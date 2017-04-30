@@ -170,6 +170,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return False
 
     def should_clear_from_dribble(self):
+        if (self.dribbler is not None and
+            self.dribbler.pos is None):
+            return False
+
         # If outside clear zone
         if (self.dribbler.pos.y > self.clear_field_cutoff):
             return False
@@ -201,29 +205,30 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.dribble_start_pt = main.ball().pos
 
         # Dribbles toward the best receive point
-        self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(), self.field_pos_weights,
-            self.dribbling_weights, False)
+        self.dribbler_pos, _ = evaluation.passing_positioning.eval_best_receive_point(
+            main.ball().pos, main.our_robots(), self.field_pos_weights,
+            self.dribbling_weights)
+
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
         self.check_dribbling_timer = 0
 
-        self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
-        )
-        self.add_subbehavior(self.midfielders,
-                             'midfielders',
-                             required=False,
-                             priority=10)
+        if (self.has_subbehavior_with_name('midfielders')):
+            self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
+            )
+            self.add_subbehavior(self.midfielders,
+                                 'midfielders',
+                                 required=False,
+                                 priority=10)
 
     def execute_dribbling(self):
         # Find the closest bot weighting the ones in front of the ball more
         closest_bot = evaluation.opponent.get_closest_opponent(main.ball().pos,
                                                                0.9)
 
-        # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(), self.field_pos_weights,
-            self.passing_weights, False)
+            main.ball().pos, main.our_robots(), self.field_pos_weights,
+            self.passing_weights)
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
@@ -233,8 +238,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         if (self.check_dribbling_timer > self.check_dribbling_timer_cutoff):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-                main.ball().pos, None, main.our_robots(),
-                self.field_pos_weights, self.dribbling_weights, False)
+                main.ball().pos, main.our_robots(),
+                self.field_pos_weights, self.dribbling_weights)
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
         # Good positions can be definied by offensive / defensive costs
@@ -267,8 +272,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Choose most open area / Best pass, weight forward
         # Decrease weight on sides of field due to complexity of settling
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(), self.field_pos_weights,
-            self.passing_weights, False)
+            main.ball().pos, main.our_robots(), self.field_pos_weights,
+            self.passing_weights)
 
         clear = skills.pivot_kick.PivotKick()
         clear.target = self.pass_target

@@ -23,17 +23,19 @@ public:
      * @param maxIterations maximum number of iterations to reach before end
      * @param maxValue max value to exit early at
      * @param maxThresh threshold for the max vlaue before exit
+     * @note Set maxValue = maxThresh to disable
      */
     NelderMead2DConfig(std::function<float(Geometry2d::Point)>* f,
-                       Geometry2d::Point start,
-                       Geometry2d::Point step,
-                       Geometry2d::Point minDist,
-                       float reflectionCoeff,
-                       float expansionCoeff,
-                       float contractionCoeff,
-                       float shrinkCoeff,
-                       int maxIterations,
-                       float maxValue, float maxThresh)
+                       Geometry2d::Point start = Geometry2d::Point(0, 0),
+                       Geometry2d::Point step = Geometry2d::Point(1, 1),
+                       Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
+                       float reflectionCoeff = 1,
+                       float expansionCoeff = 2,
+                       float contractionCoeff = 0.5,
+                       float shrinkCoeff = 0.5,
+                       int maxIterations = 100,
+                       float maxValue = 0,
+                       float maxThresh = 0)
         :
             f(f),
             start(start),
@@ -46,20 +48,6 @@ public:
             maxIterations(maxIterations),
             maxValue(maxValue),
             maxThresh(maxThresh) {}
-
-    // NelderMead2DConfig(const NelderMead2DConfig*& other) {
-    //     f = other->f;
-    //     start = other->start;
-    //     step = other->step;
-    //     minDist = other->minDist;
-    //     reflectionCoeff = other->reflectionCoeff;
-    //     expansionCoeff = other->expansionCoeff;
-    //     contractionCoeff = other->contractionCoeff;
-    //     shrinkCoeff = other->shrinkCoeff;
-    //     maxIterations = other->maxIterations;
-    //     maxValue = other->maxValue;
-    //     maxThresh = other->maxThresh;
-    // }
 
     std::function<float(Geometry2d::Point)>* f;
     Geometry2d::Point start;

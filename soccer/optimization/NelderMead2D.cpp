@@ -8,7 +8,7 @@ NelderMead2D::NelderMead2D(NelderMead2DConfig* config) : config(config), iterati
     // Creates starting points at [start], [start] + [x, y], [start] + [x, -y]
     for (int i = -1; i < 2; i++) {
         Geometry2d::Point p = config->start +
-            i * Geometry2d::Point(config->step.x() * i, config->step.y());
+            i * Geometry2d::Point(config->step.x(), i * config->step.y());
 
         vertices.push_back(std::make_tuple((*(config->f))(p), p));
     }
