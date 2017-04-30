@@ -2,6 +2,7 @@
 #include <Constants.hpp>
 #include <Utils.hpp>
 #include <rrt/planning/Path.hpp>
+#include <rrt/Tree.hpp>
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
@@ -157,6 +158,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         // Check if Planning or optimization failed
         if (points.size() < 2) {
             debugLog("RRTPlanning Failed");
+            exit(1);
             break;
         }
 
@@ -186,7 +188,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
     // Initialize bi-directional RRT
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
-    RRT::BiRRT<Point> biRRT(stateSpace);
+    RRT::BiRRT<Point> biRRT(stateSpace, 2, Point::hash);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
     biRRT.setStepSize(*RRTConfig::StepSize);
