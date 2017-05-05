@@ -47,7 +47,7 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = plays.restarts.placement.Placement()
                     self._currently_restarting = True
             else:
-                if (not isinstance(self.play, plays.stopped.Stopped)) and (not isinstance(self.play, plays.testing.test_coach.TestCoach)):
+                if self.play is None or not self.play.run_during_stopped():
                     logging.info(
                         "Running 'Stopped' play due to game state change")
                     self.play = plays.stopped.Stopped()

@@ -23,3 +23,8 @@ class TestCoach(play.Play):
     @classmethod
     def score(cls):
         return 9001
+
+    ## Allow the coach to run during stop.
+    @classmethod
+    def run_during_stopped(cls):
+        return True
