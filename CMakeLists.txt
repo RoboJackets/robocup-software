@@ -68,6 +68,8 @@ message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
 find_package(Protobuf REQUIRED)
 include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIR})
 
+# Remove QT slots/signals/emit keywords
+add_definitions(-DQT_NO_KEYWORDS)
 # Python
 if(APPLE)
     # Finding homebrew-installed python3 on OS X doesn't work with the standard

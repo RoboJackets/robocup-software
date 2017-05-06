@@ -4,7 +4,6 @@
 #include <protobuf/grSim_Packet.pb.h>
 #include <Geometry2d/Util.hpp>
 #include <Network.hpp>
-#include <QNetworkDatagram>
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <stdexcept>
@@ -73,11 +72,9 @@ void SimRadio::send(Packet::RadioTx& packet) {
 
 void SimRadio::receive() {
     while (_rx_socket.hasPendingDatagrams()) {
-        auto datagram = _rx_socket.receiveDatagram(1);
-
-        if (!datagram.isValid()) continue;
-
-        uint8_t byte = datagram.data()[0];
+        char byte = 0;
+        // one byte at a time
+        _rx_socket.readDatagram(&byte, 1);
 
         // grSim really needs to set up a proto packet for robot status.
         // Instead they pack their own byte up in a custom way :/

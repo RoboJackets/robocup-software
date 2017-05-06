@@ -172,7 +172,7 @@ private Q_SLOTS:
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
 
-signals:
+Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
 
