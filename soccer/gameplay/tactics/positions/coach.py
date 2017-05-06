@@ -9,6 +9,7 @@ import subprocess
 import random
 import role_assignment
 
+
 ## Motivates, encourages, and directs the team.
 class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
@@ -19,19 +20,18 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     TheirScore = 0
 
     STRATEGIZING_IDEAS = [
-        "*incoherent mumbling*",
-        "They'll never see it coming!",
+        "*incoherent mumbling*", "They'll never see it coming!",
         "*wild robot appendage gestures*",
         "And that's when we pull out the soldering irons",
-        "*coach violently hawks a loogie*",
-        "Sweep the Leg",
+        "*coach violently hawks a loogie*", "Sweep the Leg",
         "Is it necesarry for me to drink my own urine? No, but I do it anyway because its sterile and I like the taste",
         "There's nothing in the rules about golf clubs",
         "*coach points violently at the ref*",
         "*coach slyly passes the player an extra battery*",
         "Yes, the soup last night was delicious",
         "Time for another rule in our name...",
-        "THIS... STATEMENT... IS... FALSE"]
+        "THIS... STATEMENT... IS... FALSE"
+    ]
 
     class State(enum.Enum):
         watching = 0
@@ -40,7 +40,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         strategizing = 3
 
     def __init__(self):
-        super().__init__(continuous=True)#self.State != self.State.strategizing)
+        super().__init__(continuous=True)  #self.State != self.State.strategizing)
         self.spin_angle = 0
 
         for state in Coach.State:
@@ -53,17 +53,20 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(self.State.watching, self.State.celebrating,
                             lambda: self.our_score_increased(), 'goal scored')
         self.add_transition(self.State.celebrating, self.State.watching,
-                            lambda: self.spin_angle > Coach.MaxSpinAngle, 'done with celebration')
+                            lambda: self.spin_angle > Coach.MaxSpinAngle,
+                            'done with celebration')
 
         self.add_transition(self.State.watching, self.State.motivating,
-                            lambda: self.their_score_increased(), 'Let a goal through')
+                            lambda: self.their_score_increased(),
+                            'Let a goal through')
         self.add_transition(self.State.motivating, self.State.watching,
                             lambda: True, 'done talking')
 
         self.add_transition(self.State.watching, self.State.strategizing,
                             lambda: main.game_state().is_stopped(), 'Timeout')
         self.add_transition(self.State.strategizing, self.State.watching,
-                            lambda: not main.game_state().is_stopped(), 'Timeout over')
+                            lambda: not main.game_state().is_stopped(),
+                            'Timeout over')
 
     def our_score_increased(self):
         if (Coach.OurScore < main.game_state().our_score):
@@ -71,6 +74,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         else:
             Coach.OurScore = main.game_state().our_score
             return False
+
     def their_score_increased(self):
         if (Coach.TheirScore < main.game_state().their_score):
             return True
@@ -83,8 +87,9 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_subbehavior(move, 'coach')
 
     def on_enter_watching(self):
-        self.subbehavior_with_name('coach').pos = robocup.Point(-constants.Field.Width / 2 - constants.Robot.Radius * 2,
-                                   constants.Field.Length / 3)
+        self.subbehavior_with_name('coach').pos = robocup.Point(
+            -constants.Field.Width / 2 - constants.Robot.Radius * 2,
+            constants.Field.Length / 3)
 
     def on_exit_running(self):
         self.remove_all_subbehaviors()
@@ -124,10 +129,15 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_strategizing(self):
         #pick a robot to talk to
-        target_bot = random.randint(0, ((len(main.our_robots()) - 1) if (main.our_robots() is not None) else 0));
-        self.subbehavior_with_name('coach').pos = (main.our_robots()[target_bot].pos + robocup.Point(-constants.Robot.Radius * 2, constants.Robot.Radius * 2))
-        self.subbehavior_with_name('coach').threshold = constants.Robot.Radius * 2;
-        print("\n\n Alright Number " + str(target_bot) + " here is the plan:");
+        target_bot = random.randint(0,
+                                    ((len(main.our_robots()) - 1) if
+                                     (main.our_robots() is not None) else 0))
+        self.subbehavior_with_name('coach').pos = (
+            main.our_robots()[target_bot].pos + robocup.Point(
+                -constants.Robot.Radius * 2, constants.Robot.Radius * 2))
+        self.subbehavior_with_name(
+            'coach').threshold = constants.Robot.Radius * 2
+        print("\n\n Alright Number " + str(target_bot) + " here is the plan:")
 
     def execute_strategizing(self):
         #Stops coach from talking too much
@@ -139,9 +149,11 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             print(random.choice(Coach.STRATEGIZING_IDEAS))
 
     def on_exit_strategizing(self):
-        print("\n*coach gives the player an invigorating butt slap*\nGo get'em")
+        print(
+            "\n*coach gives the player an invigorating butt slap*\nGo get'em")
 
     @staticmethod
+
     ## Returns a fortune.
     def fortune_wrapper():
         try:
@@ -160,8 +172,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        for req in role_assignment.iterate_role_requirements_tree_leaves(
-            reqs):
+        for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
             #There is only one coach! Not just any robot can be coach
             req.robot_change_cost = 30.0
         return reqs

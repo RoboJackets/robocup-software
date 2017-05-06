@@ -20,7 +20,6 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         composite_behavior.CompositeBehavior.__init__(self,
                                                       continuous=continuous)
         self.autorestart = autorestart
-        
 
     @property
     def autorestart(self):

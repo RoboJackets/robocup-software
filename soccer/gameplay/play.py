@@ -33,7 +33,6 @@ class Play(composite_behavior.CompositeBehavior):
     def handles_goalie(cls):
         return False
 
-
     ## Override to allow a play to run during the stopped state
     # This is reserved only for very special plays that need to run during the
     # stopped state.  Most plays should give up control during the stopped state
