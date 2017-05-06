@@ -137,6 +137,9 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>score</b> (cls)</td></
 <tr class="memitem:a8c387a4a18684f9bcdb18a5aa4ae31c4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c387a4a18684f9bcdb18a5aa4ae31c4"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>handles_goalie</b> (self)</td></tr>
 <tr class="separator:a8c387a4a18684f9bcdb18a5aa4ae31c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a260d54323a897dfaa62a80f0c7145510"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1plays_1_1stopped_1_1_stopped.html#a260d54323a897dfaa62a80f0c7145510">run_during_stopped</a> (cls)</td></tr>
+<tr class="memdesc:a260d54323a897dfaa62a80f0c7145510"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allow the stopped play to run during the stopped play.  <a href="#a260d54323a897dfaa62a80f0c7145510">More...</a><br /></td></tr>
+<tr class="separator:a260d54323a897dfaa62a80f0c7145510"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3005e1d99a686307d59fb0e20d760e7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae3005e1d99a686307d59fb0e20d760e7"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_center</b> (self)</td></tr>
 <tr class="separator:ae3005e1d99a686307d59fb0e20d760e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -172,6 +175,9 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>is_restart</b> (cls)</
 <tr class="memitem:ac200a9a39e0e0d5720d525469775814e inherit pub_methods_classgameplay_1_1play_1_1_play"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1play_1_1_play.html#ac200a9a39e0e0d5720d525469775814e">handles_goalie</a> (cls)</td></tr>
 <tr class="memdesc:ac200a9a39e0e0d5720d525469775814e inherit pub_methods_classgameplay_1_1play_1_1_play"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override to opt-in to handling the Goalie By default, the root play allocates and runs the goalie behavior and the play handles the rest of the bots.  <a href="#ac200a9a39e0e0d5720d525469775814e">More...</a><br /></td></tr>
 <tr class="separator:ac200a9a39e0e0d5720d525469775814e inherit pub_methods_classgameplay_1_1play_1_1_play"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48ba624fc4c7ab50895b5e81c53eb825 inherit pub_methods_classgameplay_1_1play_1_1_play"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1play_1_1_play.html#a48ba624fc4c7ab50895b5e81c53eb825">run_during_stopped</a> (cls)</td></tr>
+<tr class="memdesc:a48ba624fc4c7ab50895b5e81c53eb825 inherit pub_methods_classgameplay_1_1play_1_1_play"><td class="mdescLeft">&#160;</td><td class="mdescRight">Override to allow a play to run during the stopped state This is reserved only for very special plays that need to run during the stopped state.  <a href="#a48ba624fc4c7ab50895b5e81c53eb825">More...</a><br /></td></tr>
+<tr class="separator:a48ba624fc4c7ab50895b5e81c53eb825 inherit pub_methods_classgameplay_1_1play_1_1_play"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgameplay_1_1composite__behavior_1_1_composite_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgameplay_1_1composite__behavior_1_1_composite_behavior')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classgameplay_1_1composite__behavior_1_1_composite_behavior.html">gameplay.composite_behavior.CompositeBehavior</a></td></tr>
 <tr class="memitem:a5d1d453e071d258f5f3631ccec7052de inherit pub_methods_classgameplay_1_1composite__behavior_1_1_composite_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d1d453e071d258f5f3631ccec7052de"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, continuous)</td></tr>
@@ -340,6 +346,26 @@ Additional Inherited Members</h2></td></tr>
 <area shape="rect" id="node6" href="classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="37,5,242,32"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a260d54323a897dfaa62a80f0c7145510"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.plays.stopped.Stopped.run_during_stopped </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>cls</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allow the stopped play to run during the stopped play. </p>
+<p>Without this, the stopped play would be killed in the stopped state. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/gameplay/plays/stopped.py</li>
 </ul>
@@ -349,7 +375,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>plays</b></li><li class="navelem"><b>stopped</b></li><li class="navelem"><a class="el" href="classgameplay_1_1plays_1_1stopped_1_1_stopped.html">Stopped</a></li>
-    <li class="footer">Generated on Mon Apr 24 2017 19:30:37 for GT RoboCup SSL by
+    <li class="footer">Generated on Sat May 6 2017 02:43:07 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

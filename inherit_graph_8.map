@@ -25,11 +25,12 @@
 <area shape="rect" id="node25" href="$classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html" title="gameplay.tactics.one\l_touch_pass.OneTouchPass.State" alt="" coords="126,1548,365,1589"/>
 <area shape="rect" id="node26" href="$classgameplay_1_1tactics_1_1our__placement_1_1_our_placement_1_1_state.html" title="gameplay.tactics.our\l_placement.OurPlacement.State" alt="" coords="130,1613,361,1655"/>
 <area shape="rect" id="node27" href="$classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html" title="gameplay.tactics.penalty.\lPenalty.State" alt="" coords="152,1679,339,1720"/>
-<area shape="rect" id="node28" href="$classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html" title="gameplay.tactics.positions.goalie.\lGoalie.State" alt="" coords="126,1744,365,1785"/>
-<area shape="rect" id="node29" href="$classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html" title="gameplay.tactics.positions.submissive\l_goalie.SubmissiveGoalie.State" alt="" coords="112,1809,379,1851"/>
-<area shape="rect" id="node30" href="$classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html" title="gameplay.timeout_behavior.\lTimeoutBehavior.State" alt="" coords="143,1875,348,1916"/>
-<area shape="rect" id="node31" href="$classkick__gently_1_1_kick_gently_1_1_state.html" title="kick_gently.KickGently.State" alt="" coords="145,1941,346,1967"/>
-<area shape="rect" id="node32" href="$classtest__fsm_1_1_my_fsm_1_1_state.html" title="test_fsm.MyFsm.State" alt="" coords="162,1991,329,2018"/>
-<area shape="rect" id="node33" href="$classtest__fsm_1_1_my_fsm_1_1_sub_state.html" title="test_fsm.MyFsm.SubState" alt="" coords="150,2042,341,2069"/>
-<area shape="rect" id="node34" href="$classwhich__half_1_1_which_half_1_1_state.html" title="which_half.WhichHalf.State" alt="" coords="149,2093,341,2119"/>
+<area shape="rect" id="node28" href="$classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach_1_1_state.html" title="gameplay.tactics.positions.coach.\lCoach.State" alt="" coords="126,1744,365,1785"/>
+<area shape="rect" id="node29" href="$classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html" title="gameplay.tactics.positions.goalie.\lGoalie.State" alt="" coords="126,1809,365,1851"/>
+<area shape="rect" id="node30" href="$classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html" title="gameplay.tactics.positions.submissive\l_goalie.SubmissiveGoalie.State" alt="" coords="112,1875,379,1916"/>
+<area shape="rect" id="node31" href="$classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html" title="gameplay.timeout_behavior.\lTimeoutBehavior.State" alt="" coords="143,1940,348,1981"/>
+<area shape="rect" id="node32" href="$classkick__gently_1_1_kick_gently_1_1_state.html" title="kick_gently.KickGently.State" alt="" coords="145,2006,346,2033"/>
+<area shape="rect" id="node33" href="$classtest__fsm_1_1_my_fsm_1_1_state.html" title="test_fsm.MyFsm.State" alt="" coords="162,2057,329,2083"/>
+<area shape="rect" id="node34" href="$classtest__fsm_1_1_my_fsm_1_1_sub_state.html" title="test_fsm.MyFsm.SubState" alt="" coords="150,2107,341,2134"/>
+<area shape="rect" id="node35" href="$classwhich__half_1_1_which_half_1_1_state.html" title="which_half.WhichHalf.State" alt="" coords="149,2158,341,2185"/>
 </map>

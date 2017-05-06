@@ -110,6 +110,9 @@ var annotated_dup =
           [ "test_capture", null, [
             [ "TestCapture", "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html", "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture" ]
           ] ],
+          [ "test_coach", null, [
+            [ "TestCoach", "classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach.html", "classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach" ]
+          ] ],
           [ "test_coordinated_pass", null, [
             [ "TestCoordinatedPass", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass" ]
           ] ],
@@ -265,6 +268,9 @@ var annotated_dup =
           [ "Penalty", "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html", "classgameplay_1_1tactics_1_1penalty_1_1_penalty" ]
         ] ],
         [ "positions", null, [
+          [ "coach", null, [
+            [ "Coach", "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html", "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach" ]
+          ] ],
           [ "defender", null, [
             [ "Defender", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender" ]
           ] ],

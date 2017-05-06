@@ -6,6 +6,7 @@ var searchData=
   ['circle',['Circle',['../class_geometry2d_1_1_circle.html',1,'Geometry2d']]],
   ['circlenearball',['CircleNearBall',['../classcircle__near__ball_1_1_circle_near_ball.html',1,'circle_near_ball']]],
   ['circleoncenter',['CircleOnCenter',['../classcircle__on__center_1_1_circle_on_center.html',1,'circle_on_center']]],
+  ['coach',['Coach',['../classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html',1,'gameplay::tactics::positions::coach']]],
   ['colors',['Colors',['../classgameplay_1_1constants_1_1_colors.html',1,'gameplay::constants']]],
   ['compositebehavior',['CompositeBehavior',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html',1,'gameplay::composite_behavior']]],
   ['compositepath',['CompositePath',['../class_planning_1_1_composite_path.html',1,'Planning']]],

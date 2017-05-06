@@ -14,6 +14,7 @@ var searchData=
   ['findnonblockedgoal',['findNonBlockedGoal',['../class_planning_1_1_escape_obstacles_path_planner.html#a6446c8be1cdca99a3a234ce64067feac',1,'Planning::EscapeObstaclesPathPlanner']]],
   ['firfilter',['FIRFilter',['../class_f_i_r_filter.html',1,'']]],
   ['forbidden_5fball_5ftoucher',['forbidden_ball_toucher',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html#a5c1f25615f78e511e209521501ea26ff',1,'gameplay::evaluation::double_touch::DoubleTouchTracker']]],
+  ['fortune_5fwrapper',['fortune_wrapper',['../classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a8c1d9c06df5e52bd551a44821e7c375f',1,'gameplay::tactics::positions::coach::Coach']]],
   ['forwardpass',['ForwardPass',['../classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html',1,'gameplay::tactics::forward_pass']]],
   ['fromregisteredconfigurables',['FromRegisteredConfigurables',['../class_configuration.html#aca77602fde525eceef3be66fa02061a4',1,'Configuration']]],
   ['fseventhandler',['FsEventHandler',['../classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html',1,'gameplay::fs_watcher::FsWatcher']]],

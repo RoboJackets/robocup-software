@@ -58,6 +58,7 @@ var hierarchy =
       [ "gameplay.tactics.one_touch_pass.OneTouchPass.State", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html", null ],
       [ "gameplay.tactics.our_placement.OurPlacement.State", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement_1_1_state.html", null ],
       [ "gameplay.tactics.penalty.Penalty.State", "classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html", null ],
+      [ "gameplay.tactics.positions.coach.Coach.State", "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach_1_1_state.html", null ],
       [ "gameplay.tactics.positions.goalie.Goalie.State", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
       [ "gameplay.timeout_behavior.TimeoutBehavior.State", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html", null ],
@@ -210,9 +211,6 @@ var hierarchy =
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -225,6 +223,7 @@ var hierarchy =
             [ "gameplay.plays.testing.stress_test.StressTest", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html", null ],
             [ "gameplay.plays.testing.test_bump.TestBump", "classgameplay_1_1plays_1_1testing_1_1test__bump_1_1_test_bump.html", null ],
             [ "gameplay.plays.testing.test_capture.TestCapture", "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html", null ],
+            [ "gameplay.plays.testing.test_coach.TestCoach", "classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach.html", null ],
             [ "gameplay.plays.testing.test_coordinated_pass.TestCoordinatedPass", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html", null ],
             [ "gameplay.plays.testing.test_defense.TestDefense", "classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense.html", null ],
             [ "gameplay.plays.testing.test_defense_and_kicker.TestDefenseAndKicker", "classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker.html", null ],
@@ -269,6 +268,7 @@ var hierarchy =
             [ "gameplay.skills.pivot_kick.PivotKick", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html", null ],
             [ "gameplay.tactics.our_placement.OurPlacement", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html", null ],
             [ "gameplay.tactics.penalty.Penalty", "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html", null ],
+            [ "gameplay.tactics.positions.coach.Coach", "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html", null ],
             [ "gameplay.tactics.positions.goalie.Goalie", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html", null ],
             [ "gameplay.tactics.positions.submissive_defender.SubmissiveDefender", "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html", null ],
             [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html", null ]
@@ -303,6 +303,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]

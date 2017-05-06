@@ -4,6 +4,7 @@ var searchData=
   ['teaminfo',['TeamInfo',['../class_team_info.html',1,'']]],
   ['testbump',['TestBump',['../classgameplay_1_1plays_1_1testing_1_1test__bump_1_1_test_bump.html',1,'gameplay::plays::testing::test_bump']]],
   ['testcapture',['TestCapture',['../classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html',1,'gameplay::plays::testing::test_capture']]],
+  ['testcoach',['TestCoach',['../classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach.html',1,'gameplay::plays::testing::test_coach']]],
   ['testconfig',['TestConfig',['../classtest__config_1_1_test_config.html',1,'test_config']]],
   ['testconstants',['TestConstants',['../classtest__constants_1_1_test_constants.html',1,'test_constants']]],
   ['testcoordinatedpass',['TestCoordinatedPass',['../classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html',1,'gameplay::plays::testing::test_coordinated_pass']]],

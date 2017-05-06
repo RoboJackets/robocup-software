@@ -1,5 +1,7 @@
 var NAVTREEINDEX5 =
 {
+"class_robot_pose.html#a9c11b53a65ec4e7ab215d33acfdf4c4f":[14,0,65,0],
+"class_robot_pose.html#aea32e946f5835656db3bbcccfdff8a95":[14,0,65,4],
 "class_robot_pose.html#aebf204e4ea326321813ecfe7e7a19df5":[14,0,65,6],
 "class_robot_status.html":[14,0,66],
 "class_robot_status.html#a1248fb03fff6700f23bc8c82049a225c":[14,0,66,5],
@@ -247,7 +249,5 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1fsm_1_1_state_machine.html":[14,0,5,5,0],
 "classgameplay_1_1fsm_1_1_state_machine.html#a017401bea1691c0b4041ca4b6ad2d6fd":[14,0,5,5,0,4],
 "classgameplay_1_1fsm_1_1_state_machine.html#a0b1b3cee27667170e0efb4f6ec0d162f":[14,0,5,5,0,3],
-"classgameplay_1_1fsm_1_1_state_machine.html#a202d07d517f2720dbd46b1214daa336a":[14,0,5,5,0,14],
-"classgameplay_1_1fsm_1_1_state_machine.html#a25540ef072be9d5415858631e0bcf913":[14,0,5,5,0,9],
-"classgameplay_1_1fsm_1_1_state_machine.html#a26580b6c91b9b04fea7347c43896017a":[14,0,5,5,0,10]
+"classgameplay_1_1fsm_1_1_state_machine.html#a202d07d517f2720dbd46b1214daa336a":[14,0,5,5,0,14]
 };
