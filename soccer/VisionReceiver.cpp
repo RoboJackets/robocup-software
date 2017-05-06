@@ -1,10 +1,10 @@
 #include "VisionReceiver.hpp"
 
-#include <multicast.hpp>
-#include <Utils.hpp>
 #include <unistd.h>
 #include <QMutexLocker>
 #include <QUdpSocket>
+#include <Utils.hpp>
+#include <multicast.hpp>
 #include <stdexcept>
 
 using namespace std;

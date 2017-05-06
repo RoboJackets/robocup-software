@@ -9,11 +9,11 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Constants.hpp>
+#include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <Geometry2d/Util.hpp>
 #include <git_version.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
@@ -688,7 +688,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field." << endl;
+                "field."
+             << endl;
     }
 }
 

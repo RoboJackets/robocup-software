@@ -1,22 +1,22 @@
 #include <gameplay/GameplayModule.hpp>
 #include <ui/StyleSheetManager.hpp>
 
+#include <assert.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <assert.h>
-#include <signal.h>
 
 #include <QApplication>
-#include <QFile>
-#include <QDir>
 #include <QDateTime>
-#include <QString>
+#include <QDir>
+#include <QFile>
 #include <QMessageBox>
+#include <QString>
 
-#include "MainWindow.hpp"
 #include "Configuration.hpp"
+#include "MainWindow.hpp"
 
 using namespace std;
 

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QTimer>
 #include <QTime>
+#include <QTimer>
 
-#include <FieldView.hpp>
 #include <Configuration.hpp>
+#include <FieldView.hpp>
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"

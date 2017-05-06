@@ -3,9 +3,9 @@
 #include <Constants.hpp>
 #include <Network.hpp>
 
-#include <QPainter>
-#include <QMouseEvent>
 #include <QFont>
+#include <QMouseEvent>
+#include <QPainter>
 
 using namespace boost;
 using namespace Packet;
@@ -105,8 +105,10 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
         grSim_BallReplacement* ball_replace =
             simPacket.mutable_replacement()->mutable_ball();
 
-        ball_replace->mutable_vel()->set_x(_teamToWorld.transformDirection(_shot).x());
-        ball_replace->mutable_vel()->set_y(_teamToWorld.transformDirection(_shot).y());
+        ball_replace->mutable_vel()->set_x(
+            _teamToWorld.transformDirection(_shot).x());
+        ball_replace->mutable_vel()->set_y(
+            _teamToWorld.transformDirection(_shot).y());
         sendSimCommand(simPacket);
 
         update();

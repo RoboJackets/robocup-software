@@ -10,6 +10,7 @@
  */
 class SimRadio : public Radio {
 public:
+    static std::size_t instance_count;
     SimRadio(SystemState& system_state, bool blueTeam = false);
 
     virtual bool isOpen() const override;
@@ -20,7 +21,8 @@ public:
 private:
     SystemState& _state;
 
-    QUdpSocket _socket;
+    QUdpSocket _tx_socket;
+    QUdpSocket _rx_socket;
     int _channel;
     bool _blueTeam;
 };

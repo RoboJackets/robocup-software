@@ -1,28 +1,28 @@
-#include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
-#include "Configuration.hpp"
-#include "radio/Radio.hpp"
-#include <Utils.hpp>
-#include <Robot.hpp>
-#include <joystick/Joystick.hpp>
-#include "RobotStatusWidget.hpp"
-#include "BatteryProfile.hpp"
 #include <Network.hpp>
-#include "git_version.hpp"
+#include <Robot.hpp>
+#include <Utils.hpp>
+#include <gameplay/GameplayModule.hpp>
+#include <joystick/Joystick.hpp>
 #include <ui/StyleSheetManager.hpp>
+#include "BatteryProfile.hpp"
+#include "Configuration.hpp"
+#include "RobotStatusWidget.hpp"
+#include "git_version.hpp"
+#include "radio/Radio.hpp"
 
-#include <QInputDialog>
-#include <QFileDialog>
 #include <QActionGroup>
+#include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 
-#include <QFile>
-#include <QDir>
 #include <QDateTime>
+#include <QDir>
+#include <QFile>
 #include <QString>
 
-#include <iostream>
 #include <ctime>
+#include <iostream>
 #include <string>
 
 #include <google/protobuf/descriptor.h>
@@ -412,10 +412,9 @@ void MainWindow::updateViews() {
              i < liveFrame->debug_layers_size(); ++i) {
             const QString name =
                 QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled =
-                !std::any_of(defaultHiddenLayers.begin(),
-                             defaultHiddenLayers.end(),
-                             [&](QString string) { return string == name; });
+            bool enabled = !std::any_of(
+                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                [&](QString string) { return string == name; });
             addLayer(i, name, enabled);
         }
 
@@ -474,9 +473,11 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage).c_str());
+                              _processor->refereeModule()->stage)
+                              .c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command).c_str());
+                                _processor->refereeModule()->command)
+                                .c_str());
 
     // convert time left from ms to s and display it to two decimal places
     _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
@@ -1319,7 +1320,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction* single = nullptr, * notSingle = nullptr;
+    QAction *single = nullptr, *notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");
