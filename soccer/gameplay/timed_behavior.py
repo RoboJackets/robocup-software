@@ -1,4 +1,4 @@
-from behavior import Behavior #pylint: disable=import-error
+from behavior import Behavior
 import time
 from enum import Enum
 

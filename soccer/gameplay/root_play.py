@@ -1,5 +1,5 @@
-from play import Play         #pylint: disable=import-error
-from behavior import Behavior #pylint: disable=import-error
+from play import Play
+from behavior import Behavior
 import plays.stopped
 import plays.testing.test_coach
 import logging
@@ -79,7 +79,6 @@ class RootPlay(Play, QtCore.QObject):
 
             # see if we need to kill current play or if it's done running
             if self.play is not None:
-                #pylint: disable=no-member
                 if self.play.__class__ not in map(lambda tup: tup[0],
                                                   enabled_plays_and_scores):
                     logging.info("Current play '" +
@@ -202,7 +201,6 @@ class RootPlay(Play, QtCore.QObject):
         logging.info("goalie_id set to: " + str(self._goalie_id))
 
     def setup_goalie_if_needed(self):
-        #pylint: disable=no-member
         if self.goalie_id is None:
             if self.has_subbehavior_with_name('goalie'):
                 self.remove_subbehavior('goalie')

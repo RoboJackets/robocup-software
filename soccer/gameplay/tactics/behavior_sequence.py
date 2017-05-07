@@ -50,7 +50,7 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
 
         if should_advance:
             if self.current_behavior != None:
-                self.remove_behavior_with_name('current')
+                self.remove_subbehavior('current')
 
             self._current_behavior_index += 1
             if self.current_behavior_index < len(self.behaviors):

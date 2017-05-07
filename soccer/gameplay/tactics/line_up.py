@@ -3,9 +3,7 @@ import behavior
 import skills.move
 import robocup
 import constants
-#pylint: disable=import-error
 from single_robot_behavior import SingleRobotBehavior
-
 
 class LineUp(composite_behavior.CompositeBehavior):
 
