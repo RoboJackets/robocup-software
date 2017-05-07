@@ -8,4 +8,6 @@ ignored-modules = PyQt5.*, robocup
 ignored-classes =
 
 [MESSAGES CONTROL]
-disable=locally-disabled
+disable=locally-disabled,
+        unused-import,
+        fixme

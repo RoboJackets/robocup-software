@@ -1,8 +1,9 @@
-from watchdog.observers import *
-from watchdog.events import *
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler,\
+    FileDeletedEvent, FileCreatedEvent, FileModifiedEvent
 import time
+import logging
 import os.path
-import imp
 
 
 ## Watches the filesytem for changes and executes any registered callbacks
