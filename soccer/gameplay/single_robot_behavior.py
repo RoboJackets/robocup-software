@@ -27,7 +27,7 @@ class SingleRobotBehavior(behavior.Behavior):
         if len(assignments) == 2:
             import robocup
             if assignments[1] is not None and not isinstance(assignments[1],
-                                                         robocup.OurRobot):
+                                                             robocup.OurRobot):
                 raise TypeError(
                     "ERROR: attempt to assign robot to a non-robot object value: "
                     + str(assignments[1]))
