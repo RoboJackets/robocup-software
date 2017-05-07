@@ -20,6 +20,8 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         composite_behavior.CompositeBehavior.__init__(self,
                                                       continuous=continuous)
         self.autorestart = autorestart
+        # for pylint
+        self.robot = self.robot
 
     @property
     def autorestart(self):
@@ -43,7 +45,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     def role_requirements(self):
         if self.has_subbehaviors():
             reqs = composite_behavior.CompositeBehavior.role_requirements(self)
-            if self.robot != None:
+            if self.robot is not None:
                 for req in role_assignment.iterate_role_requirements_tree_leaves(
                     reqs):
                     req.previous_shell_id = self.robot.shell_id()

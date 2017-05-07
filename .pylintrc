@@ -1,0 +1,7 @@
+
+[General]
+init-hook='import sys; sys.path.append("soccer/gameplay")'
+
+[TYPECHECK]
+ignored-modules = main, PyQt5.QtCore
+ignored-classes = root_play, play_registry

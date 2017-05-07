@@ -71,7 +71,7 @@ test-soccer:
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
-	cd soccer && pylint -E gameplay
+	pylint -E soccer/gameplay -j4
 
 COV_BUILD_DIR=build/coverage
 coverage:

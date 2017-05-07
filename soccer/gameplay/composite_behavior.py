@@ -88,6 +88,8 @@ class CompositeBehavior(behavior.Behavior):
     # subclasses of CompositeBehavior can override this to perform custom actions, such as removing the offending subbehavior
     # the default implementation logs the exception and re-raises it
     def handle_subbehavior_exception(self, name, exception):
+        # We only call this inside the above except
+        #pylint: disable=misplaced-bare-raise
         logging.error("Exception occurred when spinning subbehavior named '" +
                       name + "': " + str(exception))
         traceback.print_exc()

@@ -67,7 +67,7 @@ class Behavior(fsm.StateMachine):
         return self._is_continuous
 
     def __str__(self):
-        state_desc = self.state.name if self.state != None else ""
+        state_desc = self.state.name if self.state is not None else ""
         return self.__class__.__name__ + "::" + state_desc
 
     ## Returns a tree of RoleRequirements keyed by subbehavior reference name

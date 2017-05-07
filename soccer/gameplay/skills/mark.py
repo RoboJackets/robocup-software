@@ -18,6 +18,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
                             "immediately")
 
     def execute_running(self):
+        #pylint: disable=no-member
         if self.mark_point is None and \
            (self.mark_robot is None or
             not main.ball().valid or
@@ -72,17 +73,17 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
     # If mark_point is set, we will still need a mark robot
     # (for the approach_opponent function above)
     @property
-    def mark_point(self):
+    def mark_point(self) -> robocup.Point:
         return self._mark_point
 
     @mark_point.setter
-    def mark_point(self, value):
+    def mark_point(self, value: robocup.Point):
         self._mark_point = value
 
     @property
-    def mark_robot(self):
+    def mark_robot(self) -> robocup.Robot:
         return self._mark_robot
 
     @mark_robot.setter
-    def mark_robot(self, value):
+    def mark_robot(self, value: robocup.Robot):
         self._mark_robot = value
