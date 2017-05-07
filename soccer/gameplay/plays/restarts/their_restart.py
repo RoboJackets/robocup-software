@@ -50,8 +50,8 @@ class TheirRestart(standard_play.StandardPlay):
         # Right now, this is (inverse of) distance to the ball * 2 + y position.
         # Needs tuning/improvement. Right now this is excessively defensive
         sorted_opponents = sorted(
-            filter(lambda x: x != their_kicker, main.their_robots()),
-            key=lambda x: x.pos.dist_to(ball_pos) * 2 + x.pos.y)
+            filter(lambda robot: robot != their_kicker, main.their_robots()),
+            key=lambda robot: robot.pos.dist_to(ball_pos) * 2 + robot.pos.y)
 
         # Decide what each marking robot should do
         # @sorted_opponents contains the robots we want to mark by priority
