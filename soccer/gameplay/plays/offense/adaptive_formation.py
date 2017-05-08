@@ -15,6 +15,35 @@ import skills.capture
 
 
 class AdaptiveFormation(standard_play.StandardPlay):
+
+    # Min score to pass
+    DRIBBLE_TO_PASS_CUTOFF = 0.1
+    # Min score to shoot
+    DRIBBLE_TO_SHOOT_CUTOFF = 0.07
+    # Max dribble distance per the rules with 10% wiggle room
+    MAX_DRIBBLE_DIST = 1 * .9
+
+    # Min field Y to clear
+    CLEAR_FIELD_CUTOFF = constants.Field.Length * .2
+    # Min dist to opponent before clear
+    CLEAR_DISTANCE_CUTOFF = constants.Field.Length * .1
+
+    # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
+    INCREASING_CHANCE_CUTOFF = 0.05
+
+    # [type_]FIELD_POS_WEIGHTS: (Centerness, Distance to their goal, Angle off their goal)
+    # [type]_weights: (space, field_position, shot_chance, kick_proximity)
+
+    # Weights for the general field positioning
+    FIELD_POS_WEIGHTS = (0.01, 3, 0.02)
+    # Weights for finding best pass
+    PASSING_WEIGHTS = (2, 2, 15, 1)
+    # Weights for finding where to dribble to
+    DRIBBLING_WEIGHTS = (4, 2, 15, 1)
+    # Weights to find where to chip the ball
+    CHIP_FIELD_POS_WEIGHTS = (0.1, .2, 0.02)
+    CHIP_PASS_WEIGHTS = (2, 10, 0, 10)
+
     class State(enum.Enum):
         # Collect the ball / Full court defense
         collecting = 1
@@ -33,28 +62,16 @@ class AdaptiveFormation(standard_play.StandardPlay):
         for s in AdaptiveFormation.State:
             self.add_state(s, behavior.Behavior.State.running)
 
-        # Min score to pass
-        self.dribble_to_pass_cutoff = 0.1
-        # Min score to shoot
-        self.dribble_to_shoot_cutoff = 0.07
         # Dribbling skill
         self.dribbler = None
         # Dribble start point
         self.dribble_start_pt = robocup.Point(0, 0)
-        # Max dribble distance per the rules with 10% wiggle room
-        self.max_dribble_dist = 1 * .9
+        
         # Kicker for a shot
         self.kick = None
         # Controls robots while passes are being set up
         self.midfielders = None
 
-        # Min field Y to clear
-        self.clear_field_cutoff = constants.Field.Length * .2
-        # Min dist to opponent before clear
-        self.clear_distance_cutoff = constants.Field.Length * .1
-
-        # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
-        self.IncreasingChancesCutoff = 0.05
         # State Decision Variables
         self.shot_chance = 0
         self.pass_score = 0
@@ -65,18 +82,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.check_dribbling_timer = 0
         self.check_dribbling_timer_cutoff = 100
 
-        # [type_]field_pos_weights: (Centerness, Distance to their goal, Angle off their goal)
-        # [type]_weights: (space, field_position, shot_chance, kick_proximity)
-
-        # Weights for the general field positioning
-        self.field_pos_weights = (0.01, 3, 0.02)
-        # Weights for finding best pass
-        self.passing_weights = (2, 2, 15, 1)
-        # Weights for finding where to dribble to
-        self.dribbling_weights = (4, 2, 15, 1)
-        # Weights to find where to chip the ball
-        self.chip_field_pos_weights = (0.1, .2, 0.02)
-        self.chip_pass_weights = (2, 10, 0, 10)
 
         self.kick_eval = robocup.KickEvaluator(main.system_state())
 
@@ -119,7 +124,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             'Dribble: Ball Lost')
         self.add_transition(AdaptiveFormation.State.passing,
                             AdaptiveFormation.State.collecting,
-                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.cancelled or \
+                            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.cancelled or 
                                     self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
                             'Passing: Ball Lost')
         self.add_transition(
@@ -136,15 +141,15 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def should_pass_from_dribble(self):
 
         # If pass is above cutoff and we dont have a good shot
-        if (self.pass_score > self.dribble_to_pass_cutoff and \
-            self.shot_chance < self.dribble_to_shoot_cutoff):
+        if (self.pass_score > AdaptiveFormation.DRIBBLE_TO_PASS_CUTOFF and
+            self.shot_chance < AdaptiveFormation.DRIBBLE_TO_SHOOT_CUTOFF):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(
                 self.shot_chance))
             return True
 
         # Force pass if we are near our max dribble dist
         dribble_dist = (main.ball().pos - self.dribble_start_pt).mag()
-        if (dribble_dist > self.max_dribble_dist):
+        if (dribble_dist > AdaptiveFormation.MAX_DRIBBLE_DIST):
             return True
 
         # Under cutoff
@@ -153,7 +158,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def should_shoot_from_dribble(self):
 
         # If shot chance is improving significantly, hold off a second
-        if (self.prev_shot_chance + self.IncreasingChancesCutoff <
+        if (self.prev_shot_chance + AdaptiveFormation.INCREASING_CHANCE_CUTOFF <
                 self.shot_chance):
             return False
 
@@ -162,7 +167,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return False
 
         # If shot is above cutoff
-        if (self.shot_chance > self.dribble_to_shoot_cutoff):
+        if (self.shot_chance > AdaptiveFormation.DRIBBLE_TO_SHOOT_CUTOFF):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(
                 self.shot_chance))
             return True
@@ -172,17 +177,17 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def should_clear_from_dribble(self):
         # If outside clear zone
-        if (self.dribbler.pos.y > self.clear_field_cutoff):
+        if (self.dribbler.pos.y > AdaptiveFormation.CLEAR_FIELD_CUTOFF):
             return False
 
         # If pass chances are getting better, hold off
-        if (self.prev_pass_score + IncreasingChancesCutoff < self.pass_score):
+        if (self.prev_pass_score + AdaptiveFormation.INCREASING_CHANCE_CUTOFF < self.pass_score):
             return False
 
         # TODO: See if there is space to dribble
         closest_distance = (evaluation.opponent.get_closest_opponent(
             main.ball().pos, 1).pos - main.ball().pos).mag()
-        if (closest_distance > self.clear_distance_cutoff):
+        if (closest_distance > AdaptiveFormation.CLEAR_DISTANCE_CUTOFF):
             return False
 
         return True
@@ -203,13 +208,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         # Dribbles toward the best receive point
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(), self.field_pos_weights,
-            self.dribbling_weights, False)
+            main.ball().pos, None, main.our_robots(), AdaptiveFormation.FIELD_POS_WEIGHTS,
+            AdaptiveFormation.DRIBBLING_WEIGHTS, False)
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
         self.check_dribbling_timer = 0
 
-        if (self.has_subbehavior_with_name('midfielders')):
+        if (not self.has_subbehavior_with_name('midfielders')):
             self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
             )
             self.add_subbehavior(self.midfielders,
@@ -218,14 +223,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
                                  priority=10)
 
     def execute_dribbling(self):
-        # Find the closest bot weighting the ones in front of the ball more
-        closest_bot = evaluation.opponent.get_closest_opponent(main.ball().pos,
-                                                               0.9)
-
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(), self.field_pos_weights,
-            self.passing_weights, False)
+            main.ball().pos, None, main.our_robots(), AdaptiveFormation.FIELD_POS_WEIGHTS,
+            AdaptiveFormation.PASSING_WEIGHTS, False)
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
@@ -236,7 +237,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos, None, main.our_robots(),
-                self.field_pos_weights, self.dribbling_weights, False)
+                AdaptiveFormation.FIELD_POS_WEIGHTS, AdaptiveFormation.DRIBBLING_WEIGHTS, False)
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
         # Good positions can be definied by offensive / defensive costs
@@ -269,14 +270,14 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Choose most open area / Best pass, weight forward
         # Decrease weight on sides of field due to complexity of settling
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(), self.field_pos_weights,
-            self.passing_weights, False)
+            main.ball().pos, None, main.our_robots(), AdaptiveFormation.FIELD_POS_WEIGHTS,
+            AdaptiveFormation.PASSING_WEIGHTS, False)
 
         clear = skills.pivot_kick.PivotKick()
         clear.target = self.pass_target
         clear.aim_params['desperate_timeout'] = 3
         clear.use_chipper = True
-        self.add_subbehavior(chip, 'clear', required=False)
+        self.add_subbehavior(clear, 'clear', required=False)
 
     def on_exit_clearing(self):
         self.remove_subbehavior('clear')

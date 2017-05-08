@@ -119,32 +119,11 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.add_subbehavior(self.defenders[i],
                                  self.names[i],
                                  required=False,
-                                 priority=20 - 5 * i)
+                                 priority=10 - i)
             self.defenders[i].mark_robot = self.mark_bots[i]
 
-    # Uses their predicted kick direction to block
-    def get_block_pos(self, bot):
-        # Get predicted angle of shot
-        # Get goal to bot
-        # Place point x dist away
-        predicted = evaluation.defensive_positioning.predict_kick_direction(
-            bot)
-        actual = bot.angle
-
-        angle = self.block_angle_coeff * predicted + (
-            1 - self.block_angle_coeff) * actual
-
-        x = math.cos(angle)
-        y = math.sin(angle)
-        pos = robocup.Point(x, y).normalized() + bot.pos
-
-        return None  # pos * self.block_dist
-
     def we_have_ball(self):
-        has_ball = False
-        for bot in main.our_robots():
-            has_ball = has_ball or robot_has_ball(bot)
-        return has_ball
+        return any(evaluation.ball.robot_has_ball(r) for r in main.our_robots())
 
     # Wether any robot can collect the ball before the opponent
     def within_range(self):

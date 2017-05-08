@@ -108,9 +108,9 @@ def eval_singl_point(kick_point, receive_point, ignore_robots, field_weights,
 
     # All of the other scores are based on whether the pass will actually make it to it
     # Not worth returning a great position if we cant even get a pass there
-    totalChance = passChance * ( weights[0] * (1 - space) + \
-                                 weights[1] * fieldPos + \
-                                 weights[2] * shotChance + \
+    totalChance = passChance * ( weights[0] * (1 - space) +
+                                 weights[1] * fieldPos +
+                                 weights[2] * shotChance +
                                  weights[3] * (1 - distance) )
 
     return totalChance / math.fsum(weights)
@@ -163,7 +163,7 @@ def eval_best_receive_point(kick_point,
             bestScore = currentScore
             bestPoint = currentPoint
 
-    # Returns None if we can't find anythign
+    # Returns None if we can't find anything
     if bestPoint is None:
         return None, 0
 
