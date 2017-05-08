@@ -27,6 +27,10 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     def autorestart(self):
         return self._autorestart
 
+    @autorestart.setter
+    def autorestart(self, value):
+        self._autorestart = value
+
     ## we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
         if self.has_subbehaviors():
