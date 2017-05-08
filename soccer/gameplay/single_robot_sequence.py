@@ -7,7 +7,7 @@ class SingleRobotSequence(behavior_sequence.BehaviorSequence, single_robot_behav
     def __init__(self, behaviors = [], continuos=False, autorestart=lambda: True):
         single_robot_behavior.SingleRobotBehavior.__init__(self, continuos)
         behavior_sequence.BehaviorSequence.__init__(self, behaviors = behaviors)
- f
+ 
     @property
     def behaviors(self):
         return behavior_sequence.BehaviorSequence.behaviors.fget(self)
