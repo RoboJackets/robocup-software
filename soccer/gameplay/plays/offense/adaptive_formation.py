@@ -97,18 +97,20 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.add_transition(
             AdaptiveFormation.State.dribbling, AdaptiveFormation.State.passing,
-            lambda: self.should_pass_from_dribble() and not self.should_shoot_from_dribble(),
+            lambda: self.dribbler_has_ball() and self.should_pass_from_dribble() and not self.should_shoot_from_dribble(),
             'Passing')
 
-        self.add_transition(AdaptiveFormation.State.dribbling,
-                            AdaptiveFormation.State.shooting,
-                            lambda: self.should_shoot_from_dribble(),
-                            'Shooting')
+        self.add_transition(
+            AdaptiveFormation.State.dribbling,
+            AdaptiveFormation.State.shooting,
+            lambda: self.dribbler_has_ball() and self.should_shoot_from_dribble(),
+            'Shooting')
 
-        self.add_transition(AdaptiveFormation.State.dribbling,
-                            AdaptiveFormation.State.clearing,
-                            lambda: self.should_clear_from_dribble(),
-                            'Clearing')
+        self.add_transition(
+            AdaptiveFormation.State.dribbling,
+            AdaptiveFormation.State.clearing,
+            lambda: self.dribbler_has_ball() and self.should_clear_from_dribble() and not self.should_pass_from_dribble() and not self.should_shoot_from_dribble(),
+            'Clearing')
 
         self.add_transition(
             AdaptiveFormation.State.passing, AdaptiveFormation.State.dribbling,
@@ -116,11 +118,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
             'Passed')
 
         # Reset to collecting when ball is lost at any stage
-        self.add_transition(
-            AdaptiveFormation.State.dribbling,
-            AdaptiveFormation.State.collecting,
-            lambda: self.dribbler is not None and self.dribbler.robot is not None and evaluation.ball.robot_has_ball(self.dribbler.robot),
-            'Dribble: Ball Lost')
+        self.add_transition(AdaptiveFormation.State.dribbling,
+                            AdaptiveFormation.State.collecting,
+                            lambda: not self.dribbler_has_ball(),
+                            'Dribble: Ball Lost')
         self.add_transition(
             AdaptiveFormation.State.passing,
             AdaptiveFormation.State.collecting,
@@ -136,6 +137,12 @@ class AdaptiveFormation(standard_play.StandardPlay):
             AdaptiveFormation.State.collecting,
             lambda: self.subbehavior_with_name('clear').is_done_running(),
             'Clearing: Ball Lost')
+
+    @classmethod
+    def score(cls):
+        if main.game_state().is_playing():
+            return 9
+        return float("inf")
 
     def should_pass_from_dribble(self):
 
@@ -191,6 +198,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return False
 
         return True
+
+    def dribbler_has_ball(self):
+        return any(evaluation.ball.robot_has_ball(r)
+                   for r in main.our_robots())
 
     def on_enter_collecting(self):
         self.remove_all_subbehaviors()
