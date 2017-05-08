@@ -72,6 +72,8 @@ test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
 	pylint -j8 --disable=C,R,W --reports=n soccer/gameplay
+mypy:
+	mypy soccer/gameplay
 
 COV_BUILD_DIR=build/coverage
 coverage:

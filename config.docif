@@ -100,7 +100,8 @@ TEST_COMMANDS+=( 'make;compile;Compile/sanity check.' )
 TEST_COMMANDS+=( 'make test-soccer;test-soccer;A check to see if soccer tests pass' )
 TEST_COMMANDS+=( 'git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle;style;Style checks.' )
 TEST_COMMANDS+=( 'make test-python;test-python;Python tests.' )
-TEST_COMMANDS+=( 'make pylint;python-static;Python static analysis.' )
+TEST_COMMANDS+=( 'make pylint;python-pylint;Python static code analysis.' )
+TEST_COMMANDS+=( 'make mypy;python-mypy;Python static type analysis.' )
 TEST_COMMANDS+=( 'make coverage;coverage;Coverage build task.' )
 
 # @RECCOMENDED

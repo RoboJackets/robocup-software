@@ -27,10 +27,6 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     def autorestart(self):
         return self._autorestart
 
-    @autorestart.setter
-    def autorestart(self, value):
-        self._autorestart = value
-
     ## we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
         if self.has_subbehaviors():
@@ -74,7 +70,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         # middle of the behavior. For some plays, this means we shouild restart the whole
         # behavior for the new robot (autorestart = True). For others, it is more important to continue the new
         # robot where the old robot left off (autorestart = False).
-        if oldBot != None and self.robot != None and oldBot.shell_id(
+        if oldBot is not None and self.robot is not None and oldBot.shell_id(
         ) != self.robot.shell_id() and self.autorestart():
             logging.info(
                 "SingleRobotCompositeBehavior: robot changed, restarting behavior")

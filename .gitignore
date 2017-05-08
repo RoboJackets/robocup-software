@@ -19,6 +19,7 @@
 __pycache__/
 *.pyc
 .pydevproject
+.mypy_cache/
 
 # OS X Finder prefs
 .DS_Store
