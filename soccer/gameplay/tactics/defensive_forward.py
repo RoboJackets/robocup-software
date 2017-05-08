@@ -123,7 +123,8 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.defenders[i].mark_robot = self.mark_bots[i]
 
     def we_have_ball(self):
-        return any(evaluation.ball.robot_has_ball(r) for r in main.our_robots())
+        return any(evaluation.ball.robot_has_ball(r)
+                   for r in main.our_robots())
 
     # Wether any robot can collect the ball before the opponent
     def within_range(self):
