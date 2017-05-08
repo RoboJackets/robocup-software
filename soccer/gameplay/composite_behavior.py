@@ -5,20 +5,20 @@ import traceback
 import logging
 import re
 import sys
-
+from typing import Dict
 
 ## A composite behavior is one that has 0+ named subbehaviors
 # this class has methods for making it easy to work with and manage subbehaviors
 class CompositeBehavior(behavior.Behavior):
-    def __init__(self, continuous):
+    def __init__(self, continuous: bool) -> None:
         super().__init__(continuous=continuous)
-
-        self._subbehavior_info = {}
+        self._subbehavior_info = {} # type: Dict[str, Dict]
 
     # FIXME: what if a subbehavior of @bhvr is required, but this is not?
     # FIXME: how do priorities work?
     # FIXME: how do nested priorities work?
-    def add_subbehavior(self, bhvr, name, required=True, priority=100):
+    def add_subbehavior(self, bhvr: behavior.Behavior,
+                        name: str, required: bool=True, priority: int=100):
         if name in self._subbehavior_info:
             raise AssertionError("There's already a subbehavior with name: '" +
                                  name + "'")
@@ -26,19 +26,19 @@ class CompositeBehavior(behavior.Behavior):
                                         'priority': priority,
                                         'behavior': bhvr}
 
-    def remove_subbehavior(self, name):
+    def remove_subbehavior(self, name: str):
         del self._subbehavior_info[name]
 
-    def has_subbehavior_with_name(self, name):
+    def has_subbehavior_with_name(self, name: str):
         return name in self._subbehavior_info
 
-    def has_subbehaviors(self):
+    def has_subbehaviors(self) -> bool:
         return len(self._subbehavior_info) > 0
 
-    def subbehavior_with_name(self, name):
+    def subbehavior_with_name(self, name: str):
         return self._subbehavior_info[name]['behavior']
 
-    def subbehaviors_by_name(self):
+    def subbehaviors_by_name(self) -> Dict[str, Dict]:
         by_name = {}
         for name in self._subbehavior_info:
             by_name[name] = self._subbehavior_info[name]['behavior']
@@ -50,13 +50,13 @@ class CompositeBehavior(behavior.Behavior):
             self.remove_subbehavior(name)
 
     ## Returns a list of all subbehaviors
-    def all_subbehaviors(self):
+    def all_subbehaviors(self) -> list:
         return [self._subbehavior_info[name]['behavior']
                 for name in self._subbehavior_info]
 
-    def all_subbehaviors_completed(self):
-        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()
-                    ])
+    def all_subbehaviors_completed(self) -> bool:
+        return all([bhvr.is_done_running()
+                    for bhvr in self.all_subbehaviors()])
 
     ## Override StateMachine.spin() so we can call spin() on subbehaviors
     def spin(self):
@@ -71,7 +71,7 @@ class CompositeBehavior(behavior.Behavior):
             should_spin = True
             if isinstance(
                     bhvr,
-                    single_robot_behavior.SingleRobotBehavior) and bhvr.robot == None:
+                    single_robot_behavior.SingleRobotBehavior) and bhvr.robot is None:
                 should_spin = False
 
             # try executing the subbehavior
@@ -115,7 +115,7 @@ class CompositeBehavior(behavior.Behavior):
         for name, subtree in assignments.items():
             self.subbehavior_with_name(name).assign_roles(subtree)
 
-    def __str__(self):
+    def __str__(self) -> str:
         desc = super().__str__()
 
         for name in self._subbehavior_info:

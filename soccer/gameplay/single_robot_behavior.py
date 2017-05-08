@@ -1,6 +1,8 @@
 import behavior
 import role_assignment
 import re
+import robocup
+from typing import Tuple
 
 
 class SingleRobotBehavior(behavior.Behavior):
@@ -20,12 +22,15 @@ class SingleRobotBehavior(behavior.Behavior):
         return reqs
 
     # assignments is a (RoleRequirements, OurRobot) tuple
-    def assign_roles(self, assignments):
+
+    # Waiting on https://github.com/PyCQA/pylint/issues/1452 to upgrade pylint
+    # pylint: disable=invalid-sequence-index
+    def assign_roles(self, assignments: Tuple[role_assignment.RoleRequirements,
+                                              robocup.OurRobot]):
         if not isinstance(assignments, tuple) or len(assignments) > 2:
             raise AssertionError(
                 "Invalid call to assign_roles.  Expected a tuple")
         if len(assignments) == 2:
-            import robocup
             if assignments[1] is not None and not isinstance(assignments[1],
                                                              robocup.OurRobot):
                 raise TypeError(
