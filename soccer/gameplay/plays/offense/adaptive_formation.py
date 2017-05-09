@@ -140,9 +140,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        if main.game_state().is_playing():
-            return 9
-        return float("inf")
+        if len(main.our_robots()) < 5:
+            return float("inf")
+        return 10
 
     def should_pass_from_dribble(self):
 
