@@ -5,6 +5,7 @@ var searchData=
   ['defender',['Defender',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html',1,'gameplay::tactics::positions::defender']]],
   ['defendpenalty',['DefendPenalty',['../classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html',1,'gameplay::plays::restarts::defend_penalty']]],
   ['defense',['Defense',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html',1,'gameplay::tactics::defense']]],
+  ['defensiveforward',['DefensiveForward',['../classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward.html',1,'gameplay::tactics::defensive_forward']]],
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],

@@ -46,6 +46,9 @@ var annotated_dup =
       ] ],
       [ "plays", null, [
         [ "offense", null, [
+          [ "adaptive_formation", null, [
+            [ "AdaptiveFormation", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation" ]
+          ] ],
           [ "basic_122", null, [
             [ "Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122" ]
           ] ],
@@ -104,6 +107,9 @@ var annotated_dup =
           [ "stress_test", null, [
             [ "StressTest", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test" ]
           ] ],
+          [ "test_adaptive_formation_weights", null, [
+            [ "TestAdaptiveFormationWeights", "classgameplay_1_1plays_1_1testing_1_1test__adaptive__formation__weights_1_1_test_adaptive_formation_weights.html", "classgameplay_1_1plays_1_1testing_1_1test__adaptive__formation__weights_1_1_test_adaptive_formation_weights" ]
+          ] ],
           [ "test_bump", null, [
             [ "TestBump", "classgameplay_1_1plays_1_1testing_1_1test__bump_1_1_test_bump.html", "classgameplay_1_1plays_1_1testing_1_1test__bump_1_1_test_bump" ]
           ] ],
@@ -139,6 +145,9 @@ var annotated_dup =
           ] ],
           [ "test_mark", null, [
             [ "TestMark", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark" ]
+          ] ],
+          [ "test_num_on_offense", null, [
+            [ "TestNumOnOffense", "classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense.html", "classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense" ]
           ] ],
           [ "test_one_touch_pass", null, [
             [ "TestOneTouchPass", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass" ]
@@ -252,6 +261,9 @@ var annotated_dup =
         [ "defense", null, [
           [ "Defense", "classgameplay_1_1tactics_1_1defense_1_1_defense.html", "classgameplay_1_1tactics_1_1defense_1_1_defense" ]
         ] ],
+        [ "defensive_forward", null, [
+          [ "DefensiveForward", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward.html", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward" ]
+        ] ],
         [ "forward_pass", null, [
           [ "ForwardPass", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass" ]
         ] ],
@@ -283,6 +295,9 @@ var annotated_dup =
           [ "submissive_goalie", null, [
             [ "SubmissiveGoalie", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie" ]
           ] ]
+        ] ],
+        [ "simple_zone_midfielder", null, [
+          [ "SimpleZoneMidfielder", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder" ]
         ] ]
       ] ],
       [ "timed_behavior", null, [

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['adaptiveformation',['AdaptiveFormation',['../classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html',1,'gameplay::plays::offense::adaptive_formation']]],
   ['aim',['Aim',['../classgameplay_1_1skills_1_1aim_1_1_aim.html',1,'gameplay::skills::aim']]],
   ['anglefunctionpath',['AngleFunctionPath',['../class_planning_1_1_angle_function_path.html',1,'Planning']]],
   ['angleinstant',['AngleInstant',['../struct_planning_1_1_angle_instant.html',1,'Planning']]],

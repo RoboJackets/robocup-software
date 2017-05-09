@@ -34,6 +34,7 @@ var hierarchy =
     [ "Enum", null, [
       [ "binary_clock.BinaryClock.State", "classbinary__clock_1_1_binary_clock_1_1_state.html", null ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker.State", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker_1_1_state.html", null ],
+      [ "gameplay.plays.offense.adaptive_formation.AdaptiveFormation.State", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation_1_1_state.html", null ],
       [ "gameplay.plays.offense.two_side_attack.TwoSideAttack.State", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack_1_1_state.html", null ],
       [ "gameplay.plays.restarts.our_kickoff.OurKickoff.State", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html", null ],
       [ "gameplay.plays.restarts.placement.Placement.State", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement_1_1_state.html", null ],
@@ -41,6 +42,7 @@ var hierarchy =
       [ "gameplay.plays.stopped.Stopped.State", "classgameplay_1_1plays_1_1stopped_1_1_stopped_1_1_state.html", null ],
       [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp.State", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up_1_1_state.html", null ],
       [ "gameplay.plays.testing.repeated_turning_line_up.RepeatedTurningLineUp.State", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up_1_1_state.html", null ],
+      [ "gameplay.plays.testing.test_adaptive_formation_weights.TestAdaptiveFormationWeights.State", "classgameplay_1_1plays_1_1testing_1_1test__adaptive__formation__weights_1_1_test_adaptive_formation_weights_1_1_state.html", null ],
       [ "gameplay.plays.testing.test_capture.TestCapture.State", "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture_1_1_state.html", null ],
       [ "gameplay.plays.testing.triangle_pass.TrianglePass.State", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html", null ],
       [ "gameplay.plays.training.binary_clock.BinaryClock.State", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock_1_1_state.html", null ],
@@ -54,6 +56,7 @@ var hierarchy =
       [ "gameplay.skills.line_kick_receive.LineKickReceive.State", "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive_1_1_state.html", null ],
       [ "gameplay.skills.pass_receive.PassReceive.State", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html", null ],
       [ "gameplay.tactics.coordinated_pass.CoordinatedPass.State", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html", null ],
+      [ "gameplay.tactics.defensive_forward.DefensiveForward.State", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward_1_1_state.html", null ],
       [ "gameplay.tactics.forward_pass.ForwardPass.State", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass_1_1_state.html", null ],
       [ "gameplay.tactics.one_touch_pass.OneTouchPass.State", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html", null ],
       [ "gameplay.tactics.our_placement.OurPlacement.State", "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement_1_1_state.html", null ],
@@ -61,6 +64,7 @@ var hierarchy =
       [ "gameplay.tactics.positions.coach.Coach.State", "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach_1_1_state.html", null ],
       [ "gameplay.tactics.positions.goalie.Goalie.State", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
+      [ "gameplay.tactics.simple_zone_midfielder.SimpleZoneMidfielder.State", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder_1_1_state.html", null ],
       [ "gameplay.timeout_behavior.TimeoutBehavior.State", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html", null ],
       [ "kick_gently.KickGently.State", "classkick__gently_1_1_kick_gently_1_1_state.html", null ],
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
@@ -124,8 +128,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
+    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
@@ -221,6 +225,7 @@ var hierarchy =
             [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html", null ],
             [ "gameplay.plays.testing.repeated_turning_line_up.RepeatedTurningLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up.html", null ],
             [ "gameplay.plays.testing.stress_test.StressTest", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html", null ],
+            [ "gameplay.plays.testing.test_adaptive_formation_weights.TestAdaptiveFormationWeights", "classgameplay_1_1plays_1_1testing_1_1test__adaptive__formation__weights_1_1_test_adaptive_formation_weights.html", null ],
             [ "gameplay.plays.testing.test_bump.TestBump", "classgameplay_1_1plays_1_1testing_1_1test__bump_1_1_test_bump.html", null ],
             [ "gameplay.plays.testing.test_capture.TestCapture", "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html", null ],
             [ "gameplay.plays.testing.test_coach.TestCoach", "classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach.html", null ],
@@ -233,6 +238,7 @@ var hierarchy =
             [ "gameplay.plays.testing.test_intercept.TestIntercept", "classgameplay_1_1plays_1_1testing_1_1test__intercept_1_1_test_intercept.html", null ],
             [ "gameplay.plays.testing.test_line_kick.TestLineKick", "classgameplay_1_1plays_1_1testing_1_1test__line__kick_1_1_test_line_kick.html", null ],
             [ "gameplay.plays.testing.test_mark.TestMark", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html", null ],
+            [ "gameplay.plays.testing.test_num_on_offense.TestNumOnOffense", "classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense.html", null ],
             [ "gameplay.plays.testing.test_one_touch_pass.TestOneTouchPass", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html", null ],
             [ "gameplay.plays.testing.test_pivot_kick.TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", null ],
             [ "gameplay.plays.testing.triangle_pass.TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", null ],
@@ -243,6 +249,7 @@ var hierarchy =
             [ "gameplay.plays.tuning.tune_pivot.TunePivoting", "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html", null ],
             [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ],
             [ "gameplay.standard_play.StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", [
+              [ "gameplay.plays.offense.adaptive_formation.AdaptiveFormation", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html", null ],
               [ "gameplay.plays.offense.basic_122.Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", null ],
               [ "gameplay.plays.offense.two_side_attack.TwoSideAttack", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html", null ],
               [ "gameplay.plays.restarts.defend_penalty.DefendPenalty", "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html", null ],
@@ -276,9 +283,11 @@ var hierarchy =
           [ "gameplay.tactics.behavior_sequence.BehaviorSequence", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html", null ],
           [ "gameplay.tactics.coordinated_pass.CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", null ],
           [ "gameplay.tactics.defense.Defense", "classgameplay_1_1tactics_1_1defense_1_1_defense.html", null ],
+          [ "gameplay.tactics.defensive_forward.DefensiveForward", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward.html", null ],
           [ "gameplay.tactics.forward_pass.ForwardPass", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html", null ],
           [ "gameplay.tactics.line_up.LineUp", "classgameplay_1_1tactics_1_1line__up_1_1_line_up.html", null ],
           [ "gameplay.tactics.one_touch_pass.OneTouchPass", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html", null ],
+          [ "gameplay.tactics.simple_zone_midfielder.SimpleZoneMidfielder", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html", null ],
           [ "gameplay.timeout_behavior.TimeoutBehavior", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html", null ]
         ] ],
         [ "gameplay.single_robot_behavior.SingleRobotBehavior", "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html", [

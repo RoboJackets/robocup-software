@@ -1,6 +1,7 @@
 var searchData=
 [
   ['accelerationmultiplier',['accelerationMultiplier',['../class_robot_config.html#ac6dbc7789eb0a33f3ae593b5da3456f0',1,'RobotConfig']]],
+  ['adaptiveformation',['AdaptiveFormation',['../classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html',1,'gameplay::plays::offense::adaptive_formation']]],
   ['add',['add',['../class_geometry2d_1_1_composite_shape.html#a9d61a9cd810f5329270c948f6b3669d7',1,'Geometry2d::CompositeShape']]],
   ['add_5fshot_5fobstacle',['add_shot_obstacle',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#aa6947d9f302ccc4c0b817a0b613bfadc',1,'gameplay::skills::_kick::_Kick']]],
   ['add_5fstate',['add_state',['../classgameplay_1_1fsm_1_1_state_machine.html#a8fa67724f78fcf21dc6de414419be486',1,'gameplay::fsm::StateMachine']]],
