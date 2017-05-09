@@ -1,6 +1,7 @@
 from play import *
 from behavior import *
 import plays.stopped
+import plays.testing.test_coach
 import logging
 from PyQt5 import QtCore
 import main
@@ -46,7 +47,7 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = plays.restarts.placement.Placement()
                     self._currently_restarting = True
             else:
-                if not isinstance(self.play, plays.stopped.Stopped):
+                if self.play is None or not self.play.run_during_stopped():
                     logging.info(
                         "Running 'Stopped' play due to game state change")
                     self.play = plays.stopped.Stopped()
@@ -80,19 +81,22 @@ class RootPlay(Play, QtCore.QObject):
             if self.play != None:
                 if self.play.__class__ not in map(lambda tup: tup[0],
                                                   enabled_plays_and_scores):
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' no longer enabled, aborting")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' no longer enabled, aborting")
                     self.play.terminate()
                     self.play = None
                 elif self.play.is_done_running():
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' finished running")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' finished running")
                     if self.play.is_restart:
                         self._currently_restarting = False
                     self.play = None
                 elif self.play.__class__.score() == float("inf"):
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' no longer applicable, ending")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' no longer applicable, ending")
                     self.play.terminate()
                     self.play = None
 
