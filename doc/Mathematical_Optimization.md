@@ -1,26 +1,46 @@
 
 # Mathematical Optimization
 
-Mathematical optimization involves the maximization or minimization of a function through cleaver choices of the input variables and the analysis of the the output. They are mostly iterative as the underlying function is not easily calculated.
+Mathematical optimization involves the maximization or minimization of a function through clever choices of the input variables and the analysis of the the output. They are mostly iterative as the underlying function is not easily analysed.
 
 Below is the comparison of the optimization algorithms that we use and their general use cases.
 
 ## Gradient Ascent
 
-Gradient Ascent involves using the first order derivative to choose the next point to test. It will then move in the direction it increases the fastest. As it passes the maximum, the step size, or temperature, decreases. Once the gradient is close enough to zero or the temperature is low enough, the optmization algorithm exits.
+Gradient Ascent involves using the first order derivative to choose the next point. It will then move in the direction of the fastest increasing or decreasing gradient. As it passes the maximum, the step size decreases. Once the gradient is close enough to zero or the step size is small enough, the optmization algorithm exits.
 
-Gradient Ascent is very good at climbing local maxes but has difficulty when facing a multimodel function. 
+Pros:
+ * Very good at finding the the optimum point of a smooth unimodal function.
+ * Parallelizable
+ * Various configurable attributes to speed up convergence
+
+Cons:
+ * The gradient must be known at all points.
+ * Has trouble with noisy functions
+ * Can become stuck in local optimums.
+ * Somewhat slow in convergence
 
 ## Parallel Gradient Ascent
 
-Since Gradient Ascent has trouble with multiple local maxes, using mulitple starting points allows for the global maximum to be found. To do this, some knowledge of the function must be used to place a starting point near each maximum.
+Parallel Gradient Ascent combines multiple independent Gradient Ascents together and operates on them as a set. If two inputs are near to each other, the two Gradient Ascents are combined into one.
+
+Pros:
+ * Starting points can be pre-calculated to increase convergence speed
+ * 
+
+Cons:
+ * The general location of the critical point must be known to find the global optimum
+ * 
 
 ## Nelder-Mead
 
-Nelder-Mead is an algorithm that involves using a simplex to "flip" it's way up a hill, shrinking and expanding when neccessary. The simplex has N+1 vertices where N is the number of inputs to the function you are trying to optimize.
+Nelder-Mead involves using a simplex to "flip" its way up a hill, shrinking and expanding when neccessary. The simplex has N+1 vertices in N dimensions. For example, in the two dimensional case, the simplex is a triangle.
 
-This method is useful when each function call has a very high calculation cost. Nelder-Mead tries to find the maximum through the fewest amount of calls possible.
+Pros:
+ * Minimizes the number of function calls
+ * Somewhat fast in convergence
 
-Nelder-Mead can do both local and global maximization based upon the starting inputs. Special care must be taken when choosing these as the output varies widly. Specifically, the starting location and the input step sizes.
-
-
+Cons:
+ * Finding the global or local optimum is determined by the sstarting step size
+ * May converge to a non-stationary point
+ * Has trouble with noisy functions
