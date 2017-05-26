@@ -112,10 +112,11 @@ def create_area_defense_zones(ignore_robots=[]):
     avg = score_sum / point_cnt
     largest_bucket = 0
 
-    # Removes any scores that are under the avg in all the buckets
+    # Removes any point-scores that are under the avg in all the buckets
     # Finds the bucket with the most values above avg
     for i in range(angle_cnt):
-        points[i][:] = [point for point in points[i] if point[1] > avg]
+        points[i] = list(filter(lambda point_score: point_score[1] > avg,
+                                points[i]))
 
         if len(points[i]) > len(points[largest_bucket]):
             largest_bucket = i

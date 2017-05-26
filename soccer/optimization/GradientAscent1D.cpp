@@ -45,8 +45,6 @@ bool GradientAscent1D::singleStep() {
 void GradientAscent1D::execute() {
     while (continueExecution()) {
         singleStep();
-
-        iterationCount++;
     }
 }
 
