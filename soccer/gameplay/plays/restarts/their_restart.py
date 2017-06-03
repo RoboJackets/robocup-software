@@ -46,41 +46,16 @@ class TheirRestart(standard_play.StandardPlay):
         their_kicker = min(main.their_robots(),
                            key=lambda opp: opp.pos.dist_to(ball_pos))
 
-        # we build an array of (OpponentRobot, float distToClosestOfOurBots) tuples
-        # we'll use these in a sec to assign our marking robots
-        open_opps_and_dists = []
-        for opp in main.their_robots():
-            # ignore their kicker
-            if opp == their_kicker: continue
-
-            ball_dist = opp.pos.dist_to(ball_pos)
-
-            # see if the opponent is close enough to the ball for us to care
-            # if it is, we record the closest distance from one of our robots to it
-            if ball_dist < 3.0:
-                # which of our robots is closest to this opponent
-                closest_self_dist = min([bot.pos.dist_to(opp.pos)
-                                         for bot in main.our_robots()])
-                open_opps_and_dists.append((opp, closest_self_dist))
+        # we build an array of OpponentRobots sorted rudimentarily by their threat
+        # Right now, this is (inverse of) distance to the ball * 2 + y position.
+        # Needs tuning/improvement. Right now this is excessively defensive
+        sorted_opponents = sorted(
+            filter(lambda robot: robot != their_kicker, main.their_robots()),
+            key=lambda robot: robot.pos.dist_to(ball_pos) * 2 + robot.pos.y)
 
         # Decide what each marking robot should do
-        # @open_opps contains the robots we want to mark (if any)
+        # @sorted_opponents contains the robots we want to mark by priority
         # any robot that isn't assigned a mark_robot will move towards the ball
         for i, mark_i in enumerate(self.marks):
-            if mark_i.robot != None:
-                if i < len(open_opps_and_dists):
-                    # mark the opponent
-                    mark_i.mark_robot = open_opps_and_dists[i][0]
-                else:
-                    pass
-                    # NOTE: the old code ran these motion commands INSTEAD of running the mark command
-                    # we could do that, but it'd require removing the subbehavior and re-adding a move or something...
-
-                    # # move towards the ball and face it, but don't get within field center's radius
-                    # pos = mark_i.robot.pos
-                    # target = pos + (ball_pos - pos).normalized() * (ball_pos.dist_to(pos) - constants.Field.CenterRadius)
-
-                    # mark_i.robot.move(target)
-                    # mark_i.face(ball_pos)
-
-                    # tell the marking robots to avoid eachother more than normal
+            if i < len(sorted_opponents):
+                mark_i.mark_robot = sorted_opponents[i]
