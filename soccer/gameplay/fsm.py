@@ -62,7 +62,7 @@ class StateMachine:
             next_states = []
             if self.state in self._transitions:
                 for next_state, transition in self._transitions[
-                        self.state].items():
+                    self.state].items():
                     if transition['condition']():
                         next_states += [next_state]
 
@@ -99,9 +99,7 @@ class StateMachine:
                     method_name = "on_exit_" + state.name
                     state_method = None
                     try:
-                        state_method = getattr(
-                            self, method_name
-                        )  # call the transition FROM method if it exists
+                        state_method = getattr(self, method_name)  # call the transition FROM method if it exists
                     except AttributeError:
                         pass
                     if state_method is not None:
@@ -112,9 +110,7 @@ class StateMachine:
                 method_name = "on_enter_" + state.name
                 state_method = None
                 try:
-                    state_method = getattr(
-                        self, method_name
-                    )  # call the transition TO method if it exists
+                    state_method = getattr(self, method_name)  # call the transition TO method if it exists
                 except AttributeError:
                     pass
                 if state_method is not None:

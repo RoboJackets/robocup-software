@@ -15,7 +15,8 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     # If the behavior should not be restarted when it is assigned to a different robot, then autorestart must be false
     # @param continuous should the behavior runs until it is manually stopped
     # @param autorestart function governing the behavior's restarting itself when its robot is switched. Defaults to true
-    def __init__(self, continuous=False,
+    def __init__(self,
+                 continuous=False,
                  autorestart: Callable[[], bool]=lambda: True) -> None:
         single_robot_behavior.SingleRobotBehavior.__init__(
             self,
@@ -36,8 +37,11 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
 
     ## we over-ride this to enforce the rule that there can't be more
     # than one subbehavior
-    def add_subbehavior(self, bhvr: behavior.Behavior,
-                        name: str, required: bool=True, priority: int=100):
+    def add_subbehavior(self,
+                        bhvr: behavior.Behavior,
+                        name: str,
+                        required: bool=True,
+                        priority: int=100):
         if self.has_subbehaviors():
             raise AssertionError(
                 "Attempt to add more than one subbehavior to SingleRobotCompositeBehavior")

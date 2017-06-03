@@ -7,18 +7,22 @@ import re
 import sys
 from typing import Dict
 
+
 ## A composite behavior is one that has 0+ named subbehaviors
 # this class has methods for making it easy to work with and manage subbehaviors
 class CompositeBehavior(behavior.Behavior):
     def __init__(self, continuous: bool) -> None:
         super().__init__(continuous=continuous)
-        self._subbehavior_info = {} # type: Dict[str, Dict]
+        self._subbehavior_info = {}  # type: Dict[str, Dict]
 
     # FIXME: what if a subbehavior of @bhvr is required, but this is not?
     # FIXME: how do priorities work?
     # FIXME: how do nested priorities work?
-    def add_subbehavior(self, bhvr: behavior.Behavior,
-                        name: str, required: bool=True, priority: int=100):
+    def add_subbehavior(self,
+                        bhvr: behavior.Behavior,
+                        name: str,
+                        required: bool=True,
+                        priority: int=100):
         if name in self._subbehavior_info:
             raise AssertionError("There's already a subbehavior with name: '" +
                                  name + "'")
@@ -55,8 +59,8 @@ class CompositeBehavior(behavior.Behavior):
                 for name in self._subbehavior_info]
 
     def all_subbehaviors_completed(self) -> bool:
-        return all([bhvr.is_done_running()
-                    for bhvr in self.all_subbehaviors()])
+        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()
+                    ])
 
     ## Override StateMachine.spin() so we can call spin() on subbehaviors
     def spin(self):
