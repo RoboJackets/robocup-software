@@ -138,6 +138,7 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1mark_1_1_mark.html#a5ed34e76bdc719e42dbdfbf4b1b20563":[14,0,5,13,11,0,5],
 "classgameplay_1_1skills_1_1mark_1_1_mark.html#a9af645e083988ab77d3cfb7ea09cfb3b":[14,0,5,13,11,0,9],
 "classgameplay_1_1skills_1_1mark_1_1_mark.html#aa54c81905b9a9c6d40a4dc05e72ea87a":[14,0,5,13,11,0,4],
+"classgameplay_1_1skills_1_1mark_1_1_mark.html#aa6797d7c66b02af50957c34caa6da384":[14,0,5,13,11,0,10],
 "classgameplay_1_1skills_1_1mark_1_1_mark.html#ab3b7eefd31b26bd5e07c03efc068204c":[14,0,5,13,11,0,6],
 "classgameplay_1_1skills_1_1mark_1_1_mark.html#abff07036613cef2235684ee871eb1d62":[14,0,5,13,11,0,0],
 "classgameplay_1_1skills_1_1mark_1_1_mark.html#acfe86a246706006f25bba4226432420e":[14,0,5,13,11,0,8],
@@ -248,6 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a56890f2998fdbe6b2cff1a90e39810b8":[14,0,5,15,1,0,7],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a5c7bea0e43c1964a2e088d7c699da9f8":[14,0,5,15,1,0,4],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a718a529eb205e880c2e9ea3ff4499603":[14,0,5,15,1,0,13],
-"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a765fa2cfd2b90737c2199ed412e63a49":[14,0,5,15,1,0,20],
-"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a92fdf744f6a3c41a7d54b64411d18abc":[14,0,5,15,1,0,9]
+"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a765fa2cfd2b90737c2199ed412e63a49":[14,0,5,15,1,0,20]
 };

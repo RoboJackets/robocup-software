@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a92fdf744f6a3c41a7d54b64411d18abc":[14,0,5,15,1,0,9],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a9a9d6355cee99f6132a70bc0960735dc":[14,0,5,15,1,0,10],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a9f5739cf489a4f0ed68ceb414df44c62":[14,0,5,15,1,0,15],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#aa6fc81b0fa8f7f4736a2b09277c5aae6":[14,0,5,15,1,0,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "classrtp_1_1packet.html#aba6137211db066a846ebacee584f44ff":[14,0,10,2,1],
 "classrtp_1_1packet.html#ac4b74bf4776cdfb7bd016f315977cc77":[14,0,10,2,4],
 "classrtp_1_1packet.html#af3d425df5ccda362be5aa35d7b9e11a8":[14,0,10,2,2],
-"classtest__config_1_1_test_config.html":[14,0,11,0],
-"classtest__config_1_1_test_config.html#a3ff896698851e5c86095d8ecd789b05b":[14,0,11,0,0]
+"classtest__config_1_1_test_config.html":[14,0,11,0]
 };

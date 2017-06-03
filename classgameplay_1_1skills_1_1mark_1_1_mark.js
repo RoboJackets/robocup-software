@@ -9,5 +9,6 @@ var classgameplay_1_1skills_1_1mark_1_1_mark =
     [ "mark_robot", "classgameplay_1_1skills_1_1mark_1_1_mark.html#ab3b7eefd31b26bd5e07c03efc068204c", null ],
     [ "mark_robot", "classgameplay_1_1skills_1_1mark_1_1_mark.html#aeca756e990550c96fe90992fecbb5535", null ],
     [ "ratio", "classgameplay_1_1skills_1_1mark_1_1_mark.html#acfe86a246706006f25bba4226432420e", null ],
-    [ "ratio", "classgameplay_1_1skills_1_1mark_1_1_mark.html#a9af645e083988ab77d3cfb7ea09cfb3b", null ]
+    [ "ratio", "classgameplay_1_1skills_1_1mark_1_1_mark.html#a9af645e083988ab77d3cfb7ea09cfb3b", null ],
+    [ "role_requirements", "classgameplay_1_1skills_1_1mark_1_1_mark.html#aa6797d7c66b02af50957c34caa6da384", null ]
 ];
