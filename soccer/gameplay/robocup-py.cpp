@@ -546,9 +546,8 @@ void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
 
 /**
- * Given python function must take 2 float arguements, x and y, at the end of
- * it's arguement
- * declaration and must return a double / float
+ * Python function must be in the form...
+ * [float] pythonFunc(... float x, float y)
  */
 float point_python_callback(Geometry2d::Point p, PyObject* pyfun) {
     PyObject* pyresult =
@@ -565,6 +564,7 @@ float point_python_callback(Geometry2d::Point p, PyObject* pyfun) {
 
 boost::shared_ptr<std::function<float(Geometry2d::Point)>>
 stdfunction_constructor(PyObject* function) {
+    Py_INCREF(function);
     // Create aliased function to hid python function args
     std::function<float(Geometry2d::Point)> f =
         std::bind(&point_python_callback, std::placeholders::_1, function);

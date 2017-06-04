@@ -182,9 +182,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return False
 
     def should_clear_from_dribble(self):
-        if (self.dribbler is not None and self.dribbler.pos is None):
-            return False
-
         # If outside clear zone
         if (self.dribbler.pos.y > AdaptiveFormation.CLEAR_FIELD_CUTOFF):
             return False
@@ -226,7 +223,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.DRIBBLING_WEIGHTS)
-        
+
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
         self.check_dribbling_timer = 0
@@ -292,7 +289,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.PASSING_WEIGHTS)
-        
+
         clear = skills.pivot_kick.PivotKick()
         clear.target = self.pass_target
         clear.aim_params['desperate_timeout'] = 3
