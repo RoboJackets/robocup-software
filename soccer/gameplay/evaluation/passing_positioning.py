@@ -5,8 +5,7 @@ import main
 import evaluation.field
 import evaluation.passing
 import evaluation.shooting
-
-from functools import partial
+import functools
 
 ## Finds the best location wiht a rectangle to pass the ball into
 #
@@ -91,7 +90,7 @@ def eval_best_receive_point(kick_point,
                             ignore_robots=[],
                             field_weights=(0.1, 3.2, 0.1),
                             weights=(1, 4, 15, 1)):
-    pythfunc = partial(eval_single_point, kick_point, ignore_robots, \
+    pythfunc = functools.partial(eval_single_point, kick_point, ignore_robots, \
                 field_weights, weights)
     cppfunc = robocup.stdfunction(pythfunc)
     nmConfig = robocup.NelderMead2DConfig(cppfunc, \
