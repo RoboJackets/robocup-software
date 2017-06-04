@@ -26,11 +26,11 @@ Parallel Gradient Ascent combines multiple independent Gradient Ascents together
 
 Pros:
  * Starting points can be pre-calculated to increase convergence speed
- * 
+ * Can be multithreaded
 
 Cons:
  * The general location of the critical point must be known to find the global optimum
- * 
+ * Initialization is cumbersome
 
 ## Nelder-Mead
 
@@ -41,6 +41,6 @@ Pros:
  * Somewhat fast in convergence
 
 Cons:
- * Finding the global or local optimum is determined by the sstarting step size
+ * Finding the global or local optimum is determined by the starting step size
  * May converge to a non-stationary point
  * Has trouble with noisy functions
