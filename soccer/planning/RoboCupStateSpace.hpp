@@ -17,7 +17,7 @@ public:
     Geometry2d::Point randomState() const {
         double x = _fieldDimensions.FloorWidth() * (drand48() - 0.5f);
         double y = _fieldDimensions.FloorLength() * drand48() -
-                  _fieldDimensions.Border();
+                   _fieldDimensions.Border();
         return Geometry2d::Point(x, y);
     }
 
