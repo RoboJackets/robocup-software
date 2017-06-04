@@ -1,7 +1,7 @@
 var searchData=
 [
   ['unkick',['unkick',['../class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063',1,'OurRobot']]],
-  ['unsubscribe',['unsubscribe',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a98dab10dd43a8abdb7216a5fd7ff1b59',1,'gameplay::fs_watcher::FsWatcher']]],
+  ['unsubscribe',['unsubscribe',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a6ccdbd0bb8fa0de99614a132b398e262',1,'gameplay::fs_watcher::FsWatcher']]],
   ['update',['update',['../class_gamepad_controller.html#a64b2b816b671bcc500aaead6dc8e9a3a',1,'GamepadController::update()'],['../class_gamepad_joystick.html#ac4de36ae979a045c4445e866adcbd335',1,'GamepadJoystick::update()'],['../class_joystick.html#a4a959114e8af00ec67d07b8276f420ca',1,'Joystick::update()'],['../class_space_nav_joystick.html#a3ddda84db807a3e03ba70266d78171d3',1,'SpaceNavJoystick::update()'],['../class_robot_filter.html#a47b3ca9d7c598cc9078ea60a7dc1b050',1,'RobotFilter::update()']]],
   ['updatefielddimensions',['updateFieldDimensions',['../class_gameplay_1_1_gameplay_module.html#a48fad281eb14a3bc30c2553f978d5fe8',1,'Gameplay::GameplayModule']]],
   ['usbradio',['USBRadio',['../class_u_s_b_radio.html',1,'']]],

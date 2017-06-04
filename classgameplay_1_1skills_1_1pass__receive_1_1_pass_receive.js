@@ -3,7 +3,6 @@ var classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive =
     [ "State", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html", null ],
     [ "__init__", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a02e234d4eb75819c1786c3c8d788b3a0", null ],
     [ "__str__", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a0e38588e56142ee5f33c30c680c9da1e", null ],
-    [ "autorestart", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a3abf999c3a92bd94862d3922e38594c5", null ],
     [ "ball_kicked", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a99ec67224eb5573dffc4eb021d781aae", null ],
     [ "ball_kicked", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a5f48a5874c16099d9f0e3b2aa5f52d5f", null ],
     [ "check_failure", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a2d02f795305efeb2ae1ee730ea8268a9", null ],

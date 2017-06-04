@@ -13,7 +13,6 @@ var classgameplay_1_1root__play_1_1_root_play =
     [ "robots", "classgameplay_1_1root__play_1_1_root_play.html#a1828b231f6451f06469beeccf208c03c", null ],
     [ "robots", "classgameplay_1_1root__play_1_1_root_play.html#aeb3997bc2eddc16ee69455b050dae29d", null ],
     [ "setup_goalie_if_needed", "classgameplay_1_1root__play_1_1_root_play.html#afdbca26031562f2dd6112c2e7a0aa036", null ],
-    [ "goalie_id", "classgameplay_1_1root__play_1_1_root_play.html#aef5800ab3d8aa0fd25212a3becd2ac04", null ],
     [ "play", "classgameplay_1_1root__play_1_1_root_play.html#a9ee1f43610d416f5c7270610d3a5f7a3", null ],
     [ "temporarily_blacklisted_play_class", "classgameplay_1_1root__play_1_1_root_play.html#aad94884f38b5f9c15ee2f775a8422f17", null ]
 ];

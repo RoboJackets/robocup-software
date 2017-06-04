@@ -8,12 +8,6 @@ var annotated_dup =
       [ "NumericField", "struct_chart_1_1_numeric_field.html", "struct_chart_1_1_numeric_field" ],
       [ "PointMagnitude", "struct_chart_1_1_point_magnitude.html", "struct_chart_1_1_point_magnitude" ]
     ] ],
-    [ "circle_near_ball", null, [
-      [ "CircleNearBall", "classcircle__near__ball_1_1_circle_near_ball.html", "classcircle__near__ball_1_1_circle_near_ball" ]
-    ] ],
-    [ "circle_on_center", null, [
-      [ "CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", "classcircle__on__center_1_1_circle_on_center" ]
-    ] ],
     [ "Gameplay", "namespace_gameplay.html", "namespace_gameplay" ],
     [ "gameplay", null, [
       [ "behavior", null, [
@@ -298,6 +292,14 @@ var annotated_dup =
         ] ],
         [ "simple_zone_midfielder", null, [
           [ "SimpleZoneMidfielder", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder" ]
+        ] ],
+        [ "stopped", null, [
+          [ "circle_near_ball", null, [
+            [ "CircleNearBall", "classgameplay_1_1tactics_1_1stopped_1_1circle__near__ball_1_1_circle_near_ball.html", "classgameplay_1_1tactics_1_1stopped_1_1circle__near__ball_1_1_circle_near_ball" ]
+          ] ],
+          [ "circle_on_center", null, [
+            [ "CircleOnCenter", "classgameplay_1_1tactics_1_1stopped_1_1circle__on__center_1_1_circle_on_center.html", "classgameplay_1_1tactics_1_1stopped_1_1circle__on__center_1_1_circle_on_center" ]
+          ] ]
         ] ]
       ] ],
       [ "timed_behavior", null, [

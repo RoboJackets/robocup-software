@@ -12,10 +12,6 @@ var hierarchy =
     [ "gameplay.play_registry.PlayRegistry.Category", "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html", null ],
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
-    [ "CompositeBehavior", null, [
-      [ "circle_near_ball.CircleNearBall", "classcircle__near__ball_1_1_circle_near_ball.html", null ],
-      [ "circle_on_center.CircleOnCenter", "classcircle__on__center_1_1_circle_on_center.html", null ]
-    ] ],
     [ "ConfigItem", "class_config_item.html", [
       [ "ConfigBool", "class_config_bool.html", null ],
       [ "ConfigDouble", "class_config_double.html", null ],
@@ -72,9 +68,6 @@ var hierarchy =
       [ "which_half.WhichHalf.State", "classwhich__half_1_1_which_half_1_1_state.html", null ]
     ] ],
     [ "Field_Dimensions", "struct_field___dimensions.html", null ],
-    [ "FileSystemEventHandler", null, [
-      [ "gameplay.fs_watcher.FsWatcher.FsEventHandler", "classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html", null ]
-    ] ],
     [ "FIRFilter< T >", "class_f_i_r_filter.html", null ],
     [ "Chart::Function", "struct_chart_1_1_function.html", [
       [ "Chart::NumericField", "struct_chart_1_1_numeric_field.html", null ],
@@ -116,9 +109,6 @@ var hierarchy =
         [ "SpaceNavJoystick", "class_space_nav_joystick.html", null ]
       ] ]
     ] ],
-    [ "Observer", null, [
-      [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
-    ] ],
     [ "rtp::packet", "classrtp_1_1packet.html", null ],
     [ "ParallelGradient1DConfig", "class_parallel_gradient1_d_config.html", null ],
     [ "ParallelGradientAscent1D", "class_parallel_gradient_ascent1_d.html", null ],
@@ -128,8 +118,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "Pid", "class_pid.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
+    [ "Pid", "class_pid.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
@@ -215,6 +205,9 @@ var hierarchy =
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
     ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -247,7 +240,6 @@ var hierarchy =
             [ "gameplay.plays.tuning.test_jittery_motion.TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", null ],
             [ "gameplay.plays.tuning.tune_facing.TuneFacing", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html", null ],
             [ "gameplay.plays.tuning.tune_pivot.TunePivoting", "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html", null ],
-            [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ],
             [ "gameplay.standard_play.StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", [
               [ "gameplay.plays.offense.adaptive_formation.AdaptiveFormation", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html", null ],
               [ "gameplay.plays.offense.basic_122.Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", null ],
@@ -288,6 +280,8 @@ var hierarchy =
           [ "gameplay.tactics.line_up.LineUp", "classgameplay_1_1tactics_1_1line__up_1_1_line_up.html", null ],
           [ "gameplay.tactics.one_touch_pass.OneTouchPass", "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html", null ],
           [ "gameplay.tactics.simple_zone_midfielder.SimpleZoneMidfielder", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html", null ],
+          [ "gameplay.tactics.stopped.circle_near_ball.CircleNearBall", "classgameplay_1_1tactics_1_1stopped_1_1circle__near__ball_1_1_circle_near_ball.html", null ],
+          [ "gameplay.tactics.stopped.circle_on_center.CircleOnCenter", "classgameplay_1_1tactics_1_1stopped_1_1circle__on__center_1_1_circle_on_center.html", null ],
           [ "gameplay.timeout_behavior.TimeoutBehavior", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html", null ]
         ] ],
         [ "gameplay.single_robot_behavior.SingleRobotBehavior", "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html", [
@@ -308,13 +302,9 @@ var hierarchy =
           [ "gameplay.skills.move_direct.MoveDirect", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html", null ],
           [ "gameplay.skills.touch_ball.TouchBall", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html", null ],
           [ "gameplay.tactics.positions.defender.Defender", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html", null ]
-        ] ],
-        [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
+        ] ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
@@ -335,6 +325,9 @@ var hierarchy =
     [ "VisionPacket", "class_vision_packet.html", null ],
     [ "Window", "class_window.html", null ],
     [ "WindowEvaluator", "class_window_evaluator.html", null ],
+    [ "Behavior", null, [
+      [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
+    ] ],
     [ "Enum", null, [
       [ "gameplay.behavior.Behavior.State", "classgameplay_1_1behavior_1_1_behavior_1_1_state.html", null ],
       [ "gameplay.skills.capture.Capture.State", "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html", null ],
@@ -345,5 +338,14 @@ var hierarchy =
       [ "gameplay.tactics.positions.defender.Defender.State", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_defender.SubmissiveDefender.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender_1_1_state.html", null ],
       [ "gameplay.timed_behavior.TimedBehavior.State", "classgameplay_1_1timed__behavior_1_1_timed_behavior_1_1_state.html", null ]
+    ] ],
+    [ "FileSystemEventHandler", null, [
+      [ "gameplay.fs_watcher.FsWatcher.FsEventHandler", "classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html", null ]
+    ] ],
+    [ "Observer", null, [
+      [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
+    ] ],
+    [ "Play", null, [
+      [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ]
     ] ]
 ];

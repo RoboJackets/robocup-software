@@ -1,4 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_configurable.html" title="Configurable" alt="" coords="5,5,108,32"/>
-<area shape="rect" id="node2" href="$class_configurable_impl.html" title="a template for making configurables the implementing object is responsible for handling configuration..." alt="" coords="156,5,323,32"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1root__play_1_1_root_play.html" title="The RootPlay is basically the python&#45;side of the c++ GameplayModule it coordinates the selection of t..." alt="" coords="127,5,333,32"/>
+<area shape="rect" id="node4" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="177,56,283,83"/>
 </map>
