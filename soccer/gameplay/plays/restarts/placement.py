@@ -52,7 +52,6 @@ class Placement(play.Play):
         self._our_restart = main.game_state().is_our_restart()
 
     def on_enter_placing(self):
-        print(self._pos)
         if self._our_restart:
             self.placer = tactics.our_placement.OurPlacement()
             self.add_subbehavior(self.placer,
