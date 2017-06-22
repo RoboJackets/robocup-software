@@ -4,7 +4,9 @@ var class_strip_chart =
     [ "~StripChart", "class_strip_chart.html#a8c942e8526b7f8087ce7c4886bd37875", null ],
     [ "color", "class_strip_chart.html#ab4a279f831aad7084733a8b5b93848e1", null ],
     [ "dataPoint", "class_strip_chart.html#a63c1ebf716323c7c8fdf39b98464ceab", null ],
+    [ "exportChart", "class_strip_chart.html#a6c112cbadcd22b885499039548b46844", null ],
     [ "function", "class_strip_chart.html#af26b8a2a762301142e942eeb6b553cd4", null ],
+    [ "getFunctions", "class_strip_chart.html#a0fec361ca031fd7afc6c07c6a799341b", null ],
     [ "history", "class_strip_chart.html#a902103c49b854229ba93929b2144ccd3", null ],
     [ "indexAtPoint", "class_strip_chart.html#a56d0e0a0ff8da4c392831912076597ea", null ],
     [ "maxValue", "class_strip_chart.html#a7248b8bf78b6e482acdc4e6bbb23c20b", null ],
@@ -16,5 +18,6 @@ var class_strip_chart =
     [ "_maxValue", "class_strip_chart.html#a03e0e8c071aefa418b9396c077f6df65", null ],
     [ "_minValue", "class_strip_chart.html#ac953b6b58e6bf416be57a6046c201631", null ],
     [ "_mouse_overlay", "class_strip_chart.html#ac315d458d28b1091077cbd1d987f6b21", null ],
-    [ "autoRange", "class_strip_chart.html#ae3b7b94efa98dadc32029b28fd4068b6", null ]
+    [ "autoRange", "class_strip_chart.html#ae3b7b94efa98dadc32029b28fd4068b6", null ],
+    [ "chartSize", "class_strip_chart.html#a16bb3663339e36de7fdbc77b017189c6", null ]
 ];

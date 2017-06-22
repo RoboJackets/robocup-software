@@ -1,5 +1,8 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a328ec0f0a574a8b575b468cbdec1a559":[14,0,3,13,2,0,0],
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a596b0c6305b9e2721a21372ba4971ded":[14,0,3,13,2,0,2],
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a97757a611bcf1fb2de7e43b951754237":[14,0,3,13,2,0,5],
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#aaab5481614f9ee5e3159e8d8ab187668":[14,0,3,13,2,0,12],
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#abb5f76f4f5aa3933f3884daa59794c32":[14,0,3,13,2,0,4],
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#acfda1653a2502b4e1c566c0bfcbb974d":[14,0,3,13,2,0,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html":[14,0,3,15,2,0],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a13d9ebcadb025f36b9c85d2f38b320db":[14,0,3,15,2,0,7],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24":[14,0,3,15,2,0,2],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1f2371db119a2ed88c57393a1f69cc5b":[14,0,3,15,2,0,15],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a25aa12e32a89b1020353760d6e1d6ded":[14,0,3,15,2,0,1],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a5087c80ccbc2c6f306123e23ace6f7c1":[14,0,3,15,2,0,4],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a536de1c9e858220a2a2756c8bab67284":[14,0,3,15,2,0,10]
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1f2371db119a2ed88c57393a1f69cc5b":[14,0,3,15,2,0,15]
 };
