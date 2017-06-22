@@ -57,10 +57,6 @@ void StripChart::exportChart() {
         this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
     std::ofstream outfile(chartName.toStdString());
 
-    //_history has the most recent frame at 0, the most recent logframe should
-    // have its value at vert close to the time at export.
-    auto startTime = RJ::timestamp();  // get current time
-
     // output column names
     outfile << "Time";
     for (unsigned int x = 0; x < _functions.size(); x++) {
@@ -70,10 +66,18 @@ void StripChart::exportChart() {
     outfile << std::endl;
 
     // output data
-    for (unsigned int i = 0; i < _history->size(); ++i) {
+
+    // Get the oldest datapoint to use as the starting time
+    unsigned int start = _history->size() - 1;
+    while (!_history->at(start)) {
+        start--;
+    }
+    auto startTime = _history->at(start).get()->timestamp();
+
+    for (unsigned int i = start; i > 0; i--) {
         if (_history->at(i)) {
-            outfile << RJ::TimestampToSecs(startTime -
-                                           _history->at(i).get()->timestamp());
+            outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() -
+                                           startTime);
 
             for (unsigned int x = 0; x < _functions.size(); x++) {
                 auto function = _functions[x];
