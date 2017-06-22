@@ -6,7 +6,7 @@ FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-send
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $1
 endef
 
 define cmake_build_target_release
@@ -14,11 +14,20 @@ define cmake_build_target_release
 	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $1
 endef
 
+define cmake_build_target_perf
+	mkdir -p build
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $1
+endef
+
 all:
 	$(call cmake_build_target, all)
 
 all-release:
 	$(call cmake_build_target_release, all)
+
+all-perf:
+	$(call cmake_build_target_perf, all)
+perf: all-perf
 
 run: all
 	./run/soccer
