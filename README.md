@@ -47,7 +47,7 @@ Compiled programs and some configuration files are stored here.
 
 ## Setup
 
-Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux, Arch Linux, and Mac OS X, although it shouldn't be too difficult to port to other operating systems.
+Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux and Arch Linux, although it shouldn't be too difficult to port to other operating systems.
 
 1) Clone the repository
 
