@@ -81,20 +81,22 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
-            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state) and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
+            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state)
+                     and self.subbehavior_with_name('receiver').state
+                     == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
-            lambda: self.prekick_timeout_exceeded(), 'Timed out on prepare')
+            self.prekick_timeout_exceeded, 'Timed out on prepare')
 
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
-            lambda: self.prekick_timeout_exceeded(), 'Timed out on prepare')
+            self.prekick_timeout_exceeded, 'Timed out on prepare')
 
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
-            lambda: self.prekick_timeout_exceeded(), 'Timed out on kick')
+            self.prekick_timeout_exceeded, 'Timed out on kick')
 
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.receiving,

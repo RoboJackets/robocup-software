@@ -80,7 +80,7 @@ test-soccer:
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
-	pylint -j8 --disable=C,R,W --reports=n soccer/gameplay
+	pylint -j8 --reports=n soccer/gameplay
 mypy:
 	mypy soccer/gameplay
 
