@@ -113,6 +113,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             lambda: self.subbehavior_with_name('receiver').state == behavior.Behavior.State.failed,
             'pass failed :(')
 
+
+    ## Handles restarting this behaivor.
+    # Since we save a few sub-behaviors, we need to restart those when we restart.
+    def restart(self):
+        super().restart()
+        self.skillreceiver.restart()
+        self.skillkicker[0].restart()
+
     # set the location where the receiving bot should camp out and wait for the ball
     # Default: None
     @property
@@ -132,7 +140,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def on_enter_running(self):
         receiver = self.skillreceiver
-        receiver.restart()
         receiver.receive_point = self.receive_point
         self.add_subbehavior(receiver,
                              'receiver',
