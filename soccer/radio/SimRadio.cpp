@@ -32,7 +32,7 @@ void SimRadio::send(Packet::RadioTx& packet) {
         simRobot->set_veltangent(robot.control().yvelocity());
         simRobot->set_velnormal(-robot.control().xvelocity());
         simRobot->set_velangular(robot.control().avelocity());
-        //simRobot->set_velangular(RadiansToDegrees(robot.control().avelocity()));
+        // simRobot->set_velangular(RadiansToDegrees(robot.control().avelocity()));
 
         simRobot->set_triggermode(
             (grSim_Robot_Command_TriggerMode)robot.control().triggermode());
