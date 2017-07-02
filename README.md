@@ -1,5 +1,5 @@
 # GT RoboJackets RoboCup SSL
-[![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![14.04 Build Status](https://semaphoreci.com/api/v1/jgkamat/robocup-software/branches/master/shields_badge.svg)](https://semaphoreci.com/jgkamat/robocup-software) [![OSX Build Status](https://travis-ci.org/RoboJackets/robocup-software.svg?branch=master)](https://travis-ci.org/RoboJackets/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
+[![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![14.04 Build Status](https://semaphoreci.com/api/v1/jgkamat/robocup-software/branches/master/shields_badge.svg)](https://semaphoreci.com/jgkamat/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
 
 [![Riot](https://img.shields.io/badge/matrix-riot%20chat-blue.svg)](https://riot.im/app/#/room/%23robocup-software:matrix.org) [![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -42,7 +42,7 @@ Compiled programs and some configuration files are stored here.
 
 ## Setup
 
-Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux, Arch Linux, and Mac OS X, although it shouldn't be too difficult to port to other operating systems.
+Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux and Arch Linux, although it shouldn't be too difficult to port to other operating systems.
 
 1) Clone the repository
 

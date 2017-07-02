@@ -1,8 +1,10 @@
-from watchdog.observers import *
-from watchdog.events import *
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler,\
+    FileDeletedEvent, FileCreatedEvent, FileModifiedEvent
 import time
+import logging
 import os.path
-import imp
+from typing import Union, List, Callable, Iterable
 
 
 ## Watches the filesytem for changes and executes any registered callbacks
@@ -16,11 +18,11 @@ class FsWatcher(Observer):
 
     ## the callback is passed event_type, module_path
     # where event_type is a string with the following possible values: 'modified', 'created', 'deleted'
-    def subscribe(self, callback):
+    def subscribe(self, callback: Callable[[str, Iterable[str]], None]):
         self._subscribers.append(callback)
 
     ## removes a given subscriber
-    def unsubscribe(self, callback):
+    def unsubscribe(self, callback: Callable[[str, Iterable[str]], None]):
         idx = self._subscribers.index(callback)
         del self._subscribers[idx]
 
@@ -34,7 +36,7 @@ class FsWatcher(Observer):
         self._root_path = value
 
     # the handler calls _notify on its parent FsWatcher
-    def _notify(self, event_type, path):
+    def _notify(self, event_type: str, path: Union[str, bytes]):
         if not isinstance(path, str):
             path = path.decode('utf-8')
 
@@ -49,7 +51,7 @@ class FsWatcher(Observer):
 
             # if we're watching /robocup/soccer/gameplay and within that, plays/my_play.py changes,
             # we extract ['plays', 'my_play'] into the @modpath list
-            modpath = []
+            modpath = []  # type: List[str]
             while True:
                 subpath, last_piece = os.path.split(subpath)
                 modpath.insert(0, last_piece)

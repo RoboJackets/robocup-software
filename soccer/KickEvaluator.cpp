@@ -26,7 +26,7 @@ inline double fast_exp(double x) {
 }
 
 void KickEvaluator::createConfiguration(Configuration* cfg) {
-    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.08);
+    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.04);
     kick_mean = new ConfigDouble(cfg, "KickEvaluator/kick_mean", 0);
     robot_std_dev = new ConfigDouble(cfg, "KickEvaluator/robot_std_dev", 0.3);
     start_x_offset = new ConfigDouble(cfg, "KickEvaluator/start_x_offset", 0.1);
@@ -98,19 +98,10 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
             // Evaluate a normal distribution at dist away and scale
             float stdev2 = pow(*robot_std_dev, 2);
             botVertScales.push_back(
-                1 / stdev2 * fast_exp(-0.5 * pow(distPastTarget, 2) / stdev2));
+                fast_exp(-0.5 * pow(distPastTarget, 2) / stdev2));
         } else {
             botVertScales.push_back(1);
         }
-    }
-
-    // No opponent robots on the field
-    if (botMeans.size() == 0) {
-        // Push it off to the side
-        botMeans.push_back(4);
-        // Must be non-zero as 1 / botStDev is used
-        botStDevs.push_back(0.01);
-        botVertScales.push_back(0.5);
     }
 
     // Create function with only 1 input
@@ -119,6 +110,18 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         bind(&eval_calculation, std::placeholders::_1, (*kick_mean),
              (*kick_std_dev), cref(botMeans), cref(botStDevs),
              cref(botVertScales), targetWidth / -2, targetWidth / 2);
+
+    // No opponent robots on the field
+    if (botMeans.size() == 0) {
+        // Push it off to the side
+        botMeans.push_back(3);
+        // Must be non-zero as 1 / botStDev is used
+        botStDevs.push_back(0.1);
+        botVertScales.push_back(0.01);
+
+        // Center will always be the best target X with no robots
+        return pair<Point, float>(center, get<0>(keFunc(0)));
+    }
 
     ParallelGradient1DConfig parallelConfig;
     init_gradient_configs(parallelConfig, keFunc, botMeans, botStDevs,

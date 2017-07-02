@@ -189,6 +189,7 @@ set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
     "BatteryProfileTest.cpp"
+    "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "optimization/GradientAscent1DTest.cpp"
     "optimization/ParallelGradientAscent1DTest.cpp"
@@ -197,7 +198,6 @@ set(SOCCER_TEST_SRC
     "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
     "WindowEvaluatorTest.cpp"
-    "KickEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

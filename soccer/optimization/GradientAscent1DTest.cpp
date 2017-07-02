@@ -13,7 +13,7 @@ static tuple<float, float> evalFunction(float x) {
 // Tests general execution
 TEST(GradientAscent1D, execute) {
     function<tuple<float, float>(float)> f = &evalFunction;
-    Gradient1DConfig config(&f, -1, -1.1, 0.01, 0.01, 0.5, 0.01, 100, 1, 0.001);
+    Gradient1DConfig config(&f, -1, -1.1, 0.01, 0.01, 0.5, 0.01, 1000, 1, 0.01);
 
     GradientAscent1D ga(&config);
 
