@@ -201,7 +201,7 @@ vector<Point> RRTPlanner::runRRTHelper(
 
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
-    RRT::BiRRT<Point> biRRT(stateSpace, Point::hash);
+    RRT::BiRRT<Point> biRRT(stateSpace, Point::hash, 2);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
 
