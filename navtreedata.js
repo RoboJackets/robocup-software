@@ -39,15 +39,15 @@ var NAVTREEINDEX =
 ".html",
 "class_config_double.html#a98a6b831f27cb37f79e6cdcce8a28bd6",
 "class_geometry2d_1_1_composite_shape.html#aaf6c825581e1f225a81f72d003e3899a",
-"class_logger.html#afee2bab560c2db0190c980884d33868c",
-"class_planning_1_1_interpolated_path.html#a14e8ede0b6538397a192e2d1ed9986a0",
-"class_robot_pose.html",
-"classgameplay_1_1fsm_1_1_state_machine.html#a635454fee89fae74ae219bf4239d73a5",
-"classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html#acb2b8e6e8fe518c4e4e0b1e39f3e45f2",
-"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a328ec0f0a574a8b575b468cbdec1a559",
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a25aa12e32a89b1020353760d6e1d6ded",
-"classtest__fsm_1_1_my_fsm.html",
-"struct_planning_1_1_plan_request.html"
+"class_logger.html#af08f43c44f0046fcb1b3fb86eb030803",
+"class_planning_1_1_interpolated_path.html#a07a025b818e0247c09c1bb0e0dbaced2",
+"class_robot_observation.html#ab1b1133ed9080ff2e2b74e67a9774ad0",
+"classgameplay_1_1fsm_1_1_state_machine.html#a26580b6c91b9b04fea7347c43896017a",
+"classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html#a76815bf36592063eea87bdf6f8da5a51",
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html",
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a13d9ebcadb025f36b9c85d2f38b320db",
+"classtest__config_1_1_test_config.html#abd22b3b1e62a71a66d379d7b6a86b0f5",
+"struct_planning_1_1_pivot_command.html#a87784a65476c1de0d00185cd3e580fd4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

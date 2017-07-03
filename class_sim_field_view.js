@@ -6,5 +6,5 @@ var class_sim_field_view =
     [ "mousePressEvent", "class_sim_field_view.html#aeb705028a38e92e2fb74836e36395de3", null ],
     [ "mouseReleaseEvent", "class_sim_field_view.html#a3d33d94a1ea23cb36b5b914d2e63649d", null ],
     [ "robotSelected", "class_sim_field_view.html#a016e53aa048a97b8510ef9c801983424", null ],
-    [ "sendSimCommand", "class_sim_field_view.html#a987951cd0f45a2c40959d766441a19e3", null ]
+    [ "sendSimCommand", "class_sim_field_view.html#a14e38b1d6dfc3d7ff2277f704e400d9c", null ]
 ];

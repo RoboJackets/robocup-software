@@ -7,6 +7,7 @@ var class_radio =
     [ "isOpen", "class_radio.html#a9bdbe4a7f43753e6078b2a31c37bbe80", null ],
     [ "receive", "class_radio.html#a44a22ef706a9c15b0546afbc5b3c4c8a", null ],
     [ "reversePackets", "class_radio.html#a3bd06f89dc9c2836ed0f6f30caaeff5b", null ],
+    [ "reversePackets", "class_radio.html#a699d3f61553353c12a38ee383a878ae8", null ],
     [ "send", "class_radio.html#a32b84cf4e9767856e482ba435c14260c", null ],
     [ "switchTeam", "class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49", null ],
     [ "_channel", "class_radio.html#ab6ab11fbd3981e975c724ec9696c164b", null ],

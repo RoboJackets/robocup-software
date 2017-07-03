@@ -1,5 +1,8 @@
 var NAVTREEINDEX11 =
 {
+"struct_planning_1_1_pivot_command.html#a87784a65476c1de0d00185cd3e580fd4":[14,0,7,22,1],
+"struct_planning_1_1_pivot_command.html#ab5051bd7ebbc1773af7c8b6649efbca8":[14,0,7,22,2],
+"struct_planning_1_1_pivot_command.html#ae598ef3cc0a7e98e09d9cf2596d12277":[14,0,7,22,4],
 "struct_planning_1_1_plan_request.html":[14,0,7,24],
 "struct_planning_1_1_plan_request.html#a12393b19e55366c35efc316891c324f9":[14,0,7,24,0],
 "struct_planning_1_1_plan_request.html#a123e38414689af3016a4b5297818a51c":[14,0,7,24,5],

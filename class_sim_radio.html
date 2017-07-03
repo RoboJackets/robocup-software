@@ -111,6 +111,7 @@ $(document).ready(function(){initNavTree('class_sim_radio.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_sim_radio-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">SimRadio Class Reference</div>  </div>
@@ -122,9 +123,9 @@ $(document).ready(function(){initNavTree('class_sim_radio.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4201155ebfea83d663aec59ff1cbc964"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4201155ebfea83d663aec59ff1cbc964"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SimRadio</b> (bool blueTeam=false)</td></tr>
-<tr class="separator:a4201155ebfea83d663aec59ff1cbc964"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcd7e8bf9c50c91a38020c1c6b4bf1ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcd7e8bf9c50c91a38020c1c6b4bf1ad"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SimRadio</b> (<a class="el" href="class_system_state.html">SystemState</a> &amp;system_state, bool blueTeam=false)</td></tr>
+<tr class="separator:afcd7e8bf9c50c91a38020c1c6b4bf1ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ea9f7ef0cc7383df07a3839ce446ab5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ea9f7ef0cc7383df07a3839ce446ab5"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>isOpen</b> () const override</td></tr>
 <tr class="separator:a2ea9f7ef0cc7383df07a3839ce446ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -147,9 +148,18 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>channel</b> () const <
 <tr class="memitem:a3bd06f89dc9c2836ed0f6f30caaeff5b inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bd06f89dc9c2836ed0f6f30caaeff5b"></a>
 const std::vector&lt; Packet::RadioRx &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>reversePackets</b> () const </td></tr>
 <tr class="separator:a3bd06f89dc9c2836ed0f6f30caaeff5b inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a699d3f61553353c12a38ee383a878ae8 inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a699d3f61553353c12a38ee383a878ae8"></a>
+std::vector&lt; Packet::RadioRx &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>reversePackets</b> ()</td></tr>
+<tr class="separator:a699d3f61553353c12a38ee383a878ae8 inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f7eaeb68a566caa6fc22a08b5744c7a inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f7eaeb68a566caa6fc22a08b5744c7a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a6f7eaeb68a566caa6fc22a08b5744c7a inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a2c9d90a409639f04376368e5b794ef54"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c9d90a409639f04376368e5b794ef54"></a>
+static std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>instance_count</b></td></tr>
+<tr class="separator:a2c9d90a409639f04376368e5b794ef54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -193,7 +203,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>_channel</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_sim_radio.html">SimRadio</a></li>
-    <li class="footer">Generated on Mon Jun 26 2017 15:35:07 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Jul 3 2017 02:43:55 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

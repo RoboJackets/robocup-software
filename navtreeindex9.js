@@ -1,5 +1,8 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a13d9ebcadb025f36b9c85d2f38b320db":[14,0,3,15,2,0,7],
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24":[14,0,3,15,2,0,2],
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1f2371db119a2ed88c57393a1f69cc5b":[14,0,3,15,2,0,15],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a25aa12e32a89b1020353760d6e1d6ded":[14,0,3,15,2,0,1],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a5087c80ccbc2c6f306123e23ace6f7c1":[14,0,3,15,2,0,4],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a536de1c9e858220a2a2756c8bab67284":[14,0,3,15,2,0,10],
@@ -246,8 +249,5 @@ var NAVTREEINDEX9 =
 "classrtp_1_1packet.html#af3d425df5ccda362be5aa35d7b9e11a8":[14,0,8,2,2],
 "classtest__config_1_1_test_config.html":[14,0,9,0],
 "classtest__config_1_1_test_config.html#a3ff896698851e5c86095d8ecd789b05b":[14,0,9,0,0],
-"classtest__config_1_1_test_config.html#abc836759026c3d1f05689383bb256dd3":[14,0,9,0,2],
-"classtest__config_1_1_test_config.html#abd22b3b1e62a71a66d379d7b6a86b0f5":[14,0,9,0,1],
-"classtest__constants_1_1_test_constants.html":[14,0,10,0],
-"classtest__constants_1_1_test_constants.html#ac253cf58d69a024add45a849875d5ac8":[14,0,10,0,0]
+"classtest__config_1_1_test_config.html#abc836759026c3d1f05689383bb256dd3":[14,0,9,0,2]
 };

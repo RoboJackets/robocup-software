@@ -1,5 +1,8 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html":[14,0,3,13,2,0],
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a02fb87b7f4785e79aae67e25088d308b":[14,0,3,13,2,0,7],
+"classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a1a025e8abfee127a0d8da06923abf27f":[14,0,3,13,2,0,11],
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a328ec0f0a574a8b575b468cbdec1a559":[14,0,3,13,2,0,0],
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a596b0c6305b9e2721a21372ba4971ded":[14,0,3,13,2,0,2],
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html#a97757a611bcf1fb2de7e43b951754237":[14,0,3,13,2,0,5],
@@ -246,8 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#ae9c23d05b0f0ecfb222ea23a46db7edd":[14,0,3,15,1,0,6],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#aeff9dd28bed62defb5dc2fe14f2657bb":[14,0,3,15,1,0,1],
 "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html":[14,0,3,15,1,0,0],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html":[14,0,3,15,2,0],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a13d9ebcadb025f36b9c85d2f38b320db":[14,0,3,15,2,0,7],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24":[14,0,3,15,2,0,2],
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1f2371db119a2ed88c57393a1f69cc5b":[14,0,3,15,2,0,15]
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html":[14,0,3,15,2,0]
 };
