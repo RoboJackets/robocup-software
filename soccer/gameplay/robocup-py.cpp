@@ -565,6 +565,7 @@ float point_python_callback(Geometry2d::Point p, PyObject* pyfun) {
 boost::shared_ptr<std::function<float(Geometry2d::Point)>>
 stdfunction_constructor(PyObject* function) {
     Py_INCREF(function);
+
     // Create aliased function to hid python function args
     std::function<float(Geometry2d::Point)> f =
         std::bind(&point_python_callback, std::placeholders::_1, function);

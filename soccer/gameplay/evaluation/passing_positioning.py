@@ -44,7 +44,8 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
     x_offset = .1 * w
     y_offset = .1 * l
 
-    # Check bounderies
+    # Check boundaries
+    # Can be smoothed for a better solution
     if (receive_point.x - x_offset < w / -2 or
             receive_point.x + x_offset > w / 2 or
             receive_point.y - y_offset < 0 or
