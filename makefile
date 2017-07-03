@@ -35,10 +35,7 @@ run-comp:
 	./runcomp.sh
 r:	run
 rs: run-sim
-run-sim: all
-	-pkill -f './grsim'
-	./run/grsim &
-	./run/soccer -sim
+run-sim: all backend-simulator-soccer
 run-sim2play: all
 	-pkill -f './grsim'
 	./run/grsim &
@@ -46,13 +43,18 @@ run-sim2play: all
 
 run-release: all-release
 	./run/soccer
-run-sim-release: all-release
-	-pkill -f './grsim'
-	./run/grsim &
-	./run/soccer -sim
+run-sim-release: all-release backend-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
+
+# backend targets to launch soccer
+backend-simulator-soccer:
+	-pkill -f './grsim'
+	./run/grsim &
+	./run/soccer -sim
+# Kill grSim once we unblock
+	-pkill -f './grsim'
 
 
 debug: all
