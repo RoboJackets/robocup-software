@@ -102,7 +102,9 @@ class TestAdaptiveFormationWeights(play.Play):
 
         # Draw calculated max with white
         max_pt, max_val = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, main.our_robots(), (0.01, 3, 0.02), (2, 2, 15, 1))
+            main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
+            (robocup.Point(0.5, 2), robocup.Point(0.01, 0.01), 1, 2, 0.75, 0.5,
+             50, 1, 0.1), (2, 2, 15, 1))
         x_cent = max_pt.x
         y_cent = max_pt.y
 

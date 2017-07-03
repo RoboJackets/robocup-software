@@ -583,13 +583,13 @@ boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
     float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
     return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
-        function, start, step, minDist, reflectionCoeff, expansionCoeff,
+        *function, start, step, minDist, reflectionCoeff, expansionCoeff,
         contractionCoeff, shrinkCoeff, maxIterations, maxValue, maxThresh));
 }
 
 boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(
     NelderMead2DConfig* config) {
-    return boost::shared_ptr<NelderMead2D>(new NelderMead2D(config));
+    return boost::shared_ptr<NelderMead2D>(new NelderMead2D(*config));
 }
 
 /**

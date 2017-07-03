@@ -19,7 +19,7 @@
 
 class NelderMead2D {
 public:
-    NelderMead2D(NelderMead2DConfig* config);
+    NelderMead2D(NelderMead2DConfig& config);
 
     /**
      * Runs a single step of the optimization algorithm
@@ -52,7 +52,7 @@ public:
     bool continueExecution();
 
 private:
-    NelderMead2DConfig* config;
+    NelderMead2DConfig& config;
     int iterationCount;
     std::vector<std::tuple<float, Geometry2d::Point>> vertices;
 

@@ -25,7 +25,7 @@ public:
      * @param maxThresh threshold for the max vlaue before exit
      * @note Set maxValue = maxThresh to disable
      */
-    NelderMead2DConfig(std::function<float(Geometry2d::Point)>* f,
+    NelderMead2DConfig(std::function<float(Geometry2d::Point)>& f,
                        Geometry2d::Point start = Geometry2d::Point(0, 0),
                        Geometry2d::Point step = Geometry2d::Point(1, 1),
                        Geometry2d::Point minDist = Geometry2d::Point(0.001,
@@ -46,7 +46,7 @@ public:
           maxValue(maxValue),
           maxThresh(maxThresh) {}
 
-    std::function<float(Geometry2d::Point)>* f;
+    std::function<float(Geometry2d::Point)>& f;
     Geometry2d::Point start;
     Geometry2d::Point step;
     Geometry2d::Point minDist;

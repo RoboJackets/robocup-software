@@ -3,15 +3,15 @@
 #include <cmath>
 #include <iostream>
 
-NelderMead2D::NelderMead2D(NelderMead2DConfig* config)
+NelderMead2D::NelderMead2D(NelderMead2DConfig& config)
     : config(config), iterationCount(0) {
     // Creates starting points at [start], [start] + [-x, y], [start] + [x, y]
     for (int i = -1; i < 2; i++) {
         Geometry2d::Point p =
-            config->start +
-            i * Geometry2d::Point(config->step.x(), i * config->step.y());
+            config.start +
+            i * Geometry2d::Point(config.step.x(), i * config.step.y());
 
-        vertices.push_back(std::make_tuple((*(config->f))(p), p));
+        vertices.push_back(std::make_tuple((config.f)(p), p));
     }
 }
 
@@ -35,8 +35,8 @@ bool NelderMead2D::singleStep() {
 
     Geometry2d::Point reflected =
         centroid +
-        config->reflectionCoeff * (centroid - std::get<1>(vertices.at(2)));
-    float reflectedScore = (*(config->f))(reflected);
+        config.reflectionCoeff * (centroid - std::get<1>(vertices.at(2)));
+    float reflectedScore = (config.f)(reflected);
 
     // If reflected is better than second but not the first, replace last
     if (reflectedScore > std::get<0>(vertices.at(1)) &&
@@ -47,8 +47,8 @@ bool NelderMead2D::singleStep() {
     // If best point so far, expand in that reflected direction
     if (reflectedScore > bestScore) {
         Geometry2d::Point expanded =
-            centroid + config->expansionCoeff * (reflected - centroid);
-        float expandedScore = (*(config->f))(expanded);
+            centroid + config.expansionCoeff * (reflected - centroid);
+        float expandedScore = (config.f)(expanded);
 
         // If expanded is better than reflected, replace worst
         if (expandedScore > reflectedScore) {
@@ -61,8 +61,8 @@ bool NelderMead2D::singleStep() {
     // reflectedScore > second worst
     Geometry2d::Point contracted =
         centroid +
-        config->contractionCoeff * (std::get<1>(vertices.at(2)) - centroid);
-    float contractedScore = (*(config->f))(contracted);
+        config.contractionCoeff * (std::get<1>(vertices.at(2)) - centroid);
+    float contractedScore = (config.f)(contracted);
 
     // If contracted is better than last
     if (contractedScore > std::get<0>(vertices.at(2))) {
@@ -74,9 +74,8 @@ bool NelderMead2D::singleStep() {
     for (int i = 1; i < vertices.size(); i++) {
         std::get<1>(vertices.at(i)) =
             bestPoint +
-            config->shrinkCoeff * (std::get<1>(vertices.at(i)) - bestScore);
-        std::get<0>(vertices.at(i)) =
-            (*(config->f))(std::get<1>(vertices.at(i)));
+            config.shrinkCoeff * (std::get<1>(vertices.at(i)) - bestScore);
+        std::get<0>(vertices.at(i)) = (config.f)(std::get<1>(vertices.at(i)));
     }
 
     iterationCount++;
@@ -133,12 +132,11 @@ bool NelderMead2D::continueExecution() {
         maxY = std::max(dy, maxY);
     }
 
-    bool over_min =
-        (maxX > config->minDist.x()) && (maxY > config->minDist.y());
+    bool over_min = (maxX > config.minDist.x()) && (maxY > config.minDist.y());
     bool not_near_max =
-        (config->maxValue == config->maxThresh) ||
-        (config->maxValue - std::get<0>(vertices.at(0)) > config->maxThresh);
-    bool under_iter = iterationCount < config->maxIterations;
+        (config.maxValue == config.maxThresh) ||
+        (config.maxValue - std::get<0>(vertices.at(0)) > config.maxThresh);
+    bool under_iter = iterationCount < config.maxIterations;
 
     return over_min && not_near_max && under_iter;
 }
