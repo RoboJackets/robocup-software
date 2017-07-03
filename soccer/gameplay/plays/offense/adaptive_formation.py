@@ -44,6 +44,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
     CHIP_FIELD_POS_WEIGHTS = (0.1, .2, 0.02)
     CHIP_PASS_WEIGHTS = (2, 10, 0, 10)
 
+    # Initial arguements for the nelder mead optimization in passing positioning
+    NELDER_MEAD_ARGS = (robocup.Point(0.5, 2), \
+                        robocup.Point(0.01, 0.01), 1, 2, \
+                        0.75, 0.5, 50, 1, 0.1)
+
     class State(enum.Enum):
         # Collect the ball / Full court defense
         collecting = 1
@@ -222,6 +227,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
+            AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.DRIBBLING_WEIGHTS)
 
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
@@ -241,6 +247,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
+            AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
 
         # Grab shot chance
@@ -253,6 +260,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos, main.our_robots(),
                 AdaptiveFormation.FIELD_POS_WEIGHTS,
+                AdaptiveFormation.NELDER_MEAD_ARGS,
                 AdaptiveFormation.DRIBBLING_WEIGHTS)
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
@@ -288,6 +296,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
+            AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
 
         clear = skills.pivot_kick.PivotKick()

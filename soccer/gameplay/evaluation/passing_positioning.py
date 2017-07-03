@@ -84,21 +84,27 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
 # @param ignore_robots: Robots to ignore when calculating scores
 # @param field_weights: A tuple of the 3 difference weights to apply to field position 
 #               (Centerness, Distance to their goal, Angle off their goal)
+# @param nelder_mead_args: A tuple of the nelder mead optimization args
+#               (Starting point, Starting step, Exit condition, Reflection, Expansion,
+#                Coontraction, Shrink, Max iterations, Max function value, Max value exit condition)
 # @param weights: A tuple of the 4 different weights to apply to the evaulations overall (Weights are normalized)
 #               (space, field_position, shot_chance, kick_proximity)
 # @return bestPoint and bestScore in that order
 def eval_best_receive_point(kick_point,
                             ignore_robots=[],
                             field_weights=(0.1, 3.2, 0.1),
+                            nelder_mead_args=(robocup.Point(0.5, 2), \
+                                              robocup.Point(0.01, 0.01), \
+                                              1, 2, 0.75, 0.5, 50, 1, 0.1),
                             weights=(1, 4, 15, 1)):
-    pythfunc = functools.partial(eval_single_point, kick_point, ignore_robots, \
-                field_weights, weights)
+    pythfunc = functools.partial(eval_single_point, kick_point, ignore_robots,
+                                 field_weights, weights)
     cppfunc = robocup.stdfunction(pythfunc)
-    nmConfig = robocup.NelderMead2DConfig(cppfunc, \
-                                        kick_point, \
-                                        robocup.Point(0.5, 2), \
-                                        robocup.Point(0.01, 0.01), \
-                                        1, 2, 0.75, 0.5, 50, 1, 0.1)
+    nmConfig = robocup.NelderMead2DConfig(
+        cppfunc, kick_point, nelder_mead_args[0], nelder_mead_args[1],
+        nelder_mead_args[2], nelder_mead_args[3], nelder_mead_args[4],
+        nelder_mead_args[5], nelder_mead_args[6], nelder_mead_args[7],
+        nelder_mead_args[8])
     nm = robocup.NelderMead2D(nmConfig)
     nm.execute()
 
