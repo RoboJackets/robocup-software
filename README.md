@@ -1,7 +1,7 @@
 # GT RoboJackets RoboCup SSL
-[![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![14.04 Build Status](https://semaphoreci.com/api/v1/jgkamat/robocup-software/branches/master/shields_badge.svg)](https://semaphoreci.com/jgkamat/robocup-software) [![OSX Build Status](https://travis-ci.org/RoboJackets/robocup-software.svg?branch=master)](https://travis-ci.org/RoboJackets/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
+[![16.04 Build Status](https://circleci.com/gh/RoboJackets/robocup-software.svg?&style=shield)](https://circleci.com/gh/RoboJackets/robocup-software) [![14.04 Build Status](https://semaphoreci.com/api/v1/jgkamat/robocup-software/branches/master/shields_badge.svg)](https://semaphoreci.com/jgkamat/robocup-software) [![Coverage Status](https://coveralls.io/repos/RoboJackets/robocup-software/badge.svg?branch=master&service=github)](https://coveralls.io/github/RoboJackets/robocup-software?branch=master)
 
-[![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Riot](https://img.shields.io/badge/matrix-riot%20chat-blue.svg)](https://riot.im/app/#/room/%23robocup-software:matrix.org) [![Join the chat at https://gitter.im/RoboJackets/robocup-software](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RoboJackets/robocup-software?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [documentation page](http://robojackets.github.io/robocup-software/), our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
@@ -27,11 +27,6 @@ The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more informatio
 The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.
 
 
-### simulator/
-
-Code for the RoboCup simulator is located here.  This allows us to quickly test our soccer strategy on the computer.  Keep in mind though that just because something works well in the simulator doesn't mean it'll be the same in real life.
-
-
 ### common/
 
 Code that's shared between the software and firmware sections of our codebase is stored here, as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). See RoboJackets/robocup-common.
@@ -47,7 +42,7 @@ Compiled programs and some configuration files are stored here.
 
 ## Setup
 
-Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux, Arch Linux, and Mac OS X, although it shouldn't be too difficult to port to other operating systems.
+Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux and Arch Linux, although it shouldn't be too difficult to port to other operating systems.
 
 1) Clone the repository
 

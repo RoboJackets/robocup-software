@@ -166,6 +166,17 @@ protected:
                                            std::vector<double>& ks,
                                            std::vector<double>& ks2);
 
+    /**
+ * Helper method for runRRT(), which creates a vector of points representing
+ * the RRT path.
+ */
+    std::vector<Geometry2d::Point> runRRTHelper(
+            MotionInstant start, MotionInstant goal,
+            const MotionConstraints& motionConstraints,
+            const Geometry2d::ShapeSet& obstacles, SystemState* state,
+            unsigned shellID, const boost::optional<std::vector<Geometry2d::Point>> &biasWaypoints,
+            bool straightLine);
+
     static ConfigDouble* _partialReplanLeadTime;
 };
 }  // namespace Planning

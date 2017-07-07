@@ -33,9 +33,9 @@ class WhichHalf(play.Play):
         #                         'state change message')
         # ------------------------------------------------------------
 
-    # Define your own 'on_enter' and 'execute' functions here.
-    # eg: def on_enter_<???>(self):
-    #         print('Something?')
-    # eg: def execute_<???>(self):
-    #         print('Something?')
-    # ---------------------------------------------------------
+        # Define your own 'on_enter' and 'execute' functions here.
+        # eg: def on_enter_<???>(self):
+        #         print('Something?')
+        # eg: def execute_<???>(self):
+        #         print('Something?')
+        # ---------------------------------------------------------

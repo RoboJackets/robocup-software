@@ -22,7 +22,9 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         kicking = 4
 
     def __init__(self):
-        super().__init__()
+        single_robot_composite_behavior.SingleRobotCompositeBehavior.__init__(
+            self)
+        skills._kick._Kick.__init__(self)
 
         for state in PivotKick.State:
             self.add_state(state, behavior.Behavior.State.running)

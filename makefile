@@ -6,12 +6,17 @@ FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-send
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $1
 endef
 
 define cmake_build_target_release
 	mkdir -p build
 	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $1
+endef
+
+define cmake_build_target_perf
+	mkdir -p build
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $1
 endef
 
 all:
@@ -20,30 +25,36 @@ all:
 all-release:
 	$(call cmake_build_target_release, all)
 
+all-perf:
+	$(call cmake_build_target_perf, all)
+perf: all-perf
+
 run: all
 	./run/soccer
 run-comp:
 	./runcomp.sh
 r:	run
 rs: run-sim
-run-sim: all
-	-pkill -f './simulator --headless'
-	./run/simulator --headless --timeout 5 &
-	./run/soccer -sim
+run-sim: all backend-simulator-soccer
 run-sim2play: all
-	-pkill -f './simulator --headless'
-	./run/simulator --headless &
+	-pkill -f './grsim'
+	./run/grsim &
 	./run/soccer -sim -y & ./soccer -sim -b
 
 run-release: all-release
 	./run/soccer
-run-sim-release: all-release
-	-pkill -f './simulator --headless'
-	./run/simulator --headless &
-	./run/soccer -sim -pbk example.pbk
+run-sim-release: all-release backend-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
+
+# backend targets to launch soccer
+backend-simulator-soccer:
+	-pkill -f './grsim'
+	./run/grsim &
+	./run/soccer -sim
+# Kill grSim once we unblock
+	-pkill -f './grsim'
 
 
 debug: all
@@ -54,8 +65,8 @@ else
 endif
 
 debug-sim: all
-	-pkill -f './simulator --headless'
-	./run/simulator --headless &
+	-pkill -f './grsim'
+	./run/grsim &
 ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else
@@ -71,7 +82,9 @@ test-soccer:
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
-	cd soccer && pylint -E gameplay
+	pylint -j8 --disable=C,R,W --reports=n soccer/gameplay
+mypy:
+	mypy soccer/gameplay
 
 COV_BUILD_DIR=build/coverage
 coverage:
@@ -81,7 +94,6 @@ coverage:
 	run/test-soccer		# Kind of hacky, but w/e
 	-coveralls -b ${COV_BUILD_DIR} -r . \
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
-		-e ${COV_BUILD_DIR}/simulator/ \
 		-E '(^.*((moc_)|(automoc)|(ui_)|([Tt]est)).*$$)|(^.*((include)|(mbed)|(googletest)|(gtest)|(protobuf)|(qt5)).*$$)' \
 		--gcov-options '\-lp'
 
@@ -106,7 +118,7 @@ modernize:
 	# You can pass specific flags to clang-modernize if you want it to only run some types of
 	# transformations, rather than all transformations that it's capable of.
 	# See `clang-modernize --help` for more info.
-	clang-modernize -p build/modernize -include=common,logging,simulator,soccer
+	clang-modernize -p build/modernize -include=common,logging,soccer
 
 apidocs:
 	doxygen doc/Doxyfile

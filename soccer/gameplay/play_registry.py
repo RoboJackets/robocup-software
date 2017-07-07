@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 import logging
 
 
@@ -154,8 +154,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             super().__init__()
 
             self._name = name
-            self._parent = parent
             self._children = list()
+            self.parent = parent
 
         @property
         def name(self):
@@ -198,14 +198,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         def has_child_with_name(self, name):
             return self[name] != None
 
-        @property
-        def parent(self):
-            return self._parent
-
-        @parent.setter
-        def parent(self, value):
-            self._parent = value
-
         # @children is a list
         @property
         def children(self):
@@ -213,7 +205,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
         @property
         def row(self):
-            if self.parent != None:
+            if self.parent is not None:
                 return self.parent.children.index(self)
             else:
                 return 0
@@ -221,18 +213,10 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     class Node():
         def __init__(self, module_name, play_class):
             self._module_name = module_name
-            self._play_class = play_class
-            self._enabled = False
             self._last_score = float("inf")
-            self._parent = None
-
-        @property
-        def parent(self):
-            return self._parent
-
-        @parent.setter
-        def parent(self, value):
-            self._parent = value
+            self.enabled = False
+            self.play_class = play_class
+            self.parent = None
 
         @property
         def name(self):
@@ -241,22 +225,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         @property
         def module_name(self):
             return self._module_name
-
-        @property
-        def play_class(self):
-            return self._play_class
-
-        @play_class.setter
-        def play_class(self, value):
-            self._play_class = value
-
-        @property
-        def enabled(self):
-            return self._enabled
-
-        @enabled.setter
-        def enabled(self, value):
-            self._enabled = value
 
         # recalculates and caches the score value for the play
         # returns True if the value changed and False otherwise

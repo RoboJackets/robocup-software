@@ -41,6 +41,12 @@ class Stopped(standard_play.StandardPlay):
     def handles_goalie(self):
         return True
 
+    ## Allow the stopped play to run during the stopped play.
+    # Without this, the stopped play would be killed in the stopped state.
+    @classmethod
+    def run_during_stopped(cls):
+        return True
+
     def is_in_center(self):
         if main.ball().valid:
             return robocup.Circle(

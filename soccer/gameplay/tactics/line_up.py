@@ -1,9 +1,9 @@
 import composite_behavior
-from single_robot_behavior import SingleRobotBehavior
 import behavior
 import skills.move
 import robocup
 import constants
+from single_robot_behavior import SingleRobotBehavior
 
 
 class LineUp(composite_behavior.CompositeBehavior):

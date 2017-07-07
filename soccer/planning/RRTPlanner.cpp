@@ -315,23 +315,54 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     return lastPath;
 }
 
-vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal, const MotionConstraints &motionConstraints,
-                                 const ShapeSet &obstacles, SystemState *state, unsigned shellID,
-                                 const boost::optional<vector<Point>> &biasWaypoints) {
+vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
+                                 const MotionConstraints& motionConstraints,
+                                 const ShapeSet& obstacles, SystemState* state,
+                                 unsigned shellID, const boost::optional<vector<Point>> &biasWaypoints) {
+    vector<Point> straight = runRRTHelper(start, goal, motionConstraints,
+                                          obstacles, state, shellID, biasWaypoints, true);
+    if (straight.size() != 0) {
+        return straight;
+    }
+    return runRRTHelper(start, goal, motionConstraints, obstacles, state,
+                        shellID, biasWaypoints, false);
+}
+
+vector<Point> RRTPlanner::runRRTHelper(
+    MotionInstant start, MotionInstant goal,
+    const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
+    SystemState* state, unsigned shellID,
+    const boost::optional<vector<Point>> &biasWaypoints, bool straightLine) {
     // Initialize bi-directional RRT
+
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(stateSpace);
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
-    biRRT.setStepSize(*RRTConfig::StepSize);
-    biRRT.setMinIterations(_minIterations);
-    biRRT.setMaxIterations(_maxIterations);
-    biRRT.setGoalBias(*RRTConfig::GoalBias);
 
-    if(biasWaypoints) {
-        biRRT.setWaypoints(*biasWaypoints);
-        biRRT.setWaypointBias(*RRTConfig::WaypointBias);
+    // If trying to plan a straight path, plan a straight path. Otherwise, run
+    // normal RRT.
+    if (straightLine) {
+        // Set the step size to be the distance between the start and goal.
+        biRRT.setStepSize(stateSpace->distance(start.pos, goal.pos));
+        // Plan straight toward the goal.
+        biRRT.setGoalBias(1);
+        // Try up to five times. If unsuccessful after five tries, there
+        // probably doesn't exist
+        // a straight path.
+        biRRT.setMinIterations(0);
+        biRRT.setMaxIterations(5);
+    } else {
+        biRRT.setStepSize(*RRTConfig::StepSize);
+        biRRT.setMinIterations(_minIterations);
+        biRRT.setMaxIterations(_maxIterations);
+        biRRT.setGoalBias(*RRTConfig::GoalBias);
+
+        if(biasWaypoints) {
+            biRRT.setWaypoints(*biasWaypoints);
+            biRRT.setWaypointBias(*RRTConfig::WaypointBias);
+        }
     }
 
     bool success = biRRT.run();
@@ -341,8 +372,7 @@ vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal, const 
         DrawBiRRT(biRRT, state, shellID);
     }
 
-    vector<Point> points;
-    biRRT.getPath(points);
+    vector<Point> points = biRRT.getPath();
 
     // Optimize out uneccesary waypoints
     RRT::SmoothPath(points, *stateSpace);

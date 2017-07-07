@@ -99,7 +99,8 @@ def init():
 
                     logging.info("reloaded module '" + '.'.join(module_path) +
                                  "'")
-
+                    # TODO: https://github.com/PyCQA/pylint/issues/1328
+                    #pylint: disable=no-member
                     if is_play:
                         # re-register the new play class
                         # FIXME: this logic should go inside the play_registry

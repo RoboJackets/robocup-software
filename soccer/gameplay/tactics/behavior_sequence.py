@@ -7,9 +7,7 @@ import behavior
 # The sequence moves onto the next behavior as soon as the current behavior completes
 class BehaviorSequence(composite_behavior.CompositeBehavior):
     def __init__(self, behaviors=None):
-        super().__init__(
-            continuous=True
-        )  # Note: we don't know if the sequence will be continuous or not, so we assume it is to be safe
+        super().__init__(continuous=True)  # Note: we don't know if the sequence will be continuous or not, so we assume it is to be safe
 
         self.behaviors = behaviors
 
@@ -50,7 +48,7 @@ class BehaviorSequence(composite_behavior.CompositeBehavior):
 
         if should_advance:
             if self.current_behavior != None:
-                self.remove_behavior_with_name('current')
+                self.remove_subbehavior('current')
 
             self._current_behavior_index += 1
             if self.current_behavior_index < len(self.behaviors):

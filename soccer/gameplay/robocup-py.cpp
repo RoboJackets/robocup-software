@@ -9,6 +9,7 @@ using namespace boost::python;
 
 #include "motion/TrapezoidalMotion.hpp"
 #include "planning/MotionConstraints.hpp"
+#include "KickEvaluator.hpp"
 #include "WindowEvaluator.hpp"
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
@@ -458,6 +459,82 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
+boost::python::tuple KickEval_eval_pt_to_seg(
+    KickEvaluator* self, const Geometry2d::Point* origin,
+    const Geometry2d::Segment* target) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_seg(*origin, *target);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_robot(
+    KickEvaluator* self, const Geometry2d::Point* origin,
+    const Geometry2d::Point* target) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_robot(*origin, *target);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
+                                            const Geometry2d::Point* origin,
+                                            const Geometry2d::Point* target,
+                                            float targetWidth) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_opp_goal(
+    KickEvaluator* self, const Geometry2d::Point* origin) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_opp_goal(*origin);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_our_goal(
+    KickEvaluator* self, const Geometry2d::Point* origin) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_our_goal(*origin);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+void KickEval_add_excluded_robot(KickEvaluator* self, Robot* robot) {
+    self->excluded_robots.push_back(robot);
+}
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
@@ -614,7 +691,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
-    register_ptr_to_python<Robot*>();
+    
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
         "OurRobot", init<int, SystemState*>())
@@ -653,17 +730,17 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
-    register_ptr_to_python<OurRobot*>();
+    
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
-    register_ptr_to_python<OpponentRobot*>();
+  
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
-    register_ptr_to_python<Ball*>();
+   
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -694,7 +771,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
-    register_ptr_to_python<SystemState*>();
+  
 
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
@@ -756,6 +833,17 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
 
+    class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
+        .def_readwrite("excluded_robots", &KickEvaluator::excluded_robots)
+        .def_readwrite("hypothetical_robot_locations",
+                       &KickEvaluator::hypothetical_robot_locations)
+        .def("add_excluded_robot", &KickEval_add_excluded_robot)
+        .def("eval_pt_to_pt", &KickEval_eval_pt_to_pt)
+        .def("eval_pt_to_robot", &KickEval_eval_pt_to_robot)
+        .def("eval_pt_to_opp_goal", &KickEval_eval_pt_to_opp_goal)
+        .def("eval_pt_to_our_goal", &KickEval_eval_pt_to_our_goal)
+        .def("eval_pt_to_seg", &KickEval_eval_pt_to_seg);
+
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);
 
@@ -766,24 +854,24 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("nameLookup", &Configuration::nameLookup,
              return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
-    register_ptr_to_python<std::shared_ptr<Configuration>>();
+  
 
     // Add wrappers for ConfigItem subclasses
     class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
-    register_ptr_to_python<ConfigBool*>();
+  
 
     class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
                                                            no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
-    register_ptr_to_python<ConfigDouble*>();
+  
 
     class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
-    register_ptr_to_python<ConfigInt*>();
+ 
 
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)

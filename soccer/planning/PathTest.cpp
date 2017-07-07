@@ -132,7 +132,7 @@ TEST(CompositePath, CompositeSubPath) {
     compositePath.append(path.subPath(7500ms));
 
     // Compare that the compositePath and origonal path are mostly equal
-    for (auto i = 0ms; i <= 10s; i += 1ms) {
+    for (RJ::Seconds i = 0ms; i <= 10s; i += 1ms) {
         auto org = path.evaluate(i);
         auto sub = compositePath.evaluate(i);
         if (!org && !sub) break;

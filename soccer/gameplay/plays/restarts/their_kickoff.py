@@ -31,7 +31,8 @@ class TheirKickoff(standard_play.StandardPlay):
         self.add_subbehavior(
             tactics.stopped.circle_on_center.CircleOnCenter(
                 # TODO find a way to do this without hard coding 3 defense/goalie robots (or make those constants)
-                min_robots=1 if len(main.our_robots()) > 3 else 0),
+                min_robots=1 if (main.our_robots() is not None) and len(
+                    main.our_robots()) > 3 else 0),
             'circle_up',
             priority=15,
             required=True)
