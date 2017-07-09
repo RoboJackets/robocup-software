@@ -32,6 +32,7 @@ var class_geometry2d_1_1_point =
     [ "operator/", "class_geometry2d_1_1_point.html#adea0cea90d398659004f9dda454a517f", null ],
     [ "operator/=", "class_geometry2d_1_1_point.html#a005ba20f630dfff3fe5825f14df99115", null ],
     [ "operator==", "class_geometry2d_1_1_point.html#a446c6e7344a32e17db98fcab3f14b2cc", null ],
+    [ "operator[]", "class_geometry2d_1_1_point.html#a27f4746b598626882a67aef4b1dfd4a9", null ],
     [ "operator[]", "class_geometry2d_1_1_point.html#a15fd21706c50807c7a5e9caddb4905c6", null ],
     [ "perpCCW", "class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049", null ],
     [ "perpCW", "class_geometry2d_1_1_point.html#abd3f1f20685256a38bc7c2a6b264ac79", null ],

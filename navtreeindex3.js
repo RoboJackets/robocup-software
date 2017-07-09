@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"class_logger.html#ae91f9721e83aba0321a0fb52c079b38e":[14,0,42,14],
 "class_logger.html#af08f43c44f0046fcb1b3fb86eb030803":[14,0,42,2],
 "class_logger.html#afd8efcd5b1115eaf0e2724e227e1083e":[14,0,42,11],
 "class_logger.html#afee2bab560c2db0190c980884d33868c":[14,0,42,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "class_planning_1_1_independent_multi_robot_path_planner.html":[14,0,7,13],
 "class_planning_1_1_independent_multi_robot_path_planner.html#a1359e208ebfd53c5396a95cab67ee97a":[14,0,7,13,0],
 "class_planning_1_1_interpolated_path.html":[14,0,7,14],
-"class_planning_1_1_interpolated_path.html#a04577c39f23e0b96988c832fb64e558d":[14,0,7,14,5],
-"class_planning_1_1_interpolated_path.html#a05e85e9e388acb463f9991f17d504dbb":[14,0,7,14,13]
+"class_planning_1_1_interpolated_path.html#a04577c39f23e0b96988c832fb64e558d":[14,0,7,14,5]
 };
