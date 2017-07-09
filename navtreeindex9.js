@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html":[14,0,3,15,2,0],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a13d9ebcadb025f36b9c85d2f38b320db":[14,0,3,15,2,0,7],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24":[14,0,3,15,2,0,2],
 "classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1f2371db119a2ed88c57393a1f69cc5b":[14,0,3,15,2,0,15],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "classrtp_1_1packet.html#ac4b74bf4776cdfb7bd016f315977cc77":[14,0,8,2,4],
 "classrtp_1_1packet.html#af3d425df5ccda362be5aa35d7b9e11a8":[14,0,8,2,2],
 "classtest__config_1_1_test_config.html":[14,0,9,0],
-"classtest__config_1_1_test_config.html#a3ff896698851e5c86095d8ecd789b05b":[14,0,9,0,0],
-"classtest__config_1_1_test_config.html#abc836759026c3d1f05689383bb256dd3":[14,0,9,0,2]
+"classtest__config_1_1_test_config.html#a3ff896698851e5c86095d8ecd789b05b":[14,0,9,0,0]
 };

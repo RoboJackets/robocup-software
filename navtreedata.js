@@ -45,9 +45,9 @@ var NAVTREEINDEX =
 "classgameplay_1_1fsm_1_1_state_machine.html#a26580b6c91b9b04fea7347c43896017a",
 "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html#a76815bf36592063eea87bdf6f8da5a51",
 "classgameplay_1_1skills_1_1angle__receive_1_1_angle_receive.html",
-"classgameplay_1_1tactics_1_1defense_1_1_defense.html#a13d9ebcadb025f36b9c85d2f38b320db",
-"classtest__config_1_1_test_config.html#abd22b3b1e62a71a66d379d7b6a86b0f5",
-"struct_planning_1_1_pivot_command.html#a87784a65476c1de0d00185cd3e580fd4"
+"classgameplay_1_1tactics_1_1defense_1_1_defense.html",
+"classtest__config_1_1_test_config.html#abc836759026c3d1f05689383bb256dd3",
+"struct_planning_1_1_pivot_command.html#a6ef662fffac35b425bcde6e953636f70"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

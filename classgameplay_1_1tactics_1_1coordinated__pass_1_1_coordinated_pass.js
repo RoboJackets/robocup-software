@@ -14,6 +14,7 @@ var classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass =
     [ "prekick_timeout_exceeded", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#abdfb5dd4463e9c492e919220e075a2d4", null ],
     [ "receive_point", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#ad8ec0a06ee49fed0bf1a0fea2c604f24", null ],
     [ "receive_point", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a718a529eb205e880c2e9ea3ff4499603", null ],
+    [ "restart", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#ac848f91a2c537c1538b52a1c2193c436", null ],
     [ "time_remaining", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#abc7e6bdd42d3979ba28da9d7bcbc2e8f", null ],
     [ "kicker_required", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a9f5739cf489a4f0ed68ceb414df44c62", null ],
     [ "prekick_timeout", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#aadb0569b31fdffc5e80497f564985a24", null ],

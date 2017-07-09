@@ -133,6 +133,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aeff9dd28bed62defb5dc2fe14f2657bb"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#aeff9dd28bed62defb5dc2fe14f2657bb">__init__</a> (self, receive_point=None, skillreceiver=None, skillkicker=None, prekick_timeout=None, receiver_required=True, kicker_required=True)</td></tr>
 <tr class="memdesc:aeff9dd28bed62defb5dc2fe14f2657bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Init method for CoordinatedPass.  <a href="#aeff9dd28bed62defb5dc2fe14f2657bb">More...</a><br /></td></tr>
 <tr class="separator:aeff9dd28bed62defb5dc2fe14f2657bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac848f91a2c537c1538b52a1c2193c436"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#ac848f91a2c537c1538b52a1c2193c436">restart</a> (self)</td></tr>
+<tr class="memdesc:ac848f91a2c537c1538b52a1c2193c436"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles restarting this behaivor.  <a href="#ac848f91a2c537c1538b52a1c2193c436">More...</a><br /></td></tr>
+<tr class="separator:ac848f91a2c537c1538b52a1c2193c436"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8ec0a06ee49fed0bf1a0fea2c604f24"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8ec0a06ee49fed0bf1a0fea2c604f24"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>receive_point</b> (self)</td></tr>
 <tr class="separator:ad8ec0a06ee49fed0bf1a0fea2c604f24"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -295,9 +298,9 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b>
 <tr class="memitem:a017401bea1691c0b4041ca4b6ad2d6fd inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a017401bea1691c0b4041ca4b6ad2d6fd"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b> (self)</td></tr>
 <tr class="separator:a017401bea1691c0b4041ca4b6ad2d6fd inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb97e74f3b973efde9ae8d834fd81cf3 inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb97e74f3b973efde9ae8d834fd81cf3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b> (self, filename)</td></tr>
-<tr class="separator:aeb97e74f3b973efde9ae8d834fd81cf3 inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5772a4b686116712842dc82f7d3e29b4 inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5772a4b686116712842dc82f7d3e29b4"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b></td></tr>
+<tr class="separator:a5772a4b686116712842dc82f7d3e29b4 inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26580b6c91b9b04fea7347c43896017a inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26580b6c91b9b04fea7347c43896017a"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
 <tr class="separator:a26580b6c91b9b04fea7347c43896017a inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -425,6 +428,26 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6<
 
 </div>
 </div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="ac848f91a2c537c1538b52a1c2193c436"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.tactics.coordinated_pass.CoordinatedPass.restart </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Handles restarting this behaivor. </p>
+<p>Since we save a few sub-behaviors, we need to restart those when we restart. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/gameplay/tactics/coordinated_pass.py</li>
 </ul>
@@ -434,7 +457,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>KickPower</b> = 0.6<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>tactics</b></li><li class="navelem"><b>coordinated_pass</b></li><li class="navelem"><a class="el" href="classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html">CoordinatedPass</a></li>
-    <li class="footer">Generated on Sun Jul 9 2017 13:33:00 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Jul 9 2017 19:36:35 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

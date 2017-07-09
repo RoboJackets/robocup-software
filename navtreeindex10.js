@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"classtest__config_1_1_test_config.html#abc836759026c3d1f05689383bb256dd3":[14,0,9,0,2],
 "classtest__config_1_1_test_config.html#abd22b3b1e62a71a66d379d7b6a86b0f5":[14,0,9,0,1],
 "classtest__constants_1_1_test_constants.html":[14,0,10,0],
 "classtest__constants_1_1_test_constants.html#ac253cf58d69a024add45a849875d5ac8":[14,0,10,0,0],
@@ -140,8 +141,8 @@ var NAVTREEINDEX10 =
 "md_doc_training2016_training_2016.html":[9],
 "modules.html":[12],
 "multicast_8hpp_source.html":[15,0,0,6],
-"namespace_gameplay.html":[13,0,0],
 "namespace_gameplay.html":[14,0,2],
+"namespace_gameplay.html":[13,0,0],
 "namespaces.html":[13,0],
 "pages.html":[],
 "robocup-py_8hpp_source.html":[15,0,1,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "struct_planning_1_1_path_target_command.html#ae6832c2d8c92315bf897cc85a7e15fc1":[14,0,7,21,2],
 "struct_planning_1_1_path_target_command.html#aeaf867f063bd1422a198609e5239ee9b":[14,0,7,21,0],
 "struct_planning_1_1_pivot_command.html":[14,0,7,22],
-"struct_planning_1_1_pivot_command.html#a661e0e76d4908a7b5236ba0ae3bb2fb2":[14,0,7,22,0],
-"struct_planning_1_1_pivot_command.html#a6ef662fffac35b425bcde6e953636f70":[14,0,7,22,3]
+"struct_planning_1_1_pivot_command.html#a661e0e76d4908a7b5236ba0ae3bb2fb2":[14,0,7,22,0]
 };
