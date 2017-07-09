@@ -221,7 +221,7 @@ vector<Point> RRTPlanner::runRRTHelper(
         biRRT.setStepSize(*RRTConfig::StepSize);
         biRRT.setMinIterations(_minIterations);
         biRRT.setMaxIterations(_maxIterations);
-        biRRT.setGoalBias(*RRTConfig::StepSize);
+        biRRT.setGoalBias(*RRTConfig::GoalBias);
     }
 
     bool success = biRRT.run();

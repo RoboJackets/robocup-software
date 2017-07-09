@@ -1,4 +1,4 @@
-from behavior import *
+from behavior import Behavior
 import time
 from enum import Enum
 
