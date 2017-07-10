@@ -195,9 +195,12 @@ void InterpolatedPath::draw(SystemState* const state,
 
 boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
-        debugThrow(
-            invalid_argument("A time less than 0 was entered for time t."));
+        return RobotInstant(waypoints.front().instant);
     }
+//    if (t < RJ::Seconds::zero()) {
+//        debugThrow(
+//            invalid_argument("A time less than 0 was entered for time t. t=" + to_string(t)));
+//    }
     /*
     float linearPos;
     float linearSpeed;

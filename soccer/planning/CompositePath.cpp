@@ -22,7 +22,7 @@ void CompositePath::append(unique_ptr<Path> path) {
                 duration += pathDuration;
                 paths.push_back(std::move(path));
             } else {
-                debugThrow(invalid_argument("The path passed is invalid" + to_string(duration)));
+                debugThrow(invalid_argument("The path passed is invalid" + to_string(pathDuration)));
             }
         } else {
             debugThrow(runtime_error(

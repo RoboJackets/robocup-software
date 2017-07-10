@@ -155,15 +155,18 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
                 finalApproach = true;
                 auto path = RRTPlanner::generatePath(points, obstacles,
                                                      motionConstraints, startInstant.vel, target.vel);
-                path->setDebugText(
-                        "FinalPath" + QString::number(path->getSlowedDuration().count()) +
-                        " " + QString::number(timeToHit.count()) + " " +
-                        QString::number(time.time_since_epoch().count()));
-                //path->slow(timeToHit / path->getDuration());
 
-                return make_unique<AngleFunctionPath>(
-                        std::move(path),
-                        angleFunctionForCommandType(FacePointCommand(command.target)));
+                if (path) {
+                    path->setDebugText(
+                            "FinalPath" + QString::number(path->getSlowedDuration().count()) +
+                            " " + QString::number(timeToHit.count()) + " " +
+                            QString::number(time.time_since_epoch().count()));
+                    //path->slow(timeToHit / path->getDuration());
+
+                    return make_unique<AngleFunctionPath>(
+                            std::move(path),
+                            angleFunctionForCommandType(FacePointCommand(command.target)));
+                }
             }
         }
 

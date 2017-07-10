@@ -127,12 +127,12 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 
     // Simple case: no path
     if (start.pos == goal.pos) {
-        InterpolatedPath* path = new InterpolatedPath();
+        auto path = make_unique<InterpolatedPath>();
         path->setStartTime(RJ::now());
         path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
                                      RJ::Seconds::zero());
         path->setDebugText("Invalid Basic Path");
-        return unique_ptr<Path>(path);
+        return std::move(path);
     }
 
     // Locate a goal point that is obstacle-free
@@ -299,6 +299,12 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         // Generate and return a cubic bezier path using the waypoints
         auto path = generateCubicBezier(points, obstacles, motionConstraints,
                                         start.vel, goal.vel);
+
+        if (!path) {
+            debugLog("RRT Vel Planning Failed");
+            break;
+        }
+
         RJ::Seconds hitTime;
         Point hitLocation;
         bool hit = path->pathsIntersect(dyObs, path->startTime(), &hitLocation,
@@ -504,6 +510,10 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
         RRTPlanner::cubicBezierCalc(vi.x(), vf.x(), pointsX, ks, ks2);
     VectorXd solutionY =
         RRTPlanner::cubicBezierCalc(vi.y(), vf.y(), pointsY, ks, ks2);
+
+    if (solutionX.hasNaN() || solutionY.hasNaN()) {
+        return vector<CubicBezierControlPoints>();
+    }
 
     vector<CubicBezierControlPoints> path;
 
@@ -722,6 +732,10 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     vector<CubicBezierControlPoints> controlPoints =
             generateCubicBezierPath(points, motionConstraints, vi, vf);
 
+    if (controlPoints.empty()) {
+        return nullptr;
+    }
+
     vector<InterpolatedPath::Entry> entries = generateVelocityPath(
         controlPoints, motionConstraints, vi, vf, interpolations);
 
@@ -767,7 +781,7 @@ VectorXd RRTPlanner::cubicBezierCalc(double vi, double vf,
             i++;
         }
 
-        ColPivHouseholderQR<MatrixXd> solver(equations);
+        HouseholderQR<MatrixXd> solver(equations);
         VectorXd solution = solver.solve(answer);
         return solution;
     }
