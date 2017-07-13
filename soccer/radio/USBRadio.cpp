@@ -110,7 +110,7 @@ bool USBRadio::open() {
             LIBUSB_ENDPOINT_IN |
                 2,  // address of the endpoint where this transfer will be sent
             _rxBuffers[i],      // data buffer
-            rtp::Reverse_Size,  // length of data buffer
+            rtp::ReverseSize,  // length of data buffer
             rxCompleted,        // callback function to be invoked on transfer
                                 // completion
             this,               // user data to pass to callback function
@@ -127,7 +127,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
     USBRadio* radio = (USBRadio*)transfer->user_data;
 
     if (transfer->status == LIBUSB_TRANSFER_COMPLETED &&
-        transfer->actual_length == rtp::Reverse_Size) {
+        transfer->actual_length == rtp::ReverseSize) {
         // Parse the packet and add to the list of RadioRx's
         radio->handleRxData(transfer->buffer);
     }
@@ -176,11 +176,11 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    uint8_t forward_packet[rtp::Forward_Size];
+    uint8_t forward_packet[rtp::ForwardSize];
 
     // ensure Forward_Size is correct
-    static_assert(sizeof(rtp::header_data) + 6 * sizeof(rtp::ControlMessage) ==
-                      rtp::Forward_Size,
+    static_assert(sizeof(rtp::Header) + 6 * sizeof(rtp::ControlMessage) ==
+                      rtp::ForwardSize,
                   "Forward packet contents exceeds buffer size");
 
     // Unit conversions
@@ -188,10 +188,10 @@ void USBRadio::send(Packet::RadioTx& packet) {
     static const float Meters_Per_Tick = 0.026f * 2 * M_PI / 6480.0f;
     static const float Radians_Per_Tick = 0.026f * M_PI / (0.0812f * 3240.0f);
 
-    rtp::header_data* header = (rtp::header_data*)forward_packet;
-    header->port = rtp::Port::CONTROL;
+    rtp::Header* header = (rtp::Header*)forward_packet;
+    header->port = rtp::PortType::CONTROL;
     header->address = rtp::BROADCAST_ADDRESS;
-    header->type = rtp::header_data::Type::Control;
+    header->type = rtp::MessageType::CONTROL;
 
     // Build a forward packet
     for (int slot = 0; slot < 6; ++slot) {
@@ -199,7 +199,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
         // control message and cast it to a ControlMessage pointer for easy
         // access
         size_t offset =
-            sizeof(rtp::header_data) + slot * sizeof(rtp::ControlMessage);
+            sizeof(rtp::Header) + slot * sizeof(rtp::ControlMessage);
         rtp::ControlMessage* msg =
             (rtp::ControlMessage*)(forward_packet + offset);
 
@@ -265,13 +265,13 @@ void USBRadio::receive() {
     libusb_handle_events_timeout(_usb_context, &tv);
 }
 
-// Note: this method assumes that sizeof(buf) == rtp::Reverse_Size
+// Note: this method assumes that sizeof(buf) == rtp::ReverseSize
 void USBRadio::handleRxData(uint8_t* buf) {
     RadioRx packet = RadioRx();
 
-    rtp::header_data* header = (rtp::header_data*)buf;
+    rtp::Header* header = (rtp::Header*)buf;
     rtp::RobotStatusMessage* msg =
-        (rtp::RobotStatusMessage*)(buf + sizeof(rtp::header_data));
+        (rtp::RobotStatusMessage*)(buf + sizeof(rtp::Header));
 
     packet.set_timestamp(RJ::timestamp());
     packet.set_robot_id(msg->uid);
@@ -281,7 +281,7 @@ void USBRadio::handleRxData(uint8_t* buf) {
 
     // battery voltage
     packet.set_battery(msg->battVoltage *
-                       rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR);
+                       rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR);
 
     // ball sense
     if (BallSenseStatus_IsValid(msg->ballSenseStatus)) {
@@ -315,9 +315,6 @@ void USBRadio::handleRxData(uint8_t* buf) {
         packet_debug_response->set_key(debugResponseInfo.name);
         packet_debug_response->set_value(value);
         // access using []
-    }
-    for (DebugCommunication::DebugResponse debugResponse: current_receive_debug) {
-
     }
     _reversePackets.push_back(packet);
 }

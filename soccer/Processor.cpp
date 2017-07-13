@@ -734,7 +734,6 @@ void Processor::sendRadioData() {
 
 
 
-    cout<<"test" << rtp::Forward_Size<<" "<<rtp::Reverse_Size<<endl;
     if (_radio) {
         _radio->send(*_state.logFrame->mutable_radio_tx());
     }

@@ -42,7 +42,7 @@ protected:
     // Try increasing this constant for larger RX packet throughput.
     static const int NumRXTransfers = 4;
     libusb_transfer* _rxTransfers[NumRXTransfers];
-    uint8_t _rxBuffers[NumRXTransfers][rtp::Reverse_Size + 2];
+    uint8_t _rxBuffers[NumRXTransfers][rtp::ReverseSize + 2];
 
     QMutex _mutex;
     bool _printedError;
