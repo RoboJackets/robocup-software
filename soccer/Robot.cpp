@@ -67,6 +67,7 @@ OurRobot::OurRobot(int shell, SystemState* state)
     //_lastChargedTime = 0;
     _lastKickerStatus = 0;
     //_lastKickTime = 0;
+    _lastBallSense = RJ::now();
 
     _motionControl = new MotionControl(this);
 
@@ -233,6 +234,10 @@ const Geometry2d::Segment OurRobot::kickerBar() const {
     Point L(x, Robot_MouthWidth / 2.0f);
     Point R(x, -Robot_MouthWidth / 2.0f);
     return Segment(pose * L, pose * R);
+}
+
+Geometry2d::Point OurRobot::mouthPos() const {
+    return kickerBar().center();
 }
 
 bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
@@ -473,8 +478,14 @@ bool OurRobot::charged() const {
 }
 
 bool OurRobot::hasBall() const {
-    return _radioRx.has_ball_sense_status() &&
-           _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
+    if (_radioRx.has_ball_sense_status() &&
+           _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh()) {
+        OurRobot::_lastBallSense = RJ::now();
+        return true;
+    } else if ((RJ::now() - OurRobot::_lastBallSense).count() < OurRobot::_lostBallDuration) {
+        return true;
+    }
+    return false;
 }
 
 bool OurRobot::ballSenseWorks() const {

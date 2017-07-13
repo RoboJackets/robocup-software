@@ -372,6 +372,8 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
+    Geometry2d::Point mouthPos() const;
+
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
@@ -530,6 +532,9 @@ protected:
     friend class MotionControl;
 
 private:
+    mutable RJ::Time _lastBallSense;
+    const long _lostBallDuration = 200000000;
+
     mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
