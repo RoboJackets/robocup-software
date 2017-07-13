@@ -26,6 +26,8 @@ USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
     for (int i = 0; i < NumRXTransfers; ++i) {
         _rxTransfers[i] = libusb_alloc_transfer(0);
     }
+
+    current_receive_debug = {DebugCommunication::PIDError};
 }
 
 USBRadio::~USBRadio() {
@@ -304,6 +306,19 @@ void USBRadio::handleRxData(uint8_t* buf) {
         packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
     }
 
+    for (int index = 0; index < current_receive_debug.size(); ++index)
+    {
+        auto debugResponse = current_receive_debug[index];
+        auto debugResponseInfo = DebugCommunication::RESPONSE_INFO.at(debugResponse);
+        auto value = msg->debug_data.at(index);
+        auto packet_debug_response = packet.add_debug_responses();
+        packet_debug_response->set_key(debugResponseInfo.name);
+        packet_debug_response->set_value(value);
+        // access using []
+    }
+    for (DebugCommunication::DebugResponse debugResponse: current_receive_debug) {
+
+    }
     _reversePackets.push_back(packet);
 }
 

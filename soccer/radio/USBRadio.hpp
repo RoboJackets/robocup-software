@@ -34,6 +34,7 @@ public:
     void switchTeam(bool) override {}
 
 protected:
+    std::vector<DebugCommunication::DebugResponse> current_receive_debug;
     libusb_context* _usb_context;
     libusb_device_handle* _device;
 

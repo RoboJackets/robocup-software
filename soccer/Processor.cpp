@@ -26,6 +26,7 @@
 #include "modeling/BallTracker.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
+#include "firmware-common/common2015/utils/rtp.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -731,6 +732,9 @@ void Processor::sendRadioData() {
         }
     }
 
+
+
+    cout<<"test" << rtp::Forward_Size<<" "<<rtp::Reverse_Size<<endl;
     if (_radio) {
         _radio->send(*_state.logFrame->mutable_radio_tx());
     }
