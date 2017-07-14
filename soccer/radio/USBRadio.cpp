@@ -5,6 +5,7 @@
 
 #include <Utils.hpp>
 #include "USBRadio.hpp"
+#include "Geometry2d/Util.hpp"
 
 // Include this file for base station usb vendor/product ids
 #include "firmware-common/base2015/usb-interface.hpp"
@@ -27,7 +28,7 @@ USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
         _rxTransfers[i] = libusb_alloc_transfer(0);
     }
 
-    current_receive_debug = {DebugCommunication::PIDError};
+    current_receive_debug = {DebugCommunication::DebugResponse::PIDError0};
 }
 
 USBRadio::~USBRadio() {
@@ -179,7 +180,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
     uint8_t forward_packet[rtp::ForwardSize];
 
     // ensure Forward_Size is correct
-    static_assert(sizeof(rtp::Header) + 6 * sizeof(rtp::ControlMessage) ==
+    static_assert(sizeof(rtp::Header) + 6 * sizeof(rtp::RobotTxMessage) ==
                       rtp::ForwardSize,
                   "Forward packet contents exceeds buffer size");
 
@@ -200,29 +201,27 @@ void USBRadio::send(Packet::RadioTx& packet) {
         // access
         size_t offset =
             sizeof(rtp::Header) + slot * sizeof(rtp::ControlMessage);
-        rtp::ControlMessage* msg =
-            (rtp::ControlMessage*)(forward_packet + offset);
+        rtp::RobotTxMessage* msg =
+            (rtp::RobotTxMessage*)(forward_packet + offset);
 
         if (slot < packet.robots_size()) {
             const Packet::Control& robot = packet.robots(slot).control();
 
             msg->uid = packet.robots(slot).uid();
+            msg->messageType = rtp::RobotTxMessage::ControlMessageType;
 
-            msg->bodyX =
-                robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
-            msg->bodyY =
-                robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
-            msg->bodyW =
-                robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR;
+            auto &controlMessage = msg->message.controlMessage;
 
-            msg->dribbler =
-                max(0, min(255, static_cast<uint16_t>(robot.dvelocity()) * 2));
+            controlMessage.bodyX = static_cast<int16_t >(robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+            controlMessage.bodyY = static_cast<int16_t >(robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+            controlMessage.bodyW = static_cast<int16_t >(robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
 
-            msg->kickStrength = robot.kcstrength();
+            controlMessage.dribbler = clamp(static_cast<uint16_t>(robot.dvelocity()) * 2, 0, 255);
 
-            msg->shootMode = robot.shootmode();
-            msg->triggerMode = robot.triggermode();
-            msg->song = robot.song();
+            controlMessage.kickStrength = robot.kcstrength();
+            controlMessage.shootMode = robot.shootmode();
+            controlMessage.triggerMode = robot.triggermode();
+            controlMessage.song = robot.song();
         } else {
             // empty slot
             msg->uid = rtp::INVALID_ROBOT_UID;
@@ -314,7 +313,6 @@ void USBRadio::handleRxData(uint8_t* buf) {
         auto packet_debug_response = packet.add_debug_responses();
         packet_debug_response->set_key(debugResponseInfo.name);
         packet_debug_response->set_value(value);
-        // access using []
     }
     _reversePackets.push_back(packet);
 }
