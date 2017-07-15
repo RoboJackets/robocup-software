@@ -200,7 +200,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
         // control message and cast it to a ControlMessage pointer for easy
         // access
         size_t offset =
-            sizeof(rtp::Header) + slot * sizeof(rtp::ControlMessage);
+            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
         rtp::RobotTxMessage* msg =
             (rtp::RobotTxMessage*)(forward_packet + offset);
 
