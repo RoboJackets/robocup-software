@@ -228,6 +228,20 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
+    if (packet.robots_size()<6) {
+        auto slot = packet.robots_size();
+        size_t offset =
+            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
+        rtp::RobotTxMessage* msg =
+            (rtp::RobotTxMessage*)(forward_packet + offset);
+
+        msg->uid = rtp::ANY_ROBOT_UID;
+        msg->messageType = rtp::RobotTxMessage::DebugMessageType;
+
+        auto &debugMessage = msg->message.debugMessage;
+        std::copy_n(current_receive_debug.begin(), std::min(current_receive_debug.size(), debugMessage.keys.size()), debugMessage.keys.begin());
+    }
+
     // Send the forward packet
     int sent = 0;
     int transferRetCode =
