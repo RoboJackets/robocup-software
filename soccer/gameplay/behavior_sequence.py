@@ -1,6 +1,7 @@
 import composite_behavior as cb
 import behavior
 from typing import List
+import logging
 
 
 # A behavior sequence takes a list of behaviors and executes them in sequence.
@@ -8,10 +9,12 @@ from typing import List
 # The sequence moves onto the next behavior as soon as the current behavior completes
 class BehaviorSequence(cb.CompositeBehavior):
     def __init__(self, continuous=False,
+                 repeat=False,
                  behaviors: List[cb.CompositeBehavior]=[]):
         super().__init__(continuous=continuous)
 
         self.behaviors = behaviors
+        self.repeat = repeat
 
         self._current_behavior_index = -1
 
@@ -21,7 +24,8 @@ class BehaviorSequence(cb.CompositeBehavior):
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
-            lambda: self._current_behavior_index >= len(self.behaviors),
+            lambda: (not repeat
+                     and self._current_behavior_index >= len(self.behaviors)),
             'all subbehaviors complete')
 
         self.add_transition(
@@ -35,9 +39,6 @@ class BehaviorSequence(cb.CompositeBehavior):
         # reset
         self._current_behavior_index = -1
 
-    def on_enter_failed(self):
-        self._terminate_subbehaviors()
-
     ## While we haven't gone through every behavior in the sequence, we
     #  Execute each individual behavior. When it finishes we increment
     #  the current_behavior index to the next behavior
@@ -47,11 +48,15 @@ class BehaviorSequence(cb.CompositeBehavior):
                 self.remove_subbehavior('current')
 
             self._current_behavior_index += 1
+
             if self.current_behavior_index < len(self.behaviors):
                 self.add_subbehavior(
                     self.behaviors[self.current_behavior_index],
                     'current',
                     required=True)
+            elif self.repeat:
+                logging.info("Restarting behavior sequence...")
+                self.restart()
 
     #advances if the current behavior is done running, or if
     def should_advance(self):
@@ -70,13 +75,11 @@ class BehaviorSequence(cb.CompositeBehavior):
     def _terminate_subbehaviors(self):
         self.remove_all_subbehaviors()
         if self.behaviors is not None:
-            # note: we really should only do this for the ones that haven't been run yet,
-            #       but calling terminate() on something that's already done running doesn't
-            #       hurt anything and I'm lazy...
-            for bhvr in self.behaviors:
+            for bhvr in \
+                filter(lambda x: not x.is_done_running(), self.behaviors):
                 bhvr.terminate()
 
-    def on_enter_cancelled(self):
+    def on_exit_running(self):
         self._terminate_subbehaviors()
 
     @property
