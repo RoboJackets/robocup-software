@@ -1,6 +1,7 @@
-from play import *
-from behavior import *
+from play import Play
+from behavior import Behavior
 import plays.stopped
+import plays.testing.test_coach
 import logging
 from PyQt5 import QtCore
 import main
@@ -46,7 +47,7 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = plays.restarts.placement.Placement()
                     self._currently_restarting = True
             else:
-                if not isinstance(self.play, plays.stopped.Stopped):
+                if self.play is None or not self.play.run_during_stopped():
                     logging.info(
                         "Running 'Stopped' play due to game state change")
                     self.play = plays.stopped.Stopped()
@@ -77,26 +78,29 @@ class RootPlay(Play, QtCore.QObject):
             self.temporarily_blacklisted_play_class = None
 
             # see if we need to kill current play or if it's done running
-            if self.play != None:
+            if self.play is not None:
                 if self.play.__class__ not in map(lambda tup: tup[0],
                                                   enabled_plays_and_scores):
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' no longer enabled, aborting")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' no longer enabled, aborting")
                     self.play.terminate()
                     self.play = None
                 elif self.play.is_done_running():
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' finished running")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' finished running")
                     if self.play.is_restart:
                         self._currently_restarting = False
                     self.play = None
                 elif self.play.__class__.score() == float("inf"):
-                    logging.info("Current play '" + self.play.__class__.
-                                 __name__ + "' no longer applicable, ending")
+                    logging.info("Current play '" +
+                                 self.play.__class__.__name__ +
+                                 "' no longer applicable, ending")
                     self.play.terminate()
                     self.play = None
 
-            if self.play == None:
+            if self.play is None:
                 # reset the double-touch tracker
                 evaluation.double_touch.tracker().restart()
 
@@ -117,7 +121,7 @@ class RootPlay(Play, QtCore.QObject):
                     logging.error("Exception occurred during play selection: "
                                   + str(e))
                     traceback.print_exc()
-                if self.play != None:
+                if self.play is not None:
                     logging.info("Chose new play: '" +
                                  self.play.__class__.__name__ + "'")
 
@@ -164,11 +168,11 @@ class RootPlay(Play, QtCore.QObject):
     @play.setter
     def play(self, value):
         # trash old play
-        if self.play != None:
+        if self.play is not None:
             self.remove_subbehavior('play')
             self._play = None
 
-        if value != None:
+        if value is not None:
             self._play = value
 
             # see if this play handles the goalie by itself
@@ -181,8 +185,8 @@ class RootPlay(Play, QtCore.QObject):
         self.setup_goalie_if_needed()
 
         # change notification so ui can update if necessary
-        self.play_changed.emit(self.play.__class__.__name__ if self._play !=
-                               None else "(No Play)")
+        self.play_changed.emit(self.play.__class__.__name__ if self._play is
+                               not None else "(No Play)")
 
     ## the c++ GameplayModule reaches through the language portal and sets this
     # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None
@@ -197,19 +201,19 @@ class RootPlay(Play, QtCore.QObject):
         logging.info("goalie_id set to: " + str(self._goalie_id))
 
     def setup_goalie_if_needed(self):
-        if self.goalie_id == None:
+        if self.goalie_id is None:
             if self.has_subbehavior_with_name('goalie'):
                 self.remove_subbehavior('goalie')
         else:
             if self.has_subbehavior_with_name('goalie'):
                 goalie = self.subbehavior_with_name('goalie')
-            elif self.play == None or not self.play.__class__.handles_goalie():
+            elif self.play is None or not self.play.__class__.handles_goalie():
                 goalie = tactics.positions.goalie.Goalie()
                 self.add_subbehavior(goalie, 'goalie', required=True)
             else:
                 goalie = None
 
-            if goalie != None:
+            if goalie is not None:
                 goalie.shell_id = self.goalie_id
 
     @property
@@ -218,7 +222,7 @@ class RootPlay(Play, QtCore.QObject):
 
     @robots.setter
     def robots(self, robots):
-        self._robots = robots if robots != None else []
+        self._robots = robots if robots is not None else []
 
     def __str__(self):
         return '\n'.join([str(bhvr) for bhvr in self.all_subbehaviors()])

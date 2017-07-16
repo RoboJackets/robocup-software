@@ -6,10 +6,10 @@ import behavior
 # If one of these sub-behaviors fails, then the sequence fails and doesn't execute anything more
 # The sequence moves onto the next behavior as soon as the current behavior completes
 class BehaviorSequence(composite_behavior.CompositeBehavior):
-    def __init__(self, behaviors= []):
-        super().__init__(
-            continuous=True
-        )  # Note: we don't know if the sequence will be continuous or not, so we assume it is to be safe
+    def __init__(self, behaviors=None):
+        # Note: we don't know if the sequence will be continuous or not,
+        # so we assume it is to be safe
+        super().__init__(continuous=True)
 
         self.behaviors = behaviors
 

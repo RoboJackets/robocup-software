@@ -23,11 +23,11 @@ class StateMachine:
         self._state = None
 
     @property
-    def start_state(self):
+    def start_state(self) -> None:
         return self._start_state
 
     ## Resets the FSM back into the start state
-    def restart(self):
+    def restart(self) -> None:
         self.transition(self.start_state)
 
     ## Registers a new state (which can optionally be a substate of an existing state)
@@ -44,7 +44,7 @@ class StateMachine:
         s1 = self.state
 
         # call execute_STATENAME
-        if self.state != None:
+        if self.state is not None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 method_name = "execute_" + state.name
                 state_method = None
@@ -55,14 +55,14 @@ class StateMachine:
                 if state_method is not None:
                     state_method()
 
-        if self.state == None:
+        if self.state is None:
             self.transition(self.start_state)
         else:
             # transition if an 'event' fires
             next_states = []
             if self.state in self._transitions:
                 for next_state, transition in self._transitions[
-                        self.state].items():
+                    self.state].items():
                     if transition['condition']():
                         next_states += [next_state]
 
@@ -93,15 +93,13 @@ class StateMachine:
     # calls 'on_enter_STATENAME()' if it exists
     def transition(self, new_state):
         # print("TRANSITION: " + str(self.__class__.__name__) + ": " + str(self.state) + " -> " + str(new_state))
-        if self.state != None:
+        if self.state is not None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 if not self.state_is_substate(new_state, state):
                     method_name = "on_exit_" + state.name
                     state_method = None
                     try:
-                        state_method = getattr(
-                            self, method_name
-                        )  # call the transition FROM method if it exists
+                        state_method = getattr(self, method_name)  # call the transition FROM method if it exists
                     except AttributeError:
                         pass
                     if state_method is not None:
@@ -112,9 +110,7 @@ class StateMachine:
                 method_name = "on_enter_" + state.name
                 state_method = None
                 try:
-                    state_method = getattr(
-                        self, method_name
-                    )  # call the transition TO method if it exists
+                    state_method = getattr(self, method_name)  # call the transition TO method if it exists
                 except AttributeError:
                     pass
                 if state_method is not None:
@@ -128,7 +124,7 @@ class StateMachine:
 
     def state_is_substate(self, state, possible_parent):
         ancestor = state
-        while ancestor != None:
+        while ancestor is not None:
             if possible_parent == ancestor: return True
             ancestor = self._state_hierarchy[ancestor]
 
@@ -138,7 +134,7 @@ class StateMachine:
     # returns None if the current state doesn't descend from one in the list
     def corresponding_ancestor_state(self, ancestors):
         state = self.state
-        while state != None:
+        while state is not None:
             if state in ancestors:
                 return state
             state = self._state_hierarchy[state]
@@ -151,7 +147,7 @@ class StateMachine:
     def ancestors_of_state(self, state):
         ancestors = []
         state = self._state_hierarchy[state]
-        while state != None:
+        while state is not None:
             ancestors.insert(0, state)
             state = self._state_hierarchy[state]
         return ancestors
@@ -186,7 +182,7 @@ class StateMachine:
                     shape=shape)
 
         for state, subgraph in subgraphs.items():
-            if state != None:
+            if state is not None:
                 subgraphs[self._state_hierarchy[state]].subgraph(subgraph)
 
         for start in self._transitions:
@@ -199,7 +195,7 @@ class StateMachine:
         return g
 
     # writes a png file of the graphviz output to the specified location
-    def write_diagram_png(self, filename):
+    def write_diagram_png(self, filename: str):
         g = self.as_graphviz()
         g.render(filename=filename, cleanup=True)
 

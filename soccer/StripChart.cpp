@@ -1,6 +1,9 @@
 #include "StripChart.hpp"
+#include "time.hpp"
 
 #include <QPainter>
+#include <QFileDialog>
+#include <QDateTime>
 
 #include <stdio.h>
 #include <cmath>
@@ -9,6 +12,8 @@
 #include <Geometry2d/Point.hpp>
 #include <Constants.hpp>
 #include <time.hpp>
+#include <iostream>
+#include <fstream>
 
 #include <google/protobuf/descriptor.h>
 
@@ -47,15 +52,56 @@ void StripChart::function(Chart::Function* function) {
     }
 }
 
+void StripChart::exportChart() {
+    QString chartName = QFileDialog::getSaveFileName(
+        this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
+    std::ofstream outfile(chartName.toStdString());
+
+    // output column names
+    outfile << "Time";
+    for (unsigned int x = 0; x < _functions.size(); x++) {
+        auto function = _functions[x];
+        outfile << ", " << function->name.toStdString();
+    }
+    outfile << std::endl;
+
+    // output data
+
+    // Get the oldest datapoint to use as the starting time
+    unsigned int start = _history->size() - 1;
+    while (!_history->at(start)) {
+        start--;
+    }
+    auto startTime = _history->at(start).get()->timestamp();
+
+    for (unsigned int i = start; i > 0; i--) {
+        if (_history->at(i)) {
+            outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() -
+                                           startTime);
+
+            for (unsigned int x = 0; x < _functions.size(); x++) {
+                auto function = _functions[x];
+                float v = 0;
+
+                if (function->value(*_history->at(i).get(), v)) {
+                    outfile << "," << v;
+                }
+            }
+            outfile << std::endl;
+        }
+    }
+    outfile.close();
+}
+
 QPointF StripChart::dataPoint(int i, float value) {
-    float x = width() - (i * width() / _history->size());
+    float x = width() - (i * width() / chartSize);
     int h = height();
     float y = h - (value - _minValue) * h / (_maxValue - _minValue);
     return QPointF(x, y);
 }
 
 int StripChart::indexAtPoint(const QPoint& point) {
-    return (width() - point.x()) * _history->size() / width();
+    return (width() - point.x()) * chartSize / width();
 }
 
 void StripChart::paintEvent(QPaintEvent* e) {
@@ -89,7 +135,8 @@ void StripChart::paintEvent(QPaintEvent* e) {
         } else {
             p.setPen(Qt::red);
         }
-        for (unsigned int i = 0; i < _history->size(); ++i) {
+        // for (unsigned int i = 0; i < _history->size(); ++i) {
+        for (unsigned int i = 0; i < chartSize; ++i) {
             float v = 0;
             if (_history->at(i) && function->value(*_history->at(i).get(), v)) {
                 if (autoRange) {
