@@ -26,7 +26,6 @@
 #include "modeling/BallTracker.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
-#include "firmware-common/common2015/utils/rtp.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -732,7 +731,18 @@ void Processor::sendRadioData() {
         }
     }
 
+    for (const auto& pair: _robotConfigs) {
+        auto config = tx->add_configs();
+        config->set_key(pair.first);
+        config->set_value(pair.second);
+        config->set_key_name(DebugCommunication::CONFIG_TO_NAME[pair.first]);
+    }
 
+    for (const auto& debugResponse :_robotDebugResponses) {
+        auto debugCommunication = tx->add_debug_communication();
+        debugCommunication->set_key(debugResponse);
+        debugCommunication->set_key_name(DebugCommunication::RESPONSE_INFO.at(debugResponse).name);
+    }
 
     if (_radio) {
         _radio->send(*_state.logFrame->mutable_radio_tx());

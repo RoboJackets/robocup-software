@@ -3,6 +3,7 @@
 #include <libusb.h>
 #include <stdint.h>
 #include <QMutex>
+#include <mutex>
 
 #include "Radio.hpp"
 
@@ -35,6 +36,7 @@ public:
 
 protected:
     std::vector<DebugCommunication::DebugResponse> current_receive_debug;
+    std::mutex current_receive_debug_mutex;
     libusb_context* _usb_context;
     libusb_device_handle* _device;
 

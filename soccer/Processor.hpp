@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
@@ -15,6 +17,7 @@
 #include <modeling/RobotFilter.hpp>
 #include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
+#include "firmware-common/common2015/utils/rtp.hpp"
 
 class Configuration;
 class RobotStatus;
@@ -172,6 +175,14 @@ public:
 
     void changeVisionChannel(int port);
 
+    void setRobotConfigs(std::vector<std::pair<DebugCommunication::ConfigCommunication, int16_t >> configs) {
+        _robotConfigs = std::move(configs);
+    }
+
+    void setRobotDebugResponses(std::vector<DebugCommunication::DebugResponse> debugResponses) {
+        _robotDebugResponses = std::move(debugResponses);
+    }
+
     VisionChannel visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
@@ -258,6 +269,10 @@ private:
     // network
     QMutex _statusMutex;
     Status _status;
+
+    // ConfigCommunication Storage
+    std::vector<std::pair<DebugCommunication::ConfigCommunication, int16_t >> _robotConfigs{};
+    std::vector<DebugCommunication::DebugResponse>_robotDebugResponses{};
 
     // modules
     std::shared_ptr<NewRefereeModule> _refereeModule;

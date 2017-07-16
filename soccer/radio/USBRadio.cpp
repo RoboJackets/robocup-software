@@ -27,8 +27,6 @@ USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
     for (int i = 0; i < NumRXTransfers; ++i) {
         _rxTransfers[i] = libusb_alloc_transfer(0);
     }
-
-    current_receive_debug = {DebugCommunication::DebugResponse::PIDError0};
 }
 
 USBRadio::~USBRadio() {
@@ -228,21 +226,37 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    int numRobotTXMessages = packet.robots_size(); 
-    if (numRobotTXMessages<6) {
-        auto slot = numRobotTXMessages;
-        size_t offset =
-            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-        rtp::RobotTxMessage* msg =
-            (rtp::RobotTxMessage*)(forward_packet + offset);
+    int numRobotTXMessages = packet.robots_size();
 
-        msg->uid = rtp::ANY_ROBOT_UID;
-        msg->messageType = rtp::RobotTxMessage::ConfMessageType;
+    for (int configStartIndex=0; configStartIndex<packet.configs_size(); configStartIndex+=rtp::ConfMessage::length) {
+        if (numRobotTXMessages<6) {
+            auto slot = numRobotTXMessages;
+            size_t offset =
+                    sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
+            rtp::RobotTxMessage* msg =
+                    (rtp::RobotTxMessage*)(forward_packet + offset);
 
-        auto &confMessage = msg->message.confMessage;
-        // confMessage.keys[0] = DebugCommunication::ConfigCommunication::PID_P;
-        // confMessage.values[0] = 0;
-        numRobotTXMessages++;
+            msg->uid = rtp::ANY_ROBOT_UID;
+            msg->messageType = rtp::RobotTxMessage::ConfMessageType;
+
+            auto &confMessage = msg->message.confMessage;
+
+
+            auto numToCopy = std::min(static_cast<int>(rtp::ConfMessage::length), packet.configs_size()-configStartIndex);
+            for (int i=0; i<numToCopy; i++) {
+                const auto &config = packet.configs(i+configStartIndex);
+                confMessage.keys[i] = static_cast<DebugCommunication::ConfigCommunication>(config.key());
+                confMessage.values[i] = (int16_t) config.value();
+            }
+            numRobotTXMessages++;
+        }
+    }
+    {
+        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
+        current_receive_debug.clear();
+        for (auto debugMessages : packet.debug_communication()) {
+            current_receive_debug.push_back(static_cast<DebugCommunication::DebugResponse>(debugMessages.key()));
+        }
     }
     if (numRobotTXMessages<6) {
         auto slot = numRobotTXMessages;
@@ -339,14 +353,16 @@ void USBRadio::handleRxData(uint8_t* buf) {
         packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
     }
 
-    for (int index = 0; index < current_receive_debug.size(); ++index)
     {
-        auto debugResponse = current_receive_debug[index];
-        auto debugResponseInfo = DebugCommunication::RESPONSE_INFO.at(debugResponse);
-        auto value = msg->debug_data.at(index);
-        auto packet_debug_response = packet.add_debug_responses();
-        packet_debug_response->set_key(debugResponseInfo.name);
-        packet_debug_response->set_value(value);
+        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
+        for (int index = 0; index < current_receive_debug.size(); ++index) {
+            auto debugResponse = current_receive_debug[index];
+            auto debugResponseInfo = DebugCommunication::RESPONSE_INFO.at(debugResponse);
+            auto value = msg->debug_data.at(index);
+            auto packet_debug_response = packet.add_debug_responses();
+            packet_debug_response->set_key(debugResponseInfo.name);
+            packet_debug_response->set_value(value);
+        }
     }
     _reversePackets.push_back(packet);
 }
