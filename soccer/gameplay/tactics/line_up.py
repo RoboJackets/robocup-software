@@ -35,7 +35,7 @@ class LineUp(composite_behavior.CompositeBehavior):
                             'robots arent lined up')
 
     def restart(self):
-        super(composite_behavior.CompositeBehavior, self).restart()
+        super().restart()
         self.debounce_count = 0
 
     # override superclass implementation of all_subbehaviors_completed() to
