@@ -8,7 +8,8 @@ import logging
 # If one of these sub-behaviors fails, then the sequence fails and doesn't execute anything more
 # The sequence moves onto the next behavior as soon as the current behavior completes
 class BehaviorSequence(cb.CompositeBehavior):
-    def __init__(self, continuous=False,
+    def __init__(self,
+                 continuous=False,
                  repeat=False,
                  behaviors: List[cb.CompositeBehavior]=[]) -> None:
         super().__init__(continuous=continuous)
@@ -24,15 +25,12 @@ class BehaviorSequence(cb.CompositeBehavior):
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
-            lambda: (not repeat
-                     and self._current_behavior_index >= len(self.behaviors)),
+            lambda: (not repeat and self._current_behavior_index >= len(self.behaviors)),
             'all subbehaviors complete')
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.failed,
-            lambda: (self.current_behavior() is not None
-                     and self.current_behavior().state ==
-                     behavior.Behavior.State.failed),
+            lambda: (self.current_behavior() is not None and self.current_behavior().state == behavior.Behavior.State.failed),
             'subbehavior failed')
 
     def on_enter_start(self):
@@ -68,8 +66,8 @@ class BehaviorSequence(cb.CompositeBehavior):
         if len(self.behaviors) > 0 and self.current_behavior_index == -1:
             # start up our first behavior
             return True
-        if (self.current_behavior() is not None
-            and self.current_behavior().is_done_running()):
+        if (self.current_behavior() is not None and
+                self.current_behavior().is_done_running()):
             # this behavior finished, move onto the next, if we were successful
             return (not self.current_behavior ==
                     (behavior.Behavior.State.failed))
@@ -106,7 +104,6 @@ class BehaviorSequence(cb.CompositeBehavior):
     def __str__(self):
         desc = super().__str__()
         if self.state == behavior.Behavior.State.running:
-            desc += ("\n    executing "
-                     + str(self.current_behavior_index + 1)
+            desc += ("\n    executing " + str(self.current_behavior_index + 1)
                      + "/" + str(len(self.behaviors)))
         return desc

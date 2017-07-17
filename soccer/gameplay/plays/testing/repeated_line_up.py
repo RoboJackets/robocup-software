@@ -25,8 +25,8 @@ class RepeatedLineUp(play.Play):
             tools.sleep.SleepBehavior(RepeatedLineUp.PAUSE),
         ]
         b = behavior_sequence.BehaviorSequence(continuous=True,
-                                           repeat=True,
-                                           behaviors=behaviors)
+                                               repeat=True,
+                                               behaviors=behaviors)
         self.add_subbehavior(b, 'line up behavior')
 
     # x_multiplier is a 1 or -1 to indicate which side of the field to be on

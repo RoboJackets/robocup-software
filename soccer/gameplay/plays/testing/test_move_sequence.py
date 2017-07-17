@@ -4,20 +4,18 @@ import behavior
 import play
 import robocup
 
-class TestMoveSequence(play.Play):
 
+class TestMoveSequence(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
-                    behavior.Behavior.State.running, lambda: True,
-                    'immediately')
+                            behavior.Behavior.State.running, lambda: True,
+                            'immediately')
 
         #arbitrary points to move to
-        positions = [robocup.Point(0, 1.5),
-                     robocup.Point(2, 0),
-                     robocup.Point(0, 3),
-                     robocup.Point(-3, 0)]
+        positions = [robocup.Point(0, 1.5), robocup.Point(2, 0),
+                     robocup.Point(0, 3), robocup.Point(-3, 0)]
         sequence = single_robot_sequence.SingleRobotSequence(
             repeat=True,
             behaviors=list(map(skills.move.Move, positions)))
