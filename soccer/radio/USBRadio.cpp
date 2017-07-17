@@ -245,8 +245,9 @@ void USBRadio::send(Packet::RadioTx& packet) {
             auto numToCopy = std::min(static_cast<int>(rtp::ConfMessage::length), packet.configs_size()-configStartIndex);
             for (int i=0; i<numToCopy; i++) {
                 const auto &config = packet.configs(i+configStartIndex);
-                confMessage.keys[i] = static_cast<DebugCommunication::ConfigCommunication>(config.key());
-                confMessage.values[i] = (int16_t) config.value();
+                auto key = static_cast<DebugCommunication::ConfigCommunication>(config.key());
+                confMessage.keys[i] = key;
+                confMessage.values[i] = DebugCommunication::configToValue(key, config.value());
             }
             numRobotTXMessages++;
         }

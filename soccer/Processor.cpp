@@ -735,7 +735,7 @@ void Processor::sendRadioData() {
         auto config = tx->add_configs();
         config->set_key(pair.first);
         config->set_value(pair.second);
-        config->set_key_name(DebugCommunication::CONFIG_TO_NAME[pair.first]);
+        config->set_key_name(DebugCommunication::CONFIG_TO_INFO.at(pair.first).name);
     }
 
     for (const auto& debugResponse :_robotDebugResponses) {

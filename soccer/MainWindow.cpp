@@ -157,8 +157,8 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     // SetupRobotConfig
     QStringList configList{};
 
-    for (auto name : DebugCommunication::CONFIG_TO_NAME) {
-        configList.append(QString::fromStdString(name));
+    for (const auto &pair : DebugCommunication::CONFIG_TO_INFO) {
+        configList.append(QString::fromStdString(pair.second.name));
     }
     auto rowCount = _ui.robotConfig->rowCount();
     for (int row=0; row<rowCount; row++) {
@@ -169,7 +169,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     }
 
     QStringList debugResponseList{QString()};
-    for (auto entry : DebugCommunication::RESPONSE_INFO) {
+    for (const auto &entry : DebugCommunication::RESPONSE_INFO) {
         auto name = entry.second.name;
         debugResponseList.append(QString::fromStdString(name));
     }
