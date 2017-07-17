@@ -361,7 +361,7 @@ void USBRadio::handleRxData(uint8_t* buf) {
             auto value = msg->debug_data.at(index);
             auto packet_debug_response = packet.add_debug_responses();
             packet_debug_response->set_key(debugResponseInfo.name);
-            packet_debug_response->set_value(value);
+            packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse, value));
         }
     }
     _reversePackets.push_back(packet);
