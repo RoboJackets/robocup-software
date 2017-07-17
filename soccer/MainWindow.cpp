@@ -155,7 +155,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
     // SetupRobotConfig
-    QStringList configList{};
+    QStringList configList{QString{}};
 
     for (const auto &pair : DebugCommunication::CONFIG_TO_INFO) {
         configList.append(QString::fromStdString(pair.second.name));
@@ -1491,7 +1491,7 @@ void MainWindow::on_actionVisionFull_Field_triggered() {
 bool MainWindow::live() { return !_playbackRate; }
 
 void MainWindow::on_robotConfigButton_clicked() {
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, int16_t >> configs;
+    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>> configs;
     for (int i=0; i<_robotConfigQComboBoxes.size(); i++) {
         const auto& comboBox = _robotConfigQComboBoxes[i];
         auto key = comboBox->currentText().toStdString();
@@ -1501,7 +1501,7 @@ void MainWindow::on_robotConfigButton_clicked() {
             if (item) {
                 double value = item->text().toDouble(&ok);
                 if (ok) {
-                    configs.emplace_back(DebugCommunication::NAME_TO_CONFIG.at(key), static_cast<int16_t>(value));
+                    configs.emplace_back(DebugCommunication::NAME_TO_CONFIG.at(key), value);
                 } else {
                     debugLog("Config trying to be sent that is not a number.");
                 }

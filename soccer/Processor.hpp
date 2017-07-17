@@ -175,7 +175,7 @@ public:
 
     void changeVisionChannel(int port);
 
-    void setRobotConfigs(std::vector<std::pair<DebugCommunication::ConfigCommunication, int16_t >> configs) {
+    void setRobotConfigs(std::vector<std::pair<DebugCommunication::ConfigCommunication, float >> configs) {
         _robotConfigs = std::move(configs);
     }
 
@@ -271,7 +271,7 @@ private:
     Status _status;
 
     // ConfigCommunication Storage
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, int16_t >> _robotConfigs{};
+    std::vector<std::pair<DebugCommunication::ConfigCommunication, float >> _robotConfigs{};
     std::vector<DebugCommunication::DebugResponse>_robotDebugResponses{};
 
     // modules
