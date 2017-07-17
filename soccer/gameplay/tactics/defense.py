@@ -13,7 +13,6 @@ import role_assignment
 # TODO: clear free balls
 # TODO: handle the case where the ball is invalid
 
-
 ## The Defense tactic handles goalie and defender placement to defend the goal
 # It does lots of window and shot evaluation to figure out which 'threats' are the
 # most important to block, then assigns blocking positions to the bots
@@ -132,7 +131,7 @@ class Defense(composite_behavior.CompositeBehavior):
         behaviors = [goalie, defender1, defender2]
 
         # if we don't have any bots to work with, don't waste time calculating
-        if all(bhvr.robot == None for bhvr in behaviors):
+        if all(bhvr.robot is None for bhvr in behaviors):
             return
 
         # A threat to our goal - something we'll actively defend against
@@ -210,7 +209,7 @@ class Defense(composite_behavior.CompositeBehavior):
             # only look at ones that have robots
             # as we handle threats, we remove the handlers from this list
 
-        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot != None,
+        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot is not None,
                                              [goalie, defender1, defender2]))
 
         def set_block_lines_for_threat_handlers(threat):
@@ -225,7 +224,7 @@ class Defense(composite_behavior.CompositeBehavior):
                         del threat.assigned_handlers[idx]
                         threat.assigned_handlers.insert(1, goalie)
 
-            if threat.best_shot_window != None:
+            if threat.best_shot_window is not None:
                 center_line = robocup.Line(
                     threat.pos, threat.best_shot_window.segment.center())
             else:
@@ -341,14 +340,14 @@ class Defense(composite_behavior.CompositeBehavior):
             # primary threat is the ball or the opponent holding it
             opp_with_ball = evaluation.ball.opponent_with_ball()
 
-            threat = Threat(opp_with_ball if opp_with_ball != None else
+            threat = Threat(opp_with_ball if opp_with_ball is not None else
                             main.ball().pos)
             threat.ball_acquire_chance = 1.0
             threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
             threats.append(threat)
 
-# if an opponent has the ball or is potentially about to receive the ball,
-# we look at potential receivers of it as threats
+        # if an opponent has the ball or is potentially about to receive the ball,
+        # we look at potential receivers of it as threats
         if isinstance(threats[0].source, robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
                 pass_chance = evaluation.passing.eval_pass(
@@ -455,7 +454,7 @@ class Defense(composite_behavior.CompositeBehavior):
             # recalculate_threat_shot(idx)
 
             # the line they'll be shooting down/on
-            if threat.best_shot_window != None:
+            if threat.best_shot_window is not None:
                 shot_line = robocup.Segment(
                     threat.pos, threat.best_shot_window.segment.center())
             else:
@@ -470,7 +469,7 @@ class Defense(composite_behavior.CompositeBehavior):
                                                     "Defense")
 
                 # draw some debug stuff
-                if threat.best_shot_window != None:
+                if threat.best_shot_window is not None:
                     # draw shot triangle
                     pts = [threat.pos,
                            threat.best_shot_window.segment.get_pt(0),
