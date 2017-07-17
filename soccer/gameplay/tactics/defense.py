@@ -388,9 +388,19 @@ class Defense(composite_behavior.CompositeBehavior):
                 threats.append(lurker)
                 recalculate_threat_shot(len(threats) - 1)
 
+        # If we are clearing, discard any threats close to the ball
+        # (avoid multiple robots rushing for the ball)
+        if self.state == self.State.clearing:
+            threats = list(filter(
+                lambda x: x.pos is not None
+                and not x.pos.dist_to(main.ball().pos)
+                < constants.Robot.Radius * 2,
+                threats))
+
         # only consider the top three threats
         threats.sort(key=lambda threat: threat.score, reverse=True)
         threats = threats[0:3]
+
 
         # print("sorted threats:")
         # for idx, t in enumerate(threats):
