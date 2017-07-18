@@ -9,7 +9,8 @@ namespace Planning {
 
 /*
  * This is a superclass for different MotionCommands.
- * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget, TuningPath, None
+ * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget,
+ * TuningPath, None
  */
 class MotionCommand {
 public:

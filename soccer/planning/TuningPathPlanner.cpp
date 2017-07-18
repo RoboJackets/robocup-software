@@ -16,11 +16,12 @@ std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
     if (shouldReplan(planRequest)) {
         Geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
-        //Tells the robot that is actually in a different location
-        //This forces the PID Tuner to kick in to move the robot to its new location
+        // Tells the robot that is actually in a different location
+        // This forces the PID Tuner to kick in to move the robot to its new
+        // location
         auto path = std::unique_ptr<Path>(
-            new TrapezoidalPath(endTarget, startInstant.vel.mag(),
-                                endTarget, endSpeed, motionConstraints));
+            new TrapezoidalPath(endTarget, startInstant.vel.mag(), endTarget,
+                                endSpeed, motionConstraints));
         path->setStartTime(RJ::now());
         return std::move(path);
     } else {
@@ -28,8 +29,7 @@ std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
     }
 }
 
-bool TuningPathPlanner::shouldReplan(
-    const PlanRequest& planRequest) const {
+bool TuningPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();

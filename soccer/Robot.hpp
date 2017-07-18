@@ -228,9 +228,10 @@ public:
      * the path
      */
     void moveDirect(Geometry2d::Point goal, float endSpeed = 0);
-    
+
     /**
-     * @brief Move to a given point while breaking everything. Tells the robot it is already at the endpoint
+     * @brief Move to a given point while breaking everything. Tells the robot
+     * it is already at the endpoint
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path. I'm not even sure if this part makes any sense here.
      */

@@ -39,7 +39,7 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
         case MotionCommand::TuningPath:
             planner = new TuningPathPlanner();
             break;
-            
+
         case MotionCommand::Pivot:
             planner = new PivotPathPlanner();
             break;
