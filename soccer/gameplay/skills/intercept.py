@@ -18,7 +18,8 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
                             'immediately')
 
     def execute_running(self):
-        if self.robot != None and main.ball().valid:
+        #pylint: disable=no-member
+        if self.robot is not None and main.ball().valid:
             if self.shape_constraint is None:
                 self.target_pos = self.ball_line().nearest_point(
                     self.robot.pos)

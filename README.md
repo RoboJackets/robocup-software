@@ -27,11 +27,6 @@ The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more informatio
 The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.
 
 
-### simulator/
-
-Code for the RoboCup simulator is located here.  This allows us to quickly test our soccer strategy on the computer.  Keep in mind though that just because something works well in the simulator doesn't mean it'll be the same in real life.
-
-
 ### common/
 
 Code that's shared between the software and firmware sections of our codebase is stored here, as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules). See RoboJackets/robocup-common.
@@ -47,7 +42,7 @@ Compiled programs and some configuration files are stored here.
 
 ## Setup
 
-Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux, Arch Linux, and Mac OS X, although it shouldn't be too difficult to port to other operating systems.
+Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux and Arch Linux, although it shouldn't be too difficult to port to other operating systems.
 
 1) Clone the repository
 

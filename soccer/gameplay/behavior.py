@@ -17,7 +17,7 @@ class Behavior(fsm.StateMachine):
         failed = 4
         cancelled = 5
 
-    def __init__(self, continuous):
+    def __init__(self, continuous: bool) -> None:
         super().__init__(start_state=Behavior.State.start)
         # add base states for Behavior
         self.add_state(Behavior.State.start)
@@ -35,7 +35,7 @@ class Behavior(fsm.StateMachine):
         ## Whether or not the Behavior is running
         # Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it
         # This is a convenience method to check whether or not the play is running
-    def is_done_running(self):
+    def is_done_running(self) -> bool:
         for state in [Behavior.State.completed, Behavior.State.failed,
                       Behavior.State.cancelled]:
             if self.is_in_state(state): return True
@@ -63,11 +63,11 @@ class Behavior(fsm.StateMachine):
     # noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal)
     # continuous: a behavior that continually runs until told to stop (example: zone defense)
     @property
-    def is_continuous(self):
+    def is_continuous(self) -> bool:
         return self._is_continuous
 
     def __str__(self):
-        state_desc = self.state.name if self.state != None else ""
+        state_desc = self.state.name if self.state is not None else ""
         return self.__class__.__name__ + "::" + state_desc
 
     ## Returns a tree of RoleRequirements keyed by subbehavior reference name
