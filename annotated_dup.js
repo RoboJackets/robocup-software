@@ -13,6 +13,9 @@ var annotated_dup =
       [ "behavior", null, [
         [ "Behavior", "classgameplay_1_1behavior_1_1_behavior.html", "classgameplay_1_1behavior_1_1_behavior" ]
       ] ],
+      [ "behavior_sequence", null, [
+        [ "BehaviorSequence", "classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html", "classgameplay_1_1behavior__sequence_1_1_behavior_sequence" ]
+      ] ],
       [ "composite_behavior", null, [
         [ "CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", "classgameplay_1_1composite__behavior_1_1_composite_behavior" ]
       ] ],
@@ -140,6 +143,9 @@ var annotated_dup =
           [ "test_mark", null, [
             [ "TestMark", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html", "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark" ]
           ] ],
+          [ "test_move_sequence", null, [
+            [ "TestMoveSequence", "classgameplay_1_1plays_1_1testing_1_1test__move__sequence_1_1_test_move_sequence.html", "classgameplay_1_1plays_1_1testing_1_1test__move__sequence_1_1_test_move_sequence" ]
+          ] ],
           [ "test_num_on_offense", null, [
             [ "TestNumOnOffense", "classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense.html", "classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense" ]
           ] ],
@@ -188,6 +194,9 @@ var annotated_dup =
       ] ],
       [ "single_robot_composite_behavior", null, [
         [ "SingleRobotCompositeBehavior", "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html", "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior" ]
+      ] ],
+      [ "single_robot_sequence", null, [
+        [ "SingleRobotSequence", "classgameplay_1_1single__robot__sequence_1_1_single_robot_sequence.html", "classgameplay_1_1single__robot__sequence_1_1_single_robot_sequence" ]
       ] ],
       [ "skills", null, [
         [ "_kick", null, [
@@ -246,9 +255,6 @@ var annotated_dup =
         [ "StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", "classgameplay_1_1standard__play_1_1_standard_play" ]
       ] ],
       [ "tactics", null, [
-        [ "behavior_sequence", null, [
-          [ "BehaviorSequence", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html", "classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence" ]
-        ] ],
         [ "coordinated_pass", null, [
           [ "CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass" ]
         ] ],
@@ -307,6 +313,11 @@ var annotated_dup =
       ] ],
       [ "timeout_behavior", null, [
         [ "TimeoutBehavior", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior" ]
+      ] ],
+      [ "tools", null, [
+        [ "sleep", null, [
+          [ "SleepBehavior", "classgameplay_1_1tools_1_1sleep_1_1_sleep_behavior.html", "classgameplay_1_1tools_1_1sleep_1_1_sleep_behavior" ]
+        ] ]
       ] ]
     ] ],
     [ "Geometry2d", null, [

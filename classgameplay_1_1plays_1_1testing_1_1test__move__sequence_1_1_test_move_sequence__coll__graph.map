@@ -1,0 +1,6 @@
+<map id="gameplay.plays.testing.test_move_sequence.TestMoveSequence" name="gameplay.plays.testing.test_move_sequence.TestMoveSequence">
+<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="64,244,209,271"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="30,155,243,196"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="35,80,239,107"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="34,5,239,32"/>
+</map>

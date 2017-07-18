@@ -18,5 +18,6 @@ var searchData=
   ['exceptioniterator',['ExceptionIterator',['../class_exception_iterator.html',1,'']]],
   ['excluded_5frobots',['excluded_robots',['../class_kick_evaluator.html#a1aa7d49727b1a3acb5a07e2b6b0b5ab9',1,'KickEvaluator::excluded_robots()'],['../class_window_evaluator.html#a6ed16a6a51ee35a49ae29759b4290d84',1,'WindowEvaluator::excluded_robots()']]],
   ['execute',['execute',['../class_gradient_ascent1_d.html#a93f7929e5ebe692c7028d32fc154b9db',1,'GradientAscent1D::execute()'],['../class_nelder_mead2_d.html#a5cfaf6b859c457dadc4fbd907727082f',1,'NelderMead2D::execute()'],['../class_parallel_gradient_ascent1_d.html#a2e81f984d8c1a164d85c10ec9880d1aa',1,'ParallelGradientAscent1D::execute()']]],
-  ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]]
+  ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
+  ['execute_5frunning',['execute_running',['../classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#aa8eb3d8dcf320742ae8db254a920adcc',1,'gameplay::behavior_sequence::BehaviorSequence']]]
 ];

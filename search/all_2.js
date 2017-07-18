@@ -16,7 +16,7 @@ var searchData=
   ['behavior',['behavior',['../classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html#a70266354efa19159898db8d06ca0831c',1,'gameplay::timeout_behavior::TimeoutBehavior']]],
   ['behavior',['Behavior',['../classgameplay_1_1behavior_1_1_behavior.html',1,'gameplay::behavior']]],
   ['behavior_5fstate',['behavior_state',['../classgameplay_1_1behavior_1_1_behavior.html#ab425b90aad3c453104397e36297f0123',1,'gameplay::behavior::Behavior']]],
-  ['behaviorsequence',['BehaviorSequence',['../classgameplay_1_1tactics_1_1behavior__sequence_1_1_behavior_sequence.html',1,'gameplay::tactics::behavior_sequence']]],
+  ['behaviorsequence',['BehaviorSequence',['../classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html',1,'gameplay::behavior_sequence']]],
   ['behindball',['behindBall',['../class_our_robot.html#a2677e7d0dd80a11974f74af69116e74e',1,'OurRobot']]],
   ['binaryclock',['BinaryClock',['../classbinary__clock_1_1_binary_clock.html',1,'binary_clock']]],
   ['binaryclock',['BinaryClock',['../classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock.html',1,'gameplay::plays::training::binary_clock']]],

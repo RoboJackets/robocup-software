@@ -19,6 +19,7 @@ var searchData=
   ['testjitterymotion',['TestJitteryMotion',['../classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html',1,'gameplay::plays::tuning::test_jittery_motion']]],
   ['testlinekick',['TestLineKick',['../classgameplay_1_1plays_1_1testing_1_1test__line__kick_1_1_test_line_kick.html',1,'gameplay::plays::testing::test_line_kick']]],
   ['testmark',['TestMark',['../classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html',1,'gameplay::plays::testing::test_mark']]],
+  ['testmovesequence',['TestMoveSequence',['../classgameplay_1_1plays_1_1testing_1_1test__move__sequence_1_1_test_move_sequence.html',1,'gameplay::plays::testing::test_move_sequence']]],
   ['testnumonoffense',['TestNumOnOffense',['../classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense.html',1,'gameplay::plays::testing::test_num_on_offense']]],
   ['testonetouchpass',['TestOneTouchPass',['../classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html',1,'gameplay::plays::testing::test_one_touch_pass']]],
   ['testpivotkick',['TestPivotKick',['../classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html',1,'gameplay::plays::testing::test_pivot_kick']]],
