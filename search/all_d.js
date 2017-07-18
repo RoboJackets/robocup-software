@@ -9,6 +9,7 @@ var searchData=
   ['maxiterations',['maxIterations',['../class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c',1,'Planning::RRTPlanner::maxIterations() const '],['../class_planning_1_1_r_r_t_planner.html#ab45eeb7da9dbe6cb822e01748cad5867',1,'Planning::RRTPlanner::maxIterations(int value)']]],
   ['maxkick',['maxKick',['../struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b',1,'RobotConfig::Kicker']]],
   ['maxspeed',['maxSpeed',['../struct_motion_constraints.html#aee94fb30ca3759f7de83df61095504e0',1,'MotionConstraints']]],
+  ['mathematical_20optimization',['Mathematical Optimization',['../md_doc_Mathematical_Optimization.html',1,'']]],
   ['motion_20control',['Motion Control',['../md_doc_MotionControl.html',1,'']]],
   ['min_5fchip_5frange',['min_chip_range',['../class_window_evaluator.html#a9da2e28d3c3ac1c43f68da26ec56abed',1,'WindowEvaluator']]],
   ['motioncommand',['motionCommand',['../struct_planning_1_1_plan_request.html#a6354050958f22d98251d8f8ded493960',1,'Planning::PlanRequest']]],
@@ -19,8 +20,8 @@ var searchData=
   ['move',['move',['../class_our_robot.html#ab2b0fc1f00bf53277f5be70b5ce3de26',1,'OurRobot']]],
   ['move',['Move',['../classgameplay_1_1skills_1_1move_1_1_move.html',1,'gameplay::skills::move']]],
   ['move_5ftarget',['move_target',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae900f7aee36a758ba629667f6eff8554',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
-  ['movedirect',['MoveDirect',['../classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html',1,'gameplay::skills::move_direct']]],
   ['movedirect',['moveDirect',['../class_our_robot.html#a6f2a703f055c1cbbb04787e526d00b78',1,'OurRobot']]],
+  ['movedirect',['MoveDirect',['../classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html',1,'gameplay::skills::move_direct']]],
   ['multiplier',['multiplier',['../struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19',1,'RobotConfig::Dribbler']]],
   ['multirobotpathplanner',['MultiRobotPathPlanner',['../class_planning_1_1_multi_robot_path_planner.html',1,'Planning']]],
   ['myfsm',['MyFsm',['../classtest__fsm_1_1_my_fsm.html',1,'test_fsm']]]

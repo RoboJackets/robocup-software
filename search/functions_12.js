@@ -14,7 +14,7 @@ var searchData=
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a7c60733941226011ac4afedf8c94bc71',1,'gameplay::skills::_kick::_Kick']]],
   ['shouldreplan',['shouldReplan',['../class_planning_1_1_r_r_t_planner.html#aeaddd4b5266615d9da7a35f2fee3f2b6',1,'Planning::RRTPlanner::shouldReplan()'],['../class_planning_1_1_single_robot_path_planner.html#ace0745ec90d5e7c8789d1b24aead2c1f',1,'Planning::SingleRobotPathPlanner::shouldReplan()']]],
   ['sing',['sing',['../class_our_robot.html#a7304077bd824b4d8ccb57144692095a5',1,'OurRobot']]],
-  ['singlestep',['singleStep',['../class_gradient_ascent1_d.html#ae3ea14400c86cdbfd006dded8c184269',1,'GradientAscent1D']]],
+  ['singlestep',['singleStep',['../class_gradient_ascent1_d.html#ae3ea14400c86cdbfd006dded8c184269',1,'GradientAscent1D::singleStep()'],['../class_nelder_mead2_d.html#ab9499ebe054b738b34b3108a1ad5c0ae',1,'NelderMead2D::singleStep()']]],
   ['size',['size',['../class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542',1,'Planning::InterpolatedPath']]],
   ['spin',['spin',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html#aa0625f5b33206195dc9b34b0cab83b56',1,'gameplay.composite_behavior.CompositeBehavior.spin()'],['../classgameplay_1_1fsm_1_1_state_machine.html#a804465ddf9e1fa05079f96d3fcb0228f',1,'gameplay.fsm.StateMachine.spin()']]],
   ['spinkickwatcher',['spinKickWatcher',['../class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45',1,'NewRefereeModule']]],

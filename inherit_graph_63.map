@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_planning_1_1_plan_request.html" title="Encapsulates information needed for planner to make a path. " alt="" coords="5,5,168,32"/>
+<area shape="rect" id="node1" href="$class_planning_1_1_multi_robot_path_planner.html" title="Interface for Path Planners that plan paths for a set of robots. " alt="" coords="5,5,185,47"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_independent_multi_robot_path_planner.html" title="Plans paths for a collection of robots using a SingleRobotPathPlanner for each. " alt="" coords="233,5,428,47"/>
 </map>

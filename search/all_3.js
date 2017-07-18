@@ -38,7 +38,7 @@ var searchData=
   ['constpathiterator',['ConstPathIterator',['../class_planning_1_1_const_path_iterator.html',1,'Planning']]],
   ['constraints',['constraints',['../struct_planning_1_1_plan_request.html#a68dc04364cc6843247a5079446d97971',1,'Planning::PlanRequest']]],
   ['containsvertex',['containsVertex',['../class_geometry2d_1_1_polygon.html#a93a9c936d6e76f371bf03d4ecbdab9e8',1,'Geometry2d::Polygon']]],
-  ['continueexecution',['continueExecution',['../class_gradient_ascent1_d.html#a94165f21803567653affb88947d051e6',1,'GradientAscent1D']]],
+  ['continueexecution',['continueExecution',['../class_gradient_ascent1_d.html#a94165f21803567653affb88947d051e6',1,'GradientAscent1D::continueExecution()'],['../class_nelder_mead2_d.html#a7254aefd99ffc5c1b7a37ea623803ea1',1,'NelderMead2D::continueExecution()']]],
   ['controlmessage',['ControlMessage',['../structrtp_1_1_control_message.html',1,'rtp']]],
   ['coordinatedpass',['CoordinatedPass',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html',1,'gameplay::tactics::coordinated_pass']]],
   ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a99b33094d5e557edfc6409eaefc051e0',1,'OurRobot']]],

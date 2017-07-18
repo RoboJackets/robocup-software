@@ -6,6 +6,7 @@ var NAVTREE =
     [ "Documentation", "md_doc_Documentation.html", null ],
     [ "Gameplay", "md_doc_Gameplay.html", null ],
     [ "Keyboard_Shortcuts", "md_doc_Keyboard_Shortcuts.html", null ],
+    [ "Mathematical Optimization", "md_doc_Mathematical_Optimization.html", null ],
     [ "Motion Control", "md_doc_MotionControl.html", null ],
     [ "Soccer", "md_doc_Soccer.html", null ],
     [ "Style", "md_doc_Style.html", null ],
@@ -37,17 +38,17 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_config_double.html#a98a6b831f27cb37f79e6cdcce8a28bd6",
-"class_geometry2d_1_1_composite_shape.html#aaf6c825581e1f225a81f72d003e3899a",
-"class_logger.html#ae91f9721e83aba0321a0fb52c079b38e",
-"class_planning_1_1_interpolated_path.html#a05e85e9e388acb463f9991f17d504dbb",
-"class_robot_observation.html#aae563d9bd7b59ab6cdced4c435660cb6",
-"classgameplay_1_1fsm_1_1_state_machine.html#a25540ef072be9d5415858631e0bcf913",
-"classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture.html#a6a4c33b3bddc6fc68b8b006d4d0056c5",
-"classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html",
-"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html",
-"classtest__config_1_1_test_config.html#a3ff896698851e5c86095d8ecd789b05b",
-"struct_planning_1_1_pivot_command.html#a661e0e76d4908a7b5236ba0ae3bb2fb2"
+"class_config_double.html#a80ce0ee0a1ccb112c987885690e1e1ad",
+"class_geometry2d_1_1_composite_shape.html#aa0278930523dec99a4865f24dbedd052",
+"class_logger.html#acb668a9e186a25fbaad2e4af6d1ed00a",
+"class_planning_1_1_direct_target_path_planner.html",
+"class_robot_config.html",
+"classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html#a858d9db317cf35b962fc19901b467487",
+"classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up.html#ab63b1245aa5ab49e37f635883938c007",
+"classgameplay_1_1skills_1_1aim_1_1_aim.html#a4b0d026aaaf323ca93de976027427766",
+"classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#a180da2b2fbf120b49b430250b25b9a3a",
+"classkick__gently_1_1_kick_gently.html#ad9c2c2e1da4d5b69cc4be6e36914a214",
+"struct_planning_1_1_interpolated_path_1_1_entry.html#a816c31b83fe7b5b4c3abf5dbbbd4a494"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

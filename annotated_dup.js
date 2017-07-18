@@ -421,6 +421,8 @@ var annotated_dup =
     [ "MainWindow", "class_main_window.html", "class_main_window" ],
     [ "MotionConstraints", "struct_motion_constraints.html", "struct_motion_constraints" ],
     [ "MotionControl", "class_motion_control.html", "class_motion_control" ],
+    [ "NelderMead2D", "class_nelder_mead2_d.html", "class_nelder_mead2_d" ],
+    [ "NelderMead2DConfig", "class_nelder_mead2_d_config.html", "class_nelder_mead2_d_config" ],
     [ "NewRefereeModule", "class_new_referee_module.html", "class_new_referee_module" ],
     [ "NewRefereePacket", "class_new_referee_packet.html", "class_new_referee_packet" ],
     [ "OpponentRobot", "class_opponent_robot.html", "class_opponent_robot" ],

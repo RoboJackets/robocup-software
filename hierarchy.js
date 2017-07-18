@@ -100,6 +100,8 @@ var hierarchy =
     [ "Planning::MultiRobotPathPlanner", "class_planning_1_1_multi_robot_path_planner.html", [
       [ "Planning::IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", null ]
     ] ],
+    [ "NelderMead2D", "class_nelder_mead2_d.html", null ],
+    [ "NelderMead2DConfig", "class_nelder_mead2_d_config.html", null ],
     [ "NewRefereePacket", "class_new_referee_packet.html", null ],
     [ "gameplay.play_registry.PlayRegistry.Node", "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html", null ],
     [ "noncopyable", null, [
@@ -118,8 +120,8 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ],
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
-    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
+    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
@@ -204,9 +206,6 @@ var hierarchy =
       [ "Planning::PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -305,6 +304,9 @@ var hierarchy =
         ] ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]

@@ -4,6 +4,8 @@ var searchData=
   ['nearestpoint',['nearestPoint',['../class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42',1,'Geometry2d::Circle::nearestPoint()'],['../class_geometry2d_1_1_line.html#a5e7d95622c46366309c37831299cff2b',1,'Geometry2d::Line::nearestPoint()'],['../class_geometry2d_1_1_segment.html#aac32061f55b94296a3fa218b566c8cc1',1,'Geometry2d::Segment::nearestPoint()']]],
   ['nearestsegment',['nearestSegment',['../class_planning_1_1_interpolated_path.html#a5fd30372ff5c814efe795fd599768fc6',1,'Planning::InterpolatedPath']]],
   ['nearpoint',['nearPoint',['../class_geometry2d_1_1_point.html#aaea85ab2cfa8aeaa5993d806d98733bd',1,'Geometry2d::Point']]],
+  ['neldermead2d',['NelderMead2D',['../class_nelder_mead2_d.html',1,'']]],
+  ['neldermead2dconfig',['NelderMead2DConfig',['../class_nelder_mead2_d_config.html',1,'NelderMead2DConfig'],['../class_nelder_mead2_d_config.html#ac694860e43d4ffff67e1963e6a109ba3',1,'NelderMead2DConfig::NelderMead2DConfig()']]],
   ['newrefereemodule',['NewRefereeModule',['../class_new_referee_module.html',1,'']]],
   ['newrefereepacket',['NewRefereePacket',['../class_new_referee_packet.html',1,'']]],
   ['node',['Node',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html',1,'gameplay::play_registry::PlayRegistry']]],
