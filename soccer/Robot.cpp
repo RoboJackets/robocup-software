@@ -235,12 +235,6 @@ void OurRobot::pivot(Geometry2d::Point pivotTarget) {
               << endl;
 }
 
-void OurRobot::pivotAroundCenter(Geometry2d::Point pivotPoint, Geometry2d::Point pivotTarget, float radius){
-    // reset other conflicting motion commands
-    _motionCommand = std::make_unique<Planning::PivotCommand>(
-        pivotPoint, pivotTarget, radius);
-}
-
 Geometry2d::Point OurRobot::pointInRobotSpace(Geometry2d::Point pt) const {
     Point p = pt;
     p.rotate(pos, -angle);
