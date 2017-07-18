@@ -27,6 +27,8 @@
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
 
+#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
+
 REGISTER_CONFIGURABLE(Processor)
 
 using namespace std;
@@ -735,13 +737,13 @@ void Processor::sendRadioData() {
         auto config = tx->add_configs();
         config->set_key(pair.first);
         config->set_value(pair.second);
-        config->set_key_name(DebugCommunication::CONFIG_TO_INFO.at(pair.first).name);
+        config->set_key_name(DebugCommunication::CONFIG_TO_STRING.at(pair.first));
     }
 
     for (const auto& debugResponse :_robotDebugResponses) {
         auto debugCommunication = tx->add_debug_communication();
         debugCommunication->set_key(debugResponse);
-        debugCommunication->set_key_name(DebugCommunication::RESPONSE_INFO.at(debugResponse).name);
+        debugCommunication->set_key_name(DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse));
     }
 
     if (_radio) {

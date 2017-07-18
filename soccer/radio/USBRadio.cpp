@@ -358,10 +358,11 @@ void USBRadio::handleRxData(uint8_t* buf) {
         std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
         for (int index = 0; index < current_receive_debug.size(); ++index) {
             auto debugResponse = current_receive_debug[index];
-            auto debugResponseInfo = DebugCommunication::RESPONSE_INFO.at(debugResponse);
-            auto value = msg->debug_data.at(index);
+            const auto &name = DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse);
+            auto value = msg->debug_data[index];
+
             auto packet_debug_response = packet.add_debug_responses();
-            packet_debug_response->set_key(debugResponseInfo.name);
+            packet_debug_response->set_key(name);
             packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse, value));
         }
     }

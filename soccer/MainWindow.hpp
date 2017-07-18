@@ -10,6 +10,7 @@
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 #include "firmware-common/common2015/utils/rtp.hpp"
+#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
 
 class TestResultTab;
 class StripChart;

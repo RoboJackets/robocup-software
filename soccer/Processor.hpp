@@ -17,6 +17,7 @@
 #include <modeling/RobotFilter.hpp>
 #include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
+
 #include "firmware-common/common2015/utils/rtp.hpp"
 
 class Configuration;

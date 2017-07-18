@@ -157,8 +157,8 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     // SetupRobotConfig
     QStringList configList{QString{}};
 
-    for (const auto &pair : DebugCommunication::CONFIG_TO_INFO) {
-        configList.append(QString::fromStdString(pair.second.name));
+    for (const auto &pair : DebugCommunication::CONFIG_TO_STRING) {
+        configList.append(QString::fromStdString(pair.second));
     }
     auto rowCount = _ui.robotConfig->rowCount();
     for (int row=0; row<rowCount; row++) {
@@ -169,8 +169,8 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     }
 
     QStringList debugResponseList{QString()};
-    for (const auto &entry : DebugCommunication::RESPONSE_INFO) {
-        auto name = entry.second.name;
+    for (const auto &entry : DebugCommunication::DEBUGRESPONSE_TO_STRING) {
+        auto name = entry.second;
         debugResponseList.append(QString::fromStdString(name));
     }
     auto numDebugResponse = rtp::DebugMessage::length;
@@ -1501,7 +1501,7 @@ void MainWindow::on_robotConfigButton_clicked() {
             if (item) {
                 double value = item->text().toDouble(&ok);
                 if (ok) {
-                    configs.emplace_back(DebugCommunication::NAME_TO_CONFIG.at(key), value);
+                    configs.emplace_back(DebugCommunication::STRING_TO_CONFIG.at(key), value);
                 } else {
                     debugLog("Config trying to be sent that is not a number.");
                 }

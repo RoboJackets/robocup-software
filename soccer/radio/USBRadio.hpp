@@ -9,6 +9,7 @@
 
 // Included for packet layout
 #include "firmware-common/common2015/utils/rtp.hpp"
+#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
 
 /**
  * @brief Radio IO with real robots
