@@ -1,7 +1,6 @@
 import play
 import behavior
 import tactics.coordinated_pass
-import tactics.behavior_sequence
 import robocup
 import constants
 import main
