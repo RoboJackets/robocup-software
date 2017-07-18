@@ -93,9 +93,9 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
 def eval_best_receive_point(kick_point,
                             ignore_robots=[],
                             field_weights=(0.1, 3.2, 0.1),
-                            nelder_mead_args=(robocup.Point(0.5, 2), \
-                                              robocup.Point(0.01, 0.01), \
-                                              1, 2, 0.75, 0.5, 50, 1, 0.1),
+                            nelder_mead_args=(robocup.Point(0.5, 2),
+                                              robocup.Point(0.01, 0.01), 1, 2,
+                                              0.75, 0.5, 50, 1, 0.1),
                             weights=(1, 4, 15, 1)):
     pythfunc = functools.partial(eval_single_point, kick_point, ignore_robots,
                                  field_weights, weights)
