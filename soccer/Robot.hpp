@@ -386,6 +386,7 @@ public:
     bool driving_available(bool require_all = true) const;
 
     // lower level status checks
+    bool smoothHasBall();
     bool hasBall() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
@@ -533,7 +534,7 @@ protected:
 
 private:
     mutable RJ::Time _lastBallSense;
-    const long _lostBallDuration = 200000000;
+    const RJ::Seconds _lostBallDuration = RJ::Seconds(0.2);
 
     mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);

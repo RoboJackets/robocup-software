@@ -236,9 +236,7 @@ const Geometry2d::Segment OurRobot::kickerBar() const {
     return Segment(pose * L, pose * R);
 }
 
-Geometry2d::Point OurRobot::mouthPos() const {
-    return kickerBar().center();
-}
+Geometry2d::Point OurRobot::mouthPos() const { return kickerBar().center(); }
 
 bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
     Point ballTransformed = pointInRobotSpace(ballPos);
@@ -477,15 +475,20 @@ bool OurRobot::charged() const {
            rxIsFresh();
 }
 
-bool OurRobot::hasBall() const {
-    if (_radioRx.has_ball_sense_status() &&
-           _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh()) {
+bool OurRobot::smoothHasBall() {
+    if (OurRobot::hasBall()) {
         OurRobot::_lastBallSense = RJ::now();
         return true;
-    } else if ((RJ::now() - OurRobot::_lastBallSense).count() < OurRobot::_lostBallDuration) {
+    } else if ((RJ::now() - OurRobot::_lastBallSense) <
+               OurRobot::_lostBallDuration) {
         return true;
     }
     return false;
+}
+
+bool OurRobot::hasBall() const {
+    return _radioRx.has_ball_sense_status() &&
+           _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
 }
 
 bool OurRobot::ballSenseWorks() const {
