@@ -1,16 +1,14 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QTimer>
 #include <QTime>
+#include <QTimer>
 
-#include <FieldView.hpp>
 #include <Configuration.hpp>
+#include <FieldView.hpp>
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
-
-#include <protobuf/SimCommand.pb.h>
 
 class TestResultTab;
 class StripChart;
@@ -125,6 +123,12 @@ private Q_SLOTS:
     void on_actionQuicksaveRobotLocations_triggered();
     void on_actionQuickloadRobotLocations_triggered();
 
+    /// Style Sheets
+    void on_actionNoneStyle_triggered();
+    void on_actionDarkStyle_triggered();
+    void on_actionDarculizedStyle_triggered();
+    void on_action1337h4x0rStyle_triggered();
+
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);
     void on_actionDampedTranslation_toggled(bool value);
@@ -168,7 +172,7 @@ private Q_SLOTS:
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
 
-signals:
+Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
 
@@ -193,6 +197,11 @@ private:
     // This is used by other controls to get log data without having to copy it
     // again from the Logger.
     std::vector<std::shared_ptr<Packet::LogFrame> > _history;
+
+    // Longer log history, copied from Logger.
+    // This is used specificially via StripChart and ProtobufTree
+    // To export a larger amount of data.
+    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory;
 
     // When true, External Referee is automatically set.
     // This is cleared by manually changing the checkbox or after the
@@ -230,6 +239,4 @@ private:
 
     /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons;
-
-    Packet::SimCommand _quickLoadCmd;
 };

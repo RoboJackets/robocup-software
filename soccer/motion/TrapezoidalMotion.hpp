@@ -14,9 +14,9 @@
  * @return		true if the trapezoid is valid at the given time, false
  * otherwise
  */
-bool TrapezoidalMotion(float pathLength, float maxSpeed, float maxAcc,
-                       float timeIntoLap, float startSpeed, float finalSpeed,
-                       float& posOut, float& speedOut);
+bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
+                       double timeIntoLap, double startSpeed, double finalSpeed,
+                       double& posOut, double& speedOut);
 
 namespace Trapezoidal {
 /**
@@ -34,7 +34,7 @@ namespace Trapezoidal {
  * @return The estimated time it would take for the robot to move that certain
  *     distance down the path
  */
-float getTime(float distance, float pathLength, float maxSpeed, float maxAcc,
-              float startSpeed, float finalSpeed);
+double getTime(double distance, double pathLength, double maxSpeed,
+               double maxAcc, double startSpeed, double finalSpeed);
 
 }  // namespace Trapezoidal

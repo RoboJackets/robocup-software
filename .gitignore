@@ -19,6 +19,7 @@
 __pycache__/
 *.pyc
 .pydevproject
+.mypy_cache/
 
 # OS X Finder prefs
 .DS_Store
@@ -33,3 +34,4 @@ __pycache__/
 run/*.bin
 run/*.nib
 clean.patch
+perf.data*

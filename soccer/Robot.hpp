@@ -27,6 +27,8 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
+#include "firmware-common/robot2015/cpu/status.h"
+
 class SystemState;
 class RobotConfig;
 class RobotStatus;
@@ -303,7 +305,7 @@ public:
     RJ::Timestamp lastKickTime() const;
 
     /// checks if the bot has kicked/chipped very recently.
-    bool justKicked() { return RJ::now() - _lastKickTime < RJ::Seconds(0.25); }
+    bool justKicked() { return !(_radioRx.kicker_status() & Kicker_Charged); }
 
     /**
      * Gets a string representing the series of commands called on the robot

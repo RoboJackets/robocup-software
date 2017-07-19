@@ -27,9 +27,12 @@ class Placement(play.Play):
                             lambda: self.check_update(), 'command changed')
         self.add_transition(Placement.State.reset, Placement.State.placing,
                             lambda: True, 'immediately')
-
-        self._pos = main.game_state().get_ball_placement_point()
-        self._our_restart = main.game_state().is_our_restart()
+        if (main.game_state() is not None):
+            self._pos = main.game_state().get_ball_placement_point()
+            self._our_restart = main.game_state().is_our_restart()
+        else:
+            self._pos = None
+            self._our_restart = None
 
     def create_lineup(self):
         xsize = constants.Field.Width / 2 - .5

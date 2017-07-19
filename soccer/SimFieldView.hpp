@@ -3,9 +3,11 @@
 
 #pragma once
 
+#include <protobuf/grSim_Commands.pb.h>
+#include <protobuf/grSim_Packet.pb.h>
+#include <protobuf/grSim_Replacement.pb.h>
 #include <FieldView.hpp>
 #include <QUdpSocket>
-#include <protobuf/SimCommand.pb.h>
 
 class SimFieldView : public FieldView {
     Q_OBJECT;
@@ -13,7 +15,7 @@ class SimFieldView : public FieldView {
 public:
     SimFieldView(QWidget* parent = nullptr);
 
-    void sendSimCommand(const Packet::SimCommand& cmd);
+    void sendSimCommand(const grSim_Packet& cmd);
 
 Q_SIGNALS:
     // Emitted when the user selects a robot.

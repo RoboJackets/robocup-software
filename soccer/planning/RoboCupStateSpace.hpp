@@ -15,9 +15,9 @@ public:
         : _fieldDimensions(dims), _obstacles(obstacles) {}
 
     Geometry2d::Point randomState() const {
-        float x = _fieldDimensions.FloorWidth() * (drand48() - 0.5f);
-        float y = _fieldDimensions.FloorLength() * drand48() -
-                  _fieldDimensions.Border();
+        double x = _fieldDimensions.FloorWidth() * (drand48() - 0.5f);
+        double y = _fieldDimensions.FloorLength() * drand48() -
+                   _fieldDimensions.Border();
         return Geometry2d::Point(x, y);
     }
 
@@ -36,15 +36,15 @@ public:
 
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
                                         const Geometry2d::Point& target,
-                                        float stepSize) const {
+                                        double stepSize) const {
         auto dir = (target - source).norm();
         return source + dir * stepSize;
     }
 
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
                                         const Geometry2d::Point& target,
-                                        float minStepSize,
-                                        float maxStepSize) const {
+                                        double minStepSize,
+                                        double maxStepSize) const {
         throw std::runtime_error("Adaptive stepsize control not implemented");
     }
 

@@ -9,6 +9,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Constants.hpp>
+#include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
@@ -86,13 +87,15 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
     vision.simulation = _simulation;
-
+    if (sim) {
+        vision.port = SimVisionPort;
+    }
     vision.start();
 
     _visionChannel = visionChannel;
 
     // Create radio socket
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_blueTeam))
+    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_state, _blueTeam))
                          : static_cast<Radio*>(new USBRadio());
 }
 
@@ -368,7 +371,7 @@ void Processor::run() {
         // Read radio reverse packets
         _radio->receive();
 
-        for (const Packet::RadioRx& rx : _radio->reversePackets()) {
+        for (Packet::RadioRx& rx : _radio->reversePackets()) {
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
             curStatus.lastRadioRxTime =
@@ -794,7 +797,7 @@ JoystickControlValues Processor::getJoystickControlValues() {
         vals.translation *=
             Joystick::JoystickTranslationMaxDampedSpeed->value();
     } else {
-        vals.translation *= Joystick::JoystickRotationMaxSpeed->value();
+        vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
     }
     if (_dampedRotation) {
         vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();

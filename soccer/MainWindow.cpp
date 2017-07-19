@@ -1,30 +1,34 @@
-#include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
-#include "Configuration.hpp"
-#include "radio/Radio.hpp"
-#include <Utils.hpp>
-#include <Robot.hpp>
-#include <joystick/Joystick.hpp>
-#include "RobotStatusWidget.hpp"
-#include "BatteryProfile.hpp"
 #include <Network.hpp>
+#include <Robot.hpp>
+#include <Utils.hpp>
+#include <gameplay/GameplayModule.hpp>
+#include <joystick/Joystick.hpp>
+#include <ui/StyleSheetManager.hpp>
+#include "BatteryProfile.hpp"
+#include "Configuration.hpp"
+#include "RobotStatusWidget.hpp"
 #include "git_version.hpp"
+#include "radio/Radio.hpp"
 
-#include <QInputDialog>
-#include <QFileDialog>
 #include <QActionGroup>
+#include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 
-#include <QFile>
-#include <QDir>
 #include <QDateTime>
+#include <QDir>
+#include <QFile>
 #include <QString>
 
-#include <iostream>
 #include <ctime>
+#include <iostream>
 #include <string>
 
 #include <google/protobuf/descriptor.h>
+#include <protobuf/grSim_Commands.pb.h>
+#include <protobuf/grSim_Packet.pb.h>
+#include <protobuf/grSim_Replacement.pb.h>
 
 using namespace std;
 using namespace boost;
@@ -49,12 +53,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _doubleFrameNumber(-1),
       _lastUpdateTime(RJ::now()),
       _history(2 * 60),
+      _longHistory(10000),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
 
-    _ui.logTree->history(&_history);
+    _ui.logTree->history(&_longHistory);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
 
@@ -130,6 +135,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     radioGroup->addAction(_ui.action918MHz);
     qActionGroups["radioGroup"] = radioGroup;
 
+    auto styleGroup = new QActionGroup(this);
+    styleGroup->addAction(_ui.actionNoneStyle);
+    styleGroup->addAction(_ui.actionDarkStyle);
+    styleGroup->addAction(_ui.actionDarculizedStyle);
+    styleGroup->addAction(_ui.action1337h4x0rStyle);
+    qActionGroups["styleGroup"] = styleGroup;
+
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
 
@@ -153,7 +165,17 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
 
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
+    } else {
+        // reset the field initially, grSim will start out in some weird
+        // pattern and we want to keep it consistent
+        on_actionResetField_triggered();
     }
+
+    // disabled because of lack of grSim support
+    _ui.actionQuickloadRobotLocations->setEnabled(false);
+    _ui.actionQuicksaveRobotLocations->setEnabled(false);
+    //_ui.actionResetField->setEnabled(false);
+    _ui.actionStopRobots->setEnabled(false);
 }
 
 void MainWindow::configuration(Configuration* config) {
@@ -356,8 +378,12 @@ void MainWindow::updateViews() {
     // update history slider in ui
 
     // Read recent history from the log
-    _processor->logger().getFrames(frameNumber(), _history.size(),
-                                   _history.begin());
+    _processor->logger().getFrames(frameNumber(), _longHistory.size(),
+                                   _longHistory.begin());
+
+    // Set the original history vector
+    _history.assign(_longHistory.begin(),
+                    _longHistory.begin() + _history.size());
 
     // Update field view
     _ui.fieldView->update();
@@ -665,6 +691,10 @@ void MainWindow::updateViews() {
             // check for kicker error code
             bool kickerFault =
                 rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+
+            bool kicker_charging =
+                rx.has_kicker_status() && rx.kicker_status() & 0x01;
+            statusWidget->setKickerState(kicker_charging);
             bool ballSenseFault = rx.has_ball_sense_status() &&
                                   !(rx.ball_sense_status() == Packet::NoBall ||
                                     rx.ball_sense_status() == Packet::HasBall);
@@ -962,30 +992,80 @@ void MainWindow::channel(int n) {
 // Simulator commands
 
 void MainWindow::on_actionCenterBall_triggered() {
-    SimCommand cmd;
-    cmd.mutable_ball_pos()->set_x(0);
-    cmd.mutable_ball_pos()->set_y(0);
-    cmd.mutable_ball_vel()->set_x(0);
-    cmd.mutable_ball_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(cmd);
+    grSim_Packet simPacket;
+    grSim_BallReplacement* ball_replace =
+        simPacket.mutable_replacement()->mutable_ball();
+
+    ball_replace->mutable_pos()->set_x(0);
+    ball_replace->mutable_pos()->set_y(0);
+    ball_replace->mutable_vel()->set_x(0);
+    ball_replace->mutable_vel()->set_y(0);
+
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopBall_triggered() {
-    SimCommand cmd;
-    cmd.mutable_ball_vel()->set_x(0);
-    cmd.mutable_ball_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(cmd);
+    grSim_Packet simPacket;
+    grSim_BallReplacement* ball_replace =
+        simPacket.mutable_replacement()->mutable_ball();
+
+    Geometry2d::Point ballPos =
+        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
+    ball_replace->mutable_pos()->set_x(ballPos.x());
+    ball_replace->mutable_pos()->set_y(ballPos.y());
+    ball_replace->mutable_vel()->set_x(0);
+    ball_replace->mutable_vel()->set_y(0);
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionResetField_triggered() {
-    SimCommand cmd;
-    cmd.set_reset(true);
-    _ui.fieldView->sendSimCommand(cmd);
+    grSim_Packet simPacket;
+
+    grSim_Replacement* replacement = simPacket.mutable_replacement();
+    for (int i = 0; i < Robots_Per_Team; ++i) {
+        auto rob = replacement->add_robots();
+
+        const int NUM_COLS = 2;
+        const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+
+        double x_pos = -2.5 + i / ROBOTS_PER_COL;
+        double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+
+        rob->set_x(x_pos);
+        rob->set_y(y_pos);
+        rob->set_dir(0);
+        rob->set_id(i);
+        rob->set_yellowteam(false);
+    }
+
+    for (int i = 0; i < Robots_Per_Team; ++i) {
+        auto rob = replacement->add_robots();
+
+        const int NUM_COLS = 2;
+        const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+
+        double x_pos = +2.5 - i / ROBOTS_PER_COL;
+        double y_pos = i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+
+        rob->set_x(x_pos);
+        rob->set_y(y_pos);
+        rob->set_dir(180);
+        rob->set_id(i);
+        rob->set_yellowteam(true);
+    }
+
+    auto ball_replace = replacement->mutable_ball();
+    ball_replace->mutable_pos()->set_x(0.0);
+    ball_replace->mutable_pos()->set_y(0.0);
+    ball_replace->mutable_vel()->set_x(0.0);
+    ball_replace->mutable_vel()->set_y(0.0);
+
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
-    SimCommand cmd;
     // TODO: check that this handles threads properly
+    /*
     for (OurRobot* robot : state()->self) {
         if (robot->visible) {
             SimCommand::Robot* r = cmd.add_robots();
@@ -1014,10 +1094,12 @@ void MainWindow::on_actionStopRobots_triggered() {
             r->set_w(0);
         }
     }
-    _ui.fieldView->sendSimCommand(cmd);
+    */
+    //_ui.fieldView->sendSimCommand(cmd);
 }
 
 void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
+    /*
     _ui.actionQuickloadRobotLocations->setEnabled(true);
     _quickLoadCmd.reset();
     for (OurRobot* robot : state()->self) {
@@ -1055,10 +1137,28 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
     _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y());
     _quickLoadCmd.mutable_ball_vel()->set_x(0);
     _quickLoadCmd.mutable_ball_vel()->set_y(0);
+    */
 }
 
 void MainWindow::on_actionQuickloadRobotLocations_triggered() {
-    _ui.fieldView->sendSimCommand(_quickLoadCmd);
+    //_ui.fieldView->sendSimCommand(_quickLoadCmd);
+}
+
+// Style Sheets
+
+void MainWindow::on_actionNoneStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "NONE");
+}
+
+void MainWindow::on_actionDarkStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARK");
+}
+
+void MainWindow::on_actionDarculizedStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "DARCULIZED");
+}
+void MainWindow::on_action1337h4x0rStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
 
 // Manual control commands

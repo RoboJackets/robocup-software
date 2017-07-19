@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <stdio.h>
 #include <google/protobuf/descriptor.h>
+#include <iostream>
 
 using namespace std;
 using namespace google::protobuf;
@@ -409,6 +410,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
     menu.addSeparator();
 
     QAction* chartAction = nullptr;
+    QAction* exportAction = nullptr;
     QList<QAction*> chartMenuActions;
 
     QList<QDockWidget*> dockWidgets;
@@ -426,6 +428,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
                 if (!dockWidgets.isEmpty()) {
                     QMenu* chartMenu = menu.addMenu("Chart");
                     chartAction = chartMenu->addAction("New Chart");
+                    exportAction = chartMenu->addAction("Export Chart");
                     chartMenu->addSeparator();
                     for (int i = 0; i < dockWidgets.size(); ++i) {
                         chartMenuActions.append(chartMenu->addAction(
@@ -473,10 +476,12 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
             Chart::PointMagnitude* f = new Chart::PointMagnitude;
             f->path = path;
+            f->name = names.join(".");
             chart->function(f);
         } else {
             Chart::NumericField* f = new Chart::NumericField;
             f->path = path;
+            f->name = names.join(".");
             chart->function(f);
         }
         dock->setAttribute(Qt::WA_DeleteOnClose);
@@ -485,6 +490,24 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         if (updateTimer) {
             connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
         }
+    } else if (exportAction && act == exportAction) {
+        // If export button was pressed
+
+        StripChart* chart = new StripChart();
+        chart->history(_history);
+
+        // Loop through all open charts and add their data to one chart
+        for (int i = 0; i < dockWidgets.size(); i++) {
+            StripChart* cChart = (StripChart*)dockWidgets[i]->widget();
+            QList<Chart::Function*> functions = cChart->getFunctions();
+            for (int j = 0; j < functions.size(); j++) {
+                chart->function(functions[j]);
+            }
+        }
+
+        // export that chart
+        chart->exportChart();
+
     } else if (chartMenuActions.size() > 0) {
         int i = chartMenuActions.indexOf(act);
         if (i != -1) {
@@ -507,10 +530,12 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
             if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
                 Chart::PointMagnitude* f = new Chart::PointMagnitude;
                 f->path = path;
+                f->name = names.join(".");
                 chart->function(f);
             } else {
                 Chart::NumericField* f = new Chart::NumericField;
                 f->path = path;
+                f->name = names.join(".");
                 chart->function(f);
             }
 

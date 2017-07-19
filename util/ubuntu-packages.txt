@@ -13,6 +13,8 @@ qt5-default
 qttools5-dev-tools
 libqt5opengl5-dev
 libqt5svg5-dev
+qtdeclarative5-dev
+
 
 # required for compiling gcc
 libgmp3-dev
@@ -74,9 +76,15 @@ libboost-python-dev
 libsdl2-dev
 libsdl1.2-dev
 
+# grSim
+libode-dev
+qt4-dev-tools
+
+
 # everything else...
 build-essential
 libusb-1.0-0-dev
+libflann-dev
 libgtkmm-2.4-dev
 libpcap-dev
 binutils-dev

@@ -16,16 +16,7 @@ import planning_priority
 # This goalie lets someone else (the Defense tactic) handle calculations and blocks things based on that
 # TODO: merge this back into the regular goalie?
 class SubmissiveGoalie(
-        single_robot_composite_behavior.SingleRobotCompositeBehavior):
-
-    MaxX = constants.Field.GoalWidth / 2.0
-    SegmentY = constants.Robot.Radius + 0.05
-
-    # The segment we stay on during the 'block' state
-    # It's right in front of the goal
-    RobotSegment = robocup.Segment(
-        robocup.Point(-MaxX, SegmentY), robocup.Point(MaxX, SegmentY))
-
+    single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
         "Actively blocking based on a given threat"
         block = 2
@@ -36,6 +27,15 @@ class SubmissiveGoalie(
 
     def __init__(self):
         super().__init__(continuous=True)
+
+        self.MaxX = constants.Field.GoalWidth / 2.0
+        self.SegmentY = constants.Robot.Radius + 0.01
+
+        # The segment we stay on during the 'block' state
+        # It's right in front of the goal
+        self.RobotSegment = robocup.Segment(
+            robocup.Point(-self.MaxX, self.SegmentY),
+            robocup.Point(self.MaxX, self.SegmentY))
 
         for substate in SubmissiveGoalie.State:
             self.add_state(substate, behavior.Behavior.State.running)
@@ -84,14 +84,13 @@ class SubmissiveGoalie(
         self._block_line = value
 
         if self.block_line == None:
-            self._move_target = SubmissiveGoalie.RobotSegment.center()
+            self._move_target = self.RobotSegment.center()
         else:
-            self._move_target = SubmissiveGoalie.RobotSegment.nearest_point_to_line(
+            self._move_target = self.RobotSegment.nearest_point_to_line(
                 self.block_line)
 
         self._move_target.x = min(
-            max(self._move_target.x,
-                -SubmissiveGoalie.MaxX), SubmissiveGoalie.MaxX)
+            max(self._move_target.x, -self.MaxX + 0.01), self.MaxX - 0.01)
 
     # The point we'll be going to in order to block the given block_line
     @property
@@ -133,7 +132,7 @@ class SubmissiveGoalie(
 
     def on_enter_intercept(self):
         i = skills.intercept.Intercept()
-        i.shape_constraint = SubmissiveGoalie.RobotSegment
+        i.shape_constraint = self.RobotSegment
         self.add_subbehavior(i, 'intercept', required=True)
 
     def on_exit_intercept(self):

@@ -40,7 +40,7 @@ public:
     /**
      * Constructor taking in the max iterations the RRT planner should run
      */
-    RRTPlanner(int maxIterations);
+    RRTPlanner(int minIterations, int maxIterations);
 
     /**
      * gets the maximum number of iterations for the RRT algorithm
@@ -51,6 +51,9 @@ public:
      * sets the maximum number of iterations for th RRT algorithm
      */
     void maxIterations(int value) { _maxIterations = value; }
+
+    int minIterations() const { return _minIterations; }
+    void minIterations(int value) { _minIterations = value; }
 
     /**
      * Takes in a waypoints and returns a full InterpolatedPath with a generated
@@ -73,9 +76,9 @@ public:
     int reusePathTries = 0;
 
 protected:
-    /// maximum number of rrt iterations to run
+    /// minimum and maximum number of rrt iterations to run
     /// this does not include connect attempts
-    unsigned int _maxIterations;
+    int _minIterations, _maxIterations;
 
     /// Check to see if the previous path (if any) should be discarded and
     /// replaced with a newly-planned one
@@ -158,5 +161,15 @@ protected:
                                            std::vector<double>& points,
                                            std::vector<double>& ks,
                                            std::vector<double>& ks2);
+
+    /**
+     * Helper method for runRRT(), which creates a vector of points representing
+     * the RRT path.
+     */
+    std::vector<Geometry2d::Point> runRRTHelper(
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        unsigned shellID, bool straightLine);
 };
 }  // namespace Planning

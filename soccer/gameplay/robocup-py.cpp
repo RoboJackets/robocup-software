@@ -4,12 +4,16 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <functional>
 
 using namespace boost::python;
 
 #include "motion/TrapezoidalMotion.hpp"
 #include "planning/MotionConstraints.hpp"
+#include "KickEvaluator.hpp"
 #include "WindowEvaluator.hpp"
+#include "optimization/NelderMead2D.hpp"
+#include "optimization/NelderMead2DConfig.hpp"
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
@@ -490,12 +494,135 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
     self->excluded_robots.push_back(robot);
 }
 
+boost::python::tuple KickEval_eval_pt_to_seg(
+    KickEvaluator* self, const Geometry2d::Point* origin,
+    const Geometry2d::Segment* target) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_seg(*origin, *target);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_robot(
+    KickEvaluator* self, const Geometry2d::Point* origin,
+    const Geometry2d::Point* target) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_robot(*origin, *target);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
+                                            const Geometry2d::Point* origin,
+                                            const Geometry2d::Point* target,
+                                            float targetWidth) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (target == nullptr) throw NullArgumentException{"target"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_opp_goal(
+    KickEvaluator* self, const Geometry2d::Point* origin) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_opp_goal(*origin);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+boost::python::tuple KickEval_eval_pt_to_our_goal(
+    KickEvaluator* self, const Geometry2d::Point* origin) {
+    if (origin == nullptr) throw NullArgumentException{"origin"};
+    boost::python::list lst;
+
+    auto kick_results = self->eval_pt_to_our_goal(*origin);
+
+    lst.append(kick_results.first);
+    lst.append(kick_results.second);
+
+    return boost::python::tuple{lst};
+}
+
+void KickEval_add_excluded_robot(KickEvaluator* self, Robot* robot) {
+    self->excluded_robots.push_back(robot);
+}
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
 float Point_get_y(const Geometry2d::Point* self) { return self->y(); }
 void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
+
+/**
+ * Python function must be in the form...
+ * [float] pythonFunc(... float x, float y)
+ */
+float point_python_callback(Geometry2d::Point p, PyObject* pyfun) {
+    PyObject* pyresult =
+        PyObject_CallObject(pyfun, Py_BuildValue("ff", p.x(), p.y()));
+
+    if (pyresult == NULL) {
+        std::cerr << "Python callback function returned a bad value with args ";
+        std::cerr << p << std::endl;
+        return -1;
+    }
+
+    return PyFloat_AsDouble(pyresult);
+}
+
+boost::shared_ptr<std::function<float(Geometry2d::Point)>>
+stdfunction_constructor(PyObject* function) {
+    Py_INCREF(function);
+
+    // Create aliased function to hid python function args
+    std::function<float(Geometry2d::Point)> f =
+        std::bind(&point_python_callback, std::placeholders::_1, function);
+
+    return boost::shared_ptr<std::function<float(Geometry2d::Point)>>(
+        new std::function<float(Geometry2d::Point)>(f));
+}
+
+boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
+    std::function<float(Geometry2d::Point)>* function,
+    Geometry2d::Point start = Geometry2d::Point(0, 0),
+    Geometry2d::Point step = Geometry2d::Point(1, 1),
+    Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
+    float reflectionCoeff = 1, float expansionCoeff = 2,
+    float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
+    int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
+    return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
+        *function, start, step, minDist, reflectionCoeff, expansionCoeff,
+        contractionCoeff, shrinkCoeff, maxIterations, maxValue, maxThresh));
+}
+
+boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(
+    NelderMead2DConfig* config) {
+    return boost::shared_ptr<NelderMead2D>(new NelderMead2D(*config));
+}
 
 /**
  * The code in this block wraps up c++ classes and makes them
@@ -646,7 +773,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("visible", &Robot::visible)
         .def("__repr__", &Robot_repr)
         .def("__eq__", &Robot::operator==);
-    register_ptr_to_python<Robot*>();
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
         "OurRobot", init<int, SystemState*>())
@@ -690,17 +816,14 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
-    register_ptr_to_python<OurRobot*>();
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
-    register_ptr_to_python<OpponentRobot*>();
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
-    register_ptr_to_python<Ball*>();
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -731,7 +854,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
-    register_ptr_to_python<SystemState*>();
 
     class_<Field_Dimensions>("Field_Dimensions")
         .add_property("Length", &Field_Dimensions::Length)
@@ -793,6 +915,44 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &WinEval_eval_pt_to_seg);
 
+    class_<KickEvaluator>("KickEvaluator", init<SystemState*>())
+        .def_readwrite("excluded_robots", &KickEvaluator::excluded_robots)
+        .def_readwrite("hypothetical_robot_locations",
+                       &KickEvaluator::hypothetical_robot_locations)
+        .def("add_excluded_robot", &KickEval_add_excluded_robot)
+        .def("eval_pt_to_pt", &KickEval_eval_pt_to_pt)
+        .def("eval_pt_to_robot", &KickEval_eval_pt_to_robot)
+        .def("eval_pt_to_opp_goal", &KickEval_eval_pt_to_opp_goal)
+        .def("eval_pt_to_our_goal", &KickEval_eval_pt_to_our_goal)
+        .def("eval_pt_to_seg", &KickEval_eval_pt_to_seg);
+
+    class_<std::function<float(Geometry2d::Point)>,
+           std::function<float(Geometry2d::Point)>*>("stdfunction", no_init)
+        .def("__init__", make_constructor(&stdfunction_constructor));
+
+    class_<NelderMead2DConfig>("NelderMead2DConfig", no_init)
+        .def("__init__", make_constructor(&NelderMead2DConfig_constructor),
+             "function is required")
+        .def_readwrite("start", &NelderMead2DConfig::start)
+        .def_readwrite("step", &NelderMead2DConfig::step)
+        .def_readwrite("minDist", &NelderMead2DConfig::minDist)
+        .def_readwrite("reflectionCoeff", &NelderMead2DConfig::reflectionCoeff)
+        .def_readwrite("expansionCoeff", &NelderMead2DConfig::expansionCoeff)
+        .def_readwrite("contractionCoeff",
+                       &NelderMead2DConfig::contractionCoeff)
+        .def_readwrite("shrinkCoeff", &NelderMead2DConfig::shrinkCoeff)
+        .def_readwrite("maxIterations", &NelderMead2DConfig::maxIterations)
+        .def_readwrite("maxValue", &NelderMead2DConfig::maxValue)
+        .def_readwrite("maxThresh", &NelderMead2DConfig::maxThresh);
+
+    class_<NelderMead2D>("NelderMead2D", no_init)
+        .def("__init__", make_constructor(&NelderMead2D_constructor))
+        .def("execute", &NelderMead2D::execute, "returns max value")
+        .def("singleStep", &NelderMead2D::singleStep,
+             "single run of optimization")
+        .def("getValue", &NelderMead2D::getValue, "returns max value")
+        .def("getPoint", &NelderMead2D::getPoint, "returns max point");
+
     class_<ConfigItem, ConfigItem*, boost::noncopyable>("ConfigItem", no_init)
         .def_readonly("name", &ConfigItem::name);
 
@@ -803,24 +963,20 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("nameLookup", &Configuration::nameLookup,
              return_value_policy<reference_existing_object>())
         .staticmethod("FromRegisteredConfigurables");
-    register_ptr_to_python<std::shared_ptr<Configuration>>();
 
     // Add wrappers for ConfigItem subclasses
     class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
-    register_ptr_to_python<ConfigBool*>();
 
     class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
                                                            no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
-    register_ptr_to_python<ConfigDouble*>();
 
     class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
-    register_ptr_to_python<ConfigInt*>();
 
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)

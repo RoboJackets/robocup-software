@@ -1,21 +1,22 @@
 #include <gameplay/GameplayModule.hpp>
+#include <ui/StyleSheetManager.hpp>
 
+#include <assert.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <assert.h>
-#include <signal.h>
 
 #include <QApplication>
-#include <QFile>
-#include <QDir>
 #include <QDateTime>
-#include <QString>
+#include <QDir>
+#include <QFile>
 #include <QMessageBox>
+#include <QString>
 
-#include "MainWindow.hpp"
 #include "Configuration.hpp"
+#include "MainWindow.hpp"
 
 using namespace std;
 
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]) {
 
     QApplication app(argc, argv);
 
-    bool blueTeam = false;
+    bool blueTeam = true;
     QString cfgFile;
     vector<const char*> playDirs;
     bool sim = false;
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
     string playbookFile;
     bool noref = false;
     bool defendPlus = false;
-    Processor::VisionChannel visionChannel = Processor::VisionChannel::primary;
+    Processor::VisionChannel visionChannel = Processor::VisionChannel::full;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -220,6 +221,13 @@ int main(int argc, char* argv[]) {
 
     if (playbookFile.size() > 0)
         processor->gameplayModule()->loadPlaybook(playbookFile);
+
+    // Sets the initial stylesheet for the application
+    // based on the environment variable "SOCCER_THEME"
+    if (getenv("SOCCER_THEME")) {
+        StyleSheetManager::changeStyleSheet(win.get(),
+                                            QString(getenv("SOCCER_THEME")));
+    }
 
     win->show();
 

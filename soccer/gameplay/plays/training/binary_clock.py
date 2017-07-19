@@ -9,9 +9,8 @@ import plays.testing.line_up
 import time
 
 
-# Maintains the state of the ball's position by keeping track of which
-# half the ball is on and prints on both entering a given state and
-# continously during the execution of a given state.
+# A simple binary clock in the form of a Soccer Play,
+# using robots to display the current minute in binary
 class BinaryClock(play.Play):
 
     # Setting up global class variables for location to put binaryclock.
