@@ -18,33 +18,20 @@ class TestAdaptiveFormationWeights(play.Play):
         # Blue is lower
         testPointCoeff = 1
 
-        # Plots all the lines from bestPass
-        # Red is higher score
-        testBestPass = 2
-
     def __init__(self):
         super().__init__(continuous=True)
         self.add_state(TestAdaptiveFormationWeights.State.testPointCoeff,
                        behavior.Behavior.State.running)
-        self.add_state(TestAdaptiveFormationWeights.State.testBestPass,
-                       behavior.Behavior.State.running)
 
         # Enable which portion we want to test
-        mode = 1
         self.add_transition(behavior.Behavior.State.start,
                             TestAdaptiveFormationWeights.State.testPointCoeff,
-                            lambda: mode == 1, 'immediately')
-        self.add_transition(behavior.Behavior.State.start,
-                            TestAdaptiveFormationWeights.State.testBestPass,
-                            lambda: mode == 2, 'immediately')
-
-    def on_enter_testPointCoeff(self):
-        evaluation.defensive_positioning.find_defense_positions()
+                            lambda: True, 'immediately')
 
     def execute_testPointCoeff(self):
         # Number of boxes width and length wise
         num_width = 20
-        num_length = 20
+        num_length = 40
 
         val = 0
         max_val = 0
@@ -83,18 +70,21 @@ class TestAdaptiveFormationWeights(play.Play):
                 #val = evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
                 #val = (1-evaluation.field.space_coeff_at_pos(robocup.Point(x_cent, y_cent), [], main.our_robots())) * \
                 #        evaluation.defensive_positioning.estimate_risk_score(robocup.Point(x_cent, y_cent))
+                val = 5 * evaluation.passing_positioning.eval_single_point(
+                    main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
+                    (2, 2, 15, 1), x_cent, y_cent)
 
-                kick_eval = robocup.KickEvaluator(main.system_state())
-                for bot in main.our_robots():
-                    kick_eval.add_excluded_robot(bot)
-                _, val = kick_eval.eval_pt_to_opp_goal(robocup.Point(x_cent,
-                                                                     y_cent))
+                # kick_eval = robocup.KickEvaluator(main.system_state())
+                # for bot in main.our_robots():
+                #     kick_eval.add_excluded_robot(bot)
+                # _, val = kick_eval.eval_pt_to_opp_goal(robocup.Point(x_cent,
+                #                                                      y_cent))
 
                 # Find max
-                if (val > max_val):
-                    max_val = val
-                    max_x = x_cent
-                    max_y = y_cent
+                # if (val > max_val):
+                #     max_val = val
+                #     max_x = x_cent
+                #     max_y = y_cent
 
                 # Force between 0 and 1
                 val = min(val, 1)
@@ -110,6 +100,14 @@ class TestAdaptiveFormationWeights(play.Play):
                 # Draw onto the Debug layer
                 main.system_state().draw_polygon(rect, val_color, "Density")
 
+        # Draw calculated max with white
+        max_pt, max_val = evaluation.passing_positioning.eval_best_receive_point(
+            main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
+            (robocup.Point(0.5, 2), robocup.Point(0.01, 0.01), 1, 2, 0.75, 0.5,
+             50, 1, 0.1), (2, 2, 15, 1))
+        x_cent = max_pt.x
+        y_cent = max_pt.y
+
         rect = [robocup.Point(x_cent - x_half, y_cent - y_half),
                 robocup.Point(x_cent + x_half, y_cent - y_half),
                 robocup.Point(x_cent + x_half, y_cent + y_half),
@@ -119,8 +117,3 @@ class TestAdaptiveFormationWeights(play.Play):
 
         # Draw onto the Debug layer
         main.system_state().draw_polygon(rect, val_color, "Max")
-
-    def execute_testBestPass(self):
-        # Use as a way to test the pass weights for the best pass position
-        evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, [], (0.1, .2, 0.02), (2, 10, 0, 10), True)

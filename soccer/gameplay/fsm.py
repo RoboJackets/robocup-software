@@ -23,11 +23,11 @@ class StateMachine:
         self._state = None
 
     @property
-    def start_state(self):
+    def start_state(self) -> None:
         return self._start_state
 
     ## Resets the FSM back into the start state
-    def restart(self):
+    def restart(self) -> None:
         self.transition(self.start_state)
 
     ## Registers a new state (which can optionally be a substate of an existing state)
@@ -124,7 +124,7 @@ class StateMachine:
 
     def state_is_substate(self, state, possible_parent):
         ancestor = state
-        while ancestor != None:
+        while ancestor is not None:
             if possible_parent == ancestor: return True
             ancestor = self._state_hierarchy[ancestor]
 
@@ -134,7 +134,7 @@ class StateMachine:
     # returns None if the current state doesn't descend from one in the list
     def corresponding_ancestor_state(self, ancestors):
         state = self.state
-        while state != None:
+        while state is not None:
             if state in ancestors:
                 return state
             state = self._state_hierarchy[state]
@@ -147,7 +147,7 @@ class StateMachine:
     def ancestors_of_state(self, state):
         ancestors = []
         state = self._state_hierarchy[state]
-        while state != None:
+        while state is not None:
             ancestors.insert(0, state)
             state = self._state_hierarchy[state]
         return ancestors
@@ -195,7 +195,7 @@ class StateMachine:
         return g
 
     # writes a png file of the graphviz output to the specified location
-    def write_diagram_png(self, filename):
+    def write_diagram_png(self, filename: str):
         g = self.as_graphviz()
         g.render(filename=filename, cleanup=True)
 

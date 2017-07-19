@@ -44,6 +44,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
     CHIP_FIELD_POS_WEIGHTS = (0.1, .2, 0.02)
     CHIP_PASS_WEIGHTS = (2, 10, 0, 10)
 
+    # Initial arguements for the nelder mead optimization in passing positioning
+    NELDER_MEAD_ARGS = (robocup.Point(0.5, 2), \
+                        robocup.Point(0.01, 0.01), 1, 2, \
+                        0.75, 0.5, 50, 1, 0.1)
+
     class State(enum.Enum):
         # Collect the ball / Full court defense
         collecting = 1
@@ -218,10 +223,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.dribble_start_pt = main.ball().pos
 
         # Dribbles toward the best receive point
+
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(),
+            main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
-            AdaptiveFormation.DRIBBLING_WEIGHTS, False)
+            AdaptiveFormation.NELDER_MEAD_ARGS,
+            AdaptiveFormation.DRIBBLING_WEIGHTS)
+
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
         self.check_dribbling_timer = 0
@@ -237,9 +245,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def execute_dribbling(self):
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(),
+            main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
-            AdaptiveFormation.PASSING_WEIGHTS, False)
+            AdaptiveFormation.NELDER_MEAD_ARGS,
+            AdaptiveFormation.PASSING_WEIGHTS)
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
@@ -249,9 +258,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
         if (self.check_dribbling_timer > self.check_dribbling_timer_cutoff):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-                main.ball().pos, None, main.our_robots(),
+                main.ball().pos, main.our_robots(),
                 AdaptiveFormation.FIELD_POS_WEIGHTS,
-                AdaptiveFormation.DRIBBLING_WEIGHTS, False)
+                AdaptiveFormation.NELDER_MEAD_ARGS,
+                AdaptiveFormation.DRIBBLING_WEIGHTS)
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
         # Good positions can be definied by offensive / defensive costs
@@ -284,9 +294,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Choose most open area / Best pass, weight forward
         # Decrease weight on sides of field due to complexity of settling
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, None, main.our_robots(),
+            main.ball().pos, main.our_robots(),
             AdaptiveFormation.FIELD_POS_WEIGHTS,
-            AdaptiveFormation.PASSING_WEIGHTS, False)
+            AdaptiveFormation.NELDER_MEAD_ARGS,
+            AdaptiveFormation.PASSING_WEIGHTS)
 
         clear = skills.pivot_kick.PivotKick()
         clear.target = self.pass_target
