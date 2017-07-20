@@ -116,6 +116,38 @@ class MoveOneRobot(play.Play):
         self.remove_subbehavior('move')
 ~~~
 
+## Behavior Sequences
+
+Behavior Sequences are an alternative to the state-machine based logic found elsewhere in Soccer. Many times we don't need complex transition functions, and simply want to execute behaviors in sequence. We simply model the behavior sequence as a list of behaviors to be executed in order. We can then use these sequences in Plays or Complex behaviors. There are also SingleRobot Behavior Sequences which only allow SingleRobot behaviors.
+
+We can view the lifecycle of the class in its __init__ method:
+~~~{.py}
+class BehaviorSequence(composite_behavior.CompositeBehavior):
+    def __init__(self, behaviors= []):
+        super().__init__(
+            continuous=True
+        )  # Note: we don't know if the sequence will be continuous or not, so we assume it is to be safe
+
+        self.behaviors = behaviors
+
+        self._current_behavior_index = -1
+
+        self.add_transition(
+            behavior.Behavior.State.start, behavior.Behavior.State.running,
+            lambda: len(self.behaviors) > 0, 'has subbehavior sequence')
+
+        self.add_transition(
+            behavior.Behavior.State.running, behavior.Behavior.State.completed,
+            lambda: self._current_behavior_index >= len(self.behaviors),
+            'all subbehaviors complete')
+
+        self.add_transition(
+            behavior.Behavior.State.running, behavior.Behavior.State.failed,
+            lambda: self.current_behavior != None and self.current_behavior.is_in_state(behavior.Behavior.State.failed),
+            'subbehavior failed')
+~~~
+
+The behaviors are added to the sequence, and it executes them one by one. When they are all complete, the sequence ends. Alternatively, if one of the behaviors in the sequence fails then the sequence transitions to the failed state and stops executing behaviors immediately.
 
 ## Role Assignment
 

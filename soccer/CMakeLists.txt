@@ -5,24 +5,6 @@ set(CMAKE_AUTOMOC ON)
 # include Eigen3 for linear algebra
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
-# use rrt library from external/ directory
-set(rrt_install_dir ${CMAKE_CURRENT_BINARY_DIR}/rrt)
-set(rrt_lib_path ${rrt_install_dir}/lib/libRRT.a)
-ExternalProject_Add(rrt_project
-    URL ${PROJECT_SOURCE_DIR}/external/rrt
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${rrt_install_dir}
-    BUILD_BYPRODUCTS ${rrt_lib_path}
-)
-set_target_properties(rrt_project PROPERTIES EXCLUDE_FROM_ALL TRUE)
-
-# add rrt library target.  IMPORTED means that it is created externally
-add_library(rrt STATIC IMPORTED)
-set_property(TARGET rrt PROPERTY IMPORTED_LOCATION ${rrt_lib_path})
-add_dependencies(rrt rrt_project)
-
-# include rrt library headers
-include_directories(${rrt_install_dir}/include/)
-
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
 set(ROBOCUP_LIB_SRC
@@ -47,6 +29,7 @@ set(ROBOCUP_LIB_SRC
     "NewRefereeModule.cpp"
     "optimization/GradientAscent1D.cpp"
     "optimization/ParallelGradientAscent1D.cpp"
+    "optimization/NelderMead2D.cpp"
     "planning/CompositePath.cpp"
     "planning/DynamicObstacle.cpp"
     "planning/DirectTargetPathPlanner.cpp"
@@ -149,7 +132,12 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL2_LIBRARIES})
-target_link_libraries(robocup rrt)
+
+
+# RRT
+include_directories(${RRT_INCLUDE_DIR})
+target_link_libraries(robocup RRT)
+
 
 # python
 # note: these are set in the root CMakeLists.txt file
@@ -184,7 +172,6 @@ endif()
 qt5_use_modules(soccer Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(soccer robocup)
 
-
 # build the 'log_viewer' program
 qt5_add_resources(LOG_VIEWER_RSRC ui/log_icons.qrc)
 qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
@@ -203,15 +190,16 @@ set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
     "BatteryProfileTest.cpp"
+    "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "optimization/GradientAscent1DTest.cpp"
     "optimization/ParallelGradientAscent1DTest.cpp"
+    "optimization/NelderMead2DTest.cpp"
     "planning/PathTest.cpp"
     "planning/EscapeObstaclesPathPlannerTest.cpp"
     "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
     "WindowEvaluatorTest.cpp"
-    "KickEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

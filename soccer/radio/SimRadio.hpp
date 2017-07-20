@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QUdpSocket>
+#include <SystemState.hpp>
 
 #include "Radio.hpp"
 
@@ -9,7 +10,8 @@
  */
 class SimRadio : public Radio {
 public:
-    SimRadio(bool blueTeam = false);
+    static std::size_t instance_count;
+    SimRadio(SystemState& system_state, bool blueTeam = false);
 
     virtual bool isOpen() const override;
     virtual void send(Packet::RadioTx& packet) override;
@@ -17,6 +19,10 @@ public:
     virtual void switchTeam(bool blueTeam) override;
 
 private:
-    QUdpSocket _socket;
+    SystemState& _state;
+
+    QUdpSocket _tx_socket;
+    QUdpSocket _rx_socket;
     int _channel;
+    bool _blueTeam;
 };

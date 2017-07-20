@@ -56,3 +56,7 @@ gdb
 
 # verilog synthesis and simulation tool
 iverilog
+
+# grSim
+qt4
+ode
