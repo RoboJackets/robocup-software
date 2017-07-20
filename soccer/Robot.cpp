@@ -475,8 +475,8 @@ bool OurRobot::charged() const {
            rxIsFresh();
 }
 
-bool OurRobot::smoothHasBall() {
-    if (OurRobot::hasBall()) {
+bool OurRobot::hasBall() {
+    if (OurRobot::rawHasBall()) {
         OurRobot::_lastBallSense = RJ::now();
         return true;
     } else if ((RJ::now() - OurRobot::_lastBallSense) <
@@ -486,7 +486,7 @@ bool OurRobot::smoothHasBall() {
     return false;
 }
 
-bool OurRobot::hasBall() const {
+bool OurRobot::rawHasBall() const {
     return _radioRx.has_ball_sense_status() &&
            _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
 }

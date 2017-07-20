@@ -386,8 +386,8 @@ public:
     bool driving_available(bool require_all = true) const;
 
     // lower level status checks
-    bool smoothHasBall();
-    bool hasBall() const;
+    bool rawHasBall() const;
+    bool hasBall();
     bool ballSenseWorks() const;
     bool kickerWorks() const;
     float kickerVoltage() const;
