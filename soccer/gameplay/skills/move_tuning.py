@@ -1,10 +1,10 @@
 import single_robot_behavior
 import behavior
 
-## Behavior that moves a robot to a specified location, circumventing the path planner.
+## Behavior that tells the robot it is already at the endpoint.
 
 
-class MoveDirect(single_robot_behavior.SingleRobotBehavior):
+class MoveTuning(single_robot_behavior.SingleRobotBehavior):
     def __init__(self, pos=None):
         super().__init__(continuous=False)
 
@@ -51,7 +51,7 @@ class MoveDirect(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         if self.pos != None:
-            self.robot.move_to_direct(self.pos)
+            self.robot.move_tuning(self.pos)
 
     def role_requirements(self):
         reqs = super().role_requirements()

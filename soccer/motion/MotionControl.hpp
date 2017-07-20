@@ -32,6 +32,13 @@ public:
      */
     void run();
 
+    /**
+     *This returns the PID controller denoted by the char passed in
+     *Accepts characters 'x' and 'y' for x and y position controllers
+     *as well as 'a' for the angle controller
+     */
+    Pid* getPid(char controller);
+
     static void createConfiguration(Configuration* cfg);
 
 private:
