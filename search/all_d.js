@@ -20,8 +20,10 @@ var searchData=
   ['move',['move',['../class_our_robot.html#ab2b0fc1f00bf53277f5be70b5ce3de26',1,'OurRobot']]],
   ['move',['Move',['../classgameplay_1_1skills_1_1move_1_1_move.html',1,'gameplay::skills::move']]],
   ['move_5ftarget',['move_target',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ae900f7aee36a758ba629667f6eff8554',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
-  ['movedirect',['moveDirect',['../class_our_robot.html#a6f2a703f055c1cbbb04787e526d00b78',1,'OurRobot']]],
   ['movedirect',['MoveDirect',['../classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html',1,'gameplay::skills::move_direct']]],
+  ['movedirect',['moveDirect',['../class_our_robot.html#a6f2a703f055c1cbbb04787e526d00b78',1,'OurRobot']]],
+  ['movetuning',['moveTuning',['../class_our_robot.html#a0d626d020b26411f7b4288b6393e0dee',1,'OurRobot']]],
+  ['movetuning',['MoveTuning',['../classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html',1,'gameplay::skills::move_tuning']]],
   ['multiplier',['multiplier',['../struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19',1,'RobotConfig::Dribbler']]],
   ['multirobotpathplanner',['MultiRobotPathPlanner',['../class_planning_1_1_multi_robot_path_planner.html',1,'Planning']]],
   ['myfsm',['MyFsm',['../classtest__fsm_1_1_my_fsm.html',1,'test_fsm']]]

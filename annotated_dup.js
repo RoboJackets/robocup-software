@@ -168,6 +168,9 @@ var annotated_dup =
           ] ]
         ] ],
         [ "tuning", null, [
+          [ "pid", null, [
+            [ "pid", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid" ]
+          ] ],
           [ "test_jittery_motion", null, [
             [ "Jitterer", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer" ],
             [ "TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion" ]
@@ -241,6 +244,9 @@ var annotated_dup =
         [ "move_direct", null, [
           [ "MoveDirect", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct" ]
         ] ],
+        [ "move_tuning", null, [
+          [ "MoveTuning", "classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html", "classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning" ]
+        ] ],
         [ "pass_receive", null, [
           [ "PassReceive", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive" ]
         ] ],
@@ -306,6 +312,9 @@ var annotated_dup =
           [ "circle_on_center", null, [
             [ "CircleOnCenter", "classgameplay_1_1tactics_1_1stopped_1_1circle__on__center_1_1_circle_on_center.html", "classgameplay_1_1tactics_1_1stopped_1_1circle__on__center_1_1_circle_on_center" ]
           ] ]
+        ] ],
+        [ "tune_pid", null, [
+          [ "Tune_pid", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid.html", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid" ]
         ] ]
       ] ],
       [ "timed_behavior", null, [
@@ -373,6 +382,8 @@ var annotated_dup =
       [ "SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", "class_planning_1_1_single_robot_path_planner" ],
       [ "TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", "class_planning_1_1_target_vel_path_planner" ],
       [ "TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", "class_planning_1_1_trapezoidal_path" ],
+      [ "TuningPathCommand", "struct_planning_1_1_tuning_path_command.html", "struct_planning_1_1_tuning_path_command" ],
+      [ "TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", "class_planning_1_1_tuning_path_planner" ],
       [ "WorldVelTargetCommand", "struct_planning_1_1_world_vel_target_command.html", "struct_planning_1_1_world_vel_target_command" ]
     ] ],
     [ "rtp", null, [
@@ -441,6 +452,7 @@ var annotated_dup =
     [ "ParallelGradient1DConfig", "class_parallel_gradient1_d_config.html", "class_parallel_gradient1_d_config" ],
     [ "ParallelGradientAscent1D", "class_parallel_gradient_ascent1_d.html", "class_parallel_gradient_ascent1_d" ],
     [ "Pid", "class_pid.html", "class_pid" ],
+    [ "PidTuner", "class_pid_tuner.html", "class_pid_tuner" ],
     [ "Processor", "class_processor.html", "class_processor" ],
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
     [ "Radio", "class_radio.html", "class_radio" ],

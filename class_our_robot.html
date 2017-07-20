@@ -206,6 +206,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a6f2a703f055c1cbbb04787e526d00b78"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a6f2a703f055c1cbbb04787e526d00b78">moveDirect</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> goal, float endSpeed=0)</td></tr>
 <tr class="memdesc:a6f2a703f055c1cbbb04787e526d00b78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move to a given point bypassing the RRT Path planner.  <a href="#a6f2a703f055c1cbbb04787e526d00b78">More...</a><br /></td></tr>
 <tr class="separator:a6f2a703f055c1cbbb04787e526d00b78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d626d020b26411f7b4288b6393e0dee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a0d626d020b26411f7b4288b6393e0dee">moveTuning</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> goal, float endSpeed=0)</td></tr>
+<tr class="memdesc:a0d626d020b26411f7b4288b6393e0dee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move to a given point while breaking everything.  <a href="#a0d626d020b26411f7b4288b6393e0dee">More...</a><br /></td></tr>
+<tr class="separator:a0d626d020b26411f7b4288b6393e0dee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ae0e2de02a6c6834281a8a6868056f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ae0e2de02a6c6834281a8a6868056f0"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1ae0e2de02a6c6834281a8a6868056f0">worldVelocity</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> targetWorldVel)</td></tr>
 <tr class="memdesc:a1ae0e2de02a6c6834281a8a6868056f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the worldVelocity in the robot's MotionConstraints. <br /></td></tr>
@@ -397,6 +400,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setPath</b> (std::uni
 <tr class="memitem:a74fae988a3d6d672a84277f92851ea33"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a74fae988a3d6d672a84277f92851ea33">getPlanningPriority</a> ()</td></tr>
 <tr class="memdesc:a74fae988a3d6d672a84277f92851ea33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the priority which paths are planned.  <a href="#a74fae988a3d6d672a84277f92851ea33">More...</a><br /></td></tr>
 <tr class="separator:a74fae988a3d6d672a84277f92851ea33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15ed982a0402bc552ce3fab9e6e604b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15ed982a0402bc552ce3fab9e6e604b8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setPID</b> (double p, double i, double d)</td></tr>
+<tr class="separator:a15ed982a0402bc552ce3fab9e6e604b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_robot"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_robot')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_robot.html">Robot</a></td></tr>
 <tr class="memitem:a241c0ca6e392b4c2fef481392d35531d inherit pub_methods_class_robot"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a241c0ca6e392b4c2fef481392d35531d"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Robot</b> (unsigned int <a class="el" href="class_robot.html#a8ed316247241fadd6d59fc197df25e3e">shell</a>, bool <a class="el" href="class_robot.html#a54366c96e4367b00216f42ae0405c552">self</a>)</td></tr>
@@ -935,6 +941,40 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="a0d626d020b26411f7b4288b6393e0dee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OurRobot::moveTuning </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td>
+          <td class="paramname"><em>goal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>endSpeed</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Move to a given point while breaking everything. </p>
+<p>Tells the robot it is already at the endpoint </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">endSpeed</td><td>- the speed we should be going when we reach the end of the path. I'm not even sure if this part makes any sense here. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a1cb3380072ef5765f9adabb5202c3d73"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1026,7 +1066,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Tue Jul 18 2017 17:13:07 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jul 20 2017 03:16:38 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

@@ -22,5 +22,6 @@ var dir_28df16f06401fa4b261f014c0f6bda1e =
     [ "RRTUtil.hpp", "_r_r_t_util_8hpp_source.html", null ],
     [ "SingleRobotPathPlanner.hpp", "_single_robot_path_planner_8hpp_source.html", null ],
     [ "TargetVelPathPlanner.hpp", "_target_vel_path_planner_8hpp_source.html", null ],
-    [ "TrapezoidalPath.hpp", "_trapezoidal_path_8hpp_source.html", null ]
+    [ "TrapezoidalPath.hpp", "_trapezoidal_path_8hpp_source.html", null ],
+    [ "TuningPathPlanner.hpp", "_tuning_path_planner_8hpp_source.html", null ]
 ];

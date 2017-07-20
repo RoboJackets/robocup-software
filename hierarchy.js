@@ -47,6 +47,7 @@ var hierarchy =
       [ "gameplay.plays.testing.triangle_pass.TrianglePass.State", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html", null ],
       [ "gameplay.plays.training.binary_clock.BinaryClock.State", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock_1_1_state.html", null ],
       [ "gameplay.plays.training.which_half.WhichHalf.State", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half_1_1_state.html", null ],
+      [ "gameplay.plays.tuning.pid.pid.State", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid_1_1_state.html", null ],
       [ "gameplay.plays.tuning.tune_facing.Facer.State", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html", null ],
       [ "gameplay.skills.aim.Aim.State", "classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html", null ],
       [ "gameplay.skills.bump.Bump.State", "classgameplay_1_1skills_1_1bump_1_1_bump_1_1_state.html", null ],
@@ -65,6 +66,7 @@ var hierarchy =
       [ "gameplay.tactics.positions.goalie.Goalie.State", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.simple_zone_midfielder.SimpleZoneMidfielder.State", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder_1_1_state.html", null ],
+      [ "gameplay.tactics.tune_pid.Tune_pid.State", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid_1_1_state.html", null ],
       [ "gameplay.timeout_behavior.TimeoutBehavior.State", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html", null ],
       [ "kick_gently.KickGently.State", "classkick__gently_1_1_kick_gently_1_1_state.html", null ],
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
@@ -96,6 +98,7 @@ var hierarchy =
       [ "Planning::LineKickCommand", "struct_planning_1_1_line_kick_command.html", null ],
       [ "Planning::PathTargetCommand", "struct_planning_1_1_path_target_command.html", null ],
       [ "Planning::PivotCommand", "struct_planning_1_1_pivot_command.html", null ],
+      [ "Planning::TuningPathCommand", "struct_planning_1_1_tuning_path_command.html", null ],
       [ "Planning::WorldVelTargetCommand", "struct_planning_1_1_world_vel_target_command.html", null ]
     ] ],
     [ "MotionConstraints", "struct_motion_constraints.html", null ],
@@ -126,6 +129,7 @@ var hierarchy =
     ] ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
+    [ "PidTuner", "class_pid_tuner.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
@@ -209,7 +213,8 @@ var hierarchy =
       [ "Planning::LineKickPlanner", "class_planning_1_1_line_kick_planner.html", null ],
       [ "Planning::PivotPathPlanner", "class_planning_1_1_pivot_path_planner.html", null ],
       [ "Planning::RRTPlanner", "class_planning_1_1_r_r_t_planner.html", null ],
-      [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ]
+      [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ],
+      [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
     [ "StateMachine", null, [
       [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
@@ -244,6 +249,7 @@ var hierarchy =
             [ "gameplay.plays.testing.triangle_pass.TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", null ],
             [ "gameplay.plays.training.binary_clock.BinaryClock", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock.html", null ],
             [ "gameplay.plays.training.which_half.WhichHalf", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half.html", null ],
+            [ "gameplay.plays.tuning.pid.pid", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html", null ],
             [ "gameplay.plays.tuning.test_jittery_motion.TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", null ],
             [ "gameplay.plays.tuning.tune_facing.TuneFacing", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html", null ],
             [ "gameplay.plays.tuning.tune_pivot.TunePivoting", "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html", null ],
@@ -278,7 +284,8 @@ var hierarchy =
             [ "gameplay.tactics.positions.coach.Coach", "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html", null ],
             [ "gameplay.tactics.positions.goalie.Goalie", "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html", null ],
             [ "gameplay.tactics.positions.submissive_defender.SubmissiveDefender", "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html", null ],
-            [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html", null ]
+            [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html", null ],
+            [ "gameplay.tactics.tune_pid.Tune_pid", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid.html", null ]
           ] ],
           [ "gameplay.tactics.coordinated_pass.CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", null ],
           [ "gameplay.tactics.defense.Defense", "classgameplay_1_1tactics_1_1defense_1_1_defense.html", null ],
@@ -308,6 +315,7 @@ var hierarchy =
           [ "gameplay.skills.mark.Mark", "classgameplay_1_1skills_1_1mark_1_1_mark.html", null ],
           [ "gameplay.skills.move.Move", "classgameplay_1_1skills_1_1move_1_1_move.html", null ],
           [ "gameplay.skills.move_direct.MoveDirect", "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html", null ],
+          [ "gameplay.skills.move_tuning.MoveTuning", "classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html", null ],
           [ "gameplay.skills.touch_ball.TouchBall", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html", null ],
           [ "gameplay.tactics.positions.defender.Defender", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html", null ]
         ] ]

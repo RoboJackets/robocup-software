@@ -9,6 +9,8 @@ var searchData=
   ['penalty',['Penalty',['../classgameplay_1_1tactics_1_1penalty_1_1_penalty.html',1,'gameplay::tactics::penalty']]],
   ['pid',['PID',['../struct_robot_config_1_1_p_i_d.html',1,'RobotConfig']]],
   ['pid',['Pid',['../class_pid.html',1,'']]],
+  ['pid',['pid',['../classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html',1,'gameplay::plays::tuning::pid']]],
+  ['pidtuner',['PidTuner',['../class_pid_tuner.html',1,'']]],
   ['pivotcommand',['PivotCommand',['../struct_planning_1_1_pivot_command.html',1,'Planning']]],
   ['pivoter',['Pivoter',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html',1,'gameplay::plays::tuning::tune_pivot']]],
   ['pivotkick',['PivotKick',['../classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html',1,'gameplay::skills::pivot_kick']]],

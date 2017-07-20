@@ -20,6 +20,7 @@ var searchData=
   ['getmaxvalues',['getMaxValues',['../class_parallel_gradient_ascent1_d.html#aae7e5d59e24a4fa3690572523557f47c',1,'ParallelGradientAscent1D']]],
   ['getmaxxvalues',['getMaxXValues',['../class_parallel_gradient_ascent1_d.html#ab2d0998cd836e3ae09999339a051adbc',1,'ParallelGradientAscent1D']]],
   ['getpackets',['getPackets',['../class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4',1,'VisionReceiver']]],
+  ['getpid',['getPid',['../class_motion_control.html#a504d43d0683d88f286b0cf73e431c277',1,'MotionControl']]],
   ['getplanningpriority',['getPlanningPriority',['../class_our_robot.html#a74fae988a3d6d672a84277f92851ea33',1,'OurRobot']]],
   ['getpoint',['getPoint',['../class_nelder_mead2_d.html#a46ef4a8226b03c3c86c10c6daaac66b5',1,'NelderMead2D']]],
   ['gettime',['getTime',['../class_planning_1_1_interpolated_path.html#a05e85e9e388acb463f9991f17d504dbb',1,'Planning::InterpolatedPath']]],
