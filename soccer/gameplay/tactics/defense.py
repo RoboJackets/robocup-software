@@ -407,20 +407,10 @@ class Defense(composite_behavior.CompositeBehavior):
             threats_to_block = threats[0:2]
 
             # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
-            # Loop through all threats and assign robots to them
             threat_idx = 0
             while len(unused_threat_handlers) > 0:
                 threats_to_block[threat_idx].assigned_handlers.append(
                     unused_threat_handlers[0])
-
-                # If we are using the goalie, assign to the most important
-                # threat, and treat it like it wasn't threre
-                # This makes it so defender1 also gets assigned to the most
-                # important threat.
-                if goalie == unused_threat_handlers[0]:
-                    threat_idx -= 1
-
-                # Robot assigned, delete from unassigned handlers
                 del unused_threat_handlers[0]
 
                 threat_idx = (threat_idx + 1) % len(threats_to_block)
