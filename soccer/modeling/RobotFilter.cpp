@@ -22,7 +22,7 @@ void RobotFilter::update(const RobotObservation* obs) {
     // bool reset = _currentEstimate[s].time == 0 || (dtime > Coast_Time);
 
     bool reset = (dtime > Coast_Time);
-    if (reset || dtime < Min_Frame_Time) {
+    if (reset) {
         _estimate[s].vel = Point();
         _estimate[s].angleVel = 0;
     } else {
