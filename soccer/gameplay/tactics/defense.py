@@ -19,6 +19,9 @@ import role_assignment
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
+
+    DEFENSE_ROBOT_CHANGE_COST = 0.1
+
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         defending = 1
@@ -514,13 +517,17 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # By default, single robot behaviors prefer to use the same robot.
         # Because we assign defense behaviors to handle threats somewhat
-        # arbitrarily, we don't care about having the same robot, we just
-        # want the closest robot to take the role.
+        # arbitrarily, we don't care about having the same robot, we just want
+        # the closest robot to take the role.
+
+        # HOWEVER: Removing the bias causes flipping back and forth between
+        # robots on defense occasionally, so we will only decrease the
+        # robot_change_cost, not remove it.
         for subbehavior_name in ['defender1', 'defender2']:
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
                     subbehavior_req_tree):
-                    r.previous_shell_id = None
+                    r.robot_change_cost = Defense.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs
