@@ -82,7 +82,7 @@ class SubmissiveDefender(
 
         default_pt = seg.center()
 
-        if self._block_line != None:
+        if self._block_line is not None:
             # main.system_state().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
             main.system_state().draw_circle(
                 self._block_line.get_pt(0), 0.1, constants.Colors.White,
@@ -149,7 +149,7 @@ class SubmissiveDefender(
                 constants.Field.GoalFlat / 2,
                 constants.Field.ArcRadius + constants.Robot.Radius * 2))
 
-        if move.pos != None:
+        if move.pos is not None:
             main.system_state().draw_circle(move.pos, 0.02,
                                             constants.Colors.Green, "Mark")
             main.system_state().draw_segment(seg, constants.Colors.Green,
@@ -160,7 +160,8 @@ class SubmissiveDefender(
                                          "Mark")
 
         # make the defender face the threat it's defending against
-        if self.robot != None and self.block_line != None:
+        if (self.robot is not None
+            and self.block_line is not None):
             self.robot.face(self.block_line.get_pt(0))
 
         if self.robot.has_ball():
