@@ -52,7 +52,7 @@ rr: run-release
 backend-simulator-soccer:
 	-pkill -f './grsim'
 	./run/grsim &
-	./run/soccer -sim
+	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
 	-pkill -f './grsim'
 
