@@ -6,8 +6,8 @@ import evaluation.passing
 import main
 from enum import Enum
 import math
-import tactics.positions.submissive_goalie
-import tactics.positions.submissive_defender
+import tactics.positions.submissive_goalie as submissive_goalie
+import tactics.positions.submissive_defender as submissive_defender
 import role_assignment
 
 # TODO: clear free balls
@@ -47,13 +47,13 @@ class Defense(composite_behavior.CompositeBehavior):
                             lambda: not self.should_clear_ball(),
                             "done clearing")
 
-        goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
+        goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
         self.add_subbehavior(goalie, "goalie", required=False)
 
         # add defenders at the specified priority levels
         for num, priority in enumerate(defender_priorities):
-            defender = tactics.positions.submissive_defender.SubmissiveDefender(
+            defender = submissive_defender.SubmissiveDefender(
             )
             self.add_subbehavior(defender,
                                  'defender' + str(num + 1),
@@ -407,6 +407,21 @@ class Defense(composite_behavior.CompositeBehavior):
             threats_to_block = threats[0:2]
 
             # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
+
+            # If we clearing the ball, assign the clearer to the most important
+            # threat (the ball). This prevents assigning the non-clearing robot
+            # to mark the ball and causing crowding.
+            defender1 = self.subbehavior_with_name('defender1')
+            if (defender1.state
+                == submissive_defender.SubmissiveDefender.State.clearing):
+                if defender1 in unused_threat_handlers:
+                    if (threats_to_block[0].pos.dist_to(main.ball().pos)
+                        < constants.Robot.Radius * 2):
+                        defender_idx = unused_threat_handlers.index(defender1)
+                        threats_to_block[0].assigned_handlers.append(
+                            unused_threat_handlers[defender_idx])
+                        del unused_threat_handlers[defender_idx]
+
             threat_idx = 0
             while len(unused_threat_handlers) > 0:
                 threats_to_block[threat_idx].assigned_handlers.append(
