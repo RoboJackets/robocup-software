@@ -20,7 +20,7 @@ import role_assignment
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
 
-    DEFENSE_ROBOT_CHANGE_COST = 0.2
+    DEFENSE_ROBOT_CHANGE_COST = 0.29
 
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
