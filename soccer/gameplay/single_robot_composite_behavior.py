@@ -87,7 +87,9 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                 oldBot.shell_id() != self.robot.shell_id() and
                 self.autorestart()):
             logging.info(
-                "SingleRobotCompositeBehavior: robot changed, restarting behavior")
+                "SingleRobotCompositeBehavior: robot changed (" +
+                str(oldBot.shell_id()) + "->" + str(self.robot.shell_id()) +
+                "), restarting: " + type(self).__name__)
             self.restart()
 
     def __str__(self) -> str:
