@@ -24,11 +24,16 @@ using namespace boost::python;
 #include <Geometry2d/Line.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
+#include <motion/MotionControl.hpp>
+#include <Pid.hpp>
 #include <SystemState.hpp>
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 #include <exception>
+
+#include "RobotConfig.hpp"
+#include <Configuration.hpp>
 
 /**
  * These functions make sure errors on the c++
@@ -101,6 +106,11 @@ void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     self->moveDirect(*to);
 }
 
+void OurRobot_move_tuning(OurRobot* self, Geometry2d::Point* to) {
+    if (to == nullptr) throw NullArgumentException("to");
+    self->moveTuning(*to);
+}
+
 void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
                               Geometry2d::Point* vf) {
     if (endPos == nullptr || vf == nullptr) throw NullArgumentException();
@@ -144,6 +154,28 @@ void OurRobot_add_text(OurRobot* self, const std::string& text,
 
 void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
     self->avoidOpponents(value);
+}
+
+void OurRobot_initialize_tuner(OurRobot* self, char controller) {
+    self->motionControl()->getPid(controller)->initializeTuner();
+}
+
+void OurRobot_start_pid_tuner(OurRobot* self, char controller) {
+    self->motionControl()->getPid(controller)->startTunerCycle();
+    self->config->translation.p->setValue(
+        self->motionControl()->getPid(controller)->kp);
+    self->config->translation.i->setValue(
+        self->motionControl()->getPid(controller)->ki);
+    self->config->translation.d->setValue(
+        self->motionControl()->getPid(controller)->kd);
+}
+
+void OurRobot_run_pid_tuner(OurRobot* self, char controller) {
+    self->motionControl()->getPid(controller)->runTuner();
+}
+
+bool OurRobot_end_pid_tuner(OurRobot* self, char controller) {
+    return self->motionControl()->getPid(controller)->endTunerCycle();
 }
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
@@ -747,6 +779,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("move_to", &OurRobot_move_to)
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
+        .def("move_tuning", &OurRobot_move_tuning)
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)
@@ -777,6 +810,10 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("ball_sense_works", &OurRobot::ballSenseWorks)
         .def("kicker_works", &OurRobot::kickerWorks)
         .def("add_local_obstacle", &OurRobot_add_local_obstacle)
+        .def("initialize_tuner", &OurRobot_initialize_tuner)
+        .def("start_pid_tuner", &OurRobot_start_pid_tuner)
+        .def("run_pid_tuner", &OurRobot_run_pid_tuner)
+        .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
 
