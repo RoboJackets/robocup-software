@@ -11,6 +11,7 @@ static const float Velocity_Alpha = 0.2;
 static const RJ::Seconds Min_Frame_Time(0.014);
 static const RJ::Seconds Min_Velocity_Valid_Time(0.1);
 static const RJ::Seconds Vision_Timeout_Time(0.25);
+static const RJ::Seconds Min_Double_Packet_Time(1.0/120);
 
 RobotFilter::RobotFilter() {}
 
@@ -24,7 +25,11 @@ void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observ
                 Point velEstimate{};
                 double angleVelEstimate = 0;
                 const auto dtime = RJ::Seconds(obs.time - estimate.time);
-                if (dtime < Min_Velocity_Valid_Time) {
+                if (dtime < Min_Double_Packet_Time) {
+                    velEstimate = estimate.vel;
+                    angleVelEstimate = estimate.angleVel;
+                    estimate.velValid = true;
+                } else if (dtime < Min_Velocity_Valid_Time) {
                     velEstimate = (obs.pos - estimate.pos)/dtime.count();
                     angleVelEstimate = fixAngleRadians(obs.angle - estimate.angle)/dtime.count();
                     estimate.velValid = true;
