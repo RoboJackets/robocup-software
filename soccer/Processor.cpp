@@ -189,46 +189,60 @@ void Processor::runModels(
         // Add robot observations
         const RepeatedPtrField<SSL_DetectionRobot>& selfRobots =
             _blueTeam ? frame->robots_blue() : frame->robots_yellow();
+
+        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>> robotObservations{_state.self.size()};
+
         for (const SSL_DetectionRobot& robot : selfRobots) {
-            float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
-            RobotObservation obs(
-                _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                angleRad, time, frame->frame_number());
-            obs.source = frame->camera_id();
             unsigned int id = robot.robot_id();
+
             if (id < _state.self.size()) {
-                _state.self[id]->filter()->update(&obs);
+                const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+                const auto camera_id = frame->camera_id();
+                robotObservations[id][camera_id] = RobotObservation(
+                        _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                        angleRad, time, frame->frame_number(), true, camera_id);
             }
+        }
+
+        for (int i=0; i<robotObservations.size(); i++) {
+            _state.self[i]->filter()->update(robotObservations[i], _state.self[i], time, frame->frame_number());
         }
 
         const RepeatedPtrField<SSL_DetectionRobot>& oppRobots =
             _blueTeam ? frame->robots_yellow() : frame->robots_blue();
+
+        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>> oppRobotObservations{_state.self.size()};
+
         for (const SSL_DetectionRobot& robot : oppRobots) {
-            float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
-            RobotObservation obs(
-                _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                angleRad, time, frame->frame_number());
-            obs.source = frame->camera_id();
             unsigned int id = robot.robot_id();
-            if (id < _state.opp.size()) {
-                _state.opp[id]->filter()->update(&obs);
+
+            if (id < _state.self.size()) {
+                const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+                const auto camera_id = frame->camera_id();
+                oppRobotObservations[id][camera_id] = RobotObservation(
+                        _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                        angleRad, time, frame->frame_number(), true, camera_id);
             }
+        }
+
+        for (int i=0; i<oppRobotObservations.size(); i++) {
+            _state.opp[i]->filter()->update(oppRobotObservations[i], _state.opp[i], time, frame->frame_number());
         }
     }
 
     _ballTracker->run(ballObservations, &_state);
 
-    for (Robot* robot : _state.self) {
-        robot->filter()->predict(
-            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
-            robot);
-    }
-
-    for (Robot* robot : _state.opp) {
-        robot->filter()->predict(
-            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
-            robot);
-    }
+//    for (Robot* robot : _state.self) {
+//        robot->filter()->predict(
+//            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
+//            robot);
+//    }
+//
+//    for (Robot* robot : _state.opp) {
+//        robot->filter()->predict(
+//            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
+//            robot);
+//    }
 }
 
 /**
@@ -531,7 +545,7 @@ void Processor::run() {
                 Packet::LogFrame::Robot* log = _state.logFrame->add_self();
                 *log->mutable_pos() = r->pos;
                 *log->mutable_world_vel() = r->vel;
-                *log->mutable_body_vel() = r->vel.rotated(2 * M_PI - r->angle);
+                *log->mutable_body_vel() = r->vel.rotated(M_PI_2 - r->angle);
                 //*log->mutable_cmd_body_vel() = r->
                 // *log->mutable_cmd_vel() = r->cmd_vel;
                 // log->set_cmd_w(r->cmd_w);

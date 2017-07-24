@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Robot.hpp>
+#include <array>
 
 /**
  * @brief An observation of a robot's position and angle at a certain time
@@ -11,15 +12,19 @@
  */
 class RobotObservation {
 public:
+    RobotObservation()
+            : pos(), angle(), time(), frameNumber(), valid(false), source() {}
+
     RobotObservation(Geometry2d::Point pos, float angle, RJ::Time time,
-                     int frame)
-        : pos(pos), angle(angle), time(time), source(-1), frameNumber(frame) {}
+                     int frame, bool valid, int source)
+        : pos(pos), angle(angle), time(time), frameNumber(frame), valid(valid), source(source) {}
 
     Geometry2d::Point pos;
     float angle;  /// in radians
     RJ::Time time;
-    int source;
     int frameNumber;
+    bool valid;
+    int source;
 
     // Compares the times on two observations.  Used for sorting.
     bool operator<(const RobotObservation& other) const {
@@ -32,23 +37,23 @@ public:
  */
 class RobotFilter {
 public:
+    static constexpr int Num_Cameras = 4;
+
     RobotFilter();
 
     /// Gives a new observation to the filter
-    void update(const RobotObservation* obs);
+    void update(const std::array<RobotObservation, Num_Cameras> &obs, RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber);
 
     /// Generates a prediction of the ball's state at a given time in the
     /// future. This may clear robot->visible if the prediction is too long in
     /// the future to be reliable.
-    void predict(RJ::Time time, RobotPose* robot);
+//    void predict(RJ::Time time, RobotPose* robot);
+
 
 private:
-    static const int Num_Cameras = 4;
 
     /// Estimate for each camera
-    RobotPose _estimate[Num_Cameras];
+    RobotPose _estimates[Num_Cameras];
+    RobotPose _currentEstimate;
 
-    /// Which camera we are using to track this robot, or -1 if it has not been
-    /// seen recently
-    int _camera;
 };
