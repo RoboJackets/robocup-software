@@ -95,7 +95,7 @@ if(APPLE)
     set(PYTHON_LINK_DIRS "${PYTHON3_PREFIX}/lib")
 
     # search for the python library
-    find_library(PYTHON_LIBRARIES
+    find_library(PYTHON_LIBRARIES  
         NAMES python3.5 python3.4 python3.3 python3.2 python3
         PATHS ${PYTHON_LINK_DIRS})
     if(NOT PYTHON_LIBRARIES)
