@@ -7,13 +7,20 @@ using namespace Geometry2d;
 
 // How long to coast a robot's position when it isn't visible
 static const RJ::Seconds Coast_Time(0.8);
-static const float Velocity_Alpha = 0.2;
 static const RJ::Seconds Min_Frame_Time(0.014);
 static const RJ::Seconds Min_Velocity_Valid_Time(0.1);
 static const RJ::Seconds Vision_Timeout_Time(0.25);
 static const RJ::Seconds Min_Double_Packet_Time(1.0/120);
 
+REGISTER_CONFIGURABLE(RobotFilter);
+
+ConfigDouble* RobotFilter::_velocity_alpha;
+
 RobotFilter::RobotFilter() {}
+
+void RobotFilter::createConfiguration(Configuration *cfg) {
+    _velocity_alpha = new ConfigDouble(cfg, "RobotFilter/Velocity_Alpha", 0.2);
+}
 
 void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observations, RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber) {
     bool anyValid = std::any_of(observations.begin(), observations.end(), [](const RobotObservation& obs) {return obs.valid;});
@@ -38,10 +45,10 @@ void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observ
                     angleVelEstimate = robot->angleVel;
                 }
 
-                
+                const auto velocityAlpha = *_velocity_alpha;
                 if (dtime < Min_Velocity_Valid_Time && estimate.velValid) {
-                    estimate.vel = velEstimate*Velocity_Alpha + estimate.vel * (1.0f - Velocity_Alpha);
-                    estimate.angleVel = fixAngleRadians(angleVelEstimate*Velocity_Alpha + estimate.angleVel * (1.0f - Velocity_Alpha));
+                    estimate.vel = velEstimate*velocityAlpha + estimate.vel * (1.0f - velocityAlpha);
+                    estimate.angleVel = fixAngleRadians(angleVelEstimate*velocityAlpha + estimate.angleVel * (1.0f - velocityAlpha));
                 } else {
                     estimate.vel = velEstimate;
                     estimate.angleVel = fixAngleRadians(angleVelEstimate);

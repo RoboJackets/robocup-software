@@ -3,6 +3,8 @@
 #include <Robot.hpp>
 #include <array>
 
+#include <Configuration.hpp>
+
 /**
  * @brief An observation of a robot's position and angle at a certain time
  *
@@ -44,11 +46,7 @@ public:
     /// Gives a new observation to the filter
     void update(const std::array<RobotObservation, Num_Cameras> &obs, RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber);
 
-    /// Generates a prediction of the ball's state at a given time in the
-    /// future. This may clear robot->visible if the prediction is too long in
-    /// the future to be reliable.
-//    void predict(RJ::Time time, RobotPose* robot);
-
+    static void createConfiguration(Configuration* cfg);
 
 private:
 
@@ -56,4 +54,5 @@ private:
     RobotPose _estimates[Num_Cameras];
     RobotPose _currentEstimate;
 
+    static ConfigDouble* _velocity_alpha;
 };
