@@ -124,7 +124,35 @@ void SimRadio::receive() {
     }
 }
 
+void SimRadio::stopRobots() {
+    grSim_Packet simPacket;
+    grSim_Commands* simRobotCommands = simPacket.mutable_commands();
+    for (int i = 0; i < _state.self.size(); i++) {
+        auto& robot = _state.self[i]->robotPacket;
+        grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
+        simRobot->set_id(robot.uid());
+        simRobot->set_veltangent(0);
+        simRobot->set_velnormal(0);
+        simRobot->set_velangular(0);
+
+        simRobot->set_kickspeedx(0);
+        simRobot->set_kickspeedz(0);
+
+        simRobot->set_spinner(0);
+        simRobot->set_wheelsspeed(false);
+    }
+    simRobotCommands->set_isteamyellow(!_blueTeam);
+    simRobotCommands->set_timestamp(RJ::timestamp());
+
+    std::string out;
+    simPacket.SerializeToString(&out);
+    _tx_socket.writeDatagram(&out[0], out.size(),
+                             QHostAddress(QHostAddress::LocalHost),
+                             SimCommandPort);
+}
+
 void SimRadio::switchTeam(bool blueTeam) {
+    stopRobots();
     _blueTeam = blueTeam;
     _tx_socket.close();
     _rx_socket.close();
@@ -134,7 +162,6 @@ void SimRadio::switchTeam(bool blueTeam) {
                                 .arg(blueTeam ? "blue" : "yellow")
                                 .toStdString());
     }
-    std::cout << "Bound to " << SimBlueStatusPort << std::endl;
     int status_port = blueTeam ? SimBlueStatusPort : SimYellowStatusPort;
     if (!_rx_socket.bind(status_port)) {
         throw runtime_error(
