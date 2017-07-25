@@ -1,5 +1,7 @@
 #include "NewRefereeModule.hpp"
 
+#include "Constants.hpp"
+
 #include <Network.hpp>
 #include <multicast.hpp>
 #include <Utils.hpp>
@@ -184,7 +186,7 @@ void NewRefereeModule::run() {
             letter = tolower(letter);
         }
 
-        blueTeam(blue_name == "robojackets");
+        blueTeam(!(blue_name  != Team_Name_Lower));
 
         _mutex.unlock();
     }
