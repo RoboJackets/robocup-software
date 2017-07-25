@@ -286,7 +286,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # secondary threats are those that are somewhat close to our goal and open for a pass
         # if they're farther than this down the field, we don't consider them threats
-        threat_max_y = constants.Field.Length / 2.0
+        threat_max_y = constants.Field.Length
         potential_threats = [opp
                              for opp in main.their_robots()
                              if opp.pos.y < threat_max_y]
@@ -340,18 +340,21 @@ class Defense(composite_behavior.CompositeBehavior):
                     threats.append(ball_threat)
 
         else:
-            # primary threat is the ball or the opponent holding it
-            opp_with_ball = evaluation.ball.opponent_with_ball()
 
-            threat = Threat(opp_with_ball if opp_with_ball is not None else
-                            main.ball().pos)
-            threat.ball_acquire_chance = 1.0
-            threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
-            threats.append(threat)
+            if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
+
+                # primary threat is the ball or the opponent holding it
+                opp_with_ball = evaluation.ball.opponent_with_ball()
+
+                threat = Threat(opp_with_ball if opp_with_ball is not None else
+                                main.ball().pos)
+                threat.ball_acquire_chance = 1.0
+                threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
+                threats.append(threat)
 
         # if an opponent has the ball or is potentially about to receive the ball,
         # we look at potential receivers of it as threats
-        if isinstance(threats[0].source, robocup.OpponentRobot):
+        if len(threats) > 0 and isinstance(threats[0].source, robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
                 pass_chance = evaluation.passing.eval_pass(
                     main.ball().pos,

@@ -23,7 +23,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._aim_target_point = None  # this is what our calculations on the given target boil down to
 
         self.shot_obstacle_ignoring_robots = []
-        self.enable_shot_obstacle = False
+        self.enable_shot_obstacle = True
 
         self.aim_params = {}
 
