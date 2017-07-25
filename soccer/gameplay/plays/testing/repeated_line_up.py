@@ -5,6 +5,7 @@ import tools.sleep
 import robocup
 import constants
 import time
+import enum
 
 
 ## Robots repeatedly line up on opposite sides of the field
