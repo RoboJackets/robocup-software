@@ -29,7 +29,7 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 
 #pragma mark MotionControl
 
-MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 0, 50) {
+MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50, 0) {
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
