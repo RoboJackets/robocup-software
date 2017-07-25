@@ -111,7 +111,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         goalie = self.subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
-        if goalie.shell_id == None:
+        if goalie.shell_id is None:
             print("WARNING: No Goalie Selected")
             # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
@@ -405,6 +405,10 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # print("Unused handlers: " + str(unused_threat_handlers))
         # print("---------------------")
+
+        # If we have nothing to block, bail
+        if not threats:
+            return
 
         smart = False
         if not smart:
