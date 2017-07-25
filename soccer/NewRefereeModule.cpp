@@ -186,7 +186,7 @@ void NewRefereeModule::run() {
             letter = tolower(letter);
         }
 
-        blueTeam(!(blue_name  != Team_Name_Lower));
+        blueTeam(!(blue_name != Team_Name_Lower));
 
         _mutex.unlock();
     }
