@@ -9,6 +9,8 @@
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
+#include "firmware-common/common2015/utils/rtp.hpp"
+#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
 
 class TestResultTab;
 class StripChart;
@@ -172,6 +174,11 @@ private Q_SLOTS:
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
 
+    // Robot Config Buttons
+    void on_robotConfigButton_clicked();
+
+    void on_debugResponseButton_clicked();
+
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now
     int historyLocationChanged(int value);
@@ -232,11 +239,15 @@ private:
     QLabel* _logMemory;
 
     // QActionGroups for Radio Menu Actions
-    std::map<std::string, QActionGroup*> qActionGroups;
+    std::map<std::string, QActionGroup*> qActionGroups{};
 
     // maps robot shell IDs to items in the list
-    std::map<int, QListWidgetItem*> _robotStatusItemMap;
+    std::map<int, QListWidgetItem*> _robotStatusItemMap{};
 
     /// the play, pause, ffwd, etc buttons
-    std::vector<QPushButton*> _logPlaybackButtons;
+    std::vector<QPushButton*> _logPlaybackButtons{};
+
+    std::vector<QComboBox*> _robotConfigQComboBoxes{};
+
+    std::vector<QComboBox*> _robotDebugResponseQComboBoxes{};
 };

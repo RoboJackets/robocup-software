@@ -117,6 +117,10 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 
+    def on_exit_drive(self):
+        self.remove_all_subbehaviors()
+
+
     #Robot closest to the ball
     def role_requirements(self):
         reqs = super().role_requirements()

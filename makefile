@@ -52,7 +52,7 @@ rr: run-release
 backend-simulator-soccer:
 	-pkill -f './grsim'
 	./run/grsim &
-	./run/soccer -sim
+	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
 	-pkill -f './grsim'
 
@@ -82,7 +82,7 @@ test-soccer:
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
-	pylint -j8 --disable=C,R,W --reports=n soccer/gameplay
+	pylint -j8 --reports=n soccer/gameplay
 mypy:
 	mypy soccer/gameplay
 

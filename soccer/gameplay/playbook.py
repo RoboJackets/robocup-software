@@ -10,6 +10,11 @@ def load_from_file(playbook_file):
     with open(playbook_file, 'r') as f:
         for play in f:
             play = play.strip()
+
+            # Remove comments
+            if play.startswith('#'):
+                continue
+
             if play:
                 plays.append(play.split('/'))
 
@@ -18,6 +23,5 @@ def load_from_file(playbook_file):
 
 def save_to_file(playbook_file, list_of_plays):
     with open(playbook_file, 'w') as f:
-        import re
         for play in list_of_plays:
             f.write('/'.join(play) + '\n')

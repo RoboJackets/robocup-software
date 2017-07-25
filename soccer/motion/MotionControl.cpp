@@ -29,7 +29,7 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 
 #pragma mark MotionControl
 
-MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 50) {
+MotionControl::MotionControl(OurRobot* robot) : _angleController(0, 0, 0, 0, 50) {
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
@@ -239,4 +239,18 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     // set control values
     _robot->control->set_xvelocity(targetVel.x());
     _robot->control->set_yvelocity(targetVel.y());
+}
+
+Pid* MotionControl::getPid(char controller) {
+    // just in case there is confusion
+    switch (tolower(controller)) {
+        case 'a':
+            return &_angleController;
+        case 'x':
+            return &_positionXController;
+        case 'y':
+            return &_positionYController;
+        default:
+            return &_positionXController;
+    }
 }

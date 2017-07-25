@@ -10,4 +10,6 @@ ignored-classes =
 [MESSAGES CONTROL]
 disable=locally-disabled,
         unused-import,
-        fixme
+        fixme,
+        missing-docstring,
+        C,R,W

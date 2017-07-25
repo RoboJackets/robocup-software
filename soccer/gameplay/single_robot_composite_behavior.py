@@ -83,10 +83,13 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         # middle of the behavior. For some plays, this means we shouild restart the whole
         # behavior for the new robot (autorestart = True). For others, it is more important to continue the new
         # robot where the old robot left off (autorestart = False).
-        if oldBot is not None and self.robot is not None and oldBot.shell_id(
-        ) != self.robot.shell_id() and self.autorestart():
+        if (oldBot is not None and self.robot is not None and
+                oldBot.shell_id() != self.robot.shell_id() and
+                self.autorestart()):
             logging.info(
-                "SingleRobotCompositeBehavior: robot changed, restarting behavior")
+                "SingleRobotCompositeBehavior: robot changed (" +
+                str(oldBot.shell_id()) + "->" + str(self.robot.shell_id()) +
+                "), restarting: " + type(self).__name__)
             self.restart()
 
     def __str__(self) -> str:

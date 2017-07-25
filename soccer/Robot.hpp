@@ -232,6 +232,14 @@ public:
     void moveDirect(Geometry2d::Point goal, float endSpeed = 0);
 
     /**
+     * @brief Move to a given point while breaking everything. Tells the robot
+     * it is already at the endpoint
+     * @param endSpeed - the speed we should be going when we reach the end of
+     * the path. I'm not even sure if this part makes any sense here.
+     */
+    void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
+
+    /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */
     void worldVelocity(Geometry2d::Point targetWorldVel);
@@ -449,6 +457,8 @@ public:
      * Higher priority values are planned first.
      */
     int8_t getPlanningPriority() { return _planningPriority; }
+
+    void setPID(double p, double i, double d);
 
 protected:
     MotionControl* _motionControl;
