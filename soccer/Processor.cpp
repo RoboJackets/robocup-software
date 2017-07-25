@@ -233,18 +233,6 @@ void Processor::runModels(
     }
 
     _ballTracker->run(ballObservations, &_state);
-
-//    for (Robot* robot : _state.self) {
-//        robot->filter()->predict(
-//            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
-//            robot);
-//    }
-//
-//    for (Robot* robot : _state.opp) {
-//        robot->filter()->predict(
-//            RJ::Time(chrono::microseconds(_state.logFrame->command_time())),
-//            robot);
-//    }
 }
 
 /**
