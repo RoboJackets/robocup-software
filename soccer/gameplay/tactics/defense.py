@@ -111,7 +111,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         goalie = self.subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
-        if goalie.shell_id == None:
+        if goalie.shell_id is None:
             print("WARNING: No Goalie Selected")
             # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
@@ -286,7 +286,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # secondary threats are those that are somewhat close to our goal and open for a pass
         # if they're farther than this down the field, we don't consider them threats
-        threat_max_y = constants.Field.Length / 2.0
+        threat_max_y = constants.Field.Length
         potential_threats = [opp
                              for opp in main.their_robots()
                              if opp.pos.y < threat_max_y]
@@ -340,18 +340,21 @@ class Defense(composite_behavior.CompositeBehavior):
                     threats.append(ball_threat)
 
         else:
-            # primary threat is the ball or the opponent holding it
-            opp_with_ball = evaluation.ball.opponent_with_ball()
 
-            threat = Threat(opp_with_ball if opp_with_ball is not None else
-                            main.ball().pos)
-            threat.ball_acquire_chance = 1.0
-            threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
-            threats.append(threat)
+            if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
+
+                # primary threat is the ball or the opponent holding it
+                opp_with_ball = evaluation.ball.opponent_with_ball()
+
+                threat = Threat(opp_with_ball if opp_with_ball is not None else
+                                main.ball().pos)
+                threat.ball_acquire_chance = 1.0
+                threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
+                threats.append(threat)
 
         # if an opponent has the ball or is potentially about to receive the ball,
         # we look at potential receivers of it as threats
-        if isinstance(threats[0].source, robocup.OpponentRobot):
+        if len(threats) > 0 and isinstance(threats[0].source, robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
                 pass_chance = evaluation.passing.eval_pass(
                     main.ball().pos,
@@ -402,6 +405,10 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # print("Unused handlers: " + str(unused_threat_handlers))
         # print("---------------------")
+
+        # If we have nothing to block, bail
+        if not threats:
+            return
 
         smart = False
         if not smart:
