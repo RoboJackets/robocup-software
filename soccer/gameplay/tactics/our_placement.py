@@ -37,8 +37,8 @@ class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior
             'finished dribbling')
 
         self.add_transition(OurPlacement.State.pause, OurPlacement.State.avoid,
-                            lambda: time.time() - self.pause_time >= .5,
-                            'paused for .5 seconds')
+                            lambda: time.time() - self.pause_time >= 1.5,
+                            'paused for 1.5 seconds')
 
         #if the ball comes out of the target area, put it back
         self.add_transition(
@@ -63,12 +63,16 @@ class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior
         print("EXIT DRIBBLE")
 
     def on_enter_pause(self):
-        self.robot.is_ball_placer = True
         self.pause_time = time.time()
+        #If no path is given the code assumes we don't care what the robot does
+        #this line prevents the obstacle escape planner from triggering while we are trying to sit still
+        self.robot.move_to(self.robot.pos)
+        self.robot.set_max_speed(.01)
 
-        #without this the robot tries to leave the circle in a random direction
-        self.robot.set_max_speed(0.01)
-
+    def on_execute_pause(self):
+        #If no path is given the code assumes we don't care what the robot does
+        #this line prevents the obstacle escape planner from triggering while we are trying to sit still
+        self.robot.move_to(self.robot.pos)
 
     def on_exit_pause(self):
         self.robot.set_max_speed(5)

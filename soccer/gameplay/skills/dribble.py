@@ -108,12 +108,16 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.face(self.pos)
 
         #self.robot.set_max_speed(1.0)
-        self.robot.set_max_speed(.25)
+        self.robot.set_max_speed(3)
 
         #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.disable_avoid_ball()
-        self.robot.move_to(self.pos - (self.pos - self.robot.pos).normalized(
-            constants.Robot.Radius + 0.08))
+
+        #need to overshoot some so that the robot keeps going in the right direction as it gets close
+        #the state machine will reach completed before the move direct finishes
+        #may need to add custom velocity control based on distance to actual placement point
+        self.robot.move_to_direct(self.pos - (self.pos - self.robot.pos).normalized(
+            constants.Robot.Radius + .2))
         if self.robot.has_ball():
             self.last_ball_time = time.time()
 
