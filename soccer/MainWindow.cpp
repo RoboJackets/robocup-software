@@ -1251,6 +1251,13 @@ void MainWindow::on_actionSeed_triggered() {
     }
 }
 
+// Joystick settings
+void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
+    _processor->joystickKickOnBreakBeam(_ui.joystickKickOnBreakBeam);
+}
+
+// choose between kick on break beam and immeditate
+
 // Log controls
 void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
     // Sync frameNumber with logHistory slider

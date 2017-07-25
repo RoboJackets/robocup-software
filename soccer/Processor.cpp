@@ -77,6 +77,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _dampedTranslation = true;
     _dampedRotation = true;
 
+    _kickOnBreakBeam = false;
+
     // Initialize team-space transformation
     defendPlusX(defendPlus);
 
@@ -147,6 +149,11 @@ void Processor::dampedRotation(bool value) {
 void Processor::dampedTranslation(bool value) {
     QMutexLocker locker(&_loopMutex);
     _dampedTranslation = value;
+}
+
+void Processor::joystickKickOnBreakBeam(bool value) {
+    QMutexLocker locker(&_loopMutex);
+    _kickOnBreakBeam = value;
 }
 
 /**
@@ -770,8 +777,10 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick ? Packet::Control::IMMEDIATE
-                             : Packet::Control::STAND_DOWN);
+    tx->set_triggermode(kick ? (_kickOnBreakBeam
+                                ? Packet::Control::ON_BREAK_BEAM
+                                : Packet::Control::IMMEDIATE)
+                        : Packet::Control::STAND_DOWN);
     tx->set_kcstrength(controlVals.kickPower);
     tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
                                        : Packet::Control::CHIP);
