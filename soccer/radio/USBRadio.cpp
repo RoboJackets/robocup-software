@@ -271,7 +271,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
         auto &debugMessage = msg->message.debugMessage;
         std::copy_n(current_receive_debug.begin(), std::min(current_receive_debug.size(), debugMessage.keys.size()), debugMessage.keys.begin());
-        
+
         numRobotTXMessages++;
     }
 
@@ -291,7 +291,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
         int ret = libusb_clear_halt(_device, LIBUSB_ENDPOINT_OUT | 2);
         if (ret != 0) {
-            printf("tried to clear halt, error = %s\n. closing device",
+            printf("tried to clear halt, error = %s\n. closing device\n",
                    libusb_error_name(ret));
             libusb_close(_device);
             _device = nullptr;
