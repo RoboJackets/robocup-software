@@ -75,7 +75,7 @@ void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observ
         double angleVelWeightTotal = 0;
         for (const auto &estimate: _estimates) {
             const auto dTime = RJ::Seconds(currentTime - estimate.time);
-            debugThrowIf("dTime is less than 0", dTime < RJ::Seconds(0));
+//            debugLogIf(to_string(dTime) + " dTime is less than 0", dTime < RJ::Seconds(0));
             if (estimate.visible && dTime < Vision_Timeout_Time) {
                 Point pos{};
                 double angle{};
