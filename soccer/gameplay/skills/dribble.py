@@ -135,7 +135,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.set_dribble_speed(self._dribble_speed)
         self.robot.face(self.pos)
 
-        self.robot.set_max_speed(1)
+        # self.robot.set_max_speed(1)
 
         #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.disable_avoid_ball()
@@ -145,6 +145,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_exit_drive(self):
         self.remove_all_subbehaviors()
+        print("exit dribbler")
 
 
     #Robot closest to the ball
