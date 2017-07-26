@@ -46,7 +46,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.error_threshold = 0.06
         self.max_steady_ang_vel = 4
         self.min_steady_duration = 0.1
-        self.dribbler_speed = int(constants.Robot.Dribbler.MaxPower / 2.0)
+        self.dribbler_power = int(constants.Robot.Dribbler.MaxPower / 2.0)
 
         self.last_ball_time = 0
 
@@ -97,12 +97,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # Default: full power
     @property
-    def dribbler_speed(self):
-        return self._dribbler_speed
+    def dribbler_power(self):
+        return self._dribbler_power
 
-    @dribbler_speed.setter
-    def dribbler_speed(self, value):
-        self._dribbler_speed = int(value)
+    @dribbler_power.setter
+    def dribbler_power(self, value):
+        self._dribbler_power = int(value)
 
     # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
     # Default: float("inf")
@@ -213,7 +213,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         # slowly pivot toward the target
         #self.robot.set_max_angle_speed(4)
         self.robot.pivot(self._face_target)
-        self.robot.set_dribble_speed(self.dribbler_speed)
+        self.robot.set_dribble_speed(self.dribbler_power)
 
         # draw current shot line
         if self._shot_point != None:
