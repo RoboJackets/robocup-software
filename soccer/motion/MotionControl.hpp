@@ -65,4 +65,5 @@ private:
 
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_velocity;
+    static ConfigDouble* _x_multiplier;
 };
