@@ -112,16 +112,19 @@ class SubmissiveGoalie(
 
         # we use low error thresholds here
         # the goalie isn't trying to make a shot, he just wants get the ball the **** out of there
-        kick.aim_params['error_threshold'] = 1.0
-        kick.aim_params['max_steady_ang_vel'] = 12
+        kick.aim_params['error_threshold'] = 0.1
+        kick.aim_params['max_steady_ang_vel'] = 0.1
+        # print ("hi")
 
         # chip
         kick.chip_power = 1.0
         kick.use_chipper = True
 
-        kick.target = robocup.Segment(
-            robocup.Point(-constants.Field.Width / 2, constants.Field.Length),
-            robocup.Point(constants.Field.Width / 2, constants.Field.Length))
+        # kick.target = robocup.Segment(
+        #     robocup.Point(-constants.Field.Width / 2, constants.Field.Length),
+        #     robocup.Point(constants.Field.Width / 2, constants.Field.Length))
+
+        kick.target = constants.Field.TheirGoalSegment
 
         # FIXME: if the goalie has a fault, resort to bump
 

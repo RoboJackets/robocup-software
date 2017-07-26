@@ -176,6 +176,21 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
+void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
+    if (!visible) return;
+
+    // sets flags for future movement
+    if (verbose)
+        cout << " in OurRobot::moveTuning(goal): adding a goal (" << goal.x()
+             << ", " << goal.y() << ")" << endl;
+
+    _motionCommand = std::make_unique<Planning::TuningPathCommand>(
+        MotionInstant(goal, (goal - pos).normalized() * endSpeed));
+
+    *_cmdText << "moveTuning(" << goal << ")" << endl;
+    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
+}
+
 void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
     if (!visible) return;
 
@@ -566,4 +581,10 @@ uint8_t OurRobot::chipPowerForDistance(double distance) {
     if (distance < b) return 0;
     if (distance > distanceToChipLanding(255)) return 255;
     return 0.5 * distance + b;
+}
+
+void OurRobot::setPID(double p, double i, double d) {
+    config->translation.p->setValueString(QString(std::to_string(p).c_str()));
+    config->translation.i->setValueString(QString(std::to_string(i).c_str()));
+    config->translation.d->setValueString(QString(std::to_string(d).c_str()));
 }

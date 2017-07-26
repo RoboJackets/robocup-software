@@ -6,13 +6,12 @@ import evaluation.passing
 import main
 from enum import Enum
 import math
-import tactics.positions.submissive_goalie
-import tactics.positions.submissive_defender
+import tactics.positions.submissive_goalie as submissive_goalie
+import tactics.positions.submissive_defender as submissive_defender
 import role_assignment
 
 # TODO: clear free balls
 # TODO: handle the case where the ball is invalid
-
 
 ## The Defense tactic handles goalie and defender placement to defend the goal
 # It does lots of window and shot evaluation to figure out which 'threats' are the
@@ -20,6 +19,9 @@ import role_assignment
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
+
+    DEFENSE_ROBOT_CHANGE_COST = 0.29
+
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         defending = 1
@@ -48,13 +50,13 @@ class Defense(composite_behavior.CompositeBehavior):
                             lambda: not self.should_clear_ball(),
                             "done clearing")
 
-        goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
+        goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
         self.add_subbehavior(goalie, "goalie", required=False)
 
         # add defenders at the specified priority levels
         for num, priority in enumerate(defender_priorities):
-            defender = tactics.positions.submissive_defender.SubmissiveDefender(
+            defender = submissive_defender.SubmissiveDefender(
             )
             self.add_subbehavior(defender,
                                  'defender' + str(num + 1),
@@ -109,7 +111,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         goalie = self.subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
-        if goalie.shell_id == None:
+        if goalie.shell_id is None:
             print("WARNING: No Goalie Selected")
             # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
@@ -132,7 +134,7 @@ class Defense(composite_behavior.CompositeBehavior):
         behaviors = [goalie, defender1, defender2]
 
         # if we don't have any bots to work with, don't waste time calculating
-        if all(bhvr.robot == None for bhvr in behaviors):
+        if all(bhvr.robot is None for bhvr in behaviors):
             return
 
         # A threat to our goal - something we'll actively defend against
@@ -210,7 +212,7 @@ class Defense(composite_behavior.CompositeBehavior):
             # only look at ones that have robots
             # as we handle threats, we remove the handlers from this list
 
-        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot != None,
+        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot is not None,
                                              [goalie, defender1, defender2]))
 
         def set_block_lines_for_threat_handlers(threat):
@@ -225,7 +227,7 @@ class Defense(composite_behavior.CompositeBehavior):
                         del threat.assigned_handlers[idx]
                         threat.assigned_handlers.insert(1, goalie)
 
-            if threat.best_shot_window != None:
+            if threat.best_shot_window is not None:
                 center_line = robocup.Line(
                     threat.pos, threat.best_shot_window.segment.center())
             else:
@@ -284,7 +286,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # secondary threats are those that are somewhat close to our goal and open for a pass
         # if they're farther than this down the field, we don't consider them threats
-        threat_max_y = constants.Field.Length / 2.0
+        threat_max_y = constants.Field.Length
         potential_threats = [opp
                              for opp in main.their_robots()
                              if opp.pos.y < threat_max_y]
@@ -338,18 +340,21 @@ class Defense(composite_behavior.CompositeBehavior):
                     threats.append(ball_threat)
 
         else:
-            # primary threat is the ball or the opponent holding it
-            opp_with_ball = evaluation.ball.opponent_with_ball()
 
-            threat = Threat(opp_with_ball if opp_with_ball != None else
-                            main.ball().pos)
-            threat.ball_acquire_chance = 1.0
-            threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
-            threats.append(threat)
+            if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
 
-# if an opponent has the ball or is potentially about to receive the ball,
-# we look at potential receivers of it as threats
-        if isinstance(threats[0].source, robocup.OpponentRobot):
+                # primary threat is the ball or the opponent holding it
+                opp_with_ball = evaluation.ball.opponent_with_ball()
+
+                threat = Threat(opp_with_ball if opp_with_ball is not None else
+                                main.ball().pos)
+                threat.ball_acquire_chance = 1.0
+                threat.shot_chance = 1.0  # FIXME: calculate, don't use 1.0
+                threats.append(threat)
+
+        # if an opponent has the ball or is potentially about to receive the ball,
+        # we look at potential receivers of it as threats
+        if len(threats) > 0 and isinstance(threats[0].source, robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
                 pass_chance = evaluation.passing.eval_pass(
                     main.ball().pos,
@@ -401,6 +406,10 @@ class Defense(composite_behavior.CompositeBehavior):
         # print("Unused handlers: " + str(unused_threat_handlers))
         # print("---------------------")
 
+        # If we have nothing to block, bail
+        if not threats:
+            return
+
         smart = False
         if not smart:
 
@@ -408,6 +417,21 @@ class Defense(composite_behavior.CompositeBehavior):
             threats_to_block = threats[0:2]
 
             # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
+
+            # If we clearing the ball, assign the clearer to the most important
+            # threat (the ball). This prevents assigning the non-clearing robot
+            # to mark the ball and causing crowding.
+            defender1 = self.subbehavior_with_name('defender1')
+            if (defender1.state
+                == submissive_defender.SubmissiveDefender.State.clearing):
+                if defender1 in unused_threat_handlers:
+                    if (threats_to_block[0].pos.dist_to(main.ball().pos)
+                        < constants.Robot.Radius * 2):
+                        defender_idx = unused_threat_handlers.index(defender1)
+                        threats_to_block[0].assigned_handlers.append(
+                            unused_threat_handlers[defender_idx])
+                        del unused_threat_handlers[defender_idx]
+
             threat_idx = 0
             while len(unused_threat_handlers) > 0:
                 threats_to_block[threat_idx].assigned_handlers.append(
@@ -445,7 +469,7 @@ class Defense(composite_behavior.CompositeBehavior):
             # recalculate_threat_shot(idx)
 
             # the line they'll be shooting down/on
-            if threat.best_shot_window != None:
+            if threat.best_shot_window is not None:
                 shot_line = robocup.Segment(
                     threat.pos, threat.best_shot_window.segment.center())
             else:
@@ -460,7 +484,7 @@ class Defense(composite_behavior.CompositeBehavior):
                                                     "Defense")
 
                 # draw some debug stuff
-                if threat.best_shot_window != None:
+                if threat.best_shot_window is not None:
                     # draw shot triangle
                     pts = [threat.pos,
                            threat.best_shot_window.segment.get_pt(0),
@@ -500,13 +524,17 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # By default, single robot behaviors prefer to use the same robot.
         # Because we assign defense behaviors to handle threats somewhat
-        # arbitrarily, we don't care about having the same robot, we just
-        # want the closest robot to take the role.
+        # arbitrarily, we don't care about having the same robot, we just want
+        # the closest robot to take the role.
+
+        # HOWEVER: Removing the bias causes flipping back and forth between
+        # robots on defense occasionally, so we will only decrease the
+        # robot_change_cost, not remove it.
         for subbehavior_name in ['defender1', 'defender2']:
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
                     subbehavior_req_tree):
-                    r.previous_shell_id = None
+                    r.robot_change_cost = Defense.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs

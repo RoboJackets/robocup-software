@@ -9,7 +9,8 @@ namespace Planning {
 
 /*
  * This is a superclass for different MotionCommands.
- * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget, None
+ * Currently implemented are PathTarget, WorldVel, Pivot, DirectPathtarget,
+ * TuningPath, None
  */
 class MotionCommand {
 public:
@@ -18,6 +19,7 @@ public:
         WorldVel,
         Pivot,
         DirectPathTarget,
+        TuningPath,
         LineKick,
         None
     };
@@ -82,6 +84,15 @@ struct DirectPathTargetCommand : public MotionCommand {
     }
     explicit DirectPathTargetCommand(const MotionInstant& goal)
         : MotionCommand(MotionCommand::DirectPathTarget), pathGoal(goal){};
+    const MotionInstant pathGoal;
+};
+
+struct TuningPathCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<TuningPathCommand>(*this);
+    }
+    explicit TuningPathCommand(const MotionInstant& goal)
+        : MotionCommand(MotionCommand::TuningPath), pathGoal(goal){};
     const MotionInstant pathGoal;
 };
 
