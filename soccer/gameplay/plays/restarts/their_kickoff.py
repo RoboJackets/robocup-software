@@ -67,7 +67,10 @@ class TheirKickoff(standard_play.StandardPlay):
         # 1. Not on our side of the field
         # 2. behind or inside the goal circle
         mark_robot_right = list(filter(
-            lambda robot: robot.pos.x >= 0 and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio and constants.Field.FieldRect.contains_point(robot.pos) and not centerCircle.contains_point(robot.pos),
+            lambda robot: (robot.pos.x >= 0
+                           and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio
+                           and constants.Field.FieldRect.contains_point(robot.pos)
+                           and not centerCircle.contains_point(robot.pos)),
             their_robots))
 
         # Don't select robots that are
@@ -75,7 +78,11 @@ class TheirKickoff(standard_play.StandardPlay):
         # 2. behind or inside the goal circle
         # 3. Not the robot selected before
         mark_robot_left = list(filter(
-            lambda robot: robot.pos.x <= 0 and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio and constants.Field.FieldRect.contains_point(robot.pos) and not centerCircle.contains_point(robot.pos) and robot != mark_one.mark_robot,
+            lambda robot: (robot.pos.x <= 0
+                           and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio
+                           and constants.Field.FieldRect.contains_point(robot.pos)
+                           and not centerCircle.contains_point(robot.pos)
+                           and robot != mark_one.mark_robot),
             their_robots))
 
         # Special cases
