@@ -15,6 +15,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachErrorThresh = 0.8
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
+
+    # Default dribbler speed, can be overriden by self.dribbler_power
     DribbleSpeed = 100
     FineApproachSpeed = 0.1
 
@@ -53,6 +55,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             Capture.State.fine_approach, Capture.State.course_approach,
             lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
+
+        self.dribbler_power = Capture.DribbleSpeed
 
         self.lastApproachTarget = None
         self.faceBall = faceBall
@@ -127,11 +131,11 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                                         constants.Colors.White, "Capture")
 
     def on_exit_course_approach(self):
-        self.lastApproachTarget == None
+        self.lastApproachTarget is None
 
     def execute_fine_approach(self):
         self.robot.disable_avoid_ball()
-        self.robot.set_dribble_speed(Capture.DribbleSpeed)
+        self.robot.set_dribble_speed(self.dribbler_power)
 
         # TODO(ashaw596): explain this math a bit
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
