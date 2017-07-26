@@ -321,6 +321,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         }
     } else {
         _ui.goalieID->setEnabled(true);
+        qActionGroups["teamGroup"]->setEnabled(true);
     }
 }
 
