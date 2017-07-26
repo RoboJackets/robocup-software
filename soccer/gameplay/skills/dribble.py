@@ -27,7 +27,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._threshold = 0.1  #default value matches the required accuracy for a placement command
         self._pos = pos
 
-        self._dribble_speed = constants.Robot.Dribbler.MaxPower
+        self._dribble_speed = 70
 
         self.add_transition(behavior.Behavior.State.start,
                             Dribble.State.setup, lambda: True, 'immediately')
@@ -130,6 +130,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_enter_drive(self):
         move = skills.move_direct.MoveDirect(self.pos - (self.pos - self.robot.pos).normalized(constants.Robot.Radius))
         self.add_subbehavior(move, 'dmove', required=True, priority=100)
+        self.robot.set_max_speed(.5)
 
     def execute_drive(self):
         self.robot.set_dribble_speed(self._dribble_speed)
