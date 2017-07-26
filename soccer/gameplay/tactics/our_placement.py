@@ -37,8 +37,8 @@ class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior
             'finished dribbling')
 
         self.add_transition(OurPlacement.State.pause, OurPlacement.State.avoid,
-                            lambda: time.time() - self.pause_time >= .5,
-                            'paused for .5 seconds')
+                            lambda: time.time() - self.pause_time >= 1,
+                            'pause for 1 seconds')
 
         #if the ball comes out of the target area, put it back
         self.add_transition(
@@ -55,23 +55,17 @@ class OurPlacement(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
     def execute_dribble(self):
         self.robot.is_ball_placer = True
-        self.robot.set_max_speed(5)
+        # self.robot.set_max_speed(1)
 
     def on_exit_dribble(self):
         self.robot.set_dribble_speed(0)
         self.remove_all_subbehaviors()
-        print("EXIT DRIBBLE")
 
     def on_enter_pause(self):
-        self.robot.is_ball_placer = True
         self.pause_time = time.time()
 
-        #without this the robot tries to leave the circle in a random direction
-        self.robot.set_max_speed(0.01)
-
-
-    def on_exit_pause(self):
-        self.robot.set_max_speed(5)
+    def execute_pause(self):
+        self.robot.disable_avoid_ball()
 
     def execute_avoid(self):
         self.robot.is_ball_placer = True

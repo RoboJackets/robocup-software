@@ -19,12 +19,13 @@ public:
           dribblerPower(0),
           kick(false),
           chip(false),
-          dribble(false) {}
+          dribble(false),
+          kickOnBreak(false) {}
 
     Geometry2d::Point translation;
     double rotation;
     double kickPower, dribblerPower;
-    bool kick, chip, dribble;
+    bool kick, chip, dribble, kickOnBreak;
 };
 
 /**

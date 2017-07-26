@@ -142,6 +142,9 @@ private Q_SLOTS:
     /// Gameplay menu
     void on_actionSeed_triggered();
 
+    // Joystick settings
+    void on_joystickKickOnBreakBeam_stateChanged();
+
     /// Log controls
     void on_logHistoryLocation_sliderMoved(int value);
     void on_logHistoryLocation_sliderReleased();

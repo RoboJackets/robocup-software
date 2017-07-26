@@ -134,6 +134,8 @@ public:
     void dampedRotation(bool value);
     void dampedTranslation(bool value);
 
+    void joystickKickOnBreakBeam(bool value);
+
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
 
@@ -287,6 +289,8 @@ private:
     // joystick damping
     bool _dampedRotation;
     bool _dampedTranslation;
+
+    bool _kickOnBreakBeam;
 
     // If true, rotates robot commands from the joystick based on its
     // orientation on the field
