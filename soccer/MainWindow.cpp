@@ -1253,7 +1253,7 @@ void MainWindow::on_actionSeed_triggered() {
 
 // Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
-    _processor->joystickKickOnBreakBeam(_ui.joystickKickOnBreakBeam);
+    _processor->joystickKickOnBreakBeam(_ui.joystickKickOnBreakBeam->checkState());
 }
 
 // choose between kick on break beam and immeditate
