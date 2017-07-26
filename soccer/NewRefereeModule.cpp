@@ -1,5 +1,7 @@
 #include "NewRefereeModule.hpp"
 
+#include "Constants.hpp"
+
 #include <Network.hpp>
 #include <multicast.hpp>
 #include <Utils.hpp>
@@ -179,12 +181,12 @@ void NewRefereeModule::run() {
         ballPlacementx = packet->wrapper.designated_position().x();
         ballPlacementy = packet->wrapper.designated_position().y();
 
-        std::string blue_name = blue_info.name;
-        for (char& letter : blue_name) {
+        std::string yellow_name = yellow_info.name;
+        for (char& letter : yellow_name) {
             letter = tolower(letter);
         }
 
-        blueTeam(blue_name == "robojackets");
+        blueTeam(yellow_name != Team_Name_Lower);
 
         _mutex.unlock();
     }
