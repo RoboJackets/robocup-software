@@ -110,11 +110,10 @@ class SubmissiveGoalie(
         # TODO: the below dribble speed is best for a 2011 bot
         # kick.dribble_speed = constants.Robot.Dribbler.MaxPower / 3.5
 
-        # we use low error thresholds here
+        # we use high error thresholds here
         # the goalie isn't trying to make a shot, he just wants get the ball the **** out of there
-        kick.aim_params['error_threshold'] = 0.1
-        kick.aim_params['max_steady_ang_vel'] = 0.1
-        # print ("hi")
+        kick.aim_params['error_threshold'] = 1
+        kick.aim_params['max_steady_ang_vel'] = 1
 
         # chip
         kick.chip_power = 1.0
