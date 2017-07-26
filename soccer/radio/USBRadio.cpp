@@ -226,54 +226,54 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
-    int numRobotTXMessages = packet.robots_size();
-
-    for (int configStartIndex=0; configStartIndex<packet.configs_size(); configStartIndex+=rtp::ConfMessage::length) {
-        if (numRobotTXMessages<6) {
-            auto slot = numRobotTXMessages;
-            size_t offset =
-                    sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-            rtp::RobotTxMessage* msg =
-                    (rtp::RobotTxMessage*)(forward_packet + offset);
-
-            msg->uid = rtp::ANY_ROBOT_UID;
-            msg->messageType = rtp::RobotTxMessage::ConfMessageType;
-
-            auto &confMessage = msg->message.confMessage;
-
-
-            auto numToCopy = std::min(static_cast<int>(rtp::ConfMessage::length), packet.configs_size()-configStartIndex);
-            for (int i=0; i<numToCopy; i++) {
-                const auto &config = packet.configs(i+configStartIndex);
-                auto key = static_cast<DebugCommunication::ConfigCommunication>(config.key());
-                confMessage.keys[i] = key;
-                confMessage.values[i] = DebugCommunication::configToValue(key, config.value());
-            }
-            numRobotTXMessages++;
-        }
-    }
-    {
-        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
-        current_receive_debug.clear();
-        for (auto debugMessages : packet.debug_communication()) {
-            current_receive_debug.push_back(static_cast<DebugCommunication::DebugResponse>(debugMessages.key()));
-        }
-    }
-    if (numRobotTXMessages<6) {
-        auto slot = numRobotTXMessages;
-        size_t offset =
-            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-        rtp::RobotTxMessage* msg =
-            (rtp::RobotTxMessage*)(forward_packet + offset);
-
-        msg->uid = rtp::ANY_ROBOT_UID;
-        msg->messageType = rtp::RobotTxMessage::DebugMessageType;
-
-        auto &debugMessage = msg->message.debugMessage;
-        std::copy_n(current_receive_debug.begin(), std::min(current_receive_debug.size(), debugMessage.keys.size()), debugMessage.keys.begin());
-
-        numRobotTXMessages++;
-    }
+//    int numRobotTXMessages = packet.robots_size();
+//
+//    for (int configStartIndex=0; configStartIndex<packet.configs_size(); configStartIndex+=rtp::ConfMessage::length) {
+//        if (numRobotTXMessages<6) {
+//            auto slot = numRobotTXMessages;
+//            size_t offset =
+//                    sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
+//            rtp::RobotTxMessage* msg =
+//                    (rtp::RobotTxMessage*)(forward_packet + offset);
+//
+//            msg->uid = rtp::ANY_ROBOT_UID;
+//            msg->messageType = rtp::RobotTxMessage::ConfMessageType;
+//
+//            auto &confMessage = msg->message.confMessage;
+//
+//
+//            auto numToCopy = std::min(static_cast<int>(rtp::ConfMessage::length), packet.configs_size()-configStartIndex);
+//            for (int i=0; i<numToCopy; i++) {
+//                const auto &config = packet.configs(i+configStartIndex);
+//                auto key = static_cast<DebugCommunication::ConfigCommunication>(config.key());
+//                confMessage.keys[i] = key;
+//                confMessage.values[i] = DebugCommunication::configToValue(key, config.value());
+//            }
+//            numRobotTXMessages++;
+//        }
+//    }
+//    {
+//        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
+//        current_receive_debug.clear();
+//        for (auto debugMessages : packet.debug_communication()) {
+//            current_receive_debug.push_back(static_cast<DebugCommunication::DebugResponse>(debugMessages.key()));
+//        }
+//    }
+//    if (numRobotTXMessages<6) {
+//        auto slot = numRobotTXMessages;
+//        size_t offset =
+//            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
+//        rtp::RobotTxMessage* msg =
+//            (rtp::RobotTxMessage*)(forward_packet + offset);
+//
+//        msg->uid = rtp::ANY_ROBOT_UID;
+//        msg->messageType = rtp::RobotTxMessage::DebugMessageType;
+//
+//        auto &debugMessage = msg->message.debugMessage;
+//        std::copy_n(current_receive_debug.begin(), std::min(current_receive_debug.size(), debugMessage.keys.size()), debugMessage.keys.begin());
+//
+//        numRobotTXMessages++;
+//    }
 
 
 
@@ -359,11 +359,11 @@ void USBRadio::handleRxData(uint8_t* buf) {
         for (int index = 0; index < current_receive_debug.size(); ++index) {
             auto debugResponse = current_receive_debug[index];
             const auto &name = DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse);
-            auto value = msg->debug_data[index];
-
-            auto packet_debug_response = packet.add_debug_responses();
-            packet_debug_response->set_key(name);
-            packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse, value));
+//            auto value = msg->debug_data[index];
+//
+//            auto packet_debug_response = packet.add_debug_responses();
+//            packet_debug_response->set_key(name);
+//            packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse, value));
         }
     }
     _reversePackets.push_back(packet);
