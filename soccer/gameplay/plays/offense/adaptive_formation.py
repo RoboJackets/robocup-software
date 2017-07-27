@@ -145,6 +145,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
+        if (not main.game_state().is_playing()):
+            return float("inf")
         if len(main.our_robots()) < 5:
             return float("inf")
         return 10
