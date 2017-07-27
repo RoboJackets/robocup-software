@@ -214,7 +214,7 @@
  </PathPlanner>
  <MotionConstraints>
   <Max_Acceleration value="1"/>
-  <Max_Velocity value="1.5"/>
+  <Max_Velocity value="1"/>
   <Max_Angle_Speed value="0.436"/>
   <Replan_Threshold value="0.3"/>
   <Replan_Lead_Time value="0"/>
