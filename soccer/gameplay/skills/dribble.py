@@ -56,7 +56,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             lambda: self.fumbled(), 'fumbled')
 
         self.add_transition(Dribble.State.capture, Dribble.State.setup,
-                            lambda: (self.robot.pos - main.ball().pos).mag() > .5, 'fumbled')
+                            lambda: (self.robot.pos - main.ball().pos).mag() > 1, 'fumbled')
 
         self.add_transition(
             Dribble.State.drive, behavior.Behavior.State.completed,
@@ -72,7 +72,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def fumbled(self):
         return not self.robot.has_ball() and time.time(
-        ) - self.last_ball_time > 0.3
+        ) - self.last_ball_time > 1.2
 
     ## the position to move to (a robocup.Point object)
     @property
@@ -135,8 +135,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_drive(self):
         self.robot.set_dribble_speed(self._dribble_speed)
         self.robot.face(self.pos)
-
-        # self.robot.set_max_speed(1)
+        self.robot.set_max_speed(.3)
 
         #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.disable_avoid_ball()
