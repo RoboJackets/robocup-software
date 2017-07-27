@@ -29,7 +29,7 @@ class SubmissiveGoalie(
         super().__init__(continuous=True)
 
         self.MaxX = constants.Field.GoalWidth / 2.0
-        self.SegmentY = constants.Robot.Radius + 0.01
+        self.SegmentY = constants.Robot.Radius + 0.1
 
         # The segment we stay on during the 'block' state
         # It's right in front of the goal
