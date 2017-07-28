@@ -279,10 +279,12 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     // Send the forward packet
     int sent = 0;
+    // TODO FIXME remove this hack, which increases the size of data packets by 2.
+    // See +2 on sizeof's below.
     int transferRetCode =
         libusb_bulk_transfer(_device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
-                             sizeof(forward_packet), &sent, Control_Timeout);
-    if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet)) {
+                             sizeof(forward_packet) + 2, &sent, Control_Timeout);
+    if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet) + 2) {
         fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %lu\n",
                 sent, (unsigned long int)sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
