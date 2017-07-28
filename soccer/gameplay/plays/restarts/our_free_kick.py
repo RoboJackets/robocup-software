@@ -38,6 +38,8 @@ class OurFreeKick(standard_play.StandardPlay):
         # This will be reset to something else if indirect on the first iteration
         kicker.target = constants.Field.TheirGoalSegment
 
+        # kicker.set_max_speed(0.2)
+
         # add two 'centers' that just move to fixed points
         center1 = skills.move.Move(robocup.Point(0, 1.5))
         self.add_subbehavior(center1, 'center1', required=False, priority=4)

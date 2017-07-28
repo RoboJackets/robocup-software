@@ -241,8 +241,6 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         } else {
             replanState = Reuse;
         }
-
-
     }
 
     if (replanState == Reuse) {
@@ -345,6 +343,7 @@ vector<Point> RRTPlanner::runRRTHelper(
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(stateSpace, Point::hash, 2);
+        reusePathTries++;
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
 
@@ -529,7 +528,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
 }
 
 double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,
-                               double c1, double d2, double v2, double c2) {
+                               double c1, double d2, double v2, double c2, double minMaxSpeed=0) {
     double d = std::abs(d2 - d1);
     double deltaSpeed = v2 - v1;
     if (deltaSpeed < 0) {
@@ -554,6 +553,7 @@ double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,
     }
 
     double maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
+    maxSpeed = std::max(minMaxSpeed, maxSpeed);
     return std::min(v2, maxSpeed);
 }
 
@@ -682,7 +682,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         newPointsSpeed[i2] = oneStepLimitAcceleration(
             maxAceleration, newPointsDistance[i1], newPointsSpeed[i1],
             newPointsCurvature[i1], newPointsDistance[i2], newPointsSpeed[i2],
-            newPointsCurvature[i2]);
+            newPointsCurvature[i2], 0.1);
     }
 
     // Backwards Constraints
@@ -692,7 +692,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         newPointsSpeed[i2] = oneStepLimitAcceleration(
             maxAceleration, newPointsDistance[i1], newPointsSpeed[i1],
             newPointsCurvature[i1], newPointsDistance[i2], newPointsSpeed[i2],
-            newPointsCurvature[i2]);
+            newPointsCurvature[i2], 0.1);
     }
 
     RJ::Seconds totalTime(0);

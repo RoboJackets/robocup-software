@@ -39,6 +39,9 @@ class LineKick(skills._kick._Kick):
             "robot kicked")
         self.shell_id = None
 
+        self.max_speed = None
+        self.max_accel = None
+
     def on_enter_running(self):
         super().recalculate_aim_target_point()
 
@@ -46,6 +49,9 @@ class LineKick(skills._kick._Kick):
         super().execute_running()
         self.robot.disable_avoid_ball()
         self.robot.line_kick(self.aim_target_point)
+
+        if self.max_speed is not None:
+            self.robot.set_max_speed(self.max_speed)
 
         if main.ball().pos.dist_to(
                 self.robot.pos) < LineKick.ClosenessThreshold:

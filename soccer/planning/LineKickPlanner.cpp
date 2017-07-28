@@ -106,7 +106,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
         auto ballPath = ball.path(curTime);
         unique_ptr<Path> path;
         if (std::abs(target.vel.angleBetween((target.pos - startInstant.pos))) >
-            DegreesToRadians(50)) {
+            DegreesToRadians(10)) {
             target.pos -=
                 target.vel.normalized(ballAvoidDistance*2 + Robot_Radius);
             if (prevPath &&
@@ -124,11 +124,23 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
                 dynamicObstacles, planRequest.shellID);
             path = rrtPlanner.run(request);
         } else {
-            target.pos += target.vel.normalized(Robot_Radius);
+
+            if (prevPath &&
+                target.pos.distTo(prevPath->end().motion.pos) < SingleRobotPathPlanner::goalPosChangeThreshold() &&
+                reusePathCount < 20) {
+                target.vel = prevPath->end().motion.vel;
+                reusePathCount++;
+            } else {
+                reusePathCount = 0;
+            }
+
+            target.pos += target.vel.normalized(Robot_Radius/2);
             auto command = std::make_unique<PathTargetCommand>(target);
             auto request = PlanRequest(systemState,
                                        startInstant, std::move(command), robotConstraints, std::move(prevPath), obstacles,
                                        dynamicObstacles, planRequest.shellID);
+
+
             path = rrtPlanner.run(request);
         }
         targetKickPos = boost::none;
