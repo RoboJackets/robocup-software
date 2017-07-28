@@ -513,8 +513,12 @@ void MainWindow::updateViews() {
                                 _processor->refereeModule()->command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
-    _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
-        _processor->refereeModule()->stage_time_left.count(), 'f', 2)));
+    int timeSeconds = _processor->refereeModule()->stage_time_left.count() / 1000;
+    int timeMinutes = timeSeconds / 60;
+    timeSeconds = timeSeconds % 60;
+    _ui.refTimeLeft->setText(tr("%1:%2").arg(
+                                 QString::number(timeMinutes),
+                                 QString::number(timeSeconds)));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
     string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
@@ -719,7 +723,7 @@ void MainWindow::updateViews() {
 
             // check for kicker error code
             bool kickerFault =
-                rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+                rx.has_kicker_status() && !(rx.kicker_status() & Kicker_Enabled);
 
             bool kicker_charging =
                 rx.has_kicker_status() && rx.kicker_status() & 0x01;

@@ -47,10 +47,10 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         penalty_mark = robocup.Point(
             0, constants.Field.Length - constants.Field.PenaltyDist)
         backoff = 0.5
+
+        self.robot.disable_avoid_ball()
         if main.ball().pos.near_point(penalty_mark, 0.5):
-            self.robot.move_to(main.ball().pos + (main.ball(
-            ).pos - robocup.Point(0, constants.Field.Length).normalized()) *
-                               backoff)
+            self.robot.move_to(main.ball().pos - robocup.Point(0, backoff))
         else:
             self.robot.move_to(penalty_mark - robocup.Point(0, backoff))
 

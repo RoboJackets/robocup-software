@@ -499,7 +499,7 @@ bool OurRobot::ballSenseWorks() const {
 }
 
 bool OurRobot::kickerWorks() const {
-    return _radioRx.has_kicker_status() && !(_radioRx.kicker_status() & 0x80) &&
+    return _radioRx.has_kicker_status() && (_radioRx.kicker_status() & Kicker_Enabled) &&
            rxIsFresh();
 }
 
