@@ -121,8 +121,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             penalty_kicker.pos,
             penalty_kicker.pos + robocup.Point.direction(angle_rad))
 
-        dest = shot_line.line_intersection(Goalie.RobotSegment)
-        if dest == None:
+        dest = Goalie.RobotSegment.line_intersection(shot_line)
+        if dest is None:
             self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
