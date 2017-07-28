@@ -28,13 +28,18 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         self.min_robots = min_robots
         self.num_robots = 0
 
+        self.add_circle_subbehaviors()
+
+    def add_circle_subbehaviors(self):
         #create move behaviors with no position (we can't assign position because we don't know how many bots we have)
+        self.remove_all_subbehaviors()
         for i in range(6):
-            req = i < min_robots
+            req = i < self.min_robots
             self.add_subbehavior(skills.move.Move(),
                                  name="robot" + str(i),
                                  required=req,
                                  priority=6 - i)
+
 
     def goto_center(self):
         num_robots = 0
@@ -45,12 +50,7 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
         #if the number of robots has changed, recreate move behaviors to match new number of robots
         if (self.num_robots != num_robots):
             self.num_robots = num_robots
-            self.remove_all_subbehaviors()
-            for pt in range(6):
-                self.add_subbehavior(skills.move.Move(),
-                                     name="robot" + str(pt),
-                                     required=False,
-                                     priority=6 - pt)
+            self.add_circle_subbehaviors()
 
         num_robots = max(self.min_robots, num_robots)
 
