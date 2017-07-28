@@ -549,6 +549,7 @@ double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,
     double part = d * d * (a * a - c * c * pow(v1, 4));
     if (part >= 0) {
         double possible = sqrt(v1 * v1 + 2 * sqrt(part));
+        possible = std::max(possible, minMaxSpeed);
         return std::min(v2, possible);
     }
 
