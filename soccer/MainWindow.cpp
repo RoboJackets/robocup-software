@@ -719,7 +719,7 @@ void MainWindow::updateViews() {
 
             // check for kicker error code
             bool kickerFault =
-                rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+                rx.has_kicker_status() && !(rx.kicker_status() & Kicker_Enabled);
 
             bool kicker_charging =
                 rx.has_kicker_status() && rx.kicker_status() & 0x01;
