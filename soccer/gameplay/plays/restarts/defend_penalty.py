@@ -19,7 +19,7 @@ class DefendPenalty(play.Play):
         line = robocup.Segment(
             robocup.Point(1.5, 1.3), robocup.Point(1.5, 2.5))
         lineup = tactics.line_up.LineUp(line)
-        self.add_subbehavior(lineup, 'line')
+        self.add_subbehavior(lineup, 'lineup')
 
     @classmethod
     def score(cls):
