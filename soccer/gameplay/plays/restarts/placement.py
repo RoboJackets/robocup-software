@@ -71,7 +71,6 @@ class Placement(play.Play):
     def on_exit_placing(self):
         self.remove_all_subbehaviors()
 
-
     @classmethod
     def score(cls):
         gs = main.game_state()

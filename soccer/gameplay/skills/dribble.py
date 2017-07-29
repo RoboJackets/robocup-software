@@ -10,6 +10,7 @@ import skills.aim
 import skills.capture
 import skills.move
 
+
 ## Behavior that moves the ball to a specified location
 class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
@@ -30,24 +31,22 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # Tested with dribbler speed of 70
         self._dribble_speed = constants.Robot.Dribbler.StandardPower
 
-        self.add_transition(behavior.Behavior.State.start,
-                            Dribble.State.setup, lambda: True, 'immediately')
+        self.add_transition(behavior.Behavior.State.start, Dribble.State.setup,
+                            lambda: True, 'immediately')
 
-        self.add_transition(Dribble.State.setup, Dribble.State.capture,
-                            lambda: (self.subbehavior_with_name('move').state
-                                     == behavior.Behavior.State.completed),
-                            'moved to behind the ball' )
+        self.add_transition(
+            Dribble.State.setup, Dribble.State.capture,
+            lambda: (self.subbehavior_with_name('move').state == behavior.Behavior.State.completed),
+            'moved to behind the ball')
 
         self.add_transition(
             Dribble.State.capture, Dribble.State.aim,
-            lambda: (self.subbehavior_with_name('capture').state
-                     == behavior.Behavior.State.completed),
+            lambda: (self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed),
             'done capturing')
 
         self.add_transition(
             Dribble.State.capture, behavior.Behavior.State.completed,
-            lambda: ((main.ball().pos - self.pos).mag() < self._threshold
-                     and main.ball().vel.mag() < .1),
+            lambda: ((main.ball().pos - self.pos).mag() < self._threshold and main.ball().vel.mag() < .1),
             'ball is already in target')
 
         #Put the ball between the robot and the target
@@ -61,14 +60,13 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(Dribble.State.drive, Dribble.State.setup,
                             lambda: self.fumbled(), 'fumbled')
 
-        self.add_transition(Dribble.State.capture, Dribble.State.setup,
-                            lambda: (self.robot.pos - main.ball().pos).mag() > 1,
-                            'fumbled')
+        self.add_transition(
+            Dribble.State.capture, Dribble.State.setup,
+            lambda: (self.robot.pos - main.ball().pos).mag() > 1, 'fumbled')
 
         self.add_transition(
             Dribble.State.drive, behavior.Behavior.State.completed,
-            lambda: (self.subbehavior_with_name('dmove').state
-                     == behavior.Behavior.State.completed),
+            lambda: (self.subbehavior_with_name('dmove').state == behavior.Behavior.State.completed),
             'finished driving')
 
         # self.add_transition(
@@ -109,13 +107,14 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_setup(self):
         self.move_vector = main.ball().pos - self._pos
-        self.move_point = self._pos + self.move_vector + (self.move_vector.normalized() * .2)
+        self.move_point = self._pos + self.move_vector + (
+            self.move_vector.normalized() * .2)
         move = skills.move.Move(self.move_point)
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
     def execute_setup(self):
-        main.system_state().draw_circle(self.move_point, 0.1, constants.Colors.Blue,
-                                        "move setup")
+        main.system_state().draw_circle(self.move_point, 0.1,
+                                        constants.Colors.Blue, "move setup")
 
     def on_exit_setup(self):
         self.remove_all_subbehaviors()
@@ -136,9 +135,8 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             self.last_ball_time = time.time()
 
     def on_enter_drive(self):
-        move = skills.move_direct.MoveDirect(self.pos -
-                                             (self.pos - self.robot.pos)
-                                             .normalized(constants.Robot.Radius))
+        move = skills.move_direct.MoveDirect(self.pos - (
+            self.pos - self.robot.pos).normalized(constants.Robot.Radius))
 
         self.add_subbehavior(move, 'dmove', required=True, priority=100)
         self.robot.set_max_speed(.5)
@@ -157,7 +155,6 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_exit_drive(self):
         self.remove_all_subbehaviors()
         print("exit dribbler")
-
 
     #Robot closest to the ball
     def role_requirements(self):

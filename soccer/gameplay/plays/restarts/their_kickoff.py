@@ -32,8 +32,8 @@ class TheirKickoff(standard_play.StandardPlay):
             tactics.stopped.circle_on_center.CircleOnCenter(
                 # TODO find a way to do this without hard coding 3
                 # defense/goalie robots (or make those constants)
-                min_robots=1 if (main.our_robots() is not None) and
-                len(main.our_robots()) > 3 else 0),
+                min_robots=1 if (main.our_robots() is not None) and len(
+                    main.our_robots()) > 3 else 0),
             'circle_up',
             priority=15,
             required=True)
@@ -68,10 +68,7 @@ class TheirKickoff(standard_play.StandardPlay):
         # 1. Not on our side of the field
         # 2. behind or inside the goal circle
         mark_robot_right = list(filter(
-            lambda robot: (robot.pos.x >= 0
-                           and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio
-                           and constants.Field.FieldRect.contains_point(robot.pos)
-                           and not centerCircle.contains_point(robot.pos)),
+            lambda robot: (robot.pos.x >= 0 and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio and constants.Field.FieldRect.contains_point(robot.pos) and not centerCircle.contains_point(robot.pos)),
             their_robots))
 
         # Don't select robots that are
@@ -79,11 +76,7 @@ class TheirKickoff(standard_play.StandardPlay):
         # 2. behind or inside the goal circle
         # 3. Not the robot selected before
         mark_robot_left = list(filter(
-            lambda robot: (robot.pos.x <= 0
-                           and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio
-                           and constants.Field.FieldRect.contains_point(robot.pos)
-                           and not centerCircle.contains_point(robot.pos)
-                           and robot != mark_one.mark_robot),
+            lambda robot: (robot.pos.x <= 0 and robot.pos.y < constants.Field.Length * TheirKickoff.FieldRatio and constants.Field.FieldRect.contains_point(robot.pos) and not centerCircle.contains_point(robot.pos) and robot != mark_one.mark_robot),
             their_robots))
 
         # Special cases
@@ -150,9 +143,8 @@ class TheirKickoff(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        if ((gs.is_setup_state()
-             or not main.game_state().is_playing())
-            and gs.is_their_kickoff()):
+        if ((gs.is_setup_state() or not main.game_state().is_playing()) and
+                gs.is_their_kickoff()):
             return 0
         return float("inf")
 

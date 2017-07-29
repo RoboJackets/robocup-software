@@ -287,7 +287,8 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
         case Command::HALT:
             _state.gameState.state = GameState::Halt;
 
-            // /* Comment this out to make halting not clear a ball placement command
+            // /* Comment this out to make halting not clear a ball placement
+            // command
             _state.gameState.restart = GameState::None;
             _state.gameState.ourRestart = false;
             // */

@@ -199,43 +199,51 @@ void Processor::runModels(
         const RepeatedPtrField<SSL_DetectionRobot>& selfRobots =
             _blueTeam ? frame->robots_blue() : frame->robots_yellow();
 
-        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>> robotObservations{_state.self.size()};
+        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
+            robotObservations{_state.self.size()};
 
         for (const SSL_DetectionRobot& robot : selfRobots) {
             unsigned int id = robot.robot_id();
 
             if (id < _state.self.size()) {
-                const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+                const float angleRad =
+                    fixAngleRadians(robot.orientation() + _teamAngle);
                 const auto camera_id = frame->camera_id();
                 robotObservations[id][camera_id] = RobotObservation(
-                        _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                        angleRad, time, frame->frame_number(), true, camera_id);
+                    _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                    angleRad, time, frame->frame_number(), true, camera_id);
             }
         }
 
-        for (int i=0; i<robotObservations.size(); i++) {
-            _state.self[i]->filter()->update(robotObservations[i], _state.self[i], time, frame->frame_number());
+        for (int i = 0; i < robotObservations.size(); i++) {
+            _state.self[i]->filter()->update(robotObservations[i],
+                                             _state.self[i], time,
+                                             frame->frame_number());
         }
 
         const RepeatedPtrField<SSL_DetectionRobot>& oppRobots =
             _blueTeam ? frame->robots_yellow() : frame->robots_blue();
 
-        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>> oppRobotObservations{_state.self.size()};
+        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
+            oppRobotObservations{_state.self.size()};
 
         for (const SSL_DetectionRobot& robot : oppRobots) {
             unsigned int id = robot.robot_id();
 
             if (id < _state.self.size()) {
-                const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+                const float angleRad =
+                    fixAngleRadians(robot.orientation() + _teamAngle);
                 const auto camera_id = frame->camera_id();
                 oppRobotObservations[id][camera_id] = RobotObservation(
-                        _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                        angleRad, time, frame->frame_number(), true, camera_id);
+                    _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                    angleRad, time, frame->frame_number(), true, camera_id);
             }
         }
 
-        for (int i=0; i<oppRobotObservations.size(); i++) {
-            _state.opp[i]->filter()->update(oppRobotObservations[i], _state.opp[i], time, frame->frame_number());
+        for (int i = 0; i < oppRobotObservations.size(); i++) {
+            _state.opp[i]->filter()->update(oppRobotObservations[i],
+                                            _state.opp[i], time,
+                                            frame->frame_number());
         }
     }
 
@@ -742,17 +750,19 @@ void Processor::sendRadioData() {
         }
     }
 
-    for (const auto& pair: _robotConfigs) {
+    for (const auto& pair : _robotConfigs) {
         auto config = tx->add_configs();
         config->set_key(pair.first);
         config->set_value(pair.second);
-        config->set_key_name(DebugCommunication::CONFIG_TO_STRING.at(pair.first));
+        config->set_key_name(
+            DebugCommunication::CONFIG_TO_STRING.at(pair.first));
     }
 
-    for (const auto& debugResponse :_robotDebugResponses) {
+    for (const auto& debugResponse : _robotDebugResponses) {
         auto debugCommunication = tx->add_debug_communication();
         debugCommunication->set_key(debugResponse);
-        debugCommunication->set_key_name(DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse));
+        debugCommunication->set_key_name(
+            DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse));
     }
 
     if (_radio) {
@@ -779,10 +789,10 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick ? (_kickOnBreakBeam
-                                ? Packet::Control::ON_BREAK_BEAM
-                                : Packet::Control::IMMEDIATE)
-                        : Packet::Control::STAND_DOWN);
+    tx->set_triggermode(kick
+                            ? (_kickOnBreakBeam ? Packet::Control::ON_BREAK_BEAM
+                                                : Packet::Control::IMMEDIATE)
+                            : Packet::Control::STAND_DOWN);
     tx->set_kcstrength(controlVals.kickPower);
     tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
                                        : Packet::Control::CHIP);

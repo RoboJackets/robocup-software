@@ -15,11 +15,16 @@
 class RobotObservation {
 public:
     RobotObservation()
-            : pos(), angle(), time(), frameNumber(), valid(false), source() {}
+        : pos(), angle(), time(), frameNumber(), valid(false), source() {}
 
     RobotObservation(Geometry2d::Point pos, float angle, RJ::Time time,
                      int frame, bool valid, int source)
-        : pos(pos), angle(angle), time(time), frameNumber(frame), valid(valid), source(source) {}
+        : pos(pos),
+          angle(angle),
+          time(time),
+          frameNumber(frame),
+          valid(valid),
+          source(source) {}
 
     Geometry2d::Point pos;
     float angle;  /// in radians
@@ -44,12 +49,12 @@ public:
     RobotFilter();
 
     /// Gives a new observation to the filter
-    void update(const std::array<RobotObservation, Num_Cameras> &obs, RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber);
+    void update(const std::array<RobotObservation, Num_Cameras>& obs,
+                RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber);
 
     static void createConfiguration(Configuration* cfg);
 
 private:
-
     /// Estimate for each camera
     RobotPose _estimates[Num_Cameras];
     RobotPose _currentEstimate;

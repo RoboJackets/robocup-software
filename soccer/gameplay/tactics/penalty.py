@@ -63,7 +63,10 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_ready(self):
         kick = skills.pivot_kick.PivotKick()
-        self.add_subbehavior(kick, 'kick', required=True, priority=planning_priority.PENALTY_KICKER)
+        self.add_subbehavior(kick,
+                             'kick',
+                             required=True,
+                             priority=planning_priority.PENALTY_KICKER)
 
     def on_execute_ready(self):
         self.robot.is_penalty_kicker = True

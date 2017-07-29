@@ -108,12 +108,12 @@ bool USBRadio::open() {
             _device,  // handle of the device that will handle the transfer
             LIBUSB_ENDPOINT_IN |
                 2,  // address of the endpoint where this transfer will be sent
-            _rxBuffers[i],      // data buffer
+            _rxBuffers[i],     // data buffer
             rtp::ReverseSize,  // length of data buffer
-            rxCompleted,        // callback function to be invoked on transfer
-                                // completion
-            this,               // user data to pass to callback function
-            0);                 // timeout for the transfer in milliseconds
+            rxCompleted,       // callback function to be invoked on transfer
+                               // completion
+            this,              // user data to pass to callback function
+            0);                // timeout for the transfer in milliseconds
         libusb_submit_transfer(_rxTransfers[i]);
     }
 
@@ -208,13 +208,17 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->uid = packet.robots(slot).uid();
             msg->messageType = rtp::RobotTxMessage::ControlMessageType;
 
-            auto &controlMessage = msg->message.controlMessage;
+            auto& controlMessage = msg->message.controlMessage;
 
-            controlMessage.bodyX = static_cast<int16_t >(robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-            controlMessage.bodyY = static_cast<int16_t >(robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-            controlMessage.bodyW = static_cast<int16_t >(robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+            controlMessage.bodyX = static_cast<int16_t>(
+                robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+            controlMessage.bodyY = static_cast<int16_t>(
+                robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+            controlMessage.bodyW = static_cast<int16_t>(
+                robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
 
-            controlMessage.dribbler = clamp(static_cast<uint16_t>(robot.dvelocity()) * 2, 0, 255);
+            controlMessage.dribbler =
+                clamp(static_cast<uint16_t>(robot.dvelocity()) * 2, 0, 255);
 
             controlMessage.kickStrength = robot.kcstrength();
             controlMessage.shootMode = robot.shootmode();
@@ -227,65 +231,73 @@ void USBRadio::send(Packet::RadioTx& packet) {
     }
 
     // COMMENTED OUT CODE FOR DEBUG PACKETS.
-//    int numRobotTXMessages = packet.robots_size();
-//
-//    for (int configStartIndex=0; configStartIndex<packet.configs_size(); configStartIndex+=rtp::ConfMessage::length) {
-//        if (numRobotTXMessages<6) {
-//            auto slot = numRobotTXMessages;
-//            size_t offset =
-//                    sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-//            rtp::RobotTxMessage* msg =
-//                    (rtp::RobotTxMessage*)(forward_packet + offset);
-//
-//            msg->uid = rtp::ANY_ROBOT_UID;
-//            msg->messageType = rtp::RobotTxMessage::ConfMessageType;
-//
-//            auto &confMessage = msg->message.confMessage;
-//
-//
-//            auto numToCopy = std::min(static_cast<int>(rtp::ConfMessage::length), packet.configs_size()-configStartIndex);
-//            for (int i=0; i<numToCopy; i++) {
-//                const auto &config = packet.configs(i+configStartIndex);
-//                auto key = static_cast<DebugCommunication::ConfigCommunication>(config.key());
-//                confMessage.keys[i] = key;
-//                confMessage.values[i] = DebugCommunication::configToValue(key, config.value());
-//            }
-//            numRobotTXMessages++;
-//        }
-//    }
-//    {
-//        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
-//        current_receive_debug.clear();
-//        for (auto debugMessages : packet.debug_communication()) {
-//            current_receive_debug.push_back(static_cast<DebugCommunication::DebugResponse>(debugMessages.key()));
-//        }
-//    }
-//    if (numRobotTXMessages<6) {
-//        auto slot = numRobotTXMessages;
-//        size_t offset =
-//            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-//        rtp::RobotTxMessage* msg =
-//            (rtp::RobotTxMessage*)(forward_packet + offset);
-//
-//        msg->uid = rtp::ANY_ROBOT_UID;
-//        msg->messageType = rtp::RobotTxMessage::DebugMessageType;
-//
-//        auto &debugMessage = msg->message.debugMessage;
-//        std::copy_n(current_receive_debug.begin(), std::min(current_receive_debug.size(), debugMessage.keys.size()), debugMessage.keys.begin());
-//
-//        numRobotTXMessages++;
-//    }
-
-
+    //    int numRobotTXMessages = packet.robots_size();
+    //
+    //    for (int configStartIndex=0; configStartIndex<packet.configs_size();
+    //    configStartIndex+=rtp::ConfMessage::length) {
+    //        if (numRobotTXMessages<6) {
+    //            auto slot = numRobotTXMessages;
+    //            size_t offset =
+    //                    sizeof(rtp::Header) + slot *
+    //                    sizeof(rtp::RobotTxMessage);
+    //            rtp::RobotTxMessage* msg =
+    //                    (rtp::RobotTxMessage*)(forward_packet + offset);
+    //
+    //            msg->uid = rtp::ANY_ROBOT_UID;
+    //            msg->messageType = rtp::RobotTxMessage::ConfMessageType;
+    //
+    //            auto &confMessage = msg->message.confMessage;
+    //
+    //
+    //            auto numToCopy =
+    //            std::min(static_cast<int>(rtp::ConfMessage::length),
+    //            packet.configs_size()-configStartIndex);
+    //            for (int i=0; i<numToCopy; i++) {
+    //                const auto &config = packet.configs(i+configStartIndex);
+    //                auto key =
+    //                static_cast<DebugCommunication::ConfigCommunication>(config.key());
+    //                confMessage.keys[i] = key;
+    //                confMessage.values[i] =
+    //                DebugCommunication::configToValue(key, config.value());
+    //            }
+    //            numRobotTXMessages++;
+    //        }
+    //    }
+    //    {
+    //        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
+    //        current_receive_debug.clear();
+    //        for (auto debugMessages : packet.debug_communication()) {
+    //            current_receive_debug.push_back(static_cast<DebugCommunication::DebugResponse>(debugMessages.key()));
+    //        }
+    //    }
+    //    if (numRobotTXMessages<6) {
+    //        auto slot = numRobotTXMessages;
+    //        size_t offset =
+    //            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
+    //        rtp::RobotTxMessage* msg =
+    //            (rtp::RobotTxMessage*)(forward_packet + offset);
+    //
+    //        msg->uid = rtp::ANY_ROBOT_UID;
+    //        msg->messageType = rtp::RobotTxMessage::DebugMessageType;
+    //
+    //        auto &debugMessage = msg->message.debugMessage;
+    //        std::copy_n(current_receive_debug.begin(),
+    //        std::min(current_receive_debug.size(), debugMessage.keys.size()),
+    //        debugMessage.keys.begin());
+    //
+    //        numRobotTXMessages++;
+    //    }
 
     // Send the forward packet
     int sent = 0;
-    // TODO FIXME remove this hack, which increases the size of data packets by 2.
+    // TODO FIXME remove this hack, which increases the size of data packets by
+    // 2.
     // See +2 on sizeof's below.
-    int transferRetCode =
-        libusb_bulk_transfer(_device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
-                             sizeof(forward_packet) + 2, &sent, Control_Timeout);
-    if (transferRetCode != LIBUSB_SUCCESS || sent != sizeof(forward_packet) + 2) {
+    int transferRetCode = libusb_bulk_transfer(
+        _device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
+        sizeof(forward_packet) + 2, &sent, Control_Timeout);
+    if (transferRetCode != LIBUSB_SUCCESS ||
+        sent != sizeof(forward_packet) + 2) {
         fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %lu\n",
                 sent, (unsigned long int)sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
@@ -343,7 +355,8 @@ void USBRadio::handleRxData(uint8_t* buf) {
     // Report that everything is good b/c the bot currently has no way of
     // detecting kicker issues
     packet.set_kicker_status((msg->kickStatus ? Kicker_Charged : 0) |
-                             (msg->kickHealthy ? Kicker_Enabled : 0) | Kicker_I2C_OK);
+                             (msg->kickHealthy ? Kicker_Enabled : 0) |
+                             Kicker_I2C_OK);
 
     // motor errors
     for (int i = 0; i < 5; i++) {
@@ -361,12 +374,15 @@ void USBRadio::handleRxData(uint8_t* buf) {
         std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
         for (int index = 0; index < current_receive_debug.size(); ++index) {
             auto debugResponse = current_receive_debug[index];
-            const auto &name = DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse);
-//            auto value = msg->debug_data[index];
-//
-//            auto packet_debug_response = packet.add_debug_responses();
-//            packet_debug_response->set_key(name);
-//            packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse, value));
+            const auto& name =
+                DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse);
+            //            auto value = msg->debug_data[index];
+            //
+            //            auto packet_debug_response =
+            //            packet.add_debug_responses();
+            //            packet_debug_response->set_key(name);
+            //            packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse,
+            //            value));
         }
     }
     _reversePackets.push_back(packet);

@@ -13,6 +13,7 @@ import role_assignment
 # TODO: clear free balls
 # TODO: handle the case where the ball is invalid
 
+
 ## The Defense tactic handles goalie and defender placement to defend the goal
 # It does lots of window and shot evaluation to figure out which 'threats' are the
 # most important to block, then assigns blocking positions to the bots
@@ -56,8 +57,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # add defenders at the specified priority levels
         for num, priority in enumerate(defender_priorities):
-            defender = submissive_defender.SubmissiveDefender(
-            )
+            defender = submissive_defender.SubmissiveDefender()
             self.add_subbehavior(defender,
                                  'defender' + str(num + 1),
                                  required=False,
@@ -216,8 +216,9 @@ class Defense(composite_behavior.CompositeBehavior):
             # only look at ones that have robots
             # as we handle threats, we remove the handlers from this list
 
-        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot is not None,
-                                             [goalie, defender1, defender2]))
+        unused_threat_handlers = list(filter(
+            lambda bhvr: bhvr.robot is not None, [goalie, defender1, defender2
+                                                  ]))
 
         def set_block_lines_for_threat_handlers(threat):
             if len(threat.assigned_handlers) == 0:
@@ -345,7 +346,8 @@ class Defense(composite_behavior.CompositeBehavior):
 
         else:
 
-            if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
+            if not constants.Field.OurGoalZoneShape.contains_point(main.ball(
+            ).pos):
 
                 # primary threat is the ball or the opponent holding it
                 opp_with_ball = evaluation.ball.opponent_with_ball()
@@ -358,7 +360,8 @@ class Defense(composite_behavior.CompositeBehavior):
 
         # if an opponent has the ball or is potentially about to receive the ball,
         # we look at potential receivers of it as threats
-        if len(threats) > 0 and isinstance(threats[0].source, robocup.OpponentRobot):
+        if len(threats) > 0 and isinstance(threats[0].source,
+                                           robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
                 pass_chance = evaluation.passing.eval_pass(
                     main.ball().pos,
@@ -426,11 +429,11 @@ class Defense(composite_behavior.CompositeBehavior):
             # threat (the ball). This prevents assigning the non-clearing robot
             # to mark the ball and causing crowding.
             defender1 = self.subbehavior_with_name('defender1')
-            if (defender1.state
-                == submissive_defender.SubmissiveDefender.State.clearing):
+            if (defender1.state ==
+                    submissive_defender.SubmissiveDefender.State.clearing):
                 if defender1 in unused_threat_handlers:
-                    if (threats_to_block[0].pos.dist_to(main.ball().pos)
-                        < constants.Robot.Radius * 2):
+                    if (threats_to_block[0].pos.dist_to(main.ball().pos) <
+                            constants.Robot.Radius * 2):
                         defender_idx = unused_threat_handlers.index(defender1)
                         threats_to_block[0].assigned_handlers.append(
                             unused_threat_handlers[defender_idx])

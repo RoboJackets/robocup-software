@@ -178,11 +178,13 @@ public:
 
     void changeVisionChannel(int port);
 
-    void setRobotConfigs(std::vector<std::pair<DebugCommunication::ConfigCommunication, float >> configs) {
+    void setRobotConfigs(std::vector<
+        std::pair<DebugCommunication::ConfigCommunication, float>> configs) {
         _robotConfigs = std::move(configs);
     }
 
-    void setRobotDebugResponses(std::vector<DebugCommunication::DebugResponse> debugResponses) {
+    void setRobotDebugResponses(
+        std::vector<DebugCommunication::DebugResponse> debugResponses) {
         _robotDebugResponses = std::move(debugResponses);
     }
 
@@ -274,8 +276,9 @@ private:
     Status _status;
 
     // ConfigCommunication Storage
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, float >> _robotConfigs{};
-    std::vector<DebugCommunication::DebugResponse>_robotDebugResponses{};
+    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
+        _robotConfigs{};
+    std::vector<DebugCommunication::DebugResponse> _robotDebugResponses{};
 
     // modules
     std::shared_ptr<NewRefereeModule> _refereeModule;

@@ -40,7 +40,6 @@ class CircleOnCenter(composite_behavior.CompositeBehavior):
                                  required=req,
                                  priority=6 - i)
 
-
     def goto_center(self):
         num_robots = 0
         for b in self.all_subbehaviors():
