@@ -164,7 +164,7 @@ class SubmissiveDefender(
             and self.block_line is not None):
             self.robot.face(self.block_line.get_pt(0))
 
-        if self.robot.has_ball():
+        if self.robot.has_ball() and not main.game_state().is_stopped():
             self.robot.kick(0.75)
 
     def on_exit_marking(self):
