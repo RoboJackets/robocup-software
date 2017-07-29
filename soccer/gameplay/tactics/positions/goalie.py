@@ -14,10 +14,11 @@ import planning_priority
 
 class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
+    OFFSET = 0.1
     MaxX = constants.Field.GoalWidth / 2.0
     RobotSegment = robocup.Segment(
-        robocup.Point(-MaxX, constants.Robot.Radius),
-        robocup.Point(MaxX, constants.Robot.Radius))
+        robocup.Point(-MaxX, constants.Robot.Radius + OFFSET),
+        robocup.Point(MaxX, constants.Robot.Radius + OFFSET))
     OpponentFacingThreshold = math.pi / 8.0
 
     class State(enum.Enum):
@@ -110,7 +111,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def execute_chill(self):
         if self.robot != None:
-            self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
+            self.robot.move_to(robocup.Point(0, constants.Robot.Radius + Goalie.OFFSET))
 
     def execute_setup_penalty(self):
         pt = robocup.Point(0, constants.Field.PenaltyDist)
@@ -123,7 +124,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         dest = Goalie.RobotSegment.line_intersection(shot_line)
         if dest is None:
-            self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
+            self.robot.move_to(robocup.Point(0, constants.Robot.Radius + Goalie.OFFSET))
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
             dest.x = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
@@ -194,11 +195,11 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 dest.x = max(-Goalie.MaxX, dest.x)
                 self.robot.move_to(dest)
                 return
-        self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
+        self.robot.move_to(robocup.Point(0, constants.Robot.Radius + Goalie.OFFSET))
 
     def execute_defend(self):
         dest_x = main.ball().pos.x / constants.Field.Width * Goalie.MaxX
-        self.robot.move_to(robocup.Point(dest_x, constants.Robot.Radius))
+        self.robot.move_to(robocup.Point(dest_x, constants.Robot.Radius + Goalie.OFFSET))
 
     def role_requirements(self):
         reqs = super().role_requirements()
