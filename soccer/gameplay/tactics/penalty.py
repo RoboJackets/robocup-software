@@ -49,10 +49,14 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         backoff = 0.5
 
         self.robot.disable_avoid_ball()
-        if main.ball().pos.near_point(penalty_mark, 0.5):
-            self.robot.move_to(main.ball().pos - robocup.Point(0, backoff))
-        else:
-            self.robot.move_to(penalty_mark - robocup.Point(0, backoff))
+
+        self.robot.move_to(main.ball().pos - robocup.Point(0, backoff))
+        # FIXME this is old code to stick to the penalty area if possible.
+        # Now we just track the ball. Find out if this is a good idea.
+        # if main.ball().pos.near_point(penalty_mark, 0.5):
+        #     self.robot.move_to(main.ball().pos - robocup.Point(0, backoff))
+        # else:
+        #     self.robot.move_to(penalty_mark - robocup.Point(0, backoff))
 
         self.robot.face(main.ball().pos)
 
