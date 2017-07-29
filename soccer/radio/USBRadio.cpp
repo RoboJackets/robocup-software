@@ -226,6 +226,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
         }
     }
 
+    // COMMENTED OUT CODE FOR DEBUG PACKETS.
 //    int numRobotTXMessages = packet.robots_size();
 //
 //    for (int configStartIndex=0; configStartIndex<packet.configs_size(); configStartIndex+=rtp::ConfMessage::length) {

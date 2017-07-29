@@ -150,11 +150,11 @@ class TheirKickoff(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return (0
-                if (gs.is_setup_state()
-                    or not main.game_state().is_playing())
-                and gs.is_their_kickoff()
-                else float("inf"))
+        if ((gs.is_setup_state()
+             or not main.game_state().is_playing())
+            and gs.is_their_kickoff()):
+            return 0
+        return float("inf")
 
     @classmethod
     def is_restart(cls):

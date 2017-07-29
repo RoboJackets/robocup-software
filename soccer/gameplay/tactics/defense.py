@@ -288,8 +288,8 @@ class Defense(composite_behavior.CompositeBehavior):
 
         threats = []
 
-        # secondary threats are those that are somewhat close to our goal and open for a pass
-        # if they're farther than this down the field, we don't consider them threats
+        # TODO figure out which threats are moving down the field and adjust on that
+        # Also see ER-Force's ETDP from 2017 for more information
         threat_max_y = constants.Field.Length
         potential_threats = [opp
                              for opp in main.their_robots()
