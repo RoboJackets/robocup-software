@@ -78,6 +78,10 @@ class Defense(composite_behavior.CompositeBehavior):
         self._debug = value
 
     def should_clear_ball(self):
+
+        if main.game_state().is_stopped():
+            return False
+
         #Returns true if our robot can reach the ball sooner than the closest opponent
         safe_to_clear = False
         if main.ball().pos.mag() < constants.Field.ArcRadius * 2 and main.ball(

@@ -127,7 +127,10 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
             dest.x = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
-        self.robot.move_to(dest)
+            # Shots don't follow the top threat, they follow the inverse
+            # FIXME this is kind of a hack
+            dest.x = -dest.x
+            self.robot.move_to(dest)
 
     def on_enter_clear(self):
         # FIXME: what we really want is a less-precise LineKick
