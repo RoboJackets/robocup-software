@@ -18,6 +18,11 @@ using namespace Packet;
 // Timeout for control transfers, in milliseconds
 static const int Control_Timeout = 1000;
 
+// Buffer to leave at the end of the decawave control packet to prevent our data
+// from being corrupted
+// https://github.com/thotro/arduino-dw1000/blob/511930c301f49b39b7b197acf52741d96155187a/src/DW1000.h#L197-L201
+static const int Decawave_End_Buffer = 2;
+
 USBRadio::USBRadio() : _mutex(QMutex::Recursive) {
     _printedError = false;
     _device = nullptr;
@@ -290,14 +295,13 @@ void USBRadio::send(Packet::RadioTx& packet) {
 
     // Send the forward packet
     int sent = 0;
-    // TODO FIXME remove this hack, which increases the size of data packets by
-    // 2.
-    // See +2 on sizeof's below.
+    // Leave a buffer at the end of every packet, so we don't get corruption
+    // https://github.com/thotro/arduino-dw1000/blob/511930c301f49b39b7b197acf52741d96155187a/src/DW1000.h#L197-L201
     int transferRetCode = libusb_bulk_transfer(
         _device, LIBUSB_ENDPOINT_OUT | 2, forward_packet,
-        sizeof(forward_packet) + 2, &sent, Control_Timeout);
+        sizeof(forward_packet) + Decawave_End_Buffer, &sent, Control_Timeout);
     if (transferRetCode != LIBUSB_SUCCESS ||
-        sent != sizeof(forward_packet) + 2) {
+        sent != sizeof(forward_packet) + Decawave_End_Buffer) {
         fprintf(stderr, "USBRadio: Bulk write failed. sent = %d, size = %lu\n",
                 sent, (unsigned long int)sizeof(forward_packet));
         if (transferRetCode != LIBUSB_SUCCESS)
