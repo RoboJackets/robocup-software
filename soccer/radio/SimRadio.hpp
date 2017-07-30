@@ -18,6 +18,8 @@ public:
     virtual void receive() override;
     virtual void switchTeam(bool blueTeam) override;
 
+    void stopRobots();
+
 private:
     SystemState& _state;
 
