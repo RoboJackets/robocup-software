@@ -1,5 +1,6 @@
 var NAVTREEINDEX11 =
 {
+"struct_chart_1_1_numeric_field.html#a6cd002ddc9b5145f4217617d5dbe0cd8":[15,0,1,1,0],
 "struct_chart_1_1_point_magnitude.html":[15,0,1,2],
 "struct_chart_1_1_point_magnitude.html#a9f390acec466434f24928c34a2a45d14":[15,0,1,2,0],
 "struct_field___dimensions.html":[15,0,31],
