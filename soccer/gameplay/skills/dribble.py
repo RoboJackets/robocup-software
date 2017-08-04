@@ -13,6 +13,9 @@ import skills.move
 
 ## Behavior that moves the ball to a specified location
 class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
+    ENTER_DRIVE_MAX_SPEED = .5
+    DRIVE_MAX_SPEED = .3
+
     class State(enum.Enum):
         setup = 1
         capture = 2
@@ -68,11 +71,6 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             Dribble.State.drive, behavior.Behavior.State.completed,
             lambda: (self.subbehavior_with_name('dmove').state == behavior.Behavior.State.completed),
             'finished driving')
-
-        # self.add_transition(
-        #     Dribble.State.drive, behavior.Behavior.State.completed,
-        #     lambda: (main.ball().pos - self._pos).mag() < (self._threshold - constants.Ball.Radius) and not self.fumbled(),
-        #     'finished driving')
 
         self.last_ball_time = 0
 
@@ -139,12 +137,12 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             self.pos - self.robot.pos).normalized(constants.Robot.Radius))
 
         self.add_subbehavior(move, 'dmove', required=True, priority=100)
-        self.robot.set_max_speed(.5)
+        self.robot.set_max_speed(Dribble.ENTER_DRIVE_MAX_SPEED)
 
     def execute_drive(self):
         self.robot.set_dribble_speed(self._dribble_speed)
         self.robot.face(self.pos)
-        self.robot.set_max_speed(.3)
+        self.robot.set_max_speed(Dribble.DRIVE_MAX_SPEED)
 
         #offset by the size of the robot so the ball is on the target position when it stops
         self.robot.disable_avoid_ball()
