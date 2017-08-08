@@ -154,12 +154,14 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
 
-    // SetupRobotConfig
+    // SetupRobotConfig For debug
     QStringList configList{QString{}};
 
     for (const auto& pair : DebugCommunication::CONFIG_TO_STRING) {
         configList.append(QString::fromStdString(pair.second));
     }
+
+    // Add checkboxes for robot debug responses
     auto rowCount = _ui.robotConfig->rowCount();
     for (int row = 0; row < rowCount; row++) {
         auto comboBox = new QComboBox(this);
@@ -168,6 +170,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
         _robotConfigQComboBoxes.push_back(comboBox);
     }
 
+    // Process data from debug responses
     QStringList debugResponseList{QString()};
     for (const auto& entry : DebugCommunication::DEBUGRESPONSE_TO_STRING) {
         auto name = entry.second;
@@ -1509,6 +1512,7 @@ bool MainWindow::live() { return !_playbackRate; }
 void MainWindow::on_robotConfigButton_clicked() {
     std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
         configs;
+    // Loop through debug settings and read thier value
     for (int i = 0; i < _robotConfigQComboBoxes.size(); i++) {
         const auto& comboBox = _robotConfigQComboBoxes[i];
         auto key = comboBox->currentText().toStdString();
@@ -1530,6 +1534,7 @@ void MainWindow::on_robotConfigButton_clicked() {
     _processor->setRobotConfigs(std::move(configs));
 }
 
+// Send debug response template to robots
 void MainWindow::on_debugResponseButton_clicked() {
     std::vector<DebugCommunication::DebugResponse> robotDebugResponses;
     for (int i = 0; i < _robotDebugResponseQComboBoxes.size(); i++) {

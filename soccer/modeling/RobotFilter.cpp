@@ -35,12 +35,17 @@ void RobotFilter::update(
             if (obs.valid) {
                 Point velEstimate{};
                 double angleVelEstimate = 0;
+
                 const auto dtime = RJ::Seconds(obs.time - estimate.time);
                 if (dtime < Min_Double_Packet_Time) {
+                    // If we got two packets too quickly, assume the latest one
+                    // is correct
                     velEstimate = estimate.vel;
                     angleVelEstimate = estimate.angleVel;
                     estimate.velValid = true;
                 } else if (dtime < Min_Velocity_Valid_Time) {
+                    // If we got two packets at an expected time, properly
+                    // calculate vel and angle
                     velEstimate = (obs.pos - estimate.pos) / dtime.count();
                     angleVelEstimate =
                         fixAngleRadians(obs.angle - estimate.angle) /
@@ -51,8 +56,10 @@ void RobotFilter::update(
                     angleVelEstimate = robot->angleVel;
                 }
 
+                // velocity alpha is the amount to 'trust' new data by
                 const auto velocityAlpha = *_velocity_alpha;
                 if (dtime < Min_Velocity_Valid_Time && estimate.velValid) {
+                    // Weight old data and new data by 'velocityAlpha'
                     estimate.vel = velEstimate * velocityAlpha +
                                    estimate.vel * (1.0f - velocityAlpha);
                     estimate.angleVel = fixAngleRadians(
@@ -82,13 +89,16 @@ void RobotFilter::update(
 
         double angleVelTotal = 0;
         double angleVelWeightTotal = 0;
+
+        // Weight observations based on time since we've seen and average
+        // everything together.
         for (const auto& estimate : _estimates) {
             const auto dTime = RJ::Seconds(currentTime - estimate.time);
-            //            debugLogIf(to_string(dTime) + " dTime is less than 0",
-            //            dTime < RJ::Seconds(0));
+
             if (estimate.visible && dTime < Vision_Timeout_Time) {
                 Point pos{};
                 double angle{};
+                // treat data with less certainty the older it is
                 double currentPosWeight = std::max(
                     0.0, 1.0 - std::pow(dTime / Vision_Timeout_Time, 2));
                 if (estimate.velValid) {

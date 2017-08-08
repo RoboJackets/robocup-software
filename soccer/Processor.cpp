@@ -202,6 +202,7 @@ void Processor::runModels(
         std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
             robotObservations{_state.self.size()};
 
+        // Collect camera data from all robots
         for (const SSL_DetectionRobot& robot : selfRobots) {
             unsigned int id = robot.robot_id();
 
@@ -215,6 +216,7 @@ void Processor::runModels(
             }
         }
 
+        // Run robots through filter
         for (int i = 0; i < robotObservations.size(); i++) {
             _state.self[i]->filter()->update(robotObservations[i],
                                              _state.self[i], time,
