@@ -522,9 +522,8 @@ void MainWindow::updateViews() {
         _processor->refereeModule()->stage_time_left.count() / 1000;
     int timeMinutes = timeSeconds / 60;
     timeSeconds = timeSeconds % 60;
-    _ui.refTimeLeft->setText(
-        tr("%1:%2").arg(QString::number(timeMinutes),
-                        QString::number(std::abs(timeSeconds))));
+    _ui.refTimeLeft->setText(tr("%1:%2").arg(
+        QString::number(timeMinutes), QString::number(std::abs(timeSeconds))));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
     string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
