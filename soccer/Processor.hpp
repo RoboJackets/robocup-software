@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
@@ -15,6 +17,8 @@
 #include <modeling/RobotFilter.hpp>
 #include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
+
+#include "firmware-common/common2015/utils/rtp.hpp"
 
 class Configuration;
 class RobotStatus;
@@ -130,6 +134,8 @@ public:
     void dampedRotation(bool value);
     void dampedTranslation(bool value);
 
+    void joystickKickOnBreakBeam(bool value);
+
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
 
@@ -171,6 +177,16 @@ public:
     Radio* radio() { return _radio; }
 
     void changeVisionChannel(int port);
+
+    void setRobotConfigs(std::vector<
+        std::pair<DebugCommunication::ConfigCommunication, float>> configs) {
+        _robotConfigs = std::move(configs);
+    }
+
+    void setRobotDebugResponses(
+        std::vector<DebugCommunication::DebugResponse> debugResponses) {
+        _robotDebugResponses = std::move(debugResponses);
+    }
 
     VisionChannel visionChannel() { return _visionChannel; }
 
@@ -259,6 +275,11 @@ private:
     QMutex _statusMutex;
     Status _status;
 
+    // ConfigCommunication Storage
+    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
+        _robotConfigs{};
+    std::vector<DebugCommunication::DebugResponse> _robotDebugResponses{};
+
     // modules
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
@@ -271,6 +292,8 @@ private:
     // joystick damping
     bool _dampedRotation;
     bool _dampedTranslation;
+
+    bool _kickOnBreakBeam;
 
     // If true, rotates robot commands from the joystick based on its
     // orientation on the field

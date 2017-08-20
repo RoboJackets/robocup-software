@@ -4,6 +4,7 @@ import robocup
 import main
 import tactics.line_up
 import tactics.penalty
+import planning_priority
 
 
 # one robot kicks the ball, the others just line up and wait
@@ -20,7 +21,10 @@ class KickPenalty(standard_play.StandardPlay):
             lambda: self.kicker.is_done_running(), 'when kicker finishes.')
 
         self.kicker = tactics.penalty.Penalty()
-        self.add_subbehavior(self.kicker, 'kicker', required=True, priority=10)
+        self.add_subbehavior(self.kicker,
+                             'kicker',
+                             required=True,
+                             priority=planning_priority.PENALTY_KICKER)
 
         line = robocup.Segment(robocup.Point(1.5, 1), robocup.Point(1.5, 2.5))
         line_up = tactics.line_up.LineUp(line)

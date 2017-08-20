@@ -1,4 +1,5 @@
 import standard_play
+import play
 import behavior
 import robocup
 import tactics.line_up
@@ -6,7 +7,7 @@ import tactics.defense
 import main
 
 
-class DefendPenalty(standard_play.StandardPlay):
+class DefendPenalty(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
