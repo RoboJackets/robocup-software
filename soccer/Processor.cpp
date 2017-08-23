@@ -68,11 +68,24 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _simulation = sim;
     _radio = nullptr;
 
+
+
+    //I will probably just have this add more joysticks if we are in manual match mode
+
+    bool manualMode = true;
+
     // joysticks
-    _joysticks.push_back(new GamepadController());
-    _joysticks.push_back(new SpaceNavJoystick());
-    // Enable this if you have issues with the new controller.
-    // _joysticks.push_back(new GamepadJoystick());
+    if (!manualMode){
+      _joysticks.push_back(new GamepadController());
+      _joysticks.push_back(new SpaceNavJoystick());
+      // Enable this if you have issues with the new controller.
+      // _joysticks.push_back(new GamepadJoystick());
+    }
+    else{
+      for (int i = 0; i < 6; i++){
+        _joysticks.push_back(new GamepadController());
+      }
+    }
 
     _dampedTranslation = true;
     _dampedRotation = true;

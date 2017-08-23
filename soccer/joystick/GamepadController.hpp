@@ -18,6 +18,7 @@ public:
 
     bool valid() const override;
 
+    static int controllerNumber;
 private:
     SDL_GameController* _controller;
 

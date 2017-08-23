@@ -10,6 +10,8 @@ const float AXIS_MAX = 32768.0f;
 const float TRIGGER_CUTOFF = 0.9;
 }
 
+int GamepadController::controllerNumber = 0;
+
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
     // initialize using the SDL joystick
@@ -47,12 +49,13 @@ void GamepadController::openJoystick() {
 
       //HERE TOO????//
 
-        for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
+        for (size_t i = controllerNumber; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
             if (SDL_IsGameController(i)) {
                 SDL_GameController* controller;
                 controller = SDL_GameControllerOpen(i);
                 connected = true;
+                controllerNumber++;
 
                 if (controller != nullptr) {
                     _controller = controller;
