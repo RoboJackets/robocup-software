@@ -44,6 +44,9 @@ GamepadController::~GamepadController() {
 void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
+
+      //HERE TOO????//
+
         for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
             if (SDL_IsGameController(i)) {

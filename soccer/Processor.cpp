@@ -743,6 +743,8 @@ void Processor::sendRadioData() {
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
 
+
+            ////HERE MAYBE???////
             if (r->shell() == _manualID) {
                 const JoystickControlValues controlVals =
                     getJoystickControlValues();

@@ -18,6 +18,7 @@ GamepadJoystick::GamepadJoystick()
     if (SDL_NumJoysticks() < 1) {
         cout << "Warning: No joysticks connected!" << endl;
     } else {
+        //ENABLE MORE JOYSTICKS HERE?//
         _joystick = SDL_JoystickOpen(0);
         if (_joystick == nullptr) {
             cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
