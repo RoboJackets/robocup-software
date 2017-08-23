@@ -747,9 +747,36 @@ void Processor::sendRadioData() {
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
-    for (OurRobot* r : _state.self) {
-        if (r->visible || _manualID == r->shell()) {
-            Packet::Robot* txRobot = tx->add_robots();
+
+    bool manualMode = true;
+
+    if(!manualMode){
+        for (OurRobot* r : _state.self) {
+            if (r->visible || _manualID == r->shell()) {
+                Packet::Robot* txRobot = tx->add_robots();
+
+                // Copy motor commands.
+                // Even if we are using the joystick, this sets robot_id and the
+                // number of motors.
+                txRobot->CopyFrom(r->robotPacket);
+
+
+                ////HERE MAYBE???////
+                if (r->shell() == _manualID) {
+                    const JoystickControlValues controlVals =
+                        getJoystickControlValues()[0];
+                    applyJoystickControls(controlVals, txRobot->mutable_control(),
+                                          r);
+                }
+            }
+        }
+    }
+    else{
+        vector<JoystickControlValues> controlVals = getJoystickControlValues();
+        for (int i = 0; i < _state.self.size() && i < controlVals.size(); i++) {
+          OurRobot* r = _state.self[i];
+          JoystickControlValues controlVal = controlVals[i];
+          Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
@@ -758,12 +785,7 @@ void Processor::sendRadioData() {
 
 
             ////HERE MAYBE???////
-            if (r->shell() == _manualID) {
-                const JoystickControlValues controlVals =
-                    getJoystickControlValues();
-                applyJoystickControls(controlVals, txRobot->mutable_control(),
-                                      r);
-            }
+            applyJoystickControls(controlVal, txRobot->mutable_control(), r);
         }
     }
 
@@ -818,51 +840,41 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
-JoystickControlValues Processor::getJoystickControlValues() {
+vector<JoystickControlValues> Processor::getJoystickControlValues() {
     // if there's more than one joystick, we add their values
-    JoystickControlValues vals;
+    //change this to return a vector of inputs
+    vector<JoystickControlValues> valsList;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
-            JoystickControlValues newVals = joy->getJoystickControlValues();
+            JoystickControlValues vals = joy->getJoystickControlValues();
 
-            vals.dribble |= newVals.dribble;
-            vals.kick |= newVals.kick;
-            vals.chip |= newVals.chip;
+            // keep it in range
+            vals.translation.clamp(sqrt(2.0));
+            if (vals.rotation > 1) vals.rotation = 1;
+            if (vals.rotation < -1) vals.rotation = -1;
 
-            vals.rotation += newVals.rotation;
-            vals.translation += newVals.translation;
+            // Gets values from the configured joystick control values,respecting damped
+            // state
+            if (_dampedTranslation) {
+              vals.translation *=
+                Joystick::JoystickTranslationMaxDampedSpeed->value();
+            } else {
+              vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
+            }
+            if (_dampedRotation) {
+              vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+            } else {
+              vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+            }
 
-            vals.dribblerPower =
-                max<double>(vals.dribblerPower, newVals.dribblerPower);
-            vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
-            break;
+            // scale up kicker and dribbler speeds
+            vals.dribblerPower *= 128;
+            vals.kickPower *= 255;
+
+            valsList.push_back(vals);
         }
     }
-
-    // keep it in range
-    vals.translation.clamp(sqrt(2.0));
-    if (vals.rotation > 1) vals.rotation = 1;
-    if (vals.rotation < -1) vals.rotation = -1;
-
-    // Gets values from the configured joystick control values,respecting damped
-    // state
-    if (_dampedTranslation) {
-        vals.translation *=
-            Joystick::JoystickTranslationMaxDampedSpeed->value();
-    } else {
-        vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
-    }
-    if (_dampedRotation) {
-        vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
-    } else {
-        vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
-    }
-
-    // scale up kicker and dribbler speeds
-    vals.dribblerPower *= 128;
-    vals.kickPower *= 255;
-
-    return vals;
+    return valsList;
 }
 
 void Processor::defendPlusX(bool value) {

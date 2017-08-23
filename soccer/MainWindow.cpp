@@ -348,7 +348,7 @@ void MainWindow::updateViews() {
                                      true);
     }
     if (manual >= 0) {
-        JoystickControlValues vals = _processor->getJoystickControlValues();
+        JoystickControlValues vals = _processor->getJoystickControlValues()[0];
         _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
         _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
         _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));

@@ -98,7 +98,7 @@ public:
 
     bool autonomous();
     bool joystickValid() const;
-    JoystickControlValues getJoystickControlValues();
+    std::vector<JoystickControlValues> getJoystickControlValues();
 
     void externalReferee(bool value) {
         _refereeModule->useExternalReferee(value);
