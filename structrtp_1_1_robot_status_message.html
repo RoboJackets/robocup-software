@@ -127,26 +127,32 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>uid</b></td></tr>
 uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>battVoltage</b></td></tr>
 <tr class="separator:a8dd7ef8922079f3509bc171a8850aed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab114eddedd797b6d574f4a426b3bd835"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab114eddedd797b6d574f4a426b3bd835"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>motorErrors</b>:5</td></tr>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>motorErrors</b>: 5</td></tr>
 <tr class="separator:ab114eddedd797b6d574f4a426b3bd835"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9d8fdf664ed9429798dcde2772b6f96"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9d8fdf664ed9429798dcde2772b6f96"></a>
 unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>ballSenseStatus</b>: 1</td></tr>
 <tr class="separator:ac9d8fdf664ed9429798dcde2772b6f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad88b622e4b387d8910078737f2367db6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad88b622e4b387d8910078737f2367db6"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>kickStatus</b>:1</td></tr>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>kickStatus</b>: 1</td></tr>
 <tr class="separator:ad88b622e4b387d8910078737f2367db6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7b1c4cdfd408d4d65ea03e54d2f4cd2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac7b1c4cdfd408d4d65ea03e54d2f4cd2"></a>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>kickHealthy</b>: 1</td></tr>
+<tr class="separator:ac7b1c4cdfd408d4d65ea03e54d2f4cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a669577d3233a8c3bf307c6c2876f0971"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a669577d3233a8c3bf307c6c2876f0971"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>fpgaStatus</b>:1</td></tr>
+unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>fpgaStatus</b>: 1</td></tr>
 <tr class="separator:a669577d3233a8c3bf307c6c2876f0971"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:afbbaccd80b44d3015fded0f05487bc06"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structrtp_1_1_robot_status_message.html#afbbaccd80b44d3015fded0f05487bc06">BATTERY_READING_SCALE_FACTOR</a> = 0.09884</td></tr>
-<tr class="memdesc:afbbaccd80b44d3015fded0f05487bc06"><td class="mdescLeft">&#160;</td><td class="mdescRight">is a direct reading from the mbed's ADC and is sent over the air as-is.  <a href="#afbbaccd80b44d3015fded0f05487bc06">More...</a><br /></td></tr>
-<tr class="separator:afbbaccd80b44d3015fded0f05487bc06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f90e8790d8d6baec45e2ec2029e1a40"><td class="memItemLeft" align="right" valign="top">static constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structrtp_1_1_robot_status_message.html#a5f90e8790d8d6baec45e2ec2029e1a40">BATTERY_SCALE_FACTOR</a> = 0.09884f</td></tr>
+<tr class="memdesc:a5f90e8790d8d6baec45e2ec2029e1a40"><td class="mdescLeft">&#160;</td><td class="mdescRight">is a direct reading from the mbed's ADC and is sent over the air as-is.  <a href="#a5f90e8790d8d6baec45e2ec2029e1a40">More...</a><br /></td></tr>
+<tr class="separator:a5f90e8790d8d6baec45e2ec2029e1a40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64ab6f3d66312e799e686aa2a07a79a4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a64ab6f3d66312e799e686aa2a07a79a4"></a>
+static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>debug_data_length</b> = 0</td></tr>
+<tr class="separator:a64ab6f3d66312e799e686aa2a07a79a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a class="anchor" id="afbbaccd80b44d3015fded0f05487bc06"></a>
+<a class="anchor" id="a5f90e8790d8d6baec45e2ec2029e1a40"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -154,7 +160,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr float rtp::RobotStatusMessage::BATTERY_READING_SCALE_FACTOR = 0.09884</td>
+          <td class="memname">constexpr auto rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR = 0.09884f</td>
         </tr>
       </table>
   </td>
@@ -178,7 +184,7 @@ Static Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>rtp</b></li><li class="navelem"><a class="el" href="structrtp_1_1_robot_status_message.html">RobotStatusMessage</a></li>
-    <li class="footer">Generated on Mon Aug 21 2017 04:49:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 25 2017 01:25:18 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

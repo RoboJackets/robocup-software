@@ -181,6 +181,12 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>rxCompleted</b
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
+<tr class="memitem:a2ed9c3d488a73db3f0de9c135596e10c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ed9c3d488a73db3f0de9c135596e10c"></a>
+std::vector&lt; DebugCommunication::DebugResponse &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>current_receive_debug</b></td></tr>
+<tr class="separator:a2ed9c3d488a73db3f0de9c135596e10c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2688359201b630189cc1bc391046612f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2688359201b630189cc1bc391046612f"></a>
+std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>current_receive_debug_mutex</b></td></tr>
+<tr class="separator:a2688359201b630189cc1bc391046612f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60593a5a7f029d52e1f7d5479a829d3c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a60593a5a7f029d52e1f7d5479a829d3c"></a>
 libusb_context *&#160;</td><td class="memItemRight" valign="bottom"><b>_usb_context</b></td></tr>
 <tr class="separator:a60593a5a7f029d52e1f7d5479a829d3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,9 +196,9 @@ libusb_device_handle *&#160;</td><td class="memItemRight" valign="bottom"><b>_de
 <tr class="memitem:a13175984818f4acf43b96321ca23b474"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13175984818f4acf43b96321ca23b474"></a>
 libusb_transfer *&#160;</td><td class="memItemRight" valign="bottom"><b>_rxTransfers</b> [NumRXTransfers]</td></tr>
 <tr class="separator:a13175984818f4acf43b96321ca23b474"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68d61e81200ebff9372c4e969eadf1a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68d61e81200ebff9372c4e969eadf1a6"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_rxBuffers</b> [NumRXTransfers][rtp::Reverse_Size+2]</td></tr>
-<tr class="separator:a68d61e81200ebff9372c4e969eadf1a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd97fca557290e393e5839b54317a032"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd97fca557290e393e5839b54317a032"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><b>_rxBuffers</b> [NumRXTransfers][rtp::ReverseSize+2]</td></tr>
+<tr class="separator:acd97fca557290e393e5839b54317a032"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15c2a15aaece057ccb68bf5803cd2246"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15c2a15aaece057ccb68bf5803cd2246"></a>
 QMutex&#160;</td><td class="memItemRight" valign="bottom"><b>_mutex</b></td></tr>
 <tr class="separator:a15c2a15aaece057ccb68bf5803cd2246"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -233,7 +239,7 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>NumRXTran
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_u_s_b_radio__coll__graph.png" border="0" usemap="#_u_s_b_radio_coll__map" alt="Collaboration graph"/></div>
 <map name="_u_s_b_radio_coll__map" id="_u_s_b_radio_coll__map">
-<area shape="rect" id="node2" href="class_radio.html" title="Sends and receives information to/from our robots. " alt="" coords="51,109,108,136"/>
+<area shape="rect" id="node2" href="class_radio.html" title="Sends and receives information to/from our robots. " alt="" coords="51,117,108,143"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following files:<ul>
@@ -246,7 +252,7 @@ static const int&#160;</td><td class="memItemRight" valign="bottom"><b>NumRXTran
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_u_s_b_radio.html">USBRadio</a></li>
-    <li class="footer">Generated on Mon Aug 21 2017 04:49:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 25 2017 01:25:17 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

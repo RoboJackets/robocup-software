@@ -111,6 +111,8 @@ $(document).ready(function(){initNavTree('class_robot_filter.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="class_robot_filter-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">RobotFilter Class Reference</div>  </div>
@@ -122,47 +124,26 @@ $(document).ready(function(){initNavTree('class_robot_filter.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a47b3ca9d7c598cc9078ea60a7dc1b050"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47b3ca9d7c598cc9078ea60a7dc1b050"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_filter.html#a47b3ca9d7c598cc9078ea60a7dc1b050">update</a> (const <a class="el" href="class_robot_observation.html">RobotObservation</a> *obs)</td></tr>
-<tr class="memdesc:a47b3ca9d7c598cc9078ea60a7dc1b050"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gives a new observation to the filter. <br /></td></tr>
-<tr class="separator:a47b3ca9d7c598cc9078ea60a7dc1b050"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b19a762c3be127a2f6bab1881895e34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_filter.html#a4b19a762c3be127a2f6bab1881895e34">predict</a> (RJ::Time time, <a class="el" href="class_robot_pose.html">RobotPose</a> *robot)</td></tr>
-<tr class="memdesc:a4b19a762c3be127a2f6bab1881895e34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a prediction of the ball's state at a given time in the future.  <a href="#a4b19a762c3be127a2f6bab1881895e34">More...</a><br /></td></tr>
-<tr class="separator:a4b19a762c3be127a2f6bab1881895e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66c4b8eb94aa48b1d4f1578894909ff0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66c4b8eb94aa48b1d4f1578894909ff0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_filter.html#a66c4b8eb94aa48b1d4f1578894909ff0">update</a> (const std::array&lt; <a class="el" href="class_robot_observation.html">RobotObservation</a>, Num_Cameras &gt; &amp;obs, <a class="el" href="class_robot_pose.html">RobotPose</a> *robot, RJ::Time currentTime, u_int32_t frameNumber)</td></tr>
+<tr class="memdesc:a66c4b8eb94aa48b1d4f1578894909ff0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gives a new observation to the filter. <br /></td></tr>
+<tr class="separator:a66c4b8eb94aa48b1d4f1578894909ff0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a68835f901dc3b4987f6e958c47f03bc3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68835f901dc3b4987f6e958c47f03bc3"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
+<tr class="separator:a68835f901dc3b4987f6e958c47f03bc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a79f1184790030031a15a9a9bfccc134f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79f1184790030031a15a9a9bfccc134f"></a>
+static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>Num_Cameras</b> = 4</td></tr>
+<tr class="separator:a79f1184790030031a15a9a9bfccc134f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>adjusts robot vision for accuracy and calculates velocities from positions </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a4b19a762c3be127a2f6bab1881895e34"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void RobotFilter::predict </td>
-          <td>(</td>
-          <td class="paramtype">RJ::Time&#160;</td>
-          <td class="paramname"><em>time</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_robot_pose.html">RobotPose</a> *&#160;</td>
-          <td class="paramname"><em>robot</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Generates a prediction of the ball's state at a given time in the future. </p>
-<p>This may clear robot-&gt;visible if the prediction is too long in the future to be reliable. </p>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/modeling/<a class="el" href="_robot_filter_8hpp_source.html">RobotFilter.hpp</a></li>
 <li>soccer/modeling/RobotFilter.cpp</li>
 </ul>
@@ -172,7 +153,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_robot_filter.html">RobotFilter</a></li>
-    <li class="footer">Generated on Mon Aug 21 2017 04:49:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 25 2017 01:25:17 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

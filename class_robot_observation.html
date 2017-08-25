@@ -123,9 +123,9 @@ $(document).ready(function(){initNavTree('class_robot_observation.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa60bedc5a8be34de7f800d3b638b2e0d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa60bedc5a8be34de7f800d3b638b2e0d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>RobotObservation</b> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos, float angle, RJ::Time <a class="el" href="class_robot_observation.html#afe186bf1570bd871b43671ed31eb665a">time</a>, int frame)</td></tr>
-<tr class="separator:aa60bedc5a8be34de7f800d3b638b2e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f563d0988a7f59b47e536bed3e3f8fd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f563d0988a7f59b47e536bed3e3f8fd"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>RobotObservation</b> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos, float angle, RJ::Time <a class="el" href="class_robot_observation.html#afe186bf1570bd871b43671ed31eb665a">time</a>, int frame, bool valid, int source)</td></tr>
+<tr class="separator:a1f563d0988a7f59b47e536bed3e3f8fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9eb4f01610e04979eb532859bc52d7df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9eb4f01610e04979eb532859bc52d7df"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;</b> (const <a class="el" href="class_robot_observation.html">RobotObservation</a> &amp;other) const </td></tr>
 <tr class="separator:a9eb4f01610e04979eb532859bc52d7df"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,12 +142,15 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>angle</b></td></tr>
 RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_observation.html#afe186bf1570bd871b43671ed31eb665a">time</a></td></tr>
 <tr class="memdesc:afe186bf1570bd871b43671ed31eb665a"><td class="mdescLeft">&#160;</td><td class="mdescRight">in radians <br /></td></tr>
 <tr class="separator:afe186bf1570bd871b43671ed31eb665a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a477ff13d194c3593e1d17f71352fc56f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a477ff13d194c3593e1d17f71352fc56f"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>source</b></td></tr>
-<tr class="separator:a477ff13d194c3593e1d17f71352fc56f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1b1133ed9080ff2e2b74e67a9774ad0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1b1133ed9080ff2e2b74e67a9774ad0"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>frameNumber</b></td></tr>
 <tr class="separator:ab1b1133ed9080ff2e2b74e67a9774ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac595ac316c2dc1d4780fb103a036b40"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aac595ac316c2dc1d4780fb103a036b40"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>valid</b></td></tr>
+<tr class="separator:aac595ac316c2dc1d4780fb103a036b40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a477ff13d194c3593e1d17f71352fc56f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a477ff13d194c3593e1d17f71352fc56f"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>source</b></td></tr>
+<tr class="separator:a477ff13d194c3593e1d17f71352fc56f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An observation of a robot's position and angle at a certain time. </p>
@@ -171,7 +174,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>frameNumber</b></td></
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_robot_observation.html">RobotObservation</a></li>
-    <li class="footer">Generated on Mon Aug 21 2017 04:49:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 25 2017 01:25:17 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

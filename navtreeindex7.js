@@ -1,5 +1,15 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a366db10bcd9da45ba18d8e95956864da":[15,0,3,9,1,8,0,4],
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a3da2bcf17e0976d5c24fb3e3917b04d4":[15,0,3,9,1,8,0,1],
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#aa898022c05ce4face2aaf764d1207424":[15,0,3,9,1,8,0,2],
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#abf4d0467b43abd85d46b936a4c2005e4":[15,0,3,9,1,8,0,3],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html":[15,0,3,9,1,9,0],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a10afcf1f6005ab6045a7892168540adb":[15,0,3,9,1,9,0,5],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a165852ca7fc9ff0f3dcfa7fcf200a494":[15,0,3,9,1,9,0,6],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a345bf652a54580e307edbc972bb9c181":[15,0,3,9,1,9,0,3],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a4d5790c7ea7dbd1ea85e52bb57c4df7c":[15,0,3,9,1,9,0,13],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a703630b54c40032875727d09d6ec44ec":[15,0,3,9,1,9,0,4],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a836a27e73d5f0f0bd0e5ca40ecda1da2":[15,0,3,9,1,9,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a880e56d55a1d6110a17d3aaf35e9cd38":[15,0,3,9,1,9,0,8],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9b9612178e3862c02a2431232ad933af":[15,0,3,9,1,9,0,14],
@@ -239,15 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html":[15,0,3,12,0],
 "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a233287802d33a782d5da03a7ddd74dc0":[15,0,3,12,0,4],
 "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a52ffcf6f75515c574271e798acd8356d":[15,0,3,12,0,2],
-"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a6721983a1f18bcb64c70043a7fb5ac63":[15,0,3,12,0,3],
-"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a75c25cbdeae25db1caac4723240db715":[15,0,3,12,0,5],
-"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a90cdfab785236d5401795f9b64caa3eb":[15,0,3,12,0,1],
-"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#aeb178519b7573acb443dc16c7ef46426":[15,0,3,12,0,0],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html":[15,0,3,13,0],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a271c7a4d1b259880cb953ab9fe3f94ac":[15,0,3,13,0,10],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a3049fd416f01a2fec774b2325369b577":[15,0,3,13,0,8],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a6b3e668b84a303ee59a6429a3edcf35f":[15,0,3,13,0,3],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#a8af5729939e7fb71778b69cbdf9387d0":[15,0,3,13,0,2],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ab856cdedf3b5ef20c120481c88a7569c":[15,0,3,13,0,4],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ac0af2480e378ba668a1f7a9d0f6fa99f":[15,0,3,13,0,9]
+"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a6721983a1f18bcb64c70043a7fb5ac63":[15,0,3,12,0,3]
 };

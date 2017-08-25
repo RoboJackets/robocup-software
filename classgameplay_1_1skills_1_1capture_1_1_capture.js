@@ -13,6 +13,7 @@ var classgameplay_1_1skills_1_1capture_1_1_capture =
     [ "on_enter_course_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a32ba802e768c318182aadbfa462d6e1e", null ],
     [ "on_exit_course_approach", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a65badf03e22da7a022a5c5e7913980f9", null ],
     [ "role_requirements", "classgameplay_1_1skills_1_1capture_1_1_capture.html#ab2b25baee45e56ca5bca83e5f07aef08", null ],
+    [ "dribbler_power", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a0e7c5d1bea2059f376998feb551ec8f0", null ],
     [ "faceBall", "classgameplay_1_1skills_1_1capture_1_1_capture.html#af4f40fc49fcc4557e8747df83b5ed43e", null ],
     [ "lastApproachTarget", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a46990c0ab70ae4c7dbe9618748dabebe", null ]
 ];

@@ -345,6 +345,9 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
+<tr class="memitem:a46eb1453632dcc111c2f387b4a066bd9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46eb1453632dcc111c2f387b4a066bd9"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>OFFSET</b> = 0.1</td></tr>
+<tr class="separator:a46eb1453632dcc111c2f387b4a066bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac95d65f7ccffe525c9958b9ea06127eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac95d65f7ccffe525c9958b9ea06127eb"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>MaxX</b> = constants.Field.GoalWidth/2.0</td></tr>
 <tr class="separator:ac95d65f7ccffe525c9958b9ea06127eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -417,7 +420,7 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Segment(</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(-MaxX, constants.Robot.Radius),</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        robocup.Point(MaxX, constants.Robot.Radius))</div></div><!-- fragment -->
+<b>Initial value:</b><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;= robocup.Segment(</div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;        robocup.Point(-MaxX, constants.Robot.Radius + OFFSET),</div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;        robocup.Point(MaxX, constants.Robot.Radius + OFFSET))</div></div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -429,7 +432,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>tactics</b></li><li class="navelem"><b>positions</b></li><li class="navelem"><b>goalie</b></li><li class="navelem"><a class="el" href="classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html">Goalie</a></li>
-    <li class="footer">Generated on Mon Aug 21 2017 04:49:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 25 2017 01:25:18 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

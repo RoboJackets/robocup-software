@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['header_5fdata',['header_data',['../structrtp_1_1header__data.html',1,'rtp']]]
+  ['header',['Header',['../structrtp_1_1_header.html',1,'rtp']]]
 ];

@@ -387,10 +387,13 @@ var annotated_dup =
       [ "WorldVelTargetCommand", "struct_planning_1_1_world_vel_target_command.html", "struct_planning_1_1_world_vel_target_command" ]
     ] ],
     [ "rtp", null, [
+      [ "ConfMessage", "structrtp_1_1_conf_message.html", "structrtp_1_1_conf_message" ],
       [ "ControlMessage", "structrtp_1_1_control_message.html", "structrtp_1_1_control_message" ],
-      [ "header_data", "structrtp_1_1header__data.html", "structrtp_1_1header__data" ],
-      [ "packet", "classrtp_1_1packet.html", "classrtp_1_1packet" ],
-      [ "RobotStatusMessage", "structrtp_1_1_robot_status_message.html", "structrtp_1_1_robot_status_message" ]
+      [ "DebugMessage", "structrtp_1_1_debug_message.html", "structrtp_1_1_debug_message" ],
+      [ "Header", "structrtp_1_1_header.html", "structrtp_1_1_header" ],
+      [ "Packet", "classrtp_1_1_packet.html", "classrtp_1_1_packet" ],
+      [ "RobotStatusMessage", "structrtp_1_1_robot_status_message.html", "structrtp_1_1_robot_status_message" ],
+      [ "RobotTxMessage", "structrtp_1_1_robot_tx_message.html", "structrtp_1_1_robot_tx_message" ]
     ] ],
     [ "test_config", null, [
       [ "TestConfig", "classtest__config_1_1_test_config.html", "classtest__config_1_1_test_config" ]
@@ -465,6 +468,7 @@ var annotated_dup =
     [ "RobotPose", "class_robot_pose.html", "class_robot_pose" ],
     [ "RobotStatus", "class_robot_status.html", "class_robot_status" ],
     [ "RobotStatusWidget", "class_robot_status_widget.html", "class_robot_status_widget" ],
+    [ "RobotTxMessages", "union_robot_tx_messages.html", "union_robot_tx_messages" ],
     [ "RobotWidget", "class_robot_widget.html", "class_robot_widget" ],
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],

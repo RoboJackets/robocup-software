@@ -1,0 +1,6 @@
+<map id="rtp::RobotTxMessage" name="rtp::RobotTxMessage">
+<area shape="rect" id="node3" href="$unionrtp_1_1_robot_tx_message_1_1_robot_tx_messages.html" title="rtp::RobotTxMessage\l::RobotTxMessages" alt="" coords="644,57,800,98"/>
+<area shape="rect" id="node4" href="$structrtp_1_1_control_message.html" title="rtp::ControlMessage" alt="" coords="340,13,491,40"/>
+<area shape="rect" id="node5" href="$structrtp_1_1_debug_message.html" title="rtp::DebugMessage" alt="" coords="342,64,489,91"/>
+<area shape="rect" id="node7" href="$structrtp_1_1_conf_message.html" title="rtp::ConfMessage" alt="" coords="348,121,483,148"/>
+</map>

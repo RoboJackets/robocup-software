@@ -7,6 +7,5 @@ var structrtp_1_1_control_message =
     [ "kickStrength", "structrtp_1_1_control_message.html#a09351fd3e57dce45f07b296abfd2b12d", null ],
     [ "shootMode", "structrtp_1_1_control_message.html#ab04e8cf341e3cb2879a82206ad82bc29", null ],
     [ "song", "structrtp_1_1_control_message.html#a38ae3dd1443d2d071fd756b86c396784", null ],
-    [ "triggerMode", "structrtp_1_1_control_message.html#aa0dcf4aad5dbe5d5ef40913089bac11a", null ],
-    [ "uid", "structrtp_1_1_control_message.html#a24fc0c7ead429b6a14699cfa30d3a2c6", null ]
+    [ "triggerMode", "structrtp_1_1_control_message.html#aa0dcf4aad5dbe5d5ef40913089bac11a", null ]
 ];

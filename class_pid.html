@@ -120,16 +120,15 @@ $(document).ready(function(){initNavTree('class_pid.html','');});
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7feaf4b3444c9d3d40415f8479e65e4b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7feaf4b3444c9d3d40415f8479e65e4b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Pid</b> (float p=0, float i=0, float d=0, unsigned int windup=0)</td></tr>
-<tr class="separator:a7feaf4b3444c9d3d40415f8479e65e4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfd171f7623d22f9d12034ed50eb38a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acfd171f7623d22f9d12034ed50eb38a9"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Pid</b> (float p=0, float i=0, float d=0, unsigned int windup=0, float dAlpha=0)</td></tr>
+<tr class="separator:acfd171f7623d22f9d12034ed50eb38a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a594752a40e7ee5555e2f5918df67d87e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a594752a40e7ee5555e2f5918df67d87e"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>run</b> (float err)</td></tr>
+<tr class="separator:a594752a40e7ee5555e2f5918df67d87e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9a0346cf62b277d56bfbfcf12d78389"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9a0346cf62b277d56bfbfcf12d78389"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>windup</b> () const </td></tr>
 <tr class="separator:ab9a0346cf62b277d56bfbfcf12d78389"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae86adf5545b2af4188acdf3a29f71ea9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae86adf5545b2af4188acdf3a29f71ea9"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9">run</a> (const float err)</td></tr>
-<tr class="memdesc:ae86adf5545b2af4188acdf3a29f71ea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the pid loop and returns the error. <br /></td></tr>
-<tr class="separator:ae86adf5545b2af4188acdf3a29f71ea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1106664b17ce8a73c361de7b74e005eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1106664b17ce8a73c361de7b74e005eb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setWindup</b> (unsigned int w)</td></tr>
 <tr class="separator:a1106664b17ce8a73c361de7b74e005eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,6 +148,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>runTuner</b> ()</td><
 <tr class="memitem:a3089ad2d5dae7b5172a838ead1e0867c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3089ad2d5dae7b5172a838ead1e0867c"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>endTunerCycle</b> ()</td></tr>
 <tr class="separator:a3089ad2d5dae7b5172a838ead1e0867c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad429ef91b9999f5e664c90b41a9b3e9c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad429ef91b9999f5e664c90b41a9b3e9c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>set_saturated</b> (bool is_saturated)</td></tr>
+<tr class="separator:ad429ef91b9999f5e664c90b41a9b3e9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -161,6 +163,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>ki</b></td></tr>
 <tr class="memitem:a7f72115e163cb28354927c91ba5a5c3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f72115e163cb28354927c91ba5a5c3d"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>kd</b></td></tr>
 <tr class="separator:a7f72115e163cb28354927c91ba5a5c3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b2d864820b6a11ee2685dbb6ac6622b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b2d864820b6a11ee2685dbb6ac6622b"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>derivAlpha</b></td></tr>
+<tr class="separator:a0b2d864820b6a11ee2685dbb6ac6622b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>common/<a class="el" href="_pid_8hpp_source.html">Pid.hpp</a></li>
@@ -172,7 +177,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>kd</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_pid.html">Pid</a></li>
-    <li class="footer">Generated on Mon Aug 21 2017 04:49:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Aug 25 2017 01:25:17 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

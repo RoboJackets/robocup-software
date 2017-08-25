@@ -15,6 +15,7 @@ var searchData=
   ['append',['append',['../class_planning_1_1_composite_path.html#aa7dbe5c31ab2a5f25fbf785fd0f173f7',1,'Planning::CompositePath']]],
   ['approachopponent',['approachOpponent',['../class_our_robot.html#afcf2cd89c218915086882fef528e2fd2',1,'OurRobot::approachOpponent(unsigned shell_id) const '],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
   ['arcradius',['ArcRadius',['../struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f',1,'Field_Dimensions']]],
+  ['assign',['assign',['../classrtp_1_1_packet.html#a23de4f51fe48e6d30085a9c9c3647331',1,'rtp::Packet']]],
   ['assign_5froles',['assign_roles',['../classgameplay_1_1behavior_1_1_behavior.html#afd52eaedcc866b0b97b3716248a38168',1,'gameplay::behavior::Behavior']]],
   ['avoidallopponentradius',['avoidAllOpponentRadius',['../class_our_robot.html#a99ff3312c7249d7893c0c719143b84b7',1,'OurRobot']]],
   ['avoidopponent',['avoidOpponent',['../class_our_robot.html#a8bd167a6569b54a911720c7136920580',1,'OurRobot::avoidOpponent(unsigned shell_id) const '],['../class_our_robot.html#ac6176782dac7ab1550e20bdb48e6d7e8',1,'OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid)']]],
