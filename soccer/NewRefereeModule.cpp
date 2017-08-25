@@ -1,5 +1,7 @@
 #include "NewRefereeModule.hpp"
 
+#include "Constants.hpp"
+
 #include <Network.hpp>
 #include <multicast.hpp>
 #include <Utils.hpp>
@@ -99,6 +101,11 @@ static const float KickThreshold = 0.150f;
 /// as having been kicked.
 static const int KickVerifyTime_ms = 250;
 
+// Whether we cancel ball placement on a halt.
+// If we want ball placement to continue after
+// the ref halts/stops, make this false
+static const bool CancelBallPlaceOnHalt = true;
+
 NewRefereeModule::NewRefereeModule(SystemState& state)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
@@ -179,12 +186,12 @@ void NewRefereeModule::run() {
         ballPlacementx = packet->wrapper.designated_position().x();
         ballPlacementy = packet->wrapper.designated_position().y();
 
-        std::string blue_name = blue_info.name;
-        for (char& letter : blue_name) {
+        std::string yellow_name = yellow_info.name;
+        for (char& letter : yellow_name) {
             letter = tolower(letter);
         }
 
-        blueTeam(blue_name == "robojackets");
+        blueTeam(yellow_name != Team_Name_Lower);
 
         _mutex.unlock();
     }
@@ -284,6 +291,11 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
     switch (command) {
         case Command::HALT:
             _state.gameState.state = GameState::Halt;
+
+            if (CancelBallPlaceOnHalt) {
+                _state.gameState.restart = GameState::None;
+                _state.gameState.ourRestart = false;
+            }
             break;
         case Command::STOP:
             _state.gameState.state = GameState::Stop;

@@ -68,7 +68,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             'fumble')
 
         # default parameters
-        self.dribbler_power = constants.Robot.Dribbler.MaxPower
+        self.dribbler_power = constants.Robot.Dribbler.StandardPower
         self.aim_params = {'desperate_timeout': float("inf")}
 
         # The speed to drive the dribbler at during aiming

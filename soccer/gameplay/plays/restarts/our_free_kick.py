@@ -19,7 +19,7 @@ class OurFreeKick(standard_play.StandardPlay):
         # If we are indirect we don't want to shoot directly into the goal
         gs = main.game_state()
 
-        if indirect != None:
+        if indirect is not None:
             self.indirect = indirect
         elif main.ball().pos.y > constants.Field.Length / 2.0:
             self.indirect = gs.is_indirect()

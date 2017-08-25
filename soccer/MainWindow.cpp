@@ -29,6 +29,7 @@
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <protobuf/grSim_Replacement.pb.h>
+#include <ui_MainWindow.h>
 
 using namespace std;
 using namespace boost;
@@ -152,6 +153,38 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
+
+    // SetupRobotConfig For debug
+    QStringList configList{QString{}};
+
+    for (const auto& pair : DebugCommunication::CONFIG_TO_STRING) {
+        configList.append(QString::fromStdString(pair.second));
+    }
+
+    // Add checkboxes for robot debug responses
+    auto rowCount = _ui.robotConfig->rowCount();
+    for (int row = 0; row < rowCount; row++) {
+        auto comboBox = new QComboBox(this);
+        comboBox->addItems(configList);
+        _ui.robotConfig->setCellWidget(row, 0, comboBox);
+        _robotConfigQComboBoxes.push_back(comboBox);
+    }
+
+    // Process data from debug responses
+    QStringList debugResponseList{QString()};
+    for (const auto& entry : DebugCommunication::DEBUGRESPONSE_TO_STRING) {
+        auto name = entry.second;
+        debugResponseList.append(QString::fromStdString(name));
+    }
+    auto numDebugResponse = rtp::DebugMessage::length;
+    for (int i = 0; i < numDebugResponse; i++) {
+        auto comboBox = new QComboBox(this);
+        comboBox->addItems(debugResponseList);
+        _ui.debugResponse->addRow(
+            QString::fromStdString("Debug Response " + to_string(i) + ":"),
+            comboBox);
+        _robotDebugResponseQComboBoxes.push_back(comboBox);
+    }
 
     // Get the item model from the goalieID boxes so we can disable them
     // properly
@@ -293,6 +326,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         }
     } else {
         _ui.goalieID->setEnabled(true);
+        qActionGroups["teamGroup"]->setEnabled(true);
     }
 }
 
@@ -484,8 +518,12 @@ void MainWindow::updateViews() {
                                 _processor->refereeModule()->command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
-    _ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(
-        _processor->refereeModule()->stage_time_left.count(), 'f', 2)));
+    int timeSeconds =
+        _processor->refereeModule()->stage_time_left.count() / 1000;
+    int timeMinutes = timeSeconds / 60;
+    timeSeconds = timeSeconds % 60;
+    _ui.refTimeLeft->setText(tr("%1:%2").arg(
+        QString::number(timeMinutes), QString::number(std::abs(timeSeconds))));
 
     const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
     string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
@@ -689,8 +727,8 @@ void MainWindow::updateViews() {
             }
 
             // check for kicker error code
-            bool kickerFault =
-                rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+            bool kickerFault = rx.has_kicker_status() &&
+                               !(rx.kicker_status() & Kicker_Enabled);
 
             bool kicker_charging =
                 rx.has_kicker_status() && rx.kicker_status() & 0x01;
@@ -1223,6 +1261,14 @@ void MainWindow::on_actionSeed_triggered() {
     }
 }
 
+// Joystick settings
+void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
+    _processor->joystickKickOnBreakBeam(
+        _ui.joystickKickOnBreakBeam->checkState());
+}
+
+// choose between kick on break beam and immeditate
+
 // Log controls
 void MainWindow::on_logHistoryLocation_sliderMoved(int value) {
     // Sync frameNumber with logHistory slider
@@ -1461,3 +1507,43 @@ void MainWindow::on_actionVisionFull_Field_triggered() {
 }
 
 bool MainWindow::live() { return !_playbackRate; }
+
+void MainWindow::on_robotConfigButton_clicked() {
+    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
+        configs;
+    // Loop through debug settings and read thier value
+    for (int i = 0; i < _robotConfigQComboBoxes.size(); i++) {
+        const auto& comboBox = _robotConfigQComboBoxes[i];
+        auto key = comboBox->currentText().toStdString();
+        if (!key.empty()) {
+            bool ok;
+            auto item = _ui.robotConfig->item(i, 1);
+            if (item) {
+                double value = item->text().toDouble(&ok);
+                if (ok) {
+                    configs.emplace_back(
+                        DebugCommunication::STRING_TO_CONFIG.at(key), value);
+                } else {
+                    debugLog("Config trying to be sent that is not a number.");
+                }
+            }
+        }
+    }
+
+    _processor->setRobotConfigs(std::move(configs));
+}
+
+// Send debug response template to robots
+void MainWindow::on_debugResponseButton_clicked() {
+    std::vector<DebugCommunication::DebugResponse> robotDebugResponses;
+    for (int i = 0; i < _robotDebugResponseQComboBoxes.size(); i++) {
+        const auto& comboBox = _robotDebugResponseQComboBoxes[i];
+        auto key = comboBox->currentText().toStdString();
+        if (!key.empty()) {
+            robotDebugResponses.push_back(
+                DebugCommunication::STRING_TO_DEBUGRESPONSE.at(key));
+        }
+    }
+
+    _processor->setRobotDebugResponses(std::move(robotDebugResponses));
+}

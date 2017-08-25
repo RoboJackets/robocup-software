@@ -57,18 +57,24 @@ class RRTPlanner;
 class RobotPose {
 public:
     RobotPose()
-        : visible(false), angle(0), angleVel(0), time(), visionFrame(0) {
+        : visible(false),
+          velValid(false),
+          angle(0),
+          angleVel(0),
+          time(),
+          visionFrame(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }
 
     bool visible;
+    bool velValid;
 
     Geometry2d::Point pos;
     Geometry2d::Point vel;
     /// angle in radians.  0 radians means the robot is aimed along the x-axis
-    float angle;
-    float angleVel;  /// angular velocity in radians/sec
+    double angle;
+    double angleVel;  /// angular velocity in radians/sec
 
     // Time at which this estimate is valid
     RJ::Time time;
