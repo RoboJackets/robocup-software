@@ -45,7 +45,4 @@ class TestAdaptiveFormationWeights(play.Play):
             #    main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
             #    (2, 2, 15, 1), pt.x, pt.y))
 
-
-        # Append places the items in the wrong order, they need to be reversed
-        vals.reverse()
         visualization.overlay.display_visualization_points(vals, True, 40, 80)
