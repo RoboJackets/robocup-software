@@ -23,12 +23,8 @@ class TestCircleNearBall(unittest.TestCase):
 		#self.system_state = robocup.SystemState()
 	
 	def test_get_circle_points(self):
-		print("\n")
-
 		width = constants.Field.Width
 		length = constants.Field.Length
-		print("Field Width: " + str(width))
-		print("Field Length: " + str(length))
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
 			for point in array:		
@@ -49,19 +45,18 @@ class TestCircleNearBall(unittest.TestCase):
 		test_point(self, width + constants.Robot.Radius, constants.Robot.Radius * -1)
 
 	def test_normalize_angle(self):
-		print("test_normalize_angle ran")
-		# angle = -math.pi
-		# while (angle < 0):
-		# 	self.assertEqual(self.circle_near_ball.normalize_angle(angle),
-		# 		angle + 2 * math.pi)
-		# 	angle += math.pi / 6
-		# angle = 0
-		# while (angle <= 2 * math.pi):
-		# 	self.assertEqual(angle, 
-		# 		self.circle_near_ball.normalize_angle(angle))
-		# 	angle += math.pi / 6
-		# angle = 3 * math.pi
-		# while (angle < 4 * math.pi):
-		# 	self.assertEqual(angle - 2 * math.pi,
-		# 		self.circle_near_ball.normalize_angle(angle))
-		# 	angle += math.pi / 6
+		angle = -math.pi
+		while (angle < 0):
+			self.assertEqual(self.circle_near_ball.normalize_angle(angle),
+				angle + 2 * math.pi)
+			angle += math.pi / 6
+		angle = 0
+		while (angle <= 2 * math.pi):
+			self.assertEqual(angle, 
+				self.circle_near_ball.normalize_angle(angle))
+			angle += math.pi / 6
+		angle = 3 * math.pi
+		while (angle < 4 * math.pi):
+			self.assertEqual(angle - 2 * math.pi,
+				self.circle_near_ball.normalize_angle(angle))
+			angle += math.pi / 6
