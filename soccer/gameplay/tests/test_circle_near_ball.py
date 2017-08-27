@@ -28,23 +28,24 @@ class TestCircleNearBall(unittest.TestCase):
 		length = constants.Field.Length
 		print("Field Width: " + str(width))
 		print("Field Length: " + str(length))
-		main.set_ball(Moc_Ball(constants.Field.CenterPoint.x, constants.Field.CenterPoint.y))
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
-			for point in array:
-				# print(str(point.x >= width * -1 / 2 and point.x <= width / 2) + " is true?")
-				# print(str(point.y >= 0 and point.y <= length) + " is true?")		
+			for point in array:		
 				self.assertTrue(point.x >= width * -1 / 2 and point.x <= width / 2, msg="failure")
 				self.assertTrue(point.y >= 0 and point.y <= length, msg="failure")
+		
+		def test_point(self, x, y):
+			main.set_ball(Moc_Ball(x, y))
+			assert_circle_points(self)
 
-		print("ball pos: " + str(main.ball().pos))
-		assert_circle_points(self)
-		# print("Circle 1: " + str(self.circle_near_ball.get_circle_points(6)))
-		main.set_ball(Moc_Ball(-100, -100))
-		assert_circle_points(self)
-		print("ball pos: " + str(main.ball().pos))
-		print("Circle 2: " + str(self.circle_near_ball.get_circle_points(6)))
-	# def test_execute_completed(self):
+		test_point(self, constants.Field.CenterPoint.x, constants.Field.CenterPoint.y)
+		test_point(self, -100, -100)
+		test_point(self, width * -1, 0)
+		test_point(self, 0, 0)
+		test_point(self, width, 0)
+		test_point(self, width, length / 2)
+		test_point(self, width - constants.Robot.Radius, constants.Robot.Radius)
+		test_point(self, width + constants.Robot.Radius, constants.Robot.Radius * -1)
 
 	def test_normalize_angle(self):
 		print("test_normalize_angle ran")
