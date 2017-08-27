@@ -45,7 +45,7 @@ def display_visualization_points(values, show_max = True, num_width = 20, num_le
             x_cent = x * constants.Field.Width / num_width + x_half
             y_cent = y * constants.Field.Length / num_length + y_half
 
-            val = values.pop()
+            val = values.pop(1)
             val = min(val, 1)
             val = max(val, 0)
 
