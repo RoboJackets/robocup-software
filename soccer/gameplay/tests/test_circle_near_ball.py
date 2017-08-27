@@ -24,6 +24,7 @@ class TestCircleNearBall(unittest.TestCase):
 	
 	def test_get_circle_points(self):
 		print("\n")
+
 		width = constants.Field.Width
 		length = constants.Field.Length
 		print("Field Width: " + str(width))
@@ -64,4 +65,3 @@ class TestCircleNearBall(unittest.TestCase):
 		# 	self.assertEqual(angle - 2 * math.pi,
 		# 		self.circle_near_ball.normalize_angle(angle))
 		# 	angle += math.pi / 6
-
