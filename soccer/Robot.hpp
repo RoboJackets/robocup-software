@@ -386,6 +386,8 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
+    Geometry2d::Point mouthPos() const;
+
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
@@ -398,7 +400,8 @@ public:
     bool driving_available(bool require_all = true) const;
 
     // lower level status checks
-    bool hasBall() const;
+    bool rawHasBall() const;
+    bool hasBall();
     bool ballSenseWorks() const;
     bool kickerWorks() const;
     float kickerVoltage() const;
@@ -546,6 +549,9 @@ protected:
     friend class MotionControl;
 
 private:
+    mutable RJ::Time _lastBallSense;
+    const RJ::Seconds _lostBallDuration = RJ::Seconds(0.2);
+
     mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
