@@ -69,13 +69,10 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _radio = nullptr;
 
 
-
-    //I will probably just have this add more joysticks if we are in manual match mode
-
-    bool manualMode = true;
+    _multipleManual = false;
 
     // joysticks
-    if (!manualMode){
+    if (!_multipleManual){
       _joysticks.push_back(new GamepadController());
       _joysticks.push_back(new SpaceNavJoystick());
       // Enable this if you have issues with the new controller.
@@ -186,10 +183,10 @@ void Processor::blueTeam(bool value) {
 }
 
 bool Processor::joystickValid() const {
-    for (Joystick* joy : _joysticks) {
-        if (joy->valid()) return true;
-    }
-    return false;
+  for (Joystick* joy : _joysticks) {
+    if (joy->valid()) return true;
+  }
+  return false;
 }
 
 void Processor::runModels(
@@ -425,7 +422,6 @@ void Processor::run() {
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
-            if (joystick->valid()) break;
         }
 
         runModels(detectionFrames);
@@ -748,9 +744,7 @@ void Processor::sendRadioData() {
 
     // Add RadioTx commands for visible robots and apply joystick input
 
-    bool manualMode = true;
-
-    if(!manualMode){
+    if(!_multipleManual){
         for (OurRobot* r : _state.self) {
             if (r->visible || _manualID == r->shell()) {
                 Packet::Robot* txRobot = tx->add_robots();
@@ -761,7 +755,6 @@ void Processor::sendRadioData() {
                 txRobot->CopyFrom(r->robotPacket);
 
 
-                ////HERE MAYBE???////
                 if (r->shell() == _manualID) {
                     const JoystickControlValues controlVals =
                         getJoystickControlValues()[0];
@@ -773,6 +766,7 @@ void Processor::sendRadioData() {
     }
     else{
         vector<JoystickControlValues> controlVals = getJoystickControlValues();
+
         for (int i = 0; i < _state.self.size() && i < controlVals.size(); i++) {
           OurRobot* r = _state.self[i];
           JoystickControlValues controlVal = controlVals[i];
@@ -783,8 +777,6 @@ void Processor::sendRadioData() {
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
 
-
-            ////HERE MAYBE???////
             applyJoystickControls(controlVal, txRobot->mutable_control(), r);
         }
     }
@@ -841,8 +833,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 }
 
 vector<JoystickControlValues> Processor::getJoystickControlValues() {
-    // if there's more than one joystick, we add their values
-    //change this to return a vector of inputs
+    //Make list of values from each connected joystick
     vector<JoystickControlValues> valsList;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {

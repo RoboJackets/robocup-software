@@ -47,9 +47,7 @@ void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
 
-      //HERE TOO????//
-
-        for (size_t i = controllerNumber; i < SDL_NumJoysticks(); ++i) {
+        for (int i = controllerNumber; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
             if (SDL_IsGameController(i)) {
                 SDL_GameController* controller;
@@ -60,7 +58,7 @@ void GamepadController::openJoystick() {
                 if (controller != nullptr) {
                     _controller = controller;
                     cout << "Using " << SDL_GameControllerName(_controller)
-                         << " game controller" << endl;
+                         << " game controller as controller # " << controllerNumber << endl;
                     break;
                 } else {
                     cerr << "ERROR: Could not open controller! SDL Error: "

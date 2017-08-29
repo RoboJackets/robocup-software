@@ -261,6 +261,8 @@ private:
 
     // Board ID of the robot to manually control or -1 if none
     int _manualID;
+    // Use multiple joysticks at once
+    bool _multipleManual;
 
     bool _defendPlusX;
 
