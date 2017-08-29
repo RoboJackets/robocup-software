@@ -48,7 +48,9 @@ def estimate_path_length(start, end, blocking_robots, dodge_dist):
 #  @param our_robots_to_dodge List of our robots that can be considered obsticles to dodge
 #  @param their_Robots_to_dodge List of their robots that can be considered obsticles to dodge
 #  @param valid_error_percent Wiggle room so if the path is slightly off, it still tries if it is close
-#  @return Whether we can collect the ball before the opponent
+#  @return Tuple
+#       Whether we can collect the ball before the opponen
+#       The closest robot on our team
 def can_collect_ball_before_opponent(our_robots_to_check=main.our_robots(), 
                                      their_robots_to_check=main.their_robots(),
                                      our_robots_to_dodge=main.our_robots(),
@@ -57,26 +59,29 @@ def can_collect_ball_before_opponent(our_robots_to_check=main.our_robots(),
     shortest_opp_dist = 10
     shortest_our_dist = 10
     dodge_dist = 0.01
+    closest_robot = None
 
     # TODO: Do some sort of prediction as the ball moves
     target_pos = main.ball().pos
 
+    # TODO: Take velocity and acceleration into account
     # Find closest opponent robot
-    for bot in their_robots:
+    for bot in their_robots_to_check:
         dist = estimate_path_length(bot.pos, target_pos,
-                                         our_robots, dodge_dist)
+                                         our_robots_to_dodge, dodge_dist)
         if (dist < shortest_opp_dist):
             shortest_opp_dist = dist
 
     # Find closest robot on our team
     for bot in our_robots_to_check:
         dist = estimate_path_length(bot.pos, target_pos,
-                                         their_robots, dodge_dist)
+                                         their_robots_to_dodge, dodge_dist)
         if (dist < shortest_our_dist):
             shortest_our_dist = dist
+            closest_robot = bot
 
     # Greater than 1 when we are further away
-    return shortest_our_dist < shortest_opp_dist * (1 + valid_error_percent)
+    return shortest_our_dist < shortest_opp_dist * (1 + valid_error_percent), closest_robot
 
 ## Finds the intersecting robots in this line
 #  @param line The line to compare the robot locations to

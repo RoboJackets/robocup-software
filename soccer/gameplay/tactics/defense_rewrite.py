@@ -3,6 +3,7 @@ import behavior
 import constants
 import robocup
 import evaluation.passing
+import evaluation.path
 import main
 from enum import enum
 import math
@@ -70,4 +71,48 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         if main.game_state().is_stopped():
             return False
 
+        safe_to_clear = False
+        if main.ball().pos.mag() < constants.Field.ArcRadius * 2 and
+           main.ball().vel.mag() < .75 and not evaluation.ball.is_in_our_goalie_zone():
+
+           defenders = [robot1, robot2]
+
+           # See if we can reach the ball before them
+           safe_to_clear, bot_to_clear = evaluation.path.can_collect_ball_before_opponent(defenders)
+
+        return safe_to_clear
+
+    def execute_running(self):
+        goalie = self.add_subbehavior_with_name("goalie")
+        goalie.shell_id = main.root_play().goalie_id
+
+        if goalie.shell_id is None:
+            print("WARNING: No Goalie Selected")
+
+    def on_enter_clearing(self):
+        defender1 = self.subbehavior_with_name("defender1")
+        defender1.go_clear = True
+
+    def on_exit_clearing(self):
+        defender1 = self.subbehavior_with_name("defender1")
+        defender1.go_clear = False
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
         
+        # By default, single robot behaviors prefer to use the same robot.
+        # Because we assign defense behaviors to handle threats somewhat
+        # arbitrarily, we don't care about having the same robot, we just want
+        # the closest robot to take the role.
+
+        # HOWEVER: Removing the bias causes flipping back and forth between
+        # robots on defense occasionally, so we will only decrease the
+        # robot_change_cost, not remove it.
+        for subbehavior_name in ['defender1', 'defender2']:
+            if subbehavior_name in reqs:
+                subbehavior_req_tree = reqs[subbehavior_name]
+                for r in role_assignment.iterate_role_requirements_tree_leaves(
+                    subbehavior_req_tree):
+                    r.robot_change_cost = Defense.DEFENSE_ROBOT_CHANGE_COST
+
+        return reqs
