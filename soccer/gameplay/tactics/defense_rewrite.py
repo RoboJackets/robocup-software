@@ -13,6 +13,8 @@ import role_assignment
 
 class DefenseRewrite(composite_behavior.CompositeBehavior):
 
+    DEFENSE_ROBOT_CHANGE_COST = 0.29
+
     class State(Enum):
         # Gets in the way of the opponent robots
         defending = 1
@@ -83,6 +85,11 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         return safe_to_clear
 
     def execute_running(self):
+        # Get list of threats on the other team
+        # Take top 2
+        # Add blocks to list, goalie to highest threat on side closer to other threat
+        # Fill in other threats
+
         goalie = self.add_subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
 
@@ -97,9 +104,49 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         defender1 = self.subbehavior_with_name("defender1")
         defender1.go_clear = False
 
+    def get_block_target_lines(self):
+        # If ball is moving to us like a shot
+        # Only have that as target
+
+        # Add closest one to ball
+        # Add best reciever to list
+        # If no best reciever, add just the ball
+
+    ## Estimate risk score based on old defense.py play
+    #  @param bot Robot to estimate score at
+    #  @return The risk score at that point
+    def estimate_risk_score(self, bot):
+        # Pass chance and then shot chance
+        passChance = evaluation.passing.eval_pass(main.ball().pos, bot.pos,
+                                              [bot])
+        
+        # Add all the robots to the kick eval
+        shotChance, point = kick_eval.eval_pt_to_our_goal(bot.pos)
+
+        return passChance * shotChance
+
+    ## Estimate potential reciever score based on old defense.py play
+    #  @param bot Robot to estimate score at
+    #  @return The potential receiver score at that point
+    def estimate_potential_recievers_score(self, bot):
+        # Uses dot product between ball direciton and robot direction
+        ball_travel_line = robocup.Line(main.ball().pos,
+                                            main.ball().pos + main.ball().vel)
+
+        # Range -1 to 1, 0 is 90 degrees inc, -1 is following it
+        dot_product = (bot.pos - main.ball().pos).dot(ball_travel_line.delta())
+        nearest_pt = ball_travel_line.nearest_point(bot.pos)
+        dx = (nearest_pt - main.ball().pos).mag()
+        dy = (bot.pos - nearest_pt).mag()
+        angle = abs(math.atan2(dy, dx))
+
+        if (angle < pi/4 and dot is > 0)
+            return 1
+
+
     def role_requirements(self):
         reqs = super().role_requirements()
-        
+
         # By default, single robot behaviors prefer to use the same robot.
         # Because we assign defense behaviors to handle threats somewhat
         # arbitrarily, we don't care about having the same robot, we just want
