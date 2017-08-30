@@ -111,6 +111,9 @@ public:
     void manualID(int value);
     int manualID() const { return _manualID; }
 
+    void multipleManual(bool value);
+    bool multipleManual() const { return _multipleManual; }
+
     bool useFieldOrientedManualDrive() const {
         return _useFieldOrientedManualDrive;
     }
@@ -135,6 +138,8 @@ public:
     void dampedTranslation(bool value);
 
     void joystickKickOnBreakBeam(bool value);
+    void setupJoysticks();
+
 
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }

@@ -70,19 +70,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
 
 
     _multipleManual = false;
-
-    // joysticks
-    if (!_multipleManual){
-      _joysticks.push_back(new GamepadController());
-      _joysticks.push_back(new SpaceNavJoystick());
-      // Enable this if you have issues with the new controller.
-      // _joysticks.push_back(new GamepadJoystick());
-    }
-    else{
-      for (int i = 0; i < 6; i++){
-        _joysticks.push_back(new GamepadController());
-      }
-    }
+    setupJoysticks();
 
     _dampedTranslation = true;
     _dampedRotation = true;
@@ -141,6 +129,10 @@ void Processor::manualID(int value) {
     }
 }
 
+void Processor::multipleManual(bool value) {
+    _multipleManual = value;
+}
+
 void Processor::goalieID(int value) {
     QMutexLocker locker(&_loopMutex);
     _gameplayModule->goalieID(value);
@@ -164,6 +156,23 @@ void Processor::dampedTranslation(bool value) {
 void Processor::joystickKickOnBreakBeam(bool value) {
     QMutexLocker locker(&_loopMutex);
     _kickOnBreakBeam = value;
+}
+
+void Processor::setupJoysticks() {
+    GamepadController::controllerNumber = 0;
+    _joysticks.clear();
+
+    if (!_multipleManual){
+        _joysticks.push_back(new GamepadController());
+        _joysticks.push_back(new SpaceNavJoystick());
+        // Enable this if you have issues with the new controller.
+        // _joysticks.push_back(new GamepadJoystick());
+    }
+    else{
+        for (int i = 0; i < 6; i++){
+          _joysticks.push_back(new GamepadController());
+        }
+    }
 }
 
 /**

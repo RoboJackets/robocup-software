@@ -36,16 +36,7 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -341,16 +332,7 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -709,7 +691,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="manualLabel">
           <property name="text">
            <string>Manual:</string>
           </property>
@@ -1704,16 +1686,7 @@
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
@@ -2012,7 +1985,7 @@
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -2105,6 +2078,7 @@
     <addaction name="actionDampedRotation"/>
     <addaction name="actionDampedTranslation"/>
     <addaction name="actionUse_Field_Oriented_Controls"/>
+    <addaction name="actionUse_Multiple_Joysticks"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
@@ -2469,6 +2443,14 @@
    </property>
    <property name="text">
     <string>1337h4x0r</string>
+   </property>
+  </action>
+  <action name="actionUse_Multiple_Joysticks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Multiple Joysticks</string>
    </property>
   </action>
  </widget>
