@@ -122,28 +122,44 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 if len(potential_receivers) > 0:
                     # Add best receiver to threats
                     # TODO Get best receiver
-                    threats.append(receiver, .81)
+                    # TODO Calc shot chance
+                    best_tuple = min(potential_receivers, key=lambda rcrv_tuple: rcrv_tuple[1])
+                    threats.append(best_tuple[0], .81)
                 else:
                     # Just deal with ball if no recievers
                     threats.append(main.ball().pos, .9)
         else:
             # Assume opp is dribbling ball
             if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
+                # TODO: Calc shot chance
                 threats.append(main.ball().pos, 1)
 
         # if there are threats, check pass and shot chances
-        if len(threats) > 0:
+        # TODO: Fix isinstance
+        if len(threats) > 0 and isinstance(threats[0].source,
+                                           robocup.OpponentRobot):
             for opp in potential_threats:
+
                 # Exclude robots that have been assigned already
+                self.kick_eval.excluded_robots.clear()
+                for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
+                    self.kick_eval.add_excluded_robot(r)
                 threats.append(opp.pos, estimate_risk_score(opp))
         else:
             for opp in potential_threats:
+
                 # Exclude all robots
+                self.kick_eval.excluded_robots.clear()
+                shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
+
+                # Note: 0.5 is a bullshit value
                 threats.append(opp.pos, 0.5*shotChance)
 
         if not threats:
             return
 
+        # Get top 2 threats based on score
+        threats.sort(key=lambda threat: threat.score, reverse=True)
         threats_to_block = threats[0:2]
 
         # Delete defender 1 if trying to clear ball and closest guy has the ball
@@ -158,7 +174,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
     def estimate_risk_score(self, bot):
         # Pass chance and then shot chance
         passChance = evaluation.passing.eval_pass(main.ball().pos, bot.pos,
-                                              [bot])
+                                                  excluded_robots=[bot])
         
         # Add all the robots to the kick eval
         shotChance, point = kick_eval.eval_pt_to_our_goal(bot.pos)
