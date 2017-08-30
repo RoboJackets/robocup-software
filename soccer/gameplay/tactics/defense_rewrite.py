@@ -108,9 +108,51 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         # If ball is moving to us like a shot
         # Only have that as target
 
-        # Add closest one to ball
-        # Add best reciever to list
-        # If no best reciever, add just the ball
+        # List of (position, score)
+        threats = []
+
+        if (main.ball().vel.mag() > 0.4)
+            if evaluation.ball.is_moving_towards_our_goal():
+                # Add tuple of pos and score
+                threats.append((main.ball().pos, 1))
+            else:
+                # Get all potential receivers
+                potential_receivers = []
+                for opp in potential_threats:
+                    if estimate_potential_recievers_score(opp):
+                        potential_receivers.append(opp.pos, 1)
+
+                if len(potential_receivers) > 0:
+                    # Add best receiver to threats
+                    threats.append(receiver, .81)
+                else:
+                    # Just deal with ball if no recievers
+                    threats.append(main.ball().pos, .9)
+        else:
+            # Assume opp is dribbling ball
+            if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
+                threats.append(main.ball().pos, 1)
+
+        # if there are threats, check pass and shot chances
+        if len(threats) > 0:
+            for opp in potential_threats:
+                # Exclude robots that have been assigned already
+                threats.append(opp.pos, estimate_risk_score(opp))
+        else:
+            for opp in potential_threats:
+                # Exclude all robots
+                threats.append(opp.pos, 0.5*shotChance)
+
+        if not threats:
+            return
+
+        threats_to_block = threats[0:2]
+
+        # Delete defender 1 if trying to clear ball and closest guy has the ball
+
+        # Assign to block lines using best shot segment
+
+        # If debug
 
     ## Estimate risk score based on old defense.py play
     #  @param bot Robot to estimate score at
