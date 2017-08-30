@@ -108,6 +108,8 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         # List of (position, score)
         threats = []
 
+        # Ball is move in a pass or shot
+        # Joe: This can be improved a bunch
         if (main.ball().vel.mag() > 0.4)
             if evaluation.ball.is_moving_towards_our_goal():
                 # Add tuple of pos and score
@@ -117,43 +119,47 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 potential_receivers = []
                 for opp in potential_threats:
                     if estimate_potential_recievers_score(opp):
-                        potential_receivers.append(opp.pos, 1)
+                        potential_receivers.append((opp.pos, 1))
 
                 if len(potential_receivers) > 0:
                     # Add best receiver to threats
                     # TODO Get best receiver
                     # TODO Calc shot chance
                     best_tuple = min(potential_receivers, key=lambda rcrv_tuple: rcrv_tuple[1])
-                    threats.append(best_tuple[0], .81)
+                    threats.append((best_tuple[0], .81))
                 else:
                     # Just deal with ball if no recievers
-                    threats.append(main.ball().pos, .9)
+                    threats.append((main.ball().pos, .9))
         else:
             # Assume opp is dribbling ball
             if not constants.Field.OurGoalZoneShape.contains_point(main.ball().pos):
                 # TODO: Calc shot chance
-                threats.append(main.ball().pos, 1)
+                threats.append((main.ball().pos, 1))
 
         # if there are threats, check pass and shot chances
-        # TODO: Fix isinstance
-        if len(threats) > 0 and isinstance(threats[0].source,
-                                           robocup.OpponentRobot):
+        # If the first item is not a ball, it is most likely a pass
+        if len(threats) > 0 and threats[0][0] != main.ball().pos:
             for opp in potential_threats:
 
                 # Exclude robots that have been assigned already
+                # Joe: These should be all robots in list, none are assigned
                 self.kick_eval.excluded_robots.clear()
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     self.kick_eval.add_excluded_robot(r)
-                threats.append(opp.pos, estimate_risk_score(opp))
+
+                threats.append((opp.pos, estimate_risk_score(opp)))
         else:
             for opp in potential_threats:
 
                 # Exclude all robots
                 self.kick_eval.excluded_robots.clear()
+                for r in main.our_robots():
+                    self.kick_Eval.add_excluded_robot(r)
+
                 shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
 
                 # Note: 0.5 is a bullshit value
-                threats.append(opp.pos, 0.5*shotChance)
+                threats.append((opp.pos, 0.5*shotChance))
 
         if not threats:
             return
@@ -161,10 +167,26 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         # Get top 2 threats based on score
         threats.sort(key=lambda threat: threat.score, reverse=True)
         threats_to_block = threats[0:2]
+        assigned_handlers = [[], []]
 
-        # Delete defender 1 if trying to clear ball and closest guy has the ball
+        # If we clearing the ball, assign the clearer to the most important
+        # threat (the ball). This prevents assigning the non-clearing robot
+        # to mark the ball and causing crowding.
+        defender1 = self.subbehavior_with_name('defender1')
+        if (defender1.state == submissive_defender.SubmissiveDefender.State.clearing):
+            if defender1 in unused_threat_handlers:
+                if (threats_to_block[0][0].dist_to(main.ball().pos) < constants.Robot.Radius * 2):
+                    defender_idx = unused_threat_handlers.index(defender1)
+                    assigned_handlers[0].append(unused_threat_handlers[defender_idx])
+                    del unused_threat_handlers[defender_idx]
 
-        # Assign to block lines using best shot segment
+        
+        threat_idx = 0
+        while len(unused_threat_handlers) > 0:
+            assigned_handlers[threat_idx].append(unused_threat_handlers[0])
+            del unused_threat_handlers[0]
+
+            threat_idx = (threat_idx + 1) % len(threats_to_block)
 
         # If debug
 
@@ -196,7 +218,8 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         dy = (bot.pos - nearest_pt).mag()
         angle = abs(math.atan2(dy, dx))
 
-        if (angle < pi/4 and dot is > 0)
+        # Joe: This is probs where most of the error is coming from
+        if (angle < pi/4 and dot > 0)
             return 1
 
 
