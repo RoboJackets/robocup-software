@@ -68,7 +68,6 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _simulation = sim;
     _radio = nullptr;
 
-
     _multipleManual = false;
     setupJoysticks();
 
@@ -129,9 +128,7 @@ void Processor::manualID(int value) {
     }
 }
 
-void Processor::multipleManual(bool value) {
-    _multipleManual = value;
-}
+void Processor::multipleManual(bool value) { _multipleManual = value; }
 
 void Processor::goalieID(int value) {
     QMutexLocker locker(&_loopMutex);
@@ -162,15 +159,14 @@ void Processor::setupJoysticks() {
     GamepadController::controllerNumber = 0;
     _joysticks.clear();
 
-    if (!_multipleManual){
+    if (!_multipleManual) {
         _joysticks.push_back(new GamepadController());
         _joysticks.push_back(new SpaceNavJoystick());
         // Enable this if you have issues with the new controller.
         // _joysticks.push_back(new GamepadJoystick());
-    }
-    else{
-        for (int i = 0; i < 6; i++){
-          _joysticks.push_back(new GamepadController());
+    } else {
+        for (int i = 0; i < 6; i++) {
+            _joysticks.push_back(new GamepadController());
         }
     }
 }
@@ -192,10 +188,10 @@ void Processor::blueTeam(bool value) {
 }
 
 bool Processor::joystickValid() const {
-  for (Joystick* joy : _joysticks) {
-    if (joy->valid()) return true;
-  }
-  return false;
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) return true;
+    }
+    return false;
 }
 
 void Processor::runModels(
@@ -753,7 +749,7 @@ void Processor::sendRadioData() {
 
     // Add RadioTx commands for visible robots and apply joystick input
 
-    if(!_multipleManual){
+    if (!_multipleManual) {
         for (OurRobot* r : _state.self) {
             if (r->visible || _manualID == r->shell()) {
                 Packet::Robot* txRobot = tx->add_robots();
@@ -763,23 +759,21 @@ void Processor::sendRadioData() {
                 // number of motors.
                 txRobot->CopyFrom(r->robotPacket);
 
-
                 if (r->shell() == _manualID) {
                     const JoystickControlValues controlVals =
                         getJoystickControlValues()[0];
-                    applyJoystickControls(controlVals, txRobot->mutable_control(),
-                                          r);
+                    applyJoystickControls(controlVals,
+                                          txRobot->mutable_control(), r);
                 }
             }
         }
-    }
-    else{
+    } else {
         vector<JoystickControlValues> controlVals = getJoystickControlValues();
 
         for (int i = 0; i < _state.self.size() && i < controlVals.size(); i++) {
-          OurRobot* r = _state.self[i];
-          JoystickControlValues controlVal = controlVals[i];
-          Packet::Robot* txRobot = tx->add_robots();
+            OurRobot* r = _state.self[i];
+            JoystickControlValues controlVal = controlVals[i];
+            Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
@@ -842,7 +836,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 }
 
 vector<JoystickControlValues> Processor::getJoystickControlValues() {
-    //Make list of values from each connected joystick
+    // Make list of values from each connected joystick
     vector<JoystickControlValues> valsList;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
@@ -853,18 +847,21 @@ vector<JoystickControlValues> Processor::getJoystickControlValues() {
             if (vals.rotation > 1) vals.rotation = 1;
             if (vals.rotation < -1) vals.rotation = -1;
 
-            // Gets values from the configured joystick control values,respecting damped
+            // Gets values from the configured joystick control
+            // values,respecting damped
             // state
             if (_dampedTranslation) {
-              vals.translation *=
-                Joystick::JoystickTranslationMaxDampedSpeed->value();
+                vals.translation *=
+                    Joystick::JoystickTranslationMaxDampedSpeed->value();
             } else {
-              vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
+                vals.translation *=
+                    Joystick::JoystickTranslationMaxSpeed->value();
             }
             if (_dampedRotation) {
-              vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+                vals.rotation *=
+                    Joystick::JoystickRotationMaxDampedSpeed->value();
             } else {
-              vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+                vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
             }
 
             // scale up kicker and dribbler speeds

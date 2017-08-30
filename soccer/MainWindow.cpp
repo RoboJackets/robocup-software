@@ -1345,7 +1345,6 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
     _processor->setupJoysticks();
     string label = (value) ? "Debug:" : "Manual:";
     _ui.manualLabel->setText(QString::fromStdString(label));
-
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {

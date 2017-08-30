@@ -58,7 +58,8 @@ void GamepadController::openJoystick() {
                 if (controller != nullptr) {
                     _controller = controller;
                     cout << "Using " << SDL_GameControllerName(_controller)
-                         << " game controller as controller # " << controllerNumber << endl;
+                         << " game controller as controller # "
+                         << controllerNumber << endl;
                     break;
                 } else {
                     cerr << "ERROR: Could not open controller! SDL Error: "

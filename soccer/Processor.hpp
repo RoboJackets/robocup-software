@@ -140,7 +140,6 @@ public:
     void joystickKickOnBreakBeam(bool value);
     void setupJoysticks();
 
-
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
 
