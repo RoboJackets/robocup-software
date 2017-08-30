@@ -105,9 +105,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         defender1.go_clear = False
 
     def get_block_target_lines(self):
-        # If ball is moving to us like a shot
-        # Only have that as target
-
         # List of (position, score)
         threats = []
 
@@ -124,6 +121,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
 
                 if len(potential_receivers) > 0:
                     # Add best receiver to threats
+                    # TODO Get best receiver
                     threats.append(receiver, .81)
                 else:
                     # Just deal with ball if no recievers

@@ -49,11 +49,11 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
 
         self.add_transition(DefensiveForward.State.blocking,
                             DefensiveForward.State.collecting,
-                            lambda: evaluation.ball.can_collect_ball_before_opponent(), 'Collecting')
+                            lambda: evaluation.path.can_collect_ball_before_opponent(), 'Collecting')
 
         self.add_transition(
             DefensiveForward.State.collecting, DefensiveForward.State.blocking,
-            lambda: not evaluation.ball.can_collect_ball_before_opponent(), 'Back to blocking')
+            lambda: not evaluation.oath.can_collect_ball_before_opponent(), 'Back to blocking')
 
         self.add_transition(
             DefensiveForward.State.collecting,
