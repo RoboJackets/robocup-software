@@ -400,7 +400,6 @@ public:
     bool driving_available(bool require_all = true) const;
 
     // lower level status checks
-    bool rawHasBall() const;
     bool hasBall() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;

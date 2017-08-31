@@ -67,7 +67,7 @@ OurRobot::OurRobot(int shell, SystemState* state)
     //_lastChargedTime = 0;
     _lastKickerStatus = 0;
     //_lastKickTime = 0;
-    _lastBallSense = RJ::now();
+    _lastBallSense = RJ::Time();
 
     _motionControl = new MotionControl(this);
 
