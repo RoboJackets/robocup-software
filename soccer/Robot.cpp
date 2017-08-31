@@ -490,18 +490,7 @@ bool OurRobot::charged() const {
            rxIsFresh();
 }
 
-bool OurRobot::hasBall() {
-    if (OurRobot::rawHasBall()) {
-        OurRobot::_lastBallSense = RJ::now();
-        return true;
-    } else if ((RJ::now() - OurRobot::_lastBallSense) <
-               OurRobot::_lostBallDuration) {
-        return true;
-    }
-    return false;
-}
-
-bool OurRobot::rawHasBall() const {
+bool OurRobot::hasBall() const {
     return _radioRx.has_ball_sense_status() &&
            _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
 }
