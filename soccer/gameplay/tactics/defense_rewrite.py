@@ -91,18 +91,13 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         return safe_to_clear
 
     def execute_running(self):
-        # Get list of threats on the other team
-        # Take top 2
-        # Add blocks to list, goalie to highest threat on side closer to other threat
-        # Fill in other threats
-
         goalie = self.subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
 
         if goalie.shell_id is None:
             print("WARNING: No Goalie Selected")
 
-        self.get_block_target_lines()
+        self.find_and_set_defender_location()
 
     def on_enter_clearing(self):
         defender1 = self.subbehavior_with_name("defender1")
@@ -112,15 +107,46 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         defender1 = self.subbehavior_with_name("defender1")
         defender1.go_clear = False
 
-    def get_block_target_lines(self):
-        # List of (position, score)
-        threats = []
-        potential_threats = main.their_robots()
+    def find_and_set_defender_location(self):
         goalie = self.subbehavior_with_name('goalie')
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
         unused_threat_handlers = list(filter(
             lambda bhvr: bhvr.robot is not None, [goalie, defender1, defender2]))
+
+        threats = self.get_threat_list(unused_threat_handlers)
+
+        if not threats:
+            return
+
+        # Get top 2 threats based on score
+        threats.sort(key=lambda threat: threat[1], reverse=True)
+        threats_to_block = threats[0:2]
+        assigned_handlers = [[], []]
+
+        # If we clearing the ball, assign the clearer to the most important
+        # threat (the ball). This prevents assigning the non-clearing robot
+        # to mark the ball and causing crowding.
+        if (defender1.state == submissive_defender.SubmissiveDefender.State.clearing):
+            if defender1 in unused_threat_handlers:
+                if (threats_to_block[0][0].dist_to(main.ball().pos) < constants.Robot.Radius * 2):
+                    defender_idx = unused_threat_handlers.index(defender1)
+                    assigned_handlers[0].append(unused_threat_handlers[defender_idx])
+                    del unused_threat_handlers[defender_idx]
+
+        
+        self.assign_handlers_to_threats(assigned_handlers, unused_threat_handlers, threats_to_block)
+
+        self.set_defender_block_lines(threats_to_block, assigned_handlers)
+        # If debug
+
+    ## Gets list of threats
+    #  @return tuple of threat positions and score (unordered)
+    def get_threat_list(self, unused_threat_handlers):
+        # List of (position, score)
+        threats = []
+        potential_threats = main.their_robots()
+
         # find the primary threat
         # if the ball is not moving OR it's moving towards our goal, it's the primary threat
         # if it's moving, but not towards our goal, the primary threat is the robot on their team most likely to catch it
@@ -177,26 +203,47 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 # Note: 0.5 is a bullshit value
                 threats.append((opp.pos, 0.5*shotChance))
 
-        if not threats:
-            return
+        return threats
 
-        # Get top 2 threats based on score
-        threats.sort(key=lambda threat: threat[1], reverse=True)
-        threats_to_block = threats[0:2]
-        assigned_handlers = [[], []]
-
-        # If we clearing the ball, assign the clearer to the most important
-        # threat (the ball). This prevents assigning the non-clearing robot
-        # to mark the ball and causing crowding.
-        defender1 = self.subbehavior_with_name('defender1')
-        if (defender1.state == submissive_defender.SubmissiveDefender.State.clearing):
-            if defender1 in unused_threat_handlers:
-                if (threats_to_block[0][0].dist_to(main.ball().pos) < constants.Robot.Radius * 2):
-                    defender_idx = unused_threat_handlers.index(defender1)
-                    assigned_handlers[0].append(unused_threat_handlers[defender_idx])
-                    del unused_threat_handlers[defender_idx]
-
+    ## Estimate risk score based on old defense.py play
+    #  @param bot Robot to estimate score at
+    #  @return The risk score at that point
+    def estimate_risk_score(self, bot):
+        # Pass chance and then shot chance
+        passChance = evaluation.passing.eval_pass(main.ball().pos, bot.pos,
+                                                  excluded_robots=[bot])
         
+        # Add all the robots to the kick eval
+        point, shotChance = self.kick_eval.eval_pt_to_our_goal(bot.pos)
+
+        return passChance * shotChance
+
+    ## Estimate potential reciever score based on old defense.py play
+    #  @param bot Robot to estimate score at
+    #  @return The potential receiver score at that point
+    def estimate_potential_recievers_score(self, bot):
+        # Uses dot product between ball direciton and robot direction
+        ball_travel_line = robocup.Line(main.ball().pos,
+                                            main.ball().pos + main.ball().vel)
+
+        # Range -1 to 1, 0 is 90 degrees inc, -1 is following it
+        dot_product = (bot.pos - main.ball().pos).dot(ball_travel_line.delta())
+        nearest_pt = ball_travel_line.nearest_point(bot.pos)
+        dx = (nearest_pt - main.ball().pos).mag()
+        dy = (bot.pos - nearest_pt).mag()
+        angle = abs(math.atan2(dy, dx))
+
+        # Joe: This is probs where most of the error is coming from
+        if (angle < pi/4 and dot > 0):
+            return 1
+        else:
+            return 0
+
+    ## Assigns the defenders to threats
+    #  @param assigned_handlers List of list, [ a ... ] where a represents a list of defenders assigned to threat a
+    #  @param unused_threat_handlers List of defenders that are unused currently
+    #  @param threats_to_block List of threats that we have to deal with, tuple with position and threat score
+    def assign_handlers_to_threats(self, assigned_handlers, unused_threat_handlers, threats_to_block):
         threat_idx = 0
         while len(unused_threat_handlers) > 0:
             assigned_handlers[threat_idx].append(unused_threat_handlers[0])
@@ -204,7 +251,12 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
 
             threat_idx = (threat_idx + 1) % len(threats_to_block)
 
-        #main.system_state().draw_text(len(threats_to_block), robocup.Point(0,0), constants.Colors.White, "Block Threats")
+
+    ## Assigns the locations for each robot to block given a threat and list of robots to block each threat
+    #  @param threats_to_block List of threats that we have to deal with, tuple with position and threat score 
+    #  @param assigned_handlers List of list, [ a ... ] where a represents a list of defenders assigned to threat a
+    def set_defender_block_lines(self, threats_to_block, assigned_handlers):
+        goalie = self.subbehavior_with_name('goalie')
 
         # For each threat
         # threats_to_block (list of threats to block and their threat score)
@@ -219,8 +271,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         for threat_idx in range(len(threats_to_block)):
             threat = threats_to_block[threat_idx]
             assigned_handler = assigned_handlers[threat_idx]
-
-            #main.system_state().draw_text(len(assigned_handler), robocup.Point(0,0), constants.Colors.White, "AH len")
 
             # If nobody is assigned, move to next one
             if len(assigned_handler) == 0:
@@ -262,41 +312,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                                                   threat[0] + start_vec * 10)
                 start_vec.rotate(robocup.Point(0, 0), w / 2.0 + spacing)
 
-        # If debug
-
-    ## Estimate risk score based on old defense.py play
-    #  @param bot Robot to estimate score at
-    #  @return The risk score at that point
-    def estimate_risk_score(self, bot):
-        # Pass chance and then shot chance
-        passChance = evaluation.passing.eval_pass(main.ball().pos, bot.pos,
-                                                  excluded_robots=[bot])
-        
-        # Add all the robots to the kick eval
-        point, shotChance = self.kick_eval.eval_pt_to_our_goal(bot.pos)
-
-        return passChance * shotChance
-
-    ## Estimate potential reciever score based on old defense.py play
-    #  @param bot Robot to estimate score at
-    #  @return The potential receiver score at that point
-    def estimate_potential_recievers_score(self, bot):
-        # Uses dot product between ball direciton and robot direction
-        ball_travel_line = robocup.Line(main.ball().pos,
-                                            main.ball().pos + main.ball().vel)
-
-        # Range -1 to 1, 0 is 90 degrees inc, -1 is following it
-        dot_product = (bot.pos - main.ball().pos).dot(ball_travel_line.delta())
-        nearest_pt = ball_travel_line.nearest_point(bot.pos)
-        dx = (nearest_pt - main.ball().pos).mag()
-        dy = (bot.pos - nearest_pt).mag()
-        angle = abs(math.atan2(dy, dx))
-
-        # Joe: This is probs where most of the error is coming from
-        if (angle < pi/4 and dot > 0):
-            return 1
-        else:
-            return 0
 
     def role_requirements(self):
         reqs = super().role_requirements()
