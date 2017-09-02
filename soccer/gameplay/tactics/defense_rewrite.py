@@ -81,12 +81,10 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
             defender2 = self.subbehavior_with_name('defender2')
             if (defender1.robot != None and defender2.robot != None):
 
-                defenders = [defender1, defender2]
+                defenders = [defender1.robot, defender2.robot]
 
                 # See if we can reach the ball before them
-                # Joe: Double check this method
-                #safe_to_clear, bot_to_clear = evaluation.path.can_collect_ball_before_opponent(defenders)
-                safe_to_clear = False
+                safe_to_clear, bot_to_clear = evaluation.path.can_collect_ball_before_opponent(our_robots_to_check=defenders)
 
         return safe_to_clear
 
@@ -150,7 +148,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         # find the primary threat
         # if the ball is not moving OR it's moving towards our goal, it's the primary threat
         # if it's moving, but not towards our goal, the primary threat is the robot on their team most likely to catch it
-        # Joe: This can be improved a bunch
         if (main.ball().vel.mag() > 0.4):
             if evaluation.ball.is_moving_towards_our_goal():
                 # Add tuple of pos and score
@@ -184,7 +181,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
             for opp in potential_threats:
 
                 # Exclude robots that have been assigned already
-                # Joe: These should be all robots in list, none are assigned
                 self.kick_eval.excluded_robots.clear()
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     self.kick_eval.add_excluded_robot(r)
@@ -196,7 +192,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 # Exclude all robots
                 self.kick_eval.excluded_robots.clear()
                 for r in main.our_robots():
-                    self.kick_Eval.add_excluded_robot(r)
+                    self.kick_eval.add_excluded_robot(r)
 
                 shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
 
@@ -222,19 +218,19 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
     #  @param bot Robot to estimate score at
     #  @return The potential receiver score at that point
     def estimate_potential_recievers_score(self, bot):
-        # Uses dot product between ball direciton and robot direction
         ball_travel_line = robocup.Line(main.ball().pos,
                                             main.ball().pos + main.ball().vel)
 
-        # Range -1 to 1, 0 is 90 degrees inc, -1 is following it
         dot_product = (bot.pos - main.ball().pos).dot(ball_travel_line.delta())
         nearest_pt = ball_travel_line.nearest_point(bot.pos)
         dx = (nearest_pt - main.ball().pos).mag()
         dy = (bot.pos - nearest_pt).mag()
         angle = abs(math.atan2(dy, dx))
 
-        # Joe: This is probs where most of the error is coming from
-        if (angle < pi/4 and dot > 0):
+        # Only returns 1 if the opp is moving in the opposite direction as the ball
+        # and the angle between the ball ray starting at its current position and the opp position
+        # is less than pi/4
+        if (angle < math.pi/4 and dot_product > 0):
             return 1
         else:
             return 0

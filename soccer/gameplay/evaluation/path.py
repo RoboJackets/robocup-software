@@ -51,11 +51,24 @@ def estimate_path_length(start, end, blocking_robots, dodge_dist):
 #  @return Tuple
 #       Whether we can collect the ball before the opponen
 #       The closest robot on our team
-def can_collect_ball_before_opponent(our_robots_to_check=main.our_robots(), 
-                                     their_robots_to_check=main.their_robots(),
-                                     our_robots_to_dodge=main.our_robots(),
-                                     their_robots_to_dodge=main.their_robots(),
+#  @note If any imputs are None, their values are defaulted
+def can_collect_ball_before_opponent(our_robots_to_check=None, 
+                                     their_robots_to_check=None,
+                                     our_robots_to_dodge=None,
+                                     their_robots_to_dodge=None,
                                      valid_error_percent=0.05):
+    if our_robots_to_check is None:
+        our_robots_to_check = main.our_robots()
+
+    if their_robots_to_check is None:
+        their_robots_to_check = main.their_robots()
+
+    if our_robots_to_dodge is None:
+        our_robots_to_dodge = main.our_robots()
+
+    if their_robots_to_dodge is None:
+        their_robots_to_dodge = main.their_robots()
+
     shortest_opp_dist = 10
     shortest_our_dist = 10
     dodge_dist = 0.01
