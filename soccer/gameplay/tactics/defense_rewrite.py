@@ -5,10 +5,10 @@ import robocup
 import evaluation.passing
 import evaluation.path
 import main
-from enum import enum
+from enum import Enum
 import math
-import tactics.position.submissive_goalie as submissive_goalie
-import tactics.position.submissive_defender as submissive_defender
+import tactics.positions.submissive_goalie as submissive_goalie
+import tactics.positions.submissive_defender as submissive_defender
 import role_assignment
 
 class DefenseRewrite(composite_behavior.CompositeBehavior):
@@ -24,24 +24,24 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
 
-        if len(defender_priorities) !== 2:
+        if len(defender_priorities) != 2:
             raise RuntimeError(
                 "defender_priorities should have a length of 2")
 
-        self.add_state(Defense.State.defending,
+        self.add_state(DefenseRewrite.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(Defense.State.clearing,
+        self.add_state(DefenseRewrite.State.clearing,
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            Defense.State.defending, lambda: True,
+                            DefenseRewrite.State.defending, lambda: True,
                             "immediately")
-        self.add_transition(Defense.State.defending,
-                            Defense.State.clearing,
+        self.add_transition(DefenseRewrite.State.defending,
+                            DefenseRewrite.State.clearing,
                             lambda: self.should_clear_ball(),
                             "Clearing the ball")
-        self.add_transition(Defense.State.clearing,
-                            Defense.State.defending,
+        self.add_transition(DefenseRewrite.State.clearing,
+                            DefenseRewrite.State.defending,
                             lambda: not self.should_clear_ball(),
                             "Done clearing")
 
@@ -74,13 +74,19 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
             return False
 
         safe_to_clear = False
-        if main.ball().pos.mag() < constants.Field.ArcRadius * 2 and
-           main.ball().vel.mag() < .75 and not evaluation.ball.is_in_our_goalie_zone():
+        if (main.ball().pos.mag() < constants.Field.ArcRadius * 2 and
+           main.ball().vel.mag() < .75 and not evaluation.ball.is_in_our_goalie_zone()):
 
-           defenders = [robot1, robot2]
+            defender1 = self.subbehavior_with_name('defender1')
+            defender2 = self.subbehavior_with_name('defender2')
+            if (defender1.robot != None and defender2.robot != None):
 
-           # See if we can reach the ball before them
-           safe_to_clear, bot_to_clear = evaluation.path.can_collect_ball_before_opponent(defenders)
+                defenders = [defender1, defender2]
+
+                # See if we can reach the ball before them
+                # Joe: Double check this method
+                #safe_to_clear, bot_to_clear = evaluation.path.can_collect_ball_before_opponent(defenders)
+                safe_to_clear = False
 
         return safe_to_clear
 
@@ -90,11 +96,13 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         # Add blocks to list, goalie to highest threat on side closer to other threat
         # Fill in other threats
 
-        goalie = self.add_subbehavior_with_name("goalie")
+        goalie = self.subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
 
         if goalie.shell_id is None:
             print("WARNING: No Goalie Selected")
+
+        self.get_block_target_lines()
 
     def on_enter_clearing(self):
         defender1 = self.subbehavior_with_name("defender1")
@@ -107,10 +115,17 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
     def get_block_target_lines(self):
         # List of (position, score)
         threats = []
-
-        # Ball is move in a pass or shot
+        potential_threats = main.their_robots()
+        goalie = self.subbehavior_with_name('goalie')
+        defender1 = self.subbehavior_with_name('defender1')
+        defender2 = self.subbehavior_with_name('defender2')
+        unused_threat_handlers = list(filter(
+            lambda bhvr: bhvr.robot is not None, [goalie, defender1, defender2]))
+        # find the primary threat
+        # if the ball is not moving OR it's moving towards our goal, it's the primary threat
+        # if it's moving, but not towards our goal, the primary threat is the robot on their team most likely to catch it
         # Joe: This can be improved a bunch
-        if (main.ball().vel.mag() > 0.4)
+        if (main.ball().vel.mag() > 0.4):
             if evaluation.ball.is_moving_towards_our_goal():
                 # Add tuple of pos and score
                 threats.append((main.ball().pos, 1))
@@ -118,12 +133,11 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 # Get all potential receivers
                 potential_receivers = []
                 for opp in potential_threats:
-                    if estimate_potential_recievers_score(opp):
+                    if self.estimate_potential_recievers_score(opp):
                         potential_receivers.append((opp.pos, 1))
 
                 if len(potential_receivers) > 0:
                     # Add best receiver to threats
-                    # TODO Get best receiver
                     # TODO Calc shot chance
                     best_tuple = min(potential_receivers, key=lambda rcrv_tuple: rcrv_tuple[1])
                     threats.append((best_tuple[0], .81))
@@ -136,6 +150,8 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 # TODO: Calc shot chance
                 threats.append((main.ball().pos, 1))
 
+
+
         # if there are threats, check pass and shot chances
         # If the first item is not a ball, it is most likely a pass
         if len(threats) > 0 and threats[0][0] != main.ball().pos:
@@ -147,7 +163,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     self.kick_eval.add_excluded_robot(r)
 
-                threats.append((opp.pos, estimate_risk_score(opp)))
+                threats.append((opp.pos, self.estimate_risk_score(opp)))
         else:
             for opp in potential_threats:
 
@@ -165,7 +181,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
             return
 
         # Get top 2 threats based on score
-        threats.sort(key=lambda threat: threat.score, reverse=True)
+        threats.sort(key=lambda threat: threat[1], reverse=True)
         threats_to_block = threats[0:2]
         assigned_handlers = [[], []]
 
@@ -188,6 +204,64 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
 
             threat_idx = (threat_idx + 1) % len(threats_to_block)
 
+        #main.system_state().draw_text(len(threats_to_block), robocup.Point(0,0), constants.Colors.White, "Block Threats")
+
+        # For each threat
+        # threats_to_block (list of threats to block and their threat score)
+        # assigned_handlers (list of defenders to assigned to threats)
+        #
+        # If more than 1, put goalie in the middle
+        # Get best shot line
+        # 
+        # For each handler, find the angular width that each can defend
+        # 
+        # Get best point in list and set
+        for threat_idx in range(len(threats_to_block)):
+            threat = threats_to_block[threat_idx]
+            assigned_handler = assigned_handlers[threat_idx]
+
+            #main.system_state().draw_text(len(assigned_handler), robocup.Point(0,0), constants.Colors.White, "AH len")
+
+            # If nobody is assigned, move to next one
+            if len(assigned_handler) == 0:
+                continue
+
+            # Put goalie in the middle if possible
+            if len(assigned_handler) > 1:
+                if goalie in assigned_handler:
+                    idx = assigned_handler.index(goalie)
+
+                    if idx != 1:
+                        del assigned_handler[idx]
+                        assigned_handler.insert(1, goalie)
+
+            center_line = robocup.Line(threat[0], constants.Field.OurGoalSegment.center())
+
+            main.system_state().draw_line(center_line, constants.Colors.Red, "CenterLine")
+
+            # find the angular width that each defender can block.  We then space these out accordingly
+            angle_widths = []
+            for handler in assigned_handler:
+                dist_from_threat = handler.robot.pos.dist_to(threat[0])
+                w = min(2.0 * math.atan2(constants.Robot.Radius,
+                                         dist_from_threat), 0.15)
+                angle_widths.append(w)
+
+            # start on one edge of our available angle coverage and work counter-clockwise,
+            # assigning block lines to the bots as we go
+            spacing = 0.01 if len(assigned_handler) < 3 else 0.0  # spacing between each bot in radians
+            total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
+                                                        1) * spacing
+            start_vec = center_line.delta().normalized()
+            start_vec.rotate(robocup.Point(0, 0), -total_angle_coverage / 2.0)
+            for i in range(len(angle_widths)):
+                handler = assigned_handler[i]
+                w = angle_widths[i]
+                start_vec.rotate(robocup.Point(0, 0), w / 2.0)
+                handler.block_line = robocup.Line(threat[0],
+                                                  threat[0] + start_vec * 10)
+                start_vec.rotate(robocup.Point(0, 0), w / 2.0 + spacing)
+
         # If debug
 
     ## Estimate risk score based on old defense.py play
@@ -199,7 +273,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                                                   excluded_robots=[bot])
         
         # Add all the robots to the kick eval
-        shotChance, point = kick_eval.eval_pt_to_our_goal(bot.pos)
+        point, shotChance = self.kick_eval.eval_pt_to_our_goal(bot.pos)
 
         return passChance * shotChance
 
@@ -219,9 +293,10 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         angle = abs(math.atan2(dy, dx))
 
         # Joe: This is probs where most of the error is coming from
-        if (angle < pi/4 and dot > 0)
+        if (angle < pi/4 and dot > 0):
             return 1
-
+        else:
+            return 0
 
     def role_requirements(self):
         reqs = super().role_requirements()
@@ -239,6 +314,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
                     subbehavior_req_tree):
-                    r.robot_change_cost = Defense.DEFENSE_ROBOT_CHANGE_COST
+                    r.robot_change_cost = DefenseRewrite.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs
