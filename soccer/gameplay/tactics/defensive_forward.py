@@ -48,12 +48,14 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
                             'immediately')
 
         self.add_transition(DefensiveForward.State.blocking,
-                            DefensiveForward.State.collecting,
-                            lambda: evaluation.path.can_collect_ball_before_opponent(), 'Collecting')
+                            DefensiveForward.State.collecting, lambda:
+                            evaluation.path.can_collect_ball_before_opponent(),
+                            'Collecting')
 
         self.add_transition(
             DefensiveForward.State.collecting, DefensiveForward.State.blocking,
-            lambda: not evaluation.path.can_collect_ball_before_opponent(), 'Back to blocking')
+            lambda: not evaluation.path.can_collect_ball_before_opponent(),
+            'Back to blocking')
 
         self.add_transition(
             DefensiveForward.State.collecting,
@@ -115,12 +117,13 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
     def set_mark_targets(self):
         for i in range(0, 2):
             self.defenders[i] = skills.mark.Mark()
-            self.add_subbehavior(self.defenders[i],
-                                 self.names[i],
-                                 required=False,
-                                 priority=10 - i)
+            self.add_subbehavior(
+                self.defenders[i],
+                self.names[i],
+                required=False,
+                priority=10 - i)
             self.defenders[i].mark_robot = self.mark_bots[i]
 
     def we_have_ball(self):
-        return any(evaluation.ball.robot_has_ball(r)
-                   for r in main.our_robots())
+        return any(
+            evaluation.ball.robot_has_ball(r) for r in main.our_robots())

@@ -1,6 +1,7 @@
 import main
 import robocup
 
+
 ## Estimates the length of a path given a start and end point
 #  @param start The start point of the path
 #  @param end The end point of the path
@@ -35,12 +36,14 @@ def estimate_path_length(start, end, blocking_robots, dodge_dist):
         total += (next_pt - start).mag()
 
         line = robocup.Segment(next_pt, end)
-        blocking_robot = find_intersecting_robot(line, blocking_robots, dodge_dist)
+        blocking_robot = find_intersecting_robot(line, blocking_robots,
+                                                 dodge_dist)
         iterations += 1
 
     total += (end - next_pt).mag()
 
     return total
+
 
 ## Whether any robot can collect the ball before the opponent
 #  @param our_robots_to_check List of our robots that can move to ball
@@ -52,7 +55,7 @@ def estimate_path_length(start, end, blocking_robots, dodge_dist):
 #       Whether we can collect the ball before the opponen
 #       The closest robot on our team
 #  @note If any imputs are None, their values are defaulted
-def can_collect_ball_before_opponent(our_robots_to_check=None, 
+def can_collect_ball_before_opponent(our_robots_to_check=None,
                                      their_robots_to_check=None,
                                      our_robots_to_dodge=None,
                                      their_robots_to_dodge=None,
@@ -80,21 +83,23 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
     # TODO: Take velocity and acceleration into account
     # Find closest opponent robot
     for bot in their_robots_to_check:
-        dist = estimate_path_length(bot.pos, target_pos,
-                                         our_robots_to_dodge, dodge_dist)
+        dist = estimate_path_length(bot.pos, target_pos, our_robots_to_dodge,
+                                    dodge_dist)
         if (dist < shortest_opp_dist):
             shortest_opp_dist = dist
 
     # Find closest robot on our team
     for bot in our_robots_to_check:
-        dist = estimate_path_length(bot.pos, target_pos,
-                                         their_robots_to_dodge, dodge_dist)
+        dist = estimate_path_length(bot.pos, target_pos, their_robots_to_dodge,
+                                    dodge_dist)
         if (dist < shortest_our_dist):
             shortest_our_dist = dist
             closest_robot = bot
 
     # Greater than 1 when we are further away
-    return shortest_our_dist < shortest_opp_dist * (1 + valid_error_percent), closest_robot
+    return shortest_our_dist < shortest_opp_dist * (1 + valid_error_percent
+                                                    ), closest_robot
+
 
 ## Finds the intersecting robots in this line
 #  @param line The line to compare the robot locations to
