@@ -1,9 +1,6 @@
 import unittest
 import main
-import behavior
 import robocup
-import standard_play
-import play
 import math
 import tactics.stopped.circle_near_ball
 import constants
@@ -28,8 +25,8 @@ class TestCircleNearBall(unittest.TestCase):
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
 			for point in array:		
-				self.assertTrue(point.x >= width * -1 / 2 and point.x <= width / 2, msg="failure")
-				self.assertTrue(point.y >= 0 and point.y <= length, msg="failure")
+				self.assertTrue(point.x >= width * -1 / 2 and point.x <= width / 2, msg="failure of get_circle_points")
+				self.assertTrue(point.y >= 0 and point.y <= length, msg="failure of get_circle_points")
 		
 		def test_point(self, x, y):
 			main.set_ball(Moc_Ball(x, y))
