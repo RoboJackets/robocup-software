@@ -12,16 +12,14 @@ class Moc_Ball:
 class TestCircleNearBall(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestCircleNearBall, self).__init__(*args, **kwargs)
-		#self.config = robocup.Configuration.FromRegisteredConfigurables()
-		#ball = Moc_Ball()
 
 	def setUp(self):
 		self.circle_near_ball = tactics.stopped.circle_near_ball.CircleNearBall()
-		#self.system_state = robocup.SystemState()
-	
+
 	def test_get_circle_points(self):
 		width = constants.Field.Width
 		length = constants.Field.Length
+		
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
 			for point in array:		
@@ -33,7 +31,8 @@ class TestCircleNearBall(unittest.TestCase):
 			assert_circle_points(self)
 
 		test_point(self, constants.Field.CenterPoint.x, constants.Field.CenterPoint.y)
-		test_point(self, -100, -100)
+		test_point(self, width * -1 - constants.Robot.Radius * 100, 
+				length * -1 - constants.Robot.Radius * 100)
 		test_point(self, width * -1, 0)
 		test_point(self, 0, 0)
 		test_point(self, width, 0)
