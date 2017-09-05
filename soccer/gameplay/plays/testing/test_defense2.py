@@ -1,12 +1,12 @@
 import play
 import behavior
-import tactics.defense_rewrite
+import tactics.defense2
 import robocup
 import main
 
 
 ## Runs our Defense tactic
-class TestDefenseRewrite(play.Play):
+class TestDefense2(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
@@ -14,7 +14,7 @@ class TestDefenseRewrite(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        b = tactics.defense_rewrite.DefenseRewrite()
+        b = tactics.defense2.Defense2()
         self.add_subbehavior(b, name='defense', required=True)
 
     def on_exit_running(self):
