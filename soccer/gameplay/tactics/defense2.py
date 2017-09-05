@@ -12,7 +12,7 @@ import tactics.positions.submissive_defender as submissive_defender
 import role_assignment
 
 
-class DefenseRewrite(composite_behavior.CompositeBehavior):
+class Defense2(composite_behavior.CompositeBehavior):
 
     DEFENSE_ROBOT_CHANGE_COST = 0.29
 
@@ -28,21 +28,22 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         if len(defender_priorities) != 2:
             raise RuntimeError("defender_priorities should have a length of 2")
 
-        self.add_state(DefenseRewrite.State.defending,
+        self.add_state(Defense2.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(DefenseRewrite.State.clearing,
+        self.add_state(Defense2.State.clearing,
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            DefenseRewrite.State.defending, lambda: True,
+                            Defense2.State.defending, lambda: True,
                             "immediately")
         self.add_transition(
-            DefenseRewrite.State.defending,
-            DefenseRewrite.State.clearing, lambda: self.should_clear_ball(),
+            Defense2.State.defending,
+            Defense2.State.clearing, lambda: self.should_clear_ball(),
             "Clearing the ball")
-        self.add_transition(DefenseRewrite.State.clearing,
-                            DefenseRewrite.State.defending, lambda: not self.
-                            should_clear_ball(), "Done clearing")
+        self.add_transition(
+            Defense2.State.clearing,
+            Defense2.State.defending, lambda: not self.should_clear_ball(),
+            "Done clearing")
 
         goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -355,6 +356,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
                         subbehavior_req_tree):
-                    r.robot_change_cost = DefenseRewrite.DEFENSE_ROBOT_CHANGE_COST
+                    r.robot_change_cost = Defense2.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs
