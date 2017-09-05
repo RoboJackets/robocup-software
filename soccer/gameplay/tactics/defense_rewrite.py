@@ -270,7 +270,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
         for handler in handlers:
             self.kick_eval.add_excluded_robot(handler.robot)
 
-
         # For each threat
         # threats_to_block (list of threats to block and their threat score)
         # assigned_handlers (list of defenders to assigned to threats)
@@ -297,7 +296,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                     if idx != 1:
                         del assigned_handler[idx]
                         assigned_handler.insert(1, goalie)
-
 
             point, shot_chance = self.kick_eval.eval_pt_to_our_goal(threat[0])
             shot_line = robocup.Line(threat[0], point)
@@ -332,14 +330,14 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 main.system_state().draw_line(shot_line, constants.Colors.Red,
                                               "Defense-Shot Line")
                 main.system_state().draw_text(
-                        "Shot: " + str(int(shot_chance * 100.0)),
-                        threat[0], constants.Colors.White, "Defense-Shot Percent")
+                    "Shot: " + str(int(shot_chance * 100.0)), threat[0],
+                    constants.Colors.White, "Defense-Shot Percent")
 
                 # Other threats besides ball
                 if threat_idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat[0])
-                    main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense-Pass Line")
-
+                    main.system_state().draw_line(
+                        pass_line, constants.Colors.Red, "Defense-Pass Line")
 
     def role_requirements(self):
         reqs = super().role_requirements()
