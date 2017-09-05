@@ -142,7 +142,6 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
             assigned_handlers, unused_threat_handlers, threats_to_block)
 
         self.set_defender_block_lines(threats_to_block, assigned_handlers)
-        # If debug
 
     ## Gets list of threats
     #  @return tuple of threat positions and score (unordered)
@@ -261,6 +260,16 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
     #  @param assigned_handlers List of list, [ a ... ] where a represents a list of defenders assigned to threat a
     def set_defender_block_lines(self, threats_to_block, assigned_handlers):
         goalie = self.subbehavior_with_name('goalie')
+        defender1 = self.subbehavior_with_name('defender1')
+        defender2 = self.subbehavior_with_name('defender2')
+
+        handlers = [goalie, defender1, defender2]
+
+        # Exclude any robots we are about to assign to find the threats best shot
+        self.kick_eval.excluded_robots.clear()
+        for handler in handlers:
+            self.kick_eval.add_excluded_robot(handler.robot)
+
 
         # For each threat
         # threats_to_block (list of threats to block and their threat score)
@@ -289,11 +298,9 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                         del assigned_handler[idx]
                         assigned_handler.insert(1, goalie)
 
-            center_line = robocup.Line(threat[0],
-                                       constants.Field.OurGoalSegment.center())
 
-            main.system_state().draw_line(center_line, constants.Colors.Red,
-                                          "CenterLine")
+            point, shot_chance = self.kick_eval.eval_pt_to_our_goal(threat[0])
+            shot_line = robocup.Line(threat[0], point)
 
             # find the angular width that each defender can block.  We then space these out accordingly
             angle_widths = []
@@ -310,7 +317,7 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
             ) < 3 else 0.0  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1
                                                         ) * spacing
-            start_vec = center_line.delta().normalized()
+            start_vec = shot_line.delta().normalized()
             start_vec.rotate(robocup.Point(0, 0), -total_angle_coverage / 2.0)
             for i in range(len(angle_widths)):
                 handler = assigned_handler[i]
@@ -319,6 +326,20 @@ class DefenseRewrite(composite_behavior.CompositeBehavior):
                 handler.block_line = robocup.Line(threat[0],
                                                   threat[0] + start_vec * 10)
                 start_vec.rotate(robocup.Point(0, 0), w / 2.0 + spacing)
+
+            # Draw all the debug stuff
+            if self.debug:
+                main.system_state().draw_line(shot_line, constants.Colors.Red,
+                                              "Defense-Shot Line")
+                main.system_state().draw_text(
+                        "Shot: " + str(int(shot_chance * 100.0)),
+                        threat[0], constants.Colors.White, "Defense-Shot Percent")
+
+                # Other threats besides ball
+                if threat_idx > 0:
+                    pass_line = robocup.Segment(main.ball().pos, threat[0])
+                    main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense-Pass Line")
+
 
     def role_requirements(self):
         reqs = super().role_requirements()
