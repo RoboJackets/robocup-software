@@ -118,6 +118,7 @@ class Defense2(composite_behavior.CompositeBehavior):
 
         threats = self.get_threat_list(unused_threat_handlers)
 
+        # If no threats, kick out
         if not threats:
             return
 
@@ -146,7 +147,6 @@ class Defense2(composite_behavior.CompositeBehavior):
 
     ## Gets list of threats
     #  @return tuple of threat positions and score (unordered)
-
     def get_threat_list(self, unused_threat_handlers):
         # List of (position, score)
         threats = []
@@ -210,14 +210,11 @@ class Defense2(composite_behavior.CompositeBehavior):
 
     ## Estimate risk score based on old defense.py play
     #  @param bot Robot to estimate score at
-    #  @return The risk score at that point
-
+    #  @return The risk score at that point (Shot chance * pass chance)
     def estimate_risk_score(self, bot):
-        # Pass chance and then shot chance
         passChance = evaluation.passing.eval_pass(
             main.ball().pos, bot.pos, excluded_robots=[bot])
 
-        # Add all the robots to the kick eval
         point, shotChance = self.kick_eval.eval_pt_to_our_goal(bot.pos)
 
         return passChance * shotChance
@@ -244,7 +241,7 @@ class Defense2(composite_behavior.CompositeBehavior):
             return 0
 
     ## Assigns the defenders to threats
-    #  @param assigned_handlers List of list, [ a ... ] where a represents a list of defenders assigned to threat a
+    #  @param assigned_handlers List of list, [ A ... ] where A represents a list of defenders assigned to threat A
     #  @param unused_threat_handlers List of defenders that are unused currently
     #  @param threats_to_block List of threats that we have to deal with, tuple with position and threat score
     def assign_handlers_to_threats(self, assigned_handlers,
@@ -258,7 +255,7 @@ class Defense2(composite_behavior.CompositeBehavior):
 
     ## Assigns the locations for each robot to block given a threat and list of robots to block each threat
     #  @param threats_to_block List of threats that we have to deal with, tuple with position and threat score 
-    #  @param assigned_handlers List of list, [ a ... ] where a represents a list of defenders assigned to threat a
+    #  @param assigned_handlers List of list, [ A ... ] where A represents a list of defenders assigned to threat A
     def set_defender_block_lines(self, threats_to_block, assigned_handlers):
         goalie = self.subbehavior_with_name('goalie')
         defender1 = self.subbehavior_with_name('defender1')
@@ -272,17 +269,10 @@ class Defense2(composite_behavior.CompositeBehavior):
             self.kick_eval.add_excluded_robot(handler.robot)
 
         # For each threat
-        # threats_to_block (list of threats to block and their threat score)
-        # assigned_handlers (list of defenders to assigned to threats)
-        #
-        # If more than 1, put goalie in the middle
-        # Get best shot line
-        # 
-        # For each handler, find the angular width that each can defend
-        # 
-        # Get best point in list and set
         for threat_idx in range(len(threats_to_block)):
+            # Get the threat pos and score
             threat = threats_to_block[threat_idx]
+            # Grab the list of handlers assigned to this threat
             assigned_handler = assigned_handlers[threat_idx]
 
             # If nobody is assigned, move to next one
@@ -298,6 +288,7 @@ class Defense2(composite_behavior.CompositeBehavior):
                         del assigned_handler[idx]
                         assigned_handler.insert(1, goalie)
 
+            # Get best shot from that threat postiion
             point, shot_chance = self.kick_eval.eval_pt_to_our_goal(threat[0])
             shot_line = robocup.Line(threat[0], point)
 
