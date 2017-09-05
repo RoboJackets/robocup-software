@@ -748,31 +748,11 @@ void Processor::sendRadioData() {
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
+    int nextGamepad = 0;
+    const std::vector<JoystickControlValues> controlVals = getJoystickControlValues();
 
-    if (!_multipleManual) {
-        for (OurRobot* r : _state.self) {
-            if (r->visible || _manualID == r->shell()) {
-                Packet::Robot* txRobot = tx->add_robots();
-
-                // Copy motor commands.
-                // Even if we are using the joystick, this sets robot_id and the
-                // number of motors.
-                txRobot->CopyFrom(r->robotPacket);
-
-                if (r->shell() == _manualID) {
-                    const JoystickControlValues controlVals =
-                        getJoystickControlValues()[0];
-                    applyJoystickControls(controlVals,
-                                          txRobot->mutable_control(), r);
-                }
-            }
-        }
-    } else {
-        vector<JoystickControlValues> controlVals = getJoystickControlValues();
-
-        for (int i = 0; i < _state.self.size() && i < controlVals.size(); i++) {
-            OurRobot* r = _state.self[i];
-            JoystickControlValues controlVal = controlVals[i];
+    for (OurRobot* r : _state.self) {
+        if (r->visible || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
@@ -780,9 +760,18 @@ void Processor::sendRadioData() {
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
 
-            applyJoystickControls(controlVal, txRobot->mutable_control(), r);
+            if(_multipleManual) {
+              applyJoystickControls(controlVals[nextGamepad],
+                                    txRobot->mutable_control(), r);
+              nextGamepad++;
+            } else if (r->shell() == _manualID) {
+                applyJoystickControls(controlVals[0],
+                                      txRobot->mutable_control(), r);
+            }
         }
     }
+
+
 
     for (const auto& pair : _robotConfigs) {
         auto config = tx->add_configs();
