@@ -23,7 +23,6 @@ class TestCircleNearBall(unittest.TestCase):
 		# Checks that the points around the ball are within the bounds of the field
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
-			array = [robocup.Point(0, -123)]
 			for point in array:		
 				self.assertTrue(point.x >= width * -1 / 2 and point.x <= width / 2, msg="failure of get_circle_points. X position of points are outside the field. Point's x position is %d" %point.x)
 				self.assertTrue(point.y >= 0 and point.y <= length, msg="failure of get_circle_points. Y positions of points are outside the field. Point's y position is %d" %point.y )
