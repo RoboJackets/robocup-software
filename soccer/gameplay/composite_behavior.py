@@ -119,7 +119,7 @@ class CompositeBehavior(behavior.Behavior):
             # r could be a RoleRequirements or a dict forming a subtree
             if isinstance(r, role_assignment.RoleRequirements):
                 r.required = info['required']
-                r.priority = info['priority']
+                r.priority = info['priority']()
             # FIXME: should required and priority propogate if it's a tree?
             reqs[name] = r
         return reqs

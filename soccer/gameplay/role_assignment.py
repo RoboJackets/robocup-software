@@ -202,7 +202,7 @@ def assign_roles(robots, role_reqs):
     optional_roles = sorted(
         [r for r in role_reqs_list if not r.required],
         reverse=True,
-        key=lambda r: r.priority())
+        key=lambda r: r.priority)
 
     # logs the assignment parameters and raises an ImpossibleAssignmentError
     def fail(errStr):
