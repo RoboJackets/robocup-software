@@ -6,6 +6,7 @@ import logging
 import re
 import sys
 from typing import Callable, Dict, Union
+from types import LambdaType
 
 
 ## A composite behavior is one that has 0+ named subbehaviors
@@ -27,10 +28,7 @@ class CompositeBehavior(behavior.Behavior):
             raise AssertionError("There's already a subbehavior with name: '" +
                                  name + "'")
 
-        # If not a lambda function, create a new lambda and just return the constant
-        # Else just use the lambda function given
-        if not (isinstance(priority, type(lambda: 0)) and
-                priority.__name__ == (lambda: 0).__name__):
+        if not isinstance(priority, LambdaType):
             priority_func = (lambda: priority)
         else:
             priority_func = priority
