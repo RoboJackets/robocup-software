@@ -27,7 +27,7 @@ class CompositeBehavior(behavior.Behavior):
             raise AssertionError("There's already a subbehavior with name: '" +
                                  name + "'")
 
-        if not isinstance(priority, Callable):
+        if isinstance(priority, int):
             priority_func = (lambda: priority)
         else:
             priority_func = priority
