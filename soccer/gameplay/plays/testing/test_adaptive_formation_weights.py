@@ -25,10 +25,9 @@ class TestAdaptiveFormationWeights(play.Play):
                        behavior.Behavior.State.running)
 
         # Enable which portion we want to test
-        self.add_transition(
-            behavior.Behavior.State.start,
-            TestAdaptiveFormationWeights.State.testPointCoeff, lambda: True,
-            'immediately')
+        self.add_transition(behavior.Behavior.State.start,
+                            TestAdaptiveFormationWeights.State.testPointCoeff,
+                            lambda: True, 'immediately')
 
     def execute_testPointCoeff(self):
 
@@ -40,8 +39,8 @@ class TestAdaptiveFormationWeights(play.Play):
             for pt in col:
                 # Uncomment which function we want graphed
 
-                sublist.append(
-                    evaluation.field.field_pos_coeff_at_pos(pt, 0.1, .2, 0.02))
+                sublist.append(evaluation.field.field_pos_coeff_at_pos(
+                    pt, 0.1, .2, 0.02))
                 #vals.append(1-evaluation.field.space_coeff_at_pos(pt))
                 #vals.append(evaluation.shooting.eval_shot(pt))
                 #vals.append(evaluation.defensive_positioning.estimate_risk_score(pt))
