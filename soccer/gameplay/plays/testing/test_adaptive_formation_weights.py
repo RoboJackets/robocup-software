@@ -25,25 +25,30 @@ class TestAdaptiveFormationWeights(play.Play):
                        behavior.Behavior.State.running)
 
         # Enable which portion we want to test
-        self.add_transition(behavior.Behavior.State.start,
-                            TestAdaptiveFormationWeights.State.testPointCoeff,
-                            lambda: True, 'immediately')
+        self.add_transition(
+            behavior.Behavior.State.start,
+            TestAdaptiveFormationWeights.State.testPointCoeff, lambda: True,
+            'immediately')
 
     def execute_testPointCoeff(self):
 
         points = visualization.overlay.get_visualization_points(40, 80)
         vals = []
 
-        for pt in points:
-            # Uncomment which function we want graphed
+        for col in points:
+            sublist = []
+            for pt in col:
+                # Uncomment which function we want graphed
 
-            vals.append(evaluation.field.field_pos_coeff_at_pos(pt, 0.1, .2,
-                                                                0.02))
-            #vals.append(1-evaluation.field.space_coeff_at_pos(pt))
-            #vals.append(evaluation.shooting.eval_shot(pt))
-            #vals.append(evaluation.defensive_positioning.estimate_risk_score(pt))
-            #vals.append(5 * evaluation.passing_positioning.eval_single_point(
-            #    main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
-            #    (2, 2, 15, 1), pt.x, pt.y))
+                sublist.append(
+                    evaluation.field.field_pos_coeff_at_pos(pt, 0.1, .2, 0.02))
+                #vals.append(1-evaluation.field.space_coeff_at_pos(pt))
+                #vals.append(evaluation.shooting.eval_shot(pt))
+                #vals.append(evaluation.defensive_positioning.estimate_risk_score(pt))
+                #vals.append(5 * evaluation.passing_positioning.eval_single_point(
+                #    main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
+                #    (2, 2, 15, 1), pt.x, pt.y))
 
-        visualization.overlay.display_visualization_points(vals, True, 40, 80)
+            vals.append(sublist)
+
+        visualization.overlay.display_visualization_points(vals, True)
