@@ -33,8 +33,8 @@ class TestField(unittest.TestCase):
 
 	# Positions 6 robots around a point but not on it
 	#
-	# @param x x coordinate of point
-	# @param y y coordinate of point
+	# @param x: x coordinate of point
+	# @param y: y coordinate of point
 	# 
 	def set_robots_around_pos(self, x, y, rad):
 		self.robots[0].set_pos(x - constants.Robot.Radius * rad, y - constants.Robot.Radius * rad)
@@ -52,6 +52,10 @@ class TestField(unittest.TestCase):
 		msg = "evaluation.field.space_coeff_at_pos not functioning as intended: "
 
 		# Easier than writing out whole function
+		# Finds space_coeff_at_pos for a point
+		#
+		# @param x: x coordinate of point
+		# @param y: y coordinate of point
 		def run_function(x, y):
 			return evaluation.field.space_coeff_at_pos(robocup.Point(x, y))
 		
@@ -70,5 +74,77 @@ class TestField(unittest.TestCase):
 		self.set_robots_around_pos(0, length / 2, 5)
 		self.assertTrue(run_function(0, length / 2) >= 0, msg="Robots located around position considered to be open. Check constant inside function")
 
+	def test_field_pos_coeff_at_pos(self):
+
+		# Easier than writing out whole function
+		# Finds field_pos_coeff_at_pos for a point
+		#
+		# @param x: x coordinate of point
+		# @param y: y coordinate of point
+		# @param center: How much to weight being close to the 'center of the field'
+		# @param dist: How much to weight being close to the opponents goal
+		# @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
+		def run_function(x, y, center, dist, angl, attack=True):
+			return evaluation.field.field_pos_coeff_at_pos(robocup.Point(x, y), center, dist, angl, attack)
+
+
+		width = constants.Field.Width
+		length = constants.Field.Length
+
+		#########################################
+		## Test distance to center line factor ##
+		#########################################
+
+		# Test center of the field returns 1
+		num = run_function(0, length / 2, 1 ,0 ,0)
+		self.assertTrue(num == 1)
+
+		# Test halfway between center and edge returns not 0 or 1
+		num = run_function(width / 4, length / 2, 1, 0, 0)
+		self.assertTrue(num > 0 and num < 1)
+
+		# Test right edge of the field returns 0		
+		num = run_function(width / 2, length / 2, 1, 0 ,0)
+		self.assertTrue(num == 0)
+
+		##################################
+		## Test distance to goal factor ##
+		##################################
+
+		# Test position close to goal returns 1
+		num = run_function(0, length, 0, 1, 0)
+		self.assertTrue(num == 1)
+
+		# Test center of field returns not 0 or 1
+		num = run_function(0, length / 2, 0, 1, 0)
+		self.assertTrue(num > 0 and num < 1)
+
+		# Test other side of field returns 0
+		num = run_function(0, 0, 0, 1 ,0)
+		self.assertTrue(num == 0)
+
+		# Test switching sides returns 1 for same position
+		num = run_function(0, 0, 0, 1, 0, False)
+		self.assertTrue(num == 1)
+
+		###############################
+		## Test angle to goal factor ##
+		###############################
+
+		# Test front of goal returns 1
+		num = run_function(0, length / 2, 0, 0, 1)
+		self.assertTrue(num == 1)
+
+		# Test 45 angle returns not 0 or 1
+		num = run_function(width / 2, length / 2, 0 ,0 ,1)
+		self.assertTrue(num > 0 and num < 1)
+
+		# Test corner of field returns 0
+		num = run_function(width / 2, length, 0, 0, 1)
+		self.assertTrue(num == 0)
+
+		# Test corner of field returns not 0 or 1 when switching sides
+		num = run_function(width / 2, length, 0, 0, 1, False)
+		self.assertTrue(num > 0 and num < 1)
 
 
