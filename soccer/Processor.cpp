@@ -156,8 +156,9 @@ void Processor::joystickKickOnBreakBeam(bool value) {
 }
 
 void Processor::setupJoysticks() {
-    GamepadController::controllerNumber = 0;
     _joysticks.clear();
+
+    GamepadController::controllersInUse.clear();
 
     for (int i = 0; i < 6; i++) {
         _joysticks.push_back(new GamepadController());
@@ -744,7 +745,7 @@ void Processor::sendRadioData() {
 
     // Add RadioTx commands for visible robots and apply joystick input
     int nextGamepad = 0;
-    const std::vector<JoystickControlValues> controlVals = getJoystickControlValues();
+    std::vector<JoystickControlValues> controlVals = getJoystickControlValues();
 
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell() || _multipleManual) {
@@ -755,7 +756,7 @@ void Processor::sendRadioData() {
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
 
-            if(_multipleManual) {
+            if(_multipleManual && nextGamepad < controlVals.size()) {
               applyJoystickControls(controlVals[nextGamepad],
                                     txRobot->mutable_control(), r);
               nextGamepad++;

@@ -10,7 +10,7 @@ const float AXIS_MAX = 32768.0f;
 const float TRIGGER_CUTOFF = 0.9;
 }
 
-int GamepadController::controllerNumber = 0;
+std::vector<int> GamepadController::controllersInUse = {};
 
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
@@ -33,6 +33,7 @@ GamepadController::GamepadController()
 
     // Controllers will be detected later if needed.
     connected = false;
+    controllerId = -1;
     openJoystick();
 }
 
@@ -47,25 +48,25 @@ void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
 
-        for (int i = controllerNumber; i < SDL_NumJoysticks(); ++i) {
+        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
-            if (SDL_IsGameController(i)) {
+          if (std::find(controllersInUse.begin(), controllersInUse.end(), i) == controllersInUse.end() && SDL_IsGameController(i)) {
                 SDL_GameController* controller;
                 controller = SDL_GameControllerOpen(i);
-                connected = true;
-                controllerNumber++;
 
                 if (controller != nullptr) {
                     _controller = controller;
+                    connected = true;
+                    controllerId = i;
+                    controllersInUse.push_back(i);
                     cout << "Using " << SDL_GameControllerName(_controller)
                          << " game controller as controller # "
-                         << controllerNumber << endl;
+                         << controllersInUse.size() << endl;
                     break;
                 } else {
                     cerr << "ERROR: Could not open controller! SDL Error: "
                          << SDL_GetError() << endl;
                 }
-                // Only support one joystick for now.
                 return;
             }
         }
@@ -75,10 +76,11 @@ void GamepadController::openJoystick() {
 void GamepadController::closeJoystick() {
     cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
+    controllerId = -1;
     connected = false;
 }
 
-bool GamepadController::valid() const { return _controller != nullptr; }
+bool GamepadController::valid() const { return connected; }
 
 void GamepadController::update() {
     QMutexLocker(&mutex());
