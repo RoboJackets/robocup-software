@@ -87,9 +87,10 @@ class TestField(unittest.TestCase):
 		def run_function(x, y, center, dist, angl, attack=True):
 			return evaluation.field.field_pos_coeff_at_pos(robocup.Point(x, y), center, dist, angl, attack)
 
-
 		width = constants.Field.Width
 		length = constants.Field.Length
+
+		msg = "evaluation.field.field_pos_coeff_at_pos not functioning as intended: "
 
 		#########################################
 		## Test distance to center line factor ##
@@ -97,15 +98,15 @@ class TestField(unittest.TestCase):
 
 		# Test center of the field returns 1
 		num = run_function(0, length / 2, 1 ,0 ,0)
-		self.assertTrue(num == 1)
+		self.assertTrue(num == 1, msg + "center of the field doesn't return 1 for distance to center factor")
 
 		# Test halfway between center and edge returns not 0 or 1
 		num = run_function(width / 4, length / 2, 1, 0, 0)
-		self.assertTrue(num > 0 and num < 1)
+		self.assertTrue(num > 0 and num < 1, msg + "position between edge and center returns 1 or 0 for distance to center factor")
 
 		# Test right edge of the field returns 0		
 		num = run_function(width / 2, length / 2, 1, 0 ,0)
-		self.assertTrue(num == 0)
+		self.assertTrue(num == 0, msg + "edge of the field doesn't return 0 for distance to center factor")
 
 		##################################
 		## Test distance to goal factor ##
@@ -113,19 +114,19 @@ class TestField(unittest.TestCase):
 
 		# Test position close to goal returns 1
 		num = run_function(0, length, 0, 1, 0)
-		self.assertTrue(num == 1)
+		self.assertTrue(num == 1, msg + "position close to goal returns not 1 for distance to goal factor")
 
 		# Test center of field returns not 0 or 1
 		num = run_function(0, length / 2, 0, 1, 0)
-		self.assertTrue(num > 0 and num < 1)
+		self.assertTrue(num > 0 and num < 1, msg + "position in center should not return 0 or 1 for distance to goal factor")
 
 		# Test other side of field returns 0
 		num = run_function(0, 0, 0, 1 ,0)
-		self.assertTrue(num == 0)
+		self.assertTrue(num == 0, msg + "other side of field doesn't return 0 for distance to goalfactor")
 
 		# Test switching sides returns 1 for same position
 		num = run_function(0, 0, 0, 1, 0, False)
-		self.assertTrue(num == 1)
+		self.assertTrue(num == 1, msg + "Switching sides doesn't return 1 for distance to goal factor")
 
 		###############################
 		## Test angle to goal factor ##
@@ -133,18 +134,18 @@ class TestField(unittest.TestCase):
 
 		# Test front of goal returns 1
 		num = run_function(0, length / 2, 0, 0, 1)
-		self.assertTrue(num == 1)
+		self.assertTrue(num == 1, msg + "in front of the goal doesn't return 1 for angle to goal factor")
 
 		# Test 45 angle returns not 0 or 1
 		num = run_function(width / 2, length / 2, 0 ,0 ,1)
-		self.assertTrue(num > 0 and num < 1)
+		self.assertTrue(num > 0 and num < 1, msg + "45 degree angle returns 1 or 0 for angle to goal factor")
 
 		# Test corner of field returns 0
 		num = run_function(width / 2, length, 0, 0, 1)
-		self.assertTrue(num == 0)
+		self.assertTrue(num == 0, msg + "corner of the field returns not 0 for angle to goal factor")
 
 		# Test corner of field returns not 0 or 1 when switching sides
 		num = run_function(width / 2, length, 0, 0, 1, False)
-		self.assertTrue(num > 0 and num < 1)
+		self.assertTrue(num > 0 and num < 1, msg + "switching sides doesn't work for angle to goal factor")
 
 
