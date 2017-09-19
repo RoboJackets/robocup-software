@@ -4,6 +4,7 @@
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <joystick/Joystick.hpp>
+#include <joystick/GamepadController.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
@@ -347,8 +348,21 @@ void MainWindow::updateViews() {
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      true);
     }
+
+    if (_processor->multipleManual() && manual >= GamepadController::controllersInUse.size()){
+        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
+                                    false);
+    } else {
+      _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
+                                   true);
+    }
+
     if (manual >= 0) {
-        JoystickControlValues vals = _processor->getJoystickControlValues()[0];
+        int controller = 0;
+        if (_processor->multipleManual()){
+          controller = manual;
+        }
+        JoystickControlValues vals = _processor->getJoystickControlValues()[controller];
         _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
         _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
         _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
