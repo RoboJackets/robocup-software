@@ -39,8 +39,8 @@ class TestAdaptiveFormationWeights(play.Play):
             for pt in col:
                 # Uncomment which function we want graphed
 
-                sublist.append(evaluation.field.field_pos_coeff_at_pos(
-                    pt, 0.1, .2, 0.02))
+                sublist.append(
+                    evaluation.field.field_pos_coeff_at_pos(pt, 0.1, .2, 0.02))
                 #sublist.append(1-evaluation.field.space_coeff_at_pos(pt))
                 #sublist.append(evaluation.shooting.eval_shot(pt))
                 #sublist.append(evaluation.defensive_positioning.estimate_risk_score(pt))
