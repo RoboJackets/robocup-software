@@ -41,10 +41,10 @@ class TestAdaptiveFormationWeights(play.Play):
 
                 sublist.append(evaluation.field.field_pos_coeff_at_pos(
                     pt, 0.1, .2, 0.02))
-                #vals.append(1-evaluation.field.space_coeff_at_pos(pt))
-                #vals.append(evaluation.shooting.eval_shot(pt))
-                #vals.append(evaluation.defensive_positioning.estimate_risk_score(pt))
-                #vals.append(5 * evaluation.passing_positioning.eval_single_point(
+                #sublist.append(1-evaluation.field.space_coeff_at_pos(pt))
+                #sublist.append(evaluation.shooting.eval_shot(pt))
+                #sublist.append(evaluation.defensive_positioning.estimate_risk_score(pt))
+                #sublist.append(5 * evaluation.passing_positioning.eval_single_point(
                 #    main.ball().pos, main.our_robots(), (0.01, 3, 0.02),
                 #    (2, 2, 15, 1), pt.x, pt.y))
 
