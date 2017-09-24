@@ -44,6 +44,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         self.modelReset.emit()
 
     def load_playbook(self, list_of_plays):
+        self.clear()
         for play in list_of_plays:
             node = self.node_for_module_path(play)
             if node is not None:
@@ -70,6 +71,16 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
+
+    def clear(self):
+        enabled_plays = self.get_enabled_plays_paths()
+        for play in enabled_plays:
+            node = self.node_for_module_path(play)
+            if node is not None:
+                node.enabled = False
+            else:
+                logging.warn("Attempt to clear non-existent play " + '/'.join(
+                    play) + " from play registry.")
 
     # cache and calculate the score() function for each play class
     def recalculate_scores(self):
