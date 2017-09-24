@@ -5,6 +5,15 @@ import enum
 import behavior
 import main
 
+# Slides and other materials can be found here:
+# https://github.com/RoboJackets/robocup-training
+#
+# Field Documentation can be found here:
+# https://robojackets.github.io/robocup-software/struct_field___dimensions.html
+#
+# Ball Documentation can be found here:
+# https://robojackets.github.io/robocup-software/class_ball.html
+
 
 # Maintains the state of the ball's position by keeping track of which
 # half the ball is on and prints on both entering a given state and
