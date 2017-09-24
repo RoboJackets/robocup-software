@@ -12,6 +12,7 @@ var NAVTREE =
     [ "Style", "md_doc_Style.html", null ],
     [ "Themes", "md_doc_Themes.html", null ],
     [ "Training 2016", "md_doc_training2016_training_2016.html", "md_doc_training2016_training_2016" ],
+    [ "Training 2017", "md_doc_training2017_training_2017.html", "md_doc_training2017_training_2017" ],
     [ "Testing & Continuous Integration", "md_doc_UnitTestsAndCI.html", null ],
     [ "Vision", "md_doc_Vision.html", null ],
     [ "Modules", "modules.html", "modules" ],
