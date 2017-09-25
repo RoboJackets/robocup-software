@@ -490,7 +490,18 @@ bool OurRobot::charged() const {
            rxIsFresh();
 }
 
+/*
+ * If the ball was recently sensed, then we believe the robot still has it. This
+ * avoids noisiness in the ball sensor.
+ */
 bool OurRobot::hasBall() const {
+    if ((RJ::now() - _lastBallSense) < _lostBallDuration) {
+        return true;
+    }
+    return OurRobot::hasBallRaw();
+}
+
+bool OurRobot::hasBallRaw() const {
     return _radioRx.has_ball_sense_status() &&
            _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
 }

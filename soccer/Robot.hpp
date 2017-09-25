@@ -401,25 +401,17 @@ public:
 
     // lower level status checks
     bool hasBall() const;
+    bool hasBallRaw() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
     float kickerVoltage() const;
     Packet::HardwareVersion hardwareVersion() const;
 
-    /**
-     * Sets the radio packet. If the ball was recently sensed but the current
-     * packet says otherwise, _radioRx is modified to indicate the robot still
-     * has the ball.
-     */
     void setRadioRx(Packet::RadioRx packet) {
         QWriteLocker locker(&radioRxMutex);
         _radioRx = packet;
-        // tracks last time ball was sensed in order to ignore noisiness in the
-        // ball sensor
-        if (hasBall()) {
+        if (hasBallRaw()) {
             _lastBallSense = RJ::now();
-        } else if ((RJ::now() - _lastBallSense) < _lostBallDuration) {
-            _radioRx.set_ball_sense_status(Packet::HasBall);
         }
     }
 
