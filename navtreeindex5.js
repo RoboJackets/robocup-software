@@ -1,8 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"class_referee_tab.html#a471835961fd5de60b684d25e0283d9bc":[16,0,60,13],
-"class_referee_tab.html#a47362243403d9986431f0e91b1cc6bfb":[16,0,60,20],
-"class_referee_tab.html#a57619ce2c8f332d72a5fe535babcc933":[16,0,60,21],
 "class_referee_tab.html#a617792d659d2b00db1094a053406497c":[16,0,60,29],
 "class_referee_tab.html#a64c0d99f5bccec468727fe7cd3d3e1e3":[16,0,60,12],
 "class_referee_tab.html#a69c118957b4d5dba1c57331f98dd8c59":[16,0,60,8],
@@ -249,5 +246,8 @@ var NAVTREEINDEX5 =
 "class_window_evaluator.html#a9da2e28d3c3ac1c43f68da26ec56abed":[16,0,84,11],
 "class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e":[16,0,84,0],
 "class_window_evaluator.html#ae4975224599810750d351662aab90587":[16,0,84,4],
-"classbinary__clock_1_1_binary_clock.html":[16,0,0,0]
+"classbinary__clock_1_1_binary_clock.html":[16,0,0,0],
+"classbinary__clock_1_1_binary_clock.html#a43ca00786843b053e29d5cef5a3b347c":[16,0,0,0,4],
+"classbinary__clock_1_1_binary_clock.html#a7963acd417adf68bf7461f6fa1858a6d":[16,0,0,0,1],
+"classbinary__clock_1_1_binary_clock.html#a7963acd417adf68bf7461f6fa1858a6d":[16,0,0,0,2]
 };

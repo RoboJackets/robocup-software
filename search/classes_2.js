@@ -11,6 +11,5 @@ var searchData=
   ['behavior',['Behavior',['../classgameplay_1_1behavior_1_1_behavior.html',1,'gameplay::behavior']]],
   ['behaviorsequence',['BehaviorSequence',['../classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html',1,'gameplay::behavior_sequence']]],
   ['binaryclock',['BinaryClock',['../classbinary__clock_1_1_binary_clock.html',1,'binary_clock']]],
-  ['binaryclock',['BinaryClock',['../classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock.html',1,'gameplay::plays::training::binary_clock']]],
   ['bump',['Bump',['../classgameplay_1_1skills_1_1bump_1_1_bump.html',1,'gameplay::skills::bump']]]
 ];

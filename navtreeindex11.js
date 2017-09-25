@@ -1,13 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"md_doc_Style.html":[8],
-"md_doc_Themes.html":[9],
-"md_doc_UnitTestsAndCI.html":[12],
-"md_doc_Vision.html":[13],
-"md_doc_contributing.html":[1],
-"md_doc_training2016_training_2016.html":[10],
-"md_doc_training2017_training_2017.html":[11],
-"modules.html":[14],
 "multicast_8hpp_source.html":[17,0,0,6],
 "namespace_gameplay.html":[16,0,2],
 "namespace_gameplay.html":[15,0,0],

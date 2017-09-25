@@ -36,6 +36,7 @@ var hierarchy =
     [ "Planning::InterpolatedPath::Entry", "struct_planning_1_1_interpolated_path_1_1_entry.html", null ],
     [ "Enum", null, [
       [ "binary_clock.BinaryClock.State", "classbinary__clock_1_1_binary_clock_1_1_state.html", null ],
+      [ "binary_clock.BinaryClock.State", "classbinary__clock_1_1_binary_clock_1_1_state.html", null ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker.State", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker_1_1_state.html", null ],
       [ "gameplay.plays.offense.adaptive_formation.AdaptiveFormation.State", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation_1_1_state.html", null ],
       [ "gameplay.plays.offense.two_side_attack.TwoSideAttack.State", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack_1_1_state.html", null ],
@@ -47,8 +48,6 @@ var hierarchy =
       [ "gameplay.plays.testing.test_adaptive_formation_weights.TestAdaptiveFormationWeights.State", "classgameplay_1_1plays_1_1testing_1_1test__adaptive__formation__weights_1_1_test_adaptive_formation_weights_1_1_state.html", null ],
       [ "gameplay.plays.testing.test_capture.TestCapture.State", "classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture_1_1_state.html", null ],
       [ "gameplay.plays.testing.triangle_pass.TrianglePass.State", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html", null ],
-      [ "gameplay.plays.training.binary_clock.BinaryClock.State", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock_1_1_state.html", null ],
-      [ "gameplay.plays.training.which_half.WhichHalf.State", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half_1_1_state.html", null ],
       [ "gameplay.plays.tuning.pid.pid.State", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid_1_1_state.html", null ],
       [ "gameplay.plays.tuning.tune_facing.Facer.State", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html", null ],
       [ "gameplay.skills.aim.Aim.State", "classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html", null ],
@@ -73,6 +72,7 @@ var hierarchy =
       [ "kick_gently.KickGently.State", "classkick__gently_1_1_kick_gently_1_1_state.html", null ],
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
       [ "test_fsm.MyFsm.SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ],
+      [ "which_half.WhichHalf.State", "classwhich__half_1_1_which_half_1_1_state.html", null ],
       [ "which_half.WhichHalf.State", "classwhich__half_1_1_which_half_1_1_state.html", null ]
     ] ],
     [ "Field_Dimensions", "struct_field___dimensions.html", null ],
@@ -135,8 +135,10 @@ var hierarchy =
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
+      [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
       [ "kick_gently.KickGently", "classkick__gently_1_1_kick_gently.html", null ],
       [ "offensive_pivot_kick.OffensivePivotKick", "classoffensive__pivot__kick_1_1_offensive_pivot_kick.html", null ],
+      [ "which_half.WhichHalf", "classwhich__half_1_1_which_half.html", null ],
       [ "which_half.WhichHalf", "classwhich__half_1_1_which_half.html", null ]
     ] ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
@@ -250,8 +252,6 @@ var hierarchy =
             [ "gameplay.plays.testing.test_one_touch_pass.TestOneTouchPass", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html", null ],
             [ "gameplay.plays.testing.test_pivot_kick.TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", null ],
             [ "gameplay.plays.testing.triangle_pass.TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", null ],
-            [ "gameplay.plays.training.binary_clock.BinaryClock", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock.html", null ],
-            [ "gameplay.plays.training.which_half.WhichHalf", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half.html", null ],
             [ "gameplay.plays.tuning.pid.pid", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html", null ],
             [ "gameplay.plays.tuning.test_jittery_motion.TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", null ],
             [ "gameplay.plays.tuning.tune_facing.TuneFacing", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html", null ],
