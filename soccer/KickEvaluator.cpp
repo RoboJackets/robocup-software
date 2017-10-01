@@ -265,7 +265,7 @@ float KickEvaluator::get_target_angle(const Point origin,
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
-    float angle = left.dot(right) / (left.mag()*right.mag());
+    float angle = left.dot(right) / (left.mag() * right.mag());
     angle = std::min(std::max(angle, -1.0f), 1.0f);
 
     return abs(acos(angle));
@@ -296,7 +296,8 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
                                                  const Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
-    float angle = targetDir.dot(obstacleDir) / (targetDir.mag()*obstacleDir.mag());
+    float angle =
+        targetDir.dot(obstacleDir) / (targetDir.mag() * obstacleDir.mag());
     angle = std::min(std::max(angle, -1.0f), 1.0f);
 
     return make_tuple(obstacleDir.mag(), fixAngleRadians(acos(angle)));

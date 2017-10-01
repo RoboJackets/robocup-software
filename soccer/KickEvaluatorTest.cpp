@@ -67,7 +67,7 @@ TEST(KickEvaluator, eval_kick_at_pi_transition) {
     KickEvaluator kickEval(&state);
     std::pair<Point, double> pt_to_our_goal;
 
-    pt_to_our_goal = kickEval.eval_pt_to_robot(Point(3, 2), Point(-3,2));
+    pt_to_our_goal = kickEval.eval_pt_to_robot(Point(3, 2), Point(-3, 2));
 
     EXPECT_LT(std::get<1>(pt_to_our_goal), 0.99);
 }
