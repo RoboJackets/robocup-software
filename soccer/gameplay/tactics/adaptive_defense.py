@@ -25,7 +25,7 @@ import math
 import tactics.positions.submissive_goalie as submissive_goalie
 import tactics.positions.submissive_defender as submissive_defender
 
-import evaulation.field
+import evaluation.field
 
 class AdaptiveDefense(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
@@ -65,6 +65,9 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.area_risk = [] # List of tuples of area risk score, (pos, scores) tuple, and robot obj
         self.agressiviness = 0 # Changes how to weight the robots towards higher risk opp
 
+        self.uncertainty_coeff = 0.5
+        self.future_times = [0.1, 0.5, 1]
+
         self.kick_eval.excluded_robots.clear()
 
         for bot in main.our_robots():
@@ -83,7 +86,6 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.calculate_area_risk_scores()
         # Merge predicted area and robot when they are close
         self.clean_risk_scores_lists()
-        pass
 
     def calculate_robot_risk_scores(self):
         # Big ones to take into account (Robot scores)
@@ -94,6 +96,8 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
         # Ball-opponent-goal (one touch) (smaller is higher)
         # Ball-goal-opponent (def movment) (larger is higher)
+        del self.robot_risks[:]
+
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
         for bot in main.their_robots():
             if bot.visible:
@@ -132,20 +136,20 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
         # Areas is list of predictions, with an uncertainty variable
         # Think hurricane prediction cones
-        areas = []
-        uncertainty_coeff = 1
-        future_times = [0.25, 0.5, 1, 2, 3]
 
+        del self.area_risk[:]
+        
         for bot in main.their_robots():
             if bot.visible:
                 future_pos = []
                 future_scores = []
+                areas = []
 
-                for t in future_times:
+                for t in self.future_times:
                     # TODO: Think about bending line towards goal
                     future_pos.append(bot.pos + bot.vel*t)
 
-                for pos in future_pos:
+                for idx, pos in enumerate(future_pos):
                     # Space (both opp and our) (very sensitive)
                     # TODO: Do we actually need opp score
                     sensitivity = 15
@@ -160,10 +164,14 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
                     future_scores.append(risk_score)
 
+                    if self.debug:
+                        main.system_state().draw_circle(pos, self.uncertainty_coeff*self.future_times[idx], constants.Colors.Red, "Defense: Areas")
+                        main.system_state().draw_text("Risk: " + str(int(risk_score*100)), pos, constants.Colors.Red, "Defense: Areas")
+
 
                 areas.append(zip(future_pos, future_scores))
 
-                self.area_risk((sum(future_scores), areas, bot))
+                self.area_risk.append((sum(future_scores), areas, bot))
 
 
     def clean_risk_scores_lists(self):
