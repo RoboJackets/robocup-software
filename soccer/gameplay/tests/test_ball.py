@@ -7,6 +7,13 @@ import constants
 class Moc_Ball:
 	def __init__(self, x, y):
 		self.pos = robocup.Point(x, y)
+		self.vel = robocup.Point(x, y)
+
+	def set_pos(self, x, y):
+		self.pos = robocup.Point(x, y)
+
+	def set_vel(self, x, y):
+		self.vel = robocup.Point(x, y)
 
 class TestBall(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
