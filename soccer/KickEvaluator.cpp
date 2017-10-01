@@ -6,7 +6,6 @@
 #include <vector>
 #include <math.h>
 #include <cmath>
-#include <iostream>
 
 REGISTER_CONFIGURABLE(KickEvaluator)
 
