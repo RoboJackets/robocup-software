@@ -6,6 +6,7 @@
 #include <vector>
 #include <math.h>
 #include <cmath>
+#include <iostream>
 
 REGISTER_CONFIGURABLE(KickEvaluator)
 
@@ -114,10 +115,10 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // No opponent robots on the field
     if (botMeans.size() == 0) {
         // Push it off to the side
-        botMeans.push_back(3);
+        botMeans.push_back(4);
         // Must be non-zero as 1 / botStDev is used
         botStDevs.push_back(0.1);
-        botVertScales.push_back(0.01);
+        botVertScales.push_back(0.001);
 
         // Center will always be the best target X with no robots
         return pair<Point, float>(center, get<0>(keFunc(0)));
@@ -265,7 +266,10 @@ float KickEvaluator::get_target_angle(const Point origin,
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
-    return abs(left.angle() - right.angle());
+    float angle = left.dot(right) / (left.mag()*right.mag());
+    angle = std::min(std::max(angle, -1.0f), 1.0f);
+
+    return abs(acos(angle));
 }
 
 vector<Robot*> KickEvaluator::get_valid_robots() {
@@ -293,7 +297,8 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
                                                  const Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
-    float angle = obstacleDir.angle() - targetDir.angle();
+    float angle = targetDir.dot(obstacleDir) / (targetDir.mag()*obstacleDir.mag());
+    angle = std::min(std::max(angle, -1.0f), 1.0f);
 
     return make_tuple(obstacleDir.mag(), fixAngleRadians(angle));
 }
