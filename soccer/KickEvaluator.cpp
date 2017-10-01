@@ -299,7 +299,7 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
     float angle = targetDir.dot(obstacleDir) / (targetDir.mag()*obstacleDir.mag());
     angle = std::min(std::max(angle, -1.0f), 1.0f);
 
-    return make_tuple(obstacleDir.mag(), fixAngleRadians(angle));
+    return make_tuple(obstacleDir.mag(), fixAngleRadians(acos(angle)));
 }
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
