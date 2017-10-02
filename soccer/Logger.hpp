@@ -91,7 +91,7 @@ public:
         if (numFromBack >= _history.size()) {
             return 0;
         } else {
-            advance(end, numFromBack);
+            std::advance(end, numFromBack);
             int startFrame = _nextFrameNumber - _history.size();
             int numToCopy = std::min(endIndex - 1 - startFrame, num);
             copy_n(end, numToCopy, result);
