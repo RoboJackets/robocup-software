@@ -23,6 +23,7 @@ def ball_is_shot_at_goal():
             pt = ball_path.segment_intersection(WiderGoalSegment)
             return pt != None
 
+
     return False
 
 
