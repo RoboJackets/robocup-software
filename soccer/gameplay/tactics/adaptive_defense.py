@@ -28,6 +28,12 @@ import tactics.positions.submissive_defender as submissive_defender
 import evaluation.field
 
 class AdaptiveDefense(composite_behavior.CompositeBehavior):
+
+    # Weights for robot risk scores
+    ROBOT_RISK_WEIGHTS = [1, 1, 3, 1, 1, 1]
+
+    # Weights for the area risk scores
+    AREA_RISK_WEIGHTS = [1, 3, 3, 1]
     class State(enum.Enum):
         # Basic blocking for right now
         # TODO: Add clearing mode
@@ -74,7 +80,8 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
             self.kick_eval.add_excluded_robot(bot)
 
     def execute_running(self):
-        # Calculate scores (See if we can cache anything easily)
+        # Calculate scores 
+        # TODO: See if we can cache anything
         self.calculate_risks_scores()
         # Apply roles
         self.apply_blocking_roles()
@@ -88,38 +95,40 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.clean_risk_scores_lists()
 
     def calculate_robot_risk_scores(self):
-        # Big ones to take into account (Robot scores)
-        # Dist to ball^2
-        # Angle on goal (RL boxcar looking thing)
-        # Shot chance
-        # Pass chance
-
-        # Ball-opponent-goal (one touch) (smaller is higher)
-        # Ball-goal-opponent (def movment) (larger is higher)
         del self.robot_risks[:]
 
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
         for bot in main.their_robots():
             if bot.visible:
-                ball_dist = pow(1 - (bot.pos - main.ball().pos).mag() / max_dist, 2)
-                angle_to_goal = 1 - math.fabs(
-                    math.atan2(bot.pos.x, bot.pos.y) / (math.pi / 2))
+                # Various sensitiviities to change how the distribution looks
+                # Mostly shifts and scales from [0, 1] to [x, 1]
+                dist_sens = 0.75
+                angle_sens = 0.5
+                ball_opp_sens = 1.5
+                ball_goal_sens = 2.5
+
+                # Distance to the ball
+                ball_dist = pow(1 - dist_sens*(bot.pos - main.ball().pos).mag() / max_dist, 2)
+                # Angle on goal, 1 when down the center line, 0 when in corner
+                angle_to_goal = 1 - angle_sens*math.fabs(math.atan2(bot.pos.x, bot.pos.y) / (math.pi / 2))
+                # Shot chance / Pass chance
                 shot_pt, shot_chance = self.kick_eval.eval_pt_to_our_goal(bot.pos)
                 pass_pt, pass_chance = self.kick_eval.eval_pt_to_robot(main.ball().pos, bot.pos)
-                #TODO: Think about using pass_pt instead of bot.pos
-                ball_opp_goal = 1 - (math.fabs(self.angle_between(main.ball().pos - bot.pos, bot.pos - shot_pt)) / math.pi)
-                ball_goal_opp = math.fabs(self.angle_between(main.ball().pos - shot_pt, bot.pos - shot_pt)) / math.pi
+                # Angle between ball-opponent-goal
+                # Pseudo-chance to score on a one touch situation
+                ball_opp_goal = 1 - math.pow((math.fabs(self.angle_between(main.ball().pos - bot.pos, bot.pos - shot_pt)) / math.pi), ball_opp_sens)
+                # Angle between ball-goal-opponent
+                # Distance the defense will need to shift to defend
+                ball_goal_opp = 1 - math.pow(math.fabs(self.angle_between(main.ball().pos - shot_pt, shot_pt - bot.pos)) / math.pi, ball_goal_sens)
 
-                # TODO: Fix weights
-                weights = [1, 1, 1, 1, 1, 1]
-                risk_score = weights[0] * ball_dist / max_dist + \
-                             weights[1] * angle_to_goal + \
-                             weights[2] * shot_chance*pass_chance + \
-                             weights[3] * pass_chance + \
-                             weights[4] * ball_opp_goal + \
-                             weights[5] * ball_goal_opp
+                risk_score = AdaptiveDefense.ROBOT_RISK_WEIGHTS[0] * ball_dist + \
+                             AdaptiveDefense.ROBOT_RISK_WEIGHTS[1] * angle_to_goal + \
+                             AdaptiveDefense.ROBOT_RISK_WEIGHTS[2] * shot_chance + \
+                             AdaptiveDefense.ROBOT_RISK_WEIGHTS[3] * pass_chance + \
+                             AdaptiveDefense.ROBOT_RISK_WEIGHTS[4] * ball_opp_goal + \
+                             AdaptiveDefense.ROBOT_RISK_WEIGHTS[5] * ball_goal_opp
 
-                risk_score /= sum(weights)
+                risk_score /= sum(AdaptiveDefense.ROBOT_RISK_WEIGHTS)
 
                 self.robot_risks.append((risk_score, shot_pt, bot))
 
@@ -127,13 +136,6 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_text("Risk: " + str(int(risk_score*100)), bot.pos, constants.Colors.White, "Defense: Risk")
 
     def calculate_area_risk_scores(self):
-        # Big ones to take into account (areas)
-        # Only grab inc opponent traj
-        # Centroid dist to corresponding robot (larger is higher)
-        # Space
-        # Shot chance
-        # Pass to a few areas in front (not super important)
-
         # Areas is list of predictions, with an uncertainty variable
         # Think hurricane prediction cones
 
@@ -141,26 +143,33 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         
         for bot in main.their_robots():
             if bot.visible:
+                # List of future positions based upon velocity and time
                 future_pos = []
+                # List of scores corresponding to those future positions
                 future_scores = []
-                areas = []
 
                 for t in self.future_times:
                     # TODO: Think about bending line towards goal
                     future_pos.append(bot.pos + bot.vel*t)
 
                 for idx, pos in enumerate(future_pos):
-                    # Space (both opp and our) (very sensitive)
-                    # TODO: Do we actually need opp score
-                    sensitivity = 15
-                    our_space = evaluation.field.space_coeff_at_pos(pos, robots=main.their_robots(), sensitivity=sensitivity)
-                    opp_space = evaluation.field.space_coeff_at_pos(pos, robots=main.our_robots(), sensitivity=sensitivity)
-                    # TODO: Get rest of scores
+                    # Various sensitiviities to change how the distribution looks
+                    # Mostly shifts and scales from [0, 1] to [x, 1]
+                    sensitivity = 4
+                    ball_goal_sens = 2.5
 
-                    weights = [1, 1]
-                    risk_score = (weights[0] * (1 - our_space) + \
-                                  weights[1] * opp_space)
-                    risk_score /= sum(weights)
+                    # How close they are to other robots on their team
+                    opp_space = 1 - evaluation.field.space_coeff_at_pos(pos, [bot], main.their_robots(), sensitivity)
+                    # Shot chance
+                    shot_pt, shot_chance = self.kick_eval.eval_pt_to_our_goal(pos)
+                    ball_goal_opp = 1 - math.pow(math.fabs(self.angle_between(main.ball().pos - shot_pt, shot_pt - pos)) / math.pi, ball_goal_sens)
+                    field_pos = evaluation.field.field_pos_coeff_at_pos(pos, 0, 1, 0, False)
+
+                    risk_score = AdaptiveDefense.AREA_RISK_WEIGHTS[0] * opp_space + \
+                                 AdaptiveDefense.AREA_RISK_WEIGHTS[1] * shot_chance + \
+                                 AdaptiveDefense.AREA_RISK_WEIGHTS[2] * ball_goal_opp + \
+                                 AdaptiveDefense.AREA_RISK_WEIGHTS[3] * field_pos
+                    risk_score /= sum(AdaptiveDefense.AREA_RISK_WEIGHTS)
 
                     future_scores.append(risk_score)
 
@@ -168,11 +177,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
                         main.system_state().draw_circle(pos, self.uncertainty_coeff*self.future_times[idx], constants.Colors.Red, "Defense: Areas")
                         main.system_state().draw_text("Risk: " + str(int(risk_score*100)), pos, constants.Colors.Red, "Defense: Areas")
 
-
-                areas.append(zip(future_pos, future_scores))
-
-                self.area_risk.append((sum(future_scores), areas, bot))
-
+                self.area_risk.append((max(future_scores), zip(future_pos, future_scores), bot))
 
     def clean_risk_scores_lists(self):
         # Removes any close duplicates between the areas and robots
