@@ -66,28 +66,29 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                       if s2 != Goalie.State.intercept]:
             self.add_transition(
                 state, Goalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal() and not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
+                lambda: evaluation.ball.ball_is_shot_at_goal() and not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
                 "ball coming towards our goal")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.clear
                       ]:
             self.add_transition(
                 state, Goalie.State.clear,
-                lambda: evaluation.ball.is_in_our_goalie_zone() and not main.game_state().is_their_penalty() and not evaluation.ball.is_moving_towards_our_goal() and evaluation.ball.opponent_with_ball() is None,
+                lambda: evaluation.ball.is_in_our_goalie_zone() and not main.game_state().is_their_penalty() and not evaluation.ball.ball_is_shot_at_goal() and evaluation.ball.opponent_with_ball() is None,
                 "ball in our goalie box, but not headed toward goal")
 
         for state in [s2 for s2 in non_chill_states
                       if s2 != Goalie.State.defend]:
             self.add_transition(
                 state, Goalie.State.defend,
-                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.is_moving_towards_our_goal() and not main.game_state().is_their_penalty() and not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.ball_is_shot_at_goal() and not main.game_state().is_their_penalty() and not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
                 'not much going on')
+
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.block
                       ]:
             self.add_transition(
                 state, Goalie.State.block,
-                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.is_moving_towards_our_goal() and self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.ball_is_shot_at_goal() and self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
                 "opponents have possession")
 
     def robot_is_facing_our_goal(self, robot):

@@ -53,7 +53,7 @@ class SubmissiveGoalie(
                       if s2 != SubmissiveGoalie.State.intercept]:
             self.add_transition(
                 state, SubmissiveGoalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal(),
+                lambda: evaluation.ball.ball_is_shot_at_goal(),
                 "ball coming towards our goal")
 
         for state in [s2
@@ -61,13 +61,13 @@ class SubmissiveGoalie(
                       if s2 != SubmissiveGoalie.State.clear]:
             self.add_transition(
                 state, SubmissiveGoalie.State.clear,
-                lambda: evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.is_moving_towards_our_goal() and main.ball().vel.mag() < 0.4 and evaluation.ball.opponent_with_ball() is None,
+                lambda: evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.ball_is_shot_at_goal() and main.ball().vel.mag() < 0.4 and evaluation.ball.opponent_with_ball() is None,
                 "ball in our goalie box, but not headed toward goal")
 
         for state in non_block_states:
             self.add_transition(
                 state, SubmissiveGoalie.State.block,
-                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.is_moving_towards_our_goal(),
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.ball_is_shot_at_goal(),
                 'ball not in goal or moving towards it')
 
         self.block_line = None
