@@ -4,17 +4,38 @@ import constants
 import math
 
 
-def is_moving_towards_our_goal():
+def ball_is_shot_at_goal():
     # see if the ball is moving much
     if main.ball().vel.mag() > 0.1:
         
-        # Checks the dot product between the vector between the ball's position and the goal
-        # and the velocity vector
-        vector_to_goal = robocup.Point(0 - main.ball().pos.x, 0 - main.ball().pos.y)
-        return main.ball().vel.dot(vector_to_goal) > 0
+         # see if it's moving somewhat towards our goal
+        if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
+            ball_path = robocup.Line(main.ball().pos, (
+                main.ball().pos + main.ball().vel.normalized()))
+
+            fudge_factor = 0.15  # TODO: this could be tuned better
+            WiderGoalSegment = robocup.Segment(
+                robocup.Point(constants.Field.GoalWidth / 2.0 + fudge_factor,
+                              0),
+                robocup.Point(-constants.Field.GoalWidth / 2.0 - fudge_factor,
+                              0))
+
+            pt = ball_path.segment_intersection(WiderGoalSegment)
+            return pt != None
 
     return False
 
+
+
+def is_moving_towards_our_goal():
+    # see if the ball is moving much
+    if main.ball().vel.mag() > 0.1:
+
+        # Checks the dot product between the vector between the ball's position and the goal
+        # and the velocity vector
+        vector_to_goal = robocup.Point(0 - main.ball().pos.x, 0 - main.ball().pos.y)
+        return main.ball().vel.dot(vector_to_goal) > 0       
+    return False
 
 def is_in_our_goalie_zone():
     if main.ball() != None:
