@@ -2,7 +2,7 @@
 
 #include "Joystick.hpp"
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 /**
  * @brief Logitecch Gamepad/Joystick used to control robots
