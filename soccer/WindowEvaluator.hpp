@@ -29,7 +29,7 @@ public:
     }
 };
 
-using WindowingResult = std::pair<std::vector<Window>, boost::optional<Window>>;
+using WindowingResult = std::pair<std::vector<Window>, std::optional<Window>>;
 
 /**
  * @brief The WindowEvaluator class calculates open shots from a point to a

@@ -39,7 +39,7 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
     elif cat /etc/os-release | grep -iq '^VERSION=.*16.04'; then # Using Ubuntu 16.04
         echo "Ubuntu 16.04 Detected..."
         SYSTEM="ubuntu-16.04"
-        ADD_REPOS=false
+        ADD_REPOS=true
     elif cat /etc/os-release | grep -iq '^VERSION=.*16.10'; then # Using Ubuntu 16.10
         echo "Ubuntu 16.10 Detected..."
         SYSTEM="ubuntu-16.10"
@@ -148,10 +148,9 @@ apt-get install $ARGS $PACKAGES
 
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub
-# https://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-on-ubuntu
-if [ "$SYSTEM" = "ubuntu-14.04" ]; then
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
-    update-alternatives --set gcc /usr/bin/gcc-4.9
+if [ "$SYSTEM" = "ubuntu-16.04" OR "$SYSTEM" = "ubuntu-16.10"]; then
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    update-alternatives --set gcc /usr/bin/gcc-7
 fi
 
 if [ "ubuntu-14.04" = "$SYSTEM" -a "$(clang --version | grep -Eo '[0-9]+\.[0-9]+' | head -n1)" \< "3.5" ]; then

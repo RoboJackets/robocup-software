@@ -201,7 +201,7 @@ public:
     ////////
 
     // Time of the first LogFrame
-    boost::optional<RJ::Time> firstLogTime;
+    std::optional<RJ::Time> firstLogTime;
 
 protected:
     void run() override;

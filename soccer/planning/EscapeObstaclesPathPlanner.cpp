@@ -28,7 +28,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
-    boost::optional<Point> optPrevPt;
+    std::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
     const Point unblocked = findNonBlockedGoal(
         startInstant.pos, optPrevPt, obstacles, 300,
@@ -56,7 +56,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
 }
 
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
-    Point goal, boost::optional<Point> prevGoal, const ShapeSet& obstacles,
+    Point goal, std::optional<Point> prevGoal, const ShapeSet& obstacles,
     int maxItr, std::function<void(const RRT::Tree<Point>&)> rrtLogger) {
     if (obstacles.hit(goal)) {
         auto stateSpace = make_shared<RoboCupStateSpace>(

@@ -28,7 +28,7 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     auto& best = result.second;
 
     // there should be a best window, there's nothing in the way
-    EXPECT_NE(boost::none, best);
+    EXPECT_NE(std::nullopt, best);
 
     // there should only be one window
     EXPECT_EQ(1, windows.size());

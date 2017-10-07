@@ -100,7 +100,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
     }
 
     // Locate a goal point that is obstacle-free
-    boost::optional<Point> prevGoal;
+    std::optional<Point> prevGoal;
     if (prevPath) prevGoal = prevPath->end().motion.pos;
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, obstacles);
@@ -314,7 +314,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
 
 vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     const vector<Point>& points, const MotionConstraints& motionConstraints,
-    Point vi, Point vf, const boost::optional<vector<float>>& times) {
+    Point vi, Point vf, const std::optional<vector<float>>& times) {
     size_t length = points.size();
     size_t curvesNum = length - 1;
     vector<double> pointsX(length);

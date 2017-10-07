@@ -34,7 +34,7 @@ public:
      */
     void append(std::unique_ptr<Path> path);
 
-    virtual boost::optional<RobotInstant> evaluate(
+    virtual std::optional<RobotInstant> evaluate(
         RJ::Seconds t) const override;
     virtual bool hit(const Geometry2d::ShapeSet& shape,
                      RJ::Seconds startTimeIntoPath,
