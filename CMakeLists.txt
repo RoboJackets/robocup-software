@@ -14,14 +14,14 @@ include(SetupGTest)
 
 message("${TARGET}")
 # C++ version
-if ("${CMAKE_VERSION}" VERSION_LESS "3.1")
+if ("${CMAKE_VERSION}" VERSION_LESS "3.8")
     # This is to support the CMake version backported to Ubuntu 14.04
-    message("CMAKE_VERSION < 3.1, specifying c++14 flag.")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    message("CMAKE_VERSION < 3.8, specifying c++17 flag.")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 else()
     # This is the more modern way of setting our c++ version
-    message("CMAKE_VERSION >= 3.1, setting CMAKE_CXX_STANDARD to 14.")
-    set(CMAKE_CXX_STANDARD 14)
+    message("CMAKE_VERSION >= 3.8, setting CMAKE_CXX_STANDARD to 17.")
+    set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON) # Don't fall back to older versions
 endif()
 add_subdirectory(external/grSim)

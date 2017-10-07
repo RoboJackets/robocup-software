@@ -37,7 +37,7 @@ public:
                     Geometry2d::Point endPos, double endSpeed,
                     const MotionConstraints& constraints);
 
-    virtual boost::optional<RobotInstant> evaluate(
+    virtual std::optional<RobotInstant> evaluate(
         RJ::Seconds time) const override;
 
     // TODO: only return true for *new* obstacles

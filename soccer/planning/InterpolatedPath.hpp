@@ -25,7 +25,7 @@ public:
 
         MotionInstant instant;
         RJ::Seconds time;
-        boost::optional<AngleInstant> angle;
+        std::optional<AngleInstant> angle;
 
         Geometry2d::Point& pos() { return instant.pos; }
         const Geometry2d::Point& pos() const { return instant.pos; }
@@ -66,7 +66,7 @@ public:
         RJ::Seconds endTime = RJ::Seconds::max()) const override;
     virtual void draw(SystemState* const state, const QColor& color,
                       const QString& layer) const override;
-    virtual boost::optional<RobotInstant> evaluate(
+    virtual std::optional<RobotInstant> evaluate(
         RJ::Seconds t) const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;

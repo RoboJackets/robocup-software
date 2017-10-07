@@ -16,7 +16,7 @@ using Planning::MotionInstant;
 class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
-    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
+    virtual std::optional<RobotInstant> evaluate(RJ::Seconds t) const {
         return RobotInstant(ball.predict(startTime() + t));
     }
 

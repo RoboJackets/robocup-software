@@ -26,7 +26,7 @@ public:
     /// by a configurable threshold.
     /// @param rrtLogger Optional callback to log the rrt tree after it's built
     static Geometry2d::Point findNonBlockedGoal(
-        Geometry2d::Point pt, boost::optional<Geometry2d::Point> prevPt,
+        Geometry2d::Point pt, std::optional<Geometry2d::Point> prevPt,
         const Geometry2d::ShapeSet& obstacles, int maxItr = 300,
         std::function<void(const RRT::Tree<Geometry2d::Point>&)> rrtLogger =
             nullptr);

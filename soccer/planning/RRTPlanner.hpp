@@ -132,7 +132,7 @@ protected:
         const std::vector<Geometry2d::Point>& points,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf,
-        const boost::optional<std::vector<float>>& times = boost::none);
+        const std::optional<std::vector<float>>& times = std::nullopt);
 
     /**
      * Generates a velocity profile from a Cubic Bezier Path under the given

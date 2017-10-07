@@ -22,14 +22,14 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-boost::optional<RobotInstant> CompositePath::evaluate(RJ::Seconds t) const {
+std::optional<RobotInstant> CompositePath::evaluate(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
     }
 
     if (paths.empty()) {
-        return boost::none;
+        return std::nullopt;
     }
     for (const std::unique_ptr<Path>& subpath : paths) {
         RJ::Seconds timeLength = subpath->getDuration();
@@ -40,7 +40,7 @@ boost::optional<RobotInstant> CompositePath::evaluate(RJ::Seconds t) const {
         }
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,

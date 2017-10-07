@@ -193,7 +193,7 @@ void InterpolatedPath::draw(SystemState* const state,
     }
 }
 
-boost::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
+std::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
@@ -220,7 +220,7 @@ boost::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
     targetVelOut = direction * linearSpeed;
     */
     if (waypoints.size() == 0 || waypoints.size() == 1) {
-        return boost::none;
+        return std::nullopt;
     }
     if (t < waypoints[0].time) {
         debugThrow(
@@ -234,7 +234,7 @@ boost::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
         }
         i++;
         if (i == size()) {
-            return boost::none;
+            return std::nullopt;
         }
     }
     RJ::Seconds deltaT = (waypoints[i].time - waypoints[i - 1].time);
