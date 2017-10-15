@@ -127,12 +127,6 @@ class Defense2(composite_behavior.CompositeBehavior):
         threats_to_block = threats[0:2]
         assigned_handlers = [[], []]
 
-        for threat in threats:
-            main.system_state().draw_text(
-                    "Shot: " + str(int(threat[1] * 100.0)), threat[0],
-                    constants.Colors.White, "Defense- Percent")
-
-
         # If we clearing the ball, assign the clearer to the most important
         # threat (the ball). This prevents assigning the non-clearing robot
         # to mark the ball and causing crowding.
@@ -154,7 +148,7 @@ class Defense2(composite_behavior.CompositeBehavior):
     ## Gets list of threats
     #  @return tuple of threat positions and score (unordered)
     def get_threat_list(self, unused_threat_handlers):
-        # List of (position, score)
+        # List of (position, score, Robot/None)
         threats = []
         potential_threats = main.their_robots()
 
