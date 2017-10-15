@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a8003a65144ebdc20e6e58b6dcd322085":[16,0,3,17,8,4,0,11],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a957aab1cd32c652647253a6efe4072eb":[16,0,3,17,8,4,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aa5af13bc5e9022e085d131aa48e7119a":[16,0,3,17,8,4,0,19],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#abc11a4c1af45c118040c76db1c725d74":[16,0,3,17,8,4,0,3],
@@ -171,8 +172,8 @@ var NAVTREEINDEX10 =
 "functions_d.html":[16,3,0,4],
 "functions_e.html":[16,3,0,5],
 "functions_f.html":[16,3,0,6],
-"functions_func.html":[16,3,1],
 "functions_func.html":[16,3,1,0],
+"functions_func.html":[16,3,1],
 "functions_func_a.html":[16,3,1,1],
 "functions_func_b.html":[16,3,1,2],
 "functions_func_c.html":[16,3,1,3],
@@ -229,8 +230,8 @@ var NAVTREEINDEX10 =
 "group__matrices.html":[14,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[16,0,2,0,2],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,0],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[16,0,2,0,4],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[14,0,1],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[16,0,2,0,4],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[16,0,2,0,13],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[14,0,2],
 "hierarchy.html":[16,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "md_doc_Vision.html":[13],
 "md_doc_contributing.html":[1],
 "md_doc_training2016_training_2016.html":[10],
-"md_doc_training2017_training_2017.html":[11],
-"modules.html":[14]
+"md_doc_training2017_training_2017.html":[11]
 };

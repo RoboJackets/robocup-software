@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html":[16,0,3,9,1,8,0],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a31cba68185be635356dba254b8557c80":[16,0,3,9,1,8,0,0],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a366db10bcd9da45ba18d8e95956864da":[16,0,3,9,1,8,0,4],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a3da2bcf17e0976d5c24fb3e3917b04d4":[16,0,3,9,1,8,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ab856cdedf3b5ef20c120481c88a7569c":[16,0,3,13,0,4],
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ac0af2480e378ba668a1f7a9d0f6fa99f":[16,0,3,13,0,9],
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ac6864697e8eb887600a55b180b393977":[16,0,3,13,0,1],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#aca0d09ecb936a228dd0dc072ca167ba3":[16,0,3,13,0,5],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#acbae54be1afbb7ab52550f2a337f33e0":[16,0,3,13,0,7]
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#aca0d09ecb936a228dd0dc072ca167ba3":[16,0,3,13,0,5]
 };

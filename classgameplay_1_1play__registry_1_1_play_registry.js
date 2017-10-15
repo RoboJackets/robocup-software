@@ -6,6 +6,7 @@ var classgameplay_1_1play__registry_1_1_play_registry =
     [ "__contains__", "classgameplay_1_1play__registry_1_1_play_registry.html#a9fc980bc9afc7bc5aab8986fb49da047", null ],
     [ "__iter__", "classgameplay_1_1play__registry_1_1_play_registry.html#a24e08a8aad6baa809817e4cc2dc9b5f4", null ],
     [ "__str__", "classgameplay_1_1play__registry_1_1_play_registry.html#a7dde7f10a49a79343778a75c0f441834", null ],
+    [ "clear", "classgameplay_1_1play__registry_1_1_play_registry.html#aebba783c8169d8a01e53036287a28b51", null ],
     [ "columnCount", "classgameplay_1_1play__registry_1_1_play_registry.html#af79cb50dbd358f733e73c52816861cf5", null ],
     [ "data", "classgameplay_1_1play__registry_1_1_play_registry.html#a1392b9cbf9276db7662f8e8c453c666b", null ],
     [ "delete", "classgameplay_1_1play__registry_1_1_play_registry.html#ac42cba751fbbf185e3b576773e9a4669", null ],
