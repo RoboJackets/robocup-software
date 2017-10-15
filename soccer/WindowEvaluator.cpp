@@ -115,7 +115,7 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin,
         auto d = edge.delta().magsq();
 
         Point intersect;
-        if (edge.intersects(target, &intersect) &&
+        if (edge.intersects(Line(target), &intersect) &&
             (intersect - origin).dot(edge.delta()) > d) {
             auto f = (intersect - target.pt[0]).dot(target.delta());
             if (f < 0)
