@@ -127,6 +127,12 @@ class Defense2(composite_behavior.CompositeBehavior):
         threats_to_block = threats[0:2]
         assigned_handlers = [[], []]
 
+        for threat in threats:
+            main.system_state().draw_text(
+                    "Shot: " + str(int(threat[1] * 100.0)), threat[0],
+                    constants.Colors.White, "Defense- Percent")
+
+
         # If we clearing the ball, assign the clearer to the most important
         # threat (the ball). This prevents assigning the non-clearing robot
         # to mark the ball and causing crowding.
@@ -158,29 +164,29 @@ class Defense2(composite_behavior.CompositeBehavior):
         if (main.ball().vel.mag() > 0.4):
             if evaluation.ball.is_moving_towards_our_goal():
                 # Add tuple of pos and score
-                threats.append((main.ball().pos, 1))
+                threats.append((main.ball().pos, 1, None))
             else:
                 # Get all potential receivers
                 potential_receivers = []
                 for opp in potential_threats:
                     if self.estimate_potential_recievers_score(opp) == 1:
-                        potential_receivers.append((opp.pos, 1))
+                        potential_receivers.append((opp.pos, 1, opp))
 
                 if len(potential_receivers) > 0:
                     # Add best receiver to threats
                     # TODO Calc shot chance
                     best_tuple = min(potential_receivers,
                                      key=lambda rcrv_tuple: rcrv_tuple[1])
-                    threats.append((best_tuple[0], .81))
+                    threats.append((best_tuple[0], .81, best_tuple[2]))
                 else:
                     # Just deal with ball if no recievers
-                    threats.append((main.ball().pos, .9))
+                    threats.append((main.ball().pos, .9, None))
         else:
             # Assume opp is dribbling ball
             if not constants.Field.OurGoalZoneShape.contains_point(
                     main.ball().pos):
                 # TODO: Calc shot chance
-                threats.append((main.ball().pos, 1))
+                threats.append((main.ball().pos, 1, None))
 
         # if there are threats, check pass and shot chances
         # If the first item is not a ball, it is most likely a pass
@@ -192,20 +198,20 @@ class Defense2(composite_behavior.CompositeBehavior):
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     excluded_bots.append(r)
 
-                threats.append(
-                    (opp.pos, self.estimate_risk_score(opp, excluded_bots)))
+                threats.append((opp.pos, self.estimate_risk_score(opp, excluded_bots), opp))
         else:
             for opp in potential_threats:
 
                 # Exclude all robots
                 self.kick_eval.excluded_robots.clear()
+                self.kick_eval.add_excluded_robot(opp)
                 for r in main.our_robots():
                     self.kick_eval.add_excluded_robot(r)
 
                 shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
 
                 # Note: 0.5 is a bullshit value
-                threats.append((opp.pos, 0.5 * shotChance))
+                threats.append((opp.pos, 0.5 * shotChance, opp))
 
         return threats
 
@@ -214,8 +220,10 @@ class Defense2(composite_behavior.CompositeBehavior):
     #  @param exluded_Bots Robots to exclude from the defense when calculating shot
     #  @return The risk score at that point (Shot chance * pass chance)
     def estimate_risk_score(self, bot, excluded_bots=[]):
+        excluded_bots.append(bot)
+
         passChance = evaluation.passing.eval_pass(
-            main.ball().pos, bot.pos, excluded_robots=[bot] + excluded_bots)
+            main.ball().pos, bot.pos, excluded_robots=excluded_bots)
 
         self.kick_eval.excluded_robots.clear()
         for r in excluded_bots:
@@ -269,10 +277,6 @@ class Defense2(composite_behavior.CompositeBehavior):
 
         handlers = [goalie, defender1, defender2]
 
-        # Exclude any robots we are about to assign to find the threats best shot
-        self.kick_eval.excluded_robots.clear()
-        for handler in handlers:
-            self.kick_eval.add_excluded_robot(handler.robot)
 
         # For each threat
         for threat_idx in range(len(threats_to_block)):
@@ -280,6 +284,17 @@ class Defense2(composite_behavior.CompositeBehavior):
             threat = threats_to_block[threat_idx]
             # Grab the list of handlers assigned to this threat
             assigned_handler = assigned_handlers[threat_idx]
+
+
+            # Exclude any robots we are about to assign to find the threats best shot
+            self.kick_eval.excluded_robots.clear()
+            for handler in handlers:
+                self.kick_eval.add_excluded_robot(handler.robot)
+
+            # Add opp robot into exclude list, assuming it is not a ball
+            if (threat[2] is not None):
+                self.kick_eval.add_excluded_robot(threat[2])
+            
 
             # If nobody is assigned, move to next one
             if len(assigned_handler) == 0:
