@@ -75,10 +75,8 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
     if their_robots_to_dodge is None:
         their_robots_to_dodge = main.their_robots()
 
-    max_dist = robocup.Point(constants.Field.Width,
-                             constants.Field.Length).mag()
-    shortest_opp_dist = max_dist
-    shortest_our_dist = max_dist
+    shortest_opp_time = float("inf")
+    shortest_our_time = float("inf")
     dodge_dist = constants.Robot.Radius
     closest_robot = None
 
@@ -90,19 +88,25 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
     for bot in their_robots_to_check:
         dist = estimate_path_length(bot.pos, target_pos, our_robots_to_dodge,
                                     dodge_dist)
-        if (dist < shortest_opp_dist):
-            shortest_opp_dist = dist
+        target_dir = (target_pos - bot.pos).normalized()
+        time = robocup.get_trapezoidal_time(dist, dist, 2.2, 1, target_dir.dot(bot.vel) / target_dir.mag(), 0)
+        if (time < shortest_opp_time):
+            shortest_opp_time = time
 
     # Find closest robot on our team
     for bot in our_robots_to_check:
         dist = estimate_path_length(bot.pos, target_pos, their_robots_to_dodge,
                                     dodge_dist)
-        if (dist < shortest_our_dist):
-            shortest_our_dist = dist
+        target_dir = (target_pos - bot.pos).normalized()
+        time = robocup.get_trapezoidal_time(dist, dist, 2.2, 1, target_dir.dot(bot.vel) / target_dir.mag(), 0)
+        if (time < shortest_our_time):
+            shortest_our_time = time
             closest_robot = bot
 
     # Greater than 1 when we are further away
-    return shortest_our_dist < shortest_opp_dist * (1 + valid_error_percent
+    print(shortest_our_time)
+    print(shortest_opp_time)
+    return shortest_our_time < shortest_opp_time * (1 + valid_error_percent
                                                     ), closest_robot
 
 
