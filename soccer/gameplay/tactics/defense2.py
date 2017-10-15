@@ -192,7 +192,8 @@ class Defense2(composite_behavior.CompositeBehavior):
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     excluded_bots.append(r)
 
-                threats.append((opp.pos, self.estimate_risk_score(opp, excluded_bots)))
+                threats.append(
+                    (opp.pos, self.estimate_risk_score(opp, excluded_bots)))
         else:
             for opp in potential_threats:
 
@@ -215,7 +216,6 @@ class Defense2(composite_behavior.CompositeBehavior):
     def estimate_risk_score(self, bot, excluded_bots=[]):
         passChance = evaluation.passing.eval_pass(
             main.ball().pos, bot.pos, excluded_robots=[bot] + excluded_bots)
-
 
         self.kick_eval.excluded_robots.clear()
         for r in excluded_bots:

@@ -2,6 +2,7 @@ import main
 import robocup
 import constants
 
+
 ## Estimates the length of a path given a start and end point
 #  @param start The start point of the path
 #  @param end The end point of the path
@@ -74,7 +75,8 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
     if their_robots_to_dodge is None:
         their_robots_to_dodge = main.their_robots()
 
-    max_dist = robocup.Point(constants.Field.Width, constants.Field.Length).mag()
+    max_dist = robocup.Point(constants.Field.Width,
+                             constants.Field.Length).mag()
     shortest_opp_dist = max_dist
     shortest_our_dist = max_dist
     dodge_dist = constants.Robot.Radius
