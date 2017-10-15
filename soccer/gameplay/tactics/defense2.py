@@ -163,7 +163,7 @@ class Defense2(composite_behavior.CompositeBehavior):
                 # Get all potential receivers
                 potential_receivers = []
                 for opp in potential_threats:
-                    if self.estimate_potential_recievers_score(opp):
+                    if self.estimate_potential_recievers_score(opp) == 1:
                         potential_receivers.append((opp.pos, 1))
 
                 if len(potential_receivers) > 0:
@@ -188,11 +188,11 @@ class Defense2(composite_behavior.CompositeBehavior):
             for opp in potential_threats:
 
                 # Exclude robots that have been assigned already
-                self.kick_eval.excluded_robots.clear()
+                excluded_bots = []
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
-                    self.kick_eval.add_excluded_robot(r)
+                    excluded_bots.append(r)
 
-                threats.append((opp.pos, self.estimate_risk_score(opp)))
+                threats.append((opp.pos, self.estimate_risk_score(opp, excluded_bots)))
         else:
             for opp in potential_threats:
 
@@ -210,10 +210,16 @@ class Defense2(composite_behavior.CompositeBehavior):
 
     ## Estimate risk score based on old defense.py play
     #  @param bot Robot to estimate score at
+    #  @param exluded_Bots Robots to exclude from the defense when calculating shot
     #  @return The risk score at that point (Shot chance * pass chance)
-    def estimate_risk_score(self, bot):
+    def estimate_risk_score(self, bot, excluded_bots=[]):
         passChance = evaluation.passing.eval_pass(
-            main.ball().pos, bot.pos, excluded_robots=[bot])
+            main.ball().pos, bot.pos, excluded_robots=[bot] + excluded_bots)
+
+
+        self.kick_eval.excluded_robots.clear()
+        for r in excluded_bots:
+            self.kick_eval.add_excluded_robot(r)
 
         point, shotChance = self.kick_eval.eval_pt_to_our_goal(bot.pos)
 

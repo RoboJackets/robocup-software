@@ -1,6 +1,6 @@
 import main
 import robocup
-
+import constants
 
 ## Estimates the length of a path given a start and end point
 #  @param start The start point of the path
@@ -11,6 +11,7 @@ import robocup
 def estimate_path_length(start, end, blocking_robots, dodge_dist):
     total = 0
     next_pt = start
+    prev_pt = start
     line = robocup.Segment(start, end)
     iterations = 0
     max_iterations = 10
@@ -33,8 +34,9 @@ def estimate_path_length(start, end, blocking_robots, dodge_dist):
             next_pt = pt2
 
         # Add dist to total
-        total += (next_pt - start).mag()
+        total += (next_pt - prev_pt).mag()
 
+        prev_pt = next_pt
         line = robocup.Segment(next_pt, end)
         blocking_robot = find_intersecting_robot(line, blocking_robots,
                                                  dodge_dist)
@@ -72,9 +74,10 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
     if their_robots_to_dodge is None:
         their_robots_to_dodge = main.their_robots()
 
-    shortest_opp_dist = 10
-    shortest_our_dist = 10
-    dodge_dist = 0.01
+    max_dist = robocup.Point(constants.Field.Width, constants.Field.Length).mag()
+    shortest_opp_dist = max_dist
+    shortest_our_dist = max_dist
+    dodge_dist = constants.Robot.Radius
     closest_robot = None
 
     # TODO: Do some sort of prediction as the ball moves
