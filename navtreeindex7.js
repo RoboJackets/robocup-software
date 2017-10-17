@@ -1,9 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html":[16,0,3,9,1,8,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a31cba68185be635356dba254b8557c80":[16,0,3,9,1,8,0,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a366db10bcd9da45ba18d8e95956864da":[16,0,3,9,1,8,0,4],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a3da2bcf17e0976d5c24fb3e3917b04d4":[16,0,3,9,1,8,0,1],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#aa898022c05ce4face2aaf764d1207424":[16,0,3,9,1,8,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#abf4d0467b43abd85d46b936a4c2005e4":[16,0,3,9,1,8,0,3],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html":[16,0,3,9,1,9,0],
@@ -135,14 +131,6 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html":[16,0,3,9,3,21,0],
 "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html#a2a660efc21b9605aaec1947fed77c2b4":[16,0,3,9,3,21,0,1],
 "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html#a42a7097118277d229fb2d9eecae44a6e":[16,0,3,9,3,21,0,0],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html":[16,0,3,9,3,22,0],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a060c0c676e5781288e30233d4c0d538d":[16,0,3,9,3,22,0,5],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a358290054cc5fbbd6ab5c03759ba5f11":[16,0,3,9,3,22,0,3],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a7c9df48e9efbfb90e1f3c53aee6e5e94":[16,0,3,9,3,22,0,1],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#aa014b43ac25b8467da861300f5f4c776":[16,0,3,9,3,22,0,4],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#ac2403c024f0fc7545e583884631ac86a":[16,0,3,9,3,22,0,6],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#af5ec5ac4b479e0d22e8cce4e526ba213":[16,0,3,9,3,22,0,2],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html":[16,0,3,9,3,22,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html":[16,0,3,9,4,0,0],
 "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html#a4101867addd732419f0a737afa5a4da4":[16,0,3,9,4,0,0,3],
 "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html#a46e9e891691358cdf7bcac5688709b91":[16,0,3,9,4,0,0,2],
@@ -249,5 +237,17 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ab856cdedf3b5ef20c120481c88a7569c":[16,0,3,13,0,4],
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ac0af2480e378ba668a1f7a9d0f6fa99f":[16,0,3,13,0,9],
 "classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ac6864697e8eb887600a55b180b393977":[16,0,3,13,0,1],
-"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#aca0d09ecb936a228dd0dc072ca167ba3":[16,0,3,13,0,5]
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#aca0d09ecb936a228dd0dc072ca167ba3":[16,0,3,13,0,5],
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#acbae54be1afbb7ab52550f2a337f33e0":[16,0,3,13,0,7],
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ada49081c640099d21c5a571f5d0d5dda":[16,0,3,13,0,0],
+"classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html#ae60f6db5daf44c1bd907c3c22609e971":[16,0,3,13,0,6],
+"classgameplay_1_1single__robot__sequence_1_1_single_robot_sequence.html":[16,0,3,14,0],
+"classgameplay_1_1single__robot__sequence_1_1_single_robot_sequence.html#a7934352a752d3839dabc7896eb68d171":[16,0,3,14,0,1],
+"classgameplay_1_1single__robot__sequence_1_1_single_robot_sequence.html#aca4ff716bce2297c253fd263169c3e5e":[16,0,3,14,0,0],
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html":[16,0,3,15,0,0],
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a01825a7bb353613353fed1181518b342":[16,0,3,15,0,0,15],
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a0cb3368494bf57d1fe42a062a8345a7d":[16,0,3,15,0,0,9],
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a194a7a031681829ee152147af9508125":[16,0,3,15,0,0,5],
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a1aa06fd98faac92c1db89a5f9d53ec32":[16,0,3,15,0,0,10],
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a287c43c07074a9f7c0ff8e003b23c33e":[16,0,3,15,0,0,30]
 };

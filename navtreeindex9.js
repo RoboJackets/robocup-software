@@ -1,17 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a2c4856c19879483d398297505a1b44d0":[16,0,3,15,15,0,24],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a2d02f795305efeb2ae1ee730ea8268a9":[16,0,3,15,15,0,5],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a4259f23df13d19087aebe4ca3f3f453a":[16,0,3,15,15,0,26],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a451c91481e811dbc60b9715a683324db":[16,0,3,15,15,0,13],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a5db6c8ab35270a6545d7e6281a5034fd":[16,0,3,15,15,0,8],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a5f48a5874c16099d9f0e3b2aa5f52d5f":[16,0,3,15,15,0,4],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a5f942444b90e189b9cc74e33a75a0569":[16,0,3,15,15,0,20],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a63c008516f508d2263c3ad99ef908806":[16,0,3,15,15,0,14],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a7343a52e5f0cd0c7a87c1c04ad1cf876":[16,0,3,15,15,0,15],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a8e558ad12d0188fb799e827c65e12b9c":[16,0,3,15,15,0,7],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a90c186f6e0411f282212e657e87c86e4":[16,0,3,15,15,0,10],
-"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a987e4d2cc813543836c34b5266cb721a":[16,0,3,15,15,0,6],
 "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a99ec67224eb5573dffc4eb021d781aae":[16,0,3,15,15,0,3],
 "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a9b9bec876b5485b04744e08d3191d044":[16,0,3,15,15,0,21],
 "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ab91ae2664752fe43ec06daa0ce0f7d71":[16,0,3,15,15,0,11],
@@ -249,5 +237,17 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a467b08d0245e7114cd3814bb0a683969":[16,0,3,17,8,4,0,16],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a7e14d2c8923bbbce57a4b8ea0016f460":[16,0,3,17,8,4,0,12],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a7e89ba1996c3540daa77c8c575ebbb66":[16,0,3,17,8,4,0,18],
-"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a7fb3bf27c9901819855b1653e55584b1":[16,0,3,17,8,4,0,10]
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a7fb3bf27c9901819855b1653e55584b1":[16,0,3,17,8,4,0,10],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a8003a65144ebdc20e6e58b6dcd322085":[16,0,3,17,8,4,0,11],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a957aab1cd32c652647253a6efe4072eb":[16,0,3,17,8,4,0,6],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aa5af13bc5e9022e085d131aa48e7119a":[16,0,3,17,8,4,0,19],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#abc11a4c1af45c118040c76db1c725d74":[16,0,3,17,8,4,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#abec7e952f705ace57d857df0c1f5a9af":[16,0,3,17,8,4,0,1],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ac8e37af1b0ab0563149b26456f4fe003":[16,0,3,17,8,4,0,13],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aca7e407bc40e40113f6e2e51876996f2":[16,0,3,17,8,4,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#acfb524263b3dcc2ecbc82a9a539fec67":[16,0,3,17,8,4,0,4],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ade3c96fb3c77083f11411c254f7603f4":[16,0,3,17,8,4,0,2],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html":[16,0,3,17,8,4,0,0],
+"classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html":[16,0,3,17,9,0],
+"classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html#a09108a69a5be5a35f8ae7421146bd9ea":[16,0,3,17,9,0,5]
 };

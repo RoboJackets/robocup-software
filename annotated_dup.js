@@ -154,9 +154,6 @@ var annotated_dup =
           ] ],
           [ "test_pivot_kick", null, [
             [ "TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick" ]
-          ] ],
-          [ "triangle_pass", null, [
-            [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
           ] ]
         ] ],
         [ "tuning", null, [
@@ -402,6 +399,9 @@ var annotated_dup =
     ] ],
     [ "test_role_assignment", null, [
       [ "TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", "classtest__role__assignment_1_1_test_role_assignment" ]
+    ] ],
+    [ "triangle_pass", null, [
+      [ "TrianglePass", "classtriangle__pass_1_1_triangle_pass.html", "classtriangle__pass_1_1_triangle_pass" ]
     ] ],
     [ "which_half", null, [
       [ "WhichHalf", "classwhich__half_1_1_which_half.html", "classwhich__half_1_1_which_half" ]
