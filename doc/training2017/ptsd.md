@@ -1,4 +1,4 @@
-# Skills, Tactics, Plays - 1 {#t20172}
+# Skills, Tactics, Plays {#t20172}
 
 
 # Python Overview
@@ -32,11 +32,6 @@ print(mydouble)
 print(mystr)
 ```
 
-    Hello World!
-    1
-    1.0
-    one
-
 
 ## IF Statements and Conditionals
 
@@ -62,13 +57,6 @@ print("a is greater than 3" if a > 3 else "a is less than 3")
 print("a is greater than 9" if a > 9 else "a is less than 9")
 ```
 
-    RoboCup is great!
-    RoboCup is the best!
-    a is greater than 2!
-    a is > 2 and < 10
-    a is greater than 3
-    a is less than 9
-
 
 ## Loops and range()
 
@@ -84,10 +72,6 @@ for i in range(10):
     print(i * i, end=" ")
 print("")
 ```
-
-    10 9 8 7 6 5 4 3 2 1
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    0 1 4 9 16 25 36 49 64 81
 
 
 ## Functions
@@ -354,8 +338,8 @@ def on_exit_processing(self):
 ## Tips
 
 -   The field coordinates start at 0, 0; Which is our Goal.
--   Field Size Docs: ([<http://bit.ly/2cLsUBL>](http://bit.ly/2cLsUBL))
--   Ball Position Docs: ([<http://bit.ly/2damxXA>](http://bit.ly/2damxXA))
+-   Field Size Docs: ([http://bit.ly/2cLsUBL](http://bit.ly/2cLsUBL))
+-   Ball Position Docs: ([http://bit.ly/2damxXA](http://bit.ly/2damxXA))
 -   Move the template starter from `soccer/gameplay/plays/skel/which_half.py` to `soccer/gameplay/plays/testing`
 -   Start by just printing the Y coordinate of the ball and work up from there
 
