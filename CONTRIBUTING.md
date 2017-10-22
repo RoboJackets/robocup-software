@@ -55,10 +55,10 @@ To automate this process, you can add [git hooks](https://git-scm.com/book/en/v2
 
 ## Contributing
 
-This picture should summarize the contribution workflow (after forking the repo to your own github repo, so you can push to it).
+This picture should summarize the contribution workflow (after forking the repo to your own GitHub repo, so you can push to it).
 
 ![contributions](https://cloud.githubusercontent.com/assets/4349709/11414363/8936f22e-93c2-11e5-9324-5c9055b1a4e4.jpg)
 
-The contribution workflow should mimic any other repository on github.
+If you are not a member of RoboJackets, please do not fix intro issues, as those are intended to be used to give new RoboJackets members practice using Git. Other than that, the contribution workflow should mimic any other repository on GitHub.
 
 Once your Pull Request is submitted, the current maintainer (and other members) will review the contribution for quality and correctness, and once all issues are resolved, your contribution will be merged into the main repository!
