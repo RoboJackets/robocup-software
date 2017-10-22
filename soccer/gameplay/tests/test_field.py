@@ -90,7 +90,7 @@ class TestField(unittest.TestCase):
 		width = constants.Field.Width
 		length = constants.Field.Length
 
-		msg = "evaluation.field.field_pos_coeff_at_pos not functioning as intended: "
+		msg = "evaluation.field.space_coeff_at_pos not functioning as intended: "
 
 		#########################################
 		## Test distance to center line factor ##

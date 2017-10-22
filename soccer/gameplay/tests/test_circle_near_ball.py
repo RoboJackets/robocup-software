@@ -42,7 +42,7 @@ class TestCircleNearBall(unittest.TestCase):
 		test_point(self, width * -1 / 2, 0)
 
 		# Checks (0, 0). Should be right in front of our goal
-		test_point(self, 0, 0)
+		
 
 		# Checks bottom right corner of field
 		test_point(self, width / 2, 0)
