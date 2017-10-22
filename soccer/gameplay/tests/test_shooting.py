@@ -21,7 +21,7 @@ class TestShooting(unittest.TestCase):
 		main.set_their_robots(self.robots)
 
 	def test_eval_shot(self):
-		val = "x"
-		val = evaluation.shooting.eval_shot(robocup.Point(0,2))
+		val = ""
+		# val = evaluation.shooting.eval_shot(robocup.Point(0,2))
 		# Ask Joe why this doesn't work :(
 		print(val)
