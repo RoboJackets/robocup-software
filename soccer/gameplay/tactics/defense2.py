@@ -192,7 +192,8 @@ class Defense2(composite_behavior.CompositeBehavior):
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     excluded_bots.append(r)
 
-                threats.append((opp.pos, self.estimate_risk_score(opp, excluded_bots), opp))
+                threats.append((opp.pos, self.estimate_risk_score(
+                    opp, excluded_bots), opp))
         else:
             for opp in potential_threats:
 
@@ -271,14 +272,12 @@ class Defense2(composite_behavior.CompositeBehavior):
 
         handlers = [goalie, defender1, defender2]
 
-
         # For each threat
         for threat_idx in range(len(threats_to_block)):
             # Get the threat pos and score
             threat = threats_to_block[threat_idx]
             # Grab the list of handlers assigned to this threat
             assigned_handler = assigned_handlers[threat_idx]
-
 
             # Exclude any robots we are about to assign to find the threats best shot
             self.kick_eval.excluded_robots.clear()
@@ -288,7 +287,6 @@ class Defense2(composite_behavior.CompositeBehavior):
             # Add opp robot into exclude list, assuming it is not a ball
             if (threat[2] is not None):
                 self.kick_eval.add_excluded_robot(threat[2])
-            
 
             # If nobody is assigned, move to next one
             if len(assigned_handler) == 0:
