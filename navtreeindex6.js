@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"classbinary__clock_1_1_binary_clock.html#a7963acd417adf68bf7461f6fa1858a6d":[16,0,0,0,1],
+"classbinary__clock_1_1_binary_clock.html#ad8f3f2251ee065ceb506f32f32e6338d":[16,0,0,0,3],
 "classbinary__clock_1_1_binary_clock_1_1_state.html":[16,0,0,0,0],
 "classes.html":[16,1],
 "classgameplay_1_1behavior_1_1_behavior.html":[16,0,3,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a66795a4807e58fd9dd435279b92f00df":[16,0,3,9,1,7,0,1],
 "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#aac43a567431a8eb9ec1bba41f0ec0080":[16,0,3,9,1,7,0,4],
 "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html":[16,0,3,9,1,8,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a31cba68185be635356dba254b8557c80":[16,0,3,9,1,8,0,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a366db10bcd9da45ba18d8e95956864da":[16,0,3,9,1,8,0,4],
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a3da2bcf17e0976d5c24fb3e3917b04d4":[16,0,3,9,1,8,0,1]
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a31cba68185be635356dba254b8557c80":[16,0,3,9,1,8,0,0]
 };

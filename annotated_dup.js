@@ -122,6 +122,9 @@ var annotated_dup =
           [ "test_defense", null, [
             [ "TestDefense", "classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense.html", "classgameplay_1_1plays_1_1testing_1_1test__defense_1_1_test_defense" ]
           ] ],
+          [ "test_defense2", null, [
+            [ "TestDefense2", "classgameplay_1_1plays_1_1testing_1_1test__defense2_1_1_test_defense2.html", "classgameplay_1_1plays_1_1testing_1_1test__defense2_1_1_test_defense2" ]
+          ] ],
           [ "test_defense_and_kicker", null, [
             [ "TestDefenseAndKicker", "classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker.html", "classgameplay_1_1plays_1_1testing_1_1test__defense__and__kicker_1_1_test_defense_and_kicker" ]
           ] ],
@@ -255,6 +258,9 @@ var annotated_dup =
         ] ],
         [ "defense", null, [
           [ "Defense", "classgameplay_1_1tactics_1_1defense_1_1_defense.html", "classgameplay_1_1tactics_1_1defense_1_1_defense" ]
+        ] ],
+        [ "defense2", null, [
+          [ "Defense2", "classgameplay_1_1tactics_1_1defense2_1_1_defense2.html", "classgameplay_1_1tactics_1_1defense2_1_1_defense2" ]
         ] ],
         [ "defensive_forward", null, [
           [ "DefensiveForward", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward.html", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward" ]

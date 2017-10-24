@@ -26,6 +26,7 @@ var searchData=
   ['arcradius',['ArcRadius',['../struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f',1,'Field_Dimensions']]],
   ['area_5fmarking',['area_marking',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html#aff106f198c70a1bfeebc810caa685964',1,'gameplay::tactics::positions::defender::Defender::State']]],
   ['assign',['assign',['../classrtp_1_1_packet.html#a23de4f51fe48e6d30085a9c9c3647331',1,'rtp::Packet']]],
+  ['assign_5fhandlers_5fto_5fthreats',['assign_handlers_to_threats',['../classgameplay_1_1tactics_1_1defense2_1_1_defense2.html#abeffc1d6d4096104b5307b5f1e4cb383',1,'gameplay::tactics::defense2::Defense2']]],
   ['assign_5froles',['assign_roles',['../classgameplay_1_1behavior_1_1_behavior.html#afd52eaedcc866b0b97b3716248a38168',1,'gameplay::behavior::Behavior']]],
   ['autoname',['AutoName',['../class_auto_name.html',1,'']]],
   ['avoidallopponentradius',['avoidAllOpponentRadius',['../class_our_robot.html#a99ff3312c7249d7893c0c719143b84b7',1,'OurRobot']]],

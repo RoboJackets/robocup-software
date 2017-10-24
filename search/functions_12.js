@@ -4,6 +4,7 @@ var searchData=
   ['saveplaybook',['savePlaybook',['../class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96',1,'Gameplay::GameplayModule']]],
   ['score',['score',['../classgameplay_1_1play_1_1_play.html#aafa609875cbd8ae4db87cdfe9acb4281',1,'gameplay::play::Play']]],
   ['self',['self',['../class_robot.html#a54366c96e4367b00216f42ae0405c552',1,'Robot']]],
+  ['set_5fdefender_5fblock_5flines',['set_defender_block_lines',['../classgameplay_1_1tactics_1_1defense2_1_1_defense2.html#a7fb0756895c2175763e4cc4385fcd546',1,'gameplay::tactics::defense2::Defense2']]],
   ['setcoeffs',['setCoeffs',['../class_f_i_r_filter.html#ac3ce994b4706cbe70027320275e5f4dc',1,'FIRFilter']]],
   ['seterrortext',['setErrorText',['../class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b',1,'RobotStatusWidget']]],
   ['setplanningpriority',['setPlanningPriority',['../class_our_robot.html#a747bbe856ee0716ead1817b39ad18982',1,'OurRobot']]],

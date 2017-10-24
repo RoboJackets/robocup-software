@@ -1,5 +1,7 @@
 var NAVTREEINDEX3 =
 {
+"class_logger.html#a319bb691923c443e11d0db44188d50cb":[16,0,43,10],
+"class_logger.html#a4602e9fa717e08acafa200cf5c3b7f3c":[16,0,43,0],
 "class_logger.html#a7fecdb53ac3a45d35bd71417eb375f8a":[16,0,43,8],
 "class_logger.html#a9930be1c39163aa25374e5a30794cc32":[16,0,43,6],
 "class_logger.html#ab1b0c938fc6770a6869c39644dd7638f":[16,0,43,13],
@@ -247,7 +249,5 @@ var NAVTREEINDEX3 =
 "class_planning_1_1_angle_function_path.html#a249b5cbca73032c41418c4244f17d00f":[16,0,7,0,13],
 "class_planning_1_1_angle_function_path.html#a3e64c9408fc3041afe9df4a377c1f3bf":[16,0,7,0,2],
 "class_planning_1_1_angle_function_path.html#a547285880162dcae4b2563ed5cc8d85b":[16,0,7,0,0],
-"class_planning_1_1_angle_function_path.html#a67dd9a6bce9136927aa19a18efb725b5":[16,0,7,0,4],
-"class_planning_1_1_angle_function_path.html#a762383607252b6ba549ebfb6c61c6e20":[16,0,7,0,3],
-"class_planning_1_1_angle_function_path.html#a7a42fdc451c28ae2b8d907705b886641":[16,0,7,0,12]
+"class_planning_1_1_angle_function_path.html#a67dd9a6bce9136927aa19a18efb725b5":[16,0,7,0,4]
 };
