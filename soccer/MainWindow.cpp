@@ -349,20 +349,24 @@ void MainWindow::updateViews() {
                                      true);
     }
 
-    if (_processor->multipleManual() && manual >= GamepadController::controllersInUse.size()){
+    if (_processor->multipleManual() &&
+        manual < 0) {
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
-                                    false);
+                                     false);
     } else {
-      _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
-                                   true);
+        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
+                                     true);
     }
 
     if (manual >= 0) {
-        int controller = 0;
-        if (_processor->multipleManual()){
-          controller = manual;
+        int index = 0;
+        std::vector<int> manualIds =  _processor->getJoystickRobotIds();
+        auto info = std::find(manualIds.begin(), manualIds.end(), manual);
+        if (info != manualIds.end()) {
+          index = info - manualIds.begin();
         }
-        JoystickControlValues vals = _processor->getJoystickControlValues()[controller];
+
+        JoystickControlValues vals = _processor->getJoystickControlValues()[index];
         _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
         _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
         _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));

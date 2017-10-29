@@ -98,6 +98,8 @@ public:
 
     bool autonomous();
     bool joystickValid() const;
+
+    JoystickControlValues getJoystickControlValue(Joystick& joy);
     std::vector<JoystickControlValues> getJoystickControlValues();
 
     void externalReferee(bool value) {
@@ -139,6 +141,7 @@ public:
 
     void joystickKickOnBreakBeam(bool value);
     void setupJoysticks();
+    std::vector<int> getJoystickRobotIds();
 
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
@@ -292,7 +295,7 @@ private:
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
     std::shared_ptr<BallTracker> _ballTracker;
 
-    // mixes values from all joysticks to control the single manual robot
+    // joystick control
     std::vector<Joystick*> _joysticks;
 
     // joystick damping

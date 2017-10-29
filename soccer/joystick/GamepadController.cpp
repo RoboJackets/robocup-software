@@ -1,4 +1,5 @@
 #include "GamepadController.hpp"
+#include <algorithm>
 
 using namespace std;
 
@@ -11,6 +12,7 @@ const float TRIGGER_CUTOFF = 0.9;
 }
 
 std::vector<int> GamepadController::controllersInUse = {};
+int GamepadController::joystickRemoved = -1;
 
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
@@ -34,6 +36,7 @@ GamepadController::GamepadController()
     // Controllers will be detected later if needed.
     connected = false;
     controllerId = -1;
+    robotId = -1;
     openJoystick();
 }
 
@@ -47,10 +50,12 @@ GamepadController::~GamepadController() {
 void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
-
         for (int i = 0; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
-          if (std::find(controllersInUse.begin(), controllersInUse.end(), i) == controllersInUse.end() && SDL_IsGameController(i)) {
+            if (std::find(controllersInUse.begin(), controllersInUse.end(),
+                          i) == controllersInUse.end() &&
+                SDL_IsGameController(i)) {
+                std::cout << i << std::endl;
                 SDL_GameController* controller;
                 controller = SDL_GameControllerOpen(i);
 
@@ -59,6 +64,7 @@ void GamepadController::openJoystick() {
                     connected = true;
                     controllerId = i;
                     controllersInUse.push_back(i);
+                    sort(controllersInUse.begin(), controllersInUse.end());
                     cout << "Using " << SDL_GameControllerName(_controller)
                          << " game controller as controller # "
                          << controllersInUse.size() << endl;
@@ -76,7 +82,15 @@ void GamepadController::openJoystick() {
 void GamepadController::closeJoystick() {
     cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
+    auto index =
+        find(controllersInUse.begin(), controllersInUse.end(), controllerId);
+    for (auto i = index + 1; i != controllersInUse.end(); i++) {
+        *i -= 1;
+    }
+    controllersInUse.erase(index);
     controllerId = -1;
+
+    robotId = -1;
     connected = false;
 }
 
@@ -90,6 +104,9 @@ void GamepadController::update() {
 
     if (connected) {
         // Check if dc
+        if (joystickRemoved > 0 && controllerId > joystickRemoved) {
+            controllerId -= 1;
+        }
         if (!SDL_GameControllerGetAttached(_controller)) {
             closeJoystick();
             return;

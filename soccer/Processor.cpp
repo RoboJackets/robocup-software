@@ -159,12 +159,14 @@ void Processor::setupJoysticks() {
     _joysticks.clear();
 
     GamepadController::controllersInUse.clear();
+    GamepadController::joystickRemoved = -1;
 
     for (int i = 0; i < 6; i++) {
         _joysticks.push_back(new GamepadController());
     }
 
-    _joysticks.push_back(new SpaceNavJoystick());
+    //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
+    //isValid() is working properly
 }
 
 /**
@@ -424,6 +426,7 @@ void Processor::run() {
         for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
+        GamepadController::joystickRemoved = false;
 
         runModels(detectionFrames);
         for (VisionPacket* packet : visionPackets) {
@@ -743,10 +746,15 @@ void Processor::sendRadioData() {
         }
     }
 
+    //------------------------------------------------------------------------------------------------------------------------------
+    // I BROKE STUFF
+    // Specifically the manualIds are being assigned to 14 and 15?
+
     // Add RadioTx commands for visible robots and apply joystick input
     int nextGamepad = 0;
-    std::vector<JoystickControlValues> controlVals = getJoystickControlValues();
-
+    std::vector<int> manualIds = getJoystickRobotIds();  // BOOKMARK
+    int numGamepads =
+        manualIds.size() - count(manualIds.begin(), manualIds.end(), -2);
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
@@ -756,18 +764,45 @@ void Processor::sendRadioData() {
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
 
-            if(_multipleManual && nextGamepad < controlVals.size()) {
-              applyJoystickControls(controlVals[nextGamepad],
-                                    txRobot->mutable_control(), r);
-              nextGamepad++;
-            } else if (r->shell() == _manualID) {
-                applyJoystickControls(controlVals[0],
-                                      txRobot->mutable_control(), r);
+            // MANUAL STUFF
+            if (_multipleManual) {
+                std::cout << "Shell: " << r->shell() << std::endl;
+                for (int x : manualIds) {
+                    std::cout << "mnlId: " << x << std::endl;
+                }
+                auto info =
+                    find(manualIds.begin(), manualIds.end(), r->shell());
+                int index = info - manualIds.begin();
+                std::cout << "shell: " << r->shell() << std::endl;
+                std::cout << "preindex: " << index << std::endl;
+
+                // figure out if this shell value has been assigned to a
+                // joystick
+                // do stuff with that information such as assign it to the first
+                // available
+                if (info == manualIds.end()) {
+                    for (int i = 0; i < manualIds.size(); i++) {
+                        if (manualIds[i] == -1) {
+                            index = i;
+                            _joysticks[i]->setRobotId(r->shell());
+                            manualIds[i] = r->shell();
+                            break;
+                        }
+                    }
+                }
+                // Segfaults because index = manualIds.end() because never found
+                // a spot to assign to
+                std::cout << "index: " << index << std::endl;
+                std::cout << "size: " << manualIds.size() << std::endl;
+
+                if (index < manualIds.size()) {
+                    applyJoystickControls(
+                        getJoystickControlValue(*_joysticks[index]),
+                        txRobot->mutable_control(), r);
+                }
             }
         }
     }
-
-
 
     for (const auto& pair : _robotConfigs) {
         auto config = tx->add_configs();
@@ -820,43 +855,58 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
-vector<JoystickControlValues> Processor::getJoystickControlValues() {
-    // Make list of values from each connected joystick
-    vector<JoystickControlValues> valsList;
+JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
+    JoystickControlValues vals = joy.getJoystickControlValues();
+    if (joy.valid()) {
+        // keep it in range
+        vals.translation.clamp(sqrt(2.0));
+        if (vals.rotation > 1) vals.rotation = 1;
+        if (vals.rotation < -1) vals.rotation = -1;
+
+        // Gets values from the configured joystick control
+        // values,respecting damped
+        // state
+        if (_dampedTranslation) {
+            vals.translation *=
+                Joystick::JoystickTranslationMaxDampedSpeed->value();
+        } else {
+            vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
+        }
+        if (_dampedRotation) {
+            vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+        } else {
+            vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+        }
+
+        // scale up kicker and dribbler speeds
+        vals.dribblerPower *= 128;
+        vals.kickPower *= 255;
+    }
+    return vals;
+}
+
+std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
+    std::vector<JoystickControlValues> vals;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
-            JoystickControlValues vals = joy->getJoystickControlValues();
-
-            // keep it in range
-            vals.translation.clamp(sqrt(2.0));
-            if (vals.rotation > 1) vals.rotation = 1;
-            if (vals.rotation < -1) vals.rotation = -1;
-
-            // Gets values from the configured joystick control
-            // values,respecting damped
-            // state
-            if (_dampedTranslation) {
-                vals.translation *=
-                    Joystick::JoystickTranslationMaxDampedSpeed->value();
-            } else {
-                vals.translation *=
-                    Joystick::JoystickTranslationMaxSpeed->value();
-            }
-            if (_dampedRotation) {
-                vals.rotation *=
-                    Joystick::JoystickRotationMaxDampedSpeed->value();
-            } else {
-                vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
-            }
-
-            // scale up kicker and dribbler speeds
-            vals.dribblerPower *= 128;
-            vals.kickPower *= 255;
-
-            valsList.push_back(vals);
+            vals.push_back(getJoystickControlValue(*joy));
         }
     }
-    return valsList;
+    return vals;
+}
+
+vector<int> Processor::getJoystickRobotIds() {
+    vector<int> robotIds;
+    std::cout << "-----------------------" << std::endl;
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) {
+            robotIds.push_back(joy->getRobotId());
+            std::cout << "robotId: " << joy->getRobotId() << std::endl;
+        } else {
+            robotIds.push_back(-2);
+        }
+    }
+    return robotIds;
 }
 
 void Processor::defendPlusX(bool value) {

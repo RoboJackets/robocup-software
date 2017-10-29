@@ -19,6 +19,7 @@ public:
     bool valid() const override;
 
     static std::vector<int> controllersInUse;
+    static int joystickRemoved;
 
 private:
     SDL_GameController* _controller;
