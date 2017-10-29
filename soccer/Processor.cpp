@@ -166,7 +166,7 @@ void Processor::setupJoysticks() {
     }
 
     //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
-    //isValid() is working properly
+    // isValid() is working properly
 }
 
 /**
@@ -800,9 +800,9 @@ void Processor::sendRadioData() {
                         getJoystickControlValue(*_joysticks[index]),
                         txRobot->mutable_control(), r);
                 }
-            }
-            else if (_manualID == r->shell()){
-              applyJoystickControls(getJoystickControlValues()[0], txRobot->mutable_control(), r);
+            } else if (_manualID == r->shell()) {
+                applyJoystickControls(getJoystickControlValues()[0],
+                                      txRobot->mutable_control(), r);
             }
         }
     }

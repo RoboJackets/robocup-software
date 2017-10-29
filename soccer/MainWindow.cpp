@@ -349,8 +349,7 @@ void MainWindow::updateViews() {
                                      true);
     }
 
-    if (_processor->multipleManual() &&
-        manual < 0) {
+    if (_processor->multipleManual() && manual < 0) {
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
     } else {
@@ -360,13 +359,14 @@ void MainWindow::updateViews() {
 
     if (manual >= 0) {
         int index = 0;
-        std::vector<int> manualIds =  _processor->getJoystickRobotIds();
+        std::vector<int> manualIds = _processor->getJoystickRobotIds();
         auto info = std::find(manualIds.begin(), manualIds.end(), manual);
         if (info != manualIds.end()) {
-          index = info - manualIds.begin();
+            index = info - manualIds.begin();
         }
 
-        JoystickControlValues vals = _processor->getJoystickControlValues()[index];
+        JoystickControlValues vals =
+            _processor->getJoystickControlValues()[index];
         _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
         _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
         _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
