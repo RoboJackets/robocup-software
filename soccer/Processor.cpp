@@ -801,6 +801,9 @@ void Processor::sendRadioData() {
                         txRobot->mutable_control(), r);
                 }
             }
+            else if (_manualID == r->shell()){
+              applyJoystickControls(getJoystickControlValues()[0], txRobot->mutable_control(), r);
+            }
         }
     }
 
