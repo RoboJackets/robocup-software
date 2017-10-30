@@ -795,6 +795,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_avoid_opponents", &OurRobot_set_avoid_opponents)
         .def("set_dribble_speed", &OurRobot::dribble)
         .def("has_ball", &OurRobot::hasBall)
+        .def("has_ball_raw", &OurRobot::hasBallRaw)
         .def("last_kick_time", &OurRobot::lastKickTime)
         .def("just_kicked", &OurRobot::justKicked)
         .def("has_chipper", &OurRobot::chipper_available)
