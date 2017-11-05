@@ -106,7 +106,7 @@ void GamepadController::update() {
 
     if (connected) {
         // Check if dc
-        if (joystickRemoved > 0 && controllerId > joystickRemoved) {
+        if (joystickRemoved >= 0 && controllerId > joystickRemoved) {
             controllerId -= 1;
         }
         if (!SDL_GameControllerGetAttached(_controller)) {
