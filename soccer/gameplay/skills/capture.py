@@ -42,18 +42,21 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                             'immediately')
 
         self.add_transition(
-            Capture.State.course_approach, Capture.State.fine_approach,
-            lambda: (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
-            'dist to ball < threshold')
+            Capture.State.course_approach,
+            Capture.State.fine_approach, lambda: (self.bot_in_front_of_ball(
+            ) or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball(
+            ).valid, 'dist to ball < threshold')
 
         self.add_transition(
-            Capture.State.fine_approach, behavior.Behavior.State.completed,
-            lambda: self.bot_near_ball(constants.Robot.Radius + constants.Ball.Radius),
-            'has ball')
+            Capture.State.fine_approach,
+            behavior.Behavior.State.completed, lambda: self.bot_near_ball(
+                constants.Robot.Radius + constants.Ball.Radius), 'has ball')
 
         self.add_transition(
-            Capture.State.fine_approach, Capture.State.course_approach,
-            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
+            Capture.State.fine_approach, Capture.State.course_approach, lambda:
+            not (self.bot_in_front_of_ball() or self.bot_near_ball(
+                Capture.CourseApproachDist)) and (not self.bot_near_ball(
+                    Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
 
         self.dribbler_power = Capture.DribbleSpeed
@@ -129,7 +132,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_ball(r).dist_to(r.pos)
+            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_ball(
+                r).dist_to(r.pos)
 
         return reqs
 
@@ -146,8 +150,8 @@ def find_robot_intercept_ball(robot):
         # how long will it take the ball to get there
         ball_time = evaluation.ball.rev_predict(main.ball().vel, dist)
         robotDist = (pos - robot.pos).mag() * 0.6
-        bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2,
-                                                1, robot.vel.mag(), 0)
+        bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2, 1,
+                                                robot.vel.mag(), 0)
 
         if bot_time < ball_time:
             break
