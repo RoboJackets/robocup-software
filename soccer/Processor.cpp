@@ -748,7 +748,7 @@ void Processor::sendRadioData() {
 
     //------------------------------------------------------------------------------------------------------------------------------
     // I BROKE STUFF
-    // Specifically the manualIds are being assigned to 14 and 15?
+    // Segfault after remove all joysticks readd and then try to remove one
 
     // Add RadioTx commands for visible robots and apply joystick input
     int nextGamepad = 0;

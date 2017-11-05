@@ -88,8 +88,8 @@ void GamepadController::closeJoystick() {
         for (auto i = index + 1; i != controllersInUse.end(); i++) {
             *i -= 1;
         }
+        controllersInUse.erase(index);
     }
-    controllersInUse.erase(index);
     controllerId = -1;
 
     robotId = -1;
