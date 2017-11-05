@@ -85,12 +85,10 @@ void GamepadController::closeJoystick() {
     auto index =
         find(controllersInUse.begin(), controllersInUse.end(), controllerId);
     if (index != controllersInUse.end()) {
-        controllersInUse.erase(index);
-        std::cout<<"controllers in use: "<<std::endl;
-        for (; index != controllersInUse.end(); index++) {
-          std::cout<<*index<<std::endl;
-          *index -= 1;
+        for (auto i = index + 1; i != controllersInUse.end(); i++) {
+            *i -= 1;
         }
+        controllersInUse.erase(index);
     }
     controllerId = -1;
 
