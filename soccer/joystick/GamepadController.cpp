@@ -84,8 +84,10 @@ void GamepadController::closeJoystick() {
     SDL_GameControllerClose(_controller);
     auto index =
         find(controllersInUse.begin(), controllersInUse.end(), controllerId);
-    for (auto i = index + 1; i != controllersInUse.end(); i++) {
-        *i -= 1;
+    if (index != controllersInUse.end()) {
+        for (auto i = index + 1; i != controllersInUse.end(); i++) {
+            *i -= 1;
+        }
     }
     controllersInUse.erase(index);
     controllerId = -1;
