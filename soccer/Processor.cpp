@@ -764,15 +764,9 @@ void Processor::sendRadioData() {
 
             // MANUAL STUFF
             if (_multipleManual) {
-                std::cout << "Shell: " << r->shell() << std::endl;
-                for (int x : manualIds) {
-                    std::cout << "mnlId: " << x << std::endl;
-                }
                 auto info =
                     find(manualIds.begin(), manualIds.end(), r->shell());
                 int index = info - manualIds.begin();
-                std::cout << "shell: " << r->shell() << std::endl;
-                std::cout << "preindex: " << index << std::endl;
 
                 // figure out if this shell value has been assigned to a
                 // joystick
@@ -788,10 +782,6 @@ void Processor::sendRadioData() {
                         }
                     }
                 }
-                // Segfaults because index = manualIds.end() because never found
-                // a spot to assign to
-                std::cout << "index: " << index << std::endl;
-                std::cout << "size: " << manualIds.size() << std::endl;
 
                 if (index < manualIds.size()) {
                     applyJoystickControls(
@@ -902,7 +892,6 @@ vector<int> Processor::getJoystickRobotIds() {
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
             robotIds.push_back(joy->getRobotId());
-            std::cout << "robotId: " << joy->getRobotId() << std::endl;
         } else {
             robotIds.push_back(-2);
         }

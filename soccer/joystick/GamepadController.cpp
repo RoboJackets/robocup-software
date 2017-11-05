@@ -82,6 +82,10 @@ void GamepadController::openJoystick() {
 void GamepadController::closeJoystick() {
     cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
+    std::cout<<"before close"<<std::endl;
+    for (int* i : controllersInUse) {
+      std::cout<<i<<" , ";
+    }
     auto index =
         find(controllersInUse.begin(), controllersInUse.end(), controllerId);
     if (index != controllersInUse.end()) {
@@ -90,6 +94,11 @@ void GamepadController::closeJoystick() {
         }
         controllersInUse.erase(index);
     }
+    std::cout<<std::endl<<"after remove"<<std::endl;
+    for (int* i : controllersInUse) {
+      std::cout<<i<<" , ";
+    }
+    std::cout<<std::endl;
     controllerId = -1;
 
     robotId = -1;
