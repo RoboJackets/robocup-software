@@ -426,7 +426,7 @@ void Processor::run() {
         for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
-        GamepadController::joystickRemoved = false;
+        GamepadController::joystickRemoved = -1;
 
         runModels(detectionFrames);
         for (VisionPacket* packet : visionPackets) {
@@ -749,12 +749,10 @@ void Processor::sendRadioData() {
     //------------------------------------------------------------------------------------------------------------------------------
     // I BROKE STUFF
     // Segfault after remove all joysticks readd and then try to remove one
+    // Now it just doesn't recognize readding a second joystick???
 
     // Add RadioTx commands for visible robots and apply joystick input
-    int nextGamepad = 0;
     std::vector<int> manualIds = getJoystickRobotIds();  // BOOKMARK
-    int numGamepads =
-        manualIds.size() - count(manualIds.begin(), manualIds.end(), -2);
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
