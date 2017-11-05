@@ -25,7 +25,7 @@ class TestField(unittest.TestCase):
 	#
 	# @param x final x coordinate of robots
 	# @param y final y coordinate of robots
-	#
+	# 
 	def set_robot_pos(self, x, y):
 		for robot in self.robots:
 			robot.set_pos(x, y)
@@ -35,7 +35,7 @@ class TestField(unittest.TestCase):
 	#
 	# @param x: x coordinate of point
 	# @param y: y coordinate of point
-	# 
+	# @param rad: distance of robots from point
 	def set_robots_around_pos(self, x, y, rad):
 		self.robots[0].set_pos(x - constants.Robot.Radius * rad, y - constants.Robot.Radius * rad)
 		self.robots[1].set_pos(x - constants.Robot.Radius * rad, y + constants.Robot.Radius * rad)
@@ -84,6 +84,7 @@ class TestField(unittest.TestCase):
 		# @param center: How much to weight being close to the 'center of the field'
 		# @param dist: How much to weight being close to the opponents goal
 		# @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
+		# @param attack: Whether attacking their goal
 		def run_function(x, y, center, dist, angl, attack=True):
 			return evaluation.field.field_pos_coeff_at_pos(robocup.Point(x, y), center, dist, angl, attack)
 

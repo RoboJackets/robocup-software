@@ -24,8 +24,11 @@ class TestCircleNearBall(unittest.TestCase):
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
 			for point in array:		
-				self.assertTrue(point.x >= width * -1 / 2 and point.x <= width / 2, msg="failure of get_circle_points. X position of points are outside the field. Point's x position is %d" %point.x)
-				self.assertTrue(point.y >= 0 and point.y <= length, msg="failure of get_circle_points. Y positions of points are outside the field. Point's y position is %d" %point.y )
+				self.assertLessEqual(point.x, width, "X position of points are outside the field.")
+				self.assertGreaterEqual(point.x, width * -0.5, "X position of points are outside the field.")
+				
+				self.assertLessEqual(point.y, length, "Y positions of points are outside the field.")
+				self.assertGreaterEqual(point.y, 0, "Y positions of points are outside the field.")
 		
 		# Checks a point on the field to see if the circle around it is valid
 		def test_point(self, x, y):
@@ -59,18 +62,18 @@ class TestCircleNearBall(unittest.TestCase):
 	def test_normalize_angle(self):
 		angle = -math.pi
 		while (angle < 0):
-			self.assertEqual(self.circle_near_ball.normalize_angle(angle),
+			self.assertAlmostEqual(self.circle_near_ball.normalize_angle(angle),
 				angle + 2 * math.pi, msg="Unexpected value for normalize angle.")
 			angle += math.pi / 6
 		angle = 0
 		while (angle <= 2 * math.pi):
-			self.assertEqual(angle, 
+			self.assertAlmostEqual(angle, 
 				self.circle_near_ball.normalize_angle(angle), 
 				msg="Unexpected value for normalize angle.")
 			angle += math.pi / 6
 		angle = 3 * math.pi
 		while (angle < 4 * math.pi):
-			self.assertEqual(angle - 2 * math.pi,
+			self.assertAlmostEqual(angle - 2 * math.pi,
 				self.circle_near_ball.normalize_angle(angle), 
 				msg="Unexpected value for normalize angle.")
 			angle += math.pi / 6
