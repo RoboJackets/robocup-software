@@ -24,7 +24,7 @@ class TestCircleNearBall(unittest.TestCase):
 		def assert_circle_points(self):
 			array = self.circle_near_ball.get_circle_points(6)
 			for point in array:		
-				self.assertLessEqual(point.x, width, "X position of points are outside the field.")
+				self.assertLessEqual(point.x, width * 0.5, "X position of points are outside the field.")
 				self.assertGreaterEqual(point.x, width * -0.5, "X position of points are outside the field.")
 				
 				self.assertLessEqual(point.y, length, "Y positions of points are outside the field.")
