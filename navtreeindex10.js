@@ -1,5 +1,8 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a972ebd69075c88cf11b827e947520d2d":[16,0,3,17,9,3,0,10],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a9b115b63d4ff6d319ff87d34e88767f4":[16,0,3,17,9,3,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94":[16,0,3,17,9,3,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa9ad97a852015aaac9dc81905ce8d051":[16,0,3,17,9,3,0,11],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab62a9a800364e65adf07eb279c6e81a9":[16,0,3,17,9,3,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#adc3fa408e515edb60ec235d6bfddf4d6":[16,0,3,17,9,3,0,12],
@@ -192,8 +195,8 @@ var NAVTREEINDEX10 =
 "functions_d.html":[16,3,0,4],
 "functions_e.html":[16,3,0,5],
 "functions_f.html":[16,3,0,6],
-"functions_func.html":[16,3,1],
 "functions_func.html":[16,3,1,0],
+"functions_func.html":[16,3,1],
 "functions_func_a.html":[16,3,1,1],
 "functions_func_b.html":[16,3,1,2],
 "functions_func_c.html":[16,3,1,3],
@@ -246,8 +249,5 @@ var NAVTREEINDEX10 =
 "group__drawing__functions.html#gabbed0adecc1343134a049ff20daec23e":[16,0,78,6],
 "group__drawing__functions.html#gac421595f2a551228d2293bb0d8d89782":[16,0,78,12],
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[16,0,78,3],
-"group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[16,0,78,8],
-"group__matrices.html":[14,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[14,0,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[16,0,2,0,2]
+"group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[16,0,78,8]
 };
