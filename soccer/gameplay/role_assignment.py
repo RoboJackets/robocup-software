@@ -24,7 +24,7 @@ class RoleRequirements:
 
         # A lambda function property that allows customization of cost
         # Has exactly one parameter, which is a robot
-        self.cost_func = None
+        self.cost_func = lambda r: 0
 
     def __str__(self):
         props = []
@@ -266,8 +266,7 @@ def assign_roles(robots, role_reqs):
                     cost += req.robot_change_cost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
-                if req.cost_func != None:
-                    cost += req.cost_func(robot)
+                cost += req.cost_func(robot)
 
             # the munkres library freezes when given NaN values, causing our
             # whole program to hang and have to be restarted.  We check for it
