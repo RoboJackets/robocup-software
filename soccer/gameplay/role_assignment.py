@@ -21,6 +21,10 @@ class RoleRequirements:
 
         # multiply this by the distance between two points to get the cost
         self.position_cost_multiplier = 1.0
+        
+        # A lambda function property that allows customization of cost
+        # Has exactly one parameter, which is a robot
+        self.cost_func = lambda r: 0
 
     def __str__(self):
         props = []
@@ -138,6 +142,13 @@ class RoleRequirements:
     def priority(self, value):
         self._priority = value
 
+    @property
+    def cost_func(self):
+        return self._cost_func
+
+    @cost_func.setter
+    def cost_func(self, value):
+        self._cost_func = value
 
 # given a role requirements tree (with RoleRequirements or assignment tuples as leaves),
 # yields all of the RoleRequiements objects
@@ -254,6 +265,7 @@ def assign_roles(robots, role_reqs):
                     cost += req.robot_change_cost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
+                cost += req.cost_func(robot)
 
             # the munkres library freezes when given NaN values, causing our
             # whole program to hang and have to be restarted.  We check for it
