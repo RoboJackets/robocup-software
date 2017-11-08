@@ -158,6 +158,9 @@ var annotated_dup =
           [ "test_pivot_kick", null, [
             [ "TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick" ]
           ] ],
+          [ "test_priority", null, [
+            [ "TestPriority", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority.html", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority" ]
+          ] ],
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
           ] ]

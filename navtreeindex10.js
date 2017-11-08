@@ -1,5 +1,13 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed5c39b6c8aff6b6dab240e7805c2a5":[16,0,3,17,9,2,0,15],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html":[16,0,3,17,9,2,0,0],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html":[16,0,3,17,9,3,0],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a13c2700f54da2b6add41d332a6f5e8f6":[16,0,3,17,9,3,0,5],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a1d470f76752fdf3b4556e11aea6649e7":[16,0,3,17,9,3,0,8],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a580c143cf82ef92899613c131cbd7069":[16,0,3,17,9,3,0,1],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a7652fb03c4c1cd0bb9e741c73265736a":[16,0,3,17,9,3,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a965e8dc75642f569e3bfc178e3c6b7f8":[16,0,3,17,9,3,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a972ebd69075c88cf11b827e947520d2d":[16,0,3,17,9,3,0,10],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a9b115b63d4ff6d319ff87d34e88767f4":[16,0,3,17,9,3,0,9],
 "classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94":[16,0,3,17,9,3,0,4],
@@ -241,13 +249,5 @@ var NAVTREEINDEX10 =
 "group__drawing__functions.html":[14,1],
 "group__drawing__functions.html#ga0e2cfd392209bc55a231a8f286c7436c":[16,0,78,5],
 "group__drawing__functions.html#ga1b05550ea8f058670a0792cb6e7be8b1":[16,0,78,4],
-"group__drawing__functions.html#ga3225d93e0271fb56247afc6458e52add":[16,0,78,11],
-"group__drawing__functions.html#ga3fe8ee373e21333e3ee56649516f30bc":[16,0,78,9],
-"group__drawing__functions.html#ga68a562c6007cbd0be99fa2f2e6bc2b9e":[16,0,78,10],
-"group__drawing__functions.html#ga7aaafd2a33d891f2908b5c2d1eede831":[16,0,78,13],
-"group__drawing__functions.html#ga94450130819ff3b4dd47f11a8ed6cbec":[16,0,78,7],
-"group__drawing__functions.html#gabbed0adecc1343134a049ff20daec23e":[16,0,78,6],
-"group__drawing__functions.html#gac421595f2a551228d2293bb0d8d89782":[16,0,78,12],
-"group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[16,0,78,3],
-"group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[16,0,78,8]
+"group__drawing__functions.html#ga3225d93e0271fb56247afc6458e52add":[16,0,78,11]
 };

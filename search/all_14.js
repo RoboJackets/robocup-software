@@ -38,6 +38,7 @@ var searchData=
   ['testonetouchpass',['TestOneTouchPass',['../classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html',1,'gameplay::plays::testing::test_one_touch_pass']]],
   ['testpivotkick',['TestPivotKick',['../classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html',1,'gameplay::plays::testing::test_pivot_kick']]],
   ['testplayregistry',['TestPlayRegistry',['../classtest__play__registry_1_1_test_play_registry.html',1,'test_play_registry']]],
+  ['testpriority',['TestPriority',['../classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority.html',1,'gameplay::plays::testing::test_priority']]],
   ['testroleassignment',['TestRoleAssignment',['../classtest__role__assignment_1_1_test_role_assignment.html',1,'test_role_assignment']]],
   ['theirkickoff',['TheirKickoff',['../classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html',1,'gameplay::plays::restarts::their_kickoff']]],
   ['theirrestart',['TheirRestart',['../classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html',1,'gameplay::plays::restarts::their_restart']]],

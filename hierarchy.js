@@ -221,9 +221,6 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ],
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -253,6 +250,7 @@ var hierarchy =
             [ "gameplay.plays.testing.test_num_on_offense.TestNumOnOffense", "classgameplay_1_1plays_1_1testing_1_1test__num__on__offense_1_1_test_num_on_offense.html", null ],
             [ "gameplay.plays.testing.test_one_touch_pass.TestOneTouchPass", "classgameplay_1_1plays_1_1testing_1_1test__one__touch__pass_1_1_test_one_touch_pass.html", null ],
             [ "gameplay.plays.testing.test_pivot_kick.TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", null ],
+            [ "gameplay.plays.testing.test_priority.TestPriority", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority.html", null ],
             [ "gameplay.plays.testing.triangle_pass.TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", null ],
             [ "gameplay.plays.tuning.pid.pid", "classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html", null ],
             [ "gameplay.plays.tuning.test_jittery_motion.TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", null ],
@@ -326,6 +324,9 @@ var hierarchy =
         ] ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
