@@ -4,6 +4,10 @@ import main
 import evaluation.opponent
 import constants
 
+class Moc_Ball:
+	def __init__(self, x, y):
+		self.pos = robocup.Point(x, y)
+
 class Moc_Robot:
 	def __init__(self, x, y):
 		self.pos = robocup.Point(x, y)
@@ -20,22 +24,46 @@ class TestOpponent(unittest.TestCase):
 		self.robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
 				Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
 		main.set_their_robots(self.robots)
+		main.set_ball(Moc_Ball(0, 0))
 
 	# Set some robots position to a single point
-	# modify robots[start] -> modify[end] position
 	#
-	# @param start starting index to modify
-	# @param end last index to modify
+	# @param numBots: number of robots to send to point
 	# @param x final x coordinate of robots
 	# @param y final y coordinate of robots
 	#
-	def set_robot_pos(self, start, end, x, y):
-		for i in range(start, end + 1):
+	def set_robot_pos(self, numBots, x, y):
+		for i in range(numBots):
 			self.robots[i].set_pos(x, y)
 		main.set_their_robots(self.robots)
 
 	def test_num_on_offense(self):
-		self.set_robot_pos(0, 2, 0, constants.Field.Length)
-		val = evaluation.opponent.num_on_offense()
-		print(val)
-		print(main.ball().pos)
+		length = constants.Field.Length
+		width = constants.Field.Width
+
+		# Easier than typing out whole function
+		def run_function():
+			return evaluation.opponent.num_on_offense()
+
+		# Enemy robots located at their goal, ball is at our goal
+		self.set_robot_pos(6, 0, length)
+		self.assertEqual(run_function(), 0, "Enemy robots located at the enemy goal are considered on offense")
+
+		# Enemy robots located at our goal, ball is at our goal
+		self.set_robot_pos(6, 0, 0)
+		self.assertEqual(run_function(), 6, "Enemy robots located at our goal are not considered on offense")
+
+		# 3 robots are located at our goal, ball is at our goal
+		self.set_robot_pos(3, 0, length)
+		self.assertEqual(run_function, 3, "some enemy robots located at our goal are not considered on offense")
+
+		# Enemy robots are on their side of the field, ball is located close to them
+		self.set_robot_pos(6, 0, length * 3 / 4)
+		main.set_ball(Moc_Ball(0, length * 3 / 4))
+		self.assertEqual(run_function(), 6, "Enemy robots located near the ball are not considered on offense")
+		
+		# Enemy robots are on our side of the field, ball is located on the other side of the field
+		self.set_robot_pos(6, 0, length / 4)
+		self.assertEqual(run_function(), 6, "Enemy robots located on our side of the field are not considered on offense")
+
+
