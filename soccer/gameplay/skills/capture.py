@@ -132,7 +132,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_ball(
+            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(
                 r).dist_to(r.pos)
 
         return reqs
