@@ -305,7 +305,7 @@ class Defense(composite_behavior.CompositeBehavior):
                                             main.ball().pos + main.ball().vel)
 
             # this is a shot on the goal!
-            if evaluation.ball.is_moving_towards_our_goal():
+            if evaluation.ball.ball_is_shot_at_goal():
                 ball_threat = Threat(main.ball().pos)
                 ball_threat.ball_acquire_chance = 1.0
                 ball_threat.shot_chance = 1.0
