@@ -138,7 +138,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         return reqs
 
 
-def find_robot_intercept_ball(robot):
+def find_robot_intercept_point(robot):
     if robot is None:
         return main.ball().pos
     approach_vec = approach_vector(robot)
