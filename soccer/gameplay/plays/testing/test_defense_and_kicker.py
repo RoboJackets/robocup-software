@@ -16,7 +16,7 @@ class TestDefenseAndKicker(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        b = tactics.defense.Defense()
+        #b = tactics.defense.Defense()
         self.add_subbehavior(b, name='defense', required=True)
 
         kick = skills.pivot_kick.PivotKick()
@@ -28,12 +28,12 @@ class TestDefenseAndKicker(play.Play):
     def execute_running(self):
         kick = self.subbehavior_with_name('kick')
 
-        sublist = self.subbehavior_with_name('defense').all_subbehaviors()
-        roblist = []
-        for behavior in sublist:
-            roblist.append(behavior.robot)
+        #sublist = self.subbehavior_with_name('defense').all_subbehaviors()
+        #roblist = []
+        #for behavior in sublist:
+        #    roblist.append(behavior.robot)
 
-        kick.shot_obstacle_ignoring_robots = roblist
+        #kick.shot_obstacle_ignoring_robots = roblist
 
         if kick.is_done_running():
             kick.restart()
