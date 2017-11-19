@@ -164,6 +164,7 @@ def iterate_role_requirements_tree_leaves(reqs_tree):
 class ImpossibleAssignmentError(RuntimeError):
     pass
 
+
 # the munkres library doesn't like infinity, so we use this instead
 MaxWeight = 10000000
 
@@ -217,8 +218,8 @@ def assign_roles(robots, role_reqs):
     # logs the assignment parameters and raises an ImpossibleAssignmentError
     def fail(errStr):
         botsDesc = 'Robots:\n\t' + '\n\t'.join([str(bot) for bot in robots])
-        rolesDesc = 'Roles:\n\t' + '\n\t'.join([str(role)
-                                                for role in role_reqs_list])
+        rolesDesc = 'Roles:\n\t' + '\n\t'.join(
+            [str(role) for role in role_reqs_list])
         logging.error('Failed Assignment:\n' + botsDesc + '\n' + rolesDesc)
         raise ImpossibleAssignmentError(
             "No assignments possible that satisfy all constraints")
@@ -251,9 +252,8 @@ def assign_roles(robots, role_reqs):
             elif req.has_ball == True and robot.has_ball() == False:
                 cost = MaxWeight
             elif req.require_kicking and (
-                    robot.shell_id() ==
-                    evaluation.double_touch.tracker().forbidden_ball_toucher()
-                    or not robot.kicker_works() or
+                    robot.shell_id() == evaluation.double_touch.tracker()
+                    .forbidden_ball_toucher() or not robot.kicker_works() or
                     not robot.ball_sense_works()):
                 cost = MaxWeight
             else:
@@ -272,7 +272,8 @@ def assign_roles(robots, role_reqs):
             # here and raise an exception if there's a NaN.
             if (math.isnan(cost)):
                 raise ArithmeticError(
-                    "NaN value encountered when building role assignment cost matrix")
+                    "NaN value encountered when building role assignment cost matrix"
+                )
 
             cost_row.append(cost)
         cost_matrix.append(cost_row)
