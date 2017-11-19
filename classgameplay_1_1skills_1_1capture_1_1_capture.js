@@ -2,7 +2,6 @@ var classgameplay_1_1skills_1_1capture_1_1_capture =
 [
     [ "State", "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html", null ],
     [ "__init__", "classgameplay_1_1skills_1_1capture_1_1_capture.html#ab56d3223db7cb825de5bedbd055082d5", null ],
-    [ "approach_vector", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a19ce23b8b56e88c21553eb8f5c292c3a", null ],
     [ "bot_in_front_of_ball", "classgameplay_1_1skills_1_1capture_1_1_capture.html#a4dc63765a9b87f06fc19be7b63630711", null ],
     [ "bot_near_ball", "classgameplay_1_1skills_1_1capture_1_1_capture.html#aa069c94f4122141e8ab85b2cef2f5bf7", null ],
     [ "bot_to_ball", "classgameplay_1_1skills_1_1capture_1_1_capture.html#af23a6e55a0a5a6dabac5b3c8da467afb", null ],
