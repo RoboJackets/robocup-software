@@ -164,6 +164,13 @@ def save_playbook(file_name, isAbsolute=False):
         (PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name,
         _play_registry.get_enabled_plays_paths())
 
+def clear():
+    global _play_registry
+    _play_registry.clear();
+
+def checkPlayStatus():
+    global _play_registry
+    return len(_play_registry.get_enabled_plays_paths())
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():

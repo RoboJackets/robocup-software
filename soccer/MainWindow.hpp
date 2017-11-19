@@ -168,6 +168,8 @@ private Q_SLOTS:
     // Playbook
     void on_loadPlaybook_clicked();
     void on_savePlaybook_clicked();
+    void on_clearPlays_clicked();
+    void playStatus(bool color);
 
     // Fast Ref Buttons
     void on_fastHalt_clicked();

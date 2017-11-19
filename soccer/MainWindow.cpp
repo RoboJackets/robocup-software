@@ -814,6 +814,10 @@ void MainWindow::updateStatus() {
         return;
     }
 
+    if(_processor->gameplayModule()->checkPlayStatus()) {
+      playStatus(false);
+    }
+
     // Some conditions are different in simulation
     bool sim = _processor->simulation();
 
@@ -948,6 +952,15 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
         }
     }
 }
+
+void MainWindow::playStatus(bool color) {
+    if (color) {
+      _ui.playStatus->setStyleSheet("background-color: #00ff00");
+    } else {
+      _ui.playStatus->setStyleSheet("background-color: #ff0000");
+    }
+}
+
 
 void MainWindow::updateRadioBaseStatus(bool usbRadio) {
     QString label =
@@ -1398,7 +1411,8 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item) {
     _ui.fieldView->update();
 }
 
-void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column) {}
+void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column) {
+}
 
 void MainWindow::on_loadConfig_clicked() {
     QString filename = QFileDialog::getOpenFileName(this, "Load Configuration");
@@ -1428,6 +1442,7 @@ void MainWindow::on_loadPlaybook_clicked() {
         try {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
                                                        true);
+            playStatus(true);
         } catch (runtime_error* error) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
@@ -1443,11 +1458,17 @@ void MainWindow::on_savePlaybook_clicked() {
         try {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
                                                        true);
+            playStatus(true);
         } catch (runtime_error* error) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
     }
+}
+
+void MainWindow::on_clearPlays_clicked() {
+    _processor->gameplayModule()->clearPlays();
+    playStatus(true);
 }
 
 void MainWindow::setRadioChannel(RadioChannels channel) {

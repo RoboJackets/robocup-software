@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
+#include <MainWindow.hpp>
 
 // for python stuff
 #include "robocup-py.hpp"
@@ -253,6 +254,27 @@ void Gameplay::GameplayModule::savePlaybook(const string& playbookFile,
         throw new runtime_error("Error trying to save playbook.");
     }
     PyGILState_Release(state);
+}
+
+void Gameplay::GameplayModule::clearPlays() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    getMainModule().attr("clear")();
+    PyGILState_Release(state);
+}
+
+bool Gameplay::GameplayModule::checkPlayStatus() {
+  PyGILState_STATE state = PyGILState_Ensure();
+  static int prevStatus = extract<int>(getMainModule().attr("checkPlayStatus")());
+  bool static change = false;
+  int status = extract<int>(getMainModule().attr("checkPlayStatus")());
+  if (status == 0 ) {
+    change = false;
+  } else if (status != prevStatus) {
+    change = (abs(prevStatus - status) == 1);
+  }
+  prevStatus  = status;
+  PyGILState_Release(state);
+  return change;
 }
 
 void Gameplay::GameplayModule::goalieID(int value) {
