@@ -1,11 +1,12 @@
 import play
 import behavior
-import tactics.stopped.circle_near_ball
+import tactics.defense2
 import robocup
 import main
 
 
-class TestIdle(play.Play):
+## Runs our Defense tactic
+class TestDefense2(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
@@ -13,10 +14,12 @@ class TestIdle(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        self.add_subbehavior(
-            tactics.stopped.circle_near_ball.CircleNearBall(),
-            name='circle',
-            required=True)
+        b = tactics.defense2.Defense2()
+        self.add_subbehavior(b, name='defense', required=True)
 
     def on_exit_running(self):
-        self.remove_subbehavior('circle')
+        self.remove_subbehavior('defense')
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
