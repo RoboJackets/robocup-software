@@ -78,7 +78,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
 
     def find_intercept_point(self):
-        return find_robot_intercept_ball(self.robot)
+        return find_robot_intercept_point(self.robot)
 
     def execute_running(self):
         self.robot.set_planning_priority(planning_priority.CAPTURE)
