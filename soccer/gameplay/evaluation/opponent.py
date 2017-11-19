@@ -28,7 +28,10 @@ def num_on_offense():
             dist_to_goal = (bot.pos - goal_loc).mag()
 
             goal_coeff = dist_to_goal / max_goal_dis
-            ball_coeff = 1 - (dist_to_ball / ball_to_goal)
+            if ball_to_goal != 0:
+                ball_coeff = 1 - (dist_to_ball / ball_to_goal)
+            else:
+                ball_coeff = 1
             ball_coeff = max(0, ball_coeff * ball_coeff)
 
             score = filter_coeff * goal_coeff + (1 - filter_coeff) * ball_coeff
