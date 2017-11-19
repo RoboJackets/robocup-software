@@ -396,11 +396,23 @@ var annotated_dup =
       [ "RobotStatusMessage", "structrtp_1_1_robot_status_message.html", "structrtp_1_1_robot_status_message" ],
       [ "RobotTxMessage", "structrtp_1_1_robot_tx_message.html", "structrtp_1_1_robot_tx_message" ]
     ] ],
+    [ "test_ball", null, [
+      [ "Moc_Ball", "classtest__ball_1_1_moc___ball.html", "classtest__ball_1_1_moc___ball" ],
+      [ "TestBall", "classtest__ball_1_1_test_ball.html", "classtest__ball_1_1_test_ball" ]
+    ] ],
+    [ "test_circle_near_ball", null, [
+      [ "Moc_Ball", "classtest__circle__near__ball_1_1_moc___ball.html", "classtest__circle__near__ball_1_1_moc___ball" ],
+      [ "TestCircleNearBall", "classtest__circle__near__ball_1_1_test_circle_near_ball.html", "classtest__circle__near__ball_1_1_test_circle_near_ball" ]
+    ] ],
     [ "test_config", null, [
       [ "TestConfig", "classtest__config_1_1_test_config.html", "classtest__config_1_1_test_config" ]
     ] ],
     [ "test_constants", null, [
       [ "TestConstants", "classtest__constants_1_1_test_constants.html", "classtest__constants_1_1_test_constants" ]
+    ] ],
+    [ "test_field", null, [
+      [ "Moc_Robot", "classtest__field_1_1_moc___robot.html", "classtest__field_1_1_moc___robot" ],
+      [ "TestField", "classtest__field_1_1_test_field.html", "classtest__field_1_1_test_field" ]
     ] ],
     [ "test_fsm", null, [
       [ "MyFsm", "classtest__fsm_1_1_my_fsm.html", "classtest__fsm_1_1_my_fsm" ],

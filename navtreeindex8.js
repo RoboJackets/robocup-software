@@ -1,5 +1,8 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1root__play_1_1_root_play.html#aeb3997bc2eddc16ee69455b050dae29d":[16,0,3,11,0,11],
+"classgameplay_1_1root__play_1_1_root_play.html#afdbca26031562f2dd6112c2e7a0aa036":[16,0,3,11,0,12],
+"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html":[16,0,3,12,0],
 "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a233287802d33a782d5da03a7ddd74dc0":[16,0,3,12,0,4],
 "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a52ffcf6f75515c574271e798acd8356d":[16,0,3,12,0,2],
 "classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a6721983a1f18bcb64c70043a7fb5ac63":[16,0,3,12,0,3],
@@ -246,8 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a77f6a7635f36ec6c1fbe1980dae2a361":[16,0,3,15,13,0,1],
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a8add3ceb1e39da961c4f0c7c1a2cd5d8":[16,0,3,15,13,0,3],
 "classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aaa068536aaa3a5ebce8ffc568752a117":[16,0,3,15,13,0,0],
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#af112c60da99b2ddfcd714118594cfb47":[16,0,3,15,13,0,4],
-"classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html":[16,0,3,15,14,0],
-"classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html#a2078612dd880ddf6bb4228a725997abe":[16,0,3,15,14,0,7],
-"classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html#a2a753663213fe8423156e2247376536b":[16,0,3,15,14,0,10]
+"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#af112c60da99b2ddfcd714118594cfb47":[16,0,3,15,13,0,4]
 };

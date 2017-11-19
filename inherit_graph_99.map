@@ -1,3 +1,10 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node2" href="$classtest__fsm_1_1_my_fsm.html" title="test_fsm.MyFsm" alt="" coords="164,5,291,32"/>
+<area shape="rect" id="node2" href="$classtest__ball_1_1_test_ball.html" title="test_ball.TestBall" alt="" coords="176,5,307,32"/>
+<area shape="rect" id="node3" href="$classtest__circle__near__ball_1_1_test_circle_near_ball.html" title="test_circle_near_ball.Test\lCircleNearBall" alt="" coords="150,57,333,98"/>
+<area shape="rect" id="node4" href="$classtest__config_1_1_test_config.html" title="test_config.TestConfig" alt="" coords="160,123,323,149"/>
+<area shape="rect" id="node5" href="$classtest__constants_1_1_test_constants.html" title="test_constants.TestConstants" alt="" coords="135,173,348,200"/>
+<area shape="rect" id="node6" href="$classtest__field_1_1_test_field.html" title="test_field.TestField" alt="" coords="171,224,311,251"/>
+<area shape="rect" id="node7" href="$classtest__fsm_1_1_test_fsm.html" title="test_fsm.TestFsm" alt="" coords="173,275,309,301"/>
+<area shape="rect" id="node8" href="$classtest__play__registry_1_1_test_play_registry.html" title="test_play_registry.TestPlay\lRegistry" alt="" coords="145,326,337,367"/>
+<area shape="rect" id="node9" href="$classtest__role__assignment_1_1_test_role_assignment.html" title="test_role_assignment.Test\lRoleAssignment" alt="" coords="146,391,337,433"/>
 </map>
