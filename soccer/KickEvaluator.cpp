@@ -114,10 +114,10 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // No opponent robots on the field
     if (botMeans.size() == 0) {
         // Push it off to the side
-        botMeans.push_back(3);
+        botMeans.push_back(4);
         // Must be non-zero as 1 / botStDev is used
         botStDevs.push_back(0.1);
-        botVertScales.push_back(0.01);
+        botVertScales.push_back(0.001);
 
         // Center will always be the best target X with no robots
         return pair<Point, float>(center, get<0>(keFunc(0)));
@@ -265,7 +265,7 @@ float KickEvaluator::get_target_angle(const Point origin,
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
-    return abs(left.angle() - right.angle());
+    return abs(left.angleBetween(right));
 }
 
 vector<Robot*> KickEvaluator::get_valid_robots() {
@@ -293,9 +293,9 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
                                                  const Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
-    float angle = obstacleDir.angle() - targetDir.angle();
 
-    return make_tuple(obstacleDir.mag(), fixAngleRadians(angle));
+    return make_tuple(obstacleDir.mag(),
+                      fixAngleRadians(targetDir.angleBetween(obstacleDir)));
 }
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
