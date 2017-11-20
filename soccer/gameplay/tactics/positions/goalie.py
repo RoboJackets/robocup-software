@@ -21,7 +21,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         robocup.Point(MaxX, constants.Robot.Radius + OFFSET))
     OpponentFacingThreshold = math.pi / 8.0
 
-
+    #Keeps track of when the goalie is intercepting the ball, used
+    #to disable the face command when intercepting.
     isInter = False;
 
     class State(enum.Enum):
@@ -109,7 +110,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
         if self.robot != None:
-            if not self.isInter:
+            #face the ball in all states but intercept
+            if not self.isInter: 
                 self.robot.face(main.ball().pos)
             self.robot.set_planning_priority(planning_priority.GOALIE)
 
