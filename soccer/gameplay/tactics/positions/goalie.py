@@ -21,6 +21,9 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         robocup.Point(MaxX, constants.Robot.Radius + OFFSET))
     OpponentFacingThreshold = math.pi / 8.0
 
+
+    isInter = False;
+
     class State(enum.Enum):
         ## Normal gameplay, stay towards the side of the goal that the ball is on.
         defend = 1
@@ -106,7 +109,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
         if self.robot != None:
-            self.robot.face(main.ball().pos)
+            if not self.isInter:
+                self.robot.face(main.ball().pos)
             self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def execute_chill(self):
@@ -164,17 +168,15 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.remove_subbehavior('kick-clear')
 
     def on_enter_intercept(self):
-        i = skills.intercept.Intercept()
+        self.isInter = True
+        i = skills.intercept.Intercept(None, False)
         self.add_subbehavior(i, 'intercept', required=True)
 
     def execute_intercept(self):
-        ball_path = robocup.Segment(
-            main.ball().pos,
-            main.ball().pos + main.ball().vel.normalized() * 10.0)
-        dest = ball_path.nearest_point(self.robot.pos)
-        self.robot.move_to(dest)
+        pass
 
     def on_exit_intercept(self):
+        self.isInter = False
         self.remove_subbehavior('intercept')
 
     def execute_block(self):
