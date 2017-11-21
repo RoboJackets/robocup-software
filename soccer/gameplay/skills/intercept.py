@@ -10,7 +10,7 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
     #controls if the robot should face the ball while intercepting
     faceBall = False
 
-    def __init__(self, pos=None, faceBall=False):
+    def __init__(self, pos=None, faceBall=True):
         super().__init__(continuous=True)
 
         self.faceBall = faceBall
