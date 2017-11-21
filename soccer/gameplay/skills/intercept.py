@@ -17,7 +17,8 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
 
         self._shape_constraint = None
 
-        self.ball_line = lambda: robocup.Segment(main.ball().pos, main.ball().pos + (main.ball().vel.normalized() * 8.))
+        self.ball_line = lambda: robocup.Segment(main.ball(
+        ).pos, main.ball().pos + (main.ball().vel.normalized() * 8.))
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
