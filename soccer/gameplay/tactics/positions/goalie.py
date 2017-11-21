@@ -21,10 +21,6 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         robocup.Point(MaxX, constants.Robot.Radius + OFFSET))
     OpponentFacingThreshold = math.pi / 8.0
 
-    #Keeps track of when the goalie is intercepting the ball, used
-    #to disable the face command when intercepting.
-    isInter = False
-
     class State(enum.Enum):
         ## Normal gameplay, stay towards the side of the goal that the ball is on.
         defend = 1
@@ -182,12 +178,10 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.remove_subbehavior('kick-clear')
 
     def on_enter_intercept(self):
-        self.isInter = True
         i = skills.intercept.Intercept(None, False)
         self.add_subbehavior(i, 'intercept', required=True)
 
     def on_exit_intercept(self):
-        self.isInter = False
         self.remove_subbehavior('intercept')
 
     def execute_block(self):
