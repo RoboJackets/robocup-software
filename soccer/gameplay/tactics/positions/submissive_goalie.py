@@ -99,7 +99,8 @@ class SubmissiveGoalie(
 
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
-        self.robot.face(main.ball().pos)
+        if not self.has_subbehavior_with_name('intercept'):
+            self.robot.face(main.ball().pos)
         self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def on_enter_clear(self):
@@ -133,7 +134,7 @@ class SubmissiveGoalie(
         self.remove_subbehavior('kick-clear')
 
     def on_enter_intercept(self):
-        i = skills.intercept.Intercept()
+        i = skills.intercept.Intercept(None, False)
         i.shape_constraint = self.RobotSegment
         self.add_subbehavior(i, 'intercept', required=True)
 
