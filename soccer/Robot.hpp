@@ -386,7 +386,7 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
-    Geometry2d::Point mouthPos() const;
+    Geometry2d::Point mouthCenterPos() const;
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
