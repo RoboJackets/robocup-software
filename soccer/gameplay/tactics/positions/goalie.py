@@ -111,7 +111,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_running(self):
         if self.robot != None:
             #face the ball in all states but intercept
-            if not self.isInter: 
+            if not self.isInter:
                 self.robot.face(main.ball().pos)
             self.robot.set_planning_priority(planning_priority.GOALIE)
 
