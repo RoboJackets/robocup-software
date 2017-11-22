@@ -251,7 +251,9 @@ const Geometry2d::Segment OurRobot::kickerBar() const {
     return Segment(pose * L, pose * R);
 }
 
-Geometry2d::Point OurRobot::mouthCenterPos() const { return kickerBar().center(); }
+Geometry2d::Point OurRobot::mouthCenterPos() const {
+    return kickerBar().center();
+}
 
 bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
     Point ballTransformed = pointInRobotSpace(ballPos);
