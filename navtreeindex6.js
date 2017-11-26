@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"class_window_evaluator.html#a71232e59601b090acd8716f17647c788":[16,0,88,1],
+"class_window_evaluator.html#a9adcbf8fb8f9a7bcd868bac2de612aab":[16,0,88,2],
 "class_window_evaluator.html#a9da2e28d3c3ac1c43f68da26ec56abed":[16,0,88,11],
 "class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e":[16,0,88,0],
 "class_window_evaluator.html#ae4975224599810750d351662aab90587":[16,0,88,4],
@@ -247,7 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae572ecab45ea44cd20b92d69ea95e8f5":[16,0,3,9,1,6,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36":[16,0,3,9,1,6,0,5],
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement_1_1_state.html":[16,0,3,9,1,6,0,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html":[16,0,3,9,1,7,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a0b4aebe0aadf576ab616d62dd251c662":[16,0,3,9,1,7,0,0],
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a306fde146062676e6b4d39b12239387f":[16,0,3,9,1,7,0,2]
+"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html":[16,0,3,9,1,7,0]
 };

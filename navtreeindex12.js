@@ -1,5 +1,7 @@
 var NAVTREEINDEX12 =
 {
+"structrtp_1_1_conf_message.html":[16,0,8,0],
+"structrtp_1_1_conf_message.html#a800af245036262d881c5a030f25cefd2":[16,0,8,0,1],
 "structrtp_1_1_conf_message.html#ae221d7e001fb6760f565a52ef2db3bd7":[16,0,8,0,0],
 "structrtp_1_1_control_message.html":[16,0,8,1],
 "structrtp_1_1_control_message.html#a09351fd3e57dce45f07b296abfd2b12d":[16,0,8,1,4],

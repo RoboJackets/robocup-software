@@ -1,5 +1,7 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843":[16,0,3,17,9,2,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#acb7c7f9f71fc15e0f07452bc784d772f":[16,0,3,17,9,2,0,13],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ae8fd0fc49e8fdc103195c95b6a0d5668":[16,0,3,17,9,2,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aed8f5d432853ae9530bc075944ee2ed3":[16,0,3,17,9,2,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aeed5c39b6c8aff6b6dab240e7805c2a5":[16,0,3,17,9,2,0,15],
@@ -240,14 +242,12 @@ var NAVTREEINDEX10 =
 "functions_d.html":[16,3,0,4],
 "functions_e.html":[16,3,0,5],
 "functions_f.html":[16,3,0,6],
-"functions_func.html":[16,3,1],
 "functions_func.html":[16,3,1,0],
+"functions_func.html":[16,3,1],
 "functions_func_a.html":[16,3,1,1],
 "functions_func_b.html":[16,3,1,2],
 "functions_func_c.html":[16,3,1,3],
 "functions_func_d.html":[16,3,1,4],
 "functions_func_e.html":[16,3,1,5],
-"functions_func_f.html":[16,3,1,6],
-"functions_func_g.html":[16,3,1,7],
-"functions_func_h.html":[16,3,1,8]
+"functions_func_f.html":[16,3,1,6]
 };
