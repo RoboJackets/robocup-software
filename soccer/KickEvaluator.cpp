@@ -95,10 +95,9 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
         // If robot is past target, only use the chance at the target segment
         if (distPastTarget > 0 && fabs(get<1>(loc)) < M_PI / 2) {
-            // Evaluate a normal distribution at dist away and scale
-            float stdev2 = pow(*robot_std_dev, 2);
+            // Evaluate a normal distribution at dist away and scalet
             botVertScales.push_back(
-                fast_exp(-0.5 * pow(distPastTarget, 2) / stdev2));
+                1 - (1 + erf(distPastTarget / (*robot_std_dev * sqrt(2)))));
         } else {
             botVertScales.push_back(1);
         }
