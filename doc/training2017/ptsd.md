@@ -32,6 +32,11 @@ print(mydouble)
 print(mystr)
 ```
 
+    Hello World!
+    1
+    1.0
+    one
+
 
 ## IF Statements and Conditionals
 
@@ -57,6 +62,13 @@ print("a is greater than 3" if a > 3 else "a is less than 3")
 print("a is greater than 9" if a > 9 else "a is less than 9")
 ```
 
+    RoboCup is great!
+    RoboCup is the best!
+    a is greater than 2!
+    a is > 2 and < 10
+    a is greater than 3
+    a is less than 9
+
 
 ## Loops and range()
 
@@ -72,6 +84,10 @@ for i in range(10):
     print(i * i, end=" ")
 print("")
 ```
+
+    10 9 8 7 6 5 4 3 2 1 
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    0 1 4 9 16 25 36 49 64 81 
 
 
 ## Functions

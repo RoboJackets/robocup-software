@@ -183,7 +183,7 @@ def execute_running(self):
 -   Create a Triangle Pass Play
 -   Move 3 Robots into a triangle formation, and pass between them.
 -   Starter code is in `soccer/gameplay/plays/skel/triangle_pass.py` (same as last time).
--   Move it to `soccer/gameplay/plays/training/triangle_pass.py` to begin.
+-   Move it to `soccer/gameplay/plays/testing/triangle_pass.py` to begin.
 
 
 ## Tips
