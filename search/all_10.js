@@ -31,8 +31,8 @@ var searchData=
   ['pointinrobotspace',['pointInRobotSpace',['../class_our_robot.html#a1bad1a1649dfdd1f218a60effe2362d3',1,'OurRobot']]],
   ['pointmagnitude',['PointMagnitude',['../struct_chart_1_1_point_magnitude.html',1,'Chart']]],
   ['pointside',['pointSide',['../class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a',1,'Geometry2d::Line']]],
-  ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html#a9f1e47d29166782739f056d05912930d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r)'],['../class_geometry2d_1_1_polygon.html#adb85e6da4e9230a47f7ddb7c0b9c5c6d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r, float length)']]],
   ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html',1,'Geometry2d']]],
+  ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html#a9f1e47d29166782739f056d05912930d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r)'],['../class_geometry2d_1_1_polygon.html#adb85e6da4e9230a47f7ddb7c0b9c5c6d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r, float length)']]],
   ['pos',['pos',['../classgameplay_1_1skills_1_1dribble_1_1_dribble.html#a9ff811082663b2085d2dac385ac0a0dc',1,'gameplay.skills.dribble.Dribble.pos()'],['../classgameplay_1_1skills_1_1face_1_1_face.html#afed57da9968a094e3f2d91e71c96ea18',1,'gameplay.skills.face.Face.pos()'],['../classgameplay_1_1skills_1_1move_1_1_move.html#ab9f132549ba8d7013a63a2b3972853a1',1,'gameplay.skills.move.Move.pos()'],['../classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a114aed50890957700dea6556a62d16a5',1,'gameplay.skills.move_direct.MoveDirect.pos()'],['../classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html#a98ca3e6346e536d81fbd8b519c20192c',1,'gameplay.skills.move_tuning.MoveTuning.pos()']]],
   ['positionerrorthreshold',['PositionErrorThreshold',['../classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#acb6db3c10c111a0fa6121cfd314946b3',1,'gameplay::skills::line_kick_receive::LineKickReceive']]],
   ['positionxerrorthreshold',['PositionXErrorThreshold',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#ae7fe10e10d2396fa9f229b0e4e78aa71',1,'gameplay::skills::pass_receive::PassReceive']]],
@@ -43,5 +43,6 @@ var searchData=
   ['protobuftree',['ProtobufTree',['../class_protobuf_tree.html',1,'']]],
   ['pt',['pt',['../class_geometry2d_1_1_line.html#a42806daa581124ac74e34bc4217a8749',1,'Geometry2d::Line::pt()'],['../class_geometry2d_1_1_segment.html#a6b1aef1b1aba65ed6ef3c50503cc99eb',1,'Geometry2d::Segment::pt()']]],
   ['path_20planning',['Path Planning',['../t20166.html',1,'md_doc_training2016_training_2016']]],
-  ['path_20planning',['Path Planning',['../t2016p.html',1,'md_doc_training2016_training_2016']]]
+  ['path_20planning',['Path Planning',['../t2016p.html',1,'md_doc_training2016_training_2016']]],
+  ['path_20planning',['Path Planning',['../t20176.html',1,'md_doc_training2017_training_2017']]]
 ];

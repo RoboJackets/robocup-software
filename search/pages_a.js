@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['themes',['Themes',['../md_doc_Themes.html',1,'']]],
-  ['training_202016',['Training 2016',['../md_doc_training2016_training_2016.html',1,'']]],
-  ['training_202017',['Training 2017',['../md_doc_training2017_training_2017.html',1,'']]],
-  ['testing_20_26_20continuous_20integration',['Testing &amp; Continuous Integration',['../md_doc_UnitTestsAndCI.html',1,'']]],
-  ['training_20summary_201',['Training Summary 1',['../t20161.html',1,'md_doc_training2016_training_2016']]],
-  ['training_20summary_201',['Training Summary 1',['../t20171.html',1,'md_doc_training2017_training_2017']]]
+  ['soccer',['Soccer',['../md_doc_Soccer.html',1,'']]],
+  ['style',['Style',['../md_doc_Style.html',1,'']]],
+  ['skills_2c_20tactics_2c_20plays_20_2d_201',['Skills, Tactics, Plays - 1',['../t20162.html',1,'md_doc_training2016_training_2016']]],
+  ['skills_2c_20tactics_2c_20plays_20_2d_202',['Skills, Tactics, Plays - 2',['../t20163.html',1,'md_doc_training2016_training_2016']]],
+  ['skills_2c_20tactics_2c_20plays_20_2d_20overview',['Skills, Tactics, Plays - Overview',['../t20164.html',1,'md_doc_training2016_training_2016']]],
+  ['skills_2c_20tactics_2c_20plays',['Skills, Tactics, Plays',['../t20172.html',1,'md_doc_training2017_training_2017']]],
+  ['subbehaviors',['Subbehaviors',['../t20173.html',1,'md_doc_training2017_training_2017']]]
 ];

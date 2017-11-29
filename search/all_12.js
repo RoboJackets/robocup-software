@@ -48,5 +48,6 @@ var searchData=
   ['run_5fduring_5fstopped',['run_during_stopped',['../classgameplay_1_1play_1_1_play.html#a48ba624fc4c7ab50895b5e81c53eb825',1,'gameplay.play.Play.run_during_stopped()'],['../classgameplay_1_1plays_1_1stopped_1_1_stopped.html#a260d54323a897dfaa62a80f0c7145510',1,'gameplay.plays.stopped.Stopped.run_during_stopped()'],['../classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach.html#add36521b12e773a47c1437579fb3f02e',1,'gameplay.plays.testing.test_coach.TestCoach.run_during_stopped()']]],
   ['runrrt',['runRRT',['../class_planning_1_1_r_r_t_planner.html#a9ebb03674e0e372b72b5587c607b2132',1,'Planning::RRTPlanner']]],
   ['runrrthelper',['runRRTHelper',['../class_planning_1_1_r_r_t_planner.html#a6f740ad25ea28a22bf992cba4fdfd450',1,'Planning::RRTPlanner']]],
-  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#a1cb3380072ef5765f9adabb5202c3d73',1,'OurRobot']]]
+  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#a1cb3380072ef5765f9adabb5202c3d73',1,'OurRobot']]],
+  ['role_20assignment',['Role Assignment',['../t20174.html',1,'md_doc_training2017_training_2017']]]
 ];
