@@ -107,9 +107,6 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
             shortest_our_time = time
             closest_robot = bot
 
-    # Greater than 1 when we are further away
-    print(shortest_our_time)
-    print(shortest_opp_time)
     return shortest_our_time < shortest_opp_time * (1 + valid_error_percent
                                                     ), closest_robot
 
