@@ -97,7 +97,7 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         if (distPastTarget > 0 && fabs(get<1>(loc)) < M_PI / 2) {
             // Evaluate a normal distribution at dist away and scalet
             botVertScales.push_back(
-                1 - (1 + erf(distPastTarget / (*robot_std_dev* sqrt(2)))));
+                1 - (1 + erf(distPastTarget / (*robot_std_dev * sqrt(2)))));
         } else {
             botVertScales.push_back(1);
         }
