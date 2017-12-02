@@ -60,7 +60,7 @@ class ShootBall(play.Play):
         #b = tactics.defense.Defense()
         kick = skills.pivot_kick.PivotKick()
 
-        kick.target = constants.Field.OurGoalSegment
+        kick.target = constants.Field.TheirGoalSegment
         kick.aim_params['desperate_timeout'] = 3
         self.add_subbehavior(kick, 'kick', required=False)
 
