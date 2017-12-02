@@ -16,7 +16,7 @@ class SetFormation(composite_behavior.CompositeBehavior):
     def __init__(self, formation=None):
         super().__init__(continuous=False)
 
-        #positions is a list of robocup.Point objects corresponding to desired positions
+        #formation is a list of robocup.Point objects corresponding to desired positions
         self.formation = formation if formation is not None else SetFormation.DefaultFormation
         self.debounce_count = 0
 
@@ -75,4 +75,4 @@ class SetFormation(composite_behavior.CompositeBehavior):
                 skills.move.Move(pt),
                 name="robot" + str(i),
                 required=False,
-                priority=6 - i)
+                priority=6-i)

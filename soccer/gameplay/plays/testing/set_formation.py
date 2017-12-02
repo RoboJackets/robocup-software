@@ -6,7 +6,7 @@ import constants
 
 
 class SetFormation(play.Play):
-    def __init__(self):
+    def __init__(self, formation=None):
         super().__init__(continuous=False)
 
         self.add_transition(behavior.Behavior.State.start,
@@ -21,5 +21,5 @@ class SetFormation(play.Play):
             lambda: self.subbehavior_with_name("SetFormation").state == behavior.Behavior.State.running,
             'robots havent reached target positions')
 
-        l = tactics.set_formation.SetFormation()
+        l = tactics.set_formation.SetFormation(formation)
         self.add_subbehavior(l, name="SetFormation", required=True)
