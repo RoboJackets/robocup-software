@@ -65,7 +65,8 @@ public:
 
     /// we multiply this by the bot's acceleration and add this to the output
     /// targetVel
-    ConfigDouble* accelerationMultiplier;
+    ConfigDouble* accelerationFF;
+    ConfigDouble* velocityFF;
 
     // when pivoting, we multiply the calculated x-velocity of the robot by this
     // value before sending it to the robot
