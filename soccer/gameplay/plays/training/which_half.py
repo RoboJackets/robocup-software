@@ -42,8 +42,8 @@ class WhichHalf(play.Play):
         # ------------------------------------------------------------
 
         # Helps us be less redundant in the transition functions.
-        in_bottom_half = (
-            lambda: main.ball().pos.y <= constants.Field.Length / 2)
+        in_bottom_half = (lambda: main.ball().pos.y <= constants.Field.Length /
+                          2)
 
         # Rather than defining two more transitions from start to the top or
         # bottom half, we simply assume we start in bottom and let bottom's
@@ -51,8 +51,9 @@ class WhichHalf(play.Play):
         self.add_transition(behavior.Behavior.State.start,
                             self.State.bottomhalf, lambda: True, 'immediately')
 
-        self.add_transition(self.State.bottomhalf, self.State.tophalf,
-                            lambda: not in_bottom_half(), 'detected top half')
+        self.add_transition(self.State.bottomhalf,
+                            self.State.tophalf, lambda: not in_bottom_half(),
+                            'detected top half')
 
         self.add_transition(self.State.tophalf, self.State.bottomhalf,
                             in_bottom_half, 'detected bottom half')
