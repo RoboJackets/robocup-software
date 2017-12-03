@@ -1,5 +1,8 @@
 var NAVTREEINDEX1 =
 {
+"class_battery_widget.html#ad850bacfebeacfcce54146596cef39d8":[16,0,25,3],
+"class_config_bool.html":[16,0,26],
+"class_config_bool.html#a30221ddc558692a7b52598b963a74bc2":[16,0,26,8],
 "class_config_bool.html#a31c83a6f6542f246c2db254afe26744d":[16,0,26,2],
 "class_config_bool.html#a4868127f7a922a62d6d20ca97815759e":[16,0,26,9],
 "class_config_bool.html#a4bfafa723bfe195ced7dea41fd71cf71":[16,0,26,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX1 =
 "class_geometry2d_1_1_circle.html#aad5b89c5c7b3586901670ed26917516a":[16,0,4,1,5],
 "class_geometry2d_1_1_circle.html#ab9d0de1ce9a23a5b153451a7da407289":[16,0,4,1,15],
 "class_geometry2d_1_1_circle.html#af08ec3ab0be2dfb08cc3479e6b7b326b":[16,0,4,1,4],
-"class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42":[16,0,4,1,9],
-"class_geometry2d_1_1_composite_shape.html":[16,0,4,2],
-"class_geometry2d_1_1_composite_shape.html#a000954e8a51034992f8bc4515b6798f0":[16,0,4,2,14],
-"class_geometry2d_1_1_composite_shape.html#a252efa45eabb7fe88eb142dfd9b5f00c":[16,0,4,2,7]
+"class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42":[16,0,4,1,9]
 };

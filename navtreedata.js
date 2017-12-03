@@ -39,18 +39,18 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_config_bool.html#a31c83a6f6542f246c2db254afe26744d",
-"class_geometry2d_1_1_composite_shape.html#a3e91d07262feb40014c7ef096a2740a6",
-"class_log_viewer.html#af2495c3e95ce82c5fa7dd75cbaca7ca7",
-"class_planning_1_1_angle_function_path.html",
-"class_referee_tab.html#a18e345d93c4d255d8f5870c7660124e7",
-"class_window_evaluator.html#a71232e59601b090acd8716f17647c788",
-"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a0b4aebe0aadf576ab616d62dd251c662",
-"classgameplay_1_1root__play_1_1_root_play.html#aad94884f38b5f9c15ee2f775a8422f17",
-"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#aaa068536aaa3a5ebce8ffc568752a117",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843",
-"functions_func_g.html",
-"structrtp_1_1_conf_message.html"
+"class_battery_widget.html#ad850bacfebeacfcce54146596cef39d8",
+"class_geometry2d_1_1_composite_shape.html",
+"class_log_viewer.html#ad5b6532aeb944123ad21c6ac0c42667b",
+"class_pid_tuner.html#ad777ef3c6e6fab26c506a24609942d5d",
+"class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49",
+"class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e",
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#acea1876d4023b65440f2604146f24889",
+"classgameplay_1_1skills_1_1move_1_1_move.html#a16456af0a0b1ff3a5c4a7d0d2910435c",
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a9bc20b54bfd7791ad400c69c69ac0951",
+"files.html",
+"struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

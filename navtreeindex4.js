@@ -1,5 +1,8 @@
 var NAVTREEINDEX4 =
 {
+"class_pid_tuner.html#ad777ef3c6e6fab26c506a24609942d5d":[16,0,60,2],
+"class_pid_tuner.html#add729277289f5b136dfdb023bf041aeb":[16,0,60,5],
+"class_pid_tuner.html#ae2c8611df9c9a260b33bcc6ed7c96036":[16,0,60,3],
 "class_planning_1_1_angle_function_path.html":[16,0,7,0],
 "class_planning_1_1_angle_function_path.html#a152de72e9900a2a8b235a0c67766c511":[16,0,7,0,5],
 "class_planning_1_1_angle_function_path.html#a23f1a22d7864fc43d29d61d32fde5ab2":[16,0,7,0,11],
@@ -246,8 +249,5 @@ var NAVTREEINDEX4 =
 "class_radio.html#aa1f9aea5cc8245d000f442f086490c96":[16,0,63,1],
 "class_radio.html#aadddbdbe509dfeb0e45ca1893067f898":[16,0,63,0],
 "class_radio.html#ab6ab11fbd3981e975c724ec9696c164b":[16,0,63,10],
-"class_radio.html#ab7a4b5011779f41ea0615190fe543516":[16,0,63,2],
-"class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49":[16,0,63,9],
-"class_referee_tab.html":[16,0,64],
-"class_referee_tab.html#a14c732bf8ca40c57584e23be83233508":[16,0,64,15]
+"class_radio.html#ab7a4b5011779f41ea0615190fe543516":[16,0,63,2]
 };

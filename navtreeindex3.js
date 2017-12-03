@@ -1,5 +1,8 @@
 var NAVTREEINDEX3 =
 {
+"class_log_viewer.html#ad5b6532aeb944123ad21c6ac0c42667b":[16,0,47,5],
+"class_log_viewer.html#adb5363a5732b1e7b42d0ca1ea6692b8a":[16,0,47,0],
+"class_log_viewer.html#ae0946d15cd2883ea929244bdf4b260cf":[16,0,47,4],
 "class_log_viewer.html#af2495c3e95ce82c5fa7dd75cbaca7ca7":[16,0,47,2],
 "class_log_viewer.html#af406fe3c7d4786c1b6f0ff7fddfb2c25":[16,0,47,6],
 "class_logger.html":[16,0,46],
@@ -246,8 +249,5 @@ var NAVTREEINDEX3 =
 "class_pid_tuner.html#a1edf021b14e973c96eb07e2ca4a2214d":[16,0,60,0],
 "class_pid_tuner.html#a38073fb059ec11292923a5b30e806e20":[16,0,60,1],
 "class_pid_tuner.html#a4d00a3e451bb86536c2b2cf5b21fc899":[16,0,60,6],
-"class_pid_tuner.html#ab548b999d59c4ddbd1d20d4dfad5cb43":[16,0,60,4],
-"class_pid_tuner.html#ad777ef3c6e6fab26c506a24609942d5d":[16,0,60,2],
-"class_pid_tuner.html#add729277289f5b136dfdb023bf041aeb":[16,0,60,5],
-"class_pid_tuner.html#ae2c8611df9c9a260b33bcc6ed7c96036":[16,0,60,3]
+"class_pid_tuner.html#ab548b999d59c4ddbd1d20d4dfad5cb43":[16,0,60,4]
 };
