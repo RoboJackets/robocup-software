@@ -47,6 +47,7 @@ public:
     };
 
     PID translation;
+    PID velTranslation;
     PID rotation;
 
     Kicker kicker;
