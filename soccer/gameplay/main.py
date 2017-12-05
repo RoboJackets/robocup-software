@@ -168,7 +168,7 @@ def clear():
     global _play_registry
     _play_registry.clear();
 
-def checkPlayStatus():
+def numEnablePlays():
     global _play_registry
     return len(_play_registry.get_enabled_plays_paths())
 

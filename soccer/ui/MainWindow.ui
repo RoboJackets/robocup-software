@@ -1560,7 +1560,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="playStatus">
+                  <widget class="QLabel" name="playIndicatorStatus">
                    <property name="maximumSize">
                     <size>
                      <width>15</width>

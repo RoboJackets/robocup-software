@@ -815,7 +815,7 @@ void MainWindow::updateStatus() {
     }
 
     if(_processor->gameplayModule()->checkPlayStatus()) {
-      playStatus(false);
+      playIndicatorStatus(false);
     }
 
     // Some conditions are different in simulation
@@ -953,11 +953,11 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
     }
 }
 
-void MainWindow::playStatus(bool color) {
+void MainWindow::playIndicatorStatus(bool color) {
     if (color) {
-      _ui.playStatus->setStyleSheet("background-color: #00ff00");
+      _ui.playIndicatorStatus->setStyleSheet("background-color: #00ff00");
     } else {
-      _ui.playStatus->setStyleSheet("background-color: #ff0000");
+      _ui.playIndicatorStatus->setStyleSheet("background-color: #ff0000");
     }
 }
 
@@ -1442,7 +1442,7 @@ void MainWindow::on_loadPlaybook_clicked() {
         try {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
                                                        true);
-            playStatus(true);
+            playIndicatorStatus(true);
         } catch (runtime_error* error) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
@@ -1458,7 +1458,7 @@ void MainWindow::on_savePlaybook_clicked() {
         try {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
                                                        true);
-            playStatus(true);
+            playIndicatorStatus(true);
         } catch (runtime_error* error) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
@@ -1468,7 +1468,7 @@ void MainWindow::on_savePlaybook_clicked() {
 
 void MainWindow::on_clearPlays_clicked() {
     _processor->gameplayModule()->clearPlays();
-    playStatus(true);
+    playIndicatorStatus(true);
 }
 
 void MainWindow::setRadioChannel(RadioChannels channel) {

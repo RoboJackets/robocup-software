@@ -264,9 +264,9 @@ void Gameplay::GameplayModule::clearPlays() {
 
 bool Gameplay::GameplayModule::checkPlayStatus() {
   PyGILState_STATE state = PyGILState_Ensure();
-  static int prevStatus = extract<int>(getMainModule().attr("checkPlayStatus")());
+  static int prevStatus = extract<int>(getMainModule().attr("numEnablePlays")());
   bool static change = false;
-  int status = extract<int>(getMainModule().attr("checkPlayStatus")());
+  int status = extract<int>(getMainModule().attr("numEnablePlays")());
   if (status == 0 ) {
     change = false;
   } else if (status != prevStatus) {
