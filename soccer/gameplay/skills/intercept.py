@@ -6,7 +6,6 @@ import main
 
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
 class Intercept(single_robot_behavior.SingleRobotBehavior):
-
     def __init__(self, pos=None, faceBall=True):
         super().__init__(continuous=True)
 
