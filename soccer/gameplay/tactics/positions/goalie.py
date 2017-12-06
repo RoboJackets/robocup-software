@@ -65,8 +65,10 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                       for s2 in non_chill_states
                       if s2 != Goalie.State.intercept]:
             self.add_transition(
-                state, Goalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal() and not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
+                state, Goalie.State.intercept, lambda: evaluation.ball.
+                is_moving_towards_our_goal() and not self.
+                robot_is_facing_our_goal(evaluation.ball.opponent_with_ball(
+                )) and not main.game_state().is_setup_state(),
                 "ball coming towards our goal")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.clear
