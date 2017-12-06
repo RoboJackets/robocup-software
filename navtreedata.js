@@ -47,8 +47,8 @@ var NAVTREEINDEX =
 "class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e",
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36",
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#acea1876d4023b65440f2604146f24889",
-"classgameplay_1_1skills_1_1move_1_1_move.html#a16456af0a0b1ff3a5c4a7d0d2910435c",
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a9bc20b54bfd7791ad400c69c69ac0951",
+"classgameplay_1_1skills_1_1move_1_1_move.html#a129500170120d1a15c3a2c58b2b1bcf2",
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8bff37e0b3d775b0cf806a8cc8aa98b8",
 "files.html",
 "struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e"
 ];
