@@ -105,8 +105,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_setup(self):
         self.move_vector = main.ball().pos - self._pos
-        self.move_point = self._pos + self.move_vector + (
-            self.move_vector.normalized() * .2)
+        self.move_point = main.ball().pos + self.move_vector.normalized() * .2
         move = skills.move.Move(self.move_point)
         self.add_subbehavior(move, 'move', required=True, priority=100)
 

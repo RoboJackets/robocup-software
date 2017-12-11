@@ -3,7 +3,7 @@ import composite_behavior
 import role_assignment
 import logging
 import behavior
-from typing import Callable
+from typing import Callable, Union
 
 
 ## Behavior that applies to a single ROBOT and may have up to one subbehavior at any time
@@ -19,10 +19,9 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                  continuous=False,
                  autorestart: Callable[[], bool]=lambda: True) -> None:
         single_robot_behavior.SingleRobotBehavior.__init__(
-            self,
-            continuous=continuous)
-        composite_behavior.CompositeBehavior.__init__(self,
-                                                      continuous=continuous)
+            self, continuous=continuous)
+        composite_behavior.CompositeBehavior.__init__(
+            self, continuous=continuous)
         self.autorestart = autorestart
         # for pylint
         self.robot = self.robot
@@ -41,10 +40,11 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
                         bhvr: behavior.Behavior,
                         name: str,
                         required: bool=True,
-                        priority: int=100):
+                        priority: Union[int, Callable[[], int]]=100):
         if self.has_subbehaviors():
             raise AssertionError(
-                "Attempt to add more than one subbehavior to SingleRobotCompositeBehavior")
+                "Attempt to add more than one subbehavior to SingleRobotCompositeBehavior"
+            )
         super().add_subbehavior(bhvr, name, required, priority)
         self.robot_shell_id = None
 
@@ -56,7 +56,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
             reqs = composite_behavior.CompositeBehavior.role_requirements(self)
             if self.robot is not None:
                 for req in role_assignment.iterate_role_requirements_tree_leaves(
-                    reqs):
+                        reqs):
                     req.previous_shell_id = self.robot.shell_id()
 
             return reqs
@@ -73,7 +73,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
             # extract robot from the one leaf in the tree
             # we don't know how deep the tree is, which is why we use the tree leaf iterator
             for assignment_tuple in role_assignment.iterate_role_requirements_tree_leaves(
-                assignments):
+                    assignments):
                 self.robot = assignment_tuple[1]
         else:
             single_robot_behavior.SingleRobotBehavior.assign_roles(self,
