@@ -117,6 +117,13 @@ endif()
 # libusb
 include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
+# libxbee
+set(XBEE_LIBRARY_DIRECTORY common/include/xbee)
+find_path(${XBEE_LIBRARY_DIRECTORY} xbee.h)
+find_path(${XBEE_LIBRARY_DIRECTORY} xbeep.h)
+include_directories(${XBEE_LIBRARY_DIRECTORY})
+
+
 # SDL
 include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
@@ -134,6 +141,7 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL2_LIBRARIES})
+target_link_libraries(robocup xbee)
 
 
 # RRT
