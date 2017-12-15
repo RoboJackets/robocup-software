@@ -118,7 +118,7 @@ endif()
 include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
 # libxbee
-set(XBEE_LIBRARY_DIRECTORY common/include/xbee)
+set(XBEE_LIBRARY_DIRECTORY "${CMAKE_SOURCE_DIR}/common/include/xbee")
 find_path(${XBEE_LIBRARY_DIRECTORY} xbee.h)
 find_path(${XBEE_LIBRARY_DIRECTORY} xbeep.h)
 include_directories(${XBEE_LIBRARY_DIRECTORY})

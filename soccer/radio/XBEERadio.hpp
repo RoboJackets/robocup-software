@@ -25,6 +25,8 @@ class XBEERadio : public Radio {
         virtual void channel(int n) override;
         void switchTeam(bool) override {}
 
+        void testonly();
+
     protected:
         struct xbee *xbee;
         struct xbee_con *con;
