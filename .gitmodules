@@ -19,3 +19,6 @@
 [submodule "external/grSim"]
 	path = external/grSim
 	url = https://github.com/RoboJackets/grSim
+[submodule "external/ssl-refbox"]
+	path = external/ssl-refbox
+	url = git@github.com:RoboCup-SSL/ssl-refbox
