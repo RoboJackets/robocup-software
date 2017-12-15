@@ -1,0 +1,8 @@
+syntax = "proto2";
+
+import "grSim_Commands.proto";
+import "grSim_Replacement.proto";
+message grSim_Packet {
+    optional grSim_Commands commands = 1;
+    optional grSim_Replacement replacement = 2;
+}
