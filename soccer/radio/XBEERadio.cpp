@@ -14,6 +14,25 @@ XBEERadio::~XBEERadio() {
 }
 
 
+bool XBEERadio::isOpen() const {
+    //TODO: WFU
+    return true;
+}
+
+void XBEERadio::send(Packet::RadioTx& packet) {
+
+}
+
+void XBEERadio::receive() {
+
+}
+
+void XBEERadio::channel(int n) {
+
+}
+
+
+
 bool XBEERadio::open() {
     //TODO: WFU
     return true;
@@ -32,5 +51,7 @@ uint8_t XBEERadio::read(uint8_t reg) {
     //TODO: wfu
     return 0;
 }
+
+
 
 

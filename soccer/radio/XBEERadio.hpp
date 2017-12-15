@@ -2,6 +2,8 @@
 
 #include "Radio.hpp"
 
+#include <mutex>
+
 class XBEERadio : public Radio {
 public:
     XBEERadio();
@@ -15,9 +17,6 @@ public:
     void switchTeam(bool) override {}
 
 protected:
-    std::vector<DebugCommunication::DebugResponse> current_recieve_debug;
-    std::mutex current_recieve_debug_mutex;
-
     bool open();
 
     void command(uint8_t cmd);

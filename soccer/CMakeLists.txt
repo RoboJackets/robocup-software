@@ -51,6 +51,7 @@ set(ROBOCUP_LIB_SRC
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
     "radio/USBRadio.cpp"
+    "radio/XBEERadio.cpp"
     "RefereeTab.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
