@@ -1,8 +1,7 @@
 
 #pragma once
 
-#include <string>  // for size_t
-
+#include <string>
 #include "Field_Dimensions.hpp"
 
 /// all distances in meters
@@ -29,5 +28,5 @@ const float Dots_Small_Offset = 0.035;
 const float Dots_Large_Offset = 0.054772;
 const float Dots_Radius = 0.02;
 
-const std::string Team_Name_Lower = "robojackets";
-const std::string Team_Name = "RoboJackets";
+const std::string Team_Name_Lower = "rfccambridge";
+const std::string Team_Name = "RFCCambridge";
