@@ -51,6 +51,7 @@ set(ROBOCUP_LIB_SRC
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
     "radio/USBRadio.cpp"
+    "radio/XBEERadio.cpp"
     "RefereeTab.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
@@ -116,6 +117,13 @@ endif()
 # libusb
 include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
+# libxbee
+set(XBEE_LIBRARY_DIRECTORY "${CMAKE_SOURCE_DIR}/common/include/xbee")
+find_path(${XBEE_LIBRARY_DIRECTORY} xbee.h)
+find_path(${XBEE_LIBRARY_DIRECTORY} xbeep.h)
+include_directories(${XBEE_LIBRARY_DIRECTORY})
+
+
 # SDL
 include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
@@ -133,6 +141,7 @@ target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL2_LIBRARIES})
+target_link_libraries(robocup xbee)
 
 
 # RRT
@@ -201,6 +210,7 @@ set(SOCCER_TEST_SRC
     "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
     "WindowEvaluatorTest.cpp"
+    "radio/XBEERadioTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

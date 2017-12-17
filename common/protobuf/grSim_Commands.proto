@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+message grSim_Robot_Command {
+    enum TriggerMode
+    {
+        STAND_DOWN = 0;
+        IMMEDIATE = 1;
+        ON_BREAK_BEAM = 2;
+    }
+
+    required uint32 id = 1;
+    required float kickspeedx = 2;
+    required float kickspeedz = 3;
+    optional TriggerMode triggermode = 4;
+    required float veltangent = 5;
+    required float velnormal  = 6;
+    required float velangular = 7;
+    required bool spinner = 8;
+    required bool wheelsspeed = 9;
+    optional float wheel1 = 10;
+    optional float wheel2 = 11;
+    optional float wheel3 = 12;
+    optional float wheel4 = 13;
+}
+
+message grSim_Commands {
+required double timestamp = 1;
+required bool isteamyellow = 2;
+repeated grSim_Robot_Command robot_commands = 3;
+}
+
