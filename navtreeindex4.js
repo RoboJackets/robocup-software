@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_pid_tuner.html#ab548b999d59c4ddbd1d20d4dfad5cb43":[16,0,60,4],
 "class_pid_tuner.html#ad777ef3c6e6fab26c506a24609942d5d":[16,0,60,2],
 "class_pid_tuner.html#add729277289f5b136dfdb023bf041aeb":[16,0,60,5],
 "class_pid_tuner.html#ae2c8611df9c9a260b33bcc6ed7c96036":[16,0,60,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "class_radio.html#a9bdbe4a7f43753e6078b2a31c37bbe80":[16,0,63,4],
 "class_radio.html#aa1f9aea5cc8245d000f442f086490c96":[16,0,63,1],
 "class_radio.html#aadddbdbe509dfeb0e45ca1893067f898":[16,0,63,0],
-"class_radio.html#ab6ab11fbd3981e975c724ec9696c164b":[16,0,63,10],
-"class_radio.html#ab7a4b5011779f41ea0615190fe543516":[16,0,63,2]
+"class_radio.html#ab6ab11fbd3981e975c724ec9696c164b":[16,0,63,10]
 };

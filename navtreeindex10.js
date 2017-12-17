@@ -1,5 +1,14 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#af7508ed39010425d98162c14859ed1cd":[16,0,3,17,9,0,0,6],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#afe55c66edee5f537f7eca73c340b0774":[16,0,3,17,9,0,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach_1_1_state.html":[16,0,3,17,9,0,0,0],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html":[16,0,3,17,9,1,0],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a2d5c4af0d5fc9246752208a62795c88a":[16,0,3,17,9,1,0,11],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a3acf1e45d75d6da70110deac54a88059":[16,0,3,17,9,1,0,10],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a4f738207b3fce777f23988caedff46c4":[16,0,3,17,9,1,0,9],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a72f68650649ab0f391f9227b0108b7fc":[16,0,3,17,9,1,0,8],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a77389665e4f9630f89db71f4240df276":[16,0,3,17,9,1,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8bff37e0b3d775b0cf806a8cc8aa98b8":[16,0,3,17,9,1,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a9bc20b54bfd7791ad400c69c69ac0951":[16,0,3,17,9,1,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aade80d3930fe0e0febdf94353620f183":[16,0,3,17,9,1,0,7],
@@ -240,14 +249,5 @@ var NAVTREEINDEX10 =
 "dir_28df16f06401fa4b261f014c0f6bda1e.html":[17,0,1,5],
 "dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html":[17,0,1],
 "dir_35e5706fd63e5c8944975582312a2569.html":[17,0,1,0],
-"dir_40506df144da4b42abe7ffe21204d9b9.html":[17,0,0,1],
-"dir_8222bd97931203553b912ea0ca9197bb.html":[17,0,1,3],
-"dir_8780614a6a96c2043c154de986edbe91.html":[17,0,0,0,0],
-"dir_97640b445b5c3be0960f31e3bcf13c53.html":[17,0,1,4],
-"dir_9b90b75836e6e56c55cdd947e9f7c8b7.html":[17,0,0,0,2],
-"dir_bdd9a5d540de89e9fe90efdfc6973a4f.html":[17,0,0],
-"dir_cbd8e190a8e460b48e48ebd2bd706a27.html":[17,0,1,2],
-"dir_cc132907b6047b9805f38c63e061574e.html":[17,0,1,6],
-"dir_cee59dbc20d175ba3d3ad00d9c6ec89c.html":[17,0,0,0,1,0],
-"dir_d3b3c99e678dbdf8dea24fbaaffbebe5.html":[17,0,1,7]
+"dir_40506df144da4b42abe7ffe21204d9b9.html":[17,0,0,1]
 };

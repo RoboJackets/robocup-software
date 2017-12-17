@@ -39,18 +39,18 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_battery_widget.html#ad850bacfebeacfcce54146596cef39d8",
-"class_geometry2d_1_1_composite_shape.html",
-"class_log_viewer.html#ad5b6532aeb944123ad21c6ac0c42667b",
-"class_pid_tuner.html#ad777ef3c6e6fab26c506a24609942d5d",
-"class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49",
-"class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e",
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#acea1876d4023b65440f2604146f24889",
-"classgameplay_1_1skills_1_1move_1_1_move.html#a129500170120d1a15c3a2c58b2b1bcf2",
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8bff37e0b3d775b0cf806a8cc8aa98b8",
-"files.html",
-"struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e"
+"class_battery_widget.html#a9b28abbdfe102b4962d278c5effc8a57",
+"class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42",
+"class_log_viewer.html#abad69a3e8d8d02d332d3b1c78f1435d1",
+"class_pid_tuner.html#ab548b999d59c4ddbd1d20d4dfad5cb43",
+"class_radio.html#ab7a4b5011779f41ea0615190fe543516",
+"class_window_evaluator.html#a419fc2047d4ecc5d4d2364f91413196f",
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae572ecab45ea44cd20b92d69ea95e8f5",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a9db5564094bb3ddc4429497803393824",
+"classgameplay_1_1skills_1_1mark_1_1_mark.html#a904790ca7d76a22da75158ceb7adacde",
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#af7508ed39010425d98162c14859ed1cd",
+"dir_8222bd97931203553b912ea0ca9197bb.html",
+"struct_robot_config_1_1_chipper.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

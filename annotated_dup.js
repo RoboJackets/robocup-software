@@ -169,6 +169,9 @@ var annotated_dup =
           [ "binary_clock", null, [
             [ "BinaryClock", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock.html", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock" ]
           ] ],
+          [ "follow_ball", null, [
+            [ "FollowBall", "classgameplay_1_1plays_1_1training_1_1follow__ball_1_1_follow_ball.html", "classgameplay_1_1plays_1_1training_1_1follow__ball_1_1_follow_ball" ]
+          ] ],
           [ "which_half", null, [
             [ "WhichHalf", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half.html", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half" ]
           ] ]

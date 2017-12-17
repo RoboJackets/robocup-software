@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"class_battery_widget.html#a9b28abbdfe102b4962d278c5effc8a57":[16,0,25,2],
 "class_battery_widget.html#ad850bacfebeacfcce54146596cef39d8":[16,0,25,3],
 "class_config_bool.html":[16,0,26],
 "class_config_bool.html#a30221ddc558692a7b52598b963a74bc2":[16,0,26,8],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "class_geometry2d_1_1_circle.html#aa1458a6d54997f1fc0c39d120eb9bbe0":[16,0,4,1,18],
 "class_geometry2d_1_1_circle.html#aad5b89c5c7b3586901670ed26917516a":[16,0,4,1,5],
 "class_geometry2d_1_1_circle.html#ab9d0de1ce9a23a5b153451a7da407289":[16,0,4,1,15],
-"class_geometry2d_1_1_circle.html#af08ec3ab0be2dfb08cc3479e6b7b326b":[16,0,4,1,4],
-"class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42":[16,0,4,1,9]
+"class_geometry2d_1_1_circle.html#af08ec3ab0be2dfb08cc3479e6b7b326b":[16,0,4,1,4]
 };
