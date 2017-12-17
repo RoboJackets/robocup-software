@@ -15,6 +15,7 @@ class XBEERadio : public Radio {
     public:
         XBEERadio();
         XBEERadio(int id);
+        XBEERadio(std::string usbport);
         ~XBEERadio();
 
 
@@ -39,4 +40,7 @@ class XBEERadio : public Radio {
         void command(uint8_t cmd);
         void write(uint8_t reg, uint8_t value);
         uint8_t read(uint8_t reg);
+
+    private:
+        void send_broadcast(Packet::RadioTx& packet);
 };
