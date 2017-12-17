@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project("GT RoboJackets RoboCup")
+project("RFCCambdrige Robocup")
 
 # include cmake files in the 'cmake folder'
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
