@@ -17,19 +17,13 @@ class TestAdaptiveDefense(play.Play):
                             behavior.Behavior.State.running, lambda: True,
                             "immediately")
 
-        self.kick_eval = robocup.KickEvaluator(main.system_state())
-        self.kick_eval.excluded_robots.clear()
-
-        for bot in main.our_robots():
-            self.kick_eval.add_excluded_robot(bot)
-
     def on_enter_running(self):
-        #b = tactics.adaptive_defense.AdaptiveDefense()
-        #self.add_subbehavior(b, name='defense', required=True)
+        b = tactics.adaptive_defense.AdaptiveDefense()
+        self.add_subbehavior(b, name='defense', required=True)
         pass
 
     def execute_running(self):
-        points = visualization.overlay.get_visualization_points(10, 20)
+        points = visualization.overlay.get_visualization_points(30, 45)
         vals = []
 
         for col in points:
@@ -37,8 +31,10 @@ class TestAdaptiveDefense(play.Play):
             for pt in col:
                 # Uncomment which function we want graphed
 
-                sublist.append(self.robotPos(pt))
+                #sublist.append(self.robotPos(pt))
                 #sublist.append(self.areaPos(pt))
+                sublist.append(self.robotPos(pt) < self.areaPos(pt)*1.8)
+
                 #max_min = max(self.areaPos(pt), self.robotPos(pt)) - min(self.areaPos(pt), self.robotPos(pt))
                 #sublist.append(max_min*2)
                 #sublist.append(evaluation.field.field_pos_coeff_at_pos(
@@ -56,50 +52,41 @@ class TestAdaptiveDefense(play.Play):
 
     def robotPos(self, pos):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
-
         our_goal = robocup.Point(0, 0)
-
         dist_sens = 1.5
         ball_opp_sens = 1.5
-        angle_cutoff = 0.05
 
         ball_dist = pow(1 - dist_sens*(pos - main.ball().pos).mag() / max_dist, 2)
-        shot_pt, shot_chance = self.kick_eval.eval_pt_to_our_goal(pos)
+        ball_opp_goal = math.pow((math.fabs((main.ball().pos - pos).angle_between(pos - our_goal)) / math.pi), ball_opp_sens)
 
-        if ((main.ball().pos - pos).mag() < angle_cutoff):
-            ball_opp_goal = 1
-        else:
-            ball_opp_goal = math.pow((math.fabs((main.ball().pos - pos).angle_between(pos - shot_pt)) / math.pi), ball_opp_sens)
-
-        # TODO: Fix weights
-        weights = [5, 1, 1]
+        weights = [1, 1]
         risk_score = weights[0] * ball_dist + \
-                     weights[1] * shot_chance + \
-                     weights[2] * ball_opp_goal
+                     weights[1] * ball_opp_goal
 
         risk_score /= sum(weights)
 
         return risk_score
 
     def areaPos(self, pos):
-        sensitivity = 4
+        max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
+        our_goal = robocup.Point(0, 0)
         ball_goal_sens = 2.5
-        opp_space = 1 - evaluation.field.space_coeff_at_pos(pos, robots=main.their_robots(), sensitivity=sensitivity)
-        shot_pt, shot_chance = self.kick_eval.eval_pt_to_our_goal(pos)
-        ball_goal_opp = 1 - math.pow(math.fabs(self.angle_between(main.ball().pos - shot_pt, shot_pt - pos)) / math.pi, ball_goal_sens)
+        dist_sens = 1.5
+
+        ball_dist = 1 - pow(1 - dist_sens*(pos - main.ball().pos).mag() / max_dist, 2)
+        ball_goal_opp = 1 - math.pow(math.fabs((main.ball().pos - our_goal).angle_between(our_goal - pos)) / math.pi, ball_goal_sens)
         field_pos = evaluation.field.field_pos_coeff_at_pos(pos, 0, 1, 0, False)
 
-        weights = [1, 3, 3, 1]
-        risk_score = weights[0] * opp_space + \
-                     weights[1] * shot_chance + \
-                     weights[2] * ball_goal_opp + \
-                     weights[3] * field_pos
+        weights = [1, 2, 3]
+        risk_score = weights[0] * ball_dist + \
+                     weights[1] * ball_goal_opp + \
+                     weights[2] * field_pos
         risk_score /= sum(weights)
 
         return risk_score
 
     def on_exit_running(self):
-        #self.remove_subbehavior('defense')
+        self.remove_subbehavior('defense')
         pass
 
     @classmethod

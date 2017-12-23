@@ -1,5 +1,32 @@
-# Classifies a list of N-dimensional vectors into two classes
-# Additionally, there is a linear SVM optimizer to calculate the best weights for a given set of training data
-# The training data is premade into a list of inputs as well as the class associated with it
+# Classifies a feature into any number of classes
 
-# Classify object
+# Linear classfication defined is
+# y = f(x, w, b) where...
+#   x is a vector of input features of an object
+#   w is a vector of weights to apply to the features
+#   b is the bias of the feature-weight system
+#   f() is x dot w + b
+#   y is the final output score
+
+
+# Classifies the object into two distinct class based on a cutoff value
+# Anything less than the cutoff is of class false, greater than the cutoff is of class true
+# 
+# @param input The vector of input features
+# @param weights The vector of weights to apply to the input features
+# @param bias The bias of the features-weight system
+# @param cutoff The number which splits the output score of the object into two classes
+# @param Returns true or false based on which class the object is in
+def binary_classification(input, weights, bias, cutoff):
+    return linear_classification(input, weights, bias) < cutoff
+
+# Returns the raw output score of the linear classifier based on the dot product
+#
+# @param input The vector of input features
+# @param weights The vector of weights to apply to the input features
+# @param bias The bias of the features-weight system
+def linear_classification(input, weights, bias):
+    # Element wise multiplication
+    out = map(lambda x, w: x * w, input, weights)
+
+    return sum(out) + bias
