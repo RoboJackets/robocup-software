@@ -16,9 +16,10 @@
 # @param weights The vector of weights to apply to the input features
 # @param bias The bias of the features-weight system
 # @param cutoff The number which splits the output score of the object into two classes
-# @param Returns true or false based on which class the object is in
+# @param Returns tuple of the class (true or false) and the given score
 def binary_classification(input, weights, bias, cutoff):
-    return linear_classification(input, weights, bias) < cutoff
+    score = linear_classification(input, weights, bias)
+    return (score < cutoff, score)
 
 # Returns the raw output score of the linear classifier based on the dot product
 #

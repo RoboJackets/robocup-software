@@ -78,7 +78,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.debug = True
         self.kick_eval = robocup.KickEvaluator(main.system_state())
         self.num_of_defenders = 6 # TODO: Make variable
-        self.robot_classes = [] # List of tuples of is_winger (!is_forward) and robot obj
+        self.robot_classes = [] # List of tuples of is_winger (!is_forward), class score, and robot obj
         self.agressiviness = 0 # Changes how to weight positioning on the wingers
 
         self.kick_eval.excluded_robots.clear()
@@ -106,12 +106,12 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
                 features = [robot_risk_score, area_risk_score]
 
-                is_wing = evaluation.linear_classification.binary_classification(features,
-                            AdaptiveDefense.WING_FORWARD_WEIGHTS,
-                            AdaptiveDefense.WING_FORWARD_BIAS,
-                            AdaptiveDefense.WING_FORWARD_CUTOFF)
+                is_wing, class_score = evaluation.linear_classification.binary_classification(features,
+                                            AdaptiveDefense.WING_FORWARD_WEIGHTS,
+                                            AdaptiveDefense.WING_FORWARD_BIAS,
+                                            AdaptiveDefense.WING_FORWARD_CUTOFF)
                 
-                self.robot_classes.append((is_wing, bot))
+                self.robot_classes.append((is_wing, class_score, bot))
 
                 if self.debug and is_wing:
                     main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.White, "Defense: Class Wing")
