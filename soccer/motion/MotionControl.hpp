@@ -61,8 +61,6 @@ private:
 
     Pid _positionXController;
     Pid _positionYController;
-    Pid _velocityXController;
-    Pid _velocityYController;
     Pid _angleController;
 
     static ConfigDouble* _max_acceleration;

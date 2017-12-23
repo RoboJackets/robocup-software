@@ -36,11 +36,6 @@ MotionControl::MotionControl(OurRobot* robot)
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
-
-    ofstream out;
-    out.open(to_string(_robot->shell()) + ".csv");
-    out << "time,x_command,y_command,x_real,y_real,x_vel_command,y_vel_command,x_vel_real,y_vel_real,x_velFF,y_velFF,x_accelFF,y_accelFF" << std::endl;
-    out.close();
 }
 
 void MotionControl::run() {
@@ -57,14 +52,6 @@ void MotionControl::run() {
     _positionYController.ki = *_robot->config->translation.i;
     _positionYController.setWindup(*_robot->config->translation.i_windup);
     _positionYController.kd = *_robot->config->translation.d;
-    _velocityXController.kp = *_robot->config->velTranslation.p;
-    _velocityXController.ki = *_robot->config->velTranslation.i;
-    _velocityXController.setWindup(*_robot->config->velTranslation.i_windup);
-    _velocityXController.kd = *_robot->config->velTranslation.d;
-    _velocityYController.kp = *_robot->config->velTranslation.p;
-    _velocityYController.ki = *_robot->config->velTranslation.i;
-    _velocityYController.setWindup(*_robot->config->velTranslation.i_windup);
-    _velocityYController.kd = *_robot->config->velTranslation.d;
     _angleController.kp = *_robot->config->rotation.p;
     _angleController.ki = *_robot->config->rotation.i;
     _angleController.kd = *_robot->config->rotation.d;
@@ -166,36 +153,24 @@ void MotionControl::run() {
 
     // tracking error
     Point posError = target.pos - _robot->pos;
-    //posError.rotate(fieldToRobotAngle);
 
     // acceleration factor
     Point acceleration;
-    Point velocity;
     boost::optional<RobotInstant> nextTarget =
         _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
         acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;
-        velocity = nextTarget->motion.vel;
     } else {
         acceleration = {0, 0};
     }
 
     Point accelFF = acceleration * 60.0f * (*_robot->config->accelerationFF);
-    Point velFF = velocity * (*_robot->config->velocityFF);
-
-    target.vel += accelFF;
-    target.vel += velFF;
-
-    velocity += _positionXController.run(posError.x());
-    velocity += _positionYController.run(posError.y());
-
-    Point velError = velocity - _robot->vel;
 
     // PID on position
-    target.vel.x() += _velocityXController.run(velError.x());
-    target.vel.y() += _velocityYController.run(velError.y());
     //target.vel.x() += _positionXController.run(posError.x());
     //target.vel.y() += _positionYController.run(posError.y());
+
+    target.vel += accelFF;
 
     // draw target pt
     _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
@@ -212,20 +187,11 @@ void MotionControl::run() {
     _lastWorldVelCmd = target.vel;
     _lastCmdTime = RJ::now();
 
-    ofstream out;
-    out.open(to_string(_robot->shell()) + ".csv", ios::app);
-    out << 0.0 << "," 
-        << target.pos.x() << "," << target.pos.y() << "," 
-        << _robot->pos.x() << "," << _robot->pos.y() << ","
-        << target.vel.x() << "," << target.vel.y() << ","
-        << _robot->vel.x() << "," << _robot->vel.y() << ","
-        << velFF.x() << "," << velFF.y() << ","
-        << accelFF.x() << "," << velFF.y() << std::endl;
-    out.close();
-
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
     target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
+
+    target.vel = target.vel.rotated(targetW * *_robot->config->turnFF);
 
     this->_targetBodyVel(target.vel);
 }

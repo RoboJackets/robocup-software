@@ -27,7 +27,6 @@ RobotConfig::Chipper::Chipper(Configuration* config, QString prefix)
 
 RobotConfig::RobotConfig(Configuration* config, QString prefix)
     : translation(config, QString("%1/translation").arg(prefix)),
-      velTranslation(config, QString("%1/velTranslation").arg(prefix)),
       rotation(config, QString("%1/rotation").arg(prefix)),
       kicker(config, QString("%1/kicker").arg(prefix)),
       dribbler(config, QString("%1/dribbler").arg(prefix)),
@@ -40,11 +39,11 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
           config, QString("%1/rotation/velMultiplier").arg(prefix), 1.0)),
       accelerationFF(new ConfigDouble(
           config, QString("%1/translation/accelerationFF").arg(prefix))),
-      velocityFF(new ConfigDouble(
-          config, QString("%1/translation/velocityFF").arg(prefix))),
       minEffectiveVelocity(new ConfigDouble(
           config, QString("%1/translation/minEffectiveVelocity").arg(prefix),
           0.3)),
+      turnFF(new ConfigDouble(
+          config, QString("%1/translation/turnFF").arg(prefix))),
       minEffectiveAngularSpeed(new ConfigDouble(
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
           0.0)) {}

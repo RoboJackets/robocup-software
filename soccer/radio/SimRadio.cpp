@@ -7,7 +7,6 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <stdexcept>
-#include <iostream>
 
 #include "firmware-common/robot2015/cpu/status.h"
 
@@ -34,8 +33,6 @@ void SimRadio::send(Packet::RadioTx& packet) {
         simRobot->set_velnormal(-robot.control().xvelocity());
         simRobot->set_velangular(robot.control().avelocity());
         // simRobot->set_velangular(RadiansToDegrees(robot.control().avelocity()));
-
-        std::cout << -robot.control().xvelocity() << std::endl;
 
         simRobot->set_triggermode(
             (grSim_Robot_Command_TriggerMode)robot.control().triggermode());
