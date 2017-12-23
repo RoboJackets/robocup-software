@@ -126,7 +126,6 @@ void MotionControl::run() {
         _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
         _robot->addText(QString("angle: %1").arg(_robot->angle));
         */
-        _targetAngleVel(targetW);
     }
 
     // handle body velocity for pivot command
@@ -194,6 +193,20 @@ void MotionControl::run() {
     target.vel = target.vel.rotated(targetW * *_robot->config->turnFF);
 
     this->_targetBodyVel(target.vel);
+
+    if (targetAngleFinal) {
+        targetW += target.vel.x() * *_robot->config->strafeFF;
+
+        // limit W
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+            if (targetW > 0) {
+                targetW = (rotationConstraints.maxSpeed);
+            } else {
+                targetW = -(rotationConstraints.maxSpeed);
+            }
+        }
+        _targetAngleVel(targetW);
+    }
 }
 
 void MotionControl::stopped() {

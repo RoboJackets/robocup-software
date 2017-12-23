@@ -72,6 +72,7 @@ public:
     ConfigDouble* pivotVelMultiplier;
 
     ConfigDouble* turnFF;
+    ConfigDouble* strafeFF;
 };
 
 /**
