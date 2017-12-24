@@ -24,8 +24,9 @@ class TestAdaptiveDefense(play.Play):
             self.kick_eval.add_excluded_robot(bot)
 
     def on_enter_running(self):
-        b = tactics.adaptive_defense.AdaptiveDefense()
-        self.add_subbehavior(b, name='defense', required=True)
+        #b = tactics.adaptive_defense.AdaptiveDefense()
+        #self.add_subbehavior(b, name='defense', required=True)
+        pass
 
     def execute_running(self):
         points = visualization.overlay.get_visualization_points(10, 20)
@@ -36,8 +37,10 @@ class TestAdaptiveDefense(play.Play):
             for pt in col:
                 # Uncomment which function we want graphed
 
-                #sublist.append(self.robotPos(pt))
+                sublist.append(self.robotPos(pt))
                 #sublist.append(self.areaPos(pt))
+                #max_min = max(self.areaPos(pt), self.robotPos(pt)) - min(self.areaPos(pt), self.robotPos(pt))
+                #sublist.append(max_min*2)
                 #sublist.append(evaluation.field.field_pos_coeff_at_pos(
                 #    pt, 0.1, .2, 0.02))
                 #sublist.append(1-evaluation.field.space_coeff_at_pos(pt))
@@ -49,30 +52,30 @@ class TestAdaptiveDefense(play.Play):
 
             vals.append(sublist)
 
-        #visualization.overlay.display_visualization_points(vals, True)
+        visualization.overlay.display_visualization_points(vals, True)
 
     def robotPos(self, pos):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
 
-        dist_sens = 0.75
-        angle_sens = 0.5
+        our_goal = robocup.Point(0, 0)
+
+        dist_sens = 1.5
         ball_opp_sens = 1.5
-        ball_goal_sens = 2.5
+        angle_cutoff = 0.05
+
         ball_dist = pow(1 - dist_sens*(pos - main.ball().pos).mag() / max_dist, 2)
-        angle_to_goal = 1 - angle_sens*math.fabs(math.atan2(pos.x, pos.y) / (math.pi / 2))
         shot_pt, shot_chance = self.kick_eval.eval_pt_to_our_goal(pos)
-        pass_pt, pass_chance = self.kick_eval.eval_pt_to_robot(main.ball().pos, pos)
-        ball_opp_goal = 1 - math.pow((math.fabs(self.angle_between(main.ball().pos - pos, pos - shot_pt)) / math.pi), ball_opp_sens)
-        ball_goal_opp = 1 - math.pow(math.fabs(self.angle_between(main.ball().pos - shot_pt, shot_pt - pos)) / math.pi, ball_goal_sens)
+
+        if ((main.ball().pos - pos).mag() < angle_cutoff):
+            ball_opp_goal = 1
+        else:
+            ball_opp_goal = math.pow((math.fabs((main.ball().pos - pos).angle_between(pos - shot_pt)) / math.pi), ball_opp_sens)
 
         # TODO: Fix weights
-        weights = [1, 1, 3, 1, 1, 1]
+        weights = [5, 1, 1]
         risk_score = weights[0] * ball_dist + \
-                     weights[1] * angle_to_goal + \
-                     weights[2] * shot_chance + \
-                     weights[3] * pass_chance + \
-                     weights[4] * ball_opp_goal + \
-                     weights[5] * ball_goal_opp
+                     weights[1] * shot_chance + \
+                     weights[2] * ball_opp_goal
 
         risk_score /= sum(weights)
 
@@ -96,19 +99,9 @@ class TestAdaptiveDefense(play.Play):
         return risk_score
 
     def on_exit_running(self):
-        self.remove_subbehavior('defense')
+        #self.remove_subbehavior('defense')
+        pass
 
     @classmethod
     def handles_goalie(cls):
         return True
-
-
-    ## Gets the angle between two lines
-    #  Angle is constrained to -pi to +pi
-    def angle_between(self, line1, line2):
-        c = line1.dot(line2) / line1.mag() / line2.mag()
-        return math.acos(self.clip(c, -1, 1))
-
-    ## Clips the val to be between the lower and upper boundries
-    def clip(self, val, lower, upper):
-        return min(max(val, lower), upper)
