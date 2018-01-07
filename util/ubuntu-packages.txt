@@ -107,3 +107,4 @@ python-matplotlib
 python-usb
 freeglut3-dev
 mercurial
+go

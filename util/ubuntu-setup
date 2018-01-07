@@ -164,6 +164,9 @@ pip3 install -r $BASE/util/requirements3.txt
 # install python2 requirements
 pip2 install -r $BASE/util/requirements2.txt
 
+# install stylize
+go get github.com/justbuchanan/stylize
+
 # This script is run as sudo, but we don't want submodules to be owned by the
 # root user, so we use `su` to update submodules as the normal user
 SETUP_USER="$SUDO_USER"

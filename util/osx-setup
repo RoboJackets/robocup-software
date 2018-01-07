@@ -39,6 +39,9 @@ brew linkapps qt5
 echo "-- Installing python3 dependencies"
 sudo pip3 install -r "$BASE/util/requirements3.txt"
 
+# install stylize
+go get github.com/justbuchanan/stylize
+
 # prevent OS X's AppNap "feature" from sleeping the simulator
 echo "-- Disabling AppNap for simulator"
 defaults write org.robojackets.robocup.simulator NSAppSleepDisabled -bool YES

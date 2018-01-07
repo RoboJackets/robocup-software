@@ -29,6 +29,9 @@ sudo pip install -r $BASE/util/requirements3.txt
 
 sudo pip2 install -r $BASE/util/requirements2.txt
 
+# install stylize
+go get github.com/justbuchanan/stylize
+
 echo "-- Updating submodules"
 git submodule sync
 git submodule update --init --recursive
