@@ -165,7 +165,11 @@ pip3 install -r $BASE/util/requirements3.txt
 pip2 install -r $BASE/util/requirements2.txt
 
 # install stylize
-go get github.com/justbuchanan/stylize
+if [ -z "$GOPATH" ]; then
+    echo "[WARN] No GOPATH set, not installing stylize."
+else
+    go get github.com/justbuchanan/stylize
+fi
 
 # This script is run as sudo, but we don't want submodules to be owned by the
 # root user, so we use `su` to update submodules as the normal user
