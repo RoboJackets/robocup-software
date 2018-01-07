@@ -34,6 +34,7 @@ if [ -z "$GOPATH" ]; then
     echo "[WARN] No GOPATH set, not installing stylize."
 else
     go get github.com/justbuchanan/stylize
+    go install github.com/justbuchanan/stylize
 fi
 
 echo "-- Updating submodules"

@@ -169,6 +169,7 @@ if [ -z "$GOPATH" ]; then
     echo "[WARN] No GOPATH set, not installing stylize."
 else
     go get github.com/justbuchanan/stylize
+    go install github.com/justbuchanan/stylize
 fi
 
 # This script is run as sudo, but we don't want submodules to be owned by the

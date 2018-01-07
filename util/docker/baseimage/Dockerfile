@@ -33,6 +33,7 @@ WORKDIR /home/developer/project
 
 RUN mkdir -p /home/developer/golang
 ENV GOPATH /home/developer/golang
+ENV PATH="${PATH}:${GOPATH}/bin"
 
 
 # This image is not meant to be run directly, it has not been compiled yet!
