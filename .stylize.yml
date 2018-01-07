@@ -1,0 +1,14 @@
+formatters:
+    .py: yapf
+    .h: clang
+    .hpp: clang
+    .c: clang
+    .cc: clang
+    .cpp: clang
+yapf_style: .style.yapf
+clang_style: file
+exclude_dirs:
+    - build
+    - external
+    - old
+
