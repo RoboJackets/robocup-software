@@ -133,4 +133,4 @@ pretty:
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
-	@stylize --diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+	@stylize --git_diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
