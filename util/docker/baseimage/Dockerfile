@@ -31,5 +31,9 @@ ENV HOME /home/developer
 RUN mkdir -p /home/developer/project
 WORKDIR /home/developer/project
 
+RUN mkdir -p /home/developer/golang
+ENV GOPATH /home/developer/golang
+
+
 # This image is not meant to be run directly, it has not been compiled yet!
 # In addition, it does not contain any source code, only dependencies
