@@ -5,10 +5,12 @@ formatters:
     .c: clang
     .cc: clang
     .cpp: clang
-yapf_style: .style.yapf
-clang_style: file
+formatter_args:
+    clang:
+        - --style=file
+    yapf:
+        - --style=.style.yapf
 exclude:
     - build
     - external
     - old
-
