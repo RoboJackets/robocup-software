@@ -7,7 +7,7 @@ formatters:
     .cpp: clang
 yapf_style: .style.yapf
 clang_style: file
-exclude_dirs:
+exclude:
     - build
     - external
     - old
