@@ -13,6 +13,8 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     # we make a pass triangle with the far corner at the ball and the opposing side touching the receiver's mouth
     # the side along the receiver's mouth is the 'receive_seg'
     # we then use the window evaluator on this scenario to see if the pass is open
+    print("from_point: ({}, {})".format(from_point.x, from_point.y))
+    print("to_point: ({}, {})".format(to_point.x, to_point.y))
     pass_angle = math.pi / 32.0
     pass_dist = to_point.dist_to(from_point)
     pass_dir = to_point - from_point
@@ -20,6 +22,8 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     receive_seg_half_len = math.tan(pass_angle) * pass_dist
     receive_seg = robocup.Segment(to_point + pass_perp * receive_seg_half_len,
                                   to_point + pass_perp * -receive_seg_half_len)
+
+    print("1st receive length: " + str(receive_seg.length()))
 
     win_eval = robocup.WindowEvaluator(main.system_state())
     for r in excluded_robots:
@@ -30,6 +34,9 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     # value can range from zero to one
     # we square the ratio of best to total to make it weigh more - we could raise it to higher power if we wanted
     if best != None:
+        print("best length: " + str(best.segment.length()))
+        print("receive length: " + str(receive_seg.length()))
+
         return 0.8 * (best.segment.length() / receive_seg.length())**2
     else:
         # the pass is completely blocked
