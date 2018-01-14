@@ -422,7 +422,6 @@ void Processor::run() {
             }
         }
         _radio->clear();
-
         for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
@@ -748,8 +747,7 @@ void Processor::sendRadioData() {
 
     //------------------------------------------------------------------------------------------------------------------------------
     // I BROKE STUFF
-    // Segfault after remove all joysticks readd and then try to remove one
-    // Now it just doesn't recognize readding a second joystick???
+    // Segfault after plug and unplug one
 
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();  // BOOKMARK
@@ -789,8 +787,11 @@ void Processor::sendRadioData() {
                         txRobot->mutable_control(), r);
                 }
             } else if (_manualID == r->shell()) {
-                applyJoystickControls(getJoystickControlValues()[0],
-                                      txRobot->mutable_control(), r);
+                auto controlValues = getJoystickControlValues();
+                if (controlValues.size()) {
+                    applyJoystickControls(controlValues[0],
+                                          txRobot->mutable_control(), r);
+                }
             }
         }
     }
@@ -888,7 +889,6 @@ std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
 
 vector<int> Processor::getJoystickRobotIds() {
     vector<int> robotIds;
-    std::cout << "-----------------------" << std::endl;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
             robotIds.push_back(joy->getRobotId());

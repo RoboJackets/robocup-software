@@ -365,17 +365,19 @@ void MainWindow::updateViews() {
             index = info - manualIds.begin();
         }
 
-        JoystickControlValues vals =
-            _processor->getJoystickControlValues()[index];
-        _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
-        _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
-        _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
-        _ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
-        _ui.joystickDibblerPowerLabel->setText(
-            tr("%1").arg(vals.dribblerPower));
-        _ui.joystickKickCheckBox->setChecked(vals.kick);
-        _ui.joystickChipCheckBox->setChecked(vals.chip);
-        _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
+        auto valList = _processor->getJoystickControlValues();
+        if (valList.size() > index) {
+            JoystickControlValues vals = valList[index];
+            _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
+            _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
+            _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
+            _ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
+            _ui.joystickDibblerPowerLabel->setText(
+                tr("%1").arg(vals.dribblerPower));
+            _ui.joystickKickCheckBox->setChecked(vals.kick);
+            _ui.joystickChipCheckBox->setChecked(vals.chip);
+            _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
+        }
     }
 
     // Time since last update
