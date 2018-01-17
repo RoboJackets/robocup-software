@@ -10,11 +10,11 @@ class Moc_Ball:
 
 class Moc_Robot:
 	def __init__(self, x, y):
-		self.pos = robocup.Point(x, y)
+		self.pos = robocup.Point(float(x), float(y))
 		self.visible = True;
 
 	def set_pos(self, x, y):
-		self.pos = robocup.Point(x, y)
+		self.pos = robocup.Point(float(x), float(y))
 
 class TestPassing(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
@@ -28,8 +28,8 @@ class TestPassing(unittest.TestCase):
 		main.init()
 		main.set_system_state(robocup.SystemState())
 
-		self.our_robots = [Moc_Robot(0, -5), Moc_Robot(0, -5), Moc_Robot(0, -5), 
-				Moc_Robot(0, -5), Moc_Robot(0, -5), Moc_Robot(0, -5)]
+		self.our_robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
+				Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
 		main.set_our_robots(self.our_robots)
 
 		main.set_ball(Moc_Ball(0, 0))
@@ -85,10 +85,11 @@ class TestPassing(unittest.TestCase):
 		# self.set_our_robot_pos(1, 0, length / 2)
 		# self.set_their_robot_pos(1, 0, length / 2)
 		self.their_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
-		self.their_robots[1].set_pos(constants.Robot.Radius * 1 , length / 4 + constants.Robot.Radius * 2)
-		self.their_robots[2].set_pos(constants.Robot.Radius * -1 , length / 4 + constants.Robot.Radius * 2)
+		self.their_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
+		self.their_robots[2].set_pos(constants.Robot.Radius * -3 , length / 2 - constants.Robot.Radius)
+		self.their_robots[3].set_pos(.001, length / 4 + constants.Robot.Radius)
 		main.set_their_robots(self.their_robots)
-		self.assertEqual(run_function(0, length / 4, 0, length / 2), success)		
+		self.assertEqual(run_function(0, length / 4, 0, length / 2 + constants.Robot.Radius), success)		
 
 		# self.set_our_robot_pos(6, 0, length / 2)
 		# self.set_their_robot_pos(6, 0, length / 2)
