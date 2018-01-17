@@ -166,38 +166,38 @@ void GamepadController::update() {
      */
     // Logitech F310 Controller
     _controls.rotation =
-        -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) /
+        -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTX) /
         AXIS_MAX;
 
     /*
      *  VELOCITY TRANSLATION
      */
-    auto rightX =
-        SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTX) /
+    auto leftX =
+        SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) /
         AXIS_MAX;
-    auto rightY =
-        -SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTY) /
+    auto leftY =
+        -SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTY) /
         AXIS_MAX;
 
-    Geometry2d::Point input(rightX, rightY);
+    Geometry2d::Point input(leftX, leftY);
 
     // Align along an axis using the DPAD as modifier buttons
     if (SDL_GameControllerGetButton(_controller,
                                     SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        input.y() = -fabs(rightY);
+        input.y() = -fabs(leftY);
         input.x() = 0;
     } else if (SDL_GameControllerGetButton(_controller,
                                            SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        input.y() = fabs(rightY);
+        input.y() = fabs(leftY);
         input.x() = 0;
     } else if (SDL_GameControllerGetButton(_controller,
                                            SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         input.y() = 0;
-        input.x() = -fabs(rightX);
+        input.x() = -fabs(leftX);
     } else if (SDL_GameControllerGetButton(_controller,
                                            SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         input.y() = 0;
-        input.x() = fabs(rightX);
+        input.x() = fabs(leftX);
     }
 
     // Floating point precision error rounding
