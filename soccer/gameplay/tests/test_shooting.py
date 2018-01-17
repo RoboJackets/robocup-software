@@ -15,10 +15,10 @@ class TestShooting(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestShooting, self).__init__(*args, **kwargs)
 
-	def setUp(self):
-		main.init()
-		self.robots = [Moc_Robot(0, 0)]
-		main.set_their_robots(self.robots)
+	# def setUp(self):
+	# 	main.init()
+	# 	self.robots = [Moc_Robot(0, 0)]
+	# 	main.set_their_robots(self.robots)
 
 	def test_eval_shot(self):
 		val = ""

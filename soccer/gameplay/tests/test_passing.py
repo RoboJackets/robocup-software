@@ -19,14 +19,17 @@ class Moc_Robot:
 class TestPassing(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestPassing, self).__init__(*args, **kwargs)
+		self.system_state = robocup.SystemState()
 
 	def setUp(self):
-		self.their_robots = [Moc_Robot(0, -5), Moc_Robot(0, -5), Moc_Robot(0, -5), 
-				Moc_Robot(0, -5), Moc_Robot(0, -5), Moc_Robot(0, -5)]
+		bot1 = robocup.OurRobot(1, self.system_state)
+		bot2 = robocup.OurRobot(2, self.system_state)
+		bot3 = robocup.OurRobot(3, self.system_state)
+		bot4 = robocup.OurRobot(4, self.system_state)
+		bot5 = robocup.OurRobot(5, self.system_state)
+		bot6 = robocup.OurRobot(6, self.system_state)
+		self.their_robots = [bot1, bot2, bot3, bot4, bot5, bot6]
 		main.set_their_robots(self.their_robots)
-
-		main.init()
-		main.set_system_state(robocup.SystemState())
 
 		self.our_robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
 				Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
@@ -70,7 +73,7 @@ class TestPassing(unittest.TestCase):
 
 		# Test a point passing to itself. 
 		# Supposed to return 0. 
-		# This is an edge case that we discussed to be okay. In the future, if we want a pass to start and end at the same point to be considered successful, we need to modify the eval_pass function. 
+		# This is an edge case that we discussed to be okay. In the future, if we want a pass that starts and ends at the same point to be considered successful, we need to modify the eval_pass function. 
 		# self.assertEqual(run_function(0, 0, 0, 0), fail)
 
 		# Test a point passing to a close point. Should return maximal value
@@ -80,19 +83,27 @@ class TestPassing(unittest.TestCase):
 		print("length / 2: {}".format(length / 2))
 
 		# Test a point passing to a far point. Should return maximal value
-		self.assertEqual(run_function(0, length / 4, 0, length / 2), success)
+		# self.assertEqual(run_function(0, length / 4, 0, length / 2), success)
 
 		# self.set_our_robot_pos(1, 0, length / 2)
 		# self.set_their_robot_pos(1, 0, length / 2)
+
+		bot1.set_pos_for_testing(robocup.Point(0, length / 4))
 		self.their_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
 		self.their_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
 		self.their_robots[2].set_pos(constants.Robot.Radius * -3 , length / 2 - constants.Robot.Radius)
-		self.their_robots[3].set_pos(.001, length / 4 + constants.Robot.Radius)
+		self.their_robots[3].set_pos(.1, length / 4 + constants.Robot.Radius)
 		main.set_their_robots(self.their_robots)
-		self.assertEqual(run_function(0, length / 4, 0, length / 2 + constants.Robot.Radius), success)		
+
+		# self.our_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
+		# self.our_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
+		# self.our_robots[2].set_pos(constants.Robot.Radius * -3 , length / 2 - constants.Robot.Radius)
+		# self.our_robots[3].set_pos(.1, length / 4 + constants.Robot.Radius)
+		# main.set_our_robots(self.our_robots)
+		self.assertEqual(run_function(0, 0, 0, length / 2), success)		
 
 		# self.set_our_robot_pos(6, 0, length / 2)
 		# self.set_their_robot_pos(6, 0, length / 2)
 		# self.assertEqual(run_function(0, length / 2, 0, length / 2 + .01), .8)
 
-		print("Hello World")
+	

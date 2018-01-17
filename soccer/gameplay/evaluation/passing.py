@@ -21,8 +21,8 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     receive_seg = robocup.Segment(to_point + pass_perp * receive_seg_half_len,
                                   to_point + pass_perp * -receive_seg_half_len)
 
-    for i in range(len(main.their_robots())):
-        print("Robot {}: ({}, {})".format(i, main.their_robots()[i].pos.x, main.their_robots()[i].pos.y))
+    # for i in range(len(main.their_robots())):
+    #     print("Robot {}: ({}, {})".format(i, main.their_robots()[i].pos.x, main.their_robots()[i].pos.y))
 
     win_eval = robocup.WindowEvaluator(main.system_state())
     for r in excluded_robots:
@@ -38,7 +38,7 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
         print("from point: ({}, {})".format(from_point.x, from_point.y))
         print("best length: {}".format(best.segment.length()))
         print("receive length: {}".format(receive_seg.length()))
-
+        print(str(0.8 * (best.segment.length() / receive_seg.length())**2))
         return 0.8 * (best.segment.length() / receive_seg.length())**2
     else:
         # the pass is completely blocked

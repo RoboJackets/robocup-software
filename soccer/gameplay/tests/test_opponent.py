@@ -94,7 +94,7 @@ class TestOpponent(unittest.TestCase):
 		main.their_robots()[1].set_pos(0, length / 2)
 		
 		# This would work if the function worked
-		self.assertEqual(test_point(width / 2, length / 2), main.their_robots()[1])
+		self.assertEqual(test_point(width / 2, length / 2), main.their_robots()[0])
 		
 
 		self.assertEqual(test_point(0, length / 4, 0), main.their_robots()[1])
