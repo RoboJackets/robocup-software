@@ -19,17 +19,16 @@ class Moc_Robot:
 class TestPassing(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestPassing, self).__init__(*args, **kwargs)
-		self.system_state = robocup.SystemState()
-
+		self.config = robocup.Configuration.FromRegisteredConfigurables()
+		self.system_state = robocup.SystemState()	
+	
 	def setUp(self):
-		bot1 = robocup.OurRobot(1, self.system_state)
-		bot2 = robocup.OurRobot(2, self.system_state)
-		bot3 = robocup.OurRobot(3, self.system_state)
-		bot4 = robocup.OurRobot(4, self.system_state)
-		bot5 = robocup.OurRobot(5, self.system_state)
-		bot6 = robocup.OurRobot(6, self.system_state)
-		self.their_robots = [bot1, bot2, bot3, bot4, bot5, bot6]
-		main.set_their_robots(self.their_robots)
+		
+		# self.their_robots = [bot1, bot2, bot3, bot4, bot5, bot6]
+		# main.set_their_robots(self.their_robots
+
+		main.init()
+		main.set_system_state(robocup.SystemState())
 
 		self.our_robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
 				Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
@@ -65,6 +64,13 @@ class TestPassing(unittest.TestCase):
 		length = constants.Field.Length
 		width = constants.Field.Width
 
+		bot1 = robocup.OurRobot(1, self.system_state)
+		# bot2 = robocup.OurRobot(2, self.system_state)
+		# bot3 = robocup.OurRobot(3, self.system_state)
+		# bot4 = robocup.OurRobot(4, self.system_state)
+		# bot5 = robocup.OurRobot(5, self.system_state)
+		# bot6 = robocup.OurRobot(6, self.system_state)
+
 		def run_function(x1, y1, x2, y2, excluded_robots=[]):
 			return evaluation.passing.eval_pass(robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
 
@@ -89,11 +95,11 @@ class TestPassing(unittest.TestCase):
 		# self.set_their_robot_pos(1, 0, length / 2)
 
 		bot1.set_pos_for_testing(robocup.Point(0, length / 4))
-		self.their_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
-		self.their_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
-		self.their_robots[2].set_pos(constants.Robot.Radius * -3 , length / 2 - constants.Robot.Radius)
-		self.their_robots[3].set_pos(.1, length / 4 + constants.Robot.Radius)
-		main.set_their_robots(self.their_robots)
+		# self.their_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
+		# self.their_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
+		# self.their_robots[2].set_pos(constants.Robot.Radius * -3 , length / 2 - constants.Robot.Radius)
+		# self.their_robots[3].set_pos(.1, length / 4 + constants.Robot.Radius)
+		# main.set_their_robots(self.their_robots)
 
 		# self.our_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
 		# self.our_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
