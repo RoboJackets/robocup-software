@@ -93,6 +93,7 @@ private Q_SLOTS:
     void on_goalieID_currentIndexChanged(int value);
 
     void on_actionUse_Field_Oriented_Controls_toggled(bool value);
+    void on_actionUse_Multiple_Joysticks_toggled(bool value);
 
     void on_actionUse_External_Referee_toggled(bool value);
 

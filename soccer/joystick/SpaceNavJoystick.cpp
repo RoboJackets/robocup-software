@@ -13,6 +13,7 @@ ConfigDouble* SpaceNavJoystick::DribblerNegativeDeadzone;
 SpaceNavJoystick::SpaceNavJoystick() {
     _daemonConnected = false;
     _daemonTried = false;
+    robotId = -1;
 }
 
 SpaceNavJoystick::~SpaceNavJoystick() { close(); }
@@ -124,7 +125,10 @@ void SpaceNavJoystick::reset() {
     _controlValues = JoystickControlValues();
 }
 
-void SpaceNavJoystick::close() { spnav_close(); }
+void SpaceNavJoystick::close() {
+    spnav_close();
+    robotId = -1;
+}
 
 void SpaceNavJoystick::open() {
     _daemonConnected = spnav_open() != -1;
