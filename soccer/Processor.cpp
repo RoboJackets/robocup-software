@@ -161,7 +161,7 @@ void Processor::setupJoysticks() {
     GamepadController::controllersInUse.clear();
     GamepadController::joystickRemoved = -1;
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < Robots_Per_Team; i++) {
         _joysticks.push_back(new GamepadController());
     }
 
@@ -745,12 +745,8 @@ void Processor::sendRadioData() {
         }
     }
 
-    //------------------------------------------------------------------------------------------------------------------------------
-    // I BROKE STUFF
-    // Segfault after plug and unplug one
-
     // Add RadioTx commands for visible robots and apply joystick input
-    std::vector<int> manualIds = getJoystickRobotIds();  // BOOKMARK
+    std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _state.self) {
         if (r->visible || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();

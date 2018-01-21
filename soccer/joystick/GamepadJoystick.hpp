@@ -9,7 +9,7 @@
  *
  * Used to control the Logitech F310 and XBOX controllers
  *
- * Appears to have been mostly replaced by GamepadController
+ * This has been replaced by GamepadController
  */
 class GamepadJoystick : public Joystick {
 public:
