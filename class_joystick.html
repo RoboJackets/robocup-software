@@ -114,6 +114,7 @@ $(document).ready(function(){initNavTree('class_joystick.html','');});
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_joystick-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Joystick Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
@@ -139,6 +140,12 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:a8e9bf845ab30bc6f661ce91db1dd75be"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="struct_joystick_control_values.html">JoystickControlValues</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_joystick.html#a8e9bf845ab30bc6f661ce91db1dd75be">getJoystickControlValues</a> ()=0</td></tr>
 <tr class="memdesc:a8e9bf845ab30bc6f661ce91db1dd75be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the control values from this joystick.  <a href="#a8e9bf845ab30bc6f661ce91db1dd75be">More...</a><br /></td></tr>
 <tr class="separator:a8e9bf845ab30bc6f661ce91db1dd75be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85df1c7d5dc51402a366b6dc3a02cc44"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85df1c7d5dc51402a366b6dc3a02cc44"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>getRobotId</b> ()</td></tr>
+<tr class="separator:a85df1c7d5dc51402a366b6dc3a02cc44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5db0ba9b30a8fe37c4fcfaed5dd40e8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5db0ba9b30a8fe37c4fcfaed5dd40e8b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setRobotId</b> (int rId)</td></tr>
+<tr class="separator:a5db0ba9b30a8fe37c4fcfaed5dd40e8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -166,6 +173,12 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a159904c815f766ba68a7281d5738e6a2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a159904c815f766ba68a7281d5738e6a2"></a>
 QMutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mutex</b> ()</td></tr>
 <tr class="separator:a159904c815f766ba68a7281d5738e6a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a3b1ff441bf9793e2c33146dc114b0263"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b1ff441bf9793e2c33146dc114b0263"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>robotId</b></td></tr>
+<tr class="separator:a3b1ff441bf9793e2c33146dc114b0263"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Used for manually controlling robots. </p>
@@ -263,7 +276,7 @@ QMutex &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mutex</b> ()<
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_joystick.html">Joystick</a></li>
-    <li class="footer">Generated on Fri Jan 5 2018 05:17:55 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Jan 21 2018 19:56:55 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

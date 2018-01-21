@@ -41,16 +41,16 @@ var NAVTREEINDEX =
 ".html",
 "class_battery_widget.html#a9b28abbdfe102b4962d278c5effc8a57",
 "class_geometry2d_1_1_circle.html#afe58aca1bcf884f2635f129454525c42",
-"class_log_viewer.html#abad69a3e8d8d02d332d3b1c78f1435d1",
-"class_pid_tuner.html#ab548b999d59c4ddbd1d20d4dfad5cb43",
-"class_radio.html#ab7a4b5011779f41ea0615190fe543516",
-"class_window_evaluator.html#a419fc2047d4ecc5d4d2364f91413196f",
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae572ecab45ea44cd20b92d69ea95e8f5",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a9db5564094bb3ddc4429497803393824",
-"classgameplay_1_1skills_1_1mark_1_1_mark.html#a904790ca7d76a22da75158ceb7adacde",
-"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#af7508ed39010425d98162c14859ed1cd",
-"dir_8222bd97931203553b912ea0ca9197bb.html",
-"struct_robot_config_1_1_chipper.html"
+"class_log_viewer.html#aa1d8cee251677454a1ac490b4c08e2bb",
+"class_pid_tuner.html#a1edf021b14e973c96eb07e2ca4a2214d",
+"class_radio.html#a44a22ef706a9c15b0546afbc5b3c4c8a",
+"class_window.html#a99d23e8bed04237ae2ad7adddb767202",
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a3ae42722f2699d0808d8221a8c0506e4",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4a4ca8253d5d8a05adf6b861f7d15e61",
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ad7a5bf8f9c54f90209e03e8194339288",
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a5c3ba8d395e8f0876327a17fbe3b6fff",
+"dir_0c8ba52d90730d61fb3742e9bda65e07.html",
+"struct_planning_1_1_world_vel_target_command.html#ae35a7cb5e4b97b110ba02030642be312"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

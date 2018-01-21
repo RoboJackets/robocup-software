@@ -1,5 +1,13 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a3ae42722f2699d0808d8221a8c0506e4":[16,0,3,9,1,6,0,9],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a6ccaa127f310d51f4e0ce8b39bb2a4bf":[16,0,3,9,1,6,0,1],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a8c5612c94ffe87cbfb5b1b3768e089b4":[16,0,3,9,1,6,0,6],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ab0754435b7d3852803ff04f23cbff857":[16,0,3,9,1,6,0,10],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ac190d9fb409cd4faeac7299a508bf727":[16,0,3,9,1,6,0,4],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ad1ef3ecd2322a0a245db26762f30ae6a":[16,0,3,9,1,6,0,3],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae1059cfbaad27d55f197fce3dd9947e0":[16,0,3,9,1,6,0,8],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae37c8a131f681d010a983813c19b20ee":[16,0,3,9,1,6,0,11],
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae572ecab45ea44cd20b92d69ea95e8f5":[16,0,3,9,1,6,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36":[16,0,3,9,1,6,0,5],
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement_1_1_state.html":[16,0,3,9,1,6,0,0],
@@ -241,13 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a3f6b25390442b1f2c0a7ddc8492f2772":[16,0,3,10,1,9],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a40cbd4dc9ecf861bdc3951c280341d21":[16,0,3,10,1,15],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a4376adc776c5bcf14d5da408f3bdd397":[16,0,3,10,1,12],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4484d4097cee6c2e5237c4e79cc5f0a3":[16,0,3,10,1,10],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4a4ca8253d5d8a05adf6b861f7d15e61":[16,0,3,10,1,0],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a56e6cc9dd545825d4de657f21f8868c0":[16,0,3,10,1,6],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a59c21dea1e736da715d5e9540ce02325":[16,0,3,10,1,3],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a5b7a0e9608611e8144b714c70cbcd15d":[16,0,3,10,1,28],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a793364fb9b558b517f176c4746187dcc":[16,0,3,10,1,19],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a8ff442301cf542b5a99632a60935f918":[16,0,3,10,1,13],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a97f1dcb127fbf90a9a89871a2ffb3882":[16,0,3,10,1,32],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a9ba464c2227c7350c627e644427e5a3a":[16,0,3,10,1,17]
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4484d4097cee6c2e5237c4e79cc5f0a3":[16,0,3,10,1,10]
 };

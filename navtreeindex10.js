@@ -1,5 +1,13 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a5c3ba8d395e8f0876327a17fbe3b6fff":[16,0,3,17,9,0,0,11],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a5fb756d115c563f083f2ba1c05b16864":[16,0,3,17,9,0,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a61547968e42dc401d2a6b12b65a43853":[16,0,3,17,9,0,0,14],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a6546e47071687b813f328258b789dc22":[16,0,3,17,9,0,0,1],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a9099be43ca203d4614379d39504ddbc2":[16,0,3,17,9,0,0,5],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#aa2ee7044bb5349f2bb8b0bc469ea4608":[16,0,3,17,9,0,0,7],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#ac982c22f7b2d1b7da1ef688e1805616f":[16,0,3,17,9,0,0,4],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#acb59bcb81680c2b6df5eb1a74201c87e":[16,0,3,17,9,0,0,8],
 "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#af7508ed39010425d98162c14859ed1cd":[16,0,3,17,9,0,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#afe55c66edee5f537f7eca73c340b0774":[16,0,3,17,9,0,0,9],
 "classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach_1_1_state.html":[16,0,3,17,9,0,0,0],
@@ -241,13 +249,5 @@ var NAVTREEINDEX10 =
 "classtriangle__pass_1_1_triangle_pass_1_1_state.html":[16,0,17,0,0],
 "classwhich__half_1_1_which_half.html":[16,0,18,0],
 "classwhich__half_1_1_which_half.html#aae60fe0d73deefd0f08b954d38112500":[16,0,18,0,1],
-"classwhich__half_1_1_which_half_1_1_state.html":[16,0,18,0,0],
-"dir_0c8ba52d90730d61fb3742e9bda65e07.html":[17,0,0,0,1],
-"dir_112461e4720dacba48248bc37ded967a.html":[17,0,0,0,2,0],
-"dir_1d24a8c14368582c9cb652f52a2034e8.html":[17,0,0,0],
-"dir_208153af841b395fab320b840c8e7752.html":[17,0,1,1],
-"dir_28df16f06401fa4b261f014c0f6bda1e.html":[17,0,1,5],
-"dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html":[17,0,1],
-"dir_35e5706fd63e5c8944975582312a2569.html":[17,0,1,0],
-"dir_40506df144da4b42abe7ffe21204d9b9.html":[17,0,0,1]
+"classwhich__half_1_1_which_half_1_1_state.html":[16,0,18,0,0]
 };

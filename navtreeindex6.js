@@ -1,5 +1,13 @@
 var NAVTREEINDEX6 =
 {
+"class_window.html#a99d23e8bed04237ae2ad7adddb767202":[16,0,87,4],
+"class_window.html#ac11a612f9310287e7e3006144f96255e":[16,0,87,6],
+"class_window.html#ac436c19ee986038cb14e509aefabfff2":[16,0,87,7],
+"class_window.html#acebd88edef8cb7257677df3f5a35dd02":[16,0,87,8],
+"class_window_evaluator.html":[16,0,88],
+"class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758":[16,0,88,7],
+"class_window_evaluator.html#a0fd9db04818564c867860db4493aa5e3":[16,0,88,5],
+"class_window_evaluator.html#a2b016ce70c68e7f0c6641f7b3bfaca8c":[16,0,88,9],
 "class_window_evaluator.html#a419fc2047d4ecc5d4d2364f91413196f":[16,0,88,6],
 "class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e":[16,0,88,3],
 "class_window_evaluator.html#a6641bdc834df39a40c1eb2fc8e377378":[16,0,88,10],
@@ -241,13 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html#abc9b8accfbed8965efb35ba73dc66378":[16,0,3,9,1,5,0,6],
 "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html":[16,0,3,9,1,5,0,0],
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html":[16,0,3,9,1,6,0],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a285911a7238f6beb14253c21ff68096b":[16,0,3,9,1,6,0,7],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a3ae42722f2699d0808d8221a8c0506e4":[16,0,3,9,1,6,0,9],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a6ccaa127f310d51f4e0ce8b39bb2a4bf":[16,0,3,9,1,6,0,1],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a8c5612c94ffe87cbfb5b1b3768e089b4":[16,0,3,9,1,6,0,6],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ab0754435b7d3852803ff04f23cbff857":[16,0,3,9,1,6,0,10],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ac190d9fb409cd4faeac7299a508bf727":[16,0,3,9,1,6,0,4],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ad1ef3ecd2322a0a245db26762f30ae6a":[16,0,3,9,1,6,0,3],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae1059cfbaad27d55f197fce3dd9947e0":[16,0,3,9,1,6,0,8],
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae37c8a131f681d010a983813c19b20ee":[16,0,3,9,1,6,0,11]
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#a285911a7238f6beb14253c21ff68096b":[16,0,3,9,1,6,0,7]
 };
