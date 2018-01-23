@@ -148,7 +148,9 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     vector<Robot*> bots(system->self.size() + system->opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
-        return true;
+        return bot != nullptr && bot->visible &&
+               find(excluded_robots.begin(), excluded_robots.end(), bot) ==
+                   excluded_robots.end();
     };
 
     auto end_it = copy_if(system->self.begin(), system->self.end(),
@@ -169,8 +171,6 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
                          hypothetical_robot_locations.end());
 
     for (auto& pos : bot_locations) {
-        std::cout << pos << std::endl;
-
         auto d = (pos - origin).mag();
         // whether or not we can ship over this bot
         auto chip_overable = chip_enabled &&
