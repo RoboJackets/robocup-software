@@ -65,11 +65,11 @@ class TestPassing(unittest.TestCase):
 		width = constants.Field.Width
 
 		bot1 = robocup.OurRobot(1, self.system_state)
-		# bot2 = robocup.OurRobot(2, self.system_state)
-		# bot3 = robocup.OurRobot(3, self.system_state)
-		# bot4 = robocup.OurRobot(4, self.system_state)
-		# bot5 = robocup.OurRobot(5, self.system_state)
-		# bot6 = robocup.OurRobot(6, self.system_state)
+		bot2 = robocup.OurRobot(2, self.system_state)
+		bot3 = robocup.OurRobot(3, self.system_state)
+		bot4 = robocup.OurRobot(4, self.system_state)
+		bot5 = robocup.OurRobot(5, self.system_state)
+		bot6 = robocup.OurRobot(6, self.system_state)
 
 		def run_function(x1, y1, x2, y2, excluded_robots=[]):
 			return evaluation.passing.eval_pass(robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
@@ -94,7 +94,18 @@ class TestPassing(unittest.TestCase):
 		# self.set_our_robot_pos(1, 0, length / 2)
 		# self.set_their_robot_pos(1, 0, length / 2)
 
-		bot1.set_pos_for_testing(robocup.Point(0, length / 4))
+		print("starting")
+
+		bot1.set_pos_for_testing(robocup.Point(2, length / 4))
+		bot2.set_pos_for_testing(robocup.Point(5, length / 4))
+		bot3.set_pos_for_testing(robocup.Point(4, length / 4))
+		bot4.set_pos_for_testing(robocup.Point(0, length / 4))
+		bot5.set_pos_for_testing(robocup.Point(0, length / 4))
+
+
+
+
+		# main.set_system_state(robocup.SystemState())
 		# self.their_robots[0].set_pos(0, length / 4 + constants.Robot.Radius * 2)
 		# self.their_robots[1].set_pos(constants.Robot.Radius * 2 , length / 2)
 		# self.their_robots[2].set_pos(constants.Robot.Radius * -3 , length / 2 - constants.Robot.Radius)
@@ -108,6 +119,7 @@ class TestPassing(unittest.TestCase):
 		# main.set_our_robots(self.our_robots)
 		self.assertEqual(run_function(0, 0, 0, length / 2), success)		
 
+		print("Ending")
 		# self.set_our_robot_pos(6, 0, length / 2)
 		# self.set_their_robot_pos(6, 0, length / 2)
 		# self.assertEqual(run_function(0, length / 2, 0, length / 2 + .01), .8)
