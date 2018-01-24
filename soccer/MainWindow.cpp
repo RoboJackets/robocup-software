@@ -1218,6 +1218,10 @@ void MainWindow::on_actionDarculizedStyle_triggered() {
 void MainWindow::on_action1337h4x0rStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
+void MainWindow::on_actionNyanStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "NYAN");
+    std::cout << "STYLE CHANGE" << std::endl;
+}
 
 // Manual control commands
 
