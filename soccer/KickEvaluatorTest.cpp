@@ -60,3 +60,14 @@ TEST(KickEvaluator, eval_calculation) {
     EXPECT_NEAR(std::get<0>(res), std::get<0>(res), 0.01);  // Value
     EXPECT_NEAR(std::get<1>(res), std::get<1>(res), 0.01);  // Derivative
 }
+
+TEST(KickEvaluator, eval_kick_at_pi_transition) {
+    SystemState state;
+
+    KickEvaluator kickEval(&state);
+    std::pair<Point, double> pt_to_our_goal;
+
+    pt_to_our_goal = kickEval.eval_pt_to_robot(Point(3, 2), Point(-3, 2));
+
+    EXPECT_LT(std::get<1>(pt_to_our_goal), 0.99);
+}

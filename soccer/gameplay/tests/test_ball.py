@@ -4,6 +4,7 @@ import robocup
 import evaluation.field
 import constants
 
+
 class Moc_Ball:
 	def __init__(self, x, y):
 		self.pos = robocup.Point(x, y)

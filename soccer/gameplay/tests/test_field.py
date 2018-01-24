@@ -148,4 +148,3 @@ class TestField(unittest.TestCase):
 		num = run_function(width / 2, length, 0, 0, 1, False)
 		self.assertTrue(num > 0 and num < 1, msg + "switching sides doesn't work for angle to goal factor")
 
-

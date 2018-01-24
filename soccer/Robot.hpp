@@ -386,6 +386,8 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
+    Geometry2d::Point mouthCenterPos() const;
+
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
@@ -399,6 +401,7 @@ public:
 
     // lower level status checks
     bool hasBall() const;
+    bool hasBallRaw() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
     float kickerVoltage() const;
@@ -407,6 +410,9 @@ public:
     void setRadioRx(Packet::RadioRx packet) {
         QWriteLocker locker(&radioRxMutex);
         _radioRx = packet;
+        if (hasBallRaw()) {
+            _lastBallSense = RJ::now();
+        }
     }
 
     Packet::RadioRx radioRx() const {
@@ -546,6 +552,9 @@ protected:
     friend class MotionControl;
 
 private:
+    RJ::Time _lastBallSense;
+    const RJ::Seconds _lostBallDuration = RJ::Seconds(0.1);
+
     mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);

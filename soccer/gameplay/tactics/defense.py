@@ -417,56 +417,38 @@ class Defense(composite_behavior.CompositeBehavior):
         if not threats:
             return
 
-        smart = False
-        if not smart:
 
-            # only deal with top two threats
-            threats_to_block = threats[0:2]
+        # only deal with top two threats
+        threats_to_block = threats[0:2]
 
-            # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
+        # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
 
-            # If we clearing the ball, assign the clearer to the most important
-            # threat (the ball). This prevents assigning the non-clearing robot
-            # to mark the ball and causing crowding.
-            defender1 = self.subbehavior_with_name('defender1')
-            if (defender1.state ==
-                    submissive_defender.SubmissiveDefender.State.clearing):
-                if defender1 in unused_threat_handlers:
-                    if (threats_to_block[0].pos.dist_to(main.ball().pos) <
-                            constants.Robot.Radius * 2):
-                        defender_idx = unused_threat_handlers.index(defender1)
-                        threats_to_block[0].assigned_handlers.append(
-                            unused_threat_handlers[defender_idx])
-                        del unused_threat_handlers[defender_idx]
+        # If we clearing the ball, assign the clearer to the most important
+        # threat (the ball). This prevents assigning the non-clearing robot
+        # to mark the ball and causing crowding.
+        defender1 = self.subbehavior_with_name('defender1')
+        if (defender1.state ==
+                submissive_defender.SubmissiveDefender.State.clearing):
+            if defender1 in unused_threat_handlers:
+                if (threats_to_block[0].pos.dist_to(main.ball().pos) <
+                        constants.Robot.Radius * 2):
+                    defender_idx = unused_threat_handlers.index(defender1)
+                    threats_to_block[0].assigned_handlers.append(
+                        unused_threat_handlers[defender_idx])
+                    del unused_threat_handlers[defender_idx]
 
-            threat_idx = 0
-            while len(unused_threat_handlers) > 0:
-                threats_to_block[threat_idx].assigned_handlers.append(
-                    unused_threat_handlers[0])
-                del unused_threat_handlers[0]
+        threat_idx = 0
+        while len(unused_threat_handlers) > 0:
+            threats_to_block[threat_idx].assigned_handlers.append(
+                unused_threat_handlers[0])
+            del unused_threat_handlers[0]
 
-                threat_idx = (threat_idx + 1) % len(threats_to_block)
+            threat_idx = (threat_idx + 1) % len(threats_to_block)
 
-            for t_idx, t in enumerate(threats_to_block):
-                recalculate_threat_shot(t_idx)
-                set_block_lines_for_threat_handlers(t)
+        for t_idx, t in enumerate(threats_to_block):
+            recalculate_threat_shot(t_idx)
+            set_block_lines_for_threat_handlers(t)
 
-        else:
-            # assign all of our defenders to do something
-            while len(unused_threat_handlers) > 0:
-                # prioritize by threat score, highest first
-                top_threat = max(threats, key=lambda threat: threat.score)
-
-                # assign the next handler to this threat
-                handler = unused_threat_handlers[0]
-                top_threat.assigned_handlers.append(handler)
-                del unused_threat_handlers[0]
-
-                # reassign the block line for each handler of this threat
-                set_block_lines_for_threat_handlers(top_threat)
-
-                # recalculate the shot now that we have
-                recalculate_threat_shot(0)
 
         # tell the bots where to move / what to block and draw some debug stuff
         for idx, threat in enumerate(threats):

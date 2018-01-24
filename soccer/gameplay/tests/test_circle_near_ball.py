@@ -5,6 +5,7 @@ import math
 import tactics.stopped.circle_near_ball
 import constants
 
+
 class Moc_Ball:
 	def __init__(self, x, y):
 		self.pos = robocup.Point(x, y)
