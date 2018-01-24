@@ -337,6 +337,12 @@
          </property>
          <item>
           <widget class="QSlider" name="logHistoryLocation">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>Location in log history</string>
            </property>
@@ -1988,7 +1994,7 @@
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>25</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -2003,6 +2009,7 @@
      <addaction name="actionDarkStyle"/>
      <addaction name="actionDarculizedStyle"/>
      <addaction name="action1337h4x0rStyle"/>
+     <addaction name="actionNyanStyle"/>
     </widget>
     <addaction name="action0"/>
     <addaction name="action90"/>
@@ -2454,6 +2461,11 @@
    </property>
    <property name="text">
     <string>Use Multiple Joysticks</string>
+   </property>
+  </action>
+  <action name="actionNyanStyle">
+   <property name="text">
+    <string>Nyan</string>
    </property>
   </action>
  </widget>

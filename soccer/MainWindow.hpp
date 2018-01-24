@@ -131,6 +131,7 @@ private Q_SLOTS:
     void on_actionDarkStyle_triggered();
     void on_actionDarculizedStyle_triggered();
     void on_action1337h4x0rStyle_triggered();
+    void on_actionNyanStyle_triggered();
 
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);

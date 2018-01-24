@@ -8,7 +8,8 @@ std::map<QString, QString> filePaths = {
     // Add new entries here:
     {"DARK", "../soccer/ui/themes/QTDark.stylesheet"},
     {"DARCULIZED", "../soccer/ui/themes/darculized.stylesheet"},
-    {"1337H4X0R", "../soccer/ui/themes/1337h4x0r.stylesheet"}};
+    {"1337H4X0R", "../soccer/ui/themes/1337h4x0r.stylesheet"},
+    {"NYAN", "../soccer/ui/themes/nyan.stylesheet"}};
 
 void StyleSheetManager::changeStyleSheet(QMainWindow* window, QString name) {
     if (filePaths.count(name)) {
