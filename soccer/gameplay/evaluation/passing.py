@@ -33,12 +33,12 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     # value can range from zero to one
     # we square the ratio of best to total to make it weigh more - we could raise it to higher power if we wanted
     if best != None:
-        print("best center: ({}, {})".format(best.segment.center().x, best.segment.center().y))
-        print("receive center: ({}, {})".format(receive_seg.center().x, receive_seg.center().y))
-        print("from point: ({}, {})".format(from_point.x, from_point.y))
-        print("best length: {}".format(best.segment.length()))
-        print("receive length: {}".format(receive_seg.length()))
-        print(str(0.8 * (best.segment.length() / receive_seg.length())**2))
+        # print("best center: ({}, {})".format(best.segment.center().x, best.segment.center().y))
+        # print("receive center: ({}, {})".format(receive_seg.center().x, receive_seg.center().y))
+        # print("from point: ({}, {})".format(from_point.x, from_point.y))
+        # print("best length: {}".format(best.segment.length()))
+        # print("receive length: {}".format(receive_seg.length()))
+        # print(str(0.8 * (best.segment.length() / receive_seg.length())**2))
         return 0.8 * (best.segment.length() / receive_seg.length())**2
     else:
         # the pass is completely blocked

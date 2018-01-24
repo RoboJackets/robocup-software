@@ -64,12 +64,12 @@ class TestPassing(unittest.TestCase):
 		length = constants.Field.Length
 		width = constants.Field.Width
 
-		bot1 = robocup.OurRobot(1, self.system_state)
-		bot2 = robocup.OurRobot(2, self.system_state)
-		bot3 = robocup.OurRobot(3, self.system_state)
-		bot4 = robocup.OurRobot(4, self.system_state)
-		bot5 = robocup.OurRobot(5, self.system_state)
-		bot6 = robocup.OurRobot(6, self.system_state)
+		bot1 = robocup.OpponentRobot(1)
+		bot2 = robocup.OpponentRobot(2)
+		bot3 = robocup.OpponentRobot(3)
+		bot4 = robocup.OpponentRobot(4)
+		bot5 = robocup.OpponentRobot(5)
+		bot6 = robocup.OpponentRobot(6)
 
 		def run_function(x1, y1, x2, y2, excluded_robots=[]):
 			return evaluation.passing.eval_pass(robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
@@ -85,8 +85,8 @@ class TestPassing(unittest.TestCase):
 		# Test a point passing to a close point. Should return maximal value
 		# self.assertEqual(run_function(0, 0, 0, 0.1), success)
 
-		print("length / 4: {}".format(length / 4))
-		print("length / 2: {}".format(length / 2))
+		# print("length / 4: {}".format(length / 4))
+		# print("length / 2: {}".format(length / 2))
 
 		# Test a point passing to a far point. Should return maximal value
 		# self.assertEqual(run_function(0, length / 4, 0, length / 2), success)
@@ -94,7 +94,7 @@ class TestPassing(unittest.TestCase):
 		# self.set_our_robot_pos(1, 0, length / 2)
 		# self.set_their_robot_pos(1, 0, length / 2)
 
-		print("starting")
+		# print("starting")
 
 		bot1.set_pos_for_testing(robocup.Point(2, length / 4))
 		bot2.set_pos_for_testing(robocup.Point(5, length / 4))
@@ -119,7 +119,7 @@ class TestPassing(unittest.TestCase):
 		# main.set_our_robots(self.our_robots)
 		self.assertEqual(run_function(0, 0, 0, length / 2), success)		
 
-		print("Ending")
+		# print("Ending")
 		# self.set_our_robot_pos(6, 0, length / 2)
 		# self.set_their_robot_pos(6, 0, length / 2)
 		# self.assertEqual(run_function(0, length / 2, 0, length / 2 + .01), .8)
