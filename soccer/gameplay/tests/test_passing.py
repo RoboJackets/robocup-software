@@ -67,7 +67,7 @@ class TestPassing(unittest.TestCase):
 		bot1 = self.system_state.their_robots[0]
 
 		def run_function(x1, y1, x2, y2, excluded_robots=[]):
-			return evaluation.passing.eval_pass(self.system_state, robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
+			return evaluation.passing.eval_pass(robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
 
 		fail = 0
 		success = .8
@@ -79,7 +79,7 @@ class TestPassing(unittest.TestCase):
 
 		bot1.set_pos_for_testing(robocup.Point(2, length / 4))
 		bot1.set_pos_for_testing(robocup.Point(3, length / 4))
-		
+
 		# bot2.set_pos_for_testing(robocup.Point(5, length / 4))
 		# bot3.set_pos_for_testing(robocup.Point(4, length / 4))
 		# bot4.set_pos_for_testing(robocup.Point(0, length / 4))

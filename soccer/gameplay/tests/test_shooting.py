@@ -34,6 +34,6 @@ class TestShooting(unittest.TestCase):
 		self.assertGreater(run_function(width / 4, 3 * length / 4), 0.99)
 		self.assertGreater(run_function(-width / 4, 3 * length / 4), 0.99)
 
-		print("width: " ,width)
-		print("length: ", length)
-		print(run_function(width / 2, 3 * length / 4))
+		# print("width: " ,width)
+		# print("length: ", length)
+		# print(run_function(width / 2, 3 * length / 4))
