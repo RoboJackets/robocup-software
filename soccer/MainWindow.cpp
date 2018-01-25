@@ -1220,7 +1220,6 @@ void MainWindow::on_action1337h4x0rStyle_triggered() {
 }
 void MainWindow::on_actionNyanStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "NYAN");
-    std::cout << "STYLE CHANGE" << std::endl;
 }
 
 // Manual control commands
