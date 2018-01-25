@@ -231,23 +231,6 @@ QAbstractSpinBox::up-arrow, QAbstractSpinBox::down-arrow {
 	border: 1px solid black;
 }
 
-QSlider {
-	border: none;
-}
-
-QSlider::handle {
-	border: 1px solid black;
-	background: #2e2e2e;
-}
-
-QSlider::add-page:vertical, QSlider::sub-page:horizontal {
-	background: #5E6263;
-}
-
-QSlider::sub-page:vertical, QSlider::add-page:horizontal {
-	background: #2e2e2e;
-}
-
 QProgressBar {
 	text-align: center;
 }
@@ -274,4 +257,26 @@ QPushButton:hover {
     border-style: inset;
 	background: #5E6263;
     border-width: 0px;
+}
+
+
+/* Nyan mode */
+QSlider::groove {
+    border: 1px none;
+    height: 35px;
+    margin: 0 12px;
+}
+
+QSlider::sub-page:horizontal {
+    border-image: url(:/icons/rainbow.svg);
+}
+
+QSlider::handle:horizontal {
+    image: url(:/icons/nyan.svg);
+    width: 60px;
+    margin: -24px -12px;
+}
+
+QTSlider::sub-page:horizontal {
+     background: #0000FF;
 }
