@@ -168,8 +168,7 @@ pip2 install -r $BASE/util/requirements2.txt
 if [ -z "$GOPATH" ]; then
     echo "[WARN] No GOPATH set, not installing stylize."
 else
-    go get github.com/justbuchanan/stylize
-    go install github.com/justbuchanan/stylize
+    go get gopkg.in/justbuchanan/stylize.v1
 fi
 
 # This script is run as sudo, but we don't want submodules to be owned by the
