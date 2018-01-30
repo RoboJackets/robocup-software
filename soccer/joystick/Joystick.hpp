@@ -65,6 +65,9 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    int getRobotId() { return robotId; }
+    void setRobotId(int rId) { robotId = rId; }
+
     // declaration of Config values
     static ConfigDouble* JoystickRotationMaxSpeed;
     static ConfigDouble* JoystickRotationMaxDampedSpeed;
@@ -73,6 +76,7 @@ public:
 
 protected:
     QMutex& mutex() { return _mutex; }
+    int robotId;
 
 private:
     QMutex _mutex;

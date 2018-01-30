@@ -16,7 +16,7 @@ import planning_priority
 # This goalie lets someone else (the Defense tactic) handle calculations and blocks things based on that
 # TODO: merge this back into the regular goalie?
 class SubmissiveGoalie(
-    single_robot_composite_behavior.SingleRobotCompositeBehavior):
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
         "Actively blocking based on a given threat"
         block = 2
@@ -44,30 +44,36 @@ class SubmissiveGoalie(
                             SubmissiveGoalie.State.block, lambda: True,
                             "immediately")
 
-        non_block_states = [s
-                            for s in SubmissiveGoalie.State
-                            if s != SubmissiveGoalie.State.block]
+        non_block_states = [
+            s for s in SubmissiveGoalie.State
+            if s != SubmissiveGoalie.State.block
+        ]
 
-        for state in [s2
-                      for s2 in SubmissiveGoalie.State
-                      if s2 != SubmissiveGoalie.State.intercept]:
-            self.add_transition(
-                state, SubmissiveGoalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal(),
-                "ball coming towards our goal")
+        for state in [
+                s2 for s2 in SubmissiveGoalie.State
+                if s2 != SubmissiveGoalie.State.intercept
+        ]:
+            self.add_transition(state,
+                                SubmissiveGoalie.State.intercept, lambda:
+                                evaluation.ball.is_moving_towards_our_goal(),
+                                "ball coming towards our goal")
 
-        for state in [s2
-                      for s2 in SubmissiveGoalie.State
-                      if s2 != SubmissiveGoalie.State.clear]:
+        for state in [
+                s2 for s2 in SubmissiveGoalie.State
+                if s2 != SubmissiveGoalie.State.clear
+        ]:
             self.add_transition(
-                state, SubmissiveGoalie.State.clear,
-                lambda: evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.is_moving_towards_our_goal() and main.ball().vel.mag() < 0.4 and evaluation.ball.opponent_with_ball() is None,
+                state, SubmissiveGoalie.State.clear, lambda: evaluation.ball.
+                is_in_our_goalie_zone() and not evaluation.ball.
+                is_moving_towards_our_goal() and main.ball().vel.mag(
+                ) < 0.4 and evaluation.ball.opponent_with_ball() is None,
                 "ball in our goalie box, but not headed toward goal")
 
         for state in non_block_states:
             self.add_transition(
-                state, SubmissiveGoalie.State.block,
-                lambda: not evaluation.ball.is_in_our_goalie_zone() and not evaluation.ball.is_moving_towards_our_goal(),
+                state, SubmissiveGoalie.State.block, lambda: not evaluation.
+                ball.is_in_our_goalie_zone(
+                ) and not evaluation.ball.is_moving_towards_our_goal(),
                 'ball not in goal or moving towards it')
 
         self.block_line = None
@@ -99,7 +105,8 @@ class SubmissiveGoalie(
 
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
-        self.robot.face(main.ball().pos)
+        if not self.has_subbehavior_with_name('intercept'):
+            self.robot.face(main.ball().pos)
         self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def on_enter_clear(self):
@@ -133,7 +140,7 @@ class SubmissiveGoalie(
         self.remove_subbehavior('kick-clear')
 
     def on_enter_intercept(self):
-        i = skills.intercept.Intercept()
+        i = skills.intercept.Intercept(None, False)
         i.shape_constraint = self.RobotSegment
         self.add_subbehavior(i, 'intercept', required=True)
 

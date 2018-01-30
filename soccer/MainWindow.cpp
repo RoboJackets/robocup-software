@@ -4,6 +4,7 @@
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <joystick/Joystick.hpp>
+#include <joystick/GamepadController.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
@@ -347,17 +348,36 @@ void MainWindow::updateViews() {
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      true);
     }
+
+    if (_processor->multipleManual() && manual < 0) {
+        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
+                                     false);
+    } else {
+        _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
+                                     true);
+    }
+
     if (manual >= 0) {
-        JoystickControlValues vals = _processor->getJoystickControlValues();
-        _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
-        _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
-        _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
-        _ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
-        _ui.joystickDibblerPowerLabel->setText(
-            tr("%1").arg(vals.dribblerPower));
-        _ui.joystickKickCheckBox->setChecked(vals.kick);
-        _ui.joystickChipCheckBox->setChecked(vals.chip);
-        _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
+        int index = 0;
+        std::vector<int> manualIds = _processor->getJoystickRobotIds();
+        auto info = std::find(manualIds.begin(), manualIds.end(), manual);
+        if (info != manualIds.end()) {
+            index = info - manualIds.begin();
+        }
+
+        auto valList = _processor->getJoystickControlValues();
+        if (valList.size() > index) {
+            JoystickControlValues vals = valList[index];
+            _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
+            _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
+            _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
+            _ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
+            _ui.joystickDibblerPowerLabel->setText(
+                tr("%1").arg(vals.dribblerPower));
+            _ui.joystickKickCheckBox->setChecked(vals.kick);
+            _ui.joystickChipCheckBox->setChecked(vals.chip);
+            _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
+        }
     }
 
     // Time since last update
@@ -1198,6 +1218,9 @@ void MainWindow::on_actionDarculizedStyle_triggered() {
 void MainWindow::on_action1337h4x0rStyle_triggered() {
     StyleSheetManager::changeStyleSheet(this, "1337H4X0R");
 }
+void MainWindow::on_actionNyanStyle_triggered() {
+    StyleSheetManager::changeStyleSheet(this, "NYAN");
+}
 
 // Manual control commands
 
@@ -1338,6 +1361,11 @@ void MainWindow::on_manualID_currentIndexChanged(int value) {
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
     _processor->setUseFieldOrientedManualDrive(value);
+}
+
+void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
+    _processor->multipleManual(value);
+    _processor->setupJoysticks();
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {

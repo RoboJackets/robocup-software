@@ -200,6 +200,10 @@ void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
     self->rotate(*origin, angle);
 }
 
+void Point_rotate_origin(Geometry2d::Point* self, float angle) {
+    self->rotate(angle);
+}
+
 void CompositeShape_add_shape(Geometry2d::CompositeShape* self,
                               Geometry2d::Shape* shape) {
     if (shape == nullptr) throw NullArgumentException("shape");
@@ -652,6 +656,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__repr__", &Point_repr)
         .def("normalized", &Geometry2d::Point::normalized, Point_overloads())
         .def("rotate", &Point_rotate)
+        .def("rotate_origin", &Point_rotate_origin)
         .def(self * float())
         .def(self / float())
         .def("perp_ccw", &Geometry2d::Point::perpCCW)

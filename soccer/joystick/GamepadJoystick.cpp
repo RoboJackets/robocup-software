@@ -92,15 +92,15 @@ void GamepadJoystick::update() {
     // cout << endl;
 
     // Rotation
-    auto leftX = SDL_JoystickGetAxis(_joystick, 0) / AXIS_MAX;
-    // Move L/R
     auto rightX = SDL_JoystickGetAxis(_joystick, 2) / AXIS_MAX;
+    // Move L/R
+    auto leftX = SDL_JoystickGetAxis(_joystick, 0) / AXIS_MAX;
     // Move U/D
-    auto rightY = -SDL_JoystickGetAxis(_joystick, 3) / AXIS_MAX;
+    auto leftY = -SDL_JoystickGetAxis(_joystick, 1) / AXIS_MAX;
 
-    Geometry2d::Point input(rightX, rightY);
+    Geometry2d::Point input(leftX, leftY);
 
-    auto mVal = fabs(rightY);
+    auto mVal = fabs(leftY);
 
     if (SDL_JoystickGetAxis(_joystick, 5) < 0) {
         input.y() = mVal;
@@ -118,7 +118,7 @@ void GamepadJoystick::update() {
 
     _controls.translation = Geometry2d::Point(input.x(), input.y());
 
-    _controls.rotation = -leftX;
+    _controls.rotation = -rightX;
 }
 
 JoystickControlValues GamepadJoystick::getJoystickControlValues() {
