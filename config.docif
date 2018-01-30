@@ -74,7 +74,9 @@ CACHE_DIRECTORIES+=("${CIRCLE_ARTIFACTS}")
 
 # The script to set up the environment, by default ubuntu.
 # YOU WILL NEED TO USE SUDO TO GET ROOT PRIVLEGES HERE
-SETUP_COMMAND="sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G"
+
+# We want the GOPATH variable to persist into this script, so we pass it in.
+SETUP_COMMAND='sudo GOPATH=$GOPATH ./util/ubuntu-setup --yes && sudo ccache -M 1G'
 # SETUP_COMMAND="./ubuntu-setup-script"
 
 # DOCIF can cache baseimages, if you give it files that will force a rebuild if changed.
