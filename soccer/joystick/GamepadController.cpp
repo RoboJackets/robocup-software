@@ -1,4 +1,5 @@
 #include "GamepadController.hpp"
+#include <algorithm>
 
 using namespace std;
 
@@ -9,6 +10,9 @@ const float AXIS_MAX = 32768.0f;
 // cutoff for counting triggers as 'on'
 const float TRIGGER_CUTOFF = 0.9;
 }
+
+std::vector<int> GamepadController::controllersInUse = {};
+int GamepadController::joystickRemoved = -1;
 
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
@@ -31,6 +35,8 @@ GamepadController::GamepadController()
 
     // Controllers will be detected later if needed.
     connected = false;
+    controllerId = -1;
+    robotId = -1;
     openJoystick();
 }
 
@@ -44,23 +50,28 @@ GamepadController::~GamepadController() {
 void GamepadController::openJoystick() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
-        for (size_t i = 0; i < SDL_NumJoysticks(); ++i) {
+        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
             // setup the joystick as a game controller if available
-            if (SDL_IsGameController(i)) {
+            if (std::find(controllersInUse.begin(), controllersInUse.end(),
+                          i) == controllersInUse.end() &&
+                SDL_IsGameController(i)) {
                 SDL_GameController* controller;
                 controller = SDL_GameControllerOpen(i);
-                connected = true;
 
                 if (controller != nullptr) {
                     _controller = controller;
+                    connected = true;
+                    controllerId = i;
+                    controllersInUse.push_back(i);
+                    sort(controllersInUse.begin(), controllersInUse.end());
                     cout << "Using " << SDL_GameControllerName(_controller)
-                         << " game controller" << endl;
+                         << " game controller as controller # "
+                         << controllersInUse.size() << endl;
                     break;
                 } else {
                     cerr << "ERROR: Could not open controller! SDL Error: "
                          << SDL_GetError() << endl;
                 }
-                // Only support one joystick for now.
                 return;
             }
         }
@@ -70,10 +81,22 @@ void GamepadController::openJoystick() {
 void GamepadController::closeJoystick() {
     cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
+    auto index =
+        find(controllersInUse.begin(), controllersInUse.end(), controllerId);
+    if (index != controllersInUse.end()) {
+        for (auto i = index + 1; i != controllersInUse.end(); i++) {
+            *i -= 1;
+        }
+        controllersInUse.erase(index);
+    }
+    joystickRemoved = controllerId;
+    controllerId = -1;
+
+    robotId = -1;
     connected = false;
 }
 
-bool GamepadController::valid() const { return _controller != nullptr; }
+bool GamepadController::valid() const { return connected; }
 
 void GamepadController::update() {
     QMutexLocker(&mutex());
@@ -83,6 +106,9 @@ void GamepadController::update() {
 
     if (connected) {
         // Check if dc
+        if (joystickRemoved >= 0 && controllerId > joystickRemoved) {
+            controllerId -= 1;
+        }
         if (!SDL_GameControllerGetAttached(_controller)) {
             closeJoystick();
             return;
@@ -165,39 +191,39 @@ void GamepadController::update() {
      *  VELOCITY ROTATION
      */
     // Logitech F310 Controller
-    _controls.rotation =
-        -1 * SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) /
-        AXIS_MAX;
+    _controls.rotation = -1 * SDL_GameControllerGetAxis(
+                                  _controller, SDL_CONTROLLER_AXIS_RIGHTX) /
+                         AXIS_MAX;
 
     /*
      *  VELOCITY TRANSLATION
      */
-    auto rightX =
-        SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTX) /
+    auto leftX =
+        SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTX) /
         AXIS_MAX;
-    auto rightY =
-        -SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_RIGHTY) /
+    auto leftY =
+        -SDL_GameControllerGetAxis(_controller, SDL_CONTROLLER_AXIS_LEFTY) /
         AXIS_MAX;
 
-    Geometry2d::Point input(rightX, rightY);
+    Geometry2d::Point input(leftX, leftY);
 
     // Align along an axis using the DPAD as modifier buttons
     if (SDL_GameControllerGetButton(_controller,
                                     SDL_CONTROLLER_BUTTON_DPAD_DOWN)) {
-        input.y() = -fabs(rightY);
+        input.y() = -fabs(leftY);
         input.x() = 0;
     } else if (SDL_GameControllerGetButton(_controller,
                                            SDL_CONTROLLER_BUTTON_DPAD_UP)) {
-        input.y() = fabs(rightY);
+        input.y() = fabs(leftY);
         input.x() = 0;
     } else if (SDL_GameControllerGetButton(_controller,
                                            SDL_CONTROLLER_BUTTON_DPAD_LEFT)) {
         input.y() = 0;
-        input.x() = -fabs(rightX);
+        input.x() = -fabs(leftX);
     } else if (SDL_GameControllerGetButton(_controller,
                                            SDL_CONTROLLER_BUTTON_DPAD_RIGHT)) {
         input.y() = 0;
-        input.x() = fabs(rightX);
+        input.x() = fabs(leftX);
     }
 
     // Floating point precision error rounding

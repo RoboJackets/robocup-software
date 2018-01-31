@@ -36,16 +36,7 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -341,20 +332,17 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
           <widget class="QSlider" name="logHistoryLocation">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="toolTip">
             <string>Location in log history</string>
            </property>
@@ -599,6 +587,9 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_8">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QLabel" name="goalieLabel">
           <property name="text">
@@ -709,7 +700,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="manualLabel">
           <property name="text">
            <string>Manual:</string>
           </property>
@@ -1704,16 +1695,7 @@
            <property name="spacing">
             <number>0</number>
            </property>
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
@@ -2012,7 +1994,7 @@
      <x>0</x>
      <y>0</y>
      <width>1331</width>
-     <height>19</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -2027,6 +2009,7 @@
      <addaction name="actionDarkStyle"/>
      <addaction name="actionDarculizedStyle"/>
      <addaction name="action1337h4x0rStyle"/>
+     <addaction name="actionNyanStyle"/>
     </widget>
     <addaction name="action0"/>
     <addaction name="action90"/>
@@ -2105,6 +2088,7 @@
     <addaction name="actionDampedRotation"/>
     <addaction name="actionDampedTranslation"/>
     <addaction name="actionUse_Field_Oriented_Controls"/>
+    <addaction name="actionUse_Multiple_Joysticks"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
@@ -2469,6 +2453,19 @@
    </property>
    <property name="text">
     <string>1337h4x0r</string>
+   </property>
+  </action>
+  <action name="actionUse_Multiple_Joysticks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Multiple Joysticks</string>
+   </property>
+  </action>
+  <action name="actionNyanStyle">
+   <property name="text">
+    <string>Nyan</string>
    </property>
   </action>
  </widget>

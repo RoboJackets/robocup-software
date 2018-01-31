@@ -10,7 +10,7 @@ static const RJ::Seconds Coast_Time(0.8);
 static const RJ::Seconds Min_Frame_Time(0.014);
 static const RJ::Seconds Min_Velocity_Valid_Time(0.1);
 static const RJ::Seconds Vision_Timeout_Time(0.25);
-static const RJ::Seconds Min_Double_Packet_Time(1.0/120);
+static const RJ::Seconds Min_Double_Packet_Time(1.0 / 120);
 
 REGISTER_CONFIGURABLE(RobotFilter);
 
@@ -18,37 +18,53 @@ ConfigDouble* RobotFilter::_velocity_alpha;
 
 RobotFilter::RobotFilter() {}
 
-void RobotFilter::createConfiguration(Configuration *cfg) {
+void RobotFilter::createConfiguration(Configuration* cfg) {
     _velocity_alpha = new ConfigDouble(cfg, "RobotFilter/Velocity_Alpha", 0.2);
 }
 
-void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observations, RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber) {
-    bool anyValid = std::any_of(observations.begin(), observations.end(), [](const RobotObservation& obs) {return obs.valid;});
+void RobotFilter::update(
+    const std::array<RobotObservation, Num_Cameras>& observations,
+    RobotPose* robot, RJ::Time currentTime, u_int32_t frameNumber) {
+    bool anyValid =
+        std::any_of(observations.begin(), observations.end(),
+                    [](const RobotObservation& obs) { return obs.valid; });
     if (anyValid) {
-        for (int i=0; i<observations.size(); i++) {
+        for (int i = 0; i < observations.size(); i++) {
             const auto& obs = observations[i];
             auto& estimate = _estimates[i];
             if (obs.valid) {
                 Point velEstimate{};
                 double angleVelEstimate = 0;
+
                 const auto dtime = RJ::Seconds(obs.time - estimate.time);
                 if (dtime < Min_Double_Packet_Time) {
+                    // If we got two packets too quickly, assume the latest one
+                    // is correct
                     velEstimate = estimate.vel;
                     angleVelEstimate = estimate.angleVel;
                     estimate.velValid = true;
                 } else if (dtime < Min_Velocity_Valid_Time) {
-                    velEstimate = (obs.pos - estimate.pos)/dtime.count();
-                    angleVelEstimate = fixAngleRadians(obs.angle - estimate.angle)/dtime.count();
+                    // If we got two packets at an expected time, properly
+                    // calculate vel and angle
+                    velEstimate = (obs.pos - estimate.pos) / dtime.count();
+                    angleVelEstimate =
+                        fixAngleRadians(obs.angle - estimate.angle) /
+                        dtime.count();
                     estimate.velValid = true;
                 } else if (robot->velValid) {
                     velEstimate = robot->vel;
                     angleVelEstimate = robot->angleVel;
                 }
 
+                // velocity alpha is the amount to 'trust' new data by
                 const auto velocityAlpha = *_velocity_alpha;
                 if (dtime < Min_Velocity_Valid_Time && estimate.velValid) {
-                    estimate.vel = velEstimate*velocityAlpha + estimate.vel * (1.0f - velocityAlpha);
-                    estimate.angleVel = fixAngleRadians(angleVelEstimate*velocityAlpha + estimate.angleVel * (1.0f - velocityAlpha));
+                    // Weight old data and new data by 'velocityAlpha'
+                    estimate.vel = velEstimate * velocityAlpha +
+                                   estimate.vel * (1.0f - velocityAlpha);
+                    estimate.angleVel = fixAngleRadians(
+                        angleVelEstimate * velocityAlpha +
+                        estimate.angleVel * (1.0f - velocityAlpha));
                 } else {
                     estimate.vel = velEstimate;
                     estimate.angleVel = fixAngleRadians(angleVelEstimate);
@@ -73,20 +89,25 @@ void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observ
 
         double angleVelTotal = 0;
         double angleVelWeightTotal = 0;
-        for (const auto &estimate: _estimates) {
+
+        // Weight observations based on time since we've seen and average
+        // everything together.
+        for (const auto& estimate : _estimates) {
             const auto dTime = RJ::Seconds(currentTime - estimate.time);
-//            debugLogIf(to_string(dTime) + " dTime is less than 0", dTime < RJ::Seconds(0));
+
             if (estimate.visible && dTime < Vision_Timeout_Time) {
                 Point pos{};
                 double angle{};
-                double currentPosWeight = std::max(0.0, 1.0-std::pow(dTime/Vision_Timeout_Time, 2));
+                // treat data with less certainty the older it is
+                double currentPosWeight = std::max(
+                    0.0, 1.0 - std::pow(dTime / Vision_Timeout_Time, 2));
                 if (estimate.velValid) {
-                    pos = estimate.pos + estimate.vel*dTime.count();
-                    velocityTotal += estimate.vel*currentPosWeight;
+                    pos = estimate.pos + estimate.vel * dTime.count();
+                    velocityTotal += estimate.vel * currentPosWeight;
                     velocityWeightTotal += currentPosWeight;
 
-                    angle = estimate.angle + estimate.angleVel*dTime.count();
-                    angleVelTotal += estimate.angleVel*currentPosWeight;
+                    angle = estimate.angle + estimate.angleVel * dTime.count();
+                    angleVelTotal += estimate.angleVel * currentPosWeight;
                     angleVelWeightTotal += currentPosWeight;
                 } else {
                     pos = estimate.pos;
@@ -94,10 +115,10 @@ void RobotFilter::update(const std::array<RobotObservation, Num_Cameras> &observ
                     angle = estimate.angle;
                     currentPosWeight /= 2;
                 }
-                positionTotal += pos*currentPosWeight;
+                positionTotal += pos * currentPosWeight;
                 positionWeightTotal += currentPosWeight;
 
-                angleTotal += angle*currentPosWeight;
+                angleTotal += angle * currentPosWeight;
                 angleWeightTotal += currentPosWeight;
             }
         }

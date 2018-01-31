@@ -42,18 +42,21 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                             'immediately')
 
         self.add_transition(
-            Capture.State.course_approach, Capture.State.fine_approach,
-            lambda: (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
-            'dist to ball < threshold')
+            Capture.State.course_approach,
+            Capture.State.fine_approach, lambda: (self.bot_in_front_of_ball(
+            ) or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball(
+            ).valid, 'dist to ball < threshold')
 
         self.add_transition(
-            Capture.State.fine_approach, behavior.Behavior.State.completed,
-            lambda: self.bot_near_ball(constants.Robot.Radius + constants.Ball.Radius),
-            'has ball')
+            Capture.State.fine_approach,
+            behavior.Behavior.State.completed, lambda: self.bot_near_ball(
+                constants.Robot.Radius + constants.Ball.Radius), 'has ball')
 
         self.add_transition(
-            Capture.State.fine_approach, Capture.State.course_approach,
-            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
+            Capture.State.fine_approach, Capture.State.course_approach, lambda:
+            not (self.bot_in_front_of_ball() or self.bot_near_ball(
+                Capture.CourseApproachDist)) and (not self.bot_near_ball(
+                    Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
 
         self.dribbler_power = Capture.DribbleSpeed
@@ -73,32 +76,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                 ((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag())
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
-    def approach_vector(self):
-        if main.ball().vel.mag() > 0.25 \
-            and self.robot.pos.dist_to(main.ball().pos) > 0.2:
-            # ball's moving, get on the side it's moving towards
-            return main.ball().vel.normalized()
-        else:
-            return (self.robot.pos - main.ball().pos).normalized()
 
     def find_intercept_point(self):
-        approach_vec = self.approach_vector()
-
-        # sample every 5 cm in the -approach_vector direction from the ball
-        pos = None
-        for i in range(50):
-            dist = i * 0.05
-            pos = main.ball().pos + approach_vec * dist
-            # how long will it take the ball to get there
-            ball_time = evaluation.ball.rev_predict(main.ball().vel, dist)
-            robotDist = (pos - self.robot.pos).mag() * 0.6
-            bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2,
-                                                    1, self.robot.vel.mag(), 0)
-
-            if bot_time < ball_time:
-                break
-
-        return pos
+        return find_robot_intercept_point(self.robot)
 
     def execute_running(self):
         self.robot.set_planning_priority(planning_priority.CAPTURE)
@@ -152,5 +132,37 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            reqs.destination_shape = main.ball().pos
+            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(
+                r).dist_to(r.pos)
+
         return reqs
+
+
+def find_robot_intercept_point(robot):
+    if robot is None:
+        return main.ball().pos
+    approach_vec = approach_vector(robot)
+    # sample every 5 cm in the -approach_vector direction from the ball
+    pos = None
+    for i in range(50):
+        dist = i * 0.05
+        pos = main.ball().pos + approach_vec * dist
+        # how long will it take the ball to get there
+        ball_time = evaluation.ball.rev_predict(main.ball().vel, dist)
+        robotDist = (pos - robot.pos).mag() * 0.6
+        bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2, 1,
+                                                robot.vel.mag(), 0)
+
+        if bot_time < ball_time:
+            break
+
+    return pos
+
+
+def approach_vector(robot):
+    if main.ball().vel.mag() > 0.25 \
+       and robot.pos.dist_to(main.ball().pos) > 0.2:
+        # ball's moving, get on the side it's moving towards
+        return main.ball().vel.normalized()
+    else:
+        return (robot.pos - main.ball().pos).normalized()

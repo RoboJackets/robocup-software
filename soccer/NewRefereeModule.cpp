@@ -101,6 +101,11 @@ static const float KickThreshold = 0.150f;
 /// as having been kicked.
 static const int KickVerifyTime_ms = 250;
 
+// Whether we cancel ball placement on a halt.
+// If we want ball placement to continue after
+// the ref halts/stops, make this false
+static const bool CancelBallPlaceOnHalt = true;
+
 NewRefereeModule::NewRefereeModule(SystemState& state)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
@@ -287,11 +292,10 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
         case Command::HALT:
             _state.gameState.state = GameState::Halt;
 
-            // /* Comment this out to make halting not clear a ball placement command
-            _state.gameState.restart = GameState::None;
-            _state.gameState.ourRestart = false;
-            // */
-
+            if (CancelBallPlaceOnHalt) {
+                _state.gameState.restart = GameState::None;
+                _state.gameState.ourRestart = false;
+            }
             break;
         case Command::STOP:
             _state.gameState.state = GameState::Stop;

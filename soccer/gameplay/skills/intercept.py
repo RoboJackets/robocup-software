@@ -6,12 +6,15 @@ import main
 
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
 class Intercept(single_robot_behavior.SingleRobotBehavior):
-    def __init__(self, pos=None):
+    def __init__(self, pos=None, faceBall=True):
         super().__init__(continuous=True)
+
+        self.faceBall = faceBall
 
         self._shape_constraint = None
 
-        self.ball_line = lambda: robocup.Segment(main.ball().pos, main.ball().pos + (main.ball().vel.normalized() * 8.))
+        self.ball_line = lambda: robocup.Segment(main.ball(
+        ).pos, main.ball().pos + (main.ball().vel.normalized() * 8.))
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -38,7 +41,9 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
                     self.robot.pos)
 
             self.robot.move_to_direct(self.target_pos)
-            self.robot.face(main.ball().pos)
+
+            if self.faceBall:
+                self.robot.face(main.ball().pos)
 
     def role_requirements(self):
         reqs = super().role_requirements()

@@ -50,11 +50,12 @@ class BinaryClock(play.Play):
         # ------------------------------------------------------------
 
         # EXAMPLE TRANSITION, YOU MAY WANT TO REPLACE THIS
-        self.add_transition(behavior.Behavior.State.start, self.State.waiting,
-                            lambda: True, 'immediately')
-        self.add_transition(self.State.waiting, self.State.dummy,
-                            lambda: self.current_time != self.get_time(),
-                            'Time in minutes changed')
+        self.add_transition(behavior.Behavior.State.start,
+                            self.State.waiting, lambda: True, 'immediately')
+        self.add_transition(
+            self.State.waiting,
+            self.State.dummy, lambda: self.current_time != self.get_time(),
+            'Time in minutes changed')
         self.add_transition(self.State.dummy, self.State.waiting, lambda: True,
                             'immediately')
 

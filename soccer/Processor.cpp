@@ -68,11 +68,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
     _simulation = sim;
     _radio = nullptr;
 
-    // joysticks
-    _joysticks.push_back(new GamepadController());
-    _joysticks.push_back(new SpaceNavJoystick());
-    // Enable this if you have issues with the new controller.
-    // _joysticks.push_back(new GamepadJoystick());
+    _multipleManual = false;
+    setupJoysticks();
 
     _dampedTranslation = true;
     _dampedRotation = true;
@@ -131,6 +128,8 @@ void Processor::manualID(int value) {
     }
 }
 
+void Processor::multipleManual(bool value) { _multipleManual = value; }
+
 void Processor::goalieID(int value) {
     QMutexLocker locker(&_loopMutex);
     _gameplayModule->goalieID(value);
@@ -154,6 +153,20 @@ void Processor::dampedTranslation(bool value) {
 void Processor::joystickKickOnBreakBeam(bool value) {
     QMutexLocker locker(&_loopMutex);
     _kickOnBreakBeam = value;
+}
+
+void Processor::setupJoysticks() {
+    _joysticks.clear();
+
+    GamepadController::controllersInUse.clear();
+    GamepadController::joystickRemoved = -1;
+
+    for (int i = 0; i < Robots_Per_Team; i++) {
+        _joysticks.push_back(new GamepadController());
+    }
+
+    //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
+    // isValid() is working properly
 }
 
 /**
@@ -199,43 +212,53 @@ void Processor::runModels(
         const RepeatedPtrField<SSL_DetectionRobot>& selfRobots =
             _blueTeam ? frame->robots_blue() : frame->robots_yellow();
 
-        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>> robotObservations{_state.self.size()};
+        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
+            robotObservations{_state.self.size()};
 
+        // Collect camera data from all robots
         for (const SSL_DetectionRobot& robot : selfRobots) {
             unsigned int id = robot.robot_id();
 
             if (id < _state.self.size()) {
-                const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+                const float angleRad =
+                    fixAngleRadians(robot.orientation() + _teamAngle);
                 const auto camera_id = frame->camera_id();
                 robotObservations[id][camera_id] = RobotObservation(
-                        _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                        angleRad, time, frame->frame_number(), true, camera_id);
+                    _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                    angleRad, time, frame->frame_number(), true, camera_id);
             }
         }
 
-        for (int i=0; i<robotObservations.size(); i++) {
-            _state.self[i]->filter()->update(robotObservations[i], _state.self[i], time, frame->frame_number());
+        // Run robots through filter
+        for (int i = 0; i < robotObservations.size(); i++) {
+            _state.self[i]->filter()->update(robotObservations[i],
+                                             _state.self[i], time,
+                                             frame->frame_number());
         }
 
         const RepeatedPtrField<SSL_DetectionRobot>& oppRobots =
             _blueTeam ? frame->robots_yellow() : frame->robots_blue();
 
-        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>> oppRobotObservations{_state.self.size()};
+        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
+            oppRobotObservations{_state.self.size()};
 
         for (const SSL_DetectionRobot& robot : oppRobots) {
             unsigned int id = robot.robot_id();
 
             if (id < _state.self.size()) {
-                const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+                const float angleRad =
+                    fixAngleRadians(robot.orientation() + _teamAngle);
                 const auto camera_id = frame->camera_id();
                 oppRobotObservations[id][camera_id] = RobotObservation(
-                        _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                        angleRad, time, frame->frame_number(), true, camera_id);
+                    _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                    angleRad, time, frame->frame_number(), true, camera_id);
             }
         }
 
-        for (int i=0; i<oppRobotObservations.size(); i++) {
-            _state.opp[i]->filter()->update(oppRobotObservations[i], _state.opp[i], time, frame->frame_number());
+        for (int i = 0; i < oppRobotObservations.size(); i++) {
+            _state.opp[i]->filter()->update(oppRobotObservations[i],
+                                            _state.opp[i], time,
+                                            frame->frame_number());
         }
     }
 
@@ -399,11 +422,10 @@ void Processor::run() {
             }
         }
         _radio->clear();
-
         for (Joystick* joystick : _joysticks) {
             joystick->update();
-            if (joystick->valid()) break;
         }
+        GamepadController::joystickRemoved = -1;
 
         runModels(detectionFrames);
         for (VisionPacket* packet : visionPackets) {
@@ -724,8 +746,9 @@ void Processor::sendRadioData() {
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
+    std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _state.self) {
-        if (r->visible || _manualID == r->shell()) {
+        if (r->visible || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
@@ -733,26 +756,55 @@ void Processor::sendRadioData() {
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
 
-            if (r->shell() == _manualID) {
-                const JoystickControlValues controlVals =
-                    getJoystickControlValues();
-                applyJoystickControls(controlVals, txRobot->mutable_control(),
-                                      r);
+            // MANUAL STUFF
+            if (_multipleManual) {
+                auto info =
+                    find(manualIds.begin(), manualIds.end(), r->shell());
+                int index = info - manualIds.begin();
+
+                // figure out if this shell value has been assigned to a
+                // joystick
+                // do stuff with that information such as assign it to the first
+                // available
+                if (info == manualIds.end()) {
+                    for (int i = 0; i < manualIds.size(); i++) {
+                        if (manualIds[i] == -1) {
+                            index = i;
+                            _joysticks[i]->setRobotId(r->shell());
+                            manualIds[i] = r->shell();
+                            break;
+                        }
+                    }
+                }
+
+                if (index < manualIds.size()) {
+                    applyJoystickControls(
+                        getJoystickControlValue(*_joysticks[index]),
+                        txRobot->mutable_control(), r);
+                }
+            } else if (_manualID == r->shell()) {
+                auto controlValues = getJoystickControlValues();
+                if (controlValues.size()) {
+                    applyJoystickControls(controlValues[0],
+                                          txRobot->mutable_control(), r);
+                }
             }
         }
     }
 
-    for (const auto& pair: _robotConfigs) {
+    for (const auto& pair : _robotConfigs) {
         auto config = tx->add_configs();
         config->set_key(pair.first);
         config->set_value(pair.second);
-        config->set_key_name(DebugCommunication::CONFIG_TO_STRING.at(pair.first));
+        config->set_key_name(
+            DebugCommunication::CONFIG_TO_STRING.at(pair.first));
     }
 
-    for (const auto& debugResponse :_robotDebugResponses) {
+    for (const auto& debugResponse : _robotDebugResponses) {
         auto debugCommunication = tx->add_debug_communication();
         debugCommunication->set_key(debugResponse);
-        debugCommunication->set_key_name(DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse));
+        debugCommunication->set_key_name(
+            DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse));
     }
 
     if (_radio) {
@@ -779,10 +831,10 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick ? (_kickOnBreakBeam
-                                ? Packet::Control::ON_BREAK_BEAM
-                                : Packet::Control::IMMEDIATE)
-                        : Packet::Control::STAND_DOWN);
+    tx->set_triggermode(kick
+                            ? (_kickOnBreakBeam ? Packet::Control::ON_BREAK_BEAM
+                                                : Packet::Control::IMMEDIATE)
+                            : Packet::Control::STAND_DOWN);
     tx->set_kcstrength(controlVals.kickPower);
     tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
                                        : Packet::Control::CHIP);
@@ -791,51 +843,56 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
-JoystickControlValues Processor::getJoystickControlValues() {
-    // if there's more than one joystick, we add their values
-    JoystickControlValues vals;
+JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
+    JoystickControlValues vals = joy.getJoystickControlValues();
+    if (joy.valid()) {
+        // keep it in range
+        vals.translation.clamp(sqrt(2.0));
+        if (vals.rotation > 1) vals.rotation = 1;
+        if (vals.rotation < -1) vals.rotation = -1;
+
+        // Gets values from the configured joystick control
+        // values,respecting damped
+        // state
+        if (_dampedTranslation) {
+            vals.translation *=
+                Joystick::JoystickTranslationMaxDampedSpeed->value();
+        } else {
+            vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
+        }
+        if (_dampedRotation) {
+            vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+        } else {
+            vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+        }
+
+        // scale up kicker and dribbler speeds
+        vals.dribblerPower *= 128;
+        vals.kickPower *= 255;
+    }
+    return vals;
+}
+
+std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
+    std::vector<JoystickControlValues> vals;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
-            JoystickControlValues newVals = joy->getJoystickControlValues();
-
-            vals.dribble |= newVals.dribble;
-            vals.kick |= newVals.kick;
-            vals.chip |= newVals.chip;
-
-            vals.rotation += newVals.rotation;
-            vals.translation += newVals.translation;
-
-            vals.dribblerPower =
-                max<double>(vals.dribblerPower, newVals.dribblerPower);
-            vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
-            break;
+            vals.push_back(getJoystickControlValue(*joy));
         }
     }
-
-    // keep it in range
-    vals.translation.clamp(sqrt(2.0));
-    if (vals.rotation > 1) vals.rotation = 1;
-    if (vals.rotation < -1) vals.rotation = -1;
-
-    // Gets values from the configured joystick control values,respecting damped
-    // state
-    if (_dampedTranslation) {
-        vals.translation *=
-            Joystick::JoystickTranslationMaxDampedSpeed->value();
-    } else {
-        vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
-    }
-    if (_dampedRotation) {
-        vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
-    } else {
-        vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
-    }
-
-    // scale up kicker and dribbler speeds
-    vals.dribblerPower *= 128;
-    vals.kickPower *= 255;
-
     return vals;
+}
+
+vector<int> Processor::getJoystickRobotIds() {
+    vector<int> robotIds;
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) {
+            robotIds.push_back(joy->getRobotId());
+        } else {
+            robotIds.push_back(-2);
+        }
+    }
+    return robotIds;
 }
 
 void Processor::defendPlusX(bool value) {
