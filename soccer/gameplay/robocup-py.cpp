@@ -97,9 +97,7 @@ void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
 
 // Sets a robot's visibility - this should never be used in gameplay code, but
 // is useful for testing.
-void Robot_set_vis_for_testing(Robot* self, bool vis) {
-    self->visible = vis;
-}
+void Robot_set_vis_for_testing(Robot* self, bool vis) { self->visible = vis; }
 
 Geometry2d::Point Robot_vel(Robot* self) { return self->vel; }
 
