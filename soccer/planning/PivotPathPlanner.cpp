@@ -91,10 +91,6 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
             points, obstacles, newConstraints, startInstant.vel, Point(0, 0));
 
         if (path) {
-            // for (auto &waypoint: path->waypoints) {
-            // waypoint.angle = AngleInstant::
-            //}
-
             std::function<AngleInstant(MotionInstant)> function =
                     [pivotPoint, pivotTarget](MotionInstant instant) {
                         auto angleToPivot = instant.pos.angleTo(pivotPoint);

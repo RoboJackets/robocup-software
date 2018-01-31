@@ -74,15 +74,6 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
 
     const auto decayConstant = 0.1795;
 
-
-//    auto part = std::exp(-0.2913f * t.count());
-    // vel = v0 - t*Constant
-    // 0 = v0 - t * C
-    // t*C = v0
-    // t = v0/C
-
-    // d = v0t - 1/2*t^2*Constant
-
     double speed=0;
     double distance=0;
     if (s0 != 0) {
