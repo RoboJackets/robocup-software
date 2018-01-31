@@ -93,13 +93,15 @@ class TestOpponent(unittest.TestCase):
 
 		main.their_robots()[1].set_pos(0, length / 2)
 		
-		# This would work if the function worked
+		# One robot at center of field, choose right center of field
 		self.assertEqual(test_point(width / 2, length / 2), main.their_robots()[1])
-		
 
+		# Choose a point equidistant between two robots with direction weight 0. Should choose the first one in the array
 		self.assertEqual(test_point(0, length / 4, 0), main.their_robots()[0])
 
-		main.their_robots()[1].set_pos(0, length / 2)
+		self.assertEqual(test_point(0, length / 4), main.their_robots()[1])
+
+		# Test directional weight, so the robot at the center of the field should have higher weight
 		self.assertEqual(test_point(0, length / 4, .5), main.their_robots()[1])
 
 		# 5 robots are at (0, 0), one robot is closer to the center. 
@@ -109,6 +111,6 @@ class TestOpponent(unittest.TestCase):
 		# This does not return what it should because function is broken
 		self.assertEqual(test_point(0, length / 2), main.their_robots()[1])
 
-		# This does not return what it should because this function is broken
+		# Test excluded robots
 		self.assertEqual(test_point(0, length / 2, excluded_robots=[main.their_robots()[0]]), main.their_robots()[1])
 
