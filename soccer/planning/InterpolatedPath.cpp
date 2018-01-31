@@ -197,10 +197,11 @@ boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         return RobotInstant(waypoints.front().instant);
     }
-//    if (t < RJ::Seconds::zero()) {
-//        debugThrow(
-//            invalid_argument("A time less than 0 was entered for time t. t=" + to_string(t)));
-//    }
+    //    if (t < RJ::Seconds::zero()) {
+    //        debugThrow(
+    //            invalid_argument("A time less than 0 was entered for time t.
+    //            t=" + to_string(t)));
+    //    }
     /*
     float linearPos;
     float linearSpeed;
@@ -366,8 +367,12 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
     subpath->waypoints.emplace_back(MotionInstant(endPos, vf),
                                     endTime - startTime);
 
-    debugThrowIf(to_string(subpath->getDuration()) + to_string(std::min(getDuration() - startTime, endTime-startTime)),
-                 (subpath->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.00001);
+    debugThrowIf(
+        to_string(subpath->getDuration()) +
+            to_string(std::min(getDuration() - startTime, endTime - startTime)),
+        (subpath->getDuration() -
+         std::min(getDuration() - startTime, endTime - startTime)).count() >
+            0.00001);
 
     return std::move(subpath);
 }
@@ -379,7 +384,7 @@ unique_ptr<Path> InterpolatedPath::clone() const {
     return std::unique_ptr<Path>(cp);
 }
 
-//void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
+// void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
 //    for (auto& waypoint : waypoints) {
 //        waypoint.vel() /= multiplier;
 //        waypoint.time *= multiplier;

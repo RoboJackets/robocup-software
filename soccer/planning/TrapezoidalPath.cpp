@@ -20,8 +20,7 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
                                      _maxSpeed, _maxAcc, _startSpeed,
                                      _endSpeed)) {}
 
-boost::optional<RobotInstant> TrapezoidalPath::eval(
-    RJ::Seconds time) const {
+boost::optional<RobotInstant> TrapezoidalPath::eval(RJ::Seconds time) const {
     double distance;
     double speedOut;
     bool valid = TrapezoidalMotion(_pathLength,   // PathLength

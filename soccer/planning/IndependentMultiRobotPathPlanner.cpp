@@ -75,7 +75,8 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
         std::unique_ptr<Path> path = _planners[shell]->run(request);
         if (!path) {
             path = Planning::InterpolatedPath::emptyPath(request.start.pos);
-            debugLog("path was null!! " + to_string(shell) + ":" + to_string(request.motionCommand->getCommandType()));
+            debugLog("path was null!! " + to_string(shell) + ":" +
+                     to_string(request.motionCommand->getCommandType()));
         }
         paths[shell] = std::move(path);
 

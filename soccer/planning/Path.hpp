@@ -36,7 +36,7 @@ public:
      *     time range of this path, this method returns boost::none.
      */
     boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
-        auto instant = eval(t*evalRate);
+        auto instant = eval(t * evalRate);
         if (instant) {
             instant->motion.vel *= evalRate;
         }
@@ -76,9 +76,7 @@ public:
      */
     virtual RJ::Seconds getDuration() const = 0;
 
-    RJ::Seconds getSlowedDuration() const {
-        return getDuration()/evalRate;
-    }
+    RJ::Seconds getSlowedDuration() const { return getDuration() / evalRate; }
 
     /**
      * Returns a subPath
@@ -254,8 +252,7 @@ protected:
      *     time if @t is within the range of the path.  If @t is not within the
      *     time range of this path, this method returns boost::none.
      */
-    virtual boost::optional<RobotInstant> eval(
-            RJ::Seconds t) const override {
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override {
         if (!path) {
             return boost::none;
         }

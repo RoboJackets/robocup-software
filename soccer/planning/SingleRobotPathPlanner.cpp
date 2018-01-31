@@ -26,7 +26,7 @@ void SingleRobotPathPlanner::createConfiguration(Configuration* cfg) {
     _goalPosChangeThreshold =
         new ConfigDouble(cfg, "PathPlanner/goalPosChangeThreshold", 0.025);
     _goalVelChangeThreshold =
-            new ConfigDouble(cfg, "PathPlanner/goalVelChangeThreshold", 0.025);
+        new ConfigDouble(cfg, "PathPlanner/goalVelChangeThreshold", 0.025);
 }
 
 std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
@@ -121,8 +121,8 @@ bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    //const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
-    //if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
+    // const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
+    // if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
     //    return true;
     //}
 

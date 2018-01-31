@@ -90,7 +90,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
                 angleFunctionForCommandType(FacePointCommand(command.target)));
         } else {
             RJ::Seconds timeForBall = time - curTime;
-            prevPath->slow(timeLeft/timeForBall, timeIntoPath);
+            prevPath->slow(timeLeft / timeForBall, timeIntoPath);
             prevPath->setDebugText("reuse final slow " +
                                    QString::number(timeForBall.count()) + " " +
                                    QString::number(timeLeft.count()));
@@ -108,10 +108,11 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
         if (std::abs(target.vel.angleBetween((target.pos - startInstant.pos))) >
             DegreesToRadians(10)) {
             target.pos -=
-                target.vel.normalized(ballAvoidDistance*2 + Robot_Radius);
+                target.vel.normalized(ballAvoidDistance * 2 + Robot_Radius);
             if (prevPath &&
-                    target.pos.distTo(prevPath->end().motion.pos) < SingleRobotPathPlanner::goalPosChangeThreshold() &&
-                    reusePathCount < 20) {
+                target.pos.distTo(prevPath->end().motion.pos) <
+                    SingleRobotPathPlanner::goalPosChangeThreshold() &&
+                reusePathCount < 20) {
                 target.vel = prevPath->end().motion.vel;
                 reusePathCount++;
             } else {
@@ -119,14 +120,15 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             }
 
             auto command = std::make_unique<PathTargetCommand>(target);
-            auto request = PlanRequest(systemState,
-                startInstant, std::move(command), robotConstraints, std::move(prevPath), ballObstacles,
-                dynamicObstacles, planRequest.shellID);
+            auto request = PlanRequest(systemState, startInstant,
+                                       std::move(command), robotConstraints,
+                                       std::move(prevPath), ballObstacles,
+                                       dynamicObstacles, planRequest.shellID);
             path = rrtPlanner.run(request);
         } else {
-
             if (prevPath &&
-                target.pos.distTo(prevPath->end().motion.pos) < SingleRobotPathPlanner::goalPosChangeThreshold() &&
+                target.pos.distTo(prevPath->end().motion.pos) <
+                    SingleRobotPathPlanner::goalPosChangeThreshold() &&
                 reusePathCount < 20) {
                 target.vel = prevPath->end().motion.vel;
                 reusePathCount++;
@@ -136,10 +138,10 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
 
             target.pos += target.vel.normalized(Robot_Radius);
             auto command = std::make_unique<PathTargetCommand>(target);
-            auto request = PlanRequest(systemState,
-                                       startInstant, std::move(command), robotConstraints, std::move(prevPath), obstacles,
-                                       dynamicObstacles, planRequest.shellID);
-
+            auto request =
+                PlanRequest(systemState, startInstant, std::move(command),
+                            robotConstraints, std::move(prevPath), obstacles,
+                            dynamicObstacles, planRequest.shellID);
 
             path = rrtPlanner.run(request);
         }
@@ -153,43 +155,46 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
         auto timeInto = RJ::now() - prevPath->startTime();
         auto timeLeft = prevPath->getDuration() - timeInto;
 
-
         MotionInstant target;
         RJ::Time time = ball.estimateTimeTo(*targetKickPos, &target.pos);
         RJ::Seconds timeToHit = time - curTime;
         if (timeLeft < RJ::Seconds(1.0)) {
-            target.vel = (command.target - target.pos).normalized(ApproachSpeed);
+            target.vel =
+                (command.target - target.pos).normalized(ApproachSpeed);
             target.pos -= target.vel.normalized(Robot_Radius + Ball_Radius * 2);
-
 
             if (true) {
                 vector<Point> points{startInstant.pos, target.pos};
                 finalApproach = true;
-                auto path = RRTPlanner::generatePath(points, obstacles,
-                                                     motionConstraints, startInstant.vel, target.vel);
+                auto path = RRTPlanner::generatePath(
+                    points, obstacles, motionConstraints, startInstant.vel,
+                    target.vel);
 
                 if (path) {
                     path->setDebugText(
-                            "FinalPath" + QString::number(path->getSlowedDuration().count()) +
-                            " " + QString::number(timeToHit.count()) + " " +
-                            QString::number(time.time_since_epoch().count()));
-                    //path->slow(timeToHit / path->getDuration());
+                        "FinalPath" +
+                        QString::number(path->getSlowedDuration().count()) +
+                        " " + QString::number(timeToHit.count()) + " " +
+                        QString::number(time.time_since_epoch().count()));
+                    // path->slow(timeToHit / path->getDuration());
 
                     return make_unique<AngleFunctionPath>(
-                            std::move(path),
-                            angleFunctionForCommandType(FacePointCommand(command.target)));
+                        std::move(path), angleFunctionForCommandType(
+                                             FacePointCommand(command.target)));
                 }
             }
         }
 
-        if (!prevPath->hit(obstacles, timeInto) && timeLeft-1000ms < timeToHit && reusePathCount < 10) {
+        if (!prevPath->hit(obstacles, timeInto) &&
+            timeLeft - 1000ms < timeToHit && reusePathCount < 10) {
             reusePathCount++;
             Point nearPoint;
             prevPath->setDebugText("Reuse prevPath");
-            if (ball.estimateTimeTo(prevPath->end().motion.pos, &nearPoint) >= RJ::now() + timeLeft - 1000ms) {
+            if (ball.estimateTimeTo(prevPath->end().motion.pos, &nearPoint) >=
+                RJ::now() + timeLeft - 1000ms) {
                 return make_unique<AngleFunctionPath>(
-                        std::move(prevPath),
-                        angleFunctionForCommandType(FacePointCommand(command.target)));
+                    std::move(prevPath), angleFunctionForCommandType(
+                                             FacePointCommand(command.target)));
             }
         }
     }
@@ -200,8 +205,9 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
     const auto partialReplanLeadTime = RRTPlanner::getPartialReplanLeadTime();
     if (prevPath) {
         auto timeInto = RJ::now() - prevPath->startTime();
-        if (timeInto < prevPath->getDuration() - partialReplanLeadTime*2) {
-            partialPath = prevPath->subPath(0ms, timeInto + partialReplanLeadTime);
+        if (timeInto < prevPath->getDuration() - partialReplanLeadTime * 2) {
+            partialPath =
+                prevPath->subPath(0ms, timeInto + partialReplanLeadTime);
             partialPathTime = partialReplanLeadTime;
             tmpStartInstant = partialPath->end().motion;
         }
@@ -217,26 +223,28 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
         target.pos -= target.vel.normalized(Robot_Radius + Ball_Radius * 2);
 
         vector<Point> points{tmpStartInstant.pos, target.pos};
-        if (std::abs(target.vel.angleBetween((target.pos - tmpStartInstant.pos))) >
-            DegreesToRadians(60)) {
+        if (std::abs(target.vel.angleBetween(
+                (target.pos - tmpStartInstant.pos))) > DegreesToRadians(60)) {
             auto dist = target.pos.distTo(tmpStartInstant.pos);
             points = {tmpStartInstant.pos,
                       target.pos -
-                          target.vel.normalized(Robot_Radius * 2.0 + Ball_Radius * 2.0),
+                          target.vel.normalized(Robot_Radius * 2.0 +
+                                                Ball_Radius * 2.0),
                       target.pos};
 
-            //tempObstacles.add(
+            // tempObstacles.add(
             //    make_shared<Circle>(ballNow.pos, Robot_Radius + Ball_Radius));
-            //debug = "additional ";
+            // debug = "additional ";
         }
-        if (Geometry2d::Segment(ball.pos, target.pos).distTo(tmpStartInstant.pos) <
-            Robot_Radius) {
+        if (Geometry2d::Segment(ball.pos, target.pos)
+                .distTo(tmpStartInstant.pos) < Robot_Radius) {
             debug = "meh";
             // break;
         }
 
-        std::unique_ptr<Path> path = RRTPlanner::generatePath(
-            points, tempObstacles, motionConstraints, tmpStartInstant.vel, target.vel);
+        std::unique_ptr<Path> path =
+            RRTPlanner::generatePath(points, tempObstacles, motionConstraints,
+                                     tmpStartInstant.vel, target.vel);
         RJ::Seconds hitTime;
 
         if (path) {
@@ -246,7 +254,8 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
                 }
 
                 if (partialPath) {
-                    path = make_unique<CompositePath>(std::move(partialPath), std::move(path));
+                    path = make_unique<CompositePath>(std::move(partialPath),
+                                                      std::move(path));
                     path->setStartTime(prevPath->startTime());
                 }
 
@@ -260,7 +269,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
                 //    path->setDebugText(debug +
                 //    QString::number(path->getDuration()) + " slow");
                 //}
-                reusePathCount=0;
+                reusePathCount = 0;
                 return make_unique<AngleFunctionPath>(
                     std::move(path), angleFunctionForCommandType(
                                          FacePointCommand(command.target)));

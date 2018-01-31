@@ -17,7 +17,8 @@ void MotionConstraints::createConfiguration(Configuration* cfg) {
         cfg, "MotionConstraints/Replan Threshold", 0.1);  //  meters
     _replan_lead_time =
         new ConfigDouble(cfg, "MotionConstraints/Replan Lead Time", 0);
-    _max_centripetal_acceleration = new ConfigDouble(cfg, "MotionConstraints/Max Centripetal Acceleration", .5);
+    _max_centripetal_acceleration = new ConfigDouble(
+        cfg, "MotionConstraints/Max Centripetal Acceleration", .5);
 }
 
 MotionConstraints::MotionConstraints() {

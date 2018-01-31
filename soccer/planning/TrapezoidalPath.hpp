@@ -64,8 +64,7 @@ public:
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(
-            RJ::Seconds time) const override;
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds time) const override;
 };
 
 }  // namespace Planning

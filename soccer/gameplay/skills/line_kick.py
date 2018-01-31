@@ -30,13 +30,14 @@ class LineKick(skills._kick._Kick):
         self.add_transition(behavior.Behavior.State.start,
                             LineKick.State.waiting, lambda: True,
                             'immediately')
-        self.add_transition(LineKick.State.waiting, LineKick.State.kick,
-                            lambda: self.enable_kick, 'kicker is enabled')
+        self.add_transition(LineKick.State.waiting,
+                            LineKick.State.kick, lambda: self.enable_kick,
+                            'kicker is enabled')
 
         self.add_transition(
-            LineKick.State.kick, behavior.Behavior.State.completed,
-            lambda: self.robot is not None and self._got_close and self.robot.just_kicked(),
-            "robot kicked")
+            LineKick.State.kick,
+            behavior.Behavior.State.completed, lambda: self.robot is not None
+            and self._got_close and self.robot.just_kicked(), "robot kicked")
         self.shell_id = None
 
         self.max_speed = None

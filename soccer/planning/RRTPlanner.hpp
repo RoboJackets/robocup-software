@@ -92,17 +92,22 @@ protected:
                       std::string* debugOut = nullptr) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
-    std::vector<Geometry2d::Point> runRRT(MotionInstant start, MotionInstant goal,
-                                          const MotionConstraints &motionConstraints,
-                                          const Geometry2d::ShapeSet &obstacles, SystemState *state, unsigned shellID,
-                                          const boost::optional<std::vector<Geometry2d::Point>> &biasWaypoints = boost::none);
+    std::vector<Geometry2d::Point> runRRT(
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        unsigned shellID,
+        const boost::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
+            boost::none);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
         const std::vector<DynamicObstacle> paths, SystemState* state,
-        unsigned shellID, const boost::optional<std::vector<Geometry2d::Point>>& biasWayPoints = boost::none);
+        unsigned shellID,
+        const boost::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
+            boost::none);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
@@ -171,11 +176,12 @@ protected:
  * the RRT path.
  */
     std::vector<Geometry2d::Point> runRRTHelper(
-            MotionInstant start, MotionInstant goal,
-            const MotionConstraints& motionConstraints,
-            const Geometry2d::ShapeSet& obstacles, SystemState* state,
-            unsigned shellID, const boost::optional<std::vector<Geometry2d::Point>> &biasWaypoints,
-            bool straightLine);
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        unsigned shellID,
+        const boost::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
+        bool straightLine);
 
     static ConfigDouble* _partialReplanLeadTime;
 };

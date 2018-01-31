@@ -123,9 +123,9 @@ public:
         path->setDebugText("Empty Path");
         return std::move(path);
     }
+
 protected:
-    virtual boost::optional<RobotInstant> eval(
-            RJ::Seconds t) const override;
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

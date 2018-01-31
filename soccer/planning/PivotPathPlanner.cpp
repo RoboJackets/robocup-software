@@ -92,17 +92,17 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
 
         if (path) {
             std::function<AngleInstant(MotionInstant)> function =
-                    [pivotPoint, pivotTarget](MotionInstant instant) {
-                        auto angleToPivot = instant.pos.angleTo(pivotPoint);
-                        auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
+                [pivotPoint, pivotTarget](MotionInstant instant) {
+                    auto angleToPivot = instant.pos.angleTo(pivotPoint);
+                    auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
 
-                        if (abs(angleToPivot - angleToPivotTarget) <
-                            DegreesToRadians(10)) {
-                            return AngleInstant(angleToPivotTarget);
-                        } else {
-                            return AngleInstant(angleToPivot);
-                        }
-                    };
+                    if (abs(angleToPivot - angleToPivotTarget) <
+                        DegreesToRadians(10)) {
+                        return AngleInstant(angleToPivotTarget);
+                    } else {
+                        return AngleInstant(angleToPivot);
+                    }
+                };
             return make_unique<AngleFunctionPath>(move(path), function);
         } else {
             return std::move(prevPath);

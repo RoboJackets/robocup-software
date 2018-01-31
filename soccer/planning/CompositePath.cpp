@@ -11,8 +11,8 @@ CompositePath::CompositePath(unique_ptr<Path> path) {
 }
 
 void CompositePath::append(unique_ptr<Path> path) {
-    if(CompositePath *p = dynamic_cast<CompositePath*>(path.get())) {
-        for (auto &path: p->paths) {
+    if (CompositePath* p = dynamic_cast<CompositePath*>(path.get())) {
+        for (auto& path : p->paths) {
             append(std::move(path));
         }
     } else {
@@ -22,11 +22,13 @@ void CompositePath::append(unique_ptr<Path> path) {
                 duration += pathDuration;
                 paths.push_back(std::move(path));
             } else {
-                debugThrow(invalid_argument("The path passed is invalid" + to_string(pathDuration)));
+                debugThrow(invalid_argument("The path passed is invalid" +
+                                            to_string(pathDuration)));
             }
         } else {
             debugThrow(runtime_error(
-                    "You can't append to this path. It is already infinitely long."));
+                "You can't append to this path. It is already infinitely "
+                "long."));
         }
     }
 }
@@ -166,8 +168,8 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
     // If the path will only contain that one Path just return a subPath of that
     // Path
     if (time >= endTime) {
-        return paths.at(start - 1)->subPath(startTime - firstStartTime,
-                                         endTime - firstStartTime);
+        return paths.at(start - 1)
+            ->subPath(startTime - firstStartTime, endTime - firstStartTime);
     } else {
         // Create a CompositePath initialized with only that first path.
         auto path = make_unique<CompositePath>(
@@ -192,7 +194,7 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
             }
             end--;
             lastPath = paths.at(end)->subPath(RJ::Seconds(0),
-                                           endTime - (time - lastTime));
+                                              endTime - (time - lastTime));
         }
 
         // Add the ones in the middle
@@ -204,8 +206,12 @@ unique_ptr<Path> CompositePath::subPath(RJ::Seconds startTime,
         // Add the last one
         path->append(std::move(lastPath));
 
-        debugThrowIf("Subpath Duration doesn't match Expected Duration. Something went wrong",
-                     (path->getDuration() - std::min(getDuration() - startTime, endTime-startTime)).count() > 0.00001);
+        debugThrowIf(
+            "Subpath Duration doesn't match Expected Duration. Something went "
+            "wrong",
+            (path->getDuration() -
+             std::min(getDuration() - startTime, endTime - startTime)).count() >
+                0.00001);
         return std::move(path);
     }
 }

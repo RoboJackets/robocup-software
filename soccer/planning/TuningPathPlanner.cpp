@@ -46,8 +46,10 @@ bool TuningPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
         float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
         float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;
 
-        if (targetPosChange > SingleRobotPathPlanner::goalPosChangeThreshold() ||
-            targetVelChange > SingleRobotPathPlanner::goalVelChangeThreshold()) {
+        if (targetPosChange >
+                SingleRobotPathPlanner::goalPosChangeThreshold() ||
+            targetVelChange >
+                SingleRobotPathPlanner::goalVelChangeThreshold()) {
             // FIXME: goalChangeThreshold shouldn't be used for checking
             // speed differences as it is in the above 'if' statement
             return true;

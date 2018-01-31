@@ -240,7 +240,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // set control values
-    _robot->control->set_xvelocity(targetVel.x()*_x_multiplier->value());
+    _robot->control->set_xvelocity(targetVel.x() * _x_multiplier->value());
     _robot->control->set_yvelocity(targetVel.y());
 }
 
