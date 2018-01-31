@@ -153,8 +153,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicker.target = self.receive_point
         kickpower = (main.ball().pos - self.receive_point).mag() / 8
 
-        kickpower = max(0.4, kickpower)
-        kickpower = min(1, kickpower)
+        kickpower = max(0.4, min(kickpower, 1.0))
 
         kicker.kick_power = kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
