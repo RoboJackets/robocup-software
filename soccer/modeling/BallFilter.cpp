@@ -7,7 +7,7 @@
 
 using namespace Geometry2d;
 
-static const float Velocity_Alpha = 0.05;
+static const float Velocity_Alpha = 0.9;
 
 BallFilter::BallFilter() {}
 
