@@ -86,25 +86,25 @@ class TestOpponent(unittest.TestCase):
 
 
 		# All robots are at (0, 0), check that we get the first robot in the array
-		self.assertEqual(test_point(0, 0), main.their_robots()[0])
+		self.assertEqual(test_point(0, 0), main.their_robots()[0], "fail trivial case")
 
 		# All robots are at (0, 0), check that function works when the point is far
-		self.assertEqual(test_point(0, length / 2), main.their_robots()[0])
+		self.assertEqual(test_point(0, length / 2), main.their_robots()[0], "all robots at our goal, test center of field, should choose first robot in array")
 
 		main.their_robots()[1].set_pos(0, length / 2)
 		
 		# One robot at center of field, choose right center of field
-		self.assertEqual(test_point(width / 2, length / 2), main.their_robots()[1])
+		self.assertEqual(test_point(width / 2, length / 2), main.their_robots()[1], "failed to assert smaller distance")
 
 		# Choose a point equidistant between two robots with direction weight 0. Should choose the first one in the array
-		self.assertEqual(test_point(0, length / 4, 0), main.their_robots()[0])
+		self.assertEqual(test_point(0, length / 4, 0), main.their_robots()[0], "failed equidistant with direction_weight = 0 ")
 
-		# Choose a point equidistant between two robots with direction weight 1. Should choose the robot closest to our goal.
-		self.assertEqual(test_point(0, length / 4), main.their_robots()[1])
+		# Choose a point equidistant between two robots with direction weight 1. Should choose the robot closest to their goal.
+		self.assertEqual(test_point(0, length / 4), main.their_robots()[1], "failed to choose robot closer to their goal")
 
 		# Test directional weight, so the robot at the center of the field should have higher weight
-		self.assertEqual(test_point(0, length / 4, .5), main.their_robots()[1])
+		self.assertEqual(test_point(0, length / 4, .5), main.their_robots()[1], "failed direction_weight = .5")
 
 		# Test excluded robots
-		self.assertEqual(test_point(0, length / 2, excluded_robots=[main.their_robots()[0]]), main.their_robots()[1])
+		self.assertEqual(test_point(0, length / 2, excluded_robots=[main.their_robots()[0]]), main.their_robots()[1], "failed to exclude robots")
 
