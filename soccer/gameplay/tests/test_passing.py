@@ -35,6 +35,7 @@ class TestPassing(unittest.TestCase):
 	def test_eval_pass(self):
 		length = constants.Field.Length
 		width = constants.Field.Width
+		botRadius = constants.Robot.Radius
 
 		bot1, bot2, bot3, bot4, bot5 = main.system_state().their_robots[0:5]
 		# bot1, bot2, bot3, bot4, bot5 = main.system_state().our_robots[0:5]
@@ -62,14 +63,16 @@ class TestPassing(unittest.TestCase):
 		self.assertEqual(run_function(0, 0, 0, length), success, "point pass to the end of the field fail")
 
 		# If a robot is right in front of the shooter, the pass will fail
-		self.set_bot_pos(bot1, 0, constants.Robot.Radius * 2)
+		self.set_bot_pos(bot1, 0, botRadius * 2)
 		self.assertEqual(run_function(0, 0, 0, length / 2), fail, "pass with robot in front of the shooter success")
+
+		# Test excluded_robots
+		self.assertEqual(run_function(0, 0, 0, length / 2, [bot1]), success, "test excluded_robots")
 
 		# Robot halfway between shooter and goal point. 
 		self.set_bot_pos(bot1, 0, length / 4)
 		self.assertGreater(run_function(0, 0, 0, length / 2), fail, "robot halfway between shooter and goal point fail")
 		self.assertLess(run_function(0, 0, 0, length / 2), success, "robot halfway between shooter and goal point success")
-
 
 		
 
