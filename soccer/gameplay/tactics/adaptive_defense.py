@@ -167,8 +167,18 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         return risk_score
 
     def apply_blocking_roles(self):
-        # Get list of robots, sorted by risk
-        # Apply blocking for all major wingers
-        # Apply rest of large group to the forwards as goal blockers
-        # Peel from each group as necessary
+        # Apply in order of ball -> strikers -> wingers -> ball
+        pass
+
+    def build_defensive_formation(self):
+        # Using the offsets and the classifier, create the formation
+        # based on the number of offenders on each side of the ball
+        # List the positions and what robot they are defending
+        pass
+
+    def apply_opponent_forces(self):
+        # Apply opponent force fields to the positions in which we are defending
+        # (Maybe apply all at a reduced level)
+        # Treat XY axis as independent
+        # Each is a spring following F=kd
         pass
