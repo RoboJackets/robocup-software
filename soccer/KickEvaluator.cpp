@@ -159,7 +159,8 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     // Angle in reference to the field
     float realMaxAngle = maxX + (center - origin).angle();
-    Line bestKickLine(origin, origin + Point{cos(realMaxAngle), sin(realMaxAngle)});
+    Line bestKickLine(origin,
+                      origin + Point{cos(realMaxAngle), sin(realMaxAngle)});
 
     // Return point on target segment and chance
     return pair<Point, float>(target.nearestPoint(bestKickLine), maxChance);

@@ -82,5 +82,6 @@ TEST(KickEvaluator, check_best_point) {
 
     pt_to_opp_goal = kickEval.eval_pt_to_opp_goal(Point(1, 6));
 
-    EXPECT_NEAR((std::get<0>(expected)).x(), (std::get<0>(pt_to_opp_goal)).x(), 0.01);
+    EXPECT_NEAR((std::get<0>(expected)).x(), (std::get<0>(pt_to_opp_goal)).x(),
+                0.01);
 }
