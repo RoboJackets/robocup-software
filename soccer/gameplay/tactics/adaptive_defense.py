@@ -166,10 +166,6 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
         return risk_score
 
-    def apply_blocking_roles(self):
-        # Apply in order of ball -> strikers -> wingers -> ball
-        pass
-
     def build_defensive_formation(self):
         # Using the offsets and the classifier, create the formation
         # based on the number of offenders on each side of the ball
@@ -181,4 +177,8 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         # (Maybe apply all at a reduced level)
         # Treat XY axis as independent
         # Each is a spring following F=kd
+        pass
+
+    def apply_blocking_roles(self):
+        # Apply in order of ball -> strikers -> wingers -> ball
         pass
