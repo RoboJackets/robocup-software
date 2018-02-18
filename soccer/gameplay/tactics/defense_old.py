@@ -14,12 +14,12 @@ import role_assignment
 # TODO: handle the case where the ball is invalid
 
 
-## The Defense tactic handles goalie and defender placement to defend the goal
+## The DefenseOld tactic handles goalie and defender placement to defend the goal
 # It does lots of window and shot evaluation to figure out which 'threats' are the
 # most important to block, then assigns blocking positions to the bots
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
-class Defense(composite_behavior.CompositeBehavior):
+class DefenseOld(composite_behavior.CompositeBehavior):
 
     DEFENSE_ROBOT_CHANGE_COST = 0.29
 
@@ -32,22 +32,22 @@ class Defense(composite_behavior.CompositeBehavior):
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
 
-        # we could make the Defense tactic have more or less defenders, but right now we only support two
+        # we could make the DefenseOld tactic have more or less defenders, but right now we only support two
         if len(defender_priorities) != 2:
             raise RuntimeError(
                 "defender_priorities should have a length of two")
 
-        self.add_state(Defense.State.defending,
+        self.add_state(DefenseOld.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(Defense.State.clearing, behavior.Behavior.State.running)
+        self.add_state(DefenseOld.State.clearing, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            Defense.State.defending, lambda: True,
+                            DefenseOld.State.defending, lambda: True,
                             "immediately")
-        self.add_transition(Defense.State.defending, Defense.State.clearing,
+        self.add_transition(DefenseOld.State.defending, DefenseOld.State.clearing,
                             lambda: self.should_clear_ball(),
                             "when it is safe to clear the ball")
-        self.add_transition(Defense.State.clearing, Defense.State.defending,
+        self.add_transition(DefenseOld.State.clearing, DefenseOld.State.defending,
                             lambda: not self.should_clear_ball(),
                             "done clearing")
 
@@ -117,7 +117,7 @@ class Defense(composite_behavior.CompositeBehavior):
         goalie.shell_id = main.root_play().goalie_id
         if goalie.shell_id is None:
             print("WARNING: No Goalie Selected")
-            # raise RuntimeError("Defense tactic requires a goalie id to be set")
+            # raise RuntimeError("DefenseOld tactic requires a goalie id to be set")
 
             # TODO: move a lot of this code into modules in the evaluation folder
 
@@ -467,10 +467,10 @@ class Defense(composite_behavior.CompositeBehavior):
             # debug output
             if self.debug:
                 for handler in threat.assigned_handlers:
-                    # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
+                    # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "DefenseOld")
                     main.system_state().draw_circle(handler.move_target, 0.02,
                                                     constants.Colors.Blue,
-                                                    "Defense")
+                                                    "DefenseOld")
 
                 # draw some debug stuff
                 if threat.best_shot_window is not None:
@@ -480,10 +480,10 @@ class Defense(composite_behavior.CompositeBehavior):
                            threat.best_shot_window.segment.get_pt(1)]
                     shot_color = (255, 0, 0, 150)  # translucent red
                     main.system_state().draw_polygon(pts, shot_color,
-                                                     "Defense")
+                                                     "DefenseOld")
                     main.system_state().draw_segment(
                         threat.best_shot_window.segment, constants.Colors.Red,
-                        "Defense")
+                        "DefenseOld")
 
                     self.win_eval.excluded_robots.clear()
                     _, best_window = self.win_eval.eval_pt_to_our_goal(
@@ -496,17 +496,17 @@ class Defense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_text(
                         "Shot: " + str(int(threat.shot_chance * 100.0)) +
                         "% / " + str(int(chance * 100)) + "%",
-                        shot_line.center(), constants.Colors.White, "Defense")
+                        shot_line.center(), constants.Colors.White, "DefenseOld")
 
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)
                     main.system_state().draw_line(
-                        pass_line, constants.Colors.Red, "Defense")
+                        pass_line, constants.Colors.Red, "DefenseOld")
                     main.system_state().draw_text(
                         "Pass: " + str(int(threat.ball_acquire_chance * 100.0))
                         + "%", pass_line.center(), constants.Colors.White,
-                        "Defense")
+                        "DefenseOld")
 
     def role_requirements(self):
         reqs = super().role_requirements()
@@ -524,6 +524,6 @@ class Defense(composite_behavior.CompositeBehavior):
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
                     subbehavior_req_tree):
-                    r.robot_change_cost = Defense.DEFENSE_ROBOT_CHANGE_COST
+                    r.robot_change_cost = DefenseOld.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs
