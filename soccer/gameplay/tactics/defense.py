@@ -32,8 +32,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         self.add_state(Defense.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(Defense.State.clearing,
-                       behavior.Behavior.State.running)
+        self.add_state(Defense.State.clearing, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             Defense.State.defending, lambda: True,
@@ -345,6 +344,21 @@ class Defense(composite_behavior.CompositeBehavior):
                     pass_line = robocup.Segment(main.ball().pos, threat[0])
                     main.system_state().draw_line(
                         pass_line, constants.Colors.Red, "Defense-Pass Line")
+
+            #keep defenders from occupying the same spot
+            #only matters if there are 2 defenders (and the goalie)
+            if len(handlers) == 3:
+                handler1 = handlers[1]
+                handler2 = handlers[2]
+
+                #vector between the 2 points
+                overlap = handler2.move_target - handler1.move_target
+
+                #if the robots overlap
+                if overlap.mag() < 2 * constants.Robot.Radius:
+                    #move the robots away from each other
+                    handler1._move_target -= overlap / 2
+                    handler2._move_target += overlap / 2
 
     def role_requirements(self):
         reqs = super().role_requirements()
