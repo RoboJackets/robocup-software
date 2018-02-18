@@ -39,7 +39,10 @@ run-sim: all backend-simulator-soccer
 run-sim2play: all
 	-pkill -f './grsim'
 	./run/grsim &
-	./run/soccer -sim -y & ./soccer -sim -b
+	@echo '!!![WARNING]!!! Multiple soccer instances will not work unless your grSim is broadcasting over the proper IP.'
+	@echo 'Please set your grSim broadcast IP to "224.5.23.2:10020", or you will experience issues.'
+	./run/soccer -sim -b & sleep 2 && ./run/soccer -sim -y -defend plus
+	-pkill -f './grsim'
 
 run-release: all-release
 	./run/soccer
