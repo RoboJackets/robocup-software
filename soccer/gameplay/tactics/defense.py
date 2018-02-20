@@ -25,8 +25,6 @@ class Defense(composite_behavior.CompositeBehavior):
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
 
-        print("THIS ONE RUNS")
-
         if len(defender_priorities) != 2:
             raise RuntimeError("defender_priorities should have a length of 2")
 
@@ -355,10 +353,14 @@ class Defense(composite_behavior.CompositeBehavior):
                 overlap = handler2.move_target - handler1.move_target
 
                 #if the robots overlap
-                if overlap.mag() < 2 * constants.Robot.Radius:
+                if overlap.mag() < constants.Robot.Radius + .005:
                     #move the robots away from each other
-                    handler1._move_target -= overlap / 2
-                    handler2._move_target += overlap / 2
+                    overlap = overlap - (overlap.normalized()*constants.Robot.Radius)
+                    print(overlap)
+                    print("1 ", handler1._move_target)
+                    print("2 ", handler2._move_target)
+                    handler1._move_target += overlap
+                    handler2._move_target -= overlap
 
     def role_requirements(self):
         reqs = super().role_requirements()
