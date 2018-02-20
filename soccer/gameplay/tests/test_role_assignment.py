@@ -32,13 +32,6 @@ class TestRoleAssignment(unittest.TestCase):
         self.assertEqual(assignments['role1'][1], bot1)
         self.assertEqual(assignments['role2'][1], bot2)
 
-        # def run_function(x1, y1, x2, y2, excluded_robots=[]):
-        #     return evaluation.passing.eval_pass(robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
-
-        # self.assertEqual(run_function(0, 0, 0, length / 2), success)        
-
-
-
     def test_not_enough_bots(self):
         """If there's not enough robots to do an assignment, it should raise an error"""
 
