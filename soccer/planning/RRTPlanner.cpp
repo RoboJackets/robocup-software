@@ -203,15 +203,15 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         if (replanState == PartialReplan) {
             biasWaypoints = vector<Point>();
             biasWaypoints->push_back(start.pos + start.vel * 0.2);
-            //            if (auto point = prevPath->evaluate(300ms)) {
-            //                biasWaypoints->push_back(point->motion.pos);
-            //            }
-            //            if (auto point = prevPath->evaluate(500ms)) {
-            //                biasWaypoints->push_back(point->motion.pos);
-            //            }
-            //            if (auto point = prevPath->evaluate(1000ms)) {
-            //                biasWaypoints->push_back(point->motion.pos);
-            //            }
+            // if (auto point = prevPath->evaluate(300ms)) {
+            //     biasWaypoints->push_back(point->motion.pos);
+            // }
+            // if (auto point = prevPath->evaluate(500ms)) {
+            //     biasWaypoints->push_back(point->motion.pos);
+            // }
+            // if (auto point = prevPath->evaluate(1000ms)) {
+            //     biasWaypoints->push_back(point->motion.pos);
+            // }
             for (auto it = prevPath->iterator(RJ::now(), 100ms);
                  it->operator*().motion.pos != prevPath->end().motion.pos;
                  it->operator++()) {

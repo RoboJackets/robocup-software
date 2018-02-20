@@ -384,13 +384,4 @@ unique_ptr<Path> InterpolatedPath::clone() const {
     return std::unique_ptr<Path>(cp);
 }
 
-// void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
-//    for (auto& waypoint : waypoints) {
-//        waypoint.vel() /= multiplier;
-//        waypoint.time *= multiplier;
-//    }
-//    RJ::Seconds newTimeInto = timeInto * multiplier;
-//    RJ::Time now = startTime() + timeInto;
-//    setStartTime(now - newTimeInto);
-//}
 }  // namespace Planning

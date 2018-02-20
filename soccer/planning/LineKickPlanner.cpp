@@ -176,7 +176,6 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
                         QString::number(path->getSlowedDuration().count()) +
                         " " + QString::number(timeToHit.count()) + " " +
                         QString::number(time.time_since_epoch().count()));
-                    // path->slow(timeToHit / path->getDuration());
 
                     return make_unique<AngleFunctionPath>(
                         std::move(path), angleFunctionForCommandType(
