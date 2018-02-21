@@ -63,12 +63,14 @@ class TestShooting(unittest.TestCase):
 		self.assertGreater(self.eval_shot(self.width / 4, self.length / 2 + self.botRadius), 0.95)
 		self.assertGreater(self.eval_shot(self.width / -4, self.length / 2 + self.botRadius), 0.95)
 
-	@unittest.skip("demonstrating skipping")
+	@unittest.skip("Skip Problematic Cases")
 	def test_eval_shot_problem_cases(self):
+		# This location is very outside the field but we consider it successful
 		# This case return almost 1 when it should fail
 		self.assertEqual(self.eval_shot(0, 2 * self.length), self.failure)
 
-		# This case returns 0 when it should return 1
+		# Does not allow shot from midfield
+		# This case returns 0 
 		self.assertEqual(self.eval_shot(0, self.length / 2), self.success)
 
 		# Corner shots do not have 100% chance to hit the goal
@@ -86,18 +88,13 @@ class TestShooting(unittest.TestCase):
 		self.assertEqual(self.eval_shot(0, shooting_pos, [their_bot1]), self.success)
 
 		self.set_bot_pos(our_bot1, 0, shooting_pos + self.botRadius)
-		self.assertEqual(self.eval_shot(0, shooting_pos, [their_bot1]), 1)
+		self.assertEqual(self.eval_shot(0, shooting_pos, [their_bot1]), self.success)
 		
-		self.set_bot_pos(their_bot1, 0, shooting_pos + self.length / 8)
+		self.set_bot_pos(their_bot1, 0, shooting_pos + self.botRadius * 3)
 		self.assertLess(self.eval_shot(0, shooting_pos), self.success)
+		self.assertGreater(self.eval_shot(0, shooting_pos), self.failure)
 		self.assertEqual(self.eval_shot(0, shooting_pos, [their_bot1]), self.success)
 
 
-	def test_eval_shot_excluded_bots(self):
-		their_bot1, their_bot2, their_bot3, their_bot4, their_bot5 = self.their_robots
-		our_bot1, our_bot2, our_bot3, our_bot4, our_bot5 = self.our_robots
-
-		print("hello 1")
-		# self.assertEqual(self.eval_shot(0, 3 * length / 4, [their_bot1]), self.success)
 
 
