@@ -210,6 +210,14 @@ class Defense(composite_behavior.CompositeBehavior):
                 # Note: 0.5 is a bullshit value
                 threats.append((opp.pos, 0.5 * shotChance, opp))
 
+        # Prevent threats from being below our goal line (causes incorrect pos)
+        def _adjust_pt(threat):
+            pt = threat[0]
+            pt.y = max(pt.y, 0.1)
+            return (pt,) + threat[1:]
+
+        threats = list(map(_adjust_pt, threats))
+
         return threats
 
     ## Estimate risk score based on old defense.py play
