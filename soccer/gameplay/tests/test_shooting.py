@@ -4,14 +4,6 @@ import main
 import evaluation.shooting
 import constants
 
-class Moc_Robot:
-	def __init__(self, x, y):
-		self.pos = robocup.Point(x, y)
-		self.visible = True;
-
-	def set_pos(self, x, y):
-		self.pos = robocup.Point(x, y)
-
 class TestShooting(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestShooting, self).__init__(*args, **kwargs)

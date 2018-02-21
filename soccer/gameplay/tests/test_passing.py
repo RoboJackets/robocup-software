@@ -4,25 +4,13 @@ import main
 import evaluation.opponent
 import constants
 
-class Moc_Ball:
-	def __init__(self, x, y):
-		self.pos = robocup.Point(x, y)
-
-class Moc_Robot:
-	def __init__(self, x, y):
-		self.pos = robocup.Point(x, y)
-		self.visible = True;
-
-	def set_pos(self, x, y):
-		self.pos = robocup.Point(x, y)
-
 class TestPassing(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestPassing, self).__init__(*args, **kwargs)
 		self.system_state = robocup.SystemState()	
 	
 	def setUp(self):
-		main.init()
+		main.init() # This only needs to be called once for all tests
 		main.set_system_state(self.system_state)
 
 		self.length = constants.Field.Length
