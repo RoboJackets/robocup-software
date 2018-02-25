@@ -15,7 +15,7 @@ import main
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
 class LineKickReceive(
-    single_robot_composite_behavior.SingleRobotCompositeBehavior):
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     ## how much we're allowed to be off in the direction of the pass line
     PositionErrorThreshold = 0.1
@@ -45,24 +45,28 @@ class LineKickReceive(
                             LineKickReceive.State.aligning, lambda: True,
                             'immediately')
 
-        self.add_transition(
-            LineKickReceive.State.aligning, LineKickReceive.State.aligned,
-            lambda: self.errors_below_thresholds() and not self.ball_kicked,
-            'steady and in position to receive')
+        self.add_transition(LineKickReceive.State.aligning,
+                            LineKickReceive.State.aligned, lambda: self.
+                            errors_below_thresholds() and not self.ball_kicked,
+                            'steady and in position to receive')
+
+        self.add_transition(LineKickReceive.State.aligned,
+                            LineKickReceive.State.aligning, lambda: not self.
+                            errors_below_thresholds() and not self.ball_kicked,
+                            'not in receive position')
+
+        for state in [
+                LineKickReceive.State.aligning, LineKickReceive.State.aligned
+        ]:
+            self.add_transition(
+                state,
+                LineKickReceive.State.receiving, lambda: self.ball_kicked,
+                'ball kicked')
 
         self.add_transition(
-            LineKickReceive.State.aligned, LineKickReceive.State.aligning,
-            lambda: not self.errors_below_thresholds() and not self.ball_kicked,
-            'not in receive position')
-
-        for state in [LineKickReceive.State.aligning,
-                      LineKickReceive.State.aligned]:
-            self.add_transition(state, LineKickReceive.State.receiving,
-                                lambda: self.ball_kicked, 'ball kicked')
-
-        self.add_transition(LineKickReceive.State.receiving,
-                            behavior.Behavior.State.completed,
-                            lambda: self.robot.has_ball(), 'ball received!')
+            LineKickReceive.State.receiving,
+            behavior.Behavior.State.completed, lambda: self.robot.has_ball(),
+            'ball received!')
 
         # TODO add a failed state for this Receiver (possibly a timeout...)
         # self.add_transition(
@@ -109,6 +113,7 @@ class LineKickReceive(
 
     def on_enter_receiving(self):
         kick = skills.line_kick.LineKick()
+        kick.shell_id = self.robot.shell_id()
         kick.target = self.target
         self.add_subbehavior(kick, 'kick', required=True)
         self.kicked_time = time.time()

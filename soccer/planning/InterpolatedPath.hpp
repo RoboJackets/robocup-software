@@ -7,7 +7,6 @@
 #include <Configuration.hpp>
 
 namespace Planning {
-
 /**
  * @brief Represents a motion path as a series of {pos, vel} pairs.
  *
@@ -66,8 +65,6 @@ public:
         RJ::Seconds endTime = RJ::Seconds::max()) const override;
     virtual void draw(SystemState* const state, const QColor& color,
                       const QString& layer) const override;
-    virtual boost::optional<RobotInstant> evaluate(
-        RJ::Seconds t) const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 
@@ -121,7 +118,14 @@ public:
      */
     RJ::Seconds getTime(int index) const;
 
-    void slow(float multiplier, RJ::Seconds timeInto = RJ::Seconds::zero());
+    static std::unique_ptr<Path> emptyPath(Geometry2d::Point pos) {
+        auto path = std::make_unique<InterpolatedPath>(pos);
+        path->setDebugText("Empty Path");
+        return std::move(path);
+    }
+
+protected:
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning
