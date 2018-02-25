@@ -19,12 +19,26 @@ class Moc_Robot:
 class TestOpponent(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestOpponent, self).__init__(*args, **kwargs)
+		self.system_state = robocup.SystemState()
 
 	def setUp(self):
-		self.robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
-				Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
-		main.set_their_robots(self.robots)
-		main.set_ball(Moc_Ball(0, 0))
+		main.init(False)
+		main.set_system_state(self.system_state)
+
+		for robot in main.system_state().their_robots:
+
+			robot.set_vis_for_testing(True)
+
+		self.their_robots = main.system_state().their_robots[0:6]
+		self.our_robots = main.system_state().our_robots[0:6]
+
+		main.set_their_robots(main.system_state().their_robots[0:6])
+		main.set_our_robots(main.system_state().our_robots[0:6])
+
+		# self.robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
+				# Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
+		# main.set_their_robots(self.robots)
+		# main.set_ball(Moc_Ball(0, 0))
 
 	# Set some robots position to a single point
 	#
@@ -34,8 +48,7 @@ class TestOpponent(unittest.TestCase):
 	#
 	def set_robot_pos(self, numBots, x, y):
 		for i in range(numBots):
-			self.robots[i].set_pos(x, y)
-		main.set_their_robots(self.robots)
+			self.their_robots[i].set_pos_for_testing(robocup.Point(x, y))
 
 	def test_num_on_offense(self):
 		length = constants.Field.Length
@@ -91,7 +104,7 @@ class TestOpponent(unittest.TestCase):
 		# All robots are at (0, 0), check that function works when the point is far
 		self.assertEqual(test_point(0, length / 2), main.their_robots()[0], "all robots at our goal, test center of field, should choose first robot in array")
 
-		main.their_robots()[1].set_pos(0, length / 2)
+		main.their_robots()[1].set_pos_for_testing(robocup.Point(0, length / 2))
 		
 		# One robot at center of field, choose right center of field
 		self.assertEqual(test_point(width / 2, length / 2), main.their_robots()[1], "failed to assert smaller distance")

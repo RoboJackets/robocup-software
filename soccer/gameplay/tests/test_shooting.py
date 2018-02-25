@@ -19,8 +19,8 @@ class TestShooting(unittest.TestCase):
 		self.width = constants.Field.Width
 		self.botRadius = constants.Robot.Radius
 
-		self.their_robots = main.system_state().their_robots[0:5]
-		self.our_robots = main.system_state().our_robots[0:5]
+		self.their_robots = main.system_state().their_robots[0:6]
+		self.our_robots = main.system_state().our_robots[0:6]
 
 		self.success = 1
 		self.failure = 0
@@ -72,8 +72,8 @@ class TestShooting(unittest.TestCase):
 		self.assertGreater(self.eval_shot(self.width / 2, self.length), 0.99)
 
 	def test_eval_shot_with_bots_and_exclusion(self):
-		their_bot1, their_bot2, their_bot3, their_bot4, their_bot5 = self.their_robots
-		our_bot1, our_bot2, our_bot3, our_bot4, our_bot5 = self.our_robots
+		their_bot1, their_bot2, their_bot3, their_bot4, their_bot5, their_bot6 = self.their_robots
+		our_bot1, our_bot2, our_bot3, our_bot4, our_bot5, our_bot6 = self.our_robots
 
 		shooting_pos = 3 * self.length / 4
 

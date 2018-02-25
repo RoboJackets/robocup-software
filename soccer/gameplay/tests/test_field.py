@@ -17,6 +17,7 @@ class TestField(unittest.TestCase):
 		super(TestField, self).__init__(*args, **kwargs)
 
 	def setUp(self):
+		main.init(False)
 		self.robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
 				Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
 		main.set_their_robots(self.robots)
