@@ -65,7 +65,7 @@ class TestPassing(unittest.TestCase):
 		self.assertEqual(self.eval_pass(0, 0, 0, 0.1), self.success, "pass to close point fail")
 
 		# Test a point passing to a far point. Should be successful
-		self.assertEqual(self.eval_pass(0, 0, 0, self.centerY), self.success, "pass to half the field fail")
+		self.assertEqual(self.eval_pass(0, 0, 0, self.center_y), self.success, "pass to half the field fail")
 
 		# Test a point passing to the end of the field
 		self.assertEqual(self.eval_pass(0, 0, 0, self.length), self.success, "pass to the end of the field fail")
