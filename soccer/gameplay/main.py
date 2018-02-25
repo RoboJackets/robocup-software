@@ -19,7 +19,7 @@ PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 _has_initialized = False
 
 
-def init(logging = True):
+def init(logging=True):
     # by default, the logger only shows messages at the WARNING level or greater
     logging.getLogger().setLevel(logging.INFO)
 
