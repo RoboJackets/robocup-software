@@ -34,11 +34,7 @@ class TestOpponent(unittest.TestCase):
 
 		main.set_their_robots(main.system_state().their_robots[0:6])
 		main.set_our_robots(main.system_state().our_robots[0:6])
-
-		# self.robots = [Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0), 
-				# Moc_Robot(0, 0), Moc_Robot(0, 0), Moc_Robot(0, 0)]
-		# main.set_their_robots(self.robots)
-		# main.set_ball(Moc_Ball(0, 0))
+		main.set_ball(main.system_state().ball)
 
 	# Set some robots position to a single point
 	#
@@ -72,7 +68,7 @@ class TestOpponent(unittest.TestCase):
 
 		# Enemy robots are on their side of the field, ball is located close to them
 		self.set_robot_pos(6, 0, length * 3 / 4)
-		main.set_ball(Moc_Ball(0, length * 3 / 4))
+		main.ball().set_pos_for_testing(robocup.Point(0, length * 3 / 4))
 		self.assertEqual(run_function(), 6, "Enemy robots located near the ball are not considered on offense")
 		
 		# Enemy robots are on our side of the field, ball is located on the other side of the field
@@ -90,13 +86,6 @@ class TestOpponent(unittest.TestCase):
 		#
 		def test_point(x, y, directional_weight=1, excluded_robots=[]):
 			return evaluation.opponent.get_closest_opponent(robocup.Point(x, y), directional_weight, excluded_robots)
-
-		def printPoints():
-			robots = main.their_robots()
-			print()
-			for i in range(len(robots)):
-				print("Robot {} pos:({}, {})".format(i, robots[i].pos.x, robots[i].pos.y))
-
 
 		# All robots are at (0, 0), check that we get the first robot in the array
 		self.assertEqual(test_point(0, 0), main.their_robots()[0], "fail trivial case")

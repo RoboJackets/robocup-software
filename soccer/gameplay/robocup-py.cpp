@@ -91,13 +91,15 @@ Geometry2d::Point Robot_pos(Robot* self) { return self->pos; }
 
 // Sets a robot's position - this should never be used in gameplay code, but
 // is useful for testing.
-void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
-    self->pos = pos;
-}
+void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) { self->pos = pos; }
 
 // Sets a robot's visibility - this should never be used in gameplay code, but
 // is useful for testing.
 void Robot_set_vis_for_testing(Robot* self, bool vis) { self->visible = vis; }
+
+// Sets a ball's position - this should never be used in gameplay code, but
+// is useful for testing.
+void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) { self->pos = pos; }
 
 Geometry2d::Point Robot_vel(Robot* self) { return self->vel; }
 
@@ -833,9 +835,11 @@ BOOST_PYTHON_MODULE(robocup) {
            bases<Robot>>("OpponentRobot", init<int>());
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
+        .def("set_pos_for_testing", &Ball_set_pos_for_testing)
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
         .def_readonly("valid", &Ball::valid);
+
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())

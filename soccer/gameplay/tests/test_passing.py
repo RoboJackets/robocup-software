@@ -10,7 +10,6 @@ class TestPassing(unittest.TestCase):
 		self.system_state = robocup.SystemState()	
 	
 	def setUp(self):
-		main.init(False) # This only needs to be called once for all tests
 		main.set_system_state(self.system_state)
 
 		self.length = constants.Field.Length
