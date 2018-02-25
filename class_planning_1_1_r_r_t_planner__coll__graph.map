@@ -1,3 +1,8 @@
 <map id="Planning::RRTPlanner" name="Planning::RRTPlanner">
-<area shape="rect" id="node2" href="$class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="5,5,195,47"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_single_robot_path_planner.html" title="Interface for Path Planners. " alt="" coords="5,261,195,303"/>
+<area shape="rect" id="node3" href="$class_config_double.html" title="ConfigDouble" alt="" coords="219,269,325,295"/>
+<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="227,185,317,212"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="165,96,251,123"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="137,5,274,47"/>
+<area shape="rect" id="node7" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="280,96,387,123"/>
 </map>

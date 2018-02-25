@@ -11,7 +11,7 @@ var class_planning_1_1_interpolated_path =
     [ "draw", "class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb", null ],
     [ "empty", "class_planning_1_1_interpolated_path.html#aa7ffe119e72aaa36c82a266bb211c705", null ],
     [ "end", "class_planning_1_1_interpolated_path.html#ada4e9ef68db8dc49b8f0b2d99ed8f320", null ],
-    [ "evaluate", "class_planning_1_1_interpolated_path.html#a3a33e669e49cc2e4f416fbab87aea917", null ],
+    [ "eval", "class_planning_1_1_interpolated_path.html#a6ac5ddeff8e8548572645a9732527e91", null ],
     [ "getDuration", "class_planning_1_1_interpolated_path.html#a07a025b818e0247c09c1bb0e0dbaced2", null ],
     [ "getTime", "class_planning_1_1_interpolated_path.html#a05e85e9e388acb463f9991f17d504dbb", null ],
     [ "hit", "class_planning_1_1_interpolated_path.html#a2470e313ea6371623f632c163da44654", null ],
@@ -21,7 +21,6 @@ var class_planning_1_1_interpolated_path =
     [ "nearestIndex", "class_planning_1_1_interpolated_path.html#a515cdd5497dcef85ae23d22ddfbc9f91", null ],
     [ "nearestSegment", "class_planning_1_1_interpolated_path.html#a5fd30372ff5c814efe795fd599768fc6", null ],
     [ "size", "class_planning_1_1_interpolated_path.html#ad9b1bd0aad0e0a5f9ee2e14918722542", null ],
-    [ "slow", "class_planning_1_1_interpolated_path.html#a98cfe145849f4bd7a7706c1d59295e1c", null ],
     [ "start", "class_planning_1_1_interpolated_path.html#a0b9c697fbaca4114e1b3947c15c56a3a", null ],
     [ "subPath", "class_planning_1_1_interpolated_path.html#a14e8ede0b6538397a192e2d1ed9986a0", null ],
     [ "waypoints", "class_planning_1_1_interpolated_path.html#a6387ecd19b6fd3cfe83bbbe43a7cc825", null ]

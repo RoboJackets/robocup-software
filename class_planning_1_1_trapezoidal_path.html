@@ -111,6 +111,7 @@ $(document).ready(function(){initNavTree('class_planning_1_1_trapezoidal_path.ht
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="class_planning_1_1_trapezoidal_path-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Planning::TrapezoidalPath Class Reference</div>  </div>
@@ -125,9 +126,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a91ca958bf28aace4adf82358dea83532"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91ca958bf28aace4adf82358dea83532"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>TrapezoidalPath</b> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> startPos, double startSpeed, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> endPos, double endSpeed, const <a class="el" href="struct_motion_constraints.html">MotionConstraints</a> &amp;constraints)</td></tr>
 <tr class="separator:a91ca958bf28aace4adf82358dea83532"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2862996e02da76127d741dcb30723a61"><td class="memItemLeft" align="right" valign="top">virtual boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_trapezoidal_path.html#a2862996e02da76127d741dcb30723a61">evaluate</a> (RJ::Seconds time) const override</td></tr>
-<tr class="memdesc:a2862996e02da76127d741dcb30723a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evaluates the path at a given time and returns the target angle, position, and velocity of the robot.  <a href="#a2862996e02da76127d741dcb30723a61">More...</a><br /></td></tr>
-<tr class="separator:a2862996e02da76127d741dcb30723a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fa12b307e30e7fe2d346e2385cd03a3"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_trapezoidal_path.html#a6fa12b307e30e7fe2d346e2385cd03a3">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, RJ::Seconds initialTime, RJ::Seconds *hitTime) const override</td></tr>
 <tr class="memdesc:a6fa12b307e30e7fe2d346e2385cd03a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#a6fa12b307e30e7fe2d346e2385cd03a3">More...</a><br /></td></tr>
 <tr class="separator:a6fa12b307e30e7fe2d346e2385cd03a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,9 +154,15 @@ virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Pa
 <tr class="memitem:acd9a84c632ba1d26111b20b31b9a5407 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd9a84c632ba1d26111b20b31b9a5407"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>=RJ::now())</td></tr>
 <tr class="separator:acd9a84c632ba1d26111b20b31b9a5407 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e98c311efd6910bea11404063108beb inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top">boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a1e98c311efd6910bea11404063108beb">evaluate</a> (RJ::Seconds t) const </td></tr>
+<tr class="memdesc:a1e98c311efd6910bea11404063108beb inherit pub_methods_class_planning_1_1_path"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evaluates the path at a given time and returns the target angle, position, and velocity of the robot.  <a href="#a1e98c311efd6910bea11404063108beb">More...</a><br /></td></tr>
+<tr class="separator:a1e98c311efd6910bea11404063108beb inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba1ec0b69ad45b7dca7886dc1aa64e9b inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const </td></tr>
 <tr class="memdesc:aba1ec0b69ad45b7dca7886dc1aa64e9b inherit pub_methods_class_planning_1_1_path"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#aba1ec0b69ad45b7dca7886dc1aa64e9b">More...</a><br /></td></tr>
 <tr class="separator:aba1ec0b69ad45b7dca7886dc1aa64e9b inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54da34807d2b6788a1504b1ab04fdb2b inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a54da34807d2b6788a1504b1ab04fdb2b"></a>
+RJ::Seconds&#160;</td><td class="memItemRight" valign="bottom"><b>getSlowedDuration</b> () const </td></tr>
+<tr class="separator:a54da34807d2b6788a1504b1ab04fdb2b inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae067538136c94fedea43533c8bf0a2eb inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae067538136c94fedea43533c8bf0a2eb"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setDebugText</b> (QString string)</td></tr>
 <tr class="separator:ae067538136c94fedea43533c8bf0a2eb inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,10 +182,22 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>pathsIntersec
 <tr class="memitem:a8654ea5e212dbb126cf8c56c69dc9c68 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8654ea5e212dbb126cf8c56c69dc9c68"></a>
 virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_const_path_iterator.html">ConstPathIterator</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>iterator</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a8b6503873b1ff9e945625ce2088de2c7">startTime</a>, RJ::Seconds deltaT) const </td></tr>
 <tr class="separator:a8654ea5e212dbb126cf8c56c69dc9c68 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb85277138e8206c57cf876f6e09c3a9 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb85277138e8206c57cf876f6e09c3a9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>slow</b> (float multiplier, RJ::Seconds timeInto=RJ::Seconds::zero())</td></tr>
+<tr class="separator:abb85277138e8206c57cf876f6e09c3a9 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ab704896feeeab1a686022a8ac80b7683"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab704896feeeab1a686022a8ac80b7683"></a>
+virtual boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eval</b> (RJ::Seconds time) const override</td></tr>
+<tr class="separator:ab704896feeeab1a686022a8ac80b7683"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_planning_1_1_path"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_planning_1_1_path')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_planning_1_1_path.html">Planning::Path</a></td></tr>
+<tr class="memitem:aee59157fb3e636eb42026304f635770a inherit pro_attribs_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee59157fb3e636eb42026304f635770a"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>evalRate</b> = 1.0</td></tr>
+<tr class="separator:aee59157fb3e636eb42026304f635770a inherit pro_attribs_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ffd94762a6360f53b152ed0c0af241c inherit pro_attribs_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ffd94762a6360f53b152ed0c0af241c"></a>
 RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
 <tr class="separator:a6ffd94762a6360f53b152ed0c0af241c inherit pro_attribs_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,41 +229,6 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a2862996e02da76127d741dcb30723a61"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt; Planning::TrapezoidalPath::evaluate </td>
-          <td>(</td>
-          <td class="paramtype">RJ::Seconds&#160;</td>
-          <td class="paramname"><em>t</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>This method evaluates the path at a given time and returns the target angle, position, and velocity of the robot. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">t</td><td>Time (in seconds) since the robot started the path. Throws an exception if t&lt;0 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A RobotInstant containing the angle, position, and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
-
-<p>Implements <a class="el" href="class_planning_1_1_path.html#a7b219833f6c2820f7e7e5ba02c83e4d2">Planning::Path</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="a8ab9fbe001d96da01e8b2ddc9e389166"></a>
 <div class="memitem">
 <div class="memproto">
@@ -325,7 +306,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if it hits an obstacle, otherwise false </dd></dl>
 
-<p>Implements <a class="el" href="class_planning_1_1_path.html#a17baf9d9bf2d9f9d820094b51297444f">Planning::Path</a>.</p>
+<p>Implements <a class="el" href="class_planning_1_1_path.html#a95f72e817d9a25121d399a57a616e4df">Planning::Path</a>.</p>
 
 </div>
 </div>
@@ -385,7 +366,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_trapezoidal_path.html">TrapezoidalPath</a></li>
-    <li class="footer">Generated on Wed Feb 21 2018 02:05:46 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Feb 25 2018 20:08:59 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

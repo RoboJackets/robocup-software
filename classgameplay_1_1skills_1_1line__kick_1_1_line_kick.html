@@ -112,6 +112,7 @@ $(document).ready(function(){initNavTree('classgameplay_1_1skills_1_1line__kick_
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -318,14 +319,17 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b><
 def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
 <tr class="separator:a26580b6c91b9b04fea7347c43896017a inherit pub_methods_classgameplay_1_1fsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:aa563d474a2f87b1f50af89184b8adad4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa563d474a2f87b1f50af89184b8adad4"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>ClosenessThreshold</b> = constants.Robot.Radius*3</td></tr>
-<tr class="separator:aa563d474a2f87b1f50af89184b8adad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a3a1e2494d3535757b951062b29797ee5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a1e2494d3535757b951062b29797ee5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>shell_id</b></td></tr>
+<tr class="separator:a3a1e2494d3535757b951062b29797ee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81e1db4ab0ba9749dda00493ee92b6d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a81e1db4ab0ba9749dda00493ee92b6d9"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>max_speed</b></td></tr>
+<tr class="separator:a81e1db4ab0ba9749dda00493ee92b6d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99ef510dc9b20a1193a8e11e96cd147b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a99ef510dc9b20a1193a8e11e96cd147b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>max_accel</b></td></tr>
+<tr class="separator:a99ef510dc9b20a1193a8e11e96cd147b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classgameplay_1_1skills_1_1__kick_1_1___kick.html">gameplay.skills._kick._Kick</a></td></tr>
 <tr class="memitem:a41aaf1cb840c3cf9c6cc601ac55c3ced inherit pub_attribs_classgameplay_1_1skills_1_1__kick_1_1___kick"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41aaf1cb840c3cf9c6cc601ac55c3ced"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>enable_kick</b></td></tr>
@@ -361,6 +365,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a75c25cbdeae25db1caac4723240db715 inherit pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a75c25cbdeae25db1caac4723240db715"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
 <tr class="separator:a75c25cbdeae25db1caac4723240db715 inherit pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aa563d474a2f87b1f50af89184b8adad4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa563d474a2f87b1f50af89184b8adad4"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>ClosenessThreshold</b> = constants.Robot.Radius*3</td></tr>
+<tr class="separator:aa563d474a2f87b1f50af89184b8adad4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>lines up with the ball and the target, then drives up and kicks this differs from PivotKick which gets the ball first, then aims Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes </p>
@@ -400,7 +410,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>skills</b></li><li class="navelem"><b>line_kick</b></li><li class="navelem"><a class="el" href="classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html">LineKick</a></li>
-    <li class="footer">Generated on Wed Feb 21 2018 02:05:45 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Feb 25 2018 20:08:59 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.11 </li>
   </ul>

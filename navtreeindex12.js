@@ -1,5 +1,14 @@
 var NAVTREEINDEX12 =
 {
+"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7acb1aab5f40cbd5578a31a1d48771a17f":[16,0,7,27,0,2],
+"struct_planning_1_1_rotation_command.html#ab4993a4f73613d6488245233f9f933c7":[16,0,7,27,1],
+"struct_planning_1_1_rotation_command.html#acba23cfcfe914268c3480c90a0150785":[16,0,7,27,2],
+"struct_planning_1_1_tuning_path_command.html":[16,0,7,33],
+"struct_planning_1_1_tuning_path_command.html#a41342c4f30518099922ae370b2b61d14":[16,0,7,33,0],
+"struct_planning_1_1_tuning_path_command.html#a551f138905509226dec0f3c447ba0870":[16,0,7,33,2],
+"struct_planning_1_1_tuning_path_command.html#aef6a3dc19f9acc9d01c4a61aaadfb8c9":[16,0,7,33,1],
+"struct_planning_1_1_world_vel_target_command.html":[16,0,7,35],
+"struct_planning_1_1_world_vel_target_command.html#a185a58009a80971c16deb766fe835dbf":[16,0,7,35,1],
 "struct_planning_1_1_world_vel_target_command.html#ae35a7cb5e4b97b110ba02030642be312":[16,0,7,35,2],
 "struct_planning_1_1_world_vel_target_command.html#afad740eea6a70a4860f6a8c6337194fb":[16,0,7,35,0],
 "struct_processor_1_1_status.html":[16,0,61,0],
