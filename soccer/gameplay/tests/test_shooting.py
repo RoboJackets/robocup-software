@@ -42,18 +42,21 @@ class TestShooting(unittest.TestCase):
 		a_bot.set_pos_for_testing(robocup.Point(x, y))
 
 	def test_eval_shot_clear_field(self):
-
+		# Test shot from their goal (to their goal)
 		self.assertEqual(self.eval_shot(0, self.length), self.success)
 		
+		# Test shot from 3/4 of the field 
 		self.assertEqual(self.eval_shot(0, 3 * self.length / 4), self.success)
 
+		# Test shot from just past the center of the field
 		self.assertEqual(self.eval_shot(0, self.length / 2 + self.botRadius), self.success)
 
+		# Test shot from some angles
 		self.assertGreater(self.eval_shot(self.width / 4, 3 * self.length / 4), 0.99)
-		self.assertGreater(self.eval_shot(self.width / -4, 3 * self.length / 4), 0.99)
+		self.assertGreater(self.eval_shot(-self.width / 4, 3 * self.length / 4), 0.99)
 
 		self.assertGreater(self.eval_shot(self.width / 4, self.length / 2 + self.botRadius), 0.95)
-		self.assertGreater(self.eval_shot(self.width / -4, self.length / 2 + self.botRadius), 0.95)
+		self.assertGreater(self.eval_shot(-self.width / 4, self.length / 2 + self.botRadius), 0.95)
 
 	@unittest.skip("Skip Problematic Cases")
 	def test_eval_shot_problem_cases(self):
@@ -65,7 +68,7 @@ class TestShooting(unittest.TestCase):
 		# This case returns 0 
 		self.assertEqual(self.eval_shot(0, self.length / 2), self.success)
 
-		# Corner shots do not have 100% chance to hit the goal
+		# Corner shots should not have 100% chance to hit the goal
 		self.assertGreater(self.eval_shot(self.width / 2, self.length), 0.99)
 
 	def test_eval_shot_with_bots_and_exclusion(self):
@@ -74,14 +77,18 @@ class TestShooting(unittest.TestCase):
 
 		shooting_pos = 3 * self.length / 4
 
+		# Test enemy bot right in front of shooting position
 		self.set_bot_pos(their_bot1, 0, shooting_pos + self.botRadius)
 		self.assertLess(self.eval_shot(0, shooting_pos), 0.05)
 
+		# Test shot works when bot excluded
 		self.assertEqual(self.eval_shot(0, shooting_pos, [their_bot1]), self.success)
 
+		# Test friendly bot in front of shooting position
 		self.set_bot_pos(our_bot1, 0, shooting_pos + self.botRadius)
 		self.assertEqual(self.eval_shot(0, shooting_pos, [their_bot1]), self.success)
 		
+		# Test bot somewhere between shooting position and goal
 		self.set_bot_pos(their_bot1, 0, shooting_pos + self.botRadius * 3)
 		self.assertLess(self.eval_shot(0, shooting_pos), self.success)
 		self.assertGreater(self.eval_shot(0, shooting_pos), self.failure)
