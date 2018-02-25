@@ -15,7 +15,11 @@ class TestPassing(unittest.TestCase):
 
 		self.length = constants.Field.Length
 		self.width = constants.Field.Width
+		self.center_y = self.length / 2
+		self.right_side = self.width / 2
+		self.left_side = -self.width / 2
 		self.botRadius = constants.Robot.Radius
+
 
 		self.failure = 0
 		self.success = .8
@@ -61,22 +65,22 @@ class TestPassing(unittest.TestCase):
 		self.assertEqual(self.eval_pass(0, 0, 0, 0.1), self.success, "pass to close point fail")
 
 		# Test a point passing to a far point. Should be successful
-		self.assertEqual(self.eval_pass(0, 0, 0, self.length / 2), self.success, "pass to half the field fail")
+		self.assertEqual(self.eval_pass(0, 0, 0, self.centerY), self.success, "pass to half the field fail")
 
 		# Test a point passing to the end of the field
 		self.assertEqual(self.eval_pass(0, 0, 0, self.length), self.success, "pass to the end of the field fail")
 		
 		# Test a point passing from bottom left to top right of field
-		self.assertEqual(self.eval_pass(-self.width / 2, 0, self.width / 2, self.length), self.success, "pass from bottom left to top right fail")
+		self.assertEqual(self.eval_pass(self.left_side, 0, self.right_side, self.length), self.success, "pass from bottom left to top right fail")
 
 		# Test horizontal pass across the center of the field
-		self.assertEqual(self.eval_pass(-self.width / 2, self.length / 2, self.width / 2, self.length / 2), self.success, "horizontal pass across center of field")
+		self.assertEqual(self.eval_pass(self.left_side, self.center_y, self.right_side, self.center_y), self.success, "horizontal pass across center of field")
 
 	def test_eval_pass_with_bots_and_exclusion(self):
 		their_bot1, their_bot2, their_bot3, their_bot4, their_bot5 = self.their_robots[0:5]		
 		our_bot1, our_bot2, our_bot3, our_bot4, our_bot5 = self.our_robots[0:5]		
 
-		passing_dest = self.length / 2
+		passing_dest = self.center_y
 
 		# If a robot is right in front of the shooter, the pass will fail
 		self.set_bot_pos(their_bot1, 0, self.botRadius * 2)
@@ -90,7 +94,7 @@ class TestPassing(unittest.TestCase):
 		self.assertEqual(self.eval_pass(0, 0, 0, passing_dest, [their_bot1]), self.success, "fail excluded_robots")
 
 		# Robot halfway between shooter and goal point. 
-		self.set_bot_pos(their_bot1, 0, self.length / 4)
+		self.set_bot_pos(their_bot1, 0, self.center_y / 2)
 		self.assertGreater(self.eval_pass(0, 0, 0, passing_dest), self.failure, "robot halfway between shooter and goal point considered complete failure")
 		self.assertLess(self.eval_pass(0, 0, 0, passing_dest), self.success, "robot halfway between shooter and goal point considered complete success")
 		self.assertEqual(self.eval_pass(0, 0, 0, passing_dest, [their_bot1]), self.success, "fail excluded_robots")
