@@ -269,6 +269,8 @@ class Defense(composite_behavior.CompositeBehavior):
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
 
+        # Check keep defenders from occupying the same spot
+        # it will break if you change this
         handlers = [goalie, defender1, defender2]
 
         # For each threat
@@ -343,8 +345,8 @@ class Defense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_line(
                         pass_line, constants.Colors.Red, "Defense-Pass Line")
 
-            #keep defenders from occupying the same spot
-            #only matters if there are 2 defenders (and the goalie)
+            # keep defenders from occupying the same spot
+            # only matters if there are 2 defenders (and the goalie)
             if len(handlers) == 3:
                 handler1 = handlers[1]
                 handler2 = handlers[2]
@@ -353,9 +355,10 @@ class Defense(composite_behavior.CompositeBehavior):
                 overlap = handler2.move_target - handler1.move_target
 
                 #if the robots overlap
-                if overlap.mag() < constants.Robot.Radius + .005:
+                if overlap.mag() < (2 * constants.Robot.Radius) + .005:
                     #move the robots away from each other
-                    overlap = overlap - (overlap.normalized()*constants.Robot.Radius)
+                    overlap = overlap - (overlap.normalized() *
+                                         (constants.Robot.Radius + .1))
                     print(overlap)
                     print("1 ", handler1._move_target)
                     print("2 ", handler2._move_target)
