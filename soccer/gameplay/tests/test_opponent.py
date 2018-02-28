@@ -83,9 +83,11 @@ class TestOpponent(unittest.TestCase):
 		self.set_bot_pos(their_bot1, 0, self.length)
 		self.assertEqual(self.num_on_offense(), 0, "Enemy robots located at the enemy goal are considered on offense")
 
+		# Halfway
 		self.set_bot_pos(their_bot1, 0, self.center_y)
 		self.assertEqual(self.num_on_offense(), 1)
 
+		# Some locations on our side of the field
 		self.set_bot_pos(their_bot1, 0, self.center_y / 2)
 		self.assertEqual(self.num_on_offense(), 1)
 
@@ -113,16 +115,19 @@ class TestOpponent(unittest.TestCase):
 		self.set_bots_pos(bot_arr, 0, 0)
 		self.assertEqual(self.num_on_offense(), 3, "some enemy robots located at our goal are not considered on offense")
 
-		# Enemy robots are on their side of the field, ball is located close to them
+		# Move one bot away
 		self.set_bot_pos(their_bot3, 0, self.length)
 		self.assertEqual(self.num_on_offense(), 2)
 
+		# Move bots to their side of the field
 		self.set_bots_pos(bot_arr, 0, self.length * 3 / 4)
 		self.assertEqual(self.num_on_offense(), 0)
 
+		# Test ball factor
 		self.ball.set_pos_for_testing(robocup.Point(0, self.length * 3 / 4 ))
 		self.assertEqual(self.num_on_offense(), 3)
 
+		# Move one bot away
 		self.set_bot_pos(their_bot3, 0, self.length)
 		self.assertEqual(self.num_on_offense(), 2)
 		
@@ -131,7 +136,6 @@ class TestOpponent(unittest.TestCase):
 
 		# bot at center of field
 		self.set_bot_pos(their_bot1, 0, self.center_y)
-		# their_bot1.set_pos_for_testing(robocup.Point(0, self.center_y))
 
 		# Test a bunch of points
 		self.assertEqual(self.get_closest_opponent(0, 0), their_bot1)
@@ -200,7 +204,6 @@ class TestOpponent(unittest.TestCase):
 
 		# Test bot exclusion
 		self.assertEqual(self.get_closest_opponent(0, self.center_y + self.botRadius, excluded_robots=[their_bot2]), their_bot1)
-
 
 	def test_get_closest_opponent_dir_weight(self):
 		their_bot1, their_bot2 = self.their_robots[0:2]
