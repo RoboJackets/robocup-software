@@ -30,7 +30,6 @@ class TestOpponent(unittest.TestCase):
 		self.ball = main.system_state().ball
 		self.ball.set_pos_for_testing(robocup.Point(0, 0))
 
-
 		for our_robot, their_robot in zip(self.our_robots, self.their_robots):
 			our_robot.set_vis_for_testing(False)
 			their_robot.set_vis_for_testing(False)
@@ -74,7 +73,6 @@ class TestOpponent(unittest.TestCase):
 	def set_bots_pos(self, bot_arr, x, y):
 		for bot in bot_arr:
 			self.set_bot_pos(bot, x, y)
-
 
 	def test_num_on_offense_one_bot(self):
 		their_bot1 = self.their_robots[0]

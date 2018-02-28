@@ -76,8 +76,8 @@ class TestPassing(unittest.TestCase):
 		self.assertEqual(self.eval_pass(self.left_side, self.center_y, self.right_side, self.center_y), self.success, "horizontal pass across center of field")
 
 	def test_eval_pass_with_bots_and_exclusion(self):
-		their_bot1, their_bot2, their_bot3, their_bot4, their_bot5, their_bot6 = self.their_robots[0:6]		
-		our_bot1, our_bot2, our_bot3, our_bot4, our_bot5, our_bot6 = self.our_robots[0:6]		
+		their_bot1 = self.their_robots[0:1]		
+		our_bot1 = self.our_robots[0:1]		
 
 		passing_dest = self.center_y
 
