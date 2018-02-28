@@ -27,6 +27,9 @@ class TestOpponent(unittest.TestCase):
 
 		self.their_robots = main.system_state().their_robots[0:6]
 		self.our_robots = main.system_state().our_robots[0:6]
+		self.ball = main.system_state().ball
+		self.ball.set_pos_for_testing(robocup.Point(0, 0))
+
 
 		for our_robot, their_robot in zip(self.our_robots, self.their_robots):
 			our_robot.set_vis_for_testing(False)
@@ -61,6 +64,18 @@ class TestOpponent(unittest.TestCase):
 		a_bot.set_vis_for_testing(True)
 		a_bot.set_pos_for_testing(robocup.Point(x, y))
 
+	# Set the location of many robot 
+	# We must use this function so that the C++ can act on the robot location
+	# 
+	# @param bot_arr: bot_arr to change position
+	# @param x: new x position of bots
+	# @param y: new y position of bots
+	#
+	def set_bots_pos(self, bot_arr, x, y):
+		for bot in bot_arr:
+			self.set_bot_pos(bot, x, y)
+
+
 	def test_num_on_offense_one_bot(self):
 		their_bot1 = self.their_robots[0]
 
@@ -68,30 +83,49 @@ class TestOpponent(unittest.TestCase):
 		self.set_bot_pos(their_bot1, 0, self.length)
 		self.assertEqual(self.num_on_offense(), 0, "Enemy robots located at the enemy goal are considered on offense")
 
+		self.set_bot_pos(their_bot1, 0, self.center_y)
+		self.assertEqual(self.num_on_offense(), 1)
+
+		self.set_bot_pos(their_bot1, 0, self.center_y / 2)
+		self.assertEqual(self.num_on_offense(), 1)
+
+		self.set_bot_pos(their_bot1, self.right_side, self.center_y)
+		self.assertEqual(self.num_on_offense(), 1)
+
+		self.set_bot_pos(their_bot1, self.left_side, self.center_y)
+		self.assertEqual(self.num_on_offense(), 1)
+
+		self.set_bot_pos(their_bot1, self.right_side, self.center_y / 2)
+		self.assertEqual(self.num_on_offense(), 1)
+
+		self.set_bot_pos(their_bot1, self.left_side, self.center_y / 2)
+		self.assertEqual(self.num_on_offense(), 1)
+
 		# Enemy robots located at our goal, ball is at our goal
 		self.set_bot_pos(their_bot1, 0, 0)
 		self.assertEqual(self.num_on_offense(), 1, "Enemy robots located at our goal are not considered on offense")
+	
+	def test_num_on_offense_multiple_bots_and_ball(self):
+		their_bot1, their_bot2, their_bot3 = self.their_robots[0:3]
 
-		self.set_bot_pos(their_bot1, 0, self.center_y)
-		self.assertEqual(self.num_on_offense(), 1, "Enemy robots located at our goal are not considered on offense")
-
-		
-
-	@unittest.skip("for now")		
-	def test_num_on_offense_other(self):
 		# 3 robots are located at our goal, ball is at our goal
-		self.set_robot_pos(3, 0, length)
+		bot_arr = [their_bot1, their_bot2, their_bot3]
+		self.set_bots_pos(bot_arr, 0, 0)
 		self.assertEqual(self.num_on_offense(), 3, "some enemy robots located at our goal are not considered on offense")
 
 		# Enemy robots are on their side of the field, ball is located close to them
-		self.set_robot_pos(6, 0, length * 3 / 4)
-		main.ball().set_pos_for_testing(robocup.Point(0, length * 3 / 4))
-		self.assertEqual(self.num_on_offense(), 6, "Enemy robots located near the ball are not considered on offense")
-		
-		# Enemy robots are on our side of the field, ball is located on the other side of the field
-		self.set_robot_pos(6, 0, length / 4)
-		self.assertEqual(self.num_on_offense(), 6, "Enemy robots located on our side of the field are not considered on offense")
+		self.set_bot_pos(their_bot3, 0, self.length)
+		self.assertEqual(self.num_on_offense(), 2)
 
+		self.set_bots_pos(bot_arr, 0, self.length * 3 / 4)
+		self.assertEqual(self.num_on_offense(), 0)
+
+		self.ball.set_pos_for_testing(robocup.Point(0, self.length * 3 / 4 ))
+		self.assertEqual(self.num_on_offense(), 3)
+
+		self.set_bot_pos(their_bot3, 0, self.length)
+		self.assertEqual(self.num_on_offense(), 2)
+		
 	def test_get_closest_opponent_one_bot(self):
 		their_bot1 = self.their_robots[0]
 
