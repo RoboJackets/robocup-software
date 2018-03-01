@@ -1,0 +1,23 @@
+defaults: &dir
+  working_directory: ~/robocup-software
+
+defaults: &image
+  docker:
+    - image: robojackets/robocup-baseimage
+
+version: 2
+jobs:
+  compile:
+    <<: *dir
+    <<: *image
+    steps:
+      - checkout
+      # Ensure latest deps are installed
+      - run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G
+      - run: make
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - compile
