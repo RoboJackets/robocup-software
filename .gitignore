@@ -36,5 +36,3 @@ run/*.nib
 clean.patch
 perf.data*
 .gdb_history
-
-.git/
