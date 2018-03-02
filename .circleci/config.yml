@@ -3,7 +3,7 @@ defaults: &dir
 
 defaults: &image
   docker:
-    - image: robojackets/robocup-baseimage
+    - image: robojackets/robocup-software
 
 version: 2
 jobs:
@@ -11,10 +11,32 @@ jobs:
     <<: *dir
     <<: *image
     steps:
+      - restore_cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+            - source-v1-{{ .Branch }}-
+            - source-v1-
       - checkout
       # Ensure latest deps are installed
       - run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G
+
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+
+      - restore_cache:
+          keys:
+            - ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+            - ccache-{{ arch }}-{{ .Branch }}
+            - ccache-{{ arch }}
+            - ccache-
       - run: make
+      - save_cache:
+          key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ~/.ccache
+
 
 workflows:
   version: 2

@@ -1,5 +1,5 @@
 # Use phusion/baseimage if problems arise
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 MAINTAINER Jay Kamat jaygkamat@gmail.com
 
 # Setup apt to be happy with no console input
@@ -17,20 +17,21 @@ ENV LANG en_US.UTF-8
 
 # set up user <this is for running soccer later on>
 # Replace 1000 with your user / group id
-RUN export uid=1000 gid=1000 && \
-    mkdir -p /home/developer && \
-    echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
-    echo "developer:x:${uid}:" >> /etc/group && \
-    echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
-    chmod 0440 /etc/sudoers.d/developer && \
-    chown ${uid}:${gid} -R /home/developer && mkdir -p /etc/udev/rules.d/
+# RUN export uid=1000 gid=1000 && \
+#     mkdir -p /home/developer && \
+#     echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
+#     echo "developer:x:${uid}:" >> /etc/group && \
+#     echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
+#     chmod 0440 /etc/sudoers.d/developer && \
+#     chown ${uid}:${gid} -R /home/developer && mkdir -p /etc/udev/rules.d/
 
-USER developer
-ENV HOME /home/developer
+# USER developer
+# ENV HOME /home/developer
 
-# do everything in developers's home
-RUN mkdir -p /home/developer
-COPY . /home/developer/robocup-software
-WORKDIR /home/developer/robocup-software
+# # do everything in developers's home
+# RUN mkdir -p /home/developer
+
+COPY . ~/robocup-software
+WORKDIR ~/robocup-software
 
 RUN sudo ./util/ubuntu-setup --yes
