@@ -2,21 +2,25 @@ MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
 
+ifeq ($(CIRCLECI), true)
+	NINJA_FLAGS=-j4
+endif
+
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 define cmake_build_target_release
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 define cmake_build_target_perf
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 all:
