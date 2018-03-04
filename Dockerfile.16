@@ -1,5 +1,5 @@
 # Use phusion/baseimage if problems arise
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 MAINTAINER Jay Kamat jaygkamat@gmail.com
 
 # Setup apt to be happy with no console input
