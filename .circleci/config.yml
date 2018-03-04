@@ -116,15 +116,16 @@ jobs:
       - <<: *load_compile_cache
       - run: make test-python
 
+  # FIXME: pylint is broken on 18.04
   pylint:
     <<: *dir
-    <<: *image
+    docker:
+      - image: robojackets/robocup-software:16
     steps:
       - <<: *load_src_cache
       - checkout
       - <<: *install_deps
       - run: make pylint
-    <<: *dir
 
   mypy:
     <<: *dir
@@ -190,7 +191,7 @@ workflows:
             - compile
       - pylint:
           requires:
-            - compile
+            - compile-16
       - mypy:
           requires:
             - compile
