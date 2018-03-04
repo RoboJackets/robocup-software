@@ -58,7 +58,7 @@ class TestShooting(unittest.TestCase):
 	@unittest.skip("Skip Problematic Cases")
 	def test_eval_shot_problem_cases(self):
 		# This location is very outside the field but we consider it successful
-		# This case return almost 1 when it should fail
+		# KickEvaluator does not check bounds
 		self.assertEqual(self.eval_shot(0, 2 * self.length), self.failure)
 
 		# Does not allow shot from midfield
@@ -70,7 +70,6 @@ class TestShooting(unittest.TestCase):
 
 		# Just inside the corner is 100% successful too
 		self.assertEqual(self.eval_shot(self.width / 2 - self.botRadius, self.length - self.botRadius), 1)
-
 
 	def test_eval_shot_with_bots_and_exclusion(self):
 		their_bot1 = self.their_robots[0]
