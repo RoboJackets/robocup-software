@@ -3,7 +3,7 @@ TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
 
 ifeq ($(CIRCLECI), true)
-	NINJA_FLAGS=-j4
+	NINJA_FLAGS=-j2
 endif
 
 # build a specified target with CMake and Ninja
