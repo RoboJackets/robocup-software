@@ -97,7 +97,7 @@ COV_BUILD_DIR=build/coverage
 coverage:
 	mkdir -p ${COV_BUILD_DIR}
 	cd ${COV_BUILD_DIR} && cmake -GNinja -Wno-dev --target test-soccer \
-		-D CMAKE_CXX_FLAGS="--coverage" ../../ && ninja test-soccer
+		-D CMAKE_CXX_FLAGS="--coverage" ../../ && ninja $(NINJA_FLAGS) test-soccer
 	run/test-soccer		# Kind of hacky, but w/e
 	-coveralls -b ${COV_BUILD_DIR} -r . \
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \

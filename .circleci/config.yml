@@ -5,41 +5,159 @@ defaults: &image
   docker:
     - image: robojackets/robocup-software
 
+defaults: &install_deps
+  run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G
+defaults: &save_src_cache
+  save_cache:
+    key: source-v1-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ".git"
+defaults: &load_src_cache
+  restore_cache:
+    keys:
+      - source-v1-{{ .Branch }}-{{ .Revision }}
+      - source-v1-{{ .Branch }}-
+      - source-v1-
+defaults: &save_compile_cache
+  save_cache:
+    key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/.ccache
+defaults: &save_compile_coverage_cache
+  save_cache:
+    key: ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/.ccache
+defaults: &load_compile_cache
+  restore_cache:
+    keys:
+      - ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - ccache-{{ arch }}-{{ .Branch }}
+      - ccache-{{ arch }}
+      - ccache-
+defaults: &load_compile_coverage_cache
+  restore_cache:
+    keys:
+      - ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - ccache-cov-{{ arch }}-{{ .Branch }}
+      - ccache-cov-{{ arch }}
+      - ccache-cov-
+defaults: &save_workspace
+  persist_to_workspace:
+    root: .
+    paths:
+      - build/
+defaults: &load_workspace
+  attach_workspace:
+    at: build/
+
 version: 2
 jobs:
   compile:
     <<: *dir
     <<: *image
     steps:
-      - restore_cache:
-          keys:
-            - source-v1-{{ .Branch }}-{{ .Revision }}
-            - source-v1-{{ .Branch }}-
-            - source-v1-
+      - <<: *load_src_cache
       - checkout
       # Ensure latest deps are installed
-      - run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G
-
-      - save_cache:
-          key: source-v1-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ".git"
-
-      - restore_cache:
-          keys:
-            - ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-            - ccache-{{ arch }}-{{ .Branch }}
-            - ccache-{{ arch }}
-            - ccache-
+      - <<: *install_deps
+      - <<: *load_compile_cache
       - run: make
-      - save_cache:
-          key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - ~/.ccache
+      - <<: *save_compile_cache
+      - <<: *save_workspace
 
+  test-soccer:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_workspace
+      - <<: *load_compile_cache
+      - run: make test-soccer
+
+  test-python:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_workspace
+      - <<: *load_compile_cache
+      - run: make test-python
+
+  pylint:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_workspace
+      - <<: *load_compile_cache
+      - run: make pylint
+
+  mypy:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_workspace
+      - <<: *load_compile_cache
+      - run: make mypy
+
+  style:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_workspace
+      - <<: *load_compile_cache
+      - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle
+
+  coverage:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      # save src cache in coverage task as nothing depends on it, we can take our time.
+      - <<: *save_src_cache
+      - <<: *load_compile_coverage_cache
+      - run: make coverage
+      - <<: *save_compile_coverage_cache
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - compile
+      - coverage
+      - test-soccer:
+          requires:
+            - compile
+      - test-python:
+          requires:
+            - compile
+      - pylint:
+          requires:
+            - compile
+      - mypy:
+          requires:
+            - compile
+      - style:
+          requires:
+            - compile
