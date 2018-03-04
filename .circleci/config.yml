@@ -6,7 +6,7 @@ defaults: &image
     - image: robojackets/robocup-software:master
 
 defaults: &install_deps
-  run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G
+  run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 100M
 defaults: &save_src_cache
   save_cache:
     key: source-v1-{{ .Branch }}-{{ .Revision }}
@@ -148,6 +148,8 @@ jobs:
       - <<: *load_workspace
       - <<: *load_compile_cache
       - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle
+      - store_artifacts:
+          path: /tmp/clean.patch
 
   coverage:
     <<: *dir
@@ -176,6 +178,18 @@ jobs:
       - run: make
       - <<: *save_compile_16_cache
 
+  gen-docs:
+    <<: *dir
+    <<: *image
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_workspace
+      - <<: *load_compile_test_cache
+      - run: ./autoupdate-docs.sh
+
 workflows:
   version: 2
   build_and_test:
@@ -198,3 +212,16 @@ workflows:
       - style:
           requires:
             - compile
+
+      - gen-docs:
+          requires:
+            - test-soccer
+            - test-python
+            - pylint
+            - mypy
+            - style
+            - compile
+
+          filters:
+            branches:
+              only: master
