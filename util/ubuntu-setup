@@ -24,11 +24,7 @@ if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # dont add repositories
     SYSTEM="debian"
     ADD_REPOS=false
 elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
-    if cat /etc/os-release | grep -iq '^VERSION=.*14.04'; then # Using Ubuntu 14.04
-        echo "Ubuntu 14.04 Detected..."
-        SYSTEM="ubuntu-14.04"
-        ADD_REPOS=true
-    elif cat /etc/os-release | grep -iq '^VERSION=.*15.04'; then # Using Ubuntu 15.04
+    if cat /etc/os-release | grep -iq '^VERSION=.*15.04'; then # Using Ubuntu 15.04
         echo "Ubuntu 15.04 Detected..."
         SYSTEM="ubuntu-15.04"
         ADD_REPOS=false
@@ -43,6 +39,10 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
     elif cat /etc/os-release | grep -iq '^VERSION=.*16.10'; then # Using Ubuntu 16.10
         echo "Ubuntu 16.10 Detected..."
         SYSTEM="ubuntu-16.10"
+        ADD_REPOS=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*18.04'; then # Using Ubuntu 18.04
+        echo "Ubuntu 18.04 Detected..."
+        SYSTEM="ubuntu-18.04"
         ADD_REPOS=false
     else
         echo "$DISTRO_STR" >&2
