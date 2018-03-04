@@ -23,6 +23,11 @@ defaults: &save_compile_cache
     key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/.ccache
+defaults: &save_compile_16_cache
+  save_cache:
+    key: ccache-16-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/.ccache
 defaults: &save_compile_coverage_cache
   save_cache:
     key: ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
@@ -40,6 +45,14 @@ defaults: &load_compile_cache
       - ccache-{{ arch }}-{{ .Branch }}
       - ccache-{{ arch }}
       - ccache-
+defaults: &load_compile_16_cache
+  restore_cache:
+    keys:
+      - ccache-16-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - ccache-16-{{ arch }}-{{ .Branch }}
+      - ccache-16-{{ arch }}
+      - ccache-16-
+      - ccache-
 defaults: &load_compile_coverage_cache
   restore_cache:
     keys:
@@ -56,12 +69,12 @@ defaults: &load_compile_test_cache
       - ccache-test-
 defaults: &save_workspace
   persist_to_workspace:
-    root: .
+    root: build
     paths:
-      - build/
+      - ./*
 defaults: &load_workspace
   attach_workspace:
-    at: build/
+    at: build
 
 version: 2
 jobs:
@@ -149,11 +162,25 @@ jobs:
       - run: make coverage
       - <<: *save_compile_coverage_cache
 
+  compile-16:
+    <<: *dir
+    docker:
+      - image: robojackets/robocup-software:16
+    steps:
+      - <<: *load_src_cache
+      - checkout
+      # Ensure latest deps are installed
+      - <<: *install_deps
+      - <<: *load_compile_16_cache
+      - run: make
+      - <<: *save_compile_16_cache
+
 workflows:
   version: 2
   build_and_test:
     jobs:
       - compile
+      - compile-16
       - coverage
       - test-soccer:
           requires:
