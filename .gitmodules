@@ -19,6 +19,3 @@
 [submodule "external/grSim"]
 	path = external/grSim
 	url = https://github.com/RoboJackets/grSim
-[submodule "external/DoCIF"]
-	path = external/DoCIF
-	url = https://github.com/jgkamat/DoCIF.git
