@@ -19,7 +19,6 @@ class TestPassing(unittest.TestCase):
 		self.left_side = -self.width / 2
 		self.botRadius = constants.Robot.Radius
 
-
 		self.failure = 0
 		self.success = .8
 
@@ -28,7 +27,6 @@ class TestPassing(unittest.TestCase):
 
 		for robot in main.system_state().their_robots:
 			robot.set_vis_for_testing(True)
-
 
 	# Returns eval_pass
 	def eval_pass(self, x1, y1, x2, y2, excluded_robots=[]):
@@ -57,7 +55,6 @@ class TestPassing(unittest.TestCase):
 		# Test passing outside the fields.
 		# Succeeds when it should fail?
 		self.assertEqual(self.eval_pass(0, 0, 0, 2 * self.length), self.success, "pass to the end of the field fail")
-
 
 	def test_eval_pass_clear_field(self):
 		# Test a point passing to a close point. Should be successful

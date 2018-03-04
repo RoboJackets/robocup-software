@@ -14,7 +14,6 @@ class TestOpponent(unittest.TestCase):
 		main.set_system_state(self.system_state)
 
 		for robot in main.system_state().their_robots:
-
 			robot.set_vis_for_testing(True)
 
 		self.length = constants.Field.Length
@@ -37,7 +36,6 @@ class TestOpponent(unittest.TestCase):
 		main.set_their_robots(main.system_state().their_robots[0:6])
 		main.set_our_robots(main.system_state().our_robots[0:6])
 		main.set_ball(main.system_state().ball)
-
 
 	# Tests a point for get_closest_opponent
 	# 
@@ -151,7 +149,6 @@ class TestOpponent(unittest.TestCase):
 		self.assertEqual(self.get_closest_opponent(0, self.center_y - self.botRadius), their_bot1)
 		self.assertEqual(self.get_closest_opponent(self.botRadius, self.center_y), their_bot1)
 		self.assertEqual(self.get_closest_opponent(-self.botRadius, self.center_y), their_bot1)
-
 
 	def test_get_closest_opponent_two_bots(self):
 		their_bot1, their_bot2 = self.their_robots[0:2]

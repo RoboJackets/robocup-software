@@ -13,7 +13,7 @@ class TestShooting(unittest.TestCase):
 		main.set_system_state(self.system_state)
 
 		for robot in main.system_state().their_robots:
-			robot.set_vis_for_testing(True)
+			robot.set_vis_for_testing(True)	
 
 		self.length = constants.Field.Length
 		self.width = constants.Field.Width
@@ -27,7 +27,6 @@ class TestShooting(unittest.TestCase):
 
 	def eval_shot(self, x, y, excluded_robots=[]):
 		return evaluation.shooting.eval_shot(robocup.Point(x, y), excluded_robots)
-
 
 	# Set the location of a robot 
 	# We must use this function so that the C++ can act on the robot location
