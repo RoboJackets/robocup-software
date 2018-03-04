@@ -153,8 +153,10 @@ class TestOpponent(unittest.TestCase):
 	def test_get_closest_opponent_two_bots(self):
 		their_bot1, their_bot2 = self.their_robots[0:2]
 
+		# Bot 1 is at our goal
 		self.set_bot_pos(their_bot1, 0, 0)
 
+		# Bot 2 is at center of the field
 		self.set_bot_pos(their_bot2, 0, self.center_y)
 
 		# Test points around their_bot1
@@ -177,7 +179,7 @@ class TestOpponent(unittest.TestCase):
 		self.assertEqual(self.get_closest_opponent(self.left_side, 0), their_bot1)
 
 		# Test equidistant
-		self.assertEqual(self.get_closest_opponent(0, self.center_y / 2), their_bot2)
+		self.assertEqual(self.get_closest_opponent(0, self.center_y / 2), their_bot1)
 
 	def test_get_closest_opponent_our_bot_and_exclusion(self):
 		their_bot1, their_bot2 = self.their_robots[0:2]
@@ -210,7 +212,7 @@ class TestOpponent(unittest.TestCase):
 		self.assertEqual(self.get_closest_opponent(0, self.center_y / 2, 0), their_bot1, "failed equidistant with direction_weight = 0 ")
 
 		# Choose a point equidistant between two robots with direction weight 1. Should choose the robot closest to their goal.
-		self.assertEqual(self.get_closest_opponent(0, self.center_y / 2), their_bot2, "failed to choose robot closer to their goal")
+		self.assertEqual(self.get_closest_opponent(0, self.center_y / 2), their_bot1, "failed to choose robot closer to their goal")
 
 		# Test directional weight, so the robot at the center of the field should have higher weight
 		self.assertEqual(self.get_closest_opponent(0, self.center_y / 2, .1), their_bot2, "failed direction_weight = .5")

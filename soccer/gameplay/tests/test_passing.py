@@ -51,8 +51,8 @@ class TestPassing(unittest.TestCase):
 		# to be considered successful, we need to modify the eval_pass function. 
 		self.assertEqual(self.eval_pass(0, 0, 0, 0), self.failure, "point pass to itself fail")
 
-		# Test passing outside the fields.
-		# Succeeds when it should fail?
+		# Test passing outside the fields. 
+		# WindowEvaluator in eval_pass doesn't check outside the field
 		self.assertEqual(self.eval_pass(0, 0, 0, 2 * self.length), self.success, "pass to the end of the field fail")
 
 	def test_eval_pass_clear_field(self):
@@ -72,8 +72,8 @@ class TestPassing(unittest.TestCase):
 		self.assertEqual(self.eval_pass(self.left_side, self.center_y, self.right_side, self.center_y), self.success, "horizontal pass across center of field")
 
 	def test_eval_pass_with_bots_and_exclusion(self):
-		their_bot1 = self.their_robots[0:1]		
-		our_bot1 = self.our_robots[0:1]		
+		their_bot1 = self.their_robots[0]		
+		our_bot1 = self.our_robots[0]		
 
 		passing_dest = self.center_y
 

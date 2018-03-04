@@ -55,6 +55,9 @@ class TestShooting(unittest.TestCase):
 		self.assertGreater(self.eval_shot(self.width / 4, self.length / 2 + self.botRadius), 0.95)
 		self.assertGreater(self.eval_shot(-self.width / 4, self.length / 2 + self.botRadius), 0.95)
 
+		self.assertGreater(self.eval_shot(self.width / 2 - self.botRadius, self.length - self.botRadius), 0.99)
+
+
 	@unittest.skip("Skip Problematic Cases")
 	def test_eval_shot_problem_cases(self):
 		# This location is very outside the field but we consider it successful
@@ -62,7 +65,7 @@ class TestShooting(unittest.TestCase):
 		self.assertEqual(self.eval_shot(0, 2 * self.length), self.failure)
 
 		# Does not allow shot from midfield
-		# This case returns 0 
+		# This case is okay because we cannot score from our side of the field
 		self.assertEqual(self.eval_shot(0, self.length / 2), self.success)
 
 		# Corner shots should not have 100% chance to hit the goal
