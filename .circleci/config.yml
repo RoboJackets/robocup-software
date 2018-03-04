@@ -28,6 +28,11 @@ defaults: &save_compile_coverage_cache
     key: ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/.ccache
+defaults: &save_compile_test_cache
+  save_cache:
+    key: ccache-test-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ~/.ccache
 defaults: &load_compile_cache
   restore_cache:
     keys:
@@ -42,6 +47,13 @@ defaults: &load_compile_coverage_cache
       - ccache-cov-{{ arch }}-{{ .Branch }}
       - ccache-cov-{{ arch }}
       - ccache-cov-
+defaults: &load_compile_test_cache
+  restore_cache:
+    keys:
+      - ccache-test-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - ccache-test-{{ arch }}-{{ .Branch }}
+      - ccache-test-{{ arch }}
+      - ccache-test-
 defaults: &save_workspace
   persist_to_workspace:
     root: .
@@ -75,8 +87,9 @@ jobs:
       # Ensure latest deps are installed
       - <<: *install_deps
       - <<: *load_workspace
-      - <<: *load_compile_cache
+      - <<: *load_compile_test_cache
       - run: make test-soccer
+      - <<: *save_compile_test_cache
 
   test-python:
     <<: *dir
