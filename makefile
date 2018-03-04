@@ -2,6 +2,7 @@ MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
 
+# circleci has 2 cores, but advertises 32, which causes OOMs
 ifeq ($(CIRCLECI), true)
 	NINJA_FLAGS=-j2
 endif

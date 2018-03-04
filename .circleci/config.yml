@@ -3,7 +3,7 @@ defaults: &dir
 
 defaults: &image
   docker:
-    - image: robojackets/robocup-software
+    - image: robojackets/robocup-software:master
 
 defaults: &install_deps
   run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 1G
@@ -96,22 +96,18 @@ jobs:
     steps:
       - <<: *load_src_cache
       - checkout
-      # Ensure latest deps are installed
       - <<: *install_deps
-      - <<: *load_workspace
-      - <<: *load_compile_cache
       - run: make pylint
+    <<: *dir
 
   mypy:
     <<: *dir
-    <<: *image
+    docker:
+      - image: python:3
     steps:
       - <<: *load_src_cache
       - checkout
-      # Ensure latest deps are installed
-      - <<: *install_deps
-      - <<: *load_workspace
-      - <<: *load_compile_cache
+      - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
   style:
