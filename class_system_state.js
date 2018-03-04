@@ -2,7 +2,7 @@ var class_system_state =
 [
     [ "SystemState", "class_system_state.html#a6dee917f8ad57cf40a562a555b982e78", null ],
     [ "~SystemState", "class_system_state.html#ab4c21aebd95542b0f0afc18b9b8bf413", null ],
-    [ "debugLayers", "class_system_state.html#a6a7f7e376e3c3c22e296440ebbc14ffe", null ],
+    [ "debugLayers", "class_system_state.html#a69a70055d8dfe83606003cd722ef3088", null ],
     [ "drawArc", "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836", null ],
     [ "drawCircle", "group__drawing__functions.html#ga1b05550ea8f058670a0792cb6e7be8b1", null ],
     [ "drawLine", "group__drawing__functions.html#ga0e2cfd392209bc55a231a8f286c7436c", null ],
@@ -16,7 +16,7 @@ var class_system_state =
     [ "drawText", "group__drawing__functions.html#ga7aaafd2a33d891f2908b5c2d1eede831", null ],
     [ "findDebugLayer", "class_system_state.html#a812653eed4f23e3636ca4ebad24d6174", null ],
     [ "ourValidIds", "class_system_state.html#a4f199334c604adcf802f74a9bf13a85e", null ],
-    [ "timestamp", "class_system_state.html#a2f485e8762531bac6792384286fd6bc4", null ],
+    [ "timestamp", "class_system_state.html#a811a12ad2bb37300299c12033b2afc51", null ],
     [ "ball", "class_system_state.html#ab6177237598711857c66eb4a92cd8eb8", null ],
     [ "gameState", "class_system_state.html#a1babf5bd12c00f8fd35eb0cdf4ee1240", null ],
     [ "logFrame", "class_system_state.html#af1d2d245231e05f0f057b275ed4a7318", null ],

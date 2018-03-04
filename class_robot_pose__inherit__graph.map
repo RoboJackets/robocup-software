@@ -1,5 +1,5 @@
 <map id="RobotPose" name="RobotPose">
-<area shape="rect" id="node2" href="$class_robot.html" title="Robot" alt="" coords="100,80,159,107"/>
+<area shape="rect" id="node2" href="$class_robot.html" title="Robot" alt="" coords="99,80,159,107"/>
 <area shape="rect" id="node3" href="$class_opponent_robot.html" title="A robot that is not on our team. " alt="" coords="5,155,128,181"/>
 <area shape="rect" id="node4" href="$class_our_robot.html" title="A robot on our team. " alt="" coords="152,155,235,181"/>
 </map>

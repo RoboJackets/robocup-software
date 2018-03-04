@@ -1,6 +1,6 @@
 var group__matrices =
 [
-    [ "ballMatrix", "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a", null ],
-    [ "centerMatrix", "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02", null ],
-    [ "oppMatrix", "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93", null ]
+    [ "ballMatrix", "group__matrices.html#ga9d3e85c1e5057b33a033eb7bcdb24568", null ],
+    [ "centerMatrix", "group__matrices.html#gad5610a51dc615a1b53dd210541b84658", null ],
+    [ "oppMatrix", "group__matrices.html#gaa921a23d16791e2a7879a9877bcf120f", null ]
 ];

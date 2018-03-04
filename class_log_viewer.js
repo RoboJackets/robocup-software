@@ -1,7 +1,7 @@
 var class_log_viewer =
 [
     [ "LogViewer", "class_log_viewer.html#adb5363a5732b1e7b42d0ca1ea6692b8a", null ],
-    [ "frameNumber", "class_log_viewer.html#aa1d8cee251677454a1ac490b4c08e2bb", null ],
+    [ "frameNumber", "class_log_viewer.html#a9d82970aacd03678e5252c998c4fc6e0", null ],
     [ "frameNumber", "class_log_viewer.html#af2495c3e95ce82c5fa7dd75cbaca7ca7", null ],
     [ "on_action0_triggered", "class_log_viewer.html#aa469f5458fa7d9cf7cf1f1733e2db321", null ],
     [ "on_action180_triggered", "class_log_viewer.html#ae0946d15cd2883ea929244bdf4b260cf", null ],

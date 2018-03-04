@@ -12,7 +12,6 @@ var searchData=
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],
   ['dribble',['Dribble',['../classgameplay_1_1skills_1_1dribble_1_1_dribble.html',1,'gameplay::skills::dribble']]],
-  ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
-  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
+  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay.constants.Robot.Dribbler'],['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig::Dribbler']]],
   ['dynamicobstacle',['DynamicObstacle',['../class_planning_1_1_dynamic_obstacle.html',1,'Planning']]]
 ];

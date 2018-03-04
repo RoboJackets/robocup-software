@@ -6,7 +6,7 @@ var class_planning_1_1_trapezoidal_path =
     [ "eval", "class_planning_1_1_trapezoidal_path.html#ab704896feeeab1a686022a8ac80b7683", null ],
     [ "getDuration", "class_planning_1_1_trapezoidal_path.html#a8ab9fbe001d96da01e8b2ddc9e389166", null ],
     [ "hit", "class_planning_1_1_trapezoidal_path.html#a6fa12b307e30e7fe2d346e2385cd03a3", null ],
-    [ "maxSpeed", "class_planning_1_1_trapezoidal_path.html#a49cdc10192a792dac244d31daaf6146c", null ],
+    [ "maxSpeed", "class_planning_1_1_trapezoidal_path.html#a3f058ce30b4990016cc290a8190a6f8d", null ],
     [ "start", "class_planning_1_1_trapezoidal_path.html#a7acfc7210aa23cf5ec1a185975c8f8bd", null ],
     [ "subPath", "class_planning_1_1_trapezoidal_path.html#a4bccd2c89be2fd20227ecd37ff5f5394", null ]
 ];

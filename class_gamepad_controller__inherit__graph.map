@@ -1,3 +1,3 @@
 <map id="GamepadController" name="GamepadController">
-<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="44,80,113,107"/>
+<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="43,80,117,107"/>
 </map>

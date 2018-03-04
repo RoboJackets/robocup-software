@@ -1,5 +1,5 @@
 <map id="WindowEvaluator" name="WindowEvaluator">
-<area shape="rect" id="node3" href="$class_robot.html" title="Robot" alt="" coords="67,225,125,252"/>
-<area shape="rect" id="node4" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="68,109,159,136"/>
-<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="97,5,239,32"/>
+<area shape="rect" id="node3" href="$class_robot.html" title="Robot" alt="" coords="67,225,127,252"/>
+<area shape="rect" id="node4" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="67,109,158,136"/>
+<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="90,5,234,32"/>
 </map>

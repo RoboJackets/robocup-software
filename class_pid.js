@@ -9,7 +9,7 @@ var class_pid =
     [ "set_saturated", "class_pid.html#ad429ef91b9999f5e664c90b41a9b3e9c", null ],
     [ "setWindup", "class_pid.html#a1106664b17ce8a73c361de7b74e005eb", null ],
     [ "startTunerCycle", "class_pid.html#a82cef368ca1c28042e483827e7036149", null ],
-    [ "windup", "class_pid.html#ab9a0346cf62b277d56bfbfcf12d78389", null ],
+    [ "windup", "class_pid.html#aa5f15a38ac5cbe06cf21fc86dd1a18dd", null ],
     [ "derivAlpha", "class_pid.html#a0b2d864820b6a11ee2685dbb6ac6622b", null ],
     [ "kd", "class_pid.html#a7f72115e163cb28354927c91ba5a5c3d", null ],
     [ "ki", "class_pid.html#a1568c4e65b32d723598b14700fafd304", null ],

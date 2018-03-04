@@ -18,17 +18,16 @@ var searchData=
   ['direction',['direction',['../class_geometry2d_1_1_point.html#a6f666e729164f1aa25581b8e00fe8f43',1,'Geometry2d::Point']]],
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
   ['directtargetpathplanner',['DirectTargetPathPlanner',['../class_planning_1_1_direct_target_path_planner.html',1,'Planning']]],
-  ['distto',['distTo',['../class_geometry2d_1_1_line.html#a673915dcabfebfe18e045b1913e4dfe1',1,'Geometry2d::Line::distTo()'],['../class_geometry2d_1_1_point.html#afaf5a9b8ba1d58b34051a3bce38c1ad1',1,'Geometry2d::Point::distTo()']]],
-  ['dot',['dot',['../class_geometry2d_1_1_point.html#a9307e8ac17cade6a6e86d1b79fb322d9',1,'Geometry2d::Point']]],
+  ['distto',['distTo',['../class_geometry2d_1_1_line.html#aca952f88c87e733ce38953b27dce0b1d',1,'Geometry2d::Line::distTo()'],['../class_geometry2d_1_1_point.html#acb8b9329a89eb0d461d8676d6c5f1093',1,'Geometry2d::Point::distTo()']]],
+  ['dot',['dot',['../class_geometry2d_1_1_point.html#accd8a1775ab5f9ebbb6500c66a9a04fd',1,'Geometry2d::Point']]],
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],
-  ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#aba1ec0b69ad45b7dca7886dc1aa64e9b',1,'Planning::Path::draw()'],['../class_planning_1_1_angle_function_path.html#a3e64c9408fc3041afe9df4a377c1f3bf',1,'Planning::AngleFunctionPath::draw()']]],
+  ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#a5a742aee463df068e9090bcd5bde386e',1,'Planning::Path::draw()'],['../class_planning_1_1_angle_function_path.html#a3e64c9408fc3041afe9df4a377c1f3bf',1,'Planning::AngleFunctionPath::draw()']]],
   ['drawing_20functions',['Drawing Functions',['../group__drawing__functions.html',1,'']]],
   ['drawteamspace',['drawTeamSpace',['../class_field_view.html#aaabad424c361d3c3e090c0967f785a41',1,'FieldView']]],
   ['dribble',['Dribble',['../classgameplay_1_1skills_1_1dribble_1_1_dribble.html',1,'gameplay::skills::dribble']]],
-  ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
-  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay::constants::Robot']]],
+  ['dribbler',['Dribbler',['../classgameplay_1_1constants_1_1_robot_1_1_dribbler.html',1,'gameplay.constants.Robot.Dribbler'],['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig::Dribbler']]],
   ['drive_5faround_5fdist',['drive_around_dist',['../classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ac9b826816fbd4ca30412c4acb2f8b12b',1,'gameplay::skills::line_kick_old::LineKickOld']]],
   ['dynamicobstacle',['DynamicObstacle',['../class_planning_1_1_dynamic_obstacle.html',1,'Planning']]],
   ['dynamicobstacles',['dynamicObstacles',['../struct_planning_1_1_plan_request.html#a5abdded0e120862ba08be0ec98bdbce5',1,'Planning::PlanRequest']]],
-  ['documentation',['Documentation',['../md_doc_Documentation.html',1,'']]]
+  ['documentation',['Documentation',['../md_doc__documentation.html',1,'']]]
 ];

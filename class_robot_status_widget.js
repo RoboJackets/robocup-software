@@ -1,14 +1,14 @@
 var class_robot_status_widget =
 [
     [ "RobotStatusWidget", "class_robot_status_widget.html#a46caec3ac78e8adcd31c2b5edcbd2f2f", null ],
-    [ "baseID", "class_robot_status_widget.html#ad0a87138083bc4eabbbcf7da73e027f9", null ],
-    [ "batteryLevel", "class_robot_status_widget.html#ac6e8176116b109c1238b94cc79937a47", null ],
-    [ "blueTeam", "class_robot_status_widget.html#a485972a042891978be339892a331c7fb", null ],
-    [ "boardID", "class_robot_status_widget.html#aa6ade8ef47dbc0a4f95536d6243eb8e5", null ],
-    [ "hasRadio", "class_robot_status_widget.html#a4c85f11049f92d92aca12c70bf142d52", null ],
-    [ "hasVision", "class_robot_status_widget.html#aeaa8d30cddddb822cb4f3a106dfe5054", null ],
-    [ "kickerState", "class_robot_status_widget.html#abf343cea3d633695c833fc99ff201ff7", null ],
-    [ "robotModel", "class_robot_status_widget.html#aee0341c324eaeca5015992e346f61481", null ],
+    [ "baseID", "class_robot_status_widget.html#a49008533b6133d16076b8f7cf91fa401", null ],
+    [ "batteryLevel", "class_robot_status_widget.html#ac60d8e030be7976d1f28cad7eb65f0dc", null ],
+    [ "blueTeam", "class_robot_status_widget.html#a8377c2412108a680257ec8a937d3f374", null ],
+    [ "boardID", "class_robot_status_widget.html#a7e280277ac6cf16b6196588cc9317111", null ],
+    [ "hasRadio", "class_robot_status_widget.html#a89b9e9fc9a04453c242762036f14acf9", null ],
+    [ "hasVision", "class_robot_status_widget.html#abe6a76898697d280d401b117330a659c", null ],
+    [ "kickerState", "class_robot_status_widget.html#abc36278ef8cccdca4c6f20db878e856c", null ],
+    [ "robotModel", "class_robot_status_widget.html#af445b5b25688679437a3d18eb6e55ffd", null ],
     [ "setBallSenseFault", "class_robot_status_widget.html#a0aa384d19682ffb32e7e0f8a48416a1e", null ],
     [ "setBaseID", "class_robot_status_widget.html#aec7f71fc66369c4fe0eb39ad2ee9223f", null ],
     [ "setBatteryLevel", "class_robot_status_widget.html#a802c4812a61b1778d4f62a1d0ab66c6d", null ],
@@ -23,5 +23,5 @@ var class_robot_status_widget =
     [ "setShellID", "class_robot_status_widget.html#add2eaa0f944911a9dbdab962dae5f498", null ],
     [ "setShowstopper", "class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98", null ],
     [ "setWheelFault", "class_robot_status_widget.html#a1a5ad37897c571e6e95638582a9dbc4c", null ],
-    [ "shellID", "class_robot_status_widget.html#a455451a3b19b758391e42ccc5debd4e4", null ]
+    [ "shellID", "class_robot_status_widget.html#a13c1317a7a08a266c65aea3c6e9c31ca", null ]
 ];

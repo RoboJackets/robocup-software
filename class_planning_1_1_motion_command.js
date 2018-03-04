@@ -13,5 +13,5 @@ var class_planning_1_1_motion_command =
     [ "MotionCommand", "class_planning_1_1_motion_command.html#ab405ca7edbd3fbe6eb01c0029eda6f54", null ],
     [ "MotionCommand", "class_planning_1_1_motion_command.html#a5e85af2452b330757ecc645255420e90", null ],
     [ "clone", "class_planning_1_1_motion_command.html#a8bc88a8aa3e0a2dd054293b83546bc7b", null ],
-    [ "getCommandType", "class_planning_1_1_motion_command.html#a80e3fd9273900d8b53c1334ab2f781d1", null ]
+    [ "getCommandType", "class_planning_1_1_motion_command.html#a0f220293a1097cab4eae55ac238fe74c", null ]
 ];

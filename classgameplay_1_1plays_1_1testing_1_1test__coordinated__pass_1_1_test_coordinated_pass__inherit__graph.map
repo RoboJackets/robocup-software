@@ -1,6 +1,6 @@
 <map id="gameplay.plays.testing.test_coordinated_pass.TestCoordinatedPass" name="gameplay.plays.testing.test_coordinated_pass.TestCoordinatedPass">
-<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="73,244,219,271"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="39,155,253,196"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="44,80,248,107"/>
-<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="43,5,249,32"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="72,244,223,271"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="38,155,257,196"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="42,80,253,107"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="43,5,251,32"/>
 </map>

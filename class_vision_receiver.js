@@ -1,7 +1,7 @@
 var class_vision_receiver =
 [
     [ "VisionReceiver", "class_vision_receiver.html#a2386ee44bca27a45aaac4e2982766579", null ],
-    [ "getPackets", "class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4", null ],
+    [ "getPackets", "class_vision_receiver.html#ab91846fc1f08c8004b09c95ee4f8838d", null ],
     [ "run", "class_vision_receiver.html#aa1074ec8908d3c57d377e7ba27e489cd", null ],
     [ "stop", "class_vision_receiver.html#afbbed557f1f62ee95cf3530516275f3c", null ],
     [ "_mutex", "class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22", null ],

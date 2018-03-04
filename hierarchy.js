@@ -266,6 +266,7 @@ var hierarchy =
             [ "gameplay.plays.tuning.test_jittery_motion.TestJitteryMotion", "classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html", null ],
             [ "gameplay.plays.tuning.tune_facing.TuneFacing", "classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html", null ],
             [ "gameplay.plays.tuning.tune_pivot.TunePivoting", "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html", null ],
+            [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ],
             [ "gameplay.standard_play.StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", [
               [ "gameplay.plays.offense.adaptive_formation.AdaptiveFormation", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html", null ],
               [ "gameplay.plays.offense.basic_122.Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", null ],
@@ -331,7 +332,8 @@ var hierarchy =
           [ "gameplay.skills.move_tuning.MoveTuning", "classgameplay_1_1skills_1_1move__tuning_1_1_move_tuning.html", null ],
           [ "gameplay.skills.touch_ball.TouchBall", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html", null ],
           [ "gameplay.tactics.positions.defender.Defender", "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html", null ]
-        ] ]
+        ] ],
+        [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
     ] ],
@@ -360,9 +362,6 @@ var hierarchy =
     [ "VisionPacket", "class_vision_packet.html", null ],
     [ "Window", "class_window.html", null ],
     [ "WindowEvaluator", "class_window_evaluator.html", null ],
-    [ "Behavior", null, [
-      [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
-    ] ],
     [ "Enum", null, [
       [ "gameplay.behavior.Behavior.State", "classgameplay_1_1behavior_1_1_behavior_1_1_state.html", null ],
       [ "gameplay.skills.capture.Capture.State", "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html", null ],
@@ -380,8 +379,5 @@ var hierarchy =
     ] ],
     [ "Observer", null, [
       [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
-    ] ],
-    [ "Play", null, [
-      [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ]
     ] ]
 ];

@@ -1,9 +1,9 @@
 <map id="Planning::MotionCommand" name="Planning::MotionCommand">
-<area shape="rect" id="node2" href="$struct_planning_1_1_direct_path_target_command.html" title="Planning::DirectPathTarget\lCommand" alt="" coords="263,5,455,47"/>
-<area shape="rect" id="node3" href="$struct_planning_1_1_empty_command.html" title="Planning::EmptyCommand" alt="" coords="263,71,455,98"/>
-<area shape="rect" id="node4" href="$struct_planning_1_1_line_kick_command.html" title="Planning::LineKickCommand" alt="" coords="258,122,461,149"/>
-<area shape="rect" id="node5" href="$struct_planning_1_1_path_target_command.html" title="Planning::PathTargetCommand" alt="" coords="249,173,470,199"/>
-<area shape="rect" id="node6" href="$struct_planning_1_1_pivot_command.html" title="Planning::PivotCommand" alt="" coords="268,223,451,250"/>
-<area shape="rect" id="node7" href="$struct_planning_1_1_tuning_path_command.html" title="Planning::TuningPathCommand" alt="" coords="248,274,471,301"/>
-<area shape="rect" id="node8" href="$struct_planning_1_1_world_vel_target_command.html" title="Planning::WorldVelTarget\lCommand" alt="" coords="269,325,449,367"/>
+<area shape="rect" id="node2" href="$struct_planning_1_1_direct_path_target_command.html" title="Planning::DirectPathTarget\lCommand" alt="" coords="266,5,462,47"/>
+<area shape="rect" id="node3" href="$struct_planning_1_1_empty_command.html" title="Planning::EmptyCommand" alt="" coords="267,71,461,98"/>
+<area shape="rect" id="node4" href="$struct_planning_1_1_line_kick_command.html" title="Planning::LineKickCommand" alt="" coords="260,122,468,149"/>
+<area shape="rect" id="node5" href="$struct_planning_1_1_path_target_command.html" title="Planning::PathTargetCommand" alt="" coords="252,173,476,199"/>
+<area shape="rect" id="node6" href="$struct_planning_1_1_pivot_command.html" title="Planning::PivotCommand" alt="" coords="271,223,457,250"/>
+<area shape="rect" id="node7" href="$struct_planning_1_1_tuning_path_command.html" title="Planning::TuningPathCommand" alt="" coords="251,274,477,301"/>
+<area shape="rect" id="node8" href="$struct_planning_1_1_world_vel_target_command.html" title="Planning::WorldVelTarget\lCommand" alt="" coords="271,325,457,367"/>
 </map>

@@ -1,7 +1,7 @@
 var NAVTREEINDEX12 =
 {
-"struct_planning_1_1_rotation_command.html#a94883609c3495ae80e110de5957d80e7acb1aab5f40cbd5578a31a1d48771a17f":[16,0,7,27,0,2],
 "struct_planning_1_1_rotation_command.html#ab4993a4f73613d6488245233f9f933c7":[16,0,7,27,1],
+"struct_planning_1_1_rotation_command.html#abc2a24fb558977f3bd36dc2949663b08":[16,0,7,27,3],
 "struct_planning_1_1_rotation_command.html#acba23cfcfe914268c3480c90a0150785":[16,0,7,27,2],
 "struct_planning_1_1_tuning_path_command.html":[16,0,7,33],
 "struct_planning_1_1_tuning_path_command.html#a41342c4f30518099922ae370b2b61d14":[16,0,7,33,0],

@@ -1,7 +1,7 @@
 var class_robot_widget =
 [
     [ "RobotWidget", "class_robot_widget.html#ace9fe4a4a4e481840c2cefa1a28f8123", null ],
-    [ "blueTeam", "class_robot_widget.html#ab33d141237e2002e8094724362f6499f", null ],
+    [ "blueTeam", "class_robot_widget.html#a7ec900c1f5fa4aff85a672ae5270c818", null ],
     [ "paintEvent", "class_robot_widget.html#aba1b79ce8bafe351aecd0b52975b1446", null ],
     [ "setBallSenseFault", "class_robot_widget.html#a4f592142169a0313dd8c78f606904813", null ],
     [ "setBlueTeam", "class_robot_widget.html#af0f0f096d2740bbac593765e13766650", null ],

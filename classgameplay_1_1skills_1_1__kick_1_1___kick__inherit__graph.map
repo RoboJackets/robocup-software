@@ -1,8 +1,8 @@
 <map id="gameplay.skills._kick._Kick" name="gameplay.skills._kick._Kick">
-<area shape="rect" id="node5" href="$classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html" title="lines up with the ball and the target, then drives up and kicks this differs from PivotKick which get..." alt="" coords="1022,5,1167,47"/>
-<area shape="rect" id="node6" href="$classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html" title="lines up with the ball and the target, then drives up and kicks this differs from PivotKick which get..." alt="" coords="1017,71,1172,112"/>
-<area shape="rect" id="node7" href="$classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html" title="gameplay.skills.pivot\l_kick.PivotKick" alt="" coords="1017,136,1172,177"/>
-<area shape="rect" id="node2" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="511,71,731,112"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="259,78,463,105"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,78,211,105"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html" title="lines up with the ball and the target, then drives up and kicks this differs from PivotKick which get..." alt="" coords="1051,5,1204,47"/>
+<area shape="rect" id="node6" href="$classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html" title="lines up with the ball and the target, then drives up and kicks this differs from PivotKick which get..." alt="" coords="1045,71,1209,112"/>
+<area shape="rect" id="node7" href="$classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html" title="gameplay.skills.pivot\l_kick.PivotKick" alt="" coords="1046,136,1209,177"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="520,71,747,112"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="261,78,472,105"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,78,213,105"/>
 </map>

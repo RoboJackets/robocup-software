@@ -11,7 +11,7 @@ var class_new_referee_module =
     [ "~NewRefereeModule", "class_new_referee_module.html#a3375c7043798c967a248afd0a08063e3", null ],
     [ "blueTeam", "class_new_referee_module.html#ac2fecd87dd306835482aa350ec9fc716", null ],
     [ "blueTeam", "class_new_referee_module.html#a463b1404f912769929ac747757356c73", null ],
-    [ "getPackets", "class_new_referee_module.html#a147c72a78e4843f8279cd95ba6ab9294", null ],
+    [ "getPackets", "class_new_referee_module.html#aab2aef77c3a53b8833075e146af47dfe", null ],
     [ "kicked", "class_new_referee_module.html#a07cb0d959a2987bd652bddb09756e3ef", null ],
     [ "ready", "class_new_referee_module.html#a76a869649edb4c88927ec2562ab1bdc8", null ],
     [ "run", "class_new_referee_module.html#afcb94c84fef0e884ade7621b9b951342", null ],

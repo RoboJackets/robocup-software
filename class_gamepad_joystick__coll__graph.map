@@ -1,8 +1,8 @@
 <map id="GamepadJoystick" name="GamepadJoystick">
-<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="92,395,161,421"/>
-<area shape="rect" id="node4" href="$class_config_double.html" title="ConfigDouble" alt="" coords="176,261,283,288"/>
-<area shape="rect" id="node5" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="184,185,275,212"/>
-<area shape="rect" id="node6" title="STL class. " alt="" coords="122,96,209,123"/>
-<area shape="rect" id="node7" title="STL class. " alt="" coords="94,5,231,47"/>
-<area shape="rect" id="node8" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="237,96,344,123"/>
+<area shape="rect" id="node2" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="65,395,138,421"/>
+<area shape="rect" id="node4" href="$class_config_double.html" title="ConfigDouble" alt="" coords="179,261,290,288"/>
+<area shape="rect" id="node5" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="187,185,282,212"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="130,96,217,123"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="101,5,240,47"/>
+<area shape="rect" id="node8" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="245,96,355,123"/>
 </map>

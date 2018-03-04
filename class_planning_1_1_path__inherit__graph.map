@@ -1,6 +1,6 @@
 <map id="Planning::Path" name="Planning::Path">
-<area shape="rect" id="node3" href="$class_planning_1_1_angle_function_path.html" title="Class which represents a Path with an angle Function attached. " alt="" coords="167,56,369,83"/>
-<area shape="rect" id="node4" href="$class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="177,107,359,133"/>
-<area shape="rect" id="node5" href="$class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="173,157,363,184"/>
-<area shape="rect" id="node6" href="$class_planning_1_1_trapezoidal_path.html" title="Represents a straight&#45;line path with a trapezoidal velocity profile. " alt="" coords="175,208,361,235"/>
+<area shape="rect" id="node3" href="$class_planning_1_1_angle_function_path.html" title="Class which represents a Path with an angle Function attached. " alt="" coords="168,56,375,83"/>
+<area shape="rect" id="node4" href="$class_planning_1_1_composite_path.html" title="Represents a motion path made up of a series of Paths. " alt="" coords="179,107,364,133"/>
+<area shape="rect" id="node5" href="$class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="174,157,369,184"/>
+<area shape="rect" id="node6" href="$class_planning_1_1_trapezoidal_path.html" title="Represents a straight&#45;line path with a trapezoidal velocity profile. " alt="" coords="176,208,367,235"/>
 </map>

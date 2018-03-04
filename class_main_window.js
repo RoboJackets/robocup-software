@@ -4,7 +4,7 @@ var class_main_window =
     [ "allDebugOff", "class_main_window.html#ad3ef00bb8cd8a66a55eecc6244a6ce76", null ],
     [ "allDebugOn", "class_main_window.html#a8c658c8786efca65f5795e2dedfaf985", null ],
     [ "configuration", "class_main_window.html#a9670a762862f1ce381fc43b740809f1e", null ],
-    [ "frameNumber", "class_main_window.html#a81d847a2c53c4a8dc780d6daed0983db", null ],
+    [ "frameNumber", "class_main_window.html#acf7f5c21da4059eb342a09d0cbcfbe21", null ],
     [ "frameNumber", "class_main_window.html#af9dba43a40d8b47a7e1e20d80e8a5ccc", null ],
     [ "historyLocationChanged", "class_main_window.html#a61e359aed68c836d5393b607fdf17104", null ],
     [ "initialize", "class_main_window.html#a43f05c4d3f5d840d070829d3291c9ec7", null ],

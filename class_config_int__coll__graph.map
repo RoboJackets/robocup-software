@@ -1,6 +1,6 @@
 <map id="ConfigInt" name="ConfigInt">
-<area shape="rect" id="node2" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="95,185,186,212"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="33,96,120,123"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="5,5,143,47"/>
-<area shape="rect" id="node5" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="149,96,255,123"/>
+<area shape="rect" id="node2" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="91,185,186,212"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="34,96,121,123"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="5,5,144,47"/>
+<area shape="rect" id="node5" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="149,96,259,123"/>
 </map>

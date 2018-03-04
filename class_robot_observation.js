@@ -2,7 +2,7 @@ var class_robot_observation =
 [
     [ "RobotObservation", "class_robot_observation.html#aa8a64de70b9ada870cef064bae3f3353", null ],
     [ "RobotObservation", "class_robot_observation.html#a1f563d0988a7f59b47e536bed3e3f8fd", null ],
-    [ "operator<", "class_robot_observation.html#a9eb4f01610e04979eb532859bc52d7df", null ],
+    [ "operator<", "class_robot_observation.html#a1f34abca3dadb53728a1ad6aac881899", null ],
     [ "angle", "class_robot_observation.html#abac3b22710efbd54270688b8ce034607", null ],
     [ "frameNumber", "class_robot_observation.html#ab1b1133ed9080ff2e2b74e67a9774ad0", null ],
     [ "pos", "class_robot_observation.html#aae563d9bd7b59ab6cdced4c435660cb6", null ],
