@@ -32,7 +32,6 @@ class TestPassing(unittest.TestCase):
 	def eval_pass(self, x1, y1, x2, y2, excluded_robots=[]):
 		return evaluation.passing.eval_pass(robocup.Point(x1, y1), robocup.Point(x2, y2), excluded_robots)
 
-
 	# Set the location of a robot 
 	# We must use this function so that the C++ can act on the robot location
 	# 

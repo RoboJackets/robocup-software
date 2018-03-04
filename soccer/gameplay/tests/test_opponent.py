@@ -42,7 +42,7 @@ class TestOpponent(unittest.TestCase):
 	# @param x: x coordinate of test point
 	# @param y: y coordinate of test point
 	#
-	def get_closest_opponent(self, x, y, directional_weight=1, excluded_robots=[]):
+	def get_closest_opponent(self, x, y, directional_weight=0, excluded_robots=[]):
 		return evaluation.opponent.get_closest_opponent(robocup.Point(x, y), directional_weight, excluded_robots)
 
 	# Tests num_on_offense
