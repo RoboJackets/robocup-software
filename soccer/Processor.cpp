@@ -670,6 +670,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
+    float penaltyShortDist; // default value?
+    float penaltyLongDist; // default value?
     float displacement =
         Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
@@ -678,14 +680,15 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         if (arc.name() == "CenterCircle") {
             // Assume center circle
             center = &arc;
-        } else if (arc.name() == "LeftFieldLeftPenaltyArc") {
-            penalty = &arc;
         }
     }
 
     for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
         if (line.name() == "RightPenaltyStretch") {
             displacement = abs(line.p2().y() - line.p1().y());
+            penaltyLongDist = displacement;
+        } else if (line.name() == "RightFieldRightPenaltyStretch") {
+            penaltyShortDist = abs(line.p2().x() - line.p1().x());
         }
     }
 
@@ -704,9 +707,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
             fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
             Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penalty->radius() / 1000.0f + adj,  // PenaltyDist
-            Field_Dimensions::Default_Dimensions.PenaltyDiam(),
-            penalty->radius() / 1000.0f + adj,       // ArcRadius
+            penaltyShortDist / 1000.0f,  // PenaltyS
+            penaltyLongDist / 1000.0f,
             center->radius() / 1000.0f + adj,        // CenterRadius
             (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
             displacement / 1000.0f,                  // GoalFlat
