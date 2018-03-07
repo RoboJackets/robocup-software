@@ -17,13 +17,16 @@ namespace Planning {
 
 REGISTER_CONFIGURABLE(SingleRobotPathPlanner);
 
-ConfigDouble* SingleRobotPathPlanner::_goalChangeThreshold;
+ConfigDouble* SingleRobotPathPlanner::_goalPosChangeThreshold;
+ConfigDouble* SingleRobotPathPlanner::_goalVelChangeThreshold;
 ConfigDouble* SingleRobotPathPlanner::_replanTimeout;
 
 void SingleRobotPathPlanner::createConfiguration(Configuration* cfg) {
     _replanTimeout = new ConfigDouble(cfg, "PathPlanner/replanTimeout", 5);
-    _goalChangeThreshold =
-        new ConfigDouble(cfg, "PathPlanner/goalChangeThreshold", 0.025);
+    _goalPosChangeThreshold =
+        new ConfigDouble(cfg, "PathPlanner/goalPosChangeThreshold", 0.025);
+    _goalVelChangeThreshold =
+        new ConfigDouble(cfg, "PathPlanner/goalVelChangeThreshold", 0.025);
 }
 
 std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
@@ -118,10 +121,10 @@ bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
 
     // if this number of microseconds passes since our last path plan, we
     // automatically replan
-    const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
-    if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
-        return true;
-    }
+    // const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
+    // if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
+    //    return true;
+    //}
 
     // Evaluate where the path says the robot should be right now
     RJ::Seconds timeIntoPath =

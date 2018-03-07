@@ -19,14 +19,15 @@ PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 _has_initialized = False
 
 
-def init():
+def init(log_errors=True):
     # by default, the logger only shows messages at the WARNING level or greater
     logging.getLogger().setLevel(logging.INFO)
 
     global _has_initialized
     if _has_initialized:
-        logging.warn(
-            "main robocoup python init() method called twice - ignoring")
+        if log_errors:
+            logging.warn(
+                "main robocoup python init() method called twice - ignoring")
         return
 
     # init root play

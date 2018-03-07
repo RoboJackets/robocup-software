@@ -37,9 +37,6 @@ public:
                     Geometry2d::Point endPos, double endSpeed,
                     const MotionConstraints& constraints);
 
-    virtual boost::optional<RobotInstant> evaluate(
-        RJ::Seconds time) const override;
-
     // TODO: only return true for *new* obstacles
     virtual bool hit(const Geometry2d::ShapeSet& obstacles,
                      RJ::Seconds initialTime,
@@ -65,6 +62,9 @@ public:
         debugThrow("This function is not implemented");
         return nullptr;
     }
+
+protected:
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds time) const override;
 };
 
 }  // namespace Planning

@@ -15,7 +15,6 @@ class SystemState;
 namespace Planning {
 
 class ConstPathIterator;
-
 /**
  * @brief Abstract class representing a motion path
  */
@@ -36,7 +35,13 @@ public:
      *     time if @t is within the range of the path.  If @t is not within the
      *     time range of this path, this method returns boost::none.
      */
-    virtual boost::optional<RobotInstant> evaluate(RJ::Seconds t) const = 0;
+    boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
+        auto instant = eval(t * evalRate);
+        if (instant) {
+            instant->motion.vel *= evalRate;
+        }
+        return instant;
+    }
 
     /**
      * Returns true if the path hits an obstacle
@@ -50,7 +55,7 @@ public:
      */
     virtual bool hit(const Geometry2d::ShapeSet& obstacles,
                      RJ::Seconds startTimeIntoPath,
-                     RJ::Seconds* hitTime) const = 0;
+                     RJ::Seconds* hitTime = nullptr) const = 0;
 
     /**
      * Draws the path.  The default implementation adds a DebugRobotPath to the
@@ -70,6 +75,8 @@ public:
      * stops
      */
     virtual RJ::Seconds getDuration() const = 0;
+
+    RJ::Seconds getSlowedDuration() const { return getDuration() / evalRate; }
 
     /**
      * Returns a subPath
@@ -115,7 +122,12 @@ public:
     virtual std::unique_ptr<ConstPathIterator> iterator(
         RJ::Time startTime, RJ::Seconds deltaT) const;
 
+    void slow(float multiplier, RJ::Seconds timeInto = RJ::Seconds::zero());
+
 protected:
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const = 0;
+
+    double evalRate = 1.0;
     RJ::Time _startTime;
     boost::optional<QString> _debugText;
 };
@@ -133,34 +145,6 @@ public:
 
     std::unique_ptr<Path> path;
     boost::optional<std::function<AngleInstant(MotionInstant)>> angleFunction;
-    /**
-     * This method evaluates the path at a given time and returns the target
-     * position and velocity of the robot.
-     *
-     * @param t Time (in seconds) since the robot started the path. Throws an
-     *     exception if t<0
-     * @return A MotionInstant containing the position and velocity at the given
-     *     time if @t is within the range of the path.  If @t is not within the
-     *     time range of this path, this method returns boost::none.
-     */
-    virtual boost::optional<RobotInstant> evaluate(
-        RJ::Seconds t) const override {
-        if (!path) {
-            return boost::none;
-        }
-
-        boost::optional<RobotInstant> instant = path->evaluate(t);
-        if (!angleFunction) {
-            return instant;
-        } else {
-            if (instant) {
-                instant->angle = angleFunction->operator()(instant->motion);
-                return instant;
-            } else {
-                return boost::none;
-            }
-        }
-    }
 
     /**
      * Returns true if the path hits an obstacle
@@ -255,6 +239,35 @@ public:
         SystemState* state, const QColor& color = Qt::darkCyan,
         const QString& layer = "PathDebugText") const override {
         path->drawDebugText(state, color, layer);
+    }
+
+protected:
+    /**
+     * This method evaluates the path at a given time and returns the target
+     * position and velocity of the robot.
+     *
+     * @param t Time (in seconds) since the robot started the path. Throws an
+     *     exception if t<0
+     * @return A MotionInstant containing the position and velocity at the given
+     *     time if @t is within the range of the path.  If @t is not within the
+     *     time range of this path, this method returns boost::none.
+     */
+    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override {
+        if (!path) {
+            return boost::none;
+        }
+
+        boost::optional<RobotInstant> instant = path->evaluate(t);
+        if (!angleFunction) {
+            return instant;
+        } else {
+            if (instant) {
+                instant->angle = angleFunction->operator()(instant->motion);
+                return instant;
+            } else {
+                return boost::none;
+            }
+        }
     }
 };
 
