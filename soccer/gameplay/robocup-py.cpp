@@ -891,7 +891,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("SingleFieldDimensions",
                       &Field_Dimensions::Single_Field_Dimensions)
         .def_readonly("DoubleFieldDimensions",
-                      &Field_Dimensions::Double_Field_Dimensions);
+                      &Field_Dimensions::Double_Field_Dimensions)
+        .def_readonly("CurrentFieldDimensions",
+                      &Field_Dimensions::Current_Dimensions);
 
     class_<std::vector<Geometry2d::Line>>("vector_Line")
         .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());
