@@ -357,8 +357,8 @@ class Defense(composite_behavior.CompositeBehavior):
                 #if the robots overlap
                 if overlap.mag() < (2 * constants.Robot.Radius) + .005:
                     #move the robots away from each other
-                    overlap = overlap - (overlap.normalized() *
-                                         2 * constants.Robot.Radius)
+                    overlap = overlap - (overlap.normalized() * 2 *
+                                         constants.Robot.Radius)
                     print(overlap)
                     print("1 ", handler1._move_target)
                     print("2 ", handler2._move_target)
