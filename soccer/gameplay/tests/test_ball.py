@@ -69,8 +69,9 @@ class TestBall(unittest.TestCase):
             return evaluation.ball.is_in_our_goalie_zone()
 
         # Check center of field
-        self.assertFalse(test_function(
-        ), "the center of the field is indicated to be inside the goalie zone")
+        self.assertFalse(
+            test_function(),
+            "the center of the field is indicated to be inside the goalie zone")
 
         # Check inside of goalie zone
         main.ball().set_pos(0, 0)
@@ -79,17 +80,20 @@ class TestBall(unittest.TestCase):
 
         # Check another place inside goalie zone
         main.ball().set_pos(0, self.length / 8)
-        self.assertTrue(test_function(
-        ), "center of goalie zone is not indicated to be inside the goalie zone"
-                        )
+        self.assertTrue(
+            test_function(),
+            "center of goalie zone is not indicated to be inside the goalie zone"
+        )
 
         # Check just outside of goalie zone
         main.ball().set_pos(0, self.length / 4)
-        self.assertFalse(test_function(
-        ), "just outside of goalie zone is indicated to be inside the goalie zone"
-                         )
+        self.assertFalse(
+            test_function(),
+            "just outside of goalie zone is indicated to be inside the goalie zone"
+        )
 
         # Check corner of field
         main.ball().set_pos(self.width / 2, 0)
-        self.assertFalse(test_function(
-        ), "the corner of the field is indicated to be inside the goalie zone")
+        self.assertFalse(
+            test_function(),
+            "the corner of the field is indicated to be inside the goalie zone")
