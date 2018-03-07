@@ -613,14 +613,6 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     //                   -Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
     //                   Field_Dimensions::Current_Dimensions.ArcRadius(),
     //                   Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f));
-    
-    // Penalty Tick
-    p.drawEllipse(
-        QRectF(-Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f +
-                   Field_Dimensions::Current_Dimensions.PenaltyDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f,
-               Field_Dimensions::Current_Dimensions.PenaltyDiam(),
-               Field_Dimensions::Current_Dimensions.PenaltyDiam()));
 
     p.translate(Field_Dimensions::Current_Dimensions.Length(), 0);
 
@@ -651,13 +643,6 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     //                   -Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
     //                   -Field_Dimensions::Current_Dimensions.ArcRadius(),
     //                   Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f));
-    // Penalty Mark
-    p.drawEllipse(
-        QRectF(-Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f -
-                   Field_Dimensions::Current_Dimensions.PenaltyDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f,
-               Field_Dimensions::Current_Dimensions.PenaltyDiam(),
-               Field_Dimensions::Current_Dimensions.PenaltyDiam()));
 
     // goals
     float x[2] = {0, Field_Dimensions::Current_Dimensions.GoalDepth()};
