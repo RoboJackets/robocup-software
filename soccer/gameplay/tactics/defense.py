@@ -202,7 +202,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 for r in main.our_robots():
                     self.kick_eval.add_excluded_robot(r)
 
-                shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
+                point, shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
 
                 # Note: 0.5 is a bullshit value
                 threats.append((opp.pos, 0.5 * shotChance, opp))
