@@ -63,8 +63,12 @@ std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
 
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     if (estimateTime < time) {
-        debugThrow("Estimated Time can't be before observation time.");
-        return MotionInstant();
+        //debugThrow("Estimated Time can't be before observation time.");
+        std::cout<<"CRITICAL ERROR: Estimated Time can't be before observation time"<<std::endl;
+        std::cout<<"estimateTime: "<<RJ::timestamp(estimateTime)<<std::endl;
+        std::cout<<"actualTime: "<<RJ::timestamp(time)<<std::endl;
+        estimateTime = time;
+        //return MotionInstant();
     }
 
     MotionInstant instant;
