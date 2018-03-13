@@ -164,12 +164,6 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     _theirGoalArea = make_shared<CompositeShape>();
 
     _theirGoalArea->add(theirGoalArea);
-    // _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-    //     make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
-    // _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-    //     make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
-
-    //
 
     _ourHalf = make_shared<Polygon>(
         vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),
@@ -293,8 +287,6 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
     if (!_state->logFrame->use_opponent_half()) {
         obstacles.add(_opponentHalf);
     }
-    obstacles.add(_ourGoalArea);
-    obstacles.add(_theirGoalArea);
 
     /// Add non floor obstacles
     for (const std::shared_ptr<Shape>& ptr : _nonFloor) {
