@@ -150,22 +150,24 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 
     auto ourGoalArea = make_shared<Polygon>(
         vector<Point>{Point(-longDist / 2, 0), Point(longDist / 2, 0),
-                      Point(-longDist / 2, shortDist), 
-                      Point(longDist / 2, shortDist)});
+                      Point(longDist / 2, shortDist), 
+                      Point(-longDist / 2, shortDist)});
     _ourGoalArea = make_shared<CompositeShape>();
+
+    _ourGoalArea->add(ourGoalArea);
 
     auto theirGoalArea = make_shared<Polygon>(
         vector<Point>{Point(-longDist / 2, dimensions.Length()),
                       Point(longDist / 2, dimensions.Length()),
-                      Point(-longDist / 2, dimensions.Length() - shortDist),
-                      Point(longDist / 2, dimensions.Length() - shortDist)});
+                      Point(longDist / 2, dimensions.Length() - shortDist),
+                      Point(-longDist / 2, dimensions.Length() - shortDist)});
     _theirGoalArea = make_shared<CompositeShape>();
 
     _theirGoalArea->add(theirGoalArea);
-    _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
-    _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
+    // _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
+    //     make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
+    // _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
+    //     make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
 
     //
 
@@ -292,6 +294,7 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
         obstacles.add(_opponentHalf);
     }
     obstacles.add(_ourGoalArea);
+    obstacles.add(_theirGoalArea);
 
     /// Add non floor obstacles
     for (const std::shared_ptr<Shape>& ptr : _nonFloor) {

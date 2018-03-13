@@ -684,6 +684,7 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
     }
 
     for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
+        // cout << line.name() << endl;
         if (line.name() == "RightPenaltyStretch") {
             displacement = abs(line.p2().y() - line.p1().y());
             penaltyLongDist = displacement;
@@ -699,6 +700,10 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
     float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
     float fieldBorder = currentDimensions->Border();
+    // if (penaltyLongDist == 0 || penaltyShortDist == 0) {
+    //     cout << "CERO!" << endl;
+    // }
+
 
     if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
