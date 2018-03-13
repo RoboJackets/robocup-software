@@ -64,23 +64,36 @@ class SubmissiveDefender(
         self._block_line = value
 
         # we move somewhere along this arc to mark our 'block_line'
-        arc_left = robocup.Arc(
-            robocup.Point(-constants.Field.GoalFlat / 2, 0),
-            constants.Field.ArcRadius + constants.Robot.Radius * 2,
-            math.pi / 2, math.pi)
-        arc_right = robocup.Arc(
-            robocup.Point(constants.Field.GoalFlat / 2, 0),
-            constants.Field.ArcRadius + constants.Robot.Radius * 2, 0,
-            math.pi / 2)
-        seg = robocup.Segment(
+        
+        # arc_left = robocup.Arc(
+        #     robocup.Point(-constants.Field.GoalFlat / 2, 0),
+        #     constants.Field.ArcRadius + constants.Robot.Radius * 2,
+        #     math.pi / 2, math.pi)
+        # arc_right = robocup.Arc(
+        #     robocup.Point(constants.Field.GoalFlat / 2, 0),
+        #     constants.Field.ArcRadius + constants.Robot.Radius * 2, 0,
+        #     math.pi / 2)
+        left_seg = robocup.Segment(
             robocup.Point(
-                -constants.Field.GoalFlat / 2,
-                constants.Field.ArcRadius + constants.Robot.Radius * 2),
+                -constants.Field.PenaltyLongDist / 2, 0),
             robocup.Point(
-                constants.Field.GoalFlat / 2,
-                constants.Field.ArcRadius + constants.Robot.Radius * 2))
+                -constants.Field.PenaltyLongDist / 2,
+                constants.Field.PenaltyShortDist))
+        right_seg = robocup.Segment(
+            robocup.Point(
+                constants.Field.PenaltyLongDist / 2, 0),
+            robocup.Point(
+                constants.Field.PenaltyLongDist / 2,
+                constants.Field.PenaltyShortDist))
+        top_seg = robocup.Segment(
+            robocup.Point(
+                -constants.Field.PenaltyLongDist / 2,
+                constants.Field.PenaltyShortDist),
+            robocup.Point(
+                constants.Field.PenaltyLongDist / 2,
+                constants.Field.PenaltyShortDist))
 
-        default_pt = seg.center()
+        default_pt = top_seg.center()
 
         if self._block_line is not None:
             # main.system_state().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
@@ -90,10 +103,10 @@ class SubmissiveDefender(
 
             threat_point = self._block_line.get_pt(0)
 
-            intersection_center = seg.line_intersection(self._block_line)
+            intersection_center = top_seg.line_intersection(self._block_line)
 
             if threat_point.x < 0:
-                intersections_left = arc_left.intersects_line(self._block_line)
+                intersections_left = left_seg.intersects_line(self._block_line)
                 if len(intersections_left) > 0:
                     self._move_target = max(intersections_left,
                                             key=lambda p: p.y)
@@ -102,7 +115,7 @@ class SubmissiveDefender(
                 else:
                     self._move_target = default_pt
             elif threat_point.x >= 0:
-                intersections_right = arc_right.intersects_line(
+                intersections_right = right_seg.intersects_line(
                     self._block_line)
                 if len(intersections_right) > 0:
                     self._move_target = max(intersections_right,
