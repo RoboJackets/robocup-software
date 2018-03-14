@@ -20,11 +20,13 @@ REGISTER_CONFIGURABLE(MotionControl);
 
 ConfigDouble* MotionControl::_max_acceleration;
 ConfigDouble* MotionControl::_max_velocity;
+ConfigDouble* MotionControl::_x_multiplier;
 
 void MotionControl::createConfiguration(Configuration* cfg) {
     _max_acceleration =
         new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
     _max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
+    _x_multiplier = new ConfigDouble(cfg, "MotionControl/X_Multiplier", 1.0);
 }
 
 #pragma mark MotionControl
@@ -238,7 +240,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // set control values
-    _robot->control->set_xvelocity(targetVel.x());
+    _robot->control->set_xvelocity(targetVel.x() * _x_multiplier->value());
     _robot->control->set_yvelocity(targetVel.y());
 }
 

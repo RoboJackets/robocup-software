@@ -71,3 +71,17 @@ TEST(KickEvaluator, eval_kick_at_pi_transition) {
 
     EXPECT_LT(std::get<1>(pt_to_our_goal), 0.99);
 }
+
+TEST(KickEvaluator, check_best_point) {
+    SystemState state;
+
+    KickEvaluator kickEval(&state);
+    std::pair<Point, double> pt_to_opp_goal;
+    std::pair<Point, double> expected =
+        std::pair<Point, double>(Point{0, 0}, 0.56);
+
+    pt_to_opp_goal = kickEval.eval_pt_to_opp_goal(Point(1, 6));
+
+    EXPECT_NEAR((std::get<0>(expected)).x(), (std::get<0>(pt_to_opp_goal)).x(),
+                0.01);
+}

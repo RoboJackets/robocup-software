@@ -39,17 +39,20 @@ class DefenseOld(composite_behavior.CompositeBehavior):
 
         self.add_state(DefenseOld.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(DefenseOld.State.clearing, behavior.Behavior.State.running)
+        self.add_state(DefenseOld.State.clearing,
+                       behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             DefenseOld.State.defending, lambda: True,
                             "immediately")
-        self.add_transition(DefenseOld.State.defending, DefenseOld.State.clearing,
-                            lambda: self.should_clear_ball(),
-                            "when it is safe to clear the ball")
-        self.add_transition(DefenseOld.State.clearing, DefenseOld.State.defending,
-                            lambda: not self.should_clear_ball(),
-                            "done clearing")
+        self.add_transition(
+            DefenseOld.State.defending,
+            DefenseOld.State.clearing, lambda: self.should_clear_ball(),
+            "when it is safe to clear the ball")
+        self.add_transition(
+            DefenseOld.State.clearing,
+            DefenseOld.State.defending, lambda: not self.should_clear_ball(),
+            "done clearing")
 
         goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -58,10 +61,11 @@ class DefenseOld(composite_behavior.CompositeBehavior):
         # add defenders at the specified priority levels
         for num, priority in enumerate(defender_priorities):
             defender = submissive_defender.SubmissiveDefender()
-            self.add_subbehavior(defender,
-                                 'defender' + str(num + 1),
-                                 required=False,
-                                 priority=priority)
+            self.add_subbehavior(
+                defender,
+                'defender' + str(num + 1),
+                required=False,
+                priority=priority)
 
         self.debug = True
 
@@ -104,8 +108,9 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                     their_max_vel) * defender1.safety_multiplier
 
                 if their_time_to_ball > evaluation.ball.time_to_ball(
-                        defender1.robot) or their_time_to_ball > evaluation.ball.time_to_ball(
-                            defender2.robot):
+                        defender1.robot
+                ) or their_time_to_ball > evaluation.ball.time_to_ball(
+                        defender2.robot):
                     safe_to_clear = True
 
         return safe_to_clear
@@ -216,9 +221,9 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             # only look at ones that have robots
             # as we handle threats, we remove the handlers from this list
 
-        unused_threat_handlers = list(filter(
-            lambda bhvr: bhvr.robot is not None, [goalie, defender1, defender2
-                                                  ]))
+        unused_threat_handlers = list(
+            filter(lambda bhvr: bhvr.robot is not None,
+                   [goalie, defender1, defender2]))
 
         def set_block_lines_for_threat_handlers(threat):
             if len(threat.assigned_handlers) == 0:
@@ -249,9 +254,11 @@ class DefenseOld(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
-            total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
-                                                        1) * spacing
+            spacing = 0.01 if len(
+                threat.assigned_handlers
+            ) < 3 else 0.0  # spacing between each bot in radians
+            total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1
+                                                        ) * spacing
             start_vec = center_line.delta().normalized()
             start_vec.rotate(robocup.Point(0, 0), -total_angle_coverage / 2.0)
             for i in range(len(angle_widths)):
@@ -273,8 +280,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             # assigned them to go, not where they are right now)
             hypothetical_obstacles = []
             for t in threats[0:threat_index]:
-                hypothetical_obstacles.extend(map(
-                    lambda bhvr: bhvr.move_target, t.assigned_handlers))
+                hypothetical_obstacles.extend(
+                    map(lambda bhvr: bhvr.move_target, t.assigned_handlers))
 
             threat = threats[threat_index]
             self.win_eval.excluded_robots.clear()
@@ -292,9 +299,9 @@ class DefenseOld(composite_behavior.CompositeBehavior):
         # TODO figure out which threats are moving down the field and adjust on that
         # Also see ER-Force's ETDP from 2017 for more information
         threat_max_y = constants.Field.Length
-        potential_threats = [opp
-                             for opp in main.their_robots()
-                             if opp.pos.y < threat_max_y]
+        potential_threats = [
+            opp for opp in main.their_robots() if opp.pos.y < threat_max_y
+        ]
 
         # find the primary threat
         # if the ball is not moving OR it's moving towards our goal, it's the primary threat
@@ -318,8 +325,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                 potential_receivers = []
                 for opp in potential_threats:
                     # see if the bot is in the direction the ball is moving
-                    if (opp.pos - ball_travel_line.get_pt(0)).dot(
-                            ball_travel_line.delta()) > 0:
+                    if (opp.pos - ball_travel_line.get_pt(0)
+                        ).dot(ball_travel_line.delta()) > 0:
                         # calculate the angle and add it to the list if it's within reason
                         nearest_pt = ball_travel_line.nearest_point(opp.pos)
                         dx = (nearest_pt - main.ball().pos).mag()
@@ -346,8 +353,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
 
         else:
 
-            if not constants.Field.OurGoalZoneShape.contains_point(main.ball(
-            ).pos):
+            if not constants.Field.OurGoalZoneShape.contains_point(
+                    main.ball().pos):
 
                 # primary threat is the ball or the opponent holding it
                 opp_with_ball = evaluation.ball.opponent_with_ball()
@@ -364,9 +371,7 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                                            robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
                 pass_chance = evaluation.passing.eval_pass(
-                    main.ball().pos,
-                    opp.pos,
-                    excluded_robots=[opp])
+                    main.ball().pos, opp.pos, excluded_robots=[opp])
                 # give it a small chance because the obstacles in the way could move soon and we don't want to consider it a zero threatos, )
                 if pass_chance < 0.001: pass_chance = 0.4
 
@@ -417,7 +422,6 @@ class DefenseOld(composite_behavior.CompositeBehavior):
         if not threats:
             return
 
-
         # only deal with top two threats
         threats_to_block = threats[0:2]
 
@@ -449,7 +453,6 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             recalculate_threat_shot(t_idx)
             set_block_lines_for_threat_handlers(t)
 
-
         # tell the bots where to move / what to block and draw some debug stuff
         for idx, threat in enumerate(threats):
 
@@ -475,9 +478,10 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                 # draw some debug stuff
                 if threat.best_shot_window is not None:
                     # draw shot triangle
-                    pts = [threat.pos,
-                           threat.best_shot_window.segment.get_pt(0),
-                           threat.best_shot_window.segment.get_pt(1)]
+                    pts = [
+                        threat.pos, threat.best_shot_window.segment.get_pt(0),
+                        threat.best_shot_window.segment.get_pt(1)
+                    ]
                     shot_color = (255, 0, 0, 150)  # translucent red
                     main.system_state().draw_polygon(pts, shot_color,
                                                      "DefenseOld")
@@ -496,17 +500,19 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                     main.system_state().draw_text(
                         "Shot: " + str(int(threat.shot_chance * 100.0)) +
                         "% / " + str(int(chance * 100)) + "%",
-                        shot_line.center(), constants.Colors.White, "DefenseOld")
+                        shot_line.center(), constants.Colors.White,
+                        "DefenseOld")
 
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)
                     main.system_state().draw_line(
                         pass_line, constants.Colors.Red, "DefenseOld")
-                    main.system_state().draw_text(
-                        "Pass: " + str(int(threat.ball_acquire_chance * 100.0))
-                        + "%", pass_line.center(), constants.Colors.White,
-                        "DefenseOld")
+                    main.system_state().draw_text("Pass: " + str(
+                        int(threat.ball_acquire_chance * 100.0)) + "%",
+                                                  pass_line.center(),
+                                                  constants.Colors.White,
+                                                  "DefenseOld")
 
     def role_requirements(self):
         reqs = super().role_requirements()
@@ -523,7 +529,7 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
-                    subbehavior_req_tree):
+                        subbehavior_req_tree):
                     r.robot_change_cost = DefenseOld.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs

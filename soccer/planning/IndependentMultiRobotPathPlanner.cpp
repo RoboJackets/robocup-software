@@ -1,5 +1,6 @@
 #include "IndependentMultiRobotPathPlanner.hpp"
 #include "RobotConstraints.hpp"
+#include "InterpolatedPath.hpp"
 
 using namespace std;
 namespace Planning {
@@ -71,7 +72,13 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             request.dynamicObstacles = std::vector<DynamicObstacle>();
         }
 
-        paths[shell] = _planners[shell]->run(request);
+        std::unique_ptr<Path> path = _planners[shell]->run(request);
+        if (!path) {
+            path = Planning::InterpolatedPath::emptyPath(request.start.pos);
+            debugLog("path was null!! " + to_string(shell) + ":" +
+                     to_string(request.motionCommand->getCommandType()));
+        }
+        paths[shell] = std::move(path);
 
         // Add our generated path to our list of our Robot Obstacles
         ourRobotsObstacles.push_back(DynamicObstacle(

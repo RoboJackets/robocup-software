@@ -25,15 +25,12 @@ class Defense(composite_behavior.CompositeBehavior):
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
 
-        print("THIS ONE RUNS")
-
         if len(defender_priorities) != 2:
             raise RuntimeError("defender_priorities should have a length of 2")
 
         self.add_state(Defense.State.defending,
                        behavior.Behavior.State.running)
-        self.add_state(Defense.State.clearing,
-                       behavior.Behavior.State.running)
+        self.add_state(Defense.State.clearing, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             Defense.State.defending, lambda: True,
@@ -205,7 +202,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 for r in main.our_robots():
                     self.kick_eval.add_excluded_robot(r)
 
-                shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
+                point, shotChance = self.kick_eval.eval_pt_to_our_goal(opp.pos)
 
                 # Note: 0.5 is a bullshit value
                 threats.append((opp.pos, 0.5 * shotChance, opp))
@@ -280,6 +277,8 @@ class Defense(composite_behavior.CompositeBehavior):
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
 
+        # Check keep defenders from occupying the same spot
+        # it will break if you change this
         handlers = [goalie, defender1, defender2]
 
         # For each threat
@@ -353,6 +352,24 @@ class Defense(composite_behavior.CompositeBehavior):
                     pass_line = robocup.Segment(main.ball().pos, threat[0])
                     main.system_state().draw_line(
                         pass_line, constants.Colors.Red, "Defense-Pass Line")
+
+            # keep defenders from occupying the same spot
+            # only matters if there are 2 defenders (and the goalie)
+            if len(handlers) == 3:
+                handler1 = handlers[1]
+                handler2 = handlers[2]
+
+                #vector between the 2 points
+                overlap = handler2.move_target - handler1.move_target
+
+                #if the robots overlap
+                if overlap.mag() < (2 * constants.Robot.Radius) + .005:
+                    #move the robots away from each other
+                    overlap = overlap - (overlap.normalized() * 2 *
+                                         constants.Robot.Radius)
+
+                    handler1._move_target += overlap
+                    handler2._move_target -= overlap
 
     def role_requirements(self):
         reqs = super().role_requirements()
