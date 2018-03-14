@@ -727,6 +727,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             setFieldDimensions(newDim);
         }
     } else if (center != nullptr && thickness != 0) {
+        Field_Dimensions newDim = Field_Dimensions::Default_Dimensions;
+
         if (newDim != *currentDimensions) {
             // Set the changed field dimensions to the current ones
             cout << "Updating field geometry based off of vision packet."
