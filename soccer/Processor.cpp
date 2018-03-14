@@ -726,6 +726,13 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
                  << endl;
             setFieldDimensions(newDim);
         }
+    } else if (center != nullptr && thickness != 0) {
+        if (newDim != *currentDimensions) {
+            // Set the changed field dimensions to the current ones
+            cout << "Updating field geometry based off of vision packet."
+                 << endl;
+            setFieldDimensions(newDim);
+        }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
                 "field." << endl;

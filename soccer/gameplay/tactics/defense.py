@@ -84,7 +84,10 @@ class Defense(composite_behavior.CompositeBehavior):
 
         #Returns true if our robot can reach the ball sooner than the closest opponent
         safe_to_clear = False
-        if abs(main.ball().pos.x) < constants.Field.PenaltyLongDist and main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and main.ball().vel.mag() < .75 and not evaluation.ball.is_in_our_goalie_zone():
+        if (abs(main.ball().pos.x) < constants.Field.PenaltyLongDist and 
+            main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and 
+            main.ball().vel.mag() < .75 and 
+            not evaluation.ball.is_in_our_goalie_zone()):
 
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
