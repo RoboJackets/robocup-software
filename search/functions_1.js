@@ -16,7 +16,7 @@ var searchData=
   ['approachopponent',['approachOpponent',['../class_our_robot.html#ad73346d6fda1ae23f0a234542ae61e2a',1,'OurRobot::approachOpponent(unsigned shell_id) const'],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
   ['arcradius',['ArcRadius',['../struct_field___dimensions.html#a04edbfbe829fee38d277cb422da39953',1,'Field_Dimensions']]],
   ['assign',['assign',['../classrtp_1_1_packet.html#a23de4f51fe48e6d30085a9c9c3647331',1,'rtp::Packet']]],
-  ['assign_5fhandlers_5fto_5fthreats',['assign_handlers_to_threats',['../classgameplay_1_1tactics_1_1defense2_1_1_defense2.html#abeffc1d6d4096104b5307b5f1e4cb383',1,'gameplay::tactics::defense2::Defense2']]],
+  ['assign_5fhandlers_5fto_5fthreats',['assign_handlers_to_threats',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a9ccbc17224a887f0b3ed0f586297ac26',1,'gameplay::tactics::defense::Defense']]],
   ['assign_5froles',['assign_roles',['../classgameplay_1_1behavior_1_1_behavior.html#afd52eaedcc866b0b97b3716248a38168',1,'gameplay::behavior::Behavior']]],
   ['avoidallopponentradius',['avoidAllOpponentRadius',['../class_our_robot.html#a99ff3312c7249d7893c0c719143b84b7',1,'OurRobot']]],
   ['avoidopponent',['avoidOpponent',['../class_our_robot.html#a19a69cc86a204a3242f1cd3f8b7b85f3',1,'OurRobot::avoidOpponent(unsigned shell_id) const'],['../class_our_robot.html#ac6176782dac7ab1550e20bdb48e6d7e8',1,'OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid)']]],

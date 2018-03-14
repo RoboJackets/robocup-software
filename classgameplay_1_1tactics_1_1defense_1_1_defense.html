@@ -91,9 +91,6 @@ $(document).ready(function(){initNavTree('classgameplay_1_1tactics_1_1defense_1_
 <div class="title">gameplay.tactics.defense.Defense Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>The Defense tactic handles goalie and defender placement to defend the goal It does lots of window and shot evaluation to figure out which 'threats' are the most important to block, then assigns blocking positions to the bots The old defense strategy had a goalie and two defenders that didn't coordinate with eachother and tended to overlap and not get an optimal positioning - this tactic handles the coordination.  
- <a href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -106,8 +103,7 @@ Public Member Functions</h2></td></tr>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, defender_priorities=[20)</td></tr>
 <tr class="separator:a25aa12e32a89b1020353760d6e1d6ded"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bb170cd61ef6a0839411a6c0fb6ff24"><td class="memItemLeft" align="right" valign="top"><a id="a1bb170cd61ef6a0839411a6c0fb6ff24"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24">debug</a> (self)</td></tr>
-<tr class="memdesc:a1bb170cd61ef6a0839411a6c0fb6ff24"><td class="mdescLeft">&#160;</td><td class="mdescRight">draws some pretty cool shit on the field if set to True default: True <br /></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b> (self)</td></tr>
 <tr class="separator:a1bb170cd61ef6a0839411a6c0fb6ff24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4a551af32b17aacb1bad964e42da3f"><td class="memItemLeft" align="right" valign="top"><a id="aeb4a551af32b17aacb1bad964e42da3f"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b> (self, value)</td></tr>
@@ -124,9 +120,24 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_clearing</b> 
 <tr class="memitem:ac8a5fb8d01dc568866eeb56f6a67a4e0"><td class="memItemLeft" align="right" valign="top"><a id="ac8a5fb8d01dc568866eeb56f6a67a4e0"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>on_exit_clearing</b> (self)</td></tr>
 <tr class="separator:ac8a5fb8d01dc568866eeb56f6a67a4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13d9ebcadb025f36b9c85d2f38b320db"><td class="memItemLeft" align="right" valign="top"><a id="a13d9ebcadb025f36b9c85d2f38b320db"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate</b> (self)</td></tr>
-<tr class="separator:a13d9ebcadb025f36b9c85d2f38b320db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad81afa5de77adbea69d38aa11cf96eab"><td class="memItemLeft" align="right" valign="top"><a id="ad81afa5de77adbea69d38aa11cf96eab"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>find_and_set_defender_location</b> (self)</td></tr>
+<tr class="separator:ad81afa5de77adbea69d38aa11cf96eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f3a6139b432b6da2c381615c3721504"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#a3f3a6139b432b6da2c381615c3721504">get_threat_list</a> (self, unused_threat_handlers)</td></tr>
+<tr class="memdesc:a3f3a6139b432b6da2c381615c3721504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets list of threats.  <a href="#a3f3a6139b432b6da2c381615c3721504">More...</a><br /></td></tr>
+<tr class="separator:a3f3a6139b432b6da2c381615c3721504"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac1d6af093fb1fb480161cb5c7b0f491"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#aac1d6af093fb1fb480161cb5c7b0f491">estimate_risk_score</a> (self, bot, excluded_bots=[])</td></tr>
+<tr class="memdesc:aac1d6af093fb1fb480161cb5c7b0f491"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate risk score based on old defense.py play.  <a href="#aac1d6af093fb1fb480161cb5c7b0f491">More...</a><br /></td></tr>
+<tr class="separator:aac1d6af093fb1fb480161cb5c7b0f491"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8447dfbfd552a18393eec56194286be6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#a8447dfbfd552a18393eec56194286be6">estimate_potential_recievers_score</a> (self, bot)</td></tr>
+<tr class="memdesc:a8447dfbfd552a18393eec56194286be6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimate potential reciever score based on old defense.py play.  <a href="#a8447dfbfd552a18393eec56194286be6">More...</a><br /></td></tr>
+<tr class="separator:a8447dfbfd552a18393eec56194286be6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ccbc17224a887f0b3ed0f586297ac26"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#a9ccbc17224a887f0b3ed0f586297ac26">assign_handlers_to_threats</a> (self, assigned_handlers, unused_threat_handlers, threats_to_block)</td></tr>
+<tr class="memdesc:a9ccbc17224a887f0b3ed0f586297ac26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assigns the defenders to threats.  <a href="#a9ccbc17224a887f0b3ed0f586297ac26">More...</a><br /></td></tr>
+<tr class="separator:a9ccbc17224a887f0b3ed0f586297ac26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9c1cda54e41d5069131703b936cc29c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html#ae9c1cda54e41d5069131703b936cc29c">set_defender_block_lines</a> (self, threats_to_block, assigned_handlers)</td></tr>
+<tr class="memdesc:ae9c1cda54e41d5069131703b936cc29c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assigns the locations for each robot to block given a threat and list of robots to block each threat.  <a href="#ae9c1cda54e41d5069131703b936cc29c">More...</a><br /></td></tr>
+<tr class="separator:ae9c1cda54e41d5069131703b936cc29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7ec38e67f5f529493c89e405822f8aec"><td class="memItemLeft" align="right" valign="top"><a id="a7ec38e67f5f529493c89e405822f8aec"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b> (self)</td></tr>
 <tr class="separator:a7ec38e67f5f529493c89e405822f8aec"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -265,24 +276,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a9ed6189c5f7fccfbdc89680544776133"><td class="memItemLeft" align="right" valign="top"><a id="a9ed6189c5f7fccfbdc89680544776133"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>debug</b></td></tr>
 <tr class="separator:a9ed6189c5f7fccfbdc89680544776133"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acbb1ece973f30119db6e6d3ef7ec356d"><td class="memItemLeft" align="right" valign="top"><a id="acbb1ece973f30119db6e6d3ef7ec356d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>win_eval</b></td></tr>
-<tr class="separator:acbb1ece973f30119db6e6d3ef7ec356d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f2371db119a2ed88c57393a1f69cc5b"><td class="memItemLeft" align="right" valign="top"><a id="a1f2371db119a2ed88c57393a1f69cc5b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>source</b></td></tr>
-<tr class="separator:a1f2371db119a2ed88c57393a1f69cc5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95d7543870678275b1d31337f10f5c34"><td class="memItemLeft" align="right" valign="top"><a id="a95d7543870678275b1d31337f10f5c34"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ball_acquire_chance</b></td></tr>
-<tr class="separator:a95d7543870678275b1d31337f10f5c34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa29c5c0d66e53242c97cd8bca0e2c197"><td class="memItemLeft" align="right" valign="top"><a id="aa29c5c0d66e53242c97cd8bca0e2c197"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>shot_chance</b></td></tr>
-<tr class="separator:aa29c5c0d66e53242c97cd8bca0e2c197"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a536de1c9e858220a2a2756c8bab67284"><td class="memItemLeft" align="right" valign="top"><a id="a536de1c9e858220a2a2756c8bab67284"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>assigned_handlers</b></td></tr>
-<tr class="separator:a536de1c9e858220a2a2756c8bab67284"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a542a2ad7732d7ff9d2e40ac8c07eaf33"><td class="memItemLeft" align="right" valign="top"><a id="a542a2ad7732d7ff9d2e40ac8c07eaf33"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>best_shot_window</b></td></tr>
-<tr class="separator:a542a2ad7732d7ff9d2e40ac8c07eaf33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab24a870e8eb339d867737a6b2bf9280"><td class="memItemLeft" align="right" valign="top"><a id="aab24a870e8eb339d867737a6b2bf9280"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>kick_eval</b></td></tr>
+<tr class="separator:aab24a870e8eb339d867737a6b2bf9280"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -290,9 +286,7 @@ Static Public Attributes</h2></td></tr>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>DEFENSE_ROBOT_CHANGE_COST</b> = 0.29</td></tr>
 <tr class="separator:a06bf9921a0f9a14d1f2a581b3a413e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The Defense tactic handles goalie and defender placement to defend the goal It does lots of window and shot evaluation to figure out which 'threats' are the most important to block, then assigns blocking positions to the bots The old defense strategy had a goalie and two defenders that didn't coordinate with eachother and tended to overlap and not get an optimal positioning - this tactic handles the coordination. </p>
-</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for gameplay.tactics.defense.Defense:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
@@ -316,6 +310,212 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>DEFENSE_ROBOT_CHANGE
 <area shape="rect" id="node4" href="classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="11,5,219,32"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9ccbc17224a887f0b3ed0f586297ac26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ccbc17224a887f0b3ed0f586297ac26">&#9670;&nbsp;</a></span>assign_handlers_to_threats()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.tactics.defense.Defense.assign_handlers_to_threats </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>assigned_handlers</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>unused_threat_handlers</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>threats_to_block</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assigns the defenders to threats. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">assigned_handlers</td><td>List of list, [ A ... ] where A represents a list of defenders assigned to threat A </td></tr>
+    <tr><td class="paramname">unused_threat_handlers</td><td>List of defenders that are unused currently </td></tr>
+    <tr><td class="paramname">threats_to_block</td><td>List of threats that we have to deal with, tuple with position and threat score </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8447dfbfd552a18393eec56194286be6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8447dfbfd552a18393eec56194286be6">&#9670;&nbsp;</a></span>estimate_potential_recievers_score()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.tactics.defense.Defense.estimate_potential_recievers_score </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>bot</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Estimate potential reciever score based on old defense.py play. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bot</td><td>Robot to estimate score at </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The potential receiver score at that point </dd></dl>
+
+</div>
+</div>
+<a id="aac1d6af093fb1fb480161cb5c7b0f491"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac1d6af093fb1fb480161cb5c7b0f491">&#9670;&nbsp;</a></span>estimate_risk_score()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.tactics.defense.Defense.estimate_risk_score </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>bot</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>excluded_bots</em> = <code>[]</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Estimate risk score based on old defense.py play. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bot</td><td>Robot to estimate score at </td></tr>
+    <tr><td class="paramname">exluded_Bots</td><td>Robots to exclude from the defense when calculating shot </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The risk score at that point (Shot chance * pass chance) </dd></dl>
+
+</div>
+</div>
+<a id="a3f3a6139b432b6da2c381615c3721504"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f3a6139b432b6da2c381615c3721504">&#9670;&nbsp;</a></span>get_threat_list()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.tactics.defense.Defense.get_threat_list </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>unused_threat_handlers</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets list of threats. </p>
+<dl class="section return"><dt>Returns</dt><dd>tuple of threat positions and score (unordered) </dd></dl>
+
+</div>
+</div>
+<a id="ae9c1cda54e41d5069131703b936cc29c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9c1cda54e41d5069131703b936cc29c">&#9670;&nbsp;</a></span>set_defender_block_lines()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gameplay.tactics.defense.Defense.set_defender_block_lines </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>threats_to_block</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>assigned_handlers</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assigns the locations for each robot to block given a threat and list of robots to block each threat. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">threats_to_block</td><td>List of threats that we have to deal with, tuple with position and threat score </td></tr>
+    <tr><td class="paramname">assigned_handlers</td><td>List of list, [ A ... ] where A represents a list of defenders assigned to threat A </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/gameplay/tactics/defense.py</li>
 </ul>
@@ -325,7 +525,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>DEFENSE_ROBOT_CHANGE
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>tactics</b></li><li class="navelem"><b>defense</b></li><li class="navelem"><a class="el" href="classgameplay_1_1tactics_1_1defense_1_1_defense.html">Defense</a></li>
-    <li class="footer">Generated on Sun Mar 11 2018 15:48:57 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Mar 14 2018 01:14:14 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

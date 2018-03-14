@@ -1,7 +1,7 @@
 var searchData=
 [
   ['d',['d',['../struct_robot_config_1_1_p_i_d.html#a491a7263592924e116223e8becd22a70',1,'RobotConfig::PID']]],
-  ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a1bb170cd61ef6a0839411a6c0fb6ff24',1,'gameplay.tactics.defense.Defense.debug()']]],
+  ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense__old_1_1_defense_old.html#a66d66cfa92ec134c16521abba46f882e',1,'gameplay.tactics.defense_old.DefenseOld.debug()']]],
   ['debugmessage',['DebugMessage',['../structrtp_1_1_debug_message.html',1,'rtp']]],
   ['debugqmutex',['DebugQMutex',['../class_debug_q_mutex.html',1,'']]],
   ['debugwindowevaluator',['DebugWindowEvaluator',['../classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html',1,'gameplay::plays::testing::debug_window_evaluator']]],
@@ -9,10 +9,10 @@ var searchData=
   ['defaultmaxspeed',['defaultMaxSpeed',['../struct_motion_constraints.html#acd634939abe429ccc20435680cad634a',1,'MotionConstraints']]],
   ['defend',['defend',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#a918218a0009ff4c2850183e2a8940ba3',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
   ['defender',['Defender',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html',1,'gameplay::tactics::positions::defender']]],
-  ['defending',['defending',['../classgameplay_1_1tactics_1_1defense_1_1_defense_1_1_state.html#aefe6c8c74aa82cbcc9df4bd2258ea418',1,'gameplay::tactics::defense::Defense::State']]],
+  ['defending',['defending',['../classgameplay_1_1tactics_1_1defense__old_1_1_defense_old_1_1_state.html#ad7cc999550f5432bda71317fe9688fcc',1,'gameplay::tactics::defense_old::DefenseOld::State']]],
   ['defendpenalty',['DefendPenalty',['../classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html',1,'gameplay::plays::restarts::defend_penalty']]],
   ['defense',['Defense',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html',1,'gameplay::tactics::defense']]],
-  ['defense2',['Defense2',['../classgameplay_1_1tactics_1_1defense2_1_1_defense2.html',1,'gameplay::tactics::defense2']]],
+  ['defenseold',['DefenseOld',['../classgameplay_1_1tactics_1_1defense__old_1_1_defense_old.html',1,'gameplay::tactics::defense_old']]],
   ['defensiveforward',['DefensiveForward',['../classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward.html',1,'gameplay::tactics::defensive_forward']]],
   ['destination_5fshape',['destination_shape',['../classgameplay_1_1role__assignment_1_1_role_requirements.html#a0c144cebd3faf01d4d746beab154a8ec',1,'gameplay::role_assignment::RoleRequirements']]],
   ['direction',['direction',['../class_geometry2d_1_1_point.html#a6f666e729164f1aa25581b8e00fe8f43',1,'Geometry2d::Point']]],
