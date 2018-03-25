@@ -670,8 +670,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
-    float penaltyShortDist = 0; // default value?
-    float penaltyLongDist = 0; // default value?
+    float penaltyShortDist = 0; // default value
+    float penaltyLongDist = 0; // default value
     float displacement =
         Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
@@ -684,7 +684,6 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
     }
 
     for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
-        // cout << line.name() << endl;
         if (line.name() == "RightPenaltyStretch") {
             displacement = abs(line.p2().y() - line.p1().y());
             penaltyLongDist = displacement;
@@ -700,10 +699,6 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
     float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
     float fieldBorder = currentDimensions->Border();
-    // if (penaltyLongDist == 0 || penaltyShortDist == 0) {
-    //     cout << "CERO!" << endl;
-    // }
-
 
     if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
@@ -712,8 +707,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
             fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
             Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penaltyShortDist / 1000.0f,  // PenaltyS
-            penaltyLongDist / 1000.0f,
+            penaltyShortDist / 1000.0f,              // PenaltyShortDist
+            penaltyLongDist / 1000.0f,               // PenaltyLongDist
             center->radius() / 1000.0f + adj,        // CenterRadius
             (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
             displacement / 1000.0f,                  // GoalFlat
