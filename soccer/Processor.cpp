@@ -716,18 +716,12 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
 
         if (newDim != *currentDimensions) {
-            // Set the changed field dimensions to the current ones
-            cout << "Updating field geometry based off of vision packet."
-                 << endl;
             setFieldDimensions(newDim);
         }
     } else if (center != nullptr && thickness != 0) {
         Field_Dimensions newDim = Field_Dimensions::Default_Dimensions;
 
-        if (newDim != *currentDimensions) {
-            // Set the changed field dimensions to the current ones
-            cout << "Updating field geometry based off of vision packet."
-                 << endl;
+        if (newDim != *currentDimensions) {            
             setFieldDimensions(newDim);
         }
     } else {
@@ -937,6 +931,7 @@ void Processor::recalculateWorldToTeamTransform() {
 }
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
+    cout << "Updating field geometry based off of vision packet." << endl;
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
