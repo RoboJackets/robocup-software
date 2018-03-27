@@ -702,7 +702,9 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
+        cout << fieldSize.field_length() << endl;
         Field_Dimensions newDim = Field_Dimensions(
+
             fieldSize.field_length() / 1000.0f,
             fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
             fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
@@ -719,7 +721,20 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             setFieldDimensions(newDim);
         }
     } else if (center != nullptr && thickness != 0) {
-        Field_Dimensions newDim = Field_Dimensions::Default_Dimensions;
+        Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
+        
+        Field_Dimensions newDim = Field_Dimensions(
+            fieldSize.field_length() / 1000.0f,
+            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
+            Field_Dimensions::Default_Dimensions.GoalHeight(),
+            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
+            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
+            center->radius() / 1000.0f + adj,        // CenterRadius
+            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+            displacement / 1000.0f,                  // GoalFlat
+            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
+            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
 
         if (newDim != *currentDimensions) {            
             setFieldDimensions(newDim);
