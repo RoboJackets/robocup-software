@@ -74,10 +74,10 @@ class Defense(composite_behavior.CompositeBehavior):
             return False
 
         safe_to_clear = False
-        if (main.ball().pos.mag() < constants.Field.ArcRadius * 2 and
-                main.ball().vel.mag() < .75 and
-                not evaluation.ball.is_in_our_goalie_zone()):
-
+        if (abs(main.ball().pos.x) < constants.Field.PenaltyLongDist and 
+            main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and 
+            main.ball().vel.mag() < .75 and 
+            not evaluation.ball.is_in_our_goalie_zone()):
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
             if (defender1.robot != None and defender2.robot != None):
