@@ -702,7 +702,6 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
-        cout << fieldSize.field_length() << endl;
         Field_Dimensions newDim = Field_Dimensions(
 
             fieldSize.field_length() / 1000.0f,
