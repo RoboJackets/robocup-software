@@ -8,7 +8,7 @@ var searchData=
   ['path',['Path',['../class_planning_1_1_path.html',1,'Planning::Path'],['../class_our_robot.html#a530fd127fdbbfcc1ae33b7458a21f416',1,'OurRobot::path()']]],
   ['pathtargetcommand',['PathTargetCommand',['../struct_planning_1_1_path_target_command.html',1,'Planning']]],
   ['penalty',['Penalty',['../classgameplay_1_1tactics_1_1penalty_1_1_penalty.html',1,'gameplay::tactics::penalty']]],
-  ['penaltydist',['PenaltyDist',['../struct_field___dimensions.html#a2c845c24778ed0b1872ac9e9ccbd3bed',1,'Field_Dimensions']]],
+  ['penaltyshortdist',['PenaltyShortDist',['../struct_field___dimensions.html#ad6bd875fa2500890b4ea61bb6673745b',1,'Field_Dimensions']]],
   ['perpccw',['perpCCW',['../class_geometry2d_1_1_point.html#aef31af576301974dcd6c7125d3a178a1',1,'Geometry2d::Point']]],
   ['perpcw',['perpCW',['../class_geometry2d_1_1_point.html#ab5cf102aecd30b43de988ebc6e39f36c',1,'Geometry2d::Point']]],
   ['pid',['PID',['../struct_robot_config_1_1_p_i_d.html',1,'RobotConfig::PID'],['../class_pid.html',1,'Pid'],['../classgameplay_1_1plays_1_1tuning_1_1pid_1_1pid.html',1,'gameplay.plays.tuning.pid.pid']]],

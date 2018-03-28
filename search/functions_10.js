@@ -2,7 +2,7 @@ var searchData=
 [
   ['parallelgradient1dconfig',['ParallelGradient1DConfig',['../class_parallel_gradient1_d_config.html#a0e9bfedecd1b1634bacef33aa747e62e',1,'ParallelGradient1DConfig::ParallelGradient1DConfig()'],['../class_parallel_gradient1_d_config.html#a5a44719438b3eb9b5c191d361a1362d3',1,'ParallelGradient1DConfig::ParallelGradient1DConfig(std::vector&lt; Gradient1DConfig &gt; GA1DConfig, float xCombineThresh)']]],
   ['path',['path',['../class_our_robot.html#a530fd127fdbbfcc1ae33b7458a21f416',1,'OurRobot']]],
-  ['penaltydist',['PenaltyDist',['../struct_field___dimensions.html#a2c845c24778ed0b1872ac9e9ccbd3bed',1,'Field_Dimensions']]],
+  ['penaltyshortdist',['PenaltyShortDist',['../struct_field___dimensions.html#ad6bd875fa2500890b4ea61bb6673745b',1,'Field_Dimensions']]],
   ['perpccw',['perpCCW',['../class_geometry2d_1_1_point.html#aef31af576301974dcd6c7125d3a178a1',1,'Geometry2d::Point']]],
   ['perpcw',['perpCW',['../class_geometry2d_1_1_point.html#ab5cf102aecd30b43de988ebc6e39f36c',1,'Geometry2d::Point']]],
   ['pidtuner',['PidTuner',['../class_pid_tuner.html#a1edf021b14e973c96eb07e2ca4a2214d',1,'PidTuner']]],

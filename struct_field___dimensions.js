@@ -1,8 +1,7 @@
 var struct_field___dimensions =
 [
     [ "Field_Dimensions", "struct_field___dimensions.html#af48e550dfd32fef76b1324aeebcdf57e", null ],
-    [ "Field_Dimensions", "struct_field___dimensions.html#ad85026691b7e262d2ea81a6268396c93", null ],
-    [ "ArcRadius", "struct_field___dimensions.html#a04edbfbe829fee38d277cb422da39953", null ],
+    [ "Field_Dimensions", "struct_field___dimensions.html#ad5ab2531e89fdcdcf911c0b81f9a60b9", null ],
     [ "Border", "struct_field___dimensions.html#a9e766ee83c441ed38723a2f060f4ef1e", null ],
     [ "CenterDiameter", "struct_field___dimensions.html#a9e720b4ce8090b4c568b6259cc04dc7c", null ],
     [ "CenterPoint", "struct_field___dimensions.html#a4d18d719660b244182ee02d7b81488b1", null ],
@@ -23,8 +22,8 @@ var struct_field___dimensions =
     [ "OurGoalSegment", "struct_field___dimensions.html#a3726b9e0241a9a5d1960edbda0be233f", null ],
     [ "OurGoalZoneShape", "struct_field___dimensions.html#a312cfbbc07859edb6f5e06a2f761e35e", null ],
     [ "OurHalf", "struct_field___dimensions.html#abf6dd38eff2835fc9b1ce12c72a6ccf5", null ],
-    [ "PenaltyDiam", "struct_field___dimensions.html#ab5ad15c417a1cfc11680205aff819ce0", null ],
-    [ "PenaltyDist", "struct_field___dimensions.html#a2c845c24778ed0b1872ac9e9ccbd3bed", null ],
+    [ "PenaltyLongDist", "struct_field___dimensions.html#adf0a8ed3be7e05da6c7cdc87e8c5e314", null ],
+    [ "PenaltyShortDist", "struct_field___dimensions.html#ad6bd875fa2500890b4ea61bb6673745b", null ],
     [ "TheirGoalSegment", "struct_field___dimensions.html#a6ca7f7089a771dd9d677dc367b595188", null ],
     [ "TheirGoalZoneShape", "struct_field___dimensions.html#a6394dd2e1dc34e626e417a6572115462", null ],
     [ "TheirHalf", "struct_field___dimensions.html#a8fe1f3be0e6ffc27002f1da7ad52853e", null ],
