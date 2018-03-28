@@ -670,8 +670,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
-    float penaltyShortDist = 0; // default value
-    float penaltyLongDist = 0; // default value
+    float penaltyShortDist = 0;  // default value
+    float penaltyLongDist = 0;   // default value
     float displacement =
         Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
@@ -700,7 +700,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     float fieldBorder = currentDimensions->Border();
 
-    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr && thickness != 0) {
+    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
+        thickness != 0) {
         // Force a resize
         Field_Dimensions newDim = Field_Dimensions(
 
@@ -721,7 +722,7 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         }
     } else if (center != nullptr && thickness != 0) {
         Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
-        
+
         Field_Dimensions newDim = Field_Dimensions(
             fieldSize.field_length() / 1000.0f,
             fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
@@ -735,7 +736,7 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
 
-        if (newDim != *currentDimensions) {            
+        if (newDim != *currentDimensions) {
             setFieldDimensions(newDim);
         }
     } else {

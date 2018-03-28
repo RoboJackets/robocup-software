@@ -148,10 +148,9 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     const float shortDist = dimensions.PenaltyShortDist();
     const float longDist = dimensions.PenaltyLongDist();
 
-    auto ourGoalArea = make_shared<Polygon>(
-        vector<Point>{Point(-longDist / 2, 0), Point(longDist / 2, 0),
-                      Point(longDist / 2, shortDist), 
-                      Point(-longDist / 2, shortDist)});
+    auto ourGoalArea = make_shared<Polygon>(vector<Point>{
+        Point(-longDist / 2, 0), Point(longDist / 2, 0),
+        Point(longDist / 2, shortDist), Point(-longDist / 2, shortDist)});
     _ourGoalArea = make_shared<CompositeShape>();
 
     _ourGoalArea->add(ourGoalArea);
