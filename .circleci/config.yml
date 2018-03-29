@@ -1,0 +1,8 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/test
+    docker:
+      - image: alpine
+    steps:
+      - run: sh -c true
