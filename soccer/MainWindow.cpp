@@ -3,8 +3,8 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
+#include <joystick/Joystick.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
@@ -439,10 +439,9 @@ void MainWindow::updateViews() {
              i < liveFrame->debug_layers_size(); ++i) {
             const QString name =
                 QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled =
-                !std::any_of(defaultHiddenLayers.begin(),
-                             defaultHiddenLayers.end(),
-                             [&](QString string) { return string == name; });
+            bool enabled = !std::any_of(
+                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                [&](QString string) { return string == name; });
             addLayer(i, name, enabled);
         }
 
@@ -501,9 +500,11 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage).c_str());
+                              _processor->refereeModule()->stage)
+                              .c_str());
     _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command).c_str());
+                                _processor->refereeModule()->command)
+                                .c_str());
 
     // convert time left from ms to s and display it to two decimal places
     int timeSeconds =
@@ -593,8 +594,8 @@ void MainWindow::updateViews() {
             }
             statusWidget->setRobotModel(robotModel);
 
-// uncomment this #define to test the display of a variety of different errors
-// #define DEMO_ROBOT_STATUS
+            // uncomment this #define to test the display of a variety of
+            // different errors #define DEMO_ROBOT_STATUS
 
 #ifdef DEMO_ROBOT_STATUS
             // set board ID
@@ -1364,7 +1365,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction* single = nullptr, * notSingle = nullptr;
+    QAction *single = nullptr, *notSingle = nullptr;
     if (item) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");

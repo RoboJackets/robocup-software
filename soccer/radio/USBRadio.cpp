@@ -4,8 +4,8 @@
 #include <QMutexLocker>
 
 #include <Utils.hpp>
-#include "USBRadio.hpp"
 #include "Geometry2d/Util.hpp"
+#include "USBRadio.hpp"
 
 // Include this file for base station usb vendor/product ids
 #include "firmware-common/base/usb-interface.hpp"
@@ -152,8 +152,8 @@ void USBRadio::command(uint8_t cmd) {
 void USBRadio::write(uint8_t reg, uint8_t value) {
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                BaseControlCommand::RadioWriteRegister,
-                                value, reg, nullptr, 0, Control_Timeout)) {
+                                BaseControlCommand::RadioWriteRegister, value,
+                                reg, nullptr, 0, Control_Timeout)) {
         throw runtime_error("USBRadio::write control write failed");
     }
 }
@@ -162,8 +162,8 @@ uint8_t USBRadio::read(uint8_t reg) {
     uint8_t value = 0;
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                BaseControlCommand::RadioReadRegister, 0,
-                                reg, &value, 1, Control_Timeout)) {
+                                BaseControlCommand::RadioReadRegister, 0, reg,
+                                &value, 1, Control_Timeout)) {
         throw runtime_error("USBRadio::read control write failed");
     }
 

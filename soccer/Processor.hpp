@@ -6,16 +6,16 @@
 
 #include <vector>
 
-#include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QThread>
 
 #include <protobuf/LogFrame.pb.h>
-#include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <Logger.hpp>
+#include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
-#include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
 
 #include "firmware-common/rtp.hpp"
