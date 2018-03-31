@@ -18,7 +18,7 @@
 #include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
 
-#include "firmware-common/common2015/utils/rtp.hpp"
+#include "firmware-common/rtp.hpp"
 
 class Configuration;
 class RobotStatus;
@@ -185,16 +185,6 @@ public:
 
     void changeVisionChannel(int port);
 
-    void setRobotConfigs(std::vector<
-        std::pair<DebugCommunication::ConfigCommunication, float>> configs) {
-        _robotConfigs = std::move(configs);
-    }
-
-    void setRobotDebugResponses(
-        std::vector<DebugCommunication::DebugResponse> debugResponses) {
-        _robotDebugResponses = std::move(debugResponses);
-    }
-
     VisionChannel visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
@@ -283,11 +273,6 @@ private:
     // network
     QMutex _statusMutex;
     Status _status;
-
-    // ConfigCommunication Storage
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
-        _robotConfigs{};
-    std::vector<DebugCommunication::DebugResponse> _robotDebugResponses{};
 
     // modules
     std::shared_ptr<NewRefereeModule> _refereeModule;

@@ -9,8 +9,7 @@
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
-#include "firmware-common/common2015/utils/rtp.hpp"
-#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
+#include "firmware-common/rtp.hpp"
 
 class TestResultTab;
 class StripChart;
@@ -178,11 +177,6 @@ private Q_SLOTS:
     void on_fastForceStart_clicked();
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
-
-    // Robot Config Buttons
-    void on_robotConfigButton_clicked();
-
-    void on_debugResponseButton_clicked();
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now

@@ -27,7 +27,7 @@
 #include <QReadLocker>
 #include <QWriteLocker>
 
-#include "firmware-common/robot2015/cpu/status.h"
+#include "firmware-common/status.h"
 
 class SystemState;
 class RobotConfig;

@@ -8,9 +8,9 @@
 #include "Geometry2d/Util.hpp"
 
 // Include this file for base station usb vendor/product ids
-#include "firmware-common/base2015/usb-interface.hpp"
+#include "firmware-common/base/usb-interface.hpp"
 // included for kicer status enum
-#include "firmware-common/robot2015/cpu/status.h"
+#include "firmware-common/status.h"
 
 using namespace std;
 using namespace Packet;
@@ -59,8 +59,8 @@ bool USBRadio::open() {
     for (int i = 0; i < numDevices; ++i) {
         struct libusb_device_descriptor desc;
         int err = libusb_get_device_descriptor(devices[i], &desc);
-        if (err == 0 && desc.idVendor == RJ_BASE2015_VENDOR_ID &&
-            desc.idProduct == RJ_BASE2015_PRODUCT_ID) {
+        if (err == 0 && desc.idVendor == RJ_BASE_VENDOR_ID &&
+            desc.idProduct == RJ_BASE_PRODUCT_ID) {
             ++numRadios;
             int err = libusb_open(devices[i], &_device);
             if (err == 0) {
@@ -143,7 +143,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer) {
 void USBRadio::command(uint8_t cmd) {
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                Base2015ControlCommand::RadioStrobe, 0, cmd,
+                                BaseControlCommand::RadioStrobe, 0, cmd,
                                 nullptr, 0, Control_Timeout)) {
         throw runtime_error("USBRadio::command control write failed");
     }
@@ -152,7 +152,7 @@ void USBRadio::command(uint8_t cmd) {
 void USBRadio::write(uint8_t reg, uint8_t value) {
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                Base2015ControlCommand::RadioWriteRegister,
+                                BaseControlCommand::RadioWriteRegister,
                                 value, reg, nullptr, 0, Control_Timeout)) {
         throw runtime_error("USBRadio::write control write failed");
     }
@@ -162,7 +162,7 @@ uint8_t USBRadio::read(uint8_t reg) {
     uint8_t value = 0;
     if (libusb_control_transfer(_device,
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                                Base2015ControlCommand::RadioReadRegister, 0,
+                                BaseControlCommand::RadioReadRegister, 0,
                                 reg, &value, 1, Control_Timeout)) {
         throw runtime_error("USBRadio::read control write failed");
     }
@@ -234,64 +234,6 @@ void USBRadio::send(Packet::RadioTx& packet) {
             msg->uid = rtp::INVALID_ROBOT_UID;
         }
     }
-
-    // COMMENTED OUT CODE FOR DEBUG PACKETS.
-    //    int numRobotTXMessages = packet.robots_size();
-    //
-    //    for (int configStartIndex=0; configStartIndex<packet.configs_size();
-    //    configStartIndex+=rtp::ConfMessage::length) {
-    //        if (numRobotTXMessages<6) {
-    //            auto slot = numRobotTXMessages;
-    //            size_t offset =
-    //                    sizeof(rtp::Header) + slot *
-    //                    sizeof(rtp::RobotTxMessage);
-    //            rtp::RobotTxMessage* msg =
-    //                    (rtp::RobotTxMessage*)(forward_packet + offset);
-    //
-    //            msg->uid = rtp::ANY_ROBOT_UID;
-    //            msg->messageType = rtp::RobotTxMessage::ConfMessageType;
-    //
-    //            auto &confMessage = msg->message.confMessage;
-    //
-    //
-    //            auto numToCopy =
-    //            std::min(static_cast<int>(rtp::ConfMessage::length),
-    //            packet.configs_size()-configStartIndex);
-    //            for (int i=0; i<numToCopy; i++) {
-    //                const auto &config = packet.configs(i+configStartIndex);
-    //                auto key =
-    //                static_cast<DebugCommunication::ConfigCommunication>(config.key());
-    //                confMessage.keys[i] = key;
-    //                confMessage.values[i] =
-    //                DebugCommunication::configToValue(key, config.value());
-    //            }
-    //            numRobotTXMessages++;
-    //        }
-    //    }
-    //    {
-    //        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
-    //        current_receive_debug.clear();
-    //        for (auto debugMessages : packet.debug_communication()) {
-    //            current_receive_debug.push_back(static_cast<DebugCommunication::DebugResponse>(debugMessages.key()));
-    //        }
-    //    }
-    //    if (numRobotTXMessages<6) {
-    //        auto slot = numRobotTXMessages;
-    //        size_t offset =
-    //            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-    //        rtp::RobotTxMessage* msg =
-    //            (rtp::RobotTxMessage*)(forward_packet + offset);
-    //
-    //        msg->uid = rtp::ANY_ROBOT_UID;
-    //        msg->messageType = rtp::RobotTxMessage::DebugMessageType;
-    //
-    //        auto &debugMessage = msg->message.debugMessage;
-    //        std::copy_n(current_receive_debug.begin(),
-    //        std::min(current_receive_debug.size(), debugMessage.keys.size()),
-    //        debugMessage.keys.begin());
-    //
-    //        numRobotTXMessages++;
-    //    }
 
     // Send the forward packet
     int sent = 0;
@@ -374,21 +316,6 @@ void USBRadio::handleRxData(uint8_t* buf) {
         packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
     }
 
-    {
-        std::lock_guard<std::mutex> lock(current_receive_debug_mutex);
-        for (int index = 0; index < current_receive_debug.size(); ++index) {
-            auto debugResponse = current_receive_debug[index];
-            const auto& name =
-                DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse);
-            //            auto value = msg->debug_data[index];
-            //
-            //            auto packet_debug_response =
-            //            packet.add_debug_responses();
-            //            packet_debug_response->set_key(name);
-            //            packet_debug_response->set_value(DebugCommunication::debugResponseValueToFloat(debugResponse,
-            //            value));
-        }
-    }
     _reversePackets.push_back(packet);
 }
 
@@ -398,7 +325,7 @@ void USBRadio::channel(int n) {
     if (_device) {
         if (libusb_control_transfer(
                 _device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
-                Base2015ControlCommand::RadioSetChannel, n, 0, nullptr, 0,
+                BaseControlCommand::RadioSetChannel, n, 0, nullptr, 0,
                 Control_Timeout)) {
             throw runtime_error("USBRadio::channel control write failed");
         }
