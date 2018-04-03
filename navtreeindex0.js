@@ -141,7 +141,7 @@ var NAVTREEINDEX0 =
 "_composite_shape_8hpp_source.html":[17,0,0,1,2],
 "_configuration_8hpp_source.html":[17,0,1,10],
 "_constants_8hpp_source.html":[17,0,0,3],
-"_debug_communication_strings_8hpp_source.html":[17,0,0,0,1,0,0],
+"_debug_communication_strings_8hpp_source.html":[17,0,0,0,1],
 "_direct_target_path_planner_8hpp_source.html":[17,0,1,5,1],
 "_dynamic_obstacle_8hpp_source.html":[17,0,1,5,2],
 "_escape_obstacles_path_planner_8hpp_source.html":[17,0,1,5,3],

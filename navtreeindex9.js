@@ -1,9 +1,5 @@
 var NAVTREEINDEX9 =
 {
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a920a68121cec20447fcad9a1ebf6dc73":[16,0,3,15,10,0,11],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa62dd4780a99740c5801460c7d2f1d8d":[16,0,3,15,10,0,14],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa720efcd803f70960681f4ee2d44760e":[16,0,3,15,10,0,5],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aaa5e3d7ee452b920469232e29a7040bf":[16,0,3,15,10,0,9],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ab2d0327a2249af3897f28250884bd19f":[16,0,3,15,10,0,13],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ab6999a391a7e7436aa7a8e2c9a806e20":[16,0,3,15,10,0,15],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ace6a70fef0c41a8e5d366738f9eadaa5":[16,0,3,15,10,0,1],
@@ -249,5 +245,9 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#a83b5b86b587a878c58ace9aa0bce8b08":[16,0,3,17,8,0,5],
 "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#a8bea86c4fbcfad4f172223be8ee165d9":[16,0,3,17,8,0,2],
 "classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#a97a45f08cfbcf8266d20487be200cf48":[16,0,3,17,8,0,6],
-"classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#ae0b26f812ecb4b2504d00b9f6298837e":[16,0,3,17,8,0,3]
+"classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#ae0b26f812ecb4b2504d00b9f6298837e":[16,0,3,17,8,0,3],
+"classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#af782285d8cd213db6a15ed37397da33d":[16,0,3,17,8,0,4],
+"classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html":[16,0,3,17,8,0,0],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html":[16,0,3,17,9,0,0],
+"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a0c7ec850149c703b143182b3c9d42b4f":[16,0,3,17,9,0,0,13]
 };

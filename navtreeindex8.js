@@ -1,9 +1,5 @@
 var NAVTREEINDEX8 =
 {
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a312b9ab19e7039199e4bda4ac07dbdf7":[16,0,3,10,1,16],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a3f6b25390442b1f2c0a7ddc8492f2772":[16,0,3,10,1,9],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a40cbd4dc9ecf861bdc3951c280341d21":[16,0,3,10,1,15],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4376adc776c5bcf14d5da408f3bdd397":[16,0,3,10,1,12],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a4484d4097cee6c2e5237c4e79cc5f0a3":[16,0,3,10,1,10],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a4a4ca8253d5d8a05adf6b861f7d15e61":[16,0,3,10,1,0],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a56e6cc9dd545825d4de657f21f8868c0":[16,0,3,10,1,6],
@@ -249,5 +245,9 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4aacf451dae3ec241678787185e8f0b4":[16,0,3,15,10,0,19],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4c5b32b52b581b86eef0ec172427823a":[16,0,3,15,10,0,12],
 "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a4dfcf7e05241277f601ea2ed60d7c573":[16,0,3,15,10,0,6],
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a7a1c7f2698aec4866db7c76dd9c585bb":[16,0,3,15,10,0,3]
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a7a1c7f2698aec4866db7c76dd9c585bb":[16,0,3,15,10,0,3],
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#a920a68121cec20447fcad9a1ebf6dc73":[16,0,3,15,10,0,11],
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa62dd4780a99740c5801460c7d2f1d8d":[16,0,3,15,10,0,14],
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aa720efcd803f70960681f4ee2d44760e":[16,0,3,15,10,0,5],
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#aaa5e3d7ee452b920469232e29a7040bf":[16,0,3,15,10,0,9]
 };

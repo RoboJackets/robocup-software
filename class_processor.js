@@ -43,8 +43,6 @@ var class_processor =
     [ "refereeModule", "class_processor.html#ae7b2ff924f5b09cddcd120fb0e64029d", null ],
     [ "run", "class_processor.html#ae54abd5b70fd1c3d0be5af15e59e8774", null ],
     [ "setFieldDimensions", "class_processor.html#ac7a0fb93ef1c11e46c8f6313c2317e9a", null ],
-    [ "setRobotConfigs", "class_processor.html#aea944a57d9ab848969c9135dfb35aa23", null ],
-    [ "setRobotDebugResponses", "class_processor.html#adad23cef1029f307852e15096e3cb360", null ],
     [ "setupJoysticks", "class_processor.html#a70067d9c09123080539a8834219c1eac", null ],
     [ "setUseFieldOrientedManualDrive", "class_processor.html#a2c61fc87a5e9dcb24df4b64d5a701a92", null ],
     [ "simulation", "class_processor.html#ab8afad1dbae3cef440f3d0774ab1f905", null ],
