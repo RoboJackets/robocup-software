@@ -47,7 +47,7 @@ class TestCapture(play.Play):
 
     def on_enter_setup(self):
         m = skills.move.Move()
-        m.pos = robocup.Point(0, 1.1)
+        m.pos = robocup.Point(0, 1.5)
         self.add_subbehavior(m, 'move', required=True)
 
     def on_exit_setup(self):
