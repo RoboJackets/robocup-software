@@ -144,7 +144,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_world_vel(aproach)
 
     def on_enter_delay(self):
-        self.start_time = 0
+        self.start_time = time.time()
 
     def role_requirements(self):
         reqs = super().role_requirements()
