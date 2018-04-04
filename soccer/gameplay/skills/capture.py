@@ -52,11 +52,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             ) or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball(
             ).valid, 'dist to ball < threshold')
 
-        # self.add_transition(
-        #     Capture.State.fine_approach,
-        #     behavior.Behavior.State.completed, lambda: self.bot_near_ball(
-        #         constants.Robot.Radius + constants.Ball.Radius), 'has ball')
-
         self.add_transition(
             Capture.State.fine_approach,
             Capture.State.delay, lambda: self.bot_near_ball(
