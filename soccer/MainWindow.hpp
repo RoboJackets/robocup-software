@@ -8,9 +8,8 @@
 #include <FieldView.hpp>
 
 #include "Processor.hpp"
+#include "firmware-common/rtp.hpp"
 #include "ui_MainWindow.h"
-#include "firmware-common/common2015/utils/rtp.hpp"
-#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
 
 class TestResultTab;
 class StripChart;
@@ -22,7 +21,7 @@ namespace {
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
-};
+};  // namespace
 
 enum Side { Yellow, Blue };
 /**
@@ -93,6 +92,7 @@ private Q_SLOTS:
     void on_goalieID_currentIndexChanged(int value);
 
     void on_actionUse_Field_Oriented_Controls_toggled(bool value);
+    void on_actionUse_Multiple_Joysticks_toggled(bool value);
 
     void on_actionUse_External_Referee_toggled(bool value);
 
@@ -130,6 +130,7 @@ private Q_SLOTS:
     void on_actionDarkStyle_triggered();
     void on_actionDarculizedStyle_triggered();
     void on_action1337h4x0rStyle_triggered();
+    void on_actionNyanStyle_triggered();
 
     /// Manual control commands
     void on_actionDampedRotation_toggled(bool value);
@@ -178,11 +179,6 @@ private Q_SLOTS:
     void on_fastForceStart_clicked();
     void on_fastKickoffBlue_clicked();
     void on_fastKickoffYellow_clicked();
-
-    // Robot Config Buttons
-    void on_robotConfigButton_clicked();
-
-    void on_debugResponseButton_clicked();
 
 Q_SIGNALS:
     // signal used to let widgets that we're viewing a different log frame now

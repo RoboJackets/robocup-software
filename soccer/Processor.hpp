@@ -6,19 +6,19 @@
 
 #include <vector>
 
-#include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QThread>
 
 #include <protobuf/LogFrame.pb.h>
-#include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <Logger.hpp>
+#include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
-#include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
 
-#include "firmware-common/common2015/utils/rtp.hpp"
+#include "firmware-common/rtp.hpp"
 
 class Configuration;
 class RobotStatus;
@@ -98,7 +98,9 @@ public:
 
     bool autonomous();
     bool joystickValid() const;
-    JoystickControlValues getJoystickControlValues();
+
+    JoystickControlValues getJoystickControlValue(Joystick& joy);
+    std::vector<JoystickControlValues> getJoystickControlValues();
 
     void externalReferee(bool value) {
         _refereeModule->useExternalReferee(value);
@@ -110,6 +112,9 @@ public:
 
     void manualID(int value);
     int manualID() const { return _manualID; }
+
+    void multipleManual(bool value);
+    bool multipleManual() const { return _multipleManual; }
 
     bool useFieldOrientedManualDrive() const {
         return _useFieldOrientedManualDrive;
@@ -135,6 +140,8 @@ public:
     void dampedTranslation(bool value);
 
     void joystickKickOnBreakBeam(bool value);
+    void setupJoysticks();
+    std::vector<int> getJoystickRobotIds();
 
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
@@ -177,16 +184,6 @@ public:
     Radio* radio() { return _radio; }
 
     void changeVisionChannel(int port);
-
-    void setRobotConfigs(std::vector<
-        std::pair<DebugCommunication::ConfigCommunication, float>> configs) {
-        _robotConfigs = std::move(configs);
-    }
-
-    void setRobotDebugResponses(
-        std::vector<DebugCommunication::DebugResponse> debugResponses) {
-        _robotDebugResponses = std::move(debugResponses);
-    }
 
     VisionChannel visionChannel() { return _visionChannel; }
 
@@ -261,6 +258,8 @@ private:
 
     // Board ID of the robot to manually control or -1 if none
     int _manualID;
+    // Use multiple joysticks at once
+    bool _multipleManual;
 
     bool _defendPlusX;
 
@@ -275,18 +274,13 @@ private:
     QMutex _statusMutex;
     Status _status;
 
-    // ConfigCommunication Storage
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
-        _robotConfigs{};
-    std::vector<DebugCommunication::DebugResponse> _robotDebugResponses{};
-
     // modules
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
     std::shared_ptr<BallTracker> _ballTracker;
 
-    // mixes values from all joysticks to control the single manual robot
+    // joystick control
     std::vector<Joystick*> _joysticks;
 
     // joystick damping

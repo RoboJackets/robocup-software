@@ -4,30 +4,30 @@
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
-#include <planning/RobotConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
-#include "planning/RotationCommand.hpp"
+#include <planning/RobotConstraints.hpp>
 #include "planning/DynamicObstacle.hpp"
+#include "planning/RotationCommand.hpp"
 
+#include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
-#include <protobuf/Control.pb.h>
 #include <Utils.hpp>
 
+#include <stdint.h>
+#include <Eigen/Dense>
+#include <QColor>
 #include <array>
 #include <boost/circular_buffer.hpp>
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <Eigen/Dense>
-#include <QColor>
-#include <stdint.h>
 #include <vector>
 
-#include <QReadWriteLock>
 #include <QReadLocker>
+#include <QReadWriteLock>
 #include <QWriteLocker>
 
-#include "firmware-common/robot2015/cpu/status.h"
+#include "firmware-common/status.h"
 
 class SystemState;
 class RobotConfig;
@@ -38,7 +38,7 @@ class RobotFilter;
 namespace Packet {
 class DebugText;
 class LogFrame_Robot;
-};
+};  // namespace Packet
 
 namespace Gameplay {
 class GameplayModule;
@@ -386,6 +386,8 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
+    Geometry2d::Point mouthCenterPos() const;
+
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
      * checks
@@ -399,6 +401,7 @@ public:
 
     // lower level status checks
     bool hasBall() const;
+    bool hasBallRaw() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
     float kickerVoltage() const;
@@ -407,6 +410,9 @@ public:
     void setRadioRx(Packet::RadioRx packet) {
         QWriteLocker locker(&radioRxMutex);
         _radioRx = packet;
+        if (hasBallRaw()) {
+            _lastBallSense = RJ::now();
+        }
     }
 
     Packet::RadioRx radioRx() const {
@@ -546,6 +552,9 @@ protected:
     friend class MotionControl;
 
 private:
+    RJ::Time _lastBallSense;
+    const RJ::Seconds _lostBallDuration = RJ::Seconds(0.1);
+
     mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);

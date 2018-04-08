@@ -17,7 +17,7 @@ InterpolatedPath::InterpolatedPath(Point p0) {
 
 InterpolatedPath::InterpolatedPath(Point p0, Point p1) {
     waypoints.emplace_back(MotionInstant(p0, Point()), 0ms);
-    waypoints.emplace_back(MotionInstant(p1, Point()), 1s);
+    waypoints.emplace_back(MotionInstant(p1, Point()), 0ms);
 }
 
 float InterpolatedPath::length(unsigned int start) const {
@@ -193,11 +193,15 @@ void InterpolatedPath::draw(SystemState* const state,
     }
 }
 
-boost::optional<RobotInstant> InterpolatedPath::evaluate(RJ::Seconds t) const {
+boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
-        debugThrow(
-            invalid_argument("A time less than 0 was entered for time t."));
+        return RobotInstant(waypoints.front().instant);
     }
+    //    if (t < RJ::Seconds::zero()) {
+    //        debugThrow(
+    //            invalid_argument("A time less than 0 was entered for time t.
+    //            t=" + to_string(t)));
+    //    }
     /*
     float linearPos;
     float linearSpeed;
@@ -296,7 +300,11 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
         return this->clone();
     }
 
-    InterpolatedPath* subpath = new InterpolatedPath();
+    endTime = std::min(endTime, getDuration());
+
+    auto subpath = make_unique<InterpolatedPath>();
+
+    subpath->setStartTime(this->startTime() + startTime);
 
     // Bound the endTime to a reasonable time.
     endTime = min(endTime, getDuration());
@@ -359,7 +367,14 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
     subpath->waypoints.emplace_back(MotionInstant(endPos, vf),
                                     endTime - startTime);
 
-    return unique_ptr<Path>(subpath);
+    debugThrowIf(
+        to_string(subpath->getDuration()) +
+            to_string(std::min(getDuration() - startTime, endTime - startTime)),
+        (subpath->getDuration() -
+         std::min(getDuration() - startTime, endTime - startTime)).count() >
+            0.00001);
+
+    return std::move(subpath);
 }
 
 unique_ptr<Path> InterpolatedPath::clone() const {
@@ -369,13 +384,4 @@ unique_ptr<Path> InterpolatedPath::clone() const {
     return std::unique_ptr<Path>(cp);
 }
 
-void InterpolatedPath::slow(float multiplier, RJ::Seconds timeInto) {
-    for (auto& waypoint : waypoints) {
-        waypoint.vel() /= multiplier;
-        waypoint.time *= multiplier;
-    }
-    RJ::Seconds newTimeInto = timeInto * multiplier;
-    RJ::Time now = startTime() + timeInto;
-    setStartTime(now - newTimeInto);
-}
 }  // namespace Planning

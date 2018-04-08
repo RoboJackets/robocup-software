@@ -194,6 +194,10 @@ void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
     self->rotate(*origin, angle);
 }
 
+void Point_rotate_origin(Geometry2d::Point* self, float angle) {
+    self->rotate(angle);
+}
+
 void CompositeShape_add_shape(Geometry2d::CompositeShape* self,
                               Geometry2d::Shape* shape) {
     if (shape == nullptr) throw NullArgumentException("shape");
@@ -646,6 +650,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__repr__", &Point_repr)
         .def("normalized", &Geometry2d::Point::normalized, Point_overloads())
         .def("rotate", &Point_rotate)
+        .def("rotate_origin", &Point_rotate_origin)
         .def(self * float())
         .def(self / float())
         .def("perp_ccw", &Geometry2d::Point::perpCCW)
@@ -655,6 +660,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("near_point", &Geometry2d::Point::nearPoint)
         .def("dist_to", &Geometry2d::Point::distTo)
         .def("direction", &Geometry2d::Point::direction)
+        .def("angle_between", &Geometry2d::Point::angleBetween)
         .def("nearly_equals", &Geometry2d::Point::nearlyEquals)
         .staticmethod("direction");
 
@@ -794,6 +800,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_avoid_opponents", &OurRobot_set_avoid_opponents)
         .def("set_dribble_speed", &OurRobot::dribble)
         .def("has_ball", &OurRobot::hasBall)
+        .def("has_ball_raw", &OurRobot::hasBallRaw)
         .def("last_kick_time", &OurRobot::lastKickTime)
         .def("just_kicked", &OurRobot::justKicked)
         .def("has_chipper", &OurRobot::chipper_available)
@@ -863,9 +870,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("GoalWidth", &Field_Dimensions::GoalWidth)
         .add_property("GoalDepth", &Field_Dimensions::GoalDepth)
         .add_property("GoalHeight", &Field_Dimensions::GoalHeight)
-        .add_property("PenaltyDist", &Field_Dimensions::PenaltyDist)
-        .add_property("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
-        .add_property("ArcRadius", &Field_Dimensions::ArcRadius)
+        .add_property("PenaltyShortDist", &Field_Dimensions::PenaltyShortDist)
+        .add_property("PenaltyLongDist", &Field_Dimensions::PenaltyLongDist)
         .add_property("CenterRadius", &Field_Dimensions::CenterRadius)
         .add_property("CenterDiameter", &Field_Dimensions::CenterDiameter)
         .add_property("GoalFlat", &Field_Dimensions::GoalFlat)
@@ -884,7 +890,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("SingleFieldDimensions",
                       &Field_Dimensions::Single_Field_Dimensions)
         .def_readonly("DoubleFieldDimensions",
-                      &Field_Dimensions::Double_Field_Dimensions);
+                      &Field_Dimensions::Double_Field_Dimensions)
+        .def_readonly("CurrentDimensions",
+                      &Field_Dimensions::Current_Dimensions);
 
     class_<std::vector<Geometry2d::Line>>("vector_Line")
         .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());

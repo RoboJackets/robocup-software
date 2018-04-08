@@ -32,10 +32,9 @@ class TrianglePass(play.Play):
         self.add_transition(behavior.Behavior.State.start,
                             TrianglePass.State.setup, lambda: True,
                             'immediately')
-        self.add_transition(TrianglePass.State.setup,
-                            TrianglePass.State.passing,
-                            lambda: self.all_subbehaviors_completed(),
-                            'all subbehaviors completed')
+        self.add_transition(
+            TrianglePass.State.setup, TrianglePass.State.passing, lambda: self.
+            all_subbehaviors_completed(), 'all subbehaviors completed')
 
         self.triangle_points = [
             robocup.Point(0, constants.Field.Length / 2.0),

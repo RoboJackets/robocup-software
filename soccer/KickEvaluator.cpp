@@ -96,9 +96,8 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         // If robot is past target, only use the chance at the target segment
         if (distPastTarget > 0 && fabs(get<1>(loc)) < M_PI / 2) {
             // Evaluate a normal distribution at dist away and scale
-            float stdev2 = pow(*robot_std_dev, 2);
             botVertScales.push_back(
-                fast_exp(-0.5 * pow(distPastTarget, 2) / stdev2));
+                1 - erf(distPastTarget / (*robot_std_dev * sqrt(2))));
         } else {
             botVertScales.push_back(1);
         }
@@ -114,10 +113,10 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     // No opponent robots on the field
     if (botMeans.size() == 0) {
         // Push it off to the side
-        botMeans.push_back(3);
+        botMeans.push_back(4);
         // Must be non-zero as 1 / botStDev is used
         botStDevs.push_back(0.1);
-        botVertScales.push_back(0.01);
+        botVertScales.push_back(0.001);
 
         // Center will always be the best target X with no robots
         return pair<Point, float>(center, get<0>(keFunc(0)));
@@ -160,7 +159,8 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     // Angle in reference to the field
     float realMaxAngle = maxX + (center - origin).angle();
-    Line bestKickLine(origin, Point{cos(realMaxAngle), sin(realMaxAngle)});
+    Line bestKickLine(origin,
+                      origin + Point{cos(realMaxAngle), sin(realMaxAngle)});
 
     // Return point on target segment and chance
     return pair<Point, float>(target.nearestPoint(bestKickLine), maxChance);
@@ -265,7 +265,7 @@ float KickEvaluator::get_target_angle(const Point origin,
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
-    return abs(left.angle() - right.angle());
+    return abs(left.angleBetween(right));
 }
 
 vector<Robot*> KickEvaluator::get_valid_robots() {
@@ -293,9 +293,9 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
                                                  const Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
-    float angle = obstacleDir.angle() - targetDir.angle();
 
-    return make_tuple(obstacleDir.mag(), fixAngleRadians(angle));
+    return make_tuple(obstacleDir.mag(),
+                      fixAngleRadians(targetDir.angleBetween(obstacleDir)));
 }
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(

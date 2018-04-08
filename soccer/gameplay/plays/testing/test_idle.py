@@ -13,9 +13,10 @@ class TestIdle(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        self.add_subbehavior(tactics.stopped.circle_near_ball.CircleNearBall(),
-                             name='circle',
-                             required=True)
+        self.add_subbehavior(
+            tactics.stopped.circle_near_ball.CircleNearBall(),
+            name='circle',
+            required=True)
 
     def on_exit_running(self):
         self.remove_subbehavior('circle')
