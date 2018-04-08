@@ -8,7 +8,7 @@
 #include "Radio.hpp"
 
 // Included for packet layout
-#include "firmware-common/rtp.hpp"
+#include "rc-fshare/rtp.hpp"
 
 /**
  * @brief Radio IO with real robots

@@ -18,7 +18,7 @@
 #include <modeling/RobotFilter.hpp>
 #include "VisionReceiver.hpp"
 
-#include "firmware-common/rtp.hpp"
+#include "rc-fshare/rtp.hpp"
 
 class Configuration;
 class RobotStatus;

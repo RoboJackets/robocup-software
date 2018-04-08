@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project("GT RoboJackets RoboCup")
 
+
 # include cmake files in the 'cmake folder'
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -125,7 +126,7 @@ if(NOT STATIC_ANALYSIS)
 endif()
 
 # run all the other CMakeLists files
-add_subdirectory(common)
 add_subdirectory(external)
+add_subdirectory(common)
 add_subdirectory(soccer)
 add_subdirectory(logging)

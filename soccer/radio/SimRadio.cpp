@@ -8,7 +8,7 @@
 #include <Utils.hpp>
 #include <stdexcept>
 
-#include "firmware-common/status.h"
+#include "status.h"
 
 using namespace std;
 using namespace Packet;
