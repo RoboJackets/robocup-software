@@ -25,11 +25,8 @@ var hierarchy =
     [ "Configurable", "class_configurable.html", [
       [ "ConfigurableImpl< T >", "class_configurable_impl.html", null ]
     ] ],
-    [ "rtp::ConfMessage", "structrtp_1_1_conf_message.html", null ],
     [ "Planning::ConstPathIterator", "class_planning_1_1_const_path_iterator.html", null ],
-    [ "rtp::ControlMessage", "structrtp_1_1_control_message.html", null ],
     [ "Planning::CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", null ],
-    [ "rtp::DebugMessage", "structrtp_1_1_debug_message.html", null ],
     [ "gameplay.constants.Robot.Dribbler", "classgameplay_1_1constants_1_1_robot_1_1_dribbler.html", null ],
     [ "RobotConfig::Dribbler", "struct_robot_config_1_1_dribbler.html", null ],
     [ "Planning::DynamicObstacle", "class_planning_1_1_dynamic_obstacle.html", null ],
@@ -88,7 +85,6 @@ var hierarchy =
     [ "GameState", "class_game_state.html", null ],
     [ "Gradient1DConfig", "class_gradient1_d_config.html", null ],
     [ "GradientAscent1D", "class_gradient_ascent1_d.html", null ],
-    [ "rtp::Header", "structrtp_1_1_header.html", null ],
     [ "iterator", null, [
       [ "ExceptionIterator< T >", "class_exception_iterator.html", null ]
     ] ],
@@ -126,7 +122,6 @@ var hierarchy =
         [ "SpaceNavJoystick", "class_space_nav_joystick.html", null ]
       ] ]
     ] ],
-    [ "rtp::Packet", "classrtp_1_1_packet.html", null ],
     [ "ParallelGradient1DConfig", "class_parallel_gradient1_d_config.html", null ],
     [ "ParallelGradientAscent1D", "class_parallel_gradient_ascent1_d.html", null ],
     [ "Planning::Path", "class_planning_1_1_path.html", [
@@ -136,8 +131,6 @@ var hierarchy =
       [ "Planning::TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", null ]
     ] ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
-    [ "Pid", "class_pid.html", null ],
-    [ "PidTuner", "class_pid_tuner.html", null ],
     [ "Planning::PlanRequest", "struct_planning_1_1_plan_request.html", null ],
     [ "Play", null, [
       [ "binary_clock.BinaryClock", "classbinary__clock_1_1_binary_clock.html", null ],
@@ -196,10 +189,6 @@ var hierarchy =
       ] ]
     ] ],
     [ "RobotStatus", "class_robot_status.html", null ],
-    [ "rtp::RobotStatusMessage", "structrtp_1_1_robot_status_message.html", null ],
-    [ "rtp::RobotTxMessage", "structrtp_1_1_robot_tx_message.html", null ],
-    [ "RobotTxMessages", "union_robot_tx_messages.html", null ],
-    [ "rtp::RobotTxMessage::RobotTxMessages", "unionrtp_1_1_robot_tx_message_1_1_robot_tx_messages.html", null ],
     [ "gameplay.role_assignment.RoleRequirements", "classgameplay_1_1role__assignment_1_1_role_requirements.html", null ],
     [ "Planning::RotationCommand", "struct_planning_1_1_rotation_command.html", [
       [ "Planning::EmptyAngleCommand", "struct_planning_1_1_empty_angle_command.html", null ],

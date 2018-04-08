@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['usbradio',['USBRadio',['../class_u_s_b_radio.html',1,'']]]
+  ['visionpacket',['VisionPacket',['../class_vision_packet.html',1,'']]],
+  ['visionreceiver',['VisionReceiver',['../class_vision_receiver.html',1,'']]]
 ];

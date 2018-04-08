@@ -24,7 +24,6 @@ var searchData=
   ['approachopponent',['approachOpponent',['../class_our_robot.html#ad73346d6fda1ae23f0a234542ae61e2a',1,'OurRobot::approachOpponent(unsigned shell_id) const'],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
   ['arc',['Arc',['../class_geometry2d_1_1_arc.html',1,'Geometry2d']]],
   ['area_5fmarking',['area_marking',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html#aff106f198c70a1bfeebc810caa685964',1,'gameplay::tactics::positions::defender::Defender::State']]],
-  ['assign',['assign',['../classrtp_1_1_packet.html#a23de4f51fe48e6d30085a9c9c3647331',1,'rtp::Packet']]],
   ['assign_5fhandlers_5fto_5fthreats',['assign_handlers_to_threats',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html#a9ccbc17224a887f0b3ed0f586297ac26',1,'gameplay::tactics::defense::Defense']]],
   ['assign_5froles',['assign_roles',['../classgameplay_1_1behavior_1_1_behavior.html#afd52eaedcc866b0b97b3716248a38168',1,'gameplay::behavior::Behavior']]],
   ['autoname',['AutoName',['../class_auto_name.html',1,'']]],

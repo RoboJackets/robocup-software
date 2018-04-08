@@ -398,15 +398,6 @@ var annotated_dup =
       [ "TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", "class_planning_1_1_tuning_path_planner" ],
       [ "WorldVelTargetCommand", "struct_planning_1_1_world_vel_target_command.html", "struct_planning_1_1_world_vel_target_command" ]
     ] ],
-    [ "rtp", null, [
-      [ "ConfMessage", "structrtp_1_1_conf_message.html", "structrtp_1_1_conf_message" ],
-      [ "ControlMessage", "structrtp_1_1_control_message.html", "structrtp_1_1_control_message" ],
-      [ "DebugMessage", "structrtp_1_1_debug_message.html", "structrtp_1_1_debug_message" ],
-      [ "Header", "structrtp_1_1_header.html", "structrtp_1_1_header" ],
-      [ "Packet", "classrtp_1_1_packet.html", "classrtp_1_1_packet" ],
-      [ "RobotStatusMessage", "structrtp_1_1_robot_status_message.html", "structrtp_1_1_robot_status_message" ],
-      [ "RobotTxMessage", "structrtp_1_1_robot_tx_message.html", "structrtp_1_1_robot_tx_message" ]
-    ] ],
     [ "test_ball", null, [
       [ "Moc_Ball", "classtest__ball_1_1_moc___ball.html", "classtest__ball_1_1_moc___ball" ],
       [ "TestBall", "classtest__ball_1_1_test_ball.html", "classtest__ball_1_1_test_ball" ]
@@ -481,8 +472,6 @@ var annotated_dup =
     [ "OurRobot", "class_our_robot.html", "class_our_robot" ],
     [ "ParallelGradient1DConfig", "class_parallel_gradient1_d_config.html", "class_parallel_gradient1_d_config" ],
     [ "ParallelGradientAscent1D", "class_parallel_gradient_ascent1_d.html", "class_parallel_gradient_ascent1_d" ],
-    [ "Pid", "class_pid.html", "class_pid" ],
-    [ "PidTuner", "class_pid_tuner.html", "class_pid_tuner" ],
     [ "Processor", "class_processor.html", "class_processor" ],
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
     [ "Radio", "class_radio.html", "class_radio" ],
@@ -495,7 +484,6 @@ var annotated_dup =
     [ "RobotPose", "class_robot_pose.html", "class_robot_pose" ],
     [ "RobotStatus", "class_robot_status.html", "class_robot_status" ],
     [ "RobotStatusWidget", "class_robot_status_widget.html", "class_robot_status_widget" ],
-    [ "RobotTxMessages", "union_robot_tx_messages.html", "union_robot_tx_messages" ],
     [ "RobotWidget", "class_robot_widget.html", "class_robot_widget" ],
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],

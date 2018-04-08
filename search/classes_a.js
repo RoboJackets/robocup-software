@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['jitterer',['Jitterer',['../classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html',1,'gameplay::plays::tuning::test_jittery_motion']]],
-  ['joystick',['Joystick',['../class_joystick.html',1,'']]],
-  ['joystickcontrolvalues',['JoystickControlValues',['../struct_joystick_control_values.html',1,'']]]
+  ['kicker',['Kicker',['../struct_robot_config_1_1_kicker.html',1,'RobotConfig']]],
+  ['kickevaluator',['KickEvaluator',['../class_kick_evaluator.html',1,'']]],
+  ['kickgently',['KickGently',['../classkick__gently_1_1_kick_gently.html',1,'kick_gently']]],
+  ['kickpenalty',['KickPenalty',['../classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html',1,'gameplay::plays::restarts::kick_penalty']]]
 ];
