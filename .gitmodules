@@ -18,4 +18,4 @@
 	url = https://github.com/RoboJackets/grSim
 [submodule "external/robocup-fshare"]
 	path = external/robocup-fshare
-	url = https://github.com/jpfeltracco/robocup-fshare
+	url = https://github.com/robojackets/robocup-fshare
