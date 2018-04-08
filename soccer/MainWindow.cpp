@@ -803,7 +803,7 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if(_processor->gameplayModule()->checkPlayStatus()) {
+    if(_processor->gameplayModule()->checkPlaybookStatus()) {
       playIndicatorStatus(false);
     }
 

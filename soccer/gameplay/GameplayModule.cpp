@@ -1,4 +1,3 @@
-
 #include <gameplay/GameplayModule.hpp>
 #include <Constants.hpp>
 #include <planning/MotionInstant.hpp>
@@ -258,7 +257,7 @@ void Gameplay::GameplayModule::clearPlays() {
     PyGILState_Release(state);
 }
 
-bool Gameplay::GameplayModule::checkPlayStatus() {
+bool Gameplay::GameplayModule::checkPlaybookStatus() {
   PyGILState_STATE state = PyGILState_Ensure();
   static int prevStatus = extract<int>(getMainModule().attr("numEnablePlays")());
   bool static change = false;

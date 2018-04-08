@@ -66,7 +66,7 @@ public:
     void savePlaybook(const std::string& playbookFile, bool isAbsolute = false);
 
     void clearPlays();
-    bool checkPlayStatus();
+    bool checkPlaybookStatus();
 
     void goalieID(int value);
     int goalieID() { return _goalieID; }
