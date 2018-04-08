@@ -258,18 +258,19 @@ void Gameplay::GameplayModule::clearPlays() {
 }
 
 bool Gameplay::GameplayModule::checkPlaybookStatus() {
-  PyGILState_STATE state = PyGILState_Ensure();
-  static int prevStatus = extract<int>(getMainModule().attr("numEnablePlays")());
-  bool static change = false;
-  int status = extract<int>(getMainModule().attr("numEnablePlays")());
-  if (status == 0 ) {
-    change = false;
-  } else if (status != prevStatus) {
-    change = (abs(prevStatus - status) == 1);
-  }
-  prevStatus  = status;
-  PyGILState_Release(state);
-  return change;
+    PyGILState_STATE state = PyGILState_Ensure();
+    static int prevStatus =
+        extract<int>(getMainModule().attr("numEnablePlays")());
+    bool static change = false;
+    int status = extract<int>(getMainModule().attr("numEnablePlays")());
+    if (status == 0) {
+        change = false;
+    } else if (status != prevStatus) {
+        change = (abs(prevStatus - status) == 1);
+    }
+    prevStatus = status;
+    PyGILState_Release(state);
+    return change;
 }
 
 void Gameplay::GameplayModule::goalieID(int value) {

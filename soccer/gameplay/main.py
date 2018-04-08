@@ -50,8 +50,9 @@ def init(log_errors=True):
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
         # the top-level folders we care about watching
-        autoloadables = ['plays', 'skills', 'tactics', 'evaluation',
-                         'visualization']
+        autoloadables = [
+            'plays', 'skills', 'tactics', 'evaluation', 'visualization'
+        ]
 
         # Don't load if we aren't a special module or if the filename is hidden
         if module_path[0] in autoloadables and module_path[-1][0] != '.':
@@ -74,12 +75,15 @@ def init(log_errors=True):
                     try:
                         play_class = class_import.find_subclasses(module,
                                                                   play.Play)[0]
-                        _play_registry.insert(module_path[1:], play_class)  # note: skipping index zero of module_path cuts off the 'plays' part
+                        _play_registry.insert(
+                            module_path[1:], play_class
+                        )  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
                         # FIXME: instead, we should unload the module and just log a warning
                         raise Exception(
-                            "Error: python files within the plays directory must contain a subclass of play.Play")
+                            "Error: python files within the plays directory must contain a subclass of play.Play"
+                        )
             elif event_type == 'modified':
                 try:
                     # reload the module
@@ -154,25 +158,29 @@ def init(log_errors=True):
 #isAbsolute should be passed as True if the file_name is an absolute path
 def load_playbook(file_name, isAbsolute=False):
     global _play_registry
-    _play_registry.load_playbook(playbook.load_from_file((
-        PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name))
+    _play_registry.load_playbook(
+        playbook.load_from_file((PLAYBOOKS_DIR + '/'
+                                 if not isAbsolute else '') + file_name))
 
 
 #saves the playbook into the specified file_name in the playbooks folder
 #isAbsolute should be passed as True if the file_name is an absolute path
 def save_playbook(file_name, isAbsolute=False):
     global _play_registry
-    playbook.save_to_file(
-        (PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name,
-        _play_registry.get_enabled_plays_paths())
+    playbook.save_to_file((PLAYBOOKS_DIR + '/'
+                           if not isAbsolute else '') + file_name,
+                          _play_registry.get_enabled_plays_paths())
+
 
 def clear():
     global _play_registry
-    _play_registry.clear();
+    _play_registry.clear()
+
 
 def numEnablePlays():
     global _play_registry
     return len(_play_registry.get_enabled_plays_paths())
+
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():
@@ -209,6 +217,7 @@ def play_registry():
 # or None if no robots have the given ID
 def our_robot_with_id(ID):
     return next(iter([r for r in _our_robots if r.shell_id is ID]), None)
+
 
 # set by the C++ GameplayModule
 ############################################################
