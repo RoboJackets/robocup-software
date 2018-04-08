@@ -14,7 +14,7 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <git_version.hpp>
+#include <rc-fshare/git_version.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>

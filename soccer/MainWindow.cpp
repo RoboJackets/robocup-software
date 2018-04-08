@@ -9,7 +9,7 @@
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
 #include "RobotStatusWidget.hpp"
-#include "git_version.hpp"
+#include "rc-fshare/git_version.hpp"
 #include "radio/Radio.hpp"
 
 #include <QActionGroup>

@@ -25,7 +25,7 @@ using namespace boost::python;
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <motion/MotionControl.hpp>
-#include <Pid.hpp>
+#include <rc-fshare/pid.hpp>
 #include <SystemState.hpp>
 
 #include <boost/python/exception_translator.hpp>

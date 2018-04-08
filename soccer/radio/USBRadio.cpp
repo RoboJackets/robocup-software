@@ -8,9 +8,9 @@
 #include "USBRadio.hpp"
 
 // Include this file for base station usb vendor/product ids
-#include "firmware-common/base/usb-interface.hpp"
+#include "rc-fshare/usb-interface.hpp"
 // included for kicer status enum
-#include "firmware-common/status.h"
+#include "status.h"
 
 using namespace std;
 using namespace Packet;
