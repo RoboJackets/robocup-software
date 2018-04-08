@@ -53,7 +53,7 @@ run-sim2play: all
 
 run-release: all-release
 	./run/soccer
-run-sim-release: all-release backend-simulator-soccer
+run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
