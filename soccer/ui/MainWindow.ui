@@ -1473,7 +1473,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>450</width>
+           <width>400</width>
            <height>0</height>
           </size>
          </property>
@@ -1576,7 +1576,7 @@
                   <widget class="QLabel" name="playIndicatorStatus">
                    <property name="maximumSize">
                     <size>
-                     <width>15</width>
+                     <width>30</width>
                      <height>15</height>
                     </size>
                    </property>
