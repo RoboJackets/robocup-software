@@ -69,5 +69,5 @@ message RadioRx
 	
 	optional Quaternion quaternion = 13;
 
-	repeated DebugResponses debug_responses = 15;
+	repeated uint32 enc_delta = 16;
 }

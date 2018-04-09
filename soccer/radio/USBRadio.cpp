@@ -311,6 +311,10 @@ void USBRadio::handleRxData(uint8_t* buf) {
                                     : MotorStatus::Good);
     }
 
+    for (std::size_t i = 0; i < 4; i++) {
+        packet.add_enc_delta(msg->encDeltas[i]);
+    }
+
     // fpga status
     if (FpgaStatus_IsValid(msg->fpgaStatus)) {
         packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
