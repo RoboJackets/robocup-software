@@ -60,8 +60,16 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.delay, 
             behavior.Behavior.State.completed, 
-            lambda: time.time() - self.start_time > Capture.DelayTime,
+            lambda: time.time() - self.start_time > Capture.DelayTime and self.bot_near_ball(
+                constants.Robot.Radius + constants.Ball.Radius),
             'delay before finish')
+
+        self.add_transition(
+            Capture.State.delay,
+            Capture.State.fine_approach,
+            lambda: not self.bot_near_ball(
+                constants.Robot.Radius + constants.Ball.Radius),
+            'lost ball during delay')
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach, lambda:
