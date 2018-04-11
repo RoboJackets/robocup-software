@@ -16,7 +16,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachErrorThresh = 0.8
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
-    DelayTime = .25
+    DelayTime = .5
 
     # Default dribbler speed, can be overriden by self.dribbler_power
     DribbleSpeed = 100
@@ -60,14 +60,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.delay, 
             behavior.Behavior.State.completed, 
-            lambda: time.time() - self.start_time > Capture.DelayTime and self.robot.has_ball(),
+            lambda: time.time() - self.start_time > Capture.DelayTime,
             'delay before finish')
-
-        self.add_transition(
-            Capture.State.delay,
-            Capture.State.fine_approach,
-            lambda: time.time() - self.start_time > Capture.DelayTime and not self.robot.has_ball(),
-            'delay but does not have ball')
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach, lambda:
@@ -146,8 +140,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def on_enter_delay(self):
         self.start_time = time.time()
-        self.robot.disable_avoid_ball()
 
+    def execute_delay(self):
+        self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(self.dribbler_power)
 
     def role_requirements(self):
