@@ -140,6 +140,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def on_enter_delay(self):
         self.start_time = time.time()
+        self.robot.disable_avoid_ball()
+
+        self.robot.set_dribble_speed(self.dribbler_power)
 
     def role_requirements(self):
         reqs = super().role_requirements()
