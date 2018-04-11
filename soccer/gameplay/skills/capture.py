@@ -60,8 +60,14 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.delay, 
             behavior.Behavior.State.completed, 
-            lambda: time.time() - self.start_time > Capture.DelayTime,
+            lambda: time.time() - self.start_time > Capture.DelayTime and self.robot.has_ball(),
             'delay before finish')
+
+        self.add_transition(
+            Capture.State.delay,
+            Capture.State.fine_approach,
+            lambda: time.time() - self.start_time > Capture.DelayTime and not self.robot.has_ball(),
+            'delay but does not have ball')
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach, lambda:
