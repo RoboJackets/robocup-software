@@ -145,28 +145,24 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
                       Point(x + 1000, y), Point(x, y)});
 
     const float halfFlat = dimensions.GoalFlat() / 2.0;
-    const float radius = dimensions.ArcRadius();
-    auto ourGoalArea = make_shared<Polygon>(
-        vector<Point>{Point(-halfFlat, 0), Point(-halfFlat, radius),
-                      Point(halfFlat, radius), Point(halfFlat, 0)});
+    const float shortDist = dimensions.PenaltyShortDist();
+    const float longDist = dimensions.PenaltyLongDist();
+
+    auto ourGoalArea = make_shared<Polygon>(vector<Point>{
+        Point(-longDist / 2, 0), Point(longDist / 2, 0),
+        Point(longDist / 2, shortDist), Point(-longDist / 2, shortDist)});
     _ourGoalArea = make_shared<CompositeShape>();
+
     _ourGoalArea->add(ourGoalArea);
-    _ourGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(-halfFlat, 0), radius)));
-    _ourGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(halfFlat, 0), radius)));
 
     auto theirGoalArea = make_shared<Polygon>(
-        vector<Point>{Point(-halfFlat, dimensions.Length()),
-                      Point(-halfFlat, dimensions.Length() - radius),
-                      Point(halfFlat, dimensions.Length() - radius),
-                      Point(halfFlat, dimensions.Length())});
+        vector<Point>{Point(-longDist / 2, dimensions.Length()),
+                      Point(longDist / 2, dimensions.Length()),
+                      Point(longDist / 2, dimensions.Length() - shortDist),
+                      Point(-longDist / 2, dimensions.Length() - shortDist)});
     _theirGoalArea = make_shared<CompositeShape>();
+
     _theirGoalArea->add(theirGoalArea);
-    _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
-    _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
 
     _ourHalf = make_shared<Polygon>(
         vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),

@@ -32,7 +32,8 @@ public:
     /// The MotionCommand type that this planner handles
     virtual MotionCommand::CommandType commandType() const = 0;
 
-    static double goalChangeThreshold() { return *_goalChangeThreshold; }
+    static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
+    static double goalVelChangeThreshold() { return *_goalVelChangeThreshold; }
     static double replanTimeout() { return *_replanTimeout; }
 
     static void createConfiguration(Configuration* cfg);
@@ -66,7 +67,8 @@ protected:
         : handlesDynamic(handlesDynamic) {}
 
 private:
-    static ConfigDouble* _goalChangeThreshold;
+    static ConfigDouble* _goalPosChangeThreshold;
+    static ConfigDouble* _goalVelChangeThreshold;
     static ConfigDouble* _replanTimeout;
 
     const bool handlesDynamic;
