@@ -156,26 +156,29 @@ void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
     self->avoidOpponents(value);
 }
 
+// Tuner code disabled pending refactor since it was removed from
+// the firmware shared repo
 void OurRobot_initialize_tuner(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->initializeTuner();
+    // self->motionControl()->getPid(controller)->initializeTuner();
 }
 
 void OurRobot_start_pid_tuner(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->startTunerCycle();
-    self->config->translation.p->setValue(
-        self->motionControl()->getPid(controller)->kp);
-    self->config->translation.i->setValue(
-        self->motionControl()->getPid(controller)->ki);
-    self->config->translation.d->setValue(
-        self->motionControl()->getPid(controller)->kd);
+    // self->motionControl()->getPid(controller)->startTunerCycle();
+    // self->config->translation.p->setValue(
+        // self->motionControl()->getPid(controller)->kp);
+    // self->config->translation.i->setValue(
+        // self->motionControl()->getPid(controller)->ki);
+    // self->config->translation.d->setValue(
+        // self->motionControl()->getPid(controller)->kd);
 }
 
 void OurRobot_run_pid_tuner(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->runTuner();
+    // self->motionControl()->getPid(controller)->runTuner();
 }
 
 bool OurRobot_end_pid_tuner(OurRobot* self, char controller) {
-    return self->motionControl()->getPid(controller)->endTunerCycle();
+    // return self->motionControl()->getPid(controller)->endTunerCycle();
+    return false;
 }
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
