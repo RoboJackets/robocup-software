@@ -68,6 +68,4 @@ message RadioRx
 	optional HardwareVersion hardware_version = 12 [default = Unknown];
 	
 	optional Quaternion quaternion = 13;
-
-	repeated uint32 enc_delta = 16;
 }
