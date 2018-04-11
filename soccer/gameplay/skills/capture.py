@@ -68,7 +68,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             Capture.State.delay,
             Capture.State.fine_approach,
             lambda: not self.bot_near_ball(
-                constants.Robot.Radius + constants.Ball.Radius),
+                constants.Robot.Radius + constants.Ball.Radius * 2),
             'lost ball during delay')
 
         self.add_transition(
