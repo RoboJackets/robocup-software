@@ -1,39 +1,39 @@
 #include "robocup-py.hpp"
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/register_ptr_to_python.hpp>
-#include <string>
-#include <sstream>
-#include <iostream>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <functional>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace boost::python;
 
-#include "motion/TrapezoidalMotion.hpp"
-#include "planning/MotionConstraints.hpp"
-#include "KickEvaluator.hpp"
-#include "WindowEvaluator.hpp"
-#include "optimization/NelderMead2D.hpp"
-#include "optimization/NelderMead2DConfig.hpp"
+#include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Line.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Rect.hpp>
-#include <Geometry2d/Line.hpp>
-#include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
+#include <SystemState.hpp>
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
-#include <SystemState.hpp>
+#include "KickEvaluator.hpp"
+#include "WindowEvaluator.hpp"
+#include "motion/TrapezoidalMotion.hpp"
+#include "optimization/NelderMead2D.hpp"
+#include "optimization/NelderMead2DConfig.hpp"
+#include "planning/MotionConstraints.hpp"
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 #include <exception>
 
-#include "RobotConfig.hpp"
 #include <Configuration.hpp>
+#include "RobotConfig.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -165,11 +165,11 @@ void OurRobot_initialize_tuner(OurRobot* self, char controller) {
 void OurRobot_start_pid_tuner(OurRobot* self, char controller) {
     // self->motionControl()->getPid(controller)->startTunerCycle();
     // self->config->translation.p->setValue(
-        // self->motionControl()->getPid(controller)->kp);
+    // self->motionControl()->getPid(controller)->kp);
     // self->config->translation.i->setValue(
-        // self->motionControl()->getPid(controller)->ki);
+    // self->motionControl()->getPid(controller)->ki);
     // self->config->translation.d->setValue(
-        // self->motionControl()->getPid(controller)->kd);
+    // self->motionControl()->getPid(controller)->kd);
 }
 
 void OurRobot_run_pid_tuner(OurRobot* self, char controller) {
