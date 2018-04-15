@@ -5,6 +5,8 @@ var class_gameplay_1_1_gameplay_module =
     [ "ballMatrix", "group__matrices.html#ga9d3e85c1e5057b33a033eb7bcdb24568", null ],
     [ "calculateFieldObstacles", "class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d", null ],
     [ "centerMatrix", "group__matrices.html#gad5610a51dc615a1b53dd210541b84658", null ],
+    [ "checkPlaybookStatus", "class_gameplay_1_1_gameplay_module.html#a3570e915d17a9253b9747b567cb40c4f", null ],
+    [ "clearPlays", "class_gameplay_1_1_gameplay_module.html#a02ef2edd82553a78e9dd8dc07556b4a0", null ],
     [ "getMainModule", "class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2", null ],
     [ "getRootPlay", "class_gameplay_1_1_gameplay_module.html#a1986f0e589596c0a0f0bc843d916ef73", null ],
     [ "globalObstacles", "class_gameplay_1_1_gameplay_module.html#ad3bd1132404d6cda7fc52b8c9d802598", null ],

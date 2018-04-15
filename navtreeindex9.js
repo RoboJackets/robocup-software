@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1skills_1_1move_1_1_move.html#a8679e69f7c07dd7ef8c1695d75d53e4f":[16,0,3,15,12,0,0],
+"classgameplay_1_1skills_1_1move_1_1_move.html#a963ae12d6e87b4400ff4e7b0ffbe991e":[16,0,3,15,12,0,4],
 "classgameplay_1_1skills_1_1move_1_1_move.html#aa6ad2fa4c2dff543afee3e9a4c10505d":[16,0,3,15,12,0,3],
 "classgameplay_1_1skills_1_1move_1_1_move.html#ab9f132549ba8d7013a63a2b3972853a1":[16,0,3,15,12,0,2],
 "classgameplay_1_1skills_1_1move_1_1_move.html#ae0a6177bca27a3adeb7cbea12133b906":[16,0,3,15,12,0,8],
@@ -247,7 +249,5 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a77389665e4f9630f89db71f4240df276":[16,0,3,17,9,1,0,2],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a8bff37e0b3d775b0cf806a8cc8aa98b8":[16,0,3,17,9,1,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#a9bc20b54bfd7791ad400c69c69ac0951":[16,0,3,17,9,1,0,6],
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aade80d3930fe0e0febdf94353620f183":[16,0,3,17,9,1,0,7],
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aae63c6b08478319800fdaef4bd18cf25":[16,0,3,17,9,1,0,3],
-"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#ab8a102691528c5dc0e60d0764fea1b6b":[16,0,3,17,9,1,0,5]
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aade80d3930fe0e0febdf94353620f183":[16,0,3,17,9,1,0,7]
 };

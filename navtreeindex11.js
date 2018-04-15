@@ -1,5 +1,7 @@
 var NAVTREEINDEX11 =
 {
+"functions_func_k.html":[16,3,1,11],
+"functions_func_l.html":[16,3,1,12],
 "functions_func_m.html":[16,3,1,13],
 "functions_func_n.html":[16,3,1,14],
 "functions_func_o.html":[16,3,1,15],
@@ -41,9 +43,9 @@ var NAVTREEINDEX11 =
 "group__drawing__functions.html#gacf40c170ac80128c988d29c978333836":[16,0,77,3],
 "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d":[16,0,77,8],
 "group__matrices.html":[14,0],
-"group__matrices.html#ga9d3e85c1e5057b33a033eb7bcdb24568":[16,0,2,0,2],
 "group__matrices.html#ga9d3e85c1e5057b33a033eb7bcdb24568":[14,0,0],
-"group__matrices.html#gaa921a23d16791e2a7879a9877bcf120f":[16,0,2,0,13],
+"group__matrices.html#ga9d3e85c1e5057b33a033eb7bcdb24568":[16,0,2,0,2],
+"group__matrices.html#gaa921a23d16791e2a7879a9877bcf120f":[16,0,2,0,15],
 "group__matrices.html#gaa921a23d16791e2a7879a9877bcf120f":[14,0,2],
 "group__matrices.html#gad5610a51dc615a1b53dd210541b84658":[16,0,2,0,4],
 "group__matrices.html#gad5610a51dc615a1b53dd210541b84658":[14,0,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX11 =
 "t20164.html":[10,3],
 "t20166.html":[10,6],
 "t20167.html":[10,7],
-"t20168.html":[10,8],
-"t2016firmware.html":[10,5],
-"t2016git.html":[10,4]
+"t20168.html":[10,8]
 };

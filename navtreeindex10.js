@@ -1,5 +1,7 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#aae63c6b08478319800fdaef4bd18cf25":[16,0,3,17,9,1,0,3],
+"classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html#ab8a102691528c5dc0e60d0764fea1b6b":[16,0,3,17,9,1,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_side.html":[16,0,3,17,9,1,0,0],
 "classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html":[16,0,3,17,9,1,0,1],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html":[16,0,3,17,9,2,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX10 =
 "functions_func_g.html":[16,3,1,7],
 "functions_func_h.html":[16,3,1,8],
 "functions_func_i.html":[16,3,1,9],
-"functions_func_j.html":[16,3,1,10],
-"functions_func_k.html":[16,3,1,11],
-"functions_func_l.html":[16,3,1,12]
+"functions_func_j.html":[16,3,1,10]
 };
