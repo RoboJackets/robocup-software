@@ -37,11 +37,15 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
           config, QString("%1/translation/velMultiplier").arg(prefix), 1.0)),
       angleVelMultiplier(new ConfigDouble(
           config, QString("%1/rotation/velMultiplier").arg(prefix), 1.0)),
-      accelerationMultiplier(new ConfigDouble(
-          config, QString("%1/translation/accelMultiplier").arg(prefix))),
+      accelerationFF(new ConfigDouble(
+          config, QString("%1/translation/accelerationFF").arg(prefix))),
       minEffectiveVelocity(new ConfigDouble(
           config, QString("%1/translation/minEffectiveVelocity").arg(prefix),
           0.3)),
+      turnFF(new ConfigDouble(
+          config, QString("%1/translation/turnFF").arg(prefix), -0.05)),
+      strafeFF(new ConfigDouble(
+          config, QString("%1/translation/strafeFF").arg(prefix), 0)),
       minEffectiveAngularSpeed(new ConfigDouble(
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
           0.0)) {}

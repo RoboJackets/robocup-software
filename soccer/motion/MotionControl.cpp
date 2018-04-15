@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <fstream>
+#include <string>
 
 using namespace std;
 using namespace Geometry2d;
@@ -126,7 +128,6 @@ void MotionControl::run() {
         _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
         _robot->addText(QString("angle: %1").arg(_robot->angle));
         */
-        _targetAngleVel(targetW);
     }
 
     // handle body velocity for pivot command
@@ -149,6 +150,7 @@ void MotionControl::run() {
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
     MotionInstant target = optTarget->motion;
+    float fieldToRobotAngle = M_PI_2 - _robot->angle;
 
     // tracking error
     Point posError = target.pos - _robot->pos;
@@ -162,14 +164,14 @@ void MotionControl::run() {
     } else {
         acceleration = {0, 0};
     }
-    Point accelFactor =
-        acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
-    target.vel += accelFactor;
+    Point accelFF = acceleration * 60.0f * (*_robot->config->accelerationFF);
 
     // PID on position
-    target.vel.x() += _positionXController.run(posError.x());
-    target.vel.y() += _positionYController.run(posError.y());
+    //target.vel.x() += _positionXController.run(posError.x());
+    //target.vel.y() += _positionYController.run(posError.y());
+
+    target.vel += accelFF;
 
     // draw target pt
     _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
@@ -190,7 +192,23 @@ void MotionControl::run() {
     // the +y axis of the robot points forwards
     target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
 
+    target.vel = target.vel.rotated(targetW * *_robot->config->turnFF);
+
     this->_targetBodyVel(target.vel);
+
+    if (targetAngleFinal) {
+        targetW += target.vel.x() * *_robot->config->strafeFF;
+
+        // limit W
+        if (abs(targetW) > (rotationConstraints.maxSpeed)) {
+            if (targetW > 0) {
+                targetW = (rotationConstraints.maxSpeed);
+            } else {
+                targetW = -(rotationConstraints.maxSpeed);
+            }
+        }
+        _targetAngleVel(targetW);
+    }
 }
 
 void MotionControl::stopped() {
