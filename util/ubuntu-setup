@@ -149,14 +149,8 @@ apt-get install $ARGS $PACKAGES
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub
 # https://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-on-ubuntu
-if [ "$SYSTEM" = "ubuntu-14.04" ]; then
-    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
-    update-alternatives --set gcc /usr/bin/gcc-4.9
-fi
-
-if [ "ubuntu-14.04" = "$SYSTEM" -a "$(clang --version | grep -Eo '[0-9]+\.[0-9]+' | head -n1)" \< "3.5" ]; then
-    echo "-- Symlinking clang-3.5 to clang"
-    ln -sf $(which clang-3.5) /usr/bin/clang
+if [ "$SYSTEM" = "ubuntu-18.04" ] && ! command -v clang-format >/dev/null; then
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-6.0 100
 fi
 
 # install python3 requirements

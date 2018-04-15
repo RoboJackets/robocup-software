@@ -587,55 +587,35 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     p.translate(-Field_Dimensions::Current_Dimensions.Length() / 2.0, 0);
 
     // goal areas
-    p.drawArc(QRectF(-Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     -Field_Dimensions::Current_Dimensions.ArcRadius() +
-                         Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius()),
-              -90 * 16, 90 * 16);
-    p.drawArc(QRectF(-Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     -Field_Dimensions::Current_Dimensions.ArcRadius() -
-                         Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius()),
-              90 * 16, -90 * 16);
-    p.drawLine(QLineF(Field_Dimensions::Current_Dimensions.ArcRadius(),
-                      -Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
-                      Field_Dimensions::Current_Dimensions.ArcRadius(),
-                      Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f));
-    // Penalty Mark
-    p.drawEllipse(
-        QRectF(-Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f +
-                   Field_Dimensions::Current_Dimensions.PenaltyDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f,
-               Field_Dimensions::Current_Dimensions.PenaltyDiam(),
-               Field_Dimensions::Current_Dimensions.PenaltyDiam()));
+    p.drawLine(
+        QLineF(0, -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+    p.drawLine(
+        QLineF(Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+    p.drawLine(
+        QLineF(Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
+               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
 
     p.translate(Field_Dimensions::Current_Dimensions.Length(), 0);
 
-    p.drawArc(QRectF(-Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     -Field_Dimensions::Current_Dimensions.ArcRadius() +
-                         Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius()),
-              -90 * 16, -90 * 16);
-    p.drawArc(QRectF(-Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     -Field_Dimensions::Current_Dimensions.ArcRadius() -
-                         Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius(),
-                     2.f * Field_Dimensions::Current_Dimensions.ArcRadius()),
-              90 * 16, 90 * 16);
-    p.drawLine(QLineF(-Field_Dimensions::Current_Dimensions.ArcRadius(),
-                      -Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f,
-                      -Field_Dimensions::Current_Dimensions.ArcRadius(),
-                      Field_Dimensions::Current_Dimensions.GoalFlat() / 2.f));
-    // Penalty Mark
-    p.drawEllipse(
-        QRectF(-Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f -
-                   Field_Dimensions::Current_Dimensions.PenaltyDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyDiam() / 2.0f,
-               Field_Dimensions::Current_Dimensions.PenaltyDiam(),
-               Field_Dimensions::Current_Dimensions.PenaltyDiam()));
+    p.drawLine(
+        QLineF(0, -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               -Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+    p.drawLine(
+        QLineF(-Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               -Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+    p.drawLine(
+        QLineF(-Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
+               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
+               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
 
     // goals
     float x[2] = {0, Field_Dimensions::Current_Dimensions.GoalDepth()};

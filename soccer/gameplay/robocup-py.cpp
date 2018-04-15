@@ -25,7 +25,7 @@ using namespace boost::python;
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <motion/MotionControl.hpp>
-#include <Pid.hpp>
+#include <rc-fshare/pid.hpp>
 #include <SystemState.hpp>
 
 #include <boost/python/exception_translator.hpp>
@@ -870,9 +870,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("GoalWidth", &Field_Dimensions::GoalWidth)
         .add_property("GoalDepth", &Field_Dimensions::GoalDepth)
         .add_property("GoalHeight", &Field_Dimensions::GoalHeight)
-        .add_property("PenaltyDist", &Field_Dimensions::PenaltyDist)
-        .add_property("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
-        .add_property("ArcRadius", &Field_Dimensions::ArcRadius)
+        .add_property("PenaltyShortDist", &Field_Dimensions::PenaltyShortDist)
+        .add_property("PenaltyLongDist", &Field_Dimensions::PenaltyLongDist)
         .add_property("CenterRadius", &Field_Dimensions::CenterRadius)
         .add_property("CenterDiameter", &Field_Dimensions::CenterDiameter)
         .add_property("GoalFlat", &Field_Dimensions::GoalFlat)
@@ -891,7 +890,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("SingleFieldDimensions",
                       &Field_Dimensions::Single_Field_Dimensions)
         .def_readonly("DoubleFieldDimensions",
-                      &Field_Dimensions::Double_Field_Dimensions);
+                      &Field_Dimensions::Double_Field_Dimensions)
+        .def_readonly("CurrentDimensions",
+                      &Field_Dimensions::Current_Dimensions);
 
     class_<std::vector<Geometry2d::Line>>("vector_Line")
         .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());

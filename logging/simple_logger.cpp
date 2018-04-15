@@ -5,7 +5,7 @@
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/LogFrame.pb.h>
 #include <protobuf/referee.pb.h>
-#include <git_version.hpp>
+#include <rc-fshare/git_version.hpp>
 
 #include <multicast.hpp>
 #include <Network.hpp>

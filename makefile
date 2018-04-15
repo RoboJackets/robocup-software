@@ -40,7 +40,9 @@ run-comp:
 	./runcomp.sh
 r:	run
 rs: run-sim
-run-sim: all backend-simulator-soccer
+run-sim: all backend-headless-simulator-soccer
+run-headmore: all backend-simulator-soccer
+
 run-sim2play: all
 	-pkill -f './grsim'
 	./run/grsim &
@@ -51,12 +53,20 @@ run-sim2play: all
 
 run-release: all-release
 	./run/soccer
-run-sim-release: all-release backend-simulator-soccer
+run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
 
-# backend targets to launch soccer
+# backend targets to launch soccer with grsim in headless
+backend-headless-simulator-soccer:
+	-pkill -f './grsim'
+	./run/grsim --headless &
+	./run/soccer -sim -pbk testing.pbk
+# Kill grSim once we unblock
+	-pkill -f './grsim'
+
+# backend targets to launch soccer with a grsim window
 backend-simulator-soccer:
 	-pkill -f './grsim'
 	./run/grsim &

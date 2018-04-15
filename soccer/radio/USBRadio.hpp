@@ -8,8 +8,7 @@
 #include "Radio.hpp"
 
 // Included for packet layout
-#include "firmware-common/common2015/utils/rtp.hpp"
-#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
+#include "rc-fshare/rtp.hpp"
 
 /**
  * @brief Radio IO with real robots
@@ -36,8 +35,6 @@ public:
     void switchTeam(bool) override {}
 
 protected:
-    std::vector<DebugCommunication::DebugResponse> current_receive_debug;
-    std::mutex current_receive_debug_mutex;
     libusb_context* _usb_context;
     libusb_device_handle* _device;
 

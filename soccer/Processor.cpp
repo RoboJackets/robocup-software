@@ -14,7 +14,7 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <git_version.hpp>
+#include <rc-fshare/git_version.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
@@ -26,8 +26,6 @@
 #include "modeling/BallTracker.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
-
-#include "firmware-common/common2015/utils/DebugCommunicationStrings.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -670,6 +668,8 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     const SSL_FieldCicularArc* penalty = nullptr;
     const SSL_FieldCicularArc* center = nullptr;
+    float penaltyShortDist = 0;  // default value
+    float penaltyLongDist = 0;   // default value
     float displacement =
         Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
@@ -678,14 +678,15 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
         if (arc.name() == "CenterCircle") {
             // Assume center circle
             center = &arc;
-        } else if (arc.name() == "LeftFieldLeftPenaltyArc") {
-            penalty = &arc;
         }
     }
 
     for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
         if (line.name() == "RightPenaltyStretch") {
             displacement = abs(line.p2().y() - line.p1().y());
+            penaltyLongDist = displacement;
+        } else if (line.name() == "RightFieldRightPenaltyStretch") {
+            penaltyShortDist = abs(line.p2().x() - line.p1().x());
         }
     }
 
@@ -697,16 +698,17 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 
     float fieldBorder = currentDimensions->Border();
 
-    if (penalty != nullptr && center != nullptr && thickness != 0) {
+    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
+        thickness != 0) {
         // Force a resize
         Field_Dimensions newDim = Field_Dimensions(
+
             fieldSize.field_length() / 1000.0f,
             fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
             fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
             Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penalty->radius() / 1000.0f + adj,  // PenaltyDist
-            Field_Dimensions::Default_Dimensions.PenaltyDiam(),
-            penalty->radius() / 1000.0f + adj,       // ArcRadius
+            penaltyShortDist / 1000.0f,              // PenaltyShortDist
+            penaltyLongDist / 1000.0f,               // PenaltyLongDist
             center->radius() / 1000.0f + adj,        // CenterRadius
             (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
             displacement / 1000.0f,                  // GoalFlat
@@ -714,14 +716,31 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
 
         if (newDim != *currentDimensions) {
-            // Set the changed field dimensions to the current ones
-            cout << "Updating field geometry based off of vision packet."
-                 << endl;
+            setFieldDimensions(newDim);
+        }
+    } else if (center != nullptr && thickness != 0) {
+        Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
+
+        Field_Dimensions newDim = Field_Dimensions(
+            fieldSize.field_length() / 1000.0f,
+            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
+            Field_Dimensions::Default_Dimensions.GoalHeight(),
+            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
+            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
+            center->radius() / 1000.0f + adj,        // CenterRadius
+            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+            displacement / 1000.0f,                  // GoalFlat
+            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
+            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+
+        if (newDim != *currentDimensions) {
             setFieldDimensions(newDim);
         }
     } else {
         cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field." << endl;
+                "field."
+             << endl;
     }
 }
 
@@ -790,21 +809,6 @@ void Processor::sendRadioData() {
                 }
             }
         }
-    }
-
-    for (const auto& pair : _robotConfigs) {
-        auto config = tx->add_configs();
-        config->set_key(pair.first);
-        config->set_value(pair.second);
-        config->set_key_name(
-            DebugCommunication::CONFIG_TO_STRING.at(pair.first));
-    }
-
-    for (const auto& debugResponse : _robotDebugResponses) {
-        auto debugCommunication = tx->add_debug_communication();
-        debugCommunication->set_key(debugResponse);
-        debugCommunication->set_key_name(
-            DebugCommunication::DEBUGRESPONSE_TO_STRING.at(debugResponse));
     }
 
     if (_radio) {
@@ -926,6 +930,7 @@ void Processor::recalculateWorldToTeamTransform() {
 }
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
+    cout << "Updating field geometry based off of vision packet." << endl;
     Field_Dimensions::Current_Dimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();

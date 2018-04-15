@@ -1,12 +1,12 @@
 import play
 import behavior
-import tactics.defense2
+import tactics.defense_old
 import robocup
 import main
 
 
 ## Runs our Defense tactic
-class TestDefense2(play.Play):
+class TestDefenseOld(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
@@ -14,7 +14,7 @@ class TestDefense2(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        b = tactics.defense2.Defense2()
+        b = tactics.defense_old.DefenseOld()
         self.add_subbehavior(b, name='defense', required=True)
 
     def on_exit_running(self):
