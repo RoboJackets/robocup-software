@@ -35,14 +35,14 @@ class TestStrafe(play.Play):
 
         self.add_transition(
             TestStrafe.State.turning,
-            TestStrafe.State.moving, lambda: self.subbehavior_with_name('move')
-            .state == behavior.Behavior.State.completed, 'at target position')
+            TestStrafe.State.moving, lambda:self.subbehavior_with_name(
+                'move').state == behavior.Behavior.State.completed, 'at target position')
 
         ## the timer here will allow this to happen without loop but will start moving all the robots
         self.add_transition(
             TestStrafe.State.moving, behavior.Behavior.State.completed, lambda:
-            self.subbehavior_with_name('move').state == behavior.Behavior.
-            State.completed and time.time() - self.startTime > 10,
+            self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and
+            time.time() - self.startTime > 10,
             'at target position')
 
         self.pos = pos
@@ -86,12 +86,8 @@ class TestStrafe(play.Play):
         # Note these are offsets
         targetx = 1
         targety = 1
-        targetx = self.pos.x + targetx if (
-            self.pos.x + targetx
-        ) < constants.Field.Length else constants.Field.Length
-        targety = self.pos.y + targety if (
-            self.pos.y + targety
-        ) < constants.Field.Length else constants.Field.Length
+        targetx = self.pos.x + targetx if (self.pos.x + targetx) < constants.Field.Length else constants.Field.Length
+        targety = self.pos.y + targety if (self.pos.y + targety) < constants.Field.Length else constants.Field.Length
         m = skills.move.Move(robocup.Point(targetx, targety))
         self.add_subbehavior(m, 'move', required=False)
         move = self.subbehavior_with_name('move')
@@ -109,12 +105,8 @@ class TestStrafe(play.Play):
         self.startTime = time.time()
         targetx = 2
         targety = 2
-        targetx = self.pos.x + targetx if (
-            self.pos.x + targetx
-        ) < constants.Field.Length else constants.Field.Length
-        targety = self.pos.y + targety if (
-            self.pos.y + targety
-        ) < constants.Field.Length else constants.Field.Length
+        targetx = self.pos.x + targetx if (self.pos.x + targetx) < constants.Field.Length else constants.Field.Length
+        targety = self.pos.y + targety if (self.pos.y + targety) < constants.Field.Length else constants.Field.Length
         move = self.subbehavior_with_name('move')
         move.pos = robocup.Point(targetx, targety)
 
