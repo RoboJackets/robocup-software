@@ -5,12 +5,15 @@ import robocup
 import main
 import skills.move
 import constants
+import time
 import math
 import enum
-import role_assignment
+
 
 ## Testing class for facing one direction and strafing
 class TestStrafe(play.Play):
+
+    startTime = 0
 
     class State(enum.Enum):
         turning = 1
@@ -21,19 +24,26 @@ class TestStrafe(play.Play):
                  angle=90):
         super().__init__(continuous=False)
 
-        self.add_state(TestStrafe.State.turning, behavior.Behavior.State.running)
-        self.add_state(TestStrafe.State.moving, behavior.Behavior.State.running)
-
+        self.add_state(TestStrafe.State.turning,
+                       behavior.Behavior.State.running)
+        self.add_state(TestStrafe.State.moving,
+                       behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-            TestStrafe.State.turning, lambda: True,
+                            TestStrafe.State.turning, lambda: True,
                             "immediately")
 
-        self.add_transition(TestStrafe.State.turning,
-            TestStrafe.State.moving, lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed, 'at target position')
+        self.add_transition(
+            TestStrafe.State.turning,
+            TestStrafe.State.moving, lambda: self.subbehavior_with_name('move')
+            .state == behavior.Behavior.State.completed, 'at target position')
 
-        self.add_transition(TestStrafe.State.moving,
-            behavior.Behavior.State.completed, lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed, 'at target position')
+        ## the timer here will allow this to happen without loop but will start moving all the robots
+        self.add_transition(
+            TestStrafe.State.moving, behavior.Behavior.State.completed, lambda:
+            self.subbehavior_with_name('move').state == behavior.Behavior.
+            State.completed and time.time() - self.startTime > 10,
+            'at target position')
 
         self.pos = pos
         self.angle = angle
@@ -57,7 +67,7 @@ class TestStrafe(play.Play):
 
     #turning
     def calculate_facing(self):
-        target = robocup.Point(1.0,0.0)
+        target = robocup.Point(1.0, 0.0)
         move = self.subbehavior_with_name('move')
         if (move.robot != None):
             target.rotate(move.robot.pos, self.angle)
@@ -65,8 +75,8 @@ class TestStrafe(play.Play):
 
     def is_at_target_angle(self):
         if self.robot != None:
-            diff = abs(robocup.fix_angle_radians(self.robot.angle -
-                                                 self.angle))
+            diff = abs(
+                robocup.fix_angle_radians(self.robot.angle - self.angle))
             return diff < (math.pi / 64.0)
         else:
             return False
@@ -76,8 +86,12 @@ class TestStrafe(play.Play):
         # Note these are offsets
         targetx = 1
         targety = 1
-        targetx = self.pos.x + targetx if (self.pos.x + targetx) < constants.Field.Length else constants.Field.Length
-        targety = self.pos.y + targety if (self.pos.y + targety) < constants.Field.Length else constants.Field.Length
+        targetx = self.pos.x + targetx if (
+            self.pos.x + targetx
+        ) < constants.Field.Length else constants.Field.Length
+        targety = self.pos.y + targety if (
+            self.pos.y + targety
+        ) < constants.Field.Length else constants.Field.Length
         m = skills.move.Move(robocup.Point(targetx, targety))
         self.add_subbehavior(m, 'move', required=False)
         move = self.subbehavior_with_name('move')
@@ -92,10 +106,15 @@ class TestStrafe(play.Play):
     #moving
     def on_enter_moving(self):
         # Note these are offsets
+        self.startTime = time.time()
         targetx = 2
         targety = 2
-        targetx = self.pos.x + targetx if (self.pos.x + targetx) < constants.Field.Length else constants.Field.Length
-        targety = self.pos.y + targety if (self.pos.y + targety) < constants.Field.Length else constants.Field.Length
+        targetx = self.pos.x + targetx if (
+            self.pos.x + targetx
+        ) < constants.Field.Length else constants.Field.Length
+        targety = self.pos.y + targety if (
+            self.pos.y + targety
+        ) < constants.Field.Length else constants.Field.Length
         move = self.subbehavior_with_name('move')
         move.pos = robocup.Point(targetx, targety)
 
@@ -106,4 +125,3 @@ class TestStrafe(play.Play):
 
     def on_exit_moving(self):
         self.remove_subbehavior('move')
-
