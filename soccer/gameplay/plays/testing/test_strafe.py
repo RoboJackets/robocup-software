@@ -73,14 +73,6 @@ class TestStrafe(play.Play):
             target.rotate(move.robot.pos, self.angle)
             return target
 
-    def is_at_target_angle(self):
-        if self.robot != None:
-            diff = abs(
-                robocup.fix_angle_radians(self.robot.angle - self.angle))
-            return diff < (math.pi / 64.0)
-        else:
-            return False
-
     ##initial move to get to first strafing position
     def on_enter_turning(self):
         # Note these are offsets
