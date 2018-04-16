@@ -2,6 +2,7 @@ var searchData=
 [
   ['obstacles',['obstacles',['../struct_planning_1_1_plan_request.html#ae6d3ccdd493363f8f75a7d4fe4e95fed',1,'Planning::PlanRequest']]],
   ['offensivepivotkick',['OffensivePivotKick',['../classoffensive__pivot__kick_1_1_offensive_pivot_kick.html',1,'offensive_pivot_kick']]],
+  ['on_5fenter_5fturning',['on_enter_turning',['../classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe.html#ad59cbfae0722f8123e8cdeb9c3b8d976',1,'gameplay::plays::testing::test_strafe::TestStrafe']]],
   ['onetouchpass',['OneTouchPass',['../classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html',1,'gameplay::tactics::one_touch_pass']]],
   ['operator_21_3d',['operator!=',['../class_geometry2d_1_1_point.html#a3b1c692382b683c4057d5cdcad131dac',1,'Geometry2d::Point']]],
   ['operator_2a',['operator*',['../class_geometry2d_1_1_point.html#a7cd73578363a28dbe3a62e7a2be76cf7',1,'Geometry2d::Point::operator*(Point other) const'],['../class_geometry2d_1_1_point.html#ae61b90d05be8a4667a5d935770b56451',1,'Geometry2d::Point::operator*(double s) const']]],

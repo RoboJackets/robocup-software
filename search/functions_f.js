@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['on_5fenter_5fturning',['on_enter_turning',['../classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe.html#ad59cbfae0722f8123e8cdeb9c3b8d976',1,'gameplay::plays::testing::test_strafe::TestStrafe']]],
   ['operator_21_3d',['operator!=',['../class_geometry2d_1_1_point.html#a3b1c692382b683c4057d5cdcad131dac',1,'Geometry2d::Point']]],
   ['operator_2a',['operator*',['../class_geometry2d_1_1_point.html#a7cd73578363a28dbe3a62e7a2be76cf7',1,'Geometry2d::Point::operator*(Point other) const'],['../class_geometry2d_1_1_point.html#ae61b90d05be8a4667a5d935770b56451',1,'Geometry2d::Point::operator*(double s) const']]],
   ['operator_2a_3d',['operator*=',['../class_geometry2d_1_1_point.html#a73c2b50c449ae21956c0f5fa6043ad9c',1,'Geometry2d::Point']]],

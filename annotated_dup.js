@@ -161,6 +161,9 @@ var annotated_dup =
           [ "test_priority", null, [
             [ "TestPriority", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority.html", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority" ]
           ] ],
+          [ "test_strafe", null, [
+            [ "TestStrafe", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe.html", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe" ]
+          ] ],
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
           ] ]
