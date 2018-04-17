@@ -61,7 +61,6 @@ class TestCapture(play.Play):
     def role_requirements(self):
         reqs = super().role_requirements()
         if self.shell_id != None:
-            for req in role_assignment.iterate_role_requirements_tree_leaves(
-                    reqs):
-                req.previous_shell_id = self.shell_id
+            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+                req.required_shell_id = self.shell_id
         return reqs
