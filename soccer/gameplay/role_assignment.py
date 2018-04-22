@@ -21,7 +21,7 @@ class RoleRequirements:
 
         # multiply this by the distance between two points to get the cost
         self.position_cost_multiplier = 1.0
-        
+
         # A lambda function property that allows customization of cost
         # Has exactly one parameter, which is a robot
         self.cost_func = lambda r: 0
@@ -182,6 +182,8 @@ PreferChipper = 2.5
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
 def assign_roles(robots, role_reqs):
 
+    fail_reason = ""
+
     # check for empty request set
     if len(role_reqs) == 0:
         return {}
@@ -216,11 +218,16 @@ def assign_roles(robots, role_reqs):
         key=lambda r: r.priority)
 
     # logs the assignment parameters and raises an ImpossibleAssignmentError
-    def fail(errStr):
+    def fail(errStr, extended_desc=None):
+        if extended_desc is None:
+            extended_desc = ""
         botsDesc = 'Robots:\n\t' + '\n\t'.join([str(bot) for bot in robots])
         rolesDesc = 'Roles:\n\t' + '\n\t'.join(
             [str(role) for role in role_reqs_list])
-        logging.error('Failed Assignment:\n' + botsDesc + '\n' + rolesDesc)
+        extDesc = 'Reason: {}\n\t'.format(errStr) \
+            + '\n\t'.join(extended_desc.split('\n'))
+        logging.error('Failed Assignment:\n' + botsDesc + '\n' +
+                      rolesDesc + '\n' + extDesc)
         raise ImpossibleAssignmentError(
             "No assignments possible that satisfy all constraints")
 
@@ -230,7 +237,8 @@ def assign_roles(robots, role_reqs):
     if len(required_roles) > len(robots):
         fail("More required roles than available robots")
     elif len(role_reqs_list) > len(robots):
-        # remove the lowest priority optional roles so we have as many bots as roles we're trying to fill
+        # remove the lowest priority optional roles so we have as many bots as
+        # roles we're trying to fill
         overflow = len(role_reqs_list) - len(robots)
         role_reqs_list = required_roles + optional_roles[0:-overflow]
         unassigned_role_requirements = optional_roles[len(optional_roles) -
@@ -246,22 +254,29 @@ def assign_roles(robots, role_reqs):
         for req in role_reqs_list:
             cost = 0
 
-            if req.required_shell_id != None and req.required_shell_id != robot.shell_id(
+            if req.required_shell_id is not None and req.required_shell_id != robot.shell_id(
             ):
                 cost = MaxWeight
-            elif req.has_ball == True and robot.has_ball() == False:
+                fail_reason += (
+                    "Robot {}: Required ID {} does not match {}\n".format(
+                        robot.shell_id(), req.required_shell_id,
+                        robot.shell_id()))
+            elif req.has_ball and not robot.has_ball():
                 cost = MaxWeight
+                fail_reason += "Robot {}: does not have ball\n".format(
+                    robot.shell_id())
             elif req.require_kicking and (
                     robot.shell_id() == evaluation.double_touch.tracker()
                     .forbidden_ball_toucher() or not robot.kicker_works() or
                     not robot.ball_sense_works()):
                 cost = MaxWeight
+                fail_reason += (
+                    "Robot {}: does not have a fully working kicking setup\n"
+                        .format(robot.shell_id()))
             else:
-                if req.destination_shape != None:
-                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(
-                        robot.pos)
-                if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id(
-                ):
+                if req.destination_shape is not None:
+                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(robot.pos)
+                if req.previous_shell_id is not None and req.previous_shell_id != robot.shell_id():
                     cost += req.robot_change_cost
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
@@ -311,6 +326,7 @@ def assign_roles(robots, role_reqs):
         insert_into_results(results, tree_mapping, reqs, None)
 
     if total >= MaxWeight:
-        fail("No assignments possible that satisfy all constraints")
+        fail("No assignments possible that satisfy all constraints",
+             fail_reason if fail_reason else None)
 
     return results
