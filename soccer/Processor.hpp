@@ -91,7 +91,8 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim, bool defendPlus, VisionChannel visionChannel);
+    Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
+              bool blueTeam);
     virtual ~Processor();
 
     void stop();
