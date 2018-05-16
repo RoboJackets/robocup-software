@@ -14,7 +14,6 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <rc-fshare/git_version.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
@@ -22,6 +21,7 @@
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
+#include <rc-fshare/git_version.hpp>
 #include "Processor.hpp"
 #include "modeling/BallTracker.hpp"
 #include "radio/SimRadio.hpp"
@@ -55,8 +55,9 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel)
-    : _loopMutex() {
+Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
+                     bool blueTeam)
+    : _loopMutex(), _blueTeam(blueTeam) {
     _running = true;
     _manualID = -1;
     _framerate = 0;

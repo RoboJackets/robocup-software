@@ -168,8 +168,7 @@ int main(int argc, char* argv[]) {
         Configuration::FromRegisteredConfigurables();
 
     auto processor =
-        std::make_unique<Processor>(sim, defendPlus, visionChannel);
-    processor->blueTeam(blueTeam);
+        std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam);
     processor->refereeModule()->useExternalReferee(!noref);
 
     // Load config file
