@@ -221,9 +221,8 @@ def assign_roles(robots, role_reqs):
     def fail(errStr, extended_desc=None):
         if extended_desc is None:
             extended_desc = ""
-        botsDesc = 'Robots:\n\t' + '\n\t'.join([str(bot) for bot in robots])
-        rolesDesc = 'Roles:\n\t' + '\n\t'.join(
-            [str(role) for role in role_reqs_list])
+        botsDesc = 'Robots:\n\t' + '\n\t'.join(map(str, robots))
+        rolesDesc = 'Roles:\n\t' + '\n\t'.join(map(str, role_reqs_list))
         extDesc = 'Reason: {}\n\t'.format(errStr) \
             + '\n\t'.join(extended_desc.split('\n'))
         logging.error('Failed Assignment:\n' + botsDesc + '\n' +
@@ -271,7 +270,8 @@ def assign_roles(robots, role_reqs):
                     not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += (
-                    "Robot {}: does not have a fully working kicking setup\n"
+                    "Robot {}: does not have a fully working kicking setup"
+                    " (or double touched)\n"
                         .format(robot.shell_id()))
             else:
                 if req.destination_shape is not None:
