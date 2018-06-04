@@ -135,8 +135,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
             _lastTrackTime = goodObs[best]->time;
 
             // Update the real track
-            state->ball = _ballFilter->predict(
-                RJ::Time(chrono::microseconds(state->logFrame->command_time())),
+            state->ball = _ballFilter->predict(predictTime),
                 nullptr);
 
             // Don't use this observation for a possible track since it's the
@@ -207,10 +206,7 @@ void BallTracker::run(const vector<BallObservation>& obs, SystemState* state) {
                 // First update and prediction
                 _ballFilter->updateEstimate(_possibleTracks[i].obs);
                 _lastTrackTime = _possibleTracks[i].obs.time;
-                state->ball = _ballFilter->predict(
-                    RJ::Time(
-                        chrono::microseconds(state->logFrame->command_time())),
-                    nullptr);
+                state->ball = _ballFilter->predict(predictTime, nullptr);
 
                 fastRemove(_possibleTracks, i);
                 break;
