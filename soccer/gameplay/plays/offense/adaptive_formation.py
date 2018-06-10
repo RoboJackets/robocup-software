@@ -321,6 +321,5 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.add_subbehavior(
             tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')
 
-
     def on_exit_passing(self):
         self.remove_subbehavior('pass')
