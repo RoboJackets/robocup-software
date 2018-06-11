@@ -17,6 +17,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
     DelayTime = .5
+    InterceptVelocityThresh = 0.5
 
     # Default dribbler speed, can be overriden by self.dribbler_power
     DribbleSpeed = 100
@@ -25,16 +26,20 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     InFrontOfBallCosOfAngleThreshold = 0.95
 
     class State(Enum):
+        intercept = 0
         course_approach = 1
         fine_approach = 2
         delay = 3
 
     ## Capture Constructor
     # faceBall - If false, any turning functions are turned off,
-    # useful for using capture to reflect/bounce moving ballls.
+    # useful for using capture to reflect/bounce moving balls.
     def __init__(self, faceBall=True):
         super().__init__(continuous=False)
 
+        
+        self.add_state(Capture.State.intercept,
+                       behavior.Behavior.State.running)
         self.add_state(Capture.State.course_approach,
                        behavior.Behavior.State.running)
         self.add_state(Capture.State.fine_approach,
@@ -43,8 +48,12 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            Capture.State.course_approach, lambda: True,
+                            Capture.State.intercept, lambda: True,
                             'immediately')
+
+        #self.add_transition(Capture.State.course_approach, Capture.State.intercept, lambda: main.ball().vel.mag() > Capture.InterceptVelocityThresh, 'moving to intercept')
+        
+        self.add_transition(Capture.State.intercept, Capture.State.course_approach, lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or main.ball().pos.near_point(self.robot.pos, 0.05), 'moving back to coarse approach')
 
         self.add_transition(
             Capture.State.course_approach,
@@ -98,11 +107,18 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def find_intercept_point(self):
         return find_robot_intercept_point(self.robot)
 
+    def find_moving_intercept(self):
+        return find_moving_robot_intercept(self.robot)
+
     def execute_running(self):
         self.robot.set_planning_priority(planning_priority.CAPTURE)
 
         if (self.faceBall):
             self.robot.face(main.ball().pos)
+
+    def execute_intercept(self):
+        pos = self.find_moving_intercept()
+        self.robot.move_to(pos)
 
     def on_enter_course_approach(self):
         self.lastApproachTarget == None
@@ -162,13 +178,18 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         return reqs
 
+def find_moving_robot_intercept(robot):
+    passline = robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10)
+    return passline.nearest_point(robot.pos)
 
 def find_robot_intercept_point(robot):
     if robot is None:
         return main.ball().pos
+
     approach_vec = approach_vector(robot)
     # sample every 5 cm in the -approach_vector direction from the ball
     pos = None
+
     for i in range(50):
         dist = i * 0.05
         pos = main.ball().pos + approach_vec * dist
