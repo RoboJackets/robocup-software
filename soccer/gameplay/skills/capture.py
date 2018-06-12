@@ -19,9 +19,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachAvoidBall = 0.10
     DelayTime = .5
     InterceptVelocityThresh = 0.5
-
-    DampenVelocityThresh = 0.2
-    DampenMult = 0.4
+    DampenMult = 0.08
 
     # Default dribbler speed, can be overriden by self.dribbler_power
     DribbleSpeed = 100
@@ -31,10 +29,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     class State(Enum):
         intercept = 0
-        dampen = 1
-        course_approach = 2
-        fine_approach = 3
-        delay = 4
+        course_approach = 1
+        fine_approach = 2
+        delay = 3
 
     ## Capture Constructor
     # faceBall - If false, any turning functions are turned off,
@@ -43,8 +40,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         super().__init__(continuous=False)
 
         self.add_state(Capture.State.intercept,
-                       behavior.Behavior.State.running)
-        self.add_state(Capture.State.dampen,
                        behavior.Behavior.State.running)
         self.add_state(Capture.State.course_approach,
                        behavior.Behavior.State.running)
@@ -59,15 +54,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.intercept,
-            Capture.State.dampen, lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh
-            or main.ball().pos.near_point(self.robot.pos, 0.05),
+            Capture.State.course_approach, lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh,
             #or self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
             'moving to dampen')
-
-        self.add_transition(
-            Capture.State.dampen,
-            Capture.State.course_approach, lambda: main.ball().vel.mag() < Capture.DampenVelocityThresh,
-            'moving to coarse approach')
 
         self.add_transition(
             Capture.State.course_approach,
@@ -120,9 +109,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def find_moving_intercept(self):
         return find_moving_robot_intercept(self.robot)
-
-    def find_dampening_point(self):
-        return find_robot_dampening_point(self.robot)
 
     def find_intercept_point(self):
         return find_robot_intercept_point(self.robot)
@@ -200,10 +186,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 # calculates intercept point for the fast moving intercept state
 def find_moving_robot_intercept(robot):
     passline = robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10)
-    return passline.nearest_point(robot.pos)
-
-def find_robot_dampening_point(robot):
-    return robot.pos + main.ball().vel * Capture.DampenMult
+    pos = passline.nearest_point(robot.pos) + (main.ball().vel * Capture.DampenMult)
+    return pos
 
 # calculates intercept point for the slow or stationary fine approach state
 def find_robot_intercept_point(robot):
