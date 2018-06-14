@@ -17,7 +17,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachErrorThresh = 0.8
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
-    DelayTime = .1
+    DelayTime = .2
     InterceptVelocityThresh = 0.2
     DampenMult = 0.06
 
@@ -65,20 +65,20 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.fine_approach,
-            Capture.State.delay, lambda: evaluation.ball.robot_has_ball(self.robot),
+            Capture.State.delay, lambda: self.robot.has_ball_raw(),
             'has ball')
 
         self.add_transition(
             Capture.State.delay,
             behavior.Behavior.State.completed,
             lambda: time.time() - self.start_time > Capture.DelayTime and
-            evaluation.ball.robot_has_ball(self.robot),
+            self.robot.has_ball_raw(),
             'delay before finish')
 
         self.add_transition(
             Capture.State.delay,
             Capture.State.fine_approach,
-            lambda: not evaluation.ball.robot_has_ball(self.robot),
+            lambda: not self.robot.has_ball_raw(),
             'lost ball during delay')
 
         self.add_transition(
@@ -104,24 +104,13 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             return self.robot.has_ball_raw()
         else:
             return None
-        # Old has ball check method. Keeping in case of failure
-        # ball2bot = self.bot_to_ball() * -1
-        # return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and \
-        #         ((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag())
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
 
 
     # calculates intercept point for the fast moving intercept state
     def find_moving_intercept(self):
-        if (self.robot is not None):
-            passline = robocup.Line(
-                main.ball().pos, main.ball().pos + main.ball().vel * 10)
-            pos = passline.nearest_point(
-                self.robot.pos) + (main.ball().vel * Capture.DampenMult)
-            return pos
-        else:
-            return None
+        return find_robot_moving_intercept(self.robot)
 
     # returns intercept point for the slow moving capture states
     def find_intercept_point(self):
@@ -191,11 +180,19 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(
-                r).dist_to(r.pos)
-
+            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(r).dist_to(r.pos)
         return reqs
 
+
+def find_robot_moving_intercept(robot):
+    if (robot is not None):
+        passline = robocup.Line(
+            main.ball().pos, main.ball().pos + main.ball().vel * 10)
+        pos = passline.nearest_point(
+            robot.pos) + (main.ball().vel * Capture.DampenMult)
+        return pos
+    else:
+        return None
 
 # calculates intercept point for the slow or stationary fine approach state
 def find_robot_intercept_point(robot):
