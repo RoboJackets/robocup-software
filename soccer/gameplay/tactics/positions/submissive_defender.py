@@ -14,7 +14,7 @@ import evaluation
 # The regular defender does a lot of calculations and figures out where it should be
 # This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
 class SubmissiveDefender(
-    single_robot_composite_behavior.SingleRobotCompositeBehavior):
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
         ## gets between a particular opponent and the goal.  stays closer to the goal
         marking = 1
@@ -42,15 +42,15 @@ class SubmissiveDefender(
         self.add_transition(behavior.Behavior.State.start,
                             SubmissiveDefender.State.marking, lambda: True,
                             "immediately")
-        self.add_transition(SubmissiveDefender.State.marking,
-                            SubmissiveDefender.State.clearing,
-                            lambda: self.go_clear,
-                            "when it is safe to clear the ball")
+        self.add_transition(
+            SubmissiveDefender.State.marking,
+            SubmissiveDefender.State.clearing, lambda: self.go_clear,
+            "when it is safe to clear the ball")
         self.add_transition(
             SubmissiveDefender.State.clearing,
-            SubmissiveDefender.State.marking,
-            lambda: self.subbehavior_with_name('kick-clear').state == behavior.Behavior.State.completed or not self.go_clear,
-            "done clearing")
+            SubmissiveDefender.State.marking, lambda: self.
+            subbehavior_with_name('kick-clear').state == behavior.Behavior.
+            State.completed or not self.go_clear, "done clearing")
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
@@ -64,25 +64,20 @@ class SubmissiveDefender(
         self._block_line = value
 
         # we move somewhere along this arc to mark our 'block_line'
+        offset = constants.Robot.Radius * 1.2
         left_seg = robocup.Segment(
-            robocup.Point(
-                -constants.Field.PenaltyLongDist / 2, 0),
-            robocup.Point(
-                -constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist))
+            robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset, 0),
+            robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset,
+                          constants.Field.PenaltyShortDist + offset))
         right_seg = robocup.Segment(
-            robocup.Point(
-                constants.Field.PenaltyLongDist / 2, 0),
-            robocup.Point(
-                constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist))
+            robocup.Point(constants.Field.PenaltyLongDist / 2 + offset, 0),
+            robocup.Point(constants.Field.PenaltyLongDist / 2 + offset,
+                          constants.Field.PenaltyShortDist + offset))
         top_seg = robocup.Segment(
-            robocup.Point(
-                -constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist),
-            robocup.Point(
-                constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist))
+            robocup.Point(-constants.Field.PenaltyLongDist / 2,
+                          constants.Field.PenaltyShortDist + offset),
+            robocup.Point(constants.Field.PenaltyLongDist / 2,
+                          constants.Field.PenaltyShortDist + offset))
 
         default_pt = top_seg.center()
 
@@ -95,10 +90,10 @@ class SubmissiveDefender(
             threat_point = self._block_line.get_pt(0)
 
             intersection_center = top_seg.line_intersection(self._block_line)
-            intersection_center += robocup.Point(0, 0.1)  # offset from goal zone
 
             if threat_point.x < 0:
-                intersections_left = left_seg.line_intersection(self._block_line)
+                intersections_left = left_seg.line_intersection(
+                    self._block_line)
                 if intersections_left is not None:
                     self._move_target = intersections_left
                 elif intersection_center is not None:
@@ -137,24 +132,18 @@ class SubmissiveDefender(
         move.pos = self.move_target
 
         left_seg = robocup.Segment(
-            robocup.Point(
-                -constants.Field.PenaltyLongDist / 2, 0),
-            robocup.Point(
-                -constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist))
+            robocup.Point(-constants.Field.PenaltyLongDist / 2, 0),
+            robocup.Point(-constants.Field.PenaltyLongDist / 2,
+                          constants.Field.PenaltyShortDist))
         right_seg = robocup.Segment(
-            robocup.Point(
-                constants.Field.PenaltyLongDist / 2, 0),
-            robocup.Point(
-                constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist))
+            robocup.Point(constants.Field.PenaltyLongDist / 2, 0),
+            robocup.Point(constants.Field.PenaltyLongDist / 2,
+                          constants.Field.PenaltyShortDist))
         top_seg = robocup.Segment(
-            robocup.Point(
-                -constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist),
-            robocup.Point(
-                constants.Field.PenaltyLongDist / 2,
-                constants.Field.PenaltyShortDist))
+            robocup.Point(-constants.Field.PenaltyLongDist / 2,
+                          constants.Field.PenaltyShortDist),
+            robocup.Point(constants.Field.PenaltyLongDist / 2,
+                          constants.Field.PenaltyShortDist))
 
         if move.pos is not None:
             main.system_state().draw_circle(move.pos, 0.02,
