@@ -95,6 +95,7 @@ class SubmissiveDefender(
             threat_point = self._block_line.get_pt(0)
 
             intersection_center = top_seg.line_intersection(self._block_line)
+            intersection_center += robocup.Point(0, 0.1)  # offset from goal zone
 
             if threat_point.x < 0:
                 intersections_left = left_seg.line_intersection(self._block_line)
