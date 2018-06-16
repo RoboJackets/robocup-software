@@ -14,14 +14,22 @@ import skills.move
 class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
+    ## Speed in m at which a capture will be handled by coarse and fine approach instead of intercept
+    InterceptVelocityThresh = 0.2
+
+    ## Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
+    DampenMult = 0.06
+
+    # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
+
+    ## Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = .2
-    InterceptVelocityThresh = 0.2
-    DampenMult = 0.06
 
     # Default dribbler speed, can be overriden by self.dribbler_power
+    ## Sets dribbler speed during intercept and fine approach
     DribbleSpeed = 100
     FineApproachSpeed = 0.1
 
@@ -54,36 +62,39 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.intercept,
-            Capture.State.course_approach, lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh,
+            Capture.State.course_approach,
+            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh,
             'moving to dampen')
 
         self.add_transition(
             Capture.State.course_approach,
-            Capture.State.fine_approach, lambda: (self.bot_in_front_of_ball(
-            ) or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
+            Capture.State.fine_approach,
+            lambda: (self.bot_in_front_of_ball() or
+                     self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
             'dist to ball < threshold')
 
         self.add_transition(
             Capture.State.fine_approach,
-            Capture.State.delay, lambda: self.robot.has_ball_raw(),
+            Capture.State.delay,
+            lambda: evaluation.ball.robot_has_ball(self.robot),
             'has ball')
 
         self.add_transition(
             Capture.State.delay,
             behavior.Behavior.State.completed,
             lambda: time.time() - self.start_time > Capture.DelayTime and
-            self.robot.has_ball_raw(),
+            evaluation.ball.robot_has_ball(self.robot),
             'delay before finish')
 
         self.add_transition(
             Capture.State.delay,
             Capture.State.fine_approach,
-            lambda: not self.robot.has_ball_raw(),
+            lambda: evaluation.ball.robot_has_ball(self.robot),
             'lost ball during delay')
 
         self.add_transition(
-            Capture.State.fine_approach, Capture.State.course_approach, lambda:
-            not (self.bot_in_front_of_ball() or self.bot_near_ball(
+            Capture.State.fine_approach, Capture.State.course_approach,
+            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(
                 Capture.CourseApproachDist)) and (not self.bot_near_ball(
                     Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
@@ -101,20 +112,17 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def bot_in_front_of_ball(self):
         if (self.robot is not None):
-            return self.robot.has_ball_raw()
+            return evaluation.ball.robot_has_ball(self.robot)
         else:
             return None
 
-    # normalized vector pointing from the ball to the point the robot should get to in course_aproach
-
-
     # calculates intercept point for the fast moving intercept state
     def find_moving_intercept(self):
-        return find_robot_moving_intercept(self.robot)
+        return find_robot_intercept_point(self.robot)
 
     # returns intercept point for the slow moving capture states
     def find_intercept_point(self):
-        return find_robot_intercept_point(self.robot)
+        return find_robot_capture_point(self.robot)
 
     def execute_running(self):
         self.robot.set_planning_priority(planning_priority.CAPTURE)
@@ -124,6 +132,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # sets move subbehavior
     def execute_intercept(self):
+        self.robot.set_dribble_speed(self.dribbler_power)
         pos = self.find_moving_intercept()
         self.robot.move_to(pos)
 
@@ -183,8 +192,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(r).dist_to(r.pos)
         return reqs
 
-
-def find_robot_moving_intercept(robot):
+# calculates intercept point for the fast moving intercept state
+def find_robot_intercept_point(robot):
     if (robot is not None):
         passline = robocup.Line(
             main.ball().pos, main.ball().pos + main.ball().vel * 10)
@@ -194,8 +203,8 @@ def find_robot_moving_intercept(robot):
     else:
         return None
 
-# calculates intercept point for the slow or stationary fine approach state
-def find_robot_intercept_point(robot):
+# calculates capture point for the slow or stationary fine approach state
+def find_robot_capture_point(robot):
     if robot is None:
         return main.ball().pos
 
