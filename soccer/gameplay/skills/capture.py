@@ -70,7 +70,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             Capture.State.course_approach,
             Capture.State.fine_approach,
             lambda: (self.bot_in_front_of_ball() or
-                     self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
+            self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid,
             'dist to ball < threshold')
 
         self.add_transition(
@@ -111,10 +111,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         return (self.bot_to_ball().mag() < distance)
 
     def bot_in_front_of_ball(self):
-        if (self.robot is not None):
-            return evaluation.ball.robot_has_ball(self.robot)
-        else:
-            return None
+        ball2bot = self.bot_to_ball() * -1
+        return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and ((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag())
 
     # calculates intercept point for the fast moving intercept state
     def find_moving_intercept(self):
