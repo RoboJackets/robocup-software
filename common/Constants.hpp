@@ -15,6 +15,9 @@ const size_t Num_Shells = 16;
 // Number of playing robots on one team
 const size_t Robots_Per_Team = 6;
 
+const size_t Max_Dribble = 128;
+const size_t Max_Kick = 255;
+
 const float Ball_Diameter = 0.043f;
 const float Ball_Radius = Ball_Diameter / 2.0f;
 const float Ball_Mass = 0.048f;
