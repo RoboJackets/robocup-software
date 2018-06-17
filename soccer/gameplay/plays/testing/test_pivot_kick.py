@@ -14,7 +14,7 @@ class TestPivotKick(play.Play):
         super().__init__(continuous=True)
 
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running, lambda: True,
+                            behavior.Behavior.State.running, True,
                             'immediately')
 
         kick = skills.pivot_kick.PivotKick()

@@ -228,7 +228,7 @@
    <accelMultiplier value="2"/>
    <d value="0.7"/>
    <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0"/>
+   <minEffectiveVelocity value="0.05"/>
   </translation>
   <rotation>
    <p value="5"/>
