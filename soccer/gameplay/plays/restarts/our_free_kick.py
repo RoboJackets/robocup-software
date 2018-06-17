@@ -50,7 +50,7 @@ class OurFreeKick(standard_play.StandardPlay):
                                  required=False)
 
         if self.indirect:
-            receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
+            receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos)
             print(receive_pt)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
