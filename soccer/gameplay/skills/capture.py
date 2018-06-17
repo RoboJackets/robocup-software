@@ -27,6 +27,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     ## Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = .2
+    delayFrames = 5
 
     # Default dribbler speed, can be overriden by self.dribbler_power
     ## Sets dribbler speed during intercept and fine approach
@@ -60,10 +61,18 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                             Capture.State.intercept, lambda: True,
                             'immediately')
 
+        self.delayCount = 0
+
         self.add_transition(
             Capture.State.intercept,
             Capture.State.course_approach,
-            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh,
+            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or (main.ball().pos).dist_to(self.robot.pos) < (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
+            'moving to dampen')
+
+        self.add_transition(
+            Capture.State.course_approach,
+            Capture.State.intercept,
+            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and (main.ball().pos).dist_to(self.robot.pos) >= (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
             'moving to dampen')
 
         self.add_transition(
