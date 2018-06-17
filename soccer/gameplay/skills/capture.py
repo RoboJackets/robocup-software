@@ -187,7 +187,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(r).dist_to(r.pos)
+            if main.ball().vel.mag() < 0.05:
+                reqs.cost_func = lambda r: main.ball().pos.dist_to(r.pos)
+            else:
+                reqs.cost_func = lambda r: reqs.position_cost_multiplier * robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10).dist_to(r.pos)
         return reqs
 
 # calculates intercept point for the fast moving intercept state
