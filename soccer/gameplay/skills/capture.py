@@ -187,7 +187,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            if main.ball().vel.mag() < 0.05:
+            if main.ball().vel.mag() < self.InterceptVelocityThresh:
                 reqs.cost_func = lambda r: main.ball().pos.dist_to(r.pos)
             else:
                 reqs.cost_func = lambda r: reqs.position_cost_multiplier * robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10).dist_to(r.pos)
