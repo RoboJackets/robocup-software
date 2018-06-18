@@ -18,11 +18,11 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     InterceptVelocityThresh = 0.15
 
     # (possibly deprecated)Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
-    DampenMult = 0.00
+    DampenMult = 0.05
 
     # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.2
+    CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
 
     ## Time in which to wait in delay state to confirm the robot has the ball
@@ -60,14 +60,20 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.intercept, Capture.State.course_approach,
-            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or (main.ball().pos).dist_to(self.robot.pos) < (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
-            'moving to dampen')
+            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or not self.ball_moving_towards_bot,
+            'moving to coarse')
 
         self.add_transition(
             Capture.State.course_approach, Capture.State.intercept,
-            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and (main.ball().pos).dist_to(self.robot.pos) >= (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
-            'moving to dampen')
+            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and self.ball_moving_towards_bot(),
+            'moving to intercept')
 
+        self.add_transition(
+            Capture.State.fine_approach, Capture.State.intercept,
+            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and self.ball_moving_away_bot,
+            'moving to intercept')
+
+        # Coarse to fine
         self.add_transition(
             Capture.State.course_approach, Capture.State.fine_approach,
             lambda: (self.bot_in_front_of_ball() or
@@ -75,15 +81,17 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             'dist to ball < threshold')
 
         self.add_transition(
+            Capture.State.fine_approach, Capture.State.course_approach,
+            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(
+                Capture.CourseApproachDist)) and (not self.bot_near_ball(
+                    Capture.CourseApproachDist * 1.5) or not main.ball().pos),
+            'ball went into goal')
+
+        #DELAY STATES
+        self.add_transition(
             Capture.State.fine_approach, Capture.State.delay,
             lambda: evaluation.ball.robot_has_ball(self.robot),
             'has ball')
-
-        self.add_transition(
-            Capture.State.delay, behavior.Behavior.State.completed,
-            lambda: time.time() - self.start_time > Capture.DelayTime and
-            evaluation.ball.robot_has_ball(self.robot),
-            'delay before finish')
 
         self.add_transition(
             Capture.State.delay, Capture.State.fine_approach,
@@ -91,11 +99,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             'lost ball during delay')
 
         self.add_transition(
-            Capture.State.fine_approach, Capture.State.course_approach,
-            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(
-                Capture.CourseApproachDist)) and (not self.bot_near_ball(
-                    Capture.CourseApproachDist * 1.5) or not main.ball().pos),
-            'ball went into goal')
+            Capture.State.delay, behavior.Behavior.State.completed,
+            lambda: time.time() - self.start_time > Capture.DelayTime and
+            evaluation.ball.robot_has_ball(self.robot),
+            'delay before finish')
 
         self.lastApproachTarget = None
         self.faceBall = faceBall
@@ -111,12 +118,15 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         ball2bot = self.bot_to_ball() * -1
         return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and ((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag())
 
+    def ball_moving_towards_bot(self):
+        return (main.ball().pos).dist_to(self.robot.pos) < (main.ball().vel + main.ball().pos).dist_to(self.robot.pos)
+
     # calculates intercept point for the fast moving intercept state
-    def find_moving_intercept(self):
+    def find_intercept_point(self):
         return find_robot_intercept_point(self.robot)
 
     # returns intercept point for the slow moving capture states
-    def find_intercept_point(self):
+    def find_capture_point(self):
         return find_robot_capture_point(self.robot)
 
     def execute_running(self):
@@ -125,12 +135,12 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if (self.faceBall):
             self.robot.face(main.ball().pos)
 
+
     # sets move subbehavior
     def execute_intercept(self):
         self.robot.set_dribble_speed(self.dribbler_power)
-        self.robot.set_dribble_speed(self.dribbler_power)
-        self.robot.set_dribble_speed(self.dribbler_power)
-        pos = self.find_moving_intercept()
+        self.robot.disable_avoid_ball()
+        pos = self.find_intercept_point()
         self.robot.move_to(pos)
 
     def on_enter_course_approach(self):
@@ -138,7 +148,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def execute_course_approach(self):
         self.robot.set_dribble_speed(self.dribbler_power)
-        pos = self.find_intercept_point()
+        pos = self.find_capture_point()
 
         if (self.lastApproachTarget != None and
             (pos - self.lastApproachTarget).mag() < 0.1):
@@ -168,9 +178,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # TODO(ashaw596): explain this math a bit
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
         multiplier = 1.5
-        aproach = self.bot_to_ball(
-        ) * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball(
-        ).vel
+        aproach = self.bot_to_ball() * multiplier + bot2ball * Capture.FineApproachSpeed / 4 + main.ball().vel
         if (aproach.mag() > 1):
             aproach = aproach.normalized() * 1
         self.robot.set_world_vel(aproach)
@@ -199,8 +207,7 @@ def find_robot_intercept_point(robot):
     if (robot is not None):
         passline = robocup.Line(
             main.ball().pos, main.ball().pos + main.ball().vel * 10)
-        pos = passline.nearest_point(
-            robot.pos) + (main.ball().vel * Capture.DampenMult)
+        pos = passline.nearest_point(robot.pos) + (main.ball().vel * Capture.DampenMult)
         return pos
     else:
         return None
@@ -216,7 +223,7 @@ def find_robot_capture_point(robot):
 
     for i in range(50):
         dist = i * 0.05
-        pos = main.ball().pos + approach_vec * dist
+        pos = main.ball().pos + main.ball().vel + approach_vec * dist
         # how long will it take the ball to get there
         ball_time = evaluation.ball.rev_predict(main.ball().vel, dist)
         robotDist = (pos - robot.pos).mag() * 0.6
