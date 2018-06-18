@@ -19,12 +19,7 @@ class OurFreeKick(standard_play.StandardPlay):
         # If we are indirect we don't want to shoot directly into the goal
         gs = main.game_state()
 
-        if indirect is not None:
-            self.indirect = indirect
-        elif main.ball().pos.y > constants.Field.Length / 2.0:
-            self.indirect = gs.is_indirect()
-        else:
-            self.indirect = False
+        self.indirect = gs.is_indirect()
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -50,7 +45,7 @@ class OurFreeKick(standard_play.StandardPlay):
                                  required=False)
 
         if self.indirect:
-            receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
+            receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos)
             print(receive_pt)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(

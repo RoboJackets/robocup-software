@@ -163,7 +163,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         pass_line_dir = (
             self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
-
+    
         # vector pointing down the pass line toward the kicker
         pass_dir = (
             self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
@@ -265,8 +265,8 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     def role_requirements(self):
         reqs = super().role_requirements()
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
-            # if self._target_pos != None:
-            #     req.destination_shape = self._target_pos
+            #if self._target_pos != None:
+            #    req.destination_shape = self._target_pos
             if self.receive_point != None:
                 req.destination_shape = self.receive_point
         return reqs
