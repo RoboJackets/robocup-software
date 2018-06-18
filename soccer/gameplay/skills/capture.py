@@ -18,7 +18,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     InterceptVelocityThresh = 0.3
 
     ## Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
-    DampenMult = 0.00
+    DampenMult = 0.0
 
     # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
@@ -27,8 +27,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     ## Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = .2
-    delayFrames = 5
-
+        
     # Default dribbler speed, can be overriden by self.dribbler_power
     ## Sets dribbler speed during intercept and fine approach
     DribbleSpeed = 100
@@ -60,8 +59,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(behavior.Behavior.State.start,
                             Capture.State.intercept, lambda: True,
                             'immediately')
-
-        self.delayCount = 0
 
         self.add_transition(
             Capture.State.intercept,
