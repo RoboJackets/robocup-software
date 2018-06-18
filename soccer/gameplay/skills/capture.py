@@ -15,10 +15,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     ## Speed in m at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.2
+    InterceptVelocityThresh = 0.3
 
     ## Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
-    DampenMult = 0.06
+    DampenMult = 0.0
 
     # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
@@ -27,7 +27,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     ## Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = .2
-
+        
     # Default dribbler speed, can be overriden by self.dribbler_power
     ## Sets dribbler speed during intercept and fine approach
     DribbleSpeed = 100
@@ -63,7 +63,13 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.intercept,
             Capture.State.course_approach,
-            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh,
+            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or (main.ball().pos).dist_to(self.robot.pos) < (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
+            'moving to dampen')
+
+        self.add_transition(
+            Capture.State.course_approach,
+            Capture.State.intercept,
+            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and (main.ball().pos).dist_to(self.robot.pos) >= (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
             'moving to dampen')
 
         self.add_transition(
@@ -187,7 +193,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
-            reqs.cost_func = lambda r: reqs.position_cost_multiplier * find_robot_intercept_point(r).dist_to(r.pos)
+            if main.ball().vel.mag() < self.InterceptVelocityThresh:
+                reqs.cost_func = lambda r: main.ball().pos.dist_to(r.pos)
+            else:
+                reqs.cost_func = lambda r: reqs.position_cost_multiplier * robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10).dist_to(r.pos)
         return reqs
 
 # calculates intercept point for the fast moving intercept state
