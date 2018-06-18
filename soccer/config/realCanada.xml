@@ -186,7 +186,7 @@
  </ChipCalibration>
  <MotionControl>
   <Max_Acceleration value="2"/>
-  <Max_Velocity value="3"/>
+  <Max_Velocity value="4"/>
   <PathJitterCompensationFactor value="2"/>
   <PathChangeBoost value="50"/>
   <X_Multiplier value="1.3"/>
@@ -214,7 +214,7 @@
  </PathPlanner>
  <MotionConstraints>
   <Max_Acceleration value="1"/>
-  <Max_Velocity value="1"/>
+  <Max_Velocity value="1.2"/>
   <Max_Angle_Speed value="0.436"/>
   <Replan_Threshold value="0.3"/>
   <Replan_Lead_Time value="0"/>
@@ -246,7 +246,7 @@
    <velMultiplier value="0.01"/>
   </pivot>
   <dribbler>
-   <multiplier value="1"/>
+   <multiplier value="1.8"/>
   </dribbler>
   <chipper>
    <calibSlope value="2.20227"/>
