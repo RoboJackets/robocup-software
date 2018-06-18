@@ -30,6 +30,8 @@ class OurFreeKick(standard_play.StandardPlay):
         # kicker.use_chipper = True
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
+        kicker.max_speed = .5
+        kicker.max_accel = .5
         # This will be reset to something else if indirect on the first iteration
         kicker.target = constants.Field.TheirGoalSegment
 
