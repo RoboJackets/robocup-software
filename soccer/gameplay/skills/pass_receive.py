@@ -35,6 +35,8 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     StabilizationFrames = 3
     DesperateTimeout = 5
 
+    DribbleSpeed = 128
+
     class State(enum.Enum):
         ## we're aligning with the planned receive point
         aligning = 1
@@ -59,6 +61,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         self.stable_frame = 0
         self.kicked_time = 0
         self.captureFunction = captureFunction
+        self.dribbler_power = PassReceive.DribbleSpeed
 
         for state in PassReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -184,6 +187,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
                                             constants.Colors.Blue, "Pass")
 
     def execute_aligning(self):
+        self.robot.set_dribble_speed(self.dribbler_power)
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
@@ -251,10 +255,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
     def execute_receiving(self):
         # Freeze ball position and velocity once Stabilizationframes is up.
+        self.robot.set_dribble_speed(self.dribbler_power)
         if self.stable_frame <= PassReceive.StabilizationFrames:
             self.stable_frame = self.stable_frame + 1
             self.reset_correct_location()
-
         # Alignment will be handled by capture
 
         ## prefer a robot that's already near the receive position
