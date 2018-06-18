@@ -39,14 +39,20 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.target = constants.Field.TheirGoalSegment
 
         # add two 'centers' that just move to fixed points
-        center1 = skills.move.Move(robocup.Point(0, 1.5))
-        self.add_subbehavior(center1, 'center1', required=False, priority=4)
-        center2 = skills.move.Move(robocup.Point(0, 1.5))
-        self.add_subbehavior(center2, 'center2', required=False, priority=3)
+        # center1 = skills.move.Move(robocup.Point(0, main.ball().pos * .8)
+        # self.add_subbehavior(center1, 'center1', required=False, priority=4)
+        # center2 = skills.move.Move(robocup.Point(0, main.ball().pos * .8))
+        # self.add_subbehavior(center2, 'center2', required=False, priority=3)
+
+        midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder()
+        self.add_subbehavior(midfielders,
+                                 'midfielders',
+                                 required=False)
 
         if self.indirect:
-            receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
+            receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos)
+            print(receive_pt)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                 receive_pt,
                 None,
