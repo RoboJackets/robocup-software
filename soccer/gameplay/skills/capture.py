@@ -15,10 +15,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     ## Speed in m at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.2
+    InterceptVelocityThresh = 0.3
 
     ## Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
-    DampenMult = 0.06
+    DampenMult = 0.00
 
     # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
