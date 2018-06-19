@@ -171,9 +171,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         kick.chip_power = 1.0
         kick.use_chipper = True
 
-        kick.target = robocup.Segment(
-            robocup.Point(-constants.Field.Width / 2, constants.Field.Length),
-            robocup.Point(constants.Field.Width / 2, constants.Field.Length))
+        kick.target = evaluation.shooting.find_gap(robocup.Point(0, constants.Field.Length), max_shooting_angle=80)
 
         # FIXME: if the goalie has a fault, resort to bump
 
