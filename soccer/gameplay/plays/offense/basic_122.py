@@ -12,13 +12,13 @@ import math
 class Basic122(standard_play.StandardPlay):
 
     # how far the 2 support robots should stay away from the striker
-    SupportAvoidTeammateRadius = 5#0.5
+    SupportAvoidTeammateRadius = 0.5
 
     OffenseSupportRatio = 0.7
     DefenseSupportRatio = 0.9
 
     # if an opponent is this close to the striker, we don't instruct the support bots to mark him
-    SupportBackoffThresh = 10#1.5
+    SupportBackoffThresh = 1.5
 
     # multiplier used to decide when it's worth it to reassign the bot a support is marking
     MarkHysteresisCoeff = 0.9
