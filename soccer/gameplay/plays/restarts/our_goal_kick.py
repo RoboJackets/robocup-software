@@ -31,6 +31,8 @@ class OurGoalKick(standard_play.StandardPlay):
         # kicker.use_chipper = True
         kicker.kick_power = OurGoalKick.KickerPower
         kicker.chip_power = OurGoalKick.ChipperPower
+        kicker.max_speed = .5
+        kicker.max_accel = .5
         self.add_subbehavior(kicker, 'kicker', required=True, priority=6)
 
         center1 = skills.move.Move()

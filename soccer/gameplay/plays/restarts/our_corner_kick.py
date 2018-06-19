@@ -26,6 +26,8 @@ class OurCornerKick(standard_play.StandardPlay):
         self.kicker.chip_power = OurCornerKick.ChipperPower  # TODO: base this on the target dist from the bot
         self.kicker.min_chip_range = OurCornerKick.MinChipRange
         self.kicker.max_chip_range = OurCornerKick.MaxChipRange
+        self.kicker.max_speed = .5
+        self.kicker.max_accel = .5
         self.add_subbehavior(self.kicker, 'kicker', required=True, priority=5)
 
         # larger avoid ball radius for line kick setup so we don't run over the ball backwards
