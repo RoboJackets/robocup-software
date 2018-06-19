@@ -14,7 +14,7 @@ import role_assignment
 
 class Defense(composite_behavior.CompositeBehavior):
 
-    DEFENSE_ROBOT_CHANGE_COST = 0.29
+    DEFENSE_ROBOT_CHANGE_COST = 0.05
 
     class State(Enum):
         # Gets in the way of the opponent robots

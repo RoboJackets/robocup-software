@@ -144,13 +144,25 @@ class Basic122(standard_play.StandardPlay):
         # reassign support robots' mark targets based on dist sq and hysteresis coeff
         new_dists = [bestDistSq1, bestDistSq2]
         new_bots = [bestOpp1, bestOpp2]
+
+        # If one of the robots is marking the robot near the ball
+        # Reset them both to another robot
+        # Both are done so they won't have the same robot
+        clear_all_marks = False
+        for i in range(2):
+            if (striker_engaged and 
+                supports[i].mark_robot is not None and
+                supports[i].mark_robot == closest_opp_to_striker):
+                clear_all_marks = True
+
         for i in range(2):
             support = supports[i]
             if new_bots[i] != None:
                 cur_dist_sq = (
                     support.mark_robot.pos -
                     ball_proj).magsq() if support.mark_robot else float("inf")
-                if new_dists[i] < cur_dist_sq * Basic122.MarkHysteresisCoeff:
+                if (new_dists[i] < cur_dist_sq * Basic122.MarkHysteresisCoeff or
+                    clear_all_marks):
                     support.mark_robot = new_bots[i]
 
         # if the supports are farther from the ball, they can mark further away
