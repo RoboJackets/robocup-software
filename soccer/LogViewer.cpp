@@ -134,7 +134,7 @@ void LogViewer::updateViews() {
                               frameNumber());
     int elapsedMillis =
         (currentFrame.command_time() - frames[0]->command_time() + 500) / 1000;
-    QTime elapsedTime = QTime().addMSecs(elapsedMillis);
+    QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
     _elapsedTimeItem->setText(ProtobufTree::Column_Value,
                               elapsedTime.toString("hh:mm:ss.zzz"));
 

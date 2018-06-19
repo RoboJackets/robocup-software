@@ -69,7 +69,7 @@ class LineUp(composite_behavior.CompositeBehavior):
         self._line = value
         self.diff = (
             self._line.get_pt(1) - self._line.get_pt(0)).normalized() * (
-                self._line.length() / 6.0)
+                self._line.length() / 5.0)
 
         # add subbehaviors for all robots, instructing them to line up
         self.remove_all_subbehaviors()

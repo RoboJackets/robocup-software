@@ -239,7 +239,7 @@
    <minEffectiveAngularSpeed value="0"/>
   </rotation>
   <kicker>
-   <maxKick value="225"/>
+   <maxKick value="245"/>
    <maxChip value="200"/>
   </kicker>
   <pivot>
