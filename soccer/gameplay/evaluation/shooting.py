@@ -36,7 +36,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     test_distance = .5 + constants.Robot.Radius 
 
     # +- max offset to dodge ball
-    max_angle = max_offset * constants.DegreesToRadians
+    max_angle = max_shooting_angle * constants.DegreesToRadians
 
     # How much left and right of a robot to give
     # Dont make this too big or it will always go far to the right or left of the robots
@@ -131,6 +131,6 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
 
     # This will be reset to something else if indirect on the first iteration
     if (is_opponent_blocking and len(window) > 0):
-        kicker.target = window[0].segment.center()
+        return window[0].segment.center()
     else:
-        kicker.target = constants.Field.TheirGoalSegment.center()
+        return constants.Field.TheirGoalSegment.center()
