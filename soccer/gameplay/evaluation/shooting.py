@@ -21,6 +21,12 @@ def eval_shot(from_point, excluded_robots=[]):
         # The shot is invalid
         return 0
 
+## Shoot through a formation of enemy robots at a target
+# 
+# @param target_pos: the target to shoot at
+# @param max max_shooting_angle: The largest angle we will search to find a gap
+# @param robot_offset: How offset from an enemy robot we will shoot
+# @return a point
 def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8):
 	# Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
@@ -29,9 +35,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     # 500 cm min circle distance plus the robot width
     test_distance = .5 + constants.Robot.Radius 
 
-    # +- 60 degrees max as max offset to dodge ball
+    # +- max offset to dodge ball
     max_angle = max_offset * constants.DegreesToRadians
-    # MAX ANGLE
 
     # How much left and right of a robot to give
     # Dont make this too big or it will always go far to the right or left of the robots
@@ -61,8 +66,6 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
         if (ball_to_bot.mag() <= test_distance + constants.Robot.Radius):
             angle = goal_vector.angle_between(ball_to_bot)
             
-            print(ball_to_bot)
-            print(angle)
             # Try and rotate onto the goal vector
             # if we actually do, then the robot is to the right of the ball vector
             ball_to_bot.rotate(zero_point, angle)
@@ -118,7 +121,6 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
 
     if (len(window) > 0):
         main.system_state().draw_line(robocup.Line(main.ball().pos, window[0].segment.center()), (255, 255, 0), "Target Shot")
-    
 
     is_opponent_blocking = False
 
@@ -131,4 +133,4 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     if (is_opponent_blocking and len(window) > 0):
         kicker.target = window[0].segment.center()
     else:
-        kicker.target = constants.Field.TheirGoalSegment
+        kicker.target = constants.Field.TheirGoalSegment.center()
