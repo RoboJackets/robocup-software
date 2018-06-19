@@ -164,14 +164,18 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # we use low error thresholds here
         # the goalie isn't trying to make a shot, he just wants get the ball the **** out of there
-        kick.aim_params['error_threshold'] = 1.0
-        kick.aim_params['max_steady_ang_vel'] = 12
+        # kick.aim_params['error_threshold'] = 1.0
+        # kick.aim_params['max_steady_ang_vel'] = 12
 
         # chip
         kick.chip_power = 1.0
         kick.use_chipper = True
 
-        kick.target = evaluation.shooting.find_gap(robocup.Point(0, constants.Field.Length), max_shooting_angle=80)
+        kick.target = evaluation.shooting.find_gap(
+                robocup.Point(0, constants.Field.Length), 
+                max_shooting_angle=70,
+                robot_offset=8, 
+                dist_from_point=1)
 
         # FIXME: if the goalie has a fault, resort to bump
 
