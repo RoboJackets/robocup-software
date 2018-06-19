@@ -12,4 +12,4 @@ class TestFreeKickTemp(play.Play):
                             "immediately")
 
     def execute_running(self):
-        evaluation.shooting.find_gap()
+        evaluation.shooting.find_gap(max_shooting_angle=70, robot_offset=8, dist_from_point=1)
