@@ -61,9 +61,10 @@ class Basic122(standard_play.StandardPlay):
         supports = [support1, support2]
 
         # project ball location a bit into the future
-        ball_proj = evaluation.ball.predict(main.ball().pos,
-                                            main.ball().vel,
-                                            t=0.75)
+        ball_proj = main.ball().predict_pos(0.75)
+        # ball_proj = evaluation.ball.predict(main.ball().pos,
+        #                                     main.ball().vel,
+        #                                     t=0.75)
 
         # find closest opponent to striker
         closest_dist_to_striker, closest_opp_to_striker = float("inf"), None
