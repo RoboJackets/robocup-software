@@ -36,35 +36,16 @@ FrictionCoefficient = 0.04148
 GravitationalCoefficient = 9.81  # in m/s^2
 
 
-# The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
-def predict(X_i, V_i, t):
-    return X_i + (V_i * t) - (V_i.normalized() * 0.5 * FrictionCoefficient *
-                              GravitationalCoefficient * t**2)
+def predict_stop_time():
+    return main.ball().predict_seconds_to_stop()
 
 
-def predict_stop_time(start_speed):
-    return (start_speed / (FrictionCoefficient * GravitationalCoefficient))
+def predict_stop():
+    return main.ball().predict_pos(main.ball().predict_seconds_to_stop())
 
-
-def predict_stop(X_i, V_i):
-    return predict(X_i, V_i, predict_stop_time(V_i.mag()))
-
-
-def rev_predict(V_i, dist):
+def rev_predict(dist):
     """predict how much time it will take the ball to travel the given distance"""
-
-    # use the quadratic formula (a^2x + bx + c = 0 -> (-b +/- sqrt(b^2-4ac)) / 2a)
-    a = -0.5 * FrictionCoefficient * GravitationalCoefficient
-    b = V_i.mag()
-    c = -dist
-
-    # we ignore the second solution because it doesn't make sense in this context
-    b4ac = b**2 - 4 * a * c
-    if b4ac > 0:
-        return (-b + math.sqrt(b4ac)) / 2 * a
-    else:
-        return float("inf")
-
+    return main.ball().estimate_seconds_to_dist(dist)
 
 # returns a Robot or None indicating which opponent has the ball
 def opponent_with_ball():
