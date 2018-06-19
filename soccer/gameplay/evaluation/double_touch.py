@@ -17,7 +17,7 @@ import evaluation
 #
 class DoubleTouchTracker(fsm.StateMachine):
 
-    TOUCH_RADIUS = constants.Ball.Radius * 3
+    TOUCH_RADIUS = constants.Ball.Radius * 2.5
 
     class State(enum.Enum):
         start = 1

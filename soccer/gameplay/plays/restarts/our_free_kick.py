@@ -47,7 +47,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
         # How much left and right of a robot to give
         # Dont make this too big or it will always go far to the right or left of the robots
-        robot_angle_offset = 8 * constants.DegreesToRadians
+        robot_angle_offset = 10 * constants.DegreesToRadians
 
         zero_point = robocup.Point(0, 0)
     
@@ -160,20 +160,21 @@ class OurFreeKick(standard_play.StandardPlay):
             receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos)
             print(receive_pt)
-            pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                receive_pt,
-                None,
-                (kicker, lambda x: True),
-                receiver_required=False,
-                kicker_required=False,
-                prekick_timeout=9)
-            # We don't need to manage this anymore
-            self.add_subbehavior(pass_behavior, 'kicker')
 
-            kicker.target = receive_pt
+            if target_point != 0:            
+                pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+                    receive_pt,
+                    None,
+                    (kicker, lambda x: True),
+                    receiver_required=False,
+                    kicker_required=False,
+                    prekick_timeout=9)
+                # We don't need to manage this anymore
+                self.add_subbehavior(pass_behavior, 'kicker')
+            else:
+                self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+
         else:
-            kicker = skills.line_kick.LineKick()
-            kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(

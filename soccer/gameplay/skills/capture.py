@@ -23,7 +23,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
     CourseApproachDist = 1.2
-    CourseApproachAvoidBall = 0.2
+    CourseApproachAvoidBall = 0.2	
 
     ## Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = .2
@@ -31,7 +31,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     # Default dribbler speed, can be overriden by self.dribbler_power
     ## Sets dribbler speed during intercept and fine approach
     DribbleSpeed = 100
-    FineApproachSpeed = 0.01
+    FineApproachSpeed = 0.005
 
     InFrontOfBallCosOfAngleThreshold = 0.95
 
