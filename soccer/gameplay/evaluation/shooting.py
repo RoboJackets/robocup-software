@@ -27,13 +27,14 @@ def eval_shot(from_point, excluded_robots=[]):
 # @param max max_shooting_angle: The largest angle we will search to find a gap
 # @param robot_offset: How offset from an enemy robot we will shoot
 # @return a point
-def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8):
-	# Find the hole in the defenders to kick at
+def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.5):
+	
+    # Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
     win_eval = robocup.WindowEvaluator(main.system_state())
 
     # 500 cm min circle distance plus the robot width
-    test_distance = .5 + constants.Robot.Radius 
+    test_distance = dist_from_point + constants.Robot.Radius 
 
     # +- max offset to dodge ball
     max_angle = max_shooting_angle * constants.DegreesToRadians
@@ -130,7 +131,9 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             is_opponent_blocking = True
 
     # This will be reset to something else if indirect on the first iteration
-    if (is_opponent_blocking and len(window) > 0):
+    if (len(window) > 0):
+        print(window[0].segment.center())
         return window[0].segment.center()
     else:
+        print("No shot")
         return constants.Field.TheirGoalSegment.center()
