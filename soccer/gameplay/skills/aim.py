@@ -210,6 +210,9 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         self.recalculate()
 
+        self.robot.set_max_speed(0.7)
+        self.robot.set_max_accel(0.7)
+
         # slowly pivot toward the target
         #self.robot.set_max_angle_speed(4)
         self.robot.pivot(self._face_target)

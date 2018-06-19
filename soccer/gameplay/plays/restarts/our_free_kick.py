@@ -36,7 +36,8 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.max_chip_range = 3.0
 
         kicker.target = evaluation.shooting.find_gap()
-
+        if self.indirect:
+            receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
             if target_point != 0:            
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     receive_pt,

@@ -13,30 +13,30 @@ import skills.move
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
     # Speed in m/s at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.2
+    InterceptVelocityThresh = 0.1
 
     # Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
     DampenMult = 0.0
 
     # The distance to transition from coarse approach to fine
     # TODO: The correct way to do this would be using our official max acceleration and current speed
-    CoarseToFineApproachDistance = 0.5
+    CoarseToFineApproachDistance = 0.3
 
     # The distance to avoid the  ball in coarse approach
-    CoarseApproachAvoidBall = 0.2
+    CoarseApproachAvoidBall = 0.1
 
     # Minimum speed (On top of ball speed) to move towards the ball
     FineApproachMinDeltaSpeed = 0.2
 
     # Proportional term on the distance error between ball and robot during fine approach
     # Adds to the fine approach speed
-    FineApproachDistanceMultiplier = 0.1
+    FineApproachDistanceMultiplier = .5
 
     # How much of the ball speed to add to our approach speed
     FineApproachBallSpeedMultiplier = .8
 
     # Time in which to wait in delay state to confirm the robot has the ball
-    DelayTime = .2
+    DelayTime = .5
         
     # Default dribbler speed, can be overriden by self.dribbler_power
     # Sets dribbler speed during intercept and fine approach
