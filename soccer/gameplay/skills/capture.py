@@ -16,15 +16,15 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     ## Speed in m at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.5
+    InterceptVelocityThresh = 0.1
 
     DampenMult = 0.0
 
     # Coarse Approach Tunables
     CoarseApproachErrorThresh = 0.8
     CoarseApproachVelocity = 0.1
-    CoarseApproachDist = 0.8
-    CoarseApproachAvoidBall = 0.20
+    CoarseApproachDist = 0.05
+    CoarseApproachAvoidBall = 0.5
 
     ## Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = 0.4
@@ -231,11 +231,11 @@ def find_robot_capture_point(robot):
     return pos
 
 def find_robot_coarse_point(robot):
-    pos = main.ball().pos + main.ball().vel * 1.2
+    pos = main.ball().pos + main.ball().vel
     move_point = pos
 
     if main.ball().vel.mag() > Capture.CoarseApproachVelocity:
-        move_point = move_point + main.ball().vel * 0.2
+        move_point = move_point + main.ball().vel * 0.4
         if pos.cross(robot.pos) <= 0:
             move_point.rotate(pos, math.pi/2)
         elif pos.cross(robot.pos) > 0:
