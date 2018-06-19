@@ -108,7 +108,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     target_point = goal_vector.normalized() * test_distance
     target_point.rotate(zero_point, rotate_target_angle)
 
-    window, _ = win_eval.eval_pt_to_pt(main.ball().pos, target_point + main.ball().pos, target_width)
+    windows, window = win_eval.eval_pt_to_pt(main.ball().pos, target_point + main.ball().pos, target_width)
 
     main.system_state().draw_line(robocup.Line(main.ball().pos, target_point + main.ball().pos), (0, 255, 0), "Target Point")
 
@@ -120,8 +120,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     p3 = main.ball().pos
     main.system_state().draw_polygon([p1, p2, p3], (0, 0, 255), "Free Kick search zone")
 
-    if (len(window) > 0):
-        main.system_state().draw_line(robocup.Line(main.ball().pos, window[0].segment.center()), (255, 255, 0), "Target Shot")
+    if (len(windows) > 0):
+        main.system_state().draw_line(robocup.Line(main.ball().pos, window.segment.center()), (255, 255, 0), "Target Shot")
 
     is_opponent_blocking = False
 
@@ -131,9 +131,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             is_opponent_blocking = True
 
     # This will be reset to something else if indirect on the first iteration
-    if (len(window) > 0):
-        print(window[0].segment.center())
-        return window[0].segment.center()
+    if (len(windows) > 0):
+        return window.segment.center()
     else:
-        print("No shot")
         return constants.Field.TheirGoalSegment.center()
