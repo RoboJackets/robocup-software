@@ -20,7 +20,10 @@ class OurFreeKick(standard_play.StandardPlay):
         # If we are indirect we don't want to shoot directly into the goal
         gs = main.game_state()
 
-        self.indirect = gs.is_indirect()
+        if (main.ball().pos.y > constants.Field.Length / 2):
+            self.indirect = gs.is_indirect()
+        else:
+            self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
