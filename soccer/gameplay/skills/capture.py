@@ -112,7 +112,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def bot_in_front_of_ball(self):
         ball2bot = self.bot_to_ball() * -1
-        return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and ((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag())
+        return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and ((ball2bot).mag() < (evaluation.ball.predict_stop() - main.ball().pos).mag())
 
     # calculates intercept point for the fast moving intercept state
     def find_moving_intercept(self):
@@ -214,7 +214,7 @@ def find_robot_capture_point(robot):
         dist = i * 0.05
         pos = main.ball().pos + approach_vec * dist
         # how long will it take the ball to get there
-        ball_time = evaluation.ball.rev_predict(main.ball().vel, dist)
+        ball_time = evaluation.ball.rev_predict(dist)
         robotDist = (pos - robot.pos).mag() * 0.6
         bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2, 1,
                                                 robot.vel.mag(), 0)
