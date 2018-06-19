@@ -44,7 +44,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         self.target_point = constants.Field.TheirGoalSegment.center()
         self.error_threshold = 0.06
-        self.max_steady_ang_vel = 4
+        self.max_steady_ang_vel = 1.5
         self.min_steady_duration = 0.1
         self.dribbler_power = int(constants.Robot.Dribbler.MaxPower / 2.0)
 
