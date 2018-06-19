@@ -22,7 +22,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # Coarse Approach Tunables
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.4
+    CourseApproachDist = 0.6
     CourseApproachAvoidBall = 0.10
 
     ## Time in which to wait in delay state to confirm the robot has the ball
