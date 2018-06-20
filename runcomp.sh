@@ -6,7 +6,7 @@ if ! command -v git >/dev/null; then
 fi
 
 if ! git rev-parse --abbrev-ref HEAD | grep -q comp; then
-    echo "YOUR BRANCH DOES NOT CONTAIN COMP. PLEASE RECONSIDER OR COMMENT ME OUT." 2>&1
+    echo "YOUR BRANCH DOES NOT CONTAIN COMP. PLEASE RECONSIDER OR COMMENT ME OUT." >&2
     exit 1
 else
     echo "Branch is: $(git rev-parse --abbrev-ref HEAD)"

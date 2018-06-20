@@ -834,7 +834,11 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
-        .def_readonly("valid", &Ball::valid);
+        .def_readonly("valid", &Ball::valid)
+        .def("predict_pos", &Ball::predictPosition)
+        .def("estimate_seconds_to", &Ball::estimateSecondsTo)
+        .def("predict_seconds_to_stop", &Ball::predictSecondsToStop)
+    .def("estimate_seconds_to_dist", &Ball::estimateSecondsToDist);
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())

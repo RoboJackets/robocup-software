@@ -4,9 +4,10 @@ import skills.move
 import skills.pivot_kick
 import constants
 import robocup
+import math
 import main
 import tactics.coordinated_pass
-import evaluation.touchpass_positioning
+import evaluation.passing_positioning
 
 
 class OurFreeKick(standard_play.StandardPlay):
@@ -19,7 +20,10 @@ class OurFreeKick(standard_play.StandardPlay):
         # If we are indirect we don't want to shoot directly into the goal
         gs = main.game_state()
 
-        self.indirect = gs.is_indirect()
+        if (main.ball().pos.y > constants.Field.Length / 2):
+            self.indirect = gs.is_indirect()
+        else:
+            self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -30,24 +34,10 @@ class OurFreeKick(standard_play.StandardPlay):
         # kicker.use_chipper = True
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
-        # This will be reset to something else if indirect on the first iteration
-        kicker.target = constants.Field.TheirGoalSegment
 
-        # add two 'centers' that just move to fixed points
-        # center1 = skills.move.Move(robocup.Point(0, main.ball().pos * .8)
-        # self.add_subbehavior(center1, 'center1', required=False, priority=4)
-        # center2 = skills.move.Move(robocup.Point(0, main.ball().pos * .8))
-        # self.add_subbehavior(center2, 'center2', required=False, priority=3)
+        kicker.target = evaluation.shooting.find_gap()
 
-        midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder()
-        self.add_subbehavior(midfielders,
-                                 'midfielders',
-                                 required=False)
-
-        if self.indirect:
-            receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(
-                main.ball().pos)
-            print(receive_pt)
+        if target_point != 0:
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                 receive_pt,
                 None,
@@ -57,11 +47,7 @@ class OurFreeKick(standard_play.StandardPlay):
                 prekick_timeout=9)
             # We don't need to manage this anymore
             self.add_subbehavior(pass_behavior, 'kicker')
-
-            kicker.target = receive_pt
         else:
-            kicker = skills.line_kick.LineKick()
-            kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
