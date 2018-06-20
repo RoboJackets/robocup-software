@@ -50,7 +50,11 @@ class DoubleTouchTracker(fsm.StateMachine):
 
         self.add_transition(DoubleTouchTracker.State.kicking,
                             DoubleTouchTracker.State.kicker_forbidden,
-                            lambda: main.game_state().is_playing(),
+                            # The ball is no longer in restart, we have begun playing
+                            (lambda: main.game_state().is_playing() or
+                             # We aren't in a restart anymore
+                             main.root_play().play is None or
+                             not main.root_play().play.__class__.is_restart()),
                             'ball has moved and is now in play')
 
         self.add_transition(DoubleTouchTracker.State.kicker_forbidden,
@@ -74,7 +78,9 @@ class DoubleTouchTracker(fsm.StateMachine):
     def other_robot_touching_ball(self):
         for bot in filter(lambda bot: bot.visible,
                           list(main.our_robots()) + list(main.their_robots())):
-            if bot.is_ours() and bot.has_ball():
+            if (bot.is_ours() and
+                bot.has_ball() and
+                    bot.shell_id() != self.kicker_shell_id):
                 return True
             if ((bot.shell_id() != self.kicker_shell_id or
                  not bot.is_ours()) and
@@ -107,7 +113,7 @@ class DoubleTouchTracker(fsm.StateMachine):
                 return
         if main.ball().valid:
             # pick our closest robot
-            ball_pos = self._pre_ball_pos
+            ball_pos = self.pre_ball_pos
             if not ball_pos:
                 ball_pos = main.ball().pos
             bot = min(main.our_robots(),
