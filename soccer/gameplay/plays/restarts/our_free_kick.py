@@ -13,6 +13,7 @@ import evaluation.passing_positioning
 class OurFreeKick(standard_play.StandardPlay):
 
     Running = False
+    bump_power = 0.01
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -35,10 +36,12 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
 
-        kicker.target = evaluation.shooting.find_gap()
+        target = evaluation.shooting.find_gap(max_shooting_angle=50)
+
+        kicker.target = target
         if self.indirect:
-            receive_pt, target_point = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
-            if target_point != 0:            
+            receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+            if receive_value != 0:            
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     receive_pt,
                     None,
@@ -49,8 +52,14 @@ class OurFreeKick(standard_play.StandardPlay):
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
             else:
+                shooting_line = robocup.Line(main.ball().pos, target)
+                if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
+                    kicker.kick_power = bump_power
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
-        else:
+        else:            
+            shooting_line = robocup.Line(main.ball().pos, target)
+            if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
+                kicker.kick_power = self.bump_power
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
