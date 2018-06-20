@@ -7,7 +7,7 @@ import role_assignment
 import robocup
 import constants
 import main
-import numpy as np
+import math
 import planning_priority
 from enum import Enum
 
@@ -43,14 +43,19 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed,
             'aim error < threshold')
 
-        self.add_transition(
-            PivotKick.State.aiming, PivotKick.State.kicking,
-            lambda: self.facing_opp_goal(),
-            'early kick')
+        # self.add_transition(
+        #     PivotKick.State.aiming, PivotKick.State.aimed,
+        #     lambda: self.facing_opp_goal(),
+        #     'early kick')
+
+        # self.add_transition(
+        #     PivotKick.State.aimed, PivotKick.State.kicking,
+        #     lambda: self.facing_opp_goal(),
+        #     'early kick')
 
         self.add_transition(
             PivotKick.State.aimed, PivotKick.State.aiming,
-            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick,
+            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick and not self.facing_opp_goal(),
             'aim error > threshold')
 
         self.add_transition(PivotKick.State.aimed, PivotKick.State.kicking,
@@ -82,12 +87,12 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         if robot is None:
             return False
         robotAngle = robot.angle
-        a1 = np.arctan(abs(robot.pos.y - constants.Field.Length) / (robot.pos.x - constants.Field.GoalWidth))
+        a1 = math.atan(abs(robot.pos.y - constants.Field.Length) / (robot.pos.x - constants.Field.GoalWidth))
         if a1 < 0:
-            a1 +=  np.pi
-        a2 = np.arctan(abs(robot.pos.y - constants.Field.Length) / (robot.pos.x + constants.Field.GoalWidth))
+            a1 +=  math.pi
+        a2 = math.atan(abs(robot.pos.y - constants.Field.Length) / (robot.pos.x + constants.Field.GoalWidth))
         if a2 < 0:
-            a2 += np.pi
+            a2 += math.pi
         if robotAngle > min(a1, a2) and robotAngle < max(a1, a2) and robot.pos.y > constants.Field.Length / 2:
             print('EARLY KICK')
             return True
