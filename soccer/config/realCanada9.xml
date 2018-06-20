@@ -246,7 +246,7 @@
    <velMultiplier value="0.01"/>
   </pivot>
   <dribbler>
-   <multiplier value="1.8"/>
+   <multiplier value="1"/>
   </dribbler>
   <chipper>
    <calibSlope value="2.20227"/>
@@ -282,7 +282,7 @@
   <Max_Rotation_Acceleration value="4"/>
  </RotationConstraints>
  <Pivot>
-  <radius value="0.8"/>
+  <radius value="1.1"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>
