@@ -89,6 +89,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.kick_eval = robocup.KickEvaluator(main.system_state())
 
+        for r in main.our_robots():
+            self.kick_eval.add_excluded_robot(r)
+
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
                             AdaptiveFormation.State.collecting, lambda: True,
