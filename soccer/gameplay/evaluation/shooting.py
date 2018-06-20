@@ -28,7 +28,7 @@ def eval_shot(from_point, excluded_robots=[]):
 # @param robot_offset: How offset from an enemy robot we will shoot
 # @return a point
 def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.75):
-	
+
     # Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
     win_eval = robocup.WindowEvaluator(main.system_state())
@@ -147,7 +147,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     # Iterate through all possible windows to find the best possible shot
     if windows:
         best_shot = window.segment.center()
-        best_weight = 0    
+        best_weight = float("inf") * -1
         for wind in windows:
             pos_to_wind = (wind.segment.center() - main.ball().pos).normalized()
             dot_prod = pos_to_wind.dot(ideal_shot)

@@ -155,6 +155,12 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
+        shot_vector = robocup.Line(self.receive_point, main.ball().pos)
+        
+        # If we're firing at our own Field Border, decrease power greatly
+        if shot_vector.line_intersection(constants.Field.FieldBorders[3]) is not None:
+            kickpower = min(kickpower, 0.01)
+
         kicker.kick_power = kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
