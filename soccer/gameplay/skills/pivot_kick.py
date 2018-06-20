@@ -7,6 +7,7 @@ import role_assignment
 import robocup
 import constants
 import main
+import numpy as np
 import planning_priority
 from enum import Enum
 
@@ -43,6 +44,11 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             'aim error < threshold')
 
         self.add_transition(
+            PivotKick.State.aiming, PivotKick.State.kicking,
+            lambda: self.facing_opp_goal(),
+            'early kick')
+
+        self.add_transition(
             PivotKick.State.aimed, PivotKick.State.aiming,
             lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick,
             'aim error > threshold')
@@ -70,6 +76,23 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         # default parameters
         self.dribbler_power = constants.Robot.Dribbler.StandardPower
         self.aim_params = {'desperate_timeout': float("inf")}
+
+    def facing_opp_goal(self):
+        robot = self.subbehavior_with_name('aim').robot
+        if robot is None:
+            return False
+        robotAngle = robot.angle
+        a1 = np.arctan(abs(robot.pos.y - constants.Field.Length) / (robot.pos.x - constants.Field.GoalWidth))
+        if a1 < 0:
+            a1 +=  np.pi
+        a2 = np.arctan(abs(robot.pos.y - constants.Field.Length) / (robot.pos.x + constants.Field.GoalWidth))
+        if a2 < 0:
+            a2 += np.pi
+        if robotAngle > min(a1, a2) and robotAngle < max(a1, a2) and robot.pos.y > constants.Field.Length / 2:
+            print('EARLY KICK')
+            return True
+        return False
+
 
         # The speed to drive the dribbler at during aiming
         # If high, adds lift to kick

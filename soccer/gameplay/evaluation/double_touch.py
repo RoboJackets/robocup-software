@@ -24,6 +24,7 @@ class DoubleTouchTracker(fsm.StateMachine):
         restart_play_began = 2
         kicking = 3  # we go to this state once we have determined which of our bots is the kicker
         kicker_forbidden = 4  # the kicker has kicked or fumbled and is no longer allowed to touch it
+        other_robot_touched = 5  # after another bot has touched the ball, the double touch rule is no longer applicable
 
     def __init__(self):
         super().__init__(start_state=DoubleTouchTracker.State.start)
@@ -52,7 +53,7 @@ class DoubleTouchTracker(fsm.StateMachine):
                             'kicker kicks or fumbles ball')
 
         self.add_transition(DoubleTouchTracker.State.kicker_forbidden,
-                            DoubleTouchTracker.State.start,
+                            DoubleTouchTracker.State.other_robot_touched,
                             lambda: self.other_robot_touching_ball(),
                             'another robot has touched the ball')
 

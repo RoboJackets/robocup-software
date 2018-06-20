@@ -14,42 +14,43 @@ import math
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
     # Speed in m/s at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.2
+    InterceptVelocityThresh = 0.1
 
     # Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
     DampenMult = 0.0
 
     # The distance to transition from coarse approach to fine
     # TODO: The correct way to do this would be using our official max acceleration and current speed
-    CoarseToFineApproachDistance = 0.5
+    CoarseToFineApproachDistance = 0.3
 
     # the speed to have coarse approach switch from approach the ball from behind to approaching in a hook motion
     HookToDirectApproachTransisitonSpeed = 0.05
 
     # The distance state to avoid the ball in coarse approach
-    CoarseApproachAvoidBall = 0.3
+    CoarseApproachAvoidBall = 0.25
 
     # Minimum speed (On top of ball speed) to move towards the ball
     FineApproachMinDeltaSpeed = 0.1
 
     # Proportional term on the distance error between ball and robot during fine approach
     # Adds to the fine approach speed
-    FineApproachDistanceMultiplier = 0.1
+    FineApproachDistanceMultiplier = .5
 
     # How much of the ball speed to add to our approach speed
     FineApproachBallSpeedMultiplier = .8
 
     # Time in which to wait in delay state to confirm the robot has the ball
-    DelayTime = .2
+    DelayTime = 0.5
 
     # Default dribbler speed, can be overriden by self.dribbler_power
     # Sets dribbler speed during intercept and fine approach
-    DribbleSpeed = 100
+    DribbleSpeed = 0
 
     # The minimum dot product result between the ball and the robot to count as the ball moving at the
     # robot
     InFrontOfBallCosOfAngleThreshold = 0.3
 
+    DelaySpeed = 0.1
     class State(Enum):
         intercept = 0
         hook_approach = 1
@@ -241,6 +242,14 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_delay(self):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
+
+        ball_dir = (main.ball().pos - self.robot.pos).normalized()
+        if main.ball().vel.mag() < Capture.DelaySpeed:
+            self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
+        elif main.ball().vel.mag() < Capture.DelaySpeed:
+            delay_speed = main.ball().vel.mag() - Capture.DelaySpeed
+            self.robot.set_world_vel(ball_dir*delay_speed)
+        self.robot.face(main.ball().pos)
 
     def role_requirements(self):
         reqs = super().role_requirements()

@@ -54,11 +54,7 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
                 receive_point + robocup.Point(0, y_offset))):
         return 0
 
-    shotChance = 0
-
-    # Dissallow shooting over midfield
-    if (kick_point.y > constants.Field.Length / 2):
-        shotChance = evaluation.shooting.eval_shot(receive_point,
+    shotChance = evaluation.shooting.eval_shot(receive_point,
                                                    ignore_robots)
 
     passChance = evaluation.passing.eval_pass(kick_point, receive_point,

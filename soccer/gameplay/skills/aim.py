@@ -43,8 +43,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             'error > threshold or rotating too fast')
 
         self.target_point = constants.Field.TheirGoalSegment.center()
-        self.error_threshold = 0.06
-        self.max_steady_ang_vel = 1.5
+        self.error_threshold = 20 * constants.DegreesToRadians
+        self.max_steady_ang_vel = 50 * constants.DegreesToRadians
         self.min_steady_duration = 0.1
         self.dribbler_power = int(constants.Robot.Dribbler.MaxPower / 2.0)
 
@@ -207,8 +207,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if self.robot.has_ball():
             self.last_ball_time = time.time()
+            self.startBallLocation = main.ball().pos
 
         self.recalculate()
+
+        self.robot.set_max_speed(0.3)
+        self.robot.set_max_accel(0.3)
 
         # slowly pivot toward the target
         #self.robot.set_max_angle_speed(4)

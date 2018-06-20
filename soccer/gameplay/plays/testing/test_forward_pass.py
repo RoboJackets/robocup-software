@@ -11,7 +11,7 @@ import main
 class TestForwardPass(play.Play):
 
     ReceiveXCoord = -constants.Field.Width / 4
-    ReceiveYCoord = constants.Field.Length * 3.0 / 4.0
+    ReceiveYCoord = constants.Field.Length * 3 / 4.0
 
     def __init__(self):
         super().__init__(continuous=True)

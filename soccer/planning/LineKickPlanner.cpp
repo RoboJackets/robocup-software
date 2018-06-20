@@ -40,7 +40,7 @@ bool LineKickPlanner::shouldReplan(const PlanRequest& planRequest) const {
 }
 
 std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
-    const float ApproachSpeed = 1.0;
+    const float ApproachSpeed = 0.25;
 
     const float ballAvoidDistance = 0.05;
 
