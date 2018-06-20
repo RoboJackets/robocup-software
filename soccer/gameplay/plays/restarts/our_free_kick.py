@@ -54,7 +54,7 @@ class OurFreeKick(standard_play.StandardPlay):
             else:
                 shooting_line = robocup.Line(main.ball().pos, target)
                 if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
-                    kicker.kick_power = bump_power
+                    kicker.kick_power = self.bump_power
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:            
             shooting_line = robocup.Line(main.ball().pos, target)
