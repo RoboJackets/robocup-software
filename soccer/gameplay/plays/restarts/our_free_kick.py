@@ -46,9 +46,9 @@ class OurFreeKick(standard_play.StandardPlay):
             kicker.kick_power = self.full_power
         elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or shooting_line.line_intersection(constants.Field.FieldBorders[2])) and gap.y - main.ball().pos.y > 0:
             kicker.kick_power = self.full_power
+        elif main.ball().pos > constants.Field.Length / 2:
+            kicker.kick_power = self.bump_power
         else:
-            print("HELLOOOO")
-
             kicker.kick_power = self.bump_power 
 
         if self.indirect:
