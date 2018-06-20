@@ -142,8 +142,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     k1 = 1.5 # Weight of closeness to ideal shot
     k2 = 1 # Weight of shot chance
 
-    print("ideal shot:", ideal_shot)
-    print("number of windows:", len(windows))
+    # print("ideal shot:", ideal_shot)
+    # print("number of windows:", len(windows))
     # Iterate through all possible windows to find the best possible shot
     if windows:
         best_shot = window.segment.center()
@@ -151,8 +151,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
         for wind in windows:
             pos_to_wind = (wind.segment.center() - main.ball().pos).normalized()
             dot_prod = pos_to_wind.dot(ideal_shot)
-            print("weighted dot product:", dot_prod)
-            print("weighted shot chance:", wind.shot_success)
+            # print("weighted dot product:", dot_prod)
+            # print("weighted shot chance:", wind.shot_success)
             weight = k1 * dot_prod + k2 * wind.shot_success
             if weight > best_weight:
                 best_weight = weight
