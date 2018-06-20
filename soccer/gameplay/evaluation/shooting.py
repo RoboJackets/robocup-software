@@ -160,7 +160,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
         
         main.system_state().draw_line(robocup.Line(main.ball().pos, best_shot), (255, 255, 0), "Target Shot")
 
-        best_shot = robocup.Point(0,1) + main.ball().pos
+        # best_shot = robocup.Point(0,1) + main.ball().pos
         return best_shot
     else:
         return constants.Field.TheirGoalSegment.center()

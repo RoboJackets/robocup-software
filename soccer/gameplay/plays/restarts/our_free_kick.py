@@ -13,7 +13,7 @@ import evaluation.passing_positioning
 class OurFreeKick(standard_play.StandardPlay):
 
     Running = False
-    bump_power = 0.01
+    bump_power = 0.05
     full_power = 1
 
     def __init__(self, indirect=None):
@@ -45,7 +45,7 @@ class OurFreeKick(standard_play.StandardPlay):
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
             print("Option 1")
             kicker.kick_power = self.full_power
-        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0]) is not None or shooting_line.line_intersection(constants.Field.FieldBorders[2]) is not None) and gap.y - main.ball().pos.y > 0:
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0]) is not None or shooting_line.line_intersection(constants.Field.FieldBorders[2]) is not None) and main.ball().pos.y < constants.Field.Length / 4:
             print(shooting_line.line_intersection(constants.Field.FieldBorders[0]))
             print("Option 2")
             kicker.kick_power = self.full_power
