@@ -46,6 +46,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     # robot
     InFrontOfBallCosOfAngleThreshold = 0.95
 
+    DelaySpeed = 0.1
     class State(Enum):
         intercept = 0
         coarse_approach = 1
@@ -202,6 +203,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_delay(self):
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(self.dribbler_power)
+
+        ball_dir = (main.ball().pos - self.robot.pos).normalized()
+        self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
+        self.robot.face(main.ball().pos)
 
     def role_requirements(self):
         reqs = super().role_requirements()
