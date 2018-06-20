@@ -36,9 +36,14 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
 
-        target = evaluation.shooting.find_gap(max_shooting_angle=70)
+        gap = evaluation.shooting.find_gap(max_shooting_angle=80)
 
-        kicker.target = target
+        kicker.target = gap
+
+        shooting_line = robocup.Line(main.ball().pos, gap)
+        if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
+            kicker.kick_power = self.bump_power
+
         if self.indirect:
             receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
             if receive_value != 0:            
@@ -51,15 +56,9 @@ class OurFreeKick(standard_play.StandardPlay):
                     prekick_timeout=9)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
-            else:
-                shooting_line = robocup.Line(main.ball().pos, target)
-                if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
-                    kicker.kick_power = bump_power
+            else:                
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:            
-            shooting_line = robocup.Line(main.ball().pos, target)
-            if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
-                kicker.kick_power = self.bump_power
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
