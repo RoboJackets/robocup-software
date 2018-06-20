@@ -24,7 +24,7 @@ import logging
 # If the receiver gets the ball, ForwardPass transitions to the completed state, otherwise it goes to the failed state
 class ForwardPass(composite_behavior.CompositeBehavior):
 
-    KickPower = 0.4
+    KickPower = 0.05
 
     class State(enum.Enum):
         preparing = 1  # the kicker is aiming and the receiver is getting ready
@@ -32,7 +32,7 @@ class ForwardPass(composite_behavior.CompositeBehavior):
         receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
 
     ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
-    # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
+    # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoSot it).
     def __init__(self, receive_point=None, skillreceiver=None):
         super().__init__(continuous=False)
 

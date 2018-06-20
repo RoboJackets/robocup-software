@@ -56,7 +56,10 @@ class OurFreeKick(standard_play.StandardPlay):
                     prekick_timeout=9)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
-            else:                
+            else:
+                shooting_line = robocup.Line(main.ball().pos, target)
+                if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
+                    kicker.kick_power = self.bump_power
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:            
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
