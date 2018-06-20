@@ -102,6 +102,7 @@ public:
      */
     std::vector<Geometry2d::Point> hypothetical_robot_locations;
 
+    static ConfigDouble* kick_std_dev;
 private:
     SystemState* system;
 
@@ -141,7 +142,6 @@ private:
         const std::vector<float>& robotStDevs, const float boundaryLower,
         const float boundaryUpper);
 
-    static ConfigDouble* kick_std_dev;
     static ConfigDouble* kick_mean;
     static ConfigDouble* robot_std_dev;
     static ConfigDouble* start_x_offset;

@@ -14,6 +14,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
     Running = False
     bump_power = 0.01
+    full_power = 1
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -36,9 +37,20 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
 
-        target = evaluation.shooting.find_gap(max_shooting_angle=50)
+        gap = evaluation.shooting.find_gap(max_shooting_angle=80)
 
-        kicker.target = target
+        kicker.target = gap
+
+        shooting_line = robocup.Line(main.ball().pos, gap)
+        if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
+            kicker.kick_power = self.full_power
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or shooting_line.line_intersection(constants.Field.FieldBorders[2])) and gap.y - main.ball().pos.y > 0:
+            kicker.kick_power = self.full_power
+        elif main.ball().pos > constants.Field.Length / 2:
+            kicker.kick_power = self.bump_power
+        else:
+            kicker.kick_power = self.bump_power 
+
         if self.indirect:
             receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
             if receive_value != 0:            
@@ -51,15 +63,9 @@ class OurFreeKick(standard_play.StandardPlay):
                     prekick_timeout=9)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
-            else:
-                shooting_line = robocup.Line(main.ball().pos, target)
-                if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
-                    kicker.kick_power = self.bump_power
+            else:                
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:            
-            shooting_line = robocup.Line(main.ball().pos, target)
-            if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is None:
-                kicker.kick_power = self.bump_power
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
@@ -74,6 +80,8 @@ class OurFreeKick(standard_play.StandardPlay):
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def execute_running(self):
+        evaluation.shooting.find_gap(max_shooting_angle=70)
+
         if self.indirect \
            and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
             self.indirect = False
