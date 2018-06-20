@@ -27,7 +27,7 @@ def eval_shot(from_point, excluded_robots=[]):
 # @param max max_shooting_angle: The largest angle we will search to find a gap
 # @param robot_offset: How offset from an enemy robot we will shoot
 # @return a point
-def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.5):
+def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.75):
 	
     # Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
@@ -130,8 +130,25 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             (main.ball().pos - robot.pos).mag() < test_distance):
             is_opponent_blocking = True
 
-    # This will be reset to something else if indirect on the first iteration
-    if (len(windows) > 0):
-        return window.segment.center()
+    # Vector from ball position to the goal
+    forward_vector = (constants.Field.TheirGoalSegment.center() - main.ball().pos).normalized()
+
+    # Weights for determining best shot
+    k1 = 3 # Weight of closeness to goal 
+    k2 = 1 # Weight of shot chance
+
+    # Iterate through all possible windows to find the best possible shot
+    if windows:
+        best_shot = window.segment.center()
+        best_weight = 0        
+        for wind in windows:
+            pos_to_wind = (wind.segment.center() - main.ball().pos).normalized()
+            dot_prod = pos_to_wind.dot(forward_vector)
+            weight = k1 * dot_prod + k2 * wind.shot_success
+            if weight > best_weight:
+                best_weight = dot_prod
+                best_shot = wind.segment.center()
+        
+        return best_shot
     else:
         return constants.Field.TheirGoalSegment.center()

@@ -36,7 +36,7 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
 
-        target = evaluation.shooting.find_gap(max_shooting_angle=50)
+        target = evaluation.shooting.find_gap(max_shooting_angle=70)
 
         kicker.target = target
         if self.indirect:
@@ -74,6 +74,8 @@ class OurFreeKick(standard_play.StandardPlay):
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def execute_running(self):
+        evaluation.shooting.find_gap(max_shooting_angle=70)
+
         if self.indirect \
            and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
             self.indirect = False
