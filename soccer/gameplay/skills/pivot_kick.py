@@ -7,6 +7,7 @@ import role_assignment
 import robocup
 import constants
 import main
+import numpy as np
 import planning_priority
 from enum import Enum
 
@@ -42,9 +43,11 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed,
             'aim error < threshold')
 
+        # robotAngle = self.subbehavior_with_name('aim').state.robot.angle
+        # a1 = np.atan(abs())
         # self.add_transition(
         #     PivotKick.State.aiming, PivotKick.State.kicking,
-        #     lambda: self.subbehavior_with_name('aim').robot. and robot.y > midline,
+        #     lambda: robotAngle > min(a1, a2) and robotAngle < max(a1, a2) and self.subbehavior_with_name('aim').state.robot.pos.y() > constants.Field.Length(),
         #     'early kick')
 
         self.add_transition(

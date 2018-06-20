@@ -36,7 +36,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     FineApproachBallSpeedMultiplier = .8
 
     # Time in which to wait in delay state to confirm the robot has the ball
-    DelayTime = .5
+    DelayTime = 0.5
         
     # Default dribbler speed, can be overriden by self.dribbler_power
     # Sets dribbler speed during intercept and fine approach
@@ -205,7 +205,11 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_dribble_speed(self.dribbler_power)
 
         ball_dir = (main.ball().pos - self.robot.pos).normalized()
-        self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
+        if main.ball().vel.mag() < Capture.DelaySpeed:
+            self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
+        elif main.ball().vel.mag() < Capture.DelaySpeed:
+            delay_speed = main.ball().vel.mag() - Capture.DelaySpeed
+            self.robot.set_world_vel(ball_dir*delay_speed)
         self.robot.face(main.ball().pos)
 
     def role_requirements(self):
