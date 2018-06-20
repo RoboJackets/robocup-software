@@ -21,13 +21,13 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # The distance to transition from coarse approach to fine
     # TODO: The correct way to do this would be using our official max acceleration and current speed
-    CoarseToFineApproachDistance = 0.3
+    CoarseToFineApproachDistance = 0.5
 
     # the speed to have coarse approach switch from approach the ball from behind to approaching in a hook motion
     HookToDirectApproachTransisitonSpeed = 0.05
 
     # The distance state to avoid the ball in coarse approach
-    CoarseApproachAvoidBall = 0.25
+    CoarseApproachAvoidBall = 0.3
 
     # Minimum speed (On top of ball speed) to move towards the ball
     FineApproachMinDeltaSpeed = 0.1
@@ -79,13 +79,13 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.intercept, Capture.State.hook_approach,
             lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or not self.bot_in_front_of_ball(),
-            'Moving to capture')
+            'GOING FULL HOG')
 
         # Hook to Intercept
         self.add_transition(
             Capture.State.hook_approach, Capture.State.intercept,
             lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh * 1.05 and self.bot_in_front_of_ball(),
-            'Moving to intercept')
+            'Taking a swig')
 
         # Hook to Intercept
         self.add_transition(
