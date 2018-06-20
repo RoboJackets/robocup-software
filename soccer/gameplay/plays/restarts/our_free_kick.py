@@ -43,17 +43,16 @@ class OurFreeKick(standard_play.StandardPlay):
 
         shooting_line = robocup.Line(main.ball().pos, gap)
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
-            print("Option 1")
+            # print("Option 1")
             kicker.kick_power = self.full_power
         elif (shooting_line.line_intersection(constants.Field.FieldBorders[0]) is not None or shooting_line.line_intersection(constants.Field.FieldBorders[2]) is not None) and main.ball().pos.y < constants.Field.Length / 4:
-            print(shooting_line.line_intersection(constants.Field.FieldBorders[0]))
-            print("Option 2")
+            # print("Option 2")
             kicker.kick_power = self.full_power
         elif main.ball().pos.y > constants.Field.Length / 2:
-            print("Option 3")
+            # print("Option 3")
             kicker.kick_power = self.bump_power
         else:
-            print("Option 4")
+            # print("Option 4")
             kicker.kick_power = self.bump_power 
 
         if self.indirect:
