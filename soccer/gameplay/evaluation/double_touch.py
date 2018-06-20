@@ -24,6 +24,7 @@ class DoubleTouchTracker(fsm.StateMachine):
         restart_play_began = 2
         kicking = 3  # we go to this state once we have determined which of our bots is the kicker
         kicker_forbidden = 4  # the kicker has kicked or fumbled and is no longer allowed to touch it
+        other_robot_touched = 5  # after another bot has touched the ball, the double touch rule is no longer applicable
 
     def __init__(self):
         super().__init__(start_state=DoubleTouchTracker.State.start)
@@ -43,17 +44,16 @@ class DoubleTouchTracker(fsm.StateMachine):
         self.add_transition(
             DoubleTouchTracker.State.restart_play_began,
             DoubleTouchTracker.State.kicking,
-            lambda: ((any(self._has_ball(bot) for bot in main.our_robots())) or
-                     main.game_state().is_playing()) and not main.game_state().is_placement(),
-            'one of our bots has the ball or the ball was kicked')
+            lambda: (any(self._has_ball(bot) for bot in main.our_robots())) and not main.game_state().is_placement(),
+            'one of our bots has the ball')
 
         self.add_transition(DoubleTouchTracker.State.kicking,
                             DoubleTouchTracker.State.kicker_forbidden,
-                            lambda: main.game_state().is_playing(),
-                            'ball has moved and is now in play')
+                            lambda: not self.kicker_has_possession(),
+                            'kicker kicks or fumbles ball')
 
         self.add_transition(DoubleTouchTracker.State.kicker_forbidden,
-                            DoubleTouchTracker.State.start,
+                            DoubleTouchTracker.State.other_robot_touched,
                             lambda: self.other_robot_touching_ball(),
                             'another robot has touched the ball')
 
@@ -61,6 +61,15 @@ class DoubleTouchTracker(fsm.StateMachine):
         """A function for combining the ball sense and our own home
         grown cookies and ice cream."""
         return bot.has_ball() or self._bot_in_radius(bot)
+
+    def kicker_has_possession(self):
+        if self.kicker_shell_id is not None:
+            for bot in filter(
+                    lambda robot: robot.shell_id() == self.kicker_shell_id,
+                    main.our_robots()):
+                # we use two methods here because the ball-sensor output is often jittery
+                    return self._has_ball(bot)
+        return False
 
     ## The shell id of the robot that isn't allowed to touch the ball
     # returns None if everyone is allowed to touch
@@ -99,11 +108,7 @@ class DoubleTouchTracker(fsm.StateMachine):
             if self._has_ball(bot):
                 self.kicker_shell_id = bot.shell_id()
                 return
-        if main.ball().valid:
-            # pick our closest robot
-            bot = min(main.our_robots(),
-                      key=lambda bot: bot.pos.dist_to(main.ball().pos))
-            self.kicker_shell_id = bot.shell_id()
+
     def on_enter_kicker_forbidden(self):
         logging.info("Due to DoubleTouch rule, robot '" + str(
             self.kicker_shell_id) + "' can't touch the ball")
