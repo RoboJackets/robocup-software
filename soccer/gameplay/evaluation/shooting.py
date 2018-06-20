@@ -138,8 +138,6 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
 
     main.system_state().draw_line(robocup.Line(main.ball().pos, target_pos), (0, 255, 0), "Target Point")
 
-
-
     # Weights for determining best shot
     k1 = 1.5 # Weight of closeness to ideal shot
     k2 = 1 # Weight of shot chance
