@@ -118,6 +118,17 @@ class DoubleTouchTracker(fsm.StateMachine):
         logging.info("Due to DoubleTouch rule, robot '" + str(
             self.kicker_shell_id) + "' can't touch the ball")
 
+    def execute_kicker_forbidden(self):
+        bot = None
+        for b in main.our_robots():
+            if b.shell_id() == self.kicker_shell_id:
+                bot = b
+                break
+        if self.kicker_shell_id and bot:
+            main.system_state().draw_text(
+                "Blocking double touch!", bot.pos,
+                constants.Colors.Red, "Double Touches")
+
 # global double touch tracker
 _tracker = DoubleTouchTracker()
 
