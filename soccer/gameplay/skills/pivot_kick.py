@@ -55,11 +55,11 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         self.add_transition(
             PivotKick.State.aimed, PivotKick.State.aiming,
-            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick and not self.facing_opp_goal(),
+            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick,
             'aim error > threshold')
 
         self.add_transition(PivotKick.State.aimed, PivotKick.State.kicking,
-                            lambda: self.enable_kick, 'kick enabled')
+                            lambda: self.enable_kick or self.facing_opp_goal(), 'kick enabled')
 
         self.add_transition(PivotKick.State.kicking,
                             behavior.Behavior.State.completed,
@@ -94,7 +94,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         if a2 < 0:
             a2 += math.pi
         if robotAngle > min(a1, a2) and robotAngle < max(a1, a2) and robot.pos.y > constants.Field.Length / 2:
-            print('EARLY KICK')
+            print('EARLY KIck')
+            main.system_state().draw_text('Early kick', robot.pos, 'PivotKick')
             return True
         return False
 

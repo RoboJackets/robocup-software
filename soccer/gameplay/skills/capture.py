@@ -13,7 +13,7 @@ import skills.move
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
     # Speed in m/s at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.1
+    InterceptVelocityThresh = 0.15
 
     # Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
     DampenMult = 0.0
@@ -26,11 +26,11 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CoarseApproachAvoidBall = 0.1
 
     # Minimum speed (On top of ball speed) to move towards the ball
-    FineApproachMinDeltaSpeed = 0.2
+    FineApproachMinDeltaSpeed = 0.1
 
     # Proportional term on the distance error between ball and robot during fine approach
     # Adds to the fine approach speed
-    FineApproachDistanceMultiplier = .5
+    FineApproachDistanceMultiplier = .1
 
     # How much of the ball speed to add to our approach speed
     FineApproachBallSpeedMultiplier = .8
@@ -46,7 +46,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     # robot
     InFrontOfBallCosOfAngleThreshold = 0.95
 
-    DelaySpeed = 0.1
+    DelaySpeed = 0.2
+
+    DelayBallSpeedMultiplier = 1
+
     class State(Enum):
         intercept = 0
         coarse_approach = 1
@@ -96,20 +99,20 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.fine_approach,
             Capture.State.delay,
-            lambda: evaluation.ball.robot_has_ball(self.robot),
+            lambda: self.robot.has_ball, #evaluation.ball.robot_has_ball(self.robot),
             'Has ball')
 
         self.add_transition(
             Capture.State.delay,
             behavior.Behavior.State.completed,
             lambda: time.time() - self.start_time > Capture.DelayTime and
-                    evaluation.ball.robot_has_ball(self.robot),
+                    self.robot.has_ball, #evaluation.ball.robot_has_ball(self.robot),
             'Delay before finish')
 
         self.add_transition(
             Capture.State.delay,
             Capture.State.fine_approach,
-            lambda: not evaluation.ball.robot_has_ball(self.robot),
+            lambda: not self.robot.has_ball, #not evaluation.ball.robot_has_ball(self.robot),
             'Lost ball during delay')
 
         self.add_transition(
@@ -208,7 +211,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if main.ball().vel.mag() < Capture.DelaySpeed:
             self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
         elif main.ball().vel.mag() < Capture.DelaySpeed:
-            delay_speed = main.ball().vel.mag() - Capture.DelaySpeed
+            delay_speed = main.ball().vel.mag()*DelayBallSpeedMultiplier - Capture.DelaySpeed
             self.robot.set_world_vel(ball_dir*delay_speed)
         self.robot.face(main.ball().pos)
 
