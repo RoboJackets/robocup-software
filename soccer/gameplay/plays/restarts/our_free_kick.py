@@ -64,7 +64,8 @@ class OurFreeKick(standard_play.StandardPlay):
             kicker.kick_power = self.bump_power 
 
         if self.indirect:
-            receive_pt = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+            receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+            print(receive_value)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                 receive_pt,
                 None,
