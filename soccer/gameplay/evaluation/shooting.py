@@ -13,28 +13,22 @@ def eval_shot(from_point, excluded_robots=[]):
     for r in excluded_robots:
         kick_eval.add_excluded_robot(r)
     point, chance = kick_eval.eval_pt_to_opp_goal(from_point)
-
-    if from_point.y > (constants.Field.Length / 2):
-
-        return chance
-    else:
-        # The shot is invalid
-        return 0
+    return chance
 
 ## Shoot through a formation of enemy robots at a target
-# 
+#
 # @param target_pos: the target to shoot at
 # @param max max_shooting_angle: The largest angle we will search to find a gap
 # @param robot_offset: How offset from an enemy robot we will shoot
 # @return a point
 def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.75):
-	
+
     # Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
     win_eval = robocup.WindowEvaluator(main.system_state())
 
     # 500 cm min circle distance plus the robot width
-    test_distance = dist_from_point + constants.Robot.Radius 
+    test_distance = dist_from_point + constants.Robot.Radius
 
     # +- max offset to dodge ball
     max_angle = max_shooting_angle * constants.DegreesToRadians
@@ -61,12 +55,12 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
 
     for robot in main.their_robots():
         ball_to_bot = robot.pos - main.ball().pos
-        
+
         # Add an extra radius as wiggle room
         # kick eval already deals with the wiggle room so it isn't needed there
         if (ball_to_bot.mag() <= test_distance + constants.Robot.Radius):
             angle = goal_vector.angle_between(ball_to_bot)
-            
+
             # Try and rotate onto the goal vector
             # if we actually do, then the robot is to the right of the ball vector
             ball_to_bot.rotate(zero_point, angle)
@@ -78,12 +72,12 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
                 left_robot_limit = max(left_robot_limit, angle + robot_angle_offset)
         else:
             win_eval.add_excluded_robot(robot)
-                
+
 
     # Angle limit on each side of the bot->goal vector
     left_angle = max_angle
     right_angle = max_angle
-    
+
     # Make sure we limit the correct side due to the field
     if main.ball().pos.x < 0:
         left_angle = min(left_angle, field_limit)
@@ -129,7 +123,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     # Vector from ball position to the goal
     ideal_shot = (target_pos - main.ball().pos).normalized()
 
-    # If on our side of the field and there are enemy robots around us, 
+    # If on our side of the field and there are enemy robots around us,
     # prioritize passing forward vs passing towards their goal
     # Would have to change this if we are not aiming for their goal
     if main.ball().pos.y < constants.Field.Length / 2 and len(windows) > 1:
@@ -147,7 +141,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     # Iterate through all possible windows to find the best possible shot
     if windows:
         best_shot = window.segment.center()
-        best_weight = 0    
+        best_weight = 0
         for wind in windows:
             pos_to_wind = (wind.segment.center() - main.ball().pos).normalized()
             dot_prod = pos_to_wind.dot(ideal_shot)
@@ -157,7 +151,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             if weight > best_weight:
                 best_weight = weight
                 best_shot = wind.segment.center()
-        
+
         main.system_state().draw_line(robocup.Line(main.ball().pos, best_shot), (255, 255, 0), "Target Shot")
 
         best_shot = robocup.Point(0,1) + main.ball().pos
