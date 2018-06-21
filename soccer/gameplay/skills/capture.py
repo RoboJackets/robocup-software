@@ -40,7 +40,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         
     # Default dribbler speed, can be overriden by self.dribbler_power
     # Sets dribbler speed during intercept and fine approach
-    DribbleSpeed = 0
+    DribbleSpeed = 100
 
     # The minimum dot product result between the ball and the robot to count as the ball moving at the
     # robot
