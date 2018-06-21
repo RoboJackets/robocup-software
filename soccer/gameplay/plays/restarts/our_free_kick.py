@@ -37,45 +37,44 @@ class OurFreeKick(standard_play.StandardPlay):
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
 
-        gap = evaluation.shooting.find_gap(max_shooting_angle=80)
+        target = constants.Field.TheirGoalSegment.center() 
+
+        if self.indirect:
+            if main.ball().pos.y > constants.Field.Length / 2:
+                target = robocup.Point(constants.Field.Width / 2, constants.Field.Length)
+            elif main.ball().pos.y < constants.Field.Length / 2:
+                target = robocup.Point(-constants.Field.Width / 2, constants.Field.Length)           
+
+        gap = evaluation.shooting.find_gap(target_pos=target, max_shooting_angle=80)
 
         kicker.target = gap
 
         shooting_line = robocup.Line(main.ball().pos, gap)
+        
         left_border = robocup.Segment(robocup.Point(-constants.Field.Width / 2.0, 0),
                              robocup.Point(-constants.Field.Width / 2.0, constants.Field.Length))
         right_border = robocup.Segment(robocup.Point(constants.Field.Width / 2.0, 0),
                              robocup.Point(constants.Field.Width / 2.0, constants.Field.Length))
+        
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
-            print("Option 1")
             kicker.kick_power = self.full_power
         elif (shooting_line.segment_intersection(left_border) is not None or shooting_line.segment_intersection(right_border) is not None) and main.ball().pos.y < constants.Field.Length / 4:
-            print(shooting_line.segment_intersection(left_border))
-            print(shooting_line.segment_intersection(right_border))
-            print("Option 2")
             kicker.kick_power = self.full_power
-        elif main.ball().pos.y > constants.Field.Length / 2:
-            print("Option 3")
-            kicker.kick_power = self.bump_power
         else:
-            print("Option 4")
             kicker.kick_power = self.bump_power 
 
         if self.indirect:
-            receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
-            if receive_value != 0:            
-                pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                    receive_pt,
-                    None,
-                    (kicker, lambda x: True),
-                    receiver_required=False,
-                    kicker_required=False,
-                    prekick_timeout=9)
-                # We don't need to manage this anymore
-                self.add_subbehavior(pass_behavior, 'kicker')
-            else:                
-                self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
-        else:            
+            receive_pt = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+            pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+                receive_pt,
+                None,
+                (kicker, lambda x: True),
+                receiver_required=False,
+                kicker_required=False,
+                prekick_timeout=9)
+            # We don't need to manage this anymore
+            self.add_subbehavior(pass_behavior, 'kicker')
+        else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
@@ -90,7 +89,13 @@ class OurFreeKick(standard_play.StandardPlay):
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def execute_running(self):
-        evaluation.shooting.find_gap(max_shooting_angle=70)
+        target = constants.Field.TheirGoalSegment.center() 
+        if main.ball().pos.y > constants.Field.Length / 2:
+            target = robocup.Point(constants.Field.Width / 2, constants.Field.Length)
+        elif main.ball().pos.y < constants.Field.Length / 2:
+            target = robocup.Point(-constants.Field.Width / 2, constants.Field.Length)           
+
+        evaluation.shooting.find_gap(target_pos=target, max_shooting_angle=70)
 
         if self.indirect \
            and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:

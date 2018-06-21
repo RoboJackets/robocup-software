@@ -126,41 +126,10 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             (main.ball().pos - robot.pos).mag() < test_distance):
             is_opponent_blocking = True
 
-    # Vector from ball position to the goal
-    ideal_shot = (target_pos - main.ball().pos).normalized()
-
-    # If on our side of the field and there are enemy robots around us, 
-    # prioritize passing forward vs passing towards their goal
-    # Would have to change this if we are not aiming for their goal
-    if main.ball().pos.y < constants.Field.Length / 2 and len(windows) > 1:
-        ideal_shot = robocup.Point(0, 1)
-    # ASK ABOUT THIS
-
     main.system_state().draw_line(robocup.Line(main.ball().pos, target_pos), (0, 255, 0), "Target Point")
 
-    # Weights for determining best shot
-    k1 = 1.5 # Weight of closeness to ideal shot
-    k2 = 1 # Weight of shot chance
-
-    # print("ideal shot:", ideal_shot)
-    # print("number of windows:", len(windows))
-    # Iterate through all possible windows to find the best possible shot
     if windows:
-        best_shot = window.segment.center()
-        best_weight = float("inf") * -1
-        for wind in windows:
-            pos_to_wind = (wind.segment.center() - main.ball().pos).normalized()
-            dot_prod = pos_to_wind.dot(ideal_shot)
-            # print("weighted dot product:", dot_prod)
-            # print("weighted shot chance:", wind.shot_success)
-            weight = k1 * dot_prod + k2 * wind.shot_success
-            if weight > best_weight:
-                best_weight = weight
-                best_shot = wind.segment.center()
-        
-        main.system_state().draw_line(robocup.Line(main.ball().pos, best_shot), (255, 255, 0), "Target Shot")
-
-        # best_shot = robocup.Point(0,1) + main.ball().pos
-        return best_shot
+        # return robocup.Point(0, 1) + main.ball().pos
+        return window.segment.center()
     else:
         return constants.Field.TheirGoalSegment.center()
