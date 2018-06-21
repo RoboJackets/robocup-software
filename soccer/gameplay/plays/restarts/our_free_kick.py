@@ -65,14 +65,9 @@ class OurFreeKick(standard_play.StandardPlay):
 
         if self.indirect:
             receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(
-                    main.ball().pos, 
-                    field_weights=(0, 1, 5),
-                    nelder_mead_args=(robocup.Point(0.1, 0.25), robocup.Point(0.01, 0.01),1,2,.75,.5,50,1,0.01),
-                    weights=(1, 4, 5, 6)) #playing around with constants to get good receive point. Failed
-            print(receive_pt)
-            print(constants.Field.Length)
-            print(receive_pt.y + constants.Robot.Radius * 6 >= constants.Field.Length)
-            print(receive_value)
+                    main.ball().pos)
+            if receive_value == 0:
+                receive_pt = robocup.Point(0, constants.Field.Length * 3 / 4)
             pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                 receive_pt,
                 None,
@@ -82,6 +77,7 @@ class OurFreeKick(standard_play.StandardPlay):
                 prekick_timeout=9)
             # We don't need to manage this anymore
             self.add_subbehavior(pass_behavior, 'kicker')
+
         else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
