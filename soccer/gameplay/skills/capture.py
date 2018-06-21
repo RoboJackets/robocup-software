@@ -37,7 +37,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # Time in which to wait in delay state to confirm the robot has the ball
     DelayTime = 0.5
-        
+
     # Default dribbler speed, can be overriden by self.dribbler_power
     # Sets dribbler speed during intercept and fine approach
     DribbleSpeed = 100
@@ -75,14 +75,14 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             Capture.State.intercept,
             Capture.State.coarse_approach,
-            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or 
+            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or
                     (main.ball().pos).dist_to(self.robot.pos) < (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
             'Moving to dampen')
 
         self.add_transition(
             Capture.State.coarse_approach,
             Capture.State.intercept,
-            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and 
+            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and
                     (main.ball().pos).dist_to(self.robot.pos) >= (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
             'Moving to intercept')
 
@@ -114,7 +114,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.coarse_approach,
-            lambda: not (self.bot_in_front_of_ball() or 
+            lambda: not (self.bot_in_front_of_ball() or
                         self.bot_near_ball(Capture.CoarseToFineApproachDistance)) and
                     (not self.bot_near_ball(Capture.CoarseToFineApproachDistance * 1.5) or
                     not main.ball().pos),
@@ -189,7 +189,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_dribble_speed(self.dribbler_power)
 
         bot2ball_dir = (main.ball().pos - self.robot.pos).normalized()
-        
+
         approach = self.bot_to_ball() * Capture.FineApproachDistanceMultiplier + \
                     bot2ball_dir * Capture.FineApproachMinDeltaSpeed + \
                     main.ball().vel * Capture.FineApproachBallSpeedMultiplier
@@ -218,9 +218,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # try to be near the ball
         if main.ball().valid:
             if main.ball().vel.mag() < self.InterceptVelocityThresh:
-                reqs.cost_func = lambda r: main.ball().pos.dist_to(r.pos)
+                reqs.destination_shape = main.ball().pos
             else:
-                reqs.cost_func = lambda r: reqs.position_cost_multiplier * robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10).dist_to(r.pos)
+                # TODO Make this less complicated and remove magic numbers
+                reqs.destination_shape = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel * 10)
         return reqs
 
 # calculates intercept point for the fast moving intercept state
