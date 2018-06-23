@@ -481,7 +481,7 @@ void MainWindow::updateViews() {
                              RJ::timestamp(*_processor->firstLogTime)) /
                             1000;
 
-        QTime elapsedTime = QTime().addMSecs(elapsedMillis);
+        QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
         _elapsedTimeItem->setText(ProtobufTree::Column_Value,
                                   elapsedTime.toString("hh:mm:ss.zzz"));
 
