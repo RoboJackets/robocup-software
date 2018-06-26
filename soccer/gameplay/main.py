@@ -130,7 +130,7 @@ def init(log_errors=True):
                     if not is_play:
                         _root_play.drop_current_play()
                         _root_play.drop_goalie_behavior()
-                    elif is_play and root_play != None and root_play.__class__.__name__ == play_reg_node.play_class.__name__:
+                    elif is_play and root_play is not None and root_play.__class__.__name__ == play_reg_node.play_class.__name__:
                         _root_play.drop_current_play()
 
                 except Exception as e:
@@ -145,7 +145,7 @@ def init(log_errors=True):
                         logging.error("Error removing module '" + '.'.join(
                             module_path) + "'")
                         return
-                    if _root_play.play != None and _root_play.play.__class__.__name__ == node.play_class.__name__:
+                    if _root_play.play is not None and _root_play.play.__class__.__name__ == node.play_class.__name__:
                         _root_play.drop_current_play()
 
                     _play_registry.delete(module_path[1:])
@@ -199,7 +199,7 @@ def run():
         raise AssertionError("Error: must call init() before run()")
 
     try:
-        if root_play() != None:
+        if root_play() is not None:
             root_play().spin()
     except:
         exc = sys.exc_info()[0]
