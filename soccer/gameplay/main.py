@@ -112,6 +112,11 @@ def init(log_errors=True):
                         # FIXME: this logic should go inside the play_registry
                         play_reg_node = _play_registry.node_for_module_path(
                             module_path[1:])
+                        if play_reg_node is None:
+                            logging.error("Error reloading module '" + '.'.join(
+                                module_path) + "':")
+                            traceback.print_exc()
+                            return
                         play_reg_node.play_class = class_import.find_subclasses(
                             module, play.Play)[0]
 
