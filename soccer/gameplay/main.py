@@ -114,7 +114,6 @@ def init(log_errors=True):
                             module_path[1:])
                         play_reg_node.play_class = class_import.find_subclasses(
                             module, play.Play)[0]
-                        # _play_registry.modelReset.emit()
 
                         # kill currently-running stuff if needed
                     if not is_play:
