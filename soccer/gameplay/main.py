@@ -47,6 +47,11 @@ def init(log_errors=True):
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
 
+    def _module_blacklisted(module):
+        """Return true if a module has been filtered out of autoloading."""
+        return (module[0] == '.' or
+                module.startswith('flycheck'))
+
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
         # the top-level folders we care about watching
@@ -55,7 +60,8 @@ def init(log_errors=True):
         ]
 
         # Don't load if we aren't a special module or if the filename is hidden
-        if module_path[0] in autoloadables and module_path[-1][0] != '.':
+        if (module_path[0] in autoloadables and
+                not _module_blacklisted(module_path[-1])):
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
