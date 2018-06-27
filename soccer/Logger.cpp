@@ -44,7 +44,11 @@ void Logger::close() {
     }
 }
 
-void Logger::addFrame(shared_ptr<LogFrame> frame, bool force=false) {
+void Logger::addFrame(shared_ptr<LogFrame> frame) {
+    this->addFrame(frame, false);
+}
+
+void Logger::addFrame(shared_ptr<LogFrame> frame, bool force) {
     QWriteLocker locker(&_lock);
 
     if (_history.empty()) {

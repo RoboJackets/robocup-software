@@ -63,6 +63,7 @@ public:
 
     // Adds a frame to this logger. force will force the frame to be added even if we are full.
     void addFrame(std::shared_ptr<Packet::LogFrame> frame, bool force);
+    void addFrame(std::shared_ptr<Packet::LogFrame> frame);
 
     // Read in frames from a log file.
     bool readFrames(const char* filename);
