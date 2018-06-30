@@ -213,7 +213,7 @@ void OurRobot::lineKick(Point target) {
 
     disableAvoidBall();
     _motionCommand =
-        std::make_unique<Planning::LineKickCommand>(std::move(target));
+        std::make_unique<Planning::LineKickCommand>(target);
 }
 
 void OurRobot::intercept(Point target) {
@@ -221,7 +221,7 @@ void OurRobot::intercept(Point target) {
 
     disableAvoidBall();
     _motionCommand =
-        std::make_unique<Planning::InterceptCommand>(std::move(target));
+        std::make_unique<Planning::InterceptCommand>(target);
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
