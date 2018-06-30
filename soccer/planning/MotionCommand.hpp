@@ -21,6 +21,7 @@ public:
         DirectPathTarget,
         TuningPath,
         LineKick,
+        Intercept,
         None
     };
     virtual ~MotionCommand() = default;
@@ -102,6 +103,17 @@ struct LineKickCommand : public MotionCommand {
 
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<LineKickCommand>(*this);
+    };
+
+    const Geometry2d::Point target;
+};
+
+struct InterceptCommand : public MotionCommand {
+    explicit InterceptCommand(Geometry2d::Point target)
+        : MotionCommand(MotionCommand::Intercept), target(target){};
+
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<InterceptCommand>(*this);
     };
 
     const Geometry2d::Point target;
