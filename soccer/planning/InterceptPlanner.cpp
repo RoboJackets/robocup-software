@@ -17,8 +17,6 @@ bool InterceptPlanner::shouldReplan(const PlanRequest& planRequest) const {
 }
 
 std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
-    std::cout << "Entering run" << std::endl;
-
     const InterceptCommand& command = 
         dynamic_cast<const InterceptCommand&>(*planRequest.motionCommand);
 
@@ -33,7 +31,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::vector<DynamicObstacle>& dynamicObstacles = planRequest.dynamicObstacles;
 
-    SystemState systemState = planRequest.systemState;
+    SystemState& systemState = planRequest.systemState;
     const Ball& ball = systemState.ball;
 
     const RJ::Time curTime = RJ::now();
@@ -47,16 +45,17 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
 
     MotionInstant ballCurrent = ball.predict(curTime);
     
-    // Normalized vector between target and robot
-    Geometry2d::Point botToTargetNorm = (targetInterceptPos - startInstant.pos).normalized();
 
     // Time for ball to hit target point
-    RJ::Seconds ballToPointTime = ball.estimateTimeTo(targetInterceptPos) - curTime;
+    Geometry2d::Point targetPosOnLine;
+    RJ::Seconds ballToPointTime = ball.estimateTimeTo(targetInterceptPos, &targetPosOnLine) - curTime;
+    RJ::Seconds botToPointTime(0);
+
+    // Normalized vector between target and robot
+    Geometry2d::Point botToTargetNorm = (targetPosOnLine - startInstant.pos).normalized();
 
     std::unique_ptr<Path> path;
-    std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetInterceptPos};
-
-    std::cout << "Starting to check velocities" << std::endl;
+    std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetPosOnLine};
 
     // Scale the end velocity by % of max velocity to see if we can reach the target
     // at the same time as the ball
@@ -69,10 +68,12 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         // If the end velocity is not 0, you should reach the point as close
         // to the ball time as possible to just ram it
         if (path) {
-            if (path->getDuration() <= ballToPointTime) {
-                std::cout << "Returning" << std::endl;
-                path->setDebugText("Found Path " + QString::number(path->getDuration().count()));
-                std::cout << "Done Printing" << std::endl;
+            botToPointTime = path->getDuration();
+
+            if (botToPointTime <= ballToPointTime) {
+                path->setDebugText("Found Path. RT " + QString::number(botToPointTime.count(), 'g', 2) +
+                                   " BT " + QString::number(ballToPointTime.count(), 'g', 2) +
+                                   " FS " + QString::number(mag));
                 
                 return std::make_unique<AngleFunctionPath>(
                     std::move(path), 
@@ -81,9 +82,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         }
     }
 
-    std::cout << "Giving up" << std::endl;
-
-    MotionInstant target(targetInterceptPos, Geometry2d::Point(0, 0));
+    MotionInstant target(targetPosOnLine, motionConstraints.maxSpeed * botToTargetNorm);
 
     // Couldn't find a good path, give up
     std::unique_ptr<MotionCommand> rrtCommand =
@@ -93,12 +92,11 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
                                       robotConstraints, nullptr, obstacles,
                                       dynamicObstacles, planRequest.shellID);
     path = rrtPlanner.run(request);
-    path->setDebugText("Giving Up");
-
-    std::cout << "Returning" << std::endl;
+    path->setDebugText("GivingUp. RT " + QString::number(botToPointTime.count(), 'g', 2) +
+                       " BT " + QString::number(ballToPointTime.count(), 'g', 2));
 
     return std::make_unique<AngleFunctionPath>(
         std::move(path),
-        angleFunctionForCommandType(FacePointCommand(targetInterceptPos)));
+        angleFunctionForCommandType(FacePointCommand(ball.pos)));
 }
 }
