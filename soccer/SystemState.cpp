@@ -82,18 +82,16 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
 
     const auto s0 = vel.mag();
 
-    const auto decayConstant = 0.2647655;
-
     double speed = 0;
     double distance = 0;
     if (s0 != 0) {
-        auto maxTime = s0 / decayConstant;
+        auto maxTime = s0 / ballDecayConstant;
         if (t.count() >= maxTime) {
             speed = 0;
-            distance = s0 * maxTime - pow(maxTime, 2) / 2.0 * decayConstant;
+            distance = s0 * maxTime - pow(maxTime, 2) / 2.0 * ballDecayConstant;
         } else {
-            speed = s0 - (t.count() * decayConstant);
-            distance = s0 * t.count() - pow(t.count(), 2) / 2.0 * decayConstant;
+            speed = s0 - (t.count() * ballDecayConstant);
+            distance = s0 * t.count() - pow(t.count(), 2) / 2.0 * ballDecayConstant;
         }
     } else {
         speed = 0;
