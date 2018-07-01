@@ -36,7 +36,7 @@ public:
     /// Returns true if this polygon contains any vertex of other.
     bool containsVertex(const Polygon& other) const;
 
-    bool nearPoint(Point pt, float threshold) const;
+    bool nearPoint(Point pt, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;
 
     Rect bbox() const;
