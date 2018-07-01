@@ -36,7 +36,7 @@ class RoleRequirements:
         if self.required_shell_id != None:
             props.append("required_id=" + str(self.required_shell_id))
         if self.prohibited_shell_id != None:
-            props.append("prohibited_id=" + std(self.prohibited_shell_id))
+            props.append("prohibited_id=" + str(self.prohibited_shell_id))
         if self.previous_shell_id != None:
             props.append("prev_id=" + str(self.previous_shell_id))
         props.append("required=" + str(self.required))
