@@ -5,7 +5,7 @@ namespace Geometry2d {
 Shape* CompositeShape::clone() const { return new CompositeShape(*this); }
 
 bool CompositeShape::containsPoint(Point pt) const {
-    for (auto subshape : _subshapes) {
+    for (const auto &subshape : _subshapes) {
         if (subshape->containsPoint(pt)) return true;
     }
     return false;
@@ -13,7 +13,7 @@ bool CompositeShape::containsPoint(Point pt) const {
 
 
 bool CompositeShape::nearPoint(Point pt, float threshold) const {
-    for (auto subshape : _subshapes) {
+    for (const auto &subshape : _subshapes) {
         if (subshape->nearPoint(pt, threshold)) return true;
     }
     return false;
