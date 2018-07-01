@@ -842,7 +842,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("predict_pos", &Ball::predictPosition)
         .def("estimate_seconds_to", &Ball::estimateSecondsTo)
         .def("predict_seconds_to_stop", &Ball::predictSecondsToStop)
-    .def("estimate_seconds_to_dist", &Ball::estimateSecondsToDist);
+        .def("estimate_seconds_to_dist", &Ball::estimateSecondsToDist);
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
