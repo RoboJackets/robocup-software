@@ -266,7 +266,7 @@ float OurRobot::kickTimer() const {
 
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
-    uint8_t scaled = Math::min(*config->dribbler.multiplier * speed, Max_Dribble);
+    uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
     control->set_dvelocity(scaled);
     *_cmdText << "dribble(" << (float)speed << ")" << endl;
 }
