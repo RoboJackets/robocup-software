@@ -211,7 +211,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if main.ball().vel.mag() < Capture.DelaySpeed:
             self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
         elif main.ball().vel.mag() < Capture.DelaySpeed:
-            delay_speed = main.ball().vel.mag()*DelayBallSpeedMultiplier - Capture.DelaySpeed
+            delay_speed = main.ball().vel.mag() * Capture.DelayBallSpeedMultiplier - Capture.DelaySpeed
             self.robot.set_world_vel(ball_dir*delay_speed)
         self.robot.face(main.ball().pos)
 
