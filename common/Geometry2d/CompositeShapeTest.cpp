@@ -24,8 +24,8 @@ TEST(CompositeShape, nearPoint) {
     cs.add(rect);
 
     EXPECT_TRUE(cs.nearPoint(Point(1, 1), 1)); // Near circle
-    EXPECT_TRUE(cs.nearPoint(Point(5, -7), 2)); // near polygon
-    EXPECT_TRUE(cs.nearPoint(Point(7, -6), 2)); // near polygon
+    EXPECT_TRUE(cs.nearPoint(Point(5, -7), 2)); // Near polygon
+    EXPECT_TRUE(cs.nearPoint(Point(7, -6), 2)); // Near polygon
     EXPECT_TRUE(cs.nearPoint(Point(-6, -6), 2)); // Near rect
 
     EXPECT_FALSE(cs.nearPoint(Point(0, 3), 1));
