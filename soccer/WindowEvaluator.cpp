@@ -214,6 +214,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     return make_pair(windows, best);
 }
 
+// https://www.johndcook.com/blog/cpp_phi/
+// cdf of normal
 double phi(double x)
 {
     // constants
