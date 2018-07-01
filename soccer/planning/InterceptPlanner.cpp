@@ -2,11 +2,11 @@
 
 #include <Configuration.hpp>
 #include <motion/TrapezoidalMotion.hpp>
-
-#include <iostream>
+#include <Constants.hpp>
 
 #include "RRTPlanner.hpp"
 #include "MotionInstant.hpp"
+
 
 namespace Planning{
 
@@ -49,10 +49,13 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // Time for ball to hit target point
     Geometry2d::Point targetPosOnLine;
     RJ::Seconds ballToPointTime = ball.estimateTimeTo(targetInterceptPos, &targetPosOnLine) - curTime;
+    // Time for robot to hit target point
     RJ::Seconds botToPointTime(0);
 
-    // Normalized vector between target and robot
-    Geometry2d::Point botToTargetNorm = (targetPosOnLine - startInstant.pos).normalized();
+    // vector from robot to target
+    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pos);
+    // Normalized vector from robot to target
+    Geometry2d::Point botToTargetNorm = botToTarget.normalized();
 
     std::unique_ptr<Path> path;
     std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetPosOnLine};
@@ -82,7 +85,20 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         }
     }
 
-    MotionInstant target(targetPosOnLine, motionConstraints.maxSpeed * botToTargetNorm);
+    QString debug;
+
+    MotionInstant target;
+    target.pos = targetPosOnLine;
+    
+    // If we are already almost at the correct point, dont speed out of the way
+    // We may not find a path that is shorter to the ball because our ball filter is off a lot...
+    if (botToTarget.mag() < Robot_Radius / 2) {
+        target.vel = Geometry2d::Point(0,0);
+        debug = "AtPoint";
+     } else {
+        target.vel = motionConstraints.maxSpeed * botToTargetNorm;
+        debug = "GivingUp";
+     }
 
     // Couldn't find a good path, give up
     std::unique_ptr<MotionCommand> rrtCommand =
@@ -92,7 +108,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
                                       robotConstraints, nullptr, obstacles,
                                       dynamicObstacles, planRequest.shellID);
     path = rrtPlanner.run(request);
-    path->setDebugText("GivingUp. RT " + QString::number(botToPointTime.count(), 'g', 2) +
+    path->setDebugText(debug + ". RT " + QString::number(botToPointTime.count(), 'g', 2) +
                        " BT " + QString::number(ballToPointTime.count(), 'g', 2));
 
     return std::make_unique<AngleFunctionPath>(
