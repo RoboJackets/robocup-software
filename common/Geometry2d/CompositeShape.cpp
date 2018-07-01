@@ -11,6 +11,14 @@ bool CompositeShape::containsPoint(Point pt) const {
     return false;
 }
 
+
+bool CompositeShape::nearPoint(Point pt, float threshold) const {
+    for (auto subshape : _subshapes) {
+        if (subshape->nearPoint(pt, threshold)) return true;
+    }
+    return false;
+}
+
 void CompositeShape::add(std::shared_ptr<Shape> shape) {
     if (shape) {
         _subshapes.push_back(shape);
