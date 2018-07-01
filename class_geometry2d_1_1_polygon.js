@@ -16,7 +16,7 @@ var class_geometry2d_1_1_polygon =
     [ "init", "class_geometry2d_1_1_polygon.html#a7d5975d00028560f5026d928ee6ee462", null ],
     [ "intersects", "class_geometry2d_1_1_polygon.html#a9e780934bcf3b950f9679388a6c28af8", null ],
     [ "intersects", "class_geometry2d_1_1_polygon.html#aa008ecb2f635ac1dddbf9ccd150d1f6a", null ],
-    [ "nearPoint", "class_geometry2d_1_1_polygon.html#a2f652cfcca0080ca39198eabe25d1167", null ],
+    [ "nearPoint", "class_geometry2d_1_1_polygon.html#a7cf57cba5c61c56e66287f077a568448", null ],
     [ "nearSegment", "class_geometry2d_1_1_polygon.html#a7435253fe3489de14a6c599a067d867e", null ],
     [ "toString", "class_geometry2d_1_1_polygon.html#a317651b53b75a7eca0ff200febc9be6e", null ],
     [ "vertices", "class_geometry2d_1_1_polygon.html#a4106370f4b66a53fe69765dc84f2c654", null ]

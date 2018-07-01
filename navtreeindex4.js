@@ -1,5 +1,8 @@
 var NAVTREEINDEX4 =
 {
+"class_planning_1_1_angle_function_path.html#adcd452eb85c6979c010dbb9e6a2e32f8":[16,0,7,0,8],
+"class_planning_1_1_angle_function_path.html#aee0b13d88c07a1988e652598314129bc":[16,0,7,0,1],
+"class_planning_1_1_angle_function_path.html#af6bd7c2205fcfda8acb0367c00017e61":[16,0,7,0,14],
 "class_planning_1_1_composite_path.html":[16,0,7,2],
 "class_planning_1_1_composite_path.html#a41fda86dee930cc57fd2b35d1a37c1c4":[16,0,7,2,4],
 "class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4":[16,0,7,2,6],
@@ -246,8 +249,5 @@ var NAVTREEINDEX4 =
 "class_referee_tab.html#a2502ab90e83bc1dc49560fa6c940952f":[16,0,61,10],
 "class_referee_tab.html#a289af5d5085ec8d0e98189d79d2d8d7f":[16,0,61,3],
 "class_referee_tab.html#a41fc85c07d45148363bd881f20267600":[16,0,61,18],
-"class_referee_tab.html#a464fa55d184a2ad803aeebf0fbbdc211":[16,0,61,2],
-"class_referee_tab.html#a471835961fd5de60b684d25e0283d9bc":[16,0,61,13],
-"class_referee_tab.html#a47362243403d9986431f0e91b1cc6bfb":[16,0,61,20],
-"class_referee_tab.html#a57619ce2c8f332d72a5fe535babcc933":[16,0,61,21]
+"class_referee_tab.html#a464fa55d184a2ad803aeebf0fbbdc211":[16,0,61,2]
 };

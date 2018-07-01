@@ -1,5 +1,8 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a3da2bcf17e0976d5c24fb3e3917b04d4":[16,0,3,9,1,8,0,1],
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#aa898022c05ce4face2aaf764d1207424":[16,0,3,9,1,8,0,2],
+"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#abf4d0467b43abd85d46b936a4c2005e4":[16,0,3,9,1,8,0,3],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html":[16,0,3,9,1,9,0],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a10afcf1f6005ab6045a7892168540adb":[16,0,3,9,1,9,0,5],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a165852ca7fc9ff0f3dcfa7fcf200a494":[16,0,3,9,1,9,0,6],
@@ -246,8 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a4484d4097cee6c2e5237c4e79cc5f0a3":[16,0,3,10,1,10],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a4a4ca8253d5d8a05adf6b861f7d15e61":[16,0,3,10,1,0],
 "classgameplay_1_1role__assignment_1_1_role_requirements.html#a56e6cc9dd545825d4de657f21f8868c0":[16,0,3,10,1,6],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a59c21dea1e736da715d5e9540ce02325":[16,0,3,10,1,3],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a5b7a0e9608611e8144b714c70cbcd15d":[16,0,3,10,1,28],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a793364fb9b558b517f176c4746187dcc":[16,0,3,10,1,19],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a8ff442301cf542b5a99632a60935f918":[16,0,3,10,1,13]
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a59c21dea1e736da715d5e9540ce02325":[16,0,3,10,1,3]
 };

@@ -10,6 +10,7 @@ var class_geometry2d_1_1_circle =
     [ "intersects", "class_geometry2d_1_1_circle.html#a77ef12226d86fb12923a35d35f2ae13b", null ],
     [ "intersects", "class_geometry2d_1_1_circle.html#ae84f4352cb0fd18946c927cbdeb6e4b4", null ],
     [ "nearestPoint", "class_geometry2d_1_1_circle.html#ac492c8c489a6400770e7b4f726ea87dd", null ],
+    [ "nearPoint", "class_geometry2d_1_1_circle.html#a4c5bf4b9bcdff8a64df87c0c94935f4a", null ],
     [ "radius", "class_geometry2d_1_1_circle.html#a19ad561fd723797aca58e98c5570ecec", null ],
     [ "radius", "class_geometry2d_1_1_circle.html#a49ed5a6811d38f61b5faadcb9c214184", null ],
     [ "radius_sq", "class_geometry2d_1_1_circle.html#a61ff4184f1cf78c8807635e39419edbb", null ],

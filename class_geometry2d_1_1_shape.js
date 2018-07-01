@@ -6,6 +6,7 @@ var class_geometry2d_1_1_shape =
     [ "containsPoint", "class_geometry2d_1_1_shape.html#a47605ec12619d718467536fd961fa567", null ],
     [ "hit", "class_geometry2d_1_1_shape.html#a98849859aa30a87a760380b26c903873", null ],
     [ "hit", "class_geometry2d_1_1_shape.html#ac18515569b2135cb242e437c25ed5608", null ],
+    [ "nearPoint", "class_geometry2d_1_1_shape.html#adf8247be1b760e2227d5c414bf83142f", null ],
     [ "toString", "class_geometry2d_1_1_shape.html#a4e811fff528953ccbd931fb477cc3854", null ],
     [ "operator<<", "class_geometry2d_1_1_shape.html#aea5443fe39c94f1f5fd91d2432969815", null ]
 ];

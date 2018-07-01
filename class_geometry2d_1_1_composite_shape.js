@@ -20,6 +20,7 @@ var class_geometry2d_1_1_composite_shape =
     [ "hit", "class_geometry2d_1_1_composite_shape.html#a66d0baf560a02817e7d046b02305c542", null ],
     [ "hit", "class_geometry2d_1_1_composite_shape.html#a3e91d07262feb40014c7ef096a2740a6", null ],
     [ "hit", "class_geometry2d_1_1_composite_shape.html#ae29d68f3264be98552b8e6820c68f11b", null ],
+    [ "nearPoint", "class_geometry2d_1_1_composite_shape.html#a75ec230f1149f8a6628ba0c91e9693e1", null ],
     [ "operator[]", "class_geometry2d_1_1_composite_shape.html#a486aef4e9642f47c86cbb0cd4b5c6359", null ],
     [ "operator[]", "class_geometry2d_1_1_composite_shape.html#a86e0322e59b765cb1f287716e52fc3a2", null ],
     [ "size", "class_geometry2d_1_1_composite_shape.html#a6117d1beaf3ac50a8ac765c5ea93ec77", null ],
