@@ -189,8 +189,6 @@ class Basic122(standard_play.StandardPlay):
 
             # TODO: this would be a good place for a "keep-trying container behavior"
             # make the kicker try again if it already kicked
-        if self.subbehavior_with_name("defense").state == tactics.defense.Defense().State.clearing:
-            print("clearing")
         if not striker.is_in_state(behavior.Behavior.State.running):
             striker.restart()
 
