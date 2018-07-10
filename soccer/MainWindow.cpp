@@ -1507,19 +1507,23 @@ void MainWindow::on_fastKickoffYellow_clicked() {
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-  _processor->refereeModule()->command = NewRefereeModuleEnums::DIRECT_FREE_BLUE;
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::DIRECT_FREE_BLUE;
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-  _processor->refereeModule()->command = NewRefereeModuleEnums::DIRECT_FREE_YELLOW;
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::DIRECT_FREE_YELLOW;
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-  _processor->refereeModule()->command = NewRefereeModuleEnums::INDIRECT_FREE_BLUE;
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::INDIRECT_FREE_BLUE;
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-  _processor->refereeModule()->command = NewRefereeModuleEnums::INDIRECT_FREE_YELLOW;
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::INDIRECT_FREE_YELLOW;
 }
 
 void MainWindow::on_actionVisionPrimary_Half_triggered() {
