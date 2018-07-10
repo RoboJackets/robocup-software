@@ -258,6 +258,9 @@
           <layout class="QVBoxLayout" name="Kickoffs">
            <item>
             <widget class="QPushButton" name="fastKickoffBlue">
+             <property name="toolTip">
+              <string>Kickoff Blue</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -278,6 +281,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="fastKickoffYellow">
+             <property name="toolTip">
+              <string>Kickoff Yellow</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -302,6 +308,9 @@
           <layout class="QVBoxLayout" name="Directs">
            <item>
             <widget class="QPushButton" name="fastDirectBlue">
+             <property name="toolTip">
+              <string>Direct Blue</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -322,6 +331,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="fastDirectYellow">
+             <property name="toolTip">
+              <string>Direct Yellow</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -346,6 +358,9 @@
           <layout class="QVBoxLayout" name="Indirects">
            <item>
             <widget class="QPushButton" name="fastIndirectBlue">
+             <property name="toolTip">
+              <string>Indirect Blue</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -366,6 +381,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="fastIndirectYellow">
+             <property name="toolTip">
+              <string>Indirect Yellow</string>
+             </property>
              <property name="text">
               <string/>
              </property>
