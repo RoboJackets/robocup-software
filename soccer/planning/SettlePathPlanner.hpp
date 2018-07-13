@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
 #include "RRTPlanner.hpp"
 #include "SingleRobotPathPlanner.hpp"
+class Configuration;
+class ConfigDouble;
 
 namespace Planning {
 
@@ -21,7 +21,7 @@ public:
         return MotionCommand::Settle;
     }
 
-    static void createConfiguration(Configuration* cfg);
+    // static void createConfiguration(Configuration* cfg);
 
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
@@ -29,18 +29,18 @@ private:
     RRTPlanner rrtPlanner;
     boost::optional<Geometry2d::Point> targetFinalCaptureDirectionPos;
 
-    static ConfigDouble _ballSpeedPercentForDampen;
-    static ConfigDouble _minSpeedToIntercept;
-    static ConfigDouble _maxAngleOffBallForDampen;
-    static ConfigDouble _searchStartTime;
-    static ConfigDouble _searchEndTime;
-    static ConfigDouble _searchIncTime;
+    // static ConfigDouble* _ballSpeedPercentForDampen;
+    // static ConfigDouble* _minSpeedToIntercept;
+    // static ConfigDouble* _maxAngleOffBallForDampen;
+    // static ConfigDouble* _searchStartTime;
+    // static ConfigDouble* _searchEndTime;
+    // static ConfigDouble* _searchIncTime;
 
-    static double ballSpeedPercentForDampen() { return *_ballSpeedPercentForDampen; }
-    static double minSpeedToIntercept() { return *_goalVelChangeThreshold; }
-    static double maxAngleOffBallForDampen() { return *_maxAngleOffBallForDampen; }
-    static double searchStartTime() { return *_searchStartTime; }
-    static double searchEndTime() { return *_searchEndTime; }
-    static double searchIncTime() { return *_searchIncTime; }
+    // static double ballSpeedPercentForDampen = (double) *_ballSpeedPercentForDampen;
+    // static double minSpeedToIntercept = (double) *_minSpeedToIntercept;
+    // static double maxAngleOffBallForDampen = (double) *_maxAngleOffBallForDampen;
+    // static double searchStartTime = (double) *_searchStartTime;
+    // static double searchEndTime = (double) *_searchEndTime;
+    // static double searchIncTime = (double) *_searchIncTime;
 };
-
+}
