@@ -789,6 +789,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
         .def("move_tuning", &OurRobot_move_tuning)
+        .def("settle", &OurRobot::settle)
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)

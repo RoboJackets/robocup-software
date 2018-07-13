@@ -245,6 +245,8 @@ public:
      */
     void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
 
+    void settle(Geometry2d::Point target);
+
     /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */
