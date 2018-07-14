@@ -12,16 +12,17 @@ class TestCapture(play.Play):
     class State(enum.Enum):
         setup = 1
         capturing = 2
+        rotating = 3
 
     def __init__(self):
         super().__init__(continuous=True)
 
         self.shell_id = None
+        self.dribbler_power = 128
+        self.face_target = robocup.Point(0,0)
 
-        self.add_state(TestCapture.State.setup,
-                       behavior.Behavior.State.running)
-        self.add_state(TestCapture.State.capturing,
-                       behavior.Behavior.State.running)
+        for state in TestCapture.State:
+            self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             TestCapture.State.setup, lambda: True,
@@ -33,8 +34,13 @@ class TestCapture(play.Play):
             'robot away from ball')
 
         self.add_transition(
-            TestCapture.State.capturing, TestCapture.State.setup,
+            TestCapture.State.capturing, TestCapture.State.rotating,
             lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
+            'rotating to check capture')
+
+        self.add_transition(
+            TestCapture.State.rotating, TestCapture.State.setup,
+            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed,
             'successful capture')
 
     def on_enter_capturing(self):
@@ -52,6 +58,15 @@ class TestCapture(play.Play):
 
     def on_exit_setup(self):
         self.remove_subbehavior('move')
+
+    def on_enter_rotating(self):
+        aim = skills.aim.Aim()
+        aim.target_point = self.face_target
+        aim.dribbler_power = self.dribbler_power
+        self.add_subbehavior(aim, 'aim', required=True)
+
+    def on_exit_rotating(self):
+        self.remove_subbehavior('aim')
 
     def execute_running(self):
         for bhvr in self.all_subbehaviors():
