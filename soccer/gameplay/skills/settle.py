@@ -1,8 +1,9 @@
 import single_robot_behavior
 import behavior
+import robocup
 import main
 
-class Move(single_robot_behavior.SingleRobotBehavior):
+class Settle(single_robot_behavior.SingleRobotBehavior):
     def __init__(self):
         super().__init__(continuous=False)
 
@@ -23,7 +24,7 @@ class Move(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         if(self.robot is not None):
-            self.robot.settle()
+            self.robot.settle(robocup.Point(0,0))
 
     def role_requirements(self):
         reqs = super().role_requirements()

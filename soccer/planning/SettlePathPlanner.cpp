@@ -37,6 +37,11 @@ bool SettlePathPlanner::shouldReplan(const PlanRequest& planRequest) const {
 }
 
 std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
+    SystemState& systemState = planRequest.systemState;
+    const Ball& ball = systemState.ball;
+
+    const RJ::Time curTime = RJ::now();
+
     const SettleCommand& command =
     dynamic_cast<const SettleCommand&>(*planRequest.motionCommand);
 
@@ -53,10 +58,36 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::vector<DynamicObstacle>& dynamicObstacles = planRequest.dynamicObstacles;
 
-    SystemState& systemState = planRequest.systemState;
-    const Ball& ball = systemState.ball;
+    // Obstacle list with circle around ball 
+    Geometry2d::ShapeSet& obstaclesWBall = obstacles;
+    obstaclesWBall.add(
+        make_shared<Circle>(ball.predict(curTime).pos, ballAvoidDistance));
 
-    const RJ::Time curTime = RJ::now();
+    // Previous angle path from last iteration
+    AngleFunctionPath* prevAnglePath = 
+        dynamic_cast<AngleFunctionPath*>(planRequest.prevPath.get());
+
+    // Previous RRT path from last iteration
+    std::unique_ptr<Path> prevPath;
+
+    if (prevAnglePath && prevAnglePath->path) {
+        prevPath = std::move(prevAnglePath->path);
+    }
+
+    // The small beginning part of the previous path
+    std::unique_ptr<Path> partialPath = nullptr;
+
+    // The path is from the original robot position to the intercept point
+    // We only care about the replan lead time from the current pos in the path
+    // to the intercept point
+    RJ::Seconds timeIntoPreviousPath;
+
+    // How much of the future we are devoting to the partial path
+    // 0 unless we have a partial path, then it's partialReplanLeadTime
+    RJ::Seconds partialPathTime = 0ms;
+
+    // How much of the previous path to steal
+    const RJ::Seconds partialReplanLeadTime = RRTPlanner::getPartialReplanLeadTime();
 
     // How much of the ball speed to use to dampen the bounce
     const float ballSpeedPercentForDampen = 0.1; // %
@@ -71,17 +102,41 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Search settings when trying to find the correct intersection location
     // between the fast moving ball and our collecting robot
     const RJ::Seconds searchStartTime = RJ::Seconds(0.1);
-    const RJ::Seconds searchEndTime = RJ::Seconds(6);
+    const RJ::Seconds searchEndTime = RJ::Seconds(10);
     const RJ::Seconds searchIncTime = RJ::Seconds(0.2);
-    // TODO: Do more than try to intercept a moving ball
+
+    // Gain on the averaging function to smooth the target point to intercept
+    // This is due to the high flucations in the ball velocity frame to frame
+    // a*newPoint + (1-a)*oldPoint
+    const float targetPointAveragingGain = .5;
+
+    // Change start instant to be the partial path end instead of the robot current location
+    // if we actually have already calculated a path the frame before
+    if (prevPath) {
+        timeIntoPreviousPath = curTime - prevPath->startTime();
+
+        // Make sure we still have time in the path to replan and correct
+        // since it's likely that the old path is slightly off
+        //
+        // ---|----------------|-----------------|
+        // TimeNow     EndPartialPrevPath  FinalTargetPoint
+        //                     |-----------------|
+        //          Amount of the path we can change this iteration
+        if (timeIntoPreviousPath < prevPath->getDuration() - 2*partialReplanLeadTime) {
+            partialPath =
+                prevPath->subPath(0ms, timeIntoPreviousPath + partialReplanLeadTime);
+            partialPathTime = partialReplanLeadTime;
+            startInstant = partialPath->end().motion;
+        }
+    }
 
     // Try find best point to intercept using old method
-    // where we check ever X seconds along the ball velocity line
+    // where we check ever X distance along the ball velocity vector
     // TODO: Try the pronav algorithm
-
-
-    for (RJ::Seconds t = searchStartTime; t < searchEndTime; t += searchIncTime) {
-        MotionInstant targetRobotIntersection(ball.predict(curTime + t).pos);
+    for (float dist = 0; dist < 5; dist += 0.05) {
+        Point ballVelIntercept;
+        RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(ball.pos + ball.vel.normalized()*dist, &ballVelIntercept) - curTime);
+        MotionInstant targetRobotIntersection(ballVelIntercept);
         std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
 
         // TODO: Take the targetFinalCaptureDirection into account
@@ -98,23 +153,64 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
         if (path) {
             RJ::Seconds timeOfArrival = path->getDuration();
-            if (timeOfArrival <= t) {
-                path->setDebugText(QString::number(timeOfArrival.count()) + " : " + QString::number(t.count()));
 
-                return make_unique<AngleFunctionPath>(
-                    std::move(path), angleFunctionForCommandType(
-                        FacePointCommand(ball.pos)));
+            if (timeOfArrival + partialPathTime <= t) {
+                // No path found yet so there is nothing to average
+                if (!firstTargetPointFound) {
+                    interceptTarget = targetRobotIntersection.pos;
+                    averagePathTime = t;
+
+                    firstTargetPointFound = true;
+                // Average this calculation with the previous ones
+                } else {
+                    interceptTarget = targetPointAveragingGain * targetRobotIntersection.pos +
+                                      (1 - targetPointAveragingGain) * interceptTarget;
+
+                    averagePathTime = targetPointAveragingGain * t +
+                                      (1 - targetPointAveragingGain) * averagePathTime;
+                }
+                                    
+                break;
             }
         }
     }
+
+    // There is some valid interception point to go towards
+    if (firstTargetPointFound) {
+        // Try and use the previous path for the first part so it will actually make the initial turn
+        // After the partial replan time, then start moving the path towards the new predicted intercept point
+        MotionInstant targetRobotIntersection(interceptTarget);
+        std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
+        targetRobotIntersection.vel = Point(0, 0);
+
+        if (path) {
+            RJ::Seconds timeOfArrival = path->getDuration();
+            path->setDebugText(QString::number(timeOfArrival.count()) + " : " + QString::number(averagePathTime.count()));
+
+            pathFound = true;
+
+            return make_unique<AngleFunctionPath>(
+                std::move(path), angleFunctionForCommandType(
+                    FacePointCommand(ball.pos)));
+        }
+    }
+
     // No point found
-    MotionInstant targetRobotIntersection(ball.predict(curTime + searchEndTime).pos);
-    std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
-    std::unique_ptr<Path> path =
-        RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, targetRobotIntersection.vel);
+    MotionInstant target(Point(1.5,1.5), Point(0,0));
+    target.vel = Point(0, 0);
+
+    std::unique_ptr<MotionCommand> rrtCommand =
+        std::make_unique<PathTargetCommand>(target);
+
+    auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
+                               robotConstraints, nullptr, obstacles,
+                               dynamicObstacles, planRequest.shellID);
+    auto path = rrtPlanner.run(request);
+    path->setDebugText("Gives ups");
+
     return make_unique<AngleFunctionPath>(
-        std::move(path), angleFunctionForCommandType(
-            FacePointCommand(ball.pos)));
+        std::move(path),
+        angleFunctionForCommandType(FacePointCommand(ball.pos)));
 }
 }
 
