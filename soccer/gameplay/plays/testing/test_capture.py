@@ -20,6 +20,7 @@ class TestCapture(play.Play):
         self.shell_id = None
         self.dribbler_power = 128
         self.face_target = robocup.Point(0,0)
+        self.turn_count = 2
 
         for state in TestCapture.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -40,7 +41,7 @@ class TestCapture(play.Play):
 
         self.add_transition(
             TestCapture.State.rotating, TestCapture.State.setup,
-            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed,
+            lambda: self.turn_count < 0,
             'successful capture')
 
     def on_enter_capturing(self):
@@ -65,7 +66,15 @@ class TestCapture(play.Play):
         aim.dribbler_power = self.dribbler_power
         self.add_subbehavior(aim, 'aim', required=True)
 
+    def execute_rotating(self):
+        aim = self.subbehavior_with_name('aim')
+        if self.turn_count >= 0:
+            if aim.state == skills.aim.Aim.State.aimed:
+                aim.target_point.rotate(aim.robot.pos, 180.0)
+                self.turn_count -= 1
+
     def on_exit_rotating(self):
+        self.turn_count = 2
         self.remove_subbehavior('aim')
 
     def execute_running(self):
