@@ -47,6 +47,7 @@ REGISTER_CONFIGURABLE(OurRobot)
 ConfigDouble* OurRobot::_selfAvoidRadius;
 ConfigDouble* OurRobot::_oppAvoidRadius;
 ConfigDouble* OurRobot::_oppGoalieAvoidRadius;
+ConfigDouble* OurRobot::_dribbleOutOfBoundsMult;
 
 void OurRobot::createConfiguration(Configuration* cfg) {
     _selfAvoidRadius =
@@ -55,6 +56,8 @@ void OurRobot::createConfiguration(Configuration* cfg) {
                                        Robot_Radius - 0.01);
     _oppGoalieAvoidRadius = new ConfigDouble(
         cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+    _dribbleOutOfBoundsMult = new ConfigDouble(
+        cfg, "PathPlanner/dribbleOutOfBoundsMult", 1.05);
 }
 
 OurRobot::OurRobot(int shell, SystemState* state)
@@ -265,10 +268,13 @@ float OurRobot::kickTimer() const {
 }
 
 void OurRobot::dribble(uint8_t speed) {
-    uint8_t scaled = *config->dribbler.multiplier * speed;
-    control->set_dvelocity(scaled);
+    Geometry2d::Rect modifiedField = Field_Dimensions::Current_Dimensions.FieldRect() * (*_dribbleOutOfBoundsMult);
+    if (modifiedField.containsPoint(pos)) {
+        uint8_t scaled = *config->dribbler.multiplier * speed;
+        control->set_dvelocity(scaled);
 
-    *_cmdText << "dribble(" << (float)speed << ")" << endl;
+        *_cmdText << "dribble(" << (float)speed << ")" << endl;
+    }
 }
 
 void OurRobot::face(Geometry2d::Point pt) {

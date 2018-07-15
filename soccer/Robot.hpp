@@ -51,7 +51,8 @@ class RRTPlanner;
 /**
  * @brief Contains robot motion state data
  * @details This class contains data that comes from the vision system
- * including position data and which camera this robot was seen by and
+ * including position data and wDouble check with mechanical to see if they still want this
+hich camera this robot was seen by and
  * what time it was last seen.
  */
 class RobotPose {
@@ -581,6 +582,7 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
+    static ConfigDouble* _dribbleOutOfBoundsMult;
 
     int8_t _planningPriority;
 };
