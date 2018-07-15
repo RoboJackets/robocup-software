@@ -274,6 +274,8 @@ void OurRobot::dribble(uint8_t speed) {
         control->set_dvelocity(scaled);
 
         *_cmdText << "dribble(" << (float)speed << ")" << endl;
+    } else {
+        control->set_dvelocity(0);
     }
 }
 
