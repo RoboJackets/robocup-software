@@ -843,6 +843,7 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(false);
         _ui.fastKickoffBlue->setEnabled(false);
         _ui.fastKickoffYellow->setEnabled(false);
+        _ui.fastDirectBlue->setEnabled(false);
     } else {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
@@ -850,6 +851,7 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(true);
         _ui.fastKickoffBlue->setEnabled(true);
         _ui.fastKickoffYellow->setEnabled(true);
+        _ui.fastDirectBlue->setEnabled(true);
     }
 
     updateFromRefPacket(haveExternalReferee);
@@ -1502,6 +1504,26 @@ void MainWindow::on_fastKickoffBlue_clicked() {
 void MainWindow::on_fastKickoffYellow_clicked() {
     _processor->refereeModule()->command =
         NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
+}
+
+void MainWindow::on_fastDirectBlue_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::DIRECT_FREE_BLUE;
+}
+
+void MainWindow::on_fastDirectYellow_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::DIRECT_FREE_YELLOW;
+}
+
+void MainWindow::on_fastIndirectBlue_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::INDIRECT_FREE_BLUE;
+}
+
+void MainWindow::on_fastIndirectYellow_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::INDIRECT_FREE_YELLOW;
 }
 
 void MainWindow::on_actionVisionPrimary_Half_triggered() {

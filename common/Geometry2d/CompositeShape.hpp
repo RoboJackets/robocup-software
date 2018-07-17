@@ -31,6 +31,7 @@ public:
     Shape* clone() const override;
 
     virtual bool containsPoint(Point pt) const override;
+    virtual bool nearPoint(Point pt, float threshold) const override;
 
     void add(const std::shared_ptr<Shape> shape);
 
