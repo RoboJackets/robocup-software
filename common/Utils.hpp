@@ -14,7 +14,7 @@
 #include <QtWidgets>
 #include <memory>
 
-const static bool THROW_DEBUG_EXCEPTIONS = true;
+constexpr bool THROW_DEBUG_EXCEPTIONS = true;
 
 inline void debugLog(const std::string& e) { std::cerr << e << std::endl; }
 
@@ -54,7 +54,7 @@ inline void debugThrowIf(const std::string& string, bool condition) {
  * @param a An angle in radians
  * @return An equivalent angle in radians restricted to [-pi, pi]
  */
-static inline float fixAngleRadians(float a) {
+inline float fixAngleRadians(float a) {
     a = remainder(a, 2 * M_PI);
     while (a < -M_PI) a += 2.0 * M_PI;
     while (a > M_PI) a -= 2.0 * M_PI;
@@ -62,7 +62,7 @@ static inline float fixAngleRadians(float a) {
 }
 
 /** Checks whether or not the given ball is in the defense area. */
-static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
+inline bool ballIsInGoalieBox(Geometry2d::Point point) {
     Geometry2d::Point topRight = Geometry2d::Point(
         Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
         Field_Dimensions::Current_Dimensions.PenaltyShortDist());
@@ -75,7 +75,7 @@ static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
     return defenseArea.containsPoint(point);
 }
 
-static Geometry2d::Point fromOursToTheirs(Geometry2d::Point& pt) {
+Geometry2d::Point fromOursToTheirs(Geometry2d::Point& pt) {
     Geometry2d::Point c;
     c.y() = Field_Dimensions::Current_Dimensions.Length() - pt.y();
     c.x() = -pt.x();
@@ -83,7 +83,7 @@ static Geometry2d::Point fromOursToTheirs(Geometry2d::Point& pt) {
     return c;
 }
 
-static bool ballIsInTheirGoalieBox(Geometry2d::Point& pt) {
+bool ballIsInTheirGoalieBox(Geometry2d::Point& pt) {
     Geometry2d::Point converted = fromOursToTheirs(pt);
     return ballIsInGoalieBox(converted);
 }
