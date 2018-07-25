@@ -7,9 +7,12 @@ import math
 ## Determines how much "space" there is at a pos
 #    "Space" is how empty an area of the field is
 # @param pos: point to evalute
+# @param excluded_robots: Robots not to count in the space coeff
+# @param robots: Whichs robots to include, Defaults to their robots
+# @param sensitivity: How wide the space each robots "occupies"
 # @returns Number between 0 and 1 representing the closeness of robots
 # The higher the number, the more robots closer to the position
-def space_coeff_at_pos(pos, excluded_robots=[], robots=None):
+def space_coeff_at_pos(pos, excluded_robots=[], robots=None, sensitivity=8):
     # TODO: Add in velocity prediction
     if robots == None:
         robots = main.their_robots()
@@ -17,7 +20,6 @@ def space_coeff_at_pos(pos, excluded_robots=[], robots=None):
     max_dist = robocup.Point(constants.Field.Width / 2,
                              constants.Field.Length).mag()
     total = 0
-    sensitivity = 8
 
     for bot in robots:
         if bot.visible and bot not in excluded_robots:
