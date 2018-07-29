@@ -14,7 +14,13 @@ namespace Planning {
  */
 class SettlePathPlanner : public SingleRobotPathPlanner {
 public:
-    SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), interceptTarget(0,0), firstTargetPointFound(false), pathFound(false) {};
+    enum SettlePathPlannerStates {
+        Intercept,
+        Dampen,
+        Completed
+    };
+
+    SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), interceptTarget(0,0), firstTargetPointFound(false), currentState(Intercept) {};
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
@@ -29,12 +35,12 @@ private:
     RRTPlanner rrtPlanner;
     boost::optional<Geometry2d::Point> targetFinalCaptureDirectionPos;
 
+    SettlePathPlannerStates currentState;
+
     // Intercept Target Filtering Variables
     Geometry2d::Point interceptTarget;
     RJ::Seconds averagePathTime;
     bool firstTargetPointFound;
-
-    bool pathFound;
 
     // static ConfigDouble* _ballSpeedPercentForDampen;
     // static ConfigDouble* _minSpeedToIntercept;
