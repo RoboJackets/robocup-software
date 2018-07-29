@@ -33,6 +33,8 @@ namespace Planning {
 // }
 
 bool SettlePathPlanner::shouldReplan(const PlanRequest& planRequest) const {
+    // Replan whenever the ball changes paths
+    // Also reset the firstTargetPointFound
     return true;
 }
 
@@ -50,7 +52,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     targetFinalCaptureDirectionPos = command.target;
 
     // Start state for the specified robot
-    const MotionInstant& startInstant = planRequest.start;
+    MotionInstant& startInstant = planRequest.start;
     // All the max velocity / acceleration constraints for translation / rotation
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const RobotConstraints& robotConstraints = planRequest.constraints;
@@ -61,7 +63,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Obstacle list with circle around ball 
     Geometry2d::ShapeSet& obstaclesWBall = obstacles;
     obstaclesWBall.add(
-        make_shared<Circle>(ball.predict(curTime).pos, ballAvoidDistance));
+        make_shared<Circle>(ball.predict(curTime).pos, .1));
 
     // Previous angle path from last iteration
     AngleFunctionPath* prevAnglePath = 
@@ -108,7 +110,9 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Gain on the averaging function to smooth the target point to intercept
     // This is due to the high flucations in the ball velocity frame to frame
     // a*newPoint + (1-a)*oldPoint
-    const float targetPointAveragingGain = .5;
+    // The lower the number, the less noise affects the system, but the slower it responds to changes
+    // The higher the number, the more noise affects the system, but the faster it responds to changes
+    const float targetPointAveragingGain = .01;
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
@@ -125,7 +129,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         if (timeIntoPreviousPath < prevPath->getDuration() - 2*partialReplanLeadTime) {
             partialPath =
                 prevPath->subPath(0ms, timeIntoPreviousPath + partialReplanLeadTime);
-            partialPathTime = partialReplanLeadTime;
+            partialPathTime = partialPath->getDuration();//partialReplanLeadTime;
             startInstant = partialPath->end().motion;
         }
     }
@@ -178,16 +182,24 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // There is some valid interception point to go towards
     if (firstTargetPointFound) {
         // Try and use the previous path for the first part so it will actually make the initial turn
-        // After the partial replan time, then start moving the path towards the new predicted intercept point
         MotionInstant targetRobotIntersection(interceptTarget);
         std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
         targetRobotIntersection.vel = Point(0, 0);
+
+        std::unique_ptr<Path> path =
+                RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, targetRobotIntersection.vel);
+
 
         if (path) {
             RJ::Seconds timeOfArrival = path->getDuration();
             path->setDebugText(QString::number(timeOfArrival.count()) + " : " + QString::number(averagePathTime.count()));
 
-            pathFound = true;
+            if (partialPath) {
+                path = std::make_unique<CompositePath>(std::move(partialPath),
+                                                       std::move(path));
+                path->setStartTime(prevPath->startTime());
+            }
+
 
             return make_unique<AngleFunctionPath>(
                 std::move(path), angleFunctionForCommandType(
