@@ -13,6 +13,7 @@ TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
       _pathLength((startPos - endPos).mag()),
       _maxAcc(constraints.maxAcceleration),
       _maxSpeed(constraints.maxSpeed),
+      _constraints(constraints),
       _pathDirection((endPos - startPos).normalized()),
       // Precalculate the duration of the path
       _duration(Trapezoidal::getTime(_pathLength,  // distance
@@ -63,8 +64,28 @@ bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles,
 
 std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
                                                RJ::Seconds endTime) const {
-    debugThrow("This function is not implemented");
-    return nullptr;
+    // TODO: Check for valid arguements
+    boost::optional<RobotInstant> start = evaluate(startTime);
+    boost::optional<RobotInstant> end = evaluate(endTime);
+
+    if (!start) {
+        start = RobotInstant(MotionInstant(_startPos, _pathDirection * _startSpeed));
+    }
+
+    if (!end) {
+        end = RobotInstant(MotionInstant(_endPos, _pathDirection * _endSpeed));
+    }
+
+    //debugThrow("This function is not implemented. TrapezoidalPath::subPath");
+    if (true || start && end) {
+        return std::make_unique<TrapezoidalPath>(start->motion.pos, start->motion.vel.mag(), end->motion.pos, end->motion.vel.mag(), _constraints);
+    } else {
+        debugThrow(
+            "TrapezoidalPath::subPath(): startTime(" + to_string(startTime) +
+            ") and endTime(" + to_string(endTime) +
+            ") return invalid results");
+        return std::make_unique<TrapezoidalPath>(Geometry2d::Point(0,0), 0, Geometry2d::Point(0,0), 0, _constraints);
+    }
 }
 
 }  // namespace Planning

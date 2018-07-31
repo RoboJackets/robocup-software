@@ -1,7 +1,8 @@
 #include "SettlePathPlanner.hpp"
 #include "CompositePath.hpp"
 #include "MotionInstant.hpp"
-#include <Configuration.hpp>
+#include "Configuration.hpp"
+#include "Constants.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -117,7 +118,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
-    if (prevPath) {
+    if (prevPath && currentState != Complete) {
         timeIntoPreviousPath = curTime - prevPath->startTime();
 
         // Make sure we still have time in the path to replan and correct
@@ -138,9 +139,38 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
+    if (prevPath) {
+        timeIntoPreviousPath = curTime - prevPath->startTime();
+        Geometry2d::Line ballMovementLine(ball.pos, ball.pos + ball.vel);
+        std::unique_ptr<Path> pathSoFar = prevPath->subPath(0ms, timeIntoPreviousPath);
+        
+        float botDistToBallMovementLine = ballMovementLine.distTo(pathSoFar->end().motion.pos);
+
+        // Intercept -> Dampen
+        //  Almost at the end of the path and in the path of the ball
+        // TODO: Check ball sense?
+        if (timeIntoPreviousPath >= prevPath->getDuration() - 2*partialReplanLeadTime &&
+            botDistToBallMovementLine < Robot_Radius &&
+            currentState == Intercept) {
+            
+            startInstant = pathSoFar->end().motion;
+            currentState = Dampen;
+            std::cout << "Transitioned to dampen" << std::endl;
+            std::cout << timeIntoPreviousPath << " : " << prevPath->getDuration() << std::endl;
+        }
+        // Dampen -> Complete
+        //  Almost at the end of the path
+        //  TODO: Make sure ball was hit or slowed down
+        else if (timeIntoPreviousPath >= prevPath->getDuration() - 2*partialReplanLeadTime &&
+            currentState == Dampen && false) {
+            
+            currentState = Complete;
+            std::cout << "Transitioned to complete" << std::endl;
+        }
+    }
 
     switch (currentState) {
-    case Intercept:
+    case Intercept: {
         // Try find best point to intercept using old method
         // where we check ever X distance along the ball velocity vector
         // TODO: Try the pronav algorithm
@@ -165,6 +195,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             if (path) {
                 RJ::Seconds timeOfArrival = path->getDuration();
 
+                // We can reach the target point before 
                 if (timeOfArrival + partialPathTime <= t) {
                     // No path found yet so there is nothing to average
                     if (!firstTargetPointFound) {
@@ -222,39 +253,59 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
                                 robotConstraints, nullptr, obstacles,
                                 dynamicObstacles, planRequest.shellID);
-        auto path = rrtPlanner.run(request);
+        auto path = targetVelPlanner.run(request);
         path->setDebugText("Gives ups");
 
         return make_unique<AngleFunctionPath>(
             std::move(path),
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
-
-    case Dampen:
+    }
+    case Dampen: {
         // Intercept ends with a % ball velocity in the direction of the ball movement
-        // Slow down once ball is nearby
-    case Complete:
-        // Stop moving when completed motion
-        if (prevPath) {
-            return prevPath;
-        } else {
-            // Set movement target at current location
-            MotionInstant target(startInstant);
-            target.vel = Point(0, 0);
+        // Slow down once ball is nearby to 0 m/s
 
-            std::unique_ptr<MotionCommand> rrtCommand =
-                std::make_unique<PathTargetCommand>(target);
+        // Try to slow down as fast as possible to 0 m/s
+        // TODO: Implement own Path planner to move in a custom velocity profile
+        //       Linear acceleration?
+        //       Custom acceleration?
+        std:unique_ptr<MotionCommand> rrtCommand = 
+            std::make_unique<WorldVelTargetCommand>(Geometry2d::Point(0, 0));
 
-            auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
-                                       robotConstraints, nullptr, obstacles,
-                                       dynamicObstacles, planRequest.shellID);
-            auto path = rrtPlanner.run(request);
-            path->setDebugText("Completed Settle");
+        auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
+                                   robotConstraints, nullptr, obstacles,
+                                dynamicObstacles, planRequest.shellID);
+        std::unique_ptr<Path> dampenEnd = targetVelPlanner.run(request);
+        dampenEnd->setDebugText("Giving up");
 
-            return make_unique<AngleFunctionPath>(
-                std::move(path),
-                angleFunctionForCommandType(FacePointCommand(ball.pos)));
+        if (partialPath) {
+            dampenEnd = std::make_unique<CompositePath>(std::move(partialPath),
+                                                std::move(dampenEnd));
+            dampenEnd->setStartTime(prevPath->startTime());
         }
-    default:
+
+        return make_unique<AngleFunctionPath>(
+            std::move(dampenEnd),
+            angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    }
+    case Complete: {
+        // Set movement target at current location
+        MotionInstant target(startInstant);
+        target.vel = Point(0, 0);
+
+        std::unique_ptr<MotionCommand> rrtCommand =
+            std::make_unique<PathTargetCommand>(target);
+
+        auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
+                                    robotConstraints, nullptr, obstacles,
+                                    dynamicObstacles, planRequest.shellID);
+        auto path = rrtPlanner.run(request);
+        path->setDebugText("Completed Settle");
+
+        return make_unique<AngleFunctionPath>(
+            std::move(path),
+            angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    }
+    default: {
         std::cout << "Error: Invalid state in settle planner. Restarting" << std::endl;
         currentState = Intercept;
 
@@ -274,6 +325,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         return make_unique<AngleFunctionPath>(
             std::move(path),
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    }
     }
 }
 }

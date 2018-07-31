@@ -29,6 +29,7 @@ private:
     const double _pathLength;
     const double _maxAcc;
     const double _maxSpeed;
+    const MotionConstraints& _constraints;
 
     const RJ::Seconds _duration;
 
