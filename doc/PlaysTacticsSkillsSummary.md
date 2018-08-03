@@ -35,7 +35,7 @@ Defender and Goalie are really only used on some specific restarts. Submissive D
 | ---------------------- | ----------- |
 | Coach                  | The most important tactic we have. It yells strategic messages at the other robots, celebrates on goals, and follows the play from the side of the field. | 
 | Defender               | Defends specific areas of the field. Only used on restarts |
-| Goalie                 | Standalone goalie which does not coordinate with other robots. In most cases, it is better to add the Defense tactic which implements the Submissive Goalie or use the Submissive Goalie itself. |
+| Goalie                 | Standalone goalie which does not coordinate with other robots. In most cases, it is better to add the Defense tactic, which implements the Submissive Goalie, or use the Submissive Goalie itself. |
 | Submissive Defender    | Takes marking targets from the parent play. Used for more coordinated defensive plays |
 | Submissive Goalie      | Takes marking targets from the parent play. Used for more coordinated defensive plays |
 | Defensive Forward      | Commands 2 of the 3 offensive robots to block while the 3rd tries to take control of the ball |
