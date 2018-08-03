@@ -128,7 +128,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // TimeNow     EndPartialPrevPath  FinalTargetPoint
         //                     |-----------------|
         //          Amount of the path we can change this iteration
-        if (timeIntoPreviousPath < prevPath->getDuration() - 2*partialReplanLeadTime) {
+        if (timeIntoPreviousPath < prevPath->getDuration() - 2*partialReplanLeadTime &&
+            timeIntoPreviousPath > 0ms) {
             partialPath =
                 prevPath->subPath(0ms, timeIntoPreviousPath + partialReplanLeadTime);
             partialPathTime = partialPath->getDuration() - timeIntoPreviousPath;
@@ -253,7 +254,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
                                 robotConstraints, nullptr, obstacles,
                                 dynamicObstacles, planRequest.shellID);
-        auto path = targetVelPlanner.run(request);
+        auto path = rrtPlanner.run(request);
         path->setDebugText("Gives ups");
 
         return make_unique<AngleFunctionPath>(
@@ -264,18 +265,60 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // Intercept ends with a % ball velocity in the direction of the ball movement
         // Slow down once ball is nearby to 0 m/s
 
-        // Try to slow down as fast as possible to 0 m/s
+        // Try to slow down as fast as possible to 0 m/s along the ball path
+        // We have to do position control since we want to stay in the line of the ball while
+        // we do this. If we did velocity, we have very little control of where on the field it
+        // is without some other position controller.
+
+        // Uses constant acceleration to create a linear velocity profile
         // TODO: Implement own Path planner to move in a custom velocity profile
         //       Linear acceleration?
         //       Custom acceleration?
+
+        // Using the current velocity
+        // Calculate stopping point along the ball path
+        float maxAccel = motionConstraints.maxAcceleration;
+        float currentSpeed = startInstant.vel.mag();
+
+        // Assuming const accel going to zero velocity
+        // speed / accel gives time to stop
+        // speed / 2 is average time over the entire operation
+        float stoppingDist = currentSpeed*currentSpeed / (2 * maxAccel);
+
+        Geometry2d::Point ballMovementDir(ball.vel.normalized());
+        Geometry2d::Line ballMovementLine(ball.pos, ball.pos + ballMovementDir);
+        Geometry2d::Point nearestPointToRobot = ballMovementLine.nearestPoint(startInstant.pos);
+        float distToBallMovementLine = (startInstant.pos - nearestPointToRobot).mag();
+
+        // Default to just moving to the closest point on the line
+        Geometry2d::Point finalStoppingPoint(nearestPointToRobot);
+
+        // Make sure we are actually moving before we start trying to optimize stuff
+        if (stoppingDist >= 0.01f) {
+            // The closer we are to the line, the less we should move into the line to stop overshoot
+            float percentStoppingDistToBallMovementLine = distToBallMovementLine / stoppingDist;
+
+            // 0% should be just stopping at stoppingDist down the ball movement line from the nearestPointToRobot
+            // 100% or more should just be trying to get to the nearestPointToRobot (Default case)
+            if (percentStoppingDistToBallMovementLine < 1) {
+                // c^2 - a^2 = b^2
+                // c is stopping dist, a is dist to ball line
+                // b is dist down ball line
+                float distDownBallMovementLine = sqrt(stoppingDist*stoppingDist - distToBallMovementLine*distToBallMovementLine);
+                finalStoppingPoint = nearestPointToRobot + distDownBallMovementLine * ballMovementDir;
+            }
+        }
+        
+        // Target stopping point with 0 speed.
+        MotionInstant finalStoppingMotion(finalStoppingPoint, Geometry2d::Point(0,0));
         std:unique_ptr<MotionCommand> rrtCommand = 
-            std::make_unique<WorldVelTargetCommand>(Geometry2d::Point(0, 0));
+            std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
         auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
                                    robotConstraints, nullptr, obstacles,
                                 dynamicObstacles, planRequest.shellID);
-        std::unique_ptr<Path> dampenEnd = targetVelPlanner.run(request);
-        dampenEnd->setDebugText("Giving up");
+        std::unique_ptr<Path> dampenEnd = directPlanner.run(request);
+        dampenEnd->setDebugText("Damping");
 
         if (partialPath) {
             dampenEnd = std::make_unique<CompositePath>(std::move(partialPath),

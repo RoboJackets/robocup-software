@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RRTPlanner.hpp"
-#include "TargetVelPathPlanner.hpp"
+#include "DirectTargetPathPlanner.hpp"
 #include "SingleRobotPathPlanner.hpp"
 class Configuration;
 class ConfigDouble;
@@ -21,7 +21,7 @@ public:
         Complete
     };
 
-    SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), targetVelPlanner(),
+    SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), directPlanner(),
                           interceptTarget(0,0), firstTargetPointFound(false), currentState(Intercept) {};
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
@@ -35,7 +35,7 @@ private:
     bool shouldReplan(const PlanRequest& planRequest) const;
 
     RRTPlanner rrtPlanner;
-    TargetVelPathPlanner targetVelPlanner;
+    DirectTargetPathPlanner directPlanner;
     boost::optional<Geometry2d::Point> targetFinalCaptureDirectionPos;
 
     SettlePathPlannerStates currentState;
