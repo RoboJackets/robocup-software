@@ -14,8 +14,6 @@ class SkillsPractice(play.Play):
         # Define your states here.
         # eg: some_state = 0
         # -----------------------
-        tophalf = 0
-        bottomhalf = 1
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -32,7 +30,7 @@ class SkillsPractice(play.Play):
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed
-            lambda:self.subbehavior_with_name("move").state == behavior.Behavior.State.completed,
+            lambda:self.subbehavior_with_name("skill").state == behavior.Behavior.State.completed,
             "done with behavior")
 
         # Add your state transitions using 'add_transition'.
@@ -57,7 +55,8 @@ class SkillsPractice(play.Play):
         # robocup.Point(<x coordinate>, <y coordinate>)
         
         # This line moves a robot to the point (0, 0)
-        move_skill = skills.move.Move(robocup.Point(0, 0))
+        move_point = robocup.Point(0, 0)
+        skill = skills.move.Move(move_point)
 
         # Adds behavior to our behavior tree, we will explain this more later
-        self.add_subbehavior(move_skill, "move", required=True)
+        self.add_subbehavior(move_skill, "skill", required=True)
