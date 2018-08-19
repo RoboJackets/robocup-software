@@ -29,7 +29,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
     ## we have to be going slower than this to be considered 'steady'
     SteadyMaxVel = 0.04
-    SteadyMaxAngleVel = 3 / 180 * math.pi  # degrees / second
+    SteadyMaxAngleVel = 3 * constants.DegreesToRadians  # degrees / second
 
     MarginAngle = math.pi / 18
     StabilizationFrames = 3

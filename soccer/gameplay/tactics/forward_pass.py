@@ -32,7 +32,7 @@ class ForwardPass(composite_behavior.CompositeBehavior):
         receiving = 3  # the kicker has kicked and the receiver is trying to get the ball
 
     ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
-    # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoSot it).
+    # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
     def __init__(self, receive_point=None, skillreceiver=None):
         super().__init__(continuous=False)
 

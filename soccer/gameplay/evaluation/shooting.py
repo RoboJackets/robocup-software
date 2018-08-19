@@ -66,9 +66,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             ball_to_bot.rotate(zero_point, angle)
             if (ball_to_bot.angle_between(goal_vector) < 0.01):
                 right_robot_limit = max(right_robot_limit, angle + robot_angle_offset)
-                #left_robot_limit = max(left_robot_limit, -angle + robot_angle_offset)
             else:
-                #right_robot_limit = max(right_robot_limit, -angle + robot_angle_offset)
                 left_robot_limit = max(left_robot_limit, angle + robot_angle_offset)
         else:
             win_eval.add_excluded_robot(robot)
@@ -128,7 +126,6 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     # Would have to change this if we are not aiming for their goal
     if main.ball().pos.y < constants.Field.Length / 2 and len(windows) > 1:
         ideal_shot = robocup.Point(0, 1)
-    # ASK ABOUT THIS
 
     main.system_state().draw_line(robocup.Line(main.ball().pos, target_pos), (0, 255, 0), "Target Point")
 
