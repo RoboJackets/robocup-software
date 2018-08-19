@@ -22,6 +22,7 @@
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
+#include <algorithm>
 
 #include <QReadLocker>
 #include <QReadWriteLock>

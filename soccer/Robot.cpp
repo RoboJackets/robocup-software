@@ -267,8 +267,9 @@ float OurRobot::kickTimer() const {
     return (charged()) ? 0.0 : RJ::numSeconds(RJ::now() - _lastChargedTime);
 }
 
+// TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
-    Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
+\    Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
     float offset = *_dribbleOutOfBoundsOffset;
 
     Geometry2d::Rect modifiedField = Geometry2d::Rect(
@@ -277,7 +278,7 @@ void OurRobot::dribble(uint8_t speed) {
               current_dimensions.Length() + offset));
 
     if (modifiedField.containsPoint(pos)) {
-        uint8_t scaled = *config->dribbler.multiplier * speed;
+        uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
         control->set_dvelocity(scaled);
 
         *_cmdText << "dribble(" << (float)speed << ")" << endl;
