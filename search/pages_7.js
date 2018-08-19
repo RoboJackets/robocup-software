@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['plays_2c_20tactics_2c_20and_20skills_20summary',['Plays, Tactics, and Skills Summary',['../md_doc__plays_tactics_skills_summary.html',1,'']]],
   ['path_20planning',['Path Planning',['../t20166.html',1,'md_doc_training2016_training_2016']]],
   ['path_20planning',['Path Planning',['../t2016p.html',1,'md_doc_training2016_training_2016']]],
   ['path_20planning',['Path Planning',['../t20176.html',1,'md_doc_training2017_training_2017']]]
