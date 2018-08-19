@@ -872,8 +872,8 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
         }
 
         // scale up kicker and dribbler speeds
-        vals.dribblerPower *= 128;
-        vals.kickPower *= 255;
+        vals.dribblerPower *= Max_Dribble;
+        vals.kickPower *= Max_Kick;
     }
     return vals;
 }
