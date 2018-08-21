@@ -269,7 +269,7 @@ float OurRobot::kickTimer() const {
 
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
-\    Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
+    Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
     float offset = *_dribbleOutOfBoundsOffset;
 
     Geometry2d::Rect modifiedField = Geometry2d::Rect(
