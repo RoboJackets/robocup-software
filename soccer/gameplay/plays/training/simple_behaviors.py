@@ -5,7 +5,7 @@ import skills
 import tactics
 
 # This is a file where you can learn how skills work!
-class SkillsPractice(play.Play):
+class SimpleBehaviors(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
