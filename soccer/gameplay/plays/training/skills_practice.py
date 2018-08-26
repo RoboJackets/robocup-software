@@ -2,6 +2,7 @@ import robocup
 import constants
 import play
 import skills
+import tactics
 
 # This is a file where you can learn how skills work!
 class SkillsPractice(play.Play):
@@ -13,9 +14,9 @@ class SkillsPractice(play.Play):
         # To create a point, we initialize a point using 
         # robocup.Point(<x coordinate>, <y coordinate>)
         
-        # This line moves a robot to the point (0, 0)
-        move_point = robocup.Point(3, 9)
+        # These lines moves a robot to the point (0, 0)
+        move_point = robocup.Point(0, 0)
         skill = skills.move.Move(move_point)
 
         # Adds behavior to our behavior tree, we will explain this more later
-        self.add_subbehavior(skill, "skill", required=True)
+        self.add_subbehavior(skill, "skill")
