@@ -40,9 +40,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         #     raise AssertionError("There's already a play registered for the given module path")
         category.append_child(playNode)
 
-        # note: this is a shitty way to do this - we should really only reload part of the model
-        self.modelReset.emit()
-
     def load_playbook(self, list_of_plays):
         self.clear()
         for play in list_of_plays:
@@ -52,9 +49,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             else:
                 logging.warn("Attempt to load non-existent play " + '/'.join(
                     play) + " from playbook.")
-
-        # note: this is a shitty way to do this - we should really only reload part of the model
-        self.modelReset.emit()
 
     def delete(self, module_path):
         node = self.node_for_module_path(module_path)
@@ -68,9 +62,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                 node = node.parent
             else:
                 break
-
-        # note: this is a shitty way to do this - we should really only reload part of the model
-        self.modelReset.emit()
 
     def clear(self):
         enabled_plays = self.get_enabled_plays_paths()
