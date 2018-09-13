@@ -15,6 +15,10 @@ class OurFreeKick(standard_play.StandardPlay):
     Running = False
     BumpKickPower = 0.01
     FullKickPower = 1
+    MaxShootingAngle = 80
+    # Untested as of now
+    MaxChipRange = 3
+    MinChipRange = 0.3
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -34,10 +38,11 @@ class OurFreeKick(standard_play.StandardPlay):
         # FIXME: this could also be a PivotKick
         kicker = skills.line_kick.LineKick()
         # kicker.use_chipper = True
-        kicker.min_chip_range = 0.3
-        kicker.max_chip_range = 3.0
+        kicker.min_chip_range = OurFreeKick.MinChipRange
+        kicker.max_chip_range = OurFreeKick.MaxChipRange
 
-        gap = evaluation.shooting.find_gap(max_shooting_angle=80)
+        gap = evaluation.shooting.find_gap(
+            max_shooting_angle=OurFreeKick.MaxShootingAngle)
 
         kicker.target = gap
 
