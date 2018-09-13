@@ -47,20 +47,20 @@ class OurFreeKick(standard_play.StandardPlay):
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
             kicker.kick_power = self.FullKickPower
         # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
-        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or 
-              shooting_line.line_intersection(constants.Field.FieldBorders[2])) and 
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0]) or
+              shooting_line.line_intersection(constants.Field.FieldBorders[2])) and \
               gap.y - main.ball().pos.y > 0:
             kicker.kick_power = self.FullKickPower
         # If we are probably aiming down the field, slowly kick so we dont carpet
-        else: 
-            kicker.kick_power = self.BumpKickPower 
+        else:
+            kicker.kick_power = self.BumpKickPower
 
         # Try passing if we are doing an indirect kick
         if self.indirect:
             receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
 
             # Check for valid target pass position
-            if receive_value != 0:            
+            if receive_value != 0:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     receive_pt,
                     None,
@@ -70,9 +70,9 @@ class OurFreeKick(standard_play.StandardPlay):
                     prekick_timeout=9)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
-            else:                
+            else:
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
-        else:            
+        else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
