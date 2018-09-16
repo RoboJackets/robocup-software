@@ -3,13 +3,13 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <joystick/Joystick.hpp>
 #include <joystick/GamepadController.hpp>
+#include <joystick/Joystick.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
 #include "RobotStatusWidget.hpp"
-#include "git_version.hpp"
+#include "rc-fshare/git_version.hpp"
 #include "radio/Radio.hpp"
 
 #include <QActionGroup>
@@ -154,38 +154,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
     _logPlaybackButtons.push_back(_ui.logPlaybackPlay);
     _logPlaybackButtons.push_back(_ui.logPlaybackLive);
-
-    // SetupRobotConfig For debug
-    QStringList configList{QString{}};
-
-    for (const auto& pair : DebugCommunication::CONFIG_TO_STRING) {
-        configList.append(QString::fromStdString(pair.second));
-    }
-
-    // Add checkboxes for robot debug responses
-    auto rowCount = _ui.robotConfig->rowCount();
-    for (int row = 0; row < rowCount; row++) {
-        auto comboBox = new QComboBox(this);
-        comboBox->addItems(configList);
-        _ui.robotConfig->setCellWidget(row, 0, comboBox);
-        _robotConfigQComboBoxes.push_back(comboBox);
-    }
-
-    // Process data from debug responses
-    QStringList debugResponseList{QString()};
-    for (const auto& entry : DebugCommunication::DEBUGRESPONSE_TO_STRING) {
-        auto name = entry.second;
-        debugResponseList.append(QString::fromStdString(name));
-    }
-    auto numDebugResponse = rtp::DebugMessage::length;
-    for (int i = 0; i < numDebugResponse; i++) {
-        auto comboBox = new QComboBox(this);
-        comboBox->addItems(debugResponseList);
-        _ui.debugResponse->addRow(
-            QString::fromStdString("Debug Response " + to_string(i) + ":"),
-            comboBox);
-        _robotDebugResponseQComboBoxes.push_back(comboBox);
-    }
 
     // Get the item model from the goalieID boxes so we can disable them
     // properly
@@ -625,8 +593,8 @@ void MainWindow::updateViews() {
             }
             statusWidget->setRobotModel(robotModel);
 
-// uncomment this #define to test the display of a variety of different errors
-// #define DEMO_ROBOT_STATUS
+// uncomment this #define to test the display of a variety of
+// different errors #define DEMO_ROBOT_STATUS
 
 #ifdef DEMO_ROBOT_STATUS
             // set board ID
@@ -834,6 +802,10 @@ void MainWindow::updateStatus() {
         return;
     }
 
+    if (_processor->gameplayModule()->checkPlaybookStatus()) {
+        playIndicatorStatus(false);
+    }
+
     // Some conditions are different in simulation
     bool sim = _processor->simulation();
 
@@ -871,6 +843,7 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(false);
         _ui.fastKickoffBlue->setEnabled(false);
         _ui.fastKickoffYellow->setEnabled(false);
+        _ui.fastDirectBlue->setEnabled(false);
     } else {
         _ui.fastHalt->setEnabled(true);
         _ui.fastStop->setEnabled(true);
@@ -878,6 +851,7 @@ void MainWindow::updateStatus() {
         _ui.fastForceStart->setEnabled(true);
         _ui.fastKickoffBlue->setEnabled(true);
         _ui.fastKickoffYellow->setEnabled(true);
+        _ui.fastDirectBlue->setEnabled(true);
     }
 
     updateFromRefPacket(haveExternalReferee);
@@ -966,6 +940,14 @@ void MainWindow::status(QString text, MainWindow::StatusType status) {
                 _ui.statusLabel->setStyleSheet("background-color: #ff4040");
                 break;
         }
+    }
+}
+
+void MainWindow::playIndicatorStatus(bool color) {
+    if (color) {
+        _ui.playIndicatorStatus->setStyleSheet("background-color: #00ff00");
+    } else {
+        _ui.playIndicatorStatus->setStyleSheet("background-color: #ff0000");
     }
 }
 
@@ -1242,8 +1224,6 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
     _processor->dampedTranslation(value);
 }
 
-// Debug commands
-
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
     printf("Update timer: active %d, singleShot %d, interval %d\n",
            updateTimer.isActive(), updateTimer.isSingleShot(),
@@ -1456,6 +1436,7 @@ void MainWindow::on_loadPlaybook_clicked() {
         try {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
                                                        true);
+            playIndicatorStatus(true);
         } catch (runtime_error* error) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
@@ -1471,11 +1452,17 @@ void MainWindow::on_savePlaybook_clicked() {
         try {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
                                                        true);
+            playIndicatorStatus(true);
         } catch (runtime_error* error) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
     }
+}
+
+void MainWindow::on_clearPlays_clicked() {
+    _processor->gameplayModule()->clearPlays();
+    playIndicatorStatus(true);
 }
 
 void MainWindow::setRadioChannel(RadioChannels channel) {
@@ -1519,6 +1506,26 @@ void MainWindow::on_fastKickoffYellow_clicked() {
         NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
 
+void MainWindow::on_fastDirectBlue_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::DIRECT_FREE_BLUE;
+}
+
+void MainWindow::on_fastDirectYellow_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::DIRECT_FREE_YELLOW;
+}
+
+void MainWindow::on_fastIndirectBlue_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::INDIRECT_FREE_BLUE;
+}
+
+void MainWindow::on_fastIndirectYellow_clicked() {
+    _processor->refereeModule()->command =
+        NewRefereeModuleEnums::INDIRECT_FREE_YELLOW;
+}
+
 void MainWindow::on_actionVisionPrimary_Half_triggered() {
     _processor->changeVisionChannel(SharedVisionPortSinglePrimary);
     _processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
@@ -1535,43 +1542,3 @@ void MainWindow::on_actionVisionFull_Field_triggered() {
 }
 
 bool MainWindow::live() { return !_playbackRate; }
-
-void MainWindow::on_robotConfigButton_clicked() {
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
-        configs;
-    // Loop through debug settings and read thier value
-    for (int i = 0; i < _robotConfigQComboBoxes.size(); i++) {
-        const auto& comboBox = _robotConfigQComboBoxes[i];
-        auto key = comboBox->currentText().toStdString();
-        if (!key.empty()) {
-            bool ok;
-            auto item = _ui.robotConfig->item(i, 1);
-            if (item) {
-                double value = item->text().toDouble(&ok);
-                if (ok) {
-                    configs.emplace_back(
-                        DebugCommunication::STRING_TO_CONFIG.at(key), value);
-                } else {
-                    debugLog("Config trying to be sent that is not a number.");
-                }
-            }
-        }
-    }
-
-    _processor->setRobotConfigs(std::move(configs));
-}
-
-// Send debug response template to robots
-void MainWindow::on_debugResponseButton_clicked() {
-    std::vector<DebugCommunication::DebugResponse> robotDebugResponses;
-    for (int i = 0; i < _robotDebugResponseQComboBoxes.size(); i++) {
-        const auto& comboBox = _robotDebugResponseQComboBoxes[i];
-        auto key = comboBox->currentText().toStdString();
-        if (!key.empty()) {
-            robotDebugResponses.push_back(
-                DebugCommunication::STRING_TO_DEBUGRESPONSE.at(key));
-        }
-    }
-
-    _processor->setRobotDebugResponses(std::move(robotDebugResponses));
-}

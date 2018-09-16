@@ -7,12 +7,6 @@
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = https://github.com/robojackets/style-configs
-[submodule "external/DoCIF"]
-	path = external/DoCIF
-	url = https://github.com/jgkamat/DoCIF.git
-[submodule "common"]
-	path = common
-	url = https://github.com/RoboJackets/robocup-common.git
 [submodule "external/rrt"]
 	path = external/rrt
 	url = https://github.com/robojackets/rrt
@@ -22,3 +16,6 @@
 [submodule "external/grSim"]
 	path = external/grSim
 	url = https://github.com/RoboJackets/grSim
+[submodule "external/robocup-fshare"]
+	path = external/robocup-fshare
+	url = https://github.com/robojackets/robocup-fshare

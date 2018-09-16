@@ -7,6 +7,7 @@ import constants
 import role_assignment
 import robocup
 import planning_priority
+import time
 
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
@@ -15,6 +16,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     CourseApproachErrorThresh = 0.8
     CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
+    DelayTime = .5
 
     # Default dribbler speed, can be overriden by self.dribbler_power
     DribbleSpeed = 100
@@ -25,6 +27,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     class State(Enum):
         course_approach = 1
         fine_approach = 2
+        delay = 3
 
     ## Capture Constructor
     # faceBall - If false, any turning functions are turned off,
@@ -35,6 +38,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_state(Capture.State.course_approach,
                        behavior.Behavior.State.running)
         self.add_state(Capture.State.fine_approach,
+                       behavior.Behavior.State.running)
+        self.add_state(Capture.State.delay,
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
@@ -49,8 +54,21 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(
             Capture.State.fine_approach,
-            behavior.Behavior.State.completed, lambda: self.bot_near_ball(
-                constants.Robot.Radius + constants.Ball.Radius), 'has ball')
+            Capture.State.delay, lambda: evaluation.ball.robot_has_ball(self.robot), 
+            'has ball')
+
+        self.add_transition(
+            Capture.State.delay, 
+            behavior.Behavior.State.completed, 
+            lambda: time.time() - self.start_time > Capture.DelayTime and 
+            evaluation.ball.robot_has_ball(self.robot),
+            'delay before finish')
+
+        self.add_transition(
+            Capture.State.delay,
+            Capture.State.fine_approach,
+            lambda: not evaluation.ball.robot_has_ball(self.robot),
+            'lost ball during delay')
 
         self.add_transition(
             Capture.State.fine_approach, Capture.State.course_approach, lambda:
@@ -126,6 +144,13 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if (aproach.mag() > 1):
             aproach = aproach.normalized() * 1
         self.robot.set_world_vel(aproach)
+
+    def on_enter_delay(self):
+        self.start_time = time.time()
+
+    def execute_delay(self):
+        self.robot.disable_avoid_ball()
+        self.robot.set_dribble_speed(self.dribbler_power)
 
     def role_requirements(self):
         reqs = super().role_requirements()

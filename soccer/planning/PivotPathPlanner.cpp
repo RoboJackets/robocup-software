@@ -89,23 +89,24 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
         }
         unique_ptr<InterpolatedPath> path = RRTPlanner::generatePath(
             points, obstacles, newConstraints, startInstant.vel, Point(0, 0));
-        // for (auto &waypoint: path->waypoints) {
-        // waypoint.angle = AngleInstant::
-        //}
-        std::function<AngleInstant(MotionInstant)> function =
-            [pivotPoint, pivotTarget](MotionInstant instant) {
-                auto angleToPivot = instant.pos.angleTo(pivotPoint);
-                auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
 
-                if (abs(angleToPivot - angleToPivotTarget) <
-                    DegreesToRadians(10)) {
-                    return AngleInstant(angleToPivotTarget);
-                } else {
-                    return AngleInstant(angleToPivot);
-                }
-            };
-        return make_unique<AngleFunctionPath>(move(path), function);
-        ;
+        if (path) {
+            std::function<AngleInstant(MotionInstant)> function =
+                [pivotPoint, pivotTarget](MotionInstant instant) {
+                    auto angleToPivot = instant.pos.angleTo(pivotPoint);
+                    auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
+
+                    if (abs(angleToPivot - angleToPivotTarget) <
+                        DegreesToRadians(10)) {
+                        return AngleInstant(angleToPivotTarget);
+                    } else {
+                        return AngleInstant(angleToPivot);
+                    }
+                };
+            return make_unique<AngleFunctionPath>(move(path), function);
+        } else {
+            return std::move(prevPath);
+        }
     } else {
         return std::move(prevPath);
     }

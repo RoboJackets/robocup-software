@@ -2,21 +2,26 @@ MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
 
+# circleci has 2 cores, but advertises 32, which causes OOMs
+ifeq ($(CIRCLECI), true)
+	NINJA_FLAGS=-j2
+endif
+
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 define cmake_build_target_release
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 define cmake_build_target_perf
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 all:
@@ -35,7 +40,9 @@ run-comp:
 	./runcomp.sh
 r:	run
 rs: run-sim
-run-sim: all backend-simulator-soccer
+run-sim: all backend-headless-simulator-soccer
+run-headmore: all backend-simulator-soccer
+
 run-sim2play: all
 	-pkill -f './grsim'
 	./run/grsim &
@@ -46,15 +53,23 @@ run-sim2play: all
 
 run-release: all-release
 	./run/soccer
-run-sim-release: all-release backend-simulator-soccer
+run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
 
-# backend targets to launch soccer
+# backend targets to launch soccer with grsim in headless
+backend-headless-simulator-soccer:
+	-pkill -f './grsim'
+	./run/grsim --headless &
+	./run/soccer -sim -pbk testing.pbk
+# Kill grSim once we unblock
+	-pkill -f './grsim'
+
+# backend targets to launch soccer with a grsim window
 backend-simulator-soccer:
 	-pkill -f './grsim'
-	./run/grsim -headless &
+	./run/grsim &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
 	-pkill -f './grsim'
@@ -93,7 +108,7 @@ COV_BUILD_DIR=build/coverage
 coverage:
 	mkdir -p ${COV_BUILD_DIR}
 	cd ${COV_BUILD_DIR} && cmake -GNinja -Wno-dev --target test-soccer \
-		-D CMAKE_CXX_FLAGS="--coverage" ../../ && ninja test-soccer
+		-D CMAKE_CXX_FLAGS="--coverage" ../../ && ninja $(NINJA_FLAGS) test-soccer
 	run/test-soccer		# Kind of hacky, but w/e
 	-coveralls -b ${COV_BUILD_DIR} -r . \
 		-e ${COV_BUILD_DIR}/tmp/ -e ${COV_BUILD_DIR}/src/ \
@@ -138,4 +153,4 @@ pretty:
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
-	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="/tmp/clean.patch"

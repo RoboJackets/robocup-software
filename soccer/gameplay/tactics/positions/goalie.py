@@ -130,7 +130,11 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 robocup.Point(0, constants.Robot.Radius + Goalie.OFFSET))
 
     def execute_setup_penalty(self):
-        pt = robocup.Point(0, constants.Field.PenaltyDist)
+        if main.ball().valid:
+            pt = main.ball().pos
+        else:
+            # FIXME is this correct?
+            pt = robocup.Point(0, constants.Field.PenaltyLongDist)
         penalty_kicker = min(main.their_robots(),
                              key=lambda r: (r.pos - pt).mag())
         angle_rad = penalty_kicker.angle

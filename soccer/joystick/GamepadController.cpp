@@ -94,6 +94,10 @@ void GamepadController::closeJoystick() {
 
     robotId = -1;
     connected = false;
+
+    // Clear events from queue
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {}
 }
 
 bool GamepadController::valid() const { return connected; }
@@ -122,6 +126,11 @@ void GamepadController::update() {
             return;
         }
     }
+
+    // Don't do anything until we have an event
+    // TODO stop abusing the queue here and use the event api.
+    if (!SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))
+        return;
 
     /*
      *  DRIBBLER ON/OFF

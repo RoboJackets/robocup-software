@@ -6,19 +6,19 @@
 
 #include <vector>
 
-#include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QThread>
 
 #include <protobuf/LogFrame.pb.h>
-#include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <Logger.hpp>
+#include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
-#include <NewRefereeModule.hpp>
 #include "VisionReceiver.hpp"
 
-#include "firmware-common/common2015/utils/rtp.hpp"
+#include "rc-fshare/rtp.hpp"
 
 class Configuration;
 class RobotStatus;
@@ -91,7 +91,8 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim, bool defendPlus, VisionChannel visionChannel);
+    Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
+              bool blueTeam);
     virtual ~Processor();
 
     void stop();
@@ -185,16 +186,6 @@ public:
 
     void changeVisionChannel(int port);
 
-    void setRobotConfigs(std::vector<
-        std::pair<DebugCommunication::ConfigCommunication, float>> configs) {
-        _robotConfigs = std::move(configs);
-    }
-
-    void setRobotDebugResponses(
-        std::vector<DebugCommunication::DebugResponse> debugResponses) {
-        _robotDebugResponses = std::move(debugResponses);
-    }
-
     VisionChannel visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
@@ -283,11 +274,6 @@ private:
     // network
     QMutex _statusMutex;
     Status _status;
-
-    // ConfigCommunication Storage
-    std::vector<std::pair<DebugCommunication::ConfigCommunication, float>>
-        _robotConfigs{};
-    std::vector<DebugCommunication::DebugResponse> _robotDebugResponses{};
 
     // modules
     std::shared_ptr<NewRefereeModule> _refereeModule;

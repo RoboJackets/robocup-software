@@ -1,39 +1,39 @@
 #include "robocup-py.hpp"
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/register_ptr_to_python.hpp>
-#include <string>
-#include <sstream>
-#include <iostream>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <functional>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace boost::python;
 
-#include "motion/TrapezoidalMotion.hpp"
-#include "planning/MotionConstraints.hpp"
-#include "KickEvaluator.hpp"
-#include "WindowEvaluator.hpp"
-#include "optimization/NelderMead2D.hpp"
-#include "optimization/NelderMead2DConfig.hpp"
+#include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Line.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Rect.hpp>
-#include <Geometry2d/Line.hpp>
-#include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
-#include <motion/MotionControl.hpp>
-#include <Pid.hpp>
 #include <SystemState.hpp>
+#include <motion/MotionControl.hpp>
+#include <rc-fshare/pid.hpp>
+#include "KickEvaluator.hpp"
+#include "WindowEvaluator.hpp"
+#include "motion/TrapezoidalMotion.hpp"
+#include "optimization/NelderMead2D.hpp"
+#include "optimization/NelderMead2DConfig.hpp"
+#include "planning/MotionConstraints.hpp"
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 #include <exception>
 
-#include "RobotConfig.hpp"
 #include <Configuration.hpp>
+#include "RobotConfig.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -166,26 +166,29 @@ void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
     self->avoidOpponents(value);
 }
 
+// Tuner code disabled pending refactor since it was removed from
+// the firmware shared repo
 void OurRobot_initialize_tuner(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->initializeTuner();
+    // self->motionControl()->getPid(controller)->initializeTuner();
 }
 
 void OurRobot_start_pid_tuner(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->startTunerCycle();
-    self->config->translation.p->setValue(
-        self->motionControl()->getPid(controller)->kp);
-    self->config->translation.i->setValue(
-        self->motionControl()->getPid(controller)->ki);
-    self->config->translation.d->setValue(
-        self->motionControl()->getPid(controller)->kd);
+    // self->motionControl()->getPid(controller)->startTunerCycle();
+    // self->config->translation.p->setValue(
+    // self->motionControl()->getPid(controller)->kp);
+    // self->config->translation.i->setValue(
+    // self->motionControl()->getPid(controller)->ki);
+    // self->config->translation.d->setValue(
+    // self->motionControl()->getPid(controller)->kd);
 }
 
 void OurRobot_run_pid_tuner(OurRobot* self, char controller) {
-    self->motionControl()->getPid(controller)->runTuner();
+    // self->motionControl()->getPid(controller)->runTuner();
 }
 
 bool OurRobot_end_pid_tuner(OurRobot* self, char controller) {
-    return self->motionControl()->getPid(controller)->endTunerCycle();
+    // return self->motionControl()->getPid(controller)->endTunerCycle();
+    return false;
 }
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
@@ -882,9 +885,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("GoalWidth", &Field_Dimensions::GoalWidth)
         .add_property("GoalDepth", &Field_Dimensions::GoalDepth)
         .add_property("GoalHeight", &Field_Dimensions::GoalHeight)
-        .add_property("PenaltyDist", &Field_Dimensions::PenaltyDist)
-        .add_property("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
-        .add_property("ArcRadius", &Field_Dimensions::ArcRadius)
+        .add_property("PenaltyShortDist", &Field_Dimensions::PenaltyShortDist)
+        .add_property("PenaltyLongDist", &Field_Dimensions::PenaltyLongDist)
         .add_property("CenterRadius", &Field_Dimensions::CenterRadius)
         .add_property("CenterDiameter", &Field_Dimensions::CenterDiameter)
         .add_property("GoalFlat", &Field_Dimensions::GoalFlat)
@@ -903,7 +905,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("SingleFieldDimensions",
                       &Field_Dimensions::Single_Field_Dimensions)
         .def_readonly("DoubleFieldDimensions",
-                      &Field_Dimensions::Double_Field_Dimensions);
+                      &Field_Dimensions::Double_Field_Dimensions)
+        .def_readonly("CurrentDimensions",
+                      &Field_Dimensions::Current_Dimensions);
 
     class_<std::vector<Geometry2d::Line>>("vector_Line")
         .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());
