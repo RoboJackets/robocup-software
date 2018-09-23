@@ -14,6 +14,7 @@ class RoleRequirements:
         self.chipper_preference_weight = 0
         self.required_shell_id = None
         self.previous_shell_id = None
+        self.prohibited_shell_id = None
         self.required = False
         self.priority = 0
         self.require_kicking = False
@@ -34,6 +35,8 @@ class RoleRequirements:
         props.append("chip_pref=" + str(self.chipper_preference_weight))
         if self.required_shell_id != None:
             props.append("required_id=" + str(self.required_shell_id))
+        if self.prohibited_shell_id != None:
+            props.append("prohibited_id=" + str(self.prohibited_shell_id))
         if self.previous_shell_id != None:
             props.append("prev_id=" + str(self.previous_shell_id))
         props.append("required=" + str(self.required))
@@ -112,6 +115,17 @@ class RoleRequirements:
             raise TypeError("Unexpected type for required_shell_id: " + str(
                 value))
         self._required_shell_id = value
+
+    @property
+    def prohibited_shell_id(self):
+        return self._prohibited_shell_id
+
+    @prohibited_shell_id.setter
+    def prohibited_shell_id(self, value):
+        if value != None and not isinstance(value, int):
+            raise TypeError("Unexpected type for prohibited_shell_id: " + str(
+                value))
+        self._prohibited_shell_id = value
 
     @property
     def previous_shell_id(self):
@@ -274,6 +288,8 @@ def assign_roles(robots, role_reqs):
                     " (or double touched)\n"
                         .format(robot.shell_id()))
             else:
+                if req.prohibited_shell_id is not None and req.prohibited_shell_id == robot.shell_id():
+                    cost = MaxWeight
                 if req.destination_shape is not None:
                     cost += req.position_cost_multiplier * req.destination_shape.dist_to(robot.pos)
                 if req.previous_shell_id is not None and req.previous_shell_id != robot.shell_id():

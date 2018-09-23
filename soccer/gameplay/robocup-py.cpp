@@ -140,6 +140,10 @@ void OurRobot_set_max_speed(OurRobot* self, float maxSpeed) {
     self->motionConstraints().maxSpeed = maxSpeed;
 }
 
+void OurRobot_set_max_accel(OurRobot* self, float maxAccel) {
+    self->motionConstraints().maxAcceleration = maxAccel;
+}
+
 void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id,
                                 bool enable_approach) {
     self->approachOpponent(shell_id, enable_approach);
@@ -796,6 +800,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_planning_priority", &OurRobot::setPlanningPriority)
         .def("set_max_angle_speed", OurRobot_set_max_angle_speed)
         .def("set_max_speed", OurRobot_set_max_speed)
+        .def("set_max_accel", OurRobot_set_max_accel)
         .def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
         .def("disable_avoid_ball", &OurRobot::disableAvoidBall)
         .def("add_text", &OurRobot_add_text)
@@ -833,7 +838,11 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
-        .def_readonly("valid", &Ball::valid);
+        .def_readonly("valid", &Ball::valid)
+        .def("predict_pos", &Ball::predictPosition)
+        .def("estimate_seconds_to", &Ball::estimateSecondsTo)
+        .def("predict_seconds_to_stop", &Ball::predictSecondsToStop)
+        .def("estimate_seconds_to_dist", &Ball::estimateSecondsToDist);
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())

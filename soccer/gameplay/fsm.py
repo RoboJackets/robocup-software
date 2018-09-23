@@ -1,7 +1,7 @@
 import logging
 from enum import Enum
 import graphviz as gv
-
+from typing import Union, Callable
 
 ## @brief generic hierarchial state machine class.
 #
@@ -81,7 +81,12 @@ class StateMachine:
             StateMachine.spin(self)
 
     # if you add a transition that already exists, the old one will be overwritten
-    def add_transition(self, from_state, to_state, condition, event_name):
+    def add_transition(self, from_state, to_state,
+                       condition: Union[bool, Callable],
+                       event_name: str):
+        if isinstance(condition, bool):
+            condition = lambda: condition
+
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
 
