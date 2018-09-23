@@ -261,6 +261,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     def role_requirements(self):
         reqs = super().role_requirements()
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            # Target pos is causing problems in the first few frames due to the 
+            # ball velocity being completely wrong due to the ball filter. This 
+            # may add some inefficiency since the closest robot to the true ball 
+            # pass location is not being used.
             #if self._target_pos != None:
             #    req.destination_shape = self._target_pos
             if self.receive_point != None:

@@ -62,9 +62,6 @@ class Basic122(standard_play.StandardPlay):
 
         # project ball location a bit into the future
         ball_proj = main.ball().predict_pos(0.75)
-        # ball_proj = evaluation.ball.predict(main.ball().pos,
-        #                                     main.ball().vel,
-        #                                     t=0.75)
 
         # find closest opponent to striker
         closest_dist_to_striker, closest_opp_to_striker = float("inf"), None
@@ -150,7 +147,7 @@ class Basic122(standard_play.StandardPlay):
         # Both are done so they won't have the same robot
         clear_all_marks = False
         for i in range(2):
-            if (striker_engaged and 
+            if (striker_engaged and
                 supports[i].mark_robot is not None and
                 supports[i].mark_robot == closest_opp_to_striker):
                 clear_all_marks = True

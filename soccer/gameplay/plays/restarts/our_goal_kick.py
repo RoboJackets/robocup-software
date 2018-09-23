@@ -19,6 +19,8 @@ class OurGoalKick(standard_play.StandardPlay):
     MaxChipRange = 3.0
     KickerPower = 1.0
     ChipperPower = 1.0
+    MaxKickSpeed = 0.5
+    MaxKickAccel = 0.5
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -31,8 +33,8 @@ class OurGoalKick(standard_play.StandardPlay):
         # kicker.use_chipper = True
         kicker.kick_power = OurGoalKick.KickerPower
         kicker.chip_power = OurGoalKick.ChipperPower
-        kicker.max_speed = .5
-        kicker.max_accel = .5
+        kicker.max_speed = OurGoalKick.MaxKickSpeed
+        kicker.max_accel = OurGoalKick.MaxKickAccel
         self.add_subbehavior(kicker, 'kicker', required=True, priority=6)
 
         center1 = skills.move.Move()

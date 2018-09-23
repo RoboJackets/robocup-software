@@ -19,9 +19,11 @@ def eval_shot(from_point, excluded_robots=[]):
 #
 # @param target_pos: the target to shoot at
 # @param max max_shooting_angle: The largest angle we will search to find a gap
-# @param robot_offset: How offset from an enemy robot we will shoot
+# @param robot_offset: Max angle offset from an enemy robot we will shoot
 # @return a point
 def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.75):
+    if (not main.ball().valid):
+        return target_pos
 
     # Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
@@ -92,7 +94,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     if (right_robot_limit is not 0):
         right_angle = min(right_angle, right_robot_limit)
 
-    # Get the angle thatwe need to rotate the target angle behind the defenders
+    # Get the angle that we need to rotate the target angle behind the defenders
     # since kick eval doesn't support a nonsymmetric angle around a target
     rotate_target_angle = (left_angle + -right_angle)/2
     target_width = (left_angle + right_angle)
