@@ -10,6 +10,7 @@ var classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick =
     [ "execute_aiming", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a41a2113af02fc811ecebb59dc3bd7452", null ],
     [ "execute_kicking", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ac78228f850d06955b20a06d0ace89c53", null ],
     [ "execute_running", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ada10a7b3dde19f91d89072454875bf28", null ],
+    [ "facing_opp_goal", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ac4f03bb164e3d5cb60d34767e70693e9", null ],
     [ "is_steady", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab30c08630754c45322e00f209d6bd27c", null ],
     [ "on_enter_aiming", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a13cba737c6d759594ef0c52b0e4ea2e6", null ],
     [ "on_enter_capturing", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a1c9fc5b961a348758614ab5a6f8720e5", null ],

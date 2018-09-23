@@ -98,12 +98,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afee128f8abe45339b53d9c1951e36fb9"><td class="memItemLeft" align="right" valign="top"><a id="afee128f8abe45339b53d9c1951e36fb9"></a>
 <a class="el" href="struct_planning_1_1_motion_instant.html">Planning::MotionInstant</a>&#160;</td><td class="memItemRight" valign="bottom"><b>predict</b> (RJ::Time <a class="el" href="class_ball.html#abf88311b4afc4372737653ce004390c2">time</a>) const</td></tr>
 <tr class="separator:afee128f8abe45339b53d9c1951e36fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10fcb8d1a3890a71fbc8a273c1e19658"><td class="memItemLeft" align="right" valign="top"><a id="a10fcb8d1a3890a71fbc8a273c1e19658"></a>
+<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>predictPosition</b> (double seconds_from_now) const</td></tr>
+<tr class="separator:a10fcb8d1a3890a71fbc8a273c1e19658"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6179d75efa50446dda4296cd9d997a3"><td class="memItemLeft" align="right" valign="top"><a id="ac6179d75efa50446dda4296cd9d997a3"></a>
 std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>path</b> (RJ::Time startTime) const</td></tr>
 <tr class="separator:ac6179d75efa50446dda4296cd9d997a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9157007073af930fa5872545f0548f3"><td class="memItemLeft" align="right" valign="top"><a id="ab9157007073af930fa5872545f0548f3"></a>
 RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>estimateTimeTo</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;point, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *nearPoint=nullptr) const</td></tr>
 <tr class="separator:ab9157007073af930fa5872545f0548f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca04daf2774fe3cacafa73afe438f765"><td class="memItemLeft" align="right" valign="top"><a id="aca04daf2774fe3cacafa73afe438f765"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>estimateSecondsTo</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;point) const</td></tr>
+<tr class="separator:aca04daf2774fe3cacafa73afe438f765"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0382c22737db47535765c137ff755eb0"><td class="memItemLeft" align="right" valign="top"><a id="a0382c22737db47535765c137ff755eb0"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>estimateSecondsToDist</b> (double dist) const</td></tr>
+<tr class="separator:a0382c22737db47535765c137ff755eb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a055ba304fa9ea141c99ee6b97e86b22c"><td class="memItemLeft" align="right" valign="top"><a id="a055ba304fa9ea141c99ee6b97e86b22c"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><b>predictSecondsToStop</b> () const</td></tr>
+<tr class="separator:a055ba304fa9ea141c99ee6b97e86b22c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -143,7 +155,7 @@ RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_ball.html">Ball</a></li>
-    <li class="footer">Generated on Sun Aug 19 2018 15:33:47 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Sep 23 2018 15:43:47 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

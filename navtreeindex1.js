@@ -1,5 +1,10 @@
 var NAVTREEINDEX1 =
 {
+"class_battery_widget.html":[17,0,24],
+"class_battery_widget.html#a00ba251b454f574fc067c6f741f72240":[17,0,24,1],
+"class_battery_widget.html#a820b45ea6e0e3e433a9eed571b09929a":[17,0,24,0],
+"class_battery_widget.html#a9b28abbdfe102b4962d278c5effc8a57":[17,0,24,2],
+"class_battery_widget.html#ad850bacfebeacfcce54146596cef39d8":[17,0,24,3],
 "class_config_bool.html":[17,0,25],
 "class_config_bool.html#a30221ddc558692a7b52598b963a74bc2":[17,0,25,8],
 "class_config_bool.html#a31c83a6f6542f246c2db254afe26744d":[17,0,25,2],
@@ -244,10 +249,5 @@ var NAVTREEINDEX1 =
 "class_geometry2d_1_1_circle.html#a60b8c24c6d74738de16f8440257e4ca1":[17,0,4,1,17],
 "class_geometry2d_1_1_circle.html#a61ff4184f1cf78c8807635e39419edbb":[17,0,4,1,13],
 "class_geometry2d_1_1_circle.html#a74111af42516f9e6bc80c8dffcb3afc8":[17,0,4,1,15],
-"class_geometry2d_1_1_circle.html#a77ef12226d86fb12923a35d35f2ae13b":[17,0,4,1,7],
-"class_geometry2d_1_1_circle.html#a9bc585a18faa4ea651f5ca3b0838a6d0":[17,0,4,1,3],
-"class_geometry2d_1_1_circle.html#aa1458a6d54997f1fc0c39d120eb9bbe0":[17,0,4,1,19],
-"class_geometry2d_1_1_circle.html#aad5b89c5c7b3586901670ed26917516a":[17,0,4,1,5],
-"class_geometry2d_1_1_circle.html#ab9d0de1ce9a23a5b153451a7da407289":[17,0,4,1,16],
-"class_geometry2d_1_1_circle.html#ac492c8c489a6400770e7b4f726ea87dd":[17,0,4,1,9]
+"class_geometry2d_1_1_circle.html#a77ef12226d86fb12923a35d35f2ae13b":[17,0,4,1,7]
 };

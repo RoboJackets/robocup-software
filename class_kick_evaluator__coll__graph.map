@@ -1,5 +1,10 @@
 <map id="KickEvaluator" name="KickEvaluator">
-<area shape="rect" id="node3" href="$class_robot.html" title="Robot" alt="" coords="67,225,127,252"/>
-<area shape="rect" id="node4" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="67,109,158,136"/>
-<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="90,5,234,32"/>
+<area shape="rect" id="node3" href="$class_robot.html" title="Robot" alt="" coords="63,240,123,267"/>
+<area shape="rect" id="node4" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="59,124,150,151"/>
+<area shape="rect" id="node5" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="83,13,227,39"/>
+<area shape="rect" id="node6" href="$class_config_double.html" title="ConfigDouble" alt="" coords="280,344,391,371"/>
+<area shape="rect" id="node7" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="315,240,409,267"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="300,124,387,151"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="271,5,410,47"/>
+<area shape="rect" id="node10" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="415,124,525,151"/>
 </map>

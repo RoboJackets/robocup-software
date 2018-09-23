@@ -128,6 +128,9 @@ var annotated_dup =
           [ "test_defense_old", null, [
             [ "TestDefenseOld", "classgameplay_1_1plays_1_1testing_1_1test__defense__old_1_1_test_defense_old.html", "classgameplay_1_1plays_1_1testing_1_1test__defense__old_1_1_test_defense_old" ]
           ] ],
+          [ "test_find_gap", null, [
+            [ "TestFindGap", "classgameplay_1_1plays_1_1testing_1_1test__find__gap_1_1_test_find_gap.html", "classgameplay_1_1plays_1_1testing_1_1test__find__gap_1_1_test_find_gap" ]
+          ] ],
           [ "test_forward_pass", null, [
             [ "TestForwardPass", "classgameplay_1_1plays_1_1testing_1_1test__forward__pass_1_1_test_forward_pass.html", "classgameplay_1_1plays_1_1testing_1_1test__forward__pass_1_1_test_forward_pass" ]
           ] ],

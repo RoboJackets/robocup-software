@@ -40,18 +40,18 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_config_bool.html",
-"class_geometry2d_1_1_circle.html#ae84f4352cb0fd18946c927cbdeb6e4b4",
-"class_log_viewer.html#a8c88742ab0b81789221ac8867e9639ae",
-"class_planning_1_1_angle_function_path.html#adcd452eb85c6979c010dbb9e6a2e32f8",
-"class_referee_tab.html#a471835961fd5de60b684d25e0283d9bc",
-"classbinary__clock_1_1_binary_clock.html#ad8f3f2251ee065ceb506f32f32e6338d",
-"classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html#a3da2bcf17e0976d5c24fb3e3917b04d4",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a5b7a0e9608611e8144b714c70cbcd15d",
-"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html#ab6999a391a7e7436aa7a8e2c9a806e20",
-"classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a22baf04b3cfdc754b5b7d74f43de7d23",
-"dir_cc132907b6047b9805f38c63e061574e.html",
-"struct_robot_config_1_1_kicker.html#a51db9e0a74782e175a13ede38fba6c2e"
+"class_battery_widget.html",
+"class_geometry2d_1_1_circle.html#a9bc585a18faa4ea651f5ca3b0838a6d0",
+"class_log_viewer.html#a235825dfa1a81b932e9afe7922f98103",
+"class_planning_1_1_angle_function_path.html#a7a42fdc451c28ae2b8d907705b886641",
+"class_referee_tab.html#a1f2b06792116e2a4778886d92b8f7d4e",
+"class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e",
+"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a306fde146062676e6b4d39b12239387f",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a25cd963545ffbc861465074511362350",
+"classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive.html",
+"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#aabce40c96eb2bd07ea00c67ca0c0afbf",
+"classtriangle__pass_1_1_triangle_pass.html#ac6694eb8228c6eb1fa2c9f10d33cee2d",
+"struct_planning_1_1_world_vel_target_command.html#afad740eea6a70a4860f6a8c6337194fb"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
