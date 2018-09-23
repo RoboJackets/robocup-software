@@ -14,7 +14,7 @@ import role_assignment
 
 class Defense(composite_behavior.CompositeBehavior):
 
-    DEFENSE_ROBOT_CHANGE_COST = 0.29
+    DEFENSE_ROBOT_CHANGE_COST = 0.05
 
     class State(Enum):
         # Gets in the way of the opponent robots
@@ -365,7 +365,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 #if the robots overlap
                 if overlap.mag() < (2 * constants.Robot.Radius) + .005:
                     #move the robots away from each other
-                    overlap = overlap - (overlap.normalized() * 2 *
+                    overlap = overlap - (overlap.normalized() * 1.8 *
                                          constants.Robot.Radius)
 
                     handler1._move_target += overlap

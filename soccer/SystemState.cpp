@@ -61,6 +61,8 @@ std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
     return std::move(path);
 }
 
+constexpr auto ballDecayConstant = 0.275;
+
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     if (estimateTime < time) {
         // debugThrow("Estimated Time can't be before observation time.");
@@ -80,18 +82,16 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
 
     const auto s0 = vel.mag();
 
-    const auto decayConstant = 0.1795;
-
     double speed = 0;
     double distance = 0;
     if (s0 != 0) {
-        auto maxTime = s0 / decayConstant;
+        auto maxTime = s0 / ballDecayConstant;
         if (t.count() >= maxTime) {
             speed = 0;
-            distance = s0 * maxTime - pow(maxTime, 2) / 2.0 * decayConstant;
+            distance = s0 * maxTime - pow(maxTime, 2) / 2.0 * ballDecayConstant;
         } else {
-            speed = s0 - (t.count() * decayConstant);
-            distance = s0 * t.count() - pow(t.count(), 2) / 2.0 * decayConstant;
+            speed = s0 - (t.count() * ballDecayConstant);
+            distance = s0 * t.count() - pow(t.count(), 2) / 2.0 * ballDecayConstant;
         }
     } else {
         speed = 0;
@@ -108,6 +108,11 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
 }
 
+Geometry2d::Point Ball::predictPosition(double seconds_from_now) const {
+    const auto motionInstant = this->predict(RJ::now() + RJ::Seconds(seconds_from_now));
+    return motionInstant.pos;
+}
+
 RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
                               Geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
@@ -120,18 +125,37 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
     // d = v0t - 1/2*t^2*Constant
     // t = (v - sqrt(-2 C d + v^2))/C
 
-    const auto decayConstant = 0.1795;
-
     auto v = vel.mag();
-    auto part = pow(v, 2) - 2 * decayConstant * dist;
+    auto part = pow(v, 2) - 2 * ballDecayConstant * dist;
     if (part > 0) {
-        auto t = (v - sqrt(part)) / decayConstant;
+        auto t = (v - sqrt(part)) / ballDecayConstant;
         return time + RJ::Seconds(t);
     } else {
         return RJ::Time::max();
     }
 
     // auto part = vel.mag() * -3.43289;
+}
+
+double Ball::estimateSecondsTo(const Geometry2d::Point &point) const {
+    const auto time = estimateTimeTo(point);
+    return RJ::Seconds(RJ::now() - time).count();
+}
+
+double Ball::predictSecondsToStop() const {
+    return vel.mag()/ballDecayConstant;
+}
+
+double Ball::estimateSecondsToDist(double dist) const {
+    auto v = vel.mag();
+    auto part = pow(v, 2) - 2 * ballDecayConstant * dist;
+    auto t = (vel.mag() - part) / ballDecayConstant;
+    if (part > 0) {
+        auto t = (v - sqrt(part)) / ballDecayConstant;
+        return t;
+    } else {
+        return std::numeric_limits<double>::infinity();
+    }
 }
 
 SystemState::SystemState() {

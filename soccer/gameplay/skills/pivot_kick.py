@@ -7,6 +7,7 @@ import role_assignment
 import robocup
 import constants
 import main
+import math
 import planning_priority
 from enum import Enum
 
@@ -48,7 +49,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             'aim error > threshold')
 
         self.add_transition(PivotKick.State.aimed, PivotKick.State.kicking,
-                            lambda: self.enable_kick, 'kick enabled')
+                            lambda: self.enable_kick or self.facing_opp_goal(), 'kick enabled')
 
         self.add_transition(PivotKick.State.kicking,
                             behavior.Behavior.State.completed,
@@ -71,10 +72,61 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         self.dribbler_power = constants.Robot.Dribbler.StandardPower
         self.aim_params = {'desperate_timeout': float("inf")}
 
-        # The speed to drive the dribbler at during aiming
-        # If high, adds lift to kick
-        # Default: full power
-        # FIXME: defaulting to full power probably isn't the best - the C++ version sais full power in the header then actually used 50.  maybe use half speed?
+    def facing_opp_goal(self):
+        robot = self.subbehavior_with_name('aim').robot
+
+        if robot is None:
+            return False
+        
+        # L is left post
+        # R is right post
+        # T is target aiming point
+        # U is us
+        # L      T      R
+        #  \     |     /
+        #   \    |    /
+        #    \   |   /
+        #     \  |  /
+        #       \|/
+        #        U
+        # Angle LUT + Angle RUT should equal Angle LUR if vector UT is between vectors UL and UR
+        #
+        #
+        # L      R      T
+        #  \     |     /
+        #   \    |    /
+        #    \   |   /
+        #     \  |  /
+        #       \|/
+        #        U
+        # Here, Angle LUT + Angle RUT is much larger than Angle LUR since vector UT is outside vectors UL and UR
+
+        left_goal_post  = robocup.Point(-constants.Field.GoalWidth / 2, constants.Field.Length)
+        right_goal_post = robocup.Point(constants.Field.GoalWidth / 2, constants.Field.Length)
+
+        bot_to_left_goal_post = left_goal_post - robot.pos
+        bot_to_right_goal_post = right_goal_post - robot.pos
+        bot_forward_vector = robot.pos + robocup.Point(math.cos(robot.angle), math.sin(robot.angle))
+
+        angle_left_goal_post_diff  = bot_forward_vector.angle_between( bot_to_left_goal_post )
+        angle_right_goal_post_diff = bot_forward_vector.angle_between( bot_to_right_goal_post )
+        angle_goal_post_diff       = bot_to_left_goal_post.angle_between( bot_to_right_goal_post )
+
+        # Add a small amount for any errors in these math functions
+        small_angle_offset = 0.01
+
+        # We are aiming at the goal
+        if (angle_left_goal_post_diff + angle_right_goal_post_diff + small_angle_offset <= angle_goal_post_diff):
+            print('EARLY KIck')
+            main.system_state().draw_text('Early kick', robot.pos, 'PivotKick')
+            return True
+
+        return False
+
+    # The speed to drive the dribbler at during aiming
+    # If high, adds lift to kick
+    # Default: full power
+    # FIXME: defaulting to full power probably isn't the best - the C++ version sais full power in the header then actually used 50.  maybe use half speed?
     @property
     def dribbler_power(self):
         return self._dribbler_power

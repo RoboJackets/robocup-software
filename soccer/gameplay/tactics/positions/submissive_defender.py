@@ -159,8 +159,21 @@ class SubmissiveDefender(
         if (self.robot is not None and self.block_line is not None):
             self.robot.face(self.block_line.get_pt(0))
 
-        if self.robot.has_ball() and not main.game_state().is_stopped():
+        if self.robot.has_ball() and not main.game_state().is_stopped() and not self._self_goal(self.robot):
             self.robot.kick(0.75)
+
+    def _self_goal(self, robot):
+        penalty_seg = robocup.Segment(
+            robocup.Point(
+                0, -constants.Field.PenaltyLongDist / 2),
+            robocup.Point(
+                0, constants.Field.PenaltyLongDist / 2))
+        robot_face_seg = robocup.Segment(
+            robot.pos,
+            robot.pos + robocup.Point.direction(robot.angle) * constants.Field.Length)
+        self.robot.face(constants.Field.OurGoalSegment.center())
+        return robot_face_seg.segment_intersection(penalty_seg)
+
 
     def on_exit_marking(self):
         self.remove_subbehavior('move')
