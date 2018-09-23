@@ -1,5 +1,8 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a50be900f39a0c5156792fdf08ef44261":[17,0,3,17,7,0,6],
+"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a77a001fd8f589472a7405a2d366658cf":[17,0,3,17,7,0,9],
+"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a95919022efbbabdb0efb3c211ce3dba3":[17,0,3,17,7,0,2],
 "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#aabce40c96eb2bd07ea00c67ca0c0afbf":[17,0,3,17,7,0,7],
 "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#aba616c2fe855e56073d36b95596337ec":[17,0,3,17,7,0,3],
 "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#adc1b5f01e3bc4a9ff73b67c0f08ef809":[17,0,3,17,7,0,1],
@@ -246,8 +249,5 @@ var NAVTREEINDEX10 =
 "classtest__role__assignment_1_1_test_role_assignment.html#a84fbe967eb5480a789af91ce99089dfa":[17,0,15,0,4],
 "classtest__role__assignment_1_1_test_role_assignment.html#a9a83beb18c1881c89f670b8b8bcfbfb7":[17,0,15,0,3],
 "classtest__role__assignment_1_1_test_role_assignment.html#ac82c0f8291b3d51872a56bc2f50d84d3":[17,0,15,0,2],
-"classtest__role__assignment_1_1_test_role_assignment.html#ae68a418aef0c7a68d8c28d0587754802":[17,0,15,0,1],
-"classtriangle__pass_1_1_triangle_pass.html":[17,0,16,0],
-"classtriangle__pass_1_1_triangle_pass.html#a7d0e65b7c332d349665a4a8eb2222a6b":[17,0,16,0,5],
-"classtriangle__pass_1_1_triangle_pass.html#aa9896a942a15f3bd8c9a4c2d2889e69a":[17,0,16,0,1]
+"classtest__role__assignment_1_1_test_role_assignment.html#ae68a418aef0c7a68d8c28d0587754802":[17,0,15,0,1]
 };

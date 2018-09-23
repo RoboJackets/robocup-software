@@ -178,6 +178,9 @@ var annotated_dup =
           [ "follow_ball", null, [
             [ "FollowBall", "classgameplay_1_1plays_1_1training_1_1follow__ball_1_1_follow_ball.html", "classgameplay_1_1plays_1_1training_1_1follow__ball_1_1_follow_ball" ]
           ] ],
+          [ "simple_behaviors", null, [
+            [ "SimpleBehaviors", "classgameplay_1_1plays_1_1training_1_1simple__behaviors_1_1_simple_behaviors.html", "classgameplay_1_1plays_1_1training_1_1simple__behaviors_1_1_simple_behaviors" ]
+          ] ],
           [ "which_half", null, [
             [ "WhichHalf", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half.html", "classgameplay_1_1plays_1_1training_1_1which__half_1_1_which_half" ]
           ] ]
