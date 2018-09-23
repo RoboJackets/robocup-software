@@ -52,15 +52,9 @@ class OurFreeKick(standard_play.StandardPlay):
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
             kicker.kick_power = self.FullKickPower
         # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
-<<<<<<< HEAD
         elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or 
               shooting_line.line_intersection(constants.Field.FieldBorders[2]) and 
               gap.y - main.ball().pos.y > 0):
-=======
-        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0]) or
-              shooting_line.line_intersection(constants.Field.FieldBorders[2])) and \
-              gap.y - main.ball().pos.y > 0:
->>>>>>> c59b38373414c980002d46c18ed2403a38286c75
             kicker.kick_power = self.FullKickPower
         # If we are probably aiming down the field, slowly kick so we dont carpet
         else:
