@@ -56,6 +56,7 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _lastUpdateTime(RJ::now()),
       _history(2 * 60),
       _longHistory(10000),
+      _stateHistory(10000),
       _processor(processor) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
@@ -64,6 +65,10 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _ui.logTree->history(&_longHistory);
     _ui.logTree->mainWindow = this;
     _ui.logTree->updateTimer = &updateTimer;
+
+    _ui.stateTree->history(&_stateHistory);
+    _ui.stateTree->mainWindow = this;
+    _ui.stateTree->updateTimer = &updateTimer;
 
     // Initialize live/non-live control styles
 

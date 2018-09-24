@@ -215,6 +215,9 @@ private:
     // To export a larger amount of data.
     std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory;
 
+    // Log history containing data related to the game state
+    std::vector<std::shared_ptr<Packet::LogFrame> > _stateHistory;
+
     // When true, External Referee is automatically set.
     // This is cleared by manually changing the checkbox or after the
     // first referee packet is seen and the box is automatically checked.
