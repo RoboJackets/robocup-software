@@ -47,11 +47,11 @@ var NAVTREEINDEX =
 "class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49",
 "class_window_evaluator.html#a6ed16a6a51ee35a49ae29759b4290d84",
 "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html",
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274",
-"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a085f93d2f7922eb767ad75d447cbfec3",
-"classtest__opponent_1_1_test_opponent.html#a83e7cce94169e1fc0a63f0ced7573ecc",
-"struct_planning_1_1_face_angle_command.html"
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af",
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a3da267d550ba75ac2e859eb6bcf3b2ae",
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a884d6dea3e97b4197ece6755222ccf34",
+"classtest__opponent_1_1_test_opponent.html#a047a974d02a1db0e857fbdd4d50b51f8",
+"struct_planning_1_1_direct_path_target_command.html#ad5d5303834c510003006f40776b7d6df"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

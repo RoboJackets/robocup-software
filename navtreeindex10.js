@@ -1,5 +1,12 @@
 var NAVTREEINDEX10 =
 {
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a884d6dea3e97b4197ece6755222ccf34":[17,0,3,17,6,0,5],
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a9cf8cda327163fcba5f4b9fc6664fd22":[17,0,3,17,6,0,6],
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#ab91d0107fd4848db492730121f5eded7":[17,0,3,17,6,0,3],
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#ac667122a8704cfe0bba32c13f9747c79":[17,0,3,17,6,0,4],
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#adda6344233161d747a76cc996ebd7542":[17,0,3,17,6,0,2],
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html":[17,0,3,17,6,0,0],
+"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html":[17,0,3,17,7,0],
 "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a085f93d2f7922eb767ad75d447cbfec3":[17,0,3,17,7,0,8],
 "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a1343b949bb350e74c80e027728473694":[17,0,3,17,7,0,5],
 "classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a4ac99d4a8310967c1bdd64abe615f0ff":[17,0,3,17,7,0,4],
@@ -242,12 +249,5 @@ var NAVTREEINDEX10 =
 "classtest__fsm_1_1_test_fsm.html":[17,0,13,1],
 "classtest__fsm_1_1_test_fsm.html#a3183a161d38c0fbbd1fb44d7b762b5dc":[17,0,13,1,1],
 "classtest__fsm_1_1_test_fsm.html#a7a64f55adbf1c7d9fd2f26a8683f70f3":[17,0,13,1,0],
-"classtest__opponent_1_1_test_opponent.html":[17,0,14,0],
-"classtest__opponent_1_1_test_opponent.html#a047a974d02a1db0e857fbdd4d50b51f8":[17,0,14,0,21],
-"classtest__opponent_1_1_test_opponent.html#a2164e8b12217cb1530b0ed52064a813b":[17,0,14,0,18],
-"classtest__opponent_1_1_test_opponent.html#a3dffff701be7df7e59e5316a25095d43":[17,0,14,0,0],
-"classtest__opponent_1_1_test_opponent.html#a3e2169b00ce63e4c03a8bdb11603c352":[17,0,14,0,7],
-"classtest__opponent_1_1_test_opponent.html#a44584ac501a3c9652de73de74db1fa9b":[17,0,14,0,20],
-"classtest__opponent_1_1_test_opponent.html#a699b574712fac5c6cac6a486cea78deb":[17,0,14,0,11],
-"classtest__opponent_1_1_test_opponent.html#a8187794054224ef6d3784d094f9d9252":[17,0,14,0,10]
+"classtest__opponent_1_1_test_opponent.html":[17,0,14,0]
 };

@@ -1,5 +1,12 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a3da267d550ba75ac2e859eb6bcf3b2ae":[17,0,3,15,9,0,13],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5219a4c4c7ead37c164bd1ad052aab84":[17,0,3,15,9,0,14],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a577771eaa05fdba40843cc913db2d36a":[17,0,3,15,9,0,5],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5f5e60e56394bd8d3316a1f0330980ce":[17,0,3,15,9,0,9],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b0094cf85340eb551c4a4a3c5f15878":[17,0,3,15,9,0,6],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b2426b433729c0490eea18ee2e3532c":[17,0,3,15,9,0,12],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a7c86f92caef914775eaed060ccf25054":[17,0,3,15,9,0,7],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274":[17,0,3,15,9,0,3],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ac9b826816fbd4ca30412c4acb2f8b12b":[17,0,3,15,9,0,2],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ad6fdcc73bfb9088c0ff7fd045bf3c222":[17,0,3,15,9,0,1],
@@ -242,12 +249,5 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1line__up_1_1_line_up.html#acc79b7583009bf65951d73cddf2d7c81":[17,0,3,17,5,0,6],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html":[17,0,3,17,6,0],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a2b4bb37f00197c8e118dc5db124cc230":[17,0,3,17,6,0,1],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a331df03903e9856d2383caf1c60789c7":[17,0,3,17,6,0,7],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a884d6dea3e97b4197ece6755222ccf34":[17,0,3,17,6,0,5],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a9cf8cda327163fcba5f4b9fc6664fd22":[17,0,3,17,6,0,6],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#ab91d0107fd4848db492730121f5eded7":[17,0,3,17,6,0,3],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#ac667122a8704cfe0bba32c13f9747c79":[17,0,3,17,6,0,4],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#adda6344233161d747a76cc996ebd7542":[17,0,3,17,6,0,2],
-"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html":[17,0,3,17,6,0,0],
-"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html":[17,0,3,17,7,0]
+"classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#a331df03903e9856d2383caf1c60789c7":[17,0,3,17,6,0,7]
 };
