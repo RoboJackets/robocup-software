@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RRTPlanner.hpp"
+#include "DirectTargetPathPlanner.hpp"
 #include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
@@ -18,7 +18,7 @@ namespace Planning {
 
 class InterceptPlanner : public SingleRobotPathPlanner {
 public:
-    InterceptPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250){};
+    InterceptPlanner() : SingleRobotPathPlanner(false), directPlanner(){};
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
@@ -28,7 +28,7 @@ public:
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
 
-    RRTPlanner rrtPlanner;
+    DirectTargetPathPlanner directPlanner;
     Geometry2d::Point targetInterceptPos;
     int reusePathCount = 0;
 };
