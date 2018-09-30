@@ -1,5 +1,8 @@
 var NAVTREEINDEX9 =
 {
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274":[17,0,3,15,9,0,3],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ac9b826816fbd4ca30412c4acb2f8b12b":[17,0,3,15,9,0,2],
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#ad6fdcc73bfb9088c0ff7fd045bf3c222":[17,0,3,15,9,0,1],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#aeea6f9c4d2f9196efaaf5ddecc799716":[17,0,3,15,9,0,8],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#afb0ef408854714a0bcc9ade91959ca33":[17,0,3,15,9,0,4],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html":[17,0,3,15,9,0,0],
@@ -246,8 +249,5 @@ var NAVTREEINDEX9 =
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#ac667122a8704cfe0bba32c13f9747c79":[17,0,3,17,6,0,4],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass.html#adda6344233161d747a76cc996ebd7542":[17,0,3,17,6,0,2],
 "classgameplay_1_1tactics_1_1one__touch__pass_1_1_one_touch_pass_1_1_state.html":[17,0,3,17,6,0,0],
-"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html":[17,0,3,17,7,0],
-"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a085f93d2f7922eb767ad75d447cbfec3":[17,0,3,17,7,0,8],
-"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a1343b949bb350e74c80e027728473694":[17,0,3,17,7,0,5],
-"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html#a4ac99d4a8310967c1bdd64abe615f0ff":[17,0,3,17,7,0,4]
+"classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html":[17,0,3,17,7,0]
 };

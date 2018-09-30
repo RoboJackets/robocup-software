@@ -429,11 +429,20 @@ var annotated_dup =
       [ "MyFsm", "classtest__fsm_1_1_my_fsm.html", "classtest__fsm_1_1_my_fsm" ],
       [ "TestFsm", "classtest__fsm_1_1_test_fsm.html", "classtest__fsm_1_1_test_fsm" ]
     ] ],
+    [ "test_opponent", null, [
+      [ "TestOpponent", "classtest__opponent_1_1_test_opponent.html", "classtest__opponent_1_1_test_opponent" ]
+    ] ],
+    [ "test_passing", null, [
+      [ "TestPassing", "classtest__passing_1_1_test_passing.html", "classtest__passing_1_1_test_passing" ]
+    ] ],
     [ "test_play_registry", null, [
       [ "TestPlayRegistry", "classtest__play__registry_1_1_test_play_registry.html", "classtest__play__registry_1_1_test_play_registry" ]
     ] ],
     [ "test_role_assignment", null, [
       [ "TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", "classtest__role__assignment_1_1_test_role_assignment" ]
+    ] ],
+    [ "test_shooting", null, [
+      [ "TestShooting", "classtest__shooting_1_1_test_shooting.html", "classtest__shooting_1_1_test_shooting" ]
     ] ],
     [ "triangle_pass", null, [
       [ "TrianglePass", "classtriangle__pass_1_1_triangle_pass.html", "classtriangle__pass_1_1_triangle_pass" ]

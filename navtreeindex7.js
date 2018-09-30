@@ -1,5 +1,8 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#af9034fb852edb60e9ea3b0029cbcef36":[17,0,3,9,1,6,0,5],
+"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement_1_1_state.html":[17,0,3,9,1,6,0,0],
+"classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html":[17,0,3,9,1,7,0],
 "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a0b4aebe0aadf576ab616d62dd251c662":[17,0,3,9,1,7,0,0],
 "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a306fde146062676e6b4d39b12239387f":[17,0,3,9,1,7,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a3e5d70f37d90f5d99b49950e00230e6c":[17,0,3,9,1,7,0,3],
@@ -246,8 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html":[17,0,3,9,5,3,1],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#a26e73d06b1673e8b506f5cd6a02da0fc":[17,0,3,9,5,3,1,0],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html#afd94a6a6c8f7520ddc47c91af44711cc":[17,0,3,9,5,3,1,1],
-"classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[17,0,3,10,0],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html":[17,0,3,10,1],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a088d7688857a55b3d45b1f150f753829":[17,0,3,10,1,22],
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a0c144cebd3faf01d4d746beab154a8ec":[17,0,3,10,1,7]
+"classgameplay_1_1role__assignment_1_1_impossible_assignment_error.html":[17,0,3,10,0]
 };

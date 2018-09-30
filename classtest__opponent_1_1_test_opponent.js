@@ -1,0 +1,25 @@
+var classtest__opponent_1_1_test_opponent =
+[
+    [ "__init__", "classtest__opponent_1_1_test_opponent.html#a3dffff701be7df7e59e5316a25095d43", null ],
+    [ "get_closest_opponent", "classtest__opponent_1_1_test_opponent.html#aac3ab025eb12c055e42747b25687f183", null ],
+    [ "num_on_offense", "classtest__opponent_1_1_test_opponent.html#ab46840595f9ba532b52327b18efc1625", null ],
+    [ "set_bot_pos", "classtest__opponent_1_1_test_opponent.html#ac7a659ba08dc5248c5e58449581a4b4f", null ],
+    [ "set_bots_pos", "classtest__opponent_1_1_test_opponent.html#abf0d9668317b27a4bce73a20245588ff", null ],
+    [ "setUp", "classtest__opponent_1_1_test_opponent.html#aa5bf1f506d76755a805d7d5d791c58b4", null ],
+    [ "test_get_closest_opponent_dir_weight", "classtest__opponent_1_1_test_opponent.html#ac76abd0ef275848b8048ba6206e6a3d5", null ],
+    [ "test_get_closest_opponent_one_bot", "classtest__opponent_1_1_test_opponent.html#a3e2169b00ce63e4c03a8bdb11603c352", null ],
+    [ "test_get_closest_opponent_our_bot_and_exclusion", "classtest__opponent_1_1_test_opponent.html#ac86408aa2fb7e62b17a9bd28c1ee0783", null ],
+    [ "test_get_closest_opponent_two_bots", "classtest__opponent_1_1_test_opponent.html#ad4e2a846ae6b3d3a4909c18e761cb8dd", null ],
+    [ "test_num_on_offense_multiple_bots_and_ball", "classtest__opponent_1_1_test_opponent.html#a8187794054224ef6d3784d094f9d9252", null ],
+    [ "test_num_on_offense_one_bot", "classtest__opponent_1_1_test_opponent.html#a699b574712fac5c6cac6a486cea78deb", null ],
+    [ "ball", "classtest__opponent_1_1_test_opponent.html#a9edeaaa12a1e5038c4562d0c290dfb60", null ],
+    [ "botRadius", "classtest__opponent_1_1_test_opponent.html#a83e7cce94169e1fc0a63f0ced7573ecc", null ],
+    [ "center_y", "classtest__opponent_1_1_test_opponent.html#ab1b79b6835fcca59af7a582dd42ba3eb", null ],
+    [ "left_side", "classtest__opponent_1_1_test_opponent.html#ab1acce5805e71d2e7035c643c7f2ef88", null ],
+    [ "length", "classtest__opponent_1_1_test_opponent.html#aaad162501c8ecc7344ba400a47a17b35", null ],
+    [ "our_robots", "classtest__opponent_1_1_test_opponent.html#a933619ae4ca59f4ff778e93aa31d6f01", null ],
+    [ "right_side", "classtest__opponent_1_1_test_opponent.html#a2164e8b12217cb1530b0ed52064a813b", null ],
+    [ "system_state", "classtest__opponent_1_1_test_opponent.html#a8a81dd64827344685d4c3cbeccc899e9", null ],
+    [ "their_robots", "classtest__opponent_1_1_test_opponent.html#a44584ac501a3c9652de73de74db1fa9b", null ],
+    [ "width", "classtest__opponent_1_1_test_opponent.html#a047a974d02a1db0e857fbdd4d50b51f8", null ]
+];

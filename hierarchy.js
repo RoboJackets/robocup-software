@@ -218,6 +218,9 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ],
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -330,9 +333,6 @@ var hierarchy =
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
     ] ],
@@ -347,8 +347,11 @@ var hierarchy =
       [ "test_constants.TestConstants", "classtest__constants_1_1_test_constants.html", null ],
       [ "test_field.TestField", "classtest__field_1_1_test_field.html", null ],
       [ "test_fsm.TestFsm", "classtest__fsm_1_1_test_fsm.html", null ],
+      [ "test_opponent.TestOpponent", "classtest__opponent_1_1_test_opponent.html", null ],
+      [ "test_passing.TestPassing", "classtest__passing_1_1_test_passing.html", null ],
       [ "test_play_registry.TestPlayRegistry", "classtest__play__registry_1_1_test_play_registry.html", null ],
-      [ "test_role_assignment.TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", null ]
+      [ "test_role_assignment.TestRoleAssignment", "classtest__role__assignment_1_1_test_role_assignment.html", null ],
+      [ "test_shooting.TestShooting", "classtest__shooting_1_1_test_shooting.html", null ]
     ] ],
     [ "Timeout", "class_timeout.html", null ],
     [ "Geometry2d::TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", null ],
