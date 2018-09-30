@@ -300,7 +300,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
 
         // Check if Planning or optimization failed
         if (points.size() < 2) {
-            debugLog("RRTPlanning Failed");
+            // debugLog("RRTPlanning Failed");
             break;
         }
 
@@ -309,7 +309,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
                                         start.vel, goal.vel);
 
         if (!path) {
-            debugLog("RRT Vel Planning Failed");
+            // debugLog("RRT Vel Planning Failed");
             break;
         }
 

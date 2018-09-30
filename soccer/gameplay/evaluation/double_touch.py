@@ -16,6 +16,9 @@ import evaluation
 #      where the infringement occurred (see Law 13)"
 #
 class DoubleTouchTracker(fsm.StateMachine):
+
+    TOUCH_RADIUS = constants.Ball.Radius * 2.5
+
     class State(enum.Enum):
         start = 1
         restart_play_began = 2
@@ -33,65 +36,104 @@ class DoubleTouchTracker(fsm.StateMachine):
         self.add_transition(
             DoubleTouchTracker.State.start,
             DoubleTouchTracker.State.restart_play_began,
-            lambda: (main.root_play().play != None and main.root_play().play.__class__.is_restart() and main.game_state().is_our_restart()),
+            lambda: (main.root_play().play is not None and
+                     main.root_play().play.__class__.is_restart() and
+                     main.game_state().is_our_restart()),
             'we start running an offensive restart play')
 
         self.add_transition(
             DoubleTouchTracker.State.restart_play_began,
             DoubleTouchTracker.State.kicking,
-            lambda: (any(bot.has_ball() for bot in main.our_robots())) and not main.game_state().is_placement(),
-            'one of our bots has the ball')
+            lambda: ((any(self._touching_ball(bot) for bot in main.our_robots())) or
+                     main.game_state().is_playing()) and not main.game_state().is_placement(),
+            'one of our bots has the ball or the ball was kicked')
 
         self.add_transition(DoubleTouchTracker.State.kicking,
                             DoubleTouchTracker.State.kicker_forbidden,
-                            lambda: not self.kicker_has_possession(),
-                            'kicker kicks or fumbles ball')
+                            # The ball is no longer in restart, we have begun playing
+                            (lambda: main.game_state().is_playing() or
+                             # We aren't in a restart anymore
+                             main.root_play().play is None or
+                             not main.root_play().play.__class__.is_restart()),
+                            'ball has moved and is now in play')
 
         self.add_transition(DoubleTouchTracker.State.kicker_forbidden,
                             DoubleTouchTracker.State.other_robot_touched,
                             lambda: self.other_robot_touching_ball(),
                             'another robot has touched the ball')
 
-    def kicker_has_possession(self):
-        if self.kicker_shell_id != None:
-            for bot in main.our_robots():
-                if bot.shell_id() == self.kicker_shell_id:
-                    # we use two methods here because the ball-sensor output is often jittery
-                    return bot.has_ball() or evaluation.ball.robot_has_ball(
-                        bot)
-        return False
+    def _touching_ball(self, bot):
+        """A function for combining the ball sense and our own home
+        grown cookies and ice cream."""
+        return bot.has_ball() or self._bot_in_radius(bot)
 
     ## The shell id of the robot that isn't allowed to touch the ball
     # returns None if everyone is allowed to touch
     def forbidden_ball_toucher(self):
-        return self.kicker_shell_id if self.state == DoubleTouchTracker.State.kicker_forbidden else None
+        return (self.kicker_shell_id
+                if self.state == DoubleTouchTracker.State.kicker_forbidden
+                else None)
 
     # returns True if a bot other than the kicker is touching the ball
     def other_robot_touching_ball(self):
-        max_radius = constants.Robot.Radius + constants.Ball.Radius + 0.03
-        for bot in list(main.our_robots()) + list(main.their_robots()):
-            if bot.visible and (not bot.is_ours() or
-                                not bot.shell_id() == self.kicker_shell_id):
-                if bot.pos.near_point(main.ball().pos, max_radius):
-                    return True
-
+        for bot in filter(lambda bot: bot.visible,
+                          list(main.our_robots()) + list(main.their_robots())):
+            if (bot.is_ours() and
+                bot.has_ball() and
+                    bot.shell_id() != self.kicker_shell_id):
+                return True
+            if ((bot.shell_id() != self.kicker_shell_id or
+                 not bot.is_ours()) and
+                    self._bot_in_radius(bot)):
+                return True
         return False
+
+    def _bot_in_radius(self, bot):
+        "Check if a bot is within a touch radius"
+        max_radius = constants.Robot.Radius + DoubleTouchTracker.TOUCH_RADIUS
+        return (bot.visible and
+                main.ball().valid and
+                bot.pos.near_point(main.ball().pos, max_radius))
 
     # reset
     def on_enter_start(self):
         self.kicker_shell_id = None
+        self.pre_ball_pos = None
+
+    def on_enter_kicking(self):
+        if main.ball().valid:
+            self.pre_ball_pos = main.ball().pos
 
     # when we've identified that one of our bots has the ball,
     # record it's shell id
     def on_exit_restart_play_began(self):
         for bot in main.our_robots():
-            if bot.has_ball():
+            if self._touching_ball(bot):
                 self.kicker_shell_id = bot.shell_id()
                 return
+        if main.ball().valid:
+            # pick our closest robot
+            ball_pos = self.pre_ball_pos
+            if not ball_pos:
+                ball_pos = main.ball().pos
+            bot = min(main.our_robots(),
+                      key=lambda bot: bot.pos.dist_to(ball_pos))
+            self.kicker_shell_id = bot.shell_id()
 
     def on_enter_kicker_forbidden(self):
         logging.info("Due to DoubleTouch rule, robot '" + str(
             self.kicker_shell_id) + "' can't touch the ball")
+
+    def execute_kicker_forbidden(self):
+        bot = None
+        for b in main.our_robots():
+            if b.shell_id() == self.kicker_shell_id:
+                bot = b
+                break
+        if self.kicker_shell_id and bot:
+            main.system_state().draw_text(
+                "Blocking double touch!", bot.pos,
+                constants.Colors.Red, "Double Touches")
 
 # global double touch tracker
 _tracker = DoubleTouchTracker()

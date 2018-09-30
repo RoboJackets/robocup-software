@@ -47,10 +47,20 @@ public:
     RJ::Time time;
 
     Planning::MotionInstant predict(RJ::Time time) const;
+    Geometry2d::Point predictPosition(double seconds_from_now) const;
+
     std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
 
     RJ::Time estimateTimeTo(const Geometry2d::Point& point,
                             Geometry2d::Point* nearPoint = nullptr) const;
+
+    double estimateSecondsTo(const Geometry2d::Point &point) const;
+
+    double estimateSecondsToDist(double dist) const;
+
+    double predictSecondsToStop() const;
+
+
 };
 
 /**

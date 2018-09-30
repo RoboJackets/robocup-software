@@ -4,14 +4,21 @@ import skills.move
 import skills.pivot_kick
 import constants
 import robocup
+import math
 import main
 import tactics.coordinated_pass
-import evaluation.touchpass_positioning
+import evaluation.passing_positioning
 
 
 class OurFreeKick(standard_play.StandardPlay):
 
     Running = False
+    BumpKickPower = 0.01
+    FullKickPower = 1
+    MaxShootingAngle = 80
+    # Untested as of now
+    MaxChipRange = 3
+    MinChipRange = 0.3
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -19,9 +26,7 @@ class OurFreeKick(standard_play.StandardPlay):
         # If we are indirect we don't want to shoot directly into the goal
         gs = main.game_state()
 
-        if indirect is not None:
-            self.indirect = indirect
-        elif main.ball().pos.y > constants.Field.Length / 2.0:
+        if (main.ball().pos.y > constants.Field.Length / 2):
             self.indirect = gs.is_indirect()
         else:
             self.indirect = False
@@ -33,34 +38,46 @@ class OurFreeKick(standard_play.StandardPlay):
         # FIXME: this could also be a PivotKick
         kicker = skills.line_kick.LineKick()
         # kicker.use_chipper = True
-        kicker.min_chip_range = 0.3
-        kicker.max_chip_range = 3.0
-        # This will be reset to something else if indirect on the first iteration
-        kicker.target = constants.Field.TheirGoalSegment
+        kicker.min_chip_range = OurFreeKick.MinChipRange
+        kicker.max_chip_range = OurFreeKick.MaxChipRange
 
-        # add two 'centers' that just move to fixed points
-        center1 = skills.move.Move(robocup.Point(0, 1.5))
-        self.add_subbehavior(center1, 'center1', required=False, priority=4)
-        center2 = skills.move.Move(robocup.Point(0, 1.5))
-        self.add_subbehavior(center2, 'center2', required=False, priority=3)
+        gap = evaluation.shooting.find_gap(
+            max_shooting_angle=OurFreeKick.MaxShootingAngle)
 
-        if self.indirect:
-            receive_pt, target_point, probability = evaluation.touchpass_positioning.eval_best_receive_point(
-                main.ball().pos)
-            pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                receive_pt,
-                None,
-                (kicker, lambda x: True),
-                receiver_required=False,
-                kicker_required=False,
-                prekick_timeout=9)
-            # We don't need to manage this anymore
-            self.add_subbehavior(pass_behavior, 'kicker')
+        kicker.target = gap
 
-            kicker.target = receive_pt
+        shooting_line = robocup.Line(main.ball().pos, gap)
+
+        # If we are at their goal, shoot full power
+        if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
+            kicker.kick_power = self.FullKickPower
+        # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or 
+              shooting_line.line_intersection(constants.Field.FieldBorders[2]) and 
+              gap.y - main.ball().pos.y > 0):
+            kicker.kick_power = self.FullKickPower
+        # If we are probably aiming down the field, slowly kick so we dont carpet
         else:
-            kicker = skills.line_kick.LineKick()
-            kicker.target = constants.Field.TheirGoalSegment
+            kicker.kick_power = self.BumpKickPower
+
+        # Try passing if we are doing an indirect kick
+        if self.indirect:
+            receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+
+            # Check for valid target pass position
+            if receive_value != 0:
+                pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+                    receive_pt,
+                    None,
+                    (kicker, lambda x: True),
+                    receiver_required=False,
+                    kicker_required=False,
+                    prekick_timeout=9)
+                # We don't need to manage this anymore
+                self.add_subbehavior(pass_behavior, 'kicker')
+            else:
+                self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+        else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(

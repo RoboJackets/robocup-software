@@ -29,7 +29,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
     ## we have to be going slower than this to be considered 'steady'
     SteadyMaxVel = 0.04
-    SteadyMaxAngleVel = 3  # degrees / second
+    SteadyMaxAngleVel = 3 * constants.DegreesToRadians  # degrees / second
 
     MarginAngle = math.pi / 18
     StabilizationFrames = 3
@@ -160,7 +160,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         pass_line_dir = (
             self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
-
+    
         # vector pointing down the pass line toward the kicker
         pass_dir = (
             self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
@@ -261,9 +261,13 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     def role_requirements(self):
         reqs = super().role_requirements()
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
-            if self._target_pos != None:
-                req.destination_shape = self._target_pos
-            elif self.receive_point != None:
+            # Target pos is causing problems in the first few frames due to the 
+            # ball velocity being completely wrong due to the ball filter. This 
+            # may add some inefficiency since the closest robot to the true ball 
+            # pass location is not being used.
+            #if self._target_pos != None:
+            #    req.destination_shape = self._target_pos
+            if self.receive_point != None:
                 req.destination_shape = self.receive_point
         return reqs
 

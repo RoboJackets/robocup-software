@@ -9,9 +9,6 @@ import constants
 import planning_priority
 import skills.pivot_kick
 
-
-## This class is currently not used for anything
-# This was ported from our old C++ gameplay system and served a purpose then, but is unused now
 class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
         waiting = 1
@@ -45,14 +42,14 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.face(main.ball().pos)
 
     def execute_setup(self):
-        penalty_mark = robocup.Point(
-            0, constants.Field.Length - constants.Field.PenaltyDist)
         backoff = 0.5
 
         self.robot.disable_avoid_ball()
 
         self.robot.move_to(main.ball().pos - robocup.Point(0, backoff))
         # FIXME this is old code to stick to the penalty area if possible.
+        # penalty_mark = robocup.Point(
+        #     0, constants.Field.Length - constants.Field.PenaltyDist)
         # Now we just track the ball. Find out if this is a good idea.
         # if main.ball().pos.near_point(penalty_mark, 0.5):
         #     self.robot.move_to(main.ball().pos - robocup.Point(0, backoff))

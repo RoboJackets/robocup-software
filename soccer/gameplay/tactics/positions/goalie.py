@@ -130,7 +130,11 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 robocup.Point(0, constants.Robot.Radius + Goalie.OFFSET))
 
     def execute_setup_penalty(self):
-        pt = robocup.Point(0, constants.Field.PenaltyDist)
+        if main.ball().valid:
+            pt = main.ball().pos
+        else:
+            # FIXME is this correct?
+            pt = robocup.Point(0, constants.Field.PenaltyLongDist)
         penalty_kicker = min(main.their_robots(),
                              key=lambda r: (r.pos - pt).mag())
         angle_rad = penalty_kicker.angle
@@ -160,16 +164,18 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # we use low error thresholds here
         # the goalie isn't trying to make a shot, he just wants get the ball the **** out of there
-        kick.aim_params['error_threshold'] = 1.0
-        kick.aim_params['max_steady_ang_vel'] = 12
+        # kick.aim_params['error_threshold'] = 1.0
+        # kick.aim_params['max_steady_ang_vel'] = 12
 
         # chip
         kick.chip_power = 1.0
         kick.use_chipper = True
 
-        kick.target = robocup.Segment(
-            robocup.Point(-constants.Field.Width / 2, constants.Field.Length),
-            robocup.Point(constants.Field.Width / 2, constants.Field.Length))
+        kick.target = evaluation.shooting.find_gap(
+                robocup.Point(0, constants.Field.Length), 
+                max_shooting_angle=80,
+                robot_offset=8, 
+                dist_from_point=1)
 
         # FIXME: if the goalie has a fault, resort to bump
 

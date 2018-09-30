@@ -158,4 +158,8 @@ bool Circle::hit(const Segment& seg) const {
     return seg.nearPoint(center, radius() + Robot_Radius);
 }
 
+bool Circle::nearPoint(Point pt, float threshold) const {
+    return center.nearPoint(pt, threshold + radius());
+}
+
 }  // namespace Geometry2d

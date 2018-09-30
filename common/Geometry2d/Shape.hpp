@@ -42,6 +42,11 @@ public:
         return false;
     }
 
+    virtual bool nearPoint(Point other, float threshold) const {
+        throw std::runtime_error("Unimplemented method");
+        return false;
+    }
+
     virtual std::string toString() { return "Shape"; }
 
     friend std::ostream& operator<<(std::ostream& stream, Shape& shape) {

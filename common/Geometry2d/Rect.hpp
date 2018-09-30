@@ -72,7 +72,7 @@ public:
     float maxx() const { return std::max(pt[0].x(), pt[1].x()); }
     float maxy() const { return std::max(pt[0].y(), pt[1].y()); }
 
-    bool nearPoint(Point pt, float threshold) const;
+    bool nearPoint(Point pt, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;
 
     bool intersects(const Rect& other) const;
