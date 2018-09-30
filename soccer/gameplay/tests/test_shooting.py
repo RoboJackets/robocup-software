@@ -58,8 +58,8 @@ class TestShooting(unittest.TestCase):
 		# Corner shots should not have 100% chance to hit the goal
 		self.assertEqual(self.eval_shot(self.width / 2, self.length), self.failure)
 
-		# Just inside the corner is 100% successful too
-		self.assertEqual(self.eval_shot(self.width / 2 - self.botRadius, self.length - self.botRadius), self.failure)
+		# Just inside the corner will not be 100%
+		self.assertLess(self.eval_shot(self.width / 2 - self.botRadius, self.length - self.botRadius), 0.2)
         
 	@unittest.skip("Skip Problematic Cases")
 	def test_eval_shot_problem_cases(self):
