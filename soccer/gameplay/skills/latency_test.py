@@ -79,7 +79,7 @@ class LatencyTest(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             'Noise Test Completed')
 
     def on_enter_setup(self):
-        move_point = robocup.Point(0, constants.Field.Width / 4)
+        move_point = robocup.Point(0, constants.Field.Length / 4)
 
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
@@ -119,7 +119,7 @@ class LatencyTest(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_move1(self):
         self.moveStartTime = time.time()
-        self.add_subbehavior(skills.move.Move(robocup.Point(0, constants.Field.Width / 2)), 'move')
+        self.add_subbehavior(skills.move.Move(robocup.Point(0, constants.Field.Length / 3)), 'move')
 
 
     def execute_move1(self):
