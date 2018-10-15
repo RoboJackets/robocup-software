@@ -16,7 +16,17 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         setup = 1
         noise = 2
         move1 = 3
-        BasicMotion = 4
+        BasicMid0 = 4
+        BasicMid1 = 5
+        BasicMid2 = 6
+        BasicSmall0 = 7
+        BasicSmall1 = 8
+        BasicSmall2 = 9
+        BasicLarge0 = 10
+        BasicLarge1 = 11
+        BasicLarge2 = 12
+        BasicEnd = 13
+
         
     #Latency Measurement
     noiseStartTime = 0.0
@@ -28,7 +38,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     noiseMaxY = 0.0
     noiseMinY = 0.0
 
-    
     NoiseTest = 0.0
     NoiseTestDone = False
     noiseStartTime = 0.0
@@ -38,14 +47,34 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     moveStartTime = 0.0
     moveEndTime = 0.0
 
-    #Basic Motion Variables
-    
 
+    #Phase 1: Basic Motion
+
+    MediumTrials = 6
+    LargeTrials = 6
+    SmallTrials = 6
+
+    startTime = 0.0
+    endTime = 0.0
+
+    MediumTimes = []
+    LargeTimes = []
+    SmallTimes = []
+
+    MaxOvershootMedium = []
+    MaxOvershootLarge = []
+    MaxOvershootSmall = []    
+
+    MediumDone = False
+    LargeDone = False
+    SmallDone = False
+
+    
     def __init__(self):
         super().__init__(continuous=False) 
 
 
-        #Register States
+        #Latency Test
         self.add_state(MotionBenchmark.State.setup,
                        behavior.Behavior.State.running)
 
@@ -54,8 +83,49 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         self.add_state(MotionBenchmark.State.move1,
                        behavior.Behavior.State.running)
-       
-        #Add transitions
+
+
+        #Mid basic motion triangle
+
+        self.add_state(MotionBenchmark.State.BasicMid0,
+                       behavior.Behavior.State.running)
+
+        self.add_state(MotionBenchmark.State.BasicMid1,
+                       behavior.Behavior.State.running)
+
+        self.add_state(MotionBenchmark.State.BasicMid2,
+                       behavior.Behavior.State.running)
+
+        #Small basic Motion triangle
+
+        self.add_state(MotionBenchmark.State.BasicSmall0,
+                       behavior.Behavior.State.running)
+
+        self.add_state(MotionBenchmark.State.BasicSmall1,
+                       behavior.Behavior.State.running)
+
+        self.add_state(MotionBenchmark.State.BasicSmall2,
+                       behavior.Behavior.State.running)
+
+        #Large basic motion triangle
+
+        self.add_state(MotionBenchmark.State.BasicLarge0,
+                       behavior.Behavior.State.running)
+
+        self.add_state(MotionBenchmark.State.BasicLarge1,
+                       behavior.Behavior.State.running)
+
+        self.add_state(MotionBenchmark.State.BasicLarge2,
+                       behavior.Behavior.State.running)
+
+        #End of basic motion
+
+        self.add_state(MotionBenchmark.State.BasicEnd,
+                       behavior.Behavior.State.running)
+
+
+        #TRANSITIONS 
+
         self.add_transition(behavior.Behavior.State.start,
                             MotionBenchmark.State.setup, lambda: True,
                             'immediately')
