@@ -28,7 +28,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
         ## getting ready to recieve a pass from another robot
         passSet = 1
-
+        ## sitting still when we are kicking a ball to goal
         hold = 2
 
     def __init__(self):
@@ -53,11 +53,13 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
         self.priorities = [1, 2]
 
+        #self.sidePoint = None
+
         for s in AdvanceZoneMidfielder.State:
             self.add_state(s, behavior.Behavior.State.running)
 
         self.names = ['left', 'right']
-        #intially should be passSet method
+        #intially should be passSet method and adds conditions to switch to hold on kick
         self.add_transition(behavior.Behavior.State.start,
                             AdvanceZoneMidfielder.State.passSet, lambda: True,
                             "Immediately")
@@ -83,7 +85,11 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
                 AdvanceZoneMidfielder.NELDER_MEAD_ARGS,
                 AdvanceZoneMidfielder.PASSING_WEIGHTS)
 
-        # moves the robots
+        #check for futile position
+        if self.in_shot_triangle(points):
+            points[1] = self.remove_obstruction(points)
+
+        # moves the robots and assigns information
         for i in range(len(points)):
             if (self.moves[i] is None):
                 self.moves[i] = skills.move.Move(points[i])
@@ -96,7 +102,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
                 self.moves[i].pos = points[i]
 
     def execute_hold(self):
-
+        #old methodology for simple zone midfielder (check comments on that method)
         y_temp_hold = 0.8 * self.passing_point.y
 
         x_temp_hold = constants.Field.Width / 3
@@ -114,6 +120,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
             else:
                 self.moves[i].pos = self.hold_point[i]
 
+    #gets passing point from adaptive formation
     @property
     def passing_point(self):
         return self._passing_point
@@ -122,6 +129,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     def passing_point(self, value):
         self._passing_point = value
 
+    #gets when we are kicking from adaptive formation
     @property
     def kick(self):
         return self._kick
@@ -133,5 +141,44 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     def on_exit_passSet(self):
         self.remove_all_subbehaviors()
 
-    def on_exit_passBack(self):
+    def on_exit_hold(self):
         self.remove_all_subbehaviors()
+
+    #this method determines if the 2nd midfielders kicking point is actually in the way of the potential shot
+    def in_shot_triangle(self, points):
+        #get the two points of the enemies goal
+        goalSegment = constants.Field.TheirGoalSegment
+        goalCenter = goalSegment.center()
+        length = goalSegment.length()
+        point1 = robocup.Point(goalCenter.x + length/2, goalCenter.y)
+        point2 = robocup.Point(goalCenter.x - length/2, goalCenter.y)
+        #draw the line from the ideal passing position to the goal corners
+        main.system_state().draw_line(robocup.Line(point1, points[0]), (255, 0, 255), "Shot Range")
+        main.system_state().draw_line(robocup.Line(point2, points[0]), (255, 0, 255), "Shot Range")
+        #angle between the line from ideal pass point and the goal corner and between the line ideal pass point and other goal corner
+        theta = (point1 - points[0]).angle_between((point2 - points[0]))
+        #angle between the line from ideal pass point and goal corner 1 and between the line from ideal pass point and 2nd best pass point
+        theta1 = (points[0] - points[1]).angle_between(points[0] - point1)
+        #angle between the line from ideal pass point and goal corner 2 and between the line from ideal pass point and 2nd best pass point
+        theta2 = (points[0] - points[1]).angle_between(points[0] - point2)
+
+        #decides which side is closer to point by the smaller theta
+        if theta1 > theta2 :
+            self.sidePoint = point2
+        else :
+            self.sidePoint = point1
+        #if interior angles near sum to 0 then robot is inside the the zone. 
+        return abs(theta - theta1 - theta2) < .07
+
+    #finds closest point to leave zone and goes four robot radius outside the zone
+    def remove_obstruction(self, points):
+        #use line projection
+        s = points[0] - self.sidePoint
+        v = points[0] - points[1]
+        newCoef = v.dot(s)/ s.dot(s)
+        s = s * newCoef
+        # find the vector out
+        finalVector = v - s
+        # change the point
+        finalPoint = points[1] + (finalVector/finalVector.mag()) * constants.Robot.Radius * 4
+        return finalPoint
