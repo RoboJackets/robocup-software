@@ -102,7 +102,7 @@ def eval_best_receive_point(kick_point,
                                  field_weights, weights)
     cppfunc = robocup.PythonFunctionWrapper(pythfunc)
     nmConfig = robocup.NelderMead2DConfig(
-        cppfunc.get_function(), kick_point, nelder_mead_args[0], nelder_mead_args[1],
+        cppfunc, kick_point, nelder_mead_args[0], nelder_mead_args[1],
         nelder_mead_args[2], nelder_mead_args[3], nelder_mead_args[4],
         nelder_mead_args[5], nelder_mead_args[6], nelder_mead_args[7],
         nelder_mead_args[8])

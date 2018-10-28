@@ -30,6 +30,7 @@ set(ROBOCUP_LIB_SRC
     "optimization/GradientAscent1D.cpp"
     "optimization/ParallelGradientAscent1D.cpp"
     "optimization/NelderMead2D.cpp"
+    "optimization/PythonFunctionWrapper.cpp"
     "planning/CompositePath.cpp"
     "planning/DynamicObstacle.cpp"
     "planning/DirectTargetPathPlanner.cpp"

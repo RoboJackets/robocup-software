@@ -26,6 +26,7 @@ using namespace boost::python;
 #include "motion/TrapezoidalMotion.hpp"
 #include "optimization/NelderMead2D.hpp"
 #include "optimization/NelderMead2DConfig.hpp"
+#include "optimization/PythonFunctionWrapper.hpp"
 #include "planning/MotionConstraints.hpp"
 
 #include <boost/python/exception_translator.hpp>
@@ -593,22 +594,30 @@ void KickEval_add_excluded_robot(KickEvaluator* self, Robot* robot) {
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
+boost::shared_ptr<PythonFunctionWrapper> PythonFunctionWrapper_constructor(
+    PyObject* pf) {
+
+    return boost::shared_ptr<PythonFunctionWrapper>(new PythonFunctionWrapper(pf));
+}
+
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
 float Point_get_y(const Geometry2d::Point* self) { return self->y(); }
 void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
 
 boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
-    std::function<float(Geometry2d::Point)>* function,
+    PythonFunctionWrapper* functionWrapper,
     Geometry2d::Point start = Geometry2d::Point(0, 0),
     Geometry2d::Point step = Geometry2d::Point(1, 1),
     Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
     float reflectionCoeff = 1, float expansionCoeff = 2,
     float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
+
     return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
-        *function, start, step, minDist, reflectionCoeff, expansionCoeff,
-        contractionCoeff, shrinkCoeff, maxIterations, maxValue, maxThresh));
+        functionWrapper->f, start, step, minDist, 
+        reflectionCoeff, expansionCoeff, contractionCoeff, shrinkCoeff,
+        maxIterations, maxValue, maxThresh));
 }
 
 boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(
@@ -929,8 +938,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("eval_pt_to_our_goal", &KickEval_eval_pt_to_our_goal)
         .def("eval_pt_to_seg", &KickEval_eval_pt_to_seg);
 
-    class_<PythonFunctionWrapper>("PythonFunctionWrapper")
-        .def("get_function", &PythonFunctionWrapper::getFunction);
+    class_<PythonFunctionWrapper>("PythonFunctionWrapper", no_init)
+        .def("__init__", make_constructor(&PythonFunctionWrapper_constructor));
 
     class_<NelderMead2DConfig>("NelderMead2DConfig", no_init)
         .def("__init__", make_constructor(&NelderMead2DConfig_constructor),
