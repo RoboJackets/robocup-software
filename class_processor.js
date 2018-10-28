@@ -6,7 +6,7 @@ var class_processor =
       [ "secondary", "class_processor.html#a41c147c0c8301eca5a94798c9c31b463a05ef87bad4618fa9288c9f75eed87926", null ],
       [ "full", "class_processor.html#a41c147c0c8301eca5a94798c9c31b463a5b4ceb0a3978b74478c72ff056d40ef2", null ]
     ] ],
-    [ "Processor", "class_processor.html#a249771a060d01653f35a6a70a09db71c", null ],
+    [ "Processor", "class_processor.html#aa61efe97ac987821491e982d485ff9bf", null ],
     [ "~Processor", "class_processor.html#acf37952c5b420d4e903a512571678692", null ],
     [ "applyJoystickControls", "class_processor.html#af9ab76bf7d2e52b90a9688a178cf4f05", null ],
     [ "autonomous", "class_processor.html#ae82d01435599d7ade385225832ef2bf2", null ],

@@ -112,9 +112,15 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const</
 <tr class="memitem:aa2758e2ccea95173cd536d1f7980814a"><td class="memItemLeft" align="right" valign="top"><a id="aa2758e2ccea95173cd536d1f7980814a"></a>
 std::shared_ptr&lt; Packet::LogFrame &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>lastFrame</b> () const</td></tr>
 <tr class="separator:aa2758e2ccea95173cd536d1f7980814a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99b04b6982f78bb6d15e8819b3e9b96f"><td class="memItemLeft" align="right" valign="top"><a id="a99b04b6982f78bb6d15e8819b3e9b96f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>addFrame</b> (std::shared_ptr&lt; Packet::LogFrame &gt; frame, bool force)</td></tr>
+<tr class="separator:a99b04b6982f78bb6d15e8819b3e9b96f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af08f43c44f0046fcb1b3fb86eb030803"><td class="memItemLeft" align="right" valign="top"><a id="af08f43c44f0046fcb1b3fb86eb030803"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>addFrame</b> (std::shared_ptr&lt; Packet::LogFrame &gt; frame)</td></tr>
 <tr class="separator:af08f43c44f0046fcb1b3fb86eb030803"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a886c0a525bdcfa812b83fae899bbfd5f"><td class="memItemLeft" align="right" valign="top"><a id="a886c0a525bdcfa812b83fae899bbfd5f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>readFrames</b> (const char *filename)</td></tr>
+<tr class="separator:a886c0a525bdcfa812b83fae899bbfd5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4adb3df3f79a30ca9ecce7f217f6c8c0"><td class="memItemLeft" align="right" valign="top"><a id="a4adb3df3f79a30ca9ecce7f217f6c8c0"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>getFrames</b> (int start, std::vector&lt; std::shared_ptr&lt; Packet::LogFrame &gt;&gt; &amp;frames) const</td></tr>
 <tr class="separator:a4adb3df3f79a30ca9ecce7f217f6c8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,7 +167,7 @@ RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>startTime</b> () 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_logger.html">Logger</a></li>
-    <li class="footer">Generated on Sat Oct 27 2018 19:59:41 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Oct 28 2018 16:07:05 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

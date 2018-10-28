@@ -1,5 +1,7 @@
 var NAVTREEINDEX8 =
 {
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html":[17,0,3,9,5,3,0],
+"classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a029f6e451a15ab85b1941b9618c051d7":[17,0,3,9,5,3,0,3],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a3ae0d39236db579be5ef57c6f65218af":[17,0,3,9,5,3,0,2],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#a4d6380e9d59439367adee6a215042a75":[17,0,3,9,5,3,0,1],
 "classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html#aa5a6ecbf81a2e817e27736eb4554716a":[17,0,3,9,5,3,0,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX8 =
 "classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#aa2781ca33508fdfff4489326dc6c5174":[17,0,3,15,8,0,2],
 "classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html#aa569c0ca74eb55fb10acc7bd578b1d4a":[17,0,3,15,8,0,4],
 "classgameplay_1_1skills_1_1line__kick_1_1_line_kick_1_1_state.html":[17,0,3,15,8,0,0],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html":[17,0,3,15,9,0],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a12a429556767483ce6eea1660338e398":[17,0,3,15,9,0,11],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a36bf058d534cd098df987cd88e49492f":[17,0,3,15,9,0,10]
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html":[17,0,3,15,9,0]
 };
