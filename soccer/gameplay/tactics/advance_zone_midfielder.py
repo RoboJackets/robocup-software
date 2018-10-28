@@ -45,7 +45,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
         self.moves = [None, None]
 
         #an abitraty small value to account for small error
-        self.O_of_h = 0.01
+        self.epsilon = 10**-6
 
         if main.ball().valid:
             self.passing_point = main.ball().pos
@@ -72,7 +72,6 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
     def execute_pass_set(self):
         # gets the best position to travel to for ball reception
-        points = [robocup.Point(0, 0), robocup.Point(0, 0)]
         best_point = self.passing_point
 
         # sets the second point
@@ -100,7 +99,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
                 self.moves[i].pos = points[i]
     #defaults to a defensive position on kicks
     def execute_hold(self):
-        # old methodology for simple zone midfielder (check comments on that method)
+        # old methodology (simple zone midfielder) for simple zone midfielder (check comments on that method)
         y_temp_hold = 0.8 * self.passing_point.y
 
         x_temp_hold = constants.Field.Width / 3
@@ -128,10 +127,9 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     def in_shot_triangle(self, best_point, alt_point):
         # get the two points of the enemies goal
         goalSegment = constants.Field.TheirGoalSegment
-        goalCenter = goalSegment.center()
-        length = goalSegment.length()
-        right_post = robocup.Point(goalCenter.x + length / 2, goalCenter.y)
-        left_post = robocup.Point(goalCenter.x - length / 2, goalCenter.y)
+
+        right_post = goalSegment.get_pt(0)
+        left_post = goalSegment.get_pt(1)
         # draw the line from the ideal passing position to the goal corners
         main.system_state().draw_line(
             robocup.Line(right_post, best_point), (255, 0, 255), "Shot Range")
@@ -150,20 +148,20 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
         else:
             self.closest_post = right_post
         # if interior angles near sum to 0 then robot is inside the the zone. 
-        return abs(shot_angle - left_post_alt_pos_angle - right_post_alt_pos_angle) < self.O_of_h
+        return abs(shot_angle - left_post_alt_pos_angle - right_post_alt_pos_angle) < self.epsilon
 
     # finds closest point to leave zone and goes four robot radius outside the zone
     def remove_obstruction(self, best_point, alt_point):
-        # use line projection
+        # use line projection (look up vector projection online for more information)
         post_to_best_vector = best_point - self.closest_post
         best_to_alt_vector = best_point - alt_point
-        newCoef = best_to_alt_vector.dot(post_to_best_vector) / post_to_best_vector.dot(post_to_best_vector)
-        proj_post_to_best_vector = post_to_best_vector * newCoef
+        new_vector_length = best_to_alt_vector.dot(post_to_best_vector) / post_to_best_vector.dot(post_to_best_vector)
+        proj_post_to_best_vector = post_to_best_vector * new_vector_length
         # find the vector out
         escape_vector = best_to_alt_vector - proj_post_to_best_vector
         # change the point
         escape_point = alt_point + (escape_vector / escape_vector.mag()
-                                  ) * constants.Robot.Radius * 4
+                                  ) * constants.Robot.Radius * 6
         return escape_point
 
     # gets passing point from adaptive formation
