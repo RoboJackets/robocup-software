@@ -99,7 +99,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
                          : static_cast<Radio*>(new USBRadio());
 
     if (!readLogFile.empty()) {
-        _logger.readFrames("/home/jay/20180626-192851.log");
+        _logger.readFrames(readLogFile.c_str());
         firstLogTime = _logger.startTime();
     }
 }
