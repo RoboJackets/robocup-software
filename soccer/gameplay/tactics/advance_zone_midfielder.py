@@ -15,19 +15,19 @@ import functools
 import plays.offense.adaptive_formation
 
 
-#2 midfielder rely on the future location of their teammate to pass quickly
+# 2 midfielder rely on the future location of their teammate to pass quickly
 class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     # Weights for the general field positioning
-    FIELD_POS_WEIGHTS = (0.01, 3, 0.02)  #AdaptiveFormation.FIELD_POS_WEIGHTS
+    FIELD_POS_WEIGHTS = (0.01, 3, 0.02)  
     # Weights for finding best pass
-    PASSING_WEIGHTS = (2, 2, 15, 10)  #AdaptiveFormation.PASSING_WEIGHTS
+    PASSING_WEIGHTS = (2, 2, 15, 10)  
     # Initial arguements for the nelder mead optimization in passing positioning
     NELDER_MEAD_ARGS = (robocup.Point(0.75, 1), robocup.Point(0.01, 0.01), 1,
                         1.1, 0.5, 0.9, 100, 1, 0.1)
 
     class State(enum.Enum):
         # getting ready to recieve a pass from another robot
-        passSet = 1
+        pass_set = 1
         # sitting still when we are kicking a ball to goal
         hold = 2
 
@@ -36,13 +36,16 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
         # Sends one robot to best reciever point, and other to the best receiving point
         # of the first midfielder
-        self.add_state(AdvanceZoneMidfielder.State.passSet,
+        self.add_state(AdvanceZoneMidfielder.State.pass_set,
                        behavior.Behavior.State.running)
 
         self.add_state(AdvanceZoneMidfielder.State.hold,
                        behavior.Behavior.State.running)
 
         self.moves = [None, None]
+
+        #an abitraty small value to account for small error
+        self.O_of_h = 0.01
 
         if main.ball().valid:
             self.passing_point = main.ball().pos
@@ -53,37 +56,37 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
         self.priorities = [1, 2]
 
-        self.names = ['left', 'right']
-        # intially should be passSet method and adds conditions to switch to hold on kick
+        self.names = ['best', 'alternative']
+        # intially should be pass_set method and adds conditions to switch to hold on kick
         self.add_transition(behavior.Behavior.State.start,
-                            AdvanceZoneMidfielder.State.passSet, lambda: True,
+                            AdvanceZoneMidfielder.State.pass_set, lambda: True,
                             "Immediately")
         self.add_transition(
-            AdvanceZoneMidfielder.State.passSet,
+            AdvanceZoneMidfielder.State.pass_set,
             AdvanceZoneMidfielder.State.hold, lambda: self.kick,
             "When a kick play begins")
         self.add_transition(
             AdvanceZoneMidfielder.State.hold,
-            AdvanceZoneMidfielder.State.passSet, lambda: not self.kick,
+            AdvanceZoneMidfielder.State.pass_set, lambda: not self.kick,
             "When not in a kick play")
 
-    def execute_passSet(self):
-        #gets the best position to travel to for ball reception
+    def execute_pass_set(self):
+        # gets the best position to travel to for ball reception
         points = [robocup.Point(0, 0), robocup.Point(0, 0)]
-        points[0] = self.passing_point
+        best_point = self.passing_point
 
         # sets the second point
-        points[
-            1], value2 = evaluation.passing_positioning.eval_best_receive_point(
+        alt_point, value2 = evaluation.passing_positioning.eval_best_receive_point(
                 self.passing_point,
                 main.our_robots(), AdvanceZoneMidfielder.FIELD_POS_WEIGHTS,
                 AdvanceZoneMidfielder.NELDER_MEAD_ARGS,
                 AdvanceZoneMidfielder.PASSING_WEIGHTS)
 
-        # check for futile position
-        if self.in_shot_triangle(points):
-            points[1] = self.remove_obstruction(points)
+        # check for futile position i.e the alternate position is in the way of a shot from best position
+        if self.in_shot_triangle(best_point, alt_point):
+            alt_point = self.remove_obstruction(best_point, alt_point)
 
+        points = [best_point, alt_point]
         # moves the robots and assigns information
         for i in range(len(points)):
             if (self.moves[i] is None):
@@ -95,7 +98,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
                     priority=self.priorities[i])
             else:
                 self.moves[i].pos = points[i]
-
+    #defaults to a defensive position on kicks
     def execute_hold(self):
         # old methodology for simple zone midfielder (check comments on that method)
         y_temp_hold = 0.8 * self.passing_point.y
@@ -115,6 +118,54 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
             else:
                 self.moves[i].pos = self.hold_point[i]
 
+    def on_exit_pass_set(self):
+        self.remove_all_subbehaviors()
+
+    def on_exit_hold(self):
+        self.remove_all_subbehaviors()
+
+    # this method determines if the 2nd midfielders kicking point is actually in the way of the potential shot
+    def in_shot_triangle(self, best_point, alt_point):
+        # get the two points of the enemies goal
+        goalSegment = constants.Field.TheirGoalSegment
+        goalCenter = goalSegment.center()
+        length = goalSegment.length()
+        right_post = robocup.Point(goalCenter.x + length / 2, goalCenter.y)
+        left_post = robocup.Point(goalCenter.x - length / 2, goalCenter.y)
+        # draw the line from the ideal passing position to the goal corners
+        main.system_state().draw_line(
+            robocup.Line(right_post, best_point), (255, 0, 255), "Shot Range")
+        main.system_state().draw_line(
+            robocup.Line(left_post, best_point), (255, 0, 255), "Shot Range")
+        # angle between the line from ideal pass point and the goal corner and between the line ideal pass point and other goal corner
+        shot_angle = (right_post - best_point).angle_between((left_post - best_point))
+        # angle between the line from ideal pass point and goal corner 1 and between the line from ideal pass point and 2nd best pass point
+        left_post_alt_pos_angle = (best_point - alt_point).angle_between(best_point - right_post)
+        # angle between the line from ideal pass point and goal corner 2 and between the line from ideal pass point and 2nd best pass point
+        right_post_alt_pos_angle = (best_point - alt_point).angle_between(best_point - left_post)
+
+        # decides which side is closer to point by the smaller theta
+        if left_post_alt_pos_angle < right_post_alt_pos_angle:
+            self.closest_post = left_post
+        else:
+            self.closest_post = right_post
+        # if interior angles near sum to 0 then robot is inside the the zone. 
+        return abs(shot_angle - left_post_alt_pos_angle - right_post_alt_pos_angle) < self.O_of_h
+
+    # finds closest point to leave zone and goes four robot radius outside the zone
+    def remove_obstruction(self, best_point, alt_point):
+        # use line projection
+        post_to_best_vector = best_point - self.closest_post
+        best_to_alt_vector = best_point - alt_point
+        newCoef = best_to_alt_vector.dot(post_to_best_vector) / post_to_best_vector.dot(post_to_best_vector)
+        proj_post_to_best_vector = post_to_best_vector * newCoef
+        # find the vector out
+        escape_vector = best_to_alt_vector - proj_post_to_best_vector
+        # change the point
+        escape_point = alt_point + (escape_vector / escape_vector.mag()
+                                  ) * constants.Robot.Radius * 4
+        return escape_point
+
     # gets passing point from adaptive formation
     @property
     def passing_point(self):
@@ -133,50 +184,3 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     def kick(self, value):
         self._kick = value
 
-    def on_exit_passSet(self):
-        self.remove_all_subbehaviors()
-
-    def on_exit_hold(self):
-        self.remove_all_subbehaviors()
-
-    # this method determines if the 2nd midfielders kicking point is actually in the way of the potential shot
-    def in_shot_triangle(self, points):
-        # get the two points of the enemies goal
-        goalSegment = constants.Field.TheirGoalSegment
-        goalCenter = goalSegment.center()
-        length = goalSegment.length()
-        point1 = robocup.Point(goalCenter.x + length / 2, goalCenter.y)
-        point2 = robocup.Point(goalCenter.x - length / 2, goalCenter.y)
-        # draw the line from the ideal passing position to the goal corners
-        main.system_state().draw_line(
-            robocup.Line(point1, points[0]), (255, 0, 255), "Shot Range")
-        main.system_state().draw_line(
-            robocup.Line(point2, points[0]), (255, 0, 255), "Shot Range")
-        # angle between the line from ideal pass point and the goal corner and between the line ideal pass point and other goal corner
-        theta = (point1 - points[0]).angle_between((point2 - points[0]))
-        # angle between the line from ideal pass point and goal corner 1 and between the line from ideal pass point and 2nd best pass point
-        theta1 = (points[0] - points[1]).angle_between(points[0] - point1)
-        # angle between the line from ideal pass point and goal corner 2 and between the line from ideal pass point and 2nd best pass point
-        theta2 = (points[0] - points[1]).angle_between(points[0] - point2)
-
-        # decides which side is closer to point by the smaller theta
-        if theta1 > theta2:
-            self.sidePoint = point2
-        else:
-            self.sidePoint = point1
-        # if interior angles near sum to 0 then robot is inside the the zone. 
-        return abs(theta - theta1 - theta2) < .07
-
-    # finds closest point to leave zone and goes four robot radius outside the zone
-    def remove_obstruction(self, points):
-        # use line projection
-        s = points[0] - self.sidePoint
-        v = points[0] - points[1]
-        newCoef = v.dot(s) / s.dot(s)
-        s = s * newCoef
-        # find the vector out
-        finalVector = v - s
-        # change the point
-        finalPoint = points[1] + (finalVector / finalVector.mag()
-                                  ) * constants.Robot.Radius * 4
-        return finalPoint
