@@ -57,6 +57,8 @@ run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
+view: 
+	./run/soccer -vlog $(file)
 
 # backend targets to launch soccer with grsim in headless
 backend-headless-simulator-soccer:
