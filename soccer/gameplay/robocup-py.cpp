@@ -95,6 +95,16 @@ void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
     self->pos = pos;
 }
 
+// Sets a robot's visibility - this should never be used in gameplay code, but
+// is useful for testing.
+void Robot_set_vis_for_testing(Robot* self, bool vis) { self->visible = vis; }
+
+// Sets a ball's position - this should never be used in gameplay code, but
+// is useful for testing.
+void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) {
+    self->pos = pos;
+}
+
 Geometry2d::Point Robot_vel(Robot* self) { return self->vel; }
 
 float Robot_angle(Robot* self) { return self->angle; }
@@ -138,6 +148,10 @@ void OurRobot_set_max_angle_speed(OurRobot* self, float maxAngleSpeed) {
 
 void OurRobot_set_max_speed(OurRobot* self, float maxSpeed) {
     self->motionConstraints().maxSpeed = maxSpeed;
+}
+
+void OurRobot_set_max_accel(OurRobot* self, float maxAccel) {
+    self->motionConstraints().maxAcceleration = maxAccel;
 }
 
 void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id,
@@ -775,6 +789,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("pos", &Robot_pos,
                       "position vector of the robot in meters")
         .def("set_pos_for_testing", &Robot_set_pos_for_testing)
+        .def("set_vis_for_testing", &Robot_set_vis_for_testing)
         .add_property("vel", &Robot_vel, "velocity vector of the robot in m/s")
         .add_property("angle", &Robot_angle, "angle of the robot in degrees")
         .add_property("angle_vel", &Robot_angle_vel,
@@ -796,6 +811,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("set_planning_priority", &OurRobot::setPlanningPriority)
         .def("set_max_angle_speed", OurRobot_set_max_angle_speed)
         .def("set_max_speed", OurRobot_set_max_speed)
+        .def("set_max_accel", OurRobot_set_max_accel)
         .def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
         .def("disable_avoid_ball", &OurRobot::disableAvoidBall)
         .def("add_text", &OurRobot_add_text)
@@ -831,9 +847,14 @@ BOOST_PYTHON_MODULE(robocup) {
            bases<Robot>>("OpponentRobot", init<int>());
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
+        .def("set_pos_for_testing", &Ball_set_pos_for_testing)
         .def_readonly("pos", &Ball::pos)
         .def_readonly("vel", &Ball::vel)
-        .def_readonly("valid", &Ball::valid);
+        .def_readonly("valid", &Ball::valid)
+        .def("predict_pos", &Ball::predictPosition)
+        .def("estimate_seconds_to", &Ball::estimateSecondsTo)
+        .def("predict_seconds_to_stop", &Ball::predictSecondsToStop)
+        .def("estimate_seconds_to_dist", &Ball::estimateSecondsToDist);
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())

@@ -37,7 +37,7 @@ class TrianglePass(play.Play):
             all_subbehaviors_completed(), 'all subbehaviors completed')
 
         self.triangle_points = [
-            robocup.Point(0, constants.Field.Length / 2.0),
+            robocup.Point(0, constants.Field.Length / 2.0 - constants.Robot.Radius * 3),
             robocup.Point(constants.Field.Width / 4,
                           constants.Field.Length / 4),
             robocup.Point(-constants.Field.Width / 4,

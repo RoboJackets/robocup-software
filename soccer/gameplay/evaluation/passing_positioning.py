@@ -46,19 +46,20 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
 
     # Check boundaries
     # Can be smoothed for a better solution
+    robot_offset = constants.Robot.Radius * 6
     if (receive_point.x - x_offset < w / -2 or
             receive_point.x + x_offset > w / 2 or
             receive_point.y - y_offset < 0 or
             receive_point.y + y_offset > constants.Field.Length or
             constants.Field.TheirGoalZoneShape.contains_point(
-                receive_point + robocup.Point(0, y_offset))):
+                receive_point + robocup.Point(0, y_offset)
+                + robocup.Point(robot_offset, robot_offset)) or
+            constants.Field.TheirGoalZoneShape.contains_point(
+                receive_point + robocup.Point(0, y_offset)
+                - robocup.Point(robot_offset, robot_offset))):
         return 0
 
-    shotChance = 0
-
-    # Dissallow shooting over midfield
-    if (kick_point.y > constants.Field.Length / 2):
-        shotChance = evaluation.shooting.eval_shot(receive_point,
+    shotChance = evaluation.shooting.eval_shot(receive_point,
                                                    ignore_robots)
 
     passChance = evaluation.passing.eval_pass(kick_point, receive_point,
@@ -93,7 +94,7 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
 def eval_best_receive_point(kick_point,
                             ignore_robots=[],
                             field_weights=(0.1, 3.2, 0.1),
-                            nelder_mead_args=(robocup.Point(0.5, 2),
+                            nelder_mead_args=(robocup.Point(0.5, .5),
                                               robocup.Point(0.01, 0.01), 1, 2,
                                               0.75, 0.5, 50, 1, 0.1),
                             weights=(1, 4, 15, 1)):

@@ -24,7 +24,7 @@ import logging
 # If the receiver gets the ball, ForwardPass transitions to the completed state, otherwise it goes to the failed state
 class ForwardPass(composite_behavior.CompositeBehavior):
 
-    KickPower = 0.4
+    KickPower = 0.05
 
     class State(enum.Enum):
         preparing = 1  # the kicker is aiming and the receiver is getting ready
