@@ -13,9 +13,11 @@ import time
 class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     class State(Enum):
+        #Noise and latency test
         setup = 1
         noise = 2
         move1 = 3
+        #Basic motion triangle
         BasicMid0 = 4
         BasicMid1 = 5
         BasicMid2 = 6
@@ -26,6 +28,32 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         BasicLarge1 = 11
         BasicLarge2 = 12
         BasicEnd = 13
+        #Micro Motions
+        Micro0 = 14
+        Micro1 = 15
+        Micro2 = 16
+        #Pure Rotations
+        PureRot0 = 17
+        PureRot1 = 18
+        PureRot2 = 19
+        #Medium Triangle while facing
+        MidFace0 = 20
+        MidFace1 = 21
+        MidFace2 = 22
+        #Small movements with a specified end orientation
+        SmallRot0 = 23
+        SmallRot1 = 24
+        SmallRot2 = 25
+        #Very small movementes with a specified orientation
+        MicroRot0 = 26
+        MicroRot1 = 27
+        MicroRot2 = 28
+         
+        
+
+
+
+
 
         
     #Latency Measurement
