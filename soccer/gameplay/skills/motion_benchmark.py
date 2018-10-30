@@ -17,39 +17,60 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         setup = 1
         noise = 2
         move1 = 3
+
+
         #Basic motion triangle
         BasicMid0 = 4
         BasicMid1 = 5
         BasicMid2 = 6
-        BasicSmall0 = 7
-        BasicSmall1 = 8
-        BasicSmall2 = 9
-        BasicLarge0 = 10
-        BasicLarge1 = 11
-        BasicLarge2 = 12
-        BasicEnd = 13
+        BasicMidEnd = 7
+
+
+        BasicSmall0 = 8
+        BasicSmall1 = 9
+        BasicSmall2 = 10
+        BasicSmallEnd = 11
+
+        BasicLarge0 = 12
+        BasicLarge1 = 13
+        BasicLarge2 = 14
+        BasicLargeEnd = 15
+
+
         #Micro Motions
-        Micro0 = 14
-        Micro1 = 15
-        Micro2 = 16
+        Micro0 = 16
+        Micro1 = 17
+        Micro2 = 18
+        MicroEnd = 19
+
+
         #Pure Rotations
-        PureRot0 = 17
-        PureRot1 = 18
-        PureRot2 = 19
+        PureRot0 = 20
+        PureRot1 = 21
+        PureRot2 = 22
+        PureRotEnd = 23
+
+
         #Medium Triangle while facing
-        MidFace0 = 20
-        MidFace1 = 21
-        MidFace2 = 22
+        MidFace0 = 24
+        MidFace1 = 25
+        MidFace2 = 26
+        MidFaceEnd = 27
+
         #Small movements with a specified end orientation
-        SmallRot0 = 23
-        SmallRot1 = 24
-        SmallRot2 = 25
+        SmallRot0 = 28 
+        SmallRot1 = 29
+        SmallRot2 = 30
+        SmallRotEnd = 31
+
+
         #Very small movementes with a specified orientation
-        MicroRot0 = 26
-        MicroRot1 = 27
-        MicroRot2 = 28
-         
+        MicroRot0 = 32
+        MicroRot1 = 33
+        MicroRot2 = 34
+        MicroRotEnd = 35
         
+        EndAll = 36
 
 
 
@@ -76,8 +97,39 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     moveEndTime = 0.0
 
 
+
+
+    #State Control Variables
+    BasicMidCount = 0
+    BasicMidLoops = 5
+
+    BasicSmallCount = 0
+    BasicSmallLoops = 5
+
+    BasicLargeCount = 0
+    BasicLargeLoops = 5
+
+    MicroCount = 0
+    MicroLoops = 5
+
+    PureRotCount = 0
+    PureRotLoops = 5
+
+
+    MidFaceCount = 0
+    MidFaceLoops = 5
+
+    SmallRotCount = 0
+    SmallRotLoops = 5
+
+    MicroRotCount = 0
+    MicroRotLoops = 5
+
+
     #Phase 1: Basic Motion
 
+
+'''
     MediumTrials = 6
     LargeTrials = 6
     SmallTrials = 6
@@ -96,77 +148,191 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     MediumDone = False
     LargeDone = False
     SmallDone = False
-
+'''
     
     def __init__(self):
         super().__init__(continuous=False) 
 
 
-        #Latency Test
-        self.add_state(MotionBenchmark.State.setup,
-                       behavior.Behavior.State.running)
 
-        self.add_state(MotionBenchmark.State.noise,
-                       behavior.Behavior.State.running)
+        allStates = [MotionBenchmark.State.setup, 
+                     MotionBenchmark.State.noise,
+                     MotionBenchmark.State.move1,
+                     MotionBenchmark.State.BasicMid0,
+                     MotionBenchmark.State.BasicMid1,
+                     MotionBenchmark.State.BasicMid2,
+                     MotionBenchmark.State.BasicMidEnd,
+                     MotionBenchmark.State.BasicLarge0,
+                     MotionBenchmark.State.BasicLarge1,
+                     MotionBenchmark.State.BasicLarge2,
+                     MotionBenchmark.State.BasicLargeEnd,
+                     MotionBenchmark.State.BasicSmall0,
+                     MotionBenchmark.State.BasicSmall1,
+                     MotionBenchmark.State.BasicSmall2,
+                     MotionBenchmark.State.BasicSmallEnd,
+                     MotionBenchmark.State.Micro0,
+                     MotionBenchmark.State.Micro1,
+                     MotionBenchmark.State.Micro2,
+                     MotionBenchmark.State.MicroEnd,
+                     MotionBenchmark.State.PureRot0,
+                     MotionBenchmark.State.PureRot1,
+                     MotionBenchmark.State.PureRot2,
+                     MotionBenchmark.State.PureRotEnd,
+                     MotionBenchmark.State.MidFace0,
+                     MotionBenchmark.State.MidFace1,
+                     MotionBenchmark.State.MidFace2,
+                     MotionBenchmark.State.MidFaceEnd,
+                     MotionBenchmark.State.SmallRot0,
+                     MotionBenchmark.State.SmallRot1,
+                     MotionBenchmark.State.SmallRot2,
+                     MotionBenchmark.State.SmallRotEnd,
+                     MotionBenchmark.State.MicroRot0,
+                     MotionBenchmark.State.MicroRot1,
+                     MotionBenchmark.State.MicroRot2,
+                     MotionBenchmark.State.MicroRotEnd,
+                     MotionBenchmark.State.EndAll]
 
-        self.add_state(MotionBenchmark.State.move1,
-                       behavior.Behavior.State.running)
 
 
-        #Mid basic motion triangle
+        for g in allStates: 
+            self.add_state(g, behavior.Behavior.State.running)
 
-        self.add_state(MotionBenchmark.State.BasicMid0,
-                       behavior.Behavior.State.running)
 
-        self.add_state(MotionBenchmark.State.BasicMid1,
-                       behavior.Behavior.State.running)
-
-        self.add_state(MotionBenchmark.State.BasicMid2,
-                       behavior.Behavior.State.running)
-
-        #Small basic Motion triangle
-
-        self.add_state(MotionBenchmark.State.BasicSmall0,
-                       behavior.Behavior.State.running)
-
-        self.add_state(MotionBenchmark.State.BasicSmall1,
-                       behavior.Behavior.State.running)
-
-        self.add_state(MotionBenchmark.State.BasicSmall2,
-                       behavior.Behavior.State.running)
-
-        #Large basic motion triangle
-
-        self.add_state(MotionBenchmark.State.BasicLarge0,
-                       behavior.Behavior.State.running)
-
-        self.add_state(MotionBenchmark.State.BasicLarge1,
-                       behavior.Behavior.State.running)
-
-        self.add_state(MotionBenchmark.State.BasicLarge2,
-                       behavior.Behavior.State.running)
-
-        #End of basic motion
-
-        self.add_state(MotionBenchmark.State.BasicEnd,
-                       behavior.Behavior.State.running)
-
+       
 
         #TRANSITIONS 
 
+        #Reset
         self.add_transition(behavior.Behavior.State.start,
                             MotionBenchmark.State.setup, lambda: True,
                             'immediately')
 
+        #Setup -> Noise
         self.add_transition(MotionBenchmark.State.setup,
                             MotionBenchmark.State.noise,
                             lambda: self.all_subbehaviors_completed(), 'In Position')
 
+        #Noise -> Move1
         self.add_transition(MotionBenchmark.State.noise,
                             MotionBenchmark.State.move1,
                             lambda: self.noiseMeasured,
                             'The noise has been measured')
 
+        #Move1 -> BasicMid0
+        self.add_transition(MotionBenchmark.State.move1,
+                            MotionBenchmark.State.BasicMid0,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+        
+        #BasicMid0 -> BasicMid1
+        self.add_transition(MotionBenchmark.State.BasicMid0,
+                            MotionBenchmark.State.BasicMid1,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #BasicMid1 -> BasicMid2
+        self.add_transition(MotionBenchmark.State.BasicMid1,
+                            MotionBenchmark.State.BasicMid2,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+
+        #BasicMid2 -> BasicMid0
+        self.add_transition(MotionBenchmark.State.BasicMid2,
+                            MotionBenchmark.State.BasicMid0,
+                            lambda: self.all_subbehaviors_completed() and BasicMidCount < BasicMidLoops, 'In Position')
+
+        #BasicMid2 -> BasicMidEnd
+        self.add_transition(MotionBenchmark.State.BasicMid2,
+                            MotionBenchmark.State.BasicMidEnd,
+                            lambda: self.all_subbehaviors_completed() and BasicMidCount >= BasicMidLoops, 'In Position')
+
+        #BasicMidEnd -> BasicSmall0
+        self.add_transition(MotionBenchmark.State.BasicMidEnd,
+                            MotionBenchmark.State.BasicSmall0,
+                            lambda: True, 'In Position')
+
+        #BasicSmall0 -> BasicSmall1
+        self.add_transition(MotionBenchmark.State.BasicSmall0,
+                            MotionBenchmark.State.BasicSmall1,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #BasicSmall1 -> BasicSmall2
+        self.add_transition(MotionBenchmark.State.BasicSmall1,
+                            MotionBenchmark.State.BasicSmall2,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #BasicSmall2 -> BasicSmall0
+        self.add_transition(MotionBenchmark.State.BasicSmall2,
+                            MotionBenchmark.State.BasicSmall0,
+                            lambda: self.all_subbehaviors_completed() and BasicSmallCount < BasicSmallLoops, 'In Position')
+
+        #BasicSmall2 -> BasicSmallEnd
+        self.add_transition(MotionBenchmark.State.BasicSmall0,
+                            MotionBenchmark.State.BasicSmallEnd,
+                            lambda: self.all_subbehaviors_completed() and BasicSmallCount >= BasicSmallLoops, 'In Position')
+
+
+        #BasicSmallEnd -> BasicLarge0
+        self.add_transition(MotionBenchmark.State.BasicSmallEnd,
+                            MotionBenchmark.State.BasicLarge0,
+                            lambda: True, 'In Position')
+        
+      
+        #BasicLarge0 -> BasicLarge1
+        self.add_transition(MotionBenchmark.State.BasicLarge0,
+                            MotionBenchmark.State.BasicLarge1,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #BasicLarge1 -> BasicLarge2
+        self.add_transition(MotionBenchmark.State.BasicLarge1,
+                            MotionBenchmark.State.BasicLarge2,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #BasicLarge2 -> BasicLarge0
+        self.add_transition(MotionBenchmark.State.BasicLarge2,
+                    MotionBenchmark.State.BasicLarge0,
+                    lambda: self.all_subbehaviors_completed() and BasicLargeCount < BasicLargeLoops, 'In Position')
+
+
+        #BasicLarge2 -> BasicLargeEnd
+        self.add_transition(MotionBenchmark.State.BasicLarge2,
+                    MotionBenchmark.State.BasicLargeEnd,
+                    lambda: self.all_subbehaviors_completed() and BasicLargeCount >= BasicLargeLoops, 'In Position')
+
+        #BasicSmallEnd -> BasicLarge0
+        self.add_transition(MotionBenchmark.State.BasicLargeEnd,
+                            MotionBenchmark.State.Micro0,
+                            lambda: True, 'In Position')
+
+ 
+        #Micro0 -> Micro1
+        self.add_transition(MotionBenchmark.State.Micro0,
+                            MotionBenchmark.State.Micro1,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #Micro1 -> Micro2
+        self.add_transition(MotionBenchmark.State.Micro1,
+                            MotionBenchmark.State.Micro2,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #Micro2 -> Micro0
+        self.add_transition(MotionBenchmark.State.Micro2,
+                    MotionBenchmark.State.Micro0,
+                    lambda: self.all_subbehaviors_completed() and MicroCount < MicroLoops, 'In Position')
+
+
+        #Micro2 -> MicroEnd
+        self.add_transition(MotionBenchmark.State.Micro2,
+                    MotionBenchmark.State.MicroEnd,
+                    lambda: self.all_subbehaviors_completed() and MicroCount >= MicroLoops, 'In Position')
+
+        #MicroEnd -> BasicLarge0
+        self.add_transition(MotionBenchmark.State.MicroEnd,
+                            MotionBenchmark.State.PureRot0,
+                            lambda: True, 'In Position')
+
+
+
+
+        #End transition
         self.add_transition(MotionBenchmark.State.move1,
                             behavior.Behavior.State.completed,
                             lambda: self.all_subbehaviors_completed(),
