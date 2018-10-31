@@ -226,6 +226,7 @@ private:
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem;
     QTreeWidgetItem* _elapsedTimeItem;
+    QTreeWidgetItem* _lastTouchedBallItem;
 
     /// playback rate of the viewer - a value of 1 means realtime
     boost::optional<double> _playbackRate;

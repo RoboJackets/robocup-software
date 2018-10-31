@@ -112,6 +112,11 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     _elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
     _elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
 
+    // Game state items
+    _lastTouchedBallItem = new QTreeWidgetItem(_ui.stateTree);
+    _lastTouchedBallItem->setText(ProtobufTree::Column_Field, "Last Touched Ball");
+    _lastTouchedBallItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, 0);
+
     _ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QActionGroup* teamGroup = new QActionGroup(this);
@@ -489,6 +494,8 @@ void MainWindow::updateViews() {
         QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
         _elapsedTimeItem->setText(ProtobufTree::Column_Value,
                                   elapsedTime.toString("hh:mm:ss.zzz"));
+
+        _lastTouchedBallItem->setText(ProtobufTree::Column_Value, "");
 
         // Sort the tree by tag if items have been added
         if (_ui.logTree->message(*currentFrame)) {
