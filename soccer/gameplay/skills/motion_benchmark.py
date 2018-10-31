@@ -6,12 +6,21 @@ import constants
 import robocup
 import skills.move
 import time
+import datetime
 
 
 
 ## Motion Benchmark V0.0.0.0
+#
+# A skill for testing the capabilities of our robots motion control
+# 
+#
+#
+#
+#
 class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
+    #
     class State(Enum):
         #Noise and latency test
         setup = 1
@@ -75,9 +84,21 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
 
 
+    #General Result Variables
+    resultsToWrite = [] #should possibly make a seperate list for more/less verbose output
+    
+    dateString = datetime.datetime.now().strftime("Run time: %I:%M%p on %B %d, %Y")
+    versionString = "Version: 0.0"
+
+
+
+
+    #End General Result Variables
+
+
 
         
-    #Latency Measurement
+    #Latency Measurement Variables
     noiseStartTime = 0.0
     noiseStartPos = None
 
@@ -95,7 +116,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     moveStartTime = 0.0
     moveEndTime = 0.0
-
+    #End Latency Measurement Variables
 
 
 
@@ -124,37 +145,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     MicroRotCount = 0
     MicroRotLoops = 5
+    # End State Control Variables
 
 
-    #Phase 1: Basic Motion
-
-
-'''
-    MediumTrials = 6
-    LargeTrials = 6
-    SmallTrials = 6
-
-    startTime = 0.0
-    endTime = 0.0
-
-    MediumTimes = []
-    LargeTimes = []
-    SmallTimes = []
-
-    MaxOvershootMedium = []
-    MaxOvershootLarge = []
-    MaxOvershootSmall = []    
-
-    MediumDone = False
-    LargeDone = False
-    SmallDone = False
-'''
-    
     def __init__(self):
         super().__init__(continuous=False) 
 
 
-
+        #The list of states to be registered
         allStates = [MotionBenchmark.State.setup, 
                      MotionBenchmark.State.noise,
                      MotionBenchmark.State.move1,
@@ -193,7 +191,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                      MotionBenchmark.State.EndAll]
 
 
-
+        #Register states in the previously defined list
         for g in allStates: 
             self.add_state(g, behavior.Behavior.State.running)
 
@@ -324,12 +322,39 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                     MotionBenchmark.State.MicroEnd,
                     lambda: self.all_subbehaviors_completed() and MicroCount >= MicroLoops, 'In Position')
 
-        #MicroEnd -> BasicLarge0
+        #MicroEnd -> PureRot0
         self.add_transition(MotionBenchmark.State.MicroEnd,
                             MotionBenchmark.State.PureRot0,
                             lambda: True, 'In Position')
 
 
+        #PureRot0 -> PureRot1
+        self.add_transition(MotionBenchmark.State.Micro0,
+                            MotionBenchmark.State.Micro1,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #PureRot1 -> PureRot2
+        self.add_transition(MotionBenchmark.State.Micro1,
+                            MotionBenchmark.State.Micro2,
+                            lambda: self.all_subbehaviors_completed(), 'In Position')
+
+        #PureRot2 -> PureRot0
+        self.add_transition(MotionBenchmark.State.Micro2,
+                    MotionBenchmark.State.Micro0,
+                    lambda: self.all_subbehaviors_completed() and MicroCount < MicroLoops, 'In Position')
+
+
+        #PureRot2 -> PureRotEnd
+        self.add_transition(MotionBenchmark.State.Micro2,
+                    MotionBenchmark.State.MicroEnd,
+                    lambda: self.all_subbehaviors_completed() and MicroCount >= MicroLoops, 'In Position')
+
+
+
+        #PureRotEnd -> MidFace0
+        self.add_transition(MotionBenchmark.State.MicroEnd,
+                            MotionBenchmark.State.MidFace0,
+                            lambda: True, 'In Position')
 
 
         #End transition
@@ -337,6 +362,42 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             behavior.Behavior.State.completed,
                             lambda: self.all_subbehaviors_completed(),
                             'Noise Test Completed')
+        
+        
+        #END TRANSITIONS
+
+
+    
+
+
+
+
+    #Utility Functions
+
+    #A function that both prints and adds to the output file list to be written
+    def resultOut(self, result):
+        print(result)
+        self.resultsToWrite.append(result)
+
+
+
+
+
+
+
+    #End Utility Functions
+
+
+
+
+
+
+
+
+
+
+
+    #Setup state functions (for the latency test)
 
     def on_enter_setup(self):
         move_point = robocup.Point(0, constants.Field.Width / 4)
@@ -345,6 +406,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_exit_setup(self):
         self.remove_all_subbehaviors()
+
+    #End setup state functions
+
+
+
+
+
+    #Noise state functions
 
     def on_enter_noise(self):
         self.noiseStartTime = time.time()
@@ -364,6 +433,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         if(deltaY > self.noiseMaxY):
             self.noiseMaxY = deltaY
 
+    #End noise state functions
+
+
+
+
+
+    #A function to determine if the robot has broken the bounding box
+    #created by measuring the noise
     def brokenNoise(self):
         deltaX = self.noiseStartPos.x - self.robot.pos.x 
         deltaY = self.noiseStartPos.y - self.robot.pos.y
@@ -376,6 +453,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         if(deltaY > self.noiseMaxY):
             return True
         return False
+
+
+
+
+    #move1 state functions (for the latency test)
 
     def on_enter_move1(self):
         self.moveStartTime = time.time()
@@ -397,6 +479,12 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
         print("-----------------------------------------------------------")
 
+
+    #End move1 state functions
+
+
+
+    #nothing special for role requirements
     def role_requirements(self):
         reqs = super().role_requirements()
         return reqs
