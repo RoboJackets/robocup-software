@@ -7,7 +7,8 @@ import robocup
 import skills.move
 import time
 import datetime
-
+import numpy as np
+import math
 
 
 ## Motion Benchmark V0.0.0.0
@@ -79,7 +80,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     class BasicMotionTest:
 
         title = "No Name Test"
-        timer = 0.0
+        startTime = 0.0
+
+        lastLineErrorUpdate = 0.0
+        lastRotationalErrorUpdate = 0.0
+
 
         point0 = None
         point1 = None
@@ -89,29 +94,53 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         facePoint1 = None
         facePoint2 = None
         
-        timeTaken = []
-        posEndError = []
-        lineFollowError = []
-        rotationalFollowError = []
-        finalRotationalError = []
+        timeTaken = None
+        posEndError = None
+        lineFollowError = None
+        rotationalFollowError = None
+        finalRotationalError = None
+        maxOvershoot = None
 
         count = 0
         runs = 5
 
+
+        __init__(self, nRuns):
+            timeTaken = [0.0] * runs
+            posEndError = [0.0] * runs
+            lineFollowError = [0.0] * runs
+            rotationalFollowError = [0.0] * runs
+            finalRotationalError = [0.0] * runs
+            maxOvershoot = [0.0] * runs
+
+
+        startNumpy=np.array([0,0])
+        endNumpy=np.array([0,0])
+
+        d=np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1)
+
         currentStart = None
         currentEnd = None
-        currentFacePoint
+        currentFacePoint = None
 
         def startRun(self, startPoint, endPoint, facePoint):
             timer = time.time()
             currentStart = startPoint
             currentEnd = endPoint
             currentFacePoint = facePoint
+            p1 = np.array([currentStart.x,currentStart.y])
+            p2 = np.array([currentEnd.x,currentEnd.y])
             
             
         def endRun(self):
             timeTaken.append(abs(timer - time.time()))
+            calcLineError()
+            xError = robot.pos.x - currentEnd.x
+            yError = robot.pos.y - currentEnd.y
+            posError = math.sqrt(xError**2 + yError**2)
 
+        def calcLineError(self):
+            d=np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1)
 
 
     #End General Result Variables
