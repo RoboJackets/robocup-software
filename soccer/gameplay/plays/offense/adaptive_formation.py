@@ -239,7 +239,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
             )
             self.add_subbehavior(
                 self.midfielders, 'midfielders', required=False, priority=10)
-        self.midfielders.dribble_state = True
         self.midfielders.kick = False
 
     def execute_dribbling(self):
@@ -250,7 +249,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
 
-        self.midfielders.dribble_state = True
         self.midfielders.kick = False
         self.midfielders.passing_point = self.pass_target
 
@@ -316,7 +314,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_enter_passing(self):
         # TODO: Use the moving recieve when finished
-        self.midfielders.dribble_state = False
         self.midfielders.kick = False
         self.add_subbehavior(
             tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')

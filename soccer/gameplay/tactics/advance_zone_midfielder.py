@@ -44,8 +44,11 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
         self.moves = [None, None]
 
-        #an abitraty small value to account for small error
+        # an abitraty small value to account for small error
         self.epsilon = 10**-6
+
+        # a generic distance that's required to get out of the way if the ideal pos robot has a shot
+        self.escape_distance = constants.Robot.Radius * 6
 
         if main.ball().valid:
             self.passing_point = main.ball().pos
@@ -161,7 +164,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
         escape_vector = best_to_alt_vector - proj_post_to_best_vector
         # change the point
         escape_point = alt_point + (escape_vector / escape_vector.mag()
-                                  ) * constants.Robot.Radius * 6
+                                  ) * self.escape_distance
         return escape_point
 
     # gets passing point from adaptive formation
