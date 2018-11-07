@@ -3,6 +3,7 @@ import constants
 import play
 import skills
 import tactics
+import skills.pivot_kick
 
 # This is a file where you can learn how skills work!
 class SimpleBehaviors(play.Play):
@@ -15,8 +16,19 @@ class SimpleBehaviors(play.Play):
         # robocup.Point(<x coordinate>, <y coordinate>)
         
         # These lines moves a robot to the point (0, 0)
-        move_point = robocup.Point(0, 0)
-        skill = skills.move.Move(move_point)
+        
+        
+        self.linekicks = skills.line_kick.LineKick()
+        self.linekicks.target = constants.Field.OurGoalSegment
+        self.add_subbehavior(linekicks, "linekicks")
+
+
 
         # Adds behavior to our behavior tree, we will explain this more later
-        self.add_subbehavior(skill, "skill")
+    def execute_running(self):
+        
+        self.linekicks = self.subbehavior_with_name(linekicks, "linekicks")
+        if linekicks.is_done_running():
+            self.linekicks.restart()
+
+        

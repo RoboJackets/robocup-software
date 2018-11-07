@@ -14,8 +14,8 @@ class WhichHalf(play.Play):
         # Define your states here.
         # eg: some_state = 0
         # -----------------------
-        tophalf = 0
-        bottomhalf = 1
+        righthalf = 0
+        lefthalf = 1
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -27,9 +27,9 @@ class WhichHalf(play.Play):
 
         # Assume we're either in tophalf or bottomhalf, no state for
         # being right on the line.
-        self.add_state(WhichHalf.State.tophalf,
+        self.add_state(WhichHalf.State.righthalf,
                        behavior.Behavior.State.running)
-        self.add_state(WhichHalf.State.bottomhalf,
+        self.add_state(WhichHalf.State.lefthalf,
                        behavior.Behavior.State.running)
 
         # Add your state transitions using 'add_transition'.
@@ -42,21 +42,21 @@ class WhichHalf(play.Play):
         # ------------------------------------------------------------
 
         # Helps us be less redundant in the transition functions.
-        in_bottom_half = (lambda: main.ball().pos.y <= constants.Field.Length /
-                          2)
+        in_right_half = (lambda: main.ball().pos.x <= 
+                            0)
 
         # Rather than defining two more transitions from start to the top or
         # bottom half, we simply assume we start in bottom and let bottom's
         # transition function sort it out.
         self.add_transition(behavior.Behavior.State.start,
-                            self.State.bottomhalf, lambda: True, 'immediately')
+                            self.State.lefthalf, lambda: True, 'immediately')
 
-        self.add_transition(self.State.bottomhalf,
-                            self.State.tophalf, lambda: not in_bottom_half(),
-                            'detected top half')
+        self.add_transition(self.State.lefthalf,
+                            self.State.righthalf, lambda: not in_right_half(),
+                            'detected left half')
 
-        self.add_transition(self.State.tophalf, self.State.bottomhalf,
-                            in_bottom_half, 'detected bottom half')
+        self.add_transition(self.State.righthalf, self.State.lefthalf,
+                            in_right_half, 'detected right half')
 
     # Define your own 'on_enter' and 'execute' functions here.
     # eg: def on_enter_<???>(self):
@@ -65,14 +65,14 @@ class WhichHalf(play.Play):
     #         print('Something?')
     # ---------------------------------------------------------
 
-    def on_enter_tophalf(self):
-        print('Ball entered top half')
+    def on_enter_righthalf(self):
+        print('Ball entered right half')
 
-    def on_enter_bottomhalf(self):
-        print('Ball entered bottom half')
+    def on_enter_lefthalf(self):
+        print('Ball entered left half')
 
-    def execute_tophalf(self):
-        print('Ball in top half')
+    def execute_righthalf(self):
+        print('Ball in right half')
 
-    def execute_bottomhalf(self):
-        print('Ball in bottom half')
+    def execute_lefthalf(self):
+        print('Ball in left half')

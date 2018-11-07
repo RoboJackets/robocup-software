@@ -25,6 +25,10 @@ class TrianglePass(play.Play):
 
     def __init__(self):
         pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
+        r1 = robocup.Point(-1,4.5)
+        r2 = robocup.Point(1,4.5)
+        r3 = robocup.Point(0,6)
+        self.triangle_points = [r1, r2, r3]
         super().__init__(continuous=True)
 
         # register states - they're both substates of "running"
@@ -44,18 +48,15 @@ class TrianglePass(play.Play):
                             'all subbehaviors completed')
 
         # This play runs forever, so it dosen't need a transition out of 'passing'
-        r1 = robocup.Point(-1,4.5)
-        r2 = robocup.Point(1,4.5)
-        r3 = robocup.Point(0,6)
-        self.triangle_points = [r1, r2, r3]
+        
         # Define any member variables you need here:
         # Eg:
         # self.triangle_points = [<point 1>, <point 2>, <point 3>]
 
     def on_enter_setup(self):
         # Add subbehaviors to place robots in a triangle
-        self.add_subbehavior(skills.move.Move(r1), 'move 1')
-        self.add_subbehavior(skills.move.Move(r2), 'move 1')
+        self.add_subbehavior(skills.move.Move(self.r1), 'move 1')
+        self.add_subbehavior(skills.move.Move(self.r2), 'move 2')
         self.add_subbehavior(skills.capture.Capture(), 'capture')
         # Send two robots to corners of triangle, and one to 'capture' the ball
         # self.add_subbehavior(skills.move.Move(<POINT>), 'move1')
@@ -71,19 +72,18 @@ class TrianglePass(play.Play):
         # Remember this function is getting called continuously, so we don't want to add subbehaviors
         # if they are already present
         self.add_subbehavior(pass_bhvr, 'pass')
-        pass_bhvr.receive_point = robocup.Point(r1)
+        pass_bhvr.receive_point = robocup.Point(self.r1)
         # <Check to see if subbehaviors are done, if they are, remove them, so we can kick again>
         self.remove_all_subbehaviors()
         # Don't add subbehaviors if we have added them in the previous loop
         if not self.has_subbehaviors():
             # Add a subbehavior to pass the ball to another robot!
             self.add_subbehavior(pass_bhvr, 'pass')
-        pass_bhvr.receive_point = robocup.Point(r2)
-
-            self.add_subbehavior(pass_bhvr, 'pass')
-        pass_bhvr.receive_point = robocup.Point(r3)
+        pass_bhvr.receive_point = robocup.Point(self.r2)
+        self.remove_all_subbehaviors()
+            
             # self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(<KICK_TARGET_POINT>), 'pass')
-            pass
+        
 
     def on_exit_passing(self):
         # clean up!

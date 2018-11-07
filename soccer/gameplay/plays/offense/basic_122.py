@@ -63,7 +63,7 @@ class Basic122(standard_play.StandardPlay):
         # project ball location a bit into the future
         ball_proj = main.ball().predict_pos(0.75)
 
-        # find closest opponent to striker
+        # the comments previously here were deleted
         closest_dist_to_striker, closest_opp_to_striker = float("inf"), None
         if striker.robot != None:
             for opp in main.their_robots():
