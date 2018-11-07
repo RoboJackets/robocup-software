@@ -13,7 +13,8 @@ def eval_shot(from_point, excluded_robots=[]):
     for r in excluded_robots:
         kick_eval.add_excluded_robot(r)
     point, chance = kick_eval.eval_pt_to_opp_goal(from_point)
-    return chance
+    print(type(point))
+    return chance, point
 
 ## Shoot through a formation of enemy robots at a target
 #

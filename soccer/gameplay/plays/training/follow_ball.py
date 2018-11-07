@@ -8,7 +8,6 @@ import skills.move
 import plays.testing.line_up
 import time
 
-
 class FollowBall(play.Play):
     class State(enum.Enum):
         # We only need one state, and we'll transition to itself when we want to update.

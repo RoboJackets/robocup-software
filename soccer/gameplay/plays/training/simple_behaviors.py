@@ -15,8 +15,16 @@ class SimpleBehaviors(play.Play):
         # robocup.Point(<x coordinate>, <y coordinate>)
         
         # These lines moves a robot to the point (0, 0)
-        move_point = robocup.Point(0, 0)
-        skill = skills.move.Move(move_point)
+        move_point = robocup.Point(0,1)
+        skill = skills.move.Move(move_point)	
+
+	# Adds behavior to our behavior tree, we will explain this more later
+        #self.add_subbehavior(get_ball, "skill")
+
+        #skill = skills.pivot_kick.PivotKick()
+        self.add_subbehavior(skill, "pkskill")
+        #       skill = skills.line_kick.LineKick()
+        
 
         # Adds behavior to our behavior tree, we will explain this more later
-        self.add_subbehavior(skill, "skill")
+        #self.add_subbehavior(skill, "skill")
