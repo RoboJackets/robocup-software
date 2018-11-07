@@ -30,7 +30,6 @@ def predict_kick_direction(robot):
     return filter_coeff * robot_angle_predict + \
            (1 - filter_coeff) * ball_angle_predict
 
-
 def get_points_from_rect(rect, step=0.5):
     outlist = []
     currentx = rect.min_x()
@@ -218,7 +217,6 @@ def estimate_risk_score(pos, ignore_robots=[]):
             weights[5] * (1 - dist / max_dist)**2
 
     return score / sum(weights)
-
 
 ## Decides where the best positions for defense is
 #
