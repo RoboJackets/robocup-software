@@ -15,7 +15,6 @@ import math
 #
 # A skill for testing the capabilities of our robots motion control
 # 
-#
 # Note: I think I might need to add at least two different rotation tests, one for big rotations and one for small rotations
 #
 #
@@ -34,32 +33,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         BasicMotion2 = 6
         BasicMotionEnd = 7
 
-        #Pure Rotations
-        PureRot0 = 8
-        PureRot1 = 9
-        PureRot2 = 10
-        PureRotEnd = 11
+        EndAll = 8
 
 
-        #Medium Triangle while facing
-        MidFace0 = 12
-        MidFace1 = 13
-        MidFace2 = 14
-        MidFaceEnd = 15
+    basicMotionTests = []
 
-        #Small movements with a specified end orientation
-        SmallRot0 = 16
-        SmallRot1 = 17
-        SmallRot2 = 18
-        SmallRotEnd = 19
-
-        #Very small movementes with a specified orientation
-        MicroRot0 = 20
-        MicroRot1 = 21
-        MicroRot2 = 22
-        MicroRotEnd = 23
-        
-        EndAll = 24
 
 
     #General Result Variables
@@ -82,14 +60,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         title = "No Name Test"
         startTime = 0.0
 
-        lastLineErrorUpdate = 0.0
-        lastRotationalErrorUpdate = 0.0
+        lineErrorTimer = 0.0
+        rotErrorTimer = 0.0
 
 
         point0 = None
         point1 = None
         point2 = None
-        
+
         facePoint0 = None
         facePoint1 = None
         facePoint2 = None
@@ -104,6 +82,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         count = 0
         runs = 5
 
+        motionNumber = 0
 
         __init__(self, nRuns):
             timeTaken = [0.0] * runs
@@ -111,39 +90,63 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             lineFollowError = [0.0] * runs
             rotationalFollowError = [0.0] * runs
             finalRotationalError = [0.0] * runs
-            maxOvershoot = [0.0] * runs
-
-
-        startNumpy=np.array([0,0])
-        endNumpy=np.array([0,0])
-
-        d=np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1)
+            maxOvershoot = [(0,0)] * runs
 
         currentStart = None
         currentEnd = None
         currentFacePoint = None
 
-        def startRun(self, startPoint, endPoint, facePoint):
-            timer = time.time()
-            currentStart = startPoint
-            currentEnd = endPoint
-            currentFacePoint = facePoint
-            p1 = np.array([currentStart.x,currentStart.y])
-            p2 = np.array([currentEnd.x,currentEnd.y])
+        def startRun(self):
+            points = [point0, point1, point2]
+            facePoints = [facePoint0, facePoint1, facePoint2]
+            startTime = time.time()
+            currentStart = points[2] if motionNumber % 3 == 0 else points[(motionNumber % 3) - 1]
+            currentEnd = points[motionNumber % 3]
+            currentFacePoint = facePoints[motionNumber % 3]
             
+        def processRun(self):
+            if(currentEnd != None):
+                integrateLineError()
+                updateOvershoot()
+            if(currentFace != None):
+                integrateRotError()
             
+
         def endRun(self):
-            timeTaken.append(abs(timer - time.time()))
-            calcLineError()
-            xError = robot.pos.x - currentEnd.x
-            yError = robot.pos.y - currentEnd.y
-            posError = math.sqrt(xError**2 + yError**2)
-
-        def calcLineError(self):
-            d=np.cross(p2-p1,p3-p1)/np.linalg.norm(p2-p1)
+            timeTaken[motionNumber] = abs(startTime - time.time())
+            finalRotationError()
+            finalPosError()
+            motionNumber++;
 
 
-    #End General Result Variables
+        def finalRotaionalError(self):
+            finalRotationalError[motionNumber] = getAngleError(currentFacePoint)
+
+        def finalPosError(self):
+            posEndError[motionNumber] = getPosError(currentEnd)
+
+        def integrateLineError(self):
+            deltat = abs(lineErrorTimer - time.time())
+            lineErrorTimer = time.time()
+            lineFollowError[motionNumber] += getLineError(currentStart, currentEnd) * deltat
+
+        def integrateRotationalError():
+            deltat = abs(rotErrorTimer - time.time())
+            rotErrorTimer = time.time()
+            rotFollowError[motionNumber] += getAngleError(currentFacePoint) * deltat
+
+        def updateOvershoot()
+            perOvershoot = pOvershoot(currentStart, currentEnd)
+            if(perOvershoot[0] > maxOvershoot[motionNumber][0]):
+                maxOvershoot[motionNumber] =  perOvershoot
+
+        def isComplete()
+            if(motionNumber * 3 >= runs):
+                return True
+            else:
+                return False
+        
+          #End General Result Variables
 
 
     #Movement test points START
@@ -259,40 +262,46 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             lambda: self.noiseMeasured,
                             'The noise has been measured')
 
-        #Move1 -> BasicMid0
+        #Move1 -> BasicMotion0
         self.add_transition(MotionBenchmark.State.move1,
                             MotionBenchmark.State.BasicMotion0,
                             lambda: self.all_subbehaviors_completed(), 'In Position')
         
-        #BasicMid0 -> BasicMid1
+        #BasicMid0 -> BasicMotion1
         self.add_transition(MotionBenchmark.State.BasicMotion0,
                             MotionBenchmark.State.BasicMotion1,
                             lambda: self.all_subbehaviors_completed(), 'In Position')
 
-        #BasicMid1 -> BasicMid2
+        #BasicMid1 -> BasicMotion2
         self.add_transition(MotionBenchmark.State.BasicMotion1,
                             MotionBenchmark.State.BasicMotion2,
                             lambda: self.all_subbehaviors_completed(), 'In Position')
 
 
-        #BasicMid2 -> BasicMid0
+        #BasicMid2 -> BasicMotion0
         self.add_transition(MotionBenchmark.State.BasicMotion2,
                             MotionBenchmark.State.BasicMotion0,
-                            lambda: self.all_subbehaviors_completed() and BasicMidCount < BasicMidLoops, 'In Position')
+                            lambda: self.all_subbehaviors_completed() and not self.currentBasicMotion.isCompleted(), 'In Position')
 
-        #BasicMid2 -> BasicMidEnd
+        #BasicMid2 -> BasicMotionEnd
         self.add_transition(MotionBenchmark.State.BasicMotion2,
                             MotionBenchmark.State.BasicMotionEnd,
-                            lambda: self.all_subbehaviors_completed() and BasicMidCount >= BasicMidLoops, 'In Position')
+                            lambda: self.all_subbehaviors_completed() and self.currentBasicMotion.isCompleted(), 'In Position')
+
+        #BasicMotionEnd -> BasicMotion0
+        self.add_transition(MotionBenchmark.State.BasicMotionEnd,
+                            MotionBenchmark.State.BasicMotion0,
+                            lambda: basicMotionCount < len(basicMotionList) - 1, 'In Position')
+
+        #BasicMotionEnd -> exit the behavior  
+        self.add_transition(MotionBenchmark.State.BasicMotionEnd,
+                            behavior.Behavior.State.end,
+                            lambda: basicMotionCount >= len(basicMotionList) - 1, 'In Position')
+
+
 
 
         #END TRANSITIONS
-
-
-
-
-
-
 
 
 
@@ -302,6 +311,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def resultOut(self, result):
         print(result)
         self.resultsToWrite.append(result)
+
+
+    def fileOnly(self, result):
+        self.resultsToWrite.append(result)
+
 
 
     #A function to determine if the robot has broken the bounding box
@@ -320,6 +334,45 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         return False
 
 
+    def getAngleError(point):
+        targetAngle = robot.angle
+        betweenVec = robot.pos - point
+        currentAngle = math.atan2(betweenVec.x, betweenVec.y)
+        return targetAngle - currentAngle
+
+    def getPosError(point):
+        xErr = robot.pos.x - point.x
+        yErr = robot.pos.y - point.y
+        return math.sqrt(xErr**2 + yErr**2)
+
+    def getLineError(start, end):
+        startNumpy=np.array([start.x,start.y])
+        endNumpy=np.array([end.x,end.y])
+        robotNumpy=np.array([robot.pos.x,robot.pos.y])
+        d = np.cross(endNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
+        return d
+ 
+
+
+    def getOvershoot(start, end):
+       distToStart = math.sqrt((robot.pos.x - start.x)**2 + (robot.pos.x - start.y)**2)
+       startToEnd = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
+       overshoot = distToStart - starToEnd
+       if(overshoot <= 0):
+           return 0
+       else:
+           return overshoot
+
+
+    def pOvershoot(start, end):
+        overshoot = getOvershoot(start, end) 
+        if(overshoot > 0):
+            moveDist = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
+            return (overshoot, overshoot / moveDist)
+        else:
+            return (0,0)
+
+
     #Utility functions END
 
 
@@ -328,7 +381,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_enter_setup(self):
         move_point = robocup.Point(0, constants.Field.Width / 4)
-
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
     def on_exit_setup(self):
