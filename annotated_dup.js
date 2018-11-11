@@ -279,6 +279,9 @@ var annotated_dup =
         [ "StandardPlay", "classgameplay_1_1standard__play_1_1_standard_play.html", "classgameplay_1_1standard__play_1_1_standard_play" ]
       ] ],
       [ "tactics", null, [
+        [ "advance_zone_midfielder", null, [
+          [ "AdvanceZoneMidfielder", "classgameplay_1_1tactics_1_1advance__zone__midfielder_1_1_advance_zone_midfielder.html", "classgameplay_1_1tactics_1_1advance__zone__midfielder_1_1_advance_zone_midfielder" ]
+        ] ],
         [ "coordinated_pass", null, [
           [ "CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass" ]
         ] ],

@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"class_ball_tracker.html#aec5c060f83ae59d5083a6790c8239555":[17,0,25,0],
 "class_battery_profile.html":[17,0,26],
 "class_battery_profile.html#a0ef1c20dce9459c9d1bba4da43f6f137":[17,0,26,1],
 "class_battery_profile.html#a1d57cba42ed033973d6da2595b4ec5c6":[17,0,26,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "class_geometry2d_1_1_circle.html#a37efd5c0b9124f9ce0b23e9975836934":[17,0,4,1,14],
 "class_geometry2d_1_1_circle.html#a440f21df6647f855642a63d332de5fca":[17,0,4,1,2],
 "class_geometry2d_1_1_circle.html#a49ed5a6811d38f61b5faadcb9c214184":[17,0,4,1,12],
-"class_geometry2d_1_1_circle.html#a4a6c005fa53096453d42acb056a3d201":[17,0,4,1,6],
-"class_geometry2d_1_1_circle.html#a4c5bf4b9bcdff8a64df87c0c94935f4a":[17,0,4,1,10]
+"class_geometry2d_1_1_circle.html#a4a6c005fa53096453d42acb056a3d201":[17,0,4,1,6]
 };

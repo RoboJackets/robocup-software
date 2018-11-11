@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"class_geometry2d_1_1_circle.html#a4c5bf4b9bcdff8a64df87c0c94935f4a":[17,0,4,1,10],
 "class_geometry2d_1_1_circle.html#a60b8c24c6d74738de16f8440257e4ca1":[17,0,4,1,17],
 "class_geometry2d_1_1_circle.html#a61ff4184f1cf78c8807635e39419edbb":[17,0,4,1,13],
 "class_geometry2d_1_1_circle.html#a74111af42516f9e6bc80c8dffcb3afc8":[17,0,4,1,15],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "class_kick_evaluator.html#a623232ce2e8df7fe08e0bb280a99f06a":[17,0,47,7],
 "class_kick_evaluator.html#a951462ab37fbcff1bb200f47ef7f28bb":[17,0,47,5],
 "class_kick_evaluator.html#ac03d705bb28df4f1d7bd19324f511395":[17,0,47,0],
-"class_kick_evaluator.html#adb2af8f89e6ed952203ddd23e0cbe3c0":[17,0,47,2],
-"class_kick_evaluator.html#aef01bce5b4ab2f753e47c2734eec6545":[17,0,47,3]
+"class_kick_evaluator.html#adb2af8f89e6ed952203ddd23e0cbe3c0":[17,0,47,2]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"class_kick_evaluator.html#aef01bce5b4ab2f753e47c2734eec6545":[17,0,47,3],
 "class_log_viewer.html":[17,0,49],
 "class_log_viewer.html#a0261d1bcdd81275fc1a465b73942d18c":[17,0,49,16],
 "class_log_viewer.html#a16874733ad4fb4abb402eed597cf5580":[17,0,49,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "class_parallel_gradient_ascent1_d.html#aae7e5d59e24a4fa3690572523557f47c":[17,0,60,2],
 "class_parallel_gradient_ascent1_d.html#ab2d0998cd836e3ae09999339a051adbc":[17,0,60,3],
 "class_parallel_gradient_ascent1_d.html#ae34330d1d113acfbd3e5ef7f120dc020":[17,0,60,0],
-"class_planning_1_1_angle_function_path.html":[17,0,7,0],
-"class_planning_1_1_angle_function_path.html#a23f1a22d7864fc43d29d61d32fde5ab2":[17,0,7,0,11]
+"class_planning_1_1_angle_function_path.html":[17,0,7,0]
 };

@@ -58,6 +58,7 @@ var hierarchy =
       [ "gameplay.skills.line_kick_old.LineKickOld.State", "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old_1_1_state.html", null ],
       [ "gameplay.skills.line_kick_receive.LineKickReceive.State", "classgameplay_1_1skills_1_1line__kick__receive_1_1_line_kick_receive_1_1_state.html", null ],
       [ "gameplay.skills.pass_receive.PassReceive.State", "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html", null ],
+      [ "gameplay.tactics.advance_zone_midfielder.AdvanceZoneMidfielder.State", "classgameplay_1_1tactics_1_1advance__zone__midfielder_1_1_advance_zone_midfielder_1_1_state.html", null ],
       [ "gameplay.tactics.coordinated_pass.CoordinatedPass.State", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html", null ],
       [ "gameplay.tactics.defensive_forward.DefensiveForward.State", "classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward_1_1_state.html", null ],
       [ "gameplay.tactics.forward_pass.ForwardPass.State", "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass_1_1_state.html", null ],
@@ -218,9 +219,6 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ],
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -296,6 +294,7 @@ var hierarchy =
             [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html", null ],
             [ "gameplay.tactics.tune_pid.Tune_pid", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid.html", null ]
           ] ],
+          [ "gameplay.tactics.advance_zone_midfielder.AdvanceZoneMidfielder", "classgameplay_1_1tactics_1_1advance__zone__midfielder_1_1_advance_zone_midfielder.html", null ],
           [ "gameplay.tactics.coordinated_pass.CoordinatedPass", "classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html", null ],
           [ "gameplay.tactics.defense.Defense", "classgameplay_1_1tactics_1_1defense_1_1_defense.html", null ],
           [ "gameplay.tactics.defense_old.DefenseOld", "classgameplay_1_1tactics_1_1defense__old_1_1_defense_old.html", null ],
@@ -332,6 +331,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
