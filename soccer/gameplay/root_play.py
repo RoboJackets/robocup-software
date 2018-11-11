@@ -40,6 +40,7 @@ class RootPlay(Play, QtCore.QObject):
         ################################################################################
 
         if main.game_state().is_stopped():
+            evaluation.double_touch.tracker().restart()
             if main.game_state().is_placement():
                 if not isinstance(self.play,
                                   plays.restarts.placement.Placement):
@@ -53,6 +54,7 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = plays.stopped.Stopped()
                     self._currently_restarting = True
         elif main.game_state().is_halted():
+            evaluation.double_touch.tracker().restart()
             self.play = None
         else:
             # (play_class, score value) tuples
@@ -101,9 +103,6 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = None
 
             if self.play is None:
-                # reset the double-touch tracker
-                evaluation.double_touch.tracker().restart()
-
                 try:
                     if len(enabled_plays_and_scores) > 0:
                         # select the play with the smallest value for score()

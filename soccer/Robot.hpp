@@ -4,30 +4,31 @@
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
-#include <planning/RobotConstraints.hpp>
 #include <planning/RRTPlanner.hpp>
-#include "planning/RotationCommand.hpp"
+#include <planning/RobotConstraints.hpp>
 #include "planning/DynamicObstacle.hpp"
+#include "planning/RotationCommand.hpp"
 
+#include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
-#include <protobuf/Control.pb.h>
 #include <Utils.hpp>
 
+#include <stdint.h>
+#include <Eigen/Dense>
+#include <QColor>
 #include <array>
 #include <boost/circular_buffer.hpp>
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <Eigen/Dense>
-#include <QColor>
-#include <stdint.h>
 #include <vector>
+#include <algorithm>
 
-#include <QReadWriteLock>
 #include <QReadLocker>
+#include <QReadWriteLock>
 #include <QWriteLocker>
 
-#include "firmware-common/robot2015/cpu/status.h"
+#include "status.h"
 
 class SystemState;
 class RobotConfig;
@@ -38,7 +39,7 @@ class RobotFilter;
 namespace Packet {
 class DebugText;
 class LogFrame_Robot;
-};
+};  // namespace Packet
 
 namespace Gameplay {
 class GameplayModule;
@@ -581,6 +582,7 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
+    static ConfigDouble* _dribbleOutOfBoundsOffset;
 
     int8_t _planningPriority;
 };

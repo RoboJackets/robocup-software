@@ -61,7 +61,12 @@ public:
 
     std::shared_ptr<Packet::LogFrame> lastFrame() const;
 
+    // Adds a frame to this logger. force will force the frame to be added even if we are full.
+    void addFrame(std::shared_ptr<Packet::LogFrame> frame, bool force);
     void addFrame(std::shared_ptr<Packet::LogFrame> frame);
+
+    // Read in frames from a log file.
+    bool readFrames(const char* filename);
 
     // Gets frames.size() frames starting at start and working backwards.
     // Clears any frames that couldn't be populated.
@@ -125,4 +130,7 @@ private:
 
     // Sequence number of the next frame to be written
     int _nextFrameNumber = 0;
+
+    // Clears our history
+    void clear();
 };

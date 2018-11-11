@@ -30,13 +30,18 @@ class LineKick(skills._kick._Kick):
         self.add_transition(behavior.Behavior.State.start,
                             LineKick.State.waiting, lambda: True,
                             'immediately')
-        self.add_transition(LineKick.State.waiting, LineKick.State.kick,
-                            lambda: self.enable_kick, 'kicker is enabled')
+        self.add_transition(LineKick.State.waiting,
+                            LineKick.State.kick, lambda: self.enable_kick,
+                            'kicker is enabled')
 
         self.add_transition(
-            LineKick.State.kick, behavior.Behavior.State.completed,
-            lambda: self.robot is not None and self._got_close and self.robot.just_kicked(),
-            "robot kicked")
+            LineKick.State.kick,
+            behavior.Behavior.State.completed, lambda: self.robot is not None
+            and self._got_close and self.robot.just_kicked(), "robot kicked")
+        self.shell_id = None
+
+        self.max_speed = None
+        self.max_accel = None
 
     def on_enter_running(self):
         super().recalculate_aim_target_point()
@@ -45,6 +50,12 @@ class LineKick(skills._kick._Kick):
         super().execute_running()
         self.robot.disable_avoid_ball()
         self.robot.line_kick(self.aim_target_point)
+
+        if self.max_speed is not None:
+            self.robot.set_max_speed(self.max_speed)
+
+        if self.max_accel is not None:
+            self.robot.set_max_accel(self.max_accel)
 
         if main.ball().pos.dist_to(
                 self.robot.pos) < LineKick.ClosenessThreshold:
@@ -64,4 +75,7 @@ class LineKick(skills._kick._Kick):
         reqs.require_kicking = True
         if self.use_chipper:
             reqs.chipper_preference_weight = role_assignment.PreferChipper
+
+        if self.shell_id:
+            reqs.required_shell_id = self.shell_id
         return reqs

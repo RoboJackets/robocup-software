@@ -15,6 +15,7 @@ public:
 
     static ConfigDouble* StepSize;
     static ConfigDouble* GoalBias;
+    static ConfigDouble* WaypointBias;
 };
 
 /// Drawing

@@ -19,14 +19,15 @@ PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 _has_initialized = False
 
 
-def init():
+def init(log_errors=True):
     # by default, the logger only shows messages at the WARNING level or greater
     logging.getLogger().setLevel(logging.INFO)
 
     global _has_initialized
     if _has_initialized:
-        logging.warn(
-            "main robocoup python init() method called twice - ignoring")
+        if log_errors:
+            logging.warn(
+                "main robocoup python init() method called twice - ignoring")
         return
 
     # init root play
@@ -46,14 +47,21 @@ def init():
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
 
+    def _module_blacklisted(module):
+        """Return true if a module has been filtered out of autoloading."""
+        return (module[0] == '.' or
+                module.startswith('flycheck'))
+
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
         # the top-level folders we care about watching
-        autoloadables = ['plays', 'skills', 'tactics', 'evaluation',
-                         'visualization']
+        autoloadables = [
+            'plays', 'skills', 'tactics', 'evaluation', 'visualization'
+        ]
 
         # Don't load if we aren't a special module or if the filename is hidden
-        if module_path[0] in autoloadables and module_path[-1][0] != '.':
+        if (module_path[0] in autoloadables and
+                not _module_blacklisted(module_path[-1])):
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
@@ -73,12 +81,15 @@ def init():
                     try:
                         play_class = class_import.find_subclasses(module,
                                                                   play.Play)[0]
-                        _play_registry.insert(module_path[1:], play_class)  # note: skipping index zero of module_path cuts off the 'plays' part
+                        _play_registry.insert(
+                            module_path[1:], play_class
+                        )  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
                         # FIXME: instead, we should unload the module and just log a warning
                         raise Exception(
-                            "Error: python files within the plays directory must contain a subclass of play.Play")
+                            "Error: python files within the plays directory must contain a subclass of play.Play"
+                        )
             elif event_type == 'modified':
                 try:
                     # reload the module
@@ -107,15 +118,19 @@ def init():
                         # FIXME: this logic should go inside the play_registry
                         play_reg_node = _play_registry.node_for_module_path(
                             module_path[1:])
+                        if play_reg_node is None:
+                            logging.error("Error reloading module '" + '.'.join(
+                                module_path) + "':")
+                            traceback.print_exc()
+                            return
                         play_reg_node.play_class = class_import.find_subclasses(
                             module, play.Play)[0]
-                        # _play_registry.modelReset.emit()
 
                         # kill currently-running stuff if needed
                     if not is_play:
                         _root_play.drop_current_play()
                         _root_play.drop_goalie_behavior()
-                    elif is_play and root_play != None and root_play.__class__.__name__ == play_reg_node.play_class.__name__:
+                    elif is_play and root_play is not None and root_play.__class__.__name__ == play_reg_node.play_class.__name__:
                         _root_play.drop_current_play()
 
                 except Exception as e:
@@ -130,7 +145,7 @@ def init():
                         logging.error("Error removing module '" + '.'.join(
                             module_path) + "'")
                         return
-                    if _root_play.play != None and _root_play.play.__class__.__name__ == node.play_class.__name__:
+                    if _root_play.play is not None and _root_play.play.__class__.__name__ == node.play_class.__name__:
                         _root_play.drop_current_play()
 
                     _play_registry.delete(module_path[1:])
@@ -153,17 +168,28 @@ def init():
 #isAbsolute should be passed as True if the file_name is an absolute path
 def load_playbook(file_name, isAbsolute=False):
     global _play_registry
-    _play_registry.load_playbook(playbook.load_from_file((
-        PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name))
+    _play_registry.load_playbook(
+        playbook.load_from_file((PLAYBOOKS_DIR + '/'
+                                 if not isAbsolute else '') + file_name))
 
 
 #saves the playbook into the specified file_name in the playbooks folder
 #isAbsolute should be passed as True if the file_name is an absolute path
 def save_playbook(file_name, isAbsolute=False):
     global _play_registry
-    playbook.save_to_file(
-        (PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name,
-        _play_registry.get_enabled_plays_paths())
+    playbook.save_to_file((PLAYBOOKS_DIR + '/'
+                           if not isAbsolute else '') + file_name,
+                          _play_registry.get_enabled_plays_paths())
+
+
+def clear():
+    global _play_registry
+    _play_registry.clear()
+
+
+def numEnablePlays():
+    global _play_registry
+    return len(_play_registry.get_enabled_plays_paths())
 
 
 ## Called ~60times/sec by the C++ GameplayModule
@@ -173,7 +199,7 @@ def run():
         raise AssertionError("Error: must call init() before run()")
 
     try:
-        if root_play() != None:
+        if root_play() is not None:
             root_play().spin()
     except:
         exc = sys.exc_info()[0]
@@ -201,6 +227,7 @@ def play_registry():
 # or None if no robots have the given ID
 def our_robot_with_id(ID):
     return next(iter([r for r in _our_robots if r.shell_id is ID]), None)
+
 
 # set by the C++ GameplayModule
 ############################################################

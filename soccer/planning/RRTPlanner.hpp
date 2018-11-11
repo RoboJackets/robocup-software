@@ -73,6 +73,11 @@ public:
 
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
+    static void createConfiguration(Configuration* cfg);
+
+    static RJ::Seconds getPartialReplanLeadTime();
+
+private:
     int reusePathTries = 0;
 
 protected:
@@ -91,14 +96,18 @@ protected:
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet& obstacles, SystemState* state,
-        unsigned shellID);
+        unsigned shellID,
+        const boost::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
+            boost::none);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& obstacles,
         const std::vector<DynamicObstacle> paths, SystemState* state,
-        unsigned shellID);
+        unsigned shellID,
+        const boost::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
+            boost::none);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
@@ -132,7 +141,7 @@ protected:
         const std::vector<Geometry2d::Point>& points,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf,
-        const boost::optional<std::vector<float>>& times = boost::none);
+        const boost::optional<std::vector<double>>& times = boost::none);
 
     /**
      * Generates a velocity profile from a Cubic Bezier Path under the given
@@ -163,13 +172,17 @@ protected:
                                            std::vector<double>& ks2);
 
     /**
-     * Helper method for runRRT(), which creates a vector of points representing
-     * the RRT path.
-     */
+ * Helper method for runRRT(), which creates a vector of points representing
+ * the RRT path.
+ */
     std::vector<Geometry2d::Point> runRRTHelper(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet& obstacles, SystemState* state,
-        unsigned shellID, bool straightLine);
+        unsigned shellID,
+        const boost::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
+        bool straightLine);
+
+    static ConfigDouble* _partialReplanLeadTime;
 };
 }  // namespace Planning

@@ -1,4 +1,3 @@
-
 #include <gameplay/GameplayModule.hpp>
 #include <Constants.hpp>
 #include <planning/MotionInstant.hpp>
@@ -9,6 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
+#include <MainWindow.hpp>
 
 // for python stuff
 #include "robocup-py.hpp"
@@ -145,28 +145,24 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
                       Point(x + 1000, y), Point(x, y)});
 
     const float halfFlat = dimensions.GoalFlat() / 2.0;
-    const float radius = dimensions.ArcRadius();
-    auto ourGoalArea = make_shared<Polygon>(
-        vector<Point>{Point(-halfFlat, 0), Point(-halfFlat, radius),
-                      Point(halfFlat, radius), Point(halfFlat, 0)});
+    const float shortDist = dimensions.PenaltyShortDist();
+    const float longDist = dimensions.PenaltyLongDist();
+
+    auto ourGoalArea = make_shared<Polygon>(vector<Point>{
+        Point(-longDist / 2, 0), Point(longDist / 2, 0),
+        Point(longDist / 2, shortDist), Point(-longDist / 2, shortDist)});
     _ourGoalArea = make_shared<CompositeShape>();
+
     _ourGoalArea->add(ourGoalArea);
-    _ourGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(-halfFlat, 0), radius)));
-    _ourGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(halfFlat, 0), radius)));
 
     auto theirGoalArea = make_shared<Polygon>(
-        vector<Point>{Point(-halfFlat, dimensions.Length()),
-                      Point(-halfFlat, dimensions.Length() - radius),
-                      Point(halfFlat, dimensions.Length() - radius),
-                      Point(halfFlat, dimensions.Length())});
+        vector<Point>{Point(-longDist / 2, dimensions.Length()),
+                      Point(longDist / 2, dimensions.Length()),
+                      Point(longDist / 2, dimensions.Length() - shortDist),
+                      Point(-longDist / 2, dimensions.Length() - shortDist)});
     _theirGoalArea = make_shared<CompositeShape>();
+
     _theirGoalArea->add(theirGoalArea);
-    _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(-halfFlat, dimensions.Length()), radius)));
-    _theirGoalArea->add(std::dynamic_pointer_cast<Shape>(
-        make_shared<Circle>(Point(halfFlat, dimensions.Length()), radius)));
 
     _ourHalf = make_shared<Polygon>(
         vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),
@@ -253,6 +249,28 @@ void Gameplay::GameplayModule::savePlaybook(const string& playbookFile,
         throw new runtime_error("Error trying to save playbook.");
     }
     PyGILState_Release(state);
+}
+
+void Gameplay::GameplayModule::clearPlays() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    getMainModule().attr("clear")();
+    PyGILState_Release(state);
+}
+
+bool Gameplay::GameplayModule::checkPlaybookStatus() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    static int prevStatus =
+        extract<int>(getMainModule().attr("numEnablePlays")());
+    bool static change = false;
+    int status = extract<int>(getMainModule().attr("numEnablePlays")());
+    if (status == 0) {
+        change = false;
+    } else if (status != prevStatus) {
+        change = (abs(prevStatus - status) == 1);
+    }
+    prevStatus = status;
+    PyGILState_Release(state);
+    return change;
 }
 
 void Gameplay::GameplayModule::goalieID(int value) {

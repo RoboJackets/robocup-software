@@ -55,9 +55,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             skillreceiver = skills.pass_receive.PassReceive()
 
         if skillkicker == None:
-            skillkicker = (
-                skills.pivot_kick.PivotKick(),
-                lambda x: x == skills.pivot_kick.PivotKick.State.aimed)
+            skillkicker = (skills.pivot_kick.PivotKick(), lambda x: x ==
+                           skills.pivot_kick.PivotKick.State.aimed)
 
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
@@ -81,8 +80,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
-            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state) and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
-            'kicker and receiver ready')
+            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state)
+                     and self.subbehavior_with_name('receiver').state == self.
+                     skillreceiver.State.aligned), 'kicker and receiver ready')
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
@@ -96,19 +96,20 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                             CoordinatedPass.State.timeout,
                             self.prekick_timeout_exceeded, 'Timed out on kick')
 
-        self.add_transition(
-            CoordinatedPass.State.kicking, CoordinatedPass.State.receiving,
-            lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.completed,
-            'kicker kicked')
+        self.add_transition(CoordinatedPass.State.kicking,
+                            CoordinatedPass.State.receiving, lambda: self.
+                            subbehavior_with_name('kicker').state == behavior.
+                            Behavior.State.completed, 'kicker kicked')
 
         self.add_transition(
             CoordinatedPass.State.receiving, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('receiver').state == behavior.Behavior.State.completed,
-            'pass received!')
+            lambda: self.subbehavior_with_name('receiver').state == behavior.
+            Behavior.State.completed, 'pass received!')
 
         self.add_transition(
-            CoordinatedPass.State.receiving, behavior.Behavior.State.failed,
-            lambda: self.subbehavior_with_name('receiver').state == behavior.Behavior.State.failed,
+            CoordinatedPass.State.receiving,
+            behavior.Behavior.State.failed, lambda: self.subbehavior_with_name(
+                'receiver').state == behavior.Behavior.State.failed,
             'pass failed :(')
 
     ## Handles restarting this behaivor.
@@ -138,9 +139,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_enter_running(self):
         receiver = self.skillreceiver
         receiver.receive_point = self.receive_point
-        self.add_subbehavior(receiver,
-                             'receiver',
-                             required=self.receiver_required)
+        self.add_subbehavior(
+            receiver, 'receiver', required=self.receiver_required)
 
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
@@ -151,12 +151,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_enter_preparing(self):
         kicker = self.skillkicker[0]
         kicker.target = self.receive_point
-        kickpower = (main.ball().pos - self.receive_point).mag() / 8
-        if (kickpower < 0.2):
-            kickpower = 0.2
+        kickpower = (main.ball().pos - self.receive_point).mag() / 17
 
-        if (kickpower > 1.0):
-            kickpower = 1.0
+        kickpower = max(0.05, min(kickpower, 1.0))
+
         kicker.kick_power = kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 

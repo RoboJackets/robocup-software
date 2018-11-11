@@ -7,6 +7,8 @@
 #include "RRTUtil.hpp"
 #include "RoboCupStateSpace.hpp"
 #include "motion/TrapezoidalMotion.hpp"
+#include "CompositePath.hpp"
+#include "Configuration.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,11 +21,45 @@ using namespace Eigen;
 using namespace Geometry2d;
 
 namespace Planning {
+REGISTER_CONFIGURABLE(RRTPlanner);
+
+ConfigDouble* RRTPlanner::_partialReplanLeadTime;
+
+void RRTPlanner::createConfiguration(Configuration* cfg) {
+    _partialReplanLeadTime = new ConfigDouble(
+        cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
+}
 
 RRTPlanner::RRTPlanner(int minIterations, int maxIterations)
     : _minIterations(minIterations),
       _maxIterations(maxIterations),
       SingleRobotPathPlanner(true) {}
+
+bool veeredOffPath(Point currentPos, const Path& path,
+                   MotionConstraints motionConstraints) {
+    RJ::Seconds timeIntoPath =
+        (RJ::now() - path.startTime()) + RJ::Seconds(1) / 60;
+
+    boost::optional<RobotInstant> optTarget = path.evaluate(timeIntoPath);
+    // If we went off the end of the path, use the end for calculations.
+    MotionInstant target = optTarget ? optTarget->motion : path.end().motion;
+
+    // invalidate path if current position is more than the replanThreshold away
+    // from where it's supposed to be right now
+    auto pathError = (target.pos - currentPos).mag();
+    auto replanThreshold = *motionConstraints._replan_threshold;
+    return replanThreshold != 0 && pathError > replanThreshold;
+}
+
+bool goalChanged(const MotionInstant& goal, const Path& prevPath) {
+    double goalPosDiff = (prevPath.end().motion.pos - goal.pos).mag();
+    double goalVelDiff = (prevPath.end().motion.vel - goal.vel).mag();
+    // cout<<"posDif"<<(prevPath.end().motion.pos - goal.pos)<<endl;
+    //    cout<<"vel1Dif"<<(prevPath.end().motion.vel)<<endl;
+    // cout<<"vel2Dif"<<goal.vel<<endl;
+    return goalPosDiff > SingleRobotPathPlanner::goalPosChangeThreshold() ||
+           goalVelDiff > SingleRobotPathPlanner::goalVelChangeThreshold();
+}
 
 bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
                               const vector<DynamicObstacle> dynamicObs,
@@ -47,10 +83,10 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
     // if the destination of the current path is greater than X m away
     // from the target destination, we invalidate the path. This
     // situation could arise if the path destination changed.
-    float goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
-    float goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
-    if (goalPosDiff > goalChangeThreshold() ||
-        goalVelDiff > goalChangeThreshold()) {
+    double goalPosDiff = (prevPath->end().motion.pos - goal.pos).mag();
+    double goalVelDiff = (prevPath->end().motion.vel - goal.vel).mag();
+    if (goalPosDiff > goalPosChangeThreshold() ||
+        goalVelDiff > goalVelChangeThreshold()) {
         // FIXME: goalChangeThreshold shouldn't be used for velocities as it
         // is above
         if (debugOut) {
@@ -81,22 +117,22 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
     // This planner only works with commands of type 'PathTarget'
     assert(planRequest.motionCommand->getCommandType() ==
            Planning::MotionCommand::PathTarget);
-    const Planning::PathTargetCommand& target =
+    const Planning::PathTargetCommand& pathTargetCommand =
         dynamic_cast<const Planning::PathTargetCommand&>(
             *planRequest.motionCommand);
 
-    MotionInstant goal = target.pathGoal;
+    MotionInstant goal = pathTargetCommand.pathGoal;
     vector<DynamicObstacle> actualDynamic;
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
     // Simple case: no path
     if (start.pos == goal.pos) {
-        InterpolatedPath* path = new InterpolatedPath();
+        auto path = make_unique<InterpolatedPath>();
         path->setStartTime(RJ::now());
         path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
                                      RJ::Seconds::zero());
         path->setDebugText("Invalid Basic Path");
-        return unique_ptr<Path>(path);
+        return std::move(path);
     }
 
     // Locate a goal point that is obstacle-free
@@ -106,39 +142,146 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         goal.pos, prevGoal, obstacles);
 
     string debugOut;
-    // Replan if needed, otherwise return the previous path unmodified
-    if (shouldReplan(planRequest, actualDynamic, &debugOut)) {
-        auto path = generateRRTPath(start, goal, motionConstraints, obstacles,
-                                    actualDynamic, &planRequest.systemState,
-                                    planRequest.shellID);
 
-        if (!path) {
-            path = make_unique<InterpolatedPath>();
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
-                                         RJ::Seconds::zero());
-            path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
-                                         RJ::Seconds::zero());
+    const auto partialReplanTime = RJ::Seconds(*_partialReplanLeadTime);
+
+    enum ReplanState { Reuse, FullReplan, PartialReplan, CheckBetter };
+
+    ReplanState replanState = Reuse;
+
+    if (!prevPath || veeredOffPath(start.pos, *prevPath, motionConstraints)) {
+        replanState = FullReplan;
+    }
+
+    if (replanState == Reuse) {
+        const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
+
+        RJ::Seconds invalidTime;
+        if (prevPath->hit(obstacles, timeIntoPrevPath, &invalidTime)) {
+            replanState = PartialReplan;
+            debugOut = "hitObstacle";
+        } else if (prevPath->pathsIntersect(actualDynamic, RJ::now(), nullptr,
+                                            &invalidTime)) {
+            replanState = PartialReplan;
+            debugOut = "pathsIntersect";
+        } else if (goalChanged(goal, *prevPath)) {
+            invalidTime = prevPath->getDuration();
+            replanState = PartialReplan;
+            debugOut += "goalChanged";
         }
-        path->setDebugText(QString::fromStdString("Invalid. " + debugOut));
-        return std::move(path);
-    } else {
+
+        if (replanState == PartialReplan) {
+            const auto timeFromInvalid = invalidTime - timeIntoPrevPath;
+            if (timeFromInvalid < partialReplanTime * 2) {
+                replanState = FullReplan;
+                debugOut += " Too soon";
+            }
+        }
+    }
+
+    std::unique_ptr<Path> path;
+
+    if (replanState == Reuse) {
         if (reusePathTries >= maxContinue) {
             reusePathTries = 0;
-            auto path = generateRRTPath(
-                start, goal, motionConstraints, obstacles, actualDynamic,
-                &planRequest.systemState, planRequest.shellID);
-            if (path) {
+            const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
+            if (prevPath->getDuration() - timeIntoPrevPath >
+                partialReplanTime * 2) {
+                replanState = CheckBetter;
+            }
+        }
+        reusePathTries++;
+    }
+
+    if (replanState == CheckBetter || replanState == PartialReplan) {
+        const auto timeIntoPrevPath = RJ::now() - prevPath->startTime();
+        auto subPath =
+            prevPath->subPath(0ms, timeIntoPrevPath + partialReplanTime);
+        RobotInstant newStart = subPath->end();
+
+        boost::optional<vector<Point>> biasWaypoints;
+        if (replanState == PartialReplan) {
+            biasWaypoints = vector<Point>();
+            biasWaypoints->push_back(start.pos + start.vel * 0.2);
+            // if (auto point = prevPath->evaluate(300ms)) {
+            //     biasWaypoints->push_back(point->motion.pos);
+            // }
+            // if (auto point = prevPath->evaluate(500ms)) {
+            //     biasWaypoints->push_back(point->motion.pos);
+            // }
+            // if (auto point = prevPath->evaluate(1000ms)) {
+            //     biasWaypoints->push_back(point->motion.pos);
+            // }
+            for (auto it = prevPath->iterator(RJ::now(), 100ms);
+                 it->operator*().motion.pos != prevPath->end().motion.pos;
+                 it->operator++()) {
+                auto instant = it->operator*();
+                biasWaypoints->push_back(instant.motion.pos);
+            }
+        }
+
+        auto newSubPath = generateRRTPath(
+            newStart.motion, goal, motionConstraints, obstacles, actualDynamic,
+            &planRequest.systemState, planRequest.shellID, biasWaypoints);
+        if (newSubPath) {
+            path = make_unique<CompositePath>(std::move(subPath),
+                                              std::move(newSubPath));
+            path->setStartTime(prevPath->startTime());
+            path->setDebugText(
+                QString::fromStdString("partialReplan" + debugOut));
+
+            if (replanState == CheckBetter) {
                 RJ::Seconds remaining = prevPath->getDuration() -
                                         (RJ::now() - prevPath->startTime());
                 if (remaining > path->getDuration()) {
                     path->setDebugText("Found better path");
-                    return std::move(path);
+                    return path;
+                } else {
+                    replanState = Reuse;
                 }
+            } else {
+                return path;
             }
+        } else if (replanState == PartialReplan) {
+            debugOut = "Partial Failed";
+            replanState = FullReplan;
+        } else {
+            replanState = Reuse;
         }
-        reusePathTries++;
-        prevPath->setDebugText("reusing");
-        return std::move(prevPath);
+    }
+
+    if (replanState == Reuse) {
+        path = std::move(prevPath);
+        path->setDebugText("Reusing");
+        return path;
+    } else if (replanState == FullReplan) {
+        path = generateRRTPath(start, goal, motionConstraints, obstacles,
+                               actualDynamic, &planRequest.systemState,
+                               planRequest.shellID);
+        if (path) {
+            path->setDebugText(
+                QString::fromStdString("FullReplan." + debugOut));
+        } else {
+            path = InterpolatedPath::emptyPath(start.pos);
+        }
+        return path;
+    } else {
+        string type = [](auto replanState) {
+            switch (replanState) {
+                case Reuse:
+                    return "Reuse";
+                case FullReplan:
+                    return "FullReplan";
+                case CheckBetter:
+                    return "CheckBetter";
+                case PartialReplan:
+                    return "PartialReplan";
+                default:
+                    return "No idea what replanState";
+            }
+        }(replanState);
+        debugThrow("Logic Error. Rip. State:" + type);
+        return InterpolatedPath::emptyPath(start.pos);
     }
 }
 
@@ -146,24 +289,30 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
-    unsigned shellID) {
+    unsigned shellID, const boost::optional<vector<Point>>& biasWayPoints) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
-        auto points =
-            runRRT(start, goal, motionConstraints, obstacles, state, shellID);
+        auto points = runRRT(start, goal, motionConstraints, obstacles, state,
+                             shellID, biasWayPoints);
 
         // Check if Planning or optimization failed
         if (points.size() < 2) {
-            debugLog("RRTPlanning Failed");
+            // debugLog("RRTPlanning Failed");
             break;
         }
 
         // Generate and return a cubic bezier path using the waypoints
         auto path = generateCubicBezier(points, obstacles, motionConstraints,
                                         start.vel, goal.vel);
+
+        if (!path) {
+            // debugLog("RRT Vel Planning Failed");
+            break;
+        }
+
         RJ::Seconds hitTime;
         Point hitLocation;
         bool hit = path->pathsIntersect(dyObs, path->startTime(), &hitLocation,
@@ -180,28 +329,32 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     return lastPath;
 }
 
-vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
-                                 const MotionConstraints& motionConstraints,
-                                 const ShapeSet& obstacles, SystemState* state,
-                                 unsigned shellID) {
-    vector<Point> straight = runRRTHelper(start, goal, motionConstraints,
-                                          obstacles, state, shellID, true);
+vector<Point> RRTPlanner::runRRT(
+    MotionInstant start, MotionInstant goal,
+    const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
+    SystemState* state, unsigned shellID,
+    const boost::optional<vector<Point>>& biasWaypoints) {
+    vector<Point> straight =
+        runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID,
+                     biasWaypoints, true);
     if (straight.size() != 0) {
         return straight;
     }
     return runRRTHelper(start, goal, motionConstraints, obstacles, state,
-                        shellID, false);
+                        shellID, biasWaypoints, false);
 }
 
 vector<Point> RRTPlanner::runRRTHelper(
     MotionInstant start, MotionInstant goal,
     const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
-    SystemState* state, unsigned shellID, bool straightLine) {
+    SystemState* state, unsigned shellID,
+    const boost::optional<vector<Point>>& biasWaypoints, bool straightLine) {
     // Initialize bi-directional RRT
 
     auto stateSpace = make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(stateSpace, Point::hash, 2);
+    reusePathTries++;
     biRRT.setStartState(start.pos);
     biRRT.setGoalState(goal.pos);
 
@@ -222,6 +375,11 @@ vector<Point> RRTPlanner::runRRTHelper(
         biRRT.setMinIterations(_minIterations);
         biRRT.setMaxIterations(_maxIterations);
         biRRT.setGoalBias(*RRTConfig::GoalBias);
+
+        if (biasWaypoints) {
+            biRRT.setWaypoints(*biasWaypoints);
+            biRRT.setWaypointBias(*RRTConfig::WaypointBias);
+        }
     }
 
     bool success = biRRT.run();
@@ -239,11 +397,11 @@ vector<Point> RRTPlanner::runRRTHelper(
     return points;
 }
 
-float getTime(vector<Point> path, int index,
-              const MotionConstraints& motionConstraints, float startSpeed,
-              float endSpeed) {
-    float length = 0;
-    float startLength = 0;
+double getTime(vector<Point> path, int index,
+               const MotionConstraints& motionConstraints, double startSpeed,
+               double endSpeed) {
+    double length = 0;
+    double startLength = 0;
     for (int i = 1; i < path.size(); i++) {
         length += path[i - 1].distTo(path[i]);
         if (index == i) {
@@ -254,9 +412,9 @@ float getTime(vector<Point> path, int index,
                                 motionConstraints.maxAcceleration, startSpeed,
                                 endSpeed);
 }
-float getTime(InterpolatedPath& path, int index,
-              const MotionConstraints& motionConstraints, float startSpeed,
-              float endSpeed) {
+double getTime(InterpolatedPath& path, int index,
+               const MotionConstraints& motionConstraints, double startSpeed,
+               double endSpeed) {
     return Trapezoidal::getTime(
         path.length(0, index), path.length(), motionConstraints.maxSpeed,
         motionConstraints.maxAcceleration, startSpeed, endSpeed);
@@ -274,11 +432,11 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
     size_t length = points.size();
     size_t curvesNum = length - 1;
 
-    const float directionDistance = 0.4;
+    const double directionDistance = 0.4;
     vector<Point> startDirections;
     vector<Point> endDirections;
 
-    const float pathWeight = 0.1;
+    const double pathWeight = 0.1;
     Point pathDirection =
         (vi + (points[1] - points[0]).normalized(pathWeight)).normalized();
     // Point pathDirection = (points[1] - points[0]).normalized(pathWeight);
@@ -313,8 +471,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
 }
 
 vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
-    const vector<Point>& points, const MotionConstraints& motionConstraints,
-    Point vi, Point vf, const boost::optional<vector<float>>& times) {
+    const vector<Geometry2d::Point>& points,
+    const MotionConstraints& motionConstraints, Geometry2d::Point vi,
+    Geometry2d::Point vf, const boost::optional<vector<double>>& times) {
     size_t length = points.size();
     size_t curvesNum = length - 1;
     vector<double> pointsX(length);
@@ -326,9 +485,9 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
         pointsX[i] = points[i].x();
         pointsY[i] = points[i].y();
     }
-    const float startSpeed = vi.mag();
+    const double startSpeed = vi.mag();
 
-    const float endSpeed = vf.mag();
+    const double endSpeed = vf.mag();
 
     if (times) {
         assert(times->size() == points.size());
@@ -363,6 +522,10 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     VectorXd solutionY =
         RRTPlanner::cubicBezierCalc(vi.y(), vf.y(), pointsY, ks, ks2);
 
+    if (solutionX.hasNaN() || solutionY.hasNaN()) {
+        return vector<CubicBezierControlPoints>();
+    }
+
     vector<CubicBezierControlPoints> path;
 
     for (int i = 0; i < curvesNum; i++) {
@@ -375,17 +538,18 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     return path;
 }
 
-float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
-                               float c1, float d2, float v2, float c2) {
-    float d = std::abs(d2 - d1);
-    float deltaSpeed = v2 - v1;
+double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,
+                                double c1, double d2, double v2, double c2,
+                                double minMaxSpeed = 0) {
+    double d = std::abs(d2 - d1);
+    double deltaSpeed = v2 - v1;
     if (deltaSpeed < 0) {
         return v2;
     }
 
     // Isolated maxSpeed based on Curvature should already be taken care of
-    float c = max(c1, c2);
-    float a = maxAceleration;
+    double c = max(c1, c2);
+    double a = maxAceleration;
 
     // acceleration = (v2-v1)/t;
     // t = distance/((v1+v2)/2)
@@ -396,11 +560,12 @@ float oneStepLimitAcceleration(float maxAceleration, float d1, float v1,
     // http://www.wolframalpha.com/input/?i=solve+for+b+where+a%5E2+%3D+((b-v)((v%2Bb)%2F2)%2F(d))%5E2+%2B+(v%5E2*c)%5E2
     double part = d * d * (a * a - c * c * pow(v1, 4));
     if (part >= 0) {
-        float possible = sqrt(v1 * v1 + 2 * sqrt(part));
+        double possible = sqrt(v1 * v1 + 2 * sqrt(part));
         return std::min(v2, possible);
     }
 
-    float maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
+    double maxSpeed = std::sqrt(a * d * 2 + v1 * v1);
+    maxSpeed = std::max(minMaxSpeed, maxSpeed);
     return std::min(v2, maxSpeed);
 }
 
@@ -414,21 +579,23 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     int interpolations) {
     // Interpolate Through Bezier Path
     vector<Point> newPoints, newPoints1stDerivative, newPoints2ndDerivative;
-    vector<float> newPointsCurvature, newPointsDistance, newPointsSpeed;
+    vector<double> newPointsCurvature, newPointsDistance, newPointsSpeed;
 
-    float totalDistance = 0;
-    const float maxAceleration = motionConstraints.maxAcceleration;
-    const float& maxSpeed = motionConstraints.maxSpeed;
+    double totalDistance = 0;
+    const double maxAceleration = motionConstraints.maxAcceleration;
+    const double& maxSpeed = motionConstraints.maxSpeed;
 
+    int asd = 0;
     for (const CubicBezierControlPoints& controlPoint : controlPoints) {
         Point p0 = controlPoint.p0;
         Point p1 = controlPoint.p1;
         Point p2 = controlPoint.p2;
         Point p3 = controlPoint.p3;
         for (int j = 0; j < interpolations; j++) {
-            float t = (((float)j / (float)(interpolations)));
-            Point pos = pow(1.0 - t, 3) * p0 + 3.0 * pow(1.0 - t, 2) * t * p1 +
-                        3 * (1.0 - t) * pow(t, 2) * p2 + pow(t, 3) * p3;
+            double t = (((double)j / (double)(interpolations)));
+            Geometry2d::Point pos =
+                pow(1.0 - t, 3) * p0 + 3.0 * pow(1.0 - t, 2) * t * p1 +
+                3 * (1.0 - t) * pow(t, 2) * p2 + pow(t, 3) * p3;
 
             // Derivitive 1
             // 3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k
@@ -444,7 +611,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
             // https://en.wikipedia.org/wiki/Curvature#Local_expressions
             // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2)
-            float curvature =
+            double curvature =
                 std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
                 std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
@@ -455,7 +622,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
             assert(curvature >= 0);
             if (!newPoints.empty()) {
-                float distance = pos.distTo(newPoints.back());
+                double distance = pos.distTo(newPoints.back());
                 totalDistance += distance;
             }
             newPointsDistance.push_back(totalDistance);
@@ -470,7 +637,13 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
             // Curvature = 1/Radius of Curvature
             // vmax = sqrt(acceleartion/abs(Curvature))
 
-            float constantMaxSpeed = std::sqrt(maxAceleration / curvature);
+            const auto maxCentripetalAcceleration =
+                motionConstraints.maxCentripetalAcceleration;
+            double constantMaxSpeed =
+                std::sqrt(maxCentripetalAcceleration / curvature);
+            //            constantMaxSpeed =std::max(constantMaxSpeed, 0.5f);
+            // cout<<asd<< " " << constantMaxSpeed<<endl;
+            asd++;
             newPointsSpeed.push_back(std::min(constantMaxSpeed, maxSpeed));
         }
     }
@@ -484,9 +657,9 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
     Point pos = p3;
     Point d1 = vf;
-    Point d2 = 6 * (1) * (p3 - 2 * p2 + p1);
-    float curvature = std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
-                      std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
+    Geometry2d::Point d2 = 6 * (1) * (p3 - 2 * p2 + p1);
+    double curvature = std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
+                       std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
 
     // handle 0 velcoity case
     if (std::isnan(curvature)) {
@@ -506,7 +679,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
     // Velocity Profile Generation
     // Forward Smoothing
-    const float size = newPoints.size();
+    const double size = newPoints.size();
     assert(size == newPoints.size());
     assert(size == newPoints1stDerivative.size());
     assert(size == newPoints2ndDerivative.size());
@@ -523,7 +696,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         newPointsSpeed[i2] = oneStepLimitAcceleration(
             maxAceleration, newPointsDistance[i1], newPointsSpeed[i1],
             newPointsCurvature[i1], newPointsDistance[i2], newPointsSpeed[i2],
-            newPointsCurvature[i2]);
+            newPointsCurvature[i2], 0.1);
     }
 
     // Backwards Constraints
@@ -533,18 +706,17 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
         newPointsSpeed[i2] = oneStepLimitAcceleration(
             maxAceleration, newPointsDistance[i1], newPointsSpeed[i1],
             newPointsCurvature[i1], newPointsDistance[i2], newPointsSpeed[i2],
-            newPointsCurvature[i2]);
+            newPointsCurvature[i2], 0.1);
     }
 
     RJ::Seconds totalTime(0);
     vector<InterpolatedPath::Entry> entries;
 
     for (int i = 0; i < size; i++) {
-        float currentSpeed = newPointsSpeed[i];
-        float distance = newPointsDistance[i];
+        double currentSpeed = newPointsSpeed[i];
         if (i != 0) {
-            distance -= newPointsDistance[i - 1];
-            float averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
+            auto distance = newPointsDistance[i] - newPointsDistance[i - 1];
+            double averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
             auto deltaT = RJ::Seconds(distance / averageSpeed);
             totalTime += deltaT;
         }
@@ -569,8 +741,15 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
         return nullptr;
     }
 
+    //    vector<CubicBezierControlPoints> controlPoints =
+    //        generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
+
     vector<CubicBezierControlPoints> controlPoints =
-        generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
+        generateCubicBezierPath(points, motionConstraints, vi, vf);
+
+    if (controlPoints.empty()) {
+        return nullptr;
+    }
 
     vector<InterpolatedPath::Entry> entries = generateVelocityPath(
         controlPoints, motionConstraints, vi, vf, interpolations);
@@ -617,10 +796,14 @@ VectorXd RRTPlanner::cubicBezierCalc(double vi, double vf,
             i++;
         }
 
-        ColPivHouseholderQR<MatrixXd> solver(equations);
+        HouseholderQR<MatrixXd> solver(equations);
         VectorXd solution = solver.solve(answer);
         return solution;
     }
+}
+
+RJ::Seconds RRTPlanner::getPartialReplanLeadTime() {
+    return RJ::Seconds(*_partialReplanLeadTime);
 }
 
 }  // namespace Planning

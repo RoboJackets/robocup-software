@@ -2,7 +2,7 @@
 
 #include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
-#include <Pid.hpp>
+#include <rc-fshare/pid.hpp>
 #include <time.hpp>
 
 class OurRobot;
@@ -65,4 +65,5 @@ private:
 
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_velocity;
+    static ConfigDouble* _x_multiplier;
 };
