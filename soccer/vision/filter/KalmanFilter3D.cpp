@@ -1,6 +1,14 @@
 #include "KalmanFilter.hpp"
 #include <cmath>
 
+#include "vision/util/Config.hpp"
+
+void KalmanFilter3D::createConfiguation(Configuration* cfg) {
+    robot_init_covariance = new ConfigDouble(cfg, "VisionFilter/Robot/init_covariance", 100);
+    robot_process_noise = new ConfigDouble(cfg, "VisionFilter/Robot/process_noise", .1);
+    robot_observation_noise = new ConfigDouble(cfg, "VisionFilter/Robot/observation_noise", 2.0);
+}
+
 KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
                                Geometry2d::Point initVel, double omega)
     : KalmanFilter(6, 3) {
@@ -16,7 +24,7 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
     x_k_k = x_k1_k1;
 
     // Initial covariance is usually extremely high to converge to the true solution
-    double p = 1; // TODO: Take config values
+    double p = *robot_init_covariance;
     P_k1_k1 << p, 0, 0, 0, 0, 0,
                0, p, 0, 0, 0, 0,
                0, 0, p, 0, 0, 0,
@@ -28,7 +36,7 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
 
     // State transition matrix (A)
     // Pos, velocity, theta integrator. Assume constant velocity
-    double dt = .1; // TODO: Take config values
+    double dt = *VisionFilterConfig::vision_loop_dt;
     F_k << 1, dt,  0,  0,  0,  0,
            0,  1,  0,  0,  0,  0,
            0,  0,  1, dt,  0,  0,
@@ -63,7 +71,7 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
     // Note: T is the sample period
     // Taken from Tiger's AutoRef. Most likely found through integration of error through the
     // state matrices
-    double p = .1; // TODO: Take config values
+    double p = *robot_process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
     dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
@@ -77,7 +85,7 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
              0,   0,   0,   0, dt2, dt1;
 
     // Covariance of observation noise (how wrong z_k is)
-    double o = .1; // TODO: Take config values
+    double o = *robot_observation_noise;
     R_k << o, 0, 0,
            0, o, 0,
            0, 0, o;

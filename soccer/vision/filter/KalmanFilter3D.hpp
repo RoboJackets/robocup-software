@@ -1,3 +1,5 @@
+#pragma once
+
 #include "KalmanFilter.hpp"
 #include <Geometry2d/Point.hpp>
 
@@ -25,4 +27,11 @@ class KalmanFilter3D : public KalmanFilter {
 
     Geometry2d::Point getVelCov();
     double getOmegaCov();
+
+    static void createConfiguation(Configuration* cfg);
+
+private:
+    static ConfigDouble* robot_init_covariance;
+    static ConfigDouble* robot_process_noise;
+    static ConfigDouble* robot_observation_noise;
 }

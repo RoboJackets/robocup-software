@@ -1,8 +1,11 @@
+#pragma once
+
 #include <vector>
+#include <deque>
 
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
-#include <vector>
+#include <Configuration.hpp>
 
 #include "vision/ball/CameraBall.hpp"
 #include "vision/ball/WorldBall.hpp"
@@ -11,12 +14,25 @@
 class KalmanBall {
 public:
     /**
+     * Assumes there is no previous world ball
+     *
      * @param cameraId ID of the camera this filter belongs to
      * @param creationTime Time this filter is created
-     * @param initPos Initial ball measurement we are creating the filter at
+     * @param initMeasurement Initial ball measurement we are creating the filter at
+     */
+    KalmanBall(unsigned int cameraID, RJ::Time creationTime,
+               CameraBall initMeasurement);
+
+    /**
+     * Assumes there is a valid world ball
+     *
+     * @param cameraId ID of the camera this filter belongs to
+     * @param creationTime Time this filter is created
+     * @param initMeasurement Initial ball measurement we are creating the filter at
      * @param previousWorldBall Previous prediction of ball location to initialize the velocity smartly
      */
-    KalmanBall(unsigned int cameraId, RJ::Time creationTime, CameraBall initPos, WorldBall previousWorldBall);
+    KalmanBall(unsigned int cameraID, RJ::Time creationTime,
+               CameraBall initMeasurement, WorldBall previousWorldBall);
 
     /**
      * Predicts one time step forward
@@ -36,22 +52,34 @@ public:
      */
     bool isUnhealthy();
 
+    const unsigned int getCameraID();
+
     Geometry2d::Point getPos();
     Geometry2d::Point getVel();
+
+    std::deque<CameraBall> getPrevMeasurements();
 
     /**
      * Note: Only used to set the velocity when we think the ball will bounce off another robot
      */
     void setVel(Geometry2d::Point newVel);
 
+
+    static void createConfiguration(Configuration* cfg);
+
 private:
+    ConfigDouble* max_time_outside_vision;
+
+
     RJ::Time lastUpdateTime;
     RJ::Time lastPredictTime;
 
     // Keeps track of this for kick detection stuff
-    std::vector<CameraBall> previousMeasurements;
+    std::deque<CameraBall> previousMeasurements;
 
     KalmnaFilter2D filter;
 
-    unsigned int cameraId;
+    int health;
+
+    const unsigned int cameraID;
 };
