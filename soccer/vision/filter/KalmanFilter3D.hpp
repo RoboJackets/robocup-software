@@ -4,8 +4,8 @@
 #include <Geometry2d/Point.hpp>
 
 class KalmanFilter3D : public KalmanFilter {
-    KalmanFilter3D(Geometry2d::Point initPos, double theta,
-                   Geometry2d::Point initVel, double omega);
+    KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
+                   Geometry2d::Point initVel, double initOmega);
 
     /**
      * Predicts with update

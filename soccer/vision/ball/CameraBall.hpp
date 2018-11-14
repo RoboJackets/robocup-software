@@ -2,21 +2,20 @@
 #include <Utils.hpp>
 #include <vector>
 
-
+/**
+ * Wrapper for the protobuf observation
+ */
 class CameraBall {
 public:
     /**
-     * Wrapper to throw out all the extra crap in the Protobuf packet
-     *
      * @param timeCaptured Time that the picture was taken
      * @param pos Position of the ball at that time
      */
     CameraBall(RJ::Time timeCaptured, Geometry2d::Point pos)
-        : timeCaptured(timeCaptured), pos(pos);
-
-    Geometry2d::Point getPos();
+        : timeCaptured(timeCaptured), pos(pos) {}
 
     RJ::Time getTimeCaptured();
+    Geometry2d::Point getPos();
 
     /**
      * Combines all the balls in the list and returns a ball
@@ -27,6 +26,6 @@ public:
     static CameraBall CombineBalls(std::vector<CameraBall> balls);
 
 private:
-    Geometry2d::Point pos;
     RJ::Time timeCaptured;
+    Geometry2d::Point pos;
 };

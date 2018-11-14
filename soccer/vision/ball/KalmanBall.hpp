@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <deque>
 
 #include <Geometry2d/Point.hpp>
@@ -11,6 +10,9 @@
 #include "vision/ball/WorldBall.hpp"
 #include "vision/filter/KalmanFilter2D.hpp"
 
+/**
+ * Filtered ball estimation for a single camera
+ */
 class KalmanBall {
 public:
     /**
@@ -32,7 +34,7 @@ public:
      * @param previousWorldBall Previous prediction of ball location to initialize the velocity smartly
      */
     KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-               CameraBall initMeasurement, WorldBall previousWorldBall);
+               CameraBall initMeasurement, WorldBall& previousWorldBall);
 
     /**
      * Predicts one time step forward
@@ -52,7 +54,7 @@ public:
      */
     bool isUnhealthy();
 
-    const unsigned int getCameraID();
+    unsigned int getCameraID();
 
     Geometry2d::Point getPos();
     Geometry2d::Point getVel();
@@ -70,16 +72,15 @@ public:
 private:
     ConfigDouble* max_time_outside_vision;
 
-
     RJ::Time lastUpdateTime;
     RJ::Time lastPredictTime;
 
     // Keeps track of this for kick detection stuff
     std::deque<CameraBall> previousMeasurements;
 
-    KalmnaFilter2D filter;
+    KalmanFilter2D filter;
 
     int health;
 
-    const unsigned int cameraID;
+    unsigned int cameraID;
 };

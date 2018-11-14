@@ -5,13 +5,13 @@
 #include "vision/util/VisionFilterConfig.hpp"
 
 void KalmanBall::createConfiguration(Configuration* cfg) {
-    max_time_outside_vision = new ConfigDoubel("VisionFilter/KalmanBall/max_time_outside_vision", 0.2);
+    max_time_outside_vision = new ConfigDouble("VisionFilter/KalmanBall/max_time_outside_vision", 0.2);
 }
 
 KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
                        CameraBall initMeasurement)
     : cameraID(cameraID), health(*VisionFilterConfig::filter_health_init),
-      lastUpdateTime(creationTime), lastPredictTime(creationTime);
+      lastUpdateTime(creationTime), lastPredictTime(creationTime) {
 
     Geometry2d::Point initPos = initMeasurement.getPos();
     Geometry2d::Point initVel = Geometry2d::Point(0,0);
@@ -22,7 +22,7 @@ KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
 }
 
 KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-                       CameraBall initMeasurement, WorldBall &previousWorldBall)
+                       CameraBall initMeasurement, WorldBall& previousWorldBall)
     : cameraID(cameraID), health(*VisionFilterConfig::filter_health_init),
       lastUpdateTime(creationTime), lastPredictTime(creationTime);
 
@@ -52,13 +52,13 @@ void KalmanBall::predictAndUpdate(RJ::Time currentTime, CameraBall updateBall) {
     health = std::min(health + *VisionFilterConfig::filter_health_inc,
                       *VisionFilterConfig::filter_health_max);
 
-    filter.PredictWithUpdate(updateBall.getPos());
-
     // Keep last X camera observations in list for kick detection and filtering
     previousMeasurements.push_back(initMeasurement);
     if (previousMeasurements.size() > *VisionFilterConfig::slow_kick_detector_history_length) {
         previousMeasurements.pop_front();
     }
+
+    filter.PredictWithUpdate(updateBall.getPos());
 }
 
 bool KalmanBall::isUnhealthy() {
@@ -67,22 +67,22 @@ bool KalmanBall::isUnhealthy() {
     return !updated_recently;
 }
 
-const unsigned int KalmanBall::getCameraID() {
+unsigned int KalmanBall::getCameraID() {
     return cameraID;
 }
 
-Geometry2d::Point getPos() {
+Geometry2d::Point KalmanBall::getPos() {
     return filter.getPos();
 }
 
-Geometry2d::Point getVel() {
+Geometry2d::Point KalmanBall::getVel() {
     return filter.getVel();
 }
 
-std::deque<CameraBall> getPrevMeasurements() {
+std::deque<CameraBall> KalmanBall::getPrevMeasurements() {
     return previousMeasurements;
 }
 
-void setVel(Geometry2d::Point newVel) {
+void KalmanBall::setVel(Geometry2d::Point newVel) {
     filter.setVel(newVel);
 }

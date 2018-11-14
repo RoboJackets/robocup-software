@@ -9,8 +9,8 @@ void KalmanFilter3D::createConfiguation(Configuration* cfg) {
     robot_observation_noise = new ConfigDouble(cfg, "VisionFilter/Robot/observation_noise", 2.0);
 }
 
-KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
-                               Geometry2d::Point initVel, double omega)
+KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
+                               Geometry2d::Point initVel, double initOmega)
     : KalmanFilter(6, 3) {
 
     // States are X pos, X vel, Y pos, Y vel, theta, omega
@@ -18,8 +18,8 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double theta,
                initVel.x(),
                initPos.y(),
                initVel.y(),
-               theta,
-               omega;
+               initTheta,
+               initOmega;
     x_k_k1 = x_k1_k1;
     x_k_k = x_k1_k1;
 
