@@ -1,1 +1,78 @@
-class WorldRobot {};
+#include <vector>
+
+#include <Geometry2d/Point.hpp>
+#include <Configuration.hpp>
+
+#include "KalmanRobot.hpp"
+
+class WorldRobot {
+public:
+    /**
+     * Creates an invalid world robot.
+     * This is so the World can create a full list of robots without dealing with holes
+     * It's a little less efficient, but it makes things much cleaner code-wise
+     */
+    WorldRobot();
+
+    WorldRobot(int robotID, std::vector<WorldRobot> kalmanRobots);
+
+    /**
+     * @return If the robot actually represents a real robot
+     */
+    bool getIsValid();
+
+    /**
+     * @return The robot id
+     */
+    int getRobotID();
+
+    /**
+     * @return The best estimated position of the robot
+     */
+    Geometry2d::Point getPos();
+
+    /**
+     * @return The best estimated heading of the robot
+     */
+    double getTheta();
+
+    /**
+     * @return The best estimated velocity of the robot
+     */
+    Geometry2d::Point getVel();
+
+    /**
+     * @return The best estimated angular velocity of the robot
+     */
+    double getOmega();
+
+    /**
+     * @return The average position covariance of the filter including theta
+     */
+    double getPosCov();
+
+    /**
+     * @return The average velocity covaraince of the filter including omega
+     */
+    double getVelCov();
+
+    /**
+     * @return List of all the building kalman robots for this world robot
+     */
+    std::vector<KalmanRobot> getRobotComponents();
+
+    static void createConfiguration(Configuration* cfg);
+
+private:
+    int robotID;
+    Geometry2d::Point pos;
+    double theta;
+    Geometry2d::Point vel;
+    double omega;
+    double posCov;
+    double velCov;
+    std::vector<KalmanRobot> robotComponents;
+
+    bool isValid;
+    ConfigDouble* robot_merger_power;
+};

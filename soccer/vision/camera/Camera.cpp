@@ -3,8 +3,8 @@
 #include <Geometry2d/Point.hpp>
 
 void Camera::createConfiguration(Configuration* cfg) {
-    MHKF_radius_cutoff = new ConfigDouble("VisionFilter/Camera/MHKF_radius_cutoff", 1);
-    use_MHKF = new ConfigBool("VisionFilter/Camera/use_MHKF", true);
+    MHKF_radius_cutoff = new ConfigDouble(cfg, "VisionFilter/Camera/MHKF_radius_cutoff", 1);
+    use_MHKF = new ConfigBool(cfg, "VisionFilter/Camera/use_MHKF", true);
 }
 
 Camera::Camera(int cameraID)

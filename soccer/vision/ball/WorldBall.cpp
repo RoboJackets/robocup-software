@@ -3,7 +3,7 @@
 #include <cmath>
 
 void WorldBall::createConfiguration(Configuration* cfg) {
-    ball_merger_power = new ConfigDouble("VisionFilter/WorldBall/ball_merger_power", 1.5);
+    ball_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldBall/ball_merger_power", 1.5);
 }
 
 WorldBall::WorldBall(std::vecotr<KalmanBall> kalmanBalls) {

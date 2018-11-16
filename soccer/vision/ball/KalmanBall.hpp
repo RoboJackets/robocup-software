@@ -44,15 +44,39 @@ public:
      */
     bool isUnhealthy();
 
+    /**
+     * @return The camera id this belongs to
+     */
     unsigned int getCameraID();
 
+    /**
+     * @return How healthy this filter is. AKA How often it's been updated
+     */
     int getHealth();
 
+    /**
+     * @return Best estimate of the position of the ball
+     */
     Geometry2d::Point getPos();
+
+    /**
+     * @return Best estimate of the velocity of the ball
+     */
     Geometry2d::Point getVel();
+
+    /**
+     * @return Covariance in X and Y direction of the position of the ball
+     */
     Geometry2d::Point getPosCov();
+
+    /**
+     * @return Covaraince in X and Y direction of the velocity of the ball
+     */
     Geometry2d::Point getVelCov();
 
+    /**
+     * @return List of previous camera ball measurements for kick detection/estimation
+     */
     std::deque<CameraBall> getPrevMeasurements();
 
     /**

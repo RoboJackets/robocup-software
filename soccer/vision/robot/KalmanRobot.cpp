@@ -7,23 +7,7 @@
 #include "vision/util/VisionFilterConfig.hpp"
 
 void KalmanRobot::createConfiguration(Configuration* cfg) {
-    max_time_outside_vision = new ConfigDouble("VisionFilter/KalmanRobot/max_time_outside_vision", 2.0);
-}
-
-KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
-                         CameraRobot initMeasurement)
-    : cameraID(cameraID), health(*VisionFilterConfig::filter_health_init),
-      lastUpdateTime(creationTime), lastPredictTime(creationTime),
-      unwrapThetaCtr(0), robotID(initMeasurement.getRobotID()) {
-
-    Geometry2d::Point initPos = initMeasurement.getPos();
-    double initTheta = initMeasurement.getTheta();
-    Geometry2d::Point initVel = Geometry2d::Point(0,0);
-    double initOmega = 0.0;
-
-    filter = KalmanFilter3D(initPos, initTheta, initVel, initOmega);
-
-    previousMeasurements.push_back(initMeasurement);
+    max_time_outside_vision = new ConfigDouble(cfg, "VisionFilter/KalmanRobot/max_time_outside_vision", 2.0);
 }
 
 KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
@@ -105,5 +89,21 @@ Geometry2d::Point KalmanRobot::getVel() {
 }
 
 double KalmnaRobot::getOmega() {
-    return fitler.getOmega();
+    return filter.getOmega();
+}
+
+Geometry2d::Point KalmanRobot::getPosCov() {
+    return filter.getPosCov();
+}
+
+double KalmanRobot::getOmegaCov() {
+    return filter.getThetaCov();
+}
+
+Geometry2d::Point KalmanRobot::getVelCov() {
+    return filter.getVelCov();
+}
+
+double KalmanRobot::getOmegaCov() {
+    return filter.getOmegaCov();
 }

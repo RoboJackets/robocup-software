@@ -14,18 +14,25 @@ public:
      */
     WorldBall(std::vector<KalmanBall> kalmanBalls);
 
+    /**
+     * @return The best estimated position of the ball
+     */
     Geometry2d::Point getPos();
+
+    /**
+     * @return The best estimated velocity of the ball
+     */
     Geometry2d::Point getVel();
 
     /**
      * @return The average position covariance of the filter
      */
-    Geometry2d::Point getPosCov();
+    double getPosCov();
 
     /**
      * @return The average velocity covariance of the filter
      */
-    Geometry2d::Point getVelCov();
+    double getVelCov();
 
     /**
      * @return List of all the building kalman balls for this world ball
@@ -37,8 +44,8 @@ public:
 private:
     Geometry2d::Point pos;
     Geometry2d::Point vel;
-    Geometry2d::Point posCov;
-    Geometry2d::Point velCov;
+    double posCov;
+    double velCov;
     std::vector<KalmanBall> ballComponents;
 
     ConfigDouble* ball_merger_power;

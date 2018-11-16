@@ -43,15 +43,54 @@ public:
      */
     bool isUnhealthy();
 
+    /**
+     * @return The camera id this belongs to
+     */
     unsigned int getCameraID();
 
+    /**
+     * @return Best estimate of the linear position of the robot
+     */
     Geometry2d::Point getPos();
+
+    /**
+     * @return Best estimate of the heading. Not bounded
+     */
     double getTheta();
+
+    /**
+     * @return Best estimate of the linear velocity of the robot
+     */
     Geometry2d::Point getVel();
+
+    /**
+     * @return Best estimate of the angular velocity
+     */
     double getOmega();
 
-    int getRobotID();
+    /**
+     * @return Covariance in X and Y linear direction of the position of the robot
+     */
+    Geometry2d::Point getPosCov();
 
+    /**
+     * @return Covariance of theta of the robot
+     */
+    double getThetaCov();
+
+    /**
+     * @return Covariance in X and Y linear direction of the velocity of the robot
+     */
+    Geometry2d::Point getVelCov();
+
+    /**
+     * @return Covariance of omega of the robot
+     */
+    double getOmegaCov();
+
+    /**
+     * @return List of previous camera robot measurements for kick detection
+     */
     std::deque<CameraRobot> getPrevMeasurements();
 
     static void createConfiguration(Configuration* cfg);
@@ -67,7 +106,6 @@ private:
     KalmanFilter3D filter;
 
     int unwrapThetaCtr;
-    int robotID;
     int health;
 
     unsigned int cameraID;

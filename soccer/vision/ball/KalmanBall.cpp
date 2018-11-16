@@ -5,7 +5,7 @@
 #include "vision/util/VisionFilterConfig.hpp"
 
 void KalmanBall::createConfiguration(Configuration* cfg) {
-    max_time_outside_vision = new ConfigDouble("VisionFilter/KalmanBall/max_time_outside_vision", 0.2);
+    max_time_outside_vision = new ConfigDouble(cfg, "VisionFilter/KalmanBall/max_time_outside_vision", 0.2);
 }
 
 KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
