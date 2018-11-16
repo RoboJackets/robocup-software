@@ -16,17 +16,7 @@
 class KalmanRobot {
 public:
     /**
-     * Assumes there is no previous world robot for this specific id
-     *
-     * @param cameraID ID of the camera this filter is applied to
-     * @param creationTime Time this filter was created
-     * @param initMeasurement Initial robot measurement
-     */
-    KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
-                CameraRobot initMeasurement);
-
-    /**
-     * Assumes there is a previous world robot for this specific id
+     * Checks previousWorldRobot to see if it's valid
      *
      * @param cameraID ID of the camera this filter is applied to
      * @param creationTime Time this filter was created

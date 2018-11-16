@@ -16,9 +16,8 @@ Camera::Camera(int cameraID)
 void Camera::processBallBounce(std::vector<WorldRobot> yellowRobots,
                                std::vector<WorldRobot> blueRobots) {
     for (KalmanBall& b : kalmanBallList) {
-        // TODO: Use the ball collision code
         Geometry2d::Point newVel;
-        bool isCollision = Geometry2d::Point(0,0);
+        bool isCollision = BallBounce::CalcBallBounce(b, yellowRobots, blueRobots, newVel);
 
         if (isCollision) {
             b.setVel(newVel);
@@ -28,8 +27,8 @@ void Camera::processBallBounce(std::vector<WorldRobot> yellowRobots,
 
 void Camera::updateWithFrame(RJ::Time calcTime,
                              std::vector<CameraBall> ballList,
-                             std::vector<CameraRobot> yellowRobotList,
-                             std::vector<CameraRobot> blueRobotList
+                             std::vector<std::list<CameraRobot>> yellowRobotList,
+                             std::vector<std::list<CameraRobot>> blueRobotList
                              WorldBall& previousWorldBall,
                              std::vector<WorldRobot>& previousYellowWorldRobots,
                              std::vector<WorldRobot>& previousBlueWorldRobots) {
@@ -63,7 +62,9 @@ void Camera::updateWithoutFrame(RJ::Time calcTime) {
     }
 }
 
-void Camera::updateBalls(RJ::Time calcTime, std::vector<CameraBall> ballList, WorldBall& previousWorldBall) {
+void Camera::updateBalls(RJ::Time calcTime,
+                         std::vector<CameraBall> ballList,
+                         WorldBall& previousWorldBall) {
     // Make sure there are actually balls in the measurement
     // and only predict if that's the case
     if (ballList.size() == 0) {
@@ -82,7 +83,9 @@ void Camera::updateBalls(RJ::Time calcTime, std::vector<CameraBall> ballList, Wo
     }
 }
 
-void Camera::updateBallsMHKF(RJ::Time calcTime, std::vector<CameraBall> ballList, WorldBall& previousWorldBall) {
+void Camera::updateBallsMHKF(RJ::Time calcTime,
+                             std::vector<CameraBall> ballList,
+                             WorldBall& previousWorldBall) {
     // If we have no existing filters, create a new one from average of everything
     // Easier than trying to figure out which ones are more than X meters away from each other
     // Only delays the filter collection by a camera frame or two
@@ -112,7 +115,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime, std::vector<CameraBall> ballList
 
             if (dist < *MHKF_radius_cutoff) {
                 measurementBalls.push_back(cameraball);
-                usedCameraball.at(cameraballIdx) = true;
+                usedCameraball.at(cameraBallIdx) = true;
             }
             cameraBallIdx++;
         }
@@ -143,7 +146,9 @@ void Camera::updateBallsMHKF(RJ::Time calcTime, std::vector<CameraBall> ballList
     }
 }
 
-void Camera::updateBallsAKF(RJ::Time calcTime, std::vector<CameraBall> ballList, WorldBall& previousWorldBall) {
+void Camera::updateBallsAKF(RJ::Time calcTime,
+                            std::vector<CameraBall> ballList,
+                            WorldBall& previousWorldBall) {
     // If we have no existing filters, create a new one from average of everything
     if (kalmanBallList.size() == 0) {
         CameraBall avgBall = CameraBall::CombineBalls(ballList);
@@ -158,25 +163,162 @@ void Camera::updateBallsAKF(RJ::Time calcTime, std::vector<CameraBall> ballList,
     kalmanBallsList.front().predictAndUpdate(calcTime, avgBall);
 }
 
-void Camera::updateRobots(RJ::Time calcTime, std::vector<CameraRobot> yellowRobotList,
-                                             std::vector<CameraRobot> blueRobotList) {
+void Camera::updateRobots(RJ::Time calcTime,
+                          std::vector<std::list<CameraRobot>> yellowRobotList,
+                          std::vector<std::list<CameraRobot>> blueRobotList,
+                          std::vector<WorldRobot>& previousYellowWorldRobots,
+                          std::vector<WorldRobot>& previousBlueWorldRobots) {
 
+    for (int i = 0; i < maxRobotJerseyNum; i++) {
+        std::list<CameraRobot> singleYellowRobotList = yellowRobotList.at(i);
+        std::list<CameraRobot> singleBlueRobotList = yellowBlueList.at(i);
+
+        // Make sure we actually have robots for the yellow team
+        if (singleYellowRobotList.size() == 0) {
+            for (KalmanRobot& robot : kalmanRobotYellowList.at(i)) {
+                robot.predict(calctime);
+            }
+
+        // If we do, do the fancy updates
+        } else {
+            if (*use_MHKF) {
+                updateRobotsMHKF(calcTime,
+                                 singleYellowRobotList,
+                                 previousYellowWorldRobots.at(i),
+                                 kalmanRobotYellowList.at(i));
+            } else {
+                updateRobotsAKF(clacTime,
+                                singleYellowRobotList,
+                                previousYellowWorldRobots.at(i),
+                                kalmanRobotYellowList.at(i));
+            }
+        }
+
+        // Make sure we actually have robots for the blue team
+        if (singleBlueRobotList.size() == 0) {
+            for (KalmanRobot& robot : kalmanRobotBlueList.at(i)) {
+                robot.predict(calctime);
+            }
+
+        // If we do, do the fancy updates
+        } else {
+            if (*use_MHKF) {
+                updateRobotsMHKF(calcTime,
+                                 singleBlueRobotList,
+                                 previousBlueWorldRobots.at(i),
+                                 kalmanRobotBlueList.at(i));
+            } else {
+                updateRobotsAKF(clacTime,
+                                singleBlueRobotList,
+                                previousBlueWorldRobots.at(i),
+                                kalmanRobotBlueList.at(i));
+            }
+        }
+    }
 }
 
-void Camera::updateRobotsMHKF(RJ::Time calcTime, std::vector<CameraRobot> yellowRobotList,
-                                                std::vector<CameraRobot> blueRobotList) {
+void Camera::updateRobotsMHKF(RJ::Time calcTime,
+                              std::list<CameraRobot> singleRobotList,
+                              WorldRobot& previousWorldRobot,
+                              std::list<KalmanRobot>& singleKalmanRobotList) {
+    // If we have no existing filters, create a new one from average of everything
+    // Easier than trying to figure out which ones are more than X meters away from each other
+    // Only delays the filter collection by a camera frame or two
+    if (singleKalmanRobotList.size() == 0) {
+        CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
+        singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
 
+        return;
+    }
+
+    // TODO: Try merging some of the kalman filters together
+
+    // Create list of bools corresponding to whether we have used this Robot
+    // as measurement yet
+    std::vector<bool> usedCameraRobot(singleRobotList.size(), false);
+
+    // Which camera robots to apply to which kalman Robot
+    std::vector<std::list<CameraRobot>> appliedRobotsList(singleKalmanRobotList.size());
+
+    int kalmanRobotIdx = 0;
+    for (KalmanRobot& kalmanRobot : kalmanRobotList) {
+        std::list<CameraRobot>& measurementRobot = appliedRobotsList.at(kalmanRobotIdx);
+
+        int cameraRobotIdx = 0;
+        for (CameraRobot& cameraRobot : singleRobotList) {
+            double dist = (kalmanRobot.getPos() - cameraRobot.getPos).mag();
+
+            if (dist < *MHKF_radius_cutoff) {
+                measurementRobot.push_back(cameraRobot);
+                usedCameraRobot.at(cameraRobotIdx) = true;
+            }
+            cameraRobotIdx++;
+        }
+
+        kalmanRobotIdx++;
+    }
+
+    kalmnaRobotIdx = 0;
+    for (KalmanRobot& kalmanRobot : singleKalmanRobotList) {
+        std::list<CameraRobot>& measurementRobots = appliedRobotsList.at(kalmanRobotIdx);
+
+        // We had at least one measurement near this Robot
+        if (measurementRobots.size() > 0) {
+            CameraRobot avgRobot = CameraRobot::CombineRobots(measurementRobots);
+            kalmanRobot.PredictWithUpdate(calcTime, avgRobot);
+
+        // There aren't any measurements so just predict
+        } else {
+            kalmanRobot.predict(calcTime);
+        }
+    }
+
+    for (int i = 0; i < singleRobotList.size(); i++) {
+        CameraRobot& cameraRobot = RobotList.at(i);
+        bool wasUsed = usedCameraRobot.at(i);
+
+        singleKalmanRobotList.emplace_back(cameraID, calcTime, cameraRobot, previousWorldRobot);
+    }
 }
 
-void Camera::updateRobotsAKF(RJ::Time calcTime, std::vector<CameraRobot> yellowRobotList,
-                                                std:vector<CameraRobot> blueRobotList) {
+void Camera::updateRobotsAKF(RJ::Time calcTime,
+                             std::list<CameraRobot> singleRobotList,
+                             WorldRobot& previousWorldRobot,
+                             std::list<KalmanRobot>& singleKalmanRobotList) {
+    // If we have no existing filters, create a new one from average of everything
+    if (singleKalmanRobotList.size() == 0) {
+        CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
+        singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
 
+        return;
+    }
+
+    // Average everything and add as measuremnet
+    CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
+    // Kinda cheating, but we are only keeping a single element in the list
+    singleKalmanRobotList.front().predictAndUpdate(calcTime, avgRobot);
 }
 
 void Camera::removeInvalidBalls() {
-
+    // Remove all balls that are unhealthy
+    kalmanBallList.remove_if([](const KalmanBall& b) -> bool { return b.isUnhealthy(); } );
 }
 
 void Camera::removeInvalidRobots() {
+    // Remove all the robots that are unhealthy
+    for (std::list<KalmanRobot> robotList : kalmanRobotBlueList) {
+        robotList.remove_if([](const KalmanRobot& r) -> bool {return r.isUnhealthy(); } );
+    }
 
+    for (std::list<KalmanRobot> robotList : kalmanRobotYellowList) {
+        robotList.remove_id([](const KalmanRobot& r) -> bool {return r.isUnhealthy(); } );
+    }
+}
+
+void Camera::predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRobot>>& robotListList) {
+    for (std::list<KalmnaRobot>& robotList : robotListList) {
+        for (KalmanRobot& robot : robotList) {
+            robot.predict(calcTime);
+        }
+    }
 }

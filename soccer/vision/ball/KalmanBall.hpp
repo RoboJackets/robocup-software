@@ -16,17 +16,7 @@
 class KalmanBall {
 public:
     /**
-     * Assumes there is no previous world ball
-     *
-     * @param cameraId ID of the camera this filter belongs to
-     * @param creationTime Time this filter is created
-     * @param initMeasurement Initial ball measurement we are creating the filter at
-     */
-    KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-               CameraBall initMeasurement);
-
-    /**
-     * Assumes there is a valid world ball
+     * Checks the previousWorldBall to see if it's valid
      *
      * @param cameraId ID of the camera this filter belongs to
      * @param creationTime Time this filter is created
@@ -56,8 +46,12 @@ public:
 
     unsigned int getCameraID();
 
+    int getHealth();
+
     Geometry2d::Point getPos();
     Geometry2d::Point getVel();
+    Geometry2d::Point getPosCov();
+    Geometry2d::Point getVelCov();
 
     std::deque<CameraBall> getPrevMeasurements();
 
@@ -65,7 +59,6 @@ public:
      * Note: Only used to set the velocity when we think the ball will bounce off another robot
      */
     void setVel(Geometry2d::Point newVel);
-
 
     static void createConfiguration(Configuration* cfg);
 

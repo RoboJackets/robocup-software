@@ -71,12 +71,24 @@ unsigned int KalmanBall::getCameraID() {
     return cameraID;
 }
 
+int KalmanBall::getHealth() {
+    return health;
+}
+
 Geometry2d::Point KalmanBall::getPos() {
     return filter.getPos();
 }
 
 Geometry2d::Point KalmanBall::getVel() {
     return filter.getVel();
+}
+
+Geometry2d::Point KalmanBall::getPosCov() {
+    return filter.getPosCov();
+}
+
+Geometry2d::Point KalmanBall::getVelCov() {
+    return filter.getVelCov();
 }
 
 std::deque<CameraBall> KalmanBall::getPrevMeasurements() {
