@@ -92,12 +92,12 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         currentFacePoint = None
 
         def startRun(self):
-            points = [point0, point1, point2]
-            facePoints = [facePoint0, facePoint1, facePoint2]
+            points = [self.point0, self.point1, self.point2]
+            facePoints = [self.facePoint0, self.facePoint1, self.facePoint2]
             self.startTime = time.time()
-            self.currentStart = points[2] if motionNumber % 3 == 0 else points[(motionNumber % 3) - 1]
-            self.currentEnd = points[motionNumber % 3]
-            self.currentFacePoint = facePoints[motionNumber % 3]
+            self.currentStart = points[2] if self.motionNumber % 3 == 0 else points[(self.motionNumber % 3) - 1]
+            self.currentEnd = points[self.motionNumber % 3]
+            self.currentFacePoint = facePoints[self.motionNumber % 3]
             
         def processRun(self):
             if(currentEnd != None):
@@ -207,7 +207,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     NoiseTest = 0.0
     NoiseTestDone = False
-    noiseStartTime = 0.0
 
     noiseResult = 0.0
 
@@ -351,8 +350,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     basicMotionTests = []
 
     superBasicTest = BasicMotionTest(3)
+    superBasicTest.point1 = robocup.Point(1,1)
+    superBasicTest.point2 = robocup.Point(1,2)
+    superBasicTest.point3 = robocup.Point(2,1)
+   
 
     basicMotionTests.append(superBasicTest)
+
 
     basicMotionIndex = 0
     currentBasicMotion = basicMotionTests[basicMotionIndex]
@@ -362,11 +366,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #Setup state functions (for the latency test)
 
     def on_enter_setup(self):
+        self.remove_all_subbehaviors()
         move_point = robocup.Point(0, constants.Field.Width / 4)
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
     def on_exit_setup(self):
-        self.remove_all_subbehaviors()
+        #self.remove_all_subbehaviors()
+        pass
 
     #End setup state functions
 
@@ -379,6 +385,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.noiseStartPos = self.robot.pos
 
     def execute_noise(self):
+        print(self.noiseStartTime - time.time())
+        print(self.noiseMeasured)
         if(abs(self.noiseStartTime - time.time()) >=  5):
             self.noiseMeasured = True
         deltaX = self.noiseStartPos.x - self.robot.pos.x 
@@ -398,6 +406,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_enter_move1(self):
         self.moveStartTime = time.time()
+        self.remove_all_subbehaviors()
         self.add_subbehavior(skills.move.Move(robocup.Point(0, constants.Field.Width / 2)), 'move')
 
 
@@ -432,19 +441,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def on_exit_BasicMotion0(self):
         self.currentBasicMotion.endRun()
 
-
     def on_enter_BasicMotionEnd(self):
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa Hats")        
-
-
-
-
-
-
-
 
 
     #nothing special for role requirements
     def role_requirements(self):
         reqs = super().role_requirements()
+        print(reqs)
+
         return reqs
