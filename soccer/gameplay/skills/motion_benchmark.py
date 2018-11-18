@@ -79,12 +79,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         motionNumber = 0
 
         def __init__(self, nRuns):
-            timeTaken = [0.0] * runs
-            posEndError = [0.0] * runs
-            lineFollowError = [0.0] * runs
-            rotationalFollowError = [0.0] * runs
-            finalRotationalError = [0.0] * runs
-            maxOvershoot = [(0,0)] * runs
+            self.runs = nRuns
+            timeTaken = [0.0] * self.runs
+            posEndError = [0.0] * self.runs
+            lineFollowError = [0.0] * self.runs
+            rotationalFollowError = [0.0] * self.runs
+            finalRotationalError = [0.0] * self.runs
+            maxOvershoot = [(0,0)] * self.runs
 
         currentStart = None
         currentEnd = None
@@ -271,8 +272,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         #BasicMotionEnd -> exit the behavior  
         self.add_transition(MotionBenchmark.State.BasicMotionEnd,
-                            behavior.Behavior.State.end,
-                            lambda: True, 'In Position')
+                            behavior.Behavior.State.completed,
+                            lambda: self.basicMotionCount >= len(self.basicMotionTests), 'In Position')
 
         #END TRANSITIONS
 
@@ -349,7 +350,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     basicMotionTests = []
 
-    superBasicTest = None
+    superBasicTest = BasicMotionTest(3)
 
     basicMotionTests.append(superBasicTest)
 
