@@ -16,7 +16,7 @@ class OurFreeKick(standard_play.StandardPlay):
     BumpKickPower = 0.01
     FullKickPower = 1
     MaxShootingAngle = 80
-    # Untested as of now
+    # Untested as of now - I didn't test this either!!!
     MaxChipRange = 3
     MinChipRange = 0.3
 

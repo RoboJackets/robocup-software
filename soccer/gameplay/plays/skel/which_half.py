@@ -21,12 +21,47 @@ import main
 class WhichHalf(play.Play):
     class State(enum.Enum):
         # Define your states here.
-        # eg: some_state = 0
+        # eg: staome_state = 0
         # -----------------------
+        LeftHalf = 0
+        RightHalf = 1
         pass  # remove this once you have put in your states
 
     def __init__(self):
         super().__init__(continuous=True)
+
+        self.add_state(self.State.LeftHalf,
+            behavior.Behavior.State.running)
+        self.add_state(self.State.RightHalf,
+            behavior.Behavior.State.running)
+        
+        self.add_transition(behavior.Behavior.State.start,
+            self.State.RightHalf, lambda: True, 'Init')
+        self.add_transition(self.State.RightHalf, 
+            self.State.LeftHalf, in_left_half, 'Detected Left Half')
+        self.add_transition(self.State.LeftHalf, 
+            self.State.RightHalf, lambda : not in_left_half(), 'Deceted Right Half')
+
+
+    in_left_half = (lambda x: main.ball().pos.x > constants.Field.Width / 2)
+
+    def on_enter_LeftHalf(self):
+        print('Ball entering Left Half')
+
+    def on_exit_LeftHalf(self):
+        print('Ball exiting Left Half')
+
+    def execute_LeftHalf(self):
+        print("Ball is in the Left Half")
+
+    def on_enter_RightHalf(self):
+        print('Ball is entering the right half')
+
+    def on_exit_RightHalf(self):
+        print('Ball is leaving the right half')
+
+    def execute_RightHalf(self):
+        print("Ball is chillin in the right half")
 
         # Register the states you defined using 'add_state'.
         # eg: self.add_state(WhichHalf.State.<???>,
