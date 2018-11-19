@@ -1,4 +1,5 @@
 import single_robot_composite_behavior
+import single_robot_behavior
 import behavior
 from enum import Enum
 import main
@@ -9,7 +10,8 @@ import time
 import datetime
 import numpy as np
 import math
-
+import role_assignment
+import composite_behavior
 
 ## Motion Benchmark V0.0.0.0
 #
@@ -366,7 +368,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #Setup state functions (for the latency test)
 
     def on_enter_setup(self):
-        self.remove_all_subbehaviors()
+        #self.remove_all_subbehaviors()
         move_point = robocup.Point(0, constants.Field.Width / 4)
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
@@ -447,7 +449,19 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     #nothing special for role requirements
     def role_requirements(self):
-        reqs = super().role_requirements()
-        print(reqs)
 
+        '''reqs = role_assignment.RoleRequirements()
+        if self.robot is not None:
+            reqs.previous_shell_id = self.robot.shell_id()
+        return reqs'''
+        reqs = composite_behavior.CompositeBehavior.role_requirements(self)
+        if self.robot is not None:
+            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+                    req.previous_shell_id = self.robot.shell_id()
+            return reqs
+
+
+        reqs = super().role_requirements()
+        #reqs = role_assignment.RoleRequirements()
+        #reqs.destination_shape = robocup.Point(0,0)
         return reqs
