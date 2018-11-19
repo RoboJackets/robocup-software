@@ -1,0 +1,3 @@
+repository='external project URL'
+module='/home/alan/Documents/RoboJackets/robocup-software/external/googletest/googletest'
+tag=''
