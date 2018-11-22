@@ -8,11 +8,22 @@
 class WorldBall {
 public:
     /**
-     * Creates a world ball from a list of kalman balls through special averaging
+     * Creates an invalid world ball
+     * Used to make some of the code cleaner
+     */
+    WorldBall();
+
+    /**
+     * Creates a valid world ball from a list of kalman balls through special averaging
      *
      * @param kalmanBalls List of best kalman ball from every camera
      */
     WorldBall(std::vector<KalmanBall> kalmanBalls);
+
+    /**
+     * @return If the ball actually represents a real ball
+     */
+    bool getIsValid();
 
     /**
      * @return The best estimated position of the ball
@@ -42,6 +53,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
+    bool isValid;
     Geometry2d::Point pos;
     Geometry2d::Point vel;
     double posCov;

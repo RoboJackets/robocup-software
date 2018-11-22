@@ -17,7 +17,22 @@
 
 class Camera {
 public:
+    /**
+     * Creates an invalid camera
+     */
+    Camera();
+
+    /**
+     * Creates a valid camera with a specific id
+     *
+     * @param cameraID ID of this camera
+     */
     Camera(int cameraID);
+
+    /**
+     * Returns whether this camera is valid and initialized correctly
+     */
+    bool getIsValid();
 
     /**
      * Tries to predict bounces off the best known estimation of the robots
@@ -132,6 +147,8 @@ private:
      * @param robotListList Either kalmanRobotYellowList or kalmnaRobotBlueList
      */
     void predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRobot>>& robotListList);
+
+    bool isValid;
 
     int cameraID;
     std::list<KalmanBall> kalmanBallList;

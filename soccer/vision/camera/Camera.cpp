@@ -7,10 +7,17 @@ void Camera::createConfiguration(Configuration* cfg) {
     use_MHKF = new ConfigBool(cfg, "VisionFilter/Camera/use_MHKF", true);
 }
 
+Camera::Camera() : isValid(false) {}
+
 Camera::Camera(int cameraID)
-    : cameraID(cameraID),
+    : isValid(true),
+      cameraID(cameraID),
       kalmanRobotYellowlist(maxRobotJerseyNum),
       kalmnaRobotBlueList(maxRobotJerseyNum) {
+}
+
+bool Camera::getIsValid() {
+    return isValid;
 }
 
 void Camera::processBallBounce(std::vector<WorldRobot> yellowRobots,

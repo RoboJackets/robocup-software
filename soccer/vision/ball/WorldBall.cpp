@@ -6,7 +6,9 @@ void WorldBall::createConfiguration(Configuration* cfg) {
     ball_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldBall/ball_merger_power", 1.5);
 }
 
-WorldBall::WorldBall(std::vecotr<KalmanBall> kalmanBalls) {
+WorldBall::WorldBall() : isValid(false) {}
+
+WorldBall::WorldBall(std::vecotr<KalmanBall> kalmanBalls) : isValid(true) {
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double totalPosWeight = 0;
@@ -78,6 +80,10 @@ WorldBall::WorldBall(std::vecotr<KalmanBall> kalmanBalls) {
     posCov = totalPosWeight / kalmanBalls.size();
     velCov = totalVelWeight / kalmanBalls.size();
     ballComponents = kalmanBalls;
+}
+
+bool WorldBall::getIsValid() {
+    return isValid;
 }
 
 Geometry2d::Point WorldBall::getPos() {
