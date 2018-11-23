@@ -178,8 +178,12 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 
         intersectPtReflectionUnitVector = intersectPtReflectionUnitVector.rotate(extraRotationAngle);
 
-        return intersectPtReflectionUnitVector * ball.getVel().normalized();
+        outNewVel = intersectPtReflectionUnitVector * ball.getVel().normalized();
+
+        return true;
     }
+
+    return false
 }
 
 

@@ -73,6 +73,10 @@ public:
      */
     void updateWithoutFrame(RJ::Time calcTime);
 
+    std::list<KalmanBall> getKalmanBalls();
+    std::vector<std::list<KalmanRobot>> getKalmanRobotsYellow();
+    std::vector<std::list<KalmanRobot>> getKalmanRobotsBlue();
+
     static void createConfiguration(Configuration* cfg);
 
 private:

@@ -8,7 +8,7 @@ void WorldBall::createConfiguration(Configuration* cfg) {
 
 WorldBall::WorldBall() : isValid(false) {}
 
-WorldBall::WorldBall(std::vecotr<KalmanBall> kalmanBalls) : isValid(true) {
+WorldBall::WorldBall(std::list<KalmanBall> kalmanBalls) : isValid(true) {
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double totalPosWeight = 0;
@@ -102,6 +102,6 @@ double WorldBall::getVelCov() {
     return velCov;
 }
 
-std::vector<KalmanBall> getBallComponents() {
+std::list<KalmanBall> getBallComponents() {
     return ballComponents;
 }

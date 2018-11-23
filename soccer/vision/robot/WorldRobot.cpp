@@ -8,7 +8,7 @@ void WorldRobot::createConfiguration(Configuration* cfg) {
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
-WorldRobot::WorldRobot(int robotID, std::vector<KalmanRobot> kalmanRobots)
+WorldRobot::WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots)
     : robotId(robotID), isValid(true) {
 
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
@@ -101,4 +101,40 @@ WorldRobot::WorldRobot(int robotID, std::vector<KalmanRobot> kalmanRobots)
     posCov = totalPosWeight / kalmanRobots.size();
     velCov = totalVelWeight / kalmanRobots.size();
     robotComponents = kalmanRobots;
+}
+
+bool WorldRobot::getIsValid() {
+    return isVAlid;
+}
+
+int WorldRobot::getRobotID() {
+    return robotID;
+}
+
+Geometry2d::Point WorldRobot::getPos() {
+    return pos;
+}
+
+double WorldRobot::getTheta() {
+    return theta;
+}
+
+Geomtery2d::Point WorldRobot::getVel() {
+    return vel;
+}
+
+double WorldRobot::getOmega() {
+    return omega;
+}
+
+double WorldRobot::getPosCov() {
+    return posCov;
+}
+
+double getVelCov() {
+    return velCov;
+}
+
+std::list<KalmanRobots> WorldRobot::getRobotComponents() {
+    return robotComponents;
 }

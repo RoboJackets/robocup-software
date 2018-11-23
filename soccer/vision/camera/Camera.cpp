@@ -329,3 +329,15 @@ void Camera::predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRob
         }
     }
 }
+
+std::list<KalmanBall> Camera::getKalmanBalls() {
+    return kalmanBallList;
+}
+
+std::vector<std::list<KalmanRobot> Camera::getKalmanRobotsYellow() {
+    return kalmanRobotYellowList;
+}
+
+std::vetor<std::list<KalmanRobot>> Camera::getKalmanRobotsBlue() {
+    return kalmanRobotBlueList;
+}

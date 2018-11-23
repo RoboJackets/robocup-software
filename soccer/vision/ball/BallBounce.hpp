@@ -42,6 +42,8 @@ private:
     /**
      * Finds the 1 or 2 interserct locations on the ball shell
      *
+     * @param ball The ball we want to check for
+     * @param robot The robot we want to check against
      */
     static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
             KalmanBall& ball, WorldRobot& robot);

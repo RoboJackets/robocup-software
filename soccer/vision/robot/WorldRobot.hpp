@@ -1,4 +1,4 @@
-#include <vector>
+#include <list>
 
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
@@ -19,7 +19,7 @@ public:
      * @param robotID The ID of the robot
      * @param kalmlanRobots List of kalman robots from each of the cameras to merger
      */
-    WorldRobot(int robotID, std::vector<KalmanRobot> kalmanRobots);
+    WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots);
 
     /**
      * @return If the robot actually represents a real robot
@@ -64,7 +64,7 @@ public:
     /**
      * @return List of all the building kalman robots for this world robot
      */
-    std::vector<KalmanRobot> getRobotComponents();
+    std::list<KalmanRobot> getRobotComponents();
 
     static void createConfiguration(Configuration* cfg);
 
@@ -76,7 +76,7 @@ private:
     double omega;
     double posCov;
     double velCov;
-    std::vector<KalmanRobot> robotComponents;
+    std::list<KalmanRobot> robotComponents;
 
     bool isValid;
     ConfigDouble* robot_merger_power;

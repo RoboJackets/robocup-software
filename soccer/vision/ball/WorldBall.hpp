@@ -1,4 +1,4 @@
-#include <vector>
+#include <list>
 
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
@@ -18,7 +18,7 @@ public:
      *
      * @param kalmanBalls List of best kalman ball from every camera
      */
-    WorldBall(std::vector<KalmanBall> kalmanBalls);
+    WorldBall(std::list<KalmanBall> kalmanBalls);
 
     /**
      * @return If the ball actually represents a real ball
@@ -48,7 +48,7 @@ public:
     /**
      * @return List of all the building kalman balls for this world ball
      */
-    std::vector<KalmanBall> getBallComponents();
+    std::list<KalmanBall> getBallComponents();
 
     static void createConfiguration(Configuration* cfg);
 
@@ -58,7 +58,7 @@ private:
     Geometry2d::Point vel;
     double posCov;
     double velCov;
-    std::vector<KalmanBall> ballComponents;
+    std::list<KalmanBall> ballComponents;
 
     ConfigDouble* ball_merger_power;
 };
