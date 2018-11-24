@@ -1,9 +1,13 @@
+#pragma once
+
 #include <list>
 
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
 
 #include "KalmanRobot.hpp"
+
+class KalmanRobot;
 
 class WorldRobot {
 public:
@@ -15,7 +19,7 @@ public:
     WorldRobot();
 
     /**
-     * Creates a avlid world robot
+     * Creates a valid world robot
      * @param robotID The ID of the robot
      * @param kalmlanRobots List of kalman robots from each of the cameras to merger
      */
@@ -79,5 +83,5 @@ private:
     std::list<KalmanRobot> robotComponents;
 
     bool isValid;
-    ConfigDouble* robot_merger_power;
+    static ConfigDouble* robot_merger_power;
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
 #include <vector>
@@ -29,7 +31,7 @@ public:
      *
      * Note: All robots must have the same robotID
      */
-    static CameraRobot CombineRobots(std::vector<CameraRobot> robots);
+    static CameraRobot CombineRobots(std::list<CameraRobot> robots);
 
 private:
     RJ::Time timeCaptured;

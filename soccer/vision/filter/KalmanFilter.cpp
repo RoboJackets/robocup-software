@@ -1,6 +1,6 @@
 #include "KalmanFilter.hpp"
 
-void KalmanFilter::Predict() {
+void KalmanFilter::predict() {
     x_k1_k1 = x_k_k;
     P_k1_k1 = P_k_k;
 
@@ -11,7 +11,7 @@ void KalmanFilter::Predict() {
     P_k_k = P_k_k1;
 }
 
-void KalmanFilter::PredictWithUpdate() {
+void KalmanFilter::predictWithUpdate() {
     x_k_k1 = x_k_k;
     P_k1_k1 = P_k_k;
 

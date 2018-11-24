@@ -1,4 +1,5 @@
 #include "CameraRobot.hpp"
+#include <iostream>
 
 RJ::Time CameraRobot::getTimeCaptured() {
     return timeCaptured;
@@ -16,14 +17,24 @@ int CameraRobot::getRobotID() {
     return robotID;
 }
 
-CameraRobot CameraRobot::CombineRobots(std::vector<CameraRobot> robots) {
-    RJ::Time timeAvg = 0;
+CameraRobot CameraRobot::CombineRobots(std::list<CameraRobot> robots) {
+    // Make sure we don't divide by zero due to some weird error
+    if (robots.size() == 0) {
+        std::cout << "CRITICAL ERROR: Number of robots to combine is zero" << std::endl;
+
+        return CameraRobot(RJ::now(), Geometry2d::Point(0,0), 0, -1);
+    }
+
+    // Have to do the average like Ti + sum(Tn - Ti)/N
+    // so that we aren't trying to add time_points. It's durations instead.
+    RJ::Time initTime = robots.front().getTimeCaptured();
+    RJ::Seconds timeAvg = RJ::Seconds(0);
     Geometry2d::Point posAvg = Geometry2d::Point(0,0);
     double thetaAvg = 0.0;
-    int robotID = -1; // Defaults to -1 if list is empty
+    int robotID = -1;
 
     for (CameraRobot &cr : robots) {
-        timeAvg += cr.getTimeCaptured();
+        timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
         posAvg += cr.getPos();
         thetaAvg += cr.getTheta();
         robotID = cr.getRobotID(); // Shouldn't change besides the first iteration
@@ -33,5 +44,5 @@ CameraRobot CameraRobot::CombineRobots(std::vector<CameraRobot> robots) {
     posAvg /= robots.size();
     thetaAvg /= robots.size();
 
-    return CameraRobot(timeAvg, posAvg, thetaAvg, robotID)
+    return CameraRobot(initTime + timeAvg, posAvg, thetaAvg, robotID);
 }

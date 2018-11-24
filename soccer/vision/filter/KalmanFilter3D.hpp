@@ -2,8 +2,11 @@
 
 #include "KalmanFilter.hpp"
 #include <Geometry2d/Point.hpp>
+#include <Configuration.hpp>
 
 class KalmanFilter3D : public KalmanFilter {
+public:
+    KalmanFilter3D();
     KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
                    Geometry2d::Point initVel, double initOmega);
 
@@ -14,7 +17,7 @@ class KalmanFilter3D : public KalmanFilter {
      * @param observationPos The position observation for the current frame
      * @param observationTheta The theta observation for the current frame
      */
-    void PredictWithUpdate(Geometry2d::Point observationPos, double observationTheta);
+    void predictWithUpdate(Geometry2d::Point observationPos, double observationTheta);
 
     Geometry2d::Point getPos();
     double getTheta();
@@ -28,10 +31,10 @@ class KalmanFilter3D : public KalmanFilter {
     Geometry2d::Point getVelCov();
     double getOmegaCov();
 
-    static void createConfiguation(Configuration* cfg);
+    static void createConfiguration(Configuration* cfg);
 
 private:
     static ConfigDouble* robot_init_covariance;
     static ConfigDouble* robot_process_noise;
     static ConfigDouble* robot_observation_noise;
-}
+};

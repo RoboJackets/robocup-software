@@ -1,9 +1,13 @@
+#pragma once
+
 #include <list>
 
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
 
 #include "KalmanBall.hpp"
+
+class KalmanBall;
 
 class WorldBall {
 public:
@@ -60,5 +64,5 @@ private:
     double velCov;
     std::list<KalmanBall> ballComponents;
 
-    ConfigDouble* ball_merger_power;
+    static ConfigDouble* ball_merger_power;
 };

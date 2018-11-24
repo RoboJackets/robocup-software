@@ -4,6 +4,13 @@
 
 #include "vision/util/VisionFilterConfig.hpp"
 
+REGISTER_CONFIGURABLE(BallBounce)
+
+ConfigDouble* BallBounce::robot_body_lin_dampen;
+ConfigDouble* BallBounce::robot_mouth_lin_dampen;
+ConfigDouble* BallBounce::robot_body_angle_dampen;
+ConfigDouble* BallBounce::robot_mouth_angle_dampen;
+
 inline int sign(float val) { return (0.0 < val) - (val < 0.0); }
 
 void BallBounce::createConfiguration(Configuration* cfg) {
@@ -22,14 +29,14 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 
     for (WorldRobot& robot : robots) {
         if (!robot.getIsValid()) {
-            continue
+            continue;
         }
 
-        std::vector<Geometry2d::Point> instersectPts = PossibleBallIntersectionPts(ball, robot);
+        std::vector<Geometry2d::Point> intersectPts = PossibleBallIntersectionPts(ball, robot);
 
         // Doesn't intersect
         if (intersectPts.size() == 0) {
-            continue
+            continue;
         }
 
         // Tangent to robot, assuming no interaction
@@ -69,7 +76,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         // May actually be slightly off because we add the ball radius to the calculation circle
         // Does not account for the mouth just yet
         Geometry2d::Point closestIntersectPt = intersectPts.at(0);
-        if ((ballPosSafePt - closestIntersectPt).magsq() > (ballPosSafePt - intersectPts.at(1))) {
+        if ((ballPosSafePt - closestIntersectPt).magsq() > (ballPosSafePt - intersectPts.at(1)).magsq()) {
             closestIntersectPt = intersectPts.at(1);
         }
 
@@ -87,7 +94,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
                                                       mouthCenterPos - mouthHalfUnitVec);
 
         Geometry2d::Point mouthIntersect;
-        bool intersects = intersectLine.intersects(mouthLine, mouthIntersect);
+        bool intersects = intersectLine.intersects(mouthLine, &mouthIntersect);
 
         // The mouth is a coord across the circle.
         // We have the distance of the coord to the center of the circle
@@ -115,15 +122,15 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         //                    A-----D-----C
 
         // B->A
-        Geometry2d::Point intersectPtBallVector = ballPosSafePt - closest;
+        Geometry2d::Point intersectPtBallVector = ballPosSafePt - closestIntersectPt;
         // B->D (Officially R->B, but B->D makes more sense visually)
-        Geometry2d::Point robotIntersectPtVector = closest - robot.getPos();
+        Geometry2d::Point robotIntersectPtVector = closestIntersectPt - robot.getPos();
         Geometry2d::Point robotIntersectPtUnitVector = robotIntersectPtVector.normalized();
 
         // Project B->A vector onto B->D
         // This is so we can get D->A and D->C later
         double projectionMag = intersectPtBallVector.normalized().dot(robotIntersectPtUnitVector);
-        Geometry2d::Point projection = projectionMag * robotIntersectPtUnitVector
+        Geometry2d::Point projection = projectionMag * robotIntersectPtUnitVector;
 
         // A->D, which is the same as D->C
         Geometry2d::Point projectionDiff = projection - intersectPtBallVector;
@@ -132,12 +139,12 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         Geometry2d::Point intersectPtReflectionUnitVector = intersectPtReflectionVector.normalized();
 
         // Scale magnitude of velocity by a percentage
-        double dampenLinCoeff   = robot_body_lin_dampen;
-        double dampenAngleCoeff = robot_body_angle_dampen;
+        double dampenLinCoeff   = *robot_body_lin_dampen;
+        double dampenAngleCoeff = *robot_body_angle_dampen;
 
         if (didHitMouth) {
-            dampenLinCoeff   = robot_mouth_lin_dampen;
-            dampenAngleCoeff = robot_mouth_angle_dampen;
+            dampenLinCoeff   = *robot_mouth_lin_dampen;
+            dampenAngleCoeff = *robot_mouth_angle_dampen;
         }
 
         //                   C------D
@@ -171,7 +178,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         // x axis is the angle CBD
 
         // Angle CBD
-        double halfReflectAngle = intersectPtReflectionUnitVector.angleBetwee(robotIntersectPtUnitVector);
+        double halfReflectAngle = intersectPtReflectionUnitVector.angleBetween(robotIntersectPtUnitVector);
         double direction = robotIntersectPtUnitVector.cross(intersectPtReflectionUnitVector);
         double extraRotationAngle = -sign(direction)*halfReflectAngle;
         extraRotationAngle = std::min(extraRotationAngle, M_PI_2 - extraRotationAngle)*dampenAngleCoeff;
@@ -183,18 +190,18 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         return true;
     }
 
-    return false
+    return false;
 }
 
 
-bool BallInRobot(KalmanBall& ball, WorldRobot& robot) {
-    Geometry2d::Point nextPos = ball.getPos() + ball.getVel() * VisionFilterConfig::vision_loop_dt;
+bool BallBounce::BallInRobot(KalmanBall& ball, WorldRobot& robot) {
+    Geometry2d::Point nextPos = ball.getPos() + ball.getVel() * *VisionFilterConfig::vision_loop_dt;
 
     // TODO: Get robot radius and ball radius
     return (robot.getPos() - nextPos).mag() < .7 + .01;
 }
 
-std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
+std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
         KalmanBall& ball, WorldRobot& robot) {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
 
@@ -207,8 +214,8 @@ std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
     Geometry2d::Point ballVel = ball.getPos() + ball.getVel() - robot.getPos();
 
     // Magnitude of the line
-    Geomtry2d::Point d = ballVel - ballPos;
-    double dr = ballVel - ballPos.mag();
+    Geometry2d::Point d = ballVel - ballPos;
+    double dr = (ballVel - ballPos).mag();
     // Determinant
     double D = ballPos.x()*ballVel.y() - ballPos.y()*ballVel.x();
     // TODO: Get robot/ball radius
@@ -240,7 +247,7 @@ std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
     Geometry2d::Point pt1 = Geometry2d::Point(x1, y2);
     Geometry2d::Point pt2 = Geometry2d::Point(x2, y2);
 
-    delta = r*r*dr*dr - D*D;
+    double delta = r*r*dr*dr - D*D;
 
     // No intresection
     if (delta < 0) {

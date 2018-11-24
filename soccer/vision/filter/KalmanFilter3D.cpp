@@ -1,13 +1,21 @@
-#include "KalmanFilter.hpp"
+#include "KalmanFilter3D.hpp"
 #include <cmath>
 
-#include "vision/util/Config.hpp"
+#include "vision/util/VisionFilterConfig.hpp"
 
-void KalmanFilter3D::createConfiguation(Configuration* cfg) {
+REGISTER_CONFIGURABLE(KalmanFilter3D)
+
+ConfigDouble* KalmanFilter3D::robot_init_covariance;
+ConfigDouble* KalmanFilter3D::robot_process_noise;
+ConfigDouble* KalmanFilter3D::robot_observation_noise;
+
+void KalmanFilter3D::createConfiguration(Configuration* cfg) {
     robot_init_covariance = new ConfigDouble(cfg, "VisionFilter/Robot/init_covariance", 100);
     robot_process_noise = new ConfigDouble(cfg, "VisionFilter/Robot/process_noise", .1);
     robot_observation_noise = new ConfigDouble(cfg, "VisionFilter/Robot/observation_noise", 2.0);
 }
+
+KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1,1) {}
 
 KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
                                Geometry2d::Point initVel, double initOmega)
@@ -71,11 +79,11 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
     // Note: T is the sample period
     // Taken from Tiger's AutoRef. Most likely found through integration of error through the
     // state matrices
-    double p = *robot_process_noise;
+    p = *robot_process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
-    dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
-    dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
-    dt1 = dt * sigma * sigma;
+    double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
+    double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
+    double dt1 = dt * sigma * sigma;
 
     Q_k << dt3, dt2,   0,   0,   0,   0,
            dt2, dt1,   0,   0,   0,   0,
@@ -91,13 +99,13 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
            0, 0, o;
 }
 
-void KalmanFilter3D::PredictWithUpdate(Geometry2d::Point observationPos,
+void KalmanFilter3D::predictWithUpdate(Geometry2d::Point observationPos,
                                        double observationTheta) {
     z_k << observationPos.x(),
            observationPos.y(),
            observationTheta;
 
-    KalmanFilter::PredictWithUpdate();
+    KalmanFilter::predictWithUpdate();
 }
 
 

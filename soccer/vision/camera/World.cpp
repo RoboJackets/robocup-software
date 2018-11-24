@@ -21,8 +21,8 @@ void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newF
 
         // Take the non-sorted list from the frame and make a list for the cameras
         // TODO: Max num robots per team
-        std::vector<std::list<CameraRobot> yellowTeam(12);
-        std::vector<std::list<CameraRobot> blueTeam(12);
+        std::vector<std::list<CameraRobot>> yellowTeam(12);
+        std::vector<std::list<CameraRobot>> blueTeam(12);
 
         for (CameraRobot& robot : frame.getCameraRobotsYellow()) {
             yellowTeam.at(robot.getRobotID()).push_back(robot);
@@ -32,13 +32,13 @@ void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newF
             blueTeam.at(robot.getRobotID()).push_back(robot);
         }
 
-        cameras.at(frame.getCameraID).updateWithFrame(calcTime,
-                                                      frame.getCameraBalls,
-                                                      yellowTeam,
-                                                      blueTeam,
-                                                      ball,
-                                                      robotsYellow,
-                                                      robotsBlue);
+        cameras.at(frame.getCameraID()).updateWithFrame(calcTime,
+                                                        frame.getCameraBalls(),
+                                                        yellowTeam,
+                                                        blueTeam,
+                                                        ball,
+                                                        robotsYellow,
+                                                        robotsBlue);
 
         cameraUpdated.at(frame.getCameraID()) = true;
     }
@@ -54,16 +54,16 @@ void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newF
 }
 
 void World::updateWithoutCameraFrame(RJ::Time calcTime) {
-    calcBallbounce();
+    calcBallBounce();
 
     for (Camera& camera : cameras) {
         if (camera.getIsValid()) {
-            camera.updateWithoutCameraFrame(calcTime);
+            camera.updateWithoutFrame(calcTime);
         }
     }
 
     updateWorldObjects();
-    detectKicks(calctime);
+    detectKicks(calcTime);
 }
 
 void World::calcBallBounce() {
@@ -99,18 +99,31 @@ void World::updateWorldObjects() {
             std::vector<std::list<KalmanRobot>> cameraRobotsBlue = camera.getKalmanRobotsBlue();
 
             if (cameraBalls.size() > 0) {
-                kalmanBalls.push_back(cameraBalls.at(0));
+                // Sort by health of the kalman filter
+                cameraBalls.sort([](KalmanBall& a, KalmanBall& b) -> bool {
+                                    return a.getHealth() > b.getHealth();
+                                });
+
+                kalmanBalls.push_back(cameraBalls.front());
             }
 
             for (int i = 0; i < cameraRobotsYellow.size(); i++) {
                 if (cameraRobotsYellow.at(i).size() > 0) {
-                    kalmanRobotsYellow.at(i).push_back(cameraRobotsYellow.at(0));
+                    cameraRobotsYellow.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
+                                                         return a.getHealth() > b.getHealth();
+                                                     });
+
+                    kalmanRobotsYellow.at(i).push_back(cameraRobotsYellow.at(0).front());
                 }
             }
 
             for (int i = 0; i < cameraRobotsBlue.size(); i++) {
                 if (cameraRobotsBlue.at(i).size() > 0) {
-                    kalmanRobotsBlue.at(i).push_back(cameraRobotsBlue.at(0));
+                    cameraRobotsBlue.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
+                                                       return a.getHealth() > b.getHealth();
+                                                   });
+
+                    kalmanRobotsBlue.at(i).push_back(cameraRobotsBlue.at(0).front());
                 }
             }
         }
@@ -123,13 +136,13 @@ void World::updateWorldObjects() {
 
     for (int i = 0; i < robotsYellow.size(); i++) {
         if (kalmanRobotsYellow.at(i).size() > 0) {
-            robotsYellow.at(i) = WorldRobot(kalmanRobotsYellow.at(i));
+            robotsYellow.at(i) = WorldRobot(i, kalmanRobotsYellow.at(i));
         }
     }
 
     for (int i = 0; i < robotsBlue.size(); i++) {
         if (kalmanRobotsBlue.at(i).size() > 0) {
-            robotsBlue.at(i) = WorldRobot(kalmanRobotsBlue.at(i));
+            robotsBlue.at(i) = WorldRobot(i, kalmanRobotsBlue.at(i));
         }
     }
 }

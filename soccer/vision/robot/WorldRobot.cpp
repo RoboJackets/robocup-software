@@ -2,14 +2,18 @@
 #include <iostream>
 #include <cmath>
 
+REGISTER_CONFIGURABLE(WorldRobot)
+
+ConfigDouble* WorldRobot::robot_merger_power;
+
 void WorldRobot::createConfiguration(Configuration* cfg) {
-    robot_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldRobot/robot_merger_power", 1.5,)
+    robot_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldRobot/robot_merger_power", 1.5);
 }
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
 WorldRobot::WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots)
-    : robotId(robotID), isValid(true) {
+    : robotID(robotID), isValid(true) {
 
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     double thetaAvg = 0;
@@ -21,7 +25,7 @@ WorldRobot::WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots)
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (robot_merger_power < 1 || robot_merger_power > 2) {
+    if (*robot_merger_power < 1 || *robot_merger_power > 2) {
         std::cout
              << "CRITICAL ERROR: robot_merger_power must be between 1 and 2"
              << std::endl;
@@ -70,7 +74,7 @@ WorldRobot::WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots)
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),
         //  but it's a little more clear math-wise)
-        double posUncertantity = std::sqrt(posStdDev.magsq() + thetaStdDev*thetastdDev);
+        double posUncertantity = std::sqrt(posStdDev.magsq() + thetaStdDev*thetaStdDev);
         double velUncertantity = std::sqrt(posStdDev.magsq() + omegaStdDev*omegaStdDev);
 
         double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
@@ -104,7 +108,7 @@ WorldRobot::WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots)
 }
 
 bool WorldRobot::getIsValid() {
-    return isVAlid;
+    return isValid;
 }
 
 int WorldRobot::getRobotID() {
@@ -119,7 +123,7 @@ double WorldRobot::getTheta() {
     return theta;
 }
 
-Geomtery2d::Point WorldRobot::getVel() {
+Geometry2d::Point WorldRobot::getVel() {
     return vel;
 }
 
@@ -131,10 +135,10 @@ double WorldRobot::getPosCov() {
     return posCov;
 }
 
-double getVelCov() {
+double WorldRobot::getVelCov() {
     return velCov;
 }
 
-std::list<KalmanRobots> WorldRobot::getRobotComponents() {
+std::list<KalmanRobot> WorldRobot::getRobotComponents() {
     return robotComponents;
 }

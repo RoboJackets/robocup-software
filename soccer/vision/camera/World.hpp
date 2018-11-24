@@ -24,7 +24,7 @@ private:
     void updateWorldObjects();
     void detectKicks(RJ::Time calcTime);
 
-    std::vecctor<Camera> cameras;
+    std::vector<Camera> cameras;
 
     WorldBall ball;
     std::vector<WorldRobot> robotsYellow;

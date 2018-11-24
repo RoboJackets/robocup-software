@@ -8,17 +8,27 @@ Geometry2d::Point CameraBall::getPos() {
     return pos;
 }
 
-CameraBall CameraBall::CombineBalls(std::vector<CameraBall> balls) {
-    RJ::Time timeAvg = 0;
+CameraBall CameraBall::CombineBalls(std::list<CameraBall> balls) {
+    // Make sure we don't divide by zero due to some weird error
+    if (balls.size() == 0) {
+        std::cout << "CRITICAL ERROR: Number of balls to combine is zero" << std::endl;
+
+        return CameraBall(RJ::now(), Geometry2d::Point(0,0));
+    }
+
+    // Have to do the average like Ti + sum(Tn - Ti)/N
+    // so that we aren't trying to add time_points. It's durations instead.
+    RJ::Time initTime = balls.front().getTimeCaptured();
+    RJ::Seconds timeAvg = RJ::Seconds(0);
     Geometry2d::Point posAvg = Geometry2d::Point(0,0);
 
     for (CameraBall &cb : balls) {
-        timeAvg += cb.getTimeCaptured();
+        timeAvg += RJ::Seconds(cb.getTimeCaptured() - initTime);
         posAvg += cb.getPos();
     }
 
     timeAvg /= balls.size();
     posAvg /= balls.size();
 
-    return CameraBall(timeAvg, posAvg);
+    return CameraBall(initTime + timeAvg, posAvg);
 }

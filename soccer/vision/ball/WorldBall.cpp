@@ -2,6 +2,10 @@
 #include <iostream>
 #include <cmath>
 
+REGISTER_CONFIGURABLE(WorldBall)
+
+ConfigDouble* WorldBall::ball_merger_power;
+
 void WorldBall::createConfiguration(Configuration* cfg) {
     ball_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldBall/ball_merger_power", 1.5);
 }
@@ -16,7 +20,7 @@ WorldBall::WorldBall(std::list<KalmanBall> kalmanBalls) : isValid(true) {
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (ball_merger_power < 1 || ball_merger_power > 2) {
+    if (*ball_merger_power < 1 || *ball_merger_power > 2) {
         std::cout
              << "CRITICAL ERROR: ball_merger_power must be between 1 and 2"
              << std::endl;
@@ -102,6 +106,6 @@ double WorldBall::getVelCov() {
     return velCov;
 }
 
-std::list<KalmanBall> getBallComponents() {
+std::list<KalmanBall> WorldBall::getBallComponents() {
     return ballComponents;
 }

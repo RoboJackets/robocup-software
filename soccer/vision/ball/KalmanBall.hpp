@@ -10,6 +10,8 @@
 #include "vision/ball/WorldBall.hpp"
 #include "vision/filter/KalmanFilter2D.hpp"
 
+class WorldBall;
+
 /**
  * Filtered ball estimation for a single camera
  */
@@ -87,7 +89,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    ConfigDouble* max_time_outside_vision;
+    static ConfigDouble* max_time_outside_vision;
 
     RJ::Time lastUpdateTime;
     RJ::Time lastPredictTime;

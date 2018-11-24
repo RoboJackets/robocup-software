@@ -32,27 +32,27 @@ public:
      * @param observationSize The size of the observation vector
      */
     KalmanFilter(unsigned int stateSize, unsigned int observationSize) :
-        x_k1_k1(state_size), x_k_k1(state_size), x_k_k(state_size),
+        x_k1_k1(stateSize), x_k_k1(stateSize), x_k_k(stateSize),
         u_k(1), z_k(observationSize),
         y_k_k1(observationSize), y_k_k(observationSize),
         P_k1_k1(stateSize, stateSize), P_k_k1(stateSize, stateSize), P_k_k(stateSize, stateSize),
-        S_k(observationSize, observationSize), K_k(stateSate, observationSize),
+        S_k(observationSize, observationSize), K_k(stateSize, observationSize),
         F_k(stateSize, stateSize), B_k(stateSize, 1), H_k(observationSize, stateSize),
         Q_k(stateSize, stateSize), R_k(observationSize, observationSize),
-        I(MatrixXd::Identity(stateSize, stateSize)) {}
+        I(Eigen::MatrixXd::Identity(stateSize, stateSize)) {}
 
     /**
      * Predicts without update
      */
-    void Predict();
+    void predict();
 
     /**
      * Predicts with update
      * z_k must be set with the observation
      */
-    void PredictWithUpdate();
+    void predictWithUpdate();
 
-private:
+protected:
     Eigen::VectorXd x_k1_k1;
     Eigen::VectorXd x_k_k1;
     Eigen::VectorXd x_k_k;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <deque>
 
 #include <Geometry2d/Point.hpp>

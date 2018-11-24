@@ -2,11 +2,19 @@
 #include "vision/util/VisionFilterConfig.hpp"
 #include <cmath>
 
-void KalmanFilter2D::createConfiguation(Configuration* cfg) {
+REGISTER_CONFIGURABLE(KalmanFilter2D)
+
+ConfigDouble* KalmanFilter2D::ball_init_covariance;
+ConfigDouble* KalmanFilter2D::ball_process_noise;
+ConfigDouble* KalmanFilter2D::ball_observation_noise;
+
+void KalmanFilter2D::createConfiguration(Configuration* cfg) {
     ball_init_covariance = new ConfigDouble(cfg, "VisionFilter/Ball/init_covariance", 100);
     ball_process_noise = new ConfigDouble(cfg, "VisionFilter/Ball/process_noise", .1);
     ball_observation_noise = new ConfigDouble(cfg, "VisionFilter/Ball/observation_noise", 2.0);
 }
+
+KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1,1) {}
 
 KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point initVel)
     : KalmanFilter(4, 2) {
@@ -60,11 +68,11 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point init
     // Note: T is the sample period
     // Taken from Tiger's AutoRef. Most likely found through integration of error through the
     // state matrices
-    double p = *ball_process_noise;
+    p = *ball_process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
-    dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
-    dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
-    dt1 = dt * sigma * sigma;
+    double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
+    double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
+    double dt1 = dt * sigma * sigma;
 
     Q_k << dt3, dt2,   0,   0,
            dt2, dt1,   0,   0,
@@ -77,11 +85,11 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point init
            0, o;
 }
 
-void KalamnFilter2D::PredictWithUpdate(Geometry2d::Point observation) {
+void KalmanFilter2D::predictWithUpdate(Geometry2d::Point observation) {
     z_k << observation.x(),
            observation.y();
 
-    KalmanFilter::PredictWithUpdate();
+    KalmanFilter::predictWithUpdate();
 }
 
 Geometry2d::Point KalmanFilter2D::getPos() {
@@ -100,7 +108,7 @@ Geometry2d::Point KalmanFilter2D::getVelCov() {
     return Geometry2d::Point(P_k_k(1,1), P_k_k(3,3));
 }
 
-void KalmanFilter2D::setVel(Goemetry2d::Point newVel) {
+void KalmanFilter2D::setVel(Geometry2d::Point newVel) {
     x_k_k(1) = newVel.x();
     x_k_k(3) = newVel.y();
 }

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <Util.hpp>
+#include <Utils.hpp>
 #include <Configuration.hpp>
 
 #include "vision/ball/CameraBall.hpp"
@@ -11,7 +11,7 @@
 #include "vision/ball/WorldBall.hpp"
 #include "vision/robot/CameraRobot.hpp"
 #include "vision/robot/KalmanRobot.hpp"
-#include "vision/robot/WorldBall.hpp"
+#include "vision/robot/WorldRobot.hpp"
 #include "CameraFrame.hpp"
 #include "vision/ball/BallBounce.hpp"
 
@@ -41,7 +41,7 @@ public:
      * @param blueRobots List of blue world robots in the world class
      */
     void processBallBounce(std::vector<WorldRobot> yellowRobots,
-                           std::vecotr<WorldRobot> blueRobots);
+                           std::vector<WorldRobot> blueRobots);
 
     /**
      * Updates all the filters with the latest camera frame data for this camera
@@ -108,7 +108,7 @@ private:
      */
     void updateBallsAKF(RJ::Time calcTime,
                         std::vector<CameraBall> ballList,
-                        WorldBall& previousWorldBall):
+                        WorldBall& previousWorldBall);
 
     /**
      * Figures out which update style to use and calls that
@@ -124,7 +124,7 @@ private:
      */
     void updateRobotsMHKF(RJ::Time calcTime,
                           std::list<CameraRobot> singleRobotList,
-                          std::vector<WorldRobot>& previousWorldRobot,
+                          WorldRobot& previousWorldRobot,
                           std::list<KalmanRobot>& singleKalmanRobotList);
 
     /**
@@ -132,7 +132,7 @@ private:
      */
     void updateRobotsAKF(RJ::Time calcTime,
                          std::list<CameraRobot> singleRobotList,
-                         std::vector<WorldRobot>& previousWorldRobot,
+                         WorldRobot& previousWorldRobot,
                          std::list<KalmanRobot>& singleKalmanRobotList);
 
     /**
@@ -159,9 +159,9 @@ private:
     std::vector<std::list<KalmanRobot>> kalmanRobotYellowList;
     std::vector<std::list<KalmanRobot>> kalmanRobotBlueList;
 
-    ConfigDouble* MHKF_radius_cutoff;
-    ConfigBool* use_MHKF;
+    static ConfigDouble* MHKF_radius_cutoff;
+    static ConfigBool* use_MHKF;
 
     // TODO: Use the global max robot id number
-    const int maxRobotJerseyNum = 12;
+    int maxRobotJerseyNum = 12;
 };

@@ -3,8 +3,8 @@
 
 #include <Utils.hpp>
 
-#include "ball/CameraBall.hpp"
-#include "robot/CameraRobot.hpp"
+#include "vision/ball/CameraBall.hpp"
+#include "vision/robot/CameraRobot.hpp"
 
 class CameraFrame {
 public:

@@ -1,6 +1,8 @@
+#pragma once
+
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
-#include <vector>
+#include <list>
 
 /**
  * Wrapper for the protobuf observation
@@ -23,7 +25,7 @@ public:
      *
      * @param balls The list of balls to combine
      */
-    static CameraBall CombineBalls(std::vector<CameraBall> balls);
+    static CameraBall CombineBalls(std::list<CameraBall> balls);
 
 private:
     RJ::Time timeCaptured;

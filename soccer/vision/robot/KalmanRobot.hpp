@@ -8,7 +8,9 @@
 
 #include "vision/robot/CameraRobot.hpp"
 #include "vision/robot/WorldRobot.hpp"
-#include "vision/filter/Kalmanfilter3D.hpp"
+#include "vision/filter/KalmanFilter3D.hpp"
+
+class WorldRobot;
 
 /**
  * Filtered robot estimation for a single camera
@@ -47,6 +49,13 @@ public:
      * @return The camera id this belongs to
      */
     unsigned int getCameraID();
+
+    int getRobotID();
+
+    /**
+     * @return How healthy this filter is. AKA How often it's been updated
+     */
+    int getHealth();
 
     /**
      * @return Best estimate of the linear position of the robot
@@ -96,7 +105,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    ConfigDouble* max_time_outside_vision;
+    static ConfigDouble* max_time_outside_vision;
 
     RJ::Time lastUpdateTime;
     RJ::Time lastPredictTime;
@@ -107,6 +116,8 @@ private:
 
     int unwrapThetaCtr;
     int health;
+
+    int robotID;
 
     unsigned int cameraID;
 };

@@ -47,7 +47,6 @@ private:
      */
     static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
             KalmanBall& ball, WorldRobot& robot);
-    )
 
     // Linear velocity dampen
     static ConfigDouble* robot_body_lin_dampen;
@@ -55,3 +54,4 @@ private:
     // Reflect Angle dampen
     static ConfigDouble* robot_body_angle_dampen;
     static ConfigDouble* robot_mouth_angle_dampen;
+};
