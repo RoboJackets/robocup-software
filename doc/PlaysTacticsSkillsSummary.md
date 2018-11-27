@@ -15,7 +15,6 @@ For higher level plays, only Coordinated Pass and Defense are really used.
 
 | Tactics          | Description | Use When ... |
 | ---------------- | ----------- | ------------ |
-| Advance Zone Midfielder| Moves one robot to the best position to recieve the ball, and moves another robot to the best position to recieve the ball from that position. | Use it when need to move robots on a downfield attack at goal. |
 | Coordinated Pass | Moves one robot to the ball and the other to the receive point. When they both are ready, they will pass | Use when you want to pass the ball from one robot to another |
 | Defense          | Basic 2 robot defense that stays on the goalie box. Clears the ball when it comes close. | Use in most cases unless you are writing your own defense |
 | Defense Old      | Same as Defense, but significantly harder to read code-wise | Don't use |
@@ -34,6 +33,7 @@ Defender and Goalie are really only used on some specific restarts. Submissive D
 
 | Positions              | Description |
 | ---------------------- | ----------- |
+| Advance Zone Midfielder| Moves one robot to the best position to recieve the ball, and moves another robot to the best position to recieve the ball from that position. | Use it when need to move robots on a downfield attack at goal. |
 | Coach                  | The most important tactic we have. It yells strategic messages at the other robots, celebrates on goals, and follows the play from the side of the field. | 
 | Defender               | Defends specific areas of the field. Only used on restarts |
 | Goalie                 | Standalone goalie which does not coordinate with other robots. In most cases, it is better to add the Defense tactic, which implements the Submissive Goalie, or use the Submissive Goalie itself. |
