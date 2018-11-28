@@ -14,7 +14,7 @@ class TestDefense(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        b = tactics.defense.Defense()
+        b = tactics.defense.Defense(defender_priorities=[20,19,18])
         self.add_subbehavior(b, name='defense', required=True)
 
     def on_exit_running(self):

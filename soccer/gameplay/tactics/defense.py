@@ -17,16 +17,15 @@ class Defense(composite_behavior.CompositeBehavior):
     DEFENSE_ROBOT_CHANGE_COST = 0.05
 
     class State(Enum):
-        # Gets in the way of the opponent robots
+        # Gets in the way of the opponent 
         defending = 1
         # Tries to clear the ball when we can get there
         clearing = 2
 
     def __init__(self, defender_priorities=[20, 19]):
         super().__init__(continuous=True)
-
-        if len(defender_priorities) != 2:
-            raise RuntimeError("defender_priorities should have a length of 2")
+        self.number_of_defenders = len(defender_priorities)
+        self.bot_to_clear = None
 
         self.add_state(Defense.State.defending,
                        behavior.Behavior.State.running)
@@ -78,16 +77,19 @@ class Defense(composite_behavior.CompositeBehavior):
             main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and 
             main.ball().vel.mag() < .75 and 
             not evaluation.ball.is_in_our_goalie_zone()):
-            defender1 = self.subbehavior_with_name('defender1')
-            defender2 = self.subbehavior_with_name('defender2')
-            if (defender1.robot != None and defender2.robot != None):
 
-                defenders = [defender1.robot, defender2.robot]
-
-                # See if we can reach the ball before them
-                safe_to_clear, bot_to_clear = evaluation.path.can_collect_ball_before_opponent(
-                    our_robots_to_check=defenders)
-
+            defenders = []
+            for i in range(1,self.number_of_defenders+1):
+                tmp = self.subbehavior_with_name('defender{}'.format(i))
+                print(i,tmp)
+                if tmp.robot is not None:
+                    defenders.append(tmp.robot)
+            
+            # See if we can reach the ball before them
+            safe_to_clear, bot_to_clear = \
+                evaluation.path.can_collect_ball_before_opponent(our_robots_to_check=defenders)
+            #if safe_to_clear:
+            #    self.bot_to_clear = bot_to_clear
         return safe_to_clear
 
     def execute_running(self):
@@ -100,41 +102,49 @@ class Defense(composite_behavior.CompositeBehavior):
         self.find_and_set_defender_location()
 
     def on_enter_clearing(self):
-        defender1 = self.subbehavior_with_name("defender1")
-        defender1.go_clear = True
+        '''
+        Uses the bot to clear (set in the transition function to move to the clearing state)
+        And clears the ball
+        '''
+        self.bot_to_clear.go_clear = True
 
     def on_exit_clearing(self):
-        defender1 = self.subbehavior_with_name("defender1")
-        defender1.go_clear = False
+        self.bot_to_clear.go_clear = False
 
     def find_and_set_defender_location(self):
         goalie = self.subbehavior_with_name('goalie')
-        defender1 = self.subbehavior_with_name('defender1')
-        defender2 = self.subbehavior_with_name('defender2')
-        unused_threat_handlers = list(
-            filter(lambda bhvr: bhvr.robot is not None,
-                   [goalie, defender1, defender2]))
+
+        unused_threat_handlers = [self.subbehavior_with_name('goalie')]
+        for i in range(1,self.number_of_defenders+1):
+            unused_threat_handlers.append(self.subbehavior_with_name('defender{}'.format(i)))
+
+        unused_threat_handlers = [x for x in filter(lambda bhvr: bhvr.robot is not None,
+                   unused_threat_handlers)]
 
         threats = self.get_threat_list(unused_threat_handlers)
 
         # If no threats, kick out
         if not threats:
             return
-
         # Get top 2 threats based on score
         threats.sort(key=lambda threat: threat[1], reverse=True)
-        threats_to_block = threats[0:2]
-        assigned_handlers = [[], []]
+        threats_to_block = threats[0:self.number_of_defenders]
+        assigned_handlers = [[] for x in range(self.number_of_defenders)]
 
         # If we clearing the ball, assign the clearer to the most important
         # threat (the ball). This prevents assigning the non-clearing robot
         # to mark the ball and causing crowding.
-        if (defender1.state ==
+        
+        #This may not be required, but if we've already chosen a bot to clear- honor that.
+        if self.bot_to_clear is None:
+            self.bot_to_clear = self.subbehavior_with_name('defender1')
+
+        if (self.bot_to_clear.state ==
                 submissive_defender.SubmissiveDefender.State.clearing):
-            if defender1 in unused_threat_handlers:
+            if self.bot_to_clear in unused_threat_handlers:
                 if (threats_to_block[0][0].dist_to(main.ball().pos) <
                         constants.Robot.Radius * 2):
-                    defender_idx = unused_threat_handlers.index(defender1)
+                    defender_idx = unused_threat_handlers.index(self.bot_to_clear)
                     assigned_handlers[0].append(
                         unused_threat_handlers[defender_idx])
                     del unused_threat_handlers[defender_idx]
@@ -274,12 +284,9 @@ class Defense(composite_behavior.CompositeBehavior):
     #  @param assigned_handlers List of list, [ A ... ] where A represents a list of defenders assigned to threat A
     def set_defender_block_lines(self, threats_to_block, assigned_handlers):
         goalie = self.subbehavior_with_name('goalie')
-        defender1 = self.subbehavior_with_name('defender1')
-        defender2 = self.subbehavior_with_name('defender2')
-
-        # Check keep defenders from occupying the same spot
-        # it will break if you change this
-        handlers = [goalie, defender1, defender2]
+        handlers = [goalie]
+        for i in range(1,self.number_of_defenders+1):
+            handlers.append(self.subbehavior_with_name('defender{}'.format(i)))
 
         # For each threat
         for threat_idx in range(len(threats_to_block)):
@@ -302,6 +309,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 continue
 
             # Put goalie in the middle if possible
+            # This may not be working with more robots- Need to test
             if len(assigned_handler) > 1:
                 if goalie in assigned_handler:
                     idx = assigned_handler.index(goalie)
@@ -382,7 +390,7 @@ class Defense(composite_behavior.CompositeBehavior):
         # HOWEVER: Removing the bias causes flipping back and forth between
         # robots on defense occasionally, so we will only decrease the
         # robot_change_cost, not remove it.
-        for subbehavior_name in ['defender1', 'defender2']:
+        for subbehavior_name in ['defender{}'.format(i) for i in range(1,self.number_of_defenders+1)]:
             if subbehavior_name in reqs:
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
