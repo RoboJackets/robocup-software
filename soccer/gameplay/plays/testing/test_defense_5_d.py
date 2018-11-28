@@ -6,7 +6,7 @@ import main
 
 
 ## Runs our Defense tactic
-class TestDefense(play.Play):
+class TestDefense5D(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,
@@ -14,7 +14,7 @@ class TestDefense(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        b = tactics.defense.Defense()
+        b = tactics.defense.Defense(defender_priorities=[20,19,18, 17, 16])
         self.add_subbehavior(b, name='defense', required=True)
 
     def on_exit_running(self):
