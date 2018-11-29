@@ -96,17 +96,17 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         Geometry2d::Point mouthIntersect;
         bool intersects = intersectLine.intersects(mouthLine, &mouthIntersect);
 
-        // The mouth is a coord across the circle.
-        // We have the distance of the coord to the center of the circle
+        // The mouth is a chord across the circle.
+        // We have the distance of the chord to the center of the circle
         // We also have the radius of the robot
-        // Using that, we can calculate half the coord length using sqrt(R^2 - dist^2)
+        // Using that, we can calculate half the chord length using sqrt(R^2 - dist^2)
         // Keep in square form since we can get square form of the magnitude of the intersectPt to mouthCenter
         // TODO: Get mouth dist and robot radius
-        const double coordHalfLength = .6*.6 + .1*.1;
+        const double chordHalfLength = .6*.6 + .1*.1;
         bool didHitMouth = false;
 
-        // If the line intersect is inside the mouth coord
-        if (intersects && (mouthIntersect - mouthCenterPos).magsq() < coordHalfLength) {
+        // If the line intersect is inside the mouth chord
+        if (intersects && (mouthIntersect - mouthCenterPos).magsq() < chordHalfLength) {
             closestIntersectPt = mouthIntersect;
             didHitMouth = true;
         }

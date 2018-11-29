@@ -20,6 +20,13 @@
  *
  * The most recently updated values
  *  x_k_k, P_k_k
+ *
+ * Taken from https://en.wikipedia.org/wiki/Kalman_filter
+ *
+ * Conversion between code notation and wiki notation is...
+ * x_k1_k1 is X_(k-1, k-1)
+ * x_k_k is X_(k, k)
+ * etc
  */
 class KalmanFilter {
 public:

@@ -86,7 +86,7 @@ private:
      *   Any measurements not "near" a filter are used as the initial values to create a new filter
      *
      * AKF refers to the Average Kalman Filter
-     *   AKF averages all mesurements and then uses that as the measurement to the filter
+     *   AKF averages all measurements and then uses that as the measurement to the filter
      */
 
     /**
@@ -144,8 +144,8 @@ private:
     void removeInvalidRobots();
 
     /**
-     * Predicts all robots in one of the yellow/blue lists
-     * Simplifies some copy past
+     * Predicts all robots in the given list
+     * Simplifies some copy paste
      *
      * @param calcTime Time of this calculation
      * @param robotListList Either kalmanRobotYellowList or kalmnaRobotBlueList

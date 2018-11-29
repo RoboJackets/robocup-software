@@ -16,7 +16,7 @@ public:
      *
      * @param ball Kalman ball we are trying to test
      * @param yellowRobots Best estimation of the yellow robots states
-     * @param blueRobots Best esetimation of the yellow robots states
+     * @param blueRobots Best estimation of the yellow robots states
      * @param outNewVel Output of the resulting velocity vector after bounce
      *
      * @return Whether the ball bounces or not

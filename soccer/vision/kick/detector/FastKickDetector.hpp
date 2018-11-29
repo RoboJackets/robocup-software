@@ -10,6 +10,15 @@
 #include "vision/kick/KickEvent.hpp"
 #include "vision/kick/VisionState.hpp"
 
+/**
+ * Detects extremely fast kicks in the case where the
+ * 5 or more samples required by the slow kick detector
+ * would take too long to collect and still have time to
+ * react to the ball.
+ *
+ * Uses a very simple velocity change over 3 samples to test
+ * for kicks.
+ */
 class FastKickDetector {
 public:
     FastKickDetector();

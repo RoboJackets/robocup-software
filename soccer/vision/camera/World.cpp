@@ -75,7 +75,7 @@ void World::calcBallBounce() {
 }
 
 void World::updateWorldObjects() {
-    // Fill robotsYellow/Blue with what robobts we want and remove the rest
+    // Fill robotsYellow/Blue with what robots we want and remove the rest
     ball = WorldBall();
 
     for (WorldRobot& robot : robotsYellow) {
