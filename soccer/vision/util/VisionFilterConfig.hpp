@@ -15,4 +15,5 @@ public:
     static ConfigInt* filter_health_min;
 
     static ConfigInt* slow_kick_detector_history_length;
+    static ConfigInt* fast_kick_detector_history_length;
 };

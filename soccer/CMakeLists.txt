@@ -75,6 +75,7 @@ set(ROBOCUP_LIB_SRC
     "vision/kick/detector/SlowKickDetector.cpp"
     "vision/kick/estimator/ChipKickEstimator.cpp"
     "vision/kick/estimator/FlatKickEstimator.cpp"
+    "vision/kick/KickEvent.cpp"
     "vision/robot/CameraRobot.cpp"
     "vision/robot/KalmanRobot.cpp"
     "vision/robot/WorldRobot.cpp"

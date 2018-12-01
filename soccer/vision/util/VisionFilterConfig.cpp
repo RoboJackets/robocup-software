@@ -11,6 +11,7 @@ ConfigInt* VisionFilterConfig::filter_health_max;
 ConfigInt* VisionFilterConfig::filter_health_min;
 
 ConfigInt* VisionFilterConfig::slow_kick_detector_history_length;
+ConfigInt* VisionFilterConfig::fast_kick_detector_history_length;
 
 void VisionFilterConfig::createConfiguration(Configuration* cfg) {
     vision_loop_dt = new ConfigDouble(cfg, "VisionFilter/loop_dt", 1.0 / 100.0);
@@ -27,4 +28,5 @@ void VisionFilterConfig::createConfiguration(Configuration* cfg) {
     filter_health_min = new ConfigInt(cfg, "VisionFilter/Health/min", 1);
 
     slow_kick_detector_history_length = new ConfigInt(cfg, "VisionFilter/Kick/Detector/slow_hist_length", 5);
+    fast_kick_detector_history_length = new ConfigInt(cfg, "VisionFilter/Kick/Detector/fast_hist_length", 3);
 }

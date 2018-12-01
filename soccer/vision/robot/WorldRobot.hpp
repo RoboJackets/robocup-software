@@ -11,6 +11,11 @@ class KalmanRobot;
 
 class WorldRobot {
 public:
+    enum Team {
+        YELLOW,
+        BLUE
+    };
+
     /**
      * Creates an invalid world robot.
      * This is so the World can create a full list of robots without dealing with holes
@@ -23,12 +28,17 @@ public:
      * @param robotID The ID of the robot
      * @param kalmlanRobots List of kalman robots from each of the cameras to merger
      */
-    WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots);
+    WorldRobot(Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
 
     /**
      * @return If the robot actually represents a real robot
      */
     bool getIsValid();
+
+    /**
+     * @return Enum value representing team color
+     */
+    Team getTeamColor();
 
     /**
      * @return The robot id
@@ -73,6 +83,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
+    Team team;
     int robotID;
     Geometry2d::Point pos;
     double theta;

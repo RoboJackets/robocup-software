@@ -136,13 +136,13 @@ void World::updateWorldObjects() {
 
     for (int i = 0; i < robotsYellow.size(); i++) {
         if (kalmanRobotsYellow.at(i).size() > 0) {
-            robotsYellow.at(i) = WorldRobot(i, kalmanRobotsYellow.at(i));
+            robotsYellow.at(i) = WorldRobot(WorldRobot::Team::YELLOW, i, kalmanRobotsYellow.at(i));
         }
     }
 
     for (int i = 0; i < robotsBlue.size(); i++) {
         if (kalmanRobotsBlue.at(i).size() > 0) {
-            robotsBlue.at(i) = WorldRobot(i, kalmanRobotsBlue.at(i));
+            robotsBlue.at(i) = WorldRobot(WorldRobot::Team::BLUE, i, kalmanRobotsBlue.at(i));
         }
     }
 }

@@ -12,8 +12,8 @@ void WorldRobot::createConfiguration(Configuration* cfg) {
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
-WorldRobot::WorldRobot(int robotID, std::list<KalmanRobot> kalmanRobots)
-    : robotID(robotID), isValid(true) {
+WorldRobot::WorldRobot(Team team, int robotID, std::list<KalmanRobot> kalmanRobots)
+    : team(team), robotID(robotID), isValid(true) {
 
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     double thetaAvg = 0;
