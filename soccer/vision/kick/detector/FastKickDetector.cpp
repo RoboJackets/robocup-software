@@ -31,6 +31,17 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
         return false;
     }
 
+    // Make sure all the balls are valid
+    // Otherwise we can't do anything
+    bool allValid = std::all_of(stateHistory.begin(), stateHistory.end(),
+                                [](VisionState& v){
+                                    return v.ball.getIsValid();
+                                });
+
+    if (!alllValid) {
+        return false;
+    }
+
     // If we didn't kick, just return
     if (!detectKick()) {
         return false;

@@ -2,6 +2,7 @@
 
 #include <deque>
 
+#include <Configuration.hpp>
 #include <Utils.hpp>
 
 #include "vision/ball/WorldBall.hpp"
@@ -52,6 +53,7 @@ private:
      */
     WorldRobot getClosestRobot();
 
-    static ConfigDouble* acceleration_trigger;
     std::deque<VisionState> stateHistory;
+
+    static ConfigDouble* acceleration_trigger;
 };
