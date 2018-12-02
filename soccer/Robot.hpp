@@ -34,7 +34,6 @@ class SystemState;
 class RobotConfig;
 class RobotStatus;
 class MotionControl;
-class RobotFilter;
 
 namespace Packet {
 class DebugText;
@@ -85,7 +84,6 @@ public:
 class Robot : public RobotPose {
 public:
     Robot(unsigned int shell, bool self);
-    ~Robot();
 
     /**
      * ID number for the robot.  This is the number that the dot pattern on the
@@ -98,10 +96,6 @@ public:
      */
     bool self() const { return _self; }
 
-    /**
-     * Get the robot's position filter.
-     */
-    RobotFilter* filter() const { return _filter; }
 
     bool operator==(const Robot& other) {
         return shell() == other.shell() && self() == other.self();
@@ -120,7 +114,6 @@ public:
 private:
     unsigned int _shell;
     bool _self;
-    RobotFilter* _filter;
 };
 
 /**

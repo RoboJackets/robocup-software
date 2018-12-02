@@ -147,6 +147,7 @@ void World::updateWorldObjects() {
     }
 }
 
-void detectKicks(RJ::Time calcTime) {
-
+void World::detectKicks(RJ::Time calcTime) {
+    // TODO: add the frame to the kick stuff
+    // Run it and see what happens
 }

@@ -30,12 +30,12 @@ bool SlowKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
                                  KickEvent& kickEvent) {
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
-    if (stateHistory.size() > VisionFilterConfig::slow_kick_detector_history_length) {
+    if (stateHistory.size() > *VisionFilterConfig::slow_kick_detector_history_length) {
         stateHistory.pop_front();
     }
 
     // If we don't have enough, just return
-    if (stateHistory.size() < VisionFilterConfig::fast_kick_detector_history_length) {
+    if (stateHistory.size() < *VisionFilterConfig::fast_kick_detector_history_length) {
         return false;
     }
 
@@ -46,7 +46,7 @@ bool SlowKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
                                     return v.ball.getIsValid();
                                 });
 
-    if (!alllValid) {
+    if (!allValid) {
         return false;
     }
 
@@ -66,7 +66,7 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
     // Check all robots if they have enough measurements
     for (int i = 0; i < stateHistory.at(0).yellowRobots.size(); i++) {
         bool allValid = std::all_of(stateHistory.begin(), stateHistory.end(),
-                                    [](VisionState& v) {
+                                    [i](VisionState& v) {
                                         return v.yellowRobots.at(i).getIsValid();
                                     });
 
@@ -83,7 +83,7 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
 
         // Valid kick robot
         // Just take this and return a kick event
-        if (checkAllValidators(robotList, ball)) {
+        if (checkAllValidators(robotList, ballList)) {
             kickEvent = KickEvent(stateHistory.at(0).calcTime,
                                   stateHistory.at(0).yellowRobots.at(i),
                                   stateHistory);
@@ -96,7 +96,7 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
     // Same as above, need a better way to do this
     for (int i = 0; i < stateHistory.at(0).blueRobots.size(); i++) {
         bool allValid = std::all_of(stateHistory.begin(), stateHistory.end(),
-                                    [](VisionState& v) {
+                                    [i](VisionState& v) {
                                         return v.blueRobots.at(i).getIsValid();
                                     });
 
@@ -113,7 +113,7 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
 
         // Valid kick robot
         // Just take this and return a kick event
-        if (checkAllValidators(robotList, ball)) {
+        if (checkAllValidators(robotList, ballList)) {
             kickEvent = KickEvent(stateHistory.at(0).calcTime,
                                   stateHistory.at(0).blueRobots.at(i),
                                   stateHistory);
@@ -125,11 +125,12 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
     return false;
 }
 
-bool SlowKickDetector::checkAllValidators(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball) {
-    return distanceValidator(testRobotTeam, testRobotID) &&
-           velocityValidator(testRobotTeam, testRobotID) &&
-           distanceIncreasingValidator(testRobotTeam, testRobotID) &&
-           inFrontValidator(testRobotTeam, testRobotID);
+bool SlowKickDetector::checkAllValidators(std::vector<WorldRobot>& robot,
+                                          std::vector<WorldBall>& ball) {
+    return distanceValidator(robot, ball) &&
+           velocityValidator(robot, ball) &&
+           distanceIncreasingValidator(robot, ball) &&
+           inFrontValidator(robot, ball);
 }
 
 bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball) {
@@ -144,10 +145,12 @@ bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot, std::ve
         dist.at(i) = (robot.at(i).getPos() - ball.at(i).getPos()).mag();
     }
 
-    int numClose = std::count_if(dist.begin(), dist.end(), [](double i){ return i < *one_robot_within_dist });
-    int numFar   = std::count_if(dist.begin(), dist.end(), [](double i){ return i > *any_robot_past_dist });
+    int numClose = std::count_if(dist.begin(), dist.end(),
+                                 [](double i){ return i < *one_robot_within_dist; });
+    int numFar   = std::count_if(dist.begin(), dist.end(),
+                                 [](double i){ return i > *any_robot_past_dist; });
 
-    return numClose == 1 && numFar > 0
+    return numClose == 1 && numFar > 0;
 }
 
 bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball) {
@@ -156,10 +159,11 @@ bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& robot, std::ve
     std::vector<double> vel(ball.size() - 1, 0);
 
     for (int i = 0; i < ball.size() - 1; i++) {
-        vel.at(i) = (ball.at(i+1).getPos() - ball.at(i).getPos()).mag() / *visionFilterConfig::vision_loop_dt;
+        vel.at(i) = (ball.at(i+1).getPos() - ball.at(i).getPos()).mag() / *VisionFilterConfig::vision_loop_dt;
     }
 
-    bool allAbove = std::all_of(vel.begin(), vel.end(), [](double i){ return i > *min_ball_speed });
+    bool allAbove = std::all_of(vel.begin(), vel.end(),
+                                [](double i){ return i > *min_ball_speed; });
 
     return allAbove;
 }
@@ -169,8 +173,8 @@ bool SlowKickDetector::distanceIncreasingValidator(std::vector<WorldRobot>& robo
 
     // robot and ball are the same size
     for (int i = 0; i < robot.size() - 1; i++) {
-        double dist1 = (robot.at(i) - ball.at(i)).magsq();
-        double dist2 = (robot.at(i+1) - ball.at(i+1)).magsq();
+        double dist1 = (robot.at(i).getPos() - ball.at(i).getPos()).magsq();
+        double dist2 = (robot.at(i+1).getPos() - ball.at(i+1).getPos()).magsq();
 
         if (dist2 - dist1 < 0) {
             return false;
@@ -192,7 +196,7 @@ bool SlowKickDetector::inFrontValidator(std::vector<WorldRobot>& robot, std::vec
 
         double angle = normal.angleBetween(robotToBall);
 
-        if (angle > *mix_kick_angle) {
+        if (angle > *max_kick_angle) {
             return false;
         }
     }

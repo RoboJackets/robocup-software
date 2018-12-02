@@ -16,7 +16,6 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
-#include <modeling/RobotFilter.hpp>
 #include "VisionReceiver.hpp"
 
 #include "rc-fshare/rtp.hpp"

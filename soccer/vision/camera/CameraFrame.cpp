@@ -1,7 +1,6 @@
 #include "CameraFrame.hpp"
 
-CameraFrame::CameraFrame(int frameNumber,
-                         RJ::Time tCapture,
+CameraFrame::CameraFrame(RJ::Time tCapture,
                          int cameraID,
                          std::vector<CameraBall> cameraBalls,
                          std::vector<CameraRobot> cameraRobotsYellow,

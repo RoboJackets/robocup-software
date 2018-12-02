@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <vector>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
@@ -16,7 +17,7 @@ public:
     /**
      * Adds a list of frames that arrived
      */
-    void addFrames();
+    void addFrames(std::vector<CameraFrame> frames);
     void getBall();
     void getRobots();
 

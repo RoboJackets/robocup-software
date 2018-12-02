@@ -22,12 +22,12 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
 
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
-    if (stateHistory.size() > VisionFilterConfig::fast_kick_detector_history_length) {
+    if (stateHistory.size() > *VisionFilterConfig::fast_kick_detector_history_length) {
         stateHistory.pop_front();
     }
 
     // If we don't have enough, just return
-    if (stateHistory.size() < VisionFilterConfig::fast_kick_detector_history_length) {
+    if (stateHistory.size() < *VisionFilterConfig::fast_kick_detector_history_length) {
         return false;
     }
 
@@ -38,7 +38,7 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
                                     return v.ball.getIsValid();
                                 });
 
-    if (!alllValid) {
+    if (!allValid) {
         return false;
     }
 
@@ -72,17 +72,17 @@ bool FastKickDetector::detectKick() {
     Geometry2d::Point dpEnd = stateHistory.at(endIdx).ball.getPos() - stateHistory.at(endIdx - 1).ball.getPos();
 
     // Velocity at the start and end measurements
-    Geometry2d::Point vStart = dpStart / VisionFilterConfig::vision_loop_dt;
-    Goemetry2d::Point vEnd = dpEnd / VisionFilterConfig::vision_loop_dt;
+    Geometry2d::Point vStart = dpStart / *VisionFilterConfig::vision_loop_dt;
+    Geometry2d::Point vEnd = dpEnd / *VisionFilterConfig::vision_loop_dt;
 
     // Change in velocity between start and end measurements
     Geometry2d::Point dv = vEnd - vStart;
 
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to have to retune it
-    Geometry2d::Point accel = dv / VisionFilterConfig::vision_loop_dt;
+    Geometry2d::Point accel = dv / *VisionFilterConfig::vision_loop_dt;
 
-    return accel.mag() > acceleration_trigger;
+    return accel.mag() > *acceleration_trigger;
 }
 
 WorldRobot FastKickDetector::getClosestRobot() {

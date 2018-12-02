@@ -18,7 +18,7 @@ public:
 
     void addState(RJ::Time calcTime, WorldBall ball,
                   std::vector<WorldRobot> yellowRobots,
-                  std::vector<WroldRobot> blueRobots);
+                  std::vector<WorldRobot> blueRobots);
 
     RJ::Time kickTime;
     WorldRobot kickingRobot;

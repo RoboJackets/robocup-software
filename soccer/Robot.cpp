@@ -1,6 +1,5 @@
-#include <Robot.hpp>
+    #include <Robot.hpp>
 #include <LogUtils.hpp>
-#include <modeling/RobotFilter.hpp>
 #include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
@@ -33,12 +32,8 @@ const float Ball_Avoid_Small = 2.0 * Ball_Radius;
 const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
-    : RobotPose(), _shell(shell), _self(self), _filter(new RobotFilter()) {}
+    : RobotPose(), _shell(shell), _self(self) {}
 
-Robot::~Robot() {
-    delete _filter;
-    _filter = nullptr;
-}
 
 #pragma mark OurRobot
 

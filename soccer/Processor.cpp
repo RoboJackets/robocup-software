@@ -198,18 +198,16 @@ bool Processor::joystickValid() const {
 
 void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFrames) {
     std::vector<CameraFrame> frames;
-    frames.reserve(frame.size());
 
     for (const SSL_DetectionFrame* frame : detectionFrames) {
-        vector<CameraBalls> ballObservations;
+        vector<CameraBall> ballObservations;
         vector<CameraRobot> yellowObservations;
         vector<CameraRobot> blueObservations;
 
         RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
             RJ::Seconds(frame->t_capture())));
 
-        // Add ball ovservations
-        ballObservations.reserve(frame->balls().size());
+        // Add ball observations
         for (const SSL_DetectionBall& ball : frame->balls()) {
             ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
@@ -241,7 +239,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
     }
 
-    _vision.addFrames(frames);
+    _vision->addFrames(frames);
 
     // Fill the list of our robots/balls based on _blue
 }
