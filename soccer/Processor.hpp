@@ -26,7 +26,7 @@ class RobotStatus;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
-class BallTracker;
+class VisionFilter;
 
 namespace Gameplay {
 class GameplayModule;
@@ -222,8 +222,7 @@ private:
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
-    void runModels(
-        const std::vector<const SSL_DetectionFrame*>& detectionFrames);
+    void runModels(const std::vector<const SSL_DetectionFrame*>& detectionFrames);
 
     /** Used to start and stop the thread **/
     volatile bool _running;
@@ -284,7 +283,7 @@ private:
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-    std::shared_ptr<BallTracker> _ballTracker;
+    std::shared_ptr<VisionFilter> _vision;
 
     // joystick control
     std::vector<Joystick*> _joysticks;

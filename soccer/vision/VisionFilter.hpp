@@ -2,6 +2,7 @@
 
 #include <mutex>
 
+#include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
 
 class VisionFilter {

@@ -6,13 +6,10 @@ CameraFrame::CameraFrame(int frameNumber,
                          std::vector<CameraBall> cameraBalls,
                          std::vector<CameraRobot> cameraRobotsYellow,
                          std::vector<CameraRobot> cameraRobotsBlue)
-    : frameNumber(frameNumber), tCapture(tCapture), cameraID(cameraID),
-      cameraBalls(cameraBalls), cameraRobotsYellow(cameraRobotsYellow),
+    : tCapture(tCapture), cameraID(cameraID),
+      cameraBalls(cameraBalls),
+      cameraRobotsYellow(cameraRobotsYellow),
       cameraRobotsBlue(cameraRobotsBlue) {}
-
-int CameraFrame::getFrameNumber() {
-    return frameNumber;
-}
 
 RJ::Time CameraFrame::getTCapture() {
     return tCapture;
