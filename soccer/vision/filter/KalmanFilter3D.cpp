@@ -8,11 +8,13 @@ REGISTER_CONFIGURABLE(KalmanFilter3D)
 ConfigDouble* KalmanFilter3D::robot_init_covariance;
 ConfigDouble* KalmanFilter3D::robot_process_noise;
 ConfigDouble* KalmanFilter3D::robot_observation_noise;
+ConfigDouble* KalmanFilter3D::orientation_scale;
 
 void KalmanFilter3D::createConfiguration(Configuration* cfg) {
     robot_init_covariance = new ConfigDouble(cfg, "VisionFilter/Robot/init_covariance", 100);
     robot_process_noise = new ConfigDouble(cfg, "VisionFilter/Robot/process_noise", .1);
     robot_observation_noise = new ConfigDouble(cfg, "VisionFilter/Robot/observation_noise", 2.0);
+    orientation_scale = new ConfigDouble(cfg, "VisionFilter/Robot/orientation_scale", 1);
 }
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1,1) {}
@@ -33,12 +35,13 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
 
     // Initial covariance is usually extremely high to converge to the true solution
     double p = *robot_init_covariance;
-    P_k1_k1 << p, 0, 0, 0, 0, 0,
-               0, p, 0, 0, 0, 0,
-               0, 0, p, 0, 0, 0,
-               0, 0, 0, p, 0, 0,
-               0, 0, 0, 0, p, 0,
-               0, 0, 0, 0, 0, p;
+    double s = *orientation_scale;
+    P_k1_k1 << p,   0,   0,   0,   0,   0,
+               0,   p,   0,   0,   0,   0,
+               0,   0,   p,   0,   0,   0,
+               0,   0,   0,   p,   0,   0,
+               0,   0,   0,   0, s*p,   0,
+               0,   0,   0,   0,   0, s*p;
     P_k_k1 = P_k1_k1;
     P_k_k = P_k1_k1;
 
@@ -85,18 +88,18 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
     double dt2 = 1.0 / 2.0 * dt * dt * sigma * sigma;
     double dt1 = dt * sigma * sigma;
 
-    Q_k << dt3, dt2,   0,   0,   0,   0,
-           dt2, dt1,   0,   0,   0,   0,
-             0,   0, dt3, dt2,   0,   0,
-             0,   0, dt2, dt1,   0,   0,
-             0,   0,   0,   0, dt3, dt2,
-             0,   0,   0,   0, dt2, dt1;
+    Q_k << dt3,   dt2,     0,     0,     0,     0,
+           dt2,   dt1,     0,     0,     0,     0,
+             0,     0,   dt3,   dt2,     0,     0,
+             0,     0,   dt2,   dt1,     0,     0,
+             0,     0,     0,     0, s*dt3, s*dt2,
+             0,     0,     0,     0, s*dt2, s*dt1;
 
     // Covariance of observation noise (how wrong z_k is)
     double o = *robot_observation_noise;
-    R_k << o, 0, 0,
-           0, o, 0,
-           0, 0, o;
+    R_k << o,   0,   0,
+           0,   o,   0,
+           0,   0, s*o;
 }
 
 void KalmanFilter3D::predictWithUpdate(Geometry2d::Point observationPos,

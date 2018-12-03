@@ -218,6 +218,12 @@ set(SOCCER_TEST_SRC
     "planning/EscapeObstaclesPathPlannerTest.cpp"
     "planning/TargetVelPathPlannerTest.cpp"
     "TestMain.cpp"
+    "vision/tests/CameraBallTest.cpp"
+    "vision/tests/KalmanBallTest.cpp"
+    "vision/tests/WorldBallTest.cpp"
+    "vision/tests/CameraRobotTest.cpp"
+    "vision/tests/KalmanRobotTest.cpp"
+    "vision/tests/WorldRobotTest.cpp"
     "WindowEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})

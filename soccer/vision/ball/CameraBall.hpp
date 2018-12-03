@@ -1,8 +1,9 @@
 #pragma once
 
+#include <list>
+
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
-#include <list>
 
 /**
  * Wrapper for the protobuf observation

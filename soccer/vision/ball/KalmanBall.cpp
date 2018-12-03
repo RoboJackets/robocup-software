@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "vision/util/VisionFilterConfig.hpp"
+#include <iostream>
 
 REGISTER_CONFIGURABLE(KalmanBall)
 
@@ -20,6 +21,7 @@ KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
     Geometry2d::Point initPos = initMeasurement.getPos();
     Geometry2d::Point initVel = Geometry2d::Point(0,0);
     
+    // If we have a world ball, use that vel as init to smooth cam transitions
     if (previousWorldBall.getIsValid()) {
         initVel = previousWorldBall.getVel();
     }

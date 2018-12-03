@@ -1,6 +1,8 @@
 #include "KalmanFilter2D.hpp"
-#include "vision/util/VisionFilterConfig.hpp"
+
 #include <cmath>
+
+#include "vision/util/VisionFilterConfig.hpp"
 
 REGISTER_CONFIGURABLE(KalmanFilter2D)
 
@@ -81,7 +83,7 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point init
 
     // Covariance of observation noise (how wrong z_k is)
     double o = *ball_observation_noise;
-    R_k << o, 0;
+    R_k << o, 0,
            0, o;
 }
 

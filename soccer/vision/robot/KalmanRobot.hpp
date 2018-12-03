@@ -114,6 +114,7 @@ private:
 
     KalmanFilter3D filter;
 
+    double previousTheta;
     int unwrapThetaCtr;
     int health;
 

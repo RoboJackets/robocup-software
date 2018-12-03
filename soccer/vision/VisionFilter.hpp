@@ -2,6 +2,8 @@
 
 #include <mutex>
 #include <vector>
+#include <list>
+#include <thread>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
@@ -17,13 +19,21 @@ public:
     /**
      * Adds a list of frames that arrived
      */
-    void addFrames(std::vector<CameraFrame> frames);
+    void addFrames(std::vector<CameraFrame>& frames);
     void getBall();
     void getRobots();
 
 private:
-    static void workerThread();
+    void workerThread();
 
-    std::deque<CameraFrame> frameBuffer;
+    std::thread worker;
+
+    std::mutex worldLock;
     World world;
+
+    std::mutex threadEndLock;
+    bool threadEnd;
+
+    std::mutex frameLock;
+    std::list<CameraFrame> frameBuffer;
 };

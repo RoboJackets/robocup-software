@@ -72,7 +72,7 @@ public:
     Geometry2d::Point getPosCov();
 
     /**
-     * @return Covaraince in X and Y direction of the velocity of the ball
+     * @return Covariance in X and Y direction of the velocity of the ball
      */
     Geometry2d::Point getVelCov();
 

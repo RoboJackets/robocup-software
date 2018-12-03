@@ -37,4 +37,5 @@ private:
     static ConfigDouble* robot_init_covariance;
     static ConfigDouble* robot_process_noise;
     static ConfigDouble* robot_observation_noise;
+    static ConfigDouble* orientation_scale;
 };

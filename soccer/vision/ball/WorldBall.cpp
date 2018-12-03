@@ -31,6 +31,7 @@ WorldBall::WorldBall(std::list<KalmanBall> kalmanBalls) : isValid(true) {
              << "CRITICAL ERROR: Zero balls are given to the WorldBall constructor"
              << std::endl;
 
+        isValid = false;
         pos = posAvg;
         vel = velAvg;
         posCov = 0;
@@ -55,7 +56,7 @@ WorldBall::WorldBall(std::list<KalmanBall> kalmanBalls) : isValid(true) {
         velStdDev.y() = std::sqrt(velCov.y());
 
         // Inversely proportional to how much the filter has been updated
-        double filterUncertantity = 1 / ball.getHealth();
+        double filterUncertantity = 1.0 / ball.getHealth();
 
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),

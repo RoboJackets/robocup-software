@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -33,6 +34,7 @@ KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
     filter = KalmanFilter3D(initPos, initTheta, initVel, initOmega);
 
     previousMeasurements.push_back(initMeasurement);
+    previousTheta = initTheta;
 }
 
 void KalmanRobot::predict(RJ::Time currentTime) {
@@ -60,17 +62,18 @@ void KalmanRobot::predictAndUpdate(RJ::Time currentTime, CameraRobot updateRobot
     }
 
     // Unwrap theta so we have a continuous heading
-    double prevTheta = (*previousMeasurements.end()).getTheta();
     double curTheta = updateRobot.getTheta();
 
     // See if it went below -pi
     // Note: PI/2 is used to give a good buffer on either side
-    if (prevTheta < -M_PI_2 && curTheta > M_PI_2) {
+    if (previousTheta < -M_PI_2 && curTheta > M_PI_2) {
         unwrapThetaCtr--;
     // Went above pi
-    } else if (prevTheta > M_PI_2 && curTheta < -M_PI_2) {
+    } else if (previousTheta > M_PI_2 && curTheta < -M_PI_2) {
         unwrapThetaCtr++;
     }
+
+    previousTheta = curTheta;
 
     filter.predictWithUpdate(updateRobot.getPos(), curTheta + unwrapThetaCtr*2*M_PI);
 }
@@ -123,4 +126,8 @@ Geometry2d::Point KalmanRobot::getVelCov() {
 
 double KalmanRobot::getOmegaCov() {
     return filter.getOmegaCov();
+}
+
+std::deque<CameraRobot> KalmanRobot::getPrevMeasurements() {
+    return previousMeasurements;
 }

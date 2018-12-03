@@ -69,7 +69,7 @@ WorldRobot::WorldRobot(Team team, int robotID, std::list<KalmanRobot> kalmanRobo
         omegaStdDev   = std::sqrt(thetaCov);
 
         // Inversely proportional to how much the filter has been updated
-        double filterUncertantity = 1 / robot.getHealth();
+        double filterUncertantity = 1.0 / robot.getHealth();
 
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),
