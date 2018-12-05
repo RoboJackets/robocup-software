@@ -130,13 +130,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             
 
         def endRun(self):
-            print(self.timeTaken)
-            print(type(self.timeTaken[0]))
-            print(type(self.timeTaken))
-            print(self.timeTaken[0])
             self.timeTaken[self.motionNumber] = abs(self.startTime - time.time())
             self.calcFinalRotationError()
-            print(self.timeTaken[self.motionNumber])
             self.calcFinalPosError()
             if(self.started):
                 self.motionNumber = self.motionNumber + 1
@@ -273,10 +268,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             lambda: self.basicMotionIndex >= len(self.basicMotionTests), 'In Position')
 
 
-
         numberOfRuns = 3
 
-        
+    
         superBasicTest = self.BasicMotionTest(numberOfRuns, self)
         superBasicTest.point0 = robocup.Point(1.2,1.2)
         superBasicTest.point1 = robocup.Point(1.2,2.2)
@@ -306,7 +300,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicSmaller.point1 = robocup.Point(-0.25, 1.2)
         basicSmaller.point2 = robocup.Point(0, 1.7)
         self.basicMotionTests.append(basicSmaller)
-
+        
         basicTiny = self.BasicMotionTest(numberOfRuns, self)
         basicTiny.point0 = robocup.Point(0.085, 1.2)
         basicTiny.point1 = robocup.Point(-0.085, 1.2)
@@ -319,7 +313,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicMicro.point2 = robocup.Point(0,1.242)
         self.basicMotionTests.append(basicMicro)
         
-
+        
         midFace = self.BasicMotionTest(numberOfRuns, self)
         midFace.point0 = robocup.Point(1.2,1.2)
         midFace.point1 = robocup.Point(-1.2,1.2)
@@ -328,7 +322,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         midFace.facePoint1 = robocup.Point(0,0)
         midFace.facePoint2 =  robocup.Point(2,0)
         self.basicMotionTests.append(midFace)
-
+        
 
 
 
@@ -352,8 +346,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
 
     #Movement test points END
-
-
 
 
     #Utility functions START
