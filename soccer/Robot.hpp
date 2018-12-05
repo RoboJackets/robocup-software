@@ -22,6 +22,7 @@
 #include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
+#include <algorithm>
 
 #include <QReadLocker>
 #include <QReadWriteLock>
@@ -581,6 +582,7 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
+    static ConfigDouble* _dribbleOutOfBoundsOffset;
 
     int8_t _planningPriority;
 };

@@ -13,6 +13,8 @@ class OurKickoff(standard_play.StandardPlay):
 
     KickPower = 0.5
     ChipPower = 1.0
+    MaxKickSpeed = 0.5
+    MaxKickAccel = 0.5
 
     class State(enum.Enum):
         setup = 1
@@ -80,8 +82,8 @@ class OurKickoff(standard_play.StandardPlay):
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment
         # kicker.use_chipper = True
-        kicker.max_speed = .5
-        kicker.max_accel = .5
+        kicker.max_speed = OurKickoff.MaxKickSpeed
+        kicker.max_accel = OurKickoff.MaxKickAccel
         kicker.kick_power = OurKickoff.KickPower
         kicker.chip_power = OurKickoff.ChipPower
         self.add_subbehavior(kicker, 'kicker', required=True, priority=5)

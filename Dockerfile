@@ -34,4 +34,4 @@ ENV LANG en_US.UTF-8
 COPY . ~/robocup-software
 WORKDIR ~/robocup-software
 
-RUN sudo ./util/ubuntu-setup --yes
+RUN sudo ./util/ubuntu-setup --yes --no-submodules

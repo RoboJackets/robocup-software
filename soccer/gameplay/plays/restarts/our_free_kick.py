@@ -13,8 +13,12 @@ import evaluation.passing_positioning
 class OurFreeKick(standard_play.StandardPlay):
 
     Running = False
-    bump_power = 0.01
-    full_power = 1
+    BumpKickPower = 0.01
+    FullKickPower = 1
+    MaxShootingAngle = 80
+    # Untested as of now
+    MaxChipRange = 3
+    MinChipRange = 0.3
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -34,26 +38,34 @@ class OurFreeKick(standard_play.StandardPlay):
         # FIXME: this could also be a PivotKick
         kicker = skills.line_kick.LineKick()
         # kicker.use_chipper = True
-        kicker.min_chip_range = 0.3
-        kicker.max_chip_range = 3.0
+        kicker.min_chip_range = OurFreeKick.MinChipRange
+        kicker.max_chip_range = OurFreeKick.MaxChipRange
 
-        gap = evaluation.shooting.find_gap(max_shooting_angle=80)
+        gap = evaluation.shooting.find_gap(
+            max_shooting_angle=OurFreeKick.MaxShootingAngle)
 
         kicker.target = gap
 
         shooting_line = robocup.Line(main.ball().pos, gap)
-        if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
-            kicker.kick_power = self.full_power
-        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or shooting_line.line_intersection(constants.Field.FieldBorders[2])) and gap.y - main.ball().pos.y > 0:
-            kicker.kick_power = self.full_power
-        elif main.ball().pos.y > constants.Field.Length / 2:
-            kicker.kick_power = self.bump_power
-        else:
-            kicker.kick_power = self.bump_power 
 
+        # If we are at their goal, shoot full power
+        if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
+            kicker.kick_power = self.FullKickPower
+        # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or 
+              shooting_line.line_intersection(constants.Field.FieldBorders[2]) and 
+              gap.y - main.ball().pos.y > 0):
+            kicker.kick_power = self.FullKickPower
+        # If we are probably aiming down the field, slowly kick so we dont carpet
+        else:
+            kicker.kick_power = self.BumpKickPower
+
+        # Try passing if we are doing an indirect kick
         if self.indirect:
             receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
-            if receive_value != 0:            
+
+            # Check for valid target pass position
+            if receive_value != 0:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     receive_pt,
                     None,
@@ -63,9 +75,9 @@ class OurFreeKick(standard_play.StandardPlay):
                     prekick_timeout=9)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
-            else:                
+            else:
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
-        else:            
+        else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
         self.add_transition(
@@ -80,8 +92,6 @@ class OurFreeKick(standard_play.StandardPlay):
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def execute_running(self):
-        evaluation.shooting.find_gap(max_shooting_angle=70)
-
         if self.indirect \
            and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
             self.indirect = False
