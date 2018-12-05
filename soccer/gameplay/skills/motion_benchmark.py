@@ -289,6 +289,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def fileOnly(self, result):
         self.resultsToWrite.append(result)
 
+    def checkSub(self):
+        print(self.subbehaviors_by_name)
 
 
     #A function to determine if the robot has broken the bounding box
@@ -373,8 +375,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
     def on_exit_setup(self):
-        #self.remove_all_subbehaviors()
-        pass
+        self.remove_all_subbehaviors()
+        #pass
 
     #End setup state functions
 
@@ -442,6 +444,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_exit_BasicMotion0(self):
         self.currentBasicMotion.endRun()
+        self.remove_all_subbehaviors()
 
     def on_enter_BasicMotionEnd(self):
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa Hats")        
@@ -454,14 +457,16 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         if self.robot is not None:
             reqs.previous_shell_id = self.robot.shell_id()
         return reqs'''
-        reqs = composite_behavior.CompositeBehavior.role_requirements(self)
+
+        #So this returns a dict instead of a role requirements object, idk
+        reqs = composite_behavior.CompositeBehavior.role_requirements(self) 
         if self.robot is not None:
             for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
                     req.previous_shell_id = self.robot.shell_id()
             return reqs
 
-
-        reqs = super().role_requirements()
-        #reqs = role_assignment.RoleRequirements()
-        #reqs.destination_shape = robocup.Point(0,0)
-        return reqs
+        else:
+            reqs = super().role_requirements()
+            #reqs = role_assignment.RoleRequirements()
+            #reqs.destination_shape = robocup.Point(0,0)
+            return reqs
