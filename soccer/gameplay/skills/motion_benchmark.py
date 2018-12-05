@@ -93,13 +93,25 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.lineFollowError = [0.0] * motions
             self.rotationalFollowError = [0.0] * motions
             self.finalRotationalError = [0.0] * motions
-            self.maxOvershoot = [(0,0)] * motions
+            self.maxOvershoot = [[0,0]] * motions
 
             self.theMotionBenchmark = benchmark
 
         currentStart = None
         currentEnd = None
         currentFacePoint = None
+
+        def printSomeShit(self):
+            print("Times for each motion ---------------------------------")
+            print(self.timeTaken)
+            print("The ending positional error ---------------------------")
+            print(self.posEndError)
+            print("The line following error(integeral) -------------------")
+            print(self.lineFollowError)
+            print("The rotational follow Error ---------------------------")
+            print(self.rotationalFollowError)
+            print("the maximum overshoot amounts")
+            print(self.maxOvershoot)
 
         def startRun(self):
             points = [self.point0, self.point1, self.point2]
@@ -143,7 +155,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def integrateLineError(self):
             deltat = abs(self.lineErrorTimer - time.time())
             self.lineErrorTimer = time.time()
-            self.lineFollowError[self.motionNumber] += getLineError(self.currentStart, self.currentEnd) * deltat
+            self.lineFollowError[self.motionNumber] += MotionBenchmark.getLineError(self.theMotionBenchmark,self.currentStart, self.currentEnd) * deltat
 
         def integrateRotationalError(self):
             deltat = abs(rotErrorTimer - time.time())
@@ -151,9 +163,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.rotFollowError[motionNumber] += getAngleError(self.currentFacePoint) * deltat
 
         def updateOvershoot(self):
-            perOvershoot = pOvershoot(currentStart, currentEnd)
-            if(perOvershoot[0] > maxOvershoot[motionNumber][0]):
-                maxOvershoot[motionNumber] =  perOvershoot
+            perOvershoot = MotionBenchmark.pOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
+            if(perOvershoot[0] > self.maxOvershoot[self.motionNumber][0]):
+                self.maxOvershoot[self.motionNumber][0] = perOvershoot[0]
+                self.maxOvershoot[self.motionNumber][1] = perOvershoot[1]
 
         def isCompleted(self):
             if(self.motionNumber / 3.0 >= self.runs):
@@ -164,55 +177,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
           #End General Result Variables
 
 
-    #Movement test points START
-    setupPoint = robocup.Point(0, 1.2)
 
-        #BasicMid
-    BasicMid0Point = robocup.Point(1.2,1.2)
-    BasicMid1Point = robocup.Point(-1.2,1.2)
-    BasicMid2Point = robocup.Point(0,3.5)
-
-        #BasicSmall
-    BasicSmall0Point = robocup.Point(-0.75, 1.2)
-    BasicSmall1Point = robocup.Point(0.75, 1.2)
-    BasicSmall2Point = robocup.Point(0,2.4)
-
-        #BasicLarge
-    BasicLarge0Point = robocup.Point(-1.7,1.5)
-    BasicLarge1Point = robocup.Point(0, 4.8)
-    BasicLarge2Point = robocup.Point(1.7, 1.5)
-
-        #BasicSmaller
-    BasicSmaller0Point = robocup.Point(0.25, 1.2)
-    BasicSmaller1Point = robocup.Point(-0.25, 1.2)
-    BasicSmaller2Point = robocup.Point(0, 1.7)
-    
-        #BasicTiny
-    BasicTiny0Point = robocup.Point(0.085, 1.2)
-    BasicTiny1Point = robocup.Point(-0.085, 1.2)
-    BasicTiny2Point = robocup.Point(0, 1.285)
-
-        #Micro
-    Micro0Point = robocup.Point(0.034, 1.2)
-    Micro1Point = robocup.Point(-0.034, 1.2)
-    Micro2Point = robocup.Point(0,1.242)
-
-        #PureRot
-    startPoint = robocup.Point(0,1.5)
-    PureRot0FacePoint = robocup.Point(0, 2.5)
-    PureRot1FacePoint = robocup.Point(-1,1.5)
-    PureRot2FacePoint = robocup.Point(1,1.5)
-
-        #MidFace
-    MidFace0Point = BasicMid0Point
-    MidFace1Point = BasicMid1Point
-    MidFace2Point = BasicMid2Point
-
-    MidFace0FacePoint = robocup.Point(0,2.8)
-    MidFace1FacePoint = robocup.Point(0,0)
-    MidFace2FacePoint = robocup.Point(2,0)
-
-    #Movement test points END
     
     
     basicMotionTests = []
@@ -308,17 +273,87 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             lambda: self.basicMotionIndex >= len(self.basicMotionTests), 'In Position')
 
 
-        superBasicTest = self.BasicMotionTest(3, self)
+
+        numberOfRuns = 3
+
+        superBasicTest = self.BasicMotionTest(numberOfRuns, self)
         superBasicTest.point0 = robocup.Point(1.2,1.2)
         superBasicTest.point1 = robocup.Point(1.2,2.2)
         superBasicTest.point2 = robocup.Point(2.2,1.2)
         self.basicMotionTests.append(superBasicTest)
 
+        basicMid = self.BasicMotionTest(numberOfRuns, self)
+        basicMid.point0 = robocup.Point(1.2,1.2)
+        basicMid.point1 = robocup.Point(-1.2,1.2)
+        basicMid.point2 = robocup.Point(0,3.5)
+        self.basicMotionTests.append(basicMid)
+
+        basicSmall = self.BasicMotionTest(numberOfRuns, self)
+        basicSmall.point0 = robocup.Point(-0.75, 1.2)
+        basicSmall.point1 = robocup.Point(0.75, 1.2)
+        basicSmall.point2 = robocup.Point(0,2.4)
+        self.basicMotionTests.append(basicSmall)
+
+        basicLarge = self.BasicMotionTest(numberOfRuns, self)
+        basicLarge.point0 = robocup.Point(-1.7,1.5)
+        basicLarge.point1 = robocup.Point(0, 4.8)
+        basicLarge.point2 = robocup.Point(1.7, 1.5)
+        self.basicMotionTests.append(basicLarge)
+
+        basicSmaller = self.BasicMotionTest(numberOfRuns, self)
+        basicSmaller.point0 = robocup.Point(0.25, 1.2)
+        basicSmaller.point1 = robocup.Point(-0.25, 1.2)
+        basicSmaller.point2 = robocup.Point(0, 1.7)
+        self.basicMotionTests.append(basicSmaller)
+
+        basicTiny = self.BasicMotionTest(numberOfRuns, self)
+        basicTiny.point0 = robocup.Point(0.085, 1.2)
+        basicTiny.point1 = robocup.Point(-0.085, 1.2)
+        basicTiny.point2 = robocup.Point(0, 1.285)
+        self.basicMotionTests.append(basicTiny)
+
+        basicMicro = self.BasicMotionTest(numberOfRuns, self)
+        basicMicro.point0 = robocup.Point(0.034, 1.2)
+        basicMicro.point1 = robocup.Point(-0.034, 1.2)
+        basicMicro.point2 = robocup.Point(0,1.242)
+        self.basicMotionTests.append(basicMicro)
+
+
+        midFace = self.BasicMotionTest(numberOfRuns, self)
+        midFace.point0 = robocup.Point(1.2,1.2)
+        midFace.point1 = robocup.Point(-1.2,1.2)
+        midFace.point2 =  robocup.Point(0,3.5)
+        midFace.facePoint0 = robocup.Point(0,2.8)
+        midFace.facePoint1 = robocup.Point(0,0)
+        midFace.facePoint2 =  robocup.Point(2,0)
+        self.basicMotionTests.append(midFace)
+
+
+
+
+
+
         self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
 
-
-
         #END TRANSITIONS
+
+
+
+    #Movement test points START
+    setupPoint = robocup.Point(0, 1.2)
+
+
+        #PureRot
+    startPoint = robocup.Point(0,1.5)
+    PureRot0FacePoint = robocup.Point(0, 2.5)
+    PureRot1FacePoint = robocup.Point(-1,1.5)
+    PureRot2FacePoint = robocup.Point(1,1.5)
+
+
+    #Movement test points END
+
+
+
 
     #Utility functions START
 
@@ -362,27 +397,28 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         yErr = self.robot.pos.y - point.y
         return math.sqrt(xErr**2 + yErr**2)
 
-    def getLineError(start, end):
+    def getLineError(self,start, end):
         startNumpy=np.array([start.x,start.y])
         endNumpy=np.array([end.x,end.y])
-        robotNumpy=np.array([robot.pos.x,robot.pos.y])
+        robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
         d = np.cross(endNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
         return d
  
 
 
-    def getOvershoot(start, end):
-       distToStart = math.sqrt((robot.pos.x - start.x)**2 + (robot.pos.x - start.y)**2)
+    def getOvershoot(self, start, end):
+       distToStart = math.sqrt((self.robot.pos.x - start.x)**2 + (self.robot.pos.x - start.y)**2)
        startToEnd = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
-       overshoot = distToStart - starToEnd
+       overshoot = distToStart - startToEnd
        if(overshoot <= 0):
            return 0
        else:
            return overshoot
 
 
-    def pOvershoot(start, end):
-        overshoot = getOvershoot(start, end) 
+    #Returns a tuple with (the overshoot, the frational/percentage overshoot)
+    def pOvershoot(self, start, end):
+        overshoot = self.getOvershoot(start, end) 
         if(overshoot > 0):
             moveDist = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
             return (overshoot, overshoot / moveDist)
@@ -466,22 +502,28 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         else:
             print("There is no current end")
         if (self.currentBasicMotion.currentFacePoint is not None):
-            robot.face(self.currentBasicMotion.currentFacePoint)
+            self.robot.face(self.currentBasicMotion.currentFacePoint)
 
     def execute_BasicMotion0(self):
         if (self.currentBasicMotion.currentFacePoint is not None):
-            robot.face(self.currentBasicMotion.currentFacePoint)
-        #self.currentBasicMotion.processRun()
+            self.robot.face(self.currentBasicMotion.currentFacePoint)
+        self.currentBasicMotion.processRun()
 
     def on_exit_BasicMotion0(self):
         self.currentBasicMotion.endRun()
         self.remove_all_subbehaviors()
 
     def on_enter_BasicMotionEnd(self):
+        self.currentBasicMotion.printSomeShit()
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa Hats")        
 
     def on_exit_BasicMotionEnd(self):
         self.basicMotionIndex += 1
+        if(self.basicMotionIndex < len(self.basicMotionTests)):
+            self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
+        else:
+            self.currentBasicMotion = None
+
 
 
     #nothing special for role requirements
