@@ -102,10 +102,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.currentFacePoint = facePoints[self.motionNumber % 3]
             
         def processRun(self):
-            if(currentEnd != None):
+            if(self.currentEnd != None):
                 integrateLineError()
                 updateOvershoot()
-            if(currentFace != None):
+            if(self.currentFacePoint != None):
                 integrateRotError()
             
 
@@ -137,8 +137,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             if(perOvershoot[0] > maxOvershoot[motionNumber][0]):
                 maxOvershoot[motionNumber] =  perOvershoot
 
-        def isComplete(self):
-            if(motionNumber * 3 >= runs):
+        def isCompleted(self):
+            if(self.motionNumber * 3 >= self.runs):
                 return True
             else:
                 return False
@@ -389,10 +389,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.noiseStartPos = self.robot.pos
 
     def execute_noise(self):
-        print(self.noiseStartTime - time.time())
-        print(self.noiseMeasured)
+        #print(self.noiseStartTime - time.time())
+        #print(self.noiseMeasured)
         if(abs(self.noiseStartTime - time.time()) >=  5):
             self.noiseMeasured = True
+            self.noiseStartTime = time.time()
         deltaX = self.noiseStartPos.x - self.robot.pos.x 
         deltaY = self.noiseStartPos.y - self.robot.pos.y
         if(deltaX > self.noiseMaxX):
@@ -423,11 +424,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.moveEndTime = time.time()
         self.remove_all_subbehaviors() 
         self.noiseResult = abs(self.moveStartTime - self.moveEndTime)
-        print("------------------LATENCY TEST RESULTS---------------------")
-        print("Latency (seconds) = " + str(self.noiseResult))
-        print("X noise = " + str((abs(self.noiseMaxX) + abs(self.noiseMinX))))
-        print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
-        print("-----------------------------------------------------------")
+        #print("------------------LATENCY TEST RESULTS---------------------")
+        #print("Latency (seconds) = " + str(self.noiseResult))
+        #print("X noise = " + str((abs(self.noiseMaxX) + abs(self.noiseMinX))))
+        #print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
+        #print("-----------------------------------------------------------")
 
 
     def on_enter_BasicMotion0(self):
@@ -458,6 +459,47 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             reqs.previous_shell_id = self.robot.shell_id()
         return reqs'''
 
+        #b = single_robot_behavior.SingleRobotBehavior.role_requirements(self)
+        c = super().role_requirements()
+
+        if isinstance(c, role_assignment.RoleRequirements):
+            if(c.previous_shell_id is not None):
+                c.required_shell_id = c.previous_shell_id
+            else:
+                print("We have gotten a role requirements object with no previous shell id")
+        else:
+            if(c['move'].previous_shell_id is not None):
+                c['move'].required_shell_id = c['move'].previous_shell_id
+            else:
+                print("Its a dict")
+
+            #print(c)
+            #print(type(c))
+
+        return c
+
+        #a = role_assignment.RoleRequirements()
+        #print("--------------------------ROLE_REQUIREMENTS_THING--------------------")
+        #print(a)
+        #print(b)
+        #print(c)
+        #print(type(c))
+
+        '''
+        reqs = composite_behavior.CompositeBehavior.role_requirements(self)
+        print(type(reqs))
+        print(reqs)
+        return reqs
+        if(type(c) is not dict and c.previous_shell_id is not None):
+            c.required_shell_id = c.previous_shell_id
+        else:
+            print(c)
+            print(type(c))
+            print(c['move'])
+        #print("---------------------------------------------------------------------")
+        return c
+
+        
         #So this returns a dict instead of a role requirements object, idk
         reqs = composite_behavior.CompositeBehavior.role_requirements(self) 
         if self.robot is not None:
@@ -470,3 +512,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             #reqs = role_assignment.RoleRequirements()
             #reqs.destination_shape = robocup.Point(0,0)
             return reqs
+        '''
+
+
