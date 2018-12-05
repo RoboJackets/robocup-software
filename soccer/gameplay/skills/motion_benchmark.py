@@ -33,6 +33,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         BasicMotion0 = 4
         BasicMotionEnd = 5
         EndAll = 6
+        BasicMotionBuffer = 7
 
 
   
@@ -59,7 +60,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         lineErrorTimer = 0.0
         rotErrorTimer = 0.0
-        
+       
+        started = False
+
         point0 = None
         point1 = None
         point2 = None
@@ -75,19 +78,24 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         finalRotationalError = None
         maxOvershoot = None
 
+        theMotionBenchmark = None
+
         count = 0
         runs = 5
 
         motionNumber = 0
 
-        def __init__(self, nRuns):
+        def __init__(self, nRuns, benchmark):
             self.runs = nRuns
-            timeTaken = [0.0] * self.runs
-            posEndError = [0.0] * self.runs
-            lineFollowError = [0.0] * self.runs
-            rotationalFollowError = [0.0] * self.runs
-            finalRotationalError = [0.0] * self.runs
-            maxOvershoot = [(0,0)] * self.runs
+            motions = nRuns * 3 + 1
+            self.timeTaken = [0.0] * motions
+            self.posEndError = [0.0] * motions
+            self.lineFollowError = [0.0] * motions
+            self.rotationalFollowError = [0.0] * motions
+            self.finalRotationalError = [0.0] * motions
+            self.maxOvershoot = [(0,0)] * motions
+
+            self.theMotionBenchmark = benchmark
 
         currentStart = None
         currentEnd = None
@@ -100,12 +108,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.currentStart = points[2] if self.motionNumber % 3 == 0 else points[(self.motionNumber % 3) - 1]
             self.currentEnd = points[self.motionNumber % 3]
             self.currentFacePoint = facePoints[self.motionNumber % 3]
-            print(points)
-            print(facePoints)
-            print(self.startTime)
-            print(self.currentStart)
-            print(self.currentEnd)
-            print(self.currentFacePoint)
             
         def processRun(self):
             if(self.currentEnd != None):
@@ -116,27 +118,37 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             
 
         def endRun(self):
-            self.timeTaken[motionNumber] = abs(startTime - time.time())
-            finalRotationError()
-            finalPosError()
-            self.motionNumber = self.motionNumber + 1
+            print(self.timeTaken)
+            print(type(self.timeTaken[0]))
+            print(type(self.timeTaken))
+            print(self.timeTaken[0])
+            self.timeTaken[self.motionNumber] = abs(self.startTime - time.time())
+            self.calcFinalRotationError()
+            print(self.timeTaken[self.motionNumber])
+            self.calcFinalPosError()
+            if(self.started):
+                self.motionNumber = self.motionNumber + 1
+            else:
+                self.started = True
 
 
-        def finalRotaionalError(self):
-            self.finalRotationalError[motionNumber] = getAngleError(currentFacePoint)
+        def calcFinalRotationError(self):
+            if(self.currentFacePoint is not None):
+                self.finalRotationalError[self.motionNumber] = MotionBenchmark.getAngleError(self.theMotionBenchmark, self.currentFacePoint)
 
-        def finalPosError(self):
-            self.posEndError[motionNumber] = getPosError(currentEnd)
+        def calcFinalPosError(self):
+            if(self.currentEnd is not None):
+                self.posEndError[self.motionNumber] = MotionBenchmark.getPosError(self.theMotionBenchmark, self.currentEnd)
 
         def integrateLineError(self):
             deltat = abs(self.lineErrorTimer - time.time())
             self.lineErrorTimer = time.time()
-            self.lineFollowError[self.motionNumber] += MotionBenchmark.getLineError(self.currentStart, self.currentEnd) * deltat
+            self.lineFollowError[self.motionNumber] += getLineError(self.currentStart, self.currentEnd) * deltat
 
         def integrateRotationalError(self):
             deltat = abs(rotErrorTimer - time.time())
             self.rotErrorTimer = time.time()
-            self.rotFollowError[motionNumber] += MotionBenchmark.getAngleError(self.currentFacePoint) * deltat
+            self.rotFollowError[motionNumber] += getAngleError(self.currentFacePoint) * deltat
 
         def updateOvershoot(self):
             perOvershoot = pOvershoot(currentStart, currentEnd)
@@ -144,7 +156,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 maxOvershoot[motionNumber] =  perOvershoot
 
         def isCompleted(self):
-            if(self.motionNumber * 3 >= self.runs):
+            if(self.motionNumber / 3.0 >= self.runs):
                 return True
             else:
                 return False
@@ -237,7 +249,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                      MotionBenchmark.State.move1,
                      MotionBenchmark.State.BasicMotion0,
                      MotionBenchmark.State.BasicMotionEnd,
-                     MotionBenchmark.State.EndAll]
+                     MotionBenchmark.State.EndAll,
+                     MotionBenchmark.State.BasicMotionBuffer]
                     
 
         #Register states in the previously defined list
@@ -267,10 +280,16 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             MotionBenchmark.State.BasicMotion0,
                             lambda: self.all_subbehaviors_completed(), 'In Position')
         
-        #BasicMotion0 -> BasicMotion0
+        #BasicMotion0 -> BasicMotionBuffer
         self.add_transition(MotionBenchmark.State.BasicMotion0,
-                            MotionBenchmark.State.BasicMotion0,
+                            MotionBenchmark.State.BasicMotionBuffer,
                             lambda: self.all_subbehaviors_completed() and not self.currentBasicMotion.isCompleted(), 'In Position')
+       
+        #BasicMotionBuffer -> BasicMotion0
+        self.add_transition(MotionBenchmark.State.BasicMotionBuffer,
+                            MotionBenchmark.State.BasicMotion0,
+                            lambda: True, 'In Position')
+
 
         #BasicMid0 -> BasicMotionEnd
         self.add_transition(MotionBenchmark.State.BasicMotion0,
@@ -280,19 +299,19 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #BasicMotionEnd -> BasicMotion0
         self.add_transition(MotionBenchmark.State.BasicMotionEnd,
                             MotionBenchmark.State.BasicMotion0,
-                            lambda: self.basicMotionCount < len(self.basicMotionTests), 'In Position')
+                            lambda: self.basicMotionIndex < len(self.basicMotionTests) - 1, 'In Position')
 
 
         #BasicMotionEnd -> exit the behavior  
         self.add_transition(MotionBenchmark.State.BasicMotionEnd,
                             behavior.Behavior.State.completed,
-                            lambda: self.basicMotionCount >= len(self.basicMotionTests), 'In Position')
+                            lambda: self.basicMotionIndex >= len(self.basicMotionTests), 'In Position')
 
 
-        superBasicTest = self.BasicMotionTest(3)
-        superBasicTest.point0 = robocup.Point(1,1)
-        superBasicTest.point1 = robocup.Point(1,2)
-        superBasicTest.point2 = robocup.Point(2,1)
+        superBasicTest = self.BasicMotionTest(3, self)
+        superBasicTest.point0 = robocup.Point(1.2,1.2)
+        superBasicTest.point1 = robocup.Point(1.2,2.2)
+        superBasicTest.point2 = robocup.Point(2.2,1.2)
         self.basicMotionTests.append(superBasicTest)
 
         self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
@@ -332,15 +351,15 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         return False
 
 
-    def getAngleError(point):
-        targetAngle = robot.angle
-        betweenVec = robot.pos - point
+    def getAngleError(self, point):
+        targetAngle = self.robot.angle
+        betweenVec = self.robot.pos - point
         currentAngle = math.atan2(betweenVec.x, betweenVec.y)
         return targetAngle - currentAngle
 
-    def getPosError(point):
-        xErr = robot.pos.x - point.x
-        yErr = robot.pos.y - point.y
+    def getPosError(self, point):
+        xErr = self.robot.pos.x - point.x
+        yErr = self.robot.pos.y - point.y
         return math.sqrt(xErr**2 + yErr**2)
 
     def getLineError(start, end):
@@ -348,7 +367,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         endNumpy=np.array([end.x,end.y])
         robotNumpy=np.array([robot.pos.x,robot.pos.y])
         d = np.cross(endNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
-        print(d)
         return d
  
 
@@ -434,11 +452,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.moveEndTime = time.time()
         self.remove_all_subbehaviors() 
         self.noiseResult = abs(self.moveStartTime - self.moveEndTime)
-        #print("------------------LATENCY TEST RESULTS---------------------")
-        #print("Latency (seconds) = " + str(self.noiseResult))
-        #print("X noise = " + str((abs(self.noiseMaxX) + abs(self.noiseMinX))))
-        #print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
-        #print("-----------------------------------------------------------")
+        print("------------------LATENCY TEST RESULTS---------------------")
+        print("Latency (seconds) = " + str(self.noiseResult))
+        print("X noise = " + str((abs(self.noiseMaxX) + abs(self.noiseMinX))))
+        print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
+        print("-----------------------------------------------------------")
 
 
     def on_enter_BasicMotion0(self):
@@ -449,20 +467,21 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             print("There is no current end")
         if (self.currentBasicMotion.currentFacePoint is not None):
             robot.face(self.currentBasicMotion.currentFacePoint)
-        print("Enter basicMotion0")
 
     def execute_BasicMotion0(self):
         if (self.currentBasicMotion.currentFacePoint is not None):
             robot.face(self.currentBasicMotion.currentFacePoint)
-        self.currentBasicMotion.processRun()
+        #self.currentBasicMotion.processRun()
 
     def on_exit_BasicMotion0(self):
         self.currentBasicMotion.endRun()
         self.remove_all_subbehaviors()
-        print("Exit basicMotion0")
 
     def on_enter_BasicMotionEnd(self):
         print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa Hats")        
+
+    def on_exit_BasicMotionEnd(self):
+        self.basicMotionIndex += 1
 
 
     #nothing special for role requirements
