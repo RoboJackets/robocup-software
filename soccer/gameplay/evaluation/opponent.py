@@ -48,7 +48,7 @@ def num_on_offense():
 # @param direction_weight: How much to weight the positive y direction,
 #     0 <= direction weight <= 2
 #     If < 1, then robots < pos.y are weighted by direction_weight
-def get_closest_opponent(pos, direction_weight=1, excluded_robots=[]):
+def get_closest_opponent(pos, direction_weight=0, excluded_robots=[]):
 
     closest_bot, closest_dist = None, float("inf")
     for bot in main.their_robots():

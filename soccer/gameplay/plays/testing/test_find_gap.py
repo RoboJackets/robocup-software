@@ -4,7 +4,7 @@ import robocup
 import main
 import evaluation.shooting
 
-class TestFreeKickTemp(play.Play):
+class TestFindGap(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
         self.add_transition(behavior.Behavior.State.start,

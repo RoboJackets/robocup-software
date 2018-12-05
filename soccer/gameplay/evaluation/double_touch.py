@@ -44,7 +44,7 @@ class DoubleTouchTracker(fsm.StateMachine):
         self.add_transition(
             DoubleTouchTracker.State.restart_play_began,
             DoubleTouchTracker.State.kicking,
-            lambda: ((any(self._has_ball(bot) for bot in main.our_robots())) or
+            lambda: ((any(self._touching_ball(bot) for bot in main.our_robots())) or
                      main.game_state().is_playing()) and not main.game_state().is_placement(),
             'one of our bots has the ball or the ball was kicked')
 
@@ -62,7 +62,7 @@ class DoubleTouchTracker(fsm.StateMachine):
                             lambda: self.other_robot_touching_ball(),
                             'another robot has touched the ball')
 
-    def _has_ball(self, bot):
+    def _touching_ball(self, bot):
         """A function for combining the ball sense and our own home
         grown cookies and ice cream."""
         return bot.has_ball() or self._bot_in_radius(bot)
@@ -108,7 +108,7 @@ class DoubleTouchTracker(fsm.StateMachine):
     # record it's shell id
     def on_exit_restart_play_began(self):
         for bot in main.our_robots():
-            if self._has_ball(bot):
+            if self._touching_ball(bot):
                 self.kicker_shell_id = bot.shell_id()
                 return
         if main.ball().valid:
