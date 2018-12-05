@@ -26,6 +26,7 @@ const float Robot_Diameter = 0.180f;
 const float Robot_Radius = Robot_Diameter / 2.0f;
 const float Robot_Height = 0.150f;
 const float Robot_MouthWidth = 0.10f;
+const float Robot_MouthRadius = 0.007;
 
 /** constants for dot patterns */
 const float Dots_Small_Offset = 0.035;

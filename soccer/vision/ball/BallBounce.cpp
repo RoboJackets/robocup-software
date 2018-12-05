@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <Constants.hpp>
+
 #include "vision/util/VisionFilterConfig.hpp"
 
 REGISTER_CONFIGURABLE(BallBounce)
@@ -11,7 +13,8 @@ ConfigDouble* BallBounce::robot_mouth_lin_dampen;
 ConfigDouble* BallBounce::robot_body_angle_dampen;
 ConfigDouble* BallBounce::robot_mouth_angle_dampen;
 
-inline int sign(float val) { return (0.0 < val) - (val < 0.0); }
+// Note 0 case returns -1 instead of 0
+inline int sign(float val) { return (0.0 < val) - (val <= 0.0); }
 
 void BallBounce::createConfiguration(Configuration* cfg) {
     robot_body_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_lin_dampen", 1);
@@ -29,6 +32,11 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 
     for (WorldRobot& robot : robots) {
         if (!robot.getIsValid()) {
+            continue;
+        }
+
+        // Make sure ball is intersecting next frame
+        if (!BallInRobot(ball, robot)) {
             continue;
         }
 
@@ -88,8 +96,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 
         Geometry2d::Line intersectLine = Geometry2d::Line(intersectPts.at(0), intersectPts.at(1));
         Geometry2d::Point mouthHalfUnitVec = Geometry2d::Point(0, 1).rotate(robot.getTheta());
-        // TODO: Get mouth dist from center
-        Geometry2d::Point mouthCenterPos = Geometry2d::Point(.1, 0).rotate(robot.getTheta()) + robot.getPos();
+        Geometry2d::Point mouthCenterPos = Geometry2d::Point(Robot_MouthRadius, 0).rotate(robot.getTheta()) + robot.getPos();
         Geometry2d::Line mouthLine = Geometry2d::Line(mouthCenterPos + mouthHalfUnitVec,
                                                       mouthCenterPos - mouthHalfUnitVec);
 
@@ -99,10 +106,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         // The mouth is a chord across the circle.
         // We have the distance of the chord to the center of the circle
         // We also have the radius of the robot
-        // Using that, we can calculate half the chord length using sqrt(R^2 - dist^2)
-        // Keep in square form since we can get square form of the magnitude of the intersectPt to mouthCenter
-        // TODO: Get mouth dist and robot radius
-        const double chordHalfLength = .6*.6 + .1*.1;
+        const double chordHalfLength = pow(Robot_MouthWidth / 2.0, 2);
         bool didHitMouth = false;
 
         // If the line intersect is inside the mouth chord
@@ -126,6 +130,12 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         // B->D (Officially R->B, but B->D makes more sense visually)
         Geometry2d::Point robotIntersectPtVector = closestIntersectPt - robot.getPos();
         Geometry2d::Point robotIntersectPtUnitVector = robotIntersectPtVector.normalized();
+
+        // If it hit the mouth, the reflection line is pointing straight out
+        if (didHitMouth) {
+            robotIntersectPtVector = Geometry2d::Point(1, 0).rotate(robot.getTheta());
+            robotIntersectPtUnitVector = robotIntersectPtVector;
+        }
 
         // Project B->A vector onto B->D
         // This is so we can get D->A and D->C later
@@ -185,7 +195,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 
         intersectPtReflectionUnitVector = intersectPtReflectionUnitVector.rotate(extraRotationAngle);
 
-        outNewVel = intersectPtReflectionUnitVector * ball.getVel().normalized();
+        outNewVel = intersectPtReflectionUnitVector * ball.getVel().mag();
 
         return true;
     }
@@ -197,8 +207,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 bool BallBounce::BallInRobot(KalmanBall& ball, WorldRobot& robot) {
     Geometry2d::Point nextPos = ball.getPos() + ball.getVel() * *VisionFilterConfig::vision_loop_dt;
 
-    // TODO: Get robot radius and ball radius
-    return (robot.getPos() - nextPos).mag() < .7 + .01;
+    return (robot.getPos() - nextPos).mag() < Robot_Radius + Ball_Radius;
 }
 
 std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
@@ -215,12 +224,11 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
 
     // Magnitude of the line
     Geometry2d::Point d = ballVel - ballPos;
-    double dr = (ballVel - ballPos).mag();
+    double dr = d.mag();
     // Determinant
     double D = ballPos.x()*ballVel.y() - ballPos.y()*ballVel.x();
-    // TODO: Get robot/ball radius
     // Assume that two spheres intersection, is similar to the addition of their radius and a point
-    double r = .9+.1; // RobotRadius + Ball Radius
+    double r = Robot_Radius + Ball_Radius;
 
     // If the ball really isn't moving, just assume no intersection
     // since the math will go to inf
@@ -244,7 +252,7 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
     y2 /= dr*dr;
     y2 += robot.getPos().y();
 
-    Geometry2d::Point pt1 = Geometry2d::Point(x1, y2);
+    Geometry2d::Point pt1 = Geometry2d::Point(x1, y1);
     Geometry2d::Point pt2 = Geometry2d::Point(x2, y2);
 
     double delta = r*r*dr*dr - D*D;

@@ -224,6 +224,7 @@ set(SOCCER_TEST_SRC
     "vision/tests/CameraRobotTest.cpp"
     "vision/tests/KalmanRobotTest.cpp"
     "vision/tests/WorldRobotTest.cpp"
+    "vision/tests/BallBounceTest.cpp"
     "WindowEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
