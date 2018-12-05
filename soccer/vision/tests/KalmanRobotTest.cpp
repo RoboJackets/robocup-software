@@ -232,22 +232,71 @@ TEST(KalmanRobot, wrap_theta_up) {
     KalmanRobot kb = KalmanRobot(cID, t, b, w);
 
     double ut = 0;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 800; i++) {
         theta += 1.0/100.0;
         ut += 1.0/100.0;
+    
         if (theta > M_PI) {
             theta -= 2*M_PI;
         }
-
-        p += p;
+ 
+        p += Geometry2d::Point(1,1)*1.0/100.0;
 
         b = CameraRobot(t, p, theta, robotID);
         kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);
 
-    double rt = kb.getTheta();
-    double ro = kb.getOmega();
-    std::cout << theta << " " << ut << " " << rt << " " << ro << " " << kb.getVel() << std::endl;
     }
 
-    //EXPECT_NEAR(rt, ut, 0.5);
+    double rt = kb.getTheta();
+    double ro = kb.getOmega();
+    EXPECT_NEAR(rt, ut, 0.01);
+    EXPECT_NEAR(ro, 1, 0.01);
+
+    Geometry2d::Point rp = kb.getPos();
+    Geometry2d::Point rv = kb.getVel();
+    EXPECT_NEAR(rp.x(), p.x(), 0.01);
+    EXPECT_NEAR(rp.y(), p.y(), 0.01);
+    EXPECT_NEAR(rv.x(), 1, 0.01);
+    EXPECT_NEAR(rv.y(), 1, 0.01);
+}
+
+TEST(KalmanRobot, wrap_theta_down) {
+    RJ::Time t = RJ::now();
+    Geometry2d::Point p = Geometry2d::Point(1,1);
+    double theta = 0;
+    int robotID = 1;
+    
+    CameraRobot b = CameraRobot(t, p, theta, robotID);
+    int cID = 1;
+    WorldRobot w;
+
+    KalmanRobot kb = KalmanRobot(cID, t, b, w);
+
+    double ut = 0;
+    for (int i = 0; i < 800; i++) {
+        theta -= 1.0/100.0;
+        ut -= 1.0/100.0;
+    
+        if (theta < -M_PI) {
+            theta += 2*M_PI;
+        }
+ 
+        p -= Geometry2d::Point(1,1)*1.0/100.0;
+
+        b = CameraRobot(t, p, theta, robotID);
+        kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);
+
+    }
+
+    double rt = kb.getTheta();
+    double ro = kb.getOmega();
+    EXPECT_NEAR(rt, ut, 0.01);
+    EXPECT_NEAR(ro, -1, 0.01);
+
+    Geometry2d::Point rp = kb.getPos();
+    Geometry2d::Point rv = kb.getVel();
+    EXPECT_NEAR(rp.x(), p.x(), 0.01);
+    EXPECT_NEAR(rp.y(), p.y(), 0.01);
+    EXPECT_NEAR(rv.x(), -1, 0.01);
+    EXPECT_NEAR(rv.y(), -1, 0.01);
 }

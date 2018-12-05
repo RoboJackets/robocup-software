@@ -12,7 +12,7 @@ void KalmanFilter::predict() {
 }
 
 void KalmanFilter::predictWithUpdate() {
-    x_k_k1 = x_k_k;
+    x_k1_k1 = x_k_k;
     P_k1_k1 = P_k_k;
 
     // Predict
