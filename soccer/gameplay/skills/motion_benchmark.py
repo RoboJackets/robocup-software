@@ -126,7 +126,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 self.integrateLineError()
                 self.updateOvershoot()
             if(self.currentFacePoint != None):
-                self.integrateRotError()
+                self.integrateRotationalError()
             
 
         def endRun(self):
@@ -158,9 +158,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.lineFollowError[self.motionNumber] += MotionBenchmark.getLineError(self.theMotionBenchmark,self.currentStart, self.currentEnd) * deltat
 
         def integrateRotationalError(self):
-            deltat = abs(rotErrorTimer - time.time())
+            deltat = abs(self.rotErrorTimer - time.time())
             self.rotErrorTimer = time.time()
-            self.rotFollowError[motionNumber] += getAngleError(self.currentFacePoint) * deltat
+            self.rotationalFollowError[self.motionNumber] += MotionBenchmark.getAngleError(self.theMotionBenchmark,self.currentFacePoint) * deltat
 
         def updateOvershoot(self):
             perOvershoot = MotionBenchmark.pOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
@@ -276,6 +276,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         numberOfRuns = 3
 
+        
         superBasicTest = self.BasicMotionTest(numberOfRuns, self)
         superBasicTest.point0 = robocup.Point(1.2,1.2)
         superBasicTest.point1 = robocup.Point(1.2,2.2)
@@ -317,7 +318,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicMicro.point1 = robocup.Point(-0.034, 1.2)
         basicMicro.point2 = robocup.Point(0,1.242)
         self.basicMotionTests.append(basicMicro)
-
+        
 
         midFace = self.BasicMotionTest(numberOfRuns, self)
         midFace.point0 = robocup.Point(1.2,1.2)
