@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <string.h>
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -92,7 +93,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
     Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
-              bool blueTeam);
+              bool blueTeam, std::string readLogFile);
     virtual ~Processor();
 
     void stop();
@@ -240,6 +241,10 @@ private:
     // True if we are blue.
     // False if we are yellow.
     bool _blueTeam;
+
+    // A logfile to read from.
+    // When empty, don't read logs at all.
+    std::string _readLogFile;
 
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access

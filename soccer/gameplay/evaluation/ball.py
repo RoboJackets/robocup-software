@@ -68,7 +68,7 @@ def opponent_with_ball():
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
     mouth_half_angle = 15*math.pi/180 # Angle from front
-    max_dist_from_mouth = 0.5 * constants.Robot.Radius
+    max_dist_from_mouth = 1.5 * constants.Robot.Radius
 
     # Create triangle between bot pos and two points of the mouth
     A = robot.pos

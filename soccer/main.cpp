@@ -25,22 +25,24 @@ void signal_handler(int signum) { exit(signum); }
 
 void usage(const char* prog) {
     fprintf(stderr, "usage: %s [options...]\n", prog);
-    fprintf(stderr, "\t-y:          run as the yellow team\n");
-    fprintf(stderr, "\t-b:          run as the blue team\n");
-    fprintf(stderr, "\t-c <file>:   specify the configuration file\n");
-    fprintf(stderr, "\t-s <seed>:   set random seed (hexadecimal)\n");
+    fprintf(stderr, "\t-y:           run as the yellow team\n");
+    fprintf(stderr, "\t-b:           run as the blue team\n");
+    fprintf(stderr, "\t-c <file>:    specify the configuration file\n");
+    fprintf(stderr, "\t-s <seed>:    set random seed (hexadecimal)\n");
     fprintf(stderr,
-            "\t-pbk <file>: playbook file name as contained in "
+            "\t-pbk <file>:  playbook file name as contained in "
             "'soccer/gameplay/playbooks/'\n");
-    fprintf(stderr, "\t-ng:         no goalie\n");
-    fprintf(stderr, "\t-sim:        use simulator\n");
-    fprintf(stderr, "\t-freq:       specify radio frequency (918 or 916)\n");
-    fprintf(stderr, "\t-nolog:      don't write log files\n");
-    fprintf(stderr, "\t-noref:      don't use external referee commands\n");
     fprintf(stderr,
-            "\t-defend:     specify half of field to defend (plus or minus)\n");
+            "\t-vlog <file>: view <file> instead of launching normally\n");
+    fprintf(stderr, "\t-ng:          no goalie\n");
+    fprintf(stderr, "\t-sim:         use simulator\n");
+    fprintf(stderr, "\t-freq:        specify radio frequency (918 or 916)\n");
+    fprintf(stderr, "\t-nolog:       don't write log files\n");
+    fprintf(stderr, "\t-noref:       don't use external referee commands\n");
     fprintf(stderr,
-            "\t-vision      specify the vision channel (1,2, or full)\n");
+            "\t-defend:      specify half of field to defend (plus or minus)\n");
+    fprintf(stderr,
+            "\t-vision       specify the vision channel (1,2, or full)\n");
     exit(0);
 }
 
@@ -73,6 +75,7 @@ int main(int argc, char* argv[]) {
     string playbookFile;
     bool noref = false;
     bool defendPlus = false;
+    string readLogFile;
     Processor::VisionChannel visionChannel = Processor::VisionChannel::full;
 
     for (int i = 1; i < argc; ++i) {
@@ -119,6 +122,13 @@ int main(int argc, char* argv[]) {
             }
 
             playbookFile = argv[++i];
+        } else if (strcmp(var, "-vlog") == 0) {
+            if (i + 1 >= argc) {
+                printf("no log file specified after -vlog\n");
+                usage(argv[0]);
+            }
+
+            readLogFile = argv[++i];
         } else if (strcmp(var, "-noref") == 0) {
             noref = true;
         } else if (strcmp(var, "-defend") == 0) {
@@ -168,7 +178,7 @@ int main(int argc, char* argv[]) {
         Configuration::FromRegisteredConfigurables();
 
     auto processor =
-        std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam);
+        std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam, readLogFile);
     processor->refereeModule()->useExternalReferee(!noref);
 
     // Load config file
@@ -190,7 +200,7 @@ int main(int argc, char* argv[]) {
         cerr << "No ./run/logs/ directory - not writing log file" << endl;
     } else if (!log) {
         cerr << "Not writing log file" << endl;
-    } else {
+    } else if (readLogFile.empty()) {
         QString logFile =
             ApplicationRunDirectory().filePath("./logs/") +
             QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
