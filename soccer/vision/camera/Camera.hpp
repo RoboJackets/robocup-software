@@ -57,9 +57,9 @@ public:
      * Note: Call either this OR updateWithoutFrame once an iteration
      */
     void updateWithFrame(RJ::Time calcTime,
-                         std::vector<CameraBall> ballList,
-                         std::vector<std::list<CameraRobot>> yellowRobotList,
-                         std::vector<std::list<CameraRobot>> blueRobotList,
+                         std::vector<CameraBall>& ballList,
+                         std::vector<std::list<CameraRobot>>& yellowRobotList,
+                         std::vector<std::list<CameraRobot>>& blueRobotList,
                          WorldBall& previousWorldBall,
                          std::vector<WorldRobot>& previousYellowWorldRobots,
                          std::vector<WorldRobot>& previousBlueWorldRobots);
@@ -161,7 +161,6 @@ private:
 
     static ConfigDouble* MHKF_radius_cutoff;
     static ConfigBool* use_MHKF;
-
-    // TODO: Use the global max robot id number
-    int maxRobotJerseyNum = 12;
+    static ConfigInt* max_num_kalman_balls;
+    static ConfigInt* max_num_kalman_robots;
 };

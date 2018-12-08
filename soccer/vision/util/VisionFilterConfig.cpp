@@ -4,6 +4,9 @@ REGISTER_CONFIGURABLE(VisionFilterConfig)
 
 ConfigDouble* VisionFilterConfig::vision_loop_dt;
 
+ConfigInt* VisionFilterConfig::num_robot_jerseys;
+ConfigInt* VisionFilterConfig::max_num_cameras;
+
 ConfigInt* VisionFilterConfig::filter_health_init;
 ConfigInt* VisionFilterConfig::filter_health_inc;
 ConfigInt* VisionFilterConfig::filter_health_dec;
@@ -15,6 +18,9 @@ ConfigInt* VisionFilterConfig::fast_kick_detector_history_length;
 
 void VisionFilterConfig::createConfiguration(Configuration* cfg) {
     vision_loop_dt = new ConfigDouble(cfg, "VisionFilter/loop_dt", 1.0 / 100.0);
+
+    num_robot_jerseys = new ConfigInt(cfg, "VisionFilter/num_robot_jerseys", 12);
+    max_num_cameras = new ConfigInt(cfg, "VisionFilter/max_num_cameras", 12);
 
     // The health of the kalman filter is a measure of how often it's updated
     // compared to the amount it's being predicted. Each new observation,

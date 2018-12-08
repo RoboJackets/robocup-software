@@ -21,15 +21,12 @@ public:
                 int cameraID,
                 std::vector<CameraBall> cameraBalls,
                 std::vector<CameraRobot> cameraRobotsYellow,
-                std::vector<CameraRobot> cameraRobotsBlue);
+                std::vector<CameraRobot> cameraRobotsBlue)
+                : tCapture(tCapture), cameraID(cameraID),
+                  cameraBalls(cameraBalls),
+                  cameraRobotsYellow(cameraRobotsYellow),
+                  cameraRobotsBlue(cameraRobotsBlue) {}
 
-    RJ::Time getTCapture();
-    int getCameraID();
-    std::vector<CameraBall> getCameraBalls();
-    std::vector<CameraRobot> getCameraRobotsYellow();
-    std::vector<CameraRobot> getCameraRobotsBlue();
-
-private:
     RJ::Time tCapture;
     int cameraID;
     std::vector<CameraBall> cameraBalls;

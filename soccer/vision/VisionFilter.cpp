@@ -51,7 +51,6 @@ void VisionFilter::workerThread() {
         worldLock.unlock();
         frameLock.unlock();
 
-
         // Wait for the correct loop timings
         RJ::Seconds diff = RJ::now() - start;
         RJ::Seconds sleepLeft = RJ::Seconds(*VisionFilterConfig::vision_loop_dt) - diff;
@@ -61,6 +60,8 @@ void VisionFilter::workerThread() {
         } else {
             std::cout << "WARNING : Filter is not running fast enough" << std::endl;
         }
+
+        std::this_thread::sleep_for(RJ::Seconds(0.01));
 
         // Make sure we shouldn't stop
         threadEndLock.lock();

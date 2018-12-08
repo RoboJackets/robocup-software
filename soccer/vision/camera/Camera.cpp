@@ -2,14 +2,22 @@
 
 #include <Geometry2d/Point.hpp>
 
+#include "vision/util/VisionFilterConfig.hpp"
+
 REGISTER_CONFIGURABLE(Camera)
 
 ConfigDouble* Camera::MHKF_radius_cutoff;
 ConfigBool* Camera::use_MHKF;
 
+ConfigInt* Camera::max_num_kalman_balls;
+ConfigInt* Camera::max_num_kalman_robots;
+
 void Camera::createConfiguration(Configuration* cfg) {
     MHKF_radius_cutoff = new ConfigDouble(cfg, "VisionFilter/Camera/MHKF_radius_cutoff", 1);
     use_MHKF = new ConfigBool(cfg, "VisionFilter/Camera/use_MHKF", true);
+
+    max_num_kalman_balls = new ConfigInt(cfg, "VisionFilter/Camera/max_num_kalman_balls", 10);
+    max_num_kalman_robots = new ConfigInt(cfg, "VisionFilter/Camera/max_num_kalman_robots", 10);
 }
 
 Camera::Camera() : isValid(false) {}
@@ -17,9 +25,8 @@ Camera::Camera() : isValid(false) {}
 Camera::Camera(int cameraID)
     : isValid(true),
       cameraID(cameraID),
-      kalmanRobotYellowList(maxRobotJerseyNum),
-      kalmanRobotBlueList(maxRobotJerseyNum) {
-}
+      kalmanRobotYellowList(*VisionFilterConfig::num_robot_jerseys),
+      kalmanRobotBlueList(*VisionFilterConfig::num_robot_jerseys) {}
 
 bool Camera::getIsValid() {
     return isValid;
@@ -38,9 +45,9 @@ void Camera::processBallBounce(std::vector<WorldRobot> yellowRobots,
 }
 
 void Camera::updateWithFrame(RJ::Time calcTime,
-                             std::vector<CameraBall> ballList,
-                             std::vector<std::list<CameraRobot>> yellowRobotList,
-                             std::vector<std::list<CameraRobot>> blueRobotList,
+                             std::vector<CameraBall>& ballList,
+                             std::vector<std::list<CameraRobot>>& yellowRobotList,
+                             std::vector<std::list<CameraRobot>>& blueRobotList,
                              WorldBall& previousWorldBall,
                              std::vector<WorldRobot>& previousYellowWorldRobots,
                              std::vector<WorldRobot>& previousBlueWorldRobots) {
@@ -157,7 +164,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
         CameraBall& cameraBall = ballList.at(i);
         bool wasUsed = usedCameraBall.at(i);
 
-        if (!wasUsed) {
+        if (!wasUsed && kalmanBallList.size() < *max_num_kalman_balls) {
             kalmanBallList.emplace_back(cameraID, calcTime, cameraBall, previousWorldBall);
         }
     }
@@ -189,7 +196,7 @@ void Camera::updateRobots(RJ::Time calcTime,
                           std::vector<WorldRobot>& previousYellowWorldRobots,
                           std::vector<WorldRobot>& previousBlueWorldRobots) {
 
-    for (int i = 0; i < maxRobotJerseyNum; i++) {
+    for (int i = 0; i < *VisionFilterConfig::num_robot_jerseys; i++) {
         std::list<CameraRobot> singleYellowRobotList = yellowRobotList.at(i);
         std::list<CameraRobot> singleBlueRobotList = blueRobotList.at(i);
 
@@ -302,7 +309,7 @@ void Camera::updateRobotsMHKF(RJ::Time calcTime,
     for (CameraRobot& cameraRobot : singleRobotList) {
         bool wasUsed = usedCameraRobot.at(cameraRobotIdx);
 
-        if (!wasUsed) {
+        if (!wasUsed && singleKalmanRobotList.size() < *max_num_kalman_robots) {
             singleKalmanRobotList.emplace_back(cameraID, calcTime, cameraRobot, previousWorldRobot);
         }
         

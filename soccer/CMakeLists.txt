@@ -63,7 +63,6 @@ set(ROBOCUP_LIB_SRC
     "vision/ball/KalmanBall.cpp"
     "vision/ball/WorldBall.cpp"
     "vision/camera/Camera.cpp"
-    "vision/camera/CameraFrame.cpp"
     "vision/camera/World.cpp"
     "vision/filter/KalmanFilter.cpp"
     "vision/filter/KalmanFilter2D.cpp"
@@ -225,6 +224,7 @@ set(SOCCER_TEST_SRC
     "vision/tests/KalmanRobotTest.cpp"
     "vision/tests/WorldRobotTest.cpp"
     "vision/tests/BallBounceTest.cpp"
+    "vision/tests/CameraTest.cpp"
     "WindowEvaluatorTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
