@@ -30,13 +30,13 @@ CameraRobot CameraRobot::CombineRobots(std::list<CameraRobot> robots) {
     RJ::Time initTime = robots.front().getTimeCaptured();
     RJ::Seconds timeAvg = RJ::Seconds(0);
     Geometry2d::Point posAvg = Geometry2d::Point(0,0);
-    double thetaAvg = 0.0;
+    Geometry2d::Point thetaAvg = Geometry2d::Point(0,0);
     int robotID = -1;
 
     for (CameraRobot &cr : robots) {
         timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
         posAvg += cr.getPos();
-        thetaAvg += cr.getTheta();
+        thetaAvg += Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
         robotID = cr.getRobotID(); // Shouldn't change besides the first iteration
     }
 
@@ -44,5 +44,5 @@ CameraRobot CameraRobot::CombineRobots(std::list<CameraRobot> robots) {
     posAvg /= robots.size();
     thetaAvg /= robots.size();
 
-    return CameraRobot(initTime + timeAvg, posAvg, thetaAvg, robotID);
+    return CameraRobot(initTime + timeAvg, posAvg, atan2(thetaAvg.y(), thetaAvg.x()), robotID);
 }

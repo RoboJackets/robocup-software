@@ -16,7 +16,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
     : team(team), robotID(robotID), isValid(true), time(calcTime) {
 
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
-    double thetaAvg = 0;
+    Geometry2d::Point thetaAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double omegaAvg = 0;
 
@@ -37,7 +37,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
              << std::endl;
 
         pos   = posAvg;
-        theta = thetaAvg;
+        theta = 0;
         vel   = velAvg;
         omega = omegaAvg;
         posCov = 0;
@@ -85,7 +85,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
 
         // TODO: Constrain Theta in a smart way
         posAvg   += filterPosWeight * robot.getPos();
-        thetaAvg += filterPosWeight * robot.getTheta();
+        thetaAvg += Geometry2d::Point(filterPosWeight * cos(robot.getTheta()), filterPosWeight * sin(robot.getTheta()));
         velAvg   += filterVelWeight * robot.getVel();
         omegaAvg += filterVelWeight * robot.getOmega();
 
@@ -99,7 +99,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
     omegaAvg /= totalVelWeight;
 
     pos   = posAvg;
-    theta = thetaAvg;
+    theta = atan2(thetaAvg.y(), thetaAvg.x());
     vel   = velAvg;
     omega = omegaAvg;
     posCov = totalPosWeight / kalmanRobots.size();
