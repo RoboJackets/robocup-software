@@ -7,6 +7,7 @@
 
 #include "vision/util/VisionFilterConfig.hpp"
 
+REGISTER_CONFIGURABLE(SlowKickDetector)
 
 ConfigDouble* SlowKickDetector::robot_dist_filter_cutoff;
 ConfigDouble* SlowKickDetector::one_robot_within_dist;
@@ -16,12 +17,12 @@ ConfigDouble* SlowKickDetector::min_kick_dist;
 ConfigDouble* SlowKickDetector::max_kick_angle;
 
 void SlowKickDetector::createConfiguration(Configuration* cfg) {
-    robot_dist_filter_cutoff = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_robot_dist_filter_cutoff", 1);
-    one_robot_within_dist    = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_one_robot_within_dist", .11);
-    any_robot_past_dist      = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_any_robot_past_dist", .14);
-    min_ball_speed           = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_min_ball_speed", .8);
+    robot_dist_filter_cutoff = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_robot_dist_filter_cutoff", 3);
+    one_robot_within_dist    = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_one_robot_within_dist", .15);
+    any_robot_past_dist      = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_any_robot_past_dist", .16);
+    min_ball_speed           = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_min_ball_speed", .6);
     min_kick_dist            = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_min_kick_dist", .09);
-    max_kick_angle           = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_max_kick_angle", 20);
+    max_kick_angle           = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_max_kick_angle", .34);
 }
 
 bool SlowKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,

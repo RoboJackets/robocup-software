@@ -17,8 +17,8 @@ ConfigDouble* BallBounce::robot_mouth_angle_dampen;
 inline int sign(float val) { return (0.0 < val) - (val <= 0.0); }
 
 void BallBounce::createConfiguration(Configuration* cfg) {
-    robot_body_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_lin_dampen", 1);
-    robot_mouth_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_mouth_lin_dampen", 1);
+    robot_body_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_lin_dampen", .9);
+    robot_mouth_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_mouth_lin_dampen", .3);
     robot_body_angle_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_angle_dampen", 0);
     robot_mouth_angle_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_mouth_angle_dampen", 0);
 }

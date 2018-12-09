@@ -1,11 +1,23 @@
 #include "World.hpp"
 
 #include <Constants.hpp>
+#include <iostream>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
-// TODO: MaxCameraNum should be a config value
-// TODO: Max num robots per team be a config value
+REGISTER_CONFIGURABLE(World)
+
+ConfigDouble* World::fast_kick_timeout;
+ConfigDouble* World::slow_kick_timeout;
+ConfigDouble* World::same_kick_timeout;
+
+void World::createConfiguration(Configuration* cfg) {
+    // Note: slow kick timeout should be smaller than fast kick timeout
+    fast_kick_timeout = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/fast_kick_timeout", 1);
+    slow_kick_timeout = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_kick_timeout", 0.5);
+    same_kick_timeout = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/same_kick_timeout", 0.05);
+}
+
 World::World()
     : cameras(*VisionFilterConfig::max_num_cameras),
       robotsYellow(Num_Shells, WorldRobot()),
@@ -153,8 +165,44 @@ void World::updateWorldObjects(RJ::Time calcTime) {
 }
 
 void World::detectKicks(RJ::Time calcTime) {
-    // TODO: add the frame to the kick stuff
-    // Run it and see what happens
+    KickEvent fastEvent;
+    KickEvent slowEvent;
+
+    bool isFastKick = fastKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, fastEvent);
+    bool isSlowKick = slowKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, slowEvent);
+
+    // Try to use slow kick whenever it's possible
+    if (isSlowKick) {
+        // Any detected kick?
+        if (bestKickEstimate.getIsValid()) {
+            // If they are the same event, replace with the slow estimate
+            if (RJ::Seconds(bestKickEstimate.kickTime - calcTime) < RJ::Seconds(*same_kick_timeout)) {
+                bestKickEstimate = slowEvent;
+
+            // If it is probably a different kick
+            } else if ((RJ::Seconds(bestKickEstimate.kickTime - calcTime) > RJ::Seconds(*slow_kick_timeout))) {
+                bestKickEstimate = slowEvent;
+            }
+        } else {
+            bestKickEstimate = slowEvent;
+        }
+    } else if (isFastKick) {
+        // Any detected kick?
+        if (!bestKickEstimate.getIsValid()) {
+            // If there has been an even longer timeout between kick estimates
+            if ((RJ::Seconds(bestKickEstimate.kickTime - calcTime) > RJ::Seconds(*fast_kick_timeout))) {
+                bestKickEstimate = fastEvent;
+            }
+        } else {
+            bestKickEstimate = fastEvent;
+        }
+    }
+
+    // If we haven't had a kick in a while, reset out kick estimate
+    if (bestKickEstimate.getIsValid() && 
+        RJ::Seconds(bestKickEstimate.kickTime - calcTime) > RJ::Seconds(*slow_kick_timeout + *fast_kick_timeout)) {
+        bestKickEstimate = KickEvent();
+    }
 }
 
 WorldBall World::getWorldBall() {
@@ -167,4 +215,8 @@ std::vector<WorldRobot> World::getRobotsYellow() {
 
 std::vector<WorldRobot> World::getRobotsBlue() {
     return robotsBlue;
+}
+
+KickEvent World::getBestKickEstimate() {
+    return bestKickEstimate;
 }

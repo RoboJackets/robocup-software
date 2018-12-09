@@ -1,7 +1,8 @@
 #include <list>
 #include <vector>
 
-#include "Utils.hpp"
+#include <Utils.hpp>
+#include <Configuration.hpp>
 
 #include "vision/camera/Camera.hpp"
 #include "vision/camera/CameraFrame.hpp"
@@ -11,6 +12,7 @@
 
 #include "vision/kick/detector/FastKickDetector.hpp"
 #include "vision/kick/detector/SlowKickDetector.hpp"
+#include "vision/kick/KickEvent.hpp"
 
 class World {
 public:
@@ -22,6 +24,9 @@ public:
     WorldBall getWorldBall();
     std::vector<WorldRobot> getRobotsYellow();
     std::vector<WorldRobot> getRobotsBlue();
+    KickEvent getBestKickEstimate();
+
+    static void createConfiguration(Configuration* cfg);
 
 private:
     void calcBallBounce();
@@ -36,4 +41,9 @@ private:
 
     FastKickDetector fastKick;
     SlowKickDetector slowKick;
+    KickEvent bestKickEstimate;
+
+    static ConfigDouble* fast_kick_timeout;
+    static ConfigDouble* slow_kick_timeout;
+    static ConfigDouble* same_kick_timeout;
 };

@@ -11,15 +11,20 @@
 
 class KickEvent {
 public:
+    KickEvent() : isValid(false) {};
     KickEvent(RJ::Time kickTime, WorldRobot kickingRobot,
               std::deque<VisionState> statesSinceKick) :
-              kickTime(kickTime), kickingRobot(kickingRobot),
+              isValid(true), kickTime(kickTime),
+              kickingRobot(kickingRobot),
               statesSinceKick(statesSinceKick) {}
 
     void addState(RJ::Time calcTime, WorldBall ball,
                   std::vector<WorldRobot> yellowRobots,
                   std::vector<WorldRobot> blueRobots);
 
+    bool getIsValid();
+
+    bool isValid;
     RJ::Time kickTime;
     WorldRobot kickingRobot;
     std::deque<VisionState> statesSinceKick;

@@ -9,10 +9,12 @@
 
 #include "vision/util/VisionFilterConfig.hpp"
 
+REGISTER_CONFIGURABLE(FastKickDetector)
+
 ConfigDouble* FastKickDetector::acceleration_trigger;
 
 void FastKickDetector::createConfiguration(Configuration* cfg) {
-    acceleration_trigger = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/fast_acceleration_trigger", 4000);
+    acceleration_trigger = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/fast_acceleration_trigger", 750);
 }
 
 bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
@@ -82,7 +84,7 @@ bool FastKickDetector::detectKick() {
     // This is weird when the history length is > 3, but it allows you not to have to retune it
     Geometry2d::Point accel = dv / *VisionFilterConfig::vision_loop_dt;
 
-    return accel.mag() > *acceleration_trigger;
+    return accel.mag() > *acceleration_trigger && vStart.mag() < vEnd.mag();
 }
 
 WorldRobot FastKickDetector::getClosestRobot() {
