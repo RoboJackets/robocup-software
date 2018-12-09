@@ -114,8 +114,8 @@ private:
      * Figures out which update style to use and calls that
      */
     void updateRobots(RJ::Time calcTime,
-                      std::vector<std::list<CameraRobot>> yellowRobotList,
-                      std::vector<std::list<CameraRobot>> blueRobotList,
+                      std::vector<std::list<CameraRobot>>& yellowRobotList,
+                      std::vector<std::list<CameraRobot>>& blueRobotList,
                       std::vector<WorldRobot>& previousYellowWorldRobots,
                       std::vector<WorldRobot>& previousBlueWorldRobots);
 
@@ -123,7 +123,7 @@ private:
      * Updates robot filters using MHKF style updater
      */
     void updateRobotsMHKF(RJ::Time calcTime,
-                          std::list<CameraRobot> singleRobotList,
+                          std::list<CameraRobot>& singleRobotList,
                           WorldRobot& previousWorldRobot,
                           std::list<KalmanRobot>& singleKalmanRobotList);
 
@@ -131,7 +131,7 @@ private:
      * Updates robot filters using AKF style updater
      */
     void updateRobotsAKF(RJ::Time calcTime,
-                         std::list<CameraRobot> singleRobotList,
+                         std::list<CameraRobot>& singleRobotList,
                          WorldRobot& previousWorldRobot,
                          std::list<KalmanRobot>& singleKalmanRobotList);
 

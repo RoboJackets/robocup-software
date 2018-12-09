@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include <Constants.hpp>
+#include <Robot.hpp>
+
 #include "vision/util/VisionFilterConfig.hpp"
 
 VisionFilter::VisionFilter() : threadEnd(false) {
@@ -26,14 +29,72 @@ void VisionFilter::addFrames(std::vector<CameraFrame>& frames) {
     frameLock.unlock();
 }
 
-void VisionFilter::getBall() {
+void VisionFilter::fillBallState(SystemState* state) {
     worldLock.lock();
+    WorldBall wb = world.getWorldBall();
     worldLock.unlock();
+
+    if (wb.getIsValid()) {
+        state->ball.valid = true;
+        state->ball.pos = wb.getPos();
+        state->ball.vel = wb.getVel();
+        state->time = wb.getTime();
+    } else {
+        state->ball.valid = false;
+    }
 }
 
-void VisionFilter::getRobots() {
+void VisionFilter::fillRobotState(SystemState* state, bool usBlue) {
     worldLock.lock();
+    std::vector<WorldRobot> yellowTeam = world.getRobotsYellow();
+    std::vector<WorldRobot> blueTeam = world.getRobotsBlue();
     worldLock.unlock();
+
+    // Fill our robots
+    for (int i = 0; i < Num_Shells; i++) {
+        OurRobot* robot = state->self.at(i);
+        WorldRobot wr;
+
+        if (usBlue) {
+            wr = blueTeam.at(i);
+        } else {
+            wr = yellowTeam.at(i);
+        }
+
+        robot->visible = wr.getIsValid();
+        robot->velValid = wr.getIsValid();
+
+        if (wr.getIsValid()) {
+            robot->pos = wr.getPos();
+            robot->vel = wr.getVel();
+            robot->angle = wr.getTheta();
+            robot->angleVel = wr.getOmega();
+            robot->time = wr.getTime();
+        }
+    }
+
+    // Fill opp robots
+    for (int i = 0; i < Num_Shells; i++) {
+        OpponentRobot* robot = state->opp.at(i);
+        WorldRobot wr;
+
+        if (usBlue) {
+            wr = yellowTeam.at(i);
+        } else {
+            wr = blueTeam.at(i);
+        }
+
+        robot->visible = wr.getIsValid();
+        robot->velValid = wr.getIsValid();
+
+        if (wr.getIsValid()) {
+            robot->pos = wr.getPos();
+            robot->vel = wr.getVel();
+            robot->angle = wr.getTheta();
+            robot->angleVel = wr.getOmega();
+            robot->time = wr.getTime();
+        }
+    }
 }
 
 void VisionFilter::workerThread() {
@@ -45,6 +106,7 @@ void VisionFilter::workerThread() {
         worldLock.lock();
         if (frameBuffer.size() > 0) {
             world.updateWithCameraFrame(RJ::now(), frameBuffer);
+            frameBuffer.clear();
         } else {
             world.updateWithoutCameraFrame(RJ::now());
         }
@@ -60,8 +122,6 @@ void VisionFilter::workerThread() {
         } else {
             std::cout << "WARNING : Filter is not running fast enough" << std::endl;
         }
-
-        std::this_thread::sleep_for(RJ::Seconds(0.01));
 
         // Make sure we shouldn't stop
         threadEndLock.lock();

@@ -47,7 +47,7 @@ TEST(KalmanRobot, valid_world_robot) {
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(WorldRobot::Team::BLUE, robotID, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, robotID, kbl);
 
     KalmanRobot kb2 = KalmanRobot(cID, t, b1, wb);
 

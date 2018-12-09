@@ -59,7 +59,7 @@ void KalmanBall::predictAndUpdate(RJ::Time currentTime, CameraBall updateBall) {
 }
 
 bool KalmanBall::isUnhealthy() {
-    bool updated_recently = RJ::numSeconds(lastPredictTime - lastUpdateTime) < *max_time_outside_vision;
+    bool updated_recently = RJ::Seconds(lastPredictTime - lastUpdateTime) < RJ::Seconds(*max_time_outside_vision);
 
     return !updated_recently;
 }

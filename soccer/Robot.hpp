@@ -60,9 +60,7 @@ public:
         : visible(false),
           velValid(false),
           angle(0),
-          angleVel(0),
-          time(),
-          visionFrame(0) {
+          angleVel(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }
@@ -75,10 +73,7 @@ public:
     /// angle in radians.  0 radians means the robot is aimed along the x-axis
     double angle;
     double angleVel;  /// angular velocity in radians/sec
-
-    // Time at which this estimate is valid
     RJ::Time time;
-    int visionFrame;
 };
 
 class Robot : public RobotPose {

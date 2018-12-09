@@ -12,7 +12,7 @@ REGISTER_CONFIGURABLE(KalmanRobot)
 ConfigDouble* KalmanRobot::max_time_outside_vision;
 
 void KalmanRobot::createConfiguration(Configuration* cfg) {
-    max_time_outside_vision = new ConfigDouble(cfg, "VisionFilter/KalmanRobot/max_time_outside_vision", 2);
+    max_time_outside_vision = new ConfigDouble(cfg, "VisionFilter/KalmanRobot/max_time_outside_vision", 0.5);
 }
 
 KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
@@ -79,7 +79,7 @@ void KalmanRobot::predictAndUpdate(RJ::Time currentTime, CameraRobot updateRobot
 }
 
 bool KalmanRobot::isUnhealthy() {
-    bool updated_recently = RJ::numSeconds(lastPredictTime - lastUpdateTime) < *max_time_outside_vision;
+    bool updated_recently = RJ::Seconds(lastPredictTime - lastUpdateTime) < RJ::Seconds(*max_time_outside_vision);
 
     return !updated_recently;
 }

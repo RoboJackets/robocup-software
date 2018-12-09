@@ -8,7 +8,6 @@ public:
 
     static ConfigDouble* vision_loop_dt;
 
-    static ConfigInt* num_robot_jerseys;
     static ConfigInt* max_num_cameras;
 
     static ConfigInt* filter_health_init;

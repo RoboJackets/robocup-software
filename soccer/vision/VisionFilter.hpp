@@ -5,6 +5,8 @@
 #include <list>
 #include <thread>
 
+#include <SystemState.hpp>
+
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
 
@@ -20,8 +22,8 @@ public:
      * Adds a list of frames that arrived
      */
     void addFrames(std::vector<CameraFrame>& frames);
-    void getBall();
-    void getRobots();
+    void fillBallState(SystemState* state);
+    void fillRobotState(SystemState* state, bool usBlue);
 
 private:
     void workerThread();

@@ -19,9 +19,13 @@ public:
     void updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newFrames);
     void updateWithoutCameraFrame(RJ::Time calcTime);
 
+    WorldBall getWorldBall();
+    std::vector<WorldRobot> getRobotsYellow();
+    std::vector<WorldRobot> getRobotsBlue();
+
 private:
     void calcBallBounce();
-    void updateWorldObjects();
+    void updateWorldObjects(RJ::Time calcTime);
     void detectKicks(RJ::Time calcTime);
 
     std::vector<Camera> cameras;

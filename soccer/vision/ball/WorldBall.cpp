@@ -12,7 +12,7 @@ void WorldBall::createConfiguration(Configuration* cfg) {
 
 WorldBall::WorldBall() : isValid(false) {}
 
-WorldBall::WorldBall(std::list<KalmanBall> kalmanBalls) : isValid(true) {
+WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) : isValid(true), time(calcTime){
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double totalPosWeight = 0;
@@ -109,4 +109,8 @@ double WorldBall::getVelCov() {
 
 std::list<KalmanBall> WorldBall::getBallComponents() {
     return ballComponents;
+}
+
+RJ::Time WorldBall::getTime() {
+    return time;
 }

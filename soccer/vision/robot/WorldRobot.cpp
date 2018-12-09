@@ -12,8 +12,8 @@ void WorldRobot::createConfiguration(Configuration* cfg) {
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
-WorldRobot::WorldRobot(Team team, int robotID, std::list<KalmanRobot> kalmanRobots)
-    : team(team), robotID(robotID), isValid(true) {
+WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots)
+    : team(team), robotID(robotID), isValid(true), time(calcTime) {
 
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     double thetaAvg = 0;
@@ -83,7 +83,7 @@ WorldRobot::WorldRobot(Team team, int robotID, std::list<KalmanRobot> kalmanRobo
         double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
                                           -*robot_merger_power);
 
-        // TODO: Constrain Theta
+        // TODO: Constrain Theta in a smart way
         posAvg   += filterPosWeight * robot.getPos();
         thetaAvg += filterPosWeight * robot.getTheta();
         velAvg   += filterVelWeight * robot.getVel();
@@ -141,4 +141,8 @@ double WorldRobot::getVelCov() {
 
 std::list<KalmanRobot> WorldRobot::getRobotComponents() {
     return robotComponents;
+}
+
+RJ::Time WorldRobot::getTime() {
+    return time;
 }

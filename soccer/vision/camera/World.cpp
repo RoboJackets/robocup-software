@@ -1,13 +1,15 @@
 #include "World.hpp"
 
+#include <Constants.hpp>
+
 #include "vision/util/VisionFilterConfig.hpp"
 
 // TODO: MaxCameraNum should be a config value
 // TODO: Max num robots per team be a config value
 World::World()
     : cameras(*VisionFilterConfig::max_num_cameras),
-      robotsYellow(*VisionFilterConfig::num_robot_jerseys, WorldRobot()),
-      robotsBlue(*VisionFilterConfig::num_robot_jerseys, WorldRobot()) {}
+      robotsYellow(Num_Shells, WorldRobot()),
+      robotsBlue(Num_Shells, WorldRobot()) {}
 
 void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newFrames) {
     calcBallBounce();
@@ -51,7 +53,7 @@ void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newF
         }
     }
 
-    updateWorldObjects();
+    updateWorldObjects(calcTime);
     detectKicks(calcTime);
 }
 
@@ -64,7 +66,7 @@ void World::updateWithoutCameraFrame(RJ::Time calcTime) {
         }
     }
 
-    updateWorldObjects();
+    updateWorldObjects(calcTime);
     detectKicks(calcTime);
 }
 
@@ -76,7 +78,7 @@ void World::calcBallBounce() {
     }
 }
 
-void World::updateWorldObjects() {
+void World::updateWorldObjects(RJ::Time calcTime) {
     // Fill robotsYellow/Blue with what robots we want and remove the rest
     ball = WorldBall();
 
@@ -89,8 +91,8 @@ void World::updateWorldObjects() {
     }
 
     std::list<KalmanBall> kalmanBalls;
-    std::vector<std::list<KalmanRobot>> kalmanRobotsYellow(*VisionFilterConfig::num_robot_jerseys);
-    std::vector<std::list<KalmanRobot>> kalmanRobotsBlue(*VisionFilterConfig::num_robot_jerseys);
+    std::vector<std::list<KalmanRobot>> kalmanRobotsYellow(Num_Shells);
+    std::vector<std::list<KalmanRobot>> kalmanRobotsBlue(Num_Shells);
 
     // Take best kalman filter from every camera and combine them
     for (Camera& camera : cameras) {
@@ -134,18 +136,18 @@ void World::updateWorldObjects() {
 
     // Only replace the invalid result if we have measurements on any camera
     if (kalmanBalls.size() > 0) {
-        ball = WorldBall(kalmanBalls);
+        ball = WorldBall(calcTime, kalmanBalls);
     }
 
     for (int i = 0; i < robotsYellow.size(); i++) {
         if (kalmanRobotsYellow.at(i).size() > 0) {
-            robotsYellow.at(i) = WorldRobot(WorldRobot::Team::YELLOW, i, kalmanRobotsYellow.at(i));
+            robotsYellow.at(i) = WorldRobot(calcTime, WorldRobot::Team::YELLOW, i, kalmanRobotsYellow.at(i));
         }
     }
 
     for (int i = 0; i < robotsBlue.size(); i++) {
         if (kalmanRobotsBlue.at(i).size() > 0) {
-            robotsBlue.at(i) = WorldRobot(WorldRobot::Team::BLUE, i, kalmanRobotsBlue.at(i));
+            robotsBlue.at(i) = WorldRobot(calcTime, WorldRobot::Team::BLUE, i, kalmanRobotsBlue.at(i));
         }
     }
 }
@@ -153,4 +155,16 @@ void World::updateWorldObjects() {
 void World::detectKicks(RJ::Time calcTime) {
     // TODO: add the frame to the kick stuff
     // Run it and see what happens
+}
+
+WorldBall World::getWorldBall() {
+    return ball;
+}
+
+std::vector<WorldRobot> World::getRobotsYellow() {
+    return robotsYellow;
+}
+
+std::vector<WorldRobot> World::getRobotsBlue() {
+    return robotsBlue;
 }

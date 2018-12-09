@@ -4,6 +4,7 @@
 
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
+#include <Utils.hpp>
 
 #include "KalmanBall.hpp"
 
@@ -22,7 +23,7 @@ public:
      *
      * @param kalmanBalls List of best kalman ball from every camera
      */
-    WorldBall(std::list<KalmanBall> kalmanBalls);
+    WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls);
 
     /**
      * @return If the ball actually represents a real ball
@@ -54,6 +55,11 @@ public:
      */
     std::list<KalmanBall> getBallComponents();
 
+    /**
+     * @return Time of creation for this world ball
+     */
+    RJ::Time getTime();
+
     static void createConfiguration(Configuration* cfg);
 
 private:
@@ -63,6 +69,7 @@ private:
     double posCov;
     double velCov;
     std::list<KalmanBall> ballComponents;
+    RJ::Time time;
 
     static ConfigDouble* ball_merger_power;
 };

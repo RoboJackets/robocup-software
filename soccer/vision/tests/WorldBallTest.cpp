@@ -10,7 +10,7 @@ TEST(WorldBall, invalid) {
 TEST(WorldBall, no_ball) {
     std::list<KalmanBall> kbl;
 
-    WorldBall wb = WorldBall(kbl);
+    WorldBall wb = WorldBall(RJ::now(), kbl);
 
     EXPECT_FALSE(wb.getIsValid());
 }
@@ -27,7 +27,7 @@ TEST(WorldBall, one_ball) {
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
 
-    WorldBall wb = WorldBall(kbl);
+    WorldBall wb = WorldBall(t, kbl);
 
     Geometry2d::Point rp = wb.getPos();
     Geometry2d::Point rv = wb.getVel();
@@ -64,7 +64,7 @@ TEST(WorldBall, two_ball) {
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldBall wb = WorldBall(kbl);
+    WorldBall wb = WorldBall(t, kbl);
 
     Geometry2d::Point rp = wb.getPos();
     Geometry2d::Point rv = wb.getVel();

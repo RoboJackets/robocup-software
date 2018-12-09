@@ -10,7 +10,7 @@ TEST(WorldRobot, invalid) {
 TEST(WorldRobot, no_robot) {
     std::list<KalmanRobot> kbl;
 
-    WorldRobot wb = WorldRobot(WorldRobot::Team::BLUE, 1, kbl);
+    WorldRobot wb = WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl);
 
     EXPECT_FALSE(wb.getIsValid());
 }
@@ -29,7 +29,7 @@ TEST(WorldRobot, one_robot) {
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(WorldRobot::Team::BLUE, rID, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, rID, kbl);
 
     Geometry2d::Point rp = wb.getPos();
     double rt = wb.getTheta();
@@ -75,7 +75,7 @@ TEST(WorldRobot, two_robot) {
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldRobot wb = WorldRobot(WorldRobot::Team::BLUE, rID, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, rID, kbl);
 
     Geometry2d::Point rp = wb.getPos();
     double rt = wb.getTheta();

@@ -28,7 +28,7 @@ public:
      * @param robotID The ID of the robot
      * @param kalmlanRobots List of kalman robots from each of the cameras to merger
      */
-    WorldRobot(Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
+    WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
 
     /**
      * @return If the robot actually represents a real robot
@@ -80,6 +80,11 @@ public:
      */
     std::list<KalmanRobot> getRobotComponents();
 
+    /**
+     * @return Time of creation for the robot estimate
+     */
+    RJ::Time getTime();
+
     static void createConfiguration(Configuration* cfg);
 
 private:
@@ -92,6 +97,7 @@ private:
     double posCov;
     double velCov;
     std::list<KalmanRobot> robotComponents;
+    RJ::Time time;
 
     bool isValid;
     static ConfigDouble* robot_merger_power;

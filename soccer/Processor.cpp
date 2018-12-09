@@ -242,6 +242,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
     _vision->addFrames(frames);
 
     // Fill the list of our robots/balls based on _blue
+    _vision->fillBallState(&_state);
+    _vision->fillRobotState(&_state, _blueTeam);
 }
 
 /**

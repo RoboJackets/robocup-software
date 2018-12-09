@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <Constants.hpp>
 #include "vision/camera/Camera.hpp"
 
 TEST(Camera, invalid_camera) {
@@ -44,11 +45,11 @@ TEST(Camera, update_with_frame_empty) {
     RJ::Time t = RJ::now();
 
     std::vector<CameraBall> b;
-    std::vector<std::list<CameraRobot>> yr(12);
-    std::vector<std::list<CameraRobot>> br(12);
+    std::vector<std::list<CameraRobot>> yr(Num_Shells);
+    std::vector<std::list<CameraRobot>> br(Num_Shells);
     WorldBall wb;
-    std::vector<WorldRobot> wry(12, WorldRobot());
-    std::vector<WorldRobot> wrb(12, WorldRobot());
+    std::vector<WorldRobot> wry(Num_Shells, WorldRobot());
+    std::vector<WorldRobot> wrb(Num_Shells, WorldRobot());
 
     c.updateWithFrame(t, b, yr, br, wb, wry, wrb);
 
@@ -69,11 +70,11 @@ TEST(Camera, update_with_single_frame) {
     RJ::Time t = RJ::now();
 
     std::vector<CameraBall> b;
-    std::vector<std::list<CameraRobot>> yr(12);
-    std::vector<std::list<CameraRobot>> br(12);
+    std::vector<std::list<CameraRobot>> yr(Num_Shells);
+    std::vector<std::list<CameraRobot>> br(Num_Shells);
     WorldBall wb;
-    std::vector<WorldRobot> wry(12, WorldRobot());
-    std::vector<WorldRobot> wrb(12, WorldRobot());
+    std::vector<WorldRobot> wry(Num_Shells, WorldRobot());
+    std::vector<WorldRobot> wrb(Num_Shells, WorldRobot());
 
     b.emplace_back(RJ::now(), Geometry2d::Point(0, 0));
     b.emplace_back(RJ::now(), Geometry2d::Point(0.5, 0.5));
