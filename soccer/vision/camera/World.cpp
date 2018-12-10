@@ -37,8 +37,8 @@ void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newF
         }
 
         // Take the non-sorted list from the frame and make a list for the cameras
-        std::vector<std::list<CameraRobot>> yellowTeam(*VisionFilterConfig::max_num_cameras);
-        std::vector<std::list<CameraRobot>> blueTeam(*VisionFilterConfig::max_num_cameras);
+        std::vector<std::list<CameraRobot>> yellowTeam(Num_Shells);
+        std::vector<std::list<CameraRobot>> blueTeam(Num_Shells);
 
         for (CameraRobot& robot : frame.cameraRobotsYellow) {
             yellowTeam.at(robot.getRobotID()).push_back(robot);
