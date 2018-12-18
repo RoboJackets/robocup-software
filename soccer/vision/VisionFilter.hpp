@@ -30,9 +30,24 @@ public:
 
     /**
      * Adds a list of frames that arrived
+     *
+     * @param frames List of new frames
      */
     void addFrames(std::vector<CameraFrame>& frames);
+
+    /**
+     * Fills system state with the ball pos/vel
+     *
+     * @param state Current system state pointer
+     */
     void fillBallState(SystemState* state);
+
+    /**
+     * Fills system state with the robots pos/vel
+     *
+     * @param state Current system state pointer
+     * @param usBlue True if we are blue
+     */
     void fillRobotState(SystemState* state, bool usBlue);
 
 private:
