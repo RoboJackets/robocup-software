@@ -10,6 +10,16 @@
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
 
+/**
+ * Uses a seperate thread to filter the vision measurements into
+ * a smoother velocity/position estimate for both the ball and robots.
+ *
+ * Add vision frames directly into the filter call the fill states functions
+ * to push the newest estimates directly into the system state.
+ * 
+ * Note: There may be a 1 frame delay between the measurements being added
+ * and the measurements being included in the filter estimate.
+ */
 class VisionFilter {
 public:
     /**

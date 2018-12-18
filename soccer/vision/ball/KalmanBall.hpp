@@ -30,6 +30,10 @@ public:
 
     /**
      * Predicts one time step forward
+     *
+     * @param currentTime Time at the current frame
+     *
+     * @note Call either this OR predictAndUpdate once a frame
      */
     void predict(RJ::Time currentTime);
 
@@ -38,11 +42,13 @@ public:
      *
      * @param currentTime Current time of the prediction/update step
      * @param updateBall Ball measurement that we are using as feedback to the filters
+     *
+     * @note Call either this OR predict once a frame
      */
     void predictAndUpdate(RJ::Time currentTime, CameraBall updateBall);
 
     /**
-     * Returns true when the filter hasn't been updated in a while etc and should be deleted
+     * @return Returns true when the filter hasn't been updated in a while etc and should be deleted
      */
     bool isUnhealthy();
 
@@ -82,15 +88,16 @@ public:
     std::deque<CameraBall> getPrevMeasurements();
 
     /**
-     * Note: Only used to set the velocity when we think the ball will bounce off another robot
+     * @param newVel new velocity to insert into the kalman filter
+     *
+     * Note: Only used to set the velocity when we think the ball will bounce
+     * off another robot
      */
     void setVel(Geometry2d::Point newVel);
 
     static void createConfiguration(Configuration* cfg);
 
 private:
-    static ConfigDouble* max_time_outside_vision;
-
     RJ::Time lastUpdateTime;
     RJ::Time lastPredictTime;
 
@@ -102,4 +109,7 @@ private:
     int health;
 
     unsigned int cameraID;
+
+    // Max time in seconds that a filter can not be updated before it is removed
+    static ConfigDouble* max_time_outside_vision;
 };

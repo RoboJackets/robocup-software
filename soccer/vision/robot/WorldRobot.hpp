@@ -25,8 +25,10 @@ public:
 
     /**
      * Creates a valid world robot
+     *
      * @param robotID The ID of the robot
-     * @param kalmlanRobots List of kalman robots from each of the cameras to merger
+     * @param team The team color
+     * @param kalmanRobots List of kalman robots from each of the cameras to merger
      */
     WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
 
@@ -71,7 +73,7 @@ public:
     double getPosCov();
 
     /**
-     * @return The average velocity covaraince of the filter including omega
+     * @return The average velocity covariance of the filter including omega
      */
     double getVelCov();
 

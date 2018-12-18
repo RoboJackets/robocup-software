@@ -10,6 +10,9 @@
 
 class KalmanBall;
 
+/**
+ * Best estimate of the true ball position using the kalman balls from each camera
+ */
 class WorldBall {
 public:
     /**
@@ -21,6 +24,7 @@ public:
     /**
      * Creates a valid world ball from a list of kalman balls through special averaging
      *
+     * @param calcTime Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
      */
     WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls);

@@ -37,7 +37,8 @@ void Camera::processBallBounce(std::vector<WorldRobot> yellowRobots,
                                std::vector<WorldRobot> blueRobots) {
     for (KalmanBall& b : kalmanBallList) {
         Geometry2d::Point newVel;
-        bool isCollision = BallBounce::CalcBallBounce(b, yellowRobots, blueRobots, newVel);
+        bool isCollision = BallBounce::CalcBallBounce(b, yellowRobots,
+                                                      blueRobots, newVel);
 
         if (isCollision) {
             b.setVel(newVel);
@@ -128,6 +129,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
     // Which camera balls to apply to which kalman ball
     std::vector<std::list<CameraBall>> appliedBallsList(kalmanBallList.size());
 
+    // Figure out which measurements go with which kalman balls
     int kalmanBallIdx = 0;
     for (KalmanBall& kalmanBall : kalmanBallList) {
         std::list<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
@@ -149,6 +151,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
         kalmanBallIdx++;
     }
 
+    // Apply the ball measurements to the kalman filters
     kalmanBallIdx = 0;
     for (KalmanBall& kalmanBall : kalmanBallList) {
         std::list<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
@@ -164,9 +167,14 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
         }
     }
 
+    // Any balls not used, create a kalman ball at that position
     for (int i = 0; i < ballList.size(); i++) {
         CameraBall& cameraBall = ballList.at(i);
         bool wasUsed = usedCameraBall.at(i);
+
+        if (!wasUsed && kalmanBallList.size() < *max_num_kalman_balls) {
+            kalmanBallList.emplace_back(cameraID, calcTime, cameraBall, previousWorldBall);
+        }
     }
 }
 
@@ -196,7 +204,7 @@ void Camera::updateRobots(RJ::Time calcTime,
                           std::vector<WorldRobot>& previousYellowWorldRobots,
                           std::vector<WorldRobot>& previousBlueWorldRobots) {
 
-    for (int i = 0; i < *VisionFilterConfig::max_num_cameras; i++) {
+    for (int i = 0; i < Num_Shells; i++) {
         std::list<CameraRobot>& singleYellowRobotList = yellowRobotList.at(i);
         std::list<CameraRobot>& singleBlueRobotList = blueRobotList.at(i);
 

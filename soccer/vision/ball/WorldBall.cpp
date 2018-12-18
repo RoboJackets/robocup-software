@@ -1,4 +1,5 @@
 #include "WorldBall.hpp"
+
 #include <iostream>
 #include <cmath>
 
@@ -64,6 +65,7 @@ WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) : isV
         double posUncertantity = posStdDev.mag();
         double velUncertantity = velStdDev.mag();
 
+        // Weight better estimates higher
         double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
                                           -*ball_merger_power);
 

@@ -10,10 +10,10 @@
 class CameraRobot {
 public:
     /**
-     * @param timeCaptured
-     * @param pos
-     * @param theta
-     * @param robotID
+     * @param timeCaptured Time the frame was captured
+     * @param pos Position of the robot observation
+     * @param theta Heading of the robot observation
+     * @param robotID ID of the robot
      */
     CameraRobot(RJ::Time timeCaptured, Geometry2d::Point pos, double theta, int robotID)
         : timeCaptured(timeCaptured), pos(pos), theta(theta), robotID(robotID) {}

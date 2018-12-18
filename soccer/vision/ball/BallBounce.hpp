@@ -40,18 +40,31 @@ private:
     static bool BallInRobot(KalmanBall& ball, WorldRobot& robot);
 
     /**
-     * Finds the 1 or 2 interserct locations on the ball shell
+     * Finds the 0, 1 or 2 interserct locations on the ball shell
      *
      * @param ball The ball we want to check for
      * @param robot The robot we want to check against
+     *
+     * @return List of all intersection points. Length 0, 1, or 2
+     * 0 means no intersection
+     * 1 means tangental intersection
+     * 2 means chord based intersection
      */
     static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
             KalmanBall& ball, WorldRobot& robot);
 
     // Linear velocity dampen
+    // Body is bouncing off the circular shell
+    // Mouth is bouncing off the front mouth
+    // 1 means 100% of the velocity is kept after collision
+    // 0 means 0% of the velocity is kept after collision
     static ConfigDouble* robot_body_lin_dampen;
     static ConfigDouble* robot_mouth_lin_dampen;
     // Reflect Angle dampen
+    // Body is bouncing off the circular shell
+    // Mouth is bouncing off the front mouth
+    // 1 means a 45 degree hit reflects at 0 degrees out (parrallel to tangent)
+    // 0 means a 45 degree hit perfectly reflects at 45 degrees out
     static ConfigDouble* robot_body_angle_dampen;
     static ConfigDouble* robot_mouth_angle_dampen;
 };

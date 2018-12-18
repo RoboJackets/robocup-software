@@ -13,9 +13,11 @@ ConfigDouble* BallBounce::robot_mouth_lin_dampen;
 ConfigDouble* BallBounce::robot_body_angle_dampen;
 ConfigDouble* BallBounce::robot_mouth_angle_dampen;
 
-// Note 0 case returns -1 instead of 0
-// Forced to check with small epislon since we actually care about 0 being represented
-// correctly as -1
+/**
+ * Note 0 case returns -1 instead of 0
+ * Forced to check with small epislon since we actually care about 0 being represented
+ * correctly as -1. It's ok if the 1.0e-10 doesn't return -1 or 1.
+ */
 inline int sign(double val) { return (1.0e-10 < val) - (val <= 1.0e-10); }
 
 void BallBounce::createConfiguration(Configuration* cfg) {
@@ -95,7 +97,7 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
         // Use the line intersect point instead
         // If there is no line intersect point (within that angle range)
         // then the ball is moving across the mouth of the robot
-
+        // Note: No intersection across mouth is not accounted for
         Geometry2d::Line intersectLine = Geometry2d::Line(intersectPts.at(0), intersectPts.at(1));
         Geometry2d::Point mouthHalfUnitVec = Geometry2d::Point(0, 1).rotate(robot.getTheta());
         Geometry2d::Point mouthCenterPos = Geometry2d::Point(Robot_MouthRadius, 0).rotate(robot.getTheta()) + robot.getPos();

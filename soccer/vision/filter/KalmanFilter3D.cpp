@@ -1,6 +1,6 @@
 #include "KalmanFilter3D.hpp"
+
 #include <cmath>
-#include <iostream>
 
 #include "vision/util/VisionFilterConfig.hpp"
 

@@ -6,6 +6,9 @@
 #include "vision/ball/CameraBall.hpp"
 #include "vision/robot/CameraRobot.hpp"
 
+/**
+ * Simple non-protobuf object representing a camera frame
+ */
 class CameraFrame {
 public:
     /**

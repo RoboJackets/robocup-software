@@ -6,7 +6,7 @@
  * Abstract class that should be inherited from to create specific
  * kalman filters
  *
- * Must initilize:
+ * Must initialize:
  *  x_k1_k1, x_k_k1, x_k_k,
  *  P_k1_k1, P_k_k1, P_k_k,
  *  F_k, B_k, H_k,

@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "vision/util/VisionFilterConfig.hpp"
-#include <iostream>
 
 REGISTER_CONFIGURABLE(KalmanBall)
 

@@ -17,7 +17,14 @@ public:
     CameraBall(RJ::Time timeCaptured, Geometry2d::Point pos)
         : timeCaptured(timeCaptured), pos(pos) {}
 
+    /**
+     * @return Time this measurement was captured
+     */
     RJ::Time getTimeCaptured();
+
+    /**
+     * @return Position of the measurement
+     */
     Geometry2d::Point getPos();
 
     /**

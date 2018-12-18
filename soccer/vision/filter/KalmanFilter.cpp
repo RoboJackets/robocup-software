@@ -4,6 +4,7 @@ void KalmanFilter::predict() {
     x_k1_k1 = x_k_k;
     P_k1_k1 = P_k_k;
 
+    // Predict
     x_k_k1 = F_k * x_k1_k1 + B_k*u_k;
     P_k_k1 = F_k * P_k1_k1 * F_k.transpose() + Q_k;
 

@@ -1,7 +1,6 @@
 #include "World.hpp"
 
 #include <Constants.hpp>
-#include <iostream>
 
 #include "vision/util/VisionFilterConfig.hpp"
 

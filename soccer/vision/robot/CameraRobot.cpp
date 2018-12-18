@@ -30,6 +30,7 @@ CameraRobot CameraRobot::CombineRobots(std::list<CameraRobot> robots) {
     RJ::Time initTime = robots.front().getTimeCaptured();
     RJ::Seconds timeAvg = RJ::Seconds(0);
     Geometry2d::Point posAvg = Geometry2d::Point(0,0);
+    // Adding angles are done through conversion to rect coords then back to polar
     Geometry2d::Point thetaAvg = Geometry2d::Point(0,0);
     int robotID = -1;
 

@@ -55,5 +55,6 @@ private:
 
     std::deque<VisionState> stateHistory;
 
+    // How large of acceleration needed to trigger this detector
     static ConfigDouble* acceleration_trigger;
 };

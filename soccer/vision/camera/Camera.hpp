@@ -15,6 +15,10 @@
 #include "CameraFrame.hpp"
 #include "vision/ball/BallBounce.hpp"
 
+
+/**
+ * Contains all the kalman balls/robots for the specific camera
+ */
 class Camera {
 public:
     /**
@@ -73,8 +77,19 @@ public:
      */
     void updateWithoutFrame(RJ::Time calcTime);
 
+    /**
+     * @return A list of the kalman balls associated with the camera
+     */
     std::list<KalmanBall> getKalmanBalls();
+
+    /**
+     * @return A vector of yellow kalman robot lists
+     */
     std::vector<std::list<KalmanRobot>> getKalmanRobotsYellow();
+
+    /**
+     * @return A vector of blue kalman robot lists
+     */
     std::vector<std::list<KalmanRobot>> getKalmanRobotsBlue();
 
     static void createConfiguration(Configuration* cfg);
@@ -91,6 +106,10 @@ private:
 
     /**
      * Figures out which update style to use and calls that
+     *
+     * @param calcTime Time of this calculation
+     * @param ballList Unsorted list of balls measurements
+     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBalls(RJ::Time calcTime,
                      std::vector<CameraBall> ballList,
@@ -98,6 +117,10 @@ private:
 
     /**
      * Updates ball filters using MHKF style updater
+     *
+     * @param calcTime Time of this calculation
+     * @param ballList Unsorted list of balls measurements
+     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBallsMHKF(RJ::Time calcTime,
                          std::vector<CameraBall> ballList,
@@ -105,6 +128,10 @@ private:
 
     /**
      * Updates ball filters using AKF style updater
+     *
+     * @param calcTime Time of this calculation
+     * @param ballList Unsorted list of balls measurements
+     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBallsAKF(RJ::Time calcTime,
                         std::vector<CameraBall> ballList,
@@ -112,6 +139,12 @@ private:
 
     /**
      * Figures out which update style to use and calls that
+     *
+     * @param calcTime Time of this calculation
+     * @param yellowRobotList List of yellow robots sorted by id
+     * @param blueRobotList List of blue robots sorted by id
+     * @param previousYellowWorldRobots Best idea of current robots pos/vel to init velocity of new filters
+     * @param previousBlueWorldRobots Best idea of current robots pos/vel to init velocity of new filters
      */
     void updateRobots(RJ::Time calcTime,
                       std::vector<std::list<CameraRobot>>& yellowRobotList,
@@ -121,6 +154,11 @@ private:
 
     /**
      * Updates robot filters using MHKF style updater
+     *
+     * @param calcTime Time of this calculation
+     * @param singleRobotList List of one robot ID measurements
+     * @param previousWorldRobot Best idea of current robot pos/vel to init velocity of new filters
+     * @param singleKalmanRobotList List of one robot ID's kalman filters
      */
     void updateRobotsMHKF(RJ::Time calcTime,
                           std::list<CameraRobot>& singleRobotList,
@@ -129,6 +167,11 @@ private:
 
     /**
      * Updates robot filters using AKF style updater
+     *
+     * @param calcTime Time of this calculation
+     * @param singleRobotList List of one robot ID measurements
+     * @param previousWorldRobot Best idea of current robot pos/vel to init velocity of new filters
+     * @param singleKalmanRobotList List of one robot ID's kalman filters
      */
     void updateRobotsAKF(RJ::Time calcTime,
                          std::list<CameraRobot>& singleRobotList,
@@ -159,8 +202,12 @@ private:
     std::vector<std::list<KalmanRobot>> kalmanRobotYellowList;
     std::vector<std::list<KalmanRobot>> kalmanRobotBlueList;
 
+    // The cutoff radius for when to associate measurements to kalman objects
     static ConfigDouble* MHKF_radius_cutoff;
+    // Whether to use MHKF or AKF
     static ConfigBool* use_MHKF;
+    // Max number of kalman balls for this specific camera
     static ConfigInt* max_num_kalman_balls;
+    // Max number of kalman robots for each robot id for this specific camera
     static ConfigInt* max_num_kalman_robots;
 };

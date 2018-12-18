@@ -16,6 +16,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
     : team(team), robotID(robotID), isValid(true), time(calcTime) {
 
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
+    // Theta's are converted to rect coords then back to polar to convert
     Geometry2d::Point thetaAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double omegaAvg = 0;
@@ -83,7 +84,6 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
         double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
                                           -*robot_merger_power);
 
-        // TODO: Constrain Theta in a smart way
         posAvg   += filterPosWeight * robot.getPos();
         thetaAvg += Geometry2d::Point(filterPosWeight * cos(robot.getTheta()), filterPosWeight * sin(robot.getTheta()));
         velAvg   += filterVelWeight * robot.getVel();

@@ -49,6 +49,7 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
         return false;
     }
 
+    // Assume the kick happened in the middle of the history
     int midIdx = (int)floor(stateHistory.size() / 2);
 
     WorldRobot closestRobot = getClosestRobot();
@@ -84,6 +85,7 @@ bool FastKickDetector::detectKick() {
     // This is weird when the history length is > 3, but it allows you not to have to retune it
     Geometry2d::Point accel = dv / *VisionFilterConfig::vision_loop_dt;
 
+    // Check for large accelerations and only going from slow->fast transitions
     return accel.mag() > *acceleration_trigger && vStart.mag() < vEnd.mag();
 }
 
