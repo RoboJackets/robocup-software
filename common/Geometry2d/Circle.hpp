@@ -64,6 +64,8 @@ public:
 
     bool hit(const Segment& pt) const override;
 
+    bool nearPoint(Point pt, float threshold) const override;
+
     // Returns the number of points at which this circle intersects the given
     // circle.
     // i must be null or point to two points.

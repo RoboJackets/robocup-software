@@ -94,7 +94,7 @@ using namespace std;
 using namespace NewRefereeModuleEnums;
 
 /// Distance in meters that the ball must travel for a kick to be detected
-static const float KickThreshold = 0.150f;
+static const float KickThreshold = Ball_Radius * 3;
 
 /// How many milliseconds the ball must be more than KickThreshold meters away
 /// from its position when the referee indicated Ready for us to detect the ball

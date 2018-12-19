@@ -38,7 +38,7 @@ class RepeatedLineUp(play.Play):
     def generate_line(self, x_multiplier):
         x = (constants.Field.Width / 2 - constants.Robot.Radius * 2
              ) * x_multiplier
-        y_start = 1.0
+        y_start = 1.2
         line = robocup.Segment(
             robocup.Point(x, constants.Robot.Radius + y_start),
             robocup.Point(x,

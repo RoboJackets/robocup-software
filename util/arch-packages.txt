@@ -60,3 +60,5 @@ iverilog
 # grSim
 qt4
 ode
+
+go

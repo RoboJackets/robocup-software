@@ -191,6 +191,7 @@ set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
     "BatteryProfileTest.cpp"
     "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"

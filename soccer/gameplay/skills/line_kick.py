@@ -54,6 +54,9 @@ class LineKick(skills._kick._Kick):
         if self.max_speed is not None:
             self.robot.set_max_speed(self.max_speed)
 
+        if self.max_accel is not None:
+            self.robot.set_max_accel(self.max_accel)
+
         if main.ball().pos.dist_to(
                 self.robot.pos) < LineKick.ClosenessThreshold:
             self._got_close = True

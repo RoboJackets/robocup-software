@@ -18,8 +18,8 @@ def predict_kick_direction(robot):
     # Use distance from bot to ball to predict time it takes to intercept
     # Calculates direct robot to future ball position
     inst_ball_time = evaluation.ball.time_to_ball(robot)
-    future_ball_pos = evaluation.ball.predict(main.ball().pos, main.ball().vel,
-                                              inst_ball_time)
+
+    future_ball_pos = main.ball().predict_pos(inst_ball_time)
     direction = (future_ball_pos - pos).normalized()
     ball_angle_predict = direction.angle()
 

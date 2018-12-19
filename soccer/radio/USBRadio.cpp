@@ -16,7 +16,7 @@ using namespace std;
 using namespace Packet;
 
 // Timeout for control transfers, in milliseconds
-static const int Control_Timeout = 1000;
+static const int Control_Timeout = 10;
 
 // Buffer to leave at the end of the decawave control packet to prevent our data
 // from being corrupted
@@ -309,6 +309,10 @@ void USBRadio::handleRxData(uint8_t* buf) {
         bool err = msg->motorErrors & (1 << i);
         packet.add_motor_status(err ? MotorStatus::Hall_Failure
                                     : MotorStatus::Good);
+    }
+
+    for (std::size_t i = 0; i < 4; i++) {
+        packet.add_encoders(msg->encDeltas[i]);
     }
 
     // fpga status
