@@ -26,8 +26,8 @@ Camera::Camera() : isValid(false) {}
 Camera::Camera(int cameraID)
     : isValid(true),
       cameraID(cameraID),
-      kalmanRobotYellowList(*VisionFilterConfig::max_num_cameras),
-      kalmanRobotBlueList(*VisionFilterConfig::max_num_cameras) {}
+      kalmanRobotYellowList(Num_Shells),
+      kalmanRobotBlueList(Num_Shells) {}
 
 bool Camera::getIsValid() {
     return isValid;
