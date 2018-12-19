@@ -38,7 +38,7 @@ void VisionFilter::fillBallState(SystemState* state) {
         state->ball.valid = true;
         state->ball.pos = wb.getPos();
         state->ball.vel = wb.getVel();
-        state->time = wb.getTime();
+        state->ball.time = wb.getTime();
     } else {
         state->ball.valid = false;
     }
