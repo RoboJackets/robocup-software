@@ -1,4 +1,4 @@
-    #include <Robot.hpp>
+#include <Robot.hpp>
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>

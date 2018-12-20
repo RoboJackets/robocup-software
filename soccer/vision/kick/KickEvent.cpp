@@ -6,6 +6,18 @@ void KickEvent::addState(RJ::Time calcTime, WorldBall ball,
     statesSinceKick.emplace_back(calcTime, ball, yellowRobots, blueRobots);
 }
 
-bool KickEvent::getIsValid() {
+bool KickEvent::getIsValid() const {
     return isValid;
+}
+
+RJ::Time KickEvent::getKickTime() const {
+    return kickTime;
+}
+
+WorldRobot KickEvent::getKickingRobot() const {
+    return kickingRobot;
+}
+
+std::deque<VisionState> KickEvent::getStatesSinceKick() const {
+    return statesSinceKick;
 }

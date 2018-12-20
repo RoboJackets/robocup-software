@@ -29,7 +29,7 @@ public:
      *
      * @note Call this OR updateWithoutCameraFrame ONCE an iteration
      */
-    void updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newFrames);
+    void updateWithCameraFrame(RJ::Time calcTime, const std::vector<CameraFrame>& newFrames);
 
     /**
      * Updates all the child cameras when there are no new camera frames
@@ -43,22 +43,22 @@ public:
     /**
      * @return Best estimate of the ball
      */
-    WorldBall getWorldBall();
+    WorldBall getWorldBall() const;
 
     /**
      * @return List of the best estimates of all the yellow robots
      */
-    std::vector<WorldRobot> getRobotsYellow();
+    std::vector<WorldRobot> getRobotsYellow() const;
 
     /**
      * @return List of the best estimates of all the blue robots
      */
-    std::vector<WorldRobot> getRobotsBlue();
+    std::vector<WorldRobot> getRobotsBlue() const;
 
     /**
      * @return The best kick estimate over the last few seconds
      */
-    KickEvent getBestKickEstimate();
+    KickEvent getBestKickEstimate() const;
 
     static void createConfiguration(Configuration* cfg);
 

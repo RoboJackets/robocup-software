@@ -27,14 +27,14 @@ void BallBounce::createConfiguration(Configuration* cfg) {
     robot_mouth_angle_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_mouth_angle_dampen", 0);
 }
 
-bool BallBounce::CalcBallBounce(KalmanBall& ball,
-                                std::vector<WorldRobot>& yellowRobots,
-                                std::vector<WorldRobot>& blueRobots,
+bool BallBounce::CalcBallBounce(const KalmanBall& ball,
+                                const std::vector<WorldRobot>& yellowRobots,
+                                const std::vector<WorldRobot>& blueRobots,
                                 Geometry2d::Point& outNewVel) {
     std::vector<WorldRobot> robots = yellowRobots;
     robots.insert(robots.end(), blueRobots.begin(), blueRobots.end());
 
-    for (WorldRobot& robot : robots) {
+    for (const WorldRobot& robot : robots) {
         if (!robot.getIsValid()) {
             continue;
         }
@@ -208,14 +208,14 @@ bool BallBounce::CalcBallBounce(KalmanBall& ball,
 }
 
 
-bool BallBounce::BallInRobot(KalmanBall& ball, WorldRobot& robot) {
+bool BallBounce::BallInRobot(const KalmanBall& ball, const WorldRobot& robot) {
     Geometry2d::Point nextPos = ball.getPos() + ball.getVel() * *VisionFilterConfig::vision_loop_dt;
 
     return (robot.getPos() - nextPos).mag() < Robot_Radius + Ball_Radius;
 }
 
 std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
-        KalmanBall& ball, WorldRobot& robot) {
+        const KalmanBall& ball, const WorldRobot& robot) {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
 
     std::vector<Geometry2d::Point> out;

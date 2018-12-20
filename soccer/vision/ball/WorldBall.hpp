@@ -32,37 +32,37 @@ public:
     /**
      * @return If the ball actually represents a real ball
      */
-    bool getIsValid();
+    bool getIsValid() const;
 
     /**
      * @return The best estimated position of the ball
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * @return The best estimated velocity of the ball
      */
-    Geometry2d::Point getVel();
+    Geometry2d::Point getVel() const;
 
     /**
      * @return The average position covariance of the filter
      */
-    double getPosCov();
+    double getPosCov() const;
 
     /**
      * @return The average velocity covariance of the filter
      */
-    double getVelCov();
+    double getVelCov() const;
 
     /**
      * @return List of all the building kalman balls for this world ball
      */
-    std::list<KalmanBall> getBallComponents();
+    std::list<KalmanBall> getBallComponents() const;
 
     /**
      * @return Time of creation for this world ball
      */
-    RJ::Time getTime();
+    RJ::Time getTime() const;
 
     static void createConfiguration(Configuration* cfg);
 

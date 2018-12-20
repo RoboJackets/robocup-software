@@ -36,7 +36,7 @@ public:
     /**
      * Returns whether this camera is valid and initialized correctly
      */
-    bool getIsValid();
+    bool getIsValid() const;
 
     /**
      * Tries to predict bounces off the best known estimation of the robots
@@ -44,8 +44,8 @@ public:
      * @param yellowRobots List of the yellow world robots in the world class
      * @param blueRobots List of blue world robots in the world class
      */
-    void processBallBounce(std::vector<WorldRobot> yellowRobots,
-                           std::vector<WorldRobot> blueRobots);
+    void processBallBounce(const std::vector<WorldRobot>& yellowRobots,
+                           const std::vector<WorldRobot>& blueRobots);
 
     /**
      * Updates all the filters with the latest camera frame data for this camera
@@ -61,12 +61,12 @@ public:
      * Note: Call either this OR updateWithoutFrame once an iteration
      */
     void updateWithFrame(RJ::Time calcTime,
-                         std::vector<CameraBall>& ballList,
-                         std::vector<std::list<CameraRobot>>& yellowRobotList,
-                         std::vector<std::list<CameraRobot>>& blueRobotList,
-                         WorldBall& previousWorldBall,
-                         std::vector<WorldRobot>& previousYellowWorldRobots,
-                         std::vector<WorldRobot>& previousBlueWorldRobots);
+                         const std::vector<CameraBall>& ballList,
+                         const std::vector<std::list<CameraRobot>>& yellowRobotList,
+                         const std::vector<std::list<CameraRobot>>& blueRobotList,
+                         const WorldBall& previousWorldBall,
+                         const std::vector<WorldRobot>& previousYellowWorldRobots,
+                         const std::vector<WorldRobot>& previousBlueWorldRobots);
 
     /**
      * Updates all the filters without any new data from this specific camera
@@ -80,17 +80,17 @@ public:
     /**
      * @return A list of the kalman balls associated with the camera
      */
-    std::list<KalmanBall> getKalmanBalls();
+    std::list<KalmanBall> getKalmanBalls() const;
 
     /**
      * @return A vector of yellow kalman robot lists
      */
-    std::vector<std::list<KalmanRobot>> getKalmanRobotsYellow();
+    std::vector<std::list<KalmanRobot>> getKalmanRobotsYellow() const;
 
     /**
      * @return A vector of blue kalman robot lists
      */
-    std::vector<std::list<KalmanRobot>> getKalmanRobotsBlue();
+    std::vector<std::list<KalmanRobot>> getKalmanRobotsBlue() const;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -112,8 +112,8 @@ private:
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBalls(RJ::Time calcTime,
-                     std::vector<CameraBall> ballList,
-                     WorldBall& previousWorldBall);
+                     const std::vector<CameraBall> ballList,
+                     const WorldBall& previousWorldBall);
 
     /**
      * Updates ball filters using MHKF style updater
@@ -123,8 +123,8 @@ private:
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBallsMHKF(RJ::Time calcTime,
-                         std::vector<CameraBall> ballList,
-                         WorldBall& previousWorldBall);
+                         const std::vector<CameraBall> ballList,
+                         const WorldBall& previousWorldBall);
 
     /**
      * Updates ball filters using AKF style updater
@@ -134,8 +134,8 @@ private:
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBallsAKF(RJ::Time calcTime,
-                        std::vector<CameraBall> ballList,
-                        WorldBall& previousWorldBall);
+                        const std::vector<CameraBall> ballList,
+                        const WorldBall& previousWorldBall);
 
     /**
      * Figures out which update style to use and calls that
@@ -147,10 +147,10 @@ private:
      * @param previousBlueWorldRobots Best idea of current robots pos/vel to init velocity of new filters
      */
     void updateRobots(RJ::Time calcTime,
-                      std::vector<std::list<CameraRobot>>& yellowRobotList,
-                      std::vector<std::list<CameraRobot>>& blueRobotList,
-                      std::vector<WorldRobot>& previousYellowWorldRobots,
-                      std::vector<WorldRobot>& previousBlueWorldRobots);
+                      const std::vector<std::list<CameraRobot>>& yellowRobotList,
+                      const std::vector<std::list<CameraRobot>>& blueRobotList,
+                      const std::vector<WorldRobot>& previousYellowWorldRobots,
+                      const std::vector<WorldRobot>& previousBlueWorldRobots);
 
     /**
      * Updates robot filters using MHKF style updater
@@ -161,8 +161,8 @@ private:
      * @param singleKalmanRobotList List of one robot ID's kalman filters
      */
     void updateRobotsMHKF(RJ::Time calcTime,
-                          std::list<CameraRobot>& singleRobotList,
-                          WorldRobot& previousWorldRobot,
+                          const std::list<CameraRobot>& singleRobotList,
+                          const WorldRobot& previousWorldRobot,
                           std::list<KalmanRobot>& singleKalmanRobotList);
 
     /**
@@ -174,8 +174,8 @@ private:
      * @param singleKalmanRobotList List of one robot ID's kalman filters
      */
     void updateRobotsAKF(RJ::Time calcTime,
-                         std::list<CameraRobot>& singleRobotList,
-                         WorldRobot& previousWorldRobot,
+                         const std::list<CameraRobot>& singleRobotList,
+                         const WorldRobot& previousWorldRobot,
                          std::list<KalmanRobot>& singleKalmanRobotList);
 
     /**
@@ -191,7 +191,7 @@ private:
      * Simplifies some copy paste
      *
      * @param calcTime Time of this calculation
-     * @param robotListList Either kalmanRobotYellowList or kalmnaRobotBlueList
+     * @param robotListList Either kalmanRobotYellowList or kalmanRobotBlueList
      */
     void predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRobot>>& robotListList);
 

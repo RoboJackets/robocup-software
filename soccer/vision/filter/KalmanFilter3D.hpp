@@ -34,42 +34,42 @@ public:
     /**
      * @return Current position estimate
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * @return Current heading angle estimate
      */
-    double getTheta();
+    double getTheta() const;
 
     /**
      * @return Current velocity estimate
      */
-    Geometry2d::Point getVel();
+    Geometry2d::Point getVel() const;
 
     /**
      * @return Current heading angle velocity estimate
      */
-    double getOmega();
+    double getOmega() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    Geometry2d::Point getPosCov();
+    Geometry2d::Point getPosCov() const;
 
     /**
      * @return Current heading covariance
      */
-    double getThetaCov();
+    double getThetaCov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    Geometry2d::Point getVelCov();
+    Geometry2d::Point getVelCov() const;
 
     /**
      * @return Current heading angle velocity covariance
      */
-    double getOmegaCov();
+    double getOmegaCov() const;
 
     static void createConfiguration(Configuration* cfg);
 

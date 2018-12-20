@@ -1,8 +1,9 @@
 #pragma once
 
+#include <atomic>
 #include <mutex>
 #include <vector>
-#include <list>
+#include <vector>
 #include <thread>
 
 #include <SystemState.hpp>
@@ -33,7 +34,7 @@ public:
      *
      * @param frames List of new frames
      */
-    void addFrames(std::vector<CameraFrame>& frames);
+    void addFrames(const std::vector<CameraFrame>& frames);
 
     /**
      * Fills system state with the ball pos/vel
@@ -58,9 +59,8 @@ private:
     std::mutex worldLock;
     World world;
 
-    std::mutex threadEndLock;
-    bool threadEnd;
+    std::atomic_bool threadEnd;
 
     std::mutex frameLock;
-    std::list<CameraFrame> frameBuffer;
+    std::vector<CameraFrame> frameBuffer;
 };

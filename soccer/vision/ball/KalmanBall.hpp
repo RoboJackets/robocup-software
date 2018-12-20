@@ -1,6 +1,6 @@
 #pragma once
 
-#include <deque>
+#include <boost/circular_buffer.hpp>
 
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
@@ -26,7 +26,7 @@ public:
      * @param previousWorldBall Previous prediction of ball location to initialize the velocity smartly
      */
     KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-               CameraBall initMeasurement, WorldBall& previousWorldBall);
+               CameraBall initMeasurement, const WorldBall& previousWorldBall);
 
     /**
      * Predicts one time step forward
@@ -50,42 +50,42 @@ public:
     /**
      * @return Returns true when the filter hasn't been updated in a while etc and should be deleted
      */
-    bool isUnhealthy();
+    bool isUnhealthy() const;
 
     /**
      * @return The camera id this belongs to
      */
-    unsigned int getCameraID();
+    unsigned int getCameraID() const;
 
     /**
      * @return How healthy this filter is. AKA How often it's been updated
      */
-    int getHealth();
+    int getHealth() const;
 
     /**
      * @return Best estimate of the position of the ball
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * @return Best estimate of the velocity of the ball
      */
-    Geometry2d::Point getVel();
+    Geometry2d::Point getVel() const;
 
     /**
      * @return Covariance in X and Y direction of the position of the ball
      */
-    Geometry2d::Point getPosCov();
+    Geometry2d::Point getPosCov() const;
 
     /**
      * @return Covariance in X and Y direction of the velocity of the ball
      */
-    Geometry2d::Point getVelCov();
+    Geometry2d::Point getVelCov() const;
 
     /**
      * @return List of previous camera ball measurements for kick detection/estimation
      */
-    std::deque<CameraBall> getPrevMeasurements();
+    boost::circular_buffer<CameraBall> getPrevMeasurements() const;
 
     /**
      * @param newVel new velocity to insert into the kalman filter
@@ -102,7 +102,7 @@ private:
     RJ::Time lastPredictTime;
 
     // Keeps track of this for kick detection stuff
-    std::deque<CameraBall> previousMeasurements;
+    boost::circular_buffer<CameraBall> previousMeasurements;
 
     KalmanFilter2D filter;
 

@@ -94,19 +94,19 @@ void KalmanFilter2D::predictWithUpdate(Geometry2d::Point observation) {
     KalmanFilter::predictWithUpdate();
 }
 
-Geometry2d::Point KalmanFilter2D::getPos() {
+Geometry2d::Point KalmanFilter2D::getPos() const {
     return Geometry2d::Point(x_k_k(0), x_k_k(2));
 }
 
-Geometry2d::Point KalmanFilter2D::getVel() {
+Geometry2d::Point KalmanFilter2D::getVel() const {
     return Geometry2d::Point(x_k_k(1), x_k_k(3));
 }
 
-Geometry2d::Point KalmanFilter2D::getPosCov() {
+Geometry2d::Point KalmanFilter2D::getPosCov() const {
     return Geometry2d::Point(P_k_k(0,0), P_k_k(2,2));
 }
 
-Geometry2d::Point KalmanFilter2D::getVelCov() {
+Geometry2d::Point KalmanFilter2D::getVelCov() const {
     return Geometry2d::Point(P_k_k(1,1), P_k_k(3,3));
 }
 

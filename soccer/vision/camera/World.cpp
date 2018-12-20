@@ -22,14 +22,14 @@ World::World()
       robotsYellow(Num_Shells, WorldRobot()),
       robotsBlue(Num_Shells, WorldRobot()) {}
 
-void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newFrames) {
+void World::updateWithCameraFrame(RJ::Time calcTime, const std::vector<CameraFrame>& newFrames) {
     calcBallBounce();
 
     std::vector<bool> cameraUpdated(*VisionFilterConfig::max_num_cameras, false);
 
     // TODO: Take only the newest frame if 2 come in for the same camera
 
-    for (CameraFrame& frame : newFrames) {
+    for (const CameraFrame& frame : newFrames) {
         // Make sure camera from frame is created, if not, make it
         if (!cameras.at(frame.cameraID).getIsValid()) {
             cameras.at(frame.cameraID) = Camera(frame.cameraID);
@@ -39,11 +39,11 @@ void World::updateWithCameraFrame(RJ::Time calcTime, std::list<CameraFrame> newF
         std::vector<std::list<CameraRobot>> yellowTeam(Num_Shells);
         std::vector<std::list<CameraRobot>> blueTeam(Num_Shells);
 
-        for (CameraRobot& robot : frame.cameraRobotsYellow) {
+        for (const CameraRobot& robot : frame.cameraRobotsYellow) {
             yellowTeam.at(robot.getRobotID()).push_back(robot);
         }
 
-        for (CameraRobot& robot : frame.cameraRobotsBlue) {
+        for (const CameraRobot& robot : frame.cameraRobotsBlue) {
             blueTeam.at(robot.getRobotID()).push_back(robot);
         }
 
@@ -175,11 +175,11 @@ void World::detectKicks(RJ::Time calcTime) {
         // Any detected kick?
         if (bestKickEstimate.getIsValid()) {
             // If they are the same event, replace with the slow estimate
-            if (RJ::Seconds(bestKickEstimate.kickTime - calcTime) < RJ::Seconds(*same_kick_timeout)) {
+            if (RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) < RJ::Seconds(*same_kick_timeout)) {
                 bestKickEstimate = slowEvent;
 
             // If it is probably a different kick
-            } else if ((RJ::Seconds(bestKickEstimate.kickTime - calcTime) > RJ::Seconds(*slow_kick_timeout))) {
+            } else if ((RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) > RJ::Seconds(*slow_kick_timeout))) {
                 bestKickEstimate = slowEvent;
             }
         } else {
@@ -189,7 +189,7 @@ void World::detectKicks(RJ::Time calcTime) {
         // Any detected kick?
         if (!bestKickEstimate.getIsValid()) {
             // If there has been an even longer timeout between kick estimates
-            if ((RJ::Seconds(bestKickEstimate.kickTime - calcTime) > RJ::Seconds(*fast_kick_timeout))) {
+            if ((RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) > RJ::Seconds(*fast_kick_timeout))) {
                 bestKickEstimate = fastEvent;
             }
         } else {
@@ -199,23 +199,23 @@ void World::detectKicks(RJ::Time calcTime) {
 
     // If we haven't had a kick in a while, reset out kick estimate
     if (bestKickEstimate.getIsValid() && 
-        RJ::Seconds(bestKickEstimate.kickTime - calcTime) > RJ::Seconds(*slow_kick_timeout + *fast_kick_timeout)) {
+        RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) > RJ::Seconds(*slow_kick_timeout + *fast_kick_timeout)) {
         bestKickEstimate = KickEvent();
     }
 }
 
-WorldBall World::getWorldBall() {
+WorldBall World::getWorldBall() const {
     return ball;
 }
 
-std::vector<WorldRobot> World::getRobotsYellow() {
+std::vector<WorldRobot> World::getRobotsYellow() const {
     return robotsYellow;
 }
 
-std::vector<WorldRobot> World::getRobotsBlue() {
+std::vector<WorldRobot> World::getRobotsBlue() const {
     return robotsBlue;
 }
 
-KickEvent World::getBestKickEstimate() {
+KickEvent World::getBestKickEstimate() const {
     return bestKickEstimate;
 }

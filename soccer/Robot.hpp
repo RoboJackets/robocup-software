@@ -107,8 +107,8 @@ public:
     }
 
 private:
-    unsigned int _shell;
-    bool _self;
+    const unsigned int _shell;
+    const bool _self;
 };
 
 /**

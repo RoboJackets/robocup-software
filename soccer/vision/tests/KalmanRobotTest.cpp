@@ -167,7 +167,7 @@ TEST(KalmanRobot, max_measurement_size) {
         kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);
     }
 
-    std::deque<CameraRobot> list = kb.getPrevMeasurements();
+    boost::circular_buffer<CameraRobot> list = kb.getPrevMeasurements();
 
     EXPECT_LT(list.size(), 10);
 }
@@ -194,7 +194,7 @@ TEST(KalmanRobot, getters) {
     double ro = kb.getOmega();
 
 
-    std::deque<CameraRobot> list = kb.getPrevMeasurements();
+    boost::circular_buffer<CameraRobot> list = kb.getPrevMeasurements();
 
     EXPECT_EQ(kb.getCameraID(), cID);
     EXPECT_GT(kb.getHealth(), 0);

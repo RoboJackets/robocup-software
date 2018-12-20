@@ -51,8 +51,24 @@ public:
     /**
      * @return true if the kick is a valid one
      */
-    bool getIsValid();
+    bool getIsValid() const;
 
+    /**
+     * @return time we think a robot kicked
+     */
+    RJ::Time getKickTime() const;
+
+    /**
+     * @return robot we think kicked
+     */
+    WorldRobot getKickingRobot() const;
+
+    /**
+     * @return vision states since that time we kicked
+     */
+    std::deque<VisionState> getStatesSinceKick() const;
+
+private:
     // If it's a valid kick event object
     bool isValid;
     // When it was kicked

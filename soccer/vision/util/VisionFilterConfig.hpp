@@ -7,6 +7,9 @@
  */
 class VisionFilterConfig {
 public:
+    VisionFilterConfig() = delete;
+    ~VisionFilterConfig() = delete;
+
     static void createConfiguration(Configuration* cfg);
 
     // 1/freq of the vision loop

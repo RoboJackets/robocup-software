@@ -35,57 +35,57 @@ public:
     /**
      * @return If the robot actually represents a real robot
      */
-    bool getIsValid();
+    bool getIsValid() const;
 
     /**
      * @return Enum value representing team color
      */
-    Team getTeamColor();
+    Team getTeamColor() const;
 
     /**
      * @return The robot id
      */
-    int getRobotID();
+    int getRobotID() const;
 
     /**
      * @return The best estimated position of the robot
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * @return The best estimated heading of the robot
      */
-    double getTheta();
+    double getTheta() const;
 
     /**
      * @return The best estimated velocity of the robot
      */
-    Geometry2d::Point getVel();
+    Geometry2d::Point getVel() const;
 
     /**
      * @return The best estimated angular velocity of the robot
      */
-    double getOmega();
+    double getOmega() const;
 
     /**
      * @return The average position covariance of the filter including theta
      */
-    double getPosCov();
+    double getPosCov() const;
 
     /**
      * @return The average velocity covariance of the filter including omega
      */
-    double getVelCov();
+    double getVelCov() const;
 
     /**
      * @return List of all the building kalman robots for this world robot
      */
-    std::list<KalmanRobot> getRobotComponents();
+    std::list<KalmanRobot> getRobotComponents() const;
 
     /**
      * @return Time of creation for the robot estimate
      */
-    RJ::Time getTime();
+    RJ::Time getTime() const;
 
     static void createConfiguration(Configuration* cfg);
 

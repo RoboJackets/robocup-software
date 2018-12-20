@@ -18,10 +18,25 @@ public:
     CameraRobot(RJ::Time timeCaptured, Geometry2d::Point pos, double theta, int robotID)
         : timeCaptured(timeCaptured), pos(pos), theta(theta), robotID(robotID) {}
 
-    RJ::Time getTimeCaptured();
-    Geometry2d::Point getPos();
-    double getTheta();
-    int getRobotID();
+    /**
+     * @return the time the detection was captured
+     */
+    RJ::Time getTimeCaptured() const;
+
+    /**
+     * @return the position of the measurement
+     */
+    Geometry2d::Point getPos() const;
+
+    /**
+     * @return the heading of the measurement
+     */
+    double getTheta() const;
+
+    /**
+     * @return the robot ID of the measurement
+     */
+    int getRobotID() const;
 
     /**
      * Combines all the robots in the list and returns a robot
@@ -31,7 +46,7 @@ public:
      *
      * Note: All robots must have the same robotID
      */
-    static CameraRobot CombineRobots(std::list<CameraRobot> robots);
+    static CameraRobot CombineRobots(const std::list<CameraRobot>& robots);
 
 private:
     RJ::Time timeCaptured;

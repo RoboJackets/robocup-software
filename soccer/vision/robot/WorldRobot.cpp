@@ -107,42 +107,42 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
     robotComponents = kalmanRobots;
 }
 
-bool WorldRobot::getIsValid() {
+bool WorldRobot::getIsValid() const {
     return isValid;
 }
 
-int WorldRobot::getRobotID() {
+int WorldRobot::getRobotID() const {
     return robotID;
 }
 
-Geometry2d::Point WorldRobot::getPos() {
+Geometry2d::Point WorldRobot::getPos() const {
     return pos;
 }
 
-double WorldRobot::getTheta() {
+double WorldRobot::getTheta() const {
     return theta;
 }
 
-Geometry2d::Point WorldRobot::getVel() {
+Geometry2d::Point WorldRobot::getVel() const {
     return vel;
 }
 
-double WorldRobot::getOmega() {
+double WorldRobot::getOmega() const {
     return omega;
 }
 
-double WorldRobot::getPosCov() {
+double WorldRobot::getPosCov() const {
     return posCov;
 }
 
-double WorldRobot::getVelCov() {
+double WorldRobot::getVelCov() const {
     return velCov;
 }
 
-std::list<KalmanRobot> WorldRobot::getRobotComponents() {
+std::list<KalmanRobot> WorldRobot::getRobotComponents() const {
     return robotComponents;
 }
 
-RJ::Time WorldRobot::getTime() {
+RJ::Time WorldRobot::getTime() const {
     return time;
 }

@@ -10,6 +10,9 @@
 
 class BallBounce {
 public:
+    BallBounce() = delete;
+    ~BallBounce() = delete;
+
     /**
      * Calculates whether the given kalman ball will bounce against another robot and
      * the resulting velocity vector
@@ -21,9 +24,9 @@ public:
      *
      * @return Whether the ball bounces or not
      */
-    static bool CalcBallBounce(KalmanBall& ball,
-                               std::vector<WorldRobot>& yellowRobots,
-                               std::vector<WorldRobot>& blueRobots,
+    static bool CalcBallBounce(const KalmanBall& ball,
+                               const std::vector<WorldRobot>& yellowRobots,
+                               const std::vector<WorldRobot>& blueRobots,
                                Geometry2d::Point& outNewVel);
 
     static void createConfiguration(Configuration* cfg);
@@ -37,7 +40,7 @@ private:
      * @param ball The ball we want to check for intersection with
      * @param robot The robot we what to check for intersection with
      */
-    static bool BallInRobot(KalmanBall& ball, WorldRobot& robot);
+    static bool BallInRobot(const KalmanBall& ball, const WorldRobot& robot);
 
     /**
      * Finds the 0, 1 or 2 interserct locations on the ball shell
@@ -51,7 +54,7 @@ private:
      * 2 means chord based intersection
      */
     static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
-            KalmanBall& ball, WorldRobot& robot);
+            const KalmanBall& ball, const WorldRobot& robot);
 
     // Linear velocity dampen
     // Body is bouncing off the circular shell

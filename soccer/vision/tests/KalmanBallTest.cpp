@@ -121,7 +121,7 @@ TEST(KalmanBall, max_measurement_size) {
         kb.predictAndUpdate(RJ::now(), b);
     }
 
-    std::deque<CameraBall> list = kb.getPrevMeasurements();
+    boost::circular_buffer<CameraBall> list = kb.getPrevMeasurements();
 
     EXPECT_LT(list.size(), 10);
 }
@@ -143,7 +143,7 @@ TEST(KalmanBall, getters) {
     kb.setVel(p);
     Geometry2d::Point rv2 = kb.getVel();
 
-    std::deque<CameraBall> list = kb.getPrevMeasurements();
+    boost::circular_buffer<CameraBall> list = kb.getPrevMeasurements();
 
     EXPECT_EQ(kb.getCameraID(), cID);
     EXPECT_GT(kb.getHealth(), 0);

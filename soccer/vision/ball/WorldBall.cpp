@@ -89,30 +89,30 @@ WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) : isV
     ballComponents = kalmanBalls;
 }
 
-bool WorldBall::getIsValid() {
+bool WorldBall::getIsValid() const {
     return isValid;
 }
 
-Geometry2d::Point WorldBall::getPos() {
+Geometry2d::Point WorldBall::getPos() const {
     return pos;
 }
 
-Geometry2d::Point WorldBall::getVel() {
+Geometry2d::Point WorldBall::getVel() const {
     return vel;
 }
 
-double WorldBall::getPosCov() {
+double WorldBall::getPosCov() const {
     return posCov;
 }
 
-double WorldBall::getVelCov() {
+double WorldBall::getVelCov() const {
     return velCov;
 }
 
-std::list<KalmanBall> WorldBall::getBallComponents() {
+std::list<KalmanBall> WorldBall::getBallComponents() const {
     return ballComponents;
 }
 
-RJ::Time WorldBall::getTime() {
+RJ::Time WorldBall::getTime() const {
     return time;
 }

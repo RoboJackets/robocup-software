@@ -16,10 +16,11 @@ void KalmanRobot::createConfiguration(Configuration* cfg) {
 }
 
 KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
-                         CameraRobot initMeasurement, WorldRobot& previousWorldRobot)
+                         CameraRobot initMeasurement, const WorldRobot& previousWorldRobot)
     : cameraID(cameraID), health(*VisionFilterConfig::filter_health_init),
       lastUpdateTime(creationTime), lastPredictTime(creationTime),
-      unwrapThetaCtr(0), robotID(initMeasurement.getRobotID()) {
+      unwrapThetaCtr(0), robotID(initMeasurement.getRobotID()),
+      previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length) {
 
     Geometry2d::Point initPos = initMeasurement.getPos();
     double initTheta          = initMeasurement.getTheta();
@@ -42,7 +43,7 @@ void KalmanRobot::predict(RJ::Time currentTime) {
 
     // Decrement but make sure you don't go too low
     health = std::max(health - *VisionFilterConfig::filter_health_dec,
-                      (int)*VisionFilterConfig::filter_health_min);
+                      static_cast<int>(*VisionFilterConfig::filter_health_min));
 
     filter.predict();
 }
@@ -53,13 +54,10 @@ void KalmanRobot::predictAndUpdate(RJ::Time currentTime, CameraRobot updateRobot
 
     // Increment but make sure you don't go too high
     health = std::min(health + *VisionFilterConfig::filter_health_inc,
-                      (int)*VisionFilterConfig::filter_health_max);
+                      static_cast<int>(*VisionFilterConfig::filter_health_max));
 
     // Keep last X camera observations in list for kick detection and filtering
     previousMeasurements.push_back(updateRobot);
-    if (previousMeasurements.size() > *VisionFilterConfig::slow_kick_detector_history_length) {
-        previousMeasurements.pop_front();
-    }
 
     // Unwrap theta so we have a continuous heading
     double curTheta = updateRobot.getTheta();
@@ -78,56 +76,56 @@ void KalmanRobot::predictAndUpdate(RJ::Time currentTime, CameraRobot updateRobot
     filter.predictWithUpdate(updateRobot.getPos(), curTheta + unwrapThetaCtr*2*M_PI);
 }
 
-bool KalmanRobot::isUnhealthy() {
+bool KalmanRobot::isUnhealthy() const {
     bool updated_recently = RJ::Seconds(lastPredictTime - lastUpdateTime) < RJ::Seconds(*max_time_outside_vision);
 
     return !updated_recently;
 }
 
-unsigned int KalmanRobot::getCameraID() {
+unsigned int KalmanRobot::getCameraID() const {
     return cameraID;
 }
 
-int KalmanRobot::getRobotID() {
+int KalmanRobot::getRobotID() const {
     return robotID;
 }
 
-int KalmanRobot::getHealth() {
+int KalmanRobot::getHealth() const {
     return health;
 }
 
-Geometry2d::Point KalmanRobot::getPos() {
+Geometry2d::Point KalmanRobot::getPos() const {
     return filter.getPos();
 }
 
-double KalmanRobot::getTheta() {
+double KalmanRobot::getTheta() const {
     return filter.getTheta();
 }
 
-Geometry2d::Point KalmanRobot::getVel() {
+Geometry2d::Point KalmanRobot::getVel() const {
     return filter.getVel();
 }
 
-double KalmanRobot::getOmega() {
+double KalmanRobot::getOmega() const {
     return filter.getOmega();
 }
 
-Geometry2d::Point KalmanRobot::getPosCov() {
+Geometry2d::Point KalmanRobot::getPosCov() const {
     return filter.getPosCov();
 }
 
-double KalmanRobot::getThetaCov() {
+double KalmanRobot::getThetaCov() const {
     return filter.getThetaCov();
 }
 
-Geometry2d::Point KalmanRobot::getVelCov() {
+Geometry2d::Point KalmanRobot::getVelCov() const {
     return filter.getVelCov();
 }
 
-double KalmanRobot::getOmegaCov() {
+double KalmanRobot::getOmegaCov() const {
     return filter.getOmegaCov();
 }
 
-std::deque<CameraRobot> KalmanRobot::getPrevMeasurements() {
+boost::circular_buffer<CameraRobot> KalmanRobot::getPrevMeasurements() const {
     return previousMeasurements;
 }

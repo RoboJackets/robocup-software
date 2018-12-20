@@ -113,34 +113,34 @@ void KalmanFilter3D::predictWithUpdate(Geometry2d::Point observationPos,
 }
 
 
-Geometry2d::Point KalmanFilter3D::getPos() {
+Geometry2d::Point KalmanFilter3D::getPos() const {
     return Geometry2d::Point(x_k_k(0), x_k_k(2));
 }
 
-double KalmanFilter3D::getTheta() {
+double KalmanFilter3D::getTheta() const {
     return x_k_k(4);
 }
 
-Geometry2d::Point KalmanFilter3D::getVel() {
+Geometry2d::Point KalmanFilter3D::getVel() const {
     return Geometry2d::Point(x_k_k(1), x_k_k(3));
 }
 
-double KalmanFilter3D::getOmega() {
+double KalmanFilter3D::getOmega() const {
     return x_k_k(5);
 }
 
-Geometry2d::Point KalmanFilter3D::getPosCov() {
+Geometry2d::Point KalmanFilter3D::getPosCov() const {
     return Geometry2d::Point(P_k_k(0,0), P_k_k(2,2));
 }
 
-double KalmanFilter3D::getThetaCov() {
+double KalmanFilter3D::getThetaCov() const {
     return P_k_k(4,4);
 }
 
-Geometry2d::Point KalmanFilter3D::getVelCov() {
+Geometry2d::Point KalmanFilter3D::getVelCov() const {
     return Geometry2d::Point(P_k_k(1,1), P_k_k(3,3));
 }
 
-double KalmanFilter3D::getOmegaCov() {
+double KalmanFilter3D::getOmegaCov() const {
     return P_k_k(5,5);
 }

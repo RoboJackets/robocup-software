@@ -1,23 +1,23 @@
 #include "CameraRobot.hpp"
 #include <iostream>
 
-RJ::Time CameraRobot::getTimeCaptured() {
+RJ::Time CameraRobot::getTimeCaptured() const {
     return timeCaptured;
 }
 
-Geometry2d::Point CameraRobot::getPos() {
+Geometry2d::Point CameraRobot::getPos() const {
     return pos;
 }
 
-double CameraRobot::getTheta() {
+double CameraRobot::getTheta() const {
     return theta;
 }
 
-int CameraRobot::getRobotID() {
+int CameraRobot::getRobotID() const {
     return robotID;
 }
 
-CameraRobot CameraRobot::CombineRobots(std::list<CameraRobot> robots) {
+CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     // Make sure we don't divide by zero due to some weird error
     if (robots.size() == 0) {
         std::cout << "CRITICAL ERROR: Number of robots to combine is zero" << std::endl;
@@ -34,7 +34,7 @@ CameraRobot CameraRobot::CombineRobots(std::list<CameraRobot> robots) {
     Geometry2d::Point thetaAvg = Geometry2d::Point(0,0);
     int robotID = -1;
 
-    for (CameraRobot &cr : robots) {
+    for (const CameraRobot& cr : robots) {
         timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
         posAvg += cr.getPos();
         thetaAvg += Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));

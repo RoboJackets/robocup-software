@@ -30,22 +30,22 @@ public:
     /**
      * @return Current position estimate
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * @return Current velocity estimate
      */
-    Geometry2d::Point getVel();
+    Geometry2d::Point getVel() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    Geometry2d::Point getPosCov();
+    Geometry2d::Point getPosCov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    Geometry2d::Point getVelCov();
+    Geometry2d::Point getVelCov() const;
 
     /**
      * Set's state velocity given XY velocity

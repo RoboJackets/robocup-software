@@ -1,14 +1,14 @@
 #include "CameraBall.hpp"
 
-RJ::Time CameraBall::getTimeCaptured() {
+RJ::Time CameraBall::getTimeCaptured() const {
     return timeCaptured;
 }
 
-Geometry2d::Point CameraBall::getPos() {
+Geometry2d::Point CameraBall::getPos() const {
     return pos;
 }
 
-CameraBall CameraBall::CombineBalls(std::list<CameraBall> balls) {
+CameraBall CameraBall::CombineBalls(const std::list<CameraBall>& balls) {
     // Make sure we don't divide by zero due to some weird error
     if (balls.size() == 0) {
         std::cout << "CRITICAL ERROR: Number of balls to combine is zero" << std::endl;
@@ -22,7 +22,7 @@ CameraBall CameraBall::CombineBalls(std::list<CameraBall> balls) {
     RJ::Seconds timeAvg = RJ::Seconds(0);
     Geometry2d::Point posAvg = Geometry2d::Point(0,0);
 
-    for (CameraBall &cb : balls) {
+    for (const CameraBall& cb : balls) {
         timeAvg += RJ::Seconds(cb.getTimeCaptured() - initTime);
         posAvg += cb.getPos();
     }

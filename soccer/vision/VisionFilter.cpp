@@ -7,7 +7,9 @@
 
 #include "vision/util/VisionFilterConfig.hpp"
 
-VisionFilter::VisionFilter() : threadEnd(false) {
+VisionFilter::VisionFilter() {
+    threadEnd.store(false, std::memory_order::memory_order_seq_cst);
+    
     // Have to be careful so the entire initialization list
     // is created before the thread starts
     worker = std::thread(&VisionFilter::workerThread, this);
@@ -15,24 +17,20 @@ VisionFilter::VisionFilter() : threadEnd(false) {
 
 VisionFilter::~VisionFilter() {
     // Signal end of thread
-    threadEndLock.lock();
-    threadEnd = true;
-    threadEndLock.unlock();
+    threadEnd.store(true, std::memory_order::memory_order_seq_cst);
 
     // Wait for it to die
     worker.join();
 }
 
-void VisionFilter::addFrames(std::vector<CameraFrame>& frames) {
-    frameLock.lock();
+void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
+    std::lock_guard<std::mutex> lock(frameLock);
     frameBuffer.insert(frameBuffer.end(), frames.begin(), frames.end());
-    frameLock.unlock();
 }
 
 void VisionFilter::fillBallState(SystemState* state) {
-    worldLock.lock();
+    std::lock_guard<std::mutex> lock(worldLock);
     WorldBall wb = world.getWorldBall();
-    worldLock.unlock();
 
     if (wb.getIsValid()) {
         state->ball.valid = true;
@@ -45,10 +43,9 @@ void VisionFilter::fillBallState(SystemState* state) {
 }
 
 void VisionFilter::fillRobotState(SystemState* state, bool usBlue) {
-    worldLock.lock();
+    std::lock_guard<std::mutex> lock(worldLock);
     std::vector<WorldRobot> yellowTeam = world.getRobotsYellow();
     std::vector<WorldRobot> blueTeam = world.getRobotsBlue();
-    worldLock.unlock();
 
     // Fill our robots
     for (int i = 0; i < Num_Shells; i++) {
@@ -101,17 +98,20 @@ void VisionFilter::workerThread() {
     while (true) {
         RJ::Time start = RJ::now();
 
-        // Do update with whatever is in frame buffer
-        frameLock.lock();
-        worldLock.lock();
-        if (frameBuffer.size() > 0) {
-            world.updateWithCameraFrame(RJ::now(), frameBuffer);
-            frameBuffer.clear();
-        } else {
-            world.updateWithoutCameraFrame(RJ::now());
+        {
+            // Do update with whatever is in frame buffer
+            std::lock_guard<std::mutex> lock1(frameLock);
+            {
+                std::lock_guard<std::mutex> lock2(worldLock);
+
+                if (frameBuffer.size() > 0) {
+                    world.updateWithCameraFrame(RJ::now(), frameBuffer);
+                    frameBuffer.clear();
+                } else {
+                    world.updateWithoutCameraFrame(RJ::now());
+                }
+            }
         }
-        worldLock.unlock();
-        frameLock.unlock();
 
         // Wait for the correct loop timings
         RJ::Seconds diff = RJ::now() - start;
@@ -124,10 +124,8 @@ void VisionFilter::workerThread() {
         }
 
         // Make sure we shouldn't stop
-        threadEndLock.lock();
-        if (threadEnd) {
+        if (threadEnd.load(std::memory_order::memory_order_seq_cst)) {
             break;
         }
-        threadEndLock.unlock();
     }
 }

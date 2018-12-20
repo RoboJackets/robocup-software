@@ -13,9 +13,10 @@ void KalmanBall::createConfiguration(Configuration* cfg) {
 }
 
 KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-                       CameraBall initMeasurement, WorldBall& previousWorldBall)
+                       CameraBall initMeasurement, const WorldBall& previousWorldBall)
     : cameraID(cameraID), health(*VisionFilterConfig::filter_health_init),
-      lastUpdateTime(creationTime), lastPredictTime(creationTime) {
+      lastUpdateTime(creationTime), lastPredictTime(creationTime),
+      previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length) {
 
     Geometry2d::Point initPos = initMeasurement.getPos();
     Geometry2d::Point initVel = Geometry2d::Point(0,0);
@@ -35,7 +36,7 @@ void KalmanBall::predict(RJ::Time currentTime) {
 
     // Decrement but make sure you don't go too low
     health = std::max(health - *VisionFilterConfig::filter_health_dec,
-                      (int)*VisionFilterConfig::filter_health_min);
+                      static_cast<int>(*VisionFilterConfig::filter_health_min));
 
     filter.predict();
 }
@@ -46,48 +47,45 @@ void KalmanBall::predictAndUpdate(RJ::Time currentTime, CameraBall updateBall) {
 
     // Increment but make sure you don't go too high
     health = std::min(health + *VisionFilterConfig::filter_health_inc,
-                      (int)*VisionFilterConfig::filter_health_max);
+                      static_cast<int>(*VisionFilterConfig::filter_health_max));
 
     // Keep last X camera observations in list for kick detection and filtering
     previousMeasurements.push_back(updateBall);
-    if (previousMeasurements.size() > *VisionFilterConfig::slow_kick_detector_history_length) {
-        previousMeasurements.pop_front();
-    }
 
     filter.predictWithUpdate(updateBall.getPos());
 }
 
-bool KalmanBall::isUnhealthy() {
+bool KalmanBall::isUnhealthy() const {
     bool updated_recently = RJ::Seconds(lastPredictTime - lastUpdateTime) < RJ::Seconds(*max_time_outside_vision);
 
     return !updated_recently;
 }
 
-unsigned int KalmanBall::getCameraID() {
+unsigned int KalmanBall::getCameraID() const {
     return cameraID;
 }
 
-int KalmanBall::getHealth() {
+int KalmanBall::getHealth() const {
     return health;
 }
 
-Geometry2d::Point KalmanBall::getPos() {
+Geometry2d::Point KalmanBall::getPos() const {
     return filter.getPos();
 }
 
-Geometry2d::Point KalmanBall::getVel() {
+Geometry2d::Point KalmanBall::getVel() const {
     return filter.getVel();
 }
 
-Geometry2d::Point KalmanBall::getPosCov() {
+Geometry2d::Point KalmanBall::getPosCov() const {
     return filter.getPosCov();
 }
 
-Geometry2d::Point KalmanBall::getVelCov() {
+Geometry2d::Point KalmanBall::getVelCov() const {
     return filter.getVelCov();
 }
 
-std::deque<CameraBall> KalmanBall::getPrevMeasurements() {
+boost::circular_buffer<CameraBall> KalmanBall::getPrevMeasurements() const {
     return previousMeasurements;
 }
 

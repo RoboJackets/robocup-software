@@ -20,12 +20,12 @@ public:
     /**
      * @return Time this measurement was captured
      */
-    RJ::Time getTimeCaptured();
+    RJ::Time getTimeCaptured() const;
 
     /**
      * @return Position of the measurement
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * Combines all the balls in the list and returns a ball
@@ -33,7 +33,7 @@ public:
      *
      * @param balls The list of balls to combine
      */
-    static CameraBall CombineBalls(std::list<CameraBall> balls);
+    static CameraBall CombineBalls(const std::list<CameraBall>& balls);
 
 private:
     RJ::Time timeCaptured;

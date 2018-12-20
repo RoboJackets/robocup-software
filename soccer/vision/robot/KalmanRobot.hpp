@@ -1,6 +1,6 @@
 #pragma once
 
-#include <deque>
+#include <boost/circular_buffer.hpp>
 
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
@@ -26,7 +26,7 @@ public:
      * @param previousWorldRobot World robot from last frame (or invalid world robot)
      */
     KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
-                CameraRobot initMeasurement, WorldRobot& previousWorldRobot);
+                CameraRobot initMeasurement, const WorldRobot& previousWorldRobot);
 
     /**
      * Predicts one time step forward
@@ -46,67 +46,67 @@ public:
     /**
      * Returns true when the filter hasn't been updated in a while and should be deleted
      */
-    bool isUnhealthy();
+    bool isUnhealthy() const;
 
     /**
      * @return The camera id this belongs to
      */
-    unsigned int getCameraID();
+    unsigned int getCameraID() const;
 
     /**
      * @return This robot's id
      */
-    int getRobotID();
+    int getRobotID() const;
 
     /**
      * @return How healthy this filter is. AKA How often it's been updated
      */
-    int getHealth();
+    int getHealth() const;
 
     /**
      * @return Best estimate of the linear position of the robot
      */
-    Geometry2d::Point getPos();
+    Geometry2d::Point getPos() const;
 
     /**
      * @return Best estimate of the heading. Not bounded
      */
-    double getTheta();
+    double getTheta() const;
 
     /**
      * @return Best estimate of the linear velocity of the robot
      */
-    Geometry2d::Point getVel();
+    Geometry2d::Point getVel() const;
 
     /**
      * @return Best estimate of the angular velocity
      */
-    double getOmega();
+    double getOmega() const;
 
     /**
      * @return Covariance in X and Y linear direction of the position of the robot
      */
-    Geometry2d::Point getPosCov();
+    Geometry2d::Point getPosCov() const;
 
     /**
      * @return Covariance of theta of the robot
      */
-    double getThetaCov();
+    double getThetaCov() const;
 
     /**
      * @return Covariance in X and Y linear direction of the velocity of the robot
      */
-    Geometry2d::Point getVelCov();
+    Geometry2d::Point getVelCov() const;
 
     /**
      * @return Covariance of omega of the robot
      */
-    double getOmegaCov();
+    double getOmegaCov() const;
 
     /**
      * @return List of previous camera robot measurements for kick detection
      */
-    std::deque<CameraRobot> getPrevMeasurements();
+    boost::circular_buffer<CameraRobot> getPrevMeasurements() const;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -114,7 +114,7 @@ private:
     RJ::Time lastUpdateTime;
     RJ::Time lastPredictTime;
 
-    std::deque<CameraRobot> previousMeasurements;
+    boost::circular_buffer<CameraRobot> previousMeasurements;
 
     KalmanFilter3D filter;
 
