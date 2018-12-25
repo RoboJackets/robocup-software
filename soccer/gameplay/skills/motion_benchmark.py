@@ -36,8 +36,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         BasicMotionBuffer = 7
 
 
-  
-
     #General Result Variables
     resultsToWrite = [] #should possibly make a seperate list for more/less verbose output
     
@@ -51,7 +49,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 #Add a section to the file to put notes about the current run
                 #Might also put the actual data, mabye a csv if I'm feeling frisky
     #Note: add a warning if the field size is too small to run the tests
-   
+  
 
     class BasicMotionTest:
 
