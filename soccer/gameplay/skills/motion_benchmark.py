@@ -392,8 +392,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         startNumpy=np.array([start.x,start.y])
         endNumpy=np.array([end.x,end.y])
         robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
-        d = np.cross(endNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
-        return d
+        d = np.cross(startNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
+        return abs(d)
  
 
 
@@ -506,7 +506,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_enter_BasicMotionEnd(self):
         self.currentBasicMotion.printSomeShit()
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa Hats")        
 
     def on_exit_BasicMotionEnd(self):
         self.basicMotionIndex += 1
@@ -579,5 +578,4 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             #reqs.destination_shape = robocup.Point(0,0)
             return reqs
         '''
-
 
