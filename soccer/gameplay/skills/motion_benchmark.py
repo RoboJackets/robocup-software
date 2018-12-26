@@ -97,8 +97,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
             self.theMotionBenchmark = benchmark
 
-
-
         currentStart = None
         currentEnd = None
         currentFacePoint = None
@@ -145,6 +143,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             else:
                 self.started = True
 
+            if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
+                theMotionBenchmark.robot.faceNone()
 
         def calcFinalRotationError(self):
             if(self.currentFacePoint is not None):
@@ -282,58 +282,62 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         superBasicTest.point0 = robocup.Point(1.2,1.2)
         superBasicTest.point1 = robocup.Point(1.2,2.2)
         superBasicTest.point2 = robocup.Point(2.2,1.2)
+        superBasicTest.title = "Test Triangle"
         self.basicMotionTests.append(superBasicTest)
 
         basicMid = self.BasicMotionTest(numberOfRuns, self)
         basicMid.point0 = robocup.Point(1.2,1.2)
         basicMid.point1 = robocup.Point(-1.2,1.2)
         basicMid.point2 = robocup.Point(0,3.5)
+        basicMid.title = "Mid Size Motion Triangle"
         self.basicMotionTests.append(basicMid)
 
         basicSmall = self.BasicMotionTest(numberOfRuns, self)
         basicSmall.point0 = robocup.Point(-0.75, 1.2)
         basicSmall.point1 = robocup.Point(0.75, 1.2)
         basicSmall.point2 = robocup.Point(0,2.4)
+        basicMid.title = "Small Motion Triangle"
         self.basicMotionTests.append(basicSmall)
 
         basicLarge = self.BasicMotionTest(numberOfRuns, self)
         basicLarge.point0 = robocup.Point(-1.7,1.5)
         basicLarge.point1 = robocup.Point(0, 4.8)
         basicLarge.point2 = robocup.Point(1.7, 1.5)
+        basicLarge.title = "Large Motion Triangle"
         self.basicMotionTests.append(basicLarge)
 
         basicSmaller = self.BasicMotionTest(numberOfRuns, self)
         basicSmaller.point0 = robocup.Point(0.25, 1.2)
         basicSmaller.point1 = robocup.Point(-0.25, 1.2)
         basicSmaller.point2 = robocup.Point(0, 1.7)
+        basicSmaller.title = "Smaller Motion Triangle"
         self.basicMotionTests.append(basicSmaller)
         
         basicTiny = self.BasicMotionTest(numberOfRuns, self)
         basicTiny.point0 = robocup.Point(0.085, 1.2)
         basicTiny.point1 = robocup.Point(-0.085, 1.2)
         basicTiny.point2 = robocup.Point(0, 1.285)
+        basicTiny.title = "Tiny Motion Triangle"
         self.basicMotionTests.append(basicTiny)
 
         basicMicro = self.BasicMotionTest(numberOfRuns, self)
         basicMicro.point0 = robocup.Point(0.034, 1.2)
         basicMicro.point1 = robocup.Point(-0.034, 1.2)
         basicMicro.point2 = robocup.Point(0,1.242)
+        basicMicro.title = "Micro Motion Triangle"
         self.basicMotionTests.append(basicMicro)
         
         
         midFace = self.BasicMotionTest(numberOfRuns, self)
         midFace.point0 = robocup.Point(1.2,1.2)
         midFace.point1 = robocup.Point(-1.2,1.2)
-        midFace.point2 =  robocup.Point(0,3.5)
+        midFace.point2 = robocup.Point(0,3.5)
         midFace.facePoint0 = robocup.Point(0,2.8)
         midFace.facePoint1 = robocup.Point(0,0)
-        midFace.facePoint2 =  robocup.Point(2,0)
+        midFace.facePoint2 = robocup.Point(2,0)
+        midFace.title = "Mid size triangle while facing points"
         self.basicMotionTests.append(midFace)
         
-
-
-
-
 
         self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
 
@@ -428,8 +432,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     #Utility functions END
 
-
-   
 
     #Setup state functions (for the latency test)
 
