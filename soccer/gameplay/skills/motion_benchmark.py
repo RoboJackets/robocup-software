@@ -83,6 +83,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         motionNumber = 0
 
+
+
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
             motions = nRuns * 3 + 1
@@ -94,6 +96,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.maxOvershoot = [[0,0]] * motions
 
             self.theMotionBenchmark = benchmark
+
+
 
         currentStart = None
         currentEnd = None
@@ -116,11 +120,16 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             facePoints = [self.facePoint0, self.facePoint1, self.facePoint2]
             self.startTime = time.time()
             self.currentStart = points[2] if self.motionNumber % 3 == 0 else points[(self.motionNumber % 3) - 1]
+            if(self.motionNumber is 0):
+                self.currentStart = None
+            
             self.currentEnd = points[self.motionNumber % 3]
             self.currentFacePoint = facePoints[self.motionNumber % 3]
+            self.lineErrorTimer = time.time()
+            self.rotErrorTimer = time.time()
             
         def processRun(self):
-            if(self.currentEnd != None):
+            if(self.currentEnd != None and self.currentStart is not None):
                 self.integrateLineError()
                 self.updateOvershoot()
             if(self.currentFacePoint != None):
@@ -153,7 +162,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def integrateRotationalError(self):
             deltat = abs(self.rotErrorTimer - time.time())
             self.rotErrorTimer = time.time()
-            self.rotationalFollowError[self.motionNumber] += MotionBenchmark.getAngleError(self.theMotionBenchmark,self.currentFacePoint) * deltat
+            self.rotationalFollowError[self.motionNumber] += abs(MotionBenchmark.getAngleError(self.theMotionBenchmark,self.currentFacePoint)) * deltat
 
         def updateOvershoot(self):
             perOvershoot = MotionBenchmark.pOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
