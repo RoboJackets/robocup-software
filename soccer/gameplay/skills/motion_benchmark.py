@@ -32,7 +32,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #Basic motion triangle
         BasicMotion0 = 4
         BasicMotionEnd = 5
-        EndAll = 6
+        ProcessBasicMotion = 6
         BasicMotionBuffer = 7
 
 
@@ -122,6 +122,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             print(self.rotationalFollowError)
             print("the maximum overshoot amounts")
             print(self.maxOvershoot)
+
+
+        def __str__(self):
+            return self.title
+
 
         def startRun(self):
             points = [self.point0, self.point1, self.point2]
@@ -228,7 +233,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                      MotionBenchmark.State.move1,
                      MotionBenchmark.State.BasicMotion0,
                      MotionBenchmark.State.BasicMotionEnd,
-                     MotionBenchmark.State.EndAll,
+                     MotionBenchmark.State.ProcessBasicMotion,
                      MotionBenchmark.State.BasicMotionBuffer]
                     
 
@@ -281,14 +286,17 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             lambda: self.basicMotionIndex < len(self.basicMotionTests) - 1, 'In Position')
 
 
-        #BasicMotionEnd -> exit the behavior  
+        #BasicMotionEnd -> ProcessBasicMotion
         self.add_transition(MotionBenchmark.State.BasicMotionEnd,
+                            MotionBenchmark.State.ProcessBasicMotion,
+                            lambda: self.basicMotionIndex >= len(self.basicMotionTests) - 1, 'In Position')
+                            
+        #ProcessBasicMotion -> exit
+        self.add_transition(MotionBenchmark.State.ProcessBasicMotion,
                             behavior.Behavior.State.completed,
-                            lambda: self.basicMotionIndex >= len(self.basicMotionTests), 'In Position')
-
-
+                            lambda: False, 'In Position') #Should change this to true if I want it to end
+                            
         numberOfRuns = 3
-
     
         superBasicTest = self.BasicMotionTest(numberOfRuns, self)
         superBasicTest.point0 = robocup.Point(1.2,1.2)
@@ -452,6 +460,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         move_point = robocup.Point(0, constants.Field.Width / 4)
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
+        self.basicMotionIndex = 0
+        self.currentBasicMotion = self.basicMotionTests[0]
+    
+        print("TESTS TO BE RUN --------------------------------")
+        for g in self.basicMotionTests:
+            print(g)
+        print("TESTS TO BE RUN --------------------------------")
+
     def on_exit_setup(self):
         self.remove_all_subbehaviors()
         #pass
@@ -539,6 +555,21 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.currentBasicMotion = None
         self.currentBasicMotion.resetTest()
 
+
+    def on_enter_ProcessBasicMotion(self):
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+
+        #I Should figure out the velocity
 
     #nothing special for role requirements
     def role_requirements(self):
