@@ -87,19 +87,29 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
-            motions = nRuns * 3 + 1
+            motions = nRuns * 3 + 2
             self.timeTaken = [0.0] * motions
             self.posEndError = [0.0] * motions
             self.lineFollowError = [0.0] * motions
             self.rotationalFollowError = [0.0] * motions
             self.finalRotationalError = [0.0] * motions
             self.maxOvershoot = [[0,0]] * motions
-
+            self.motionNumber = 0
             self.theMotionBenchmark = benchmark
 
         currentStart = None
         currentEnd = None
         currentFacePoint = None
+
+        def resetTest(self):
+            motions = self.runs * 3 + 2
+            self.timeTaken = [0.0] * motions
+            self.posEndError = [0.0] * motions
+            self.lineFollowError = [0.0] * motions
+            self.rotationalFollowError = [0.0] * motions
+            self.finalRotationalError = [0.0] * motions
+            self.maxOvershoot = [[0,0]] * motions
+            self.motionNumber = 0
 
         def printSomeShit(self):
             print("Times for each motion ---------------------------------")
@@ -144,7 +154,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 self.started = True
 
             if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
-                theMotionBenchmark.robot.faceNone()
+                self.theMotionBenchmark.robot.face(None)
 
         def calcFinalRotationError(self):
             if(self.currentFacePoint is not None):
@@ -495,6 +505,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         print("X noise = " + str((abs(self.noiseMaxX) + abs(self.noiseMinX))))
         print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
         print("-----------------------------------------------------------")
+        self.currentBasicMotion.resetTest()
 
 
     def on_enter_BasicMotion0(self):
@@ -524,7 +535,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
         else:
             self.currentBasicMotion = None
-
+        self.currentBasicMotion.resetTest()
 
 
     #nothing special for role requirements
