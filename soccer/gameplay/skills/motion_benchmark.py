@@ -81,20 +81,20 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         count = 0
         runs = 5
 
-        motionNumber = 0
+        motionNumber = -1
 
 
 
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
-            motions = nRuns * 3 + 2
+            motions = nRuns * 3 + 1
             self.timeTaken = [0.0] * motions
             self.posEndError = [0.0] * motions
             self.lineFollowError = [0.0] * motions
             self.rotationalFollowError = [0.0] * motions
             self.finalRotationalError = [0.0] * motions
             self.maxOvershoot = [[0,0]] * motions
-            self.motionNumber = 0
+            self.motionNumber = -1
             self.theMotionBenchmark = benchmark
 
         currentStart = None
@@ -102,14 +102,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         currentFacePoint = None
 
         def resetTest(self):
-            motions = self.runs * 3 + 2
+            motions = self.runs * 3 + 1
             self.timeTaken = [0.0] * motions
             self.posEndError = [0.0] * motions
             self.lineFollowError = [0.0] * motions
             self.rotationalFollowError = [0.0] * motions
             self.finalRotationalError = [0.0] * motions
             self.maxOvershoot = [[0,0]] * motions
-            self.motionNumber = 0
+            self.motionNumber = -1
 
         def printSomeShit(self):
             print("Times for each motion ---------------------------------")
@@ -154,7 +154,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 self.started = True
 
             if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
-                self.theMotionBenchmark.robot.face(None)
+                #self.theMotionBenchmark.robot.faceNone(self)
+                #I need to cancel the face command so that the next run can be fresh - faceNone is not working
+                pass
 
         def calcFinalRotationError(self):
             if(self.currentFacePoint is not None):
