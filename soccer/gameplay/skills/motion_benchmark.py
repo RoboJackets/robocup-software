@@ -295,7 +295,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.add_transition(MotionBenchmark.State.ProcessBasicMotion,
                             behavior.Behavior.State.completed,
                             lambda: False, 'In Position') #Should change this to true if I want it to end
-                            
+        self.basicMotionTest = []            
         numberOfRuns = 3
     
         superBasicTest = self.BasicMotionTest(numberOfRuns, self)
@@ -303,28 +303,28 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         superBasicTest.point1 = robocup.Point(1.2,2.2)
         superBasicTest.point2 = robocup.Point(2.2,1.2)
         superBasicTest.title = "Test Triangle"
-        self.basicMotionTests.append(superBasicTest)
+        #self.basicMotionTests.append(superBasicTest)
 
         basicMid = self.BasicMotionTest(numberOfRuns, self)
         basicMid.point0 = robocup.Point(1.2,1.2)
         basicMid.point1 = robocup.Point(-1.2,1.2)
         basicMid.point2 = robocup.Point(0,3.5)
         basicMid.title = "Mid Size Motion Triangle"
-        self.basicMotionTests.append(basicMid)
+        #self.basicMotionTests.append(basicMid)
 
         basicSmall = self.BasicMotionTest(numberOfRuns, self)
         basicSmall.point0 = robocup.Point(-0.75, 1.2)
         basicSmall.point1 = robocup.Point(0.75, 1.2)
         basicSmall.point2 = robocup.Point(0,2.4)
         basicMid.title = "Small Motion Triangle"
-        self.basicMotionTests.append(basicSmall)
+        #self.basicMotionTests.append(basicSmall)
 
         basicLarge = self.BasicMotionTest(numberOfRuns, self)
         basicLarge.point0 = robocup.Point(-1.7,1.5)
         basicLarge.point1 = robocup.Point(0, 4.8)
         basicLarge.point2 = robocup.Point(1.7, 1.5)
         basicLarge.title = "Large Motion Triangle"
-        self.basicMotionTests.append(basicLarge)
+        #self.basicMotionTests.append(basicLarge)
 
         basicSmaller = self.BasicMotionTest(numberOfRuns, self)
         basicSmaller.point0 = robocup.Point(0.25, 1.2)
@@ -338,14 +338,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicTiny.point1 = robocup.Point(-0.085, 1.2)
         basicTiny.point2 = robocup.Point(0, 1.285)
         basicTiny.title = "Tiny Motion Triangle"
-        self.basicMotionTests.append(basicTiny)
+        #self.basicMotionTests.append(basicTiny)
 
         basicMicro = self.BasicMotionTest(numberOfRuns, self)
         basicMicro.point0 = robocup.Point(0.034, 1.2)
         basicMicro.point1 = robocup.Point(-0.034, 1.2)
         basicMicro.point2 = robocup.Point(0,1.242)
         basicMicro.title = "Micro Motion Triangle"
-        self.basicMotionTests.append(basicMicro)
+        #self.basicMotionTests.append(basicMicro)
         
         
         midFace = self.BasicMotionTest(numberOfRuns, self)
@@ -356,7 +356,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         midFace.facePoint1 = robocup.Point(0,0)
         midFace.facePoint2 = robocup.Point(2,0)
         midFace.title = "Mid size triangle while facing points"
-        self.basicMotionTests.append(midFace)
+        #self.basicMotionTests.append(midFace)
         
 
         self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
@@ -551,23 +551,16 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.basicMotionIndex += 1
         if(self.basicMotionIndex < len(self.basicMotionTests)):
             self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
+            self.currentBasicMotion.resetTest()
         else:
             self.currentBasicMotion = None
-        self.currentBasicMotion.resetTest()
 
-
+#ProcessBasicMotion
     def on_enter_ProcessBasicMotion(self):
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
-        print("WE ARE READY TO PROCESS INFORMATION!!!!!!!")
+        for g in self.basicMotionTests:
+            print(g)
+            print("We can start doing a thing!!")
+
 
         #I Should figure out the velocity
 
