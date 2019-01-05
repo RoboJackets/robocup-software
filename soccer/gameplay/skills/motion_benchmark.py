@@ -65,6 +65,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         point1 = None
         point2 = None
 
+        dist0 = None
+        dist1 = None
+        dist2 = None
+
         facePoint0 = None
         facePoint1 = None
         facePoint2 = None
@@ -82,8 +86,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         runs = 5
 
         motionNumber = -1
-
-
 
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
@@ -140,7 +142,18 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.currentFacePoint = facePoints[self.motionNumber % 3]
             self.lineErrorTimer = time.time()
             self.rotErrorTimer = time.time()
-            
+
+            self.dist0 = self.calcDist(self.point0, self.point1)
+            self.dist1 = self.calcDist(self.point1, self.point2)
+            self.dist2 = self.calcDist(self.point2, self.point0)
+
+           
+        def calcDist(self, point1, point2):
+            if(point1 is not None and point2 is not None):
+                return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2)
+            else:
+                return 0
+
         def processRun(self):
             if(self.currentEnd != None and self.currentStart is not None):
                 self.integrateLineError()
@@ -273,7 +286,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.add_transition(MotionBenchmark.State.BasicMotionBuffer,
                             MotionBenchmark.State.BasicMotion0,
                             lambda: True, 'In Position')
-
 
         #BasicMid0 -> BasicMotionEnd
         self.add_transition(MotionBenchmark.State.BasicMotion0,
@@ -555,14 +567,54 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         else:
             self.currentBasicMotion = None
 
-#ProcessBasicMotion
+    #ProcessBasicMotion
     def on_enter_ProcessBasicMotion(self):
         for g in self.basicMotionTests:
-            print(g)
+            print("TEST RESULT ------------------------")
+            print("Test Name: " + g.title)
+            print("Average Motion Time: " + (str) (sum(g.timeTaken) / len(timeTaken)))
+            print("Average Ending Positional Error: " + (str) (sum(g.posEndError) / len(g.posEndError)))
+            print("Maximum Ending Positional Error: " + (str) max(g.posEndError))
+            print("Average straight Line Error:" + (str) sum(g.lineFollowError) / len(g.lineFollowError))
+            from operator import truediv
+            unitLineError = map(truediv, g.lineFollowError, g.timeTaken)
+            print("Average straight line Error per time: " + (str) sum(unitLineError) / len(unitLineError))
+            print("Average rotational following error" + (str) sum(g.rotationalFollowError) / len(g.rotationalFollowError))
+            unitRotError = map(truediv, g.rotationalFollowError, g.timeTaken)
+            print("Average rotational following error per time" + (str) sum(unitRotError) / len(unitRotError))
+            
+            a = [row[0] for row in g.maxOvershoot] 
+            b = [row[1] for row in g.maxOvershoot]
+            aAvg = sum(a) / len(a)
+            bAvg = sum(b) / len(b)
+
+            print("Average Overshoot: ",aAvg)
+            print("Average perportional Overshoot",bAvg)
+            '''
+            self.timeTaken = [0.0] * motions
+            self.posEndError = [0.0] * motions
+            self.lineFollowError = [0.0] * motions
+            self.rotationalFollowError = [0.0] * motions
+            self.finalRotationalError = [0.0] * motions
+            self.maxOvershoot = [[0,0]] * motions
+            self.motionNumber = -1
+            '''
+
+
             print("We can start doing a thing!!")
 
 
         #I Should figure out the velocity
+
+
+
+
+
+
+
+
+
+
 
     #nothing special for role requirements
     def role_requirements(self):
