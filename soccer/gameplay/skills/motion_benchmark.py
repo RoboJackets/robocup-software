@@ -51,6 +51,21 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #Note: add a warning if the field size is too small to run the tests
   
 
+
+    #Test that makes the robot navigate a virtual field with virtual obstacles
+    class ObstacleMotionTest:
+
+        title = "No Name Test"
+        startTime = 0.0
+
+
+    #Tests how a robot captures an inbound or stationary ball
+    class InboundBallTest:
+
+        title = "No Name Test"
+        startTime = 0.0
+
+    #Test that causes the robot to move in triangular motions
     class BasicMotionTest:
 
         title = "No Name Test"
@@ -103,6 +118,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         currentEnd = None
         currentFacePoint = None
 
+        #Reset this test for a re-run
         def resetTest(self):
             motions = self.runs * 3 + 1
             self.timeTaken = [0.0] * motions
@@ -113,6 +129,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.maxOvershoot = [[0,0]] * motions
             self.motionNumber = -1
 
+
+        #Print some of the data from the test
         def printSomeShit(self):
             print("Times for each motion ---------------------------------")
             print(self.timeTaken)
@@ -125,11 +143,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             print("the maximum overshoot amounts")
             print(self.maxOvershoot)
 
-
+        #Title for prints
         def __str__(self):
             return self.title
 
-
+        #Set everything up to begin 
         def startRun(self):
             points = [self.point0, self.point1, self.point2]
             facePoints = [self.facePoint0, self.facePoint1, self.facePoint2]
@@ -172,7 +190,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 self.started = True
 
             if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
-                #self.theMotionBenchmark.robot.faceNone(self)
+                self.theMotionBenchmark.robot.face_none(self)
                 #I need to cancel the face command so that the next run can be fresh - faceNone is not working
                 pass
 
@@ -570,18 +588,25 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #ProcessBasicMotion
     def on_enter_ProcessBasicMotion(self):
         for g in self.basicMotionTests:
+
+            theTitle = g.title
+            timeTaken = g.timeTaken
+            avgMotionTime = sum(g.timeTaken) / len(g.timeTaken))
+            avgEndPosError = sum(g.posEndError) / len(g.posEndError))
+            MaximumEnding = 
+
             print("TEST RESULT ------------------------")
-            print("Test Name: " + g.title)
-            print("Average Motion Time: " + (str) (sum(g.timeTaken) / len(timeTaken)))
-            print("Average Ending Positional Error: " + (str) (sum(g.posEndError) / len(g.posEndError)))
-            print("Maximum Ending Positional Error: " + (str) max(g.posEndError))
-            print("Average straight Line Error:" + (str) sum(g.lineFollowError) / len(g.lineFollowError))
+            print("Test Name: " + theTitle)
+            print("Average Motion Time: " +
+            print("Average Ending Positional Error: " + str()
+            print("Maximum Ending Positional Error: " +  str()
+            print("Average straight Line Error:" +  str(sum(g.lineFollowError) / len(g.lineFollowError)))
             from operator import truediv
-            unitLineError = map(truediv, g.lineFollowError, g.timeTaken)
-            print("Average straight line Error per time: " + (str) sum(unitLineError) / len(unitLineError))
-            print("Average rotational following error" + (str) sum(g.rotationalFollowError) / len(g.rotationalFollowError))
-            unitRotError = map(truediv, g.rotationalFollowError, g.timeTaken)
-            print("Average rotational following error per time" + (str) sum(unitRotError) / len(unitRotError))
+            unitLineError = list(map(truediv, g.lineFollowError, g.timeTaken))
+            print("Average straight line Error per time: " + str(sum(unitLineError) / len(unitLineError)))
+            print("Average rotational following error" + str(sum(g.rotationalFollowError) / len(g.rotationalFollowError)))
+            unitRotError = list(map(truediv, g.rotationalFollowError, g.timeTaken))
+            print("Average rotational following error per time" + str(sum(unitRotError) / len(unitRotError)))
             
             a = [row[0] for row in g.maxOvershoot] 
             b = [row[1] for row in g.maxOvershoot]
@@ -605,13 +630,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
 
         #I Should figure out the velocity
-
-
-
-
-
-
-
 
 
 
