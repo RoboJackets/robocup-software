@@ -421,7 +421,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
 
     #Movement test points START
-    setupPoint = robocup.Point(0, 1.2)
+    setupPoint = robocup.Point(0, 1.25)
 
 
     #PureRot
@@ -520,7 +520,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_enter_setup(self):
         #self.remove_all_subbehaviors()
-        move_point = robocup.Point(0, constants.Field.Width / 4)
+        move_point = self.setupPoint
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
 
         self.basicMotionIndex = 0
