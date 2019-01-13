@@ -61,7 +61,7 @@ class distraction1(standard_play.StandardPlay):
 
         self.add_transition(distraction1.State.optionaladjustment,
                         distraction1.State.centerpass, lambda: self.subbehavior_with_name('move half').is_done_running() and 
-                        self.subbehavior_with_name('move to distract').is_done_running() , '2-centerpass')
+                        self.subbehavior_with_name('stay').is_done_running() , '2-centerpass')
 
         self.add_transition(distraction1.State.centerpass,
                         distraction1.State.passing, lambda: self.subbehavior_with_name('center pass').is_done_running(), 'centerpass-passing')
@@ -84,7 +84,7 @@ class distraction1(standard_play.StandardPlay):
         self.d1 = robocup.Point(0.40*constants.Field.Width, 0.95*constants.Field.Length) #the first distraction point
         self.d2 = robocup.Point(0.40*constants.Field.Width, 0.8*constants.Field.Length) #the second distraction point
         self.s1 = robocup.Point(-0.40*constants.Field.Width, 0.9*constants.Field.Length) #striker's position
-        self.center = robocup.Point(0,4.5) #center of field position, used if ball is far
+        self.center = robocup.Point(0.5*constants.Field.Width,0.5*constants.Field.Length) #center of field position, used if ball is far
         
 
     def on_enter_setup(self):
@@ -94,7 +94,7 @@ class distraction1(standard_play.StandardPlay):
         self.add_subbehavior(skills.move.Move(self.s1), 'striker moves')
         self.add_subbehavior(skills.move.Move(self.d2), 'distract moves')
         #if the ball is too far away to pass across the field
-        self.ball_is_far = main.ball().pos.y < 4
+        self.ball_is_far = main.ball().pos.y < (0.4*constants.Field.Length)
         
 
 
