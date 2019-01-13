@@ -6,12 +6,16 @@ import main
 import constants
 import robocup
 import skills.move
+import skills.face
 import time
 import datetime
 import numpy as np
 import math
 import role_assignment
 import composite_behavior
+from operator import truediv
+import statistics
+
 
 ## Motion Benchmark V0.0.0.0
 #
@@ -49,7 +53,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 #Add a section to the file to put notes about the current run
                 #Might also put the actual data, mabye a csv if I'm feeling frisky
     #Note: add a warning if the field size is too small to run the tests
-  
+ 
+    #A Max speed readout would be nice
 
 
     #Test that makes the robot navigate a virtual field with virtual obstacles
@@ -130,7 +135,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.motionNumber = -1
 
 
+
         #Print some of the data from the test
+        '''
         def printSomeShit(self):
             print("Times for each motion ---------------------------------")
             print(self.timeTaken)
@@ -142,6 +149,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             print(self.rotationalFollowError)
             print("the maximum overshoot amounts")
             print(self.maxOvershoot)
+        '''
 
         #Title for prints
         def __str__(self):
@@ -190,8 +198,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 self.started = True
 
             if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
-                self.theMotionBenchmark.robot.face_none(self)
-                #I need to cancel the face command so that the next run can be fresh - faceNone is not working
+                self.theMotionBenchmark.robot.face_none()
                 pass
 
         def calcFinalRotationError(self):
@@ -325,6 +332,12 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.add_transition(MotionBenchmark.State.ProcessBasicMotion,
                             behavior.Behavior.State.completed,
                             lambda: False, 'In Position') #Should change this to true if I want it to end
+
+
+
+
+        #Setup the BasicMotionTests
+
         self.basicMotionTest = []            
         numberOfRuns = 3
     
@@ -340,21 +353,21 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicMid.point1 = robocup.Point(-1.2,1.2)
         basicMid.point2 = robocup.Point(0,3.5)
         basicMid.title = "Mid Size Motion Triangle"
-        #self.basicMotionTests.append(basicMid)
+        self.basicMotionTests.append(basicMid)
 
         basicSmall = self.BasicMotionTest(numberOfRuns, self)
         basicSmall.point0 = robocup.Point(-0.75, 1.2)
         basicSmall.point1 = robocup.Point(0.75, 1.2)
         basicSmall.point2 = robocup.Point(0,2.4)
         basicMid.title = "Small Motion Triangle"
-        #self.basicMotionTests.append(basicSmall)
+        self.basicMotionTests.append(basicSmall)
 
         basicLarge = self.BasicMotionTest(numberOfRuns, self)
         basicLarge.point0 = robocup.Point(-1.7,1.5)
         basicLarge.point1 = robocup.Point(0, 4.8)
         basicLarge.point2 = robocup.Point(1.7, 1.5)
         basicLarge.title = "Large Motion Triangle"
-        #self.basicMotionTests.append(basicLarge)
+        self.basicMotionTests.append(basicLarge)
 
         basicSmaller = self.BasicMotionTest(numberOfRuns, self)
         basicSmaller.point0 = robocup.Point(0.25, 1.2)
@@ -368,15 +381,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicTiny.point1 = robocup.Point(-0.085, 1.2)
         basicTiny.point2 = robocup.Point(0, 1.285)
         basicTiny.title = "Tiny Motion Triangle"
-        #self.basicMotionTests.append(basicTiny)
+        self.basicMotionTests.append(basicTiny)
 
         basicMicro = self.BasicMotionTest(numberOfRuns, self)
         basicMicro.point0 = robocup.Point(0.034, 1.2)
         basicMicro.point1 = robocup.Point(-0.034, 1.2)
         basicMicro.point2 = robocup.Point(0,1.242)
         basicMicro.title = "Micro Motion Triangle"
-        #self.basicMotionTests.append(basicMicro)
-        
+        self.basicMotionTests.append(basicMicro)
         
         midFace = self.BasicMotionTest(numberOfRuns, self)
         midFace.point0 = robocup.Point(1.2,1.2)
@@ -385,21 +397,34 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         midFace.facePoint0 = robocup.Point(0,2.8)
         midFace.facePoint1 = robocup.Point(0,0)
         midFace.facePoint2 = robocup.Point(2,0)
-        midFace.title = "Mid size triangle while facing points"
-        #self.basicMotionTests.append(midFace)
+        midFace.title = "Mid size triangle while facing points #1"
+        self.basicMotionTests.append(midFace)
         
+        midFace2 = self.BasicMotionTest(numberOfRuns, self)
+        midFace2.point0 = robocup.Point(1.2,1.2)
+        midFace2.point1 = robocup.Point(-1.2,1.2)
+        midFace2.point2 = robocup.Point(0,3.5)
+        midFace2.facePoint0 = robocup.Point(0,2.8)
+        midFace2.facePoint1 = robocup.Point(0,0)
+        midFace2.facePoint2 = robocup.Point(2,0)
+        midFace2.title = "Mid size triangle while facing points #2"
+        self.basicMotionTests.append(midFace)
+
+        pureRot = self.BasicMotionTest(numberOfRuns, self)
+        pureRot.facePoint0 = robocup.Point(0,2.8)
+        pureRot.facePoint1 = robocup.Point(0,0)
+        pureRot.facePoint2 = robocup.Point(2,0)
+        pureRot.title = "Pure Rotational Test"
+        #self.basicMotionTests.append(midFace)
 
         self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
-
-        #END TRANSITIONS
-
 
 
     #Movement test points START
     setupPoint = robocup.Point(0, 1.2)
 
 
-        #PureRot
+    #PureRot
     startPoint = robocup.Point(0,1.5)
     PureRot0FacePoint = robocup.Point(0, 2.5)
     PureRot1FacePoint = robocup.Point(-1,1.5)
@@ -415,7 +440,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def resultOut(self, result):
         print(result)
         self.resultsToWrite.append(result)
-
 
     def fileOnly(self, result):
         self.resultsToWrite.append(result)
@@ -440,6 +464,15 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         return False
 
 
+
+    def scaleResult(self, value, expectedMin, expectedMax, outMin, outMax):
+        if(value < expectedMin or value > expectedMax):
+            return None
+        retValue = ((outMax - outMin)*(value - expectedMin)) / (expectedMax - expectedMin) + outMin
+        if(retValue > outMax or retValue < outMin):
+            raise ValueError('A very specific bad thing happened.')
+        return retValue
+
     def getAngleError(self, point):
         targetAngle = self.robot.angle
         betweenVec = self.robot.pos - point
@@ -459,7 +492,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         return abs(d)
  
 
-
     def getOvershoot(self, start, end):
        distToStart = math.sqrt((self.robot.pos.x - start.x)**2 + (self.robot.pos.x - start.y)**2)
        startToEnd = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
@@ -471,6 +503,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
 
     #Returns a tuple with (the overshoot, the frational/percentage overshoot)
+    
     def pOvershoot(self, start, end):
         overshoot = self.getOvershoot(start, end) 
         if(overshoot > 0):
@@ -480,7 +513,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             return (0,0)
 
 
-    #Utility functions END
+
 
 
     #Setup state functions (for the latency test)
@@ -562,6 +595,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.add_subbehavior(skills.move.Move(self.currentBasicMotion.currentEnd), 'move')
         else:
             print("There is no current end")
+
         if (self.currentBasicMotion.currentFacePoint is not None):
             self.robot.face(self.currentBasicMotion.currentFacePoint)
 
@@ -575,7 +609,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.remove_all_subbehaviors()
 
     def on_enter_BasicMotionEnd(self):
-        self.currentBasicMotion.printSomeShit()
+        pass
 
     def on_exit_BasicMotionEnd(self):
         self.basicMotionIndex += 1
@@ -588,53 +622,54 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #ProcessBasicMotion
     def on_enter_ProcessBasicMotion(self):
         for g in self.basicMotionTests:
-
             theTitle = g.title
             timeTaken = g.timeTaken
-            avgMotionTime = sum(g.timeTaken) / len(g.timeTaken))
-            avgEndPosError = sum(g.posEndError) / len(g.posEndError))
-            MaximumEnding = 
-
-            print("TEST RESULT ------------------------")
-            print("Test Name: " + theTitle)
-            print("Average Motion Time: " +
-            print("Average Ending Positional Error: " + str()
-            print("Maximum Ending Positional Error: " +  str()
-            print("Average straight Line Error:" +  str(sum(g.lineFollowError) / len(g.lineFollowError)))
-            from operator import truediv
+            avgMotionTime = sum(g.timeTaken) / len(g.timeTaken)
+            motionTimeVar = statistics.pvariance(g.timeTaken)
+            avgEndPosError = sum(g.posEndError) / len(g.posEndError)
+            maxEndPosError = max(g.posEndError)
+            lineError = sum(g.lineFollowError) / len(g.lineFollowError)
             unitLineError = list(map(truediv, g.lineFollowError, g.timeTaken))
-            print("Average straight line Error per time: " + str(sum(unitLineError) / len(unitLineError)))
-            print("Average rotational following error" + str(sum(g.rotationalFollowError) / len(g.rotationalFollowError)))
+            lineErrorPerTime = str(sum(unitLineError) / len(unitLineError))
+            rotationalError = sum(g.rotationalFollowError) / len(g.rotationalFollowError)
             unitRotError = list(map(truediv, g.rotationalFollowError, g.timeTaken))
-            print("Average rotational following error per time" + str(sum(unitRotError) / len(unitRotError)))
+            rotErrorPerTime = sum(unitRotError) / len(unitRotError)
             
             a = [row[0] for row in g.maxOvershoot] 
             b = [row[1] for row in g.maxOvershoot]
-            aAvg = sum(a) / len(a)
-            bAvg = sum(b) / len(b)
 
-            print("Average Overshoot: ",aAvg)
-            print("Average perportional Overshoot",bAvg)
-            '''
-            self.timeTaken = [0.0] * motions
-            self.posEndError = [0.0] * motions
-            self.lineFollowError = [0.0] * motions
-            self.rotationalFollowError = [0.0] * motions
-            self.finalRotationalError = [0.0] * motions
-            self.maxOvershoot = [[0,0]] * motions
-            self.motionNumber = -1
-            '''
+            avgAbsOvershoot = sum(a) / len(a)
+            avgPerOvershoot = sum(b) / len(b)
+            maxAbsOvershoot = max(a)
+            maxPerOvershoot = max(b)
 
-
-            print("We can start doing a thing!!")
+            avgMotionVelocity = []
+            distances = [g.dist0, g.dist1, g.dist2]
+            for i in range(0, len(g.timeTaken) - 1): 
+                avgMotionVelocity.append(distances[i % 3] / g.timeTaken[i])
+            
+            avgTestVelocity = sum(avgMotionVelocity) / len(avgMotionVelocity)
+            maxTestVelocity = max(avgMotionVelocity)
 
 
-        #I Should figure out the velocity
+            self.resultOut("\nResults for test " + theTitle + " - - - - - - - - - - - - - - - \n")
+            self.resultOut("Average Motion Time: " + str(avgMotionTime))
+            self.resultOut("Motion Time Variance: " + str(motionTimeVar))
+            self.resultOut("Average Positional Error: " + str(avgEndPosError))
+            self.resultOut("Maximum Positional Error: " + str(maxEndPosError))
+            self.resultOut("Positional Error Score (0-100): " + str(self.scaleResult(avgEndPosError, 0.0, 0.15, 0, 100 )))
+            self.resultOut("Line Follow Error: " +  str(lineError))
+            self.resultOut("Line Follow Error per Time" + str(lineErrorPerTime))
+            self.resultOut("Rotational Error: " + str(rotationalError))
+            self.resultOut("Rotational Error per Time: " + str(rotErrorPerTime))
+            self.resultOut("Average Absolute Overshoot: " + str(avgAbsOvershoot))
+            self.resultOut("Average Perportional Overshoot: " + str(avgPerOvershoot))
+            self.resultOut("Max Absolute Overshoot: " + str(maxAbsOvershoot))
+            self.resultOut("Max Perportional Overshoot: " + str(maxPerOvershoot))
+            self.resultOut("Average Test Velocity: " + str(avgTestVelocity))
+            self.resultOut("Max Test Velocity: " + str(maxTestVelocity))
+            self.resultOut("\nEnd of results - - - - - - - - - - - - - - - - - - - - - - - - - \n")
 
-
-
-
-    #nothing special for role requirements
     def role_requirements(self):
 
         '''reqs = role_assignment.RoleRequirements()
@@ -655,9 +690,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 c['move'].required_shell_id = c['move'].previous_shell_id
             else:
                 print("Its a dict")
-
-            #print(c)
-            #print(type(c))
 
         return c
 
