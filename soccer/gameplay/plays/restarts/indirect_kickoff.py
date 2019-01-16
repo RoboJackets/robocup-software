@@ -60,7 +60,16 @@ class IndirectKickoff(standard_play.StandardPlay):
         kicker.kick_power = self.FullKickPower
 
         # Try passing if we are doing an indirect kick
-        receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+        # receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+        close_pt = robocup.Point(0, constants.Field.Length / 4)
+        far_pt = robocup.Point(0, 3 * constants.Field.Length / 4)
+
+        if (main.ball().pos - close_pt).mag() < (main.ball().pos - far_pt).mag():
+            closest_pt = close_pt
+        else: 
+            closest_pt = far_pt
+        receive_pt = far_pt
+        receive_value = 1
 
         # Check for valid target pass position
         if receive_value != 0:
