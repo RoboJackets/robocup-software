@@ -67,7 +67,9 @@ class distraction1(standard_play.StandardPlay):
                         distraction1.State.passing, lambda: self.subbehavior_with_name('center pass').is_done_running(), 'centerpass-passing')
 
         self.add_transition(distraction1.State.passing, 
-                        distraction1.State.cross, lambda: (self.has_subbehavior_with_name('distract pass') and self.subbehavior_with_name('distract pass').is_done_running() )
+                        distraction1.State.cross, lambda: ((self.has_subbehavior_with_name('distract pass') and self.subbehavior_with_name('distract pass').is_done_running()) 
+                            or 
+                        (self.has_subbehavior_with_name('get close ball') and self.subbehavior_with_name('get close ball').is_done_running())  )
                         , 'passing-crossing')
 
         self.add_transition(distraction1.State.passing,
@@ -85,6 +87,7 @@ class distraction1(standard_play.StandardPlay):
         self.d2 = robocup.Point(0.40*constants.Field.Width, 0.8*constants.Field.Length) #the second distraction point
         self.s1 = robocup.Point(-0.40*constants.Field.Width, 0.9*constants.Field.Length) #striker's position
         self.center = robocup.Point(0.5*constants.Field.Width,0.5*constants.Field.Length) #center of field position, used if ball is far
+        self.distracterbox = robocup.Circle(self.d1, 2)
         
 
     def on_enter_setup(self):
@@ -100,6 +103,8 @@ class distraction1(standard_play.StandardPlay):
 
     def on_exit_setup(self):
         print("exits setup")
+        print(self.distracterbox)
+        print(main.ball().pos == self.distracterbox)
         self.remove_all_subbehaviors()
         
 
@@ -134,13 +139,19 @@ class distraction1(standard_play.StandardPlay):
         passchance3 = evaluation.passing.eval_pass( self.d2, self.s1, main.our_robots() )
         shotchance1 = evaluation.shooting.eval_shot( self.s1, main.our_robots() )
 
-        if passchance1 >= passchance2*shotchance1:
+        if main.ball().pos == self.distracterbox:
+
+            self.add_subbehavior(skills.capture.Capture(), 'get close ball')
+
+        else:
+
+            if passchance1 >= passchance2*shotchance1:
                 self.add_subbehavior(skills.move.Move(self.s1), 'stay2 ')
                 
                 self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.d2), 'distract pass')
                 
 
-        else:
+            else:
                 self.add_subbehavior(skills.move.Move(self.d1), 'stay2')
                 
                 self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.s1), 'striker pass') 
