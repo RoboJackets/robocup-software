@@ -34,21 +34,6 @@ class IndirectKickoff(standard_play.StandardPlay):
         self.add_state(IndirectKickoff.State.moving, behavior.Behavior.State.running)
         self.add_state(IndirectKickoff.State.passing, behavior.Behavior.State.running)
 
-        # self.add_transition(behavior.Behavior.State.start,
-        #                     IndirectKickoff.State.moving, lambda: True,
-        #                     'immediately')
-
-        # self.add_transition(IndirectKickoff.State.moving, 
-        #                     IndirectKickoff.State.passing, 
-        #                     lambda: self.moving_done(),
-        #                     'Robots are in position to pass')
-
-        # self.add_transition(IndirectKickoff.State.passing,
-        #                     behavior.Behavior.State.completed,
-        #                     lambda: self.subbehavior_with_name('kicker') == behavior.Behavior.State.completed, 
-        #                     'Pass Complete')
-
-
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
@@ -61,30 +46,20 @@ class IndirectKickoff(standard_play.StandardPlay):
 
         # Try passing if we are doing an indirect kick
         # receive_pt, receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
-        close_pt = robocup.Point(0, constants.Field.Length / 4)
-        far_pt = robocup.Point(0, 3 * constants.Field.Length / 4)
 
-        if (main.ball().pos - close_pt).mag() < (main.ball().pos - far_pt).mag():
-            closest_pt = close_pt
-        else: 
-            closest_pt = far_pt
+        far_pt = robocup.Point(0, 3 * constants.Field.Length / 4)
         receive_pt = far_pt
-        receive_value = 1
 
         # Check for valid target pass position
-        if receive_value != 0:
-            pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                receive_pt,
-                None,
-                (kicker, lambda x: True),
-                receiver_required=False,
-                kicker_required=False,
-                prekick_timeout=9)
-            # We don't need to manage this anymore
-            self.add_subbehavior(pass_behavior, 'kicker')
-        else:
-            print('UNFOUND')
-            self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+        pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+            receive_pt,
+            None,
+            (kicker, lambda x: True),
+            receiver_required=False,
+            kicker_required=False,
+            prekick_timeout=9)
+        # We don't need to manage this anymore
+        self.add_subbehavior(pass_behavior, 'kicker')
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
@@ -97,29 +72,6 @@ class IndirectKickoff(standard_play.StandardPlay):
         return 0 if IndirectKickoff.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
-    # def execute_running(self):
-    #     if self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
-    #         self.remove_subbehavior('kicker')
-    #         kicker = skills.line_kick.LineKick()
-    #         kicker.target = constants.Field.TheirGoalSegment
-    #         self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
-
-    #     if self.indirect:
-    #         passState = self.subbehavior_with_name('kicker').state
-    #         IndirectKickoff.Running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
-    #                               passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
-
-    # def on_enter_running(self):
-    #     IndirectKickoff.Running = False
-
-    # def on_exit_running(self):
-    #     IndirectKickoff.Running = False
-
     @classmethod
     def is_restart(cls):
         return True
-
-    def moving_done(self):
-        move1_done = self.subbehavior_with_name('move1').state == behavior.Behavior.State.completed
-        move1_done = self.subbehavior_with_name('move2').state == behavior.Behavior.State.completed
-        return move1_done and move2_done
