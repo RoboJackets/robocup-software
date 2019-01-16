@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <vector>
 
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
@@ -33,7 +33,7 @@ public:
      *
      * @param balls The list of balls to combine
      */
-    static CameraBall CombineBalls(const std::list<CameraBall>& balls);
+    static CameraBall CombineBalls(const std::vector<CameraBall>& balls);
 
 private:
     RJ::Time timeCaptured;

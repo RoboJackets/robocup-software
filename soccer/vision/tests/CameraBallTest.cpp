@@ -25,7 +25,7 @@ TEST(CameraBall, get_pos) {
 }
 
 TEST(CameraBall, combine_zero) {
-    std::list<CameraBall> balls;
+    std::vector<CameraBall> balls;
 
     CameraBall r = CameraBall::CombineBalls(balls);
 
@@ -38,7 +38,7 @@ TEST(CameraBall, combine_one) {
     RJ::Time t = RJ::now();
     Geometry2d::Point p = Geometry2d::Point(1,1);
 
-    std::list<CameraBall> balls;
+    std::vector<CameraBall> balls;
     balls.emplace_back(t, p);
 
     CameraBall r = CameraBall::CombineBalls(balls);
@@ -55,7 +55,7 @@ TEST(CameraBall, combine_two) {
     RJ::Time t2 = t1;
     Geometry2d::Point p2 = Geometry2d::Point(2,2);
 
-    std::list<CameraBall> balls;
+    std::vector<CameraBall> balls;
     balls.emplace_back(t1, p1);
     balls.emplace_back(t2, p2);
 

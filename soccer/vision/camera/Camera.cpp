@@ -111,10 +111,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
     // Easier than trying to figure out which ones are more than X meters away from each other
     // Only delays the filter collection by a camera frame or two
     if (kalmanBallList.size() == 0) {
-        std::list<CameraBall> ballList2;
-        std::copy(ballList.begin(), ballList.end(), std::back_inserter(ballList2));
-        
-        CameraBall avgBall = CameraBall::CombineBalls(ballList2);
+        CameraBall avgBall = CameraBall::CombineBalls(ballList);
         kalmanBallList.emplace_back(cameraID, calcTime, avgBall, previousWorldBall);
 
         return;
@@ -127,12 +124,12 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
     std::vector<bool> usedCameraBall(ballList.size(), false);
 
     // Which camera balls to apply to which kalman ball
-    std::vector<std::list<CameraBall>> appliedBallsList(kalmanBallList.size());
+    std::vector<std::vector<CameraBall>> appliedBallsList(kalmanBallList.size());
 
     // Figure out which measurements go with which kalman balls
     int kalmanBallIdx = 0;
     for (KalmanBall& kalmanBall : kalmanBallList) {
-        std::list<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
+        std::vector<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
 
         int cameraBallIdx = 0;
         for (const CameraBall& cameraBall : ballList) {
@@ -154,7 +151,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
     // Apply the ball measurements to the kalman filters
     kalmanBallIdx = 0;
     for (KalmanBall& kalmanBall : kalmanBallList) {
-        std::list<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
+        std::vector<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
 
         // We had at least one measurement near this ball
         if (measurementBalls.size() > 0) {
@@ -168,6 +165,12 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
     }
 
     // Any balls not used, create a kalman ball at that position
+    //
+    // If there are two measurements which too far away from any
+    // current kalman filter, the two measurements will be form
+    // two individual kalman filters intead of a single one
+    // with an update.
+    // A slight delay in will most likely be seen in these cases
     for (int i = 0; i < ballList.size(); i++) {
         const CameraBall& cameraBall = ballList.at(i);
         bool wasUsed = usedCameraBall.at(i);
@@ -181,19 +184,16 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
 void Camera::updateBallsAKF(RJ::Time calcTime,
                             const std::vector<CameraBall> ballList,
                             const WorldBall& previousWorldBall) {
-    std::list<CameraBall> ballList2;
-    std::copy(ballList.begin(), ballList.end(), std::back_inserter(ballList2));
+    // Average everything and add as measuremnet
+    CameraBall avgBall = CameraBall::CombineBalls(ballList);
 
     // If we have no existing filters, create a new one from average of everything
     if (kalmanBallList.size() == 0) {
-        CameraBall avgBall = CameraBall::CombineBalls(ballList2);
         kalmanBallList.emplace_back(cameraID, calcTime, avgBall, previousWorldBall);
 
         return;
     }
 
-    // Average everything and add as measuremnet
-    CameraBall avgBall = CameraBall::CombineBalls(ballList2);
     // Kinda cheating, but we are only keeping a single element in the list
     kalmanBallList.front().predictAndUpdate(calcTime, avgBall);
 }
@@ -260,10 +260,7 @@ void Camera::updateRobotsMHKF(RJ::Time calcTime,
     // Easier than trying to figure out which ones are more than X meters away from each other
     // Only delays the filter collection by a camera frame or two
     if (singleKalmanRobotList.size() == 0) {
-        std::list<CameraRobot> singleRobotList2;
-        std::copy(singleRobotList.begin(), singleRobotList.end(), std::back_inserter(singleRobotList2));
-
-        CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList2);
+        CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
         singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
 
         return;
@@ -334,20 +331,17 @@ void Camera::updateRobotsAKF(RJ::Time calcTime,
                              const std::list<CameraRobot>& singleRobotList,
                              const WorldRobot& previousWorldRobot,
                              std::list<KalmanRobot>& singleKalmanRobotList) {
-    
-    std::list<CameraRobot> singleRobotList2;
-    std::copy(singleRobotList.begin(), singleRobotList.end(), std::back_inserter(singleRobotList2));
+
+    // Average everything and add as measuremnet
+    CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
 
     // If we have no existing filters, create a new one from average of everything
     if (singleKalmanRobotList.size() == 0) {
-        CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList2);
         singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
 
         return;
     }
 
-    // Average everything and add as measuremnet
-    CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList2);
     // Kinda cheating, but we are only keeping a single element in the list
     singleKalmanRobotList.front().predictAndUpdate(calcTime, avgRobot);
 }
