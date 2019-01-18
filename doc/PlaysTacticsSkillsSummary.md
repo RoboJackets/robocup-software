@@ -33,6 +33,7 @@ Defender and Goalie are really only used on some specific restarts. Submissive D
 
 | Positions              | Description |
 | ---------------------- | ----------- |
+| Advance Zone Midfielder| Moves one robot to the best position to recieve the ball, and moves another robot to the best position to recieve the ball from that position. | Use it when need to move robots on a downfield attack at goal. |
 | Coach                  | The most important tactic we have. It yells strategic messages at the other robots, celebrates on goals, and follows the play from the side of the field. | 
 | Defender               | Defends specific areas of the field. Only used on restarts |
 | Goalie                 | Standalone goalie which does not coordinate with other robots. In most cases, it is better to add the Defense tactic, which implements the Submissive Goalie, or use the Submissive Goalie itself. |
