@@ -70,6 +70,7 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point init
     // Note: T is the sample period
     // Taken from Tiger's AutoRef. Most likely found through integration of error through the
     // state matrices
+    // See https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
     p = *ball_process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
     double dt3 = 1.0 / 3.0 * dt * dt * dt * sigma * sigma;
