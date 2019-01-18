@@ -45,6 +45,10 @@ void Logger::close() {
 }
 
 void Logger::addFrame(shared_ptr<LogFrame> frame) {
+    this->addFrame(frame, false);
+}
+
+void Logger::addFrame(shared_ptr<LogFrame> frame, bool force) {
     QWriteLocker locker(&_lock);
 
     if (_history.empty()) {
@@ -68,7 +72,7 @@ void Logger::addFrame(shared_ptr<LogFrame> frame) {
         }
     }
 
-    if (_history.full()) {
+    if (_history.full() && !force) {
         _spaceUsed -= _history.front()->SpaceUsed();
         _history.pop_front();
     }
@@ -84,4 +88,49 @@ void Logger::addFrame(shared_ptr<LogFrame> frame) {
 shared_ptr<LogFrame> Logger::lastFrame() const {
     QReadLocker locker(&_lock);
     return _history.back();
+}
+
+void Logger::clear() {
+    QReadLocker locker(&_lock);
+    _history.clear();
+    _spaceUsed = 0;
+}
+
+// Clears out existing logs
+bool Logger::readFrames(const char* filename) {
+    this->clear();
+
+    QFile file(filename);
+    if (!file.open(QFile::ReadOnly)) {
+        fprintf(stderr, "Can't open %s: %s\n", filename,
+                (const char*)file.errorString().toLatin1());
+        return false;
+    }
+
+    int n = 0;
+    while (!file.atEnd()) {
+        uint32_t size = 0;
+        if (file.read((char*)&size, sizeof(size)) != sizeof(size)) {
+            // Broken length
+            printf("Broken length\n");
+            return false;
+        }
+
+        string str(size, 0);
+        if (file.read(&str[0], size) != size) {
+            // Broken packet at end of file
+            printf("Broken packet\n");
+            return false;
+        }
+
+        std::shared_ptr<LogFrame> frame = std::make_shared<LogFrame>();
+        if (!frame->ParsePartialFromString(str)) {
+            printf("Failed: %s\n", frame->InitializationErrorString().c_str());
+            return false;
+        }
+        this->addFrame(frame, true);
+        ++n;
+    }
+
+    return true;
 }

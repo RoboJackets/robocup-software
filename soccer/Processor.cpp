@@ -56,8 +56,8 @@ void Processor::createConfiguration(Configuration* cfg) {
 }
 
 Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
-                     bool blueTeam)
-    : _loopMutex(), _blueTeam(blueTeam) {
+                     bool blueTeam, std::string readLogFile="")
+    : _loopMutex(), _blueTeam(blueTeam), _readLogFile(readLogFile) {
     _running = true;
     _manualID = -1;
     _framerate = 0;
@@ -97,6 +97,11 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     // Create radio socket
     _radio = _simulation ? static_cast<Radio*>(new SimRadio(_state, _blueTeam))
                          : static_cast<Radio*>(new USBRadio());
+
+    if (!readLogFile.empty()) {
+        _logger.readFrames(readLogFile.c_str());
+        firstLogTime = _logger.startTime();
+    }
 }
 
 Processor::~Processor() {
@@ -628,8 +633,10 @@ void Processor::run() {
         // Send motion commands to the robots
         sendRadioData();
 
-        // Write to the log
-        _logger.addFrame(_state.logFrame);
+        // Write to the log unless we are viewing logs
+        if (_readLogFile.empty()) {
+            _logger.addFrame(_state.logFrame);
+        }
 
         // Store processing loop status
         _statusMutex.lock();

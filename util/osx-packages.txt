@@ -23,6 +23,7 @@ bullet --with-shared
 protobuf
 clang-format
 graphviz
+go
 
 # firmware - required
 hg
