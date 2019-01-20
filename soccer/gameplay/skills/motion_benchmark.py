@@ -70,10 +70,17 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         title = "No Name Test"
         startTime = 0.0
 
+        
+
+
+
     #Test that causes the robot to move in triangular motions
     class BasicMotionTest:
 
+
+        #Test information - 
         title = "No Name Test"
+
         startTime = 0.0
         started = False
 
@@ -98,6 +105,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         finalRotationalError = None
         maxOvershoot = None
         maxVel = None
+        totalVel = None
 
         theMotionBenchmark = None
 
@@ -118,8 +126,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.lineFollowError = [0.0] * motions
             self.rotationalFollowError = [0.0] * motions
             self.finalRotationalError = [0.0] * motions
-            self.maxOvershoot = [[0,0]] * motions
+            self.maxOvershoot = [0.0] * motions
             self.motionNumber = -1
+            self.totalVel = [0.0] * motions
+            self.endVel = [0.0] * motions
             self.theMotionBenchmark = benchmark
 
         currentStart = None
@@ -134,7 +144,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.lineFollowError = [0.0] * motions
             self.rotationalFollowError = [0.0] * motions
             self.finalRotationalError = [0.0] * motions
-            self.maxOvershoot = [[0,0]] * motions
+            self.maxOvershoot = [0.0] * motions
+            self.endVel = [0.0] * motions
             self.motionNumber = -1
 
 
@@ -187,7 +198,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def processRun(self):
             deltat = abs(self.timeSinceLastCalc - time.time())
             self.timeSinceLastCalc = time.time()
-            if(self.currentEnd != None and self.currentStart is not None):
+            if(self.currentEnd is not None and self.currentStart is not None):
                 self.integrateLineError(deltat)
                 self.updateOvershoot()
             if(self.currentFacePoint != None):
@@ -202,18 +213,18 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
             if speed > self.maximumSpeed:
                 maximumSpeed = speed
-            
+           
+            self.totalVel[self.motionNumber] += speed * deltat
+
             accl = abs(self.lastSpeed - speed) / deltat
 
-            if(accl > self.maximumAcc):
-                self.maximumAcc = accl
-                print(accl)
 
             self.lastSpeed = speed
 
 
         def endRun(self):
             self.timeTaken[self.motionNumber] = abs(self.startTime - time.time())
+            self.endVel[self.motionNumber] = MotionBenchmark.getSpeed(self.theMotionBenchmark)
             self.calcFinalRotationError()
             self.calcFinalPosError()
             if(self.started):
@@ -240,10 +251,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.rotationalFollowError[self.motionNumber] += abs(MotionBenchmark.getAngleError(self.theMotionBenchmark,self.currentFacePoint)) * deltat
 
         def updateOvershoot(self):
-            perOvershoot = MotionBenchmark.pOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
-            if(perOvershoot[0] > self.maxOvershoot[self.motionNumber][0]):
-                self.maxOvershoot[self.motionNumber][0] = perOvershoot[0]
-                self.maxOvershoot[self.motionNumber][1] = perOvershoot[1]
+            overshoot = MotionBenchmark.getOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
+            if(overshoot > self.maxOvershoot[self.motionNumber]):
+                self.maxOvershoot[self.motionNumber] = overshoot
 
         def isCompleted(self):
             if(self.motionNumber / 3.0 >= self.runs):
@@ -504,6 +514,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             raise ValueError('A very specific bad thing happened.')
         return retValue
 
+    def scaleHundred(self, value, expectedMin, expectedMax):
+        return scaleResult(scaleResult(value, expected))
+
+
     def getAngleError(self, point):
         targetAngle = self.robot.angle
         betweenVec = self.robot.pos - point
@@ -524,26 +538,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
  
 
     def getOvershoot(self, start, end):
-       distToStart = math.sqrt((self.robot.pos.x - start.x)**2 + (self.robot.pos.x - start.y)**2)
+       distToStart = math.sqrt((self.robot.pos.x - start.x)**2 + (self.robot.pos.y - start.y)**2)
        startToEnd = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
        overshoot = distToStart - startToEnd
        if(overshoot <= 0):
            return 0
        else:
            return overshoot
-
-
-    #Returns a tuple with (the overshoot, the frational/percentage overshoot)
-    
-    def pOvershoot(self, start, end):
-        overshoot = self.getOvershoot(start, end) 
-        if(overshoot > 0):
-            moveDist = math.sqrt((start.x - end.x)**2 + (start.y - end.y)**2)
-            return (overshoot, overshoot / moveDist)
-        else:
-            return (0,0)
-
-
 
     #Setup state functions (for the latency test)
 
@@ -663,20 +664,33 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             rotationalError = sum(g.rotationalFollowError) / len(g.rotationalFollowError)
             unitRotError = list(map(truediv, g.rotationalFollowError, g.timeTaken))
             rotErrorPerTime = sum(unitRotError) / len(unitRotError)
-            
-            a = [row[0] for row in g.maxOvershoot] 
-            b = [row[1] for row in g.maxOvershoot]
+           
+            distances = [g.dist0, g.dist1, g.dist2]
 
-            avgAbsOvershoot = sum(a) / len(a)
-            avgPerOvershoot = sum(b) / len(b)
-            maxAbsOvershoot = max(a)
-            maxPerOvershoot = max(b)
+
+            overshoot = g.maxOvershoot
+            perOvershoot = []
+            for i in range(0, len(g.maxOvershoot)):
+                perOvershoot.append(g.maxOvershoot[i] / distances[i % 3])
+
+
+            avgAbsOvershoot = sum(overshoot) / len(overshoot)
+            avgPerOvershoot = sum(perOvershoot) / len(perOvershoot)
+            maxAbsOvershoot = max(overshoot)
+            maxPerOvershoot = max(perOvershoot)
 
             avgMotionVelocity = []
-            distances = [g.dist0, g.dist1, g.dist2]
             for i in range(0, len(g.timeTaken) - 1): 
                 avgMotionVelocity.append(distances[i % 3] / g.timeTaken[i])
-            
+           
+            calcVels = []
+            for i in range(0, len(g.totalVel) - 1):
+                calcVels.append(g.totalVel[i] / g.timeTaken[i])
+
+            avgCalcVelocity = sum(calcVels) / len(calcVels)
+            maxCalcVelocity = max(calcVels)
+            varCalcVelocity = statistics.variance(calcVels)
+
             avgTestVelocity = sum(avgMotionVelocity) / len(avgMotionVelocity)
             maxTestVelocity = max(avgMotionVelocity)
 
@@ -722,14 +736,18 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         return c
 
-        #a = role_assignment.RoleRequirements()
-        #print("--------------------------ROLE_REQUIREMENTS_THING--------------------")
-        #print(a)
-        #print(b)
-        #print(c)
-        #print(type(c))
 
+        #This is what was in the role requiremnts before, what I have now works but is not ideal
+        
         '''
+        a = role_assignment.RoleRequirements()
+        print("--------------------------ROLE_REQUIREMENTS_THING--------------------")
+        print(a)
+        print(b)
+        print(c)
+        print(type(c))
+
+        
         reqs = composite_behavior.CompositeBehavior.role_requirements(self)
         print(type(reqs))
         print(reqs)
