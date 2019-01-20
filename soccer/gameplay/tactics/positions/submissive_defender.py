@@ -12,7 +12,12 @@ import evaluation
 
 ## Defender behavior meant to be coordinated in a defense tactic
 # The regular defender does a lot of calculations and figures out where it should be
-# This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
+# This defender lets someone else (the Defense tactic) handle calculations and blocks things based on it
+#
+# The submissive defender takes in a block line via setter- this should be the line between the threat and 
+# the point on the goal the threat is likely to shoot at 
+# The submissive defender will place itself on the block line, just outside the goal box (exact amount depends
+# on the value of the _defend_goal_radius param).
 class SubmissiveDefender(
         single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
@@ -54,7 +59,7 @@ class SubmissiveDefender(
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
-    # the threat it's blocking and makes an effort to face towards it
+    # the threat it's blocking and makesmar  an effort to face towards it
     @property
     def block_line(self):
         return self._block_line
@@ -64,7 +69,7 @@ class SubmissiveDefender(
         self._block_line = value
 
         # we move somewhere along this arc to mark our 'block_line'
-        offset = constants.Robot.Radius * 1.2
+        offset = constants.Robot.Radius * self._defend_goal_radius
         left_seg = robocup.Segment(
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset, 0),
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset,
