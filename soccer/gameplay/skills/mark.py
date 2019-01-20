@@ -7,14 +7,14 @@ import role_assignment
 
 
 class Mark(single_robot_behavior.SingleRobotBehavior):
-'''
+    '''
     The mark skill will take a robot or mark point and position itself on the line from the ball to the 
     robot or mark_pt
     @param: ratio - this will control how far from the opposing robot the defender will mark 
             (0 is close to ball, 1 is close to mark_pt/robot)
     @param: mark_point - point to mark, this is not required and will overwrite the mark_robot if set
     @param: mark_robot - robot to mark, mark_point is essentially set to mark_robot.pos 
-'''
+    '''
     def __init__(self):
         super().__init__(continuous=True)
         #Below params are described above @properties
@@ -23,7 +23,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
         self._mark_robot = None 
         self._mark_point = None 
 
-        self._target_point = None 
+        self._target_point = None  
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
