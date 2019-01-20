@@ -23,7 +23,7 @@
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 #include "Processor.hpp"
-#include "modeling/BallTracker.hpp"
+#include "vision/VisionFilter.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
 
@@ -80,7 +80,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
 
     QMetaObject::connectSlotsByName(this);
 
-    _ballTracker = std::make_shared<BallTracker>();
+    _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<NewRefereeModule>(_state);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
@@ -196,77 +196,54 @@ bool Processor::joystickValid() const {
     return false;
 }
 
-void Processor::runModels(
-    const vector<const SSL_DetectionFrame*>& detectionFrames) {
-    vector<BallObservation> ballObservations;
+void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFrames) {
+    std::vector<CameraFrame> frames;
 
     for (const SSL_DetectionFrame* frame : detectionFrames) {
+        vector<CameraBall> ballObservations;
+        vector<CameraRobot> yellowObservations;
+        vector<CameraRobot> blueObservations;
+
         RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
             RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
-        ballObservations.reserve(ballObservations.size() +
-                                 frame->balls().size());
         for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.push_back(BallObservation(
-                _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000), time));
+            ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
-
-        // Add robot observations
-        const RepeatedPtrField<SSL_DetectionRobot>& selfRobots =
-            _blueTeam ? frame->robots_blue() : frame->robots_yellow();
-
-        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
-            robotObservations{_state.self.size()};
 
         // Collect camera data from all robots
-        for (const SSL_DetectionRobot& robot : selfRobots) {
+        yellowObservations.reserve(frame->robots_yellow().size());
+        for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
             unsigned int id = robot.robot_id();
+            const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
 
-            if (id < _state.self.size()) {
-                const float angleRad =
-                    fixAngleRadians(robot.orientation() + _teamAngle);
-                const auto camera_id = frame->camera_id();
-                robotObservations[id][camera_id] = RobotObservation(
-                    _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                    angleRad, time, frame->frame_number(), true, camera_id);
-            }
+            yellowObservations.emplace_back(time,
+                                            _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                                            angleRad,
+                                            id);
         }
 
-        // Run robots through filter
-        for (int i = 0; i < robotObservations.size(); i++) {
-            _state.self[i]->filter()->update(robotObservations[i],
-                                             _state.self[i], time,
-                                             frame->frame_number());
-        }
-
-        const RepeatedPtrField<SSL_DetectionRobot>& oppRobots =
-            _blueTeam ? frame->robots_yellow() : frame->robots_blue();
-
-        std::vector<std::array<RobotObservation, RobotFilter::Num_Cameras>>
-            oppRobotObservations{_state.self.size()};
-
-        for (const SSL_DetectionRobot& robot : oppRobots) {
+        // Collect camera data from all robots
+        blueObservations.reserve(frame->robots_blue().size());
+        for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
             unsigned int id = robot.robot_id();
+            const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
 
-            if (id < _state.self.size()) {
-                const float angleRad =
-                    fixAngleRadians(robot.orientation() + _teamAngle);
-                const auto camera_id = frame->camera_id();
-                oppRobotObservations[id][camera_id] = RobotObservation(
-                    _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                    angleRad, time, frame->frame_number(), true, camera_id);
-            }
+            blueObservations.emplace_back(time,
+                                          _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
+                                          angleRad,
+                                          id);
         }
 
-        for (int i = 0; i < oppRobotObservations.size(); i++) {
-            _state.opp[i]->filter()->update(oppRobotObservations[i],
-                                            _state.opp[i], time,
-                                            frame->frame_number());
-        }
+        frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
     }
 
-    _ballTracker->run(ballObservations, &_state);
+    _vision->addFrames(frames);
+
+    // Fill the list of our robots/balls based on _blue
+    _vision->fillBallState(&_state);
+    _vision->fillRobotState(&_state, _blueTeam);
 }
 
 /**
