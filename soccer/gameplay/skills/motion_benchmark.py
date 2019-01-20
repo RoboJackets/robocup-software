@@ -75,13 +75,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         title = "No Name Test"
         startTime = 0.0
-
-        timeSinceLastCalc = 0.0
-        lineErrorTimer = 0.0
-        rotErrorTimer = 0.0
-       
         started = False
 
+        timeSinceLastCalc = 0.0
+      
         point0 = None
         point1 = None
         point2 = None
@@ -105,7 +102,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         theMotionBenchmark = None
 
         maximumSpeed = -1
-        maxumumAcceleration = -1
+        maximumAcc = -1
         lastSpeed = -1
 
         count = 0
@@ -172,8 +169,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             
             self.currentEnd = points[self.motionNumber % 3]
             self.currentFacePoint = facePoints[self.motionNumber % 3]
-            self.lineErrorTimer = time.time()
-            self.rotErrorTimer = time.time()
+            self.timeSinceLastCalc = time.time()
 
             self.dist0 = self.calcDist(self.point0, self.point1)
             self.dist1 = self.calcDist(self.point1, self.point2)
@@ -200,19 +196,21 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.updateVel(deltat)
 
 
-
         def updateVel(self, deltat):
             vel = MotionBenchmark.getVel(self.theMotionBenchmark)
             speed = MotionBenchmark.getSpeed(self.theMotionBenchmark)
 
             if speed > self.maximumSpeed:
                 maximumSpeed = speed
+            
+            accl = abs(self.lastSpeed - speed) / deltat
+
+            if(accl > self.maximumAcc):
+                self.maximumAcc = accl
+                print(accl)
 
             self.lastSpeed = speed
 
-
-
-            
 
         def endRun(self):
             self.timeTaken[self.motionNumber] = abs(self.startTime - time.time())
@@ -522,7 +520,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         endNumpy=np.array([end.x,end.y])
         robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
         d = np.cross(startNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
-        print(abs(d))
         return abs(d)
  
 
@@ -545,8 +542,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             return (overshoot, overshoot / moveDist)
         else:
             return (0,0)
-
-
 
 
 
