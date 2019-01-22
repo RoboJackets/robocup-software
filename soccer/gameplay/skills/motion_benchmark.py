@@ -84,6 +84,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         startTime = 0.0
         started = False
 
+        sParams = dict()
+        sResults = dict()
+
+
         timeSinceLastCalc = 0.0
       
         point0 = None
@@ -419,7 +423,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicSmall.point0 = robocup.Point(-0.75, 1.2)
         basicSmall.point1 = robocup.Point(0.75, 1.2)
         basicSmall.point2 = robocup.Point(0,2.4)
-        basicMid.title = "Small Motion Triangle"
+        basicSmall.title = "Small Motion Triangle"
         self.basicMotionTests.append(basicSmall)
 
         basicLarge = self.BasicMotionTest(numberOfRuns, self)
