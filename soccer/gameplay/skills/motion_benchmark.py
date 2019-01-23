@@ -72,11 +72,45 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         timeSinceLastCalc = 0.0
 
         runs = 0
+   
+        def __init__(self, nRuns, benchmark):
+            self.runs = nRuns
+            self.theMotionBenchmark = benchmark
+
+        #Just a distance calculation
+        def calcDist(self, point1, point2):
+            if(point1 is not None and point2 is not None):
+                return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2)
+            else:
+                return 0
 
         #Title for prints
         def __str__(self):
             return self.title
 
+        @abstractmethod
+        def setupTest(self):
+            pass
+
+        @abstractmethod
+        def startMotion(self):
+            pass
+
+        @abstractmethod
+        def endMotion(self):
+            pass
+
+        @abstractmethod
+        def processMotion(self):
+            pass
+
+        @abstractmethod
+        def motionCompleted(self):
+            pass
+        
+        @abstractmethod
+        def testCompleted(self):
+            pass
 
 
     #Class to calculate the noise and latency from the vision system
@@ -97,15 +131,12 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #Test that causes the robot to move in triangular motions
     class BasicMotionTest(MotionTest):
 
-
         #Test information - 
 
         started = False
      
         points = []
-
         distances = []
-
         facePoints = []
         
         timeTaken = None
@@ -123,9 +154,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         motionNumber = -1
 
-        def __init__(self, nRuns, benchmark):
-            self.runs = nRuns
-            self.theMotionBenchmark = benchmark
 
         currentStart = None
         currentEnd = None
@@ -146,9 +174,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.maxOvershoot = [0.0] * self.motions
             self.endVel = [0.0] * self.motions
             self.motionNumber = -1
-
-
-
 
         startIndex = 0
         endIndex = 1
@@ -179,16 +204,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.timeSinceLastCalc = time.time()
 
 
-           
-        def calcDist(self, point1, point2):
-            if(point1 is not None and point2 is not None):
-                return math.sqrt((point1.x - point2.x)**2 + (point1.y - point2.y)**2)
-            else:
-                return 0
-
-
+       
         #Calls all the functions that need to be called every frame
-        def processRun(self):
+        def processMotion(self):
             deltat = abs(self.timeSinceLastCalc - time.time())
             self.timeSinceLastCalc = time.time()
             if(self.currentEnd is not None and self.currentStart is not None):
@@ -211,7 +229,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
             accl = abs(self.lastSpeed - speed) / deltat
 
-
             self.lastSpeed = speed
 
 
@@ -227,7 +244,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
             if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
                 self.theMotionBenchmark.robot.face_none()
-                pass
 
         def calcFinalRotationError(self):
             if(self.currentFacePoint is not None):
@@ -251,15 +267,12 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def motionCompleted(self, motionBenchmark):
             return True
 
-
         def testCompleted(self):
-            if(self.motionNumber >= self.motions):
+            if (self.motionNumber >= self.motions):
                 return True
             else:
                 return False
         
-          #End General Result Variables
-
     
     basicMotionTests = []
     basicMotionIndex = 0
@@ -629,7 +642,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def execute_BasicMotion0(self):
         if (self.currentBasicMotion.currentFacePoint is not None):
             self.robot.face(self.currentBasicMotion.currentFacePoint)
-        self.currentBasicMotion.processRun()
+        self.currentBasicMotion.processMotion()
 
     def on_exit_BasicMotion0(self):
         self.currentBasicMotion.endMotion()
