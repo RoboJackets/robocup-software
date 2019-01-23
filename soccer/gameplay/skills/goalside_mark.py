@@ -44,19 +44,10 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         pos = self.robot.pos
         mark_pos = self.mark_point if self.mark_point is not None else self.mark_robot.pos
         self.kick_eval.add_excluded_robot(self.robot)
-        #if isinstance(self.kick_eval.excluded_robots, list):
-        #    print([x.shell_id for x in self.kick_eval.excluded_robots])
-        #else:
-        #    print(self.kick_eval.excluded_robots.shell_id)
-        #print('Excluded Robots')
-        for robot in self.kick_eval.add_excluded_robot:
-            print(robot.shell_id)
 
         shot_pt, shot_score = self.kick_eval.eval_pt_to_our_goal(mark_pos)
         self.kick_eval.excluded_robots.clear()
-        #print(shot_pt, shot_score)
-        #print(dir(shot_pt), dir(shot_score))
-        #print(type(shot_pt), type(shot_score))
+
         
         #Finds the line from the mark position to the shot point and creates a line between them
         #removing the overlap with the ball on one side and robot on the other

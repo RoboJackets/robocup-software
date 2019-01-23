@@ -59,7 +59,7 @@ class SubmissiveDefender(
 
     ## the line we should be on to block
     # The defender assumes that the first endpoint on the line is the source of
-    # the threat it's blocking and makesmar  an effort to face towards it
+    # the threat it's blocking and makes an effort to face towards it
     @property
     def block_line(self):
         return self._block_line
