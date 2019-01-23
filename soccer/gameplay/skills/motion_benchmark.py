@@ -15,7 +15,7 @@ import role_assignment
 import composite_behavior
 from operator import truediv
 import statistics
-
+from abc import ABC, abstractmethod
 
 ## Motion Benchmark V0.0.0.0
 #
@@ -46,6 +46,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     dateString = datetime.datetime.now().strftime("Run time: %I:%M%p on %B %d, %Y")
         #I also need this info for the file name
     versionString = "Version: 0.0"
+
+
     #Note: Add the type of processor used
     #Note: If possible, add the battery voltage of the robot that is performing the test
                 #Add a warning message if the battery is below almost full
@@ -56,51 +58,55 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
  
     #A Max speed readout would be nice
 
-
-    #Test that makes the robot navigate a virtual field with virtual obstacles
-    class ObstacleMotionTest:
-
-        title = "No Name Test"
-        startTime = 0.0
-
-
-    #Tests how a robot captures an inbound or stationary ball
-    class InboundBallTest:
-
-        title = "No Name Test"
-        startTime = 0.0
-
+    #An abstract base class for motion tests
+    class MotionTest(ABC):
         
-
-
-
-    #Test that causes the robot to move in triangular motions
-    class BasicMotionTest:
-
-
-        #Test information - 
         title = "No Name Test"
-
-        startTime = 0.0
-        started = False
 
         sParams = dict()
         sResults = dict()
 
-
+        theMotionBenchmark = None
+        
+        motionStartTime = 0.0
         timeSinceLastCalc = 0.0
-      
-        point0 = None
-        point1 = None
-        point2 = None
 
-        dist0 = None
-        dist1 = None
-        dist2 = None
+        runs = 0
 
-        facePoint0 = None
-        facePoint1 = None
-        facePoint2 = None
+        #Title for prints
+        def __str__(self):
+            return self.title
+
+
+
+    #Class to calculate the noise and latency from the vision system
+    class VisionTest(MotionTest):
+        pass
+        #Note, add angular noise?
+
+    #Test that makes the robot navigate a virtual field with virtual obstacles
+    class ObstacleMotionTest(MotionTest):
+        pass
+
+
+    #Tests how a robot captures an inbound or stationary ball
+    class InboundBallTest(MotionTest):
+        pass
+
+
+    #Test that causes the robot to move in triangular motions
+    class BasicMotionTest(MotionTest):
+
+
+        #Test information - 
+
+        started = False
+     
+        points = []
+
+        distances = []
+
+        facePoints = []
         
         timeTaken = None
         posEndError = None
@@ -111,84 +117,67 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         maxVel = None
         totalVel = None
 
-        theMotionBenchmark = None
-
         maximumSpeed = -1
         maximumAcc = -1
         lastSpeed = -1
-
-        count = 0
-        runs = 5
 
         motionNumber = -1
 
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
-            motions = nRuns * 3 + 1
-            self.timeTaken = [0.0] * motions
-            self.posEndError = [0.0] * motions
-            self.lineFollowError = [0.0] * motions
-            self.rotationalFollowError = [0.0] * motions
-            self.finalRotationalError = [0.0] * motions
-            self.maxOvershoot = [0.0] * motions
-            self.motionNumber = -1
-            self.totalVel = [0.0] * motions
-            self.endVel = [0.0] * motions
             self.theMotionBenchmark = benchmark
 
         currentStart = None
         currentEnd = None
         currentFacePoint = None
 
-        #Reset this test for a re-run
-        def resetTest(self):
-            motions = self.runs * 3 + 1
-            self.timeTaken = [0.0] * motions
-            self.posEndError = [0.0] * motions
-            self.lineFollowError = [0.0] * motions
-            self.rotationalFollowError = [0.0] * motions
-            self.finalRotationalError = [0.0] * motions
-            self.maxOvershoot = [0.0] * motions
-            self.endVel = [0.0] * motions
+        positions = 0
+        motions = 0 
+
+        #Sets up the test to be run
+        def setupTest(self):
+            self.positions = max(len(self.points),len(self.facePoints))
+            self.motions = self.runs * self.positions
+            self.timeTaken = [0.0] * self.motions
+            self.posEndError = [0.0] * self.motions
+            self.lineFollowError = [0.0] * self.motions
+            self.rotationalFollowError = [0.0] * self.motions
+            self.finalRotationalError = [0.0] * self.motions
+            self.maxOvershoot = [0.0] * self.motions
+            self.endVel = [0.0] * self.motions
             self.motionNumber = -1
 
 
 
-        #Print some of the data from the test
-        '''
-        def printSomeShit(self):
-            print("Times for each motion ---------------------------------")
-            print(self.timeTaken)
-            print("The ending positional error ---------------------------")
-            print(self.posEndError)
-            print("The line following error(integeral) -------------------")
-            print(self.lineFollowError)
-            print("The rotational follow Error ---------------------------")
-            print(self.rotationalFollowError)
-            print("the maximum overshoot amounts")
-            print(self.maxOvershoot)
-        '''
 
-        #Title for prints
-        def __str__(self):
-            return self.title
+        startIndex = 0
+        endIndex = 1
+        faceIndex = 0
 
-        #Set everything up to begin 
-        def startRun(self):
-            points = [self.point0, self.point1, self.point2]
-            facePoints = [self.facePoint0, self.facePoint1, self.facePoint2]
-            self.startTime = time.time()
-            self.currentStart = points[2] if self.motionNumber % 3 == 0 else points[(self.motionNumber % 3) - 1]
-            if(self.motionNumber is 0):
-                self.currentStart = None
-            
-            self.currentEnd = points[self.motionNumber % 3]
-            self.currentFacePoint = facePoints[self.motionNumber % 3]
+        #Sets up the next motion
+        def startMotion(self):
+            if (self.motionNumber is -1):
+                self.currentStart = points[0]
+                self.currentEnd = points[0]
+                self.facePoints = None
+            else:
+                if(self.startIndex >= len(points)):
+                    self.startIndex = 0
+                if(self.endIndex >= len(points)):
+                    self.endIndex = 0
+                if(self.faceIndex >= len(facePoints)):
+                    self.faceIndex = 0
+
+                self.currentStart = points[startIndex]
+                self.currentEnd = points[endIndex]
+                self.currentFacePoint = facePoints[self.faceIndex]
+                self.startIndex += 1
+                self.endIndex += 1
+                self.faceIndex += 1
+
+            self.motionStartTime = time.time()
             self.timeSinceLastCalc = time.time()
 
-            self.dist0 = self.calcDist(self.point0, self.point1)
-            self.dist1 = self.calcDist(self.point1, self.point2)
-            self.dist2 = self.calcDist(self.point2, self.point0)
 
            
         def calcDist(self, point1, point2):
@@ -226,8 +215,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.lastSpeed = speed
 
 
-        def endRun(self):
-            self.timeTaken[self.motionNumber] = abs(self.startTime - time.time())
+        def endMotion(self):
+            self.timeTaken[self.motionNumber] = abs(self.motionStartTime - time.time())
             self.endVel[self.motionNumber] = MotionBenchmark.getSpeed(self.theMotionBenchmark)
             self.calcFinalRotationError()
             self.calcFinalPosError()
@@ -258,9 +247,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             overshoot = MotionBenchmark.getOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
             if(overshoot > self.maxOvershoot[self.motionNumber]):
                 self.maxOvershoot[self.motionNumber] = overshoot
+        
+        def motionCompleted(self, motionBenchmark):
+            return True
 
-        def isCompleted(self):
-            if(self.motionNumber / 3.0 >= self.runs):
+
+        def testCompleted(self):
+            if(self.motionNumber >= self.motions):
                 return True
             else:
                 return False
@@ -620,7 +613,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         print("X noise = " + str((abs(self.noiseMaxX) + abs(self.noiseMinX))))
         print("Y noise = " + str((abs(self.noiseMaxY) + abs(self.noiseMinY))))
         print("-----------------------------------------------------------")
-        self.currentBasicMotion.resetTest()
+        self.currentBasicMotion.setupTest()
 
 
     def on_enter_BasicMotion0(self):
@@ -639,7 +632,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.currentBasicMotion.processRun()
 
     def on_exit_BasicMotion0(self):
-        self.currentBasicMotion.endRun()
+        self.currentBasicMotion.endMotion()
         self.remove_all_subbehaviors()
 
     def on_enter_BasicMotionEnd(self):
@@ -649,7 +642,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.basicMotionIndex += 1
         if(self.basicMotionIndex < len(self.basicMotionTests)):
             self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
-            self.currentBasicMotion.resetTest()
+            self.currentBasicMotion.setupTest()
         else:
             self.currentBasicMotion = None
 
