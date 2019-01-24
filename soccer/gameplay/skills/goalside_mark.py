@@ -34,7 +34,6 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         #pylint: disable=no-member
         #Skill does nothing if mark point isn't given AND the ball or robot to mark can't be found
-        self.kick_eval = robocup.KickEvaluator(main.system_state())
         if self.mark_point is None and \
            (self.mark_robot is None or
             not main.ball().valid or
@@ -43,10 +42,10 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
 
         pos = self.robot.pos
         mark_pos = self.mark_point if self.mark_point is not None else self.mark_robot.pos
+        self.kick_eval.excluded_robots.clear()
         self.kick_eval.add_excluded_robot(self.robot)
 
         shot_pt, shot_score = self.kick_eval.eval_pt_to_our_goal(mark_pos)
-        self.kick_eval.excluded_robots.clear()
 
         
         #Finds the line from the mark position to the shot point and creates a line between them
@@ -54,7 +53,6 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         #This assumes even with mark position parameter that there is a robot there to avoid
         mark_line_dir = (mark_pos - shot_pt).normalized()
         mark_line, shot_pt = self.get_mark_line()
-        print(mark_line)
 
         #Drawing for simulator 
         main.system_state().draw_line(mark_line, (0, 0, 255), "Mark")
