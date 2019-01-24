@@ -20,7 +20,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         #This threshold is lower than mark to ensure we get goal side of the opponent fast, 
         #then back off based on ratio
         
-        self._mark_line_thresh = constants.Robot.Radius*3
+        self._mark_line_thresh = constants.Robot.Radius*4
         self._mark_robot = None 
         self._mark_point = None 
 
@@ -30,6 +30,8 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
                             behavior.Behavior.State.running, lambda: True,
                             "immediately")
         self.kick_eval = robocup.KickEvaluator(main.system_state())
+        self.mark_pos = None
+        self.adjusted_mark_pos = None
 
     def execute_running(self):
         #pylint: disable=no-member
@@ -39,26 +41,19 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
             not main.ball().valid or
             not self.mark_robot.visible):
             return
-
-        pos = self.robot.pos
-        mark_pos = self.mark_point if self.mark_point is not None else self.mark_robot.pos
-        self.kick_eval.excluded_robots.clear()
-        self.kick_eval.add_excluded_robot(self.robot)
-
-        shot_pt, shot_score = self.kick_eval.eval_pt_to_our_goal(mark_pos)
-
         
         #Finds the line from the mark position to the shot point and creates a line between them
         #removing the overlap with the ball on one side and robot on the other
         #This assumes even with mark position parameter that there is a robot there to avoid
-        mark_line_dir = (mark_pos - shot_pt).normalized()
-        mark_line, shot_pt = self.get_mark_line()
+        self._reset_mark_pos()
+        mark_line, shot_pt = self.get_mark_segment()
 
         #Drawing for simulator 
         main.system_state().draw_line(mark_line, (0, 0, 255), "Mark")
 
         #Distance from robot to mark line
-        mark_line_dist = mark_line.dist_to(pos)
+        #TODO: Change C++ to optionally account for goal box
+        mark_line_dist = mark_line.dist_to(self.robot.pos)
         
         #Sets target point to nearest point on mark line if the robot is over ball_mark_threshold
         #from the mark line
@@ -67,18 +62,14 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         #   - 0 being close to ball, 1 close to mark pt
         self._target_point = None
         if mark_line_dist > self.mark_line_thresh:
-            self._target_point = mark_line.nearest_point(pos)
+            self._target_point = mark_line.nearest_point(self.robot.pos)
         else:
-            if self.mark_point is None:
-                adjusted_mark_pos = mark_pos - mark_line_dir * 2 * constants.Robot.Radius
-            else:
-                adjusted_mark_pos = mark_pos - mark_line_dir * constants.Ball.Radius
-            self._target_point = adjusted_mark_pos - (
-                mark_pos -
+            self._target_point = self.adjusted_mark_pos - (
+                self.mark_pos -
                 shot_pt).normalized() * self.ratio * mark_line.length()
 
         #Drawing for simulator
-        main.system_state().draw_circle(mark_pos, constants.Robot.Radius * 1.2,
+        main.system_state().draw_circle(self.mark_pos, constants.Robot.Radius * 1.2,
                                         (0, 127, 255), "Mark")
 
         #Move robot into position and face the ball
@@ -112,6 +103,11 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     @mark_point.setter
     def mark_point(self, value: robocup.Point):
         self._mark_point = value
+    
+    # Sets the position to mark as the given mark position 
+    # or robot position if no mark position is given
+    def _reset_mark_pos(self):
+        self.mark_pos = self.mark_point if self.mark_point is not None else self._mark_robot.pos
 
     #Robot to mark (what it sounds like)
     @property
@@ -129,12 +125,16 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
             req.destination_shape = self._target_point
         return req
 
-    def get_mark_line(self):
-        #Finds the line segment between the ball and the highest danger shot point
-        #Cuts off the portion of the line that is inside of the goal box
-        #@return: LineSegment to defend on, shot_point
+    def get_mark_segment(self):
+        # Finds the line segment between the ball and the highest danger shot point
+        # Cuts off the portion of the line that is inside of the goal box
+        # @return: LineSegment to defend on, shot_point
+        # This will also set 1 intermediate value to self:
+        # self.adjusted_mark_pos - the offset mark pos depending on if we defend a spot (assumed to be the ball) or a robot
+        #                        - this defines the closest point to the mark_pos our robot will go to defend
 
         #Define the segments where the defender can go closest the goal
+
         offset = constants.Robot.Radius
         left_seg = robocup.Segment(
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset, 0),
@@ -150,43 +150,39 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
             robocup.Point(constants.Field.PenaltyLongDist / 2,
                           constants.Field.PenaltyShortDist + offset))
 
-        #Sets the position to mark as the given mark position 
-        #or robot position if no mark position is given
-        pos = self.robot.pos
-        mark_pos = self.mark_point if self.mark_point is not None else self.mark_robot.pos
-
+        
         #Find best shot point from threat
         self.kick_eval.add_excluded_robot(self.robot) #FIX: Should we really exclude all of our robots but the goalie?
-        shot_pt, shot_score = self.kick_eval.eval_pt_to_our_goal(mark_pos)
+        shot_pt, shot_score = self.kick_eval.eval_pt_to_our_goal(self.mark_pos)
         self.kick_eval.excluded_robots.clear()
 
-        mark_line_dir = (mark_pos - shot_pt).normalized()
+        mark_line_dir = (self.mark_pos - shot_pt).normalized()
         #End the mark line segment 1 radius away from the opposing robot
         #Or 1 ball radius away if marking a position
         if self.mark_point is None:
-            adjusted_mark_pos = mark_pos - mark_line_dir * 2 * constants.Robot.Radius
+            self.adjusted_mark_pos = self.mark_pos - mark_line_dir * 2 * constants.Robot.Radius
         else:
-            adjusted_mark_pos = mark_pos - mark_line_dir * constants.Ball.Radius
+            self.adjusted_mark_pos = self.mark_pos - mark_line_dir * constants.Ball.Radius
 
-        mark_line = robocup.Segment(adjusted_mark_pos , shot_pt + mark_line_dir )
+        mark_line = robocup.Segment(self.adjusted_mark_pos , shot_pt)
 
         intersection_center = top_seg.segment_intersection(mark_line)
 
-        if mark_pos.x < 0:
+        if self.mark_pos.x < 0:
             intersection_left = left_seg.segment_intersection(
                 mark_line)
             if intersection_left is not None:
-                return robocup.Segment(adjusted_mark_pos, intersection_left), shot_pt
+                return robocup.Segment(self.adjusted_mark_pos, intersection_left), shot_pt
             elif intersection_center is not None:
-                return robocup.Segment(adjusted_mark_pos, intersection_center), shot_pt
+                return robocup.Segment(self.adjusted_mark_pos, intersection_center), shot_pt
             else:
                 return None , shot_pt#FIX: do we want some other default?
-        elif mark_pos.x >= 0:
+        elif self.mark_pos.x >= 0:
             intersection_right = right_seg.segment_intersection(
                 mark_line)
             if intersection_right is not None:
-                return robocup.Segment(adjusted_mark_pos, intersection_right), shot_pt
+                return robocup.Segment(self.adjusted_mark_pos, intersection_right), shot_pt
             elif intersection_center is not None:
-                return robocup.Segment(adjusted_mark_pos, intersection_center), shot_pt
+                return robocup.Segment(self.adjusted_mark_pos, intersection_center), shot_pt
             else:
                 return None, shot_pt #FIX: do we want some other default?
