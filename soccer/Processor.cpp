@@ -86,6 +86,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
+
     vision.simulation = _simulation;
     if (sim) {
         vision.port = SimVisionPort;
@@ -208,6 +209,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
             RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
+        ballObservations.reserve(frame->balls().size());
         for (const SSL_DetectionBall& ball : frame->balls()) {
             ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
@@ -215,25 +217,19 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         // Collect camera data from all robots
         yellowObservations.reserve(frame->robots_yellow().size());
         for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            unsigned int id = robot.robot_id();
-            const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
-
             yellowObservations.emplace_back(time,
                                             _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                            angleRad,
-                                            id);
+                                            fixAngleRadians(robot.orientation() + _teamAngle),
+                                            robot.robot_id());
         }
 
         // Collect camera data from all robots
         blueObservations.reserve(frame->robots_blue().size());
         for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            unsigned int id = robot.robot_id();
-            const float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
-
             blueObservations.emplace_back(time,
                                           _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                          angleRad,
-                                          id);
+                                          fixAngleRadians(robot.orientation() + _teamAngle),
+                                          robot.robot_id());
         }
 
         frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
@@ -241,9 +237,9 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
 
     _vision->addFrames(frames);
 
-    // Fill the list of our robots/balls based on _blue
-    _vision->fillBallState(&_state);
-    _vision->fillRobotState(&_state, _blueTeam);
+    // Fill the list of our robots/balls based on whether we are the blue team or not
+    _vision->fillBallState(_state);
+    _vision->fillRobotState(_state, _blueTeam);
 }
 
 /**

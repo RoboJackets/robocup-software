@@ -12,7 +12,7 @@ VisionFilter::VisionFilter() {
     
     // Have to be careful so the entire initialization list
     // is created before the thread starts
-    worker = std::thread(&VisionFilter::workerThread, this);
+    worker = std::thread(&VisionFilter::updateLoop, this);
 }
 
 VisionFilter::~VisionFilter() {
@@ -28,35 +28,29 @@ void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
     frameBuffer.insert(frameBuffer.end(), frames.begin(), frames.end());
 }
 
-void VisionFilter::fillBallState(SystemState* state) {
+void VisionFilter::fillBallState(SystemState& state) {
     std::lock_guard<std::mutex> lock(worldLock);
     WorldBall wb = world.getWorldBall();
 
     if (wb.getIsValid()) {
-        state->ball.valid = true;
-        state->ball.pos = wb.getPos();
-        state->ball.vel = wb.getVel();
-        state->ball.time = wb.getTime();
+        state.ball.valid = true;
+        state.ball.pos = wb.getPos();
+        state.ball.vel = wb.getVel();
+        state.ball.time = wb.getTime();
     } else {
-        state->ball.valid = false;
+        state.ball.valid = false;
     }
 }
 
-void VisionFilter::fillRobotState(SystemState* state, bool usBlue) {
+void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
     std::lock_guard<std::mutex> lock(worldLock);
-    std::vector<WorldRobot> yellowTeam = world.getRobotsYellow();
-    std::vector<WorldRobot> blueTeam = world.getRobotsBlue();
+    const auto& ourWorldRobot = usBlue ? world.getRobotsBlue() : world.getRobotsYellow();
+    const auto& oppWorldRobot = usBlue ? world.getRobotsYellow() : world.getRobotsBlue();
 
     // Fill our robots
     for (int i = 0; i < Num_Shells; i++) {
-        OurRobot* robot = state->self.at(i);
-        WorldRobot wr;
-
-        if (usBlue) {
-            wr = blueTeam.at(i);
-        } else {
-            wr = yellowTeam.at(i);
-        }
+        OurRobot* robot = state.self.at(i);
+        const WorldRobot& wr = ourWorldRobot.at(i);
 
         robot->visible = wr.getIsValid();
         robot->velValid = wr.getIsValid();
@@ -72,14 +66,8 @@ void VisionFilter::fillRobotState(SystemState* state, bool usBlue) {
 
     // Fill opp robots
     for (int i = 0; i < Num_Shells; i++) {
-        OpponentRobot* robot = state->opp.at(i);
-        WorldRobot wr;
-
-        if (usBlue) {
-            wr = yellowTeam.at(i);
-        } else {
-            wr = blueTeam.at(i);
-        }
+        OpponentRobot* robot = state.opp.at(i);
+        const WorldRobot& wr = oppWorldRobot.at(i);
 
         robot->visible = wr.getIsValid();
         robot->velValid = wr.getIsValid();
@@ -94,8 +82,8 @@ void VisionFilter::fillRobotState(SystemState* state, bool usBlue) {
     }
 }
 
-void VisionFilter::workerThread() {
-    while (true) {
+void VisionFilter::updateLoop() {
+    while (!threadEnd.load(std::memory_order::memory_order_seq_cst)) {
         RJ::Time start = RJ::now();
 
         {
@@ -121,11 +109,6 @@ void VisionFilter::workerThread() {
             std::this_thread::sleep_for(sleepLeft);
         } else {
             std::cout << "WARNING : Filter is not running fast enough" << std::endl;
-        }
-
-        // Make sure we shouldn't stop
-        if (threadEnd.load(std::memory_order::memory_order_seq_cst)) {
-            break;
         }
     }
 }

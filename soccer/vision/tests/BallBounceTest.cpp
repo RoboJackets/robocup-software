@@ -1,4 +1,7 @@
 #include <gtest/gtest.h>
+#include "vision/ball/CameraBall.hpp"
+#include "vision/ball/KalmanBall.hpp"
+#include "vision/ball/WorldBall.hpp"
 #include "vision/ball/BallBounce.hpp"
 
 TEST(BallBounce, no_input) {

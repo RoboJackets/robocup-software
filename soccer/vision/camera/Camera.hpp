@@ -80,17 +80,17 @@ public:
     /**
      * @return A list of the kalman balls associated with the camera
      */
-    std::list<KalmanBall> getKalmanBalls() const;
+    const std::list<KalmanBall>& getKalmanBalls() const;
 
     /**
      * @return A vector of yellow kalman robot lists
      */
-    std::vector<std::list<KalmanRobot>> getKalmanRobotsYellow() const;
+    const std::vector<std::list<KalmanRobot>>& getKalmanRobotsYellow() const;
 
     /**
      * @return A vector of blue kalman robot lists
      */
-    std::vector<std::list<KalmanRobot>> getKalmanRobotsBlue() const;
+    const std::vector<std::list<KalmanRobot>>& getKalmanRobotsBlue() const;
 
     static void createConfiguration(Configuration* cfg);
 

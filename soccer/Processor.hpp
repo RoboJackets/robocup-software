@@ -279,10 +279,10 @@ private:
     Status _status;
 
     // modules
+    std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-    std::shared_ptr<VisionFilter> _vision;
 
     // joystick control
     std::vector<Joystick*> _joysticks;

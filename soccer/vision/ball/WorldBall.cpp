@@ -13,7 +13,9 @@ void WorldBall::createConfiguration(Configuration* cfg) {
 
 WorldBall::WorldBall() : isValid(false) {}
 
-WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) : isValid(true), time(calcTime){
+WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) 
+    : isValid(true), time(calcTime){
+        
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double totalPosWeight = 0;
@@ -22,14 +24,15 @@ WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) : isV
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
     if (*ball_merger_power < 1 || *ball_merger_power > 2) {
+
         std::cout
-             << "CRITICAL ERROR: ball_merger_power must be between 1 and 2"
+             << "WARN: ball_merger_power should be between 1 and 2"
              << std::endl;
     }
 
     if (kalmanBalls.size() == 0) {
         std::cout
-             << "CRITICAL ERROR: Zero balls are given to the WorldBall constructor"
+             << "ERROR: Zero balls are given to the WorldBall constructor"
              << std::endl;
 
         isValid = false;
@@ -109,7 +112,7 @@ double WorldBall::getVelCov() const {
     return velCov;
 }
 
-std::list<KalmanBall> WorldBall::getBallComponents() const {
+const std::list<KalmanBall>& WorldBall::getBallComponents() const {
     return ballComponents;
 }
 

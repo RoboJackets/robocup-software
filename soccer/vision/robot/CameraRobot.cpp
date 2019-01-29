@@ -20,7 +20,7 @@ int CameraRobot::getRobotID() const {
 CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     // Make sure we don't divide by zero due to some weird error
     if (robots.size() == 0) {
-        std::cout << "CRITICAL ERROR: Number of robots to combine is zero" << std::endl;
+        std::cout << "ERROR: Number of robots to combine is zero" << std::endl;
 
         return CameraRobot(RJ::now(), Geometry2d::Point(0,0), 0, -1);
     }

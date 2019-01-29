@@ -57,7 +57,7 @@ public:
     /**
      * @return List of all the building kalman balls for this world ball
      */
-    std::list<KalmanBall> getBallComponents() const;
+    const std::list<KalmanBall>& getBallComponents() const;
 
     /**
      * @return Time of creation for this world ball

@@ -43,22 +43,22 @@ public:
     /**
      * @return Best estimate of the ball
      */
-    WorldBall getWorldBall() const;
+    const WorldBall& getWorldBall() const;
 
     /**
      * @return List of the best estimates of all the yellow robots
      */
-    std::vector<WorldRobot> getRobotsYellow() const;
+    const std::vector<WorldRobot>& getRobotsYellow() const;
 
     /**
      * @return List of the best estimates of all the blue robots
      */
-    std::vector<WorldRobot> getRobotsBlue() const;
+    const std::vector<WorldRobot>& getRobotsBlue() const;
 
     /**
      * @return The best kick estimate over the last few seconds
      */
-    KickEvent getBestKickEstimate() const;
+    const KickEvent& getBestKickEstimate() const;
 
     static void createConfiguration(Configuration* cfg);
 

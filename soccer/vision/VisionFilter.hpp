@@ -41,7 +41,7 @@ public:
      *
      * @param state Current system state pointer
      */
-    void fillBallState(SystemState* state);
+    void fillBallState(SystemState& state);
 
     /**
      * Fills system state with the robots pos/vel
@@ -49,10 +49,10 @@ public:
      * @param state Current system state pointer
      * @param usBlue True if we are blue
      */
-    void fillRobotState(SystemState* state, bool usBlue);
+    void fillRobotState(SystemState& state, bool usBlue);
 
 private:
-    void workerThread();
+    void updateLoop();
 
     std::thread worker;
 

@@ -28,13 +28,13 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
     // Above 2 would just be super noisy
     if (*robot_merger_power < 1 || *robot_merger_power > 2) {
         std::cout
-             << "CRITICAL ERROR: robot_merger_power must be between 1 and 2"
+             << "WARN: robot_merger_power must be between 1 and 2"
              << std::endl;
     }
 
     if (kalmanRobots.size() == 0) {
         std::cout
-             << "CRITICAL ERROR: Zero robots are given to the WorldRobot constructor"
+             << "ERROR: Zero robots are given to the WorldRobot constructor"
              << std::endl;
 
         pos   = posAvg;
@@ -139,7 +139,7 @@ double WorldRobot::getVelCov() const {
     return velCov;
 }
 
-std::list<KalmanRobot> WorldRobot::getRobotComponents() const {
+const std::list<KalmanRobot>& WorldRobot::getRobotComponents() const {
     return robotComponents;
 }
 

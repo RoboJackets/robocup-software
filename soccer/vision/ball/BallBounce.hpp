@@ -10,6 +10,11 @@
 
 class BallBounce {
 public:
+    /**
+     * These functions are wrapped into a class instead of a namespace so that
+     * the config system can be used. It requires a class with the REGISTER_CONFIGUABLE
+     * define. Additionally, this allows for the extra helper functions to be hidden.
+     */
     BallBounce() = delete;
     ~BallBounce() = delete;
 

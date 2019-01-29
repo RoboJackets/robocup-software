@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "vision/ball/KalmanBall.hpp"
+#include "vision/ball/WorldBall.hpp"
 
 TEST(KalmanBall, invalid_world_ball) {
     RJ::Time t = RJ::now();

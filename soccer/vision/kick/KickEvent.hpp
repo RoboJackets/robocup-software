@@ -66,7 +66,7 @@ public:
     /**
      * @return vision states since that time we kicked
      */
-    std::deque<VisionState> getStatesSinceKick() const;
+    const std::deque<VisionState>& getStatesSinceKick() const;
 
 private:
     // If it's a valid kick event object

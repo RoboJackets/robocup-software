@@ -7,7 +7,6 @@
 #include <Configuration.hpp>
 
 #include "vision/robot/CameraRobot.hpp"
-#include "vision/robot/WorldRobot.hpp"
 #include "vision/filter/KalmanFilter3D.hpp"
 
 class WorldRobot;
@@ -106,7 +105,7 @@ public:
     /**
      * @return List of previous camera robot measurements for kick detection
      */
-    boost::circular_buffer<CameraRobot> getPrevMeasurements() const;
+    const boost::circular_buffer<CameraRobot>& getPrevMeasurements() const;
 
     static void createConfiguration(Configuration* cfg);
 

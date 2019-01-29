@@ -34,12 +34,10 @@ class LogFrame;
  */
 class Ball {
 public:
-    Ball() : valid(false) {}
-
     Geometry2d::Point pos;
     Geometry2d::Point vel;
     RJ::Time time;
-    bool valid;
+    bool valid = false;
 
     Planning::MotionInstant predict(RJ::Time time) const;
     Geometry2d::Point predictPosition(double seconds_from_now) const;

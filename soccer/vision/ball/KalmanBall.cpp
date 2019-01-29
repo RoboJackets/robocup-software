@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "vision/ball/WorldBall.hpp"
 #include "vision/util/VisionFilterConfig.hpp"
 
 REGISTER_CONFIGURABLE(KalmanBall)
@@ -14,9 +15,9 @@ void KalmanBall::createConfiguration(Configuration* cfg) {
 
 KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
                        CameraBall initMeasurement, const WorldBall& previousWorldBall)
-    : cameraID(cameraID), health(*VisionFilterConfig::filter_health_init),
-      lastUpdateTime(creationTime), lastPredictTime(creationTime),
-      previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length) {
+    : lastUpdateTime(creationTime), lastPredictTime(creationTime),
+      previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length),
+      health(*VisionFilterConfig::filter_health_init), cameraID(cameraID) {
 
     Geometry2d::Point initPos = initMeasurement.getPos();
     Geometry2d::Point initVel = Geometry2d::Point(0,0);
@@ -85,7 +86,7 @@ Geometry2d::Point KalmanBall::getVelCov() const {
     return filter.getVelCov();
 }
 
-boost::circular_buffer<CameraBall> KalmanBall::getPrevMeasurements() const {
+const boost::circular_buffer<CameraBall>& KalmanBall::getPrevMeasurements() const {
     return previousMeasurements;
 }
 

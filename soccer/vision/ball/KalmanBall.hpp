@@ -7,7 +7,6 @@
 #include <Configuration.hpp>
 
 #include "vision/ball/CameraBall.hpp"
-#include "vision/ball/WorldBall.hpp"
 #include "vision/filter/KalmanFilter2D.hpp"
 
 class WorldBall;
@@ -85,7 +84,7 @@ public:
     /**
      * @return List of previous camera ball measurements for kick detection/estimation
      */
-    boost::circular_buffer<CameraBall> getPrevMeasurements() const;
+    const boost::circular_buffer<CameraBall>& getPrevMeasurements() const;
 
     /**
      * @param newVel new velocity to insert into the kalman filter
