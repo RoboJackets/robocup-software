@@ -30,7 +30,7 @@ void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
 
 void VisionFilter::fillBallState(SystemState& state) {
     std::lock_guard<std::mutex> lock(worldLock);
-    WorldBall wb = world.getWorldBall();
+    const WorldBall& wb = world.getWorldBall();
 
     if (wb.getIsValid()) {
         state.ball.valid = true;

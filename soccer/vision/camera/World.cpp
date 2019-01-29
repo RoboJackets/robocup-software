@@ -172,7 +172,7 @@ void World::detectKicks(RJ::Time calcTime) {
         // but take fast kick if there isn't a corrsponding slow kick yet
         if (isSlowKick) {
             bestKickEstimate = slowEvent;
-        } else {
+        } else if (isFastKick) {
             bestKickEstimate = fastEvent;
         }
 
@@ -183,11 +183,6 @@ void World::detectKicks(RJ::Time calcTime) {
         const RJ::Seconds slowKickTimeout(*slow_kick_timeout);
         const RJ::Seconds fastKickTimeout(*fast_kick_timeout);
 
-        // If we haven't had a kick detection in a while, just remove it
-        if (!isSlowKick && !isFastKick && timeSinceBestEvent > slowKickTimeout + fastKickTimeout) {
-            bestKickEstimate = KickEvent();
-        }
-
         // Try using the slow kick if:
         //      - It refers to the current best kick event (and probably is a better estimate)
         //      - The old kick timed out and should be updated
@@ -197,6 +192,10 @@ void World::detectKicks(RJ::Time calcTime) {
         // Try using the fast kick if the old kick timed out
         } else if (isFastKick && timeSinceBestEvent > fastKickTimeout) {
             bestKickEstimate = fastEvent;
+
+        // Remove the old kick if it's completely time out
+        } else if (timeSinceBestEvent > slowKickTimeout + fastKickTimeout) {
+            bestKickEstimate = KickEvent();
         }
     }
 }
