@@ -114,7 +114,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // a*newPoint + (1-a)*oldPoint
     // The lower the number, the less noise affects the system, but the slower it responds to changes
     // The higher the number, the more noise affects the system, but the faster it responds to changes
-    const float targetPointAveragingGain = .01;
+    const float targetPointAveragingGain = .8;
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
@@ -245,8 +245,9 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         }
 
         // No point found
-        MotionInstant target(Point(1.5,1.5), Point(0,0));
-        target.vel = Point(0, 0);
+        // Try to move to the closest point in the ball vel line
+        Line ballMovementLine(ball.pos, ball.pos + ball.vel);
+        MotionInstant target(ballMovementLine.nearestPoint(startInstant.pos), Point(0,0));
 
         std::unique_ptr<MotionCommand> rrtCommand =
             std::make_unique<PathTargetCommand>(target);
