@@ -1,6 +1,6 @@
 # Vision Filter
 
-Based on a mixture of the Tiger's vision filter from their auto-ref and something known as the Multi-Hypothesis Extended Kalman Filter (MHEKF). The overall goal of this module is to convert the raw vision packet data from SSL-Vision and creates a good estimate of the true robot and ball positions.
+Based on a mixture of the Mannheim Tiger's vision filter from their [auto-ref](https://gitlab.tigers-mannheim.de/open-source/AutoReferee) and something known as the [Multi-Hypothesis Extended Kalman Filter (MHEKF)](https://dainamite.github.io/public/publication/qian_master_thesis.pdf) found in a paper from the RoboCup SPL league team DAInamite. The overall goal of this module is to convert the raw vision packet data from SSL-Vision and creates a good estimate of the true robot and ball positions.
 
 The overall setup is shown in the image below. Vision data is fed into the world object. This world object splits up the vision data by camera ID and feeds it into each corresponding camera object. The camera objects then apply the vision data as measurements to individual kalman filters corresponding to balls and robots. The world object then combines the best kalman filter from each camera for each individual robot and ball.
 

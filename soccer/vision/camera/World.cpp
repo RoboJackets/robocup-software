@@ -93,13 +93,8 @@ void World::updateWorldObjects(RJ::Time calcTime) {
     // Fill robotsYellow/Blue with what robots we want and remove the rest
     ball = WorldBall();
 
-    for (WorldRobot& robot : robotsYellow) {
-        robot = WorldRobot();
-    }
-
-    for (WorldRobot& robot : robotsBlue) {
-        robot = WorldRobot();
-    }
+    std::fill(robotsYellow.begin(), robotsYellow.end(), WorldRobot());
+    std::fill(robotsBlue.begin(), robotsBlue.end(), WorldRobot());
 
     std::list<KalmanBall> kalmanBalls;
     std::vector<std::list<KalmanRobot>> kalmanRobotsYellow(Num_Shells);
@@ -170,52 +165,53 @@ void World::detectKicks(RJ::Time calcTime) {
     bool isFastKick = fastKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, fastEvent);
     bool isSlowKick = slowKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, slowEvent);
 
-    // Try to use slow kick whenever it's possible
-    if (isSlowKick) {
-        // Any detected kick?
-        if (bestKickEstimate.getIsValid()) {
-            // If they are the same event, replace with the slow estimate
-            if (RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) < RJ::Seconds(*same_kick_timeout)) {
-                bestKickEstimate = slowEvent;
-
-            // If it is probably a different kick
-            } else if ((RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) > RJ::Seconds(*slow_kick_timeout))) {
-                bestKickEstimate = slowEvent;
-            }
-        } else {
+    // If there isn't a kick recorded already
+    if (!bestKickEstimate.getIsValid()) {
+        
+        // Try to use the slow kick as it's a better estimate
+        // but take fast kick if there isn't a corrsponding slow kick yet
+        if (isSlowKick) {
             bestKickEstimate = slowEvent;
-        }
-    } else if (isFastKick) {
-        // Any detected kick?
-        if (!bestKickEstimate.getIsValid()) {
-            // If there has been an even longer timeout between kick estimates
-            if ((RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) > RJ::Seconds(*fast_kick_timeout))) {
-                bestKickEstimate = fastEvent;
-            }
-        } else {
+        } else if (isFastKick) {
             bestKickEstimate = fastEvent;
         }
-    }
 
-    // If we haven't had a kick in a while, reset out kick estimate
-    if (bestKickEstimate.getIsValid() && 
-        RJ::Seconds(bestKickEstimate.getKickTime() - calcTime) > RJ::Seconds(*slow_kick_timeout + *fast_kick_timeout)) {
-        bestKickEstimate = KickEvent();
+    // There is a kick recorded already
+    } else {
+        const RJ::Seconds timeSinceBestEvent(bestKickEstimate.getKickTime() - calcTime);
+        const RJ::Seconds sameKickTimeout(*same_kick_timeout);
+        const RJ::Seconds slowKickTimeout(*slow_kick_timeout);
+        const RJ::Seconds fastKickTimeout(*fast_kick_timeout);
+
+        // Try using the slow kick if:
+        //      - It refers to the current best kick event (and probably is a better estimate)
+        //      - The old kick timed out and should be updated
+        if (isSlowKick && (timeSinceBestEvent < sameKickTimeout || timeSinceBestEvent > slowKickTimeout)) {
+            bestKickEstimate = slowEvent;
+
+        // Try using the fast kick if the old kick timed out
+        } else if (isFastKick && timeSinceBestEvent > fastKickTimeout) {
+            bestKickEstimate = fastEvent;
+
+        // Remove the old kick if it's completely time out
+        } else if (timeSinceBestEvent > slowKickTimeout + fastKickTimeout) {
+            bestKickEstimate = KickEvent();
+        }
     }
 }
 
-WorldBall World::getWorldBall() const {
+const WorldBall& World::getWorldBall() const {
     return ball;
 }
 
-std::vector<WorldRobot> World::getRobotsYellow() const {
+const std::vector<WorldRobot>& World::getRobotsYellow() const {
     return robotsYellow;
 }
 
-std::vector<WorldRobot> World::getRobotsBlue() const {
+const std::vector<WorldRobot>& World::getRobotsBlue() const {
     return robotsBlue;
 }
 
-KickEvent World::getBestKickEstimate() const {
+const KickEvent& World::getBestKickEstimate() const {
     return bestKickEstimate;
 }

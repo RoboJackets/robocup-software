@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
-#include "vision/robot/KalmanRobot.hpp"
 #include <cmath>
+#include "vision/robot/KalmanRobot.hpp"
+#include "vision/robot/WorldRobot.hpp"
 
 TEST(KalmanRobot, invalid_world_robot) {
     RJ::Time t = RJ::now();

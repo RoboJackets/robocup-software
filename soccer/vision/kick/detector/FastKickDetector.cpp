@@ -83,7 +83,7 @@ bool FastKickDetector::detectKick() {
 
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to have to retune it
-    Geometry2d::Point accel = dv / *VisionFilterConfig::vision_loop_dt;
+    Geometry2d::Point accel = dv / (*VisionFilterConfig::vision_loop_dt * stateHistory.size());
 
     // Check for large accelerations and only going from slow->fast transitions
     return accel.mag() > *acceleration_trigger && vStart.mag() < vEnd.mag();
@@ -111,7 +111,7 @@ WorldRobot FastKickDetector::getClosestRobot() {
         }
     }
 
-    for (WorldRobot& robot : stateHistory.at(midIdx).yellowRobots) {
+    for (WorldRobot& robot : stateHistory.at(midIdx).blueRobots) {
         if (robot.getIsValid()) {
             double dist = (midBallPos - robot.getPos()).mag();
 

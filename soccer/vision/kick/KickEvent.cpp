@@ -18,6 +18,6 @@ WorldRobot KickEvent::getKickingRobot() const {
     return kickingRobot;
 }
 
-std::deque<VisionState> KickEvent::getStatesSinceKick() const {
+const std::deque<VisionState>& KickEvent::getStatesSinceKick() const {
     return statesSinceKick;
 }

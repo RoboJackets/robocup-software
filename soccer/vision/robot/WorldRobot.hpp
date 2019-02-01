@@ -80,7 +80,7 @@ public:
     /**
      * @return List of all the building kalman robots for this world robot
      */
-    std::list<KalmanRobot> getRobotComponents() const;
+    const std::list<KalmanRobot>& getRobotComponents() const;
 
     /**
      * @return Time of creation for the robot estimate

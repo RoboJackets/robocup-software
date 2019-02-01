@@ -348,17 +348,17 @@ void Camera::updateRobotsAKF(RJ::Time calcTime,
 
 void Camera::removeInvalidBalls() {
     // Remove all balls that are unhealthy
-    kalmanBallList.remove_if([](KalmanBall& b) -> bool { return b.isUnhealthy(); } );
+    kalmanBallList.remove_if([](KalmanBall& b) { return b.isUnhealthy(); } );
 }
 
 void Camera::removeInvalidRobots() {
     // Remove all the robots that are unhealthy
     for (std::list<KalmanRobot>& robotList : kalmanRobotBlueList) {
-        robotList.remove_if([](KalmanRobot& r) -> bool {return r.isUnhealthy(); } );
+        robotList.remove_if([](KalmanRobot& r) {return r.isUnhealthy(); } );
     }
 
     for (std::list<KalmanRobot>& robotList : kalmanRobotYellowList) {
-        robotList.remove_if([](KalmanRobot& r) -> bool {return r.isUnhealthy(); } );
+        robotList.remove_if([](KalmanRobot& r) {return r.isUnhealthy(); } );
     }
 }
 
@@ -370,14 +370,14 @@ void Camera::predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRob
     }
 }
 
-std::list<KalmanBall> Camera::getKalmanBalls() const {
+const std::list<KalmanBall>& Camera::getKalmanBalls() const {
     return kalmanBallList;
 }
 
-std::vector<std::list<KalmanRobot>> Camera::getKalmanRobotsYellow() const {
+const std::vector<std::list<KalmanRobot>>& Camera::getKalmanRobotsYellow() const {
     return kalmanRobotYellowList;
 }
 
-std::vector<std::list<KalmanRobot>> Camera::getKalmanRobotsBlue() const {
+const std::vector<std::list<KalmanRobot>>& Camera::getKalmanRobotsBlue() const {
     return kalmanRobotBlueList;
 }

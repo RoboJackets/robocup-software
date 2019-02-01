@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include "vision/robot/WorldRobot.hpp"
 #include "vision/util/VisionFilterConfig.hpp"
 
 REGISTER_CONFIGURABLE(KalmanRobot)
@@ -126,6 +127,6 @@ double KalmanRobot::getOmegaCov() const {
     return filter.getOmegaCov();
 }
 
-boost::circular_buffer<CameraRobot> KalmanRobot::getPrevMeasurements() const {
+const boost::circular_buffer<CameraRobot>& KalmanRobot::getPrevMeasurements() const {
     return previousMeasurements;
 }
