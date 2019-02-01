@@ -21,6 +21,7 @@ public:
         Pivot,
         WorldVel,
         Settle,
+        Collect,
         LineKick,
         None
     };
@@ -105,6 +106,14 @@ struct SettleCommand : public MotionCommand {
     explicit SettleCommand(Geometry2d::Point target)
         : MotionCommand(MotionCommand::Settle), target(target){};
     const Geometry2d::Point target;
+};
+
+struct CollectCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<CollectCommand>(*this);
+    }
+    explicit CollectCommand()
+        : MotionCommand(MotionCommand::Collect) {};
 };
 
 struct LineKickCommand : public MotionCommand {

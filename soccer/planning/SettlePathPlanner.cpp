@@ -1,4 +1,5 @@
 #include "SettlePathPlanner.hpp"
+
 #include "CompositePath.hpp"
 #include "MotionInstant.hpp"
 #include "Configuration.hpp"
@@ -46,8 +47,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
     const RJ::Time curTime = RJ::now();
 
-    const SettleCommand& command =
-    dynamic_cast<const SettleCommand&>(*planRequest.motionCommand);
+    const SettleCommand& command = dynamic_cast<const SettleCommand&>(*planRequest.motionCommand);
 
     // The direction we will try and bounce the ball when we dampen it to
     // speed up actions after capture
@@ -58,28 +58,28 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // All the max velocity / acceleration constraints for translation / rotation
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const RobotConstraints& robotConstraints = planRequest.constraints;
+
     // List of obstacles
-    Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-    std::vector<DynamicObstacle>& dynamicObstacles = planRequest.dynamicObstacles;
+    ShapeSet& obstacles = planRequest.obstacles;
+    vector<DynamicObstacle>& dynamicObstacles = planRequest.dynamicObstacles;
 
     // Obstacle list with circle around ball 
-    Geometry2d::ShapeSet& obstaclesWBall = obstacles;
-    obstaclesWBall.add(
-        make_shared<Circle>(ball.predict(curTime).pos, .1));
+    ShapeSet& obstaclesWBall = obstacles;
+    obstaclesWBall.add(make_shared<Circle>(ball.predict(curTime).pos, .1));
 
     // Previous angle path from last iteration
     AngleFunctionPath* prevAnglePath = 
         dynamic_cast<AngleFunctionPath*>(planRequest.prevPath.get());
 
     // Previous RRT path from last iteration
-    std::unique_ptr<Path> prevPath;
+    unique_ptr<Path> prevPath;
 
     if (prevAnglePath && prevAnglePath->path) {
-        prevPath = std::move(prevAnglePath->path);
+        prevPath = move(prevAnglePath->path);
     }
 
     // The small beginning part of the previous path
-    std::unique_ptr<Path> partialPath = nullptr;
+    unique_ptr<Path> partialPath = nullptr;
 
     // The path is from the original robot position to the intercept point
     // We only care about the replan lead time from the current pos in the path
@@ -87,7 +87,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     RJ::Seconds timeIntoPreviousPath;
 
     // How much of the future we are devoting to the partial path
-    // 0 unless we have a partial path, then it's partialReplanLeadTime
+    // 0ms unless we have a partial path, then it's partialReplanLeadTime
     RJ::Seconds partialPathTime = 0ms;
 
     // How much of the previous path to steal
@@ -179,7 +179,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             Point ballVelIntercept;
             RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(ball.pos + ball.vel.normalized()*dist, &ballVelIntercept) - curTime);
             MotionInstant targetRobotIntersection(ballVelIntercept);
-            std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
+            vector<Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
 
             // TODO: Take the targetFinalCaptureDirection into account
             // Use the mouth to center vector, rotate by X degrees
@@ -350,7 +350,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
     default: {
-        std::cout << "Error: Invalid state in settle planner. Restarting" << std::endl;
+        std::cout << "WARNING: Invalid state in settle planner. Restarting" << std::endl;
         currentState = Intercept;
 
         // Stop movement until next frame since it's the safest option programmatically

@@ -3,6 +3,7 @@
 #include "RRTPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
 #include "SingleRobotPathPlanner.hpp"
+
 class Configuration;
 class ConfigDouble;
 
@@ -23,6 +24,7 @@ public:
 
     SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), directPlanner(),
                           interceptTarget(0,0), firstTargetPointFound(false), currentState(Intercept) {};
+
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {

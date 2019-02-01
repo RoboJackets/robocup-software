@@ -28,7 +28,6 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
             reqs.destination_shape = main.ball().pos
