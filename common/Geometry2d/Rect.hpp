@@ -76,6 +76,9 @@ public:
     bool nearSegment(const Segment& seg, float threshold) const;
 
     bool intersects(const Rect& other) const;
+    bool intersects_(const Segment& other) const;
+
+    int CohenSutherlandCode(const Point& other) const;
 
     Point pt[2];
 

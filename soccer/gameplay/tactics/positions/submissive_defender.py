@@ -79,9 +79,9 @@ class SubmissiveDefender(
             robocup.Point(constants.Field.PenaltyLongDist / 2 + offset,
                           constants.Field.PenaltyShortDist + offset))
         top_seg = robocup.Segment(
-            robocup.Point(-constants.Field.PenaltyLongDist / 2,
+            robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset,
                           constants.Field.PenaltyShortDist + offset),
-            robocup.Point(constants.Field.PenaltyLongDist / 2,
+            robocup.Point(constants.Field.PenaltyLongDist / 2 + offset,
                           constants.Field.PenaltyShortDist + offset))
 
         default_pt = top_seg.center()
