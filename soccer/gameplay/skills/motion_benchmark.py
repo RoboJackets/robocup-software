@@ -26,7 +26,6 @@ from abc import ABC, abstractmethod
 #
 class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
-    
     class State(Enum):
         #Noise and latency test
         setup = 1
@@ -39,14 +38,12 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         ProcessBasicMotion = 6
         BasicMotionBuffer = 7
 
-
     #General Result Variables
     resultsToWrite = [] #should possibly make a seperate list for more/less verbose output
     
     dateString = datetime.datetime.now().strftime("Run time: %I:%M%p on %B %d, %Y")
         #I also need this info for the file name
     versionString = "Version: 0.0"
-
 
     #Note: Add the type of processor used
     #Note: If possible, add the battery voltage of the robot that is performing the test
@@ -55,8 +52,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                 #Add a section to the file to put notes about the current run
                 #Might also put the actual data, mabye a csv if I'm feeling frisky
     #Note: add a warning if the field size is too small to run the tests
- 
-    #A Max speed readout would be nice
 
     #An abstract base class for motion tests
     class MotionTest(ABC):
@@ -65,6 +60,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         sParams = dict()
         sResults = dict()
+        sScore = dict()
 
         theMotionBenchmark = None
         
@@ -111,6 +107,22 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         @abstractmethod
         def testCompleted(self):
             pass
+
+        @abstractmethod
+        def processResults(self):
+            pass
+
+
+        def scaleResult(self, value, expectedMin, expectedMax, outMin, outMax):
+            if(value < expectedMin or value > expectedMax):
+                return None
+            retValue = ((outMax - outMin)*(value - expectedMin)) / (expectedMax - expectedMin) + outMin
+            if(retValue > outMax or retValue < outMin):
+                raise ValueError('A very specific bad thing happened.')
+            return retValue
+
+        def scaleHundred(self, value, expectedMin, expectedMax):
+            return scaleResult(value,expectedMin,expectedMax,0.0,100.0)
 
 
     #Class to calculate the noise and latency from the vision system
@@ -173,6 +185,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.finalRotationalError = [0.0] * self.motions
             self.maxOvershoot = [0.0] * self.motions
             self.endVel = [0.0] * self.motions
+            self.totalVel = [0.0] * self.motions
             self.motionNumber = -1
 
         startIndex = 0
@@ -182,20 +195,24 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #Sets up the next motion
         def startMotion(self):
             if (self.motionNumber is -1):
-                self.currentStart = points[0]
-                self.currentEnd = points[0]
-                self.facePoints = None
+                self.currentStart = self.points[0]
+                self.currentEnd = self.points[0]
+                self.currentFacePoint = None
+                self.theMotionBenchmark.robot.face_none()
             else:
-                if(self.startIndex >= len(points)):
+                if(self.startIndex >= len(self.points)):
                     self.startIndex = 0
-                if(self.endIndex >= len(points)):
+                if(self.endIndex >= len(self.points)):
                     self.endIndex = 0
-                if(self.faceIndex >= len(facePoints)):
+                if(self.faceIndex >= len(self.facePoints)):
                     self.faceIndex = 0
+                if(len(self.facePoints) == 0):
+                    self.theMotionBenchmark.robot.face_none()
+                    self.faceIndex = -1
 
-                self.currentStart = points[startIndex]
-                self.currentEnd = points[endIndex]
-                self.currentFacePoint = facePoints[self.faceIndex]
+                self.currentStart = self.points[self.startIndex]
+                self.currentEnd = self.points[self.endIndex]
+                self.currentFacePoint = self.facePoints[self.faceIndex]
                 self.startIndex += 1
                 self.endIndex += 1
                 self.faceIndex += 1
@@ -242,9 +259,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             else:
                 self.started = True
 
-            if (self.facePoint0 is not None or self.facePoint1 is not None or self.facePoint2 is not None):
+            if (len(self.facePoints) is 0):
                 self.theMotionBenchmark.robot.face_none()
-
+                
         def calcFinalRotationError(self):
             if(self.currentFacePoint is not None):
                 self.finalRotationalError[self.motionNumber] = MotionBenchmark.getAngleError(self.theMotionBenchmark, self.currentFacePoint)
@@ -273,7 +290,78 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             else:
                 return False
         
-    
+   
+        def processResults(self):
+
+            timeTaken = self.timeTaken
+            self.sResults['avgMotionTime'] = sum(self.timeTaken) / len(self.timeTaken)
+            self.sResults['motionTimeVar'] = statistics.pvariance(self.timeTaken)
+            self.sResults['avgEndPosError'] = sum(self.posEndError) / len(self.posEndError)
+            self.sResults['maxEndPosError'] = max(self.posEndError)
+            self.sResults['lineError'] = sum(self.lineFollowError) / len(self.lineFollowError)
+            self.sResults['unitLineError'] = list(map(truediv, self.lineFollowError, self.timeTaken))
+            self.sResults['lineErrorPerTime'] = sum(unitLineError) / len(unitLineError)
+            rotationalError = sum(self.rotationalFollowError) / len(self.rotationalFollowError)
+            unitRotError = list(map(truediv, self.rotationalFollowError, self.timeTaken))
+            rotErrorPerTime = sum(unitRotError) / len(unitRotError)
+           
+            distances = [g.dist0, g.dist1, g.dist2]
+
+            overshoot = self.maxOvershoot
+            perOvershoot = []
+            for i in range(0, len(self.maxOvershoot)):
+                perOvershoot.append(self.maxOvershoot[i] / distances[i % 3])
+
+
+            avgAbsOvershoot = sum(overshoot) / len(overshoot)
+            avgPerOvershoot = sum(perOvershoot) / len(perOvershoot)
+            maxAbsOvershoot = max(overshoot)
+            maxPerOvershoot = max(perOvershoot)
+
+            avgMotionVelocity = []
+            for i in range(0, len(self.timeTaken) - 1): 
+                avgMotionVelocity.append(distances[i % 3] / self.timeTaken[i])
+           
+            calcVels = []
+            for i in range(0, len(g.totalVel) - 1):
+                calcVels.append(self.totalVel[i] / self.timeTaken[i])
+
+            avgCalcVelocity = sum(calcVels) / len(calcVels)
+            maxCalcVelocity = max(calcVels)
+            varCalcVelocity = statistics.variance(calcVels)
+
+            avgTestVelocity = sum(avgMotionVelocity) / len(avgMotionVelocity)
+            maxTestVelocity = max(avgMotionVelocity)
+
+            self.sResults['title'] = self.title
+
+
+
+            paramList = []
+
+
+
+
+            if self.sParams.get('avgMotionTime',False): 
+                self.sResults['avgMotionTime'] = avgMotionTime
+                self.sScore['avgMotionTime'] = self.scaleHundred(avgMotionTime,self.sParams.get('avgMotionTimeBest'),self.sParams.get('avgMotionTimeWorst'))
+
+            if self.sParams.get('motionTimeVar',False): 
+                self.sResults['motionTimeVar'] = motionTimeVar
+                self.sScore['motionTimeVar'] = self.scaleHundred(motionTimeVar,self.sParams.get('motionTimeVarBest'),self.sParams.get('motionTimeVarWorst'))
+
+            if self.sParams.get('avgEndPosError',False): 
+                self.sResults['avgEndPosError'] = motionTimeVar
+                self.sScore['avgEndPosError'] = self.scaleHundred(avgEndPosError,self.sParams.get('avgEndPosErrorBest'),self.sParams.get('avgEndPosErrorWorst'))
+
+            if self.sParams.get('avgEndPosError',False): 
+                self.sResults['avgEndPosError'] = motionTimeVar
+                self.sScore['avgEndPosError'] = self.scaleHundred(motionTimeVar,self.sParams.get('avgEndPosErrorBest'),self.sParams.get('avgEndPosErrorWorst'))
+
+
+
+
+
     basicMotionTests = []
     basicMotionIndex = 0
     currentBasicMotion = None
@@ -341,7 +429,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #BasicMotion0 -> BasicMotionBuffer
         self.add_transition(MotionBenchmark.State.BasicMotion0,
                             MotionBenchmark.State.BasicMotionBuffer,
-                            lambda: self.all_subbehaviors_completed() and not self.currentBasicMotion.isCompleted(), 'In Position')
+                            lambda: self.all_subbehaviors_completed() and not self.currentBasicMotion.testCompleted(), 'In Position')
        
         #BasicMotionBuffer -> BasicMotion0
         self.add_transition(MotionBenchmark.State.BasicMotionBuffer,
@@ -351,7 +439,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #BasicMid0 -> BasicMotionEnd
         self.add_transition(MotionBenchmark.State.BasicMotion0,
                             MotionBenchmark.State.BasicMotionEnd,
-                            lambda: self.all_subbehaviors_completed() and self.currentBasicMotion.isCompleted(), 'In Position')
+                            lambda: self.all_subbehaviors_completed() and self.currentBasicMotion.testCompleted(), 'In Position')
 
         #BasicMotionEnd -> BasicMotion0
         self.add_transition(MotionBenchmark.State.BasicMotionEnd,
@@ -369,12 +457,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             behavior.Behavior.State.completed,
                             lambda: False, 'In Position') #Should change this to true if I want it to end
 
-
-
-
         #Setup the BasicMotionTests
-
-        
 
     #Movement test points START
     setupPoint = robocup.Point(0, 1.25)
@@ -403,93 +486,89 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         print(self.subbehaviors_by_name)
 
 
-
-
-
     def setupBasicMotionTests(self):
         self.basicMotionTests = []
         numberOfRuns = 3
         print(self.basicMotionTests)
     
         superBasicTest = self.BasicMotionTest(numberOfRuns, self)
-        superBasicTest.point0 = robocup.Point(1.2,1.2)
-        superBasicTest.point1 = robocup.Point(1.2,2.2)
-        superBasicTest.point2 = robocup.Point(2.2,1.2)
+        superBasicTest.points.append(robocup.Point(1.2,1.2))
+        superBasicTest.points.append(robocup.Point(1.2,2.2))
+        superBasicTest.points.append(robocup.Point(2.2,1.2))
         superBasicTest.title = "Test Triangle"
         #self.basicMotionTests.append(superBasicTest)
 
         basicMid = self.BasicMotionTest(numberOfRuns, self)
-        basicMid.point0 = robocup.Point(1.2,1.2)
-        basicMid.point1 = robocup.Point(-1.2,1.2)
-        basicMid.point2 = robocup.Point(0,3.5)
+        basicMid.points.append(robocup.Point(1.2,1.2))
+        basicMid.points.append(robocup.Point(-1.2,1.2))
+        basicMid.points.append(robocup.Point(0,3.5))
         basicMid.title = "Mid Size Motion Triangle"
         self.basicMotionTests.append(basicMid)
 
         basicSmall = self.BasicMotionTest(numberOfRuns, self)
-        basicSmall.point0 = robocup.Point(-0.75, 1.2)
-        basicSmall.point1 = robocup.Point(0.75, 1.2)
-        basicSmall.point2 = robocup.Point(0,2.4)
+        basicSmall.points.append(robocup.Point(-0.75, 1.2))
+        basicSmall.points.append(robocup.Point(0.75, 1.2))
+        basicSmall.points.append(robocup.Point(0,2.4))
         basicSmall.title = "Small Motion Triangle"
         self.basicMotionTests.append(basicSmall)
 
         basicLarge = self.BasicMotionTest(numberOfRuns, self)
-        basicLarge.point0 = robocup.Point(-1.7,1.5)
-        basicLarge.point1 = robocup.Point(0, 4.8)
-        basicLarge.point2 = robocup.Point(1.7, 1.5)
+        basicLarge.points.append(robocup.Point(-1.7,1.5))
+        basicLarge.points.append(robocup.Point(0, 4.8))
+        basicLarge.points.append(robocup.Point(1.7, 1.5))
         basicLarge.title = "Large Motion Triangle"
         self.basicMotionTests.append(basicLarge)
 
         basicSmaller = self.BasicMotionTest(numberOfRuns, self)
-        basicSmaller.point0 = robocup.Point(0.25, 1.2)
-        basicSmaller.point1 = robocup.Point(-0.25, 1.2)
-        basicSmaller.point2 = robocup.Point(0, 1.7)
+        basicSmaller.points.append(robocup.Point(0.25, 1.2))
+        basicSmaller.points.append(robocup.Point(-0.25, 1.2))
+        basicSmaller.points.append(robocup.Point(0, 1.7))
         basicSmaller.title = "Smaller Motion Triangle"
         self.basicMotionTests.append(basicSmaller)
         
         basicTiny = self.BasicMotionTest(numberOfRuns, self)
-        basicTiny.point0 = robocup.Point(0.085, 1.2)
-        basicTiny.point1 = robocup.Point(-0.085, 1.2)
-        basicTiny.point2 = robocup.Point(0, 1.285)
+        basicTiny.points.append(robocup.Point(0.085, 1.2))
+        basicTiny.points.append(robocup.Point(-0.085, 1.2))
+        basicTiny.points.append(robocup.Point(0, 1.285))
         basicTiny.title = "Tiny Motion Triangle"
         self.basicMotionTests.append(basicTiny)
 
         basicMicro = self.BasicMotionTest(numberOfRuns, self)
-        basicMicro.point0 = robocup.Point(0.034, 1.2)
-        basicMicro.point1 = robocup.Point(-0.034, 1.2)
-        basicMicro.point2 = robocup.Point(0,1.242)
+        basicMicro.points.append(robocup.Point(0.034, 1.2))
+        basicMicro.points.append(robocup.Point(-0.034, 1.2))
+        basicMicro.points.append(robocup.Point(0,1.242))
         basicMicro.title = "Micro Motion Triangle"
         self.basicMotionTests.append(basicMicro)
         
         midFace = self.BasicMotionTest(numberOfRuns, self)
-        midFace.point0 = robocup.Point(1.2,1.2)
-        midFace.point1 = robocup.Point(-1.2,1.2)
-        midFace.point2 = robocup.Point(0,3.5)
-        midFace.facePoint0 = robocup.Point(0,2.8)
-        midFace.facePoint1 = robocup.Point(0,0)
-        midFace.facePoint2 = robocup.Point(2,0)
+        midFace.points.append(robocup.Point(1.2,1.2))
+        midFace.points.append(robocup.Point(-1.2,1.2))
+        midFace.points.append(robocup.Point(0,3.5))
+        midFace.facePoints.append(robocup.Point(0,2.8))
+        midFace.facePoints.append(robocup.Point(0,0))
+        midFace.facePoints.append(robocup.Point(2,0))
         midFace.title = "Mid size triangle while facing points #1"
         self.basicMotionTests.append(midFace)
         
         midFace2 = self.BasicMotionTest(numberOfRuns, self)
-        midFace2.point0 = robocup.Point(1.2,1.2)
-        midFace2.point1 = robocup.Point(-1.2,1.2)
-        midFace2.point2 = robocup.Point(0,3.5)
-        midFace2.facePoint0 = robocup.Point(0,2.8)
-        midFace2.facePoint1 = robocup.Point(0,0)
-        midFace2.facePoint2 = robocup.Point(2,0)
+        midFace2.points.append(robocup.Point(1.2,1.2))
+        midFace2.points.append(robocup.Point(-1.2,1.2))
+        midFace2.points.append(robocup.Point(0,3.5))
+        midFace2.facePoints.append(robocup.Point(0,2.8))
+        midFace2.facePoints.append(robocup.Point(0,0))
+        midFace2.facePoints.append(robocup.Point(2,0))
         midFace2.title = "Mid size triangle while facing points #2"
         self.basicMotionTests.append(midFace)
 
         pureRot = self.BasicMotionTest(numberOfRuns, self)
-        pureRot.facePoint0 = robocup.Point(0,2.8)
-        pureRot.facePoint1 = robocup.Point(0,0)
-        pureRot.facePoint2 = robocup.Point(2,0)
+        pureRot.facePoints.append(robocup.Point(0,2.8))
+        pureRot.facePoints.append(robocup.Point(0,0))
+        pureRot.facePoints.append(robocup.Point(2,0))
         pureRot.title = "Pure Rotational Test"
         #self.basicMotionTests.append(midFace)
         
         self.basicMotionIndex = 0
         self.currentBasicMotion = self.basicMotionTests[self.basicMotionIndex]
-
 
 
     #A function to determine if the robot has broken the bounding box
@@ -514,18 +593,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def getSpeed(self):
         a = self.getVel()
         return math.sqrt(a.x**2 + a.y**2)
-
-
-    def scaleResult(self, value, expectedMin, expectedMax, outMin, outMax):
-        if(value < expectedMin or value > expectedMax):
-            return None
-        retValue = ((outMax - outMin)*(value - expectedMin)) / (expectedMax - expectedMin) + outMin
-        if(retValue > outMax or retValue < outMin):
-            raise ValueError('A very specific bad thing happened.')
-        return retValue
-
-    def scaleHundred(self, value, expectedMin, expectedMax):
-        return scaleResult(scaleResult(value, expected))
 
 
     def getAngleError(self, point):
@@ -630,7 +697,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
 
     def on_enter_BasicMotion0(self):
-        self.currentBasicMotion.startRun()
+        self.currentBasicMotion.startMotion()
         if (self.currentBasicMotion.currentEnd is not None):
             self.add_subbehavior(skills.move.Move(self.currentBasicMotion.currentEnd), 'move')
         else:
@@ -661,49 +728,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     #ProcessBasicMotion
     def on_enter_ProcessBasicMotion(self):
-        for g in self.basicMotionTests:
-            theTitle = g.title
-            timeTaken = g.timeTaken
-            avgMotionTime = sum(g.timeTaken) / len(g.timeTaken)
-            motionTimeVar = statistics.pvariance(g.timeTaken)
-            avgEndPosError = sum(g.posEndError) / len(g.posEndError)
-            maxEndPosError = max(g.posEndError)
-            lineError = sum(g.lineFollowError) / len(g.lineFollowError)
-            unitLineError = list(map(truediv, g.lineFollowError, g.timeTaken))
-            lineErrorPerTime = str(sum(unitLineError) / len(unitLineError))
-            rotationalError = sum(g.rotationalFollowError) / len(g.rotationalFollowError)
-            unitRotError = list(map(truediv, g.rotationalFollowError, g.timeTaken))
-            rotErrorPerTime = sum(unitRotError) / len(unitRotError)
-           
-            distances = [g.dist0, g.dist1, g.dist2]
+        print("Should be processing basic motion")
 
-
-            overshoot = g.maxOvershoot
-            perOvershoot = []
-            for i in range(0, len(g.maxOvershoot)):
-                perOvershoot.append(g.maxOvershoot[i] / distances[i % 3])
-
-
-            avgAbsOvershoot = sum(overshoot) / len(overshoot)
-            avgPerOvershoot = sum(perOvershoot) / len(perOvershoot)
-            maxAbsOvershoot = max(overshoot)
-            maxPerOvershoot = max(perOvershoot)
-
-            avgMotionVelocity = []
-            for i in range(0, len(g.timeTaken) - 1): 
-                avgMotionVelocity.append(distances[i % 3] / g.timeTaken[i])
-           
-            calcVels = []
-            for i in range(0, len(g.totalVel) - 1):
-                calcVels.append(g.totalVel[i] / g.timeTaken[i])
-
-            avgCalcVelocity = sum(calcVels) / len(calcVels)
-            maxCalcVelocity = max(calcVels)
-            varCalcVelocity = statistics.variance(calcVels)
-
-            avgTestVelocity = sum(avgMotionVelocity) / len(avgMotionVelocity)
-            maxTestVelocity = max(avgMotionVelocity)
-
+        '''
 
             self.resultOut("\nResults for test " + theTitle + " - - - - - - - - - - - - - - - \n")
             self.resultOut("Average Motion Time: " + str(avgMotionTime))
@@ -722,7 +749,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.resultOut("Average Test Velocity: " + str(avgTestVelocity))
             self.resultOut("Max Test Velocity: " + str(maxTestVelocity))
             self.resultOut("\nEnd of results - - - - - - - - - - - - - - - - - - - - - - - - - \n")
-
+            '''
     def role_requirements(self):
 
         '''reqs = role_assignment.RoleRequirements()
