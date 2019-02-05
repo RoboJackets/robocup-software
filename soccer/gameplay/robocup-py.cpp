@@ -251,6 +251,19 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
+/*boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
+                                                Geometry2d::Segment* segment){
+    if (segment==nullptr) throw NullArgumentException{"segment"};
+    Geometry2d::Point inter_pt1;
+    Geometry2d::Point inter_pt2;
+    if (self->intersects(*segment, &inter_pt1, &inter_pt2)) {
+        boost::python::object obj{pt};
+        return obj;
+    } else {
+        return boost::python::object{};
+    }
+}*/
+
 boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
                                                 Geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException{"line"};

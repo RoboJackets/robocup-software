@@ -7,6 +7,13 @@ using namespace std;
 
 namespace Geometry2d {
 
+//constants used for the rect-segment intersection
+const int INSIDE = 0; // 0000
+const int LEFT = 1;   // 0001
+const int RIGHT = 2;  // 0010
+const int BOTTOM = 4; // 0100
+const int TOP = 8;    // 1000
+
 Shape* Rect::clone() const { return new Rect(*this); }
 
 bool Rect::intersects(const Rect& other) const {
@@ -19,11 +26,6 @@ bool Rect::intersects(const Rect& other) const {
 }
 
 int Rect::CohenSutherlandCode(const Point& other) const{
-    const int INSIDE = 0; // 0000
-    const int LEFT = 1;   // 0001
-    const int RIGHT = 2;  // 0010
-    const int BOTTOM = 4; // 0100
-    const int TOP = 8;    // 1000
     int code;
     double x,y;
     x = other.x();
@@ -43,13 +45,6 @@ int Rect::CohenSutherlandCode(const Point& other) const{
 }
 
 bool Rect::intersects_(const Segment& other) const{
-    //These constants are needed in here and in the CohenSutherlandCode method - is there
-    //a place where we should make these definitions globally?
-    const int INSIDE = 0; // 0000
-    const int LEFT = 1;   // 0001
-    const int RIGHT = 2;  // 0010
-    const int BOTTOM = 4; // 0100
-    const int TOP = 8;    // 1000
 
     //Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line Clipping
     Point p0 = other.pt[0];
