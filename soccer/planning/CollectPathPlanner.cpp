@@ -142,7 +142,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
             approachDirection = approachDirection.norm();
         }
 
-        Point targetPos = ball.pos + approachDirection * 0.3;
+        Point targetPos = ball.pos + approachDirection * 0.09;
         
 
         MotionInstant target(targetPos, velocityTarget);

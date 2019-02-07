@@ -94,7 +94,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     const RJ::Seconds partialReplanLeadTime = RRTPlanner::getPartialReplanLeadTime();
 
     // How much of the ball speed to use to dampen the bounce
-    const float ballSpeedPercentForDampen = 1 / 100.0; // %
+    const float ballSpeedPercentForDampen = 0 / 100.0; // %
 
     // Ball speed cutoff to decide when to catch it from behind or get in front of it
     const float minSpeedToIntercept = 0.1; // m/s
@@ -114,7 +114,18 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // a*newPoint + (1-a)*oldPoint
     // The lower the number, the less noise affects the system, but the slower it responds to changes
     // The higher the number, the more noise affects the system, but the faster it responds to changes
-    const float targetPointAveragingGain = .8;
+    const float targetPointAveragingGain = .1;
+
+    // Investigate averaging the angle
+    const float ballVelAveragingGain = .1;
+
+    if (firstBallVelFound) {
+        averageBallVel = ballVelAveragingGain*ball.vel +
+                         (1 - ballVelAveragingGain)*averageBallVel;
+    } else {
+        averageBallVel = ball.vel;
+        firstBallVelFound = true;
+    }
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
@@ -128,7 +139,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // TimeNow     EndPartialPrevPath  FinalTargetPoint
         //                     |-----------------|
         //          Amount of the path we can change this iteration
-        if (timeIntoPreviousPath < prevPath->getDuration() - 2*partialReplanLeadTime &&
+        if (timeIntoPreviousPath < prevPath->getDuration() - partialReplanLeadTime &&
             timeIntoPreviousPath > 0ms) {
             partialPath =
                 prevPath->subPath(0ms, timeIntoPreviousPath + partialReplanLeadTime);
@@ -142,7 +153,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
     if (prevPath) {
         timeIntoPreviousPath = curTime - prevPath->startTime();
-        Geometry2d::Line ballMovementLine(ball.pos, ball.pos + ball.vel);
+        Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
         std::unique_ptr<Path> pathSoFar = prevPath->subPath(0ms, timeIntoPreviousPath);
         
         float botDistToBallMovementLine = ballMovementLine.distTo(pathSoFar->end().motion.pos);
@@ -150,9 +161,11 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // Intercept -> Dampen
         //  Almost at the end of the path and in the path of the ball
         // TODO: Check ball sense?
-        if (timeIntoPreviousPath >= prevPath->getDuration() - 2*partialReplanLeadTime &&
-            botDistToBallMovementLine < Robot_Radius &&
-            currentState == Intercept) {
+        // TODO: Make sure in front of ball
+        // TODO: Make sure we're reasonably close too (Don't be all the way across the field)
+        if (botDistToBallMovementLine < Robot_Radius &&
+            currentState == Intercept &&
+            false) {
             
             startInstant = pathSoFar->end().motion;
             currentState = Dampen;
@@ -177,7 +190,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // TODO: Try the pronav algorithm
         for (float dist = 0; dist < 5; dist += 0.05) {
             Point ballVelIntercept;
-            RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(ball.pos + ball.vel.normalized()*dist, &ballVelIntercept) - curTime);
+            RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(ball.pos + averageBallVel.normalized()*dist, &ballVelIntercept) - curTime);
             MotionInstant targetRobotIntersection(ballVelIntercept);
             vector<Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
 
@@ -188,6 +201,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
             // TODO: Improve velocity target
             //       May be able to just dampen here instead of another state
+
+            // TODO: Dodge ball untill after reaching intercept point
             targetRobotIntersection.vel = Point(0, 0);
 
             std::unique_ptr<Path> path =
@@ -197,7 +212,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                 RJ::Seconds timeOfArrival = path->getDuration();
 
                 // We can reach the target point before 
-                if (timeOfArrival + partialPathTime <= t) {
+                if (timeOfArrival + partialPathTime + 200ms <= t) {
                     // No path found yet so there is nothing to average
                     if (!firstTargetPointFound) {
                         interceptTarget = targetRobotIntersection.pos;
@@ -206,6 +221,15 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                         firstTargetPointFound = true;
                     // Average this calculation with the previous ones
                     } else {
+                        // Don't allow paths that do not have a continuous velocity state
+                        // See issue #1239
+                        if (partialPath) {
+                            if ((path->start().motion.vel - partialPath->end().motion.vel).mag() > 0.5) {
+                                std::cout << "Broken path" << std::endl;
+                                break;
+                            }
+                        }
+
                         interceptTarget = targetPointAveragingGain * targetRobotIntersection.pos +
                                         (1 - targetPointAveragingGain) * interceptTarget;
 
@@ -223,7 +247,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             // Try and use the previous path for the first part so it will actually make the initial turn
             MotionInstant targetRobotIntersection(interceptTarget);
             std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
-            targetRobotIntersection.vel = ballSpeedPercentForDampen*ball.vel;
+            targetRobotIntersection.vel = ballSpeedPercentForDampen*averageBallVel;
 
             std::unique_ptr<Path> interceptAndDampenStart =
                     RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, targetRobotIntersection.vel);
@@ -238,6 +262,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                     interceptAndDampenStart->setStartTime(prevPath->startTime());
                 }
 
+                // TODO: Predict ball facing location?
                 return make_unique<AngleFunctionPath>(
                     std::move(interceptAndDampenStart), angleFunctionForCommandType(
                         FacePointCommand(ball.pos)));
@@ -246,7 +271,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
         // No point found
         // Try to move to the closest point in the ball vel line
-        Line ballMovementLine(ball.pos, ball.pos + ball.vel);
+        Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
         MotionInstant target(ballMovementLine.nearestPoint(startInstant.pos), Point(0,0));
 
         std::unique_ptr<MotionCommand> rrtCommand =
@@ -258,11 +283,14 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         auto path = rrtPlanner.run(request);
         path->setDebugText("Gives ups");
 
+        std::cout << "Giving up" << std::endl;
+
         return make_unique<AngleFunctionPath>(
             std::move(path),
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
     case Dampen: {
+        std::cout << "Entered dampen state" << std::endl;
         // Intercept ends with a % ball velocity in the direction of the ball movement
         // Slow down once ball is nearby to 0 m/s
 
@@ -276,6 +304,10 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         //       Linear acceleration?
         //       Custom acceleration?
 
+        // TODO: Realize the ball will probably bounce off the robot
+        // so we can use that vector to stop
+        // Save vector and use that?
+
         // Using the current velocity
         // Calculate stopping point along the ball path
         float maxAccel = motionConstraints.maxAcceleration;
@@ -286,7 +318,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // speed / 2 is average time over the entire operation
         float stoppingDist = currentSpeed*currentSpeed / (2 * maxAccel);
 
-        Geometry2d::Point ballMovementDir(ball.vel.normalized());
+        Geometry2d::Point ballMovementDir(averageBallVel.normalized());
         Geometry2d::Line ballMovementLine(ball.pos, ball.pos + ballMovementDir);
         Geometry2d::Point nearestPointToRobot = ballMovementLine.nearestPoint(startInstant.pos);
         float distToBallMovementLine = (startInstant.pos - nearestPointToRobot).mag();

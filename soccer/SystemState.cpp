@@ -61,7 +61,7 @@ std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
     return std::move(path);
 }
 
-constexpr auto ballDecayConstant = 0.206;
+constexpr auto ballDecayConstant = 0.180;
 
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     if (estimateTime < time) {
