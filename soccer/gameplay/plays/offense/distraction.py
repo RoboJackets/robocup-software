@@ -1,46 +1,46 @@
+import main
 import robocup
-import standard_play
 import behavior
 import constants
-import main
-import skills.move
-import skills.capture
 import enum
+
+import standard_play
 import evaluation
 import tactics.coordinated_pass
-import tactics.defense
-import play
+import skills.move
+import skills.capture
 
 
 class distraction(standard_play.StandardPlay):
 
 
     class State (enum.Enum):
-        setup = 1
-        optional_adjustment = 2
-        cetner_pass = 3
-        passing = 4
-        cross = 5
-        shoot = 6
+        setup = 1, 'capture ball and move distractor and striker into position'
+        optional_adjustment = 2, 'setup a pass to the center right'
+        cetner_pass = 3, 'pass to the center right of the field'
+        passing = 4, 'pass from first capture to distractor'
+        cross = 5, 'pass from distractor to striker'
+        shoot = 6, 'shoot at goal'
     
     def __init__(self):
         super().__init__(continuous=False)  
 
         self.ball_is_far = False
-        
-        self.add_state(distraction.State.setup,
-                        behavior.Behavior.State.running)
-        self.add_state(distraction.State.optional_adjustment,
-                        behavior.Behavior.State.running)
-        self.add_state(distraction.State.cetner_pass,
-                        behavior.Behavior.State.running)
-        self.add_state(distraction.State.passing,
-                        behavior.Behavior.State.running)
-        self.add_state(distraction.State.cross,
-                        behavior.Behavior.State.running)
-        self.add_state(distraction.State.shoot,
-                        behavior.Behavior.State.running)
-        
+        self.distraction_point = robocup.Point(0.40*constants.Field.Width, 0.95*constants.Field.Length) #the first distraction point
+        self.distraction_recieve_pass_point = robocup.Point(0.40*constants.Field.Width, 0.8*constants.Field.Length) #the second distraction point
+        self.striker_point = robocup.Point(-0.40*constants.Field.Width, 0.9*constants.Field.Length) #striker's position
+        self.center = robocup.Point(0.5*constants.Field.Width,0.5*constants.Field.Length) #center of field position, used if ball is far
+        self.distract_box_min = robocup.Point(0.33*constants.Field.Width/2,(7/9)*constants.Field.Length)
+        self.distract_box_max = robocup.Point(constants.Field.Width/2, constants.Field.Length)
+        self.striker_box_min = robocup.Point(-0.33*constants.Field.Width/2,(7/9)*constants.Field.Length)
+        self.striker_box_max = robocup.Point(-constants.Field.Width/2, constants.Field.Length)
+
+        states = [distraction.State.setup, distraction.State.optional_adjustment, distraction.State.cetner_pass,
+         distraction.State.passing, distraction.State.cross, distraction.State.shoot]
+
+        for i in states:
+            self.add_state(i, behavior.Behavior.State.running)
+
         
         self.add_transition(behavior.Behavior.State.start,
                         distraction.State.setup, 
@@ -50,63 +50,53 @@ class distraction(standard_play.StandardPlay):
         self.add_transition(distraction.State.setup,
                         distraction.State.passing, 
                         lambda: not self.ball_is_far,
-                        '1-passing')
+                        'capture the ball and pass to a distracting robot if the ball is not far away')
 
         #optional_adjustment can be skipped if ball is not far from goal
         self.add_transition(distraction.State.setup, 
                         distraction.State.optional_adjustment, 
-                        lambda: self.ball_is_far and self.subbehavior_with_name('striker moves').is_done_running(),
-                        '1-2')
+                        lambda: self.ball_is_far,
+                        'if the ball is far away, then go from capturing the ball to getting robots set up to recieve a closer pass')
 
         self.add_transition(distraction.State.optional_adjustment,
                         distraction.State.cetner_pass, 
-                        lambda: self.subbehavior_with_name('move half').is_done_running() and self.subbehavior_with_name('stay').is_done_running() , 
-                        '2-cetner_pass')
+                        lambda: self.subbehavior_with_name('move half').is_done_running() and self.subbehavior_with_name('make striker stay').is_done_running() , 
+                        'go from setting up a close pass to making the pass towards the center of the field')
 
         self.add_transition(distraction.State.cetner_pass,
                         distraction.State.passing, 
                         lambda: self.subbehavior_with_name('center pass').is_done_running(), 
-                        'cetner_pass-passing')
+                        'after getting the ball to the center of the field, pass to the distracting robot')
 
         self.add_transition(distraction.State.passing, 
                         distraction.State.cross, lambda: 
-                        ((self.has_subbehavior_with_name('distract pass') and self.subbehavior_with_name('distract pass').is_done_running()) or 
-                        (self.has_subbehavior_with_name('get close ball') and self.subbehavior_with_name('get close ball').is_done_running())), 
-                        'passing-crossing')
+                        (self.has_subbehavior_with_name('distract pass') and self.subbehavior_with_name('distract pass').is_done_running()) or 
+                        (self.has_subbehavior_with_name('get close ball') and self.subbehavior_with_name('get close ball').is_done_running()), 
+                        'have the distracrting robot capture the ball and go to passing to the striker')
 
         self.add_transition(distraction.State.passing,
                         distraction.State.shoot, lambda: 
                         (self.has_subbehavior_with_name('striker pass') and self.subbehavior_with_name('striker pass').is_done_running() ) or 
                         (self.has_subbehavior_with_name('striker get close ball') and self.subbehavior_with_name('striker get close ball').is_done_running()),
-                        'pass-shoot')
+                        'if the ball is already close to the ball, then go from the striker captureing the ball to shooting the ball')
 
         self.add_transition(distraction.State.cross,
                         distraction.State.shoot, lambda: 
                         self.subbehavior_with_name('pass to striker').is_done_running() or (self.has_subbehavior_with_name('capture 3') and 
                         self.subbehavior_with_name('capture 3').is_done_running()) , 
-                        'crossing-shooting')
+                        'go from the striker receiving the pass to shooting the ball')
 
         self.add_transition(distraction.State.shoot,
                         distraction.State.setup, lambda: 
                         self.has_subbehavior_with_name('shooting') and self.subbehavior_with_name('shooting').is_done_running(), 
                         'repeat')
 
-        
-        self.d1 = robocup.Point(0.40*constants.Field.Width, 0.95*constants.Field.Length) #the first distraction point
-        self.d2 = robocup.Point(0.40*constants.Field.Width, 0.8*constants.Field.Length) #the second distraction point
-        self.s1 = robocup.Point(-0.40*constants.Field.Width, 0.9*constants.Field.Length) #striker's position
-        self.center = robocup.Point(0.5*constants.Field.Width,0.5*constants.Field.Length) #center of field position, used if ball is far
-        self.distract_box_min = robocup.Point(0.33*constants.Field.Width/2,(7/9)*constants.Field.Length)
-        self.distract_box_max = robocup.Point(constants.Field.Width/2, constants.Field.Length)
-        self.striker_box_min = robocup.Point(-0.33*constants.Field.Width/2,(7/9)*constants.Field.Length)
-        self.striker_box_max = robocup.Point(-constants.Field.Width/2, constants.Field.Length)
-
     def on_enter_setup(self):
         #capture ball and get striker and distractor in position
         print("entered setup")
-        self.add_subbehavior(skills.capture.Capture(), 'capture1')
-        self.add_subbehavior(skills.move.Move(self.s1), 'striker moves')
-        self.add_subbehavior(skills.move.Move(self.d2), 'distract moves')
+        self.add_subbehavior(skills.capture.Capture(), 'capture1', required = True)
+        self.add_subbehavior(skills.move.Move(self.striker_point), 'striker moves', required = False, priority = 10)
+        self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'distract moves', required = True)
         #if the ball is too far away to pass across the field
         self.ball_is_far = main.ball().pos.y < (0.4*constants.Field.Length)
         
@@ -122,9 +112,9 @@ class distraction(standard_play.StandardPlay):
     def on_enter_optional_adjustment(self):
         #if the ball is too far then the distractor moves to the center
         print("entered setup2")
-        self.add_subbehavior(skills.capture.Capture(), 'capture 2')
-        self.add_subbehavior(skills.move.Move(self.center), 'move half')
-        self.add_subbehavior(skills.move.Move(self.s1), 'stay')
+        self.add_subbehavior(skills.capture.Capture(), 'capture 2', required = True)
+        self.add_subbehavior(skills.move.Move(self.center), 'move half', required = True)
+        self.add_subbehavior(skills.move.Move(self.striker_point), 'make striker stay', required = True)
         
 
     def on_exit_optional_adjustment(self):
@@ -133,8 +123,8 @@ class distraction(standard_play.StandardPlay):
 
     def on_enter_cetner_pass(self):
         #pass the ball to the robot in the center and move a robot to the distract position 
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.center), 'center pass')
-        self.add_subbehavior(skills.move.Move(self.d2), "move back to distract")
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.center), 'center pass', required = True)
+        self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'move back to distract', required = False, priority = 10)
 
 
     def on_exit_cetner_pass(self):
@@ -145,30 +135,30 @@ class distraction(standard_play.StandardPlay):
         print('entered passing')
         
         
-        pass_to_distract_chance = evaluation.passing.eval_pass( main.ball().pos, self.d2, main.our_robots() )
-        pass_to_striker_chance = evaluation.passing.eval_pass( main.ball().pos, self.s1, main.our_robots() )
-        pass_from_distract_to_striker_chance = evaluation.passing.eval_pass( self.d2, self.s1, main.our_robots() )
-        shot_of_striker_chance1 = evaluation.shooting.eval_shot( self.s1, main.our_robots() )
+        pass_to_distract_chance = evaluation.passing.eval_pass( main.ball().pos, self.distraction_recieve_pass_point, main.our_robots() )
+        pass_to_striker_chance = evaluation.passing.eval_pass( main.ball().pos, self.striker_point, main.our_robots() )
+        shot_of_striker_chance1 = evaluation.shooting.eval_shot( self.striker_point, main.our_robots() )
 
         if self.distract_box_max.x > main.ball().pos.x > self.distract_box_min.x and self.distract_box_max.y > main.ball().pos.y > self.distract_box_min.y:
-
-            self.add_subbehavior(skills.capture.Capture(), 'get close ball')
+            #if the ball is already near the distracter, then no pass will occur and the distracter will just cpature the ball
+            self.add_subbehavior(skills.capture.Capture(), 'get close ball', equired = True)
             print("In box")
         elif self.striker_box_max.x < main.ball().pos.x < self.striker_box_min.x and self.striker_box_max.y > main.ball().pos.y > self.striker_box_min.y:
+            #if the ball is already near the striker, then no pass will occur and the striker will just cpature the ball
             print("in striker box")
-            self.add_subbehavior(skills.capture.Capture(), 'striker get close ball')
+            self.add_subbehavior(skills.capture.Capture(), 'striker get close ball', required = True)
         else:
             print("Out box")
             if pass_to_distract_chance >= pass_to_striker_chance*shot_of_striker_chance1:
-                self.add_subbehavior(skills.move.Move(self.s1), 'stay2 ')
+                self.add_subbehavior(skills.move.Move(self.striker_point), 'make striker stay again', required = True)
                 
-                self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.d2), 'distract pass')
+                self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.distraction_recieve_pass_point), 'distract pass', required = True)
                 
 
             else:
-                self.add_subbehavior(skills.move.Move(self.d1), 'stay2')
+                self.add_subbehavior(skills.move.Move(self.distraction_point), 'make striker stay again', required = True)
                 
-                self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.s1), 'striker pass') 
+                self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.striker_point), 'striker pass', required = True) 
 
 
     def on_exit_passing(self):
@@ -179,11 +169,12 @@ class distraction(standard_play.StandardPlay):
         #if the ball is passed to the distractor the ball is passed to the striker, as the third robot moves to the right to distract more
         print('enter cross')
         if self.striker_box_max.x < main.ball().pos.x < self.striker_box_min.x and self.striker_box_max.y > main.ball().pos.y > self.striker_box_min.y:
-            self.add_subbehavior(skills.capture.Capture(), 'capture 3')
+            #if the ball is already near the striker, then no pass will occur and the striker will just cpature the ball
+            self.add_subbehavior(skills.capture.Capture(), 'capture 3', required = True)
         else:
-            self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.s1), 'pass to striker')
-            self.add_subbehavior(skills.move.Move(self.d1), 'move distract')
-            self.add_subbehavior(skills.move.Move(self.d2), 'shift right')
+            self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.striker_point), 'pass to striker', required = True)
+            self.add_subbehavior(skills.move.Move(self.distraction_point), 'move distract', required = False, priority = 10)
+            self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'shift right', required = False, priority = 10)
         
 
     def on_exit_cross(self):
@@ -196,18 +187,21 @@ class distraction(standard_play.StandardPlay):
         #or
         #the striker will pass to the distractor and the distractor will shoot
         print('enter shoot')
-        pass_striker_to_distractor_chance = evaluation.passing.eval_pass( self.s1, self.d2, main.our_robots() )
-        shot_of_striker_chance = evaluation.shooting.eval_shot( self.s1, main.our_robots() )
-        shot_of_distracotr_chance = evaluation.shooting.eval_shot( self.d2, main.our_robots() )
+        pass_striker_to_distractor_chance = evaluation.passing.eval_pass( self.striker_point, self.distraction_recieve_pass_point, main.our_robots() )
+        shot_of_striker_chance = evaluation.shooting.eval_shot( self.striker_point, main.our_robots() )
+        shot_of_distractor_chance = evaluation.shooting.eval_shot( self.distraction_recieve_pass_point, main.our_robots() )
 
-        if pass_striker_to_distractor_chance*shot_of_distracotr_chance > shot_of_striker_chance:
+        if pass_striker_to_distractor_chance*shot_of_distractor_chance > shot_of_striker_chance:
                 
-                self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.d2), 'distract pass')
-                self.add_subbehavior(skills.move.Move(self.s1), 'stay3')
-                self.add_subbehavior(skills.pivot_kick.PivotKick(), 'shooting')
+                self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.distraction_recieve_pass_point), 'distract pass', required = True)
+                self.add_subbehavior(skills.move.Move(self.striker_point), 'make striker stay 3', required = True)
+                self.add_subbehavior(skills.pivot_kick.PivotKick(), 'shooting', required = True)
                 
 
         else:
-                self.add_subbehavior(skills.move.Move(self.d2), 'stay2')
-                self.add_subbehavior(skills.move.Move(self.d1), 'stay3')
-                self.add_subbehavior(skills.pivot_kick.PivotKick(), 'shooting')
+                self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'make striker stay again', required = True)
+                self.add_subbehavior(skills.move.Move(self.distraction_point), 'make distracor stay', required = False, priority = 10)
+                self.add_subbehavior(skills.pivot_kick.PivotKick(), 'shooting', required = True)
+
+    def on_exit_shoot(self):
+        self.remove_all_subbehaviors()
