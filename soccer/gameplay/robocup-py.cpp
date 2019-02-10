@@ -251,18 +251,21 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
-/*boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
+boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
                                                 Geometry2d::Segment* segment){
     if (segment==nullptr) throw NullArgumentException{"segment"};
     Geometry2d::Point inter_pt1;
     Geometry2d::Point inter_pt2;
-    if (self->intersects(*segment, &inter_pt1, &inter_pt2)) {
-        boost::python::object obj{pt};
-        return obj;
+    boost::python::list lst;
+    if (self->intersects_(*segment, &inter_pt1, &inter_pt2)) {
+        lst.append(inter_pt1);
+        lst.append(inter_pt2);
     } else {
-        return boost::python::object{};
+        lst.append(boost::python::object());
+        lst.append(boost::python::object());
     }
-}*/
+    return boost::python::tuple(lst);
+}
 
 boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
                                                 Geometry2d::Line* line) {
@@ -730,6 +733,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("max_y", &Geometry2d::Rect::maxy)
         .def("near_point", &Geometry2d::Rect::nearPoint)
         .def("intersects_rect", &Geometry2d::Rect::intersects)
+        .def("intersects_segment", &Rect_segment_intersection)
         .def("contains_point", &Geometry2d::Rect::containsPoint)
         .def("get_pt", &Rect_get_pt,
              return_value_policy<reference_existing_object>());

@@ -44,7 +44,7 @@ int Rect::CohenSutherlandCode(const Point& other) const{
     return code;
 }
 
-bool Rect::intersects_(const Segment& other) const{
+bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
 
     //Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line Clipping
     Point p0 = other.pt[0];
@@ -56,6 +56,9 @@ bool Rect::intersects_(const Segment& other) const{
 
     int outcode0 = CohenSutherlandCode(p0);
     int outcode1 = CohenSutherlandCode(p1);
+    
+    intr1, intr2 = nullptr;
+    Point **nextPoint = &intr1;
     bool accept = false;
 
     while (true) {
@@ -82,7 +85,7 @@ bool Rect::intersects_(const Segment& other) const{
             //   y = y0 + slope * (xm - x0), where xm is xmin or xmax
             // No need to worry about divide-by-zero because, in each case, the
             // outcode bit being tested guarantees the denominator is non-zero
-            if (outcodeOut & TOP) {           // point is above the clip window
+            if (outcodeOut & TOP) {  // point is above the clip window
                 x = x0 + (x1 - x0) * (maxy() - y0) / (y1 - y0);
                 y = maxy();
             } else if (outcodeOut & BOTTOM) { // point is below the clip window
@@ -101,13 +104,15 @@ bool Rect::intersects_(const Segment& other) const{
             if (outcodeOut == outcode0) {
                 x0 = x;
                 y0 = y;
-                Point tmp = Point(x0, y0);
-                outcode0 = CohenSutherlandCode(tmp);
+                **nextPoint = Point(x0, y0);
+                outcode0 = CohenSutherlandCode(**nextPoint);
+                nextPoint = &intr2;
             } else {
                 x1 = x;
                 y1 = y;
-                Point tmp = Point(x1, y1);
-                outcode1 = CohenSutherlandCode(tmp);
+                **nextPoint = Point(x0, y0);
+                outcode1 = CohenSutherlandCode(**nextPoint);
+                nextPoint = &intr2;
             }
         }
     }
