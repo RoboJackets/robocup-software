@@ -25,7 +25,9 @@ public:
     SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), directPlanner(),
                           interceptTarget(0,0), averageBallVel(0,0),
                           firstTargetPointFound(false),
-                          firstBallVelFound(false), currentState(Intercept) {};
+                          firstBallVelFound(false),
+                          pathCreatedForDampen(false),
+                          currentState(Intercept) {};
 
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
@@ -50,6 +52,8 @@ private:
     RJ::Seconds averagePathTime;
     bool firstTargetPointFound;
     bool firstBallVelFound;
+
+    bool pathCreatedForDampen;
 
     // static ConfigDouble* _ballSpeedPercentForDampen;
     // static ConfigDouble* _minSpeedToIntercept;

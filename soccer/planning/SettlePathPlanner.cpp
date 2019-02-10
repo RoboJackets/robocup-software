@@ -38,6 +38,7 @@ bool SettlePathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     // Replan whenever the ball changes paths
     // or every X amount of time
     // Also reset the firstTargetPointFound
+
     return true;
 }
 
@@ -94,7 +95,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     const RJ::Seconds partialReplanLeadTime = RRTPlanner::getPartialReplanLeadTime();
 
     // How much of the ball speed to use to dampen the bounce
-    const float ballSpeedPercentForDampen = 0 / 100.0; // %
+    const float ballSpeedPercentForDampen = 1; // %
 
     // Ball speed cutoff to decide when to catch it from behind or get in front of it
     const float minSpeedToIntercept = 0.1; // m/s
@@ -109,6 +110,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     const RJ::Seconds searchEndTime = RJ::Seconds(10);
     const RJ::Seconds searchIncTime = RJ::Seconds(0.2);
 
+    const RJ::Seconds bufferInterceptTime = RJ::Seconds(0.0);
+
     // Gain on the averaging function to smooth the target point to intercept
     // This is due to the high flucations in the ball velocity frame to frame
     // a*newPoint + (1-a)*oldPoint
@@ -119,6 +122,22 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Investigate averaging the angle
     const float ballVelAveragingGain = .1;
 
+    const float maxDistPathTargetChange = 0.5;
+    const float maxAnglePathTargetChange = 20; // deg
+    const float maxBallAngleChangeForPathReset = 20; // deg
+
+    // If the ball changed directions or magnitude really quickly, do a reset of target
+    // But if we are already in another state, it should be very quickly to jump out
+    // and try again
+    if (averageBallVel.angleBetween(planRequest.systemState.ball.vel) > maxBallAngleChangeForPathReset*3.14/180 ||
+        (averageBallVel - planRequest.systemState.ball.vel).mag() > 2) {
+        firstTargetPointFound = false;
+        firstBallVelFound = false;
+        std::cout << "Resetting plan" << std::endl;
+    }
+
+
+    // Smooth out the ball velocity a little bit so we can get a better estimate of intersect points
     if (firstBallVelFound) {
         averageBallVel = ballVelAveragingGain*ball.vel +
                          (1 - ballVelAveragingGain)*averageBallVel;
@@ -129,7 +148,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
-    if (prevPath && currentState != Complete) {
+    if (prevPath) {
         timeIntoPreviousPath = curTime - prevPath->startTime();
 
         // Make sure we still have time in the path to replan and correct
@@ -151,21 +170,24 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
-    if (prevPath) {
-        timeIntoPreviousPath = curTime - prevPath->startTime();
+    if (prevPath && timeIntoPreviousPath < prevPath->getDuration()) {
         Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
         std::unique_ptr<Path> pathSoFar = prevPath->subPath(0ms, timeIntoPreviousPath);
         
         float botDistToBallMovementLine = ballMovementLine.distTo(pathSoFar->end().motion.pos);
 
         // Intercept -> Dampen
-        //  Almost at the end of the path and in the path of the ball
+        //  Almost interescting the ball path
+        //    or Almost at end of the target path
+        //  Actually in front of the ball
+        //
         // TODO: Check ball sense?
-        // TODO: Make sure in front of ball
-        // TODO: Make sure we're reasonably close too (Don't be all the way across the field)
-        if (botDistToBallMovementLine < Robot_Radius &&
-            currentState == Intercept &&
-            false) {
+        if (//botDistToBallMovementLine < Robot_Radius &&
+            timeIntoPreviousPath < prevPath->getDuration() - 1.5*partialReplanLeadTime &&
+            (pathSoFar->end().motion.pos - prevPath->end().motion.pos).mag() < 3*Robot_Radius &&
+            (pathSoFar->end().motion.pos - ballMovementLine.pt[0]).mag() >
+                (pathSoFar->end().motion.pos - ballMovementLine.pt[1]).mag() &&
+            currentState == Intercept) {
             
             startInstant = pathSoFar->end().motion;
             currentState = Dampen;
@@ -175,7 +197,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // Dampen -> Complete
         //  Almost at the end of the path
         //  TODO: Make sure ball was hit or slowed down
-        else if (timeIntoPreviousPath >= prevPath->getDuration() - 2*partialReplanLeadTime &&
+        else if (timeIntoPreviousPath >= prevPath->getDuration() - 1.1*partialReplanLeadTime &&
             currentState == Dampen && false) {
             
             currentState = Complete;
@@ -187,7 +209,6 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     case Intercept: {
         // Try find best point to intercept using old method
         // where we check ever X distance along the ball velocity vector
-        // TODO: Try the pronav algorithm
         for (float dist = 0; dist < 5; dist += 0.05) {
             Point ballVelIntercept;
             RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(ball.pos + averageBallVel.normalized()*dist, &ballVelIntercept) - curTime);
@@ -199,10 +220,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             // Take the delta between old and new mouth vector and move
             // targetRobotIntersection by that amount
 
-            // TODO: Improve velocity target
-            //       May be able to just dampen here instead of another state
-
-            // TODO: Dodge ball untill after reaching intercept point
+            // TODO: Dodge ball until after reaching intercept point
             targetRobotIntersection.vel = Point(0, 0);
 
             std::unique_ptr<Path> path =
@@ -212,7 +230,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                 RJ::Seconds timeOfArrival = path->getDuration();
 
                 // We can reach the target point before 
-                if (timeOfArrival + partialPathTime + 200ms <= t) {
+                if (timeOfArrival + partialPathTime + bufferInterceptTime <= t) {
                     // No path found yet so there is nothing to average
                     if (!firstTargetPointFound) {
                         interceptTarget = targetRobotIntersection.pos;
@@ -226,8 +244,23 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                         if (partialPath) {
                             if ((path->start().motion.vel - partialPath->end().motion.vel).mag() > 0.5) {
                                 std::cout << "Broken path" << std::endl;
-                                break;
                             }
+                        }
+
+                        // Stop any velocity estimation outliers from affecting the path target too much
+                        // creating a unachievable path and subsequently causing a large drop in the velocity
+                        // at the next state in time
+                        // See issue #1239
+                        // 
+                        // This is will not catch all "bad" paths, but it should get most of them
+                        Point robotToNew = targetRobotIntersection.pos - startInstant.pos;
+                        Point robotToOld = interceptTarget - startInstant.pos;
+                        float angle = robotToNew.angleBetween(robotToOld);
+
+                        if (angle > maxAnglePathTargetChange*3.14/180) {
+                            targetRobotIntersection.pos = targetRobotIntersection.pos + 
+                                (interceptTarget - targetRobotIntersection.pos).norm() * sin(maxAnglePathTargetChange*3.14/180);
+                            std::cout << "Angle too large" << std::endl;
                         }
 
                         interceptTarget = targetPointAveragingGain * targetRobotIntersection.pos +
@@ -290,7 +323,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
     case Dampen: {
-        std::cout << "Entered dampen state" << std::endl;
+        // Only run once?
+
         // Intercept ends with a % ball velocity in the direction of the ball movement
         // Slow down once ball is nearby to 0 m/s
 
@@ -307,6 +341,20 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // TODO: Realize the ball will probably bounce off the robot
         // so we can use that vector to stop
         // Save vector and use that?
+
+        if (pathCreatedForDampen) {
+            if (prevPath) {
+                std::cout << "Using same" << std::endl;
+                return std::move(prevPath);
+            }
+        }
+
+        if (prevPath) {
+            startInstant = prevPath->end().motion;
+            std::cout << "Valid prev path" << std::endl;
+        }
+
+        pathCreatedForDampen = true;
 
         // Using the current velocity
         // Calculate stopping point along the ball path
@@ -353,12 +401,14 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         std::unique_ptr<Path> dampenEnd = directPlanner.run(request);
         dampenEnd->setDebugText("Damping");
 
-        if (partialPath) {
-            dampenEnd = std::make_unique<CompositePath>(std::move(partialPath),
+        if (prevPath) {
+            RJ::Time newStartTime = prevPath->startTime();
+            dampenEnd = std::make_unique<CompositePath>(std::move(prevPath),
                                                 std::move(dampenEnd));
-            dampenEnd->setStartTime(prevPath->startTime());
+            dampenEnd->setStartTime(newStartTime);
         }
 
+        std::cout << "New damp path" << std::endl;
         return make_unique<AngleFunctionPath>(
             std::move(dampenEnd),
             angleFunctionForCommandType(FacePointCommand(ball.pos)));

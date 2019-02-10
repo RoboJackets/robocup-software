@@ -127,20 +127,23 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 
     motionConstraints.maxAcceleration *= approachAccelScalePercent;
 
+    // Figure out the vector from the robot into the ball
+    // about what the robot should follow
+    Point approachDirection = -ball.vel;
+
+    // If it's almost 0, approach 
+    if (approachDirection.magsq() < 0.1) {
+        approachDirection = (startInstant.pos - ball.pos).norm();
+    } else {
+        approachDirection = approachDirection.norm();
+    }
+
     switch (currentState) {
     case Approach: {
 
         // The target position shouldn't be the ball, it should be where the mouth
         // is touching the ball
         // Move to ball position matching ball speed
-        Point approachDirection = -ball.vel;
-
-        // If it's almost 0, approach 
-        if (approachDirection.magsq() < 0.01) {
-            approachDirection = (startInstant.pos - ball.pos).norm();
-        } else {
-            approachDirection = approachDirection.norm();
-        }
 
         Point targetPos = ball.pos + approachDirection * 0.09;
         
@@ -180,7 +183,11 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
     case Control: {
+        // Keep moving at the ball at vel slightly larger until past the ball
+        // Ignore ball hitbox
         // Stop movement
+
+
 
         // Using the current velocity
         // Calculate stopping point along the ball path
