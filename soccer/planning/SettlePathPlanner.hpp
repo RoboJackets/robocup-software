@@ -35,7 +35,7 @@ public:
         return MotionCommand::Settle;
     }
 
-    // static void createConfiguration(Configuration* cfg);
+    static void createConfiguration(Configuration* cfg);
 
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
@@ -55,18 +55,38 @@ private:
 
     bool pathCreatedForDampen;
 
-    // static ConfigDouble* _ballSpeedPercentForDampen;
-    // static ConfigDouble* _minSpeedToIntercept;
-    // static ConfigDouble* _maxAngleOffBallForDampen;
-    // static ConfigDouble* _searchStartTime;
-    // static ConfigDouble* _searchEndTime;
-    // static ConfigDouble* _searchIncTime;
-
-    // static double ballSpeedPercentForDampen = (double) *_ballSpeedPercentForDampen;
-    // static double minSpeedToIntercept = (double) *_minSpeedToIntercept;
-    // static double maxAngleOffBallForDampen = (double) *_maxAngleOffBallForDampen;
-    // static double searchStartTime = (double) *_searchStartTime;
-    // static double searchEndTime = (double) *_searchEndTime;
-    // static double searchIncTime = (double) *_searchIncTime;
+    // How much of the ball seed to contact the ball with
+    // before slowing down to dampen the initial hit
+    static ConfigDouble* _ballSpeedPercentForDampen; // %
+    // Earliest time to start searching for intercept points
+    static ConfigDouble* _searchStartTime; // Secs
+    // Latest time to search for intercept points
+    static ConfigDouble* _searchEndTime; // Secs
+    // What increment of time to search for intercepts
+    static ConfigDouble* _searchIncTime; // Secs
+    // How much sooner should we reach the intercept point than we need to
+    // Increase this to give us more time to reach the point to
+    // compensate for bad motion control
+    static ConfigDouble* _interceptBufferTime; // Sec
+    // Gain on the averaging function to smooth the target point to intercept
+    // This is due to the high flucations in the ball velocity frame to frame
+    // a*newPoint + (1-a)*oldPoint
+    // The lower the number, the less noise affects the system, but the slower it responds to changes
+    // The higher the number, the more noise affects the system, but the faster it responds to changes
+    static ConfigDouble* _targetPointGain;
+    // Gain on the averaging function to smooth the ball velocity to for any motion commands
+    // This is due to the high flucations in the ball velocity frame to frame
+    // a*newPoint + (1-a)*oldPoint
+    // The lower the number, the less noise affects the system, but the slower it responds to changes
+    // The higher the number, the more noise affects the system, but the faster it responds to changes    
+    static ConfigDouble* _ballVelGain;
+    // Limits the max change in angle for the target intercept point
+    // This is due to a bug in the velocity path planner
+    // sometimes dropping speed significantly for a single frame
+    // and messing up the intercept target
+    static ConfigDouble* _maxAnglePathTargetChange; // Deg
+    // If the ball velocity angle changes by a large amount
+    // we want to quickly react and clear all the smoothing filters 
+    static ConfigDouble* _maxBallAngleForReset; // Deg
 };
 }

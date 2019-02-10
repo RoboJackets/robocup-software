@@ -1,5 +1,7 @@
 #include "SettlePathPlanner.hpp"
 
+#include <cmath>
+
 #include "CompositePath.hpp"
 #include "MotionInstant.hpp"
 #include "Configuration.hpp"
@@ -10,35 +12,40 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-// REGISTER_CONFIGURABLE(SettlePathPlanner);
+REGISTER_CONFIGURABLE(SettlePathPlanner);
 
-// ConfigDouble* SettlePathPlanner::_ballSpeedPercentForDampen;
-// ConfigDouble* SettlePathPlanner::_minSpeedToIntercept;
-// ConfigDouble* SettlePathPlanner::_maxAngleOffBallForDampen;
-// ConfigDouble* SettlePathPlanner::_searchStartTime;
-// ConfigDouble* SettlePathPlanner::_searchEndTime;
-// ConfigDouble* SettlePathPlanner::_searchIncTime;
+ConfigDouble* SettlePathPlanner::_ballSpeedPercentForDampen;
+ConfigDouble* SettlePathPlanner::_searchStartTime;
+ConfigDouble* SettlePathPlanner::_searchEndTime;
+ConfigDouble* SettlePathPlanner::_searchIncTime;
+ConfigDouble* SettlePathPlanner::_interceptBufferTime;
+ConfigDouble* SettlePathPlanner::_targetPointGain;
+ConfigDouble* SettlePathPlanner::_ballVelGain;
+ConfigDouble* SettlePathPlanner::_maxAnglePathTargetChange;
+ConfigDouble* SettlePathPlanner::_maxBallAngleForReset; 
 
-// void SettlePathPlanner::createConfiguration(Configuration* cfg) {
-//     _ballSpeedPercentForDampen =
-//         new ConfigDouble(cfg, "SettlePathPlanner/ballSpeedPercentForDampen", 0.1); // %
-//     _minSpeedToIntercept =
-//         new ConfigDouble(cfg, "SettlePathPlanner/minSpeedToIntercept", 0.1); // m/s
-//     _maxAngleOffBallForDampen =
-//         new ConfigDouble(cfg, "SettlePathPlanner/maxAngleOffBallForDampen", 45); // Deg
-//     _searchStartTime=
-//         new ConfigDouble(cfg, "SettlePathPlanner/searchStartTime", 0.1); // Seconds
-//     _searchEndTime =
-//         new ConfigDouble(cfg, "SettlePathPlanner/searchEndTime", 6.0); // Seconds
-//     _searchIncTime =
-//         new ConfigDouble(cfg, "SettlePathPlanner/searchIncTime", 0.2); // Seconds
-// }
+void SettlePathPlanner::createConfiguration(Configuration* cfg) {
+    _ballSpeedPercentForDampen =
+        new ConfigDouble(cfg, "Capture/Settle/ballSpeedPercentForDampen", 0.1); // %
+    _searchStartTime =
+        new ConfigDouble(cfg, "Capture/Settle/searchStartTime", 0.1); // Seconds
+    _searchEndTime =
+        new ConfigDouble(cfg, "Capture/Settle/searchEndtime", 10.0); // Seconds
+    _searchIncTime =
+        new ConfigDouble(cfg, "Capture/Settle/searchIncTime", 0.2); // Seconds
+    _interceptBufferTime =
+        new ConfigDouble(cfg, "Capture/Settle/interceptBufferTime", 0.0); // Seconds
+    _targetPointGain =
+        new ConfigDouble(cfg, "Capture/Settle/targetPointGain", 0.1);
+    _ballVelGain =
+        new ConfigDouble(cfg, "Capture/Settle/ballVelGain", 0.1);
+    _maxAnglePathTargetChange =
+        new ConfigDouble(cfg, "Capture/Settle/maxAnglePathTargetChange", 20); // Deg
+    _maxBallAngleForReset =
+        new ConfigDouble(cfg, "Capture/Settle/maxBallAngleForReset", 20); // Deg
+}
 
 bool SettlePathPlanner::shouldReplan(const PlanRequest& planRequest) const {
-    // Replan whenever the ball changes paths
-    // or every X amount of time
-    // Also reset the firstTargetPointFound
-
     return true;
 }
 
@@ -94,42 +101,25 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // How much of the previous path to steal
     const RJ::Seconds partialReplanLeadTime = RRTPlanner::getPartialReplanLeadTime();
 
-    // How much of the ball speed to use to dampen the bounce
-    const float ballSpeedPercentForDampen = 1; // %
-
-    // Ball speed cutoff to decide when to catch it from behind or get in front of it
-    const float minSpeedToIntercept = 0.1; // m/s
-
     // Max angle from the ball vector when trying to bounce the ball
     // on dampen when trying to speed up actions after captures
     const float maxAngleoffBallForDampen = 45; // deg
 
     // Search settings when trying to find the correct intersection location
     // between the fast moving ball and our collecting robot
-    const RJ::Seconds searchStartTime = RJ::Seconds(0.1);
-    const RJ::Seconds searchEndTime = RJ::Seconds(10);
-    const RJ::Seconds searchIncTime = RJ::Seconds(0.2);
+    const RJ::Seconds searchStartTime = RJ::Seconds(*_searchStartTime);
+    const RJ::Seconds searchEndTime = RJ::Seconds(*_searchEndTime);
+    const RJ::Seconds searchIncTime = RJ::Seconds(*_searchIncTime);
 
-    const RJ::Seconds bufferInterceptTime = RJ::Seconds(0.0);
+    const RJ::Seconds bufferInterceptTime = RJ::Seconds(*_interceptBufferTime);
 
-    // Gain on the averaging function to smooth the target point to intercept
-    // This is due to the high flucations in the ball velocity frame to frame
-    // a*newPoint + (1-a)*oldPoint
-    // The lower the number, the less noise affects the system, but the slower it responds to changes
-    // The higher the number, the more noise affects the system, but the faster it responds to changes
-    const float targetPointAveragingGain = .1;
-
-    // Investigate averaging the angle
-    const float ballVelAveragingGain = .1;
-
-    const float maxDistPathTargetChange = 0.5;
-    const float maxAnglePathTargetChange = 20; // deg
-    const float maxBallAngleChangeForPathReset = 20; // deg
+    const float maxAnglePathTargetChange = *_maxAnglePathTargetChange*M_PI/180.0f;
+    const float maxBallAngleChangeForPathReset = *_maxBallAngleForReset*M_PI/180.0f;
 
     // If the ball changed directions or magnitude really quickly, do a reset of target
     // But if we are already in another state, it should be very quickly to jump out
     // and try again
-    if (averageBallVel.angleBetween(planRequest.systemState.ball.vel) > maxBallAngleChangeForPathReset*3.14/180 ||
+    if (averageBallVel.angleBetween(planRequest.systemState.ball.vel) > maxBallAngleChangeForPathReset ||
         (averageBallVel - planRequest.systemState.ball.vel).mag() > 2) {
         firstTargetPointFound = false;
         firstBallVelFound = false;
@@ -139,8 +129,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
     // Smooth out the ball velocity a little bit so we can get a better estimate of intersect points
     if (firstBallVelFound) {
-        averageBallVel = ballVelAveragingGain*ball.vel +
-                         (1 - ballVelAveragingGain)*averageBallVel;
+        averageBallVel = *_ballVelGain * ball.vel +
+                         (1 - *_ballVelGain) * averageBallVel;
     } else {
         averageBallVel = ball.vel;
         firstBallVelFound = true;
@@ -257,17 +247,17 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                         Point robotToOld = interceptTarget - startInstant.pos;
                         float angle = robotToNew.angleBetween(robotToOld);
 
-                        if (angle > maxAnglePathTargetChange*3.14/180) {
+                        if (angle > maxAnglePathTargetChange) {
                             targetRobotIntersection.pos = targetRobotIntersection.pos + 
-                                (interceptTarget - targetRobotIntersection.pos).norm() * sin(maxAnglePathTargetChange*3.14/180);
+                                (interceptTarget - targetRobotIntersection.pos).norm() * sin(maxAnglePathTargetChange);
                             std::cout << "Angle too large" << std::endl;
                         }
 
-                        interceptTarget = targetPointAveragingGain * targetRobotIntersection.pos +
-                                        (1 - targetPointAveragingGain) * interceptTarget;
+                        interceptTarget = *_targetPointGain * targetRobotIntersection.pos +
+                                        (1 - *_targetPointGain) * interceptTarget;
 
-                        averagePathTime = targetPointAveragingGain * t +
-                                        (1 - targetPointAveragingGain) * averagePathTime;
+                        averagePathTime = *_targetPointGain * t +
+                                        (1 - *_targetPointGain) * averagePathTime;
                     }
                                         
                     break;
@@ -280,7 +270,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             // Try and use the previous path for the first part so it will actually make the initial turn
             MotionInstant targetRobotIntersection(interceptTarget);
             std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
-            targetRobotIntersection.vel = ballSpeedPercentForDampen*averageBallVel;
+            targetRobotIntersection.vel = *_ballSpeedPercentForDampen * averageBallVel;
 
             std::unique_ptr<Path> interceptAndDampenStart =
                     RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, targetRobotIntersection.vel);
@@ -351,7 +341,6 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
         if (prevPath) {
             startInstant = prevPath->end().motion;
-            std::cout << "Valid prev path" << std::endl;
         }
 
         pathCreatedForDampen = true;
