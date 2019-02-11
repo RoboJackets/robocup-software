@@ -42,6 +42,7 @@ class Wall(composite_behavior.CompositeBehavior):
     def on_enter_defense_wall(self):
         self.remove_all_subbehaviors()
         midpoint = self.arc_midpoint()
+        #angle = (midpoint - self.defense_point).angle()
         angle = (math.atan2(midpoint.x - self.defense_point.x, midpoint.y - self.defense_point.y))
         for i in range(self.number_of_defenders):
             pt = None
@@ -70,10 +71,7 @@ class Wall(composite_behavior.CompositeBehavior):
 
     # Finds the point on the line between the defense and mark point that is the distance specified from the mark point
     def arc_midpoint(self):
-        dist_from_defense_and_mark = (self.mark_point - self.defense_point).mag()
-        x_pt = self.mark_point.x + self.dist_from_mark / dist_from_defense_and_mark * (self.defense_point.x - self.mark_point.x)
-        y_pt = self.mark_point.y + self.dist_from_mark / dist_from_defense_and_mark * (self.defense_point.y - self.mark_point.y)
-        return robocup.Point(x_pt, y_pt)
+        return self.mark_point + (self.defense_point - self.mark_point).normalized() * self.dist_from_mark
 
     @property
     def defense_point(self):
