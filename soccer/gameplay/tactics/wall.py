@@ -52,7 +52,7 @@ class Wall(composite_behavior.CompositeBehavior):
     # Finds the point on the arc the defender should move to
     def calculate_destination(self, midpoint, angle, robot_number):
         defender_number = robot_number - self.number_of_defenders / 2 + .5
-        x_perp = robocup.Point(1, self.defense_point.y)
+        x_perp = robocup.Point(1, self.defense_point.y) #TODO FIX
         x_perp.rotate(self.defense_point, angle + defender_number * self.curvature + math.pi/2)
         return midpoint + x_perp * constants.Robot.Radius * self.defender_spacing * defender_number        
 
