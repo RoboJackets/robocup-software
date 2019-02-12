@@ -18,7 +18,7 @@ class Wall(composite_behavior.CompositeBehavior):
                  mark_point = None,                         # what point we are defending against (default is ball)
                  defender_point = robocup.Point(0, 0),      # what point we are defending (default is goal)
                  defender_spacing = 3,                      # number of robot radii between the centers of the defenders in the wall
-                 dist_from_mark = 1):                       # distance from the mark point we want to build the wall
+                 dist_from_mark = .5):                       # distance from the mark point we want to build the wall
         super().__init__(continuous=True)
 
         self.number_of_defenders = num_defenders
@@ -41,15 +41,14 @@ class Wall(composite_behavior.CompositeBehavior):
 
     def on_enter_defense_wall(self):
         self.remove_all_subbehaviors()
-        midpoint = self.arc_midpoint()
-        #angle = (midpoint - self.defense_point).angle()
-        angle = (math.atan2(midpoint.x - self.defense_point.x, midpoint.y - self.defense_point.y))
+        midpoint = self.mark_point + (self.defense_point - self.mark_point).normalized() * self.dist_from_mark
+        angle = (midpoint - self.defense_point).angle()
         for i in range(self.number_of_defenders):
             pt = None
             if self.number_of_defenders % 2 != 0:
                 pt = self.point_on_arc(midpoint, angle, i - int(self.number_of_defenders / 2))
             else:
-                pt = self.point_on_arc(midpoint, angle, i - self.number_of_defenders / 2 + .5)
+                pt = self.point_on_arc(midpoint, angle, i - int(self.number_of_defenders / 2) + .5)
             self.add_subbehavior(
                 skills.move.Move(pt),
                 name="robot" + str(i),
@@ -65,13 +64,9 @@ class Wall(composite_behavior.CompositeBehavior):
 
     # Finds the point on the wall (arc) at which the defender robot should move to
     def point_on_arc(self, midpoint, angle, defender_number):
-        x_pt = midpoint.x - defender_number * (constants.Robot.Radius * self.defender_spacing) * math.cos(angle + (defender_number * self.curvature))
-        y_pt = midpoint.y + defender_number * (constants.Robot.Radius * self.defender_spacing) * math.sin(angle + (defender_number * self.curvature))
-        return robocup.Point(x_pt,y_pt)
-
-    # Finds the point on the line between the defense and mark point that is the distance specified from the mark point
-    def arc_midpoint(self):
-        return self.mark_point + (self.defense_point - self.mark_point).normalized() * self.dist_from_mark
+        x_perp = robocup.Point(1, 0)
+        x_perp.rotate(self.defense_point, angle + defender_number * self.curvature + math.pi/2)
+        return midpoint + x_perp * constants.Robot.Radius * self.defender_spacing * defender_number
 
     @property
     def defense_point(self):
