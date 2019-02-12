@@ -7,6 +7,7 @@ import robocup
 import evaluation
 import constants
 import math
+from enum import Enum
 
 
 class Basic122(standard_play.StandardPlay):
@@ -23,37 +24,56 @@ class Basic122(standard_play.StandardPlay):
     # multiplier used to decide when it's worth it to reassign the bot a support is marking
     MarkHysteresisCoeff = 0.9
 
+    class State(Enum):
+        # Normal offensive state
+        attack = 1
+        # Stay out of the way of defense clearing the ball
+        clear = 2
+
+
     def __init__(self):
         super().__init__(continuous=False)  # FIXME: continuous?
 
-        striker = skills.pivot_kick.PivotKick()
-        striker.aim_params['error_threshold'] = 0.15
-        striker.aim_params['max_steady_ang_vel'] = 7
-        striker.aim_params['min_steady_duration'] = 0.1
-        striker.aim_params['desperate_timeout'] = 2.5
+        self.striker = skills.pivot_kick.PivotKick()
+        self.striker.aim_params['error_threshold'] = 0.15
+        self.striker.aim_params['max_steady_ang_vel'] = 7
+        self.striker.aim_params['min_steady_duration'] = 0.1
+        self.striker.aim_params['desperate_timeout'] = 2.5
+
+        self.add_state(Basic122.State.attack, behavior.Behavior.State.running)
+        self.add_state(Basic122.State.clear, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running, lambda: True,
+                            Basic122.State.attack, lambda: True,
                             "immediately")
 
-        striker.add_transition(behavior.Behavior.State.completed,
-                               behavior.Behavior.State.start, lambda: True,
+        self.add_transition(behavior.Behavior.State.completed,
+                               Basic122.State.attack, lambda: True,
                                "immediately")
-        self.add_subbehavior(striker, 'striker', required=False, priority=3)
+        self.add_transition(Basic122.State.attack, Basic122.State.clear,
+                                lambda: self.subbehavior_with_name("defense").state == tactics.defense.Defense().State.clearing,
+                                "Defense is clearing")
+        self.add_transition(Basic122.State.clear, Basic122.State.attack,
+                                lambda: self.subbehavior_with_name("defense").state == tactics.defense.Defense().State.defending,
+                                "Defense is not clearing")
 
-        support1 = skills.mark.Mark()
-        support1.mark_line_thresh = 1.0
-        self.add_subbehavior(support1, 'support1', required=False, priority=2)
 
-        support2 = skills.mark.Mark()
-        support2.mark_line_thresh = 1.0
-        self.add_subbehavior(support2, 'support2', required=False, priority=1)
+        self.support1 = skills.mark.Mark()
+        self.support1.mark_line_thresh = 1.0
+
+        self.support2 = skills.mark.Mark()
+        self.support2.mark_line_thresh = 1.0
 
     @classmethod
     def score(cls):
         return 10 if main.game_state().is_playing() else float("inf")
 
-    def execute_running(self):
+    def on_enter_attack(self):
+        self.add_subbehavior(self.striker, 'striker', required=False, priority=3)
+        self.add_subbehavior(self.support1, 'support1', required=False, priority=2)
+        self.add_subbehavior(self.support2, 'support2', required=False, priority=1)
+
+    def execute_attack(self):
         super().execute_running()
         striker = self.subbehavior_with_name('striker')
         support1 = self.subbehavior_with_name('support1')
@@ -181,3 +201,8 @@ class Basic122(standard_play.StandardPlay):
             # make the kicker try again if it already kicked
         if not striker.is_in_state(behavior.Behavior.State.running):
             striker.restart()
+
+    def on_exit_attack(self):
+        self.remove_subbehavior("striker")
+        self.remove_subbehavior("support1")
+        self.remove_subbehavior("support2")
