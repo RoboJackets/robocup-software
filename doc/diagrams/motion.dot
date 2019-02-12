@@ -1,0 +1,58 @@
+digraph Motion {
+    label="Motion Dataflow";
+
+    subgraph cluster_highlevel {
+        label="High-level Commands";
+
+        move_cmd [label="move()"];
+        pivotTo_cmd [label="pivotTarget()"];
+        face_cmd [label="face()"];
+        worldVel_cmd [label="worldVel()"];
+        stop_cmd [label="stop()"];
+    }
+
+    {
+        node [color=blue];
+
+        posTarget [label="target S"];
+        velTarget [label="target S'"];
+        faceTarget [label="target theta"];
+        targetAngleVel [label="target theta'"];
+        pivotTarget;
+    }
+
+    path;
+
+    subgraph cluster_RobotCommand {
+        label="Robot Command";
+
+        vel [label="S'"];
+        angleVel [label="theta'"];
+    }
+
+    /*{
+        node [shape=rect];
+
+        path_constraints [label="startSpeed\nmaxSpeed\nendSpeed\nmaxAccel"];
+        angleVel_constraints [label="maxAngleVel\nmaxAngleAcc"];
+        path_to_vel_constraints [label="error\nPID"];
+        targetAngleVel_to_angleVel_constraints [label="PID"];
+    }*/
+
+    move_cmd -> posTarget;
+    pivotTo_cmd -> pivotTarget;
+    face_cmd -> {faceTarget};
+    worldVel_cmd -> velTarget;
+    stop_cmd -> {velTarget, targetAngleVel};
+
+
+    velTarget -> vel;
+    targetAngleVel -> angleVel;
+
+    posTarget -> path;
+    path -> vel;
+
+    faceTarget -> angleVel;
+
+    pivotTarget -> {vel, angleVel};
+}

@@ -1,0 +1,93 @@
+<config>
+	<motionModule>
+		<robot>
+			<axles>
+	            <axle x="1" y="1" />
+	            <axle x="1" y="-1" />
+	            <axle x="-1" y="-1" />
+	            <axle x="-1" y="1" />
+        	</axles>
+		</robot>
+	</motionModule>
+	
+	<!-- Map from robot types to revision -->
+	<revLUT>
+		<rev2008>
+			<robot id="0"/>
+			<robot id="1"/>
+			<robot id="2"/>
+			<robot id="3"/>
+			<robot id="4"/>
+			<robot id="5"/>
+			<robot id="6"/>
+			<robot id="7"/>
+			<robot id="8"/>
+			<robot id="9"/>
+			<robot id="10"/>
+			<robot id="11"/>
+			<robot id="12"/>
+			<robot id="13"/>
+			<robot id="14"/>
+			<robot id="15"/>
+		</rev2008>
+	</revLUT>
+	     
+	<robots>
+		<!-- Default 2008 robot -->	  
+	    <robot id="2008" rev="rev2008">	     
+   			<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.2" acceleration="3.33" deceleration="1.5" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="50" deceleration="0" />
+					
+					<pid type="angle" p="2.75" i="0" d="0" />
+				</rotation>
+				
+				<!-- output filtering -->
+				<coeffs>
+					<coeff value="10.0"/>
+					<coeff value="0.0"/>
+					<coeff value="0.0"/>
+					<coeff value="0.0"/>
+				</coeffs>
+			</motion>
+			
+			<kicker m="71.17" b="-2.7" />
+	    </robot>
+	    
+	</robots>
+	
+	<worldModel>
+	    <pos>
+	    	<filter alpha="1" beta="0" gamma="0" />
+	    </pos>
+	    <angle>
+	    	<filter alpha="1" beta="0" gamma="0" />
+	    </angle>
+	    <abgModelRobot>
+	        <abgModelRobot alphaPos="1.0" betaPos="1.0" gammaPos="1.0" alphaAng="1.0" betaAng="1.0" gammaAng="1.0" />
+	    </abgModelRobot>
+	    <kalmanModelRobot>
+	        <kalmanModelRobot covPosVel="10.0" covVelAcc="0.01" covPosAcc="0.001" covPos="10.0" covVel="10.0" covAcc="10.0" measurementNoise="0.1" />
+	    </kalmanModelRobot>
+	    <rbpfModelBallRolling>
+	        <rbpfModelBallRolling processNoiseSqrdPos="0.05" processNoiseSqrdVel="1.0" processNoiseSqrdAcc="1.0" measurementNoiseSqrd="0.01" />
+	    </rbpfModelBallRolling>
+	    <rbpfModelBallKicked>
+	        <rbpfModelBallKicked processNoiseSqrdPos="0.2" processNoiseSqrdVel="1.0" processNoiseSqrdAcc="10.0" measurementNoiseSqrd="0.01" />
+	    </rbpfModelBallKicked>
+	    <ball>
+	    </ball>
+	</worldModel>
+</config>

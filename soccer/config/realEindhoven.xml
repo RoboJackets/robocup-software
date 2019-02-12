@@ -1,0 +1,189 @@
+<config>
+ <Rev2008>
+  <translation>
+   <p value="3"/>
+   <i value="0"/>
+   <i_windup value="0"/>
+   <d value="0.4"/>
+   <velMultiplier value="0.9"/>
+   <accelMultiplier value="20"/>
+  </translation>
+  <rotation>
+   <p value="0.1"/>
+   <i value="0.003"/>
+   <i_windup value="0"/>
+   <d value="0.05"/>
+   <velMultiplier value="0.15"/>
+  </rotation>
+  <kicker>
+   <maxKick value="40"/>
+   <maxChip value="150"/>
+  </kicker>
+  <pivot>
+   <velMultiplier value="0.25"/>
+  </pivot>
+  <dribbler>
+   <multiplier value="1"/>
+  </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
+ </Rev2008>
+ <Rev2011>
+  <translation>
+   <p value="4"/>
+   <i value="0"/>
+   <i_windup value="0"/>
+   <accelMultiplier value="16"/>
+   <d value="0.2"/>
+   <velMultiplier value="0.73"/>
+  </translation>
+  <rotation>
+   <p value="0.14"/>
+   <i value="0.0025"/>
+   <i_windup value="0"/>
+   <d value="0.05"/>
+   <velMultiplier value="0.3"/>
+  </rotation>
+  <kicker>
+   <maxKick value="120"/>
+   <maxChip value="150"/>
+  </kicker>
+  <pivot>
+   <velMultiplier value="0.006"/>
+  </pivot>
+  <dribbler>
+   <multiplier value="0.75"/>
+  </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
+ </Rev2011>
+ <Robot_Statuses>
+  <Robot_0>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_0>
+  <Robot_1>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_1>
+  <Robot_2>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_2>
+  <Robot_3>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_3>
+  <Robot_4>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_4>
+  <Robot_5>
+   <Chipper_Enabled value="false"/>
+   <Kicker_Enabled value="false"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_5>
+  <Robot_6>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_6>
+  <Robot_7>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_7>
+  <Robot_8>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_8>
+  <Robot_9>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_9>
+  <Robot_10>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_10>
+  <Robot_11>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_11>
+  <Robot_12>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_12>
+  <Robot_13>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_13>
+  <Robot_14>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_14>
+  <Robot_15>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_15>
+ </Robot_Statuses>
+ <ChipCalibration>
+  <_a0 value="-3.90845"/>
+  <_a1 value="0.0873787"/>
+  <_a2 value="-0.000365537"/>
+  <_a3 value="4.37278e-07"/>
+  <Dribble_Speed value="40"/>
+  <Max_Chip_Distance value="2.5"/>
+  <Roll_Distance value="0.1"/>
+ </ChipCalibration>
+ <MotionControl>
+  <Max_Acceleration value="1.5"/>
+  <Max_Velocity value="3"/>
+  <PathJitterCompensationFactor value="2"/>
+  <PathChangeBoost value="50"/>
+ </MotionControl>
+ <PathPlanner>
+  <Max_Acceleration value="1"/>
+  <Max_Velocity value="2"/>
+  <selfAvoidRadius value="0.09"/>
+  <oppAvoidRadius value="0.08"/>
+  <oppGoalieAvoidRadius value="0.14"/>
+ </PathPlanner>
+ <MotionConstraints>
+  <Max_Acceleration value="0.9"/>
+  <Max_Velocity value="2.3"/>
+  <Max_Angle_Speed value="0.436"/>
+ </MotionConstraints>
+</config>

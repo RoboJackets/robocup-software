@@ -1,0 +1,166 @@
+<config>
+	<motionModule>
+		<robot>
+			<axles>
+	            <axle x="1" y="1" />
+	            <axle x="1" y="-1" />
+	            <axle x="-1" y="-1" />
+	            <axle x="-1" y="1" />
+        	</axles>
+		</robot>
+	</motionModule>
+
+	<robots>
+	    <robot id="10">
+	    	<!-- done -->      
+	    	<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.85250468293" acceleration="4.76765854021" deceleration="1.78787195257875" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="0" deceleration="0" />
+					
+					<pid type="angle" p=".4" i="0" d="0" />
+				</rotation>
+			</motion>
+			
+			<kicker m="10" b="0" />
+	    </robot>
+	    <robot id="11">	        
+	    	<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.85250468293" acceleration="4.76765854021" deceleration="1.78787195257875" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="0" deceleration="0" />
+					
+					<pid type="angle" p=".4" i="0" d="0" />
+				</rotation>
+			</motion>
+			
+			<kicker m="20" b="0" />
+	    </robot>
+	    <robot id="9">	        
+	    	<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.561498886644" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.85250468293" acceleration="4.76765854021" deceleration="1.448176281589" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="0" deceleration="0" />
+					
+					<pid type="angle" p=".4" i="0" d="0" />
+				</rotation>
+			</motion>
+			
+			<kicker m="20" b="0" />
+	    </robot>
+	    <robot id="3">	        
+	    	<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.85250468293" acceleration="4.76765854021" deceleration="1.78787195257875" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="0" deceleration="0" />
+					
+					<pid type="angle" p=".4" i="0" d="0" />
+				</rotation>
+			</motion>
+			
+			<kicker m="20" b="0" />
+	    </robot>
+	    <robot id="5">	        
+	    	<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.85250468293" acceleration="4.76765854021" deceleration="1.78787195257875" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="0" deceleration="0" />
+					
+					<pid type="angle" p=".4" i="0" d="0" />
+				</rotation>
+			</motion>
+			
+			<kicker m="20" b="0" />
+	    </robot>
+	     <robot id="7">
+	    	<motion>
+		        <!-- calibration based data -->
+		        <translation>
+
+			    	<deg value="0">
+						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
+					</deg>
+					<deg value="45">
+						<dynamics velocity="1.85250468293" acceleration="4.76765854021" deceleration="1.78787195257875" />
+					</deg>
+				</translation>
+				
+				<!-- rotational dynamics -->
+				<rotation>
+					<dynamics velocity="100" acceleration="0" deceleration="0" />
+					
+					<pid type="angle" p=".4" i="0" d="0" />
+				</rotation>
+			</motion>
+			
+			<kicker m="20" b="0" />
+	    </robot>
+	</robots>
+	
+	<worldModel>
+		<pos>
+	    	<filter alpha="1" beta="0" gamma="0" />
+	    </pos>
+	    <angle>
+	    	<filter alpha="1" beta="0" gamma="0" />
+	    </angle>
+	    
+	    <ball>
+	    </ball>
+	</worldModel>
+</config>
