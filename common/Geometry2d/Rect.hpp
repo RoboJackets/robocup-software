@@ -66,11 +66,15 @@ public:
     /* Assumes that pt[0] <= pt[1] for both x and y */
     void expand(Point pt);
     void expand(const Rect& rect);
+    void pad(float padding);
 
     float minx() const { return std::min(pt[0].x(), pt[1].x()); }
     float miny() const { return std::min(pt[0].y(), pt[1].y()); }
     float maxx() const { return std::max(pt[0].x(), pt[1].x()); }
     float maxy() const { return std::max(pt[0].y(), pt[1].y()); }
+
+    std::vector<Point> corners();
+    std::vector<Point> pointList();
 
     bool nearPoint(Point pt, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;

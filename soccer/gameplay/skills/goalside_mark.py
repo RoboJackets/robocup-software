@@ -5,6 +5,7 @@ import main
 import constants
 import role_assignment
 
+
 class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     '''
     The goalside mark will take a robot or mark point and position itself on line with the best shot from 
@@ -136,6 +137,9 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         #Define the segments where the defender can go closest the goal
 
         offset = constants.Robot.Radius
+        goal_rect = constants.Field.OurGoalZoneShapePadded(offset)
+        main.system_state().draw_polygon(corners, (0, 0, 255), "Expanded GoalZone")
+
         left_seg = robocup.Segment(
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset, 0),
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset,

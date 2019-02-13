@@ -55,6 +55,12 @@ struct Field_Dimensions {
     Geometry2d::Rect OurHalf() const { return _OurHalf; }
     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
     Geometry2d::Rect FieldRect() const { return _FieldRect; }
+    Geometry2d::Rect OurGoalZoneShapePadded(float padding){
+      Geometry2d::Rect tmp = Geometry2d::Rect(_OurGoalZoneShape);
+      tmp.pad(padding);
+      return tmp;
+    };
+
 
     std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
 

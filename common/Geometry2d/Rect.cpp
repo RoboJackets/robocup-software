@@ -121,7 +121,21 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
 
 }
 
+std::vector<Point> Rect::corners(){
+    std::vector<Point> tmp;
+    tmp.push_back(Point(minx(),miny()));
+    tmp.push_back(Point(minx(),maxy()));
+    tmp.push_back(Point(maxx(),maxy()));
+    tmp.push_back(Point(maxx(),miny()));
+    return tmp;
+}
 
+std::vector<Point> Rect::pointList(){
+    std::vector<Point> tmp;
+    tmp.push_back(pt[0]);
+    tmp.push_back(pt[1]);
+    return tmp;
+}
 
 bool Rect::containsRect(const Rect& other) const {
     // return other.pt[0].inRect(*this) && other.pt[1].inRect(*this);
@@ -140,15 +154,31 @@ bool Rect::hit(const Segment& seg) const {
 bool Rect::hit(Point pt) const { return nearPoint(pt, Robot_Radius); }
 
 void Rect::expand(Point p) {
-    pt[0].x() = min(pt[0].x(), p.x());
-    pt[0].y() = min(pt[0].y(), p.y());
-    pt[1].x() = max(pt[1].x(), p.x());
-    pt[1].y() = max(pt[1].y(), p.y());
+    float _minx = minx();
+    float _miny = miny();
+    float _maxx = maxx();
+    float _maxy = maxy();
+
+    pt[0].x() = min(_minx, (float)p.x());
+    pt[0].y() = min(_miny, (float)p.y());
+    pt[1].x() = max(_maxx, (float)p.x());
+    pt[1].y() = max(_maxy, (float)p.y());
 }
 
 void Rect::expand(const Rect& rect) {
     expand(rect.pt[0]);
     expand(rect.pt[1]);
+}
+
+void Rect::pad(float padding){
+    float _minx = minx();
+    float _miny = miny();
+    float _maxx = maxx();
+    float _maxy = maxy();
+    pt[0].x() = _minx - padding;
+    pt[0].y() = _miny - padding;
+    pt[1].x() = _maxx + padding;
+    pt[1].y() = _maxy + padding;
 }
 
 bool Rect::nearSegment(const Segment& seg, float threshold) const {

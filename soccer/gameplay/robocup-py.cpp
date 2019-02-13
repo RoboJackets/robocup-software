@@ -251,6 +251,13 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
+boost::python::object Our_goalzone_padded(float padding){
+    Geometry2d::Rect tmp = Geometry2d::Rect(Field_Dimensions::Current_Dimensions.OurGoalZoneShape());
+    tmp.expand(Geometry2d::Point(-Field_Dimensions::Current_Dimensions.PenaltyLongDist()/2 - padding, Field_Dimensions::Current_Dimensions.PenaltyShortDist() + padding));
+    tmp.expand(Geometry2d::Point(Field_Dimensions::Current_Dimensions.PenaltyLongDist()/2 + padding, Field_Dimensions::Current_Dimensions.PenaltyShortDist() + padding));
+    return boost::python::object(tmp);
+}
+
 boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
                                                 Geometry2d::Segment* segment){
     if (segment==nullptr) throw NullArgumentException{"segment"};
@@ -697,6 +704,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("nearly_equals", &Geometry2d::Point::nearlyEquals)
         .staticmethod("direction");
 
+    class_<std::vector<Geometry2d::Point>>("vector_Point")
+        .def(vector_indexing_suite<std::vector<Geometry2d::Point>>());
+
     class_<Geometry2d::Line, Geometry2d::Line*>(
         "Line", init<Geometry2d::Point, Geometry2d::Point>())
         .def("delta", &Geometry2d::Line::delta)
@@ -731,6 +741,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("min_y", &Geometry2d::Rect::miny)
         .def("max_x", &Geometry2d::Rect::maxx)
         .def("max_y", &Geometry2d::Rect::maxy)
+        .def("corners", &Geometry2d::Rect::corners)
+        .def("points", &Geometry2d::Rect::pointList)//mostly for debugging 
+        .def("pad", &Geometry2d::Rect::pad)
         .def("near_point", &Geometry2d::Rect::nearPoint)
         .def("intersects_rect", &Geometry2d::Rect::intersects)
         .def("intersects_segment", &Rect_segment_intersection)
@@ -904,6 +917,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc);
 
     class_<Field_Dimensions>("Field_Dimensions")
+        .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
         .add_property("Border", &Field_Dimensions::Border)
