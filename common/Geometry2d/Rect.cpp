@@ -57,10 +57,9 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
     int outcode0 = CohenSutherlandCode(p0);
     int outcode1 = CohenSutherlandCode(p1);
     
-    intr1, intr2 = nullptr;
+    //intr1, intr2 = nullptr;
     Point **nextPoint = &intr1;
     bool accept = false;
-
     while (true) {
         if (!(outcode0 | outcode1)) {
             // bitwise OR is 0: both points inside window; trivially accept and exit loop
@@ -85,6 +84,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
             //   y = y0 + slope * (xm - x0), where xm is xmin or xmax
             // No need to worry about divide-by-zero because, in each case, the
             // outcode bit being tested guarantees the denominator is non-zero
+      
             if (outcodeOut & TOP) {  // point is above the clip window
                 x = x0 + (x1 - x0) * (maxy() - y0) / (y1 - y0);
                 y = maxy();
@@ -98,7 +98,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 y = y0 + (y1 - y0) * (minx() - x0) / (x1 - x0);
                 x = minx();
             }
-
+            
             // Now we move outside point to intersection point to clip
             // and get ready for next pass.
             if (outcodeOut == outcode0) {
@@ -108,6 +108,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 outcode0 = CohenSutherlandCode(**nextPoint);
                 nextPoint = &intr2;
             } else {
+                std::cout << "Branch 2" << std::endl;
                 x1 = x;
                 y1 = y;
                 **nextPoint = Point(x0, y0);
@@ -116,7 +117,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
             }
         }
     }
-
+    std::cout << "Returning" << std::endl;
     return accept;
 
 }
