@@ -147,6 +147,7 @@ class distraction(standard_play.StandardPlay):
         if self.striker_box_max.x < main.ball().pos.x < self.striker_box_min.x and self.striker_box_max.y > main.ball().pos.y > self.striker_box_min.y:
             #if the ball is already near the striker, then no pass will occur and the striker will just cpature the ball
             self.add_subbehavior(skills.capture.Capture(), 'capture 3', required = True)
+        #add chip here if pass chance is low
         else:
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.striker_point), 'pass to striker', required = True)
             self.add_subbehavior(skills.move.Move(self.distraction_point), 'move distract', required = False, priority = 10)
