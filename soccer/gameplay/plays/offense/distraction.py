@@ -3,7 +3,6 @@ import robocup
 import behavior
 import constants
 import enum
-
 import standard_play
 import evaluation
 import tactics.coordinated_pass
@@ -12,7 +11,6 @@ import skills.capture
 
 
 class distraction(standard_play.StandardPlay):
-
 
     class State (enum.Enum):
         setup = 1, 'capture ball and move distractor and striker into position'
@@ -41,7 +39,6 @@ class distraction(standard_play.StandardPlay):
         for i in states:
             self.add_state(i, behavior.Behavior.State.running)
 
-        
         self.add_transition(behavior.Behavior.State.start,
                         distraction.State.setup, 
                         lambda: True, 
@@ -93,32 +90,24 @@ class distraction(standard_play.StandardPlay):
 
     def on_enter_setup(self):
         #capture ball and get striker and distractor in position
-        print("entered setup")
         self.add_subbehavior(skills.capture.Capture(), 'capture1', required = True)
         self.add_subbehavior(skills.move.Move(self.striker_point), 'striker moves', required = False, priority = 10)
         self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'distract moves', required = True)
         #if the ball is too far away to pass across the field
         self.ball_is_far = main.ball().pos.y < (0.4*constants.Field.Length)
         
-
-
     def on_exit_setup(self):
-        print("exits setup")
         # print(self.distracterbox)
         # print(main.ball().pos == self.distracterbox)
         self.remove_all_subbehaviors()
         
-
     def on_enter_optional_adjustment(self):
         #if the ball is too far then the distractor moves to the center
-        print("entered setup2")
         self.add_subbehavior(skills.capture.Capture(), 'capture 2', required = True)
         self.add_subbehavior(skills.move.Move(self.center), 'move half', required = True)
         self.add_subbehavior(skills.move.Move(self.striker_point), 'make striker stay', required = True)
         
-
     def on_exit_optional_adjustment(self):
-        print('exits optional adjustment')
         self.remove_all_subbehaviors()
 
     def on_enter_cetner_pass(self):
@@ -126,48 +115,35 @@ class distraction(standard_play.StandardPlay):
         self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.center), 'center pass', required = True)
         self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'move back to distract', required = False, priority = 10)
 
-
     def on_exit_cetner_pass(self):
         self.remove_all_subbehaviors()
 
     def on_enter_passing(self):
-        #either pass to striker or distracter depending on shot chance
-        print('entered passing')
-        
-        
+        #either pass to striker or distracter depending on shot chance        
         pass_to_distract_chance = evaluation.passing.eval_pass( main.ball().pos, self.distraction_recieve_pass_point, main.our_robots() )
         pass_to_striker_chance = evaluation.passing.eval_pass( main.ball().pos, self.striker_point, main.our_robots() )
         shot_of_striker_chance1 = evaluation.shooting.eval_shot( self.striker_point, main.our_robots() )
 
         if self.distract_box_max.x > main.ball().pos.x > self.distract_box_min.x and self.distract_box_max.y > main.ball().pos.y > self.distract_box_min.y:
             #if the ball is already near the distracter, then no pass will occur and the distracter will just cpature the ball
-            self.add_subbehavior(skills.capture.Capture(), 'get close ball', equired = True)
-            print("In box")
+            self.add_subbehavior(skills.capture.Capture(), 'get close ball', required = True)
         elif self.striker_box_max.x < main.ball().pos.x < self.striker_box_min.x and self.striker_box_max.y > main.ball().pos.y > self.striker_box_min.y:
             #if the ball is already near the striker, then no pass will occur and the striker will just cpature the ball
-            print("in striker box")
             self.add_subbehavior(skills.capture.Capture(), 'striker get close ball', required = True)
         else:
-            print("Out box")
             if pass_to_distract_chance >= pass_to_striker_chance*shot_of_striker_chance1:
                 self.add_subbehavior(skills.move.Move(self.striker_point), 'make striker stay again', required = True)
-                
                 self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.distraction_recieve_pass_point), 'distract pass', required = True)
-                
-
             else:
                 self.add_subbehavior(skills.move.Move(self.distraction_point), 'make striker stay again', required = True)
-                
                 self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.striker_point), 'striker pass', required = True) 
 
-
     def on_exit_passing(self):
-        print('exit passing')
         self.remove_all_subbehaviors()
 
     def on_enter_cross(self):
         #if the ball is passed to the distractor the ball is passed to the striker, as the third robot moves to the right to distract more
-        print('enter cross')
+        pass_to_striker_chance = evaluation.passing.eval_pass(main.ball().pos, self.striker_point, main.our_robots() )
         if self.striker_box_max.x < main.ball().pos.x < self.striker_box_min.x and self.striker_box_max.y > main.ball().pos.y > self.striker_box_min.y:
             #if the ball is already near the striker, then no pass will occur and the striker will just cpature the ball
             self.add_subbehavior(skills.capture.Capture(), 'capture 3', required = True)
@@ -175,10 +151,8 @@ class distraction(standard_play.StandardPlay):
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.striker_point), 'pass to striker', required = True)
             self.add_subbehavior(skills.move.Move(self.distraction_point), 'move distract', required = False, priority = 10)
             self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'shift right', required = False, priority = 10)
-        
 
     def on_exit_cross(self):
-        print('exit cross')
         self.remove_all_subbehaviors()
 
     def on_enter_shoot(self):
@@ -186,18 +160,14 @@ class distraction(standard_play.StandardPlay):
         #the striker will shoot
         #or
         #the striker will pass to the distractor and the distractor will shoot
-        print('enter shoot')
         pass_striker_to_distractor_chance = evaluation.passing.eval_pass( self.striker_point, self.distraction_recieve_pass_point, main.our_robots() )
         shot_of_striker_chance = evaluation.shooting.eval_shot( self.striker_point, main.our_robots() )
         shot_of_distractor_chance = evaluation.shooting.eval_shot( self.distraction_recieve_pass_point, main.our_robots() )
 
         if pass_striker_to_distractor_chance*shot_of_distractor_chance > shot_of_striker_chance:
-                
                 self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.distraction_recieve_pass_point), 'distract pass', required = True)
                 self.add_subbehavior(skills.move.Move(self.striker_point), 'make striker stay 3', required = True)
                 self.add_subbehavior(skills.pivot_kick.PivotKick(), 'shooting', required = True)
-                
-
         else:
                 self.add_subbehavior(skills.move.Move(self.distraction_recieve_pass_point), 'make striker stay again', required = True)
                 self.add_subbehavior(skills.move.Move(self.distraction_point), 'make distracor stay', required = False, priority = 10)
