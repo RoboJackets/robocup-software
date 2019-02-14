@@ -104,16 +104,22 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
             if (outcodeOut == outcode0) {
                 x0 = x;
                 y0 = y;
-                **nextPoint = Point(x0, y0);
-                outcode0 = CohenSutherlandCode(**nextPoint);
-                nextPoint = &intr2;
+                Point pt = Point(x0, y0);
+                outcode0 = CohenSutherlandCode(pt);
+                if (outcode0==INSIDE){
+                    **nextPoint = pt;
+                    nextPoint = &intr2;
+                }
             } else {
-                std::cout << "Branch 2" << std::endl;
                 x1 = x;
                 y1 = y;
+                Point pt = Point(x0, y0);
                 **nextPoint = Point(x0, y0);
-                outcode1 = CohenSutherlandCode(**nextPoint);
-                nextPoint = &intr2;
+                outcode1 = CohenSutherlandCode(pt);
+                if (outcode1==INSIDE){
+                    **nextPoint = pt;
+                    nextPoint = &intr2;
+                }
             }
         }
     }
