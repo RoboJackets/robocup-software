@@ -106,6 +106,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 y0 = y;
                 Point pt = Point(x0, y0);
                 outcode0 = CohenSutherlandCode(pt);
+                //Save point iff it is inside the Rect
                 if (outcode0==INSIDE){
                     **nextPoint = pt;
                     nextPoint = &intr2;
@@ -116,6 +117,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 Point pt = Point(x0, y0);
                 **nextPoint = Point(x0, y0);
                 outcode1 = CohenSutherlandCode(pt);
+                //Save point iff it is inside the Rect
                 if (outcode1==INSIDE){
                     **nextPoint = pt;
                     nextPoint = &intr2;
@@ -123,9 +125,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
             }
         }
     }
-    std::cout << "Returning" << std::endl;
     return accept;
-
 }
 
 std::vector<Point> Rect::corners(){

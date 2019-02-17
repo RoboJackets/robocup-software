@@ -44,23 +44,41 @@ struct Field_Dimensions {
     float FloorWidth() const { return _FloorWidth; }
 
     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
+    
     Geometry2d::Rect OurGoalZoneShape() const {
         return _OurGoalZoneShape;
     }
     Geometry2d::Rect TheirGoalZoneShape() const {
         return _TheirGoalZoneShape;
     }
+
+    /*
+    * Provides a rect that is a padded version of their goalbox
+    * used mostly for movement at the play level
+    * exposed to python via constants.Field
+    */
+    Geometry2d::Rect TheirGoalZoneShapePadded(float padding){
+      Geometry2d::Rect tmp = Geometry2d::Rect(_TheirGoalZoneShape);
+      tmp.pad(padding);
+      return tmp;
+    };
+
     Geometry2d::Segment OurGoalSegment() const { return _OurGoalSegment; }
     Geometry2d::Segment TheirGoalSegment() const { return _TheirGoalSegment; }
     Geometry2d::Rect OurHalf() const { return _OurHalf; }
     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
     Geometry2d::Rect FieldRect() const { return _FieldRect; }
+    
+    /*
+    * Provides a rect that is a padded version of our goalbox
+    * used mostly for movement at the play level
+    * exposed to python via constants.Field
+    */
     Geometry2d::Rect OurGoalZoneShapePadded(float padding){
       Geometry2d::Rect tmp = Geometry2d::Rect(_OurGoalZoneShape);
       tmp.pad(padding);
       return tmp;
     };
-
 
     std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
 

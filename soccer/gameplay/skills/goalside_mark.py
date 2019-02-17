@@ -13,7 +13,6 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     @param: ratio - this will control how far from the opposing robot the defender will mark (0 is close to robot)
     '''
 
-    
     def __init__(self):
         super().__init__(continuous=True)
         #Below params are described above @properties
@@ -53,9 +52,8 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         main.system_state().draw_line(mark_line, (0, 0, 255), "Mark")
 
         #Distance from robot to mark line
-        #TODO: Change C++ to optionally account for goal box
         mark_line_dist = mark_line.dist_to(self.robot.pos)
-        print(mark_line, mark_line_dist)
+
         #Sets target point to nearest point on mark line if the robot is over ball_mark_threshold
         #from the mark line
         # or
@@ -138,8 +136,6 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
 
         offset = constants.Robot.Radius
         goal_rect_padded = constants.Field.OurGoalZoneShapePadded(offset)
-        corners = list(goal_rect_padded.corners())
-        main.system_state().draw_polygon(corners, (0, 0, 255), "Expanded GoalZone")
         
         #Find best shot point from threat
         self.kick_eval.add_excluded_robot(self.robot) #FIX: Should we really exclude all of our robots but the goalie?
@@ -156,7 +152,6 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
 
         shot_seg = robocup.Segment(self.adjusted_mark_pos , shot_pt)
         inter1, inter2 = goal_rect_padded.intersects_segment(shot_seg)
-        print(inter1, inter2)
         if inter2 is None:
             if inter1 is None:
                 return None, shot_pt
@@ -166,33 +161,3 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
             return robocup.Segment(self.adjusted_mark_pos, inter1), shot_pt
         else:
             return robocup.Segment(self.adjusted_mark_pos, inter2), shot_pt
-
-        #End the mark line segment 1 radius away from the opposing robot
-        #Or 1 ball radius away if marking a position
-        # if self.mark_point is None:
-        #     self.adjusted_mark_pos = self.mark_pos - mark_line_dir * 2 * constants.Robot.Radius
-        # else:
-        #     self.adjusted_mark_pos = self.mark_pos - mark_line_dir * constants.Ball.Radius
-
-        # mark_line = robocup.Segment(self.adjusted_mark_pos , shot_pt)
-
-        # intersection_center = top_seg.segment_intersection(mark_line)
-
-        # if self.mark_pos.x < 0:
-        #     intersection_left = left_seg.segment_intersection(
-        #         mark_line)
-        #     if intersection_left is not None:
-        #         return robocup.Segment(self.adjusted_mark_pos, intersection_left), shot_pt
-        #     elif intersection_center is not None:
-        #         return robocup.Segment(self.adjusted_mark_pos, intersection_center), shot_pt
-        #     else:
-        #         return None , shot_pt#FIX: do we want some other default?
-        # elif self.mark_pos.x >= 0:
-        #     intersection_right = right_seg.segment_intersection(
-        #         mark_line)
-        #     if intersection_right is not None:
-        #         return robocup.Segment(self.adjusted_mark_pos, intersection_right), shot_pt
-        #     elif intersection_center is not None:
-        #         return robocup.Segment(self.adjusted_mark_pos, intersection_center), shot_pt
-        #     else:
-        #         return None, shot_pt #FIX: do we want some other default?
