@@ -117,7 +117,7 @@ public:
     * Calculates the code for the Cohen Sutherland algorithm
     * bit string represents how a point relates to the rect 
     */
-    int CohenSutherlandCode(const Point& other) const;
+    int CohenSutherlandOutCode(const Point& other) const;
 
     Point pt[2];
 

@@ -8,11 +8,11 @@ using namespace std;
 namespace Geometry2d {
 
 //constants used for the rect-segment intersection
-const int INSIDE = 0; // 0000
-const int LEFT = 1;   // 0001
-const int RIGHT = 2;  // 0010
-const int BOTTOM = 4; // 0100
-const int TOP = 8;    // 1000
+const int INSIDE = 0x00; // 0000
+const int LEFT = 0x01;   // 0001
+const int RIGHT = 0x02;  // 0010
+const int BOTTOM = 0x04; // 0100
+const int TOP = 0x08;    // 1000
 
 Shape* Rect::clone() const { return new Rect(*this); }
 
@@ -25,7 +25,7 @@ bool Rect::intersects(const Rect& other) const {
     }
 }
 
-int Rect::CohenSutherlandCode(const Point& other) const{
+int Rect::CohenSutherlandOutCode(const Point& other) const{
     int code;
     double x,y;
     x = other.x();
@@ -54,8 +54,8 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
     double x1 = p1.x();
     double y1 = p1.y();
 
-    int outcode0 = CohenSutherlandCode(p0);
-    int outcode1 = CohenSutherlandCode(p1);
+    int outcode0 = CohenSutherlandOutCode(p0);
+    int outcode1 = CohenSutherlandOutCode(p1);
     
     //intr1, intr2 = nullptr;
     Point **nextPoint = &intr1;
@@ -105,7 +105,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 x0 = x;
                 y0 = y;
                 Point pt = Point(x0, y0);
-                outcode0 = CohenSutherlandCode(pt);
+                outcode0 = CohenSutherlandOutCode(pt);
                 //Save point iff it is inside the Rect
                 if (outcode0==INSIDE){
                     **nextPoint = pt;
@@ -116,7 +116,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 y1 = y;
                 Point pt = Point(x0, y0);
                 **nextPoint = Point(x0, y0);
-                outcode1 = CohenSutherlandCode(pt);
+                outcode1 = CohenSutherlandOutCode(pt);
                 //Save point iff it is inside the Rect
                 if (outcode1==INSIDE){
                     **nextPoint = pt;
