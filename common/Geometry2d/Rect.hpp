@@ -67,19 +67,25 @@ public:
 
     /*
     * The expand function will make the rectangle larger to include
-    * the given point (just large enough)
+    * the given point (just large enough) 
+    * This function will alter the points defining the rect to the bottom left
+    * and the top right
     */
     void expand(Point pt);
     
     /*
     * The expand function will make the rectangle larger to include
     * the given rectangle (just large enough)
+    * This function will alter the points defining the rect to the bottom left
+    * and the top right
     */
     void expand(const Rect& rect);
 
     /*
     * Makes the rectangle bigger in all direction by the padding amount
     * especially useful around the goalboxes to movement
+    * This function will alter the points defining the rect to the bottom left
+    * and the top right
     */
     void pad(float padding);
 
