@@ -151,13 +151,9 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
 
 
         shot_seg = robocup.Segment(self.adjusted_mark_pos , shot_pt)
-        inter1, inter2 = goal_rect_padded.intersects_segment(shot_seg)
-        if inter2 is None:
-            if inter1 is None:
-                return None, shot_pt
-            else:
-                return robocup.Segment(self.adjusted_mark_pos, inter1), shot_pt
-        elif inter1.y > inter2.y:
-            return robocup.Segment(self.adjusted_mark_pos, inter1), shot_pt
-        else:
-            return robocup.Segment(self.adjusted_mark_pos, inter2), shot_pt
+        tmp = goal_rect_padded.intersects_segment(shot_seg)
+        if tmp is None:
+            return None, shot_pt
+
+        intersections = sorted(tmp, key=lambda pt: pt.y, reverse=True)
+        return robocup.Segment(self.adjusted_mark_pos, intersections[0]), shot_pt

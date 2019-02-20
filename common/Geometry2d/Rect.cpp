@@ -44,7 +44,7 @@ int Rect::CohenSutherlandOutCode(const Point& other) const{
     return code;
 }
 
-bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
+std::tuple<bool, std::vector<Point> > Rect::intersects_(const Segment& other) const{
 
     //Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line Clipping
     Point p0 = other.pt[0];
@@ -57,8 +57,7 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
     int outcode0 = CohenSutherlandOutCode(p0);
     int outcode1 = CohenSutherlandOutCode(p1);
     
-    //intr1, intr2 = nullptr;
-    Point **nextPoint = &intr1;
+    std::vector<Point> intersectionPoints;
     bool accept = false;
     while (true) {
         if (!(outcode0 | outcode1)) {
@@ -108,24 +107,21 @@ bool Rect::intersects_(const Segment& other, Point* intr1, Point* intr2) const{
                 outcode0 = CohenSutherlandOutCode(pt);
                 //Save point iff it is inside the Rect
                 if (outcode0==INSIDE){
-                    **nextPoint = pt;
-                    nextPoint = &intr2;
+                    intersectionPoints.push_back(pt);
                 }
             } else {
                 x1 = x;
                 y1 = y;
-                Point pt = Point(x0, y0);
-                **nextPoint = Point(x0, y0);
+                Point pt = Point(x1, y1);
                 outcode1 = CohenSutherlandOutCode(pt);
                 //Save point iff it is inside the Rect
                 if (outcode1==INSIDE){
-                    **nextPoint = pt;
-                    nextPoint = &intr2;
+                    intersectionPoints.push_back(pt);
                 }
             }
         }
     }
-    return accept;
+    return std::tuple<bool, std::vector<Point> >(accept,intersectionPoints);
 }
 
 std::vector<Point> Rect::corners(){

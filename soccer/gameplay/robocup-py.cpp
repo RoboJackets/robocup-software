@@ -261,17 +261,19 @@ boost::python::object Our_goalzone_padded(float padding){
 boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
                                                 Geometry2d::Segment* segment){
     if (segment==nullptr) throw NullArgumentException{"segment"};
-    Geometry2d::Point inter_pt1;
-    Geometry2d::Point inter_pt2;
     boost::python::list lst;
-    if (self->intersects_(*segment, &inter_pt1, &inter_pt2)) {
-        lst.append(inter_pt1);
-        lst.append(inter_pt2);
-    } else {
-        lst.append(boost::python::object());
-        lst.append(boost::python::object());
+    std::tuple<bool, std::vector<Geometry2d::Point> > result = self->intersects_(*segment);
+    bool doesIntersect = std::get<0>(result);
+    if (!doesIntersect){
+        return boost::python::object();
     }
-    return boost::python::tuple(lst);
+
+    std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
+    std::vector<Geometry2d::Point>::iterator it;
+    for (it=intersectionPoints.begin(); it!=intersectionPoints.end(); it++){
+        lst.append(*it);    
+    }
+    return lst;
 }
 
 boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
