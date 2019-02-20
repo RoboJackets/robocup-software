@@ -739,8 +739,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("corners", &Geometry2d::Rect::corners)
         .def("pad", &Geometry2d::Rect::pad)
         .def("near_point", &Geometry2d::Rect::nearPoint)
-        .def("intersects_rect", &Geometry2d::Rect::intersects)
-        .def("intersects_segment", &Rect_segment_intersection)
+        .def("rect_intersection", &Geometry2d::Rect::intersects)
+        .def("segment_intersection", &Rect_segment_intersection)
         .def("contains_point", &Geometry2d::Rect::containsPoint)
         .def("get_pt", &Rect_get_pt,
              return_value_policy<reference_existing_object>());

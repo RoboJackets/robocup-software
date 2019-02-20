@@ -151,7 +151,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
 
 
         shot_seg = robocup.Segment(self.adjusted_mark_pos , shot_pt)
-        tmp = goal_rect_padded.intersects_segment(shot_seg)
+        tmp = goal_rect_padded.segment_intersection(shot_seg)
         if tmp is None:
             return None, shot_pt
 
