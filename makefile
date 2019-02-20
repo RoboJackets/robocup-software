@@ -146,13 +146,24 @@ apidocs:
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
 STYLIZE_DIFFBASE ?= master
-STYLE_EXCLUDE_DIRS=build \
-	external
 # automatically format code according to our style config defined in .clang-format
 pretty:
-	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+	@stylize.v1 -i --git_diffbase=$(STYLIZE_DIFFBASE)
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
+	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
+	@stylize.v1 --git_diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+
+
+# Option to use old version of stylize
+STYLE_EXCLUDE_DIRS=build \
+	external
+# automatically format code according to our style config defined in .clang-format
+pretty-old:
+	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
+# check if everything in our codebase is in accordance with the style config defined in .clang-format
+# a nonzero exit code indicates that there's a formatting error somewhere
+checkstyle-old:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
 	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="/tmp/clean.patch"

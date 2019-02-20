@@ -13,18 +13,20 @@ Adaptive Formation and Basic 122 are the two main plays we run at competition. A
 ## Tactics
 For higher level plays, only Coordinated Pass and Defense are really used.
 
-| Tactics          | Description | Use When ... |
-| ---------------- | ----------- | ------------ |
-| Coordinated Pass | Moves one robot to the ball and the other to the receive point. When they both are ready, they will pass | Use when you want to pass the ball from one robot to another |
-| Defense          | Basic 2 robot defense that stays on the goalie box. Clears the ball when it comes close. | Use in most cases unless you are writing your own defense |
-| Defense Old      | Same as Defense, but significantly harder to read code-wise | Don't use |
-| Forward Pass     | Basically the same as Coordinated Pass, but ball capture is slightly different | Don't use since the new ball capture needs more testing / tuning |
-| Line Up          | Lines up all robots in a specified line | Use when you need robots out of the way for testing purposes |
-| One Touch Pass   | Finds the best point in front of the opponent goal to pass to and one touch it in | Don't use since it hasn't been tested / tuned |
-| Our Placement    | Places the ball according to the auto-ref commands | Don't use unless trying to change ball placement code |
-| Penalty          | Takes the penalty and tries to shoot | Don't use unless trying to change Our Penalty code |
-| Tune PID         | Moves one robot back and forth to tune the motion control | Don't use unless you are trying to tune the motion control |
-
+| Tactics                | Description | Use When ... |
+| ---------------------- | ----------- | ------------ |
+| Advance Zone Midfielder| Moves one robot to the best position to recieve the ball, and moves another robot to the best position to recieve the ball from that position. | Use it when need to move robots on a downfield attack at goal. |
+| Coordinated Pass       | Moves one robot to the ball and the other to the receive point. When they both are ready, they will pass | Use when you want to pass the ball from one robot to another |
+| Defense                | Basic 2 robot defense that stays on the goalie box. Clears the ball when it comes close. | Use in most cases unless you are writing your own defense |
+| Defense Old            | Same as Defense, but significantly harder to read code-wise | Don't use |
+| Defensive Forward      | Commands 2 of the 3 offensive robots to block while the 3rd tries to take control of the ball | Use when you're trying to capture the ball and have nothing for the other robots to do |
+| Forward Pass           | Basically the same as Coordinated Pass, but ball capture is slightly different | Don't use since the new ball capture needs more testing / tuning |
+| Line Up                | Lines up all robots in a specified line | Use when you need robots out of the way for testing purposes |
+| One Touch Pass         | Finds the best point in front of the opponent goal to pass to and one touch it in | Don't use since it hasn't been tested / tuned |
+| Our Placement          | Places the ball according to the auto-ref commands | Don't use unless trying to change ball placement code |
+| Penalty                | Takes the penalty and tries to shoot | Don't use unless trying to change Our Penalty code |
+| Simple Zone Midfielder | Commands 2 of the 3 offensive robots to stay at specific positions behind the ball. It just gets the out of the way so they aren't just sitting there on the field | Don't use unless there is nothing better to do |
+| Tune PID               | Moves one robot back and forth to tune the motion control | Don't use unless you are trying to tune the motion control |
 
 ## Positions
 These are in the tactic folder, but slightly higher level than normal tactics. They contain the AI for a single position (or group) on the field. 
@@ -38,8 +40,6 @@ Defender and Goalie are really only used on some specific restarts. Submissive D
 | Goalie                 | Standalone goalie which does not coordinate with other robots. In most cases, it is better to add the Defense tactic, which implements the Submissive Goalie, or use the Submissive Goalie itself. |
 | Submissive Defender    | Takes marking targets from the parent play. Used for more coordinated defensive plays |
 | Submissive Goalie      | Takes marking targets from the parent play. Used for more coordinated defensive plays |
-| Defensive Forward      | Commands 2 of the 3 offensive robots to block while the 3rd tries to take control of the ball |
-| Simple Zone Midfielder | Commands 2 of the 3 offensive robots to stay at specific positions behind the ball. It just gets the out of the way so they aren't just sitting there on the field |
 
 ## Skills
 There are a large number of skills, but many are not used in the higher level plays. Only Capture, Mark, Move, and Pivot/Line Kick are constantly used.
