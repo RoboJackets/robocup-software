@@ -269,6 +269,16 @@ boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
     return lst;
 }
 
+boost::python::object Rect_corners(Geometry2d::Rect *self){
+    boost::python::list lst;
+    std::vector<Geometry2d::Point> corners= self->corners();
+    std::vector<Geometry2d::Point>::iterator it;
+    for (it=corners.begin(); it!=corners.end(); it++){
+        lst.append(*it);    
+    }
+    return lst;
+}
+
 boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
                                                 Geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException{"line"};
@@ -736,7 +746,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("min_y", &Geometry2d::Rect::miny)
         .def("max_x", &Geometry2d::Rect::maxx)
         .def("max_y", &Geometry2d::Rect::maxy)
-        .def("corners", &Geometry2d::Rect::corners)
+        .def("corners", &Rect_corners)
         .def("pad", &Geometry2d::Rect::pad)
         .def("near_point", &Geometry2d::Rect::nearPoint)
         .def("rect_intersection", &Geometry2d::Rect::intersects)
