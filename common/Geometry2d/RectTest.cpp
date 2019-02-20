@@ -31,6 +31,8 @@ TEST(Rect, containsPoint) {
     EXPECT_FALSE(example.containsPoint(Point(-1, 01)));
 }
 
+/* Tests below can be uncommented to test if this function breaks
+ * Needs to be made public for tests to work.
 TEST(Rect, cohenCodes){
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(0,1.2)), 0x00);
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(-1,1)), 0x00);
@@ -45,7 +47,7 @@ TEST(Rect, cohenCodes){
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(1.1,0)), 0x06);
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(-1.5,2.5)), 0x09);
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(1.5,2.5)), 0x0A);
-}
+}*/
 
 TEST(Rect, degenerageCohenCodes){
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(0,0)), 0x00);
