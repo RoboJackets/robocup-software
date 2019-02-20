@@ -251,11 +251,17 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
+bool Rect_rect_intersection(Geometry2d::Rect* self,
+                                  Geometry2d::Rect* other) {
+    if (other == nullptr) throw NullArgumentException{"other"};
+    return self->intersects(*other);
+}
+
 boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
                                                 Geometry2d::Segment* segment){
     if (segment==nullptr) throw NullArgumentException{"segment"};
     boost::python::list lst;
-    std::tuple<bool, std::vector<Geometry2d::Point> > result = self->intersects_(*segment);
+    std::tuple<bool, std::vector<Geometry2d::Point> > result = self->intersects(*segment);
     bool doesIntersect = std::get<0>(result);
     if (!doesIntersect){
         return boost::python::object();
@@ -749,7 +755,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("corners", &Rect_corners)
         .def("pad", &Geometry2d::Rect::pad)
         .def("near_point", &Geometry2d::Rect::nearPoint)
-        .def("rect_intersection", &Geometry2d::Rect::intersects)
+        .def("rect_intersection", &Rect_rect_intersection)
         .def("segment_intersection", &Rect_segment_intersection)
         .def("contains_point", &Geometry2d::Rect::containsPoint)
         .def("get_pt", &Rect_get_pt,

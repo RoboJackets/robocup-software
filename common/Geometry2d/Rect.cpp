@@ -44,7 +44,7 @@ int Rect::CohenSutherlandOutCode(const Point& other) const{
     return code;
 }
 
-std::tuple<bool, std::vector<Point> > Rect::intersects_(const Segment& other) const{
+std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) const{
 
     //Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line Clipping
     Point p0 = other.pt[0];

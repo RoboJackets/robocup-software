@@ -58,18 +58,18 @@ TEST(Rect, degenerageCohenCodes){
 }
 
 TEST(Rect, degenerageSegmentIntersection){
-    std::tuple<bool, std::vector<Point> > res = nullExample.intersects_(Segment(Point(1,0),Point(-1,0)));
+    std::tuple<bool, std::vector<Point> > res = nullExample.intersects(Segment(Point(1,0),Point(-1,0)));
     EXPECT_TRUE(std::get<0>(res));
-    res = nullExample.intersects_(Segment(Point(1,.1),Point(-1,0)));
+    res = nullExample.intersects(Segment(Point(1,.1),Point(-1,0)));
     EXPECT_FALSE(std::get<0>(res));
 }
 
 TEST(Rect, SegmentIntersection){
     Point v1 = Point(-1,1);
     Point v2 = Point(1,2);
-    std::tuple<bool, std::vector<Point> > res = intersectExample.intersects_(Segment(Point(1,.1),Point(-1,0)));
+    std::tuple<bool, std::vector<Point> > res = intersectExample.intersects(Segment(Point(1,.1),Point(-1,0)));
     EXPECT_FALSE(std::get<0>(res));
-    res = intersectExample.intersects_(Segment(Point(-2,.5),Point(2,2.5)));
+    res = intersectExample.intersects(Segment(Point(-2,.5),Point(2,2.5)));
     std::vector<Point> intersectionPoints = std::get<1>(res);
     std::vector<Geometry2d::Point>::iterator it;
     EXPECT_TRUE(std::get<0>(res));
