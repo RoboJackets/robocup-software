@@ -133,13 +133,6 @@ std::vector<Point> Rect::corners(){
     return tmp;
 }
 
-std::vector<Point> Rect::pointList(){
-    std::vector<Point> tmp;
-    tmp.push_back(pt[0]);
-    tmp.push_back(pt[1]);
-    return tmp;
-}
-
 bool Rect::containsRect(const Rect& other) const {
     // return other.pt[0].inRect(*this) && other.pt[1].inRect(*this);
     return this->containsPoint(other.pt[0]) && this->containsPoint(other.pt[1]);

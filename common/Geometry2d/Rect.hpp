@@ -97,12 +97,6 @@ public:
     */
     std::vector<Point> corners();
 
-    /*
-    * The pointList() function is primarily for debugging and 
-    * lists the 2 corner points used to define this rectangle
-    * useful since any 2 diagonal corners can define a rect.
-    */
-    std::vector<Point> pointList();
 
     bool nearPoint(Point pt, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;

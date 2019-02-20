@@ -744,7 +744,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("max_x", &Geometry2d::Rect::maxx)
         .def("max_y", &Geometry2d::Rect::maxy)
         .def("corners", &Geometry2d::Rect::corners)
-        .def("points", &Geometry2d::Rect::pointList)
         .def("pad", &Geometry2d::Rect::pad)
         .def("near_point", &Geometry2d::Rect::nearPoint)
         .def("intersects_rect", &Geometry2d::Rect::intersects)
