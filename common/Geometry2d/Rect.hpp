@@ -9,6 +9,8 @@ class Segment;
 /// Represents a rectangle by storing two opposite corners.  They may be upper-
 /// left and lower-right or any other pair of diagonal corners.
 class Rect : public Shape {
+private:
+    int CohenSutherlandOutCode(const Point& other) const;
 public:
     Rect() {}
 
@@ -117,7 +119,7 @@ public:
     * Calculates the code for the Cohen Sutherland algorithm
     * bit string represents how a point relates to the rect 
     */
-    int CohenSutherlandOutCode(const Point& other) const;
+    
 
     Point pt[2];
 
