@@ -126,10 +126,10 @@ std::tuple<bool, std::vector<Point> > Rect::intersects_(const Segment& other) co
 
 std::vector<Point> Rect::corners(){
     std::vector<Point> tmp;
-    tmp.push_back(Point(minx(),miny()));
-    tmp.push_back(Point(minx(),maxy()));
-    tmp.push_back(Point(maxx(),maxy()));
-    tmp.push_back(Point(maxx(),miny()));
+    tmp.emplace_back(minx(),miny());
+    tmp.emplace_back(minx(),maxy());
+    tmp.emplace_back(maxx(),maxy());
+    tmp.emplace_back(maxx(),miny());
     return tmp;
 }
 

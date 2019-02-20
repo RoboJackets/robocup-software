@@ -36,10 +36,10 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         #pylint: disable=no-member
         #Skill does nothing if mark point isn't given AND the ball or robot to mark can't be found
-        if self.mark_point is None and \
+        if self.robot is None or (self.mark_point is None and \
            (self.mark_robot is None or
             not main.ball().valid or
-            not self.mark_robot.visible):
+            not self.mark_robot.visible)):
             return
         
         #Finds the line from the mark position to the shot point and creates a line between them
