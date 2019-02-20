@@ -251,13 +251,6 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
-boost::python::object Our_goalzone_padded(float padding){
-    Geometry2d::Rect tmp = Geometry2d::Rect(Field_Dimensions::Current_Dimensions.OurGoalZoneShape());
-    tmp.expand(Geometry2d::Point(-Field_Dimensions::Current_Dimensions.PenaltyLongDist()/2 - padding, Field_Dimensions::Current_Dimensions.PenaltyShortDist() + padding));
-    tmp.expand(Geometry2d::Point(Field_Dimensions::Current_Dimensions.PenaltyLongDist()/2 + padding, Field_Dimensions::Current_Dimensions.PenaltyShortDist() + padding));
-    return boost::python::object(tmp);
-}
-
 boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
                                                 Geometry2d::Segment* segment){
     if (segment==nullptr) throw NullArgumentException{"segment"};
