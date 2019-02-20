@@ -11,6 +11,11 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
+        self.add_transition(behavior.Behavior.State.running,
+                            behavior.Behavior.State.completed,
+                            lambda: self.robot is not None and
+                                    self.robot.has_ball(),
+                            'ball collected')
 
     def execute_running(self):
         if (self.robot is not None):
@@ -19,6 +24,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
+        reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
             reqs.destination_shape = main.ball().pos

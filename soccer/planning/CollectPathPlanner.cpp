@@ -77,6 +77,8 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     const float distCutoffToControl = 0.07; // m
     const float velCutoffToControl = 1; // m/s
 
+    const float touchSpeed = 0.5; // m/s
+
     // Gain on the averaging function to smooth the target point to intercept
     // This is due to the high flucations in the ball velocity frame to frame
     // a*newPoint + (1-a)*oldPoint
@@ -131,7 +133,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     // about what the robot should follow
     Point approachDirection = -ball.vel;
 
-    // If it's almost 0, approach 
+    // If it's almost 0, approach from any direction
     if (approachDirection.magsq() < 0.1) {
         approachDirection = (startInstant.pos - ball.pos).norm();
     } else {
@@ -148,7 +150,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
         Point targetPos = ball.pos + approachDirection * 0.09;
         
 
-        MotionInstant target(targetPos, velocityTarget);
+        MotionInstant target(targetPos, velocityTarget + velocityTarget.norm()*touchSpeed);
         vector<Point> startEndPoints{startInstant.pos, target.pos};
 
         unique_ptr<Path> path =
@@ -183,11 +185,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
     case Control: {
-        // Keep moving at the ball at vel slightly larger until past the ball
-        // Ignore ball hitbox
         // Stop movement
-
-
 
         // Using the current velocity
         // Calculate stopping point along the ball path

@@ -30,6 +30,6 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
         reqs = super().role_requirements()
         # try to be near the ball
         if main.ball().valid:
-            reqs.destination_shape = main.ball().pos
+            reqs.destination_shape = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel * 10)
 
         return reqs
