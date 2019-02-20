@@ -18,11 +18,11 @@ class BasicIndirect(standard_play.StandardPlay):
 
         kicker = skills.line_kick.LineKick()
         kicker.use_chipper = True
-
         kicker.kick_power = 50
 
+        # Pass to point in front of opponent goal
         receive_pt = robocup.Point(0, 3 * constants.Field.Length / 4)
-        
+
         pass_behavior = tactics.coordinated_pass.CoordinatedPass(
             receive_pt,
             None,
@@ -34,7 +34,9 @@ class BasicIndirect(standard_play.StandardPlay):
 
         self.add_transition(
             behavior.Behavior.State.running, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('pass').is_done_running() and self.subbehavior_with_name('pass').state != tactics.coordinated_pass.CoordinatedPass.State.timeout,
+            lambda: self.subbehavior_with_name('pass').is_done_running() and 
+            self.subbehavior_with_name('pass').state != tactics.coordinated_pass.CoordinatedPass.State.timeout,
+            # Keep trying pass until timeout
             'pass completes')
 
     @classmethod
