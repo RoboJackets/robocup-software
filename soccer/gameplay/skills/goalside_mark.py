@@ -12,7 +12,8 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     the position of the robot/mark_point.
     @param: ratio - this will control how far from the opposing robot the defender will mark (0 is close to robot)
     '''
-
+    #pylint: disable=no-member
+    
     def __init__(self):
         super().__init__(continuous=True)
         #Below params are described above @properties
