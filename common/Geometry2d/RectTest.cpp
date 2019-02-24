@@ -49,13 +49,13 @@ TEST(Rect, cohenCodes){
     EXPECT_EQ(intersectExample.CohenSutherlandOutCode(Point(1.5,2.5)), 0x0A);
 }*/
 
-TEST(Rect, degenerageCohenCodes){
+/*TEST(Rect, degenerageCohenCodes){
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(0,0)), 0x00);
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(1,0)), 0x02);
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(-1,0)), 0x01);
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(0,1)), 0x08);
     EXPECT_EQ(nullExample.CohenSutherlandOutCode(Point(0,-.1)), 0x04);
-}
+}*/
 
 TEST(Rect, degenerageSegmentIntersection){
     std::tuple<bool, std::vector<Point> > res = nullExample.intersects(Segment(Point(1,0),Point(-1,0)));
