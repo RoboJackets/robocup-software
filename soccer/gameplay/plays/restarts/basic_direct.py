@@ -1,30 +1,35 @@
-import robocup
-import constants
-import standard_play
-import enum
-import behavior
 import main
+import robocup
+import behavior
+import constants
+import enum
+
+import standard_play
 import evaluation
 import tactics.coordinated_pass
 import skills
 
 
-class DirectFreeKick(standard_play.StandardPlay):
+class BasicDirect(standard_play.StandardPlay):
+
+    #Minimum probability for which a shot should be taken
+    MIN_SHOT_PROB = 0.35
+    FIELD_LENGTH_MULTIPLIER = 0.75
 
     class State(enum.Enum):
         kicking = 1
         passing = 2
+
     def __init__ (self):
         super().__init__(continuous = True)
-
-        self.add_state(DirectFreeKick.State.kicking,behavior.Behavior.State.running)
-        self.add_state(DirectFreeKick.State.passing,behavior.Behavior.State.running)
-
-
+        for s in DirectFreeKick.State:
+            self.add_state(s, behavior.Behavior.State.running)
+        # If chance of scoring is greater than equal to MIN_SHOT_PROB it will kick
         self.add_transition(behavior.Behavior.State.start,DirectFreeKick.State.kicking,
-            lambda:evaluation.shooting.eval_shot(main.ball().pos, main.our_robots()) >= 0.35,'ShotChanceHigh')        
+            lambda:evaluation.shooting.eval_shot(main.ball().pos, main.our_robots()) >= MIN_SHOT_PROB,'ShotChanceHigh')        
+        #If chance of scoring is below MIN_SHOT_PROB we want to pass using the chipper
         self.add_transition(behavior.Behavior.State.start,DirectFreeKick.State.passing,
-            lambda:evaluation.shooting.eval_shot(main.ball().pos, main.our_robots()) <0.35,'Pass')
+            lambda:evaluation.shooting.eval_shot(main.ball().pos, main.our_robots()) < MIN_SHOT_PROB,'Pass')
 
     def on_enter_kicking(self):
         self.add_subbehavior(skills.pivot_kick.PivotKick(),'kicking_the_ball')
@@ -33,9 +38,12 @@ class DirectFreeKick(standard_play.StandardPlay):
         kicker = skills.pivot_kick.PivotKick()
         kicker.use_chipper = True
         kicker.kick_power = 50
-        receive_pt = robocup.Point(0, 3 * constants.Field.Length / 4)
+        #The point the ball will be chipped to
+        receive_pt = robocup.Point(0, FIELD_LENGTH_MULTIPLIER * constants.Field.Length)
 
-        chip_behavior = tactics.coordinated_pass.CoordinatedPass(receive_pt,None,(kicker, lambda x : True), None, False, False) 
+        chip_behavior = tactics.coordinated_pass.CoordinatedPass(receive_pt,None,
+            (kicker, lambda x : True), 
+            None, False, False) 
         self.add_subbehavior(chip_behavior,'chipping')
 
     @classmethod
