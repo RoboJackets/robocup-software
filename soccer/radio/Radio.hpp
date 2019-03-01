@@ -23,15 +23,23 @@ public:
 
     int channel() const { return _channel; }
 
-    const std::vector<Packet::RadioRx>& reversePackets() const {
-        return _reversePackets;
+    bool hasReversePackets() {
+        std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
+        return _reversePackets.size();
     }
 
-    std::vector<Packet::RadioRx>& reversePackets() { return _reversePackets; }
+    const Packet::RadioRx popReversePacket() {
+        std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
+        Packet::RadioRx packet = _reversePackets.back();
+        _reversePackets.pop_back();
+        return packet;
+    }
 
     void clear() { _reversePackets.clear(); }
 
 protected:
+    std::mutex _reverse_packets_mutex;
+
     std::vector<Packet::RadioRx> _reversePackets;
     int _channel;
 };

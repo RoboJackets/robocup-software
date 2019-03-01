@@ -120,6 +120,7 @@ void SimRadio::receive() {
                                          : kicker_status_ready);
         rx.set_kicker_voltage(200);
 
+        std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
         _reversePackets.push_back(rx);
     }
 }
