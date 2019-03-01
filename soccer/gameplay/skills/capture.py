@@ -46,7 +46,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.add_transition(Capture.State.collect,
                             behavior.Behavior.State.completed,
-                            lambda: False,
+                            lambda: self.subbehavior_with_name('collector').is_done_running(),
                             'captured')
 
         # Cut back if the velocity is pretty high and it was probably kicked

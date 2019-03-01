@@ -22,6 +22,7 @@ ConfigDouble* SettlePathPlanner::_interceptBufferTime;
 ConfigDouble* SettlePathPlanner::_targetPointGain;
 ConfigDouble* SettlePathPlanner::_ballVelGain;
 ConfigDouble* SettlePathPlanner::_maxAnglePathTargetChange;
+ConfigDouble* SettlePathPlanner::_maxBallVelForPathReset;
 ConfigDouble* SettlePathPlanner::_maxBallAngleForReset; 
 
 void SettlePathPlanner::createConfiguration(Configuration* cfg) {
@@ -41,6 +42,8 @@ void SettlePathPlanner::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "Capture/Settle/ballVelGain", 0.1);
     _maxAnglePathTargetChange =
         new ConfigDouble(cfg, "Capture/Settle/maxAnglePathTargetChange", 20); // Deg
+    _maxBallVelForPathReset =
+        new ConfigDouble(cfg, "Capture/Settle/maxBallVelForPathReset", 2); // m/s
     _maxBallAngleForReset =
         new ConfigDouble(cfg, "Capture/Settle/maxBallAngleForReset", 20); // Deg
 }
@@ -75,16 +78,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     ShapeSet& obstaclesWBall = obstacles;
     obstaclesWBall.add(make_shared<Circle>(ball.predict(curTime).pos, .1));
 
-    // Previous angle path from last iteration
-    AngleFunctionPath* prevAnglePath = 
-        dynamic_cast<AngleFunctionPath*>(planRequest.prevPath.get());
-
     // Previous RRT path from last iteration
-    unique_ptr<Path> prevPath;
-
-    if (prevAnglePath && prevAnglePath->path) {
-        prevPath = move(prevAnglePath->path);
-    }
+    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // The small beginning part of the previous path
     unique_ptr<Path> partialPath = nullptr;
@@ -119,11 +114,10 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // If the ball changed directions or magnitude really quickly, do a reset of target
     // But if we are already in another state, it should be very quickly to jump out
     // and try again
-    if (averageBallVel.angleBetween(planRequest.systemState.ball.vel) > maxBallAngleChangeForPathReset ||
-        (averageBallVel - planRequest.systemState.ball.vel).mag() > 2) {
+    if (averageBallVel.angleBetween(ball.vel) > maxBallAngleChangeForPathReset ||
+        (averageBallVel - ball.vel).mag() > *_maxBallVelForPathReset) {
         firstTargetPointFound = false;
         firstBallVelFound = false;
-        std::cout << "Resetting plan" << std::endl;
     }
 
 
@@ -172,8 +166,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         //  Actually in front of the ball
         //
         // TODO: Check ball sense?
-        if (//botDistToBallMovementLine < Robot_Radius &&
-            timeIntoPreviousPath < prevPath->getDuration() - 1.5*partialReplanLeadTime &&
+        if (timeIntoPreviousPath < prevPath->getDuration() - 1.5*partialReplanLeadTime &&
             (pathSoFar->end().motion.pos - prevPath->end().motion.pos).mag() < 3*Robot_Radius &&
             (pathSoFar->end().motion.pos - ballMovementLine.pt[0]).mag() >
                 (pathSoFar->end().motion.pos - ballMovementLine.pt[1]).mag() &&
@@ -182,16 +175,6 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             startInstant = pathSoFar->end().motion;
             currentState = Dampen;
             std::cout << "Transitioned to dampen" << std::endl;
-            std::cout << timeIntoPreviousPath << " : " << prevPath->getDuration() << std::endl;
-        }
-        // Dampen -> Complete
-        //  Almost at the end of the path
-        //  TODO: Make sure ball was hit or slowed down
-        else if (timeIntoPreviousPath >= prevPath->getDuration() - 1.1*partialReplanLeadTime &&
-            currentState == Dampen && false) {
-            
-            currentState = Complete;
-            std::cout << "Transitioned to complete" << std::endl;
         }
     }
 
@@ -251,6 +234,16 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
                             targetRobotIntersection.pos = targetRobotIntersection.pos + 
                                 (interceptTarget - targetRobotIntersection.pos).norm() * sin(maxAnglePathTargetChange);
                             std::cout << "Angle too large" << std::endl;
+                        }
+
+                        if ((path->start().motion.vel - partialPath->end().motion.vel).mag() > 0.1) {
+                            numInvalidPaths++;
+                        } else {
+                            numInvalidPaths = 0;
+                        }
+
+                        if (numInvalidPaths > 5) {
+                            std::cout << "X in a row" << std::endl;
                         }
 
                         interceptTarget = *_targetPointGain * targetRobotIntersection.pos +
@@ -332,18 +325,15 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // so we can use that vector to stop
         // Save vector and use that?
 
-        if (pathCreatedForDampen) {
-            if (prevPath) {
-                std::cout << "Using same" << std::endl;
-                return std::move(prevPath);
-            }
+        if (pathCreatedForDampen && prevPath) {
+            return std::move(prevPath);
         }
+
+        pathCreatedForDampen = true;
 
         if (prevPath) {
             startInstant = prevPath->end().motion;
         }
-
-        pathCreatedForDampen = true;
 
         // Using the current velocity
         // Calculate stopping point along the ball path
@@ -397,27 +387,9 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
             dampenEnd->setStartTime(newStartTime);
         }
 
-        std::cout << "New damp path" << std::endl;
+        //std::cout << "New damp path" << std::endl;
         return make_unique<AngleFunctionPath>(
             std::move(dampenEnd),
-            angleFunctionForCommandType(FacePointCommand(ball.pos)));
-    }
-    case Complete: {
-        // Set movement target at current location
-        MotionInstant target(startInstant);
-        target.vel = Point(0, 0);
-
-        std::unique_ptr<MotionCommand> rrtCommand =
-            std::make_unique<PathTargetCommand>(target);
-
-        auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
-                                    robotConstraints, nullptr, obstacles,
-                                    dynamicObstacles, planRequest.shellID);
-        auto path = rrtPlanner.run(request);
-        path->setDebugText("Completed Settle");
-
-        return make_unique<AngleFunctionPath>(
-            std::move(path),
             angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
     default: {

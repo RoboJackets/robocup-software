@@ -10,7 +10,41 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-// All the config stuff here
+REGISTER_CONFIGURABLE(CollectPathPlanner);
+
+ConfigDouble* CollectPathPlanner::_ballSpeedApproachDirectionCutoff;
+ConfigDouble* CollectPathPlanner::_approachAccelScalePercent;
+ConfigDouble* CollectPathPlanner::_controlAccelScalePercent;
+ConfigDouble* CollectPathPlanner::_approachDistTarget;
+ConfigDouble* CollectPathPlanner::_touchDeltaSpeed;
+ConfigDouble* CollectPathPlanner::_distCutoffToControl;
+ConfigDouble* CollectPathPlanner::_velCutoffToControl;
+ConfigDouble* CollectPathPlanner::_distCutoffToApproach;
+ConfigDouble* CollectPathPlanner::_stopDistScale;
+ConfigDouble* CollectPathPlanner::_targetPointAveragingGain;
+
+void CollectPathPlanner::createConfiguration(Configuration* cfg) {
+    _ballSpeedApproachDirectionCutoff =
+        new ConfigDouble(cfg, "Capture/Collect/ballSpeedApproachDirectionCutoff", 0.1);
+    _approachAccelScalePercent =
+        new ConfigDouble(cfg, "Capture/Collect/approachAccelScalePercent", 0.7);
+    _controlAccelScalePercent =
+        new ConfigDouble(cfg, "Capture/Collect/controlAccelScalePercent", 0.8);
+    _approachDistTarget =
+        new ConfigDouble(cfg, "Capture/Collect/approachDistTarget", 0.04);
+    _touchDeltaSpeed =
+        new ConfigDouble(cfg, "Capture/Collect/touchDeltaSpeed", 0.1);
+    _distCutoffToControl =
+        new ConfigDouble(cfg, "Capture/Collect/distCutoffToControl", 0.05);
+    _velCutoffToControl =
+        new ConfigDouble(cfg, "Capture/Collect/velCutoffToControl", 1);
+    _distCutoffToApproach =
+        new ConfigDouble(cfg, "Capture/Collect/distCutoffToApproach", 0.3);
+    _stopDistScale =
+        new ConfigDouble(cfg, "Capture/Collect/stopDistScale", 1);
+    _targetPointAveragingGain =
+        new ConfigDouble(cfg, "Capture/Collect/targetPointAveragingGain", 0.8);
+}
 
 bool CollectPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     // TODO: Figure out when a replan is needed
@@ -35,20 +69,8 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     ShapeSet& obstacles = planRequest.obstacles;
     vector<DynamicObstacle>& dynamicObstacles = planRequest.dynamicObstacles;
 
-    // Obstacle list with ball
-    ShapeSet& obstaclesWBall = obstacles;
-    obstaclesWBall.add(make_shared<Circle>(ball.predict(curTime).pos, .1));
-
-    // Previous angle path from last iteration
-    AngleFunctionPath* prevAnglePath =
-        dynamic_cast<AngleFunctionPath*>(planRequest.prevPath.get());
-
     // Previous RRT path from last iteration
-    unique_ptr<Path> prevPath;
-
-    if (prevAnglePath && prevAnglePath->path) {
-        prevPath = move(prevAnglePath->path);
-    }
+    std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // The small beginning part of the previous path
     unique_ptr<Path> partialPath = nullptr;
@@ -64,27 +86,6 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 
     // How much of the previous path to steal
     const RJ::Seconds partialReplanLeadTime = RRTPlanner::getPartialReplanLeadTime();
-
-    // TODO: Decide whether to get an average of ball vel approach 
-
-    // The cutoff ball speed to approach from behind the ball movement or
-    // to just directly move in
-    const float ballSpeedDirectCutoff = 0.1; // m/s
-
-    // Percent of max accel to use
-    const float approachAccelScalePercent = 0.5; // %
-
-    const float distCutoffToControl = 0.07; // m
-    const float velCutoffToControl = 1; // m/s
-
-    const float touchSpeed = 0.5; // m/s
-
-    // Gain on the averaging function to smooth the target point to intercept
-    // This is due to the high flucations in the ball velocity frame to frame
-    // a*newPoint + (1-a)*oldPoint
-    // The lower the number, the less noise affects the system, but the slower it responds to changes
-    // The higher the number, the more noise affects the system, but the faster it responds to changes
-    const float targetPointAveragingGain = .8;
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
@@ -107,57 +108,73 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
         }
     }
 
-    if (!firstTargetFound) {
-        velocityTarget = ball.vel;
-        firstTargetFound = true;
+    // Initialize the filter to the ball velocity so there's less ramp up
+    if (!averageBallVelInitialized) {
+        averageBallVel = ball.vel;
+        averageBallVelInitialized = true;
     } else {
-        velocityTarget = targetPointAveragingGain * velocityTarget + 
-                         (1 - targetPointAveragingGain) * ball.vel;
+        averageBallVel = *_targetPointAveragingGain * averageBallVel + 
+                         (1 - *_targetPointAveragingGain) * ball.vel;
     }
 
     // Do the transitions
-    float dist = (startInstant.pos - ball.pos).mag();
-    float speedDiff = (startInstant.vel.mag() - velocityTarget.mag());
+    float dist = (startInstant.pos - ball.pos).mag() - Robot_MouthRadius - *_approachDistTarget;
+    float speedDiff = (startInstant.vel - averageBallVel).mag() - *_touchDeltaSpeed;
 
-    // If we are close enough to the ball and almost the same speed, start slowing down
-    // TODO: Check for ball sense
-    if (dist < distCutoffToControl && speedDiff < velCutoffToControl && currentState == Approach) {
+    // If we are close enough to the target point near the ball
+    // and almost the same speed we want, start slowing down
+    // TODO: Check for ball sense?
+    if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl && currentState == Approach) {
         currentState = Control;
-
-        std::cout << "Transition to control" << std::endl;
     }
 
-    motionConstraints.maxAcceleration *= approachAccelScalePercent;
+    // Check if we need to go back into approach
+    if ((ball.pos - startInstant.pos).mag() > 2*Robot_Radius && currentState == Control) {
+        cout << "Reseting" << endl;
+        currentState = Approach;
+    }
 
-    // Figure out the vector from the robot into the ball
-    // about what the robot should follow
-    Point approachDirection = -ball.vel;
+    // Approach direction is the direction we move towards the ball and through it
+    // Only set once
+    // Reset when the ball state changes significantly (This is done in python)
 
-    // If it's almost 0, approach from any direction
-    if (approachDirection.magsq() < 0.1) {
-        approachDirection = (startInstant.pos - ball.pos).norm();
-    } else {
-        approachDirection = approachDirection.norm();
+    // If we haven't found an approach direction yet
+    if (approachDirection == Point(0,0)) {
+        if (ball.vel.mag() < *_ballSpeedApproachDirectionCutoff) {
+            // Move directly to the ball
+            approachDirection = (ball.pos - startInstant.pos).norm();
+        } else {
+            // Approach the ball from behind
+            // TODO: May need to rethink average here since it'll be based on the first ball vel only
+            approachDirection = averageBallVel.norm();
+        }
     }
 
     switch (currentState) {
+    // Moves from the current location to the ball
+    // Controls the robot up until just before the point of contact
     case Approach: {
 
         // The target position shouldn't be the ball, it should be where the mouth
         // is touching the ball
         // Move to ball position matching ball speed
 
-        Point targetPos = ball.pos + approachDirection * 0.09;
-        
-
-        MotionInstant target(targetPos, velocityTarget + velocityTarget.norm()*touchSpeed);
+        // Setup targets for path planner
+        Point targetPos = ball.pos - (*_approachDistTarget + Robot_MouthRadius) * approachDirection;
+        MotionInstant target(targetPos, averageBallVel + approachDirection.norm() * *_touchDeltaSpeed);
         vector<Point> startEndPoints{startInstant.pos, target.pos};
 
+        // Decrease accel over the entire path
+        // In the correct case, only the end will be decreased
+        motionConstraints.maxAcceleration *= *_approachAccelScalePercent;
+
+        // Build a path from now to the end
         unique_ptr<Path> path =
             RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, target.vel);
 
         path->setDebugText("approaching");
 
+        // Append to the partial path
         if (path) {
             if (partialPath) {
                 path = make_unique<CompositePath>(move(partialPath),
@@ -170,8 +187,8 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
                     FacePointCommand(ball.pos)));
         }
 
-        // No point found
-        // just move to ball
+        // No partial path found
+        // Just use the path we created
         unique_ptr<MotionCommand> rrtCommand =
             make_unique<PathTargetCommand>(target);
 
@@ -181,37 +198,76 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
         path = rrtPlanner.run(request);
 
         return make_unique<AngleFunctionPath>(
-            move(path),
-            angleFunctionForCommandType(FacePointCommand(ball.pos)));
+            move(path), angleFunctionForCommandType(
+                FacePointCommand(ball.pos)));
     }
+    // Move through the ball and stop
+    // Controls from the point of impact to stop
     case Control: {
-        // Stop movement
+        
+        // Only plan the path once and run through it
+        // Otherwise it will basically push the ball across the field
+        if (controlPathCreated && prevPath) {
+            return std::move(prevPath);
+        }
+
+        controlPathCreated = true;
+
+        // Scale the max acceleration so we don't stop too quickly
+        // Set the max speed to the current speed so it stays constant as
+        //  we touch the ball and allows the dribbler to get some time to
+        //  spin it up to speed
+        // Make sure we don't go over our current max speed
+        // Shouldn't happen (tm)
+        motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
+        motionConstraints.maxSpeed = min(averageBallVel.mag() + *_touchDeltaSpeed,
+                                         motionConstraints.maxSpeed);
 
         // Using the current velocity
-        // Calculate stopping point along the ball path
+        // Calculate stopping distance given the acceleration
         float maxAccel = motionConstraints.maxAcceleration;
-        float currentSpeed = startInstant.vel.mag();
+        float currentSpeed = averageBallVel.mag() + *_touchDeltaSpeed;
 
         // Assuming const accel going to zero velocity
         // speed / accel gives time to stop
-        // speed / 2 is average time over the entire operation
+        // speed / 2 is average speed over entire operation
         float stoppingDist = currentSpeed*currentSpeed / (2 * maxAccel);
 
-        MotionInstant target(startInstant);
+        // Move through the ball some distance
+        // The initial part will be at a constant speed, then it will decelerate to 0 m/s
+        double distFromBall = *_stopDistScale * stoppingDist;
+        MotionInstant target;
+        target.pos = startInstant.pos + distFromBall * startInstant.vel.norm();
         target.vel = Point(0, 0);
 
-        std::unique_ptr<MotionCommand> rrtCommand =
-            std::make_unique<PathTargetCommand>(target);
 
-        auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
-                                    robotConstraints, nullptr, obstacles,
-                                    dynamicObstacles, planRequest.shellID);
-        auto path = rrtPlanner.run(request);
+        // Try to use the RRTPlanner to generate the path first
+        // It reaches the target better for some reason
+        vector<Point> startEndPoints{startInstant.pos, target.pos};
+        unique_ptr<Path> path =
+            RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, target.vel);
+
+        // Try to use the plan request if the above fails
+        // This sometimes doesn't reach the target commanded though 
+        if (!path) {
+            std::unique_ptr<MotionCommand> rrtCommand =
+                std::make_unique<PathTargetCommand>(target);
+
+            auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
+                                        robotConstraints, nullptr, obstacles,
+                                        dynamicObstacles, planRequest.shellID);
+            path = rrtPlanner.run(request);
+        }
+
         path->setDebugText("stopping");
 
+        // Make sure that when the path ends, we don't end up spinning around because we
+        // hit go past the ball position at the time of path creation
+        Point facePt = startInstant.pos + 10 * (ball.pos - startInstant.pos).norm();
+
         return make_unique<AngleFunctionPath>(
-            std::move(path),
-            angleFunctionForCommandType(FacePointCommand(ball.pos)));
+            std::move(path), angleFunctionForCommandType(
+                FacePointCommand(facePt)));
     }
     default: {
         std::cout << "WARNING: Invalid state in collect planner. Restarting" << std::endl;
