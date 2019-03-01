@@ -31,7 +31,7 @@ public:
         return _reversePackets.size();
     }
 
-    inline const Packet::RadioRx popReversePacket() {
+    const Packet::RadioRx popReversePacket() {
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
         Packet::RadioRx packet = std::move(_reversePackets.front());
         _reversePackets.pop_front();
