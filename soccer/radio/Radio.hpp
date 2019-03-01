@@ -41,8 +41,9 @@ public:
     void clear() {
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
 
-        // Clear the reverse packets queue
-        _reversePackets = {};
+        // Clear the reverse packets queue by copy-swap
+        std::queue<Packet::RadioRx> cleared;
+        std::swap(cleared, _reversePackets);
     }
 
 protected:
