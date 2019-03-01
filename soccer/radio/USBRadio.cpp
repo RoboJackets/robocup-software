@@ -321,7 +321,7 @@ void USBRadio::handleRxData(uint8_t* buf) {
     }
 
     std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-    _reversePackets.push(packet);
+    _reversePackets.push_back(packet);
 }
 
 void USBRadio::channel(int n) {
