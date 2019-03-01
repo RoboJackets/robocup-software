@@ -3,6 +3,9 @@
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 
+#include <mutex>
+#include <queue>
+
 /**
  * @brief Sends and receives information to/from our robots.
  *
@@ -28,18 +31,25 @@ public:
         return _reversePackets.size();
     }
 
-    const Packet::RadioRx popReversePacket() {
+    inline const Packet::RadioRx popReversePacket() {
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-        Packet::RadioRx packet = _reversePackets.back();
-        _reversePackets.pop_back();
+        Packet::RadioRx packet = std::move(_reversePackets.front());
+        _reversePackets.pop();
         return packet;
     }
 
-    void clear() { _reversePackets.clear(); }
+    void clear() {
+        std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
+
+        // Clear the reverse packets queue
+        _reversePackets = {};
+    }
 
 protected:
+    // A queue for the reverse packets as they come in through libusb.
+    // Access to this queue should be controlled by locking the mutex.
+    std::queue<Packet::RadioRx> _reversePackets;
     std::mutex _reverse_packets_mutex;
 
-    std::vector<Packet::RadioRx> _reversePackets;
     int _channel;
 };
