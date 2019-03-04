@@ -14,7 +14,7 @@ class Wall(composite_behavior.CompositeBehavior):
 
     def __init__(self,
                  num_defenders = 3,                         # number of defenders we're making the wall with (default 3)
-                 curvature =  math.pi/4,                            # 'curvature' (in radians) of the wall 
+                 curvature =  0,                            # 'curvature' (in radians) of the wall 
                  mark_point = None,                         # what point we are defending against (default is ball)
                  defender_point = robocup.Point(0, 0),      # what point we are defending (default is goal)
                  defender_spacing = 3.5,                    # number of robot radii between the centers of the defenders in the wall
