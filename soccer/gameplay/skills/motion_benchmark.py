@@ -130,7 +130,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         pass
         #Note, add angular noise?
 
-    #Test that makes the robot navigate a virtual field with virtual obstacles
+    #Test that makes the robot navigate virtual obstacles
     class ObstacleMotionTest(MotionTest):
         pass
 
@@ -335,11 +335,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
             self.sResults['title'] = self.title
 
-
-
             paramList = []
-
-
 
 
             if self.sParams.get('avgMotionTime',False): 
@@ -357,9 +353,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             if self.sParams.get('avgEndPosError',False): 
                 self.sResults['avgEndPosError'] = motionTimeVar
                 self.sScore['avgEndPosError'] = self.scaleHundred(motionTimeVar,self.sParams.get('avgEndPosErrorBest'),self.sParams.get('avgEndPosErrorWorst'))
-
-
-
 
 
     basicMotionTests = []
@@ -391,8 +384,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         #The list of states to be registered
         allStates = [MotionBenchmark.State.setup, 
-                     MotionBenchmark.State.noise,
-                     MotionBenchmark.State.move1,
                      MotionBenchmark.State.BasicMotion0,
                      MotionBenchmark.State.BasicMotionEnd,
                      MotionBenchmark.State.ProcessBasicMotion,
@@ -412,20 +403,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         #Setup -> Noise
         self.add_transition(MotionBenchmark.State.setup,
-                            MotionBenchmark.State.noise,
-                            lambda: self.all_subbehaviors_completed(), 'In Position')
-
-        #Noise -> Move1
-        self.add_transition(MotionBenchmark.State.noise,
-                            MotionBenchmark.State.move1,
-                            lambda: self.noiseMeasured,
-                            'The noise has been measured')
-
-        #Move1 -> BasicMotion0
-        self.add_transition(MotionBenchmark.State.move1,
                             MotionBenchmark.State.BasicMotion0,
                             lambda: self.all_subbehaviors_completed(), 'In Position')
-        
+
         #BasicMotion0 -> BasicMotionBuffer
         self.add_transition(MotionBenchmark.State.BasicMotion0,
                             MotionBenchmark.State.BasicMotionBuffer,
