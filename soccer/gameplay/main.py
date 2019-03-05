@@ -10,6 +10,7 @@ import imp
 import sys
 import os
 import constants
+from situational_play_selection import SituationalPlaySelector
 
 ## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -201,6 +202,7 @@ def run():
     try:
         if root_play() is not None:
             root_play().spin()
+            SituationalPlaySelector.updateAnalysis()
     except:
         exc = sys.exc_info()[0]
         logging.error("Exception occurred in main.run(): " + str(exc) +
