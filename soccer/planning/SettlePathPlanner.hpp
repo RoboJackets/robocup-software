@@ -39,6 +39,38 @@ public:
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
 
+    // Restarts the state machine if our calculations are whack
+    // and won't intercept ball correctly anymore
+    void checkSolutionValidity(const Ball& ball);
+
+    // Figures out when to move to each state
+    // (only in the standard transition)
+    //
+    // Note: startInstant may be changed inside this function
+    //       when we are basically at the correct location and
+    //       need to start the dampen
+    void processStateTransition(const Ball& ball,
+                                Path* prevPath,
+                                const RJ::Seconds& timeIntoPreviousPath,
+                                MotionInstant& startInstant);
+
+    // State functions
+    std::unique_ptr<Path> intercept(const PlanRequest& planRequest,
+                                    const RJ::Time curTime,
+                                    const MotionInstant& startInstant,
+                                    std::unique_ptr<Path> partialPath,
+                                    const RJ::Seconds partialPathTime,
+                                    const Geometry2d::ShapeSet& obstacles);
+
+    std::unique_ptr<Path> dampen(const PlanRequest& planRequest,
+                                 MotionInstant& startInstant,
+                                 std::unique_ptr<Path> prevPath);
+
+    std::unique_ptr<Path> invalid(const PlanRequest& planRequest);
+
+    template<typename T>
+    static T applyLowPassFilter(const T& oldValue, const T& newValue, double gain);
+
     RRTPlanner rrtPlanner;
     DirectTargetPathPlanner directPlanner;
     boost::optional<Geometry2d::Point> targetFinalCaptureDirectionPos;
@@ -85,11 +117,11 @@ private:
     // The higher the number, the more noise affects the system, but the faster it responds to changes    
     static ConfigDouble* _ballVelGain;
     
-    // Limits the max change in angle for the target intercept point
-    // This is due to a bug in the velocity path planner
-    // sometimes dropping speed significantly for a single frame
-    // and messing up the intercept target
-    static ConfigDouble* _maxAnglePathTargetChange; // Deg
+    // Limits the max number of invalid paths in a row
+    // Specifically, an invalid path is a path where the velocity of
+    // the robot is not continuous when the target state is not reacable
+    // given the current acceleration constraints
+    static ConfigInt* _maxNumInvalidPaths; // integer num
     
     // If the ball velocity angle changes by a large amount
     // we want to quickly react and clear all the smoothing filters 
