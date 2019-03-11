@@ -2,11 +2,11 @@ import play
 import behavior
 import constants
 import robocup
-import tactics.positions.wing_defender as wd
+import tactics.adaptive_defense as ad
 import main
 import skills
 
-class TestWinger(play.Play):
+class TestAdaptiveDefense(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -14,5 +14,5 @@ class TestWinger(play.Play):
             behavior.Behavior.State.running, lambda: True,
             'now')
 
-        defender = wd.WingDefender(mark_robot = main.system_state().their_robots[0])
-        self.add_subbehavior(defender, "pkskill")
+        defense = ad.AdaptiveDefense()
+        self.add_subbehavior(defense, "adaptive_defense")

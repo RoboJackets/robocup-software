@@ -7,8 +7,7 @@ import skills
 import enum
 import constants
 import role_assignment
-import evaluation.defensive_positioning 
-
+import evaluation.defensive_positioning
 
 class WingDefender(single_robot_behavior.SingleRobotBehavior):
 
@@ -47,12 +46,11 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
 	def execute_defending(self):
 		self._mark_pos = self._mark_robot.pos if self._mark_robot != None else self.mark_pos
 		pt = self.calc_move_point()
-		move_skill = skills.move.Move(pt)
 		self.robot.move_to(pt)
 
 	def calc_move_point(self):
 		if self._mark_pos != None: 
-			goal_line, shot_pt = evaluation.defensive_positioning.goalside_mark_segment(self._mark_pos, self.robot, kick_eval=self.kick_eval)
+			goal_line, shot_pt = evaluation.defensive_positioning.goalside_mark_segment(self._mark_pos, self.robot, ball=False, kick_eval=self.kick_eval)
 			ballside_line = evaluation.defensive_positioning.ballside_mark_segment(self._mark_pos, main.ball().pos)
 			angle = (main.ball().pos - self._mark_pos).angle_between(shot_pt - self._mark_pos) * self._goalside_ratio
 			norm_goal_line = ((shot_pt - self._mark_pos).normalized() + self._mark_pos)
