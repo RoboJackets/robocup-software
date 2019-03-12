@@ -34,7 +34,6 @@ class SystemState;
 class RobotConfig;
 class RobotStatus;
 class MotionControl;
-class RobotFilter;
 
 namespace Packet {
 class DebugText;
@@ -61,9 +60,7 @@ public:
         : visible(false),
           velValid(false),
           angle(0),
-          angleVel(0),
-          time(),
-          visionFrame(0) {
+          angleVel(0) {
         // normalize angle so it's always positive
         // while (angle < 0) angle += 2.0 * M_PI;
     }
@@ -76,16 +73,12 @@ public:
     /// angle in radians.  0 radians means the robot is aimed along the x-axis
     double angle;
     double angleVel;  /// angular velocity in radians/sec
-
-    // Time at which this estimate is valid
     RJ::Time time;
-    int visionFrame;
 };
 
 class Robot : public RobotPose {
 public:
     Robot(unsigned int shell, bool self);
-    ~Robot();
 
     /**
      * ID number for the robot.  This is the number that the dot pattern on the
@@ -98,10 +91,6 @@ public:
      */
     bool self() const { return _self; }
 
-    /**
-     * Get the robot's position filter.
-     */
-    RobotFilter* filter() const { return _filter; }
 
     bool operator==(const Robot& other) {
         return shell() == other.shell() && self() == other.self();
@@ -118,9 +107,8 @@ public:
     }
 
 private:
-    unsigned int _shell;
-    bool _self;
-    RobotFilter* _filter;
+    const unsigned int _shell;
+    const bool _self;
 };
 
 /**
@@ -582,6 +570,7 @@ private:
     static ConfigDouble* _selfAvoidRadius;
     static ConfigDouble* _oppAvoidRadius;
     static ConfigDouble* _oppGoalieAvoidRadius;
+    static ConfigDouble* _dribbleOutOfBoundsOffset;
 
     int8_t _planningPriority;
 };

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <string.h>
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -15,7 +16,6 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
-#include <modeling/RobotFilter.hpp>
 #include "VisionReceiver.hpp"
 
 #include "rc-fshare/rtp.hpp"
@@ -25,7 +25,7 @@ class RobotStatus;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
-class BallTracker;
+class VisionFilter;
 
 namespace Gameplay {
 class GameplayModule;
@@ -92,7 +92,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
     Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
-              bool blueTeam);
+              bool blueTeam, std::string readLogFile);
     virtual ~Processor();
 
     void stop();
@@ -221,8 +221,7 @@ private:
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
-    void runModels(
-        const std::vector<const SSL_DetectionFrame*>& detectionFrames);
+    void runModels(const std::vector<const SSL_DetectionFrame*>& detectionFrames);
 
     /** Used to start and stop the thread **/
     volatile bool _running;
@@ -240,6 +239,10 @@ private:
     // True if we are blue.
     // False if we are yellow.
     bool _blueTeam;
+
+    // A logfile to read from.
+    // When empty, don't read logs at all.
+    std::string _readLogFile;
 
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
@@ -276,10 +279,10 @@ private:
     Status _status;
 
     // modules
+    std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-    std::shared_ptr<BallTracker> _ballTracker;
 
     // joystick control
     std::vector<Joystick*> _joysticks;

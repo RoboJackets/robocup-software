@@ -1,6 +1,5 @@
 #include <Robot.hpp>
 #include <LogUtils.hpp>
-#include <modeling/RobotFilter.hpp>
 #include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
@@ -33,12 +32,8 @@ const float Ball_Avoid_Small = 2.0 * Ball_Radius;
 const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
-    : RobotPose(), _shell(shell), _self(self), _filter(new RobotFilter()) {}
+    : RobotPose(), _shell(shell), _self(self) {}
 
-Robot::~Robot() {
-    delete _filter;
-    _filter = nullptr;
-}
 
 #pragma mark OurRobot
 
@@ -47,6 +42,7 @@ REGISTER_CONFIGURABLE(OurRobot)
 ConfigDouble* OurRobot::_selfAvoidRadius;
 ConfigDouble* OurRobot::_oppAvoidRadius;
 ConfigDouble* OurRobot::_oppGoalieAvoidRadius;
+ConfigDouble* OurRobot::_dribbleOutOfBoundsOffset;
 
 void OurRobot::createConfiguration(Configuration* cfg) {
     _selfAvoidRadius =
@@ -55,6 +51,8 @@ void OurRobot::createConfiguration(Configuration* cfg) {
                                        Robot_Radius - 0.01);
     _oppGoalieAvoidRadius = new ConfigDouble(
         cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+    _dribbleOutOfBoundsOffset = new ConfigDouble(
+        cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
 OurRobot::OurRobot(int shell, SystemState* state)
@@ -266,9 +264,22 @@ float OurRobot::kickTimer() const {
 
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
-    uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
-    control->set_dvelocity(scaled);
-    *_cmdText << "dribble(" << (float)speed << ")" << endl;
+    Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
+    float offset = *_dribbleOutOfBoundsOffset;
+
+    Geometry2d::Rect modifiedField = Geometry2d::Rect(
+        Point((-current_dimensions.Width() / 2) - offset, -offset),
+        Point((current_dimensions.Width() / 2) + offset,
+              current_dimensions.Length() + offset));
+
+    if (modifiedField.containsPoint(pos)) {
+        uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
+        control->set_dvelocity(scaled);
+
+        *_cmdText << "dribble(" << (float)speed << ")" << endl;
+    } else {
+        control->set_dvelocity(0);
+    }
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
