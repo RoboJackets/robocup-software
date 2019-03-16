@@ -82,15 +82,23 @@ class SituationalPlaySelector:
     #there should also probably be a factor for when the ball is moving too
     #fast to reasonably be captured, if that is a concern.
 
+    def ballVelFactor(ballVel):
+        return 1.0 
+
 
     #Velocity is a scalar here and the robots x and y are in the balls refrence frame
-    @classmethod
-    def ballRecieveFunction(cls, x, y, v):
+    @staticmethod
+    def ballRecieveFunction(x, y, v):
 
         #This covers things in the direction oppisate the direction that the ball is traveling
         if(x + y < 0):
             return 0
 
+
+
+
+
+        #Section I: The Main Gaussian
         vfl = 1.0 #Velocity factor linear
         vfn = 1.0 #Velocity factor non-linear
         u = math.pow(v,vfn) * vfl * math.pow(((sqrt((x-y)**2 + (y-x)**2)/sqrt(x**2 + y**2))),flatness)
@@ -99,9 +107,10 @@ class SituationalPlaySelector:
         elif(u < -1.0):
             u = -1.0
 
-        cls.triweight(u) #Puts the positional and falloff factors into a gaussian approximation 
+        u = cls.triweight(u) #Puts the positional and falloff factors into a gaussian approximation 
 
 
+        #Section II: The Falloff Factor
         fl = 0.05 #Falloff linear factor
         fn = 1.2 #Falloff nonlinear factor
 
@@ -111,27 +120,58 @@ class SituationalPlaySelector:
         elif(f > 1.0):
             f = 1.0
 
-        return u * f
+
+        #Section III: The Occlusion Factor
+        of = 0.0
+
+        if(of)
+        
+
+        #The final formula is the gaussian times the falloff minus the occlusion factor (which is capped 0,1)
+        retVal = u * f - of
+
+        if(retVal < 0.0):
+            return 0
+        elif(retVal > 1.0):
+            return 1.0
+            print("This really should not happen (The value of the ball recieve function was greater than 1)")
 
 
     #A triweight kernal approximation of a gaussian
-    @classmethod 
-    def triweight(cls, x):
+    @staticmethod
+    def triweight(x):
         return (34.0 / 35.0) * ((1 - x**2)**3)
 
     #penalty for not facing the ball as a function of ball velocity and distance to the ball 
-    @classmethod
-    def rotationPenalty(cls, ):
-        pass
+    @staticmethod
+    def rotationFactor(ballPos, ballVel, robotPos):
+        return 1.0
 
     #Transforms position vector from global to the ball (where the ball is always traveling in the pi / 4 direction)
-    #Ball is traveling in the pi / 4 direction 
     #(Really just a general transform but its made to do this in particular)
-    @classmethod
-    def TransformToBall(x,y,ballX,ballY,ballTheta):
-        return 0
+    @staticmethod
+    def transformToBall(pos, ballPos, ballVel):
+        #Current hypothesis is that I want to rotate the vector the angle of the
+        #ball velocity plus pi / 4, will see how that plays out
+        rotA = math.atan2(ballVel[1], ballVel[0]) + (math.pi / 4.0)
+        x = pos[0] * math.cos(rotA) - pos[1] * math.sin(rotA) + ballPos[0]
+        y = pos[0] * math.cos(rotA) + pos[1] * math.cos(rotA) + ballPos[1]
+        return (x, y)
 
-        
+    @staticmethod
+    def rotate_point(x, y, heading_deg):
+        c = math.cos(math.radians(heading_deg))
+        s = math.sin(math.radians(heading_deg))
+        xr = x * c + y * -s
+        yr = x * s + y * c
+        return xr, yr
+
+    
+    @staticmethod
+    def ball_recieve_prob(ballPos, ballVel, robot):
+        robotPos = (robot.pos.x, robot.pos.y)
+        robotPos_ball = transformToBall(robotPos, ballPos, ballVel)
+
 
     @classmethod
     def ballPossessionUpdate(cls):
@@ -174,6 +214,7 @@ class SituationalPlaySelector:
             #print(i)
             pass
         '''
+        cls.systemState.draw_text("Gregory is a weeb", Robocup.Point(0,3), (0,0,0),"hat")
         print(cls.systemState.ball.pos)
 
         pass
