@@ -65,11 +65,7 @@ class Wall(composite_behavior.CompositeBehavior):
     @property
     def defense_point(self):
         return self._defense_point
-
-    @property
-    def mark_point(self):
-        return self._mark_point
-
+    
     # Changes the point we are defending against attack, updates move behaviors
     @defense_point.setter
     def defense_point(self, point):
@@ -79,6 +75,10 @@ class Wall(composite_behavior.CompositeBehavior):
             if self.has_subbehavior_with_name("robot" + str(i)):
                 behavior = self.subbehavior_with_name("robot" + str(i))
                 behavior.pos = self.calculate_destination(i)
+
+    @property
+    def mark_point(self):
+        return self._mark_point
 
     # Changes the point we are defending against, updates move behaviors
     @mark_point.setter
