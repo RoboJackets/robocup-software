@@ -382,7 +382,8 @@ void Processor::run() {
         // Read radio reverse packets
         _radio->receive();
 
-        for (Packet::RadioRx& rx : _radio->reversePackets()) {
+        while (_radio->hasReversePackets()) {
+            Packet::RadioRx rx = _radio->popReversePacket();
             _state.logFrame->add_radio_rx()->CopyFrom(rx);
 
             curStatus.lastRadioRxTime =
@@ -398,7 +399,7 @@ void Processor::run() {
                 _state.self[board]->radioRxUpdated();
             }
         }
-        _radio->clear();
+
         for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
