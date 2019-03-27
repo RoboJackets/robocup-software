@@ -49,7 +49,7 @@ class FourCornerPass(play.Play):
 			State.failed, 'all subbehaviors completed')
 
 		#change this to adjust the square size
-		variable_square = 4.5
+		variable_square = 5.5
 
 		#NEVER CHANGE THIS
 		length = constants.Field.Length
@@ -62,7 +62,7 @@ class FourCornerPass(play.Play):
 		#radius of robot
 		self.bot = constants.Robot.Radius
 		# the largest and smallest x and y postion possible for the square
-		self.max_x = (width / 2 - self.bot * 3)
+		self.max_x = (variable_square / 2 - self.bot * 3)
 		self.min_x = -self.max_x
 		self.max_y = length/2 + self.max_x
 		self.min_y = length/2 - self.max_x
@@ -85,31 +85,16 @@ class FourCornerPass(play.Play):
 	# constanly running changes and updates
 	def execute_running(self):
 		# checks if there is an offensive behavior for the various plays and set the normal speed
-		if (self.has_subbehavior_with_name('move1')) :
-			robo = self.subbehavior_with_name('move1').robot
-			if (robo != None) :
-				robo.set_max_speed(self.normal_speed)
-
-		if (self.has_subbehavior_with_name('move2')) :
-			robo = self.subbehavior_with_name('move2').robot
-			if (robo != None) :
-				robo.set_max_speed(self.normal_speed)
-
-		if (self.has_subbehavior_with_name('capture')):
-			robo = self.subbehavior_with_name('capture').robot
-			if (robo != None) :
-				robo.set_max_speed(self.normal_speed)
-
-		if (self.has_subbehavior_with_name('premove')) :
-			robo = self.subbehavior_with_name('premove').robot
-			if (robo != None) :
-				robo.set_max_speed(self.normal_speed)
-
-		# checks if there is a chasing robot and set their speed to defense speed
-		if (self.has_subbehavior_with_name('chasing')):
-			robo = self.subbehavior_with_name('chasing').robot
-			if (robo != None) :
-				robo.set_max_speed(self.defense_speed)
+		for sub in self.subbehaviors_by_name() :
+			if (sub != 'passer') :
+				robo = self.subbehavior_with_name(sub).robot
+				# checks if there is a chasing robot and set their speed to defense speed
+				if (robo != None) :
+					if (sub == 'chasing'):
+						robo.set_max_speed(self.defense_speed)
+					# otherwise sets to the offensive normal speed rate
+					else:
+						robo.set_max_speed(self.normal_speed)		
 
 		# keep the iso point stuck in the corner
 		if (self.has_subbehavior_with_name('iso')) :
@@ -121,11 +106,17 @@ class FourCornerPass(play.Play):
 			self.chaser.pos = self.cut_of_pos(main.ball().pos)
 
 		#draw the four courner field
-		self.paint_the_field()
+		# takes in the square points and form lines and create a square on the field
+		for i in range(len(self.square_points)) :
+			main.system_state().draw_line(robocup.Line(self.square_points[i], 
+			self.square_points[(i + 1) % 4]), (135, 0, 255), "Square")
+
 
 	def on_enter_setup(self):
 		# find where we will consider the ball is closest too and passing from
 		closestPt = min(self.square_points, key=lambda pt: pt.dist_to(main.ball().pos))
+
+		closestPtIdx = self.square_points.index(closestPt)
 
 		#points that the other robots can move to
 		self.otherPts = list(self.square_points)
@@ -137,14 +128,15 @@ class FourCornerPass(play.Play):
 
 		self.otherPts.remove(farthestPt)
 
-
+		# decide which direction you're passing to
+		self.direction = self.safer_pass()
 		# move the other two robots to the other point locations
-		self.add_subbehavior(skills.move.Move(self.otherPts[0]), 'move1', required = False)
-		self.add_subbehavior(skills.move.Move(self.otherPts[1]), 'move2', required = False)
+		self.add_subbehavior(skills.move.Move(self.square_points[(closestPtIdx + self.direction) % 4]), 'move1', required = False)
 		# send the closest robot to capture the ball
 		self.add_subbehavior(skills.capture.Capture(), 'capture')
 
 	def on_exit_setup(self):
+		self.remove_subbehavior('move1')
 		self.remove_subbehavior('capture')
 
 	def on_enter_passing(self):
@@ -153,20 +145,10 @@ class FourCornerPass(play.Play):
 					   key=lambda pt: pt.dist_to(main.ball().pos))
 		# get the index of where you're passing from
 		kickFromIdx = self.square_points.index(kickFrom)
-		# decide which direction you're passing to
-		self.direction = self.safer_pass()
 		# based on which direction you're passing to pick that index
 		kickToIdx = (kickFromIdx + self.direction) % len(self.square_points)
 		# get that point
 		kickToPt = self.square_points[kickToIdx]
-
-		# remove the subbehavior that's not recieving the pass
-		if (kickToPt is self.otherPts[0]) :
-			self.remove_subbehavior('move1')
-			self.text = 'move2'
-		else :
-			self.remove_subbehavior('move2')
-			self.text = 'move1'
 
 		# get ready to pass the ball
 		passing_action = tactics.coordinated_pass.CoordinatedPass(kickToPt)
@@ -189,16 +171,10 @@ class FourCornerPass(play.Play):
 			
 	# remove subbehaviors 
 	def on_exit_passing(self):
-		self.remove_subbehavior(self.text)
+		#self.text)
 		self.remove_subbehavior('passer')
 		self.remove_subbehavior('chasing')
 		self.remove_subbehavior('premove')
-
-	# takes in the square points and form lines and create a square on the field
-	def paint_the_field(self):
-		for i in range(len(self.square_points)) :
-			main.system_state().draw_line(robocup.Line(self.square_points[i], 
-			self.square_points[(i + 1) % 4]), (135, 0, 255), "Square")
 
 	#TODO decide which the better direction to pass is
 	def safer_pass(self):
