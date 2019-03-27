@@ -30,10 +30,13 @@ class distraction(standard_play.StandardPlay):
 
         self.distraction_point = robocup.Point(0.40*constants.Field.Width, 
             0.95*constants.Field.Length) #the first distraction point
+
         self.distraction_recieve_pass_point = robocup.Point(0.40*constants.Field.Width, 
             0.8*constants.Field.Length) #the second distraction point
+
         self.striker_point = robocup.Point(-0.40*constants.Field.Width, 
             0.9*constants.Field.Length) #striker's position
+
         self.center = robocup.Point(0.5*constants.Field.Width,
             0.5*constants.Field.Length) #center of field position, used if ball is far
 
@@ -97,27 +100,33 @@ class distraction(standard_play.StandardPlay):
 
         self.add_transition(distraction.State.passing, 
                         distraction.State.cross, lambda: 
-                        (self.has_subbehavior_with_name('distract pass') and self.subbehavior_with_name('distract pass').is_done_running()) or
+                        (self.has_subbehavior_with_name('distract pass') and 
+                            self.subbehavior_with_name('distract pass').is_done_running()) or
 
-                        (self.has_subbehavior_with_name('get close ball') and self.subbehavior_with_name('get close ball').is_done_running()), 
+                        (self.has_subbehavior_with_name('get close ball') and 
+                            self.subbehavior_with_name('get close ball').is_done_running()), 
                         'have the distracrting robot capture the ball and go to passing to the striker')
 
         self.add_transition(distraction.State.passing,
                         distraction.State.shoot, lambda: 
                         (self.has_subbehavior_with_name('striker pass') and self.subbehavior_with_name('striker pass').is_done_running() ) or 
 
-                        (self.has_subbehavior_with_name('striker get close ball') and self.subbehavior_with_name('striker get close ball').is_done_running()) or
+                        (self.has_subbehavior_with_name('striker get close ball') and 
+                            self.subbehavior_with_name('striker get close ball').is_done_running()) or
 
-                        (self.has_subbehavior_with_name('get close ball') and self.subbehavior_with_name('get close ball').is_done_running()) or
+                        (self.has_subbehavior_with_name('get close ball') and 
+                            self.subbehavior_with_name('get close ball').is_done_running()) or
 
-                        (self.has_subbehavior_with_name('distract pass') and self.subbehavior_with_name('distract pass').is_done_running()),
+                        (self.has_subbehavior_with_name('distract pass') and 
+                            self.subbehavior_with_name('distract pass').is_done_running()),
                         'if the ball is already close to the ball, then go from the striker captureing the ball to shooting the ball')
 
         self.add_transition(distraction.State.cross,
                         distraction.State.shoot, lambda: 
                         self.subbehavior_with_name('pass to striker').is_done_running() or 
-                        
-                        (self.has_subbehavior_with_name('capture 3') and self.subbehavior_with_name('capture 3').is_done_running()) , 
+
+                        (self.has_subbehavior_with_name('capture 3') and 
+                            self.subbehavior_with_name('capture 3').is_done_running()) , 
                         'go from the striker receiving the pass to shooting the ball')
 
         self.add_transition(distraction.State.shoot,
