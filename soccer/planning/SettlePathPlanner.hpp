@@ -17,7 +17,9 @@ namespace Planning {
 class SettlePathPlanner : public SingleRobotPathPlanner {
 public:
     enum SettlePathPlannerStates {
+        // Moves to the ball path in front of it
         Intercept,
+        // Starts to dampen the ball with backward motion
         Dampen
     };
 
@@ -97,6 +99,9 @@ private:
     static ConfigDouble* _searchEndTime; // Secs
     // What increment of time to search for intercepts
     static ConfigDouble* _searchIncTime; // Secs
+
+    // How large of circle around ball to avoid
+    static ConfigDouble* _ballAvoidDistance; // m
     
     // How much sooner should we reach the intercept point than we need to
     // Increase this to give us more time to reach the point to

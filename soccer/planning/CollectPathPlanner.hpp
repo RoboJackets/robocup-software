@@ -39,6 +39,23 @@ public:
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
 
+    // Restarts the state machine if our calculations are whack
+    // and won't intercept ball correctly anymore
+    void checkSolutionValidity(const Ball& ball);
+
+    void processStateTransition(const Ball& ball,
+                                Path* prevPath,
+                                const RJ::Seconds& timeIntoPreviousPath);
+
+    std::unique_ptr<Path> approach(const PlanRequest& planRequest);
+
+    std::unique_ptr<Path> control(const PlanRequest& planRequest);
+
+    std::unique_ptr<path> invalid(const PlanRequest& planRequest);
+
+    template<typename T>
+    static T applyLowPassFilter(const T& oldValue, const T& newValue, double gain);
+
     RRTPlanner rrtPlanner;
     DirectTargetPathPlanner directPlanner;
 

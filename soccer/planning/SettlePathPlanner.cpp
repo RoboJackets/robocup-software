@@ -18,6 +18,7 @@ ConfigDouble* SettlePathPlanner::_ballSpeedPercentForDampen;
 ConfigDouble* SettlePathPlanner::_searchStartTime;
 ConfigDouble* SettlePathPlanner::_searchEndTime;
 ConfigDouble* SettlePathPlanner::_searchIncTime;
+ConfigDouble* SettlePathPlanner::_ballAvoidDistance;
 ConfigDouble* SettlePathPlanner::_interceptBufferTime;
 ConfigDouble* SettlePathPlanner::_targetPointGain;
 ConfigDouble* SettlePathPlanner::_ballVelGain;
@@ -34,6 +35,8 @@ void SettlePathPlanner::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "Capture/Settle/searchEndtime", 10.0); // Seconds
     _searchIncTime =
         new ConfigDouble(cfg, "Capture/Settle/searchIncTime", 0.2); // Seconds
+    _ballAvoidDistance =
+        new ConfigDouble(cfg, "Capture/Settle/ballAvoidDistance", 0.3); // m
     _interceptBufferTime =
         new ConfigDouble(cfg, "Capture/Settle/interceptBufferTime", 0.0); // Seconds
     _targetPointGain =
@@ -71,8 +74,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     ShapeSet& obstacles = planRequest.obstacles;
 
     // Obstacle list with circle around ball 
-    ShapeSet& obstaclesWBall = obstacles;
-    obstaclesWBall.add(make_shared<Circle>(ball.pos, .1));
+    ShapeSet obstaclesWBall = obstacles;
+    obstaclesWBall.add(make_shared<Circle>(ball.pos, *_ballAvoidDistance));
 
     // Previous RRT path from last iteration
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
@@ -232,76 +235,74 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
         // Take the delta between old and new mouth vector and move
         // targetRobotIntersection by that amount
 
+        ShapeSet obstacleWEnd = obstacles;
+        obstacleWEnd.add(make_shared<Circle>(ball.pos + averageBallVel.normalized()*dist, *_ballAvoidDistance));
+
         // TODO: Dodge ball until after reaching intercept point
         targetRobotIntersection.vel = Point(0, 0);
 
         std::unique_ptr<Path> path = RRTPlanner::generatePath(startEndPoints,
-                                                              obstacles,
+                                                              obstacleWEnd,
                                                               planRequest.constraints.mot,
                                                               startInstant.vel,
                                                               targetRobotIntersection.vel);
 
         // If valid path to location
-        if (path) {
-            RJ::Seconds timeOfArrival = path->getDuration();
+        // and we can reach the target point before ball
+        if (path && path->getDuration() + partialPathTime + bufferInterceptTime <= t) {
+            // No path found yet so there is nothing to average
+            if (!firstTargetPointFound) {
+                interceptTarget = targetRobotIntersection.pos;
+                averagePathTime = t;
 
-            // We can reach the target point before ball
-            if (timeOfArrival + partialPathTime + bufferInterceptTime <= t) {
-                // No path found yet so there is nothing to average
-                if (!firstTargetPointFound) {
-                    interceptTarget = targetRobotIntersection.pos;
-                    averagePathTime = t;
+                firstTargetPointFound = true;
+            // Average this calculation with the previous ones
+            } else {
+                // Stop any velocity estimation outliers from affecting the path target too much
+                // creating a unachievable path and subsequently causing a large drop in the velocity
+                // at the next state in time
+                // See issue #1239
+                // 
+                // This happens quite a bit at the beginning of a path due to the not fully correct
+                // estimate of the ball velocity. Once it stabilizes, the path usually doesn't change
+                //
+                // This allows at most 3 invalid paths in a row before deciding that we need to change
+                //
+                // Gotta make sure that this fails only when there is a discontinuity in the path,
+                // not when partial path is invalid
+                bool invalidPath = (partialPath && (path->start().motion.vel - partialPath->end().motion.vel).mag() > 0.01) ||
+                                    !partialPath;
 
-                    firstTargetPointFound = true;
-                // Average this calculation with the previous ones
-                } else {
-                    // Stop any velocity estimation outliers from affecting the path target too much
-                    // creating a unachievable path and subsequently causing a large drop in the velocity
-                    // at the next state in time
-                    // See issue #1239
-                    // 
-                    // This happens quite a bit at the beginning of a path due to the not fully correct
-                    // estimate of the ball velocity. Once it stabilizes, the path usually doesn't change
-                    //
-                    // This allows at most 3 invalid paths in a row before deciding that we need to change
-                    //
-                    // Gotta make sure that this fails only when there is a discontinuity in the path,
-                    // not when partial path is invalid
-                    bool invalidPath = (partialPath && (path->start().motion.vel - partialPath->end().motion.vel).mag() > 0.01) ||
-                                       !partialPath;
-
-                    // if (valid path) OR (3 invalid paths in a row)
-                    // Use the current path and average in
-                    //
-                    // Increments the number of invalid path's if it's not valid
-                    // If we hit that limit, we should change the path
-                    // Always reset the number of invalid paths when a new value is averaged in
-                    if (invalidPath) {
-                        numInvalidPaths++;
-                    }
-
-                    if (!invalidPath || numInvalidPaths > *_maxNumInvalidPaths) {
-                        interceptTarget = applyLowPassFilter<Point>(interceptTarget,
-                                                                    targetRobotIntersection.pos,
-                                                                    *_targetPointGain);
-
-                        averagePathTime = applyLowPassFilter<RJ::Seconds>(averagePathTime, t, *_targetPointGain);
-
-                        // Debug print
-                        // TODO: Remove
-                        if (numInvalidPaths > *_maxNumInvalidPaths) {
-                            std::cout << "Changing paths" << std::endl;
-                        }
-
-                        numInvalidPaths = 0;
-                    }
-
+                // if (valid path) OR (3 invalid paths in a row)
+                // Use the current path and average in
+                //
+                // Increments the number of invalid path's if it's not valid
+                // If we hit that limit, we should change the path
+                // Always reset the number of invalid paths when a new value is averaged in
+                if (invalidPath) {
+                    numInvalidPaths++;
                 }
 
-                foundInterceptPath = true;
+                if (!invalidPath || numInvalidPaths > *_maxNumInvalidPaths) {
+                    interceptTarget = applyLowPassFilter<Point>(interceptTarget,
+                                                                targetRobotIntersection.pos,
+                                                                *_targetPointGain);
 
-                break;
+                    averagePathTime = applyLowPassFilter<RJ::Seconds>(averagePathTime, t, *_targetPointGain);
+
+                    // Debug print
+                    // TODO: Remove
+                    if (numInvalidPaths > *_maxNumInvalidPaths) {
+                        std::cout << "Changing paths" << std::endl;
+                    }
+
+                    numInvalidPaths = 0;
+                }
             }
+
+            foundInterceptPath = true;
+
+            break;
         }
     }
 
