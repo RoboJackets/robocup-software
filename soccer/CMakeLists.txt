@@ -49,6 +49,7 @@ set(ROBOCUP_LIB_SRC
     "ProtobufTree.cpp"
     "radio/SimRadio.cpp"
     "radio/USBRadio.cpp"
+    "radio/NetworkRadio.cpp"
     "RefereeTab.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
@@ -145,7 +146,7 @@ set_target_properties(robocup PROPERTIES SUFFIX ".so")
 target_link_libraries(robocup common rc-fshare)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
-target_link_libraries(robocup ${Boost_LIBRARIES})
+target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
