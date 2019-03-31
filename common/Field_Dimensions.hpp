@@ -44,17 +44,41 @@ struct Field_Dimensions {
     float FloorWidth() const { return _FloorWidth; }
 
     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
-    Geometry2d::CompositeShape OurGoalZoneShape() const {
+    
+    Geometry2d::Rect OurGoalZoneShape() const {
         return _OurGoalZoneShape;
     }
-    Geometry2d::CompositeShape TheirGoalZoneShape() const {
+    Geometry2d::Rect TheirGoalZoneShape() const {
         return _TheirGoalZoneShape;
     }
+
+    /*
+    * Provides a rect that is a padded version of their goalbox
+    * used mostly for movement at the play level
+    * exposed to python via constants.Field
+    */
+    Geometry2d::Rect TheirGoalZoneShapePadded(float padding){
+      Geometry2d::Rect tmp = Geometry2d::Rect(_TheirGoalZoneShape);
+      tmp.pad(padding);
+      return tmp;
+    };
+
     Geometry2d::Segment OurGoalSegment() const { return _OurGoalSegment; }
     Geometry2d::Segment TheirGoalSegment() const { return _TheirGoalSegment; }
     Geometry2d::Rect OurHalf() const { return _OurHalf; }
     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
     Geometry2d::Rect FieldRect() const { return _FieldRect; }
+    
+    /*
+    * Provides a rect that is a padded version of our goalbox
+    * used mostly for movement at the play level
+    * exposed to python via constants.Field
+    */
+    Geometry2d::Rect OurGoalZoneShapePadded(float padding){
+      Geometry2d::Rect tmp = Geometry2d::Rect(_OurGoalZoneShape);
+      tmp.pad(padding);
+      return tmp;
+    };
 
     std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
 
@@ -121,15 +145,13 @@ struct Field_Dimensions {
     void updateGeometry() {
         _CenterPoint = Geometry2d::Point(0.0, _Length / 2.0);
 
-        _OurGoalZoneShape = Geometry2d::CompositeShape();
-        _OurGoalZoneShape.add(std::make_shared<Geometry2d::Rect>(
-          Geometry2d::Point(-_PenaltyLongDist / 2, 0), 
-          Geometry2d::Point(_PenaltyLongDist / 2, _PenaltyShortDist)));
+        _OurGoalZoneShape = Geometry2d::Rect(
+          Geometry2d::Point(_PenaltyLongDist / 2, _PenaltyShortDist),
+          Geometry2d::Point(-_PenaltyLongDist / 2, 0));
 
-        _TheirGoalZoneShape = Geometry2d::CompositeShape();
-        _TheirGoalZoneShape.add(std::make_shared<Geometry2d::Rect>(
-            Geometry2d::Point(-_PenaltyLongDist / 2, _Length),
-            Geometry2d::Point(_PenaltyLongDist / 2, _Length - _PenaltyShortDist)));
+        _TheirGoalZoneShape = Geometry2d::Rect(
+          Geometry2d::Point(-_PenaltyLongDist / 2, _Length),
+          Geometry2d::Point(_PenaltyLongDist / 2, _Length - _PenaltyShortDist));
 
         _TheirGoalSegment =
             Geometry2d::Segment(Geometry2d::Point(_GoalWidth / 2.0, _Length),
@@ -176,8 +198,8 @@ private:
     float _FloorWidth;
 
     Geometry2d::Point _CenterPoint;
-    Geometry2d::CompositeShape _OurGoalZoneShape;
-    Geometry2d::CompositeShape _TheirGoalZoneShape;
+    Geometry2d::Rect _OurGoalZoneShape;
+    Geometry2d::Rect _TheirGoalZoneShape;
     Geometry2d::Segment _OurGoalSegment;
     Geometry2d::Segment _TheirGoalSegment;
     Geometry2d::Rect _OurHalf;
