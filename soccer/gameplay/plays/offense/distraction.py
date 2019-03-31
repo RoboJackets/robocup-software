@@ -101,7 +101,7 @@ class distraction(standard_play.StandardPlay):
         self.add_transition(distraction.State.optional_adjustment,
                         distraction.State.center_pass, 
                         lambda: self.subbehavior_with_name('move half').is_done_running() and 
-                                self.subbehavior_with_name('capture2').is_done_running(), 
+                                self.subbehavior_with_name('capture 2').is_done_running(), 
                         'closer pass')
 
         #After getting the ball to the center right of the field, pass to the distracting robot
@@ -127,9 +127,7 @@ class distraction(standard_play.StandardPlay):
                                 (self.has_subbehavior_with_name('striker get close ball') and 
                                  self.subbehavior_with_name('striker get close ball').is_done_running()) or
                                 (self.has_subbehavior_with_name('get close ball') and 
-                                 self.subbehavior_with_name('get close ball').is_done_running()) or
-                                (self.has_subbehavior_with_name('distract pass') and 
-                                 self.subbehavior_with_name('distract pass').is_done_running()),
+                                 self.subbehavior_with_name('get close ball').is_done_running()),
                         'stiker get ball')
 
         #go from the striker receiving the cross to shooting the ball
