@@ -32,7 +32,6 @@ class SituationalPlaySelector:
         print("Don't make an instance of this class you bafoon!") 
         exit() #This is a joke I'll need to remove at some point
 
-
     isSetup = False
     gameState = None
     systemState = None
@@ -85,62 +84,45 @@ class SituationalPlaySelector:
     def ballVelFactor(ballVel):
         return 1.0 
 
-
-    #Velocity is a scalar here and the robots x and y are in the balls refrence frame
     @staticmethod
-    def ballRecieveFunction(x, y, v):
-
-        #This covers things in the direction oppisate the direction that the ball is traveling
-        if(x + y < 0):
-            return 0
-
-
-
-
-
-        #Section I: The Main Gaussian
-        vfl = 1.0 #Velocity factor linear
-        vfn = 1.0 #Velocity factor non-linear
-        u = math.pow(v,vfn) * vfl * math.pow(((sqrt((x-y)**2 + (y-x)**2)/sqrt(x**2 + y**2))),flatness)
-        if(u > 1.0):
-            u = 1.0
-        elif(u < -1.0):
-            u = -1.0
-
-        u = cls.triweight(u) #Puts the positional and falloff factors into a gaussian approximation 
+    def clip(x, minValue=-1.0, maxValue=1.0):
+        if(x > maxValue):
+            return maxValue
+        elif(x < minValue):
+            return minValue
+        else:
+            return x
 
 
-        #Section II: The Falloff Factor
-        fl = 0.05 #Falloff linear factor
-        fn = 1.2 #Falloff nonlinear factor
-
-        f = (1 - fl * math.pow(1.0 / v, fn) * sqrt(x**2 + y**2))
-        if(f < 0):
-            f = 0
-        elif(f > 1.0):
-            f = 1.0
+    @staticmethod
+    def trajectory(x, y, v, velWidthNon=0.2, velWidthLin=1.0):
+        factor = v**velWidthNon * velWidthLin * ((math.sqrt((x - y)**2 + math.sqrt(y - x)**2)) / (math.sqrt(x**2 + y**2)))
+        return clip(factor) #I either have to make these class methods or do this manually fml
 
 
-        #Section III: The Occlusion Factor
-        of = 0.0
-
-        if(of)
-        
-
-        #The final formula is the gaussian times the falloff minus the occlusion factor (which is capped 0,1)
-        retVal = u * f - of
-
-        if(retVal < 0.0):
-            return 0
-        elif(retVal > 1.0):
-            return 1.0
-            print("This really should not happen (The value of the ball recieve function was greater than 1)")
+    @staticmethod
+    def falloff(x, y, v, falloffLin=0.03, falloffNon=1.0):
+        factor = 1.0 - falloffLin * (1.0 / v)**falloffNon * math.sqrt(x**2 + y**2)
+        return clip(factor,minValue = 0.0)
+  
+    @staticmethod
+    def obstruction(x, y, obstDist, obsDrop=0.2):
+        factor = obsDrop * clip((math.sqrt(x**2 + y**2) - obstDist) * 0.5, minValue=0.0) * (3 / math.sqrt((x-y)**2 + (y-x)**2))
 
 
     #A triweight kernal approximation of a gaussian
     @staticmethod
     def triweight(x):
         return (34.0 / 35.0) * ((1 - x**2)**3)
+
+    #Velocity is a scalar here and the robots x and y are in the balls refrence frame
+    @staticmethod
+    def ballRecieveFunction(x, y, v, od):
+        if(math.sqrt(x**2 + y**2) > 4 * od or x + y < 0.0):
+            return 0.0
+        return clip(triweight(trajectory(x,y,v) * falloff(x,y,v) - obstruction(x,y,od)), minValue=0.0)
+     
+
 
     #penalty for not facing the ball as a function of ball velocity and distance to the ball 
     @staticmethod
