@@ -320,6 +320,7 @@ void USBRadio::handleRxData(uint8_t* buf) {
         packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
     }
 
+    std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
     _reversePackets.push_back(packet);
 }
 
