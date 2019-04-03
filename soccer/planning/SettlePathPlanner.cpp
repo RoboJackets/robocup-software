@@ -125,7 +125,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         // TimeNow     EndPartialPrevPath  FinalTargetPoint
         //                     |-----------------|
         //          Amount of the path we can change this iteration
-        if (timeIntoPreviousPath < prevPath->getDuration() - partialReplanLeadTime &&
+        if (timeIntoPreviousPath < prevPath->getDuration() - 2*partialReplanLeadTime &&
             timeIntoPreviousPath > 0ms) {
             partialPath =
                 prevPath->subPath(0ms, timeIntoPreviousPath + partialReplanLeadTime);
@@ -183,8 +183,8 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
         float botDistToBallMovementLine = ballMovementLine.distTo(pathSoFar->end().motion.pos);
 
         // Intercept -> Dampen
-        //  Almost interescting the ball path
-        //    or Almost at end of the target path
+        //  Almost interescting the ball path and
+        //  Almost at end of the target path and
         //  Actually in front of the ball
         //
         // TODO: Check ball sense?

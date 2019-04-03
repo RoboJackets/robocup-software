@@ -61,6 +61,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 
     // Start state for specified robot
     MotionInstant& startInstant = planRequest.start;
+
     // All the max velocity / acceleration constraints for translation / rotation
     RobotConstraints robotConstraints = planRequest.constraints;
     MotionConstraints& motionConstraints = robotConstraints.mot;
@@ -89,7 +90,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 
     // Check and see if we should reset the entire thing if we are super far off course
     // or the ball state changes significantly
-    checkSolutionValidity(ball);
+    checkSolutionValidity(ball, startInstant);
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
@@ -121,9 +122,6 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
                          (1 - *_targetPointAveragingGain) * ball.vel;
     }
 
-    // Do the transitions
-    float dist = (startInstant.pos - ball.pos).mag() - Robot_MouthRadius - *_approachDistTarget;
-    float speedDiff = (startInstant.vel - averageBallVel).mag() - *_touchDeltaSpeed;
 
 
     // Approach direction is the direction we move towards the ball and through it
@@ -143,18 +141,20 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     }
 
     // Check if we should transition to control from approach
-    processStateTransition(ball, prevPath, timeIntoPath);
+    processStateTransition(ball, startInstant, prevPath.get(), timeIntoPreviousPath);
 
     switch (currentState) {
     // Moves from the current location to the ball
     // Controls the robot up until just before the point of contact
     case Approach: {
-        return std::move(approach(planRequest));
+        return std::move(approach(planRequest, curTime, startInstant,
+                                  std::move(prevPath), std::move(partialPath),
+                                  partialPathTime, obstacles));
     }
     // Move through the ball and stop
     // Controls from the point of impact to stop
     case Control: {
-        return std::move(control(planRequest));
+        return std::move(control(planRequest, startInstant, std::move(prevPath), obstacles));
     }
     default: {
         return std::move(invalid(planRequest));
@@ -162,7 +162,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     }
 }
 
-void CollectPathPlanner::checkSolutionValidity(const Ball& ball) {
+void CollectPathPlanner::checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant) {
     // Check if we need to go back into approach
     if ((ball.pos - startInstant.pos).mag() > 2*Robot_Radius && currentState == Control) {
         cout << "Reseting" << endl;
@@ -171,8 +171,13 @@ void CollectPathPlanner::checkSolutionValidity(const Ball& ball) {
 }
 
 void CollectPathPlanner::processStateTransition(const Ball& ball,
-                                                Path* prevPath,
+                                                const MotionInstant& startInstant,
+                                                const Path* const prevPath,
                                                 const RJ::Seconds& timeIntoPreviousPath) {
+    // Do the transitions
+    float dist = (startInstant.pos - ball.pos).mag() - Robot_MouthRadius - *_approachDistTarget;
+    float speedDiff = (startInstant.vel - averageBallVel).mag() - *_touchDeltaSpeed;
+
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
     // TODO: Check for ball sense?
@@ -181,7 +186,17 @@ void CollectPathPlanner::processStateTransition(const Ball& ball,
     }
 }
 
-std::unique_ptr<Path> CollectPathPlanner::approach(const PlanRequest& planRequest) {
+std::unique_ptr<Path> CollectPathPlanner::approach(const PlanRequest& planRequest,
+                                                   const RJ::Time curTime,
+                                                   const MotionInstant& startInstant,
+                                                   std::unique_ptr<Path> prevPath,
+                                                   std::unique_ptr<Path> partialPath,
+                                                   const RJ::Seconds partialPathTime,
+                                                   const ShapeSet& obstacles) {
+    const Ball& ball = planRequest.systemState.ball;
+    RobotConstraints robotConstraints = planRequest.constraints;
+    MotionConstraints& motionConstraints = robotConstraints.mot;
+
     // The target position shouldn't be the ball, it should be where the mouth
     // is touching the ball
     // Move to ball position matching ball speed
@@ -219,9 +234,9 @@ std::unique_ptr<Path> CollectPathPlanner::approach(const PlanRequest& planReques
     unique_ptr<MotionCommand> rrtCommand =
         make_unique<PathTargetCommand>(target);
 
-    auto request = PlanRequest(systemState, startInstant, move(rrtCommand),
-                                robotConstraints, nullptr, obstacles,
-                                dynamicObstacles, planRequest.shellID);
+    auto request = PlanRequest(planRequest.systemState, startInstant, move(rrtCommand),
+                               robotConstraints, nullptr, obstacles,
+                               planRequest.dynamicObstacles, planRequest.shellID);
     path = rrtPlanner.run(request);
 
     return make_unique<AngleFunctionPath>(
@@ -229,7 +244,14 @@ std::unique_ptr<Path> CollectPathPlanner::approach(const PlanRequest& planReques
             FacePointCommand(ball.pos)));
 }
 
-std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest) {
+std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest,
+                                                  const MotionInstant& startInstant,
+                                                  std::unique_ptr<Path> prevPath,
+                                                  const ShapeSet& obstacles) {
+    const Ball& ball = planRequest.systemState.ball;
+    RobotConstraints robotConstraints = planRequest.constraints;
+    MotionConstraints& motionConstraints = robotConstraints.mot;
+
     // Only plan the path once and run through it
     // Otherwise it will basically push the ball across the field
     if (controlPathCreated && prevPath) {
@@ -278,9 +300,9 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
         std::unique_ptr<MotionCommand> rrtCommand =
             std::make_unique<PathTargetCommand>(target);
 
-        auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
-                                    robotConstraints, nullptr, obstacles,
-                                    dynamicObstacles, planRequest.shellID);
+        auto request = PlanRequest(planRequest.systemState, startInstant, std::move(rrtCommand),
+                                   robotConstraints, nullptr, obstacles,
+                                   planRequest.dynamicObstacles, planRequest.shellID);
         path = rrtPlanner.run(request);
     }
 
@@ -295,30 +317,31 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
             FacePointCommand(facePt)));
 }
 
-std::unique_ptr<Path> CollectPathPlanner::invlaid(const PlanRequest& planRequest) {
+std::unique_ptr<Path> CollectPathPlanner::invalid(const PlanRequest& planRequest) {
     std::cout << "WARNING: Invalid state in collect planner. Restarting" << std::endl;
     currentState = Approach;
 
     // Stop movement until next frame since it's the safest option programmatically
-    MotionInstant target(startInstant);
+    MotionInstant target(planRequest.start);
     target.vel = Point(0, 0);
 
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(target);
 
-    auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
-                                robotConstraints, nullptr, obstacles,
-                                dynamicObstacles, planRequest.shellID);
+    auto request = PlanRequest(planRequest.systemState, planRequest.start,
+                               std::move(rrtCommand), planRequest.constraints,
+                               nullptr, planRequest.obstacles, planRequest.dynamicObstacles,
+                               planRequest.shellID);
     auto path = rrtPlanner.run(request);
     path->setDebugText("Invalid state in collect");
 
     return make_unique<AngleFunctionPath>(
         std::move(path),
-        angleFunctionForCommandType(FacePointCommand(ball.pos)));
+        angleFunctionForCommandType(FacePointCommand(planRequest.systemState.ball.pos)));
 }
 
 template<typename T>
-T SettlePathPlanner::applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
+T CollectPathPlanner::applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
     return gain*newValue + (1 - gain)*oldValue;
 }
 }

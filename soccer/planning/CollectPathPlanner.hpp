@@ -41,17 +41,27 @@ private:
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void checkSolutionValidity(const Ball& ball);
+    void checkSolutionValidity(const Ball& ball,  const MotionInstant& startInstant);
 
     void processStateTransition(const Ball& ball,
-                                Path* prevPath,
+                                const MotionInstant& startInstant,
+                                const Path* const prevPath,
                                 const RJ::Seconds& timeIntoPreviousPath);
 
-    std::unique_ptr<Path> approach(const PlanRequest& planRequest);
+    std::unique_ptr<Path> approach(const PlanRequest& planRequest,
+                                   const RJ::Time curTime,
+                                   const MotionInstant& startInstant,
+                                   std::unique_ptr<Path> prevPath,
+                                   std::unique_ptr<Path> partialPath,
+                                   const RJ::Seconds partialPathTime,
+                                   const Geometry2d::ShapeSet& obstacles);
 
-    std::unique_ptr<Path> control(const PlanRequest& planRequest);
+    std::unique_ptr<Path> control(const PlanRequest& planRequest,
+                                  const MotionInstant& startInstant,
+                                  std::unique_ptr<Path> prevPath,
+                                  const Geometry2d::ShapeSet& obstacles);
 
-    std::unique_ptr<path> invalid(const PlanRequest& planRequest);
+    std::unique_ptr<Path> invalid(const PlanRequest& planRequest);
 
     template<typename T>
     static T applyLowPassFilter(const T& oldValue, const T& newValue, double gain);
