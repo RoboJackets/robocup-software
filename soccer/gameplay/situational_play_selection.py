@@ -1,5 +1,6 @@
 
 import main
+import time
 
 class SituationalPlaySelector:
 
@@ -38,6 +39,12 @@ class SituationalPlaySelector:
     robotList = list()
     activeRobots = list()
 
+
+    lastFullPossession = dict()
+    possessionLength = dict()
+
+    possessionLastCalc = 0.0
+
     robotPossessionTimer = 0.0
 
     count = 0
@@ -52,7 +59,6 @@ class SituationalPlaySelector:
             cls.robotList.append(g)
 
         cls.updateRobotList()
-
 
     @classmethod 
     def updateRobotList(cls): 
@@ -123,11 +129,10 @@ class SituationalPlaySelector:
         return clip(triweight(trajectory(x,y,v) * falloff(x,y,v) - obstruction(x,y,od)), minValue=0.0)
      
 
-
     #penalty for not facing the ball as a function of ball velocity and distance to the ball 
-    @staticmethod
-    def rotationFactor(ballPos, ballVel, robotPos):
-        return 1.0
+    #@staticmethod
+    #def rotationFactor(ballPos, ballVel, robotPos):
+    #    return 1.0
 
     #Transforms position vector from global to the ball (where the ball is always traveling in the pi / 4 direction)
     #(Really just a general transform but its made to do this in particular)
@@ -147,16 +152,25 @@ class SituationalPlaySelector:
         xr = x * c + y * -s
         yr = x * s + y * c
         return xr, yr
+ 
+    def get_obstruct_dist():
+        return 999999
 
-    
-    @staticmethod
-    def ball_recieve_prob(ballPos, ballVel, robot):
+    @classmethod
+    def ball_recieve_prob(cls, ballPos, ballVel, robot):
         robotPos = (robot.pos.x, robot.pos.y)
         robotPos_ball = transformToBall(robotPos, ballPos, ballVel)
+        return ballRecieveFunction(robotPos_ball[0], robotPos_ball[1], math.sqrt(ballVel[0]**2 + ballVel[1]**2), get_obstruct_dist())
+
+    #A function that determines if the ball is in the mouth of a given robot
+    def possesses_the_ball(ballPos, robot):
+        pass
 
 
     @classmethod
     def ballPossessionUpdate(cls):
+
+
         #Ok, so we want to look at a couple of factors here
 
         #For one, if a bot has the ball in its mouth, than they probably are in possession of the ball
@@ -174,15 +188,9 @@ class SituationalPlaySelector:
             #Should include factor for if ball was impelled (kicked)
             #A quick decaying timer from when the robot genuially had the ball in its mouth past the settle timer
 
-
         #3. Ball ingress towards robot
             #Probably a cone that is narrower based on velocity I would think
             #Might need to be a continuous function
-
-            #Function: 
-            #t[x_, y_] := 34/35 (1 - (Clip[ Sqrt[(x - y)^2 + (y - x)^2]/Sqrt[x^2 + y^2]])^2)^3
-            #There is a crazier version of it in my mathematica notebook right now
-                #I want to add occlusion of the ball path into it, could be done in a simple way.
 
         #4. 
 
@@ -217,6 +225,7 @@ class SituationalPlaySelector:
         #This will actually update the dict
         pass
 
+    #This method is stupid and does nothing for us (I need to figure out what it was supposed to do)
     @classmethod
     def getBonus(cls):
         return max([situations.get(t) for t in cls.situations])
