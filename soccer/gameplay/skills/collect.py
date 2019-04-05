@@ -28,17 +28,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
                             behavior.Behavior.State.running,
                             lambda: True, 'immediately')
 
-        # TODO: Add short timeout
-
-        # Only restart if the ball is reasonably far away and 
-        # it changed directions or it's moving away from us
-        self.add_transition(behavior.Behavior.State.running,
-                            behavior.Behavior.State.running,
-                            lambda: self.robot is not None and
-                                    not self.robot.has_ball() and
-                                    (self.robot.pos - main.ball().pos).mag() > Collect.RESTART_MIN_DIST and
-                                    self.ball_changed(), 'restart')
-
         # Complete when we have the ball and it's stopped
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,

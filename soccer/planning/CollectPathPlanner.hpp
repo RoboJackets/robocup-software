@@ -26,7 +26,8 @@ public:
     CollectPathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), directPlanner(),
                            currentState(Approach),
                            averageBallVel(0,0), averageBallVelInitialized(false),
-                           approachDirection(0,0), controlPathCreated(false) {};
+                           approachDirection(0,0), approachDirectionCreated(false),
+                           controlPathCreated(false) {};
 
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
@@ -76,6 +77,8 @@ private:
     bool averageBallVelInitialized;
 
     Geometry2d::Point approachDirection;
+    bool approachDirectionCreated;
+
     bool controlPathCreated;
 
     // Controls at which ball speed we should try to go directly to the ball

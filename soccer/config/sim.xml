@@ -371,15 +371,16 @@
    <maxBallVelForPathReset value="2"/>
    <maxBallAngleForReset value="20"/>
    <maxNumInvalidPaths value="3"/>
+   <ballAvoidDistance value="0.3"/>
   </Settle>
   <Collect>
    <ballSpeedApproachDirectionCutoff value="0.1"/>
    <approachAccelScalePercent value="0.6"/>
    <controlAccelScalePercent value="0.7"/>
-   <approachDistTarget value="0.05"/>
+   <approachDistTarget value="0.15"/>
    <touchDeltaSpeed value="0.05"/>
-   <distCutoffToControl value="0.05"/>
-   <velCutoffToControl value="1"/>
+   <distCutoffToControl value="0.15"/>
+   <velCutoffToControl value="2"/>
    <stopDistScale value="1"/>
    <targetPointAveragingGain value="0.8"/>
    <distCutoffToApproach value="0.3"/>
