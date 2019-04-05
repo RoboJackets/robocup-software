@@ -5,24 +5,24 @@ import behavior
 import single_robot_behavior
 
 class Collect(single_robot_behavior.SingleRobotBehavior):
-    MAX_INIT_ANGLE_CHANGE = 20 * math.pi/180
+    # Ball has to be within this distance to be considered captured
     RESTART_MIN_DIST = 0.12
+
+    # Ball has to be below this speed to be considered stopped
     STOP_SPEED = 0.1
 
     DRIBBLE_SPEED = 100
 
     # How many of the last X cycles "has_ball()" was true
-    PROBABLY_HELD_MAX = 150
+    PROBABLY_HELD_MAX = 60
 
     # How many cycles we want held
-    PROBABLY_HELD_CUTOFF = 50
+    PROBABLY_HELD_CUTOFF = 30
 
     def __init__(self):
         super().__init__(continuous=False)
 
         self.probably_held_cnt = 0
-
-        self.old_ball_heading = main.ball().vel
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running,
@@ -34,38 +34,19 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
                             lambda: self.robot is not None and
                                     self.robot.has_ball() and
                                     self.robot.vel.mag() < Collect.STOP_SPEED and
+                                    (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
                                     self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
                             'ball collected')
 
         self.add_transition(behavior.Behavior.State.completed,
                             behavior.Behavior.State.running,
                             lambda: self.robot is not None and
-                                    (self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF or
-                                     (self.robot.pos - main.ball().pos).mag() > Collect.RESTART_MIN_DIST),
+                                    ((self.robot.pos - main.ball().pos).mag() > Collect.RESTART_MIN_DIST or
+                                     self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF),
                             'ball lost')
 
-    def ball_changed(self):
-        # Make sure the ball hasn't changed direction significantly
-        if (self.old_ball_heading.angle_between(main.ball().vel) > Collect.MAX_INIT_ANGLE_CHANGE):
-            return True
-
-        # Make sure we didn't miss the ball
-        if (self.robot is not None):
-            small_dt = 1.0/20.0
-            robot_future_pos = self.robot.pos + self.robot.vel*small_dt
-            ball_future_pos = main.ball().pos + main.ball().vel*small_dt
-
-            # If they are moving away
-            if ((robot_future_pos - ball_future_pos).mag() > 
-                    (self.robot.pos - main.ball().pos).mag()):
-                return True
-
-            # Make sure both the ball and robot didn't stop
-            if (self.robot.vel.mag() < Collect.STOP_SPEED and
-                main.ball().vel.mag() < Collect.STOP_SPEED):
-                return True
-
-        return False
+    def on_enter_running(self):
+        self.probably_held_cnt = 0
 
     def execute_running(self):
         if (self.robot is not None):
@@ -74,8 +55,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
             self.robot.collect()
 
             self.update_held_cnt()
-
-            
 
     def execute_completed(self):
         if (self.robot is not None):
@@ -89,7 +68,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # if not, drop to 0
         if (self.robot.has_ball()):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
-                                            Collect.PROBABLY_HELD_MAX)
+                                         Collect.PROBABLY_HELD_MAX)
         else:
             self.probably_held_cnt = max(self.probably_held_cnt - 1, 0)
 

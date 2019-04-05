@@ -41,7 +41,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(Capture.State.settle,
                             Capture.State.collect,
                             lambda: main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH or
-                                    self.ball_bounced_off_robot(),
+                                    self.ball_bounced_off_robot() and not self.ball_probably_kicked(),
                             'collecting')
 
         self.add_transition(Capture.State.collect,
@@ -53,7 +53,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(Capture.State.collect,
                             Capture.State.settle,
                             lambda: main.ball().vel.mag() >= Capture.INTERCEPT_VELOCITY_THRESH and 
-                                    self.ball_probably_kicked(),
+                                    self.ball_probably_kicked() and not self.ball_bounced_off_robot(),
                             'settling again')
 
     def ball_bounced_off_robot(self):
@@ -89,8 +89,26 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             return False
 
     def is_same_direction(self, vec1, vec2):
-        angle = vec1.angle_between(vec2)
-        return angle < math.pi/2
+        # Check the angle between is less than 90 degrees
+        # On the unit circle, two vectors are within 90 degrees of each other if the distance
+        # between two vectors is less than sqrt(1^2 + 1^2)
+        #
+        #              +1 | a
+        #                 |
+        #                 |
+        #                 |            b
+        #                 |_____________
+        #                              +1
+        #
+        # Dist between a and b are sqrt(2)
+        #
+        #
+        #     a                         b
+        #     ____________________________
+        #     -1                        +1
+        #
+        # Dist between a and b is 2
+        return (vec1.norm() - vec2.norm()).mag() < math.sqrt(2)
 
     def on_enter_settle(self):
         self.remove_all_subbehaviors()
