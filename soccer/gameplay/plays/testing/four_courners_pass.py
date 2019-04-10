@@ -7,6 +7,7 @@ import tactics.coordinated_pass
 import constants
 import main
 import enum
+import copy
 
 
 ## A testing play to demonstrate our ability to pass and recieve balls
@@ -49,23 +50,23 @@ class FourCornerPass(play.Play):
 			State.failed, 'all subbehaviors completed')
 
 		#change this to adjust the square size
-		variable_square = 5.5
+		self.variable_square = 5.5
 
 		#NEVER CHANGE THIS
-		length = constants.Field.Length
-		width = constants.Field.Width
+		self.length = constants.Field.Length
+		self.width = constants.Field.Width
 
 		#if the square size is smaller than the width shrink it down otherwise
 		#max value is the width of the field.
-		variable_square = min(variable_square, width, length)
+		self.variable_square = min(self.variable_square, self.width, self.length)
 
 		#radius of robot
 		self.bot = constants.Robot.Radius
 		# the largest and smallest x and y postion possible for the square
-		self.max_x = (variable_square / 2 - self.bot * 3)
+		self.max_x = (self.variable_square / 2 - self.bot * 3)
 		self.min_x = -self.max_x
-		self.max_y = length/2 + self.max_x
-		self.min_y = length/2 - self.max_x
+		self.max_y = self.length/2 + self.max_x
+		self.min_y = self.length/2 - self.max_x
 
 		# the four courners
 		self.square_points = [
@@ -75,9 +76,11 @@ class FourCornerPass(play.Play):
 			robocup.Point(self.max_x, self.min_y)]
 
 		# speed of the hunting robots
-		self.normal_speed = 2.0
+		#TODO Create python pull from Config values. Currently this breaks the world.
+		#tmp = robocup.Configuration.FromRegisteredConfigurables().nameLookup("MotionConstraints/Max Velocity").value
+		self.normal_speed = 1.0 #tmp 
 		# speed of the defending robots can decrease value to make it easier for offense
-		self.defense_speed = variable_square/3.0
+		self.defense_speed = self.normal_speed * 2 / 3 #self.normal_speed/2.0
 
 		# picks the direction to pass to. TODO make actual smart pass selection
 		self.direction = 1
@@ -110,6 +113,14 @@ class FourCornerPass(play.Play):
 		for i in range(len(self.square_points)) :
 			main.system_state().draw_line(robocup.Line(self.square_points[i], 
 			self.square_points[(i + 1) % 4]), (135, 0, 255), "Square")
+
+		# speed of the hunting robots
+		#TODO Create python pull from Config values. Currently this breaks the world.
+		#tmp = copy.deepcopy(robocup.Configuration.FromRegisteredConfigurables().nameLookup("MotionConstraints/Max Velocity").value)
+		self.normal_speed = 1.0 # tmp
+		#speed of the defending robots can decrease value to make it easier for offense
+		self.defense_speed = 2 * self.normal_speed/ 3.0 #self.normal_speed/2.0#self.variable_square/(min(self.width,self.length) * 2) * self.normal_speed
+
 
 
 	def on_enter_setup(self):
