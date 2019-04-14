@@ -11,7 +11,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     # Ball has to be below this speed to be considered stopped
     STOP_SPEED = 0.1
 
-    DRIBBLE_SPEED = 100
+    DRIBBLE_SPEED = 254
 
     # How many of the last X cycles "has_ball()" was true
     PROBABLY_HELD_MAX = 60
@@ -31,16 +31,16 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # Complete when we have the ball and it's stopped
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,
-                            lambda: self.robot is not None and
-                                    self.robot.has_ball() and
-                                    self.robot.vel.mag() < Collect.STOP_SPEED and
-                                    (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
-                                    self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
+                            lambda: False,#self.robot is not None and
+                                    #self.robot.has_ball() and
+                                    #self.robot.vel.mag() < Collect.STOP_SPEED, # and
+                                    #(self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
+                                    #self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
                             'ball collected')
 
         self.add_transition(behavior.Behavior.State.completed,
                             behavior.Behavior.State.running,
-                            lambda: self.robot is not None and
+                            lambda: False and self.robot is not None and
                                     ((self.robot.pos - main.ball().pos).mag() > Collect.RESTART_MIN_DIST or
                                      self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF),
                             'ball lost')
@@ -74,7 +74,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.require_kicking = True
+        #reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
             reqs.destination_shape = main.ball().pos

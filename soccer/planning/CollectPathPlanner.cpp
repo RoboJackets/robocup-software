@@ -189,6 +189,7 @@ void CollectPathPlanner::processStateTransition(const Ball& ball,
     // TODO: Check for ball sense?
     if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl && currentState == Approach) {
         currentState = Control;
+	cout << "Transitioning" << std::endl;
     }
 }
 

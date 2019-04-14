@@ -314,10 +314,10 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
 
         // If we are trying to intercept the line behind the ball, just go for the position of the ball
         // 1 second from now
-        if ((interceptTarget - ball.pos).mag() < (interceptTarget - (ball.pos + averageBallVel)).mag()) {
-            interceptTarget = ball.pos + averageBallVel;
-            std::cout << "giving up in front" << std::endl;
-        }
+        //if ((interceptTarget - ball.pos).mag() < (interceptTarget - (ball.pos + averageBallVel)).mag()) {
+        //    interceptTarget = ball.pos + averageBallVel;
+        //    std::cout << "giving up in front" << std::endl;
+        //}
     }
 
     // Try and use the previous path for the first part so it will actually make the initial turn
