@@ -42,6 +42,8 @@ protected:
     bool open();
     void receivePacket(const boost::system::error_code& error, std::size_t num_bytes);
 
+    void startReceive();
+
     void registerRobot(int robot, boost::asio::ip::address ip);
 
     boost::asio::io_service _context;

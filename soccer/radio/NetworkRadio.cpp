@@ -14,16 +14,21 @@ NetworkRadio::NetworkRadio(int server_port, int robot_port)
 NetworkRadio::~NetworkRadio() {}
 
 bool NetworkRadio::open() {
+    startReceive();
+    return true;
+}
+
+void NetworkRadio::startReceive() {
+    // Set a receive callback
     _socket.async_receive_from(
         boost::asio::buffer(_recv_buffer), _robot_endpoint,
         [this] (const boost::system::error_code& error, std::size_t num_bytes) {
             receivePacket(error, num_bytes);
         });
-    return true;
 }
 
 bool NetworkRadio::isOpen() const {
-    return true;
+    return _socket.is_open();
 }
 
 void NetworkRadio::send(Packet::RadioTx& packet) {
@@ -44,6 +49,7 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         rtp::RobotTxMessage* msg = reinterpret_cast<rtp::RobotTxMessage*>(
                 &forward_packet[offset]);
 
+        // Set fields of the control message.
         msg->uid = robot_id;
 
         msg->message.controlMessage.bodyX = static_cast<int16_t>(
@@ -81,11 +87,12 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
 }
 
 void NetworkRadio::receive() {
-    // boost::asio handles all of the actual receive code, so we don't need to
-    // do any synchronous receives.
+    // Let boost::asio handles callbacks
+    _context.poll();
 }
 
-void NetworkRadio::receivePacket(const boost::system::error_code& error, std::size_t num_bytes) {
+void NetworkRadio::receivePacket(
+        const boost::system::error_code& error, std::size_t num_bytes) {
     if (error) {
         std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
         return;
@@ -120,7 +127,10 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error, std::si
         auto matching_ip = [&] (const RobotIpMap::left_map::value_type& v) {
             return v.second == ip_iter->first;
         };
-        RobotIpMap::left_map::iterator mid_begin = matching_id.first, mid_end = matching_id.second;
+
+        RobotIpMap::left_map::iterator mid_begin = matching_id.first,
+                                       mid_end = matching_id.second;
+
         // auto to_remove = std::remove_if(mid_begin, mid_end, matching_ip);
         // _robot_ip_map.left.erase(to_remove, _robot_ip_map.left.end());
         registerRobot(msg->uid, _robot_endpoint.address());
@@ -135,14 +145,14 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error, std::si
                 Packet::BallSenseStatus(msg->ballSenseStatus));
     }
 
-    // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
+    // Using same flags as 2011 robot. See common/status.h
     // Report that everything is good b/c the bot currently has no way of
     // detecting kicker issues
     packet.set_kicker_status((msg->kickStatus ? Kicker_Charged : 0) |
                              (msg->kickHealthy ? Kicker_Enabled : 0) |
                              Kicker_I2C_OK);
 
-    // motor errors
+    // Motor errors
     for (int i = 0; i < 5; i++) {
         bool err = msg->motorErrors & (1 << i);
         packet.add_motor_status(err ? Packet::MotorStatus::Hall_Failure
@@ -158,8 +168,14 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error, std::si
         packet.set_fpga_status(Packet::FpgaStatus(msg->fpgaStatus));
     }
 
-    std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-    _reversePackets.push_back(packet);
+    {
+        // Add reverse packets
+        std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
+        _reversePackets.push_back(packet);
+    }
+
+    // Restart receiving
+    startReceive();
 }
 
 void NetworkRadio::switchTeam(bool) {}
