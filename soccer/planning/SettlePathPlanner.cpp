@@ -68,7 +68,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     targetFinalCaptureDirectionPos = command.target;
 
     // Start state for the specified robot
-    MotionInstant& startInstant = planRequest.start;
+    MotionInstant startInstant = planRequest.start;
 
     // List of obstacles
     ShapeSet& obstacles = planRequest.obstacles;
@@ -99,7 +99,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 
     // Check and see if we should reset the entire thing if we are super far off course
     // or the ball state changes significantly
-    checkSolutionValidity(ball);
+    checkSolutionValidity(ball, startInstant);
 
 
     // Smooth out the ball velocity a little bit so we can get a better estimate of intersect points
@@ -153,7 +153,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     }
 }
 
-void SettlePathPlanner::checkSolutionValidity(const Ball& ball) {
+void SettlePathPlanner::checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant) {
     const float maxBallAngleChangeForPathReset = *_maxBallAngleForReset*M_PI/180.0f;
 
     // If the ball changed directions or magnitude really quickly, do a reset of target
@@ -163,6 +163,11 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball) {
         (averageBallVel - ball.vel).mag() > *_maxBallVelForPathReset) {
         firstTargetPointFound = false;
         firstBallVelFound = false;
+    }
+
+    Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
+    if (ballMovementLine.distTo(startInstant.pos) > Robot_MouthWidth && currentState == Dampen) {
+        currentState = Intercept;
     }
 }
 
@@ -218,14 +223,17 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     const RJ::Seconds searchIncTime = RJ::Seconds(*_searchIncTime);
 
     // How much earlier should we be at the point compaired to the ball
-    const RJ::Seconds bufferInterceptTime = RJ::Seconds(*_interceptBufferTime);
+    //const RJ::Seconds bufferInterceptTime = RJ::Seconds(*_interceptBufferTime);
 
     bool foundInterceptPath = false;
 
     // Try find best point to intercept using old method
     // where we check ever X distance along the ball velocity vector
+    // 
+    // Disallow points outside the field
+
+    Point ballVelIntercept;
     for (float dist = 0; dist < 5; dist += 0.05) {
-        Point ballVelIntercept;
         RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(ball.pos + averageBallVel.normalized()*dist, &ballVelIntercept) - curTime);
         MotionInstant targetRobotIntersection(ballVelIntercept);
         vector<Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
@@ -249,7 +257,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
 
         // If valid path to location
         // and we can reach the target point before ball
-        if (path && path->getDuration() + partialPathTime + bufferInterceptTime <= t) {
+        if (path && (path->getDuration() + partialPathTime) * *_interceptBufferTime <= t) {
             // No path found yet so there is nothing to average
             if (!firstTargetPointFound) {
                 interceptTarget = targetRobotIntersection.pos;
@@ -307,17 +315,40 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     }
 
     // Could not find a valid path that reach the point first
-    // Just try and hit the closest point in velocity line
+    // Just go for the farthest point and recalc next time
     if (!foundInterceptPath) {
-        Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
-        interceptTarget = ballMovementLine.nearestPoint(startInstant.pos);
+        if (!firstTargetPointFound) {
+            interceptTarget = ballVelIntercept;
+        } else {
+            interceptTarget = applyLowPassFilter<Point>(interceptTarget, ballVelIntercept, *_targetPointGain);
+        }
 
-        // If we are trying to intercept the line behind the ball, just go for the position of the ball
-        // 1 second from now
-        //if ((interceptTarget - ball.pos).mag() < (interceptTarget - (ball.pos + averageBallVel)).mag()) {
-        //    interceptTarget = ball.pos + averageBallVel;
-        //    std::cout << "giving up in front" << std::endl;
-        //}
+        std::cout << "giving up in front" << std::endl;
+    }
+
+    // Make sure targetRobotIntersection is inside the field
+    if (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget)) {
+        // Move backwards down the ball vel line until we are inside
+        // Super inefficient, but easy to do right now
+        // TODO: Change this to something smart
+        int ctr = 0;
+
+        while (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget) && ctr < 100) {
+            interceptTarget -= 0.1*averageBallVel;
+            ctr++;
+        }
+
+        ctr = 0;
+        if (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget)) {
+            interceptTarget += 10*averageBallVel;
+        }
+
+        while (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget) && ctr < 100) {
+            interceptTarget += 0.1*averageBallVel;
+            ctr++;
+        }
+
+        std::cout << "move it back in" << std::endl;
     }
 
     // Try and use the previous path for the first part so it will actually make the initial turn

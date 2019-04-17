@@ -9,7 +9,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     RESTART_MIN_DIST = 0.12
 
     # Ball has to be below this speed to be considered stopped
-    STOP_SPEED = 0.1
+    STOP_SPEED = 0.05
 
     DRIBBLE_SPEED = 254
 
@@ -31,11 +31,11 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # Complete when we have the ball and it's stopped
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,
-                            lambda: False,#self.robot is not None and
+                            lambda: self.robot is not None and
                                     #self.robot.has_ball() and
-                                    #self.robot.vel.mag() < Collect.STOP_SPEED, # and
-                                    #(self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
-                                    #self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
+                                    self.robot.vel.mag() < Collect.STOP_SPEED and # and
+                                    (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
+                                    self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
                             'ball collected')
 
         self.add_transition(behavior.Behavior.State.completed,
@@ -51,7 +51,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if (self.robot is not None):
             self.robot.set_dribble_speed(Collect.DRIBBLE_SPEED)
-            self.robot.disable_avoid_ball()
             self.robot.collect()
 
             self.update_held_cnt()
@@ -59,14 +58,14 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def execute_completed(self):
         if (self.robot is not None):
             self.robot.set_dribble_speed(Collect.DRIBBLE_SPEED)
-            self.robot.disable_avoid_ball()
 
             self.update_held_cnt()
 
     def update_held_cnt(self):
         # If we see the ball, increment up to max
         # if not, drop to 0
-        if (self.robot.has_ball()):
+        #if (self.robot.has_ball()):
+        if (self.robot is not None and self.robot.vel.mag() < Collect.STOP_SPEED):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
                                          Collect.PROBABLY_HELD_MAX)
         else:

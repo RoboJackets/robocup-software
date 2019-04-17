@@ -43,7 +43,7 @@ private:
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void checkSolutionValidity(const Ball& ball);
+    void checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant);
 
     // Figures out when to move to each state
     // (only in the standard transition)

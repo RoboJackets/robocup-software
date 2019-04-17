@@ -42,7 +42,9 @@ private:
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void checkSolutionValidity(const Ball& ball,  const MotionInstant& startInstant);
+    void checkSolutionValidity(const Ball& ball,
+                               const MotionInstant& startInstant,
+                               const Path* prevPath);
 
     void processStateTransition(const Ball& ball,
                                 const MotionInstant& startInstant,

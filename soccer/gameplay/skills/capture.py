@@ -13,7 +13,7 @@ import math
 
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
-    INTERCEPT_VELOCITY_THRESH = 0.5
+    INTERCEPT_VELOCITY_THRESH = 0.3
 
     PROBABLE_KICK_CHANGE = 0.1
 
@@ -40,8 +40,8 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         self.add_transition(Capture.State.settle,
                             Capture.State.collect,
-                            lambda: main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH or
-                                    self.ball_bounced_off_robot() and not self.ball_probably_kicked(),
+                            lambda: main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH, # or
+                                    #self.ball_bounced_off_robot() and not self.ball_probably_kicked(),
                             'collecting')
 
         self.add_transition(Capture.State.collect,
@@ -52,8 +52,10 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # Cut back if the velocity is pretty high and it was probably kicked
         self.add_transition(Capture.State.collect,
                             Capture.State.settle,
-                            lambda: main.ball().vel.mag() >= Capture.INTERCEPT_VELOCITY_THRESH and 
-                                    self.ball_probably_kicked() and not self.ball_bounced_off_robot(),
+                            lambda: main.ball().vel.mag() >= Capture.INTERCEPT_VELOCITY_THRESH and
+                                    (self.subbehavior_with_name('collector').robot is not None and
+                                     (self.subbehavior_with_name('collector').robot.pos - main.ball().pos).mag() > .3), # and 
+                                    #self.ball_probably_kicked() and not self.ball_bounced_off_robot(),
                             'settling again')
 
     def ball_bounced_off_robot(self):
