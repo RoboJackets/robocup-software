@@ -10,7 +10,7 @@ import skills.move
 import skills.capture
 
 
-class distraction(standard_play.StandardPlay):
+class Distraction(standard_play.StandardPlay):
 
     class State (enum.Enum):
         setup = 1, 'capture ball and move distractor and striker into position'
@@ -28,17 +28,21 @@ class distraction(standard_play.StandardPlay):
 
         self.ball_is_far = main.ball().pos.y < (0.4*constants.Field.Length)
 
-        self.distraction_point = robocup.Point(0.40*constants.Field.Width, 
-            0.95*constants.Field.Length) #the first distraction point
+        #the first distraction point
+        self.distraction_point = robocup.Point(0.40*constants.Field.Width,
+                                               0.95*constants.Field.Length)
 
-        self.distraction_recieve_pass_point = robocup.Point(0.40*constants.Field.Width, 
-            0.8*constants.Field.Length) #the second distraction point
+        #the second distraction point
+        self.distraction_recieve_pass_point = robocup.Point(0.40*constants.Field.Width,
+                                                            0.8*constants.Field.Length)
 
-        self.striker_point = robocup.Point(-0.40*constants.Field.Width, 
-            0.9*constants.Field.Length) #striker's position
+        #striker's position
+        self.striker_point = robocup.Point(-0.40*constants.Field.Width,
+                                            0.9*constants.Field.Length)
 
+        #center of field position, used if ball is far
         self.center = robocup.Point(0.5*constants.Field.Width,
-            0.5*constants.Field.Length) #center of field position, used if ball is far
+                                    0.5*constants.Field.Length)
 
         self.distract_box = robocup.Rect(
             robocup.Point(0.33*constants.Field.Width/2,
@@ -192,9 +196,14 @@ class distraction(standard_play.StandardPlay):
     def on_enter_passing(self):
         self.remove_all_subbehaviors()
         #either pass to striker or distracter depending on shot chance        
-        pass_to_distract_chance = evaluation.passing.eval_pass( main.ball().pos, self.distraction_recieve_pass_point, main.our_robots() )
-        pass_to_striker_chance = evaluation.passing.eval_pass( main.ball().pos, self.striker_point, main.our_robots() )
-        shot_of_striker_chance = evaluation.shooting.eval_shot( self.striker_point, main.our_robots())
+        pass_to_distract_chance = evaluation.passing.eval_pass(main.ball().pos, 
+                                                               self.distraction_recieve_pass_point,
+                                                               main.our_robots())
+        pass_to_striker_chance  = evaluation.passing.eval_pass(main.ball().pos,
+                                                               self.striker_point,
+                                                               main.our_robots())
+        shot_of_striker_chance  = evaluation.shooting.eval_shot(self.striker_point,
+                                                                main.our_robots())
 
         if pass_to_distract_chance <= pass_to_striker_chance*shot_of_striker_chance:
             pass_striker_instead = True
@@ -224,9 +233,13 @@ class distraction(standard_play.StandardPlay):
         #the striker will shoot
         #or
         #the striker will pass to the distractor and the distractor will shoot
-        pass_striker_to_distractor_chance = evaluation.passing.eval_pass( self.striker_point, self.distraction_recieve_pass_point, main.our_robots() )
-        shot_of_striker_chance = evaluation.shooting.eval_shot( self.striker_point, main.our_robots() )
-        shot_of_distractor_chance = evaluation.shooting.eval_shot( self.distraction_recieve_pass_point, main.our_robots() )
+        pass_striker_to_distractor_chance = evaluation.passing.eval_pass(self.striker_point,
+                                                                         self.distraction_recieve_pass_point,
+                                                                         main.our_robots())
+        shot_of_striker_chance = evaluation.shooting.eval_shot(self.striker_point,
+                                                               main.our_robots())
+        shot_of_distractor_chance = evaluation.shooting.eval_shot(self.distraction_recieve_pass_point,
+                                                                  main.our_robots())
         
         if pass_striker_to_distractor_chance*shot_of_distractor_chance > shot_of_striker_chance:
             dont_shoot = True
