@@ -47,6 +47,7 @@ set(ROBOCUP_LIB_SRC
     "planning/TrapezoidalPath.cpp"
     "Processor.cpp"
     "ProtobufTree.cpp"
+    "radio/PacketConvert.cpp"
     "radio/SimRadio.cpp"
     "radio/USBRadio.cpp"
     "radio/NetworkRadio.cpp"

@@ -12,6 +12,8 @@
 // included for kicer status enum
 #include "status.h"
 
+#include "PacketConvert.hpp"
+
 using namespace std;
 using namespace Packet;
 
@@ -187,53 +189,11 @@ void USBRadio::send(Packet::RadioTx& packet) {
                       rtp::ForwardSize,
                   "Forward packet contents exceeds buffer size");
 
-    // Unit conversions
-    static const float Seconds_Per_Cycle = 0.005f;
-    static const float Meters_Per_Tick = 0.026f * 2 * M_PI / 6480.0f;
-    static const float Radians_Per_Tick = 0.026f * M_PI / (0.0812f * 3240.0f);
+    fill_header(reinterpret_cast<rtp::Header*>(forward_packet));
+    rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
+            forward_packet + sizeof(rtp::Header));
 
-    rtp::Header* header = (rtp::Header*)forward_packet;
-    header->port = rtp::PortType::CONTROL;
-    header->address = rtp::BROADCAST_ADDRESS;
-    header->type = rtp::MessageType::CONTROL;
-
-    // Build a forward packet
-    for (int slot = 0; slot < 6; ++slot) {
-        // Calculate the offset into the @forward_packet for this robot's
-        // control message and cast it to a ControlMessage pointer for easy
-        // access
-        size_t offset =
-            sizeof(rtp::Header) + slot * sizeof(rtp::RobotTxMessage);
-        rtp::RobotTxMessage* msg =
-            (rtp::RobotTxMessage*)(forward_packet + offset);
-
-        if (slot < packet.robots_size()) {
-            const Packet::Control& robot = packet.robots(slot).control();
-
-            msg->uid = packet.robots(slot).uid();
-            msg->messageType = rtp::RobotTxMessage::ControlMessageType;
-
-            auto& controlMessage = msg->message.controlMessage;
-
-            controlMessage.bodyX = static_cast<int16_t>(
-                robot.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-            controlMessage.bodyY = static_cast<int16_t>(
-                robot.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-            controlMessage.bodyW = static_cast<int16_t>(
-                robot.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-
-            controlMessage.dribbler =
-                clamp(static_cast<uint16_t>(robot.dvelocity()) * 2, 0, 255);
-
-            controlMessage.kickStrength = robot.kcstrength();
-            controlMessage.shootMode = robot.shootmode();
-            controlMessage.triggerMode = robot.triggermode();
-            controlMessage.song = robot.song();
-        } else {
-            // empty slot
-            msg->uid = rtp::INVALID_ROBOT_UID;
-        }
-    }
+    convert_tx_proto_to_rtp(packet, body, 6);
 
     // Send the forward packet
     int sent = 0;
@@ -276,50 +236,10 @@ void USBRadio::receive() {
 
 // Note: this method assumes that sizeof(buf) == rtp::ReverseSize
 void USBRadio::handleRxData(uint8_t* buf) {
-    RadioRx packet = RadioRx();
-
-    rtp::Header* header = (rtp::Header*)buf;
     rtp::RobotStatusMessage* msg =
-        (rtp::RobotStatusMessage*)(buf + sizeof(rtp::Header));
+        reinterpret_cast<rtp::RobotStatusMessage*>(buf + sizeof(rtp::Header));
 
-    packet.set_timestamp(RJ::timestamp());
-    packet.set_robot_id(msg->uid);
-
-    // Hardware version
-    packet.set_hardware_version(RJ2015);
-
-    // battery voltage
-    packet.set_battery(msg->battVoltage *
-                       rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR);
-
-    // ball sense
-    if (BallSenseStatus_IsValid(msg->ballSenseStatus)) {
-        packet.set_ball_sense_status(BallSenseStatus(msg->ballSenseStatus));
-    }
-
-    // Using same flags as 2011 robot. See firmware/robot2011/cpu/status.h.
-    // Report that everything is good b/c the bot currently has no way of
-    // detecting kicker issues
-    packet.set_kicker_status((msg->kickStatus ? Kicker_Charged : 0) |
-                             (msg->kickHealthy ? Kicker_Enabled : 0) |
-                             Kicker_I2C_OK);
-
-    // motor errors
-    for (int i = 0; i < 5; i++) {
-        bool err = msg->motorErrors & (1 << i);
-        packet.add_motor_status(err ? MotorStatus::Hall_Failure
-                                    : MotorStatus::Good);
-    }
-
-    for (std::size_t i = 0; i < 4; i++) {
-        packet.add_encoders(msg->encDeltas[i]);
-    }
-
-    // fpga status
-    if (FpgaStatus_IsValid(msg->fpgaStatus)) {
-        packet.set_fpga_status(FpgaStatus(msg->fpgaStatus));
-    }
-
+    RadioRx packet = convert_rx_rtp_to_proto(*msg);
     std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
     _reversePackets.push_back(packet);
 }

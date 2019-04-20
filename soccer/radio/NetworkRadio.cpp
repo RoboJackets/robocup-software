@@ -2,6 +2,7 @@
 #include <Utils.hpp>
 #include "Geometry2d/Util.hpp"
 #include "status.h"
+#include "PacketConvert.hpp"
 
 using namespace boost::asio;
 using ip::udp;
@@ -41,30 +42,13 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)> forward_packet;
 
         rtp::Header* header = reinterpret_cast<rtp::Header*>(&forward_packet[0]);
-        header->port = rtp::PortType::CONTROL;
-        header->address = rtp::BROADCAST_ADDRESS;
-        header->type = rtp::MessageType::CONTROL;
+        fill_header(header);
 
         size_t offset = sizeof(rtp::Header);
-        rtp::RobotTxMessage* msg = reinterpret_cast<rtp::RobotTxMessage*>(
+        rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
                 &forward_packet[offset]);
 
-        // Set fields of the control message.
-        msg->uid = robot_id;
-
-        msg->message.controlMessage.bodyX = static_cast<int16_t>(
-            control.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-        msg->message.controlMessage.bodyY = static_cast<int16_t>(
-            control.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-        msg->message.controlMessage.bodyW = static_cast<int16_t>(
-            control.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-        msg->message.controlMessage.dribbler =
-            clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
-
-        msg->message.controlMessage.shootMode = control.shootmode();
-        msg->message.controlMessage.kickStrength = control.kcstrength();
-        msg->message.controlMessage.triggerMode = control.triggermode();
-        msg->message.controlMessage.song = control.song();
+        convert_tx_proto_to_rtp(packet, body, 6);
 
         // Fetch the IP address
         auto range = _robot_ip_map.left.equal_range(robot_id);
@@ -105,10 +89,6 @@ void NetworkRadio::receivePacket(
     rtp::RobotStatusMessage* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
             &_recv_buffer[sizeof(rtp::Header)]);
 
-    Packet::RadioRx packet;
-    packet.set_timestamp(RJ::timestamp());
-    packet.set_robot_id(msg->uid);
-
     // Find out which robot this corresponds to.
     auto ip_iter = _robot_ip_map.right.find(_robot_endpoint.address());
 
@@ -136,37 +116,8 @@ void NetworkRadio::receivePacket(
         registerRobot(msg->uid, _robot_endpoint.address());
     }
 
-    packet.set_hardware_version(Packet::RJ2015);
-    packet.set_battery(msg->battVoltage *
-            rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR);
-
-    if (Packet::BallSenseStatus_IsValid(msg->ballSenseStatus)) {
-        packet.set_ball_sense_status(
-                Packet::BallSenseStatus(msg->ballSenseStatus));
-    }
-
-    // Using same flags as 2011 robot. See common/status.h
-    // Report that everything is good b/c the bot currently has no way of
-    // detecting kicker issues
-    packet.set_kicker_status((msg->kickStatus ? Kicker_Charged : 0) |
-                             (msg->kickHealthy ? Kicker_Enabled : 0) |
-                             Kicker_I2C_OK);
-
-    // Motor errors
-    for (int i = 0; i < 5; i++) {
-        bool err = msg->motorErrors & (1 << i);
-        packet.add_motor_status(err ? Packet::MotorStatus::Hall_Failure
-                                    : Packet::MotorStatus::Good);
-    }
-
-    for (std::size_t i = 0; i < 4; i++) {
-        packet.add_encoders(msg->encDeltas[i]);
-    }
-
-    // fpga status
-    if (Packet::FpgaStatus_IsValid(msg->fpgaStatus)) {
-        packet.set_fpga_status(Packet::FpgaStatus(msg->fpgaStatus));
-    }
+    // Extract the protobuf form
+    Packet::RadioRx packet = convert_rx_rtp_to_proto(*msg);
 
     {
         // Add reverse packets

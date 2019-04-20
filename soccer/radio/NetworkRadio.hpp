@@ -14,8 +14,6 @@
 
 /**
  * @brief Interface for the radio over regular network interface
- *
- * @details ...
  */
 class NetworkRadio : public Radio {
 public:
