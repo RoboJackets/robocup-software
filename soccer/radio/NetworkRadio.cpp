@@ -10,7 +10,6 @@ using ip::udp;
 NetworkRadio::NetworkRadio(int server_port, int robot_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
       _send_buffers(6),
-      _server_port{server_port},
       _robot_port{robot_port} {
     startReceive();
 }
@@ -41,9 +40,8 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         rtp::Header* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
-        size_t offset = sizeof(rtp::Header);
         rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
-                &forward_packet_buffer[offset]);
+                &forward_packet_buffer[rtp::HeaderSize]);
 
         convert_tx_proto_to_rtp(packet, body, 6);
 
@@ -86,7 +84,7 @@ void NetworkRadio::receivePacket(
     }
 
     rtp::RobotStatusMessage* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
-            &_recv_buffer[sizeof(rtp::Header)]);
+            &_recv_buffer[rtp::HeaderSize]);
 
     // Find out which robot this corresponds to.
     auto ip_iter = _robot_ip_map.right.find(_robot_endpoint.address());
@@ -102,16 +100,9 @@ void NetworkRadio::receivePacket(
         // map correctly, but we still need to remove it from the ID->IP map.
         std::cerr << "Warning: UID of robot assigned IP "
             << ip_iter->first << " changed to " << ip_iter->second << ". Reassigning.";
-        auto matching_id = _robot_ip_map.left.equal_range(ip_iter->second);
-        auto matching_ip = [&] (const RobotIpMap::left_map::value_type& v) {
-            return v.second == ip_iter->first;
-        };
 
-        RobotIpMap::left_map::iterator mid_begin = matching_id.first,
-                                       mid_end = matching_id.second;
-
-        // auto to_remove = std::remove_if(mid_begin, mid_end, matching_ip);
-        // _robot_ip_map.left.erase(to_remove, _robot_ip_map.left.end());
+        // Erase the IP address and re-register the robot.
+        _robot_ip_map.right.erase(ip_iter->first);
         registerRobot(msg->uid, _robot_endpoint.address());
     }
 
@@ -132,6 +123,5 @@ void NetworkRadio::switchTeam(bool) {}
 
 void NetworkRadio::registerRobot(int robot, ip::address ip) {
     // Insert the robot into the bimap, going both directions
-    _robot_ip_map.right.insert(RobotIpMap::right_map::value_type(ip, robot));
-    _robot_ip_map.left.insert(RobotIpMap::left_map::value_type(robot, ip));
+    _robot_ip_map.insert({robot, ip});
 }

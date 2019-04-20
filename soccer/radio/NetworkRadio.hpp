@@ -33,7 +33,7 @@ public:
 protected:
     // Bidrectional mapping from IP address <-> robot ID
     using RobotIpMap = boost::bimaps::bimap<
-        boost::bimaps::set_of<int>, boost::bimaps::multiset_of<boost::asio::ip::address>>;
+        boost::bimaps::multiset_of<int>, boost::bimaps::set_of<boost::asio::ip::address>>;
     RobotIpMap _robot_ip_map;
 
     bool open();
@@ -50,8 +50,9 @@ protected:
     std::array<char, rtp::ReverseSize> _recv_buffer;
     boost::asio::ip::udp::endpoint _robot_endpoint;
 
+    // Read from by `async_send_to`
     std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>>
         _send_buffers;
 
-    int _server_port, _robot_port;
+    const int _robot_port;
 };
