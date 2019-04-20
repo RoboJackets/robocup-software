@@ -9,6 +9,7 @@ using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port, int robot_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
+      _send_buffers(6),
       _server_port{server_port},
       _robot_port{robot_port} {
     startReceive();
@@ -34,14 +35,15 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         uint32_t robot_id = packet.robots(robot_idx).uid();
 
         // Build the control packet for this robot.
-        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)> forward_packet;
+        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
+            forward_packet_buffer = _send_buffers[robot_idx];
 
-        rtp::Header* header = reinterpret_cast<rtp::Header*>(&forward_packet[0]);
+        rtp::Header* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
         size_t offset = sizeof(rtp::Header);
         rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
-                &forward_packet[offset]);
+                &forward_packet_buffer[offset]);
 
         convert_tx_proto_to_rtp(packet, body, 6);
 
@@ -53,7 +55,9 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
             // Send to the given IP address
             ip::address robot_ip = it->second;
             udp::endpoint _robot_endpoint(robot_ip, _robot_port);
-            _socket.async_send_to(boost::asio::buffer(forward_packet), _robot_endpoint,
+            _socket.async_send_to(
+                boost::asio::buffer(forward_packet_buffer),
+                _robot_endpoint,
                 [] (const boost::system::error_code& error, std::size_t num_bytes) {
                     // Handle errors.
                     if (error) {

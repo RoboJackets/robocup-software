@@ -50,5 +50,8 @@ protected:
     std::array<char, rtp::ReverseSize> _recv_buffer;
     boost::asio::ip::udp::endpoint _robot_endpoint;
 
+    std::vector<std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>>
+        _send_buffers;
+
     int _server_port, _robot_port;
 };
