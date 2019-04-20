@@ -10,13 +10,8 @@ using ip::udp;
 NetworkRadio::NetworkRadio(int server_port, int robot_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
       _server_port{server_port},
-      _robot_port{robot_port} {}
-
-NetworkRadio::~NetworkRadio() {}
-
-bool NetworkRadio::open() {
+      _robot_port{robot_port} {
     startReceive();
-    return true;
 }
 
 void NetworkRadio::startReceive() {

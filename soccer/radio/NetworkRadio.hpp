@@ -18,7 +18,6 @@
 class NetworkRadio : public Radio {
 public:
     NetworkRadio(int server_port, int robot_port);
-    ~NetworkRadio();
 
     virtual bool isOpen() const override;
 
