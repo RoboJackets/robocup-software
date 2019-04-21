@@ -323,7 +323,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
             interceptTarget = applyLowPassFilter<Point>(interceptTarget, ballVelIntercept, *_targetPointGain);
         }
 
-        std::cout << "giving up in front" << std::endl;
+        //std::cout << "giving up in front" << std::endl;
     }
 
     // Make sure targetRobotIntersection is inside the field
@@ -348,7 +348,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
             ctr++;
         }
 
-        std::cout << "move it back in" << std::endl;
+        //std::cout << "move it back in" << std::endl;
     }
 
     // Try and use the previous path for the first part so it will actually make the initial turn
@@ -400,7 +400,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     auto path = rrtPlanner.run(request);
     path->setDebugText("Gives ups");
 
-    std::cout << "Giving up" << std::endl;
+    //std::cout << "Giving up" << std::endl;
 
     return make_unique<AngleFunctionPath>(
         std::move(path),
@@ -500,7 +500,7 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
 
     return make_unique<AngleFunctionPath>(
         std::move(dampenEnd),
-        angleFunctionForCommandType(FacePointCommand(ball.pos)));
+        angleFunctionForCommandType(FacePointCommand(ball.pos - ballMovementDir)));
 }
 
 std::unique_ptr<Path> SettlePathPlanner::invalid(const PlanRequest& planRequest) {

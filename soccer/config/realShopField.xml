@@ -283,7 +283,7 @@
   <Max_Rotation_Acceleration value="4"/>
  </RotationConstraints>
  <Pivot>
-  <radius value="1.2"/>
+  <radius value="1.3"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>
@@ -315,16 +315,17 @@
    <maxBallAngleForReset value="20"/>
   </Settle>
   <Collect>
-   <ballSpeedApproachDirectionCutoff value="0.1"/>
-   <approachAccelScalePercent value="0.8"/>
+   <ballSpeedApproachDirectionCutoff value="0.5"/>
+   <approachAccelScalePercent value="1"/>
    <controlAccelScalePercent value="0.5"/>
    <approachDistTarget value="0.12"/>
-   <touchDeltaSpeed value="0.15"/>
+   <touchDeltaSpeed value="0.2"/>
    <distCutoffToControl value="0.14"/>
    <velCutoffToControl value="100"/>
    <distCutoffToApproach value="1"/>
    <stopDistScale value="0.5"/>
    <targetPointAveragingGain value="0.8"/>
+   <velocityControlScale value="1.2"/>
   </Collect>
  </Capture>
  <VisionFilter>

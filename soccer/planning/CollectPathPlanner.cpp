@@ -17,6 +17,7 @@ ConfigDouble* CollectPathPlanner::_approachAccelScalePercent;
 ConfigDouble* CollectPathPlanner::_controlAccelScalePercent;
 ConfigDouble* CollectPathPlanner::_approachDistTarget;
 ConfigDouble* CollectPathPlanner::_touchDeltaSpeed;
+ConfigDouble* CollectPathPlanner::_velocityControlScale;
 ConfigDouble* CollectPathPlanner::_distCutoffToControl;
 ConfigDouble* CollectPathPlanner::_velCutoffToControl;
 ConfigDouble* CollectPathPlanner::_distCutoffToApproach;
@@ -34,6 +35,8 @@ void CollectPathPlanner::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "Capture/Collect/approachDistTarget", 0.04);
     _touchDeltaSpeed =
         new ConfigDouble(cfg, "Capture/Collect/touchDeltaSpeed", 0.1);
+    _velocityControlScale =
+        new ConfigDouble(cfg, "Capture/Collect/velocityControlScale", 1);
     _distCutoffToControl =
         new ConfigDouble(cfg, "Capture/Collect/distCutoffToControl", 0.05);
     _velCutoffToControl =
@@ -156,7 +159,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     // Move through the ball and stop
     // Controls from the point of impact to stop
     case Control: {
-        return std::move(control(planRequest, startInstant, std::move(prevPath), obstacles));
+        return std::move(control(planRequest, startInstant, std::move(prevPath), std::move(partialPath), obstacles));
     }
     default: {
         return std::move(invalid(planRequest));
@@ -165,19 +168,19 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 }
 
 void CollectPathPlanner::checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant, const Path* prevPath) {
+    Line ballVelLine(ball.pos, averageBallVel);
     // Check if we need to go back into approach
     //
     // See if we are not near the ball and both almost stopped
     if (((ball.pos - startInstant.pos).mag() > *_distCutoffToApproach || 
-        (prevPath && averageBallVel.norm().dot((prevPath->end().motion.pos - startInstant.pos).norm()) < 0.1 &&
-            averageBallVel.mag() > 0.2)) ||
+        (prevPath && ballVelLine.distTo(prevPath->end().motion.pos) > Robot_Radius) ||
         (ball.vel.mag() < 0.1 && startInstant.vel.mag() < 0.1 &&
-            (ball.pos - startInstant.pos).mag() > 2*Robot_Radius) &&
+            (ball.pos - startInstant.pos).mag() > 2*Robot_Radius)) &&
         currentState == Control) {
             
         cout << "Reseting" << endl;
-        if (prevPath)
-            cout << "Norm = " << averageBallVel.norm().dot((prevPath->end().motion.pos - startInstant.pos).norm().norm()) << endl;
+        //if (prevPath)
+        //    cout << "Norm = " << averageBallVel.norm().dot((prevPath->end().motion.pos - startInstant.pos).norm().norm()) << endl;
 
         cout << "Ball vel " << ball.vel.mag() << " robot vel " << 
             startInstant.vel.mag() << " dist " << (ball.pos - startInstant.pos).mag() << endl;
@@ -291,6 +294,7 @@ std::unique_ptr<Path> CollectPathPlanner::approach(const PlanRequest& planReques
 std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest,
                                                   const MotionInstant& startInstant,
                                                   std::unique_ptr<Path> prevPath,
+                                                  std::unique_ptr<Path> partialPath,
                                                   const ShapeSet& obstacles) {
     const Ball& ball = planRequest.systemState.ball;
     RobotConstraints robotConstraints = planRequest.constraints;
@@ -319,16 +323,19 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
     float maxAccel = motionConstraints.maxAcceleration;
     float currentSpeed = averageBallVel.mag() + *_touchDeltaSpeed;
 
+
+    float nonZeroVelTimeDelta = *_approachDistTarget / *_touchDeltaSpeed;
+
     // Assuming const accel going to zero velocity
     // speed / accel gives time to stop
     // speed / 2 is average speed over entire operation
-    float stoppingDist = *_approachDistTarget + currentSpeed*currentSpeed / (2 * maxAccel);
+    float stoppingDist = *_approachDistTarget + currentSpeed*currentSpeed / (2 * maxAccel) + *_velocityControlScale*currentSpeed*nonZeroVelTimeDelta;
 
     // Move through the ball some distance
     // The initial part will be at a constant speed, then it will decelerate to 0 m/s
     double distFromBall = *_stopDistScale * stoppingDist;
     MotionInstant target;
-    target.pos = startInstant.pos + distFromBall * (ball.pos - startInstant.pos).norm();
+    target.pos = startInstant.pos + distFromBall * (ball.pos - startInstant.pos + *_velocityControlScale*averageBallVel*nonZeroVelTimeDelta).norm();
     target.vel = Point(0, 0);
 
 
@@ -348,13 +355,19 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
                                    robotConstraints, nullptr, obstacles,
                                    planRequest.dynamicObstacles, planRequest.shellID);
         path = rrtPlanner.run(request);
+
+        if (partialPath) {
+            path = make_unique<CompositePath>(move(partialPath),
+                                              move(path));
+            path->setStartTime(prevPath->startTime());
+        }
     }
 
     path->setDebugText("stopping");
 
     // Make sure that when the path ends, we don't end up spinning around because we
     // hit go past the ball position at the time of path creation
-    Point facePt = startInstant.pos + 10 * (ball.pos - startInstant.pos).norm();
+    Point facePt = startInstant.pos + 10*(target.pos - startInstant.pos).norm();//startInstant.pos + 10 * (ball.pos - startInstant.pos).norm();
 
     return make_unique<AngleFunctionPath>(
         std::move(path), angleFunctionForCommandType(

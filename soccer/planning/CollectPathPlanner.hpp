@@ -62,6 +62,7 @@ private:
     std::unique_ptr<Path> control(const PlanRequest& planRequest,
                                   const MotionInstant& startInstant,
                                   std::unique_ptr<Path> prevPath,
+                                  std::unique_ptr<Path> partialPath,
                                   const Geometry2d::ShapeSet& obstacles);
 
     std::unique_ptr<Path> invalid(const PlanRequest& planRequest);
@@ -114,6 +115,8 @@ private:
     // If we are slamming into the ball decrease this number
     // If we aren't even touching it to the dribbler, increase this number (And check the approachDistTarget)
     static ConfigDouble* _touchDeltaSpeed; // m/s
+
+    static ConfigDouble* _velocityControlScale; // %
 
     // How close to the ball do we have to be before transferring to the control state
     // This should be almost zero

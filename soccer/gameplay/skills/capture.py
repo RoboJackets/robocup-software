@@ -13,7 +13,7 @@ import math
 
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
-    INTERCEPT_VELOCITY_THRESH = 0.3
+    INTERCEPT_VELOCITY_THRESH = 0.4
 
     PROBABLE_KICK_CHANGE = 0.1
 
