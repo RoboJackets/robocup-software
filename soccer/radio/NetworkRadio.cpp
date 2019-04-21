@@ -7,10 +7,9 @@
 using namespace boost::asio;
 using ip::udp;
 
-NetworkRadio::NetworkRadio(int server_port, int robot_port)
+NetworkRadio::NetworkRadio(int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
-      _send_buffers(6),
-      _robot_port{robot_port} {
+      _send_buffers(6) {
     startReceive();
 }
 
@@ -51,11 +50,10 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         // Loop over all addresses for this robot; we want to send multiple copies.
         for (auto it = range.first; it != range.second; it++) {
             // Send to the given IP address
-            ip::address robot_ip = it->second;
-            udp::endpoint _robot_endpoint(robot_ip, _robot_port);
+            const udp::endpoint& robot_endpoint = it->second;
             _socket.async_send_to(
                 boost::asio::buffer(forward_packet_buffer),
-                _robot_endpoint,
+                robot_endpoint,
                 [] (const boost::system::error_code& error, std::size_t num_bytes) {
                     // Handle errors.
                     if (error) {
@@ -87,14 +85,15 @@ void NetworkRadio::receivePacket(
             &_recv_buffer[rtp::HeaderSize]);
 
     // Find out which robot this corresponds to.
-    auto ip_iter = _robot_ip_map.right.find(_robot_endpoint.address());
+    auto ip_iter = _robot_ip_map.right.find(_robot_endpoint);
 
     int robot_id = msg->uid;
 
     // We already have this robot registered; this is a reverse packet
     if (ip_iter == _robot_ip_map.right.end()) {
         // This is a new robot, so we need to register this robot's UID
-        registerRobot(msg->uid, _robot_endpoint.address());
+        std::cout << "Adding robot with endpoint " << _robot_endpoint << std::endl;
+        registerRobot(msg->uid, _robot_endpoint);
     } else if (ip_iter->second != robot_id) {
         // This robot has been reassigned. Re-registering it sets the IP->ID
         // map correctly, but we still need to remove it from the ID->IP map.
@@ -103,7 +102,7 @@ void NetworkRadio::receivePacket(
 
         // Erase the IP address and re-register the robot.
         _robot_ip_map.right.erase(ip_iter->first);
-        registerRobot(msg->uid, _robot_endpoint.address());
+        registerRobot(msg->uid, _robot_endpoint);
     }
 
     // Extract the protobuf form
@@ -121,7 +120,7 @@ void NetworkRadio::receivePacket(
 
 void NetworkRadio::switchTeam(bool) {}
 
-void NetworkRadio::registerRobot(int robot, ip::address ip) {
+void NetworkRadio::registerRobot(int robot, udp::endpoint endpoint) {
     // Insert the robot into the bimap, going both directions
-    _robot_ip_map.insert({robot, ip});
+    _robot_ip_map.insert({robot, endpoint});
 }
