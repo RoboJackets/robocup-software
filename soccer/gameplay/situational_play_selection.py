@@ -1,6 +1,8 @@
 
 import main
 import time
+import robocup
+import math
 
 class SituationalPlaySelector:
 
@@ -64,7 +66,7 @@ class SituationalPlaySelector:
     def updateRobotList(cls): 
        cls.activeRobots.clear()
        for g in cls.robotList:
-           if(g.is_visible):
+           if(g.visible):
                cls.activeRobots.append(g)
 
     @classmethod
@@ -77,7 +79,7 @@ class SituationalPlaySelector:
             cls.updateRobotList()
 
         cls.ballPossessionUpdate()
-        cls.scoreUpdate()
+        #cls.scoreUpdate()
 
     #It would be interesting to evaluate characteristics about our enemy
     #Like some kind of manuverability/speed characteristic
@@ -100,20 +102,21 @@ class SituationalPlaySelector:
             return x
 
 
-    @staticmethod
-    def trajectory(x, y, v, velWidthNon=0.2, velWidthLin=1.0):
-        factor = v**velWidthNon * velWidthLin * ((math.sqrt((x - y)**2 + math.sqrt(y - x)**2)) / (math.sqrt(x**2 + y**2)))
-        return clip(factor) #I either have to make these class methods or do this manually fml
+    @classmethod
+    def trajectory(cls, x, y, v, velWidthNon=0.2, velWidthLin=1.0):
+        factor = v**velWidthNon * velWidthLin * ((math.sqrt((x - y)**2 + (y - x)**2)) / (math.sqrt(x**2 + y**2)))
+        return cls.clip(factor) #I either have to make these class methods or do this manually fml
 
 
-    @staticmethod
-    def falloff(x, y, v, falloffLin=0.03, falloffNon=1.0):
+    @classmethod
+    def falloff(cls, x, y, v, falloffLin=0.03, falloffNon=1.0):
         factor = 1.0 - falloffLin * (1.0 / v)**falloffNon * math.sqrt(x**2 + y**2)
-        return clip(factor,minValue = 0.0)
+        return cls.clip(factor,minValue = 0.0)
   
-    @staticmethod
-    def obstruction(x, y, obstDist, obsDrop=0.2):
-        factor = obsDrop * clip((math.sqrt(x**2 + y**2) - obstDist) * 0.5, minValue=0.0) * (3 / math.sqrt((x-y)**2 + (y-x)**2))
+    @classmethod
+    def obstruction(cls, x, y, obstDist, obsDrop=0.2):
+        factor = obsDrop * cls.clip((math.sqrt(x**2 + y**2) - obstDist) * 0.5, minValue=0.0) * (3 / math.sqrt((x-y)**2 + (y-x)**2))
+        return factor
 
 
     #A triweight kernal approximation of a gaussian
@@ -122,11 +125,11 @@ class SituationalPlaySelector:
         return (34.0 / 35.0) * ((1 - x**2)**3)
 
     #Velocity is a scalar here and the robots x and y are in the balls refrence frame
-    @staticmethod
-    def ballRecieveFunction(x, y, v, od):
+    @classmethod
+    def ballRecieveFunction(cls, x, y, v, od):
         if(math.sqrt(x**2 + y**2) > 4 * od or x + y < 0.0):
             return 0.0
-        return clip(triweight(trajectory(x,y,v) * falloff(x,y,v) - obstruction(x,y,od)), minValue=0.0)
+        return cls.clip(cls.triweight(cls.trajectory(x,y,v) * cls.falloff(x,y,v) - cls.obstruction(x,y,od)), minValue=0.0)
      
 
     #penalty for not facing the ball as a function of ball velocity and distance to the ball 
@@ -140,9 +143,9 @@ class SituationalPlaySelector:
     def transformToBall(pos, ballPos, ballVel):
         #Current hypothesis is that I want to rotate the vector the angle of the
         #ball velocity plus pi / 4, will see how that plays out
-        rotA = math.atan2(ballVel[1], ballVel[0]) + (math.pi / 4.0)
-        x = pos[0] * math.cos(rotA) - pos[1] * math.sin(rotA) + ballPos[0]
-        y = pos[0] * math.cos(rotA) + pos[1] * math.cos(rotA) + ballPos[1]
+        rotA = math.atan2(ballVel.y, ballVel.x) + (math.pi / 4.0)
+        x = pos[0] * math.cos(rotA) - pos[1] * math.sin(rotA) + ballPos.x
+        y = pos[0] * math.cos(rotA) + pos[1] * math.cos(rotA) + ballPos.y
         return (x, y)
 
     @staticmethod
@@ -152,19 +155,22 @@ class SituationalPlaySelector:
         xr = x * c + y * -s
         yr = x * s + y * c
         return xr, yr
- 
-    def get_obstruct_dist():
+
+    @classmethod
+    def get_obstruct_dist(cls):
         return 999999
 
     @classmethod
     def ball_recieve_prob(cls, ballPos, ballVel, robot):
+        if(math.sqrt(ballVel.x**2 + ballVel.y**2) < 0.2):
+            return 0.0
         robotPos = (robot.pos.x, robot.pos.y)
-        robotPos_ball = transformToBall(robotPos, ballPos, ballVel)
-        return ballRecieveFunction(robotPos_ball[0], robotPos_ball[1], math.sqrt(ballVel[0]**2 + ballVel[1]**2), get_obstruct_dist())
+        robotPos_ball = cls.transformToBall(robotPos, ballPos, ballVel)
+        return cls.ballRecieveFunction(robotPos_ball[0], robotPos_ball[1], math.sqrt(ballVel.x**2 + ballVel.y**2), cls.get_obstruct_dist())
 
     #A function that determines if the ball is in the mouth of a given robot
     def possesses_the_ball(ballPos, robot):
-        pass
+        return math.sqrt(ballPos[0]**2 + ballPos[1]**2) < thresh and abs(math.atan2(ballPos[1] - robotPos[1], ballPos[0] - robotPos[0]) - robot.angle) < angleThresh
 
 
     @classmethod
@@ -204,7 +210,8 @@ class SituationalPlaySelector:
             #print(i)
             pass
         '''
-        cls.systemState.draw_text("Gregory is a weeb", Robocup.Point(0,3), (0,0,0),"hat")
+        for g in cls.activeRobots:
+            cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0,0,0),"hat")
         print(cls.systemState.ball.pos)
 
         pass
