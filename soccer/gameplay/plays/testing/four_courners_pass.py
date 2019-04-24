@@ -40,14 +40,14 @@ class FourCornerPass(play.Play):
 		self.add_transition(
 			FourCornerPass.State.setup, FourCornerPass.State.passing, 
 			lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.
-			State.completed , 'all subbehaviors completed')
+			State.completed , 'captured ball')
 
 		#transition when ball is passed or failed to pass
 		self.add_transition(
 			FourCornerPass.State.passing, FourCornerPass.State.setup, 
 			lambda: self.subbehavior_with_name('passer').state == behavior.Behavior.State.completed
-			or self.subbehavior_with_name('passer').state == behavior.Behavior.
-			State.failed, 'all subbehaviors completed')
+			or self.subbehavior_with_name('passer').state == behavior.Behavior.State.failed,
+			'passed ball')
 
 		#change this to adjust the square size
 		self.variable_square = 5.5
@@ -61,9 +61,9 @@ class FourCornerPass(play.Play):
 		self.variable_square = min(self.variable_square, self.width, self.length)
 
 		#radius of robot
-		self.bot = constants.Robot.Radius
+		self.bot_buffer = constants.Robot.Radius * 3
 		# the largest and smallest x and y postion possible for the square
-		self.max_x = (self.variable_square / 2 - self.bot * 3)
+		self.max_x = (self.variable_square / 2 - self.bot_buffer)
 		self.min_x = -self.max_x
 		self.max_y = self.length/2 + self.max_x
 		self.min_y = self.length/2 - self.max_x
@@ -99,20 +99,16 @@ class FourCornerPass(play.Play):
 					else:
 						robo.set_max_speed(self.normal_speed)		
 
-		# keep the iso point stuck in the corner
-		if (self.has_subbehavior_with_name('iso')) :
-			self.iso.pos = robocup.Point(-constants.Field.Width/2, 0)
-
 		# chasing robot positon should always follow the ball within a smaller inside box of the
 		# four corners.
 		if (self.has_subbehavior_with_name('chasing')) :
-			self.chaser.pos = self.cut_of_pos(main.ball().pos)
+			self.chaser.pos = self.cut_off_pos(main.ball().pos)
 
 		#draw the four courner field
 		# takes in the square points and form lines and create a square on the field
 		for i in range(len(self.square_points)) :
 			main.system_state().draw_line(robocup.Line(self.square_points[i], 
-			self.square_points[(i + 1) % 4]), (135, 0, 255), "Square")
+				self.square_points[(i + 1) % 4]), (135, 0, 255), "Square")
 
 		# speed of the hunting robots
 		#TODO Create python pull from Config values. Currently this breaks the world.
@@ -121,6 +117,19 @@ class FourCornerPass(play.Play):
 		#speed of the defending robots can decrease value to make it easier for offense
 		self.defense_speed = 2 * self.normal_speed/ 3.0 #self.normal_speed/2.0#self.variable_square/(min(self.width,self.length) * 2) * self.normal_speed
 
+
+
+	def on_enter_start(self):
+		# if we have too many robots isolate one of the robots so they don't help in the play
+		goalie = main.root_play().goalie_id#.system_state().game_state.get_goalie_id()
+		print(goalie)
+		numRobots = len(main.our_robots()) - 4
+		if (goalie != None) :
+			numRobots = numRobots - 1
+
+		for i in range(numRobots) :
+			iso = skills.move.Move(robocup.Point(-constants.Field.Width/2 + self.bot_buffer * i, 0))
+			self.add_subbehavior(iso,'iso' + str(i), required = True, priority = 1)
 
 
 	def on_enter_setup(self):
@@ -142,12 +151,12 @@ class FourCornerPass(play.Play):
 		# decide which direction you're passing to
 		self.direction = self.safer_pass()
 		# move the other two robots to the other point locations
-		self.add_subbehavior(skills.move.Move(self.square_points[(closestPtIdx + self.direction) % 4]), 'move1', required = False)
+		self.add_subbehavior(skills.move.Move(self.square_points[(closestPtIdx + self.direction) % 4]), 'move', required = False)
 		# send the closest robot to capture the ball
 		self.add_subbehavior(skills.capture.Capture(), 'capture')
 
 	def on_exit_setup(self):
-		self.remove_subbehavior('move1')
+		self.remove_subbehavior('move')
 		self.remove_subbehavior('capture')
 
 	def on_enter_passing(self):
@@ -172,22 +181,16 @@ class FourCornerPass(play.Play):
 
 		# add a robot to chase after the ball.
 		if (not self.has_subbehavior_with_name('chasing')):
-			self.chaser = skills.move.Move(self.cut_of_pos(main.ball().pos))
+			self.chaser = skills.move.Move(self.cut_off_pos(main.ball().pos))
 			self.add_subbehavior(self.chaser, 'chasing', required = True, priority = 2)
-
-		# if we have too many robots isolate one of the robots so they don't help in the play
-		if (not self.has_subbehavior_with_name('iso') and len(main.our_robots()) == 6) :
-			self.iso = skills.move.Move(robocup.Point(-constants.Field.Width/2, 0))
-			self.add_subbehavior(self.iso,'iso', required = True, priority = 1)
 			
 	# remove subbehaviors 
 	def on_exit_passing(self):
-		#self.text)
 		self.remove_subbehavior('passer')
 		self.remove_subbehavior('chasing')
 		self.remove_subbehavior('premove')
 
-	#TODO decide which the better direction to pass is
+	#Decide which the better direction to pass is
 	def safer_pass(self):
 		if (True):
 			return 1
@@ -197,16 +200,16 @@ class FourCornerPass(play.Play):
 
 	# if a point is outside of a smaller box that is the square points - 3 robot radius'
 	# return the closest point inside that box.
-	def cut_of_pos(self, point):
-		x = point.x
-		if (point.x > (self.max_x - 3 * self.bot)):
-			x = self.max_x - 3 * self.bot
-		elif (point.x < (self.min_x + 3 *self.bot)):
-			x = self.min_x + 3 *self.bot
+	def cut_off_pos(self, point):
+	# Projects the point given onto the edge of the smaller rectangle
+	# Each coordinate is found independently so we don't have to project to each
+	# segment of the rectangle and choose the closest
+		segment_x = robocup.Segment(robocup.Point(self.min_x + self.bot_buffer, 0),
+									robocup.Point(self.max_x - self.bot_buffer, 0))
+		segment_y = robocup.Segment(robocup.Point(0, self.min_y + self.bot_buffer),
+									robocup.Point(0, self.max_y - self.bot_buffer))
 
-		y = point.y
-		if (point.y > (self.max_y - 3 * self.bot)):
-			y = self.max_y - 3 * self.bot
-		elif(point.y < (self.min_y + 3 * self.bot)):
-			y = self.min_y + 3 * self.bot
-		return robocup.Point(x,y)
+		x_pos = segment_x.nearest_point(point)
+		y_pos = segment_y.nearest_point(point)
+
+		return robocup.Point(x_pos.x, y_pos.y)
