@@ -360,7 +360,7 @@
  </VisionFilter>
  <Capture>
   <Settle>
-   <ballSpeedPercentForDampen value="0.1"/>
+   <ballSpeedPercentForDampen value="0"/>
    <searchStartTime value="0.1"/>
    <searchEndtime value="10"/>
    <searchIncTime value="0.2"/>
