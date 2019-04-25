@@ -22,14 +22,14 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
 
     ## how much we're allowed to be off in the direction of the pass line
-    PositionYErrorThreshold = 0.06
+    PositionYErrorThreshold = 0.1
 
     ## how much we're allowed to be off side-to-side from the pass line
-    PositionXErrorThreshold = 0.03
+    PositionXErrorThreshold = 0.1
 
     ## we have to be going slower than this to be considered 'steady'
-    SteadyMaxVel = 0.04
-    SteadyMaxAngleVel = 3 * constants.DegreesToRadians  # degrees / second
+    SteadyMaxVel = 0.1
+    SteadyMaxAngleVel = 20 * constants.DegreesToRadians  # degrees / second
 
     MarginAngle = math.pi / 18
     StabilizationFrames = 3

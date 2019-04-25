@@ -229,7 +229,7 @@
    <accelMultiplier value="0"/>
    <d value="0.4"/>
    <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0.2"/>
+   <minEffectiveVelocity value="0.1"/>
   </translation>
   <rotation>
    <p value="7"/>
@@ -364,26 +364,27 @@
    <searchStartTime value="0.1"/>
    <searchEndtime value="10"/>
    <searchIncTime value="0.2"/>
-   <interceptBufferTime value="0"/>
+   <interceptBufferTime value="1"/>
    <targetPointGain value="0.5"/>
    <ballVelGain value="0.9"/>
    <maxAnglePathTargetChange value="20"/>
    <maxBallVelForPathReset value="2"/>
    <maxBallAngleForReset value="20"/>
-   <maxNumInvalidPaths value="3"/>
+   <maxNumInvalidPaths value="50"/>
    <ballAvoidDistance value="0.3"/>
   </Settle>
   <Collect>
    <ballSpeedApproachDirectionCutoff value="0.1"/>
    <approachAccelScalePercent value="0.6"/>
-   <controlAccelScalePercent value="0.7"/>
-   <approachDistTarget value="0.15"/>
-   <touchDeltaSpeed value="0.05"/>
+   <controlAccelScalePercent value="0.8"/>
+   <approachDistTarget value="0.12"/>
+   <touchDeltaSpeed value="0.1"/>
    <distCutoffToControl value="0.15"/>
    <velCutoffToControl value="2"/>
-   <stopDistScale value="1"/>
+   <stopDistScale value="0.5"/>
    <targetPointAveragingGain value="0.8"/>
-   <distCutoffToApproach value="0.3"/>
+   <distCutoffToApproach value="1"/>
+   <velocityControlScale value="0"/>
   </Collect>
  </Capture>
 </config>

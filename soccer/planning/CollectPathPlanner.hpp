@@ -123,6 +123,8 @@ private:
     // Increase if the noise on vision causes problems and we never transition
     static ConfigDouble* _distCutoffToControl; // m
 
+    // How close to the ball do we need to be before transferring back to the approach state and restarting
+    // This should be just above zero to account for noise in vision
     static ConfigDouble* _distCutoffToApproach; // m
 
     // How close to the target velocity do we have to be before transferring to the control state
@@ -134,7 +136,8 @@ private:
 
     // How much extra room should we stay at the delta speed before slowing down
     // This is really a percent of the minimum stop distance to fully stop given the current velocity
-    // Minimum number should be 1 to not oscillate at the end
+    // This should be tuned such that we dont drive too far through the ball
+    // A number of 1 should mean a constant acceleration through the entire sequence
     // Increasing this number makes the robot state at delta velocity longer
     static ConfigDouble* _stopDistScale; // %
 

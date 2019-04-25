@@ -16,6 +16,7 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         if(self.robot is not None):
+            self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(Settle.DRIBBLE_SPEED)
             self.robot.settle(robocup.Point(0,0))
 

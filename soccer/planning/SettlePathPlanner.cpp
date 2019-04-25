@@ -323,7 +323,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
             interceptTarget = applyLowPassFilter<Point>(interceptTarget, ballVelIntercept, *_targetPointGain);
         }
 
-        //std::cout << "giving up in front" << std::endl;
+        std::cout << "Couldn't find valid intercept point" << std::endl;
     }
 
     // Make sure targetRobotIntersection is inside the field
@@ -347,8 +347,6 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
             interceptTarget += 0.1*averageBallVel;
             ctr++;
         }
-
-        //std::cout << "move it back in" << std::endl;
     }
 
     // Try and use the previous path for the first part so it will actually make the initial turn

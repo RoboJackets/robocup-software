@@ -63,7 +63,8 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     const CollectCommand& command = dynamic_cast<const CollectCommand&>(*planRequest.motionCommand);
 
     // Start state for specified robot
-    MotionInstant& startInstant = planRequest.start;
+    MotionInstant& currentStartInstant = planRequest.start;
+    MotionInstant partialPathStartInstant = currentStartInstant;
 
     // All the max velocity / acceleration constraints for translation / rotation
     RobotConstraints robotConstraints = planRequest.constraints;
@@ -93,7 +94,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 
     // Check and see if we should reset the entire thing if we are super far off course
     // or the ball state changes significantly
-    checkSolutionValidity(ball, startInstant, prevPath.get());
+    checkSolutionValidity(ball, currentStartInstant, prevPath.get());
 
     // Change start instant to be the partial path end instead of the robot current location
     // if we actually have already calculated a path the frame before
@@ -112,7 +113,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
             partialPath =
                 prevPath->subPath(0ms, timeIntoPreviousPath + partialReplanLeadTime);
             partialPathTime = partialPath->getDuration() - timeIntoPreviousPath;
-            startInstant = partialPath->end().motion;
+            partialPathStartInstant = partialPath->end().motion;
         }
     }
 
@@ -135,7 +136,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     //if (!approachDirectionCreated) {
         if (ball.vel.mag() < *_ballSpeedApproachDirectionCutoff) {
             // Move directly to the ball
-            approachDirection = (ball.pos - startInstant.pos).norm();
+            approachDirection = (ball.pos - currentStartInstant.pos).norm();
         } else {
             // Approach the ball from behind
             // TODO: May need to rethink average here since it'll be based on the first ball vel only
@@ -146,20 +147,20 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     //}
 
     // Check if we should transition to control from approach
-    processStateTransition(ball, startInstant, prevPath.get(), timeIntoPreviousPath);
+    processStateTransition(ball, currentStartInstant, prevPath.get(), timeIntoPreviousPath);
 
     switch (currentState) {
     // Moves from the current location to the ball
     // Controls the robot up until just before the point of contact
     case Approach: {
-        return std::move(approach(planRequest, curTime, startInstant,
+        return std::move(approach(planRequest, curTime, partialPathStartInstant,
                                   std::move(prevPath), std::move(partialPath),
                                   partialPathTime, obstacles));
     }
     // Move through the ball and stop
     // Controls from the point of impact to stop
     case Control: {
-        return std::move(control(planRequest, startInstant, std::move(prevPath), std::move(partialPath), obstacles));
+        return std::move(control(planRequest, partialPathStartInstant, std::move(prevPath), std::move(partialPath), obstacles));
     }
     default: {
         return std::move(invalid(planRequest));
@@ -168,25 +169,31 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 }
 
 void CollectPathPlanner::checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant, const Path* prevPath) {
-    Line ballVelLine(ball.pos, averageBallVel);
+    // Use raw vel here because of the ball bounce of robot messing things up
+    Line ballVelLine(ball.pos, ball.pos + ball.vel);
+
+    bool nearBall = (ball.pos - startInstant.pos).mag() < *_distCutoffToApproach + *_distCutoffToControl;
+
+    bool movingTowardsBall = true;
+    bool endNearBall = true;
+    if (controlPathCreated && prevPath) {
+        // moving in the same direction as the ball
+        movingTowardsBall = (prevPath->end().motion.pos - startInstant.pos).angleBetween(ball.pos - startInstant.pos) < 50*3.14/180;
+        //endNearBall = ballVelLine.distTo(prevPath->end().motion.pos) < Robot_Radius;
+    }
+    
+
     // Check if we need to go back into approach
     //
     // See if we are not near the ball and both almost stopped
-    if (((ball.pos - startInstant.pos).mag() > *_distCutoffToApproach || 
-        (prevPath && ballVelLine.distTo(prevPath->end().motion.pos) > Robot_Radius) ||
-        (ball.vel.mag() < 0.1 && startInstant.vel.mag() < 0.1 &&
-            (ball.pos - startInstant.pos).mag() > 2*Robot_Radius)) &&
-        currentState == Control) {
+    if ((!nearBall || !movingTowardsBall || !endNearBall) && currentState == Control) {
             
-        cout << "Reseting" << endl;
-        //if (prevPath)
-        //    cout << "Norm = " << averageBallVel.norm().dot((prevPath->end().motion.pos - startInstant.pos).norm().norm()) << endl;
-
-        cout << "Ball vel " << ball.vel.mag() << " robot vel " << 
-            startInstant.vel.mag() << " dist " << (ball.pos - startInstant.pos).mag() << endl;
+        cout << "Reseting. NearBall: " << nearBall << " movingTowardsBall: " << movingTowardsBall
+             << " endNearBall: " << endNearBall << endl;
 
         currentState = Approach;
         approachDirectionCreated = false;
+        controlPathCreated = false;
     }
 }
 

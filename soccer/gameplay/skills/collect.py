@@ -14,10 +14,10 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     DRIBBLE_SPEED = 254
 
     # How many of the last X cycles "has_ball()" was true
-    PROBABLY_HELD_MAX = 60
+    PROBABLY_HELD_MAX = 100
 
     # How many cycles we want held
-    PROBABLY_HELD_CUTOFF = 30
+    PROBABLY_HELD_CUTOFF = 50
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -32,9 +32,9 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,
                             lambda: self.robot is not None and
-                                    #self.robot.has_ball() and
-                                    self.robot.vel.mag() < Collect.STOP_SPEED and # and
-                                    (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
+                                    self.robot.has_ball() and
+                                    #self.robot.vel.mag() < Collect.STOP_SPEED and # and
+                                    #(self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
                                     self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
                             'ball collected')
 
@@ -50,6 +50,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         if (self.robot is not None):
+            self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(Collect.DRIBBLE_SPEED)
             self.robot.collect()
 
@@ -57,6 +58,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     def execute_completed(self):
         if (self.robot is not None):
+            self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(Collect.DRIBBLE_SPEED)
 
             self.update_held_cnt()
@@ -64,8 +66,8 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def update_held_cnt(self):
         # If we see the ball, increment up to max
         # if not, drop to 0
-        #if (self.robot.has_ball()):
-        if (self.robot is not None and self.robot.vel.mag() < Collect.STOP_SPEED):
+        if (self.robot.has_ball()):
+        #if (self.robot is not None and self.robot.vel.mag() < Collect.STOP_SPEED):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
                                          Collect.PROBABLY_HELD_MAX)
         else:
