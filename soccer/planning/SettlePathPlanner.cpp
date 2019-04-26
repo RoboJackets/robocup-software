@@ -145,7 +145,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         case Intercept:
             return std::move(intercept(planRequest, curTime, startInstant,
                                        std::move(partialPath), partialPathTime,
-                                       obstaclesWBall));
+                                       std::move(prevPath), obstaclesWBall));
         case Dampen:
             return std::move(dampen(planRequest, startInstant, std::move(prevPath)));
         default:
@@ -212,8 +212,17 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
                                                    const MotionInstant& startInstant,
                                                    unique_ptr<Path> partialPath,
                                                    const RJ::Seconds partialPathTime,
+                                                   unique_ptr<Path> prevPath,
                                                    const ShapeSet& obstacles) {
     const Ball& ball = planRequest.systemState.ball;
+
+    // See if the old path is still valid
+    // This assumes that all the reset logic passed and this path will get us to a good spot
+    // See if we can save procssing time and keep a consistant path across multiple frames
+    RJ::Seconds t = RJ::Seconds(ball.estimateTimeTo(interceptTarget, nullptr) - curTime);
+    if (prevPath && t * *_interceptBufferTime <= prevPath->getDuration()) {
+        return std::move(prevPath);
+    }
 
     // Search settings when trying to find the correct intersection location
     // between the fast moving ball and our collecting robot
@@ -243,17 +252,23 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
         // Take the delta between old and new mouth vector and move
         // targetRobotIntersection by that amount
 
-        ShapeSet obstacleWEnd = obstacles;
-        obstacleWEnd.add(make_shared<Circle>(ball.pos + averageBallVel.normalized()*dist, *_ballAvoidDistance));
-
         // TODO: Dodge ball until after reaching intercept point
         targetRobotIntersection.vel = Point(0, 0);
 
-        std::unique_ptr<Path> path = RRTPlanner::generatePath(startEndPoints,
-                                                              obstacleWEnd,
-                                                              planRequest.constraints.mot,
-                                                              startInstant.vel,
-                                                              targetRobotIntersection.vel);
+        // Plan a path from our partial path start location to the intercept test location
+        std::unique_ptr<MotionCommand> rrtCommand =
+            std::make_unique<PathTargetCommand>(targetRobotIntersection);
+
+        auto request = PlanRequest(planRequest.systemState,
+                                   startInstant,
+                                   std::move(rrtCommand),
+                                   planRequest.constraints,
+                                   nullptr,
+                                   obstacles,
+                                   planRequest.dynamicObstacles,
+                                   planRequest.shellID);
+
+        std::unique_ptr<Path> path = rrtPlanner.run(request);
 
         // If valid path to location
         // and we can reach the target point before ball
@@ -354,54 +369,38 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetRobotIntersection.pos};
     targetRobotIntersection.vel = *_ballSpeedPercentForDampen * averageBallVel;
 
-    std::unique_ptr<Path> interceptAndDampenStart = RRTPlanner::generatePath(startEndPoints,
-                                                                             obstacles,
-                                                                             planRequest.constraints.mot,
-                                                                             startInstant.vel,
-                                                                             targetRobotIntersection.vel);
-
-    if (interceptAndDampenStart) {
-        RJ::Seconds timeOfArrival = interceptAndDampenStart->getDuration();
-        interceptAndDampenStart->setDebugText(QString::number(timeOfArrival.count()) + " s");
-
-        if (partialPath) {
-            // You have to create a temp variable otherwise partialPath goes to nullptr after the
-            // composite path creation
-            RJ::Time startTime = partialPath->startTime();
-
-            interceptAndDampenStart = std::make_unique<CompositePath>(std::move(partialPath),
-                                                                      std::move(interceptAndDampenStart));
-            interceptAndDampenStart->setStartTime(startTime);
-        }
-
-        return make_unique<AngleFunctionPath>(
-            std::move(interceptAndDampenStart),
-            angleFunctionForCommandType(FacePointCommand(ball.pos)));
-    }
-
-    // Path failed, just try a different way. I don't think it's possible for this one to fail?
-    // Not sure why this is needed, but it's used in line kick
-    MotionInstant target(interceptTarget, Point(0,0));
-
     std::unique_ptr<MotionCommand> rrtCommand =
-        std::make_unique<PathTargetCommand>(target);
+        std::make_unique<PathTargetCommand>(targetRobotIntersection);
 
     auto request = PlanRequest(planRequest.systemState,
-                               planRequest.start,
-                               std::move(rrtCommand),
-                               planRequest.constraints,
-                               nullptr,
-                               obstacles,
-                               planRequest.dynamicObstacles,
-                               planRequest.shellID);
+                                startInstant,
+                                std::move(rrtCommand),
+                                planRequest.constraints,
+                                std::move(prevPath),
+                                obstacles,
+                                planRequest.dynamicObstacles,
+                                planRequest.shellID);
 
-    auto path = rrtPlanner.run(request);
-    path->setDebugText("Gives ups");
+    std::unique_ptr<Path> interceptAndDampenStart = rrtPlanner.run(request);
 
-    //std::cout << "Giving up" << std::endl;
+    RJ::Seconds timeOfArrival = interceptAndDampenStart->getDuration();
+    interceptAndDampenStart->setDebugText(QString::number(timeOfArrival.count()) + " s");
+
+    if (partialPath && partialPath->getDuration() > RJ::Seconds(0) &&
+                       interceptAndDampenStart->getDuration() > RJ::Seconds(0)) {
+        // You have to create a temp variable otherwise partialPath goes to nullptr after the
+        // composite path creation
+        RJ::Time startTime = partialPath->startTime();
+
+        interceptAndDampenStart = std::make_unique<CompositePath>(std::move(partialPath),
+                                                                  std::move(interceptAndDampenStart));
+        interceptAndDampenStart->setStartTime(startTime);
+    }
+
+    std::cout << "Not same path" << std::endl;
 
     return make_unique<AngleFunctionPath>(
-        std::move(path),
+        std::move(interceptAndDampenStart),
         angleFunctionForCommandType(FacePointCommand(ball.pos)));
 }
 

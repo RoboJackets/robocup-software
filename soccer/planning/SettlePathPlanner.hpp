@@ -62,6 +62,7 @@ private:
                                     const MotionInstant& startInstant,
                                     std::unique_ptr<Path> partialPath,
                                     const RJ::Seconds partialPathTime,
+                                    std::unique_ptr<Path> prevPath,
                                     const Geometry2d::ShapeSet& obstacles);
 
     std::unique_ptr<Path> dampen(const PlanRequest& planRequest,
