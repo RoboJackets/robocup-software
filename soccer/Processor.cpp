@@ -18,7 +18,7 @@
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
-#include <motion/MotionControl.hpp>
+#include <motion/TrajectoryExecutor.hpp>
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
@@ -515,14 +515,14 @@ void Processor::run() {
             _state.drawShape(shape, Qt::black, "Global Obstacles");
         }
 
-        // Run velocity controllers
+        // Execute the trajectory for each robot.
         for (OurRobot* robot : _state.self) {
             if (robot->visible) {
                 if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
                     _state.gameState.halt()) {
-                    robot->motionControl()->stopped();
+                    robot->trajectoryExecutor()->stop();
                 } else {
-                    robot->motionControl()->run();
+                    robot->trajectoryExecutor()->run();
                 }
             }
         }
@@ -737,14 +737,15 @@ void Processor::sendRadioData() {
         // Force all motor speeds to zero
         for (OurRobot* r : _state.self) {
             Packet::Control* control = r->control;
-            control->set_xvelocity(0);
-            control->set_yvelocity(0);
-            control->set_avelocity(0);
-            control->set_dvelocity(0);
+            control->set_goal_velocity_x(0);
+            control->set_goal_velocity_y(0);
+            control->set_goal_velocity_theta(0);
+            control->set_dribbler_velocity(0);
             control->set_kcstrength(0);
             control->set_shootmode(Packet::Control::KICK);
             control->set_triggermode(Packet::Control::STAND_DOWN);
             control->set_song(Packet::Control::STOP);
+            control->set_motion_mode(Packet::Control::VELOCITY_CONTROL);
         }
     }
 
@@ -810,12 +811,14 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
         translation.rotate(-M_PI / 2 - robot->angle);
     }
 
+    tx->set_motion_mode(Packet::Control::VELOCITY_CONTROL);
+
     // translation
-    tx->set_xvelocity(translation.x());
-    tx->set_yvelocity(translation.y());
+    tx->set_goal_velocity_x(translation.x());
+    tx->set_goal_velocity_y(translation.y());
 
     // rotation
-    tx->set_avelocity(controlVals.rotation);
+    tx->set_goal_velocity_theta(controlVals.rotation);
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
@@ -828,7 +831,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
                                        : Packet::Control::CHIP);
 
     // dribbler
-    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
+    tx->set_dribbler_velocity(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {

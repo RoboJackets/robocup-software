@@ -7,19 +7,45 @@
 void from_robot_tx_proto(const Packet::Robot& proto_packet, rtp::RobotTxMessage* msg) {
     Packet::Control control = proto_packet.control();
     msg->uid = proto_packet.uid();
-    msg->message.controlMessage.bodyX = static_cast<int16_t>(
-        control.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    msg->message.controlMessage.bodyY = static_cast<int16_t>(
-        control.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    msg->message.controlMessage.bodyW = static_cast<int16_t>(
-        control.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+
+    msg->message.controlMessage.vision_pose_x = static_cast<int16_t>(
+        control.vision_pose_x() * rtp::ControlMessage::POSE_SCALE_FACTOR);
+    msg->message.controlMessage.vision_pose_y = static_cast<int16_t>(
+        control.vision_pose_y() * rtp::ControlMessage::POSE_SCALE_FACTOR);
+    msg->message.controlMessage.vision_pose_theta = static_cast<int16_t>(
+        control.vision_pose_theta() * rtp::ControlMessage::POSE_SCALE_FACTOR);
+
+    msg->message.controlMessage.goal_pose_x = static_cast<int16_t>(
+        control.goal_pose_x() * rtp::ControlMessage::POSE_SCALE_FACTOR);
+    msg->message.controlMessage.goal_pose_y = static_cast<int16_t>(
+        control.goal_pose_y() * rtp::ControlMessage::POSE_SCALE_FACTOR);
+    msg->message.controlMessage.goal_pose_theta = static_cast<int16_t>(
+        control.goal_pose_theta() * rtp::ControlMessage::POSE_SCALE_FACTOR);
+
+    msg->message.controlMessage.goal_velocity_x = static_cast<int16_t>(
+        control.goal_velocity_x() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    msg->message.controlMessage.goal_velocity_y = static_cast<int16_t>(
+        control.goal_velocity_y() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    msg->message.controlMessage.goal_velocity_theta = static_cast<int16_t>(
+        control.goal_velocity_theta() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+
+    msg->message.controlMessage.goal_acceleration_x = static_cast<int16_t>(
+        control.goal_acceleration_x() * rtp::ControlMessage::ACCELERATION_SCALE_FACTOR);
+    msg->message.controlMessage.goal_acceleration_y = static_cast<int16_t>(
+        control.goal_acceleration_y() * rtp::ControlMessage::ACCELERATION_SCALE_FACTOR);
+    msg->message.controlMessage.goal_acceleration_theta = static_cast<int16_t>(
+        control.goal_acceleration_theta() * rtp::ControlMessage::ACCELERATION_SCALE_FACTOR);
+
     msg->message.controlMessage.dribbler =
-        clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
+        clamp(static_cast<uint16_t>(control.dribbler_velocity()) * 2, 0, 255);
 
     msg->message.controlMessage.shootMode = control.shootmode();
     msg->message.controlMessage.kickStrength = control.kcstrength();
     msg->message.controlMessage.triggerMode = control.triggermode();
     msg->message.controlMessage.song = control.song();
+
+    msg->message.controlMessage.motionMode = control.motion_mode();
+
     msg->messageType = rtp::RobotTxMessage::ControlMessageType;
 }
 

@@ -19,7 +19,6 @@ using namespace boost::python;
 #include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
 #include "KickEvaluator.hpp"
 #include "WindowEvaluator.hpp"

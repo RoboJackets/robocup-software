@@ -33,7 +33,7 @@
 class SystemState;
 class RobotConfig;
 class RobotStatus;
-class MotionControl;
+class TrajectoryExecutor;
 
 namespace Packet {
 class DebugText;
@@ -419,7 +419,7 @@ public:
 
     RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
 
-    MotionControl* motionControl() const { return _motionControl; }
+    TrajectoryExecutor* trajectoryExecutor() { return _trajectory_executor.get(); }
 
     SystemState* state() const { return _state; }
 
@@ -462,7 +462,7 @@ public:
     void setPID(double p, double i, double d);
 
 protected:
-    MotionControl* _motionControl;
+    std::unique_ptr<TrajectoryExecutor> _trajectory_executor;
 
     SystemState* _state;
 
@@ -537,8 +537,6 @@ protected:
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
-
-    friend class MotionControl;
 
 private:
     RJ::Time _lastBallSense;

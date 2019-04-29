@@ -29,10 +29,9 @@ void SimRadio::send(Packet::RadioTx& packet) {
         const Packet::Robot& robot = packet.robots(i);
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(robot.uid());
-        simRobot->set_veltangent(robot.control().yvelocity());
-        simRobot->set_velnormal(-robot.control().xvelocity());
-        simRobot->set_velangular(robot.control().avelocity());
-        // simRobot->set_velangular(RadiansToDegrees(robot.control().avelocity()));
+        simRobot->set_veltangent(robot.control().goal_velocity_x());
+        simRobot->set_velnormal(robot.control().goal_velocity_y());
+        simRobot->set_velangular(robot.control().goal_velocity_theta());
 
         simRobot->set_triggermode(
             (grSim_Robot_Command_TriggerMode)robot.control().triggermode());
@@ -58,7 +57,7 @@ void SimRadio::send(Packet::RadioTx& packet) {
                 break;
         }
 
-        simRobot->set_spinner(robot.control().dvelocity() > 0);
+        simRobot->set_spinner(robot.control().dribbler_velocity() > 0);
         simRobot->set_wheelsspeed(false);
     }
     simRobotCommands->set_isteamyellow(!_blueTeam);

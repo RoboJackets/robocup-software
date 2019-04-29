@@ -23,12 +23,35 @@ message Control
         FIGHT_SONG = 2;
     }
 
-    required float xVelocity = 1         [default = 0];
-    required float yVelocity = 2         [default = 0];
-    required float aVelocity = 3         [default = 0];
-    required float dVelocity = 4         [default = 0];
-    required uint32 kcStrength = 5       [default = 255];
-    required ShootMode shootMode = 6     [default = KICK];
-    required TriggerMode triggerMode = 7 [default = STAND_DOWN];
-    required Song song = 9               [default = CONTINUE];
+    enum MotionMode
+    {
+        POSITION_CONTROL = 0;
+        VELOCITY_CONTROL = 1;
+    }
+
+    // Values from vision
+    required float vision_pose_x = 1            [default = 0];
+    required float vision_pose_y = 2            [default = 0];
+    required float vision_pose_theta = 3        [default = 0];
+
+    // Goals
+    required float goal_pose_x = 4              [default = 0];
+    required float goal_pose_y = 5              [default = 0];
+    required float goal_pose_theta = 6          [default = 0];
+
+    required float goal_velocity_x = 7          [default = 0];
+    required float goal_velocity_y = 8          [default = 0];
+    required float goal_velocity_theta = 9      [default = 0];
+
+    required float goal_acceleration_x = 10     [default = 0];
+    required float goal_acceleration_y = 11     [default = 0];
+    required float goal_acceleration_theta = 12 [default = 0];
+
+    required MotionMode motion_mode = 18        [default = POSITION_CONTROL];
+
+    required float dribbler_velocity = 13       [default = 0];
+    required uint32 kcStrength = 14             [default = 255];
+    required ShootMode shootMode = 15           [default = KICK];
+    required TriggerMode triggerMode = 16       [default = STAND_DOWN];
+    required Song song = 17                     [default = CONTINUE];
 }

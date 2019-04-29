@@ -1,6 +1,7 @@
-#include <Robot.hpp>
+#include "Robot.hpp"
+
 #include <LogUtils.hpp>
-#include <motion/MotionControl.hpp>
+#include <motion/TrajectoryExecutor.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -67,7 +68,7 @@ OurRobot::OurRobot(int shell, SystemState* state)
     //_lastKickTime = 0;
     _lastBallSense = RJ::Time();
 
-    _motionControl = new MotionControl(this);
+    _trajectory_executor = std::make_unique<TrajectoryExecutor>(this);
 
     resetAvoidRobotRadii();
 
@@ -75,7 +76,6 @@ OurRobot::OurRobot(int shell, SystemState* state)
 }
 
 OurRobot::~OurRobot() {
-    if (_motionControl) delete _motionControl;
     delete _cmdText;
 }
 
@@ -130,7 +130,7 @@ void OurRobot::resetForNextIteration() {
     _clearCmdText();
 
     control->Clear();
-    control->set_dvelocity(0);
+    control->set_dribbler_velocity(0);
     robotPacket.set_uid(shell());
 
     if (charged()) {
@@ -274,11 +274,11 @@ void OurRobot::dribble(uint8_t speed) {
 
     if (modifiedField.containsPoint(pos)) {
         uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
-        control->set_dvelocity(scaled);
+        control->set_dribbler_velocity(scaled);
 
         *_cmdText << "dribble(" << (float)speed << ")" << endl;
     } else {
-        control->set_dvelocity(0);
+        control->set_dribbler_velocity(0);
     }
 }
 
