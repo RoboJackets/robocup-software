@@ -193,7 +193,7 @@ void USBRadio::send(Packet::RadioTx& packet) {
     rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
             forward_packet + sizeof(rtp::Header));
 
-    convert_tx_proto_to_rtp(packet, body, 6);
+    convert_tx_proto_to_rtp(packet, body, Robots_Per_Team);
 
     // Send the forward packet
     int sent = 0;

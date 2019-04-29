@@ -9,7 +9,7 @@ using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
-      _send_buffers(6) {
+      _send_buffers(Robots_Per_Team) {
     startReceive();
 }
 
@@ -42,7 +42,7 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
                 &forward_packet_buffer[rtp::HeaderSize]);
 
-        convert_tx_proto_to_rtp(packet, body, 6);
+        convert_tx_proto_to_rtp(packet, body, Robots_Per_Team);
 
         // Fetch the IP address
         auto range = _robot_ip_map.left.equal_range(robot_id);
