@@ -65,7 +65,7 @@ void TrajectoryExecutor::run() {
         robot->control->set_goal_pose_y(instant_now.motion.pos.y());
 
         robot->control->set_goal_velocity_x(instant_now.motion.vel.y());
-        robot->control->set_goal_velocity_y(instant_now.motion.vel.x());
+        robot->control->set_goal_velocity_y(-instant_now.motion.vel.x());
 
         // Default angular values, in case there's no angular command
         robot->control->set_goal_pose_theta(robot->angle);

@@ -29,8 +29,14 @@ void SimRadio::send(Packet::RadioTx& packet) {
         const Packet::Robot& robot = packet.robots(i);
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(robot.uid());
-        simRobot->set_veltangent(robot.control().goal_velocity_x());
-        simRobot->set_velnormal(robot.control().goal_velocity_y());
+
+        // Rotate velocity into the robot frame
+        double a = robot.control().vision_pose_theta() - M_PI / 2;
+        double vx = std::cos(a) * robot.control().goal_velocity_x() + std::sin(a) * robot.control().goal_velocity_y();
+        double vy = std::cos(a) * robot.control().goal_velocity_y() - std::sin(a) * robot.control().goal_velocity_x();
+
+        simRobot->set_veltangent(vx);
+        simRobot->set_velnormal(vy);
         simRobot->set_velangular(robot.control().goal_velocity_theta());
 
         simRobot->set_triggermode(
