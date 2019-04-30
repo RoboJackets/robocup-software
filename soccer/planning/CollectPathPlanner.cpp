@@ -346,9 +346,8 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
     motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
     motionConstraints.maxSpeed = min(averageBallVel.mag() + *_touchDeltaSpeed, motionConstraints.maxSpeed);
 
-    // Within 30 degrees of us
-    double theta = 90 * 3.14/180;
-    if ((averageBallVel.norm() - (startInstant.pos - ball.pos).norm()).mag() < (Point(cos(theta), sin(theta)) - Point(1,0)).mag()) {
+    // Moving at us
+    if ((averageBallVel.norm().dot(startInstant.pos - ball.pos).norm()) > 0) {
         motionConstraints.maxSpeed = min((double)*_touchDeltaSpeed, motionConstraints.maxSpeed);
         std::cout << "At us" << std::endl;
     }
