@@ -1,5 +1,6 @@
 #include "SettlePathPlanner.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 #include "CompositePath.hpp"
@@ -31,9 +32,9 @@ void SettlePathPlanner::createConfiguration(Configuration* cfg) {
     _searchStartDist =
         new ConfigDouble(cfg, "Capture/Settle/searchStartDist", 0.0); // m
     _searchEndDist =
-        new ConfigDouble(cfg, "Capture/Settle/searchEndDist", 10.0); // m
+        new ConfigDouble(cfg, "Capture/Settle/searchEndDist", 7.0); // m
     _searchIncDist =
-        new ConfigDouble(cfg, "Capture/Settle/searchIncDist", 0.1); // m
+        new ConfigDouble(cfg, "Capture/Settle/searchIncDist", 0.2); // m
     _interceptBufferTime =
         new ConfigDouble(cfg, "Capture/Settle/interceptBufferTime", 0.0); // %
     _targetPointGain =
@@ -144,7 +145,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
-    if (prevPath) {
+    if (prevPath && (RJ::now() - prevPath->startTime() > RJ::Seconds(0))) {
         Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
 
         const RJ::Seconds timeIntoPreviousPath = RJ::now() - prevPath->startTime();
@@ -284,25 +285,37 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     }
 
     // Make sure targetRobotIntersection is inside the field
-    if (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget)) {
-        // Move backwards down the ball vel line until we are inside
-        // Super inefficient, but easy to do right now
-        // TODO: Change this to something smart
-        int ctr = 0;
+    // If not, project it into the field
+    const Rect& fieldRect =  Field_Dimensions::Current_Dimensions.FieldRect();
+    if (!fieldRect.containsPoint(interceptTarget)) {
+        auto intersectReturn = fieldRect.intersects(Segment(ball.pos, interceptTarget));
 
-        while (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget) && ctr < 100) {
-            interceptTarget -= 0.1*averageBallVel;
-            ctr++;
-        }
+        bool validIntersect = get<0>(intersectReturn);
+        vector<Point> intersectPts = get<1>(intersectReturn);
 
-        ctr = 0;
-        if (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget)) {
-            interceptTarget += 10*averageBallVel;
-        }
+        // If the ball intersects the field at some point
+        // Just get the intersect point as the new target
+        if (validIntersect) {
+            // Sorts based on distance to intercept target
+            // The closest one is the intercept point which the ball moves through leaving the field
+            // Not the one on the other side of the field
+            sort(intersectPts.begin(), intersectPts.end(),
+                [&](Point a, Point b) {
+                    return (a - interceptTarget).mag() < (b - interceptTarget).mag();
+                });
 
-        while (!Field_Dimensions::Current_Dimensions.FieldRect().containsPoint(interceptTarget) && ctr < 100) {
-            interceptTarget += 0.1*averageBallVel;
-            ctr++;
+            // Choose a point just inside the field
+            interceptTarget = intersectPts.at(0) - Robot_Radius*averageBallVel.norm();
+
+        // Doesn't intersect
+        // project the ball into the field
+        } else {
+            // Simple projection
+            interceptTarget.x() = max(interceptTarget.x(), (double)fieldRect.minx() + Robot_Radius);
+            interceptTarget.x() = min(interceptTarget.x(), (double)fieldRect.maxx() - Robot_Radius);
+
+            interceptTarget.y() = max(interceptTarget.y(), (double)fieldRect.miny() + Robot_Radius);
+            interceptTarget.y() = min(interceptTarget.y(), (double)fieldRect.maxy() - Robot_Radius);
         }
     }
 
