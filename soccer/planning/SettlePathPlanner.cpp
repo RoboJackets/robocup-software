@@ -151,8 +151,8 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
 
         // Intercept -> Dampen
         //  Almost interescting the ball path and
-        //  Almost at end of the target path and
-        //  Actually in front of the ball
+        //  Almost at end of the target path or
+        //  Already in line with the ball
         //
         // TODO: Check ball sense?
 
@@ -160,7 +160,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
         bool almostAtEndPath = timeIntoPreviousPath > prevPath->getDuration() - RJ::Seconds(.5);
         bool inlineWithBall =  botDistToBallMovementLine < Robot_Radius;
 
-        if (almostAtEndPath && inlineWithBall && currentState == Intercept) {
+        if (inlineWithBall && currentState == Intercept) {
             
             // Start the next section of the path from the end of our current path
             startInstant = pathSoFar->end().motion;
@@ -283,8 +283,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
 
     // Build a new path with the target
     // Since the rrtPlanner exists, we don't have to deal with partial paths, just use the interface
-    MotionInstant targetRobotIntersection(interceptTarget);
-    targetRobotIntersection.vel = *_ballSpeedPercentForDampen * averageBallVel;
+    MotionInstant targetRobotIntersection(interceptTarget, *_ballSpeedPercentForDampen * averageBallVel);
 
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(targetRobotIntersection);
@@ -378,12 +377,12 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     
     // Target stopping point with 0 speed.
     MotionInstant finalStoppingMotion(finalStoppingPoint, Point(0,0));
-    std:unique_ptr<MotionCommand> rrtCommand = 
+    std:unique_ptr<MotionCommand> directCommand = 
         std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
     auto request = PlanRequest(planRequest.systemState,
                                startInstant,
-                               std::move(rrtCommand),
+                               std::move(directCommand),
                                planRequest.constraints,
                                nullptr,
                                planRequest.obstacles,

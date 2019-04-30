@@ -17,14 +17,16 @@ namespace Planning {
 class CollectPathPlanner : public SingleRobotPathPlanner {
 public:
     enum CollectPathPlannerStates {
-        // From start of subbehavior to the moment before touching the ball
-        Approach,
+        // From start of subbehavior to the start of the slow part of the approach
+        CourseApproach,
+        // From the slow part of the approach to the touching of the ball
+        FineApproach,
         // From touching the ball to stopped with the ball in the mouth
         Control
     };
 
     CollectPathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), directPlanner(),
-                           currentState(Approach),
+                           currentState(CourseApproach),
                            averageBallVel(0,0), averageBallVelInitialized(false),
                            approachDirection(0,0), approachDirectionCreated(false),
                            controlPathCreated(false) {};
@@ -51,13 +53,13 @@ private:
                                 const Path* const prevPath,
                                 const RJ::Seconds& timeIntoPreviousPath);
 
-    std::unique_ptr<Path> approach(const PlanRequest& planRequest,
-                                   const RJ::Time curTime,
-                                   const MotionInstant& startInstant,
-                                   std::unique_ptr<Path> prevPath,
-                                   std::unique_ptr<Path> partialPath,
-                                   const RJ::Seconds partialPathTime,
-                                   const Geometry2d::ShapeSet& obstacles);
+    std::unique_ptr<Path> courseApproach(const PlanRequest& planRequest,
+                                         const MotionInstant& startInstant,
+                                         std::unique_ptr<Path> prevPaths);
+
+    std::unique_ptr<Path> fineApproach(const PlanRequest& planRequest,
+                                       const MotionInstant& startInstant,
+                                       std::unique_ptr<Path> prevPath);
 
     std::unique_ptr<Path> control(const PlanRequest& planRequest,
                                   const MotionInstant& startInstant,

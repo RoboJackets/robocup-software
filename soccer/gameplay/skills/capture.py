@@ -207,14 +207,32 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         else:
             self.probably_held_cnt = max(self.probably_held_cnt - 1, 0)
 
+    @staticmethod
+    def role_assignment_cost(robot):
+        # Represents ball movement
+        ball_move_line = robocup.Line(main.ball().pos, main.ball().pos + main.ball().vel * 10)
+
+        robot_nearest_pt = ball_move_line.nearest_point(robot.pos)
+
+        robot_to_intercept = (robot_nearest_pt - robot.pos)
+        ball_to_intercept = (robot_nearest_pt - main.ball().pos)
+
+        angle_to_ball = ball_move_line.delta().angle_between(robot_to_intercept)
+
+        in_front = ball_move_line.delta().normalized().dot((robot.pos - main.ball().pos).normalized()) < 0
+
+        return 100*in_front + robot_to_intercept.mag() / ball_to_intercept.mag() + .01*ball_to_intercept.mag()
+
+
     def role_requirements(self):
         reqs = super().role_requirements()
         # reqs.require_kicking = True
         # try to be near the ball
-        # if main.ball().valid:
-        #     if main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH:
-        #         reqs.destination_shape = main.ball().pos
-        #     else:
-        #         # TODO Make this less complicated and remove magic numbers
-        #         reqs.destination_shape = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel * 10)
+        for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            if main.ball().valid:
+                if main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH:
+                    req.destination_shape = main.ball().pos
+                else:
+                    # TODO Make this less complicated and remove magic numbers
+                    req.cost_func = Capture.role_assignment_cost
         return reqs
