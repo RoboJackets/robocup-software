@@ -53,15 +53,12 @@ private:
     //       need to start the dampen
     void processStateTransition(const Ball& ball,
                                 Path* prevPath,
-                                const RJ::Seconds& timeIntoPreviousPath,
                                 MotionInstant& startInstant);
 
     // State functions
     std::unique_ptr<Path> intercept(const PlanRequest& planRequest,
                                     const RJ::Time curTime,
                                     const MotionInstant& startInstant,
-                                    std::unique_ptr<Path> partialPath,
-                                    const RJ::Seconds partialPathTime,
                                     std::unique_ptr<Path> prevPath,
                                     const Geometry2d::ShapeSet& obstacles);
 
@@ -83,7 +80,6 @@ private:
     // Intercept Target Filtering Variables
     Geometry2d::Point interceptTarget;
     Geometry2d::Point averageBallVel;
-    RJ::Seconds averagePathTime;
     bool firstTargetPointFound;
     bool firstBallVelFound;
     int numInvalidPaths = 0;
@@ -94,20 +90,18 @@ private:
     // before slowing down to dampen the initial hit
     static ConfigDouble* _ballSpeedPercentForDampen; // %
 
-    // Earliest time to start searching for intercept points
-    static ConfigDouble* _searchStartTime; // Secs
-    // Latest time to search for intercept points
-    static ConfigDouble* _searchEndTime; // Secs
-    // What increment of time to search for intercepts
-    static ConfigDouble* _searchIncTime; // Secs
-
-    // How large of circle around ball to avoid
-    static ConfigDouble* _ballAvoidDistance; // m
+    // Closest dist to start searching for intercept points
+    static ConfigDouble* _searchStartDist; // m
+    // Furthest dist to search for intercept points
+    static ConfigDouble* _searchEndDist; // m
+    // What dist increment to search for intercepts
+    static ConfigDouble* _searchIncDist; // m
     
     // How much sooner should we reach the intercept point than we need to
-    // Increase this to give us more time to reach the point to
-    // compensate for bad motion control
-    static ConfigDouble* _interceptBufferTime; // Sec
+    // This is a percent of the calculated intercept time
+    // Numbers greater than 1 mean we increase intercept time needed by X% over actual
+    // Numbers less than 1 mean we get there X% faster than we plan (Shouldn't ever happen)
+    static ConfigDouble* _interceptBufferTime; // %
     
     // Gain on the averaging function to smooth the target point to intercept
     // This is due to the high flucations in the ball velocity frame to frame
