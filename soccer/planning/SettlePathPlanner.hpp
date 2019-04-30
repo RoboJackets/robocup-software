@@ -82,7 +82,6 @@ private:
     Geometry2d::Point averageBallVel;
     bool firstTargetPointFound;
     bool firstBallVelFound;
-    int numInvalidPaths = 0;
 
     bool pathCreatedForDampen;
 
@@ -116,12 +115,6 @@ private:
     // The lower the number, the less noise affects the system, but the slower it responds to changes
     // The higher the number, the more noise affects the system, but the faster it responds to changes    
     static ConfigDouble* _ballVelGain;
-    
-    // Limits the max number of invalid paths in a row
-    // Specifically, an invalid path is a path where the velocity of
-    // the robot is not continuous when the target state is not reacable
-    // given the current acceleration constraints
-    static ConfigInt* _maxNumInvalidPaths; // integer num
     
     // If the ball velocity angle changes by a large amount
     // we want to quickly react and clear all the smoothing filters 

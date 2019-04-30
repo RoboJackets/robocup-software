@@ -22,7 +22,6 @@ ConfigDouble* SettlePathPlanner::_searchIncDist;
 ConfigDouble* SettlePathPlanner::_interceptBufferTime;
 ConfigDouble* SettlePathPlanner::_targetPointGain;
 ConfigDouble* SettlePathPlanner::_ballVelGain;
-ConfigInt*    SettlePathPlanner::_maxNumInvalidPaths;
 ConfigDouble* SettlePathPlanner::_maxBallVelForPathReset;
 ConfigDouble* SettlePathPlanner::_maxBallAngleForReset; 
 
@@ -41,8 +40,6 @@ void SettlePathPlanner::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "Capture/Settle/targetPointGain", 0.5); // gain between 0 and 1
     _ballVelGain =
         new ConfigDouble(cfg, "Capture/Settle/ballVelGain", 0.5); // gain between 0 and 1
-    _maxNumInvalidPaths =
-        new ConfigInt(cfg, "Capture/Settle/maxNumInvalidPaths", 3); // int
     _maxBallVelForPathReset =
         new ConfigDouble(cfg, "Capture/Settle/maxBallVelForPathReset", 2); // m/s
     _maxBallAngleForReset =
@@ -225,45 +222,10 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
 
                 firstTargetPointFound = true;
             // Average this calculation with the previous ones
-            } else {
-                // Stop any velocity estimation outliers from affecting the path target too much
-                // creating a unachievable path and subsequently causing a large drop in the velocity
-                // at the next state in time
-                // See issue #1239
-                // 
-                // This happens quite a bit at the beginning of a path due to the not fully correct
-                // estimate of the ball velocity. Once it stabilizes, the path usually doesn't change
-                //
-                // This allows at most 3 invalid paths in a row before deciding that we need to change
-                //
-                // Gotta make sure that this fails only when there is a discontinuity in the path,
-                // not when partial path is invalid
-                /*bool invalidPath = (prevPath && (path->start().motion.vel - prevPath->start().motion.vel).mag() > 0.01) ||
-                                    !prevPath;
-
-                // if (valid path) OR (3 invalid paths in a row)
-                // Use the current path and average in
-                //
-                // Increments the number of invalid path's if it's not valid
-                // If we hit that limit, we should change the path
-                // Always reset the number of invalid paths when a new value is averaged in
-                if (invalidPath) {
-                    numInvalidPaths++;
-                }
-
-                if (!invalidPath || numInvalidPaths > *_maxNumInvalidPaths) {*/
-                    interceptTarget = applyLowPassFilter<Point>(interceptTarget,
-                                                                targetRobotIntersection.pos,
-                                                                *_targetPointGain);
-/*
-                    // Debug print
-                    // TODO: Remove
-                    if (numInvalidPaths > *_maxNumInvalidPaths) {
-                        std::cout << "Too many bad paths" << std::endl;
-                    }
-
-                    numInvalidPaths = 0;
-                }*/
+            } else {                
+                interceptTarget = applyLowPassFilter<Point>(interceptTarget,
+                                                            targetRobotIntersection.pos,
+                                                            *_targetPointGain);
             }
 
             foundInterceptPath = true;
