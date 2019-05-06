@@ -139,7 +139,7 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
 
 double Ball::estimateSecondsTo(const Geometry2d::Point &point) const {
     const auto time = estimateTimeTo(point);
-    return RJ::Seconds(RJ::now() - time).count();
+    return RJ::Seconds(time - RJ::now()).count();
 }
 
 double Ball::predictSecondsToStop() const {

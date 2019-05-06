@@ -176,7 +176,7 @@ void CollectPathPlanner::checkSolutionValidity(const Ball& ball, const MotionIns
 
     bool movingTowardsBall = true;
     bool endNearBall = true;
-    if (controlPathCreated && prevPath) {
+    if (false && controlPathCreated && prevPath) {
         // moving in the same direction as the ball
         movingTowardsBall = (prevPath->end().motion.pos - startInstant.pos).angleBetween(ball.pos - startInstant.pos) < 50*3.14/180;
         //endNearBall = ballVelLine.distTo(prevPath->end().motion.pos) < Robot_Radius;
@@ -347,7 +347,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
     motionConstraints.maxSpeed = min(averageBallVel.mag() + *_touchDeltaSpeed, motionConstraints.maxSpeed);
 
     // Moving at us
-    if ((averageBallVel.norm().dot(startInstant.pos - ball.pos).norm()) > 0) {
+    if (averageBallVel.norm().dot((startInstant.pos - ball.pos).norm()) > 0) {
         motionConstraints.maxSpeed = min((double)*_touchDeltaSpeed, motionConstraints.maxSpeed);
         std::cout << "At us" << std::endl;
     }

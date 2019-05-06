@@ -124,7 +124,7 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball, const MotionInst
     Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
 
     bool robotFar = (ball.pos - startInstant.pos).mag() > 2*Robot_Radius + Ball_Radius;
-    bool robotOnBallLine = ballMovementLine.distTo(startInstant.pos) > Robot_MouthWidth;
+    bool robotOnBallLine = ballMovementLine.distTo(startInstant.pos) > Robot_MouthWidth/2;
     bool ballMoving = averageBallVel.mag() > 0.2;
     bool ballMovingToUs = (ball.pos - startInstant.pos).mag() > (ball.pos + 0.01*averageBallVel - startInstant.pos).mag();
 
@@ -142,7 +142,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
-    if (prevPath && (RJ::now() - prevPath->startTime() > RJ::Seconds(0))) {
+    if (prevPath && (RJ::now() - prevPath->startTime() > RJ::Seconds(0)) && prevPath->getDuration() > RJ::Seconds(0)) {
         Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
 
         const RJ::Seconds timeIntoPreviousPath = RJ::now() - prevPath->startTime();

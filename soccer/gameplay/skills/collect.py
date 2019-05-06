@@ -3,6 +3,7 @@ import robocup
 import math
 import behavior
 import single_robot_behavior
+import evaluation.ball
 
 class Collect(single_robot_behavior.SingleRobotBehavior):
     # Ball has to be within this distance to be considered captured
@@ -18,6 +19,10 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     # How many cycles we want held
     PROBABLY_HELD_CUTOFF = 50
+
+    # Really only care about how close robots are to the ball
+    # Higher means closer, but possibly less optimal overall with all robot movement
+    POSITION_COST_MULTIPLER = 30
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -66,7 +71,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def update_held_cnt(self):
         # If we see the ball, increment up to max
         # if not, drop to 0
-        if (self.robot.has_ball()):
+        if (evaluation.ball.robot_has_ball(self.robot) or not main.ball().valid): #self.robot.has_ball()):
         #if (self.robot is not None and self.robot.vel.mag() < Collect.STOP_SPEED):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
                                          Collect.PROBABLY_HELD_MAX)
@@ -76,8 +81,10 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
         #reqs.require_kicking = True
+        
         # try to be near the ball
         if main.ball().valid:
             reqs.destination_shape = main.ball().pos
+            reqs.position_cost_multiplier = Collect.POSITION_COST_MULTIPLER
 
         return reqs

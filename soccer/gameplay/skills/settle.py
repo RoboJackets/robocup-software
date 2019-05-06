@@ -19,11 +19,3 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
             self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(Settle.DRIBBLE_SPEED)
             self.robot.settle(robocup.Point(0,0))
-
-    def role_requirements(self):
-        reqs = super().role_requirements()
-        # try to be near the ball
-        if main.ball().valid:
-            reqs.destination_shape = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel * 10)
-
-        return reqs
