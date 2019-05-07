@@ -92,6 +92,8 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
         firstBallVelFound = true;
     }
 
+    systemState.drawLine(Segment(ball.pos, ball.pos + averageBallVel*10), QColor(255, 255, 255), "AverageBallVel");
+
     // Check if we should transition from intercept to dampen
     // Start instant may be changed in that case since we want to start changing the path
     // as soon as possible
@@ -124,11 +126,11 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball, const MotionInst
     Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
 
     bool robotFar = (ball.pos - startInstant.pos).mag() > 2*Robot_Radius + Ball_Radius;
-    bool robotOnBallLine = ballMovementLine.distTo(startInstant.pos) > Robot_MouthWidth/2;
+    bool robotOnBallLine = ballMovementLine.distTo(startInstant.pos) < Robot_MouthWidth/2;
     bool ballMoving = averageBallVel.mag() > 0.2;
     bool ballMovingToUs = (ball.pos - startInstant.pos).mag() > (ball.pos + 0.01*averageBallVel - startInstant.pos).mag();
 
-    if (((robotOnBallLine && ballMoving) || (robotFar && ballMoving && !ballMovingToUs)) && currentState == Dampen) {
+    if (((!robotOnBallLine && ballMoving && ballMovingToUs) || (robotFar && ballMoving && !ballMovingToUs)) && currentState == Dampen) {
         firstTargetPointFound = false;
         firstBallVelFound = false;
 
@@ -158,7 +160,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
 
         // Within X seconds of the end of path
         bool almostAtEndPath = timeIntoPreviousPath > prevPath->getDuration() - RJ::Seconds(.5);
-        bool inlineWithBall =  botDistToBallMovementLine < Robot_Radius;
+        bool inlineWithBall =  botDistToBallMovementLine < Robot_MouthWidth/2;
 
         if (inlineWithBall && currentState == Intercept) {
             
@@ -322,14 +324,13 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     // is without some other position controller.
 
     // Uses constant acceleration to create a linear velocity profile
-    // TODO: Implement own Path planner to move in a custom velocity profile
-    //       Linear acceleration?
-    //       Custom acceleration?
 
     // TODO: Realize the ball will probably bounce off the robot
     // so we can use that vector to stop
     // Save vector and use that?
     const Ball& ball = planRequest.systemState.ball;
+
+    planRequest.systemState.drawText("Damping", ball.pos + Point(.1,.1), QColor(255, 255, 255), "DampState");
 
     if (pathCreatedForDampen && prevPath) {
         return std::move(prevPath);

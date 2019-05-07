@@ -343,20 +343,22 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
     // Shouldn't happen (tm)
     //
     // If the ball is moving towards us (like receiving a pass) just move forward at touchDeltaSpeed
-    motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
-    motionConstraints.maxSpeed = min(averageBallVel.mag() + *_touchDeltaSpeed, motionConstraints.maxSpeed);
-
+    float currentSpeed = averageBallVel.mag() + *_touchDeltaSpeed;
+    
     // Moving at us
-    if (averageBallVel.norm().dot((startInstant.pos - ball.pos).norm()) > 0) {
-        motionConstraints.maxSpeed = min((double)*_touchDeltaSpeed, motionConstraints.maxSpeed);
+    if (averageBallVel.angleBetween((ball.pos - startInstant.pos)) > 3.14/2) {
+        currentSpeed = *_touchDeltaSpeed;
         std::cout << "At us" << std::endl;
+    } else {
+        std::cout << averageBallVel.angleBetween((ball.pos - startInstant.pos)) << std::endl;
     }
+
+    motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
+    motionConstraints.maxSpeed = min((double)currentSpeed, motionConstraints.maxSpeed);
 
     // Using the current velocity
     // Calculate stopping distance given the acceleration
     float maxAccel = motionConstraints.maxAcceleration;
-    float currentSpeed = averageBallVel.mag() + *_touchDeltaSpeed;
-
 
     float nonZeroVelTimeDelta = *_approachDistTarget / *_touchDeltaSpeed;
 
@@ -378,6 +380,9 @@ std::unique_ptr<Path> CollectPathPlanner::control(const PlanRequest& planRequest
     vector<Point> startEndPoints{startInstant.pos, target.pos};
     unique_ptr<Path> path =
         RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints, startInstant.vel, target.vel);
+
+
+    planRequest.systemState.drawLine(Segment(startInstant.pos, startInstant.pos + (target.pos - startInstant.pos)*10), QColor(255, 255, 255), "Control");
 
     // Try to use the plan request if the above fails
     // This sometimes doesn't reach the target commanded though 

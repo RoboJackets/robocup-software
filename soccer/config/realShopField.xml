@@ -224,7 +224,7 @@
  <Rev2015>
   <translation>
    <p value="2"/>
-   <i value="0.2"/>
+   <i value="0.4"/>
    <i_windup value="20"/>
    <accelMultiplier value="8"/>
    <d value="1"/>
@@ -308,8 +308,8 @@
    <searchIncTime value="0.2"/>
    <ballAvoidDistance value="0.3"/>
    <interceptBufferTime value="1"/>
-   <targetPointGain value="0.4"/>
-   <ballVelGain value="0.7"/>
+   <targetPointGain value="0.1"/>
+   <ballVelGain value="0.4"/>
    <maxNumInvalidPaths value="150"/>
    <maxBallVelForPathReset value="2"/>
    <maxBallAngleForReset value="20"/>
@@ -325,10 +325,10 @@
    <touchDeltaSpeed value="0.2"/>
    <distCutoffToControl value="0.1"/>
    <velCutoffToControl value="100"/>
-   <distCutoffToApproach value="0.05"/>
-   <stopDistScale value="0.3"/>
+   <distCutoffToApproach value="0.1"/>
+   <stopDistScale value="1"/>
    <targetPointAveragingGain value="0.8"/>
-   <velocityControlScale value="1"/>
+   <velocityControlScale value="0"/>
   </Collect>
  </Capture>
  <VisionFilter>

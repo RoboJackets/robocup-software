@@ -13,6 +13,8 @@ import evaluation.ball
 
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
+    DRIBBLE_SPEED = 255
+
     INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.5
     INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.4
 
@@ -73,13 +75,13 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # By default, move into the settle state since we almost never start with ball
         self.add_transition(behavior.Behavior.State.start,
                             Capture.State.settle,
-                            lambda: self.robot is not None and not self.robot.has_ball(),
+                            lambda: self.robot is not None and not evaluation.ball.robot_has_ball(self.robot), #self.robot.has_ball(),
                             'dont have ball')
 
         # On the offchance we start with ball, double check it's not a blip on the sensor
         self.add_transition(behavior.Behavior.State.start,
                             Capture.State.captured,
-                            lambda: self.robot is not None and self.robot.has_ball(),
+                            lambda: self.robot is not None and evaluation.ball.robot_has_ball(self.robot), #self.robot.has_ball(),
                             'may already have ball')
 
         # We actually don't have the ball, either 50% register rate (faulty sensor?) or we just got a blip
@@ -204,9 +206,14 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_completed(self):
         self.probably_held_cnt = Capture.PROBABLY_HELD_START
+        self.remove_all_subbehaviors()
+
 
     def execute_completed(self):
         self.update_held_cnt()
+
+        self.robot.disable_avoid_ball()
+        self.robot.set_dribble_speed(Capture.DRIBBLE_SPEED)
 
     def update_held_cnt(self):
         if (self.robot is None):
