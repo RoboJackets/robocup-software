@@ -160,9 +160,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         # we use tighter error thresholds because passing is hard
         kicker.aim_params['error_threshold'] = 0.2
-        kicker.aim_params['max_steady_ang_vel'] = 3.0
+        kicker.aim_params['max_steady_ang_vel'] = 0.2
         kicker.aim_params['min_steady_duration'] = 0.15
-        kicker.aim_params['desperate_timeout'] = 3.0
+        kicker.aim_params['desperate_timeout'] = 5.0
         self.add_subbehavior(kicker, 'kicker', required=self.kicker_required)
 
         # receive point renegotiation
