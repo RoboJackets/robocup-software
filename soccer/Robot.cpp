@@ -206,7 +206,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
               << ")" << endl;
 }
 
-void OurRobot::settle(Point target) {
+void OurRobot::settle(boost::optional<Point> target) {
     if (!visible) return;
 
     _motionCommand = std::make_unique<Planning::SettleCommand>(target);

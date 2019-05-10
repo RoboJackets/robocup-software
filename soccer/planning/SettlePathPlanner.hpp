@@ -41,9 +41,15 @@ public:
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
 
+    // Given the global target in `targetBounceDirection`
+    // Calculate the delta position to get the robot in the correct location
+    // And the face point to get the bounce right
+    // If no targetBounceDirection is given, just get in front and face the ball
+    void calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant, Geometry2d::Point& deltaRobotPos, Geometry2d::Point& facePos);
+
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant);
+    void checkSolutionValidity(const Ball& ball, const MotionInstant& startInstant, const Geometry2d::Point& deltaPos);
 
     // Figures out when to move to each state
     // (only in the standard transition)
@@ -53,18 +59,23 @@ private:
     //       need to start the dampen
     void processStateTransition(const Ball& ball,
                                 Path* prevPath,
-                                MotionInstant& startInstant);
+                                MotionInstant& startInstant,
+                                const Geometry2d::Point& deltaPos);
 
     // State functions
     std::unique_ptr<Path> intercept(const PlanRequest& planRequest,
                                     const RJ::Time curTime,
                                     const MotionInstant& startInstant,
                                     std::unique_ptr<Path> prevPath,
-                                    const Geometry2d::ShapeSet& obstacles);
+                                    const Geometry2d::ShapeSet& obstacles,
+                                    const Geometry2d::Point& deltaPos,
+                                    const Geometry2d::Point& facePos);
 
     std::unique_ptr<Path> dampen(const PlanRequest& planRequest,
                                  MotionInstant& startInstant,
-                                 std::unique_ptr<Path> prevPath);
+                                 std::unique_ptr<Path> prevPath,
+                                 const Geometry2d::Point& deltaPos,
+                                 const Geometry2d::Point& facePos);
 
     std::unique_ptr<Path> invalid(const PlanRequest& planRequest);
 
@@ -73,7 +84,7 @@ private:
 
     RRTPlanner rrtPlanner;
     DirectTargetPathPlanner directPlanner;
-    boost::optional<Geometry2d::Point> targetFinalCaptureDirectionPos;
+    boost::optional<Geometry2d::Point> targetBounceDirection;
 
     SettlePathPlannerStates currentState;
 
@@ -130,5 +141,8 @@ private:
     // Lower numbers means it reacts faster, but more chance for false positives
     // Higher numbers means slower reaction, but less false positives
     static ConfigDouble* _maxBallVelForPathReset; // m/s
+
+    // Max angle between ball and target bounce direction
+    static ConfigDouble* _maxBounceAngle; // Deg
 };
 }

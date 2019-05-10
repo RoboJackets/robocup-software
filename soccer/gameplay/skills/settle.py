@@ -7,9 +7,10 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
 
     DRIBBLE_SPEED = 90
 
-    def __init__(self):
+    def __init__(self, target=None):
         super().__init__(continuous=False)
 
+        self.target = target
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
@@ -18,4 +19,8 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
         if(self.robot is not None):
             self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(Settle.DRIBBLE_SPEED)
-            self.robot.settle(robocup.Point(0,0))
+
+            if (self.target is None):
+                self.robot.settle()
+            else:
+                self.robot.settle_w_bounce(self.target)

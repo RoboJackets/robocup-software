@@ -25,7 +25,8 @@ class TestCoordinatedPass(play.Play):
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
         x = self.ReceiveXCoord if main.ball().pos.x < 0 else -self.ReceiveXCoord
-        y = self.ReceiveYCoord if main.ball().pos.x > 0 else 3*self.ReceiveYCoord
+        #y = self.ReceiveYCoord if main.ball().pos.x > 0 else 3*self.ReceiveYCoord
+        y = self.ReceiveYCoord if main.ball().pos.x > 0 else 1*self.ReceiveYCoord
         pass_bhvr.receive_point = robocup.Point(x, y)
 
     def execute_running(self):

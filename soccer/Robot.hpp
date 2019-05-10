@@ -234,7 +234,7 @@ public:
      */
     void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
 
-    void settle(Geometry2d::Point target);
+    void settle(boost::optional<Geometry2d::Point> target);
     void collect();
 
     /**

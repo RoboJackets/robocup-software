@@ -103,9 +103,9 @@ struct SettleCommand : public MotionCommand {
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<SettleCommand>(*this);
     }
-    explicit SettleCommand(Geometry2d::Point target)
+    explicit SettleCommand(boost::optional<Geometry2d::Point> target)
         : MotionCommand(MotionCommand::Settle), target(target){};
-    const Geometry2d::Point target;
+    const boost::optional<Geometry2d::Point> target;
 };
 
 struct CollectCommand : public MotionCommand {
