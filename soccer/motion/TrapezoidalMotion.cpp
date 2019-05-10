@@ -171,7 +171,6 @@ bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
         /// not even started on the path yet
         posOut = 0;
         speedOut = startSpeed;
-        //std::cout << "Below Zero" << std::endl;
         return false;
     } else if (timeIntoLap < rampUpTime) {
         /// on the ramp-up, we're accelerating at @maxAcc
@@ -195,7 +194,6 @@ bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
         /// past the end of the path
         posOut = pathLength;
         speedOut = finalSpeed;
-        //std::cout << "Past End of Path" << std::endl;
         return false;
     }
 }
