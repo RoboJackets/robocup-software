@@ -117,7 +117,7 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball, const MotionInst
     // If the ball changed directions or magnitude really quickly, do a reset of target
     if (averageBallVel.angleBetween(ball.vel) > maxBallAngleChangeForPathReset ||
         (averageBallVel - ball.vel).mag() > *_maxBallVelForPathReset) {
-        firstTargetPointFound = false;
+        firstInterceptTargetFound = false;
         firstBallVelFound = false;
     }
 
@@ -131,7 +131,7 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball, const MotionInst
     bool ballMovingToUs = (ball.pos - startInstant.pos).mag() > (ball.pos + 0.01*averageBallVel - startInstant.pos).mag();
 
     if (((!robotOnBallLine && ballMoving && ballMovingToUs) || (robotFar && ballMoving && !ballMovingToUs)) && currentState == Dampen) {
-        firstTargetPointFound = false;
+        firstInterceptTargetFound = false;
         firstBallVelFound = false;
 
         currentState = Intercept;
@@ -183,8 +183,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     // where we check ever X distance along the ball velocity vector
     // 
     // Disallow points outside the field
-
-    bool foundInterceptPath = false;
+    const Rect& fieldRect =  Field_Dimensions::Current_Dimensions.FieldRect();
 
     Point ballVelIntercept;
     for (float dist = *_searchStartDist; dist < *_searchEndDist; dist += *_searchIncDist) {
@@ -217,30 +216,17 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
 
         // If valid path to location
         // and we can reach the target point before ball
-        if (path && path->getDuration() * *_interceptBufferTime <= ballTime) {
-            // No path found yet so there is nothing to average
-            if (!firstTargetPointFound) {
-                interceptTarget = targetRobotIntersection.pos;
-
-                firstTargetPointFound = true;
-            // Average this calculation with the previous ones
-            } else {                
-                interceptTarget = applyLowPassFilter<Point>(interceptTarget,
-                                                            targetRobotIntersection.pos,
-                                                            *_targetPointGain);
-            }
-
-            foundInterceptPath = true;
-
+        //
+        // Don't do the average here so we can project the intercept point inside the field
+        if (path && path->getDuration() * *_interceptBufferTime <= ballTime || !fieldRect.containsPoint(ballVelIntercept)) {
             break;
         }
     }
 
     // Make sure targetRobotIntersection is inside the field
     // If not, project it into the field
-    const Rect& fieldRect =  Field_Dimensions::Current_Dimensions.FieldRect();
-    if (!fieldRect.containsPoint(interceptTarget)) {
-        auto intersectReturn = fieldRect.intersects(Segment(ball.pos, interceptTarget));
+    if (!fieldRect.containsPoint(ballVelIntercept)) {
+        auto intersectReturn = fieldRect.intersects(Segment(ball.pos, ballVelIntercept));
 
         bool validIntersect = get<0>(intersectReturn);
         vector<Point> intersectPts = get<1>(intersectReturn);
@@ -253,34 +239,33 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
             // Not the one on the other side of the field
             sort(intersectPts.begin(), intersectPts.end(),
                 [&](Point a, Point b) {
-                    return (a - interceptTarget).mag() < (b - interceptTarget).mag();
+                    return (a - ballVelIntercept).mag() < (b - ballVelIntercept).mag();
                 });
 
             // Choose a point just inside the field
-            interceptTarget = intersectPts.at(0) - Robot_Radius*averageBallVel.norm();
+            ballVelIntercept = intersectPts.at(0);
 
         // Doesn't intersect
         // project the ball into the field
         } else {
             // Simple projection
-            interceptTarget.x() = max(interceptTarget.x(), (double)fieldRect.minx() + Robot_Radius);
-            interceptTarget.x() = min(interceptTarget.x(), (double)fieldRect.maxx() - Robot_Radius);
+            ballVelIntercept.x() = max(ballVelIntercept.x(), (double)fieldRect.minx());
+            ballVelIntercept.x() = min(ballVelIntercept.x(), (double)fieldRect.maxx());
 
-            interceptTarget.y() = max(interceptTarget.y(), (double)fieldRect.miny() + Robot_Radius);
-            interceptTarget.y() = min(interceptTarget.y(), (double)fieldRect.maxy() - Robot_Radius);
+            ballVelIntercept.y() = max(ballVelIntercept.y(), (double)fieldRect.miny());
+            ballVelIntercept.y() = min(ballVelIntercept.y(), (double)fieldRect.maxy());
         }
     }
 
     // Could not find a valid path that reach the point first
     // Just go for the farthest point and recalc next time
-    if (!foundInterceptPath) {
-        if (!firstTargetPointFound) {
-            interceptTarget = ballVelIntercept;
-        } else {
-            interceptTarget = applyLowPassFilter<Point>(interceptTarget, ballVelIntercept, *_targetPointGain);
-        }
+    if (!firstInterceptTargetFound) {
+        avgInstantaneousInterceptTarget = ballVelIntercept;
+        pathInterceptTarget = ballVelIntercept;
 
-        std::cout << "Couldn't find valid intercept point" << std::endl;
+        firstInterceptTargetFound = true;
+    } else {
+        avgInstantaneousInterceptTarget = applyLowPassFilter<Point>(avgInstantaneousInterceptTarget, ballVelIntercept, *_targetPointGain);
     }
 
     // Shortcuts the crazy path planner to just move into the path of the ball if we are very close
@@ -300,8 +285,8 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     // we have run the algorithm at least once AND
     // the target point found in the algorithm is further than we are or just about equal
     if ((closestPt - startInstant.pos).mag() < Robot_Radius && 
-        firstTargetPointFound &&
-        (closestPt - ball.pos).mag() - (interceptTarget - ball.pos).mag() < Robot_Radius) {
+        firstInterceptTargetFound &&
+        (closestPt - ball.pos).mag() - (avgInstantaneousInterceptTarget - ball.pos).mag() < Robot_Radius) {
         vector<Point> startEnd{startInstant.pos, closestPt};
 
         unique_ptr<Path> shortCut =
@@ -311,9 +296,21 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
             return shortCut;
     }
 
+    // There's some major problems with repeatedly changing the target for the path planner
+    // To alleviate this problem, we only change the target point when it moves over X amount from the
+    // previous path target
+    //
+    // This combined with the shortcut is guaranteed to get in front of the ball correctly
+    // If not, add some sort of distance scale that changes based on how close the robot is
+    // to the target
+    if ((pathInterceptTarget - avgInstantaneousInterceptTarget).mag() > Robot_Radius) {
+        pathInterceptTarget = avgInstantaneousInterceptTarget;
+        std::cout << "Changing targets" << std::endl;
+    }
+
     // Build a new path with the target
     // Since the rrtPlanner exists, we don't have to deal with partial paths, just use the interface
-    MotionInstant targetRobotIntersection(interceptTarget, *_ballSpeedPercentForDampen * averageBallVel);
+    MotionInstant targetRobotIntersection(pathInterceptTarget, *_ballSpeedPercentForDampen * averageBallVel);
 
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(targetRobotIntersection);

@@ -24,8 +24,8 @@ public:
     };
 
     SettlePathPlanner() : SingleRobotPathPlanner(false), rrtPlanner(0, 250), directPlanner(),
-                          interceptTarget(0,0), averageBallVel(0,0),
-                          firstTargetPointFound(false),
+                          avgInstantaneousInterceptTarget(0,0), averageBallVel(0,0),
+                          firstInterceptTargetFound(false),
                           firstBallVelFound(false),
                           pathCreatedForDampen(false),
                           currentState(Intercept) {};
@@ -78,10 +78,13 @@ private:
     SettlePathPlannerStates currentState;
 
     // Intercept Target Filtering Variables
-    Geometry2d::Point interceptTarget;
+    Geometry2d::Point avgInstantaneousInterceptTarget;
     Geometry2d::Point averageBallVel;
-    bool firstTargetPointFound;
+    bool firstInterceptTargetFound;
     bool firstBallVelFound;
+
+    // Only change the target of the path if it changes significantly
+    Geometry2d::Point pathInterceptTarget;
 
     bool pathCreatedForDampen;
 
