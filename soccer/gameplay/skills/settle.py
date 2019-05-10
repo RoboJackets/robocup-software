@@ -5,7 +5,7 @@ import main
 
 class Settle(single_robot_behavior.SingleRobotBehavior):
 
-    DRIBBLE_SPEED = 50
+    DRIBBLE_SPEED = 90
 
     def __init__(self):
         super().__init__(continuous=False)
