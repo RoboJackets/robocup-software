@@ -152,6 +152,8 @@ public:
 
     std::vector<int> ourValidIds();
 
+    bool paused;
+
 private:
     /// Map from debug layer name to ID
     QMap<QString, int> _debugLayerMap;

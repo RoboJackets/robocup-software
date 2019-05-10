@@ -160,6 +160,7 @@ double Ball::estimateSecondsToDist(double dist) const {
 
 SystemState::SystemState() {
     _numDebugLayers = 0;
+    paused = false;
 
     // FIXME - boost::array?
     self.resize(Num_Shells);
