@@ -12,7 +12,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     # Ball has to be below this speed to be considered stopped
     STOP_SPEED = 0.05
 
-    DRIBBLE_SPEED = 254
+    DRIBBLE_SPEED = 50
 
     # How many of the last X cycles "has_ball()" was true
     PROBABLY_HELD_MAX = 100

@@ -13,10 +13,10 @@ import evaluation.ball
 
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
-    DRIBBLE_SPEED = 255
+    DRIBBLE_SPEED = 50
 
-    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.5
-    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.4
+    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.7
+    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.5
 
     PROBABLE_KICK_CHANGE = 0.1
 

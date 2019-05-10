@@ -179,31 +179,6 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
                                                    const ShapeSet& obstacles) {
     const Ball& ball = planRequest.systemState.ball;
 
-    // Shortcuts the crazy path planner to just move into the path of the ball if we are very close
-    // Only shortcuts if the target point is further up the path than we are going to hit
-    // AKA only shortcut if we have to move backwards along the path to capture the ball
-
-    // If we are within a single radius of the ball path
-    // and in front of it
-    // just move directly to the path location
-    Segment ballLine = Segment(ball.pos, ball.pos + averageBallVel.norm()* *_searchEndDist);
-    Point closestPt = ballLine.nearestPoint(startInstant.pos);
-
-    // Only force a direct movement if we are within a small range AND
-    // we have run the algorithm at least once AND
-    // the target point found in the algorithm is further than we are or just about equal
-    if ((closestPt - startInstant.pos).mag() < Robot_Radius && 
-        firstTargetPointFound &&
-        (closestPt - ball.pos).mag() - (interceptTarget - ball.pos).mag() < Robot_Radius) {
-        vector<Point> startEnd{startInstant.pos, closestPt};
-
-        unique_ptr<Path> shortCut =
-            RRTPlanner::generatePath(startEnd, obstacles, planRequest.constraints.mot, startInstant.vel, *_ballSpeedPercentForDampen * averageBallVel);
-
-        if (shortCut)
-            return shortCut;
-    }
-
     // Try find best point to intercept using brute force method
     // where we check ever X distance along the ball velocity vector
     // 
@@ -306,6 +281,34 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
         }
 
         std::cout << "Couldn't find valid intercept point" << std::endl;
+    }
+
+    // Shortcuts the crazy path planner to just move into the path of the ball if we are very close
+    // Only shortcuts if the target point is further up the path than we are going to hit
+    // AKA only shortcut if we have to move backwards along the path to capture the ball
+    //
+    // Still want to do the math in case the best point changes
+    // which happens a lot when the ball is first kicked
+
+    // If we are within a single radius of the ball path
+    // and in front of it
+    // just move directly to the path location
+    Segment ballLine = Segment(ball.pos, ball.pos + averageBallVel.norm()* *_searchEndDist);
+    Point closestPt = ballLine.nearestPoint(startInstant.pos);
+
+    // Only force a direct movement if we are within a small range AND
+    // we have run the algorithm at least once AND
+    // the target point found in the algorithm is further than we are or just about equal
+    if ((closestPt - startInstant.pos).mag() < Robot_Radius && 
+        firstTargetPointFound &&
+        (closestPt - ball.pos).mag() - (interceptTarget - ball.pos).mag() < Robot_Radius) {
+        vector<Point> startEnd{startInstant.pos, closestPt};
+
+        unique_ptr<Path> shortCut =
+            RRTPlanner::generatePath(startEnd, obstacles, planRequest.constraints.mot, startInstant.vel, *_ballSpeedPercentForDampen * averageBallVel);
+
+        if (shortCut)
+            return shortCut;
     }
 
     // Build a new path with the target

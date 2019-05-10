@@ -283,7 +283,7 @@
   <Max_Rotation_Acceleration value="4"/>
  </RotationConstraints>
  <Pivot>
-  <radius value="1.3"/>
+  <radius value="1.2"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>
@@ -308,7 +308,7 @@
    <searchIncTime value="0.2"/>
    <ballAvoidDistance value="0.3"/>
    <interceptBufferTime value="1"/>
-   <targetPointGain value="0.1"/>
+   <targetPointGain value="0.05"/>
    <ballVelGain value="0.4"/>
    <maxNumInvalidPaths value="150"/>
    <maxBallVelForPathReset value="2"/>
