@@ -2,11 +2,9 @@ import single_robot_behavior
 import behavior
 import robocup
 import main
+import constants
 
 class Settle(single_robot_behavior.SingleRobotBehavior):
-
-    DRIBBLE_SPEED = 150
-
     def __init__(self, target=None):
         super().__init__(continuous=False)
 
@@ -18,7 +16,7 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if(self.robot is not None):
             self.robot.disable_avoid_ball()
-            self.robot.set_dribble_speed(Settle.DRIBBLE_SPEED)
+            self.robot.set_dribble_speed(constants.Robot.Dribbler.MaxPower)
 
             if (self.target is None):
                 self.robot.settle()

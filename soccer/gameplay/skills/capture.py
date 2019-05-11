@@ -1,6 +1,6 @@
 import single_robot_composite_behavior
 import behavior
-from enum import Enum
+import enum
 import main
 import role_assignment
 import robocup
@@ -12,9 +12,6 @@ import evaluation.ball
 
 
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
-
-    DRIBBLE_SPEED = 50
-
     INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.7
     INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.5
 
@@ -48,7 +45,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     # Only used for collect phase
     POSITION_COST_MULTIPLIER = 30
 
-    class State(Enum):
+    class State(enum.Enum):
         # May already have the ball so just sit for a split second and keep dribbler on
         captured = 0
 
@@ -213,7 +210,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.update_held_cnt()
 
         self.robot.disable_avoid_ball()
-        self.robot.set_dribble_speed(Capture.DRIBBLE_SPEED)
+        self.robot.set_dribble_speed(constants.Robot.Dribbler.StandardPower)
 
     def update_held_cnt(self):
         if (self.robot is None):

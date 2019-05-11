@@ -4,6 +4,7 @@ import math
 import behavior
 import single_robot_behavior
 import evaluation.ball
+import constants
 
 class Collect(single_robot_behavior.SingleRobotBehavior):
     # Ball has to be within this distance to be considered captured
@@ -11,8 +12,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     # Ball has to be below this speed to be considered stopped
     STOP_SPEED = 0.05
-
-    DRIBBLE_SPEED = 70
 
     # How many of the last X cycles "has_ball()" was true
     PROBABLY_HELD_MAX = 100
@@ -56,7 +55,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if (self.robot is not None):
             self.robot.disable_avoid_ball()
-            self.robot.set_dribble_speed(Collect.DRIBBLE_SPEED)
+            self.robot.set_dribble_speed(constants.Robot.Dribbler.StandardPower)
             self.robot.collect()
 
             self.update_held_cnt()
@@ -64,7 +63,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def execute_completed(self):
         if (self.robot is not None):
             self.robot.disable_avoid_ball()
-            self.robot.set_dribble_speed(Collect.DRIBBLE_SPEED)
+            self.robot.set_dribble_speed(constants.Robot.Dribbler.StandardPower)
 
             self.update_held_cnt()
 
