@@ -234,7 +234,17 @@ public:
      */
     void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
 
+    /**
+     * @brief Move in front of the ball to intercept it. If a target face point
+     * is given, the robot will try to face in that direction when the ball hits
+     * @param target - the target point in which the robot will try to bounce the
+     * towards
+     */
     void settle(boost::optional<Geometry2d::Point> target);
+
+    /**
+     * @brief Approaches the ball and moves through it slowly
+     */
     void collect();
 
     /**
