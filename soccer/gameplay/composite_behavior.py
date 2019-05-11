@@ -50,6 +50,13 @@ class CompositeBehavior(behavior.Behavior):
     def subbehavior_with_name(self, name: str):
         return self._subbehavior_info[name]['behavior']
 
+    def subbehavior_info_with_behavior(self, bhvr: behavior.Behavior):
+        info = None
+        for name in self._subbehavior_info:
+            if (self._subbehavior_info[name]['behavior'] is bhvr):
+                info = self._subbehavior_info[name]
+        return info
+
     def subbehaviors_by_name(self) -> Dict[str, Dict]:
         by_name = {}
         for name in self._subbehavior_info:
