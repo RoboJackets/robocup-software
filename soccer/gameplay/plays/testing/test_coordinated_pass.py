@@ -18,16 +18,15 @@ class TestCoordinatedPass(play.Play):
         pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
         self.add_subbehavior(pass_bhvr, 'pass')
 
-
-        self.ReceiveXCoord = constants.Field.Width/2 - 1.0/3.0
+        # This has to be here instead of up top because the field is the wrong
+        # size for a little while until vision sends an update
+        self.ReceiveXCoord = constants.Field.Width/2 - 1.0/4.0
         self.ReceiveYCoord = constants.Field.Length * 1.0 / 4.0
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
         x = self.ReceiveXCoord if main.ball().pos.x < 0 else -self.ReceiveXCoord
-        #y = self.ReceiveYCoord if main.ball().pos.x > 0 else 3*self.ReceiveYCoord
-        y = self.ReceiveYCoord if main.ball().pos.x > 0 else 1*self.ReceiveYCoord
-        pass_bhvr.receive_point = robocup.Point(x, y)
+        pass_bhvr.receive_point = robocup.Point(x, self.ReceiveYCoord)
 
     def execute_running(self):
         pass_bhvr = self.subbehavior_with_name('pass')
