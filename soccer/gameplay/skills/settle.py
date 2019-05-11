@@ -4,6 +4,10 @@ import robocup
 import main
 import constants
 
+# Moves in front of a moving ball to intercept it
+# When target is set, settle tries to intercept the ball
+# while facing the target to either bounce the ball in that
+# direction or kick on breakbeam in that direction
 class Settle(single_robot_behavior.SingleRobotBehavior):
     def __init__(self, target=None):
         super().__init__(continuous=False)

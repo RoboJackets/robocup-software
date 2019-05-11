@@ -10,12 +10,17 @@ import skills.collect
 import math
 import evaluation.ball
 
-
+# Captures the ball through whatever means needed
+# In most cases, the robot moves in front of the moving ball
+# to bounce it off the dribbler. It then slowly moves through the
+# ball to fully control it
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
-    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.7
-    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.5
 
-    PROBABLE_KICK_CHANGE = 0.1
+    # Speed at which we transition to settle
+    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.7
+
+    # Speed at which we transition to collect
+    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.5
 
     # We want  to let the probably held count stabilize
     # but to do that we have to let it sit still
@@ -26,6 +31,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     # X number of frames in the past to look at
     PROBABLY_HELD_HISTORY_LENGTH = 60
 
+    # Initial starting location for the counter
     PROBABLY_HELD_START = .5 * PROBABLY_HELD_HISTORY_LENGTH
 
     # Anything below this number we think we don't have the ball
@@ -98,17 +104,15 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # The velocity is just funky
         self.add_transition(Capture.State.settle,
                             Capture.State.collect,
-                            lambda: main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH_TO_COLLECT, # or
-                                    #self.ball_bounced_off_robot() and not self.ball_probably_kicked(),
+                            lambda: main.ball().vel.mag() < Capture.INTERCEPT_VELOCITY_THRESH_TO_COLLECT,
                             'collecting')
 
-        # Cut back if the velocity is pretty high or it was probably kicked
+        # Cut back if the velocity is pretty high and we aren't about to collect the ball
         self.add_transition(Capture.State.collect,
                             Capture.State.settle,
                             lambda: main.ball().vel.mag() >= Capture.INTERCEPT_VELOCITY_THRESH_TO_SETTLE and
                                     (self.subbehavior_with_name('collector').robot is not None and
-                                     (self.subbehavior_with_name('collector').robot.pos - main.ball().pos).mag() > .3), # or 
-                                    #self.ball_probably_kicked() and not self.ball_bounced_off_robot(),
+                                     (self.subbehavior_with_name('collector').robot.pos - main.ball().pos).mag() > .3),
                             'settling again')
 
         #  Once collect is done, we have the ball
@@ -123,70 +127,11 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             lambda: self.probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF,
                             'captured')
 
-
-    def ball_bounced_off_robot(self):
-        # Check if ball is near current robot
-        # Check if the ball velocity went from coming to us
-        #   to moving away
-        if (self.robot is not None):
-            old_ball_to_bot = self.robot.pos - self.prev_ball.pos
-            ball_to_bot = self.robot.pos - main.ball().pos
-
-            # If the old ball is not in the same direction as the current one
-            is_bounce = (self.is_same_direction(old_ball_to_bot, self.prev_ball.vel) and
-                         not self.is_same_direction(ball_to_bot, main.ball().vel))
-
-            # And we are near the ball
-            near_robot = ball_to_bot.mag() < 2*constants.Robot.Radius
-
-            return is_bounce and near_robot
-
-        else:
-            return False
-
-    def ball_probably_kicked(self):
-        if (self.robot is not None):
-            # Check if there is a significant jump in velocity
-            prob_kick = (self.prev_ball.vel - main.ball().vel).mag() > Capture.PROBABLE_KICK_CHANGE
-
-            # And we are not near the ball
-            near_robot = (self.robot.pos - main.ball().pos).mag() < 2*constants.Robot.Radius
-
-            return prob_kick and not near_robot
-        else:
-            return False
-
-    def is_same_direction(self, vec1, vec2):
-        # Check the angle between is less than 90 degrees
-        # On the unit circle, two vectors are within 90 degrees of each other if the distance
-        # between two vectors is less than sqrt(1^2 + 1^2)
-        #
-        #              +1 | a
-        #                 |
-        #                 |
-        #                 |            b
-        #                 |_____________
-        #                              +1
-        #
-        # Dist between a and b are sqrt(2)
-        #
-        #
-        #     a                         b
-        #     ____________________________
-        #     -1                        +1
-        #
-        # Dist between a and b is 2
-        return (vec1.norm() - vec2.norm()).mag() < math.sqrt(2)
-
-    def on_enter_captured(self):
-        print("Enter captured")
-
     def execute_captured(self):
         self.update_held_cnt()
         self.frames_in_captured += 1
 
     def on_enter_settle(self):
-        print("Enter settle")
         self.remove_all_subbehaviors()
         self.add_subbehavior(skills.settle.Settle(),
                              name='settler',
@@ -194,7 +139,6 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                              priority=10)
 
     def on_enter_collect(self):
-        print("Enter collect")
         self.remove_all_subbehaviors()
         self.add_subbehavior(skills.collect.Collect(),
                              name='collector',
@@ -204,7 +148,6 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_enter_completed(self):
         self.probably_held_cnt = Capture.PROBABLY_HELD_START
         self.remove_all_subbehaviors()
-
 
     def execute_completed(self):
         self.update_held_cnt()
@@ -217,9 +160,8 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             return
 
         # If we hold the ball, increment up to max
-        # if not, drop to 0
+        # if not, decrement to 0
         if (evaluation.ball.robot_has_ball(self.robot)): #self.robot.has_ball()):
-        #if (self.robot is not None and self.robot.vel.mag() < Collect.STOP_SPEED):
             self.probably_held_cnt = min(self.probably_held_cnt + 1, Capture.PROBABLY_HELD_HISTORY_LENGTH)
         else:
             self.probably_held_cnt = max(self.probably_held_cnt - 1, 0)

@@ -6,12 +6,10 @@ import single_robot_behavior
 import evaluation.ball
 import constants
 
+# Moves in to dribble a slow moving ball
 class Collect(single_robot_behavior.SingleRobotBehavior):
     # Ball has to be within this distance to be considered captured
     RESTART_MIN_DIST = 0.12
-
-    # Ball has to be below this speed to be considered stopped
-    STOP_SPEED = 0.05
 
     # How many of the last X cycles "has_ball()" was true
     PROBABLY_HELD_MAX = 100
@@ -32,19 +30,18 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
                             behavior.Behavior.State.running,
                             lambda: True, 'immediately')
 
-        # Complete when we have the ball and it's stopped
+        # Complete when we have the ball
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,
                             lambda: self.robot is not None and
                                     self.robot.has_ball() and
-                                    #self.robot.vel.mag() < Collect.STOP_SPEED and # and
-                                    #(self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
                                     self.probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF,
                             'ball collected')
 
+        # Go back if we loose the ball
         self.add_transition(behavior.Behavior.State.completed,
                             behavior.Behavior.State.running,
-                            lambda: False and self.robot is not None and
+                            lambda: self.robot is not None and
                                     ((self.robot.pos - main.ball().pos).mag() > Collect.RESTART_MIN_DIST or
                                      self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF),
                             'ball lost')
@@ -71,7 +68,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # If we see the ball, increment up to max
         # if not, drop to 0
         if (evaluation.ball.robot_has_ball(self.robot) or not main.ball().valid): #self.robot.has_ball()):
-        #if (self.robot is not None and self.robot.vel.mag() < Collect.STOP_SPEED):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
                                          Collect.PROBABLY_HELD_MAX)
         else:
@@ -79,7 +75,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        #reqs.require_kicking = True
         
         # try to be near the ball
         if main.ball().valid:
