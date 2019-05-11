@@ -218,7 +218,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         if self.use_chipper and self.robot.has_chipper():
             self.robot.chip(self.chip_power)
         else:
-            self.robot.kick(0.35)#self.kick_power)
+            self.robot.kick(self.kick_power)
 
     def on_exit_running(self):
         self.remove_aim_behavior()

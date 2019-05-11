@@ -155,7 +155,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
-        kicker.kick_power = kickpower
+        kicker.kick_power = 0.35 #kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
