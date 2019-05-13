@@ -55,6 +55,14 @@ class StaticFormation(standard_play.StandardPlay):
             self.required = True
             self.priority = 10
 
+    #
+    # Each of these states are a different "play" that can be created
+    # They all have very specific actions that are going to be taken
+    # Once each is done, it'll go back to the main formation type thing for another
+    # Action to be taken
+    # Any robots not needed in the play stay in the formation positions
+    # 
+
     class State(enum.Enum):
         # We don't have the ball
         # do some stuff here
@@ -78,10 +86,7 @@ class StaticFormation(standard_play.StandardPlay):
         # Chip the ball across the opponent goal towards a few of
         # our strikers / midfielder
         cross = 6
-
-        # Through pass between two opponent defenders
-        # and let one of our robots move onto the pass
-        through = 7
+        cross_into_middle = 7
 
         # Shoot on goal
         shoot = 8
@@ -117,7 +122,7 @@ class StaticFormation(standard_play.StandardPlay):
         self.rand_num = 0
 
         # Center location of the defense        
-        self.formation_center = main.ball().pos - robocup.Point(0, 0.1)
+        self.formation_center = robocup.Point(0, constants.Field.Length/2) - robocup.Point(0, 0.3)
 
         # List of the positions we have in this formation
         self.strikers = []
@@ -136,6 +141,10 @@ class StaticFormation(standard_play.StandardPlay):
         ######                       Private Play Variables                       ######
         ######                                                                    ######
         ################################################################################
+
+        # All of these will be within the specific plays
+        # I still need to figure out a good way to do this automatically, but this is 
+        # a reasonable start
 
         #######################################
         ####                               ####
@@ -160,6 +169,23 @@ class StaticFormation(standard_play.StandardPlay):
         ######################################
         self.switch_kicker_position = None
         self.switch_receiver_position = None
+
+        #####################################
+        ####                             ####
+        #### Private Variables for cross ####
+        ####                             ####
+        #####################################
+        self.cross_shooter_position = None
+        self.cross_crosser_position = None
+        self.cross_extra_support_position = None
+        self.cross_back_pass_position = None
+
+        #####################################
+        ####                             ####
+        #### Private Variables for shoot ####
+        ####                             ####
+        #####################################
+        self.shoot_kicker_position = None
 
         #####################################################################
         ######                                                         ######
@@ -231,6 +257,44 @@ class StaticFormation(standard_play.StandardPlay):
                             lambda: self.subbehavior_with_name('switch_pass').is_done_running(),
                             'done switch')
 
+        ###############################
+        ####                       ####
+        #### Transitions for cross ####
+        ####                       ####
+        ###############################
+        
+        self.add_transition(StaticFormation.State.formation,
+                            StaticFormation.State.cross,
+                            lambda: self.try_choosing_play(self.cross_score_function) and
+                                    self.enforce_play_priority_order(StaticFormation.State.cross),
+                            'cross setup')
+
+        self.add_transition(StaticFormation.State.cross,
+                            StaticFormation.State.cross_into_middle,
+                            lambda: self.subbehavior_with_name('cross_setup').is_done_running(),
+                            'cross into middle')
+
+        self.add_transition(StaticFormation.State.cross_into_middle,
+                            StaticFormation.State.formation,
+                            lambda: self.subbehavior_with_name('one_touch').is_done_running(),
+                            'done cross')
+
+        ###############################
+        ####                       ####
+        #### Transitions for shoot ####
+        ####                       ####
+        ###############################
+
+        self.add_transition(StaticFormation.State.formation,
+                            StaticFormation.State.shoot,
+                            lambda: self.try_choosing_play(self.shoot_score_function) and
+                                    self.enforce_play_priority_order(StaticFormation.State.shoot),
+                            'shoot')
+
+        self.add_transition(StaticFormation.State.shoot,
+                            StaticFormation.State.formation,
+                            lambda: self.subbehavior_with_name('shooter').is_done_running(),
+                            'done shooting')
 
 
     ###########################################################################
@@ -240,6 +304,11 @@ class StaticFormation(standard_play.StandardPlay):
     ###########################################################################
 
 
+    #
+    # This will be the standard play score function that is used by the playbook
+    # We can change the score to represent how good of situation it is for a single play
+    # This below is just a way of adding randomness to the play selection without
+    # having to split this out
     #
     # Scores will just be out of 100 right now
     # and if a random number between 0 and 99 is less than
@@ -270,7 +339,7 @@ class StaticFormation(standard_play.StandardPlay):
 
         # If we are in a good position, do it 40% of the time, otherwise dont at all
         if (ball_away_from_their_goal and (ball_with_midfielders or ball_with_fullbacks)):
-            return 100
+            return 20
         else:
             return 0
 
@@ -287,14 +356,43 @@ class StaticFormation(standard_play.StandardPlay):
 
         average_opponent_x_loc /= len(main.their_robots())
 
+        opponents_on_one_side = abs(average_opponent_x_loc) > (self.width/2) * .3
+        ball_on_same_side = main.ball().pos.x * average_opponent_x_loc > 0
+
         # Switch if most of the opponents are on our side with the ball
         # If the ball and x loc are the same sign, multiplying them together 
         # gives a positive number
-        if (abs(average_opponent_x_loc) > (self.width/2) * .3 and
-            main.ball().pos.x * average_opponent_x_loc > 0):
-            return 100
+        if (opponents_on_one_side and ball_on_same_side):
+            return 30
         else:
             return 0
+        
+    #########################################
+    ####                                 ####
+    #### Cross score transition function ####
+    ####                                 ####
+    #########################################
+    def cross_score_function(self):
+        ball_on_their_half = main.ball().pos.y > self.length/2
+
+        # Cross if we are on their half, don't really care about much else for the moment
+        if (ball_on_their_half):
+            return 40
+        else:
+            return 0
+
+    #########################################
+    ####                                 ####
+    #### Shoot score transition function ####
+    ####                                 ####
+    #########################################
+    def shoot_score_function(self):
+        ball_near_their_goal = (main.ball().pos - constants.Field.TheirGoalSegment.center()).mag() < 2
+
+        if (ball_near_their_goal):
+            return 100
+        else:
+            return 10
 
     ###################################################################################
     ######                                                                       ######
@@ -397,7 +495,29 @@ class StaticFormation(standard_play.StandardPlay):
             position.update_move_target()
 
     def update_formation_center(self):
-        self.formation_center = robocup.Point(0, constants.Field.Length/2) - robocup.Point(0, 0.3)
+        delta_width = self.width - self.formation_width
+        delta_length = self.length - self.formation_length - 2*constants.Field.PenaltyShortDist
+        max_center_rect = robocup.Rect(
+                            robocup.Point(-delta_width/2 + constants.Robot.Radius, delta_length/2 + constants.Field.PenaltyShortDist),
+                            robocup.Point(delta_width/2 - constants.Robot.Radius, self.length - delta_length/2 - constants.Field.PenaltyShortDist))
+
+        main.system_state().draw_segment(robocup.Segment(max_center_rect.get_pt(0), max_center_rect.get_pt(1)), constants.Colors.White, 'FormationMax')
+
+        ball_pos = main.ball().pos
+
+        projected_ball = ball_pos
+
+        # if the ball is outside the movement, project it in
+        if (not max_center_rect.contains_point(ball_pos)):
+            ball_proj_line = robocup.Segment(ball_pos, self.formation_center)
+            intersects = max_center_rect.segment_intersection(ball_proj_line)
+
+            # Get closest edge to center of formation
+            if (intersects is not None):
+                projected_ball = intersects[0]
+
+        alpha = 0.99
+        self.formation_center = self.formation_center * alpha + projected_ball * (1 - alpha)
 
     def update_subbehaviors_settings(self):
         for position in self.all_positions:
@@ -438,7 +558,16 @@ class StaticFormation(standard_play.StandardPlay):
 
         # Save which two positions we steal
         self.passing_kicker_position = self.position_with_ball
-        self.passing_receiver_position = random.choice(possible_pass_targets)
+
+        # Do a weighted random thing to try and pass forward
+        found_one = False
+        for i in range(len(possible_pass_targets)):
+            if (random.uniform(0, 10) < 5):
+                self.passing_receiver_position = possible_pass_targets[i]
+                found_one = True
+
+        if (not found_one):
+            self.passing_receiver_position = possible_pass_targets[0]
 
         # Take control of them
         self.passing_kicker_position.take_control()
@@ -587,6 +716,134 @@ class StaticFormation(standard_play.StandardPlay):
     def switch_release_robots(self):
         self.switch_kicker_position.release_control()
         self.switch_receiver_position.release_control()
+
+    ##################################
+    ####                          ####
+    #### Cross Play State Machine ####
+    ####                          ####
+    ##################################
+
+    def on_enter_cross(self):
+        # Will be called by parents class
+        self.cross_request_robots()
+
+        # Get corner kick location
+        corner_cross_pos = robocup.Point(self.width/2 * .9, self.length * .9)
+        if (main.ball().pos.x < 0):
+            corner_cross_pos.x = -corner_cross_pos.x
+
+        support_pos = robocup.Point(0, self.length * .7)
+        
+        back_pass_pos = corner_cross_pos*.8
+
+        future_one_touch_pos = robocup.Point(0, self.length * .85)
+
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(corner_cross_pos), 'cross_setup', True, 10)
+        self.add_subbehavior(skills.move.Move(support_pos), 'support_move', True, 10)
+        self.add_subbehavior(skills.move.Move(back_pass_pos), 'back_pass_move', True, 10)
+
+    # Standardized function rn to select which robots we want
+    def cross_request_robots(self):
+        # Go from current position into one of the corners
+        # Take current robot with ball
+        # And striker on that side (or midfielder)
+
+        is_left_side = main.ball().pos.x < 0
+
+        is_striker = self.position_with_ball in self.strikers
+
+        # Assume is a midfielder if not a fullback
+        target_position_list = self.strikers if not is_striker else self.midfielders
+
+        # Closest person is either the first or last in list
+        closest_position_idx = 0 if is_left_side else len(target_position_list) - 1
+        closest_position = target_position_list[closest_position_idx]
+
+        # Since all robots list is from left to right front to back
+        # we can just loop through that until we find a robot not being used in offense
+        # Should be closest one in front to help setup
+        extra_support_position = None
+        for position in self.all_positions:
+            if (position is not self.position_with_ball and
+                position is not closest_position):
+                extra_support_position = position
+                break
+
+        # Back pass should be closet fullback
+        # Can reverse list if on right side
+        # Warning: This makes assumptions about formation
+        fullbacks = self.fullbacks if is_left_side else reversed(self.fullbacks)
+        back_pass_position = None
+        for fullback in fullbacks:
+            back_pass_position = fullback
+            break
+
+        print(extra_support_position is closest_position)
+
+        self.cross_shooter_position = self.position_with_ball
+        self.cross_crosser_position = closest_position
+        self.cross_extra_support_position = extra_support_position
+        self.cross_back_pass_position = back_pass_position
+
+        # Take control of them
+        self.cross_shooter_position.take_control()
+        self.cross_crosser_position.take_control()
+        self.cross_extra_support_position.take_control()
+        self.cross_back_pass_position.take_control()
+
+    def on_exit_cross(self):
+        self.remove_subbehavior('cross_setup')
+
+    def on_enter_cross_into_middle(self):
+        # Can do some extra movement here as well if we want
+        self.add_subbehavior(tactics.one_touch_pass.OneTouchPass(), 'one_touch', True, 10)
+
+    def on_exit_cross_into_middle(self):
+        self.remove_subbehavior('one_touch')
+        self.remove_subbehavior('support_move')
+        self.remove_subbehavior('back_pass_move')
+
+        self.cross_release_robots()
+
+        self.ctr = 0
+
+    # Should be called automatically when play finishes
+    def cross_release_robots(self):
+        self.cross_shooter_position.release_control()
+        self.cross_crosser_position.release_control()
+        self.cross_extra_support_position.release_control()
+        self.cross_back_pass_position.release_control()
+
+    #################################
+    ####                         ####
+    #### Pass Play State Machine ####
+    ####                         ####
+    #################################
+
+    def on_enter_shoot(self):
+        # Will be called by parents class
+        self.shoot_request_robots()
+
+        kick = skills.pivot_kick.PivotKick()
+        kick.target = constants.Field.TheirGoalSegment.center()
+
+        self.add_subbehavior(kick, 'shooter', True, 10)
+
+    # Standardized function rn to select which robots we want
+    def shoot_request_robots(self):
+        self.shoot_kicker_position = self.position_with_ball
+        self.shoot_kicker_position.take_control()
+
+    def on_exit_shoot(self):
+        self.remove_subbehavior('shooter')
+
+        self.shoot_release_robots()
+
+        self.ctr = 0
+
+    # Should be called automatically when play finishes
+    def shoot_release_robots(self):
+        self.shoot_kicker_position.release_control()
 
     @classmethod
     def score(cls):
