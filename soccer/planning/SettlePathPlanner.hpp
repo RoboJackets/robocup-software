@@ -45,7 +45,7 @@ private:
     // Calculate the delta position to get the robot in the correct location
     // And the face point to get the bounce right
     // If no targetBounceDirection is given, just get in front and face the ball
-    void calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant, Geometry2d::Point& deltaRobotPos, Geometry2d::Point& facePos);
+    void calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant, double& angle, Geometry2d::Point& deltaRobotPos, Geometry2d::Point& facePos);
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
@@ -60,6 +60,7 @@ private:
     void processStateTransition(const Ball& ball,
                                 Path* prevPath,
                                 MotionInstant& startInstant,
+                                const double angle,
                                 const Geometry2d::Point& deltaPos);
 
     // State functions

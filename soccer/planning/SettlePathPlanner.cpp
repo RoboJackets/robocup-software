@@ -96,9 +96,10 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Figure out where we should place the robot and where to face
     // to get the bounce that we want
     // In the case of no input, it defaults to noraml behavior
+    double angle;
     Point deltaPos;
     Point facePos;
-    calcDeltaPosForDir(ball, startInstant, deltaPos, facePos);
+    calcDeltaPosForDir(ball, startInstant, angle, deltaPos, facePos);
 
     // Check and see if we should reset the entire thing if we are super far off course
     // or the ball state changes significantly
@@ -110,7 +111,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // Check if we should transition from intercept to dampen
     // Start instant may be changed in that case since we want to start changing the path
     // as soon as possible
-    processStateTransition(ball, prevPath.get(), startInstant, deltaPos);
+    processStateTransition(ball, prevPath.get(), startInstant, angle, deltaPos);
 
     // Run state code
     switch (currentState) {
@@ -157,6 +158,7 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball, const MotionInst
 void SettlePathPlanner::processStateTransition(const Ball& ball,
                                                Path* prevPath,
                                                MotionInstant& startInstant,
+                                               const double angle,
                                                const Point& deltaPos) {
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
@@ -177,7 +179,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
 
         // Within X seconds of the end of path
         bool almostAtEndPath = timeIntoPreviousPath > prevPath->getDuration() - RJ::Seconds(.5);
-        bool inlineWithBall =  botDistToBallMovementLine < Robot_MouthWidth/2;
+        bool inlineWithBall =  botDistToBallMovementLine < cos(angle)*Robot_MouthWidth/2;
 
         if (inlineWithBall && currentState == Intercept) {
             
@@ -494,7 +496,7 @@ std::unique_ptr<Path> SettlePathPlanner::invalid(const PlanRequest& planRequest)
         angleFunctionForCommandType(FacePointCommand(planRequest.systemState.ball.pos)));
 }
 
-void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant, 
+void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant, double& angle,
                                            Geometry2d::Point& deltaRobotPos, Geometry2d::Point& facePos) {
     // If we have a valid bounce target
     //
@@ -505,22 +507,22 @@ void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball, const MotionInstant
         Point targetFaceVector = *targetBounceDirection - startInstant.pos;
         
         // Get the angle between the vectors
-        double angleBetween = normalFaceVector.angleBetween(targetFaceVector);
+        angle = normalFaceVector.angleBetween(targetFaceVector);
 
         // Clamp so we don't try to bounce behind us
-        angleBetween = min(angleBetween, (double)*_maxBounceAngle);
+        angle = min(angle, (double)*_maxBounceAngle);
 
         // Since we loose the sign for the angle between call, there are two possibilities
-        Point positiveAngle = Point(0, -Robot_MouthRadius*sin(angleBetween)).rotate(normalFaceVector.angle());
-        Point negativeAngle = Point(0,  Robot_MouthRadius*sin(angleBetween)).rotate(normalFaceVector.angle());
+        Point positiveAngle = Point(0, -Robot_MouthRadius*sin(angle)).rotate(normalFaceVector.angle());
+        Point negativeAngle = Point(0,  Robot_MouthRadius*sin(angle)).rotate(normalFaceVector.angle());
 
         // Choose the closest one to the true angle
         if (targetFaceVector.angleBetween(positiveAngle) < targetFaceVector.angleBetween(negativeAngle)) {
             deltaRobotPos = negativeAngle;
-            facePos = startInstant.pos + Point::direction(-angleBetween + normalFaceVector.angle())*10;
+            facePos = startInstant.pos + Point::direction(-angle + normalFaceVector.angle())*10;
         } else {
             deltaRobotPos = positiveAngle;
-            facePos = startInstant.pos + Point::direction(angleBetween + normalFaceVector.angle())*10;
+            facePos = startInstant.pos + Point::direction(angle + normalFaceVector.angle())*10;
         }
     } else {
         deltaRobotPos = Point(0,0);
