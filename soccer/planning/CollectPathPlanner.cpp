@@ -244,7 +244,12 @@ std::unique_ptr<Path> CollectPathPlanner::courseApproach(const PlanRequest& plan
     Point targetSlowPos = ball.pos - (*_approachDistTarget + Robot_MouthRadius) * approachDirection;
     Point targetSlowVel = averageBallVel + approachDirection * *_touchDeltaSpeed;
 
-    MotionInstant targetSlow(targetSlowPos, targetSlowVel);
+    // Force the path to use the same target if it doesn't move too much
+    if ((pathCourseTarget - targetSlowPos).mag() > (*_approachDistTarget - *_distCutoffToControl)/2) {
+        pathCourseTarget = targetSlowPos;
+    }
+
+    MotionInstant targetSlow(pathCourseTarget, targetSlowVel);
     unique_ptr<MotionCommand> rrtCommand = make_unique<PathTargetCommand>(targetSlow);
 
     auto request = PlanRequest(planRequest.systemState,

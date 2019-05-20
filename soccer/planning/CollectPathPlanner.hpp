@@ -86,6 +86,8 @@ private:
 
     bool controlPathCreated;
 
+    Geometry2d::Point pathCourseTarget;
+
     // Controls at which ball speed we should try to go directly to the ball
     // or to move behind it and in the same direction as it
     //
