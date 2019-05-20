@@ -130,6 +130,11 @@ private:
     // The higher the number, the more noise affects the system, but the faster it responds to changes    
     static ConfigDouble* _ballVelGain;
     
+    // Distance between robot and closest point on ball line such that we move directly into the ball line
+    // instead of trying to find the point we hit first
+    // This does take into account slow moving balls in which we should move onto the ball to capture it
+    static ConfigDouble* _shortcutDist; // m
+
     // If the ball velocity angle changes by a large amount
     // we want to quickly react and clear all the smoothing filters 
     // Lower numbers means it reacts faster, but more chance for false positives

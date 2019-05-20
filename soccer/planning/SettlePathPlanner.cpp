@@ -22,6 +22,7 @@ ConfigDouble* SettlePathPlanner::_searchIncDist;
 ConfigDouble* SettlePathPlanner::_interceptBufferTime;
 ConfigDouble* SettlePathPlanner::_targetPointGain;
 ConfigDouble* SettlePathPlanner::_ballVelGain;
+ConfigDouble* SettlePathPlanner::_shortcutDist;
 ConfigDouble* SettlePathPlanner::_maxBallVelForPathReset;
 ConfigDouble* SettlePathPlanner::_maxBallAngleForReset;
 ConfigDouble* SettlePathPlanner::_maxBounceAngle;
@@ -41,6 +42,8 @@ void SettlePathPlanner::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "Capture/Settle/targetPointGain", 0.5); // gain between 0 and 1
     _ballVelGain =
         new ConfigDouble(cfg, "Capture/Settle/ballVelGain", 0.5); // gain between 0 and 1
+    _shortcutDist =
+        new ConfigDouble(cfg, "Capture/Settle/shortcutDist", Robot_Radius); // m
     _maxBallVelForPathReset =
         new ConfigDouble(cfg, "Capture/Settle/maxBallVelForPathReset", 2); // m/s
     _maxBallAngleForReset =
@@ -303,12 +306,16 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     Segment ballLine = Segment(ball.pos, ball.pos + averageBallVel.norm()* *_searchEndDist);
     Point closestPt = ballLine.nearestPoint(startInstant.pos) + deltaPos;
 
+    Point ballToPtDir = closestPt - ball.pos;
+    bool inFrontOfBall = averageBallVel.angleBetween(ballToPtDir) < 3.14/2;
+
     // Only force a direct movement if we are within a small range AND
     // we have run the algorithm at least once AND
     // the target point found in the algorithm is further than we are or just about equal
-    if ((closestPt - startInstant.pos).mag() < Robot_Radius && 
+    if (inFrontOfBall &&
+        (closestPt - startInstant.pos).mag() < *_shortcutDist && 
         firstInterceptTargetFound &&
-        (closestPt - ball.pos).mag() - (avgInstantaneousInterceptTarget - ball.pos).mag() < Robot_Radius) {
+        (closestPt - ball.pos).mag() - (avgInstantaneousInterceptTarget - ball.pos).mag() < *_shortcutDist) {
         vector<Point> startEnd{startInstant.pos, closestPt};
 
         unique_ptr<Path> shortCut =
