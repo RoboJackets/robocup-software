@@ -127,9 +127,9 @@ class SituationalPlaySelector:
     #Velocity is a scalar here and the robots x and y are in the balls refrence frame
     @classmethod
     def ballRecieveFunction(cls, x, y, v, od):
-        if(math.sqrt(x**2 + y**2) > 4 * od or x + y < 0.0):
+        if(x + y < 0.0):
             return 0.0
-        return cls.clip(cls.triweight(cls.trajectory(x,y,v) * cls.falloff(x,y,v) - cls.obstruction(x,y,od)), minValue=0.0)
+        return cls.clip(cls.triweight(cls.trajectory(x,y,v)))
      
 
     #penalty for not facing the ball as a function of ball velocity and distance to the ball 
@@ -143,9 +143,9 @@ class SituationalPlaySelector:
     def transformToBall(pos, ballPos, ballVel):
         #Current hypothesis is that I want to rotate the vector the angle of the
         #ball velocity plus pi / 4, will see how that plays out
-        rotA = math.atan2(ballVel.y, ballVel.x) + (math.pi / 4.0)
+        rotA = math.atan2(ballVel.y - pos[1], ballVel.x - pos[0]) + (math.pi / 4.0)
         x = pos[0] * math.cos(rotA) - pos[1] * math.sin(rotA) + ballPos.x
-        y = pos[0] * math.cos(rotA) + pos[1] * math.cos(rotA) + ballPos.y
+        y = pos[0] * math.sin(rotA) + pos[1] * math.cos(rotA) + ballPos.y
         return (x, y)
 
     @staticmethod
@@ -160,13 +160,33 @@ class SituationalPlaySelector:
     def get_obstruct_dist(cls):
         return 999999
 
+
+
+    #So this was going to be super fancy but for now its very simple, basically just based on the angle
     @classmethod
     def ball_recieve_prob(cls, ballPos, ballVel, robot):
+        robotx = robot.pos.x
+        roboty = robot.pos.y
+        
+        if(math.sqrt(ballVel.x**2 + ballVel.y**2) < 0.4):
+            return 0.0
+
+        robotToBall = [robotx - ballPos.x, roboty - ballPos.y]
+        angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]));
+        if(abs(angle) > 90):
+            return 0.0
+        return (1 - abs(angle / 90))**4
+
+
+
+        '''
         if(math.sqrt(ballVel.x**2 + ballVel.y**2) < 0.2):
             return 0.0
         robotPos = (robot.pos.x, robot.pos.y)
         robotPos_ball = cls.transformToBall(robotPos, ballPos, ballVel)
         return cls.ballRecieveFunction(robotPos_ball[0], robotPos_ball[1], math.sqrt(ballVel.x**2 + ballVel.y**2), cls.get_obstruct_dist())
+        '''
+
 
     #A function that determines if the ball is in the mouth of a given robot
     def possesses_the_ball(ballPos, robot):
@@ -211,7 +231,7 @@ class SituationalPlaySelector:
             pass
         '''
         for g in cls.activeRobots:
-            cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0,0,0),"hat")
+            cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0.3,0,0),"hat")
         print(cls.systemState.ball.pos)
 
         pass
