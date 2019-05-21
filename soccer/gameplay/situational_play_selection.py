@@ -189,8 +189,13 @@ class SituationalPlaySelector:
 
 
     #A function that determines if the ball is in the mouth of a given robot
-    def possesses_the_ball(ballPos, robot):
-        return math.sqrt(ballPos[0]**2 + ballPos[1]**2) < thresh and abs(math.atan2(ballPos[1] - robotPos[1], ballPos[0] - robotPos[0]) - robot.angle) < angleThresh
+    @staticmethod
+    def possesses_the_ball(ballPos, robot, distThresh=0.14, angleThresh=35):
+        distance = math.sqrt((ballPos.x - robot.pos.x)**2 + (ballPos.y - robot.pos.y)**2)
+        angle = math.degrees(math.atan2(ballPos.y - robot.pos.y, ballPos.x - robot.pos.x) - robot.angle)
+        if(distance < distThresh and abs(angle) < angleThresh):
+                return True
+        return False
 
 
     @classmethod
@@ -231,8 +236,10 @@ class SituationalPlaySelector:
             pass
         '''
         for g in cls.activeRobots:
-            cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0.3,0,0),"hat")
-        print(cls.systemState.ball.pos)
+            printPoint = robocup.Point(g.pos.x + 0.1, g.pos.y)
+            #cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0.3,0,0),"hat")
+            cls.systemState.draw_text(str(cls.possesses_the_ball(cls.systemState.ball.pos,g)), printPoint, (0.3,0,0),"hat")
+        #print(cls.systemState.ball.pos)
 
         pass
 
