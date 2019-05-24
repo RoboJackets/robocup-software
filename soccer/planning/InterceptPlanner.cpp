@@ -10,12 +10,6 @@
 
 namespace Planning{
 
-bool InterceptPlanner::shouldReplan(const PlanRequest& planRequest) const {
-    // Intercept point is > 1 radius from current ball path
-    std::cout << "Should Replace" << std::endl;
-    return false;
-}
-
 std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     const InterceptCommand& command = 
         dynamic_cast<const InterceptCommand&>(*planRequest.motionCommand);
@@ -63,16 +57,15 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // Scale the end velocity by % of max velocity to see if we can reach the target
     // at the same time as the ball
     for (double mag = 0.0; mag <= 1.0; mag += .05) {
-        // path = RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints,
-        //                                 startInstant.vel,
-        //                                 mag*motionConstraints.maxSpeed * botToTargetNorm);
-
         MotionInstant finalStoppingMotion(targetPosOnLine, Geometry2d::Point(0,0));
+
         std::unique_ptr<MotionCommand> directCommand =
-                std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
+            std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
+        
         auto request = PlanRequest(systemState, startInstant, std::move(directCommand),
                                    robotConstraints, nullptr, obstacles,
                                    dynamicObstacles, planRequest.shellID);
+        
         std::unique_ptr<Path> path = directPlanner.run(request);
 
         // First path where we can reach the point at or before the ball
@@ -82,9 +75,8 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
             botToPointTime = path->getDuration();
 
             if (botToPointTime <= ballToPointTime) {
-                path->setDebugText("Found Path. RT " + QString::number(botToPointTime.count(), 'g', 2) +
-                                   " BT " + QString::number(ballToPointTime.count(), 'g', 2) +
-                                   " FS " + QString::number(mag));
+                path->setDebugText("RT " + QString::number(botToPointTime.count(), 'g', 2) +
+                                   " BT " + QString::number(ballToPointTime.count(), 'g', 2));
 
                 return std::make_unique<AngleFunctionPath>(
                     std::move(path),
@@ -108,13 +100,13 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         debug = "GivingUp";
      }
 
-    // Couldn't find a good path, give up
     std::unique_ptr<MotionCommand> directCommand =
         std::make_unique<DirectPathTargetCommand>(target);
 
     PlanRequest request = PlanRequest(systemState, startInstant, std::move(directCommand),
                                       robotConstraints, nullptr, obstacles,
                                       dynamicObstacles, planRequest.shellID);
+
     path = directPlanner.run(request);
     path->setDebugText(debug + ". RT " + QString::number(botToPointTime.count(), 'g', 2) +
                        " BT " + QString::number(ballToPointTime.count(), 'g', 2));

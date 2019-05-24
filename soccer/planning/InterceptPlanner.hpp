@@ -19,6 +19,7 @@ namespace Planning {
 class InterceptPlanner : public SingleRobotPathPlanner {
 public:
     InterceptPlanner() : SingleRobotPathPlanner(false), directPlanner(){};
+
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
     virtual MotionCommand::CommandType commandType() const override {
@@ -26,11 +27,8 @@ public:
     }
 
 private:
-    bool shouldReplan(const PlanRequest& planRequest) const;
-
     DirectTargetPathPlanner directPlanner;
     Geometry2d::Point targetInterceptPos;
-    int reusePathCount = 0;
 };
 
 } // namespace Planning
