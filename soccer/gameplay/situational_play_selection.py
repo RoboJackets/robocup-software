@@ -27,12 +27,15 @@ class SituationalPlaySelector:
             'clear', #play for clearing the ball from our side of the field (should include defensive caution)
             'defend_clear', #Plays for defending the opponents clear, when the ball is on their side.
             'defend_goal', #Plays for defending our goal from opponents near it with the ball
+            'midfield_clear',
             'attack_goal', #Plays for attacking the opponents goal, when we have the ball near it
             'offensive_scramble', #Plays for getting a loose ball when the ball is on the opponents half
+            'midfield_scramble',
             'defensive_scramble', #Plays for getting a loose ball when the ball is on our half
             'save_ball', #Plays that will trigger when the ball is headed out of the field with no obstuctions
             'save_shot', #Plays that will trigger when the ball is headed directly at our goal
             'offensive_pile_up', #Plays to handle a pile up on their side of the field
+            'midfield_pile_up',
             'defensive_pile_up'] #Plays to handle a pile up on our side of the field
        
 
@@ -306,55 +309,63 @@ class SituationalPlaySelector:
         if(cls.gameState.is_our_penalty()):
             pass
         if(cls.gameState.is_our_direct()):
-            pass
+            cls.currentSituation['direct_kick'] = True
         if(cls.gameState.is_our_indirect()):
-            pass
+            cls.currentSituation['indirect_kick'] = True
         if(cls.gameState.is_our_free_kick()):
             pass
         if(cls.gameState.is_their_kickoff()):
-            pass
+            cls.currentSituation['defend_restart_defensive'] = True
         if(cls.gameState.is_their_penalty()):
-            pass
-        if(cls.gameState.is_their_direct()):
-            pass
-        if(cls.gameState.is_their_indirect()):
-            pass
+            pass 
+        if(cls.gameState.is_their_direct() or cls.gameState.is_their_indirect()):
+            if(cls.ballLocation == cls.fieldLoc.defendSide):
+                cls.currentSituation['defend_restart_defensive'] = True
+            elif(cls.ballLocation == cls.fieldLoc.attackSide):
+                cls.currentSituation['defend_restart_offensive'] = True
+            elif(cls.ballLocation == cls.fieldLoc.midfield):
+                cls.currentSituation['defend_restart_defensive'] = True
+                cls.currentSituation['defend_restart_offensive'] = True 
         if(cls.gameState.is_their_free_kick()):
             pass
 
         if(cls.ballLocation == cls.fieldLoc.defendSide):
             if(cls.currentPileup):
-                pass
+                cls.currentSituation['defensive_pileup']
             elif(cls.freeBall):
-                pass
+                cls.currentSituation['defensive_scramble']
             elif(cls.ourBall):
-                pass
+                cls.currentSituation['clear_ball']
             elif(cls.theirBall):
-                pass
+                cls.currentSituation['defend_goal']
             else:
                 print("Situation analysis has done broke")
         
         elif(cls.ballLocation == cls.fieldLoc.attackSide):
             if(cls.currentPileup):
-                pass
+                cls.currentSituation['offensive_pileup']
             elif(cls.freeBall):
-                pass
+                cls.currentSituation['offensive_scramble']
             elif(cls.ourBall):
-                pass
+                cls.currentSituation['attack_goal']
             elif(cls.theirBall):
-                pass
+                cls.currentSituation['defend_clear']
             else:
                 print("Situation analysis has done broke")
         
         elif(cls.ballLocation == cls.fieldLoc.midfield):
             if(cls.currentPileup):
-                pass
+                cls.currentSituation['offensive_pileup']
+                cls.currentSituation['defensive_pileup']
             elif(cls.freeBall):
-                pass
+                cls.currentSituation['offensive_scramble']
+                cls.currentSituation['defensive_scramble']
             elif(cls.ourBall):
-                pass
+                cls.currentSituation['clear_ball']
+                cls.currentSituation['attack_goal']
             elif(cls.theirBall):
-                pass
+                cls.currentSituation['defend_goal']
+                cls.currentSituation['defend_clear']
             else:
                 print("Situation analysis has done broke")
 
