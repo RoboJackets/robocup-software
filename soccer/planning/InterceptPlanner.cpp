@@ -27,6 +27,14 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     Geometry2d::Point targetPosOnLine;
     RJ::Seconds ballToPointTime = ball.estimateTimeTo(command.target, &targetPosOnLine) - RJ::now();
 
+    // Try to use the same point if it's pretty close
+    // Improves consistency overall
+    if ((targetPosOnLine - prevPathTarget).mag() < Robot_Radius / 2) {
+        targetPosOnLine = prevPathTarget;
+    } else {
+        prevPathTarget = targetPosOnLine;
+    }
+
     // vector from robot to target
     Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pos);
     // Normalized vector from robot to target
@@ -34,7 +42,8 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
 
     // Max speed we can reach given the distance to target and constant acceleration
     // If we don't constrain the speed, there is a velocity discontinuity in the middle of the path
-    double maxSpeed = std::min(sqrt(2*motionConstraints.maxAcceleration*botToTarget.mag()), motionConstraints.maxSpeed);
+    double maxSpeed = std::min(startInstant.vel.mag() + sqrt(2*motionConstraints.maxAcceleration*botToTarget.mag()),
+                               motionConstraints.maxSpeed);
 
     // Try to shortcut
     // If we are almost in the way of the ball already, just stay still

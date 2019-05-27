@@ -18,7 +18,9 @@ namespace Planning {
 
 class InterceptPlanner : public SingleRobotPathPlanner {
 public:
-    InterceptPlanner() : SingleRobotPathPlanner(false), directPlanner(){};
+    InterceptPlanner() : SingleRobotPathPlanner(false),
+                         directPlanner(),
+                         prevPathTarget(0, 0){};
 
     virtual std::unique_ptr<Path> run(PlanRequest& planRequest) override;
 
@@ -28,5 +30,6 @@ public:
 
 private:
     DirectTargetPathPlanner directPlanner;
+    Geometry2d::Point prevPathTarget;
 };
 } // namespace Planning
