@@ -28,7 +28,5 @@ public:
 
 private:
     DirectTargetPathPlanner directPlanner;
-    Geometry2d::Point targetInterceptPos;
 };
-
 } // namespace Planning

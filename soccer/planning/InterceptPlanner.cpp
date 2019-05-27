@@ -9,107 +9,89 @@
 
 
 namespace Planning{
-
 std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     const InterceptCommand& command = 
         dynamic_cast<const InterceptCommand&>(*planRequest.motionCommand);
 
-    targetInterceptPos = command.target;
-
     // Start state for the specified robot
     const MotionInstant& startInstant = planRequest.start;
+
     // All the max velocity / acceleration constraints for translation / rotation
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const RobotConstraints& robotConstraints = planRequest.constraints;
-    // List of obstacles
-    Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-    std::vector<DynamicObstacle>& dynamicObstacles = planRequest.dynamicObstacles;
 
     SystemState& systemState = planRequest.systemState;
     const Ball& ball = systemState.ball;
 
-    const RJ::Time curTime = RJ::now();
-
-    // Intercept the ball at closest point to the ball vel
-
-    // Get closest point to ball vel vector
-    // Calc ball time to pos
-    // Find path to point
-    // Up end vel until time to pos = ball pos
-
-    MotionInstant ballCurrent = ball.predict(curTime);
-
-
     // Time for ball to hit target point
+    // Target point is projected into ball vel line
     Geometry2d::Point targetPosOnLine;
-    RJ::Seconds ballToPointTime = ball.estimateTimeTo(targetInterceptPos, &targetPosOnLine) - curTime;
-    // Time for robot to hit target point
-    RJ::Seconds botToPointTime(0);
+    RJ::Seconds ballToPointTime = ball.estimateTimeTo(command.target, &targetPosOnLine) - RJ::now();
 
     // vector from robot to target
     Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pos);
     // Normalized vector from robot to target
     Geometry2d::Point botToTargetNorm = botToTarget.normalized();
 
-    std::unique_ptr<Path> path;
-    std::vector<Geometry2d::Point> startEndPoints{startInstant.pos, targetPosOnLine};
+    // Max speed we can reach given the distance to target and constant acceleration
+    // If we don't constrain the speed, there is a velocity discontinuity in the middle of the path
+    double maxSpeed = std::min(sqrt(2*motionConstraints.maxAcceleration*botToTarget.mag()), motionConstraints.maxSpeed);
+
+    // Try to shortcut
+    // If we are almost in the way of the ball already, just stay still
+    // Saves some frames trying to compute that
+    // Also is much more consistent
+    if (botToTarget.mag() < Robot_Radius / 2) {
+        MotionInstant finalStoppingMotion(targetPosOnLine, Geometry2d::Point(0, 0));
+
+        std::unique_ptr<MotionCommand> directCommand =
+            std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
+
+        PlanRequest request = PlanRequest(systemState, startInstant, std::move(directCommand),
+                                          planRequest.constraints, nullptr, planRequest.obstacles,
+                                          planRequest.dynamicObstacles, planRequest.shellID);
+
+        std::unique_ptr<Path> path = directPlanner.run(request);
+        path->setDebugText("AtPoint");
+
+        return std::make_unique<AngleFunctionPath>(
+            std::move(path),
+            angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    }
+
 
     // Scale the end velocity by % of max velocity to see if we can reach the target
     // at the same time as the ball
+    std::unique_ptr<Path> path;
+
     for (double mag = 0.0; mag <= 1.0; mag += .05) {
-        MotionInstant finalStoppingMotion(targetPosOnLine, Geometry2d::Point(0,0));
+        MotionInstant finalStoppingMotion(targetPosOnLine, mag*maxSpeed*botToTarget.normalized());
 
         std::unique_ptr<MotionCommand> directCommand =
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
         
         auto request = PlanRequest(systemState, startInstant, std::move(directCommand),
-                                   robotConstraints, nullptr, obstacles,
-                                   dynamicObstacles, planRequest.shellID);
+                                   planRequest.constraints, nullptr, planRequest.obstacles,
+                                   planRequest.dynamicObstacles, planRequest.shellID);
         
-        std::unique_ptr<Path> path = directPlanner.run(request);
+        path = directPlanner.run(request);
 
         // First path where we can reach the point at or before the ball
         // If the end velocity is not 0, you should reach the point as close
         // to the ball time as possible to just ram it
-        if (path) {
-            botToPointTime = path->getDuration();
+        if (path->getDuration() <=  ballToPointTime) {
+            path->setDebugText("RT " + QString::number(path->getDuration().count(), 'g', 2) +
+                                " BT " + QString::number(path->getDuration().count(), 'g', 2));
 
-            if (botToPointTime <= ballToPointTime) {
-                path->setDebugText("RT " + QString::number(botToPointTime.count(), 'g', 2) +
-                                   " BT " + QString::number(ballToPointTime.count(), 'g', 2));
-
-                return std::make_unique<AngleFunctionPath>(
-                    std::move(path),
-                    angleFunctionForCommandType(FacePointCommand(ball.pos)));
-            }
+            return std::make_unique<AngleFunctionPath>(
+                std::move(path),
+                angleFunctionForCommandType(FacePointCommand(ball.pos)));
         }
     }
 
-    QString debug;
-
-    MotionInstant target;
-    target.pos = targetPosOnLine;
-
-    // If we are already almost at the correct point, dont speed out of the way
-    // We may not find a path that is shorter to the ball because our ball filter is off a lot...
-    if (botToTarget.mag() < Robot_Radius / 2) {
-        target.vel = Geometry2d::Point(0,0);
-        debug = "AtPoint";
-     } else {
-        target.vel = motionConstraints.maxSpeed * botToTargetNorm;
-        debug = "GivingUp";
-     }
-
-    std::unique_ptr<MotionCommand> directCommand =
-        std::make_unique<DirectPathTargetCommand>(target);
-
-    PlanRequest request = PlanRequest(systemState, startInstant, std::move(directCommand),
-                                      robotConstraints, nullptr, obstacles,
-                                      dynamicObstacles, planRequest.shellID);
-
-    path = directPlanner.run(request);
-    path->setDebugText(debug + ". RT " + QString::number(botToPointTime.count(), 'g', 2) +
-                       " BT " + QString::number(ballToPointTime.count(), 'g', 2));
+    // We couldn't get to the target point in time
+    // Just give up and do the max vel across ball vel
+    // Which ends up being the path after the final loop
+    path->setDebugText("GivingUp");
 
     return std::make_unique<AngleFunctionPath>(
         std::move(path),
