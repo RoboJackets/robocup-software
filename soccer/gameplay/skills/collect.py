@@ -9,7 +9,7 @@ import constants
 # Moves in to dribble a slow moving ball
 class Collect(single_robot_behavior.SingleRobotBehavior):
     # Ball has to be within this distance to be considered captured
-    RESTART_MIN_DIST = 0.12
+    RESTART_MIN_DIST = constants.Robot.Radius + constants.Ball.Radius + 0.05
 
     # How many of the last X cycles "has_ball()" was true
     PROBABLY_HELD_MAX = 100
@@ -21,14 +21,37 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     # Higher means closer, but possibly less optimal overall with all robot movement
     POSITION_COST_MULTIPLER = 30
 
+    # Restart counter
+    # If both robot and ball are stopped near each other, but not in mouth
+    # Restart because the path planner doesn't have angle information
+    RESTART_TIMEOUT = 100
+
+    STOPPED_VEL = 0.1
+
     def __init__(self):
         super().__init__(continuous=False)
 
         self.probably_held_cnt = 0
+        self.restart_cnt = 0
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running,
-                            lambda: True, 'immediately')
+                            lambda: self.restart_cnt == 0, 'immediately')
+
+
+        # Restart the collect path planner
+        # Since there is no definition of which direction a robot is facing
+        # We cannot figure out if the ball is directly behind us or in it's mouth
+        # We can restart the collect and it'll try it again
+        # Only restart when the ball is close, both are stopped, and we dont have the ball in the mouth
+        self.add_transition(behavior.Behavior.State.running,
+                            behavior.Behavior.State.start,
+                            lambda: (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
+                                    self.robot.vel.mag() < Collect.STOPPED_VEL and
+                                    main.ball().vel.mag() < Collect.STOPPED_VEL and
+                                    not self.robot.has_ball() and
+                                    self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF,
+                            'restart')
 
         # Complete when we have the ball
         self.add_transition(behavior.Behavior.State.running,
@@ -46,6 +69,9 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
                                      self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF),
                             'ball lost')
 
+    def execute_start(self):
+        self.restart_cnt = max(0, self.restart_cnt - 1)
+
     def on_enter_running(self):
         self.probably_held_cnt = 0
 
@@ -56,6 +82,9 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
             self.robot.collect()
 
             self.update_held_cnt()
+
+    def on_exit_running(self):
+        self.restart_cnt = Collect.RESTART_TIMEOUT
 
     def execute_completed(self):
         if (self.robot is not None):

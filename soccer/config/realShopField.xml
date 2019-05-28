@@ -316,6 +316,8 @@
    <searchStartDist value="0"/>
    <searchEndDist value="7"/>
    <searchIncDist value="0.2"/>
+   <shortcutDist value="0.12"/>
+   <maxBounceAngle value="45"/>
   </Settle>
   <Collect>
    <ballSpeedApproachDirectionCutoff value="0.5"/>
@@ -328,7 +330,7 @@
    <distCutoffToApproach value="0.1"/>
    <stopDistScale value="1"/>
    <targetPointAveragingGain value="0.8"/>
-   <velocityControlScale value="0"/>
+   <velocityControlScale value="0.1"/>
   </Collect>
  </Capture>
  <VisionFilter>

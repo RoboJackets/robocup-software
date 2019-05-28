@@ -179,9 +179,10 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
 
         // Within X seconds of the end of path
         bool almostAtEndPath = timeIntoPreviousPath > prevPath->getDuration() - RJ::Seconds(.5);
-        bool inlineWithBall =  botDistToBallMovementLine < cos(angle)*Robot_MouthWidth/2;
+        bool inlineWithBall = botDistToBallMovementLine < cos(angle)*Robot_MouthWidth/2;
+        bool inFrontOfBall = averageBallVel.angleBetween(startInstant.pos - ball.pos) < 3.14/2;
 
-        if (inlineWithBall && currentState == Intercept) {
+        if (inFrontOfBall && inlineWithBall && currentState == Intercept) {
             
             // Start the next section of the path from the end of our current path
             startInstant = pathSoFar->end().motion;
