@@ -12,26 +12,26 @@ class SituationalPlaySelector:
 
     ballPossessionScore = 0.0 #I'm thinking positive scores for our possession, and negative for our opponents
 
-    situations = [
-            'kickoff', #Plays that can perform our kickoff
-            'indirect_kick', #Plays that can perform our indirect kicks
-            'direct_kick', #Plays that can perform our direct kicks
-            'defend_restart_offensive', #Plays for defending our opponents restart on their side of the field
-            'defend_restart_midfield', #Plays for defending our opponents restart in the midfield
-            'defend_restart_defensive', #Plays for defending our opponents restart on our side of the field
-            'clear', #play for clearing the ball from our side of the field (should include defensive caution)
-            'defend_clear', #Plays for defending the opponents clear, when the ball is on their side.
-            'defend_goal', #Plays for defending our goal from opponents near it with the ball
-            'midfield_clear', #Plays for when we possess the ball in the midfield
-            'attack_goal', #Plays for attacking the opponents goal, when we have the ball near it
-            'offensive_scramble', #Plays for getting a loose ball when the ball is on the opponents half
-            'midfield_scramble', #Plays for getting a loose ball when the ball is in the midfield
-            'defensive_scramble', #Plays for getting a loose ball when the ball is on our half
-            'save_ball', #Plays that will trigger when the ball is headed out of the field with no obstuctions
-            'save_shot', #Plays that will trigger when the ball is headed directly at our goal
-            'offensive_pile_up', #Plays to handle a pile up on their side of the field
-            'midfield_pile_up', #Plays to handle a pile up in the midfield
-            'defensive_pile_up'] #Plays to handle a pile up on our side of the field
+    class situation(Enum):
+            kickoff = 1 #Plays that can perform our kickoff
+            indirect_kick = 2 #Plays that can perform our indirect kicks
+            direct_kick = 3 #Plays that can perform our direct kicks
+            defend_restart_offensive = 4 #Plays for defending our opponents restart on their side of the field
+            defend_restart_midfield = 5 #Plays for defending our opponents restart in the midfield
+            defend_restart_defensive = 6 #Plays for defending our opponents restart on our side of the field
+            clear = 7 #play for clearing the ball from our side of the field (should include defensive caution)
+            defend_clear = 8 #Plays for defending the opponents clear, when the ball is on their side.
+            defend_goal = 9#Plays for defending our goal from opponents near it with the ball
+            midfield_clear = 10 #Plays for when we possess the ball in the midfield
+            attack_goal = 11 #Plays for attacking the opponents goal, when we have the ball near it
+            offensive_scramble = 12 #Plays for getting a loose ball when the ball is on the opponents half
+            midfield_scramble = 13 #Plays for getting a loose ball when the ball is in the midfield
+            defensive_scramble = 14 #Plays for getting a loose ball when the ball is on our half
+            save_ball = 15 #Plays that will trigger when the ball is headed out of the field with no obstuctions
+            save_shot = 16 #Plays that will trigger when the ball is headed directly at our goal
+            offensive_pile_up = 17 #Plays to handle a pile up on their side of the field
+            midfield_pile_up = 18 #Plays to handle a pile up in the midfield
+            defensive_pile_up = 19] #Plays to handle a pile up on our side of the field
        
 
     def __init__(self):
