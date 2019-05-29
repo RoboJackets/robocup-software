@@ -40,14 +40,23 @@ class SituationalPlaySelector:
 
     currentSituation = dict()
 
-
     isSetup = False
     gameState = None
     systemState = None
     robotList = list()
     activeRobots = list()
 
+
     ballLocation = None
+    currentPileup = False
+    freeBall = False
+    ourBall = False
+    theirBall = False
+
+
+
+
+
 
     @classmethod
     def setupStates(cls):
@@ -84,9 +93,12 @@ class SituationalPlaySelector:
         else:
             cls.updateRobotList()
 
-
+        cls.scoreUpdate()
         cls.ballLocation = cls.locationUpdate()
         cls.ballPossessionUpdate()
+        printPoint1 = robocup.Point(0,0)
+        print(cls.getCurrentSituations())
+        #cls.systemState.draw_text(str(cls.getCurrentSituations()[0]), printPoint1, (0,0,0),"hat")
 
     #It would be interesting to evaluate characteristics about our enemy
     #Like some kind of manuverability/speed characteristic
@@ -259,11 +271,30 @@ class SituationalPlaySelector:
 
         cls.ballPossessionScore = ourScore - theirScore
 
+
+        cls.ourBall = False
+        cls.theirBall = False
+        cls.freeBall = False
+
+        thresh = 0.3
+
+        if(cls.ballPossessionScore > thresh):
+            cls.ourBall = True
+        elif(cls.ballPossessionScore < -1 * thresh):
+            cls.theirBall = True
+        else:
+            cls.freeBall = True
+
     
     class fieldLoc(Enum):
         defendSide = 1
         midfield = 2
         attackSide = 3
+
+    class ballPos(Enum):
+        ourBall = 1
+        freeBall = 2
+        theirBall = 3
 
     @classmethod
     def locationUpdate(cls):
@@ -300,7 +331,6 @@ class SituationalPlaySelector:
         cls.zeroCurrentSituation()
 
         restart = False
-
         if(cls.gameState.is_our_kickoff()):
             pass
         if(cls.gameState.is_our_penalty()):
@@ -376,6 +406,16 @@ class SituationalPlaySelector:
     @classmethod
     def getBonus(cls):
         return max([cls.situations.get(t) for t in cls.situations])
+
+    @classmethod
+    def getCurrentSituations(cls):
+
+
+        retList = list() 
+        for g in cls.currentSituation:
+            if(cls.currentSituation[g]):
+                retList.append(g)
+        return retList
 
 
 
