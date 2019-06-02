@@ -10,9 +10,9 @@ import constants
 class SituationalPlaySelector:
 
 
-    ballPossessionScore = 0.0 #I'm thinking positive scores for our possession, and negative for our opponents
 
     class situation(Enum):
+            none = 0
             kickoff = 1 #Plays that can perform our kickoff
             indirect_kick = 2 #Plays that can perform our indirect kicks
             direct_kick = 3 #Plays that can perform our direct kicks
@@ -21,7 +21,7 @@ class SituationalPlaySelector:
             defend_restart_defensive = 6 #Plays for defending our opponents restart on our side of the field
             clear = 7 #play for clearing the ball from our side of the field (should include defensive caution)
             defend_clear = 8 #Plays for defending the opponents clear, when the ball is on their side.
-            defend_goal = 9#Plays for defending our goal from opponents near it with the ball
+            defend_goal = 9 #Plays for defending our goal from opponents near it with the ball
             midfield_clear = 10 #Plays for when we possess the ball in the midfield
             attack_goal = 11 #Plays for attacking the opponents goal, when we have the ball near it
             offensive_scramble = 12 #Plays for getting a loose ball when the ball is on the opponents half
@@ -31,14 +31,17 @@ class SituationalPlaySelector:
             save_shot = 16 #Plays that will trigger when the ball is headed directly at our goal
             offensive_pile_up = 17 #Plays to handle a pile up on their side of the field
             midfield_pile_up = 18 #Plays to handle a pile up in the midfield
-            defensive_pile_up = 19] #Plays to handle a pile up on our side of the field
+            defensive_pile_up = 19 #Plays to handle a pile up on our side of the field
+            midfield_defend_clear = 20 #Plays to defend 
        
 
     def __init__(self):
         print("Don't make an instance of this class you bafoon!") 
         exit() #This is a joke I'll need to remove at some point
 
-    currentSituation = dict()
+    currentSituation = None
+
+    ballPossessionScore = 0.0 #I'm thinking positive scores for our possession, and negative for our opponents
 
     isSetup = False
     gameState = None
@@ -46,17 +49,9 @@ class SituationalPlaySelector:
     robotList = list()
     activeRobots = list()
 
-
     ballLocation = None
+
     currentPileup = False
-    freeBall = False
-    ourBall = False
-    theirBall = False
-
-
-
-
-
 
     @classmethod
     def setupStates(cls):
@@ -67,7 +62,6 @@ class SituationalPlaySelector:
         for g in cls.systemState.their_robots:
             cls.robotList.append(g)
 
-        cls.zeroCurrentSituation()
 
         cls.updateRobotList()
 
@@ -77,11 +71,6 @@ class SituationalPlaySelector:
        for g in cls.robotList:
            if(g.visible):
                cls.activeRobots.append(g)
-
-    @classmethod
-    def zeroCurrentSituation(cls):
-        for g in cls.situations:
-            cls.currentSituation[g] = False
 
 
     @classmethod
@@ -316,10 +305,6 @@ class SituationalPlaySelector:
         else:
             return cls.fieldLoc.midfield
 
-
-
-
-
     #This function will detect if the ball is about to go out of bounds, or is headed towards the goal
     @classmethod
     def ballTrajectoryUpdate(cls, ballPos, ballVel, factor=0.5):
@@ -327,8 +312,11 @@ class SituationalPlaySelector:
         pass
 
     @classmethod
+    def clearSituation(cls):
+        cls.currentSituation = cls.situation.none
+
+    @classmethod
     def scoreUpdate(cls):
-        cls.zeroCurrentSituation()
 
         restart = False
         if(cls.gameState.is_our_kickoff()):
@@ -336,58 +324,58 @@ class SituationalPlaySelector:
         if(cls.gameState.is_our_penalty()):
             pass
         if(cls.gameState.is_our_direct()):
-            cls.currentSituation['direct_kick'] = True
+            cls.currentSituation = cls.situation.direct_kick
         if(cls.gameState.is_our_indirect()):
-            cls.currentSituation['indirect_kick'] = True
+            cls.currentSituation = cls.situation.indirect_kick
         if(cls.gameState.is_our_free_kick()):
             pass
         if(cls.gameState.is_their_kickoff()):
-            cls.currentSituation['defend_restart_defensive'] = True
+            cls.currentSituation = cls.situation.defend_restart_defensive
         if(cls.gameState.is_their_penalty()):
             pass 
         if(cls.gameState.is_their_direct() or cls.gameState.is_their_indirect()):
             if(cls.ballLocation == cls.fieldLoc.defendSide):
-                cls.currentSituation['defend_restart_defensive'] = True
+                cls.currentSituation = cls.situation.defend_restart_defensive
             elif(cls.ballLocation == cls.fieldLoc.attackSide):
-                cls.currentSituation['defend_restart_offensive'] = True
+                cls.currentSituation = cls.situation.defend_restart_offensive
             elif(cls.ballLocation == cls.fieldLoc.midfield):
-                cls.currentSituation['defend_restart_midfield'] = True
+                cls.currentSituation = cls.situation.defend_restart_midfield
         if(cls.gameState.is_their_free_kick()):
             pass
 
         if(cls.ballLocation == cls.fieldLoc.defendSide):
             if(cls.currentPileup):
-                cls.currentSituation['defensive_pileup'] = True
+                cls.currentSituation = cls.situation.defensive_pileup
             elif(cls.freeBall):
-                cls.currentSituation['defensive_scramble'] = True
+                cls.currentSituation = cls.situation.defensive_scramble
             elif(cls.ourBall):
-                cls.currentSituation['clear_ball'] = True
+                cls.currentSituation = cls.situation.clear
             elif(cls.theirBall):
-                cls.currentSituation['defend_goal'] = True
+                cls.currentSituation = cls.situation.defend_goal
             else:
                 print("Situation analysis has done broke")
         
         elif(cls.ballLocation == cls.fieldLoc.attackSide):
             if(cls.currentPileup):
-                cls.currentSituation['offensive_pileup'] = True
+                cls.currentSituation = cls.situation.offensive_pileup
             elif(cls.freeBall):
-                cls.currentSituation['offensive_scramble'] = True
+                cls.currentSituation = cls.situation.offensive_scramble
             elif(cls.ourBall):
-                cls.currentSituation['attack_goal'] = True
+                cls.currentSituation = cls.situation.attack_goal
             elif(cls.theirBall):
-                cls.currentSituation['defend_clear'] = True
+                cls.currentSituation = cls.situation.defend_clear
             else:
                 print("Situation analysis has done broke")
         
         elif(cls.ballLocation == cls.fieldLoc.midfield):
             if(cls.currentPileup):
-                cls.currentSituation['midfield_pileup'] = True
+                cls.currentSituation = cls.situation.midfield_pileup
             elif(cls.freeBall):
-                cls.currentSituation['midfield_scramble'] = True
+                cls.currentSituation = cls.situation.midfield_scramble
             elif(cls.ourBall):
-                cls.currentSituation['midfield_clear'] = True
+                cls.currentSituation = cls.situation.midfield_clear
             elif(cls.theirBall):
-                cls.currentSituation['midfield_defend_clear'] = True
+                cls.currentSituation = cls.situation.midfield_defend_clear
             else:
                 print("Situation analysis has done broke")
 
@@ -409,13 +397,8 @@ class SituationalPlaySelector:
 
     @classmethod
     def getCurrentSituations(cls):
+        return cls.currentSituation
 
-
-        retList = list() 
-        for g in cls.currentSituation:
-            if(cls.currentSituation[g]):
-                retList.append(g)
-        return retList
 
 
 
