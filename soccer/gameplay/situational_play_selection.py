@@ -182,7 +182,6 @@ class SituationalPlaySelector:
         return False
 
 
-
     hasBall = dict()
     posChangeTime = dict()
     posDuration = dict()
@@ -193,7 +192,9 @@ class SituationalPlaySelector:
     @classmethod
     def ballToRobotDist(cls, robot):
         return math.sqrt((robot.pos.x - cls.systemState.ball.pos.x)**2 + (robot.pos.y -  cls.systemState.ball.pos.y)**2)
-    
+
+
+    #Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
     @classmethod
     def closestRobot(cls):
        
@@ -209,17 +210,68 @@ class SituationalPlaySelector:
 
         return (closestRobot, closestRobotDistance)
 
+
+    #Returns true if our robot is closest to the ball
     @classmethod
     def ourRobotClosest(cls):
         closestRobot = cls.closestRobot()[0]
         return closestRobot.is_ours
 
+
+    #Returns the robot that last had the ball and how long it was since they had the ball
     @classmethod
     def hadBallLast(cls):
         pass
 
+    #Returns true if we had the ball last
+    @classmethod
     def weHadBallLast(cls):
         pass
+
+    @classmethod
+    def updatePileup(cls):
+        cls.currentPileup = cls.isPileup()
+
+    @classmethod
+    def robotsWithTheBall(cls):
+        robotsWithTheBall = list()
+
+        for g in cls.activeRobots:
+            if(cls.hasBall(g)):
+                robotsWithTheBall.append(g)
+
+        return robotsWithTheBall
+
+    @classmethod
+    def numRobotsWithTheBall(cls):
+        return len(robotsWithTheBall())
+
+    @classmethod
+    def robotsNearTheBall(cls, distance = 0.5):
+        robotsNearTheBall = list()
+       
+        for g in cls.activeRobots:
+            if(cls.ballToRobotDist(g) < distance):
+                robotsNearTheBall.append(g)
+
+        return robotsNearTheBall
+
+    @classmethod
+    def nearBallCount(cls, distance = 0.5):
+        ourBots = 0
+        theirBots = 0
+        for g in cls.robotsNearTheBall(distance):
+            if(g.is_ours()):
+                ourBots += 1
+            else:
+                theirBots += 1
+
+        return (ourBots, theirBots)
+
+    @classmethod
+    def isPileup(cls):
+        pass
+
 
     @classmethod
     def ballPossessionUpdate(cls):
@@ -288,7 +340,6 @@ class SituationalPlaySelector:
 
         cls.ballPossessionScore = ourScore - theirScore
 
-
         cls.ourBall = False
         cls.theirBall = False
         cls.freeBall = False
@@ -348,7 +399,7 @@ class SituationalPlaySelector:
 
         restart = False
         if(cls.gameState.is_our_kickoff()):
-            pass
+            cls.currentSituation = cls.situation.kickoff
         if(cls.gameState.is_our_penalty()):
             pass
         if(cls.gameState.is_our_direct()):
@@ -406,28 +457,6 @@ class SituationalPlaySelector:
                 cls.currentSituation = cls.situation.midfield_defend_clear
             else:
                 print("Situation analysis has done broke")
-
-
-    def updatePileup(cls):
-        cls.currentPileup = cls.isPileup()
-            
-    @classmethod
-    def isPileup(cls):
-        possessingRobots
-        for g in cls.activeRobots:
-            pass
-        #Will attempt to detect if there is a pileup on the field 
-
-
-    @classmethod
-    def getBonus(cls):
-        return max([cls.situations.get(t) for t in cls.situations])
-
-    @classmethod
-    def getCurrentSituations(cls):
-        return cls.currentSituation
-
-
 
 
 
