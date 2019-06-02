@@ -10,7 +10,6 @@ import constants
 class SituationalPlaySelector:
 
 
-
     class situation(Enum):
             none = 0
             kickoff = 1 #Plays that can perform our kickoff
@@ -457,14 +456,6 @@ class SituationalPlaySelector:
                 cls.currentSituation = cls.situation.midfield_defend_clear
             else:
                 print("Situation analysis has done broke")
-
-
-
-
-
-
-
-
 
 
 
