@@ -32,7 +32,7 @@ class SituationalPlaySelector:
             offensive_pile_up = 17 #Plays to handle a pile up on their side of the field
             midfield_pile_up = 18 #Plays to handle a pile up in the midfield
             defensive_pile_up = 19 #Plays to handle a pile up on our side of the field
-            midfield_defend_clear = 20 #Plays to defend 
+            midfield_defend_clear = 20 #Plays to defend a clear when the ball is in the midfield
        
 
     def __init__(self):
@@ -41,7 +41,7 @@ class SituationalPlaySelector:
 
     currentSituation = None
 
-    ballPossessionScore = 0.0 #I'm thinking positive scores for our possession, and negative for our opponents
+    ballPossessionScore = 0.0
 
     isSetup = False
     gameState = None
@@ -62,7 +62,6 @@ class SituationalPlaySelector:
         for g in cls.systemState.their_robots:
             cls.robotList.append(g)
 
-
         cls.updateRobotList()
 
     @classmethod 
@@ -71,7 +70,6 @@ class SituationalPlaySelector:
        for g in cls.robotList:
            if(g.visible):
                cls.activeRobots.append(g)
-
 
     @classmethod
     def updateAnalysis(cls):
@@ -193,6 +191,37 @@ class SituationalPlaySelector:
 
 
     @classmethod
+    def ballToRobotDist(cls, robot):
+        return math.sqrt((robot.pos.x - cls.systemState.ball.pos.x)**2 + (robot.pos.y -  cls.systemState.ball.pos.y)**2)
+    
+    @classmethod
+    def closestRobot(cls):
+       
+        closestRobot = None
+        closestRobotDistance = 0.0
+        ballLocation = cls.systemState.ball.pos
+
+        for g in cls.activeRobots:
+            roboDist = ballToRobotDist(g)
+            if(closestRobot == None or roboDist < closestRobotDistance):
+                closestRobot = g
+                closestRobotDistance = roboDist
+
+        return (closestRobot, closestRobotDistance)
+
+    @classmethod
+    def ourRobotClosest(cls):
+        closestRobot = cls.closestRobot()[0]
+        return closestRobot.is_ours
+
+    @classmethod
+    def hadBallLast(cls):
+        pass
+
+    def weHadBallLast(cls):
+        pass
+
+    @classmethod
     def ballPossessionUpdate(cls):
 
         for g in cls.activeRobots:
@@ -201,11 +230,10 @@ class SituationalPlaySelector:
             printPoint3 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.24)
             printPoint4 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.36)
 
-
             hasBall = cls.possesses_the_ball(cls.systemState.ball.pos,g)
-            try:
-                hadBall = cls.hasBall[g]
-            except:
+
+            hadBall = cls.hasBall.get(g)
+            if(hadBall == None):
                 hadBall = False
                 cls.hasBall[g] = False
 
