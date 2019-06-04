@@ -242,8 +242,17 @@ class SituationalPlaySelector:
         return robotsWithTheBall
 
     @classmethod
-    def numRobotsWithTheBall(cls):
-        return len(robotsWithTheBall())
+    def withBallCount(cls):
+        ourBots = 0
+        theirBots = 0
+        for g in robotsWithTheBall():
+            if(g.is_ours()):
+                ourBots += 1
+            else:
+                theirBots += 1
+
+        return (ourBots, theirBots)
+        
 
     @classmethod
     def robotsNearTheBall(cls, distance = 0.5):
@@ -269,8 +278,18 @@ class SituationalPlaySelector:
 
     @classmethod
     def isPileup(cls):
-        pass
+        botsNearBall = nearBallCount()
+        botsWithBall = withBallCount()
+        totalNearBall = sum(botsNearBall)
+        totalWithBall = sum(botsWithBall)
 
+        if(totalNearBall >= 3 and botsNearBall[0] > 0 and botsNearBall[1] > 0):
+            return True
+
+        if(totalWithBall >= 2 and bothWithBall[0] > 0 and botsWithBall[1] > 0):
+            return True
+
+        return False
 
     @classmethod
     def ballPossessionUpdate(cls):
