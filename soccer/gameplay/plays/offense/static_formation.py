@@ -11,7 +11,8 @@ import evaluation.passing_positioning
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
-import tactics.positions.goalie
+from tactics.positions.goalie import Goalie
+
 
 class StaticFormation(standard_play.StandardPlay):
     # Contains the target robot position, move subehavior
@@ -104,7 +105,10 @@ class StaticFormation(standard_play.StandardPlay):
 
         # This is really the goalie, but naming it defense allows us not to have the defense automatically be added
         self.remove_all_subbehaviors()
-        self.add_subbehavior(skills.move.Move(robocup.Point(0,0)), 'defense', required=True, priority=100)
+        #self.add_subbehavior(skills.move.Move(robocup.Point(0,0)), 'defense', required=True, priority=100)
+        self.goalie = Goalie()
+        self.goalie.shell_id = main.system_state().game_state.get_goalie_id()
+        self.add_subbehavior(self.goalie, "Goalie", required=True, priority=100)
 
         self.width = constants.Field.Width
         self.length = constants.Field.Length
@@ -418,6 +422,8 @@ class StaticFormation(standard_play.StandardPlay):
 
     def execute_running(self):
         self.update_formation_center()
+        main.system_state().draw_circle(self.formation_center,.2,(255,255,255), "FORMATION CENTER")
+        #print(_game_state.get_goalie_id())
         self.update_formation()
         self.set_special_roles()
         self.update_subbehaviors_settings()
