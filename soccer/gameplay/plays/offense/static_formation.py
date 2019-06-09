@@ -4,6 +4,7 @@ import behavior
 import constants
 import enum
 import random
+import numpy as np
 
 import standard_play
 import evaluation.ball
@@ -13,6 +14,10 @@ import skills.move
 import skills.capture
 from tactics.positions.goalie import Goalie
 
+def copy_function(f, name=None):
+    return types.FunctionType(f.func_code, f.func_globals, name or f.func_name,
+                f.func_defaults, f.func_closure)
+
 
 class StaticFormation(standard_play.StandardPlay):
     # Contains the target robot position, move subehavior
@@ -21,8 +26,13 @@ class StaticFormation(standard_play.StandardPlay):
     # TODO: Think about just returning the controller robot position instead of the target robot position
     # Or just when doing which robot has ball, use the real robot positions
     class FormationPosition():
+
+
         def __init__(self, relative_pos, name, formation_center, formation_half_width, formation_half_length):
             # Relative position inside formation
+            class PositionMove(skills.move.Move):
+                pass
+
             self.relative_pos = relative_pos
 
             self.formation_center = formation_center
@@ -38,7 +48,9 @@ class StaticFormation(standard_play.StandardPlay):
             self.name = name
             self.priority = 10
             self.required = True
-            self.move_behavior = skills.move.Move(self.target_pos)
+            self.move_skill = PositionMove
+            self.move_skill.__name__ = 'Move_{}'.format(name)
+            self.move_behavior = self.move_skill(self.target_pos)
 
         def update_target_pos(self):
             offset_in_formation = robocup.Point(self.relative_pos.x * self.formation_half_width,
@@ -303,6 +315,19 @@ class StaticFormation(standard_play.StandardPlay):
 
     ###########################################################################
     ######                                                               ######
+    ######                       Debug Functions                       ######
+    ######                                                               ######
+    ###########################################################################
+
+    def draw_actual_center(self):
+        positions = [robot.pos for robot in main.system_state().our_robots if robot.shell_id!=self.goalie.shell_id and robot.visible]
+        actual_center = robocup.Point(np.mean([pos.x for pos in positions]), np.mean([pos.y for pos in positions]))
+        main.system_state().draw_circle(actual_center, .2, (0,0,0),"")
+        #print(actual_center)
+
+
+    ###########################################################################
+    ######                                                               ######
     ######                       Scoring Functions                       ######
     ######                                                               ######
     ###########################################################################
@@ -423,6 +448,7 @@ class StaticFormation(standard_play.StandardPlay):
     def execute_running(self):
         self.update_formation_center()
         main.system_state().draw_circle(self.formation_center,.2,(255,255,255), "FORMATION CENTER")
+        self.draw_actual_center()
         #print(_game_state.get_goalie_id())
         self.update_formation()
         self.set_special_roles()
