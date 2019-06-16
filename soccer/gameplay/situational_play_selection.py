@@ -32,7 +32,7 @@ class SituationalPlaySelector:
             midfield_pile_up = 18 #Plays to handle a pile up in the midfield
             defensive_pile_up = 19 #Plays to handle a pile up on our side of the field
             midfield_defend_clear = 20 #Plays to defend a clear when the ball is in the midfield
-       
+      
 
     def __init__(self):
         print("Don't make an instance of this class you bafoon!") 
@@ -83,7 +83,6 @@ class SituationalPlaySelector:
         cls.ballLocation = cls.locationUpdate()
         cls.ballPossessionUpdate()
         printPoint1 = robocup.Point(0,0)
-        print(cls.getCurrentSituations())
         #cls.systemState.draw_text(str(cls.getCurrentSituations()[0]), printPoint1, (0,0,0),"hat")
 
     #It would be interesting to evaluate characteristics about our enemy
@@ -213,19 +212,24 @@ class SituationalPlaySelector:
     #Returns true if our robot is closest to the ball
     @classmethod
     def ourRobotClosest(cls):
-        closestRobot = cls.closestRobot()[0]
-        return closestRobot.is_ours
+        return cls.closestRobot()[0].is_ours()
 
 
     #Returns the robot that last had the ball and how long it was since they had the ball
     @classmethod
-    def hadBallLast(cls):
-        pass
+    def hadBallLast(cls): 
+        for g in cls.activeRobots:
+           pass 
+
+        return (lastBot, timeSince, posTime)
 
     #Returns true if we had the ball last
     @classmethod
     def weHadBallLast(cls):
-        pass
+        if(hadBallLast()[0].is_ours()):
+            return True
+        else:
+            return False
 
     @classmethod
     def updatePileup(cls):
@@ -316,6 +320,7 @@ class SituationalPlaySelector:
 
             cls.hasBall[g] = hasBall
 
+
             #cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0.3,0,0),"hat")
             #cls.systemState.draw_text(str(cls.possesses_the_ball(cls.systemState.ball.pos,g)), printPoint, (0.3,0,0),"hat")
             if(cls.hasBall[g]):
@@ -361,6 +366,7 @@ class SituationalPlaySelector:
         cls.ourBall = False
         cls.theirBall = False
         cls.freeBall = False
+
 
         thresh = 0.3
 
