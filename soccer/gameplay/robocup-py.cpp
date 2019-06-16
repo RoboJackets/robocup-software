@@ -800,7 +800,13 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
         .def("is_our_restart", &GameState::isOurRestart)
         .def("get_ball_placement_point", &GameState::getBallPlacementPoint)
-        .def("get_goalie_id", &GameState::getGoalieId);
+        .def("get_goalie_id", &GameState::getGoalieId)
+        .def("is_first_half", &GameState::isFirstHalf)
+        .def("is_second_half", &GameState::isSecondHalf)
+        .def("is_halftime", &GameState::isHalftime)
+        .def("is_overtime1", &GameState::isOvertime1)
+        .def("is_overtime2", &GameState::isOvertime2)
+        .def("is_penalty_shootout", &GameState::isPenaltyShootout);
 
     class_<Robot>("Robot", init<int, bool>())
         .def("shell_id", &Robot::shell)
