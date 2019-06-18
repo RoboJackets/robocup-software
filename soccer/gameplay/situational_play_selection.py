@@ -32,7 +32,10 @@ class SituationalPlaySelector:
             midfield_pile_up = 18 #Plays to handle a pile up in the midfield
             defensive_pile_up = 19 #Plays to handle a pile up on our side of the field
             midfield_defend_clear = 20 #Plays to defend a clear when the ball is in the midfield
-      
+            shootout = 21 #Plays for making shootout shots
+            defend_shootout = 22 #Plays for defending shootout shots
+            penalty = 23 #Plays for making penalty shots
+            defend_penalty = 24 #Plays for defending penalty shots
 
     def __init__(self):
         print("Don't make an instance of this class you bafoon!") 
@@ -187,6 +190,27 @@ class SituationalPlaySelector:
     ballDist = dict()
 
 
+    lastSituation = None
+    situationChangeTime = None
+    playPreemptTime = 0.20 #The time after a situation changes before preempting the current play
+    currentPreempt = False #If we are preempting the current play
+
+    #Update determining if we want to preempt the current play or not 
+    def updatePreempt():
+        pass
+
+    #def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
+    # for g in states
+    #    .add_transition(g -> completed , preemptPlay)
+    #
+    #You will also need to make sure you delete all subbehaviors on enter_completed in the play
+
+    #A function to determine if the currently running play should be preempted
+    @classmethod
+    def preemptPlay():
+        return currentPreempt
+
+
     @classmethod
     def ballToRobotDist(cls, robot):
         return math.sqrt((robot.pos.x - cls.systemState.ball.pos.x)**2 + (robot.pos.y -  cls.systemState.ball.pos.y)**2)
@@ -194,12 +218,10 @@ class SituationalPlaySelector:
 
     #Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
     @classmethod
-    def closestRobot(cls):
-       
+    def closestRobot(cls): 
         closestRobot = None
         closestRobotDistance = 0.0
         ballLocation = cls.systemState.ball.pos
-
         for g in cls.activeRobots:
             roboDist = ballToRobotDist(g)
             if(closestRobot == None or roboDist < closestRobotDistance):
@@ -218,8 +240,11 @@ class SituationalPlaySelector:
     #Returns the robot that last had the ball and how long it was since they had the ball
     @classmethod
     def hadBallLast(cls): 
+        lastRobot = None
+        lastRobotTime = 0.0
+        
         for g in cls.activeRobots:
-           pass 
+           if()
 
         return (lastBot, timeSince, posTime)
 
