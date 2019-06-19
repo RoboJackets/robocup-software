@@ -24,22 +24,8 @@ void from_robot_tx_proto(const Packet::Robot& proto_packet, rtp::RobotTxMessage*
 }
 
 void convert_tx_proto_to_rtp(const Packet::RadioTx &proto_packet,
-                             rtp::RobotTxMessage *messages,
-                             int num_robots) {
-    if (proto_packet.robots_size() != num_robots) {
-        std::cerr << "Error: size mismatch in " __FILE__ << std::endl;
-        return;
-    }
-
-    for (int slot = 0; slot < num_robots; slot++) {
-        rtp::RobotTxMessage* msg = messages + slot;
-        if (slot < proto_packet.robots_size()) {
-            from_robot_tx_proto(proto_packet.robots(slot), msg);
-        } else {
-            // Empty slot
-            msg->uid = rtp::INVALID_ROBOT_UID;
-        }
-    }
+                             rtp::RobotTxMessage *messages) {
+    from_robot_tx_proto(proto_packet.robots(0), messages);
 }
 
 Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage &msg) {

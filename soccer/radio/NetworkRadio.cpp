@@ -42,7 +42,7 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
                 &forward_packet_buffer[rtp::HeaderSize]);
 
-        convert_tx_proto_to_rtp(packet, body, Robots_Per_Team);
+        from_robot_tx_proto(packet.robots(robot_idx), body);
 
         // Fetch the IP address
         auto range = _robot_ip_map.left.equal_range(robot_id);
@@ -83,6 +83,9 @@ void NetworkRadio::receivePacket(
 
     rtp::RobotStatusMessage* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
             &_recv_buffer[rtp::HeaderSize]);
+
+
+    _robot_endpoint.port(25566);
 
     // Find out which robot this corresponds to.
     auto ip_iter = _robot_ip_map.right.find(_robot_endpoint);
