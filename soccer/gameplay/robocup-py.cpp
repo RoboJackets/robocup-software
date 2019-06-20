@@ -780,7 +780,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_placement", &GameState::placement)
         .def("is_direct", &GameState::direct)
         .def("is_indirect", &GameState::indirect)
-        .def("is_penalty_shootout", &GameState::isPenaltyShootout);
         .def("is_our_kickoff", &GameState::ourKickoff)
         .def("is_our_penalty", &GameState::ourPenalty)
         .def("is_our_direct", &GameState::ourDirect)
