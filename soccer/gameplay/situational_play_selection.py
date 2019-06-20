@@ -75,7 +75,7 @@ class SituationalPlaySelector:
 
     @classmethod
     def updateAnalysis(cls):
-
+        
         if(not cls.isSetup):
             cls.setupStates()
             cls.isSetup = True
@@ -86,7 +86,9 @@ class SituationalPlaySelector:
         cls.ballLocation = cls.locationUpdate()
         cls.ballPossessionUpdate()
         printPoint1 = robocup.Point(0,0)
-        #cls.systemState.draw_text(str(cls.getCurrentSituations()[0]), printPoint1, (0,0,0),"hat")
+        print(cls.currentSituation.name)
+
+
 
     #It would be interesting to evaluate characteristics about our enemy
     #Like some kind of manuverability/speed characteristic
@@ -158,20 +160,24 @@ class SituationalPlaySelector:
         return 999999
     '''
 
-    #So this was going to be super fancy but for now its very simple, basically just based on the angle
+
     @classmethod
     def ball_recieve_prob(cls, ballPos, ballVel, robot):
         robotx = robot.pos.x
         roboty = robot.pos.y
         
-        if(math.sqrt(ballVel.x**2 + ballVel.y**2) < 0.4):
+        ballSpeed = math.sqrt(ballVel.x**2 + ballVel.y**2)
+
+        if(ballSpeed < 0.4)
             return 0.0
+
+        
 
         robotToBall = [robotx - ballPos.x, roboty - ballPos.y]
         angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]));
-        if(abs(angle) > 90):
-            return 0.0
-        return (1 - abs(angle / 90))**4
+
+        return ballSpeed * cos(angle)
+
 
     #A function that determines if the ball is in the mouth of a given robot
     @staticmethod
@@ -188,7 +194,6 @@ class SituationalPlaySelector:
     posDuration = dict()
     recvProb = dict()
     ballDist = dict()
-
 
     lastSituation = None
     situationChangeTime = None
@@ -244,9 +249,17 @@ class SituationalPlaySelector:
         lastRobotTime = 0.0
         
         for g in cls.activeRobots:
-           if()
+            if(hasBall[g]):
+               return (g, 0.0, abs(time.time() - posChangeTime[g]))
+            timeSincePoss = cls.posChangeTime.get(g ,float("inf"))
+            if(lastRobot == None or timeSincePoss < lastRobotTime):
+                lastRobot = g
+                lastRobotTime = timeSincePoss
 
-        return (lastBot, timeSince, posTime)
+        if(cls.posChangeTime.get(lastRobot, float("inf")) == float("inf")):
+            return (None, None, None)
+
+        return (lastBot, lastRobotTime, posTime)
 
     #Returns true if we had the ball last
     @classmethod
@@ -445,6 +458,9 @@ class SituationalPlaySelector:
 
     @classmethod
     def scoreUpdate(cls):
+
+
+        #I need to add a determination of change and make sure no more than a single situation is triggered
 
         restart = False
         if(cls.gameState.is_our_kickoff()):
