@@ -8,6 +8,7 @@ import math
 import main
 import tactics.coordinated_pass
 import evaluation.passing_positioning
+from enum import Enum
 
 class OurShootoutChip(standard_play.StandardPlay):
 

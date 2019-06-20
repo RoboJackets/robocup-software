@@ -1,3 +1,8 @@
+import standard_play
+import behavior
+import robocup
+import main
+
 # one robot kicks the ball, the others just line up and wait
 class OurShootoutKick(standard_play.StandardPlay):
     def __init__(self):
