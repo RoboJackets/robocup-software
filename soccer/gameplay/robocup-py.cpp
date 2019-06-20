@@ -252,6 +252,40 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
+bool Rect_rect_intersection(Geometry2d::Rect* self,
+                                  Geometry2d::Rect* other) {
+    if (other == nullptr) throw NullArgumentException{"other"};
+    return self->intersects(*other);
+}
+
+boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
+                                                Geometry2d::Segment* segment){
+    if (segment==nullptr) throw NullArgumentException{"segment"};
+    boost::python::list lst;
+    std::tuple<bool, std::vector<Geometry2d::Point> > result = self->intersects(*segment);
+    bool doesIntersect = std::get<0>(result);
+    if (!doesIntersect){
+        return boost::python::object();
+    }
+
+    std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
+    std::vector<Geometry2d::Point>::iterator it;
+    for (it=intersectionPoints.begin(); it!=intersectionPoints.end(); it++){
+        lst.append(*it);
+    }
+    return lst;
+}
+
+boost::python::object Rect_corners(Geometry2d::Rect *self){
+    boost::python::list lst;
+    std::vector<Geometry2d::Point> corners= self->corners();
+    std::vector<Geometry2d::Point>::iterator it;
+    for (it=corners.begin(); it!=corners.end(); it++){
+        lst.append(*it);
+    }
+    return lst;
+}
+
 boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
                                                 Geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException{"line"};
@@ -615,7 +649,7 @@ boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
 
     return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
-        functionWrapper->f, start, step, minDist, 
+        functionWrapper->f, start, step, minDist,
         reflectionCoeff, expansionCoeff, contractionCoeff, shrinkCoeff,
         maxIterations, maxValue, maxThresh));
 }
@@ -661,6 +695,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("nearly_equals", &Geometry2d::Point::nearlyEquals)
         .staticmethod("direction");
 
+    class_<std::vector<Geometry2d::Point>>("vector_Point")
+        .def(vector_indexing_suite<std::vector<Geometry2d::Point>>());
+
     class_<Geometry2d::Line, Geometry2d::Line*>(
         "Line", init<Geometry2d::Point, Geometry2d::Point>())
         .def("delta", &Geometry2d::Line::delta)
@@ -695,8 +732,11 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("min_y", &Geometry2d::Rect::miny)
         .def("max_x", &Geometry2d::Rect::maxx)
         .def("max_y", &Geometry2d::Rect::maxy)
+        .def("corners", &Rect_corners)
+        .def("pad", &Geometry2d::Rect::pad)
         .def("near_point", &Geometry2d::Rect::nearPoint)
-        .def("intersects_rect", &Geometry2d::Rect::intersects)
+        .def("rect_intersection", &Rect_rect_intersection)
+        .def("segment_intersection", &Rect_segment_intersection)
         .def("contains_point", &Geometry2d::Rect::containsPoint)
         .def("get_pt", &Rect_get_pt,
              return_value_policy<reference_existing_object>());
@@ -740,6 +780,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_placement", &GameState::placement)
         .def("is_direct", &GameState::direct)
         .def("is_indirect", &GameState::indirect)
+        .def("is_penalty_shootout", &GameState::isPenaltyShootout);
         .def("is_our_kickoff", &GameState::ourKickoff)
         .def("is_our_penalty", &GameState::ourPenalty)
         .def("is_our_direct", &GameState::ourDirect)
@@ -760,7 +801,12 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
         .def("is_our_restart", &GameState::isOurRestart)
         .def("get_ball_placement_point", &GameState::getBallPlacementPoint)
-        .def("get_goalie_id", &GameState::getGoalieId);
+        .def("get_goalie_id", &GameState::getGoalieId)
+        .def("is_first_half", &GameState::isFirstHalf)
+        .def("is_second_half", &GameState::isSecondHalf)
+        .def("is_halftime", &GameState::isHalftime)
+        .def("is_overtime1", &GameState::isOvertime1)
+        .def("is_overtime2", &GameState::isOvertime2)
 
     class_<Robot>("Robot", init<int, bool>())
         .def("shell_id", &Robot::shell)
@@ -867,6 +913,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc);
 
     class_<Field_Dimensions>("Field_Dimensions")
+        .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
         .add_property("Border", &Field_Dimensions::Border)
