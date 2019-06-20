@@ -807,6 +807,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_halftime", &GameState::isHalftime)
         .def("is_overtime1", &GameState::isOvertime1)
         .def("is_overtime2", &GameState::isOvertime2)
+        .def("is_penalty_shootout", &GameState::isPenaltyShootout);
 
     class_<Robot>("Robot", init<int, bool>())
         .def("shell_id", &Robot::shell)

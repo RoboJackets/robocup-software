@@ -167,16 +167,17 @@ class SituationalPlaySelector:
         roboty = robot.pos.y
         
         ballSpeed = math.sqrt(ballVel.x**2 + ballVel.y**2)
-
-        if(ballSpeed < 0.4)
+        
+        if(ballSpeed < 0.4):
             return 0.0
 
-        
+        robotToBall = [robotx - ballPos.x, roboty - ballPos.y] 
+        ballDist = math.sqrt(robotToBall[0]**2 + robotToBall[1]**2)
+        angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]))
+       
+        return 0.0
 
-        robotToBall = [robotx - ballPos.x, roboty - ballPos.y]
-        angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]));
 
-        return ballSpeed * cos(angle)
 
 
     #A function that determines if the ball is in the mouth of a given robot
