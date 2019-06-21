@@ -10,6 +10,7 @@ import constants
 class SituationalPlaySelector:
 
 
+    #Enum for representing the current game situation, each of which acts as a catagory of play to be run
     class situation(Enum):
             none = 0
             kickoff = 1 #Plays that can perform our kickoff
@@ -37,23 +38,32 @@ class SituationalPlaySelector:
             penalty = 23 #Plays for making penalty shots
             defend_penalty = 24 #Plays for defending penalty shots
 
+    #Enum for representing where the ball is on the field
+    class fieldLoc(Enum):
+        defendSide = 1
+        midfield = 2
+        attackSide = 3
+
+    #Enum for representing the possession of the ball
+    class ballPos(Enum):
+        ourBall = 1
+        freeBall = 2
+        theirBall = 3
+
     def __init__(self):
         print("Don't make an instance of this class you bafoon!") 
         exit() #This is a joke I'll need to remove at some point
 
-    currentSituation = None
-
-    ballPossessionScore = 0.0
+    currentSituation = situation.none
+    currentPossession = ballPos.freeBall
+    ballLocation = fieldLoc.midfield 
+    currentPileup = False
 
     isSetup = False
     gameState = None
     systemState = None
     robotList = list()
     activeRobots = list()
-
-    ballLocation = None
-
-    currentPileup = False
 
     @classmethod
     def setupStates(cls):
@@ -73,6 +83,8 @@ class SituationalPlaySelector:
            if(g.visible):
                cls.activeRobots.append(g)
 
+    #Calls all needed update functions
+    #Needs to be called in main loop to make the module work
     @classmethod
     def updateAnalysis(cls):
         
@@ -82,10 +94,9 @@ class SituationalPlaySelector:
         else:
             cls.updateRobotList()
 
-        cls.scoreUpdate()
         cls.ballLocation = cls.locationUpdate()
         cls.ballPossessionUpdate()
-        printPoint1 = robocup.Point(0,0)
+        cls.situationUpdate()
         print(cls.currentSituation.name)
 
 
@@ -160,6 +171,9 @@ class SituationalPlaySelector:
         return 999999
     '''
 
+    @classmethod
+    def in_ball_path(cls, ballPos, ballVel, robot):
+        pass
 
     @classmethod
     def ball_recieve_prob(cls, ballPos, ballVel, robot):
@@ -171,10 +185,10 @@ class SituationalPlaySelector:
         if(ballSpeed < 0.4):
             return 0.0
 
-        robotToBall = [robotx - ballPos.x, roboty - ballPos.y] 
+        robotToBall = (robotx - ballPos.x, roboty - ballPos.y)
         ballDist = math.sqrt(robotToBall[0]**2 + robotToBall[1]**2)
         angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]))
-       
+        
         return 0.0
 
 
@@ -201,9 +215,19 @@ class SituationalPlaySelector:
     playPreemptTime = 0.20 #The time after a situation changes before preempting the current play
     currentPreempt = False #If we are preempting the current play
 
-    #Update determining if we want to preempt the current play or not 
-    def updatePreempt():
-        pass
+    #Update determining if we want to preempt the current play or not
+    @classmethod
+    def updatePreempt(cls):
+        if(cls.lastSituation != cls.currentSituaion and cls.situationChangeTime == None):
+            cls.situationChangeTime = time.time()
+
+        if(cls.currentPreempt):
+            cls.currentPreempt = False
+        elif(cls.situationChangeTime != None):
+            if(abs(time.time() - cls.situationChangeTime) > cls.playPreemptTime):
+                cls.situationChangeTime = None
+                cls.currentPreempt = True
+                cls.LastSituation = cls.currentSituaion
 
     #def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
     # for g in states
@@ -216,11 +240,9 @@ class SituationalPlaySelector:
     def preemptPlay():
         return currentPreempt
 
-
     @classmethod
     def ballToRobotDist(cls, robot):
         return math.sqrt((robot.pos.x - cls.systemState.ball.pos.x)**2 + (robot.pos.y -  cls.systemState.ball.pos.y)**2)
-
 
     #Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
     @classmethod
@@ -241,6 +263,36 @@ class SituationalPlaySelector:
     @classmethod
     def ourRobotClosest(cls):
         return cls.closestRobot()[0].is_ours()
+
+    #Returns a tuple of the distance from the ball of our closest robot and our opponents closest robot
+    #(our distance, theirDistance)
+    @classmethod
+    def bothTeamsClosest(cls):
+        ourClosest = None
+        ourClosestDist = 0.0
+        theirClosest = None
+        theirClosestDist = 0.0 
+
+        ballLocation = cls.systemState.ball.pos
+
+        for g in cls.activeRobots:
+            roboDist = ballToRobotDist(g)
+            if(g.is_ours()):
+                if(ourClosest == None or roboDist < ourClosestDist):
+                    ourClosest = g
+                    ourClosestDist = roboDist
+            else: 
+                if(theirClosest == None or roboDist < theirClosestDist):
+                    theirClosest = g
+                    theirClosestDist = roboDist
+
+        return (ourClosestDist, theirClosestDist)
+   
+    #Returns the ratio of our closest distance to the ball and the opponents closest distance to the ball
+    @classmethod
+    def ballClosenessRatio(cls):
+        distances = cls.bothTeamsClosest()
+        return distances[0] / distances[1]
 
 
     #Returns the robot that last had the ball and how long it was since they had the ball
@@ -321,8 +373,8 @@ class SituationalPlaySelector:
 
     @classmethod
     def isPileup(cls):
-        botsNearBall = nearBallCount()
-        botsWithBall = withBallCount()
+        botsNearBall = cls.nearBallCount()
+        botsWithBall = cls.withBallCount()
         totalNearBall = sum(botsNearBall)
         totalWithBall = sum(botsWithBall)
 
@@ -338,10 +390,10 @@ class SituationalPlaySelector:
     def ballPossessionUpdate(cls):
 
         for g in cls.activeRobots:
-            printPoint1 = robocup.Point(g.pos.x + 0.1, g.pos.y)
-            printPoint2 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.12)
-            printPoint3 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.24)
-            printPoint4 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.36)
+            #printPoint1 = robocup.Point(g.pos.x + 0.1, g.pos.y)
+            #printPoint2 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.12)
+            #printPoint3 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.24)
+            #printPoint4 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.36)
 
             hasBall = cls.possesses_the_ball(cls.systemState.ball.pos,g)
 
@@ -359,28 +411,50 @@ class SituationalPlaySelector:
 
             cls.hasBall[g] = hasBall
 
-
             #cls.systemState.draw_text(str(round(cls.ball_recieve_prob(cls.systemState.ball.pos,cls.systemState.ball.vel,g), 3)), g.pos, (0.3,0,0),"hat")
             #cls.systemState.draw_text(str(cls.possesses_the_ball(cls.systemState.ball.pos,g)), printPoint, (0.3,0,0),"hat")
-            if(cls.hasBall[g]):
-                cls.systemState.draw_text(str(abs(time.time() - cls.posChangeTime[g])), printPoint1, (0,0,0),"hat")
+            #if(cls.hasBall[g]):
+            #    cls.systemState.draw_text(str(abs(time.time() - cls.posChangeTime[g])), printPoint1, (0,0,0),"hat")
+            #else:
+            #    cls.systemState.draw_text("N/A", printPoint1, (0,0,0),"hat")
+
+            #try:
+            #    cls.systemState.draw_text(str(round(cls.posDuration[g],3)), printPoint2, (0,0,0),"hat")
+            #except:
+            #    cls.systemState.draw_text("N/A", printPoint2, (0,0,0),"hat")
+
+            #cls.recvProb[g] = cls.ball_recieve_prob(cls.systemState.ball.pos, cls.systemState.ball.vel, g)
+
+            #cls.systemState.draw_text(str(round(cls.recvProb[g],3)), printPoint3, (0,0,0), "hat")
+
+            #try:
+            #    cls.systemState.draw_text(str(round(abs(cls.posChangeTime[g] - time.time()),3)), printPoint4, (0,0,0), "hat")
+            #except:
+            #    pass
+
+        if(cls.isPileup()):
+            cls.currentPossession = cls.ballPos.freeBall
+            return None
+
+        ballPossessionDurationThreshold = 0.1
+        botsWithBall = cls.robotsWithBall()
+        if(len(botsWithBall) == 1 and abs(cls.possessionChangeTime[botsWithBall[0]] - time.time()) > ballPossessionDurationThreshold):
+            if(botsWithBall[0].is_ours()):
+                cls.currentPossession = cls.ballPos.ourBall
             else:
-                cls.systemState.draw_text("N/A", printPoint1, (0,0,0),"hat")
+                cls.currentPossession = cls.ballPos.theirBall
+            return None
 
-            try:
-                cls.systemState.draw_text(str(round(cls.posDuration[g],3)), printPoint2, (0,0,0),"hat")
-            except:
-                cls.systemState.draw_text("N/A", printPoint2, (0,0,0),"hat")
+        ballRatioFactor = 6.0
+        ballDistRatio = cls.ballClosenessRatio()
+        if(ballDistRatio > ballRatioFactor):
+            cls.currentPossession = cls.ballPos.theirBall
+            return None
+        if(ballDistRatio < (1.0 / ballRatioFactor)):
+            cls.currentPossession = cls.ballPos.ourBall
+            return None
 
-            cls.recvProb[g] = cls.ball_recieve_prob(cls.systemState.ball.pos, cls.systemState.ball.vel, g)
-
-            cls.systemState.draw_text(str(round(cls.recvProb[g],3)), printPoint3, (0,0,0), "hat")
-
-            try:
-                cls.systemState.draw_text(str(round(abs(cls.posChangeTime[g] - time.time()),3)), printPoint4, (0,0,0), "hat")
-            except:
-                pass
-
+        '''
         ourScore = 0.0
         theirScore = 0.0
 
@@ -401,12 +475,7 @@ class SituationalPlaySelector:
                 theirScore += cls.recvProb.get(g,0) * 15
 
         cls.ballPossessionScore = ourScore - theirScore
-
-        cls.ourBall = False
-        cls.theirBall = False
-        cls.freeBall = False
-
-
+        
         thresh = 0.3
 
         if(cls.ballPossessionScore > thresh):
@@ -415,18 +484,9 @@ class SituationalPlaySelector:
             cls.theirBall = True
         else:
             cls.freeBall = True
-
+        '''
     
-    class fieldLoc(Enum):
-        defendSide = 1
-        midfield = 2
-        attackSide = 3
-
-    class ballPos(Enum):
-        ourBall = 1
-        freeBall = 2
-        theirBall = 3
-
+    
     @classmethod
     def locationUpdate(cls):
         #This will basically just figure out what part of the field the ball is in.
@@ -458,12 +518,10 @@ class SituationalPlaySelector:
         cls.currentSituation = cls.situation.none
 
     @classmethod
-    def scoreUpdate(cls):
-
+    def situationUpdate(cls):
 
         #I need to add a determination of change and make sure no more than a single situation is triggered
 
-        restart = False
         if(cls.gameState.is_our_kickoff()):
             cls.currentSituation = cls.situation.kickoff
         if(cls.gameState.is_our_penalty()):
