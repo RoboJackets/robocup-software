@@ -97,7 +97,7 @@ class SituationalPlaySelector:
         cls.ballLocation = cls.locationUpdate()
         cls.ballPossessionUpdate()
         cls.situationUpdate()
-        print(cls.currentSituation.name)
+        #print(cls.currentPossession.name)
 
 
 
@@ -171,25 +171,59 @@ class SituationalPlaySelector:
         return 999999
     '''
 
-    @classmethod
-    def in_ball_path(cls, ballPos, ballVel, robot):
-        pass
 
+
+
+    #These two functions are really a mess, its kind of bad
     @classmethod
-    def ball_recieve_prob(cls, ballPos, ballVel, robot):
+    def in_ball_path(cls):
+        ingress_info = dict()
+        robotsInBallPath = list()
+        for g in cls.activeRobots:
+            ingress_info[g] = cls.ball_ingress(cls.systemState.ball.pos, cls.systemState.ball.vel, g)
+            if(abs(ingress_info.get(g, (0,0,0,999))[3]) < 8):
+                robotsInBallPath.append(g)
+       
+        print(robotsInBallPath)
+        return robotsInBallPath
+        if(ingress_info[cls.activeRobots[0]] != None):
+            toPrint = ingress_info[cls.activeRobots[0]][0]
+            if(toPrint != None):
+                print(toPrint)
+
+    #Second mess function
+    @classmethod
+    def ball_ingress(cls, ballPos, ballVel, robot):
         robotx = robot.pos.x
         roboty = robot.pos.y
         
         ballSpeed = math.sqrt(ballVel.x**2 + ballVel.y**2)
+        if(ballSpeed < 0.15):
+            return (None, None, None, None)
         
-        if(ballSpeed < 0.4):
-            return 0.0
-
         robotToBall = (robotx - ballPos.x, roboty - ballPos.y)
+        
         ballDist = math.sqrt(robotToBall[0]**2 + robotToBall[1]**2)
         angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]))
+
+        if(abs(angle) > 100):
+            return (None, None, None, None)
+       
+        robotToBallDOTBallVel = robotToBall[0] * ballVel.x + robotToBall[1] * ballVel.y
+        scalar = robotToBallDOTBallVel / (ballSpeed**2)
+        robotOntoVelocity = (scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
+        projectedToRobot = (robotOntoVelocity[0] - robotToBall[0], robotOntoVelocity[1] - robotToBall[1]) #The vector from the projected vector to the robots position
         
-        return 0.0
+        distanceFromPath = math.sqrt(projectedToRobot[0]**2 +  projectedToRobot[1]**2) 
+        interceptDistance = math.sqrt(robotOntoVelocity[0]**2 + robotOntoVelocity[1]**2)
+
+        return (distanceFromPath, interceptDistance, ballSpeed, angle)
+
+
+    @classmethod
+    def closestReciever(cls):
+        botsInPath = cls.in_ball_path()
+
 
 
 
@@ -215,6 +249,32 @@ class SituationalPlaySelector:
     playPreemptTime = 0.20 #The time after a situation changes before preempting the current play
     currentPreempt = False #If we are preempting the current play
 
+
+
+    @classmethod
+    def isFreeBall(cls):
+        return cls.currentPossession == cls.ballPos.freeBall
+
+    @classmethod
+    def isOurBall(cls):
+        return cls.currentPossession == cls.ballPos.ourBall
+
+    @classmethod
+    def isTheirBall(cls):
+        return cls.currentPossession == cls.ballPos.theirBall
+
+    @classmethod
+    def isAttackSide(cls):
+        return cls.ballLocation == cls.fieldLoc.attackSide
+
+    @classmethod
+    def isDefendSide(cls):
+        return cls.ballLocation == cls.fieldLoc.defendSide
+
+    @classmethod
+    def isMidfield(cls):
+        return cls.ballLocation == cls.fieldLoc.midfield
+
     #Update determining if we want to preempt the current play or not
     @classmethod
     def updatePreempt(cls):
@@ -230,8 +290,8 @@ class SituationalPlaySelector:
                 cls.LastSituation = cls.currentSituaion
 
     #def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
-    # for g in states
-    #    .add_transition(g -> completed , preemptPlay)
+    # for g in states:
+    #    play.add_transition(g -> completed , preemptPlay)
     #
     #You will also need to make sure you delete all subbehaviors on enter_completed in the play
 
@@ -276,7 +336,7 @@ class SituationalPlaySelector:
         ballLocation = cls.systemState.ball.pos
 
         for g in cls.activeRobots:
-            roboDist = ballToRobotDist(g)
+            roboDist = cls.ballToRobotDist(g)
             if(g.is_ours()):
                 if(ourClosest == None or roboDist < ourClosestDist):
                     ourClosest = g
@@ -331,7 +391,7 @@ class SituationalPlaySelector:
         robotsWithTheBall = list()
 
         for g in cls.activeRobots:
-            if(cls.hasBall(g)):
+            if(cls.hasBall.get(g, False)):
                 robotsWithTheBall.append(g)
 
         return robotsWithTheBall
@@ -340,7 +400,7 @@ class SituationalPlaySelector:
     def withBallCount(cls):
         ourBots = 0
         theirBots = 0
-        for g in robotsWithTheBall():
+        for g in cls.robotsWithTheBall():
             if(g.is_ours()):
                 ourBots += 1
             else:
@@ -436,9 +496,10 @@ class SituationalPlaySelector:
             cls.currentPossession = cls.ballPos.freeBall
             return None
 
-        ballPossessionDurationThreshold = 0.1
-        botsWithBall = cls.robotsWithBall()
-        if(len(botsWithBall) == 1 and abs(cls.possessionChangeTime[botsWithBall[0]] - time.time()) > ballPossessionDurationThreshold):
+        ballPossessionDurationThreshold = 0.07
+        botsWithBall = cls.robotsWithTheBall()
+        if(len(botsWithBall) == 1 and abs(cls.posChangeTime[botsWithBall[0]] - time.time()) > ballPossessionDurationThreshold):
+            #print(abs(cls.posChangeTime[botsWithBall[0]] - time.time())) 
             if(botsWithBall[0].is_ours()):
                 cls.currentPossession = cls.ballPos.ourBall
             else:
@@ -447,12 +508,19 @@ class SituationalPlaySelector:
 
         ballRatioFactor = 6.0
         ballDistRatio = cls.ballClosenessRatio()
+        #print(ballDistRatio)
         if(ballDistRatio > ballRatioFactor):
             cls.currentPossession = cls.ballPos.theirBall
             return None
         if(ballDistRatio < (1.0 / ballRatioFactor)):
             cls.currentPossession = cls.ballPos.ourBall
             return None
+
+
+        cls.currentPossession = cls.ballPos.freeBall
+    
+        a = cls.in_ball_path()
+        
 
         '''
         ourScore = 0.0
@@ -520,64 +588,61 @@ class SituationalPlaySelector:
     @classmethod
     def situationUpdate(cls):
 
-        #I need to add a determination of change and make sure no more than a single situation is triggered
-
         if(cls.gameState.is_our_kickoff()):
             cls.currentSituation = cls.situation.kickoff
-        if(cls.gameState.is_our_penalty()):
+        elif(cls.gameState.is_our_penalty()):
             pass
-        if(cls.gameState.is_our_direct()):
+        elif(cls.gameState.is_our_direct()):
             cls.currentSituation = cls.situation.direct_kick
-        if(cls.gameState.is_our_indirect()):
+        elif(cls.gameState.is_our_indirect()):
             cls.currentSituation = cls.situation.indirect_kick
-        if(cls.gameState.is_our_free_kick()):
+        elif(False and cls.gameState.is_our_free_kick()):
             pass
-        if(cls.gameState.is_their_kickoff()):
+        elif(cls.gameState.is_their_kickoff()):
             cls.currentSituation = cls.situation.defend_restart_defensive
-        if(cls.gameState.is_their_penalty()):
+        elif(False and cls.gameState.is_their_penalty()):
             pass 
-        if(cls.gameState.is_their_direct() or cls.gameState.is_their_indirect()):
+        elif(cls.gameState.is_their_direct() or cls.gameState.is_their_indirect()):
             if(cls.ballLocation == cls.fieldLoc.defendSide):
                 cls.currentSituation = cls.situation.defend_restart_defensive
             elif(cls.ballLocation == cls.fieldLoc.attackSide):
                 cls.currentSituation = cls.situation.defend_restart_offensive
             elif(cls.ballLocation == cls.fieldLoc.midfield):
                 cls.currentSituation = cls.situation.defend_restart_midfield
-        if(cls.gameState.is_their_free_kick()):
+        elif(False and cls.gameState.is_their_free_kick()):
             pass
-
-        if(cls.ballLocation == cls.fieldLoc.defendSide):
+        elif(cls.isDefendSide()):
             if(cls.currentPileup):
                 cls.currentSituation = cls.situation.defensive_pileup
-            elif(cls.freeBall):
+            elif(cls.isFreeBall()):
                 cls.currentSituation = cls.situation.defensive_scramble
-            elif(cls.ourBall):
+            elif(cls.isOurBall()):
                 cls.currentSituation = cls.situation.clear
-            elif(cls.theirBall):
+            elif(cls.isTheirBall):
                 cls.currentSituation = cls.situation.defend_goal
             else:
                 print("Situation analysis has done broke")
         
-        elif(cls.ballLocation == cls.fieldLoc.attackSide):
+        elif(cls.isAttackSide()):
             if(cls.currentPileup):
                 cls.currentSituation = cls.situation.offensive_pileup
-            elif(cls.freeBall):
+            elif(cls.isFreeBall()):
                 cls.currentSituation = cls.situation.offensive_scramble
-            elif(cls.ourBall):
+            elif(cls.isOurBall()):
                 cls.currentSituation = cls.situation.attack_goal
-            elif(cls.theirBall):
+            elif(cls.isTheirBall()):
                 cls.currentSituation = cls.situation.defend_clear
             else:
                 print("Situation analysis has done broke")
         
-        elif(cls.ballLocation == cls.fieldLoc.midfield):
+        elif(cls.isMidfield()):
             if(cls.currentPileup):
                 cls.currentSituation = cls.situation.midfield_pileup
-            elif(cls.freeBall):
+            elif(cls.isFreeBall()):
                 cls.currentSituation = cls.situation.midfield_scramble
-            elif(cls.ourBall):
+            elif(cls.isOurBall()):
                 cls.currentSituation = cls.situation.midfield_clear
-            elif(cls.theirBall):
+            elif(cls.isTheirBall()):
                 cls.currentSituation = cls.situation.midfield_defend_clear
             else:
                 print("Situation analysis has done broke")
