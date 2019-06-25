@@ -3,6 +3,7 @@
 #include "TuningPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "LineKickPlanner.hpp"
+#include "InterceptPlanner.hpp"
 //#include "PivotPathPlanner.hpp"
 //#include "RRTPlanner.hpp"
 #include "SettlePathPlanner.hpp"
@@ -56,6 +57,9 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             break;
         case MotionCommand::LineKick:
             planner = new LineKickPlanner();
+            break;
+        case MotionCommand::Intercept:
+            planner = new InterceptPlanner();
             break;
         case MotionCommand::None:
             planner = new EscapeObstaclesPathPlanner();

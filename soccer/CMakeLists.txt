@@ -35,6 +35,7 @@ set(ROBOCUP_LIB_SRC
     "planning/EscapeObstaclesPathPlanner.cpp"
     "planning/InterpolatedPath.cpp"
     "planning/IndependentMultiRobotPathPlanner.cpp"
+    "planning/InterceptPlanner.cpp"
     "planning/MotionConstraints.cpp"
     "planning/RotationConstraints.cpp"
     "planning/Path.cpp"

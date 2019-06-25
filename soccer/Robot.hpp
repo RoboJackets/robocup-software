@@ -211,6 +211,14 @@ public:
     void lineKick(Geometry2d::Point target);
 
     /**
+     * Intercept the ball as quickly as possible
+     * May just slam into the ball if it does not have time to stop 
+     * 
+     * @param target - The target position to intercept the ball at
+     */
+    void intercept(Geometry2d::Point target);
+
+    /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path

@@ -840,6 +840,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)
         .def("line_kick", &OurRobot::lineKick)
+        .def("intercept", &OurRobot::intercept)
         .def("set_planning_priority", &OurRobot::setPlanningPriority)
         .def("set_max_angle_speed", OurRobot_set_max_angle_speed)
         .def("set_max_speed", OurRobot_set_max_speed)
