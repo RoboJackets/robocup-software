@@ -206,6 +206,18 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
               << ")" << endl;
 }
 
+void OurRobot::settle(boost::optional<Point> target) {
+    if (!visible) return;
+
+    _motionCommand = std::make_unique<Planning::SettleCommand>(target);
+}
+
+void OurRobot::collect() {
+    if (!visible) return;
+
+    _motionCommand = std::make_unique<Planning::CollectCommand>();
+}
+
 void OurRobot::lineKick(Point target) {
     if (!visible) return;
 

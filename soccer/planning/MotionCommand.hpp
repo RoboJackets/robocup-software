@@ -16,10 +16,12 @@ class MotionCommand {
 public:
     enum CommandType {
         PathTarget,
-        WorldVel,
-        Pivot,
         DirectPathTarget,
         TuningPath,
+        Pivot,
+        WorldVel,
+        Settle,
+        Collect,
         LineKick,
         None
     };
@@ -61,6 +63,7 @@ struct WorldVelTargetCommand : public MotionCommand {
     }
     const Geometry2d::Point worldVel;
 };
+
 struct PivotCommand : public MotionCommand {
     explicit PivotCommand(Geometry2d::Point pivotPoint,
                           Geometry2d::Point target, float radius)
@@ -94,6 +97,23 @@ struct TuningPathCommand : public MotionCommand {
     explicit TuningPathCommand(const MotionInstant& goal)
         : MotionCommand(MotionCommand::TuningPath), pathGoal(goal){};
     const MotionInstant pathGoal;
+};
+
+struct SettleCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<SettleCommand>(*this);
+    }
+    explicit SettleCommand(boost::optional<Geometry2d::Point> target)
+        : MotionCommand(MotionCommand::Settle), target(target){};
+    const boost::optional<Geometry2d::Point> target;
+};
+
+struct CollectCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<CollectCommand>(*this);
+    }
+    explicit CollectCommand()
+        : MotionCommand(MotionCommand::Collect) {};
 };
 
 struct LineKickCommand : public MotionCommand {

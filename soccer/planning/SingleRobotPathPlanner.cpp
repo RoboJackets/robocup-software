@@ -5,8 +5,8 @@
 #include "LineKickPlanner.hpp"
 //#include "PivotPathPlanner.hpp"
 //#include "RRTPlanner.hpp"
-//#include "TargetVelPathPlanner.hpp"
-//#include "TargetVelPathPlanner.hpp"
+#include "SettlePathPlanner.hpp"
+#include "CollectPathPlanner.hpp"
 #include "PivotPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
@@ -47,6 +47,12 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
             break;
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
+            break;
+        case MotionCommand::Settle:
+            planner = new SettlePathPlanner();
+            break;
+        case MotionCommand::Collect:
+            planner = new CollectPathPlanner();
             break;
         case MotionCommand::LineKick:
             planner = new LineKickPlanner();
