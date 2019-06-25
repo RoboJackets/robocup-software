@@ -181,15 +181,15 @@ class SituationalPlaySelector:
         robotsInBallPath = list()
         for g in cls.activeRobots:
             ingress_info[g] = cls.ball_ingress(cls.systemState.ball.pos, cls.systemState.ball.vel, g)
-            if(abs(ingress_info.get(g, (0,0,0,999))[3]) < 8):
+            if(ingress_info[g] != None and ingress_info[g][0] != None and abs(ingress_info.get(g)[3]) < 8):
                 robotsInBallPath.append(g)
        
         print(robotsInBallPath)
         return robotsInBallPath
-        if(ingress_info[cls.activeRobots[0]] != None):
+        '''if(ingress_info[cls.activeRobots[0]] != None):
             toPrint = ingress_info[cls.activeRobots[0]][0]
             if(toPrint != None):
-                print(toPrint)
+                print(toPrint)'''
 
     #Second mess function
     @classmethod
@@ -223,10 +223,20 @@ class SituationalPlaySelector:
     @classmethod
     def closestReciever(cls):
         botsInPath = cls.in_ball_path()
+        if(len(botsInPath) == 0):
+            return None
+        closestRobot = None
+        closestRobotDistance = 0.0
+        ballLocation = cls.systemState.ball.pos
+        for g in botsInPath:
+            roboDist = ballToRobotDist(g)
+            if(closestRobot == None or roboDist < closestRobotDistance):
+                closestRobot = g
+                closestRobotDistance = roboDist
 
+        return (closestRobot, closestRobotDistance)
 
-
-
+        
 
     #A function that determines if the ball is in the mouth of a given robot
     @staticmethod
