@@ -206,12 +206,32 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
               << ")" << endl;
 }
 
+void OurRobot::settle(boost::optional<Point> target) {
+    if (!visible) return;
+
+    _motionCommand = std::make_unique<Planning::SettleCommand>(target);
+}
+
+void OurRobot::collect() {
+    if (!visible) return;
+
+    _motionCommand = std::make_unique<Planning::CollectCommand>();
+}
+
 void OurRobot::lineKick(Point target) {
     if (!visible) return;
 
     disableAvoidBall();
     _motionCommand =
-        std::make_unique<Planning::LineKickCommand>(std::move(target));
+        std::make_unique<Planning::LineKickCommand>(target);
+}
+
+void OurRobot::intercept(Point target) {
+    if (!visible) return;
+
+    disableAvoidBall();
+    _motionCommand =
+        std::make_unique<Planning::InterceptCommand>(target);
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {

@@ -40,7 +40,7 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
                 self.target_pos = self.ball_line().nearest_point(
                     self.robot.pos)
 
-            self.robot.move_to_direct(self.target_pos)
+            self.robot.intercept(self.target_pos)
 
             if self.faceBall:
                 self.robot.face(main.ball().pos)

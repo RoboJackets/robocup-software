@@ -16,11 +16,14 @@ class MotionCommand {
 public:
     enum CommandType {
         PathTarget,
-        WorldVel,
-        Pivot,
         DirectPathTarget,
         TuningPath,
+        Pivot,
+        WorldVel,
+        Settle,
+        Collect,
         LineKick,
+        Intercept,
         None
     };
     virtual ~MotionCommand() = default;
@@ -61,6 +64,7 @@ struct WorldVelTargetCommand : public MotionCommand {
     }
     const Geometry2d::Point worldVel;
 };
+
 struct PivotCommand : public MotionCommand {
     explicit PivotCommand(Geometry2d::Point pivotPoint,
                           Geometry2d::Point target, float radius)
@@ -96,12 +100,40 @@ struct TuningPathCommand : public MotionCommand {
     const MotionInstant pathGoal;
 };
 
+struct SettleCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<SettleCommand>(*this);
+    }
+    explicit SettleCommand(boost::optional<Geometry2d::Point> target)
+        : MotionCommand(MotionCommand::Settle), target(target){};
+    const boost::optional<Geometry2d::Point> target;
+};
+
+struct CollectCommand : public MotionCommand {
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<CollectCommand>(*this);
+    }
+    explicit CollectCommand()
+        : MotionCommand(MotionCommand::Collect) {};
+};
+
 struct LineKickCommand : public MotionCommand {
     explicit LineKickCommand(Geometry2d::Point target)
         : MotionCommand(MotionCommand::LineKick), target(target){};
 
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<LineKickCommand>(*this);
+    };
+
+    const Geometry2d::Point target;
+};
+
+struct InterceptCommand : public MotionCommand {
+    explicit InterceptCommand(Geometry2d::Point target)
+        : MotionCommand(MotionCommand::Intercept), target(target){};
+
+    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+        return std::make_unique<InterceptCommand>(*this);
     };
 
     const Geometry2d::Point target;
