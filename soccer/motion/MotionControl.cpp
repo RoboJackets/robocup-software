@@ -21,12 +21,14 @@ REGISTER_CONFIGURABLE(MotionControl);
 ConfigDouble* MotionControl::_max_acceleration;
 ConfigDouble* MotionControl::_max_velocity;
 ConfigDouble* MotionControl::_x_multiplier;
+ConfigDouble* MotionControl::_ff_ang_vel;
 
 void MotionControl::createConfiguration(Configuration* cfg) {
     _max_acceleration =
         new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
     _max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
     _x_multiplier = new ConfigDouble(cfg, "MotionControl/X_Multiplier", 1.0);
+    _ff_ang_vel = new ConfigDouble(cfg, "MotionControl/FeedForward_Ang_Vel", 3.0);
 }
 
 #pragma mark MotionControl
@@ -188,7 +190,7 @@ void MotionControl::run() {
 
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
-    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle + *_ff_ang_vel/60.0*_robot->angleVel);
 
     this->_targetBodyVel(target.vel);
 }
