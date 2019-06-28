@@ -107,6 +107,13 @@ class TheirShootOut(play.Play):
 		segment = constants.Field.OurGoalSegment
 		line = robocup.Line(main.ball().pos, main.their_robots()[0].pos)
 
+		goalie_pos = constants.Field.OurGoalSegment.center()
+		if (self.has_subbehavior_with_name('block')) :
+			block_robot = self.subbehavior_with_name('block').robot
+			if (block_robot != None) :
+				goalie_pos = block_robot.pos
+
+
 		#find the point that the robot is most likely going to shoot at
 		goal_intercept = segment.line_intersection(line)
 
@@ -128,11 +135,11 @@ class TheirShootOut(play.Play):
 		ball_to_goal_segment = robocup.Segment(main.ball().pos, goal_intercept)
 
 		#this is the point to get our robot to block the shot the quickest.
-		fastest_defence = ball_to_goal_segment.nearest_point(main.our_robots()[0].pos)
+		fastest_defence = ball_to_goal_segment.nearest_point(goalie_pos)
 
 		#if robot is blocking the shot already just go to the ideal point otherwise average the vectors
 		#based on the blocking percentage.
-		if (main.our_robots()[0].pos.dist_to(fastest_defence) < (constants.Robot.Radius /4)):
+		if (goalie_pos.dist_to(fastest_defence) < (constants.Robot.Radius /4)):
 			move_to_point = ideal_defence
 		else:
 			move_to_point = robocup.Point((ideal_defence.x * (self.block_percentage)) + (fastest_defence.x * (1 - self.block_percentage)), 

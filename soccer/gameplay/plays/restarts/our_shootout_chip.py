@@ -13,6 +13,7 @@ import evaluation.passing_positioning
 from enum import Enum
 import play
 import time
+import random
 
 class OurShootoutChip(play.Play):
 
@@ -93,7 +94,8 @@ class OurShootoutChip(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+        randomfloat = random.random()
+        return randomfloat if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     def on_enter_starting(self):
         # find the direction from the enemy goal to the ball

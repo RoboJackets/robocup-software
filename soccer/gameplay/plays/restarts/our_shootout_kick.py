@@ -61,7 +61,7 @@ class OurShootoutKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+        return 0.50 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     @classmethod
     def is_restart(cls):
