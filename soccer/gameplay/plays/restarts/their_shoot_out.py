@@ -47,6 +47,7 @@ class TheirShootOut(play.Play):
 		self.ball_lost_distance = 0.5
 
 	def on_enter_starting(self):
+		#move the goalie into the goal for the shoot out
 		start_point = constants.Field.OurGoalSegment.center()
 		self.add_subbehavior(skills.move.Move(start_point), 'start')
 
