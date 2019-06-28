@@ -25,6 +25,7 @@ class OurShootoutChip(play.Play):
         chipping = 1
         shooting = 2
         capture = 3
+        starting = 4
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -33,8 +34,13 @@ class OurShootoutChip(play.Play):
             self.add_state(s, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            OurShootoutChip.State.dribbling, lambda: True,
+                            OurShootoutChip.State.starting, lambda: True,
                             'immediately')
+
+        self.add_transition(OurShootoutChip.State.starting,
+                            OurShootoutChip.State.dribbling,
+                            lambda: main.game_state().is_ready_state(),
+                            'begin')
 
         self.add_transition(OurShootoutChip.State.dribbling,
                             OurShootoutChip.State.chipping, lambda: self.is_goalie_close(),
@@ -47,7 +53,8 @@ class OurShootoutChip(play.Play):
 
         self.add_transition(OurShootoutChip.State.chipping, 
                             OurShootoutChip.State.capture,
-                            lambda: self.subbehavior_with_name('chipping').state == behavior.Behavior.State.completed,
+                            lambda: self.has_subbehavior_with_name('chipping') and 
+                            self.subbehavior_with_name('chipping').state == behavior.Behavior.State.completed,
                             'recapture')
 
         self.add_transition(OurShootoutChip.State.capture,
@@ -71,19 +78,31 @@ class OurShootoutChip(play.Play):
         return True
 
     @classmethod
-    def score(cls):
-        gs = main.game_state()
-        return 0# if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
-
-    @classmethod
     def is_restart(cls):
         return False
 
+    @classmethod
+    def score(cls):
+        gs = main.game_state()
+        return 0 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+
+    def on_enter_starting(self):
+        behind_ball = (main.ball().pos - constants.Field.TheirGoalSegment.center())
+        behind_ball = behind_ball.normalized()
+        start_point = behind_ball * 2 * constants.Robot.Radius + main.ball().pos
+        self.add_subbehavior(skills.move.Move(start_point), 'starting', required = False,
+                            priority = 5)
+
+    def on_exit_starting(self):
+        self.remove_all_subbehaviors()
+
     def on_enter_dribbling(self):
-        robot_pos = main.our_robots()[0].pos
+        self.start_time = time.time()
+        robot_pos = main.ball().pos
         center_goal = constants.Field.TheirGoalSegment.center()
-        dribble_point = (center_goal - robot_pos).normalized() + robot_pos
-        print(dribble_point)
+        dribble_point = (center_goal - robot_pos)
+        dribble_point = dribble_point.normalized()
+        dribble_point = dribble_point + robot_pos
         dribble = skills.dribble.Dribble(dribble_point)
         if (not self.has_subbehavior_with_name('dribble')):
             self.add_subbehavior(dribble, 'dribble', required = False, priority = 5)
@@ -91,7 +110,7 @@ class OurShootoutChip(play.Play):
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()
 
-    def execute_chipping(self):
+    def on_enter_chipping(self):
             #self.remove_subbehavior('kicker')
             kicker = skills.line_kick.LineKick()
             kicker.use_chipper = True
@@ -126,16 +145,17 @@ class OurShootoutChip(play.Play):
         our_free_kick.OurFreeKick.Running = False
 
     #def execute_running(self):
-    #    print(time.time())
+        #print(main.game_state().is_ready_state())
+        #print(time.time() - self.start_time)
 
     def on_exit_running(self):
         our_free_kick.OurFreeKick.Running = False
 
     def must_shoot_time(self):
-        print(time.time() - self.start_time)
         return time.time() - self.start_time > self.shoot_time
 
     def is_goalie_close(self):
         close_check = False
         for r in main.their_robots():
-            close_check = r or (r.pos - main.our_robots()[0]).mag() < self.goalie_range
+            close_check = close_check or (r.pos - main.ball().pos).mag() < self.goalie_range
+        return close_check

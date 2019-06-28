@@ -10,6 +10,8 @@ import evaluation
 
 class TheirShootOut(play.Play):
 	class State(enum.Enum):
+		#where the goalie should start before the game begins
+		starting = 0
 		#prevent the shooting robot from chipping of the robot and shooting a straight shot
 		block = 1
 		#go recieve the ball
@@ -22,8 +24,13 @@ class TheirShootOut(play.Play):
 			self.add_state(state, behavior.Behavior.State.running)
 
 		self.add_transition(behavior.Behavior.State.start,
-							TheirShootOut.State.block, lambda: True,
+							TheirShootOut.State.starting, lambda: True,
 							'immediately')
+
+		self.add_transition(TheirShootOut.State.starting, 
+							TheirShootOut.State.block, 
+							lambda: main.game_state().is_playing(),
+							'block')
 
 		#go capture if enemy robot doesn't have the ball or is within chip range
 		self.add_transition(TheirShootOut.State.block,
@@ -33,11 +40,18 @@ class TheirShootOut(play.Play):
 		#go back to blocking if the robot reclaims control of the ball and is outside chip range.
 		self.add_transition(TheirShootOut.State.capture,
 							TheirShootOut.State.block, lambda: self.has_ball() and not self.in_chip_distance(),
-							'block')
+							'reblock')
 
 		self.block_percentage = .50
 		self.chip_distance = 3.0
 		self.ball_lost_distance = 0.5
+
+	def on_enter_starting(self):
+		start_point = constants.Field.OurGoalSegment.center()
+		self.add_subbehavior(skills.move.Move(start_point), 'start')
+
+	def on_exit_starting(self):
+		self.remove_all_subbehaviors()
 
 	def on_enter_block(self):
 		#find ideal point to move too and move there
@@ -66,7 +80,7 @@ class TheirShootOut(play.Play):
 
 	@classmethod
 	def is_restart (cls):
-		return True
+		return False
 
 	@classmethod
 	def handles_goalie(cls):
