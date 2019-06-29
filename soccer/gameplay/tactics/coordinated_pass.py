@@ -155,14 +155,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
-        kicker.kick_power = 0.35 #kickpower
+        kicker.kick_power = 0.2 #kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
-        kicker.aim_params['error_threshold'] = 0.2
-        kicker.aim_params['max_steady_ang_vel'] = 0.2
+        kicker.aim_params['error_threshold'] = 0.1
+        kicker.aim_params['max_steady_ang_vel'] = 0.1
         kicker.aim_params['min_steady_duration'] = 0.15
-        kicker.aim_params['desperate_timeout'] = 3.0
+        kicker.aim_params['desperate_timeout'] = 4.0
         self.add_subbehavior(kicker, 'kicker', required=self.kicker_required)
 
         # receive point renegotiation
