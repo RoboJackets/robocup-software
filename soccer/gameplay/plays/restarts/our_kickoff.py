@@ -81,7 +81,7 @@ class OurKickoff(standard_play.StandardPlay):
         self.remove_subbehavior('move')
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment
-        # kicker.use_chipper = True
+        kicker.use_chipper = True
         kicker.max_speed = OurKickoff.MaxKickSpeed
         kicker.max_accel = OurKickoff.MaxKickAccel
         kicker.kick_power = OurKickoff.KickPower
