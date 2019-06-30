@@ -9,7 +9,7 @@ import skills.move
 import skills.face
 import time
 import datetime
-import numpy as np
+#import numpy as np
 import math
 import role_assignment
 import composite_behavior
@@ -28,11 +28,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     class State(Enum):
         #setup
-        setup = 1
-        #Basic motion triangle
-        TestMotion = 2
-        TestEnd = 3
-        ProcessTest = 4
+        setup = 1 #Setup state
+        TestMotion = 2 #Perform a test motion
+        TestEnd = 3 #The end of a test
+        ProcessAllTests = 4 #a state in which we process the test
         TestBuffer = 5
 
     #General Result Variables
@@ -158,11 +157,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     class ObstacleMotionTest(MotionTest):
         pass
 
-
     #Tests how a robot captures an inbound or stationary ball using a simulated one
     class InboundBallTest(MotionTest):
         pass
-
 
     #Test that causes the robot to move in triangular motions,
     #recording movement characteristics
@@ -417,7 +414,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         allStates = [MotionBenchmark.State.setup, 
                      MotionBenchmark.State.TestMotion,
                      MotionBenchmark.State.TestEnd,
-                     MotionBenchmark.State.ProcessTest,
+                     MotionBenchmark.State.ProcessAllTests,
                      MotionBenchmark.State.TestBuffer]
                     
 
@@ -440,7 +437,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #TestMotion -> TestBuffer
         self.add_transition(MotionBenchmark.State.TestMotion,
                             MotionBenchmark.State.TestBuffer,
-                            lambda: self.all_subbehaviors_completed() and not self.currentTest.testCompleted(), 'In Position')
+                            lambda: self.currentTest.motionCompleted() and not self.currentTest.testCompleted(), 'In Position')
        
         #TestBuffer -> TestMotion
         #Note that this transition happens instantly, as the buffer is just to reset the state machine, causing on_enter and on_exit to trigger
@@ -448,27 +445,27 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
                             MotionBenchmark.State.TestMotion,
                             lambda: True, 'In Position')
 
-        #TestMotion -> BasicMotionEnd
+        #TestMotion -> TestEnd
         #We have to check both subbehavior completion and testCompleted() because some tests aren't subbehaviors
         self.add_transition(MotionBenchmark.State.TestMotion,
                             MotionBenchmark.State.BasicMotionEnd, #I should probably change this to just testCompleted(), its a bit of a hack right now
-                            lambda: self.all_subbehaviors_completed() and self.currentTest.testCompleted(), 'In Position')
+                            lambda: self.currentTest.motionCompleted() and self.currentTest.testCompleted(), 'In Position')
 
-        #BasicMotionEnd -> TestMotion
+        #TestEnd -> TestMotion
         self.add_transition(MotionBenchmark.State.TestEnd,
-                            MotionBenchmark.State.TestMotion,
-                            lambda: self.basicMotionIndex < len(self.tests) - 1, 'In Position')
+                            MotionBenchmark.State.setup,
+                            lambda: self.testIndex < len(self.tests), 'Next test exists')
 
 
-        #BasicMotionEnd -> ProcessTest
+        #BasicMotionEnd -> ProcessAllTests
         self.add_transition(MotionBenchmark.State.BasicMotionEnd,
-                            MotionBenchmark.State.ProcessTest,
-                            lambda: self.basicMotionIndex >= len(self.tests) - 1, 'In Position')
+                            MotionBenchmark.State.ProcessAllTests,
+                            lambda: self.testIndex >= len(self.tests), 'No next test exists')
                             
         #ProcessTest -> exit
-        self.add_transition(MotionBenchmark.State.ProcessTest,
+        self.add_transition(MotionBenchmark.State.ProcessAllTests,
                             behavior.Behavior.State.completed,
-                            lambda: False, 'In Position') #Should change this to true if I want it to end
+                            lambda: True, 'In Position') #Should change this to true if I want it to end
 
         #Setup the BasicMotionTests
 
@@ -584,9 +581,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.currentTest = self.tests[self.basicMotionIndex]
 
 
-    
-    
-
     def getVel(self):
         return self.robot.vel
 
@@ -606,10 +600,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         return math.sqrt(xErr**2 + yErr**2)
 
     def getLineError(self,start, end):
-        startNumpy=np.array([start.x,start.y])
-        endNumpy=np.array([end.x,end.y])
-        robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
-        d = np.cross(startNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
+        #startNumpy=np.array([start.x,start.y])
+        #endNumpy=np.array([end.x,end.y])
+        #robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
+        #d = np.cross(startNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
+        d = 0.1
         return abs(d)
  
     def getOvershoot(self, start, end):
@@ -732,7 +727,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         print("Should be processing basic motion")
 
         '''
-
             self.resultOut("\nResults for test " + theTitle + " - - - - - - - - - - - - - - - \n")
             self.resultOut("Average Motion Time: " + str(avgMotionTime))
             self.resultOut("Motion Time Variance: " + str(motionTimeVar))
