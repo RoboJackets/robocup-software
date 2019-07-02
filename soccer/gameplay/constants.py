@@ -16,6 +16,7 @@ class Colors:
 class Robot:
     Radius = 0.09
     MaxKickSpeed = 8  # m/s
+    ChipClearance = (.1, .6) # min and max distance a chip will go over another robot
 
     class Dribbler:
         MaxPower = 127

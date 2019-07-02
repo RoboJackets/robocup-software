@@ -29,9 +29,9 @@ import functools
 # @param recieve_y: Y position of the receive point
 # @return Returns a score between 0 and 1 on how good of pass would be
 def eval_single_point(kick_point, ignore_robots, field_weights, weights,
-                      recieve_x, recieve_y):
+                      receive_x, receive_y):
 
-    receive_point = robocup.Point(recieve_x, recieve_y)
+    receive_point = robocup.Point(receive_x, receive_y)
 
     if kick_point is None:
         if main.ball().valid:
