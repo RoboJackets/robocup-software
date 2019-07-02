@@ -7,7 +7,7 @@ import evaluation.passing
 import evaluation.shooting
 import functools
 
-## Finds the best location wiht a rectangle to pass the ball into
+## Finds the best location with a rectangle to pass the ball into
 #
 # By default, this is use the half of the field in front of the ball (Or the opponents half)
 # The best location is found by combining the pass chance by the 
