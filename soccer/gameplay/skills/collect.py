@@ -44,14 +44,14 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # We cannot figure out if the ball is directly behind us or in it's mouth
         # We can restart the collect and it'll try it again
         # Only restart when the ball is close, both are stopped, and we dont have the ball in the mouth
-        self.add_transition(behavior.Behavior.State.running,
-                            behavior.Behavior.State.start,
-                            lambda: (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
-                                    self.robot.vel.mag() < Collect.STOPPED_VEL and
-                                    main.ball().vel.mag() < Collect.STOPPED_VEL and
-                                    not self.robot.has_ball() and
-                                    self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF,
-                            'restart')
+        #self.add_transition(behavior.Behavior.State.running,
+        #                    behavior.Behavior.State.start,
+        #                    lambda: (self.robot.pos - main.ball().pos).mag() < Collect.RESTART_MIN_DIST and
+        #                            self.robot.vel.mag() < Collect.STOPPED_VEL and
+        #                            main.ball().vel.mag() < Collect.STOPPED_VEL and
+        #                            not self.robot.has_ball() and
+        #                            self.probably_held_cnt < Collect.PROBABLY_HELD_CUTOFF,
+        #                    'restart')
 
         # Complete when we have the ball
         self.add_transition(behavior.Behavior.State.running,

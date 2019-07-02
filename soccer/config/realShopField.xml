@@ -39,6 +39,32 @@
   <Has_Ball_Distance value="0.1"/>
   <Pivot_Speed value="1.5708"/>
   <Dribbler_Speed value="127"/>
+  <Settle>
+   <ballSpeedPercentForDampen value="0"/>
+   <searchStartDist value="0"/>
+   <searchEndDist value="7"/>
+   <searchIncDist value="0.05"/>
+   <interceptBufferTime value="0.5"/>
+   <targetPointGain value="0.5"/>
+   <ballVelGain value="0.5"/>
+   <shortcutDist value="0.1"/>
+   <maxBallVelForPathReset value="2"/>
+   <maxBallAngleForReset value="20"/>
+   <maxBounceAngle value="45"/>
+  </Settle>
+  <Collect>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <approachAccelScalePercent value="0.8"/>
+   <controlAccelScalePercent value="0.6"/>
+   <approachDistTarget value="0.01"/>
+   <touchDeltaSpeed value="0.1"/>
+   <velocityControlScale value="1"/>
+   <distCutoffToControl value="0.01"/>
+   <velCutoffToControl value="1"/>
+   <distCutoffToApproach value="0.3"/>
+   <stopDistScale value="1"/>
+   <targetPointAveragingGain value="0.8"/>
+  </Collect>
  </Capture>
  <Rev2008>
   <trapTrans>
