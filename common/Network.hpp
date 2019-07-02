@@ -48,6 +48,9 @@ static const int SharedVisionPortSinglePrimary = 10002;
 // Secondary Single-sized field port with old Protobuf protocol
 static const int SharedVisionPortSingleSecondary = 10004;
 
+// TODO(Kyle): Find an actual number here. It may need to change between yellow and blue.
+static constexpr int NetworkRadioServerPort = 25565;
+
 // Double-sized field port with old Protobuf protocol
 // static const int SharedVisionPortDoubleOld = 10005;
 

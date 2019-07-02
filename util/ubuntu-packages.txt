@@ -52,8 +52,8 @@ libprotobuf-dev
 graphviz
 
 # AVR
-avr-libc
-avrdude
+#avr-libc
+#avrdude
 
 # Python stuff
 python-pip

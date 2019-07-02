@@ -43,10 +43,10 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             'error > threshold or rotating too fast')
 
         self.target_point = constants.Field.TheirGoalSegment.center()
-        self.error_threshold = 20 * constants.DegreesToRadians
-        self.max_steady_ang_vel = 50 * constants.DegreesToRadians
+        self.error_threshold = 15 * constants.DegreesToRadians
+        self.max_steady_ang_vel = 25 * constants.DegreesToRadians
         self.min_steady_duration = 0.1
-        self.dribbler_power = int(constants.Robot.Dribbler.MaxPower / 2.0)
+        self.dribbler_power = constants.Robot.Dribbler.StandardPower
 
         self.last_ball_time = 0
 

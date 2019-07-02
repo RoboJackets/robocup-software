@@ -211,6 +211,14 @@ public:
     void lineKick(Geometry2d::Point target);
 
     /**
+     * Intercept the ball as quickly as possible
+     * May just slam into the ball if it does not have time to stop 
+     * 
+     * @param target - The target position to intercept the ball at
+     */
+    void intercept(Geometry2d::Point target);
+
+    /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
@@ -233,6 +241,19 @@ public:
      * the path. I'm not even sure if this part makes any sense here.
      */
     void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
+
+    /**
+     * @brief Move in front of the ball to intercept it. If a target face point
+     * is given, the robot will try to face in that direction when the ball hits
+     * @param target - the target point in which the robot will try to bounce the
+     * towards
+     */
+    void settle(boost::optional<Geometry2d::Point> target);
+
+    /**
+     * @brief Approaches the ball and moves through it slowly
+     */
+    void collect();
 
     /**
      * Sets the worldVelocity in the robot's MotionConstraints

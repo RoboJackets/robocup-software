@@ -206,12 +206,32 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
               << ")" << endl;
 }
 
+void OurRobot::settle(boost::optional<Point> target) {
+    if (!visible) return;
+
+    _motionCommand = std::make_unique<Planning::SettleCommand>(target);
+}
+
+void OurRobot::collect() {
+    if (!visible) return;
+
+    _motionCommand = std::make_unique<Planning::CollectCommand>();
+}
+
 void OurRobot::lineKick(Point target) {
     if (!visible) return;
 
     disableAvoidBall();
     _motionCommand =
-        std::make_unique<Planning::LineKickCommand>(std::move(target));
+        std::make_unique<Planning::LineKickCommand>(target);
+}
+
+void OurRobot::intercept(Point target) {
+    if (!visible) return;
+
+    disableAvoidBall();
+    _motionCommand =
+        std::make_unique<Planning::InterceptCommand>(target);
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
@@ -327,6 +347,7 @@ void OurRobot::_kick(uint8_t strength) {
 }
 
 void OurRobot::_chip(uint8_t strength) {
+    std::cout << "YAYYAYAYAYA" << std::endl;
     uint8_t max = *config->kicker.maxChip;
     control->set_kcstrength(strength > max ? max : strength);
     control->set_shootmode(Packet::Control::CHIP);
@@ -531,7 +552,7 @@ bool OurRobot::kickerWorks() const {
 }
 
 bool OurRobot::chipper_available() const {
-    return hardwareVersion() == Packet::RJ2011 && kickerWorks() &&
+    return kickerWorks() &&
            *status->chipper_enabled;
 }
 
