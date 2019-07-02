@@ -280,7 +280,7 @@ boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
     std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
     std::vector<Geometry2d::Point>::iterator it;
     for (it=intersectionPoints.begin(); it!=intersectionPoints.end(); it++){
-        lst.append(*it);    
+        lst.append(*it);
     }
     return lst;
 }
@@ -290,7 +290,7 @@ boost::python::object Rect_corners(Geometry2d::Rect *self){
     std::vector<Geometry2d::Point> corners= self->corners();
     std::vector<Geometry2d::Point>::iterator it;
     for (it=corners.begin(); it!=corners.end(); it++){
-        lst.append(*it);    
+        lst.append(*it);
     }
     return lst;
 }
@@ -658,7 +658,7 @@ boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
 
     return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
-        functionWrapper->f, start, step, minDist, 
+        functionWrapper->f, start, step, minDist,
         reflectionCoeff, expansionCoeff, contractionCoeff, shrinkCoeff,
         maxIterations, maxValue, maxThresh));
 }
@@ -809,7 +809,13 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
         .def("is_our_restart", &GameState::isOurRestart)
         .def("get_ball_placement_point", &GameState::getBallPlacementPoint)
-        .def("get_goalie_id", &GameState::getGoalieId);
+        .def("get_goalie_id", &GameState::getGoalieId)
+        .def("is_first_half", &GameState::isFirstHalf)
+        .def("is_second_half", &GameState::isSecondHalf)
+        .def("is_halftime", &GameState::isHalftime)
+        .def("is_overtime1", &GameState::isOvertime1)
+        .def("is_overtime2", &GameState::isOvertime2)
+        .def("is_penalty_shootout", &GameState::isPenaltyShootout);
 
     class_<Robot>("Robot", init<int, bool>())
         .def("shell_id", &Robot::shell)
