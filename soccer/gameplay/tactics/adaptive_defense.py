@@ -117,9 +117,9 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.forwards = sorted(self.forwards, key=lambda winger: winger[0])
         if len(self.forwards) > 0:
             if self.has_subbehavior_with_name('form wall'):
-                self.subbehavior_with_name('form wall').mark_point = self.forwards[0][1].pos
+                self.subbehavior_with_name('form wall').mark_point = main.ball().pos
             else:
-                tact = wall.Wall(mark_point = self.forwards[0][1].pos)
+                tact = wall.Wall(mark_point = main.ball().pos)
                 self.add_subbehavior(tact, "form wall")
 
 
@@ -164,9 +164,9 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
         risk_score /= sum(AdaptiveDefense.AREA_RISK_WEIGHTS)
 
-        # if self.debug:
-        #     main.system_state().draw_text("Area Risk: " + str(int(risk_score*100)), 
-        #         bot.pos + robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
+        if self.debug:
+            main.system_state().draw_text("Area Risk: " + str(int(risk_score*100)), 
+            bot.pos + robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
 
         return risk_score
         
