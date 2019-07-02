@@ -18,6 +18,7 @@ class RoleRequirements:
         self.required = False
         self.priority = 0
         self.require_kicking = False
+        self.require_chipping = False
         self.robot_change_cost = 1.0
 
         # multiply this by the distance between two points to get the cost
@@ -104,6 +105,17 @@ class RoleRequirements:
     @require_kicking.setter
     def require_kicking(self, value):
         self._require_kicking = value
+
+    # if True, requires that the robot has a working ball sensor, a working chipper,
+    # and isn't forbidden from touching the ball by the double touch rules
+    # Default: False
+    @property
+    def require_chipping(self):
+        return self._require_chipping
+
+    @require_chipping.setter
+    def require_chipping(self, value):
+        self._require_chipping = value
 
     @property
     def required_shell_id(self):
@@ -285,6 +297,15 @@ def assign_roles(robots, role_reqs):
                 cost = MaxWeight
                 fail_reason += (
                     "Robot {}: does not have a fully working kicking setup"
+                    " (or double touched)\n"
+                        .format(robot.shell_id()))
+            elif req.require_chipping and (
+                    robot.shell_id() == evaluation.double_touch.tracker()
+                    .forbidden_ball_toucher() or not robot.has_chipper() or
+                    not robot.ball_sense_works()):
+                cost = MaxWeight
+                fail_reason += (
+                    "Robot {}: does not have a chipper"
                     " (or double touched)\n"
                         .format(robot.shell_id()))
             else:
