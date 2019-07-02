@@ -375,18 +375,20 @@
    <searchStartDist value="0"/>
    <searchEndDist value="7"/>
    <searchIncDist value="0.2"/>
+   <shortcutDist value="0.09"/>
+   <maxBounceAngle value="45"/>
   </Settle>
   <Collect>
    <ballSpeedApproachDirectionCutoff value="0.1"/>
    <approachAccelScalePercent value="0.6"/>
    <controlAccelScalePercent value="0.8"/>
-   <approachDistTarget value="0.2"/>
-   <touchDeltaSpeed value="0.1"/>
-   <distCutoffToControl value="0.1"/>
+   <approachDistTarget value="0.1"/>
+   <touchDeltaSpeed value="0.2"/>
+   <distCutoffToControl value="0.05"/>
    <velCutoffToControl value="2"/>
    <stopDistScale value="0.5"/>
    <targetPointAveragingGain value="0.8"/>
-   <distCutoffToApproach value="1"/>
+   <distCutoffToApproach value="0.15"/>
    <velocityControlScale value="0"/>
   </Collect>
  </Capture>
