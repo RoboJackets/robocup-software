@@ -66,9 +66,9 @@ class OurShootoutChip(play.Play):
                             'must shoot')
 
         # if the ball fails to go in after a chip try to capture
-        self.add_transition(OurShootoutChip.State.chipping, 
+        self.add_transition(OurShootoutChip.State.chipping,
                             OurShootoutChip.State.capture,
-                            lambda: self.has_subbehavior_with_name('chipping') and 
+                            lambda: self.has_subbehavior_with_name('chipping') and
                             self.subbehavior_with_name('chipping').state == behavior.Behavior.State.completed,
                             'recapture')
 
@@ -99,14 +99,11 @@ class OurShootoutChip(play.Play):
         return randomfloat if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     def on_enter_starting(self):
-        # find the direction from the enemy goal to the ball
-        behind_ball = (main.ball().pos - constants.Field.TheirGoalSegment.center())
-        # normalize the vector
-        behind_ball = behind_ball.normalized()
-        # move the robot one robot width behind the ball away from the opponent's goal
-        start_point = behind_ball * 2 * constants.Robot.Radius + main.ball().pos
-        self.add_subbehavior(skills.move.Move(start_point), 'starting', required = False,
+        self.add_subbehavior(skills.move.Move(self.calculate_starting_pos()), 'starting', required = False,
                             priority = 5)
+
+    def execute_starting(self):
+        self.subbehavior_with_name("starting").pos = self.calculate_starting_pos()
 
     def on_exit_starting(self):
         self.remove_all_subbehaviors()
@@ -181,3 +178,11 @@ class OurShootoutChip(play.Play):
         for r in main.their_robots():
             close_check = close_check or (r.pos - main.ball().pos).mag() < self.goalie_range
         return close_check
+
+    def calculate_starting_pos(self):
+        # find the direction from the enemy goal to the ball
+        behind_ball = (main.ball().pos - constants.Field.TheirGoalSegment.center())
+        # normalize the vector
+        behind_ball = behind_ball.normalized()
+        behind_ball = behind_ball * 0.5 + main.ball().pos
+        return behind_ball
