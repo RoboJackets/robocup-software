@@ -37,7 +37,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
         # FIXME: this could also be a PivotKick
         kicker = skills.line_kick.LineKick()
-        # kicker.use_chipper = True
+        kicker.use_chipper = True
         kicker.min_chip_range = OurFreeKick.MinChipRange
         kicker.max_chip_range = OurFreeKick.MaxChipRange
 

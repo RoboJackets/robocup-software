@@ -30,7 +30,7 @@ class OurGoalKick(standard_play.StandardPlay):
                             'immediately')
 
         kicker = skills.line_kick.LineKick()
-        # kicker.use_chipper = True
+        kicker.use_chipper = True
         kicker.kick_power = OurGoalKick.KickerPower
         kicker.chip_power = OurGoalKick.ChipperPower
         kicker.max_speed = OurGoalKick.MaxKickSpeed
