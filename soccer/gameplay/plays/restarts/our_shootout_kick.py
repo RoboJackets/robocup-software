@@ -15,7 +15,7 @@ class OurShootoutKick(play.Play):
         #setup
         starting = 0
         #kick
-        shooting = 1 
+        shooting = 1
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -33,16 +33,12 @@ class OurShootoutKick(play.Play):
                             lambda: main.game_state().is_ready_state(),
                             'shoot when given the ready signal')
 
-
     def on_enter_starting(self):
-        # find the direction from the enemy goal to the ball
-        behind_ball = (main.ball().pos - constants.Field.TheirGoalSegment.center())
-        # normalize the vector
-        behind_ball = behind_ball.normalized()
-        # move the robot one robot width behind the ball away from the opponent's goal
-        start_point = behind_ball * 2 * constants.Robot.Radius + main.ball().pos
-        self.add_subbehavior(skills.move.Move(start_point), 'starting', required = False,
+        self.add_subbehavior(skills.move.Move(self.calculate_starting_pos()), 'starting', required = False,
                             priority = 5)
+
+    def execute_starting(self):
+        self.subbehavior_with_name("starting").pos = self.calculate_starting_pos()
 
     def on_exit_starting(self):
         self.remove_all_subbehaviors()
@@ -61,7 +57,7 @@ class OurShootoutKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0.50 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+        return 0 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     @classmethod
     def is_restart(cls):
@@ -70,3 +66,11 @@ class OurShootoutKick(play.Play):
     @classmethod
     def handles_goalie(cls):
         return True
+
+    def calculate_starting_pos(self):
+        # find the direction from the enemy goal to the ball
+        behind_ball = (main.ball().pos - constants.Field.TheirGoalSegment.center())
+        # normalize the vector
+        behind_ball = behind_ball.normalized()
+        behind_ball = behind_ball * 0.5 + main.ball().pos
+        return behind_ball
