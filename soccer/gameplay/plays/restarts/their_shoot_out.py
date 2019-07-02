@@ -5,6 +5,7 @@ import robocup
 import play
 import enum
 import skills.move
+import skills.capture
 import constants
 import evaluation
 

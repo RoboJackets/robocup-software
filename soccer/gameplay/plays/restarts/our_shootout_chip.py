@@ -3,6 +3,7 @@ import behavior
 import skills.move
 import skills.pivot_kick
 import skills.dribble
+import skills.capture
 import constants
 import robocup
 import math
@@ -158,7 +159,7 @@ class OurShootoutChip(play.Play):
 
     #capture the ball
     def execute_capture (self):
-        capture = tactics.capture.Capture()
+        capture = skills.capture.Capture()
         if (not self.has_subbehavior_with_name('capture')):
             self.add_subbehavior(capture, 'capture', required = False, priority=5)
 
