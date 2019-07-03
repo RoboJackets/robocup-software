@@ -880,7 +880,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("run_pid_tuner", &OurRobot_run_pid_tuner)
         .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
-        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
+        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer)
+        .def("is_facing", &OurRobot::isFacing);
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<int>());
