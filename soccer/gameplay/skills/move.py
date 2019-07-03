@@ -42,10 +42,17 @@ class Move(single_robot_behavior.SingleRobotBehavior):
     def threshold(self, value):
         self._threshold = value
 
+    def on_enter_running(self):
+        print(self.robot.is_facing())
+
+
+
     def execute_running(self):
         if self.pos != None:
             self.robot.move_to(self.pos)
-
+            if(not self.robot.is_facing()):
+                self.robot.face(self.pos)
+           
     def role_requirements(self):
         reqs = super().role_requirements()
         reqs.destination_shape = self.pos

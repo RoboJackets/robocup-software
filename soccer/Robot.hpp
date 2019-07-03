@@ -266,6 +266,11 @@ public:
     void face(Geometry2d::Point pt);
 
     /**
+     * Returns true if the robot currently has a face command
+     */
+    bool isFacing();
+
+    /**
      * Remove the facing command
      */
     void faceNone();
