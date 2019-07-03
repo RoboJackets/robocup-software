@@ -118,7 +118,7 @@ class OurShootoutChip(play.Play):
         # normalize the vector
         dribble_point = dribble_point.normalized()
         # added that to the current ball position going one meter to the goal
-        dribble_point = dribble_point + robot_pos
+        dribble_point = dribble_point * 0.9 + robot_pos
         # dribble one meter up
         dribble = skills.dribble.Dribble(dribble_point)
         if (not self.has_subbehavior_with_name('dribble')):
@@ -129,13 +129,13 @@ class OurShootoutChip(play.Play):
 
     def on_enter_chipping(self):
             # setup chipper
-            kicker = skills.line_kick.LineKick()
+            kicker = skills.pivot_kick.PivotKick()
             kicker.use_chipper = True
             kicker.min_chip_range = our_free_kick.OurFreeKick.MinChipRange
             kicker.max_chip_range = our_free_kick.OurFreeKick.MaxChipRange
             #calculate target
-            gap = evaluation.shooting.find_gap(max_shooting_angle= our_free_kick.OurFreeKick.MaxShootingAngle)
-            kicker.target = gap
+            kicker.target = constants.Field.TheirGoalSegment
+            kicker.aim_params['desperate_timeout'] = 3
             # chip
             if (not self.has_subbehavior_with_name('chipper')) :
                 self.add_subbehavior(kicker, 'chipper', required=False, priority=5)
@@ -144,9 +144,10 @@ class OurShootoutChip(play.Play):
         self.remove_all_subbehaviors()
 
     def execute_shooting(self):
-        kicker = skills.line_kick.LineKick()
+        kicker = skills.pivot_kick.PivotKick()
         # aim for the goal segmant
         kicker.target = constants.Field.TheirGoalSegment
+        kicker.aim_params['desperate_timeout'] = 3
         # kick
         if (not self.has_subbehavior_with_name('kicker')) :
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
