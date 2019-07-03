@@ -17,10 +17,10 @@ import evaluation.ball
 class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     # Speed at which we transition to settle
-    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.8
+    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.5
 
     # Speed at which we transition to collect
-    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.7
+    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.4
 
     # We want  to let the probably held count stabilize
     # but to do that we have to let it sit still

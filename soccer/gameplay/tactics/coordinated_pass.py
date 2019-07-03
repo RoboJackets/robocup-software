@@ -47,7 +47,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  prekick_timeout=None,
                  receiver_required=True,
                  kicker_required=True,
-                 use_chipper=True):
+                 use_chipper=False):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
