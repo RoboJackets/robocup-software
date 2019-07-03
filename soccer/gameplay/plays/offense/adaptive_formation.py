@@ -150,6 +150,15 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return float("inf")
         if len(main.our_robots()) < 5:
             return float("inf")
+        if (not main.game_state().is_playing()):
+            return float("inf")
+        if main.ball().pos.y < constants.Field.Length/2:
+            if evaluation.ball.opponent_with_ball():
+                return float('inf')
+            elif not evaluation.ball.we_are_closer():
+                return float('inf')
+            elif evaluation.ball.our_robot_with_ball() is not None:
+                return float('inf')
         return 10
 
     def should_pass_from_dribble(self):

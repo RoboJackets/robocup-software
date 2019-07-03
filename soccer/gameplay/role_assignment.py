@@ -338,12 +338,12 @@ def assign_roles(robots, role_reqs):
             cost_row.append(cost)
         cost_matrix.append(cost_row)
 
-    if RoleRequirements.debugTimer==0:
-        with open('/home/alan/CLionProjects/robocup-software/log_cost.txt','a') as file:
-            for robot,row in enumerate(cost_matrix):
-                file.write("{},{},{}\n".format(RoleRequirements.writeFrame,robot,",".join([str(i) for i in row])))
-            RoleRequirements.writeFrame +=1
-        
+    # if RoleRequirements.debugTimer==0:
+    #     with open('/home/alan/CLionProjects/robocup-software/log_cost.txt','a') as file:
+    #         for robot,row in enumerate(cost_matrix):
+    #             file.write("{},{},{}\n".format(RoleRequirements.writeFrame,robot,",".join([str(i) for i in row])))
+    #         RoleRequirements.writeFrame +=1
+
 
     # solve
     solver = munkres.Munkres()

@@ -20,6 +20,7 @@ import tactics.wall as wall
 
 class AdaptiveDefense(standard_play.StandardPlay):
 
+    use_defense = False
     # Weights for robot risk scores
     # [ball_dist, ball_opp_goal]
     ROBOT_RISK_WEIGHTS = [1, 1]
@@ -37,9 +38,11 @@ class AdaptiveDefense(standard_play.StandardPlay):
     class State(Enum):
         defending = 0
 
-    def __init__(self, defender_priorities=[20, 19, 18, 17, 16]):
-        super().__init__(continuous=True)
+    def __init__(self, defender_priorities=[0, 0, 0, 0, 0]):
+    # def __init__(self, defender_priorities=[20, 19, 18, 17, 16]):
+        super().__init__(continuous=True, use_defense=False)
 
+        # super().use_defense = False
         if len(defender_priorities) != 5:
             raise RuntimeError("defender_priorities must have a length of 5")
 
@@ -67,6 +70,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
 
         for bot in main.our_robots():
             self.kick_eval.add_excluded_robot(bot)
+
 
     def execute_defending(self):
         # Classify the opponent robots as wingers or forwards
@@ -98,14 +102,14 @@ class AdaptiveDefense(standard_play.StandardPlay):
 
                 if is_wing:
                     self.wingers.append((class_score, bot))
-                else: 
+                else:
                     self.forwards.append((class_score, bot))
 
                 if self.debug and is_wing:
                     main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.White, "Defense: Class Wing")
                 elif self.debug and not is_wing:
                     main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.Black, "Defense: Class Forward")
-                main.system_state().draw_text(" Class Score: " + str(int(100*class_score)), 
+                main.system_state().draw_text(" Class Score: " + str(int(100*class_score)),
                     bot.pos + robocup.Point(0.2, 0), constants.Colors.White, "Defense: ClassScore")
 
 
@@ -114,7 +118,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
         score = 20
         if (not main.game_state().is_playing()):
             return float("inf")
-        if main.ball().y < constants.Field.Length/2:
+        if main.ball().pos.y < constants.Field.Length/2:
             if evaluation.ball.opponent_with_ball():
                 return 5
             elif not evaluation.ball.we_are_closer():
@@ -133,7 +137,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
     def _setup_submissive_defenders(self, number):
         # Last priority defender not yet implemented
         pass
-        
+
     def _setup_wing_defenders(self):
         self.wingers = sorted(self.wingers, key=lambda winger: winger[0], reverse=True)
         current_wingers = len(self.wingers)
@@ -146,7 +150,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
                 if self.assigned_wingers <= i:
                     # Assign to a new wing defender
                     defender = wing_defender.WingDefender(mark_robot = rob, goalside_ratio= self._calc_depth_ratio(rob), distance=self._calc_wing_distance(rob, score))
-                    self.add_subbehavior(defender, name)  
+                    self.add_subbehavior(defender, name)
                 else:
                     # Assign to an existing wing defender
                     self.subbehavior_with_name(name).mark_robot = rob
@@ -191,7 +195,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
         risk_score /= sum(AdaptiveDefense.ROBOT_RISK_WEIGHTS)
 
         if self.debug:
-            main.system_state().draw_text("Robot Risk: " + str(int(risk_score*100)), 
+            main.system_state().draw_text("Robot Risk: " + str(int(risk_score*100)),
                 bot.pos - robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
 
         return risk_score
@@ -216,8 +220,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
         risk_score /= sum(AdaptiveDefense.AREA_RISK_WEIGHTS)
 
         if self.debug:
-            main.system_state().draw_text("Area Risk: " + str(int(risk_score*100)), 
+            main.system_state().draw_text("Area Risk: " + str(int(risk_score*100)),
             bot.pos + robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
 
         return risk_score
-        
