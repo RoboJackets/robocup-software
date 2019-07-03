@@ -253,8 +253,8 @@
    <minEffectiveAngularSpeed value="0.05"/>
   </rotation>
   <kicker>
-   <maxKick value="15"/>
-   <maxChip value="200"/>
+   <maxKick value="255"/>
+   <maxChip value="255"/>
   </kicker>
   <dribbler>
    <multiplier value="1"/>
