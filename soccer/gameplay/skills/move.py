@@ -1,6 +1,6 @@
 import single_robot_behavior
 import behavior
-
+import robocup
 
 ## Behavior that moves a robot to a specified location
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
@@ -42,16 +42,11 @@ class Move(single_robot_behavior.SingleRobotBehavior):
     def threshold(self, value):
         self._threshold = value
 
-    def on_enter_running(self):
-        print(self.robot.is_facing())
-
-
-
     def execute_running(self):
         if self.pos != None:
             self.robot.move_to(self.pos)
             if(not self.robot.is_facing()):
-                self.robot.face(self.pos)
+                self.robot.face(robocup.Point(self.robot.pos.x + self.robot.vel.x * 5, self.robot.pos.y + self.robot.vel.y * 5))
            
     def role_requirements(self):
         reqs = super().role_requirements()
