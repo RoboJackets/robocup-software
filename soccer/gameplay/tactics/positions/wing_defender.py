@@ -63,7 +63,6 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
                 if (self._mark_pos - main.ball().pos).mag() > (constants.Their_Chipping[1] + constants.Robot.Radius*2):
                     #print("Far Away")
                     self._goalside_ratio = 1
-                    self._distance = .1
                 else:
                     self._goalside_ratio = 0
 
@@ -71,7 +70,6 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
             norm_goal_line = ((shot_pt - self._mark_pos).normalized() + self._mark_pos)
             angle = -1 * angle if main.ball().pos.x - self._mark_pos.x < 0 else angle       
             norm_goal_line.rotate(self._mark_pos, angle)
-            #print(norm_goal_line)
             return norm_goal_line
 
     @property

@@ -178,7 +178,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
         return min(1,(1 - opp_robot.pos.y / (constants.Field.Length/2))*self.aggression)
 
     def _calc_wing_distance(self, opp_robot, score):
-        return (constants.Robot.Radius + abs(opp_robot.pos.x) / (constants.Field.Width / 2))/(self.aggression*score)
+        return (constants.Robot.Radius + abs(opp_robot.pos.x) / (constants.Field.Width / 2))/(self.aggression)
 
     def calculate_robot_risk_scores(self, bot):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
