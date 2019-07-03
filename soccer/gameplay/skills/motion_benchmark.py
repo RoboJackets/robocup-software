@@ -55,10 +55,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
-            #print(type(benchmark))
             self.theMotionBenchmark = benchmark
-            #print(type(self.theMotionBenchmark))
             self.title = "No Name Test"
+
+            self.motionPause = 0.5
 
             self.sParams = dict() #Scoring parameters
             self.sResults = dict() #Raw results
@@ -70,7 +70,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
             #This holds a refrence to the calling class
             #self.theMotionBenchmark = None
-           
+          
+            #The time at which the motion pause started
+            self.motionPauseStart = 0.0
+
             #The time at which the current motion started
             self.motionStartTime = 0.0
 
@@ -92,6 +95,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def __str__(self):
             return self.title
 
+        def startMotionPause():
+            self.motionPauseStart = time.time()
+
         @abstractmethod
         def setupTest(self):
             pass
@@ -109,7 +115,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             pass
 
         @abstractmethod
-        def motionCompleted(self, motionBenchmark):
+        def motionCompleted(self):
             pass
         
         @abstractmethod
@@ -171,15 +177,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
  
 
         def __init__(self, nRuns, benchmark):
-            try:
-                print("we have x runs" + str(self.runs))
-            except:
-                print("we don't have an attribute runs")
-            super().__init__(3, benchmark)
-            print("After super we have " + str(self.runs) + " runs!")
-            #print(type(benchmark))
-            #print(type(self.theMotionBenchmark))
-            print(self.runs)
+            super().__init__(nRuns, benchmark)
+            
             self.points = [] #The points to move to
             self.distances = [] #The distances of each motion
             self.facePoints = [] #The points to face while making motions
@@ -236,8 +235,8 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #Largly initalizes arrays to arrays of zeros
         def setupTest(self):
             print("Setting up test: " + self.title)
-            if(len(self.points) == 0 or len(self.facePoints) == 1 or len(self.points) == len(self.facePoints)):
-                raise RuntimeError("Invalid number of face points")
+            #if(len(self.points) == 0 or len(self.facePoints) == 1 or len(self.points) == len(self.facePoints)):
+            #    raise RuntimeError("Invalid number of face points")
             self.positions = max(len(self.points),len(self.facePoints))
             self.motions = self.runs * self.positions
             self.timeTaken = [0.0] * self.motions
@@ -249,11 +248,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             self.endVel = [0.0] * self.motions
             self.totalVel = [0.0] * self.motions
             self.motionNumber = -1
-            print("This test has: " + str(self.runs) + " runs")
-            print("This test has: " + str(self.positions) + " positions")
-            print(self.points)
-            print(self.facePoints)
-            print("So this test will have: " + str(self.motions) + "total motions in it")
+            #print("This test has: " + str(self.runs) + " runs")
+            #print("This test has: " + str(self.positions) + " positions")
+            #print(self.points)
+            #print(self.facePoints)
+            #print("So this test will have: " + str(self.motions) + "total motions in it")
 
        
         #Sets up the next motion to be done
@@ -261,8 +260,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             if(not self.isSetup):
                 self.setupTest()
                 self.isSetup = True
-
-            print("This is a motion running for test: " + self.title)
 
             if (self.motionNumber is -1):
                 self.currentStart = self.points[0]
@@ -373,14 +370,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
        
         #Returns true if the current motion is completed
         #Will be used mostly for pure rotation as it does not have an end
-        def motionCompleted(self, motionBenchmark):
-            return motionBenchmark.all_subbehaviors_completed()
+        def motionCompleted(self):
+            return self.theMotionBenchmark.all_subbehaviors_completed()
 
         #Returns true when the entire test has been completed, false otherwise
         def testCompleted(self):
-            print(self.motionNumber)
-            print(self.motions)
             if (self.motionNumber >= self.motions - 1):
+                print("Test " + self.title + " Completed")
                 return True
             else:
                 return False
@@ -486,7 +482,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #TestMotion -> TestBuffer
         self.add_transition(MotionBenchmark.State.TestMotion,
                             MotionBenchmark.State.TestBuffer,
-                            lambda: self.currentTest.motionCompleted(self) and not self.currentTest.testCompleted(), 'In Position')
+                            lambda: self.currentTest.motionCompleted() and not self.currentTest.testCompleted(), 'In Position')
        
         #TestBuffer -> TestMotion
         #Note that this transition happens instantly, as the buffer is just to reset the state machine, causing on_enter and on_exit to trigger
@@ -498,11 +494,11 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #We have to check both subbehavior completion and testCompleted() because some tests aren't subbehaviors
         self.add_transition(MotionBenchmark.State.TestMotion,
                             MotionBenchmark.State.TestEnd, #I should probably change this to just testCompleted(), its a bit of a hack right now
-                            lambda: self.currentTest.motionCompleted(self) and self.currentTest.testCompleted(), 'In Position')
+                            lambda: self.currentTest.testCompleted(), 'In Position')
 
         #TestEnd -> TestMotion
         self.add_transition(MotionBenchmark.State.TestEnd,
-                            MotionBenchmark.State.setup,
+                            MotionBenchmark.State.TestMotion,
                             lambda: self.testIndex < len(self.tests), 'Next test exists')
 
 
@@ -563,9 +559,6 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         basicMid.points.append(robocup.Point(0,3.5))
         basicMid.title = "Mid Size Motion Triangle"
         self.tests.append(basicMid)
-
-        print("Lets see if they have the same points variable: ")
-        print(superBasicTest.points is basicMid.points)
 
         basicSmall = self.BasicMotionTest(numberOfRuns, self)
         basicSmall.points.append(robocup.Point(-0.75, 1.2))
@@ -679,9 +672,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #self.remove_all_subbehaviors()
         move_point = self.setupPoint
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
-
         self.setupBasicMotionTests()
-
     
         print("TESTS TO BE RUN --------------------------------")
         for g in self.tests:
