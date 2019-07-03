@@ -18,6 +18,7 @@ import tactics.positions.wing_defender as wing_defender
 import tactics.wall as wall
 
 
+
 class AdaptiveDefense(standard_play.StandardPlay):
 
     # Weights for robot risk scores
@@ -39,6 +40,10 @@ class AdaptiveDefense(standard_play.StandardPlay):
 
     def __init__(self, defender_priorities=[20, 19, 18, 17, 16]):
         super().__init__(continuous=True)
+
+        goalie = submissive_goalie.SubmissiveGoalie()
+        goalie.shell_id = main.root_play().goalie_id
+        self.add_subbehavior(goalie, "goalie", required=True)
 
         if len(defender_priorities) != 5:
             raise RuntimeError("defender_priorities must have a length of 5")
@@ -117,12 +122,11 @@ class AdaptiveDefense(standard_play.StandardPlay):
         if main.ball().pos.y < constants.Field.Length/2:
             if evaluation.ball.opponent_with_ball():
                 return 5
-            elif not evaluation.ball.we_are_closer():
-                return 9
             elif evaluation.ball.our_robot_with_ball() is not None:
                 return float('inf')
-
-        return float("inf")
+        else:
+            return float('inf')
+        return 10
 
 
     def apply_blocking_roles(self):
