@@ -58,6 +58,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.wingers = []
         self.forwards = []
         self.max_wingers=3
+        self.max_wall=3
         self.assigned_wingers=0
         # List of tuples of (class score, robot obj)
 
@@ -109,8 +110,12 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
     def apply_blocking_roles(self):
         self._setup_wing_defenders()
-        wall_defenders = self.num_of_defenders - self.assigned_wingers
+        wall_defenders = max(3,self.num_of_defenders - self.assigned_wingers)
         self._setup_wall(wall_defenders)
+
+    def _setup_submissive_defenders(self, number):
+        # Last priority defender not yet implemented
+        pass
         
     def _setup_wing_defenders(self):
         self.wingers = sorted(self.wingers, key=lambda winger: winger[0], reverse=True)

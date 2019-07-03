@@ -33,7 +33,7 @@ class StandardPlay(play.Play):
 
     def use_adaptive_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
-                'defense'):
+                  'defense'):
             self.add_subbehavior(tactics.adaptive_defense.AdaptiveDefense(),
                                  'defense',
                                  required=False)

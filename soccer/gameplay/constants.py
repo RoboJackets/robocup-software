@@ -3,7 +3,8 @@ import math
 
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
-
+Our_Chipping = (.1, .5)
+Their_Chipping = (.1, .5)
 
 class Colors:
     White = (255, 255, 255)

@@ -11,6 +11,8 @@ import skills.move
 class Wall(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
         defense_wall = 1
+        shot = 2
+        scramble = 3
 
     def __init__(self,
                  num_defenders = 3,                         # number of defenders we're making the wall with (default 3)
@@ -37,10 +39,27 @@ class Wall(composite_behavior.CompositeBehavior):
 
         self.add_state(Wall.State.defense_wall, 
                        behavior.Behavior.State.running)
+        self.add_state(Wall.State.shot, 
+                       behavior.Behavior.State.running)
+        self.add_state(Wall.State.scramble, 
+                       behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             Wall.State.defense_wall, lambda: True,
                             "immideately")
+        self.add_transition(Wall.State.defense_wall,
+                            Wall.State.shot, lambda: False,
+                            "on shot")
+        self.add_transition(Wall.State.defense_wall,
+                            Wall.State.scramble, self.is_ball_free,
+                            "on shot")
+
+    def is_ball_free(self):
+        return main.ball().vel.mag() < 1 and min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots])>1.5*min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
+
+    def is_ball_shot(self):
+        SHOT_THRESH = 2
+        return main.ball().vel.mag() > SHOT_THRESH and (main.ball().vel).normalized().dot(main.ball().vel) >.9
 
     def on_enter_defense_wall(self):
         self.remove_all_subbehaviors()
@@ -52,6 +71,9 @@ class Wall(composite_behavior.CompositeBehavior):
                 name="robot" + str(i),
                 required=False,
                 priority=priority)
+
+    def on_enter_scramble(self):
+        self.remove_all_subbehaviors()
 
     def execute_defense_wall(self):
         if self.active_defenders < self.number_of_defenders:
