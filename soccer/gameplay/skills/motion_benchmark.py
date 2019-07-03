@@ -95,9 +95,15 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def __str__(self):
             return self.title
 
-        def startMotionPause():
+        def startMotionPause(self):
             self.motionPauseStart = time.time()
 
+        def isMotionPause(self):
+            if(abs(time.time() - self.motionPauseStart) > self.motionPause):
+                return True
+            else:
+                return False
+    
         @abstractmethod
         def setupTest(self):
             pass
@@ -260,6 +266,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             if(not self.isSetup):
                 self.setupTest()
                 self.isSetup = True
+
+            if(len(self.points) == 0):
+                self.points = [None]
 
             if (self.motionNumber is -1):
                 self.currentStart = self.points[0]
@@ -488,7 +497,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #Note that this transition happens instantly, as the buffer is just to reset the state machine, causing on_enter and on_exit to trigger
         self.add_transition(MotionBenchmark.State.TestBuffer,
                             MotionBenchmark.State.TestMotion,
-                            lambda: True, 'In Position')
+                            lambda: self.currentTest.isMotionPause(), 'In Position')
 
         #TestMotion -> TestEnd
         #We have to check both subbehavior completion and testCompleted() because some tests aren't subbehaviors
@@ -613,14 +622,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         midFace2.facePoints.append(robocup.Point(0,0))
         midFace2.facePoints.append(robocup.Point(2,0))
         midFace2.title = "Mid size triangle while facing points #2"
-        self.tests.append(midFace)
+        self.tests.append(midFace2)
 
         pureRot = self.BasicMotionTest(numberOfRuns, self)
         pureRot.facePoints.append(robocup.Point(0,2.8))
         pureRot.facePoints.append(robocup.Point(0,0))
         pureRot.facePoints.append(robocup.Point(2,0))
         pureRot.title = "Pure Rotational Test"
-        self.tests.append(midFace)
+        self.tests.append(pureRot)
         
         self.testIndex = 0
         self.currentTest = self.tests[self.testIndex]
@@ -754,6 +763,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         if (self.currentTest.currentFacePoint is not None):
             self.robot.face(self.currentTest.currentFacePoint)
         self.currentTest.processMotion()
+
+    def on_enter_TestBuffer(self):
+        self.currentTest.startMotionPause()
 
     def on_exit_TestMotion(self):
         self.currentTest.endMotion()
