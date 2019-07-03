@@ -43,7 +43,6 @@ class Wall(composite_behavior.CompositeBehavior):
                             "immideately")
 
     def on_enter_defense_wall(self):
-        print("Entering Wall Defense")
         self.remove_all_subbehaviors()
         self.update_midpoint()
         for i, priority in enumerate(self.defender_priorities[:self.number_of_defenders]):
@@ -60,14 +59,13 @@ class Wall(composite_behavior.CompositeBehavior):
             self._add_wall_defenders()
             self.active_defenders = self.number_of_defenders
         elif self.active_defenders > self.number_of_defenders:
-            #self._update_wall()
             self._remove_wall_defenders()
             self.active_defenders = self.number_of_defenders
 
     def _add_wall_defenders(self):
         self.update_midpoint()
         for i, priority in enumerate(self.defender_priorities[:self.number_of_defenders]):
-            name="Wallrobot" + str(i)
+            name="robot" + str(i)
             pt = self.calculate_destination(i)
             if i < self.active_defenders:
                 self.subbehavior_with_name(name).pos = pt
@@ -79,7 +77,7 @@ class Wall(composite_behavior.CompositeBehavior):
     def _remove_wall_defenders(self):
         self.update_midpoint()
         for i, priority in enumerate(self.defender_priorities[:self.active_defenders]):
-            name="Wallrobot" + str(i)
+            name="robot" + str(i)
             pt = self.calculate_destination(i)
             if i < self.number_of_defenders:
                 self.subbehavior_with_name(name).pos = pt
@@ -117,15 +115,12 @@ class Wall(composite_behavior.CompositeBehavior):
         self._defense_point = point
         self._update_wall()
 
-        #self.mark_moved = True
-
     @property 
     def num_defenders(self):
         self.number_of_defenders
 
     @num_defenders.setter
     def num_defenders(self, value):
-        print("Setting Wall to {} defenders!".format(value))
         self.active_defenders = self.number_of_defenders
         self.number_of_defenders = value
 

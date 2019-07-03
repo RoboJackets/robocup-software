@@ -282,6 +282,11 @@ def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
             return shot_seg, shot_pt
 
         intersections = sorted(tmp, key=lambda pt: pt.y, reverse=True)
+        
+        #Correction for when there is no segment because the opposing robot is inside a radius of our goalzone
+        if len(intersections)==0:
+            intersections.append(adjusted_mark_pos)
+
         return robocup.Segment(adjusted_mark_pos, intersections[0]), shot_pt
 
 

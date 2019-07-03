@@ -21,7 +21,7 @@ class RoleRequirements:
         self.priority = 0
         self.require_kicking = False
         self.require_chipping = False
-        self.robot_change_cost = 1
+        self.robot_change_cost = 0.1
 
         # multiply this by the distance between two points to get the cost
         self.position_cost_multiplier = 1.0

@@ -51,6 +51,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
         # TODO add goalie
 
+        self.aggression = 1
         self.debug = True
         self.kick_eval = robocup.KickEvaluator(main.system_state())
         self.num_of_defenders = 5 # TODO: Make variable
@@ -81,7 +82,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         del self.forwards[:]
 
         for bot in main.their_robots():
-            if bot.visible:
+            if bot.visible and bot.pos.y < constants.Field.Length/2:
                 robot_risk_score = self.calculate_robot_risk_scores(bot)
                 area_risk_score  = self.calculate_area_risk_scores(bot)
 
@@ -107,36 +108,49 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
 
     def apply_blocking_roles(self):
+        self._setup_wing_defenders()
+        wall_defenders = self.num_of_defenders - self.assigned_wingers
+        self._setup_wall(wall_defenders)
+        
+    def _setup_wing_defenders(self):
         self.wingers = sorted(self.wingers, key=lambda winger: winger[0], reverse=True)
         current_wingers = len(self.wingers)
         for i in range(self.max_wingers):
-            #print("Maximum={}, i={}, number previously assigned= {}, wingers= {}, assigning to robot- {}, with score = {}".format(self.max_wingers, i, self.assigned_wingers, current_wingers,self.wingers[i][1],self.wingers[i][0]))
             name = 'winger_skill' + str(i)
             if current_wingers > i:
+                rob = self.wingers[i][1]
+                score = self.wingers[i][0]
                 # Assign an opposing winger to a wing defender
                 if self.assigned_wingers <= i:
                     # Assign to a new wing defender
-                    defender = wing_defender.WingDefender(mark_robot = self.wingers[i][1])
+                    defender = wing_defender.WingDefender(mark_robot = rob, goalside_ratio= self._calc_depth_ratio(rob), distance=self._calc_wing_distance(rob, score))
                     self.add_subbehavior(defender, name)  
                 else:
                     # Assign to an existing wing defender
-                    self.subbehavior_with_name(name).mark_robot = self.wingers[i][1]
+                    self.subbehavior_with_name(name).mark_robot = rob
+                    self.subbehavior_with_name(name).goalside_ratio = self._calc_depth_ratio(rob)
+                    self.subbehavior_with_name(name).distance = self._calc_wing_distance(rob, score)
+
             elif self.assigned_wingers > i and self.assigned_wingers > 0:
                 # Remove extra wing defender
                 self.remove_subbehavior(name)
 
         self.assigned_wingers = min(self.max_wingers,current_wingers)
 
-        wall_defenders = self.num_of_defenders - self.assigned_wingers
-        #print("Wall Size={}".format(wall_defenders))
+    def _setup_wall(self, wall_defenders=3):
         self.forwards = sorted(self.forwards, key=lambda winger: winger[0])
-        if len(self.forwards) > 0:
-            if self.has_subbehavior_with_name('form wall'):
-                self.subbehavior_with_name('form wall').mark_point = main.ball().pos
-                self.subbehavior_with_name('form wall').num_defenders = wall_defenders
-            else:
-                tact = wall.Wall(mark_point = main.ball().pos, num_defenders=wall_defenders)
-                self.add_subbehavior(tact, "form wall")
+        if self.has_subbehavior_with_name('form wall'):
+            self.subbehavior_with_name('form wall').mark_point = main.ball().pos
+            self.subbehavior_with_name('form wall').num_defenders = wall_defenders
+        else:
+            tact = wall.Wall(mark_point = main.ball().pos, num_defenders=wall_defenders)
+            self.add_subbehavior(tact, "form wall")
+
+    def _calc_depth_ratio(self, opp_robot):
+        return min(1,(1 - opp_robot.pos.y / (constants.Field.Length/2))*self.aggression)
+
+    def _calc_wing_distance(self, opp_robot, score):
+        return (constants.Robot.Radius + abs(opp_robot.pos.x) / (constants.Field.Width / 2))/(self.aggression*score)
 
     def calculate_robot_risk_scores(self, bot):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()

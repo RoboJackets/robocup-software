@@ -70,6 +70,23 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
         self._mark_robot = None
 
     @property
+    def goalside_ratio(self):
+        return self._goalside_ratio
+
+    @goalside_ratio.setter
+    def goalside_ratio(self, value):
+        self._goalside_ratio = value
+
+    @property
+    def distance(self):
+        return self._distance
+
+    @distance.setter
+    def distance(self, value):
+        self._distance = value
+    
+
+    @property
     def mark_robot(self):
         return self._mark_robot
     
