@@ -47,7 +47,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  prekick_timeout=None,
                  receiver_required=True,
                  kicker_required=True,
-                 use_chipper=True):
+                 use_chipper=False):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -157,7 +157,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
-        kicker.kick_power = 0.2 #kickpower
+        kicker.kick_power = 0.4 #kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard

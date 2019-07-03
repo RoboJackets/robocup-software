@@ -247,11 +247,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.check_dribbling_timer = 0
 
         if (not self.has_subbehavior_with_name('midfielders')):
-            self.midfielders = tactics.advance_zone_midfielder.AdvanceZoneMidfielder(
+            self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
             )
             self.add_subbehavior(
                 self.midfielders, 'midfielders', required=False, priority=10)
-        self.midfielders.kick = False
+        #self.midfielders.kick = False
 
     def execute_dribbling(self):
         # Grab best pass
@@ -261,8 +261,8 @@ class AdaptiveFormation(standard_play.StandardPlay):
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
 
-        self.midfielders.kick = False
-        self.midfielders.passing_point = self.pass_target
+        #self.midfielders.kick = False
+        #self.midfielders.passing_point = self.pass_target
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
@@ -297,13 +297,13 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.kick = skills.pivot_kick.PivotKick()
         self.kick.target = constants.Field.TheirGoalSegment
         self.kick.aim_params['desperate_timeout'] = 3
-        self.midfielders.kick = True
+        #self.midfielders.kick = True
         self.add_subbehavior(self.kick, 'kick', required=False)
 
     def on_exit_shooting(self):
         self.remove_subbehavior('kick')
         self.kick = None
-        self.midfielders.kick = False
+        #self.midfielders.kick = False
 
     def on_enter_clearing(self):
         # Line kick with chip
@@ -326,7 +326,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_enter_passing(self):
         # TODO: Use the moving recieve when finished
-        self.midfielders.kick = False
+        #self.midfielders.kick = False
         self.add_subbehavior(
             tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')
 

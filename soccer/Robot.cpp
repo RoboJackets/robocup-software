@@ -308,6 +308,20 @@ void OurRobot::face(Geometry2d::Point pt) {
     *_cmdText << "face(" << pt.x() << ", " << pt.y() << ")" << endl;
 }
 
+bool OurRobot::isFacing() {
+    if (_rotationCommand && _rotationCommand->getCommandType() == Planning::RotationCommand::CommandType::None) {
+        return false;
+    } else {
+        return true;
+    }
+    //if (_rotationCommand && *_rotationCommand == Planning::EmptyAngleCommand{}) {
+    //    return false;
+    //} else {
+    //    return true;
+    //}
+}
+
+
 void OurRobot::faceNone() {
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
 

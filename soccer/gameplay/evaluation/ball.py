@@ -91,7 +91,7 @@ def our_robot_with_ball():
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
     mouth_half_angle = 15*math.pi/180 # Angle from front
-    max_dist_from_mouth = 1.1 * (constants.Robot.Radius + constants.Ball.Radius)
+    max_dist_from_mouth = 1.15 * (constants.Robot.Radius + constants.Ball.Radius)
 
     # Create triangle between bot pos and two points of the mouth
     A = robot.pos
@@ -108,7 +108,9 @@ def robot_has_ball(robot):
     s = 1/(2*area) * (A.y*C.x - A.x*C.y + (C.y - A.y)*D.x + (A.x - C.x)*D.y)
     t = 1/(2*area) * (A.x*B.y - A.y*B.x + (A.y - B.y)*D.x + (B.x - A.x)*D.y)
 
-    return s > 0 and t > 0 and (1 - s - t) > 0
+    ball_inside_robot = (robot.pos - main.ball().pos).mag() < constants.Robot.Radius
+
+    return (s > 0 and t > 0 and (1 - s - t) > 0) or ball_inside_robot
 
 
 def time_to_ball(robot):
