@@ -114,11 +114,11 @@ class AdaptiveDefense(standard_play.StandardPlay):
         score = 20
         if (not main.game_state().is_playing()):
             return float("inf")
-        if main.ball().y < constants.Field.Length/2:
+        if main.ball().pos.y < constants.Field.Length/2:
             if evaluation.ball.opponent_with_ball():
                 return 5
             elif not evaluation.ball.we_are_closer():
-                return 10
+                return 9
             elif evaluation.ball.our_robot_with_ball() is not None:
                 return float('inf')
 

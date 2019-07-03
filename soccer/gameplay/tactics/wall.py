@@ -1,4 +1,5 @@
 import composite_behavior
+import evaluation
 import behavior
 import constants
 import robocup
@@ -23,6 +24,9 @@ class Wall(composite_behavior.CompositeBehavior):
                  dist_from_mark = .75,                        # distance from the mark point we want to build the wall
                  defender_priorities = [20, 19, 18, 17, 16]): # default defense priorities                       
         super().__init__(continuous=True)
+
+        is_ball_free = lambda: main.ball().vel.mag() < 1 and min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots])>min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
+
 
         self.mark_moved = False
         self.active_defenders = num_defenders
@@ -51,11 +55,16 @@ class Wall(composite_behavior.CompositeBehavior):
                             Wall.State.shot, lambda: False,
                             "on shot")
         self.add_transition(Wall.State.defense_wall,
-                            Wall.State.scramble, self.is_ball_free,
-                            "on shot")
+                            Wall.State.scramble, lambda:  evaluation.ball.we_are_closer() and evaluation.ball.moving_slow(),
+                            "ball free")
+        self.add_transition(Wall.State.scramble,
+                            Wall.State.defense_wall, lambda: not evaluation.ball.we_are_closer() or not evaluation.ball.moving_slow(),
+                            "ball captured")
 
-    def is_ball_free(self):
-        return main.ball().vel.mag() < 1 and min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots])>1.5*min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
+
+    def is_ball_not_free(self):
+        return main.ball().vel.mag() > 1 or min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots]) <= min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
+
 
     def is_ball_shot(self):
         SHOT_THRESH = 2
@@ -68,12 +77,24 @@ class Wall(composite_behavior.CompositeBehavior):
             pt = self.calculate_destination(i)
             self.add_subbehavior(
                 skills.move.Move(pt),
-                name="robot" + str(i),
+                name="robot"+str(i),
                 required=False,
                 priority=priority)
 
     def on_enter_scramble(self):
-        self.remove_all_subbehaviors()
+        self.number_of_defenders = self.number_of_defenders - 1
+        self._remove_wall_defenders()
+        self.add_subbehavior(
+                skills.capture.Capture(),
+                name="robotCapture")
+
+    def on_exit_scramble(self):
+        self.number_of_defenders = self.number_of_defenders + 1
+        self.remove_subbehavior("robotCapture")
+        self._add_wall_defenders()
+
+    def execute_scramble(self):
+        pass#print('scrambling')
 
     def execute_defense_wall(self):
         if self.active_defenders < self.number_of_defenders:
