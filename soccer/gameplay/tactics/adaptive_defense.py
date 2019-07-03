@@ -29,7 +29,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
     # Weights / Bias for whether a opponent is a forward or winger
     # Classifier returns true if it is a winger
-    WING_FORWARD_WEIGHTS = [-1, 1.8]
+    WING_FORWARD_WEIGHTS = [-1.1, 1.8]
     WING_FORWARD_BIAS    = 0
     WING_FORWARD_CUTOFF  = 0
 
@@ -56,6 +56,8 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         self.num_of_defenders = 5 # TODO: Make variable
         self.wingers = []
         self.forwards = []
+        self.max_wingers=3
+        self.assigned_wingers=0
         # List of tuples of (class score, robot obj)
 
         self.kick_eval.excluded_robots.clear()
@@ -84,7 +86,6 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
                 area_risk_score  = self.calculate_area_risk_scores(bot)
 
                 features = [robot_risk_score, area_risk_score]
-
                 is_wing, class_score = evaluation.linear_classification.binary_classification(features,
                                             AdaptiveDefense.WING_FORWARD_WEIGHTS,
                                             AdaptiveDefense.WING_FORWARD_BIAS,
@@ -101,27 +102,41 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.White, "Defense: Class Wing")
                 elif self.debug and not is_wing:
                     main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.Black, "Defense: Class Forward")
+                main.system_state().draw_text(" Class Score: " + str(int(100*class_score)), 
+                    bot.pos + robocup.Point(0.2, 0), constants.Colors.White, "Defense: ClassScore")
 
 
     def apply_blocking_roles(self):
-        self.wingers = sorted(self.wingers, key=lambda winger: winger[0])
-        if len(self.wingers) >= 2:
-            for i in range(2):
-                name = 'winger_skill' + str(i)
-                if self.has_subbehavior_with_name(name):
-                    self.subbehavior_with_name(name).mark_robot = self.wingers[i][1]
-                else:
+        self.wingers = sorted(self.wingers, key=lambda winger: winger[0], reverse=True)
+        current_wingers = len(self.wingers)
+        for i in range(self.max_wingers):
+            #print("Maximum={}, i={}, number previously assigned= {}, wingers= {}, assigning to robot- {}, with score = {}".format(self.max_wingers, i, self.assigned_wingers, current_wingers,self.wingers[i][1],self.wingers[i][0]))
+            name = 'winger_skill' + str(i)
+            if current_wingers > i:
+                # Assign an opposing winger to a wing defender
+                if self.assigned_wingers <= i:
+                    # Assign to a new wing defender
                     defender = wing_defender.WingDefender(mark_robot = self.wingers[i][1])
-                    self.add_subbehavior(defender, name)                 
+                    self.add_subbehavior(defender, name)  
+                else:
+                    # Assign to an existing wing defender
+                    self.subbehavior_with_name(name).mark_robot = self.wingers[i][1]
+            elif self.assigned_wingers > i and self.assigned_wingers > 0:
+                # Remove extra wing defender
+                self.remove_subbehavior(name)
 
+        self.assigned_wingers = min(self.max_wingers,current_wingers)
+
+        wall_defenders = self.num_of_defenders - self.assigned_wingers
+        #print("Wall Size={}".format(wall_defenders))
         self.forwards = sorted(self.forwards, key=lambda winger: winger[0])
         if len(self.forwards) > 0:
             if self.has_subbehavior_with_name('form wall'):
                 self.subbehavior_with_name('form wall').mark_point = main.ball().pos
+                self.subbehavior_with_name('form wall').num_defenders = wall_defenders
             else:
-                tact = wall.Wall(mark_point = main.ball().pos)
+                tact = wall.Wall(mark_point = main.ball().pos, num_defenders=wall_defenders)
                 self.add_subbehavior(tact, "form wall")
-
 
     def calculate_robot_risk_scores(self, bot):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
@@ -130,7 +145,7 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
         ball_opp_sens = 1.5
 
         # How far away the robot is from the ball, closer is higher
-        ball_dist = pow(1 - dist_sens*(bot.pos- main.ball().pos).mag() / max_dist, 2)
+        ball_dist = pow(1 - dist_sens*(bot.pos - main.ball().pos).mag() / max_dist, 2)
         # How large the angle is between the ball, opponent, and goal, smaller angle is better
         ball_opp_goal = math.pow((math.fabs((main.ball().pos - bot.pos).angle_between(bot.pos - our_goal)) / math.pi), ball_opp_sens)
 
@@ -139,9 +154,9 @@ class AdaptiveDefense(composite_behavior.CompositeBehavior):
 
         risk_score /= sum(AdaptiveDefense.ROBOT_RISK_WEIGHTS)
 
-        # if self.debug:
-        #     main.system_state().draw_text("Robot Risk: " + str(int(risk_score*100)), 
-        #         bot.pos - robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
+        if self.debug:
+            main.system_state().draw_text("Robot Risk: " + str(int(risk_score*100)), 
+                bot.pos - robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
 
         return risk_score
 

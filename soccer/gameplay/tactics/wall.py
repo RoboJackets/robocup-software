@@ -14,14 +14,16 @@ class Wall(composite_behavior.CompositeBehavior):
 
     def __init__(self,
                  num_defenders = 3,                         # number of defenders we're making the wall with (default 3)
-                 curvature =  0,                            # 'curvature' (in radians) of the wall 
+                 curvature =  .3,                            # 'curvature' (in radians) of the wall 
                  mark_point = None,                         # what point we are defending against (default is ball)
                  defender_point = robocup.Point(0, 0),      # what point we are defending (default is goal)
-                 defender_spacing = 3.5,                    # number of robot radii between the centers of the defenders in the wall
-                 dist_from_mark = 1,                        # distance from the mark point we want to build the wall
+                 defender_spacing = 2.5,                    # number of robot radii between the centers of the defenders in the wall
+                 dist_from_mark = .75,                        # distance from the mark point we want to build the wall
                  defender_priorities = [20, 19, 18, 17, 16]): # default defense priorities                       
         super().__init__(continuous=True)
 
+        self.mark_moved = False
+        self.active_defenders = num_defenders
         self.number_of_defenders = num_defenders
         self.curvature = 1 * curvature
         self._mark_point = main.ball().pos if mark_point == None else mark_point
@@ -30,7 +32,7 @@ class Wall(composite_behavior.CompositeBehavior):
         self.defender_spacing = defender_spacing
         self.defender_priorities = defender_priorities
 
-        # Information for movement calculations to reduce redundancy 
+        # Information for movement calculations to reduce redundancy
         self.midpoint = None
 
         self.add_state(Wall.State.defense_wall, 
@@ -41,6 +43,7 @@ class Wall(composite_behavior.CompositeBehavior):
                             "immideately")
 
     def on_enter_defense_wall(self):
+        print("Entering Wall Defense")
         self.remove_all_subbehaviors()
         self.update_midpoint()
         for i, priority in enumerate(self.defender_priorities[:self.number_of_defenders]):
@@ -50,6 +53,48 @@ class Wall(composite_behavior.CompositeBehavior):
                 name="robot" + str(i),
                 required=False,
                 priority=priority)
+
+    def execute_defense_wall(self):
+        if self.active_defenders < self.number_of_defenders:
+            #self._update_wall()
+            self._add_wall_defenders()
+            self.active_defenders = self.number_of_defenders
+        elif self.active_defenders > self.number_of_defenders:
+            #self._update_wall()
+            self._remove_wall_defenders()
+            self.active_defenders = self.number_of_defenders
+
+    def _add_wall_defenders(self):
+        self.update_midpoint()
+        for i, priority in enumerate(self.defender_priorities[:self.number_of_defenders]):
+            name="Wallrobot" + str(i)
+            pt = self.calculate_destination(i)
+            if i < self.active_defenders:
+                self.subbehavior_with_name(name).pos = pt
+            else:
+                self.add_subbehavior(
+                    skills.move.Move(pt),
+                    name=name)
+
+    def _remove_wall_defenders(self):
+        self.update_midpoint()
+        for i, priority in enumerate(self.defender_priorities[:self.active_defenders]):
+            name="Wallrobot" + str(i)
+            pt = self.calculate_destination(i)
+            if i < self.number_of_defenders:
+                self.subbehavior_with_name(name).pos = pt
+            else:
+                self.remove_subbehavior(name)
+
+    def _rebuild_wall(self):
+        self.remove_all_subbehaviors()
+        self.update_midpoint()
+        for i, priority in enumerate(self.defender_priorities[:self.active_defenders]):
+            name="robot" + str(i)
+            pt = self.calculate_destination(i)
+            self.add_subbehavior(
+                    skills.move.Move(pt),
+                    name=name)
 
     # Finds the point on the arc the defender should move to
     def calculate_destination(self, robot_number):
@@ -70,11 +115,19 @@ class Wall(composite_behavior.CompositeBehavior):
     @defense_point.setter
     def defense_point(self, point):
         self._defense_point = point
-        self.update_midpoint()
-        for i in range(self.number_of_defenders):
-            if self.has_subbehavior_with_name("robot" + str(i)):
-                behavior = self.subbehavior_with_name("robot" + str(i))
-                behavior.pos = self.calculate_destination(i)
+        self._update_wall()
+
+        #self.mark_moved = True
+
+    @property 
+    def num_defenders(self):
+        self.number_of_defenders
+
+    @num_defenders.setter
+    def num_defenders(self, value):
+        print("Setting Wall to {} defenders!".format(value))
+        self.active_defenders = self.number_of_defenders
+        self.number_of_defenders = value
 
     @property
     def mark_point(self):
@@ -84,8 +137,12 @@ class Wall(composite_behavior.CompositeBehavior):
     @mark_point.setter
     def mark_point(self, point):
         self._mark_point = point
+        self._update_wall()
+
+    def _update_wall(self):
         self.update_midpoint()
         for i in range(self.number_of_defenders):
             if self.has_subbehavior_with_name("robot" + str(i)):
                 behavior = self.subbehavior_with_name("robot" + str(i))
                 behavior.pos = self.calculate_destination(i)
+            

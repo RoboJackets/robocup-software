@@ -55,7 +55,7 @@ def get_points_from_rect(rect, step=0.5):
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
 #   Risk score in that position
-#   Adviailbity of opponent robots to reach that point
+#   Aviailbity of opponent robots to reach that point
 #   Space in that area
 #
 # @param ignore_robots: Ignore these robots in defensive calculations
