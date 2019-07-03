@@ -122,6 +122,8 @@ class AdaptiveDefense(standard_play.StandardPlay):
         if main.ball().pos.y < constants.Field.Length/2:
             if evaluation.ball.opponent_with_ball():
                 return 5
+            elif evaluation.ball.opponent_is_much_closer():
+                return 5
             elif evaluation.ball.our_robot_with_ball() is not None:
                 return float('inf')
         else:
