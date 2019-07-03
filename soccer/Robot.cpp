@@ -361,7 +361,6 @@ void OurRobot::_kick(uint8_t strength) {
 }
 
 void OurRobot::_chip(uint8_t strength) {
-    std::cout << "YAYYAYAYAYA" << std::endl;
     uint8_t max = *config->kicker.maxChip;
     control->set_kcstrength(strength > max ? max : strength);
     control->set_shootmode(Packet::Control::CHIP);
