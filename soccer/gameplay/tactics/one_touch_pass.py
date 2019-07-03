@@ -22,8 +22,12 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
         passing = 1
 
-    def __init__(self):
+    def __init__(self,
+                 skillkicker=None):
         super().__init__(continuous=False)
+
+        if skillkicker == None:
+            skillkicker = skills.pivot_kick.PivotKick()
 
         self.tpass_iterations = 0
         self.force_reevauation = False
@@ -45,6 +49,16 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
             lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
             'Touchpass failed!')
 
+        pass_bhvr = tactics.coordinated_pass.CoordinatedPass(
+            None,
+            None,
+            (skillkicker, lambda x: True),
+            receiver_required=False,
+            kicker_required=False,
+            prekick_timeout=20)
+        self.add_subbehavior(pass_bhvr, 'pass')
+
+
     def reset_receive_point(self):
         angle_receive = skills.angle_receive.AngleReceive()
 
@@ -63,8 +77,7 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         pass_bhvr.skillreceiver = angle_receive
 
     def on_enter_passing(self):
-        pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
-        self.add_subbehavior(pass_bhvr, 'pass')
+        pass_bhvr = self.subbehavior_with_name('pass')
         if pass_bhvr.receive_point == None:
             self.reset_receive_point()
 

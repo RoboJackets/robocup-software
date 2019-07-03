@@ -47,7 +47,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  prekick_timeout=None,
                  receiver_required=True,
                  kicker_required=True,
-                 use_chipper=True):
+                 use_chipper=False):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -175,6 +175,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def execute_running(self):
         # The shot obstacle doesn't apply to the receiver
+        # print (self.skillkicker[1])
         if self.has_subbehavior_with_name('kicker'):
             kicker = self.subbehavior_with_name('kicker')
             receiver = self.subbehavior_with_name('receiver')
