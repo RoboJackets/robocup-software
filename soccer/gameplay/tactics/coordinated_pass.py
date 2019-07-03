@@ -46,7 +46,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  skillkicker=None,
                  prekick_timeout=None,
                  receiver_required=True,
-                 kicker_required=True):
+                 kicker_required=True,
+                 use_chipper=True):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -61,6 +62,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
         self.skillkicker = skillkicker
+        self.skillkicker[0].use_chipper = use_chipper
         self.prekick_timeout = prekick_timeout
         self.receiver_required = receiver_required
         self.kicker_required = kicker_required
@@ -155,14 +157,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
-        kicker.kick_power = kickpower
+        kicker.kick_power = 0.2 #kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
-        kicker.aim_params['error_threshold'] = 0.2
-        kicker.aim_params['max_steady_ang_vel'] = 3.0
+        kicker.aim_params['error_threshold'] = 0.1
+        kicker.aim_params['max_steady_ang_vel'] = 0.1
         kicker.aim_params['min_steady_duration'] = 0.15
-        kicker.aim_params['desperate_timeout'] = 3.0
+        kicker.aim_params['desperate_timeout'] = 4.0
         self.add_subbehavior(kicker, 'kicker', required=self.kicker_required)
 
         # receive point renegotiation

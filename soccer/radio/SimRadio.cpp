@@ -1,5 +1,6 @@
 #include "SimRadio.hpp"
 
+#include <iostream>
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <Geometry2d/Util.hpp>
@@ -7,6 +8,9 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <stdexcept>
+#include <math.h>
+
+#define PI 3.14159265
 
 #include "status.h"
 
@@ -41,18 +45,24 @@ void SimRadio::send(Packet::RadioTx& packet) {
         // corresponds to 8 m / s and min is 1 m / s
         const float min_kick_m_s = 2.1f;
         const float max_kick_m_s = 7.0f;
+        const float min_chip_m_s = 2.1f;
+        const float max_chip_m_s = 5.0f;
+        const float chip_angle = 40*PI/180; // degrees
+        float kc_strength_to_ms;
+        uint kick_strength;
 
-        const float kc_strength_to_ms = (max_kick_m_s - min_kick_m_s) / 255;
-        uint kick_strength =
-            kc_strength_to_ms * robot.control().kcstrength() + min_kick_m_s;
         switch (robot.control().shootmode()) {
             case Packet::Control::KICK:
+                kc_strength_to_ms = (max_kick_m_s - min_kick_m_s) / 255;
+                kick_strength = kc_strength_to_ms * robot.control().kcstrength() + min_kick_m_s;
                 simRobot->set_kickspeedx(kick_strength);
                 simRobot->set_kickspeedz(0);
                 break;
             case Packet::Control::CHIP:
-                simRobot->set_kickspeedx(kick_strength);
-                simRobot->set_kickspeedz(kick_strength);
+                kc_strength_to_ms = (max_chip_m_s - min_chip_m_s) / 255;
+                kick_strength = kc_strength_to_ms * robot.control().kcstrength() + min_chip_m_s;
+                simRobot->set_kickspeedx(cos(chip_angle)*kick_strength);
+                simRobot->set_kickspeedz(sin(chip_angle)*kick_strength);
                 break;
             default:
                 break;
