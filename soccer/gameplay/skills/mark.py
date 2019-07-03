@@ -77,7 +77,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
 
         #Move robot into position and face the ball
         self.robot.move_to(self._target_point)
-        self.robot.face(ball_pos)
+        #self.robot.face(ball_pos) #Commented out to reduce lateral motion
 
     #Ratio of distance to mark point v. distance to ball for target point
     @property
