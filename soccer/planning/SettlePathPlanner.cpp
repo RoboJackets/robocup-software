@@ -187,7 +187,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
             // Start the next section of the path from the end of our current path
             startInstant = pathSoFar->end().motion;
             currentState = Dampen;
-            std::cout << "Transitioned to dampen" << std::endl;
+            //std::cout << "Transitioned to dampen" << std::endl;
         }
     }
 }
@@ -339,7 +339,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     // to the target
     if ((pathInterceptTarget - avgInstantaneousInterceptTarget).mag() > Robot_Radius) {
         pathInterceptTarget = avgInstantaneousInterceptTarget;
-        std::cout << "Changing targets" << std::endl;
+        //std::cout << "Changing targets" << std::endl;
     }
 
     // Build a new path with the target

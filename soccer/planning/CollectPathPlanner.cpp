@@ -192,7 +192,7 @@ void CollectPathPlanner::processStateTransition(const Ball& ball,
     // If we are in range to the slow dist
     if (dist < *_approachDistTarget + Robot_MouthRadius && currentState == CourseApproach) {
         currentState = FineApproach;
-        cout << "Transitioning to fine" << endl;
+        //cout << "Transitioning to fine" << endl;
     }
 
     // If we are close enough to the target point near the ball
@@ -200,7 +200,7 @@ void CollectPathPlanner::processStateTransition(const Ball& ball,
     // TODO: Check for ball sense?
     if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl && currentState == FineApproach) {
         currentState = Control;
-	    cout << "Transitioning to control" << std::endl;
+	    //cout << "Transitioning to control" << std::endl;
     }
 }
 
