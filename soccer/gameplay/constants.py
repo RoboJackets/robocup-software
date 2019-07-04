@@ -3,7 +3,8 @@ import math
 
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
-
+OurChipping = (.1, .75) # Range of distances which a robot cannot block the ball
+TheirChipping = (.1, .8)
 
 class Colors:
     White = (255, 255, 255)

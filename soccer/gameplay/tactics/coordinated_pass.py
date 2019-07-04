@@ -144,6 +144,15 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.add_subbehavior(
             receiver, 'receiver', required=self.receiver_required)
 
+    @property
+    def use_chipper(self):
+        return self.skillkicker[0].use_chipper
+
+    @use_chipper.setter
+    def use_chipper(self, value):
+        if isinstance(value, bool):
+            self.skillkicker[0].use_chipper = value
+
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
