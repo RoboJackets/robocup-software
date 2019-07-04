@@ -7,6 +7,8 @@ import constants
 import main
 import skills.angle_receive
 import evaluation.touchpass_positioning
+from evaluation.passing import eval_pass
+import evaluation.chipping
 import enum
 
 
@@ -55,26 +57,45 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
             (skillkicker, lambda x: True),
             receiver_required=False,
             kicker_required=False,
-            prekick_timeout=20)
+            prekick_timeout=20,
+            use_chipper=True)
         self.add_subbehavior(pass_bhvr, 'pass')
 
+    def evaluate_chip(self, receive_point):
+        bp = main.ball().pos
+        ex_robots = self.subbehavior_with_name('pass').get_robots()
+        print(receive_point)
+        print(bp)
+        kick_p = eval_pass(bp, receive_point, excluded_robots=ex_robots) 
+        print("Kick probability is {}".format(kick_p))
+        if kick_p < .5:
+            ex_robots.extend(evaluation.chipping.chippable_robots())
+            chip_p = eval_pass(bp, receive_point, excluded_robots=ex_robots)
+            print("Chip probability is {}".format(chip_p))
+            if chip_p > kick_p:
+                print("CHIP!")
+                self.subbehavior_with_name('pass').use_chipper = True
 
     def reset_receive_point(self):
         angle_receive = skills.angle_receive.AngleReceive()
-
         pass_bhvr = self.subbehavior_with_name('pass')
+        ex_robots = pass_bhvr.get_robots()
+        ex_robots.extend(evaluation.chipping.chippable_robots())
+        print(evaluation.chipping.chippable_robots())
         receive_pt, target_point, probability = OneTouchPass.tpass.eval_best_receive_point(
-            main.ball().pos, None, pass_bhvr.get_robots())
+            main.ball().pos, None, ex_robots)
         # only change if increase of beyond the threshold.
-        if self.force_reevauation == True or pass_bhvr.receive_point == None or pass_bhvr.target_point == None \
+        if self.force_reevauation or pass_bhvr.receive_point is None or pass_bhvr.target_point is None \
            or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos,
-                                                                 pass_bhvr.receive_point, ignore_robots=pass_bhvr.get_robots()) \
+                                                                 pass_bhvr.receive_point, ignore_robots=ex_robots) \
                                                                  + OneTouchPass.receivePointChangeThreshold:
             pass_bhvr.receive_point = receive_pt
             angle_receive.target_point = target_point
             self.force_reevauation = False
 
         pass_bhvr.skillreceiver = angle_receive
+        #JUST CHIP FOR NOW
+        #self.evaluate_chip(pass_bhvr.receive_point)
 
     def on_enter_passing(self):
         pass_bhvr = self.subbehavior_with_name('pass')

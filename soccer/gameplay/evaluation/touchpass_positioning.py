@@ -2,6 +2,7 @@ import robocup
 import constants
 import main
 import evaluation.passing
+import evaluation.chipping
 
 ## The Touchpass positioning file finds the best location within a rectangle to ricochet
 # a ball into the goal.
@@ -106,35 +107,38 @@ def eval_single_point(kick_point,
 def eval_best_receive_point(kick_point,
                             evaluation_zone=None,
                             ignore_robots=[]):
+    bestpt = None
     win_eval = robocup.WindowEvaluator(main.system_state())
     for r in ignore_robots:
         win_eval.add_excluded_robot(r)
 
     targetSeg = constants.Field.TheirGoalSegment
+
     # Autogenerate kick point
-    if evaluation_zone == None:
+    if evaluation_zone is None:
         evaluation_zone = generate_default_rectangle(kick_point)
 
     segments = get_segments_from_rect(evaluation_zone)
 
-    if segments == None or len(segments) == 0:
+    if segments is None or len(segments) == 0:
         # We can't do anything.
-        return None
-
+        return None, None, None
     bestChance = None
 
     for segment in segments:
         main.system_state().draw_line(segment, constants.Colors.Blue,
                                       "Candidate Lines")
         _, best = win_eval.eval_pt_to_seg(kick_point, segment)
-        if best == None: continue
+        
+        if best is None: continue
 
         currentChance = best.shot_success
         # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
         receivePt = best.segment.center()
 
         _, best = win_eval.eval_pt_to_seg(receivePt, targetSeg)
-        if best == None: continue
+        
+        if best is None: continue
 
         currentChance = currentChance * best.shot_success
         if bestChance == None or currentChance > bestChance:
@@ -142,7 +146,8 @@ def eval_best_receive_point(kick_point,
             targetPoint = best.segment.center()
             bestpt = receivePt
 
-    if bestpt == None:
-        return None
+    if bestpt is None:
+        return None, None, None
 
     return bestpt, targetPoint, bestChance
+
