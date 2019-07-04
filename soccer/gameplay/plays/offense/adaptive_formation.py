@@ -298,7 +298,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.kick.aim_params['error_threshold'] = 0.3
         self.kick.aim_params['max_steady_ang_vel'] = 10
         self.kick.aim_params['min_steady_duration'] = 0.1
-        self.kick.aim_params['desperate_timeout'] = 2.5
+        self.kick.aim_params['desperate_timeout'] = 1
 
         self.kick.target = constants.Field.TheirGoalSegment
         #self.midfielders.kick = True
@@ -321,7 +321,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         clear = skills.pivot_kick.PivotKick()
         clear.target = self.pass_target
-        clear.aim_params['desperate_timeout'] = 3
+        clear.aim_params['desperate_timeout'] = 1
         clear.use_chipper = True
         self.add_subbehavior(clear, 'clear', required=False)
 

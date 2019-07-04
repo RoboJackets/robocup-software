@@ -30,7 +30,7 @@ class Basic122(standard_play.StandardPlay):
         striker.aim_params['error_threshold'] = 0.3
         striker.aim_params['max_steady_ang_vel'] = 10
         striker.aim_params['min_steady_duration'] = 0.1
-        striker.aim_params['desperate_timeout'] = 2.5
+        striker.aim_params['desperate_timeout'] = 1
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,

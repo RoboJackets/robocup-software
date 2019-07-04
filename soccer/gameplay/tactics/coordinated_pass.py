@@ -164,7 +164,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicker.aim_params['error_threshold'] = 0.1
         kicker.aim_params['max_steady_ang_vel'] = 0.1
         kicker.aim_params['min_steady_duration'] = 0.15
-        kicker.aim_params['desperate_timeout'] = 4.0
+        kicker.aim_params['desperate_timeout'] = 2.0
         self.add_subbehavior(kicker, 'kicker', required=self.kicker_required)
 
         # receive point renegotiation
