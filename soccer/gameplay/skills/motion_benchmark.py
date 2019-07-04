@@ -341,10 +341,15 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
         #Records the data at the end of the motion
         def endMotion(self):
+            print("Motion " + str(self.motionNumber) + " out of " + str(self.motions) + " in test " + self.title + " results: ")
             self.timeTaken[self.motionNumber] = abs(self.motionStartTime - time.time())
+            print("Time taken: " + str(self.timeTaken[self.motionNumber]) + " seconds")
             self.endVel[self.motionNumber] = MotionBenchmark.getSpeed(self.theMotionBenchmark)
+            print("Ending velocity: " + str(self.endVel[self.motionNumber]) + " m/s")
             self.calcFinalRotationError()
             self.calcFinalPosError()
+            print("Overshoot: " + str(self.maxOvershoot[self.motionNumber]) + " meters")
+
             if(self.started):
                 self.motionNumber = self.motionNumber + 1
             else:
@@ -357,11 +362,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         def calcFinalRotationError(self):
             if(self.currentFacePoint is not None):
                 self.finalRotationalError[self.motionNumber] = MotionBenchmark.getAngleError(self.theMotionBenchmark, self.currentFacePoint)
+                print("End rotational error: " + str(self.finalRotationalError[self.motionNumber]) + " degrees")
 
         #Calculates the final positional error based 
         def calcFinalPosError(self):
             if(self.currentEnd is not None):
                 self.posEndError[self.motionNumber] = MotionBenchmark.getPosError(self.theMotionBenchmark, self.currentEnd)
+                print("End positional error: " + str(self.posEndError[self.motionNumber]) + " meters")
 
         #Update the line follow error integral
         def integrateLineError(self, deltat):
@@ -650,7 +657,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def getAngleError(self, point):
         targetAngle = self.robot.angle
         betweenVec = self.robot.pos - point
-        currentAngle = math.atan2(betweenVec.x, betweenVec.y)
+        currentAngle = math.degrees(math.atan2(betweenVec.x, betweenVec.y))
         return targetAngle - currentAngle
 
     def getPosError(self, point):
