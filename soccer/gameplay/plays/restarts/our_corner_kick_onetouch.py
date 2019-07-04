@@ -68,4 +68,4 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     def execute_running(self):
         # exit the play when the pass is done
         if self.pass_bhvr.is_done_running():
-            OurCornerKickTouch.Running = True
+            OurCornerKickTouch.Running = False
