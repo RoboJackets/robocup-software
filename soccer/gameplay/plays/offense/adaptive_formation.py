@@ -284,10 +284,15 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.remove_subbehavior('dribble')
 
     def on_enter_shooting(self):
-        # TODO: Use moving kick when completed
         self.kick = skills.pivot_kick.PivotKick()
+        
+        # Same params as basic_122
+        striker.aim_params['error_threshold'] = 0.3
+        striker.aim_params['max_steady_ang_vel'] = 10
+        striker.aim_params['min_steady_duration'] = 0.1
+        striker.aim_params['desperate_timeout'] = 2.5
+
         self.kick.target = constants.Field.TheirGoalSegment
-        self.kick.aim_params['desperate_timeout'] = 3
         #self.midfielders.kick = True
         self.add_subbehavior(self.kick, 'kick', required=False)
 
