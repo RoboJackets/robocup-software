@@ -7,7 +7,7 @@ import robocup
 import skills
 import constants
 import planning_priority
-import skills.pivot_kick
+import skills.line_kick
 
 class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(enum.Enum):
@@ -59,7 +59,7 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.robot.face(main.ball().pos)
 
     def on_enter_ready(self):
-        kick = skills.pivot_kick.PivotKick()
+        kick = skills.line_kick.LineKick()
         self.add_subbehavior(kick,
                              'kick',
                              required=True,
