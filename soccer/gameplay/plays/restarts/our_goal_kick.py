@@ -6,6 +6,7 @@ import tactics
 import constants
 import evaluation
 import main
+import enum
 
 
 # sends a goal kick towards the goal if it's open
@@ -22,13 +23,48 @@ class OurGoalKick(standard_play.StandardPlay):
     MaxKickSpeed = 0.5
     MaxKickAccel = 0.5
 
+    class State (enum.Enum):
+        move = 1
+
+        kick = 2
+
     def __init__(self):
         super().__init__(continuous=True)
 
+        for s in OurGoalKick.State:
+            self.add_state(s, behavior.Behavior.State.running)
+
+
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running, lambda: True,
+                            OurGoalKick.State.move, lambda: True,
                             'immediately')
 
+        self.add_transition(OurGoalKick.State.move,
+                            OurGoalKick.State.kick,
+                            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
+                            'kick')
+
+    @classmethod
+    def score(cls):
+        gs = main.game_state()
+        return if (gs.is_ready_state() and gs.is_our_direct() and
+                   main.ball().pos.y < 1.0) else float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    def on_enter_move(self):
+        self.move_pos = self.calc_move_pt()
+        self.add_subbehavior(skills.move.Move(self.move_pos), 'move', required = False, priority = 5)
+
+    def execute_move(self):
+        self.move_pos = self.calc_move_pt()
+
+    def on_exit_move(self):
+        self.remove_subbehavior('move')
+
+    def on_enter_kick(self):
         kicker = skills.line_kick.LineKick()
         kicker.use_chipper = True
         kicker.kick_power = OurGoalKick.KickerPower
@@ -43,17 +79,8 @@ class OurGoalKick(standard_play.StandardPlay):
         center2 = skills.move.Move()
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
-    @classmethod
-    def score(cls):
-        gs = main.game_state()
-        return 0 if (gs.is_ready_state() and gs.is_our_direct() and
-                     main.ball().pos.y < 1.0) else float("inf")
 
-    @classmethod
-    def is_restart(cls):
-        return True
-
-    def execute_running(self):
+    def execute_kick(self):
         super().execute_running()
         kicker = self.subbehavior_with_name('kicker')
         center1 = self.subbehavior_with_name('center1')
@@ -87,3 +114,8 @@ class OurGoalKick(standard_play.StandardPlay):
             center2.target = robocup.Point(center_x, center_y)
 
             kicker.target = robocup.Segment(center1.target, center2.target)
+
+    def calc_move_pt(self):
+        ball = main.ball().pos
+        pt = constants.Field.TheirGoalSegment.center()
+        return (ball - pt).normalized() * 0.15 + ball
