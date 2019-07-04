@@ -13,6 +13,7 @@ class StandardPlay(play.Play):
     #Note: This method is called many times during the duration of a play,
     #Not just on selection
     def __init__(self, continuous):
+        print("Init Std Play")
         super().__init__(continuous)
         self.use_standard_defense()
 

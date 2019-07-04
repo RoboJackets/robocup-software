@@ -18,6 +18,7 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     Running = False
 
     def __init__(self, indirect=None):
+        print("Init Corner")
         super().__init__(continuous=True)
 
 
@@ -64,9 +65,8 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-
     def execute_running(self):
-        #super().execute_running()
+        super().execute_running()
         # exit the play when the pass is done
         if self.pass_bhvr.all_subbehaviors_completed() or not self.pass_bhvr.pass_bhvr.has_roles_assigned:
             OurCornerKickTouch.Running = False
