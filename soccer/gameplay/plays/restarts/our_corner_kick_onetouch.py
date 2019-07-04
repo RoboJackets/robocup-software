@@ -18,7 +18,6 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     Running = False
 
     def __init__(self, indirect=None):
-        print("Init Corner")
         super().__init__(continuous=True)
 
 
