@@ -5,6 +5,7 @@ import robocup
 import enum
 import main
 import role_assignment
+import evaluation.ball
 
 
 ## lines up with the ball and the target, then drives up and kicks
@@ -66,6 +67,12 @@ class LineKick(skills._kick._Kick):
                 self.robot.chip(self.chip_power)
             else:
                 self.robot.kick(self.kick_power)
+
+        # For when ball sense isn't great, kick when vision
+        # thinks we have the ball
+        if (self.robot is not None and
+            evaluation.ball.robot_has_ball(self.robot)):
+            self.robot.kick_immediately()
 
     def role_requirements(self):
         reqs = super().role_requirements()

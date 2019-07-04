@@ -869,6 +869,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("chip_level", &OurRobot::chipLevel)
         .def("unkick", &OurRobot::unkick,
              "clears any prevous kick command sent to the robot")
+        .def("kick_immediately", &OurRobot::kickImmediately)
         .def("get_cmd_text", &OurRobot::getCmdText,
              "gets the string containing a list of commands sent to the robot, "
              "such as face(), move_to(), etc.")
