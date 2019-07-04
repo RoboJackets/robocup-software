@@ -24,8 +24,6 @@ class AngleReceive(skills.pass_receive.PassReceive):
         self.ball_kicked = False
         self.target_angle = 0
 
-
-
     ## The point that the receiver should expect the ball to hit it's mouth
     # Default: constants.Field.TheirGoalSegment.center()
     @property
