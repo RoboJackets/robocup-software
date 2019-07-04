@@ -152,7 +152,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             return float("inf")
         if len(main.our_robots()) < 5:
             return float("inf")
-        return 10
+        return 8
 
     def should_pass_from_dribble(self):
 
