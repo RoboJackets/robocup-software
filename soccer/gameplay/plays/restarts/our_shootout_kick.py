@@ -6,7 +6,7 @@ import tactics.penalty
 import planning_priority
 from enum import Enum
 import skills.move
-import skills.line_kick
+import skills.pivot_kick
 import constants
 
 # one robot kicks the ball, the others just line up and wait
@@ -44,9 +44,10 @@ class OurShootoutKick(play.Play):
         self.remove_all_subbehaviors()
 
     def execute_shooting(self):
-        kicker = skills.line_kick.LineKick()
+        kicker = skills.pivot_kick.PivotKick()
         #aim for goal segmant
         kicker.target = constants.Field.TheirGoalSegment
+        kicker.aim_params['desperate_timeout'] = 8
         #kick
         if (not self.has_subbehavior_with_name('kicker')) :
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
@@ -57,7 +58,7 @@ class OurShootoutKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+        return 0.5 if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     @classmethod
     def is_restart(cls):

@@ -5,6 +5,7 @@ import robocup
 import play
 import enum
 import skills.move
+import skills.intercept
 import skills.capture
 import constants
 import evaluation
@@ -15,8 +16,11 @@ class TheirShootOut(play.Play):
 		starting = 0
 		#prevent the shooting robot from chipping of the robot and shooting a straight shot
 		block = 1
-		#go recieve the ball
-		capture = 2
+		#go block the ball
+		intercept = 2
+		#if the ball is too close try to capture
+		capture = 3
+
 
 	def __init__(self):
 		super().__init__(continuous=True)
@@ -33,15 +37,23 @@ class TheirShootOut(play.Play):
 							lambda: main.game_state().is_playing(),
 							'block')
 
-		#go capture if enemy robot doesn't have the ball or is within chip range
+		#go intercept if enemy robot doesn't have the ball or is within chip range
 		self.add_transition(TheirShootOut.State.block,
-							TheirShootOut.State.capture, lambda: not self.has_ball() or self.in_chip_distance(),
-							'capture')
+							TheirShootOut.State.intercept, lambda: not self.has_ball(),
+							'intercept')
 
 		#go back to blocking if the robot reclaims control of the ball and is outside chip range.
-		self.add_transition(TheirShootOut.State.capture,
+		self.add_transition(TheirShootOut.State.intercept,
 							TheirShootOut.State.block, lambda: self.has_ball() and not self.in_chip_distance(),
 							'reblock')
+
+		self.add_transition(TheirShootOut.State.block,
+							TheirShootOut.State.capture, lambda: self.in_chip_distance() and self.has_ball(),
+							'capture')
+
+		self.add_transition(TheirShootOut.State.intercept,
+							TheirShootOut.State.capture, lambda: self.in_chip_distance() and self.has_ball(),
+							'capture')
 
 		self.block_percentage = .50
 		self.chip_distance = 3.0
@@ -68,8 +80,14 @@ class TheirShootOut(play.Play):
 	def on_exit_block(self):
 		self.remove_all_subbehaviors()
 
-	def on_enter_capture(self):
+	def on_enter_intercept(self):
 		#capture ball
+		self.add_subbehavior(skills.intercept.Intercept(),'intercept')
+
+	def on_exit_intercept(self):
+		self.remove_all_subbehaviors()
+
+	def on_enter_capture(self):
 		self.add_subbehavior(skills.capture.Capture(),'capture')
 
 	def on_exit_capture(self):
@@ -92,14 +110,14 @@ class TheirShootOut(play.Play):
 	def has_ball(self):
 		closeIndicator = False
 		for r in main.their_robots():
-			closeIndicator = closeIndicator or robocup.Segment(r.pos, main.ball().pos).length() < self.ball_lost_distance
+			closeIndicator = closeIndicator or (r.pos - main.ball().pos).mag() < self.ball_lost_distance
 		return closeIndicator
 
 	#test all robots in their fleet to see if one is within chip distance of the goal
 	def in_chip_distance(self):
 		chipIndicator = False
 		for r in main.their_robots():
-			chipIndicator = chipIndicator or robocup.Segment(r.pos, constants.Field.OurGoalSegment.nearest_point(r.pos)).length() < self.chip_distance
+			chipIndicator = chipIndicator or (r.pos - constants.Field.OurGoalSegment.nearest_point(r.pos)).mag() < self.chip_distance
 
 		return chipIndicator
 
