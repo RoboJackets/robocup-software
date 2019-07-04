@@ -53,8 +53,8 @@ class OurCornerKickTouch(standard_play.StandardPlay):
         gs = main.game_state()
 
         # enter play when doing a corner kick or stay in it even if we manipulate the ball
-        if OurCornerKickTouch.Running or (gs.is_ready_state() and (gs.is_our_direct() or gs.is_our_indirect()) and main.ball().pos.y > (
-                constants.Field.Length - 1.2) and abs(main.ball().x) > .6 ):
+        if OurCornerKickTouch.Running or (gs.is_ready_state() and (gs.is_our_direct() or gs.is_our_indirect() or gs.is_our_free_kick()) and main.ball().pos.y > (
+                constants.Field.Length - 2) and abs(main.ball().pos.x) > .5 ):
             OurCornerKickTouch.Running = True
             return 0
         else:
