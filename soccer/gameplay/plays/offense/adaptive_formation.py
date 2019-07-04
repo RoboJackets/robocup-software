@@ -20,9 +20,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
     # Min score to shoot
-    DRIBBLE_TO_SHOOT_CUTOFF = 0.07
+    DRIBBLE_TO_SHOOT_CUTOFF = 0.03
     # Max dribble distance per the rules with 10% wiggle room
     MAX_DRIBBLE_DIST = 1 * .9
+
+    MIN_PASS_DIST = .2
 
     # Min field Y to clear
     CLEAR_FIELD_CUTOFF = constants.Field.Length * .2
@@ -229,7 +231,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(), AdaptiveFormation.FIELD_POS_WEIGHTS,
+            main.our_robots(),
+            AdaptiveFormation.MIN_PASS_DIST,
+            AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.DRIBBLING_WEIGHTS)
 
@@ -248,7 +252,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(), AdaptiveFormation.FIELD_POS_WEIGHTS,
+            main.our_robots(),
+            AdaptiveFormation.MIN_PASS_DIST,
+            AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
 
@@ -264,7 +270,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos,
-                main.our_robots(), AdaptiveFormation.FIELD_POS_WEIGHTS,
+                main.our_robots(),
+                AdaptiveFormation.MIN_PASS_DIST,
+                AdaptiveFormation.FIELD_POS_WEIGHTS,
                 AdaptiveFormation.NELDER_MEAD_ARGS,
                 AdaptiveFormation.DRIBBLING_WEIGHTS)
 
