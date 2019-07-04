@@ -62,13 +62,22 @@ class Stopped(standard_play.StandardPlay):
         idle = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
-    def execute_running(self):
+    def execute_normal(self):
+        for r in main.our_robots() :
+           r.set_max_speed(self.slow_speed)
+
+    def execute_center(self):
         for r in main.our_robots() :
             r.set_max_speed(self.slow_speed)
 
-    def on_exit_running(self):
+    def on_exit_center(self):
         for r in main.our_robots() :
-            r.set_max_speed(self.speed)
+           r.set_max_speed(self.speed)
+
+    def on_exit_normal(self):
+        for r in main.our_robots() :
+           r.set_max_speed(self.speed)
+       
 
     def on_enter_center(self):
         self.remove_all_subbehaviors()
