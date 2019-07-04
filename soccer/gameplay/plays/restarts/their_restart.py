@@ -23,6 +23,9 @@ class TheirRestart(standard_play.StandardPlay):
                                  priority=3 - i)
             self.marks.append(mark_i)
 
+        self.win_eval = robocup.WindowEvaluator(main.system_state())
+
+
     @classmethod
     def score(cls):
         gs = main.game_state()
@@ -33,6 +36,10 @@ class TheirRestart(standard_play.StandardPlay):
     @classmethod
     def is_restart(cls):
         return True
+
+    def calculate_shot_chance(robot):
+        windows, best = self.win_eval.eval_pt_to_pt(main.ball().pos, target_point + main.ball().pos, target_width)
+        return best.shot_chance
 
     def execute_running(self):
         super().execute_running()
@@ -51,7 +58,7 @@ class TheirRestart(standard_play.StandardPlay):
         # Needs tuning/improvement. Right now this is excessively defensive
         sorted_opponents = sorted(
             filter(lambda robot: robot != their_kicker, main.their_robots()),
-            key=lambda robot: robot.pos.dist_to(ball_pos) * 2 + robot.pos.y)
+            key=lambda robot: self.calculate_shot_chance(robot))
 
         # Decide what each marking robot should do
         # @sorted_opponents contains the robots we want to mark by priority
