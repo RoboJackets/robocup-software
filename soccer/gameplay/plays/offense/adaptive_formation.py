@@ -287,10 +287,10 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.kick = skills.pivot_kick.PivotKick()
         
         # Same params as basic_122
-        self.kicker.aim_params['error_threshold'] = 0.3
-        self.kicker.aim_params['max_steady_ang_vel'] = 10
-        self.kicker.aim_params['min_steady_duration'] = 0.1
-        self.kicker.aim_params['desperate_timeout'] = 2.5
+        self.kick.aim_params['error_threshold'] = 0.3
+        self.kick.aim_params['max_steady_ang_vel'] = 10
+        self.kick.aim_params['min_steady_duration'] = 0.1
+        self.kick.aim_params['desperate_timeout'] = 2.5
 
         self.kick.target = constants.Field.TheirGoalSegment
         #self.midfielders.kick = True
