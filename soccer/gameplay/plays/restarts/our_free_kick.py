@@ -62,8 +62,8 @@ class OurFreeKick(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 #if OurFreeKick.Running or (
-            #gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
+        return if OurFreeKick.Running or (
+            gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
 
     def on_enter_move(self):
