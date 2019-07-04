@@ -213,7 +213,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 time_to_hit += delta_time
         
 
-        main.system_state().draw_text(str(time_to_hit), robot.pos + robocup.Point(0.1,0.1), (255,255,255), "test")
+        #main.system_state().draw_text(str(time_to_hit), robot.pos + robocup.Point(0.1,0.1), (255,255,255), "test")
 
         return time_to_hit * Capture.SETTLE_COST_MULTIPLIER
 
