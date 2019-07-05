@@ -7,6 +7,7 @@ import math
 # Returns an array of their robots that we can chip over based on the current ball position 
 # this only operates on the distances from the ball to each robot and the Chip distances in constants.py
 #
+
 def chippable_robots(bp= None):
     if bp is None:
         bp = main.ball().pos

@@ -5,6 +5,7 @@ import tactics
 import robocup
 import constants
 import main
+import time
 
 
 class OurCornerKickTouch(standard_play.StandardPlay):
@@ -15,11 +16,12 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     TargetSegmentWidth = 1.5
     MaxKickSpeed = 0.5
     MaxKickAccel = 0.5
-    Running = False
+    Timeout = 10.0
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
 
+        self.start_time = time.time()
 
         # setup a line kick skill to replace the pivotkick since a pivot would easily cause a double touch
         self.kicker = skills.line_kick.LineKick()
@@ -45,6 +47,10 @@ class OurCornerKickTouch(standard_play.StandardPlay):
                             behavior.Behavior.State.completed,
                             self.pass_bhvr.is_done_running, 'passing is done')
 
+        for state in OurCornerKickTouch.State:
+            self.add_transition(state, behavior.Behavior.State.failed,
+                                lambda: time.time() - self.start_time > OurCornerKickTouch.Timeout, 'fumble')
+
         # start the actual pass
         self.add_subbehavior(self.pass_bhvr, 'pass')
 
@@ -52,13 +58,11 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     def score(cls):
         gs = main.game_state()
 
-        # enter play when doing a corner kick or stay in it even if we manipulate the ball
-        if OurCornerKickTouch.Running or (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y > (
+        if (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y > (
                 constants.Field.Length - 1.2) and abs(main.ball().pos.x) > .6 ):
-            OurCornerKickTouch.Running = True
             return 0
         else:
-            return float("inf")
+            return 10000
 
     @classmethod
     def is_restart(cls):
@@ -67,6 +71,8 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     def execute_running(self):
         super().execute_running()
         # exit the play when the pass is done
-
+        #try:
+        #    if not main.system_state().game_state.is_playing():
+        #        OurCornerKickTouch.Running = False
         if self.pass_bhvr.is_done_running():
             OurCornerKickTouch.Running = False

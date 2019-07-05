@@ -9,6 +9,7 @@ import constants
 import main
 import math
 import planning_priority
+import evaluation.ball
 from enum import Enum
 
 
@@ -219,6 +220,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             self.robot.chip(self.chip_power)
         else:
             self.robot.kick(self.kick_power)
+        if (evaluation.ball.robot_has_ball(self.robot)):
+            self.robot.kick_immediately()
 
     def on_exit_running(self):
         self.remove_aim_behavior()

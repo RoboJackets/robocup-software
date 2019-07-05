@@ -62,8 +62,6 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
 
         self.angle_receive = skills.angle_receive.AngleReceive()
 
-        #self.angle_receive
-
         self.pass_bhvr = tactics.coordinated_pass.CoordinatedPass(
             None,
             self.angle_receive,
@@ -76,7 +74,7 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
     def evaluate_chip(self, receive_point):
         bp = main.ball().pos
         ex_robots = self.subbehavior_with_name('pass').get_robots()
-        kick_p = eval_pass(bp, receive_point, excluded_robots=ex_robots) 
+        kick_p = eval_pass(bp, receive_point, excluded_robots=ex_robots)
         if kick_p < .5:
             ex_robots.extend(evaluation.chipping.chippable_robots())
             chip_p = eval_pass(bp, receive_point, excluded_robots=ex_robots)
@@ -117,13 +115,13 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         self.remove_subbehavior('receiveSetup')
         self.angle_receive = skills.angle_receive.AngleReceive()
         self.add_subbehavior(self.pass_bhvr, 'pass', priority=5)
-        
+
         if self.pass_bhvr.receive_point == None:
             self.reset_receive_point()
-        
+
 
     def execute_passing(self):
-        self.tpass_iterations = self.tpass_iterations + 1
+        #self.tpass_iterations = self.tpass_iterations + 1
         if not self.pass_bhvr.state == tactics.coordinated_pass.CoordinatedPass.State.receiving and self.tpass_iterations > 50 or main.ball(
         ).pos.y < self.pass_bhvr.receive_point.y:
             self.force_reevauation = True

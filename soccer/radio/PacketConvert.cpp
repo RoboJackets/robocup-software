@@ -57,10 +57,10 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage &msg) {
                                     : Packet::MotorStatus::Good);
     }
 
-    for (std::size_t i = 0; i < 14; i++) {
+    /*for (std::size_t i = 0; i < 14; i++) {
         packet.add_encoders(msg.encDeltas[i]);
         //printf("%9.3f,", (float)msg.encDeltas[i] / 1000);
-    }
+    }*/
     //printf("\r\n");
 
     // FPGA status
