@@ -91,7 +91,7 @@ def eval_single_point(kick_point,
     currentChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                                  ignore_robots)
     # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
-    if targetPoint == None:
+    if targetPoint is None:
         targetPoint = constants.Field.TheirGoalSegment.center()
     currentChance = currentChance * evaluation.passing.eval_pass(
         receive_point, targetPoint, ignore_robots)
@@ -141,7 +141,7 @@ def eval_best_receive_point(kick_point,
         if best is None: continue
 
         currentChance = currentChance * best.shot_success
-        if bestChance == None or currentChance > bestChance:
+        if bestChance is None or currentChance > bestChance:
             bestChance = currentChance
             targetPoint = best.segment.center()
             bestpt = receivePt

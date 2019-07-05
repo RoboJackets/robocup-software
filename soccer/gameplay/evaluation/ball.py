@@ -6,7 +6,7 @@ import math
 
 def is_moving_towards_our_goal():
     # see if the ball is moving much
-    if main.ball().vel.mag() > 0.1:
+    if main.ball().vel.mag() > 0.18: # Tuned based on vision noise
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Line(main.ball().pos, (

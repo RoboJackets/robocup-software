@@ -22,7 +22,7 @@ class RoleRequirements:
         self.robot_change_cost = 1.0
 
         # multiply this by the distance between two points to get the cost
-        self.position_cost_multiplier = 5.0
+        self.position_cost_multiplier = 1.0
 
         # A lambda function property that allows customization of cost
         # Has exactly one parameter, which is a robot
