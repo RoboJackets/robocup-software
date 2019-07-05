@@ -154,7 +154,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
     @classmethod
     def is_restart(cls):
-        return False#True
+        return True
 
     def calc_move_pos(self):
         point = self.gap
