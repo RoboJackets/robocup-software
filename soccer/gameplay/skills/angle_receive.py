@@ -144,8 +144,9 @@ class AngleReceive(skills.pass_receive.PassReceive):
 
         self.ball_kicked = True
         # Kick the ball!
-        if (self.robot is not None and self.robot.has_ball()): #evaluation.ball.robot_has_ball(self.robot)):
+        if (self.robot is not None and evaluation.ball.robot_has_ball(self.robot)): #self.robot.has_ball()): #
             self.robot.kick(self.kick_power)
+            self.robot.kick_immediately()
 
         if self.target_point != None:
             main.system_state().draw_circle(self.target_point, 0.03,
