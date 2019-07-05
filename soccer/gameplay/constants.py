@@ -33,7 +33,7 @@ class Robot:
 
         # "Normal" Dribbler speed to be used for generic ball capture/movement
 
-        StandardPower = 80
+        StandardPower = 127#80
 
 
 class Ball:
