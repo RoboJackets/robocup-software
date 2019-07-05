@@ -257,11 +257,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
                                             constants.Colors.Blue, "Aim")
 
         # If we are within X degrees of the target, start the fine timeout
-        if (self._shot_point is not None and
-            self.target_point is not None and
+        if (self.target_point is not None and
             self._fine_start == 0 and
-            (self._shot_point - self.robot.pos).angle_between(
-                self.target_point - self.robot.pos) < 45*constants.DegreesToRadians):
+            robocup.Point.direction(self.robot.angle).angle_between(
+                self.target_point - self.robot.pos) < 45*constants.DegreesToRadians and
+            robocup.Point.direction(self.robot.angle).dot(
+                self.target_point - self.robot.pos) > 0):
 
             self._fine_start = time.time()
 
