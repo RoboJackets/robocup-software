@@ -49,8 +49,13 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick,
             'aim error > threshold')
 
+        self.add_transition(PivotKick.State.aiming, PivotKick.State.kicking,
+                            lambda: self.opp_robot_blocking(),
+                            'opp robot blocking')
+
         self.add_transition(PivotKick.State.aimed, PivotKick.State.kicking,
-                            lambda: self.enable_kick or self.facing_opp_goal(), 'kick enabled')
+                            lambda: self.enable_kick or self.facing_opp_goal() or self.opp_robot_blocking(),
+                            'kick enabled')
 
         self.add_transition(PivotKick.State.kicking,
                             behavior.Behavior.State.completed,
@@ -123,6 +128,55 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             return True
 
         return False
+
+    def opp_robot_blocking(self):
+        # Get aim direction
+        # Get robot direction
+        # Make sure in front
+        # Make sure dist to angle line is less than radius
+        # But greater than mouth radius
+        if (self.robot is None):
+            return False
+
+        # Closest opp robot in any direction
+        # To us, not the ball
+        # May want to change        
+        closest_opp_robot = None
+        closest_opp_dist = float("inf")
+        for r in main.their_robots():
+            if ((r.pos - self.robot.pos).mag() < closest_opp_dist):
+                closest_opp_robot = r
+                closest_opp_dist = (r.pos - self.robot.pos).mag()
+
+        # Only do this if a robot is in range
+        robot_in_range = closest_opp_dist < 5
+
+        aim_dir = robocup.Point.direction(self.robot.angle)
+        robot_dir = (closest_opp_robot.pos - self.robot.pos)
+
+        # Only trigger if they are infront of us
+        robot_in_front = aim_dir.dot(robot_dir) > 0
+
+        closest_pt = robocup.Line(self.robot.pos,
+                                  self.robot.pos + aim_dir).nearest_point(
+                                      closest_opp_robot.pos)
+
+        does_hit_robot = (closest_opp_robot.pos - closest_pt).mag() < constants.Robot.Radius
+        doesnt_hit_mouth = True # TODO See if this matters
+
+        facing_their_side = robocup.Point.direction(self.robot.angle).y > 0# self.robot.angle > 0
+
+        ret = (facing_their_side and
+               robot_in_range and
+               robot_in_front and
+               does_hit_robot and
+               doesnt_hit_mouth)
+
+        if ret:
+            print("Panic kick")
+
+        return ret
+        
 
     # The speed to drive the dribbler at during aiming
     # If high, adds lift to kick
