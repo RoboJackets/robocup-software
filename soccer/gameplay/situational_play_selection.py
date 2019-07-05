@@ -29,9 +29,9 @@ class SituationalPlaySelector:
             defensive_scramble = 14 #Plays for getting a loose ball when the ball is on our half
             save_ball = 15 #Plays that will trigger when the ball is headed out of the field with no obstuctions
             save_shot = 16 #Plays that will trigger when the ball is headed directly at our goal
-            offensive_pile_up = 17 #Plays to handle a pile up on their side of the field
-            midfield_pile_up = 18 #Plays to handle a pile up in the midfield
-            defensive_pile_up = 19 #Plays to handle a pile up on our side of the field
+            offensive_pileup = 17 #Plays to handle a pile up on their side of the field
+            midfield_pileup = 18 #Plays to handle a pile up in the midfield
+            defensive_pileup = 19 #Plays to handle a pile up on our side of the field
             midfield_defend_clear = 20 #Plays to defend a clear when the ball is in the midfield
             shootout = 21 #Plays for making shootout shots
             defend_shootout = 22 #Plays for defending shootout shots
@@ -58,6 +58,8 @@ class SituationalPlaySelector:
     currentPossession = ballPos.freeBall
     ballLocation = fieldLoc.midfield 
     currentPileup = False
+
+    pileupTime = None #The first time at which a pileup was detected
 
     isSetup = False
     gameState = None
@@ -87,18 +89,20 @@ class SituationalPlaySelector:
     #Needs to be called in main loop to make the module work
     @classmethod
     def updateAnalysis(cls):
-        
+        startTime = time.time()  
         if(not cls.isSetup):
             cls.setupStates()
             cls.isSetup = True
         else:
             cls.updateRobotList()
 
+        cls.updatePileup()
         cls.ballLocation = cls.locationUpdate()
         cls.ballPossessionUpdate()
         cls.situationUpdate()
-        #print(cls.currentPossession.name)
-
+        
+        print(cls.currentSituation.name)
+        #print(abs(time.time() - startTime))
 
 
     #It would be interesting to evaluate characteristics about our enemy
@@ -181,10 +185,10 @@ class SituationalPlaySelector:
         robotsInBallPath = list()
         for g in cls.activeRobots:
             ingress_info[g] = cls.ball_ingress(cls.systemState.ball.pos, cls.systemState.ball.vel, g)
-            if(ingress_info[g] != None and ingress_info[g][0] != None and abs(ingress_info.get(g)[3]) < 8):
+            if(ingress_info[g] != None and ingress_info[g][0] != None and abs(ingress_info.get(g)[0]) < 0.1):
                 robotsInBallPath.append(g)
        
-        print(robotsInBallPath)
+        #print(robotsInBallPath)
         return robotsInBallPath
         '''if(ingress_info[cls.activeRobots[0]] != None):
             toPrint = ingress_info[cls.activeRobots[0]][0]
@@ -224,12 +228,12 @@ class SituationalPlaySelector:
     def closestReciever(cls):
         botsInPath = cls.in_ball_path()
         if(len(botsInPath) == 0):
-            return None
+            return (None, None)
         closestRobot = None
         closestRobotDistance = 0.0
         ballLocation = cls.systemState.ball.pos
         for g in botsInPath:
-            roboDist = ballToRobotDist(g)
+            roboDist = cls.ballToRobotDist(g)
             if(closestRobot == None or roboDist < closestRobotDistance):
                 closestRobot = g
                 closestRobotDistance = roboDist
@@ -244,8 +248,9 @@ class SituationalPlaySelector:
         distance = math.sqrt((ballPos.x - robot.pos.x)**2 + (ballPos.y - robot.pos.y)**2)
         angle = math.degrees(math.atan2(ballPos.y - robot.pos.y, ballPos.x - robot.pos.x) - robot.angle)
         if(distance < distThresh and abs(angle) < angleThresh):
-                return True
-        return False
+            return True
+        else:
+            return False
 
 
     hasBall = dict()
@@ -299,10 +304,10 @@ class SituationalPlaySelector:
                 cls.currentPreempt = True
                 cls.LastSituation = cls.currentSituaion
 
-    #def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
-    # for g in states:
-    #    play.add_transition(g -> completed , preemptPlay)
-    #
+    '''def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
+        for g in states:
+            play.add_transition(g -> completed , preemptPlay)'''
+
     #You will also need to make sure you delete all subbehaviors on enter_completed in the play
 
     #A function to determine if the currently running play should be preempted
@@ -362,8 +367,10 @@ class SituationalPlaySelector:
     @classmethod
     def ballClosenessRatio(cls):
         distances = cls.bothTeamsClosest()
-        return distances[0] / distances[1]
-
+        try:
+            return distances[0] / distances[1]
+        except:
+            return 1.0
 
     #Returns the robot that last had the ball and how long it was since they had the ball
     @classmethod
@@ -430,7 +437,7 @@ class SituationalPlaySelector:
         return robotsNearTheBall
 
     @classmethod
-    def nearBallCount(cls, distance = 0.5):
+    def nearBallCount(cls, distance = 0.2):
         ourBots = 0
         theirBots = 0
         for g in cls.robotsNearTheBall(distance):
@@ -443,21 +450,34 @@ class SituationalPlaySelector:
 
     @classmethod
     def isPileup(cls):
+
+        pileupBufferTime = 0.8 #the number of seconds of pile up conditions before a pile up is declared
+
         botsNearBall = cls.nearBallCount()
         botsWithBall = cls.withBallCount()
         totalNearBall = sum(botsNearBall)
         totalWithBall = sum(botsWithBall)
 
+        currentPileup = False
+
         if(totalNearBall >= 3 and botsNearBall[0] > 0 and botsNearBall[1] > 0):
-            return True
+            currentPileup = True
 
-        if(totalWithBall >= 2 and bothWithBall[0] > 0 and botsWithBall[1] > 0):
-            return True
+        if(totalWithBall >= 2 and botsWithBall[0] > 0 and botsWithBall[1] > 0):
+            currentPileup = True
 
-        return False
+        if(cls.pileupTime == None and currentPileup):
+            cls.pileupTime = time.time()
+        elif(cls.pileupTime != None and not currentPileup):
+            cls.pileupTime = None
+
+        return cls.pileupTime != None and abs(time.time() - cls.pileupTime) >= pileupBufferTime 
 
     @classmethod
     def ballPossessionUpdate(cls):
+
+        minimumPassSpeed = 2.2 #The minumum speed for the ball to be traveling to look for recieving robots
+        ballRatioFactor = 6.0 #The ratio of robot closeness for automatic possession
 
         for g in cls.activeRobots:
             #printPoint1 = robocup.Point(g.pos.x + 0.1, g.pos.y)
@@ -502,12 +522,13 @@ class SituationalPlaySelector:
             #except:
             #    pass
 
-        if(cls.isPileup()):
+        if(cls.currentPileup):
             cls.currentPossession = cls.ballPos.freeBall
             return None
 
         ballPossessionDurationThreshold = 0.07
         botsWithBall = cls.robotsWithTheBall()
+        #print(botsWithBall)
         if(len(botsWithBall) == 1 and abs(cls.posChangeTime[botsWithBall[0]] - time.time()) > ballPossessionDurationThreshold):
             #print(abs(cls.posChangeTime[botsWithBall[0]] - time.time())) 
             if(botsWithBall[0].is_ours()):
@@ -516,7 +537,6 @@ class SituationalPlaySelector:
                 cls.currentPossession = cls.ballPos.theirBall
             return None
 
-        ballRatioFactor = 6.0
         ballDistRatio = cls.ballClosenessRatio()
         #print(ballDistRatio)
         if(ballDistRatio > ballRatioFactor):
@@ -526,12 +546,18 @@ class SituationalPlaySelector:
             cls.currentPossession = cls.ballPos.ourBall
             return None
 
-
+        if(math.sqrt(cls.systemState.ball.vel.x**2 + cls.systemState.ball.vel.y**2) > minimumPassSpeed):
+            recvr = cls.closestReciever()
+            if(recvr[0] != None):
+                if(recvr[0].is_ours()):
+                    cls.currentPossession = cls.ballPos.ourBall
+                else:
+                    cls.currentPossession = cls.ballPos.theirBall
+                return None
+       
         cls.currentPossession = cls.ballPos.freeBall
-    
-        a = cls.in_ball_path()
         
-
+        
         '''
         ourScore = 0.0
         theirScore = 0.0
@@ -568,10 +594,9 @@ class SituationalPlaySelector:
     @classmethod
     def locationUpdate(cls):
         #This will basically just figure out what part of the field the ball is in.
-        #This should probably be appended at some point to account where the ball will be in the near future
-        
-        midfieldFactor = 0.33  
-        
+        midfieldFactor = 0.23 #On the div B field I'm making this pretty small  
+       
+       
         ballPos = cls.systemState.ball.pos
 
         fieldLen = constants.Field.Length
