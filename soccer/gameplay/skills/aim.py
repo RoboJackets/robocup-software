@@ -238,6 +238,18 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_max_speed(0.3)
         self.robot.set_max_accel(0.3)
 
+
+        # If we have more than 45 degrees to rotate
+        # Rotate that first little bit faster to improve speed
+        # at which we play
+        if (self.target_point is not None and
+            (robocup.Point.direction(self.robot.angle).angle_between(
+                self.target_point - self.robot.pos) > 45*constants.DegreesToRadians or
+             robocup.Point.direction(self.robot.angle).dot(
+                self.target_point - self.robot.pos) < 0)):
+                    self.robot.set_max_speed(0.6)
+                    self.robot.set_max_accel(0.6) 
+
         # slowly pivot toward the target
         #self.robot.set_max_angle_speed(4)
         self.robot.pivot(self._face_target)
@@ -257,11 +269,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
                                             constants.Colors.Blue, "Aim")
 
         # If we are within X degrees of the target, start the fine timeout
-        if (self._shot_point is not None and
-            self.target_point is not None and
+        if (self.target_point is not None and
             self._fine_start == 0 and
-            (self._shot_point - self.robot.pos).angle_between(
-                self.target_point - self.robot.pos) < 45*constants.DegreesToRadians):
+            robocup.Point.direction(self.robot.angle).angle_between(
+                self.target_point - self.robot.pos) < 45*constants.DegreesToRadians and
+            robocup.Point.direction(self.robot.angle).dot(
+                self.target_point - self.robot.pos) > 0):
 
             self._fine_start = time.time()
 
