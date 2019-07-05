@@ -47,7 +47,7 @@ class OurFreeKick(standard_play.StandardPlay):
         self.add_transition(OurFreeKick.State.move,
                             OurFreeKick.State.kick,
                             lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and
-                                    self.receiver_above_half(),
+                                    self.receiver_near_pos(),
                             'kick')
 
         self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
@@ -66,22 +66,28 @@ class OurFreeKick(standard_play.StandardPlay):
         return 3 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
-    def receiver_above_half(self):
-        return self.subbehavior_with_name('receiver').robot is not None and \
-               self.subbehavior_with_name('receiver').robot.pos.y > constants.Field.Length/2
+    def receiver_near_pos(self):
+        return len(main.our_robots()) <= 4 or (self.subbehavior_with_name('receiver').robot is not None and \
+               (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5)
 
     def on_enter_move(self):
         self.move_pos = self.calc_move_pos()
-        self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 5)
+        self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 11)
 
-        pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
-        self.add_subbehavior(skills.move.Move(pos_up_field), 'receiver', required=False)
+        self.pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
+        if (main.ball().pos.y > constants.Field.Length / 2) :
+            sign = (main.ball().pos.x)/ abs(main.ball().pos.x) * -1
+            x = sign * constants.Field.Width * 3 / 8
+            y = max(constants.Field.Length * .75, (main.ball().pos.y + constants.Field.Length) * 0.5)
+            self.pos_up_field = robocup.Point(x,y)
+
+        self.add_subbehavior(skills.move.Move(self.pos_up_field), 'receiver', required=False, priority = 5)
 
     def execute_move(self):
         self.move_pos = self.calc_move_pos()
 
     def on_exit_move(self):
-        self.remove_subbehavior('move')
+        self.remove_all_subbehaviors()
 
     def execute_kick(self):
         if self.indirect \
@@ -90,7 +96,7 @@ class OurFreeKick(standard_play.StandardPlay):
             self.remove_subbehavior('kicker')
             kicker = skills.line_kick.LineKick()
             kicker.target = constants.Field.TheirGoalSegment
-            self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+            self.add_subbehavior(kicker, 'kicker', required=False, priority=11)
 
         if self.indirect:
             passState = self.subbehavior_with_name('kicker').state
@@ -122,18 +128,21 @@ class OurFreeKick(standard_play.StandardPlay):
 
         # Try passing if we are doing an indirect kick
         if self.indirect:
+            pass
             # Check for valid target pass position
-            if self.receive_value != 0:
+            if self.receive_value != 0 and len(self.main.our_robots()) >= 5:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     self.receive_pt,
                     None,
                     (kicker, lambda x: True),
                     receiver_required=False,
                     kicker_required=False,
-                    prekick_timeout=9)
+                    prekick_timeout=7,
+                    use_chipper = True)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
             else:
+                kicker.target = (self.pos_up_field)
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
@@ -144,11 +153,11 @@ class OurFreeKick(standard_play.StandardPlay):
 
     @classmethod
     def is_restart(cls):
-        return False#True
+        return True
 
     def calc_move_pos(self):
         point = self.gap
         if (self.indirect and self.receive_value != 0) :
             point = self.receive_pt
         ball = main.ball().pos
-        return (ball - point).normalized() * 0.15 + ball
+        return (ball - point).normalized() * 0.2 + ball

@@ -2,6 +2,7 @@ import standard_play
 import behavior
 import tactics.positions.defender
 import skills.mark
+import skills.move
 import main
 import robocup
 import constants
@@ -17,6 +18,11 @@ class TheirRestart(standard_play.StandardPlay):
                             'immediately')
 
         self.marks = []
+
+        if (main.game_state().is_their_direct()) :
+            self.intercept = (constants.Field.OurGoalSegment.center() - main.ball().pos) * 0.25 + main.ball().pos
+            self.add_subbehavior(skills.move.Move(self.intercept), 'intercept direct', required = False, priority = 5)
+        
         for i in range(3):
             mark_i = skills.mark.Mark()
             mark_i.ratio = 0.7
@@ -64,6 +70,9 @@ class TheirRestart(standard_play.StandardPlay):
             return
 
         ball_pos = main.ball().pos
+
+        self.intercept = (constants.Field.OurGoalSegment.center() - main.ball().pos) * 0.25 + main.ball().pos
+
 
         # the closest of their bots to the ball is their kicker
         their_kicker = min(main.their_robots(),
