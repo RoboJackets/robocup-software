@@ -66,39 +66,14 @@ class OurFreeKick(standard_play.StandardPlay):
         return 1 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
-<<<<<<< HEAD
-    def modify_receive_pt(self):
-        direction = (self.receive_pt - main.ball().pos).normalized()
-        return main.ball().pos + direction*constants.OurChipping.CAPTURE_DISTANCE
-
-    def receiver_near_receive_point(self):
-        max_speed = robocup.MotionConstraints.MaxRobotSpeed.value
-        max_acc = robocup.MotionConstraints.MaxRobotAccel.value
-        rob = self.subbehavior_with_name('receiver').robot
-        if rob is None:
-            print('No Assigned Receiver')
-            return True
-        if self.subbehavior_with_name('receiver').state == behavior.Behavior.State.completed:
-            return True
-        return (self.receive_pt - rob.pos).mag() < .75
-
-    def receiver_above_half(self):
-        return self.subbehavior_with_name('receiver').robot is not None and \
-               self.subbehavior_with_name('receiver').robot.pos.y > constants.Field.Length/2
-=======
     def receiver_near_pos(self):
         return len(main.our_robots()) <= 4 or (self.subbehavior_with_name('receiver').robot is not None and \
                (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5)
->>>>>>> 25229527334c42961c2236fd2473eb56964d2e39
 
     def on_enter_move(self):
         self.move_pos = self.calc_move_pos()
         self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 11)
 
-<<<<<<< HEAD
-        pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
-        self.add_subbehavior(skills.move.Move(self.modify_receive_pt()), 'receiver', required=False)
-=======
         self.pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
         if (main.ball().pos.y > constants.Field.Length / 2) :
             sign = (main.ball().pos.x)/ abs(main.ball().pos.x) * -1
@@ -107,7 +82,6 @@ class OurFreeKick(standard_play.StandardPlay):
             self.pos_up_field = robocup.Point(x,y)
 
         self.add_subbehavior(skills.move.Move(self.pos_up_field), 'receiver', required=False, priority = 5)
->>>>>>> 25229527334c42961c2236fd2473eb56964d2e39
 
     def execute_move(self):
         self.move_pos = self.calc_move_pos()
