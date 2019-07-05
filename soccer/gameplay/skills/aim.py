@@ -108,7 +108,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # Temporary to not have to switch all the code everywhere
     # to use these new functions
-    # TODO: Revamp this correctly after comp 
+    # TODO: Revamp this correctly after comp
     @property
     def desperate_timeout(self):
         return self._fine_timeout
@@ -152,8 +152,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         return self._error < self.error_threshold
 
     def is_steady(self):
-        return time.time(
-        ) - self._last_unsteady_time > self.min_steady_duration
+        return time.time() - self._last_unsteady_time > self.min_steady_duration
 
     def fumbled(self):
         return (self.startBallLocation -
@@ -256,7 +255,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         if self.target_point != None:
             main.system_state().draw_circle(self.target_point, 0.02,
                                             constants.Colors.Blue, "Aim")
-        
+
         # If we are within X degrees of the target, start the fine timeout
         if (self._shot_point is not None and
             self.target_point is not None and
@@ -265,8 +264,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
                 self.target_point - self.robot.pos) < 45*constants.DegreesToRadians):
 
             self._fine_start = time.time()
-            
-                
+
+
 
     def __str__(self):
         desc = super().__str__()
