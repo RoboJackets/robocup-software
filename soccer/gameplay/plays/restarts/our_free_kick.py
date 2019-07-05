@@ -45,7 +45,7 @@ class OurFreeKick(standard_play.StandardPlay):
                             'immediately')
 
         self.add_transition(OurFreeKick.State.move,
-                            OurFreeKick.State.kick, 
+                            OurFreeKick.State.kick,
                             lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and
                                     self.receiver_above_half(),
                             'kick')
@@ -63,7 +63,7 @@ class OurFreeKick(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if OurFreeKick.Running or (
+        return 3 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def receiver_above_half(self):
@@ -112,8 +112,8 @@ class OurFreeKick(standard_play.StandardPlay):
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
             kicker.kick_power = self.FullKickPower
         # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
-        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or 
-              shooting_line.line_intersection(constants.Field.FieldBorders[2]) and 
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or
+              shooting_line.line_intersection(constants.Field.FieldBorders[2]) and
               self.gap.y - main.ball().pos.y > 0):
             kicker.kick_power = self.FullKickPower
         # If we are probably aiming down the field, slowly kick so we dont carpet

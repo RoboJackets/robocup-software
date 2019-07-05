@@ -19,7 +19,7 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     Timeout = 10.0
 
     def __init__(self, indirect=None):
-        super().__init__(continuous=True)
+        super().__init__(continuous=False)
 
         self.start_time = time.time()
 
@@ -38,6 +38,9 @@ class OurCornerKickTouch(standard_play.StandardPlay):
         # create a one touch pass behavior with line kick as the kicker skill
         self.pass_bhvr = tactics.one_touch_pass.OneTouchPass(self.kicker)
 
+        # start the actual pass
+        self.add_subbehavior(self.pass_bhvr, 'pass')
+
         # add transistions for when the play is done
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -49,15 +52,17 @@ class OurCornerKickTouch(standard_play.StandardPlay):
 
         for state in OurCornerKickTouch.State:
             self.add_transition(state, behavior.Behavior.State.failed,
-                                lambda: time.time() - self.start_time > OurCornerKickTouch.Timeout, 'fumble')
+                                lambda: (time.time() - self.start_time > OurCornerKickTouch.Timeout), 'failed')
 
-        # start the actual pass
-        self.add_subbehavior(self.pass_bhvr, 'pass')
+        # for state in OurCornerKickTouch.State:
+        #     self.add_transition(state, behavior.Behavior.State.failed,
+        #                         lambda: (self.pass_bhvr.state == behavior.State.failed) or (time.time() - self.start_time > OurCornerKickTouch.Timeout), 'failed')
 
     @classmethod
     def score(cls):
         gs = main.game_state()
-
+        if len(main.our_robots()) < 5:
+            return float("inf")
         if (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y > (
                 constants.Field.Length - 1.2) and abs(main.ball().pos.x) > .6 ):
             return 0
