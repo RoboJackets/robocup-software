@@ -22,7 +22,8 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
     receivePointChangeThreshold = 0.15  # 15%
 
     class State(enum.Enum):
-        passing = 1
+        setup=1
+        passing = 2
 
     def __init__(self,
                  skillkicker=None):
@@ -34,50 +35,63 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         self.tpass_iterations = 0
         self.force_reevauation = False
 
+        rp = self.calc_receive_point()
+        self.add_subbehavior(skills.move.Move(main.ball().pos - (rp - main.ball().pos).normalized()*.4), 'passSetup', priority=5)
+        self.add_subbehavior(skills.move.Move(rp), 'receiveSetup', priority=5)
+
         for state in OneTouchPass.State:
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            OneTouchPass.State.passing, lambda: True,
+                            OneTouchPass.State.setup, lambda: True,
                             'immediately')
+
+        self.add_transition(OneTouchPass.State.setup,
+                            OneTouchPass.State.passing, lambda: self.subbehavior_with_name('passSetup').is_done_running(),
+                            'movedKicker')
 
         self.add_transition(
             OneTouchPass.State.passing, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
+            lambda: self.pass_bhvr.state == behavior.Behavior.State.completed,
             'Touchpass completed.')
 
         self.add_transition(
             OneTouchPass.State.passing, behavior.Behavior.State.failed,
-            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
+            lambda: self.pass_bhvr.state == behavior.Behavior.State.failed,
             'Touchpass failed!')
 
-        pass_bhvr = tactics.coordinated_pass.CoordinatedPass(
+        self.angle_receive = skills.angle_receive.AngleReceive()
+
+        #self.angle_receive
+
+        self.pass_bhvr = tactics.coordinated_pass.CoordinatedPass(
             None,
-            None,
+            self.angle_receive,
             (skillkicker, lambda x: True),
             receiver_required=False,
             kicker_required=False,
             prekick_timeout=20,
             use_chipper=True)
-        self.add_subbehavior(pass_bhvr, 'pass')
 
     def evaluate_chip(self, receive_point):
         bp = main.ball().pos
         ex_robots = self.subbehavior_with_name('pass').get_robots()
-        print(receive_point)
-        print(bp)
         kick_p = eval_pass(bp, receive_point, excluded_robots=ex_robots) 
-        print("Kick probability is {}".format(kick_p))
         if kick_p < .5:
             ex_robots.extend(evaluation.chipping.chippable_robots())
             chip_p = eval_pass(bp, receive_point, excluded_robots=ex_robots)
-            print("Chip probability is {}".format(chip_p))
             if chip_p > kick_p:
-                print("CHIP!")
                 self.subbehavior_with_name('pass').use_chipper = True
 
+    def calc_receive_point(self):
+        ex_robots = list(main.system_state().our_robots)
+        #print(ex_robots)
+        ex_robots.extend(evaluation.chipping.chippable_robots())
+        receive_pt, _, _ = OneTouchPass.tpass.eval_best_receive_point(
+            main.ball().pos, None, ex_robots)
+        return receive_pt
+
     def reset_receive_point(self):
-        angle_receive = skills.angle_receive.AngleReceive()
         pass_bhvr = self.subbehavior_with_name('pass')
         ex_robots = pass_bhvr.get_robots()
         ex_robots.extend(evaluation.chipping.chippable_robots())
@@ -89,23 +103,29 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
                                                                  pass_bhvr.receive_point, ignore_robots=ex_robots) \
                                                                  + OneTouchPass.receivePointChangeThreshold:
             pass_bhvr.receive_point = receive_pt
-            angle_receive.target_point = target_point
+            self.pass_bhvr.skillreceiver.target_point = target_point
             self.force_reevauation = False
 
-        pass_bhvr.skillreceiver = angle_receive
+        #pass_bhvr.skillreceiver = angle_receive
         #JUST CHIP FOR NOW
         #self.evaluate_chip(pass_bhvr.receive_point)
 
+
+
     def on_enter_passing(self):
-        pass_bhvr = self.subbehavior_with_name('pass')
-        if pass_bhvr.receive_point == None:
+        self.remove_subbehavior('passSetup')
+        self.remove_subbehavior('receiveSetup')
+        self.angle_receive = skills.angle_receive.AngleReceive()
+        self.add_subbehavior(self.pass_bhvr, 'pass', priority=5)
+        
+        if self.pass_bhvr.receive_point == None:
             self.reset_receive_point()
+        
 
     def execute_passing(self):
-        pass_bhvr = self.subbehavior_with_name('pass')
         self.tpass_iterations = self.tpass_iterations + 1
-        if not pass_bhvr.state == tactics.coordinated_pass.CoordinatedPass.State.receiving and self.tpass_iterations > 50 or main.ball(
-        ).pos.y < pass_bhvr.receive_point.y:
+        if not self.pass_bhvr.state == tactics.coordinated_pass.CoordinatedPass.State.receiving and self.tpass_iterations > 50 or main.ball(
+        ).pos.y < self.pass_bhvr.receive_point.y:
             self.force_reevauation = True
             self.reset_receive_point()
             self.tpass_iterations = 0
