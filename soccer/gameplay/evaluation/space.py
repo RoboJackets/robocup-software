@@ -88,17 +88,17 @@ def dot_product_penalty_func(point):
 def downfield_space_scoring(point, penalties=[outer_third_linear_penalty_func]):
 	penalty_mult = np.prod([p(point) for p in penalties])
 	downfield_dist = get_closest_downfield_opponent_distance_to_point(point)
-	print("PT",point)
-	print("PEN",penalty_mult)
-	print("DD",downfield_dist,'\n')
+	#print("PT",point)
+	#print("PEN",penalty_mult)
+	#print("DD",downfield_dist,'\n')
 	return penalty_mult * downfield_dist[0]
 
 def downfield_chase_scoring(point, penalties=[outer_third_linear_penalty_func, dot_product_penalty_func]):
 	penalty_mult = np.prod([p(point) for p in penalties])
 	downfield_dist = get_closest_downfield_opponent_distance_to_point(point)
-	print("PT",point)
-	print("PEN",penalty_mult)
-	print("DD",downfield_dist,'\n')
+	#print("PT",point)
+	#print("PEN",penalty_mult)
+	#print("DD",downfield_dist,'\n')
 	return penalty_mult * downfield_dist[0]
 
 def get_best_downfield_space_point(start_point=None, 

@@ -8,6 +8,7 @@ import main
 from enum import Enum
 import evaluation
 from evaluation.passing import eval_pass    
+import evaluation.space
 
 
 class OurIndirectPivot(standard_play.StandardPlay):
@@ -92,8 +93,8 @@ class OurIndirectPivot(standard_play.StandardPlay):
 
     def execute_passing(self):
         if self.pass_bhvr.state == tactics.coordinated_pass.CoordinatedPass.State.preparing:
-            self.pass_bhvr.receive_point = self.pick_pass_spot() 
-            self.pass_bhvr.use_chipper = self.evaluate_chip(self.pick_pass_spot())
+            self.pass_bhvr.receive_point = self.pick_pass_spot()
+            self.pass_bhvr.use_chipper = self.evaluate_chip(self.pass_bhvr.receive_point)
         print(self.pass_bhvr.state)
 
     def on_enter_kicking(self):
@@ -118,6 +119,12 @@ class OurIndirectPivot(standard_play.StandardPlay):
         self.remove_all_subbehaviors()
 
     def pick_pass_spot(self):
+        tmp = evaluation.space.get_best_downfield_space_point(start_point=main.ball().pos,
+                                    min_radius=1.5, 
+                                    max_radius=constants.OurChipping.CAPTURE_DISTANCE, 
+                                    radius_resolution=.5, 
+                                    min_upfield_distance=.75, 
+                                    min_downfield_distance=.75)
         return robocup.Point(1,constants.Field.Length*3/4)
 
     def evaluate_chip(self, receive_point):
@@ -125,7 +132,7 @@ class OurIndirectPivot(standard_play.StandardPlay):
         ex_robots = []
         kick_p = eval_pass(bp, receive_point, excluded_robots=ex_robots) 
         #print("Kick probability is {}".format(kick_p))
-        if kick_p < .5:
+        if kick_p < .75:
             ex_robots.extend(evaluation.chipping.chippable_robots())
             chip_p = eval_pass(bp, receive_point, excluded_robots=ex_robots)
             #print("Chip probability is {}".format(chip_p))
