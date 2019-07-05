@@ -3,6 +3,7 @@ import behavior
 import tactics.positions.defender
 import skills.mark
 import main
+import robocup
 
 
 class TheirRestart(standard_play.StandardPlay):
@@ -37,9 +38,12 @@ class TheirRestart(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-    def calculate_shot_chance(robot):
-        windows, best = self.win_eval.eval_pt_to_pt(main.ball().pos, target_point + main.ball().pos, target_width)
-        return best.shot_chance
+    def calculate_shot_chance(self, robot):
+        windows, best = self.win_eval.eval_pt_to_opp_goal(robot.pos)
+        if best is not None:
+            return best.shot_success
+        else:
+            return 0
 
     def execute_running(self):
         super().execute_running()
