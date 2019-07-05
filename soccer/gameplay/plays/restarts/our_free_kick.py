@@ -130,7 +130,7 @@ class OurFreeKick(standard_play.StandardPlay):
         if self.indirect:
             pass
             # Check for valid target pass position
-            if self.receive_value != 0 and len(self.main.our_robots()) >= 5:
+            if self.receive_value != 0 and len(main.our_robots()) >= 5:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     self.receive_pt,
                     None,
@@ -160,4 +160,4 @@ class OurFreeKick(standard_play.StandardPlay):
         if (self.indirect and self.receive_value != 0) :
             point = self.receive_pt
         ball = main.ball().pos
-        return (ball - point).normalized() * 0.2 + ball
+        return (ball - point).normalized() * 0.15 + ball
