@@ -131,7 +131,7 @@ class OurFreeKick(standard_play.StandardPlay):
             # Check for valid target pass position
             print("RECIEVE VALUE")
             print(self.receive_value)
-            if self.receive_value != 0:
+            if self.receive_value != 0 and len(self.main.our_robots()) >= 5:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     self.pos_up_field,#self.receive_pt,
                     None,
