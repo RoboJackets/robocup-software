@@ -50,8 +50,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #Note: add a warning if the field size is too small to run the tests
 
     #An abstract base class for motion tests
-    class MotionTest(ABC):
-       
+    class MotionTest(ABC): 
 
         def __init__(self, nRuns, benchmark):
             self.runs = nRuns
@@ -515,7 +514,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #TestEnd -> TestMotion
         self.add_transition(MotionBenchmark.State.TestEnd,
                             MotionBenchmark.State.TestMotion,
-                            lambda: self.testIndex < len(self.tests), 'Next test exists')
+                            lambda: self.currentTest != None, 'Next test exists')
 
 
         #BasicMotionEnd -> ProcessAllTests
