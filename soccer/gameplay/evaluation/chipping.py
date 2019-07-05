@@ -10,5 +10,5 @@ import math
 def chippable_robots():
 	bp = main.ball().pos
 	return [rob for rob in main.system_state().their_robots if 
-                (rob.pos-bp).mag() > min(constants.OurChipping) and 
-                (rob.pos-bp).mag() < max(constants.OurChipping) ]
+                (rob.pos-bp).mag() > constants.OurChipping.MIN_CARRY and 
+                (rob.pos-bp).mag() < constants.OurChipping.MAX_CARRY ]
