@@ -68,11 +68,11 @@ class OurFreeKick(standard_play.StandardPlay):
 
     def receiver_near_pos(self):
         return self.subbehavior_with_name('receiver').robot is not None and \
-               (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.3
+               (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5
 
     def on_enter_move(self):
         self.move_pos = self.calc_move_pos()
-        self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 5)
+        self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 11)
 
         self.pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
         if (main.ball().pos.y > constants.Field.Length / 2) :
@@ -96,7 +96,7 @@ class OurFreeKick(standard_play.StandardPlay):
             self.remove_subbehavior('kicker')
             kicker = skills.line_kick.LineKick()
             kicker.target = constants.Field.TheirGoalSegment
-            self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+            self.add_subbehavior(kicker, 'kicker', required=False, priority=11)
 
         if self.indirect:
             passState = self.subbehavior_with_name('kicker').state
@@ -129,16 +129,14 @@ class OurFreeKick(standard_play.StandardPlay):
         # Try passing if we are doing an indirect kick
         if self.indirect:
             # Check for valid target pass position
-            print("RECIEVE VALUE")
-            print(self.receive_value)
             if self.receive_value != 0 and len(self.main.our_robots()) >= 5:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                    self.pos_up_field,#self.receive_pt,
+                    self.receive_pt,
                     None,
                     (kicker, lambda x: True),
                     receiver_required=False,
                     kicker_required=False,
-                    prekick_timeout=9,
+                    prekick_timeout=7,
                     use_chipper = True)
                 # We don't need to manage this anymore
                 self.add_subbehavior(pass_behavior, 'kicker')
