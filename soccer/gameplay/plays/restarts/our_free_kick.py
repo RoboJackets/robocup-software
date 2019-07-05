@@ -47,11 +47,7 @@ class OurFreeKick(standard_play.StandardPlay):
         self.add_transition(OurFreeKick.State.move,
                             OurFreeKick.State.kick, 
                             lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and
-<<<<<<< HEAD
-                                    self.receiver_above_half() and self.receiver_near_receive_point(),
-=======
                                     self.receiver_near_pos(),
->>>>>>> 25229527334c42961c2236fd2473eb56964d2e39
                             'kick')
 
         self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
