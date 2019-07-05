@@ -67,8 +67,8 @@ class OurFreeKick(standard_play.StandardPlay):
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def receiver_near_pos(self):
-        return self.subbehavior_with_name('receiver').robot is not None and \
-               (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5
+        return len(main.our_robots()) <= 4 or (self.subbehavior_with_name('receiver').robot is not None and \
+               (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5)
 
     def on_enter_move(self):
         self.move_pos = self.calc_move_pos()
