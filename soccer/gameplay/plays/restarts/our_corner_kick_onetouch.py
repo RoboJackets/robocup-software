@@ -5,6 +5,7 @@ import tactics
 import robocup
 import constants
 import main
+import time
 
 
 class OurCornerKickTouch(standard_play.StandardPlay):
@@ -15,9 +16,12 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     TargetSegmentWidth = 1.5
     MaxKickSpeed = 0.5
     MaxKickAccel = 0.5
+    Timeout = 10.0
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
+
+        self.start_time = time.time()
 
         # setup a line kick skill to replace the pivotkick since a pivot would easily cause a double touch
         self.kicker = skills.line_kick.LineKick()
@@ -42,6 +46,10 @@ class OurCornerKickTouch(standard_play.StandardPlay):
         self.add_transition(behavior.Behavior.State.running,
                             behavior.Behavior.State.completed,
                             self.pass_bhvr.is_done_running, 'passing is done')
+
+        for state in OurCornerKickTouch.State:
+            self.add_transition(state, behavior.Behavior.State.failed,
+                                lambda: time.time() - self.start_time > OurCornerKickTouch.Timeout, 'fumble')
 
         # start the actual pass
         self.add_subbehavior(self.pass_bhvr, 'pass')
