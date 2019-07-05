@@ -47,7 +47,7 @@ class OurFreeKick(standard_play.StandardPlay):
         self.add_transition(OurFreeKick.State.move,
                             OurFreeKick.State.kick, 
                             lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and
-                                    self.receiver_above_half(),
+                                    self.receiver_above_half() and self.receiver_near_receive_point(),
                             'kick')
 
         self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
@@ -66,6 +66,21 @@ class OurFreeKick(standard_play.StandardPlay):
         return 0 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
+    def modify_receive_pt(self):
+        direction = (self.receive_pt - main.ball().pos).normalized()
+        return main.ball().pos + direction*constants.OurChipping.CAPTURE_DISTANCE
+
+    def receiver_near_receive_point(self):
+        max_speed = robocup.MotionConstraints.MaxRobotSpeed.value
+        max_acc = robocup.MotionConstraints.MaxRobotAccel.value
+        rob = self.subbehavior_with_name('receiver').robot
+        if rob is None:
+            print('No Assigned Receiver')
+            return True
+        if self.subbehavior_with_name('receiver').state == behavior.Behavior.State.completed:
+            return True
+        return (self.receive_pt - rob.pos).mag() < .75
+
     def receiver_above_half(self):
         return self.subbehavior_with_name('receiver').robot is not None and \
                self.subbehavior_with_name('receiver').robot.pos.y > constants.Field.Length/2
@@ -75,7 +90,7 @@ class OurFreeKick(standard_play.StandardPlay):
         self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 5)
 
         pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
-        self.add_subbehavior(skills.move.Move(pos_up_field), 'receiver', required=False)
+        self.add_subbehavior(skills.move.Move(self.modify_receive_pt()), 'receiver', required=False)
 
     def execute_move(self):
         self.move_pos = self.calc_move_pos()

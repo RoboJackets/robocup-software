@@ -2,7 +2,7 @@ import constants
 import math
 import robocup
 import main
-
+import evaluation.chipping
 
 ## Find the chance of a pass succeeding by looking at pass distance and what robots are in the way
 # @param from_point The Point the pass is coming from
@@ -34,3 +34,11 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     else:
         # the pass is completely blocked
         return 0
+
+
+def eval_chip(from_point, to_point, excluded_robots=[]):
+    excluded_robots = list(excluded_robots)
+    #print("CHIPPABLE",type(evaluation.chipping.chippable_robots(from_point)))
+    #print(list(excluded_robots))
+    excluded_robots.extend(evaluation.chipping.chippable_robots(from_point))
+    return eval_pass(from_point, to_point, excluded_robots)

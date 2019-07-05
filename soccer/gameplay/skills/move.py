@@ -55,7 +55,7 @@ class Move(single_robot_behavior.SingleRobotBehavior):
                     self.robot.face(robocup.Point(self.robot.pos.x + self.robot.vel.x * -5, self.robot.pos.y + self.robot.vel.y * -5))
 
 
-def role_requirements(self):
+    def role_requirements(self):
         reqs = super().role_requirements()
         reqs.destination_shape = self.pos
         return reqs

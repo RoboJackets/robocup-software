@@ -25,7 +25,7 @@ class TestSpaceEvals(standard_play.StandardPlay):
             print("Upfield:" ,evaluation.space.get_closest_upfield_opponent_distance_to_point(main.ball().pos))
             rp = evaluation.space.get_radius_points(main.ball().pos, r=1, n=5)
             #print("Radius Points from Ball", rp)
-            best_downfield_point = evaluation.space.get_best_downfield_space_point()
+            best_downfield_point = evaluation.space.get_best_downfield_space_point(angle_resolution = 3, max_radius=3, radius_resolution=.5)
             print("Best Downfield Point: ",best_downfield_point)
             if best_downfield_point is None:
                 print('WELL FUCK')
