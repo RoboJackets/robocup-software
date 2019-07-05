@@ -67,5 +67,6 @@ class OurCornerKickTouch(standard_play.StandardPlay):
     def execute_running(self):
         super().execute_running()
         # exit the play when the pass is done
-        if self.pass_bhvr.all_subbehaviors_completed() or not self.pass_bhvr.pass_bhvr.has_roles_assigned:
+
+        if self.pass_bhvr.is_done_running():
             OurCornerKickTouch.Running = False
