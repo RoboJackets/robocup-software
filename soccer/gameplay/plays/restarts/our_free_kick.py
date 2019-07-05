@@ -128,6 +128,7 @@ class OurFreeKick(standard_play.StandardPlay):
 
         # Try passing if we are doing an indirect kick
         if self.indirect:
+            pass
             # Check for valid target pass position
             if self.receive_value != 0 and len(self.main.our_robots()) >= 5:
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
