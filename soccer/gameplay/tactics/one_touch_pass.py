@@ -123,7 +123,7 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         
 
     def execute_passing(self):
-        self.tpass_iterations = self.tpass_iterations + 1
+        #self.tpass_iterations = self.tpass_iterations + 1
         if not self.pass_bhvr.state == tactics.coordinated_pass.CoordinatedPass.State.receiving and self.tpass_iterations > 50 or main.ball(
         ).pos.y < self.pass_bhvr.receive_point.y:
             self.force_reevauation = True

@@ -122,19 +122,20 @@ class OurFreeKick(standard_play.StandardPlay):
 
         # Try passing if we are doing an indirect kick
         if self.indirect:
+            pass
             # Check for valid target pass position
-            if self.receive_value != 0:
-                pass_behavior = tactics.coordinated_pass.CoordinatedPass(
-                    self.receive_pt,
-                    None,
-                    (kicker, lambda x: True),
-                    receiver_required=False,
-                    kicker_required=False,
-                    prekick_timeout=9)
+            #if self.receive_value != 0:
+            #    pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+            #        self.receive_pt,
+            #        None,
+            #        (kicker, lambda x: True),
+            #        receiver_required=False,
+            #        kicker_required=False,
+            #        prekick_timeout=9)
                 # We don't need to manage this anymore
-                self.add_subbehavior(pass_behavior, 'kicker')
-            else:
-                self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+            #    self.add_subbehavior(pass_behavior, 'kicker')
+            #else:
+            #    self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
