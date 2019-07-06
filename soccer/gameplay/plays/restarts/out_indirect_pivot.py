@@ -93,10 +93,10 @@ class OurIndirectPivot(standard_play.StandardPlay):
             OurIndirectPivot.LAST_START = None
             return float('inf')
         # enter play when doing a corner kick or stay in it even if we manipulate the ball
-        if (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
+        if not OurIndirectPivot.Running and OurIndirectPivot.LAST_START is None and (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
                 constants.Field.Length - 1.2) and main.ball().pos.y >= constants.Field.Length/2 and (gs.is_our_direct() and main.ball().pos.y >= constants.Field.Length-3 and abs(main.ball().pos.x)) < 1 ):
             OurIndirectPivot.Running = True
-            return 4
+            return 0
         elif OurIndirectPivot.Running or (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
                 constants.Field.Length - 1.2) and main.ball().pos.y >= constants.Field.Length/2 ):
             OurIndirectPivot.Running = True
