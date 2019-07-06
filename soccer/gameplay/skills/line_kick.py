@@ -46,11 +46,13 @@ class LineKick(skills._kick._Kick, single_robot_composite_behavior.SingleRobotCo
         self.max_accel = None
 
     def on_enter_waiting(self):
+        self.robot.set_avoid_ball_radius(0.1)
         super().recalculate_aim_target_point()
-        self.add_subbehavior(skills.move.Move(main.ball().pos - (self.aim_target_point - main.ball().pos).normalized()*.4), 'setupMove')
+        self.add_subbehavior(skills.move.Move(main.ball().pos - (self.aim_target_point - main.ball().pos).normalized()*.5), 'setupMove')
 
     def on_exit_waiting(self):
         self.remove_subbehavior('setupMove')
+        self.robot.disable_avoid_ball()
 
     def on_enter_running(self):
         super().recalculate_aim_target_point()

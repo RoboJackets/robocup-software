@@ -34,7 +34,7 @@ class OurCornerKick(standard_play.StandardPlay):
 
         self.add_transition(OurCornerKick.State.move,
                             OurCornerKick.State.kick,
-                            lambda: self.subbehavior_with_name('move behind').state == behavior.Behavior.State.completed,
+                            lambda: True,#self.subbehavior_with_name('move behind').state == behavior.Behavior.State.completed,
                             'kick')
 
         self.kicker = skills.line_kick.LineKick()
@@ -47,7 +47,7 @@ class OurCornerKick(standard_play.StandardPlay):
         gs = main.game_state()
         if gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y > (
                 constants.Field.Length - 1.0):
-            return 0
+            return 1
         else:
             return float("inf")
 

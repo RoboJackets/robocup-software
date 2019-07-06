@@ -36,9 +36,9 @@ class OurFreeKick(standard_play.StandardPlay):
         gs = main.game_state()
 
         if (main.ball().pos.y > constants.Field.Length / 2):
-            self.indirect = gs.is_indirect()
+             self.indirect = gs.is_indirect()
         else:
-            self.indirect = False
+             self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             OurFreeKick.State.move, lambda: True,
@@ -49,7 +49,7 @@ class OurFreeKick(standard_play.StandardPlay):
                             lambda: (not self.has_subbehavior_with_name('receiver')) or self.receiver_near_pos(),
                             'kick')
 
-        self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+        self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, field_weights=(2.0, 10.0, 0.1))
         self.gap = evaluation.shooting.find_gap(max_shooting_angle=OurFreeKick.MaxShootingAngle)
 
 
@@ -62,7 +62,7 @@ class OurFreeKick(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 1 if OurFreeKick.Running or (
+        return 3 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def receiver_near_pos(self):
@@ -79,7 +79,8 @@ class OurFreeKick(standard_play.StandardPlay):
             y = max(constants.Field.Length * .75, (main.ball().pos.y + constants.Field.Length) * 0.5)
             self.pos_up_field = robocup.Point(x,y)
 
-        if self.indirect and (self.receive_value == 0 or len(main.our_robots()) <= 5):
+
+        if self.indirect and (self.receive_value == 0 and len(main.our_robots()) >= 5):
             self.add_subbehavior(skills.move.Move(self.pos_up_field), 'receiver', required=False, priority = 5)
 
     def execute_move(self):
@@ -117,6 +118,7 @@ class OurFreeKick(standard_play.StandardPlay):
             pass
             # Check for valid target pass position
             if self.receive_value != 0 and len(main.our_robots()) >= 5:
+                self.remove_all_subbehaviors()
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     self.receive_pt,
                     None,
