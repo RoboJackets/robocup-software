@@ -83,7 +83,7 @@ class OurIndirectPivot(standard_play.StandardPlay):
 
         self.add_transition(OurIndirectPivot.State.kicking,
                             behavior.Behavior.State.completed,
-                            lambda: False, 'Shot Completed')
+                            lambda: time.time() - OurIndirectPivot.LAST_START > OurIndirectPivot.MAX_RUNTIME, 'Shot Completed')
 
     @classmethod
     def score(cls):
