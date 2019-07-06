@@ -379,17 +379,17 @@ class SituationalPlaySelector:
         lastRobotTime = 0.0
         
         for g in cls.activeRobots:
-            if(hasBall[g]):
-               return (g, 0.0, abs(time.time() - posChangeTime[g]))
-            timeSincePoss = cls.posChangeTime.get(g ,float("inf"))
+            if(cls.hasBall[g]):
+               return (g, 0.0, abs(time.time() - cls.posChangeTime[g]))
+            timeSincePoss = abs(time.time() - cls.posChangeTime.get(g ,float("inf")))
             if(lastRobot == None or timeSincePoss < lastRobotTime):
                 lastRobot = g
                 lastRobotTime = timeSincePoss
-
+        
         if(cls.posChangeTime.get(lastRobot, float("inf")) == float("inf")):
             return (None, None, None)
 
-        return (lastBot, lastRobotTime, posTime)
+        return (lastRobot, lastRobotTime, cls.posDuration.get(lastRobot,0.0))
 
     #Returns true if we had the ball last
     @classmethod
@@ -497,6 +497,7 @@ class SituationalPlaySelector:
 
             if(hadBall and not hasBall):
                 cls.posDuration[g] = abs(time.time() - cls.posChangeTime[g])
+                #print(cls.posDuration[g])
                 cls.posChangeTime[g] = time.time()
 
             cls.hasBall[g] = hasBall
@@ -536,6 +537,19 @@ class SituationalPlaySelector:
             else:
                 cls.currentPossession = cls.ballPos.theirBall
             return None
+
+        lastInfo = cls.hadBallLast()
+        lastDurationThreshold = 0.5
+        lastDurationLengthThreshold = 0.5
+        print(str(lastInfo[1]) + " " + str(lastInfo[2]))
+        if(lastInfo[0] != None and lastInfo[1] < lastDurationThreshold and lastInfo[2] > lastDurationLengthThreshold):
+            if(lastInfo[0].is_ours()):
+                cls.currentPossession = cls.ballPos.ourBall
+            else:
+                cls.currentPossession = cls.ballPos.theirBall
+            print("This thing has happened")
+            return None
+
 
         ballDistRatio = cls.ballClosenessRatio()
         #print(ballDistRatio)
