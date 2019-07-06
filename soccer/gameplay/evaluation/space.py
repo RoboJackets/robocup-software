@@ -161,8 +161,9 @@ def get_best_downfield_space_point(start_point=None,
 	best_point = None
 	for i in range(math.ceil(min_radius/radius_resolution),math.floor(max_radius/radius_resolution)+1):
 		points = [pt for pt in get_radius_points(start_point, r=i*radius_resolution, n=50, from_rad=0, to_rad=180) if 
-					not constants.Field.TheirGoalZoneShapePadded(.5).contains_point(pt) 
-					and constants.Field.FieldRect.contains_point(pt) 
+					not (abs(pt.x) < 1.3 and pt.y >7.7)
+					and constants.Field.FieldRect.contains_point(pt)
+					and pt.y < constants.Field.Length 
 					and get_closest_upfield_opponent_distance_to_point(pt)[0] >= min_upfield_distance 
 					and get_closest_downfield_opponent_distance_to_point(pt)[0] >= min_downfield_distance]
 		
