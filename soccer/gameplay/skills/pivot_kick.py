@@ -135,7 +135,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         # Make sure in front
         # Make sure dist to angle line is less than radius
         # But greater than mouth radius
-        if (self.robot is None or len(maintheir_robots()) == 0):
+        if (self.robot is None or len(main.their_robots()) == 0):
             return False
 
         # Closest opp robot in any direction
