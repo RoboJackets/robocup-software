@@ -10,8 +10,8 @@ TheirChipping = (.1, .8)
 class OurChipping:
     MIN_CARRY = .1
     MAX_CARRY = .8
-    MIN_CAPTURE_DISTANCE = 2.5
-    MAX_CAPTURE_DISTANCE = 2.5
+    MIN_CAPTURE_DISTANCE = 3
+    MAX_CAPTURE_DISTANCE = 6
     MIN_CARRY_TIME = .1
     MAX_CARRY_TIME = .4
     CAPTURE_DISTANCE_TIME = 1.2

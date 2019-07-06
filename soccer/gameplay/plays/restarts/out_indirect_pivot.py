@@ -5,6 +5,7 @@ import tactics
 import robocup
 import constants
 import main
+import math
 from enum import Enum
 import evaluation
 from evaluation.passing import eval_pass, eval_chip 
@@ -15,7 +16,7 @@ import time
 class OurIndirectPivot(standard_play.StandardPlay):
 
     LAST_START=None
-    MAX_RUNTIME = 10
+    MAX_RUNTIME = 12
     class State(Enum):
         preparing=0
         passing=1
@@ -36,6 +37,7 @@ class OurIndirectPivot(standard_play.StandardPlay):
         OurIndirectPivot.LAST_START = int(time.time())
         self.receive_point = self.pick_pass_spot()
         self.ball_near_receive_point_time = None
+
         # setup a line kick skill to replace the pivotkick since a pivot would easily cause a double touch
         self.shot_kicker = skills.pivot_kick.PivotKick()
         self.shot_kicker.chip_power = OurIndirectPivot.ChipperPower  # TODO: base this on the target dist from the bot
@@ -102,6 +104,8 @@ class OurIndirectPivot(standard_play.StandardPlay):
     def on_enter_preparing(self):
         self.add_subbehavior(skills.move.Move((main.ball().pos + (main.ball().pos -robocup.Point(0,constants.Field.Length)).normalized()/2)), 'setupKick', priority=25)
         self.add_subbehavior(skills.move.Move(self.receive_point), 'setupReceive', priority=19)
+        backup_point = self.receive_point + (main.ball().pos - self.receive_point).normalized()
+        self.add_subbehavior(skills.move.Move(backup_point), 'Backup', priority=1)
 
     def on_exit_preparing(self):
         self.remove_all_subbehaviors()
@@ -114,10 +118,6 @@ class OurIndirectPivot(standard_play.StandardPlay):
         self.pass_bhvr.use_chipper = self.evaluate_chip(self.receive_point)
 
         
-        threat_point = robocup.Point(self.receive_point.x, self.receive_point.y-.5)
-        
-        print("Threatening At : ", threat_point)
-        self.add_subbehavior(skills.move.Move(threat_point), 'Threat', required=False, priority=1)
 
     def execute_passing(self):
         pass
@@ -144,7 +144,7 @@ class OurIndirectPivot(standard_play.StandardPlay):
 
 
     def on_enter_kicking(self):
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior_with_name('pass')
         self.add_subbehavior(self.shot_kicker, 'Shot')
 
         if abs(main.ball().pos.x)>2:
@@ -157,9 +157,8 @@ class OurIndirectPivot(standard_play.StandardPlay):
         self.add_subbehavior(skills.move.Move(rebound_point), 'Rebound', required=False, priority=5)
 
     def execute_kicking(self):
-        print(self.subbehavior_with_name('Shot').state)
         if self.subbehavior_with_name('Shot').state in [behavior.Behavior.State.completed,behavior.Behavior.State.failed]:
-            print('womp')
+            print('Failed Shot on PivotKick Indirect')
             OurIndirectPivot.Running = False
 
     def on_exit_kicking(self):
@@ -172,9 +171,9 @@ class OurIndirectPivot(standard_play.StandardPlay):
                                     min_upfield_distance=.5, 
                                     min_downfield_distance=.25)
         if tmp is None:
-            return robocup.Point(1,constants.Field.Length)
+            print("No good evaluations found, using a static point")
+            return robocup.Point(math.copysign(1,main.ball().pos.x),constants.Field.Length-1.6)
         else:
-            print("FOUND A POINT")
             return tmp
         
 

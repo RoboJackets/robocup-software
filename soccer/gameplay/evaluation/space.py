@@ -166,7 +166,10 @@ def get_best_downfield_space_point(start_point=None,
 					and get_closest_upfield_opponent_distance_to_point(pt)[0] >= min_upfield_distance 
 					and get_closest_downfield_opponent_distance_to_point(pt)[0] >= min_downfield_distance]
 		
-		best_r = sorted([ (pt_scoring_func(pt), pt) for pt in points], key=lambda x: x[0], reverse=True)[0]
+		try:
+			best_r = sorted([ (pt_scoring_func(pt), pt) for pt in points], key=lambda x: x[0], reverse=True)[0]
+		except:
+			best_r = (0,robocup.Point(1,6))
 		
 		if best_r[0] > best_score:
 			#print(best_r)
