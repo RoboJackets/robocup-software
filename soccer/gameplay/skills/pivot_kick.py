@@ -123,8 +123,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         # We are aiming at the goal
         if (angle_left_goal_post_diff + angle_right_goal_post_diff + small_angle_offset <= angle_goal_post_diff):
-            print('EARLY KIck')
-            main.system_state().draw_text('Early kick', robot.pos, 'PivotKick')
+            print('EARLY KICK')
+            main.system_state().draw_text('Early kick', robot.pos, (255, 255, 255), 'PivotKick')
             return True
 
         return False
@@ -149,7 +149,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
                 closest_opp_dist = (r.pos - self.robot.pos).mag()
 
         # Only do this if a robot is in range
-        robot_in_range = closest_opp_dist < 5
+        robot_in_range = closest_opp_dist < .2 + constants.Robot.Radius
 
         aim_dir = robocup.Point.direction(self.robot.angle)
         robot_dir = (closest_opp_robot.pos - self.robot.pos)
@@ -174,6 +174,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if ret:
             print("Panic kick")
+            main.system_state().draw_text('panic kick', self.robot.pos, (255, 255, 255), 'PivotKick')
 
         return ret
         
