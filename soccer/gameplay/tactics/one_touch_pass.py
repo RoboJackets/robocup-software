@@ -36,19 +36,19 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         self.force_reevauation = False
 
         rp = self.calc_receive_point()
-        self.add_subbehavior(skills.move.Move(main.ball().pos - (rp - main.ball().pos).normalized()*.4), 'passSetup', priority=5)
-        self.add_subbehavior(skills.move.Move(rp), 'receiveSetup', priority=5)
+        # self.add_subbehavior(skills.move.Move(main.ball().pos - (rp - main.ball().pos).normalized()*.4), 'passSetup', priority=5)
+        # self.add_subbehavior(skills.move.Move(rp), 'receiveSetup', priority=5)
 
         for state in OneTouchPass.State:
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            OneTouchPass.State.setup, lambda: True,
+                            OneTouchPass.State.passing, lambda: True,
                             'immediately')
 
-        self.add_transition(OneTouchPass.State.setup,
-                            OneTouchPass.State.passing, lambda: self.subbehavior_with_name('passSetup').is_done_running(),
-                            'movedKicker')
+        # self.add_transition(OneTouchPass.State.setup,
+        #                     OneTouchPass.State.passing, lambda: self.subbehavior_with_name('passSetup').is_done_running(),
+        #                     'movedKicker')
 
         self.add_transition(
             OneTouchPass.State.passing, behavior.Behavior.State.completed,
@@ -111,8 +111,8 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
 
 
     def on_enter_passing(self):
-        self.remove_subbehavior('passSetup')
-        self.remove_subbehavior('receiveSetup')
+        # self.remove_subbehavior('passSetup')
+        # self.remove_subbehavior('receiveSetup')
         self.angle_receive = skills.angle_receive.AngleReceive()
         self.add_subbehavior(self.pass_bhvr, 'pass', priority=5)
 
