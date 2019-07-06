@@ -127,7 +127,11 @@ class OurIndirectPivot(standard_play.StandardPlay):
         #backup_point = backup_point.normalized()
         print(evaluation.situation.goal_per_minute_required())
         backup_req = True if evaluation.situation.goal_per_minute_required()>=1 else False
-        self.add_subbehavior(skills.move.Move(backup_point), 'Backup', priority=1, required=backup_req)
+        self.add_subbehavior(skills.move.Move(backup_point), 'Backup', priority=2, required=backup_req)
+        try:
+            self.add_subbehavior(skills.move.Move(robocup.Point(1,5.5)), 'Backup2', priority=1, required=backup_req)
+            self.add_subbehavior(skills.move.Move(robocup.Point(-1,5.5)), 'Backup4', priority=1, required=backup_req)
+
         self.pass_bhvr.receive_point = self.receive_point
         self.pass_bhvr.use_chipper = True #self.evaluate_chip(self.receive_point)
         
