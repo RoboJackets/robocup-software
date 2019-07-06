@@ -10,13 +10,14 @@ from enum import Enum
 import evaluation
 from evaluation.passing import eval_pass, eval_chip 
 import evaluation.space
+import evaluation.situation
 import time
 
 
 class OurIndirectPivot(standard_play.StandardPlay):
 
     LAST_START=None
-    MAX_RUNTIME = 12
+    MAX_RUNTIME = 15
     class State(Enum):
         preparing=0
         passing=1
@@ -35,6 +36,8 @@ class OurIndirectPivot(standard_play.StandardPlay):
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
         OurIndirectPivot.LAST_START = int(time.time())
+        self.ball_start_pos = main.ball().pos
+        self.ball_has_left = False
         self.receive_point = self.pick_pass_spot()
         self.ball_near_receive_point_time = None
 
@@ -67,16 +70,16 @@ class OurIndirectPivot(standard_play.StandardPlay):
 
         # add transistions for when the play is done
         self.add_transition(behavior.Behavior.State.start,
-                            OurIndirectPivot.State.preparing, lambda: True,
+                            OurIndirectPivot.State.passing, lambda: True,
                             'immediately')
 
-        self.add_transition(OurIndirectPivot.State.preparing,
-                            OurIndirectPivot.State.passing, lambda: self.subbehavior_with_name('setupKick').is_done_running(),
-                            'move_completed')
+        #self.add_transition(OurIndirectPivot.State.preparing,
+        #                    OurIndirectPivot.State.passing, lambda: self.subbehavior_with_name('setupKick').is_done_running(),
+        #                    'move_completed')
 
         self.add_transition(OurIndirectPivot.State.passing,
                             OurIndirectPivot.State.kicking,
-                            lambda: self.pass_bhvr.is_done_running() or self.ball_close_enough_to_receive(), 'Pass Completed')
+                            lambda: self.pass_bhvr.is_done_running() or self.ball_has_left, 'Pass Completed')
 
         self.add_transition(OurIndirectPivot.State.kicking,
                             behavior.Behavior.State.completed,
@@ -114,13 +117,19 @@ class OurIndirectPivot(standard_play.StandardPlay):
         # start the actual pass
         self.add_subbehavior(self.pass_bhvr, 'pass', priority=20)
         self.receive_point = self.pick_pass_spot()
+        backup_point = main.ball().pos - (main.ball().pos - self.receive_point)-(main.ball().pos - self.receive_point).normalized()
+        backup_point.rotate(main.ball().pos,-math.pi/32)
+        #backup_point = main.ball().pos + backup_point
+        #backup_point = backup_point.normalized()
+        self.add_subbehavior(skills.move.Move(backup_point), 'Backup', priority=19 if evaluation.situation.goal_per_minute_required()>=1 else 1)
         self.pass_bhvr.receive_point = self.receive_point
-        self.pass_bhvr.use_chipper = self.evaluate_chip(self.receive_point)
+        self.pass_bhvr.use_chipper = True #self.evaluate_chip(self.receive_point)
 
         
 
     def execute_passing(self):
-        pass
+        if (main.ball().pos - self.ball_start_pos).mag() > 3:
+            self.ball_has_left = True 
         #if self.pass_bhvr.state == tactics.coordinated_pass.CoordinatedPass.State.preparing:
             #self.pass_bhvr.receive_point = self.pick_pass_spot()
             #self.pass_bhvr.use_chipper = self.evaluate_chip(self.pass_bhvr.receive_point)
@@ -128,6 +137,8 @@ class OurIndirectPivot(standard_play.StandardPlay):
     def ball_near_receive_point(self):
         return (self.receive_point - main.ball().pos).mag() <= .75
 
+    # Wasn't working- taken out
+    # Preferable to seeing if ball has moved a lot if it can get working
     def ball_close_enough_to_receive(self):
         if self.ball_near_receive_point():
             if self.ball_near_receive_point_time is None:
@@ -144,7 +155,7 @@ class OurIndirectPivot(standard_play.StandardPlay):
 
 
     def on_enter_kicking(self):
-        self.remove_subbehavior_with_name('pass')
+        self.remove_subbehavior('pass')
         self.add_subbehavior(self.shot_kicker, 'Shot')
 
         if abs(main.ball().pos.x)>2:

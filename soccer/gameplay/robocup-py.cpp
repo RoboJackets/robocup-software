@@ -781,6 +781,7 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<GameState>("GameState")
         .def_readonly("our_score", &GameState::ourScore)
         .def_readonly("their_score", &GameState::theirScore)
+        .def_readonly("seconds_remaining", &GameState::secondsRemaining)
         .def("is_halted", &GameState::halt)
         .def("is_stopped", &GameState::stopped)
         .def("is_playing", &GameState::playing)
