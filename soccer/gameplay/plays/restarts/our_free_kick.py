@@ -79,7 +79,7 @@ class OurFreeKick(standard_play.StandardPlay):
             y = max(constants.Field.Length * .75, (main.ball().pos.y + constants.Field.Length) * 0.5)
             self.pos_up_field = robocup.Point(x,y)
 
-        if self.indirect and (self.receive_value == 0 or len(main.our_robots()) <= 5):
+        if self.indirect and (self.receive_value == 0 and len(main.our_robots()) >= 5):
             self.add_subbehavior(skills.move.Move(self.pos_up_field), 'receiver', required=False, priority = 5)
 
     def execute_move(self):
