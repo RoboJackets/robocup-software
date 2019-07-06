@@ -62,7 +62,7 @@ class OurFreeKick(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 1 if OurFreeKick.Running or (
+        return 3 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def receiver_near_pos(self):

@@ -47,7 +47,7 @@ class OurCornerKick(standard_play.StandardPlay):
         gs = main.game_state()
         if gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y > (
                 constants.Field.Length - 1.0):
-            return 0
+            return 1
         else:
             return float("inf")
 
