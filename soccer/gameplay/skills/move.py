@@ -46,6 +46,7 @@ class Move(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if self.pos != None:
             self.robot.move_to(self.pos)
+            return
             if(not self.robot.is_facing()):
                 velPoint = robocup.Point(self.robot.vel.x, self.robot.vel.y)
                 robotPoint = robocup.Point(math.cos(self.robot.angle) * 3, math.sin(self.robot.angle) * 3)
