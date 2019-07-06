@@ -930,6 +930,7 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
+        .def("TheirGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
         .add_property("Border", &Field_Dimensions::Border)
