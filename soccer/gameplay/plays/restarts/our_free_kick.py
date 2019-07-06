@@ -35,10 +35,11 @@ class OurFreeKick(standard_play.StandardPlay):
         # If we are indirect we don't want to shoot directly into the goal
         gs = main.game_state()
 
-        if (main.ball().pos.y > constants.Field.Length / 2):
-            self.indirect = gs.is_indirect()
-        else:
-            self.indirect = False
+        self.indirect = gs.is_indirect()
+        # if (main.ball().pos.y > constants.Field.Length / 2):
+        #     self.indirect = gs.is_indirect()
+        # else:
+        #     self.indirect = False
 
         self.add_transition(behavior.Behavior.State.start,
                             OurFreeKick.State.move, lambda: True,
@@ -49,7 +50,7 @@ class OurFreeKick(standard_play.StandardPlay):
                             lambda: (not self.has_subbehavior_with_name('receiver')) or self.receiver_near_pos(),
                             'kick')
 
-        self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
+        self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos, field_weights=(2.0, 10.0, 0.1))
         self.gap = evaluation.shooting.find_gap(max_shooting_angle=OurFreeKick.MaxShootingAngle)
 
 
