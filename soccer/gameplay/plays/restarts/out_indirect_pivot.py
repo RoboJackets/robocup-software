@@ -96,11 +96,11 @@ class OurIndirectPivot(standard_play.StandardPlay):
         if not OurIndirectPivot.Running and OurIndirectPivot.LAST_START is None and (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
                 constants.Field.Length - 1.2) and main.ball().pos.y >= constants.Field.Length/2 and (gs.is_our_direct() and main.ball().pos.y >= constants.Field.Length-3 and abs(main.ball().pos.x)) < 1 ):
             OurIndirectPivot.Running = True
-            return 0
+            return 1
         elif OurIndirectPivot.Running or (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
                 constants.Field.Length - 1.2) and main.ball().pos.y >= constants.Field.Length/2 ):
             OurIndirectPivot.Running = True
-            return 0
+            return 1
         else:
             return float("inf")
 

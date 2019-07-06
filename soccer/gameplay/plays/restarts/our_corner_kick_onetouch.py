@@ -61,7 +61,7 @@ class OurCornerKickTouch(standard_play.StandardPlay):
         if len(main.our_robots()) < 5:
             return float("inf")
         if (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y > (
-                constants.Field.Length - 1.2) and abs(main.ball().pos.x) > .6 ):
+                constants.Field.Length - 1.5) and abs(main.ball().pos.x) > .6 ):
             return 0
         else:
             return 10000
