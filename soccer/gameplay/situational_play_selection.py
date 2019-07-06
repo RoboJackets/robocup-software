@@ -101,7 +101,9 @@ class SituationalPlaySelector:
         cls.ballPossessionUpdate()
         cls.situationUpdate()
         
-        print(cls.currentSituation.name)
+
+        cls.systemState.draw_text(cls.currentSituation.name, robocup.Point(-3,-0.3), (0,0,0),"hat")
+        #print(cls.currentSituation.name)
         #print(abs(time.time() - startTime))
 
 
@@ -497,7 +499,6 @@ class SituationalPlaySelector:
 
             if(hadBall and not hasBall):
                 cls.posDuration[g] = abs(time.time() - cls.posChangeTime[g])
-                #print(cls.posDuration[g])
                 cls.posChangeTime[g] = time.time()
 
             cls.hasBall[g] = hasBall
@@ -507,7 +508,6 @@ class SituationalPlaySelector:
             #if(cls.hasBall[g]):
             #    cls.systemState.draw_text(str(abs(time.time() - cls.posChangeTime[g])), printPoint1, (0,0,0),"hat")
             #else:
-            #    cls.systemState.draw_text("N/A", printPoint1, (0,0,0),"hat")
 
             #try:
             #    cls.systemState.draw_text(str(round(cls.posDuration[g],3)), printPoint2, (0,0,0),"hat")
@@ -519,7 +519,6 @@ class SituationalPlaySelector:
             #cls.systemState.draw_text(str(round(cls.recvProb[g],3)), printPoint3, (0,0,0), "hat")
 
             #try:
-            #    cls.systemState.draw_text(str(round(abs(cls.posChangeTime[g] - time.time()),3)), printPoint4, (0,0,0), "hat")
             #except:
             #    pass
 
@@ -529,7 +528,6 @@ class SituationalPlaySelector:
 
         ballPossessionDurationThreshold = 0.07
         botsWithBall = cls.robotsWithTheBall()
-        #print(botsWithBall)
         if(len(botsWithBall) == 1 and abs(cls.posChangeTime[botsWithBall[0]] - time.time()) > ballPossessionDurationThreshold):
             #print(abs(cls.posChangeTime[botsWithBall[0]] - time.time())) 
             if(botsWithBall[0].is_ours()):
@@ -541,13 +539,12 @@ class SituationalPlaySelector:
         lastInfo = cls.hadBallLast()
         lastDurationThreshold = 0.5
         lastDurationLengthThreshold = 0.5
-        print(str(lastInfo[1]) + " " + str(lastInfo[2]))
+        #print(str(lastInfo[1]) + " " + str(lastInfo[2]))
         if(lastInfo[0] != None and lastInfo[1] < lastDurationThreshold and lastInfo[2] > lastDurationLengthThreshold):
             if(lastInfo[0].is_ours()):
                 cls.currentPossession = cls.ballPos.ourBall
             else:
                 cls.currentPossession = cls.ballPos.theirBall
-            print("This thing has happened")
             return None
 
 
