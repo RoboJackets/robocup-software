@@ -11,12 +11,12 @@ class RoleRequirements:
     def __init__(self):
         self.destination_shape = None
         self.has_ball = False
-        self.chipper_preference_weight = 0
+        self.chipper_preference_weight = 0.0
         self.required_shell_id = None
         self.previous_shell_id = None
         self.prohibited_shell_id = None
         self.required = False
-        self.priority = 0
+        self.priority = 0.0
         self.require_kicking = False
         self.require_chipping = False
         self.robot_change_cost = 1.0
@@ -26,7 +26,7 @@ class RoleRequirements:
 
         # A lambda function property that allows customization of cost
         # Has exactly one parameter, which is a robot
-        self.cost_func = lambda r: 0
+        self.cost_func = lambda r: 0.0
 
     def __str__(self):
         props = []
@@ -192,7 +192,12 @@ class ImpossibleAssignmentError(RuntimeError):
 
 
 # the munkres library doesn't like infinity, so we use this instead
-MaxWeight = 10000000
+MaxWeight = 10000000.0
+
+# The munkres library works in ints, so multiply everything by 1000
+# In theory it should work with floats, but the types are getting messed up
+# This creates a fixed point type situation
+IntScale = 1000.0
 
 # a default weight for preferring a chipper
 # this is tunable
@@ -277,7 +282,7 @@ def assign_roles(robots, role_reqs):
     for robot in robots:
         cost_row = []
         for req in role_reqs_list:
-            cost = 0
+            cost = 0.0
 
             if req.required_shell_id is not None and req.required_shell_id != robot.shell_id(
             ):
@@ -319,6 +324,8 @@ def assign_roles(robots, role_reqs):
                     cost += req.chipper_preference_weight
                 cost += req.cost_func(robot)
 
+                cost *= IntScale
+
             # the munkres library freezes when given NaN values, causing our
             # whole program to hang and have to be restarted.  We check for it
             # here and raise an exception if there's a NaN.
@@ -350,7 +357,7 @@ def assign_roles(robots, role_reqs):
     assignments = {}
     total = 0
     for row, col in indexes:
-        total += cost_matrix[row][col]
+        total += cost_matrix[row][col] / IntScale
 
         bot = robots[row]
         reqs = role_reqs_list[col]
