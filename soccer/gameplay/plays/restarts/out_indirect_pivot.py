@@ -93,7 +93,11 @@ class OurIndirectPivot(standard_play.StandardPlay):
             OurIndirectPivot.LAST_START = None
             return float('inf')
         # enter play when doing a corner kick or stay in it even if we manipulate the ball
-        if OurIndirectPivot.Running or (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
+        if (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
+                constants.Field.Length - 1.2) and main.ball().pos.y >= constants.Field.Length/2 and (gs.is_our_direct() and main.ball().pos.y >= constants.Field.Length-3 and abs(main.ball().pos.x)) < 1 ):
+            OurIndirectPivot.Running = True
+            return 4
+        elif OurIndirectPivot.Running or (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y < (
                 constants.Field.Length - 1.2) and main.ball().pos.y >= constants.Field.Length/2 ):
             OurIndirectPivot.Running = True
             return 0
@@ -126,7 +130,6 @@ class OurIndirectPivot(standard_play.StandardPlay):
         self.add_subbehavior(skills.move.Move(backup_point), 'Backup', priority=1, required=backup_req)
         self.pass_bhvr.receive_point = self.receive_point
         self.pass_bhvr.use_chipper = True #self.evaluate_chip(self.receive_point)
-
         
 
     def execute_passing(self):

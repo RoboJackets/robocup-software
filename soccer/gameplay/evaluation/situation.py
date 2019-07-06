@@ -17,7 +17,10 @@ def goal_per_minute_required():
 	time_left = gs.seconds_remaining / 60
 	if gs.is_first_half() or gs.is_overtime1():
 		time_left += HALF_LENGTH
-	return (gs.their_score - gs.our_score) / time_left
+	if time_left == 0:
+		return 0 
+	else:
+		return (gs.their_score - gs.our_score) / time_left
 
 def we_are_winning():
 	gs = main.system_state().game_state
