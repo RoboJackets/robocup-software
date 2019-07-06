@@ -45,9 +45,8 @@ class OurFreeKick(standard_play.StandardPlay):
                             'immediately')
 
         self.add_transition(OurFreeKick.State.move,
-                            OurFreeKick.State.kick, 
-                            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed and
-                                    self.receiver_near_pos(),
+                            OurFreeKick.State.kick,
+                            lambda: (not self.has_subbehavior_with_name('receiver')) or self.receiver_near_pos(),
                             'kick')
 
         self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(main.ball().pos)
@@ -63,16 +62,15 @@ class OurFreeKick(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 1 if OurFreeKick.Running or (
+        return 3 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def receiver_near_pos(self):
-        return len(main.our_robots()) <= 4 or (self.subbehavior_with_name('receiver').robot is not None and \
-               (self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5)
+        return len(main.our_robots()) <= 4 or (self.has_subbehavior_with_name('receiver') and (self.subbehavior_with_name('receiver').robot is not None)) and \
+            ((self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5)
 
     def on_enter_move(self):
         self.move_pos = self.calc_move_pos()
-        self.add_subbehavior(skills.move.Move(self.move_pos),'move', required = False, priority = 11)
 
         self.pos_up_field = robocup.Point(main.ball().pos.x, constants.Field.Length*.75)
         if (main.ball().pos.y > constants.Field.Length / 2) :
@@ -81,27 +79,15 @@ class OurFreeKick(standard_play.StandardPlay):
             y = max(constants.Field.Length * .75, (main.ball().pos.y + constants.Field.Length) * 0.5)
             self.pos_up_field = robocup.Point(x,y)
 
-        self.add_subbehavior(skills.move.Move(self.pos_up_field), 'receiver', required=False, priority = 5)
+        if self.indirect and (self.receive_value == 0 or len(main.our_robots()) <= 5):
+            self.add_subbehavior(skills.move.Move(self.pos_up_field), 'receiver', required=False, priority = 5)
 
     def execute_move(self):
         self.move_pos = self.calc_move_pos()
 
-    def on_exit_move(self):
-        self.remove_all_subbehaviors()
+    # def on_exit_move(self):
+        # self.remove_all_subbehaviors()
 
-    def execute_kick(self):
-        if self.indirect \
-           and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
-            self.indirect = False
-            self.remove_subbehavior('kicker')
-            kicker = skills.line_kick.LineKick()
-            kicker.target = constants.Field.TheirGoalSegment
-            self.add_subbehavior(kicker, 'kicker', required=False, priority=11)
-
-        if self.indirect:
-            passState = self.subbehavior_with_name('kicker').state
-            OurFreeKick.Running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
-                                  passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
 
     def on_enter_kick(self):
         OurFreeKick.Running = False
@@ -118,8 +104,8 @@ class OurFreeKick(standard_play.StandardPlay):
         if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
             kicker.kick_power = self.FullKickPower
         # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
-        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or 
-              shooting_line.line_intersection(constants.Field.FieldBorders[2]) and 
+        elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])  or
+              shooting_line.line_intersection(constants.Field.FieldBorders[2]) and
               self.gap.y - main.ball().pos.y > 0):
             kicker.kick_power = self.FullKickPower
         # If we are probably aiming down the field, slowly kick so we dont carpet
@@ -145,8 +131,22 @@ class OurFreeKick(standard_play.StandardPlay):
                 kicker.target = (self.pos_up_field)
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
         else:
+            kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
+    def execute_kick(self):
+        if self.indirect \
+           and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
+            self.indirect = False
+            self.remove_subbehavior('kicker')
+            kicker = skills.line_kick.LineKick()
+            kicker.target = constants.Field.TheirGoalSegment
+            self.add_subbehavior(kicker, 'kicker', required=False, priority=11)
+
+        if self.indirect:
+            passState = self.subbehavior_with_name('kicker').state
+            OurFreeKick.Running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
+                                  passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
 
     def on_exit_kick(self):
         OurFreeKick.Running = False

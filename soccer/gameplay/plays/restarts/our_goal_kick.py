@@ -36,13 +36,8 @@ class OurGoalKick(standard_play.StandardPlay):
 
 
         self.add_transition(behavior.Behavior.State.start,
-                            OurGoalKick.State.move, lambda: True,
+                            OurGoalKick.State.kick, lambda: True,
                             'immediately')
-
-        self.add_transition(OurGoalKick.State.move,
-                            OurGoalKick.State.kick,
-                            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
-                            'kick')
 
     @classmethod
     def score(cls):
@@ -53,16 +48,6 @@ class OurGoalKick(standard_play.StandardPlay):
     @classmethod
     def is_restart(cls):
         return True
-
-    def on_enter_move(self):
-        self.move_pos = self.calc_move_pt()
-        self.add_subbehavior(skills.move.Move(self.move_pos), 'move', required = False, priority = 5)
-
-    def execute_move(self):
-        self.move_pos = self.calc_move_pt()
-
-    def on_exit_move(self):
-        self.remove_subbehavior('move')
 
     def on_enter_kick(self):
         kicker = skills.line_kick.LineKick()
@@ -114,8 +99,3 @@ class OurGoalKick(standard_play.StandardPlay):
             center2.target = robocup.Point(center_x, center_y)
 
             kicker.target = robocup.Segment(center1.target, center2.target)
-
-    def calc_move_pt(self):
-        ball = main.ball().pos
-        pt = constants.Field.TheirGoalSegment.center()
-        return (ball - pt).normalized() * 0.15 + ball
