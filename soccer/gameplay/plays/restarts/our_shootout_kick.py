@@ -6,7 +6,7 @@ import tactics.penalty
 import planning_priority
 from enum import Enum
 import skills.move
-import skills.pivot_kick
+import skills.line_kick
 import constants
 
 # one robot kicks the ball, the others just line up and wait
@@ -44,12 +44,15 @@ class OurShootoutKick(play.Play):
         self.remove_all_subbehaviors()
 
     def execute_shooting(self):
-        kicker = skills.pivot_kick.PivotKick()
+        kicker = skills.line_kick.LineKick()#skills.pivot_kick.PivotKick()
         #aim for goal segmant
-        kicker.target = constants.Field.TheirGoalSegment
+        win_eval = robocup.WindowEvaluator(main.system_state())
+
+        kicker.target = constants.Field.TheirGoalSegment # TODO Use win eval
         kicker.aim_params['desperate_timeout'] = 8
         #kick
-        if (not self.has_subbehavior_with_name('kicker')) :
+        if (not self.has_subbehavior_with_name('kicker') or self.subbehavior_with_name('kicker').is_done_running()) :
+                self.remove_all_subbehaviors()
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
     def on_exit_shooting(self):

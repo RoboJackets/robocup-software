@@ -96,7 +96,7 @@ class OurShootoutChip(play.Play):
     def score(cls):
         gs = main.game_state()
         randomfloat = random.random()
-        return randomfloat if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+        return float("inf") #randomfloat if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     def on_enter_starting(self):
         self.add_subbehavior(skills.move.Move(self.calculate_starting_pos()), 'starting', required = False,
