@@ -34,7 +34,7 @@ class OurCornerKick(standard_play.StandardPlay):
 
         self.add_transition(OurCornerKick.State.move,
                             OurCornerKick.State.kick,
-                            lambda: self.subbehavior_with_name('move behind').state == behavior.Behavior.State.completed,
+                            lambda: True,#self.subbehavior_with_name('move behind').state == behavior.Behavior.State.completed,
                             'kick')
 
         self.kicker = skills.line_kick.LineKick()
