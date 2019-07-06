@@ -117,6 +117,7 @@ class OurFreeKick(standard_play.StandardPlay):
             pass
             # Check for valid target pass position
             if self.receive_value != 0 and len(main.our_robots()) >= 5:
+                self.remove_all_subbehaviors()
                 pass_behavior = tactics.coordinated_pass.CoordinatedPass(
                     self.receive_pt,
                     None,
