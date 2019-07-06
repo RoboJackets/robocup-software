@@ -48,9 +48,16 @@ class OurShootoutKick(play.Play):
         #aim for goal segmant
         win_eval = robocup.WindowEvaluator(main.system_state())
 
-        kicker.target = constants.Field.TheirGoalSegment # TODO Use win eval
+        for g in main.our_robots():
+            win_eval.add_excluded_robot(g)
+
+        windows, window = win_eval.eval_pt_to_opp_goal(main.ball().pos)
+        if(window != None):
+            kicker.target = window.segment.center()
+        else:
+            kicker.target = constants.Field.TheirGoalSegment
+
         kicker.aim_params['desperate_timeout'] = 8
-        #kick
         if (not self.has_subbehavior_with_name('kicker') or self.subbehavior_with_name('kicker').is_done_running()) :
                 self.remove_all_subbehaviors()
                 self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
