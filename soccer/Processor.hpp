@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include <string.h>
 
 #include <QMutex>
@@ -199,7 +200,7 @@ public:
     ////////
 
     // Time of the first LogFrame
-    boost::optional<RJ::Time> firstLogTime;
+    std::optional<RJ::Time> firstLogTime;
 
 protected:
     void run() override;

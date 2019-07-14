@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <boost/optional.hpp>
 #include <boost/functional/hash.hpp>
 #include <QtCore/QPointF>
 #include <protobuf/Point.pb.h>

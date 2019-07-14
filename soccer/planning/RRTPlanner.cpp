@@ -40,7 +40,7 @@ bool veeredOffPath(Point currentPos, const Path& path,
     RJ::Seconds timeIntoPath =
         (RJ::now() - path.startTime()) + RJ::Seconds(1) / 60;
 
-    boost::optional<RobotInstant> optTarget = path.evaluate(timeIntoPath);
+    std::optional<RobotInstant> optTarget = path.evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
     MotionInstant target = optTarget ? optTarget->motion : path.end().motion;
 
@@ -136,7 +136,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
     }
 
     // Locate a goal point that is obstacle-free
-    boost::optional<Point> prevGoal;
+    std::optional<Point> prevGoal;
     if (prevPath) prevGoal = prevPath->end().motion.pos;
     goal.pos = EscapeObstaclesPathPlanner::findNonBlockedGoal(
         goal.pos, prevGoal, obstacles);
@@ -199,7 +199,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
             prevPath->subPath(0ms, timeIntoPrevPath + partialReplanTime);
         RobotInstant newStart = subPath->end();
 
-        boost::optional<vector<Point>> biasWaypoints;
+        std::optional<vector<Point>> biasWaypoints;
         if (replanState == PartialReplan) {
             biasWaypoints = vector<Point>();
             biasWaypoints->push_back(start.pos + start.vel * 0.2);
@@ -289,7 +289,7 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, SystemState* state,
-    unsigned shellID, const boost::optional<vector<Point>>& biasWayPoints) {
+    unsigned shellID, const std::optional<vector<Point>>& biasWayPoints) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
@@ -333,7 +333,7 @@ vector<Point> RRTPlanner::runRRT(
     MotionInstant start, MotionInstant goal,
     const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
     SystemState* state, unsigned shellID,
-    const boost::optional<vector<Point>>& biasWaypoints) {
+    const std::optional<vector<Point>>& biasWaypoints) {
     vector<Point> straight =
         runRRTHelper(start, goal, motionConstraints, obstacles, state, shellID,
                      biasWaypoints, true);
@@ -348,7 +348,7 @@ vector<Point> RRTPlanner::runRRTHelper(
     MotionInstant start, MotionInstant goal,
     const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
     SystemState* state, unsigned shellID,
-    const boost::optional<vector<Point>>& biasWaypoints, bool straightLine) {
+    const std::optional<vector<Point>>& biasWaypoints, bool straightLine) {
     // Initialize bi-directional RRT
 
     auto stateSpace = make_shared<RoboCupStateSpace>(
@@ -473,7 +473,7 @@ vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
 vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     const vector<Geometry2d::Point>& points,
     const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-    Geometry2d::Point vf, const boost::optional<vector<double>>& times) {
+    Geometry2d::Point vf, const std::optional<vector<double>>& times) {
     size_t length = points.size();
     size_t curvesNum = length - 1;
     vector<double> pointsX(length);

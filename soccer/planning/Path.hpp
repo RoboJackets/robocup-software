@@ -1,11 +1,12 @@
 #pragma once
 
+#include <optional>
+
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/ShapeSet.hpp>
 #include "MotionInstant.hpp"
 #include "Utils.hpp"
 
-#include <boost/optional.hpp>
 #include <QColor>
 #include <QString>
 
@@ -33,9 +34,9 @@ public:
      * @return A RobotInstant containing the angle, position, and velocity at
      * the given
      *     time if @t is within the range of the path.  If @t is not within the
-     *     time range of this path, this method returns boost::none.
+     *     time range of this path, this method returns std::nullopt
      */
-    boost::optional<RobotInstant> evaluate(RJ::Seconds t) const {
+    std::optional<RobotInstant> evaluate(RJ::Seconds t) const {
         auto instant = eval(t * evalRate);
         if (instant) {
             instant->motion.vel *= evalRate;
@@ -125,11 +126,11 @@ public:
     void slow(float multiplier, RJ::Seconds timeInto = RJ::Seconds::zero());
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const = 0;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const = 0;
 
     double evalRate = 1.0;
     RJ::Time _startTime;
-    boost::optional<QString> _debugText;
+    std::optional<QString> _debugText;
 };
 
 /**
@@ -139,12 +140,12 @@ class AngleFunctionPath : public Path {
 public:
     AngleFunctionPath(
         std::unique_ptr<Path> path = nullptr,
-        boost::optional<std::function<AngleInstant(MotionInstant)>>
-            angleFunction = boost::none)
+        std::optional<std::function<AngleInstant(MotionInstant)>>
+            angleFunction = std::nullopt)
         : path(std::move(path)), angleFunction(angleFunction) {}
 
     std::unique_ptr<Path> path;
-    boost::optional<std::function<AngleInstant(MotionInstant)>> angleFunction;
+    std::optional<std::function<AngleInstant(MotionInstant)>> angleFunction;
 
     /**
      * Returns true if the path hits an obstacle
@@ -250,14 +251,14 @@ protected:
      *     exception if t<0
      * @return A MotionInstant containing the position and velocity at the given
      *     time if @t is within the range of the path.  If @t is not within the
-     *     time range of this path, this method returns boost::none.
+     *     time range of this path, this method returns std::nullopt.
      */
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override {
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const override {
         if (!path) {
-            return boost::none;
+            return std::nullopt;
         }
 
-        boost::optional<RobotInstant> instant = path->evaluate(t);
+        std::optional<RobotInstant> instant = path->evaluate(t);
         if (!angleFunction) {
             return instant;
         } else {
@@ -265,7 +266,7 @@ protected:
                 instant->angle = angleFunction->operator()(instant->motion);
                 return instant;
             } else {
-                return boost::none;
+                return std::nullopt;
             }
         }
     }
