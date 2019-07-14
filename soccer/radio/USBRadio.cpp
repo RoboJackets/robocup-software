@@ -12,7 +12,6 @@
 // included for kicer status enum
 #include "status.h"
 
-using namespace std;
 using namespace Packet;
 
 // Timeout for control transfers, in milliseconds
@@ -145,7 +144,7 @@ void USBRadio::command(uint8_t cmd) {
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
                                 BaseControlCommand::RadioStrobe, 0, cmd,
                                 nullptr, 0, Control_Timeout)) {
-        throw runtime_error("USBRadio::command control write failed");
+        throw std::runtime_error("USBRadio::command control write failed");
     }
 }
 
@@ -154,7 +153,7 @@ void USBRadio::write(uint8_t reg, uint8_t value) {
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
                                 BaseControlCommand::RadioWriteRegister, value,
                                 reg, nullptr, 0, Control_Timeout)) {
-        throw runtime_error("USBRadio::write control write failed");
+        throw std::runtime_error("USBRadio::write control write failed");
     }
 }
 
@@ -164,7 +163,7 @@ uint8_t USBRadio::read(uint8_t reg) {
                                 LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
                                 BaseControlCommand::RadioReadRegister, 0, reg,
                                 &value, 1, Control_Timeout)) {
-        throw runtime_error("USBRadio::read control write failed");
+        throw std::runtime_error("USBRadio::read control write failed");
     }
 
     return value;
@@ -332,7 +331,7 @@ void USBRadio::channel(int n) {
                 _device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR,
                 BaseControlCommand::RadioSetChannel, n, 0, nullptr, 0,
                 Control_Timeout)) {
-            throw runtime_error("USBRadio::channel control write failed");
+            throw std::runtime_error("USBRadio::channel control write failed");
         }
     }
 
