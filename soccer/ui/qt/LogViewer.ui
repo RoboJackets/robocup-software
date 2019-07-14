@@ -349,13 +349,13 @@
   <customwidget>
    <class>FieldView</class>
    <extends>QWidget</extends>
-   <header location="global">FieldView.hpp</header>
+   <header location="global">ui/FieldView.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ProtobufTree</class>
    <extends>QTreeWidget</extends>
-   <header location="global">ProtobufTree.hpp</header>
+   <header location="global">ui/ProtobufTree.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

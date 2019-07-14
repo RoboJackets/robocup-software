@@ -349,13 +349,13 @@
   <customwidget>
    <class>BatteryWidget</class>
    <extends>QWidget</extends>
-   <header>BatteryWidget.hpp</header>
+   <header>ui/BatteryWidget.hpp</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>RobotWidget</class>
    <extends>QWidget</extends>
-   <header>RobotWidget.hpp</header>
+   <header>ui/RobotWidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

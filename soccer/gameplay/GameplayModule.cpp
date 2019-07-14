@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
-#include <MainWindow.hpp>
 
 // for python stuff
 #include "robocup-py.hpp"
