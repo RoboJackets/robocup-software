@@ -6,7 +6,7 @@ defaults: &image
     - image: robojackets/robocup-software:master
 
 defaults: &install_deps
-  run: export GOPATH=$HOME/go && sudo ./util/ubuntu-setup --yes && sudo ccache -M 100M
+  run: export GOPATH=$HOME/go && sudo GOPATH=$GOPATH ./util/ubuntu-setup --yes && sudo ccache -M 100M
 
 defaults: &save_src_cache
   save_cache:
