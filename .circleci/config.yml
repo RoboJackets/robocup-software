@@ -104,10 +104,11 @@ jobs:
       - <<: *load_compile_cache
       - run: make test-python
 
+  # FIXME: pylint is broken on 18.04
   pylint:
     <<: *dir
     docker:
-      - image: robojackets/robocup-software
+      - image: robojackets/robocup-software:16
     steps:
       - <<: *load_src_cache
       - checkout
@@ -134,7 +135,7 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       - <<: *load_compile_cache
-      - run: git fetch origin && PATH=$PATH:$GOPATH/bin STYLIZE_DIFFBASE=origin/master make checkstyle-old
+      - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle-old
       - store_artifacts:
           path: /tmp/clean.patch
 
