@@ -1,8 +1,11 @@
 #pragma once
 
+#include <optional>
+
 #include <Geometry2d/Point.hpp>
 #include "RRTPlanner.hpp"
 #include "SingleRobotPathPlanner.hpp"
+
 class Configuration;
 class ConfigDouble;
 
@@ -31,7 +34,7 @@ private:
 
     RRTPlanner rrtPlanner;
     bool finalApproach = false;
-    boost::optional<Geometry2d::Point> targetKickPos;
+    std::optional<Geometry2d::Point> targetKickPos;
     int reusePathCount = 0;
 };
 

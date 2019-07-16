@@ -45,7 +45,7 @@ void Path::draw(SystemState* const state, const QColor& color,
 void Path::drawDebugText(SystemState* state, const QColor& color,
                          const QString& layer) const {
     if (_debugText) {
-        state->drawText(_debugText.get(), end().motion.pos, color, layer);
+        state->drawText(_debugText.value(), end().motion.pos, color, layer);
     }
 }
 

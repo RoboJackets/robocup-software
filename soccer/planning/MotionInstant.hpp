@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <Geometry2d/Point.hpp>
 
 namespace Planning {
@@ -28,11 +29,11 @@ struct MotionInstant {
  * angle and rotation velocity.
  */
 struct AngleInstant {
-    explicit AngleInstant(boost::optional<float> angle = boost::none,
-                          boost::optional<float> angleVel = boost::none)
+    explicit AngleInstant(std::optional<float> angle = std::nullopt,
+                          std::optional<float> angleVel = std::nullopt)
         : angle(angle), angleVel(angleVel){};
-    boost::optional<float> angle;
-    boost::optional<float> angleVel;
+    std::optional<float> angle;
+    std::optional<float> angleVel;
 
     // TODO ashaw596 implement stream operator
 };
@@ -44,10 +45,10 @@ struct AngleInstant {
  */
 struct RobotInstant {
     explicit RobotInstant(MotionInstant motion = MotionInstant(),
-                          boost::optional<AngleInstant> angle = boost::none)
+                          std::optional<AngleInstant> angle = std::nullopt)
         : motion(motion), angle(angle) {}
     MotionInstant motion;
-    boost::optional<AngleInstant> angle;
+    std::optional<AngleInstant> angle;
 
     // TODO ashaw596  implement stream operator
 };

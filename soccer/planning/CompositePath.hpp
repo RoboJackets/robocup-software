@@ -1,4 +1,7 @@
 #pragma once
+
+#include <optional>
+
 #include <planning/Path.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
@@ -60,7 +63,7 @@ public:
     virtual std::unique_ptr<Path> clone() const override;
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

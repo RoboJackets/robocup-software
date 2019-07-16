@@ -136,7 +136,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     auto end = target.delta().magsq();
 
     // if target is a zero-length segment, there are no windows
-    if (end == 0) return make_pair(vector<Window>{}, boost::none);
+    if (end == 0) return make_pair(vector<Window>{}, std::nullopt);
 
     if (debug) {
         system->drawLine(target, QColor{"Blue"}, "Debug");
@@ -192,12 +192,14 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         fill_shot_success(w, origin);
     }
 
-    boost::optional<Window> best{
-        !windows.empty(), *max_element(windows.begin(), windows.end(),
-                                       [](Window& a, Window& b) -> bool {
-                                           return a.segment.delta().magsq() <
-                                                  b.segment.delta().magsq();
-                                       })};
+    std::optional<Window> best;
+    if (!windows.empty()) {
+        best = *max_element(
+                    windows.begin(), windows.end(),
+                    [](Window& a, Window& b) -> bool {
+                        return a.segment.delta().magsq() < b.segment.delta().magsq();
+                    });
+    }
     if (debug) {
         if (best) {
             system->drawLine(Segment{origin, best->segment.center()},
