@@ -1,4 +1,7 @@
 #include "MotionControl.hpp"
+
+#include <optional>
+
 #include <Geometry2d/Util.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
@@ -60,7 +63,7 @@ void MotionControl::run() {
         (RJ::now() - _robot->path().startTime()) + RJ::Seconds(1.0 / 60);
 
     // evaluate path - where should we be right now?
-    boost::optional<RobotInstant> optTarget =
+    std::optional<RobotInstant> optTarget =
         _robot->path().evaluate(timeIntoPath);
 
     if (!optTarget) {
@@ -80,10 +83,10 @@ void MotionControl::run() {
     auto& rotationCommand = _robot->rotationCommand();
     const auto& rotationConstraints = _robot->rotationConstraints();
 
-    boost::optional<Geometry2d::Point> targetPt;
+    std::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
 
-    boost::optional<float> targetAngleFinal;
+    std::optional<float> targetAngleFinal;
     // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
     //    PivotCommand command =
     //    *static_cast<PivotCommand*>(motionCommand.get());
@@ -155,7 +158,7 @@ void MotionControl::run() {
 
     // acceleration factor
     Point acceleration;
-    boost::optional<RobotInstant> nextTarget =
+    std::optional<RobotInstant> nextTarget =
         _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
         acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;

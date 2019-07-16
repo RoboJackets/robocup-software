@@ -469,8 +469,8 @@ boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self,
     auto window_results = self->eval_pt_to_seg(*origin, *target);
 
     lst.append(window_results.first);
-    if (window_results.second.is_initialized())
-        lst.append(window_results.second.get());
+    if (window_results.second.has_value())
+        lst.append(window_results.second.value());
     else
         lst.append(boost::python::api::object());
 
@@ -487,8 +487,8 @@ boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator* self,
     auto window_results = self->eval_pt_to_robot(*origin, *target);
 
     lst.append(window_results.first);
-    if (window_results.second.is_initialized())
-        lst.append(window_results.second.get());
+    if (window_results.second.has_value())
+        lst.append(window_results.second.value());
     else
         lst.append(boost::python::api::object());
 
@@ -506,8 +506,8 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
     auto window_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
 
     lst.append(window_results.first);
-    if (window_results.second.is_initialized())
-        lst.append(window_results.second.get());
+    if (window_results.second.has_value())
+        lst.append(window_results.second.value());
     else
         lst.append(boost::python::api::object());
 
@@ -522,8 +522,8 @@ boost::python::tuple WinEval_eval_pt_to_opp_goal(
     auto window_results = self->eval_pt_to_opp_goal(*origin);
 
     lst.append(window_results.first);
-    if (window_results.second.is_initialized())
-        lst.append(window_results.second.get());
+    if (window_results.second.has_value())
+        lst.append(window_results.second.value());
     else
         lst.append(boost::python::api::object());
 
@@ -538,8 +538,8 @@ boost::python::tuple WinEval_eval_pt_to_our_goal(
     auto window_results = self->eval_pt_to_our_goal(*origin);
 
     lst.append(window_results.first);
-    if (window_results.second.is_initialized())
-        lst.append(window_results.second.get());
+    if (window_results.second.has_value())
+        lst.append(window_results.second.value());
     else
         lst.append(boost::python::api::object());
 
