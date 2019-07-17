@@ -4,6 +4,9 @@ defaults: &dir
 defaults: &image
   docker:
     - image: robojackets/robocup-software:master
+      environment:
+        GOPATH: ~/go
+        PATH: ~/go/bin
 
 defaults: &install_deps
   run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 100M
@@ -134,7 +137,7 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       - <<: *load_compile_cache
-      - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle-old
+      - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle
       - store_artifacts:
           path: /tmp/clean.patch
 
