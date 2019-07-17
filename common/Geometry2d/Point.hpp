@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Eigen/Dense>
 #include <cmath>
 #include <boost/functional/hash.hpp>
 #include <QtCore/QPointF>
@@ -46,6 +47,18 @@ public:
     Point(const double* other) : Point(other[0], other[1]) {}
 
     /**
+     * Implicit conversion from Eigen::Vector2d
+     */
+    Point(const Eigen::Vector2d& other) : Point(other(0), other(1)) {}
+
+    /**
+     * Implicit conversion to Eigen::Vector2d
+     */
+    operator Eigen::Vector2d() const {
+        return Eigen::Vector2d(x(), y());
+    }
+
+    /**
      * to draw stuff and interface with QT
      */
     QPointF toQPointF() const { return QPointF(x(), y()); }
@@ -56,6 +69,7 @@ public:
         out.set_y(y());
         return out;
     }
+
     /**
      * does vector addition
      * adds the + operator, shorthand
