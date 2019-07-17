@@ -6,7 +6,6 @@ defaults: &image
     - image: robojackets/robocup-software:master
   environment:
     GOPATH: ~/go
-    PATH: ~/go/bin
 
 defaults: &install_deps
   run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 100M
@@ -137,6 +136,11 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       - <<: *load_compile_cache
+      - run:
+          name: Set $PATH
+          command: |
+            echo 'export PATH="$PATH:~/go/bin"' >> $BASH_ENV
+            source $BASH_ENV
       - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle
       - store_artifacts:
           path: /tmp/clean.patch
