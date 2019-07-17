@@ -4,9 +4,9 @@ defaults: &dir
 defaults: &image
   docker:
     - image: robojackets/robocup-software:master
-      environment:
-        GOPATH: ~/go
-        PATH: ~/go/bin
+  environment:
+    GOPATH: ~/go
+    PATH: ~/go/bin
 
 defaults: &install_deps
   run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 100M
