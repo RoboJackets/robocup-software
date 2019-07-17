@@ -8,7 +8,7 @@ defaults: &image
     GOPATH: ~/go
 
 defaults: &install_deps
-  run: sudo ./util/ubuntu-setup --yes && sudo ccache -M 100M
+  run: sudo env GOPATH=$GOPATH ./util/ubuntu-setup --yes && sudo ccache -M 100M
 defaults: &save_src_cache
   save_cache:
     key: source-v1-{{ .Branch }}-{{ .Revision }}
