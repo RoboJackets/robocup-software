@@ -1,6 +1,5 @@
 var class_ball =
 [
-    [ "Ball", "class_ball.html#a86a144d3dad6c953e422e32435923bbb", null ],
     [ "estimateSecondsTo", "class_ball.html#aca04daf2774fe3cacafa73afe438f765", null ],
     [ "estimateSecondsToDist", "class_ball.html#a0382c22737db47535765c137ff755eb0", null ],
     [ "estimateTimeTo", "class_ball.html#ab9157007073af930fa5872545f0548f3", null ],

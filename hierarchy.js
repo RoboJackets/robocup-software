@@ -5,11 +5,14 @@ var hierarchy =
     [ "AutoName", "class_auto_name.html", null ],
     [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
     [ "Ball", "class_ball.html", null ],
-    [ "BallFilter", "class_ball_filter.html", null ],
-    [ "BallObservation", "class_ball_observation.html", null ],
-    [ "BallTracker", "class_ball_tracker.html", null ],
+    [ "BallBounce", "class_ball_bounce.html", null ],
     [ "BatteryProfile", "class_battery_profile.html", null ],
+    [ "Camera", "class_camera.html", null ],
+    [ "CameraBall", "class_camera_ball.html", null ],
+    [ "CameraFrame", "class_camera_frame.html", null ],
+    [ "CameraRobot", "class_camera_robot.html", null ],
     [ "gameplay.play_registry.PlayRegistry.Category", "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html", null ],
+    [ "ChipKickEstimator", "class_chip_kick_estimator.html", null ],
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
     [ "CompositeBehavior", null, [
@@ -70,6 +73,7 @@ var hierarchy =
       [ "gameplay.tactics.positions.submissive_goalie.SubmissiveGoalie.State", "classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
       [ "gameplay.tactics.simple_zone_midfielder.SimpleZoneMidfielder.State", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder_1_1_state.html", null ],
       [ "gameplay.tactics.tune_pid.Tune_pid.State", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid_1_1_state.html", null ],
+      [ "gameplay.tactics.wall.Wall.State", "classgameplay_1_1tactics_1_1wall_1_1_wall_1_1_state.html", null ],
       [ "gameplay.timeout_behavior.TimeoutBehavior.State", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior_1_1_state.html", null ],
       [ "kick_gently.KickGently.State", "classkick__gently_1_1_kick_gently_1_1_state.html", null ],
       [ "test_fsm.MyFsm.State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
@@ -77,8 +81,10 @@ var hierarchy =
       [ "triangle_pass.TrianglePass.State", "classtriangle__pass_1_1_triangle_pass_1_1_state.html", null ],
       [ "which_half.WhichHalf.State", "classwhich__half_1_1_which_half_1_1_state.html", null ]
     ] ],
+    [ "FastKickDetector", "class_fast_kick_detector.html", null ],
     [ "Field_Dimensions", "struct_field___dimensions.html", null ],
     [ "FIRFilter< T >", "class_f_i_r_filter.html", null ],
+    [ "FlatKickEstimator", "class_flat_kick_estimator.html", null ],
     [ "Chart::Function", "struct_chart_1_1_function.html", [
       [ "Chart::NumericField", "struct_chart_1_1_numeric_field.html", null ],
       [ "Chart::PointMagnitude", "struct_chart_1_1_point_magnitude.html", null ]
@@ -91,8 +97,15 @@ var hierarchy =
       [ "ExceptionIterator< T >", "class_exception_iterator.html", null ]
     ] ],
     [ "JoystickControlValues", "struct_joystick_control_values.html", null ],
+    [ "KalmanBall", "class_kalman_ball.html", null ],
+    [ "KalmanFilter", "class_kalman_filter.html", [
+      [ "KalmanFilter2D", "class_kalman_filter2_d.html", null ],
+      [ "KalmanFilter3D", "class_kalman_filter3_d.html", null ]
+    ] ],
+    [ "KalmanRobot", "class_kalman_robot.html", null ],
     [ "RobotConfig::Kicker", "struct_robot_config_1_1_kicker.html", null ],
     [ "KickEvaluator", "class_kick_evaluator.html", null ],
+    [ "KickEvent", "class_kick_event.html", null ],
     [ "Geometry2d::Line", "class_geometry2d_1_1_line.html", null ],
     [ "Logger", "class_logger.html", null ],
     [ "test_ball.Moc_Ball", "classtest__ball_1_1_moc___ball.html", null ],
@@ -142,6 +155,7 @@ var hierarchy =
       [ "which_half.WhichHalf", "classwhich__half_1_1_which_half.html", null ]
     ] ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
+    [ "PythonFunctionWrapper", "class_python_function_wrapper.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
     ] ],
@@ -181,9 +195,7 @@ var hierarchy =
     [ "gameplay.constants.Robot", "classgameplay_1_1constants_1_1_robot.html", null ],
     [ "RobotConfig", "class_robot_config.html", null ],
     [ "RobotConstraints", "struct_robot_constraints.html", null ],
-    [ "RobotFilter", "class_robot_filter.html", null ],
     [ "Planning::RobotInstant", "struct_planning_1_1_robot_instant.html", null ],
-    [ "RobotObservation", "class_robot_observation.html", null ],
     [ "RobotPose", "class_robot_pose.html", [
       [ "Robot", "class_robot.html", [
         [ "OpponentRobot", "class_opponent_robot.html", null ],
@@ -219,6 +231,7 @@ var hierarchy =
       [ "Planning::TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", null ],
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
+    [ "SlowKickDetector", "class_slow_kick_detector.html", null ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -241,6 +254,7 @@ var hierarchy =
             [ "gameplay.plays.testing.test_find_gap.TestFindGap", "classgameplay_1_1plays_1_1testing_1_1test__find__gap_1_1_test_find_gap.html", null ],
             [ "gameplay.plays.testing.test_forward_pass.TestForwardPass", "classgameplay_1_1plays_1_1testing_1_1test__forward__pass_1_1_test_forward_pass.html", null ],
             [ "gameplay.plays.testing.test_fullback.TestDefender", "classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender.html", null ],
+            [ "gameplay.plays.testing.test_goalside_mark.TestGoalsideMark", "classgameplay_1_1plays_1_1testing_1_1test__goalside__mark_1_1_test_goalside_mark.html", null ],
             [ "gameplay.plays.testing.test_idle.TestIdle", "classgameplay_1_1plays_1_1testing_1_1test__idle_1_1_test_idle.html", null ],
             [ "gameplay.plays.testing.test_intercept.TestIntercept", "classgameplay_1_1plays_1_1testing_1_1test__intercept_1_1_test_intercept.html", null ],
             [ "gameplay.plays.testing.test_line_kick.TestLineKick", "classgameplay_1_1plays_1_1testing_1_1test__line__kick_1_1_test_line_kick.html", null ],
@@ -251,6 +265,7 @@ var hierarchy =
             [ "gameplay.plays.testing.test_pivot_kick.TestPivotKick", "classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html", null ],
             [ "gameplay.plays.testing.test_priority.TestPriority", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority.html", null ],
             [ "gameplay.plays.testing.test_strafe.TestStrafe", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe.html", null ],
+            [ "gameplay.plays.testing.test_wall.TestWall", "classgameplay_1_1plays_1_1testing_1_1test__wall_1_1_test_wall.html", null ],
             [ "gameplay.plays.testing.triangle_pass.TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", null ],
             [ "gameplay.plays.training.binary_clock.BinaryClock", "classgameplay_1_1plays_1_1training_1_1binary__clock_1_1_binary_clock.html", null ],
             [ "gameplay.plays.training.follow_ball.FollowBall", "classgameplay_1_1plays_1_1training_1_1follow__ball_1_1_follow_ball.html", null ],
@@ -265,6 +280,7 @@ var hierarchy =
               [ "gameplay.plays.offense.adaptive_formation.AdaptiveFormation", "classgameplay_1_1plays_1_1offense_1_1adaptive__formation_1_1_adaptive_formation.html", null ],
               [ "gameplay.plays.offense.basic_122.Basic122", "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html", null ],
               [ "gameplay.plays.offense.two_side_attack.TwoSideAttack", "classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html", null ],
+              [ "gameplay.plays.restarts.basic_indirect.BasicIndirect", "classgameplay_1_1plays_1_1restarts_1_1basic__indirect_1_1_basic_indirect.html", null ],
               [ "gameplay.plays.restarts.kick_penalty.KickPenalty", "classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html", null ],
               [ "gameplay.plays.restarts.our_corner_kick.OurCornerKick", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html", null ],
               [ "gameplay.plays.restarts.our_free_kick.OurFreeKick", "classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html", null ],
@@ -305,6 +321,7 @@ var hierarchy =
           [ "gameplay.tactics.simple_zone_midfielder.SimpleZoneMidfielder", "classgameplay_1_1tactics_1_1simple__zone__midfielder_1_1_simple_zone_midfielder.html", null ],
           [ "gameplay.tactics.stopped.circle_near_ball.CircleNearBall", "classgameplay_1_1tactics_1_1stopped_1_1circle__near__ball_1_1_circle_near_ball.html", null ],
           [ "gameplay.tactics.stopped.circle_on_center.CircleOnCenter", "classgameplay_1_1tactics_1_1stopped_1_1circle__on__center_1_1_circle_on_center.html", null ],
+          [ "gameplay.tactics.wall.Wall", "classgameplay_1_1tactics_1_1wall_1_1_wall.html", null ],
           [ "gameplay.timeout_behavior.TimeoutBehavior", "classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html", null ],
           [ "gameplay.tools.sleep.SleepBehavior", "classgameplay_1_1tools_1_1sleep_1_1_sleep_behavior.html", null ]
         ] ],
@@ -320,6 +337,7 @@ var hierarchy =
           [ "gameplay.skills.aim.Aim", "classgameplay_1_1skills_1_1aim_1_1_aim.html", null ],
           [ "gameplay.skills.bump.Bump", "classgameplay_1_1skills_1_1bump_1_1_bump.html", null ],
           [ "gameplay.skills.capture.Capture", "classgameplay_1_1skills_1_1capture_1_1_capture.html", null ],
+          [ "gameplay.skills.goalside_mark.Goalside_Mark", "classgameplay_1_1skills_1_1goalside__mark_1_1_goalside___mark.html", null ],
           [ "gameplay.skills.intercept.Intercept", "classgameplay_1_1skills_1_1intercept_1_1_intercept.html", null ],
           [ "gameplay.skills.mark.Mark", "classgameplay_1_1skills_1_1mark_1_1_mark.html", null ],
           [ "gameplay.skills.move.Move", "classgameplay_1_1skills_1_1move_1_1_move.html", null ],
@@ -357,9 +375,15 @@ var hierarchy =
     ] ],
     [ "Timeout", "class_timeout.html", null ],
     [ "Geometry2d::TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", null ],
+    [ "VisionFilter", "class_vision_filter.html", null ],
+    [ "VisionFilterConfig", "class_vision_filter_config.html", null ],
     [ "VisionPacket", "class_vision_packet.html", null ],
+    [ "VisionState", "class_vision_state.html", null ],
     [ "Window", "class_window.html", null ],
     [ "WindowEvaluator", "class_window_evaluator.html", null ],
+    [ "World", "class_world.html", null ],
+    [ "WorldBall", "class_world_ball.html", null ],
+    [ "WorldRobot", "class_world_robot.html", null ],
     [ "Enum", null, [
       [ "gameplay.behavior.Behavior.State", "classgameplay_1_1behavior_1_1_behavior_1_1_state.html", null ],
       [ "gameplay.skills.capture.Capture.State", "classgameplay_1_1skills_1_1capture_1_1_capture_1_1_state.html", null ],

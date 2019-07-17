@@ -1,6 +1,11 @@
 var searchData=
 [
+  ['calcballbounce',['CalcBallBounce',['../class_ball_bounce.html#a0e9bd1521a7777e4c259a29e797df962',1,'BallBounce']]],
   ['calculatefieldobstacles',['calculateFieldObstacles',['../class_gameplay_1_1_gameplay_module.html#ab76f2717e7ed13a7c738c081bf70be3d',1,'Gameplay::GameplayModule']]],
+  ['camera',['Camera',['../class_camera.html',1,'Camera'],['../class_camera.html#a01f94c3543f56ede7af49dc778f19331',1,'Camera::Camera()'],['../class_camera.html#adcb467c291290abed74d8e1f81acbe49',1,'Camera::Camera(int cameraID)']]],
+  ['cameraball',['CameraBall',['../class_camera_ball.html',1,'CameraBall'],['../class_camera_ball.html#a3747933a854abb73d50ab3fc3e4ba119',1,'CameraBall::CameraBall()']]],
+  ['cameraframe',['CameraFrame',['../class_camera_frame.html',1,'CameraFrame'],['../class_camera_frame.html#a52709fe256196eda5abedbe7dbacafbe',1,'CameraFrame::CameraFrame()']]],
+  ['camerarobot',['CameraRobot',['../class_camera_robot.html',1,'CameraRobot'],['../class_camera_robot.html#ab1affd9448ff62b985e56de6a7042352',1,'CameraRobot::CameraRobot()']]],
   ['capture',['Capture',['../classgameplay_1_1skills_1_1capture_1_1_capture.html',1,'gameplay::skills::capture']]],
   ['category',['Category',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html',1,'gameplay::play_registry::PlayRegistry']]],
   ['centermatrix',['centerMatrix',['../group__matrices.html#gad5610a51dc615a1b53dd210541b84658',1,'Gameplay::GameplayModule']]],
@@ -11,6 +16,7 @@ var searchData=
   ['chill',['chill',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#aee00ec00f07e8671c4f88ef22802cb0f',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
   ['chip',['chip',['../class_our_robot.html#a5db88cfc6b189c39fa00f192bdb8a2e6',1,'OurRobot']]],
   ['chip_5fenabled',['chip_enabled',['../class_window_evaluator.html#a419fc2047d4ecc5d4d2364f91413196f',1,'WindowEvaluator']]],
+  ['chipkickestimator',['ChipKickEstimator',['../class_chip_kick_estimator.html',1,'']]],
   ['chiplevel',['chipLevel',['../class_our_robot.html#aeb77e0c6dc791ef1ed39af425ebc0aa7',1,'OurRobot']]],
   ['chipper',['Chipper',['../struct_robot_config_1_1_chipper.html',1,'RobotConfig']]],
   ['chipper_5favailable',['chipper_available',['../class_our_robot.html#a046e43773982dff0d088eb28a2c1895a',1,'OurRobot']]],
@@ -22,6 +28,8 @@ var searchData=
   ['clone',['clone',['../class_planning_1_1_composite_path.html#a7ae76a00762203c43efa4ec6ed1ecc37',1,'Planning::CompositePath::clone()'],['../class_planning_1_1_interpolated_path.html#ad32897dcaddb33b8e9ff517e3d020536',1,'Planning::InterpolatedPath::clone()'],['../class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76',1,'Planning::Path::clone()'],['../class_planning_1_1_angle_function_path.html#aee0b13d88c07a1988e652598314129bc',1,'Planning::AngleFunctionPath::clone()'],['../class_planning_1_1_trapezoidal_path.html#aaa4562f2d7800152a1e3c1723e083fde',1,'Planning::TrapezoidalPath::clone()']]],
   ['coach',['Coach',['../classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html',1,'gameplay::tactics::positions::coach']]],
   ['colors',['Colors',['../classgameplay_1_1constants_1_1_colors.html',1,'gameplay::constants']]],
+  ['combineballs',['CombineBalls',['../class_camera_ball.html#a2a6a671861bb93f9153ccd5eb3c37c0a',1,'CameraBall']]],
+  ['combinerobots',['CombineRobots',['../class_camera_robot.html#a3abcfb5dd463167fe4c6488467003803',1,'CameraRobot']]],
   ['commandtype',['commandType',['../class_planning_1_1_direct_target_path_planner.html#ad02e0ab0a766c0642412e7bfda1798d7',1,'Planning::DirectTargetPathPlanner::commandType()'],['../class_planning_1_1_escape_obstacles_path_planner.html#a25b5499bdde1f93e5a4b65c17e4e4c04',1,'Planning::EscapeObstaclesPathPlanner::commandType()'],['../class_planning_1_1_line_kick_planner.html#a266918c356e3cf405a9c16913ab30fac',1,'Planning::LineKickPlanner::commandType()'],['../class_planning_1_1_pivot_path_planner.html#a98b8ab1171f3ac171af5cec4a7a3c4c7',1,'Planning::PivotPathPlanner::commandType()'],['../class_planning_1_1_r_r_t_planner.html#af3b4fb2c8d3af6d34fbb0173ae0b621c',1,'Planning::RRTPlanner::commandType()'],['../class_planning_1_1_single_robot_path_planner.html#a4639ec1ebd831d32d15a878419f33f3f',1,'Planning::SingleRobotPathPlanner::commandType()'],['../class_planning_1_1_target_vel_path_planner.html#aae1185aba167a50e37043c87e3c740bc',1,'Planning::TargetVelPathPlanner::commandType()'],['../class_planning_1_1_tuning_path_planner.html#a51d409e884a21c96e2b7432cff319369',1,'Planning::TuningPathPlanner::commandType()']]],
   ['compositebehavior',['CompositeBehavior',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html',1,'gameplay::composite_behavior']]],
   ['compositepath',['CompositePath',['../class_planning_1_1_composite_path.html',1,'Planning::CompositePath'],['../class_planning_1_1_composite_path.html#abc6160d85809ed87b08458aa2dafd58c',1,'Planning::CompositePath::CompositePath()'],['../class_planning_1_1_composite_path.html#ae0696157e38b858bde2fb6e77fc81c4e',1,'Planning::CompositePath::CompositePath(std::unique_ptr&lt; Path &gt; path)']]],

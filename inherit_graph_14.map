@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_field___dimensions.html" title="This class contains constants defining the layout of the field. " alt="" coords="5,5,143,32"/>
+<area shape="rect" id="node1" href="$class_configurable.html" title="Configurable" alt="" coords="5,5,111,32"/>
+<area shape="rect" id="node2" href="$class_configurable_impl.html" title="a template for making configurables the implementing object is responsible for handling configuration..." alt="" coords="159,5,331,32"/>
 </map>

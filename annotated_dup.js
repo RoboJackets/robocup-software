@@ -54,6 +54,9 @@ var annotated_dup =
           ] ]
         ] ],
         [ "restarts", null, [
+          [ "basic_indirect", null, [
+            [ "BasicIndirect", "classgameplay_1_1plays_1_1restarts_1_1basic__indirect_1_1_basic_indirect.html", "classgameplay_1_1plays_1_1restarts_1_1basic__indirect_1_1_basic_indirect" ]
+          ] ],
           [ "defend_penalty", null, [
             [ "DefendPenalty", "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html", "classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty" ]
           ] ],
@@ -137,6 +140,9 @@ var annotated_dup =
           [ "test_fullback", null, [
             [ "TestDefender", "classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender.html", "classgameplay_1_1plays_1_1testing_1_1test__fullback_1_1_test_defender" ]
           ] ],
+          [ "test_goalside_mark", null, [
+            [ "TestGoalsideMark", "classgameplay_1_1plays_1_1testing_1_1test__goalside__mark_1_1_test_goalside_mark.html", "classgameplay_1_1plays_1_1testing_1_1test__goalside__mark_1_1_test_goalside_mark" ]
+          ] ],
           [ "test_idle", null, [
             [ "TestIdle", "classgameplay_1_1plays_1_1testing_1_1test__idle_1_1_test_idle.html", "classgameplay_1_1plays_1_1testing_1_1test__idle_1_1_test_idle" ]
           ] ],
@@ -166,6 +172,9 @@ var annotated_dup =
           ] ],
           [ "test_strafe", null, [
             [ "TestStrafe", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe.html", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe" ]
+          ] ],
+          [ "test_wall", null, [
+            [ "TestWall", "classgameplay_1_1plays_1_1testing_1_1test__wall_1_1_test_wall.html", "classgameplay_1_1plays_1_1testing_1_1test__wall_1_1_test_wall" ]
           ] ],
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
@@ -240,6 +249,9 @@ var annotated_dup =
         ] ],
         [ "face", null, [
           [ "Face", "classgameplay_1_1skills_1_1face_1_1_face.html", "classgameplay_1_1skills_1_1face_1_1_face" ]
+        ] ],
+        [ "goalside_mark", null, [
+          [ "Goalside_Mark", "classgameplay_1_1skills_1_1goalside__mark_1_1_goalside___mark.html", "classgameplay_1_1skills_1_1goalside__mark_1_1_goalside___mark" ]
         ] ],
         [ "intercept", null, [
           [ "Intercept", "classgameplay_1_1skills_1_1intercept_1_1_intercept.html", "classgameplay_1_1skills_1_1intercept_1_1_intercept" ]
@@ -339,6 +351,9 @@ var annotated_dup =
         ] ],
         [ "tune_pid", null, [
           [ "Tune_pid", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid.html", "classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid" ]
+        ] ],
+        [ "wall", null, [
+          [ "Wall", "classgameplay_1_1tactics_1_1wall_1_1_wall.html", "classgameplay_1_1tactics_1_1wall_1_1_wall" ]
         ] ]
       ] ],
       [ "timed_behavior", null, [
@@ -455,11 +470,14 @@ var annotated_dup =
     ] ],
     [ "AutoName", "class_auto_name.html", "class_auto_name" ],
     [ "Ball", "class_ball.html", "class_ball" ],
-    [ "BallFilter", "class_ball_filter.html", "class_ball_filter" ],
-    [ "BallObservation", "class_ball_observation.html", "class_ball_observation" ],
-    [ "BallTracker", "class_ball_tracker.html", "class_ball_tracker" ],
+    [ "BallBounce", "class_ball_bounce.html", "class_ball_bounce" ],
     [ "BatteryProfile", "class_battery_profile.html", "class_battery_profile" ],
     [ "BatteryWidget", "class_battery_widget.html", "class_battery_widget" ],
+    [ "Camera", "class_camera.html", "class_camera" ],
+    [ "CameraBall", "class_camera_ball.html", "class_camera_ball" ],
+    [ "CameraFrame", "class_camera_frame.html", "class_camera_frame" ],
+    [ "CameraRobot", "class_camera_robot.html", "class_camera_robot" ],
+    [ "ChipKickEstimator", "class_chip_kick_estimator.html", null ],
     [ "ConfigBool", "class_config_bool.html", "class_config_bool" ],
     [ "ConfigDouble", "class_config_double.html", "class_config_double" ],
     [ "ConfigInt", "class_config_int.html", "class_config_int" ],
@@ -469,9 +487,11 @@ var annotated_dup =
     [ "Configuration", "class_configuration.html", "class_configuration" ],
     [ "DebugQMutex", "class_debug_q_mutex.html", "class_debug_q_mutex" ],
     [ "ExceptionIterator", "class_exception_iterator.html", "class_exception_iterator" ],
+    [ "FastKickDetector", "class_fast_kick_detector.html", "class_fast_kick_detector" ],
     [ "Field_Dimensions", "struct_field___dimensions.html", "struct_field___dimensions" ],
     [ "FieldView", "class_field_view.html", "class_field_view" ],
     [ "FIRFilter", "class_f_i_r_filter.html", "class_f_i_r_filter" ],
+    [ "FlatKickEstimator", "class_flat_kick_estimator.html", null ],
     [ "GamepadController", "class_gamepad_controller.html", "class_gamepad_controller" ],
     [ "GamepadJoystick", "class_gamepad_joystick.html", "class_gamepad_joystick" ],
     [ "GameState", "class_game_state.html", "class_game_state" ],
@@ -479,7 +499,13 @@ var annotated_dup =
     [ "GradientAscent1D", "class_gradient_ascent1_d.html", "class_gradient_ascent1_d" ],
     [ "Joystick", "class_joystick.html", "class_joystick" ],
     [ "JoystickControlValues", "struct_joystick_control_values.html", "struct_joystick_control_values" ],
+    [ "KalmanBall", "class_kalman_ball.html", "class_kalman_ball" ],
+    [ "KalmanFilter", "class_kalman_filter.html", "class_kalman_filter" ],
+    [ "KalmanFilter2D", "class_kalman_filter2_d.html", "class_kalman_filter2_d" ],
+    [ "KalmanFilter3D", "class_kalman_filter3_d.html", "class_kalman_filter3_d" ],
+    [ "KalmanRobot", "class_kalman_robot.html", "class_kalman_robot" ],
     [ "KickEvaluator", "class_kick_evaluator.html", "class_kick_evaluator" ],
+    [ "KickEvent", "class_kick_event.html", "class_kick_event" ],
     [ "Logger", "class_logger.html", "class_logger" ],
     [ "LogViewer", "class_log_viewer.html", "class_log_viewer" ],
     [ "MainWindow", "class_main_window.html", "class_main_window" ],
@@ -495,13 +521,12 @@ var annotated_dup =
     [ "ParallelGradientAscent1D", "class_parallel_gradient_ascent1_d.html", "class_parallel_gradient_ascent1_d" ],
     [ "Processor", "class_processor.html", "class_processor" ],
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
+    [ "PythonFunctionWrapper", "class_python_function_wrapper.html", "class_python_function_wrapper" ],
     [ "Radio", "class_radio.html", "class_radio" ],
     [ "RefereeTab", "class_referee_tab.html", "class_referee_tab" ],
     [ "Robot", "class_robot.html", "class_robot" ],
     [ "RobotConfig", "class_robot_config.html", "class_robot_config" ],
     [ "RobotConstraints", "struct_robot_constraints.html", "struct_robot_constraints" ],
-    [ "RobotFilter", "class_robot_filter.html", "class_robot_filter" ],
-    [ "RobotObservation", "class_robot_observation.html", "class_robot_observation" ],
     [ "RobotPose", "class_robot_pose.html", "class_robot_pose" ],
     [ "RobotStatus", "class_robot_status.html", "class_robot_status" ],
     [ "RobotStatusWidget", "class_robot_status_widget.html", "class_robot_status_widget" ],
@@ -509,6 +534,7 @@ var annotated_dup =
     [ "RotationConstraints", "struct_rotation_constraints.html", "struct_rotation_constraints" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],
     [ "SimRadio", "class_sim_radio.html", "class_sim_radio" ],
+    [ "SlowKickDetector", "class_slow_kick_detector.html", "class_slow_kick_detector" ],
     [ "SpaceNavJoystick", "class_space_nav_joystick.html", "class_space_nav_joystick" ],
     [ "StripChart", "class_strip_chart.html", "class_strip_chart" ],
     [ "StyleSheetManager", "class_style_sheet_manager.html", null ],
@@ -516,8 +542,14 @@ var annotated_dup =
     [ "TeamInfo", "class_team_info.html", "class_team_info" ],
     [ "Timeout", "class_timeout.html", "class_timeout" ],
     [ "USBRadio", "class_u_s_b_radio.html", "class_u_s_b_radio" ],
+    [ "VisionFilter", "class_vision_filter.html", "class_vision_filter" ],
+    [ "VisionFilterConfig", "class_vision_filter_config.html", "class_vision_filter_config" ],
     [ "VisionPacket", "class_vision_packet.html", "class_vision_packet" ],
     [ "VisionReceiver", "class_vision_receiver.html", "class_vision_receiver" ],
+    [ "VisionState", "class_vision_state.html", "class_vision_state" ],
     [ "Window", "class_window.html", "class_window" ],
-    [ "WindowEvaluator", "class_window_evaluator.html", "class_window_evaluator" ]
+    [ "WindowEvaluator", "class_window_evaluator.html", "class_window_evaluator" ],
+    [ "World", "class_world.html", "class_world" ],
+    [ "WorldBall", "class_world_ball.html", "class_world_ball" ],
+    [ "WorldRobot", "class_world_robot.html", "class_world_robot" ]
 ];

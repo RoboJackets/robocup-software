@@ -1,0 +1,4 @@
+<map id="VisionState" name="VisionState">
+<area shape="rect" id="node3" href="$class_world_robot.html" title="WorldRobot" alt="" coords="55,5,153,32"/>
+<area shape="rect" id="node4" href="$class_world_ball.html" title="Best estimate of the true ball position using the kalman balls from each camera. " alt="" coords="227,95,312,121"/>
+</map>

@@ -16,6 +16,7 @@ var NAVTREE =
     [ "Training 2017", "md_doc_training2017_training_2017.html", "md_doc_training2017_training_2017" ],
     [ "Testing & Continuous Integration", "md_doc__unit_tests_and_c_i.html", null ],
     [ "Vision", "md_doc__vision.html", null ],
+    [ "Vision Filter", "md_doc__vision_filter.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ]
@@ -40,18 +41,19 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_ball_tracker.html#aec5c060f83ae59d5083a6790c8239555",
-"class_geometry2d_1_1_circle.html#a4c5bf4b9bcdff8a64df87c0c94935f4a",
-"class_kick_evaluator.html#aef01bce5b4ab2f753e47c2734eec6545",
-"class_planning_1_1_angle_function_path.html#a23f1a22d7864fc43d29d61d32fde5ab2",
-"class_radio.html#aadddbdbe509dfeb0e45ca1893067f898",
-"class_window_evaluator.html#a419fc2047d4ecc5d4d2364f91413196f",
-"classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html#ae1059cfbaad27d55f197fce3dd9947e0",
-"classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html#a84164e3897a9784032e0ff6b876bc455",
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html",
-"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a43e9ff210b17459da2199004c3eacd4f",
-"classtest__field_1_1_test_field.html#a58cf8bc0549f6cc58532d54b5740d1be",
-"struct_joystick_control_values.html#a1559e6c412ca17949fa462e9cd84df9f"
+"class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558",
+"class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19",
+"class_geometry2d_1_1_transform_matrix.html#a53e6f9411968ca4ff1f257d223df1e38",
+"class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278ac3bcf483da12c113f3410c2a68d2e1ed",
+"class_planning_1_1_pivot_path_planner.html",
+"class_sim_field_view.html#a9912216ea68b82c7303d7e794d0a9be9",
+"classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a653d96ed5ecab84b3b4b85236fa06734",
+"classgameplay_1_1plays_1_1testing_1_1test__adaptive__formation__weights_1_1_test_adaptive_formation_weights.html#ac6dd14867e5d1c8cc0e72a762ab55d78",
+"classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html#a52ffcf6f75515c574271e798acd8356d",
+"classgameplay_1_1skills_1_1move_1_1_move.html#a0c7170c0b5e41b6ffae7f5b454778865",
+"classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html",
+"classtest__opponent_1_1_test_opponent.html#a933619ae4ca59f4ff778e93aa31d6f01",
+"struct_planning_1_1_direct_path_target_command.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

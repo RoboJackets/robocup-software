@@ -68,7 +68,7 @@ var class_our_robot =
     [ "path", "class_our_robot.html#a530fd127fdbbfcc1ae33b7458a21f416", null ],
     [ "pivot", "class_our_robot.html#a5b4559811248e148990e74aa3eceb74b", null ],
     [ "pointInRobotSpace", "class_our_robot.html#a2c34d1812ea3af7f1ede3500b8cf2cd5", null ],
-    [ "quaternion", "class_our_robot.html#a2f687be61a91e194aa35b66e1caf5490", null ],
+    [ "quaternion", "class_our_robot.html#a573cbccc88c617ac8836a65a3a0ee668", null ],
     [ "radioRx", "class_our_robot.html#a690203ae54eeb6686bcdc31e0c277f8d", null ],
     [ "radioRxUpdated", "class_our_robot.html#a78613ea6958affaf11afaf152aceaf60", null ],
     [ "resetAvoidBall", "class_our_robot.html#a4e60906752c6be31fda315fe8ae958ed", null ],

@@ -1,10 +1,9 @@
 var searchData=
 [
   ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay.constants.Ball'],['../class_ball.html',1,'Ball']]],
-  ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
-  ['ballobservation',['BallObservation',['../class_ball_observation.html',1,'']]],
-  ['balltracker',['BallTracker',['../class_ball_tracker.html',1,'']]],
+  ['ballbounce',['BallBounce',['../class_ball_bounce.html',1,'']]],
   ['basic122',['Basic122',['../classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html',1,'gameplay::plays::offense::basic_122']]],
+  ['basicindirect',['BasicIndirect',['../classgameplay_1_1plays_1_1restarts_1_1basic__indirect_1_1_basic_indirect.html',1,'gameplay::plays::restarts::basic_indirect']]],
   ['batteryprofile',['BatteryProfile',['../class_battery_profile.html',1,'']]],
   ['batterywidget',['BatteryWidget',['../class_battery_widget.html',1,'']]],
   ['behavior',['Behavior',['../classgameplay_1_1behavior_1_1_behavior.html',1,'gameplay::behavior']]],

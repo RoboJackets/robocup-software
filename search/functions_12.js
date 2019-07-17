@@ -10,6 +10,7 @@ var searchData=
   ['setplanningpriority',['setPlanningPriority',['../class_our_robot.html#a747bbe856ee0716ead1817b39ad18982',1,'OurRobot']]],
   ['setshowstopper',['setShowstopper',['../class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98',1,'RobotStatusWidget']]],
   ['setup_5fball_5favoid',['setup_ball_avoid',['../classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a12a429556767483ce6eea1660338e398',1,'gameplay::skills::line_kick_old::LineKickOld']]],
+  ['setvel',['setVel',['../class_kalman_ball.html#ad2ba65f9700d3015193877ed63de71d6',1,'KalmanBall::setVel()'],['../class_kalman_filter2_d.html#ac8c0bef403587e3e711cfeca893bcdf8',1,'KalmanFilter2D::setVel()']]],
   ['shapeset',['ShapeSet',['../class_geometry2d_1_1_shape_set.html#a5c0ed4dae2daee13389ab15697e66d35',1,'Geometry2d::ShapeSet']]],
   ['shell',['shell',['../class_robot.html#a9d5f12249405266d1f62f6f57d45a285',1,'Robot']]],
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a7c60733941226011ac4afedf8c94bc71',1,'gameplay::skills::_kick::_Kick']]],

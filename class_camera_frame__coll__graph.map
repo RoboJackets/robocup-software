@@ -1,0 +1,4 @@
+<map id="CameraFrame" name="CameraFrame">
+<area shape="rect" id="node3" href="$class_camera_ball.html" title="Wrapper for the protobuf observation. " alt="" coords="55,5,153,32"/>
+<area shape="rect" id="node5" href="$class_camera_robot.html" title="Wrapper for the protobuf observation. " alt="" coords="277,5,387,32"/>
+</map>

@@ -104,11 +104,15 @@ $(document).ready(function(){initNavTree('md_doc__plays_tactics_skills_summary.h
 <tr>
 <th>Tactics </th><th>Description </th><th>Use When ...  </th></tr>
 <tr>
+<td>Advance Zone Midfielder</td><td>Moves one robot to the best position to recieve the ball, and moves another robot to the best position to recieve the ball from that position. </td><td>Use it when need to move robots on a downfield attack at goal. </td></tr>
+<tr>
 <td>Coordinated Pass </td><td>Moves one robot to the ball and the other to the receive point. When they both are ready, they will pass </td><td>Use when you want to pass the ball from one robot to another </td></tr>
 <tr>
 <td>Defense </td><td>Basic 2 robot defense that stays on the goalie box. Clears the ball when it comes close. </td><td>Use in most cases unless you are writing your own defense </td></tr>
 <tr>
 <td>Defense Old </td><td>Same as Defense, but significantly harder to read code-wise </td><td>Don't use </td></tr>
+<tr>
+<td>Defensive Forward </td><td>Commands 2 of the 3 offensive robots to block while the 3rd tries to take control of the ball </td><td>Use when you're trying to capture the ball and have nothing for the other robots to do </td></tr>
 <tr>
 <td>Forward Pass </td><td>Basically the same as Coordinated Pass, but ball capture is slightly different </td><td>Don't use since the new ball capture needs more testing / tuning </td></tr>
 <tr>
@@ -119,6 +123,8 @@ $(document).ready(function(){initNavTree('md_doc__plays_tactics_skills_summary.h
 <td>Our Placement </td><td>Places the ball according to the auto-ref commands </td><td>Don't use unless trying to change ball placement code </td></tr>
 <tr>
 <td>Penalty </td><td>Takes the penalty and tries to shoot </td><td>Don't use unless trying to change Our Penalty code </td></tr>
+<tr>
+<td>Simple Zone Midfielder </td><td>Commands 2 of the 3 offensive robots to stay at specific positions behind the ball. It just gets the out of the way so they aren't just sitting there on the field </td><td>Don't use unless there is nothing better to do </td></tr>
 <tr>
 <td>Tune PID </td><td>Moves one robot back and forth to tune the motion control </td><td>Don't use unless you are trying to tune the motion control </td></tr>
 </table>
@@ -138,10 +144,6 @@ $(document).ready(function(){initNavTree('md_doc__plays_tactics_skills_summary.h
 <td>Submissive Defender </td><td>Takes marking targets from the parent play. Used for more coordinated defensive plays </td></tr>
 <tr>
 <td>Submissive Goalie </td><td>Takes marking targets from the parent play. Used for more coordinated defensive plays </td></tr>
-<tr>
-<td>Defensive Forward </td><td>Commands 2 of the 3 offensive robots to block while the 3rd tries to take control of the ball </td></tr>
-<tr>
-<td>Simple Zone Midfielder </td><td>Commands 2 of the 3 offensive robots to stay at specific positions behind the ball. It just gets the out of the way so they aren't just sitting there on the field </td></tr>
 </table>
 <h2>Skills</h2>
 <p>There are a large number of skills, but many are not used in the higher level plays. Only Capture, Mark, Move, and Pivot/Line Kick are constantly used.</p>
@@ -191,7 +193,7 @@ $(document).ready(function(){initNavTree('md_doc__plays_tactics_skills_summary.h
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 13 2018 21:21:01 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jul 17 2019 19:16:05 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

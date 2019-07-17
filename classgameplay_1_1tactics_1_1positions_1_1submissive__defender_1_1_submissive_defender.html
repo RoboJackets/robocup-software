@@ -91,7 +91,7 @@ $(document).ready(function(){initNavTree('classgameplay_1_1tactics_1_1positions_
 </div><!--header-->
 <div class="contents">
 
-<p>Defender behavior meant to be coordinated in a defense tactic The regular defender does a lot of calculations and figures out where it should be This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that.  
+<p>Defender behavior meant to be coordinated in a defense tactic The regular defender does a lot of calculations and figures out where it should be This defender lets someone else (the Defense tactic) handle calculations and blocks things based on it.  
  <a href="classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
@@ -336,7 +336,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a75c25cbdeae25db1caac4723240db715 inherit pub_attribs_classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Defender behavior meant to be coordinated in a defense tactic The regular defender does a lot of calculations and figures out where it should be This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that. </p>
+<div class="textblock"><p>Defender behavior meant to be coordinated in a defense tactic The regular defender does a lot of calculations and figures out where it should be This defender lets someone else (the Defense tactic) handle calculations and blocks things based on it. </p>
+<p>The submissive defender takes in a block line via setter- this should be the line between the threat and the point on the goal the threat is likely to shoot at The submissive defender will place itself on the block line, just outside the goal box (exact amount depends on the value of the _defend_goal_radius param). </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for gameplay.tactics.positions.submissive_defender.SubmissiveDefender:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -374,7 +375,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>tactics</b></li><li class="navelem"><b>positions</b></li><li class="navelem"><b>submissive_defender</b></li><li class="navelem"><a class="el" href="classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html">SubmissiveDefender</a></li>
-    <li class="footer">Generated on Tue Nov 13 2018 21:21:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jul 17 2019 19:16:05 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

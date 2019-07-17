@@ -53,5 +53,5 @@ var class_processor =
     [ "useOpponentHalf", "class_processor.html#abe2acdc734aece774c9dd262a217ba1a", null ],
     [ "useOurHalf", "class_processor.html#a761db266f4f8c46829387e50ec2a8c5a", null ],
     [ "visionChannel", "class_processor.html#a192b0c7aecffcbe5043815b7de1d7246", null ],
-    [ "firstLogTime", "class_processor.html#af4215878c42994c28925af6f4e091633", null ]
+    [ "firstLogTime", "class_processor.html#aa62238123a9c00b0e46ad351bb9f3675", null ]
 ];

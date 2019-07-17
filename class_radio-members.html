@@ -89,23 +89,24 @@ $(document).ready(function(){initNavTree('class_radio.html','');});
 <p>This is the complete list of members for <a class="el" href="class_radio.html">Radio</a>, including all inherited members.</p>
 <table class="directory">
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>_channel</b> (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>_reversePackets</b> (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>channel</b>(int n) (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>channel</b>() const (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>clear</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>_reverse_packets_mutex</b> (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>_reversePackets</b> (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>channel</b>(int n) (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>channel</b>() const (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>clear</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>hasReversePackets</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>isOpen</b>() const =0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Radio</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>receive</b>()=0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>reversePackets</b>() const (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>reversePackets</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>send</b>(Packet::RadioTx &amp;packet)=0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>switchTeam</b>(bool blueTeam)=0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>popReversePacket</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Radio</b>() (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>receive</b>()=0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>send</b>(Packet::RadioTx &amp;packet)=0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>switchTeam</b>(bool blueTeam)=0 (defined in <a class="el" href="class_radio.html">Radio</a>)</td><td class="entry"><a class="el" href="class_radio.html">Radio</a></td><td class="entry"><span class="mlabel">pure virtual</span></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 13 2018 21:21:01 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jul 17 2019 19:16:05 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

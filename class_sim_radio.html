@@ -120,12 +120,12 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>channel</b> (
 <tr class="memitem:ab056bc8bed18e7b89a6f5728e90be091 inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="ab056bc8bed18e7b89a6f5728e90be091"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>channel</b> () const</td></tr>
 <tr class="separator:ab056bc8bed18e7b89a6f5728e90be091 inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06a81bc2cfbc7230a446194800d66fb4 inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a06a81bc2cfbc7230a446194800d66fb4"></a>
-const std::vector&lt; Packet::RadioRx &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>reversePackets</b> () const</td></tr>
-<tr class="separator:a06a81bc2cfbc7230a446194800d66fb4 inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a699d3f61553353c12a38ee383a878ae8 inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a699d3f61553353c12a38ee383a878ae8"></a>
-std::vector&lt; Packet::RadioRx &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>reversePackets</b> ()</td></tr>
-<tr class="separator:a699d3f61553353c12a38ee383a878ae8 inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca7ad66e692f26fec5eae91c4a2ec37d inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="aca7ad66e692f26fec5eae91c4a2ec37d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>hasReversePackets</b> ()</td></tr>
+<tr class="separator:aca7ad66e692f26fec5eae91c4a2ec37d inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d69cd477526e98c0296fed2e02445d6 inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a0d69cd477526e98c0296fed2e02445d6"></a>
+const Packet::RadioRx&#160;</td><td class="memItemRight" valign="bottom"><b>popReversePacket</b> ()</td></tr>
+<tr class="separator:a0d69cd477526e98c0296fed2e02445d6 inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f7eaeb68a566caa6fc22a08b5744c7a inherit pub_methods_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a6f7eaeb68a566caa6fc22a08b5744c7a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a6f7eaeb68a566caa6fc22a08b5744c7a inherit pub_methods_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,9 +139,12 @@ static std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>instanc
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_attribs_class_radio"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_radio')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_radio.html">Radio</a></td></tr>
-<tr class="memitem:a6d55838ff1d2d631cffcced368eba2f3 inherit pro_attribs_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a6d55838ff1d2d631cffcced368eba2f3"></a>
-std::vector&lt; Packet::RadioRx &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_reversePackets</b></td></tr>
-<tr class="separator:a6d55838ff1d2d631cffcced368eba2f3 inherit pro_attribs_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61047078055705c7102ae33fe4db410e inherit pro_attribs_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a61047078055705c7102ae33fe4db410e"></a>
+std::deque&lt; Packet::RadioRx &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_reversePackets</b></td></tr>
+<tr class="separator:a61047078055705c7102ae33fe4db410e inherit pro_attribs_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0db8c1900118eb0fbb30e0752296dd94 inherit pro_attribs_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="a0db8c1900118eb0fbb30e0752296dd94"></a>
+std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>_reverse_packets_mutex</b></td></tr>
+<tr class="separator:a0db8c1900118eb0fbb30e0752296dd94 inherit pro_attribs_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6ab11fbd3981e975c724ec9696c164b inherit pro_attribs_class_radio"><td class="memItemLeft" align="right" valign="top"><a id="ab6ab11fbd3981e975c724ec9696c164b"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>_channel</b></td></tr>
 <tr class="separator:ab6ab11fbd3981e975c724ec9696c164b inherit pro_attribs_class_radio"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -165,7 +168,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>_channel</b></td></tr>
 <div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="class_sim_radio__coll__graph.png" border="0" usemap="#_sim_radio_coll__map" alt="Collaboration graph"/></div>
 <map name="_sim_radio_coll__map" id="_sim_radio_coll__map">
-<area shape="rect" id="node2" href="class_radio.html" title="Sends and receives information to/from our robots. " alt="" coords="51,109,110,136"/>
+<area shape="rect" id="node2" href="class_radio.html" title="Sends and receives information to/from our robots. " alt="" coords="51,109,109,136"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <hr/>The documentation for this class was generated from the following files:<ul>
@@ -178,7 +181,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>_channel</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_sim_radio.html">SimRadio</a></li>
-    <li class="footer">Generated on Tue Nov 13 2018 21:21:01 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jul 17 2019 19:16:05 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

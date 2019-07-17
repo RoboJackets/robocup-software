@@ -99,9 +99,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acd9a84c632ba1d26111b20b31b9a5407"><td class="memItemLeft" align="right" valign="top"><a id="acd9a84c632ba1d26111b20b31b9a5407"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Path</b> (RJ::Time <a class="el" href="class_planning_1_1_path.html#a5cb758fb6643e9a815d32b933acf0063">startTime</a>=RJ::now())</td></tr>
 <tr class="separator:acd9a84c632ba1d26111b20b31b9a5407"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26b4c5cd1fec4c1928a1f0569b762ecd"><td class="memItemLeft" align="right" valign="top">boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a26b4c5cd1fec4c1928a1f0569b762ecd">evaluate</a> (RJ::Seconds t) const</td></tr>
-<tr class="memdesc:a26b4c5cd1fec4c1928a1f0569b762ecd"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evaluates the path at a given time and returns the target angle, position, and velocity of the robot.  <a href="#a26b4c5cd1fec4c1928a1f0569b762ecd">More...</a><br /></td></tr>
-<tr class="separator:a26b4c5cd1fec4c1928a1f0569b762ecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f119b98af0c3d8c49154fbf8ea7c5f7"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a2f119b98af0c3d8c49154fbf8ea7c5f7">evaluate</a> (RJ::Seconds t) const</td></tr>
+<tr class="memdesc:a2f119b98af0c3d8c49154fbf8ea7c5f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">This method evaluates the path at a given time and returns the target angle, position, and velocity of the robot.  <a href="#a2f119b98af0c3d8c49154fbf8ea7c5f7">More...</a><br /></td></tr>
+<tr class="separator:a2f119b98af0c3d8c49154fbf8ea7c5f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95f72e817d9a25121d399a57a616e4df"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a95f72e817d9a25121d399a57a616e4df">hit</a> (const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds *hitTime=nullptr) const =0</td></tr>
 <tr class="memdesc:a95f72e817d9a25121d399a57a616e4df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path hits an obstacle.  <a href="#a95f72e817d9a25121d399a57a616e4df">More...</a><br /></td></tr>
 <tr class="separator:a95f72e817d9a25121d399a57a616e4df"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,9 +154,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>slow</b> (float multi
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a0d325e709ef7b08f60926f50627134e5"><td class="memItemLeft" align="right" valign="top"><a id="a0d325e709ef7b08f60926f50627134e5"></a>
-virtual boost::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eval</b> (RJ::Seconds t) const =0</td></tr>
-<tr class="separator:a0d325e709ef7b08f60926f50627134e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dd7b60cd8ca7ed11efe17ff71cf521f"><td class="memItemLeft" align="right" valign="top"><a id="a9dd7b60cd8ca7ed11efe17ff71cf521f"></a>
+virtual std::optional&lt; <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>eval</b> (RJ::Seconds t) const =0</td></tr>
+<tr class="separator:a9dd7b60cd8ca7ed11efe17ff71cf521f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -166,9 +166,9 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>evalRate</b> = 1.0<
 <tr class="memitem:a6ffd94762a6360f53b152ed0c0af241c"><td class="memItemLeft" align="right" valign="top"><a id="a6ffd94762a6360f53b152ed0c0af241c"></a>
 RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><b>_startTime</b></td></tr>
 <tr class="separator:a6ffd94762a6360f53b152ed0c0af241c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adec308e50c05ed419e9c459495d4f3ee"><td class="memItemLeft" align="right" valign="top"><a id="adec308e50c05ed419e9c459495d4f3ee"></a>
-boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_debugText</b></td></tr>
-<tr class="separator:adec308e50c05ed419e9c459495d4f3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4df8087a4c052cf61b2c1ae5a321314e"><td class="memItemLeft" align="right" valign="top"><a id="a4df8087a4c052cf61b2c1ae5a321314e"></a>
+std::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_debugText</b></td></tr>
+<tr class="separator:a4df8087a4c052cf61b2c1ae5a321314e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Abstract class representing a motion path. </p>
@@ -241,8 +241,8 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 
 </div>
 </div>
-<a id="a26b4c5cd1fec4c1928a1f0569b762ecd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26b4c5cd1fec4c1928a1f0569b762ecd">&#9670;&nbsp;</a></span>evaluate()</h2>
+<a id="a2f119b98af0c3d8c49154fbf8ea7c5f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f119b98af0c3d8c49154fbf8ea7c5f7">&#9670;&nbsp;</a></span>evaluate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -251,7 +251,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">boost::optional&lt;<a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a>&gt; Planning::Path::evaluate </td>
+          <td class="memname">std::optional&lt;<a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant</a>&gt; Planning::Path::evaluate </td>
           <td>(</td>
           <td class="paramtype">RJ::Seconds&#160;</td>
           <td class="paramname"><em>t</em></td><td>)</td>
@@ -272,7 +272,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A RobotInstant containing the angle, position, and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns boost::none. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A RobotInstant containing the angle, position, and velocity at the given time if  is within the range of the path. If  is not within the time range of this path, this method returns std::nullopt </dd></dl>
 
 </div>
 </div>
@@ -419,7 +419,7 @@ boost::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bott
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Tue Nov 13 2018 21:21:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jul 17 2019 19:16:06 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

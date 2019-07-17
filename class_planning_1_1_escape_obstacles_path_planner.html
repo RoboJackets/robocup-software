@@ -110,9 +110,9 @@ virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>canHandleDyna
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a6446c8be1cdca99a3a234ce64067feac"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_escape_obstacles_path_planner.html#a6446c8be1cdca99a3a234ce64067feac">findNonBlockedGoal</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt, boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt; prevPt, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, int maxItr=300, std::function&lt; void(const RRT::Tree&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt; &amp;)&gt; rrtLogger=nullptr)</td></tr>
-<tr class="memdesc:a6446c8be1cdca99a3a234ce64067feac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses an RRT to find a point near to  that isn't blocked by obstacles.  <a href="#a6446c8be1cdca99a3a234ce64067feac">More...</a><br /></td></tr>
-<tr class="separator:a6446c8be1cdca99a3a234ce64067feac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71f770d5ae702bd98548a664ecd1cba8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_escape_obstacles_path_planner.html#a71f770d5ae702bd98548a664ecd1cba8">findNonBlockedGoal</a> (<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt, std::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt; prevPt, const <a class="el" href="class_geometry2d_1_1_shape_set.html">Geometry2d::ShapeSet</a> &amp;obstacles, int maxItr=300, std::function&lt; void(const RRT::Tree&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt; &amp;)&gt; rrtLogger=nullptr)</td></tr>
+<tr class="memdesc:a71f770d5ae702bd98548a664ecd1cba8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses an RRT to find a point near to  that isn't blocked by obstacles.  <a href="#a71f770d5ae702bd98548a664ecd1cba8">More...</a><br /></td></tr>
+<tr class="separator:a71f770d5ae702bd98548a664ecd1cba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9478c822c62d572ab140c6b06fb80d7"><td class="memItemLeft" align="right" valign="top"><a id="ac9478c822c62d572ab140c6b06fb80d7"></a>
 static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
 <tr class="separator:ac9478c822c62d572ab140c6b06fb80d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,8 +176,8 @@ Additional Inherited Members</h2></td></tr>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6446c8be1cdca99a3a234ce64067feac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6446c8be1cdca99a3a234ce64067feac">&#9670;&nbsp;</a></span>findNonBlockedGoal()</h2>
+<a id="a71f770d5ae702bd98548a664ecd1cba8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71f770d5ae702bd98548a664ecd1cba8">&#9670;&nbsp;</a></span>findNonBlockedGoal()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -194,7 +194,7 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td>
+          <td class="paramtype">std::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td>
           <td class="paramname"><em>prevPt</em>, </td>
         </tr>
         <tr>
@@ -248,7 +248,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_escape_obstacles_path_planner.html">EscapeObstaclesPathPlanner</a></li>
-    <li class="footer">Generated on Tue Nov 13 2018 21:21:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jul 17 2019 19:16:06 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>
