@@ -1,5 +1,9 @@
 var NAVTREEINDEX13 =
 {
+"struct_planning_1_1_cubic_bezier_control_points.html#a365ec77f7e2b506b2e623751da82c283":[18,0,7,4,3],
+"struct_planning_1_1_cubic_bezier_control_points.html#aa0ebb54b8d16a078ed8ac581e76eeb66":[18,0,7,4,2],
+"struct_planning_1_1_cubic_bezier_control_points.html#acfc2af8f58471cbc9336074a0623246a":[18,0,7,4,1],
+"struct_planning_1_1_cubic_bezier_control_points.html#ad86cca705dbbbbcf049862a4d103555c":[18,0,7,4,0],
 "struct_planning_1_1_direct_path_target_command.html":[18,0,7,5],
 "struct_planning_1_1_direct_path_target_command.html#a65c3b139ae8b314c0ba66f26ae954fdd":[18,0,7,5,0],
 "struct_planning_1_1_direct_path_target_command.html#ad5d5303834c510003006f40776b7d6df":[18,0,7,5,1],

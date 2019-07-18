@@ -88,11 +88,18 @@ $(document).ready(function(){initNavTree('class_geometry2d_1_1_arc.html','');});
 <div class="title">Geometry2d::Arc Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>An arc (a segment of a circle) specified by a center point, a radius and a starting and ending angle.  
+ <a href="class_geometry2d_1_1_arc.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7bd0724359f45af17b4e1e015ab466e1"><td class="memItemLeft" align="right" valign="top"><a id="a7bd0724359f45af17b4e1e015ab466e1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Arc</b> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> center, float radius, float start, float end)</td></tr>
+<tr class="memitem:a0c0dc9d9fecd085b8e036fcd5246d8fe"><td class="memItemLeft" align="right" valign="top"><a id="a0c0dc9d9fecd085b8e036fcd5246d8fe"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_arc.html#a0c0dc9d9fecd085b8e036fcd5246d8fe">Arc</a> ()</td></tr>
+<tr class="memdesc:a0c0dc9d9fecd085b8e036fcd5246d8fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default-initialze an arc to the empty arc. <br /></td></tr>
+<tr class="separator:a0c0dc9d9fecd085b8e036fcd5246d8fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bd0724359f45af17b4e1e015ab466e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_geometry2d_1_1_arc.html#a7bd0724359f45af17b4e1e015ab466e1">Arc</a> (<a class="el" href="class_geometry2d_1_1_point.html">Point</a> center, float radius, float start, float end)</td></tr>
+<tr class="memdesc:a7bd0724359f45af17b4e1e015ab466e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize an arc with a given center, radius, and starting and ending angle (in radians).  <a href="#a7bd0724359f45af17b4e1e015ab466e1">More...</a><br /></td></tr>
 <tr class="separator:a7bd0724359f45af17b4e1e015ab466e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abba1f6af5b02a5533ef298b1a3de9c33"><td class="memItemLeft" align="right" valign="top"><a id="abba1f6af5b02a5533ef298b1a3de9c33"></a>
 <a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>center</b> () const</td></tr>
@@ -128,6 +135,70 @@ std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &
 std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>intersects</b> (const <a class="el" href="class_geometry2d_1_1_segment.html">Segment</a> &amp;segment) const</td></tr>
 <tr class="separator:a70545d75fcc97b9f9945882fdb6bb2ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An arc (a segment of a circle) specified by a center point, a radius and a starting and ending angle. </p>
+<dl class="section note"><dt>Note</dt><dd>: the starting and ending angles should be in the range [-M_PI, M_PI] or intersection functions will not work as expected. In addition, start should be less than or equal to end </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a7bd0724359f45af17b4e1e015ab466e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bd0724359f45af17b4e1e015ab466e1">&#9670;&nbsp;</a></span>Arc()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Geometry2d::Arc::Arc </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Point</a>&#160;</td>
+          <td class="paramname"><em>center</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>radius</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>end</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize an arc with a given center, radius, and starting and ending angle (in radians). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">center</td><td>the center point of the characteristic circle </td></tr>
+    <tr><td class="paramname">radius</td><td>the radius of the characteristic circle </td></tr>
+    <tr><td class="paramname">start</td><td>the starting angle in radians in the range [-M_PI, M_PI] </td></tr>
+    <tr><td class="paramname">end</td><td>the ending angle in radians in the range [-M_PI, M_PI]</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>angle 0 radians is aligned with the x axis. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>common/Geometry2d/<a class="el" href="_arc_8hpp_source.html">Arc.hpp</a></li>
 <li>common/Geometry2d/Arc.cpp</li>
@@ -138,7 +209,7 @@ std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Point</a> &
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Geometry2d</b></li><li class="navelem"><a class="el" href="class_geometry2d_1_1_arc.html">Arc</a></li>
-    <li class="footer">Generated on Wed Jul 17 2019 19:16:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jul 18 2019 12:00:34 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>
