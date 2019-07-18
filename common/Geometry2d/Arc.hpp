@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Point.hpp"
 #include "Line.hpp"
+#include "Point.hpp"
 #include "Segment.hpp"
 
 namespace Geometry2d {
@@ -76,4 +76,4 @@ private:
     float _end_angle;
 };
 
-}
+}  // namespace Geometry2d

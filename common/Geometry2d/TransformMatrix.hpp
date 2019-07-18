@@ -166,4 +166,4 @@ protected:
     //    3 4 5]
     float _m[6];
 };
-}
+}  // namespace Geometry2d
