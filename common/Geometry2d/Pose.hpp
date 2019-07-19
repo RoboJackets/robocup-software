@@ -173,9 +173,7 @@ public:
      *
      * Called deltaFixed because it operates fixed to the origin frame.
      */
-    Pose applyFixed(double t) const {
-        return Pose(t * _twist);
-    }
+    Pose applyFixed(double t) const { return Pose(t * _twist); }
 
     /**
      * Find the resulting pose (delta) of an object starting at the origin and
@@ -219,16 +217,11 @@ public:
             cosine_frac = (1 - std::cos(vh * t)) / vh;
         }
 
-        return Eigen::Vector3d {
-            vx * sine_frac - vy * cosine_frac,
-            vx * cosine_frac + vy * sine_frac,
-            vh * t
-        };
+        return Eigen::Vector3d{vx * sine_frac - vy * cosine_frac,
+                               vx * cosine_frac + vy * sine_frac, vh * t};
     }
 
-    double curvature() const {
-        return angular() / linear().norm();
-    }
+    double curvature() const { return angular() / linear().norm(); }
 
     /**
      * Operators

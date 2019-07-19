@@ -138,7 +138,6 @@ TEST(Twist, Curvature) {
     // Infinite
     {
         Twist twist(Point(0, 0), 1);
-        EXPECT_EQ(twist.curvature(),
-                std::numeric_limits<double>::infinity());
+        EXPECT_EQ(twist.curvature(), std::numeric_limits<double>::infinity());
     }
 }
