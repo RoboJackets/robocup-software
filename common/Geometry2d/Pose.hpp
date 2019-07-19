@@ -24,6 +24,11 @@ public:
         : _pose(position.x(), position.y(), heading) {}
 
     /**
+     * Component-wise constructor
+     */
+    Pose(double x, double y, double h) : _pose(x, y, h) {}
+
+    /**
      * Implicit conversion from Eigen::Vector3d
      */
     Pose(const Eigen::Vector3d& other) : _pose(other) {}
@@ -84,8 +89,10 @@ public:
     /**
      * Accessors
      */
-    Point position() const { return Point(_pose.template block<2, 1>(0, 0)); }
-    double heading() const { return _pose(2); }
+    Point const position() const {
+        return Point(_pose.template block<2, 1>(0, 0));
+    }
+    double const heading() const { return _pose(2); }
 
     /**
      * Operators
@@ -137,6 +144,11 @@ public:
         : _twist(linear.x(), linear.y(), angular) {}
 
     /**
+     * Component-wise constructor
+     */
+    Twist(double dx, double dy, double dh) : _twist(dx, dy, dh) {}
+
+    /**
      * Implicit conversion from Eigen::Vector3d
      */
     Twist(const Eigen::Vector3d& other) : _twist(other) {}
@@ -159,8 +171,10 @@ public:
     /**
      * Accessors
      */
-    Eigen::Vector2d linear() const { return _twist.template block<2, 1>(0, 0); }
-    double angular() const { return _twist(2); }
+    Point const linear() const {
+        return Point(_twist.template block<2, 1>(0, 0));
+    }
+    double const angular() const { return _twist(2); }
 
     /**
      * Find the resulting pose (delta) of an object starting at the origin and
@@ -221,7 +235,7 @@ public:
                                vx * cosine_frac + vy * sine_frac, vh * t};
     }
 
-    double curvature() const { return angular() / linear().norm(); }
+    double curvature() const { return angular() / linear().mag(); }
 
     /**
      * Operators
