@@ -1,77 +1,9 @@
 #pragma once
 
 #include "Point.hpp"
+#include "TransformMatrix.hpp"
 
 namespace Geometry2d {
-
-/**
- * Represents a differential (velocity, acceleration, etc.) in 2d space:
- * (dx, dy, dh). Uses double-precision floating point numbers.
- */
-class Twist {
-public:
-    /**
-     * Default constructor - zero-initialize
-     */
-    Twist() = default;
-
-    /**
-     * Implicit conversion from Eigen::Vector3d
-     */
-    Twist(const Eigen::Vector3d& other) : _twist(other) {}
-
-    /**
-     * Copy-constructor - default
-     */
-    Twist(const Twist& other) = default;
-
-    /**
-     * Zero
-     */
-    static Twist Zero() { return Twist(Eigen::Vector3d::Zero()); }
-
-    /**
-     * Implicit conversion to Eigen::Vector3d
-     */
-    operator Eigen::Vector3d() const { return _twist; }
-
-    /**
-     * Accessors
-     */
-    Eigen::Vector2d linear() const { return _twist.template block<2, 1>(0, 0); }
-    double angular() const { return _twist(2); }
-
-    /**
-     * Operators
-     */
-    Twist operator+(const Twist& other) const {
-        return Twist(_twist + other._twist);
-    }
-    Twist operator-(const Twist& other) const {
-        return Twist(_twist - other._twist);
-    }
-    Twist operator*(double s) const { return Twist(_twist * s); }
-    Twist operator/(double s) const { return Twist(_twist / s); }
-    Twist& operator+=(const Twist& other) {
-        _twist += other._twist;
-        return *this;
-    }
-    Twist& operator-=(const Twist& other) {
-        _twist -= other._twist;
-        return *this;
-    }
-    Twist& operator*=(double s) {
-        _twist *= s;
-        return *this;
-    }
-    Twist& operator/=(double s) {
-        _twist /= s;
-        return *this;
-    }
-
-private:
-    Eigen::Vector3d _twist;
-};
 
 /**
  * Represents a pose in 2d space: (x, y, theta). Uses double-precision floating
@@ -83,7 +15,7 @@ public:
     /**
      * Default constructor - zero-initialize
      */
-    Pose() = default;
+    Pose() { _pose = Eigen::Vector3d::Zero(); }
 
     /**
      * Point-heading constructor
@@ -132,12 +64,8 @@ public:
      */
     Pose withOrigin(Pose other) const {
         double sh = std::sin(other.heading()), ch = std::cos(other.heading());
-        double x = other.position().x() + ch * other.position().x() -
-                   sh * other.position().y();
-        double y =
-            other.position().y() + ch * position().y() + sh * position().x();
-        double h = heading() + other.heading();
-        return Pose({x, y}, h);
+        Point rotated = position().rotated(other.heading());
+        return other + Pose(rotated, heading());
     }
 
     /**
@@ -190,4 +118,148 @@ public:
 private:
     Eigen::Vector3d _pose;
 };
+
+/**
+ * Represents a differential (velocity, acceleration, etc.) in 2d space:
+ * (dx, dy, dh). Uses double-precision floating point numbers.
+ */
+class Twist {
+public:
+    /**
+     * Default constructor - zero-initialize
+     */
+    Twist() = default;
+
+    /**
+     * Linear+angular terms.
+     */
+    Twist(const Point& linear, double angular)
+        : _twist(linear.x(), linear.y(), angular) {}
+
+    /**
+     * Implicit conversion from Eigen::Vector3d
+     */
+    Twist(const Eigen::Vector3d& other) : _twist(other) {}
+
+    /**
+     * Copy-constructor - default
+     */
+    Twist(const Twist& other) = default;
+
+    /**
+     * Zero
+     */
+    static Twist Zero() { return Twist(Eigen::Vector3d::Zero()); }
+
+    /**
+     * Implicit conversion to Eigen::Vector3d
+     */
+    operator Eigen::Vector3d() const { return _twist; }
+
+    /**
+     * Accessors
+     */
+    Eigen::Vector2d linear() const { return _twist.template block<2, 1>(0, 0); }
+    double angular() const { return _twist(2); }
+
+    /**
+     * Find the resulting pose (delta) of an object starting at the origin and
+     * continuing with constant (world-space) velocity for the specified time
+     * (in seconds).
+     *
+     * Throughout the movement, linear velocity relative to the origin is
+     * constant (but velocity in the pose's reference frame is changing in
+     * direction as the pose rotates)
+     *
+     * Called deltaFixed because it operates fixed to the origin frame.
+     */
+    Pose applyFixed(double t) const {
+        return Pose(t * _twist);
+    }
+
+    /**
+     * Find the resulting pose (delta) of an object starting at the origin and
+     * continuing with constant (local) velocity for the specified time
+     * (in seconds).
+     *
+     * Throughout the movement, linear velocity relative to the pose's frame of
+     * reference is constant (but linear velocity relative to the origin might
+     * change as the pose rotates)
+     *
+     * Called applyRelative because it operates with velocities that remain
+     * constant relative to the pose.
+     *
+     * In mathematical terms, this is the exponential mapping that takes the Lie
+     * algebra so(2) (twists) to the Lie group SO(2) (poses).
+     */
+    Pose applyRelative(double t) const {
+        // twist = (x', y', h')
+        // dh(world) = h' * dt
+        // dx(world) = dx(local)cos(dh(world)) - dy(local)sin(dh(world))
+        //           = integral(x'cos(h't) - y'sin(h't), dt)
+        //           = x'/h' sin(h't) + y'/h' (cos(h't) - 1)
+        // dy(world) = dx(local)sin(dh(world)) + dy(local)cos(dh(world))
+        //           = integral(x'sin(h't) + y'cos(h't), dt)
+        //           = x'/h' (1 - cos(h't)) + y'/h' sin(h't)
+        double vx = _twist(0);
+        double vy = _twist(1);
+        double vh = _twist(2);
+
+        // From above: sin(h't)/h' and (1 - cos(h't))/h' respectively
+        double sine_frac, cosine_frac;
+
+        if (std::abs(vh) < 1e-6) {
+            // Small-angle approximations
+            // sin(h't) ~ h't
+            // 1 - cos(h't) ~ 0
+            sine_frac = t;
+            cosine_frac = 0;
+        } else {
+            sine_frac = std::sin(vh * t) / vh;
+            cosine_frac = (1 - std::cos(vh * t)) / vh;
+        }
+
+        return Eigen::Vector3d {
+            vx * sine_frac - vy * cosine_frac,
+            vx * cosine_frac + vy * sine_frac,
+            vh * t
+        };
+    }
+
+    double curvature() const {
+        return angular() / linear().norm();
+    }
+
+    /**
+     * Operators
+     */
+    Twist operator+(const Twist& other) const {
+        return Twist(_twist + other._twist);
+    }
+    Twist operator-(const Twist& other) const {
+        return Twist(_twist - other._twist);
+    }
+    Twist operator*(double s) const { return Twist(_twist * s); }
+    Twist operator/(double s) const { return Twist(_twist / s); }
+    Twist& operator+=(const Twist& other) {
+        _twist += other._twist;
+        return *this;
+    }
+    Twist& operator-=(const Twist& other) {
+        _twist -= other._twist;
+        return *this;
+    }
+    Twist& operator*=(double s) {
+        _twist *= s;
+        return *this;
+    }
+    Twist& operator/=(double s) {
+        _twist /= s;
+        return *this;
+    }
+
+private:
+    Eigen::Vector3d _twist;
+};
+
 }  // namespace Geometry2d
