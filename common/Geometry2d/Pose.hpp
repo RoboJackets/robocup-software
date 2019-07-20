@@ -219,7 +219,7 @@ public:
      * constant relative to the pose.
      *
      * In mathematical terms, this is the exponential mapping that takes the Lie
-     * algebra so(2) (twists) to the Lie group SO(2) (poses).
+     * algebra se(2) (twists) to the Lie group SE(2) (poses).
      */
     Pose deltaRelative(double t) const {
         // twist = (x', y', h')
