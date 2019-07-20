@@ -61,7 +61,7 @@ TEST(Twist, ExponentialMapping) {
     // +---
     {
         Twist twist(Point(1, 0), 1);
-        Pose applied = twist.applyRelative(M_PI / 2);
+        Pose applied = twist.deltaRelative(M_PI / 2);
         EXPECT_NEAR(applied.position().x(), 1, 1e-6);
         EXPECT_NEAR(applied.position().y(), 1, 1e-6);
         EXPECT_NEAR(applied.heading(), M_PI / 2, 1e-6);
@@ -79,7 +79,7 @@ TEST(Twist, ExponentialMapping) {
     // +
     {
         Twist twist(Point(0, 1), -1);
-        Pose applied = twist.applyRelative(M_PI / 2);
+        Pose applied = twist.deltaRelative(M_PI / 2);
         EXPECT_NEAR(applied.position().x(), 1, 1e-6);
         EXPECT_NEAR(applied.position().y(), 1, 1e-6);
         EXPECT_NEAR(applied.heading(), -M_PI / 2, 1e-6);
@@ -88,7 +88,7 @@ TEST(Twist, ExponentialMapping) {
     // Go straight up for 2 seconds
     {
         Twist twist(Point(0, 1), 0);
-        Pose applied = twist.applyRelative(2);
+        Pose applied = twist.deltaRelative(2);
         EXPECT_NEAR(applied.position().x(), 0, 1e-6);
         EXPECT_NEAR(applied.position().y(), 2, 1e-6);
         EXPECT_NEAR(applied.heading(), 0, 1e-6);
@@ -97,7 +97,7 @@ TEST(Twist, ExponentialMapping) {
     // Spin in place
     {
         Twist twist(Point(0, 0), 1);
-        Pose applied = twist.applyRelative(1);
+        Pose applied = twist.deltaRelative(1);
         EXPECT_NEAR(applied.position().x(), 0, 1e-6);
         EXPECT_NEAR(applied.position().y(), 0, 1e-6);
         EXPECT_NEAR(applied.heading(), 1, 1e-6);
@@ -106,7 +106,7 @@ TEST(Twist, ExponentialMapping) {
     // Sit still
     {
         Twist twist(Point(0, 0), 0);
-        Pose applied = twist.applyRelative(1);
+        Pose applied = twist.deltaRelative(1);
         EXPECT_NEAR(applied.position().x(), 0, 1e-6);
         EXPECT_NEAR(applied.position().y(), 0, 1e-6);
         EXPECT_NEAR(applied.heading(), 0, 1e-6);
@@ -115,7 +115,7 @@ TEST(Twist, ExponentialMapping) {
     // Move 2PI in a circle (of radius 1) to end up where we started
     {
         Twist twist(Point(0, 1), 1);
-        Pose applied = twist.applyRelative(2 * M_PI);
+        Pose applied = twist.deltaRelative(2 * M_PI);
         EXPECT_NEAR(applied.position().x(), 0, 1e-6);
         EXPECT_NEAR(applied.position().y(), 0, 1e-6);
         EXPECT_NEAR(applied.heading(), 2 * M_PI, 1e-6);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ostream>
 #include "Point.hpp"
 #include "TransformMatrix.hpp"
 
@@ -293,5 +294,20 @@ private:
     Point _linear;
     double _angular;
 };
+
+/**
+ * Stream operators for printing.
+ */
+std::ostream& operator<<(std::ostream& stream, const Pose& pose) {
+    stream << "Pose(" << pose.position().x() << ", " << pose.position().y()
+           << ", " << pose.heading() << ")";
+    return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Twist& twist) {
+    stream << "Twist(" << twist.linear().x() << ", " << twist.linear().y()
+           << ", " << twist.angular() << ")";
+    return stream;
+}
 
 }  // namespace Geometry2d
