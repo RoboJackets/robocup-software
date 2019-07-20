@@ -15,23 +15,24 @@ public:
     /**
      * Default constructor - zero-initialize
      */
-    Pose() { _pose = Eigen::Vector3d::Zero(); }
+    Pose() : _position{}, _heading{0} {}
 
     /**
      * Point-heading constructor
      */
     Pose(Point position, double heading)
-        : _pose(position.x(), position.y(), heading) {}
+        : _position(position), _heading(heading) {}
 
     /**
      * Component-wise constructor
      */
-    Pose(double x, double y, double h) : _pose(x, y, h) {}
+    Pose(double x, double y, double h) : _position(x, y), _heading(h) {}
 
     /**
      * Implicit conversion from Eigen::Vector3d
      */
-    Pose(const Eigen::Vector3d& other) : _pose(other) {}
+    Pose(const Eigen::Vector3d& other)
+        : _position(other(0), other(1)), _heading(other(2)) {}
 
     /**
      * Copy-constructor - default
@@ -68,7 +69,6 @@ public:
      *       |
      */
     Pose withOrigin(Pose other) const {
-        double sh = std::sin(other.heading()), ch = std::cos(other.heading());
         Point rotated = position().rotated(other.heading());
         return other + Pose(rotated, heading());
     }
@@ -76,7 +76,9 @@ public:
     /**
      * Implicit conversion to Eigen::Vector3d
      */
-    operator Eigen::Vector3d() const { return _pose; }
+    operator Eigen::Vector3d() const {
+        return Eigen::Vector3d(position().x(), position().y(), heading());
+    }
 
     /**
      * Calculate a TransformMatrix corresponding to using this pose as the
@@ -89,41 +91,50 @@ public:
     /**
      * Accessors
      */
-    Point const position() const {
-        return Point(_pose.template block<2, 1>(0, 0));
-    }
-    double const heading() const { return _pose(2); }
+    Point& position() { return _position; }
+    Point const& position() const { return _position; }
+    double& heading() { return _heading; }
+    double const& heading() const { return _heading; }
 
     /**
      * Operators
      */
     Pose operator+(const Pose& other) const {
-        return Pose(_pose + other._pose);
+        return Pose(position() + other.position(), heading() + other.heading());
     }
     Pose operator-(const Pose& other) const {
-        return Pose(_pose - other._pose);
+        return Pose(position() - other.position(), heading() - other.heading());
     }
-    Pose operator*(double s) const { return Pose(_pose * s); }
-    Pose operator/(double s) const { return Pose(_pose / s); }
+    Pose operator*(double s) const {
+        return Pose(position() * s, heading() * s);
+    }
+    Pose operator/(double s) const {
+        return Pose(position() / s, heading() / s);
+    }
     Pose& operator+=(const Pose& other) {
-        _pose += other._pose;
+        position() += other.position();
+        heading() += other.heading();
         return *this;
     }
     Pose& operator-=(const Pose& other) {
-        _pose -= other._pose;
+        position() += other.position();
+        heading() += other.heading();
         return *this;
     }
     Pose& operator*=(double s) {
-        _pose *= s;
+        position() *= s;
+        heading() *= s;
         return *this;
     }
     Pose& operator/=(double s) {
-        _pose /= s;
+        position() /= s;
+        heading() /= s;
         return *this;
     }
 
 private:
-    Eigen::Vector3d _pose;
+    Point _position;
+    double _heading;
 };
 
 /**
@@ -135,23 +146,24 @@ public:
     /**
      * Default constructor - zero-initialize
      */
-    Twist() = default;
+    Twist() : _linear{}, _angular{0} {}
 
     /**
      * Linear+angular terms.
      */
     Twist(const Point& linear, double angular)
-        : _twist(linear.x(), linear.y(), angular) {}
+        : _linear(linear), _angular(angular) {}
 
     /**
      * Component-wise constructor
      */
-    Twist(double dx, double dy, double dh) : _twist(dx, dy, dh) {}
+    Twist(double dx, double dy, double dh) : _linear(dx, dy), _angular(dh) {}
 
     /**
      * Implicit conversion from Eigen::Vector3d
      */
-    Twist(const Eigen::Vector3d& other) : _twist(other) {}
+    Twist(const Eigen::Vector3d& other)
+        : _linear(other(0), other(1)), _angular(other(2)) {}
 
     /**
      * Copy-constructor - default
@@ -166,15 +178,17 @@ public:
     /**
      * Implicit conversion to Eigen::Vector3d
      */
-    operator Eigen::Vector3d() const { return _twist; }
+    operator Eigen::Vector3d() const {
+        return Eigen::Vector3d(linear().x(), linear().y(), angular());
+    }
 
     /**
      * Accessors
      */
-    Point const linear() const {
-        return Point(_twist.template block<2, 1>(0, 0));
-    }
-    double const angular() const { return _twist(2); }
+    Point& linear() { return _linear; }
+    Point const& linear() const { return _linear; }
+    double& angular() { return _angular; }
+    double const& angular() const { return _angular; }
 
     /**
      * Find the resulting pose (delta) of an object starting at the origin and
@@ -187,7 +201,9 @@ public:
      *
      * Called deltaFixed because it operates fixed to the origin frame.
      */
-    Pose applyFixed(double t) const { return Pose(t * _twist); }
+    Pose deltaFixed(double t) const {
+        return Pose(linear().x(), linear().y(), angular());
+    }
 
     /**
      * Find the resulting pose (delta) of an object starting at the origin and
@@ -198,13 +214,13 @@ public:
      * reference is constant (but linear velocity relative to the origin might
      * change as the pose rotates)
      *
-     * Called applyRelative because it operates with velocities that remain
+     * Called deltaRelative because it operates with velocities that remain
      * constant relative to the pose.
      *
      * In mathematical terms, this is the exponential mapping that takes the Lie
      * algebra so(2) (twists) to the Lie group SO(2) (poses).
      */
-    Pose applyRelative(double t) const {
+    Pose deltaRelative(double t) const {
         // twist = (x', y', h')
         // dh(world) = h' * dt
         // dx(world) = dx(local)cos(dh(world)) - dy(local)sin(dh(world))
@@ -213,9 +229,9 @@ public:
         // dy(world) = dx(local)sin(dh(world)) + dy(local)cos(dh(world))
         //           = integral(x'sin(h't) + y'cos(h't), dt)
         //           = x'/h' (1 - cos(h't)) + y'/h' sin(h't)
-        double vx = _twist(0);
-        double vy = _twist(1);
-        double vh = _twist(2);
+        double vx = linear().x();
+        double vy = linear().y();
+        double vh = angular();
 
         // From above: sin(h't)/h' and (1 - cos(h't))/h' respectively
         double sine_frac, cosine_frac;
@@ -231,8 +247,8 @@ public:
             cosine_frac = (1 - std::cos(vh * t)) / vh;
         }
 
-        return Eigen::Vector3d{vx * sine_frac - vy * cosine_frac,
-                               vx * cosine_frac + vy * sine_frac, vh * t};
+        return Pose(vx * sine_frac - vy * cosine_frac,
+                    vx * cosine_frac + vy * sine_frac, vh * t);
     }
 
     double curvature() const { return angular() / linear().mag(); }
@@ -241,32 +257,41 @@ public:
      * Operators
      */
     Twist operator+(const Twist& other) const {
-        return Twist(_twist + other._twist);
+        return Twist(linear() + other.linear(), angular() + other.angular());
     }
     Twist operator-(const Twist& other) const {
-        return Twist(_twist - other._twist);
+        return Twist(linear() - other.linear(), angular() - other.angular());
     }
-    Twist operator*(double s) const { return Twist(_twist * s); }
-    Twist operator/(double s) const { return Twist(_twist / s); }
+    Twist operator*(double s) const {
+        return Twist(linear() * s, angular() * s);
+    }
+    Twist operator/(double s) const {
+        return Twist(linear() * s, angular() * s);
+    }
     Twist& operator+=(const Twist& other) {
-        _twist += other._twist;
+        linear() += other.linear();
+        angular() += other.angular();
         return *this;
     }
     Twist& operator-=(const Twist& other) {
-        _twist -= other._twist;
+        linear() -= other.linear();
+        angular() -= other.angular();
         return *this;
     }
     Twist& operator*=(double s) {
-        _twist *= s;
+        linear() *= s;
+        angular() *= s;
         return *this;
     }
     Twist& operator/=(double s) {
-        _twist /= s;
+        linear() /= s;
+        angular() /= s;
         return *this;
     }
 
 private:
-    Eigen::Vector3d _twist;
+    Point _linear;
+    double _angular;
 };
 
 }  // namespace Geometry2d
