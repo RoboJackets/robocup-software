@@ -239,7 +239,7 @@ TEST(BallBounce, angle_intersect_mouth) {
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
     kb.setVel(Geometry2d::Point(-1,0));
 
-    Geometry2d::Point p2 = Geometry2d::Point(-0.05, -0.03);
+    Geometry2d::Point p2 = Geometry2d::Point(-0.06, -0.04);
     double th = 1*3.14/4;
     CameraRobot cr = CameraRobot(tc, p2, th, 1);
     WorldRobot wr1;
