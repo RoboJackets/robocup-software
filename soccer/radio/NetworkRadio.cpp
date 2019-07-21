@@ -95,13 +95,15 @@ void NetworkRadio::receivePacket(
     // We already have this robot registered; this is a reverse packet
     if (ip_iter == _robot_ip_map.right.end()) {
         // This is a new robot, so we need to register this robot's UID
-        std::cout << "Adding robot with endpoint " << _robot_endpoint << std::endl;
+        std::cout << "Adding robot with endpoint " << _robot_endpoint
+            << std::endl;
         registerRobot(msg->uid, _robot_endpoint);
     } else if (ip_iter->second != robot_id) {
         // This robot has been reassigned. Re-registering it sets the IP->ID
         // map correctly, but we still need to remove it from the ID->IP map.
         std::cerr << "Warning: UID of robot assigned IP "
-            << ip_iter->first << " changed to " << ip_iter->second << ". Reassigning.";
+            << ip_iter->first << " changed to " << ip_iter->second
+            << ". Reassigning." << std::endl;;
 
         // Erase the IP address and re-register the robot.
         _robot_ip_map.right.erase(ip_iter->first);

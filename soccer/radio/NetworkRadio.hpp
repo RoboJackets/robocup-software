@@ -14,6 +14,8 @@
 
 /**
  * @brief Interface for the radio over regular network interface
+ *
+ * TODO(Kyle): Clean this up by removing dual-radio support.
  */
 class NetworkRadio : public Radio {
 public:
@@ -32,6 +34,8 @@ public:
 
 protected:
     // Bidrectional mapping from IP address <-> robot ID
+    // TODO(Kyle): Add a timeout to remove robots from this once they're no
+    // longer communicating with soccer
     using RobotIpMap = boost::bimaps::bimap<
         boost::bimaps::multiset_of<int>, boost::bimaps::set_of<boost::asio::ip::udp::endpoint>>;
     RobotIpMap _robot_ip_map;
