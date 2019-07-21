@@ -72,10 +72,6 @@ class OurIndirectPivot(standard_play.StandardPlay):
         else:
             return float("inf")
 
-    @classmethod
-    def is_restart(cls):
-        return True
-
     def on_enter_passing(self):
         # start the actual pass
         self.add_subbehavior(self.pass_bhvr, 'pass')

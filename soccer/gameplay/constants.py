@@ -3,7 +3,6 @@ import math
 
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
-OurChipping = (.1, .8) # Min distance where chip is over a robot to max such distance
 OurChipRoll = 3 # Average distance at which a ball is slow enough to capture
 TheirChipping = (.1, .8)
 
