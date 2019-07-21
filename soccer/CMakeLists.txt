@@ -52,7 +52,6 @@ set(ROBOCUP_LIB_SRC
     "ProtobufTree.cpp"
     "radio/PacketConvert.cpp"
     "radio/SimRadio.cpp"
-    "radio/USBRadio.cpp"
     "radio/NetworkRadio.cpp"
     "RefereeTab.cpp"
     "Robot.cpp"

@@ -25,7 +25,6 @@
 #include "Processor.hpp"
 #include "vision/VisionFilter.hpp"
 #include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
 #include "radio/NetworkRadio.hpp"
 #include "Network.hpp"
 

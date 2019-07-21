@@ -8,9 +8,7 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <stdexcept>
-#include <math.h>
-
-#define PI 3.14159265
+#include <cmath>
 
 #include "status.h"
 
@@ -47,7 +45,7 @@ void SimRadio::send(Packet::RadioTx& packet) {
         const float max_kick_m_s = 7.0f;
         const float min_chip_m_s = 2.1f;
         const float max_chip_m_s = 5.0f;
-        const float chip_angle = 40*PI/180; // degrees
+        const float chip_angle = 40 * M_PI / 180; // degrees
         float kc_strength_to_ms;
         uint kick_strength;
 
