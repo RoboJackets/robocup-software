@@ -134,7 +134,7 @@ void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
 }
 
 void OurRobot_settle(OurRobot* self) {
-    self->settle(boost::none);
+    self->settle(std::nullopt);
 }
 
 void OurRobot_settle_w_bounce(OurRobot* self, Geometry2d::Point* bounceTarget) {

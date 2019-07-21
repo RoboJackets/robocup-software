@@ -94,9 +94,9 @@ std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
                                                  Geometry2d::Point(0,0),0,
                                                  _constraints);
     }
-    
-    boost::optional<RobotInstant> start = evaluate(startTime);
-    boost::optional<RobotInstant> end = evaluate(endTime);
+
+    std::optional<RobotInstant> start = evaluate(startTime);
+    std::optional<RobotInstant> end = evaluate(endTime);
 
     // Start can return null when startTime < pathStartTime
     // It should be covered under the test for startTime > 0,

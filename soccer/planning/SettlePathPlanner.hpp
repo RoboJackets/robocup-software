@@ -85,7 +85,7 @@ private:
 
     RRTPlanner rrtPlanner;
     DirectTargetPathPlanner directPlanner;
-    boost::optional<Geometry2d::Point> targetBounceDirection;
+    std::optional<Geometry2d::Point> targetBounceDirection;
 
     SettlePathPlannerStates currentState;
 

@@ -248,7 +248,7 @@ public:
      * @param target - the target point in which the robot will try to bounce the
      * towards
      */
-    void settle(boost::optional<Geometry2d::Point> target);
+    void settle(std::optional<Geometry2d::Point> target);
 
     /**
      * @brief Approaches the ball and moves through it slowly
