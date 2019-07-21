@@ -1,3 +1,5 @@
+#include <optional>
+
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Line.hpp>
 #include <Geometry2d/Polygon.hpp>
@@ -47,7 +49,7 @@ public:
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const {
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const {
         return RobotInstant(ball.predict(startTime() + t));
     }
 

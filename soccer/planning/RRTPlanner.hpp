@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/ShapeSet.hpp>
 #include <planning/InterpolatedPath.hpp>
@@ -13,7 +15,6 @@
 #include "SystemState.hpp"
 
 #include <Eigen/Dense>
-#include <boost/optional.hpp>
 #include <list>
 
 namespace Planning {
@@ -97,8 +98,8 @@ protected:
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet& obstacles, SystemState* state,
         unsigned shellID,
-        const boost::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
-            boost::none);
+        const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
+            std::nullopt);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
@@ -106,8 +107,8 @@ protected:
         Geometry2d::ShapeSet& obstacles,
         const std::vector<DynamicObstacle> paths, SystemState* state,
         unsigned shellID,
-        const boost::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
-            boost::none);
+        const std::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
+            std::nullopt);
 
     /**
      * Takes in waypoints and returns a InterpolatedPath with a generated
@@ -141,7 +142,7 @@ protected:
         const std::vector<Geometry2d::Point>& points,
         const MotionConstraints& motionConstraints, Geometry2d::Point vi,
         Geometry2d::Point vf,
-        const boost::optional<std::vector<double>>& times = boost::none);
+        const std::optional<std::vector<double>>& times = std::nullopt);
 
     /**
      * Generates a velocity profile from a Cubic Bezier Path under the given
@@ -180,7 +181,7 @@ protected:
         const MotionConstraints& motionConstraints,
         const Geometry2d::ShapeSet& obstacles, SystemState* state,
         unsigned shellID,
-        const boost::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
+        const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
         bool straightLine);
 
     static ConfigDouble* _partialReplanLeadTime;

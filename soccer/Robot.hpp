@@ -18,8 +18,8 @@
 #include <Eigen/Dense>
 #include <QColor>
 #include <array>
+#include <optional>
 #include <boost/circular_buffer.hpp>
-#include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
 #include <algorithm>
@@ -165,7 +165,7 @@ public:
 
     // Gets the robot quaternion.  Returns false (and does not change q) if not
     // available.
-    boost::optional<Eigen::Quaternionf> quaternion() const;
+    std::optional<Eigen::Quaternionf> quaternion() const;
 
     // Constraints
     const RobotConstraints& robotConstraints() const {

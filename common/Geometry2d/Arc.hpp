@@ -4,19 +4,42 @@
 
 #pragma once
 
-#include "Point.hpp"
 #include "Line.hpp"
+#include "Point.hpp"
 #include "Segment.hpp"
 
 namespace Geometry2d {
+
+/**
+ * An arc (a segment of a circle) specified by a center point, a radius and a
+ * starting and ending angle.
+ *
+ * @note: the starting and ending angles should be in the range [-M_PI, M_PI]
+ *      or intersection functions will not work as expected. In addition,
+ *      start should be less than or equal to end
+ */
 class Arc {
 public:
+    /**
+     * Default-initialze an arc to the empty arc.
+     */
     Arc() {
         _radius = -1;
         _start_angle = 0;
         _end_angle = 0;
     }
 
+    /**
+     * Initialize an arc with a given center, radius, and starting and ending
+     * angle (in radians).
+     *
+     * @param center: the center point of the characteristic circle
+     * @param radius: the radius of the characteristic circle
+     * @param start: the starting angle in radians in the range [-M_PI, M_PI]
+     * @param end: the ending angle in radians in the range [-M_PI, M_PI]
+     *
+     * @note angle 0 radians is aligned with the x axis.
+     */
     Arc(Point center, float radius, float start, float end) {
         _center = center;
         _radius = radius;
@@ -52,4 +75,5 @@ private:
     float _start_angle;
     float _end_angle;
 };
-}
+
+}  // namespace Geometry2d

@@ -605,14 +605,14 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const {
     }
 }
 
-boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
+std::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
     if (_radioRx.has_quaternion() && rxIsFresh(RJ::Seconds(0.05))) {
         return Eigen::Quaternionf(_radioRx.quaternion().q0() / 16384.0,
                                   _radioRx.quaternion().q1() / 16384.0,
                                   _radioRx.quaternion().q2() / 16384.0,
                                   _radioRx.quaternion().q3() / 16384.0);
     } else {
-        return boost::none;
+        return std::nullopt;
     }
 }
 

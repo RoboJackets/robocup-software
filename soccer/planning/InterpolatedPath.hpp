@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <planning/Path.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
@@ -24,7 +26,7 @@ public:
 
         MotionInstant instant;
         RJ::Seconds time;
-        boost::optional<AngleInstant> angle;
+        std::optional<AngleInstant> angle;
 
         Geometry2d::Point& pos() { return instant.pos; }
         const Geometry2d::Point& pos() const { return instant.pos; }
@@ -125,7 +127,7 @@ public:
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

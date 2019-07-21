@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "motion/TrapezoidalMotion.hpp"
 #include "MotionConstraints.hpp"
 #include "MotionInstant.hpp"
@@ -66,7 +68,7 @@ public:
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds time) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds time) const override;
 };
 
 }  // namespace Planning

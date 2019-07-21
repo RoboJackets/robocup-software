@@ -1,6 +1,7 @@
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
+
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include "Robot.hpp"
@@ -29,7 +30,7 @@ public:
     }
 };
 
-using WindowingResult = std::pair<std::vector<Window>, boost::optional<Window>>;
+using WindowingResult = std::pair<std::vector<Window>, std::optional<Window>>;
 
 /**
  * @brief The WindowEvaluator class calculates open shots from a point to a
