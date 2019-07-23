@@ -45,12 +45,13 @@ var searchData=
   ['touchball',['TouchBall',['../classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html',1,'gameplay::skills::touch_ball']]],
   ['transformmatrix',['TransformMatrix',['../class_geometry2d_1_1_transform_matrix.html',1,'Geometry2d']]],
   ['trapezoidalpath',['TrapezoidalPath',['../class_planning_1_1_trapezoidal_path.html',1,'Planning']]],
-  ['trianglepass',['TrianglePass',['../classtriangle__pass_1_1_triangle_pass.html',1,'triangle_pass.TrianglePass'],['../classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html',1,'gameplay.plays.testing.triangle_pass.TrianglePass']]],
+  ['trianglepass',['TrianglePass',['../classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html',1,'gameplay.plays.testing.triangle_pass.TrianglePass'],['../classtriangle__pass_1_1_triangle_pass.html',1,'triangle_pass.TrianglePass']]],
   ['tune_5fpid',['Tune_pid',['../classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid.html',1,'gameplay::tactics::tune_pid']]],
   ['tunefacing',['TuneFacing',['../classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html',1,'gameplay::plays::tuning::tune_facing']]],
   ['tunepivoting',['TunePivoting',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html',1,'gameplay::plays::tuning::tune_pivot']]],
   ['tuningpathcommand',['TuningPathCommand',['../struct_planning_1_1_tuning_path_command.html',1,'Planning']]],
   ['tuningpathplanner',['TuningPathPlanner',['../class_planning_1_1_tuning_path_planner.html',1,'Planning']]],
+  ['twist',['Twist',['../class_geometry2d_1_1_twist.html',1,'Geometry2d']]],
   ['twosideattack',['TwoSideAttack',['../classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html',1,'gameplay::plays::offense::two_side_attack']]],
   ['twosidecornerkick',['TwoSideCornerKick',['../classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html',1,'gameplay::plays::restarts::two_side_corner_kick']]]
 ];

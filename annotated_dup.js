@@ -375,11 +375,13 @@ var annotated_dup =
       [ "Line", "class_geometry2d_1_1_line.html", "class_geometry2d_1_1_line" ],
       [ "Point", "class_geometry2d_1_1_point.html", "class_geometry2d_1_1_point" ],
       [ "Polygon", "class_geometry2d_1_1_polygon.html", "class_geometry2d_1_1_polygon" ],
+      [ "Pose", "class_geometry2d_1_1_pose.html", "class_geometry2d_1_1_pose" ],
       [ "Rect", "class_geometry2d_1_1_rect.html", "class_geometry2d_1_1_rect" ],
       [ "Segment", "class_geometry2d_1_1_segment.html", "class_geometry2d_1_1_segment" ],
       [ "Shape", "class_geometry2d_1_1_shape.html", "class_geometry2d_1_1_shape" ],
       [ "ShapeSet", "class_geometry2d_1_1_shape_set.html", "class_geometry2d_1_1_shape_set" ],
-      [ "TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", "class_geometry2d_1_1_transform_matrix" ]
+      [ "TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", "class_geometry2d_1_1_transform_matrix" ],
+      [ "Twist", "class_geometry2d_1_1_twist.html", "class_geometry2d_1_1_twist" ]
     ] ],
     [ "kick_gently", null, [
       [ "KickGently", "classkick__gently_1_1_kick_gently.html", "classkick__gently_1_1_kick_gently" ]

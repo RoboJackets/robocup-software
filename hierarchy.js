@@ -155,6 +155,7 @@ var hierarchy =
       [ "which_half.WhichHalf", "classwhich__half_1_1_which_half.html", null ]
     ] ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
+    [ "Geometry2d::Pose", "class_geometry2d_1_1_pose.html", null ],
     [ "PythonFunctionWrapper", "class_python_function_wrapper.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
@@ -232,6 +233,9 @@ var hierarchy =
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
     [ "SlowKickDetector", "class_slow_kick_detector.html", null ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -350,9 +354,6 @@ var hierarchy =
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
     ] ],
@@ -375,6 +376,7 @@ var hierarchy =
     ] ],
     [ "Timeout", "class_timeout.html", null ],
     [ "Geometry2d::TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", null ],
+    [ "Geometry2d::Twist", "class_geometry2d_1_1_twist.html", null ],
     [ "VisionFilter", "class_vision_filter.html", null ],
     [ "VisionFilterConfig", "class_vision_filter_config.html", null ],
     [ "VisionPacket", "class_vision_packet.html", null ],

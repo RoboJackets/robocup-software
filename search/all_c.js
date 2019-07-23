@@ -2,6 +2,7 @@ var searchData=
 [
   ['length',['length',['../class_planning_1_1_interpolated_path.html#a6ec47398956d59fcd4f3883e2e68dd61',1,'Planning::InterpolatedPath::length(unsigned int start=0) const'],['../class_planning_1_1_interpolated_path.html#a647d819c0fd40a47ab4e1612c37a8a4a',1,'Planning::InterpolatedPath::length(unsigned int start, unsigned int end) const'],['../class_planning_1_1_interpolated_path.html#ae03c0bd4fa71206ee9cef9c191d84707',1,'Planning::InterpolatedPath::length(Geometry2d::Point pt) const']]],
   ['line',['Line',['../class_geometry2d_1_1_line.html',1,'Geometry2d']]],
+  ['linear',['linear',['../class_geometry2d_1_1_twist.html#a1bca40ec8a8ead6e664f5fc10df38d0f',1,'Geometry2d::Twist']]],
   ['linekick',['LineKick',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick.html',1,'gameplay.skills.line_kick.LineKick'],['../class_our_robot.html#a8947b3e75d17eaa484cbcb4013f1f6a9',1,'OurRobot::lineKick()']]],
   ['linekickcommand',['LineKickCommand',['../struct_planning_1_1_line_kick_command.html',1,'Planning']]],
   ['linekickold',['LineKickOld',['../classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html',1,'gameplay::skills::line_kick_old']]],

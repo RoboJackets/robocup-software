@@ -60,15 +60,16 @@ var searchData=
   ['timeoutbehavior',['TimeoutBehavior',['../classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html',1,'gameplay::timeout_behavior']]],
   ['toqpointf',['toQPointF',['../class_geometry2d_1_1_point.html#a09693545a2d1e2b5e5803a9f41f9c843',1,'Geometry2d::Point']]],
   ['touchball',['TouchBall',['../classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html',1,'gameplay::skills::touch_ball']]],
-  ['transform',['transform',['../class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95',1,'Geometry2d::Line']]],
+  ['transform',['transform',['../class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95',1,'Geometry2d::Line::transform()'],['../class_geometry2d_1_1_pose.html#a5426e02d89ef19ff98ad647bf3ef6263',1,'Geometry2d::Pose::transform()']]],
   ['transformmatrix',['TransformMatrix',['../class_geometry2d_1_1_transform_matrix.html',1,'Geometry2d']]],
   ['trapezoidalpath',['TrapezoidalPath',['../class_planning_1_1_trapezoidal_path.html',1,'Planning']]],
-  ['trianglepass',['TrianglePass',['../classtriangle__pass_1_1_triangle_pass.html',1,'triangle_pass.TrianglePass'],['../classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html',1,'gameplay.plays.testing.triangle_pass.TrianglePass']]],
+  ['trianglepass',['TrianglePass',['../classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html',1,'gameplay.plays.testing.triangle_pass.TrianglePass'],['../classtriangle__pass_1_1_triangle_pass.html',1,'triangle_pass.TrianglePass']]],
   ['tune_5fpid',['Tune_pid',['../classgameplay_1_1tactics_1_1tune__pid_1_1_tune__pid.html',1,'gameplay::tactics::tune_pid']]],
   ['tunefacing',['TuneFacing',['../classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html',1,'gameplay::plays::tuning::tune_facing']]],
   ['tunepivoting',['TunePivoting',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html',1,'gameplay::plays::tuning::tune_pivot']]],
   ['tuningpathcommand',['TuningPathCommand',['../struct_planning_1_1_tuning_path_command.html',1,'Planning']]],
   ['tuningpathplanner',['TuningPathPlanner',['../class_planning_1_1_tuning_path_planner.html',1,'Planning']]],
+  ['twist',['Twist',['../class_geometry2d_1_1_twist.html',1,'Geometry2d::Twist'],['../class_geometry2d_1_1_twist.html#a08732760ba9aad66260cc87d6d85e522',1,'Geometry2d::Twist::Twist()'],['../class_geometry2d_1_1_twist.html#a27afd0427d0452befa486cb8dfb96080',1,'Geometry2d::Twist::Twist(const Point &amp;linear, double angular)'],['../class_geometry2d_1_1_twist.html#a01f3c9b0eb1be90188dcbefc60641fda',1,'Geometry2d::Twist::Twist(double dx, double dy, double dh)'],['../class_geometry2d_1_1_twist.html#a9726173c84a836d9d3bbe0bf43f98d3a',1,'Geometry2d::Twist::Twist(const Eigen::Vector3d &amp;other)'],['../class_geometry2d_1_1_twist.html#a8c4d8a668987052a6b218b342a7c262f',1,'Geometry2d::Twist::Twist(const Twist &amp;other)=default']]],
   ['twosideattack',['TwoSideAttack',['../classgameplay_1_1plays_1_1offense_1_1two__side__attack_1_1_two_side_attack.html',1,'gameplay::plays::offense::two_side_attack']]],
   ['twosidecornerkick',['TwoSideCornerKick',['../classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html',1,'gameplay::plays::restarts::two_side_corner_kick']]]
 ];

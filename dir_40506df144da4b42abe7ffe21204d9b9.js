@@ -6,6 +6,7 @@ var dir_40506df144da4b42abe7ffe21204d9b9 =
     [ "Line.hpp", "_line_8hpp_source.html", null ],
     [ "Point.hpp", "_point_8hpp_source.html", null ],
     [ "Polygon.hpp", "_polygon_8hpp_source.html", null ],
+    [ "Pose.hpp", "_pose_8hpp_source.html", null ],
     [ "Rect.hpp", "_rect_8hpp_source.html", null ],
     [ "Segment.hpp", "_segment_8hpp_source.html", null ],
     [ "Shape.hpp", "_shape_8hpp_source.html", null ],

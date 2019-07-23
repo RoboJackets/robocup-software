@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"class_auto_name.html#a40b258fc4ea233331eee110c92473396":[18,0,21,0],
 "class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558":[18,0,21,1],
 "class_ball.html":[18,0,22],
 "class_ball.html#a0382c22737db47535765c137ff755eb0":[18,0,22,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "class_gamepad_joystick.html":[18,0,46],
 "class_gamepad_joystick.html#a5295fd0b867b599ac4310e7bf85dcc79":[18,0,46,2],
 "class_gamepad_joystick.html#a6840961fb456cd8374493702dd84b06d":[18,0,46,0],
-"class_gamepad_joystick.html#ab64b3a6f7d97b7a31e639ae907375027":[18,0,46,1],
-"class_gamepad_joystick.html#ac4de36ae979a045c4445e866adcbd335":[18,0,46,4]
+"class_gamepad_joystick.html#ab64b3a6f7d97b7a31e639ae907375027":[18,0,46,1]
 };

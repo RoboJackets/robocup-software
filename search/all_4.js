@@ -13,6 +13,8 @@ var searchData=
   ['defense',['Defense',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html',1,'gameplay::tactics::defense']]],
   ['defenseold',['DefenseOld',['../classgameplay_1_1tactics_1_1defense__old_1_1_defense_old.html',1,'gameplay::tactics::defense_old']]],
   ['defensiveforward',['DefensiveForward',['../classgameplay_1_1tactics_1_1defensive__forward_1_1_defensive_forward.html',1,'gameplay::tactics::defensive_forward']]],
+  ['deltafixed',['deltaFixed',['../class_geometry2d_1_1_twist.html#a027f87c1e71eae83d33ae56cbc24ba48',1,'Geometry2d::Twist']]],
+  ['deltarelative',['deltaRelative',['../class_geometry2d_1_1_twist.html#abf0e863b83e4c669daa2e207aca3faf6',1,'Geometry2d::Twist']]],
   ['destination_5fshape',['destination_shape',['../classgameplay_1_1role__assignment_1_1_role_requirements.html#a0c144cebd3faf01d4d746beab154a8ec',1,'gameplay::role_assignment::RoleRequirements']]],
   ['direction',['direction',['../class_geometry2d_1_1_point.html#a6f666e729164f1aa25581b8e00fe8f43',1,'Geometry2d::Point']]],
   ['directpathtargetcommand',['DirectPathTargetCommand',['../struct_planning_1_1_direct_path_target_command.html',1,'Planning']]],
