@@ -162,7 +162,7 @@ pretty-lines:
 checkstyle-lines:
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | clang-format-diff -p1 | tee /tmp/checkstyle.patch
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
-	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || echo "****************************** Checkstyle errors *******************************"'
+	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 # Option to use old version of stylize
 STYLE_EXCLUDE_DIRS=build \
