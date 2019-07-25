@@ -1,11 +1,5 @@
 var NAVTREEINDEX10 =
 {
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a36bf058d534cd098df987cd88e49492f":[18,0,3,15,10,0,10],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a3da267d550ba75ac2e859eb6bcf3b2ae":[18,0,3,15,10,0,13],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5219a4c4c7ead37c164bd1ad052aab84":[18,0,3,15,10,0,14],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a577771eaa05fdba40843cc913db2d36a":[18,0,3,15,10,0,5],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5f5e60e56394bd8d3316a1f0330980ce":[18,0,3,15,10,0,9],
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b0094cf85340eb551c4a4a3c5f15878":[18,0,3,15,10,0,6],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b2426b433729c0490eea18ee2e3532c":[18,0,3,15,10,0,12],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a7c86f92caef914775eaed060ccf25054":[18,0,3,15,10,0,7],
 "classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a8edb983d8102d848c6386e75dc1e9274":[18,0,3,15,10,0,3],
@@ -249,5 +243,11 @@ var NAVTREEINDEX10 =
 "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a08d2c3f2d0b0db75955a06fee5adfd4a":[18,0,3,17,5,0,6],
 "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a34a51b140a2def16e855f2289759b105":[18,0,3,17,5,0,13],
 "classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a43e9ff210b17459da2199004c3eacd4f":[18,0,3,17,5,0,11],
-"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a4a6ef959fb4386626d5df77a9d391f93":[18,0,3,17,5,0,10]
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a4a6ef959fb4386626d5df77a9d391f93":[18,0,3,17,5,0,10],
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a5661f4de9fd7ab98d9cb39389ceed3af":[18,0,3,17,5,0,7],
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a6901f81faf846cbebd61840332c6227a":[18,0,3,17,5,0,3],
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a7c87710f292cd1c1515268a2e858a0fa":[18,0,3,17,5,0,2],
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a86b6717950b61579886ae38f6b9a0fcd":[18,0,3,17,5,0,8],
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#ab9ca1c03dd4dd870d785a437581fcef1":[18,0,3,17,5,0,5],
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#acfee073bb6f389f2573605588022812e":[18,0,3,17,5,0,12]
 };

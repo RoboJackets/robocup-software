@@ -1,3 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_vision_filter.html" title="Uses a seperate thread to filter the vision measurements into a smoother velocity/position estimate f..." alt="" coords="5,5,100,32"/>
+<area shape="rect" id="node1" href="$class_vision_filter_config.html" title="Contains all the global vision config variables. " alt="" coords="5,5,143,32"/>
 </map>

@@ -1,5 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_kalman_filter.html" title="Abstract class that should be inherited from to create specific kalman filters. " alt="" coords="5,31,111,57"/>
-<area shape="rect" id="node2" href="$class_kalman_filter2_d.html" title="KalmanFilter2D" alt="" coords="159,5,281,32"/>
-<area shape="rect" id="node3" href="$class_kalman_filter3_d.html" title="KalmanFilter3D" alt="" coords="159,56,281,83"/>
+<area shape="rect" id="node1" href="$class_kalman_robot.html" title="Filtered robot estimation for a single camera. " alt="" coords="5,5,116,32"/>
 </map>

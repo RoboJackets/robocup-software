@@ -1,11 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#a38f37d5714fcf36d92f6d0c3cb0b5abb":[18,0,3,1,0,9],
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#a58eb770fb0b17b24d8e874f76ec1a75e":[18,0,3,1,0,2],
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#a634f95e44d20595e5a5976b167e6e04c":[18,0,3,1,0,3],
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#a89d8d58379a5147c4902c6deb93e9607":[18,0,3,1,0,10],
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#aa8eb3d8dcf320742ae8db254a920adcc":[18,0,3,1,0,6],
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#aad74144a3a0482f02eb9e4e09c8044ba":[18,0,3,1,0,13],
 "classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#ab861513c426124558c53324cf47633c7":[18,0,3,1,0,1],
 "classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#ac37f1d1ac69722a3ddcf056e4e7a1041":[18,0,3,1,0,11],
 "classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#ac3a94221d9d867df9cff082499ce4898":[18,0,3,1,0,14],
@@ -249,5 +243,11 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a703630b54c40032875727d09d6ec44ec":[18,0,3,9,1,10,0,4],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a836a27e73d5f0f0bd0e5ca40ecda1da2":[18,0,3,9,1,10,0,2],
 "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a880e56d55a1d6110a17d3aaf35e9cd38":[18,0,3,9,1,10,0,8],
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9b9612178e3862c02a2431232ad933af":[18,0,3,9,1,10,0,14]
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9b9612178e3862c02a2431232ad933af":[18,0,3,9,1,10,0,14],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9c8f1421bb1eeed354762011a043ca1e":[18,0,3,9,1,10,0,12],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#ab9fc6c602aa68f6536560cf88690d02a":[18,0,3,9,1,10,0,1],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#abc81a94245d293599e6095c06c2ecc2d":[18,0,3,9,1,10,0,10],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#acca6dffaa79553bdb524b6036e6839ab":[18,0,3,9,1,10,0,11],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#af1257f1c23de3eafb4ca3848fbde6413":[18,0,3,9,1,10,0,15],
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#af86d1f977fe1fc576f25c1bb68e68c5f":[18,0,3,9,1,10,0,7]
 };

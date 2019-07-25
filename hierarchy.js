@@ -164,9 +164,6 @@ var hierarchy =
       [ "LogViewer", "class_log_viewer.html", null ],
       [ "MainWindow", "class_main_window.html", null ]
     ] ],
-    [ "QMutex", null, [
-      [ "DebugQMutex", "class_debug_q_mutex.html", null ]
-    ] ],
     [ "QObject", null, [
       [ "Configuration", "class_configuration.html", null ],
       [ "gameplay.root_play.RootPlay", "classgameplay_1_1root__play_1_1_root_play.html", null ]
@@ -233,9 +230,6 @@ var hierarchy =
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
     [ "SlowKickDetector", "class_slow_kick_detector.html", null ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -353,6 +347,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]
