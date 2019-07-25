@@ -177,6 +177,8 @@ public:
     // Time of the first LogFrame
     std::optional<RJ::Time> firstLogTime;
 
+    Context* context() { return &_context; }
+
 protected:
     void run() override;
 

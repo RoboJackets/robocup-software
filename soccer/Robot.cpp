@@ -353,7 +353,7 @@ void OurRobot::kickImmediately() {
 
 void OurRobot::resetAvoidRobotRadii() {
     for (size_t i = 0; i < Num_Shells; ++i) {
-        _opp_avoid_mask[i] = (i == state()->gameState.TheirInfo.goalie)
+        _opp_avoid_mask[i] = (i == _context->game_state.TheirInfo.goalie)
                                  ? *_oppGoalieAvoidRadius
                                  : *_oppAvoidRadius;
     }
@@ -418,9 +418,9 @@ void OurRobot::resetAvoidBall() { avoidBallRadius(Ball_Avoid_Small); }
 
 std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
     // if game is stopped, large obstacle regardless of flags
-    if (_context->state.gameState.state != GameState::Playing &&
-        !(_context->state.gameState.ourRestart ||
-          _context->state.gameState.theirPenalty())) {
+    if (_context->game_state.state != GameState::Playing &&
+        !(_context->game_state.ourRestart ||
+          _context->game_state.theirPenalty())) {
         return std::make_shared<Geometry2d::Circle>(
             _context->state.ball.pos,
             Field_Dimensions::Current_Dimensions.CenterRadius());

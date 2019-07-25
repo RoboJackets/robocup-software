@@ -13,4 +13,5 @@ struct Context {
     Context& operator=(Context&&) = delete;
 
     SystemState state;
+    GameState game_state;
 };
