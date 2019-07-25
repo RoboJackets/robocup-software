@@ -160,7 +160,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         pass_line_dir = (
             self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
-    
+
         # vector pointing down the pass line toward the kicker
         pass_dir = (
             self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()

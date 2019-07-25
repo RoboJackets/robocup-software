@@ -286,10 +286,10 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 }
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
-        const MotionInstant &start, const MotionInstant &goal,
-        const MotionConstraints &motionConstraints, ShapeSet &origional,
-        const std::vector<DynamicObstacle> dyObs, Context *context,
-        unsigned shellID, const optional<vector<Point>> &biasWayPoints) {
+    const MotionInstant& start, const MotionInstant& goal,
+    const MotionConstraints& motionConstraints, ShapeSet& origional,
+    const std::vector<DynamicObstacle> dyObs, Context* context,
+    unsigned shellID, const optional<vector<Point>>& biasWayPoints) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
@@ -329,14 +329,14 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     return lastPath;
 }
 
-vector<Point> RRTPlanner::runRRT(
-        MotionInstant start, MotionInstant goal,
-        const MotionConstraints &motionConstraints, const ShapeSet &obstacles,
-        Context *context, unsigned shellID,
-        const optional<vector<Point>> &biasWaypoints) {
+vector<Point> RRTPlanner::runRRT(MotionInstant start, MotionInstant goal,
+                                 const MotionConstraints& motionConstraints,
+                                 const ShapeSet& obstacles, Context* context,
+                                 unsigned shellID,
+                                 const optional<vector<Point>>& biasWaypoints) {
     vector<Point> straight =
-        runRRTHelper(start, goal, motionConstraints, obstacles, context, shellID,
-                     biasWaypoints, true);
+        runRRTHelper(start, goal, motionConstraints, obstacles, context,
+                     shellID, biasWaypoints, true);
     if (straight.size() != 0) {
         return straight;
     }
@@ -345,10 +345,10 @@ vector<Point> RRTPlanner::runRRT(
 }
 
 vector<Point> RRTPlanner::runRRTHelper(
-        MotionInstant start, MotionInstant goal,
-        const MotionConstraints &motionConstraints, const ShapeSet &obstacles,
-        Context *context, unsigned shellID,
-        const optional<vector<Point>> &biasWaypoints, bool straightLine) {
+    MotionInstant start, MotionInstant goal,
+    const MotionConstraints& motionConstraints, const ShapeSet& obstacles,
+    Context* context, unsigned shellID,
+    const optional<vector<Point>>& biasWaypoints, bool straightLine) {
     // Initialize bi-directional RRT
 
     auto stateSpace = make_shared<RoboCupStateSpace>(

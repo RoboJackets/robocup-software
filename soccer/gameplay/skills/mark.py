@@ -18,12 +18,12 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
     def __init__(self):
         super().__init__(continuous=True)
         #Below params are described above @properties
-        self._ratio = 0.9 
-        self._mark_line_thresh = 0.9 
-        self._mark_robot = None 
-        self._mark_point = None 
+        self._ratio = 0.9
+        self._mark_line_thresh = 0.9
+        self._mark_robot = None
+        self._mark_point = None
 
-        self._target_point = None  
+        self._target_point = None
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -57,7 +57,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
 
         #Distance from robot to mark line
         mark_line_dist = ball_mark_line.dist_to(pos)
-        
+
         #Sets target point to nearest point on mark line if the robot is over ball_mark_threshold
         #from the mark line
         # or

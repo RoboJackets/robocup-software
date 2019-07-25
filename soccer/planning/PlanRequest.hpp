@@ -34,7 +34,7 @@ struct PlanRequest {
           dynamicObstacles(dObs),
           shellID(shellID) {}
 
-    Context* context; /**< Allows debug drawing, position info */
+    Context* context;         /**< Allows debug drawing, position info */
     MotionInstant start;      /**< Starting state of the robot */
     std::unique_ptr<MotionCommand>
         motionCommand;              /**< Specific type of motion desired */

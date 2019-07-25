@@ -35,8 +35,8 @@ using namespace boost::python;
 #include <exception>
 
 #include <Configuration.hpp>
-#include "RobotConfig.hpp"
 #include "DebugDrawer.hpp"
+#include "RobotConfig.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -354,39 +354,41 @@ boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
 }
 
 void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center,
-                       float radius, boost::python::tuple rgb,
-                       const std::string& layer) {
+                             float radius, boost::python::tuple rgb,
+                             const std::string& layer) {
     if (center == nullptr) throw NullArgumentException("center");
     self->drawCircle(*center, radius, Color_from_tuple(rgb),
                      QString::fromStdString(layer));
 }
 
 void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
-                    boost::python::tuple rgb, const std::string& layer) {
+                          boost::python::tuple rgb, const std::string& layer) {
     if (arc == nullptr) throw NullArgumentException{"arc"};
     self->drawArc(*arc, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 // TODO(ashaw596) Fix this lie of a function
 void DebugDrawer_draw_line(DebugDrawer* self, const Geometry2d::Line* line,
-                     boost::python::tuple rgb, const std::string& layer) {
+                           boost::python::tuple rgb, const std::string& layer) {
     if (line == nullptr) throw NullArgumentException("line");
     self->drawLine(Geometry2d::Segment(*line), Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_segment(DebugDrawer* self, const Geometry2d::Segment* segment,
-                        boost::python::tuple rgb, const std::string& layer) {
+void DebugDrawer_draw_segment(DebugDrawer* self,
+                              const Geometry2d::Segment* segment,
+                              boost::python::tuple rgb,
+                              const std::string& layer) {
     if (segment == nullptr) throw NullArgumentException("segment");
     self->drawSegment(*segment, Color_from_tuple(rgb),
                       QString::fromStdString(layer));
 }
 
 void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
-                                    const Geometry2d::Point* p0,
-                                    const Geometry2d::Point* p1,
-                                    boost::python::tuple rgb,
-                                    const std::string& layer) {
+                                          const Geometry2d::Point* p0,
+                                          const Geometry2d::Point* p1,
+                                          boost::python::tuple rgb,
+                                          const std::string& layer) {
     if (p0 == nullptr) throw NullArgumentException{"p0"};
     if (p1 == nullptr) throw NullArgumentException{"p1"};
     self->drawLine(*p0, *p1, Color_from_tuple(rgb),
@@ -394,15 +396,17 @@ void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
 }
 
 void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text,
-                     Geometry2d::Point* pos, boost::python::tuple rgb,
-                     const std::string& layer) {
+                           Geometry2d::Point* pos, boost::python::tuple rgb,
+                           const std::string& layer) {
     if (pos == nullptr) throw NullArgumentException("pos");
     self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_polygon(DebugDrawer* self, const boost::python::list& points,
-                        boost::python::tuple rgb, const std::string& layer) {
+void DebugDrawer_draw_polygon(DebugDrawer* self,
+                              const boost::python::list& points,
+                              boost::python::tuple rgb,
+                              const std::string& layer) {
     std::vector<Geometry2d::Point> ptVec;
     for (int i = 0; i < len(points); i++) {
         ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
@@ -413,8 +417,8 @@ void DebugDrawer_draw_polygon(DebugDrawer* self, const boost::python::list& poin
 }
 
 void DebugDrawer_draw_raw_polygon(DebugDrawer* self, Geometry2d::Polygon points,
-                            boost::python::tuple rgb,
-                            const std::string& layer) {
+                                  boost::python::tuple rgb,
+                                  const std::string& layer) {
     self->drawPolygon(points, Color_from_tuple(rgb),
                       QString::fromStdString(layer));
 }
@@ -895,7 +899,7 @@ BOOST_PYTHON_MODULE(robocup) {
 
         .add_property("timestamp", &SystemState::timestamp);
 
-        // debug drawing methods
+    // debug drawing methods
     class_<DebugDrawer, DebugDrawer*>("DebugDrawer", init<Context*>())
         .def("draw_circle", &DebugDrawer_draw_circle)
         .def("draw_text", &DebugDrawer_draw_text)

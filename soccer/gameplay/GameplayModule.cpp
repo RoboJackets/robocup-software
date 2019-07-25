@@ -10,8 +10,8 @@
 #include <cmath>
 
 // for python stuff
-#include "robocup-py.hpp"
 #include "DebugDrawer.hpp"
+#include "robocup-py.hpp"
 
 using namespace Gameplay;
 

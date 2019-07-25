@@ -8,12 +8,12 @@
 #include <SystemState.hpp>
 #include <Utils.hpp>
 
-#include <cmath>
 #include <execinfo.h>
-#include <iostream>
-#include <QString>
-#include <stdexcept>
 #include <stdio.h>
+#include <QString>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
 #include <utility>
 #include "DebugDrawer.hpp"
 

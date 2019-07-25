@@ -94,20 +94,20 @@ protected:
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
     std::vector<Geometry2d::Point> runRRT(
-            MotionInstant start, MotionInstant goal,
-            const MotionConstraints &motionConstraints,
-            const Geometry2d::ShapeSet &obstacles, Context *context,
-            unsigned shellID,
-            const std::optional<std::vector<Geometry2d::Point>> &biasWaypoints =
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet& obstacles, Context* context,
+        unsigned shellID,
+        const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
             std::nullopt);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
-            const MotionInstant &start, const MotionInstant &goal,
-            const MotionConstraints &motionConstraints,
-            Geometry2d::ShapeSet &origional,
-            const std::vector<DynamicObstacle> dyObs, Context *context,
-            unsigned shellID,
-            const std::optional<std::vector<Geometry2d::Point>> &biasWayPoints =
+        const MotionInstant& start, const MotionInstant& goal,
+        const MotionConstraints& motionConstraints,
+        Geometry2d::ShapeSet& origional,
+        const std::vector<DynamicObstacle> dyObs, Context* context,
+        unsigned shellID,
+        const std::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
             std::nullopt);
 
     /**
@@ -177,12 +177,12 @@ protected:
  * the RRT path.
  */
     std::vector<Geometry2d::Point> runRRTHelper(
-            MotionInstant start, MotionInstant goal,
-            const MotionConstraints &motionConstraints,
-            const Geometry2d::ShapeSet &obstacles, Context *context,
-            unsigned shellID,
-            const std::optional<std::vector<Geometry2d::Point>> &biasWaypoints,
-            bool straightLine);
+        MotionInstant start, MotionInstant goal,
+        const MotionConstraints& motionConstraints,
+        const Geometry2d::ShapeSet& obstacles, Context* context,
+        unsigned shellID,
+        const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
+        bool straightLine);
 
     static ConfigDouble* _partialReplanLeadTime;
 };

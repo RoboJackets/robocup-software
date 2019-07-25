@@ -7,9 +7,9 @@
 #include "MotionInstant.hpp"
 #include "Utils.hpp"
 
+#include <DebugDrawer.hpp>
 #include <QColor>
 #include <QString>
-#include <DebugDrawer.hpp>
 
 #include "DynamicObstacle.hpp"
 
@@ -67,8 +67,9 @@ public:
      * @param color The color the path should be drawn
      * @param layer The layer to draw the path on
      */
-    virtual void draw(DebugDrawer *const debug_drawer, const QColor &color = Qt::black,
-                      const QString &layer = "Motion") const;
+    virtual void draw(DebugDrawer* const debug_drawer,
+                      const QColor& color = Qt::black,
+                      const QString& layer = "Motion") const;
 
     /**
      * Returns how long it would take for the entire path to be traversed
@@ -172,7 +173,8 @@ public:
      * @param color The color the path should be drawn
      * @param layer The layer to draw the path on
      */
-    virtual void draw(DebugDrawer* const debug_drawer, const QColor& color = Qt::black,
+    virtual void draw(DebugDrawer* const debug_drawer,
+                      const QColor& color = Qt::black,
                       const QString& layer = "Motion") const override {
         path->draw(debug_drawer, color, layer);
     }

@@ -1,6 +1,6 @@
 #include "RRTUtil.hpp"
-#include "DebugDrawer.hpp"
 #include <array>
+#include "DebugDrawer.hpp"
 
 using namespace Geometry2d;
 
@@ -41,8 +41,9 @@ void DrawRRT(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer,
 
     for (auto& node : rrt.allNodes()) {
         if (node.parent()) {
-            debug_drawer->drawLine(Segment(node.state(), node.parent()->state()),
-                            color, QString("RobotRRT%1").arg(shellID));
+            debug_drawer->drawLine(
+                Segment(node.state(), node.parent()->state()), color,
+                QString("RobotRRT%1").arg(shellID));
         }
     }
 }

@@ -1,9 +1,9 @@
 #include "Path.hpp"
 #include <protobuf/LogFrame.pb.h>
-#include "SystemState.hpp"
+#include "DebugDrawer.hpp"
 #include "DynamicObstacle.hpp"
 #include "Geometry2d/ShapeSet.hpp"
-#include "DebugDrawer.hpp"
+#include "SystemState.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -13,9 +13,10 @@ class ConstPathIterator;
 
 // This method is a default implementation of draw() that works by evaluating
 // the path at fixed time intervals form t = 0 to t = duration.
-void Path::draw(DebugDrawer *const debug_drawer, const QColor& color,
+void Path::draw(DebugDrawer* const debug_drawer, const QColor& color,
                 const QString& layer) const {
-    Packet::DebugRobotPath* dbg = debug_drawer->getLogFrame()->add_debug_robot_paths();
+    Packet::DebugRobotPath* dbg =
+        debug_drawer->getLogFrame()->add_debug_robot_paths();
     dbg->set_layer(debug_drawer->findDebugLayer(layer));
 
     auto addPoint = [dbg](MotionInstant instant) {
@@ -46,7 +47,8 @@ void Path::draw(DebugDrawer *const debug_drawer, const QColor& color,
 void Path::drawDebugText(DebugDrawer* debug_drawer, const QColor& color,
                          const QString& layer) const {
     if (_debugText) {
-        debug_drawer->drawText(_debugText.value(), end().motion.pos, color, layer);
+        debug_drawer->drawText(_debugText.value(), end().motion.pos, color,
+                               layer);
     }
 }
 

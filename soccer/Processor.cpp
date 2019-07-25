@@ -22,11 +22,11 @@
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
+#include "DebugDrawer.hpp"
 #include "Processor.hpp"
-#include "vision/VisionFilter.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
-#include "DebugDrawer.hpp"
+#include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -469,7 +469,7 @@ void Processor::run() {
                 // Visualize local obstacles
                 for (auto& shape : r->localObstacles().shapes()) {
                     _context.debug_drawer.drawShape(shape, Qt::black,
-                                             "LocalObstacles");
+                                                    "LocalObstacles");
                 }
 
                 auto& globalObstaclesForBot =
@@ -514,7 +514,8 @@ void Processor::run() {
 
         // Visualize obstacles
         for (auto& shape : globalObstacles.shapes()) {
-            _context.debug_drawer.drawShape(shape, Qt::black, "Global Obstacles");
+            _context.debug_drawer.drawShape(shape, Qt::black,
+                                            "Global Obstacles");
         }
 
         // Run velocity controllers

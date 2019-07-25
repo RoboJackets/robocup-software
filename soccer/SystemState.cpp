@@ -7,8 +7,8 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
-#include "planning/Path.hpp"
 #include "DebugDrawer.hpp"
+#include "planning/Path.hpp"
 
 using namespace Packet;
 using namespace std;
@@ -26,7 +26,8 @@ public:
         throw new std::runtime_error("Unsupported Opperation");
     }
 
-    virtual void draw(DebugDrawer *constdebug_drawer, const QColor& color = Qt::black,
+    virtual void draw(DebugDrawer* constdebug_drawer,
+                      const QColor& color = Qt::black,
                       const QString& layer = "Motion") const {
         throw new std::runtime_error("Unsupported Opperation");
     }

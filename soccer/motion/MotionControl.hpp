@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Configuration.hpp>
+#include <Context.hpp>
 #include <Geometry2d/Point.hpp>
 #include <rc-fshare/pid.hpp>
 #include <time.hpp>
-#include <Context.hpp>
 
 class OurRobot;
 

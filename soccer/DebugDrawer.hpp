@@ -1,17 +1,17 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
-#include <QMap>
 #include <QColor>
+#include <QMap>
+#include <memory>
+#include <string>
+#include <vector>
 
+#include <Geometry2d/Arc.hpp>
 #include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/ShapeSet.hpp>
-#include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Arc.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 
 #include "protobuf/LogFrame.pb.h"
 

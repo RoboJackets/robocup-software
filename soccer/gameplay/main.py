@@ -309,6 +309,7 @@ def set_debug_drawer(value):
     global _debug_drawer
     _debug_drawer = value
 
+
 _context = None
 
 

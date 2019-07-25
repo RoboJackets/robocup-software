@@ -77,7 +77,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if robot is None:
             return False
-        
+
         # L is left post
         # R is right post
         # T is target aiming point

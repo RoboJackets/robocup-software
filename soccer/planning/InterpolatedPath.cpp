@@ -1,9 +1,9 @@
 #include "InterpolatedPath.hpp"
-#include "LogUtils.hpp"
-#include "Utils.hpp"
 #include <protobuf/LogFrame.pb.h>
-#include "SystemState.hpp"
 #include "DebugDrawer.hpp"
+#include "LogUtils.hpp"
+#include "SystemState.hpp"
+#include "Utils.hpp"
 
 #include <stdexcept>
 
@@ -177,10 +177,11 @@ float InterpolatedPath::length(Point pt) const {
     return length;
 }
 
-void InterpolatedPath::draw(DebugDrawer *const debug_drawer,
-                            const QColor &col = Qt::black,
-                            const QString &layer = "Motion") const {
-    Packet::DebugRobotPath* dbg = debug_drawer->getLogFrame()->add_debug_robot_paths();
+void InterpolatedPath::draw(DebugDrawer* const debug_drawer,
+                            const QColor& col = Qt::black,
+                            const QString& layer = "Motion") const {
+    Packet::DebugRobotPath* dbg =
+        debug_drawer->getLogFrame()->add_debug_robot_paths();
     dbg->set_layer(debug_drawer->findDebugLayer(layer));
 
     if (waypoints.size() <= 1) {

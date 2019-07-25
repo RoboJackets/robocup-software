@@ -2,12 +2,12 @@
 
 #include <optional>
 
-#include <planning/Path.hpp>
+#include <Configuration.hpp>
+#include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <Configuration.hpp>
-#include <DebugDrawer.hpp>
+#include <planning/Path.hpp>
 
 namespace Planning {
 /**
@@ -66,8 +66,8 @@ public:
     virtual std::unique_ptr<Path> subPath(
         RJ::Seconds startTime = RJ::Seconds::zero(),
         RJ::Seconds endTime = RJ::Seconds::max()) const override;
-    virtual void draw(DebugDrawer *constdebug_drawer, const QColor &color,
-                      const QString &layer) const override;
+    virtual void draw(DebugDrawer* constdebug_drawer, const QColor& color,
+                      const QString& layer) const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 

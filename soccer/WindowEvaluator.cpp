@@ -1,8 +1,8 @@
 #include "WindowEvaluator.hpp"
-#include "Constants.hpp"
-#include "KickEvaluator.hpp"
-#include "DebugDrawer.hpp"
 #include <Geometry2d/Util.hpp>
+#include "Constants.hpp"
+#include "DebugDrawer.hpp"
+#include "KickEvaluator.hpp"
 
 #include <algorithm>
 #include <array>
@@ -28,8 +28,7 @@ void WindowEvaluator::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
 }
 
-WindowEvaluator::WindowEvaluator(Context* context)
-    : context(context) {
+WindowEvaluator::WindowEvaluator(Context* context) : context(context) {
     if (context == nullptr) {
         std::cout << "NULL POINTER FOUND!" << std::endl;
     }
@@ -159,11 +158,12 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
                    excluded_robots.end();
     };
 
-    auto end_it = copy_if(context->state.self.begin(), context->state.self.end(),
-                          bots.begin(), filter_predicate);
+    auto end_it =
+        copy_if(context->state.self.begin(), context->state.self.end(),
+                bots.begin(), filter_predicate);
 
-    end_it = copy_if(context->state.opp.begin(), context->state.opp.end(), end_it,
-                     filter_predicate);
+    end_it = copy_if(context->state.opp.begin(), context->state.opp.end(),
+                     end_it, filter_predicate);
 
     bots.resize(distance(bots.begin(), end_it));
 
@@ -207,14 +207,17 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     }
     if (debug) {
         if (best) {
-            context->debug_drawer.drawLine(Segment{origin, best->segment.center()},
-                             QColor{"Green"}, "Debug");
+            context->debug_drawer.drawLine(
+                Segment{origin, best->segment.center()}, QColor{"Green"},
+                "Debug");
         }
         for (Window& window : windows) {
-            context->debug_drawer.drawLine(window.segment, QColor{"Green"}, "Debug");
-            context->debug_drawer.drawText(QString::number(window.shot_success),
-                             window.segment.center() + Point(0, 0.1),
-                             QColor{"Green"}, "Debug");
+            context->debug_drawer.drawLine(window.segment, QColor{"Green"},
+                                           "Debug");
+            context->debug_drawer.drawText(
+                QString::number(window.shot_success),
+                window.segment.center() + Point(0, 0.1), QColor{"Green"},
+                "Debug");
         }
     }
 
