@@ -12,6 +12,7 @@ class TestPassing(unittest.TestCase):
 
     def setUp(self):
         main.set_system_state(self.system_state)
+        main.set_context(self.context)
 
         self.length = constants.Field.Length
         self.width = constants.Field.Width

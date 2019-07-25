@@ -42,7 +42,7 @@ public:
      * @brief Constructor
      * @param systemState pointer to global system state object
      */
-    WindowEvaluator(SystemState* systemState);
+    WindowEvaluator(Context* context);
 
     /**
      * @brief Evaluates shot windows to a target point, using a virtual width
@@ -124,7 +124,7 @@ public:
     std::vector<Geometry2d::Point> hypothetical_robot_locations;
 
 private:
-    SystemState* system;
+    Context* context;
 
     void fill_shot_success(Window& window, Geometry2d::Point origin);
 

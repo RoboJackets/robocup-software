@@ -52,8 +52,8 @@ public:
     virtual bool hit(const Geometry2d::ShapeSet& shape,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override;
-    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const override;
+    virtual void draw(DebugDrawer *constdebug_drawer, const QColor &color = Qt::black,
+                      const QString &layer = "Motion") const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> subPath(
         RJ::Seconds startTime = 0ms,

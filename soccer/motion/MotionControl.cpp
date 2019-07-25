@@ -9,6 +9,7 @@
 #include <Utils.hpp>
 #include <planning/MotionInstant.hpp>
 #include "TrapezoidalMotion.hpp"
+#include "DebugDrawer.hpp"
 
 #include <stdio.h>
 #include <algorithm>
@@ -34,8 +35,9 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 
 #pragma mark MotionControl
 
-MotionControl::MotionControl(OurRobot* robot)
-    : _angleController(0, 0, 0, 50, 0) {
+MotionControl::MotionControl(Context* context, OurRobot* robot)
+    : _angleController(0, 0, 0, 50, 0),
+      _context(context) {
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
@@ -68,11 +70,11 @@ void MotionControl::run() {
 
     if (!optTarget) {
         optTarget = _robot->path().end();
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red,
+        _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::red,
                                     "Planning");
     } else {
         Point start = _robot->pos;
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green,
+        _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::green,
                                     "Planning");
     }
 
@@ -175,8 +177,8 @@ void MotionControl::run() {
     target.vel.y() += _positionYController.run(posError.y());
 
     // draw target pt
-    _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
-    _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
+    _context->debug_drawer.drawCircle(target.pos, .04, Qt::red, "MotionControl");
+    _context->debug_drawer.drawLine(target.pos, target.pos + target.vel, Qt::blue,
                               "MotionControl");
 
     // Clamp World Acceleration

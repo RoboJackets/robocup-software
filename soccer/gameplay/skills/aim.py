@@ -223,14 +223,14 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         if self._shot_point != None:
             color = constants.Colors.Green if self.is_aimed(
             ) else constants.Colors.Red
-            main.system_state().draw_line(
+            main.debug_drawer().draw_line(
                 robocup.Line(self.robot.pos, self._shot_point), color, "Aim")
-            main.system_state().draw_circle(self._shot_point, 0.02, color,
+            main.debug_drawer().draw_circle(self._shot_point, 0.02, color,
                                             "Aim")
 
         # draw where we're supposed to be aiming
         if self.target_point != None:
-            main.system_state().draw_circle(self.target_point, 0.02,
+            main.debug_drawer().draw_circle(self.target_point, 0.02,
                                             constants.Colors.Blue, "Aim")
 
     def __str__(self):

@@ -53,7 +53,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
             mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
 
         #Drawing for simulator
-        main.system_state().draw_line(ball_mark_line, (0, 0, 255), "Mark")
+        main.debug_drawer().draw_line(ball_mark_line, (0, 0, 255), "Mark")
 
         #Distance from robot to mark line
         mark_line_dist = ball_mark_line.dist_to(pos)
@@ -72,7 +72,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
                 ball_pos).normalized() * self.ratio * ball_mark_line.length()
 
         #Drawing for simulator
-        main.system_state().draw_circle(mark_pos, constants.Robot.Radius * 1.2,
+        main.debug_drawer().draw_circle(mark_pos, constants.Robot.Radius * 1.2,
                                         (0, 127, 255), "Mark")
 
         #Move robot into position and face the ball

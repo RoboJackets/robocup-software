@@ -49,7 +49,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         mark_line, shot_pt = self.get_mark_segment()
 
         #Drawing for simulator 
-        main.system_state().draw_line(mark_line, (0, 0, 255), "Mark")
+        main.debug_drawer().draw_line(mark_line, (0, 0, 255), "Mark")
 
         #Distance from robot to mark line
         mark_line_dist = mark_line.dist_to(self.robot.pos)
@@ -68,7 +68,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
                 shot_pt).normalized() * self.ratio * mark_line.length()
 
         #Drawing for simulator
-        main.system_state().draw_circle(self.mark_pos, constants.Robot.Radius * 1.2,
+        main.debug_drawer().draw_circle(self.mark_pos, constants.Robot.Radius * 1.2,
                                         (0, 127, 255), "Mark")
 
         #Move robot into position and face the ball

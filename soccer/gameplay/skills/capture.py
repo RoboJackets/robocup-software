@@ -180,7 +180,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             self.robot.set_avoid_ball_radius(Capture.CoarseApproachAvoidBall)
 
         self.robot.move_to(pos)
-        main.system_state().draw_circle(self.lastApproachTarget,
+        main.debug_drawer().draw_circle(self.lastApproachTarget,
                                         constants.Ball.Radius,
                                         constants.Colors.White, "Capture")
 

@@ -296,3 +296,27 @@ def system_state():
 def set_system_state(value):
     global _system_state
     _system_state = value
+
+_debug_drawer = None
+
+
+def debug_drawer():
+    global _debug_drawer
+    return _debug_drawer
+
+
+def set_debug_drawer(value):
+    global _debug_drawer
+    _debug_drawer = value
+
+_context = None
+
+
+def context():
+    global _context
+    return _context
+
+
+def set_context(value):
+    global _context
+    _context = value

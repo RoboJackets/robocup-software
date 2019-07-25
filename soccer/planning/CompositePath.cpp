@@ -1,3 +1,4 @@
+#include <DebugDrawer.hpp>
 #include "CompositePath.hpp"
 
 using namespace std;
@@ -102,10 +103,10 @@ bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
     return false;
 }
 
-void CompositePath::draw(SystemState* const state, const QColor& color,
+void CompositePath::draw(DebugDrawer *const debug_drawer, const QColor& color,
                          const QString& layer) const {
     for (const std::unique_ptr<Path>& path : paths) {
-        path->draw(state, color, layer);
+        path->draw(debug_drawer, color, layer);
     }
 }
 

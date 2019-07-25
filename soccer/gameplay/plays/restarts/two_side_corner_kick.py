@@ -109,7 +109,7 @@ class TwoSideCornerKick(standard_play.StandardPlay):
         #to_exclude = [capture.robot, passRobot1.robot, passRobot2.robot]
 
         # Do shot evaluation here
-        win_eval = robocup.WindowEvaluator(main.system_state())
+        win_eval = robocup.WindowEvaluator(main.context())
         for r in self.to_exclude:
             win_eval.add_excluded_robot(r)
 

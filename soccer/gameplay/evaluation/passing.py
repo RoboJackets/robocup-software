@@ -21,7 +21,7 @@ def eval_pass(from_point, to_point, excluded_robots=[]):
     receive_seg = robocup.Segment(to_point + pass_perp * receive_seg_half_len,
                                   to_point + pass_perp * -receive_seg_half_len)
 
-    win_eval = robocup.WindowEvaluator(main.system_state())
+    win_eval = robocup.WindowEvaluator(main.context())
     for r in excluded_robots:
         win_eval.add_excluded_robot(r)
     windows, best = win_eval.eval_pt_to_seg(from_point, receive_seg)

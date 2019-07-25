@@ -194,7 +194,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_block(self):
         opposing_kicker = evaluation.ball.opponent_with_ball()
         if opposing_kicker is not None:
-            winEval = robocup.WindowEvaluator(main.system_state())
+            winEval = robocup.WindowEvaluator(main.context())
             winEval.excluded_robots = [self.robot]
             best = winEval.eval_pt_to_our_goal(main.ball().pos)[1]
             if best is not None:
@@ -206,7 +206,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                     robocup.Point(
                         best.segment.get_pt(1).x + constants.Robot.Radius,
                         constants.Robot.Radius))
-                main.system_state().draw_line(block_line, (255, 0, 0), "Debug")
+                main.debug_drawer().draw_line(block_line, (255, 0, 0), "Debug")
                 dest = block_line.line_intersection(shot_line)
                 dest.x = min(Goalie.MaxX, dest.x)
                 dest.x = max(-Goalie.MaxX, dest.x)

@@ -9,6 +9,7 @@
 
 #include <QColor>
 #include <QString>
+#include <DebugDrawer.hpp>
 
 #include "DynamicObstacle.hpp"
 
@@ -62,12 +63,12 @@ public:
      * Draws the path.  The default implementation adds a DebugRobotPath to the
      * SystemState that interpolates points along the path.
      *
-     * @param state The SystemState to draw the path on
+     * @param debug_drawer The SystemState to draw the path on
      * @param color The color the path should be drawn
      * @param layer The layer to draw the path on
      */
-    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const;
+    virtual void draw(DebugDrawer *const debug_drawer, const QColor &color = Qt::black,
+                      const QString &layer = "Motion") const;
 
     /**
      * Returns how long it would take for the entire path to be traversed
@@ -107,7 +108,7 @@ public:
         _debugText = std::move(string);
     }
 
-    virtual void drawDebugText(SystemState* state,
+    virtual void drawDebugText(DebugDrawer* debug_drawer,
                                const QColor& color = Qt::darkCyan,
                                const QString& layer = "PathDebugText") const;
 
@@ -167,13 +168,13 @@ public:
      * Draws the path.  The default implementation adds a DebugRobotPath to the
      * SystemState that interpolates points along the path.
      *
-     * @param state The SystemState to draw the path on
+     * @param debug_drawer The SystemState to draw the path on
      * @param color The color the path should be drawn
      * @param layer The layer to draw the path on
      */
-    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
+    virtual void draw(DebugDrawer* const debug_drawer, const QColor& color = Qt::black,
                       const QString& layer = "Motion") const override {
-        path->draw(state, color, layer);
+        path->draw(debug_drawer, color, layer);
     }
 
     /**
@@ -237,9 +238,9 @@ public:
     }
 
     virtual void drawDebugText(
-        SystemState* state, const QColor& color = Qt::darkCyan,
+        DebugDrawer* debug_drawer, const QColor& color = Qt::darkCyan,
         const QString& layer = "PathDebugText") const override {
-        path->drawDebugText(state, color, layer);
+        path->drawDebugText(debug_drawer, color, layer);
     }
 
 protected:

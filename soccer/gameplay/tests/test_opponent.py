@@ -13,6 +13,7 @@ class TestOpponent(unittest.TestCase):
     def setUp(self):
         main.init(False)
         main.set_system_state(self.system_state)
+        main.set_context(self.context)
 
         for robot in main.system_state().their_robots:
             robot.set_vis_for_testing(True)

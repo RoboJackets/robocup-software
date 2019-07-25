@@ -134,9 +134,9 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
         right_post = goalSegment.get_pt(0)
         left_post = goalSegment.get_pt(1)
         # draw the line from the ideal passing position to the goal corners
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(right_post, best_point), (255, 0, 255), "Shot Range")
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(left_post, best_point), (255, 0, 255), "Shot Range")
         # angle between the line from ideal pass point and the goal corner and between the line ideal pass point and other goal corner
         shot_angle = (right_post - best_point).angle_between((left_post - best_point))

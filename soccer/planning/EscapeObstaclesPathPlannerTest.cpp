@@ -24,7 +24,7 @@ TEST(EscapeObstaclesPathPlanner, run) {
 
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
-    PlanRequest request(context.state, startInstant, std::move(cmd),
+    PlanRequest request(&context, startInstant, std::move(cmd),
                         RobotConstraints(), nullptr, obstacles,
                         dynamicObstacles, 0);
     auto path = planner.run(request);

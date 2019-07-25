@@ -87,17 +87,17 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
         else:
             self.robot.set_avoid_ball_radius(Bump.LineupBallAvoidRadius)
             self.robot.move_to(behind_line.nearest_point(self.robot.pos))
-            main.system_state().draw_line(behind_line, constants.Colors.Black,
+            main.debug_drawer().draw_line(behind_line, constants.Colors.Black,
                                           "Bump")
 
         delta_facing = self.target - main.ball().pos
         self.robot.face(self.robot.pos + delta_facing)
 
     def execute_charge(self):
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(self.robot.pos, self.target), constants.Colors.White,
             "bump")
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(main.ball().pos, self.target), constants.Colors.White,
             "bump")
 
