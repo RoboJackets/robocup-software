@@ -8,16 +8,16 @@ class TestRoleAssignment(unittest.TestCase):
         super(TestRoleAssignment, self).__init__(*args, **kwargs)
         # Some objects initialized below depend on the config system being setup
         self.config = robocup.Configuration.FromRegisteredConfigurables()
-        self.system_state = robocup.SystemState()
+        self.context = robocup.Context()
 
     def test_pos_cost(self):
         """Ensure that when requirements specify a target position, it is taken
         into account in assignment"""
 
-        bot1 = robocup.OurRobot(1, self.system_state)
+        bot1 = robocup.OurRobot(1, self.context)
         bot1.set_pos_for_testing(robocup.Point(1, 6))
 
-        bot2 = robocup.OurRobot(2, self.system_state)
+        bot2 = robocup.OurRobot(2, self.context)
         bot2.set_pos_for_testing(robocup.Point(2, 3))
 
         req1 = role_assignment.RoleRequirements()
@@ -35,7 +35,7 @@ class TestRoleAssignment(unittest.TestCase):
     def test_not_enough_bots(self):
         """If there's not enough robots to do an assignment, it should raise an error"""
 
-        bot1 = robocup.OurRobot(1, self.system_state)
+        bot1 = robocup.OurRobot(1, self.context)
         bot1.set_pos_for_testing(robocup.Point(1, 6))
 
         req1 = role_assignment.RoleRequirements()

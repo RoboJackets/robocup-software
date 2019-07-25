@@ -42,9 +42,9 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
     return false;
 }
 
-Gameplay::GameplayModule::GameplayModule(SystemState* state)
-    : _mutex(QMutex::Recursive) {
-    _state = state;
+Gameplay::GameplayModule::GameplayModule(Context* context)
+    : _mutex(QMutex::Recursive),
+      _context(context) {
 
     calculateFieldObstacles();
 
@@ -296,15 +296,15 @@ void Gameplay::GameplayModule::goalieID(int value) {
  */
 Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
     Geometry2d::ShapeSet obstacles;
-    if (_state->gameState.stayOnSide()) {
+    if (_context->state.gameState.stayOnSide()) {
         obstacles.add(_sideObstacle);
     }
 
-    if (!_state->logFrame->use_our_half()) {
+    if (!_context->state.logFrame->use_our_half()) {
         obstacles.add(_ourHalf);
     }
 
-    if (!_state->logFrame->use_opponent_half()) {
+    if (!_context->state.logFrame->use_opponent_half()) {
         obstacles.add(_opponentHalf);
     }
 
@@ -335,10 +335,10 @@ void Gameplay::GameplayModule::run() {
     bool verbose = false;
     if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
-    _ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
+    _ballMatrix = Geometry2d::TransformMatrix::translate(_context->state.ball.pos);
 
     /// prepare each bot for the next iteration by resetting temporary things
-    for (OurRobot* robot : _state->self) {
+    for (OurRobot* robot : _context->state.self) {
         if (robot) {
             robot->resetAvoidBall();
             robot->resetAvoidRobotRadii();
@@ -348,7 +348,7 @@ void Gameplay::GameplayModule::run() {
 
     /// Build a list of visible robots
     _playRobots.clear();
-    for (OurRobot* r : _state->self) {
+    for (OurRobot* r : _context->state.self) {
         if (r->visible && r->rxIsFresh()) {
             _playRobots.insert(r);
         }
@@ -369,18 +369,18 @@ void Gameplay::GameplayModule::run() {
             getMainModule().attr("set_our_robots")(botVector);
 
             vector<OpponentRobot*> theirBotVector;
-            for (auto bot : _state->opp) {
+            for (auto bot : _context->state.opp) {
                 if (bot && bot->visible) {
                     theirBotVector.push_back(bot);
                 }
             }
             getMainModule().attr("set_their_robots")(theirBotVector);
 
-            getMainModule().attr("set_game_state")(_state->gameState);
+            getMainModule().attr("set_game_state")(_context->state.gameState);
 
-            getMainModule().attr("set_system_state")(&_state);
+            getMainModule().attr("set_system_state")(&_context->state);
 
-            getMainModule().attr("set_ball")(_state->ball);
+            getMainModule().attr("set_ball")(_context->state.ball);
 
         } catch (error_already_set) {
             PyErr_Print();
@@ -412,7 +412,7 @@ void Gameplay::GameplayModule::run() {
                 // record the state of our behavior tree
                 std::string bhvrTreeDesc =
                     extract<std::string>(getRootPlay().attr("__str__")());
-                _state->logFrame->set_behavior_tree(bhvrTreeDesc);
+                _context->state.logFrame->set_behavior_tree(bhvrTreeDesc);
             } catch (error_already_set) {
                 PyErr_Print();
             }
@@ -424,20 +424,20 @@ void Gameplay::GameplayModule::run() {
     PyGILState_Release(state);
 
     /// visualize
-    if (_state->gameState.stayAwayFromBall() && _state->ball.valid) {
-        _state->drawCircle(_state->ball.pos,
+    if (_context->state.gameState.stayAwayFromBall() && _context->state.ball.valid) {
+        _context->state.drawCircle(_context->state.ball.pos,
                            Field_Dimensions::Current_Dimensions.CenterRadius(),
                            Qt::black, "Rules");
     }
 
     if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 
-    if (_state->gameState.ourScore > _our_score_last_frame) {
-        for (OurRobot* r : _state->self) {
+    if (_context->state.gameState.ourScore > _our_score_last_frame) {
+        for (OurRobot* r : _context->state.self) {
             r->sing();
         }
     }
-    _our_score_last_frame = _state->gameState.ourScore;
+    _our_score_last_frame = _context->state.gameState.ourScore;
 }
 
 #pragma mark python

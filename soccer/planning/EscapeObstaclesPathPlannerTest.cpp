@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Context.hpp>
 #include "EscapeObstaclesPathPlanner.hpp"
 
 using namespace Geometry2d;
@@ -19,11 +20,11 @@ TEST(EscapeObstaclesPathPlanner, run) {
     const float circleRadius = 5;
     obstacles.add(std::make_shared<Circle>(Point(0, 0), circleRadius));
 
-    SystemState systemState;
+    Context context;
 
     EscapeObstaclesPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
-    PlanRequest request(systemState, startInstant, std::move(cmd),
+    PlanRequest request(context.state, startInstant, std::move(cmd),
                         RobotConstraints(), nullptr, obstacles,
                         dynamicObstacles, 0);
     auto path = planner.run(request);

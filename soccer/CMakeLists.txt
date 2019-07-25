@@ -79,7 +79,7 @@ set(ROBOCUP_LIB_SRC
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
     "WindowEvaluator.cpp"
-)
+        Context.hpp)
 
 
 if(APPLE)

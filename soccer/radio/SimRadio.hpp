@@ -2,6 +2,7 @@
 
 #include <QUdpSocket>
 #include <SystemState.hpp>
+#include <Context.hpp>
 
 #include "Radio.hpp"
 
@@ -11,7 +12,7 @@
 class SimRadio : public Radio {
 public:
     static std::size_t instance_count;
-    SimRadio(SystemState& system_state, bool blueTeam = false);
+    SimRadio(Context* context, bool blueTeam = false);
 
     virtual bool isOpen() const override;
     virtual void send(Packet::RadioTx& packet) override;
@@ -21,7 +22,7 @@ public:
     void stopRobots();
 
 private:
-    SystemState& _state;
+    Context* _context;
 
     QUdpSocket _tx_socket;
     QUdpSocket _rx_socket;

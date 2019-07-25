@@ -17,6 +17,7 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <Configuration.hpp>
+#include <Context.hpp>
 
 class OurRobot;
 class SystemState;
@@ -42,10 +43,10 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(SystemState* state);
+    GameplayModule(Context* context);
     virtual ~GameplayModule();
 
-    SystemState* state() const { return _state; }
+    SystemState* state() const { return &_context->state; }
 
     virtual void run();
 
@@ -135,7 +136,7 @@ private:
     static ConfigDouble* _fieldEdgeInset;
     double _oldFieldEdgeInset;
 
-    SystemState* _state;
+    Context* _context;
 
     std::set<OurRobot*> _playRobots;
 

@@ -7,7 +7,8 @@ import constants
 class TestOpponent(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestOpponent, self).__init__(*args, **kwargs)
-		self.system_state = robocup.SystemState()
+		self.context = robocup.Context()
+		self.system_state = self.context.state
 
 	def setUp(self):
 		main.init(False)

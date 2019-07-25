@@ -160,14 +160,14 @@ double Ball::estimateSecondsToDist(double dist) const {
     }
 }
 
-SystemState::SystemState() {
+SystemState::SystemState(Context* context) {
     _numDebugLayers = 0;
 
     // FIXME - boost::array?
     self.resize(Num_Shells);
     opp.resize(Num_Shells);
     for (unsigned int i = 0; i < Num_Shells; ++i) {
-        self[i] = new OurRobot(i, this);
+        self[i] = new OurRobot(i, context);
         opp[i] = new OpponentRobot(i);
     }
 }

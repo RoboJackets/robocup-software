@@ -7,8 +7,9 @@ import constants
 class TestPassing(unittest.TestCase):
 	def __init__(self, *args, **kwargs):
 		super(TestPassing, self).__init__(*args, **kwargs)
-		self.system_state = robocup.SystemState()	
-	
+		self.context = robocup.Context()
+		self.system_state = self.context.state
+
 	def setUp(self):
 		main.set_system_state(self.system_state)
 

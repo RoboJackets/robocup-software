@@ -56,6 +56,8 @@ public:
 
 };
 
+class Context;
+
 /**
  * @brief Holds the positions of everything on the field
  * @details  this has the debugging drawer for the gui
@@ -65,7 +67,7 @@ public:
  */
 class SystemState {
 public:
-    SystemState();
+    SystemState(Context* context);
     ~SystemState();
 
     /**
