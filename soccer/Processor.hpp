@@ -36,32 +36,6 @@ namespace Planning {
 class MultiRobotPathPlanner;
 }
 
-class DebugQMutex : public QMutex {
-public:
-    DebugQMutex(QMutex::RecursionMode mode = QMutex::NonRecursive)
-        : QMutex(mode) {}
-
-    void lock() {
-        // printf("thread %ld tries to lock\n", QThread::currentThreadId());
-        QMutex::lock();
-    }
-
-    bool tryLock() {
-        // printf("tryLock\n");
-        return QMutex::tryLock();
-    }
-
-    bool tryLock(int timeout) {
-        // printf("tryLock\n");
-        return QMutex::tryLock(timeout);
-    }
-
-    void unlock() {
-        QMutex::unlock();
-        // printf("thread %ld unlocked\n", QThread::currentThreadId());
-    }
-};
-
 /**
  * @brief Brings all the pieces together
  *
