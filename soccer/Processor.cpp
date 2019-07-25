@@ -96,8 +96,9 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _visionChannel = visionChannel;
 
     // Create radio socket
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
-                         : static_cast<Radio*>(new USBRadio());
+    _radio = _simulation
+                 ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
+                 : static_cast<Radio*>(new USBRadio());
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
@@ -465,7 +466,8 @@ void Processor::run() {
 
                 // Visualize local obstacles
                 for (auto& shape : r->localObstacles().shapes()) {
-                    _context.state.drawShape(shape, Qt::black, "LocalObstacles");
+                    _context.state.drawShape(shape, Qt::black,
+                                             "LocalObstacles");
                 }
 
                 auto& globalObstaclesForBot =
@@ -539,7 +541,8 @@ void Processor::run() {
             if (r->visible) {
                 r->addStatusText();
 
-                Packet::LogFrame::Robot* log = _context.state.logFrame->add_self();
+                Packet::LogFrame::Robot* log =
+                    _context.state.logFrame->add_self();
                 *log->mutable_pos() = r->pos;
                 *log->mutable_world_vel() = r->vel;
                 *log->mutable_body_vel() = r->vel.rotated(M_PI_2 - r->angle);
@@ -585,7 +588,8 @@ void Processor::run() {
         // Opponent robots
         for (OpponentRobot* r : _context.state.opp) {
             if (r->visible) {
-                Packet::LogFrame::Robot* log = _context.state.logFrame->add_opp();
+                Packet::LogFrame::Robot* log =
+                    _context.state.logFrame->add_opp();
                 *log->mutable_pos() = r->pos;
                 log->set_shell(r->shell());
                 log->set_angle(r->angle);
@@ -596,7 +600,8 @@ void Processor::run() {
 
         // Ball
         if (_context.state.ball.valid) {
-            Packet::LogFrame::Ball* log = _context.state.logFrame->mutable_ball();
+            Packet::LogFrame::Ball* log =
+                _context.state.logFrame->mutable_ball();
             *log->mutable_pos() = _context.state.ball.pos;
             *log->mutable_vel() = _context.state.ball.vel;
         }

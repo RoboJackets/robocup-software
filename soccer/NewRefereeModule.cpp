@@ -106,7 +106,7 @@ static const int KickVerifyTime_ms = 250;
 // the ref halts/stops, make this false
 static const bool CancelBallPlaceOnHalt = true;
 
-NewRefereeModule::NewRefereeModule(Context *context)
+NewRefereeModule::NewRefereeModule(Context* context)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
       _running(false),
@@ -212,7 +212,8 @@ void NewRefereeModule::spinKickWatcher() {
                 break;
 
             case WaitForKick:
-                if (!_context->state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
+                if (!_context->state.ball.pos.nearPoint(_readyBallPos,
+                                                        KickThreshold)) {
                     // The ball appears to have moved
                     _kickTime = QTime::currentTime();
                     _kickDetectState = VerifyKick;
@@ -220,7 +221,8 @@ void NewRefereeModule::spinKickWatcher() {
                 break;
 
             case VerifyKick:
-                if (_context->state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
+                if (_context->state.ball.pos.nearPoint(_readyBallPos,
+                                                       KickThreshold)) {
                     // The ball is back where it was.  There was probably a
                     // vision error.
                     _kickDetectState = WaitForKick;
@@ -240,7 +242,8 @@ void NewRefereeModule::spinKickWatcher() {
 }
 
 void NewRefereeModule::updateGameState(bool blueTeam) {
-    _context->state.gameState.ourScore = blueTeam ? blue_info.score : yellow_info.score;
+    _context->state.gameState.ourScore =
+        blueTeam ? blue_info.score : yellow_info.score;
     _context->state.gameState.theirScore =
         blueTeam ? yellow_info.score : blue_info.score;
     using namespace NewRefereeModuleEnums;
@@ -363,14 +366,14 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
             _context->state.gameState.restart = GameState::Placement;
             _context->state.gameState.ourRestart = !blueTeam;
             _context->state.gameState.setBallPlacementPoint(ballPlacementx,
-                                                   ballPlacementy);
+                                                            ballPlacementy);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             _context->state.gameState.state = GameState::Stop;
             _context->state.gameState.restart = GameState::Placement;
             _context->state.gameState.ourRestart = blueTeam;
             _context->state.gameState.setBallPlacementPoint(ballPlacementx,
-                                                   ballPlacementy);
+                                                            ballPlacementy);
             break;
     }
 

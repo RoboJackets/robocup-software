@@ -1,8 +1,8 @@
 #include <optional>
 
 #include <gtest/gtest.h>
-#include <Geometry2d/Point.hpp>
 #include <Context.hpp>
+#include <Geometry2d/Point.hpp>
 #include "TargetVelPathPlanner.hpp"
 #include "planning/MotionCommand.hpp"
 

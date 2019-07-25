@@ -28,8 +28,8 @@
 #include <QReadWriteLock>
 #include <QWriteLocker>
 
-#include "status.h"
 #include "Context.hpp"
+#include "status.h"
 
 class RobotConfig;
 class RobotStatus;

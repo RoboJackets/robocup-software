@@ -10,6 +10,7 @@ using namespace boost::python;
 
 #include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
+#include <Context.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
@@ -19,7 +20,6 @@ using namespace boost::python;
 #include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <Context.hpp>
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
 #include "KickEvaluator.hpp"
@@ -907,8 +907,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
 
-    class_<Context, Context*>("Context")
-        .def_readonly("state", &Context::state);
+    class_<Context, Context*>("Context").def_readonly("state", &Context::state);
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)

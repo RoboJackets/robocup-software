@@ -19,8 +19,8 @@
 #include <SystemState.hpp>
 #include "VisionReceiver.hpp"
 
-#include "rc-fshare/rtp.hpp"
 #include "Context.hpp"
+#include "rc-fshare/rtp.hpp"
 
 class Configuration;
 class RobotStatus;

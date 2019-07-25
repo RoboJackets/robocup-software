@@ -1,12 +1,12 @@
 #pragma once
 
-#include <protobuf/referee.pb.h>
 #include <protobuf/LogFrame.pb.h>
-#include "TeamInfo.hpp"
+#include <protobuf/referee.pb.h>
+#include <Utils.hpp>
+#include "Context.hpp"
 #include "GameState.hpp"
 #include "SystemState.hpp"
-#include "Context.hpp"
-#include <Utils.hpp>
+#include "TeamInfo.hpp"
 
 #include <QThread>
 #include <QMutex>

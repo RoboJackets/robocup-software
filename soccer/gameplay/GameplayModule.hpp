@@ -15,9 +15,9 @@
 #include <QMutex>
 #include <QString>
 
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <Configuration.hpp>
 #include <Context.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 class OurRobot;
 class SystemState;
