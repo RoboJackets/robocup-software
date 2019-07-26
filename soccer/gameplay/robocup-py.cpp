@@ -10,6 +10,7 @@ using namespace boost::python;
 
 #include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
+#include <Context.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
@@ -819,7 +820,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__eq__", &Robot::operator==);
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
-        "OurRobot", init<int, SystemState*>())
+        "OurRobot", init<int, Context*>())
         .def("move_to", &OurRobot_move_to)
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
@@ -886,7 +887,7 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<std::vector<OpponentRobot*>>("vector_OpponentRobot")
         .def(vector_indexing_suite<std::vector<OpponentRobot*>>());
 
-    class_<SystemState, SystemState*>("SystemState")
+    class_<SystemState, SystemState*>("SystemState", init<Context*>())
         .def_readonly("our_robots", &SystemState::self)
         .def_readonly("their_robots", &SystemState::opp)
         .def_readonly("ball", &SystemState::ball)
@@ -905,6 +906,9 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
         .def("draw_arc", &State_draw_arc);
+
+    class_<Context, Context*, boost::noncopyable>("Context").def_readonly(
+        "state", &Context::state);
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)

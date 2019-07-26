@@ -28,9 +28,9 @@
 #include <QReadWriteLock>
 #include <QWriteLocker>
 
+#include "Context.hpp"
 #include "status.h"
 
-class SystemState;
 class RobotConfig;
 class RobotStatus;
 class MotionControl;
@@ -139,7 +139,7 @@ public:
      * @param shell The robot ID
      * @param state A pointer to the global system state object
      */
-    OurRobot(int shell, SystemState* state);
+    OurRobot(int shell, Context* const context);
     ~OurRobot();
 
     void addStatusText();
@@ -421,7 +421,7 @@ public:
 
     MotionControl* motionControl() const { return _motionControl; }
 
-    SystemState* state() const { return _state; }
+    SystemState* state() const { return &_context->state; }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
@@ -464,7 +464,7 @@ public:
 protected:
     MotionControl* _motionControl;
 
-    SystemState* _state;
+    Context* const _context;
 
     /// set of obstacles added by plays
     Geometry2d::ShapeSet _local_obstacles;

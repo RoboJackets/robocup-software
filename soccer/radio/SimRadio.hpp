@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Context.hpp>
 #include <QUdpSocket>
 #include <SystemState.hpp>
 
@@ -11,7 +12,7 @@
 class SimRadio : public Radio {
 public:
     static std::size_t instance_count;
-    SimRadio(SystemState& system_state, bool blueTeam = false);
+    SimRadio(Context* const context, bool blueTeam = false);
 
     virtual bool isOpen() const override;
     virtual void send(Packet::RadioTx& packet) override;
@@ -21,7 +22,7 @@ public:
     void stopRobots();
 
 private:
-    SystemState& _state;
+    Context* const _context;
 
     QUdpSocket _tx_socket;
     QUdpSocket _rx_socket;

@@ -19,6 +19,7 @@
 #include <SystemState.hpp>
 #include "VisionReceiver.hpp"
 
+#include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
@@ -130,7 +131,7 @@ public:
         return _refereeModule;
     }
 
-    SystemState* state() { return &_state; }
+    SystemState* state() { return &_context.state; }
 
     bool simulation() const { return _simulation; }
 
@@ -225,7 +226,7 @@ private:
     QMutex _loopMutex;
 
     /** global system state */
-    SystemState _state;
+    Context _context;
 
     // Transformation from world space to team space.
     // This depends on which goal we're defending.
