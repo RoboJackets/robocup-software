@@ -67,7 +67,7 @@ class Context;
  */
 class SystemState {
 public:
-    SystemState(Context* context);
+    SystemState(Context* const context);
     ~SystemState();
 
     /**

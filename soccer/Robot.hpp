@@ -139,7 +139,7 @@ public:
      * @param shell The robot ID
      * @param state A pointer to the global system state object
      */
-    OurRobot(int shell, Context* context);
+    OurRobot(int shell, Context* const context);
     ~OurRobot();
 
     void addStatusText();
@@ -464,7 +464,7 @@ public:
 protected:
     MotionControl* _motionControl;
 
-    Context* _context;
+    Context* const _context;
 
     /// set of obstacles added by plays
     Geometry2d::ShapeSet _local_obstacles;

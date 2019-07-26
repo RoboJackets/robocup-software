@@ -43,7 +43,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* context);
+    GameplayModule(Context* const context);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -136,7 +136,7 @@ private:
     static ConfigDouble* _fieldEdgeInset;
     double _oldFieldEdgeInset;
 
-    Context* _context;
+    Context* const _context;
 
     std::set<OurRobot*> _playRobots;
 

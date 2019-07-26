@@ -42,7 +42,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
     return false;
 }
 
-Gameplay::GameplayModule::GameplayModule(Context* context)
+Gameplay::GameplayModule::GameplayModule(Context* const context)
     : _mutex(QMutex::Recursive), _context(context) {
     calculateFieldObstacles();
 

@@ -106,7 +106,7 @@ static const int KickVerifyTime_ms = 250;
 // the ref halts/stops, make this false
 static const bool CancelBallPlaceOnHalt = true;
 
-NewRefereeModule::NewRefereeModule(Context* context)
+NewRefereeModule::NewRefereeModule(Context* const context)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
       _running(false),

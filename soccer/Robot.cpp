@@ -55,7 +55,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
         cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
-OurRobot::OurRobot(int shell, Context* context)
+OurRobot::OurRobot(int shell, Context* const context)
     : Robot(shell, true), _context(context) {
     _cmdText = new std::stringstream();
     Packet::Control* ctl = new Packet::Control();

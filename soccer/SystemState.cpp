@@ -160,7 +160,7 @@ double Ball::estimateSecondsToDist(double dist) const {
     }
 }
 
-SystemState::SystemState(Context* context) {
+SystemState::SystemState(Context* const context) {
     _numDebugLayers = 0;
 
     // FIXME - boost::array?

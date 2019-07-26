@@ -15,7 +15,7 @@ using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
-SimRadio::SimRadio(Context* context, bool blueTeam)
+SimRadio::SimRadio(Context* const context, bool blueTeam)
     : _context(context), _blueTeam(blueTeam) {
     switchTeam(blueTeam);
 }
