@@ -366,14 +366,14 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
             _context->game_state.restart = GameState::Placement;
             _context->game_state.ourRestart = !blueTeam;
             _context->game_state.setBallPlacementPoint(ballPlacementx,
-                                                            ballPlacementy);
+                                                       ballPlacementy);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             _context->game_state.state = GameState::Stop;
             _context->game_state.restart = GameState::Placement;
             _context->game_state.ourRestart = blueTeam;
             _context->game_state.setBallPlacementPoint(ballPlacementx,
-                                                            ballPlacementy);
+                                                       ballPlacementy);
             break;
     }
 

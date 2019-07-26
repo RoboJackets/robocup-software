@@ -423,8 +423,7 @@ void Gameplay::GameplayModule::run() {
     PyGILState_Release(state);
 
     /// visualize
-    if (_context->game_state.stayAwayFromBall() &&
-        _context->state.ball.valid) {
+    if (_context->game_state.stayAwayFromBall() && _context->state.ball.valid) {
         _context->state.drawCircle(
             _context->state.ball.pos,
             Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black,
