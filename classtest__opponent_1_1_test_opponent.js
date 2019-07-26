@@ -15,6 +15,7 @@ var classtest__opponent_1_1_test_opponent =
     [ "ball", "classtest__opponent_1_1_test_opponent.html#a9edeaaa12a1e5038c4562d0c290dfb60", null ],
     [ "botRadius", "classtest__opponent_1_1_test_opponent.html#a83e7cce94169e1fc0a63f0ced7573ecc", null ],
     [ "center_y", "classtest__opponent_1_1_test_opponent.html#ab1b79b6835fcca59af7a582dd42ba3eb", null ],
+    [ "context", "classtest__opponent_1_1_test_opponent.html#ac0e79d2248b3fb82dfbddc2baefb8607", null ],
     [ "left_side", "classtest__opponent_1_1_test_opponent.html#ab1acce5805e71d2e7035c643c7f2ef88", null ],
     [ "length", "classtest__opponent_1_1_test_opponent.html#aaad162501c8ecc7344ba400a47a17b35", null ],
     [ "our_robots", "classtest__opponent_1_1_test_opponent.html#a933619ae4ca59f4ff778e93aa31d6f01", null ],

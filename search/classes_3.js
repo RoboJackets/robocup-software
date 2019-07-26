@@ -24,6 +24,7 @@ var searchData=
   ['configurableimpl',['ConfigurableImpl',['../class_configurable_impl.html',1,'']]],
   ['configuration',['Configuration',['../class_configuration.html',1,'']]],
   ['constpathiterator',['ConstPathIterator',['../class_planning_1_1_const_path_iterator.html',1,'Planning']]],
+  ['context',['Context',['../struct_context.html',1,'']]],
   ['coordinatedpass',['CoordinatedPass',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html',1,'gameplay::tactics::coordinated_pass']]],
   ['cubicbeziercontrolpoints',['CubicBezierControlPoints',['../struct_planning_1_1_cubic_bezier_control_points.html',1,'Planning']]]
 ];

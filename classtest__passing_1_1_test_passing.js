@@ -9,6 +9,7 @@ var classtest__passing_1_1_test_passing =
     [ "test_eval_pass_with_bots_and_exclusion", "classtest__passing_1_1_test_passing.html#a5d4bfe7b8130451765b96d3af33a0863", null ],
     [ "botRadius", "classtest__passing_1_1_test_passing.html#a6742d4c5ac9ca9ce2cd53593c5407f86", null ],
     [ "center_y", "classtest__passing_1_1_test_passing.html#a24413620d93719c47d61978dfb5ced40", null ],
+    [ "context", "classtest__passing_1_1_test_passing.html#a111f01df8ed1d62029de3de41833ace7", null ],
     [ "failure", "classtest__passing_1_1_test_passing.html#af167c5b7dc1bde2721dfec97c81636db", null ],
     [ "left_side", "classtest__passing_1_1_test_passing.html#aa7c431e85c2e702eee49d338219926ea", null ],
     [ "length", "classtest__passing_1_1_test_passing.html#a750ea0d18414e91107b25a048e29063b", null ],

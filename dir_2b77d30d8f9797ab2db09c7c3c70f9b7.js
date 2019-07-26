@@ -10,6 +10,7 @@ var dir_2b77d30d8f9797ab2db09c7c3c70f9b7 =
     [ "vision", "dir_4289ce7243dbec095d81aded90e25a6a.html", "dir_4289ce7243dbec095d81aded90e25a6a" ],
     [ "BatteryProfile.hpp", "_battery_profile_8hpp_source.html", null ],
     [ "Configuration.hpp", "_configuration_8hpp_source.html", null ],
+    [ "Context.hpp", "_context_8hpp_source.html", null ],
     [ "GameState.hpp", "_game_state_8hpp_source.html", null ],
     [ "KickEvaluator.hpp", "_kick_evaluator_8hpp_source.html", null ],
     [ "Logger.hpp", "_logger_8hpp_source.html", null ],

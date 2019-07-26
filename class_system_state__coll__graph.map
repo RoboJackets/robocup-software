@@ -1,32 +1,33 @@
 <map id="SystemState" name="SystemState">
-<area shape="rect" id="node3" href="$class_our_robot.html" title="A robot on our team. " alt="" coords="1888,441,1971,468"/>
-<area shape="rect" id="node4" href="$class_robot.html" title="Robot" alt="" coords="565,107,625,133"/>
-<area shape="rect" id="node35" href="$class_opponent_robot.html" title="A robot that is not on our team. " alt="" coords="753,119,876,145"/>
-<area shape="rect" id="node5" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="251,107,341,133"/>
-<area shape="rect" id="node6" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,107,149,133"/>
-<area shape="rect" id="node36" href="$class_ball.html" title="Our beliefs about the ball&#39;s position and velocity. " alt="" coords="435,16,482,43"/>
-<area shape="rect" id="node37" href="$class_game_state.html" title="Holds the state of the game according to the referee. " alt="" coords="767,171,862,197"/>
-<area shape="rect" id="node8" href="$class_planning_1_1_motion_command.html" title="Planning::MotionCommand" alt="" coords="1141,773,1339,800"/>
-<area shape="rect" id="node9" href="$class_planning_1_1_angle_function_path.html" title="Class which represents a Path with an angle Function attached. " alt="" coords="1504,657,1711,684"/>
-<area shape="rect" id="node10" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="757,847,872,873"/>
-<area shape="rect" id="node12" href="$struct_robot_constraints.html" title="RobotConstraints" alt="" coords="1540,384,1675,411"/>
-<area shape="rect" id="node13" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1170,333,1310,360"/>
-<area shape="rect" id="node14" href="$class_config_double.html" title="ConfigDouble" alt="" coords="759,528,870,555"/>
-<area shape="rect" id="node20" href="$struct_rotation_constraints.html" title="RotationConstraints" alt="" coords="1165,384,1315,411"/>
-<area shape="rect" id="node22" href="$class_robot_config.html" title="Configuration per robot model. " alt="" coords="1556,540,1659,567"/>
-<area shape="rect" id="node23" href="$struct_robot_config_1_1_dribbler.html" title="RobotConfig::Dribbler" alt="" coords="1159,571,1321,597"/>
-<area shape="rect" id="node24" href="$struct_robot_config_1_1_kicker.html" title="RobotConfig::Kicker" alt="" coords="1165,621,1315,648"/>
-<area shape="rect" id="node25" href="$struct_robot_config_1_1_p_i_d.html" title="RobotConfig::PID" alt="" coords="1174,723,1306,749"/>
-<area shape="rect" id="node27" href="$struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="1160,672,1320,699"/>
-<area shape="rect" id="node15" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="548,492,643,519"/>
-<area shape="rect" id="node26" href="$class_config_int.html" title="ConfigInt" alt="" coords="774,669,855,696"/>
-<area shape="rect" id="node31" href="$class_config_bool.html" title="ConfigBool" alt="" coords="768,311,861,337"/>
-<area shape="rect" id="node16" title="STL class. " alt="" coords="253,308,339,335"/>
-<area shape="rect" id="node38" href="$class_team_info.html" title="TeamInfo" alt="" coords="553,163,637,189"/>
-<area shape="rect" id="node17" title="STL class. " alt="" coords="8,301,147,342"/>
-<area shape="rect" id="node18" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="241,492,351,519"/>
-<area shape="rect" id="node21" href="$class_motion_control.html" title="Handles computer&#45;side motion control. " alt="" coords="1551,708,1664,735"/>
-<area shape="rect" id="node29" href="$class_geometry2d_1_1_shape_set.html" title="This class maintains a collection of Shape objects. " alt="" coords="1521,825,1693,852"/>
-<area shape="rect" id="node30" href="$class_robot_status.html" title="Provides per&#45;robot overrides for a robot Should be updated for hardware revision. ..." alt="" coords="1379,292,1480,319"/>
-<area shape="rect" id="node33" href="$struct_planning_1_1_rotation_command.html" title="Planning::RotationCommand" alt="" coords="1136,232,1344,259"/>
+<area shape="rect" id="node21" href="$struct_context.html" title="Context" alt="" coords="1916,101,1989,128"/>
+<area shape="rect" id="node3" href="$class_our_robot.html" title="A robot on our team. " alt="" coords="2233,292,2316,318"/>
+<area shape="rect" id="node4" href="$class_robot.html" title="Robot" alt="" coords="499,46,559,73"/>
+<area shape="rect" id="node36" href="$class_opponent_robot.html" title="A robot that is not on our team. " alt="" coords="777,49,900,76"/>
+<area shape="rect" id="node5" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="247,46,337,73"/>
+<area shape="rect" id="node6" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,106,149,133"/>
+<area shape="rect" id="node37" href="$class_ball.html" title="Our beliefs about the ball&#39;s position and velocity. " alt="" coords="385,105,432,132"/>
+<area shape="rect" id="node38" href="$class_game_state.html" title="Holds the state of the game according to the referee. " alt="" coords="1081,162,1175,189"/>
+<area shape="rect" id="node8" href="$class_planning_1_1_motion_command.html" title="Planning::MotionCommand" alt="" coords="1497,758,1695,785"/>
+<area shape="rect" id="node9" href="$class_planning_1_1_angle_function_path.html" title="Class which represents a Path with an angle Function attached. " alt="" coords="1849,817,2056,844"/>
+<area shape="rect" id="node10" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="1071,853,1185,880"/>
+<area shape="rect" id="node12" href="$struct_robot_constraints.html" title="RobotConstraints" alt="" coords="1885,569,2020,596"/>
+<area shape="rect" id="node13" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1526,620,1666,646"/>
+<area shape="rect" id="node14" href="$class_config_double.html" title="ConfigDouble" alt="" coords="1073,420,1183,446"/>
+<area shape="rect" id="node20" href="$struct_rotation_constraints.html" title="RotationConstraints" alt="" coords="1521,569,1671,596"/>
+<area shape="rect" id="node23" href="$class_robot_config.html" title="Configuration per robot model. " alt="" coords="1901,386,2004,413"/>
+<area shape="rect" id="node24" href="$struct_robot_config_1_1_dribbler.html" title="RobotConfig::Dribbler" alt="" coords="1515,281,1677,308"/>
+<area shape="rect" id="node25" href="$struct_robot_config_1_1_kicker.html" title="RobotConfig::Kicker" alt="" coords="1521,332,1671,358"/>
+<area shape="rect" id="node26" href="$struct_robot_config_1_1_p_i_d.html" title="RobotConfig::PID" alt="" coords="1530,230,1662,257"/>
+<area shape="rect" id="node28" href="$struct_robot_config_1_1_chipper.html" title="RobotConfig::Chipper" alt="" coords="1516,382,1676,409"/>
+<area shape="rect" id="node15" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="791,388,886,414"/>
+<area shape="rect" id="node27" href="$class_config_int.html" title="ConfigInt" alt="" coords="1087,234,1169,261"/>
+<area shape="rect" id="node32" href="$class_config_bool.html" title="ConfigBool" alt="" coords="1081,650,1175,677"/>
+<area shape="rect" id="node16" title="STL class. " alt="" coords="486,302,573,329"/>
+<area shape="rect" id="node39" href="$class_team_info.html" title="TeamInfo" alt="" coords="797,226,881,253"/>
+<area shape="rect" id="node17" title="STL class. " alt="" coords="223,295,361,336"/>
+<area shape="rect" id="node18" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="474,388,585,414"/>
+<area shape="rect" id="node22" href="$class_motion_control.html" title="Handles computer&#45;side motion control. " alt="" coords="1896,152,2009,178"/>
+<area shape="rect" id="node30" href="$class_geometry2d_1_1_shape_set.html" title="This class maintains a collection of Shape objects. " alt="" coords="1867,269,2039,296"/>
+<area shape="rect" id="node31" href="$class_robot_status.html" title="Provides per&#45;robot overrides for a robot Should be updated for hardware revision. ..." alt="" coords="1724,686,1825,713"/>
+<area shape="rect" id="node34" href="$struct_planning_1_1_rotation_command.html" title="Planning::RotationCommand" alt="" coords="1492,180,1700,206"/>
 </map>

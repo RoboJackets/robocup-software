@@ -487,6 +487,7 @@ var annotated_dup =
     [ "Configurable", "class_configurable.html", "class_configurable" ],
     [ "ConfigurableImpl", "class_configurable_impl.html", "class_configurable_impl" ],
     [ "Configuration", "class_configuration.html", "class_configuration" ],
+    [ "Context", "struct_context.html", "struct_context" ],
     [ "ExceptionIterator", "class_exception_iterator.html", "class_exception_iterator" ],
     [ "FastKickDetector", "class_fast_kick_detector.html", "class_fast_kick_detector" ],
     [ "Field_Dimensions", "struct_field___dimensions.html", "struct_field___dimensions" ],

@@ -29,6 +29,7 @@ var hierarchy =
       [ "ConfigurableImpl< T >", "class_configurable_impl.html", null ]
     ] ],
     [ "Planning::ConstPathIterator", "class_planning_1_1_const_path_iterator.html", null ],
+    [ "Context", "struct_context.html", null ],
     [ "Planning::CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", null ],
     [ "gameplay.constants.Robot.Dribbler", "classgameplay_1_1constants_1_1_robot_1_1_dribbler.html", null ],
     [ "RobotConfig::Dribbler", "struct_robot_config_1_1_dribbler.html", null ],
@@ -230,6 +231,9 @@ var hierarchy =
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
     [ "SlowKickDetector", "class_slow_kick_detector.html", null ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
+    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -347,9 +351,6 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]

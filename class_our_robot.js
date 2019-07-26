@@ -1,7 +1,7 @@
 var class_our_robot =
 [
     [ "RobotMask", "class_our_robot.html#a1ee7ef35836f1b868ddfeb330c4cca03", null ],
-    [ "OurRobot", "class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a", null ],
+    [ "OurRobot", "class_our_robot.html#ac4315d83b6bfc8341ec82bcf267a2233", null ],
     [ "~OurRobot", "class_our_robot.html#a8ff6c7f8f05d24ba8f24efcb0ad247a3", null ],
     [ "addStatusText", "class_our_robot.html#a47574cba97a8970a1437e47e8657d032", null ],
     [ "addText", "class_our_robot.html#a639eecf0232af72c5845feca21ee9d70", null ],
@@ -93,13 +93,13 @@ var class_our_robot =
     [ "MotionControl", "class_our_robot.html#aabed7217097a6f528ada1f80beef0b15", null ],
     [ "Processor", "class_our_robot.html#af37dcfbfcb6939b2878353a117ef691a", null ],
     [ "_avoidBallRadius", "class_our_robot.html#a3c4be933a623940fe86c44c3a3a3f5d4", null ],
+    [ "_context", "class_our_robot.html#a6c3ea61a512539c22d9bfe981b3f2dd1", null ],
     [ "_local_obstacles", "class_our_robot.html#a0f4a7efaf00dbd3d1f308553f69382e8", null ],
     [ "_motionCommand", "class_our_robot.html#a8b6d4cabd77dc54ac67b14a5e7094f9b", null ],
     [ "_motionControl", "class_our_robot.html#a783be25e2f56ecf73507134831fd79f3", null ],
     [ "_opp_avoid_mask", "class_our_robot.html#a52e73bbe9a4e546a0103838e1a1da08e", null ],
     [ "_robotConstraints", "class_our_robot.html#a2786bc4a648f251b8aa1f0a910427e12", null ],
     [ "_rotationCommand", "class_our_robot.html#a019e094bf9347690e54572334f9c0a0b", null ],
-    [ "_state", "class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff", null ],
     [ "angleFunctionPath", "class_our_robot.html#a99c3d92c2c979f9ff6eba73bbb0b41b3", null ],
     [ "config", "class_our_robot.html#a0d772617dda85ce48b6ee3fe4b7746ef", null ],
     [ "control", "class_our_robot.html#a22dbb3da6c0f44de0f1e83f772ed26e6", null ],
