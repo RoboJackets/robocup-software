@@ -8,10 +8,8 @@ class TestShooting(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestShooting, self).__init__(*args, **kwargs)
         self.context = robocup.Context()
-        self.system_state = self.context.state
 
     def setUp(self):
-        main.set_system_state(self.system_state)
         main.set_context(self.context)
 
         for robot in main.system_state().their_robots:
