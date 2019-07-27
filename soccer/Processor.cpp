@@ -429,11 +429,11 @@ void Processor::run() {
         string yellowname, bluename;
 
         if (blueTeam()) {
-            bluename = _context.state.gameState.OurInfo.name;
-            yellowname = _context.state.gameState.TheirInfo.name;
+            bluename = _context.game_state.OurInfo.name;
+            yellowname = _context.game_state.TheirInfo.name;
         } else {
-            yellowname = _context.state.gameState.OurInfo.name;
-            bluename = _context.state.gameState.TheirInfo.name;
+            yellowname = _context.game_state.OurInfo.name;
+            bluename = _context.game_state.TheirInfo.name;
         }
 
         _context.state.logFrame->set_team_name_blue(bluename);
@@ -459,7 +459,7 @@ void Processor::run() {
         std::map<int, Planning::PlanRequest> requests;
         for (OurRobot* r : _context.state.self) {
             if (r && r->visible) {
-                if (_context.state.gameState.state == GameState::Halt) {
+                if (_context.game_state.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
                 }
@@ -519,7 +519,7 @@ void Processor::run() {
         for (OurRobot* robot : _context.state.self) {
             if (robot->visible) {
                 if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
-                    _context.state.gameState.halt()) {
+                    _context.game_state.halt()) {
                     robot->motionControl()->stopped();
                 } else {
                     robot->motionControl()->run();
@@ -736,7 +736,7 @@ void Processor::sendRadioData() {
     tx->set_txmode(Packet::RadioTx::UNICAST);
 
     // Halt overrides normal motion control, but not joystick
-    if (_context.state.gameState.halt()) {
+    if (_context.game_state.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
             Packet::Control* control = r->control;

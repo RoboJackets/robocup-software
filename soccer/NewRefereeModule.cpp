@@ -242,138 +242,138 @@ void NewRefereeModule::spinKickWatcher() {
 }
 
 void NewRefereeModule::updateGameState(bool blueTeam) {
-    _context->state.gameState.ourScore =
+    _context->game_state.ourScore =
         blueTeam ? blue_info.score : yellow_info.score;
-    _context->state.gameState.theirScore =
+    _context->game_state.theirScore =
         blueTeam ? yellow_info.score : blue_info.score;
     using namespace NewRefereeModuleEnums;
     switch (stage) {
         case Stage::NORMAL_FIRST_HALF_PRE:
-            _context->state.gameState.period = GameState::FirstHalf;
+            _context->game_state.period = GameState::FirstHalf;
             break;
         case Stage::NORMAL_FIRST_HALF:
-            _context->state.gameState.period = GameState::FirstHalf;
+            _context->game_state.period = GameState::FirstHalf;
             break;
         case Stage::NORMAL_HALF_TIME:
-            _context->state.gameState.period = GameState::Halftime;
+            _context->game_state.period = GameState::Halftime;
             break;
         case Stage::NORMAL_SECOND_HALF_PRE:
-            _context->state.gameState.period = GameState::SecondHalf;
+            _context->game_state.period = GameState::SecondHalf;
             break;
         case Stage::NORMAL_SECOND_HALF:
-            _context->state.gameState.period = GameState::SecondHalf;
+            _context->game_state.period = GameState::SecondHalf;
             break;
         case Stage::EXTRA_TIME_BREAK:
-            _context->state.gameState.period = GameState::FirstHalf;
+            _context->game_state.period = GameState::FirstHalf;
             break;
         case Stage::EXTRA_FIRST_HALF_PRE:
-            _context->state.gameState.period = GameState::Overtime1;
+            _context->game_state.period = GameState::Overtime1;
             break;
         case Stage::EXTRA_FIRST_HALF:
-            _context->state.gameState.period = GameState::Overtime1;
+            _context->game_state.period = GameState::Overtime1;
             break;
         case Stage::EXTRA_HALF_TIME:
-            _context->state.gameState.period = GameState::Halftime;
+            _context->game_state.period = GameState::Halftime;
             break;
         case Stage::EXTRA_SECOND_HALF_PRE:
-            _context->state.gameState.period = GameState::Overtime2;
+            _context->game_state.period = GameState::Overtime2;
             break;
         case Stage::EXTRA_SECOND_HALF:
-            _context->state.gameState.period = GameState::Overtime2;
+            _context->game_state.period = GameState::Overtime2;
             break;
         case Stage::PENALTY_SHOOTOUT_BREAK:
-            _context->state.gameState.period = GameState::PenaltyShootout;
+            _context->game_state.period = GameState::PenaltyShootout;
             break;
         case Stage::PENALTY_SHOOTOUT:
-            _context->state.gameState.period = GameState::PenaltyShootout;
+            _context->game_state.period = GameState::PenaltyShootout;
             break;
         case Stage::POST_GAME:
-            _context->state.gameState.period = GameState::Overtime2;
+            _context->game_state.period = GameState::Overtime2;
             break;
     }
     switch (command) {
         case Command::HALT:
-            _context->state.gameState.state = GameState::Halt;
+            _context->game_state.state = GameState::Halt;
 
             if (CancelBallPlaceOnHalt) {
-                _context->state.gameState.restart = GameState::None;
-                _context->state.gameState.ourRestart = false;
+                _context->game_state.restart = GameState::None;
+                _context->game_state.ourRestart = false;
             }
             break;
         case Command::STOP:
-            _context->state.gameState.state = GameState::Stop;
+            _context->game_state.state = GameState::Stop;
             break;
         case Command::NORMAL_START:
             ready();
             break;
         case Command::FORCE_START:
-            _context->state.gameState.state = GameState::Playing;
-            _context->state.gameState.ourRestart = false;
-            _context->state.gameState.restart = GameState::None;
+            _context->game_state.state = GameState::Playing;
+            _context->game_state.ourRestart = false;
+            _context->game_state.restart = GameState::None;
             break;
         case Command::PREPARE_KICKOFF_YELLOW:
-            _context->state.gameState.state = GameState::Setup;
-            _context->state.gameState.restart = GameState::Kickoff;
-            _context->state.gameState.ourRestart = !blueTeam;
+            _context->game_state.state = GameState::Setup;
+            _context->game_state.restart = GameState::Kickoff;
+            _context->game_state.ourRestart = !blueTeam;
             break;
         case Command::PREPARE_KICKOFF_BLUE:
-            _context->state.gameState.state = GameState::Setup;
-            _context->state.gameState.restart = GameState::Kickoff;
-            _context->state.gameState.ourRestart = blueTeam;
+            _context->game_state.state = GameState::Setup;
+            _context->game_state.restart = GameState::Kickoff;
+            _context->game_state.ourRestart = blueTeam;
             break;
         case Command::PREPARE_PENALTY_YELLOW:
-            _context->state.gameState.state = GameState::Setup;
-            _context->state.gameState.restart = GameState::Penalty;
-            _context->state.gameState.ourRestart = !blueTeam;
+            _context->game_state.state = GameState::Setup;
+            _context->game_state.restart = GameState::Penalty;
+            _context->game_state.ourRestart = !blueTeam;
             break;
         case Command::PREPARE_PENALTY_BLUE:
-            _context->state.gameState.state = GameState::Setup;
-            _context->state.gameState.restart = GameState::Penalty;
-            _context->state.gameState.ourRestart = blueTeam;
+            _context->game_state.state = GameState::Setup;
+            _context->game_state.restart = GameState::Penalty;
+            _context->game_state.ourRestart = blueTeam;
             break;
         case Command::DIRECT_FREE_YELLOW:
             ready();
-            _context->state.gameState.restart = GameState::Direct;
-            _context->state.gameState.ourRestart = !blueTeam;
+            _context->game_state.restart = GameState::Direct;
+            _context->game_state.ourRestart = !blueTeam;
             break;
         case Command::DIRECT_FREE_BLUE:
             ready();
-            _context->state.gameState.restart = GameState::Direct;
-            _context->state.gameState.ourRestart = blueTeam;
+            _context->game_state.restart = GameState::Direct;
+            _context->game_state.ourRestart = blueTeam;
             break;
         case Command::INDIRECT_FREE_YELLOW:
             ready();
-            _context->state.gameState.restart = GameState::Indirect;
-            _context->state.gameState.ourRestart = !blueTeam;
+            _context->game_state.restart = GameState::Indirect;
+            _context->game_state.ourRestart = !blueTeam;
             break;
         case Command::INDIRECT_FREE_BLUE:
             ready();
-            _context->state.gameState.restart = GameState::Indirect;
-            _context->state.gameState.ourRestart = blueTeam;
+            _context->game_state.restart = GameState::Indirect;
+            _context->game_state.ourRestart = blueTeam;
             break;
         case Command::TIMEOUT_YELLOW:
-            _context->state.gameState.state = GameState::Halt;
+            _context->game_state.state = GameState::Halt;
             break;
         case Command::TIMEOUT_BLUE:
-            _context->state.gameState.state = GameState::Halt;
+            _context->game_state.state = GameState::Halt;
             break;
         case Command::GOAL_YELLOW:
             break;
         case Command::GOAL_BLUE:
             break;
         case Command::BALL_PLACEMENT_YELLOW:
-            _context->state.gameState.state = GameState::Stop;
-            _context->state.gameState.restart = GameState::Placement;
-            _context->state.gameState.ourRestart = !blueTeam;
-            _context->state.gameState.setBallPlacementPoint(ballPlacementx,
-                                                            ballPlacementy);
+            _context->game_state.state = GameState::Stop;
+            _context->game_state.restart = GameState::Placement;
+            _context->game_state.ourRestart = !blueTeam;
+            _context->game_state.setBallPlacementPoint(ballPlacementx,
+                                                       ballPlacementy);
             break;
         case Command::BALL_PLACEMENT_BLUE:
-            _context->state.gameState.state = GameState::Stop;
-            _context->state.gameState.restart = GameState::Placement;
-            _context->state.gameState.ourRestart = blueTeam;
-            _context->state.gameState.setBallPlacementPoint(ballPlacementx,
-                                                            ballPlacementy);
+            _context->game_state.state = GameState::Stop;
+            _context->game_state.restart = GameState::Placement;
+            _context->game_state.ourRestart = blueTeam;
+            _context->game_state.setBallPlacementPoint(ballPlacementx,
+                                                       ballPlacementy);
             break;
     }
 
@@ -388,18 +388,18 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
         prev_stage = stage;
     }
 
-    if (_context->state.gameState.state == GameState::Ready && kicked()) {
-        _context->state.gameState.state = GameState::Playing;
+    if (_context->game_state.state == GameState::Ready && kicked()) {
+        _context->game_state.state = GameState::Playing;
     }
 
-    _context->state.gameState.OurInfo = blueTeam ? blue_info : yellow_info;
-    _context->state.gameState.TheirInfo = blueTeam ? yellow_info : blue_info;
+    _context->game_state.OurInfo = blueTeam ? blue_info : yellow_info;
+    _context->game_state.TheirInfo = blueTeam ? yellow_info : blue_info;
 }
 
 void NewRefereeModule::ready() {
-    if (_context->state.gameState.state == GameState::Stop ||
-        _context->state.gameState.state == GameState::Setup) {
-        _context->state.gameState.state = GameState::Ready;
+    if (_context->game_state.state == GameState::Stop ||
+        _context->game_state.state == GameState::Setup) {
+        _context->game_state.state = GameState::Ready;
         _kickDetectState = CapturePosition;
     }
 }

@@ -126,7 +126,6 @@ public:
                       const QColor& color = Qt::black,
                       const QString& layer = QString());
     RJ::Time time;
-    GameState gameState;
 
     RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
 

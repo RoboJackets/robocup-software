@@ -294,7 +294,7 @@ void Gameplay::GameplayModule::goalieID(int value) {
  */
 Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
     Geometry2d::ShapeSet obstacles;
-    if (_context->state.gameState.stayOnSide()) {
+    if (_context->game_state.stayOnSide()) {
         obstacles.add(_sideObstacle);
     }
 
@@ -375,7 +375,7 @@ void Gameplay::GameplayModule::run() {
             }
             getMainModule().attr("set_their_robots")(theirBotVector);
 
-            getMainModule().attr("set_game_state")(_context->state.gameState);
+            getMainModule().attr("set_game_state")(_context->game_state);
 
             getMainModule().attr("set_system_state")(&_context->state);
 
@@ -423,8 +423,7 @@ void Gameplay::GameplayModule::run() {
     PyGILState_Release(state);
 
     /// visualize
-    if (_context->state.gameState.stayAwayFromBall() &&
-        _context->state.ball.valid) {
+    if (_context->game_state.stayAwayFromBall() && _context->state.ball.valid) {
         _context->state.drawCircle(
             _context->state.ball.pos,
             Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black,
@@ -433,12 +432,12 @@ void Gameplay::GameplayModule::run() {
 
     if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 
-    if (_context->state.gameState.ourScore > _our_score_last_frame) {
+    if (_context->game_state.ourScore > _our_score_last_frame) {
         for (OurRobot* r : _context->state.self) {
             r->sing();
         }
     }
-    _our_score_last_frame = _context->state.gameState.ourScore;
+    _our_score_last_frame = _context->game_state.ourScore;
 }
 
 #pragma mark python
