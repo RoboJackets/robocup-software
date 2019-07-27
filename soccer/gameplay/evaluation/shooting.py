@@ -110,8 +110,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     target_point.rotate(zero_point, -target_width)
     p2 = target_point + main.ball().pos
     p3 = main.ball().pos
-    main.debug_drawer().draw_polygon([p1, p2, p3],
-                                     (0, 0, 255), "Free Kick search zone")
+    main.debug_drawer().draw_polygon([p1, p2, p3], (0, 0, 255),
+                                     "Free Kick search zone")
 
 
     is_opponent_blocking = False
@@ -150,8 +150,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
                 best_shot = wind.segment.center()
 
         main.debug_drawer().draw_line(
-            robocup.Line(main.ball().pos, best_shot),
-            (255, 255, 0), "Target Shot")
+            robocup.Line(main.ball().pos, best_shot), (255, 255, 0),
+            "Target Shot")
 
         best_shot = robocup.Point(0,1) + main.ball().pos
         return best_shot

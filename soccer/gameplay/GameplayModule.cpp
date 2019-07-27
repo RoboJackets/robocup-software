@@ -376,15 +376,7 @@ void Gameplay::GameplayModule::run() {
             }
             getMainModule().attr("set_their_robots")(theirBotVector);
 
-            getMainModule().attr("set_game_state")(_context->game_state);
-
-            getMainModule().attr("set_system_state")(&_context->state);
-
-            getMainModule().attr("set_debug_drawer")(&_context->debug_drawer);
-
-            getMainModule().attr("set_context")(_context);
-
-            getMainModule().attr("set_ball")(_context->state.ball);
+            getMainModule().attr("set_context")(&_context);
 
         } catch (error_already_set) {
             PyErr_Print();

@@ -912,8 +912,10 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_raw_polygon", &DebugDrawer_draw_raw_polygon)
         .def("draw_arc", &DebugDrawer_draw_arc);
 
-    class_<Context, Context*, boost::noncopyable>("Context").def_readonly(
-        "state", &Context::state);
+    class_<Context, Context*, boost::noncopyable>("Context")
+        .def_readonly("state", &Context::state)
+        .def_readonly("debug_drawer", &Context::debug_drawer)
+        .def_readonly("game_state", &Context::game_state);
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
