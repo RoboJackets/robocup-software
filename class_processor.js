@@ -14,6 +14,7 @@ var class_processor =
     [ "blueTeam", "class_processor.html#a5a0a9a148cbc1cac97f1b1e80f356f3b", null ],
     [ "changeVisionChannel", "class_processor.html#afbefacf8023e7c804d0451ff1d5fde39", null ],
     [ "closeLog", "class_processor.html#a6a9546f03d466b7f18fa34cf72233e56", null ],
+    [ "context", "class_processor.html#ad1f093753aacc873b64ef7b6a8f95126", null ],
     [ "dampedRotation", "class_processor.html#a1b599d9aba834e8671ce1f65d5471e25", null ],
     [ "dampedTranslation", "class_processor.html#a72c28573c98b04824354ac13897dab84", null ],
     [ "defendPlusX", "class_processor.html#abe3e25aed4cd5a0363621b4cf4664653", null ],
