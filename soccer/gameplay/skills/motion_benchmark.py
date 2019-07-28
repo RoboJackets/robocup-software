@@ -145,7 +145,16 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
             return scaleResult(value,expectedMin,expectedMax,0.0,100.0)
 
 
-    #Test that tests the vision system for performance
+    #Tests with continuous move commands, often incountered in defence
+    class ContinuousIssueMotionTest(MotionTest):
+        pass
+
+    #Test of pivoting around the ball
+    #May use Line kick or move, I'm not sure yet
+    class BallProximityTest(MotionTest):
+        pass
+
+    #Test that tests the vision system and radio for performance
     class VisionTest(MotionTest):
 
         #A function to determine if the robot has broken the bounding box
