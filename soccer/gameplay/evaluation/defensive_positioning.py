@@ -158,7 +158,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
     max_ball_vel = 8  # m/s per the rules
     est_turn_vel = 8  # rad/s per a random dice roll (Over estimates oppnents abilities)
 
-    kick_eval = robocup.KickEvaluator(main.debug_drawer())
+    kick_eval = robocup.KickEvaluator(main.system_state())
 
     for r in ignore_robots:
         kick_eval.add_excluded_robot(r)
