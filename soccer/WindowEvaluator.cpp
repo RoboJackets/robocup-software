@@ -28,11 +28,7 @@ void WindowEvaluator::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
 }
 
-WindowEvaluator::WindowEvaluator(Context* context) : context(context) {
-    if (context == nullptr) {
-        std::cout << "NULL POINTER FOUND!" << std::endl;
-    }
-}
+WindowEvaluator::WindowEvaluator(Context* context) : context(context) {}
 
 WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target,
                                                float targetWidth) {
