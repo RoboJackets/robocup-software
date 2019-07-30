@@ -133,9 +133,9 @@ virtual <a class="el" href="struct_planning_1_1_robot_instant.html">RobotInstant
 <tr class="memitem:a14e8ede0b6538397a192e2d1ed9986a0"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="class_planning_1_1_path.html">Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_interpolated_path.html#a14e8ede0b6538397a192e2d1ed9986a0">subPath</a> (RJ::Seconds <a class="el" href="class_planning_1_1_path.html#a5cb758fb6643e9a815d32b933acf0063">startTime</a>=RJ::Seconds::zero(), RJ::Seconds endTime=RJ::Seconds::max()) const override</td></tr>
 <tr class="memdesc:a14e8ede0b6538397a192e2d1ed9986a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a subPath.  <a href="#a14e8ede0b6538397a192e2d1ed9986a0">More...</a><br /></td></tr>
 <tr class="separator:a14e8ede0b6538397a192e2d1ed9986a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af43ab3ca2e74d653fab2ffb8a2f2edbb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color, const QString &amp;layer) const override</td></tr>
-<tr class="memdesc:af43ab3ca2e74d653fab2ffb8a2f2edbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#af43ab3ca2e74d653fab2ffb8a2f2edbb">More...</a><br /></td></tr>
-<tr class="separator:af43ab3ca2e74d653fab2ffb8a2f2edbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76b137d6b7d691c258a304aaa4dcdfad"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_interpolated_path.html#a76b137d6b7d691c258a304aaa4dcdfad">draw</a> (<a class="el" href="class_debug_drawer.html">DebugDrawer</a> *constdebug_drawer, const QColor &amp;color, const QString &amp;layer) const override</td></tr>
+<tr class="memdesc:a76b137d6b7d691c258a304aaa4dcdfad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#a76b137d6b7d691c258a304aaa4dcdfad">More...</a><br /></td></tr>
+<tr class="separator:a76b137d6b7d691c258a304aaa4dcdfad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07a025b818e0247c09c1bb0e0dbaced2"><td class="memItemLeft" align="right" valign="top">virtual RJ::Seconds&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_interpolated_path.html#a07a025b818e0247c09c1bb0e0dbaced2">getDuration</a> () const override</td></tr>
 <tr class="memdesc:a07a025b818e0247c09c1bb0e0dbaced2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns how long it would take for the entire path to be traversed.  <a href="#a07a025b818e0247c09c1bb0e0dbaced2">More...</a><br /></td></tr>
 <tr class="separator:a07a025b818e0247c09c1bb0e0dbaced2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,9 +190,9 @@ RJ::Seconds&#160;</td><td class="memItemRight" valign="bottom"><b>getSlowedDurat
 <tr class="memitem:ae067538136c94fedea43533c8bf0a2eb inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a id="ae067538136c94fedea43533c8bf0a2eb"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setDebugText</b> (QString string)</td></tr>
 <tr class="separator:ae067538136c94fedea43533c8bf0a2eb inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc6448308a9b8fdcd263adeeaf479d81 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a id="adc6448308a9b8fdcd263adeeaf479d81"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawDebugText</b> (<a class="el" href="class_system_state.html">SystemState</a> *state, const QColor &amp;color=Qt::darkCyan, const QString &amp;layer=&quot;PathDebugText&quot;) const</td></tr>
-<tr class="separator:adc6448308a9b8fdcd263adeeaf479d81 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac15093884b2e3db929789b4677635a30 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a id="ac15093884b2e3db929789b4677635a30"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>drawDebugText</b> (<a class="el" href="class_debug_drawer.html">DebugDrawer</a> *debug_drawer, const QColor &amp;color=Qt::darkCyan, const QString &amp;layer=&quot;PathDebugText&quot;) const</td></tr>
+<tr class="separator:ac15093884b2e3db929789b4677635a30 inherit pub_methods_class_planning_1_1_path"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cb758fb6643e9a815d32b933acf0063 inherit pub_methods_class_planning_1_1_path"><td class="memItemLeft" align="right" valign="top"><a id="a5cb758fb6643e9a815d32b933acf0063"></a>
 virtual RJ::Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a5cb758fb6643e9a815d32b933acf0063">startTime</a> () const</td></tr>
 <tr class="memdesc:a5cb758fb6643e9a815d32b933acf0063 inherit pub_methods_class_planning_1_1_path"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time the path starts at. <br /></td></tr>
@@ -307,8 +307,8 @@ std::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom
 
 </div>
 </div>
-<a id="af43ab3ca2e74d653fab2ffb8a2f2edbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af43ab3ca2e74d653fab2ffb8a2f2edbb">&#9670;&nbsp;</a></span>draw()</h2>
+<a id="a76b137d6b7d691c258a304aaa4dcdfad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76b137d6b7d691c258a304aaa4dcdfad">&#9670;&nbsp;</a></span>draw()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -319,8 +319,8 @@ std::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom
         <tr>
           <td class="memname">void Planning::InterpolatedPath::draw </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_system_state.html">SystemState</a> *const&#160;</td>
-          <td class="paramname"><em>state</em>, </td>
+          <td class="paramtype"><a class="el" href="class_debug_drawer.html">DebugDrawer</a> *&#160;</td>
+          <td class="paramname"><em>debug_drawer</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -351,14 +351,14 @@ std::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom
 <p>The default implementation adds a DebugRobotPath to the SystemState that interpolates points along the path.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">state</td><td>The SystemState to draw the path on </td></tr>
+    <tr><td class="paramname">debug_drawer</td><td>The SystemState to draw the path on </td></tr>
     <tr><td class="paramname">color</td><td>The color the path should be drawn </td></tr>
     <tr><td class="paramname">layer</td><td>The layer to draw the path on </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="class_planning_1_1_path.html#a5a742aee463df068e9090bcd5bde386e">Planning::Path</a>.</p>
+<p>Reimplemented from <a class="el" href="class_planning_1_1_path.html#aa34f9905b639f40adbb38fcd139bc8ab">Planning::Path</a>.</p>
 
 </div>
 </div>
@@ -597,7 +597,7 @@ std::optional&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_interpolated_path.html">InterpolatedPath</a></li>
-    <li class="footer">Generated on Sat Jul 27 2019 00:41:01 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Jul 30 2019 01:21:48 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

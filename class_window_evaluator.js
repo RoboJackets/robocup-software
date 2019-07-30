@@ -1,6 +1,6 @@
 var class_window_evaluator =
 [
-    [ "WindowEvaluator", "class_window_evaluator.html#ab1d464e93521cad566a6d52ad0cee44e", null ],
+    [ "WindowEvaluator", "class_window_evaluator.html#abdc89a6082b6e7f900a95d2f0ffdcbfa", null ],
     [ "eval_pt_to_opp_goal", "class_window_evaluator.html#a71232e59601b090acd8716f17647c788", null ],
     [ "eval_pt_to_our_goal", "class_window_evaluator.html#a9adcbf8fb8f9a7bcd868bac2de612aab", null ],
     [ "eval_pt_to_pt", "class_window_evaluator.html#a4f43dbf948898d95139bf6514ebf033e", null ],

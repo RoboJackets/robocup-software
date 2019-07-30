@@ -20,7 +20,6 @@ var classtest__opponent_1_1_test_opponent =
     [ "length", "classtest__opponent_1_1_test_opponent.html#aaad162501c8ecc7344ba400a47a17b35", null ],
     [ "our_robots", "classtest__opponent_1_1_test_opponent.html#a933619ae4ca59f4ff778e93aa31d6f01", null ],
     [ "right_side", "classtest__opponent_1_1_test_opponent.html#a2164e8b12217cb1530b0ed52064a813b", null ],
-    [ "system_state", "classtest__opponent_1_1_test_opponent.html#a8a81dd64827344685d4c3cbeccc899e9", null ],
     [ "their_robots", "classtest__opponent_1_1_test_opponent.html#a44584ac501a3c9652de73de74db1fa9b", null ],
     [ "width", "classtest__opponent_1_1_test_opponent.html#a047a974d02a1db0e857fbdd4d50b51f8", null ]
 ];

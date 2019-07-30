@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['debugdrawer',['DebugDrawer',['../class_debug_drawer.html',1,'']]],
   ['debugwindowevaluator',['DebugWindowEvaluator',['../classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html',1,'gameplay::plays::testing::debug_window_evaluator']]],
   ['defender',['Defender',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html',1,'gameplay::tactics::positions::defender']]],
   ['defendpenalty',['DefendPenalty',['../classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html',1,'gameplay::plays::restarts::defend_penalty']]],

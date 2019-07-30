@@ -31,6 +31,7 @@ var hierarchy =
     [ "Planning::ConstPathIterator", "class_planning_1_1_const_path_iterator.html", null ],
     [ "Context", "struct_context.html", null ],
     [ "Planning::CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", null ],
+    [ "DebugDrawer", "class_debug_drawer.html", null ],
     [ "gameplay.constants.Robot.Dribbler", "classgameplay_1_1constants_1_1_robot_1_1_dribbler.html", null ],
     [ "RobotConfig::Dribbler", "struct_robot_config_1_1_dribbler.html", null ],
     [ "Planning::DynamicObstacle", "class_planning_1_1_dynamic_obstacle.html", null ],

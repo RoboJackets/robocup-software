@@ -2,6 +2,7 @@ var searchData=
 [
   ['d',['d',['../struct_robot_config_1_1_p_i_d.html#a491a7263592924e116223e8becd22a70',1,'RobotConfig::PID']]],
   ['debug',['debug',['../class_window_evaluator.html#a0d64365e0a35a79464d0c71695cf2758',1,'WindowEvaluator::debug()'],['../classgameplay_1_1tactics_1_1defense__old_1_1_defense_old.html#a66d66cfa92ec134c16521abba46f882e',1,'gameplay.tactics.defense_old.DefenseOld.debug()']]],
+  ['debugdrawer',['DebugDrawer',['../class_debug_drawer.html',1,'']]],
   ['debugwindowevaluator',['DebugWindowEvaluator',['../classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html',1,'gameplay::plays::testing::debug_window_evaluator']]],
   ['defaultdrivearounddist',['DefaultDriveAroundDist',['../classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a5e9bfdaada1e75177a8251959899b122',1,'gameplay::skills::line_kick_old::LineKickOld']]],
   ['defaultmaxspeed',['defaultMaxSpeed',['../struct_motion_constraints.html#acd634939abe429ccc20435680cad634a',1,'MotionConstraints']]],
@@ -21,7 +22,7 @@ var searchData=
   ['distto',['distTo',['../class_geometry2d_1_1_line.html#aca952f88c87e733ce38953b27dce0b1d',1,'Geometry2d::Line::distTo()'],['../class_geometry2d_1_1_point.html#acb8b9329a89eb0d461d8676d6c5f1093',1,'Geometry2d::Point::distTo()']]],
   ['dot',['dot',['../class_geometry2d_1_1_point.html#accd8a1775ab5f9ebbb6500c66a9a04fd',1,'Geometry2d::Point']]],
   ['doubletouchtracker',['DoubleTouchTracker',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html',1,'gameplay::evaluation::double_touch']]],
-  ['draw',['draw',['../class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#af43ab3ca2e74d653fab2ffb8a2f2edbb',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#a5a742aee463df068e9090bcd5bde386e',1,'Planning::Path::draw()'],['../class_planning_1_1_angle_function_path.html#a3e64c9408fc3041afe9df4a377c1f3bf',1,'Planning::AngleFunctionPath::draw()']]],
+  ['draw',['draw',['../class_planning_1_1_composite_path.html#ae2ed6f49a3fec65f8b487d62cf382ead',1,'Planning::CompositePath::draw()'],['../class_planning_1_1_interpolated_path.html#a76b137d6b7d691c258a304aaa4dcdfad',1,'Planning::InterpolatedPath::draw()'],['../class_planning_1_1_path.html#aa34f9905b639f40adbb38fcd139bc8ab',1,'Planning::Path::draw()'],['../class_planning_1_1_angle_function_path.html#a71319f6fe8959e829b37395195356ff9',1,'Planning::AngleFunctionPath::draw()']]],
   ['drawing_20functions',['Drawing Functions',['../group__drawing__functions.html',1,'']]],
   ['drawteamspace',['drawTeamSpace',['../class_field_view.html#aaabad424c361d3c3e090c0967f785a41',1,'FieldView']]],
   ['dribble',['Dribble',['../classgameplay_1_1skills_1_1dribble_1_1_dribble.html',1,'gameplay::skills::dribble']]],

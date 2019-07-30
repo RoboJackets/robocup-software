@@ -16,7 +16,6 @@ var classtest__passing_1_1_test_passing =
     [ "our_robots", "classtest__passing_1_1_test_passing.html#a7ae27b34a97f90c00ecd0fceb1c5b0d1", null ],
     [ "right_side", "classtest__passing_1_1_test_passing.html#a64373f6f3851232f66237d08f5e0ad77", null ],
     [ "success", "classtest__passing_1_1_test_passing.html#a0babfbefcefc0a2c51bce4ce6f030828", null ],
-    [ "system_state", "classtest__passing_1_1_test_passing.html#a0adec877fc28ce9ac60e7bc30d0e6fe5", null ],
     [ "their_robots", "classtest__passing_1_1_test_passing.html#a73bc3a47b8c2476b959877705a910c51", null ],
     [ "width", "classtest__passing_1_1_test_passing.html#ac7859593c8b250efb9e123292b4157f5", null ]
 ];

@@ -5,6 +5,5 @@ var searchData=
   ['setup_5fpenalty',['setup_penalty',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html#a8bde93263d313be9559dd9bce3cdca4e',1,'gameplay::tactics::positions::goalie::Goalie::State']]],
   ['shellid',['shellID',['../struct_planning_1_1_plan_request.html#ad515d67fe33e383342f4984169ff3d85',1,'Planning::PlanRequest']]],
   ['start',['start',['../struct_planning_1_1_plan_request.html#a98e981dbad53b764d63e90c51f497374',1,'Planning::PlanRequest']]],
-  ['steadymaxvel',['SteadyMaxVel',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a9276aee57f404ef4cb0374a159e539d4',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['systemstate',['systemState',['../struct_planning_1_1_plan_request.html#aa346d7feb23c8c8f4a62558168d47cdd',1,'Planning::PlanRequest']]]
+  ['steadymaxvel',['SteadyMaxVel',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a9276aee57f404ef4cb0374a159e539d4',1,'gameplay::skills::pass_receive::PassReceive']]]
 ];

@@ -13,7 +13,6 @@ var classtest__shooting_1_1_test_shooting =
     [ "length", "classtest__shooting_1_1_test_shooting.html#a12d974e2bdf2b20a0d176697a9ad37e5", null ],
     [ "our_robots", "classtest__shooting_1_1_test_shooting.html#aee3e41627c756667ca4f1c901fa03fee", null ],
     [ "success", "classtest__shooting_1_1_test_shooting.html#ac4b0c72c1c9f2427dafd99623449ac68", null ],
-    [ "system_state", "classtest__shooting_1_1_test_shooting.html#a8ff7bffb93d2d79ca136ac73a0d9a024", null ],
     [ "their_robots", "classtest__shooting_1_1_test_shooting.html#a38440e44c35f27263a5f8a29413f9c7e", null ],
     [ "width", "classtest__shooting_1_1_test_shooting.html#a8c498f3b8e543720baedbc31b5cfddb5", null ]
 ];

@@ -1,5 +1,12 @@
 var NAVTREEINDEX2 =
 {
+"class_gamepad_joystick.html#a6840961fb456cd8374493702dd84b06d":[18,0,47,0],
+"class_gamepad_joystick.html#ab64b3a6f7d97b7a31e639ae907375027":[18,0,47,1],
+"class_gamepad_joystick.html#ac4de36ae979a045c4445e866adcbd335":[18,0,47,4],
+"class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19":[18,0,47,5],
+"class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25":[18,0,47,3],
+"class_gameplay_1_1_gameplay_module.html":[18,0,2,0],
+"class_gameplay_1_1_gameplay_module.html#a02ef2edd82553a78e9dd8dc07556b4a0":[18,0,2,0,6],
 "class_gameplay_1_1_gameplay_module.html#a0cd9f6f095d43b1896e073e0f1d9bf20":[18,0,2,0,20],
 "class_gameplay_1_1_gameplay_module.html#a18e319fda79838b561d98588cd9eca80":[18,0,2,0,11],
 "class_gameplay_1_1_gameplay_module.html#a1986f0e589596c0a0f0bc843d916ef73":[18,0,2,0,8],
@@ -242,12 +249,5 @@ var NAVTREEINDEX2 =
 "class_geometry2d_1_1_segment.html#aff0156971f29d02ee141a89c1546099f":[18,0,4,8,18],
 "class_geometry2d_1_1_shape.html":[18,0,4,9],
 "class_geometry2d_1_1_shape.html#a47605ec12619d718467536fd961fa567":[18,0,4,9,3],
-"class_geometry2d_1_1_shape.html#a4e811fff528953ccbd931fb477cc3854":[18,0,4,9,7],
-"class_geometry2d_1_1_shape.html#a98849859aa30a87a760380b26c903873":[18,0,4,9,4],
-"class_geometry2d_1_1_shape.html#abd2f0ec9636f6be10fe2eb9ea9fdd6be":[18,0,4,9,2],
-"class_geometry2d_1_1_shape.html#ac18515569b2135cb242e437c25ed5608":[18,0,4,9,5],
-"class_geometry2d_1_1_shape.html#ac791f35db4e0efa1a6f07a619100d700":[18,0,4,9,0],
-"class_geometry2d_1_1_shape.html#acf902863336b26eb2de2d9e03182913f":[18,0,4,9,1],
-"class_geometry2d_1_1_shape.html#adf8247be1b760e2227d5c414bf83142f":[18,0,4,9,6],
-"class_geometry2d_1_1_shape.html#aea5443fe39c94f1f5fd91d2432969815":[18,0,4,9,8]
+"class_geometry2d_1_1_shape.html#a4e811fff528953ccbd931fb477cc3854":[18,0,4,9,7]
 };

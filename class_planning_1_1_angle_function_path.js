@@ -2,8 +2,8 @@ var class_planning_1_1_angle_function_path =
 [
     [ "AngleFunctionPath", "class_planning_1_1_angle_function_path.html#a237a95134d6471418ff657ffe6f263f5", null ],
     [ "clone", "class_planning_1_1_angle_function_path.html#aee0b13d88c07a1988e652598314129bc", null ],
-    [ "draw", "class_planning_1_1_angle_function_path.html#a3e64c9408fc3041afe9df4a377c1f3bf", null ],
-    [ "drawDebugText", "class_planning_1_1_angle_function_path.html#a762383607252b6ba549ebfb6c61c6e20", null ],
+    [ "draw", "class_planning_1_1_angle_function_path.html#a71319f6fe8959e829b37395195356ff9", null ],
+    [ "drawDebugText", "class_planning_1_1_angle_function_path.html#a67807ae9dcbeb2841411fdf459abfee6", null ],
     [ "end", "class_planning_1_1_angle_function_path.html#a67dd9a6bce9136927aa19a18efb725b5", null ],
     [ "eval", "class_planning_1_1_angle_function_path.html#ab383794a3a13e70938eb9009a1bd4b8c", null ],
     [ "getDuration", "class_planning_1_1_angle_function_path.html#ac888ee8ed16a776de01db2c327496e03", null ],

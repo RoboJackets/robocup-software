@@ -41,19 +41,19 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_auto_name.html",
-"class_gameplay_1_1_gameplay_module.html#a0cd9f6f095d43b1896e073e0f1d9bf20",
-"class_geometry2d_1_1_shape_set.html",
-"class_nelder_mead2_d_config.html#aa9307845e90acbedd76dc4db097ffae0",
-"class_planning_1_1_line_kick_planner.html",
-"class_robot_status.html#a49393cc5b2f7627f8f615c7211fcd345",
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#aad74144a3a0482f02eb9e4e09c8044ba",
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#af86d1f977fe1fc576f25c1bb68e68c5f",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a4484d4097cee6c2e5237c4e79cc5f0a3",
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a6b0094cf85340eb551c4a4a3c5f15878",
-"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#acfee073bb6f389f2573605588022812e",
-"classtest__constants_1_1_test_constants.html#ac253cf58d69a024add45a849875d5ac8",
-"struct_field___dimensions.html#a040e4e4a836ac50146a77b1f776a2840"
+"annotated.html",
+"class_gamepad_joystick.html#a6840961fb456cd8374493702dd84b06d",
+"class_geometry2d_1_1_shape.html#a98849859aa30a87a760380b26c903873",
+"class_nelder_mead2_d_config.html",
+"class_planning_1_1_interpolated_path.html#ab4a5db5c2ffb7e122d0846642761ed5a",
+"class_robot_pose.html#aba10a272072c2db915def20351375549",
+"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#a38f37d5714fcf36d92f6d0c3cb0b5abb",
+"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9c8f1421bb1eeed354762011a043ca1e",
+"classgameplay_1_1role__assignment_1_1_role_requirements.html#a312b9ab19e7039199e4bda4ac07dbdf7",
+"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a36bf058d534cd098df987cd88e49492f",
+"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a5661f4de9fd7ab98d9cb39389ceed3af",
+"classtest__circle__near__ball_1_1_test_circle_near_ball.html#ae48dd276dff826812f8033656f964d43",
+"struct_context.html#aa32d5e391e503d6d80de568a37ba7b52"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

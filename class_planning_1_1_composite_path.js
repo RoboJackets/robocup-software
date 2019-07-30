@@ -6,7 +6,7 @@ var class_planning_1_1_composite_path =
     [ "append", "class_planning_1_1_composite_path.html#aa7dbe5c31ab2a5f25fbf785fd0f173f7", null ],
     [ "append", "class_planning_1_1_composite_path.html#a41fda86dee930cc57fd2b35d1a37c1c4", null ],
     [ "clone", "class_planning_1_1_composite_path.html#a7ae76a00762203c43efa4ec6ed1ecc37", null ],
-    [ "draw", "class_planning_1_1_composite_path.html#a49a53c51d18adedb59542f42f6d897a4", null ],
+    [ "draw", "class_planning_1_1_composite_path.html#ae2ed6f49a3fec65f8b487d62cf382ead", null ],
     [ "end", "class_planning_1_1_composite_path.html#ad0f58fd77d04e78e88445231bfe5d3ee", null ],
     [ "eval", "class_planning_1_1_composite_path.html#a28191860f2a8b9eb7842cdb99c7e3b69", null ],
     [ "getDuration", "class_planning_1_1_composite_path.html#a536dc0fab4c404372de7a78b7d781096", null ],
