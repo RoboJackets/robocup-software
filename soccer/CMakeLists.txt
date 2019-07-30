@@ -48,6 +48,7 @@ set(ROBOCUP_LIB_SRC
     "Robot.cpp"
     "RobotConfig.cpp"
     "SystemState.cpp"
+    "DebugDrawer.cpp"
     "ui/BatteryWidget.cpp"
     "ui/FieldView.cpp"
     "ui/MainWindow.cpp"

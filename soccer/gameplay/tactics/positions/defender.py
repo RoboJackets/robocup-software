@@ -30,7 +30,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
         self._side = side
         self._opponent_avoid_threshold = 2.0
         self._defend_goal_radius = 0.9
-        self._win_eval = robocup.WindowEvaluator(main.system_state())
+        self._win_eval = robocup.WindowEvaluator(main.context())
 
         self._area = robocup.Rect(
             robocup.Point(-constants.Field.Width / 2.0,
@@ -61,7 +61,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_planning_priority(planning_priority.DEFENDER)
 
     def execute_marking(self):
-        #main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Defender")
+        #main.debug_drawer().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Defender")
         self.block_robot = self.find_robot_to_block()
         if self.block_robot is not None:
             # self.robot.add_text("Blocking Robot " + str(self.block_robot.shell_id()), (255,255,255), "RobotText")
@@ -220,7 +220,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
             shootline = robocup.Segment(
                 self._win_eval.origin(), robocup.Point.direction(angle * (
                     math.pi / 180.0)))  # FIXME :no origin.
-            main.system_state().draw_line(shootline, (255, 0, 0), "Defender")
+            main.debug_drawer().draw_line(shootline, (255, 0, 0), "Defender")
 
         need_task = False
         if best is not None:

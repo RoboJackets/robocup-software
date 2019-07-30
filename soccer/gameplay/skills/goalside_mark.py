@@ -13,19 +13,19 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     @param: ratio - this will control how far from the opposing robot the defender will mark (0 is close to robot)
     '''
     #pylint: disable=no-member
-    
+
     def __init__(self):
         super().__init__(continuous=True)
         #Below params are described above @properties
         self._ratio = 0.2
         #This threshold is lower than mark to ensure we get goal side of the opponent fast, 
         #then back off based on ratio
-        
-        self._mark_line_thresh = constants.Robot.Radius*4
-        self._mark_robot = None 
-        self._mark_point = None 
 
-        self._target_point = None 
+        self._mark_line_thresh = constants.Robot.Radius*4
+        self._mark_robot = None
+        self._mark_point = None
+
+        self._target_point = None
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -41,7 +41,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
             not main.ball().valid or
             not self.mark_robot.visible)):
             return
-        
+
         #Finds the line from the mark position to the shot point and creates a line between them
         #removing the overlap with the ball on one side and robot on the other
         #This assumes even with mark position parameter that there is a robot there to avoid
@@ -49,7 +49,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
         mark_line, shot_pt = self.get_mark_segment()
 
         #Drawing for simulator 
-        main.system_state().draw_line(mark_line, (0, 0, 255), "Mark")
+        main.debug_drawer().draw_line(mark_line, (0, 0, 255), "Mark")
 
         #Distance from robot to mark line
         mark_line_dist = mark_line.dist_to(self.robot.pos)
@@ -68,8 +68,8 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
                 shot_pt).normalized() * self.ratio * mark_line.length()
 
         #Drawing for simulator
-        main.system_state().draw_circle(self.mark_pos, constants.Robot.Radius * 1.2,
-                                        (0, 127, 255), "Mark")
+        main.debug_drawer().draw_circle(self.mark_pos, constants.Robot.Radius *
+                                        1.2, (0, 127, 255), "Mark")
 
         #Move robot into position and face the ball
         self.robot.move_to(self._target_point)
@@ -102,7 +102,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
     @mark_point.setter
     def mark_point(self, value: robocup.Point):
         self._mark_point = value
-    
+
     # Sets the position to mark as the given mark position 
     # or robot position if no mark position is given
     def _reset_mark_pos(self):
@@ -136,7 +136,7 @@ class Goalside_Mark(single_robot_behavior.SingleRobotBehavior):
 
         offset = constants.Robot.Radius
         goal_rect_padded = constants.Field.OurGoalZoneShapePadded(offset)
-        
+
         #Find best shot point from threat
         self.kick_eval.add_excluded_robot(self.robot) #FIX: Should we really exclude all of our robots but the goalie?
         shot_pt, shot_score = self.kick_eval.eval_pt_to_our_goal(self.mark_pos)

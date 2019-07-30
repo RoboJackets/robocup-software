@@ -110,7 +110,7 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_subbehavior(move, 'move', required=True, priority=100)
 
     def execute_setup(self):
-        main.system_state().draw_circle(self.move_point, 0.1,
+        main.debug_drawer().draw_circle(self.move_point, 0.1,
                                         constants.Colors.Blue, "move setup")
 
     def on_exit_setup(self):

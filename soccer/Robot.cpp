@@ -8,13 +8,14 @@
 #include <SystemState.hpp>
 #include <Utils.hpp>
 
-#include <cmath>
 #include <execinfo.h>
-#include <iostream>
-#include <QString>
-#include <stdexcept>
 #include <stdio.h>
+#include <QString>
+#include <cmath>
+#include <iostream>
+#include <stdexcept>
 #include <utility>
+#include "DebugDrawer.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -67,7 +68,7 @@ OurRobot::OurRobot(int shell, Context* const context)
     //_lastKickTime = 0;
     _lastBallSense = RJ::Time();
 
-    _motionControl = new MotionControl(this);
+    _motionControl = new MotionControl(context, this);
 
     resetAvoidRobotRadii();
 
@@ -91,7 +92,7 @@ void OurRobot::addText(const QString& text, const QColor& qc,
                        const QString& layerPrefix) {
     Packet::DebugText* dbg = new Packet::DebugText;
     QString layer = layerPrefix + QString::number(shell());
-    dbg->set_layer(_context->state.findDebugLayer(layer));
+    dbg->set_layer(_context->debug_drawer.findDebugLayer(layer));
     dbg->set_text(text.toStdString());
     dbg->set_color(color(qc));
     robotText.push_back(dbg);

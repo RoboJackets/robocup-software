@@ -20,7 +20,7 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
         Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
         Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
-    WindowEvaluator winEval(&context.state);
+    WindowEvaluator winEval(&context);
     WindowingResult result =
         winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
 

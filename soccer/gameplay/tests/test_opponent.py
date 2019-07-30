@@ -8,11 +8,10 @@ class TestOpponent(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestOpponent, self).__init__(*args, **kwargs)
         self.context = robocup.Context()
-        self.system_state = self.context.state
 
     def setUp(self):
         main.init(False)
-        main.set_system_state(self.system_state)
+        main.set_context(self.context)
 
         for robot in main.system_state().their_robots:
             robot.set_vis_for_testing(True)
@@ -36,7 +35,6 @@ class TestOpponent(unittest.TestCase):
 
         main.set_their_robots(main.system_state().their_robots[0:6])
         main.set_our_robots(main.system_state().our_robots[0:6])
-        main.set_ball(main.system_state().ball)
 
     # Tests a point for get_closest_opponent
     # 

@@ -77,7 +77,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if robot is None:
             return False
-        
+
         # L is left post
         # R is right post
         # T is target aiming point
@@ -118,7 +118,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         # We are aiming at the goal
         if (angle_left_goal_post_diff + angle_right_goal_post_diff + small_angle_offset <= angle_goal_post_diff):
             print('EARLY KIck')
-            main.system_state().draw_text('Early kick', robot.pos, 'PivotKick')
+            main.debug_drawer().draw_text('Early kick', robot.pos, 'PivotKick')
             return True
 
         return False
@@ -202,7 +202,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if isinstance(self.target, robocup.Segment):
             for i in range(2):
-                main.system_state().draw_line(
+                main.debug_drawer().draw_line(
                     robocup.Line(main.ball().pos, self.target.get_pt(i)),
                     constants.Colors.Blue, "PivotKick")
 

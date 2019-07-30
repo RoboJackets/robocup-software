@@ -22,10 +22,11 @@
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
+#include "DebugDrawer.hpp"
 #include "Processor.hpp"
-#include "vision/VisionFilter.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
+#include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -275,6 +276,7 @@ void Processor::run() {
         _context.state.logFrame->set_manual_id(_manualID);
         _context.state.logFrame->set_blue_team(_blueTeam);
         _context.state.logFrame->set_defend_plus_x(_defendPlusX);
+        _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
 
         if (first) {
             first = false;
@@ -466,8 +468,8 @@ void Processor::run() {
 
                 // Visualize local obstacles
                 for (auto& shape : r->localObstacles().shapes()) {
-                    _context.state.drawShape(shape, Qt::black,
-                                             "LocalObstacles");
+                    _context.debug_drawer.drawShape(shape, Qt::black,
+                                                    "LocalObstacles");
                 }
 
                 auto& globalObstaclesForBot =
@@ -489,7 +491,7 @@ void Processor::run() {
                 requests.emplace(
                     r->shell(),
                     Planning::PlanRequest(
-                        _context.state, Planning::MotionInstant(r->pos, r->vel),
+                        &_context, Planning::MotionInstant(r->pos, r->vel),
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
@@ -502,8 +504,8 @@ void Processor::run() {
         for (auto& entry : pathsById) {
             OurRobot* r = _context.state.self[entry.first];
             auto& path = entry.second;
-            path->draw(&_context.state, Qt::magenta, "Planning");
-            path->drawDebugText(&_context.state);
+            path->draw(&_context.debug_drawer, Qt::magenta, "Planning");
+            path->drawDebugText(&_context.debug_drawer);
             r->setPath(std::move(path));
 
             r->angleFunctionPath.angleFunction =
@@ -512,7 +514,8 @@ void Processor::run() {
 
         // Visualize obstacles
         for (auto& shape : globalObstacles.shapes()) {
-            _context.state.drawShape(shape, Qt::black, "Global Obstacles");
+            _context.debug_drawer.drawShape(shape, Qt::black,
+                                            "Global Obstacles");
         }
 
         // Run velocity controllers
@@ -531,7 +534,7 @@ void Processor::run() {
         // Store logging information
 
         // Debug layers
-        const QStringList& layers = _context.state.debugLayers();
+        const QStringList& layers = _context.debug_drawer.debugLayers();
         for (const QString& str : layers) {
             _context.state.logFrame->add_debug_layers(str.toStdString());
         }

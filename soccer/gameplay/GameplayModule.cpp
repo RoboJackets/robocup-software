@@ -10,6 +10,7 @@
 #include <cmath>
 
 // for python stuff
+#include "DebugDrawer.hpp"
 #include "robocup-py.hpp"
 
 using namespace Gameplay;
@@ -375,11 +376,7 @@ void Gameplay::GameplayModule::run() {
             }
             getMainModule().attr("set_their_robots")(theirBotVector);
 
-            getMainModule().attr("set_game_state")(_context->game_state);
-
-            getMainModule().attr("set_system_state")(&_context->state);
-
-            getMainModule().attr("set_ball")(_context->state.ball);
+            getMainModule().attr("set_context")(&_context);
 
         } catch (error_already_set) {
             PyErr_Print();
@@ -424,7 +421,7 @@ void Gameplay::GameplayModule::run() {
 
     /// visualize
     if (_context->game_state.stayAwayFromBall() && _context->state.ball.valid) {
-        _context->state.drawCircle(
+        _context->debug_drawer.drawCircle(
             _context->state.ball.pos,
             Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black,
             "Rules");
