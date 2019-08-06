@@ -163,7 +163,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         pass_line_dir = (
             self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
-    
+
         # vector pointing down the pass line toward the kicker
         pass_dir = (
             self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
@@ -180,9 +180,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         self.recalculate()
 
         if self._pass_line != None:
-            main.system_state().draw_line(self._pass_line,
+            main.debug_drawer().draw_line(self._pass_line,
                                           constants.Colors.Blue, "Pass")
-            main.system_state().draw_circle(self._target_pos, 0.03,
+            main.debug_drawer().draw_circle(self._target_pos, 0.03,
                                             constants.Colors.Blue, "Pass")
 
     def execute_aligning(self):
@@ -249,7 +249,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
         good_area.add_vertex(self.kicked_from + right_recieve)
         good_area.add_vertex(self.kicked_from + left_recieve)
 
-        main.system_state().draw_raw_polygon(good_area, constants.Colors.Green,
+        main.debug_drawer().draw_raw_polygon(good_area, constants.Colors.Green,
                                              "Good Pass Area")
         return not good_area.contains_point(main.ball().pos)
 

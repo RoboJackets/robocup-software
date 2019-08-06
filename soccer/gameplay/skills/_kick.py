@@ -97,7 +97,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
                 self._aim_target_point = self.target
             elif isinstance(self.target, robocup.Segment):
                 if self.use_windowing:
-                    win_eval = robocup.WindowEvaluator(main.system_state())
+                    win_eval = robocup.WindowEvaluator(main.context())
                     for key, value in self.win_eval_params.items():
                         setattr(win_eval, key, value)
                     win_eval.chip_enabled = self.robot.has_chipper(

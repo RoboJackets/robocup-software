@@ -283,9 +283,9 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() !=
-            _processor->state()->gameState.getGoalieId() + 1) {
+            _processor->context()->game_state.getGoalieId() + 1) {
             _ui.goalieID->setCurrentIndex(
-                _processor->state()->gameState.getGoalieId() + 1);
+                _processor->context()->game_state.getGoalieId() + 1);
         }
 
         bool blueTeam = _processor->refereeModule()->blueTeam();

@@ -18,6 +18,6 @@ class DebugWindowEvaluator(play.Play):
                             'immediately')
 
     def execute_running(self):
-        win_eval = robocup.WindowEvaluator(main.system_state())
+        win_eval = robocup.WindowEvaluator(main.context())
         win_eval.debug = True
         windows, best = win_eval.eval_pt_to_our_goal(main.ball().pos)

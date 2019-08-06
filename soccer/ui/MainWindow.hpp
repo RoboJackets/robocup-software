@@ -7,7 +7,7 @@
 #include <QTimer>
 
 #include <Configuration.hpp>
-#include <FieldView.hpp>
+#include "FieldView.hpp"
 
 #include "Processor.hpp"
 #include "rc-fshare/rtp.hpp"

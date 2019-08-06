@@ -2653,12 +2653,12 @@
   <customwidget>
    <class>ProtobufTree</class>
    <extends>QTreeWidget</extends>
-   <header>ProtobufTree.hpp</header>
+   <header>ui/ProtobufTree.hpp</header>
   </customwidget>
   <customwidget>
    <class>SimFieldView</class>
    <extends>QWidget</extends>
-   <header location="global">SimFieldView.hpp</header>
+   <header location="global">ui/SimFieldView.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

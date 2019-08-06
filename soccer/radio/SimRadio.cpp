@@ -17,8 +17,8 @@ using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
-SimRadio::SimRadio(SystemState& system_state, bool blueTeam)
-    : _state(system_state), _blueTeam(blueTeam) {
+SimRadio::SimRadio(Context* const context, bool blueTeam)
+    : _context(context), _blueTeam(blueTeam) {
     switchTeam(blueTeam);
 }
 
@@ -136,8 +136,8 @@ void SimRadio::receive() {
 void SimRadio::stopRobots() {
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
-    for (int i = 0; i < _state.self.size(); i++) {
-        auto& robot = _state.self[i]->robotPacket;
+    for (int i = 0; i < _context->state.self.size(); i++) {
+        auto& robot = _context->state.self[i]->robotPacket;
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(robot.uid());
         simRobot->set_veltangent(0);
