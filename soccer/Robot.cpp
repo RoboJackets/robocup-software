@@ -309,16 +309,8 @@ void OurRobot::face(Geometry2d::Point pt) {
 }
 
 bool OurRobot::isFacing() {
-    if (_rotationCommand && _rotationCommand->getCommandType() == Planning::RotationCommand::CommandType::None) {
-        return false;
-    } else {
-        return true;
-    }
-    //if (_rotationCommand && *_rotationCommand == Planning::EmptyAngleCommand{}) {
-    //    return false;
-    //} else {
-    //    return true;
-    //}
+    return _rotationCommand &&
+           _rotationCommand->getCommandType() == Planning::RotationCommand::CommandType::None;
 }
 
 
