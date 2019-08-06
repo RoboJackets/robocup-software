@@ -187,7 +187,6 @@ void SettlePathPlanner::processStateTransition(const Ball& ball,
             // Start the next section of the path from the end of our current path
             startInstant = pathSoFar->end().motion;
             currentState = Dampen;
-            //std::cout << "Transitioned to dampen" << std::endl;
         }
     }
 }
@@ -216,7 +215,6 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
         // we want the ball to still hit the mouth
         ballVelIntercept += deltaPos;
 
-        // TODO: Take the targetFinalCaptureDirection into account
         // Use the mouth to center vector, rotate by X degrees
         // Take the delta between old and new mouth vector and move
         // targetRobotIntersection by that amount
@@ -339,7 +337,6 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(const PlanRequest& planReques
     // to the target
     if ((pathInterceptTarget - avgInstantaneousInterceptTarget).mag() > Robot_Radius) {
         pathInterceptTarget = avgInstantaneousInterceptTarget;
-        //std::cout << "Changing targets" << std::endl;
     }
 
     // Build a new path with the target
@@ -500,8 +497,6 @@ std::unique_ptr<Path> SettlePathPlanner::invalid(const PlanRequest& planRequest)
 void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant, double& angle,
                                            Geometry2d::Point& deltaRobotPos, Geometry2d::Point& facePos) {
     // If we have a valid bounce target
-    //
-    // TODO: Simplify the math
     if (targetBounceDirection) {
         // Get angle between target and normal hit
         Point normalFaceVector = ball.pos - startInstant.pos;
