@@ -50,7 +50,7 @@ void CollectPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 bool CollectPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
-    // TODO: Figure out when a replan is needed
+    // Always replan since the ball is very noisy
     return true;
 }
 
@@ -127,24 +127,14 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     }
 
 
-
     // Approach direction is the direction we move towards the ball and through it
-    // Only set once
-    // Reset when the ball state changes significantly
-
-    // If we haven't found an approach direction yet
-    //if (!approachDirectionCreated) {
-        if (ball.vel.mag() < *_ballSpeedApproachDirectionCutoff) {
-            // Move directly to the ball
-            approachDirection = (ball.pos - startInstant.pos).norm();
-        } else {
-            // Approach the ball from behind
-            // TODO: May need to rethink average here since it'll be based on the first ball vel only
-            approachDirection = averageBallVel.norm();
-        }
-
-    //    approachDirectionCreated = true;
-    //}
+    if (ball.vel.mag() < *_ballSpeedApproachDirectionCutoff) {
+        // Move directly to the ball
+        approachDirection = (ball.pos - startInstant.pos).norm();
+    } else {
+        // Approach the ball from behind
+        approachDirection = averageBallVel.norm();
+    }
 
     // Check if we should transition to control from approach
     processStateTransition(ball, startInstant, prevPath.get(), timeIntoPreviousPath);
@@ -192,7 +182,6 @@ void CollectPathPlanner::processStateTransition(const Ball& ball,
     // If we are in range to the slow dist
     if (dist < *_approachDistTarget + Robot_MouthRadius && currentState == CourseApproach) {
         currentState = FineApproach;
-        //cout << "Transitioning to fine" << endl;
     }
 
     // If we are close enough to the target point near the ball
@@ -200,7 +189,6 @@ void CollectPathPlanner::processStateTransition(const Ball& ball,
     // TODO: Check for ball sense?
     if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl && currentState == FineApproach) {
         currentState = Control;
-	    //cout << "Transitioning to control" << std::endl;
     }
 }
 
