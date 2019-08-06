@@ -246,7 +246,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
             )
             self.add_subbehavior(
                 self.midfielders, 'midfielders', required=False, priority=10)
-        #self.midfielders.kick = False
 
     def execute_dribbling(self):
         # Grab best pass
@@ -257,9 +256,6 @@ class AdaptiveFormation(standard_play.StandardPlay):
             AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
-
-        #self.midfielders.kick = False
-        #self.midfielders.passing_point = self.pass_target
 
         # Grab shot chance
         self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
@@ -301,13 +297,11 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.kick.aim_params['desperate_timeout'] = 1
 
         self.kick.target = constants.Field.TheirGoalSegment
-        #self.midfielders.kick = True
         self.add_subbehavior(self.kick, 'kick', required=False)
 
     def on_exit_shooting(self):
         self.remove_subbehavior('kick')
         self.kick = None
-        #self.midfielders.kick = False
 
     def on_enter_clearing(self):
         # Line kick with chip
@@ -329,8 +323,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         self.remove_subbehavior('clear')
 
     def on_enter_passing(self):
-        # TODO: Use the moving recieve when finished
-        #self.midfielders.kick = False
+        # TODO: Use the moving receive when finished
         self.add_subbehavior(
             tactics.coordinated_pass.CoordinatedPass(self.pass_target), 'pass')
 
