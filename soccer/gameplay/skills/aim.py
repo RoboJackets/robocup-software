@@ -60,7 +60,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         # track start time so we can use desperate timeout
         self._course_start = 0
         self._fine_start = 0
-        self.course_timeout = 5#float("inf")
+        self.course_timeout = float("inf")
         self.fine_timeout = float("inf")
 
         self.startBallLocation = main.ball().pos
