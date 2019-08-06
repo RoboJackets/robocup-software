@@ -89,7 +89,8 @@ class OurKickoff(standard_play.StandardPlay):
         kicker.kick_power = OurKickoff.KickPower
         kicker.chip_power = OurKickoff.ChipPower
         if (not self.has_subbehavior_with_name('kicker') or
-            (self.has_subbehavior_with_name('kicker') and self.subbehavior_with_name('kicker').is_done_running())):
+            (self.has_subbehavior_with_name('kicker') and
+             self.subbehavior_with_name('kicker').is_done_running())):
             self.remove_all_subbehaviors()
             self.add_subbehavior(kicker, 'kicker', required=True, priority=5)
 

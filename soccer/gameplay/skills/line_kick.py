@@ -14,7 +14,8 @@ import evaluation.ball
 # Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes
 #
 # See Also: LineKickOld is the old, python-only implementation of line_kick
-class LineKick(skills._kick._Kick, single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class LineKick(skills._kick._Kick,
+               single_robot_composite_behavior.SingleRobotCompositeBehavior):
     ClosenessThreshold = constants.Robot.Radius * 3 + 0.04
 
     class State(enum.Enum):
@@ -48,7 +49,10 @@ class LineKick(skills._kick._Kick, single_robot_composite_behavior.SingleRobotCo
     def on_enter_waiting(self):
         self.robot.set_avoid_ball_radius(0.1)
         super().recalculate_aim_target_point()
-        self.add_subbehavior(skills.move.Move(main.ball().pos - (self.aim_target_point - main.ball().pos).normalized()*.5), 'setupMove')
+        self.add_subbehavior(
+            skills.move.Move(main.ball().pos - (
+                self.aim_target_point - main.ball().pos).normalized() * .5),
+            'setupMove')
 
     def on_exit_waiting(self):
         self.remove_subbehavior('setupMove')
@@ -81,7 +85,7 @@ class LineKick(skills._kick._Kick, single_robot_composite_behavior.SingleRobotCo
         # For when ball sense isn't great, kick when vision
         # thinks we have the ball
         if (self.robot is not None and
-            evaluation.ball.robot_has_ball(self.robot)):
+                evaluation.ball.robot_has_ball(self.robot)):
             self.robot.kick_immediately()
 
     # TODO Figure out how to renable role requirements for this however it needs to be done

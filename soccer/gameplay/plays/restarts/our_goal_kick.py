@@ -23,7 +23,7 @@ class OurGoalKick(standard_play.StandardPlay):
     MaxKickSpeed = 0.5
     MaxKickAccel = 0.5
 
-    class State (enum.Enum):
+    class State(enum.Enum):
         move = 1
 
         kick = 2
@@ -34,7 +34,6 @@ class OurGoalKick(standard_play.StandardPlay):
         for s in OurGoalKick.State:
             self.add_state(s, behavior.Behavior.State.running)
 
-
         self.add_transition(behavior.Behavior.State.start,
                             OurGoalKick.State.kick, lambda: True,
                             'immediately')
@@ -43,7 +42,7 @@ class OurGoalKick(standard_play.StandardPlay):
     def score(cls):
         gs = main.game_state()
         return 0 if (gs.is_ready_state() and gs.is_our_direct() and
-                   main.ball().pos.y < 1.0) else float("inf")
+                     main.ball().pos.y < 1.0) else float("inf")
 
     @classmethod
     def is_restart(cls):

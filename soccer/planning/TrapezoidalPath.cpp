@@ -69,14 +69,14 @@ std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
     // Check for valid arguments
     if (startTime < RJ::Seconds::zero()) {
         throw std::invalid_argument("TrapezoidalPath::subPath(): startTime(" +
-                               to_string(startTime) +
-                               ") can't be less than zero");
+                                    to_string(startTime) +
+                                    ") can't be less than zero");
     }
 
     if (endTime < RJ::Seconds::zero()) {
         throw std::invalid_argument("TrapezoidalPath::subPath(): endTime(" +
-                               to_string(endTime) +
-                               ") can't be less than zero");
+                                    to_string(endTime) +
+                                    ") can't be less than zero");
     }
 
     if (startTime > endTime) {
@@ -90,8 +90,8 @@ std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
             "TrapezoidalPath::subPath(): startTime(" + to_string(startTime) +
             ") can't be greater than the duration(" + to_string(_duration) +
             ") of the path"));
-        return std::make_unique<TrapezoidalPath>(Geometry2d::Point(0,0),0,
-                                                 Geometry2d::Point(0,0),0,
+        return std::make_unique<TrapezoidalPath>(Geometry2d::Point(0, 0), 0,
+                                                 Geometry2d::Point(0, 0), 0,
                                                  _constraints);
     }
 
@@ -102,7 +102,8 @@ std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
     // It should be covered under the test for startTime > 0,
     // but this will fail gracefully in case something wasn't considered
     if (!start) {
-        start = RobotInstant(MotionInstant(_startPos, _pathDirection * _startSpeed));
+        start = RobotInstant(
+            MotionInstant(_startPos, _pathDirection * _startSpeed));
     }
 
     // End can return null when endTime > path_duration
@@ -112,9 +113,9 @@ std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
         end = RobotInstant(MotionInstant(_endPos, _pathDirection * _endSpeed));
     }
 
-    return std::make_unique<TrapezoidalPath>(start->motion.pos, start->motion.vel.mag(), 
-                                             end->motion.pos, end->motion.vel.mag(),
-                                             _constraints);
+    return std::make_unique<TrapezoidalPath>(
+        start->motion.pos, start->motion.vel.mag(), end->motion.pos,
+        end->motion.vel.mag(), _constraints);
 }
 
 }  // namespace Planning

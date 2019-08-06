@@ -63,21 +63,21 @@ class Stopped(standard_play.StandardPlay):
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
     def execute_normal(self):
-        for r in main.our_robots() :
-           r.set_max_speed(self.slow_speed)
+        for r in main.our_robots():
+            r.set_max_speed(self.slow_speed)
 
     def execute_center(self):
-        for r in main.our_robots() :
+        for r in main.our_robots():
             r.set_max_speed(self.slow_speed)
 
     def on_exit_center(self):
-        for r in main.our_robots() :
-           r.set_max_speed(self.speed)
+        for r in main.our_robots():
+            r.set_max_speed(self.speed)
 
     def on_exit_normal(self):
-        for r in main.our_robots() :
-           r.set_max_speed(self.speed)
-       
+        for r in main.our_robots():
+            r.set_max_speed(self.speed)
+
 
     def on_enter_center(self):
         self.remove_all_subbehaviors()

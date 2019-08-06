@@ -212,8 +212,8 @@ public:
 
     /**
      * Intercept the ball as quickly as possible
-     * May just slam into the ball if it does not have time to stop 
-     * 
+     * May just slam into the ball if it does not have time to stop
+     *
      * @param target - The target position to intercept the ball at
      */
     void intercept(Geometry2d::Point target);
@@ -245,8 +245,8 @@ public:
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
      * is given, the robot will try to face in that direction when the ball hits
-     * @param target - the target point in which the robot will try to bounce the
-     * towards
+     * @param target - the target point in which the robot will try to bounce
+     * the towards
      */
     void settle(std::optional<Geometry2d::Point> target);
 

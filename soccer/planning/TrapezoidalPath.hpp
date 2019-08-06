@@ -62,9 +62,8 @@ public:
     }
 
     virtual std::unique_ptr<Path> clone() const override {
-        return std::make_unique<TrapezoidalPath>(_startPos, _startSpeed, 
-                                                 _endPos, _endSpeed,
-                                                 _constraints);
+        return std::make_unique<TrapezoidalPath>(
+            _startPos, _startSpeed, _endPos, _endSpeed, _constraints);
     }
 
 protected:

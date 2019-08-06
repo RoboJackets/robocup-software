@@ -25,8 +25,7 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
         setup = 1
         passing = 2
 
-    def __init__(self,
-                 skillkicker=None):
+    def __init__(self, skillkicker=None):
         super().__init__(continuous=False)
 
         if skillkicker == None:
@@ -49,17 +48,16 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
             lambda: self.pass_bhvr.state == behavior.Behavior.State.completed,
             'Touchpass completed.')
 
-        self.add_transition(
-            OneTouchPass.State.passing, behavior.Behavior.State.failed,
-            lambda: self.pass_bhvr.state == behavior.Behavior.State.failed,
-            'Touchpass failed!')
+        self.add_transition(OneTouchPass.State.passing,
+                            behavior.Behavior.State.failed, lambda: self.
+                            pass_bhvr.state == behavior.Behavior.State.failed,
+                            'Touchpass failed!')
 
         self.angle_receive = skills.angle_receive.AngleReceive()
 
         self.pass_bhvr = tactics.coordinated_pass.CoordinatedPass(
             None,
-            self.angle_receive,
-            (skillkicker, lambda x: True),
+            self.angle_receive, (skillkicker, lambda x: True),
             receiver_required=False,
             kicker_required=False,
             prekick_timeout=20,
@@ -68,11 +66,13 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
     def evaluate_chip(self, receive_point):
         bp = main.ball().pos
         ex_robots = self.subbehavior_with_name('pass').get_robots()
-        kick_p = evaluation.passing.eval_pass(bp, receive_point, excluded_robots=ex_robots)
+        kick_p = evaluation.passing.eval_pass(
+            bp, receive_point, excluded_robots=ex_robots)
 
         if kick_p < .5:
             ex_robots.extend(evaluation.chipping.chippable_robots())
-            chip_p = evaluation.passing.eval_pass(bp, receive_point, excluded_robots=ex_robots)
+            chip_p = evaluation.passing.eval_pass(
+                bp, receive_point, excluded_robots=ex_robots)
             if chip_p > kick_p:
                 self.subbehavior_with_name('pass').use_chipper = True
 

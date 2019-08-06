@@ -112,8 +112,7 @@ struct CollectCommand : public MotionCommand {
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<CollectCommand>(*this);
     }
-    explicit CollectCommand()
-        : MotionCommand(MotionCommand::Collect) {};
+    explicit CollectCommand() : MotionCommand(MotionCommand::Collect){};
 };
 
 struct LineKickCommand : public MotionCommand {

@@ -33,8 +33,8 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # Tested with dribbler speed of 70
         self._dribble_speed = constants.Robot.Dribbler.StandardPower
 
-        self.add_transition(behavior.Behavior.State.start, Dribble.State.capture,
-                            lambda: True, 'immediately')
+        self.add_transition(behavior.Behavior.State.start,
+                            Dribble.State.capture, lambda: True, 'immediately')
 
         self.add_transition(
             Dribble.State.capture, Dribble.State.aim,
@@ -51,11 +51,13 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             lambda: self.aimed() and self.robot.has_ball(),
                             'done aiming')
 
-        self.add_transition(Dribble.State.aim, Dribble.State.capture,
-                            lambda: self.fumbled(), 'fumbled')
+        self.add_transition(Dribble.State.aim,
+                            Dribble.State.capture, lambda: self.fumbled(),
+                            'fumbled')
 
-        self.add_transition(Dribble.State.drive, Dribble.State.capture,
-                            lambda: self.fumbled(), 'fumbled')
+        self.add_transition(Dribble.State.drive,
+                            Dribble.State.capture, lambda: self.fumbled(),
+                            'fumbled')
 
         self.add_transition(
             Dribble.State.drive, behavior.Behavior.State.completed,

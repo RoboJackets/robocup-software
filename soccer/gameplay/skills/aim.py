@@ -117,7 +117,6 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     def desperate_timeout(self, value):
         self._fine_timeout = value
 
-
     # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
     # Default: float("inf")
     @property
@@ -258,12 +257,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
                                             constants.Colors.Blue, "Aim")
 
         # If we are within X degrees of the target, start the fine timeout
-        if (self.target_point is not None and
-            self._fine_start == 0 and
-            robocup.Point.direction(self.robot.angle).angle_between(
-                self.target_point - self.robot.pos) < 45*constants.DegreesToRadians and
-            robocup.Point.direction(self.robot.angle).dot(
-                self.target_point - self.robot.pos) > 0):
+        if (self.target_point is not None and self._fine_start == 0 and
+                robocup.Point.direction(self.robot.angle).angle_between(
+                    self.target_point - self.robot.pos) < 45 *
+                constants.DegreesToRadians and robocup.Point.direction(
+                    self.robot.angle).dot(self.target_point - self.robot.pos) >
+                0):
 
             self._fine_start = time.time()
 

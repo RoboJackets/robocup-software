@@ -231,8 +231,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(),
-            AdaptiveFormation.MIN_PASS_DIST,
+            main.our_robots(), AdaptiveFormation.MIN_PASS_DIST,
             AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.DRIBBLING_WEIGHTS)
@@ -251,8 +250,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(),
-            AdaptiveFormation.MIN_PASS_DIST,
+            main.our_robots(), AdaptiveFormation.MIN_PASS_DIST,
             AdaptiveFormation.FIELD_POS_WEIGHTS,
             AdaptiveFormation.NELDER_MEAD_ARGS,
             AdaptiveFormation.PASSING_WEIGHTS)
@@ -266,8 +264,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos,
-                main.our_robots(),
-                AdaptiveFormation.MIN_PASS_DIST,
+                main.our_robots(), AdaptiveFormation.MIN_PASS_DIST,
                 AdaptiveFormation.FIELD_POS_WEIGHTS,
                 AdaptiveFormation.NELDER_MEAD_ARGS,
                 AdaptiveFormation.DRIBBLING_WEIGHTS)
@@ -289,7 +286,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def on_enter_shooting(self):
         self.kick = skills.pivot_kick.PivotKick()
-        
+
         # Same params as basic_122
         self.kick.aim_params['error_threshold'] = 0.3
         self.kick.aim_params['max_steady_ang_vel'] = 10

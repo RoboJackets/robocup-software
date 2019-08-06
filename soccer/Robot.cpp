@@ -223,16 +223,14 @@ void OurRobot::lineKick(Point target) {
     if (!visible) return;
 
     disableAvoidBall();
-    _motionCommand =
-        std::make_unique<Planning::LineKickCommand>(target);
+    _motionCommand = std::make_unique<Planning::LineKickCommand>(target);
 }
 
 void OurRobot::intercept(Point target) {
     if (!visible) return;
 
     disableAvoidBall();
-    _motionCommand =
-        std::make_unique<Planning::InterceptCommand>(target);
+    _motionCommand = std::make_unique<Planning::InterceptCommand>(target);
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
@@ -310,10 +308,9 @@ void OurRobot::face(Geometry2d::Point pt) {
 }
 
 bool OurRobot::isFacing() {
-    return _rotationCommand &&
-           _rotationCommand->getCommandType() == Planning::RotationCommand::CommandType::None;
+    return _rotationCommand && _rotationCommand->getCommandType() ==
+                                   Planning::RotationCommand::CommandType::None;
 }
-
 
 void OurRobot::faceNone() {
     _rotationCommand = std::make_unique<Planning::EmptyAngleCommand>();
@@ -560,8 +557,7 @@ bool OurRobot::kickerWorks() const {
 }
 
 bool OurRobot::chipper_available() const {
-    return kickerWorks() &&
-           *status->chipper_enabled;
+    return kickerWorks() && *status->chipper_enabled;
 }
 
 bool OurRobot::kicker_available() const {

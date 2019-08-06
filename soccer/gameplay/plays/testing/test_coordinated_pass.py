@@ -20,7 +20,7 @@ class TestCoordinatedPass(play.Play):
 
         # This has to be here instead of up top because the field is the wrong
         # size for a little while until vision sends an update
-        self.ReceiveXCoord = constants.Field.Width/2 - 1.0/4.0
+        self.ReceiveXCoord = constants.Field.Width / 2 - 1.0 / 4.0
         self.ReceiveYCoord = constants.Field.Length * 1.0 / 4.0
 
     def reset_receive_point(self):

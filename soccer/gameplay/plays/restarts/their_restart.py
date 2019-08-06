@@ -19,10 +19,15 @@ class TheirRestart(standard_play.StandardPlay):
 
         self.marks = []
 
-        if (main.game_state().is_their_direct()) :
-            self.intercept = (constants.Field.OurGoalSegment.center() - main.ball().pos) * 0.25 + main.ball().pos
-            self.add_subbehavior(skills.move.Move(self.intercept), 'intercept direct', required = False, priority = 5)
-        
+        if (main.game_state().is_their_direct()):
+            self.intercept = (constants.Field.OurGoalSegment.center() -
+                              main.ball().pos) * 0.25 + main.ball().pos
+            self.add_subbehavior(
+                skills.move.Move(self.intercept),
+                'intercept direct',
+                required=False,
+                priority=5)
+
         for i in range(3):
             mark_i = skills.mark.Mark()
             mark_i.ratio = 0.7
@@ -33,7 +38,7 @@ class TheirRestart(standard_play.StandardPlay):
             self.marks.append(mark_i)
 
         self.kick_eval = robocup.KickEvaluator(main.system_state())
-        self.kick_eval.debug = True;
+        self.kick_eval.debug = True
         for i, robot in enumerate(main.our_robots()):
             self.kick_eval.add_excluded_robot(robot)
 
@@ -56,11 +61,15 @@ class TheirRestart(standard_play.StandardPlay):
         return True
 
     def calculate_shot_chance(self, robot):
-        shot_position, success_chance = self.kick_eval.eval_pt_to_our_goal(robot.pos)
+        shot_position, success_chance = self.kick_eval.eval_pt_to_our_goal(
+            robot.pos)
         if self.debug is True:
             shot_line = robocup.Segment(robot.pos, shot_position)
-            main.system_state().draw_line(shot_line, (0, 255, 0), "Target Position")
-            main.system_state().draw_text("Shot Chance: " + str(success_chance), shot_line.center(), constants.Colors.White, "Defense")
+            main.system_state().draw_line(shot_line,
+                                          (0, 255, 0), "Target Position")
+            main.system_state().draw_text(
+                "Shot Chance: " + str(success_chance),
+                shot_line.center(), constants.Colors.White, "Defense")
         return success_chance
 
     def execute_running(self):
@@ -71,7 +80,8 @@ class TheirRestart(standard_play.StandardPlay):
 
         ball_pos = main.ball().pos
 
-        self.intercept = (constants.Field.OurGoalSegment.center() - main.ball().pos) * 0.25 + main.ball().pos
+        self.intercept = (constants.Field.OurGoalSegment.center() -
+                          main.ball().pos) * 0.25 + main.ball().pos
 
 
         # the closest of their bots to the ball is their kicker
@@ -83,7 +93,8 @@ class TheirRestart(standard_play.StandardPlay):
         # Needs tuning/improvement. Right now this is excessively defensive
         sorted_opponents = sorted(
             filter(lambda robot: robot != their_kicker, main.their_robots()),
-            key=lambda robot: self.calculate_shot_chance(robot), reverse=True)
+            key=lambda robot: self.calculate_shot_chance(robot),
+            reverse=True)
 
         # Decide what each marking robot should do
         # @sorted_opponents contains the robots we want to mark by priority

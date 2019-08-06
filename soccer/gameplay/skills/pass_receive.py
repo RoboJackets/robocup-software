@@ -82,11 +82,12 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
             self.add_transition(state, PassReceive.State.receiving,
                                 lambda: self.ball_kicked, 'ball kicked')
 
-        self.add_transition(PassReceive.State.receiving,
-                            behavior.Behavior.State.completed,
-                            lambda: evaluation.ball.robot_has_ball(self.robot) and
-                                    self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
-                            'ball received!')
+        self.add_transition(
+            PassReceive.State.receiving,
+            behavior.Behavior.State.completed, lambda: evaluation.ball.
+            robot_has_ball(self.robot) and self.subbehavior_with_name(
+                'capture').state == behavior.Behavior.State.completed,
+            'ball received!')
 
         self.add_transition(
             PassReceive.State.receiving, behavior.Behavior.State.failed,
@@ -188,7 +189,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
     def execute_aligning(self):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
-            
+
         self.robot.face(main.ball().pos)
 
     def reset_correct_location(self):

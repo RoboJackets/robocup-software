@@ -4,6 +4,7 @@ import robocup
 import main
 import constants
 
+
 # Moves in front of a moving ball to intercept it
 # When target is set, settle tries to intercept the ball
 # while facing the target to either bounce the ball in that
@@ -18,7 +19,7 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
                             'immediately')
 
     def execute_running(self):
-        if(self.robot is not None):
+        if (self.robot is not None):
             self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(constants.Robot.Dribbler.MaxPower)
 

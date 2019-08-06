@@ -51,17 +51,18 @@ class OurCornerKickTouch(standard_play.StandardPlay):
                             self.pass_bhvr.is_done_running, 'passing is done')
 
         for state in OurCornerKickTouch.State:
-            self.add_transition(state, behavior.Behavior.State.failed,
-                                lambda: (time.time() - self.start_time > OurCornerKickTouch.Timeout), 'failed')
-
+            self.add_transition(
+                state, behavior.Behavior.State.failed, lambda: (time.time(
+                ) - self.start_time > OurCornerKickTouch.Timeout), 'failed')
 
     @classmethod
     def score(cls):
         gs = main.game_state()
         if len(main.our_robots()) < 5:
             return float("inf")
-        if (gs.is_ready_state() and gs.is_our_free_kick() and main.ball().pos.y > (
-                constants.Field.Length - 1.2) and abs(main.ball().pos.x) > .6 ):
+        if (gs.is_ready_state() and gs.is_our_free_kick() and
+                main.ball().pos.y > (constants.Field.Length - 1.2) and
+                abs(main.ball().pos.x) > .6):
             return 0
         else:
             return 10000

@@ -309,10 +309,9 @@ def assign_roles(robots, role_reqs):
                     .forbidden_ball_toucher() or not robot.has_chipper() or
                     not robot.ball_sense_works()):
                 cost = MaxWeight
-                fail_reason += (
-                    "Robot {}: does not have a chipper"
-                    " (or double touched)\n"
-                        .format(robot.shell_id()))
+                fail_reason += ("Robot {}: does not have a chipper"
+                                " (or double touched)\n"
+                                .format(robot.shell_id()))
             else:
                 if req.prohibited_shell_id is not None and req.prohibited_shell_id == robot.shell_id():
                     cost = MaxWeight

@@ -13,4 +13,5 @@ class TestSettle(play.Play):
                             "immediately")
 
     def on_enter_running(self):
-        self.add_subbehavior(skills.settle.Settle(), name='settler', required=True)
+        self.add_subbehavior(
+            skills.settle.Settle(), name='settler', required=True)

@@ -16,6 +16,7 @@ import play
 import time
 import random
 
+
 class OurShootoutChip(play.Play):
 
     #currently not sure if these variables are necessary will update soon
@@ -39,7 +40,7 @@ class OurShootoutChip(play.Play):
         super().__init__(continuous=True)
 
         #initalize states
-        for s in OurShootoutChip.State :
+        for s in OurShootoutChip.State:
             self.add_state(s, behavior.Behavior.State.running)
 
         # add transition to lead into the first state (starting/setup state)
@@ -49,34 +50,35 @@ class OurShootoutChip(play.Play):
 
         # one the ball is able to be hit begin dribbling a meter up
         self.add_transition(OurShootoutChip.State.starting,
-                            OurShootoutChip.State.dribbling,
-                            lambda: main.game_state().is_ready_state(),
-                            'begin')
+                            OurShootoutChip.State.dribbling, lambda: main.
+                            game_state().is_ready_state(), 'begin')
 
         # if the goalie gets too close chip over him
-        self.add_transition(OurShootoutChip.State.dribbling,
-                            OurShootoutChip.State.chipping, lambda: self.is_goalie_close(),
-                            'goalie in range')
+        self.add_transition(
+            OurShootoutChip.State.dribbling,
+            OurShootoutChip.State.chipping, lambda: self.is_goalie_close(),
+            'goalie in range')
 
         # if the goalie is not too close and we reach a "must shoot time" (since we only have 10s)
         # just kick the ball into goal
-        self.add_transition(OurShootoutChip.State.dribbling,
-                            OurShootoutChip.State.shooting,
-                            lambda: not self.is_goalie_close() and self.must_shoot_time(),
-                            'must shoot')
+        self.add_transition(
+            OurShootoutChip.State.dribbling,
+            OurShootoutChip.State.shooting, lambda: not self.is_goalie_close(
+            ) and self.must_shoot_time(), 'must shoot')
 
         # if the ball fails to go in after a chip try to capture
-        self.add_transition(OurShootoutChip.State.chipping,
-                            OurShootoutChip.State.capture,
-                            lambda: self.has_subbehavior_with_name('chipping') and
-                            self.subbehavior_with_name('chipping').state == behavior.Behavior.State.completed,
-                            'recapture')
+        self.add_transition(
+            OurShootoutChip.State.chipping, OurShootoutChip.State.capture,
+            lambda: self.has_subbehavior_with_name(
+                'chipping') and self.subbehavior_with_name('chipping').state ==
+            behavior.Behavior.State.completed, 'recapture')
 
         # after you capture shoot the ball with a kick
-        self.add_transition(OurShootoutChip.State.capture,
-                            OurShootoutChip.State.shooting,
-                            lambda:self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
-                            'reshoot')
+        self.add_transition(
+            OurShootoutChip.State.capture,
+            OurShootoutChip.State.shooting, lambda: self.subbehavior_with_name(
+                'capture').state == behavior.Behavior.State.completed,
+            'reshoot')
 
         self.total_time = 10.0
         self.shoot_time = 6.0
@@ -96,14 +98,20 @@ class OurShootoutChip(play.Play):
     def score(cls):
         gs = main.game_state()
         randomfloat = random.random()
-        return float("inf") #randomfloat if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
+        return float(
+            "inf"
+        )  #randomfloat if gs.is_penalty_shootout() and gs.is_our_penalty() else float("inf")
 
     def on_enter_starting(self):
-        self.add_subbehavior(skills.move.Move(self.calculate_starting_pos()), 'starting', required = False,
-                            priority = 5)
+        self.add_subbehavior(
+            skills.move.Move(self.calculate_starting_pos()),
+            'starting',
+            required=False,
+            priority=5)
 
     def execute_starting(self):
-        self.subbehavior_with_name("starting").pos = self.calculate_starting_pos()
+        self.subbehavior_with_name(
+            "starting").pos = self.calculate_starting_pos()
 
     def on_exit_starting(self):
         self.remove_all_subbehaviors()
@@ -122,23 +130,24 @@ class OurShootoutChip(play.Play):
         # dribble one meter up
         dribble = skills.dribble.Dribble(dribble_point)
         if (not self.has_subbehavior_with_name('dribble')):
-            self.add_subbehavior(dribble, 'dribble', required = False, priority = 5)
+            self.add_subbehavior(
+                dribble, 'dribble', required=False, priority=5)
 
     def on_exit_dribbling(self):
         self.remove_all_subbehaviors()
 
     def on_enter_chipping(self):
-            # setup chipper
-            kicker = skills.pivot_kick.PivotKick()
-            kicker.use_chipper = True
-            kicker.min_chip_range = our_free_kick.OurFreeKick.MinChipRange
-            kicker.max_chip_range = our_free_kick.OurFreeKick.MaxChipRange
-            #calculate target
-            kicker.target = constants.Field.TheirGoalSegment
-            kicker.aim_params['desperate_timeout'] = 3
-            # chip
-            if (not self.has_subbehavior_with_name('chipper')) :
-                self.add_subbehavior(kicker, 'chipper', required=False, priority=5)
+        # setup chipper
+        kicker = skills.pivot_kick.PivotKick()
+        kicker.use_chipper = True
+        kicker.min_chip_range = our_free_kick.OurFreeKick.MinChipRange
+        kicker.max_chip_range = our_free_kick.OurFreeKick.MaxChipRange
+        #calculate target
+        kicker.target = constants.Field.TheirGoalSegment
+        kicker.aim_params['desperate_timeout'] = 3
+        # chip
+        if (not self.has_subbehavior_with_name('chipper')):
+            self.add_subbehavior(kicker, 'chipper', required=False, priority=5)
 
     def on_exit_chipping(self):
         self.remove_all_subbehaviors()
@@ -149,19 +158,20 @@ class OurShootoutChip(play.Play):
         kicker.target = constants.Field.TheirGoalSegment
         kicker.aim_params['desperate_timeout'] = 3
         # kick
-        if (not self.has_subbehavior_with_name('kicker')) :
-                self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+        if (not self.has_subbehavior_with_name('kicker')):
+            self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
     def on_exit_shooting(self):
         self.remove_all_subbehaviors()
 
     #capture the ball
-    def execute_capture (self):
+    def execute_capture(self):
         capture = skills.capture.Capture()
         if (not self.has_subbehavior_with_name('capture')):
-            self.add_subbehavior(capture, 'capture', required = False, priority=5)
+            self.add_subbehavior(
+                capture, 'capture', required=False, priority=5)
 
-    def on_exit_capture (self):
+    def on_exit_capture(self):
         self.remove_all_subbehaviors()
 
     def on_enter_running(self):
@@ -177,12 +187,14 @@ class OurShootoutChip(play.Play):
         # if any of there robots are in near chip range chip over them
         close_check = False
         for r in main.their_robots():
-            close_check = close_check or (r.pos - main.ball().pos).mag() < self.goalie_range
+            close_check = close_check or (r.pos - main.ball().pos
+                                          ).mag() < self.goalie_range
         return close_check
 
     def calculate_starting_pos(self):
         # find the direction from the enemy goal to the ball
-        behind_ball = (main.ball().pos - constants.Field.TheirGoalSegment.center())
+        behind_ball = (
+            main.ball().pos - constants.Field.TheirGoalSegment.center())
         # normalize the vector
         behind_ball = behind_ball.normalized()
         behind_ball = behind_ball * 0.5 + main.ball().pos

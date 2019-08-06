@@ -27,15 +27,17 @@ class BasicIndirect(standard_play.StandardPlay):
                             BasicIndirect.State.move, lambda: True,
                             'immediately')
 
-        self.add_transition(BasicIndirect.State.move,
-                            BasicIndirect.State.kick,
-                            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
-                            'kick')
+        self.add_transition(
+            BasicIndirect.State.move,
+            BasicIndirect.State.kick, lambda: self.subbehavior_with_name(
+                'move').state == behavior.Behavior.State.completed, 'kick')
 
         self.add_transition(
-            BasicIndirect.State.kick, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('pass').is_done_running() and 
-            self.subbehavior_with_name('pass').state != tactics.coordinated_pass.CoordinatedPass.State.timeout,
+            BasicIndirect.State.kick,
+            behavior.Behavior.State.completed,
+            lambda: self.subbehavior_with_name('pass').is_done_running(
+            ) and self.subbehavior_with_name('pass').state != tactics.
+            coordinated_pass.CoordinatedPass.State.timeout,
             # Keep trying pass until timeout
             'pass completes')
 
@@ -43,16 +45,17 @@ class BasicIndirect(standard_play.StandardPlay):
     def score(cls):
         gs = main.game_state()
         return 0 if behavior.Behavior.State.running or (
-            gs.is_ready_state() and gs.is_our_indirect_kick()) else float("inf")
+            gs.is_ready_state() and
+            gs.is_our_indirect_kick()) else float("inf")
 
     @classmethod
     def is_restart(cls):
         return True
 
-
     def on_enter_move(self):
         self.move_to = self.calc_move_pt()
-        self.add_subbehavior(skills.move.Move(self.move_to),'move', required = False, priority = 5)
+        self.add_subbehavior(
+            skills.move.Move(self.move_to), 'move', required=False, priority=5)
 
     def execute_move(self):
         self.move_to = self.calc_move_pt()

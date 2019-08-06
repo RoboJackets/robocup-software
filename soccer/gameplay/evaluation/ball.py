@@ -6,7 +6,7 @@ import math
 
 def is_moving_towards_our_goal():
     # see if the ball is moving much
-    if main.ball().vel.mag() > 0.18: # Tuned based on vision noise
+    if main.ball().vel.mag() > 0.18:  # Tuned based on vision noise
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Line(main.ball().pos, (
@@ -68,7 +68,8 @@ def opponent_with_ball():
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
     mouth_half_angle = 15*math.pi/180 # Angle from front
-    max_dist_from_mouth = 1.13 * (constants.Robot.Radius + constants.Ball.Radius)
+    max_dist_from_mouth = 1.13 * (
+        constants.Robot.Radius + constants.Ball.Radius)
 
     # Create triangle between bot pos and two points of the mouth
     A = robot.pos

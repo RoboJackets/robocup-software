@@ -128,7 +128,7 @@ def eval_best_receive_point(kick_point,
         main.debug_drawer().draw_line(segment, constants.Colors.Blue,
                                       "Candidate Lines")
         _, best = win_eval.eval_pt_to_seg(kick_point, segment)
-        
+
         if best is None: continue
 
         currentChance = best.shot_success
@@ -136,7 +136,7 @@ def eval_best_receive_point(kick_point,
         receivePt = best.segment.center()
 
         _, best = win_eval.eval_pt_to_seg(receivePt, targetSeg)
-        
+
         if best is None: continue
 
         currentChance = currentChance * best.shot_success
@@ -149,4 +149,3 @@ def eval_best_receive_point(kick_point,
         return None, None, None
 
     return bestpt, targetPoint, bestChance
-

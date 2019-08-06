@@ -1,15 +1,15 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
-#include "TuningPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "LineKickPlanner.hpp"
 #include "InterceptPlanner.hpp"
+#include "LineKickPlanner.hpp"
+#include "TuningPathPlanner.hpp"
 //#include "PivotPathPlanner.hpp"
 //#include "RRTPlanner.hpp"
-#include "SettlePathPlanner.hpp"
 #include "CollectPathPlanner.hpp"
 #include "PivotPathPlanner.hpp"
 #include "RRTPlanner.hpp"
+#include "SettlePathPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
 
 using namespace std;

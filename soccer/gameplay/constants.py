@@ -3,8 +3,9 @@ import math
 
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
-OurChipRoll = 3 # Average distance at which a ball is slow enough to capture
+OurChipRoll = 3  # Average distance at which a ball is slow enough to capture
 TheirChipping = (.1, .8)
+
 
 class OurChipping:
     MIN_CARRY = .1
@@ -25,7 +26,8 @@ class Colors:
 class Robot:
     Radius = 0.09
     MaxKickSpeed = 8  # m/s
-    ChipClearance = (.1, .6) # min and max distance a chip will go over another robot
+    ChipClearance = (
+        .1, .6)  # min and max distance a chip will go over another robot
 
     class Dribbler:
         MaxPower = 127
