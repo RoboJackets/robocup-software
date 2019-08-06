@@ -5,14 +5,13 @@ import tactics
 import robocup
 import constants
 import main
-from enum import Enum
-import evaluation
-from evaluation.passing import eval_pass    
+import enum
+import evaluation.passing    
 
 
 class OurIndirectPivot(standard_play.StandardPlay):
 
-    class State(Enum):
+    class State(enum.Enum):
         passing=1
         kicking=2
 
@@ -119,12 +118,12 @@ class OurIndirectPivot(standard_play.StandardPlay):
     def evaluate_chip(self, receive_point):
         bp = main.ball().pos
         ex_robots = []
-        kick_p = eval_pass(bp, receive_point, excluded_robots=ex_robots) 
-        #print("Kick probability is {}".format(kick_p))
+        kick_p = evaluation.passing.eval_pass(bp, receive_point, excluded_robots=ex_robots) 
+        
         if kick_p < .5:
             ex_robots.extend(evaluation.chipping.chippable_robots())
-            chip_p = eval_pass(bp, receive_point, excluded_robots=ex_robots)
-            #print("Chip probability is {}".format(chip_p))
+            chip_p = evaluation.passing.eval_pass(bp, receive_point, excluded_robots=ex_robots)
+            
             if chip_p > kick_p:
                 return True
         return False
