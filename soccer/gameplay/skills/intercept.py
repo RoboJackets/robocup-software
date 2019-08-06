@@ -40,6 +40,11 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
                 self.target_pos = self.ball_line().nearest_point(
                     self.robot.pos)
 
+
+            # Intercept works better at high accelerations and speeds
+            # but due to lag with bad motion control, it doesn't actually
+            # end up moving robots in the way
+            # TODO(motion-control): Swap back to intercept
             #self.robot.intercept(self.target_pos)
             self.robot.move_to(self.target_pos)
 
