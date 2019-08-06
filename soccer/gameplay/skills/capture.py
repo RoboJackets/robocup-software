@@ -173,11 +173,6 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     @staticmethod
     def role_assignment_cost(robot):
         # Estimate the time it takes to intercept the ball
-        self.robot.move_to(pos)
-        main.debug_drawer().draw_circle(self.lastApproachTarget,
-                                        constants.Ball.Radius,
-                                        constants.Colors.White, "Capture")
-
         # Use straight line distance to closest point along line
         # Then movement down the line
 
