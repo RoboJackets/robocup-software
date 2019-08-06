@@ -11,22 +11,22 @@ class RoleRequirements:
     def __init__(self):
         self.destination_shape = None
         self.has_ball = False
-        self.chipper_preference_weight = 0.0
+        self.chipper_preference_weight = 0
         self.required_shell_id = None
         self.previous_shell_id = None
         self.prohibited_shell_id = None
         self.required = False
-        self.priority = 0.0
+        self.priority = 0
         self.require_kicking = False
         self.require_chipping = False
-        self.robot_change_cost = 1.0
+        self.robot_change_cost = 1
 
         # multiply this by the distance between two points to get the cost
-        self.position_cost_multiplier = 1.0
+        self.position_cost_multiplier = 1
 
         # A lambda function property that allows customization of cost
         # Has exactly one parameter, which is a robot
-        self.cost_func = lambda r: 0.0
+        self.cost_func = lambda r: 0
 
     def __str__(self):
         props = []
@@ -192,12 +192,12 @@ class ImpossibleAssignmentError(RuntimeError):
 
 
 # the munkres library doesn't like infinity, so we use this instead
-MaxWeight = 10000000.0
+MaxWeight = 10000000
 
 # The munkres library works in ints, so multiply everything by 1000
 # In theory it should work with floats, but the types are getting messed up
 # This creates a fixed point type situation
-IntScale = 1000.0
+IntScale = 1000
 
 # a default weight for preferring a chipper
 # this is tunable
@@ -282,7 +282,7 @@ def assign_roles(robots, role_reqs):
     for robot in robots:
         cost_row = []
         for req in role_reqs_list:
-            cost = 0.0
+            cost = 0
 
             if req.required_shell_id is not None and req.required_shell_id != robot.shell_id(
             ):
