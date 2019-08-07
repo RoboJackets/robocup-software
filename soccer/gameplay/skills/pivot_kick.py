@@ -167,7 +167,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if ret:
             print("Panic kick")
-            main.system_state().draw_text('panic kick', self.robot.pos,
+            main.debug_drawer().draw_text('panic kick', self.robot.pos,
                                           (255, 255, 255), 'PivotKick')
 
         return ret

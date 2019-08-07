@@ -65,9 +65,9 @@ class TheirRestart(standard_play.StandardPlay):
             robot.pos)
         if self.debug is True:
             shot_line = robocup.Segment(robot.pos, shot_position)
-            main.system_state().draw_line(shot_line,
+            main.debug_drawer().draw_line(shot_line,
                                           (0, 255, 0), "Target Position")
-            main.system_state().draw_text(
+            main.debug_drawer().draw_text(
                 "Shot Chance: " + str(success_chance),
                 shot_line.center(), constants.Colors.White, "Defense")
         return success_chance
