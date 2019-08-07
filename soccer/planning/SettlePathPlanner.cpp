@@ -109,8 +109,9 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // course or the ball state changes significantly
     checkSolutionValidity(ball, startInstant, deltaPos);
 
-    planRequest.context->debug_drawer.drawLine(Segment(ball.pos, ball.pos + averageBallVel * 10),
-                         QColor(255, 255, 255), "AverageBallVel");
+    planRequest.context->debug_drawer.drawLine(
+        Segment(ball.pos, ball.pos + averageBallVel * 10),
+        QColor(255, 255, 255), "AverageBallVel");
 
     // Check if we should transition from intercept to dampen
     // Start instant may be changed in that case since we want to start changing
@@ -386,10 +387,10 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(targetRobotIntersection);
 
-    auto request = PlanRequest(
-        planRequest.context, startInstant, std::move(rrtCommand),
-        planRequest.constraints, std::move(prevPath), obstacles,
-        planRequest.dynamicObstacles, planRequest.shellID);
+    auto request =
+        PlanRequest(planRequest.context, startInstant, std::move(rrtCommand),
+                    planRequest.constraints, std::move(prevPath), obstacles,
+                    planRequest.dynamicObstacles, planRequest.shellID);
 
     std::unique_ptr<Path> newTargetPath = rrtPlanner.run(request);
 
@@ -423,8 +424,9 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     // Save vector and use that?
     const Ball& ball = planRequest.context->state.ball;
 
-    planRequest.context->debug_drawer.drawText("Damping", ball.pos + Point(.1, .1),
-                                     QColor(255, 255, 255), "DampState");
+    planRequest.context->debug_drawer.drawText(
+        "Damping", ball.pos + Point(.1, .1), QColor(255, 255, 255),
+        "DampState");
 
     if (pathCreatedForDampen && prevPath) {
         return std::move(prevPath);
@@ -486,10 +488,10 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     std::unique_ptr<MotionCommand> directCommand =
         std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
-    auto request = PlanRequest(
-        planRequest.context, startInstant, std::move(directCommand),
-        planRequest.constraints, nullptr, planRequest.obstacles,
-        planRequest.dynamicObstacles, planRequest.shellID);
+    auto request =
+        PlanRequest(planRequest.context, startInstant, std::move(directCommand),
+                    planRequest.constraints, nullptr, planRequest.obstacles,
+                    planRequest.dynamicObstacles, planRequest.shellID);
 
     std::unique_ptr<Path> dampenEnd = directPlanner.run(request);
     dampenEnd->setDebugText("Damping");

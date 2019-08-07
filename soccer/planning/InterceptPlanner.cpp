@@ -60,10 +60,10 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         std::unique_ptr<MotionCommand> directCommand =
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
-        PlanRequest request =
-            PlanRequest(planRequest.context, startInstant, std::move(directCommand),
-                        planRequest.constraints, nullptr, planRequest.obstacles,
-                        planRequest.dynamicObstacles, planRequest.shellID);
+        PlanRequest request = PlanRequest(
+            planRequest.context, startInstant, std::move(directCommand),
+            planRequest.constraints, nullptr, planRequest.obstacles,
+            planRequest.dynamicObstacles, planRequest.shellID);
 
         std::unique_ptr<Path> path = directPlanner.run(request);
         path->setDebugText("AtPoint");
@@ -84,10 +84,10 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         std::unique_ptr<MotionCommand> directCommand =
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
-        auto request =
-            PlanRequest(planRequest.context, startInstant, std::move(directCommand),
-                        planRequest.constraints, nullptr, planRequest.obstacles,
-                        planRequest.dynamicObstacles, planRequest.shellID);
+        auto request = PlanRequest(
+            planRequest.context, startInstant, std::move(directCommand),
+            planRequest.constraints, nullptr, planRequest.obstacles,
+            planRequest.dynamicObstacles, planRequest.shellID);
 
         path = directPlanner.run(request);
 

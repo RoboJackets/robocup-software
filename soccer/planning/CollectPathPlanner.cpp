@@ -161,9 +161,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
                                      std::move(prevPath),
                                      std::move(partialPath), obstacles));
         }
-        default: {
-            return std::move(invalid(planRequest));
-        }
+        default: { return std::move(invalid(planRequest)); }
     }
 }
 
