@@ -96,7 +96,7 @@ protected:
     std::vector<Geometry2d::Point> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        const Geometry2d::ShapeSet& obstacles, Context* context,
         unsigned shellID,
         const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
             std::nullopt);
@@ -104,8 +104,8 @@ protected:
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& obstacles,
-        const std::vector<DynamicObstacle> paths, SystemState* state,
+        Geometry2d::ShapeSet& origional,
+        const std::vector<DynamicObstacle> dyObs, Context* context,
         unsigned shellID,
         const std::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
             std::nullopt);
@@ -179,7 +179,7 @@ protected:
     std::vector<Geometry2d::Point> runRRTHelper(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles, SystemState* state,
+        const Geometry2d::ShapeSet& obstacles, Context* context,
         unsigned shellID,
         const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
         bool straightLine);

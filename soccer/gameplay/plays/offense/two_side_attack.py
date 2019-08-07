@@ -93,7 +93,7 @@ class TwoSideAttack(standard_play.StandardPlay):
 
     def on_enter_passing(self):
         # Do shot evaluation here
-        win_eval = robocup.WindowEvaluator(main.system_state())
+        win_eval = robocup.WindowEvaluator(main.context())
         for r in self.to_exclude:
             win_eval.add_excluded_robot(r)
 

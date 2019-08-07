@@ -155,6 +155,14 @@ checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
 	@stylize.v1 --git_diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
 
+pretty-lines:
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | clang-format-diff -i -p1
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
+
+checkstyle-lines:
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | clang-format-diff -p1 | tee /tmp/checkstyle.patch
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
+	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 # Option to use old version of stylize
 STYLE_EXCLUDE_DIRS=build \

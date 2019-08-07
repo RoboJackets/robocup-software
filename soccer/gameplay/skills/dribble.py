@@ -93,6 +93,19 @@ class Dribble(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         angle = self.robot.angle - (self.pos - self.robot.pos).angle()
         return angle < .1 and angle > -.1
 
+    def on_enter_setup(self):
+        self.move_vector = main.ball().pos - self._pos
+        self.move_point = main.ball().pos + self.move_vector.normalized() * .2
+        move = skills.move.Move(self.move_point)
+        self.add_subbehavior(move, 'move', required=True, priority=100)
+
+    def execute_setup(self):
+        main.debug_drawer().draw_circle(self.move_point, 0.1,
+                                        constants.Colors.Blue, "move setup")
+
+    def on_exit_setup(self):
+        self.remove_all_subbehaviors()
+
     def on_enter_capture(self):
         self.robot.unkick()
         capture = skills.capture.Capture()
