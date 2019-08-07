@@ -19,7 +19,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // rotation
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
 
-    SystemState& systemState = planRequest.systemState;
+    SystemState& systemState = planRequest.context->state;
     const Ball& ball = systemState.ball;
 
     // Time for ball to hit target point
@@ -61,7 +61,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
         PlanRequest request =
-            PlanRequest(systemState, startInstant, std::move(directCommand),
+            PlanRequest(planRequest.context, startInstant, std::move(directCommand),
                         planRequest.constraints, nullptr, planRequest.obstacles,
                         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -85,7 +85,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
         auto request =
-            PlanRequest(systemState, startInstant, std::move(directCommand),
+            PlanRequest(planRequest.context, startInstant, std::move(directCommand),
                         planRequest.constraints, nullptr, planRequest.obstacles,
                         planRequest.dynamicObstacles, planRequest.shellID);
 

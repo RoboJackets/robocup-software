@@ -51,7 +51,7 @@ class OurShootoutKick(play.Play):
     def execute_shooting(self):
         kicker = skills.line_kick.LineKick()  #skills.pivot_kick.PivotKick()
         #aim for goal segmant
-        win_eval = robocup.WindowEvaluator(main.system_state())
+        win_eval = robocup.WindowEvaluator(main.context())
 
         kicker.target = constants.Field.TheirGoalSegment  # TODO Use win eval
         kicker.aim_params['desperate_timeout'] = 8

@@ -54,7 +54,7 @@ bool CollectPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
 }
 
 std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
-    SystemState& systemState = planRequest.systemState;
+    SystemState& systemState = planRequest.context->state;
     const Ball& ball = systemState.ball;
 
     const RJ::Time curTime = RJ::now();
@@ -208,7 +208,7 @@ void CollectPathPlanner::processStateTransition(
 std::unique_ptr<Path> CollectPathPlanner::courseApproach(
     const PlanRequest& planRequest, const MotionInstant& startInstant,
     std::unique_ptr<Path> prevPath) {
-    const Ball& ball = planRequest.systemState.ball;
+    const Ball& ball = planRequest.context->state.ball;
 
     // There are two paths that get combined together
     //
@@ -243,7 +243,7 @@ std::unique_ptr<Path> CollectPathPlanner::courseApproach(
         make_unique<PathTargetCommand>(targetSlow);
 
     auto request = PlanRequest(
-        planRequest.systemState, startInstant, std::move(rrtCommand),
+        planRequest.context, startInstant, std::move(rrtCommand),
         planRequest.constraints, std::move(prevPath), planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -260,7 +260,7 @@ std::unique_ptr<Path> CollectPathPlanner::courseApproach(
 std::unique_ptr<Path> CollectPathPlanner::fineApproach(
     const PlanRequest& planRequest, const MotionInstant& startInstant,
     std::unique_ptr<Path> prevPath) {
-    const Ball& ball = planRequest.systemState.ball;
+    const Ball& ball = planRequest.context->state.ball;
     RobotConstraints robotConstraintsHit = planRequest.constraints;
     MotionConstraints& motionConstraintsHit = robotConstraintsHit.mot;
 
@@ -296,7 +296,7 @@ std::unique_ptr<Path> CollectPathPlanner::fineApproach(
         make_unique<DirectPathTargetCommand>(targetHit);
 
     auto request = PlanRequest(
-        planRequest.systemState, startInstant, std::move(directCommand),
+        planRequest.context, startInstant, std::move(directCommand),
         robotConstraintsHit, std::move(prevPath), planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -311,7 +311,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(
     const PlanRequest& planRequest, const MotionInstant& startInstant,
     std::unique_ptr<Path> prevPath, std::unique_ptr<Path> partialPath,
     const ShapeSet& obstacles) {
-    const Ball& ball = planRequest.systemState.ball;
+    const Ball& ball = planRequest.context->state.ball;
     RobotConstraints robotConstraints = planRequest.constraints;
     MotionConstraints& motionConstraints = robotConstraints.mot;
 
@@ -377,7 +377,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(
         RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints,
                                  startInstant.vel, target.vel);
 
-    planRequest.systemState.drawLine(
+    planRequest.context->debug_drawer.drawLine(
         Segment(startInstant.pos,
                 startInstant.pos + (target.pos - startInstant.pos) * 10),
         QColor(255, 255, 255), "Control");
@@ -389,7 +389,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(
             std::make_unique<PathTargetCommand>(target);
 
         auto request = PlanRequest(
-            planRequest.systemState, startInstant, std::move(rrtCommand),
+            planRequest.context, startInstant, std::move(rrtCommand),
             robotConstraints, nullptr, obstacles, planRequest.dynamicObstacles,
             planRequest.shellID);
         path = rrtPlanner.run(request);
@@ -428,7 +428,7 @@ std::unique_ptr<Path> CollectPathPlanner::invalid(
         std::make_unique<PathTargetCommand>(target);
 
     auto request = PlanRequest(
-        planRequest.systemState, planRequest.start, std::move(rrtCommand),
+        planRequest.context, planRequest.start, std::move(rrtCommand),
         planRequest.constraints, nullptr, planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
     auto path = rrtPlanner.run(request);
@@ -436,7 +436,7 @@ std::unique_ptr<Path> CollectPathPlanner::invalid(
 
     return make_unique<AngleFunctionPath>(
         std::move(path), angleFunctionForCommandType(FacePointCommand(
-                             planRequest.systemState.ball.pos)));
+                             planRequest.context->state.ball.pos)));
 }
 
 template <typename T>

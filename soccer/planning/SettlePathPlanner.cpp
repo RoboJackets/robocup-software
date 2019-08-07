@@ -57,7 +57,7 @@ bool SettlePathPlanner::shouldReplan(const PlanRequest& planRequest) const {
 }
 
 std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
-    SystemState& systemState = planRequest.systemState;
+    SystemState& systemState = planRequest.context->state;
     const Ball& ball = systemState.ball;
 
     const RJ::Time curTime = RJ::now();
@@ -109,7 +109,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     // course or the ball state changes significantly
     checkSolutionValidity(ball, startInstant, deltaPos);
 
-    systemState.drawLine(Segment(ball.pos, ball.pos + averageBallVel * 10),
+    planRequest.context->debug_drawer.drawLine(Segment(ball.pos, ball.pos + averageBallVel * 10),
                          QColor(255, 255, 255), "AverageBallVel");
 
     // Check if we should transition from intercept to dampen
@@ -216,7 +216,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
     const PlanRequest& planRequest, const RJ::Time curTime,
     const MotionInstant& startInstant, unique_ptr<Path> prevPath,
     const ShapeSet& obstacles, const Point& deltaPos, const Point& facePos) {
-    const Ball& ball = planRequest.systemState.ball;
+    const Ball& ball = planRequest.context->state.ball;
 
     // Try find best point to intercept using brute force method
     // where we check ever X distance along the ball velocity vector
@@ -252,7 +252,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
             std::make_unique<PathTargetCommand>(targetRobotIntersection);
 
         auto request = PlanRequest(
-            planRequest.systemState, startInstant, std::move(rrtCommand),
+            planRequest.context, startInstant, std::move(rrtCommand),
             planRequest.constraints, nullptr, obstacles,
             planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -387,7 +387,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
         std::make_unique<PathTargetCommand>(targetRobotIntersection);
 
     auto request = PlanRequest(
-        planRequest.systemState, startInstant, std::move(rrtCommand),
+        planRequest.context, startInstant, std::move(rrtCommand),
         planRequest.constraints, std::move(prevPath), obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -421,9 +421,9 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     // TODO: Realize the ball will probably bounce off the robot
     // so we can use that vector to stop
     // Save vector and use that?
-    const Ball& ball = planRequest.systemState.ball;
+    const Ball& ball = planRequest.context->state.ball;
 
-    planRequest.systemState.drawText("Damping", ball.pos + Point(.1, .1),
+    planRequest.context->debug_drawer.drawText("Damping", ball.pos + Point(.1, .1),
                                      QColor(255, 255, 255), "DampState");
 
     if (pathCreatedForDampen && prevPath) {
@@ -483,12 +483,11 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
 
     // Target stopping point with 0 speed.
     MotionInstant finalStoppingMotion(finalStoppingPoint, Point(0, 0));
-std:
-    unique_ptr<MotionCommand> directCommand =
+    std::unique_ptr<MotionCommand> directCommand =
         std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
     auto request = PlanRequest(
-        planRequest.systemState, startInstant, std::move(directCommand),
+        planRequest.context, startInstant, std::move(directCommand),
         planRequest.constraints, nullptr, planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -522,7 +521,7 @@ std::unique_ptr<Path> SettlePathPlanner::invalid(
         std::make_unique<PathTargetCommand>(target);
 
     auto request = PlanRequest(
-        planRequest.systemState, planRequest.start, std::move(rrtCommand),
+        planRequest.context, planRequest.start, std::move(rrtCommand),
         planRequest.constraints, nullptr, planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -531,7 +530,7 @@ std::unique_ptr<Path> SettlePathPlanner::invalid(
 
     return make_unique<AngleFunctionPath>(
         std::move(path), angleFunctionForCommandType(FacePointCommand(
-                             planRequest.systemState.ball.pos)));
+                             planRequest.context->state.ball.pos)));
 }
 
 void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball,
