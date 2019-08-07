@@ -25,7 +25,7 @@
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
 #include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
+#include "radio/NetworkRadio.hpp"
 #include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
@@ -99,7 +99,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     // Create radio socket
     _radio = _simulation
                  ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
-                 : static_cast<Radio*>(new USBRadio());
+                 : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
