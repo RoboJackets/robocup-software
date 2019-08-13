@@ -34,7 +34,7 @@ def eval_single_point(kick_point, ignore_robots, min_pass_dist, field_weights,
 
     receive_point = robocup.Point(receive_x, receive_y)
 
-    if kick_point is None: 
+    if kick_point is None:
         if main.ball().valid:
             kick_point = main.ball().pos
         else:
