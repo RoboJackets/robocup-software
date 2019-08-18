@@ -31,13 +31,14 @@ private:
     const double _pathLength;
     const double _maxAcc;
     const double _maxSpeed;
+    const MotionConstraints _constraints;
 
     const RJ::Seconds _duration;
 
 public:
     TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
                     Geometry2d::Point endPos, double endSpeed,
-                    const MotionConstraints& constraints);
+                    const MotionConstraints constraints);
 
     // TODO: only return true for *new* obstacles
     virtual bool hit(const Geometry2d::ShapeSet& obstacles,
@@ -61,8 +62,8 @@ public:
     }
 
     virtual std::unique_ptr<Path> clone() const override {
-        debugThrow("This function is not implemented");
-        return nullptr;
+        return std::make_unique<TrapezoidalPath>(
+            _startPos, _startSpeed, _endPos, _endSpeed, _constraints);
     }
 
 protected:

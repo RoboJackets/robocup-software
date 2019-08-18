@@ -109,7 +109,7 @@ class SubmissiveGoalie(
             self.robot.face(main.ball().pos)
         self.robot.set_planning_priority(planning_priority.GOALIE)
 
-    def on_enter_clear(self):
+    def execute_clear(self):
         # FIXME: what we really want is a less-precise LineKick
         #           this will require a Capture behavior that doesn't wait for the ball to stop
         kick = skills.pivot_kick.PivotKick()
@@ -134,7 +134,15 @@ class SubmissiveGoalie(
 
         # FIXME: if the goalie has a fault, resort to bump
 
-        self.add_subbehavior(kick, 'kick-clear', required=True)
+        # It's possible that if the kick finishs, but the ball
+        # doesn't leave the box or trigger a state change, you
+        # will be stuck in the clear state without a kick happening
+        # This restarts the kick
+        if not self.has_subbehavior_with_name('kick-clear'):
+            self.add_subbehavior(kick, 'kick-clear', required=True)
+        elif self.subbehavior_with_name('kick-clear').is_done_running():
+            self.remove_all_subbehaviors()
+            self.add_subbehavior(kick, 'kick-clear', required=True)
 
     def on_exit_clear(self):
         self.remove_subbehavior('kick-clear')

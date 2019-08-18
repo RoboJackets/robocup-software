@@ -1,12 +1,16 @@
+offense/adaptive_formation
 offense/basic_122
 restarts/defend_penalty
 restarts/kick_penalty
 restarts/our_corner_kick
+restarts/our_corner_kick_onetouch
 restarts/our_free_kick
 restarts/our_goal_kick
 restarts/our_kickoff
+restarts/our_shootout_chip
+restarts/our_shootout_kick
 restarts/placement
 restarts/their_kickoff
 restarts/their_restart
-restarts/two_side_corner_kick
+restarts/their_shoot_out
 stopped

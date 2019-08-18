@@ -121,7 +121,9 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         if self.robot != None:
             #face the ball in all states but intercept
             if not self.has_subbehavior_with_name('intercept'):
-                self.robot.face(main.ball().pos)
+                # TODO(motion-control): The robot should face the ball here.
+                #self.robot.face(main.ball().pos)
+                pass
             self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def execute_chill(self):

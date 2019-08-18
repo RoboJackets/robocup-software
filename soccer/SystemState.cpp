@@ -65,7 +65,7 @@ std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
     return std::move(path);
 }
 
-constexpr auto ballDecayConstant = 0.275;
+constexpr auto ballDecayConstant = 0.180;
 
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     if (estimateTime < time) {
@@ -143,7 +143,7 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
 
 double Ball::estimateSecondsTo(const Geometry2d::Point &point) const {
     const auto time = estimateTimeTo(point);
-    return RJ::Seconds(RJ::now() - time).count();
+    return RJ::Seconds(time - RJ::now()).count();
 }
 
 double Ball::predictSecondsToStop() const {

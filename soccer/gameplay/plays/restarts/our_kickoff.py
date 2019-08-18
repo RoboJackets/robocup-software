@@ -79,16 +79,21 @@ class OurKickoff(standard_play.StandardPlay):
             self._kicker_shell_id = self.subbehavior_with_name(
                 'move').robot.shell_id()
         self.remove_subbehavior('move')
+
+    def execute_kick(self):
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment
-        # kicker.use_chipper = True
+        kicker.use_chipper = True
         kicker.max_speed = OurKickoff.MaxKickSpeed
         kicker.max_accel = OurKickoff.MaxKickAccel
         kicker.kick_power = OurKickoff.KickPower
         kicker.chip_power = OurKickoff.ChipPower
-        self.add_subbehavior(kicker, 'kicker', required=True, priority=5)
+        if (not self.has_subbehavior_with_name('kicker') or
+            (self.has_subbehavior_with_name('kicker') and
+             self.subbehavior_with_name('kicker').is_done_running())):
+            self.remove_all_subbehaviors()
+            self.add_subbehavior(kicker, 'kicker', required=True, priority=5)
 
-    def execute_kick(self):
         # all centers should face the ball
         for center in self.centers:
             if center.robot is not None:
