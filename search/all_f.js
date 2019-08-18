@@ -17,12 +17,17 @@ var searchData=
   ['oppmatrix',['oppMatrix',['../group__matrices.html#gaa921a23d16791e2a7879a9877bcf120f',1,'Gameplay::GameplayModule']]],
   ['opponentrobot',['OpponentRobot',['../class_opponent_robot.html',1,'']]],
   ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a5c1ee8144b2855b97ebd08cbaa6fb2d9',1,'Planning::RRTPlanner']]],
+  ['ourchipping',['OurChipping',['../classgameplay_1_1constants_1_1_our_chipping.html',1,'gameplay::constants']]],
   ['ourcornerkick',['OurCornerKick',['../classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html',1,'gameplay::plays::restarts::our_corner_kick']]],
+  ['ourcornerkicktouch',['OurCornerKickTouch',['../classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html',1,'gameplay::plays::restarts::our_corner_kick_onetouch']]],
   ['ourfreekick',['OurFreeKick',['../classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html',1,'gameplay::plays::restarts::our_free_kick']]],
   ['ourgoalkick',['OurGoalKick',['../classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html',1,'gameplay::plays::restarts::our_goal_kick']]],
+  ['ourindirectpivot',['OurIndirectPivot',['../classgameplay_1_1plays_1_1restarts_1_1our__indirect__pivot_1_1_our_indirect_pivot.html',1,'gameplay::plays::restarts::our_indirect_pivot']]],
   ['ourkickoff',['OurKickoff',['../classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html',1,'gameplay::plays::restarts::our_kickoff']]],
   ['ourplacement',['OurPlacement',['../classgameplay_1_1tactics_1_1our__placement_1_1_our_placement.html',1,'gameplay::tactics::our_placement']]],
   ['ourrobot',['OurRobot',['../class_our_robot.html',1,'OurRobot'],['../class_our_robot.html#ac4315d83b6bfc8341ec82bcf267a2233',1,'OurRobot::OurRobot()']]],
+  ['ourshootoutchip',['OurShootoutChip',['../classgameplay_1_1plays_1_1restarts_1_1our__shootout__chip_1_1_our_shootout_chip.html',1,'gameplay::plays::restarts::our_shootout_chip']]],
+  ['ourshootoutkick',['OurShootoutKick',['../classgameplay_1_1plays_1_1restarts_1_1our__shootout__kick_1_1_our_shootout_kick.html',1,'gameplay::plays::restarts::our_shootout_kick']]],
   ['vector2d',['Vector2d',['../class_geometry2d_1_1_point.html#ac9e5657e58cba7f8612f6679fcd5c97d',1,'Geometry2d::Point']]],
   ['vector3d',['Vector3d',['../class_geometry2d_1_1_pose.html#aec9a4b663b296b1c4b8861da76b89bd0',1,'Geometry2d::Pose::Vector3d()'],['../class_geometry2d_1_1_twist.html#a7b4dec2938d8b730cb86beb394a1ffd5',1,'Geometry2d::Twist::Vector3d()']]]
 ];

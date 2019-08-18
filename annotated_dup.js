@@ -22,6 +22,7 @@ var annotated_dup =
       [ "constants", null, [
         [ "Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
         [ "Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
+        [ "OurChipping", "classgameplay_1_1constants_1_1_our_chipping.html", null ],
         [ "Robot", "classgameplay_1_1constants_1_1_robot.html", "classgameplay_1_1constants_1_1_robot" ]
       ] ],
       [ "evaluation", null, [
@@ -66,14 +67,26 @@ var annotated_dup =
           [ "our_corner_kick", null, [
             [ "OurCornerKick", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick" ]
           ] ],
+          [ "our_corner_kick_onetouch", null, [
+            [ "OurCornerKickTouch", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html", "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch" ]
+          ] ],
           [ "our_free_kick", null, [
             [ "OurFreeKick", "classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html", "classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick" ]
           ] ],
           [ "our_goal_kick", null, [
             [ "OurGoalKick", "classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html", "classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick" ]
           ] ],
+          [ "our_indirect_pivot", null, [
+            [ "OurIndirectPivot", "classgameplay_1_1plays_1_1restarts_1_1our__indirect__pivot_1_1_our_indirect_pivot.html", "classgameplay_1_1plays_1_1restarts_1_1our__indirect__pivot_1_1_our_indirect_pivot" ]
+          ] ],
           [ "our_kickoff", null, [
             [ "OurKickoff", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff" ]
+          ] ],
+          [ "our_shootout_chip", null, [
+            [ "OurShootoutChip", "classgameplay_1_1plays_1_1restarts_1_1our__shootout__chip_1_1_our_shootout_chip.html", "classgameplay_1_1plays_1_1restarts_1_1our__shootout__chip_1_1_our_shootout_chip" ]
+          ] ],
+          [ "our_shootout_kick", null, [
+            [ "OurShootoutKick", "classgameplay_1_1plays_1_1restarts_1_1our__shootout__kick_1_1_our_shootout_kick.html", "classgameplay_1_1plays_1_1restarts_1_1our__shootout__kick_1_1_our_shootout_kick" ]
           ] ],
           [ "placement", null, [
             [ "Placement", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement" ]
@@ -83,6 +96,9 @@ var annotated_dup =
           ] ],
           [ "their_restart", null, [
             [ "TheirRestart", "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html", "classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart" ]
+          ] ],
+          [ "their_shoot_out", null, [
+            [ "TheirShootOut", "classgameplay_1_1plays_1_1restarts_1_1their__shoot__out_1_1_their_shoot_out.html", "classgameplay_1_1plays_1_1restarts_1_1their__shoot__out_1_1_their_shoot_out" ]
           ] ],
           [ "two_side_corner_kick", null, [
             [ "TwoSideCornerKick", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick" ]
@@ -104,6 +120,9 @@ var annotated_dup =
           [ "repeated_turning_line_up", null, [
             [ "RepeatedTurningLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up.html", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up" ]
           ] ],
+          [ "repeated_turning_line_up_lengthwise", null, [
+            [ "RepeatedTurningLineUpLengthwise", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up__lengthwise_1_1_repeated_turning_line_up_lengthwise.html", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up__lengthwise_1_1_repeated_turning_line_up_lengthwise" ]
+          ] ],
           [ "stress_test", null, [
             [ "StressTest", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html", "classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test" ]
           ] ],
@@ -118,6 +137,9 @@ var annotated_dup =
           ] ],
           [ "test_coach", null, [
             [ "TestCoach", "classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach.html", "classgameplay_1_1plays_1_1testing_1_1test__coach_1_1_test_coach" ]
+          ] ],
+          [ "test_collect", null, [
+            [ "TestCollect", "classgameplay_1_1plays_1_1testing_1_1test__collect_1_1_test_collect.html", "classgameplay_1_1plays_1_1testing_1_1test__collect_1_1_test_collect" ]
           ] ],
           [ "test_coordinated_pass", null, [
             [ "TestCoordinatedPass", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html", "classgameplay_1_1plays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass" ]
@@ -169,6 +191,9 @@ var annotated_dup =
           ] ],
           [ "test_priority", null, [
             [ "TestPriority", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority.html", "classgameplay_1_1plays_1_1testing_1_1test__priority_1_1_test_priority" ]
+          ] ],
+          [ "test_settle", null, [
+            [ "TestSettle", "classgameplay_1_1plays_1_1testing_1_1test__settle_1_1_test_settle.html", "classgameplay_1_1plays_1_1testing_1_1test__settle_1_1_test_settle" ]
           ] ],
           [ "test_strafe", null, [
             [ "TestStrafe", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe.html", "classgameplay_1_1plays_1_1testing_1_1test__strafe_1_1_test_strafe" ]
@@ -244,6 +269,9 @@ var annotated_dup =
         [ "capture", null, [
           [ "Capture", "classgameplay_1_1skills_1_1capture_1_1_capture.html", "classgameplay_1_1skills_1_1capture_1_1_capture" ]
         ] ],
+        [ "collect", null, [
+          [ "Collect", "classgameplay_1_1skills_1_1collect_1_1_collect.html", "classgameplay_1_1skills_1_1collect_1_1_collect" ]
+        ] ],
         [ "dribble", null, [
           [ "Dribble", "classgameplay_1_1skills_1_1dribble_1_1_dribble.html", "classgameplay_1_1skills_1_1dribble_1_1_dribble" ]
         ] ],
@@ -282,6 +310,9 @@ var annotated_dup =
         ] ],
         [ "pivot_kick", null, [
           [ "PivotKick", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick" ]
+        ] ],
+        [ "settle", null, [
+          [ "Settle", "classgameplay_1_1skills_1_1settle_1_1_settle.html", "classgameplay_1_1skills_1_1settle_1_1_settle" ]
         ] ],
         [ "touch_ball", null, [
           [ "TouchBall", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball.html", "classgameplay_1_1skills_1_1touch__ball_1_1_touch_ball" ]
@@ -392,6 +423,8 @@ var annotated_dup =
     [ "Planning", null, [
       [ "AngleFunctionPath", "class_planning_1_1_angle_function_path.html", "class_planning_1_1_angle_function_path" ],
       [ "AngleInstant", "struct_planning_1_1_angle_instant.html", "struct_planning_1_1_angle_instant" ],
+      [ "CollectCommand", "struct_planning_1_1_collect_command.html", "struct_planning_1_1_collect_command" ],
+      [ "CollectPathPlanner", "class_planning_1_1_collect_path_planner.html", "class_planning_1_1_collect_path_planner" ],
       [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
       [ "ConstPathIterator", "class_planning_1_1_const_path_iterator.html", "class_planning_1_1_const_path_iterator" ],
       [ "CubicBezierControlPoints", "struct_planning_1_1_cubic_bezier_control_points.html", "struct_planning_1_1_cubic_bezier_control_points" ],
@@ -404,6 +437,8 @@ var annotated_dup =
       [ "FaceAngleCommand", "struct_planning_1_1_face_angle_command.html", "struct_planning_1_1_face_angle_command" ],
       [ "FacePointCommand", "struct_planning_1_1_face_point_command.html", "struct_planning_1_1_face_point_command" ],
       [ "IndependentMultiRobotPathPlanner", "class_planning_1_1_independent_multi_robot_path_planner.html", "class_planning_1_1_independent_multi_robot_path_planner" ],
+      [ "InterceptCommand", "struct_planning_1_1_intercept_command.html", "struct_planning_1_1_intercept_command" ],
+      [ "InterceptPlanner", "class_planning_1_1_intercept_planner.html", "class_planning_1_1_intercept_planner" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
       [ "LineKickCommand", "struct_planning_1_1_line_kick_command.html", "struct_planning_1_1_line_kick_command" ],
       [ "LineKickPlanner", "class_planning_1_1_line_kick_planner.html", "class_planning_1_1_line_kick_planner" ],
@@ -420,6 +455,8 @@ var annotated_dup =
       [ "RotationCommand", "struct_planning_1_1_rotation_command.html", "struct_planning_1_1_rotation_command" ],
       [ "RRTConfig", "class_planning_1_1_r_r_t_config.html", null ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
+      [ "SettleCommand", "struct_planning_1_1_settle_command.html", "struct_planning_1_1_settle_command" ],
+      [ "SettlePathPlanner", "class_planning_1_1_settle_path_planner.html", "class_planning_1_1_settle_path_planner" ],
       [ "SingleRobotPathPlanner", "class_planning_1_1_single_robot_path_planner.html", "class_planning_1_1_single_robot_path_planner" ],
       [ "TargetVelPathPlanner", "class_planning_1_1_target_vel_path_planner.html", "class_planning_1_1_target_vel_path_planner" ],
       [ "TrapezoidalPath", "class_planning_1_1_trapezoidal_path.html", "class_planning_1_1_trapezoidal_path" ],
@@ -516,6 +553,7 @@ var annotated_dup =
     [ "MotionControl", "class_motion_control.html", "class_motion_control" ],
     [ "NelderMead2D", "class_nelder_mead2_d.html", "class_nelder_mead2_d" ],
     [ "NelderMead2DConfig", "class_nelder_mead2_d_config.html", "class_nelder_mead2_d_config" ],
+    [ "NetworkRadio", "class_network_radio.html", "class_network_radio" ],
     [ "NewRefereeModule", "class_new_referee_module.html", "class_new_referee_module" ],
     [ "NewRefereePacket", "class_new_referee_packet.html", "class_new_referee_packet" ],
     [ "OpponentRobot", "class_opponent_robot.html", "class_opponent_robot" ],
@@ -544,7 +582,6 @@ var annotated_dup =
     [ "SystemState", "class_system_state.html", "class_system_state" ],
     [ "TeamInfo", "class_team_info.html", "class_team_info" ],
     [ "Timeout", "class_timeout.html", "class_timeout" ],
-    [ "USBRadio", "class_u_s_b_radio.html", "class_u_s_b_radio" ],
     [ "VisionFilter", "class_vision_filter.html", "class_vision_filter" ],
     [ "VisionFilterConfig", "class_vision_filter_config.html", "class_vision_filter_config" ],
     [ "VisionPacket", "class_vision_packet.html", "class_vision_packet" ],

@@ -1,9 +1,12 @@
 <map id="Planning::MotionCommand" name="Planning::MotionCommand">
-<area shape="rect" id="node2" href="$struct_planning_1_1_direct_path_target_command.html" title="Planning::DirectPathTarget\lCommand" alt="" coords="266,5,462,47"/>
-<area shape="rect" id="node3" href="$struct_planning_1_1_empty_command.html" title="Planning::EmptyCommand" alt="" coords="267,71,461,98"/>
-<area shape="rect" id="node4" href="$struct_planning_1_1_line_kick_command.html" title="Planning::LineKickCommand" alt="" coords="260,122,468,149"/>
-<area shape="rect" id="node5" href="$struct_planning_1_1_path_target_command.html" title="Planning::PathTargetCommand" alt="" coords="252,173,476,199"/>
-<area shape="rect" id="node6" href="$struct_planning_1_1_pivot_command.html" title="Planning::PivotCommand" alt="" coords="271,223,457,250"/>
-<area shape="rect" id="node7" href="$struct_planning_1_1_tuning_path_command.html" title="Planning::TuningPathCommand" alt="" coords="251,274,477,301"/>
-<area shape="rect" id="node8" href="$struct_planning_1_1_world_vel_target_command.html" title="Planning::WorldVelTarget\lCommand" alt="" coords="271,325,457,367"/>
+<area shape="rect" id="node2" href="$struct_planning_1_1_collect_command.html" title="Planning::CollectCommand" alt="" coords="265,5,463,32"/>
+<area shape="rect" id="node3" href="$struct_planning_1_1_direct_path_target_command.html" title="Planning::DirectPathTarget\lCommand" alt="" coords="266,57,462,98"/>
+<area shape="rect" id="node4" href="$struct_planning_1_1_empty_command.html" title="Planning::EmptyCommand" alt="" coords="267,123,461,149"/>
+<area shape="rect" id="node5" href="$struct_planning_1_1_intercept_command.html" title="Planning::InterceptCommand" alt="" coords="259,173,469,200"/>
+<area shape="rect" id="node6" href="$struct_planning_1_1_line_kick_command.html" title="Planning::LineKickCommand" alt="" coords="260,224,468,251"/>
+<area shape="rect" id="node7" href="$struct_planning_1_1_path_target_command.html" title="Planning::PathTargetCommand" alt="" coords="252,275,476,301"/>
+<area shape="rect" id="node8" href="$struct_planning_1_1_pivot_command.html" title="Planning::PivotCommand" alt="" coords="271,325,457,352"/>
+<area shape="rect" id="node9" href="$struct_planning_1_1_settle_command.html" title="Planning::SettleCommand" alt="" coords="269,376,459,403"/>
+<area shape="rect" id="node10" href="$struct_planning_1_1_tuning_path_command.html" title="Planning::TuningPathCommand" alt="" coords="251,427,477,453"/>
+<area shape="rect" id="node11" href="$struct_planning_1_1_world_vel_target_command.html" title="Planning::WorldVelTarget\lCommand" alt="" coords="271,478,457,519"/>
 </map>

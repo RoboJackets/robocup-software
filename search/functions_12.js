@@ -9,6 +9,7 @@ var searchData=
   ['seterrortext',['setErrorText',['../class_robot_status_widget.html#a407333ebcd9a92b112db48fcc42a0b0b',1,'RobotStatusWidget']]],
   ['setplanningpriority',['setPlanningPriority',['../class_our_robot.html#a747bbe856ee0716ead1817b39ad18982',1,'OurRobot']]],
   ['setshowstopper',['setShowstopper',['../class_robot_status_widget.html#a40aeb74a207e2b6c00845fcedb00aa98',1,'RobotStatusWidget']]],
+  ['settle',['settle',['../class_our_robot.html#a24882b81f2bbb6f20cdeb4269b840aea',1,'OurRobot']]],
   ['setup_5fball_5favoid',['setup_ball_avoid',['../classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a12a429556767483ce6eea1660338e398',1,'gameplay::skills::line_kick_old::LineKickOld']]],
   ['setvel',['setVel',['../class_kalman_ball.html#ad2ba65f9700d3015193877ed63de71d6',1,'KalmanBall::setVel()'],['../class_kalman_filter2_d.html#ac8c0bef403587e3e711cfeca893bcdf8',1,'KalmanFilter2D::setVel()']]],
   ['shapeset',['ShapeSet',['../class_geometry2d_1_1_shape_set.html#a5c0ed4dae2daee13389ab15697e66d35',1,'Geometry2d::ShapeSet']]],

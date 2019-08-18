@@ -1,0 +1,5 @@
+<map id="gameplay.skills.collect.Collect" name="gameplay.skills.collect.Collect">
+<area shape="rect" id="node2" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="5,155,232,196"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="13,80,224,107"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="15,5,223,32"/>
+</map>

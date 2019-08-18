@@ -1,6 +1,8 @@
 <map id="gameplay.skills.line_kick.LineKick" name="gameplay.skills.line_kick.LineKick">
-<area shape="rect" id="node2" href="$classgameplay_1_1skills_1_1__kick_1_1___kick.html" title="this is the abstract superclass for PivotKick and LineKick " alt="" coords="17,244,220,271"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="5,155,232,196"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="13,80,224,107"/>
-<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="15,5,223,32"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1skills_1_1__kick_1_1___kick.html" title="this is the abstract superclass for PivotKick and LineKick " alt="" coords="815,13,1017,39"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1single__robot__behavior_1_1_single_robot_behavior.html" title="gameplay.single_robot\l_behavior.SingleRobotBehavior" alt="" coords="520,5,747,47"/>
+<area shape="rect" id="node6" href="$classgameplay_1_1single__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="795,63,1037,119"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="261,46,472,73"/>
+<area shape="rect" id="node7" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="524,71,743,112"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,46,213,73"/>
 </map>

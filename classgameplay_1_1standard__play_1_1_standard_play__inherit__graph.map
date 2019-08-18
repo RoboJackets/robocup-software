@@ -5,15 +5,17 @@
 <area shape="rect" id="node9" href="$classgameplay_1_1plays_1_1restarts_1_1basic__indirect_1_1_basic_indirect.html" title="gameplay.plays.restarts.basic\l_indirect.BasicIndirect" alt="" coords="1331,201,1550,243"/>
 <area shape="rect" id="node10" href="$classgameplay_1_1plays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html" title="gameplay.plays.restarts.kick\l_penalty.KickPenalty" alt="" coords="1335,267,1546,308"/>
 <area shape="rect" id="node11" href="$classgameplay_1_1plays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html" title="gameplay.plays.restarts.our\l_corner_kick.OurCornerKick" alt="" coords="1338,332,1543,373"/>
-<area shape="rect" id="node12" href="$classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html" title="gameplay.plays.restarts.our\l_free_kick.OurFreeKick" alt="" coords="1338,397,1543,439"/>
-<area shape="rect" id="node13" href="$classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html" title="gameplay.plays.restarts.our\l_goal_kick.OurGoalKick" alt="" coords="1338,463,1543,504"/>
-<area shape="rect" id="node14" href="$classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html" title="gameplay.plays.restarts.our\l_kickoff.OurKickoff" alt="" coords="1338,528,1543,569"/>
-<area shape="rect" id="node15" href="$classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html" title="gameplay.plays.restarts.their\l_kickoff.TheirKickoff" alt="" coords="1333,593,1548,635"/>
-<area shape="rect" id="node16" href="$classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html" title="gameplay.plays.restarts.their\l_restart.TheirRestart" alt="" coords="1333,659,1548,700"/>
-<area shape="rect" id="node17" href="$classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html" title="gameplay.plays.restarts.two\l_side_corner_kick.TwoSideCornerKick" alt="" coords="1307,724,1575,765"/>
-<area shape="rect" id="node18" href="$classgameplay_1_1plays_1_1stopped_1_1_stopped.html" title="When we get the Stopped command from the referee, we run this play. " alt="" coords="1321,790,1560,817"/>
-<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="787,405,937,431"/>
-<area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="520,397,739,439"/>
-<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="261,405,472,431"/>
-<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,405,213,431"/>
+<area shape="rect" id="node12" href="$classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html" title="gameplay.plays.restarts.our\l_corner_kick_onetouch.OurCorner\lKickTouch" alt="" coords="1320,398,1561,454"/>
+<area shape="rect" id="node13" href="$classgameplay_1_1plays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html" title="gameplay.plays.restarts.our\l_free_kick.OurFreeKick" alt="" coords="1338,479,1543,520"/>
+<area shape="rect" id="node14" href="$classgameplay_1_1plays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html" title="gameplay.plays.restarts.our\l_goal_kick.OurGoalKick" alt="" coords="1338,544,1543,585"/>
+<area shape="rect" id="node15" href="$classgameplay_1_1plays_1_1restarts_1_1our__indirect__pivot_1_1_our_indirect_pivot.html" title="gameplay.plays.restarts.our\l_indirect_pivot.OurIndirectPivot" alt="" coords="1327,609,1554,651"/>
+<area shape="rect" id="node16" href="$classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html" title="gameplay.plays.restarts.our\l_kickoff.OurKickoff" alt="" coords="1338,675,1543,716"/>
+<area shape="rect" id="node17" href="$classgameplay_1_1plays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html" title="gameplay.plays.restarts.their\l_kickoff.TheirKickoff" alt="" coords="1333,740,1548,781"/>
+<area shape="rect" id="node18" href="$classgameplay_1_1plays_1_1restarts_1_1their__restart_1_1_their_restart.html" title="gameplay.plays.restarts.their\l_restart.TheirRestart" alt="" coords="1333,805,1548,847"/>
+<area shape="rect" id="node19" href="$classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html" title="gameplay.plays.restarts.two\l_side_corner_kick.TwoSideCornerKick" alt="" coords="1307,871,1575,912"/>
+<area shape="rect" id="node20" href="$classgameplay_1_1plays_1_1stopped_1_1_stopped.html" title="When we get the Stopped command from the referee, we run this play. " alt="" coords="1321,937,1560,963"/>
+<area shape="rect" id="node2" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="787,486,937,513"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="520,479,739,520"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="261,486,472,513"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="5,486,213,513"/>
 </map>

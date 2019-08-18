@@ -41,19 +41,20 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"annotated.html",
-"class_gamepad_joystick.html#a6840961fb456cd8374493702dd84b06d",
-"class_geometry2d_1_1_shape.html#a98849859aa30a87a760380b26c903873",
-"class_nelder_mead2_d_config.html",
-"class_planning_1_1_interpolated_path.html#ab4a5db5c2ffb7e122d0846642761ed5a",
-"class_robot_pose.html#aba10a272072c2db915def20351375549",
-"classgameplay_1_1behavior__sequence_1_1_behavior_sequence.html#a38f37d5714fcf36d92f6d0c3cb0b5abb",
-"classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick.html#a9c8f1421bb1eeed354762011a043ca1e",
-"classgameplay_1_1role__assignment_1_1_role_requirements.html#a312b9ab19e7039199e4bda4ac07dbdf7",
-"classgameplay_1_1skills_1_1line__kick__old_1_1_line_kick_old.html#a36bf058d534cd098df987cd88e49492f",
-"classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html#a5661f4de9fd7ab98d9cb39389ceed3af",
-"classtest__circle__near__ball_1_1_test_circle_near_ball.html#ae48dd276dff826812f8033656f964d43",
-"struct_context.html#aa32d5e391e503d6d80de568a37ba7b52"
+"_trapezoidal_motion_8hpp_source.html",
+"class_game_state.html#adc767eb4c4e06cc0c61edaec21a09696",
+"class_geometry2d_1_1_segment.html#a385beaec60342d0643cdf8512918a1a1",
+"class_main_window.html#a8c658c8786efca65f5795e2dedfaf985",
+"class_planning_1_1_composite_path.html#aa7dbe5c31ab2a5f25fbf785fd0f173f7",
+"class_radio.html#ab056bc8bed18e7b89a6f5728e90be091",
+"class_world_ball.html#a4e085d92b279fbc0eaf762f30ad70453",
+"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html#a8b600b0957c2f794d12e6dbedc1e0c38",
+"classgameplay_1_1plays_1_1testing_1_1test__collect_1_1_test_collect.html#ab3666a29dc918d1e9ab5f4ec998cf884",
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a01825a7bb353613353fed1181518b342",
+"classgameplay_1_1skills_1_1move__direct_1_1_move_direct.html#a320c81dbef6cf1304a45271bf7781c72",
+"classgameplay_1_1tactics_1_1penalty_1_1_penalty.html#af782285d8cd213db6a15ed37397da33d",
+"classtest__opponent_1_1_test_opponent.html#a8187794054224ef6d3784d094f9d9252",
+"struct_motion_constraints.html#a0f3c3398456e18530d9d4c6cc1a97509"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

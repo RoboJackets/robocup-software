@@ -1,3 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_world_ball.html" title="Best estimate of the true ball position using the kalman balls from each camera. " alt="" coords="5,5,91,32"/>
+<area shape="rect" id="node1" href="$class_world.html" title="Keeps list of all the cameras and sends camera data down to the correct location. ..." alt="" coords="5,5,65,32"/>
 </map>

@@ -1,0 +1,7 @@
+<map id="gameplay.plays.restarts.our_corner_kick_onetouch.OurCornerKickTouch" name="gameplay.plays.restarts.our_corner_kick_onetouch.OurCornerKickTouch">
+<area shape="rect" id="node2" href="$classgameplay_1_1standard__play_1_1_standard_play.html" title="A standardized play that handles actions that an average play needs Right now, this is only used to i..." alt="" coords="5,319,279,345"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1play_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="67,244,217,271"/>
+<area shape="rect" id="node4" href="$classgameplay_1_1composite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="33,155,251,196"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1behavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="37,80,247,107"/>
+<area shape="rect" id="node6" href="$classgameplay_1_1fsm_1_1_state_machine.html" title="generic hierarchial state machine class. " alt="" coords="38,5,246,32"/>
+</map>

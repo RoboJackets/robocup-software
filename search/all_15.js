@@ -8,7 +8,6 @@ var searchData=
   ['updatewithframe',['updateWithFrame',['../class_camera.html#affe08cc07585fd4216692df783ed2aef',1,'Camera']]],
   ['updatewithoutcameraframe',['updateWithoutCameraFrame',['../class_world.html#a464e9ac3c01a2f826f7cff4e0f8c56d8',1,'World']]],
   ['updatewithoutframe',['updateWithoutFrame',['../class_camera.html#a155e093c784ed69d47de67c61cd43232',1,'Camera']]],
-  ['usbradio',['USBRadio',['../class_u_s_b_radio.html',1,'']]],
   ['use_5fchipper',['use_chipper',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#aa0b6be1e5cdf11a76e5dccf5100cf78b',1,'gameplay::skills::_kick::_Kick']]],
   ['use_5fwindowing',['use_windowing',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a4e4a464a160deb1b56f80d4daa0e9439',1,'gameplay::skills::_kick::_Kick']]]
 ];

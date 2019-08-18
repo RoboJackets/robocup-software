@@ -17,6 +17,7 @@ var classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick =
     [ "on_exit_aiming", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#aa9944b31d5500bd94989ae098a9ab17b", null ],
     [ "on_exit_capturing", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a72cac1daf19497109823e1cd4b953159", null ],
     [ "on_exit_running", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a3499a245d371592c32aed6ece8972f63", null ],
+    [ "opp_robot_blocking", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#adda973eb2b96ec7e1461f48a76e6a702", null ],
     [ "remove_aim_behavior", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a91185fd346d9a86e32c2761e4c90c894", null ],
     [ "role_requirements", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#ab77ee4a6b112dec34d52b9bfa23d3e8e", null ],
     [ "set_aim_params", "classgameplay_1_1skills_1_1pivot__kick_1_1_pivot_kick.html#a20346411aea6dc9835489c129182f7bc", null ],
