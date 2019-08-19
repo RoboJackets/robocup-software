@@ -32,19 +32,23 @@ set(ROBOCUP_LIB_SRC
     "planning/EscapeObstaclesPathPlanner.cpp"
     "planning/InterpolatedPath.cpp"
     "planning/IndependentMultiRobotPathPlanner.cpp"
+    "planning/InterceptPlanner.cpp"
     "planning/MotionConstraints.cpp"
     "planning/RotationConstraints.cpp"
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
     "planning/RRTUtil.cpp"
     "planning/PivotPathPlanner.cpp"
+    "planning/SettlePathPlanner.cpp"
+    "planning/CollectPathPlanner.cpp"
     "planning/LineKickPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
     "planning/TrapezoidalPath.cpp"
     "Processor.cpp"
+    "radio/NetworkRadio.cpp"
+    "radio/PacketConvert.cpp"
     "radio/SimRadio.cpp"
-    "radio/USBRadio.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
     "SystemState.cpp"
@@ -114,9 +118,9 @@ set(version ${PYTHONLIBS_VERSION_STRING})
 if(APPLE)
     set(boost_py_version "")
 else()
-    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
+    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version "${version}" )
     # Get first two numbers of python string
-    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version ${boost_py_version} )
+    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version "${boost_py_version}" )
 endif()
 
 foreach(possible_name python3 python-py${boost_py_version} python)
@@ -145,7 +149,7 @@ set_target_properties(robocup PROPERTIES SUFFIX ".so")
 target_link_libraries(robocup common rc-fshare)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
-target_link_libraries(robocup ${Boost_LIBRARIES})
+target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)

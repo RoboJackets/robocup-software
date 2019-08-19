@@ -1,5 +1,6 @@
 import robocup
 import constants
+import evaluation.ball
 import main
 import math
 import skills.touch_ball
@@ -16,7 +17,7 @@ import skills.pass_receive
 class AngleReceive(skills.pass_receive.PassReceive):
     def __init__(self):
         super().__init__(
-            captureFunction=(lambda: skills.touch_ball.TouchBall()))
+            captureFunction=(lambda: skills.settle.Settle(self._target_point)))
         self._target_point = None
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
@@ -123,6 +124,11 @@ class AngleReceive(skills.pass_receive.PassReceive):
         self._x_error = self._target_pos.x - self.robot.pos.x
         self._y_error = self._target_pos.y - self.robot.pos.y
 
+    def execute_aligning(self):
+        super().execute_aligning()
+        self.robot.face(self.robot.pos + robocup.Point(
+            math.cos(self._angle_facing), math.sin(self._angle_facing)))
+
     def execute_running(self):
         super().execute_running()
         self.recalculate()
@@ -138,7 +144,10 @@ class AngleReceive(skills.pass_receive.PassReceive):
 
         self.ball_kicked = True
         # Kick the ball!
-        self.robot.kick(self.kick_power)
+        if (self.robot is not None and evaluation.ball.robot_has_ball(
+                self.robot)):  #self.robot.has_ball()): #
+            self.robot.kick(self.kick_power)
+            self.robot.kick_immediately()
 
         if self.target_point != None:
             main.debug_drawer().draw_circle(self.target_point, 0.03,

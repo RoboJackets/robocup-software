@@ -1,14 +1,15 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
-#include "TuningPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
+#include "InterceptPlanner.hpp"
 #include "LineKickPlanner.hpp"
+#include "TuningPathPlanner.hpp"
 //#include "PivotPathPlanner.hpp"
 //#include "RRTPlanner.hpp"
-//#include "TargetVelPathPlanner.hpp"
-//#include "TargetVelPathPlanner.hpp"
+#include "CollectPathPlanner.hpp"
 #include "PivotPathPlanner.hpp"
 #include "RRTPlanner.hpp"
+#include "SettlePathPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
 
 using namespace std;
@@ -48,8 +49,17 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
         case MotionCommand::WorldVel:
             planner = new TargetVelPathPlanner();
             break;
+        case MotionCommand::Settle:
+            planner = new SettlePathPlanner();
+            break;
+        case MotionCommand::Collect:
+            planner = new CollectPathPlanner();
+            break;
         case MotionCommand::LineKick:
             planner = new LineKickPlanner();
+            break;
+        case MotionCommand::Intercept:
+            planner = new InterceptPlanner();
             break;
         case MotionCommand::None:
             planner = new EscapeObstaclesPathPlanner();
