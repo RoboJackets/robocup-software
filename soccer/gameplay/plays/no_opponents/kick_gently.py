@@ -81,7 +81,7 @@ class KickGently(play.Play):
         self.remove_all_subbehaviors()
 
     def execute_running(self):
-        main.system_state().draw_circle(self.target, constants.Robot.Radius,
+        main.debug_drawer().draw_circle(self.target, constants.Robot.Radius,
                                         constants.Colors.Green, "target")
 
     @classmethod

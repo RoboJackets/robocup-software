@@ -9,9 +9,7 @@ include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
 set(ROBOCUP_LIB_SRC
     "BatteryProfile.cpp"
-    "BatteryWidget.cpp"
     "Configuration.cpp"
-    "FieldView.cpp"
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
     "joystick/Joystick.cpp"
@@ -20,7 +18,6 @@ set(ROBOCUP_LIB_SRC
     "joystick/SpaceNavJoystick.cpp"
     "KickEvaluator.cpp"
     "Logger.cpp"
-    "MainWindow.cpp"
     "motion/MotionControl.cpp"
     "motion/TrapezoidalMotion.cpp"
     "NewRefereeModule.cpp"
@@ -35,28 +32,36 @@ set(ROBOCUP_LIB_SRC
     "planning/EscapeObstaclesPathPlanner.cpp"
     "planning/InterpolatedPath.cpp"
     "planning/IndependentMultiRobotPathPlanner.cpp"
+    "planning/InterceptPlanner.cpp"
     "planning/MotionConstraints.cpp"
     "planning/RotationConstraints.cpp"
     "planning/Path.cpp"
     "planning/RRTPlanner.cpp"
     "planning/RRTUtil.cpp"
     "planning/PivotPathPlanner.cpp"
+    "planning/SettlePathPlanner.cpp"
+    "planning/CollectPathPlanner.cpp"
     "planning/LineKickPlanner.cpp"
     "planning/SingleRobotPathPlanner.cpp"
     "planning/TargetVelPathPlanner.cpp"
     "planning/TrapezoidalPath.cpp"
     "Processor.cpp"
-    "ProtobufTree.cpp"
+    "radio/NetworkRadio.cpp"
+    "radio/PacketConvert.cpp"
     "radio/SimRadio.cpp"
-    "radio/USBRadio.cpp"
-    "RefereeTab.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
-    "RobotStatusWidget.cpp"
-    "RobotWidget.cpp"
-    "SimFieldView.cpp"
-    "StripChart.cpp"
     "SystemState.cpp"
+    "DebugDrawer.cpp"
+    "ui/BatteryWidget.cpp"
+    "ui/FieldView.cpp"
+    "ui/MainWindow.cpp"
+    "ui/ProtobufTree.cpp"
+    "ui/RefereeTab.cpp"
+    "ui/RobotStatusWidget.cpp"
+    "ui/RobotWidget.cpp"
+    "ui/SimFieldView.cpp"
+    "ui/StripChart.cpp"
     "ui/StyleSheetManager.cpp"
     "VisionReceiver.cpp"
     "vision/ball/BallBounce.cpp"
@@ -78,8 +83,7 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp"
-)
+    "WindowEvaluator.cpp")
 
 
 if(APPLE)
@@ -93,10 +97,10 @@ endif()
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-file(GLOB SOCCER_UIS "${CMAKE_CURRENT_SOURCE_DIR}/ui/*.ui")
+file(GLOB SOCCER_UIS "${CMAKE_CURRENT_SOURCE_DIR}/ui/qt/*.ui")
 qt5_wrap_ui(SOCCER_UIS ${SOCCER_UIS})
 
-qt5_add_resources(SOCCER_RSRC ui/main_icons.qrc)
+qt5_add_resources(SOCCER_RSRC ui/qt/main_icons.qrc)
 
 
 # Boost Python
@@ -114,9 +118,9 @@ set(version ${PYTHONLIBS_VERSION_STRING})
 if(APPLE)
     set(boost_py_version "")
 else()
-    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version ${version} )
+    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version "${version}" )
     # Get first two numbers of python string
-    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version ${boost_py_version} )
+    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version "${boost_py_version}" )
 endif()
 
 foreach(possible_name python3 python-py${boost_py_version} python)
@@ -145,7 +149,7 @@ set_target_properties(robocup PROPERTIES SUFFIX ".so")
 target_link_libraries(robocup common rc-fshare)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
-target_link_libraries(robocup ${Boost_LIBRARIES})
+target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
@@ -168,7 +172,7 @@ if(APPLE)
     include(BundleUtilities)
 
     # app icon
-    set(OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/SoccerBall.icns)
+    set(OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt/SoccerBall.icns)
     set_source_files_properties(${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set(MACOSX_BUNDLE_ICON_FILE SoccerBall)
 
@@ -191,8 +195,8 @@ qt5_use_modules(soccer Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(soccer robocup)
 
 # build the 'log_viewer' program
-qt5_add_resources(LOG_VIEWER_RSRC ui/log_icons.qrc)
-qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
+qt5_add_resources(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
+qt5_wrap_ui(LOG_VIEWER_UI ui/qt/LogViewer.ui)
 set(LOG_VIEWER_SRC
     "LogViewer.cpp"
 )
@@ -208,6 +212,9 @@ set(SOCCER_TEST_SRC
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/TransformMatrixTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
     "BatteryProfileTest.cpp"
     "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"

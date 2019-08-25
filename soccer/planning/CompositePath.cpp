@@ -1,4 +1,5 @@
 #include "CompositePath.hpp"
+#include <DebugDrawer.hpp>
 
 using namespace std;
 using namespace Geometry2d;
@@ -33,14 +34,14 @@ void CompositePath::append(unique_ptr<Path> path) {
     }
 }
 
-boost::optional<RobotInstant> CompositePath::eval(RJ::Seconds t) const {
+std::optional<RobotInstant> CompositePath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         debugThrow(
             invalid_argument("A time less than 0 was entered for time t."));
     }
 
     if (paths.empty()) {
-        return boost::none;
+        return std::nullopt;
     }
     for (const std::unique_ptr<Path>& subpath : paths) {
         RJ::Seconds timeLength = subpath->getDuration();
@@ -51,7 +52,7 @@ boost::optional<RobotInstant> CompositePath::eval(RJ::Seconds t) const {
         }
     }
 
-    return boost::none;
+    return std::nullopt;
 }
 
 bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
@@ -102,10 +103,10 @@ bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
     return false;
 }
 
-void CompositePath::draw(SystemState* const state, const QColor& color,
+void CompositePath::draw(DebugDrawer* const debug_drawer, const QColor& color,
                          const QString& layer) const {
     for (const std::unique_ptr<Path>& path : paths) {
-        path->draw(state, color, layer);
+        path->draw(debug_drawer, color, layer);
     }
 }
 

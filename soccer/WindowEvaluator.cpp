@@ -1,7 +1,8 @@
 #include "WindowEvaluator.hpp"
-#include "Constants.hpp"
-#include "KickEvaluator.hpp"
 #include <Geometry2d/Util.hpp>
+#include "Constants.hpp"
+#include "DebugDrawer.hpp"
+#include "KickEvaluator.hpp"
 
 #include <algorithm>
 #include <array>
@@ -27,8 +28,7 @@ void WindowEvaluator::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
 }
 
-WindowEvaluator::WindowEvaluator(SystemState* systemState)
-    : system(systemState) {}
+WindowEvaluator::WindowEvaluator(Context* context) : context(context) {}
 
 WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target,
                                                float targetWidth) {
@@ -104,7 +104,7 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin,
                 bot_pos - n * Robot_Radius - t * r};
 
     if (debug) {
-        system->drawLine(seg, QColor{"Red"}, "Debug");
+        context->debug_drawer.drawLine(seg, QColor{"Red"}, "Debug");
     }
 
     auto end = target.delta().magsq();
@@ -136,17 +136,17 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     auto end = target.delta().magsq();
 
     // if target is a zero-length segment, there are no windows
-    if (end == 0) return make_pair(vector<Window>{}, boost::none);
+    if (end == 0) return make_pair(vector<Window>{}, std::nullopt);
 
     if (debug) {
-        system->drawLine(target, QColor{"Blue"}, "Debug");
+        context->debug_drawer.drawLine(target, QColor{"Blue"}, "Debug");
     }
 
     vector<Window> windows = {Window{0, end}};
 
     // apply the obstacles
 
-    vector<Robot*> bots(system->self.size() + system->opp.size());
+    vector<Robot*> bots(context->state.self.size() + context->state.opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
         return bot != nullptr && bot->visible &&
@@ -154,11 +154,12 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
                    excluded_robots.end();
     };
 
-    auto end_it = copy_if(system->self.begin(), system->self.end(),
-                          bots.begin(), filter_predicate);
+    auto end_it =
+        copy_if(context->state.self.begin(), context->state.self.end(),
+                bots.begin(), filter_predicate);
 
-    end_it = copy_if(system->opp.begin(), system->opp.end(), end_it,
-                     filter_predicate);
+    end_it = copy_if(context->state.opp.begin(), context->state.opp.end(),
+                     end_it, filter_predicate);
 
     bots.resize(distance(bots.begin(), end_it));
 
@@ -192,22 +193,27 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
         fill_shot_success(w, origin);
     }
 
-    boost::optional<Window> best{
-        !windows.empty(), *max_element(windows.begin(), windows.end(),
-                                       [](Window& a, Window& b) -> bool {
-                                           return a.segment.delta().magsq() <
-                                                  b.segment.delta().magsq();
-                                       })};
+    std::optional<Window> best;
+    if (!windows.empty()) {
+        best = *max_element(
+                    windows.begin(), windows.end(),
+                    [](Window& a, Window& b) -> bool {
+                        return a.segment.delta().magsq() < b.segment.delta().magsq();
+                    });
+    }
     if (debug) {
         if (best) {
-            system->drawLine(Segment{origin, best->segment.center()},
-                             QColor{"Green"}, "Debug");
+            context->debug_drawer.drawLine(
+                Segment{origin, best->segment.center()}, QColor{"Green"},
+                "Debug");
         }
         for (Window& window : windows) {
-            system->drawLine(window.segment, QColor{"Green"}, "Debug");
-            system->drawText(QString::number(window.shot_success),
-                             window.segment.center() + Point(0, 0.1),
-                             QColor{"Green"}, "Debug");
+            context->debug_drawer.drawLine(window.segment, QColor{"Green"},
+                                           "Debug");
+            context->debug_drawer.drawText(
+                QString::number(window.shot_success),
+                window.segment.center() + Point(0, 0.1), QColor{"Green"},
+                "Debug");
         }
     }
 

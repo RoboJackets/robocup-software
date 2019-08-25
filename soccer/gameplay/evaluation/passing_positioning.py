@@ -7,7 +7,7 @@ import evaluation.passing
 import evaluation.shooting
 import functools
 
-## Finds the best location wiht a rectangle to pass the ball into
+## Finds the best location with a rectangle to pass the ball into
 #
 # By default, this is use the half of the field in front of the ball (Or the opponents half)
 # The best location is found by combining the pass chance by the 
@@ -21,6 +21,7 @@ import functools
 #
 # @param kick_point: Point where we are kicking from
 # @param ignore_robots: Robots to ignore
+# @param min_pass_dist: Minimum distance that we should ever pass
 # @param field_weights: A tuple of the 3 difference weights to apply to field position 
 #               (Centerness, Distance to their goal, Angle off their goal)
 # @param weights: A tuple of the 4 different weights to apply to the evaulations overall
@@ -28,16 +29,16 @@ import functools
 # @param recieve_x: X position of the receive point
 # @param recieve_y: Y position of the receive point
 # @return Returns a score between 0 and 1 on how good of pass would be
-def eval_single_point(kick_point, ignore_robots, field_weights, weights,
-                      recieve_x, recieve_y):
+def eval_single_point(kick_point, ignore_robots, min_pass_dist, field_weights,
+                      weights, receive_x, receive_y):
 
-    receive_point = robocup.Point(recieve_x, recieve_y)
+    receive_point = robocup.Point(receive_x, receive_y)
 
     if kick_point is None:
         if main.ball().valid:
             kick_point = main.ball().pos
         else:
-            return None
+            return 0
 
     w = constants.Field.Width
     l = constants.Field.Length
@@ -57,6 +58,10 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
             constants.Field.TheirGoalZoneShape.contains_point(
                 receive_point + robocup.Point(0, y_offset)
                 - robocup.Point(robot_offset, robot_offset))):
+        return 0
+
+    # Check if we are too close to the ball
+    if ((receive_point - kick_point).mag() < min_pass_dist):
         return 0
 
     shotChance = evaluation.shooting.eval_shot(receive_point,
@@ -93,13 +98,14 @@ def eval_single_point(kick_point, ignore_robots, field_weights, weights,
 # @return bestPoint and bestScore in that order
 def eval_best_receive_point(kick_point,
                             ignore_robots=[],
+                            min_pass_dist=0.0,
                             field_weights=(0.1, 3.2, 0.1),
                             nelder_mead_args=(robocup.Point(0.5, .5),
                                               robocup.Point(0.01, 0.01), 1, 2,
                                               0.75, 0.5, 50, 1, 0.1),
                             weights=(1, 4, 15, 1)):
     pythfunc = functools.partial(eval_single_point, kick_point, ignore_robots,
-                                 field_weights, weights)
+                                 min_pass_dist, field_weights, weights)
     cppfunc = robocup.PythonFunctionWrapper(pythfunc)
     nmConfig = robocup.NelderMead2DConfig(
         cppfunc, kick_point, nelder_mead_args[0], nelder_mead_args[1],

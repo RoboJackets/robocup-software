@@ -6,7 +6,7 @@ import math
 
 def is_moving_towards_our_goal():
     # see if the ball is moving much
-    if main.ball().vel.mag() > 0.1:
+    if main.ball().vel.mag() > 0.18:  # Tuned based on vision noise
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Line(main.ball().pos, (
@@ -68,7 +68,8 @@ def opponent_with_ball():
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
     mouth_half_angle = 15*math.pi/180 # Angle from front
-    max_dist_from_mouth = 1.5 * constants.Robot.Radius
+    max_dist_from_mouth = 1.13 * (
+        constants.Robot.Radius + constants.Ball.Radius)
 
     # Create triangle between bot pos and two points of the mouth
     A = robot.pos
@@ -85,7 +86,15 @@ def robot_has_ball(robot):
     s = 1/(2*area) * (A.y*C.x - A.x*C.y + (C.y - A.y)*D.x + (A.x - C.x)*D.y)
     t = 1/(2*area) * (A.x*B.y - A.y*B.x + (A.y - B.y)*D.x + (B.x - A.x)*D.y)
 
-    return s > 0 and t > 0 and (1 - s - t) > 0
+    # Due to the new camera configuration in the 2019 year,
+    # the ball dissapears consistently when we go to capture a ball near the
+    # edge of the field. This causes the ball to "appear" inside the robot
+    # so we should assume that if the ball is inside, we probably have
+    # the ball
+    ball_inside_robot = (robot.pos - main.ball().pos).mag() < \
+                        constants.Robot.Radius + constants.Ball.Radius
+
+    return (s > 0 and t > 0 and (1 - s - t) > 0) or ball_inside_robot
 
 
 def time_to_ball(robot):

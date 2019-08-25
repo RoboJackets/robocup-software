@@ -87,8 +87,8 @@ class SubmissiveDefender(
         default_pt = top_seg.center()
 
         if self._block_line is not None:
-            # main.system_state().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
-            main.system_state().draw_circle(
+            # main.debug_drawer().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
+            main.debug_drawer().draw_circle(
                 self._block_line.get_pt(0), 0.1, constants.Colors.White,
                 "SubmissiveDefender")
 
@@ -151,13 +151,13 @@ class SubmissiveDefender(
                           constants.Field.PenaltyShortDist))
 
         if move.pos is not None:
-            main.system_state().draw_circle(move.pos, 0.02,
+            main.debug_drawer().draw_circle(move.pos, 0.02,
                                             constants.Colors.Green, "Mark")
-            main.system_state().draw_segment(left_seg, constants.Colors.Green,
+            main.debug_drawer().draw_segment(left_seg, constants.Colors.Green,
                                              "Mark")
-            main.system_state().draw_segment(top_seg, constants.Colors.Green,
+            main.debug_drawer().draw_segment(top_seg, constants.Colors.Green,
                                              "Mark")
-            main.system_state().draw_segment(right_seg, constants.Colors.Green,
+            main.debug_drawer().draw_segment(right_seg, constants.Colors.Green,
                                              "Mark")
 
         # make the defender face the threat it's defending against

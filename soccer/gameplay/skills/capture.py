@@ -1,60 +1,65 @@
-import single_robot_behavior
+import single_robot_composite_behavior
 import behavior
-from enum import Enum
+import enum
 import main
-import evaluation
-import constants
 import role_assignment
 import robocup
-import planning_priority
-import time
-import skills.move
+import constants
+import skills.settle
+import skills.collect
+import math
+import evaluation.ball
 
 
-class Capture(single_robot_behavior.SingleRobotBehavior):
-    # Speed in m/s at which a capture will be handled by coarse and fine approach instead of intercept
-    InterceptVelocityThresh = 0.15
+# Captures the ball through whatever means needed
+# In most cases, the robot moves in front of the moving ball
+# to bounce it off the dribbler. It then slowly moves through the
+# ball to fully control it
+class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
-    # Multiplied by the speed of the ball to find a "dampened" point to move to during an intercept
-    DampenMult = 0.0
+    # Speed at which we transition to settle
+    INTERCEPT_VELOCITY_THRESH_TO_SETTLE = 0.5
 
-    # The distance to transition from coarse approach to fine
-    # TODO: The correct way to do this would be using our official max acceleration and current speed
-    CoarseToFineApproachDistance = 0.3
+    # Speed at which we transition to collect
+    INTERCEPT_VELOCITY_THRESH_TO_COLLECT = 0.4
 
-    # The distance to avoid the  ball in coarse approach
-    CoarseApproachAvoidBall = 0.1
+    # We want  to let the probably held count stabilize
+    # but to do that we have to let it sit still
+    # If it doesn't move to either extreme and stays at 50%
+    # we can't transition away, so we need this counter
+    MAX_FRAMES_IN_CAPTURED = 20
 
-    # Minimum speed (On top of ball speed) to move towards the ball
-    FineApproachMinDeltaSpeed = 0.1
+    # X number of frames in the past to look at
+    PROBABLY_HELD_HISTORY_LENGTH = 60
 
-    # Proportional term on the distance error between ball and robot during fine approach
-    # Adds to the fine approach speed
-    FineApproachDistanceMultiplier = .1
+    # Initial starting location for the counter
+    PROBABLY_HELD_START = .5 * PROBABLY_HELD_HISTORY_LENGTH
 
-    # How much of the ball speed to add to our approach speed
-    FineApproachBallSpeedMultiplier = .8
+    # Anything below this number we think we don't have the ball
+    PROBABLY_NOT_HELD_CUTOFF = .4 * PROBABLY_HELD_HISTORY_LENGTH
+    # Anything above this number we think we have the ball
+    PROBABLY_HELD_CUTOFF = .6 * PROBABLY_HELD_HISTORY_LENGTH
 
-    # Time in which to wait in delay state to confirm the robot has the ball
-    DelayTime = 0.5
+    # Accounts for the scaling needed to balance the robot change cost
+    # Increase to decrease the chance of robot change
+    # Decrease to improve the responsiveness in regard th changing robots
+    SETTLE_COST_MULTIPLIER = 20
 
-    # Default dribbler speed, can be overriden by self.dribbler_power
-    # Sets dribbler speed during intercept and fine approach
-    DribbleSpeed = 100
+    # How "likely" it is for role assignment to choose the closest robot
+    # Higher means more likely
+    # 1 is the default number for role assignment in general
+    # Only used for collect phase
+    POSITION_COST_MULTIPLIER = 30
 
-    # The minimum dot product result between the ball and the robot to count as the ball moving at the
-    # robot
-    InFrontOfBallCosOfAngleThreshold = 0.95
+    class State(enum.Enum):
+        # May already have the ball so just sit for a split second and keep dribbler on
+        captured = 0
 
-    DelaySpeed = 0.2
+        # Don't have ball so try to intercept the moving ball
+        settle = 2
 
-    DelayBallSpeedMultiplier = 1
-
-    class State(Enum):
-        intercept = 0
-        coarse_approach = 1
-        fine_approach = 2
-        delay = 3
+        # Don't have ball so try to do the fine approach to control the ball
+        collect = 1
 
     ## Capture Constructor
     # faceBall - If false, any turning functions are turned off,
@@ -62,209 +67,183 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def __init__(self, faceBall=True):
         super().__init__(continuous=False)
 
-        self.add_state(Capture.State.intercept,
-                       behavior.Behavior.State.running)
-        self.add_state(Capture.State.coarse_approach,
-                       behavior.Behavior.State.running)
-        self.add_state(Capture.State.fine_approach,
-                       behavior.Behavior.State.running)
-        self.add_state(Capture.State.delay,
-                       behavior.Behavior.State.running)
+        for s in Capture.State:
+            self.add_state(s, behavior.Behavior.State.running)
 
-        self.add_transition(behavior.Behavior.State.start,
-                            Capture.State.intercept, lambda: True,
-                            'immediately')
+        self.prev_ball = main.ball()
+        self.probably_held_cnt = Capture.PROBABLY_HELD_START
+        self.frames_in_captured = 0
 
+        # By default, move into the settle state since we almost never start with ball
         self.add_transition(
-            Capture.State.intercept,
-            Capture.State.coarse_approach,
-            lambda: main.ball().vel.mag() < Capture.InterceptVelocityThresh or
-                    (main.ball().pos).dist_to(self.robot.pos) < (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
-            'Moving to dampen')
+            behavior.Behavior.State.start,
+            Capture.State.settle,
+            lambda: self.robot is not None and not evaluation.ball.
+            robot_has_ball(self.robot),  #self.robot.has_ball(),
+            'dont have ball')
 
+        # On the offchance we start with ball, double check it's not a blip on the sensor
         self.add_transition(
-            Capture.State.coarse_approach,
-            Capture.State.intercept,
-            lambda: main.ball().vel.mag() >= Capture.InterceptVelocityThresh and
-                    (main.ball().pos).dist_to(self.robot.pos) >= (main.ball().vel + main.ball().pos).dist_to(self.robot.pos),
-            'Moving to intercept')
+            behavior.Behavior.State.start,
+            Capture.State.captured,
+            lambda: self.robot is not None and evaluation.ball.robot_has_ball(
+                self.robot),  #self.robot.has_ball(),
+            'may already have ball')
 
+        # We actually don't have the ball, either 50% register rate (faulty sensor?) or we just got a blip
         self.add_transition(
-            Capture.State.coarse_approach,
-            Capture.State.fine_approach,
-            lambda: (self.bot_in_front_of_ball() or
-                    self.bot_near_ball(Capture.CoarseToFineApproachDistance)) and main.ball().valid,
-            'dist to ball < threshold')
+            Capture.State.captured, Capture.State.settle, lambda: self.
+            probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF or self.
+            frames_in_captured > Capture.MAX_FRAMES_IN_CAPTURED,
+            'actually dont have ball')
 
+        # Actually do have the ball, we can just leave
+        self.add_transition(Capture.State.captured,
+                            behavior.Behavior.State.completed, lambda: self.
+                            probably_held_cnt > Capture.PROBABLY_HELD_CUTOFF,
+                            'actually have ball')
+
+        # If we intercepted the ball to slow it down enough or it most likely just bounced off our robot and
+        # The velocity is just funky
+        self.add_transition(Capture.State.settle,
+                            Capture.State.collect, lambda: main.ball().vel.mag(
+                            ) < Capture.INTERCEPT_VELOCITY_THRESH_TO_COLLECT,
+                            'collecting')
+
+        # Cut back if the velocity is pretty high and we aren't about to collect the ball
         self.add_transition(
-            Capture.State.fine_approach,
-            Capture.State.delay,
-            lambda: self.robot.has_ball, #evaluation.ball.robot_has_ball(self.robot),
-            'Has ball')
+            Capture.State.collect, Capture.State.settle, lambda: main.ball(
+            ).vel.mag() >= Capture.INTERCEPT_VELOCITY_THRESH_TO_SETTLE and
+            (self.subbehavior_with_name('collector').robot is not None and
+             (self.subbehavior_with_name('collector').robot.pos - main.ball().
+              pos).mag() > .3), 'settling again')
 
+        #  Once collect is done, we have the ball
         self.add_transition(
-            Capture.State.delay,
-            behavior.Behavior.State.completed,
-            lambda: time.time() - self.start_time > Capture.DelayTime and
-                    self.robot.has_ball, #evaluation.ball.robot_has_ball(self.robot),
-            'Delay before finish')
+            Capture.State.collect, behavior.Behavior.State.completed, lambda:
+            self.subbehavior_with_name('collector').is_done_running(),
+            'captured')
 
+        # Go back to settle if we loose the ball when completed
         self.add_transition(
-            Capture.State.delay,
-            Capture.State.fine_approach,
-            lambda: not self.robot.has_ball, #not evaluation.ball.robot_has_ball(self.robot),
-            'Lost ball during delay')
+            behavior.Behavior.State.completed, Capture.State.settle, lambda:
+            self.probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF,
+            'captured')
 
-        self.add_transition(
-            Capture.State.fine_approach, Capture.State.coarse_approach,
-            lambda: not (self.bot_in_front_of_ball() or
-                        self.bot_near_ball(Capture.CoarseToFineApproachDistance)) and
-                    (not self.bot_near_ball(Capture.CoarseToFineApproachDistance * 1.5) or
-                    not main.ball().pos),
-            'Lost ball during delay')
+    def execute_captured(self):
+        self.update_held_cnt()
+        self.frames_in_captured += 1
 
-        self.dribbler_power = Capture.DribbleSpeed
+    def on_enter_settle(self):
+        self.remove_all_subbehaviors()
+        self.add_subbehavior(
+            skills.settle.Settle(), name='settler', required=True, priority=10)
 
-        self.lastApproachTarget = None
-        self.faceBall = faceBall
+    def on_enter_collect(self):
+        self.remove_all_subbehaviors()
+        self.add_subbehavior(
+            skills.collect.Collect(),
+            name='collector',
+            required=True,
+            priority=10)
 
-    def bot_to_ball(self):
-        return main.ball().pos - self.robot.pos
+    def on_enter_completed(self):
+        self.probably_held_cnt = Capture.PROBABLY_HELD_START
+        self.remove_all_subbehaviors()
 
-    def bot_near_ball(self, distance):
-        return (self.bot_to_ball().mag() < distance)
+    def execute_completed(self):
+        self.update_held_cnt()
 
-    # Ball is moving towards us and will not stop before reaching us
-    def bot_in_front_of_ball(self):
-        ball2bot = self.bot_to_ball() * -1
-        return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and \
-               ((ball2bot).mag() < (evaluation.ball.predict_stop() - main.ball().pos).mag())
+        self.robot.disable_avoid_ball()
+        self.robot.set_dribble_speed(constants.Robot.Dribbler.StandardPower)
 
-    # calculates intercept point for the fast moving intercept state
-    def find_moving_intercept(self):
-        return find_robot_intercept_point(self.robot)
+    def update_held_cnt(self):
+        if (self.robot is None):
+            return
 
-    # returns intercept point for the slow moving capture states
-    def find_intercept_point(self):
-        return find_robot_capture_point(self.robot)
-
-    def execute_running(self):
-        self.robot.set_planning_priority(planning_priority.CAPTURE)
-
-        if (self.faceBall):
-            self.robot.face(main.ball().pos)
-
-    # sets move subbehavior
-    def execute_intercept(self):
-        self.robot.set_dribble_speed(self.dribbler_power)
-        pos = self.find_moving_intercept()
-        self.robot.move_to(pos)
-
-    def on_enter_coarse_approach(self):
-        self.lastApproachTarget == None
-
-    def execute_coarse_approach(self):
-        pos = self.find_intercept_point()
-
-        # Don't move our target if it's somewhat close to our old target
-        if (self.lastApproachTarget != None and
-            (pos - self.lastApproachTarget).mag() < 0.1):
-            pos = self.lastApproachTarget
-
-        self.lastApproachTarget = pos
-
-        # don't hit the ball on accident
-        if pos.dist_to(main.ball().pos) < Capture.CoarseApproachAvoidBall + constants.Robot.Radius:
-            self.robot.disable_avoid_ball()
+        # If we hold the ball, increment up to max
+        # if not, decrement to 0
+        if (evaluation.ball.robot_has_ball(
+                self.robot)):  #self.robot.has_ball()):
+            self.probably_held_cnt = min(self.probably_held_cnt + 1,
+                                         Capture.PROBABLY_HELD_HISTORY_LENGTH)
         else:
-            self.robot.set_avoid_ball_radius(Capture.CoarseApproachAvoidBall)
+            self.probably_held_cnt = max(self.probably_held_cnt - 1, 0)
 
-        self.robot.move_to(pos)
-        main.system_state().draw_circle(self.lastApproachTarget,
-                                        constants.Ball.Radius,
-                                        constants.Colors.White, "Capture")
+    @staticmethod
+    def role_assignment_cost(robot):
+        # Estimate the time it takes to intercept the ball
+        # Use straight line distance to closest point along line
+        # Then movement down the line
 
-    def on_exit_coarse_approach(self):
-        self.lastApproachTarget is None
+        # Represents ball movement line
+        ball_move_line = robocup.Line(main.ball().pos,
+                                      main.ball().pos + main.ball().vel * 10)
 
-    def execute_fine_approach(self):
-        self.robot.disable_avoid_ball()
-        self.robot.set_dribble_speed(self.dribbler_power)
+        # Closest point to robot on ball movement line
+        ball_line_intercept = ball_move_line.nearest_point(robot.pos)
 
-        bot2ball_dir = (main.ball().pos - self.robot.pos).normalized()
+        ball_to_robot = robot.pos - main.ball().pos
+        ball_to_intercept = ball_line_intercept - main.ball().pos
+        robot_to_intercept = ball_line_intercept - robot.pos
 
-        approach = self.bot_to_ball() * Capture.FineApproachDistanceMultiplier + \
-                    bot2ball_dir * Capture.FineApproachMinDeltaSpeed + \
-                    main.ball().vel * Capture.FineApproachBallSpeedMultiplier
-        if (approach.mag() > 1):
-            approach = approach.normalized() * 1
-        self.robot.set_world_vel(approach)
+        # If we are actually in front of the ball angle wise
+        # OR close enough that it could be a bounce off the robot due to noisy vision
+        in_front = ball_move_line.delta().angle_between(ball_to_robot) < math.pi/2 or \
+                   ball_to_robot.mag() < 1.5*(constants.Robot.Radius + constants.Ball.Radius)
 
-    def on_enter_delay(self):
-        self.start_time = time.time()
+        # Calculate how much further the ball will move before we reach the point
 
-    def execute_delay(self):
-        self.robot.disable_avoid_ball()
-        self.robot.set_dribble_speed(self.dribbler_power)
+        max_speed = robocup.MotionConstraints.MaxRobotSpeed.value
+        max_acc = robocup.MotionConstraints.MaxRobotAccel.value
 
-        ball_dir = (main.ball().pos - self.robot.pos).normalized()
-        if main.ball().vel.mag() < Capture.DelaySpeed:
-            self.robot.set_world_vel(ball_dir*Capture.DelaySpeed)
-        elif main.ball().vel.mag() < Capture.DelaySpeed:
-            delay_speed = main.ball().vel.mag() * Capture.DelayBallSpeedMultiplier - Capture.DelaySpeed
-            self.robot.set_world_vel(ball_dir*delay_speed)
-        self.robot.face(main.ball().pos)
+        # How long it will take the robot/ball to reach that intercept point
+        ball_secs = main.ball().estimate_seconds_to(ball_line_intercept)
+        robot_secs = robocup.get_trapezoidal_time(robot_to_intercept.mag(),
+                                                  robot_to_intercept.mag(),
+                                                  max_speed, max_acc, 0, 0)
+
+        time_to_hit = robot_secs
+
+        # If we aren't in front of the ball, we need to get time to catch up
+        if (not in_front):
+            # Difference in speed between us and ball
+            delta_speed = max_speed - main.ball().vel.mag()
+
+            # if we are slower than the ball, don't even try and just exclude it automatically
+            if (delta_speed < 0):
+                time_to_hit += 100
+            # If we are fast, figure out how much more time we need
+            else:
+                delta_time = robocup.get_trapezoidal_time(
+                    ball_to_intercept.mag(),
+                    ball_to_intercept.mag(), delta_speed, max_acc, 0, 0)
+                time_to_hit += delta_time
+
+        #main.debug_drawer().draw_text(str(time_to_hit), robot.pos + robocup.Point(0.1,0.1), (255,255,255), "test")
+
+        return time_to_hit * Capture.SETTLE_COST_MULTIPLIER
+
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.require_kicking = True
+        #reqs.require_kicking = True
+
         # try to be near the ball
-        if main.ball().valid:
-            if main.ball().vel.mag() < self.InterceptVelocityThresh:
-                reqs.destination_shape = main.ball().pos
-            else:
-                # TODO Make this less complicated and remove magic numbers
-                reqs.destination_shape = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel * 10)
+        for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            if main.ball().valid:
+                # Slow ball so we can move in from any direction
+                if main.ball().vel.mag(
+                ) < Capture.INTERCEPT_VELOCITY_THRESH_TO_COLLECT:
+                    # Get the closest robot to the ball
+                    # Increase the cost significantly for robots far away so that it
+                    # picks the robot already controlling the ball
+                    req.destination_shape = main.ball().pos
+                    req.position_cost_multiplier = Capture.POSITION_COST_MULTIPLIER
+                # Fast ball, want something downfield
+                else:
+                    req.cost_func = Capture.role_assignment_cost
+                    req.robot_change_cost = 10
+                    req.destination_shape = None
+
         return reqs
-
-# calculates intercept point for the fast moving intercept state
-def find_robot_intercept_point(robot):
-    if (robot is not None):
-        passline = robocup.Line(
-            main.ball().pos, main.ball().pos + main.ball().vel * 10)
-        pos = passline.nearest_point(robot.pos) + (main.ball().vel * Capture.DampenMult)
-        return pos
-    else:
-        return None
-
-# calculates capture point for the slow or stationary fine approach state
-def find_robot_capture_point(robot):
-    if robot is None:
-        return main.ball().pos
-
-    approach_vec = approach_vector(robot)
-    # sample every 5 cm in the -approach_vector direction from the ball
-    pos = None
-
-    for i in range(50):
-        dist = i * 0.05
-        pos = main.ball().pos + approach_vec * dist
-        # how long will it take the ball to get there
-        ball_time = evaluation.ball.rev_predict(dist)
-        robotDist = (pos - robot.pos).mag() * 0.6
-        bot_time = robocup.get_trapezoidal_time(robotDist, robotDist, 2.2, 1,
-                                                robot.vel.mag(), 0)
-
-        if bot_time < ball_time:
-            break
-
-    return pos
-
-
-def approach_vector(robot):
-    if main.ball().vel.mag() > 0.25 \
-       and robot.pos.dist_to(main.ball().pos) > 0.2:
-        # ball's moving, get on the side it's moving towards
-        return main.ball().vel.normalized()
-    else:
-        return (robot.pos - main.ball().pos).normalized()

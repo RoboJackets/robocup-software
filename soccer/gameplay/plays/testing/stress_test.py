@@ -37,7 +37,7 @@ class StressTest(play.Play):
         # draw laps
         # indices = list(range(len(self.points))) + [0]
         # for i in range(len(indices)):
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(self.points[0], self.points[1]), (255, 0, 0),
             "StressTest")
 

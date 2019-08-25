@@ -69,7 +69,7 @@ class DefenseOld(composite_behavior.CompositeBehavior):
 
         self.debug = True
 
-        self.win_eval = robocup.WindowEvaluator(main.system_state())
+        self.win_eval = robocup.WindowEvaluator(main.context())
 
     ## draws some pretty cool shit on the field if set to True
     # default: True
@@ -126,7 +126,7 @@ class DefenseOld(composite_behavior.CompositeBehavior):
 
             # TODO: move a lot of this code into modules in the evaluation folder
 
-            #main.system_state().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
+            #main.debug_drawer().draw_circle(robocup.Point(0, 0), constants.Field.ArcRadius * 2,constants.Colors.Red, "Clear Ball")
 
     def on_enter_clearing(self):
         defender1 = self.subbehavior_with_name('defender1')
@@ -471,7 +471,7 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             if self.debug:
                 for handler in threat.assigned_handlers:
                     # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "DefenseOld")
-                    main.system_state().draw_circle(handler.move_target, 0.02,
+                    main.debug_drawer().draw_circle(handler.move_target, 0.02,
                                                     constants.Colors.Blue,
                                                     "DefenseOld")
 
@@ -483,9 +483,9 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                         threat.best_shot_window.segment.get_pt(1)
                     ]
                     shot_color = (255, 0, 0, 150)  # translucent red
-                    main.system_state().draw_polygon(pts, shot_color,
+                    main.debug_drawer().draw_polygon(pts, shot_color,
                                                      "DefenseOld")
-                    main.system_state().draw_segment(
+                    main.debug_drawer().draw_segment(
                         threat.best_shot_window.segment, constants.Colors.Red,
                         "DefenseOld")
 
@@ -497,7 +497,7 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                     else:
                         chance = 0.0
 
-                    main.system_state().draw_text(
+                    main.debug_drawer().draw_text(
                         "Shot: " + str(int(threat.shot_chance * 100.0)) +
                         "% / " + str(int(chance * 100)) + "%",
                         shot_line.center(), constants.Colors.White,
@@ -506,9 +506,9 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)
-                    main.system_state().draw_line(
+                    main.debug_drawer().draw_line(
                         pass_line, constants.Colors.Red, "DefenseOld")
-                    main.system_state().draw_text("Pass: " + str(
+                    main.debug_drawer().draw_text("Pass: " + str(
                         int(threat.ball_acquire_chance * 100.0)) + "%",
                                                   pass_line.center(),
                                                   constants.Colors.White,

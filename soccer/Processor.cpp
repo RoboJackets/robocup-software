@@ -22,10 +22,11 @@
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
+#include "DebugDrawer.hpp"
 #include "Processor.hpp"
-#include "vision/VisionFilter.hpp"
+#include "radio/NetworkRadio.hpp"
 #include "radio/SimRadio.hpp"
-#include "radio/USBRadio.hpp"
+#include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -81,9 +82,9 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     QMetaObject::connectSlotsByName(this);
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(_state);
+    _refereeModule = std::make_shared<NewRefereeModule>(&_context);
     _refereeModule->start();
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
 
@@ -96,8 +97,10 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _visionChannel = visionChannel;
 
     // Create radio socket
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_state, _blueTeam))
-                         : static_cast<Radio*>(new USBRadio());
+    _radio =
+        _simulation
+            ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
+            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
@@ -238,8 +241,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
     _vision->addFrames(frames);
 
     // Fill the list of our robots/balls based on whether we are the blue team or not
-    _vision->fillBallState(_state);
-    _vision->fillRobotState(_state, _blueTeam);
+    _vision->fillBallState(_context.state);
+    _vision->fillRobotState(_context.state, _blueTeam);
 }
 
 /**
@@ -255,7 +258,7 @@ void Processor::run() {
         auto deltaTime = startTime - curStatus.lastLoopTime;
         _framerate = RJ::Seconds(1) / deltaTime;
         curStatus.lastLoopTime = startTime;
-        _state.time = startTime;
+        _context.state.time = startTime;
 
         if (!firstLogTime) {
             firstLogTime = startTime;
@@ -265,28 +268,29 @@ void Processor::run() {
         // Reset
 
         // Make a new log frame
-        _state.logFrame = std::make_shared<Packet::LogFrame>();
-        _state.logFrame->set_timestamp(RJ::timestamp());
-        _state.logFrame->set_command_time(
+        _context.state.logFrame = std::make_shared<Packet::LogFrame>();
+        _context.state.logFrame->set_timestamp(RJ::timestamp());
+        _context.state.logFrame->set_command_time(
             RJ::timestamp(startTime + Command_Latency));
-        _state.logFrame->set_use_our_half(_useOurHalf);
-        _state.logFrame->set_use_opponent_half(_useOpponentHalf);
-        _state.logFrame->set_manual_id(_manualID);
-        _state.logFrame->set_blue_team(_blueTeam);
-        _state.logFrame->set_defend_plus_x(_defendPlusX);
+        _context.state.logFrame->set_use_our_half(_useOurHalf);
+        _context.state.logFrame->set_use_opponent_half(_useOpponentHalf);
+        _context.state.logFrame->set_manual_id(_manualID);
+        _context.state.logFrame->set_blue_team(_blueTeam);
+        _context.state.logFrame->set_defend_plus_x(_defendPlusX);
+        _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
 
         if (first) {
             first = false;
 
             Packet::LogConfig* logConfig =
-                _state.logFrame->mutable_log_config();
+                _context.state.logFrame->mutable_log_config();
             logConfig->set_generator("soccer");
             logConfig->set_git_version_hash(git_version_hash);
             logConfig->set_git_version_dirty(git_version_dirty);
             logConfig->set_simulation(_simulation);
         }
 
-        for (OurRobot* robot : _state.self) {
+        for (OurRobot* robot : _context.state.self) {
             // overall robot config
             switch (robot->hardwareVersion()) {
                 case Packet::RJ2008:
@@ -316,7 +320,7 @@ void Processor::run() {
         vector<VisionPacket*> visionPackets;
         vision.getPackets(visionPackets);
         for (VisionPacket* packet : visionPackets) {
-            SSL_WrapperPacket* log = _state.logFrame->add_raw_vision();
+            SSL_WrapperPacket* log = _context.state.logFrame->add_raw_vision();
             log->CopyFrom(packet->wrapper);
 
             curStatus.lastVisionTime = packet->receivedTime;
@@ -341,10 +345,10 @@ void Processor::run() {
                 for (int i = 0; i < balls->size(); ++i) {
                     float x = balls->Get(i).x();
                     // FIXME - OMG too many terms
-                    if ((!_state.logFrame->use_opponent_half() &&
+                    if ((!_context.state.logFrame->use_opponent_half() &&
                          ((_defendPlusX && x < 0) ||
                           (!_defendPlusX && x > 0))) ||
-                        (!_state.logFrame->use_our_half() &&
+                        (!_context.state.logFrame->use_our_half() &&
                          ((_defendPlusX && x > 0) ||
                           (!_defendPlusX && x < 0)))) {
                         balls->SwapElements(i, balls->size() - 1);
@@ -361,10 +365,10 @@ void Processor::run() {
                 for (int team = 0; team < 2; ++team) {
                     for (int i = 0; i < robots[team]->size(); ++i) {
                         float x = robots[team]->Get(i).x();
-                        if ((!_state.logFrame->use_opponent_half() &&
+                        if ((!_context.state.logFrame->use_opponent_half() &&
                              ((_defendPlusX && x < 0) ||
                               (!_defendPlusX && x > 0))) ||
-                            (!_state.logFrame->use_our_half() &&
+                            (!_context.state.logFrame->use_our_half() &&
                              ((_defendPlusX && x > 0) ||
                               (!_defendPlusX && x < 0)))) {
                             robots[team]->SwapElements(
@@ -384,7 +388,7 @@ void Processor::run() {
 
         while (_radio->hasReversePackets()) {
             Packet::RadioRx rx = _radio->popReversePacket();
-            _state.logFrame->add_radio_rx()->CopyFrom(rx);
+            _context.state.logFrame->add_radio_rx()->CopyFrom(rx);
 
             curStatus.lastRadioRxTime =
                 RJ::Time(chrono::microseconds(rx.timestamp()));
@@ -395,8 +399,8 @@ void Processor::run() {
                 // We have to copy because the RX packet will survive past this
                 // frame but LogFrame will not (the RadioRx in LogFrame will be
                 // reused).
-                _state.self[board]->setRadioRx(rx);
-                _state.self[board]->radioRxUpdated();
+                _context.state.self[board]->setRadioRx(rx);
+                _context.state.self[board]->radioRxUpdated();
             }
         }
 
@@ -414,7 +418,7 @@ void Processor::run() {
         vector<NewRefereePacket*> refereePackets;
         _refereeModule.get()->getPackets(refereePackets);
         for (NewRefereePacket* packet : refereePackets) {
-            SSL_Referee* log = _state.logFrame->add_raw_refbox();
+            SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
             curStatus.lastRefereeTime =
                 std::max(curStatus.lastRefereeTime, packet->receivedTime);
@@ -428,15 +432,15 @@ void Processor::run() {
         string yellowname, bluename;
 
         if (blueTeam()) {
-            bluename = _state.gameState.OurInfo.name;
-            yellowname = _state.gameState.TheirInfo.name;
+            bluename = _context.game_state.OurInfo.name;
+            yellowname = _context.game_state.TheirInfo.name;
         } else {
-            yellowname = _state.gameState.OurInfo.name;
-            bluename = _state.gameState.TheirInfo.name;
+            yellowname = _context.game_state.OurInfo.name;
+            bluename = _context.game_state.TheirInfo.name;
         }
 
-        _state.logFrame->set_team_name_blue(bluename);
-        _state.logFrame->set_team_name_yellow(yellowname);
+        _context.state.logFrame->set_team_name_blue(bluename);
+        _context.state.logFrame->set_team_name_yellow(yellowname);
 
         // Run high-level soccer logic
         _gameplayModule->run();
@@ -456,16 +460,17 @@ void Processor::run() {
 
         // Build a plan request for each robot.
         std::map<int, Planning::PlanRequest> requests;
-        for (OurRobot* r : _state.self) {
+        for (OurRobot* r : _context.state.self) {
             if (r && r->visible) {
-                if (_state.gameState.state == GameState::Halt) {
+                if (_context.game_state.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
                 }
 
                 // Visualize local obstacles
                 for (auto& shape : r->localObstacles().shapes()) {
-                    _state.drawShape(shape, Qt::black, "LocalObstacles");
+                    _context.debug_drawer.drawShape(shape, Qt::black,
+                                                    "LocalObstacles");
                 }
 
                 auto& globalObstaclesForBot =
@@ -487,7 +492,7 @@ void Processor::run() {
                 requests.emplace(
                     r->shell(),
                     Planning::PlanRequest(
-                        _state, Planning::MotionInstant(r->pos, r->vel),
+                        &_context, Planning::MotionInstant(r->pos, r->vel),
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
@@ -498,10 +503,10 @@ void Processor::run() {
         // Run path planner and set the path for each robot that was planned for
         auto pathsById = _pathPlanner->run(std::move(requests));
         for (auto& entry : pathsById) {
-            OurRobot* r = _state.self[entry.first];
+            OurRobot* r = _context.state.self[entry.first];
             auto& path = entry.second;
-            path->draw(&_state, Qt::magenta, "Planning");
-            path->drawDebugText(&_state);
+            path->draw(&_context.debug_drawer, Qt::magenta, "Planning");
+            path->drawDebugText(&_context.debug_drawer);
             r->setPath(std::move(path));
 
             r->angleFunctionPath.angleFunction =
@@ -510,14 +515,15 @@ void Processor::run() {
 
         // Visualize obstacles
         for (auto& shape : globalObstacles.shapes()) {
-            _state.drawShape(shape, Qt::black, "Global Obstacles");
+            _context.debug_drawer.drawShape(shape, Qt::black,
+                                            "Global Obstacles");
         }
 
         // Run velocity controllers
-        for (OurRobot* robot : _state.self) {
+        for (OurRobot* robot : _context.state.self) {
             if (robot->visible) {
                 if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
-                    _state.gameState.halt()) {
+                    _context.game_state.halt()) {
                     robot->motionControl()->stopped();
                 } else {
                     robot->motionControl()->run();
@@ -529,17 +535,18 @@ void Processor::run() {
         // Store logging information
 
         // Debug layers
-        const QStringList& layers = _state.debugLayers();
+        const QStringList& layers = _context.debug_drawer.debugLayers();
         for (const QString& str : layers) {
-            _state.logFrame->add_debug_layers(str.toStdString());
+            _context.state.logFrame->add_debug_layers(str.toStdString());
         }
 
         // Add our robots data to the LogFram
-        for (OurRobot* r : _state.self) {
+        for (OurRobot* r : _context.state.self) {
             if (r->visible) {
                 r->addStatusText();
 
-                Packet::LogFrame::Robot* log = _state.logFrame->add_self();
+                Packet::LogFrame::Robot* log =
+                    _context.state.logFrame->add_self();
                 *log->mutable_pos() = r->pos;
                 *log->mutable_world_vel() = r->vel;
                 *log->mutable_body_vel() = r->vel.rotated(M_PI_2 - r->angle);
@@ -583,9 +590,10 @@ void Processor::run() {
         }
 
         // Opponent robots
-        for (OpponentRobot* r : _state.opp) {
+        for (OpponentRobot* r : _context.state.opp) {
             if (r->visible) {
-                Packet::LogFrame::Robot* log = _state.logFrame->add_opp();
+                Packet::LogFrame::Robot* log =
+                    _context.state.logFrame->add_opp();
                 *log->mutable_pos() = r->pos;
                 log->set_shell(r->shell());
                 log->set_angle(r->angle);
@@ -595,10 +603,11 @@ void Processor::run() {
         }
 
         // Ball
-        if (_state.ball.valid) {
-            Packet::LogFrame::Ball* log = _state.logFrame->mutable_ball();
-            *log->mutable_pos() = _state.ball.pos;
-            *log->mutable_vel() = _state.ball.vel;
+        if (_context.state.ball.valid) {
+            Packet::LogFrame::Ball* log =
+                _context.state.logFrame->mutable_ball();
+            *log->mutable_pos() = _context.state.ball.pos;
+            *log->mutable_vel() = _context.state.ball.vel;
         }
 
         ////////////////
@@ -609,7 +618,7 @@ void Processor::run() {
 
         // Write to the log unless we are viewing logs
         if (_readLogFile.empty()) {
-            _logger.addFrame(_state.logFrame);
+            _logger.addFrame(_context.state.logFrame);
         }
 
         // Store processing loop status
@@ -727,13 +736,13 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 }
 
 void Processor::sendRadioData() {
-    Packet::RadioTx* tx = _state.logFrame->mutable_radio_tx();
+    Packet::RadioTx* tx = _context.state.logFrame->mutable_radio_tx();
     tx->set_txmode(Packet::RadioTx::UNICAST);
 
     // Halt overrides normal motion control, but not joystick
-    if (_state.gameState.halt()) {
+    if (_context.game_state.halt()) {
         // Force all motor speeds to zero
-        for (OurRobot* r : _state.self) {
+        for (OurRobot* r : _context.state.self) {
             Packet::Control* control = r->control;
             control->set_xvelocity(0);
             control->set_yvelocity(0);
@@ -748,7 +757,7 @@ void Processor::sendRadioData() {
 
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
-    for (OurRobot* r : _state.self) {
+    for (OurRobot* r : _context.state.self) {
         if (r->visible || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
 
@@ -794,7 +803,7 @@ void Processor::sendRadioData() {
     }
 
     if (_radio) {
-        _radio->send(*_state.logFrame->mutable_radio_tx());
+        _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }
 
