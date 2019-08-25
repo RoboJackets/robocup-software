@@ -192,7 +192,6 @@ class SituationalPlaySelector:
             if(ingress_info[g] != None and ingress_info[g][0] != None and abs(ingress_info.get(g)[0]) < 0.1):
                 robotsInBallPath.append(g)
        
-        #print(robotsInBallPath)
         return robotsInBallPath
         '''if(ingress_info[cls.activeRobots[0]] != None):
             toPrint = ingress_info[cls.activeRobots[0]][0]
@@ -267,7 +266,6 @@ class SituationalPlaySelector:
     situationChangeTime = None
     playPreemptTime = 0.20 #The time after a situation changes before preempting the current play
     currentPreempt = False #If we are preempting the current play
-
 
 
     @classmethod
@@ -643,13 +641,13 @@ class SituationalPlaySelector:
     def cleanGoaliePossession(cls):
         goalieID = cls.gameState.get_goalie_id()
         goalieBot = None
-       
+
         for g in cls.activeRobots:
-            if(g.shell_id == goalieID):
+            if(g.shell_id() == goalieID):
                 goalieBot = g
                 break
-       
-        goalieHasBall = cls.hasBall.get(goalieBot, False)
+      
+        goalieHasBall = cls.hasBall.get(goalieBot)
         return goalieHasBall and cls.ballInGoalZone()
 
         #print(constants.Field.OurGoalZoneShape)
@@ -700,6 +698,7 @@ class SituationalPlaySelector:
         elif(cls.gameState.is_their_free_kick()):
             cls.currentSituation = cls.situation.none #Warning: assigns none
         elif(cls.isDefendSide()):
+            #print(cls.cleanGoaliePossession())
             if(cls.cleanGoaliePossession()):
                 cls.currentSituaion = cls.situation.goalie_clear
             elif(cls.isPileup()):
