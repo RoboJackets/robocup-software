@@ -700,7 +700,7 @@ class SituationalPlaySelector:
             cls.currentSituation = cls.situation.none #Warning: assigns none
         elif(cls.isDefendSide()):
             #print(cls.cleanGoaliePossession())
-            if(cls.cleanGoaliePossession()):
+            if(cls.cleanGoaliePossession()): #This does not trigger correctly currently
                 cls.currentSituaion = cls.situation.goalie_clear
             elif(cls.isPileup()):
                 cls.currentSituation = cls.situation.defensive_pileup
