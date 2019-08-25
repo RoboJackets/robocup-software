@@ -73,6 +73,7 @@ class SituationalPlaySelector:
     def setupStates(cls):
         cls.gameState = main.game_state()
         cls.systemState = main.system_state()
+        cls.context = main.context()
         for g in cls.systemState.our_robots:
             cls.robotList.append(g)
         for g in cls.systemState.their_robots:
@@ -104,7 +105,7 @@ class SituationalPlaySelector:
         cls.situationUpdate()
         
 
-        cls.systemState.draw_text(cls.currentSituation.name, robocup.Point(-3,-0.3), (0,0,0),"hat")
+        cls.context.debug_drawer.draw_text(cls.currentSituation.name, robocup.Point(-3,-0.3), (0,0,0),"hat")
         #print(cls.currentSituation.name)
         #print(abs(time.time() - startTime))
 
