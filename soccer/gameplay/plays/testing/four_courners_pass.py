@@ -107,7 +107,7 @@ class FourCornerPass(play.Play):
 		#draw the four courner field
 		# takes in the square points and form lines and create a square on the field
 		for i in range(len(self.square_points)) :
-			main.system_state().draw_line(robocup.Line(self.square_points[i], 
+			main.debug_drawer().draw_line(robocup.Line(self.square_points[i], 
 				self.square_points[(i + 1) % 4]), (135, 0, 255), "Square")
 
 		# speed of the hunting robots
