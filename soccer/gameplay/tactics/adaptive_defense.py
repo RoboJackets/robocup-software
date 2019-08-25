@@ -57,7 +57,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
 
         self.aggression = 1
         self.debug = True
-        self.kick_eval = robocup.KickEvaluator(main.system_state())
+        self.kick_eval = robocup.KickEvaluator(main.debug_drawer())
         self.num_of_defenders = 5 # TODO: Make variable
         self.wingers = []
         self.forwards = []
@@ -106,10 +106,10 @@ class AdaptiveDefense(standard_play.StandardPlay):
                     self.forwards.append((class_score, bot))
 
                 if self.debug and is_wing:
-                    main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.White, "Defense: Class Wing")
+                    main.debug_drawer().draw_circle(bot.pos, 0.5, constants.Colors.White, "Defense: Class Wing")
                 elif self.debug and not is_wing:
-                    main.system_state().draw_circle(bot.pos, 0.5, constants.Colors.Black, "Defense: Class Forward")
-                main.system_state().draw_text(" Class Score: " + str(int(100*class_score)),
+                    main.debug_drawer().draw_circle(bot.pos, 0.5, constants.Colors.Black, "Defense: Class Forward")
+                main.debug_drawer().draw_text(" Class Score: " + str(int(100*class_score)),
                     bot.pos + robocup.Point(0.2, 0), constants.Colors.White, "Defense: ClassScore")
 
 
@@ -195,7 +195,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
         risk_score /= sum(AdaptiveDefense.ROBOT_RISK_WEIGHTS)
 
         if self.debug:
-            main.system_state().draw_text("Robot Risk: " + str(int(risk_score*100)),
+            main.debug_drawer().draw_text("Robot Risk: " + str(int(risk_score*100)),
                 bot.pos - robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
 
         return risk_score
@@ -220,7 +220,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
         risk_score /= sum(AdaptiveDefense.AREA_RISK_WEIGHTS)
 
         if self.debug:
-            main.system_state().draw_text("Area Risk: " + str(int(risk_score*100)),
+            main.debug_drawer().draw_text("Area Risk: " + str(int(risk_score*100)),
             bot.pos + robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
 
         return risk_score
