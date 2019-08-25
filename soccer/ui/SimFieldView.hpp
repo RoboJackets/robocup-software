@@ -6,8 +6,9 @@
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <protobuf/grSim_Replacement.pb.h>
-#include <FieldView.hpp>
+
 #include <QUdpSocket>
+#include "FieldView.hpp"
 
 class SimFieldView : public FieldView {
     Q_OBJECT;

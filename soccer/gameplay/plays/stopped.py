@@ -33,6 +33,9 @@ class Stopped(standard_play.StandardPlay):
                             lambda: not self.is_in_center(),
                             'Switched into normal mode')
 
+        self.slow_speed = 1
+        self.speed = 2.2
+
     @classmethod
     def score(cls):
         return 0 if main.game_state().is_stopped() else float("inf")
@@ -58,6 +61,23 @@ class Stopped(standard_play.StandardPlay):
         self.remove_all_subbehaviors()
         idle = tactics.stopped.circle_near_ball.CircleNearBall()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
+
+    def execute_normal(self):
+        for r in main.our_robots():
+            r.set_max_speed(self.slow_speed)
+
+    def execute_center(self):
+        for r in main.our_robots():
+            r.set_max_speed(self.slow_speed)
+
+    def on_exit_center(self):
+        for r in main.our_robots():
+            r.set_max_speed(self.speed)
+
+    def on_exit_normal(self):
+        for r in main.our_robots():
+            r.set_max_speed(self.speed)
+
 
     def on_enter_center(self):
         self.remove_all_subbehaviors()

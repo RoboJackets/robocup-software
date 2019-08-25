@@ -1,8 +1,9 @@
 #include "InterpolatedPath.hpp"
-#include "LogUtils.hpp"
-#include "Utils.hpp"
 #include <protobuf/LogFrame.pb.h>
+#include "DebugDrawer.hpp"
+#include "LogUtils.hpp"
 #include "SystemState.hpp"
+#include "Utils.hpp"
 
 #include <stdexcept>
 
@@ -176,11 +177,12 @@ float InterpolatedPath::length(Point pt) const {
     return length;
 }
 
-void InterpolatedPath::draw(SystemState* const state,
+void InterpolatedPath::draw(DebugDrawer* const debug_drawer,
                             const QColor& col = Qt::black,
                             const QString& layer = "Motion") const {
-    Packet::DebugRobotPath* dbg = state->logFrame->add_debug_robot_paths();
-    dbg->set_layer(state->findDebugLayer(layer));
+    Packet::DebugRobotPath* dbg =
+        debug_drawer->getLogFrame()->add_debug_robot_paths();
+    dbg->set_layer(debug_drawer->findDebugLayer(layer));
 
     if (waypoints.size() <= 1) {
         return;
@@ -193,7 +195,7 @@ void InterpolatedPath::draw(SystemState* const state,
     }
 }
 
-boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
+std::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     if (t < RJ::Seconds::zero()) {
         return RobotInstant(waypoints.front().instant);
     }
@@ -224,7 +226,7 @@ boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     targetVelOut = direction * linearSpeed;
     */
     if (waypoints.size() == 0 || waypoints.size() == 1) {
-        return boost::none;
+        return std::nullopt;
     }
     if (t < waypoints[0].time) {
         debugThrow(
@@ -238,7 +240,7 @@ boost::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
         }
         i++;
         if (i == size()) {
-            return boost::none;
+            return std::nullopt;
         }
     }
     RJ::Seconds deltaT = (waypoints[i].time - waypoints[i - 1].time);
