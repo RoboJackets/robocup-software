@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include <string.h>
 
 #include <QMutex>
@@ -18,6 +19,7 @@
 #include <SystemState.hpp>
 #include "VisionReceiver.hpp"
 
+#include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
@@ -34,32 +36,6 @@ class GameplayModule;
 namespace Planning {
 class MultiRobotPathPlanner;
 }
-
-class DebugQMutex : public QMutex {
-public:
-    DebugQMutex(QMutex::RecursionMode mode = QMutex::NonRecursive)
-        : QMutex(mode) {}
-
-    void lock() {
-        // printf("thread %ld tries to lock\n", QThread::currentThreadId());
-        QMutex::lock();
-    }
-
-    bool tryLock() {
-        // printf("tryLock\n");
-        return QMutex::tryLock();
-    }
-
-    bool tryLock(int timeout) {
-        // printf("tryLock\n");
-        return QMutex::tryLock(timeout);
-    }
-
-    void unlock() {
-        QMutex::unlock();
-        // printf("thread %ld unlocked\n", QThread::currentThreadId());
-    }
-};
 
 /**
  * @brief Brings all the pieces together
@@ -155,7 +131,7 @@ public:
         return _refereeModule;
     }
 
-    SystemState* state() { return &_state; }
+    SystemState* state() { return &_context.state; }
 
     bool simulation() const { return _simulation; }
 
@@ -199,7 +175,9 @@ public:
     ////////
 
     // Time of the first LogFrame
-    boost::optional<RJ::Time> firstLogTime;
+    std::optional<RJ::Time> firstLogTime;
+
+    Context* context() { return &_context; }
 
 protected:
     void run() override;
@@ -250,7 +228,7 @@ private:
     QMutex _loopMutex;
 
     /** global system state */
-    SystemState _state;
+    Context _context;
 
     // Transformation from world space to team space.
     // This depends on which goal we're defending.

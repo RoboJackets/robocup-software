@@ -39,6 +39,32 @@
   <Has_Ball_Distance value="0.1"/>
   <Pivot_Speed value="1.5708"/>
   <Dribbler_Speed value="127"/>
+  <Settle>
+   <ballSpeedPercentForDampen value="0"/>
+   <searchStartDist value="0"/>
+   <searchEndDist value="7"/>
+   <searchIncDist value="0.05"/>
+   <interceptBufferTime value="0.5"/>
+   <targetPointGain value="0.5"/>
+   <ballVelGain value="0.5"/>
+   <shortcutDist value="0.1"/>
+   <maxBallVelForPathReset value="2"/>
+   <maxBallAngleForReset value="20"/>
+   <maxBounceAngle value="45"/>
+  </Settle>
+  <Collect>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <approachAccelScalePercent value="0.8"/>
+   <controlAccelScalePercent value="0.6"/>
+   <approachDistTarget value="0.01"/>
+   <touchDeltaSpeed value="0.2"/>
+   <velocityControlScale value="1"/>
+   <distCutoffToControl value="0.01"/>
+   <velCutoffToControl value="1"/>
+   <distCutoffToApproach value="0.12"/>
+   <stopDistScale value="1"/>
+   <targetPointAveragingGain value="0.8"/>
+  </Collect>
  </Capture>
  <Rev2008>
   <trapTrans>
@@ -203,32 +229,32 @@
   <partialReplanLeadTime value="0.2"/>
  </RRTPlanner>
  <Pivot>
-  <radius value="1.1"/>
+  <radius value="1.05"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>
  </TargetVelPathPlanner>
  <Rev2015>
   <translation>
-   <p value="3.2"/>
+   <p value="2"/>
    <i value="2"/>
-   <i_windup value="150"/>
-   <d value="1.5"/>
+   <i_windup value="20"/>
+   <d value="1"/>
    <velMultiplier value="1.1"/>
-   <minEffectiveVelocity value="0.05"/>
+   <minEffectiveVelocity value="0.01"/>
    <accelMultiplier value="7"/>
   </translation>
   <rotation>
-   <p value="0.6"/>
-   <i value="1"/>
-   <i_windup value="300"/>
-   <d value="1"/>
+   <p value="4"/>
+   <i value="0.1"/>
+   <i_windup value="0"/>
+   <d value="0"/>
    <velMultiplier value="1"/>
    <minEffectiveAngularSpeed value="0.05"/>
   </rotation>
   <kicker>
-   <maxKick value="225"/>
-   <maxChip value="200"/>
+   <maxKick value="255"/>
+   <maxChip value="255"/>
   </kicker>
   <dribbler>
    <multiplier value="1"/>

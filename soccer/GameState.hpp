@@ -66,7 +66,7 @@ public:
 
     ////////
     // Rule queries
-    
+
     bool isFirstHalf() const { return period == FirstHalf; }
 
     bool isSecondHalf() const { return period == SecondHalf; }

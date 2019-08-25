@@ -1,10 +1,12 @@
 import skills._kick
+import single_robot_composite_behavior
 import behavior
 import constants
 import robocup
 import enum
 import main
 import role_assignment
+import evaluation.ball
 
 
 ## lines up with the ball and the target, then drives up and kicks
@@ -12,11 +14,12 @@ import role_assignment
 # Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes
 #
 # See Also: LineKickOld is the old, python-only implementation of line_kick
-class LineKick(skills._kick._Kick):
+class LineKick(skills._kick._Kick,
+               single_robot_composite_behavior.SingleRobotCompositeBehavior):
     ClosenessThreshold = constants.Robot.Radius * 3 + 0.04
 
     class State(enum.Enum):
-        waiting = 1  # waiting state does nothing
+        waiting = 1
         kick = 2
 
     def __init__(self):
@@ -43,6 +46,18 @@ class LineKick(skills._kick._Kick):
         self.max_speed = None
         self.max_accel = None
 
+    def on_enter_waiting(self):
+        self.robot.set_avoid_ball_radius(0.1)
+        super().recalculate_aim_target_point()
+        self.add_subbehavior(
+            skills.move.Move(main.ball().pos - (
+                self.aim_target_point - main.ball().pos).normalized() * .5),
+            'setupMove')
+
+    def on_exit_waiting(self):
+        self.remove_subbehavior('setupMove')
+        self.robot.disable_avoid_ball()
+
     def on_enter_running(self):
         super().recalculate_aim_target_point()
 
@@ -67,15 +82,22 @@ class LineKick(skills._kick._Kick):
             else:
                 self.robot.kick(self.kick_power)
 
-    def role_requirements(self):
-        reqs = super().role_requirements()
-        # try to be near the ball
-        if main.ball().valid:
-            reqs.destination_shape = main.ball().pos
-        reqs.require_kicking = True
-        if self.use_chipper:
-            reqs.chipper_preference_weight = role_assignment.PreferChipper
+        # For when ball sense isn't great, kick when vision
+        # thinks we have the ball
+        if (self.robot is not None and
+                evaluation.ball.robot_has_ball(self.robot)):
+            self.robot.kick_immediately()
 
-        if self.shell_id:
-            reqs.required_shell_id = self.shell_id
-        return reqs
+    # TODO Figure out how to renable role requirements for this however it needs to be done
+    # def role_requirements(self):
+    #     reqs = super().role_requirements()
+    #     try to be near the ball
+    #     if main.ball().valid:
+    #         reqs.destination_shape = main.ball().pos
+    #     reqs.require_kicking = True
+    #     if self.use_chipper:
+    #         reqs.chipper_preference_weight = role_assignment.PreferChipper
+
+    #     if self.shell_id:
+    #         reqs.required_shell_id = self.shell_id
+    #     return reqs

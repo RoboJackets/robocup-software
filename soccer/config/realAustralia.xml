@@ -57,12 +57,12 @@
    <approachAccelScalePercent value="0.8"/>
    <controlAccelScalePercent value="0.6"/>
    <approachDistTarget value="0.01"/>
-   <touchDeltaSpeed value="0.15"/>
+   <touchDeltaSpeed value="0.25"/>
    <velocityControlScale value="1"/>
    <distCutoffToControl value="0.01"/>
    <velCutoffToControl value="1"/>
-   <distCutoffToApproach value="0.3"/>
-   <stopDistScale value="1"/>
+   <distCutoffToApproach value="0.12"/>
+   <stopDistScale value="0.7"/>
    <targetPointAveragingGain value="0.8"/>
   </Collect>
  </Capture>
@@ -229,7 +229,7 @@
   <partialReplanLeadTime value="0.2"/>
  </RRTPlanner>
  <Pivot>
-  <radius value="1.1"/>
+  <radius value="1.02"/>
  </Pivot>
  <TargetVelPathPlanner>
   <velChangeReplanThreshold value="0.05"/>

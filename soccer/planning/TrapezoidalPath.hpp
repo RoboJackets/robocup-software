@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "motion/TrapezoidalMotion.hpp"
 #include "MotionConstraints.hpp"
 #include "MotionInstant.hpp"
@@ -60,13 +62,12 @@ public:
     }
 
     virtual std::unique_ptr<Path> clone() const override {
-        return std::make_unique<TrapezoidalPath>(_startPos, _startSpeed, 
-                                                 _endPos, _endSpeed,
-                                                 _constraints);
+        return std::make_unique<TrapezoidalPath>(
+            _startPos, _startSpeed, _endPos, _endSpeed, _constraints);
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds time) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds time) const override;
 };
 
 }  // namespace Planning

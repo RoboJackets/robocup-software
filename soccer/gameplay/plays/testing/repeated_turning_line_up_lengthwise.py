@@ -25,32 +25,37 @@ class RepeatedTurningLineUpLengthwise(play.Play):
         for state in RepeatedTurningLineUpLengthwise.State:
             self.add_state(state, behavior.Behavior.State.running)
 
-        self.add_transition(behavior.Behavior.State.start,
-                            RepeatedTurningLineUpLengthwise.State.their_goal, lambda: True,
-                            'immediately')
+        self.add_transition(
+            behavior.Behavior.State.start,
+            RepeatedTurningLineUpLengthwise.State.their_goal, lambda: True,
+            'immediately')
 
         self.add_transition(
             RepeatedTurningLineUpLengthwise.State.our_goal,
-            RepeatedTurningLineUpLengthwise.State.pause,
-            lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and time.time() - self.side_start > 1,
+            RepeatedTurningLineUpLengthwise.State.pause, lambda: self.
+            subbehavior_with_name('LineUp').state == behavior.Behavior.State.
+            completed and time.time() - self.side_start > 1,
             'made it to our_goal')
 
         self.add_transition(
             RepeatedTurningLineUpLengthwise.State.their_goal,
-            RepeatedTurningLineUpLengthwise.State.pause,
-            lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and time.time() - self.side_start > 1,
+            RepeatedTurningLineUpLengthwise.State.pause, lambda: self.
+            subbehavior_with_name('LineUp').state == behavior.Behavior.State.
+            completed and time.time() - self.side_start > 1,
             'made it to their_goal')
 
         self.add_transition(
             RepeatedTurningLineUpLengthwise.State.pause,
-            RepeatedTurningLineUpLengthwise.State.their_goal,
-            lambda: (time.time() - self.pause_start_time) > RepeatedTurningLineUpLengthwise.Pause and self.prev_side == RepeatedTurningLineUpLengthwise.State.our_goal,
-            'pause over')
+            RepeatedTurningLineUpLengthwise.State.their_goal, lambda: (
+                time.time() - self.pause_start_time
+            ) > RepeatedTurningLineUpLengthwise.Pause and self.prev_side ==
+            RepeatedTurningLineUpLengthwise.State.our_goal, 'pause over')
         self.add_transition(
             RepeatedTurningLineUpLengthwise.State.pause,
-            RepeatedTurningLineUpLengthwise.State.our_goal,
-            lambda: (time.time() - self.pause_start_time) > RepeatedTurningLineUpLengthwise.Pause and self.prev_side == RepeatedTurningLineUpLengthwise.State.their_goal,
-            'pause over')
+            RepeatedTurningLineUpLengthwise.State.our_goal, lambda: (
+                time.time() - self.pause_start_time
+            ) > RepeatedTurningLineUpLengthwise.Pause and self.prev_side ==
+            RepeatedTurningLineUpLengthwise.State.their_goal, 'pause over')
 
     def on_enter_our_goal(self):
         self.side_start = time.time()
@@ -82,8 +87,10 @@ class RepeatedTurningLineUpLengthwise(play.Play):
     # y_multiplier is a 1 or -1 to indicate which side of the field to be on
     # 1 is their goal, -1 is our goal
     def generate_line(self, y_multiplier):
-        y = ((constants.Field.Length / 2 - constants.Field.GoalWidth - constants.Robot.Radius * 2) * y_multiplier) + (constants.Field.Length / 2)
-        x_start = - 0.8
+        y = ((constants.Field.Length / 2 - constants.Field.GoalWidth -
+              constants.Robot.Radius * 2) * y_multiplier) + (
+                  constants.Field.Length / 2)
+        x_start = -0.8
         line = robocup.Segment(
             robocup.Point(constants.Robot.Radius + x_start, y),
             robocup.Point((constants.Robot.Radius * 2 + 0.1) * 6 + x_start, y))

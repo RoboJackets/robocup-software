@@ -21,10 +21,10 @@ class RoleRequirements:
         self.priority = 0
         self.require_kicking = False
         self.require_chipping = False
-        self.robot_change_cost = 0.1
+        self.robot_change_cost = 1
 
         # multiply this by the distance between two points to get the cost
-        self.position_cost_multiplier = 1.0
+        self.position_cost_multiplier = 1
 
         # A lambda function property that allows customization of cost
         # Has exactly one parameter, which is a robot
@@ -196,6 +196,11 @@ class ImpossibleAssignmentError(RuntimeError):
 # the munkres library doesn't like infinity, so we use this instead
 MaxWeight = 10000000
 
+# The munkres library works in ints, so multiply everything by 1000
+# In theory it should work with floats, but the types are getting messed up
+# This creates a fixed point type situation
+IntScale = 1000
+
 # a default weight for preferring a chipper
 # this is tunable
 PreferChipper = 2.5
@@ -312,10 +317,9 @@ def assign_roles(robots, role_reqs):
                     .forbidden_ball_toucher() or not robot.has_chipper() or
                     not robot.ball_sense_works()):
                 cost = MaxWeight
-                fail_reason += (
-                    "Robot {}: does not have a chipper"
-                    " (or double touched)\n"
-                        .format(robot.shell_id()))
+                fail_reason += ("Robot {}: does not have a chipper"
+                                " (or double touched)\n"
+                                .format(robot.shell_id()))
             else:
                 if req.prohibited_shell_id is not None and req.prohibited_shell_id == robot.shell_id():
                     cost = MaxWeight
@@ -326,6 +330,8 @@ def assign_roles(robots, role_reqs):
                 if not robot.has_chipper():
                     cost += req.chipper_preference_weight
                 cost += req.cost_func(robot)
+
+                cost *= IntScale
 
             # the munkres library freezes when given NaN values, causing our
             # whole program to hang and have to be restarted.  We check for it
@@ -365,7 +371,7 @@ def assign_roles(robots, role_reqs):
     assignments = {}
     total = 0
     for row, col in indexes:
-        total += cost_matrix[row][col]
+        total += cost_matrix[row][col] / IntScale
 
         bot = robots[row]
         reqs = role_reqs_list[col]

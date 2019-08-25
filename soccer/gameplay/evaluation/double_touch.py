@@ -131,9 +131,9 @@ class DoubleTouchTracker(fsm.StateMachine):
                 bot = b
                 break
         if self.kicker_shell_id and bot:
-            main.system_state().draw_text(
-                "Blocking double touch!", bot.pos,
-                constants.Colors.Red, "Double Touches")
+            main.debug_drawer().draw_text("Blocking double touch!", bot.pos,
+                                          constants.Colors.Red,
+                                          "Double Touches")
 
 # global double touch tracker
 _tracker = DoubleTouchTracker()

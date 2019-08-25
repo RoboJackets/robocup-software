@@ -46,16 +46,24 @@ class Move(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if self.pos != None:
             self.robot.move_to(self.pos)
-            if(not self.robot.is_facing()):
+            # TODO(motion-control): Remove this entire statement.
+            if (not self.robot.is_facing()):
                 velPoint = robocup.Point(self.robot.vel.x, self.robot.vel.y)
-                robotPoint = robocup.Point(math.cos(self.robot.angle) * 3, math.sin(self.robot.angle) * 3)
-                if(math.degrees(robotPoint.angle_between(velPoint)) < 90):
-                    self.robot.face(robocup.Point(self.robot.pos.x + self.robot.vel.x * 5, self.robot.pos.y + self.robot.vel.y * 5))
+                robotPoint = robocup.Point(
+                    math.cos(self.robot.angle) * 3,
+                    math.sin(self.robot.angle) * 3)
+                if (math.degrees(robotPoint.angle_between(velPoint)) < 90):
+                    self.robot.face(
+                        robocup.Point(self.robot.pos.x + self.robot.vel.x * 5,
+                                      self.robot.pos.y + self.robot.vel.y * 5))
                 else:
-                    self.robot.face(robocup.Point(self.robot.pos.x + self.robot.vel.x * -5, self.robot.pos.y + self.robot.vel.y * -5))
+                    self.robot.face(
+                        robocup.Point(self.robot.pos.x + self.robot.vel.x * -5,
+                                      self.robot.pos.y + self.robot.vel.y *
+                                      -5))
 
 
-def role_requirements(self):
+    def role_requirements(self):
         reqs = super().role_requirements()
         reqs.destination_shape = self.pos
         return reqs

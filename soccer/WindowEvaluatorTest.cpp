@@ -11,8 +11,8 @@ Configuration config;
 // evaluator, but is not actuallly in the way.  Should return one segment as
 // the result.
 TEST(WindowEvaluator, eval_pt_to_seg) {
-    SystemState state;
-    OurRobot* obstacleBot = state.self[0];
+    Context context;
+    OurRobot* obstacleBot = context.state.self[0];
     obstacleBot->visible = true;
     obstacleBot->pos = Point(1, 1);
 
@@ -20,7 +20,7 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
         Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
         Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
-    WindowEvaluator winEval(&state);
+    WindowEvaluator winEval(&context);
     WindowingResult result =
         winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
 
@@ -28,7 +28,7 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     auto& best = result.second;
 
     // there should be a best window, there's nothing in the way
-    EXPECT_NE(boost::none, best);
+    EXPECT_NE(std::nullopt, best);
 
     // there should only be one window
     EXPECT_EQ(1, windows.size());

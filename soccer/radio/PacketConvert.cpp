@@ -1,10 +1,11 @@
+#include "PacketConvert.hpp"
+#include <status.h>
 #include <Geometry2d/Util.hpp>
 #include <iostream>
 #include <time.hpp>
-#include <status.h>
-#include "PacketConvert.hpp"
 
-void from_robot_tx_proto(const Packet::Robot& proto_packet, rtp::RobotTxMessage* msg) {
+void from_robot_tx_proto(const Packet::Robot& proto_packet,
+                         rtp::RobotTxMessage* msg) {
     Packet::Control control = proto_packet.control();
     msg->uid = proto_packet.uid();
     msg->message.controlMessage.bodyX = static_cast<int16_t>(
@@ -23,12 +24,12 @@ void from_robot_tx_proto(const Packet::Robot& proto_packet, rtp::RobotTxMessage*
     msg->messageType = rtp::RobotTxMessage::ControlMessageType;
 }
 
-void convert_tx_proto_to_rtp(const Packet::RadioTx &proto_packet,
-                             rtp::RobotTxMessage *messages) {
+void convert_tx_proto_to_rtp(const Packet::RadioTx& proto_packet,
+                             rtp::RobotTxMessage* messages) {
     from_robot_tx_proto(proto_packet.robots(0), messages);
 }
 
-Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage &msg) {
+Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
     Packet::RadioRx packet;
 
     packet.set_timestamp(RJ::timestamp());
@@ -36,11 +37,11 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage &msg) {
 
     packet.set_hardware_version(Packet::RJ2015);
     packet.set_battery(msg.battVoltage *
-            rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR);
+                       rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR);
 
     if (Packet::BallSenseStatus_IsValid(msg.ballSenseStatus)) {
         packet.set_ball_sense_status(
-                Packet::BallSenseStatus(msg.ballSenseStatus));
+            Packet::BallSenseStatus(msg.ballSenseStatus));
     }
 
     // Using same flags as 2011 robot. See common/status.h
@@ -57,11 +58,11 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage &msg) {
                                     : Packet::MotorStatus::Good);
     }
 
-    for (std::size_t i = 0; i < 14; i++) {
+    /*for (std::size_t i = 0; i < 14; i++) {
         packet.add_encoders(msg.encDeltas[i]);
-        printf("%9.3f,", (float)msg.encDeltas[i] / 1000);
-    }
-    printf("\r\n");
+        //printf("%9.3f,", (float)msg.encDeltas[i] / 1000);
+    }*/
+    // printf("\r\n");
 
     // FPGA status
     if (Packet::FpgaStatus_IsValid(msg.fpgaStatus)) {

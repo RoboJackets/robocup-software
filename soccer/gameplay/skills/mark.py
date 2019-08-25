@@ -18,12 +18,12 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
     def __init__(self):
         super().__init__(continuous=True)
         #Below params are described above @properties
-        self._ratio = 0.9 
-        self._mark_line_thresh = 0.9 
-        self._mark_robot = None 
-        self._mark_point = None 
+        self._ratio = 0.9
+        self._mark_line_thresh = 0.9
+        self._mark_robot = None
+        self._mark_point = None
 
-        self._target_point = None  
+        self._target_point = None
 
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
@@ -53,11 +53,11 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
             mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
 
         #Drawing for simulator
-        main.system_state().draw_line(ball_mark_line, (0, 0, 255), "Mark")
+        main.debug_drawer().draw_line(ball_mark_line, (0, 0, 255), "Mark")
 
         #Distance from robot to mark line
         mark_line_dist = ball_mark_line.dist_to(pos)
-        
+
         #Sets target point to nearest point on mark line if the robot is over ball_mark_threshold
         #from the mark line
         # or
@@ -72,12 +72,12 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
                 ball_pos).normalized() * self.ratio * ball_mark_line.length()
 
         #Drawing for simulator
-        main.system_state().draw_circle(mark_pos, constants.Robot.Radius * 1.2,
+        main.debug_drawer().draw_circle(mark_pos, constants.Robot.Radius * 1.2,
                                         (0, 127, 255), "Mark")
 
         #Move robot into position and face the ball
         self.robot.move_to(self._target_point)
-        self.robot.face(ball_pos)
+        #self.robot.face(ball_pos) #Commented out to reduce lateral motion
 
     #Ratio of distance to mark point v. distance to ball for target point
     @property

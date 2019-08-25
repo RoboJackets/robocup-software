@@ -63,9 +63,9 @@ class Placement(play.Play):
         self.add_subbehavior(line_up, 'line_up', required=False, priority=80)
 
     def execute_placing(self):
-        main.system_state().draw_circle(self._pos, 0.1, constants.Colors.Green,
+        main.debug_drawer().draw_circle(self._pos, 0.1, constants.Colors.Green,
                                         "Place")
-        main.system_state().draw_circle(self._pos, 0.5, constants.Colors.Red,
+        main.debug_drawer().draw_circle(self._pos, 0.5, constants.Colors.Red,
                                         "Avoid")
 
     def on_exit_placing(self):
