@@ -19,8 +19,8 @@ public:
 };
 
 /// Drawing
-void DrawRRT(const RRT::Tree<Geometry2d::Point>& rrt, SystemState* state,
+void DrawRRT(const RRT::Tree<Geometry2d::Point>& rrt, DebugDrawer* debug_drawer,
              unsigned shellID);
-void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT, SystemState* state,
-               unsigned shellID);
+void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
+               DebugDrawer* debug_drawer, unsigned shellID);
 }  // Planning

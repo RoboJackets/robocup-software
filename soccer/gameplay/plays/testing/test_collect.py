@@ -14,6 +14,4 @@ class TestCollect(play.Play):
 
     def on_enter_running(self):
         self.add_subbehavior(
-            skills.collect.Collect(),
-            name = 'collect',
-            required=True)
+            skills.collect.Collect(), name='collect', required=True)

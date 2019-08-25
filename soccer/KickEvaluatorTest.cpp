@@ -7,8 +7,8 @@
 using namespace Geometry2d;
 
 TEST(KickEvaluator, no_robots) {
-    SystemState state;
-    KickEvaluator kickEval(&state);
+    Context context;
+    KickEvaluator kickEval(&context.state);
     std::pair<Point, double> pt_to_our_goal;
     std::pair<Point, double> expected =
         std::pair<Point, double>(Point{0, 0}, 1.0);
@@ -25,12 +25,12 @@ TEST(KickEvaluator, no_robots) {
 }
 
 TEST(KickEvaluator, eval_pt_to_our_goal) {
-    SystemState state;
-    OurRobot* obstacleBot = state.self[0];
+    Context context;
+    OurRobot* obstacleBot = context.state.self[0];
     obstacleBot->visible = true;
     obstacleBot->pos = Point(1, 1);
 
-    KickEvaluator kickEval(&state);
+    KickEvaluator kickEval(&context.state);
     std::pair<Point, double> pt_to_our_goal;
     std::pair<Point, double> expected =
         std::pair<Point, double>(Point{0, 0}, 0.56);
@@ -62,9 +62,9 @@ TEST(KickEvaluator, eval_calculation) {
 }
 
 TEST(KickEvaluator, eval_kick_at_pi_transition) {
-    SystemState state;
+    Context context;
 
-    KickEvaluator kickEval(&state);
+    KickEvaluator kickEval(&context.state);
     std::pair<Point, double> pt_to_our_goal;
 
     pt_to_our_goal = kickEval.eval_pt_to_robot(Point(3, 2), Point(-3, 2));
@@ -73,9 +73,9 @@ TEST(KickEvaluator, eval_kick_at_pi_transition) {
 }
 
 TEST(KickEvaluator, check_best_point) {
-    SystemState state;
+    Context context;
 
-    KickEvaluator kickEval(&state);
+    KickEvaluator kickEval(&context.state);
     std::pair<Point, double> pt_to_opp_goal;
     std::pair<Point, double> expected =
         std::pair<Point, double>(Point{0, 0}, 0.56);

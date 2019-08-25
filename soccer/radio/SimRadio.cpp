@@ -1,16 +1,14 @@
 #include "SimRadio.hpp"
 
-#include <iostream>
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <Geometry2d/Util.hpp>
 #include <Network.hpp>
 #include <Robot.hpp>
 #include <Utils.hpp>
+#include <cmath>
+#include <iostream>
 #include <stdexcept>
-#include <math.h>
-
-#define PI 3.14159265
 
 #include "status.h"
 
@@ -19,8 +17,8 @@ using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
-SimRadio::SimRadio(SystemState& system_state, bool blueTeam)
-    : _state(system_state), _blueTeam(blueTeam) {
+SimRadio::SimRadio(Context* const context, bool blueTeam)
+    : _context(context), _blueTeam(blueTeam) {
     switchTeam(blueTeam);
 }
 
@@ -47,22 +45,26 @@ void SimRadio::send(Packet::RadioTx& packet) {
         const float max_kick_m_s = 7.0f;
         const float min_chip_m_s = 2.1f;
         const float max_chip_m_s = 5.0f;
-        const float chip_angle = 40*PI/180; // degrees
+        const float chip_angle = 40 * M_PI / 180;  // degrees
         float kc_strength_to_ms;
         uint kick_strength;
 
         switch (robot.control().shootmode()) {
             case Packet::Control::KICK:
                 kc_strength_to_ms = (max_kick_m_s - min_kick_m_s) / 255;
-                kick_strength = kc_strength_to_ms * robot.control().kcstrength() + min_kick_m_s;
+                kick_strength =
+                    kc_strength_to_ms * robot.control().kcstrength() +
+                    min_kick_m_s;
                 simRobot->set_kickspeedx(kick_strength);
                 simRobot->set_kickspeedz(0);
                 break;
             case Packet::Control::CHIP:
                 kc_strength_to_ms = (max_chip_m_s - min_chip_m_s) / 255;
-                kick_strength = kc_strength_to_ms * robot.control().kcstrength() + min_chip_m_s;
-                simRobot->set_kickspeedx(cos(chip_angle)*kick_strength);
-                simRobot->set_kickspeedz(sin(chip_angle)*kick_strength);
+                kick_strength =
+                    kc_strength_to_ms * robot.control().kcstrength() +
+                    min_chip_m_s;
+                simRobot->set_kickspeedx(cos(chip_angle) * kick_strength);
+                simRobot->set_kickspeedz(sin(chip_angle) * kick_strength);
                 break;
             default:
                 break;
@@ -138,8 +140,8 @@ void SimRadio::receive() {
 void SimRadio::stopRobots() {
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
-    for (int i = 0; i < _state.self.size(); i++) {
-        auto& robot = _state.self[i]->robotPacket;
+    for (int i = 0; i < _context->state.self.size(); i++) {
+        auto& robot = _context->state.self[i]->robotPacket;
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(robot.uid());
         simRobot->set_veltangent(0);

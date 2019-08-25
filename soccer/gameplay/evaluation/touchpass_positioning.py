@@ -107,8 +107,7 @@ def eval_single_point(kick_point,
 def eval_best_receive_point(kick_point,
                             evaluation_zone=None,
                             ignore_robots=[]):
-    bestpt = None
-    win_eval = robocup.WindowEvaluator(main.system_state())
+    win_eval = robocup.WindowEvaluator(main.context())
     for r in ignore_robots:
         win_eval.add_excluded_robot(r)
 
@@ -126,10 +125,10 @@ def eval_best_receive_point(kick_point,
     bestChance = None
 
     for segment in segments:
-        main.system_state().draw_line(segment, constants.Colors.Blue,
+        main.debug_drawer().draw_line(segment, constants.Colors.Blue,
                                       "Candidate Lines")
         _, best = win_eval.eval_pt_to_seg(kick_point, segment)
-        
+
         if best is None: continue
 
         currentChance = best.shot_success
@@ -137,7 +136,7 @@ def eval_best_receive_point(kick_point,
         receivePt = best.segment.center()
 
         _, best = win_eval.eval_pt_to_seg(receivePt, targetSeg)
-        
+
         if best is None: continue
 
         currentChance = currentChance * best.shot_success
@@ -150,4 +149,3 @@ def eval_best_receive_point(kick_point,
         return None, None, None
 
     return bestpt, targetPoint, bestChance
-

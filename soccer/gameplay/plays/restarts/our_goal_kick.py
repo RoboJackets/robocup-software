@@ -23,7 +23,7 @@ class OurGoalKick(standard_play.StandardPlay):
     MaxKickSpeed = 0.5
     MaxKickAccel = 0.5
 
-    class State (enum.Enum):
+    class State(enum.Enum):
         move = 1
 
         kick = 2
@@ -34,35 +34,19 @@ class OurGoalKick(standard_play.StandardPlay):
         for s in OurGoalKick.State:
             self.add_state(s, behavior.Behavior.State.running)
 
-
         self.add_transition(behavior.Behavior.State.start,
-                            OurGoalKick.State.move, lambda: True,
+                            OurGoalKick.State.kick, lambda: True,
                             'immediately')
-
-        self.add_transition(OurGoalKick.State.move,
-                            OurGoalKick.State.kick,
-                            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
-                            'kick')
 
     @classmethod
     def score(cls):
         gs = main.game_state()
         return 0 if (gs.is_ready_state() and gs.is_our_direct() and
-                   main.ball().pos.y < 1.0) else float("inf")
+                     main.ball().pos.y < 1.0) else float("inf")
 
     @classmethod
     def is_restart(cls):
         return True
-
-    def on_enter_move(self):
-        self.move_pos = self.calc_move_pt()
-        self.add_subbehavior(skills.move.Move(self.move_pos), 'move', required = False, priority = 5)
-
-    def execute_move(self):
-        self.move_pos = self.calc_move_pt()
-
-    def on_exit_move(self):
-        self.remove_subbehavior('move')
 
     def on_enter_kick(self):
         kicker = skills.line_kick.LineKick()
@@ -87,7 +71,7 @@ class OurGoalKick(standard_play.StandardPlay):
         center2 = self.subbehavior_with_name('center2')
 
         # see if we have a direct shot on their goal
-        win_eval = robocup.WindowEvaluator(main.system_state())
+        win_eval = robocup.WindowEvaluator(main.context())
         win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper(
         )
         win_eval.min_chip_range = OurGoalKick.MinChipRange
@@ -114,8 +98,3 @@ class OurGoalKick(standard_play.StandardPlay):
             center2.target = robocup.Point(center_x, center_y)
 
             kicker.target = robocup.Segment(center1.target, center2.target)
-
-    def calc_move_pt(self):
-        ball = main.ball().pos
-        pt = constants.Field.TheirGoalSegment.center()
-        return (ball - pt).normalized() * 0.15 + ball

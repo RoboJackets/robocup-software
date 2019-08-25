@@ -145,7 +145,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
-        kicker.kick_power = 0.6 #kickpower
+        # Very simple tuning right now
+        # It is setup to use kickerpower once the distance scale has been
+        # tuned correctly
+        kicker.kick_power = 0.6  #kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
@@ -153,11 +156,12 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicker.aim_params['max_steady_ang_vel'] = 0.1
         kicker.aim_params['min_steady_duration'] = 0.15
         kicker.aim_params['desperate_timeout'] = 2.0
-        self.add_subbehavior(kicker, 'kicker', required=self.kicker_required, priority=5)
+        self.add_subbehavior(
+            kicker, 'kicker', required=self.kicker_required, priority=5)
         receiver = self.skillreceiver
         receiver.receive_point = self.receive_point
         self.add_subbehavior(
-            receiver, 'receiver', required=self.receiver_required, priority = 5)
+            receiver, 'receiver', required=self.receiver_required, priority=5)
 
     @property
     def use_chipper(self):
@@ -244,9 +248,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     @property
     def has_roles_assigned(self):
         if self.state == CoordinatedPass.State.kicking:
-            return len(self.get_robots())==2
+            return len(self.get_robots()) == 2
         elif self.state == CoordinatedPass.State.receiving:
-            return len(self.get_robots())>=1
+            return len(self.get_robots()) >= 1
         elif self.state == CoordinatedPass.State.preparing:
             return True
         else:

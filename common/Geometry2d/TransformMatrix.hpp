@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Eigen/Dense>
+
 #include "Point.hpp"
 
 namespace Geometry2d {
@@ -31,6 +33,15 @@ public:
     TransformMatrix(Geometry2d::Point origin, float rotation = 0,
                     bool mirror = false, float scale = 1);
 
+    TransformMatrix(const Eigen::Matrix<double, 3, 3>& other) {
+        _m[0] = other(0, 0);
+        _m[1] = other(0, 1);
+        _m[2] = other(0, 2);
+        _m[3] = other(1, 0);
+        _m[4] = other(1, 1);
+        _m[5] = other(1, 2);
+    }
+
     TransformMatrix operator*(const TransformMatrix& other) const {
         float a = _m[0] * other._m[0] + _m[1] * other._m[3];
         float b = _m[0] * other._m[1] + _m[1] * other._m[4];
@@ -58,6 +69,12 @@ public:
         _m[5] = f;
 
         return *this;
+    }
+
+    operator Eigen::Matrix<double, 3, 3>() const {
+        Eigen::Matrix<double, 3, 3> result;
+        result << _m[0], _m[1], _m[2], _m[3], _m[4], _m[5], 0, 0, 1;
+        return result;
     }
 
     Point operator*(const Point& pt) const {
@@ -149,4 +166,4 @@ protected:
     //    3 4 5]
     float _m[6];
 };
-}
+}  // namespace Geometry2d

@@ -23,6 +23,18 @@ TEST(Point, constructors) {
     EXPECT_EQ(test, defaultConstructed);
 }
 
+TEST(Point, toEigen) {
+    Eigen::Vector2d p = Point(1.0, 2.0);
+    ASSERT_EQ(p(0), 1.0);
+    ASSERT_EQ(p(1), 2.0);
+}
+
+TEST(Point, fromEigen) {
+    Point p = Eigen::Vector2d(1.0, 2.0);
+    ASSERT_EQ(p.x(), 1.0);
+    ASSERT_EQ(p.y(), 2.0);
+}
+
 TEST(Point, operators) {
     // Test +, - operator
     Point expected;

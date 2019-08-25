@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <boost/optional.hpp>
 #include "planning/MotionInstant.hpp"
 #include "Utils.hpp"
 
@@ -104,17 +103,16 @@ struct SettleCommand : public MotionCommand {
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<SettleCommand>(*this);
     }
-    explicit SettleCommand(boost::optional<Geometry2d::Point> target)
+    explicit SettleCommand(std::optional<Geometry2d::Point> target)
         : MotionCommand(MotionCommand::Settle), target(target){};
-    const boost::optional<Geometry2d::Point> target;
+    const std::optional<Geometry2d::Point> target;
 };
 
 struct CollectCommand : public MotionCommand {
     virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
         return std::make_unique<CollectCommand>(*this);
     }
-    explicit CollectCommand()
-        : MotionCommand(MotionCommand::Collect) {};
+    explicit CollectCommand() : MotionCommand(MotionCommand::Collect){};
 };
 
 struct LineKickCommand : public MotionCommand {

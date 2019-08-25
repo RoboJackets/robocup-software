@@ -49,13 +49,15 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aiming and not self.enable_kick,
             'aim error > threshold')
 
-        self.add_transition(PivotKick.State.aiming, PivotKick.State.kicking,
-                            lambda: self.opp_robot_blocking(),
-                            'opp robot blocking')
+        self.add_transition(
+            PivotKick.State.aiming,
+            PivotKick.State.kicking, lambda: self.opp_robot_blocking(),
+            'opp robot blocking')
 
-        self.add_transition(PivotKick.State.aimed, PivotKick.State.kicking,
-                            lambda: self.enable_kick or self.facing_opp_goal() or self.opp_robot_blocking(),
-                            'kick enabled')
+        self.add_transition(
+            PivotKick.State.aimed, PivotKick.State.kicking, lambda: self.
+            enable_kick or self.facing_opp_goal() or self.opp_robot_blocking(),
+            'kick enabled')
 
         self.add_transition(PivotKick.State.kicking,
                             behavior.Behavior.State.completed,
@@ -83,7 +85,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if robot is None:
             return False
-        
+
         # L is left post
         # R is right post
         # T is target aiming point
@@ -123,24 +125,18 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         # We are aiming at the goal
         if (angle_left_goal_post_diff + angle_right_goal_post_diff + small_angle_offset <= angle_goal_post_diff):
-            print('EARLY KICK')
-            main.system_state().draw_text('Early kick', robot.pos, (255, 255, 255), 'PivotKick')
+            print('EARLY KIck')
+            main.debug_drawer().draw_text('Early kick', robot.pos, 'PivotKick')
             return True
 
         return False
 
     def opp_robot_blocking(self):
-        # Get aim direction
-        # Get robot direction
-        # Make sure in front
-        # Make sure dist to angle line is less than radius
-        # But greater than mouth radius
         if (self.robot is None):
             return False
 
         # Closest opp robot in any direction
-        # To us, not the ball
-        # May want to change        
+        # To us, not the ball   
         closest_opp_robot = None
         closest_opp_dist = float("inf")
         for r in main.their_robots():
@@ -149,7 +145,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
                 closest_opp_dist = (r.pos - self.robot.pos).mag()
 
         # Only do this if a robot is in range
-        robot_in_range = closest_opp_dist < .2 + constants.Robot.Radius
+        robot_in_range = closest_opp_dist < .2 + 2 * constants.Robot.Radius
 
         aim_dir = robocup.Point.direction(self.robot.angle)
         robot_dir = (closest_opp_robot.pos - self.robot.pos)
@@ -157,27 +153,25 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         # Only trigger if they are infront of us
         robot_in_front = aim_dir.dot(robot_dir) > 0
 
-        closest_pt = robocup.Line(self.robot.pos,
-                                  self.robot.pos + aim_dir).nearest_point(
-                                      closest_opp_robot.pos)
+        closest_pt = robocup.Line(
+            self.robot.pos,
+            self.robot.pos + aim_dir).nearest_point(closest_opp_robot.pos)
 
-        does_hit_robot = (closest_opp_robot.pos - closest_pt).mag() < constants.Robot.Radius
-        doesnt_hit_mouth = True # TODO See if this matters
+        does_hit_robot = (closest_opp_robot.pos - closest_pt
+                          ).mag() < constants.Robot.Radius
 
-        facing_their_side = robocup.Point.direction(self.robot.angle).y > 0# self.robot.angle > 0
+        facing_their_side = robocup.Point.direction(self.robot.angle).y > 0
 
-        ret = (facing_their_side and
-               robot_in_range and
-               robot_in_front and
-               does_hit_robot and
-               doesnt_hit_mouth)
+        ret = (facing_their_side and robot_in_range and robot_in_front and
+               does_hit_robot)
 
         if ret:
             print("Panic kick")
-            main.system_state().draw_text('panic kick', self.robot.pos, (255, 255, 255), 'PivotKick')
+            main.debug_drawer().draw_text('panic kick', self.robot.pos,
+                                          (255, 255, 255), 'PivotKick')
 
         return ret
-        
+
 
     # The speed to drive the dribbler at during aiming
     # If high, adds lift to kick
@@ -258,7 +252,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
 
         if isinstance(self.target, robocup.Segment):
             for i in range(2):
-                main.system_state().draw_line(
+                main.debug_drawer().draw_line(
                     robocup.Line(main.ball().pos, self.target.get_pt(i)),
                     constants.Colors.Blue, "PivotKick")
 

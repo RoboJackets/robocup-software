@@ -60,7 +60,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         # track start time so we can use desperate timeout
         self._course_start = 0
         self._fine_start = 0
-        self.course_timeout = 5#float("inf")
+        self.course_timeout = float("inf")
         self.fine_timeout = float("inf")
 
         self.startBallLocation = main.ball().pos
@@ -116,7 +116,6 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     @desperate_timeout.setter
     def desperate_timeout(self, value):
         self._fine_timeout = value
-
 
     # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
     # Default: float("inf")
@@ -245,24 +244,25 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         # draw current shot line
         if self._shot_point != None:
-            color = constants.Colors.Green if self.is_aimed() else constants.Colors.Red
-            main.system_state().draw_line(
+            color = constants.Colors.Green if self.is_aimed(
+            ) else constants.Colors.Red
+            main.debug_drawer().draw_line(
                 robocup.Line(self.robot.pos, self._shot_point), color, "Aim")
-            main.system_state().draw_circle(self._shot_point, 0.02, color,
+            main.debug_drawer().draw_circle(self._shot_point, 0.02, color,
                                             "Aim")
 
         # draw where we're supposed to be aiming
         if self.target_point != None:
-            main.system_state().draw_circle(self.target_point, 0.02,
+            main.debug_drawer().draw_circle(self.target_point, 0.02,
                                             constants.Colors.Blue, "Aim")
 
         # If we are within X degrees of the target, start the fine timeout
-        if (self.target_point is not None and
-            self._fine_start == 0 and
-            robocup.Point.direction(self.robot.angle).angle_between(
-                self.target_point - self.robot.pos) < 45*constants.DegreesToRadians and
-            robocup.Point.direction(self.robot.angle).dot(
-                self.target_point - self.robot.pos) > 0):
+        if (self.target_point is not None and self._fine_start == 0 and
+                robocup.Point.direction(self.robot.angle).angle_between(
+                    self.target_point - self.robot.pos) < 45 *
+                constants.DegreesToRadians and robocup.Point.direction(
+                    self.robot.angle).dot(self.target_point - self.robot.pos) >
+                0):
 
             self._fine_start = time.time()
 

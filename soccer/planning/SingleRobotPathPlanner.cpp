@@ -1,15 +1,15 @@
 #include "SingleRobotPathPlanner.hpp"
 #include "DirectTargetPathPlanner.hpp"
-#include "TuningPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "LineKickPlanner.hpp"
 #include "InterceptPlanner.hpp"
+#include "LineKickPlanner.hpp"
+#include "TuningPathPlanner.hpp"
 //#include "PivotPathPlanner.hpp"
 //#include "RRTPlanner.hpp"
-#include "SettlePathPlanner.hpp"
 #include "CollectPathPlanner.hpp"
 #include "PivotPathPlanner.hpp"
 #include "RRTPlanner.hpp"
+#include "SettlePathPlanner.hpp"
 #include "TargetVelPathPlanner.hpp"
 
 using namespace std;
@@ -93,7 +93,7 @@ void SingleRobotPathPlanner::splitDynamic(
     }
 }
 
-boost::optional<std::function<AngleInstant(MotionInstant)>>
+std::optional<std::function<AngleInstant(MotionInstant)>>
 angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
         case RotationCommand::FacePoint: {
@@ -114,10 +114,10 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             return function;
         }
         case RotationCommand::None:
-            return boost::none;
+            return std::nullopt;
         default:
             debugThrow("RotationCommand Not implemented");
-            return boost::none;
+            return std::nullopt;
     }
 }
 
@@ -140,7 +140,7 @@ bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
     RJ::Seconds timeIntoPath =
         (RJ::now() - prevPath->startTime()) + RJ::Seconds(1) / 60;
 
-    boost::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
+    std::optional<RobotInstant> optTarget = prevPath->evaluate(timeIntoPath);
     // If we went off the end of the path, use the end for calculations.
     MotionInstant target =
         optTarget ? optTarget->motion : prevPath->end().motion;
