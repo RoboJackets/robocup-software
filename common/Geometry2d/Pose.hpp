@@ -133,6 +133,13 @@ public:
         return *this;
     }
 
+    friend std::ostream& operator<<(std::ostream& stream, const Pose& pose) {
+        stream << "Pose(" << pose.position().x() << ", " << pose.position().y()
+               << ", " << pose.heading() << ")";
+        return stream;
+    }
+
+
 private:
     Point _position;
     double _heading;
@@ -267,7 +274,7 @@ public:
         return Twist(linear() * s, angular() * s);
     }
     Twist operator/(double s) const {
-        return Twist(linear() * s, angular() * s);
+        return Twist(linear() / s, angular() / s);
     }
     Twist& operator+=(const Twist& other) {
         linear() += other.linear();
@@ -290,24 +297,15 @@ public:
         return *this;
     }
 
+    friend std::ostream& operator<<(std::ostream& stream, const Twist& twist) {
+        stream << "Twist(" << twist.linear().x() << ", " << twist.linear().y()
+               << ", " << twist.angular() << ")";
+        return stream;
+    }
+
 private:
     Point _linear;
     double _angular;
 };
-
-/**
- * Stream operators for printing.
- */
-std::ostream& operator<<(std::ostream& stream, const Pose& pose) {
-    stream << "Pose(" << pose.position().x() << ", " << pose.position().y()
-           << ", " << pose.heading() << ")";
-    return stream;
-}
-
-std::ostream& operator<<(std::ostream& stream, const Twist& twist) {
-    stream << "Twist(" << twist.linear().x() << ", " << twist.linear().y()
-           << ", " << twist.angular() << ")";
-    return stream;
-}
 
 }  // namespace Geometry2d
