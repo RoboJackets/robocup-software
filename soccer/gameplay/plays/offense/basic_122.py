@@ -51,18 +51,7 @@ class Basic122(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        if (not main.game_state().is_playing()):
-            return float("inf")
-        if (not main.game_state().is_playing()):
-            return float("inf")
-        if main.ball().pos.y < constants.Field.Length/2:
-            if evaluation.ball.opponent_with_ball():
-                return 100
-            elif not evaluation.ball.we_are_closer():
-                return 10
-            elif evaluation.ball.our_robot_with_ball() is not None:
-                return 5
-        return 10
+        return 10 if main.game_state().is_playing() else float("inf")
 
     def execute_running(self):
         super().execute_running()
