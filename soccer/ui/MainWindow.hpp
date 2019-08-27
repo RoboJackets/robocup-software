@@ -163,6 +163,10 @@ private Q_SLOTS:
     void on_debugLayers_itemChanged(QListWidgetItem* item);
     void on_debugLayers_customContextMenuRequested(const QPoint& pos);
 
+    /// Testing Tab
+    void on_testRun_clicked();
+    void on_addToTable_clicked();
+
     /// Configuration
     void on_configTree_itemChanged(QTreeWidgetItem* item, int column);
     void on_loadConfig_clicked();

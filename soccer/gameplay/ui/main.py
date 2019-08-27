@@ -38,6 +38,7 @@ def setup():
         raise AssertionError("Unable to get a reference to the main window")
 
     pcTab = win.findChild(QtWidgets.QTreeView, 'plays')
+    testingTab = win.findChild(QtWidgets.QTreeView, 'testingPlays')
 
     # setup play config tab
     pcTab.setModel(main.play_registry())
@@ -45,6 +46,13 @@ def setup():
     pcTab.resizeColumnToContents(0)
 
     logging.debug("Initialized PlayConfigTab")
+
+    # setup testing tab
+    testingTab.setModel(main.test_registry())
+    #testingTab.expandAll()
+    #testingTab.resizeColumnToContents(0)
+
+    logging.debug("Initialized TestConfigTab")
 
     # bind the play label in the ui to the name of the current play
     play_name_label = win.findChild(QtWidgets.QLabel, 'current_play_name')

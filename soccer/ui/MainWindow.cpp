@@ -239,6 +239,28 @@ void MainWindow::initialize() {
             _ui.actionVisionFull_Field->setChecked(true);
             break;
     }
+
+    // Initialize testing tab
+
+    _ui.testingTable->addItem(QString("1"));
+    _ui.testingTable->addItem(QString("2"));
+    _ui.testingTable->addItem(QString("3"));
+
+
+    //_ui.testingPlays->
+
+    /* bring back if using table
+    //_ui.testingTable->setRowCount(3);
+    //_ui.testingTable->setColumnCount(2);
+
+
+    QTableWidgetItem *newItem1 = new QTableWidgetItem(tr("%1").arg(1));
+    _ui.testingTable->setItem(0, 0, newItem1);
+    QTableWidgetItem *newItem2 = new QTableWidgetItem(tr("%1").arg(2));
+    _ui.testingTable->setItem(1, 0, newItem2);
+    QTableWidgetItem *newItem3 = new QTableWidgetItem(tr("%1").arg(3));
+    _ui.testingTable->setItem(2, 0, newItem3);
+    */
 }
 
 void MainWindow::logFileChanged() {
@@ -1357,6 +1379,10 @@ void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
     _processor->externalReferee(value);
 }
 
+
+////////////////
+// Tab Widget Section
+
 ////////
 // Debug layer list
 
@@ -1464,6 +1490,21 @@ void MainWindow::on_clearPlays_clicked() {
     _processor->gameplayModule()->clearPlays();
     playIndicatorStatus(true);
 }
+
+
+
+////////
+// Testing Tab
+
+void MainWindow::on_testRun_clicked() {
+    std::cout<<"run tests"<<std::endl;
+}
+
+void MainWindow::on_addToTable_clicked() {
+    std::cout<<"Adding to table"<<std::endl;
+}
+
+
 
 void MainWindow::setRadioChannel(RadioChannels channel) {
     switch (channel) {
