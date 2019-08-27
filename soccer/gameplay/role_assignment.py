@@ -8,8 +8,6 @@ import math
 
 
 class RoleRequirements:
-    debugTimer = 0
-    writeFrame = 0
     def __init__(self):
         self.destination_shape = None
         self.has_ball = False
@@ -215,12 +213,6 @@ PreferChipper = 2.5
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
 def assign_roles(robots, role_reqs):
 
-    #Printing the cost matrix for debug purposes, don't want to see it every frame
-    if RoleRequirements.debugTimer==100:
-        RoleRequirements.debugTimer = 0
-    else:
-        RoleRequirements.debugTimer +=1
-
     fail_reason = ""
 
     # check for empty request set
@@ -343,13 +335,6 @@ def assign_roles(robots, role_reqs):
 
             cost_row.append(cost)
         cost_matrix.append(cost_row)
-
-    # if RoleRequirements.debugTimer==0:
-    #     with open('/home/alan/CLionProjects/robocup-software/log_cost.txt','a') as file:
-    #         for robot,row in enumerate(cost_matrix):
-    #             file.write("{},{},{}\n".format(RoleRequirements.writeFrame,robot,",".join([str(i) for i in row])))
-    #         RoleRequirements.writeFrame +=1
-
 
     # solve
     solver = munkres.Munkres()
