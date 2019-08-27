@@ -3,17 +3,6 @@ import robocup
 import constants
 import math
 
-
-def we_are_closer():
-    return min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots]) > min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
-
-def opponent_is_much_closer():
-    return min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots])*3 < min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
-
-
-def moving_slow():
-    return main.ball().vel.mag() <= 1
-
 def is_moving_towards_our_goal():
     # see if the ball is moving much
     if main.ball().vel.mag() > 0.18:  # Tuned based on vision noise
