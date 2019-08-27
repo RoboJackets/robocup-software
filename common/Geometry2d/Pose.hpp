@@ -139,7 +139,6 @@ public:
         return stream;
     }
 
-
 private:
     Point _position;
     double _heading;
