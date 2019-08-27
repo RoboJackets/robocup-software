@@ -116,19 +116,7 @@ class AdaptiveDefense(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        score = 20
-        if (not main.game_state().is_playing()):
-            return float("inf")
-        if main.ball().pos.y < constants.Field.Length/2:
-            if evaluation.ball.opponent_with_ball():
-                return 5
-            elif evaluation.ball.opponent_is_much_closer():
-                return 5
-            elif evaluation.ball.our_robot_with_ball() is not None:
-                return float('inf')
-        else:
-            return float('inf')
-        return 10
+        return 10 if main.game_state().is_playing() else float("inf")
 
 
     def apply_blocking_roles(self):
