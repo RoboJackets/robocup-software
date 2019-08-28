@@ -60,7 +60,7 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
             # not really a wing defender anymore- this is a hacky fix
             if goal_angle < -.9:
                 #print("Striker")
-                if (self._mark_pos - main.ball().pos).mag() > (constants.Their_Chipping[1] + constants.Robot.Radius*2):
+                if (self._mark_pos - main.ball().pos).mag() > (constants.TheirChipping[1] + constants.Robot.Radius*2):
                     #print("Far Away")
                     self._goalside_ratio = 1
                     

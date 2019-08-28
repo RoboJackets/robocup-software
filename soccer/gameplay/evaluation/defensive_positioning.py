@@ -243,17 +243,15 @@ def find_defense_positions(ignore_robots=[]):
 
     return area_def_pos, sorted_bot[0], sorted_bot[1]
 
-
+## Finds the line segment between the mark_pos and the highest danger shot point
+# Cuts off the portion of the line that is inside of the goal box
+#
+# @param mark_pos: Point (usually robot position) to defend against
+# @param robot: The robot assigned to defend
+# @param ball: Is the marked position the ball? Defaults to robot - used for offsets
+# @param kick_eval: kick evaluator, not required, but fewer steps if it's included here vs. recreated
+# @return Tuple: LineSegment to defend on , shot_pt from kick_eval
 def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
-        '''
-         Finds the line segment between the mark_pos and the highest danger shot point
-         Cuts off the portion of the line that is inside of the goal box
-         @param mark_pos: Point (usually robot position) to defend against
-         @param robot: The robot assigned to defend
-         @param ball: Is the marked position the ball? Defaults to robot - used for offsets
-         @param kick_eval: kick evaluator, not required, but fewer steps if it's included here vs. recreated
-         @return Tuple: LineSegment to defend on , shot_pt from kick_eval
-        '''
 
         if kick_eval is None:
             kick_eval = robocup.KickEvaluator(main.system_state())
@@ -289,20 +287,18 @@ def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
 
         return robocup.Segment(adjusted_mark_pos, intersections[0]), shot_pt
 
-
-def ballside_mark_segment(mark_pos, ball_pos = None):
-        # Finds the line segment between the mark_pos and the ball
-        # @param mark_pos: Point (usually robot position) to defend against
-        # @return: LineSegment to defend on
-
-        #offsets on ball and mark_pos sides
-        if ball_pos is None:
-            ball_pos = main.ball().pos
-        offsets = [constants.Robot.Radius, constants.Ball.Radius]
-        mark_line_dir = (ball_pos - mark_pos).normalized()
-        ball_mark_line = robocup.Segment(
-            ball_pos - mark_line_dir * constants.Ball.Radius,
-            mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
-        #End the mark line segment 1 radius away from the opposing robot
-        #Or 1 ball radius away if marking a position
-        return ball_mark_line
+## Finds the line segment between the mark_pos and the ball
+# @param mark_pos: Point (usually robot position) to defend against
+# @return: LineSegment to defend on
+def ballside_mark_segment(mark_pos, ball_pos = None):     
+    #offsets on ball and mark_pos sides
+    if ball_pos is None:
+        ball_pos = main.ball().pos
+    offsets = [constants.Robot.Radius, constants.Ball.Radius]
+    mark_line_dir = (ball_pos - mark_pos).normalized()
+    ball_mark_line = robocup.Segment(
+        ball_pos - mark_line_dir * constants.Ball.Radius,
+        mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
+    #End the mark line segment 1 radius away from the opposing robot
+    #Or 1 ball radius away if marking a position
+    return ball_mark_line

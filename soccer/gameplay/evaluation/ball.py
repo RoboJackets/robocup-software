@@ -64,7 +64,9 @@ def opponent_with_ball():
             return None
 
 
-# returns a Robot or None indicating which of us has the ball
+## If our robot has the ball, then returns that robot. Otherwise None
+#
+# @return Robot: a robot or None 
 def our_robot_with_ball():
     closest_bot, closest_dist = None, float("inf")
     for bot in main.our_robots():

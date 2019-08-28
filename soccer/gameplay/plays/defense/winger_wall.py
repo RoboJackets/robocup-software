@@ -18,8 +18,9 @@ import tactics.positions.wing_defender as wing_defender
 import tactics.wall as wall
 
 
-
-class AdaptiveDefense(standard_play.StandardPlay):
+## Defense play that utilizes a wall and wingers
+#
+class WingerWall(standard_play.StandardPlay):
 
     # Weights for robot risk scores
     # [ball_dist, ball_opp_goal]

@@ -1,6 +1,7 @@
 
-# Classifies a feature into any number of classes
-
+## @package Linear Classification
+#  Classifies a feature into any number of classes
+#
 # Linear classfication defined is
 # y = f(x, w, b) where...
 #   x is a vector of input features of an object
@@ -10,8 +11,8 @@
 #   y is the final output score
 
 
-# Classifies the object into two distinct class based on a cutoff value
-# Anything less than the cutoff is of class false, greater than the cutoff is of class true
+## Classifies the object into two distinct class based on a cutoff value
+#  Anything less than the cutoff is of class false, greater than the cutoff is of class true
 # 
 # @param input The vector of input features
 # @param weights The vector of weights to apply to the input features
@@ -22,7 +23,7 @@ def binary_classification(input, weights, bias, cutoff):
     score = linear_classification(input, weights, bias)
     return (score < cutoff, score)
 
-# Returns the raw output score of the linear classifier based on the dot product
+## Returns the raw output score of the linear classifier based on the dot product
 #
 # @param input The vector of input features
 # @param weights The vector of weights to apply to the input features
