@@ -8,7 +8,7 @@ import enum
 import math
 import skills.move
 
-# This tactic builds a wall a certain distance from point A, blocking point B.
+## This tactic builds a wall a certain distance from point A, blocking point B.
 class Wall(composite_behavior.CompositeBehavior):
     class State(enum.Enum):
         defense_wall = 1
@@ -61,15 +61,6 @@ class Wall(composite_behavior.CompositeBehavior):
                             Wall.State.defense_wall, lambda: not evaluation.ball.we_are_closer() or not evaluation.ball.moving_slow(),
                             "ball captured")
 
-
-    def is_ball_not_free(self):
-        return main.ball().vel.mag() > 1 or min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots]) <= min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
-
-
-    def is_ball_shot(self):
-        SHOT_THRESH = 2
-        return main.ball().vel.mag() > SHOT_THRESH and (main.ball().vel).normalized().dot(main.ball().vel) >.9
-
     def on_enter_defense_wall(self):
         self.remove_all_subbehaviors()
         self.update_midpoint()
@@ -105,6 +96,18 @@ class Wall(composite_behavior.CompositeBehavior):
             self._remove_wall_defenders()
             self.active_defenders = self.number_of_defenders
 
+    ## Returns true if some team has possession of the ball
+    def is_ball_not_free(self):
+        return main.ball().vel.mag() > 1 or min([(main.ball().pos - rob.pos).mag() \
+            for rob in main.system_state().their_robots]) <= min([(main.ball().pos - rob.pos).mag() \
+                for rob in main.system_state().our_robots])
+
+    ## Returns true if the ball was shot
+    def is_ball_shot(self):
+        SHOT_THRESH = 2
+        return main.ball().vel.mag() > SHOT_THRESH and (main.ball().vel).normalized().dot(main.ball().vel) >.9
+
+    ## moves robot to appropriate positions to form wall
     def _add_wall_defenders(self):
         self.update_midpoint()
         for i, priority in enumerate(self.defender_priorities[:self.number_of_defenders]):
@@ -137,7 +140,7 @@ class Wall(composite_behavior.CompositeBehavior):
                     skills.move.Move(pt),
                     name=name)
 
-    # Finds the point on the arc the defender should move to
+    ## Finds the point on the arc the defender should move to
     def calculate_destination(self, robot_number):
         defender_number = robot_number - self.number_of_defenders / 2 + .5
         direct = (self.mark_point - self.defense_point).normalized()

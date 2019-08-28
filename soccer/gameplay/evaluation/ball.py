@@ -30,6 +30,16 @@ def is_in_our_goalie_zone():
     else:
         return False
 
+def we_are_closer():
+    return min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots]) > min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
+
+def opponent_is_much_closer():
+    return min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots])*3 < min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
+
+
+def moving_slow():
+    return main.ball().vel.mag() <= 1
+
 
 FrictionCoefficient = 0.04148
 GravitationalCoefficient = 9.81  # in m/s^2
