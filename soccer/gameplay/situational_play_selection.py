@@ -587,7 +587,7 @@ class SituationalPlaySelector:
         if(cls.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = cls.closestReciever()
             if(recvr[0] != None):
-                print(recvr[1] / cls.systemState.ball.vel.mag())
+                #print(recvr[1] / cls.systemState.ball.vel.mag())
             if(recvr[0] != None and (recvr[1] / cls.systemState.ball.vel.mag()) < intercept_time):
                 
                 if(recvr[0].is_ours()):
