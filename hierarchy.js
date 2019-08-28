@@ -50,6 +50,7 @@ var hierarchy =
       [ "gameplay.plays.restarts.their_shoot_out.TheirShootOut.State", "classgameplay_1_1plays_1_1restarts_1_1their__shoot__out_1_1_their_shoot_out_1_1_state.html", null ],
       [ "gameplay.plays.restarts.two_side_corner_kick.TwoSideCornerKick.State", "classgameplay_1_1plays_1_1restarts_1_1two__side__corner__kick_1_1_two_side_corner_kick_1_1_state.html", null ],
       [ "gameplay.plays.stopped.Stopped.State", "classgameplay_1_1plays_1_1stopped_1_1_stopped_1_1_state.html", null ],
+      [ "gameplay.plays.testing.four_courners_pass.FourCornerPass.State", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass_1_1_state.html", null ],
       [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp.State", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up_1_1_state.html", null ],
       [ "gameplay.plays.testing.repeated_turning_line_up.RepeatedTurningLineUp.State", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up_1_1_state.html", null ],
       [ "gameplay.plays.testing.repeated_turning_line_up_lengthwise.RepeatedTurningLineUpLengthwise.State", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up__lengthwise_1_1_repeated_turning_line_up_lengthwise_1_1_state.html", null ],
@@ -246,9 +247,6 @@ var hierarchy =
       [ "Planning::TuningPathPlanner", "class_planning_1_1_tuning_path_planner.html", null ]
     ] ],
     [ "SlowKickDetector", "class_slow_kick_detector.html", null ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -259,6 +257,7 @@ var hierarchy =
             [ "gameplay.plays.restarts.placement.Placement", "classgameplay_1_1plays_1_1restarts_1_1placement_1_1_placement.html", null ],
             [ "gameplay.plays.restarts.their_shoot_out.TheirShootOut", "classgameplay_1_1plays_1_1restarts_1_1their__shoot__out_1_1_their_shoot_out.html", null ],
             [ "gameplay.plays.testing.debug_window_evaluator.DebugWindowEvaluator", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html", null ],
+            [ "gameplay.plays.testing.four_courners_pass.FourCornerPass", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html", null ],
             [ "gameplay.plays.testing.line_up.LineUp", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up.html", null ],
             [ "gameplay.plays.testing.repeated_line_up.RepeatedLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html", null ],
             [ "gameplay.plays.testing.repeated_turning_line_up.RepeatedTurningLineUp", "classgameplay_1_1plays_1_1testing_1_1repeated__turning__line__up_1_1_repeated_turning_line_up.html", null ],
@@ -377,6 +376,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "StateSpace", null, [
       [ "Planning::RoboCupStateSpace", "class_planning_1_1_robo_cup_state_space.html", null ]

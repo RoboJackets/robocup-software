@@ -17,7 +17,7 @@ var searchData=
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a7ca51b77463ff495045946ad0dff142d',1,'gameplay.fsm.StateMachine.restart()'],['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html#ac848f91a2c537c1538b52a1c2193c436',1,'gameplay.tactics.coordinated_pass.CoordinatedPass.restart()'],['../classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html#a14b51116f0b0860a4b34d9241080a833',1,'gameplay.timeout_behavior.TimeoutBehavior.restart()']]],
   ['restart_5ftimer',['restart_timer',['../classgameplay_1_1timeout__behavior_1_1_timeout_behavior.html#ad0025260a0c21a2780dd030a3a33b2ce',1,'gameplay::timeout_behavior::TimeoutBehavior']]],
   ['robocupstatespace',['RoboCupStateSpace',['../class_planning_1_1_robo_cup_state_space.html',1,'Planning']]],
-  ['robot',['Robot',['../class_robot.html',1,'Robot'],['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay.constants.Robot']]],
+  ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay.constants.Robot'],['../class_robot.html',1,'Robot']]],
   ['robotconfig',['RobotConfig',['../class_robot_config.html',1,'']]],
   ['robotconstraints',['RobotConstraints',['../struct_robot_constraints.html',1,'']]],
   ['robotinstant',['RobotInstant',['../struct_planning_1_1_robot_instant.html',1,'Planning']]],

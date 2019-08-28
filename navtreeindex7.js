@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"class_world_ball.html#a265281dddd04eb91cce43b7454d2b132":[18,0,104,2],
 "class_world_ball.html#a4e085d92b279fbc0eaf762f30ad70453":[18,0,104,6],
 "class_world_ball.html#a55439f9b6f302e4203d141321cb66a74":[18,0,104,8],
 "class_world_ball.html#a71ab55d6221bf9a1c8333c6003c64df2":[18,0,104,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html":[18,0,3,9,1,4,0],
 "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html#a1f7bd61b72f624bd0dfb3c463f06e57b":[18,0,3,9,1,4,0,0],
 "classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html#a23c053ac43cee13641f2806936a65bac":[18,0,3,9,1,4,0,6],
-"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html#a2eca673fc475bb44a8ac2ec37ba9f317":[18,0,3,9,1,4,0,3],
-"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html#a7626ed89da5f0862c3a966675ddbbcb4":[18,0,3,9,1,4,0,5]
+"classgameplay_1_1plays_1_1restarts_1_1our__corner__kick__onetouch_1_1_our_corner_kick_touch.html#a2eca673fc475bb44a8ac2ec37ba9f317":[18,0,3,9,1,4,0,3]
 };

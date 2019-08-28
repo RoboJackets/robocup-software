@@ -111,6 +111,9 @@ var annotated_dup =
           [ "debug_window_evaluator", null, [
             [ "DebugWindowEvaluator", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html", "classgameplay_1_1plays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator" ]
           ] ],
+          [ "four_courners_pass", null, [
+            [ "FourCornerPass", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass" ]
+          ] ],
           [ "line_up", null, [
             [ "LineUp", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up.html", "classgameplay_1_1plays_1_1testing_1_1line__up_1_1_line_up" ]
           ] ],

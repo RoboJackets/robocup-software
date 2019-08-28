@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"class_radio.html#aadddbdbe509dfeb0e45ca1893067f898":[18,0,77,0],
 "class_radio.html#ab056bc8bed18e7b89a6f5728e90be091":[18,0,77,2],
 "class_radio.html#ab6ab11fbd3981e975c724ec9696c164b":[18,0,77,10],
 "class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49":[18,0,77,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "class_world.html#afe70e690fb14b3509073f95298c7bb9b":[18,0,103,1],
 "class_world_ball.html":[18,0,104],
 "class_world_ball.html#a104fadf1f3b0c6371f3cbcbdb9090d4b":[18,0,104,3],
-"class_world_ball.html#a208272bc118b22e8e78aa7508287f4ee":[18,0,104,7],
-"class_world_ball.html#a265281dddd04eb91cce43b7454d2b132":[18,0,104,2]
+"class_world_ball.html#a208272bc118b22e8e78aa7508287f4ee":[18,0,104,7]
 };

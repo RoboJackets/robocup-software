@@ -19,6 +19,7 @@ var searchData=
   ['forbidden_5fball_5ftoucher',['forbidden_ball_toucher',['../classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html#a5c1f25615f78e511e209521501ea26ff',1,'gameplay::evaluation::double_touch::DoubleTouchTracker']]],
   ['fortune_5fwrapper',['fortune_wrapper',['../classgameplay_1_1tactics_1_1positions_1_1coach_1_1_coach.html#a8c1d9c06df5e52bd551a44821e7c375f',1,'gameplay::tactics::positions::coach::Coach']]],
   ['forwardpass',['ForwardPass',['../classgameplay_1_1tactics_1_1forward__pass_1_1_forward_pass.html',1,'gameplay::tactics::forward_pass']]],
+  ['fourcornerpass',['FourCornerPass',['../classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html',1,'gameplay::plays::testing::four_courners_pass']]],
   ['fromregisteredconfigurables',['FromRegisteredConfigurables',['../class_configuration.html#aca77602fde525eceef3be66fa02061a4',1,'Configuration']]],
   ['fseventhandler',['FsEventHandler',['../classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html',1,'gameplay::fs_watcher::FsWatcher']]],
   ['fswatcher',['FsWatcher',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html',1,'gameplay::fs_watcher']]],

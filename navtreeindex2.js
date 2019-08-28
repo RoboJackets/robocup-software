@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"class_game_state.html#ad9740de34d5dc2e11d0edefbfde73b0f":[18,0,48,18],
 "class_game_state.html#adc767eb4c4e06cc0c61edaec21a09696":[18,0,48,48],
 "class_game_state.html#add37c5c64e9112974952848be2fe5e85":[18,0,48,7],
 "class_game_state.html#adf8863cca508d7a2a2ac46ff2bc0c8c1":[18,0,48,49],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "class_geometry2d_1_1_rect.html#aecefcf3a75a6467ddb73e38895ff3975":[18,0,4,7,3],
 "class_geometry2d_1_1_segment.html":[18,0,4,8],
 "class_geometry2d_1_1_segment.html#a0cc216ff392092f5d0766225c55b5b1a":[18,0,4,8,8],
-"class_geometry2d_1_1_segment.html#a2d044739f0097d0a2ba7e8da97ab4238":[18,0,4,8,6],
-"class_geometry2d_1_1_segment.html#a32147fb0948f99ce105b7c8a210a1374":[18,0,4,8,4]
+"class_geometry2d_1_1_segment.html#a2d044739f0097d0a2ba7e8da97ab4238":[18,0,4,8,6]
 };

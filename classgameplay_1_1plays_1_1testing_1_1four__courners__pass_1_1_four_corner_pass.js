@@ -1,0 +1,27 @@
+var classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass =
+[
+    [ "State", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass_1_1_state.html", null ],
+    [ "__init__", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#ac688e00af56f9127c8154af0404283a6", null ],
+    [ "cut_off_pos", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#adcbec542acedcf17f2be8a1f031a7b22", null ],
+    [ "execute_running", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#ad7a58037bce9c4393c8a021db1ca5179", null ],
+    [ "on_enter_passing", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a4303a3241213e64397e6fe2babbeedc4", null ],
+    [ "on_enter_setup", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#acc708d9231158192be91d67d7d3c979b", null ],
+    [ "on_enter_start", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a8391d8e7f3da88fe3472439871c6cfb9", null ],
+    [ "on_exit_passing", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#ab893fc489cf2252335d8ab1c1f0f888b", null ],
+    [ "on_exit_setup", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a04117f73af7b0a1200e87bc52d628a61", null ],
+    [ "safer_pass", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#af48b6487773c89e968d39c802563680a", null ],
+    [ "bot_buffer", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a54ff9b389c3f897605251d87346a9485", null ],
+    [ "chaser", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#afc9935665790e40998d07f1c7e2d5d09", null ],
+    [ "defense_speed", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#ad67b86fe445e70bc1e59dda9bb3b426f", null ],
+    [ "direction", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a3a15dc64bd3c5db557598de65bc2aed8", null ],
+    [ "length", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#abe260cfb4fe5e453a8f26f91de6f5f81", null ],
+    [ "max_x", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a2551ef2fac75a79f7beb1821d9425ba3", null ],
+    [ "max_y", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a596c3e1f6374af9e633e411795924ba7", null ],
+    [ "min_x", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a7eff1dbd7538faf8aaf7ce1080576057", null ],
+    [ "min_y", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#aee9af160153a3f940ee6de06feee2677", null ],
+    [ "normal_speed", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a6134eb849e47465eca4d02b1dd3def35", null ],
+    [ "otherPts", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a70ce5ed6b00071f323ef70b5ba8e9ec3", null ],
+    [ "square_points", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a8c9ebce73b1db34a494ae3b0cf8dff41", null ],
+    [ "variable_square", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#adc92699566dadd55589d836c970ac36e", null ],
+    [ "width", "classgameplay_1_1plays_1_1testing_1_1four__courners__pass_1_1_four_corner_pass.html#a6833c4e16a01920f6614de3afee4b994", null ]
+];
