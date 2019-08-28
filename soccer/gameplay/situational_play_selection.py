@@ -12,53 +12,53 @@ class SituationalPlaySelector:
 
     #Enum for representing the current game situation, each of which acts as a catagory of play to be run
     class situation(Enum):
-            none = 0
-            kickoff = 1 #Plays that can perform our kickoff
-            defend_restart_offensive = 2 #Plays for defending our opponents restart on their side of the field
-            defend_restart_midfield = 3 #Plays for defending our opponents restart in the midfield
-            defend_restart_defensive = 4 #Plays for defending our opponents restart on our side of the field
-            clear = 5 #play for clearing the ball from our side of the field (should include defensive caution)
-            defend_clear = 6 #Plays for defending the opponents clear, when the ball is on their side.
-            defend_goal = 7 #Plays for defending our goal from opponents near it with the ball
-            midfield_clear = 8 #Plays for when we possess the ball in the midfield
-            attack_goal = 9 #Plays for attacking the opponents goal, when we have the ball near it
-            offensive_scramble = 10 #Plays for getting a loose ball when the ball is on the opponents half
-            midfield_scramble = 11 #Plays for getting a loose ball when the ball is in the midfield
-            defensive_scramble = 12 #Plays for getting a loose ball when the ball is on our half
-            save_ball = 13 #Plays that will trigger when the ball is headed out of the field with no obstuctions
-            save_shot = 14 #Plays that will trigger when the ball is headed directly at our goal
-            offensive_pileup = 15 #Plays to handle a pile up on their side of the field
-            midfield_pileup = 16 #Plays to handle a pile up in the midfield
-            defensive_pileup = 17 #Plays to handle a pile up on our side of the field
-            midfield_defend_clear = 18 #Plays to defend a clear when the ball is in the midfield
-            shootout = 19 #Plays for making shootout shots
-            defend_shootout = 20 #Plays for defending shootout shots
-            penalty = 21 #Plays for making penalty shots
-            defend_penalty = 22 #Plays for defending penalty shots
-            offensive_kick = 23 #Plays for direct and indirect kicks on their side
-            defensive_kick = 24 #Plays for direct and indirect kicks on our side
-            midfield_kick = 25 #Plays for direct and indirect kicks in the midfield
-            goalie_clear = 26 #Plays for clearing the ball when our goalie possesses the ball
+            NONE = 0
+            KICKOFF = 1 #Plays that can perform our kickoff
+            DEFEND_RESTART_OFFENSIVE = 2 #Plays for defending our opponents restart on their side of the field
+            DEFEND_RESTART_MIDFIELD = 3 #Plays for defending our opponents restart in the midfield
+            DEFEND_RESTART_DEFENSIVE = 4 #Plays for defending our opponents restart on our side of the field
+            CLEAR = 5 #play for clearing the ball from our side of the field (should include defensive caution)
+            DEFEND_CLEAR = 6 #Plays for defending the opponents clear, when the ball is on their side.
+            DEFEND_GOAL = 7 #Plays for defending our goal from opponents near it with the ball
+            MIDFIELD_CLEAR = 8 #Plays for when we possess the ball in the midfield
+            ATTACK_GOAL = 9 #Plays for attacking the opponents goal, when we have the ball near it
+            OFFENSIVE_SCRAMBLE = 10 #Plays for getting a loose ball when the ball is on the opponents half
+            MIDFIELD_SCRAMBLE = 11 #Plays for getting a loose ball when the ball is in the midfield
+            DEFENSIVE_SCRAMBLE = 12 #Plays for getting a loose ball when the ball is on our half
+            SAVE_BALL = 13 #Plays that will trigger when the ball is headed out of the field with no obstuctions
+            SAVE_SHOT = 14 #Plays that will trigger when the ball is headed directly at our goal
+            OFFENSIVE_PILEUP = 15 #Plays to handle a pile up on their side of the field
+            MIDFIELD_PILEUP = 16 #Plays to handle a pile up in the midfield
+            DEFENSIVE_PILEUP = 17 #Plays to handle a pile up on our side of the field
+            MIDFIELD_DEFEND_CLEAR = 18 #Plays to defend a clear when the ball is in the midfield
+            SHOOTOUT = 19 #Plays for making shootout shots
+            DEFEND_SHOOTOUT = 20 #Plays for defending shootout shots
+            PENALTY = 21 #Plays for making penalty shots
+            DEFEND_PENALTY = 22 #Plays for defending penalty shots
+            OFFENSIVE_KICK = 23 #Plays for direct and indirect kicks on their side
+            DEFENSIVE_KICK = 24 #Plays for direct and indirect kicks on our side
+            MIDFIELD_KICK = 25 #Plays for direct and indirect kicks in the midfield
+            GOALIE_CLEAR = 26 #Plays for clearing the ball when our goalie possesses the ball
 
     #Enum for representing where the ball is on the field
     class fieldLoc(Enum):
-        defendSide = 1
-        midfield = 2
-        attackSide = 3
+        DEFENDSIDE = 1
+        MIDFIELD = 2
+        ATTACKSIDE = 3
 
     #Enum for representing the possession of the ball
     class ballPos(Enum):
-        ourBall = 1
-        freeBall = 2
-        theirBall = 3
+        OURBALL = 1
+        FREEBALL = 2
+        THEIRBALL = 3
 
     def __init__(self):
         print("Don't make an instance of this class you bafoon!") 
         exit() #This is a joke I'll need to remove at some point
 
-    currentSituation = situation.none
-    currentPossession = ballPos.freeBall
-    ballLocation = fieldLoc.midfield 
+    currentSituation = situation.NONE
+    currentPossession = ballPos.FREEBALL
+    ballLocation = fieldLoc.MIDFIELD 
     currentPileup = False
 
     pileupTime = None #The first time at which a pileup was detected
@@ -271,31 +271,52 @@ class SituationalPlaySelector:
 
     @classmethod
     def isFreeBall(cls):
-        return cls.currentPossession == cls.ballPos.freeBall
+        return cls.currentPossession == cls.ballPos.FREEBALL
 
     @classmethod
     def isOurBall(cls):
-        return cls.currentPossession == cls.ballPos.ourBall
+        return cls.currentPossession == cls.ballPos.OURBALL
 
     @classmethod
     def isTheirBall(cls):
-        return cls.currentPossession == cls.ballPos.theirBall
+        return cls.currentPossession == cls.ballPos.THEIRBALL
 
     @classmethod
     def isAttackSide(cls):
-        return cls.ballLocation == cls.fieldLoc.attackSide
+        return cls.ballLocation == cls.fieldLoc.ATTACKSIDE
 
     @classmethod
     def isDefendSide(cls):
-        return cls.ballLocation == cls.fieldLoc.defendSide
+        return cls.ballLocation == cls.fieldLoc.DEFENDSIDE
 
     @classmethod
     def isMidfield(cls):
-        return cls.ballLocation == cls.fieldLoc.midfield
+        return cls.ballLocation == cls.fieldLoc.MIDFIELD
 
     @classmethod
     def isPileup(cls):
         return cls.currentPileup
+
+    #Returns if we are in the specified situation without regard to 
+    @classmethod
+    def isSituation(cls, situation, check = False):
+        up = situation.upper()
+
+        if(check):
+            found = False
+            for g in cls.situation:
+                if(up == g):
+                    found = True
+                    break
+            if not found:
+                raise Exception("Passed situation " + situaion + " / " + up + " is not an existing situation")
+
+        
+        if(cls.currentSituaion.name == up):
+            return true
+        else:
+            return false
+        
 
     #Update determining if we want to preempt the current play or not
     @classmethod
@@ -528,7 +549,7 @@ class SituationalPlaySelector:
             #    pass
 
         if(cls.currentPileup):
-            cls.currentPossession = cls.ballPos.freeBall
+            cls.currentPossession = cls.ballPos.FREEBALL
             return None
 
         ballPossessionDurationThreshold = 0.07
@@ -536,9 +557,9 @@ class SituationalPlaySelector:
         if(len(botsWithBall) == 1 and abs(cls.posChangeTime[botsWithBall[0]] - time.time()) > ballPossessionDurationThreshold):
             #print(abs(cls.posChangeTime[botsWithBall[0]] - time.time())) 
             if(botsWithBall[0].is_ours()):
-                cls.currentPossession = cls.ballPos.ourBall
+                cls.currentPossession = cls.ballPos.OURBALL
             else:
-                cls.currentPossession = cls.ballPos.theirBall
+                cls.currentPossession = cls.ballPos.THEIRBALL
             return None
 
         lastInfo = cls.hadBallLast()
@@ -547,31 +568,31 @@ class SituationalPlaySelector:
         #print(str(lastInfo[1]) + " " + str(lastInfo[2]))
         if(lastInfo[0] != None and lastInfo[1] < lastDurationThreshold and lastInfo[2] > lastDurationLengthThreshold):
             if(lastInfo[0].is_ours()):
-                cls.currentPossession = cls.ballPos.ourBall
+                cls.currentPossession = cls.ballPos.OURBALL
             else:
-                cls.currentPossession = cls.ballPos.theirBall
+                cls.currentPossession = cls.ballPos.THEIRBALL
             return None
 
 
         ballDistRatio = cls.ballClosenessRatio()
         #print(ballDistRatio)
         if(ballDistRatio > ballRatioFactor):
-            cls.currentPossession = cls.ballPos.theirBall
+            cls.currentPossession = cls.ballPos.THEIRBALL
             return None
         if(ballDistRatio < (1.0 / ballRatioFactor)):
-            cls.currentPossession = cls.ballPos.ourBall
+            cls.currentPossession = cls.ballPos.OURBALL
             return None
 
         if(math.sqrt(cls.systemState.ball.vel.x**2 + cls.systemState.ball.vel.y**2) > minimumPassSpeed):
             recvr = cls.closestReciever()
             if(recvr[0] != None):
                 if(recvr[0].is_ours()):
-                    cls.currentPossession = cls.ballPos.ourBall
+                    cls.currentPossession = cls.ballPos.OURBALL
                 else:
-                    cls.currentPossession = cls.ballPos.theirBall
+                    cls.currentPossession = cls.ballPos.THEIRBALL
                 return None
        
-        cls.currentPossession = cls.ballPos.freeBall
+        cls.currentPossession = cls.ballPos.FREEBALL
         
         
         '''
@@ -618,11 +639,11 @@ class SituationalPlaySelector:
         midfield = fieldLen / 2
 
         if(ballPos.y < midfield - (midfieldFactor / 2) * fieldLen):
-            return cls.fieldLoc.defendSide
+            return cls.fieldLoc.DEFENDSIDE
         elif(ballPos.y > midfield + (midfieldFactor / 2) * fieldLen):
-            return cls.fieldLoc.attackSide
+            return cls.fieldLoc.ATTACKSIDE
         else:
-            return cls.fieldLoc.midfield
+            return cls.fieldLoc.MIDFIELD
 
 
     @classmethod
@@ -663,7 +684,7 @@ class SituationalPlaySelector:
 
     @classmethod
     def clearSituation(cls):
-        cls.currentSituation = cls.situation.none
+        cls.currentSituation = cls.situation.NONE
 
     @classmethod
     def situationUpdate(cls):
@@ -671,73 +692,72 @@ class SituationalPlaySelector:
         #none assignments have been marked
 
         if(cls.gameState.is_our_kickoff()):
-            cls.currentSituation = cls.situation.kickoff
+            cls.currentSituation = cls.situation.KICKOFF
         elif(cls.gameState.is_our_penalty()):
-            cls.currentSituation = cls.situation.none #Warning: assigns none
+            cls.currentSituation = cls.situation.NONE #Warning: assigns none
         elif(cls.gameState.is_our_direct() or cls.gameState.is_our_indirect()):
             if(cls.isAttackSide()):
-                cls.currentSituation = cls.situation.offensive_kick
+                cls.currentSituation = cls.situation.OFFENSIVE_KICK
             elif(cls.isMidfield()):
-                cls.currentSituation = cls.situation.midfield_kick
+                cls.currentSituation = cls.situation.MIDFIELD_KICK
             elif(cls.isDefendSide()):
-                cls.currentSituation = cls.situation.defensive_kick
+                cls.currentSituation = cls.situation.DEFENSIVE_KICK
             else:
-                cls.currentSituation = cls.situation.none #Warning: assigns none
+                cls.currentSituation = cls.situation.NONE #Warning: assigns none
         elif(cls.gameState.is_our_free_kick()):
-            cls.currentSituation = cls.situation.none #Warning: assigns none
+            cls.currentSituation = cls.situation.NONE #Warning: assigns none
         elif(cls.gameState.is_their_kickoff()):
-            cls.currentSituation = cls.situation.defend_restart_defensive
+            cls.currentSituation = cls.situation.DEFEND_RESTART_DEFENSIVE
         elif(cls.gameState.is_their_penalty()):
-            cls.currentSituation = cls.situation.none #Warning: assigns none
+            cls.currentSituation = cls.situation.NONE #Warning: assigns none
         elif(cls.gameState.is_their_direct() or cls.gameState.is_their_indirect()):
-            if(cls.ballLocation == cls.fieldLoc.defendSide):
-                cls.currentSituation = cls.situation.defend_restart_defensive
-            elif(cls.ballLocation == cls.fieldLoc.attackSide):
-                cls.currentSituation = cls.situation.defend_restart_offensive
-            elif(cls.ballLocation == cls.fieldLoc.midfield):
-                cls.currentSituation = cls.situation.defend_restart_midfield
+            if(cls.isDefendSide()):
+                cls.currentSituation = cls.situation.DEFEND_RESTART_DEFENSIVE
+            elif(cls.isAttackSide()):
+                cls.currentSituation = cls.situation.DEFEND_RESTART_OFFENSIVE
+            elif(cls.isMidfield()):
+                cls.currentSituation = cls.situation.DEFEND_RESTART_MIDFIELD
         elif(cls.gameState.is_their_free_kick()):
-            cls.currentSituation = cls.situation.none #Warning: assigns none
+            cls.currentSituation = cls.situation.NONE #Warning: assigns none
         elif(cls.isDefendSide()):
-            #print(cls.cleanGoaliePossession())
             if(cls.cleanGoaliePossession()): #This does not trigger correctly currently
-                cls.currentSituaion = cls.situation.goalie_clear
+                cls.currentSituaion = cls.situation.GOALIE_CLEAR
             elif(cls.isPileup()):
-                cls.currentSituation = cls.situation.defensive_pileup
+                cls.currentSituation = cls.situation.DEFENSIVE_PILEUP
             elif(cls.isFreeBall()):
-                cls.currentSituation = cls.situation.defensive_scramble
+                cls.currentSituation = cls.situation.DEFENSIVE_SCRAMBLE
             elif(cls.isOurBall()):
-                cls.currentSituation = cls.situation.clear
+                cls.currentSituation = cls.situation.CLEAR
             elif(cls.isTheirBall):
-                cls.currentSituation = cls.situation.defend_goal
+                cls.currentSituation = cls.situation.DEFEND_GOAL
             else:
-                cls.currentSituation = cls.situation.none #Warning: assigns none
+                cls.currentSituation = cls.situation.NONE #Warning: assigns none
         
         elif(cls.isAttackSide()):
             if(cls.isPileup()):
-                cls.currentSituation = cls.situation.offensive_pileup
+                cls.currentSituation = cls.situation.OFFENSIVE_PILEUP
             elif(cls.isFreeBall()):
-                cls.currentSituation = cls.situation.offensive_scramble
+                cls.currentSituation = cls.situation.OFFENSIVE_SCRAMBLE
             elif(cls.isOurBall()):
-                cls.currentSituation = cls.situation.attack_goal
+                cls.currentSituation = cls.situation.ATTACK_GOAL
             elif(cls.isTheirBall()):
-                cls.currentSituation = cls.situation.defend_clear
+                cls.currentSituation = cls.situation.DEFEND_CLEAR
             else:
-                cls.currentSituation = cls.situation.none #Warning: assigns none
+                cls.currentSituation = cls.situation.NONE #Warning: assigns none
         
         elif(cls.isMidfield()):
             if(cls.isPileup()):
-                cls.currentSituation = cls.situation.midfield_pileup
+                cls.currentSituation = cls.situation.MIDFIELD_PILEUP
             elif(cls.isFreeBall()):
-                cls.currentSituation = cls.situation.midfield_scramble
+                cls.currentSituation = cls.situation.MIDFIELD_SCRAMBLE
             elif(cls.isOurBall()):
-                cls.currentSituation = cls.situation.midfield_clear
+                cls.currentSituation = cls.situation.MIDFIELD_CLEAR
             elif(cls.isTheirBall()):
-                cls.currentSituation = cls.situation.midfield_defend_clear
+                cls.currentSituation = cls.situation.MIDFIELD_DEFEND_CLEAR
             else:
-                cls.currentSituation = cls.situation.none #Warning: assigns none
+                cls.currentSituation = cls.situation.NONE #Warning: assigns none
         else:
-            cls.currentSituation = cls.situation.none #Warning: assigns none
+            cls.currentSituation = cls.situation.NONE #Warning: assigns none
 
 
 
