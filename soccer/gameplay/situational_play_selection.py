@@ -53,8 +53,7 @@ class SituationalPlaySelector:
         THEIRBALL = 3
 
     def __init__(self):
-        print("Don't make an instance of this class you bafoon!") 
-        exit() #This is a joke I'll need to remove at some point
+        raise Exception("Situation Analysis is intended to be a static class, and so instances should not be made")
 
     currentSituation = situation.NONE
     currentPossession = ballPos.FREEBALL
@@ -202,28 +201,28 @@ class SituationalPlaySelector:
     #Second mess function
     @classmethod
     def ball_ingress(cls, ballPos, ballVel, robot):
+       
         robotx = robot.pos.x
         roboty = robot.pos.y
         
-        ballSpeed = math.sqrt(ballVel.x**2 + ballVel.y**2)
+        ballSpeed = ballVel.mag()
         if(ballSpeed < 0.15):
             return (None, None, None, None)
         
-        robotToBall = (robotx - ballPos.x, roboty - ballPos.y)
-        
-        ballDist = math.sqrt(robotToBall[0]**2 + robotToBall[1]**2)
-        angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall[1], robotToBall[0]))
+        robotToBall = robot.pos - ballPos
+        ballDist = robotToBall.mag() #math.sqrt(robotToBall[0]**2 + robotToBall[1]**2)
+        angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall.y, robotToBall.x))
 
         if(abs(angle) > 100):
             return (None, None, None, None)
-       
-        robotToBallDOTBallVel = robotToBall[0] * ballVel.x + robotToBall[1] * ballVel.y
+         
+        robotToBallDOTBallVel = robotToBall.x * ballVel.x + robotToBall.y * ballVel.y
         scalar = robotToBallDOTBallVel / (ballSpeed**2)
-        robotOntoVelocity = (scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
-        projectedToRobot = (robotOntoVelocity[0] - robotToBall[0], robotOntoVelocity[1] - robotToBall[1]) #The vector from the projected vector to the robots position
+        robotOntoVelocity = robocup.Point(scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
+        projectedToRobot = robocup.Point(robotOntoVelocity.x - robotToBall.x, robotOntoVelocity.y - robotToBall.y) #The vector from the projected vector to the robots position
         
-        distanceFromPath = math.sqrt(projectedToRobot[0]**2 +  projectedToRobot[1]**2) 
-        interceptDistance = math.sqrt(robotOntoVelocity[0]**2 + robotOntoVelocity[1]**2)
+        distanceFromPath = projectedToRobot.mag() #math.sqrt(projectedToRobot[0]**2 +  projectedToRobot[1]**2) 
+        interceptDistance = robotOntoVelocity.mag()#math.sqrt(robotOntoVelocity[0]**2 + robotOntoVelocity[1]**2)
 
         return (distanceFromPath, interceptDistance, ballSpeed, angle)
 
@@ -649,11 +648,11 @@ class SituationalPlaySelector:
     @classmethod
     def ballInGoalZone(cls, buff = constants.Robot.Radius + constants.Ball.Radius):
         ballPos = cls.systemState.ball.pos
-        if(ballPos.x - buff > constants.Field.OurGoalZoneShape.min_x()):
-            if(ballPos.x + buff < constants.Field.OurGoalZoneShape.max_x()):
-                if(ballPos.y + buff < constants.Field.OurGoalZoneShape.max_y()):
-                    if(ballPos.y > constants.Field.OurGoalZoneShape.min_y()):
-                        return True
+        if(ballPos.x - buff > constants.Field.OurGoalZoneShape.min_x() and
+                ballPos.x + buff < constants.Field.OurGoalZoneShape.max_x() and
+                ballPos.y + buff < constants.Field.OurGoalZoneShape.max_y() and
+                ballPos.y > constants.Field.OurGoalZoneShape.min_y()):
+            return True
 
         return False
 
@@ -680,6 +679,8 @@ class SituationalPlaySelector:
     @classmethod
     def ballTrajectoryUpdate(cls, ballPos, ballVel, factor=0.5):
         #Find function that determines if a point is in bounds
+        
+        
         pass
 
     @classmethod
