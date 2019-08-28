@@ -10,6 +10,9 @@ import role_assignment
 import evaluation.defensive_positioning
 from skills.move import Move
 
+## Defender that hovers in the middle of the angle between
+#  the line segment between the opponent at the ball
+#  and the line segment between the opponent at the goal
 class WingDefender(single_robot_behavior.SingleRobotBehavior):
 
     class State(enum.Enum):
@@ -40,6 +43,7 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
                             'immediately')
         self.mv_pt = self.calc_move_point()
         
+        # TODO: Intercept ball if it's coming close
         # self.add_transition(
         #   WingDefender.State.defending, WingDefender.State.intercepting,
         #   lambda: self.ball_kicked,
@@ -50,6 +54,11 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
         self.mv_pt = self.calc_move_point()
         self.robot.move_to(self.mv_pt)
 
+    ## Move robot to winger position
+    #
+    # winger position is halfway between the angle between the 
+    # line segment from the mark point to the ball and 
+    # the line segment from the mark point to the ball
     def calc_move_point(self):
         if self._mark_pos != None: 
             goal_line, shot_pt = evaluation.defensive_positioning.goalside_mark_segment(self._mark_pos, self.robot, ball=False, kick_eval=self.kick_eval)
@@ -98,7 +107,6 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
     def distance(self, value):
         self._distance = value
     
-
     @property
     def mark_robot(self):
         return self._mark_robot
