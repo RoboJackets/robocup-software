@@ -19,7 +19,6 @@ import tactics.wall as wall
 
 
 ## Defense play that utilizes a wall and wingers
-#
 class WingerWall(standard_play.StandardPlay):
 
     # Weights for robot risk scores
@@ -39,33 +38,26 @@ class WingerWall(standard_play.StandardPlay):
     class State(Enum):
         defending = 0
 
-    def __init__(self, defender_priorities=[20, 19, 18, 17, 16]):
+    def __init__(self):
         super().__init__(continuous=True)
 
         goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
         self.add_subbehavior(goalie, "goalie", required=True)
 
-        if len(defender_priorities) != 5:
-            raise RuntimeError("defender_priorities must have a length of 5")
-
-        self.add_state(AdaptiveDefense.State.defending,
+        self.add_state(WingerWall.State.defending,
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            AdaptiveDefense.State.defending, lambda: True,
+                            WingerWall.State.defending, lambda: True,
                             "immediately")
 
-        # TODO add goalie
-
         self.aggression = 1
-        self.debug = True
         self.kick_eval = robocup.KickEvaluator(main.system_state())
-        self.num_of_defenders = 5 # TODO: Make variable
         self.wingers = []
         self.forwards = []
-        self.max_wingers=3
-        self.max_wall=3
+        self.max_wingers= 3
+        self.max_wall= 3
         self.assigned_wingers=0
         # List of tuples of (class score, robot obj)
 
@@ -80,12 +72,15 @@ class WingerWall(standard_play.StandardPlay):
         # Apply roles
         self.apply_blocking_roles()
 
+    @classmethod
+    def score(cls):
+        return 10 if main.game_state().is_playing() else float("inf")
+    
+    ## Classify opponent robots as a 'winger' or 'forward'
+    #
+    # Wingers are positioned away from the ball and may be passed to
+    # Forwards mostly have the ball or are near the ball and require direct shot blocking
     def classify_opponent_robots(self):
-
-        # Classify opponent robots as a 'winger' or 'forward'
-        # Wingers are positioned away from the ball and may be passed to
-        # Forwards mostly have the ball or are near the ball and require direct shot blocking
-
         del self.wingers[:]
         del self.forwards[:]
 
@@ -96,9 +91,9 @@ class WingerWall(standard_play.StandardPlay):
 
                 features = [robot_risk_score, area_risk_score]
                 is_wing, class_score = evaluation.linear_classification.binary_classification(features,
-                                            AdaptiveDefense.WING_FORWARD_WEIGHTS,
-                                            AdaptiveDefense.WING_FORWARD_BIAS,
-                                            AdaptiveDefense.WING_FORWARD_CUTOFF)
+                                            WingerWall.WING_FORWARD_WEIGHTS,
+                                            WingerWall.WING_FORWARD_BIAS,
+                                            WingerWall.WING_FORWARD_CUTOFF)
 
                 is_wing = not is_wing #appears tobe inverted fix TODO
 
@@ -107,28 +102,21 @@ class WingerWall(standard_play.StandardPlay):
                 else: 
                     self.forwards.append((class_score, bot))
 
-                if self.debug and is_wing:
-                    main.debug_drawer().draw_circle(bot.pos, 0.5, constants.Colors.White, "Defense: Class Wing")
-                elif self.debug and not is_wing:
-                    main.debug_drawer().draw_circle(bot.pos, 0.5, constants.Colors.Black, "Defense: Class Forward")
-                main.debug_drawer().draw_text(" Class Score: " + str(int(100*class_score)), 
-                    bot.pos + robocup.Point(0.2, 0), constants.Colors.White, "Defense: ClassScore")
-
-
-    @classmethod
-    def score(cls):
-        return 10 if main.game_state().is_playing() else float("inf")
-
-
+    ## Set up wingers and walls
+    #
+    # calls setup wing defenders and setup wall
     def apply_blocking_roles(self):
         self._setup_wing_defenders()
-        wall_defenders = max(3,self.num_of_defenders - self.assigned_wingers)
+        wall_defenders = max(3, len(main.our_robots()) - self.assigned_wingers)
         self._setup_wall(wall_defenders)
 
     def _setup_submissive_defenders(self, number):
         # Last priority defender not yet implemented
         pass
         
+    ## Sets up our wing defenders
+    #
+    # After we classify the enemy wingers, we assign our own wingers to them
     def _setup_wing_defenders(self):
         self.wingers = sorted(self.wingers, key=lambda winger: winger[0], reverse=True)
         current_wingers = len(self.wingers)
@@ -154,6 +142,10 @@ class WingerWall(standard_play.StandardPlay):
 
         self.assigned_wingers = min(self.max_wingers,current_wingers)
 
+    ## Set up the wall defenders
+    #
+    # After we classify the enemy forward attacker, 
+    # we will build a wall to block their shot
     def _setup_wall(self, wall_defenders=3):
         self.forwards = sorted(self.forwards, key=lambda winger: winger[0])
         if self.has_subbehavior_with_name('form wall'):
@@ -163,12 +155,19 @@ class WingerWall(standard_play.StandardPlay):
             tact = wall.Wall(mark_point = main.ball().pos, num_defenders=wall_defenders)
             self.add_subbehavior(tact, "form wall")
 
+    ## Factor for how close the robot is to our goal
+    #
+    # increases as robot gets closer to our goal
     def _calc_depth_ratio(self, opp_robot):
         return min(1,(1 - opp_robot.pos.y / (constants.Field.Length/2))*self.aggression)
-
+    
+    ## Factors how close the robot is to the right side of the field?
+    #
+    # Increases as the robot position x increases. 
     def _calc_wing_distance(self, opp_robot, score):
         return (constants.Robot.Radius + abs(opp_robot.pos.x) / (constants.Field.Width / 2))/(self.aggression)
 
+    ## Calculates robot risk using ball dist to goal and angle
     def calculate_robot_risk_scores(self, bot):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
         our_goal = robocup.Point(0, 0)
@@ -180,17 +179,14 @@ class WingerWall(standard_play.StandardPlay):
         # How large the angle is between the ball, opponent, and goal, smaller angle is better
         ball_opp_goal = math.pow((math.fabs((main.ball().pos - bot.pos).angle_between(bot.pos - our_goal)) / math.pi), ball_opp_sens)
 
-        risk_score = AdaptiveDefense.ROBOT_RISK_WEIGHTS[0] * ball_dist + \
-                     AdaptiveDefense.ROBOT_RISK_WEIGHTS[1] * ball_opp_goal
+        risk_score = WingerWall.ROBOT_RISK_WEIGHTS[0] * ball_dist + \
+                     WingerWall.ROBOT_RISK_WEIGHTS[1] * ball_opp_goal
 
-        risk_score /= sum(AdaptiveDefense.ROBOT_RISK_WEIGHTS)
-
-        if self.debug:
-            main.debug_drawer().draw_text("Robot Risk: " + str(int(risk_score*100)), 
-                bot.pos - robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
+        risk_score /= sum(WingerWall.ROBOT_RISK_WEIGHTS)
 
         return risk_score
 
+    ## Calculates area risk based on angle and distance
     def calculate_area_risk_scores(self, bot):
         max_dist = robocup.Point(constants.Field.Length, constants.Field.Width).mag()
         our_goal = robocup.Point(0, 0)
@@ -204,15 +200,11 @@ class WingerWall(standard_play.StandardPlay):
         # Location on the field based on closeness to the goal line, closer is better
         field_pos = evaluation.field.field_pos_coeff_at_pos(bot.pos, 0, 1, 0, False)
 
-        risk_score = AdaptiveDefense.AREA_RISK_WEIGHTS[0] * ball_dist + \
-                     AdaptiveDefense.AREA_RISK_WEIGHTS[1] * ball_goal_opp + \
-                     AdaptiveDefense.AREA_RISK_WEIGHTS[2] * field_pos
+        risk_score = WingerWall.AREA_RISK_WEIGHTS[0] * ball_dist + \
+                     WingerWall.AREA_RISK_WEIGHTS[1] * ball_goal_opp + \
+                     WingerWall.AREA_RISK_WEIGHTS[2] * field_pos
 
-        risk_score /= sum(AdaptiveDefense.AREA_RISK_WEIGHTS)
-
-        if self.debug:
-            main.debug_drawer().draw_text("Area Risk: " + str(int(risk_score*100)), 
-            bot.pos + robocup.Point(0, 0.25), constants.Colors.White, "Defense: Risk")
+        risk_score /= sum(WingerWall.AREA_RISK_WEIGHTS)
 
         return risk_score
         
