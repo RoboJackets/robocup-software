@@ -506,6 +506,8 @@ class SituationalPlaySelector:
         minimumPassSpeed = 2.2 #The minumum speed for the ball to be traveling to look for recieving robots
         ballRatioFactor = 6.0 #The ratio of robot closeness for automatic possession
 
+        intercept_time = 0.7 #The remaining travel time for the ball to a robot for that robot to be considered recieving the ball
+
         for g in cls.activeRobots:
             #printPoint1 = robocup.Point(g.pos.x + 0.1, g.pos.y)
             #printPoint2 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.12)
@@ -582,9 +584,12 @@ class SituationalPlaySelector:
             cls.currentPossession = cls.ballPos.OURBALL
             return None
 
-        if(math.sqrt(cls.systemState.ball.vel.x**2 + cls.systemState.ball.vel.y**2) > minimumPassSpeed):
+        if(cls.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = cls.closestReciever()
             if(recvr[0] != None):
+                print(recvr[1] / cls.systemState.ball.vel.mag())
+            if(recvr[0] != None and (recvr[1] / cls.systemState.ball.vel.mag()) < intercept_time):
+                
                 if(recvr[0].is_ours()):
                     cls.currentPossession = cls.ballPos.OURBALL
                 else:
@@ -679,8 +684,6 @@ class SituationalPlaySelector:
     @classmethod
     def ballTrajectoryUpdate(cls, ballPos, ballVel, factor=0.5):
         #Find function that determines if a point is in bounds
-        
-        
         pass
 
     @classmethod
