@@ -4,7 +4,7 @@ import math
 DegreesToRadians = math.pi / 180.0
 RadiansToDegrees = 180.0 / math.pi
 OurChipRoll = 3  # Average distance at which a ball is slow enough to capture
-Their_Chipping = (.1, .8)
+TheirChipping = (.1, .8)
 
 
 class OurChipping:
