@@ -34,6 +34,9 @@ public:
             }
         }
 
+        Entry(Geometry2d::Pose pose, Geometry2d::Twist twist, RJ::Seconds t)
+            : pose(pose), vel(twist), time(t) {}
+
         Entry(MotionInstant inst, RJ::Seconds t) : Entry(RobotInstant(inst), t) {}
 
         Geometry2d::Pose pose;

@@ -12,10 +12,10 @@ TEST(Path, nearestSegment) {
     Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
     InterpolatedPath path;
-    path.waypoints.emplace_back(RobotInstant{Pose(p0, 0), Twist::Zero()}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(p1, 0), Twist::Zero()}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(p2, 0), Twist::Zero()}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(p3, 0), Twist::Zero()}, 0s);
+    path.waypoints.emplace_back(Pose(p0, 0), Twist::Zero(), 0s);
+    path.waypoints.emplace_back(Pose(p1, 0), Twist::Zero(), 0s);
+    path.waypoints.emplace_back(Pose(p2, 0), Twist::Zero(), 0s);
+    path.waypoints.emplace_back(Pose(p3, 0), Twist::Zero(), 0s);
 
     Segment actSeg = path.nearestSegment(Point(0.5, -0.5));
     EXPECT_FLOAT_EQ(p0.x(), actSeg.pt[0].x());
@@ -28,45 +28,45 @@ TEST(InterpolatedPath, evaluate) {
     Point p0(1, 1), p1(1, 2), p2(2, 2);
 
     InterpolatedPath path;
-    path.waypoints.emplace_back(RobotInstant{Pose(p0, 0), Twist::Zero()}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(p1, 0), Twist(p1, 0)}, 3s);
-    path.waypoints.emplace_back(RobotInstant{Pose(p2, 0), Twist::Zero()}, 6s);
+    path.waypoints.emplace_back(Pose(p0, 0), Twist::Zero(), 0s);
+    path.waypoints.emplace_back(Pose(p1, 0), Twist(p1, 0), 3s);
+    path.waypoints.emplace_back(Pose(p2, 0), Twist::Zero(), 6s);
 
     // Pose and velocity should take on correct values at and near waypoints
     {
         auto pt = path.evaluate(0s);
         ASSERT_TRUE(pt);
-        EXPECT_FLOAT_EQ(pt->pose.position().x(), p0.x());
-        EXPECT_FLOAT_EQ(pt->pose.position().y(), p0.y());
-        EXPECT_FLOAT_EQ(pt->velocity.linear().x(), 0);
-        EXPECT_FLOAT_EQ(pt->velocity.linear().y(), 0);
+        EXPECT_FLOAT_EQ(pt->motion.pos.x(), p0.x());
+        EXPECT_FLOAT_EQ(pt->motion.pos.y(), p0.y());
+        EXPECT_FLOAT_EQ(pt->motion.vel.x(), 0);
+        EXPECT_FLOAT_EQ(pt->motion.vel.y(), 0);
     }
 
     {
         auto pt = path.evaluate(1e-6s);
         ASSERT_TRUE(pt);
-        EXPECT_NEAR(pt->pose.position().x(), p0.x(), 1e-3);
-        EXPECT_NEAR(pt->pose.position().y(), p0.y(), 1e-3);
-        EXPECT_NEAR(pt->velocity.linear().x(), 0, 1e-3);
-        EXPECT_NEAR(pt->velocity.linear().y(), 0, 1e-3);
+        EXPECT_NEAR(pt->motion.pos.x(), p0.x(), 1e-3);
+        EXPECT_NEAR(pt->motion.pos.y(), p0.y(), 1e-3);
+        EXPECT_NEAR(pt->motion.vel.x(), 0, 1e-3);
+        EXPECT_NEAR(pt->motion.vel.y(), 0, 1e-3);
     }
 
     {
         auto pt = path.evaluate(3s);
         ASSERT_TRUE(pt);
-        EXPECT_FLOAT_EQ(pt->pose.position().x(), p1.x());
-        EXPECT_FLOAT_EQ(pt->pose.position().y(), p1.y());
-        EXPECT_FLOAT_EQ(pt->velocity.linear().x(), p1.x());
-        EXPECT_FLOAT_EQ(pt->velocity.linear().y(), p2.y());
+        EXPECT_FLOAT_EQ(pt->motion.pos.x(), p1.x());
+        EXPECT_FLOAT_EQ(pt->motion.pos.y(), p1.y());
+        EXPECT_FLOAT_EQ(pt->motion.vel.x(), p1.x());
+        EXPECT_FLOAT_EQ(pt->motion.vel.y(), p2.y());
     }
 
     {
         auto pt = path.evaluate(3s + 1e-6s);
         ASSERT_TRUE(pt);
-        EXPECT_NEAR(pt->pose.position().x(), p1.x(), 1e-3);
-        EXPECT_NEAR(pt->pose.position().y(), p1.y(), 1e-3);
-        EXPECT_NEAR(pt->velocity.linear().x(), p1.x(), 1e-3);
-        EXPECT_NEAR(pt->velocity.linear().y(), p2.y(), 1e-3);
+        EXPECT_NEAR(pt->motion.pos.x(), p1.x(), 1e-3);
+        EXPECT_NEAR(pt->motion.pos.y(), p1.y(), 1e-3);
+        EXPECT_NEAR(pt->motion.vel.x(), p1.x(), 1e-3);
+        EXPECT_NEAR(pt->motion.vel.y(), p2.y(), 1e-3);
     }
 
     // Check that velocity matches expected
@@ -77,8 +77,8 @@ TEST(InterpolatedPath, evaluate) {
         auto pt2 = path.evaluate(t + dt);
         ASSERT_TRUE(pt);
         ASSERT_TRUE(pt2);
-        auto velocity = (pt->velocity + pt2->velocity) / 2;
-        Twist finite_difference(Eigen::Vector3d(pt2->pose - pt->pose) / RJ::numSeconds(dt));
+        auto velocity = (pt->twist() + pt2->twist()) / 2;
+        Twist finite_difference(Eigen::Vector3d(pt2->pose() - pt->pose()) / RJ::numSeconds(dt));
         ASSERT_LT(Eigen::Vector3d(velocity - finite_difference).lpNorm<Eigen::Infinity>(), 1e-3);
     }
 
@@ -89,9 +89,9 @@ TEST(InterpolatedPath, evaluate) {
 
 TEST(InterpolatedPath, subPath1) {
     InterpolatedPath path;
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 1, 0), Twist(0, 0, 0)}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 2, 0), Twist(1, 1, 0)}, 3s);
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 3, 0), Twist(0, 0, 0)}, 6s);
+    path.waypoints.emplace_back(Pose(1, 1, 0), Twist(0, 0, 0), 0s);
+    path.waypoints.emplace_back(Pose(1, 2, 0), Twist(1, 1, 0), 3s);
+    path.waypoints.emplace_back(Pose(1, 3, 0), Twist(0, 0, 0), 6s);
 
     //  test invalid parameters to subPath()
     EXPECT_THROW(path.subPath(-1s, 5s), invalid_argument);
@@ -105,13 +105,13 @@ TEST(InterpolatedPath, subPath1) {
     RJ::Seconds midTime((5 - 1) / 2.0);
     auto mid = subPath->evaluate(midTime);
     ASSERT_TRUE(mid);
-    EXPECT_FLOAT_EQ(Point(1, 1).x(), mid->velocity.linear().x());
+    EXPECT_FLOAT_EQ(Point(1, 1).x(), mid->motion.vel.x());
 
     //  mid velocity of subpath should be the same as velocity of original path
-    EXPECT_FLOAT_EQ(Point(1, 1).y(), mid->velocity.linear().y());
+    EXPECT_FLOAT_EQ(Point(1, 1).y(), mid->motion.vel.y());
 
-    EXPECT_FLOAT_EQ(1, mid->pose.position().x());
-    EXPECT_FLOAT_EQ(2, mid->pose.position().y());
+    EXPECT_FLOAT_EQ(1, mid->motion.pos.x());
+    EXPECT_FLOAT_EQ(2, mid->motion.pos.y());
 
     //  test the subpath at t = 0
     auto start = subPath->evaluate(0s);
@@ -119,22 +119,22 @@ TEST(InterpolatedPath, subPath1) {
 
     //  the starting velocity of the subpath should be somewhere between the 0
     //  and the velocity at the middle
-    EXPECT_GT(start->velocity.linear().mag(), 0);
-    EXPECT_LT(start->velocity.linear().mag(), Point(1, 1).mag());
+    EXPECT_GT(start->motion.vel.mag(), 0);
+    EXPECT_LT(start->motion.vel.mag(), Point(1, 1).mag());
 
     //  the starting position of the subpath should be somewhere between the
     //  start pos of the original path and the middle point
-    EXPECT_GT(start->pose.position().y(), 1);
-    EXPECT_LT(start->pose.position().x(), 2);
+    EXPECT_GT(start->motion.pos.y(), 1);
+    EXPECT_LT(start->motion.pos.x(), 2);
 }
 
 TEST(InterpolatedPath, subpath2) {
     // Create a test path
     InterpolatedPath path;
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 0, 0), Twist(0, 0, 0)}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 2, 0), Twist(-1, -1, 0)}, 1s);
-    path.waypoints.emplace_back(RobotInstant{Pose(-2, 19, 0), Twist(1, 1, 0)}, 3s);
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 6, 0), Twist(0, 0, 0)}, 9s);
+    path.waypoints.emplace_back(Pose(1, 0, 0), Twist(0, 0, 0), 0s);
+    path.waypoints.emplace_back(Pose(1, 2, 0), Twist(-1, -1, 0), 1s);
+    path.waypoints.emplace_back(Pose(-2, 19, 0), Twist(1, 1, 0), 3s);
+    path.waypoints.emplace_back(Pose(1, 6, 0), Twist(0, 0, 0), 9s);
 
     // Create 6 subPaths of length 1.5
     vector<unique_ptr<Path>> subPaths;
@@ -155,13 +155,13 @@ TEST(InterpolatedPath, subpath2) {
 
             ASSERT_TRUE(org);
             ASSERT_TRUE(sub);
-            EXPECT_NEAR(org->velocity.linear().x(), sub->velocity.linear().x(), 0.000001)
+            EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
                 << "i+j=" << to_string(time);
-            EXPECT_NEAR(org->velocity.linear().y(), sub->velocity.linear().y(), 0.000001)
+            EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
                 << "i+j=" << to_string(time);
-            EXPECT_NEAR(org->pose.position().x(), sub->pose.position().x(), 0.000001)
+            EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
                 << "i+j=" << to_string(time);
-            EXPECT_NEAR(org->pose.position().y(), sub->pose.position().y(), 0.00001)
+            EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
                 << "i+j=" << to_string(time);
         }
     }
@@ -170,10 +170,10 @@ TEST(InterpolatedPath, subpath2) {
 TEST(CompositePath, CompositeSubPath) {
     // Create a test path
     InterpolatedPath path;
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 0, 0), Twist(0, 0, 0)}, 0s);
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 2, 0), Twist(-1, -1, 0)}, 1s);
-    path.waypoints.emplace_back(RobotInstant{Pose(-2, 19, 0), Twist(1, 1, 0)}, 3s);
-    path.waypoints.emplace_back(RobotInstant{Pose(1, 6, 0), Twist(0, 0, 0)}, 9s);
+    path.waypoints.emplace_back(Pose(1, 0, 0), Twist(0, 0, 0), 0s);
+    path.waypoints.emplace_back(Pose(1, 2, 0), Twist(-1, -1, 0), 1s);
+    path.waypoints.emplace_back(Pose(-2, 19, 0), Twist(1, 1, 0), 3s);
+    path.waypoints.emplace_back(Pose(1, 6, 0), Twist(0, 0, 0), 9s);
 
     // Create 6 subPaths and rejoin them together into one compositePath
     CompositePath compositePath;
@@ -191,13 +191,13 @@ TEST(CompositePath, CompositeSubPath) {
 
         ASSERT_TRUE(org);
         ASSERT_TRUE(sub);
-        EXPECT_NEAR(org->velocity.linear().x(), sub->velocity.linear().x(), 0.000001)
+        EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
             << "i=" << to_string(i);
-        EXPECT_NEAR(org->velocity.linear().y(), sub->velocity.linear().y(), 0.000001)
+        EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
             << "i=" << to_string(i);
-        EXPECT_NEAR(org->pose.position().x(), sub->pose.position().x(), 0.000001)
+        EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
             << "i=" << to_string(i);
-        EXPECT_NEAR(org->pose.position().y(), sub->pose.position().y(), 0.00001)
+        EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
             << "i=" << to_string(i);
     }
 
@@ -218,13 +218,13 @@ TEST(CompositePath, CompositeSubPath) {
             auto sub = subPaths[i]->evaluate(j);
             ASSERT_TRUE(org);
             ASSERT_TRUE(sub);
-            EXPECT_NEAR(org->velocity.linear().x(), sub->velocity.linear().x(), 0.000001)
+            EXPECT_NEAR(org->motion.vel.x(), sub->motion.vel.x(), 0.000001)
                 << "newPathTime=" << to_string(time);
-            EXPECT_NEAR(org->velocity.linear().y(), sub->velocity.linear().y(), 0.000001)
+            EXPECT_NEAR(org->motion.vel.y(), sub->motion.vel.y(), 0.000001)
                 << "newPathTime=" << to_string(time);
-            EXPECT_NEAR(org->pose.position().x(), sub->pose.position().x(), 0.000001)
+            EXPECT_NEAR(org->motion.pos.x(), sub->motion.pos.x(), 0.000001)
                 << "newPathTime=" << to_string(time);
-            EXPECT_NEAR(org->pose.position().y(), sub->pose.position().y(), 0.00001)
+            EXPECT_NEAR(org->motion.pos.y(), sub->motion.pos.y(), 0.00001)
                 << "newPathTime=" << to_string(time);
         }
     }
