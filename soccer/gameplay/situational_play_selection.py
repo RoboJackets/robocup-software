@@ -53,8 +53,6 @@ class SituationalPlaySelector:
         THEIRBALL = 3
 
     def __init__(self):
-        #raise Exception("Situation Analysis is intended to be a static class, and so instances should not be made")
-        #raise Exception("Congruadulations, you've made a situational analysis object!!")
         pass 
 
     currentSituation = situation.NONE
@@ -107,85 +105,9 @@ class SituationalPlaySelector:
         
 
         self.context.debug_drawer.draw_text(self.currentSituation.name, robocup.Point(-3,-0.3), (0,0,0),"hat")
-        #print(self.currentSituation.name)
-        #print(abs(time.time() - startTime))
 
 
-    #It would be interesting to evaluate characteristics about our enemy
-    #Like some kind of manuverability/speed characteristic
-    #Would have to have one for each team
-   
-    '''
-    def ballVelFactor(ballVel):
-        return 1.0 
-
-    @staticmethod
-    def clip(x, minValue=-1.0, maxValue=1.0):
-        if(x > maxValue):
-            return maxValue
-        elif(x < minValue):
-            return minValue
-        else:
-            return x
-
-
-    
-    def trajectory(self, x, y, v, velWidthNon=0.2, velWidthLin=1.0):
-        factor = v**velWidthNon * velWidthLin * ((math.sqrt((x - y)**2 + (y - x)**2)) / (math.sqrt(x**2 + y**2)))
-        return self.clip(factor) #I either have to make these class methods or do this manually fml
-
-
-    
-    def falloff(self, x, y, v, falloffLin=0.03, falloffNon=1.0):
-        factor = 1.0 - falloffLin * (1.0 / v)**falloffNon * math.sqrt(x**2 + y**2)
-        return self.clip(factor,minValue = 0.0)
-  
-    
-    def obstruction(self, x, y, obstDist, obsDrop=0.2):
-        factor = obsDrop * self.clip((math.sqrt(x**2 + y**2) - obstDist) * 0.5, minValue=0.0) * (3 / math.sqrt((x-y)**2 + (y-x)**2))
-        return factor
-
-    #A triweight kernal approximation of a gaussian
-    @staticmethod
-    def triweight(x):
-        return (34.0 / 35.0) * ((1 - x**2)**3)
-
-    #Velocity is a scalar here and the robots x and y are in the balls refrence frame
-    
-    def ballRecieveFunction(self, x, y, v, od):
-        if(x + y < 0.0):
-            return 0.0
-        return self.clip(self.triweight(self.trajectory(x,y,v)))
-     
-    #Transforms position vector from global to the ball (where the ball is always traveling in the pi / 4 direction)
-    #(Really just a general transform but its made to do this in particular)
-    @staticmethod
-    def transformToBall(pos, ballPos, ballVel):
-        #Current hypothesis is that I want to rotate the vector the angle of the
-        #ball velocity plus pi / 4, will see how that plays out
-        rotA = math.atan2(ballVel.y - pos[1], ballVel.x - pos[0]) + (math.pi / 4.0)
-        x = pos[0] * math.cos(rotA) - pos[1] * math.sin(rotA) + ballPos.x
-        y = pos[0] * math.sin(rotA) + pos[1] * math.cos(rotA) + ballPos.y
-        return (x, y)
-
-    @staticmethod
-    def rotate_point(x, y, heading_deg):
-        c = math.cos(math.radians(heading_deg))
-        s = math.sin(math.radians(heading_deg))
-        xr = x * c + y * -s
-        yr = x * s + y * c
-        return xr, yr
-
-    
-    def get_obstruct_dist(self):
-        return 999999
-    '''
-
-
-
-
-    #These two functions are really a mess, its kind of bad
-    
+    #returns a list of the robots in the path of the ball 
     def in_ball_path(self):
         ingress_info = dict()
         robotsInBallPath = list()
@@ -195,13 +117,9 @@ class SituationalPlaySelector:
                 robotsInBallPath.append(g)
        
         return robotsInBallPath
-        '''if(ingress_info[self.activeRobots[0]] != None):
-            toPrint = ingress_info[self.activeRobots[0]][0]
-            if(toPrint != None):
-                print(toPrint)'''
 
-    #Second mess function
     
+    #Returns a tuple containing the robots distance from the balls path, the distance the ball has to travel to get to that intercept point, the balls speed, and the angle between the balls velocity and the robot's position
     def ball_ingress(self, ballPos, ballVel, robot):
        
         robotx = robot.pos.x
@@ -212,8 +130,8 @@ class SituationalPlaySelector:
             return (None, None, None, None)
         
         robotToBall = robot.pos - ballPos
-        ballDist = robotToBall.mag() #math.sqrt(robotToBall[0]**2 + robotToBall[1]**2)
-        angle = math.degrees(math.atan2(ballVel.y, ballVel.x) - math.atan2(robotToBall.y, robotToBall.x))
+        ballDist = robotToBall.mag()
+        angle = ballVel.angle_between(robotToBall)
 
         if(abs(angle) > 100):
             return (None, None, None, None)
@@ -223,13 +141,13 @@ class SituationalPlaySelector:
         robotOntoVelocity = robocup.Point(scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
         projectedToRobot = robocup.Point(robotOntoVelocity.x - robotToBall.x, robotOntoVelocity.y - robotToBall.y) #The vector from the projected vector to the robots position
         
-        distanceFromPath = projectedToRobot.mag() #math.sqrt(projectedToRobot[0]**2 +  projectedToRobot[1]**2) 
-        interceptDistance = robotOntoVelocity.mag()#math.sqrt(robotOntoVelocity[0]**2 + robotOntoVelocity[1]**2)
+        distanceFromPath = projectedToRobot.mag() 
+        interceptDistance = robotOntoVelocity.mag()
 
         return (distanceFromPath, interceptDistance, ballSpeed, angle)
 
 
-    
+    #Returns the closest robot in the balls path as a tuple of the robot and its distance 
     def closestReciever(self):
         botsInPath = self.in_ball_path()
         if(len(botsInPath) == 0):
@@ -298,8 +216,9 @@ class SituationalPlaySelector:
     def isPileup(self):
         return self.currentPileup
 
-    #Returns if we are in the specified situation without regard to 
-    
+    #Returns if we are in the specified situation without regard to capitalization
+    #If the check variable is true, it will check if the situation exists and throw an 
+    #exception is it does now.
     def isSituation(self, situation, check = False):
         up = situation.upper()
 
@@ -319,8 +238,7 @@ class SituationalPlaySelector:
             return false
         
 
-    #Update determining if we want to preempt the current play or not
-    
+    #Update determining if we want to preempt the current play or not 
     def updatePreempt(self):
         if(self.lastSituation != self.currentSituaion and self.situationChangeTime == None):
             self.situationChangeTime = time.time()
@@ -339,8 +257,7 @@ class SituationalPlaySelector:
 
     #You will also need to make sure you delete all subbehaviors on enter_completed in the play
 
-    #A function to determine if the currently running play should be preempted
-    
+    #A function to determine if the currently running play should be preempted 
     def preemptPlay():
         return currentPreempt
 
@@ -511,11 +428,6 @@ class SituationalPlaySelector:
         intercept_time = 0.7 #The remaining travel time for the ball to a robot for that robot to be considered recieving the ball
 
         for g in self.activeRobots:
-            #printPoint1 = robocup.Point(g.pos.x + 0.1, g.pos.y)
-            #printPoint2 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.12)
-            #printPoint3 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.24)
-            #printPoint4 = robocup.Point(g.pos.x + 0.1, g.pos.y - 0.36)
-
             hasBall = self.possesses_the_ball(self.systemState.ball.pos,g)
 
             hadBall = self.hasBall.get(g)
@@ -532,24 +444,6 @@ class SituationalPlaySelector:
 
             self.hasBall[g] = hasBall
 
-            #self.systemState.draw_text(str(round(self.ball_recieve_prob(self.systemState.ball.pos,self.systemState.ball.vel,g), 3)), g.pos, (0.3,0,0),"hat")
-            #self.systemState.draw_text(str(self.possesses_the_ball(self.systemState.ball.pos,g)), printPoint, (0.3,0,0),"hat")
-            #if(self.hasBall[g]):
-            #    self.systemState.draw_text(str(abs(time.time() - self.posChangeTime[g])), printPoint1, (0,0,0),"hat")
-            #else:
-
-            #try:
-            #    self.systemState.draw_text(str(round(self.posDuration[g],3)), printPoint2, (0,0,0),"hat")
-            #except:
-            #    self.systemState.draw_text("N/A", printPoint2, (0,0,0),"hat")
-
-            #self.recvProb[g] = self.ball_recieve_prob(self.systemState.ball.pos, self.systemState.ball.vel, g)
-
-            #self.systemState.draw_text(str(round(self.recvProb[g],3)), printPoint3, (0,0,0), "hat")
-
-            #try:
-            #except:
-            #    pass
 
         if(self.currentPileup):
             self.currentPossession = self.ballPos.FREEBALL
@@ -578,7 +472,6 @@ class SituationalPlaySelector:
 
 
         ballDistRatio = self.ballClosenessRatio()
-        #print(ballDistRatio)
         if(ballDistRatio > ballRatioFactor):
             self.currentPossession = self.ballPos.THEIRBALL
             return None
@@ -600,40 +493,6 @@ class SituationalPlaySelector:
        
         self.currentPossession = self.ballPos.FREEBALL
         
-        
-        '''
-        ourScore = 0.0
-        theirScore = 0.0
-
-        for g in self.activeRobots:
-            if(g.is_ours()):
-                if(self.hasBall[g]):
-                    ourScore += abs(time.time() - self.posChangeTime.get(g,time.time()))
-                elif(self.posDuration.get(g,0) > 0 and abs(time.time() - self.posChangeTime[g]) < 4):
-                    ourScore += self.posDuration[g] / abs(time.time() - self.posChangeTime[g])
-
-                ourScore += self.recvProb.get(g,0) * 15
-            else:
-                if(self.hasBall[g]):
-                    theirScore += abs(time.time() - self.posChangeTime.get(g,time.time()))
-                elif(self.posDuration.get(g,0) > 0 and abs(time.time() - self.posChangeTime[g]) < 4):
-                    theirScore += self.posDuration[g] / abs(time.time() - self.posChangeTime[g])
- 
-                theirScore += self.recvProb.get(g,0) * 15
-
-        self.ballPossessionScore = ourScore - theirScore
-        
-        thresh = 0.3
-
-        if(self.ballPossessionScore > thresh):
-            self.ourBall = True
-        elif(self.ballPossessionScore < -1 * thresh):
-            self.theirBall = True
-        else:
-            self.freeBall = True
-        '''
-    
-    
     
     def locationUpdate(self):
         #This will basically just figure out what part of the field the ball is in.
@@ -664,8 +523,7 @@ class SituationalPlaySelector:
         return False
 
 
-    #Function that determines if our goalie has the ball safely inside our goal zone
-    
+    #Function that determines if our goalie has the ball safely inside our goal zone 
     def cleanGoaliePossession(self):
         goalieID = self.gameState.get_goalie_id()
         goalieBot = None
@@ -678,12 +536,8 @@ class SituationalPlaySelector:
         goalieHasBall = self.hasBall.get(goalieBot)
         return goalieHasBall and self.ballInGoalZone()
 
-        #print(constants.Field.OurGoalZoneShape)
-
-        #return False
-
-    #This function will detect if the ball is about to go out of bounds, or is headed towards the goal
-    
+`
+    #This function will detect if the ball is about to go out of bounds, or is headed towards the goal 
     def ballTrajectoryUpdate(self, ballPos, ballVel, factor=0.5):
         #Find function that determines if a point is in bounds
         pass
@@ -764,7 +618,5 @@ class SituationalPlaySelector:
                 self.currentSituation = self.situation.NONE #Warning: assigns none
         else:
             self.currentSituation = self.situation.NONE #Warning: assigns none
-
-
 
 
