@@ -32,7 +32,9 @@ float InterpolatedPath::length(unsigned int start, unsigned int end) const {
 
     float length = 0;
     for (unsigned int i = start; i < end; ++i) {
-        length += (waypoints[i + 1].pose.position() - waypoints[i].pose.position()).mag();
+        length +=
+            (waypoints[i + 1].pose.position() - waypoints[i].pose.position())
+                .mag();
     }
     return length;
 }
@@ -88,8 +90,8 @@ bool InterpolatedPath::hit(const Geometry2d::ShapeSet& obstacles,
         obstacles.hitSet(waypoints[start].pose.position());
 
     for (size_t i = start; i < waypoints.size() - 1; i++) {
-        std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(
-            Segment(waypoints[i].pose.position(), waypoints[i + 1].pose.position()));
+        std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(Segment(
+            waypoints[i].pose.position(), waypoints[i + 1].pose.position()));
         if (!newHitSet.empty()) {
             for (std::shared_ptr<Shape> hit : newHitSet) {
                 // If it hits something, check if the hit was in the original
@@ -114,7 +116,8 @@ float InterpolatedPath::distanceTo(Point pt) const {
 
     float dist = -1;
     for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
-        Segment s(waypoints[i].pose.position(), waypoints[i + 1].pose.position());
+        Segment s(waypoints[i].pose.position(),
+                  waypoints[i + 1].pose.position());
         const float d = s.distTo(pt);
 
         if (dist < 0 || d < dist) {
@@ -133,7 +136,8 @@ Segment InterpolatedPath::nearestSegment(Point pt) const {
     }
 
     for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
-        Segment s(waypoints[i].pose.position(), waypoints[i + 1].pose.position());
+        Segment s(waypoints[i].pose.position(),
+                  waypoints[i + 1].pose.position());
         const float d = s.distTo(pt);
 
         if (dist < 0 || d < dist) {
@@ -153,7 +157,8 @@ float InterpolatedPath::length(Point pt) const {
     }
 
     for (unsigned int i = 0; i < (waypoints.size() - 1); ++i) {
-        Segment s(waypoints[i].pose.position(), waypoints[i + 1].pose.position());
+        Segment s(waypoints[i].pose.position(),
+                  waypoints[i + 1].pose.position());
 
         // add the segment length
         length += s.length();
@@ -198,7 +203,8 @@ void InterpolatedPath::draw(DebugDrawer* const debug_drawer,
 std::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     if (waypoints.size() < 2) {
         return std::nullopt;
-    } if (t <= waypoints.front().time) {
+    }
+    if (t <= waypoints.front().time) {
         return waypoints.front().instant();
     } else if (t > waypoints.back().time) {
         return std::nullopt;
@@ -238,22 +244,25 @@ std::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     Twist tangent_1 = next_entry.vel * RJ::numSeconds(dt);
 
     // Cubic interpolation
-    Pose interpolated_pose = Pose(Eigen::Vector3d(pose_0) * (2 * s * s * s - 3 * s * s + 1) +
-                                  Eigen::Vector3d(tangent_0) * (s * s * s - 2 * s * s + s) +
-                                  Eigen::Vector3d(pose_1) * (-2 * s * s * s + 3 * s * s) +
-                                  Eigen::Vector3d(tangent_1) * (s * s * s - s * s));
+    Pose interpolated_pose =
+        Pose(Eigen::Vector3d(pose_0) * (2 * s * s * s - 3 * s * s + 1) +
+             Eigen::Vector3d(tangent_0) * (s * s * s - 2 * s * s + s) +
+             Eigen::Vector3d(pose_1) * (-2 * s * s * s + 3 * s * s) +
+             Eigen::Vector3d(tangent_1) * (s * s * s - s * s));
 
-    Twist interpolated_twist = Twist(Eigen::Vector3d(pose_0) * (6 * s * s - 6 * s) +
-                                     Eigen::Vector3d(tangent_0) * (3 * s * s - 4 * s + 1) +
-                                     Eigen::Vector3d(pose_1) * (-6 * s * s + 6 * s) +
-                                     Eigen::Vector3d(tangent_1) * (3 * s * s - 2 * s)) /
-                                             RJ::numSeconds(dt);
+    Twist interpolated_twist =
+        Twist(Eigen::Vector3d(pose_0) * (6 * s * s - 6 * s) +
+              Eigen::Vector3d(tangent_0) * (3 * s * s - 4 * s + 1) +
+              Eigen::Vector3d(pose_1) * (-6 * s * s + 6 * s) +
+              Eigen::Vector3d(tangent_1) * (3 * s * s - 2 * s)) /
+        RJ::numSeconds(dt);
 
     // Create a new MotionInstant
     RobotInstant instant;
     instant.motion.pos = interpolated_pose.position();
     instant.motion.vel = interpolated_twist.linear();
-    instant.angle = AngleInstant(interpolated_pose.heading(), interpolated_twist.angular());
+    instant.angle =
+        AngleInstant(interpolated_pose.heading(), interpolated_twist.angular());
 
     return instant;
 }
@@ -321,9 +330,11 @@ unique_ptr<Path> InterpolatedPath::subPath(RJ::Seconds startTime,
         entry_it++;
     }
 
-    // Copy until the time is greater than or equal to endTime. Noninclusive because we always copy eval(endTime)
+    // Copy until the time is greater than or equal to endTime. Noninclusive
+    // because we always copy eval(endTime)
     while (entry_it != waypoints.end() && entry_it->time < endTime) {
-        subpath->waypoints.emplace_back(entry_it->instant(), entry_it->time - startTime);
+        subpath->waypoints.emplace_back(entry_it->instant(),
+                                        entry_it->time - startTime);
         entry_it++;
     }
 

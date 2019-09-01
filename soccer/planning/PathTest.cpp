@@ -70,16 +70,18 @@ TEST(InterpolatedPath, evaluate) {
     }
 
     // Check that velocity matches expected
-    for (RJ::Seconds t = 0s; t + 1e-6s < 6s; t += 5ms)
-    {
+    for (RJ::Seconds t = 0s; t + 1e-6s < 6s; t += 5ms) {
         auto dt = 1e-6s;
         auto pt = path.evaluate(t);
         auto pt2 = path.evaluate(t + dt);
         ASSERT_TRUE(pt);
         ASSERT_TRUE(pt2);
         auto velocity = (pt->twist() + pt2->twist()) / 2;
-        Twist finite_difference(Eigen::Vector3d(pt2->pose() - pt->pose()) / RJ::numSeconds(dt));
-        ASSERT_LT(Eigen::Vector3d(velocity - finite_difference).lpNorm<Eigen::Infinity>(), 1e-3);
+        Twist finite_difference(Eigen::Vector3d(pt2->pose() - pt->pose()) /
+                                RJ::numSeconds(dt));
+        ASSERT_LT(Eigen::Vector3d(velocity - finite_difference)
+                      .lpNorm<Eigen::Infinity>(),
+                  1e-3);
     }
 
     // path should be invalid and at end state when t > duration

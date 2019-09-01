@@ -1,8 +1,8 @@
 #pragma once
 
-#include <optional>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
+#include <optional>
 
 namespace Planning {
 
