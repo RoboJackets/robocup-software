@@ -24,8 +24,6 @@
 
 class Configuration;
 class RobotStatus;
-class Joystick;
-struct JoystickControlValues;
 class Radio;
 class VisionFilter;
 
@@ -74,10 +72,6 @@ public:
     void stop();
 
     bool autonomous();
-    bool joystickValid() const;
-
-    JoystickControlValues getJoystickControlValue(Joystick& joy);
-    std::vector<JoystickControlValues> getJoystickControlValues();
 
     void externalReferee(bool value) {
         _refereeModule->useExternalReferee(value);
@@ -85,19 +79,6 @@ public:
 
     bool externalReferee() const {
         return _refereeModule->useExternalReferee();
-    }
-
-    void manualID(int value);
-    int manualID() const { return _manualID; }
-
-    void multipleManual(bool value);
-    bool multipleManual() const { return _multipleManual; }
-
-    bool useFieldOrientedManualDrive() const {
-        return _useFieldOrientedManualDrive;
-    }
-    void setUseFieldOrientedManualDrive(bool foc) {
-        _useFieldOrientedManualDrive = foc;
     }
 
     /**
@@ -115,10 +96,6 @@ public:
 
     void dampedRotation(bool value);
     void dampedTranslation(bool value);
-
-    void joystickKickOnBreakBeam(bool value);
-    void setupJoysticks();
-    std::vector<int> getJoystickRobotIds();
 
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
@@ -182,8 +159,6 @@ public:
 protected:
     void run() override;
 
-    void applyJoystickControls(const JoystickControlValues& controlVals,
-                               Packet::Control* txRobot, OurRobot* robot);
 
 private:
     // Configuration for different models of robots
@@ -238,10 +213,6 @@ private:
     Geometry2d::TransformMatrix _worldToTeam;
     float _teamAngle;
 
-    // Board ID of the robot to manually control or -1 if none
-    int _manualID;
-    // Use multiple joysticks at once
-    bool _multipleManual;
 
     bool _defendPlusX;
 
@@ -261,19 +232,7 @@ private:
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-
-    // joystick control
-    std::vector<Joystick*> _joysticks;
-
-    // joystick damping
-    bool _dampedRotation;
-    bool _dampedTranslation;
-
-    bool _kickOnBreakBeam;
-
-    // If true, rotates robot commands from the joystick based on its
-    // orientation on the field
-    bool _useFieldOrientedManualDrive = false;
+    std::shared_ptr<ManualManager> _manualManager;
 
     VisionReceiver vision;
 
