@@ -10,9 +10,9 @@
 #include <stdint.h>
 #include <vector>
 
-struct JoystickControlValues {
+struct InputDeviceControlValues {
 public:
-    JoystickControlValues()
+    InputDeviceControlValues()
         : translation(0, 0),
           rotation(0),
           kickPower(0),
@@ -31,21 +31,21 @@ public:
 /**
  * @brief Used for manually controlling robots
  * @details The joystick's main jobs are to report its status (valid or not) and
- * to return a JoystickControlValues object indicating the desired driving
+ * to return a InputDeviceControlValues object indicating the desired driving
  */
-class Joystick : boost::noncopyable {
+class InputDevice : boost::noncopyable {
 public:
-    Joystick() : _mutex(QMutex::Recursive){};
-    virtual ~Joystick(){};
+    InputDevice() : _mutex(QMutex::Recursive){};
+    virtual ~InputDevice(){};
 
     /**
-     * @brief Whether or not this Joystick is connected to a real device
+     * @brief Whether or not this InputDevice is connected to a real device
      */
     virtual bool valid() const = 0;
 
     /**
      * @brief Resets any stored values
-     * @details Joysticks are reset whenever the robot they're controlling is
+     * @details InputDevices are reset whenever the robot they're controlling is
      * switched
      */
     virtual void reset() = 0;
@@ -61,7 +61,7 @@ public:
      * The processor handles scaling to real world values.
      * @return The control values for this joystick
      */
-    virtual JoystickControlValues getJoystickControlValues() = 0;
+    virtual InputDeviceControlValues getInputDeviceControlValues() = 0;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -69,10 +69,10 @@ public:
     void setRobotId(int rId) { robotId = rId; }
 
     // declaration of Config values
-    static ConfigDouble* JoystickRotationMaxSpeed;
-    static ConfigDouble* JoystickRotationMaxDampedSpeed;
-    static ConfigDouble* JoystickTranslationMaxSpeed;
-    static ConfigDouble* JoystickTranslationMaxDampedSpeed;
+    static ConfigDouble* InputDeviceRotationMaxSpeed;
+    static ConfigDouble* InputDeviceRotationMaxDampedSpeed;
+    static ConfigDouble* InputDeviceTranslationMaxSpeed;
+    static ConfigDouble* InputDeviceTranslationMaxDampedSpeed;
 
 protected:
     QMutex& mutex() { return _mutex; }

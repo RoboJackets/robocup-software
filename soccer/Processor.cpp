@@ -704,51 +704,25 @@ void Processor::sendRadioData() {
         }
     }
 
-    // Add RadioTx commands for visible robots and apply joystick input
+
+    // TODO NEEDS TO BE REFACTORED OUT
     std::vector<int> manualIds = getJoystickRobotIds();
+    if (r->visible || _manualID == r->shell() || _multipleManual) {
+
+
+    }
+
+
+    // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _context.state.self) {
-        if (r->visible || _manualID == r->shell() || _multipleManual) {
-            Packet::Robot* txRobot = tx->add_robots();
+      Packet::Robot* txRobot = tx->add_robots();
 
-            // Copy motor commands.
-            // Even if we are using the joystick, this sets robot_id and the
-            // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
+      // Copy motor commands.
+      // Even if we are using the joystick, this sets robot_id and the
+      // number of motors.
+      txRobot->CopyFrom(r->robotPacket);
 
-            // MANUAL STUFF
-            if (_multipleManual) {
-                auto info =
-                    find(manualIds.begin(), manualIds.end(), r->shell());
-                int index = info - manualIds.begin();
-
-                // figure out if this shell value has been assigned to a
-                // joystick
-                // do stuff with that information such as assign it to the first
-                // available
-                if (info == manualIds.end()) {
-                    for (int i = 0; i < manualIds.size(); i++) {
-                        if (manualIds[i] == -1) {
-                            index = i;
-                            _joysticks[i]->setRobotId(r->shell());
-                            manualIds[i] = r->shell();
-                            break;
-                        }
-                    }
-                }
-
-                if (index < manualIds.size()) {
-                    applyJoystickControls(
-                        getJoystickControlValue(*_joysticks[index]),
-                        txRobot->mutable_control(), r);
-                }
-            } else if (_manualID == r->shell()) {
-                auto controlValues = getJoystickControlValues();
-                if (controlValues.size()) {
-                    applyJoystickControls(controlValues[0],
-                                          txRobot->mutable_control(), r);
-                }
-            }
-        }
+      _manualManager->applyJoystickControls(r, txRobot);
     }
 
     if (_radio) {

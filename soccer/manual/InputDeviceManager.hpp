@@ -9,30 +9,35 @@
 
 using namespace std;
 
-class Joystick;
-struct JoystickControlValues;
+class Input;
+struct InputDeviceControlValues;
 
 class ManualManager {
 protected:
-  void applyJoystickControls(const JoystickControlValues& controlVals,
-                            Packet::Control* txRobot, OurRobot* robot);
+  void applyInputDeviceControls(OurRobot* robot, Packet::Control* txRobot);
 
 public:
-  // joystick control
-  std::vector<Joystick*> _joysticks;
+  // input devices index represents robot id
+  std::vector<InputDevice*> _inputDevices;
+
+
 
   // Board ID of the robot to manually control or -1 if none
   int _manualID;
   // Use multiple joysticks at once
   bool _multipleManual;
 
-  void setupJoysticks();
+
+  void dampedRotation(bool value);
+  void dampedTranslation(bool value);
+
+  void setupInputDevices();
   bool joystickValid() const;
 
   void joystickKickOnBreakBeam(bool value);
 
-  JoystickControlValues getJoystickControlValue(Joystick& joy);
-  std::vector<JoystickControlValues> getJoystickControlValues();
+  InputDeviceControlValues getInputDeviceControlValue(InputDevice& joy);
+  std::vector<InputDeviceControlValues> getInputDeviceControlValues();
 
   void manualID(int value);
   int manualID() const { return _manualID; }
@@ -59,5 +64,5 @@ private:
   bool _useFieldOrientedManualDrive = false;
 
 
-  std::vector<int> getJoystickRobotIds();
+  std::vector<int> getInputDeviceRobotIds();
 }

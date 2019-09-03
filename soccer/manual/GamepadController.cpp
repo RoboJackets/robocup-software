@@ -16,28 +16,11 @@ int GamepadController::joystickRemoved = -1;
 
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
-    // initialize using the SDL joystick
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
-        cerr << "ERROR: SDL could not initialize game controller system! SDL "
-                "Error: " << SDL_GetError() << endl;
-        return;
-    }
 
-    // Attempt to add additional mappings (relative to run)
-    if (SDL_GameControllerAddMappingsFromFile(
-            ApplicationRunDirectory()
-                .filePath("../external/sdlcontrollerdb/gamecontrollerdb.txt")
-                .toStdString()
-                .c_str()) == -1) {
-        cout << "Failed adding additional SDL Gamecontroller Mappings: "
-             << SDL_GetError() << endl;
-    }
-
-    // Controllers will be detected later if needed.
     connected = false;
     controllerId = -1;
     robotId = -1;
-    openJoystick();
+    openInputDevice();
 }
 
 GamepadController::~GamepadController() {
@@ -47,7 +30,7 @@ GamepadController::~GamepadController() {
     SDL_Quit();
 }
 
-void GamepadController::openJoystick() {
+void GamepadController::openInputDevice() {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
         for (int i = 0; i < SDL_NumJoysticks(); ++i) {
@@ -107,25 +90,6 @@ void GamepadController::update() {
     SDL_GameControllerUpdate();
 
     RJ::Time now = RJ::now();
-
-    if (connected) {
-        // Check if dc
-        if (joystickRemoved >= 0 && controllerId > joystickRemoved) {
-            controllerId -= 1;
-        }
-        if (!SDL_GameControllerGetAttached(_controller)) {
-            closeJoystick();
-            return;
-        }
-    } else {
-        // Check if new controller found
-        // TODO use the SDL event API to only run this if we receive a connected
-        // event.
-        openJoystick();
-        if (!connected) {
-            return;
-        }
-    }
 
     // Don't do anything until we have an event
     // TODO stop abusing the queue here and use the event api.

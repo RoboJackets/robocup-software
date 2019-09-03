@@ -7,7 +7,7 @@
 /**
  * @brief Logitecch Gamepad/Joystick used to control robots
  */
-class GamepadController : public Joystick {
+class GamepadController : public InputDevice {
 public:
     GamepadController();
     ~GamepadController();
@@ -24,13 +24,13 @@ public:
 private:
     SDL_GameController* _controller;
 
-    JoystickControlValues _controls;
+    InputDeviceControlValues _controls;
 
     RJ::Time _lastDribblerTime;
     RJ::Time _lastKickerTime;
 
-    void openJoystick();
-    void closeJoystick();
+    void openInputDevice();
+    void closeInputDevice();
     bool connected;
     int controllerId;
 };
