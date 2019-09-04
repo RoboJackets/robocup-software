@@ -18,6 +18,7 @@
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
 #include "VisionReceiver.hpp"
+#include "motion/MotionControlModule.hpp"
 
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -280,4 +281,6 @@ private:
     VisionChannel _visionChannel;
 
     bool _initialized;
+
+    std::unique_ptr<MotionControlModule> _motionControl;
 };

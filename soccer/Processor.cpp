@@ -87,6 +87,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
+    _motionControl = std::make_unique<MotionControlModule>(&_context);
 
     vision.simulation = _simulation;
     if (sim) {
@@ -519,17 +520,15 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
-        // Run velocity controllers
+        // TODO(Kyle, Collin): This is a horrible hack to get around the fact that
+        // joystick code only (sort of) supports one joystick at a time.
+        // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
-            if (robot->visible) {
-                if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
-                    _context.game_state.halt()) {
-                    robot->motionControl()->stopped();
-                } else {
-                    robot->motionControl()->run();
-                }
-            }
+            robot->setJoystickControlled(robot->shell() == _manualID);
         }
+
+        // Run velocity controllers
+        _motionControl->run(_context.game_state.halt());
 
         ////////////////
         // Store logging information
