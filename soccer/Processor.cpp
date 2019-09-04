@@ -618,7 +618,7 @@ void Processor::run() {
 
         // Write to the log unless we are viewing logs or main window is paused
         if (_readLogFile.empty() && !_context.state.paused) {
-              _logger.addFrame(_context.state.logFrame);
+            _logger.addFrame(_context.state.logFrame);
         }
 
         // Store processing loop status
