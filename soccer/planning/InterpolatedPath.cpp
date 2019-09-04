@@ -212,15 +212,17 @@ std::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
         return waypoints.back().instant();
     }
 
+    // Find the waypoints on either side of the query time such that
+    // prev_it->time < t <= next_it->time
     std::vector<Entry>::const_iterator prev_it = waypoints.begin();
     std::vector<Entry>::const_iterator next_it = waypoints.begin();
     while (next_it != waypoints.end()) {
-        prev_it = next_it;
-        next_it++;
-
         if (next_it->time >= t) {
             break;
         }
+
+        prev_it = next_it;
+        next_it++;
     }
 
     assert(prev_it != waypoints.end());
@@ -243,7 +245,14 @@ std::optional<RobotInstant> InterpolatedPath::eval(RJ::Seconds t) const {
     Twist tangent_0 = prev_entry.vel * RJ::numSeconds(dt);
     Twist tangent_1 = next_entry.vel * RJ::numSeconds(dt);
 
-    // Cubic interpolation
+    // Cubic interpolation.
+    // We've rescaled the problem to exist in the range [0, 1] instead of
+    // [t0, t1] by adjusting the tangent vectors, so now we can interpolate
+    // using a Hermite spline. The coefficients for `interpolated_pose` can be
+    // found at https://en.wikipedia.org/wiki/Cubic_Hermite_spline. The
+    // coefficients for `interpolated_twist` are chosen to be the derivative of
+    // `interpolated_pose` with respect to s, and then it is rescaled to match
+    // the time derivative
     Pose interpolated_pose =
         Pose(Eigen::Vector3d(pose_0) * (2 * s * s * s - 3 * s * s + 1) +
              Eigen::Vector3d(tangent_0) * (s * s * s - 2 * s * s + s) +
