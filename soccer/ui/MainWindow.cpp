@@ -429,7 +429,7 @@ void MainWindow::updateViews() {
     // Update status indicator
     updateStatus();
 
-    _processor->state()->paused = !live();
+    _processor->setPaused(!live());
 
     // Check if any debug layers have been added
     // (layers should never be removed)

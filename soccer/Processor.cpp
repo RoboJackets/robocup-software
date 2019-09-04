@@ -617,7 +617,7 @@ void Processor::run() {
         sendRadioData();
 
         // Write to the log unless we are viewing logs or main window is paused
-        if (_readLogFile.empty() && !_context.state.paused) {
+        if (_readLogFile.empty() && !_paused) {
             _logger.addFrame(_context.state.logFrame);
         }
 
