@@ -1,5 +1,6 @@
 #include "RRTUtil.hpp"
 #include <array>
+#include "DebugDrawer.hpp"
 
 using namespace Geometry2d;
 
@@ -29,7 +30,7 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
 
 ConfigBool EnableExpensiveRRTDebugDrawing();
 
-void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
+void DrawRRT(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer,
              unsigned shellID) {
     // Draw each robot's rrts in a different color
     // Note: feel free to change these, they're completely arbitrary
@@ -40,15 +41,16 @@ void DrawRRT(const RRT::Tree<Point>& rrt, SystemState* state,
 
     for (auto& node : rrt.allNodes()) {
         if (node.parent()) {
-            state->drawLine(Segment(node.state(), node.parent()->state()),
-                            color, QString("RobotRRT%1").arg(shellID));
+            debug_drawer->drawLine(
+                Segment(node.state(), node.parent()->state()), color,
+                QString("RobotRRT%1").arg(shellID));
         }
     }
 }
 
-void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, SystemState* state,
+void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
                unsigned shellID) {
-    DrawRRT(biRRT.startTree(), state, shellID);
-    DrawRRT(biRRT.goalTree(), state, shellID);
+    DrawRRT(biRRT.startTree(), debug_drawer, shellID);
+    DrawRRT(biRRT.goalTree(), debug_drawer, shellID);
 }
 }

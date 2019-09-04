@@ -16,7 +16,7 @@
 #include <QString>
 
 #include "Configuration.hpp"
-#include "MainWindow.hpp"
+#include "ui/MainWindow.hpp"
 
 using namespace std;
 

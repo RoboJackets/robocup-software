@@ -54,7 +54,8 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
     const auto& motionConstraints = planRequest.constraints.mot;
     const auto& rotationConstraints = planRequest.constraints.rot;
     auto& obstacles = planRequest.obstacles;
-    auto& systemState = planRequest.systemState;
+    auto context = planRequest.context;
+    auto& systemState = context->state;
     const auto& ball = systemState.ball;
     const auto& robotConstraints = planRequest.constraints;
     auto& dynamicObstacles = planRequest.dynamicObstacles;
@@ -120,7 +121,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             }
 
             auto command = std::make_unique<PathTargetCommand>(target);
-            auto request = PlanRequest(systemState, startInstant,
+            auto request = PlanRequest(context, startInstant,
                                        std::move(command), robotConstraints,
                                        std::move(prevPath), ballObstacles,
                                        dynamicObstacles, planRequest.shellID);
@@ -139,13 +140,13 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             target.pos += target.vel.normalized(Robot_Radius);
             auto command = std::make_unique<PathTargetCommand>(target);
             auto request =
-                PlanRequest(systemState, startInstant, std::move(command),
+                PlanRequest(context, startInstant, std::move(command),
                             robotConstraints, std::move(prevPath), obstacles,
                             dynamicObstacles, planRequest.shellID);
 
             path = rrtPlanner.run(request);
         }
-        targetKickPos = boost::none;
+        targetKickPos = std::nullopt;
         return make_unique<AngleFunctionPath>(
             std::move(path),
             angleFunctionForCommandType(FacePointCommand(command.target)));
@@ -287,13 +288,13 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(target);
 
-    auto request = PlanRequest(systemState, startInstant, std::move(rrtCommand),
+    auto request = PlanRequest(context, startInstant, std::move(rrtCommand),
                                robotConstraints, std::move(prevPath), obstacles,
                                dynamicObstacles, planRequest.shellID);
     auto path = rrtPlanner.run(request);
     path->setDebugText("Gives ups");
 
-    targetKickPos = boost::none;
+    targetKickPos = std::nullopt;
     return make_unique<AngleFunctionPath>(
         std::move(path),
         angleFunctionForCommandType(FacePointCommand(command.target)));

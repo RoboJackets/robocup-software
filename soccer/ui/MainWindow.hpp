@@ -1,11 +1,13 @@
 #pragma once
 
+#include <optional>
+
 #include <QMainWindow>
 #include <QTime>
 #include <QTimer>
 
 #include <Configuration.hpp>
-#include <FieldView.hpp>
+#include "FieldView.hpp"
 
 #include "Processor.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -51,7 +53,7 @@ public:
         if (!live()) {
             _ui.logTree->setStyleSheet(
                 QString("QTreeWidget{%1}").arg(NonLiveStyle));
-            _playbackRate = boost::none;
+            _playbackRate = std::nullopt;
         }
     }
 
@@ -225,7 +227,7 @@ private:
     QTreeWidgetItem* _elapsedTimeItem;
 
     /// playback rate of the viewer - a value of 1 means realtime
-    boost::optional<double> _playbackRate;
+    std::optional<double> _playbackRate;
 
     // This is used to update some status items less frequently than the full
     // field view
