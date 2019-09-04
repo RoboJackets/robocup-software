@@ -362,7 +362,7 @@ void MainWindow::updateViews() {
         _procFPS->setText(
             QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
-        // NOTE: why are we using magic numbers instead of defined constants?
+        // TODO: Use constants here instead of magic numbers
         _logMemory->setText(
             QString("Log: %1/%2 %3 kiB")
                 .arg(QString::number(_processor->logger().size()),
@@ -1305,7 +1305,6 @@ void MainWindow::on_logPlaybackPrevFrame_clicked() {
     _doubleFrameNumber -= 1;
 }
 
-// NOTE:Pause should possibly be locked
 void MainWindow::on_logPlaybackPause_clicked() {
     if (live() || std::abs(*_playbackRate) > 0.1) {
         setPlayBackRate(0);
