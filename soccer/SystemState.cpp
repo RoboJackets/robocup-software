@@ -164,6 +164,7 @@ double Ball::estimateSecondsToDist(double dist) const {
 
 SystemState::SystemState(Context* const context) {
     // FIXME - boost::array?
+    paused = false;
     self.resize(Num_Shells);
     opp.resize(Num_Shells);
     for (unsigned int i = 0; i < Num_Shells; ++i) {

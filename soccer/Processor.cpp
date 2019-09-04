@@ -616,8 +616,8 @@ void Processor::run() {
         // Send motion commands to the robots
         sendRadioData();
 
-        // Write to the log unless we are viewing logs
-        if (_readLogFile.empty()) {
+        // Write to the log unless we are viewing logs or main window is paused
+        if (_readLogFile.empty() && !_paused) {
             _logger.addFrame(_context.state.logFrame);
         }
 
