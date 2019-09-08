@@ -61,7 +61,7 @@ void GamepadController::openInputDevice() {
     }
 }
 
-void GamepadController::closeJoystick() {
+void GamepadController::closeInputDevice() {
     cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
     auto index =
@@ -90,6 +90,27 @@ void GamepadController::update() {
     SDL_GameControllerUpdate();
 
     RJ::Time now = RJ::now();
+
+
+    if (connected) {
+      // Check if dc
+      if (joystickRemoved >= 0 && controllerId > joystickRemoved) {
+        controllerId -= 1;
+      }
+      if (!SDL_GameControllerGetAttached(_controller)) {
+        closeJoystick();
+        return;
+      }
+    } else {
+      // Check if new controller found
+      // TODO use the SDL event API to only run this if we receive a connected
+      // event.
+      openJoystick();
+      if (!connected) {
+        return;
+      }
+    }
+
 
     // Don't do anything until we have an event
     // TODO stop abusing the queue here and use the event api.

@@ -1,5 +1,5 @@
 
-#include "joystick/InputDevice.hpp"
+#include "manual/InputDevice.hpp"
 
 REGISTER_CONFIGURABLE(InputDevice);
 

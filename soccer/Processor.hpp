@@ -232,7 +232,7 @@ private:
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-    std::shared_ptr<ManualManager> _manualManager;
+    std::shared_ptr<InputDeviceManager> _inputDeviceManager;
 
     VisionReceiver vision;
 

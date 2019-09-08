@@ -1,9 +1,14 @@
-#include <input-devices/GamepadController.hpp>
-#include <input-devices/GamepadJoystick.hpp>
-#include <input-devices/InputDevice.hpp>
-#include <input-devices/SpaceNavJoystick.hpp>
+#include <manual/GamepadController.hpp>
+#include <manual/GamepadJoystick.hpp>
+#include <manual/InputDevice.hpp>
+#include <manual/SpaceNavJoystick.hpp>
 
-void ManualControl::setupInputDevices() {
+InputDeviceManager::InputDeviceManager() {
+  setupInputDevices();
+
+}
+
+void InputDeviceManager::setupInputDevices() {
   _inputDevices.clear();
 
   // initialize using the SDL joystick
@@ -29,7 +34,6 @@ void ManualControl::setupInputDevices() {
   _dampedRotation = true;
 
 
-
   // TODO robots per team seems hard coded
   // for (int i = 0; i < Robots_Per_Team; i++) {
   //   _joysticks.push_back(new GamepadController());
@@ -42,6 +46,15 @@ void ManualControl::setupInputDevices() {
 void InputDeviceManager::update() {
   // TODO This is where the bulk of event handling and checking should be done for new controllers
   // Check for sdl device connected
+
+  // Pump sdl update
+  // Iterate eventqueue
+  // For each event
+  // If it is a controller connected event make a new gamepad object and register it
+  // if it is a Joystick disconnected delete the pointer to the joystick and let the destructor handle the rest
+  // if it is a Joystick event of
+  // if (SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))
+  // send the event to the to the controllers update function
 
   if (connected) {
     // Check if dc

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Joystick.hpp"
+#include "InputDevice.hpp"
 
 #include <SDL.h>
 

@@ -16,7 +16,8 @@
 #include <Utils.hpp>
 #include <manual/GamepadController.hpp>
 #include <manual/GamepadJoystick.hpp>
-#include <manual/Joystick.hpp>
+#include <manual/InputDevice.hpp>
+#include <manual/InputDeviceManager.hpp>
 #include <manual/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
@@ -27,7 +28,6 @@
 #include "radio/NetworkRadio.hpp"
 #include "radio/SimRadio.hpp"
 #include "vision/VisionFilter.hpp"
-#include "manual/ManualControl.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -67,9 +67,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _initialized = false;
     _simulation = sim;
     _radio = nullptr;
-    _manualManager = nullptr;
-
-    _kickOnBreakBeam = false;
+    _inputDeviceManager = nullptr;
 
     // Initialize team-space transformation
     defendPlusX(defendPlus);
@@ -82,7 +80,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-    _manualManager = std::make_shared<ManualManager>();
+    _inputDeviceManager = std::make_shared<InputDeviceManager>();
 
     // Start vision system
     vision.simulation = _simulation;
@@ -225,7 +223,7 @@ void Processor::run() {
             RJ::timestamp(startTime + Command_Latency));
         _context.state.logFrame->set_use_our_half(_useOurHalf);
         _context.state.logFrame->set_use_opponent_half(_useOpponentHalf);
-        _context.state.logFrame->set_manual_id(_manualID);
+        _context.state.logFrame->set_manual_id(_inputDeviceManager->manualID());
         _context.state.logFrame->set_blue_team(_blueTeam);
         _context.state.logFrame->set_defend_plus_x(_defendPlusX);
         _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
@@ -356,7 +354,7 @@ void Processor::run() {
         }
 
         // TODO Joy stick updates
-        _manualManager->update();
+        _inputManager->update();
 
         runModels(detectionFrames);
         for (VisionPacket* packet : visionPackets) {
@@ -709,20 +707,17 @@ void Processor::sendRadioData() {
     std::vector<int> manualIds = getJoystickRobotIds();
     if (r->visible || _manualID == r->shell() || _multipleManual) {
 
+      // Add RadioTx commands for visible robots and apply joystick input
+      for (OurRobot* r : _context.state.self) {
+        Packet::Robot* txRobot = tx->add_robots();
 
-    }
+        // Copy motor commands.
+        // Even if we are using the joystick, this sets robot_id and the
+        // number of motors.
+        txRobot->CopyFrom(r->robotPacket);
 
-
-    // Add RadioTx commands for visible robots and apply joystick input
-    for (OurRobot* r : _context.state.self) {
-      Packet::Robot* txRobot = tx->add_robots();
-
-      // Copy motor commands.
-      // Even if we are using the joystick, this sets robot_id and the
-      // number of motors.
-      txRobot->CopyFrom(r->robotPacket);
-
-      _manualManager->applyJoystickControls(r, txRobot);
+        _manualManager->applyJoystickControls(r, txRobot);
+      }
     }
 
     if (_radio) {

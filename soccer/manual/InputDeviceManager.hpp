@@ -12,14 +12,15 @@ using namespace std;
 class Input;
 struct InputDeviceControlValues;
 
-class ManualManager {
+class InputDeviceManager {
 protected:
   void applyInputDeviceControls(OurRobot* robot, Packet::Control* txRobot);
 
 public:
+  InputDeviceManager();
+
   // input devices index represents robot id
   std::vector<InputDevice*> _inputDevices;
-
 
 
   // Board ID of the robot to manually control or -1 if none
@@ -28,16 +29,19 @@ public:
   bool _multipleManual;
 
 
-  void dampedRotation(bool value);
-  void dampedTranslation(bool value);
+  bool _kickOnBreakBeam = false;
 
   void setupInputDevices();
+
   bool joystickValid() const;
 
-  void joystickKickOnBreakBeam(bool value);
+  void KickOnBreakBeam(bool value);
 
   InputDeviceControlValues getInputDeviceControlValue(InputDevice& joy);
   std::vector<InputDeviceControlValues> getInputDeviceControlValues();
+
+  void dampedRotation(bool value);
+  void dampedTranslation(bool value);
 
   void manualID(int value);
   int manualID() const { return _manualID; }
