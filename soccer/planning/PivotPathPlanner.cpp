@@ -70,8 +70,10 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
 
         // maxSpeed = maxRadians * radius
         MotionConstraints newConstraints = planRequest.constraints.mot;
-        newConstraints.maxSpeed = std::min(
-            newConstraints.maxSpeed, rotationConstraints.maxSpeed * radius);
+        newConstraints.maxSpeed =
+            std::min(newConstraints.maxSpeed,
+                     rotationConstraints.maxSpeed * radius) *
+            .5;
 
         float startAngle = pivotPoint.angleTo(startInstant.pos);
         float targetAngle = pivotPoint.angleTo(endTarget);

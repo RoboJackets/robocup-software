@@ -122,7 +122,7 @@ class LineKickOld(skills._kick._Kick):
             main.ball().pos - self._target_line.delta().normalized() *
             self.drive_around_dist,
             main.ball().pos - self._target_line.delta().normalized())
-        main.system_state().draw_line(behind_line, constants.Colors.Blue,
+        main.debug_drawer().draw_line(behind_line, constants.Colors.Blue,
                                       "LineKickOld")
         for edge in [left_field_edge, right_field_edge]:
             if edge.near_point(main.ball().pos, field_edge_thresh):
@@ -138,10 +138,10 @@ class LineKickOld(skills._kick._Kick):
 
     def execute_charge(self):
         self.robot.disable_avoid_ball()
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(self.robot.pos, self.aim_target_point),
             constants.Colors.White, "LineKickOld")
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(main.ball().pos, self.aim_target_point),
             constants.Colors.White, "LineKickOld")
 

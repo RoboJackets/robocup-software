@@ -229,7 +229,7 @@ def find_defense_positions(ignore_robots=[]):
 
     for bot in main.their_robots():
         score = estimate_risk_score(bot.pos, ignore_robots)
-        main.system_state().draw_text("Risk: " + str(int(score * 100)),
+        main.debug_drawer().draw_text("Risk: " + str(int(score * 100)),
                                       bot.pos, constants.Colors.White,
                                       "Defense")
         their_risk_scores.extend([score])

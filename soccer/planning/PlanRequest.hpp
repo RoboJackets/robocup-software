@@ -4,7 +4,7 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
 #include <planning/Path.hpp>
-#include "SystemState.hpp"
+#include "Context.hpp"
 #include "planning/DynamicObstacle.hpp"
 
 #include <map>
@@ -20,12 +20,12 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(SystemState& systemState, MotionInstant start,
+    PlanRequest(Context* context, MotionInstant start,
                 std::unique_ptr<MotionCommand> command,
                 RobotConstraints constraints, std::unique_ptr<Path> prevPath,
                 Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
                 unsigned shellID, int8_t priority = 0)
-        : systemState(systemState),
+        : context(context),
           start(start),
           motionCommand(std::move(command)),
           constraints(constraints),
@@ -34,7 +34,7 @@ struct PlanRequest {
           dynamicObstacles(dObs),
           shellID(shellID) {}
 
-    SystemState& systemState; /**< Allows debug drawing, position info */
+    Context* context;         /**< Allows debug drawing, position info */
     MotionInstant start;      /**< Starting state of the robot */
     std::unique_ptr<MotionCommand>
         motionCommand;              /**< Specific type of motion desired */

@@ -27,7 +27,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
 
     # Find the hole in the defenders to kick at
     # The limit is 20 cm so any point past it should be defenders right there
-    win_eval = robocup.WindowEvaluator(main.system_state())
+    win_eval = robocup.WindowEvaluator(main.context())
 
     # 500 cm min circle distance plus the robot width
     test_distance = dist_from_point + constants.Robot.Radius
@@ -110,7 +110,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     target_point.rotate(zero_point, -target_width)
     p2 = target_point + main.ball().pos
     p3 = main.ball().pos
-    main.system_state().draw_polygon([p1, p2, p3], (0, 0, 255), "Free Kick search zone")
+    main.debug_drawer().draw_polygon([p1, p2, p3], (0, 0, 255),
+                                     "Free Kick search zone")
 
 
     is_opponent_blocking = False
@@ -129,14 +130,13 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     if main.ball().pos.y < constants.Field.Length / 2 and len(windows) > 1:
         ideal_shot = robocup.Point(0, 1)
 
-    main.system_state().draw_line(robocup.Line(main.ball().pos, target_pos), (0, 255, 0), "Target Point")
+    main.debug_drawer().draw_line(
+        robocup.Line(main.ball().pos, target_pos), (0, 255, 0), "Target Point")
 
     # Weights for determining best shot
     k1 = 1.5 # Weight of closeness to ideal shot
     k2 = 1 # Weight of shot chance
 
-    # print("ideal shot:", ideal_shot)
-    # print("number of windows:", len(windows))
     # Iterate through all possible windows to find the best possible shot
     if windows:
         best_shot = window.segment.center()
@@ -144,14 +144,14 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
         for wind in windows:
             pos_to_wind = (wind.segment.center() - main.ball().pos).normalized()
             dot_prod = pos_to_wind.dot(ideal_shot)
-            # print("weighted dot product:", dot_prod)
-            # print("weighted shot chance:", wind.shot_success)
             weight = k1 * dot_prod + k2 * wind.shot_success
             if weight > best_weight:
                 best_weight = weight
                 best_shot = wind.segment.center()
 
-        main.system_state().draw_line(robocup.Line(main.ball().pos, best_shot), (255, 255, 0), "Target Shot")
+        main.debug_drawer().draw_line(
+            robocup.Line(main.ball().pos, best_shot), (255, 255, 0),
+            "Target Shot")
 
         best_shot = robocup.Point(0,1) + main.ball().pos
         return best_shot

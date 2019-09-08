@@ -3,7 +3,6 @@
 #include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
-#include <boost/optional.hpp>
 
 /**
  * This class contains the motion constraints that the high-level logic sets for

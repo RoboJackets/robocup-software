@@ -7,5 +7,4 @@ munkres	# provides the 'hungarian algorithm', which we use for robot role assign
 pylint==1.6.5 # static checker for python
 mypy==0.510   # static arugment checker
 
-stylize>=0.3.2 # code reformatting and checkstyling
 yapf==0.15.2 # python checker

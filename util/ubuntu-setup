@@ -45,6 +45,10 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
         echo "Ubuntu 18.04 Detected..."
         SYSTEM="ubuntu-18.04"
         ADD_REPOS=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*19.04'; then # Using Ubuntu 19.04
+        echo "Ubuntu 19.04 Detected..."
+        SYSTEM="ubuntu-19.04"
+        ADD_REPOS=false
     else
         echo "$DISTRO_STR" >&2
         exit 1
@@ -93,7 +97,7 @@ done
 # Become root
 if [ $UID -ne 0 ]; then
 	echo "-- Becoming root"
-	exec sudo $0 $@
+	exec sudo GOPATH=$GOPATH $0 $@
 fi
 
 if $OVERWRITE_SOURCES; then
@@ -162,6 +166,20 @@ fi
 pip3 install -r $BASE/util/requirements3.txt
 # install python2 requirements
 pip2 install -r $BASE/util/requirements2.txt
+
+# install stylize
+if [ -z "$GOPATH" ]; then
+    echo "[WARN] No GOPATH set, not installing stylize."
+else
+    go get gopkg.in/justbuchanan/stylize.v1
+fi
+
+# This script is run as sudo, but we don't want submodules to be owned by the
+# root user, so we use `su` to update submodules as the normal user
+SETUP_USER="$SUDO_USER"
+if [ -z "$SETUP_USER" ]; then
+    SETUP_USER="$(whoami)"
+fi
 
 if [ "$NO_SUBMODULES" != "true" ]; then
     # This script is run as sudo, but we don't want submodules to be owned by the

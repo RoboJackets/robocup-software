@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Configuration.hpp>
+#include <Context.hpp>
 #include <Geometry2d/Point.hpp>
 #include <rc-fshare/pid.hpp>
 #include <time.hpp>
@@ -18,7 +19,7 @@ class OurRobot;
  */
 class MotionControl {
 public:
-    MotionControl(OurRobot* robot);
+    MotionControl(Context* context, OurRobot* robot);
 
     /**
      * Stops the robot.
@@ -51,6 +52,7 @@ private:
     /// does velocity limiting and conversion
     void _targetAngleVel(float angleVel);
 
+    Context* _context;
     OurRobot* _robot;
 
     /// The last velocity command (in m/s) that we sent / to the robot

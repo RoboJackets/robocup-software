@@ -1,10 +1,13 @@
 #pragma once
 
-#include <planning/Path.hpp>
+#include <optional>
+
+#include <Configuration.hpp>
+#include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <Configuration.hpp>
+#include <planning/Path.hpp>
 
 namespace Planning {
 /**
@@ -24,7 +27,7 @@ public:
 
         MotionInstant instant;
         RJ::Seconds time;
-        boost::optional<AngleInstant> angle;
+        std::optional<AngleInstant> angle;
 
         Geometry2d::Point& pos() { return instant.pos; }
         const Geometry2d::Point& pos() const { return instant.pos; }
@@ -63,7 +66,7 @@ public:
     virtual std::unique_ptr<Path> subPath(
         RJ::Seconds startTime = RJ::Seconds::zero(),
         RJ::Seconds endTime = RJ::Seconds::max()) const override;
-    virtual void draw(SystemState* const state, const QColor& color,
+    virtual void draw(DebugDrawer* constdebug_drawer, const QColor& color,
                       const QString& layer) const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
@@ -125,7 +128,7 @@ public:
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

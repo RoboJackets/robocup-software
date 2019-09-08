@@ -189,6 +189,7 @@
   <Max_Velocity value="2"/>
   <PathJitterCompensationFactor value="2"/>
   <PathChangeBoost value="50"/>
+  <X_Multiplier value="1"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>
@@ -206,7 +207,11 @@
    <EnableDebugDrawing value="false"/>
    <StepSize value="0.15"/>
    <GoalBias value="0.3"/>
+   <WayPointBias value="0.5"/>
   </RRT>
+  <goalPosChangeThreshold value="0.025"/>
+  <goalVelChangeThreshold value="0.025"/>
+  <dribbleOutOfBoundsOffset value="0.05"/>
  </PathPlanner>
  <MotionConstraints>
   <Max_Acceleration value="1"/>
@@ -214,16 +219,17 @@
   <Max_Angle_Speed value="0.436"/>
   <Replan_Threshold value="0.3"/>
   <Replan_Lead_Time value="0"/>
+  <Max_Centripetal_Acceleration value="0.5"/>
  </MotionConstraints>
  <Rev2015>
   <translation>
-   <p value="3"/>
+   <p value="2.2"/>
    <i value="0"/>
    <i_windup value="10"/>
    <accelMultiplier value="0"/>
    <d value="0.4"/>
    <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0.2"/>
+   <minEffectiveVelocity value="0.1"/>
   </translation>
   <rotation>
    <p value="7"/>
@@ -288,4 +294,102 @@
   <robot_std_dev value="0.3"/>
   <start_x_offset value="0.1"/>
  </KickEvaluator>
+ <RRTPlanner>
+  <partialReplanLeadTime value="0.2"/>
+ </RRTPlanner>
+ <VisionFilter>
+  <Bounce>
+   <robot_body_lin_dampen value="0.9"/>
+   <robot_mouth_lin_dampen value="0.3"/>
+   <robot_body_angle_dampen value="0"/>
+   <robot_mouth_angle_dampen value="0"/>
+  </Bounce>
+  <KalmanBall>
+   <max_time_outside_vision value="0.2"/>
+  </KalmanBall>
+  <WorldBall>
+   <ball_merger_power value="1.5"/>
+  </WorldBall>
+  <Camera>
+   <MHKF_radius_cutoff value="0.5"/>
+   <use_MHKF value="true"/>
+   <max_num_kalman_balls value="10"/>
+   <max_num_kalman_robots value="10"/>
+  </Camera>
+  <Kick>
+   <Detector>
+    <fast_kick_timeout value="1"/>
+    <slow_kick_timeout value="0.5"/>
+    <same_kick_timeout value="0.05"/>
+    <fast_acceleration_trigger value="750"/>
+    <slow_robot_dist_filter_cutoff value="3"/>
+    <slow_one_robot_within_dist value="0.15"/>
+    <slow_any_robot_past_dist value="0.16"/>
+    <slow_min_ball_speed value="0.6"/>
+    <slow_max_kick_angle value="0.34"/>
+    <slow_hist_length value="5"/>
+    <fast_hist_length value="3"/>
+   </Detector>
+  </Kick>
+  <Ball>
+   <init_covariance value="100"/>
+   <process_noise value="0.1"/>
+   <observation_noise value="2"/>
+  </Ball>
+  <Robot>
+   <init_covariance value="100"/>
+   <process_noise value="0.1"/>
+   <observation_noise value="2"/>
+   <orientation_scale value="1"/>
+  </Robot>
+  <KalmanRobot>
+   <max_time_outside_vision value="0.5"/>
+  </KalmanRobot>
+  <WorldRobot>
+   <robot_merger_power value="1.5"/>
+  </WorldRobot>
+  <loop_dt value="0.01"/>
+  <max_num_cameras value="12"/>
+  <Health>
+   <init value="2"/>
+   <increment value="2"/>
+   <decrement value="1"/>
+   <max value="20"/>
+   <min value="1"/>
+  </Health>
+ </VisionFilter>
+ <Capture>
+  <Settle>
+   <ballSpeedPercentForDampen value="0"/>
+   <searchStartTime value="0.1"/>
+   <searchEndtime value="10"/>
+   <searchIncTime value="0.2"/>
+   <interceptBufferTime value="1"/>
+   <targetPointGain value="0.5"/>
+   <ballVelGain value="0.9"/>
+   <maxAnglePathTargetChange value="20"/>
+   <maxBallVelForPathReset value="2"/>
+   <maxBallAngleForReset value="20"/>
+   <maxNumInvalidPaths value="50"/>
+   <ballAvoidDistance value="0.3"/>
+   <searchStartDist value="0"/>
+   <searchEndDist value="7"/>
+   <searchIncDist value="0.2"/>
+   <shortcutDist value="0.09"/>
+   <maxBounceAngle value="45"/>
+  </Settle>
+  <Collect>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <approachAccelScalePercent value="0.6"/>
+   <controlAccelScalePercent value="0.8"/>
+   <approachDistTarget value="0.1"/>
+   <touchDeltaSpeed value="0.2"/>
+   <distCutoffToControl value="0.05"/>
+   <velCutoffToControl value="2"/>
+   <stopDistScale value="0.5"/>
+   <targetPointAveragingGain value="0.8"/>
+   <distCutoffToApproach value="0.15"/>
+   <velocityControlScale value="0"/>
+  </Collect>
+ </Capture>
 </config>
