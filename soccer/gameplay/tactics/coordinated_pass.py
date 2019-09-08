@@ -185,6 +185,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         kickpower = max(0.05, min(kickpower, 1.0))
 
+        # Slow down ball if passing towards our goal
         pass_line = robocup.Line(main.ball().pos, self.receive_point)
         our_goal = constants.Field.OurGoalSegment
         intersect = our_goal.line_intersection(pass_line)
@@ -192,7 +193,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             self.receive_point) and not intersect is None
         if towards_goal:
             kickpower = max(0.05, kickpower * 0.25)
-            print('Towards goal: reducing kickpower')
 
         kicker.kick_power = kickpower
         kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
