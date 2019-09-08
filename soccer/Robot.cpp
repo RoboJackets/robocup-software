@@ -642,6 +642,4 @@ void OurRobot::setJoystickControlled(bool joystickControlled) {
     _joystickControlled = joystickControlled;
 }
 
-bool OurRobot::isJoystickControlled() const {
-    return _joystickControlled;
-}
+bool OurRobot::isJoystickControlled() const { return _joystickControlled; }

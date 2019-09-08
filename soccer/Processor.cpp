@@ -107,6 +107,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         _logger.readFrames(readLogFile.c_str());
         firstLogTime = _logger.startTime();
     }
+
+    _modules.push_back(std::make_unique<MotionControlModule>(&_context));
 }
 
 Processor::~Processor() {
@@ -520,15 +522,17 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
-        // TODO(Kyle, Collin): This is a horrible hack to get around the fact that
-        // joystick code only (sort of) supports one joystick at a time.
+        // TODO(Kyle, Collin): This is a horrible hack to get around the fact
+        // that joystick code only (sort of) supports one joystick at a time.
         // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
             robot->setJoystickControlled(robot->shell() == _manualID);
         }
 
-        // Run velocity controllers
-        _motionControl->run(_context.game_state.halt());
+        // Run all modules in sequence
+        for (auto& module : _modules) {
+            module->run();
+        }
 
         ////////////////
         // Store logging information

@@ -52,8 +52,9 @@ void MotionControl::run() {
     }
 
     if (_robot->isJoystickControlled()) {
-        // We are joystick controlled. Any integral we had before entering joystick
-        // control isn't going to be relevant after we exit, so we should clear it.
+        // We are joystick controlled. Any integral we had before entering
+        // joystick control isn't going to be relevant after we exit, so we
+        // should clear it.
         _positionXController.clearWindup();
         _positionYController.clearWindup();
         _angleController.clearWindup();
