@@ -76,7 +76,7 @@ class Wall(composite_behavior.CompositeBehavior):
         self.number_of_defenders = self.number_of_defenders - 1
         self._remove_wall_defenders()
         self.add_subbehavior(
-                skills.capture.Capture(),
+                skills.pivot_kick.PivotKick(), # TODO figure out what to do in scramble
                 name="robotCapture")
 
     def on_exit_scramble(self):
