@@ -174,6 +174,8 @@ public:
 
     bool isInitialized() const;
 
+    void setPaused(bool paused) { _paused = paused; }
+
     ////////
 
     // Time of the first LogFrame
@@ -285,5 +287,5 @@ private:
 
     bool _initialized;
 
-    std::unique_ptr<MotionControlModule> _motionControl;
+    bool _paused;
 };
