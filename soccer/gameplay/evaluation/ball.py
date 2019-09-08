@@ -30,15 +30,17 @@ def is_in_our_goalie_zone():
     else:
         return False
 
+# TODO use for situation analysis
 def we_are_closer():
     return min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots]) > min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
 
+# TODO use for situation analysis
 def opponent_is_much_closer():
     return min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().their_robots])*3 < min([(main.ball().pos - rob.pos).mag() for rob in main.system_state().our_robots])
 
 
 def moving_slow():
-    return main.ball().vel.mag() <= 1
+    return main.ball().vel.mag() <= constants.Evaluation.SlowThreshold
 
 
 FrictionCoefficient = 0.04148

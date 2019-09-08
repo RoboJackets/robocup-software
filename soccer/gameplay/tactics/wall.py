@@ -120,6 +120,7 @@ class Wall(composite_behavior.CompositeBehavior):
                     skills.move.Move(pt),
                     name=name)
 
+    ## Remove wall behaviors
     def _remove_wall_defenders(self):
         self.update_midpoint()
         for i, priority in enumerate(self.defender_priorities[:self.active_defenders]):
@@ -130,6 +131,7 @@ class Wall(composite_behavior.CompositeBehavior):
             else:
                 self.remove_subbehavior(name)
 
+    ## Remove all behaviors from wall and rebuild wall
     def _rebuild_wall(self):
         self.remove_all_subbehaviors()
         self.update_midpoint()
@@ -148,6 +150,7 @@ class Wall(composite_behavior.CompositeBehavior):
         direct.rotate_origin(arc_angle)
         return self.midpoint - direct * constants.Robot.Radius * self.defender_spacing * defender_number
 
+    ## Update wall's midpoint based on the mark and defense points
     def update_midpoint(self):
         self.midpoint = self.mark_point + (self.defense_point - self.mark_point).normalized() * self.dist_from_mark
 
@@ -180,6 +183,7 @@ class Wall(composite_behavior.CompositeBehavior):
         self._mark_point = point
         self._update_wall()
 
+    ## Recalculate points where the wall defenders should be
     def _update_wall(self):
         self.update_midpoint()
         for i in range(self.number_of_defenders):

@@ -55,7 +55,7 @@ def get_points_from_rect(rect, step=0.5):
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
 #   Risk score in that position
-#   Aviailbity of opponent robots to reach that point
+#   Availbity of opponent robots to reach that point
 #   Space in that area
 #
 # @param ignore_robots: Ignore these robots in defensive calculations
@@ -271,7 +271,6 @@ def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
             adjusted_mark_pos = mark_pos - (mark_pos - shot_pt).normalized() * 2 * constants.Robot.Radius
         else:
             adjusted_mark_pos = mark_pos - (mark_pos - shot_pt).normalized() * constants.Ball.Radius
-
 
         shot_seg = robocup.Segment(adjusted_mark_pos , shot_pt)
         tmp = goal_rect_padded.segment_intersection(shot_seg)
