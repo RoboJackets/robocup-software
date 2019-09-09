@@ -917,7 +917,11 @@ void Processor::defendPlusX(bool value) {
 void Processor::changeVisionChannel(int port) {
     _loopMutex.lock();
 
-    _visionReceiver->port = port;
+    // If we're in simulation, the vision channel should never change
+    // from `SimVisionPort`.
+    if (!_simulation) {
+        _visionReceiver->setPort(port);
+    }
 
     _loopMutex.unlock();
 }

@@ -36,12 +36,13 @@ public:
     /// returns.
     void getPackets(std::vector<VisionPacket*>& packets);
 
-    bool simulation;
-    int port;
-
     virtual void run() override;
 
+    void setPort(int port);
+
 protected:
+    int port;
+
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
