@@ -52,16 +52,18 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
         OurRobot* robot = state.self.at(i);
         const WorldRobot& wr = ourWorldRobot.at(i);
 
-        robot->visible = wr.getIsValid();
-        robot->velValid = wr.getIsValid();
+        RobotState robot_state;
+        robot_state.visible = wr.getIsValid();
+        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
-            robot->pos = wr.getPos();
-            robot->vel = wr.getVel();
-            robot->angle = wr.getTheta();
-            robot->angleVel = wr.getOmega();
-            robot->time = wr.getTime();
+            robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
+            robot_state.velocity =
+                Geometry2d::Twist(wr.getVel(), wr.getOmega());
+            robot_state.timestamp = wr.getTime();
         }
+
+        robot->mutable_state() = robot_state;
     }
 
     // Fill opp robots
@@ -69,16 +71,18 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
         OpponentRobot* robot = state.opp.at(i);
         const WorldRobot& wr = oppWorldRobot.at(i);
 
-        robot->visible = wr.getIsValid();
-        robot->velValid = wr.getIsValid();
+        RobotState robot_state;
+        robot_state.visible = wr.getIsValid();
+        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
-            robot->pos = wr.getPos();
-            robot->vel = wr.getVel();
-            robot->angle = wr.getTheta();
-            robot->angleVel = wr.getOmega();
-            robot->time = wr.getTime();
+            robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
+            robot_state.velocity =
+                Geometry2d::Twist(wr.getVel(), wr.getOmega());
+            robot_state.timestamp = wr.getTime();
         }
+
+        robot->mutable_state() = robot_state;
     }
 }
 

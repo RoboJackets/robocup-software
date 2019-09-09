@@ -3,6 +3,7 @@
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "SystemState.hpp"
+#include "WorldState.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -17,4 +18,5 @@ struct Context {
     SystemState state;
     GameState game_state;
     DebugDrawer debug_drawer;
+    WorldState world_state;
 };
