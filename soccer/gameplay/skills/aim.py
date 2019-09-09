@@ -43,10 +43,10 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             'error > threshold or rotating too fast')
 
         self.target_point = constants.Field.TheirGoalSegment.center()
-        self.error_threshold = 20 * constants.DegreesToRadians
-        self.max_steady_ang_vel = 50 * constants.DegreesToRadians
+        self.error_threshold = 15 * constants.DegreesToRadians
+        self.max_steady_ang_vel = 25 * constants.DegreesToRadians
         self.min_steady_duration = 0.1
-        self.dribbler_power = int(constants.Robot.Dribbler.MaxPower / 2.0)
+        self.dribbler_power = constants.Robot.Dribbler.StandardPower
 
         self.last_ball_time = 0
 
@@ -58,8 +58,10 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self._last_unsteady_time = time.time()
 
         # track start time so we can use desperate timeout
-        self._start_time = 0
-        self.desperate_timeout = float("inf")
+        self._course_start = 0
+        self._fine_start = 0
+        self.course_timeout = float("inf")
+        self.fine_timeout = float("inf")
 
         self.startBallLocation = main.ball().pos
 
@@ -104,15 +106,36 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     def dribbler_power(self, value):
         self._dribbler_power = int(value)
 
-    # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
-    # Default: float("inf")
+    # Temporary to not have to switch all the code everywhere
+    # to use these new functions
+    # TODO: Revamp this correctly after comp
     @property
     def desperate_timeout(self):
-        return self._desperate_timeout
+        return self._fine_timeout
 
     @desperate_timeout.setter
     def desperate_timeout(self, value):
-        self._desperate_timeout = value
+        self._fine_timeout = value
+
+    # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
+    # Default: float("inf")
+    @property
+    def fine_timeout(self):
+        return self._fine_timeout
+
+    @fine_timeout.setter
+    def fine_timeout(self, value):
+        self._fine_timeout = value
+
+    # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
+    # Default: float("inf")
+    @property
+    def course_timeout(self):
+        return self._course_timeout
+
+    @course_timeout.setter
+    def course_timeout(self, value):
+        self._course_timeout = value
 
     # we have to be going less than max_steady_angle_vel for this amount of time to be considered steady
     @property
@@ -128,8 +151,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         return self._error < self.error_threshold
 
     def is_steady(self):
-        return time.time(
-        ) - self._last_unsteady_time > self.min_steady_duration
+        return time.time() - self._last_unsteady_time > self.min_steady_duration
 
     def fumbled(self):
         return (self.startBallLocation -
@@ -199,20 +221,21 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             self._error = float("inf")
 
     def on_exit_start(self):
-        self._start_time = time.time()
+        self._course_start = time.time()
+        self._fine_start = 0
 
     def is_desperate(self):
-        return time.time() - self._start_time > self.desperate_timeout
+        return (time.time() - self._course_start > self.course_timeout) or \
+               (self._fine_start != 0 and time.time() - self._fine_start > self.fine_timeout)
 
     def execute_running(self):
         if self.robot.has_ball():
-            self.last_ball_time = time.time()
             self.startBallLocation = main.ball().pos
 
         self.recalculate()
 
-        self.robot.set_max_speed(0.3)
-        self.robot.set_max_accel(0.3)
+        self.robot.set_max_speed(0.9)
+        self.robot.set_max_accel(0.9)
 
         # slowly pivot toward the target
         #self.robot.set_max_angle_speed(4)
@@ -223,15 +246,27 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         if self._shot_point != None:
             color = constants.Colors.Green if self.is_aimed(
             ) else constants.Colors.Red
-            main.system_state().draw_line(
+            main.debug_drawer().draw_line(
                 robocup.Line(self.robot.pos, self._shot_point), color, "Aim")
-            main.system_state().draw_circle(self._shot_point, 0.02, color,
+            main.debug_drawer().draw_circle(self._shot_point, 0.02, color,
                                             "Aim")
 
         # draw where we're supposed to be aiming
         if self.target_point != None:
-            main.system_state().draw_circle(self.target_point, 0.02,
+            main.debug_drawer().draw_circle(self.target_point, 0.02,
                                             constants.Colors.Blue, "Aim")
+
+        # If we are within X degrees of the target, start the fine timeout
+        if (self.target_point is not None and self._fine_start == 0 and
+                robocup.Point.direction(self.robot.angle).angle_between(
+                    self.target_point - self.robot.pos) < 45 *
+                constants.DegreesToRadians and robocup.Point.direction(
+                    self.robot.angle).dot(self.target_point - self.robot.pos) >
+                0):
+
+            self._fine_start = time.time()
+
+
 
     def __str__(self):
         desc = super().__str__()

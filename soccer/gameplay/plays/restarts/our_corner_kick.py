@@ -5,6 +5,7 @@ import tactics
 import robocup
 import constants
 import main
+import enum
 
 
 class OurCornerKick(standard_play.StandardPlay):
@@ -23,6 +24,25 @@ class OurCornerKick(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
 
+        self.kicker = skills.line_kick.LineKick()
+        self.add_transition(behavior.Behavior.State.running,
+                            behavior.Behavior.State.completed,
+                            self.kicker.is_done_running, 'kicker is done')
+
+    @classmethod
+    def score(cls):
+        gs = main.game_state()
+        if gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y > (
+                constants.Field.Length - 1.0):
+            return 1
+        else:
+            return float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    def on_enter_running(self):
         self.kicker = skills.line_kick.LineKick()
         self.kicker.use_chipper = True
         self.kicker.chip_power = OurCornerKick.ChipperPower  # TODO: base this on the target dist from the bot
@@ -48,26 +68,8 @@ class OurCornerKick(standard_play.StandardPlay):
                              required=False,
                              priority=3)
 
-        self.add_transition(behavior.Behavior.State.running,
-                            behavior.Behavior.State.completed,
-                            self.kicker.is_done_running, 'kicker is done')
-
-    @classmethod
-    def score(cls):
-        gs = main.game_state()
-
-        if gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y > (
-                constants.Field.Length - 1.0):
-            return 0
-        else:
-            return float("inf")
-
-    @classmethod
-    def is_restart(cls):
-        return True
 
     def execute_running(self):
-        super().execute_running()
         # setup the kicker target
         goal_x = constants.Field.GoalWidth * (1 if main.ball().pos.x < 0 else
                                               -1)

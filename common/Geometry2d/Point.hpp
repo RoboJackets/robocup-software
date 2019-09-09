@@ -1,10 +1,10 @@
 #pragma once
 
-#include <cmath>
-#include <boost/optional.hpp>
-#include <boost/functional/hash.hpp>
-#include <QtCore/QPointF>
 #include <protobuf/Point.pb.h>
+#include <Eigen/Dense>
+#include <QtCore/QPointF>
+#include <boost/functional/hash.hpp>
+#include <cmath>
 #include <sstream>
 #include <string>
 
@@ -47,6 +47,16 @@ public:
     Point(const double* other) : Point(other[0], other[1]) {}
 
     /**
+     * Implicit conversion from Eigen::Vector2d
+     */
+    Point(const Eigen::Vector2d& other) : Point(other(0), other(1)) {}
+
+    /**
+     * Implicit conversion to Eigen::Vector2d
+     */
+    operator Eigen::Vector2d() const { return Eigen::Vector2d(x(), y()); }
+
+    /**
      * to draw stuff and interface with QT
      */
     QPointF toQPointF() const { return QPointF(x(), y()); }
@@ -57,6 +67,7 @@ public:
         out.set_y(y());
         return out;
     }
+
     /**
      * does vector addition
      * adds the + operator, shorthand
@@ -237,8 +248,8 @@ public:
     }
 
     /**
-    * rotates the point around the origin
-    */
+     * rotates the point around the origin
+     */
     Point& rotate(double angle) {
         double newX = x() * cos(angle) - y() * sin(angle);
         double newY = y() * cos(angle) + x() * sin(angle);
@@ -264,8 +275,8 @@ public:
     }
 
     /**
-    * static function to use rotate
-    */
+     * static function to use rotate
+     */
     static Point rotated(const Point& pt, const Point& origin, double angle) {
         Point newPt = pt;
         newPt.rotate(origin, angle);
@@ -283,11 +294,10 @@ public:
     }
 
     /**
-    * Returns a vector with the same direction as this vector but with magnitude
-    * given,
-    * unless this vector is zero.
-    * If the vector is (0,0), Point(0,0) is returned
-    */
+     * Returns a vector with the same direction as this vector but with
+     * magnitude given, unless this vector is zero. If the vector is (0,0),
+     * Point(0,0) is returned
+     */
     Point normalized(double magnitude = 1.0) const {
         double m = mag();
         if (m == 0) {
@@ -301,21 +311,21 @@ public:
     Point norm() const { return normalized(); }
 
     /**
-    * Returns true if this point is within the given distance (threshold) of
-    * (pt)
-    */
+     * Returns true if this point is within the given distance (threshold) of
+     * (pt)
+     */
     bool nearPoint(const Point& other, double threshold) const {
         return (*this - other).magsq() <= (threshold * threshold);
     }
 
     /**
-    * Returns the angle of this point in radians CCW from +X.
-    */
+     * Returns the angle of this point in radians CCW from +X.
+     */
     double angle() const { return atan2(y(), x()); }
 
     /**
-    * Returns a unit vector in the given direction (in radians)
-    */
+     * Returns a unit vector in the given direction (in radians)
+     */
     static Point direction(double theta) {
         return Point(cos(theta), sin(theta));
     }
@@ -373,4 +383,4 @@ private:
 inline Point operator*(const double& s, const Point& pt) {
     return Point(pt.x() * s, pt.y() * s);
 }
-}
+}  // namespace Geometry2d

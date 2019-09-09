@@ -223,13 +223,13 @@
  </MotionConstraints>
  <Rev2015>
   <translation>
-   <p value="2.5"/>
+   <p value="2.2"/>
    <i value="0"/>
    <i_windup value="10"/>
    <accelMultiplier value="0"/>
    <d value="0.4"/>
    <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0.2"/>
+   <minEffectiveVelocity value="0.1"/>
   </translation>
   <rotation>
    <p value="7"/>
@@ -358,4 +358,38 @@
    <min value="1"/>
   </Health>
  </VisionFilter>
+ <Capture>
+  <Settle>
+   <ballSpeedPercentForDampen value="0"/>
+   <searchStartTime value="0.1"/>
+   <searchEndtime value="10"/>
+   <searchIncTime value="0.2"/>
+   <interceptBufferTime value="1"/>
+   <targetPointGain value="0.5"/>
+   <ballVelGain value="0.9"/>
+   <maxAnglePathTargetChange value="20"/>
+   <maxBallVelForPathReset value="2"/>
+   <maxBallAngleForReset value="20"/>
+   <maxNumInvalidPaths value="50"/>
+   <ballAvoidDistance value="0.3"/>
+   <searchStartDist value="0"/>
+   <searchEndDist value="7"/>
+   <searchIncDist value="0.2"/>
+   <shortcutDist value="0.09"/>
+   <maxBounceAngle value="45"/>
+  </Settle>
+  <Collect>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <approachAccelScalePercent value="0.6"/>
+   <controlAccelScalePercent value="0.8"/>
+   <approachDistTarget value="0.1"/>
+   <touchDeltaSpeed value="0.2"/>
+   <distCutoffToControl value="0.05"/>
+   <velCutoffToControl value="2"/>
+   <stopDistScale value="0.5"/>
+   <targetPointAveragingGain value="0.8"/>
+   <distCutoffToApproach value="0.15"/>
+   <velocityControlScale value="0"/>
+  </Collect>
+ </Capture>
 </config>

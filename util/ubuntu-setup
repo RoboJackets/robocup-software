@@ -45,6 +45,10 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
         echo "Ubuntu 18.04 Detected..."
         SYSTEM="ubuntu-18.04"
         ADD_REPOS=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*19.04'; then # Using Ubuntu 19.04
+        echo "Ubuntu 19.04 Detected..."
+        SYSTEM="ubuntu-19.04"
+        ADD_REPOS=false
     else
         echo "$DISTRO_STR" >&2
         exit 1

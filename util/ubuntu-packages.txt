@@ -51,10 +51,6 @@ libprotobuf-dev
 # Graphviz - makes pretty neat graph/web/diagram things
 graphviz
 
-# AVR
-avr-libc
-avrdude
-
 # Python stuff
 python-pip
 python-dev

@@ -18,9 +18,9 @@ import plays.offense.adaptive_formation
 # 2 midfielder rely on the future location of their teammate to pass quickly
 class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     # Weights for the general field positioning
-    FIELD_POS_WEIGHTS = (0.01, 3, 0.02)  
+    FIELD_POS_WEIGHTS = (0.01, 3, 0.02)
     # Weights for finding best pass
-    PASSING_WEIGHTS = (2, 2, 15, 10)  
+    PASSING_WEIGHTS = (2, 2, 15, 10)
     # Initial arguements for the nelder mead optimization in passing positioning
     NELDER_MEAD_ARGS = (robocup.Point(0.75, 1), robocup.Point(0.01, 0.01), 1,
                         1.1, 0.5, 0.9, 100, 1, 0.1)
@@ -134,9 +134,9 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
         right_post = goalSegment.get_pt(0)
         left_post = goalSegment.get_pt(1)
         # draw the line from the ideal passing position to the goal corners
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(right_post, best_point), (255, 0, 255), "Shot Range")
-        main.system_state().draw_line(
+        main.debug_drawer().draw_line(
             robocup.Line(left_post, best_point), (255, 0, 255), "Shot Range")
         # angle between the line from ideal pass point and the goal corner and between the line ideal pass point and other goal corner
         shot_angle = (right_post - best_point).angle_between((left_post - best_point))
@@ -184,4 +184,3 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     @kick.setter
     def kick(self, value):
         self._kick = value
-

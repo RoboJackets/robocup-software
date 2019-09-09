@@ -232,67 +232,53 @@ def our_robot_with_id(ID):
 # set by the C++ GameplayModule
 ############################################################
 
-_game_state = None
+_context = None
+
+
+def context():
+    global _context
+    return _context
+
+
+def set_context(value):
+    global _context
+    _context = value
+
+
+def debug_drawer():
+    global _context
+    return _context.debug_drawer
 
 
 def game_state():
-    global _game_state
-    return _game_state
+    global _context
+    return _context.game_state
 
 
-def set_game_state(value):
-    global _game_state
-    _game_state = value
-
-
-_ball = None
-
-
-def ball():
-    global _ball
-    return _ball
-
-
-def set_ball(value):
-    global _ball
-    _ball = value
-
+def system_state():
+    global _context
+    return _context.state
 
 _our_robots = None
 
+def set_our_robots(robots):
+    global _our_robots
+    root_play().robots = robots
+    _our_robots = robots
 
 def our_robots():
     global _our_robots
     return _our_robots
 
-
-def set_our_robots(value):
-    global _our_robots
-    root_play().robots = value
-    _our_robots = value
-
-
 _their_robots = None
 
+def set_their_robots(robots):
+    global _their_robots
+    _their_robots = robots
 
 def their_robots():
     global _their_robots
     return _their_robots
 
-
-def set_their_robots(value):
-    global _their_robots
-    _their_robots = value
-
-
-_system_state = None
-
-
-def system_state():
-    global _system_state
-    return _system_state
-
-
-def set_system_state(value):
-    global _system_state
-    _system_state = value
+def ball():
+    return system_state().ball
