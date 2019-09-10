@@ -138,7 +138,11 @@ class SituationalPlaySelector:
          
         robotToBallDOTBallVel = robotToBall.x * ballVel.x + robotToBall.y * ballVel.y
         scalar = robotToBallDOTBallVel / (ballSpeed**2)
-        robotOntoVelocity = robocup.Point(scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
+
+        ballDirection = ballVel.normalized()
+        robotOntoVelocity = ballDirection * ballDirection.dot(robotToBall) #The robots position relative to the ball projected onto the balls velocity
+        
+        #robotOntoVelocity = robocup.Point(scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
         projectedToRobot = robocup.Point(robotOntoVelocity.x - robotToBall.x, robotOntoVelocity.y - robotToBall.y) #The vector from the projected vector to the robots position
         
         distanceFromPath = projectedToRobot.mag() 
@@ -486,6 +490,8 @@ class SituationalPlaySelector:
             self.currentPossession = self.ballPos.OURBALL
             return None
 
+        #This should probably eventually be updated to take the intercept location into accoutn rather i
+        i#than the current location for determining what situation we are in. Or not, I could see an arguement for both.
         if(self.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = self.closestReciever()
             #if(recvr[0] != None):
