@@ -20,7 +20,7 @@ PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 _has_initialized = False
 
 #situationalPlaySelector
-situationAnalysis = SituationalPlaySelector() #This possibly should not go here
+situationAnalysis = SituationalPlaySelector()  #This possibly should not go here
 
 def init(log_errors=True):
     # by default, the logger only shows messages at the WARNING level or greater
