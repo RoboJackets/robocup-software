@@ -221,7 +221,7 @@ class SituationalPlaySelector:
 
         if (check):
             found = False
-            for g in self.situation:
+            for g in self.Situation:
                 if (up == g):
                     found = True
                     break
@@ -338,7 +338,7 @@ class SituationalPlaySelector:
     #Returns true if we had the ball last
 
     def weHadBallLast(self):
-        if (hadBallLast()[0].is_ours()):
+        if (self.hadBallLast()[0].is_ours()):
             return True
         else:
             return False
