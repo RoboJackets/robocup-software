@@ -9,7 +9,7 @@ import constants
 class SituationalPlaySelector:
 
     #Enum for representing the current game situation, each of which acts as a catagory of play to be run
-    class situation(Enum):
+    class Situation(Enum):
         NONE = 0
         KICKOFF = 1  #Plays that can perform our kickoff
         DEFEND_RESTART_OFFENSIVE = 2  #Plays for defending our opponents restart on their side of the field
@@ -39,13 +39,13 @@ class SituationalPlaySelector:
         GOALIE_CLEAR = 26  #Plays for clearing the ball when our goalie possesses the ball
 
     #Enum for representing where the ball is on the field
-    class fieldLoc(Enum):
+    class FieldLoc(Enum):
         DEFENDSIDE = 1
         MIDFIELD = 2
         ATTACKSIDE = 3
 
     #Enum for representing the possession of the ball
-    class ballPos(Enum):
+    class BallPos(Enum):
         OURBALL = 1
         FREEBALL = 2
         THEIRBALL = 3
@@ -53,9 +53,9 @@ class SituationalPlaySelector:
     def __init__(self):
         pass
 
-    currentSituation = situation.NONE
-    currentPossession = ballPos.FREEBALL
-    ballLocation = fieldLoc.MIDFIELD
+    currentSituation = Situation.NONE
+    currentPossession = BallPos.FREEBALL
+    ballLocation = FieldLoc.MIDFIELD
     currentPileup = False
 
     pileupTime = time.time()  #The first time at which a pileup was detected
@@ -193,22 +193,22 @@ class SituationalPlaySelector:
     currentPreempt = False  #If we are preempting the current play
 
     def isFreeBall(self):
-        return self.currentPossession == self.ballPos.FREEBALL
+        return self.currentPossession == self.BallPos.FREEBALL
 
     def isOurBall(self):
-        return self.currentPossession == self.ballPos.OURBALL
+        return self.currentPossession == self.BallPos.OURBALL
 
     def isTheirBall(self):
-        return self.currentPossession == self.ballPos.THEIRBALL
+        return self.currentPossession == self.BallPos.THEIRBALL
 
     def isAttackSide(self):
-        return self.ballLocation == self.fieldLoc.ATTACKSIDE
+        return self.ballLocation == self.FieldLoc.ATTACKSIDE
 
     def isDefendSide(self):
-        return self.ballLocation == self.fieldLoc.DEFENDSIDE
+        return self.ballLocation == self.FieldLoc.DEFENDSIDE
 
     def isMidfield(self):
-        return self.ballLocation == self.fieldLoc.MIDFIELD
+        return self.ballLocation == self.FieldLoc.MIDFIELD
 
     def isPileup(self):
         return self.currentPileup
@@ -444,7 +444,7 @@ class SituationalPlaySelector:
             self.hasBall[g] = hasBall
 
         if (self.currentPileup):
-            self.currentPossession = self.ballPos.FREEBALL
+            self.currentPossession = self.BallPos.FREEBALL
             return None
 
         ballPossessionDurationThreshold = 0.07
@@ -454,9 +454,9 @@ class SituationalPlaySelector:
                 ballPossessionDurationThreshold):
             #print(abs(self.posChangeTime[botsWithBall[0]] - time.time())) 
             if (botsWithBall[0].is_ours()):
-                self.currentPossession = self.ballPos.OURBALL
+                self.currentPossession = self.BallPos.OURBALL
             else:
-                self.currentPossession = self.ballPos.THEIRBALL
+                self.currentPossession = self.BallPos.THEIRBALL
             return None
 
         lastInfo = self.hadBallLast()
@@ -466,17 +466,17 @@ class SituationalPlaySelector:
         if (lastInfo[0] != None and lastInfo[1] < lastDurationThreshold and
                 lastInfo[2] > lastDurationLengthThreshold):
             if (lastInfo[0].is_ours()):
-                self.currentPossession = self.ballPos.OURBALL
+                self.currentPossession = self.BallPos.OURBALL
             else:
-                self.currentPossession = self.ballPos.THEIRBALL
+                self.currentPossession = self.BallPos.THEIRBALL
             return None
 
         ballDistRatio = self.ballClosenessRatio()
         if (ballDistRatio > ballRatioFactor):
-            self.currentPossession = self.ballPos.THEIRBALL
+            self.currentPossession = self.BallPos.THEIRBALL
             return None
         if (ballDistRatio < (1.0 / ballRatioFactor)):
-            self.currentPossession = self.ballPos.OURBALL
+            self.currentPossession = self.BallPos.OURBALL
             return None
 
         #This should probably eventually be updated to take the intercept location into accoutn rather 
@@ -489,12 +489,12 @@ class SituationalPlaySelector:
                 (recvr[1] / self.systemState.ball.vel.mag()) < intercept_time):
 
                 if (recvr[0].is_ours()):
-                    self.currentPossession = self.ballPos.OURBALL
+                    self.currentPossession = self.BallPos.OURBALL
                 else:
-                    self.currentPossession = self.ballPos.THEIRBALL
+                    self.currentPossession = self.BallPos.THEIRBALL
                 return None
 
-        self.currentPossession = self.ballPos.FREEBALL
+        self.currentPossession = self.BallPos.FREEBALL
 
     def locationUpdate(self):
         #This will basically just figure out what part of the field the ball is in.
@@ -506,11 +506,11 @@ class SituationalPlaySelector:
         midfield = fieldLen / 2
 
         if (ballPos.y < midfield - (midfieldFactor / 2) * fieldLen):
-            return self.fieldLoc.DEFENDSIDE
+            return self.FieldLoc.DEFENDSIDE
         elif (ballPos.y > midfield + (midfieldFactor / 2) * fieldLen):
-            return self.fieldLoc.ATTACKSIDE
+            return self.FieldLoc.ATTACKSIDE
         else:
-            return self.fieldLoc.MIDFIELD
+            return self.FieldLoc.MIDFIELD
 
     def ballInGoalZone(self,
                        buff=constants.Robot.Radius + constants.Ball.Radius):
@@ -542,79 +542,79 @@ class SituationalPlaySelector:
         pass
 
     def clearSituation(self):
-        self.currentSituation = self.situation.NONE
+        self.currentSituation = self.Situation.NONE
 
     def situationUpdate(self):
         #I've made all branches make an assignment for ease of debugging,
         #none assignments have been marked
 
         if (self.gameState.is_our_kickoff()):
-            self.currentSituation = self.situation.KICKOFF
+            self.currentSituation = self.Situation.KICKOFF
         elif (self.gameState.is_our_penalty()):
-            self.currentSituation = self.situation.NONE  #Warning: assigns none
+            self.currentSituation = self.Situation.NONE  #Warning: assigns none
         elif (self.gameState.is_our_direct() or
               self.gameState.is_our_indirect()):
             if (self.isAttackSide()):
-                self.currentSituation = self.situation.OFFENSIVE_KICK
+                self.currentSituation = self.Situation.OFFENSIVE_KICK
             elif (self.isMidfield()):
-                self.currentSituation = self.situation.MIDFIELD_KICK
+                self.currentSituation = self.Situation.MIDFIELD_KICK
             elif (self.isDefendSide()):
-                self.currentSituation = self.situation.DEFENSIVE_KICK
+                self.currentSituation = self.Situation.DEFENSIVE_KICK
             else:
-                self.currentSituation = self.situation.NONE  #Warning: assigns none
+                self.currentSituation = self.Situation.NONE  #Warning: assigns none
         elif (self.gameState.is_our_free_kick()):
-            self.currentSituation = self.situation.NONE  #Warning: assigns none
+            self.currentSituation = self.Situation.NONE  #Warning: assigns none
         elif (self.gameState.is_their_kickoff()):
-            self.currentSituation = self.situation.DEFEND_RESTART_DEFENSIVE
+            self.currentSituation = self.Situation.DEFEND_RESTART_DEFENSIVE
         elif (self.gameState.is_their_penalty()):
-            self.currentSituation = self.situation.NONE  #Warning: assigns none
+            self.currentSituation = self.Situation.NONE  #Warning: assigns none
         elif (self.gameState.is_their_direct() or
               self.gameState.is_their_indirect()):
             if (self.isDefendSide()):
-                self.currentSituation = self.situation.DEFEND_RESTART_DEFENSIVE
+                self.currentSituation = self.Situation.DEFEND_RESTART_DEFENSIVE
             elif (self.isAttackSide()):
-                self.currentSituation = self.situation.DEFEND_RESTART_OFFENSIVE
+                self.currentSituation = self.Situation.DEFEND_RESTART_OFFENSIVE
             elif (self.isMidfield()):
-                self.currentSituation = self.situation.DEFEND_RESTART_MIDFIELD
+                self.currentSituation = self.Situation.DEFEND_RESTART_MIDFIELD
         elif (self.gameState.is_their_free_kick()):
-            self.currentSituation = self.situation.NONE  #Warning: assigns none
+            self.currentSituation = self.Situation.NONE  #Warning: assigns none
         elif (self.isDefendSide()):
             if (self.cleanGoaliePossession(
             )):  #This does not trigger correctly currently
-                self.currentSituaion = self.situation.GOALIE_CLEAR
+                self.currentSituaion = self.Situation.GOALIE_CLEAR
             elif (self.isPileup()):
-                self.currentSituation = self.situation.DEFENSIVE_PILEUP
+                self.currentSituation = self.Situation.DEFENSIVE_PILEUP
             elif (self.isFreeBall()):
-                self.currentSituation = self.situation.DEFENSIVE_SCRAMBLE
+                self.currentSituation = self.Situation.DEFENSIVE_SCRAMBLE
             elif (self.isOurBall()):
-                self.currentSituation = self.situation.CLEAR
+                self.currentSituation = self.Situation.CLEAR
             elif (self.isTheirBall):
-                self.currentSituation = self.situation.DEFEND_GOAL
+                self.currentSituation = self.Situation.DEFEND_GOAL
             else:
-                self.currentSituation = self.situation.NONE  #Warning: assigns none
+                self.currentSituation = self.Situation.NONE  #Warning: assigns none
 
         elif (self.isAttackSide()):
             if (self.isPileup()):
-                self.currentSituation = self.situation.OFFENSIVE_PILEUP
+                self.currentSituation = self.Situation.OFFENSIVE_PILEUP
             elif (self.isFreeBall()):
-                self.currentSituation = self.situation.OFFENSIVE_SCRAMBLE
+                self.currentSituation = self.Situation.OFFENSIVE_SCRAMBLE
             elif (self.isOurBall()):
-                self.currentSituation = self.situation.ATTACK_GOAL
+                self.currentSituation = self.Situation.ATTACK_GOAL
             elif (self.isTheirBall()):
-                self.currentSituation = self.situation.DEFEND_CLEAR
+                self.currentSituation = self.Situation.DEFEND_CLEAR
             else:
-                self.currentSituation = self.situation.NONE  #Warning: assigns none
+                self.currentSituation = self.Situation.NONE  #Warning: assigns none
 
         elif (self.isMidfield()):
             if (self.isPileup()):
-                self.currentSituation = self.situation.MIDFIELD_PILEUP
+                self.currentSituation = self.Situation.MIDFIELD_PILEUP
             elif (self.isFreeBall()):
-                self.currentSituation = self.situation.MIDFIELD_SCRAMBLE
+                self.currentSituation = self.Situation.MIDFIELD_SCRAMBLE
             elif (self.isOurBall()):
-                self.currentSituation = self.situation.MIDFIELD_CLEAR
+                self.currentSituation = self.Situation.MIDFIELD_CLEAR
             elif (self.isTheirBall()):
-                self.currentSituation = self.situation.MIDFIELD_DEFEND_CLEAR
+                self.currentSituation = self.Situation.MIDFIELD_DEFEND_CLEAR
             else:
-                self.currentSituation = self.situation.NONE  #Warning: assigns none
+                self.currentSituation = self.Situation.NONE  #Warning: assigns none
         else:
-            self.currentSituation = self.situation.NONE  #Warning: assigns none
+            self.currentSituation = self.Situation.NONE  #Warning: assigns none
