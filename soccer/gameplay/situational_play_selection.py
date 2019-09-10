@@ -226,13 +226,13 @@ class SituationalPlaySelector:
                     found = True
                     break
             if not found:
-                raise Exception("Passed situation " + situaion + " / " + up +
+                raise Exception("Passed situation " + situation + " / " + up +
                                 " is not an existing situation")
 
         if (self.currentSituaion.name == up):
-            return true
+            return True
         else:
-            return false
+            return False
 
     #Update determining if we want to preempt the current play or not 
     def updatePreempt(self):
@@ -256,8 +256,8 @@ class SituationalPlaySelector:
     #You will also need to make sure you delete all subbehaviors on enter_completed in the play
 
     #A function to determine if the currently running play should be preempted 
-    def preemptPlay():
-        return currentPreempt
+    def preemptPlay(self):
+        return self.currentPreempt
 
     def ballToRobotDist(self, robot):
         return math.sqrt((robot.pos.x - self.systemState.ball.pos.x)**2 + (
@@ -270,7 +270,7 @@ class SituationalPlaySelector:
         closestRobotDistance = 0.0
         ballLocation = self.systemState.ball.pos
         for g in self.activeRobots:
-            roboDist = ballToRobotDist(g)
+            roboDist = self.ballToRobotDist(g)
             if (closestRobot == None or roboDist < closestRobotDistance):
                 closestRobot = g
                 closestRobotDistance = roboDist
