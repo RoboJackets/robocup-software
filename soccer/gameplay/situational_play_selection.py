@@ -60,7 +60,7 @@ class SituationalPlaySelector:
     ballLocation = fieldLoc.MIDFIELD 
     currentPileup = False
 
-    pileupTime = None #The first time at which a pileup was detected
+    pileupTime = time.time() #The first time at which a pileup was detected
 
     isSetup = False
     gameState = None
@@ -346,8 +346,6 @@ class SituationalPlaySelector:
             return False
 
     
-    def updatePileup(self):
-        self.currentPileup = self.isPileup()
 
     
     def robotsWithTheBall(self):
@@ -383,7 +381,7 @@ class SituationalPlaySelector:
         return robotsNearTheBall
 
     
-    def nearBallCount(self, distance = 0.2):
+    def nearBallCount(self, distance = 0.35):
         ourBots = 0
         theirBots = 0
         for g in self.robotsNearTheBall(distance):
@@ -395,29 +393,38 @@ class SituationalPlaySelector:
         return (ourBots, theirBots)
 
     
-    def isPileup(self):
+    def updatePileup(self):
 
-        pileupBufferTime = 0.8 #the number of seconds of pile up conditions before a pile up is declared
+        pileupBufferTimeIn = 0.3 #the number of seconds of pile up conditions before a pile up is declared
+        pileupBufferTimeOut = 0.3 #the number of seconds of not pile up conditions before a pile up is un declared
 
-        botsNearBall = self.nearBallCount()
+        botsNearBall = self.nearBallCount(distance = 0.35)
         botsWithBall = self.withBallCount()
         totalNearBall = sum(botsNearBall)
         totalWithBall = sum(botsWithBall)
-
-        currentPileup = False
+        #print("Pileup info------------------") 
+        #print(botsNearBall)
+        #print(botsWithBall)
+        pileUpCalc = False
         
         if(totalNearBall >= 3 and botsNearBall[0] > 0 and botsNearBall[1] > 0):
-            currentPileup = True
+            pileUpCalc = True
 
         if(totalWithBall >= 2 and botsWithBall[0] > 0 and botsWithBall[1] > 0):
-            currentPileup = True
+            pileUpCalc = True
 
-        if(self.pileupTime == None and currentPileup):
+        
+        pileUpDecision = bool(self.currentPileup)
+
+        if(not self.currentPileup and pileUpCalc and abs(time.time() - self.pileupTime) > pileupBufferTimeIn):
+            pileUpDecision = True
+        if(self.currentPileup and not pileUpCalc and abs(time.time() - self.pileupTime) > pileupBufferTimeOut):
+            pileUpDecision = False
+
+        if(pileUpDecision != self.currentPileup):
             self.pileupTime = time.time()
-        elif(self.pileupTime != None and not currentPileup):
-            self.pileupTime = None
 
-        return self.pileupTime != None and abs(time.time() - self.pileupTime) >= pileupBufferTime 
+        self.currentPileup = pileUpDecision
 
     
     def ballPossessionUpdate(self):
@@ -536,7 +543,7 @@ class SituationalPlaySelector:
         goalieHasBall = self.hasBall.get(goalieBot)
         return goalieHasBall and self.ballInGoalZone()
 
-`
+
     #This function will detect if the ball is about to go out of bounds, or is headed towards the goal 
     def ballTrajectoryUpdate(self, ballPos, ballVel, factor=0.5):
         #Find function that determines if a point is in bounds
