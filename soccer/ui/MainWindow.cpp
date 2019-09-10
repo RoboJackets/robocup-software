@@ -242,9 +242,9 @@ void MainWindow::initialize() {
 
     // Initialize testing tab
 
-    _ui.testingTable->addItem(QString("1"));
-    _ui.testingTable->addItem(QString("2"));
-    _ui.testingTable->addItem(QString("3"));
+    _ui.selectedTestsTable->addItem(QString("1"));
+    _ui.selectedTestsTable->addItem(QString("2"));
+    _ui.selectedTestsTable->addItem(QString("3"));
 
 
     //_ui.testingPlays->
@@ -1501,7 +1501,10 @@ void MainWindow::on_testRun_clicked() {
 }
 
 void MainWindow::on_addToTable_clicked() {
+  //MAKE allTestsTable A LIST, IT MAKES LIFE EASIER
     std::cout<<"Adding to table"<<std::endl;
+    _ui.allTestsTable->currentIndex();
+
 }
 
 
