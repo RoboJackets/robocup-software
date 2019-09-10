@@ -479,8 +479,8 @@ class SituationalPlaySelector:
             self.currentPossession = self.ballPos.OURBALL
             return None
 
-        #This should probably eventually be updated to take the intercept location into accoutn rather i
-        i  #than the current location for determining what situation we are in. Or not, I could see an arguement for both.
+        #This should probably eventually be updated to take the intercept location into accoutn rather 
+        #than the current location for determining what situation we are in. Or not, I could see an arguement for both.
         if (self.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = self.closestReciever()
             #if(recvr[0] != None):
