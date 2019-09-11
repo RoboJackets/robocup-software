@@ -1,4 +1,3 @@
-
 ## @package Linear Classification
 #  Classifies a feature into any number of classes
 #
@@ -23,6 +22,7 @@ def binary_classification(input, weights, bias, cutoff):
     score = linear_classification(input, weights, bias)
     return (score < cutoff, score)
 
+
 ## Returns the raw output score of the linear classifier based on the dot product
 #
 # @param input The vector of input features
@@ -32,4 +32,4 @@ def linear_classification(input, weights, bias):
     # Element wise multiplication
     out = map(lambda x, w: x * w, input, weights)
 
-    return sum(out) + bias 
+    return sum(out) + bias

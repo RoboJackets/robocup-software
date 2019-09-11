@@ -7,6 +7,7 @@ import robocup
 import tactics.positions.wing_defender as wing_defender
 import evaluation.opponent as opponent_eval
 
+
 ## Tests wing defender on the closest opponent robot to our goal
 class TestWingDefender(play.Play):
     def __init__(self):
