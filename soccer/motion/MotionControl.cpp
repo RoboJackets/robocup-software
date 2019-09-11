@@ -45,6 +45,22 @@ MotionControl::MotionControl(Context* context, OurRobot* robot)
 void MotionControl::run() {
     if (!_robot) return;
 
+    // Force a stop if the robot isn't on vision
+    if (!_robot->visible) {
+        stopped();
+        return;
+    }
+
+    if (_robot->isJoystickControlled()) {
+        // We are joystick controlled. Any integral we had before entering
+        // joystick control isn't going to be relevant after we exit, so we
+        // should clear it.
+        _positionXController.clearWindup();
+        _positionYController.clearWindup();
+        _angleController.clearWindup();
+        return;
+    }
+
     const MotionConstraints& constraints = _robot->motionConstraints();
 
     // update PID parameters
