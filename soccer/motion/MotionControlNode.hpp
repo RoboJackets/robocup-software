@@ -2,16 +2,16 @@
 
 #include <vector>
 #include "Constants.hpp"
-#include "Module.hpp"
 #include "MotionControl.hpp"
+#include "Node.hpp"
 
 /**
  * Handles motion control for all robots. Calling this once will run motion
  * control on all robots.
  */
-class MotionControlModule : public Module {
+class MotionControlNode : public Node {
 public:
-    explicit MotionControlModule(Context* context);
+    explicit MotionControlNode(Context* context);
 
     void run() override;
 

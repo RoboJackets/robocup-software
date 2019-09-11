@@ -107,7 +107,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         firstLogTime = _logger.startTime();
     }
 
-    _modules.push_back(std::make_unique<MotionControlModule>(&_context));
+    _modules.push_back(std::make_unique<MotionControlNode>(&_context));
 }
 
 Processor::~Processor() {

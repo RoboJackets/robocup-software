@@ -1,7 +1,7 @@
-#include "MotionControlModule.hpp"
+#include "MotionControlNode.hpp"
 #include "Robot.hpp"
 
-MotionControlModule::MotionControlModule(Context* context)
+MotionControlNode::MotionControlNode(Context* context)
     : _context(context), _controllers(Num_Shells, std::nullopt) {
     _controllers.reserve(Num_Shells);
     for (OurRobot* robot : context->state.self) {
@@ -9,7 +9,7 @@ MotionControlModule::MotionControlModule(Context* context)
     }
 }
 
-void MotionControlModule::run() {
+void MotionControlNode::run() {
     bool force_stop = _context->game_state.state == GameState::State::Halt;
     for (auto& maybe_controller : _controllers) {
         if (!maybe_controller) {
