@@ -168,8 +168,8 @@ class WingerWall(standard_play.StandardPlay):
     #
     # increases as robot gets closer to our goal
     def _calc_depth_ratio(self, opp_robot):
-        return min(1, (1 - opp_robot.pos.y /
-                       (constants.Field.Length / 2)) * self.aggression)
+        return min(1, (1 - opp_robot.pos.y / (constants.Field.Length / 2)) *
+                   self.aggression)
 
     ## Factors how close the robot is to the right side of the field?
     #
