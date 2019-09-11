@@ -4,7 +4,7 @@ import robocup
 import math
 from enum import Enum
 import constants
-
+from typing import List, Dict
 
 class SituationalPlaySelector:
 
@@ -63,8 +63,8 @@ class SituationalPlaySelector:
     isSetup = False
     gameState = None
     systemState = None
-    robotList = list()
-    activeRobots = list()
+    robotList: List[robocup.Robot] = list()
+    activeRobots: List[robocup.Robot] = list()
 
     def setupStates(self):
         self.gameState = main.game_state()
@@ -181,11 +181,11 @@ class SituationalPlaySelector:
         else:
             return False
 
-    hasBall = dict()
-    posChangeTime = dict()
-    posDuration = dict()
-    recvProb = dict()
-    ballDist = dict()
+    hasBall: Dict[robocup.Robot,bool] = dict()
+    posChangeTime: Dict[robocup.Robot,float] = dict()
+    posDuration: Dict[robocup.Robot,float] = dict()
+    recvProb: Dict[robocup.Robot,float] = dict()
+    #ballDist: Dict[robocup.Robot, float] = dict()
 
     lastSituation = None
     situationChangeTime = None
