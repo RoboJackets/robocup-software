@@ -6,20 +6,27 @@ from enum import Enum
 import constants
 from typing import List, Dict
 
+
 ## Class for breaking gameplay down into discrete states to aid in play selection
 # 
 # An instance of this class exists in main.py where its updateAnalysis function 
 # every frame.
 #
-# The purpose of this class is to 
+# The purpose of this class is to inform plays of the current gameplay situation
+# so that they can change their score function based on their applicability to
+# the current situation
+#
+# Organization of tunable parameters is something that is still under consideration
+#
 #
 class SituationalPlaySelector:
 
     ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
-    #
+    #  
+    # The none situation should never be encountered during gameplay
     # 
     class Situation(Enum):
-        NONE = 0
+        NONE = 0 #This situation should never be encountered during gameplay
         KICKOFF = 1  #Plays that can perform our kickoff
         DEFEND_RESTART_OFFENSIVE = 2  #Plays for defending our opponents restart on their side of the field
         DEFEND_RESTART_MIDFIELD = 3  #Plays for defending our opponents restart in the midfield
@@ -47,8 +54,9 @@ class SituationalPlaySelector:
         MIDFIELD_KICK = 25  #Plays for direct and indirect kicks in the midfield
         GOALIE_CLEAR = 26  #Plays for clearing the ball when our goalie possesses the ball
 
-    #Enum for representing where the ball is on the field
+    ##Enum for representing where the ball is on the field
     #
+    # The regions are defined in the update function
     #
     class FieldLoc(Enum):
         DEFENDSIDE = 1
@@ -56,19 +64,15 @@ class SituationalPlaySelector:
         ATTACKSIDE = 3
 
     ##Enum for representing the possession of the ball
-    #
-    #
     class BallPos(Enum):
         OURBALL = 1
         FREEBALL = 2
         THEIRBALL = 3
 
-    ##
-    #
-    #
+    ##An empty constructor
     def __init__(self):
         pass
-    
+
     ## Holds the current situation enum
     currentSituation = Situation.NONE
 
@@ -78,10 +82,10 @@ class SituationalPlaySelector:
     ##Holds the ball location enum
     ballLocation = FieldLoc.MIDFIELD
 
-    ##
+    ##Represents if there is currently a pileup for the purposes of situation selection
     currentPileup = False
 
-    ##Holds the last time that currentPileup was changed by  
+    ##Holds the last time that currentPileup was changed by the pileup update function 
     pileupTime = time.time()
 
     ##Variable used to ensure setup is done 
@@ -90,15 +94,21 @@ class SituationalPlaySelector:
     ##Holds the game state object
     gameState = None
 
-    #Holds the system state object
+    ##Holds the system state object
     systemState = None
 
-    #Holds a list of all the robots
+    ##Holds a list of all the robots
     robotList: List[robocup.Robot] = list()
 
     ##Holds a list of the currently visible robots
     activeRobots: List[robocup.Robot] = list()
 
+    ##Function is run a single time to setup the class
+    #
+    # Gets the game state, system state, and context objects
+    #
+    # Builds the robotList for later use
+    #
     def setupStates(self):
         self.gameState = main.game_state()
         self.systemState = main.system_state()
@@ -110,21 +120,25 @@ class SituationalPlaySelector:
 
         self.updateRobotList()
 
+    ## Function that updates the activeRobots list
+    # 
+    # Updates the activerobots list every frame to include only the currently visible robots
+    #
     def updateRobotList(self):
         self.activeRobots.clear()
         for g in self.robotList:
             if (g.visible):
                 self.activeRobots.append(g)
 
-    #Calls all needed update functions
-    #Needs to be called in main loop to make the module work
 
-
-    ##
-    #
-    #
+    ## Main update function
+    #   Is called every frame from main.py to update the situation information 
+    #   mostly calls all the other update functions
+    #   
+    #   Will also run the setup if isSetup is false and has functionality to get
+    #   the running time of the module
     def updateAnalysis(self):
-        startTime = time.time()
+        #startTime = time.time()
         if (not self.isSetup):
             self.setupStates()
             self.isSetup = True
@@ -132,16 +146,20 @@ class SituationalPlaySelector:
             self.updateRobotList()
 
         self.updatePileup()
-        self.ballLocation = self.locationUpdate()
+        self.locationUpdate()
         self.ballPossessionUpdate()
         self.situationUpdate()
 
+        #print(abs(startTime - time.time()))
+
+        #Print the current situation in the corner of the soccer gui
         self.context.debug_drawer.draw_text(self.currentSituation.name,
                                             robocup.Point(-3, -0.3), (0, 0, 0),
                                             "hat")
 
-    ## returns a list of the robots in the path of the ball
-    #
+    ## Returns a list of the robots in the path of the ball
+    # 
+    # builds a dict of ingress info, which is expensive
     #
     def in_ball_path(self):
         ingress_info = dict()
@@ -156,15 +174,15 @@ class SituationalPlaySelector:
         return robotsInBallPath
 
     ##Returns a tuple containing the robots distance from the balls path, 
-    #the distance the ball has to travel to get to that intercept point, i
+    #the distance the ball has to travel to get to that intercept point, 
     #the balls speed, and the angle between the balls velocity and the robot's position
-    def ball_ingress(self, ballPos, ballVel, robot):
+    def ball_ingress(self, ballPos, ballVel, robot, slowThresh = 0.15):
 
         robotx = robot.pos.x
         roboty = robot.pos.y
 
         ballSpeed = ballVel.mag()
-        if (ballSpeed < 0.15):
+        if (ballSpeed < slowThresh):
             return (None, None, None, None)
 
         robotToBall = robot.pos - ballPos
@@ -182,7 +200,6 @@ class SituationalPlaySelector:
             robotToBall
         )  #The robots position relative to the ball projected onto the balls velocity
 
-        #robotOntoVelocity = robocup.Point(scalar * ballVel.x, scalar * ballVel.y) #The robots position relative to the ball projected onto the balls velocity
         projectedToRobot = robocup.Point(
             robotOntoVelocity.x - robotToBall.x,
             robotOntoVelocity.y - robotToBall.
@@ -194,8 +211,6 @@ class SituationalPlaySelector:
         return (distanceFromPath, interceptDistance, ballSpeed, angle)
 
     ##Returns the closest robot in the balls path as a tuple of the robot and its distance 
-    #
-    #
     def closestReciever(self):
         botsInPath = self.in_ball_path()
         if (len(botsInPath) == 0):
@@ -211,12 +226,20 @@ class SituationalPlaySelector:
 
         return (closestRobot, closestRobotDistance)
 
+
     ##A function that determines if the ball is in the mouth of a given robot
     #
+    # Is purly geometric, looks at angle and distance based on the thresholds
+    # given as parameters
     #
-    def possesses_the_ball(self, ballPos, robot, distThresh=0.14, angleThresh=35):
-        distance = math.sqrt((ballPos.x - robot.pos.x)**2 + (ballPos.y -
-                                                             robot.pos.y)**2)
+    def possesses_the_ball(self,
+                           ballPos,
+                           robot,
+                           distThresh=0.14,
+                           angleThresh=35):
+
+        distance = (ballPos - robot.pos).mag()
+        #math.sqrt((ballPos.x - robot.pos.x)**2 + (ballPos.y - robot.pos.y)**2)
         angle = math.degrees(
             math.atan2(ballPos.y - robot.pos.y, ballPos.x - robot.pos.x) -
             robot.angle)
@@ -225,49 +248,55 @@ class SituationalPlaySelector:
         else:
             return False
 
+    ##Keeps track of if each robot possesses the ball
     hasBall: Dict[robocup.Robot, bool] = dict()
+
+    ##Keeps track of when possession last changed for each robot
     posChangeTime: Dict[robocup.Robot, float] = dict()
+
+    ##Keeps track of how long the last possession or lack of possession was for each robot
     posDuration: Dict[robocup.Robot, float] = dict()
-    recvProb: Dict[robocup.Robot, float] = dict()
+
+    #recvProb: Dict[robocup.Robot, float] = dict()
     #ballDist: Dict[robocup.Robot, float] = dict()
 
+    ##Keeps track of what the situaion was for the last frame for the purpose of preemption
     lastSituation = None
-    situationChangeTime = None
-    playPreemptTime = 0.20  #The time after a situation changes before preempting the current play
-    currentPreempt = False  #If we are preempting the current play
 
-    ##
-    # 
+    ##Keeps track of the time at which the situation last changed
+    situationChangeTime = None
+
+    ##The time after a situation changes before preempting the current play
+    playPreemptTime = 0.20
+    
+    ##Keeps track of if the current play should be preempted 
+    currentPreempt = False
+
+    ## Returns true if no one posseses the ball
     def isFreeBall(self):
         return self.currentPossession == self.BallPos.FREEBALL
 
-    ##
-    #
+    ## Returns true if we possess the ball
     def isOurBall(self):
         return self.currentPossession == self.BallPos.OURBALL
 
-    ##
-    #
+    ## Returns true if our opponents possess the ball
     def isTheirBall(self):
         return self.currentPossession == self.BallPos.THEIRBALL
-    
-    ##
-    #
+
+    ## Returns true if the ball is on our opponents side of the field, but not in the midfield
     def isAttackSide(self):
         return self.ballLocation == self.FieldLoc.ATTACKSIDE
 
-    ##
-    #
+    ## Returns true if the ball is on our side of the field, but not in the midfield
     def isDefendSide(self):
         return self.ballLocation == self.FieldLoc.DEFENDSIDE
 
-    ##
-    #
+    ## Returns true if the ball is in the midfield
     def isMidfield(self):
         return self.ballLocation == self.FieldLoc.MIDFIELD
 
-    ##
-    #
+    ##Returns true if there is currently determined to be a pileup
     def isPileup(self):
         return self.currentPileup
 
@@ -294,6 +323,8 @@ class SituationalPlaySelector:
 
     ##Update determining if we want to preempt the current play or not 
     #
+    # Preemption is still an open question but this is a prototype of 
+    # of how a non-invasive preemption system might work
     #
     def updatePreempt(self):
         if (self.lastSituation != self.currentSituaion and
@@ -312,20 +343,15 @@ class SituationalPlaySelector:
     '''def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
         for g in states:
             play.add_transition(g -> completed , preemptPlay)'''
-    #You will also need to make sure you delete all subbehaviors on enter_completed in the play
+
 
     ##A function to determine if the currently running play should be preempted
-    #
-    #
     def preemptPlay(self):
         return self.currentPreempt
 
-    ##
-    #
-    #
+    ##Returns the distance from a given robot to the ball
     def ballToRobotDist(self, robot):
-        return math.sqrt((robot.pos.x - self.systemState.ball.pos.x)**2 + (
-            robot.pos.y - self.systemState.ball.pos.y)**2)
+        return (robot.pos - self.systemState.ball.pos).mag()
 
     ##Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
     #
@@ -373,8 +399,6 @@ class SituationalPlaySelector:
         return (ourClosestDist, theirClosestDist)
 
     ##Returns the ratio of our closest distance to the ball and the opponents closest distance to the ball
-    #
-    #
     def ballClosenessRatio(self):
         distances = self.bothTeamsClosest()
         try:
@@ -382,8 +406,7 @@ class SituationalPlaySelector:
         except:
             return 1.0
 
-    ##Returns the robot that last had the ball and how long it was since they had the ball
-    # 
+    ##Returns the robot that last had the ball, when they last had the ball, and how long they had the ball for
     #
     def hadBallLast(self):
         lastRobot = None
@@ -404,16 +427,13 @@ class SituationalPlaySelector:
         return (lastRobot, lastRobotTime, self.posDuration.get(lastRobot, 0.0))
 
     ##Returns true if we had the ball last
-    #
-    #
     def weHadBallLast(self):
         if (self.hadBallLast()[0].is_ours()):
             return True
         else:
             return False
-    ##
-    #
-    #
+
+    ##Returns a list of robots that currently possess the ball
     def robotsWithTheBall(self):
         robotsWithTheBall = list()
 
@@ -424,7 +444,7 @@ class SituationalPlaySelector:
         return robotsWithTheBall
 
     ##
-    #
+    #Returns the number of robots that currenly possess the ball
     #
     def withBallCount(self):
         ourBots = 0
@@ -438,8 +458,8 @@ class SituationalPlaySelector:
         return (ourBots, theirBots)
 
     ##
-    #
-    #
+    # Returns a list of the robots that are currenly near the ball based on the passed distance parameter
+    # 
     def robotsNearTheBall(self, distance=0.5):
         robotsNearTheBall = list()
 
@@ -450,7 +470,7 @@ class SituationalPlaySelector:
         return robotsNearTheBall
 
     ##
-    #
+    # Returns the number of robots on each team that are near the ball based on the passed distance parameter
     #
     def nearBallCount(self, distance=0.35):
         ourBots = 0
@@ -464,7 +484,8 @@ class SituationalPlaySelector:
         return (ourBots, theirBots)
 
     ##
-    #
+    # Updates the self.currentPileup bool with its determination of if we are in a pileup state
+    # called every frame
     #
     def updatePileup(self):
 
@@ -502,9 +523,10 @@ class SituationalPlaySelector:
 
         self.currentPileup = pileUpDecision
 
-
-    ##
-    #
+    ## Function that updates self.currentPossession enum with the current possession
+    # 
+    # Looks at a number of factors including the balls trajectory towards robots
+    # to determine possession
     #
     def ballPossessionUpdate(self):
 
@@ -539,7 +561,6 @@ class SituationalPlaySelector:
         if (len(botsWithBall) == 1 and
                 abs(self.posChangeTime[botsWithBall[0]] - time.time()) >
                 ballPossessionDurationThreshold):
-            #print(abs(self.posChangeTime[botsWithBall[0]] - time.time())) 
             if (botsWithBall[0].is_ours()):
                 self.currentPossession = self.BallPos.OURBALL
             else:
@@ -549,7 +570,6 @@ class SituationalPlaySelector:
         lastInfo = self.hadBallLast()
         lastDurationThreshold = 0.5
         lastDurationLengthThreshold = 0.5
-        #print(str(lastInfo[1]) + " " + str(lastInfo[2]))
         if (lastInfo[0] != None and lastInfo[1] < lastDurationThreshold and
                 lastInfo[2] > lastDurationLengthThreshold):
             if (lastInfo[0].is_ours()):
@@ -570,8 +590,6 @@ class SituationalPlaySelector:
         #than the current location for determining what situation we are in. Or not, I could see an arguement for both.
         if (self.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = self.closestReciever()
-            #if(recvr[0] != None):
-            #print(recvr[1] / self.systemState.ball.vel.mag())
             if (recvr[0] != None and
                 (recvr[1] / self.systemState.ball.vel.mag()) < intercept_time):
 
@@ -583,13 +601,14 @@ class SituationalPlaySelector:
 
         self.currentPossession = self.BallPos.FREEBALL
 
-
     ##
+    # Function that is called every frame to update the self.ballLocation enum value
+    # based on the current ball location.
+    # 
+    # We have set the midfield factor to zero for div B fields
     #
-    #
-    def locationUpdate(self):
-        #This will basically just figure out what part of the field the ball is in.
-        midfieldFactor = 0.0  #We have concluded to change the midfield factor to zero for the div B field  
+    # @param midfieldFactor The fraction of the field to be designated as the midfield
+    def locationUpdate(self, midfieldFactor = 0.0):
 
         ballPos = self.systemState.ball.pos
 
@@ -597,15 +616,13 @@ class SituationalPlaySelector:
         midfield = fieldLen / 2
 
         if (ballPos.y < midfield - (midfieldFactor / 2) * fieldLen):
-            return self.FieldLoc.DEFENDSIDE
+            self.ballLocation = self.FieldLoc.DEFENDSIDE
         elif (ballPos.y > midfield + (midfieldFactor / 2) * fieldLen):
-            return self.FieldLoc.ATTACKSIDE
+            self.ballLocation = self.FieldLoc.ATTACKSIDE
         else:
-            return self.FieldLoc.MIDFIELD
+            self.ballLocation = self.FieldLoc.MIDFIELD
 
-    ##
-    #
-    #
+    ## Function to determine if the ball is inside the goal zone
     def ballInGoalZone(self,
                        buff=constants.Robot.Radius + constants.Ball.Radius):
         ballPos = self.systemState.ball.pos
@@ -619,7 +636,9 @@ class SituationalPlaySelector:
 
     ##Function that determines if our goalie has the ball safely inside our goal zone 
     # 
-    # 
+    # Looks for if our goalie has the ball in a position to not be harassed by the other team
+    # intended to interact with the GOALIE_CLEAR situation
+    #
     def cleanGoaliePossession(self):
         goalieID = self.gameState.get_goalie_id()
         goalieBot = None
@@ -634,19 +653,21 @@ class SituationalPlaySelector:
 
     ##This function will detect if the ball is about to go out of bounds, or is headed towards the goal 
     #
+    # Function not currently implemented but is intended to trigger the SAVE_BALL situation
+    # and possibly the SAVE_GOAL situation
     #
     def ballTrajectoryUpdate(self, ballPos, ballVel, factor=0.5):
         #Find function that determines if a point is in bounds
         pass
 
-    ##
-    #
-    #
+    ## Sets the current situation to NONE
     def clearSituation(self):
         self.currentSituation = self.Situation.NONE
 
-    ##
-    #
+    ## Function that is called every frame to actually change currentSituation
+    # 
+    #  This function looks at the game state, the balls location, and the possession of the ball
+    #  to make a determination as to the current situation, from there it sets an enum
     #
     def situationUpdate(self):
         #I've made all branches make an assignment for ease of debugging,
