@@ -26,7 +26,7 @@ class SituationalPlaySelector:
     # The none situation should never be encountered during gameplay
     # 
     class Situation(Enum):
-        NONE = 0 #This situation should never be encountered during gameplay
+        NONE = 0  #This situation should never be encountered during gameplay
         KICKOFF = 1  #Plays that can perform our kickoff
         DEFEND_RESTART_OFFENSIVE = 2  #Plays for defending our opponents restart on their side of the field
         DEFEND_RESTART_MIDFIELD = 3  #Plays for defending our opponents restart in the midfield
@@ -130,7 +130,6 @@ class SituationalPlaySelector:
             if (g.visible):
                 self.activeRobots.append(g)
 
-
     ## Main update function
     #   Is called every frame from main.py to update the situation information 
     #   mostly calls all the other update functions
@@ -176,7 +175,7 @@ class SituationalPlaySelector:
     ##Returns a tuple containing the robots distance from the balls path, 
     #the distance the ball has to travel to get to that intercept point, 
     #the balls speed, and the angle between the balls velocity and the robot's position
-    def ball_ingress(self, ballPos, ballVel, robot, slowThresh = 0.15):
+    def ball_ingress(self, ballPos, ballVel, robot, slowThresh=0.15):
 
         robotx = robot.pos.x
         roboty = robot.pos.y
@@ -226,7 +225,6 @@ class SituationalPlaySelector:
 
         return (closestRobot, closestRobotDistance)
 
-
     ##A function that determines if the ball is in the mouth of a given robot
     #
     # Is purly geometric, looks at angle and distance based on the thresholds
@@ -268,7 +266,7 @@ class SituationalPlaySelector:
 
     ##The time after a situation changes before preempting the current play
     playPreemptTime = 0.20
-    
+
     ##Keeps track of if the current play should be preempted 
     currentPreempt = False
 
@@ -343,7 +341,6 @@ class SituationalPlaySelector:
     '''def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
         for g in states:
             play.add_transition(g -> completed , preemptPlay)'''
-
 
     ##A function to determine if the currently running play should be preempted
     def preemptPlay(self):
@@ -608,7 +605,7 @@ class SituationalPlaySelector:
     # We have set the midfield factor to zero for div B fields
     #
     # @param midfieldFactor The fraction of the field to be designated as the midfield
-    def locationUpdate(self, midfieldFactor = 0.0):
+    def locationUpdate(self, midfieldFactor=0.0):
 
         ballPos = self.systemState.ball.pos
 

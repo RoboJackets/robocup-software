@@ -10,7 +10,7 @@ import imp
 import sys
 import os
 import constants
-from situational_play_selection import SituationalPlaySelector
+import situational_play_selection
 
 ## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -20,7 +20,7 @@ PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 _has_initialized = False
 
 #situationalPlaySelector
-situationAnalysis = SituationalPlaySelector()  #This possibly should not go here
+situationAnalysis = situational_play_selection.SituationalPlaySelector()
 
 def init(log_errors=True):
     # by default, the logger only shows messages at the WARNING level or greater
