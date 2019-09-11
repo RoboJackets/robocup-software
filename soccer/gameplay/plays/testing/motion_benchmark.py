@@ -9,7 +9,7 @@ import main
 import enum
 import tools
 import skills.latency_test
-import skills.motion_benchmark
+import skills.benchmark.motion_benchmark
 
 class RunMotionBenchmark(play.Play):
     class State(enum.Enum):
@@ -36,5 +36,5 @@ class RunMotionBenchmark(play.Play):
                             'all subbehaviors completed')
   
     def on_enter_run(self):
-        self.add_subbehavior(skills.motion_benchmark.MotionBenchmark(), 'move2')
+        self.add_subbehavior(skills.benchmark.motion_benchmark.MotionBenchmark(), 'move2')
 

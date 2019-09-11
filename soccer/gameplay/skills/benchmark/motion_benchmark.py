@@ -23,7 +23,7 @@ import statistics
 # Note: I think I might need to add at least two different rotation tests, one for big rotations and one for small rotations
 #
 #
-class BaseMotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     class State(Enum):
         #setup
