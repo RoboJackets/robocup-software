@@ -8,8 +8,8 @@ from typing import List, Dict
 
 
 ## Class for breaking gameplay down into discrete states to aid in play selection
-# 
-# An instance of this class exists in main.py where its updateAnalysis function 
+#
+# An instance of this class exists in main.py where its updateAnalysis function
 # every frame.
 #
 # The purpose of this class is to inform plays of the current gameplay situation
@@ -22,9 +22,9 @@ from typing import List, Dict
 class SituationalPlaySelector:
 
     ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
-    #  
+    #
     # The none situation should never be encountered during gameplay
-    # 
+    #
     class Situation(Enum):
         NONE = 0  #This situation should never be encountered during gameplay
         KICKOFF = 1  #Plays that can perform our kickoff
@@ -85,10 +85,10 @@ class SituationalPlaySelector:
     ##Represents if there is currently a pileup for the purposes of situation selection
     currentPileup = False
 
-    ##Holds the last time that currentPileup was changed by the pileup update function 
+    ##Holds the last time that currentPileup was changed by the pileup update function
     pileupTime = time.time()
 
-    ##Variable used to ensure setup is done 
+    ##Variable used to ensure setup is done
     isSetup = False
 
     ##Holds the game state object
@@ -98,10 +98,10 @@ class SituationalPlaySelector:
     systemState = None
 
     ##Holds a list of all the robots
-    robotList: List[robocup.Robot] = list()
+    robotList = list()  # type: List[robocup.Robot]
 
     ##Holds a list of the currently visible robots
-    activeRobots: List[robocup.Robot] = list()
+    activeRobots = list()  # type: List[robocup.Robot]
 
     ##Function is run a single time to setup the class
     #
@@ -121,7 +121,7 @@ class SituationalPlaySelector:
         self.updateRobotList()
 
     ## Function that updates the activeRobots list
-    # 
+    #
     # Updates the activerobots list every frame to include only the currently visible robots
     #
     def updateRobotList(self):
@@ -131,9 +131,9 @@ class SituationalPlaySelector:
                 self.activeRobots.append(g)
 
     ## Main update function
-    #   Is called every frame from main.py to update the situation information 
+    #   Is called every frame from main.py to update the situation information
     #   mostly calls all the other update functions
-    #   
+    #
     #   Will also run the setup if isSetup is false and has functionality to get
     #   the running time of the module
     def updateAnalysis(self):
@@ -157,7 +157,7 @@ class SituationalPlaySelector:
                                             "hat")
 
     ## Returns a list of the robots in the path of the ball
-    # 
+    #
     # builds a dict of ingress info, which is expensive
     #
     def in_ball_path(self):
@@ -172,8 +172,8 @@ class SituationalPlaySelector:
 
         return robotsInBallPath
 
-    ##Returns a tuple containing the robots distance from the balls path, 
-    #the distance the ball has to travel to get to that intercept point, 
+    ##Returns a tuple containing the robots distance from the balls path,
+    #the distance the ball has to travel to get to that intercept point,
     #the balls speed, and the angle between the balls velocity and the robot's position
     def ball_ingress(self, ballPos, ballVel, robot, slowThresh=0.15):
 
@@ -209,7 +209,7 @@ class SituationalPlaySelector:
 
         return (distanceFromPath, interceptDistance, ballSpeed, angle)
 
-    ##Returns the closest robot in the balls path as a tuple of the robot and its distance 
+    ##Returns the closest robot in the balls path as a tuple of the robot and its distance
     def closestReciever(self):
         botsInPath = self.in_ball_path()
         if (len(botsInPath) == 0):
@@ -247,13 +247,13 @@ class SituationalPlaySelector:
             return False
 
     ##Keeps track of if each robot possesses the ball
-    hasBall: Dict[robocup.Robot, bool] = dict()
+    hasBall = dict()  # type: Dict[robocup.Robot, bool]
 
     ##Keeps track of when possession last changed for each robot
-    posChangeTime: Dict[robocup.Robot, float] = dict()
+    posChangeTime = dict()  # type: Dict[robocup.Robot, float]
 
     ##Keeps track of how long the last possession or lack of possession was for each robot
-    posDuration: Dict[robocup.Robot, float] = dict()
+    posDuration = dict()  # type: Dict[robocup.Robot, float]
 
     #recvProb: Dict[robocup.Robot, float] = dict()
     #ballDist: Dict[robocup.Robot, float] = dict()
@@ -267,7 +267,7 @@ class SituationalPlaySelector:
     ##The time after a situation changes before preempting the current play
     playPreemptTime = 0.20
 
-    ##Keeps track of if the current play should be preempted 
+    ##Keeps track of if the current play should be preempted
     currentPreempt = False
 
     ## Returns true if no one posseses the ball
@@ -299,7 +299,7 @@ class SituationalPlaySelector:
         return self.currentPileup
 
     ##Returns if we are in the specified situation without regard to capitalization
-    #If the check variable is true, it will check if the situation exists and throw an 
+    #If the check variable is true, it will check if the situation exists and throw an
     #exception is it does now.
     def isSituation(self, situation, check=False):
         up = situation.upper()
@@ -319,9 +319,9 @@ class SituationalPlaySelector:
         else:
             return False
 
-    ##Update determining if we want to preempt the current play or not 
+    ##Update determining if we want to preempt the current play or not
     #
-    # Preemption is still an open question but this is a prototype of 
+    # Preemption is still an open question but this is a prototype of
     # of how a non-invasive preemption system might work
     #
     def updatePreempt(self):
@@ -456,7 +456,7 @@ class SituationalPlaySelector:
 
     ##
     # Returns a list of the robots that are currenly near the ball based on the passed distance parameter
-    # 
+    #
     def robotsNearTheBall(self, distance=0.5):
         robotsNearTheBall = list()
 
@@ -493,7 +493,7 @@ class SituationalPlaySelector:
         botsWithBall = self.withBallCount()
         totalNearBall = sum(botsNearBall)
         totalWithBall = sum(botsWithBall)
-        #print("Pileup info------------------") 
+        #print("Pileup info------------------")
         #print(botsNearBall)
         #print(botsWithBall)
         pileUpCalc = False
@@ -521,7 +521,7 @@ class SituationalPlaySelector:
         self.currentPileup = pileUpDecision
 
     ## Function that updates self.currentPossession enum with the current possession
-    # 
+    #
     # Looks at a number of factors including the balls trajectory towards robots
     # to determine possession
     #
@@ -583,7 +583,7 @@ class SituationalPlaySelector:
             self.currentPossession = self.BallPos.OURBALL
             return None
 
-        #This should probably eventually be updated to take the intercept location into accoutn rather 
+        #This should probably eventually be updated to take the intercept location into accoutn rather
         #than the current location for determining what situation we are in. Or not, I could see an arguement for both.
         if (self.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = self.closestReciever()
@@ -601,7 +601,7 @@ class SituationalPlaySelector:
     ##
     # Function that is called every frame to update the self.ballLocation enum value
     # based on the current ball location.
-    # 
+    #
     # We have set the midfield factor to zero for div B fields
     #
     # @param midfieldFactor The fraction of the field to be designated as the midfield
@@ -631,8 +631,8 @@ class SituationalPlaySelector:
 
         return False
 
-    ##Function that determines if our goalie has the ball safely inside our goal zone 
-    # 
+    ##Function that determines if our goalie has the ball safely inside our goal zone
+    #
     # Looks for if our goalie has the ball in a position to not be harassed by the other team
     # intended to interact with the GOALIE_CLEAR situation
     #
@@ -648,7 +648,7 @@ class SituationalPlaySelector:
         goalieHasBall = self.hasBall.get(goalieBot)
         return goalieHasBall and self.ballInGoalZone()
 
-    ##This function will detect if the ball is about to go out of bounds, or is headed towards the goal 
+    ##This function will detect if the ball is about to go out of bounds, or is headed towards the goal
     #
     # Function not currently implemented but is intended to trigger the SAVE_BALL situation
     # and possibly the SAVE_GOAL situation
@@ -662,7 +662,7 @@ class SituationalPlaySelector:
         self.currentSituation = self.Situation.NONE
 
     ## Function that is called every frame to actually change currentSituation
-    # 
+    #
     #  This function looks at the game state, the balls location, and the possession of the ball
     #  to make a determination as to the current situation, from there it sets an enum
     #
