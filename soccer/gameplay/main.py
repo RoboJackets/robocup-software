@@ -203,8 +203,8 @@ def run():
 
     try:
         if root_play() is not None:
-            root_play().spin()
             situationAnalysis.updateAnalysis()
+            root_play().spin()
     except:
         exc = sys.exc_info()[0]
         logging.error("Exception occurred in main.run(): " + str(exc) +
