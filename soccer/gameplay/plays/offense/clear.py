@@ -46,7 +46,7 @@ class Clear(standard_play.StandardPlay):
         self.add_transition(behavior.Behavior.State.start,
                             Clear.State.get_ball,
                             lambda: True,
-                            'Immidietley')
+                            'Immidiatley')
 
         self.add_transition(Clear.State.get_ball,
                             Clear.State.clear_ball,
@@ -72,7 +72,7 @@ class Clear(standard_play.StandardPlay):
         self.remove_all_subbehaviors()
 
         num = random.randint(0,1)
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.points[num], use_chipper = True),
+        self.add_subbehavior(skills.pivot_kick.PivotKick(self.points[num], use_chipper = True),
                                                                      'clear',
                                                                      required = True)
         count = 0
