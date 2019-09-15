@@ -3,6 +3,7 @@ import robocup
 import behavior
 import constants
 import enum
+
 import standard_play
 import evaluation
 import tactics.coordinated_pass
@@ -72,9 +73,11 @@ class Clear(standard_play.StandardPlay):
         self.remove_all_subbehaviors()
 
         num = random.randint(0,1)
-        self.add_subbehavior(skills.pivot_kick.PivotKick(self.points[num], use_chipper = True),
-                                                                     'clear',
-                                                                     required = True)
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.points[num],
+                                                    receiver_required = False, 
+                                                    use_chipper=True),
+                                                            'clear',
+                                                             required = True)
         count = 0
         for k in self.points:
             count+=1
