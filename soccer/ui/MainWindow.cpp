@@ -362,6 +362,7 @@ void MainWindow::updateViews() {
         _procFPS->setText(
             QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
+        // TODO: Use constants here instead of magic numbers
         _logMemory->setText(
             QString("Log: %1/%2 %3 kiB")
                 .arg(QString::number(_processor->logger().size()),
@@ -427,6 +428,8 @@ void MainWindow::updateViews() {
 
     // Update status indicator
     updateStatus();
+
+    _processor->setPaused(!live());
 
     // Check if any debug layers have been added
     // (layers should never be removed)

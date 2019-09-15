@@ -172,6 +172,8 @@ public:
 
     bool isInitialized() const;
 
+    void setPaused(bool paused) { _paused = paused; }
+
     ////////
 
     // Time of the first LogFrame
@@ -280,4 +282,6 @@ private:
     VisionChannel _visionChannel;
 
     bool _initialized;
+
+    bool _paused;
 };
