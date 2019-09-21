@@ -459,7 +459,7 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    angleFunctionPath.path = std::move(path);
+    _path = std::move(path);
 }
 
 std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {

@@ -121,7 +121,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         angle_goal_post_diff       = bot_to_left_goal_post.angle_between( bot_to_right_goal_post )
 
         # Add a small amount for any errors in these math functions
-        small_angle_offset = 0.01
+        small_angle_offset = 0.001
 
         # We are aiming at the goal
         if (angle_left_goal_post_diff + angle_right_goal_post_diff + small_angle_offset <= angle_goal_post_diff):

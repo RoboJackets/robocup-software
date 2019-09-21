@@ -13,7 +13,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         dynamic_cast<const InterceptCommand&>(*planRequest.motionCommand);
 
     // Start state for the specified robot
-    const MotionInstant& startInstant = planRequest.start;
+    const RobotInstant& startInstant = planRequest.start;
 
     // All the max velocity / acceleration constraints for translation /
     // rotation
@@ -28,6 +28,8 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     RJ::Seconds ballToPointTime =
         ball.estimateTimeTo(command.target, &targetPosOnLine) - RJ::now();
 
+    AngleFunction angleFunction = angleFunctionForCommandType(FacePointCommand(ball.pos));
+
     // Try to use the same point if it's pretty close
     // Improves consistency overall
     if ((targetPosOnLine - prevPathTarget).mag() < Robot_Radius / 2) {
@@ -37,7 +39,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     }
 
     // vector from robot to target
-    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pos);
+    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.motion.pos);
     // Normalized vector from robot to target
     Geometry2d::Point botToTargetNorm = botToTarget.normalized();
 
@@ -45,7 +47,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // acceleration If we don't constrain the speed, there is a velocity
     // discontinuity in the middle of the path
     double maxSpeed = std::min(
-        startInstant.vel.mag() +
+        startInstant.motion.vel.mag() +
             sqrt(2 * motionConstraints.maxAcceleration * botToTarget.mag()),
         motionConstraints.maxSpeed);
 
@@ -60,17 +62,15 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
         std::unique_ptr<MotionCommand> directCommand =
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
+
         PlanRequest request = PlanRequest(
             planRequest.context, startInstant, std::move(directCommand),
+            angleFunction,
             planRequest.constraints, nullptr, planRequest.obstacles,
             planRequest.dynamicObstacles, planRequest.shellID);
 
         std::unique_ptr<Path> path = directPlanner.run(request);
         path->setDebugText("AtPoint");
-
-        return std::make_unique<AngleFunctionPath>(
-            std::move(path),
-            angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
 
     // Scale the end velocity by % of max velocity to see if we can reach the
@@ -86,6 +86,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
 
         auto request = PlanRequest(
             planRequest.context, startInstant, std::move(directCommand),
+            angleFunction,
             planRequest.constraints, nullptr, planRequest.obstacles,
             planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -99,9 +100,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
                 "RT " + QString::number(path->getDuration().count(), 'g', 2) +
                 " BT " + QString::number(path->getDuration().count(), 'g', 2));
 
-            return std::make_unique<AngleFunctionPath>(
-                std::move(path),
-                angleFunctionForCommandType(FacePointCommand(ball.pos)));
+            return path;
         }
     }
 
@@ -110,8 +109,6 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // Which ends up being the path after the final loop
     path->setDebugText("GivingUp");
 
-    return std::make_unique<AngleFunctionPath>(
-        std::move(path),
-        angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    return path;
 }
 }  // namespace Planning

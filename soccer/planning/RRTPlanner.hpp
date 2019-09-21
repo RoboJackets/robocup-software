@@ -63,8 +63,9 @@ public:
     static std::unique_ptr<Planning::InterpolatedPath> generatePath(
         const std::vector<Geometry2d::Point>& points,
         const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+        const MotionConstraints& motionConstraints,
+        Geometry2d::Pose p0, Geometry2d::Twist v0, Geometry2d::Point vf,
+        const AngleFunction& angleFunction);
 
     // Overridden methods
 
@@ -102,10 +103,11 @@ protected:
             std::nullopt);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
-        const MotionInstant& start, const MotionInstant& goal,
+        const RobotInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
         Geometry2d::ShapeSet& origional,
         const std::vector<DynamicObstacle> dyObs, Context* context,
+        const AngleFunction& angleFunction,
         unsigned shellID,
         const std::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
             std::nullopt);
@@ -119,11 +121,11 @@ protected:
      * 3. It returns a interpolated path combining the bezier path and the
      *velocity profile
      */
-    static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
-        const std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+    static std::unique_ptr<InterpolatedPath>
+    generateCubicBezier(const std::vector<Geometry2d::Point> &points, const Geometry2d::ShapeSet &obstacles,
+                        const MotionConstraints &motionConstraints,
+                        Geometry2d::Pose p0, Geometry2d::Twist v0, Geometry2d::Point vf,
+                        const AngleFunction& angleFunction);
 
     /**
      *  Removes unnecesary waypoints in the path
@@ -148,10 +150,11 @@ protected:
      * Generates a velocity profile from a Cubic Bezier Path under the given
      * motion constratins
      */
-    static std::vector<InterpolatedPath::Entry> generateVelocityPath(
-        const std::vector<CubicBezierControlPoints>& controlPoints,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf, int interpolations = 40);
+    static std::vector<InterpolatedPath::Entry>
+    generateVelocityPath(const std::vector<CubicBezierControlPoints> &controlPoints,
+                         const MotionConstraints &motionConstraints,
+                         const Geometry2d::Pose &p0, const Geometry2d::Twist &v0, Geometry2d::Point vf,
+                         const AngleFunction &angleFunction, int interpolations);
 
     /**
      * Generates a Cubic Bezier Path based on some attempted heuristical Control

@@ -83,6 +83,5 @@ private:
 std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(
     Planning::MotionCommand::CommandType type);
 
-std::optional<std::function<AngleInstant(MotionInstant)>>
-angleFunctionForCommandType(const Planning::RotationCommand& command);
+AngleFunction angleFunctionForCommandType(const Planning::RotationCommand& command);
 }  // namespace Planning

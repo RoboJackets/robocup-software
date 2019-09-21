@@ -50,7 +50,7 @@ bool PivotPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
 }
 
 std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.start;
+    const RobotInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     const auto& rotationConstraints = planRequest.constraints.rot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
@@ -75,13 +75,13 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
                      rotationConstraints.maxSpeed * radius) *
             .5;
 
-        float startAngle = pivotPoint.angleTo(startInstant.pos);
+        float startAngle = pivotPoint.angleTo(startInstant.motion.pos);
         float targetAngle = pivotPoint.angleTo(endTarget);
         float change = fixAngleRadians(targetAngle - startAngle);
 
         const int interpolations = 10;
 
-        points.push_back(startInstant.pos);
+        points.push_back(startInstant.motion.pos);
         for (int i = 1; i <= interpolations; i++) {
             float percent = (float)i / interpolations;
             float angle = startAngle + change * percent;
@@ -89,23 +89,26 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
                 Point::direction(angle).normalized(radius) + pivotPoint;
             points.push_back(point);
         }
-        unique_ptr<InterpolatedPath> path = RRTPlanner::generatePath(
-            points, obstacles, newConstraints, startInstant.vel, Point(0, 0));
 
-        if (path) {
-            std::function<AngleInstant(MotionInstant)> function =
+        std::function<double(MotionInstant)> angleFunction =
                 [pivotPoint, pivotTarget](MotionInstant instant) {
                     auto angleToPivot = instant.pos.angleTo(pivotPoint);
                     auto angleToPivotTarget = instant.pos.angleTo(pivotTarget);
 
                     if (abs(angleToPivot - angleToPivotTarget) <
                         DegreesToRadians(10)) {
-                        return AngleInstant(angleToPivotTarget);
+                        return angleToPivotTarget;
                     } else {
-                        return AngleInstant(angleToPivot);
+                        return angleToPivot;
                     }
                 };
-            return make_unique<AngleFunctionPath>(move(path), function);
+
+        unique_ptr<InterpolatedPath> path = RRTPlanner::generatePath(
+            points, obstacles, newConstraints, startInstant.pose(), startInstant.twist(), Point(0, 0),
+            angleFunction);
+
+        if (path) {
+            return path;
         } else {
             return std::move(prevPath);
         }

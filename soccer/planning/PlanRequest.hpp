@@ -20,14 +20,16 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(Context* context, MotionInstant start,
+    PlanRequest(Context* context, RobotInstant start,
                 std::unique_ptr<MotionCommand> command,
+                AngleFunction angleFunction,
                 RobotConstraints constraints, std::unique_ptr<Path> prevPath,
                 Geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
                 unsigned shellID, int8_t priority = 0)
         : context(context),
           start(start),
           motionCommand(std::move(command)),
+          angleFunction(angleFunction),
           constraints(constraints),
           prevPath(std::move(prevPath)),
           obstacles(obs),
@@ -35,7 +37,8 @@ struct PlanRequest {
           shellID(shellID) {}
 
     Context* context;         /**< Allows debug drawing, position info */
-    MotionInstant start;      /**< Starting state of the robot */
+    RobotInstant start;      /**< Starting state of the robot */
+    AngleFunction angleFunction;
     std::unique_ptr<MotionCommand>
         motionCommand;              /**< Specific type of motion desired */
     RobotConstraints constraints;   /**< Constraint parameters on motion */

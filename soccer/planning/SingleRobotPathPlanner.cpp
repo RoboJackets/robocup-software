@@ -93,31 +93,39 @@ void SingleRobotPathPlanner::splitDynamic(
     }
 }
 
-std::optional<std::function<AngleInstant(MotionInstant)>>
-angleFunctionForCommandType(const Planning::RotationCommand& command) {
+AngleFunction angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
         case RotationCommand::FacePoint: {
             Geometry2d::Point targetPt =
                 static_cast<const Planning::FacePointCommand&>(command)
                     .targetPos;
-            std::function<AngleInstant(MotionInstant)> function =
+            AngleFunction function =
                 [targetPt](MotionInstant instant) {
-                    return AngleInstant(instant.pos.angleTo(targetPt));
+                    return instant.pos.angleTo(targetPt);
                 };
             return function;
         }
         case RotationCommand::FaceAngle: {
             float angle = static_cast<const Planning::FaceAngleCommand&>(
                               command).targetAngle;
-            std::function<AngleInstant(MotionInstant)> function =
-                [angle](MotionInstant instant) { return AngleInstant(angle); };
+            AngleFunction function =
+                [angle](MotionInstant instant) { return angle; };
             return function;
         }
         case RotationCommand::None:
-            return std::nullopt;
+            // Return a default angle command to face in the direction of velocity.
+            // TODO(Kyle): This can't handle backwards motion. Fix it to target
+            // forwards or backwards, whichever is closest.
+            return [](MotionInstant instant) {
+                double angle = instant.vel.angle();
+                return angle;
+            };
         default:
             debugThrow("RotationCommand Not implemented");
-            return std::nullopt;
+            return [](MotionInstant instant) {
+                double angle = instant.vel.angle();
+                return angle;
+            };
     }
 }
 
@@ -147,7 +155,7 @@ bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
 
     // invalidate path if current position is more than the replanThreshold away
     // from where it's supposed to be right now
-    float pathError = (target.pos - currentInstant.pos).mag();
+    float pathError = (target.pos - currentInstant.motion.pos).mag();
     float replanThreshold = *motionConstraints._replan_threshold;
     if (*motionConstraints._replan_threshold != 0 &&
         pathError > replanThreshold) {

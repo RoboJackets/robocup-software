@@ -48,10 +48,14 @@ struct RobotInstant {
     explicit RobotInstant(MotionInstant motion = MotionInstant(),
                           std::optional<AngleInstant> angle = std::nullopt)
         : motion(motion), angle(angle) {}
+
+    explicit RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist vel)
+            : motion(pose.position(), vel.linear()), angle(AngleInstant(pose.heading(), vel.angular())) {}
+
     MotionInstant motion;
     std::optional<AngleInstant> angle;
 
-    Geometry2d::Pose pose() {
+    Geometry2d::Pose pose() const {
         if (angle && angle->angle) {
             return Geometry2d::Pose(motion.pos, angle->angle.value());
         } else {
@@ -59,7 +63,7 @@ struct RobotInstant {
         }
     }
 
-    Geometry2d::Twist twist() {
+    Geometry2d::Twist twist() const {
         if (angle && angle->angleVel) {
             return Geometry2d::Twist(motion.vel, angle->angleVel.value());
         } else {

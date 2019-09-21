@@ -139,6 +139,14 @@ public:
         return stream;
     }
 
+    friend Pose operator*(double s, const Pose& p) {
+        return Pose(p.position() * s, p.heading() * s);
+    }
+
+    friend Pose operator/(double s, const Pose& p) {
+        return Pose(p.position() / s, p.heading() / s);
+    }
+
 private:
     Point _position;
     double _heading;
@@ -300,6 +308,14 @@ public:
         stream << "Twist(" << twist.linear().x() << ", " << twist.linear().y()
                << ", " << twist.angular() << ")";
         return stream;
+    }
+
+    friend Twist operator*(double s, const Twist& p) {
+        return Twist(p.linear() * s, p.angular() * s);
+    }
+
+    friend Twist operator/(double s, const Twist& p) {
+        return Twist(p.linear() / s, p.angular() / s);
     }
 
 private:

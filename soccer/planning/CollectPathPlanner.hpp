@@ -51,24 +51,24 @@ private:
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
     void checkSolutionValidity(const Ball& ball,
-                               const MotionInstant& startInstant,
+                               const RobotInstant& startInstant,
                                const Path* prevPath);
 
     void processStateTransition(const Ball& ball,
-                                const MotionInstant& startInstant,
+                                const RobotInstant& startInstant,
                                 const Path* const prevPath,
                                 const RJ::Seconds& timeIntoPreviousPath);
 
     std::unique_ptr<Path> courseApproach(const PlanRequest& planRequest,
-                                         const MotionInstant& startInstant,
+                                         const RobotInstant& startInstant,
                                          std::unique_ptr<Path> prevPaths);
 
     std::unique_ptr<Path> fineApproach(const PlanRequest& planRequest,
-                                       const MotionInstant& startInstant,
+                                       const RobotInstant& startInstant,
                                        std::unique_ptr<Path> prevPath);
 
     std::unique_ptr<Path> control(const PlanRequest& planRequest,
-                                  const MotionInstant& startInstant,
+                                  const RobotInstant& startInstant,
                                   std::unique_ptr<Path> prevPath,
                                   std::unique_ptr<Path> partialPath,
                                   const Geometry2d::ShapeSet& obstacles);

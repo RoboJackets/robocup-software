@@ -97,18 +97,10 @@ void MotionControl::run() {
     ////////////////////////////////////////////////////////////////////
 
     float targetW = 0;
-    auto& rotationCommand = _robot->rotationCommand();
     const auto& rotationConstraints = _robot->rotationConstraints();
 
-    std::optional<Geometry2d::Point> targetPt;
-    const auto& motionCommand = _robot->motionCommand();
-
     std::optional<float> targetAngleFinal;
-    // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
-    //    PivotCommand command =
-    //    *static_cast<PivotCommand*>(motionCommand.get());
-    //    targetPt = command.pivotTarget;
-    //} else {
+
     if (optTarget) {
         if (optTarget->angle) {
             if (optTarget->angle->angle) {
@@ -118,16 +110,11 @@ void MotionControl::run() {
     }
     //}
 
-    if (targetPt) {
-        // fixing the angle ensures that we don't go the long way around to get
-        // to our final angle
-        targetAngleFinal = (*targetPt - _robot->pos).angle();
-    }
-
     if (!targetAngleFinal) {
         _targetAngleVel(0);
     } else {
         float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
+        std::cout << angleError << std::endl;
 
         targetW = _angleController.run(angleError);
 
@@ -140,31 +127,8 @@ void MotionControl::run() {
             }
         }
 
-        /*
-        _robot->addText(QString("targetW: %1").arg(targetW));
-        _robot->addText(QString("angleError: %1").arg(angleError));
-        _robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-        _robot->addText(QString("angle: %1").arg(_robot->angle));
-        */
         _targetAngleVel(targetW);
     }
-
-    // handle body velocity for pivot command
-    /*
-    if (motionCommand->getCommandType() == MotionCommand::Pivot) {
-        float r = Robot_Radius;
-        const float FudgeFactor = *_robot->config->pivotVelMultiplier;
-        float speed = RadiansToDegrees(r * targetW * FudgeFactor);
-        Point vel(speed, 0);
-
-        // the robot body coordinate system is wierd...
-        vel.rotate(-M_PI_2);
-
-        _targetBodyVel(vel);
-
-        return;  // pivot handles both angle and position
-    }
-     */
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

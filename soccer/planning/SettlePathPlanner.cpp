@@ -70,7 +70,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
     targetBounceDirection = command.target;
 
     // Start state for the specified robot
-    MotionInstant startInstant = planRequest.start;
+    RobotInstant startInstant = planRequest.start;
 
     // List of obstacles
     ShapeSet& obstacles = planRequest.obstacles;
@@ -133,7 +133,7 @@ std::unique_ptr<Path> SettlePathPlanner::run(PlanRequest& planRequest) {
 }
 
 void SettlePathPlanner::checkSolutionValidity(const Ball& ball,
-                                              const MotionInstant& startInstant,
+                                              const RobotInstant& startInstant,
                                               const Point& deltaPos) {
     const float maxBallAngleChangeForPathReset =
         *_maxBallAngleForReset * M_PI / 180.0f;
@@ -150,7 +150,7 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball,
     // Are we too far from the ball line and the ball is still moving
     // or are we too far from a ball not moving towards us
     Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
-    Point relativeRobotPos = startInstant.pos - deltaPos;
+    Point relativeRobotPos = startInstant.motion.pos - deltaPos;
 
     bool robotFar =
         (ball.pos - relativeRobotPos).mag() > 2 * Robot_Radius + Ball_Radius;
@@ -172,7 +172,7 @@ void SettlePathPlanner::checkSolutionValidity(const Ball& ball,
 }
 
 void SettlePathPlanner::processStateTransition(const Ball& ball, Path* prevPath,
-                                               MotionInstant& startInstant,
+                                               RobotInstant& startInstant,
                                                const double angle,
                                                const Point& deltaPos) {
     // State transitions
@@ -202,12 +202,12 @@ void SettlePathPlanner::processStateTransition(const Ball& ball, Path* prevPath,
         bool inlineWithBall =
             botDistToBallMovementLine < cos(angle) * Robot_MouthWidth / 2;
         bool inFrontOfBall =
-            averageBallVel.angleBetween(startInstant.pos - ball.pos) < 3.14 / 2;
+            averageBallVel.angleBetween(startInstant.motion.pos - ball.pos) < 3.14 / 2;
 
         if (inFrontOfBall && inlineWithBall && currentState == Intercept) {
             // Start the next section of the path from the end of our current
             // path
-            startInstant = pathSoFar->end().motion;
+            startInstant = pathSoFar->end();
             currentState = Dampen;
         }
     }
@@ -215,8 +215,11 @@ void SettlePathPlanner::processStateTransition(const Ball& ball, Path* prevPath,
 
 std::unique_ptr<Path> SettlePathPlanner::intercept(
     const PlanRequest& planRequest, const RJ::Time curTime,
-    const MotionInstant& startInstant, unique_ptr<Path> prevPath,
+    const RobotInstant& startInstant, unique_ptr<Path> prevPath,
     const ShapeSet& obstacles, const Point& deltaPos, const Point& facePos) {
+
+    AngleFunction angleFunction = angleFunctionForCommandType(FacePointCommand(facePos));
+
     const Ball& ball = planRequest.context->state.ball;
 
     // Try find best point to intercept using brute force method
@@ -254,6 +257,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
 
         auto request = PlanRequest(
             planRequest.context, startInstant, std::move(rrtCommand),
+            angleFunction,
             planRequest.constraints, nullptr, obstacles,
             planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -339,7 +343,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
     // just move directly to the path location
     Segment ballLine =
         Segment(ball.pos, ball.pos + averageBallVel.norm() * *_searchEndDist);
-    Point closestPt = ballLine.nearestPoint(startInstant.pos) + deltaPos;
+    Point closestPt = ballLine.nearestPoint(startInstant.motion.pos) + deltaPos;
 
     Point ballToPtDir = closestPt - ball.pos;
     bool inFrontOfBall = averageBallVel.angleBetween(ballToPtDir) < 3.14 / 2;
@@ -349,21 +353,20 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
     // the target point found in the algorithm is further than we are or just
     // about equal
     if (inFrontOfBall &&
-        (closestPt - startInstant.pos).mag() < *_shortcutDist &&
+        (closestPt - startInstant.motion.pos).mag() < *_shortcutDist &&
         firstInterceptTargetFound &&
         (closestPt - ball.pos).mag() -
                 (avgInstantaneousInterceptTarget - ball.pos).mag() <
             *_shortcutDist) {
-        vector<Point> startEnd{startInstant.pos, closestPt};
+        vector<Point> startEnd{startInstant.motion.pos, closestPt};
 
         unique_ptr<Path> shortCut = RRTPlanner::generatePath(
-            startEnd, obstacles, planRequest.constraints.mot, startInstant.vel,
-            *_ballSpeedPercentForDampen * averageBallVel);
+            startEnd, obstacles, planRequest.constraints.mot, startInstant.pose(), startInstant.twist(),
+            *_ballSpeedPercentForDampen * averageBallVel, angleFunction);
 
-        if (shortCut)
-            return make_unique<AngleFunctionPath>(
-                std::move(shortCut),
-                angleFunctionForCommandType(FacePointCommand(facePos)));
+        if (shortCut) {
+            return shortCut;
+        }
     }
 
     // There's some major problems with repeatedly changing the target for the
@@ -389,6 +392,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
 
     auto request =
         PlanRequest(planRequest.context, startInstant, std::move(rrtCommand),
+                    angleFunction,
                     planRequest.constraints, std::move(prevPath), obstacles,
                     planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -397,13 +401,11 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
     RJ::Seconds timeOfArrival = newTargetPath->getDuration();
     newTargetPath->setDebugText(QString::number(timeOfArrival.count()) + " s");
 
-    return make_unique<AngleFunctionPath>(
-        std::move(newTargetPath),
-        angleFunctionForCommandType(FacePointCommand(facePos)));
+    return newTargetPath;
 }
 
 std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
-                                                MotionInstant& startInstant,
+                                                RobotInstant& startInstant,
                                                 unique_ptr<Path> prevPath,
                                                 const Point& deltaPos,
                                                 const Point& facePos) {
@@ -435,13 +437,13 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     pathCreatedForDampen = true;
 
     if (prevPath) {
-        startInstant = prevPath->end().motion;
+        startInstant = prevPath->end();
     }
 
     // Using the current velocity
     // Calculate stopping point along the ball path
     float maxAccel = planRequest.constraints.mot.maxAcceleration;
-    float currentSpeed = startInstant.vel.mag();
+    float currentSpeed = startInstant.motion.vel.mag();
 
     // Assuming const accel going to zero velocity
     // speed / accel gives time to stop
@@ -454,9 +456,9 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     Point ballMovementDir(averageBallVel.normalized());
     Line ballMovementLine(ball.pos + deltaPos,
                           ball.pos + ballMovementDir + deltaPos);
-    Point nearestPointToRobot = ballMovementLine.nearestPoint(startInstant.pos);
+    Point nearestPointToRobot = ballMovementLine.nearestPoint(startInstant.motion.pos);
     float distToBallMovementLine =
-        (startInstant.pos - nearestPointToRobot).mag();
+        (startInstant.motion.pos - nearestPointToRobot).mag();
 
     // Default to just moving to the closest point on the line
     Point finalStoppingPoint(nearestPointToRobot);
@@ -488,8 +490,10 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
     std::unique_ptr<MotionCommand> directCommand =
         std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
+    AngleFunction angleFunction = angleFunctionForCommandType(FacePointCommand(facePos));
     auto request =
         PlanRequest(planRequest.context, startInstant, std::move(directCommand),
+                    angleFunction,
                     planRequest.constraints, nullptr, planRequest.obstacles,
                     planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -503,9 +507,7 @@ std::unique_ptr<Path> SettlePathPlanner::dampen(const PlanRequest& planRequest,
         dampenEnd->setStartTime(newStartTime);
     }
 
-    return make_unique<AngleFunctionPath>(
-        std::move(dampenEnd),
-        angleFunctionForCommandType(FacePointCommand(facePos)));
+    return dampenEnd;
 }
 
 std::unique_ptr<Path> SettlePathPlanner::invalid(
@@ -516,35 +518,36 @@ std::unique_ptr<Path> SettlePathPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    MotionInstant target(planRequest.start);
+    MotionInstant target(planRequest.start.motion);
     target.vel = Point(0, 0);
 
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(target);
 
+    AngleFunction angleFunction = angleFunctionForCommandType(FacePointCommand(
+                                     planRequest.context->state.ball.pos));
     auto request = PlanRequest(
         planRequest.context, planRequest.start, std::move(rrtCommand),
+        angleFunction,
         planRequest.constraints, nullptr, planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
     auto path = rrtPlanner.run(request);
     path->setDebugText("Invalid state in settle");
 
-    return make_unique<AngleFunctionPath>(
-        std::move(path), angleFunctionForCommandType(FacePointCommand(
-                             planRequest.context->state.ball.pos)));
+    return path;
 }
 
 void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball,
-                                           const MotionInstant& startInstant,
+                                           const RobotInstant& startInstant,
                                            double& angle,
                                            Geometry2d::Point& deltaRobotPos,
                                            Geometry2d::Point& facePos) {
     // If we have a valid bounce target
     if (targetBounceDirection) {
         // Get angle between target and normal hit
-        Point normalFaceVector = ball.pos - startInstant.pos;
-        Point targetFaceVector = *targetBounceDirection - startInstant.pos;
+        Point normalFaceVector = ball.pos - startInstant.motion.pos;
+        Point targetFaceVector = *targetBounceDirection - startInstant.motion.pos;
 
         // Get the angle between the vectors
         angle = normalFaceVector.angleBetween(targetFaceVector);
@@ -563,11 +566,11 @@ void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball,
         if (targetFaceVector.angleBetween(positiveAngle) <
             targetFaceVector.angleBetween(negativeAngle)) {
             deltaRobotPos = negativeAngle;
-            facePos = startInstant.pos +
+            facePos = startInstant.motion.pos +
                       Point::direction(-angle + normalFaceVector.angle()) * 10;
         } else {
             deltaRobotPos = positiveAngle;
-            facePos = startInstant.pos +
+            facePos = startInstant.motion.pos +
                       Point::direction(angle + normalFaceVector.angle()) * 10;
         }
     } else {

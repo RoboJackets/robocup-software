@@ -49,14 +49,14 @@ private:
     // Calculate the delta position to get the robot in the correct location
     // And the face point to get the bounce right
     // If no targetBounceDirection is given, just get in front and face the ball
-    void calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant,
+    void calcDeltaPosForDir(const Ball& ball, const RobotInstant& startInstant,
                             double& angle, Geometry2d::Point& deltaRobotPos,
                             Geometry2d::Point& facePos);
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
     void checkSolutionValidity(const Ball& ball,
-                               const MotionInstant& startInstant,
+                               const RobotInstant& startInstant,
                                const Geometry2d::Point& deltaPos);
 
     // Figures out when to move to each state
@@ -66,20 +66,20 @@ private:
     //       when we are basically at the correct location and
     //       need to start the dampen
     void processStateTransition(const Ball& ball, Path* prevPath,
-                                MotionInstant& startInstant, const double angle,
+                                RobotInstant& startInstant, const double angle,
                                 const Geometry2d::Point& deltaPos);
 
     // State functions
     std::unique_ptr<Path> intercept(const PlanRequest& planRequest,
                                     const RJ::Time curTime,
-                                    const MotionInstant& startInstant,
+                                    const RobotInstant& startInstant,
                                     std::unique_ptr<Path> prevPath,
                                     const Geometry2d::ShapeSet& obstacles,
                                     const Geometry2d::Point& deltaPos,
                                     const Geometry2d::Point& facePos);
 
     std::unique_ptr<Path> dampen(const PlanRequest& planRequest,
-                                 MotionInstant& startInstant,
+                                 RobotInstant& startInstant,
                                  std::unique_ptr<Path> prevPath,
                                  const Geometry2d::Point& deltaPos,
                                  const Geometry2d::Point& facePos);

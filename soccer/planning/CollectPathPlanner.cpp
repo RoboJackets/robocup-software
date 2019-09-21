@@ -63,8 +63,8 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
         dynamic_cast<const CollectCommand&>(*planRequest.motionCommand);
 
     // Start state for specified robot
-    MotionInstant& startInstant = planRequest.start;
-    MotionInstant partialStartInstant = startInstant;
+    RobotInstant& startInstant = planRequest.start;
+    RobotInstant partialStartInstant = startInstant;
 
     // All the max velocity / acceleration constraints for translation /
     // rotation
@@ -117,7 +117,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
             partialPath = prevPath->subPath(
                 0ms, timeIntoPreviousPath + partialReplanLeadTime);
             partialPathTime = partialPath->getDuration() - timeIntoPreviousPath;
-            partialStartInstant = partialPath->end().motion;
+            partialStartInstant = partialPath->end();
         }
     }
 
@@ -134,7 +134,7 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
     // it
     if (ball.vel.mag() < *_ballSpeedApproachDirectionCutoff) {
         // Move directly to the ball
-        approachDirection = (ball.pos - startInstant.pos).norm();
+        approachDirection = (ball.pos - startInstant.motion.pos).norm();
     } else {
         // Approach the ball from behind
         approachDirection = averageBallVel.norm();
@@ -166,8 +166,8 @@ std::unique_ptr<Path> CollectPathPlanner::run(PlanRequest& planRequest) {
 }
 
 void CollectPathPlanner::checkSolutionValidity(
-    const Ball& ball, const MotionInstant& startInstant, const Path* prevPath) {
-    bool nearBall = (ball.pos - startInstant.pos).mag() <
+    const Ball& ball, const RobotInstant& startInstant, const Path* prevPath) {
+    bool nearBall = (ball.pos - startInstant.motion.pos).mag() <
                     *_distCutoffToApproach + *_distCutoffToControl;
 
     // Check if we need to go back into approach
@@ -181,12 +181,12 @@ void CollectPathPlanner::checkSolutionValidity(
 }
 
 void CollectPathPlanner::processStateTransition(
-    const Ball& ball, const MotionInstant& startInstant,
+    const Ball& ball, const RobotInstant& startInstant,
     const Path* const prevPath, const RJ::Seconds& timeIntoPreviousPath) {
     // Do the transitions
-    float dist = (startInstant.pos - ball.pos).mag() - Robot_MouthRadius;
+    float dist = (startInstant.motion.pos - ball.pos).mag() - Robot_MouthRadius;
     float speedDiff =
-        (startInstant.vel - averageBallVel).mag() - *_touchDeltaSpeed;
+        (startInstant.motion.vel - averageBallVel).mag() - *_touchDeltaSpeed;
 
     // If we are in range to the slow dist
     if (dist < *_approachDistTarget + Robot_MouthRadius &&
@@ -204,7 +204,7 @@ void CollectPathPlanner::processStateTransition(
 }
 
 std::unique_ptr<Path> CollectPathPlanner::courseApproach(
-    const PlanRequest& planRequest, const MotionInstant& startInstant,
+    const PlanRequest& planRequest, const RobotInstant& startInstant,
     std::unique_ptr<Path> prevPath) {
     const Ball& ball = planRequest.context->state.ball;
 
@@ -242,6 +242,7 @@ std::unique_ptr<Path> CollectPathPlanner::courseApproach(
 
     auto request = PlanRequest(
         planRequest.context, startInstant, std::move(rrtCommand),
+        angleFunctionForCommandType(FacePointCommand(ball.pos)),
         planRequest.constraints, std::move(prevPath), planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
@@ -250,13 +251,11 @@ std::unique_ptr<Path> CollectPathPlanner::courseApproach(
     // Build a path from now to the slow point
     coursePath->setDebugText("course");
 
-    return make_unique<AngleFunctionPath>(
-        move(coursePath),
-        angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    return coursePath;
 }
 
 std::unique_ptr<Path> CollectPathPlanner::fineApproach(
-    const PlanRequest& planRequest, const MotionInstant& startInstant,
+    const PlanRequest& planRequest, const RobotInstant& startInstant,
     std::unique_ptr<Path> prevPath) {
     const Ball& ball = planRequest.context->state.ball;
     RobotConstraints robotConstraintsHit = planRequest.constraints;
@@ -295,18 +294,18 @@ std::unique_ptr<Path> CollectPathPlanner::fineApproach(
 
     auto request = PlanRequest(
         planRequest.context, startInstant, std::move(directCommand),
+        angleFunctionForCommandType(FacePointCommand(ball.pos)),
         robotConstraintsHit, std::move(prevPath), planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
 
     unique_ptr<Path> pathHit = directPlanner.run(request);
     pathHit->setDebugText("fine");
 
-    return make_unique<AngleFunctionPath>(
-        move(pathHit), angleFunctionForCommandType(FacePointCommand(ball.pos)));
+    return pathHit;
 }
 
 std::unique_ptr<Path> CollectPathPlanner::control(
-    const PlanRequest& planRequest, const MotionInstant& startInstant,
+    const PlanRequest& planRequest, const RobotInstant& startInstant,
     std::unique_ptr<Path> prevPath, std::unique_ptr<Path> partialPath,
     const ShapeSet& obstacles) {
     const Ball& ball = planRequest.context->state.ball;
@@ -335,7 +334,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(
     float velocityScale = *_velocityControlScale;
 
     // Moving at us
-    if (averageBallVel.angleBetween((ball.pos - startInstant.pos)) > 3.14 / 2) {
+    if (averageBallVel.angleBetween((ball.pos - startInstant.motion.pos)) > 3.14 / 2) {
         currentSpeed = *_touchDeltaSpeed;
         velocityScale = 0;
     }
@@ -362,22 +361,30 @@ std::unique_ptr<Path> CollectPathPlanner::control(
     double distFromBall = *_stopDistScale * stoppingDist;
     MotionInstant target;
     target.pos =
-        startInstant.pos +
-        distFromBall * (ball.pos - startInstant.pos +
+        startInstant.motion.pos +
+        distFromBall * (ball.pos - startInstant.motion.pos +
                         velocityScale * averageBallVel * nonZeroVelTimeDelta)
                            .norm();
     target.vel = Point(0, 0);
 
+    // Make sure that when the path ends, we don't end up spinning around
+    // because we hit go past the ball position at the time of path creation
+    Point facePt = startInstant.motion.pos +
+                   10 * (target.pos - startInstant.motion.pos)
+                           .norm();
+
+    AngleFunction angleFunction = angleFunctionForCommandType(FacePointCommand(facePt));
+
     // Try to use the RRTPlanner to generate the path first
     // It reaches the target better for some reason
-    vector<Point> startEndPoints{startInstant.pos, target.pos};
+    vector<Point> startEndPoints{startInstant.motion.pos, target.pos};
     unique_ptr<Path> path =
         RRTPlanner::generatePath(startEndPoints, obstacles, motionConstraints,
-                                 startInstant.vel, target.vel);
+                                 startInstant.pose(), startInstant.twist(), target.vel, angleFunction);
 
     planRequest.context->debug_drawer.drawLine(
-        Segment(startInstant.pos,
-                startInstant.pos + (target.pos - startInstant.pos) * 10),
+        Segment(startInstant.motion.pos,
+                startInstant.motion.pos + (target.pos - startInstant.motion.pos) * 10),
         QColor(255, 255, 255), "Control");
 
     // Try to use the plan request if the above fails
@@ -387,7 +394,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(
             std::make_unique<PathTargetCommand>(target);
 
         auto request = PlanRequest(
-            planRequest.context, startInstant, std::move(rrtCommand),
+            planRequest.context, startInstant, std::move(rrtCommand), angleFunction,
             robotConstraints, nullptr, obstacles, planRequest.dynamicObstacles,
             planRequest.shellID);
         path = rrtPlanner.run(request);
@@ -400,15 +407,7 @@ std::unique_ptr<Path> CollectPathPlanner::control(
 
     path->setDebugText("stopping");
 
-    // Make sure that when the path ends, we don't end up spinning around
-    // because we hit go past the ball position at the time of path creation
-    Point facePt = startInstant.pos +
-                   10 * (target.pos - startInstant.pos)
-                            .norm();  // startInstant.pos + 10 * (ball.pos -
-                                      // startInstant.pos).norm();
-
-    return make_unique<AngleFunctionPath>(
-        std::move(path), angleFunctionForCommandType(FacePointCommand(facePt)));
+    return path;
 }
 
 std::unique_ptr<Path> CollectPathPlanner::invalid(
@@ -419,22 +418,23 @@ std::unique_ptr<Path> CollectPathPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    MotionInstant target(planRequest.start);
+    MotionInstant target(planRequest.start.motion);
     target.vel = Point(0, 0);
 
     std::unique_ptr<MotionCommand> rrtCommand =
         std::make_unique<PathTargetCommand>(target);
 
+    AngleFunction angleFunction = angleFunctionForCommandType(
+            FacePointCommand(planRequest.context->state.ball.pos));
     auto request = PlanRequest(
         planRequest.context, planRequest.start, std::move(rrtCommand),
+        angleFunction,
         planRequest.constraints, nullptr, planRequest.obstacles,
         planRequest.dynamicObstacles, planRequest.shellID);
     auto path = rrtPlanner.run(request);
     path->setDebugText("Invalid state in collect");
 
-    return make_unique<AngleFunctionPath>(
-        std::move(path), angleFunctionForCommandType(FacePointCommand(
-                             planRequest.context->state.ball.pos)));
+    return path;
 }
 
 template <typename T>

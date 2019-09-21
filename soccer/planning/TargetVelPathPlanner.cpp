@@ -96,14 +96,14 @@ bool TargetVelPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
 // TODO(justbuchanan): Paths aren't dynamically feasible sometimes because it
 // doesn't account for initial velocity
 std::unique_ptr<Path> TargetVelPathPlanner::run(PlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.start;
+    const RobotInstant& startInstant = planRequest.start;
     const MotionCommand& cmd = *planRequest.motionCommand;
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // If the start point is in an obstacle, escape from it
-    if (obstacles.hit(startInstant.pos)) {
+    if (obstacles.hit(startInstant.motion.pos)) {
         EscapeObstaclesPathPlanner escapePlanner;
         EmptyCommand emptyCommand;
         return escapePlanner.run(planRequest);
@@ -115,14 +115,14 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(PlanRequest& planRequest) {
     if (shouldReplan(planRequest)) {
         // Choose the furthest endpoint we can that doesn't hit obstacles
         Point endpoint = calculateNonblockedPathEndpoint(
-            startInstant.pos, command.worldVel, obstacles);
+            startInstant.motion.pos, command.worldVel, obstacles);
         MotionConstraints moddedConstraints = motionConstraints;
         moddedConstraints.maxSpeed = command.worldVel.mag();
 
         // Make a path from the start point in the direction of the target vel
         // that ends at the calculated endpoint
         auto path = std::unique_ptr<Path>(
-            new TrapezoidalPath(startInstant.pos, startInstant.vel.mag(),
+            new TrapezoidalPath(startInstant.motion.pos, startInstant.motion.vel.mag(),
                                 endpoint, 0, moddedConstraints));
         path->setStartTime(RJ::now());
         return std::move(path);

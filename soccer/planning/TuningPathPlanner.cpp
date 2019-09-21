@@ -4,7 +4,7 @@
 namespace Planning {
 
 std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.start;
+    const MotionInstant& startInstant = planRequest.start.motion;
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;

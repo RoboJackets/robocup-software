@@ -33,7 +33,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
             staticRequests.push_back(shell);
         }
         staticRobotObstacles[shell] = std::make_shared<Geometry2d::Circle>(
-            request.start.pos, Robot_Radius);
+            request.start.motion.pos, Robot_Radius);
     }
 
     // Sorts descending so that higher priorities are first
@@ -74,7 +74,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
 
         std::unique_ptr<Path> path = _planners[shell]->run(request);
         if (!path) {
-            path = Planning::InterpolatedPath::emptyPath(request.start.pos);
+            path = Planning::InterpolatedPath::emptyPath(request.start.motion.pos);
             debugLog("path was null!! " + to_string(shell) + ":" +
                      to_string(request.motionCommand->getCommandType()));
         }
@@ -82,7 +82,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
 
         // Add our generated path to our list of our Robot Obstacles
         ourRobotsObstacles.push_back(DynamicObstacle(
-            request.start.pos, Robot_Radius, paths[shell].get()));
+            request.start.motion.pos, Robot_Radius, paths[shell].get()));
     }
 
     return paths;

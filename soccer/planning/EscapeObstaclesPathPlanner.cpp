@@ -26,7 +26,7 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 
 std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     PlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.start;
+    const RobotInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
@@ -34,7 +34,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     std::optional<Point> optPrevPt;
     if (prevPath) optPrevPt = prevPath->end().motion.pos;
     const Point unblocked = findNonBlockedGoal(
-        startInstant.pos, optPrevPt, obstacles, 300,
+        startInstant.motion.pos, optPrevPt, obstacles, 300,
         [&](const RRT::Tree<Point>& rrt) {
             if (*RRTConfig::EnableRRTDebugDrawing) {
                 DrawRRT(rrt, &planRequest.context->debug_drawer,
@@ -53,7 +53,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     // findNonBlockedGoal() so it takes initial velocity into account
 
     auto path = std::unique_ptr<Path>(
-        new TrapezoidalPath(startInstant.pos, motionConstraints.maxSpeed,
+        new TrapezoidalPath(startInstant.motion.pos, motionConstraints.maxSpeed,
                             unblocked, 0, motionConstraints));
     path->setStartTime(RJ::now());
     return std::move(path);

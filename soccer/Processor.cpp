@@ -491,12 +491,17 @@ void Processor::run() {
                 std::vector<Planning::DynamicObstacle> dynamicObstacles =
                     r->collectDynamicObstacles();
 
+                auto angleFunction = angleFunctionForCommandType(r->rotationCommand());
+                assert(angleFunction);
+
                 requests.emplace(
                     r->shell(),
                     Planning::PlanRequest(
-                        &_context, Planning::MotionInstant(r->pos, r->vel),
-                        r->motionCommand()->clone(), r->robotConstraints(),
-                        std::move(r->angleFunctionPath.path),
+                        &_context, Planning::RobotInstant(Pose(r->pos, r->angle), Twist(r->vel, r->angleVel)),
+                        r->motionCommand()->clone(),
+                        angleFunction,
+                        r->robotConstraints(),
+                        std::move(r->_path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
                         r->shell(), r->getPlanningPriority()));
             }
@@ -510,9 +515,6 @@ void Processor::run() {
             path->draw(&_context.debug_drawer, Qt::magenta, "Planning");
             path->drawDebugText(&_context.debug_drawer);
             r->setPath(std::move(path));
-
-            r->angleFunctionPath.angleFunction =
-                angleFunctionForCommandType(r->rotationCommand());
         }
 
         // Visualize obstacles

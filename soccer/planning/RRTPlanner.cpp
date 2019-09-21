@@ -108,7 +108,7 @@ bool RRTPlanner::shouldReplan(const PlanRequest& planRequest,
 const int maxContinue = 10;
 
 std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
-    const MotionInstant& start = planRequest.start;
+    const RobotInstant& start = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
@@ -126,10 +126,10 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
     splitDynamic(obstacles, actualDynamic, dynamicObstacles);
 
     // Simple case: no path
-    if (start.pos == goal.pos) {
+    if (start.motion.pos == goal.pos) {
         auto path = make_unique<InterpolatedPath>();
         path->setStartTime(RJ::now());
-        path->waypoints.emplace_back(MotionInstant(start.pos, Point()),
+        path->waypoints.emplace_back(MotionInstant(start.motion.pos, Point()),
                                      RJ::Seconds::zero());
         path->setDebugText("Invalid Basic Path");
         return std::move(path);
@@ -149,7 +149,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 
     ReplanState replanState = Reuse;
 
-    if (!prevPath || veeredOffPath(start.pos, *prevPath, motionConstraints)) {
+    if (!prevPath || veeredOffPath(start.motion.pos, *prevPath, motionConstraints)) {
         replanState = FullReplan;
     }
 
@@ -202,7 +202,7 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         std::optional<vector<Point>> biasWaypoints;
         if (replanState == PartialReplan) {
             biasWaypoints = vector<Point>();
-            biasWaypoints->push_back(start.pos + start.vel * 0.2);
+            biasWaypoints->push_back(start.motion.pos + start.motion.vel * 0.2);
             // if (auto point = prevPath->evaluate(300ms)) {
             //     biasWaypoints->push_back(point->motion.pos);
             // }
@@ -221,8 +221,8 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
         }
 
         auto newSubPath = generateRRTPath(
-            newStart.motion, goal, motionConstraints, obstacles, actualDynamic,
-            planRequest.context, planRequest.shellID, biasWaypoints);
+            newStart, goal, motionConstraints, obstacles, actualDynamic,
+            planRequest.context, planRequest.angleFunction, planRequest.shellID, biasWaypoints);
         if (newSubPath) {
             path = make_unique<CompositePath>(std::move(subPath),
                                               std::move(newSubPath));
@@ -257,12 +257,12 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
     } else if (replanState == FullReplan) {
         path = generateRRTPath(start, goal, motionConstraints, obstacles,
                                actualDynamic, planRequest.context,
-                               planRequest.shellID);
+                               planRequest.angleFunction, planRequest.shellID);
         if (path) {
             path->setDebugText(
                 QString::fromStdString("FullReplan." + debugOut));
         } else {
-            path = InterpolatedPath::emptyPath(start.pos);
+            path = InterpolatedPath::emptyPath(start.motion.pos);
         }
         return path;
     } else {
@@ -281,21 +281,22 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
             }
         }(replanState);
         debugThrow("Logic Error. Rip. State:" + type);
-        return InterpolatedPath::emptyPath(start.pos);
+        return InterpolatedPath::emptyPath(start.motion.pos);
     }
 }
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
-    const MotionInstant& start, const MotionInstant& goal,
+    const RobotInstant& start, const MotionInstant& goal,
     const MotionConstraints& motionConstraints, ShapeSet& origional,
     const std::vector<DynamicObstacle> dyObs, Context* context,
+    const AngleFunction& angleFunction,
     unsigned shellID, const optional<vector<Point>>& biasWayPoints) {
     const int tries = 10;
     ShapeSet obstacles = origional;
     unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
-        auto points = runRRT(start, goal, motionConstraints, obstacles, context,
+        auto points = runRRT(start.motion, goal, motionConstraints, obstacles, context,
                              shellID, biasWayPoints);
 
         // Check if Planning or optimization failed
@@ -305,8 +306,8 @@ std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
         }
 
         // Generate and return a cubic bezier path using the waypoints
-        auto path = generateCubicBezier(points, obstacles, motionConstraints,
-                                        start.vel, goal.vel);
+        auto path = generateCubicBezier(points, obstacles, motionConstraints, start.pose(), start.twist(),
+                                        goal.vel, angleFunction);
 
         if (!path) {
             // debugLog("RRT Vel Planning Failed");
@@ -422,8 +423,8 @@ double getTime(InterpolatedPath& path, int index,
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generatePath(
     const std::vector<Point>& points, const ShapeSet& obstacles,
-    const MotionConstraints& motionConstraints, Point vi, Point vf) {
-    return generateCubicBezier(points, obstacles, motionConstraints, vi, vf);
+    const MotionConstraints& motionConstraints, Pose p0, Twist v0, Point vf, const AngleFunction& angleFunction) {
+    return generateCubicBezier(points, obstacles, motionConstraints, p0, v0, vf, angleFunction);
 }
 
 vector<CubicBezierControlPoints> RRTPlanner::generateNormalCubicBezierPath(
@@ -573,10 +574,11 @@ double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,
  * Generates a Cubic Bezier Path based on Albert's random Bezier Velocity Path
  * Algorithm
  */
-std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
-    const std::vector<CubicBezierControlPoints>& controlPoints,
-    const MotionConstraints& motionConstraints, Point vi, Point vf,
-    int interpolations) {
+std::vector<InterpolatedPath::Entry>
+RRTPlanner::generateVelocityPath(const std::vector<CubicBezierControlPoints> &controlPoints,
+                                 const MotionConstraints &motionConstraints,
+                                 const Pose &pose0, const Twist &v0, Point vf,
+                                 const AngleFunction &angleFunction, int interpolations) {
     // Interpolate Through Bezier Path
     vector<Point> newPoints, newPoints1stDerivative, newPoints2ndDerivative;
     vector<double> newPointsCurvature, newPointsDistance, newPointsSpeed;
@@ -674,7 +676,7 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
 
     newPointsDistance.push_back(totalDistance);
 
-    newPointsSpeed[0] = vi.mag();
+    newPointsSpeed[0] = v0.linear().mag();
     newPointsSpeed.push_back(vf.mag());
 
     // Velocity Profile Generation
@@ -712,26 +714,71 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
     RJ::Seconds totalTime(0);
     vector<InterpolatedPath::Entry> entries;
 
-    for (int i = 0; i < size; i++) {
+    // Treat the angle as a mass-spring damper system, with a guiding force acting towards the goal angle.
+    // This basically simulates rolling out a PID controller forwards in time.
+    double angle = pose0.heading();
+    double angleVel = v0.angular();
+
+    // Calculate the first point separately
+    if (size > 0) {
+        double currentSpeed = newPointsSpeed[0];
+
+        Point point = newPoints[0];
+        Point vel = newPoints1stDerivative[0].normalized();
+
+        MotionInstant instant(point, vel * currentSpeed);
+
+        entries.emplace_back(
+                Geometry2d::Pose(point, angle),
+                Geometry2d::Twist(vel * currentSpeed, angleVel * currentSpeed),
+                totalTime);
+    }
+
+    // Then the rest of the points, starting at 1.
+    for (int i = 1; i < size; i++) {
         double currentSpeed = newPointsSpeed[i];
-        if (i != 0) {
-            auto distance = newPointsDistance[i] - newPointsDistance[i - 1];
-            double averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
-            auto deltaT = RJ::Seconds(distance / averageSpeed);
-            totalTime += deltaT;
-        }
+
+        // We know we have point [i-1] because i >= 1
+        auto distance = newPointsDistance[i] - newPointsDistance[i - 1];
+        double averageSpeed = (currentSpeed + newPointsSpeed[i - 1]) / 2.0;
+        auto deltaT = RJ::Seconds(distance / averageSpeed);
+        totalTime += deltaT;
 
         Point point = newPoints[i];
         Point vel = newPoints1stDerivative[i].normalized();
-        entries.emplace_back(MotionInstant(point, vel * currentSpeed),
-                             totalTime);
+
+        // Mass-spring-damper constants
+        constexpr double kAngleMass = 1.0;
+        constexpr double kAngleSpringConstant = 10.0;
+        constexpr double kAngleDamping = 2.0;
+
+        MotionInstant instant(point, vel * currentSpeed);
+
+        double desiredAngle = angle;
+
+        // If we get a value from the angle function, use that.
+        std::optional<double> maybe_angle = angleFunction(instant);
+        if (maybe_angle) {
+            desiredAngle = *maybe_angle;
+        }
+
+        double force = kAngleSpringConstant * (desiredAngle - angle) - kAngleDamping * angleVel;
+
+        angle += deltaT.count() * angleVel;
+        angleVel += force / kAngleMass * deltaT.count();
+
+        entries.emplace_back(
+                Geometry2d::Pose(point, desiredAngle),
+                Geometry2d::Twist(vel * currentSpeed, 0),
+                totalTime);
     }
     return entries;
 }
 
-std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
-    const std::vector<Point>& points, const ShapeSet& obstacles,
-    const MotionConstraints& motionConstraints, Point vi, Point vf) {
+std::unique_ptr<InterpolatedPath>
+RRTPlanner::generateCubicBezier(const std::vector<Point> &points, const ShapeSet &obstacles,
+                                const MotionConstraints &motionConstraints, Pose p0, Twist v0, Point vf,
+                                const AngleFunction& angleFunction) {
     const int interpolations = 40;
 
     size_t length = points.size();
@@ -745,14 +792,14 @@ std::unique_ptr<Planning::InterpolatedPath> RRTPlanner::generateCubicBezier(
     //        generateNormalCubicBezierPath(points, motionConstraints, vi, vf);
 
     vector<CubicBezierControlPoints> controlPoints =
-        generateCubicBezierPath(points, motionConstraints, vi, vf);
+        generateCubicBezierPath(points, motionConstraints, v0.linear(), vf);
 
     if (controlPoints.empty()) {
         return nullptr;
     }
 
     vector<InterpolatedPath::Entry> entries = generateVelocityPath(
-        controlPoints, motionConstraints, vi, vf, interpolations);
+            controlPoints, motionConstraints, p0, v0, vf, angleFunction, interpolations);
 
     std::unique_ptr<InterpolatedPath> path = make_unique<InterpolatedPath>();
     path->waypoints = entries;

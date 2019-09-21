@@ -10,7 +10,7 @@ double vectorInDirection(Point point, Point direction) {
 }
 
 std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
-    const MotionInstant& startInstant = planRequest.start;
+    const RobotInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
@@ -21,11 +21,11 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
 
     if (shouldReplan(planRequest)) {
         Geometry2d::Point endTarget = command.pathGoal.pos;
-        const auto direction = (endTarget - startInstant.pos).normalized();
+        const auto direction = (endTarget - startInstant.motion.pos).normalized();
 
         float endSpeed = command.pathGoal.vel.mag();
         auto path = std::make_unique<TrapezoidalPath>(
-            startInstant.pos, vectorInDirection(startInstant.vel, direction),
+            startInstant.motion.pos, vectorInDirection(startInstant.motion.vel, direction),
             endTarget, vectorInDirection(command.pathGoal.vel, direction),
             motionConstraints);
         path->setStartTime(RJ::now());

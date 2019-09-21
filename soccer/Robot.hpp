@@ -188,7 +188,7 @@ public:
      */
     const Planning::Path& path() {
         // return *angleFunctionPath.path;
-        return angleFunctionPath;
+        return *_path;
     }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
@@ -501,7 +501,7 @@ protected:
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RobotConstraints _robotConstraints;
 
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
+    std::unique_ptr<Planning::Path> _path;
 
     bool _joystickControlled = false;
 
