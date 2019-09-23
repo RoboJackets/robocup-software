@@ -82,7 +82,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     QMetaObject::connectSlotsByName(this);
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(&_context);
+    _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
@@ -191,7 +191,10 @@ void Processor::blueTeam(bool value) {
     if (_blueTeam != value) {
         _blueTeam = value;
         if (_radio) _radio->switchTeam(_blueTeam);
-        if (!externalReferee()) _refereeModule->blueTeam(value);
+
+        // Try to set the team in the referee module.
+        // Note: this will not update if we are being referee controlled.
+        _refereeModule->overrideTeam(value);
     }
 }
 
