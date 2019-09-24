@@ -82,7 +82,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     QMetaObject::connectSlotsByName(this);
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(&_context);
+    _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
@@ -106,6 +106,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         _logger.readFrames(readLogFile.c_str());
         firstLogTime = _logger.startTime();
     }
+
+    _modules.push_back(std::make_unique<MotionControlNode>(&_context));
 }
 
 Processor::~Processor() {
@@ -189,7 +191,10 @@ void Processor::blueTeam(bool value) {
     if (_blueTeam != value) {
         _blueTeam = value;
         if (_radio) _radio->switchTeam(_blueTeam);
-        if (!externalReferee()) _refereeModule->blueTeam(value);
+
+        // Try to set the team in the referee module.
+        // Note: this will not update if we are being referee controlled.
+        _refereeModule->overrideTeam(value);
     }
 }
 
@@ -519,16 +524,16 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
-        // Run velocity controllers
+        // TODO(Kyle, Collin): This is a horrible hack to get around the fact
+        // that joystick code only (sort of) supports one joystick at a time.
+        // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
-            if (robot->visible()) {
-                if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
-                    _context.game_state.halt()) {
-                    robot->motionControl()->stopped();
-                } else {
-                    robot->motionControl()->run();
-                }
-            }
+            robot->setJoystickControlled(robot->shell() == _manualID);
+        }
+
+        // Run all modules in sequence
+        for (auto& module : _modules) {
+            module->run();
         }
 
         ////////////////

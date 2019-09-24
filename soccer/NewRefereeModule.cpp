@@ -1,5 +1,7 @@
 #include "NewRefereeModule.hpp"
 
+#include <boost/algorithm/string/predicate.hpp>
+
 #include "Constants.hpp"
 
 #include <Network.hpp>
@@ -106,11 +108,12 @@ static const int KickVerifyTime_ms = 250;
 // the ref halts/stops, make this false
 static const bool CancelBallPlaceOnHalt = true;
 
-NewRefereeModule::NewRefereeModule(Context* const context)
+NewRefereeModule::NewRefereeModule(Context* const context, bool isBlue)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
       _running(false),
-      _context(context) {}
+      _context(context),
+      _blueTeam(isBlue) {}
 
 NewRefereeModule::~NewRefereeModule() { this->stop(); }
 
@@ -186,14 +189,32 @@ void NewRefereeModule::run() {
         ballPlacementx = packet->wrapper.designated_position().x();
         ballPlacementy = packet->wrapper.designated_position().y();
 
-        std::string yellow_name = yellow_info.name;
-        for (char& letter : yellow_name) {
-            letter = tolower(letter);
+        // If we have no name, we're using a default config and there's no
+        // sense trying to match the referee's output (because chances are
+        // everything is just on default configuration with no names, so more
+        // than one team/soccer instance will be trying to use the same color)
+        if (Team_Name_Lower.length() > 0) {
+            // We only want to change teams if we get something that actually
+            // matches our team name (either yellow or blue).
+            // Otherwise, keep the current color.
+            if (boost::iequals(yellow_info.name, Team_Name_Lower)) {
+                blueTeam(false);
+                _isRefControlled = true;
+            } else if (boost::iequals(blue_info.name, Team_Name_Lower)) {
+                blueTeam(true);
+                _isRefControlled = true;
+            } else {
+                _isRefControlled = false;
+            }
         }
 
-        blueTeam(yellow_name != Team_Name_Lower);
-
         _mutex.unlock();
+    }
+}
+
+void NewRefereeModule::overrideTeam(bool isBlue) {
+    if (!_isRefControlled) {
+        blueTeam(isBlue);
     }
 }
 

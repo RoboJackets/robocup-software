@@ -288,7 +288,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
                 _processor->context()->game_state.getGoalieId() + 1);
         }
 
-        bool blueTeam = _processor->refereeModule()->blueTeam();
+        bool blueTeam = _processor->refereeModule()->isBlueTeam();
         if (_processor->blueTeam() != blueTeam) {
             blueTeam ? _ui.actionTeamBlue->trigger()
                      : _ui.actionTeamYellow->trigger();
@@ -1127,7 +1127,7 @@ void MainWindow::on_actionStopRobots_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = cmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->blueTeam());
+            r->set_blue_team(!_processor->isBlueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());
@@ -1163,7 +1163,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = _quickLoadCmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->blueTeam());
+            r->set_blue_team(!_processor->isBlueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());

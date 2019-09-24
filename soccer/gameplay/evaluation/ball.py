@@ -3,7 +3,6 @@ import robocup
 import constants
 import math
 
-
 def is_moving_towards_our_goal():
     # see if the ball is moving much
     if main.ball().vel.mag() > 0.18:  # Tuned based on vision noise
@@ -30,6 +29,28 @@ def is_in_our_goalie_zone():
         return constants.Field.OurGoalZoneShape.contains_point(main.ball().pos)
     else:
         return False
+
+
+# TODO use for situation analysis
+def we_are_closer():
+    return min([(main.ball().pos - rob.pos).mag()
+                for rob in main.system_state().their_robots]) > min([
+                    (main.ball().pos - rob.pos).mag()
+                    for rob in main.system_state().our_robots
+                ])
+
+
+# TODO use for situation analysis
+def opponent_is_much_closer():
+    return min([(main.ball().pos - rob.pos).mag()
+                for rob in main.system_state().their_robots]) * 3 < min([
+                    (main.ball().pos - rob.pos).mag()
+                    for rob in main.system_state().our_robots
+                ])
+
+
+def moving_slow():
+    return main.ball().vel.mag() <= constants.Evaluation.SlowThreshold
 
 
 FrictionCoefficient = 0.04148
@@ -64,6 +85,25 @@ def opponent_with_ball():
         else:
             return None
 
+
+## If our robot has the ball, then returns that robot. Otherwise None
+#
+# @return Robot: a robot or None 
+def our_robot_with_ball():
+    closest_bot, closest_dist = None, float("inf")
+    for bot in main.our_robots():
+        if bot.visible:
+            dist = (bot.pos - main.ball().pos).mag()
+            if dist < closest_dist:
+                closest_bot, closest_dist = bot, dist
+
+    if closest_bot == None:
+        return None
+    else:
+        if robot_has_ball(closest_bot):
+            return closest_bot
+        else:
+            return None
 
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):

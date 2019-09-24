@@ -33,7 +33,6 @@
 
 class RobotConfig;
 class RobotStatus;
-class MotionControl;
 
 namespace Packet {
 class DebugText;
@@ -451,10 +450,6 @@ public:
 
     RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
 
-    MotionControl* motionControl() const { return _motionControl; }
-
-    SystemState* state() const { return &(_context->state); }
-
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
@@ -493,9 +488,10 @@ public:
 
     void setPID(double p, double i, double d);
 
-protected:
-    MotionControl* _motionControl;
+    void setJoystickControlled(bool joystickControlled);
+    bool isJoystickControlled() const;
 
+protected:
     /// set of obstacles added by plays
     Geometry2d::ShapeSet _local_obstacles;
 
@@ -508,6 +504,8 @@ protected:
     RobotConstraints _robotConstraints;
 
     Planning::AngleFunctionPath angleFunctionPath;  /// latest path
+
+    bool _joystickControlled = false;
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -567,8 +565,6 @@ protected:
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
-
-    friend class MotionControl;
 
 private:
     RJ::Time _lastBallSense;

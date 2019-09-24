@@ -66,15 +66,12 @@ OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
     //_lastKickTime = 0;
     _lastBallSense = RJ::Time();
 
-    _motionControl = new MotionControl(context, this);
-
     resetAvoidRobotRadii();
 
     _clearCmdText();
 }
 
 OurRobot::~OurRobot() {
-    if (_motionControl) delete _motionControl;
     delete _cmdText;
 }
 
@@ -638,3 +635,9 @@ void OurRobot::setPID(double p, double i, double d) {
     config->translation.i->setValueString(QString(std::to_string(i).c_str()));
     config->translation.d->setValueString(QString(std::to_string(d).c_str()));
 }
+
+void OurRobot::setJoystickControlled(bool joystickControlled) {
+    _joystickControlled = joystickControlled;
+}
+
+bool OurRobot::isJoystickControlled() const { return _joystickControlled; }
