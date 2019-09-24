@@ -22,6 +22,9 @@
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
 
+#include "manual/InputDeviceManager.hpp"
+#include "manual/InputDevice.hpp"
+
 class Configuration;
 class RobotStatus;
 class Radio;
@@ -149,6 +152,9 @@ public:
 
     bool isInitialized() const;
 
+    std::shared_ptr<InputDeviceManager> getInputDeviceManager() { return _inputDeviceManager; }
+
+
     ////////
 
     // Time of the first LogFrame
@@ -239,4 +245,5 @@ private:
     VisionChannel _visionChannel;
 
     bool _initialized;
-};
+}
+;

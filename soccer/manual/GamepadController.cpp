@@ -12,7 +12,7 @@ const float TRIGGER_CUTOFF = 0.9;
 }
 
 std::vector<int> GamepadController::controllersInUse = {};
-int GamepadController::joystickRemoved = -1;
+int GamepadController::deviceRemoved = -1;
 
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
@@ -72,7 +72,7 @@ void GamepadController::closeInputDevice() {
         }
         controllersInUse.erase(index);
     }
-    joystickRemoved = controllerId;
+    deviceRemoved = controllerId;
     controllerId = -1;
 
     robotId = -1;
@@ -94,18 +94,18 @@ void GamepadController::update() {
 
     if (connected) {
       // Check if dc
-      if (joystickRemoved >= 0 && controllerId > joystickRemoved) {
+      if (deviceRemoved >= 0 && controllerId > deviceRemoved) {
         controllerId -= 1;
       }
       if (!SDL_GameControllerGetAttached(_controller)) {
-        closeJoystick();
+        closeInputDevice();
         return;
       }
     } else {
       // Check if new controller found
       // TODO use the SDL event API to only run this if we receive a connected
       // event.
-      openJoystick();
+      openInputDevice();
       if (!connected) {
         return;
       }
@@ -230,7 +230,7 @@ void GamepadController::update() {
     _controls.translation = Geometry2d::Point(input.x(), input.y());
 }
 
-JoystickControlValues GamepadController::getJoystickControlValues() {
+InputDeviceControlValues GamepadController::getInputDeviceControlValues() {
     QMutexLocker(&mutex());
     return _controls;
 }

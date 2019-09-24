@@ -14,12 +14,12 @@ public:
 
     void reset() override;
     void update() override;
-    JoystickControlValues getJoystickControlValues() override;
+    InputDeviceControlValues getInputDeviceControlValues() override;
 
     bool valid() const override;
 
     static std::vector<int> controllersInUse;
-    static int joystickRemoved;
+    static int deviceRemoved;
 
 private:
     SDL_GameController* _controller;

@@ -121,7 +121,7 @@ void GamepadJoystick::update() {
     _controls.rotation = -rightX;
 }
 
-JoystickControlValues GamepadJoystick::getJoystickControlValues() {
+InputDeviceControlValues GamepadJoystick::getInputDeviceControlValues() {
     QMutexLocker(&mutex());
     return _controls;
 }

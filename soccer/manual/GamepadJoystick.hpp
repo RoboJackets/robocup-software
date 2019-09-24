@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Joystick.hpp"
+#include "InputDevice.hpp"
 
 #include <SDL.h>
 
@@ -11,21 +11,22 @@
  *
  * This has been replaced by GamepadController
  */
-class GamepadJoystick : public Joystick {
+class GamepadJoystick : public InputDevice {
 public:
     GamepadJoystick();
     ~GamepadJoystick();
 
+
     void reset() override;
     void update() override;
-    JoystickControlValues getJoystickControlValues() override;
+    InputDeviceControlValues getInputDeviceControlValues() override;
 
     bool valid() const override;
 
 private:
     SDL_Joystick* _joystick;
 
-    JoystickControlValues _controls;
+    InputDeviceControlValues _controls;
 
     RJ::Time _lastDribblerTime;
     RJ::Time _lastKickerTime;

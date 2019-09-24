@@ -1,11 +1,10 @@
+#include <manual/InputDeviceManager.hpp>
 #include <manual/GamepadController.hpp>
 #include <manual/GamepadJoystick.hpp>
-#include <manual/InputDevice.hpp>
 #include <manual/SpaceNavJoystick.hpp>
 
 InputDeviceManager::InputDeviceManager() {
   setupInputDevices();
-
 }
 
 void InputDeviceManager::setupInputDevices() {
@@ -35,9 +34,9 @@ void InputDeviceManager::setupInputDevices() {
 
 
   // TODO robots per team seems hard coded
-  // for (int i = 0; i < Robots_Per_Team; i++) {
-  //   _joysticks.push_back(new GamepadController());
-  // }
+  for (int i = 0; i < Robots_Per_Team; i++) {
+    _inputDevices.push_back(new GamepadController());
+  }
 
   //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
   // isValid() is working properly
@@ -56,51 +55,35 @@ void InputDeviceManager::update() {
   // if (SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))
   // send the event to the to the controllers update function
 
-  if (connected) {
-    // Check if dc
-    if (joystickRemoved >= 0 && controllerId > joystickRemoved) {
-      controllerId -= 1;
-    }
-    if (!SDL_GameControllerGetAttached(_controller)) {
-      closeJoystick();
-      return;
-    }
-  } else {
-    // Check if new controller found
-    // TODO use the SDL event API to only run this if we receive a connected
-    // event.
-    openJoystick();
-    if (!connected) {
-      return;
-    }
-  }
 
 
   for (InputDevice* inputDevice : _inputDevices) {
     inputDevice->update();
   }
-  //TODO get rid of this
-  GamepadController::joystickRemoved = -1;
+}
+
+bool InputDeviceManager::joystickValid() const {
+    for (InputDevice* dev : _inputDevices) {
+        if (dev->valid()) return true;
+    }
+    return false;
 }
 
 void InputDeviceManager::manualID(int value) {
   QMutexLocker locker(&_loopMutex);
   _manualID = value;
 
-  for (Joystick* joy : _joysticks) {
-    joy->reset();
+  for (InputDevice* dev : _inputDevices) {
+    dev->reset();
   }
 }
 
 
-void InputDeviceManager::multipleManual(bool value) { _multipleManual = value; }
-
-
-vector<int> InputDeviceManager::getJoystickRobotIds() {
+vector<int> InputDeviceManager::getInputDeviceRobotIds() {
   vector<int> robotIds;
-  for (Joystick* joy : _joysticks) {
-    if (joy->valid()) {
-      robotIds.push_back(joy->getRobotId());
+  for (InputDevice* dev : _inputDevices) {
+    if (dev->valid()) {
+      robotIds.push_back(dev->getRobotId());
     } else {
       robotIds.push_back(-2);
     }
@@ -108,20 +91,20 @@ vector<int> InputDeviceManager::getJoystickRobotIds() {
   return robotIds;
 }
 
-std::vector<JoystickControlValues> InputDeviceManager::getJoystickControlValues() {
-  std::vector<JoystickControlValues> vals;
-  for (Joystick* joy : _joysticks) {
-    if (joy->valid()) {
-      vals.push_back(getJoystickControlValue(*joy));
+std::vector<InputDeviceControlValues> InputDeviceManager::getInputDeviceControlValues() {
+  std::vector<InputDeviceControlValues> vals;
+  for (InputDevice* dev : _inputDevices) {
+    if (dev->valid()) {
+      vals.push_back(getInputDeviceControlValue(*joy));
     }
   }
   return vals;
 }
 
 
-JoystickControlValues InputDeviceManager::getJoystickControlValue(Joystick& joy) {
-    JoystickControlValues vals = joy.getJoystickControlValues();
-    if (joy.valid()) {
+InputDeviceControlValues InputDeviceManager::getInputDeviceControlValue(InputDevice& dev) {
+    InputDeviceControlValues vals = dev.getInputDeviceControlValues();
+    if (dev.valid()) {
         // keep it in range
         vals.translation.clamp(sqrt(2.0));
         if (vals.rotation > 1) vals.rotation = 1;
@@ -132,14 +115,14 @@ JoystickControlValues InputDeviceManager::getJoystickControlValue(Joystick& joy)
         // state
         if (_dampedTranslation) {
             vals.translation *=
-                Joystick::JoystickTranslationMaxDampedSpeed->value();
+                InputDevice::InputDeviceTranslationMaxDampedSpeed->value();
         } else {
-            vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
+            vals.translation *= InputDevice::InputDeviceTranslationMaxSpeed->value();
         }
         if (_dampedRotation) {
-            vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+            vals.rotation *= InputDevice::InputDeviceRotationMaxDampedSpeed->value();
         } else {
-            vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+            vals.rotation *= InputDevice::InputDeviceRotationMaxSpeed->value();
         }
 
         // scale up kicker and dribbler speeds
@@ -150,11 +133,10 @@ JoystickControlValues InputDeviceManager::getJoystickControlValue(Joystick& joy)
 }
 
 
-
 // TODO Remove joystick controlVals from pass and use in header
-void InputDeviceManager::applyJoystickControls(OurRobot* robot, Packet::Control* tx) {
+void InputDeviceManager::applyInputDeviceControls(OurRobot* r, Packet::Control* tx) {
 
-
+    std::vector<int> manualIds = _inputDeviceManager->getInputDeviceRobotIds();
     // MANUAL STUFF
     if (_multipleManual) {
         auto info =
@@ -169,7 +151,7 @@ void InputDeviceManager::applyJoystickControls(OurRobot* robot, Packet::Control*
             for (int i = 0; i < manualIds.size(); i++) {
                 if (manualIds[i] == -1) {
                     index = i;
-                    _joysticks[i]->setRobotId(r->shell());
+                    _inputDevices[i]->setRobotId(r->shell());
                     manualIds[i] = r->shell();
                     break;
                 }
@@ -177,14 +159,14 @@ void InputDeviceManager::applyJoystickControls(OurRobot* robot, Packet::Control*
         }
 
         if (index < manualIds.size()) {
-            applyJoystickControls(
-                getJoystickControlValue(*_joysticks[index]),
+            applyInputDeviceControls(
+                getInputDeviceControlValue(*_inputDevices[index]),
                 txRobot->mutable_control(), r);
         }
     } else if (_manualID == r->shell()) {
-        auto controlValues = getJoystickControlValues();
+        auto controlValues = getInputDeviceControlValues();
         if (controlValues.size()) {
-            applyJoystickControls(controlValues[0],
+            applyInputDeviceControls(controlValues[0],
                                   txRobot->mutable_control(), r);
         }
     }

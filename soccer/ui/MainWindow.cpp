@@ -3,8 +3,9 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <joystick/GamepadController.hpp>
-#include <joystick/Joystick.hpp>
+#include <manual/InputDeviceManager.hpp>
+#include <manual/InputDevice.hpp>
+#include <manual/GamepadController.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
@@ -143,6 +144,8 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     styleGroup->addAction(_ui.actionDarculizedStyle);
     styleGroup->addAction(_ui.action1337h4x0rStyle);
     qActionGroups["styleGroup"] = styleGroup;
+
+    _inputDeviceManager = _processor->getInputDeviceManager();
 
     connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this,
             SLOT(on_manualID_currentIndexChanged(int)));
@@ -300,16 +303,16 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 }
 
 void MainWindow::updateViews() {
-    int manual = _processor->manualID();
+    int manual = _inputDeviceManager->manualID();
     if ((manual >= 0 || _ui.manualID->isEnabled()) &&
-        !_processor->joystickValid()) {
+        !_inputDeviceManager->joystickValid()) {
         // Joystick is gone - turn off manual control
         _ui.manualID->setCurrentIndex(0);
-        _processor->manualID(-1);
+        _inputDeviceManager->manualID(-1);
         _ui.manualID->setEnabled(false);
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
-    } else if (!_ui.manualID->isEnabled() && _processor->joystickValid()) {
+    } else if (!_ui.manualID->isEnabled() && _inputDeviceManager->joystickValid()) {
         // Joystick reconnected
         _ui.manualID->setEnabled(true);
         _ui.joystickTab->setVisible(true);
@@ -317,7 +320,7 @@ void MainWindow::updateViews() {
                                      true);
     }
 
-    if (_processor->multipleManual() && manual < 0) {
+    if (_inputDeviceManager->multipleManual() && manual < 0) {
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
     } else {
@@ -327,15 +330,15 @@ void MainWindow::updateViews() {
 
     if (manual >= 0) {
         int index = 0;
-        std::vector<int> manualIds = _processor->getJoystickRobotIds();
+        std::vector<int> manualIds = _inputDeviceManager->getInputDeviceRobotIds();
         auto info = std::find(manualIds.begin(), manualIds.end(), manual);
         if (info != manualIds.end()) {
             index = info - manualIds.begin();
         }
 
-        auto valList = _processor->getJoystickControlValues();
+        auto valList = _inputDeviceManager->getInputDeviceControlValues();
         if (valList.size() > index) {
-            JoystickControlValues vals = valList[index];
+            InputDeviceControlValues vals = valList[index];
             _ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x()));
             _ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y()));
             _ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
@@ -873,7 +876,7 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if (_processor->manualID() >= 0) {
+    if (_inputDeviceManager->manualID() >= 0) {
         // Mixed auto/manual control
         status("MANUAL", Status_Warning);
         return;
@@ -963,9 +966,9 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
 }
 
 void MainWindow::on_fieldView_robotSelected(int shell) {
-    if (_processor->joystickValid()) {
+    if (_inputDeviceManager->joystickValid()) {
         _ui.manualID->setCurrentIndex(shell + 1);
-        _processor->manualID(shell);
+        _inputDeviceManager->manualID(shell);
     }
 }
 
@@ -1266,7 +1269,7 @@ void MainWindow::on_actionSeed_triggered() {
 
 // Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
-    _processor->joystickKickOnBreakBeam(
+    _inputDeviceManager->kickOnBreakBeam(
         _ui.joystickKickOnBreakBeam->checkState());
 }
 
@@ -1336,16 +1339,16 @@ void MainWindow::on_actionTeamYellow_triggered() {
 }
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
-    _processor->manualID(value - 1);
+    _inputDeviceManager->manualID(value - 1);
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
-    _processor->setUseFieldOrientedManualDrive(value);
+    _inputDeviceManager->setUseFieldOrientedManualDrive(value);
 }
 
 void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
-    _processor->multipleManual(value);
-    _processor->setupJoysticks();
+    _inputDeviceManager->multipleManual(value);
+    _inputDeviceManager->setupInputDevices();
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {

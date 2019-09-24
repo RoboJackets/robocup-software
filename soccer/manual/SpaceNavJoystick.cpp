@@ -111,7 +111,7 @@ void SpaceNavJoystick::createConfiguration(Configuration* cfg) {
         cfg, "SpaceNavJoystick/Negative Dribbler Deadzone", -150);
 }
 
-JoystickControlValues SpaceNavJoystick::getJoystickControlValues() {
+InputDeviceControlValues SpaceNavJoystick::getInputDeviceControlValues() {
     return _controlValues;
 }
 
@@ -122,7 +122,7 @@ void SpaceNavJoystick::reset() {
     }
 
     //  reset commands
-    _controlValues = JoystickControlValues();
+    _controlValues = InputDeviceControlValues();
 }
 
 void SpaceNavJoystick::close() {

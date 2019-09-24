@@ -1,4 +1,3 @@
-
 #include "manual/InputDevice.hpp"
 
 REGISTER_CONFIGURABLE(InputDevice);

@@ -6,6 +6,7 @@
 
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
+#include <manual/InputDevice.hpp>
 
 using namespace std;
 
@@ -22,22 +23,20 @@ public:
   // input devices index represents robot id
   std::vector<InputDevice*> _inputDevices;
 
-
   // Board ID of the robot to manually control or -1 if none
   int _manualID;
   // Use multiple joysticks at once
   bool _multipleManual;
 
-
-  bool _kickOnBreakBeam = false;
-
   void setupInputDevices();
+
+  void update();
 
   bool joystickValid() const;
 
-  void KickOnBreakBeam(bool value);
+  void kickOnBreakBeam(bool value) { _kickOnBreakBeam = value; }
 
-  InputDeviceControlValues getInputDeviceControlValue(InputDevice& joy);
+  InputDeviceControlValues getInputDeviceControlValue(InputDevice& dev);
   std::vector<InputDeviceControlValues> getInputDeviceControlValues();
 
   void dampedRotation(bool value);
@@ -46,8 +45,8 @@ public:
   void manualID(int value);
   int manualID() const { return _manualID; }
 
-  void multipleManual(bool value);
   bool multipleManual() const { return _multipleManual; }
+  void multipleManual(bool value) { _multipleManual = value; }
 
   bool useFieldOrientedManualDrive() const {
     return _useFieldOrientedManualDrive;
@@ -55,6 +54,8 @@ public:
   void setUseFieldOrientedManualDrive(bool foc) {
     _useFieldOrientedManualDrive = foc;
   }
+
+  std::vector<int> getInputDeviceRobotIds();
 
 private:
   // joystick damping
@@ -66,7 +67,4 @@ private:
   // If true, rotates robot commands from the joystick based on its
   // orientation on the field
   bool _useFieldOrientedManualDrive = false;
-
-
-  std::vector<int> getInputDeviceRobotIds();
-}
+};

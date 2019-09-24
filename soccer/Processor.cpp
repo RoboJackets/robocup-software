@@ -354,7 +354,7 @@ void Processor::run() {
         }
 
         // TODO Joy stick updates
-        _inputManager->update();
+        _inputDeviceManager->update();
 
         runModels(detectionFrames);
         for (VisionPacket* packet : visionPackets) {
@@ -466,10 +466,11 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
+        // TODO Refactor manual ID stuff here
         // Run velocity controllers
         for (OurRobot* robot : _context.state.self) {
             if (robot->visible) {
-                if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
+                if ((_inputDeviceManager->_manualID >= 0 && (int)robot->shell() == _inputDeviceManager->_manualID) ||
                     _context.game_state.halt()) {
                     robot->motionControl()->stopped();
                 } else {
@@ -702,23 +703,20 @@ void Processor::sendRadioData() {
         }
     }
 
+    std::vector<int> manualIds = _inputDeviceManager->getInputDeviceRobotIds();
+    for (OurRobot* r : _context.state.self) {
+        if (r->visible || _inputDeviceManager->_manualID == r->shell() || _inputDeviceManager->_multipleManual) {
+            Packet::Robot* txRobot = tx->add_robots();
 
-    // TODO NEEDS TO BE REFACTORED OUT
-    std::vector<int> manualIds = getJoystickRobotIds();
-    if (r->visible || _manualID == r->shell() || _multipleManual) {
+            // Copy motor commands.
+            // Even if we are using the joystick, this sets robot_id and the
+            // number of motors.
+            txRobot->CopyFrom(r->robotPacket);
 
-      // Add RadioTx commands for visible robots and apply joystick input
-      for (OurRobot* r : _context.state.self) {
-        Packet::Robot* txRobot = tx->add_robots();
-
-        // Copy motor commands.
-        // Even if we are using the joystick, this sets robot_id and the
-        // number of motors.
-        txRobot->CopyFrom(r->robotPacket);
-
-        _manualManager->applyJoystickControls(r, txRobot);
-      }
+            _inputDeviceManager->applyInputDeviceControls(r, txRobot);
+        }
     }
+
 
     if (_radio) {
         _radio->send(*_context.state.logFrame->mutable_radio_tx());

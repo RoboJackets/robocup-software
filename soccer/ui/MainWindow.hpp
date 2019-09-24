@@ -245,6 +245,8 @@ private:
     QLabel* _procFPS;
     QLabel* _logMemory;
 
+    std::shared_ptr<InputDeviceManager> _inputDeviceManager;
+
     // QActionGroups for Radio Menu Actions
     std::map<std::string, QActionGroup*> qActionGroups{};
 
