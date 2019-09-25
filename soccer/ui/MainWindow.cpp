@@ -673,7 +673,7 @@ void MainWindow::updateViews() {
             statusWidget->setHasRadio(hasRadio);
 
             // vision status
-            bool hasVision = robot->visible;
+            bool hasVision = robot->visible();
             statusWidget->setHasVision(hasVision);
 
             // build a list of errors to display in the widget
