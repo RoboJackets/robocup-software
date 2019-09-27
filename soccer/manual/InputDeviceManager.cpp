@@ -151,7 +151,7 @@ void InputDeviceManager::applyInputDeviceControls(std::vector<OurRobot*>& robots
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getInputDeviceRobotIds();
     for (OurRobot* r : robots) {
-        if (r->visible || _manualID == r->shell() || _multipleManual) {
+        if (r->visible() || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
@@ -202,8 +202,8 @@ void InputDeviceManager::applyInputDeviceControls(const InputDeviceControlValues
 
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
-    if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-M_PI / 2 - robot->angle);
+    if (robot && robot->visible() && _useFieldOrientedManualDrive) {
+      translation.rotate(-M_PI / 2 - robot->angle());
     }
 
     // translation
