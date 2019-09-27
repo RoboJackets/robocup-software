@@ -291,7 +291,7 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
                 _processor->context()->game_state.getGoalieId() + 1);
         }
 
-        bool blueTeam = _processor->refereeModule()->blueTeam();
+        bool blueTeam = _processor->refereeModule()->isBlueTeam();
         if (_processor->blueTeam() != blueTeam) {
             blueTeam ? _ui.actionTeamBlue->trigger()
                      : _ui.actionTeamYellow->trigger();
@@ -365,6 +365,7 @@ void MainWindow::updateViews() {
         _procFPS->setText(
             QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
+        // TODO: Use constants here instead of magic numbers
         _logMemory->setText(
             QString("Log: %1/%2 %3 kiB")
                 .arg(QString::number(_processor->logger().size()),
@@ -430,6 +431,8 @@ void MainWindow::updateViews() {
 
     // Update status indicator
     updateStatus();
+
+    _processor->setPaused(!live());
 
     // Check if any debug layers have been added
     // (layers should never be removed)
@@ -673,7 +676,7 @@ void MainWindow::updateViews() {
             statusWidget->setHasRadio(hasRadio);
 
             // vision status
-            bool hasVision = robot->visible;
+            bool hasVision = robot->visible();
             statusWidget->setHasVision(hasVision);
 
             // build a list of errors to display in the widget
@@ -1127,7 +1130,7 @@ void MainWindow::on_actionStopRobots_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = cmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->blueTeam());
+            r->set_blue_team(!_processor->isBlueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());
@@ -1163,7 +1166,7 @@ void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
         if (robot->visible) {
             SimCommand::Robot* r = _quickLoadCmd.add_robots();
             r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->blueTeam());
+            r->set_blue_team(!_processor->isBlueTeam());
             Geometry2d::Point newPos =
                 _ui.fieldView->getTeamToWorld() * robot->pos;
             r->mutable_pos()->set_x(newPos.x());

@@ -90,17 +90,19 @@ std::string Point_repr(Geometry2d::Point* self) { return self->toString(); }
 
 std::string Robot_repr(Robot* self) { return self->toString(); }
 
-Geometry2d::Point Robot_pos(Robot* self) { return self->pos; }
+Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
 
 // Sets a robot's position - this should never be used in gameplay code, but
 // is useful for testing.
 void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
-    self->pos = pos;
+    self->mutable_state().pose.position() = pos;
 }
 
 // Sets a robot's visibility - this should never be used in gameplay code, but
 // is useful for testing.
-void Robot_set_vis_for_testing(Robot* self, bool vis) { self->visible = vis; }
+void Robot_set_vis_for_testing(Robot* self, bool vis) {
+    self->mutable_state().visible = vis;
+}
 
 // Sets a ball's position - this should never be used in gameplay code, but
 // is useful for testing.
@@ -108,11 +110,11 @@ void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) {
     self->pos = pos;
 }
 
-Geometry2d::Point Robot_vel(Robot* self) { return self->vel; }
+Geometry2d::Point Robot_vel(Robot* self) { return self->vel(); }
 
-float Robot_angle(Robot* self) { return self->angle; }
+float Robot_angle(Robot* self) { return self->angle(); }
 
-float Robot_angle_vel(Robot* self) { return self->angleVel; }
+float Robot_angle_vel(Robot* self) { return self->angleVel(); }
 
 void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
@@ -820,7 +822,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_overtime2", &GameState::isOvertime2)
         .def("is_penalty_shootout", &GameState::isPenaltyShootout);
 
-    class_<Robot>("Robot", init<int, bool>())
+    class_<Robot>("Robot", init<Context*, int, bool>())
         .def("shell_id", &Robot::shell)
         .def("is_ours", &Robot::self,
              "whether or not this robot is on our team")
@@ -837,7 +839,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("__eq__", &Robot::operator==);
 
     class_<OurRobot, OurRobot*, bases<Robot>, boost::noncopyable>(
-        "OurRobot", init<int, Context*>())
+        "OurRobot", init<Context*, int>())
         .def("move_to", &OurRobot_move_to)
         .def("move_to_end_vel", &OurRobot_move_to_end_vel)
         .def("move_to_direct", &OurRobot_move_to_direct)
@@ -888,7 +890,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_facing", &OurRobot::isFacing);
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
-           bases<Robot>>("OpponentRobot", init<int>());
+           bases<Robot>>("OpponentRobot", init<Context*, int>());
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def("set_pos_for_testing", &Ball_set_pos_for_testing)

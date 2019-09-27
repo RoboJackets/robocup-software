@@ -349,7 +349,7 @@ void Gameplay::GameplayModule::run() {
     /// Build a list of visible robots
     _playRobots.clear();
     for (OurRobot* r : _context->state.self) {
-        if (r->visible && r->rxIsFresh()) {
+        if (r->visible() && r->rxIsFresh()) {
             _playRobots.insert(r);
         }
     }
@@ -370,7 +370,7 @@ void Gameplay::GameplayModule::run() {
 
             vector<OpponentRobot*> theirBotVector;
             for (auto bot : _context->state.opp) {
-                if (bot && bot->visible) {
+                if (bot && bot->visible()) {
                     theirBotVector.push_back(bot);
                 }
             }

@@ -17,7 +17,9 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
+#include "Node.hpp"
 #include "VisionReceiver.hpp"
+#include "motion/MotionControlNode.hpp"
 
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -152,8 +154,9 @@ public:
 
     bool isInitialized() const;
 
-    std::shared_ptr<InputDeviceManager> getInputDeviceManager() { return _inputDeviceManager; }
+    void setPaused(bool paused) { _paused = paused; }
 
+    std::shared_ptr<InputDeviceManager> getInputDeviceManager() { return _inputDeviceManager; }
 
     ////////
 
@@ -240,6 +243,9 @@ private:
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
+    std::vector<std::unique_ptr<Node>> _modules;
+
+    // joystick control
     std::shared_ptr<InputDeviceManager> _inputDeviceManager;
 
     VisionReceiver vision;
@@ -247,5 +253,6 @@ private:
     VisionChannel _visionChannel;
 
     bool _initialized;
-}
-;
+
+    bool _paused;
+};
