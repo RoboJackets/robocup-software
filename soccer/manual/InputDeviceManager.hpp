@@ -30,7 +30,7 @@ public:
 
   void setupInputDevices();
 
-  void update();
+  void update(std::vector<OurRobot*>& robots, Packet::RadioTx* tx);
 
   bool joystickValid() const;
 
@@ -54,6 +54,10 @@ public:
   void setUseFieldOrientedManualDrive(bool foc) {
     _useFieldOrientedManualDrive = foc;
   }
+
+  void applyInputDeviceControls(std::vector<OurRobot*>& robots, Packet::RadioTx* tx);
+
+  void applyInputDeviceControls(const InputDeviceControlValues& controlVals, Packet::Control* tx, OurRobot* robot);
 
   std::vector<int> getInputDeviceRobotIds();
 

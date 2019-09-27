@@ -353,9 +353,6 @@ void Processor::run() {
             }
         }
 
-        // TODO Joy stick updates
-        _inputDeviceManager->update();
-
         runModels(detectionFrames);
         for (VisionPacket* packet : visionPackets) {
             delete packet;
@@ -470,12 +467,7 @@ void Processor::run() {
         // Run velocity controllers
         for (OurRobot* robot : _context.state.self) {
             if (robot->visible) {
-                if ((_inputDeviceManager->_manualID >= 0 && (int)robot->shell() == _inputDeviceManager->_manualID) ||
-                    _context.game_state.halt()) {
-                    robot->motionControl()->stopped();
-                } else {
-                    robot->motionControl()->run();
-                }
+                robot->motionControl()->run();
             }
         }
 
@@ -703,20 +695,7 @@ void Processor::sendRadioData() {
         }
     }
 
-    std::vector<int> manualIds = _inputDeviceManager->getInputDeviceRobotIds();
-    for (OurRobot* r : _context.state.self) {
-        if (r->visible || _inputDeviceManager->_manualID == r->shell() || _inputDeviceManager->_multipleManual) {
-            Packet::Robot* txRobot = tx->add_robots();
-
-            // Copy motor commands.
-            // Even if we are using the joystick, this sets robot_id and the
-            // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
-
-            _inputDeviceManager->applyInputDeviceControls(r, txRobot);
-        }
-    }
-
+    _inputDeviceManager->update(_context.state.self, tx);
 
     if (_radio) {
         _radio->send(*_context.state.logFrame->mutable_radio_tx());

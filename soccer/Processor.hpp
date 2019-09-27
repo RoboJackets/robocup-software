@@ -97,8 +97,8 @@ public:
      */
     int goalieID();
 
-    void dampedRotation(bool value);
-    void dampedTranslation(bool value);
+    // void dampedRotation(bool value);
+    // void dampedTranslation(bool value);
 
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
@@ -159,6 +159,8 @@ public:
 
     // Time of the first LogFrame
     std::optional<RJ::Time> firstLogTime;
+
+
 
     Context* context() { return &_context; }
 

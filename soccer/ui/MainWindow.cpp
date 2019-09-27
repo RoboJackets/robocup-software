@@ -1215,7 +1215,7 @@ void MainWindow::on_actionDampedRotation_toggled(bool value) {
         cout << "Enabled" << endl;
     else
         cout << "Disabled" << endl;
-    _processor->dampedRotation(value);
+    _inputDeviceManager->dampedRotation(value);
 }
 
 void MainWindow::on_actionDampedTranslation_toggled(bool value) {
@@ -1224,7 +1224,7 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
         cout << "Enabled" << endl;
     else
         cout << "Disabled" << endl;
-    _processor->dampedTranslation(value);
+    _inputDeviceManager->dampedTranslation(value);
 }
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {

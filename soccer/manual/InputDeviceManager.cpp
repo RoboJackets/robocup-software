@@ -42,7 +42,7 @@ void InputDeviceManager::setupInputDevices() {
   // isValid() is working properly
 }
 
-void InputDeviceManager::update() {
+void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx* tx) {
   // TODO This is where the bulk of event handling and checking should be done for new controllers
   // Check for sdl device connected
 
@@ -55,11 +55,13 @@ void InputDeviceManager::update() {
   // if (SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))
   // send the event to the to the controllers update function
 
-
-
   for (InputDevice* inputDevice : _inputDevices) {
     inputDevice->update();
   }
+
+  // Apply input device updates to robots
+  applyInputDeviceControls(robots, tx);
+
 }
 
 bool InputDeviceManager::joystickValid() const {
@@ -70,12 +72,22 @@ bool InputDeviceManager::joystickValid() const {
 }
 
 void InputDeviceManager::manualID(int value) {
-  QMutexLocker locker(&_loopMutex);
+  // QMutexLocker locker(&_loopMutex);
   _manualID = value;
 
   for (InputDevice* dev : _inputDevices) {
     dev->reset();
   }
+}
+
+void InputDeviceManager::dampedRotation(bool value) {
+  // QMutexLocker locker(&_loopMutex);
+  _dampedRotation = value;
+}
+
+void InputDeviceManager::dampedTranslation(bool value) {
+  // QMutexLocker locker(&_loopMutex);
+  _dampedTranslation = value;
 }
 
 
@@ -95,7 +107,7 @@ std::vector<InputDeviceControlValues> InputDeviceManager::getInputDeviceControlV
   std::vector<InputDeviceControlValues> vals;
   for (InputDevice* dev : _inputDevices) {
     if (dev->valid()) {
-      vals.push_back(getInputDeviceControlValue(*joy));
+      vals.push_back(getInputDeviceControlValue(*dev));
     }
   }
   return vals;
@@ -134,42 +146,57 @@ InputDeviceControlValues InputDeviceManager::getInputDeviceControlValue(InputDev
 
 
 // TODO Remove joystick controlVals from pass and use in header
-void InputDeviceManager::applyInputDeviceControls(OurRobot* r, Packet::Control* tx) {
+void InputDeviceManager::applyInputDeviceControls(std::vector<OurRobot*>& robots, Packet::RadioTx* tx) {
 
-    std::vector<int> manualIds = _inputDeviceManager->getInputDeviceRobotIds();
-    // MANUAL STUFF
-    if (_multipleManual) {
-        auto info =
-            find(manualIds.begin(), manualIds.end(), r->shell());
-        int index = info - manualIds.begin();
+    // Add RadioTx commands for visible robots and apply joystick input
+    std::vector<int> manualIds = getInputDeviceRobotIds();
+    for (OurRobot* r : robots) {
+        if (r->visible || _manualID == r->shell() || _multipleManual) {
+            Packet::Robot* txRobot = tx->add_robots();
 
-        // figure out if this shell value has been assigned to a
-        // joystick
-        // do stuff with that information such as assign it to the first
-        // available
-        if (info == manualIds.end()) {
-            for (int i = 0; i < manualIds.size(); i++) {
-                if (manualIds[i] == -1) {
-                    index = i;
-                    _inputDevices[i]->setRobotId(r->shell());
-                    manualIds[i] = r->shell();
-                    break;
+            // Copy motor commands.
+            // Even if we are using the joystick, this sets robot_id and the
+            // number of motors.
+            txRobot->CopyFrom(r->robotPacket);
+
+            // MANUAL STUFF
+            if (_multipleManual) {
+                auto info =
+                    find(manualIds.begin(), manualIds.end(), r->shell());
+                int index = info - manualIds.begin();
+
+                // figure out if this shell value has been assigned to a
+                // joystick
+                // do stuff with that information such as assign it to the first
+                // available
+                if (info == manualIds.end()) {
+                    for (int i = 0; i < manualIds.size(); i++) {
+                        if (manualIds[i] == -1) {
+                            index = i;
+                            _inputDevices[i]->setRobotId(r->shell());
+                            manualIds[i] = r->shell();
+                            break;
+                        }
+                    }
+                }
+
+                if (index < manualIds.size()) {
+                    applyInputDeviceControls(
+                        getInputDeviceControlValue(*_inputDevices[index]),
+                        txRobot->mutable_control(), r);
+                }
+            } else if (_manualID == r->shell()) {
+                auto controlValues = getInputDeviceControlValues();
+                if (controlValues.size()) {
+                    applyInputDeviceControls(controlValues[0],
+                                          txRobot->mutable_control(), r);
                 }
             }
         }
-
-        if (index < manualIds.size()) {
-            applyInputDeviceControls(
-                getInputDeviceControlValue(*_inputDevices[index]),
-                txRobot->mutable_control(), r);
-        }
-    } else if (_manualID == r->shell()) {
-        auto controlValues = getInputDeviceControlValues();
-        if (controlValues.size()) {
-            applyInputDeviceControls(controlValues[0],
-                                  txRobot->mutable_control(), r);
-        }
     }
+}
+
+void InputDeviceManager::applyInputDeviceControls(const InputDeviceControlValues& controlVals, Packet::Control* tx, OurRobot* robot) {
 
     Geometry2d::Point translation(controlVals.translation);
 
