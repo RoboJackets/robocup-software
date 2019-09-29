@@ -1,10 +1,14 @@
 #pragma once
 
-#include <planning/Path.hpp>
+#include <optional>
+
+#include <Configuration.hpp>
+#include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <Configuration.hpp>
+#include <planning/Path.hpp>
 
 namespace Planning {
 /**
@@ -20,17 +24,36 @@ public:
     /// Each entry in InterpolatedPath is a MotionInstant and the time that the
     /// robot should be at that position and velocity.
     struct Entry {
-        Entry(MotionInstant inst, RJ::Seconds t) : instant(inst), time(t) {}
+        Entry(RobotInstant inst, RJ::Seconds t) : time(t) {
+            if (inst.angle) {
+                pose = Geometry2d::Pose(inst.motion.pos,
+                                        inst.angle->angle.value_or(0));
+                vel = Geometry2d::Twist(inst.motion.vel,
+                                        inst.angle->angleVel.value_or(0));
+            } else {
+                pose = Geometry2d::Pose(inst.motion.pos, 0);
+                vel = Geometry2d::Twist(inst.motion.vel, 0);
+            }
+        }
 
-        MotionInstant instant;
+        Entry(Geometry2d::Pose pose, Geometry2d::Twist twist, RJ::Seconds t)
+            : pose(pose), vel(twist), time(t) {}
+
+        Entry(MotionInstant inst, RJ::Seconds t)
+            : Entry(RobotInstant(inst), t) {}
+
+        Geometry2d::Pose pose;
+        Geometry2d::Twist vel;
         RJ::Seconds time;
-        boost::optional<AngleInstant> angle;
 
-        Geometry2d::Point& pos() { return instant.pos; }
-        const Geometry2d::Point& pos() const { return instant.pos; }
-
-        Geometry2d::Point& vel() { return instant.vel; }
-        const Geometry2d::Point& vel() const { return instant.vel; }
+        RobotInstant instant() const {
+            // Create a new MotionInstant
+            RobotInstant instant;
+            instant.motion.pos = pose.position();
+            instant.motion.vel = vel.linear();
+            instant.angle = AngleInstant(pose.heading(), vel.angular());
+            return instant;
+        }
     };
 
     // Set of points in the path - used as waypoints
@@ -40,14 +63,14 @@ public:
     InterpolatedPath() {}
 
     /** constructor with a single point */
-    InterpolatedPath(Geometry2d::Point p0);
+    InterpolatedPath(RobotInstant p0);
 
     /** constructor from two points */
-    InterpolatedPath(Geometry2d::Point p0, Geometry2d::Point p1);
+    InterpolatedPath(RobotInstant p0, RobotInstant p1);
 
     /// Adds an instant at the end of the path for the given time.
     /// Time should not bet less than the last time.
-    void addInstant(RJ::Seconds time, MotionInstant instant) {
+    void addInstant(RJ::Seconds time, RobotInstant instant) {
         if (!waypoints.empty()) {
             assert(time > waypoints.back().time);
         }
@@ -63,7 +86,7 @@ public:
     virtual std::unique_ptr<Path> subPath(
         RJ::Seconds startTime = RJ::Seconds::zero(),
         RJ::Seconds endTime = RJ::Seconds::max()) const override;
-    virtual void draw(SystemState* const state, const QColor& color,
+    virtual void draw(DebugDrawer* constdebug_drawer, const QColor& color,
                       const QString& layer) const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
@@ -118,14 +141,15 @@ public:
      */
     RJ::Seconds getTime(int index) const;
 
-    static std::unique_ptr<Path> emptyPath(Geometry2d::Point pos) {
-        auto path = std::make_unique<InterpolatedPath>(pos);
+    static std::unique_ptr<Path> emptyPath(Geometry2d::Point position) {
+        auto path = std::make_unique<InterpolatedPath>(
+            RobotInstant(MotionInstant(position)));
         path->setDebugText("Empty Path");
         return std::move(path);
     }
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

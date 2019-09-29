@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include <string.h>
 
 #include <QMutex>
@@ -16,8 +17,11 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
+#include "Node.hpp"
 #include "VisionReceiver.hpp"
+#include "motion/MotionControlNode.hpp"
 
+#include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
@@ -34,32 +38,6 @@ class GameplayModule;
 namespace Planning {
 class MultiRobotPathPlanner;
 }
-
-class DebugQMutex : public QMutex {
-public:
-    DebugQMutex(QMutex::RecursionMode mode = QMutex::NonRecursive)
-        : QMutex(mode) {}
-
-    void lock() {
-        // printf("thread %ld tries to lock\n", QThread::currentThreadId());
-        QMutex::lock();
-    }
-
-    bool tryLock() {
-        // printf("tryLock\n");
-        return QMutex::tryLock();
-    }
-
-    bool tryLock(int timeout) {
-        // printf("tryLock\n");
-        return QMutex::tryLock(timeout);
-    }
-
-    void unlock() {
-        QMutex::unlock();
-        // printf("thread %ld unlocked\n", QThread::currentThreadId());
-    }
-};
 
 /**
  * @brief Brings all the pieces together
@@ -155,7 +133,7 @@ public:
         return _refereeModule;
     }
 
-    SystemState* state() { return &_state; }
+    SystemState* state() { return &_context.state; }
 
     bool simulation() const { return _simulation; }
 
@@ -196,10 +174,14 @@ public:
 
     bool isInitialized() const;
 
+    void setPaused(bool paused) { _paused = paused; }
+
     ////////
 
     // Time of the first LogFrame
-    boost::optional<RJ::Time> firstLogTime;
+    std::optional<RJ::Time> firstLogTime;
+
+    Context* context() { return &_context; }
 
 protected:
     void run() override;
@@ -250,7 +232,7 @@ private:
     QMutex _loopMutex;
 
     /** global system state */
-    SystemState _state;
+    Context _context;
 
     // Transformation from world space to team space.
     // This depends on which goal we're defending.
@@ -284,6 +266,8 @@ private:
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
 
+    std::vector<std::unique_ptr<Node>> _modules;
+
     // joystick control
     std::vector<Joystick*> _joysticks;
 
@@ -302,4 +286,6 @@ private:
     VisionChannel _visionChannel;
 
     bool _initialized;
+
+    bool _paused;
 };

@@ -121,7 +121,9 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         if self.robot != None:
             #face the ball in all states but intercept
             if not self.has_subbehavior_with_name('intercept'):
-                self.robot.face(main.ball().pos)
+                # TODO(motion-control): The robot should face the ball here.
+                #self.robot.face(main.ball().pos)
+                pass
             self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def execute_chill(self):
@@ -172,10 +174,10 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         kick.use_chipper = True
 
         kick.target = evaluation.shooting.find_gap(
-                robocup.Point(0, constants.Field.Length), 
-                max_shooting_angle=80,
-                robot_offset=8, 
-                dist_from_point=1)
+            robocup.Point(0, constants.Field.Length),
+            max_shooting_angle=80,
+            robot_offset=8,
+            dist_from_point=1)
 
         # FIXME: if the goalie has a fault, resort to bump
 
@@ -194,7 +196,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_block(self):
         opposing_kicker = evaluation.ball.opponent_with_ball()
         if opposing_kicker is not None:
-            winEval = robocup.WindowEvaluator(main.system_state())
+            winEval = robocup.WindowEvaluator(main.context())
             winEval.excluded_robots = [self.robot]
             best = winEval.eval_pt_to_our_goal(main.ball().pos)[1]
             if best is not None:
@@ -206,7 +208,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                     robocup.Point(
                         best.segment.get_pt(1).x + constants.Robot.Radius,
                         constants.Robot.Radius))
-                main.system_state().draw_line(block_line, (255, 0, 0), "Debug")
+                main.debug_drawer().draw_line(block_line, (255, 0, 0), "Debug")
                 dest = block_line.line_intersection(shot_line)
                 dest.x = min(Goalie.MaxX, dest.x)
                 dest.x = max(-Goalie.MaxX, dest.x)

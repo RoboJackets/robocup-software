@@ -14,8 +14,12 @@ class Moc_Ball:
 class TestCircleNearBall(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestCircleNearBall, self).__init__(*args, **kwargs)
+        # Context depends on the configuration system being setup
+        self.config = robocup.Configuration.FromRegisteredConfigurables()
+        self.context = robocup.Context()
 
     def setUp(self):
+        main.set_context(self.context)
         self.circle_near_ball = tactics.stopped.circle_near_ball.CircleNearBall(
         )
 
@@ -42,7 +46,7 @@ class TestCircleNearBall(unittest.TestCase):
 
         # Checks a point on the field to see if the circle around it is valid
         def test_point(self, x, y):
-            main.set_ball(Moc_Ball(x, y))
+            main.system_state().ball.set_pos_for_testing(robocup.Point(x, y))
             assert_circle_points(self)
 
         # Checks center of field

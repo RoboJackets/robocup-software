@@ -55,7 +55,7 @@ def get_points_from_rect(rect, step=0.5):
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
 #   Risk score in that position
-#   Adviailbity of opponent robots to reach that point
+#   Availbity of opponent robots to reach that point
 #   Space in that area
 #
 # @param ignore_robots: Ignore these robots in defensive calculations
@@ -229,7 +229,7 @@ def find_defense_positions(ignore_robots=[]):
 
     for bot in main.their_robots():
         score = estimate_risk_score(bot.pos, ignore_robots)
-        main.system_state().draw_text("Risk: " + str(int(score * 100)),
+        main.debug_drawer().draw_text("Risk: " + str(int(score * 100)),
                                       bot.pos, constants.Colors.White,
                                       "Defense")
         their_risk_scores.extend([score])
@@ -242,3 +242,66 @@ def find_defense_positions(ignore_robots=[]):
     area_def_pos = create_area_defense_zones(ignore_robots)
 
     return area_def_pos, sorted_bot[0], sorted_bot[1]
+
+
+## Finds the line segment between the mark_pos and the highest danger shot point
+# Cuts off the portion of the line that is inside of the goal box
+#
+# @param mark_pos: Point (usually robot position) to defend against
+# @param robot: The robot assigned to defend
+# @param ball: Is the marked position the ball? Defaults to robot - used for offsets
+# @param kick_eval: kick evaluator, not required, but fewer steps if it's included here vs. recreated
+# @return Tuple: LineSegment to defend on , shot_pt from kick_eval
+def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
+
+    if kick_eval is None:
+        kick_eval = robocup.KickEvaluator(main.system_state())
+
+    #Define the segments where the defender can go closest the goal
+    offset = constants.Robot.Radius
+    goal_rect_padded = constants.Field.OurGoalZoneShapePadded(offset)
+
+    #Find best shot point from threat
+    kick_eval.add_excluded_robot(robot)
+    shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(mark_pos)
+    kick_eval.excluded_robots.clear()
+
+    #End the mark line segment 1 radius away from the opposing robot
+    #Or 1 ball radius away if marking a position
+    if not ball:
+        adjusted_mark_pos = mark_pos - (
+            mark_pos - shot_pt).normalized() * 2 * constants.Robot.Radius
+    else:
+        adjusted_mark_pos = mark_pos - (mark_pos - shot_pt
+                                        ).normalized() * constants.Ball.Radius
+
+    shot_seg = robocup.Segment(adjusted_mark_pos, shot_pt)
+    tmp = goal_rect_padded.segment_intersection(shot_seg)
+
+    if tmp is None:
+        return shot_seg, shot_pt
+
+    intersections = sorted(tmp, key=lambda pt: pt.y, reverse=True)
+
+    #Correction for when there is no segment because the opposing robot is inside a radius of our goalzone
+    if len(intersections) == 0:
+        intersections.append(adjusted_mark_pos)
+
+    return robocup.Segment(adjusted_mark_pos, intersections[0]), shot_pt
+
+
+## Finds the line segment between the mark_pos and the ball
+# @param mark_pos: Point (usually robot position) to defend against
+# @return: LineSegment to defend on
+def ballside_mark_segment(mark_pos, ball_pos=None):
+    #offsets on ball and mark_pos sides
+    if ball_pos is None:
+        ball_pos = main.ball().pos
+    offsets = [constants.Robot.Radius, constants.Ball.Radius]
+    mark_line_dir = (ball_pos - mark_pos).normalized()
+    ball_mark_line = robocup.Segment(
+        ball_pos - mark_line_dir * constants.Ball.Radius,
+        mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
+    #End the mark line segment 1 radius away from the opposing robot
+    #Or 1 ball radius away if marking a position
+    return ball_mark_line

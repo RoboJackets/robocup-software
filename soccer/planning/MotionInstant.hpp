@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
+#include <optional>
 
 namespace Planning {
 
@@ -28,11 +30,11 @@ struct MotionInstant {
  * angle and rotation velocity.
  */
 struct AngleInstant {
-    explicit AngleInstant(boost::optional<float> angle = boost::none,
-                          boost::optional<float> angleVel = boost::none)
+    explicit AngleInstant(std::optional<float> angle = std::nullopt,
+                          std::optional<float> angleVel = std::nullopt)
         : angle(angle), angleVel(angleVel){};
-    boost::optional<float> angle;
-    boost::optional<float> angleVel;
+    std::optional<float> angle;
+    std::optional<float> angleVel;
 
     // TODO ashaw596 implement stream operator
 };
@@ -44,10 +46,26 @@ struct AngleInstant {
  */
 struct RobotInstant {
     explicit RobotInstant(MotionInstant motion = MotionInstant(),
-                          boost::optional<AngleInstant> angle = boost::none)
+                          std::optional<AngleInstant> angle = std::nullopt)
         : motion(motion), angle(angle) {}
     MotionInstant motion;
-    boost::optional<AngleInstant> angle;
+    std::optional<AngleInstant> angle;
+
+    Geometry2d::Pose pose() {
+        if (angle && angle->angle) {
+            return Geometry2d::Pose(motion.pos, angle->angle.value());
+        } else {
+            return Geometry2d::Pose(motion.pos, 0);
+        }
+    }
+
+    Geometry2d::Twist twist() {
+        if (angle && angle->angleVel) {
+            return Geometry2d::Twist(motion.vel, angle->angleVel.value());
+        } else {
+            return Geometry2d::Twist(motion.vel, 0);
+        }
+    }
 
     // TODO ashaw596  implement stream operator
 };

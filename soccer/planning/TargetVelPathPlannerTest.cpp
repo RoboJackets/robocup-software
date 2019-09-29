@@ -1,4 +1,7 @@
+#include <optional>
+
 #include <gtest/gtest.h>
+#include <Context.hpp>
 #include <Geometry2d/Point.hpp>
 #include "TargetVelPathPlanner.hpp"
 #include "planning/MotionCommand.hpp"
@@ -16,12 +19,12 @@ TEST(TargetVelPathPlannerTest, run) {
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Rect>(Point(-1, 5), Point(1, 4)));
 
-    SystemState systemState;
+    Context context;
 
     TargetVelPathPlanner planner;
     std::vector<DynamicObstacle> dynamicObstacles;
 
-    PlanRequest request(systemState, startInstant, std::move(cmd),
+    PlanRequest request(&context, startInstant, std::move(cmd),
                         RobotConstraints(), nullptr, obstacles,
                         dynamicObstacles, 0);
     auto path = planner.run(request);
@@ -35,7 +38,7 @@ TEST(TargetVelPathPlannerTest, run) {
 
     // Ensure that the path moves in the direction of the target world velocity
     // (positive y-axis)
-    boost::optional<RobotInstant> instant = path->evaluate(100ms);
+    std::optional<RobotInstant> instant = path->evaluate(100ms);
     ASSERT_TRUE(instant);
     EXPECT_FLOAT_EQ(0, instant->motion.pos.x());
     EXPECT_GT(instant->motion.pos.y(), 0);

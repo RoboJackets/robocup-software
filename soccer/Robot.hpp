@@ -18,8 +18,8 @@
 #include <Eigen/Dense>
 #include <QColor>
 #include <array>
+#include <optional>
 #include <boost/circular_buffer.hpp>
-#include <boost/optional.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
 #include <algorithm>
@@ -28,12 +28,11 @@
 #include <QReadWriteLock>
 #include <QWriteLocker>
 
+#include "Context.hpp"
 #include "status.h"
 
-class SystemState;
 class RobotConfig;
 class RobotStatus;
-class MotionControl;
 
 namespace Packet {
 class DebugText;
@@ -48,37 +47,40 @@ namespace Planning {
 class RRTPlanner;
 }
 
-/**
- * @brief Contains robot motion state data
- * @details This class contains data that comes from the vision system
- * including position data and which camera this robot was seen by and
- * what time it was last seen.
- */
-class RobotPose {
+class Robot {
 public:
-    RobotPose()
-        : visible(false),
-          velValid(false),
-          angle(0),
-          angleVel(0) {
-        // normalize angle so it's always positive
-        // while (angle < 0) angle += 2.0 * M_PI;
+    Robot(Context* context, unsigned int shell, bool self);
+
+    /**
+     * Get an immutable reference to the robot's estimated state from vision.
+     * @return An immutable reference to the robot's state.
+     */
+    const RobotState& state() const {
+        return _context->world_state.get_robot(self(), shell());
     }
 
-    bool visible;
-    bool velValid;
+    /**
+     * Mutable state accessor. Should only be used by vision and tests that
+     * are supposed to bypass vision functionality.
+     * @return A mutable reference to the robot's state.
+     */
+    RobotState& mutable_state() {
+        return _context->world_state.get_robot(self(), shell());
+    }
 
-    Geometry2d::Point pos;
-    Geometry2d::Point vel;
-    /// angle in radians.  0 radians means the robot is aimed along the x-axis
-    double angle;
-    double angleVel;  /// angular velocity in radians/sec
-    RJ::Time time;
-};
+    Geometry2d::Pose pose() const { return state().pose; }
 
-class Robot : public RobotPose {
-public:
-    Robot(unsigned int shell, bool self);
+    Geometry2d::Point pos() const { return state().pose.position(); }
+
+    double angle() const { return state().pose.heading(); }
+
+    Geometry2d::Twist twist() const { return state().velocity; }
+
+    Geometry2d::Point vel() const { return state().velocity.linear(); }
+
+    double angleVel() const { return state().velocity.angular(); }
+
+    bool visible() const { return state().visible; }
 
     /**
      * ID number for the robot.  This is the number that the dot pattern on the
@@ -98,13 +100,16 @@ public:
 
     std::string toString() const {
         return std::string("<Robot ") + (self() ? "us[" : "them[") +
-               std::to_string(shell()) + "], pos=" + pos.toString() + ">";
+               std::to_string(shell()) + "], pos=" + pos().toString() + ">";
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Robot& robot) {
         stream << robot.toString();
         return stream;
     }
+
+protected:
+    Context* _context;
 
 private:
     const unsigned int _shell;
@@ -136,10 +141,10 @@ public:
 
     /**
      * @brief Construct a new OurRobot
+     * @param context A pointer to the global system context object
      * @param shell The robot ID
-     * @param state A pointer to the global system state object
      */
-    OurRobot(int shell, SystemState* state);
+    OurRobot(Context* context, int shell);
     ~OurRobot();
 
     void addStatusText();
@@ -165,7 +170,7 @@ public:
 
     // Gets the robot quaternion.  Returns false (and does not change q) if not
     // available.
-    boost::optional<Eigen::Quaternionf> quaternion() const;
+    std::optional<Eigen::Quaternionf> quaternion() const;
 
     // Constraints
     const RobotConstraints& robotConstraints() const {
@@ -211,6 +216,14 @@ public:
     void lineKick(Geometry2d::Point target);
 
     /**
+     * Intercept the ball as quickly as possible
+     * May just slam into the ball if it does not have time to stop
+     *
+     * @param target - The target position to intercept the ball at
+     */
+    void intercept(Geometry2d::Point target);
+
+    /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
@@ -235,6 +248,19 @@ public:
     void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
 
     /**
+     * @brief Move in front of the ball to intercept it. If a target face point
+     * is given, the robot will try to face in that direction when the ball hits
+     * @param target - the target point in which the robot will try to bounce
+     * the towards
+     */
+    void settle(std::optional<Geometry2d::Point> target);
+
+    /**
+     * @brief Approaches the ball and moves through it slowly
+     */
+    void collect();
+
+    /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */
     void worldVelocity(Geometry2d::Point targetWorldVel);
@@ -243,6 +269,11 @@ public:
      * Face a point while remaining in place
      */
     void face(Geometry2d::Point pt);
+
+    /**
+     * Returns true if the robot currently has a face command
+     */
+    bool isFacing();
 
     /**
      * Remove the facing command
@@ -419,10 +450,6 @@ public:
 
     RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
 
-    MotionControl* motionControl() const { return _motionControl; }
-
-    SystemState* state() const { return _state; }
-
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
@@ -461,11 +488,10 @@ public:
 
     void setPID(double p, double i, double d);
 
+    void setJoystickControlled(bool joystickControlled);
+    bool isJoystickControlled() const;
+
 protected:
-    MotionControl* _motionControl;
-
-    SystemState* _state;
-
     /// set of obstacles added by plays
     Geometry2d::ShapeSet _local_obstacles;
 
@@ -478,6 +504,8 @@ protected:
     RobotConstraints _robotConstraints;
 
     Planning::AngleFunctionPath angleFunctionPath;  /// latest path
+
+    bool _joystickControlled = false;
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -494,9 +522,9 @@ protected:
                                               const RobotMask& mask) const {
         Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i)
-            if (mask[i] > 0 && robots[i] && robots[i]->visible)
+            if (mask[i] > 0 && robots[i] && robots[i]->visible())
                 result.add(std::shared_ptr<Geometry2d::Shape>(
-                    new Geometry2d::Circle(robots[i]->pos, mask[i])));
+                    new Geometry2d::Circle(robots[i]->pos(), mask[i])));
         return result;
     }
 
@@ -518,10 +546,10 @@ protected:
                                               float checkRadius) const {
         Geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i)
-            if (mask[i] > 0 && robots[i] && robots[i]->visible) {
-                if (currentPosition.distTo(robots[i]->pos) <= checkRadius) {
+            if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
+                if (currentPosition.distTo(robots[i]->pos()) <= checkRadius) {
                     result.add(std::shared_ptr<Geometry2d::Shape>(
-                        new Geometry2d::Circle(robots[i]->pos, mask[i])));
+                        new Geometry2d::Circle(robots[i]->pos(), mask[i])));
                 }
             }
         return result;
@@ -537,8 +565,6 @@ protected:
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
-
-    friend class MotionControl;
 
 private:
     RJ::Time _lastBallSense;
@@ -582,5 +608,11 @@ private:
  */
 class OpponentRobot : public Robot {
 public:
-    OpponentRobot(unsigned int shell) : Robot(shell, false) {}
+    /**
+     * @brief Construct a new OpponentRobot
+     * @param context A pointer to the global system context object
+     * @param shell The robot ID
+     */
+    OpponentRobot(Context* context, unsigned int shell)
+        : Robot(context, shell, false) {}
 };

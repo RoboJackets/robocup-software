@@ -1,10 +1,14 @@
 #include "MotionControl.hpp"
+
+#include <optional>
+
 #include <Geometry2d/Util.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
 #include <Utils.hpp>
 #include <planning/MotionInstant.hpp>
+#include "DebugDrawer.hpp"
 #include "TrapezoidalMotion.hpp"
 
 #include <stdio.h>
@@ -31,8 +35,8 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 
 #pragma mark MotionControl
 
-MotionControl::MotionControl(OurRobot* robot)
-    : _angleController(0, 0, 0, 50, 0) {
+MotionControl::MotionControl(Context* context, OurRobot* robot)
+    : _angleController(0, 0, 0, 50, 0), _context(context) {
     _robot = robot;
 
     _robot->robotPacket.set_uid(_robot->shell());
@@ -40,6 +44,22 @@ MotionControl::MotionControl(OurRobot* robot)
 
 void MotionControl::run() {
     if (!_robot) return;
+
+    // Force a stop if the robot isn't on vision
+    if (!_robot->visible()) {
+        stopped();
+        return;
+    }
+
+    if (_robot->isJoystickControlled()) {
+        // We are joystick controlled. Any integral we had before entering
+        // joystick control isn't going to be relevant after we exit, so we
+        // should clear it.
+        _positionXController.clearWindup();
+        _positionYController.clearWindup();
+        _angleController.clearWindup();
+        return;
+    }
 
     const MotionConstraints& constraints = _robot->motionConstraints();
 
@@ -60,17 +80,17 @@ void MotionControl::run() {
         (RJ::now() - _robot->path().startTime()) + RJ::Seconds(1.0 / 60);
 
     // evaluate path - where should we be right now?
-    boost::optional<RobotInstant> optTarget =
+    std::optional<RobotInstant> optTarget =
         _robot->path().evaluate(timeIntoPath);
 
     if (!optTarget) {
         optTarget = _robot->path().end();
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::red,
-                                    "Planning");
+        _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::red,
+                                          "Planning");
     } else {
-        Point start = _robot->pos;
-        _robot->state()->drawCircle(optTarget->motion.pos, .15, Qt::green,
-                                    "Planning");
+        Point start = _robot->pos();
+        _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::green,
+                                          "Planning");
     }
 
     // Angle control //////////////////////////////////////////////////
@@ -80,10 +100,10 @@ void MotionControl::run() {
     auto& rotationCommand = _robot->rotationCommand();
     const auto& rotationConstraints = _robot->rotationConstraints();
 
-    boost::optional<Geometry2d::Point> targetPt;
+    std::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
 
-    boost::optional<float> targetAngleFinal;
+    std::optional<float> targetAngleFinal;
     // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
     //    PivotCommand command =
     //    *static_cast<PivotCommand*>(motionCommand.get());
@@ -101,13 +121,13 @@ void MotionControl::run() {
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        targetAngleFinal = (*targetPt - _robot->pos).angle();
+        targetAngleFinal = (*targetPt - _robot->pos()).angle();
     }
 
     if (!targetAngleFinal) {
         _targetAngleVel(0);
     } else {
-        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
+        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle());
 
         targetW = _angleController.run(angleError);
 
@@ -151,11 +171,11 @@ void MotionControl::run() {
     MotionInstant target = optTarget->motion;
 
     // tracking error
-    Point posError = target.pos - _robot->pos;
+    Point posError = target.pos - _robot->pos();
 
     // acceleration factor
     Point acceleration;
-    boost::optional<RobotInstant> nextTarget =
+    std::optional<RobotInstant> nextTarget =
         _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
         acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;
@@ -172,9 +192,10 @@ void MotionControl::run() {
     target.vel.y() += _positionYController.run(posError.y());
 
     // draw target pt
-    _robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
-    _robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue,
-                              "MotionControl");
+    _context->debug_drawer.drawCircle(target.pos, .04, Qt::red,
+                                      "MotionControl");
+    _context->debug_drawer.drawLine(target.pos, target.pos + target.vel,
+                                    Qt::blue, "MotionControl");
 
     // Clamp World Acceleration
     auto dt = RJ::Seconds(RJ::now() - _lastCmdTime);
@@ -188,7 +209,7 @@ void MotionControl::run() {
 
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
-    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle());
 
     this->_targetBodyVel(target.vel);
 }

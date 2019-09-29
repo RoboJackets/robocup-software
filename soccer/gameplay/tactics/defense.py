@@ -74,10 +74,10 @@ class Defense(composite_behavior.CompositeBehavior):
             return False
 
         safe_to_clear = False
-        if (abs(main.ball().pos.x) < constants.Field.PenaltyLongDist and 
-            main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and 
-            main.ball().vel.mag() < .75 and 
-            not evaluation.ball.is_in_our_goalie_zone()):
+        if (abs(main.ball().pos.x) < constants.Field.PenaltyLongDist and
+                main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and
+                main.ball().vel.mag() < .75 and
+                not evaluation.ball.is_in_our_goalie_zone()):
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
             if (defender1.robot != None and defender2.robot != None):
@@ -341,16 +341,16 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # Draw all the debug stuff
             if self.debug:
-                main.system_state().draw_line(shot_line, constants.Colors.Red,
+                main.debug_drawer().draw_line(shot_line, constants.Colors.Red,
                                               "Defense-Shot Line")
-                main.system_state().draw_text(
+                main.debug_drawer().draw_text(
                     "Shot: " + str(int(shot_chance * 100.0)), threat[0],
                     constants.Colors.White, "Defense-Shot Percent")
 
                 # Other threats besides ball
                 if threat_idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat[0])
-                    main.system_state().draw_line(
+                    main.debug_drawer().draw_line(
                         pass_line, constants.Colors.Red, "Defense-Pass Line")
 
             # keep defenders from occupying the same spot

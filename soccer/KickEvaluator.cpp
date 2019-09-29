@@ -272,7 +272,7 @@ vector<Robot*> KickEvaluator::get_valid_robots() {
     vector<Robot*> bots(system->self.size() + system->opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
-        return bot != nullptr && bot->visible &&
+        return bot != nullptr && bot->visible() &&
                find(excluded_robots.begin(), excluded_robots.end(), bot) ==
                    excluded_robots.end();
     };
@@ -307,7 +307,7 @@ vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
     // Convert each bot position to polar
     transform(bots.begin(), bots.end(), back_inserter(botLocations),
               [target, origin, this](Robot* bot) {
-                  return rect_to_polar(origin, target, bot->pos);
+                  return rect_to_polar(origin, target, bot->pos());
               });
 
     // Convert imaginary obstacles to polar
