@@ -240,6 +240,7 @@ void MainWindow::initialize() {
             break;
     }
 
+    /*
     // Initialize testing tab
 
     _ui.selectedTestsTable->addItem(QString("1"));
@@ -248,7 +249,7 @@ void MainWindow::initialize() {
 
 
     //_ui.testingPlays->
-
+    */
     /* bring back if using table
     //_ui.testingTable->setRowCount(3);
     //_ui.testingTable->setColumnCount(2);
@@ -1497,13 +1498,14 @@ void MainWindow::on_clearPlays_clicked() {
 // Testing Tab
 
 void MainWindow::on_testRun_clicked() {
-    std::cout<<"run tests"<<std::endl;
+  _processor->gameplayModule()->runTests();
+
 }
 
 void MainWindow::on_addToTable_clicked() {
-  //MAKE allTestsTable A LIST, IT MAKES LIFE EASIER
     std::cout<<"Adding to table"<<std::endl;
-    _ui.allTestsTable->currentIndex();
+    _processor->gameplayModule()->addTests();
+    //_ui.allTestsTable->currentIndex();
 
 }
 

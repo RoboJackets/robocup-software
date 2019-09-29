@@ -28,6 +28,7 @@ def defenseEnabled():
 def setup():
     global _has_setup_ui
     global _defense_checkbox
+    global _selectedTestsTable
 
     if _has_setup_ui == True:
         logging.warn("ui setup() function called more than once")
@@ -39,6 +40,7 @@ def setup():
 
     pcTab = win.findChild(QtWidgets.QTreeView, 'plays')
     testingTab = win.findChild(QtWidgets.QTreeView, 'allTestsTable')
+    _selectedTestsTable = win.findChild(QtWidgets.QListWidget, 'selectedTestsTable')
 
     # setup play config tab
     pcTab.setModel(main.play_registry())
@@ -49,8 +51,9 @@ def setup():
 
     # setup testing tab
     testingTab.setModel(main.test_registry())
-    #testingTab.expandAll()
-    #testingTab.resizeColumnToContents(0)
+    testingTab.expandAll()
+    testingTab.resizeColumnToContents(0)
+
 
     logging.debug("Initialized TestConfigTab")
 
@@ -62,3 +65,20 @@ def setup():
     main.root_play().play_changed.connect(play_name_label.setText)
 
     _has_setup_ui = True
+
+
+def addTests():
+    global _selectedTestsTable
+
+    #TODO: implement custom listview for selectedTestsTable to support
+    #status indicator, test results, and test data
+
+    print("UI ADD TESTS")
+    for item in main.test_registry():
+        if (item.enabled):
+            print(item, " is enabled")
+
+            _selectedTestsTable.addItem(item)
+
+def runTests():
+    print("UI RUN TESTS")

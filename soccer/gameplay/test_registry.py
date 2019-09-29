@@ -193,6 +193,7 @@ class TestRegistry(QtCore.QAbstractItemModel):
     class Node():
         def __init__(self, module_name, test_class):
             self._module_name = module_name
+            self.enabled = False
             self.test_class = test_class
             self.parent = None
 
@@ -222,17 +223,24 @@ class TestRegistry(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
         node = index.internalPointer()
+        print(node.name)
         if role == QtCore.Qt.DisplayRole:
+            print("display based role")
             if index.column() == 0:
                 return node.name
             elif index.column() == 1:
                 if isinstance(node, TestRegistry.Node):
-                    return str(node.test_class.score())
+                    return str(node.test_class.name())
                 else:
                     return None
         elif role == QtCore.Qt.CheckStateRole and isinstance(
                 node, TestRegistry.Node):
-            return None
+            if index.column() == 0:
+                return node.enabled
+            else:
+                return None
+
+        print("returning none :(")
         return None
 
     def rowCount(self, parent):
@@ -272,8 +280,7 @@ class TestRegistry(QtCore.QAbstractItemModel):
                 return 'Test'
         return None
 
-    # I think this needs to be switched to be used to determine which tests are selected, not enabled
-    # this is implemented so we can enable/disable tests from the gui
+
     def setData(self, index, value, role):
         if role == QtCore.Qt.CheckStateRole:
             if index.isValid():
@@ -281,7 +288,7 @@ class TestRegistry(QtCore.QAbstractItemModel):
                 if not isinstance(testNode, TestRegistry.Node):
                     raise AssertionError(
                         "Only Test Nodes should be checkable...")
-                playNode.enabled = not testNode.enabled
+                testNode.enabled = not testNode.enabled
                 self.dataChanged.emit(index, index)
                 return True
         return False

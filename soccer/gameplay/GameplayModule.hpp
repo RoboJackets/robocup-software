@@ -122,6 +122,12 @@ public:
     /// whenever the current field dimensions change
     void updateFieldDimensions();
 
+    /// adds tests to the list of tests to run
+    void addTests();
+
+    /// runs tests for the testing tab
+    void runTests();
+
 protected:
     boost::python::object getRootPlay();
 

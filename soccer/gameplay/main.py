@@ -1,5 +1,5 @@
 import play_registry as play_registry_module
-import test_registry as test_registry_module #TODO: complete test registry module
+import test_registry as test_registry_module
 import playbook
 import play
 import gameplay_test
@@ -62,6 +62,7 @@ def init(log_errors=True):
         mod_path = entry[0][1:]
         _test_registry.insert(mod_path, entry[1])
 
+    print("root: ", _test_registry.root._children[0])
 
     def _module_blacklisted(module):
         """Return true if a module has been filtered out of autoloading."""
@@ -237,6 +238,9 @@ _play_registry = None
 def play_registry():
     global _play_registry
     return _play_registry
+
+
+_test_registry = None
 
 
 def test_registry():

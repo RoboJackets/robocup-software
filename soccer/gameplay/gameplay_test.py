@@ -4,6 +4,7 @@ import robocup
 
 class GameplayTest():
 
+    name = "longdescriptivename"
     ourRobots = []
     theirRobots = []
     ballPosition = robocup.Point(0, 0)

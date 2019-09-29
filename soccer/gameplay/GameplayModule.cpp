@@ -455,3 +455,40 @@ void Gameplay::GameplayModule::updateFieldDimensions() {
     }
     PyGILState_Release(state);
 }
+
+
+void Gameplay::GameplayModule::addTests() {
+
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+          handle<> ignored3(
+                            (PyRun_String("import ui.main; ui.main.addTests()", Py_file_input,
+                                          _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+        } catch (error_already_set) {
+          PyErr_Print();
+          throw new runtime_error("Error trying to add tests");
+        }
+    }
+    PyGILState_Release(state);
+
+    //TODO: Implement custom MIME type for tests
+    //      Enable dragdrop in allTestsTable
+    //      Link selectedTestsTable to a python list in main.py
+}
+
+void Gameplay::GameplayModule::runTests() {
+
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+          handle<> ignored3(
+                            (PyRun_String("import ui.main; ui.main.runTests()", Py_file_input,
+                                          _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+        } catch (error_already_set) {
+          PyErr_Print();
+          throw new runtime_error("Error trying to run tests");
+        }
+    }
+    PyGILState_Release(state);
+}
