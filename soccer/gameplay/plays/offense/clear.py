@@ -36,13 +36,17 @@ class Clear(standard_play.StandardPlay):
                                              0.95*constants.Field.Length)
 
         #Points to move midfield bots to
-        #self.midfield_point_1 = robocup.Point(0.20*constants.Field.Width,
-                                              #0.70*constants.Field.Length)
+        self.midfield_point_1 = robocup.Point(0.20*constants.Field.Width,
+                                              0.70*constants.Field.Length)
 
-        #self.midfield_point_2 = robocup.Point(-0.40*constants.Field.Width,
-                                             #0.60*constants.Field.Length)
+        self.midfield_point_2 = robocup.Point(-0.40*constants.Field.Width,
+                                             0.60*constants.Field.Length)
 
-        self.points = [self.offense_point_1, self.offense_point_2]
+        self.points = [self.offense_point_1, self.offense_point_2, self.midfield_point_1, self.midfield_point_2]
+
+        self.offense_points = [self.offense_point_1, self.offense_point_2]
+
+        self.midfield_points = [self.midfield_point_1, self.midfield_point_2]
 
         self.add_transition(behavior.Behavior.State.start,
                             Clear.State.get_ball,
@@ -62,7 +66,7 @@ class Clear(standard_play.StandardPlay):
                             required = True)
         
         count = 0
-        for i in self.points:
+        for i in self.offense_points:
             count+=1
             self.add_subbehavior(skills.move.Move(i),
                                 'move to point ' + str(count),
@@ -78,12 +82,16 @@ class Clear(standard_play.StandardPlay):
                                                     use_chipper=True),
                                                             'clear',
                                                              required = True)
-        count = 0
-        for k in self.points:
-            count+=1
-            self.add_subbehavior(skills.move.Move(k),
-                                'move to point ' + str(count) + ' 2',
-                                required = False)
+
+        self.add_subbehavior(skills.move.Move(self.offense_points[1-num]),
+                                              'keep moving',
+                                              required = False)
+        # count = 0
+        # for k in self.offense_points:
+        #     count+=1
+        #     self.add_subbehavior(skills.move.Move(k),
+        #                         'move to point ' + str(count) + ' 2',
+        #                         required = False, priority = 1)
 
 
 
