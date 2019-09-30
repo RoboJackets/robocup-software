@@ -56,6 +56,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     #The currently running test
     currentTest = None
 
+    #Variable to control leaving the setup state, exists so the the play can setup the tests to be run
+    isSetup = False
+
     def __init__(self):
         super().__init__(continuous=False) 
 
@@ -80,13 +83,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #Setup -> TestMotion
         self.add_transition(MotionBenchmark.State.setup,
                             MotionBenchmark.State.TestMotion,
-                            lambda: self.all_subbehaviors_completed(), 'In Position')
+                            lambda: self.isSetup, 'Ready to start running')
 
         #TestMotion -> TestBuffer
         self.add_transition(MotionBenchmark.State.TestMotion,
                             MotionBenchmark.State.TestBuffer,
                             lambda: self.currentTest.motionCompleted() and not self.currentTest.testCompleted(), 'In Position')
-       
+
         #TestBuffer -> TestMotion
         #Note that this transition happens instantly, as the buffer is just to reset the state machine, causing on_enter and on_exit to trigger
         self.add_transition(MotionBenchmark.State.TestBuffer,
@@ -143,7 +146,9 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     def checkSub(self):
         print(self.subbehaviors_by_name)
 
-
+    ##
+    # This function used to do something
+    #
     def setupTests(self):
        pass 
 
@@ -166,11 +171,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         return math.sqrt(xErr**2 + yErr**2)
 
     def getLineError(self,start, end):
-        #startNumpy=np.array([start.x,start.y])
-        #endNumpy=np.array([end.x,end.y])
-        #robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
-        #d = np.cross(startNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
-        d = 0.1
+        startNumpy=np.array([start.x,start.y])
+        endNumpy=np.array([end.x,end.y])
+        robotNumpy=np.array([self.robot.pos.x,self.robot.pos.y])
+        d = np.cross(startNumpy-endNumpy,endNumpy-robotNumpy)/np.linalg.norm(endNumpy-startNumpy)
         return abs(d)
  
     def getOvershoot(self, start, end):
@@ -189,13 +193,14 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         move_point = self.setupPoint
         self.add_subbehavior(skills.move.Move(move_point), 'move') 
         self.setupTests()
-    
+   
+    def on_exit_setup(self):
+ 
         print("TESTS TO BE RUN --------------------------------")
         for g in self.tests:
             print(g)
         print("TESTS TO BE RUN --------------------------------")
 
-    def on_exit_setup(self):
         self.remove_all_subbehaviors()
         #pass
 
