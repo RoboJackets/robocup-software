@@ -51,7 +51,39 @@ class Basic122(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        return 10 if main.game_state().is_playing() else float("inf")
+
+        #I want there to be a list of valid situations at the top that is easily accessable
+        situationList = ["attack_goal", "defend_clear"]
+
+        #Check to see if situation analysis is active, use default if it is not
+        if(not main.situationAnalysis.active):
+            return 10 if main.game_state().is_playing() else float("inf")
+       
+        #If situation analysis is active
+        else:
+            #If this play is currently running, and preempt is true, set score to
+            #float("inf") to force it to stop running 
+            #Two notes here, one, I think I need to add a play change check to make
+            #sure plays aren't preempted after a play properly terminated, also idk
+            #the way to properly check if this play is currently running hince the 
+            #self.is_running placeholder
+            if(main.situationAnalysis.currentPreempt and self.is_running()):
+                return float("inf")
+            
+            #So I'm currently using string comparison, using enums should be possible,
+            #making it an external enum might be a possiblity too
+            #Note: I don't know if isSituations is actually implemented, I should
+            #make it take strings or enums with good checks.
+            if(main.situationAnalysis.isSituations(situationList)):
+                return main.situationAnalysis.inSituationScore
+            else:  
+                return main.situationAnalysis.outSituationScore
+
+
+
+
+
+
 
     def execute_running(self):
         super().execute_running()

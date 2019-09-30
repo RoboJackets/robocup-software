@@ -21,6 +21,18 @@ from typing import List, Dict
 #
 class SituationalPlaySelector:
 
+    ##!!!! This variable will control if plays will be using the situational play selector or not!
+    enabled = False
+
+    ##Score for when the current situation is valid
+    inSituationScore = 100
+
+    ##Score for when the current situation is not valid
+    outSituationScore = 1000
+
+    ##Score for when the current situation must be terminated or absolutly must not run
+    invalidScore = float("inf")
+
     ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
     #
     # The none situation should never be encountered during gameplay
@@ -302,28 +314,37 @@ class SituationalPlaySelector:
     #If the check variable is true, it will check if the situation exists and throw an
     #exception is it does now.
     def isSituation(self, situation, check=False):
-        up = situation.upper()
 
-        if (check):
-            found = False
-            for g in self.Situation:
-                if (up == g):
-                    found = True
-                    break
-            if not found:
-                raise Exception("Passed situation " + situation + " / " + up +
-                                " is not an existing situation")
+        if(isinstance(situation,str)):
+            up = situation.upper()
 
-        if (self.currentSituaion.name == up):
-            return True
+            if (check):
+                found = False
+                for g in self.Situation:
+                    if (up == g):
+                        found = True
+                        break
+                if not found:
+                    raise ValueError("Passed situation " + situation + " / " + up +
+                                    " is not an existing situation")
+
+            if (self.currentSituaion.name == up):
+                return True
+            else:
+                return False
+        
+        elif(isinstance(situation,self.Situation)):
+            return situation == self.currentSituation
         else:
-            return False
+            raise TypeError("isSituation only takes strings and enums")
+
 
     ##Update determining if we want to preempt the current play or not
     #
     # Preemption is still an open question but this is a prototype of
     # of how a non-invasive preemption system might work
     #
+    #   
     def updatePreempt(self):
         if (self.lastSituation != self.currentSituaion and
                 self.situationChangeTime == None):
@@ -337,10 +358,6 @@ class SituationalPlaySelector:
                 self.situationChangeTime = None
                 self.currentPreempt = True
                 self.LastSituation = self.currentSituaion
-
-    '''def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
-        for g in states:
-            play.add_transition(g -> completed , preemptPlay)'''
 
     ##A function to determine if the currently running play should be preempted
     def preemptPlay(self):
