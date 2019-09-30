@@ -46,7 +46,7 @@ void MotionControl::run() {
     if (!_robot) return;
 
     // Force a stop if the robot isn't on vision
-    if (!_robot->visible) {
+    if (!_robot->visible()) {
         stopped();
         return;
     }
@@ -88,7 +88,7 @@ void MotionControl::run() {
         _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::red,
                                           "Planning");
     } else {
-        Point start = _robot->pos;
+        Point start = _robot->pos();
         _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::green,
                                           "Planning");
     }
@@ -121,13 +121,13 @@ void MotionControl::run() {
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        targetAngleFinal = (*targetPt - _robot->pos).angle();
+        targetAngleFinal = (*targetPt - _robot->pos()).angle();
     }
 
     if (!targetAngleFinal) {
         _targetAngleVel(0);
     } else {
-        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
+        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle());
 
         targetW = _angleController.run(angleError);
 
@@ -171,7 +171,7 @@ void MotionControl::run() {
     MotionInstant target = optTarget->motion;
 
     // tracking error
-    Point posError = target.pos - _robot->pos;
+    Point posError = target.pos - _robot->pos();
 
     // acceleration factor
     Point acceleration;
@@ -209,7 +209,7 @@ void MotionControl::run() {
 
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
-    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle());
 
     this->_targetBodyVel(target.vel);
 }

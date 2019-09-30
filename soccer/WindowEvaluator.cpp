@@ -149,7 +149,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     vector<Robot*> bots(context->state.self.size() + context->state.opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
-        return bot != nullptr && bot->visible &&
+        return bot != nullptr && bot->visible() &&
                find(excluded_robots.begin(), excluded_robots.end(), bot) ==
                    excluded_robots.end();
     };
@@ -165,7 +165,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     vector<Point> bot_locations;
     for_each(bots.begin(), bots.end(), [&bot_locations](Robot* bot) {
-        bot_locations.push_back(bot->pos);
+        bot_locations.push_back(bot->pos());
     });
 
     bot_locations.insert(bot_locations.end(),
