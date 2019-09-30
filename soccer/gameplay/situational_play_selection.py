@@ -24,6 +24,9 @@ class SituationalPlaySelector:
     ##!!!! This variable will control if plays will be using the situational play selector or not!
     enabled = False
 
+    ##This determines if this file will even run, set to false to save computation
+    toRun = True
+
     ##Score for when the current situation is valid
     inSituationScore = 100
 
@@ -68,8 +71,7 @@ class SituationalPlaySelector:
 
     ##Enum for representing where the ball is on the field
     #
-    # The regions are defined in the update function
-    #
+    # The regions are defined in the update fudoablse#
     class FieldLoc(Enum):
         DEFENDSIDE = 1
         MIDFIELD = 2
@@ -156,17 +158,18 @@ class SituationalPlaySelector:
         else:
             self.updateRobotList()
 
-        self.updatePileup()
-        self.locationUpdate()
-        self.ballPossessionUpdate()
-        self.situationUpdate()
+        if(self.toRun):
+            self.updatePileup()
+            self.locationUpdate()
+            self.ballPossessionUpdate()
+            self.situationUpdate()
 
-        #print(abs(startTime - time.time()))
+            #print(abs(startTime - time.time()))
 
-        #Print the current situation in the corner of the soccer gui
-        self.context.debug_drawer.draw_text(self.currentSituation.name,
-                                            robocup.Point(-3, -0.3), (0, 0, 0),
-                                            "hat")
+            #Print the current situation in the corner of the soccer gui
+            self.context.debug_drawer.draw_text(self.currentSituation.name,
+                                                robocup.Point(-3, -0.3), (0, 0, 0),
+                                                "hat")
 
     ## Returns a list of the robots in the path of the ball
     #
@@ -273,8 +276,14 @@ class SituationalPlaySelector:
     ##Keeps track of what the situaion was for the last frame for the purpose of preemption
     lastSituation = None
 
+    ##Keeps track of the last play for the purposes of determining preemption
+    lastPlay = None
+
     ##Keeps track of the time at which the situation last changed
     situationChangeTime = None
+
+    ##Keeps track of if the situation has changes while the play has not
+    situationChanged = False
 
     ##The time after a situation changes before preempting the current play
     playPreemptTime = 0.20
@@ -312,7 +321,9 @@ class SituationalPlaySelector:
 
     ##Returns if we are in the specified situation without regard to capitalization
     #If the check variable is true, it will check if the situation exists and throw an
-    #exception is it does now.
+    #exception is it does now
+    # @param situation a situation as a string or a enum 
+    # @param check Strings will be checked if they are real if True
     def isSituation(self, situation, check=False):
 
         if(isinstance(situation,str)):
@@ -339,6 +350,15 @@ class SituationalPlaySelector:
             raise TypeError("isSituation only takes strings and enums")
 
 
+    ##Returns true if we are in any of the situations in the passed list
+    #Will take enums or 
+    def isSituations(self, situations, check=False):
+        for g in situations:
+            if(self.isSituation(g,check=check)):
+                return True 
+        
+        return False
+
     ##Update determining if we want to preempt the current play or not
     #
     # Preemption is still an open question but this is a prototype of
@@ -346,6 +366,33 @@ class SituationalPlaySelector:
     #
     #   
     def updatePreempt(self):
+
+        #I think this is a no no??!? 
+        currentPlay = main._root_play.play()
+   
+        #Lets print that out to see what it is
+        print(currentPlay)
+
+        #I'm not totally convinced I know what I'm doing here 
+
+        if(self.lastSituation != self.currentSituation):
+            self.situationChangeTime = time.time()
+            self.situationChanged = True
+
+        if(self.lastPlay != currentPlay):
+            self.lastPlay = currentPlay     
+            self.situationChanged = False
+       
+        if(self.situationChanged and abs(time.time() - self.situationChangeTime) > self.preemptTime):
+            return True
+
+        return False
+
+
+        '''
+        if (self.lastPlay != currentPlay and self.situationChangeTime == None):
+            self.lastPlay = currentPlay
+            
         if (self.lastSituation != self.currentSituaion and
                 self.situationChangeTime == None):
             self.situationChangeTime = time.time()
@@ -356,8 +403,13 @@ class SituationalPlaySelector:
             if (abs(time.time() - self.situationChangeTime) >
                     self.playPreemptTime):
                 self.situationChangeTime = None
-                self.currentPreempt = True
+                if(currentPlay == self.lastPlay):
+                    self.currentPreempt = True
+                self.lastPlay = currentPlay
                 self.LastSituation = self.currentSituaion
+        '''
+
+
 
     ##A function to determine if the currently running play should be preempted
     def preemptPlay(self):

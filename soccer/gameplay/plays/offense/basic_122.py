@@ -51,6 +51,10 @@ class Basic122(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
+        
+        #I'm also realizing that a lot of this functionality could be built into the Standard Play
+        #Which may be the correct way, like using super() to get a base score and then modifying 
+        #that score based on the specifics
 
         #I want there to be a list of valid situations at the top that is easily accessable
         situationList = ["attack_goal", "defend_clear"]
@@ -67,10 +71,16 @@ class Basic122(standard_play.StandardPlay):
             #sure plays aren't preempted after a play properly terminated, also idk
             #the way to properly check if this play is currently running hince the 
             #self.is_running placeholder
-            if(main.situationAnalysis.currentPreempt and self.is_running()):
+            if(main.situationAnalysis.currentPreempt and self.is_in_state(Behavior.State.running)):
+                #This should also terminate the play? 
+                self.terminate()
+  
+                #This should terminate the play. 
                 return float("inf")
+                
+                #One of these two options is probably better than the other one
             
-            #So I'm currently using string comparison, using enums should be possible,
+            #So I'm currently using string comparison, using enums should be doable,
             #making it an external enum might be a possiblity too
             #Note: I don't know if isSituations is actually implemented, I should
             #make it take strings or enums with good checks.
@@ -78,10 +88,6 @@ class Basic122(standard_play.StandardPlay):
                 return main.situationAnalysis.inSituationScore
             else:  
                 return main.situationAnalysis.outSituationScore
-
-
-
-
 
 
 
