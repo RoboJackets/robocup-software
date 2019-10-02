@@ -7,7 +7,7 @@ import skills.benchmark.motion_test
 
 ##Runs motion tests involving polygonal motions with or without a face command
 #So if we end up defining everything inside of the plays, this should probably just be called motion test?
-class BasicMotionTest(MotionTest):
+class BasicMotionTest(skills.motion_test.MotionTest):
 
     #Test information - 
 
