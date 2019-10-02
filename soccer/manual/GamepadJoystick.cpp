@@ -9,30 +9,35 @@ static constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 static constexpr float AXIS_MAX = 32768.0f;
 
 GamepadJoystick::GamepadJoystick()
-    : _joystick(nullptr), _lastDribblerTime(), _lastKickerTime() {
-    if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
-        cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
-             << endl;
-        return;
-    }
-    if (SDL_NumJoysticks() < 1) {
-        cout << "Warning: No joysticks connected!" << endl;
-    } else {
-        _joystick = SDL_JoystickOpen(0);
-        if (_joystick == nullptr) {
-            cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
-                 << endl;
-        } else {
-            cout << "Joystick connected to " << SDL_JoystickName(0) << endl;
-        }
-    }
 }
+
 
 GamepadJoystick::~GamepadJoystick() {
     QMutexLocker(&mutex());
     SDL_JoystickClose(_joystick);
     _joystick = nullptr;
     SDL_Quit();
+}
+
+
+//TODO make static init for joysticks
+static bool GamepadJoystick::initDeviceType() {
+    if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
+      cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
+           << endl;
+      return;
+    }
+    if (SDL_NumJoysticks() < 1) {
+      cout << "Warning: No joysticks connected!" << endl;
+    } else {
+      _joystick = SDL_JoystickOpen(0);
+      if (_joystick == nullptr) {
+        cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
+             << endl;
+      } else {
+        cout << "Joysticks connected to " << SDL_JoystickName(0) << endl;
+      }
+    }
 }
 
 bool GamepadJoystick::valid() const { return _joystick != nullptr; }

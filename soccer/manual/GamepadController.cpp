@@ -14,6 +14,7 @@ const float TRIGGER_CUTOFF = 0.9;
 std::vector<int> GamepadController::controllersInUse = {};
 int GamepadController::deviceRemoved = -1;
 
+
 GamepadController::GamepadController()
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
 
@@ -29,6 +30,27 @@ GamepadController::~GamepadController() {
     _controller = nullptr;
     SDL_Quit();
 }
+
+//TODO make static init for gamepads
+static bool GamepadController::initDeviceType() {
+  if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
+    cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
+         << endl;
+    return;
+  }
+  if (SDL_NumJoysticks() < 1) {
+    cout << "Warning: No joysticks connected!" << endl;
+  } else {
+    _joystick = SDL_JoystickOpen(0);
+    if (_joystick == nullptr) {
+      cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
+           << endl;
+    } else {
+      cout << "Joysticks connected to " << SDL_JoystickName(0) << endl;
+    }
+  }
+}
+
 
 void GamepadController::openInputDevice() {
     if (SDL_NumJoysticks()) {

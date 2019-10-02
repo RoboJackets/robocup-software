@@ -10,22 +10,17 @@ InputDeviceManager::InputDeviceManager() {
 void InputDeviceManager::setupInputDevices() {
   _inputDevices.clear();
 
-  // initialize using the SDL joystick
-  if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
-    cerr << "ERROR: SDL could not initialize game controller system! SDL "
+  // Init event system
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    cerr << "ERROR: SDL could not Initialize event system! SDL "
       "Error: " << SDL_GetError() << endl;
     return;
   }
 
-  // Attempt to add additional mappings (relative to run)
-  if (SDL_GameControllerAddMappingsFromFile(
-                                            ApplicationRunDirectory()
-                                            .filePath("../external/sdlcontrollerdb/gamecontrollerdb.txt")
-                                            .toStdString()
-                                            .c_str()) == -1) {
-    cout << "Failed adding additional SDL Gamecontroller Mappings: "
-         << SDL_GetError() << endl;
-  }
+  //TODO
+  // run static init functions for each type of devices
+  GamepadController::initDeviceType();
+  GamepadJoystick::initDeviceType();
 
   _manualID = -1;
   _multipleManual = false;
@@ -46,10 +41,15 @@ void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx*
   // TODO This is where the bulk of event handling and checking should be done for new controllers
   // Check for sdl device connected
 
-  // Pump sdl update
+  // Pump sdl update for each type
+  SDL_GameControllerUpdate();
   // Iterate eventqueue
   // For each event
   // If it is a controller connected event make a new gamepad object and register it
+  if (SDL_HasEvents(SDL_CONTROLLERDEVICEADDED) {
+    _inputDevices.push_back(new GamepadController());
+  }
+
   // if it is a Joystick disconnected delete the pointer to the joystick and let the destructor handle the rest
   // if it is a Joystick event of
   // if (SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))

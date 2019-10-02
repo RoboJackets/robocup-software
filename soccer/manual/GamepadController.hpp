@@ -12,6 +12,8 @@ public:
     GamepadController();
     ~GamepadController();
 
+    static bool GamepadController::initDeviceType();
+
     void reset() override;
     void update() override;
     InputDeviceControlValues getInputDeviceControlValues() override;
