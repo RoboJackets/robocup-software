@@ -130,10 +130,13 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     PureRot1FacePoint = robocup.Point(-1,1.5)
     PureRot2FacePoint = robocup.Point(1,1.5)
 
-    #Movement test points END
 
+    
+    ##
+    # Appends a test to the list of tests
+    def addTest(self, a):
+        self.test.append(a)
 
-    #Utility functions START
 
     #A function that both prints and adds to the output file list to be written
     def resultOut(self, result):
