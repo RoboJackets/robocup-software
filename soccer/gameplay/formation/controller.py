@@ -1,10 +1,13 @@
+import main
 import robocup
 import enum
 import constants
-
 import composite_behavior
+import behavior
+import formation.positions.position
+import formation.positions.simple_goalie
+import formation.positions.simple_position
 
-import positions.position as position
 # Create the formation
 # Position for every robot
 # In their prominant location
@@ -34,6 +37,7 @@ class Controller(composite_behavior.CompositeBehavior):
     CENTER_OFFSET = -.25
 
     def __init__(self):
+        super().__init__(continuous=True)
         ### Formation specifics ###
 
         # [Their  Goal] #
@@ -49,15 +53,21 @@ class Controller(composite_behavior.CompositeBehavior):
         # Replace the next lines with the target class
         # Type should remain the same unless the general
         #  of the formation changes (AKA 3 defenders now etc)
-        self.Striker_Left  = position.Position(position.Position.Type.Striker)
-        self.Striker_Right = position.Position(position.Position.Type.Striker)
+        self.Striker_Left  = formation.positions.simple_position.SimplePosition(formation.positions.position.Position.Type.Striker,
+                                               "Left Striker")
+        self.Striker_Right = formation.positions.simple_position.SimplePosition(formation.positions.position.Position.Type.Striker,
+                                               "Right Striker")
 
-        self.Midfielder_Center = position.Position(position.Position.Type.Midfielder)
+        self.Midfielder_Center = formation.positions.simple_position.SimplePosition(formation.positions.position.Position.Type.Midfielder,
+                                                   "Center Midfielder")
         
-        self.Defender_Left  = position.Position(position.Position.Type.Defender)
-        self.Defender_Right = position.Position(position.Position.Type.Defender)
+        self.Defender_Left  = formation.positions.simple_position.SimplePosition(formation.positions.position.Position.Type.Defender,
+                                                "Left Defender")
+        self.Defender_Right = formation.positions.simple_position.SimplePosition(formation.positions.position.Position.Type.Defender,
+                                                "Right Defender")
 
-        self.Goalie = position.Position(position.Position.Type.Goalie)
+        self.Goalie = formation.positions.simple_goalie.SimpleGoalie(formation.positions.position.Position.Type.Goalie,
+                                        "Goalie")
 
         self.positions = [self.Striker_Left, self.Striker_Right,
                           self.Midfielder_Center,
@@ -92,13 +102,22 @@ class Controller(composite_behavior.CompositeBehavior):
         self.Defender_Right.pass_options = [self.Striker_Right, self.Midfielder_Center, self.Defender_Left]
 
 
-        self.formation_width = Controller.FORMATION_WIDTH * constants.Field.width
-        self.formation_length = Controller.FORMATION_LENGTH * constants.Field.length
+        self.formation_width = Controller.FORMATION_WIDTH * constants.Field.Width
+        self.formation_length = Controller.FORMATION_LENGTH * constants.Field.Length
         self.formation_center = main.ball().pos
 
         self.clip_formation_center()
         self.update_formation_center()
-        self.update_formation_targets()
+        self.update_formation_location()
+
+        for p in self.positions:
+            IDLE = 1
+            self.add_subbehavior(p, p.str_name, required=False, priority=IDLE)
+
+        # Just jump to running instantly
+        self.add_transition(behavior.Behavior.State.start,
+                            behavior.Behavior.State.running,
+                            lambda: True, "starting")
 
     # Clip formation such that all robots are in bounds
     def clip_formation_center(self):
@@ -114,6 +133,8 @@ class Controller(composite_behavior.CompositeBehavior):
 
     # Move center of formation to correct location
     def update_formation_center(self):
+        self.formation_center = robocup.Point(0,4.5)
+        return
         # Shift formation such that it "falls" about 25% ahead of each of the
         # 3 main lines (striker, midfielder, defender) y values
 
@@ -148,16 +169,16 @@ class Controller(composite_behavior.CompositeBehavior):
         target_line = None
         real_target = 0
         for l in possible_lines:
-            real_target = self.formation_center.y + (l + Controller.CENTER_OFFFSET)*self.formation_length/2
+            real_target = self.formation_center.y + (l + Controller.CENTER_OFFSET)*self.formation_length/2
             
             target_line = l
 
             # If the line is almost at correct position
-            if (real_target - shift_down_bound < main.ball().y):
+            if (real_target - shift_down_bound < main.ball().pos.y):
                 break
             # No man's zone so use previous line
             # This should always be the current line or the one after
-            elif (real_target - shift_up_bound < main.ball().y):
+            elif (real_target - shift_up_bound < main.ball().pos.y):
                 target_line = self.previous_target_line
 
 
@@ -175,7 +196,7 @@ class Controller(composite_behavior.CompositeBehavior):
     # Assumes formation center is valid
     #  AKA Not out of bounds
     def update_formation_location(self):
-        for (p in self.positions):
+        for p in self.positions:
             p.target_pos =  self.formation_center + \
                             p.relative_pos * robocup.Point(self.formation_width / 2,
                                                            self.formation_length / 2)
