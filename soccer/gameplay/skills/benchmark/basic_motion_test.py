@@ -193,7 +193,7 @@ class BasicMotionTest(skills.benchmark.motion_test.MotionTest):
             self.calcFinalRotationError()
             self.calcFinalPosError()
             print("Overshoot: " + str(self.maxOvershoot[self.motionNumber]) + " meters")
-            print("Line follow Error (This is a bad metric): " + str(self.lineFollowError[self.motionNumber]))
+            print("Line follow Error (This is a questionable metric): " + str(self.lineFollowError[self.motionNumber] / self.timeTaken[self.motionNumber]))
             print("Rotational Follow Error: " + str(self.rotationalFollowError[self.motionNumber]))
 
         if(self.started):
