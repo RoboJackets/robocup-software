@@ -1,4 +1,6 @@
 import skills.benchmark.motion_test
+import time
+import skills.benchmark.motion_benchmark
 #import Motion
 #import motion_test.MotionTest
 
@@ -7,7 +9,7 @@ import skills.benchmark.motion_test
 
 ##Runs motion tests involving polygonal motions with or without a face command
 #So if we end up defining everything inside of the plays, this should probably just be called motion test?
-class BasicMotionTest(skills.motion_test.MotionTest):
+class BasicMotionTest(skills.benchmark.motion_test.MotionTest):
 
     #Test information - 
 
@@ -168,8 +170,8 @@ class BasicMotionTest(skills.motion_test.MotionTest):
 
     #Update the velocity related stats
     def updateVel(self, deltat):
-        vel = MotionBenchmark.getVel(self.theMotionBenchmark)
-        speed = MotionBenchmark.getSpeed(self.theMotionBenchmark)
+        vel = self.theMotionBenchmark.getVel() #MotionBenchmark.getVel(self.theMotionBenchmark)
+        speed = self.theMotionBenchmark.getSpeed()
 
         if speed > self.maximumSpeed:
             maximumSpeed = speed
@@ -182,14 +184,17 @@ class BasicMotionTest(skills.motion_test.MotionTest):
 
     #Records the data at the end of the motion
     def endMotion(self):
-        print("Motion " + str(self.motionNumber) + " out of " + str(self.motions) + " in test " + self.title + " results: ")
-        self.timeTaken[self.motionNumber] = abs(self.motionStartTime - time.time())
-        print("Time taken: " + str(self.timeTaken[self.motionNumber]) + " seconds")
-        self.endVel[self.motionNumber] = MotionBenchmark.getSpeed(self.theMotionBenchmark)
-        print("Ending velocity: " + str(self.endVel[self.motionNumber]) + " m/s")
-        self.calcFinalRotationError()
-        self.calcFinalPosError()
-        print("Overshoot: " + str(self.maxOvershoot[self.motionNumber]) + " meters")
+        if(self.motionNumber != -1):
+            print("Motion " + str(self.motionNumber) + " out of " + str(self.motions) + " in test " + self.title + " results: ")
+            self.timeTaken[self.motionNumber] = abs(self.motionStartTime - time.time())
+            print("Time taken: " + str(self.timeTaken[self.motionNumber]) + " seconds")
+            self.endVel[self.motionNumber] = self.theMotionBenchmark.getSpeed()
+            print("Ending velocity: " + str(self.endVel[self.motionNumber]) + " m/s")
+            self.calcFinalRotationError()
+            self.calcFinalPosError()
+            print("Overshoot: " + str(self.maxOvershoot[self.motionNumber]) + " meters")
+            print("Line follow Error (area between path and line): " + str(self.lineFollowError[self.motionNumber]))
+            print("Rotational Follow Error: " + str(self.rotationalFollowError[self.motionNumber]))
 
         if(self.started):
             self.motionNumber = self.motionNumber + 1
@@ -202,26 +207,26 @@ class BasicMotionTest(skills.motion_test.MotionTest):
     #Calculates the final rotational error based on self.currentFacePoint
     def calcFinalRotationError(self):
         if(self.currentFacePoint is not None):
-            self.finalRotationalError[self.motionNumber] = MotionBenchmark.getAngleError(self.theMotionBenchmark, self.currentFacePoint)
+            self.finalRotationalError[self.motionNumber] = self.theMotionBenchmark.getAngleError(self.currentFacePoint)
             print("End rotational error: " + str(self.finalRotationalError[self.motionNumber]) + " degrees")
 
     #Calculates the final positional error based 
     def calcFinalPosError(self):
         if(self.currentEnd is not None):
-            self.posEndError[self.motionNumber] = MotionBenchmark.getPosError(self.theMotionBenchmark, self.currentEnd)
+            self.posEndError[self.motionNumber] = self.theMotionBenchmark.getPosError(self.currentEnd)
             print("End positional error: " + str(self.posEndError[self.motionNumber]) + " meters")
 
     #Update the line follow error integral
     def integrateLineError(self, deltat):
-        self.lineFollowError[self.motionNumber] += MotionBenchmark.getLineError(self.theMotionBenchmark,self.currentStart, self.currentEnd) * deltat
+        self.lineFollowError[self.motionNumber] += self.theMotionBenchmark.getLineError(self.currentStart, self.currentEnd) * deltat
 
     #Update the rotation error integral
     def integrateRotationalError(self, deltat):
-        self.rotationalFollowError[self.motionNumber] += abs(MotionBenchmark.getAngleError(self.theMotionBenchmark,self.currentFacePoint)) * deltat
+        self.rotationalFollowError[self.motionNumber] += abs(self.theMotionBenchmark.getAngleError(self.currentFacePoint)) * deltat
 
     #Check and update the overshoot stats
     def updateOvershoot(self):
-        overshoot = MotionBenchmark.getOvershoot(self.theMotionBenchmark,self.currentStart, self.currentEnd)
+        overshoot = self.theMotionBenchmark.getOvershoot(self.currentStart, self.currentEnd)
         if(overshoot > self.maxOvershoot[self.motionNumber]):
             self.maxOvershoot[self.motionNumber] = overshoot
    

@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+import time
+
 
 #An abstract base class for motion tests to be run by subclasses of the BaseMotionBenchmark skill
 class MotionTest(ABC): 

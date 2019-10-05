@@ -9,7 +9,7 @@ import skills.move
 import skills.face
 import time
 import datetime
-#import numpy as np
+import numpy as np
 import math
 import role_assignment
 import composite_behavior
@@ -111,7 +111,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         #BasicMotionEnd -> ProcessAllTests
         self.add_transition(MotionBenchmark.State.TestEnd,
                             MotionBenchmark.State.ProcessAllTests,
-                            lambda: self.testIndex >= len(self.tests), 'No next test exists')
+                            lambda: self.testIndex >= len(self.tests) or self.currentTest == None, 'No next test exists')
                             
         #ProcessTest -> exit
         self.add_transition(MotionBenchmark.State.ProcessAllTests,
@@ -135,7 +135,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
     ##
     # Appends a test to the list of tests
     def addTest(self, a):
-        self.test.append(a)
+        self.tests.append(a)
 
 
     #A function that both prints and adds to the output file list to be written
@@ -198,7 +198,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.setupTests()
    
     def on_exit_setup(self):
- 
+        self.currentTest = self.tests[0] 
         print("TESTS TO BE RUN --------------------------------")
         for g in self.tests:
             print(g)
@@ -262,6 +262,10 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
         self.currentTest.setupTest()
 
     '''
+
+
+    def done_with_setup(self):
+        self.isSetup = True
 
     def on_enter_TestMotion(self):
         self.currentTest.startMotion()
