@@ -9,14 +9,17 @@
  */
 class GamepadController : public InputDevice {
 public:
-    GamepadController();
+    GamepadController(SDL_Event& event);
     ~GamepadController();
 
-    static bool GamepadController::initDeviceType();
+    static void initDeviceType();
 
     void reset() override;
-    void update() override;
+    void update(SDL_Event& event) override;
     InputDeviceControlValues getInputDeviceControlValues() override;
+
+    void openInputDevice(SDL_Event& event);
+    void closeInputDevice();
 
     bool valid() const override;
 
@@ -31,8 +34,6 @@ private:
     RJ::Time _lastDribblerTime;
     RJ::Time _lastKickerTime;
 
-    void openInputDevice();
-    void closeInputDevice();
     bool connected;
     int controllerId;
 };

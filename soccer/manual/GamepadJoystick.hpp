@@ -13,15 +13,23 @@
  */
 class GamepadJoystick : public InputDevice {
 public:
-    GamepadJoystick();
+    GamepadJoystick(SDL_Event& event);
     ~GamepadJoystick();
 
+    static void initDeviceType();
 
     void reset() override;
-    void update() override;
+    void update(SDL_Event& event) override;
     InputDeviceControlValues getInputDeviceControlValues() override;
 
+    void openInputDevice(SDL_Event& event);
+    void closeInputDevice();
+
     bool valid() const override;
+
+    static std::vector<int> joysticksInUse;
+    static int deviceRemoved;
+
 
 private:
     SDL_Joystick* _joystick;
@@ -30,4 +38,8 @@ private:
 
     RJ::Time _lastDribblerTime;
     RJ::Time _lastKickerTime;
+
+    bool connected;
+    int joystickId;
+
 };

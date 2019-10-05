@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <vector>
+#include <SDL.h>
 
 struct InputDeviceControlValues {
 public:
@@ -53,7 +54,7 @@ public:
     /**
      * @brief Instructs the joystick to updates its values
      */
-    virtual void update() = 0;
+    virtual void update(SDL_Event& event) = 0;
 
     /**
      * @brief Returns the control values from this joystick

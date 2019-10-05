@@ -34,7 +34,7 @@ public:
     bool valid() const override;
 
     void reset() override;
-    void update() override;
+    void update(SDL_Event& event) override;
 
     InputDeviceControlValues getInputDeviceControlValues() override;
 

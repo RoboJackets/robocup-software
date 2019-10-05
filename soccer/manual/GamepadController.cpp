@@ -15,13 +15,13 @@ std::vector<int> GamepadController::controllersInUse = {};
 int GamepadController::deviceRemoved = -1;
 
 
-GamepadController::GamepadController()
+GamepadController::GamepadController(SDL_Event& event)
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
 
     connected = false;
     controllerId = -1;
     robotId = -1;
-    openInputDevice();
+    openInputDevice(event);
 }
 
 GamepadController::~GamepadController() {
@@ -31,28 +31,16 @@ GamepadController::~GamepadController() {
     SDL_Quit();
 }
 
-//TODO make static init for gamepads
-static bool GamepadController::initDeviceType() {
+void GamepadController::initDeviceType() {
   if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
     cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
          << endl;
     return;
   }
-  if (SDL_NumJoysticks() < 1) {
-    cout << "Warning: No joysticks connected!" << endl;
-  } else {
-    _joystick = SDL_JoystickOpen(0);
-    if (_joystick == nullptr) {
-      cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
-           << endl;
-    } else {
-      cout << "Joysticks connected to " << SDL_JoystickName(0) << endl;
-    }
-  }
 }
 
 
-void GamepadController::openInputDevice() {
+void GamepadController::openInputDevice(SDL_Event& event) {
     if (SDL_NumJoysticks()) {
         // Open the first available controller
         for (int i = 0; i < SDL_NumJoysticks(); ++i) {
@@ -100,48 +88,15 @@ void GamepadController::closeInputDevice() {
     robotId = -1;
     connected = false;
 
-    // Clear events from queue
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {}
 }
 
 bool GamepadController::valid() const { return connected; }
 
-void GamepadController::update() {
+void GamepadController::update(SDL_Event& event) {
     QMutexLocker(&mutex());
-    SDL_GameControllerUpdate();
 
     RJ::Time now = RJ::now();
 
-
-    if (connected) {
-      // Check if dc
-      if (deviceRemoved >= 0 && controllerId > deviceRemoved) {
-        controllerId -= 1;
-      }
-      if (!SDL_GameControllerGetAttached(_controller)) {
-        closeInputDevice();
-        return;
-      }
-    } else {
-      // Check if new controller found
-      // TODO use the SDL event API to only run this if we receive a connected
-      // event.
-      openInputDevice();
-      if (!connected) {
-        return;
-      }
-    }
-
-
-    // Don't do anything until we have an event
-    // TODO stop abusing the queue here and use the event api.
-    if (!SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))
-        return;
-
-    /*
-     *  DRIBBLER ON/OFF
-     */
     if (SDL_GameControllerGetButton(_controller,
                                     SDL_CONTROLLER_BUTTON_LEFTSHOULDER)) {
         _controls.dribble = true;

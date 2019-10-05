@@ -8,59 +8,74 @@ InputDeviceManager::InputDeviceManager() {
 }
 
 void InputDeviceManager::setupInputDevices() {
-  _inputDevices.clear();
+    _inputDevices.clear();
 
-  // Init event system
-  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-    cerr << "ERROR: SDL could not Initialize event system! SDL "
-      "Error: " << SDL_GetError() << endl;
-    return;
-  }
+    // Init event system
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        cerr << "ERROR: SDL could not Initialize event system! SDL "
+            "Error: " << SDL_GetError() << endl;
+        return;
+    }
 
-  //TODO
-  // run static init functions for each type of devices
-  GamepadController::initDeviceType();
-  GamepadJoystick::initDeviceType();
+    //TODO
+    // run static init functions for each type of devices
+    GamepadController::initDeviceType();
+    GamepadJoystick::initDeviceType();
 
-  _manualID = -1;
-  _multipleManual = false;
-  _dampedTranslation = true;
-  _dampedRotation = true;
+    _manualID = -1;
+    _multipleManual = false;
+    _dampedTranslation = true;
+    _dampedRotation = true;
 
-
-  // TODO robots per team seems hard coded
-  for (int i = 0; i < Robots_Per_Team; i++) {
-    _inputDevices.push_back(new GamepadController());
-  }
-
-  //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
-  // isValid() is working properly
+    // _inputDevices.resize(Robots_Per_Team);
 }
 
 void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx* tx) {
-  // TODO This is where the bulk of event handling and checking should be done for new controllers
-  // Check for sdl device connected
+    // TODO This is where the bulk of event handling and checking should be done for new controllers
+    // Pump sdl update for each type
+    SDL_GameControllerUpdate();
 
-  // Pump sdl update for each type
-  SDL_GameControllerUpdate();
-  // Iterate eventqueue
-  // For each event
-  // If it is a controller connected event make a new gamepad object and register it
-  if (SDL_HasEvents(SDL_CONTROLLERDEVICEADDED) {
-    _inputDevices.push_back(new GamepadController());
-  }
+    // TODO Only serve so many events
+    SDL_Event event;
 
-  // if it is a Joystick disconnected delete the pointer to the joystick and let the destructor handle the rest
-  // if it is a Joystick event of
-  // if (SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP))
-  // send the event to the to the controllers update function
 
-  for (InputDevice* inputDevice : _inputDevices) {
-    inputDevice->update();
-  }
+    // TODO Opens on number of robots but currently indexes by SDL connection number
+    // Iterate eventqueue
+    while (SDL_PollEvent(&event)) {
+        // Figure out what event it is
+        switch (event.type) {
 
-  // Apply input device updates to robots
-  applyInputDeviceControls(robots, tx);
+        // If it is a controller connected event make a new gamepad object and register it
+        case SDL_CONTROLLERDEVICEADDED:
+            if (event.cdevice.which < Robots_Per_Team) {
+                _inputDevices.at(event.cdevice.which) = (new GamepadController(event));
+            } else {
+                cerr << "ERROR: Attempted to open a controller beyond the number of robots"
+                     << SDL_GetError() << endl;
+            }
+            break;
+
+        // if it is a Joystick disconnected delete the pointer to the joystick and let the destructor handle the rest
+        case SDL_CONTROLLERDEVICEREMOVED:
+            if (event.cdevice.which < Robots_Per_Team) {
+                delete _inputDevices.at(event.cdevice.which);
+            } else {
+                cerr << "ERROR: Attempted to close a controller beyond the number of robots"
+                     << SDL_GetError() << endl;
+            }
+            break;
+
+        // if it is a Joystick event of
+        case SDL_CONTROLLERAXISMOTION:
+        case SDL_CONTROLLERBUTTONUP:
+            // send the event to the to the controllers update function
+            _inputDevices.at(event.cdevice.which)->update(event);
+            break;
+        }
+    }
+
+    // Apply input device updates to robots
+    applyInputDeviceControls(robots, tx);
 
 }
 

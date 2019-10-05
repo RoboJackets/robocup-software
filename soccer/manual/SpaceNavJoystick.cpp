@@ -20,7 +20,7 @@ SpaceNavJoystick::~SpaceNavJoystick() { close(); }
 
 bool SpaceNavJoystick::valid() const { return _daemonConnected; }
 
-void SpaceNavJoystick::update() {
+void SpaceNavJoystick::update(SDL_Event& event) {
     QMutexLocker(&mutex());
 
     //  try again if we failed last time
