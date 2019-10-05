@@ -57,7 +57,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         if skillkicker == None:
             skillkicker = (skills.pivot_kick.PivotKick(), lambda x: x ==
-                           skills.pivot_kick.PivotKick.State.aimed)
+                           skills.pivot_kick.PivotKick.State.aimed
+                           or x == skills.pivot_kick.PivotKick.State.kicking)
 
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
@@ -83,8 +84,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
             lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state)
-                     and self.subbehavior_with_name('receiver').state == self.
-                     skillreceiver.State.aligned), 'kicker and receiver ready')
+                     and (self.subbehavior_with_name('receiver').state == self.
+                     skillreceiver.State.aligned or not self.receiver_required)),
+                    'kicker and receiver ready')
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
@@ -99,20 +101,26 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                             self.prekick_timeout_exceeded, 'Timed out on kick')
 
         self.add_transition(CoordinatedPass.State.kicking,
-                            CoordinatedPass.State.receiving, lambda: self.
-                            subbehavior_with_name('kicker').state == behavior.
+                            CoordinatedPass.State.receiving,
+                            lambda: self.subbehavior_with_name('kicker').state == behavior.
                             Behavior.State.completed, 'kicker kicked')
 
-        self.add_transition(
-            CoordinatedPass.State.receiving, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('receiver').state == behavior.
-            Behavior.State.completed, 'pass received!')
+        self.add_transition(CoordinatedPass.State.kicking,
+                            behavior.Behavior.State.failed,
+                            lambda:self.subbehavior_with_name('kicker').state == behavior.Behavior.State.failed,
+                            'kicker failed')
 
-        self.add_transition(
-            CoordinatedPass.State.receiving,
-            behavior.Behavior.State.failed, lambda: self.subbehavior_with_name(
-                'receiver').state == behavior.Behavior.State.failed,
-            'pass failed :(')
+        self.add_transition(CoordinatedPass.State.receiving,
+                            behavior.Behavior.State.completed,
+                            lambda: self.subbehavior_with_name('receiver').state == behavior.
+                            Behavior.State.completed,
+                            'pass received!')
+
+        self.add_transition(CoordinatedPass.State.receiving,
+                            behavior.Behavior.State.failed, 
+                            lambda: not self.ball_heading_to_receive_point()
+                            or self.subbehavior_with_name('receiver').state == behavior.Behavior.State.failed,
+                            'pass failed :(')
 
     ## Handles restarting this behaivor.
     # Since we save a few sub-behaviors, we need to restart those when we restart.
@@ -175,15 +183,35 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
-    def on_enter_kicking(self):
+    def ball_heading_to_receive_point(self):
+        ball_velocity = main.ball().vel;
+        if ball_velocity.mag() > 0.1:
+            ball_velocity_unit = [ball_velocity.x/ball_velocity.mag(), ball_velocity.y/ball_velocity.mag()]
+            path_vector = main.ball().pos - self.receive_point
+            path_unit = [path_vector.x/path_vector.mag(), path_vector.y/path_vector.mag()]
+            cross_product_mag = abs(ball_velocity_unit[0] * path_unit[1] -
+                ball_velocity_unit[1] * path_unit[0])
+            distance = path_vector.mag()
+            if distance < 0.3:
+                print("Too close for fail")
+                return True
+            if (distance > 0.5 and cross_product_mag > 0.1) or (distance < 0.5 and cross_product_mag > 0.4) or ball_velocity.mag() < 0.05:
+                if ball_velocity.mag() < 0.05:
+                    print("You're too slow")
+                else:
+                    print("You're off course")
+                    print(path_vector.mag())
+                return False
+        return True
+
+    def execute_kicking(self):
+        print(self.ball_heading_to_receive_point())
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
-
         # receive point renegotiation
         self._last_unsteady_time = None
         self._has_renegotiated_receive_point = False
-
         self._preparing_start = time.time()
 
     def execute_running(self):
@@ -240,10 +268,13 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             return 0
         return self.prekick_timeout - (time.time() - self._preparing_start)
 
-    def on_enter_receiving(self):
+    def execute_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
-        self.subbehavior_with_name('receiver').ball_kicked = True
-        self.remove_subbehavior('kicker')
+        print(self.ball_heading_to_receive_point())
+        if not self.subbehavior_with_name('receiver').ball_kicked == True:
+            self.subbehavior_with_name('receiver').ball_kicked = True
+        if self.has_subbehavior_with_name('kicker'):
+            self.remove_subbehavior('kicker')
 
     @property
     def has_roles_assigned(self):
@@ -263,3 +294,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 or self.prekick_timeout <= 0):
             desc += "\n    timeout=" + str(round(self.time_remaining(), 2))
         return desc
+
+
+
