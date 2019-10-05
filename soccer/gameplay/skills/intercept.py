@@ -34,13 +34,19 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
                         self.robot.pos)
                     self.target_pos = self.shape_constraint.nearest_point(
                         self.target_pos)
-                main.system_state().draw_line(self.shape_constraint,
+                main.debug_drawer().draw_line(self.shape_constraint,
                                               (0, 255, 0), "Debug")
             else:
                 self.target_pos = self.ball_line().nearest_point(
                     self.robot.pos)
 
-            self.robot.move_to_direct(self.target_pos)
+
+            # Intercept works better at high accelerations and speeds
+            # but due to lag with bad motion control, it doesn't actually
+            # end up moving robots in the way
+            # TODO(motion-control): Swap back to intercept
+            #self.robot.intercept(self.target_pos)
+            self.robot.move_to(self.target_pos)
 
             if self.faceBall:
                 self.robot.face(main.ball().pos)

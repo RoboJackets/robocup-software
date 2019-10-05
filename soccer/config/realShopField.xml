@@ -39,6 +39,32 @@
   <Has_Ball_Distance value="0.1"/>
   <Pivot_Speed value="1.5708"/>
   <Dribbler_Speed value="127"/>
+  <Settle>
+   <ballSpeedPercentForDampen value="0"/>
+   <searchStartDist value="0"/>
+   <searchEndDist value="7"/>
+   <searchIncDist value="0.05"/>
+   <interceptBufferTime value="0.5"/>
+   <targetPointGain value="0.5"/>
+   <ballVelGain value="0.5"/>
+   <shortcutDist value="0.1"/>
+   <maxBallVelForPathReset value="2"/>
+   <maxBallAngleForReset value="20"/>
+   <maxBounceAngle value="45"/>
+  </Settle>
+  <Collect>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <approachAccelScalePercent value="0.8"/>
+   <controlAccelScalePercent value="0.6"/>
+   <approachDistTarget value="0.01"/>
+   <touchDeltaSpeed value="0.1"/>
+   <velocityControlScale value="1"/>
+   <distCutoffToControl value="0.01"/>
+   <velCutoffToControl value="1"/>
+   <distCutoffToApproach value="0.3"/>
+   <stopDistScale value="1"/>
+   <targetPointAveragingGain value="0.8"/>
+  </Collect>
  </Capture>
  <Rev2008>
   <trapTrans>
@@ -57,11 +83,18 @@
    <p value="0"/>
    <i value="0"/>
    <d value="0"/>
+   <i_windup value="0"/>
+   <velMultiplier value="1.3"/>
+   <minEffectiveVelocity value="0.3"/>
+   <accelMultiplier value="20"/>
   </translation>
   <rotation>
    <p value="0"/>
    <i value="0"/>
    <d value="0"/>
+   <i_windup value="0"/>
+   <velMultiplier value="0.1"/>
+   <minEffectiveAngularSpeed value="1.2"/>
   </rotation>
   <wheel>
    <p value="0"/>
@@ -71,7 +104,19 @@
   <kicker>
    <m value="1"/>
    <b value="0"/>
+   <maxKick value="200"/>
+   <maxChip value="150"/>
   </kicker>
+  <dribbler>
+   <multiplier value="1"/>
+  </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
+  <pivot>
+   <velMultiplier value="0.3"/>
+  </pivot>
  </Rev2008>
  <Rev2011>
   <trapTrans>
@@ -90,11 +135,18 @@
    <p value="0"/>
    <i value="0"/>
    <d value="0"/>
+   <i_windup value="0"/>
+   <velMultiplier value="1.2"/>
+   <minEffectiveVelocity value="0.35"/>
+   <accelMultiplier value="16"/>
   </translation>
   <rotation>
    <p value="0"/>
    <i value="0"/>
    <d value="0"/>
+   <i_windup value="0"/>
+   <velMultiplier value="0.1"/>
+   <minEffectiveAngularSpeed value="0.2"/>
   </rotation>
   <wheel>
    <p value="0"/>
@@ -104,6 +156,278 @@
   <kicker>
    <m value="1"/>
    <b value="0"/>
+   <maxKick value="255"/>
+   <maxChip value="200"/>
   </kicker>
+  <dribbler>
+   <multiplier value="1"/>
+  </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
+  <pivot>
+   <velMultiplier value="0.01"/>
+  </pivot>
  </Rev2011>
+ <PathPlanner>
+  <Field_Edge_Obstacle value="0.33"/>
+  <EscapeObstaclesPathPlanner>
+   <stepSize value="0.1"/>
+  </EscapeObstaclesPathPlanner>
+  <RRT>
+   <EnableDebugDrawing value="false"/>
+   <StepSize value="0.15"/>
+   <GoalBias value="0.3"/>
+   <WayPointBias value="0.5"/>
+  </RRT>
+  <replanTimeout value="5"/>
+  <goalPosChangeThreshold value="0.025"/>
+  <goalVelChangeThreshold value="0.025"/>
+  <selfAvoidRadius value="0.09"/>
+  <oppAvoidRadius value="0.08"/>
+  <oppGoalieAvoidRadius value="0.14"/>
+  <dribbleOutOfBoundsOffset value="0.05"/>
+ </PathPlanner>
+ <Joystick>
+  <Max_Rotation_Speed value="12.5664"/>
+  <Max_Damped_Rotation_Speed value="4"/>
+  <Max_Translation_Speed value="3"/>
+  <Max_Damped_Translation_Speed value="0.7"/>
+ </Joystick>
+ <SpaceNavJoystick>
+  <Positive_Dribbler_Deadzone value="100"/>
+  <Negative_Dribbler_Deadzone value="-150"/>
+ </SpaceNavJoystick>
+ <KickEvaluator>
+  <kick_std_dev value="0.04"/>
+  <kick_mean value="0"/>
+  <robot_std_dev value="0.3"/>
+  <start_x_offset value="0.1"/>
+ </KickEvaluator>
+ <MotionControl>
+  <Max_Acceleration value="100"/>
+  <Max_Velocity value="100"/>
+  <X_Multiplier value="1.05"/>
+  <FeedForward_Ang_Vel value="0"/>
+ </MotionControl>
+ <EscapeObstaclesPathPlanner>
+  <goalChangeThreshold value="0.09"/>
+ </EscapeObstaclesPathPlanner>
+ <MotionConstraints>
+  <Max_Acceleration value="1"/>
+  <Max_Velocity value="2.2"/>
+  <Replan_Threshold value="0.3"/>
+  <Replan_Lead_Time value="0.1"/>
+  <Max_Centripetal_Acceleration value="0.5"/>
+ </MotionConstraints>
+ <RotationConstraints>
+  <Max_Rotation_Speed value="5"/>
+  <Max_Rotation_Acceleration value="4"/>
+ </RotationConstraints>
+ <RRTPlanner>
+  <partialReplanLeadTime value="0.2"/>
+ </RRTPlanner>
+ <Pivot>
+  <radius value="1.1"/>
+ </Pivot>
+ <TargetVelPathPlanner>
+  <velChangeReplanThreshold value="0.05"/>
+ </TargetVelPathPlanner>
+ <Rev2015>
+  <translation>
+   <p value="2"/>
+   <i value="0.4"/>
+   <i_windup value="20"/>
+   <d value="1"/>
+   <velMultiplier value="1.1"/>
+   <minEffectiveVelocity value="0.05"/>
+   <accelMultiplier value="7"/>
+  </translation>
+  <rotation>
+   <p value="2"/>
+   <i value="0.1"/>
+   <i_windup value="0"/>
+   <d value="0"/>
+   <velMultiplier value="1"/>
+   <minEffectiveAngularSpeed value="0.05"/>
+  </rotation>
+  <kicker>
+   <maxKick value="225"/>
+   <maxChip value="200"/>
+  </kicker>
+  <dribbler>
+   <multiplier value="1"/>
+  </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
+  <pivot>
+   <velMultiplier value="0.01"/>
+  </pivot>
+ </Rev2015>
+ <Robot_Statuses>
+  <Robot_0>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_0>
+  <Robot_1>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_1>
+  <Robot_2>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_2>
+  <Robot_3>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_3>
+  <Robot_4>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_4>
+  <Robot_5>
+   <Chipper_Enabled value="false"/>
+   <Kicker_Enabled value="false"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_5>
+  <Robot_6>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_6>
+  <Robot_7>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_7>
+  <Robot_8>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_8>
+  <Robot_9>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_9>
+  <Robot_10>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_10>
+  <Robot_11>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_11>
+  <Robot_12>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_12>
+  <Robot_13>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_13>
+  <Robot_14>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_14>
+  <Robot_15>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_15>
+ </Robot_Statuses>
+ <VisionFilter>
+  <Bounce>
+   <robot_body_lin_dampen value="0.9"/>
+   <robot_mouth_lin_dampen value="0.3"/>
+   <robot_body_angle_dampen value="0"/>
+   <robot_mouth_angle_dampen value="0"/>
+  </Bounce>
+  <KalmanBall>
+   <max_time_outside_vision value="0.2"/>
+  </KalmanBall>
+  <WorldBall>
+   <ball_merger_power value="1.5"/>
+  </WorldBall>
+  <Camera>
+   <MHKF_radius_cutoff value="0.5"/>
+   <use_MHKF value="true"/>
+   <max_num_kalman_balls value="10"/>
+   <max_num_kalman_robots value="10"/>
+  </Camera>
+  <Kick>
+   <Detector>
+    <fast_kick_timeout value="1"/>
+    <slow_kick_timeout value="0.5"/>
+    <same_kick_timeout value="0.05"/>
+    <fast_acceleration_trigger value="750"/>
+    <slow_robot_dist_filter_cutoff value="3"/>
+    <slow_one_robot_within_dist value="0.15"/>
+    <slow_any_robot_past_dist value="0.16"/>
+    <slow_min_ball_speed value="0.6"/>
+    <slow_max_kick_angle value="0.34"/>
+    <slow_hist_length value="5"/>
+    <fast_hist_length value="3"/>
+   </Detector>
+  </Kick>
+  <Ball>
+   <init_covariance value="100"/>
+   <process_noise value="0.1"/>
+   <observation_noise value="2"/>
+  </Ball>
+  <Robot>
+   <init_covariance value="100"/>
+   <process_noise value="0.1"/>
+   <observation_noise value="2"/>
+   <orientation_scale value="1"/>
+  </Robot>
+  <KalmanRobot>
+   <max_time_outside_vision value="0.5"/>
+  </KalmanRobot>
+  <WorldRobot>
+   <robot_merger_power value="1.5"/>
+  </WorldRobot>
+  <loop_dt value="0.01"/>
+  <max_num_cameras value="12"/>
+  <Health>
+   <init value="2"/>
+   <increment value="2"/>
+   <decrement value="1"/>
+   <max value="20"/>
+   <min value="1"/>
+  </Health>
+ </VisionFilter>
+ <WindowEvaluator>
+  <angleScoreCoeff value="0.7"/>
+  <distScoreCoeff value="0"/>
+ </WindowEvaluator>
 </config>

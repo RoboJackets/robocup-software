@@ -71,7 +71,7 @@ def display_visualization_points(values, show_max=True):
             val_color = (round(val * 255), 0, round((1 - val) * 255))
 
             # Draw onto the Overlay layer
-            main.system_state().draw_polygon(rect, val_color, "Overlay")
+            main.debug_drawer().draw_polygon(rect, val_color, "Overlay")
         values.pop(0)
 
     rect = [
@@ -84,4 +84,4 @@ def display_visualization_points(values, show_max=True):
     val_color = (255, 255, 255)
 
     # Draw onto the Max layer
-    main.system_state().draw_polygon(rect, val_color, "Max")
+    main.debug_drawer().draw_polygon(rect, val_color, "Max")

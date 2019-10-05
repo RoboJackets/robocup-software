@@ -1,4 +1,7 @@
 #pragma once
+
+#include <optional>
+
 #include <planning/Path.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
@@ -49,7 +52,8 @@ public:
     virtual bool hit(const Geometry2d::ShapeSet& shape,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override;
-    virtual void draw(SystemState* const state, const QColor& color = Qt::black,
+    virtual void draw(DebugDrawer* constdebug_drawer,
+                      const QColor& color = Qt::black,
                       const QString& layer = "Motion") const override;
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> subPath(
@@ -60,7 +64,7 @@ public:
     virtual std::unique_ptr<Path> clone() const override;
 
 protected:
-    virtual boost::optional<RobotInstant> eval(RJ::Seconds t) const override;
+    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const override;
 };
 
 }  // namespace Planning

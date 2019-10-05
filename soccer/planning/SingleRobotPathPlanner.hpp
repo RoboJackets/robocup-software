@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <Configuration.hpp>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
@@ -81,6 +83,6 @@ private:
 std::unique_ptr<Planning::SingleRobotPathPlanner> PlannerForCommandType(
     Planning::MotionCommand::CommandType type);
 
-boost::optional<std::function<AngleInstant(MotionInstant)>>
+std::optional<std::function<AngleInstant(MotionInstant)>>
 angleFunctionForCommandType(const Planning::RotationCommand& command);
 }  // namespace Planning

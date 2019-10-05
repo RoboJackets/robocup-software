@@ -12,7 +12,12 @@ import evaluation
 
 ## Defender behavior meant to be coordinated in a defense tactic
 # The regular defender does a lot of calculations and figures out where it should be
-# This defender lets someone else (the Defense tactic) handle calculations and blocks things based on that
+# This defender lets someone else (the Defense tactic) handle calculations and blocks things based on it
+#
+# The submissive defender takes in a block line via setter- this should be the line between the threat and 
+# the point on the goal the threat is likely to shoot at 
+# The submissive defender will place itself on the block line, just outside the goal box (exact amount depends
+# on the value of the _defend_goal_radius param).
 class SubmissiveDefender(
         single_robot_composite_behavior.SingleRobotCompositeBehavior):
     class State(Enum):
@@ -64,7 +69,7 @@ class SubmissiveDefender(
         self._block_line = value
 
         # we move somewhere along this arc to mark our 'block_line'
-        offset = constants.Robot.Radius * 1.2
+        offset = constants.Robot.Radius * self._defend_goal_radius
         left_seg = robocup.Segment(
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset, 0),
             robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset,
@@ -74,16 +79,16 @@ class SubmissiveDefender(
             robocup.Point(constants.Field.PenaltyLongDist / 2 + offset,
                           constants.Field.PenaltyShortDist + offset))
         top_seg = robocup.Segment(
-            robocup.Point(-constants.Field.PenaltyLongDist / 2,
+            robocup.Point(-constants.Field.PenaltyLongDist / 2 - offset,
                           constants.Field.PenaltyShortDist + offset),
-            robocup.Point(constants.Field.PenaltyLongDist / 2,
+            robocup.Point(constants.Field.PenaltyLongDist / 2 + offset,
                           constants.Field.PenaltyShortDist + offset))
 
         default_pt = top_seg.center()
 
         if self._block_line is not None:
-            # main.system_state().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
-            main.system_state().draw_circle(
+            # main.debug_drawer().draw_line(self._block_line, constants.Colors.White, "SubmissiveDefender")
+            main.debug_drawer().draw_circle(
                 self._block_line.get_pt(0), 0.1, constants.Colors.White,
                 "SubmissiveDefender")
 
@@ -146,13 +151,13 @@ class SubmissiveDefender(
                           constants.Field.PenaltyShortDist))
 
         if move.pos is not None:
-            main.system_state().draw_circle(move.pos, 0.02,
+            main.debug_drawer().draw_circle(move.pos, 0.02,
                                             constants.Colors.Green, "Mark")
-            main.system_state().draw_segment(left_seg, constants.Colors.Green,
+            main.debug_drawer().draw_segment(left_seg, constants.Colors.Green,
                                              "Mark")
-            main.system_state().draw_segment(top_seg, constants.Colors.Green,
+            main.debug_drawer().draw_segment(top_seg, constants.Colors.Green,
                                              "Mark")
-            main.system_state().draw_segment(right_seg, constants.Colors.Green,
+            main.debug_drawer().draw_segment(right_seg, constants.Colors.Green,
                                              "Mark")
 
         # make the defender face the threat it's defending against

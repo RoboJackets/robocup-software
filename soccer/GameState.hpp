@@ -67,6 +67,18 @@ public:
     ////////
     // Rule queries
 
+    bool isFirstHalf() const { return period == FirstHalf; }
+
+    bool isSecondHalf() const { return period == SecondHalf; }
+
+    bool isHalftime() const { return period == Halftime; }
+
+    bool isOvertime1() const { return period == Overtime1; }
+
+    bool isOvertime2() const { return period == Overtime2; }
+
+    bool isPenaltyShootout() const { return period == PenaltyShootout; }
+
     bool halt() const { return state == Halt; }
 
     bool stopped() const { return state == Stop; }

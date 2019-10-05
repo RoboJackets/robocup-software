@@ -46,7 +46,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  skillkicker=None,
                  prekick_timeout=None,
                  receiver_required=True,
-                 kicker_required=True):
+                 kicker_required=True,
+                 use_chipper=False):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -61,6 +62,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
         self.skillkicker = skillkicker
+        self.skillkicker[0].use_chipper = use_chipper
         self.prekick_timeout = prekick_timeout
         self.receiver_required = receiver_required
         self.kicker_required = kicker_required
@@ -137,10 +139,38 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 'receiver').receive_point = self.receive_point
 
     def on_enter_running(self):
+        kicker = self.skillkicker[0]
+        kicker.target = self.receive_point
+        kickpower = (main.ball().pos - self.receive_point).mag() / 17
+
+        kickpower = max(0.05, min(kickpower, 1.0))
+
+        # Very simple tuning right now
+        # It is setup to use kickerpower once the distance scale has been
+        # tuned correctly
+        kicker.kick_power = 0.6  #kickpower
+        kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
+
+        # we use tighter error thresholds because passing is hard
+        kicker.aim_params['error_threshold'] = 0.1
+        kicker.aim_params['max_steady_ang_vel'] = 0.1
+        kicker.aim_params['min_steady_duration'] = 0.15
+        kicker.aim_params['desperate_timeout'] = 2.0
+        self.add_subbehavior(
+            kicker, 'kicker', required=self.kicker_required, priority=5)
         receiver = self.skillreceiver
         receiver.receive_point = self.receive_point
         self.add_subbehavior(
-            receiver, 'receiver', required=self.receiver_required)
+            receiver, 'receiver', required=self.receiver_required, priority=5)
+
+    @property
+    def use_chipper(self):
+        return self.skillkicker[0].use_chipper
+
+    @use_chipper.setter
+    def use_chipper(self, value):
+        if isinstance(value, bool):
+            self.skillkicker[0].use_chipper = value
 
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
@@ -149,21 +179,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
-        kicker = self.skillkicker[0]
-        kicker.target = self.receive_point
-        kickpower = (main.ball().pos - self.receive_point).mag() / 17
-
-        kickpower = max(0.05, min(kickpower, 1.0))
-
-        kicker.kick_power = kickpower
-        kicker.enable_kick = False  # we'll re-enable kick once both bots are ready
-
-        # we use tighter error thresholds because passing is hard
-        kicker.aim_params['error_threshold'] = 0.2
-        kicker.aim_params['max_steady_ang_vel'] = 3.0
-        kicker.aim_params['min_steady_duration'] = 0.15
-        kicker.aim_params['desperate_timeout'] = 3.0
-        self.add_subbehavior(kicker, 'kicker', required=self.kicker_required)
 
         # receive point renegotiation
         self._last_unsteady_time = None
@@ -187,9 +202,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if self.has_subbehavior_with_name('receiver'):
             receiver = self.subbehavior_with_name('receiver')
         toReturn = []
-        if receiver != None and receiver.robot != None:
+        if receiver is not None and receiver.robot is not None:
             toReturn.extend([receiver.robot])
-        if kicker != None and kicker.robot != None:
+        if kicker is not None and kicker.robot is not None:
             toReturn.extend([kicker.robot])
         return toReturn
 
@@ -229,6 +244,17 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         # once the ball's been kicked, the kicker can go relax or do another job
         self.subbehavior_with_name('receiver').ball_kicked = True
         self.remove_subbehavior('kicker')
+
+    @property
+    def has_roles_assigned(self):
+        if self.state == CoordinatedPass.State.kicking:
+            return len(self.get_robots()) == 2
+        elif self.state == CoordinatedPass.State.receiving:
+            return len(self.get_robots()) >= 1
+        elif self.state == CoordinatedPass.State.preparing:
+            return True
+        else:
+            return False
 
     def __str__(self):
         desc = super().__str__()
