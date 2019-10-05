@@ -193,7 +193,7 @@ class BasicMotionTest(skills.benchmark.motion_test.MotionTest):
             self.calcFinalRotationError()
             self.calcFinalPosError()
             print("Overshoot: " + str(self.maxOvershoot[self.motionNumber]) + " meters")
-            print("Line follow Error (area between path and line): " + str(self.lineFollowError[self.motionNumber]))
+            print("Line follow Error (This is a bad metric): " + str(self.lineFollowError[self.motionNumber]))
             print("Rotational Follow Error: " + str(self.rotationalFollowError[self.motionNumber]))
 
         if(self.started):
@@ -243,20 +243,23 @@ class BasicMotionTest(skills.benchmark.motion_test.MotionTest):
         else:
             return False
     
-    #A function that processes the results and stores them to the relavant maps 
+    #A function that processes the results and stores them to the relavant maps
+    #This function causes a seemingly totally unrelated error
     def processResults(self):
+        print("We are actually processing results")
+        return  
         timeTaken = self.timeTaken
-        avgMotionTime = sum(self.timeTaken) / len(self.timeTaken)
-        motionTimeVar = statistics.pvariance(self.timeTaken)
-        avgEndPosError = sum(self.posEndError) / len(self.posEndError)
-        maxEndPosError = max(self.posEndError)
-        avgLineError = sum(self.lineFollowError) / len(self.lineFollowError)
-        unitLineError = list(map(truediv, self.lineFollowError, self.timeTaken)) #What even is this?
-        lineErrorPerTime = sum(unitLineError) / len(unitLineError)
-        rotationalError = sum(self.rotationalFollowError) / len(self.rotationalFollowError)
-        unitRotError = list(map(truediv, self.rotationalFollowError, self.timeTaken))
-        rotErrorPerTime = sum(unitRotError) / len(unitRotError)
-
+        #avgMotionTime = sum(self.timeTaken) / len(self.timeTaken)
+        #motionTimeVar = statistics.pvariance(self.timeTaken)
+        #avgEndPosError = sum(self.posEndError) / len(self.posEndError)
+        #maxEndPosError = max(self.posEndError)
+        #avgLineError = sum(self.lineFollowError) / len(self.lineFollowError)
+        #unitLineError = list(map(truediv, self.lineFollowError, self.timeTaken)) #What even is this?
+        #lineErrorPerTime = sum(unitLineError) / len(unitLineError)
+        #rotationalError = sum(self.rotationalFollowError) / len(self.rotationalFollowError)
+        #unitRotError = list(map(truediv, self.rotationalFollowError, self.timeTaken))
+        #rotErrorPerTime = sum(unitRotError) / len(unitRotError)
+        return 
         overshoot = self.maxOvershoot
         perOvershoot = []
         for i in range(0, len(self.maxOvershoot)):
@@ -282,6 +285,14 @@ class BasicMotionTest(skills.benchmark.motion_test.MotionTest):
 
         avgTestVelocity = sum(avgMotionVelocity) / len(avgMotionVelocity)
         maxTestVelocity = max(avgMotionVelocity)
+
+        print("-------------Some-End-Of-Run-Info---------------------")
+        print("Average Motion Time: " + str(avgMotionTime))
+        print("Motion Time Variance: " + str(motionTimeVar))
+        print("Average Ending pos Error: " + str(avgEndPosError))
+        print("Average Line Error: " + str(avgLineError))
+        print("Average Rotational Follow Error: " + str(rotationalError))
+        print("------------------------------------------------------")
 
         self.sResults['title'] = self.title
 

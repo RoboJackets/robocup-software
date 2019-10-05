@@ -291,6 +291,7 @@ class MotionBenchmark(single_robot_composite_behavior.SingleRobotCompositeBehavi
 
     def on_enter_TestEnd(self):
         print("Ending test " + self.currentTest.title)
+        self.currentTest.processResults()
         pass
 
     def on_exit_TestEnd(self):
