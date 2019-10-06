@@ -11,6 +11,8 @@ import math
 
 class Basic122(standard_play.StandardPlay):
 
+    situationList = ['clear', 'defend_goal', 'defensive_scramble', 'offensive_pileup', 'defensive_pileup']
+
     # how far the 2 support robots should stay away from the striker
     SupportAvoidTeammateRadius = 0.5
 
@@ -51,44 +53,11 @@ class Basic122(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        
-        #I'm also realizing that a lot of this functionality could be built into the Standard Play
-        #Which may be the correct way, like using super() to get a base score and then modifying 
-        #that score based on the specifics
-
-        #I want there to be a list of valid situations at the top that is easily accessable
-        situationList = ["attack_goal", "defend_clear"]
-
-        #Check to see if situation analysis is active, use default if it is not
-        if(not main.situationAnalysis.active):
-            return 10 if main.game_state().is_playing() else float("inf")
-       
-        #If situation analysis is active
+        score = super().score()
+        if(score != None):
+            return score
         else:
-            #If this play is currently running, and preempt is true, set score to
-            #float("inf") to force it to stop running 
-            #Two notes here, one, I think I need to add a play change check to make
-            #sure plays aren't preempted after a play properly terminated, also idk
-            #the way to properly check if this play is currently running hince the 
-            #self.is_running placeholder
-            if(main.situationAnalysis.currentPreempt and self.is_in_state(Behavior.State.running)):
-                #This should also terminate the play? 
-                self.terminate()
-  
-                #This should terminate the play. 
-                return float("inf")
-                
-                #One of these two options is probably better than the other one
-            
-            #So I'm currently using string comparison, using enums should be doable,
-            #making it an external enum might be a possiblity too
-            #Note: I don't know if isSituations is actually implemented, I should
-            #make it take strings or enums with good checks.
-            if(main.situationAnalysis.isSituations(situationList)):
-                return main.situationAnalysis.inSituationScore
-            else:  
-                return main.situationAnalysis.outSituationScore
-
+            return 10 if main.game_state().is_playing() else float("inf")
 
 
     def execute_running(self):

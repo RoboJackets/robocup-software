@@ -22,7 +22,7 @@ from typing import List, Dict
 class SituationalPlaySelector:
 
     ##!!!! This variable will control if plays will be using the situational play selector or not!
-    enabled = False
+    enabled = True
 
     ##This determines if this file will even run, set to false to save computation
     toRun = True
@@ -35,6 +35,9 @@ class SituationalPlaySelector:
 
     ##Score for when the current situation must be terminated or absolutly must not run
     invalidScore = float("inf")
+
+    ##Debug to figure out how many
+    sitChanges = 0
 
     ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
     #
@@ -161,6 +164,7 @@ class SituationalPlaySelector:
         if(self.toRun):
             self.updatePileup()
             self.locationUpdate()
+            self.currentPreempt = self.updatePreempt()
             self.ballPossessionUpdate()
             self.situationUpdate()
 
@@ -286,7 +290,7 @@ class SituationalPlaySelector:
     situationChanged = False
 
     ##The time after a situation changes before preempting the current play
-    playPreemptTime = 0.20
+    preemptTime = 0.20
 
     ##Keeps track of if the current play should be preempted
     currentPreempt = False
@@ -324,7 +328,7 @@ class SituationalPlaySelector:
     #exception is it does now
     # @param situation a situation as a string or a enum 
     # @param check Strings will be checked if they are real if True
-    def isSituation(self, situation, check=False):
+    def isSituation(self, situation, check=True):
 
         if(isinstance(situation,str)):
             up = situation.upper()
@@ -339,7 +343,7 @@ class SituationalPlaySelector:
                     raise ValueError("Passed situation " + situation + " / " + up +
                                     " is not an existing situation")
 
-            if (self.currentSituaion.name == up):
+            if (self.currentSituation.name == up):
                 return True
             else:
                 return False
@@ -367,24 +371,39 @@ class SituationalPlaySelector:
     #   
     def updatePreempt(self):
 
+        #if(main._root_play == None):
+        #   return False 
+        #print(main._root_play)
+        #print(type(main._root_play))
+        #print(main._root_play.play)
+        #return False 
+
         #I think this is a no no??!? 
-        currentPlay = main._root_play.play()
+        currentPlay = main._root_play.play
+        
    
         #Lets print that out to see what it is
-        print(currentPlay)
+        #print(currentPlay)
 
         #I'm not totally convinced I know what I'm doing here 
 
-        if(self.lastSituation != self.currentSituation):
+        if(self.lastSituation != self.currentSituation and not self.situationChanged):
             self.situationChangeTime = time.time()
+            self.lastSituation = self.currentSituation
             self.situationChanged = True
+            #print("The situation has changed, looking for a play change!")
+            
 
         if(self.lastPlay != currentPlay):
-            self.lastPlay = currentPlay     
+            #print("The play has changed!")
+            self.lastPlay = currentPlay 
             self.situationChanged = False
-       
+        
+
         if(self.situationChanged and abs(time.time() - self.situationChangeTime) > self.preemptTime):
+            #print("A PREEMPT HAS BEEN THROWN--------------------------------------------------------")
             return True
+
 
         return False
 

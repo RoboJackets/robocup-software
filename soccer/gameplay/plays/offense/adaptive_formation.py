@@ -17,6 +17,11 @@ import skills.capture
 
 class AdaptiveFormation(standard_play.StandardPlay):
 
+
+
+    situationList = ['attack_goal', 'defend_clear', 'offensive_scramble']
+
+
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
     # Min score to shoot
@@ -148,12 +153,19 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        if (not main.game_state().is_playing()):
-            return float("inf")
-        if len(main.our_robots()) < 5:
-            return float("inf")
-        return 8
+        score = super().score()
 
+        if(score != None):
+            return score
+        else:
+            if (not main.game_state().is_playing()):
+                return float("inf")
+            if len(main.our_robots()) < 5:
+                return float("inf")
+            return 8
+    
+    
+    
     def should_pass_from_dribble(self):
 
         # If pass is above cutoff and we dont have a good shot

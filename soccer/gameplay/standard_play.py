@@ -1,7 +1,7 @@
 import play
 import ui.main
 import tactics
-
+import main
 
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
@@ -20,6 +20,10 @@ class StandardPlay(play.Play):
         #defense, then it adds the defense behavior. If the box isn't checked and the
         #play is running defense then it removes the behavior. Also note: it ignores
         #the requirement for goalie if the box is checked.
+
+
+    situationList = list()
+
     def use_standard_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
                 'defense'):
@@ -34,9 +38,25 @@ class StandardPlay(play.Play):
     #method in additionto having an "execute_running" method of its own must call
     #it via super
     def execute_running(self):
+        main.situationAnalysis.currentPreempt
+        if(main.situationAnalysis.currentPreempt):
+            self.terminate() 
+
         self.use_standard_defense()
 
     #Since the standard_play handles defense, it will always handle the goalie
     @classmethod
     def handles_goalie(cls):
         return True
+    
+    @classmethod
+    def score(cls):
+        #Check to see if situation analysis is active, use default if it is not
+        if(not main.situationAnalysis.enabled):
+            return None 
+        else:
+            if(main.situationAnalysis.isSituations(cls.situationList)):
+                return main.situationAnalysis.inSituationScore
+            else:  
+                return main.situationAnalysis.outSituationScore
+
