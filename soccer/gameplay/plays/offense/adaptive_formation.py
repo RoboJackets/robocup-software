@@ -155,7 +155,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def score(cls):
         score = super().score()
 
-        if(score != None):
+        if (score != None):
             return score
         else:
             if (not main.game_state().is_playing()):
@@ -163,9 +163,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
             if len(main.our_robots()) < 5:
                 return float("inf")
             return 8
-    
-    
-    
+
+
+
     def should_pass_from_dribble(self):
 
         # If pass is above cutoff and we dont have a good shot

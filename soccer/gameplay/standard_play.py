@@ -39,8 +39,8 @@ class StandardPlay(play.Play):
     #it via super
     def execute_running(self):
         main.situationAnalysis.currentPreempt
-        if(main.situationAnalysis.currentPreempt):
-            self.terminate() 
+        if (main.situationAnalysis.currentPreempt):
+            self.terminate()
 
         self.use_standard_defense()
 
@@ -48,15 +48,14 @@ class StandardPlay(play.Play):
     @classmethod
     def handles_goalie(cls):
         return True
-    
+
     @classmethod
     def score(cls):
         #Check to see if situation analysis is active, use default if it is not
-        if(not main.situationAnalysis.enabled):
-            return None 
+        if (not main.situationAnalysis.enabled):
+            return None
         else:
-            if(main.situationAnalysis.isSituations(cls.situationList)):
+            if (main.situationAnalysis.isSituations(cls.situationList)):
                 return main.situationAnalysis.inSituationScore
-            else:  
+            else:
                 return main.situationAnalysis.outSituationScore
-

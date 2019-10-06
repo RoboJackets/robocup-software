@@ -155,7 +155,7 @@ class SituationalPlaySelector:
         else:
             self.updateRobotList()
 
-        if(self.toRun):
+        if (self.toRun):
             self.updatePileup()
             self.locationUpdate()
             self.currentPreempt = self.updatePreempt()
@@ -166,8 +166,8 @@ class SituationalPlaySelector:
 
             #Print the current situation in the corner of the soccer gui
             self.context.debug_drawer.draw_text(self.currentSituation.name,
-                                                robocup.Point(-3, -0.3), (0, 0, 0),
-                                                "hat")
+                                                robocup.Point(-3, -0.3),
+                                                (0, 0, 0), "hat")
 
     ## Returns a list of the robots in the path of the ball
     #
@@ -324,7 +324,7 @@ class SituationalPlaySelector:
     # @param check Strings will be checked if they are real if True
     def isSituation(self, situation, check=True):
 
-        if(isinstance(situation,str)):
+        if (isinstance(situation, str)):
             up = situation.upper()
 
             if (check):
@@ -334,27 +334,26 @@ class SituationalPlaySelector:
                         found = True
                         break
                 if not found:
-                    raise ValueError("Passed situation " + situation + " / " + up +
-                                    " is not an existing situation")
+                    raise ValueError("Passed situation " + situation + " / " +
+                                     up + " is not an existing situation")
 
             if (self.currentSituation.name == up):
                 return True
             else:
                 return False
-        
-        elif(isinstance(situation,self.Situation)):
+
+        elif (isinstance(situation, self.Situation)):
             return situation == self.currentSituation
         else:
             raise TypeError("isSituation only takes strings and enums")
-
 
     ##Returns true if we are in any of the situations in the passed list
     #Will take enums or 
     def isSituations(self, situations, check=False):
         for g in situations:
-            if(self.isSituation(g,check=check)):
-                return True 
-        
+            if (self.isSituation(g, check=check)):
+                return True
+
         return False
 
     ##
@@ -365,23 +364,22 @@ class SituationalPlaySelector:
 
         currentPlay = main._root_play.play
 
-        if(self.lastSituation != self.currentSituation and not self.situationChanged):
+        if (self.lastSituation != self.currentSituation and
+                not self.situationChanged):
             self.situationChangeTime = time.time()
             self.lastSituation = self.currentSituation
             self.situationChanged = True
-            
 
-        if(self.lastPlay != currentPlay):
-            self.lastPlay = currentPlay 
+        if (self.lastPlay != currentPlay):
+            self.lastPlay = currentPlay
             self.situationChanged = False
-        
 
-        if(self.situationChanged and abs(time.time() - self.situationChangeTime) > self.preemptTime):
+        if (self.situationChanged and
+                abs(time.time() - self.situationChangeTime) >
+                self.preemptTime):
             return True
 
-
         return False
-
 
     ##A function to determine if the currently running play should be preempted
     def preemptPlay(self):

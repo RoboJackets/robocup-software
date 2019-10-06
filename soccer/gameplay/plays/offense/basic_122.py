@@ -11,7 +11,10 @@ import math
 
 class Basic122(standard_play.StandardPlay):
 
-    situationList = ['clear', 'defend_goal', 'defensive_scramble', 'offensive_pileup', 'defensive_pileup']
+    situationList = [
+        'clear', 'defend_goal', 'defensive_scramble', 'offensive_pileup',
+        'defensive_pileup'
+    ]
 
     # how far the 2 support robots should stay away from the striker
     SupportAvoidTeammateRadius = 0.5
@@ -54,7 +57,7 @@ class Basic122(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         score = super().score()
-        if(score != None):
+        if (score != None):
             return score
         else:
             return 10 if main.game_state().is_playing() else float("inf")
