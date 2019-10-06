@@ -3,8 +3,8 @@
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "SystemState.hpp"
-#include "vision/VisionPacket.hpp"
 #include "WorldState.hpp"
+#include "vision/VisionPacket.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
