@@ -2,6 +2,7 @@ import logging
 from PyQt5 import QtCore, QtWidgets
 import main
 import sys
+import test_list
 
 
 def getMainWindow():
@@ -28,7 +29,7 @@ def defenseEnabled():
 def setup():
     global _has_setup_ui
     global _defense_checkbox
-    global _selectedTestsTable
+    global _testList
 
     if _has_setup_ui == True:
         logging.warn("ui setup() function called more than once")
@@ -40,7 +41,8 @@ def setup():
 
     pcTab = win.findChild(QtWidgets.QTreeView, 'plays')
     testingTab = win.findChild(QtWidgets.QTreeView, 'allTestsTable')
-    _selectedTestsTable = win.findChild(QtWidgets.QListWidget, 'selectedTestsTable')
+    selectedTestsTable = win.findChild(QtWidgets.QListView, 'selectedTestsTable')
+    _testList = test_list.TestList()
 
     # setup play config tab
     pcTab.setModel(main.play_registry())
@@ -53,6 +55,8 @@ def setup():
     testingTab.setModel(main.test_registry())
     testingTab.expandAll()
     testingTab.resizeColumnToContents(0)
+
+    selectedTestsTable.setModel(_testList)
 
 
     logging.debug("Initialized TestConfigTab")
@@ -68,17 +72,34 @@ def setup():
 
 
 def addTests():
-    global _selectedTestsTable
+    global _testList
 
     #TODO: implement custom listview for selectedTestsTable to support
     #status indicator, test results, and test data
 
-    print("UI ADD TESTS")
     for item in main.test_registry():
         if (item.enabled):
-            print(item, " is enabled")
-
-            _selectedTestsTable.addItem(item)
+            _testList.insert(item)
 
 def runTests():
     print("UI RUN TESTS")
+    for test in _testList.tList:
+
+        # Enter Halt
+
+
+        # Select Plays
+        play_list = test.test_class.play_list
+        playbook = []
+        for play in play_list:
+            playbook.append(play.split('/'))
+        main.play_registry().load_playbook(playbook)
+
+        # Place Entities
+        #TODO: the rest of the owl
+
+        # Enter Stop
+        # Enter Normal Start (should this be changeable?)
+        # Run till "next play button is pushed"
+
+        # Store information

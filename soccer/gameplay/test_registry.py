@@ -197,6 +197,9 @@ class TestRegistry(QtCore.QAbstractItemModel):
             self.test_class = test_class
             self.parent = None
 
+            self.status = None
+            self.information = None
+
         @property
         def name(self):
             return self.test_class.__name__
@@ -223,9 +226,7 @@ class TestRegistry(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
         node = index.internalPointer()
-        print(node.name)
         if role == QtCore.Qt.DisplayRole:
-            print("display based role")
             if index.column() == 0:
                 return node.name
             elif index.column() == 1:
@@ -240,7 +241,6 @@ class TestRegistry(QtCore.QAbstractItemModel):
             else:
                 return None
 
-        print("returning none :(")
         return None
 
     def rowCount(self, parent):

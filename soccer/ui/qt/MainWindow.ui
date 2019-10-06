@@ -2245,7 +2245,7 @@
                 </layout>
                </item>
                <item>
-                <widget class="QListWidget" name="selectedTestsTable">
+                <widget class="QListView" name="selectedTestsTable">
                  <property name="acceptDrops">
                   <bool>true</bool>
                  </property>

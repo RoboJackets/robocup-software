@@ -43,6 +43,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     def load_playbook(self, list_of_plays):
         self.clear()
         for play in list_of_plays:
+            print("play: ", play)
             node = self.node_for_module_path(play)
             if node is not None:
                 node.enabled = True

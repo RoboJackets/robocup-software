@@ -8,7 +8,7 @@ class GameplayTest():
     ourRobots = []
     theirRobots = []
     ballPosition = robocup.Point(0, 0)
-    play = play.Play
+    play_list = []
 
 class testRobot():
     pos = robocup.Point(0,0)

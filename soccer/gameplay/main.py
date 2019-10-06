@@ -99,7 +99,7 @@ def init(log_errors=True):
                         play_class = class_import.find_subclasses(module,
                                                                   play.Play)[0]
                         _play_registry.insert(
-                            module_path[1:], play_class
+                           module_path[1:], play_class
                         )  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
