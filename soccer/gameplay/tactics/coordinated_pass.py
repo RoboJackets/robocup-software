@@ -92,6 +92,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
             self.prekick_timeout_exceeded, 'Timed out on prepare')
 
+        self.add_transition(CoordinatedPass.State.preparing,
+                            behavior.Behavior.State.failed,
+                            lambda: self.opponent_too_close(),
+                            'Opponent too close to ball to pass')
+
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
             self.prekick_timeout_exceeded, 'Timed out on prepare')
@@ -107,7 +112,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(CoordinatedPass.State.kicking,
                             behavior.Behavior.State.failed,
-                            lambda:self.subbehavior_with_name('kicker').state == behavior.Behavior.State.failed,
+                            lambda:self.subbehavior_with_name('kicker').state == behavior.Behavior.State.failed
+                            or self.opponent_too_close(),
                             'kicker failed')
 
         self.add_transition(CoordinatedPass.State.receiving,
@@ -183,6 +189,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
+    # Funciton to find if ball is moving towards receive point
     def ball_heading_to_receive_point(self):
         ball_velocity = main.ball().vel;
         if ball_velocity.mag() > 0.1:
@@ -193,19 +200,20 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 ball_velocity_unit[1] * path_unit[0])
             distance = path_vector.mag()
             if distance < 0.3:
-                print("Too close for fail")
-                return True
+                return True # If the ball is already close to the receive point but not heading towards it, dont fail
             if (distance > 0.5 and cross_product_mag > 0.1) or (distance < 0.5 and cross_product_mag > 0.4) or ball_velocity.mag() < 0.05:
-                if ball_velocity.mag() < 0.05:
-                    print("You're too slow")
-                else:
-                    print("You're off course")
-                    print(path_vector.mag())
-                return False
+                return False # If ball is too off course or too slow fail the pass
         return True
 
+    # Funciton that decides if an opponent robot is too close to the kicking robot
+    def opponent_too_close(self):
+        for bot in main.their_robots():
+            distance = (main.ball().pos - bot.pos).mag()
+            if distance < 0.27:
+                return True # If the ball is too close to the kicking robot then fail
+        return False
+
     def execute_kicking(self):
-        print(self.ball_heading_to_receive_point())
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
@@ -270,7 +278,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def execute_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
-        print(self.ball_heading_to_receive_point())
         if not self.subbehavior_with_name('receiver').ball_kicked == True:
             self.subbehavior_with_name('receiver').ball_kicked = True
         if self.has_subbehavior_with_name('kicker'):
