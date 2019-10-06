@@ -16,9 +16,8 @@ class TrianglePass(play.Play):
 	#set up your states here
 	class State(enum.Enum):
 		#example: 
-		#stateA = 1
-		#stateB = 2
-
+		stateA = 1
+		stateB = 2
 	def __init__(self):
 		super().__init__(continuous=True)
 
@@ -55,6 +54,7 @@ class TrianglePass(play.Play):
 	capture.Capture()
 	move.Move(robocup.Point(x,y))
 	coordinated_pass.CoordinatedPass(robocup.Point(x,y))
+	main.ball().pos
 	
 	how to add subbehaviors
 	self.add_subbehavior(skill_object,  "Name of Subbehavior",
@@ -70,16 +70,19 @@ class TrianglePass(play.Play):
 	# code that runs once at the start of the state
 	# Usually good for setting up subbehaviors
 	# you may or may not need this for your state
-	def on_enter_stateA:
 
+	#def on_enter_stateA:
+	
 	# change this name to your state
 	# code that runs continously while in the state
 	# usually good for updating needed values
 	# you may or may not need this for your state
-	def execute_stateA:
+	
+	#def execute_stateA:
 
 	# change this name to your state
 	# code that runs once at the end of the state
 	# Needed to remove subbehaviors before going to the next state
 	# usually necessary so we don't get too many subbehaviors
-	def on_exit_stateA:
+	
+	#def on_exit_stateA:
