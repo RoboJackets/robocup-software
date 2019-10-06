@@ -33,12 +33,6 @@ class SituationalPlaySelector:
     ##Score for when the current situation is not valid
     outSituationScore = 1000
 
-    ##Score for when the current situation must be terminated or absolutly must not run
-    invalidScore = float("inf")
-
-    ##Debug to figure out how many
-    sitChanges = 0
-
     ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
     #
     # The none situation should never be encountered during gameplay
@@ -363,71 +357,30 @@ class SituationalPlaySelector:
         
         return False
 
-    ##Update determining if we want to preempt the current play or not
-    #
-    # Preemption is still an open question but this is a prototype of
-    # of how a non-invasive preemption system might work
-    #
+    ##
+    # 
+    # Update determining if we want to preempt the current play or not
     #   
     def updatePreempt(self):
 
-        #if(main._root_play == None):
-        #   return False 
-        #print(main._root_play)
-        #print(type(main._root_play))
-        #print(main._root_play.play)
-        #return False 
-
-        #I think this is a no no??!? 
         currentPlay = main._root_play.play
-        
-   
-        #Lets print that out to see what it is
-        #print(currentPlay)
-
-        #I'm not totally convinced I know what I'm doing here 
 
         if(self.lastSituation != self.currentSituation and not self.situationChanged):
             self.situationChangeTime = time.time()
             self.lastSituation = self.currentSituation
             self.situationChanged = True
-            #print("The situation has changed, looking for a play change!")
             
 
         if(self.lastPlay != currentPlay):
-            #print("The play has changed!")
             self.lastPlay = currentPlay 
             self.situationChanged = False
         
 
         if(self.situationChanged and abs(time.time() - self.situationChangeTime) > self.preemptTime):
-            #print("A PREEMPT HAS BEEN THROWN--------------------------------------------------------")
             return True
 
 
         return False
-
-
-        '''
-        if (self.lastPlay != currentPlay and self.situationChangeTime == None):
-            self.lastPlay = currentPlay
-            
-        if (self.lastSituation != self.currentSituaion and
-                self.situationChangeTime == None):
-            self.situationChangeTime = time.time()
-
-        if (self.currentPreempt):
-            self.currentPreempt = False
-        elif (self.situationChangeTime != None):
-            if (abs(time.time() - self.situationChangeTime) >
-                    self.playPreemptTime):
-                self.situationChangeTime = None
-                if(currentPlay == self.lastPlay):
-                    self.currentPreempt = True
-                self.lastPlay = currentPlay
-                self.LastSituation = self.currentSituaion
-        '''
-
 
 
     ##A function to determine if the currently running play should be preempted
