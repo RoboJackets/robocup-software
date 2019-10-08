@@ -68,6 +68,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.receiver_required = receiver_required
         self.kicker_required = kicker_required
 
+        self.MIN_BALL_MOVING_SPEED = 0.1
+        self.TOO_CLOSE_TO_FAIL_DISTANCE =0.3
+        self.FAR_DISTANCE = 0.5
+        self.STRICT_CROSS_THRESHOLD = 0.1
+        self.RELAXED_CROSS_THRESHOLD = 0.4
+        self.OPPONENT_DISTANCE_THRESHOLD = 0.27
+        self.BALL_STOPPED_SPEED = 0.05
+
         self.add_state(CoordinatedPass.State.preparing,
                        behavior.Behavior.State.running)
         self.add_state(CoordinatedPass.State.kicking,
@@ -192,24 +200,27 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     # Funciton to find if ball is moving towards receive point
     def ball_heading_to_receive_point(self):
         ball_velocity = main.ball().vel;
-        if ball_velocity.mag() > 0.1:
-            ball_velocity_unit = [ball_velocity.x/ball_velocity.mag(), ball_velocity.y/ball_velocity.mag()]
+        if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
+            ball_velocity_unit = ball_velocity.normalized()
             path_vector = main.ball().pos - self.receive_point
-            path_unit = [path_vector.x/path_vector.mag(), path_vector.y/path_vector.mag()]
-            cross_product_mag = abs(ball_velocity_unit[0] * path_unit[1] -
-                ball_velocity_unit[1] * path_unit[0])
+            path_unit = path_vector.normalized()
+            cross_product_mag = abs(ball_velocity_unit.x * path_unit.y -
+                ball_velocity_unit.y * path_unit.x)
             distance = path_vector.mag()
-            if distance < 0.3:
+            if distance < self.TOO_CLOSE_TO_FAIL_DISTANCE:
                 return True # If the ball is already close to the receive point but not heading towards it, dont fail
-            if (distance > 0.5 and cross_product_mag > 0.1) or (distance < 0.5 and cross_product_mag > 0.4) or ball_velocity.mag() < 0.05:
+            if (distance > self.FAR_DISTANCE and cross_product_mag > self.STRICT_CROSS_THRESHOLD)\
+               or (distance < self.FAR_DISTANCE and cross_product_mag > self.RELAXED_CROSS_THRESHOLD)\
+               or ball_velocity.mag() < self.BALL_STOPPED_SPEED:
                 return False # If ball is too off course or too slow fail the pass
         return True
 
     # Funciton that decides if an opponent robot is too close to the kicking robot
+    #TODO: Fix to be less sketch, like checking if opponent is in front of the kicker
     def opponent_too_close(self):
         for bot in main.their_robots():
             distance = (main.ball().pos - bot.pos).mag()
-            if distance < 0.27:
+            if distance < self.OPPONENT_DISTANCE_THRESHOLD:
                 return True # If the ball is too close to the kicking robot then fail
         return False
 
