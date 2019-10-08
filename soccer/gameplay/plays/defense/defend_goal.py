@@ -23,8 +23,8 @@ class DefendGoal(standard_play.StandardPlay):
 
         for i in range(num_defenders):
             defender = submissive_defender.SubmissiveDefender()
-            self.add_subbehavior(defender)
+            self.add_subbehavior(defender, 'defender' + str(i), required=True)
 
-        for i in range(num_wingers):
-            winger = winger.WingerDefense()
-            self.add_subbehavior(winger)
+        # for i in range(num_wingers):
+        #     winger = winger.WingerDefense()
+        #     self.add_subbehavior('winger' + str(i), winger)
