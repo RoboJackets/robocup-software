@@ -224,7 +224,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 return True # If the ball is too close to the kicking robot then fail
         return False
 
-    def execute_kicking(self):
+    def on_enter_kicking(self):
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
@@ -287,12 +287,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             return 0
         return self.prekick_timeout - (time.time() - self._preparing_start)
 
-    def execute_receiving(self):
+    def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
-        if not self.subbehavior_with_name('receiver').ball_kicked == True:
-            self.subbehavior_with_name('receiver').ball_kicked = True
-        if self.has_subbehavior_with_name('kicker'):
-            self.remove_subbehavior('kicker')
+        self.subbehavior_with_name('receiver').ball_kicked = True
+        self.remove_subbehavior('kicker')
 
     @property
     def has_roles_assigned(self):
