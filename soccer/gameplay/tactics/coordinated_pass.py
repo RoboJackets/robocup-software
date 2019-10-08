@@ -25,6 +25,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     KickPower = 0.6
 
+    MIN_BALL_MOVING_SPEED = 0.1
+    TOO_CLOSE_TO_FAIL_DISTANCE =0.3
+    FAR_DISTANCE = 0.5
+    STRICT_CROSS_THRESHOLD = 0.1
+    RELAXED_CROSS_THRESHOLD = 0.4
+    OPPONENT_DISTANCE_THRESHOLD = 0.27
+    BALL_STOPPED_SPEED = 0.05
+
     class State(enum.Enum):
         preparing = 1  # the kicker is aiming and the receiver is getting ready
         kicking = 2  # waiting for the kicker to kick
@@ -67,14 +75,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.prekick_timeout = prekick_timeout
         self.receiver_required = receiver_required
         self.kicker_required = kicker_required
-
-        self.MIN_BALL_MOVING_SPEED = 0.1
-        self.TOO_CLOSE_TO_FAIL_DISTANCE =0.3
-        self.FAR_DISTANCE = 0.5
-        self.STRICT_CROSS_THRESHOLD = 0.1
-        self.RELAXED_CROSS_THRESHOLD = 0.4
-        self.OPPONENT_DISTANCE_THRESHOLD = 0.27
-        self.BALL_STOPPED_SPEED = 0.05
 
         self.add_state(CoordinatedPass.State.preparing,
                        behavior.Behavior.State.running)
@@ -200,18 +200,18 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     # Funciton to find if ball is moving towards receive point
     def ball_heading_to_receive_point(self):
         ball_velocity = main.ball().vel;
-        if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
+        if ball_velocity.mag() > MIN_BALL_MOVING_SPEED:
             ball_velocity_unit = ball_velocity.normalized()
             path_vector = main.ball().pos - self.receive_point
             path_unit = path_vector.normalized()
             cross_product_mag = abs(ball_velocity_unit.x * path_unit.y -
                 ball_velocity_unit.y * path_unit.x)
             distance = path_vector.mag()
-            if distance < self.TOO_CLOSE_TO_FAIL_DISTANCE:
+            if distance < TOO_CLOSE_TO_FAIL_DISTANCE:
                 return True # If the ball is already close to the receive point but not heading towards it, dont fail
-            if (distance > self.FAR_DISTANCE and cross_product_mag > self.STRICT_CROSS_THRESHOLD)\
-               or (distance < self.FAR_DISTANCE and cross_product_mag > self.RELAXED_CROSS_THRESHOLD)\
-               or ball_velocity.mag() < self.BALL_STOPPED_SPEED:
+            if (distance > FAR_DISTANCE and cross_product_mag > STRICT_CROSS_THRESHOLD)\
+               or (distance < FAR_DISTANCE and cross_product_mag > RELAXED_CROSS_THRESHOLD)\
+               or ball_velocity.mag() < BALL_STOPPED_SPEED:
                 return False # If ball is too off course or too slow fail the pass
         return True
 
