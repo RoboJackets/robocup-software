@@ -5,6 +5,7 @@
 #include "SystemState.hpp"
 #include "WorldState.hpp"
 #include "vision/VisionPacket.hpp"
+#include "RobotIntent.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -22,4 +23,6 @@ struct Context {
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
     WorldState world_state;
+
+    std::vector<RobotIntent> robotIntents;
 };

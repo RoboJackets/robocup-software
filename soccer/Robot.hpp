@@ -492,15 +492,7 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    /// set of obstacles added by plays
-    Geometry2d::ShapeSet _local_obstacles;
 
-    /// masks for obstacle avoidance
-    RobotMask _opp_avoid_mask;
-    float _avoidBallRadius;  /// radius of ball obstacle
-
-    std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RobotConstraints _robotConstraints;
 
     Planning::AngleFunctionPath angleFunctionPath;  /// latest path
