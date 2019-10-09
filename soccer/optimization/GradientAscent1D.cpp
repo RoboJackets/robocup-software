@@ -31,8 +31,8 @@ bool GradientAscent1D::singleStep() {
     currentdx = std::get<1>(funcOutput);
     currentVal = std::get<0>(funcOutput);
 
-    // Decrease temperature when derivative flips signbit
-    if (signbit(previousdx) == -1 * signbit(currentdx)) {
+    // Decrease temperature when derivative flips std::signbit
+    if (std::signbit(previousdx) == std::signbit(-1 * currentdx)) {
         temperature *= config->temperatureDescent;
     }
 
