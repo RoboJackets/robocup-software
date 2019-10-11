@@ -6,9 +6,11 @@
 #include "WorldState.hpp"
 #include "vision/VisionPacket.hpp"
 #include "RobotIntent.hpp"
+#include <Constants.hpp>
 
 struct Context {
-    Context() : state(this), debug_drawer(this) {}
+    Context() : state(this), debug_drawer(this), robotIntents(Num_Shells) {
+    }
 
     // Delete copy, copy-assign, move, and move-assign because
     // many places are expected to hold Context* pointers.

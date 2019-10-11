@@ -1,18 +1,21 @@
 #pragma once
 
-#include <planning/RotationCommand.hpp>
-#include <planning/MotionCommand.hpp>
+#include "planning/RotationCommand.hpp"
+#include "planning/MotionCommand.hpp"
+#include <Constants.hpp>
+typedef std::array<float, Num_Shells> RobotMask;
+
 enum ShootMode
 {
-    KICK = 0;
-    CHIP = 1;
+    KICK = 0,
+    CHIP = 1
 };
 
 enum TriggerMode
 {
-    STAND_DOWN = 0;
-    IMMEDIATE = 1;
-    ON_BREAK_BEAM = 2;
+    STAND_DOWN = 0,
+    IMMEDIATE = 1,
+    ON_BREAK_BEAM = 2
 };
 
 
