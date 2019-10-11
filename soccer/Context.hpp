@@ -9,8 +9,7 @@
 #include <Constants.hpp>
 
 struct Context {
-    Context() : state(this), debug_drawer(this) {
-    }
+    Context() : state(this), debug_drawer(this) {}
 
     // Delete copy, copy-assign, move, and move-assign because
     // many places are expected to hold Context* pointers.
@@ -26,5 +25,6 @@ struct Context {
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
     WorldState world_state;
 
+    // construct these right away so they can be used from the SystemState constructor
     std::array<RobotIntent, Num_Shells> robotIntents;
 };
