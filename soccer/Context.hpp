@@ -9,7 +9,8 @@
 #include <Constants.hpp>
 
 struct Context {
-    Context() : state(this), debug_drawer(this), robotIntents(Num_Shells) {
+    Context() : state(this), debug_drawer(this), robotIntents() {
+        robotIntents.resize(Num_Shells);
     }
 
     // Delete copy, copy-assign, move, and move-assign because
