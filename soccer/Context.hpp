@@ -9,8 +9,7 @@
 #include <Constants.hpp>
 
 struct Context {
-    Context() : state(this), debug_drawer(this), robotIntents() {
-        robotIntents.resize(Num_Shells);
+    Context() : state(this), debug_drawer(this) {
     }
 
     // Delete copy, copy-assign, move, and move-assign because
@@ -27,5 +26,5 @@ struct Context {
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
     WorldState world_state;
 
-    std::vector<RobotIntent> robotIntents;
+    std::array<RobotIntent, Num_Shells> robotIntents;
 };
