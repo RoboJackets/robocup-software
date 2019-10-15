@@ -8,7 +8,6 @@
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
 #include "DebugDrawer.hpp"
-#include "planning/Path.hpp"
 
 using namespace Packet;
 using namespace std;
@@ -16,54 +15,13 @@ using namespace Planning;
 using namespace Geometry2d;
 using Planning::MotionInstant;
 
-class BallPath : public Planning::Path {
-public:
-    BallPath(const Ball& ball) : ball(ball){};
-
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
-                     RJ::Seconds startTimeIntoPath,
-                     RJ::Seconds* hitTime) const {
-        throw new std::runtime_error("Unsupported Opperation");
-    }
-
-    virtual void draw(DebugDrawer* constdebug_drawer,
-                      const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const {
-        throw new std::runtime_error("Unsupported Opperation");
-    }
-
-    virtual RJ::Seconds getDuration() const { return RJ::Seconds::max(); }
-
-    virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
-                                          RJ::Seconds endTime) const {
-        throw new std::runtime_error("Unsupported Opperation");
-    }
-
-    virtual RobotInstant start() const {
-        return RobotInstant(ball.predict(startTime()));
-    }
-    virtual RobotInstant end() const {
-        throw new std::runtime_error("Unsupported Opperation");
-    }
-
-    virtual std::unique_ptr<Path> clone() const {
-        return std::make_unique<BallPath>(*this);
-    }
-
-protected:
-    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const {
-        return RobotInstant(ball.predict(startTime() + t));
-    }
-
-private:
-    const Ball& ball;
-};
-
+/*
 std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
     auto path = std::make_unique<BallPath>(*this);
     path->setStartTime(startTime);
     return std::move(path);
 }
+ */
 
 constexpr auto ballDecayConstant = 0.180;
 

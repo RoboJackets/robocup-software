@@ -20,6 +20,7 @@
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
+#include "planning/PlannerNode.hpp"
 
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -264,7 +265,7 @@ private:
     std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-    std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
+    std::unique_ptr<Planning::PlannerNode> _pathPlanner;
     std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
 

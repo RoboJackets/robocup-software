@@ -77,19 +77,24 @@ void MotionControl::run() {
     _angleController.kd = *_robot->config->rotation.d;
 
     RJ::Seconds timeIntoPath =
-        (RJ::now() - _robot->path().startTime()) + RJ::Seconds(1.0 / 60);
+        (RJ::now() - _robot->path().begin_time()) + RJ::Seconds(1.0 / 60);
 
     // evaluate path - where should we be right now?
     std::optional<RobotInstant> optTarget =
-        _robot->path().evaluate(timeIntoPath);
+        _robot->path().EvaluateSeconds(timeIntoPath);
+
+    if (_robot->path().empty()) {
+        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
+        optTarget = target;
+    }
 
     if (!optTarget) {
-        optTarget = _robot->path().end();
-        _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::red,
+        optTarget = _robot->path().last();
+        _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, Qt::red,
                                           "Planning");
     } else {
         Point start = _robot->pos();
-        _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::green,
+        _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, Qt::green,
                                           "Planning");
     }
 
@@ -97,26 +102,16 @@ void MotionControl::run() {
     ////////////////////////////////////////////////////////////////////
 
     float targetW = 0;
-    auto& rotationCommand = _robot->rotationCommand();
     const auto& rotationConstraints = _robot->rotationConstraints();
 
     std::optional<Geometry2d::Point> targetPt;
     const auto& motionCommand = _robot->motionCommand();
 
-    std::optional<float> targetAngleFinal;
-    // if (motionCommand->getCommandType() == MotionCommand::Pivot) {
-    //    PivotCommand command =
-    //    *static_cast<PivotCommand*>(motionCommand.get());
-    //    targetPt = command.pivotTarget;
-    //} else {
+    std::optional<double> targetAngleFinal;
     if (optTarget) {
-        if (optTarget->angle) {
-            if (optTarget->angle->angle) {
-                targetAngleFinal = *optTarget->angle->angle;
-            }
-        }
+        targetAngleFinal = optTarget->pose.heading();
+        targetW = optTarget->velocity.angular();
     }
-    //}
 
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
@@ -134,9 +129,9 @@ void MotionControl::run() {
         // limit W
         if (abs(targetW) > (rotationConstraints.maxSpeed)) {
             if (targetW > 0) {
-                targetW = (rotationConstraints.maxSpeed);
+                targetW = rotationConstraints.maxSpeed;
             } else {
-                targetW = -(rotationConstraints.maxSpeed);
+                targetW = -rotationConstraints.maxSpeed;
             }
         }
 
@@ -168,7 +163,9 @@ void MotionControl::run() {
 
     // Position control ///////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
-    MotionInstant target = optTarget->motion;
+    MotionInstant target;
+    target.pos = optTarget->pose.position();
+    target.vel = optTarget->velocity.linear();
 
     // tracking error
     Point posError = target.pos - _robot->pos();
@@ -176,9 +173,9 @@ void MotionControl::run() {
     // acceleration factor
     Point acceleration;
     std::optional<RobotInstant> nextTarget =
-        _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
+        _robot->path().EvaluateSeconds(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
-        acceleration = (nextTarget->motion.vel - target.vel) / 60.0f;
+        acceleration = (nextTarget->velocity.linear() - target.vel) / 60.0f;
     } else {
         acceleration = {0, 0};
     }

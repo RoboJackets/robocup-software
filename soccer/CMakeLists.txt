@@ -26,26 +26,14 @@ set(ROBOCUP_LIB_SRC
     "optimization/ParallelGradientAscent1D.cpp"
     "optimization/NelderMead2D.cpp"
     "optimization/PythonFunctionWrapper.cpp"
-    "planning/CompositePath.cpp"
-    "planning/DynamicObstacle.cpp"
-    "planning/DirectTargetPathPlanner.cpp"
-    "planning/TuningPathPlanner.cpp"
-    "planning/EscapeObstaclesPathPlanner.cpp"
-    "planning/InterpolatedPath.cpp"
-    "planning/IndependentMultiRobotPathPlanner.cpp"
-    "planning/InterceptPlanner.cpp"
     "planning/MotionConstraints.cpp"
+    "planning/PlannerNode.cpp"
     "planning/RotationConstraints.cpp"
-    "planning/Path.cpp"
-    "planning/RRTPlanner.cpp"
-    "planning/RRTUtil.cpp"
-    "planning/PivotPathPlanner.cpp"
-    "planning/SettlePathPlanner.cpp"
-    "planning/CollectPathPlanner.cpp"
-    "planning/LineKickPlanner.cpp"
-    "planning/SingleRobotPathPlanner.cpp"
-    "planning/TargetVelPathPlanner.cpp"
-    "planning/TrapezoidalPath.cpp"
+    "planning/planner/PathTargetPlanner.cpp"
+    "planning/trajectory/PathSmoothing.cpp"
+    "planning/trajectory/RRTUtil.cpp"
+    "planning/trajectory/Trajectory.cpp"
+    "planning/trajectory/VelocityProfiling.cpp"
     "Processor.cpp"
     "radio/NetworkRadio.cpp"
     "radio/PacketConvert.cpp"
@@ -84,7 +72,16 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp")
+    "WindowEvaluator.cpp"
+    "planning/trajectory/Trajectory.cpp"
+    "planning/trajectory/PathSmoothing.cpp"
+    "planning/trajectory/VelocityProfiling.hpp"
+    "planning/trajectory/VelocityProfiling.cpp"
+    "planning/PlannerNode.cpp"
+    "planning/PlannerNode.hpp"
+    "planning/planner/Planner.hpp"
+    "planning/planner/PathTargetPlanner.cpp"
+    "planning/planner/PathTargetPlanner.hpp")
 
 
 if(APPLE)
@@ -222,9 +219,7 @@ set(SOCCER_TEST_SRC
     "optimization/GradientAscent1DTest.cpp"
     "optimization/ParallelGradientAscent1DTest.cpp"
     "optimization/NelderMead2DTest.cpp"
-    "planning/PathTest.cpp"
-    "planning/EscapeObstaclesPathPlannerTest.cpp"
-    "planning/TargetVelPathPlannerTest.cpp"
+    "planning/trajectory/TrajectoryTest.cpp"
     "TestMain.cpp"
     "vision/tests/CameraBallTest.cpp"
     "vision/tests/KalmanBallTest.cpp"
@@ -236,6 +231,7 @@ set(SOCCER_TEST_SRC
     "vision/tests/CameraTest.cpp"
     "WindowEvaluatorTest.cpp"
 )
+
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)
 qt5_use_modules(test-soccer Core Widgets Xml)

@@ -133,6 +133,20 @@ public:
         return *this;
     }
 
+    /**
+     * Equality comparison operation.
+     */
+    bool operator==(const Pose& other) const {
+        return _position == other._position && _heading == other._heading;
+    }
+
+    /**
+     * Inequality comparison operation.
+     */
+    bool operator!=(const Pose& other) const {
+        return _position != other._position || _heading != other._heading;
+    }
+
     friend std::ostream& operator<<(std::ostream& stream, const Pose& pose) {
         stream << "Pose(" << pose.position().x() << ", " << pose.position().y()
                << ", " << pose.heading() << ")";
@@ -294,6 +308,20 @@ public:
         linear() /= s;
         angular() /= s;
         return *this;
+    }
+
+    /**
+     * Equality comparison operation.
+     */
+    bool operator==(const Twist& other) const {
+        return _linear == other._linear && _angular == other._angular;
+    }
+
+    /**
+     * Inequality comparison operation.
+     */
+    bool operator!=(const Twist& other) const {
+        return _linear != other._linear || _angular != other._angular;
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Twist& twist) {

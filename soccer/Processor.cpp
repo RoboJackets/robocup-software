@@ -20,7 +20,6 @@
 #include <joystick/SpaceNavJoystick.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
-#include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
@@ -85,8 +84,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
-    _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
-        new Planning::IndependentMultiRobotPathPlanner());
+    _pathPlanner = std::make_unique<Planning::PlannerNode>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
@@ -468,66 +466,9 @@ void Processor::run() {
             _gameplayModule->goalZoneObstacles();
         globalObstaclesWithGoalZones.add(goalZoneObstacles);
 
-        // Build a plan request for each robot.
-        std::map<int, Planning::PlanRequest> requests;
-        for (OurRobot* r : _context.state.self) {
-            if (r && r->visible()) {
-                if (_context.game_state.state == GameState::Halt) {
-                    r->setPath(nullptr);
-                    continue;
-                }
-
-                // Visualize local obstacles
-                for (auto& shape : r->localObstacles().shapes()) {
-                    _context.debug_drawer.drawShape(shape, Qt::black,
-                                                    "LocalObstacles");
-                }
-
-                auto& globalObstaclesForBot =
-                    (r->shell() == _gameplayModule->goalieID() ||
-                     r->isPenaltyKicker || r->isBallPlacer)
-                        ? globalObstacles
-                        : globalObstaclesWithGoalZones;
-
-                // create and visualize obstacles
-                Geometry2d::ShapeSet staticObstacles =
-                    r->collectStaticObstacles(
-                        globalObstaclesForBot,
-                        !(r->shell() == _gameplayModule->goalieID() ||
-                          r->isPenaltyKicker || r->isBallPlacer));
-
-                std::vector<Planning::DynamicObstacle> dynamicObstacles =
-                    r->collectDynamicObstacles();
-
-                requests.emplace(
-                    r->shell(),
-                    Planning::PlanRequest(
-                        &_context, Planning::MotionInstant(r->pos(), r->vel()),
-                        r->motionCommand()->clone(), r->robotConstraints(),
-                        std::move(r->angleFunctionPath.path),
-                        std::move(staticObstacles), std::move(dynamicObstacles),
-                        r->shell(), r->getPlanningPriority()));
-            }
-        }
-
-        // Run path planner and set the path for each robot that was planned for
-        auto pathsById = _pathPlanner->run(std::move(requests));
-        for (auto& entry : pathsById) {
-            OurRobot* r = _context.state.self[entry.first];
-            auto& path = entry.second;
-            path->draw(&_context.debug_drawer, Qt::magenta, "Planning");
-            path->drawDebugText(&_context.debug_drawer);
-            r->setPath(std::move(path));
-
-            r->angleFunctionPath.angleFunction =
-                angleFunctionForCommandType(r->rotationCommand());
-        }
-
-        // Visualize obstacles
-        for (auto& shape : globalObstacles.shapes()) {
-            _context.debug_drawer.drawShape(shape, Qt::black,
-                                            "Global Obstacles");
-        }
+        // Run the path planner.
+        // TODO(Kyle): Remove when everything is in modules.
+        _pathPlanner->run();
 
         // TODO(Kyle, Collin): This is a horrible hack to get around the fact
         // that joystick code only (sort of) supports one joystick at a time.

@@ -1,20 +1,15 @@
 #pragma once
 
 #include <Constants.hpp>
-#include <planning/CompositePath.hpp>
-#include <planning/InterpolatedPath.hpp>
-#include <planning/MotionCommand.hpp>
-#include <planning/RRTPlanner.hpp>
+#include <planning/planner/MotionCommand.hpp>
 #include <planning/RobotConstraints.hpp>
-#include "planning/DynamicObstacle.hpp"
-#include "planning/RotationCommand.hpp"
 
 #include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <Utils.hpp>
 
-#include <stdint.h>
+#include <cstdint>
 #include <Eigen/Dense>
 #include <QColor>
 #include <array>
@@ -27,6 +22,7 @@
 #include <QReadLocker>
 #include <QReadWriteLock>
 #include <QWriteLocker>
+#include <planning/trajectory/Trajectory.hpp>
 
 #include "Context.hpp"
 #include "status.h"
@@ -185,16 +181,18 @@ public:
 
     MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
 
-    const Planning::RotationCommand& rotationCommand() const {
-        return *_rotationCommand;
-    }
-
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Path& path() {
-        // return *angleFunctionPath.path;
-        return angleFunctionPath;
+    const Planning::Trajectory& path() const {
+        return _path;
+    }
+
+    /**
+     * Returns a movable reference to the path of the robot.
+     */
+    Planning::Trajectory&& path_movable() {
+        return std::move(_path);
     }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
@@ -264,21 +262,6 @@ public:
      * Sets the worldVelocity in the robot's MotionConstraints
      */
     void worldVelocity(Geometry2d::Point targetWorldVel);
-
-    /**
-     * Face a point while remaining in place
-     */
-    void face(Geometry2d::Point pt);
-
-    /**
-     * Returns true if the robot currently has a face command
-     */
-    bool isFacing();
-
-    /**
-     * Remove the facing command
-     */
-    void faceNone();
 
     /**
      * The robot pivots around it's mouth toward the given target
@@ -371,8 +354,6 @@ public:
     }
     void clearLocalObstacles() { _local_obstacles.clear(); }
 
-    std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
-
     Geometry2d::ShapeSet collectStaticObstacles(
         const Geometry2d::ShapeSet& globalObstacles,
         bool localObstacles = true);
@@ -440,7 +421,7 @@ public:
         return _radioRx;
     }
 
-    const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
+    const Planning::MotionCommand& motionCommand() const {
         return _motionCommand;
     }
 
@@ -472,7 +453,7 @@ public:
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
 
-    void setPath(std::unique_ptr<Planning::Path> path);
+    void setPath(Planning::Trajectory&& new_path);
 
     /**
      * Sets the priority which paths are planned.
@@ -499,11 +480,10 @@ protected:
     RobotMask _opp_avoid_mask;
     float _avoidBallRadius;  /// radius of ball obstacle
 
-    std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    std::unique_ptr<Planning::RotationCommand> _rotationCommand;
+    Planning::MotionCommand _motionCommand;
     RobotConstraints _robotConstraints;
 
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
+    Planning::Trajectory _path;
 
     bool _joystickControlled = false;
 
