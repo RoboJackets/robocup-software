@@ -5,27 +5,15 @@
 #include <Constants.hpp>
 typedef std::array<float, Num_Shells> RobotMask;
 
-enum ShootMode
-{
-    KICK = 0,
-    CHIP = 1
-};
-
-enum TriggerMode
-{
-    STAND_DOWN = 0,
-    IMMEDIATE = 1,
-    ON_BREAK_BEAM = 2
-};
-
-
 struct ControlSetpoints {
     float xVelocity;
     float yVelocity;
     float aVelocity;
 };
-
 struct RobotIntent {
+    enum ShootMode { KICK, CHIP };
+    enum TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
+
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
 
