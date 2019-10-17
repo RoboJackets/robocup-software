@@ -132,10 +132,6 @@ class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
 
-    /** radio packets */
-    Packet::Robot robotPacket;
-    Packet::Control* control;
-
     RobotConfig* config;
     RobotStatus* status;
 
@@ -459,9 +455,9 @@ public:
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(Packet::Control::Song song = Packet::Control::FIGHT_SONG) {
+    void sing(RobotIntent::Song song = RobotIntent::Song::FIGHT_SONG) {
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        control->set_song(song);
+        _context->robotIntents[shell()].song = song;
     }
 
     bool isPenaltyKicker = false;

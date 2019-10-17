@@ -57,9 +57,6 @@ void OurRobot::createConfiguration(Configuration* cfg) {
 
 OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
     _cmdText = new std::stringstream();
-    Packet::Control* ctl = new Packet::Control();
-    robotPacket.set_allocated_control(ctl);
-    control = ctl;
 
     //_lastChargedTime = 0;
     _lastKickerStatus = 0;
@@ -125,9 +122,8 @@ void OurRobot::resetForNextIteration() {
 
     _clearCmdText();
 
-    control->Clear();
-    control->set_dvelocity(0);
-    robotPacket.set_uid(shell());
+    _context->robotIntents[shell()].clear();
+    _context->robotIntents[shell()].dvelocity = 0;
 
     if (charged()) {
         _lastChargedTime = RJ::now();
@@ -137,7 +133,7 @@ void OurRobot::resetForNextIteration() {
 
     resetMotionConstraints();
     _unkick();
-    control->set_song(Packet::Control::STOP);
+    _context->robotIntents[shell()].song = RobotIntent::Song::STOP;
 
     isPenaltyKicker = false;
     isBallPlacer = false;
@@ -288,11 +284,11 @@ void OurRobot::dribble(uint8_t speed) {
 
     if (modifiedField.containsPoint(pos())) {
         uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
-        control->set_dvelocity(scaled);
+        _context->robotIntents[shell()].dvelocity = scaled;
 
         *_cmdText << "dribble(" << (float)speed << ")" << endl;
     } else {
-        control->set_dvelocity(0);
+        _context->robotIntents[shell()].dvelocity = 0;
     }
 }
 
@@ -340,22 +336,22 @@ void OurRobot::chipLevel(uint8_t strength) {
 
 void OurRobot::_kick(uint8_t strength) {
     uint8_t max = *config->kicker.maxKick;
-    control->set_kcstrength(strength > max ? max : strength);
-    control->set_shootmode(Packet::Control::KICK);
-    control->set_triggermode(Packet::Control::ON_BREAK_BEAM);
+    _context->robotIntents[shell()].kcstrength = (strength > max ? max : strength);
+    _context->robotIntents[shell()].shootmode = RobotIntent::ShootMode::KICK;
+    _context->robotIntents[shell()].triggermode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
 
 void OurRobot::_chip(uint8_t strength) {
     uint8_t max = *config->kicker.maxChip;
-    control->set_kcstrength(strength > max ? max : strength);
-    control->set_shootmode(Packet::Control::CHIP);
-    control->set_triggermode(Packet::Control::ON_BREAK_BEAM);
+    _context->robotIntents[shell()].kcstrength = (strength > max ? max : strength);
+    _context->robotIntents[shell()].shootmode = RobotIntent::ShootMode::CHIP;
+    _context->robotIntents[shell()].triggermode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
 
 void OurRobot::_unkick() {
-    control->set_kcstrength(0);
-    control->set_shootmode(Packet::Control::KICK);
-    control->set_triggermode(Packet::Control::STAND_DOWN);
+    _context->robotIntents[shell()].kcstrength = 0;
+    _context->robotIntents[shell()].shootmode = RobotIntent::ShootMode::KICK;
+    _context->robotIntents[shell()].triggermode = RobotIntent::TriggerMode::STAND_DOWN;
 }
 
 void OurRobot::unkick() {
@@ -365,7 +361,7 @@ void OurRobot::unkick() {
 }
 
 void OurRobot::kickImmediately() {
-    control->set_triggermode(Packet::Control::IMMEDIATE);
+    _context->robotIntents[shell()].triggermode = RobotIntent::TriggerMode::IMMEDIATE;
 }
 
 #pragma mark Robot Avoidance

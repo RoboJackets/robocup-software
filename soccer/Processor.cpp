@@ -760,15 +760,15 @@ void Processor::sendRadioData() {
     if (_context.game_state.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
-            Packet::Control* control = r->control;
-            control->set_xvelocity(0);
-            control->set_yvelocity(0);
-            control->set_avelocity(0);
-            control->set_dvelocity(0);
-            control->set_kcstrength(0);
-            control->set_shootmode(Packet::Control::KICK);
-            control->set_triggermode(Packet::Control::STAND_DOWN);
-            control->set_song(Packet::Control::STOP);
+            RobotIntent& intent = _context.robotIntents[r->shell()];
+            intent.setpoints.xvelocity = 0;
+            intent.setpoints.yvelocity = 0;
+            intent.setpoints.avelocity = 0;
+            intent.dvelocity = 0;
+            intent.kcstrength = 0;
+            intent.shootmode = RobotIntent::ShootMode::KICK;
+            intent.triggermode = RobotIntent::TriggerMode::STAND_DOWN;
+            intent.song = RobotIntent::Song::STOP;
         }
     }
 
