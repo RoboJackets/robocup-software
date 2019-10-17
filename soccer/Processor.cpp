@@ -805,15 +805,13 @@ void Processor::sendRadioData() {
                 }
 
                 if (index < manualIds.size()) {
-                    applyJoystickControls(
-                        getJoystickControlValue(*_joysticks[index]),
-                        txRobot->mutable_control(), r);
+                    applyJoystickControls(getJoystickControlValue(
+                            *_joysticks[index]), r);
                 }
             } else if (_manualID == r->shell()) {
                 auto controlValues = getJoystickControlValues();
                 if (controlValues.size()) {
-                    applyJoystickControls(controlValues[0],
-                                          txRobot->mutable_control(), r);
+                    applyJoystickControls(controlValues[0], r);
                 }
             }
         }
@@ -825,7 +823,7 @@ void Processor::sendRadioData() {
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::Control* tx, OurRobot* robot) {
+        OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -834,25 +832,27 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
         translation.rotate(-M_PI / 2 - robot->angle());
     }
 
+    RobotIntent& intent = _context.robotIntents[robot->shell()];
+
     // translation
-    tx->set_xvelocity(translation.x());
-    tx->set_yvelocity(translation.y());
+    intent.setpoints.xvelocity = translation.x();
+    intent.setpoints.yvelocity = translation.y();
 
     // rotation
-    tx->set_avelocity(controlVals.rotation);
+    intent.setpoints.avelocity = controlVals.rotation;
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick
-                            ? (_kickOnBreakBeam ? Packet::Control::ON_BREAK_BEAM
-                                                : Packet::Control::IMMEDIATE)
-                            : Packet::Control::STAND_DOWN);
-    tx->set_kcstrength(controlVals.kickPower);
-    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
-                                       : Packet::Control::CHIP);
+    intent.triggermode = (kick
+                            ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                                : RobotIntent::TriggerMode::IMMEDIATE)
+                            : RobotIntent::TriggerMode::STAND_DOWN);
+    intent.kcstrength = (controlVals.kickPower);
+    intent.shootmode = (controlVals.kick ? RobotIntent::ShootMode::KICK
+                                       : RobotIntent::ShootMode::CHIP);
 
     // dribbler
-    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
+    intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
