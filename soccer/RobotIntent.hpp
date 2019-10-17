@@ -19,6 +19,11 @@ enum TriggerMode
 };
 
 
+struct ControlSetpoints {
+    float xVelocity;
+    float yVelocity;
+    float aVelocity;
+};
 
 struct RobotIntent {
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
@@ -35,4 +40,6 @@ struct RobotIntent {
     TriggerMode triggerMode;
     int kcStrength;
     float dVelocity;
+
+    ControlSetpoints setpoints;
 };
