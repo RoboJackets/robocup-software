@@ -5,6 +5,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <WorldState.hpp>
+#include "planning/trajectory/Trajectory.hpp"
 #include "planning/MotionInstant.hpp"
 #include "Utils.hpp"
 
@@ -19,7 +20,7 @@ struct EmptyCommand {};
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
 struct PathTargetCommand {
-    RobotState pathGoal;
+    RobotInstant pathGoal;
 };
 
 /**
@@ -46,7 +47,7 @@ struct PivotCommand {
  * Should not be used in regular gameplay.
  */
 struct DirectPathTargetCommand {
-    RobotState pathGoal;
+    RobotInstant pathGoal;
 };
 
 /**

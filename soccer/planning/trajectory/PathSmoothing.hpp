@@ -16,7 +16,8 @@ public:
      *
      * @param points The points through which the final curve must pass. These
      *      will be used as the endpoints for consecutive Bezier segments. In
-     *      total there will be points.size() - 1 curves.
+     *      total there will be points.size() - 1 curves. This must not be
+     *      empty.
      * @param vi The initial velocity, used as a tangent for the first curve.
      * @param vf The final velocity, used as a tangent for the last curve.
      * @param motion_constraints Linear constraints for motion. These are used

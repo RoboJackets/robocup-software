@@ -161,10 +161,10 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
         cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x()
              << ", " << goal.y() << ")" << endl;
 
-    RobotState goal_state;
-    goal_state.pose = Pose{goal, angle()};
-    goal_state.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
-    _motionCommand = Planning::PathTargetCommand{goal_state};
+    Planning::RobotInstant goal_instant;
+    goal_instant.pose = Pose{goal, angle()};
+    goal_instant.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
+    _motionCommand = Planning::PathTargetCommand{goal_instant};
 
     *_cmdText << "moveDirect(" << goal << ")" << endl;
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
@@ -178,10 +178,10 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
         cout << " in OurRobot::moveTuning(goal): adding a goal (" << goal.x()
              << ", " << goal.y() << ")" << endl;
 
-    RobotState goal_state;
-    goal_state.pose = Pose{goal, angle()};
-    goal_state.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
-    _motionCommand = Planning::PathTargetCommand{goal_state};
+    Planning::RobotInstant goal_instant;
+    goal_instant.pose = Pose{goal, angle()};
+    goal_instant.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
+    _motionCommand = Planning::PathTargetCommand{goal_instant};
 
     *_cmdText << "moveTuning(" << goal << ")" << endl;
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
@@ -195,10 +195,10 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
         cout << " in OurRobot::move(goal): adding a goal (" << goal.x() << ", "
              << goal.y() << ")" << std::endl;
 
-    RobotState goal_state;
-    goal_state.pose = Pose{goal, angle()};
-    goal_state.velocity = Twist{endVelocity, 0};
-    _motionCommand = Planning::PathTargetCommand{goal_state};
+    Planning::RobotInstant goal_instant;
+    goal_instant.pose = Pose{goal, angle()};
+    goal_instant.velocity = Twist{endVelocity, 0};
+    _motionCommand = Planning::PathTargetCommand{goal_instant};
 
     *_cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
     *_cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()

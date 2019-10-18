@@ -2,7 +2,8 @@
 
 #include <Geometry2d/Pose.hpp>
 #include <time.hpp>
-#include <WorldState.hpp>
+#include "WorldState.hpp"
+#include "DebugDrawer.hpp"
 
 namespace Planning {
 
@@ -12,6 +13,9 @@ namespace Planning {
 struct RobotInstant {
     RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist velocity, RJ::Time stamp)
         : pose(pose), velocity(velocity), stamp(stamp) {}
+
+    RobotInstant() = default;
+
     Geometry2d::Pose pose;
     Geometry2d::Twist velocity;
     RJ::Time stamp;
@@ -170,6 +174,12 @@ public:
      * @return The last instant in the path.
      */
     RobotInstant last() const { return instants_.back(); }
+
+    /**
+     * Draw this trajectory.
+     * @param drawer The debug drawer to use.
+     */
+    void draw(DebugDrawer* drawer) const;
 
 protected:
     // A sorted array of RobotInstants (by timestamp)

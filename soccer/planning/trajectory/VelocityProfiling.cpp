@@ -12,9 +12,45 @@ Trajectory ProfileVelocity(const BezierPath& path,
                            double initial_speed,
                            double final_speed,
                            const MotionConstraints& constraints) {
+    Trajectory result({});
+    RobotInstant instant;
+
+    // Add an initial point to the trajectory so that we keep track of initial
+    // velocity
+    path.Evaluate(0, &instant.pose.position(), &instant.velocity.linear());
+    instant.stamp = RJ::now();
+
+    // Scale the velocity so that the initial speed is correct
+    instant.velocity.linear() = instant.velocity.linear().normalized() * initial_speed;
+
+    result.AppendInstant(instant);
+
+    AppendProfiledVelocity(result, path, final_speed, constraints);
+    return result;
+}
+
+void AppendProfiledVelocity(Trajectory& out,
+                            const BezierPath& path,
+                            double final_speed,
+                            const MotionConstraints& constraints) {
+    double initial_speed = 0;
+
+    // The rest of this code will assume that we don't need to add the first
+    // instant in the trajectory, because it will be at the end of the existing
+    // trajectory. Add an instant to ensure this is true when out is empty.
+    if (out.empty()) {
+        RobotInstant instant;
+        instant.stamp = RJ::now();
+        path.Evaluate(0, &instant.pose.position());
+        out.AppendInstant(instant);
+    }
+
+    // Planning starts after `out` ends, so we want to capture the ending speed.
+    initial_speed = out.last().velocity.linear().mag();
+
     constexpr int num_segments = 15;
 
-    // Interpolate Through Bezier Path
+    // Scratch data that we will use later.
     std::vector<Point> points(num_segments + 1), derivs1(num_segments + 1);
     std::vector<double> curvature(num_segments + 1), speed(num_segments + 1);
 
@@ -70,26 +106,19 @@ Trajectory ProfileVelocity(const BezierPath& path,
         }
     }
 
-    std::vector<RobotInstant> instants;
-
     // TODO(Kyle): Allow the user to pass in an initial time.
-    RJ::Time time = RJ::now();
+    RJ::Time time = out.last().stamp;
 
-    instants.emplace_back(
-            Pose(points[0], 0),
-            Twist(derivs1[0].normalized() * speed[0], 0),
-            time);
+    // We skip the first instant.
     for (int n = 1; n < num_segments + 1; n++) {
-        // Add point n in
-        instants.emplace_back(Pose(points[n], n), Twist(derivs1[n].normalized() * speed[n], n), time);
-
         double distance = (points[n] - points[n - 1]).mag();
         double vbar = (speed[n] + speed[n - 1]) / 2;
         double t_sec = distance / vbar;
         time = time + RJ::Seconds(t_sec);
-    }
 
-    return Trajectory(std::move(instants));
+        // Add point n in
+        out.AppendInstant(RobotInstant{Pose(points[n], n), Twist(derivs1[n].normalized() * speed[n], n), time});
+    }
 }
 
 void PlanAngles(Trajectory& trajectory,

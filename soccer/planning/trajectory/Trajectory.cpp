@@ -127,4 +127,20 @@ std::optional<RobotInstant> Trajectory::EvaluateTime(RJ::Time time) const {
     return RobotInstant{interpolated_pose, interpolated_twist, time};
 }
 
+void Trajectory::draw(DebugDrawer* drawer) const {
+    if (empty()) {
+        return;
+    }
+
+    constexpr int kNumSegments = 150;
+    RJ::Seconds dt = duration() / kNumSegments;
+
+    Geometry2d::Point last_point = EvaluateSeconds(0s)->pose.position();
+    for (int i = 1; i <= kNumSegments; i++) {
+        Geometry2d::Point point = EvaluateSeconds(i * dt)->pose.position();
+        drawer->drawSegment(Geometry2d::Segment(last_point, point));
+        last_point = point;
+    }
+}
+
 } // namespace Planning

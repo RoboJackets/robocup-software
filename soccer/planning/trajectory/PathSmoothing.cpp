@@ -74,6 +74,7 @@ void FitCubicBezier(Point vi, Point vf,
             equations(i, n * 2 + 2) = ks[n + 1];
             answer_x(i) = (ks[n] + ks[n + 1]) * points[n + 1].x();
             answer_y(i) = (ks[n] + ks[n + 1]) * points[n + 1].y();
+            i++;
         }
 
         // Finally, the last equations represent constraints between curves.
@@ -106,6 +107,8 @@ void FitCubicBezier(Point vi, Point vf,
 }
 
 BezierPath::BezierPath(std::vector<Point> points, Point vi, Point vf, MotionConstraints motion_constraints) {
+    assert(!points.empty());
+
     size_t length = points.size();
     size_t num_curves = length - 1;
 
@@ -134,9 +137,11 @@ BezierPath::BezierPath(std::vector<Point> points, Point vi, Point vf, MotionCons
 
         // Calculate the time at which we will arrive at the point, and the
         // speed we arrive with.
+        // TODO(Kyle) Write one function that does both of these at the same time.
+        // There's a lot of shared logic.
         double time = Trapezoidal::getTime(
-                length_accrued,
-                arc_length,
+                length_approx,
+                arc_length - length_accrued,
                 motion_constraints.maxSpeed,
                 motion_constraints.maxAcceleration,
                 speed,
@@ -163,19 +168,9 @@ BezierPath::BezierPath(std::vector<Point> points, Point vi, Point vf, MotionCons
         }
     }
 
-    std::cout << "Points: " << std::endl;
-    for (auto p : points) {
-        std::cout << p << std::endl;
-    }
-
     // Finally, we can find our control points as the solutions to a set of equations.
     // This computation is carried out by cubicBezierCalc.
     FitCubicBezier(vi, vf, points, ks, control);
-
-    std::cout << "Control: " << std::endl;
-    for (auto c : control) {
-        std::cout << c.p0 << ", " << c.p1 << ", " << c.p2 << ", " << c.p3 << std::endl;
-    }
 }
 
 void BezierPath::Evaluate(double s, Geometry2d::Point *position, Geometry2d::Point *tangent, double *curvature) const {
