@@ -1,4 +1,4 @@
 socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
 open -a Terminal -n
-cd ~
+cd ../..
 docker run -e DISPLAY=“$(ipconfig getifaddr en0):0” --mount type=bind,source="$(pwd)",target="$(pwd)" -it robocup_software

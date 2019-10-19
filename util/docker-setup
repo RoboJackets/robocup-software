@@ -4,5 +4,6 @@ brew install docker
 brew install git
 brew install socat
 defaults write org.macosforge.xquartz.X11 enable_iglx -bool true
+cd ..
 git submodule update —init —recursive
 docker build . -t robocup_software
