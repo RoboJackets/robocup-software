@@ -3,6 +3,7 @@
 #include <boost/circular_buffer.hpp>
 
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 #include <Utils.hpp>
 #include <Configuration.hpp>
 

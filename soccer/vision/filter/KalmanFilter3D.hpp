@@ -2,6 +2,7 @@
 
 #include "KalmanFilter.hpp"
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 #include <Configuration.hpp>
 
 class KalmanFilter3D : public KalmanFilter {
@@ -14,22 +15,19 @@ public:
     /**
      * Creates and initializes a kalman filter
      *
-     * @param initPos initial position
-     * @param initTheta initial heading
-     * @param initVel initial velocity
-     * @param initOmega initial angular velocity
+     * @param initPose initial pose
+     * @param initTwist initial twist
      */
-    KalmanFilter3D(Geometry2d::Point initPos, double initTheta,
-                   Geometry2d::Point initVel, double initOmega);
+    KalmanFilter3D(Geometry2d::Pose initPose,
+                   Geometry2d::Twist initTwist);
 
     /**
      * Predicts with update
      * Overrides the standard PredictWithUpdate and sets the z_k automatically
      *
-     * @param observationPos The position observation for the current frame
-     * @param observationTheta The theta observation for the current frame
+     * @param observation The observation for the current frame
      */
-    void predictWithUpdate(Geometry2d::Point observationPos, double observationTheta);
+    void predictWithUpdate(Geometry2d::Pose observation);
 
     /**
      * @return Current position estimate
