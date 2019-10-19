@@ -1,5 +1,8 @@
+BASEDIR=$(dirname "$0")
+cd $BASEDIR
 ps -efw | grep socat | grep -v grep | awk '{print $2}' | xargs kill
 socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &
 xhost + $(ifconfig en0 | grep inet | awk '$1=="inet" {print $2}')
 echo "If this is your first time runningmake sure in the XQuartz preferences, go to the “Security” tab and make sure you’ve got “Allow connections from network clients” ticked"
+cd ..
 docker run -e DISPLAY=host.docker.internal:0 --mount type=bind,source="$(pwd)",target="$(pwd)" -it robocup_software
