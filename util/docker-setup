@@ -1,0 +1,8 @@
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)
+brew cask install xquartz
+brew install docker
+brew install git
+brew install socat
+defaults write org.macosforge.xquartz.X11 enable_iglx -bool true
+git submodule update —init —recursive
+docker build . -t robocup_software
