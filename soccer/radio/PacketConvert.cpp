@@ -75,8 +75,12 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
 void construct_tx_proto(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells>& intents) {
     //I'm assuming this is necessary to do logging. idk
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
+    while(radioTx.robots_size() < Num_Shells) {
+        radioTx.add_robots();
+    }
     for(int i = 0; i < intents.size(); ++i) {
-        Packet::Robot* robotPacket = radioTx.add_robots();
+        Packet::Robot* robotPacket;
+        robotPacket = radioTx.mutable_robots(i);
         robotPacket->set_uid(i);
         //TODO(Ethan): Check if we need to do set_allocated_control instead of this
         Packet::Control* controlPacket = robotPacket->mutable_control();
