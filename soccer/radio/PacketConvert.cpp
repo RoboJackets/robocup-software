@@ -82,7 +82,6 @@ void construct_tx_proto(Packet::RadioTx& radioTx, const std::array<RobotIntent, 
         Packet::Robot* robotPacket;
         robotPacket = radioTx.mutable_robots(i);
         robotPacket->set_uid(i);
-        //TODO(Ethan): Check if we need to do set_allocated_control instead of this
         Packet::Control* controlPacket = robotPacket->mutable_control();
         const RobotIntent& intent = intents[i];
         switch(intent.shootmode) {
