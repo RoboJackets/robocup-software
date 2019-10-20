@@ -13,7 +13,11 @@ import skills.mark as mark
 import tactics.defense
 
 ## Play that uses submissive defenders and wingers to defend
-#  an attack close to our goal
+#  an attack close to our goal.
+#  
+#  By default, we will use standard defense (two submissive 
+#  defenders, one goalie) and two wing defense robots. The
+#  remaining robot will mark the highest threat robot. 
 class DefendGoal(standard_play.StandardPlay):
 
     def __init__(self, num_defenders=3, num_wingers=2):
@@ -26,21 +30,12 @@ class DefendGoal(standard_play.StandardPlay):
             behavior.Behavior.State.running, lambda: True,
             'Immediately')
 
-        goalie = submissive_goalie.SubmissiveGoalie()
-        goalie.shell_id = main.root_play().goalie_id
-        # self.add_subbehavior(goalie, "goalie", required=True)
-
-        # for i in range(num_defenders):
-        #     defender = submissive_defender.SubmissiveDefender()
-        #     self.add_subbehavior(defender, 'defender' + str(i))
-
-        # self.threat_list = list(map(lambda threat: threat[0], eval_opp.get_threat_list(self.all_subbehaviors())))
-        # self.threat_list = eval_opp.get_threat_list(self.all_subbehaviors())
-
+        # Use standard defense
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         self.add_subbehavior(mark.Mark(), 'mark')
 
+        # Keep track of which robots are currently being defended
         self.defended = {}
         for i in range(len(main.their_robots())):
             self.defended[i] = False
@@ -48,11 +43,11 @@ class DefendGoal(standard_play.StandardPlay):
         for i in range(self.num_wingers):
             self.add_subbehavior(wing_defender.WingDefender(), 'winger' + str(i))
 
-
     def execute_running(self):
         for i in range(self.num_wingers):
             bhvr = self.subbehavior_with_name('winger' + str(i))
 
+            # Control which robots are being defended by wing defender
             for i in range(len(main.their_robots())):
                 bot = main.their_robots()[i]
                 if not eval_opp.is_marked(bot.pos) and not self.defended[i]:
@@ -63,6 +58,7 @@ class DefendGoal(standard_play.StandardPlay):
             if not eval_opp.is_marked(bot.pos):
                 self.defended[i] = False
 
+        # mark highest threat robot
         mark_bhvr = self.subbehavior_with_name('mark')
         highest_threat_pt = eval_opp.get_threat_list([mark_bhvr])[0][0]
 
