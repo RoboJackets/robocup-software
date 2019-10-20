@@ -22,7 +22,7 @@ class StandardPlay(play.Play):
         #the requirement for goalie if the box is checked.
 
 
-    situationList = list()
+    _situationList = list()
 
     def use_standard_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
@@ -38,10 +38,6 @@ class StandardPlay(play.Play):
     #method in additionto having an "execute_running" method of its own must call
     #it via super
     def execute_running(self):
-        main.situationAnalysis.currentPreempt
-        if (main.situationAnalysis.currentPreempt):
-            self.terminate()
-
         self.use_standard_defense()
 
     #Since the standard_play handles defense, it will always handle the goalie
@@ -49,13 +45,25 @@ class StandardPlay(play.Play):
     def handles_goalie(cls):
         return True
 
+
+    #Since only the root play can be preempted, we can call a function for it
+    #If you want to have more complex logic
+    #Returns true if the preempt is sucessful
+    def try_preempt(self):
+        self.terminate()
+        return True
+
+
+
+    #def is_situation_valid(self, situation):
+
     @classmethod
     def score(cls):
         #Check to see if situation analysis is active, use default if it is not
         if (not main.situationAnalysis.enabled):
             return None
         else:
-            if (main.situationAnalysis.isSituations(cls.situationList)):
+            if (main.situationAnalysis.isSituations(cls._situationList)):
                 return main.situationAnalysis.inSituationScore
             else:
                 return main.situationAnalysis.outSituationScore

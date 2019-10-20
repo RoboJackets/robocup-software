@@ -363,6 +363,8 @@ class SituationalPlaySelector:
     def updatePreempt(self):
 
         currentPlay = main._root_play.play
+        #print(type(currentPlay))
+        #print(currentPlay)
 
         if (self.lastSituation != self.currentSituation and
                 not self.situationChanged):
@@ -377,6 +379,8 @@ class SituationalPlaySelector:
         if (self.situationChanged and
                 abs(time.time() - self.situationChangeTime) >
                 self.preemptTime):
+            if(currentPlay != None):
+                currentPlay.try_preempt()
             return True
 
         return False
@@ -651,7 +655,7 @@ class SituationalPlaySelector:
         fieldLen = constants.Field.Length
         midfield = fieldLen / 2
 
-        if (ballPos.y < midfield - (midfieldFactor / 2) * fieldLen):
+        if (ballPos.y <= midfield - (midfieldFactor / 2) * fieldLen):
             self.ballLocation = self.FieldLoc.DEFENDSIDE
         elif (ballPos.y > midfield + (midfieldFactor / 2) * fieldLen):
             self.ballLocation = self.FieldLoc.ATTACKSIDE

@@ -19,7 +19,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
 
 
-    situationList = ['attack_goal', 'defend_clear', 'offensive_scramble']
+    _situationList = ['attack_goal', 'defend_clear', 'offensive_scramble']
 
 
     # Min score to pass
