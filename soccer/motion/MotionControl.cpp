@@ -38,8 +38,6 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 MotionControl::MotionControl(Context* context, OurRobot* robot)
     : _angleController(0, 0, 0, 50, 0), _context(context) {
     _robot = robot;
-
-    _robot->robotPacket.set_uid(_robot->shell());
 }
 
 void MotionControl::run() {

@@ -25,7 +25,7 @@ void NetworkRadio::startReceive() {
 bool NetworkRadio::isOpen() const { return _socket.is_open(); }
 
 void NetworkRadio::send(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells>& intents) {
-    consruct_tx_proto(radioTx, intents);
+    construct_tx_proto(radioTx, intents);
 
     // Get a list of all the IP addresses this packet needs to be sent to
     for (int robot_idx = 0; robot_idx < radioTx.robots_size(); robot_idx++) {

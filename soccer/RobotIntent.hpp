@@ -3,6 +3,8 @@
 #include "planning/RotationCommand.hpp"
 #include "planning/MotionCommand.hpp"
 #include <Constants.hpp>
+#include <Geometry2d/ShapeSet.hpp>
+
 typedef std::array<float, Num_Shells> RobotMask;
 
 struct ControlSetpoints {

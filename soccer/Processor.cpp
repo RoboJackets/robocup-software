@@ -808,7 +808,7 @@ void Processor::sendRadioData() {
     }
 
     if (_radio) {
-        _radio->send(_context.state.logFrame->mutable_radio_tx() , _context.robotIntents);
+        _radio->send(*_context.state.logFrame->mutable_radio_tx() , _context.robotIntents);
     }
 }
 
