@@ -39,7 +39,7 @@ class DefendGoal(standard_play.StandardPlay):
 
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
-        self.add_subbehavior(mark.Mark(), 'marker')
+        self.add_subbehavior(mark.Mark(), 'mark')
 
         self.defended = {}
         for i in range(len(main.their_robots())):
@@ -50,13 +50,6 @@ class DefendGoal(standard_play.StandardPlay):
 
 
     def execute_running(self):
-        # print(self.threat_list[0])
-
-        # for point, threat, roboot in self.threat_list:
-            # print(point)
-        # for bhvr in self.all_subbehaviors():
-        #     print(bhvr)
-
         for i in range(self.num_wingers):
             bhvr = self.subbehavior_with_name('winger' + str(i))
 
@@ -70,8 +63,7 @@ class DefendGoal(standard_play.StandardPlay):
             if not eval_opp.is_marked(bot.pos):
                 self.defended[i] = False
 
-        # for name, bhvr in self.wingers:
-        #     for bot in main.their_robots():
-        #         if not eval_opp.is_marked(bot.pos):
-        #             bhvr.mark_robot(bot)
-        #             self.add_subbehavior(bhvr, name)
+        mark_bhvr = self.subbehavior_with_name('mark')
+        highest_threat_pt = eval_opp.get_threat_list([mark_bhvr])[0][0]
+
+        mark_bhvr.mark_robot = eval_opp.get_closest_opponent(highest_threat_pt)
