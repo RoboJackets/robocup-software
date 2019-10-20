@@ -200,18 +200,18 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     # Funciton to find if ball is moving towards receive point
     def ball_heading_to_receive_point(self):
         ball_velocity = main.ball().vel;
-        if ball_velocity.mag() > MIN_BALL_MOVING_SPEED:
+        if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
             ball_velocity_unit = ball_velocity.normalized()
             path_vector = main.ball().pos - self.receive_point
             path_unit = path_vector.normalized()
             cross_product_mag = abs(ball_velocity_unit.x * path_unit.y -
                 ball_velocity_unit.y * path_unit.x)
             distance = path_vector.mag()
-            if distance < TOO_CLOSE_TO_FAIL_DISTANCE:
+            if distance < self.TOO_CLOSE_TO_FAIL_DISTANCE:
                 return True # If the ball is already close to the receive point but not heading towards it, dont fail
-            if (distance > FAR_DISTANCE and cross_product_mag > STRICT_CROSS_THRESHOLD)\
-               or (distance < FAR_DISTANCE and cross_product_mag > RELAXED_CROSS_THRESHOLD)\
-               or ball_velocity.mag() < BALL_STOPPED_SPEED:
+            if (distance > self.FAR_DISTANCE and cross_product_mag > self.STRICT_CROSS_THRESHOLD)\
+               or (distance < self.FAR_DISTANCE and cross_product_mag > self.RELAXED_CROSS_THRESHOLD)\
+               or ball_velocity.mag() < self.BALL_STOPPED_SPEED:
                 return False # If ball is too off course or too slow fail the pass
         return True
 
