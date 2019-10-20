@@ -197,6 +197,6 @@ def is_marked(pos):
     line = robocup.Line(pos, robocup.Point(0, 0))
 
     for bot in main.our_robots():
-        if line.dist_to(bot.pos) < constants.Robot.Radius:
+        if line.dist_to(bot.pos) < constants.Robot.Radius / 2:
             return True
     return False
