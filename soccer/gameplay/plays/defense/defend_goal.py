@@ -9,13 +9,14 @@ import tactics.positions.submissive_goalie as submissive_goalie
 import tactics.positions.submissive_defender as submissive_defender
 import evaluation.opponent as eval_opp
 import tactics.positions.wing_defender as wing_defender
+import skills.mark as mark
 import tactics.defense
 
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal
 class DefendGoal(standard_play.StandardPlay):
 
-    def __init__(self, num_defenders=3, num_wingers=3):
+    def __init__(self, num_defenders=3, num_wingers=2):
         super().__init__(continuous=True)
 
         self.num_defenders = num_defenders
@@ -38,9 +39,12 @@ class DefendGoal(standard_play.StandardPlay):
 
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
-        self.wingers = {}
-        for i in range(self.num_wingers):
-            self.wingers['winger' + str(i)] = wing_defender.WingDefender()
+        self.add_subbehavior(mark.Mark(), 'marker')
+
+        self.defended = {}
+        for i in range(len(main.their_robots())):
+            self.defended[i] = False
+
         for i in range(self.num_wingers):
             self.add_subbehavior(wing_defender.WingDefender(), 'winger' + str(i))
 
@@ -56,10 +60,16 @@ class DefendGoal(standard_play.StandardPlay):
         for i in range(self.num_wingers):
             bhvr = self.subbehavior_with_name('winger' + str(i))
 
-            for bot in main.their_robots():
-                if not eval_opp.is_marked(bot.pos):
+            for i in range(len(main.their_robots())):
+                bot = main.their_robots()[i]
+                if not eval_opp.is_marked(bot.pos) and not self.defended[i]:
                     bhvr.mark_robot = bot
+                    self.defended[i] = True
         
+        for bot in main.their_robots():
+            if not eval_opp.is_marked(bot.pos):
+                self.defended[i] = False
+
         # for name, bhvr in self.wingers:
         #     for bot in main.their_robots():
         #         if not eval_opp.is_marked(bot.pos):
