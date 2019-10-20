@@ -41,15 +41,25 @@ class DefendGoal(standard_play.StandardPlay):
         self.wingers = {}
         for i in range(self.num_wingers):
             self.wingers['winger' + str(i)] = wing_defender.WingDefender()
-        
+        for i in range(self.num_wingers):
+            self.add_subbehavior(wing_defender.WingDefender(), 'winger' + str(i))
+
 
     def execute_running(self):
         # print(self.threat_list[0])
 
         # for point, threat, roboot in self.threat_list:
             # print(point)
-        for bhvr in self.all_subbehaviors():
-            print(bhvr)
+        # for bhvr in self.all_subbehaviors():
+        #     print(bhvr)
+
+        for i in range(self.num_wingers):
+            bhvr = self.subbehavior_with_name('winger' + str(i))
+
+            for bot in main.their_robots():
+                if not eval_opp.is_marked(bot.pos):
+                    bhvr.mark_robot = bot
+        
         # for name, bhvr in self.wingers:
         #     for bot in main.their_robots():
         #         if not eval_opp.is_marked(bot.pos):
