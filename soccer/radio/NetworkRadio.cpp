@@ -24,11 +24,13 @@ void NetworkRadio::startReceive() {
 
 bool NetworkRadio::isOpen() const { return _socket.is_open(); }
 
-void NetworkRadio::send(Packet::RadioTx& packet) {
+void NetworkRadio::send(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells>& intents) {
+    consruct_tx_proto(radioTx, intents);
+
     // Get a list of all the IP addresses this packet needs to be sent to
-    for (int robot_idx = 0; robot_idx < packet.robots_size(); robot_idx++) {
-        const Packet::Control& control = packet.robots(robot_idx).control();
-        uint32_t robot_id = packet.robots(robot_idx).uid();
+    for (int robot_idx = 0; robot_idx < radioTx.robots_size(); robot_idx++) {
+        const Packet::Control& control = radioTx.robots(robot_idx).control();
+        uint32_t robot_id = radioTx.robots(robot_idx).uid();
 
         // Build the control packet for this robot.
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
@@ -41,7 +43,7 @@ void NetworkRadio::send(Packet::RadioTx& packet) {
         rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
             &forward_packet_buffer[rtp::HeaderSize]);
 
-        from_robot_tx_proto(packet.robots(robot_idx), body);
+        from_robot_tx_proto(radioTx.robots(robot_idx), body);
 
         // Fetch the IP address
         auto range = _robot_ip_map.left.equal_range(robot_id);

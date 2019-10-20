@@ -753,9 +753,6 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 }
 
 void Processor::sendRadioData() {
-    Packet::RadioTx* tx = _context.state.logFrame->mutable_radio_tx();
-    tx->set_txmode(Packet::RadioTx::UNICAST);
-
     // Halt overrides normal motion control, but not joystick
     if (_context.game_state.halt()) {
         // Force all motor speeds to zero
@@ -776,13 +773,6 @@ void Processor::sendRadioData() {
     std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _context.state.self) {
         if (r->visible() || _manualID == r->shell() || _multipleManual) {
-            Packet::Robot* txRobot = tx->add_robots();
-
-            // Copy motor commands.
-            // Even if we are using the joystick, this sets robot_id and the
-            // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
-
             // MANUAL STUFF
             if (_multipleManual) {
                 auto info =
@@ -818,7 +808,7 @@ void Processor::sendRadioData() {
     }
 
     if (_radio) {
-        _radio->send(*_context.state.logFrame->mutable_radio_tx());
+        _radio->send(_context.state.logFrame->mutable_radio_tx() , _context.robotIntents);
     }
 }
 

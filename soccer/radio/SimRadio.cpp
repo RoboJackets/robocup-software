@@ -24,11 +24,12 @@ SimRadio::SimRadio(Context* const context, bool blueTeam)
 
 bool SimRadio::isOpen() const { return _tx_socket.isValid(); }
 
-void SimRadio::send(Packet::RadioTx& packet) {
+void SimRadio::send(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells>& intents) {
+    consruct_tx_proto(radioTx, intents);
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
-    for (int i = 0; i < packet.robots_size(); i++) {
-        const Packet::Robot& robot = packet.robots(i);
+    for (int i = 0; i < radioTx.robots_size(); i++) {
+        const Packet::Robot& robot = radioTx.robots(i);
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(robot.uid());
         simRobot->set_veltangent(robot.control().yvelocity());

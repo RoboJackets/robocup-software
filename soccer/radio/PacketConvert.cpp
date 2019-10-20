@@ -72,6 +72,53 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
     return packet;
 }
 
+void construct_tx_proto(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells> intents) {
+    //I'm assuming this is necessary to do logging. idk
+    radioTx->set_txmode(Packet::RadioTx::UNICAST);
+    for(int i = 0; i < intents.size(); ++i) {
+        Packet::Robot* robotPacket = radioTx->add_robots();
+        robotPacket->set_uid(i);
+        //TODO(Ethan): Check if we need to do set_allocated_control instead of this
+        Packet::Control* controlPacket = robotPacket->mutable_control();
+        const RobotIntent& intent = intents[i];
+        switch(intent.shootmode) {
+            case RobotIntent::ShootMode::KICK:
+                controlPacket->set_shootmode(Packet::Control::KICK);
+                break;
+            case RobotIntent::ShootMode::CHIP:
+                controlPacket->set_shootmode(Packet::Control::CHIP);
+                break;
+        }
+        switch(intent.triggermode) {
+            case RobotIntent::TriggerMode::STAND_DOWN:
+                controlPacket->set_triggermode(Packet::Control::STAND_DOWN)
+                break;
+            case RobotIntent::TriggerMode::IMMEDIATE:
+                controlPacket->set_triggermode(Packet::Control::IMMEDIATE)
+                break;
+            case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+                controlPacket->set_triggermode(Packet::Control::ON_BREAK_BEAM)
+                break;
+        }
+        switch(intent.song) {
+            case RobotIntent::Song::STOP:
+                controlPacket->set_song(Packet::Control::STOP);
+                break;
+            case RobotIntent::Song::CONTINUE:
+                controlPacket->set_song(Packet::Control::CONTINUE);
+                break;
+            case RobotIntent::Song::FIGHT_SONG:
+                controlPacket->set_song(Packet::Control::FIGHT_SONG);
+                break;
+        }
+        controlPacket->set_xvelocity(intent.setpoints.xvelocity);
+        controlPacket->set_yvelocity(intent.setpoints.yvelocity);
+        controlPacket->set_avelocity(intent.setpoints.avelocity);
+        controlPacket->set_dvelocity(intent.dvelocity);
+        controlPacket->set_kcstrength(intent.kcstrength);
+    }
+}
+
 void fill_header(rtp::Header* header) {
     header->port = rtp::PortType::CONTROL;
     header->address = rtp::BROADCAST_ADDRESS;
