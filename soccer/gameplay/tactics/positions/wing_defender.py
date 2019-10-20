@@ -7,9 +7,10 @@ import skills
 import enum
 import constants
 import role_assignment
-import evaluation.defensive_positioning
-from skills.move import Move
 
+from skills.move import Move
+import evaluation.defensive_positioning
+import evaluation.opponent as eval_opp
 
 ## Defender that hovers in the middle of the angle between
 #  the line segment between the opponent at the ball
@@ -22,7 +23,7 @@ class WingDefender(single_robot_behavior.SingleRobotBehavior):
     def __init__(self,
                  goalside_ratio=.5,
                  distance=.5,
-                 mark_robot=None,
+                 mark_robot=eval_opp.get_closest_opponent(robocup.Point(0, 0)),
                  mark_point=None):
         super().__init__(continuous=True)
 
