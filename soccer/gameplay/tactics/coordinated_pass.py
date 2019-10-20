@@ -102,7 +102,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(CoordinatedPass.State.preparing,
                             behavior.Behavior.State.failed,
-                            lambda: self.opponent_too_close(),
+                            lambda: self.opponent_in_way(),
                             'Opponent too close to ball to pass')
 
         self.add_transition(
@@ -121,7 +121,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.add_transition(CoordinatedPass.State.kicking,
                             behavior.Behavior.State.failed,
                             lambda:self.subbehavior_with_name('kicker').state == behavior.Behavior.State.failed
-                            or self.opponent_too_close(),
+                            or self.opponent_in_way(),
                             'kicker failed')
 
         self.add_transition(CoordinatedPass.State.receiving,
@@ -215,13 +215,19 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 return False # If ball is too off course or too slow fail the pass
         return True
 
-    # Funciton that decides if an opponent robot is too close to the kicking robot
-    #TODO: Fix to be less sketch, like checking if opponent is in front of the kicker
-    def opponent_too_close(self):
+    # Funciton that decides if an opponent robot is in the way of passing
+    def opponent_in_way(self):
+        path_vector = main.ball().pos - self.receive_point
+        path_unit = path_vector.normalized()
+        pass_distance = path_vector.mag()
         for bot in main.their_robots():
-            distance = (main.ball().pos - bot.pos).mag()
-            if distance < self.OPPONENT_DISTANCE_THRESHOLD:
-                return True # If the ball is too close to the kicking robot then fail
+            distance_vector = (main.ball().pos - bot.pos)
+            distance = distance_vector.mag()
+            distance_unit_vector = distance_vector.normalized()
+            cross_product_mag = abs(distance_unit_vector.x * path_unit.y -
+                distance_unit_vector.y * path_unit.x)
+            if pass_distance > distance and cross_product_mag < self.STRICT_CROSS_THRESHOLD:
+                return True # If the ball is within the line of passing fail the 
         return False
 
     def on_enter_kicking(self):
