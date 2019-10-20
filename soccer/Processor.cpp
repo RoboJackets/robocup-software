@@ -795,8 +795,8 @@ void Processor::sendRadioData() {
                 }
 
                 if (index < manualIds.size()) {
-                    applyJoystickControls(getJoystickControlValue(
-                            *_joysticks[index]), r);
+                    applyJoystickControls(
+                        getJoystickControlValue(*_joysticks[index]), r);
                 }
             } else if (_manualID == r->shell()) {
                 auto controlValues = getJoystickControlValues();
@@ -808,12 +808,13 @@ void Processor::sendRadioData() {
     }
 
     if (_radio) {
-        _radio->send(*_context.state.logFrame->mutable_radio_tx() , _context.robotIntents);
+        _radio->send(*_context.state.logFrame->mutable_radio_tx(),
+                     _context.robotIntents);
     }
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-        OurRobot* robot) {
+                                      OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -833,13 +834,13 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    intent.triggermode = (kick
-                            ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                                                : RobotIntent::TriggerMode::IMMEDIATE)
-                            : RobotIntent::TriggerMode::STAND_DOWN);
+    intent.triggermode =
+        (kick ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                  : RobotIntent::TriggerMode::IMMEDIATE)
+              : RobotIntent::TriggerMode::STAND_DOWN);
     intent.kcstrength = (controlVals.kickPower);
     intent.shootmode = (controlVals.kick ? RobotIntent::ShootMode::KICK
-                                       : RobotIntent::ShootMode::CHIP);
+                                         : RobotIntent::ShootMode::CHIP);
 
     // dribbler
     intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);

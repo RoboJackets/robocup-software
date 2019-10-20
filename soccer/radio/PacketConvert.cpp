@@ -72,19 +72,20 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
     return packet;
 }
 
-void construct_tx_proto(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells>& intents) {
-    //I'm assuming this is necessary to do logging. idk
+void construct_tx_proto(Packet::RadioTx& radioTx,
+                        const std::array<RobotIntent, Num_Shells>& intents) {
+    // I'm assuming this is necessary to do logging. idk
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
-    while(radioTx.robots_size() < Num_Shells) {
+    while (radioTx.robots_size() < Num_Shells) {
         radioTx.add_robots();
     }
-    for(int i = 0; i < intents.size(); ++i) {
+    for (int i = 0; i < intents.size(); ++i) {
         Packet::Robot* robotPacket;
         robotPacket = radioTx.mutable_robots(i);
         robotPacket->set_uid(i);
         Packet::Control* controlPacket = robotPacket->mutable_control();
         const RobotIntent& intent = intents[i];
-        switch(intent.shootmode) {
+        switch (intent.shootmode) {
             case RobotIntent::ShootMode::KICK:
                 controlPacket->set_shootmode(Packet::Control::KICK);
                 break;
@@ -92,7 +93,7 @@ void construct_tx_proto(Packet::RadioTx& radioTx, const std::array<RobotIntent, 
                 controlPacket->set_shootmode(Packet::Control::CHIP);
                 break;
         }
-        switch(intent.triggermode) {
+        switch (intent.triggermode) {
             case RobotIntent::TriggerMode::STAND_DOWN:
                 controlPacket->set_triggermode(Packet::Control::STAND_DOWN);
                 break;
@@ -103,7 +104,7 @@ void construct_tx_proto(Packet::RadioTx& radioTx, const std::array<RobotIntent, 
                 controlPacket->set_triggermode(Packet::Control::ON_BREAK_BEAM);
                 break;
         }
-        switch(intent.song) {
+        switch (intent.song) {
             case RobotIntent::Song::STOP:
                 controlPacket->set_song(Packet::Control::STOP);
                 break;

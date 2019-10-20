@@ -260,7 +260,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
 
     // set control values
     _context->robotIntents[_robot->shell()].setpoints.xvelocity =
-            targetVel.x() * _x_multiplier->value();
+        targetVel.x() * _x_multiplier->value();
     _context->robotIntents[_robot->shell()].setpoints.yvelocity = targetVel.y();
 }
 

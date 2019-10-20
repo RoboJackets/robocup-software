@@ -365,7 +365,9 @@ public:
     const Geometry2d::ShapeSet& localObstacles() const {
         return _context->robotIntents[shell()]._local_obstacles;
     }
-    void clearLocalObstacles() { _context->robotIntents[shell()]._local_obstacles.clear(); }
+    void clearLocalObstacles() {
+        _context->robotIntents[shell()]._local_obstacles.clear();
+    }
 
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
@@ -488,7 +490,6 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-
     RobotConstraints _robotConstraints;
 
     Planning::AngleFunctionPath angleFunctionPath;  /// latest path

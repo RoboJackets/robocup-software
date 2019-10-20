@@ -1,12 +1,12 @@
 #pragma once
 
+#include <Constants.hpp>
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
+#include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
 #include "vision/VisionPacket.hpp"
-#include "RobotIntent.hpp"
-#include <Constants.hpp>
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -25,6 +25,7 @@ struct Context {
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
     WorldState world_state;
 
-    // construct these right away so they can be used from the SystemState constructor
+    // construct these right away so they can be used from the SystemState
+    // constructor
     std::array<RobotIntent, Num_Shells> robotIntents;
 };

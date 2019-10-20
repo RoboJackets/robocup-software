@@ -15,7 +15,9 @@ public:
     SimRadio(Context* const context, bool blueTeam = false);
 
     virtual bool isOpen() const override;
-    virtual void send(Packet::RadioTx& radioTx, const std::array<RobotIntent, Num_Shells>& intents) override;
+    virtual void send(
+        Packet::RadioTx& radioTx,
+        const std::array<RobotIntent, Num_Shells>& intents) override;
     virtual void receive() override;
     virtual void switchTeam(bool blueTeam) override;
 

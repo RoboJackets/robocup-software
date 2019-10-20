@@ -1,9 +1,9 @@
 #pragma once
 
-#include "planning/RotationCommand.hpp"
-#include "planning/MotionCommand.hpp"
 #include <Constants.hpp>
 #include <Geometry2d/ShapeSet.hpp>
+#include "planning/MotionCommand.hpp"
+#include "planning/RotationCommand.hpp"
 
 typedef std::array<float, Num_Shells> RobotMask;
 
@@ -15,7 +15,7 @@ struct ControlSetpoints {
 struct RobotIntent {
     enum class ShootMode { KICK, CHIP };
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
-    enum class Song {STOP, CONTINUE, FIGHT_SONG};
+    enum class Song { STOP, CONTINUE, FIGHT_SONG };
 
     std::unique_ptr<Planning::MotionCommand> _motionCommand;
     std::unique_ptr<Planning::RotationCommand> _rotationCommand;
@@ -36,7 +36,8 @@ struct RobotIntent {
     ControlSetpoints setpoints;
 
     void clear() {
-        dvelocity = setpoints.xvelocity = setpoints.yvelocity = setpoints.avelocity = 0;
+        dvelocity = setpoints.xvelocity = setpoints.yvelocity =
+            setpoints.avelocity = 0;
         kcstrength = 255u;
         shootmode = ShootMode::KICK;
         triggermode = TriggerMode::STAND_DOWN;
