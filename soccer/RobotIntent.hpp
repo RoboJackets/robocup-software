@@ -7,11 +7,6 @@
 
 typedef std::array<float, Num_Shells> RobotMask;
 
-struct ControlSetpoints {
-    float xvelocity;
-    float yvelocity;
-    float avelocity;
-};
 struct RobotIntent {
     enum class ShootMode { KICK, CHIP };
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
@@ -33,11 +28,8 @@ struct RobotIntent {
     int kcstrength;
     float dvelocity;
 
-    ControlSetpoints setpoints;
-
     void clear() {
-        dvelocity = setpoints.xvelocity = setpoints.yvelocity =
-            setpoints.avelocity = 0;
+        dvelocity = 0;
         kcstrength = 255;
         shootmode = ShootMode::KICK;
         triggermode = TriggerMode::STAND_DOWN;

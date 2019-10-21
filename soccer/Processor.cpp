@@ -758,9 +758,10 @@ void Processor::sendRadioData() {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
             RobotIntent& intent = _context.robotIntents[r->shell()];
-            intent.setpoints.xvelocity = 0;
-            intent.setpoints.yvelocity = 0;
-            intent.setpoints.avelocity = 0;
+            MotionSetpoint& setpoint = _context.motionStepoints[r->shell()];
+            setpoint.xvelocity = 0;
+            setpoint.yvelocity = 0;
+            setpoint.avelocity = 0;
             intent.dvelocity = 0;
             intent.kcstrength = 0;
             intent.shootmode = RobotIntent::ShootMode::KICK;
@@ -809,7 +810,7 @@ void Processor::sendRadioData() {
 
     if (_radio) {
         _radio->send(*_context.state.logFrame->mutable_radio_tx(),
-                     _context.robotIntents);
+                     _context.robotIntents, _context.motionSetpoints);
     }
 }
 
@@ -822,15 +823,14 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     if (robot && robot->visible() && _useFieldOrientedManualDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
-
     RobotIntent& intent = _context.robotIntents[robot->shell()];
-
+    MotionSetpoint& setpoint = _context.motionStepoints[robot->shell()];
     // translation
-    intent.setpoints.xvelocity = translation.x();
-    intent.setpoints.yvelocity = translation.y();
+    setpoint.xvelocity = translation.x();
+    setpoint.yvelocity = translation.y();
 
     // rotation
-    intent.setpoints.avelocity = controlVals.rotation;
+    setpoint.avelocity = controlVals.rotation;
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;

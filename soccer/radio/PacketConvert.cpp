@@ -3,6 +3,7 @@
 #include <Geometry2d/Util.hpp>
 #include <iostream>
 #include <time.hpp>
+#include <motion/MotionControl.hpp>
 
 void from_robot_tx_proto(const Packet::Robot& proto_packet,
                          rtp::RobotTxMessage* msg) {
@@ -73,7 +74,8 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
 }
 
 void construct_tx_proto(Packet::RadioTx& radioTx,
-                        const std::array<RobotIntent, Num_Shells>& intents) {
+                        const std::array<RobotIntent, Num_Shells>& intents,
+                        const std::array<MotionSetpoint, Num_Shells>& setpoints) {
     // I'm assuming this is necessary to do logging. idk
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
     while (radioTx.robots_size() < Num_Shells) {
@@ -85,6 +87,7 @@ void construct_tx_proto(Packet::RadioTx& radioTx,
         robotPacket->set_uid(i);
         Packet::Control* controlPacket = robotPacket->mutable_control();
         const RobotIntent& intent = intents[i];
+        const MotionSetpoint& setpoint = setpoints[i];
         switch (intent.shootmode) {
             case RobotIntent::ShootMode::KICK:
                 controlPacket->set_shootmode(Packet::Control::KICK);
@@ -115,9 +118,9 @@ void construct_tx_proto(Packet::RadioTx& radioTx,
                 controlPacket->set_song(Packet::Control::FIGHT_SONG);
                 break;
         }
-        controlPacket->set_xvelocity(intent.setpoints.xvelocity);
-        controlPacket->set_yvelocity(intent.setpoints.yvelocity);
-        controlPacket->set_avelocity(intent.setpoints.avelocity);
+        controlPacket->set_xvelocity(setpoint.xvelocity);
+        controlPacket->set_yvelocity(setpoint.yvelocity);
+        controlPacket->set_avelocity(setpoint.avelocity);
         controlPacket->set_dvelocity(intent.dvelocity);
         controlPacket->set_kcstrength(intent.kcstrength);
     }

@@ -231,7 +231,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     }
 
     // the robot firmware still speaks degrees, so that's how we send it over
-    _context->robotIntents[_robot->shell()].setpoints.avelocity = angleVel;
+    setpoint().avelocity = angleVel;
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
@@ -259,9 +259,8 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // set control values
-    _context->robotIntents[_robot->shell()].setpoints.xvelocity =
-        targetVel.x() * _x_multiplier->value();
-    _context->robotIntents[_robot->shell()].setpoints.yvelocity = targetVel.y();
+    setpoint().xvelocity = targetVel.x() * _x_multiplier->value();
+    setpoint().yvelocity = targetVel.y();
 }
 
 Pid* MotionControl::getPid(char controller) {

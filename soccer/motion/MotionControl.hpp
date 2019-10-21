@@ -8,6 +8,14 @@
 
 class OurRobot;
 
+//stores the outputs published by MotionControl
+struct MotionSetpoint {
+    float xvelocity;
+    float yvelocity;
+    float avelocity;
+    void clear() { xvelocity = yvelocity = avelocity = 0; }
+};
+
 /**
  * @brief Handles computer-side motion control
  * @details This class handles the details of creating velocity commands for a
@@ -54,6 +62,8 @@ private:
 
     Context* _context;
     OurRobot* _robot;
+
+    MotionSetpoint& setpoint() const { return _context->motionSetpoints[_robot->shell()]; }
 
     /// The last velocity command (in m/s) that we sent / to the robot
     Geometry2d::Point _lastWorldVelCmd;

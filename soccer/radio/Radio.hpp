@@ -18,7 +18,8 @@ public:
 
     virtual bool isOpen() const = 0;
     virtual void send(Packet::RadioTx& radioTx,
-                      const std::array<RobotIntent, Num_Shells>& intents) = 0;
+                      const std::array<RobotIntent, Num_Shells>& intents,
+                      const std::array<MotionSetpoint, Num_Shells>& setpoints) = 0;
     virtual void receive() = 0;
 
     virtual void switchTeam(bool blueTeam) = 0;

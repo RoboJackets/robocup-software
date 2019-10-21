@@ -4,6 +4,7 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/Robot.pb.h>
 #include <RobotIntent.hpp>
+#include <motion/MotionControl.hpp>
 
 #include "rc-fshare/rtp.hpp"
 
@@ -24,7 +25,8 @@ void convert_tx_proto_to_rtp(const ::Packet::RadioTx& proto_packet,
                              rtp::RobotTxMessage* messages);
 
 void construct_tx_proto(Packet::RadioTx& radioTx,
-                        const std::array<RobotIntent, Num_Shells>& intents);
+                        const std::array<RobotIntent, Num_Shells>& intents,
+                        const std::array<MotionSetpoint, Num_Shells>& setpoints);
 
 /**
  * @brief Deserialize an incoming message from a single robot into a protobuf.

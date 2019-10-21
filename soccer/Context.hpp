@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Constants.hpp>
+#include <motion/MotionControl.hpp>
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "RobotIntent.hpp"
@@ -28,4 +29,5 @@ struct Context {
     // construct these right away so they can be used from the SystemState
     // constructor
     std::array<RobotIntent, Num_Shells> robotIntents;
+    std::array<MotionSetpoint, Num_Shells> motionSetpoints;
 };
