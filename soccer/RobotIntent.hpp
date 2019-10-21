@@ -38,7 +38,7 @@ struct RobotIntent {
     void clear() {
         dvelocity = setpoints.xvelocity = setpoints.yvelocity =
             setpoints.avelocity = 0;
-        kcstrength = 255u;
+        kcstrength = 255;
         shootmode = ShootMode::KICK;
         triggermode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
