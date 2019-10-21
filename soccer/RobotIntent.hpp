@@ -35,4 +35,6 @@ struct RobotIntent {
         triggermode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
     }
+
+    RobotIntent() { clear(); }
 };

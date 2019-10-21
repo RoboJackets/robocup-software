@@ -14,6 +14,7 @@ struct MotionSetpoint {
     float yvelocity;
     float avelocity;
     void clear() { xvelocity = yvelocity = avelocity = 0; }
+    MotionSetpoint() { clear(); }
 };
 
 /**
