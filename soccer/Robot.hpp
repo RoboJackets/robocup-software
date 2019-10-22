@@ -563,13 +563,15 @@ private:
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
     void _unkick();
-    RobotIntent& intent() const { return _context->robotIntents[shell()]; }
 
     uint32_t _lastKickerStatus;
     RJ::Time _lastKickTime;
     RJ::Time _lastChargedTime;
 
     Packet::RadioRx _radioRx;
+
+    RobotIntent& intent() { return _context->robotIntents[shell()]; }
+    const RobotIntent& intent() const { return _context->robotIntents[shell()]; }
 
     /**
      * We build a string of commands such as face(), move(), etc at each

@@ -758,7 +758,7 @@ void Processor::sendRadioData() {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
             RobotIntent& intent = _context.robotIntents[r->shell()];
-            MotionSetpoint& setpoint = _context.motionStepoints[r->shell()];
+            MotionSetpoint& setpoint = _context.motionSetpoints[r->shell()];
             setpoint.xvelocity = 0;
             setpoint.yvelocity = 0;
             setpoint.avelocity = 0;
@@ -824,7 +824,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
         translation.rotate(-M_PI / 2 - robot->angle());
     }
     RobotIntent& intent = _context.robotIntents[robot->shell()];
-    MotionSetpoint& setpoint = _context.motionStepoints[robot->shell()];
+    MotionSetpoint& setpoint = _context.motionSetpoints[robot->shell()];
     // translation
     setpoint.xvelocity = translation.x();
     setpoint.yvelocity = translation.y();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Constants.hpp>
-#include <motion/MotionControl.hpp>
+#include "motion/MotionSetpoint.hpp"
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "RobotIntent.hpp"
@@ -9,6 +9,14 @@
 #include "WorldState.hpp"
 #include "vision/VisionPacket.hpp"
 
+////stores the outputs published by MotionControl
+//struct MotionSetpoint {
+//    float xvelocity;
+//    float yvelocity;
+//    float avelocity;
+//    void clear() { xvelocity = yvelocity = avelocity = 0; }
+//    MotionSetpoint() { clear(); }
+//};
 struct Context {
     Context() : state(this), debug_drawer(this) {}
 
