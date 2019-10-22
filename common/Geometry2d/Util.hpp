@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #ifndef M_PI
 #define M_PI 3.141592653589793
@@ -36,7 +36,4 @@ static bool nearlyEqual(float a, float b) {
 
 /** Returns @value if it is in bounds, otherwise returns the bound it is closest
  * to */
-template <class T>
-T clamp(T value, T min, T max) {
-    return std::max(min, std::min(max, value));
-}
+using std::clamp;
