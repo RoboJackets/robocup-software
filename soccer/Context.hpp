@@ -9,14 +9,6 @@
 #include "motion/MotionSetpoint.hpp"
 #include "vision/VisionPacket.hpp"
 
-////stores the outputs published by MotionControl
-// struct MotionSetpoint {
-//    float xvelocity;
-//    float yvelocity;
-//    float avelocity;
-//    void clear() { xvelocity = yvelocity = avelocity = 0; }
-//    MotionSetpoint() { clear(); }
-//};
 struct Context {
     Context() : state(this), debug_drawer(this) {}
 

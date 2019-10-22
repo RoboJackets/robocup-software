@@ -77,7 +77,6 @@ void construct_tx_proto(
     Packet::RadioTx& radioTx,
     const std::array<RobotIntent, Num_Shells>& intents,
     const std::array<MotionSetpoint, Num_Shells>& setpoints) {
-    // I'm assuming this is necessary to do logging. idk
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
     while (radioTx.robots_size() < Num_Shells) {
         radioTx.add_robots();
