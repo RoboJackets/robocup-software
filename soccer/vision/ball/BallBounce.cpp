@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include <Constants.hpp>
+#include <Utils.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -18,11 +19,11 @@ ConfigDouble* BallBounce::robot_mouth_angle_dampen;
  * Note 0 case returns -1 instead of 0
  * Forced to check with small epsilon since we actually care about 0 being represented
  * correctly as -1. It's ok if the 1.0e-10 doesn't return -1 or 1.
- * 
+ *
  * This is mostly so the simple test case have the correct behavior
  * If it lands on the 1.0e-10 boundary the code reacts as if there was no hit
  */
-int sign(double val) { return (1.0e-10 < val) - (val <= 1.0e-10); }
+//int sign(double val) { return (1.0e-10 < val) - (val <= 1.0e-10); }
 
 void BallBounce::createConfiguration(Configuration* cfg) {
     robot_body_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_lin_dampen", .9);
@@ -198,7 +199,7 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
             // Angle CBD
             double halfReflectAngle = intersectPtReflectionUnitVector.angleBetween(robotIntersectPtUnitVector);
             double direction = robotIntersectPtUnitVector.cross(intersectPtReflectionUnitVector);
-            double extraRotationAngle = -sign(direction)*halfReflectAngle;
+            double extraRotationAngle = -signum(direction)*halfReflectAngle;
             extraRotationAngle = std::min(extraRotationAngle, M_PI_2 - extraRotationAngle)*dampenAngleCoeff;
 
             intersectPtReflectionUnitVector = intersectPtReflectionUnitVector.rotate(extraRotationAngle);
@@ -251,7 +252,7 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
         return out;
     }
 
-    double x1 = D*d.y() + sign(d.y()) * d.x() * sqrt(r*r*dr*dr - D*D);
+    double x1 = D*d.y() + signum(d.y()) * d.x() * sqrt(r*r*dr*dr - D*D);
     x1 /= dr*dr;
     x1 += robot.getPos().x();
 
@@ -259,7 +260,7 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
     y1 /= dr*dr;
     y1 += robot.getPos().y();
 
-    double x2 = D*d.y() - sign(d.y()) * d.x() * sqrt(r*r*dr*dr - D*D);
+    double x2 = D*d.y() - signum(d.y()) * d.x() * sqrt(r*r*dr*dr - D*D);
     x2 /= dr*dr;
     x2 += robot.getPos().x();
 
@@ -283,6 +284,6 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
         out.push_back(pt1);
         out.push_back(pt2);
     }
-    
+
     return out;
 }

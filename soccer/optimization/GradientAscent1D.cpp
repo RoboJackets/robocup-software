@@ -2,6 +2,7 @@
 #include <math.h>
 #include <algorithm>
 #include <tuple>
+#include <Utils.hpp>
 
 GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     currentx = config->startX;
@@ -31,8 +32,8 @@ bool GradientAscent1D::singleStep() {
     currentdx = std::get<1>(funcOutput);
     currentVal = std::get<0>(funcOutput);
 
-    // Decrease temperature when derivative flips std::signbit
-    if (std::signbit(previousdx) == std::signbit(-1 * currentdx)) {
+    // Decrease temperature when derivative flips sign
+    if (signum(previousdx) != signum(currentdx)) {
         temperature *= config->temperatureDescent;
     }
 
