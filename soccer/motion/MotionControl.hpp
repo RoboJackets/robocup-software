@@ -53,8 +53,12 @@ private:
     Context* _context;
     OurRobot* _robot;
 
-    MotionSetpoint& setpoint() { return _context->motionSetpoints[_robot->shell()]; }
-    const MotionSetpoint& setpoint() const { return _context->motionSetpoints[_robot->shell()]; }
+    MotionSetpoint& setpoint() {
+        return _context->motionSetpoints[_robot->shell()];
+    }
+    const MotionSetpoint& setpoint() const {
+        return _context->motionSetpoints[_robot->shell()];
+    }
 
     /// The last velocity command (in m/s) that we sent / to the robot
     Geometry2d::Point _lastWorldVelCmd;

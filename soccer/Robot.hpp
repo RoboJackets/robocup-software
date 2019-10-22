@@ -365,9 +365,7 @@ public:
     const Geometry2d::ShapeSet& localObstacles() const {
         return intent()._local_obstacles;
     }
-    void clearLocalObstacles() {
-        intent()._local_obstacles.clear();
-    }
+    void clearLocalObstacles() { intent()._local_obstacles.clear(); }
 
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
@@ -571,7 +569,9 @@ private:
     Packet::RadioRx _radioRx;
 
     RobotIntent& intent() { return _context->robotIntents[shell()]; }
-    const RobotIntent& intent() const { return _context->robotIntents[shell()]; }
+    const RobotIntent& intent() const {
+        return _context->robotIntents[shell()];
+    }
 
     /**
      * We build a string of commands such as face(), move(), etc at each

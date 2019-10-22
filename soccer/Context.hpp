@@ -1,16 +1,16 @@
 #pragma once
 
 #include <Constants.hpp>
-#include "motion/MotionSetpoint.hpp"
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
+#include "motion/MotionSetpoint.hpp"
 #include "vision/VisionPacket.hpp"
 
 ////stores the outputs published by MotionControl
-//struct MotionSetpoint {
+// struct MotionSetpoint {
 //    float xvelocity;
 //    float yvelocity;
 //    float avelocity;

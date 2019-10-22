@@ -1,5 +1,5 @@
 #pragma once
-//stores the outputs published by MotionControl
+// stores the outputs published by MotionControl
 struct MotionSetpoint {
     float xvelocity;
     float yvelocity;

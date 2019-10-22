@@ -2,8 +2,8 @@
 #include <status.h>
 #include <Geometry2d/Util.hpp>
 #include <iostream>
-#include <time.hpp>
 #include <motion/MotionControl.hpp>
+#include <time.hpp>
 
 void from_robot_tx_proto(const Packet::Robot& proto_packet,
                          rtp::RobotTxMessage* msg) {
@@ -73,9 +73,10 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
     return packet;
 }
 
-void construct_tx_proto(Packet::RadioTx& radioTx,
-                        const std::array<RobotIntent, Num_Shells>& intents,
-                        const std::array<MotionSetpoint, Num_Shells>& setpoints) {
+void construct_tx_proto(
+    Packet::RadioTx& radioTx,
+    const std::array<RobotIntent, Num_Shells>& intents,
+    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
     // I'm assuming this is necessary to do logging. idk
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
     while (radioTx.robots_size() < Num_Shells) {
