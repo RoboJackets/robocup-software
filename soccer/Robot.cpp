@@ -1,6 +1,5 @@
 #include <Robot.hpp>
 #include <LogUtils.hpp>
-#include <motion/MotionControl.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <planning/TrapezoidalPath.hpp>
 #include <protobuf/LogFrame.pb.h>

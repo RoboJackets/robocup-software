@@ -2,7 +2,7 @@
 #include <status.h>
 #include <Geometry2d/Util.hpp>
 #include <iostream>
-#include <motion/MotionControl.hpp>
+#include "motion/MotionSetpoint.hpp"
 #include <time.hpp>
 
 void from_robot_tx_proto(const Packet::Robot& proto_packet,

@@ -18,7 +18,6 @@
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
-#include <motion/MotionControl.hpp>
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>

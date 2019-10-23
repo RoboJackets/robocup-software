@@ -8,7 +8,6 @@
 #include <boost/asio.hpp>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <motion/MotionControl.hpp>
 
 #include "Radio.hpp"
 

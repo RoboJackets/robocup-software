@@ -4,7 +4,7 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/Robot.pb.h>
 #include <RobotIntent.hpp>
-#include <motion/MotionControl.hpp>
+#include <motion/MotionSetpoint.hpp>
 
 #include "rc-fshare/rtp.hpp"
 
