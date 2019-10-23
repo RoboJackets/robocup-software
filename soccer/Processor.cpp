@@ -24,9 +24,9 @@
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
 #include "radio/NetworkRadio.hpp"
+#include "radio/PacketConvert.hpp"
 #include "radio/SimRadio.hpp"
 #include "vision/VisionFilter.hpp"
-#include "radio/PacketConvert.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -815,8 +815,6 @@ void Processor::sendRadioData() {
     }
 }
 
-
-
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
                                       OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
@@ -843,7 +841,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
               : RobotIntent::TriggerMode::STAND_DOWN);
     intent.kcstrength = (controlVals.kickPower);
     intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
-                                         : RobotIntent::ShootMode::CHIP);
+                                          : RobotIntent::ShootMode::CHIP);
 
     // dribbler
     intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);

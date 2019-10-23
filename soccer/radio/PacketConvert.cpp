@@ -2,8 +2,8 @@
 #include <status.h>
 #include <Geometry2d/Util.hpp>
 #include <iostream>
-#include "motion/MotionSetpoint.hpp"
 #include <time.hpp>
+#include "motion/MotionSetpoint.hpp"
 
 void from_robot_tx_proto(const Packet::Robot& proto_packet,
                          rtp::RobotTxMessage* msg) {
