@@ -182,7 +182,7 @@ public:
     MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
 
     const Planning::RotationCommand& rotationCommand() const {
-        return *intent()._rotationCommand;
+        return *intent().rotation_command;
     }
 
     /**
@@ -360,12 +360,12 @@ public:
      * Cleared after every frame
      */
     void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
-        intent()._local_obstacles.add(obs);
+        intent().local_obstacles.add(obs);
     }
     const Geometry2d::ShapeSet& localObstacles() const {
-        return intent()._local_obstacles;
+        return intent().local_obstacles;
     }
-    void clearLocalObstacles() { intent()._local_obstacles.clear(); }
+    void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
@@ -437,7 +437,7 @@ public:
     }
 
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
-        return intent()._motionCommand;
+        return intent().motion_command;
     }
 
     const RotationConstraints& rotationConstraints() const {

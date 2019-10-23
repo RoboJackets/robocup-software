@@ -19,15 +19,13 @@ struct Context {
     Context(Context&&) = delete;
     Context& operator=(Context&&) = delete;
 
+    std::array<RobotIntent, Num_Shells> robotIntents;
+    std::array<MotionSetpoint, Num_Shells> motionSetpoints;
+
     SystemState state;
     GameState game_state;
     DebugDrawer debug_drawer;
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
     WorldState world_state;
-
-    // construct these right away so they can be used from the SystemState
-    // constructor
-    std::array<RobotIntent, Num_Shells> robotIntents;
-    std::array<MotionSetpoint, Num_Shells> motionSetpoints;
 };

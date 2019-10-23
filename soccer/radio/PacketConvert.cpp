@@ -88,7 +88,7 @@ void construct_tx_proto(
         Packet::Control* controlPacket = robotPacket->mutable_control();
         const RobotIntent& intent = intents[i];
         const MotionSetpoint& setpoint = setpoints[i];
-        switch (intent.shootmode) {
+        switch (intent.shoot_mode) {
             case RobotIntent::ShootMode::KICK:
                 controlPacket->set_shootmode(Packet::Control::KICK);
                 break;
@@ -96,7 +96,7 @@ void construct_tx_proto(
                 controlPacket->set_shootmode(Packet::Control::CHIP);
                 break;
         }
-        switch (intent.triggermode) {
+        switch (intent.trigger_mode) {
             case RobotIntent::TriggerMode::STAND_DOWN:
                 controlPacket->set_triggermode(Packet::Control::STAND_DOWN);
                 break;

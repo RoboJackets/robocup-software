@@ -28,10 +28,7 @@ public:
     // This `send` method actually sends separate control packets to all robots
     // to maintain backwards compatibility with the old radio API.
     // TODO(Kyle) Rearchitect radio code to avoid needing to do this.
-    virtual void send(
-        Packet::RadioTx& radioTx,
-        const std::array<RobotIntent, Num_Shells>& intents,
-        const std::array<MotionSetpoint, Num_Shells>& setpoints) override;
+    virtual void send(Packet::RadioTx& radioTx) override;
 
     virtual void receive() override;
 

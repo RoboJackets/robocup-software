@@ -27,6 +27,7 @@
 #include "radio/NetworkRadio.hpp"
 #include "radio/SimRadio.hpp"
 #include "vision/VisionFilter.hpp"
+#include "radio/PacketConvert.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -764,8 +765,8 @@ void Processor::sendRadioData() {
             setpoint.avelocity = 0;
             intent.dvelocity = 0;
             intent.kcstrength = 0;
-            intent.shootmode = RobotIntent::ShootMode::KICK;
-            intent.triggermode = RobotIntent::TriggerMode::STAND_DOWN;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
             intent.song = RobotIntent::Song::STOP;
         }
     }
@@ -809,10 +810,13 @@ void Processor::sendRadioData() {
     }
 
     if (_radio) {
-        _radio->send(*_context.state.logFrame->mutable_radio_tx(),
-                     _context.robotIntents, _context.motionSetpoints);
+        construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
+                           _context.robotIntents, _context.motionSetpoints);
+        _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }
+
+
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
                                       OurRobot* robot) {
@@ -834,12 +838,12 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    intent.triggermode =
+    intent.trigger_mode =
         (kick ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
                                   : RobotIntent::TriggerMode::IMMEDIATE)
               : RobotIntent::TriggerMode::STAND_DOWN);
     intent.kcstrength = (controlVals.kickPower);
-    intent.shootmode = (controlVals.kick ? RobotIntent::ShootMode::KICK
+    intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
                                          : RobotIntent::ShootMode::CHIP);
 
     // dribbler

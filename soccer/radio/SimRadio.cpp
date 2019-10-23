@@ -25,10 +25,7 @@ SimRadio::SimRadio(Context* const context, bool blueTeam)
 
 bool SimRadio::isOpen() const { return _tx_socket.isValid(); }
 
-void SimRadio::send(Packet::RadioTx& radioTx,
-                    const std::array<RobotIntent, Num_Shells>& intents,
-                    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
-    construct_tx_proto(radioTx, intents, setpoints);
+void SimRadio::send(Packet::RadioTx& radioTx) {
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
     for (int i = 0; i < radioTx.robots_size(); i++) {

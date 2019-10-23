@@ -12,18 +12,18 @@ struct RobotIntent {
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
     enum class Song { STOP, CONTINUE, FIGHT_SONG };
 
-    std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    std::unique_ptr<Planning::RotationCommand> _rotationCommand;
+    std::unique_ptr<Planning::MotionCommand> motion_command;
+    std::unique_ptr<Planning::RotationCommand> rotation_command;
 
     /// set of obstacles added by plays
-    Geometry2d::ShapeSet _local_obstacles;
+    Geometry2d::ShapeSet local_obstacles;
 
     /// masks for obstacle avoidance
-    RobotMask _opp_avoid_mask;
-    float _avoidBallRadius;  /// radius of ball obstacle
+    RobotMask opp_avoid_mask;
+    float avoid_ball_radius;  /// radius of ball obstacle
 
-    ShootMode shootmode;
-    TriggerMode triggermode;
+    ShootMode shoot_mode;
+    TriggerMode trigger_mode;
     Song song;
     int kcstrength;
     float dvelocity;
@@ -31,8 +31,8 @@ struct RobotIntent {
     void clear() {
         dvelocity = 0;
         kcstrength = 255;
-        shootmode = ShootMode::KICK;
-        triggermode = TriggerMode::STAND_DOWN;
+        shoot_mode = ShootMode::KICK;
+        trigger_mode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
     }
 
