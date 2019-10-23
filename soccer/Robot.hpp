@@ -568,9 +568,9 @@ private:
 
     Packet::RadioRx _radioRx;
 
-    RobotIntent& intent() { return _context->robotIntents[shell()]; }
+    RobotIntent& intent() { return _context->robot_intents[shell()]; }
     const RobotIntent& intent() const {
-        return _context->robotIntents[shell()];
+        return _context->robot_intents[shell()];
     }
 
     /**

@@ -8,6 +8,7 @@
 #include "WorldState.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "vision/VisionPacket.hpp"
+#include <set>
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -19,8 +20,9 @@ struct Context {
     Context(Context&&) = delete;
     Context& operator=(Context&&) = delete;
 
-    std::array<RobotIntent, Num_Shells> robotIntents;
-    std::array<MotionSetpoint, Num_Shells> motionSetpoints;
+    std::array<RobotIntent, Num_Shells> robot_intents;
+    std::array<MotionSetpoint, Num_Shells> motion_setpoints;
+    std::set<int> active_robots;
 
     SystemState state;
     GameState game_state;

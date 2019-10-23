@@ -757,8 +757,8 @@ void Processor::sendRadioData() {
     if (_context.game_state.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
-            RobotIntent& intent = _context.robotIntents[r->shell()];
-            MotionSetpoint& setpoint = _context.motionSetpoints[r->shell()];
+            RobotIntent& intent = _context.robot_intents[r->shell()];
+            MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
             setpoint.xvelocity = 0;
             setpoint.yvelocity = 0;
             setpoint.avelocity = 0;
@@ -772,8 +772,10 @@ void Processor::sendRadioData() {
 
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
+    _context.active_robots.clear();
     for (OurRobot* r : _context.state.self) {
         if (r->visible() || _manualID == r->shell() || _multipleManual) {
+            _context.active_robots.insert(r->shell());
             // MANUAL STUFF
             if (_multipleManual) {
                 auto info =
@@ -810,7 +812,7 @@ void Processor::sendRadioData() {
 
     if (_radio) {
         construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
-                           _context.robotIntents, _context.motionSetpoints);
+                           _context.robot_intents, _context.motion_setpoints, _context.active_robots);
         _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }
@@ -824,8 +826,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     if (robot && robot->visible() && _useFieldOrientedManualDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
-    RobotIntent& intent = _context.robotIntents[robot->shell()];
-    MotionSetpoint& setpoint = _context.motionSetpoints[robot->shell()];
+    RobotIntent& intent = _context.robot_intents[robot->shell()];
+    MotionSetpoint& setpoint = _context.motion_setpoints[robot->shell()];
     // translation
     setpoint.xvelocity = translation.x();
     setpoint.yvelocity = translation.y();

@@ -55,10 +55,10 @@ private:
     OurRobot* _robot;
 
     MotionSetpoint& setpoint() {
-        return _context->motionSetpoints[_robot->shell()];
+        return _context->motion_setpoints[_robot->shell()];
     }
     const MotionSetpoint& setpoint() const {
-        return _context->motionSetpoints[_robot->shell()];
+        return _context->motion_setpoints[_robot->shell()];
     }
 
     /// The last velocity command (in m/s) that we sent / to the robot

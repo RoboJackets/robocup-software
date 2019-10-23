@@ -76,14 +76,11 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
 void construct_tx_proto(
     Packet::RadioTx& radioTx,
     const std::array<RobotIntent, Num_Shells>& intents,
-    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
+    const std::array<MotionSetpoint, Num_Shells>& setpoints,
+    const std::set<int>& activeRobots) {
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
-    while (radioTx.robots_size() < Num_Shells) {
-        radioTx.add_robots();
-    }
-    for (int i = 0; i < intents.size(); ++i) {
-        Packet::Robot* robotPacket;
-        robotPacket = radioTx.mutable_robots(i);
+    for (int i : activeRobots) {
+        Packet::Robot* robotPacket = radioTx.add_robots();
         robotPacket->set_uid(i);
         Packet::Control* controlPacket = robotPacket->mutable_control();
         const RobotIntent& intent = intents[i];

@@ -122,7 +122,7 @@ void OurRobot::resetForNextIteration() {
     _clearCmdText();
 
     intent().clear();
-    _context->motionSetpoints[shell()].clear();
+    _context->motion_setpoints[shell()].clear();
 
     if (charged()) {
         _lastChargedTime = RJ::now();
