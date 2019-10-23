@@ -73,17 +73,20 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
     return packet;
 }
 
-void construct_tx_proto(Packet::RadioTx& radioTx,
-                        const std::array<RobotIntent, Num_Shells>& intents,
-                        const std::array<MotionSetpoint, Num_Shells>& setpoints,
-                        const std::set<int>& activeRobots) {
+void construct_tx_proto(
+    Packet::RadioTx& radioTx,
+    const std::array<RobotIntent, Num_Shells>& intents,
+    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
     radioTx.set_txmode(Packet::RadioTx::UNICAST);
-    for (int i : activeRobots) {
+    for (int i = 0; i < Num_Shells; ++i) {
+        const RobotIntent& intent = intents[i];
+        if (!intent.is_active) {
+            continue;
+        }
+        const MotionSetpoint& setpoint = setpoints[i];
         Packet::Robot* robotPacket = radioTx.add_robots();
         robotPacket->set_uid(i);
         Packet::Control* controlPacket = robotPacket->mutable_control();
-        const RobotIntent& intent = intents[i];
-        const MotionSetpoint& setpoint = setpoints[i];
         switch (intent.shoot_mode) {
             case RobotIntent::ShootMode::KICK:
                 controlPacket->set_shootmode(Packet::Control::KICK);

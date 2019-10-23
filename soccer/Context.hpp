@@ -22,7 +22,6 @@ struct Context {
 
     std::array<RobotIntent, Num_Shells> robot_intents;
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
-    std::set<int> active_robots;
 
     SystemState state;
     GameState game_state;

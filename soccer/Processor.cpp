@@ -772,10 +772,10 @@ void Processor::sendRadioData() {
 
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
-    _context.active_robots.clear();
     for (OurRobot* r : _context.state.self) {
+        RobotIntent& intent = _context.robot_intents[r->shell()];
         if (r->visible() || _manualID == r->shell() || _multipleManual) {
-            _context.active_robots.insert(r->shell());
+            intent.is_active = true;
             // MANUAL STUFF
             if (_multipleManual) {
                 auto info =
@@ -807,13 +807,14 @@ void Processor::sendRadioData() {
                     applyJoystickControls(controlValues[0], r);
                 }
             }
+        } else {
+            intent.is_active = false;
         }
     }
 
     if (_radio) {
         construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
-                           _context.robot_intents, _context.motion_setpoints,
-                           _context.active_robots);
+                           _context.robot_intents, _context.motion_setpoints);
         _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }

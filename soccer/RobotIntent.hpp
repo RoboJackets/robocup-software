@@ -28,6 +28,8 @@ struct RobotIntent {
     int kcstrength;
     float dvelocity;
 
+    bool is_active;
+
     void clear() {
         dvelocity = 0;
         kcstrength = 255;
@@ -36,5 +38,5 @@ struct RobotIntent {
         song = Song::CONTINUE;
     }
 
-    RobotIntent() { clear(); }
+    RobotIntent() : is_active(false) { clear(); }
 };
