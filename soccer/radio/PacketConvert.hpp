@@ -28,11 +28,10 @@ void convert_tx_proto_to_rtp(const ::Packet::RadioTx& proto_packet,
 /**
  * @brief Construct a RadioTx packet from the intents and setpoints
  */
-void construct_tx_proto(
-    Packet::RadioTx& radioTx,
-    const std::array<RobotIntent, Num_Shells>& intents,
-    const std::array<MotionSetpoint, Num_Shells>& setpoints,
-    const std::set<int>& activeRobots);
+void construct_tx_proto(Packet::RadioTx& radioTx,
+                        const std::array<RobotIntent, Num_Shells>& intents,
+                        const std::array<MotionSetpoint, Num_Shells>& setpoints,
+                        const std::set<int>& activeRobots);
 
 /**
  * @brief Deserialize an incoming message from a single robot into a protobuf.

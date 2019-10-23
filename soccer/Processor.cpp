@@ -812,7 +812,8 @@ void Processor::sendRadioData() {
 
     if (_radio) {
         construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
-                           _context.robot_intents, _context.motion_setpoints, _context.active_robots);
+                           _context.robot_intents, _context.motion_setpoints,
+                           _context.active_robots);
         _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }

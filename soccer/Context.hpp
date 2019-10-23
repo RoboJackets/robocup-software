@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Constants.hpp>
+#include <set>
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "RobotIntent.hpp"
@@ -8,7 +9,6 @@
 #include "WorldState.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "vision/VisionPacket.hpp"
-#include <set>
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
