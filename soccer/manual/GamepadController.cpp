@@ -18,7 +18,6 @@ int GamepadController::deviceRemoved = -1;
 GamepadController::GamepadController(SDL_Event& event)
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
 
-    connected = false;
     controllerId = -1;
     robotId = -1;
     openInputDevice(event);
@@ -39,58 +38,31 @@ void GamepadController::initDeviceType() {
   }
 }
 
+bool GamepadController::valid() const { return _controller != nullptr; }
 
 void GamepadController::openInputDevice(SDL_Event& event) {
-    if (SDL_NumJoysticks()) {
-        // Open the first available controller
-        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-            // setup the joystick as a game controller if available
-            if (std::find(controllersInUse.begin(), controllersInUse.end(),
-                          i) == controllersInUse.end() &&
-                SDL_IsGameController(i)) {
-                SDL_GameController* controller;
-                controller = SDL_GameControllerOpen(i);
+    if (SDL_NumJoysticks() && SDL_IsGameController(event.cdevice.which)) {
+        SDL_GameController* controller;
+        controller = SDL_GameControllerOpen(event.cdevice.which);
 
-                if (controller != nullptr) {
-                    _controller = controller;
-                    connected = true;
-                    controllerId = i;
-                    controllersInUse.push_back(i);
-                    sort(controllersInUse.begin(), controllersInUse.end());
-                    cout << "Using " << SDL_GameControllerName(_controller)
-                         << " game controller as controller # "
-                         << controllersInUse.size() << endl;
-                    break;
-                } else {
-                    cerr << "ERROR: Could not open controller! SDL Error: "
-                         << SDL_GetError() << endl;
-                }
-                return;
-            }
+        if (controller != nullptr) {
+            _controller = controller;
+            cout << "Using " << SDL_GameControllerName(_controller)
+                    << " game controller as controller " << endl;
+        } else {
+            cerr << "ERROR: Could not open controller! SDL Error: "
+                    << SDL_GetError() << endl;
         }
+        return;
     }
 }
 
 void GamepadController::closeInputDevice() {
     cout << "Closing " << SDL_GameControllerName(_controller) << endl;
     SDL_GameControllerClose(_controller);
-    auto index =
-        find(controllersInUse.begin(), controllersInUse.end(), controllerId);
-    if (index != controllersInUse.end()) {
-        for (auto i = index + 1; i != controllersInUse.end(); i++) {
-            *i -= 1;
-        }
-        controllersInUse.erase(index);
-    }
-    deviceRemoved = controllerId;
     controllerId = -1;
-
     robotId = -1;
-    connected = false;
-
 }
-
-bool GamepadController::valid() const { return connected; }
 
 void GamepadController::update(SDL_Event& event) {
     QMutexLocker(&mutex());

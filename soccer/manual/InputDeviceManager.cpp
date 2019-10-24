@@ -38,7 +38,6 @@ void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx*
     // TODO Only serve so many events
     SDL_Event event;
 
-
     // TODO Opens on number of robots but currently indexes by SDL connection number
     // Iterate eventqueue
     while (SDL_PollEvent(&event)) {
@@ -47,21 +46,26 @@ void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx*
 
         // If it is a controller connected event make a new gamepad object and register it
         case SDL_CONTROLLERDEVICEADDED:
-            if (event.cdevice.which < Robots_Per_Team) {
-                _inputDevices.at(event.cdevice.which) = (new GamepadController(event));
-            } else {
-                cerr << "ERROR: Attempted to open a controller beyond the number of robots"
-                     << SDL_GetError() << endl;
+            {
+                int sdl_index = event.cdevice.which;
+                if (sdl_index < SDL_NumJoysticks()) {
+                    _inputDevices.insert(_inputDevices.begin() + sdl_index, new GamepadController(event));
+                } else {
+                    cerr << "ERROR: Attempted to open a controller beyond the number of controllers"
+                        << SDL_GetError() << endl;
+                }
             }
             break;
 
         // if it is a Joystick disconnected delete the pointer to the joystick and let the destructor handle the rest
         case SDL_CONTROLLERDEVICEREMOVED:
-            if (event.cdevice.which < Robots_Per_Team) {
-                delete _inputDevices.at(event.cdevice.which);
-            } else {
-                cerr << "ERROR: Attempted to close a controller beyond the number of robots"
-                     << SDL_GetError() << endl;
+            {
+                if (event.cdevice.which < SDL_NumJoysticks()) {
+                    delete _inputDevices.at(event.cdevice.which);
+                } else {
+                    cerr << "ERROR: Attempted to close a controller beyond the number of controllers"
+                        << SDL_GetError() << endl;
+                }
             }
             break;
 
@@ -164,49 +168,23 @@ InputDeviceControlValues InputDeviceManager::getInputDeviceControlValue(InputDev
 void InputDeviceManager::applyInputDeviceControls(std::vector<OurRobot*>& robots, Packet::RadioTx* tx) {
 
     // Add RadioTx commands for visible robots and apply joystick input
-    std::vector<int> manualIds = getInputDeviceRobotIds();
+    // TODO I think this radio tx application needs to be removed and only the final packets passed here
+    // TODO I think this needs to be moved outside this
+    Packet::Robot* txRobot = tx->add_robots();
     for (OurRobot* r : robots) {
-        if (r->visible() || _manualID == r->shell() || _multipleManual) {
-            Packet::Robot* txRobot = tx->add_robots();
+        if (r->visible() || _manualID == r->shell()) {
 
             // Copy motor commands.
             // Even if we are using the joystick, this sets robot_id and the
             // number of motors.
             txRobot->CopyFrom(r->robotPacket);
-
-            // MANUAL STUFF
-            if (_multipleManual) {
-                auto info =
-                    find(manualIds.begin(), manualIds.end(), r->shell());
-                int index = info - manualIds.begin();
-
-                // figure out if this shell value has been assigned to a
-                // joystick
-                // do stuff with that information such as assign it to the first
-                // available
-                if (info == manualIds.end()) {
-                    for (int i = 0; i < manualIds.size(); i++) {
-                        if (manualIds[i] == -1) {
-                            index = i;
-                            _inputDevices[i]->setRobotId(r->shell());
-                            manualIds[i] = r->shell();
-                            break;
-                        }
-                    }
-                }
-
-                if (index < manualIds.size()) {
-                    applyInputDeviceControls(
-                        getInputDeviceControlValue(*_inputDevices[index]),
-                        txRobot->mutable_control(), r);
-                }
-            } else if (_manualID == r->shell()) {
-                auto controlValues = getInputDeviceControlValues();
-                if (controlValues.size()) {
-                    applyInputDeviceControls(controlValues[0],
-                                          txRobot->mutable_control(), r);
-                }
-            }
+        }
+    }
+    for (InputDevice* dev : _inputDevices) {
+        int robot_id = dev->getRobotId();
+        if (robot_id != -1) {
+            applyInputDeviceControls(dev->getInputDeviceControlValues(),
+                                     txRobot->mutable_control(), robots.at(robot_id));
         }
     }
 }
