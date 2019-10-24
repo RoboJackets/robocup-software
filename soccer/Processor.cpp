@@ -82,17 +82,14 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     QMetaObject::connectSlotsByName(this);
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(&_context);
+    _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-
-    vision.simulation = _simulation;
-    if (sim) {
-        vision.port = SimVisionPort;
-    }
-    vision.start();
+    _motionControl = std::make_unique<MotionControlNode>(&_context);
+    _visionReceiver = std::make_unique<VisionReceiver>(
+        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
 
     _visionChannel = visionChannel;
 
@@ -107,7 +104,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         firstLogTime = _logger.startTime();
     }
 
-    _modules.push_back(std::make_unique<MotionControlNode>(&_context));
+    _nodes.push_back(_visionReceiver.get());
+    _nodes.push_back(_motionControl.get());
 }
 
 Processor::~Processor() {
@@ -191,7 +189,10 @@ void Processor::blueTeam(bool value) {
     if (_blueTeam != value) {
         _blueTeam = value;
         if (_radio) _radio->switchTeam(_blueTeam);
-        if (!externalReferee()) _refereeModule->blueTeam(value);
+
+        // Try to set the team in the referee module.
+        // Note: this will not update if we are being referee controlled.
+        _refereeModule->overrideTeam(value);
     }
 }
 
@@ -317,11 +318,19 @@ void Processor::run() {
         ////////////////
         // Inputs
 
+        // TODO(Kyle): Don't do this here.
+        // Because not everything is on modules yet, but we still need things to
+        // run in order, we can't just do everything via the for loop (yet).
+        _visionReceiver->run();
+
         // Read vision packets
         vector<const SSL_DetectionFrame*> detectionFrames;
-        vector<VisionPacket*> visionPackets;
-        vision.getPackets(visionPackets);
-        for (VisionPacket* packet : visionPackets) {
+
+        // TODO(Kyle): Move this logic into the VisionReceiver. Until we have a
+        // non-protobuf logging solution (i.e. ROS) we will still have to log
+        // vision protos directly, but once logging functionality is exposed
+        // through Context it should be okay to move this into VisionReceiver
+        for (auto& packet : _context.vision_packets) {
             SSL_WrapperPacket* log = _context.state.logFrame->add_raw_vision();
             log->CopyFrom(packet->wrapper);
 
@@ -412,9 +421,8 @@ void Processor::run() {
         GamepadController::joystickRemoved = -1;
 
         runModels(detectionFrames);
-        for (VisionPacket* packet : visionPackets) {
-            delete packet;
-        }
+
+        _context.vision_packets.clear();
 
         // Log referee data
         vector<NewRefereePacket*> refereePackets;
@@ -463,7 +471,7 @@ void Processor::run() {
         // Build a plan request for each robot.
         std::map<int, Planning::PlanRequest> requests;
         for (OurRobot* r : _context.state.self) {
-            if (r && r->visible) {
+            if (r && r->visible()) {
                 if (_context.game_state.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
@@ -494,7 +502,7 @@ void Processor::run() {
                 requests.emplace(
                     r->shell(),
                     Planning::PlanRequest(
-                        &_context, Planning::MotionInstant(r->pos, r->vel),
+                        &_context, Planning::MotionInstant(r->pos(), r->vel()),
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
@@ -528,9 +536,15 @@ void Processor::run() {
             robot->setJoystickControlled(robot->shell() == _manualID);
         }
 
-        // Run all modules in sequence
-        for (auto& module : _modules) {
-            module->run();
+        _motionControl->run();
+        // Run all nodes in sequence
+        // TODO(Kyle): This is dead code for now. Once everything is ported over
+        // to modules we can delete the if (false), but for now we still have to
+        // update things manually.
+        if (false) {
+            for (auto& node : _nodes) {
+                node->run();
+            }
         }
 
         ////////////////
@@ -542,21 +556,22 @@ void Processor::run() {
             _context.state.logFrame->add_debug_layers(str.toStdString());
         }
 
-        // Add our robots data to the LogFram
+        // Add our robots data to the LogFrame
         for (OurRobot* r : _context.state.self) {
-            if (r->visible) {
+            if (r->visible()) {
                 r->addStatusText();
 
                 Packet::LogFrame::Robot* log =
                     _context.state.logFrame->add_self();
-                *log->mutable_pos() = r->pos;
-                *log->mutable_world_vel() = r->vel;
-                *log->mutable_body_vel() = r->vel.rotated(M_PI_2 - r->angle);
+                *log->mutable_pos() = r->pos();
+                *log->mutable_world_vel() = r->vel();
+                *log->mutable_body_vel() =
+                    r->vel().rotated(M_PI_2 - r->angle());
                 //*log->mutable_cmd_body_vel() = r->
                 // *log->mutable_cmd_vel() = r->cmd_vel;
                 // log->set_cmd_w(r->cmd_w);
                 log->set_shell(r->shell());
-                log->set_angle(r->angle);
+                log->set_angle(r->angle());
                 auto radioRx = r->radioRx();
                 if (radioRx.has_kicker_voltage()) {
                     log->set_kicker_voltage(radioRx.kicker_voltage());
@@ -593,14 +608,15 @@ void Processor::run() {
 
         // Opponent robots
         for (OpponentRobot* r : _context.state.opp) {
-            if (r->visible) {
+            if (r->visible()) {
                 Packet::LogFrame::Robot* log =
                     _context.state.logFrame->add_opp();
-                *log->mutable_pos() = r->pos;
+                *log->mutable_pos() = r->pos();
                 log->set_shell(r->shell());
-                log->set_angle(r->angle);
-                *log->mutable_world_vel() = r->vel;
-                *log->mutable_body_vel() = r->vel.rotated(2 * M_PI - r->angle);
+                log->set_angle(r->angle());
+                *log->mutable_world_vel() = r->vel();
+                *log->mutable_body_vel() =
+                    r->vel().rotated(2 * M_PI - r->angle());
             }
         }
 
@@ -647,7 +663,6 @@ void Processor::run() {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
-    vision.stop();
 }
 
 /*
@@ -760,7 +775,7 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _context.state.self) {
-        if (r->visible || _manualID == r->shell() || _multipleManual) {
+        if (r->visible() || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
@@ -815,8 +830,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
-    if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-M_PI / 2 - robot->angle);
+    if (robot && robot->visible() && _useFieldOrientedManualDrive) {
+        translation.rotate(-M_PI / 2 - robot->angle());
     }
 
     // translation
@@ -907,11 +922,11 @@ void Processor::defendPlusX(bool value) {
 void Processor::changeVisionChannel(int port) {
     _loopMutex.lock();
 
-    vision.stop();
-
-    vision.simulation = _simulation;
-    vision.port = port;
-    vision.start();
+    // If we're in simulation, the vision channel should never change
+    // from `SimVisionPort`.
+    if (!_simulation) {
+        _visionReceiver->setPort(port);
+    }
 
     _loopMutex.unlock();
 }

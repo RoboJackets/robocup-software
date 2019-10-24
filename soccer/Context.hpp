@@ -3,6 +3,8 @@
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
 #include "SystemState.hpp"
+#include "WorldState.hpp"
+#include "vision/VisionPacket.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -17,4 +19,7 @@ struct Context {
     SystemState state;
     GameState game_state;
     DebugDrawer debug_drawer;
+
+    std::vector<std::unique_ptr<VisionPacket>> vision_packets;
+    WorldState world_state;
 };
