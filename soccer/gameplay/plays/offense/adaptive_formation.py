@@ -155,7 +155,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def score(cls):
         score = super().score()
 
-        if (score != None):
+        if (score != float("inf")):
             return score
         else:
             if (not main.game_state().is_playing()):

@@ -66,7 +66,7 @@ class Basic122(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         score = super().score()
-        if (score != None):
+        if (score != float("inf")):
             return score
         else:
             return 10 if main.game_state().is_playing() else float("inf")

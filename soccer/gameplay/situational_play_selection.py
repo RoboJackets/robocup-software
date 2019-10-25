@@ -5,6 +5,7 @@ import math
 from enum import Enum
 import constants
 from typing import List, Dict
+import standard_play
 
 
 ## Class for breaking gameplay down into discrete states to aid in play selection
@@ -158,7 +159,7 @@ class SituationalPlaySelector:
         if (self.toRun):
             self.updatePileup()
             self.locationUpdate()
-            self.currentPreempt = self.updatePreempt()
+            self.updatePreempt()
             self.ballPossessionUpdate()
             self.situationUpdate()
 
@@ -358,13 +359,11 @@ class SituationalPlaySelector:
 
     ##
     # 
-    # Update determining if we want to preempt the current play or not
-    #   
+    # Will determine if the current play has lasted too long over a situation change
+    #   and needs to be preempted, it will call try_preempt
     def updatePreempt(self):
 
         currentPlay = main._root_play.play
-        #print(type(currentPlay))
-        #print(currentPlay)
 
         if (self.lastSituation != self.currentSituation and
                 not self.situationChanged):
@@ -379,22 +378,17 @@ class SituationalPlaySelector:
         if (self.situationChanged and
                 abs(time.time() - self.situationChangeTime) >
                 self.preemptTime):
-            if(currentPlay != None):
+            if(currentPlay != None and isinstance(currentPlay, standard_play.StandardPlay) and self.enabled):
                 currentPlay.try_preempt()
-            return True
 
-        return False
 
-    ##A function to determine if the currently running play should be preempted
-    def preemptPlay(self):
-        return self.currentPreempt
 
     ##Returns the distance from a given robot to the ball
     def ballToRobotDist(self, robot):
         return (robot.pos - self.systemState.ball.pos).mag()
 
-    ##Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
-    #
+    ##
+    # Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
     #
     def closestRobot(self):
         closestRobot = None

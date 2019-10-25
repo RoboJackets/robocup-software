@@ -21,8 +21,8 @@ class StandardPlay(play.Play):
         #play is running defense then it removes the behavior. Also note: it ignores
         #the requirement for goalie if the box is checked.
 
-
-    _situationList = list()
+    #A private list of situations that are applicable to this play
+    _situationList = list() 
 
     def use_standard_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
@@ -46,22 +46,24 @@ class StandardPlay(play.Play):
         return True
 
 
-    #Since only the root play can be preempted, we can call a function for it
-    #If you want to have more complex logic
-    #Returns true if the preempt is sucessful
+    ##
+    # Call to attempt to preempt the play
+    # Returns true if the preempt is successful 
+    # Override if you want more complex responce to being preempted
     def try_preempt(self):
         self.terminate()
         return True
-
 
 
     #def is_situation_valid(self, situation):
 
     @classmethod
     def score(cls):
-        #Check to see if situation analysis is active, use default if it is not
+        #Check to see if situation analysis is active, if it is not
+        #return float('inf') and allow overridden score functions to
+        #define non-situation score if they want
         if (not main.situationAnalysis.enabled):
-            return None
+            return float('inf')
         else:
             if (main.situationAnalysis.isSituations(cls._situationList)):
                 return main.situationAnalysis.inSituationScore
