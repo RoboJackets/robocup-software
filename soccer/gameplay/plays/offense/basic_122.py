@@ -12,12 +12,6 @@ import situational_play_selection
 
 class Basic122(standard_play.StandardPlay):
 
-    ''' 
-    situationList = [
-        'clear', 'defend_goal', 'defensive_scramble', 'offensive_pileup',
-        'defensive_pileup'
-    ]
-    '''
     _situationList = [situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
             situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL,
             situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE,

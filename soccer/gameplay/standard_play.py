@@ -59,11 +59,19 @@ class StandardPlay(play.Play):
     def is_valid(self, situation):
         return self._situationList.contains(situation)
 
+
+    ##
+    # The score function for standard play will check if situation analysis
+    # is enabled, will return a base score based on situation match if it is
+    # or return float('inf') if it is not
+    #
+    # The expected interaction is to override this function can call super()
+    # to get a baseline score, then to modify that score based on situational
+    # factors. If you get a float("inf") back you know that situation analysis
+    # is not running and you will need to overwrite that with some other score
+    #
     @classmethod
     def score(cls):
-        #Check to see if situation analysis is active, if it is not
-        #return float('inf') and allow overridden score functions to
-        #define non-situation score if they want
         if (not main.situationAnalysis.enabled):
             return float('inf')
         else:

@@ -11,7 +11,7 @@ import standard_play
 ## Class for breaking gameplay down into discrete states to aid in play selection
 #
 # An instance of this class exists in main.py where its updateAnalysis function
-# every frame.
+# is called every frame.
 #
 # The purpose of this class is to inform plays of the current gameplay situation
 # so that they can change their score function based on their applicability to
