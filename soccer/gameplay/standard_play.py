@@ -3,6 +3,7 @@ import ui.main
 import tactics
 import main
 import situational_play_selection
+from typing import List
 
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
