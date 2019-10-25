@@ -16,7 +16,7 @@ void from_robot_tx_proto(const Packet::Robot& proto_packet,
     msg->message.controlMessage.bodyW = static_cast<int16_t>(
         control.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     msg->message.controlMessage.dribbler =
-        clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
+        std::clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
 
     msg->message.controlMessage.shootMode = control.shootmode();
     msg->message.controlMessage.kickStrength = control.kcstrength();
