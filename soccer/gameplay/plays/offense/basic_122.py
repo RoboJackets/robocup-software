@@ -64,8 +64,11 @@ class Basic122(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         score = super().score()
+
+        #If the score from the super function is valid, use that with some offset
         if (score != float("inf")):
-            return score
+            scoreOffset = 0
+            return score + scoreOffset
         else:
             return 10 if main.game_state().is_playing() else float("inf")
 
