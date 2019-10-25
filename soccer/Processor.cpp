@@ -18,13 +18,13 @@
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
-#include <motion/MotionControl.hpp>
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
 #include "radio/NetworkRadio.hpp"
+#include "radio/PacketConvert.hpp"
 #include "radio/SimRadio.hpp"
 #include "vision/VisionFilter.hpp"
 
@@ -87,12 +87,9 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-
-    vision.simulation = _simulation;
-    if (sim) {
-        vision.port = SimVisionPort;
-    }
-    vision.start();
+    _motionControl = std::make_unique<MotionControlNode>(&_context);
+    _visionReceiver = std::make_unique<VisionReceiver>(
+        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
 
     _visionChannel = visionChannel;
 
@@ -107,7 +104,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         firstLogTime = _logger.startTime();
     }
 
-    _modules.push_back(std::make_unique<MotionControlNode>(&_context));
+    _nodes.push_back(_visionReceiver.get());
+    _nodes.push_back(_motionControl.get());
 }
 
 Processor::~Processor() {
@@ -320,11 +318,19 @@ void Processor::run() {
         ////////////////
         // Inputs
 
+        // TODO(Kyle): Don't do this here.
+        // Because not everything is on modules yet, but we still need things to
+        // run in order, we can't just do everything via the for loop (yet).
+        _visionReceiver->run();
+
         // Read vision packets
         vector<const SSL_DetectionFrame*> detectionFrames;
-        vector<VisionPacket*> visionPackets;
-        vision.getPackets(visionPackets);
-        for (VisionPacket* packet : visionPackets) {
+
+        // TODO(Kyle): Move this logic into the VisionReceiver. Until we have a
+        // non-protobuf logging solution (i.e. ROS) we will still have to log
+        // vision protos directly, but once logging functionality is exposed
+        // through Context it should be okay to move this into VisionReceiver
+        for (auto& packet : _context.vision_packets) {
             SSL_WrapperPacket* log = _context.state.logFrame->add_raw_vision();
             log->CopyFrom(packet->wrapper);
 
@@ -415,9 +421,8 @@ void Processor::run() {
         GamepadController::joystickRemoved = -1;
 
         runModels(detectionFrames);
-        for (VisionPacket* packet : visionPackets) {
-            delete packet;
-        }
+
+        _context.vision_packets.clear();
 
         // Log referee data
         vector<NewRefereePacket*> refereePackets;
@@ -531,9 +536,15 @@ void Processor::run() {
             robot->setJoystickControlled(robot->shell() == _manualID);
         }
 
-        // Run all modules in sequence
-        for (auto& module : _modules) {
-            module->run();
+        _motionControl->run();
+        // Run all nodes in sequence
+        // TODO(Kyle): This is dead code for now. Once everything is ported over
+        // to modules we can delete the if (false), but for now we still have to
+        // update things manually.
+        if (false) {
+            for (auto& node : _nodes) {
+                node->run();
+            }
         }
 
         ////////////////
@@ -545,7 +556,7 @@ void Processor::run() {
             _context.state.logFrame->add_debug_layers(str.toStdString());
         }
 
-        // Add our robots data to the LogFram
+        // Add our robots data to the LogFrame
         for (OurRobot* r : _context.state.self) {
             if (r->visible()) {
                 r->addStatusText();
@@ -652,7 +663,6 @@ void Processor::run() {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
-    vision.stop();
 }
 
 /*
@@ -743,36 +753,29 @@ void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
 }
 
 void Processor::sendRadioData() {
-    Packet::RadioTx* tx = _context.state.logFrame->mutable_radio_tx();
-    tx->set_txmode(Packet::RadioTx::UNICAST);
-
     // Halt overrides normal motion control, but not joystick
     if (_context.game_state.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
-            Packet::Control* control = r->control;
-            control->set_xvelocity(0);
-            control->set_yvelocity(0);
-            control->set_avelocity(0);
-            control->set_dvelocity(0);
-            control->set_kcstrength(0);
-            control->set_shootmode(Packet::Control::KICK);
-            control->set_triggermode(Packet::Control::STAND_DOWN);
-            control->set_song(Packet::Control::STOP);
+            RobotIntent& intent = _context.robot_intents[r->shell()];
+            MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
+            setpoint.xvelocity = 0;
+            setpoint.yvelocity = 0;
+            setpoint.avelocity = 0;
+            intent.dvelocity = 0;
+            intent.kcstrength = 0;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
+            intent.song = RobotIntent::Song::STOP;
         }
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _context.state.self) {
+        RobotIntent& intent = _context.robot_intents[r->shell()];
         if (r->visible() || _manualID == r->shell() || _multipleManual) {
-            Packet::Robot* txRobot = tx->add_robots();
-
-            // Copy motor commands.
-            // Even if we are using the joystick, this sets robot_id and the
-            // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
-
+            intent.is_active = true;
             // MANUAL STUFF
             if (_multipleManual) {
                 auto info =
@@ -796,26 +799,28 @@ void Processor::sendRadioData() {
 
                 if (index < manualIds.size()) {
                     applyJoystickControls(
-                        getJoystickControlValue(*_joysticks[index]),
-                        txRobot->mutable_control(), r);
+                        getJoystickControlValue(*_joysticks[index]), r);
                 }
             } else if (_manualID == r->shell()) {
                 auto controlValues = getJoystickControlValues();
                 if (controlValues.size()) {
-                    applyJoystickControls(controlValues[0],
-                                          txRobot->mutable_control(), r);
+                    applyJoystickControls(controlValues[0], r);
                 }
             }
+        } else {
+            intent.is_active = false;
         }
     }
 
     if (_radio) {
+        construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
+                           _context.robot_intents, _context.motion_setpoints);
         _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::Control* tx, OurRobot* robot) {
+                                      OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -823,26 +828,27 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     if (robot && robot->visible() && _useFieldOrientedManualDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
-
+    RobotIntent& intent = _context.robot_intents[robot->shell()];
+    MotionSetpoint& setpoint = _context.motion_setpoints[robot->shell()];
     // translation
-    tx->set_xvelocity(translation.x());
-    tx->set_yvelocity(translation.y());
+    setpoint.xvelocity = translation.x();
+    setpoint.yvelocity = translation.y();
 
     // rotation
-    tx->set_avelocity(controlVals.rotation);
+    setpoint.avelocity = controlVals.rotation;
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick
-                            ? (_kickOnBreakBeam ? Packet::Control::ON_BREAK_BEAM
-                                                : Packet::Control::IMMEDIATE)
-                            : Packet::Control::STAND_DOWN);
-    tx->set_kcstrength(controlVals.kickPower);
-    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
-                                       : Packet::Control::CHIP);
+    intent.trigger_mode =
+        (kick ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                  : RobotIntent::TriggerMode::IMMEDIATE)
+              : RobotIntent::TriggerMode::STAND_DOWN);
+    intent.kcstrength = (controlVals.kickPower);
+    intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
+                                          : RobotIntent::ShootMode::CHIP);
 
     // dribbler
-    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
+    intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
@@ -912,11 +918,11 @@ void Processor::defendPlusX(bool value) {
 void Processor::changeVisionChannel(int port) {
     _loopMutex.lock();
 
-    vision.stop();
-
-    vision.simulation = _simulation;
-    vision.port = port;
-    vision.start();
+    // If we're in simulation, the vision channel should never change
+    // from `SimVisionPort`.
+    if (!_simulation) {
+        _visionReceiver->setPort(port);
+    }
 
     _loopMutex.unlock();
 }

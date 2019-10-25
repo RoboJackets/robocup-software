@@ -1,10 +1,10 @@
 # python requirements
 
-graphviz>=0.4.2 # make pretty graphs/diagrams
+graphviz # make pretty graphs/diagrams
 watchdog # file-system event notifications
 munkres	# provides the 'hungarian algorithm', which we use for robot role assignment
 
-pylint==1.6.5 # static checker for python
-mypy==0.510   # static arugment checker
+pylint # static checker for python
+mypy # static arugment checker
 
-yapf==0.15.2 # python checker
+yapf # python checker
