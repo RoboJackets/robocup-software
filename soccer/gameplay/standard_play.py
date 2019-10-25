@@ -45,7 +45,6 @@ class StandardPlay(play.Play):
     def handles_goalie(cls):
         return True
 
-
     ##
     # Call to attempt to preempt the play
     # Returns true if the preempt is successful 
@@ -54,8 +53,11 @@ class StandardPlay(play.Play):
         self.terminate()
         return True
 
-
-    #def is_situation_valid(self, situation):
+    ##
+    # Returns true if this play is valid for the passed situation
+    #
+    def is_valid(self, situation):
+        return self._situationList.contains(situation)
 
     @classmethod
     def score(cls):

@@ -318,41 +318,21 @@ class SituationalPlaySelector:
     def isPileup(self):
         return self.currentPileup
 
-    ##Returns if we are in the specified situation without regard to capitalization
-    #If the check variable is true, it will check if the situation exists and throw an
-    #exception is it does now
-    # @param situation a situation as a string or a enum 
-    # @param check Strings will be checked if they are real if True
-    def isSituation(self, situation, check=True):
-
-        if (isinstance(situation, str)):
-            up = situation.upper()
-
-            if (check):
-                found = False
-                for g in self.Situation:
-                    if (up == g):
-                        found = True
-                        break
-                if not found:
-                    raise ValueError("Passed situation " + situation + " / " +
-                                     up + " is not an existing situation")
-
-            if (self.currentSituation.name == up):
-                return True
-            else:
-                return False
-
-        elif (isinstance(situation, self.Situation)):
+    ##
+    # 
+    # @param situation a situation as an enum
+    def isSituation(self, situation): 
+        if (isinstance(situation, self.Situation)):
             return situation == self.currentSituation
         else:
-            raise TypeError("isSituation only takes strings and enums")
+            raise TypeError("isSituation only takes enums")
 
     ##Returns true if we are in any of the situations in the passed list
-    #Will take enums or 
-    def isSituations(self, situations, check=False):
+    #passed situation list must be enums
+    def isSituations(self, situations):
+        #This could be pretty easily inverted into a contains call
         for g in situations:
-            if (self.isSituation(g, check=check)):
+            if (self.isSituation(g)):
                 return True
 
         return False
