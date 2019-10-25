@@ -11,9 +11,10 @@ from typing import List
 # placed here
 class StandardPlay(play.Play):
 
-    #Performs actions that all "Standard Plays" should do on initialization
-    #Note: This method is called many times during the duration of a play,
-    #Not just on selection
+    ##
+    # Performs actions that all "Standard Plays" should do on initialization
+    # Note: This method is called many times during the duration of a play,
+    # Not just on selection
     def __init__(self, continuous):
         super().__init__(continuous)
         self.use_standard_defense()
@@ -23,7 +24,7 @@ class StandardPlay(play.Play):
         #play is running defense then it removes the behavior. Also note: it ignores
         #the requirement for goalie if the box is checked.
 
-    #A private list of situations that are applicable to this play
+    ##A private list of situations that are applicable to this play
 
     _situationList = list()  # type: List[situational_play_selection.Situation]
 
@@ -37,9 +38,10 @@ class StandardPlay(play.Play):
             if self.has_subbehavior_with_name('defense'):
                 self.remove_subbehavior('defense')
 
-    #Handles activity while the play is active. A play wishing to utilize this
-    #method in additionto having an "execute_running" method of its own must call
-    #it via super
+    ## 
+    # Handles activity while the play is active. A play wishing to utilize this
+    # method in additionto having an "execute_running" method of its own must call
+    # it via super
     def execute_running(self):
         self.use_standard_defense()
 
