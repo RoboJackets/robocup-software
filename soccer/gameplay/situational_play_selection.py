@@ -347,21 +347,28 @@ class SituationalPlaySelector:
     #   and needs to be preempted, it will call try_preempt
     def updatePreempt(self):
 
+        #Get the current play, may want to add a getter, as this is a "private" variable
         currentPlay = main._root_play.play
 
+        #If the last situation is not the current situation, and the situationChanged flag
+        #is not already up, put it up and record the time, and change last situation to be the current situation
         if (self.lastSituation != self.currentSituation and
                 not self.situationChanged):
             self.situationChangeTime = time.time()
             self.lastSituation = self.currentSituation
             self.situationChanged = True
 
+        #If the play changes, put the situationChanged flag down and change lastPlay
         if (self.lastPlay != currentPlay):
             self.lastPlay = currentPlay
             self.situationChanged = False
 
+        #If the situation has changed and its been longer than situationChange
+        #time without a play change, try to preempt the current play
         if (self.situationChanged and
                 abs(time.time() - self.situationChangeTime) >
                 self.preemptTime):
+            #Check to see if the play is a standard play before trying to preempt
             if (currentPlay != None and isinstance(
                     currentPlay, standard_play.StandardPlay) and self.enabled):
                 currentPlay.try_preempt()
