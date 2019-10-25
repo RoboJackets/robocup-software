@@ -26,7 +26,8 @@ class StandardPlay(play.Play):
 
     ##A private list of situations that are applicable to this play
 
-    _situationList = list()  # type: List[situational_play_selection.SituationalPlaySelector.Situation]
+    _situationList = list(
+    )  # type: List[situational_play_selection.SituationalPlaySelector.Situation]
 
     def use_standard_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
