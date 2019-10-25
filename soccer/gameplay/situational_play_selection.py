@@ -321,7 +321,7 @@ class SituationalPlaySelector:
     ##
     # 
     # @param situation a situation as an enum
-    def isSituation(self, situation): 
+    def isSituation(self, situation):
         if (isinstance(situation, self.Situation)):
             return situation == self.currentSituation
         else:
@@ -358,7 +358,8 @@ class SituationalPlaySelector:
         if (self.situationChanged and
                 abs(time.time() - self.situationChangeTime) >
                 self.preemptTime):
-            if(currentPlay != None and isinstance(currentPlay, standard_play.StandardPlay) and self.enabled):
+            if (currentPlay != None and isinstance(
+                    currentPlay, standard_play.StandardPlay) and self.enabled):
                 currentPlay.try_preempt()
 
 

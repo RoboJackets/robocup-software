@@ -22,7 +22,8 @@ class StandardPlay(play.Play):
         #the requirement for goalie if the box is checked.
 
     #A private list of situations that are applicable to this play
-    _situationList = list() 
+
+    _situationList = list()
 
     def use_standard_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
@@ -58,7 +59,6 @@ class StandardPlay(play.Play):
     #
     def is_valid(self, situation):
         return self._situationList.contains(situation)
-
 
     ##
     # The score function for standard play will check if situation analysis

@@ -12,12 +12,16 @@ import situational_play_selection
 
 class Basic122(standard_play.StandardPlay):
 
-    _situationList = [situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
-            situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL,
-            situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE,
-            situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_PILEUP,
-            situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_PILEUP]
-    
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
+        situational_play_selection.SituationalPlaySelector.Situation.
+        DEFEND_GOAL, situational_play_selection.SituationalPlaySelector.
+        Situation.DEFENSIVE_SCRAMBLE, situational_play_selection.
+        SituationalPlaySelector.Situation.OFFENSIVE_PILEUP,
+        situational_play_selection.SituationalPlaySelector.Situation.
+        DEFENSIVE_PILEUP
+    ]
+
 
     # how far the 2 support robots should stay away from the striker
     SupportAvoidTeammateRadius = 0.5
