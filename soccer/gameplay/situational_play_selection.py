@@ -373,8 +373,6 @@ class SituationalPlaySelector:
                     currentPlay, standard_play.StandardPlay) and self.enabled):
                 currentPlay.try_preempt()
 
-
-
     ##Returns the distance from a given robot to the ball
     def ballToRobotDist(self, robot):
         return (robot.pos - self.systemState.ball.pos).mag()
