@@ -90,8 +90,6 @@ std::string Point_repr(Geometry2d::Point* self) { return self->toString(); }
 
 std::string Robot_repr(Robot* self) { return self->toString(); }
 
-Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
-
 // Sets a robot's position - this should never be used in gameplay code, but
 // is useful for testing.
 void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
@@ -110,11 +108,17 @@ void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) {
     self->pos = pos;
 }
 
+Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
+
 Geometry2d::Point Robot_vel(Robot* self) { return self->vel(); }
 
 float Robot_angle(Robot* self) { return self->angle(); }
 
 float Robot_angle_vel(Robot* self) { return self->angleVel(); }
+
+Geometry2d::Point Ball_pos(Ball* self) { return self->pos; }
+
+Geometry2d::Point Ball_vel(Ball* self) { return self->vel; }
 
 void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
@@ -894,8 +898,8 @@ BOOST_PYTHON_MODULE(robocup) {
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def("set_pos_for_testing", &Ball_set_pos_for_testing)
-        .def_readonly("pos", &Ball::pos)
-        .def_readonly("vel", &Ball::vel)
+        .add_property("pos", &Ball_pos)
+        .add_property("vel", &Ball_vel)
         .def_readonly("valid", &Ball::valid)
         .def("predict_pos", &Ball::predictPosition)
         .def("estimate_seconds_to", &Ball::estimateSecondsTo)

@@ -477,6 +477,7 @@ void MainWindow::updateViews() {
                                        .arg(QString::number(frameNumber()))
                                        .arg(QString::number(frameNum)));
 
+        /*
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                                   frameNumber());
@@ -494,6 +495,7 @@ void MainWindow::updateViews() {
             _ui.logTree->sortItems(ProtobufTree::Column_Tag,
                                    Qt::AscendingOrder);
         }
+        */
 
         // update the behavior tree view
         QString behaviorStr =
