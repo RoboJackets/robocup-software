@@ -318,6 +318,10 @@ class SituationalPlaySelector:
     def isPileup(self):
         return self.currentPileup
 
+    ##Returns the current situation
+    def getSituation(self):
+        return self.currentSituation
+
     ##
     # 
     # @param situation a situation as an enum

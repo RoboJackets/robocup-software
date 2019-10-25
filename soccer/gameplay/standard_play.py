@@ -57,8 +57,9 @@ class StandardPlay(play.Play):
     ##
     # Returns true if this play is valid for the passed situation
     #
-    def is_valid(self, situation):
-        return situation in self._situationList
+    @classmethod
+    def is_valid(cls, situation):
+        return situation in cls._situationList
 
     ##
     # The score function for standard play will check if situation analysis
@@ -75,7 +76,7 @@ class StandardPlay(play.Play):
         if (not main.situationAnalysis.enabled):
             return float('inf')
         else:
-            if (main.situationAnalysis.isSituations(cls._situationList)):
+            if (cls.is_valid(main.situationAnalysis.getSituation())):
                 return main.situationAnalysis.inSituationScore
             else:
                 return main.situationAnalysis.outSituationScore
