@@ -2,6 +2,7 @@ import play
 import ui.main
 import tactics
 import main
+import situational_play_selection
 
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
@@ -23,7 +24,7 @@ class StandardPlay(play.Play):
 
     #A private list of situations that are applicable to this play
 
-    _situationList = list()
+    _situationList = list()  # type: List[situational_play_selection.Situation]
 
     def use_standard_defense(self):
         if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
