@@ -6,15 +6,19 @@ RJ::Time CameraRobot::getTimeCaptured() const {
 }
 
 Geometry2d::Point CameraRobot::getPos() const {
-    return pos;
+    return pose.position();
 }
 
 double CameraRobot::getTheta() const {
-    return theta;
+    return pose.heading();
 }
 
 int CameraRobot::getRobotID() const {
     return robotID;
+}
+
+Geometry2d::Pose getPose() const {
+    return pose;
 }
 
 CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {

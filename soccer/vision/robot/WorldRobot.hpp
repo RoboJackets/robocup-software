@@ -3,6 +3,7 @@
 #include <list>
 
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 #include <Configuration.hpp>
 
 #include "KalmanRobot.hpp"
