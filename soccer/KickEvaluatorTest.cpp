@@ -27,8 +27,8 @@ TEST(KickEvaluator, no_robots) {
 TEST(KickEvaluator, eval_pt_to_our_goal) {
     Context context;
     OurRobot* obstacleBot = context.state.self[0];
-    obstacleBot->visible = true;
-    obstacleBot->pos = Point(1, 1);
+    obstacleBot->mutable_state().visible = true;
+    obstacleBot->mutable_state().pose = Pose(1, 1, 0);
 
     KickEvaluator kickEval(&context.state);
     std::pair<Point, double> pt_to_our_goal;

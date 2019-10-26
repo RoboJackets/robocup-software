@@ -13,8 +13,8 @@ Configuration config;
 TEST(WindowEvaluator, eval_pt_to_seg) {
     Context context;
     OurRobot* obstacleBot = context.state.self[0];
-    obstacleBot->visible = true;
-    obstacleBot->pos = Point(1, 1);
+    obstacleBot->mutable_state().visible = true;
+    obstacleBot->mutable_state().pose = Pose(1, 1, 0);
 
     Segment ourGoalSegment(
         Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),

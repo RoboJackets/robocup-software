@@ -168,8 +168,8 @@ SystemState::SystemState(Context* const context) {
     self.resize(Num_Shells);
     opp.resize(Num_Shells);
     for (unsigned int i = 0; i < Num_Shells; ++i) {
-        self[i] = new OurRobot(i, context);
-        opp[i] = new OpponentRobot(i);
+        self[i] = new OurRobot(context, i);
+        opp[i] = new OpponentRobot(context, i);
     }
 }
 
@@ -183,7 +183,7 @@ SystemState::~SystemState() {
 std::vector<int> SystemState::ourValidIds() {
     std::vector<int> validIds;
     for (int i = 0; i < self.size(); i++) {
-        if (self[i]->visible) {
+        if (self[i]->visible()) {
             validIds.push_back(self[i]->shell());
         }
     }

@@ -145,7 +145,7 @@ apidocs:
 	cp doc/doxygen.css api_docs/html/
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
-STYLIZE_DIFFBASE ?= master
+STYLIZE_DIFFBASE ?= staging
 # automatically format code according to our style config defined in .clang-format
 pretty:
 	@stylize.v1 -i --git_diffbase=$(STYLIZE_DIFFBASE)

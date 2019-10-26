@@ -38,15 +38,13 @@ void MotionControl::createConfiguration(Configuration* cfg) {
 MotionControl::MotionControl(Context* context, OurRobot* robot)
     : _angleController(0, 0, 0, 50, 0), _context(context) {
     _robot = robot;
-
-    _robot->robotPacket.set_uid(_robot->shell());
 }
 
 void MotionControl::run() {
     if (!_robot) return;
 
     // Force a stop if the robot isn't on vision
-    if (!_robot->visible) {
+    if (!_robot->visible()) {
         stopped();
         return;
     }
@@ -88,7 +86,7 @@ void MotionControl::run() {
         _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::red,
                                           "Planning");
     } else {
-        Point start = _robot->pos;
+        Point start = _robot->pos();
         _context->debug_drawer.drawCircle(optTarget->motion.pos, .15, Qt::green,
                                           "Planning");
     }
@@ -121,13 +119,13 @@ void MotionControl::run() {
     if (targetPt) {
         // fixing the angle ensures that we don't go the long way around to get
         // to our final angle
-        targetAngleFinal = (*targetPt - _robot->pos).angle();
+        targetAngleFinal = (*targetPt - _robot->pos()).angle();
     }
 
     if (!targetAngleFinal) {
         _targetAngleVel(0);
     } else {
-        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle);
+        float angleError = fixAngleRadians(*targetAngleFinal - _robot->angle());
 
         targetW = _angleController.run(angleError);
 
@@ -171,7 +169,7 @@ void MotionControl::run() {
     MotionInstant target = optTarget->motion;
 
     // tracking error
-    Point posError = target.pos - _robot->pos;
+    Point posError = target.pos - _robot->pos();
 
     // acceleration factor
     Point acceleration;
@@ -209,7 +207,7 @@ void MotionControl::run() {
 
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
-    target.vel = target.vel.rotated(M_PI_2 - _robot->angle);
+    target.vel = target.vel.rotated(M_PI_2 - _robot->angle());
 
     this->_targetBodyVel(target.vel);
 }
@@ -233,7 +231,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     }
 
     // the robot firmware still speaks degrees, so that's how we send it over
-    _robot->control->set_avelocity(angleVel);
+    setpoint().avelocity = angleVel;
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
@@ -261,8 +259,8 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     }
 
     // set control values
-    _robot->control->set_xvelocity(targetVel.x() * _x_multiplier->value());
-    _robot->control->set_yvelocity(targetVel.y());
+    setpoint().xvelocity = targetVel.x() * _x_multiplier->value();
+    setpoint().yvelocity = targetVel.y();
 }
 
 Pid* MotionControl::getPid(char controller) {
