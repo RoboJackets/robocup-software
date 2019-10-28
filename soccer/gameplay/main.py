@@ -11,6 +11,7 @@ import sys
 import os
 import constants
 import situational_play_selection
+import robocup
 
 ## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -59,7 +60,7 @@ def init(log_errors=True):
     def fswatch_callback(event_type, module_path):
         # the top-level folders we care about watching
         autoloadables = [
-            'plays', 'skills', 'tactics', 'evaluation', 'visualization'
+            'plays', 'skills', 'tactics', 'evaluation', 'visualization', 'formation', 'positions'
         ]
 
         # Don't load if we aren't a special module or if the filename is hidden
