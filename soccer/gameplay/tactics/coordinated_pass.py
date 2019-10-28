@@ -25,6 +25,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     KickPower = 0.6
 
+    MIN_BALL_MOVING_SPEED = 0.1
+    TOO_CLOSE_TO_FAIL_DISTANCE = 0.3
+    FAR_DISTANCE = 0.5
+    STRICT_CROSS_THRESHOLD = 0.1
+    RELAXED_CROSS_THRESHOLD = 0.4
+    OPPONENT_DISTANCE_THRESHOLD = 0.27
+    BALL_STOPPED_SPEED = 0.05
+
     class State(enum.Enum):
         preparing = 1  # the kicker is aiming and the receiver is getting ready
         kicking = 2  # waiting for the kicker to kick
@@ -57,7 +65,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         if skillkicker == None:
             skillkicker = (skills.pivot_kick.PivotKick(), lambda x: x ==
-                           skills.pivot_kick.PivotKick.State.aimed)
+                           skills.pivot_kick.PivotKick.State.aimed or x ==
+                           skills.pivot_kick.PivotKick.State.kicking)
 
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
@@ -81,14 +90,21 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                             'immediately')
 
         self.add_transition(
-            CoordinatedPass.State.preparing, CoordinatedPass.State.kicking,
-            lambda: (skillkicker[1](self.subbehavior_with_name('kicker').state)
-                     and self.subbehavior_with_name('receiver').state == self.
-                     skillreceiver.State.aligned), 'kicker and receiver ready')
+            CoordinatedPass.State.preparing,
+            CoordinatedPass.State.kicking, lambda: (
+                skillkicker[1](self.subbehavior_with_name('kicker').state) and
+                (self.subbehavior_with_name('receiver').state == self.
+                 skillreceiver.State.aligned or not self.receiver_required)),
+            'kicker and receiver ready')
 
         self.add_transition(
             CoordinatedPass.State.preparing, CoordinatedPass.State.timeout,
             self.prekick_timeout_exceeded, 'Timed out on prepare')
+
+        self.add_transition(
+            CoordinatedPass.State.preparing,
+            behavior.Behavior.State.failed, lambda: self.opponent_in_way(),
+            'Opponent too close to ball to pass')
 
         self.add_transition(
             CoordinatedPass.State.kicking, CoordinatedPass.State.timeout,
@@ -104,13 +120,19 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                             Behavior.State.completed, 'kicker kicked')
 
         self.add_transition(
+            CoordinatedPass.State.kicking, behavior.Behavior.State.failed,
+            lambda: self.subbehavior_with_name('kicker').state == behavior.
+            Behavior.State.failed or self.opponent_in_way(), 'kicker failed')
+
+        self.add_transition(
             CoordinatedPass.State.receiving, behavior.Behavior.State.completed,
             lambda: self.subbehavior_with_name('receiver').state == behavior.
             Behavior.State.completed, 'pass received!')
 
         self.add_transition(
             CoordinatedPass.State.receiving,
-            behavior.Behavior.State.failed, lambda: self.subbehavior_with_name(
+            behavior.Behavior.State.failed, lambda: not self.
+            ball_heading_to_receive_point() or self.subbehavior_with_name(
                 'receiver').state == behavior.Behavior.State.failed,
             'pass failed :(')
 
@@ -175,15 +197,46 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
+    # Funciton to find if ball is moving towards receive point
+    def ball_heading_to_receive_point(self):
+        ball_velocity = main.ball().vel
+        if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
+            ball_velocity_unit = ball_velocity.normalized()
+            path_vector = main.ball().pos - self.receive_point
+            path_unit = path_vector.normalized()
+            cross_product_mag = abs(ball_velocity_unit.x * path_unit.y -
+                                    ball_velocity_unit.y * path_unit.x)
+            distance = path_vector.mag()
+            if distance < self.TOO_CLOSE_TO_FAIL_DISTANCE:
+                return True  # If the ball is already close to the receive point but not heading towards it, dont fail
+            if (distance > self.FAR_DISTANCE and cross_product_mag > self.STRICT_CROSS_THRESHOLD)\
+               or (distance < self.FAR_DISTANCE and cross_product_mag > self.RELAXED_CROSS_THRESHOLD)\
+               or ball_velocity.mag() < self.BALL_STOPPED_SPEED:
+                return False  # If ball is too off course or too slow, fail the pass
+        return True
+
+    # Funciton that decides if an opponent robot is in the way of passing
+    def opponent_in_way(self):
+        path_vector = main.ball().pos - self.receive_point
+        path_unit = path_vector.normalized()
+        pass_distance = path_vector.mag()
+        for bot in main.their_robots():
+            distance_vector = (main.ball().pos - bot.pos)
+            distance = distance_vector.mag()
+            distance_unit_vector = distance_vector.normalized()
+            cross_product_mag = abs(distance_unit_vector.x * path_unit.y -
+                                    distance_unit_vector.y * path_unit.x)
+            if pass_distance > distance and cross_product_mag < self.STRICT_CROSS_THRESHOLD:
+                return True  # If the ball is within some threshold of the line of passing, fail the pass
+        return False
+
     def on_enter_kicking(self):
         self.subbehavior_with_name('kicker').enable_kick = True
 
     def on_enter_preparing(self):
-
         # receive point renegotiation
         self._last_unsteady_time = None
         self._has_renegotiated_receive_point = False
-
         self._preparing_start = time.time()
 
     def execute_running(self):
