@@ -84,8 +84,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior
 
         self.add_transition(
             PassReceive.State.receiving,
-            behavior.Behavior.State.completed, lambda: evaluation.ball.
-            robot_has_ball(self.robot) and self.subbehavior_with_name(
+            behavior.Behavior.State.completed, lambda: self.robot.has_ball() and self.subbehavior_with_name(
                 'capture').state == behavior.Behavior.State.completed,
             'ball received!')
 
