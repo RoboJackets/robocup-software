@@ -2,6 +2,7 @@ import robocup
 import single_robot_composite_behavior
 import enum
 
+
 ## Parent class of any position
 # Deals with relative positions as well
 # as the generic pass options
@@ -23,7 +24,6 @@ class Position(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # Actual location the controller wants in field XY terms
         # None follows the same rules as the `relative_pos`
         self.target_pos = None
-
 
     ## What type of position this is
     # (Striker/Midfielder/Defender/Goalie etc)

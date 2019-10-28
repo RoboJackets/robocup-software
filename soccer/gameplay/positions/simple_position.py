@@ -4,6 +4,7 @@ import skills.move
 import behavior
 import enum
 
+
 # Simple player who stays in target locations
 # Moves out of influence areas
 class SimplePosition(positions.position.Position):
@@ -11,8 +12,8 @@ class SimplePosition(positions.position.Position):
         super().__init__(position_class, name)
 
         self.add_transition(behavior.Behavior.State.start,
-                            behavior.Behavior.State.running,
-                            lambda: True, 'immediately')
+                            behavior.Behavior.State.running, lambda: True,
+                            'immediately')
 
         self.move = skills.move.Move()
         self.add_subbehavior(self.move, "move", False, 0)
