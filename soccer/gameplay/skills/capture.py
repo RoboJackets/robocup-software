@@ -76,17 +76,14 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # By default, move into the settle state since we almost never start with ball
         self.add_transition(
-            behavior.Behavior.State.start,
-            Capture.State.settle,
-            lambda: self.robot is not None and not self.robot.has_ball(),
-            'dont have ball')
+            behavior.Behavior.State.start, Capture.State.settle, lambda: self.
+            robot is not None and not self.robot.has_ball(), 'dont have ball')
 
         # On the offchance we start with ball, double check it's not a blip on the sensor
-        self.add_transition(
-            behavior.Behavior.State.start,
-            Capture.State.captured,
-            lambda: self.robot is not None and self.robot.has_ball(),
-            'may already have ball')
+        self.add_transition(behavior.Behavior.State.start,
+                            Capture.State.captured, lambda: self.robot is
+                            not None and self.robot.has_ball(),
+                            'may already have ball')
 
         # We actually don't have the ball, either 50% register rate (faulty sensor?) or we just got a blip
         self.add_transition(

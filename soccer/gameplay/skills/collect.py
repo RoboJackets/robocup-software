@@ -47,14 +47,13 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(
             behavior.Behavior.State.running,
             behavior.Behavior.State.start, lambda: self.is_bot_ball_stopped(
-            ) and not self.robot.has_ball() and self.probably_held_cnt < Collect.
-            PROBABLY_HELD_CUTOFF and self.timeout == 0, 'restart')
+            ) and not self.robot.has_ball() and self.probably_held_cnt <
+            Collect.PROBABLY_HELD_CUTOFF and self.timeout == 0, 'restart')
 
         # Complete when we have the ball
         self.add_transition(
-            behavior.Behavior.State.running,
-            behavior.Behavior.State.completed, lambda: self.robot is not None
-            and self.robot.has_ball() and self.
+            behavior.Behavior.State.running, behavior.Behavior.State.completed,
+            lambda: self.robot is not None and self.robot.has_ball() and self.
             probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF, 'ball collected')
 
         # Go back if we loose the ball
@@ -86,8 +85,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
             # If the ball and robot are both stopped
             # and it's not in the mouth
             # increase timeout
-            if (self.is_bot_ball_stopped() and
-                    not self.robot.has_ball()):
+            if (self.is_bot_ball_stopped() and not self.robot.has_ball()):
 
                 self.timeout = min(self.timeout + 1, Collect.RESTART_TIMEOUT)
             else:

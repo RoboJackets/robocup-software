@@ -84,8 +84,7 @@ class LineKick(skills._kick._Kick,
 
         # For when ball sense isn't great, kick when vision
         # thinks we have the ball
-        if (self.robot is not None and
-                self.robot.has_ball()):
+        if (self.robot is not None and self.robot.has_ball()):
             self.robot.kick_immediately()
 
     # TODO Figure out how to renable role requirements for this however it needs to be done

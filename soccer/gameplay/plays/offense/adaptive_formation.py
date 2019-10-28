@@ -210,8 +210,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def dribbler_has_ball(self):
-        return any(
-            r.has_ball() for r in main.our_robots())
+        return any(r.has_ball() for r in main.our_robots())
 
     def on_enter_collecting(self):
         self.remove_all_subbehaviors()
