@@ -1,8 +1,8 @@
 #include "GradientAscent1D.hpp"
 #include <math.h>
+#include <Utils.hpp>
 #include <algorithm>
 #include <tuple>
-#include <Utils.hpp>
 
 GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     currentx = config->startX;

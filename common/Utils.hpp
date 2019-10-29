@@ -16,8 +16,10 @@
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
-template<typename T>
-inline int signum(T val) { return (0 < val) - (val <= 0); }
+template <typename T>
+inline int signum(T val) {
+    return (0 < val) - (val <= 0);
+}
 
 inline void debugLog(const std::string& e) { std::cerr << e << std::endl; }
 
