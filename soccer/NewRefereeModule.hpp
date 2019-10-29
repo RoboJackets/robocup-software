@@ -137,7 +137,7 @@ public:
  */
 class NewRefereeModule : public QThread {
 public:
-    NewRefereeModule(Context* const ctx);
+    NewRefereeModule(Context* const ctx, bool isBlue = false);
     ~NewRefereeModule();
 
     void stop();
@@ -150,9 +150,16 @@ public:
 
     bool useExternalReferee() { return _useExternalRef; }
 
-    void blueTeam(bool value) { _blueTeam = value; }
+    /**
+     * Set the team color only if it is not already being controlled by the
+     * refbox. This will set the team color in the event that none of the
+     * names in the referee packet match our team name.
+     *
+     * @param isBlue
+     */
+    void overrideTeam(bool isBlue);
 
-    bool blueTeam() { return _blueTeam; }
+    bool isBlueTeam() { return _blueTeam; }
 
     NewRefereeModuleEnums::Stage stage;
     NewRefereeModuleEnums::Command command;
@@ -194,6 +201,9 @@ public:
 protected:
     virtual void run() override;
 
+    // Unconditional setter for the team color.
+    void blueTeam(bool value) { _blueTeam = value; }
+
     volatile bool _running;
 
     void ready();
@@ -220,6 +230,12 @@ protected:
     NewRefereeModuleEnums::Stage prev_stage;
 
     bool _useExternalRef = false;
+
+    // Whether or not WE are currently controlled by the ref. This is not the
+    // same as whether the referee is connected, because it will still be false
+    // if the ref is connected but our team name doesn't match either of the
+    // team names in the packet.
+    bool _isRefControlled = false;
 
     bool _blueTeam = false;
 

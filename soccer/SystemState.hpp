@@ -105,4 +105,5 @@ public:
 
     std::vector<int> ourValidIds();
 
+    bool paused;
 };

@@ -82,7 +82,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     QMetaObject::connectSlotsByName(this);
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(&_context);
+    _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
@@ -106,6 +106,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         _logger.readFrames(readLogFile.c_str());
         firstLogTime = _logger.startTime();
     }
+
+    _modules.push_back(std::make_unique<MotionControlNode>(&_context));
 }
 
 Processor::~Processor() {
@@ -189,7 +191,10 @@ void Processor::blueTeam(bool value) {
     if (_blueTeam != value) {
         _blueTeam = value;
         if (_radio) _radio->switchTeam(_blueTeam);
-        if (!externalReferee()) _refereeModule->blueTeam(value);
+
+        // Try to set the team in the referee module.
+        // Note: this will not update if we are being referee controlled.
+        _refereeModule->overrideTeam(value);
     }
 }
 
@@ -461,7 +466,7 @@ void Processor::run() {
         // Build a plan request for each robot.
         std::map<int, Planning::PlanRequest> requests;
         for (OurRobot* r : _context.state.self) {
-            if (r && r->visible) {
+            if (r && r->visible()) {
                 if (_context.game_state.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
@@ -492,7 +497,7 @@ void Processor::run() {
                 requests.emplace(
                     r->shell(),
                     Planning::PlanRequest(
-                        &_context, Planning::MotionInstant(r->pos, r->vel),
+                        &_context, Planning::MotionInstant(r->pos(), r->vel()),
                         r->motionCommand()->clone(), r->robotConstraints(),
                         std::move(r->angleFunctionPath.path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
@@ -519,16 +524,16 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
-        // Run velocity controllers
+        // TODO(Kyle, Collin): This is a horrible hack to get around the fact
+        // that joystick code only (sort of) supports one joystick at a time.
+        // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
-            if (robot->visible) {
-                if ((_manualID >= 0 && (int)robot->shell() == _manualID) ||
-                    _context.game_state.halt()) {
-                    robot->motionControl()->stopped();
-                } else {
-                    robot->motionControl()->run();
-                }
-            }
+            robot->setJoystickControlled(robot->shell() == _manualID);
+        }
+
+        // Run all modules in sequence
+        for (auto& module : _modules) {
+            module->run();
         }
 
         ////////////////
@@ -542,19 +547,20 @@ void Processor::run() {
 
         // Add our robots data to the LogFram
         for (OurRobot* r : _context.state.self) {
-            if (r->visible) {
+            if (r->visible()) {
                 r->addStatusText();
 
                 Packet::LogFrame::Robot* log =
                     _context.state.logFrame->add_self();
-                *log->mutable_pos() = r->pos;
-                *log->mutable_world_vel() = r->vel;
-                *log->mutable_body_vel() = r->vel.rotated(M_PI_2 - r->angle);
+                *log->mutable_pos() = r->pos();
+                *log->mutable_world_vel() = r->vel();
+                *log->mutable_body_vel() =
+                    r->vel().rotated(M_PI_2 - r->angle());
                 //*log->mutable_cmd_body_vel() = r->
                 // *log->mutable_cmd_vel() = r->cmd_vel;
                 // log->set_cmd_w(r->cmd_w);
                 log->set_shell(r->shell());
-                log->set_angle(r->angle);
+                log->set_angle(r->angle());
                 auto radioRx = r->radioRx();
                 if (radioRx.has_kicker_voltage()) {
                     log->set_kicker_voltage(radioRx.kicker_voltage());
@@ -591,14 +597,15 @@ void Processor::run() {
 
         // Opponent robots
         for (OpponentRobot* r : _context.state.opp) {
-            if (r->visible) {
+            if (r->visible()) {
                 Packet::LogFrame::Robot* log =
                     _context.state.logFrame->add_opp();
-                *log->mutable_pos() = r->pos;
+                *log->mutable_pos() = r->pos();
                 log->set_shell(r->shell());
-                log->set_angle(r->angle);
-                *log->mutable_world_vel() = r->vel;
-                *log->mutable_body_vel() = r->vel.rotated(2 * M_PI - r->angle);
+                log->set_angle(r->angle());
+                *log->mutable_world_vel() = r->vel();
+                *log->mutable_body_vel() =
+                    r->vel().rotated(2 * M_PI - r->angle());
             }
         }
 
@@ -616,8 +623,8 @@ void Processor::run() {
         // Send motion commands to the robots
         sendRadioData();
 
-        // Write to the log unless we are viewing logs
-        if (_readLogFile.empty()) {
+        // Write to the log unless we are viewing logs or main window is paused
+        if (_readLogFile.empty() && !_paused) {
             _logger.addFrame(_context.state.logFrame);
         }
 
@@ -758,7 +765,7 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _context.state.self) {
-        if (r->visible || _manualID == r->shell() || _multipleManual) {
+        if (r->visible() || _manualID == r->shell() || _multipleManual) {
             Packet::Robot* txRobot = tx->add_robots();
 
             // Copy motor commands.
@@ -813,8 +820,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
-    if (robot && robot->visible && _useFieldOrientedManualDrive) {
-        translation.rotate(-M_PI / 2 - robot->angle);
+    if (robot && robot->visible() && _useFieldOrientedManualDrive) {
+        translation.rotate(-M_PI / 2 - robot->angle());
     }
 
     // translation

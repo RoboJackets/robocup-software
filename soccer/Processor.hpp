@@ -17,7 +17,9 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
+#include "Node.hpp"
 #include "VisionReceiver.hpp"
+#include "motion/MotionControlNode.hpp"
 
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -172,6 +174,8 @@ public:
 
     bool isInitialized() const;
 
+    void setPaused(bool paused) { _paused = paused; }
+
     ////////
 
     // Time of the first LogFrame
@@ -262,6 +266,8 @@ private:
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
 
+    std::vector<std::unique_ptr<Node>> _modules;
+
     // joystick control
     std::vector<Joystick*> _joysticks;
 
@@ -280,4 +286,6 @@ private:
     VisionChannel _visionChannel;
 
     bool _initialized;
+
+    bool _paused;
 };

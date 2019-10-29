@@ -27,6 +27,30 @@ TEST(Pose, Constructors) {
     }
 }
 
+TEST(Pose, Operators) {
+    Pose a(1, 2, -1);
+    Pose b(3, 4, 2);
+
+    EXPECT_EQ((a + b).position(), Point(4, 6));
+    EXPECT_EQ((a + b).heading(), 1);
+
+    EXPECT_EQ((a - b).position(), Point(-2, -2));
+    EXPECT_EQ((a - b).heading(), -3);
+
+    EXPECT_EQ((a * 2).position(), Point(2, 4));
+    EXPECT_EQ((a * 2).heading(), -2);
+
+    EXPECT_EQ((a / 2).position(), Point(0.5, 1));
+    EXPECT_EQ((a / 2).heading(), -0.5);
+
+    // Stream operator
+    {
+        std::stringstream stream;
+        stream << a;
+        EXPECT_EQ(stream.str(), "Pose(1, 2, -1)");
+    }
+}
+
 TEST(Pose, Transforms) {
     // Only linear offsets
     {
@@ -139,5 +163,29 @@ TEST(Twist, Curvature) {
     {
         Twist twist(Point(0, 0), 1);
         EXPECT_EQ(twist.curvature(), std::numeric_limits<double>::infinity());
+    }
+}
+
+TEST(Twist, Operators) {
+    Twist a(1, 2, -1);
+    Twist b(3, 4, 2);
+
+    EXPECT_EQ((a + b).linear(), Point(4, 6));
+    EXPECT_EQ((a + b).angular(), 1);
+
+    EXPECT_EQ((a - b).linear(), Point(-2, -2));
+    EXPECT_EQ((a - b).angular(), -3);
+
+    EXPECT_EQ((a * 2).linear(), Point(2, 4));
+    EXPECT_EQ((a * 2).angular(), -2);
+
+    EXPECT_EQ((a / 2).linear(), Point(0.5, 1));
+    EXPECT_EQ((a / 2).angular(), -0.5);
+
+    // Stream operator
+    {
+        std::stringstream stream;
+        stream << a;
+        EXPECT_EQ(stream.str(), "Twist(1, 2, -1)");
     }
 }

@@ -19,6 +19,7 @@ set(ROBOCUP_LIB_SRC
     "KickEvaluator.cpp"
     "Logger.cpp"
     "motion/MotionControl.cpp"
+    "motion/MotionControlNode.cpp"
     "motion/TrapezoidalMotion.cpp"
     "NewRefereeModule.cpp"
     "optimization/GradientAscent1D.cpp"
