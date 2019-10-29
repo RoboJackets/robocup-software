@@ -3,6 +3,7 @@
 #include <Geometry2d/Util.hpp>
 #include <iostream>
 #include <time.hpp>
+#include "motion/MotionSetpoint.hpp"
 
 void from_robot_tx_proto(const Packet::Robot& proto_packet,
                          rtp::RobotTxMessage* msg) {
@@ -15,7 +16,7 @@ void from_robot_tx_proto(const Packet::Robot& proto_packet,
     msg->message.controlMessage.bodyW = static_cast<int16_t>(
         control.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
     msg->message.controlMessage.dribbler =
-        clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
+        std::clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
 
     msg->message.controlMessage.shootMode = control.shootmode();
     msg->message.controlMessage.kickStrength = control.kcstrength();
@@ -70,6 +71,58 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
     }
 
     return packet;
+}
+
+void construct_tx_proto(
+    Packet::RadioTx& radioTx,
+    const std::array<RobotIntent, Num_Shells>& intents,
+    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
+    radioTx.set_txmode(Packet::RadioTx::UNICAST);
+    for (int i = 0; i < Num_Shells; ++i) {
+        const RobotIntent& intent = intents[i];
+        if (!intent.is_active) {
+            continue;
+        }
+        const MotionSetpoint& setpoint = setpoints[i];
+        Packet::Robot* robotPacket = radioTx.add_robots();
+        robotPacket->set_uid(i);
+        Packet::Control* controlPacket = robotPacket->mutable_control();
+        switch (intent.shoot_mode) {
+            case RobotIntent::ShootMode::KICK:
+                controlPacket->set_shootmode(Packet::Control::KICK);
+                break;
+            case RobotIntent::ShootMode::CHIP:
+                controlPacket->set_shootmode(Packet::Control::CHIP);
+                break;
+        }
+        switch (intent.trigger_mode) {
+            case RobotIntent::TriggerMode::STAND_DOWN:
+                controlPacket->set_triggermode(Packet::Control::STAND_DOWN);
+                break;
+            case RobotIntent::TriggerMode::IMMEDIATE:
+                controlPacket->set_triggermode(Packet::Control::IMMEDIATE);
+                break;
+            case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+                controlPacket->set_triggermode(Packet::Control::ON_BREAK_BEAM);
+                break;
+        }
+        switch (intent.song) {
+            case RobotIntent::Song::STOP:
+                controlPacket->set_song(Packet::Control::STOP);
+                break;
+            case RobotIntent::Song::CONTINUE:
+                controlPacket->set_song(Packet::Control::CONTINUE);
+                break;
+            case RobotIntent::Song::FIGHT_SONG:
+                controlPacket->set_song(Packet::Control::FIGHT_SONG);
+                break;
+        }
+        controlPacket->set_xvelocity(setpoint.xvelocity);
+        controlPacket->set_yvelocity(setpoint.yvelocity);
+        controlPacket->set_avelocity(setpoint.avelocity);
+        controlPacket->set_dvelocity(intent.dvelocity);
+        controlPacket->set_kcstrength(intent.kcstrength);
+    }
 }
 
 void fill_header(rtp::Header* header) {
