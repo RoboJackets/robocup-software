@@ -14,12 +14,10 @@ WorldRobot::WorldRobot() : isValid(false) {}
 
 WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots)
     : team(team), robotID(robotID), isValid(true), time(calcTime) {
-
-    Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     // Theta's are converted to rect coords then back to polar to convert
-    Geometry2d::Point thetaAvg = Geometry2d::Point(0, 0);
-    Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
-    double omegaAvg = 0;
+    Geometry2d::Point posCartesianAvg;
+    Geometry2d::Point thetaCartesianAvg;
+    Geometry2d::Twist twistAvg; 
 
     double totalPosWeight = 0;
     double totalVelWeight = 0;
@@ -37,10 +35,10 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
              << "ERROR: Zero robots are given to the WorldRobot constructor"
              << std::endl;
 
-        pos   = posAvg;
-        theta = 0;
-        vel   = velAvg;
-        omega = omegaAvg;
+        pose.position()   = posCartesianAvg;
+        pose.heading() = 0;
+        twist.linear()   = twistAvg.linear();
+        twist.angular() = twistAvg.angular();
         posCov = 0;
         velCov = 0;
         isValid = false;
@@ -51,23 +49,19 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
     for (KalmanRobot& robot : kalmanRobots) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Point posCov = robot.getPosCov();
-        Geometry2d::Point velCov = robot.getVelCov();
-        double thetaCov          = robot.getThetaCov();
-        double omegaCov          = robot.getOmegaCov();
+        Geometry2d::Pose poseCov{robot.getPosCov(), robot.getThetaCov()};
+        Geometry2d::Twist twistCov{robot.getVelCov(), robot.getOmegaCov()};
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Point posStdDev;
-        Geometry2d::Point velStdDev;
-        double thetaStdDev;
-        double omegaStdDev;
-        posStdDev.x() = std::sqrt(posCov.x());
-        posStdDev.y() = std::sqrt(posCov.y());
-        velStdDev.x() = std::sqrt(velCov.x());
-        velStdDev.y() = std::sqrt(velCov.y());
-        thetaStdDev   = std::sqrt(thetaCov);
-        omegaStdDev   = std::sqrt(thetaCov);
+        Geometry2d::Pose poseStdDev;
+        Geometry2d::Twist twistStdDev;
+        poseStdDev.position().x() = std::sqrt(poseCov.position().x());
+        poseStdDev.position().y() = std::sqrt(poseCov.position().y());
+        twistStdDev.linear().x() = std::sqrt(twistCov.linear().x());
+        twistStdDev.linear().y() = std::sqrt(twistCov.linear().y());
+        poseStdDev.heading()   = std::sqrt(poseCov.heading());
+        twistStdDev.angular()   = std::sqrt(poseCov.heading());
 
         // Inversely proportional to how much the filter has been updated
         double filterUncertantity = 1.0 / robot.getHealth();
@@ -75,8 +69,8 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),
         //  but it's a little more clear math-wise)
-        double posUncertantity = std::sqrt(posStdDev.magsq() + thetaStdDev*thetaStdDev);
-        double velUncertantity = std::sqrt(posStdDev.magsq() + omegaStdDev*omegaStdDev);
+        double posUncertantity = std::sqrt(poseStdDev.position().magsq() + std::pow(poseStdDev.heading(),2));
+        double velUncertantity = std::sqrt(poseStdDev.position().magsq() + std::pow(twistStdDev.angular(),2));
 
         double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
                                           -*robot_merger_power);
@@ -84,24 +78,24 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
         double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
                                           -*robot_merger_power);
 
-        posAvg   += filterPosWeight * robot.getPos();
-        thetaAvg += Geometry2d::Point(filterPosWeight * cos(robot.getTheta()), filterPosWeight * sin(robot.getTheta()));
-        velAvg   += filterVelWeight * robot.getVel();
-        omegaAvg += filterVelWeight * robot.getOmega();
+        posCartesianAvg   += filterPosWeight * robot.getPos();
+        thetaCartesianAvg += Geometry2d::Point(filterPosWeight * cos(robot.getTheta()), filterPosWeight * sin(robot.getTheta()));
+        twistAvg.linear()   += filterVelWeight * robot.getVel();
+        twistAvg.angular() += filterVelWeight * robot.getOmega();
 
         totalPosWeight += filterPosWeight;
         totalVelWeight += filterVelWeight;
     }
 
-    posAvg   /= totalPosWeight;
-    thetaAvg /= totalPosWeight;
-    velAvg   /= totalVelWeight;
-    omegaAvg /= totalVelWeight;
+    posCartesianAvg   /= totalPosWeight;
+    thetaCartesianAvg /= totalPosWeight;
+    twistAvg.linear()   /= totalVelWeight;
+    twistAvg.angular() /= totalVelWeight;
 
-    pos   = posAvg;
-    theta = atan2(thetaAvg.y(), thetaAvg.x());
-    vel   = velAvg;
-    omega = omegaAvg;
+    pose.position()   = posCartesianAvg;
+    pose.heading() = atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x());
+    twist.linear()   = twistAvg.linear();
+    twist.angular() = twistAvg.angular();
     posCov = totalPosWeight / kalmanRobots.size();
     velCov = totalVelWeight / kalmanRobots.size();
     robotComponents = kalmanRobots;
@@ -116,19 +110,27 @@ int WorldRobot::getRobotID() const {
 }
 
 Geometry2d::Point WorldRobot::getPos() const {
-    return pos;
+    return pose.position();
 }
 
 double WorldRobot::getTheta() const {
-    return theta;
+    return pose.heading();
+}
+
+Geometry2d::Pose WorldRobot::getPose() const {
+    return pose;
 }
 
 Geometry2d::Point WorldRobot::getVel() const {
-    return vel;
+    return twist.linear();
 }
 
 double WorldRobot::getOmega() const {
-    return omega;
+    return twist.angular();
+}
+
+Geometry2d::Twist WorldRobot::getTwist() const {
+    return twist;
 }
 
 double WorldRobot::getPosCov() const {

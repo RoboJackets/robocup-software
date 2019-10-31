@@ -50,7 +50,7 @@ TEST(BallBounce, no_intersection) {
 
     Geometry2d::Point p2 = Geometry2d::Point(1,1);
     double th = 1;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     
@@ -81,7 +81,7 @@ TEST(BallBounce, wrong_direction) {
 
     Geometry2d::Point p2 = Geometry2d::Point(1,0);
     double th = 1;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     
@@ -111,7 +111,7 @@ TEST(BallBounce, too_far) {
 
     Geometry2d::Point p2 = Geometry2d::Point(-1,0);
     double th = 1;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     
@@ -141,7 +141,7 @@ TEST(BallBounce, flat_intersect_side) {
 
     Geometry2d::Point p2 = Geometry2d::Point(-.1,0);
     double th = 3.14/2;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     
@@ -174,7 +174,7 @@ TEST(BallBounce, flat_intersect_mouth) {
 
     Geometry2d::Point p2 = Geometry2d::Point(-.1,0);
     double th = 0;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     
@@ -207,7 +207,7 @@ TEST(BallBounce, angle_intersect_side) {
 
     Geometry2d::Point p2 = Geometry2d::Point(-0.1, -0.06);
     double th = 3.14;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     
@@ -241,7 +241,7 @@ TEST(BallBounce, angle_intersect_mouth) {
 
     Geometry2d::Point p2 = Geometry2d::Point(-0.06, -0.04);
     double th = 1*3.14/4;
-    CameraRobot cr = CameraRobot(tc, p2, th, 1);
+    CameraRobot cr = CameraRobot(tc, Geometry2d::Pose(p2,th), 1);
     WorldRobot wr1;
     KalmanRobot kr = KalmanRobot(1, tc, cr, wr1);
     

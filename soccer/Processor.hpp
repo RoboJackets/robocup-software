@@ -14,6 +14,8 @@
 
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "KalmanFilter.hpp"
+#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
-#include <Configuration.hpp>
+#include "KalmanFilter.hpp"
 
 class KalmanFilter3D : public KalmanFilter {
 public:
@@ -18,8 +18,7 @@ public:
      * @param initPose initial pose
      * @param initTwist initial twist
      */
-    KalmanFilter3D(Geometry2d::Pose initPose,
-                   Geometry2d::Twist initTwist);
+    KalmanFilter3D(Geometry2d::Pose initPose, Geometry2d::Twist initTwist);
 
     /**
      * Predicts with update

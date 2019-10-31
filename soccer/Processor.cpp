@@ -224,8 +224,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         yellowObservations.reserve(frame->robots_yellow().size());
         for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
             yellowObservations.emplace_back(time,
-                                            _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                            fixAngleRadians(robot.orientation() + _teamAngle),
+                                            Pose(Point(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000)),
+                                            fixAngleRadians(robot.orientation() + _teamAngle)),
                                             robot.robot_id());
         }
 
@@ -233,8 +233,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         blueObservations.reserve(frame->robots_blue().size());
         for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
             blueObservations.emplace_back(time,
-                                          _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                          fixAngleRadians(robot.orientation() + _teamAngle),
+                                          Pose(Point(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000)),
+                                          fixAngleRadians(robot.orientation() + _teamAngle)),
                                           robot.robot_id());
         }
 

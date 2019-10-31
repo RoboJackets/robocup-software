@@ -23,14 +23,10 @@ KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1,1) {}
 KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
                                Geometry2d::Twist initTwist)
     : KalmanFilter(6, 3) {
-
     // States are X pos, X vel, Y pos, Y vel, theta, omega
-    x_k1_k1 << initPose.position().x(),
-               initTwist.linear().x(),
-               initPose.position().y(),
-               initTwist.linear().y(),
-               initPose.heading(),
-               initTwist.angular();
+    x_k1_k1 << initPose.position().x(), initTwist.linear().x(),
+        initPose.position().y(), initTwist.linear().y(), initPose.heading(),
+        initTwist.angular();
     x_k_k1 = x_k1_k1;
     x_k_k = x_k1_k1;
 
@@ -105,9 +101,8 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
 }
 
 void KalmanFilter3D::predictWithUpdate(Geometry2d::Pose observation) {
-    z_k << observation.position().x(),
-           observation.position().y(),
-           observation.heading();
+    z_k << observation.position().x(), observation.position().y(),
+        observation.heading();
 
     KalmanFilter::predictWithUpdate();
 }

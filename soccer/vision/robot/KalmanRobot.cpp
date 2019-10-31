@@ -22,9 +22,8 @@ KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
       lastUpdateTime(creationTime), lastPredictTime(creationTime),
       unwrapThetaCtr(0), robotID(initMeasurement.getRobotID()),
       previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length) {
-
     Geometry2d::Pose initPose = initMeasurement.getPose();
-    Geometry2d::Twist initTwist(0,0,0);
+    Geometry2d::Twist initTwist(0, 0, 0);
 
     if (previousWorldRobot.getIsValid()) {
         initTwist.linear() = previousWorldRobot.getVel();
@@ -72,7 +71,8 @@ void KalmanRobot::predictAndUpdate(RJ::Time currentTime, CameraRobot updateRobot
 
     previousTheta = curTheta;
 
-    filter.predictWithUpdate({updateRobot.getPos(), curTheta + unwrapThetaCtr*2*M_PI});
+    filter.predictWithUpdate(
+        {updateRobot.getPos(), curTheta + unwrapThetaCtr * 2 * M_PI});
 }
 
 bool KalmanRobot::isUnhealthy() const {
