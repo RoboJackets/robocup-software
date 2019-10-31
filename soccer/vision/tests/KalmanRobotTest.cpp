@@ -5,9 +5,9 @@
 
 TEST(KalmanRobot, invalid_world_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b = CameraRobot(t, pose, robotID);
     int cID = 1;
     WorldRobot w;
@@ -32,11 +32,15 @@ TEST(KalmanRobot, invalid_world_robot) {
 
 TEST(KalmanRobot, valid_world_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b1 = CameraRobot(t, pose, robotID);
-    CameraRobot b2 = CameraRobot(t, Geometry2d::Pose(pose.position()+pose.position(), pose.heading()+pose.heading()), robotID);
+    CameraRobot b2 =
+        CameraRobot(t,
+                    Geometry2d::Pose(pose.position() + pose.position(),
+                                     pose.heading() + pose.heading()),
+                    robotID);
     int cID = 1;
     WorldRobot w;
 
@@ -68,11 +72,15 @@ TEST(KalmanRobot, valid_world_robot) {
 
 TEST(KalmanRobot, predict) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b1 = CameraRobot(t, pose, robotID);
-    CameraRobot b2 = CameraRobot(t, Geometry2d::Pose(pose.position()+pose.position(), pose.heading()+pose.heading()), robotID);
+    CameraRobot b2 =
+        CameraRobot(t,
+                    Geometry2d::Pose(pose.position() + pose.position(),
+                                     pose.heading() + pose.heading()),
+                    robotID);
     int cID = 1;
     WorldRobot w;
 
@@ -101,11 +109,15 @@ TEST(KalmanRobot, predict) {
 
 TEST(KalmanRobot, predict_and_update) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b1 = CameraRobot(t, pose, robotID);
-    CameraRobot b2 = CameraRobot(t, Geometry2d::Pose(pose.position()+pose.position(), pose.heading()+pose.heading()), robotID);
+    CameraRobot b2 =
+        CameraRobot(t,
+                    Geometry2d::Pose(pose.position() + pose.position(),
+                                     pose.heading() + pose.heading()),
+                    robotID);
     int cID = 1;
     WorldRobot w;
 
@@ -116,10 +128,10 @@ TEST(KalmanRobot, predict_and_update) {
     Geometry2d::Point rv = kb.getVel();
     double th = kb.getTheta();
     double om = kb.getOmega();
-    
-    EXPECT_NEAR(rp.x(), pose.position().x()*2, 0.1);
-    EXPECT_NEAR(rp.y(), pose.position().y()*2, 0.1);
-    EXPECT_NEAR(th, pose.heading()*2, 0.1);
+
+    EXPECT_NEAR(rp.x(), pose.position().x() * 2, 0.1);
+    EXPECT_NEAR(rp.y(), pose.position().y() * 2, 0.1);
+    EXPECT_NEAR(th, pose.heading() * 2, 0.1);
     EXPECT_GT(rv.x(), 0);
     EXPECT_GT(rv.y(), 0);
     EXPECT_GT(om, 0);
@@ -133,9 +145,9 @@ TEST(KalmanRobot, predict_and_update) {
 
 TEST(KalmanRobot, is_unhealthy) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b = CameraRobot(t, pose, robotID);
     int cID = 1;
     WorldRobot w;
@@ -149,9 +161,9 @@ TEST(KalmanRobot, is_unhealthy) {
 
 TEST(KalmanRobot, max_measurement_size) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b = CameraRobot(t, pose, robotID);
     int cID = 1;
     WorldRobot w;
@@ -169,9 +181,9 @@ TEST(KalmanRobot, max_measurement_size) {
 
 TEST(KalmanRobot, getters) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int robotID = 1;
-    
+
     CameraRobot b = CameraRobot(t, pose, robotID);
     int cID = 1;
     WorldRobot w;
@@ -215,9 +227,9 @@ TEST(KalmanRobot, getters) {
 
 TEST(KalmanRobot, wrap_theta_up) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1),0);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 0);
     int robotID = 1;
-    
+
     CameraRobot b = CameraRobot(t, pose, robotID);
     int cID = 1;
     WorldRobot w;
@@ -226,14 +238,14 @@ TEST(KalmanRobot, wrap_theta_up) {
 
     double ut = 0;
     for (int i = 0; i < 800; i++) {
-        pose.heading() += 1.0/100.0;
+        pose.heading() += 1.0 / 100.0;
         ut += 1.0/100.0;
-    
+
         if (pose.heading() > M_PI) {
-            pose.heading() -= 2*M_PI;
+            pose.heading() -= 2 * M_PI;
         }
- 
-        pose.position() += Geometry2d::Point(1,1)*1.0/100.0;
+
+        pose.position() += Geometry2d::Point(1, 1) * 1.0 / 100.0;
 
         b = CameraRobot(t, pose, robotID);
         kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);
@@ -255,10 +267,10 @@ TEST(KalmanRobot, wrap_theta_up) {
 
 TEST(KalmanRobot, wrap_theta_down) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1),0);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 0);
 
     int robotID = 1;
-    
+
     CameraRobot b = CameraRobot(t, pose, robotID);
     int cID = 1;
     WorldRobot w;
@@ -267,14 +279,14 @@ TEST(KalmanRobot, wrap_theta_down) {
 
     double ut = 0;
     for (int i = 0; i < 800; i++) {
-        pose.heading() -= 1.0/100.0;
+        pose.heading() -= 1.0 / 100.0;
         ut -= 1.0/100.0;
-    
+
         if (pose.heading() < -M_PI) {
-            pose.heading() += 2*M_PI;
+            pose.heading() += 2 * M_PI;
         }
- 
-        pose.position() -= Geometry2d::Point(1,1)*1.0/100.0;
+
+        pose.position() -= Geometry2d::Point(1, 1) * 1.0 / 100.0;
 
         b = CameraRobot(t, pose, robotID);
         kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);

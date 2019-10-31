@@ -223,19 +223,23 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         // Collect camera data from all robots
         yellowObservations.reserve(frame->robots_yellow().size());
         for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            yellowObservations.emplace_back(time,
-                                            Pose(Point(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000)),
-                                            fixAngleRadians(robot.orientation() + _teamAngle)),
-                                            robot.robot_id());
+            yellowObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         // Collect camera data from all robots
         blueObservations.reserve(frame->robots_blue().size());
         for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            blueObservations.emplace_back(time,
-                                          Pose(Point(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000)),
-                                          fixAngleRadians(robot.orientation() + _teamAngle)),
-                                          robot.robot_id());
+            blueObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);

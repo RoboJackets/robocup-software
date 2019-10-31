@@ -17,7 +17,7 @@ TEST(WorldRobot, no_robot) {
 
 TEST(WorldRobot, one_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1,1), 1);
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int rID = 1;
     CameraRobot b = CameraRobot(t, pose, rID);
     int cID = 1;
@@ -57,8 +57,8 @@ TEST(WorldRobot, one_robot) {
 
 TEST(WorldRobot, two_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose1(Geometry2d::Point(1,1),1);
-    Geometry2d::Pose pose2(Geometry2d::Point(2,2),2);
+    Geometry2d::Pose pose1(Geometry2d::Point(1, 1), 1);
+    Geometry2d::Pose pose2(Geometry2d::Point(2, 2), 2);
 
     // Geometry2d::Point p1 = Geometry2d::Point(1,1);
     // Geometry2d::Point p2 = Geometry2d::Point(2,2);
