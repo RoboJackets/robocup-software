@@ -63,7 +63,6 @@ Gameplay::GameplayModule::GameplayModule(Context* const context, NewRefereeModul
     //
     try {
         cout << "Initializing embedded python interpreter..." << endl;
-        print("plays: ", plays)
 
         //  this tells python how to load the robocup module
         //  it has to be done before Py_Initialize()
@@ -604,6 +603,3 @@ void Gameplay::GameplayModule::loadTest() {
     }
     PyGILState_Release(state);
 }
-
-//TODO: HAVE TO FIX ISSUE WITH QT GENERATING THE HEADER FOR MAINWINDOW
-// it currently erases the method of passing grSimCom into the simfieldview

@@ -1673,7 +1673,7 @@
           <enum>QTabWidget::East</enum>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="playsBehaviorsTab">
           <property name="sizePolicy">
@@ -2198,7 +2198,7 @@
           <attribute name="title">
            <string>Testing Tab</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_testingTab">
+          <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
             <widget class="QSplitter" name="splitter_3">
              <property name="frameShadow">
@@ -2210,7 +2210,7 @@
              <property name="handleWidth">
               <number>10</number>
              </property>
-             <widget class="QWidget" name="layoutWidget_testingTable">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_testingTable">
                <property name="spacing">
                 <number>2</number>
@@ -2291,7 +2291,7 @@
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="layoutWidget_testingList">
+             <widget class="QWidget" name="layoutWidget1">
               <layout class="QVBoxLayout" name="verticalLayout_testingList">
                <property name="spacing">
                 <number>2</number>
