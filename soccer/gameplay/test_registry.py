@@ -62,37 +62,6 @@ class TestRegistry(QtCore.QAbstractItemModel):
                 break
 
 
-    '''
-    TODO: potentially rework this to find selected objects to move to the table of active tests
-
-    ## Get a list of all plays in the tree that are currently enabled
-    def get_enabled_plays_and_scores(self):
-        return [(node.play_class, node.last_score)
-                for node in self if node.enabled]
-
-    TODO: potentially rework this to find selected objects to move to the table of active tests
-
-    ## Returns a list of module paths for the currently-enabled plays
-    # The module path is a list or tuple giving the path the the play's python module
-    # For example: ['testing', 'test_pivot_kick']
-    def get_enabled_plays_paths(self):
-        enabled_plays = []
-
-        for node in self:
-            if node.enabled:
-                play_path = []
-
-                curr_node = node
-                while curr_node is not None:
-                    if curr_node.module_name:
-                        play_path.insert(0, curr_node.module_name)
-                    curr_node = curr_node.parent
-
-                enabled_plays.append(play_path)
-
-        return enabled_plays
-    '''
-
     # iterates over all of the Nodes registered in the tree
     def __iter__(self):
         def _recursive_iter(category):
@@ -292,3 +261,6 @@ class TestRegistry(QtCore.QAbstractItemModel):
                 self.dataChanged.emit(index, index)
                 return True
         return False
+
+    def updateModel(self):
+        self.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())

@@ -18,6 +18,7 @@
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
 #include "VisionReceiver.hpp"
+#include "grSimCom.hpp"
 
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -178,6 +179,7 @@ public:
     std::optional<RJ::Time> firstLogTime;
 
     Context* context() { return &_context; }
+    grSimCom* grCom() { return &_grCom; }
 
 protected:
     void run() override;
@@ -229,6 +231,9 @@ private:
 
     /** global system state */
     Context _context;
+
+    /** Communication to GrSim **/
+    grSimCom _grCom;
 
     // Transformation from world space to team space.
     // This depends on which goal we're defending.

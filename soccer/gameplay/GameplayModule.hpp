@@ -18,6 +18,8 @@
 #include <Configuration.hpp>
 #include <Context.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <NewRefereeModule.hpp>
+#include <grSimCom.hpp>
 
 class OurRobot;
 class SystemState;
@@ -43,7 +45,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context);
+    GameplayModule(Context* const context, NewRefereeModule* refereeModule, grSimCom* grCom);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -125,8 +127,14 @@ public:
     /// adds tests to the list of tests to run
     void addTests();
 
-    /// runs tests for the testing tab
-    void runTests();
+    /// remove selected test from the list of tests to run
+    void removeTest();
+
+    /// loads a test for the testing tab
+    void loadTest();
+
+    /// go to the next test for the testing tab
+    void nextTest();
 
 protected:
     boost::python::object getRootPlay();
@@ -143,6 +151,7 @@ private:
     double _oldFieldEdgeInset;
 
     Context* const _context;
+    NewRefereeModule* const _refereeModule;
 
     std::set<OurRobot*> _playRobots;
 
@@ -175,5 +184,9 @@ private:
 
     // python
     boost::python::object _mainPyNamespace;
+
+    // Testing
+    bool runningTests = false;
+    grSimCom* const _grCom;
 };
 }

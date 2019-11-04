@@ -11,6 +11,7 @@
 #include "RobotStatusWidget.hpp"
 #include "rc-fshare/git_version.hpp"
 #include "radio/Radio.hpp"
+#include "grSimCom.hpp"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -48,7 +49,7 @@ void calcMinimumWidth(QWidget* widget, QString text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, QWidget* parent)
+MainWindow::MainWindow(Processor* processor, grSimCom* grCom, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _autoExternalReferee(true),
@@ -168,6 +169,9 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
     } else {
+        //Pass grCom into the simFieldView
+        _ui.fieldView->setGrCom(grCom);
+
         // reset the field initially, grSim will start out in some weird
         // pattern and we want to keep it consistent
         on_actionResetField_triggered();
@@ -239,29 +243,6 @@ void MainWindow::initialize() {
             _ui.actionVisionFull_Field->setChecked(true);
             break;
     }
-
-    /*
-    // Initialize testing tab
-
-    _ui.selectedTestsTable->addItem(QString("1"));
-    _ui.selectedTestsTable->addItem(QString("2"));
-    _ui.selectedTestsTable->addItem(QString("3"));
-
-
-    //_ui.testingPlays->
-    */
-    /* bring back if using table
-    //_ui.testingTable->setRowCount(3);
-    //_ui.testingTable->setColumnCount(2);
-
-
-    QTableWidgetItem *newItem1 = new QTableWidgetItem(tr("%1").arg(1));
-    _ui.testingTable->setItem(0, 0, newItem1);
-    QTableWidgetItem *newItem2 = new QTableWidgetItem(tr("%1").arg(2));
-    _ui.testingTable->setItem(1, 0, newItem2);
-    QTableWidgetItem *newItem3 = new QTableWidgetItem(tr("%1").arg(3));
-    _ui.testingTable->setItem(2, 0, newItem3);
-    */
 }
 
 void MainWindow::logFileChanged() {
@@ -1064,7 +1045,7 @@ void MainWindow::on_actionCenterBall_triggered() {
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
 
-    _ui.fieldView->sendSimCommand(simPacket);
+    _ui.fieldView->grCom->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopBall_triggered() {
@@ -1078,7 +1059,7 @@ void MainWindow::on_actionStopBall_triggered() {
     ball_replace->mutable_pos()->set_y(ballPos.y());
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(simPacket);
+    _ui.fieldView->grCom->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -1123,7 +1104,7 @@ void MainWindow::on_actionResetField_triggered() {
     ball_replace->mutable_vel()->set_x(0.0);
     ball_replace->mutable_vel()->set_y(0.0);
 
-    _ui.fieldView->sendSimCommand(simPacket);
+    _ui.fieldView->grCom->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
@@ -1498,17 +1479,23 @@ void MainWindow::on_clearPlays_clicked() {
 // Testing Tab
 
 void MainWindow::on_testRun_clicked() {
-  _processor->gameplayModule()->runTests();
+    _processor->gameplayModule()->loadTest();
 
 }
 
 void MainWindow::on_addToTable_clicked() {
-    std::cout<<"Adding to table"<<std::endl;
     _processor->gameplayModule()->addTests();
-    //_ui.allTestsTable->currentIndex();
 
 }
 
+void MainWindow::on_removeFromTable_clicked() {
+    _processor->gameplayModule()->removeTest();
+}
+
+void MainWindow::on_testNext_clicked() {
+    _processor->gameplayModule()->nextTest();
+
+}
 
 
 void MainWindow::setRadioChannel(RadioChannels channel) {

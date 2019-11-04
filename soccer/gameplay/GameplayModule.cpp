@@ -1,13 +1,19 @@
 #include <gameplay/GameplayModule.hpp>
 #include <Constants.hpp>
+#include <Network.hpp>
 #include <planning/MotionInstant.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
 #include <SystemState.hpp>
+#include <NewRefereeModule.hpp>
 
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
+
+#include <protobuf/grSim_Commands.pb.h>
+#include <protobuf/grSim_Packet.pb.h>
+#include <protobuf/grSim_Replacement.pb.h>
 
 // for python stuff
 #include "DebugDrawer.hpp"
@@ -22,6 +28,7 @@ using namespace boost;
 using namespace boost::python;
 
 using namespace Geometry2d;
+using namespace NewRefereeModuleEnums;
 
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
@@ -43,8 +50,8 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
     return false;
 }
 
-Gameplay::GameplayModule::GameplayModule(Context* const context)
-    : _mutex(QMutex::Recursive), _context(context) {
+Gameplay::GameplayModule::GameplayModule(Context* const context, NewRefereeModule* const refereeModule, grSimCom* const grCom)
+  : _mutex(QMutex::Recursive), _context(context), _refereeModule(refereeModule), _grCom(grCom) {
     calculateFieldObstacles();
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
@@ -56,6 +63,7 @@ Gameplay::GameplayModule::GameplayModule(Context* const context)
     //
     try {
         cout << "Initializing embedded python interpreter..." << endl;
+        print("plays: ", plays)
 
         //  this tells python how to load the robocup module
         //  it has to be done before Py_Initialize()
@@ -378,6 +386,19 @@ void Gameplay::GameplayModule::run() {
 
             getMainModule().attr("set_context")(&_context);
 
+            // Handle Tests
+            if (runningTests) {
+
+              // I could add a bool to check if this needs to run or not if this is too inefficient
+                object rtrn(handle<>( PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+
+                if (rtrn.ptr() != Py_None) {
+                    Command cmd = extract<Command>(rtrn);
+                    _refereeModule->command = cmd;
+                }
+
+            }
+
         } catch (error_already_set) {
             PyErr_Print();
             throw new runtime_error(
@@ -456,14 +477,12 @@ void Gameplay::GameplayModule::updateFieldDimensions() {
     PyGILState_Release(state);
 }
 
-
 void Gameplay::GameplayModule::addTests() {
-
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
           handle<> ignored3(
-                            (PyRun_String("import ui.main; ui.main.addTests()", Py_file_input,
+                            (PyRun_String("import ui.main; ui.main._tests.addTests()", Py_file_input,
                                           _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         } catch (error_already_set) {
           PyErr_Print();
@@ -477,18 +496,114 @@ void Gameplay::GameplayModule::addTests() {
     //      Link selectedTestsTable to a python list in main.py
 }
 
-void Gameplay::GameplayModule::runTests() {
+void Gameplay::GameplayModule::removeTest() {
+  PyGILState_STATE state = PyGILState_Ensure();
+  {
+    try {
+      handle<> ignored3(
+                        (PyRun_String("import ui.main; ui.main._tests.removeTest()", Py_file_input,
+                                      _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+    } catch (error_already_set) {
+      PyErr_Print();
+      throw new runtime_error("Error trying to add tests");
+    }
+  }
+  PyGILState_Release(state);
+}
 
+void Gameplay::GameplayModule::nextTest() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+      try {
+        object rtrn(handle<>( PyRun_String("ui.main._tests.nextTest()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+
+        runningTests = extract<bool>(rtrn);
+      } catch (error_already_set) {
+        PyErr_Print();
+        throw new runtime_error("Error trying to go to next test");
+      }
+    }
+    PyGILState_Release(state);
+
+    // load the test
+    loadTest();
+
+}
+
+void Gameplay::GameplayModule::loadTest() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-          handle<> ignored3(
-                            (PyRun_String("import ui.main; ui.main.runTests()", Py_file_input,
-                                          _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            object rtrn(handle<>( PyRun_String("ui.main._tests.loadTest()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+
+            runningTests = extract<bool>(rtrn);
+
+            if (runningTests) {
+                _refereeModule->command = Command::HALT;
+
+                // Place robots and ball
+                grSim_Packet simPacket;
+
+                grSim_Replacement* replacement = simPacket.mutable_replacement();
+
+                // Load OurRobots information
+                object our_robot_rtrn(handle<>( PyRun_String("ui.main._tests.getTestOurRobots()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+
+                boost::python::list our_robots = extract<boost::python::list>(our_robot_rtrn);
+
+
+                for (int i = 0; i < len(our_robots); i++) {
+                    auto rob = replacement->add_robots();
+
+                    boost::python::list robot = extract<boost::python::list>(our_robots[i]);
+
+                    rob->set_x(extract<float>(robot[0]));
+                    rob->set_y(extract<float>(robot[1]));
+                    rob->set_dir(extract<float>(robot[2]));
+                    rob->set_id(i);
+                    rob->set_yellowteam(false); //Need to get this info from somewhere
+                }
+
+
+                // Load TheirRobots information
+                object their_robot_rtrn(handle<>( PyRun_String("ui.main._tests.getTestTheirRobots()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+
+                boost::python::list their_robots = extract<boost::python::list>(their_robot_rtrn);
+
+                for (int i = 0; i < len(their_robots); i++) {
+                  auto rob = replacement->add_robots();
+
+                  boost::python::list robot = extract<boost::python::list>(their_robots[i]);
+
+                  rob->set_x(extract<float>(robot[0]));
+                  rob->set_y(extract<float>(robot[1]));
+                  rob->set_dir(extract<float>(robot[2]));
+                  rob->set_id(i);
+                  rob->set_yellowteam(true); //Need to get this info from somewhere
+                }
+
+
+                // Get ball Information
+                object ball_rtrn(handle<>( PyRun_String("ui.main._tests.getTestBall()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+
+                boost::python::list ball = extract<boost::python::list>(ball_rtrn);
+                auto ball_replace = replacement->mutable_ball();
+                ball_replace->mutable_pos()->set_x(extract<float>(ball[0]));
+                ball_replace->mutable_pos()->set_y(extract<float>(ball[1]));
+                ball_replace->mutable_vel()->set_x(extract<float>(ball[2]));
+                ball_replace->mutable_vel()->set_y(extract<float>(ball[3]));
+
+
+                _grCom->sendSimCommand(simPacket);
+            }
+
         } catch (error_already_set) {
-          PyErr_Print();
-          throw new runtime_error("Error trying to run tests");
+            PyErr_Print();
+            throw new runtime_error("Error trying to load test");
         }
     }
     PyGILState_Release(state);
 }
+
+//TODO: HAVE TO FIX ISSUE WITH QT GENERATING THE HEADER FOR MAINWINDOW
+// it currently erases the method of passing grSimCom into the simfieldview

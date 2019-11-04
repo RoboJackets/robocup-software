@@ -49,8 +49,6 @@ def init(log_errors=True):
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
 
-    print("----------------------- LOADING TESTING REGISTRY -----------------------")
-
     #TODO: finish test registry
     # init test registry
     global _test_registry
@@ -62,7 +60,6 @@ def init(log_errors=True):
         mod_path = entry[0][1:]
         _test_registry.insert(mod_path, entry[1])
 
-    print("root: ", _test_registry.root._children[0])
 
     def _module_blacklisted(module):
         """Return true if a module has been filtered out of autoloading."""

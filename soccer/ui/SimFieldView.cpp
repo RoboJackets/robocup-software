@@ -2,6 +2,7 @@
 
 #include <Constants.hpp>
 #include <Network.hpp>
+#include <grSimCom.hpp>
 
 #include <QFont>
 #include <QMouseEvent>
@@ -17,6 +18,10 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragMode = DRAG_NONE;
     _dragRobot = -1;
     _dragRobotBlue = false;
+}
+
+void SimFieldView::setGrCom(grSimCom* grCom) {
+    this->grCom = grCom;
 }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
@@ -41,7 +46,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         }
 
         if (_dragRobot < 0) {
-            placeBall(me->pos());
+            grCom->placeBall(me->pos(), _screenToWorld);
         }
 
         _dragMode = DRAG_PLACE;
@@ -87,9 +92,9 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 robot_replace->set_yellowteam(!_dragRobotBlue);
                 robot_replace->set_dir(0.0);
 
-                sendSimCommand(simPacket);
+                grCom->sendSimCommand(simPacket);
             } else {
-                placeBall(me->pos());
+                grCom->placeBall(me->pos(), _screenToWorld);
             }
             break;
 
@@ -109,33 +114,12 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
             _teamToWorld.transformDirection(_shot).x());
         ball_replace->mutable_vel()->set_y(
             _teamToWorld.transformDirection(_shot).y());
-        sendSimCommand(simPacket);
+        grCom->sendSimCommand(simPacket);
 
         update();
     }
 
     _dragMode = DRAG_NONE;
-}
-
-void SimFieldView::placeBall(QPointF pos) {
-    grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace =
-        simPacket.mutable_replacement()->mutable_ball();
-
-    ball_replace->mutable_pos()->set_x((_screenToWorld * pos).x());
-    ball_replace->mutable_pos()->set_y((_screenToWorld * pos).y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
-
-    sendSimCommand(simPacket);
-}
-
-void SimFieldView::sendSimCommand(const grSim_Packet& cmd) {
-    std::string out;
-    cmd.SerializeToString(&out);
-    _simCommandSocket.writeDatagram(&out[0], out.size(),
-                                    QHostAddress(QHostAddress::LocalHost),
-                                    SimCommandPort);
 }
 
 void SimFieldView::drawTeamSpace(QPainter& p) {
