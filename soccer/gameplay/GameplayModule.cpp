@@ -560,7 +560,7 @@ void Gameplay::GameplayModule::loadTest() {
                     rob->set_y(extract<float>(robot[1]));
                     rob->set_dir(extract<float>(robot[2]));
                     rob->set_id(i);
-                    rob->set_yellowteam(false); //Need to get this info from somewhere
+                    rob->set_yellowteam(not _context->game_state.blueTeam); //Need to get this info from somewhere
                 }
 
 
@@ -578,7 +578,7 @@ void Gameplay::GameplayModule::loadTest() {
                   rob->set_y(extract<float>(robot[1]));
                   rob->set_dir(extract<float>(robot[2]));
                   rob->set_id(i);
-                  rob->set_yellowteam(true); //Need to get this info from somewhere
+                  rob->set_yellowteam(_context->game_state.blueTeam); //Need to get this info from somewhere
                 }
 
 
