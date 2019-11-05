@@ -57,6 +57,7 @@ def setup():
 
     main.root_play().play_changed.connect(play_name_label.setText)
 
-    _tests = test_system.TestSystem(main.play_registry(), main.test_registry(), win)
+    _tests = test_system.TestSystem(main.play_registry(),
+                                    main.test_registry(), win)
 
     _has_setup_ui = True

@@ -9,9 +9,9 @@
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
 #include "RobotStatusWidget.hpp"
-#include "rc-fshare/git_version.hpp"
-#include "radio/Radio.hpp"
 #include "grSimCom.hpp"
+#include "radio/Radio.hpp"
+#include "rc-fshare/git_version.hpp"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -169,7 +169,7 @@ MainWindow::MainWindow(Processor* processor, grSimCom* grCom, QWidget* parent)
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
     } else {
-        //Pass grCom into the simFieldView
+        // Pass grCom into the simFieldView
         _ui.fieldView->setGrCom(grCom);
 
         // reset the field initially, grSim will start out in some weird
@@ -1361,7 +1361,6 @@ void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
     _processor->externalReferee(value);
 }
 
-
 ////////////////
 // Tab Widget Section
 
@@ -1473,19 +1472,15 @@ void MainWindow::on_clearPlays_clicked() {
     playIndicatorStatus(true);
 }
 
-
-
 ////////
 // Testing Tab
 
 void MainWindow::on_testRun_clicked() {
     _processor->gameplayModule()->loadTest();
-
 }
 
 void MainWindow::on_addToTable_clicked() {
     _processor->gameplayModule()->addTests();
-
 }
 
 void MainWindow::on_removeFromTable_clicked() {
@@ -1494,9 +1489,7 @@ void MainWindow::on_removeFromTable_clicked() {
 
 void MainWindow::on_testNext_clicked() {
     _processor->gameplayModule()->nextTest();
-
 }
-
 
 void MainWindow::setRadioChannel(RadioChannels channel) {
     switch (channel) {

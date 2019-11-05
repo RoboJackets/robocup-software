@@ -7,13 +7,11 @@
 #include <protobuf/grSim_Packet.pb.h>
 #include <protobuf/grSim_Replacement.pb.h>
 
-#include <QUdpSocket>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <QUdpSocket>
 
 class grSimCom {
-
 public:
-
     void sendSimCommand(const grSim_Packet& cmd);
 
     // Places the ball at a position on the screen

@@ -61,7 +61,6 @@ class TestRegistry(QtCore.QAbstractItemModel):
             else:
                 break
 
-
     # iterates over all of the Nodes registered in the tree
     def __iter__(self):
         def _recursive_iter(category):
@@ -132,7 +131,9 @@ class TestRegistry(QtCore.QAbstractItemModel):
                 if child.name == name:
                     del self.children[idx]
                     return
-            raise KeyError("Testing System attempted to delete a child node that doesn't exist")
+            raise KeyError(
+                "Testing System attempted to delete a child node that doesn't exist"
+            )
 
         def append_child(self, child):
             self.children.append(child)
@@ -248,7 +249,6 @@ class TestRegistry(QtCore.QAbstractItemModel):
             if section == 0:
                 return 'Test'
         return None
-
 
     def setData(self, index, value, role):
         if role == QtCore.Qt.CheckStateRole:

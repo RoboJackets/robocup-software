@@ -2,13 +2,14 @@
 import play
 import robocup
 
+
 # Class to define robot locations/velocities
 class testRobot():
-
-    def __init__(self, x = 0, y = 0, angle = 0):
+    def __init__(self, x=0, y=0, angle=0):
         self.x = x
         self.y = y
         self.angle = angle
+
 
 '''
 # Enum of possible referee commands
@@ -33,8 +34,8 @@ robocup.Command:
     ball_placement_blue = 17
 '''
 
-class GameplayTest():
 
+class GameplayTest():
     def __init__(self):
 
         # Variables to be set by user
@@ -55,4 +56,7 @@ class GameplayTest():
         self.play_list = []
         # List of referee commands to run at the start (will run 1 each frame)
         # Default value is seen here
-        self.start_commands = [robocup.Command.halt, robocup.Command.force_start]
+        self.start_commands = [
+            robocup.Command.halt,
+            robocup.Command.force_start
+        ]

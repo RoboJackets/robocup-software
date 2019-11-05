@@ -6,8 +6,8 @@
 using namespace boost;
 using namespace Packet;
 
-
-void grSimCom::placeBall(QPointF pos, Geometry2d::TransformMatrix _screenToWorld) {
+void grSimCom::placeBall(QPointF pos,
+                         Geometry2d::TransformMatrix _screenToWorld) {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
@@ -22,7 +22,7 @@ void grSimCom::placeBall(QPointF pos, Geometry2d::TransformMatrix _screenToWorld
 
 void grSimCom::sendSimCommand(const grSim_Packet& cmd) {
     std::string out;
-    std::cout<<"send sim command??"<<std::endl;
+    std::cout << "send sim command??" << std::endl;
     cmd.SerializeToString(&out);
     _simCommandSocket.writeDatagram(&out[0], out.size(),
                                     QHostAddress(QHostAddress::LocalHost),

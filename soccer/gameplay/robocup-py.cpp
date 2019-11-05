@@ -23,13 +23,13 @@ using namespace boost::python;
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
 #include "KickEvaluator.hpp"
+#include "NewRefereeModule.hpp"
 #include "WindowEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "optimization/NelderMead2D.hpp"
 #include "optimization/NelderMead2DConfig.hpp"
 #include "optimization/PythonFunctionWrapper.hpp"
 #include "planning/MotionConstraints.hpp"
-#include "NewRefereeModule.hpp"
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
@@ -1069,19 +1069,28 @@ BOOST_PYTHON_MODULE(robocup) {
         .value("stop", NewRefereeModuleEnums::Command::STOP)
         .value("normal_start", NewRefereeModuleEnums::Command::NORMAL_START)
         .value("force_start", NewRefereeModuleEnums::Command::FORCE_START)
-        .value("prepare_kickoff_yellow", NewRefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
-        .value("prepare_kickoff_blue", NewRefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
-        .value("prepare_penalty_yellow", NewRefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
-        .value("prepare_penalty_blue", NewRefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
-        .value("direct_free_yellow", NewRefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
-        .value("direct_free_blue", NewRefereeModuleEnums::Command::DIRECT_FREE_BLUE)
-        .value("indirect_free_yellow", NewRefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
-        .value("indirect_free_blue", NewRefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
+        .value("prepare_kickoff_yellow",
+               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
+        .value("prepare_kickoff_blue",
+               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
+        .value("prepare_penalty_yellow",
+               NewRefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
+        .value("prepare_penalty_blue",
+               NewRefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
+        .value("direct_free_yellow",
+               NewRefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
+        .value("direct_free_blue",
+               NewRefereeModuleEnums::Command::DIRECT_FREE_BLUE)
+        .value("indirect_free_yellow",
+               NewRefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
+        .value("indirect_free_blue",
+               NewRefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
         .value("timeout_yellow", NewRefereeModuleEnums::Command::TIMEOUT_YELLOW)
         .value("timeout_blue", NewRefereeModuleEnums::Command::TIMEOUT_BLUE)
         .value("goal_yellow", NewRefereeModuleEnums::Command::GOAL_YELLOW)
         .value("goal_blue", NewRefereeModuleEnums::Command::GOAL_BLUE)
-        .value("ball_placement_yellow", NewRefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
-        .value("ball_placement_blue", NewRefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
-
+        .value("ball_placement_yellow",
+               NewRefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
+        .value("ball_placement_blue",
+               NewRefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
 }

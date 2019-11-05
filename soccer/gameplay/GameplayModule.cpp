@@ -1,11 +1,11 @@
-#include <gameplay/GameplayModule.hpp>
+#include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
 #include <Network.hpp>
-#include <planning/MotionInstant.hpp>
-#include <protobuf/LogFrame.pb.h>
+#include <NewRefereeModule.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <NewRefereeModule.hpp>
+#include <gameplay/GameplayModule.hpp>
+#include <planning/MotionInstant.hpp>
 
 #include <stdio.h>
 #include <iostream>
@@ -50,8 +50,13 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
     return false;
 }
 
-Gameplay::GameplayModule::GameplayModule(Context* const context, NewRefereeModule* const refereeModule, grSimCom* const grCom)
-  : _mutex(QMutex::Recursive), _context(context), _refereeModule(refereeModule), _grCom(grCom) {
+Gameplay::GameplayModule::GameplayModule(Context* const context,
+                                         NewRefereeModule* const refereeModule,
+                                         grSimCom* const grCom)
+    : _mutex(QMutex::Recursive),
+      _context(context),
+      _refereeModule(refereeModule),
+      _grCom(grCom) {
     calculateFieldObstacles();
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
@@ -387,15 +392,16 @@ void Gameplay::GameplayModule::run() {
 
             // Handle Tests
             if (runningTests) {
-
-              // I could add a bool to check if this needs to run or not if this is too inefficient
-                object rtrn(handle<>( PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+                // I could add a bool to check if this needs to run or not if
+                // this is too inefficient
+                object rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getNextCommand()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
                     _refereeModule->command = cmd;
                 }
-
             }
 
         } catch (error_already_set) {
@@ -480,60 +486,63 @@ void Gameplay::GameplayModule::addTests() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-          handle<> ignored3(
-                            (PyRun_String("import ui.main; ui.main._tests.addTests()", Py_file_input,
-                                          _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            handle<> ignored3((PyRun_String(
+                "import ui.main; ui.main._tests.addTests()", Py_file_input,
+                _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         } catch (error_already_set) {
-          PyErr_Print();
-          throw new runtime_error("Error trying to add tests");
+            PyErr_Print();
+            throw new runtime_error("Error trying to add tests");
         }
     }
     PyGILState_Release(state);
 
-    //TODO: Implement custom MIME type for tests
+    // TODO: Implement custom MIME type for tests
     //      Enable dragdrop in allTestsTable
     //      Link selectedTestsTable to a python list in main.py
 }
 
 void Gameplay::GameplayModule::removeTest() {
-  PyGILState_STATE state = PyGILState_Ensure();
-  {
-    try {
-      handle<> ignored3(
-                        (PyRun_String("import ui.main; ui.main._tests.removeTest()", Py_file_input,
-                                      _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
-    } catch (error_already_set) {
-      PyErr_Print();
-      throw new runtime_error("Error trying to add tests");
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+            handle<> ignored3((PyRun_String(
+                "import ui.main; ui.main._tests.removeTest()", Py_file_input,
+                _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+        } catch (error_already_set) {
+            PyErr_Print();
+            throw new runtime_error("Error trying to add tests");
+        }
     }
-  }
-  PyGILState_Release(state);
+    PyGILState_Release(state);
 }
 
 void Gameplay::GameplayModule::nextTest() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
-      try {
-        object rtrn(handle<>( PyRun_String("ui.main._tests.nextTest()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+        try {
+            object rtrn(handle<>(
+                PyRun_String("ui.main._tests.nextTest()", Py_eval_input,
+                             _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-        runningTests = extract<bool>(rtrn);
-      } catch (error_already_set) {
-        PyErr_Print();
-        throw new runtime_error("Error trying to go to next test");
-      }
+            runningTests = extract<bool>(rtrn);
+        } catch (error_already_set) {
+            PyErr_Print();
+            throw new runtime_error("Error trying to go to next test");
+        }
     }
     PyGILState_Release(state);
 
     // load the test
     loadTest();
-
 }
 
 void Gameplay::GameplayModule::loadTest() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            object rtrn(handle<>( PyRun_String("ui.main._tests.loadTest()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+            object rtrn(handle<>(
+                PyRun_String("ui.main._tests.loadTest()", Py_eval_input,
+                             _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
             runningTests = extract<bool>(rtrn);
 
@@ -543,55 +552,68 @@ void Gameplay::GameplayModule::loadTest() {
                 // Place robots and ball
                 grSim_Packet simPacket;
 
-                grSim_Replacement* replacement = simPacket.mutable_replacement();
+                grSim_Replacement* replacement =
+                    simPacket.mutable_replacement();
 
                 // Load OurRobots information
-                object our_robot_rtrn(handle<>( PyRun_String("ui.main._tests.getTestOurRobots()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+                object our_robot_rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getTestOurRobots()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-                boost::python::list our_robots = extract<boost::python::list>(our_robot_rtrn);
-
+                boost::python::list our_robots =
+                    extract<boost::python::list>(our_robot_rtrn);
 
                 for (int i = 0; i < len(our_robots); i++) {
                     auto rob = replacement->add_robots();
 
-                    boost::python::list robot = extract<boost::python::list>(our_robots[i]);
+                    boost::python::list robot =
+                        extract<boost::python::list>(our_robots[i]);
 
                     rob->set_x(extract<float>(robot[0]));
                     rob->set_y(extract<float>(robot[1]));
                     rob->set_dir(extract<float>(robot[2]));
                     rob->set_id(i);
-                    rob->set_yellowteam(not _context->game_state.blueTeam); //Need to get this info from somewhere
+                    rob->set_yellowteam(
+                        not _context->game_state
+                                .blueTeam);  // Need to get this info from
+                                             // somewhere
                 }
-
 
                 // Load TheirRobots information
-                object their_robot_rtrn(handle<>( PyRun_String("ui.main._tests.getTestTheirRobots()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+                object their_robot_rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getTestTheirRobots()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-                boost::python::list their_robots = extract<boost::python::list>(their_robot_rtrn);
+                boost::python::list their_robots =
+                    extract<boost::python::list>(their_robot_rtrn);
 
                 for (int i = 0; i < len(their_robots); i++) {
-                  auto rob = replacement->add_robots();
+                    auto rob = replacement->add_robots();
 
-                  boost::python::list robot = extract<boost::python::list>(their_robots[i]);
+                    boost::python::list robot =
+                        extract<boost::python::list>(their_robots[i]);
 
-                  rob->set_x(extract<float>(robot[0]));
-                  rob->set_y(extract<float>(robot[1]));
-                  rob->set_dir(extract<float>(robot[2]));
-                  rob->set_id(i);
-                  rob->set_yellowteam(_context->game_state.blueTeam); //Need to get this info from somewhere
+                    rob->set_x(extract<float>(robot[0]));
+                    rob->set_y(extract<float>(robot[1]));
+                    rob->set_dir(extract<float>(robot[2]));
+                    rob->set_id(i);
+                    rob->set_yellowteam(
+                        _context->game_state
+                            .blueTeam);  // Need to get this info from somewhere
                 }
 
-
                 // Get ball Information
-                object ball_rtrn(handle<>( PyRun_String("ui.main._tests.getTestBall()", Py_eval_input, _mainPyNamespace.ptr(), _mainPyNamespace.ptr()) ));
+                object ball_rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getTestBall()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-                boost::python::list ball = extract<boost::python::list>(ball_rtrn);
+                boost::python::list ball =
+                    extract<boost::python::list>(ball_rtrn);
                 auto ball_replace = replacement->mutable_ball();
                 ball_replace->mutable_pos()->set_x(extract<float>(ball[0]));
                 ball_replace->mutable_pos()->set_y(extract<float>(ball[1]));
                 ball_replace->mutable_vel()->set_x(extract<float>(ball[2]));
                 ball_replace->mutable_vel()->set_y(extract<float>(ball[3]));
-
 
                 _grCom->sendSimCommand(simPacket);
             }

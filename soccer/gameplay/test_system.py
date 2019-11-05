@@ -2,14 +2,15 @@ from PyQt5 import QtCore, QtWidgets
 import logging
 import test_list
 
-class TestSystem:
 
+class TestSystem:
     def __init__(self, play_registry, test_registry, win):
         self._play_registry = play_registry
         self._test_registry = test_registry
 
         testingTab = win.findChild(QtWidgets.QTreeView, 'allTestsTable')
-        selectedTestsTable = win.findChild(QtWidgets.QListView, 'selectedTestsTable')
+        selectedTestsTable = win.findChild(QtWidgets.QListView,
+                                           'selectedTestsTable')
 
         self._testList = test_list.TestList(selectedTestsTable)
         self._testIndex = 0
@@ -22,7 +23,6 @@ class TestSystem:
         selectedTestsTable.setModel(self._testList)
 
         logging.debug("Initialized TestConfigTab")
-
 
     def addTests(self):
         #TODO: implement custom listview for selectedTestsTable to support
@@ -45,7 +45,6 @@ class TestSystem:
             # If the running test was removed, load the next one
             self.loadTest()
 
-
     def loadTest(self):
         if self._testList.size() == 0:
             # No tests selected, not running
@@ -53,7 +52,6 @@ class TestSystem:
         elif self._testIndex >= self._testList.size():
             # test index out of range, start from the beginning
             self._testIndex = 0
-
 
         # This initializes a fresh version of the test
         # Even if it has already been run before
@@ -69,14 +67,12 @@ class TestSystem:
 
         return True
 
-
     def getNextCommand(self):
         if self._testNode is None or not self._testNode.test.start_commands:
             # Test Node does not exist or there are no start_commands
             return None
 
         return self._testNode.test.start_commands.pop(0)
-
 
     def nextTest(self):
         # If the test is running, go to next test, otherwise leave index the same
@@ -85,11 +81,10 @@ class TestSystem:
             self._testList.tList[self._testIndex] = self._testNode
 
             # Increment testIndex, if it is too large wrap around
-            self._testIndex+=1
+            self._testIndex += 1
             if self._testIndex >= self._testList.size():
                 self._testIndex = 0
         # loadTest() is called from the C++ side if it is necessary
-
 
     def getTestOurRobots(self):
         rtrn = []

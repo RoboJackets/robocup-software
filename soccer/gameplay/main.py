@@ -53,7 +53,8 @@ def init(log_errors=True):
     # init test registry
     global _test_registry
     _test_registry = test_registry_module.TestRegistry()
-    test_classes = class_import.recursive_import_classes(GAMEPLAY_DIR, ['gameplay_tests'], gameplay_test.GameplayTest)
+    test_classes = class_import.recursive_import_classes(
+        GAMEPLAY_DIR, ['gameplay_tests'], gameplay_test.GameplayTest)
 
     for entry in test_classes:
         # keep in mind that @entry is a tuple
@@ -96,7 +97,7 @@ def init(log_errors=True):
                         play_class = class_import.find_subclasses(module,
                                                                   play.Play)[0]
                         _play_registry.insert(
-                           module_path[1:], play_class
+                            module_path[1:], play_class
                         )  # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays

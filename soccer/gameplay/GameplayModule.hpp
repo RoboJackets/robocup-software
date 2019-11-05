@@ -17,8 +17,8 @@
 
 #include <Configuration.hpp>
 #include <Context.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <NewRefereeModule.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <grSimCom.hpp>
 
 class OurRobot;
@@ -45,7 +45,8 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context, NewRefereeModule* refereeModule, grSimCom* grCom);
+    GameplayModule(Context* const context, NewRefereeModule* refereeModule,
+                   grSimCom* grCom);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }

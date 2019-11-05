@@ -2,10 +2,12 @@ from PyQt5 import QtCore
 import test_registry
 from enum import Enum
 
+
 class Status(Enum):
     idle = 0
     running = 1
     completed = 2
+
 
 class TestNode(test_registry.TestRegistry.Node):
     def __init__(self, registryNode):
@@ -16,6 +18,7 @@ class TestNode(test_registry.TestRegistry.Node):
         self.test = self.test_class()
         self.status = Status.idle
         self.results = []
+
 
 class TestList(QtCore.QAbstractListModel):
     def __init__(self, selectedTestsTable):
@@ -37,8 +40,8 @@ class TestList(QtCore.QAbstractListModel):
         # After a lot of experimentation this is the closest that I
         # can get to the correct implementation of this.
         self.dataChanged.emit(index, index)
-        self.beginRemoveRows(self.createIndex(0,0), i, i)
-        self.rowsRemoved.emit(self.createIndex(0,0), i, i)
+        self.beginRemoveRows(self.createIndex(0, 0), i, i)
+        self.rowsRemoved.emit(self.createIndex(0, 0), i, i)
         self.endRemoveRows()
 
         return i
@@ -46,7 +49,7 @@ class TestList(QtCore.QAbstractListModel):
     def rowCount(self, parent):
         return len(self.tList)
 
-    def data(self, index, role = None):
+    def data(self, index, role=None):
         if not index.isValid():
             return None
         node = index.internalPointer()
@@ -64,11 +67,10 @@ class TestList(QtCore.QAbstractListModel):
 
         return None
 
-    def index(self, row, column = 0, parent = None):
+    def index(self, row, column=0, parent=None):
         if row < len(self.tList) and column == 0:
             return self.createIndex(row, column, self.tList[row])
         return QtCore.QModelIndex()
-
 
     def size(self):
         return len(self.tList)
@@ -81,7 +83,8 @@ class TestList(QtCore.QAbstractListModel):
         # Set the specific index to be selected
 
         selectionModel = self.selectedTestsTable.selectionModel()
-        selectionModel.setCurrentIndex(self.index(index), QtCore.QItemSelectionModel.ClearAndSelect)
+        selectionModel.setCurrentIndex(
+            self.index(index), QtCore.QItemSelectionModel.ClearAndSelect)
 
     def removeSelectedNode(self):
         selectionModel = self.selectedTestsTable.selectionModel()
