@@ -13,6 +13,8 @@
 #include <QThread>
 
 #include <protobuf/LogFrame.pb.h>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
@@ -187,7 +189,7 @@ protected:
     void run() override;
 
     void applyJoystickControls(const JoystickControlValues& controlVals,
-                               Packet::Control* txRobot, OurRobot* robot);
+                               OurRobot* robot);
 
 private:
     // Configuration for different models of robots
@@ -265,8 +267,10 @@ private:
     std::shared_ptr<NewRefereeModule> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
+    std::unique_ptr<VisionReceiver> _visionReceiver;
+    std::unique_ptr<MotionControlNode> _motionControl;
 
-    std::vector<std::unique_ptr<Node>> _modules;
+    std::vector<Node*> _nodes;
 
     // joystick control
     std::vector<Joystick*> _joysticks;
@@ -280,8 +284,6 @@ private:
     // If true, rotates robot commands from the joystick based on its
     // orientation on the field
     bool _useFieldOrientedManualDrive = false;
-
-    VisionReceiver vision;
 
     VisionChannel _visionChannel;
 

@@ -269,7 +269,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             self.robot.chip(self.chip_power)
         else:
             self.robot.kick(self.kick_power)
-        if (evaluation.ball.robot_has_ball(self.robot)):
+        if (self.robot.has_ball()):
             self.robot.kick_immediately()
 
     def on_exit_running(self):
