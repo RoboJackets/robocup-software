@@ -334,12 +334,7 @@ class SituationalPlaySelector:
     ##Returns true if we are in any of the situations in the passed list
     #passed situation list must be enums
     def isSituations(self, situations):
-        #This could be pretty easily inverted into a contains call
-        for g in situations:
-            if (self.isSituation(g)):
-                return True
-
-        return False
+        return self.currentSituation in situations
 
     ##
     # 

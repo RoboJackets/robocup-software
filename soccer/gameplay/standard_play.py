@@ -41,7 +41,7 @@ class StandardPlay(play.Play):
 
     ## 
     # Handles activity while the play is active. A play wishing to utilize this
-    # method in additionto having an "execute_running" method of its own must call
+    # method in addition to having an "execute_running" method of its own must call
     # it via super
     def execute_running(self):
         self.use_standard_defense()

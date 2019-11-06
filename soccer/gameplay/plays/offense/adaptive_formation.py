@@ -14,6 +14,7 @@ import tactics.advance_zone_midfielder
 import skills.move
 import skills.capture
 import situational_play_selection
+from situational_play_selection.SituationalPlaySelector import Situation
 
 
 class AdaptiveFormation(standard_play.StandardPlay):
