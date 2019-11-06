@@ -23,7 +23,7 @@ import standard_play
 class SituationalPlaySelector:
 
     ##!!!! This variable will control if plays will be using the situational play selector or not!
-    enabled = True
+    enabled = False
 
     ##This determines if this file will even run, set to false to save computation
     toRun = True
