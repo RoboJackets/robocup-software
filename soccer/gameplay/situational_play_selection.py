@@ -23,7 +23,7 @@ import standard_play
 class SituationalPlaySelector:
 
     ##!!!! This variable will control if plays will be using the situational play selector or not!
-    enabled = False
+    enabled = True
 
     ##This determines if this file will even run, set to false to save computation
     toRun = True
@@ -367,7 +367,6 @@ class SituationalPlaySelector:
             #Check to see if the play is a standard play before trying to preempt
             if (currentPlay != None and isinstance(
                     currentPlay, standard_play.StandardPlay) and self.enabled):
-                print("WE ARE TRYING TO PREEMPT THE PLAY!")
                 if (currentPlay.try_preempt()):
                     self.situationChanged = False
 
