@@ -23,7 +23,7 @@ import standard_play
 class SituationalPlaySelector:
 
     ##!!!! This variable will control if plays will be using the situational play selector or not!
-    enabled = False
+    enabled = True
 
     ##This determines if this file will even run, set to false to save computation
     toRun = True
@@ -323,6 +323,7 @@ class SituationalPlaySelector:
         return self.currentSituation
 
     ##
+    # Returns if we are in the passed situation
     # 
     # @param situation a situation as an enum
     def isSituation(self, situation):
@@ -366,7 +367,8 @@ class SituationalPlaySelector:
             #Check to see if the play is a standard play before trying to preempt
             if (currentPlay != None and isinstance(
                     currentPlay, standard_play.StandardPlay) and self.enabled):
-                currentPlay.try_preempt()
+                if(currentPlay.try_preempt()):
+                    self.situationChanged = False
 
     ##Returns the distance from a given robot to the ball
     def ballToRobotDist(self, robot):
