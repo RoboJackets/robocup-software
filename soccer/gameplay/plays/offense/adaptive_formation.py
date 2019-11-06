@@ -19,12 +19,13 @@ import situational_play_selection
 class AdaptiveFormation(standard_play.StandardPlay):
 
 
+
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.
-        ATTACK_GOAL, situational_play_selection.SituationalPlaySelector.
-        Situation.DEFEND_CLEAR, situational_play_selection.
-        SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
-    ]
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
+        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_CLEAR,
+        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+    ] # yapf: disable
+
 
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
