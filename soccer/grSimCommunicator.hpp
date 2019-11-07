@@ -10,7 +10,7 @@
 #include <Geometry2d/TransformMatrix.hpp>
 #include <QUdpSocket>
 
-class grSimCom {
+class grSimCommunicator {
 public:
     void sendSimCommand(const grSim_Packet& cmd);
 

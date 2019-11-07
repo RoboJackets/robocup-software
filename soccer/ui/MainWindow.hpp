@@ -33,7 +33,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(Processor* processor, grSimCom* grCom = nullptr,
+    MainWindow(Processor* processor, grSimCommunicator* grCom = nullptr,
                QWidget* parent = nullptr);
 
     void configuration(Configuration* config);

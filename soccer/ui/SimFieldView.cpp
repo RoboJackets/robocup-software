@@ -2,7 +2,7 @@
 
 #include <Constants.hpp>
 #include <Network.hpp>
-#include <grSimCom.hpp>
+#include <grSimCommunicator.hpp>
 
 #include <QFont>
 #include <QMouseEvent>
@@ -20,7 +20,7 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragRobotBlue = false;
 }
 
-void SimFieldView::setGrCom(grSimCom* grCom) { this->grCom = grCom; }
+void SimFieldView::setGrCom(grSimCommunicator* grCom) { this->grCom = grCom; }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
     Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();

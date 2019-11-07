@@ -8,16 +8,16 @@
 #include <protobuf/grSim_Replacement.pb.h>
 
 #include "FieldView.hpp"
-#include "grSimCom.hpp"
+#include "grSimCommunicator.hpp"
 
 class SimFieldView : public FieldView {
     Q_OBJECT;
 
 public:
     SimFieldView(QWidget* parent = nullptr);
-    void setGrCom(grSimCom* grCom);
+    void setGrCom(grSimCommunicator* grCom);
 
-    grSimCom* grCom;
+    grSimCommunicator* grCom;
 
 Q_SIGNALS:
     // Emitted when the user selects a robot.

@@ -21,7 +21,7 @@
 #include <SystemState.hpp>
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
-#include "grSimCom.hpp"
+#include "grSimCommunicator.hpp"
 #include "motion/MotionControlNode.hpp"
 
 #include "Context.hpp"
@@ -185,7 +185,7 @@ public:
     std::optional<RJ::Time> firstLogTime;
 
     Context* context() { return &_context; }
-    grSimCom* grCom() { return &_grCom; }
+    grSimCommunicator* grCom() { return &_grCom; }
 
 protected:
     void run() override;
@@ -239,7 +239,7 @@ private:
     Context _context;
 
     /** Communication to GrSim **/
-    grSimCom _grCom;
+    grSimCommunicator _grCom;
 
     // Transformation from world space to team space.
     // This depends on which goal we're defending.

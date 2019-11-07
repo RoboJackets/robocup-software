@@ -53,7 +53,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 // TODO: Replace this whole file when we move to ROS2
 Gameplay::GameplayModule::GameplayModule(Context* const context,
                                          NewRefereeModule* const refereeModule,
-                                         grSimCom* const grCom)
+                                         grSimCommunicator* const grCom)
     : _mutex(QMutex::Recursive),
       _context(context),
       _refereeModule(refereeModule),

@@ -19,7 +19,7 @@
 #include <Context.hpp>
 #include <NewRefereeModule.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <grSimCom.hpp>
+#include <grSimCommunicator.hpp>
 
 class OurRobot;
 class SystemState;
@@ -46,7 +46,7 @@ namespace Gameplay {
 class GameplayModule {
 public:
     GameplayModule(Context* const context, NewRefereeModule* refereeModule,
-                   grSimCom* grCom);
+                   grSimCommunicator* grCom);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -188,6 +188,6 @@ private:
 
     // Testing
     bool runningTests = false;
-    grSimCom* const _grCom;
+    grSimCommunicator* const _grCom;
 };
 }
