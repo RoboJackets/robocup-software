@@ -49,7 +49,8 @@ void calcMinimumWidth(QWidget* widget, QString text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, grSimCommunicator* grCom, QWidget* parent)
+MainWindow::MainWindow(Processor* processor, grSimCommunicator* grCom,
+                       QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _autoExternalReferee(true),

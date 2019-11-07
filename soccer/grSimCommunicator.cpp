@@ -7,7 +7,7 @@ using namespace boost;
 using namespace Packet;
 
 void grSimCommunicator::placeBall(QPointF pos,
-                         Geometry2d::TransformMatrix _screenToWorld) {
+                                  Geometry2d::TransformMatrix _screenToWorld) {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
