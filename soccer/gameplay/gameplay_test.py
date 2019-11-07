@@ -59,4 +59,4 @@ class GameplayTest():
         self.start_commands = [
             robocup.Command.halt,
             robocup.Command.force_start
-        ]
+        ] # yapf: disable
