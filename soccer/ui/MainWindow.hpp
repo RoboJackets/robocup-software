@@ -33,7 +33,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(Processor* processor, QWidget* parent = nullptr);
+    MainWindow(Processor* processor, grSimCom* grCom = nullptr,
+               QWidget* parent = nullptr);
 
     void configuration(Configuration* config);
 
@@ -162,6 +163,12 @@ private Q_SLOTS:
     /// Debug layers
     void on_debugLayers_itemChanged(QListWidgetItem* item);
     void on_debugLayers_customContextMenuRequested(const QPoint& pos);
+
+    /// Testing Tab
+    void on_testRun_clicked();
+    void on_addToTable_clicked();
+    void on_removeFromTable_clicked();
+    void on_testNext_clicked();
 
     /// Configuration
     void on_configTree_itemChanged(QTreeWidgetItem* item, int column);

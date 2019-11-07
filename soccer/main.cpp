@@ -190,7 +190,8 @@ int main(int argc, char* argv[]) {
                 .arg(cfgFile, error));
     }
 
-    auto win = std::make_unique<MainWindow>(processor.get());
+    auto win =
+        std::make_unique<MainWindow>(processor.get(), processor->grCom());
     win->configuration(config.get());
     win->initialize();
 

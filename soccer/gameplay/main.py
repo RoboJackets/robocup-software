@@ -1,6 +1,8 @@
 import play_registry as play_registry_module
+import test_registry as test_registry_module
 import playbook
 import play
+import gameplay_test
 import fs_watcher
 import class_import
 import logging
@@ -49,6 +51,19 @@ def init(log_errors=True):
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
+
+    #TODO: finish test registry
+    # init test registry
+    global _test_registry
+    _test_registry = test_registry_module.TestRegistry()
+    test_classes = class_import.recursive_import_classes(
+        GAMEPLAY_DIR, ['gameplay_tests'], gameplay_test.GameplayTest)
+
+    for entry in test_classes:
+        # keep in mind that @entry is a tuple
+        mod_path = entry[0][1:]
+        _test_registry.insert(mod_path, entry[1])
+
 
     def _module_blacklisted(module):
         """Return true if a module has been filtered out of autoloading."""
@@ -226,6 +241,13 @@ def play_registry():
     global _play_registry
     return _play_registry
 
+
+_test_registry = None
+
+
+def test_registry():
+    global _test_registry
+    return _test_registry
 
 # returns the first robot in our robots with matching ID,
 # or None if no robots have the given ID
