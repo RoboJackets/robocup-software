@@ -14,10 +14,10 @@ class TestRoleAssignment(unittest.TestCase):
         """Ensure that when requirements specify a target position, it is taken
         into account in assignment"""
 
-        bot1 = robocup.OurRobot(1, self.context)
+        bot1 = robocup.OurRobot(self.context, 1)
         bot1.set_pos_for_testing(robocup.Point(1, 6))
 
-        bot2 = robocup.OurRobot(2, self.context)
+        bot2 = robocup.OurRobot(self.context, 2)
         bot2.set_pos_for_testing(robocup.Point(2, 3))
 
         req1 = role_assignment.RoleRequirements()
@@ -35,7 +35,7 @@ class TestRoleAssignment(unittest.TestCase):
     def test_not_enough_bots(self):
         """If there's not enough robots to do an assignment, it should raise an error"""
 
-        bot1 = robocup.OurRobot(1, self.context)
+        bot1 = robocup.OurRobot(self.context, 1)
         bot1.set_pos_for_testing(robocup.Point(1, 6))
 
         req1 = role_assignment.RoleRequirements()

@@ -62,7 +62,7 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             behavior.Behavior.State.completed,
             lambda: self.collector is not None and \
                     self.collector.robot is not None and \
-                    evaluation.ball.robot_has_ball(self.collector.robot),
+                    self.collector.robot.has_ball(),
             'Ball collected')
 
         # Create list of defenders and start the marking
@@ -125,5 +125,4 @@ class DefensiveForward(composite_behavior.CompositeBehavior):
             self.defenders[i].mark_robot = self.mark_bots[i]
 
     def we_have_ball(self):
-        return any(
-            evaluation.ball.robot_has_ball(r) for r in main.our_robots())
+        return any(r.has_ball() for r in main.our_robots())
