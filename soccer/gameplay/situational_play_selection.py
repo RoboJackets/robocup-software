@@ -69,7 +69,7 @@ class SituationalPlaySelector:
 
     ##Enum for representing where the ball is on the field
     #
-    # The regions are defined in the update fudoablse#
+    # The regions are defined in the update field Location
     class FieldLoc(Enum):
         DEFENDSIDE = 1
         MIDFIELD = 2
@@ -342,6 +342,10 @@ class SituationalPlaySelector:
     # Will determine if the current play has lasted too long over a situation change
     #   and needs to be preempted, it will call try_preempt
     def updatePreempt(self):
+
+        #Since this not actually calls preemption we need to check if we are enabled 
+        if (not self.enabled):
+            return
 
         #Get the current play, may want to add a getter, as this is a "private" variable
         currentPlay = main._root_play.play
