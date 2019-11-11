@@ -7,6 +7,13 @@
 
 namespace Planning {
 
+REGISTER_CONFIGURABLE(PathTargetPlanner);
+
+void PathTargetPlanner::createConfiguration(Configuration* cfg) {
+    _partialReplanLeadTime = new ConfigDouble(
+            cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
+}
+
 Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     using Geometry2d::Point;
     using Geometry2d::Pose;
@@ -38,6 +45,11 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     // Make the path smooth
     RRT::SmoothPath(rrt, *state_space);
 
+
+    const RJ::Seconds partialReplanTime(*_partialReplanLeadTime);
+
+    enum ReplanState { Reuse, FullReplan, PartialReplan, CheckBetter };
+
     BezierPath path(rrt, start_instant.velocity.linear(), command.pathGoal.velocity.linear(), request.constraints.mot);
     result = ProfileVelocity(path,
                              start_instant.velocity.linear().mag(),
@@ -59,14 +71,6 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
             };
     PlanAngles(result, RobotState{start_instant.pose, start_instant.velocity, start_instant.stamp}, angleFunction, request.constraints.rot);
     return result;
-}
-
-bool PathTargetPlanner::shouldReplan(const PlanRequest& planRequest) const {
-    if(!Planner::shouldReplan(planRequest)) {
-        return false;
-    }
-    // todo(Ethan): do other checks
-    return true;
 }
 
 } // namespace Planning
