@@ -81,7 +81,7 @@ void MotionControl::run() {
 
     // evaluate path - where should we be right now?
     std::optional<RobotInstant> optTarget =
-        _robot->path().EvaluateSeconds(timeIntoPath);
+            _robot->path().evaluate(timeIntoPath);
 
     if (_robot->path().empty()) {
         RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
@@ -173,7 +173,7 @@ void MotionControl::run() {
     // acceleration factor
     Point acceleration;
     std::optional<RobotInstant> nextTarget =
-        _robot->path().EvaluateSeconds(timeIntoPath + RJ::Seconds(1) / 60.0);
+            _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
         acceleration = (nextTarget->velocity.linear() - target.vel) / 60.0f;
     } else {

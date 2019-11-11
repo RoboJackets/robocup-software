@@ -79,6 +79,8 @@ public:
      */
     bool CheckSeconds(RJ::Seconds seconds) const;
 
+    bool hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime) const;
+
     /**
      * Contract or expand this trajectory by scaling velocities and timestamps
      * (relative to the beginning).
@@ -129,7 +131,7 @@ public:
      * @return The RobotInstant at that point, or nullopt if time is
      *      out-of-bounds.
      */
-    std::optional<RobotInstant> EvaluateTime(RJ::Time time) const;
+    std::optional<RobotInstant> evaluate(RJ::Time time) const;
 
     /**
      * Evaluate this trajectory (calculate position and velocity) at a given
@@ -139,7 +141,7 @@ public:
      * @return The RobotInstant at that duration into the path, or nullopt if
      *      seconds is out-of-bounds.
      */
-    std::optional<RobotInstant> EvaluateSeconds(RJ::Seconds seconds) const;
+    std::optional<RobotInstant> evaluate(RJ::Seconds seconds) const;
 
     /**
      * Get the instant count. Intended for use when editing a trajectory in-

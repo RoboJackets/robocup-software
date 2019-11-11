@@ -24,12 +24,12 @@ TEST(Trajectory, Interpolation) {
     trajectory.AppendInstant(start_instant);
     trajectory.AppendInstant(mid_instant);
 
-    EXPECT_EQ(*trajectory.EvaluateTime(start), start_instant);
-    EXPECT_EQ(*trajectory.EvaluateTime(trajectory.end_time()), mid_instant);
+    EXPECT_EQ(*trajectory.evaluate(start), start_instant);
+    EXPECT_EQ(*trajectory.evaluate(trajectory.end_time()), mid_instant);
 
     Twist mid_twist;
     {
-        RobotInstant instant = *trajectory.EvaluateTime(start + 500ms);
+        RobotInstant instant = *trajectory.evaluate(start + 500ms);
         EXPECT_NEAR(instant.pose.position().x(), 0.5, 1e-6);
         EXPECT_NEAR(instant.pose.position().y(), 0.5, 1e-6);
         EXPECT_NEAR(instant.pose.heading(), 1.5, 1e-6);
@@ -39,7 +39,7 @@ TEST(Trajectory, Interpolation) {
     // Make sure we use the right segment.
     trajectory.AppendInstant(end_instant);
     {
-        RobotInstant instant = *trajectory.EvaluateTime(start + 1250ms);
+        RobotInstant instant = *trajectory.evaluate(start + 1250ms);
         EXPECT_NEAR(instant.pose.position().x(), 1.5, 1e-6);
         EXPECT_NEAR(instant.pose.position().y(), 0.5, 1e-6);
         EXPECT_NEAR(instant.pose.heading(), 4.5, 1e-6);
@@ -50,7 +50,7 @@ TEST(Trajectory, Interpolation) {
         EXPECT_NEAR(mid_twist.angular() * 2, instant.velocity.angular(), 1e-6);
     }
 
-    EXPECT_EQ(*trajectory.EvaluateTime(trajectory.end_time()), end_instant);
+    EXPECT_EQ(*trajectory.evaluate(trajectory.end_time()), end_instant);
 
     EXPECT_TRUE(trajectory.CheckTime(start + 500ms));
     EXPECT_FALSE(trajectory.CheckTime(start - 500ms));

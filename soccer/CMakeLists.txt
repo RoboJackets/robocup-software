@@ -81,7 +81,7 @@ set(ROBOCUP_LIB_SRC
     "planning/PlannerNode.hpp"
     "planning/planner/Planner.hpp"
     "planning/planner/PathTargetPlanner.cpp"
-    "planning/planner/PathTargetPlanner.hpp")
+    "planning/planner/PathTargetPlanner.hpp" planning/planner/Planner.cpp)
 
 
 if(APPLE)

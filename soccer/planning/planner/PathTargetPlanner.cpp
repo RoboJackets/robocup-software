@@ -19,7 +19,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     start_instant.stamp = request.start.timestamp;
 
     if (!result.empty()) {
-        auto maybe_start = result.EvaluateTime(RJ::now());
+        auto maybe_start = result.evaluate(RJ::now());
         if (maybe_start) {
             start_instant = *maybe_start;
         }
@@ -59,6 +59,14 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
             };
     PlanAngles(result, RobotState{start_instant.pose, start_instant.velocity, start_instant.stamp}, angleFunction, request.constraints.rot);
     return result;
+}
+
+bool PathTargetPlanner::shouldReplan(const PlanRequest& planRequest) const {
+    if(!Planner::shouldReplan(planRequest)) {
+        return false;
+    }
+    // todo(Ethan): do other checks
+    return true;
 }
 
 } // namespace Planning

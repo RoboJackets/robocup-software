@@ -1,9 +1,15 @@
 #include "Trajectory.hpp"
+#include <Geometry2d/Shape.hpp>
+#include <Geometry2d/Pose.hpp>
+#include <Geometry2d/Segment.hpp>
+
 
 namespace Planning {
 
 using Geometry2d::Pose;
 using Geometry2d::Twist;
+using Geometry2d::Shape;
+using Geometry2d::Segment;
 
 void Trajectory::InsertInstant(RobotInstant instant) {
     instants_.insert(std::upper_bound(
@@ -42,15 +48,15 @@ void Trajectory::ScaleDuration(RJ::Seconds final_duration, RJ::Time fixed_point)
     }
 }
 
-std::optional<RobotInstant> Trajectory::EvaluateSeconds(RJ::Seconds seconds) const {
+std::optional<RobotInstant> Trajectory::evaluate(RJ::Seconds seconds) const {
     if (instants_.empty()) {
         return std::nullopt;
     }
 
-    return EvaluateTime(begin_time() + seconds);
+    return evaluate(begin_time() + seconds);
 }
 
-std::optional<RobotInstant> Trajectory::EvaluateTime(RJ::Time time) const {
+std::optional<RobotInstant> Trajectory::evaluate(RJ::Time time) const {
     if (instants_.empty()) {
         return std::nullopt;
     }
@@ -127,6 +133,44 @@ std::optional<RobotInstant> Trajectory::EvaluateTime(RJ::Time time) const {
     return RobotInstant{interpolated_pose, interpolated_twist, time};
 }
 
+bool Trajectory::hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime) const {
+    size_t start = 0;
+    for (const auto& instant : instants_) {
+        if (instant.stamp - begin_time() > startTimeIntoPath) {
+            break;
+        }
+        start++;
+    }
+
+    if (start >= instants_.size()) {
+        // Empty path or starting beyond end of path
+        return false;
+    }
+
+    // This code disregards obstacles which the robot starts in. This allows the
+    // robot to move out a obstacle if it is already in one.
+    std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(instants_[start].pose.position());
+
+    for (size_t i = start; i < instants_.size() - 1; i++) {
+        std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(Segment(
+                instants_[i].pose.position(), instants_[i + 1].pose.position()));
+        if (!newHitSet.empty()) {
+            for (std::shared_ptr<Shape> hit : newHitSet) {
+                // If it hits something, check if the hit was in the original
+                // hitSet
+                if (startHitSet.find(hit) == startHitSet.end()) {
+                    if (hitTime) {
+                        *hitTime = instants_[i].stamp - begin_time();
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+
 void Trajectory::draw(DebugDrawer* drawer) const {
     if (empty()) {
         return;
@@ -135,9 +179,9 @@ void Trajectory::draw(DebugDrawer* drawer) const {
     constexpr int kNumSegments = 150;
     RJ::Seconds dt = duration() / kNumSegments;
 
-    Geometry2d::Point last_point = EvaluateSeconds(0s)->pose.position();
+    Geometry2d::Point last_point = evaluate(0s)->pose.position();
     for (int i = 1; i <= kNumSegments; i++) {
-        Geometry2d::Point point = EvaluateSeconds(i * dt)->pose.position();
+        Geometry2d::Point point = evaluate(i * dt)->pose.position();
         drawer->drawSegment(Geometry2d::Segment(last_point, point));
         last_point = point;
     }
