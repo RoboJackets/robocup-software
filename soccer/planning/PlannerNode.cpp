@@ -84,7 +84,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     // the empty planner is always last.
     for (auto& planner : planners_) {
         if (planner->isApplicable(request.motionCommand)) {
-            return planner->plan(std::move(request));
+            return std::move(planner->plan(std::move(request)));
         } else {
             std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl;
         }

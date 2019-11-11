@@ -2,8 +2,10 @@
 #include <planning/trajectory/PathSmoothing.hpp>
 #include <planning/trajectory/VelocityProfiling.hpp>
 #include "PathTargetPlanner.hpp"
-
+#include "planning/trajectory/Trajectory.hpp"
 #include "planning/trajectory/RRTUtil.hpp"
+#include <Geometry2d/Pose.hpp>
+#include <vector>
 
 namespace Planning {
 
@@ -11,12 +13,13 @@ REGISTER_CONFIGURABLE(PathTargetPlanner);
 
 void PathTargetPlanner::createConfiguration(Configuration* cfg) {
     _partialReplanLeadTime = new ConfigDouble(
-            cfg, "RRTPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
+            cfg, "PathTargetPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
 }
 
 Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     using Geometry2d::Point;
     using Geometry2d::Pose;
+    using Geometry2d::Twist;
 
     Trajectory result = std::move(request.prevTrajectory);
 
@@ -25,6 +28,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     start_instant.velocity = request.start.velocity;
     start_instant.stamp = request.start.timestamp;
 
+    //assumes the robot is on the path
     if (!result.empty()) {
         auto maybe_start = result.evaluate(RJ::now());
         if (maybe_start) {
@@ -36,7 +40,20 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
 
     auto state_space = std::make_shared<RoboCupStateSpace>(
             Field_Dimensions::Current_Dimensions, std::move(request.obstacles));
-    auto rrt = GenerateRRT(start_instant.pose.position(), command.pathGoal.pose.position(), state_space);
+
+    // Simple case: no path
+    const Pose& start_pose = start_instant.pose;
+    const Pose& goal_pose = command.pathGoal.pose;
+    if (start_pose.position() == goal_pose.position()) {
+        std::vector<RobotInstant> instants;
+        instants.push_back(RobotInstant(start_pose, Twist(), RJ::now()));
+        result = std::move(Trajectory(std::move(instants)));
+        //todo(Ethan) fix this
+//        result.setDebugText("Invalid Basic Path");
+        return std::move(result);
+    }
+
+    auto rrt = GenerateRRT(start_pose.position(), goal_pose.position(), state_space);
 
     if (rrt.empty()) {
         return Trajectory({});
