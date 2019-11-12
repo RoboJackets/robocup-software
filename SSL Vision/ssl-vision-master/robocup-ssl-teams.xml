@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VarXML>
+	<Var name="Default" type="list">
+		<Var name="Team Name" type="string">
+			Default
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			140.000000
+		</Var>
+	</Var>
+	<Var name="MRL" type="list">
+		<Var name="Team Name" type="string">
+			MRL
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			150.000000
+		</Var>
+	</Var>
+	<Var name="CMus" type="list">
+		<Var name="Team Name" type="string">
+			CMus
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			140.000000
+		</Var>
+	</Var>
+	<Var name="ER-Force" type="list">
+		<Var name="Team Name" type="string">
+			ER-Force
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			142.000000
+		</Var>
+	</Var>
+	<Var name="Immortals" type="list">
+		<Var name="Team Name" type="string">
+			Immortals
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			150.000000
+		</Var>
+	</Var>
+	<Var name="KIKS" type="list">
+		<Var name="Team Name" type="string">
+			KIKS
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			125.000000
+		</Var>
+	</Var>
+	<Var name="RoboDragons" type="list">
+		<Var name="Team Name" type="string">
+			RoboDragons
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			125.000000
+		</Var>
+	</Var>
+	<Var name="RoboTeam Twente" type="list">
+		<Var name="Team Name" type="string">
+			RoboTeam Twente
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			148.000000
+		</Var>
+	</Var>
+	<Var name="TIGERs Mannheim" type="list">
+		<Var name="Team Name" type="string">
+			TIGERs Mannheim
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			146.000000
+		</Var>
+	</Var>
+	<Var name="UMass Minutebots" type="list">
+		<Var name="Team Name" type="string">
+			UMass Minutebots
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			150.000000
+		</Var>
+	</Var>
+	<Var name="ZJUNlict" type="list">
+		<Var name="Team Name" type="string">
+			ZJUNlict
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			148.725000
+		</Var>
+	</Var>
+	<Var name="AIS" type="list">
+		<Var name="Team Name" type="string">
+			AIS
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			150.000000
+		</Var>
+	</Var>
+	<Var name="NAMeC" type="list">
+		<Var name="Team Name" type="string">
+			NAMeC
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			149.000000
+		</Var>
+	</Var>
+	<Var name="NEUIslanders" type="list">
+		<Var name="Team Name" type="string">
+			NEUIslanders
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			140.000000
+		</Var>
+	</Var>
+	<Var name="RoboFEI" type="list">
+		<Var name="Team Name" type="string">
+			RoboFEI
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			149.000000
+		</Var>
+	</Var>
+	<Var name="RoboIME" type="list">
+		<Var name="Team Name" type="string">
+			RoboIME
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			149.000000
+		</Var>
+	</Var>
+	<Var name="RoboJackets" type="list">
+		<Var name="Team Name" type="string">
+			RoboJackets
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			150.000000
+		</Var>
+	</Var>
+	<Var name="UBC Thunderbots" type="list">
+		<Var name="Team Name" type="string">
+			UBC Thunderbots
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			144.000000
+		</Var>
+	</Var>
+	<Var name="ULtron" type="list">
+		<Var name="Team Name" type="string">
+			ULtron
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			143.000000
+		</Var>
+	</Var>
+	<Var name="OP-AmP" type="list">
+		<Var name="Team Name" type="string">
+			OP-AmP
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			147.000000
+		</Var>
+	</Var>
+	<Var name="MCT Susano Logics" type="list">
+		<Var name="Team Name" type="string">
+			MCT Susano Logics
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			148.000000
+		</Var>
+	</Var>
+	<Var name="RoboCIn" type="list">
+		<Var name="Team Name" type="string">
+			RobôCIn
+		</Var>
+		<Var name="Robot Height (mm)" type="double" minval="" maxval="">
+			149.000000
+		</Var>
+	</Var>
+</VarXML>

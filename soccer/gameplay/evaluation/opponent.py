@@ -67,6 +67,7 @@ def get_closest_opponent(pos, direction_weight=0, excluded_robots=[]):
 
     return closest_bot
 
+
 ## Gets list of threats
 #
 # @return sorted tuple of threat positions and score 
@@ -96,7 +97,7 @@ def get_threat_list(unused_threat_handlers):
                 # Add best receiver to threats
                 # TODO Calc shot chance
                 best_tuple = min(potential_receivers,
-                                    key=lambda rcrv_tuple: rcrv_tuple[1])
+                                 key=lambda rcrv_tuple: rcrv_tuple[1])
                 threats.append((best_tuple[0], .81, best_tuple[2]))
             else:
                 # Just deal with ball if no recievers
@@ -118,8 +119,8 @@ def get_threat_list(unused_threat_handlers):
             for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                 excluded_bots.append(r)
 
-            threats.append((opp.pos, estimate_risk_score(
-                opp, excluded_bots), opp))
+            threats.append((opp.pos, estimate_risk_score(opp, excluded_bots),
+                            opp))
     else:
         for opp in potential_threats:
 
@@ -138,12 +139,13 @@ def get_threat_list(unused_threat_handlers):
     def _adjust_pt(threat):
         pt = threat[0]
         pt.y = max(pt.y, 0.1)
-        return (pt,) + threat[1:]
+        return (pt, ) + threat[1:]
 
     threats = list(map(_adjust_pt, threats))
     threats.sort(key=lambda threat: threat[1], reverse=True)
 
     return threats
+
 
 ## Estimate potential reciever score (likelihood of opponent passing to this robot)
 #  
@@ -167,6 +169,7 @@ def estimate_potential_recievers_score(bot):
     else:
         return 0
 
+
 ## Estimate risk score based on old defense.py play
 #  
 #  @param bot Robot to estimate score at
@@ -188,6 +191,7 @@ def estimate_risk_score(bot, excluded_bots=[]):
     point, shotChance = kick_eval.eval_pt_to_our_goal(bot.pos)
 
     return passChance * shotChance
+
 
 ## Returns whether a position is marked by one of our robots
 #
