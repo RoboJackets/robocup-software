@@ -13,9 +13,19 @@ import tactics.simple_zone_midfielder
 import tactics.advance_zone_midfielder
 import skills.move
 import skills.capture
+import situational_play_selection
 
 
 class AdaptiveFormation(standard_play.StandardPlay):
+
+
+
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
+        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_CLEAR,
+        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+    ] # yapf: disable
+
 
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
@@ -148,11 +158,22 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     @classmethod
     def score(cls):
-        if (not main.game_state().is_playing()):
-            return float("inf")
-        if len(main.our_robots()) < 5:
-            return float("inf")
-        return 8
+        score = super().score()
+
+        #If we get a valid score from the super function, then we should calculate 
+        #an offset and sum that with score and return that
+        if (score != float("inf")):
+            #currently the offset is just 0 because we haven't made one
+            scoreOffset = 0
+            return score + scoreOffset
+        else:
+            if (not main.game_state().is_playing()):
+                return float("inf")
+            if len(main.our_robots()) < 5:
+                return float("inf")
+            return 8
+
+
 
     def should_pass_from_dribble(self):
 
@@ -210,8 +231,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
         return True
 
     def dribbler_has_ball(self):
-        return any(
-            evaluation.ball.robot_has_ball(r) for r in main.our_robots())
+        return any(r.has_ball() for r in main.our_robots())
 
     def on_enter_collecting(self):
         self.remove_all_subbehaviors()
