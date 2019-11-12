@@ -7,7 +7,7 @@ import enum
 
 # Simple goalie who chills in goal
 class SimpleGoalie(positions.position.Position):
-    def __init__(self, position_class: enum.Enum, name: str):
+    def __init__(self, position_class: enum.Enum, name: str) -> None:
         super().__init__(position_class, name)
 
         self.add_transition(behavior.Behavior.State.start,
