@@ -564,15 +564,29 @@ void Gameplay::GameplayModule::loadTest() {
                 boost::python::list our_robots =
                     extract<boost::python::list>(our_robot_rtrn);
 
-                for (int i = 0; i < len(our_robots); i++) {
+                const int NUM_COLS = 2;
+                const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+                const int teamDirection =
+                    _context->game_state.blueTeam ? -1 : 1;
+                for (int i = 0; i < Robots_Per_Team; i++) {
                     auto rob = replacement->add_robots();
 
-                    boost::python::list robot =
-                        extract<boost::python::list>(our_robots[i]);
+                    if (i < len(our_robots)) {
+                        boost::python::list robot =
+                            extract<boost::python::list>(our_robots[i]);
 
-                    rob->set_x(extract<float>(robot[0]));
-                    rob->set_y(extract<float>(robot[1]));
-                    rob->set_dir(extract<float>(robot[2]));
+                        rob->set_x(extract<float>(robot[0]));
+                        rob->set_y(extract<float>(robot[1]));
+                        rob->set_dir(extract<float>(robot[2]));
+                    } else {
+                        double x_pos =
+                            teamDirection * (2.5 - i / ROBOTS_PER_COL);
+                        double y_pos =
+                            i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+                        rob->set_x(x_pos);
+                        rob->set_y(y_pos);
+                        rob->set_dir(0);
+                    }
                     rob->set_id(i);
                     rob->set_yellowteam(not _context->game_state.blueTeam);
                 }
@@ -585,15 +599,25 @@ void Gameplay::GameplayModule::loadTest() {
                 boost::python::list their_robots =
                     extract<boost::python::list>(their_robot_rtrn);
 
-                for (int i = 0; i < len(their_robots); i++) {
+                for (int i = 0; i < Robots_Per_Team; i++) {
                     auto rob = replacement->add_robots();
 
-                    boost::python::list robot =
-                        extract<boost::python::list>(their_robots[i]);
+                    if (i < len(their_robots)) {
+                        boost::python::list robot =
+                            extract<boost::python::list>(their_robots[i]);
 
-                    rob->set_x(extract<float>(robot[0]));
-                    rob->set_y(extract<float>(robot[1]));
-                    rob->set_dir(extract<float>(robot[2]));
+                        rob->set_x(extract<float>(robot[0]));
+                        rob->set_y(extract<float>(robot[1]));
+                        rob->set_dir(extract<float>(robot[2]));
+                    } else {
+                        double x_pos =
+                            -teamDirection * (2.5 - i / ROBOTS_PER_COL);
+                        double y_pos =
+                            i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+                        rob->set_x(x_pos);
+                        rob->set_y(y_pos);
+                        rob->set_dir(0);
+                    }
                     rob->set_id(i);
                     rob->set_yellowteam(_context->game_state.blueTeam);
                 }
