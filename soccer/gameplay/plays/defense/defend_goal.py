@@ -12,6 +12,7 @@ import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import tactics.defense
 
+
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal.
 #  
@@ -19,7 +20,6 @@ import tactics.defense
 #  defenders, one goalie) and two wing defense robots. The
 #  remaining robot will mark the highest threat robot. 
 class DefendGoal(standard_play.StandardPlay):
-
     def __init__(self, num_defenders=3, num_wingers=2):
         super().__init__(continuous=True)
 
@@ -27,11 +27,12 @@ class DefendGoal(standard_play.StandardPlay):
         self.num_wingers = num_wingers
 
         self.add_transition(behavior.Behavior.State.start,
-            behavior.Behavior.State.running, lambda: True,
-            'Immediately')
+                            behavior.Behavior.State.running, lambda: True,
+                            'Immediately')
 
         # Use standard defense
-        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+        self.add_subbehavior(
+            tactics.defense.Defense(), 'defense', required=False)
 
         self.add_subbehavior(mark.Mark(), 'mark')
 
@@ -41,7 +42,8 @@ class DefendGoal(standard_play.StandardPlay):
             self.defended[i] = False
 
         for i in range(self.num_wingers):
-            self.add_subbehavior(wing_defender.WingDefender(), 'winger' + str(i))
+            self.add_subbehavior(wing_defender.WingDefender(),
+                                 'winger' + str(i))
 
     def execute_running(self):
         for i in range(self.num_wingers):
@@ -53,7 +55,7 @@ class DefendGoal(standard_play.StandardPlay):
                 if not eval_opp.is_marked(bot.pos) and not self.defended[i]:
                     bhvr.mark_robot = bot
                     self.defended[i] = True
-        
+
         for bot in main.their_robots():
             if not eval_opp.is_marked(bot.pos):
                 self.defended[i] = False
