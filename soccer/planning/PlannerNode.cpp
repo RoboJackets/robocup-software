@@ -86,7 +86,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
         if (planner->isApplicable(request.motionCommand)) {
             return std::move(planner->plan(std::move(request)));
         } else {
-            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl;
+//            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this
         }
     }
 

@@ -237,12 +237,16 @@ void Trajectory::draw(DebugDrawer* drawer) const {
 
     constexpr int kNumSegments = 150;
     RJ::Seconds dt = duration() / kNumSegments;
-
-    Geometry2d::Point last_point = evaluate(0s)->pose.position();
-    for (int i = 1; i <= kNumSegments; i++) {
-        Geometry2d::Point point = evaluate(i * dt)->pose.position();
-        drawer->drawSegment(Geometry2d::Segment(last_point, point));
-        last_point = point;
+    auto trajectory_it = iterator(begin_time(), dt);
+    Geometry2d::Point from_point = (*trajectory_it).pose.position();
+    ++trajectory_it;
+    Geometry2d::Point to_point = (*trajectory_it).pose.position();
+    Geometry2d::Point last_point = last().pose.position();
+    while (to_point != last_point) {
+        drawer->drawSegment(Geometry2d::Segment(from_point, to_point));
+        from_point = to_point;
+        ++trajectory_it;
+        to_point = (*trajectory_it).pose.position();
     }
 }
 

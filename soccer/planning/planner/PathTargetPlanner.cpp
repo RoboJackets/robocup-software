@@ -23,7 +23,6 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
         throw std::invalid_argument("Error in PathTargetPlanner: invalid motionCommand; must be a PathTargetCommand.");
     }
 
-
     ++counter;
     using Geometry2d::Point;
     using Geometry2d::Pose;
@@ -47,12 +46,12 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     current_instant.stamp = request.start.timestamp;
 
     //assumes the robot is on the path
-    if (!result.empty()) {
-        auto maybe_start = result.evaluate(RJ::now());
-        if (maybe_start) {
-            current_instant = *maybe_start;
-        }
-    }
+//    if (!result.empty()) {
+//        auto maybe_start = result.evaluate(RJ::now());
+//        if (maybe_start) {
+//            current_instant = *maybe_start;
+//        }
+//    }
     PathTargetCommand command = std::get<PathTargetCommand>(request.motionCommand);
 
 
@@ -68,6 +67,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
         result = std::move(Trajectory(std::move(instants)));
         //todo(Ethan) fix this
 //        result.setDebugText("Invalid Basic Path");
+        std::cout << "invalid basic path " << std::endl;
         return std::move(result);
     }
 
@@ -91,6 +91,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     if(isFullReplan) {
         std::vector<Point> new_points = GenerateRRT(current_pose.position(), goal_pose.position(), state_space);
         if (new_points.empty()) {
+            std::cout << "RRT failed (full) " << std::endl;
             return Trajectory({});
         }
         RRT::SmoothPath(new_points, *state_space);
@@ -112,6 +113,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
         std::vector<Point> new_points = GenerateRRT(middle_instant.pose.position(), goal_pose.position(), state_space,
                 biasWaypoints);
         if (new_points.empty()) {
+            std::cout << "RRT failed (partial) " << std::endl;
             return Trajectory({});
         }
         RRT::SmoothPath(new_points, *state_space);
