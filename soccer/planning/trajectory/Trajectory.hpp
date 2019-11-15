@@ -45,6 +45,8 @@ struct RobotInstant {
  * This uses cubic interpolation between two adjacent instants, fitting a
  * parametric cubic polynomial based on initial and final posiiton and velocity.
  */
+class TrajectoryIterator;
+//todo(Ethan) implement move-constructor, move-assign, copy-constructor, copy-assign
 class Trajectory {
 public:
     /**
@@ -52,6 +54,13 @@ public:
      * and timestamp.
      */
     explicit Trajectory(std::vector<RobotInstant> &&instants) : instants_(instants) {}
+
+    /**
+     * Create a trajectory from two other trajectories
+     * This copies all old RobotInstants, so don't use this with too many points
+     * (see CompositePath for a more efficient way if needed)
+     */
+    Trajectory(const Trajectory& a, const Trajectory& b);
 
     /**
      * Insert a RobotInstant based on its timestamp.
@@ -79,6 +88,16 @@ public:
      */
     bool CheckSeconds(RJ::Seconds seconds) const;
 
+    /**
+     * Returns true if the path hits an obstacle
+     *
+     * @param[in]	shape The obstacles on the field
+     * @param[out]  hitTime the approximate time when the path hits an obstacle.
+     * If no obstacles are hit, behavior is undefined for the final value.
+     * @param[in] 	startTimeIntoPath The time on the path to start checking
+     *from
+     * @return 		true if it hits an obstacle, otherwise false
+     */
     bool hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime) const;
 
     /**
@@ -144,6 +163,18 @@ public:
     std::optional<RobotInstant> evaluate(RJ::Seconds seconds) const;
 
     /**
+     * Returns a subTrajectory
+     *
+     * @param startTime The startTime for from which the subTrajectory should be
+     *     taken.
+     * @param endTime The endTime from which the subTrajectory should be taken. If it
+     *     is greater than the duration fo the trajectory, it should go to the end of
+     *     the trajectory.
+     * @return a subTrajectory
+     */
+    Trajectory subTrajectory(RJ::Seconds startTime, RJ::Seconds endTime) const;
+
+    /**
      * Get the instant count. Intended for use when editing a trajectory in-
      * place.
      *
@@ -183,9 +214,49 @@ public:
      */
     void draw(DebugDrawer* drawer) const;
 
+    /**
+     * make a clone
+     * @return clone
+     */
+    Trajectory clone() const {
+        return Trajectory(std::vector<RobotInstant>(instants_));
+    }
+
+    /**
+     * get an iterator
+     * @param startTime start time
+     * @param deltaT time step
+     * @return iterator
+     */
+     TrajectoryIterator iterator(RJ::Time startTime, RJ::Seconds deltaT) const;
 protected:
     // A sorted array of RobotInstants (by timestamp)
     std::vector<RobotInstant> instants_;
+};
+
+class TrajectoryIterator {
+public:
+    explicit TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime, RJ::Seconds deltaT)
+            : _trajectory(trajectory), _time(startTime - trajectory.begin_time()), _deltaT(deltaT) {}
+
+    virtual RobotInstant operator*() const {
+        auto temp = _trajectory.evaluate(_time);
+        if (temp) {
+            return *temp;
+        } else {
+            return _trajectory.last();
+        }
+    }
+
+    virtual TrajectoryIterator& operator++() {
+        _time += _deltaT;
+        return *this;
+    }
+
+private:
+    const Trajectory& _trajectory;
+    RJ::Seconds _time;
+    const RJ::Seconds _deltaT;
 };
 
 } // namespace Planning

@@ -28,9 +28,43 @@ public:
     virtual Trajectory plan(PlanRequest&& request) = 0;
 
     /**
+     * checks if a full replan is necessary
+     * @param planRequest plan reuest
+     * @return true if a full replan is necessary; false otherwise
+     */
+    virtual bool shouldReplan(const PlanRequest &planRequest) const;
+
+    /**
      * Get a user-readable name for this planner.
      */
     virtual std::string name() const = 0;
+
+    /**
+     * create configuration for Qt
+     * @param cfg configuration
+     */
+    static void createConfiguration(Configuration* cfg);
+
+    /**
+     * get threshold for change in target position for replanning
+     * @return threshold
+     */
+    static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
+
+    /**
+     * get threshold for change in target velocity for replanning
+     * @return threshold
+     */
+    static double goalVelChangeThreshold() { return *_goalVelChangeThreshold; }
+    /**
+     * get replan timeout
+     * @return timeout
+     */
+    static double replanTimeout() { return *_replanTimeout; }
+private:
+    static ConfigDouble* _goalPosChangeThreshold;
+    static ConfigDouble* _goalVelChangeThreshold;
+    static ConfigDouble* _replanTimeout;
 };
 
 template<typename CommandType>

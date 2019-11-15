@@ -2,7 +2,11 @@
 #include <Geometry2d/Shape.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Segment.hpp>
+#include <memory>
 
+
+#include <stdexcept>
+#include "Utils.hpp"
 
 namespace Planning {
 
@@ -10,6 +14,16 @@ using Geometry2d::Pose;
 using Geometry2d::Twist;
 using Geometry2d::Shape;
 using Geometry2d::Segment;
+
+Trajectory::Trajectory(const Trajectory& a, const Trajectory& b) {
+    instants_.reserve(a.instants_.size()+b.instants_.size());
+    for(auto it = a.instants_.begin(); it != a.instants_.end(); ++it) {
+        instants_.push_back(*it);
+    }
+    for(auto it = b.instants_.begin(); it != b.instants_.end(); ++it) {
+        instants_.push_back(*it);
+    }
+}
 
 void Trajectory::InsertInstant(RobotInstant instant) {
     instants_.insert(std::upper_bound(
@@ -170,6 +184,51 @@ bool Trajectory::hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTim
     return false;
 }
 
+Trajectory Trajectory::subTrajectory(RJ::Seconds startTime, RJ::Seconds endTime) const {
+    // Check for valid arguments
+    if (startTime < RJ::Seconds::zero()) {
+        throw std::invalid_argument("InterpolatedPath::subPath(): startTime(" +
+                               to_string(startTime) +
+                               ") can't be less than zero");
+    }
+    if (startTime > endTime) {
+        throw std::invalid_argument(
+                "InterpolatedPath::subPath(): startTime(" + to_string(startTime) +
+                ") can't be after endTime(" + to_string(endTime) + ")");
+    }
+    if (startTime >= duration()) {
+        debugThrow(std::invalid_argument(
+                "InterpolatedPath::subPath(): startTime(" + to_string(startTime) +
+                ") can't be greater than the duration(" + to_string(duration()) +
+                ") of the path"));
+        return Trajectory(std::vector<RobotInstant>());
+    }
+    if (startTime == RJ::Seconds::zero() && endTime >= duration()) {
+        return this->clone();
+    }
+    endTime = std::min(endTime, duration());
+    Trajectory result = Trajectory(std::vector<RobotInstant>());
+    result.AppendInstant(*evaluate(startTime));
+    // Find the first point in the vector of points which will be included in
+    // the subPath. Noninclusive because we always copy eval(startTime)
+    auto instants_it = instants_.begin();
+    RJ::Time absolute_start_time = begin_time();
+    while ((*instants_it).stamp <= absolute_start_time) {
+        ++instants_it;
+    }
+    // Copy until the time is greater than or equal to endTime. Noninclusive
+    // because we always copy eval(endTime)
+    while (instants_it != instants_.end() && (*instants_it).stamp - absolute_start_time < endTime) {
+        result.instants_.push_back(*instants_it);
+        ++instants_it;
+    }
+    result.AppendInstant(*evaluate(endTime));
+    return std::move(result);
+}
+
+TrajectoryIterator Trajectory::iterator(RJ::Time startTime, RJ::Seconds deltaT) const {
+    return TrajectoryIterator(*this, startTime, deltaT);
+}
 
 void Trajectory::draw(DebugDrawer* drawer) const {
     if (empty()) {
