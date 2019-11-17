@@ -8,11 +8,11 @@ namespace Planning {
     ConfigDouble* Planner::_replanTimeout;
 
     void Planner::createConfiguration(Configuration* cfg) {
-        _replanTimeout = new ConfigDouble(ConfigDouble(cfg, "PlannerForCommandType/replanTimeout", 5));
+        _replanTimeout = new ConfigDouble(cfg, "PlannerForCommandType/replanTimeout", 5);
         _goalPosChangeThreshold =
-                new ConfigDouble(ConfigDouble(cfg, "PlannerForCommandType/goalPosChangeThreshold", 0.025));
+                new ConfigDouble(cfg, "PlannerForCommandType/goalPosChangeThreshold", 0.025);
         _goalVelChangeThreshold =
-                new ConfigDouble(ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025));
+                new ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025);
     }
 
     //todo(Ethan) check for target change --> replan

@@ -96,7 +96,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     if(isFullReplan) {
         std::vector<Point> new_points = GenerateRRT(current_pose.position(), goal_pose.position(), state_space);
         if (new_points.empty()) {
-            std::cout << "RRT failed (full) " << std::endl;
+//            std::cout << "RRT failed (full) " << current_pose.position() << " " << goal_pose.position() << std::endl;
             return Trajectory({});
         }
         RRT::SmoothPath(new_points, *state_space);

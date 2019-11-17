@@ -10,8 +10,7 @@ namespace Planning {
 PlannerNode::PlannerNode(Context* context) : context_(context) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePathPlanner>());
-    planners_.push_back(std::make_unique<DirectTargetPathPlanner>());
-    planners_.push_back(std::make_unique<PivotPathPlanner>());
+//    planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EmptyPlanner>());
@@ -90,6 +89,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     // the empty planner is always last.
     for (auto& planner : planners_) {
         if (planner->isApplicable(request.motionCommand)) {
+            std::cout << "Planner: " << planner->name() << std::endl;
             return std::move(planner->plan(std::move(request)));
         } else {
 //            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this

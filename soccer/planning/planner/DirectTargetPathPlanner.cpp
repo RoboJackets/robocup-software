@@ -21,6 +21,7 @@ Trajectory DirectTargetPathPlanner::plan(PlanRequest&& planRequest) {
     const Planning::DirectPathTargetCommand& command = std::get<DirectPathTargetCommand>(planRequest.motionCommand);
 
     if (shouldReplan(planRequest) || findInvalidTime(planRequest)) {
+        std::cout << "planning direct" << std::endl;
         Geometry2d::Point endTarget = command.pathGoal.pose.position();
         const Point direction = (endTarget - startInstant.pose.position()).normalized();
 
