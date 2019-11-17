@@ -7,8 +7,6 @@ import skills
 import enum
 import constants
 import role_assignment
-
-from skills.move import Move
 import evaluation.defensive_positioning
 import evaluation.opponent as eval_opp
 
