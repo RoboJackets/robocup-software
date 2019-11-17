@@ -11,15 +11,15 @@ namespace Planning {
 
 REGISTER_CONFIGURABLE(PathTargetPlanner);
 
-ConfigDouble* PathTargetPlanner::_partialReplanLeadTime;
+std::unique_ptr<ConfigDouble> PathTargetPlanner::_partialReplanLeadTime;
 
 void PathTargetPlanner::createConfiguration(Configuration* cfg) {
-    _partialReplanLeadTime = new ConfigDouble(
+    _partialReplanLeadTime = std::make_unique<ConfigDouble>(
             cfg, "PathTargetPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
 }
 
 Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
-    if(!std::holds_alternative<PathTargetCommand>(request.motionCommand)) {
+    if(!isApplicable(request.motionCommand)) {
         throw std::invalid_argument("Error in PathTargetPlanner: invalid motionCommand; must be a PathTargetCommand.");
     }
 
@@ -52,7 +52,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
 //            current_instant = *maybe_start;
 //        }
 //    }
-    PathTargetCommand command = std::get<PathTargetCommand>(request.motionCommand);
+    PathTargetCommand& command = std::get<PathTargetCommand>(request.motionCommand);
 
 
     auto state_space = std::make_shared<RoboCupStateSpace>(
@@ -81,13 +81,18 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
             isFullReplan = true;
         }
     }
-    //todo(Ethan) **maybe** delete checkBetter, it's pointless maybe
+    //todo(Ethan) **maybe** delete checkBetter, it's maybe unnecessary
     if (counter >= 10) {
         counter = 0;
         if (result.duration() - timeIntoTrajectory > partialReplanTime * 2) {
             checkBetter = true;
         }
     }
+    //todo(Ethan) this removes partial planning for testing. is partial replanning better?
+    if(isPartialReplan) {
+        isFullReplan = true;
+    }
+
     if(isFullReplan) {
         std::vector<Point> new_points = GenerateRRT(current_pose.position(), goal_pose.position(), state_space);
         if (new_points.empty()) {
@@ -120,7 +125,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
         BezierPath new_bezier(new_points, current_instant.velocity.linear(), command.pathGoal.velocity.linear(),
                 request.constraints.mot);
         Trajectory post_trajectory = ProfileVelocity(new_bezier,
-                current_instant.velocity.linear().mag(),
+                current_instant.velocity.linear().mag(), // todo(Ethan) should this be pre_trajectory.last() instead of current_instant?
                 command.pathGoal.velocity.linear().mag(),
                 request.constraints.mot);
         result = Trajectory(pre_trajectory, post_trajectory);
@@ -129,15 +134,16 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     result.draw(&(request.context->debug_drawer));
 
     std::function<double(Point, Point, double)> angleFunction =
-            [](Point pos, Point vel_linear, double angle) -> double {
-                // Find the nearest angle either matching velocity or at a 180 degree angle.
-                double angle_delta = fixAngleRadians(vel_linear.angle() - angle);
-                if (std::abs(angle_delta) < 90) {
-                    return angle + angle_delta;
-                } else {
-                    return fixAngleRadians(angle + angle_delta + M_PI);
-                }
-            };
+        [](Point pos, Point vel_linear, double angle) -> double {
+            // Find the nearest angle either matching velocity or at a 180 degree angle.
+            //todo(Ethan) fix this, Point heading is radians, `angle` is garbage data
+            double angle_delta = fixAngleRadians(vel_linear.angle() - angle);
+            if (std::abs(angle_delta) < 90) {
+                return angle + angle_delta;
+            } else {
+                return fixAngleRadians(angle + angle_delta + M_PI);
+            }
+        };
     PlanAngles(result, RobotState{current_instant.pose, current_instant.velocity, current_instant.stamp}, angleFunction, request.constraints.rot);
     return std::move(result);
 }

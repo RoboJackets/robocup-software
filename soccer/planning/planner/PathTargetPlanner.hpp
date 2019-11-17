@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Planner.hpp"
+#include <memory>
 
 namespace Planning {
 
@@ -11,18 +12,12 @@ public:
     Trajectory plan(PlanRequest&& request) override;
 
     std::string name() const override { return "PathTargetPlanner"; }
-
     bool shouldReplan(const PlanRequest& request) const override;
-
     static void createConfiguration(Configuration* cfg);
-
-protected:
-    static ConfigDouble* _partialReplanLeadTime;
-
 private:
+    static std::unique_ptr<ConfigDouble> _partialReplanLeadTime;
     std::optional<RJ::Seconds> findInvalidTime(const PlanRequest& request) const;
 
     int counter;
 };
-
 } // namespace Planning

@@ -3,18 +3,19 @@ namespace Planning {
 
     REGISTER_CONFIGURABLE(Planner);
 
-    ConfigDouble* Planner::_goalPosChangeThreshold;
-    ConfigDouble* Planner::_goalVelChangeThreshold;
-    ConfigDouble* Planner::_replanTimeout;
+    std::unique_ptr<ConfigDouble> Planner::_goalPosChangeThreshold;
+    std::unique_ptr<ConfigDouble> Planner::_goalVelChangeThreshold;
+    std::unique_ptr<ConfigDouble> Planner::_replanTimeout;
 
     void Planner::createConfiguration(Configuration* cfg) {
-        _replanTimeout = new ConfigDouble(cfg, "PlannerForCommandType/replanTimeout", 5);
+        _replanTimeout = std::make_unique<ConfigDouble>(ConfigDouble(cfg, "PlannerForCommandType/replanTimeout", 5));
         _goalPosChangeThreshold =
-                new ConfigDouble(cfg, "PlannerForCommandType/goalPosChangeThreshold", 0.025);
+                std::make_unique<ConfigDouble>(ConfigDouble(cfg, "PlannerForCommandType/goalPosChangeThreshold", 0.025));
         _goalVelChangeThreshold =
-                new ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025);
+                std::make_unique<ConfigDouble>(ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025));
     }
 
+    //todo(Ethan) check for target change --> replan
     bool Planner::shouldReplan(const PlanRequest &planRequest) const {
         const auto& currentInstant = planRequest.start;
         const MotionConstraints &motionConstraints = planRequest.constraints.mot;

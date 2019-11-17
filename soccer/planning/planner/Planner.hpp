@@ -62,9 +62,9 @@ public:
      */
     static double replanTimeout() { return *_replanTimeout; }
 private:
-    static ConfigDouble* _goalPosChangeThreshold;
-    static ConfigDouble* _goalVelChangeThreshold;
-    static ConfigDouble* _replanTimeout;
+    static std::unique_ptr<ConfigDouble> _goalPosChangeThreshold;
+    static std::unique_ptr<ConfigDouble> _goalVelChangeThreshold;
+    static std::unique_ptr<ConfigDouble> _replanTimeout;
 };
 
 template<typename CommandType>

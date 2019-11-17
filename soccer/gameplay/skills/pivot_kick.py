@@ -124,6 +124,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
         small_angle_offset = 0.01
 
         # We are aiming at the goal
+        # todo(Ethan) shouldn't this be "al + ar - small <= total" instead
         if (angle_left_goal_post_diff + angle_right_goal_post_diff + small_angle_offset <= angle_goal_post_diff):
             print('EARLY KIck')
             main.debug_drawer().draw_text('Early kick', robot.pos, 'PivotKick')
