@@ -9,6 +9,7 @@ import main
 #
 class DefendClear(standard_play.StandardPlay):
     def __init__(self, num_supports=2):
+        print("Wow")
         super().__init__(continuous=False)
 
         self.add_transition(behavior.Behavior.State.start,
@@ -29,3 +30,7 @@ class DefendClear(standard_play.StandardPlay):
     def closest_opps_to_our_goal(self, num_bots):
         opp_bots = [bot for bot in main.their_robots()]
         return sorted(opp_bots, key=lambda bot: bot.pos.y)[:num_bots]
+
+    @classmethod
+    def score(cls):
+        return 10 if main.game_state().is_playing() else float("inf")
