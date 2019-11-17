@@ -9,7 +9,6 @@ import main
 #
 class DefendClear(standard_play.StandardPlay):
     def __init__(self, num_supports=2):
-        print("Wow")
         super().__init__(continuous=False)
 
         self.add_transition(behavior.Behavior.State.start,
