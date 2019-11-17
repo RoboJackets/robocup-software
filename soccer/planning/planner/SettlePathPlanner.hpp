@@ -32,6 +32,10 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    std::string name() const override {
+        return "SettlePathPlanner";
+    }
+
 private:
     // Given the global target in `targetBounceDirection`
     // Calculate the delta position to get the robot in the correct location

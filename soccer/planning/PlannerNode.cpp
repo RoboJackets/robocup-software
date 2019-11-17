@@ -1,4 +1,7 @@
-#include "planner/PathTargetPlanner.hpp"
+#include "planning/planner/PathTargetPlanner.hpp"
+#include "planning/planner/DirectTargetPathPlanner.hpp"
+#include "planning/planner/SettlePathPlanner.hpp"
+#include "planning/planner/PivotPathPlanner.hpp"
 #include "PlannerNode.hpp"
 #include "Robot.hpp"
 
@@ -6,6 +9,9 @@ namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
+    planners_.push_back(std::make_unique<SettlePathPlanner>());
+    planners_.push_back(std::make_unique<DirectTargetPathPlanner>());
+    planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EmptyPlanner>());

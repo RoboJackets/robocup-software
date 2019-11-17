@@ -11,10 +11,10 @@
 namespace Planning {
     REGISTER_CONFIGURABLE(PivotPathPlanner);
 
-    std::unique_ptr<ConfigDouble> PivotPathPlanner::_pivotRadiusMultiplier;
+    ConfigDouble* PivotPathPlanner::_pivotRadiusMultiplier;
 
     void PivotPathPlanner::createConfiguration(Configuration *cfg) {
-        _pivotRadiusMultiplier = std::make_unique<ConfigDouble>(cfg, "Pivot/radius", 1.0,
+        _pivotRadiusMultiplier = new ConfigDouble(cfg, "Pivot/radius", 1.0,
         "Multiplier for the pivotRadius. PivotRadius = RobotRadius * multiplier");
     }
 

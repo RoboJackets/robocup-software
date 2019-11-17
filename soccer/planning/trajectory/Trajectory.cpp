@@ -24,6 +24,13 @@ Trajectory::Trajectory(const Trajectory& a, const Trajectory& b) {
         instants_.push_back(*it);
     }
 }
+Trajectory::Trajectory(Trajectory&& a, Trajectory&& b) {
+    instants_ = std::move(a.instants_);
+    instants_.reserve(instants_.size()+b.instants_.size());
+    for(auto it = b.instants_.begin(); it != b.instants_.end(); ++it) {
+        instants_.push_back(*it);
+    }
+}
 
 void Trajectory::InsertInstant(RobotInstant instant) {
     instants_.insert(std::upper_bound(

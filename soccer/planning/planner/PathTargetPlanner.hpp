@@ -15,7 +15,7 @@ public:
     bool shouldReplan(const PlanRequest& request) const override;
     static void createConfiguration(Configuration* cfg);
 private:
-    static std::unique_ptr<ConfigDouble> _partialReplanLeadTime;
+    static ConfigDouble* _partialReplanLeadTime;
     std::optional<RJ::Seconds> findInvalidTime(const PlanRequest& request) const;
 
     int counter;

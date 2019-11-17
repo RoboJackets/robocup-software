@@ -3,16 +3,16 @@ namespace Planning {
 
     REGISTER_CONFIGURABLE(Planner);
 
-    std::unique_ptr<ConfigDouble> Planner::_goalPosChangeThreshold;
-    std::unique_ptr<ConfigDouble> Planner::_goalVelChangeThreshold;
-    std::unique_ptr<ConfigDouble> Planner::_replanTimeout;
+    ConfigDouble* Planner::_goalPosChangeThreshold;
+    ConfigDouble* Planner::_goalVelChangeThreshold;
+    ConfigDouble* Planner::_replanTimeout;
 
     void Planner::createConfiguration(Configuration* cfg) {
-        _replanTimeout = std::make_unique<ConfigDouble>(ConfigDouble(cfg, "PlannerForCommandType/replanTimeout", 5));
+        _replanTimeout = new ConfigDouble(ConfigDouble(cfg, "PlannerForCommandType/replanTimeout", 5));
         _goalPosChangeThreshold =
-                std::make_unique<ConfigDouble>(ConfigDouble(cfg, "PlannerForCommandType/goalPosChangeThreshold", 0.025));
+                new ConfigDouble(ConfigDouble(cfg, "PlannerForCommandType/goalPosChangeThreshold", 0.025));
         _goalVelChangeThreshold =
-                std::make_unique<ConfigDouble>(ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025));
+                new ConfigDouble(ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025));
     }
 
     //todo(Ethan) check for target change --> replan

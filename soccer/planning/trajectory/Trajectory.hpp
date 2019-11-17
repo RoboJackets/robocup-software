@@ -53,7 +53,7 @@ public:
      * Create a trajectory from several "instants", each with a pose, velocity,
      * and timestamp.
      */
-    explicit Trajectory(std::vector<RobotInstant> &&instants) : instants_(instants) {}
+    explicit Trajectory(std::vector<RobotInstant> &&instants) : instants_(std::move(instants)) {}
 
     /**
      * Create a trajectory from two other trajectories
@@ -61,6 +61,21 @@ public:
      * (see CompositePath for a more efficient way if needed)
      */
     Trajectory(const Trajectory& a, const Trajectory& b);
+    Trajectory(Trajectory&& a, Trajectory&& b);
+
+    /**
+     * allow copy constructor, copy assignment, move constructor, and move assignment
+     */
+    Trajectory(Trajectory&& other): instants_(std::move(other.instants_)) {}
+    Trajectory(const Trajectory& other): instants_(other.instants_) {}
+    Trajectory& operator=(Trajectory&& other) {
+        instants_ = std::move(other.instants_);
+        return *this;
+    }
+    Trajectory& operator=(const Trajectory& other) {
+        instants_ = other.instants_;
+        return *this;
+    }
 
     /**
      * Insert a RobotInstant based on its timestamp.

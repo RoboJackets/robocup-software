@@ -487,12 +487,11 @@ Trajectory SettlePathPlanner::dampen(PlanRequest&& planRequest,
         PlanRequest(planRequest.context, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, directCommand,
                     planRequest.constraints, Trajectory({}), planRequest.obstacles, planRequest.shellID);
 
-    Trajectory dampenEnd = directPlanner.run(request);
+    Trajectory dampenEnd = directPlanner.plan(std::move(request));
 //    dampenEnd->setDebugText("Damping");
 
-    if (!request.prevTrajectory.empty()) {
-        RJ::Time newStartTime = request.prevTrajectory.begin_time();
-        dampenEnd = Trajectory(std::move(request.prevTrajectory), std::move(dampenEnd));
+    if (!planRequest.prevTrajectory.empty()) {
+        dampenEnd = Trajectory(std::move(planRequest.prevTrajectory), std::move(dampenEnd));
     }
     std::function<double(Point,Point,double)> angleFunction =
         [](Point pos, Point vel, double angle) -> double {
@@ -525,6 +524,7 @@ Trajectory SettlePathPlanner::invalid(
                 return vel.angle();
             };
     PlanAngles(path, planRequest.start, angleFunction, planRequest.constraints.rot);
+    return path;
 }
 
 void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball,

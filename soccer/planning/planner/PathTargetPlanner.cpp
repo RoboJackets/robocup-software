@@ -11,10 +11,10 @@ namespace Planning {
 
 REGISTER_CONFIGURABLE(PathTargetPlanner);
 
-std::unique_ptr<ConfigDouble> PathTargetPlanner::_partialReplanLeadTime;
+ConfigDouble* PathTargetPlanner::_partialReplanLeadTime;
 
 void PathTargetPlanner::createConfiguration(Configuration* cfg) {
-    _partialReplanLeadTime = std::make_unique<ConfigDouble>(
+    _partialReplanLeadTime = new ConfigDouble(
             cfg, "PathTargetPlanner/partialReplanLeadTime", 0.2, "partialReplanLeadTime");
 }
 
