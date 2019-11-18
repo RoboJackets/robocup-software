@@ -121,7 +121,7 @@ Trajectory CollectPathPlanner::plan(PlanRequest&& planRequest) {
         averageBallVelInitialized = true;
     } else {
         averageBallVel = *_targetPointAveragingGain * averageBallVel +
-                         (1 - *_targetPointAveragingGain) * ball.vel;
+                         (1 - *_targetPointAveragingGain) * ball.vel; //todo(Ethan) use LPF function here?
     }
 
     // Approach direction is the direction we move towards the ball and through
@@ -138,24 +138,32 @@ Trajectory CollectPathPlanner::plan(PlanRequest&& planRequest) {
     processStateTransition(ball, startInstant, prevPath,
                            timeIntoPreviousPath);
 
+
+    std::cout << "CollectPathPlanner: ";
     switch (currentState) {
         // Moves from the current location to the slow point of approach
         case CourseApproach: {
+            std::cout << "course approach" << std::endl;
             return std::move(
                 courseApproach(planRequest, startInstant, std::move(prevPath)));
         }
         // Moves from the slow point of approach to just before point of contact
         case FineApproach: {
+            std::cout << "fine approach" << std::endl;
             return std::move(
                 fineApproach(planRequest, startInstant, std::move(prevPath)));
         }
         // Move through the ball and stop
         case Control: {
+            std::cout << "control" << std::endl;
             return std::move(control(planRequest, partialStartInstant,
                                      std::move(prevPath),
                                      std::move(partialPath)));
         }
-        default: { return std::move(invalid(planRequest)); }
+        default: {
+            std::cout << "invalid" << std::endl;
+            return std::move(invalid(planRequest));
+        }
     }
 }
 
@@ -375,13 +383,19 @@ Trajectory CollectPathPlanner::control(
     BezierPath bezier(startEndPoints, vi, vf, motionConstraints);
     Trajectory path = ProfileVelocity(bezier, vi.mag(), vf.mag(), motionConstraints);
 
-
     // Make sure that when the path ends, we don't end up spinning around
     // because we hit go past the ball position at the time of path creation
     Point facePt = startPoint +
                    10 * (target.pos - startPoint)
                            .norm();  // startInstant.pos + 10 * (ball.pos -
     // startInstant.pos).norm();
+    std::function<double(Point, Point, double)> angleFunction =
+            [&](Point pos, Point vel, double angle) -> double {
+                return pos.angleTo(facePt);
+            };
+    PlanAngles(path, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, robotConstraints.rot);
+
+
 
     planRequest.context->debug_drawer.drawLine(
         Segment(startPoint,
@@ -407,12 +421,6 @@ Trajectory CollectPathPlanner::control(
             path = Trajectory{std::move(partialPath), std::move(path)};
         }
     }
-
-    std::function<double(Point, Point, double)> angleFunction =
-            [&](Point pos, Point vel, double angle) -> double {
-                return pos.angleTo(facePt);
-            };
-    PlanAngles(path, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, robotConstraints.rot);
 
 //    path->setDebugText("stopping");
     //todo(Ethan) fix these veriable names e.g. path --> trajectory

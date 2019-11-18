@@ -2,6 +2,7 @@
 #include "planning/planner/DirectTargetPathPlanner.hpp"
 #include "planning/planner/SettlePathPlanner.hpp"
 #include "planning/planner/PivotPathPlanner.hpp"
+#include "planning/planner/CollectPathPlanner.hpp"
 #include "PlannerNode.hpp"
 #include "Robot.hpp"
 
@@ -10,7 +11,8 @@ namespace Planning {
 PlannerNode::PlannerNode(Context* context) : context_(context) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePathPlanner>());
-//    planners_.push_back(std::make_unique<PivotPathPlanner>());
+    planners_.push_back(std::make_unique<CollectPathPlanner>());
+    planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EmptyPlanner>());
@@ -29,6 +31,7 @@ void PlannerNode::run() {
     Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
     Geometry2d::ShapeSet goalZoneObstacles;
     globalObstaclesWithGoalZones.add(goalZoneObstacles);
+
 
     for (OurRobot* robot : context_->state.self) {
         if (!robot) {
@@ -89,13 +92,11 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     // the empty planner is always last.
     for (auto& planner : planners_) {
         if (planner->isApplicable(request.motionCommand)) {
-//            std::cout << "Planner: " << planner->name() << std::endl;
             return std::move(planner->plan(std::move(request)));
         } else {
 //            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this
         }
     }
-
     std::cerr << "No valid planner! Did you forget to specify a default planner?"
               << std::endl;
     return Trajectory({});

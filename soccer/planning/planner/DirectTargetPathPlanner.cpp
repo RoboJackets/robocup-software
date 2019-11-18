@@ -40,7 +40,7 @@ Trajectory DirectTargetPathPlanner::plan(PlanRequest&& planRequest) {
     }
 }
 
-//todo(Ethan) fix this this should be implemented in a base class
+//todo(Ethan) fix this this should be implemented in a base class (note: this will change variant accessing)
 std::optional<RJ::Seconds> DirectTargetPathPlanner::findInvalidTime(const PlanRequest& request) const {
     if(request.prevTrajectory.empty()) {
         return std::nullopt;
@@ -50,7 +50,7 @@ std::optional<RJ::Seconds> DirectTargetPathPlanner::findInvalidTime(const PlanRe
     if (request.prevTrajectory.hit(request.obstacles, timeIntoPrevPath, &invalidTime)) {
         return invalidTime;
     }
-    PathTargetCommand command = std::get<PathTargetCommand>(request.motionCommand);
+    DirectPathTargetCommand command = std::get<DirectPathTargetCommand>(request.motionCommand);
 
     //todo(Ethan) check dynamic obstacles
     const RobotInstant& last = request.prevTrajectory.last();

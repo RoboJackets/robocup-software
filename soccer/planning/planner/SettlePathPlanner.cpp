@@ -115,12 +115,16 @@ Trajectory SettlePathPlanner::plan(PlanRequest&& request) {
     processStateTransition(ball, request.prevTrajectory, startInstant, angle, deltaPos);
 
     // Run state code
+    std::cout << "SettlePlanner: ";
     switch (currentState) {
         case Intercept:
+            std::cout << "intercept" << std::endl;
             return intercept(std::move(request), startInstant, obstaclesWBall, deltaPos, facePos);
         case Dampen:
+            std::cout << "dampen" << std::endl;
             return dampen(std::move(request), startInstant, deltaPos, facePos);
         default:
+            std::cout << "invalid" << std::endl;
             return invalid(request);
     }
 }

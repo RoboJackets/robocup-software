@@ -213,7 +213,6 @@ void OurRobot::settle(std::optional<Point> target) {
 }
 
 void OurRobot::collect() {
-    std::cout << "collect" << std::endl;
     if (!visible()) return;
 
     _motionCommand = Planning::CollectCommand{};
