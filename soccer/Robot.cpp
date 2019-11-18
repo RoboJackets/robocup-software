@@ -206,12 +206,14 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 }
 
 void OurRobot::settle(std::optional<Point> target) {
+    std::cout << "settle" << std::endl;
     if (!visible()) return;
 
     _motionCommand = Planning::SettleCommand{target};
 }
 
 void OurRobot::collect() {
+    std::cout << "collect" << std::endl;
     if (!visible()) return;
 
     _motionCommand = Planning::CollectCommand{};

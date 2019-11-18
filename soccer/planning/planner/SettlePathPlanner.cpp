@@ -5,7 +5,6 @@
 
 #include "Configuration.hpp"
 #include "Constants.hpp"
-#include "planning/planner/Planner.hpp"
 #include "planning/trajectory/Trajectory.hpp"
 #include "planning/planner/PlanRequest.hpp"
 #include "planning/trajectory/PathSmoothing.hpp"

@@ -1,4 +1,3 @@
-#include <rrt/planning/Path.hpp>
 #include <planning/trajectory/PathSmoothing.hpp>
 #include <planning/trajectory/VelocityProfiling.hpp>
 #include "PathTargetPlanner.hpp"
@@ -6,6 +5,7 @@
 #include "planning/trajectory/RRTUtil.hpp"
 #include <Geometry2d/Pose.hpp>
 #include <vector>
+#include <rrt/planning/Path.hpp>
 
 namespace Planning {
 

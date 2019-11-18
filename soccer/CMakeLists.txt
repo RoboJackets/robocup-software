@@ -33,6 +33,7 @@ set(ROBOCUP_LIB_SRC
     "planning/planner/PivotPathPlanner.cpp"
     "planning/planner/SettlePathPlanner.cpp"
     "planning/planner/DirectTargetPathPlanner.cpp"
+    "planning/planner/CollectPathPlanner.cpp"
     "planning/trajectory/PathSmoothing.cpp"
     "planning/trajectory/RRTUtil.cpp"
     "planning/trajectory/Trajectory.cpp"
