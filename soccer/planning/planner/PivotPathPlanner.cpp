@@ -77,6 +77,7 @@ namespace Planning {
                 };
             PlanAngles(result, RobotState{current_instant.pose, current_instant.velocity, current_instant.stamp}, angleFunction, request.constraints.rot);
         }
+        result.setDebugText("Pivot");
         return std::move(result);
     }
 }

@@ -115,16 +115,12 @@ Trajectory SettlePathPlanner::plan(PlanRequest&& request) {
     processStateTransition(ball, request.prevTrajectory, startInstant, angle, deltaPos);
 
     // Run state code
-    std::cout << "SettlePlanner: ";
     switch (currentState) {
         case Intercept:
-            std::cout << "intercept" << std::endl;
             return intercept(std::move(request), startInstant, obstaclesWBall, deltaPos, facePos);
         case Dampen:
-            std::cout << "dampen" << std::endl;
             return dampen(std::move(request), startInstant, deltaPos, facePos);
         default:
-            std::cout << "invalid" << std::endl;
             return invalid(request);
     }
 }
@@ -360,6 +356,7 @@ Trajectory SettlePathPlanner::intercept(
                         return vel_linear.angle();
                     };
             PlanAngles(shortCut, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, planRequest.constraints.rot);
+            shortCut.setDebugText("settle - intercept - short cut");
             return shortCut;
         }
     }
@@ -396,8 +393,7 @@ Trajectory SettlePathPlanner::intercept(
     Trajectory newTargetPath = rrtPlanner.plan(std::move(request));
 
     RJ::Seconds timeOfArrival = newTargetPath.duration();
-//    newTargetPath->setDebugText(QString::number(timeOfArrival.count()) + " s");
-
+    newTargetPath.setDebugText("Intercept " + QString::number(timeOfArrival.count()) + " s");
     return std::move(newTargetPath);
 }
 
@@ -421,7 +417,7 @@ Trajectory SettlePathPlanner::dampen(PlanRequest&& planRequest,
     // so we can use that vector to stop
     // Save vector and use that?
     const Ball& ball = planRequest.context->state.ball;
-
+    DebugDrawer& drawer = planRequest.context->debug_drawer;
     planRequest.context->debug_drawer.drawText(
         "Damping", ball.pos + Point(.1, .1), QColor(255, 255, 255),
         "DampState");
@@ -491,7 +487,6 @@ Trajectory SettlePathPlanner::dampen(PlanRequest&& planRequest,
                     planRequest.constraints, Trajectory({}), planRequest.obstacles, planRequest.shellID);
 
     Trajectory dampenEnd = directPlanner.plan(std::move(request));
-//    dampenEnd->setDebugText("Damping");
 
     if (!planRequest.prevTrajectory.empty()) {
         dampenEnd = Trajectory(std::move(planRequest.prevTrajectory), std::move(dampenEnd));
@@ -501,6 +496,7 @@ Trajectory SettlePathPlanner::dampen(PlanRequest&& planRequest,
             return vel.angle();
         };
     PlanAngles(dampenEnd, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, planRequest.constraints.rot);
+    dampenEnd.setDebugText("Damping");
     return std::move(dampenEnd);
 }
 
@@ -521,12 +517,12 @@ Trajectory SettlePathPlanner::invalid(
         planRequest.constraints, Trajectory({}), planRequest.obstacles, planRequest.shellID);
 
     auto path = rrtPlanner.plan(std::move(request));
-//    path->setDebugText("Invalid state in settle");
     std::function<double(Point,Point,double)> angleFunction =
             [](Point pos, Point vel, double angle) -> double {
                 return vel.angle();
             };
     PlanAngles(path, planRequest.start, angleFunction, planRequest.constraints.rot);
+    path.setDebugText("Invalid state in settle");
     return path;
 }
 

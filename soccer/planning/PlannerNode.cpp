@@ -9,10 +9,10 @@
 namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context) {
-    planners_.push_back(std::make_unique<PathTargetPlanner>());
-    planners_.push_back(std::make_unique<SettlePathPlanner>());
-    planners_.push_back(std::make_unique<CollectPathPlanner>());
-    planners_.push_back(std::make_unique<PivotPathPlanner>());
+//    planners_.push_back(std::make_unique<PathTargetPlanner>());
+//    planners_.push_back(std::make_unique<SettlePathPlanner>());
+//    planners_.push_back(std::make_unique<CollectPathPlanner>());
+//    planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EmptyPlanner>());
@@ -39,7 +39,9 @@ void PlannerNode::run() {
         }
 
         if (!robot->visible() || context_->game_state.state == GameState::Halt) {
-            robot->setPath(Trajectory({}));
+            Trajectory inactivePath{{}};
+            inactivePath.setDebugText("INACTIVE");
+            robot->setPath(std::move(inactivePath));
             continue;
         }
 
@@ -76,6 +78,7 @@ void PlannerNode::run() {
                 robot->robotConstraints(), robot->path_movable(),
                 staticObstacles, robot->shell(), robot->getPlanningPriority());
 
+        //complete the plan request
         robot->setPath(std::move(PlanForRobot(std::move(request))));
     }
 
@@ -92,14 +95,17 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     // the empty planner is always last.
     for (auto& planner : planners_) {
         if (planner->isApplicable(request.motionCommand)) {
-            return std::move(planner->plan(std::move(request)));
+            return planner->plan(std::move(request));
         } else {
 //            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this
         }
     }
     std::cerr << "No valid planner! Did you forget to specify a default planner?"
               << std::endl;
-    return Trajectory({});
+    Trajectory result{{}};
+    result.setDebugText("Error: No Valid Planners");
+    result.draw(&request.context->debug_drawer, request.context.);
+    return std::move(result);
 }
 
 } // namespace Planning

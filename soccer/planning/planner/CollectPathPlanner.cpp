@@ -139,30 +139,23 @@ Trajectory CollectPathPlanner::plan(PlanRequest&& planRequest) {
                            timeIntoPreviousPath);
 
 
-    std::cout << "CollectPathPlanner: ";
     switch (currentState) {
         // Moves from the current location to the slow point of approach
         case CourseApproach: {
-            std::cout << "course approach" << std::endl;
-            return std::move(
-                courseApproach(planRequest, startInstant, std::move(prevPath)));
+            return courseApproach(planRequest, startInstant, std::move(prevPath));
         }
         // Moves from the slow point of approach to just before point of contact
         case FineApproach: {
-            std::cout << "fine approach" << std::endl;
-            return std::move(
-                fineApproach(planRequest, startInstant, std::move(prevPath)));
+            return fineApproach(planRequest, startInstant, std::move(prevPath));
         }
         // Move through the ball and stop
         case Control: {
-            std::cout << "control" << std::endl;
-            return std::move(control(planRequest, partialStartInstant,
+            return control(planRequest, partialStartInstant,
                                      std::move(prevPath),
-                                     std::move(partialPath)));
+                                     std::move(partialPath));
         }
         default: {
-            std::cout << "invalid" << std::endl;
-            return std::move(invalid(planRequest));
+            return invalid(planRequest);
         }
     }
 }
@@ -249,12 +242,12 @@ Trajectory CollectPathPlanner::courseApproach(
     Trajectory coursePath = rrtPlanner.plan(std::move(request));
 
     // Build a path from now to the slow point
-//    coursePath->setDebugText("course");
     std::function<double(Point,Point,double)> angleFunction =
         [&](Point pos, Point vel, double angle) {
             return vel.angle();
         };
     PlanAngles(coursePath, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, request.constraints.rot);
+    coursePath.setDebugText("Course");
     return std::move(coursePath);
 }
 
@@ -301,14 +294,13 @@ Trajectory CollectPathPlanner::fineApproach(
         robotConstraintsHit, std::move(prevPath), planRequest.obstacles,planRequest.shellID);
 
     Trajectory pathHit = directPlanner.plan(std::move(request));
-//    pathHit->setDebugText("fine");
-
 
     std::function<double(Point,Point,double)> angleFunction =
             [&](Point pos, Point vel, double angle) {
                 return pos.angleTo(ball.pos);
             };
-    PlanAngles(pathHit, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, request.constraints.rot);
+    PlanAngles(pathHit, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, planRequest.constraints.rot);
+    pathHit.setDebugText("Fine");
     return std::move(pathHit);
 }
 
@@ -422,7 +414,7 @@ Trajectory CollectPathPlanner::control(
         }
     }
 
-//    path->setDebugText("stopping");
+    path.setDebugText("Control");
     //todo(Ethan) fix these veriable names e.g. path --> trajectory
     return std::move(path);
 }
@@ -445,13 +437,13 @@ Trajectory CollectPathPlanner::invalid(
         planRequest.constraints, Trajectory{{}}, planRequest.obstacles,
         planRequest.shellID);
     auto path = rrtPlanner.plan(std::move(request));
-//    path->setDebugText("Invalid state in collect");
 
     std::function<double(Point,Point,double)> angleFunction =
             [&](Point pos, Point vel, double angle) {
                 return pos.angleTo(ball.pos);
             };
     PlanAngles(path, startRobotState, angleFunction, request.constraints.rot);
+    path.setDebugText("Invalid state in collect");
     return std::move(path);
 }
 

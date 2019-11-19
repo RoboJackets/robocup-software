@@ -17,9 +17,9 @@ Trajectory DirectTargetPathPlanner::plan(PlanRequest&& planRequest) {
     RobotInstant startInstant {planRequest.start.pose, planRequest.start.velocity, planRequest.start.timestamp};
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
-
+    DebugDrawer& drawer = planRequest.context->debug_drawer;
     const Planning::DirectPathTargetCommand& command = std::get<DirectPathTargetCommand>(planRequest.motionCommand);
-
+    Trajectory result{std::vector<RobotInstant>{}};
     if (shouldReplan(planRequest) || findInvalidTime(planRequest)) {
         std::cout << "planning direct" << std::endl;
         Geometry2d::Point endTarget = command.pathGoal.pose.position();
@@ -32,12 +32,14 @@ Trajectory DirectTargetPathPlanner::plan(PlanRequest&& planRequest) {
         double vfMag = vectorInDirection(command.pathGoal.velocity.linear(), direction);
         //this should be a straight line path since vi and vf are collinear
         BezierPath bezier(points, direction.normalized(viMag), direction.normalized(vfMag), motionConstraints);
-        Trajectory result = ProfileVelocity(bezier, viMag, vfMag, motionConstraints);
+        result = ProfileVelocity(bezier, viMag, vfMag, motionConstraints);
 //        path->setStartTime(RJ::now());
-        return std::move(result);
     } else {
-        return std::move(planRequest.prevTrajectory);
+        result = std::move(planRequest.prevTrajectory);
     }
+    result.setDebugText("Direct");
+    result.draw(&drawer);
+    return std::move(result);
 }
 
 //todo(Ethan) fix this this should be implemented in a base class (note: this will change variant accessing)

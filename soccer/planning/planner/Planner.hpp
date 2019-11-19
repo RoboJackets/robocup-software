@@ -92,7 +92,9 @@ public:
 //                      << "(command type has index " << command.index()
 //                      << ")" << std::endl;
         }
-        return Trajectory({});
+        Trajectory result = Trajectory{{}};
+        result.setDebugText("Empty");
+        return std::move(result);
     }
 
     std::string name() const override { return "EmptyPlaner"; }

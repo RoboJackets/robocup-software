@@ -235,7 +235,7 @@ void OurRobot::intercept(Point target) {
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
     _motionCommand = Planning::WorldVelTargetCommand{Twist{v, 0}};
-    setPath(Planning::Trajectory({}));
+//    setPath(Planning::Trajectory({}));//todo(Ethan) add this back? I commented it
     *_cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
 }
 

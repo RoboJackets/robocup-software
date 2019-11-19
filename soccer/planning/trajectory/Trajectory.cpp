@@ -15,6 +15,21 @@ using Geometry2d::Twist;
 using Geometry2d::Shape;
 using Geometry2d::Segment;
 
+Trajectory& Trajectory::operator=(Trajectory&& other) {
+    //move data into *this
+    instants_ = std::move(other.instants_);
+    _debugText = std::move(other._debugText);
+    //clear data in other
+    other.instants_ = std::vector<RobotInstant>{};
+    other._debugText = "MOVED FROM";
+    return *this;
+}
+Trajectory& Trajectory::operator=(const Trajectory& other) {
+    instants_ = other.instants_;
+    _debugText = other._debugText;
+    return *this;
+}
+
 Trajectory::Trajectory(const Trajectory& a, const Trajectory& b) {
     instants_.reserve(a.instants_.size()+b.instants_.size());
     for(auto it = a.instants_.begin(); it != a.instants_.end(); ++it) {
@@ -237,11 +252,7 @@ TrajectoryIterator Trajectory::iterator(RJ::Time startTime, RJ::Seconds deltaT) 
     return TrajectoryIterator(*this, startTime, deltaT);
 }
 
-void Trajectory::draw(DebugDrawer* drawer) const {
-    if (empty()) {
-        return;
-    }
-
+void Trajectory::draw(DebugDrawer* drawer, std::optional<Geometry2d::Point> backupTextPos) const {
     constexpr int kNumSegments = 150;
     RJ::Seconds dt = duration() / kNumSegments;
     auto trajectory_it = iterator(begin_time(), dt);
@@ -250,10 +261,24 @@ void Trajectory::draw(DebugDrawer* drawer) const {
     Geometry2d::Point to_point = (*trajectory_it).pose.position();
     Geometry2d::Point last_point = last().pose.position();
     while (to_point != last_point) {
-        drawer->drawSegment(Geometry2d::Segment(from_point, to_point));
+        drawer->drawSegment(Geometry2d::Segment(from_point, to_point), Qt::darkCyan);
         from_point = to_point;
         ++trajectory_it;
         to_point = (*trajectory_it).pose.position();
+    }
+
+    if (_debugText) {
+        Geometry2d::Point textPos;
+        if (empty()) {
+            if(backupTextPos) {
+                textPos = *backupTextPos;
+            } else {
+                return;
+            }
+        } else {
+            textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
+        }
+        drawer->drawText(_debugText.value(), textPos, Qt::white);
     }
 }
 

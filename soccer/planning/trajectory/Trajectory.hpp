@@ -66,16 +66,13 @@ public:
     /**
      * allow copy constructor, copy assignment, move constructor, and move assignment
      */
-    Trajectory(Trajectory&& other): instants_(std::move(other.instants_)) {}
-    Trajectory(const Trajectory& other): instants_(other.instants_) {}
-    Trajectory& operator=(Trajectory&& other) {
-        instants_ = std::move(other.instants_);
-        return *this;
+    Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)) {
+        other.instants_ = std::vector<RobotInstant>{};
+        other._debugText = "MOVED FROM";
     }
-    Trajectory& operator=(const Trajectory& other) {
-        instants_ = other.instants_;
-        return *this;
-    }
+    Trajectory(const Trajectory& other): instants_(other.instants_), _debugText(other._debugText) {}
+    Trajectory& operator=(Trajectory&& other);
+    Trajectory& operator=(const Trajectory& other);
 
     /**
      * Insert a RobotInstant based on its timestamp.
@@ -227,7 +224,7 @@ public:
      * Draw this trajectory.
      * @param drawer The debug drawer to use.
      */
-    void draw(DebugDrawer* drawer) const;
+    void draw(DebugDrawer* drawer, std::optional<Geometry2d::Point> backupPos = std::nullopt) const;
 
     /**
      * make a clone
@@ -243,10 +240,15 @@ public:
      * @param deltaT time step
      * @return iterator
      */
-     TrajectoryIterator iterator(RJ::Time startTime, RJ::Seconds deltaT) const;
+    TrajectoryIterator iterator(RJ::Time startTime, RJ::Seconds deltaT) const;
+
+    void setDebugText(QString str) {_debugText = std::move(str); };
+
 protected:
     // A sorted array of RobotInstants (by timestamp)
     std::vector<RobotInstant> instants_;
+
+    std::optional<QString> _debugText;
 };
 
 class TrajectoryIterator {

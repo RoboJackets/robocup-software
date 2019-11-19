@@ -125,6 +125,9 @@ void PlanAngles(Trajectory& trajectory,
                 RobotState initial_state,
                 const AngleFunction& angle_function,
                 const RotationConstraints& constraints) {
+    if(trajectory.empty()) {
+        return;
+    }
     trajectory.instant(0).pose = initial_state.pose;
     trajectory.instant(0).velocity = initial_state.velocity;
 

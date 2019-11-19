@@ -39,6 +39,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     bool checkBetter = false;
 
     Trajectory result = std::move(request.prevTrajectory);
+    DebugDrawer* drawer = &request.context->debug_drawer;
 
     RobotInstant current_instant;
     current_instant.pose = request.start.pose;
@@ -66,8 +67,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
         instants.push_back(RobotInstant(current_pose, Twist(), RJ::now()));
         result = std::move(Trajectory(std::move(instants)));
         //todo(Ethan) fix this
-//        result.setDebugText("Invalid Basic Path");
-        std::cout << "invalid basic path " << std::endl;
+        result.setDebugText("RRT Basic");
         return std::move(result);
     }
 
@@ -97,7 +97,9 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
         std::vector<Point> new_points = GenerateRRT(current_pose.position(), goal_pose.position(), state_space);
         if (new_points.empty()) {
 //            std::cout << "RRT failed (full) " << current_pose.position() << " " << goal_pose.position() << std::endl;
-            return Trajectory({});
+            result = Trajectory{{}};
+            result.setDebugText("RRT Fail");
+            return std::move(result);
         }
         RRT::SmoothPath(new_points, *state_space);
         BezierPath new_bezier(new_points, current_instant.velocity.linear(), command.pathGoal.velocity.linear(),
@@ -130,8 +132,6 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
                 request.constraints.mot);
         result = Trajectory(pre_trajectory, post_trajectory);
     }
-    // Draw the trajectory
-    result.draw(&(request.context->debug_drawer));
 
     std::function<double(Point, Point, double)> angleFunction =
         [](Point pos, Point vel_linear, double angle) -> double {
@@ -145,6 +145,7 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
             }
         };
     PlanAngles(result, RobotState{current_instant.pose, current_instant.velocity, current_instant.stamp}, angleFunction, request.constraints.rot);
+    result.setDebugText("RRT");
     return std::move(result);
 }
 
