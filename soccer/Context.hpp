@@ -1,9 +1,13 @@
 #pragma once
 
+#include <Constants.hpp>
+#include <set>
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
+#include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
+#include "motion/MotionSetpoint.hpp"
 #include "vision/VisionPacket.hpp"
 
 struct Context {
@@ -15,6 +19,9 @@ struct Context {
     Context& operator=(const Context&) = delete;
     Context(Context&&) = delete;
     Context& operator=(Context&&) = delete;
+
+    std::array<RobotIntent, Num_Shells> robot_intents;
+    std::array<MotionSetpoint, Num_Shells> motion_setpoints;
 
     SystemState state;
     GameState game_state;

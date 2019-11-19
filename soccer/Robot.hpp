@@ -128,10 +128,6 @@ class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
 
-    /** radio packets */
-    Packet::Robot robotPacket;
-    Packet::Control* control;
-
     RobotConfig* config;
     RobotStatus* status;
 
@@ -347,12 +343,12 @@ public:
      * Cleared after every frame
      */
     void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
-        _local_obstacles.add(obs);
+        intent().local_obstacles.add(obs);
     }
     const Geometry2d::ShapeSet& localObstacles() const {
-        return _local_obstacles;
+        return intent().local_obstacles;
     }
-    void clearLocalObstacles() { _local_obstacles.clear(); }
+    void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
     Geometry2d::ShapeSet collectStaticObstacles(
         const Geometry2d::ShapeSet& globalObstacles,
@@ -421,8 +417,9 @@ public:
         return _radioRx;
     }
 
-    const Planning::MotionCommand& motionCommand() const {
-        return _motionCommand;
+
+    const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
+        return intent().motion_command;
     }
 
     const RotationConstraints& rotationConstraints() const {
@@ -440,9 +437,9 @@ public:
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(Packet::Control::Song song = Packet::Control::FIGHT_SONG) {
+    void sing(RobotIntent::Song song = RobotIntent::Song::FIGHT_SONG) {
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        control->set_song(song);
+        intent().song = song;
     }
 
     bool isPenaltyKicker = false;
@@ -473,14 +470,6 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    /// set of obstacles added by plays
-    Geometry2d::ShapeSet _local_obstacles;
-
-    /// masks for obstacle avoidance
-    RobotMask _opp_avoid_mask;
-    float _avoidBallRadius;  /// radius of ball obstacle
-
-    Planning::MotionCommand _motionCommand;
     RobotConstraints _robotConstraints;
 
     Planning::Trajectory _path;
@@ -560,6 +549,11 @@ private:
     RJ::Time _lastChargedTime;
 
     Packet::RadioRx _radioRx;
+
+    RobotIntent& intent() { return _context->robot_intents[shell()]; }
+    const RobotIntent& intent() const {
+        return _context->robot_intents[shell()];
+    }
 
     /**
      * We build a string of commands such as face(), move(), etc at each

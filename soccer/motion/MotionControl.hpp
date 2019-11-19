@@ -5,9 +5,8 @@
 #include <Geometry2d/Point.hpp>
 #include <rc-fshare/pid.hpp>
 #include <time.hpp>
-
-class OurRobot;
-
+#include "Robot.hpp"
+#include "motion/MotionSetpoint.hpp"
 /**
  * @brief Handles computer-side motion control
  * @details This class handles the details of creating velocity commands for a
@@ -54,6 +53,13 @@ private:
 
     Context* _context;
     OurRobot* _robot;
+
+    MotionSetpoint& setpoint() {
+        return _context->motion_setpoints[_robot->shell()];
+    }
+    const MotionSetpoint& setpoint() const {
+        return _context->motion_setpoints[_robot->shell()];
+    }
 
     /// The last velocity command (in m/s) that we sent / to the robot
     Geometry2d::Point _lastWorldVelCmd;

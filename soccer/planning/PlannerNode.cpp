@@ -73,13 +73,15 @@ void PlannerNode::run() {
                 */
 
         // Construct a plan request.
-        PlanRequest request = PlanRequest(
-                context_, robot->state(), robot->motionCommand(),
-                robot->robotConstraints(), robot->path_movable(),
-                staticObstacles, robot->shell(), robot->getPlanningPriority());
+        if(robot->motionCommand()) {
+            PlanRequest request = PlanRequest(
+                    context_, robot->state(), *robot->motionCommand(),
+                    robot->robotConstraints(), robot->path_movable(),
+                    staticObstacles, robot->shell(), robot->getPlanningPriority());
 
-        //complete the plan request
-        robot->setPath(std::move(PlanForRobot(std::move(request))));
+            //complete the plan request
+            robot->setPath(std::move(PlanForRobot(std::move(request))));
+        }
     }
 
     // Visualize obstacles
@@ -104,7 +106,8 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
               << std::endl;
     Trajectory result{{}};
     result.setDebugText("Error: No Valid Planners");
-    result.draw(&request.context->debug_drawer, request.context.);
+//    Geometry2d::Point robotPos =  request.context->;
+//    result.draw(&request.context->debug_drawer, robotPos);
     return std::move(result);
 }
 

@@ -4,6 +4,7 @@
 
 #include <boost/config.hpp>
 
+#include <RobotIntent.hpp>
 #include <boost/asio.hpp>
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
@@ -26,7 +27,7 @@ public:
     // This `send` method actually sends separate control packets to all robots
     // to maintain backwards compatibility with the old radio API.
     // TODO(Kyle) Rearchitect radio code to avoid needing to do this.
-    virtual void send(Packet::RadioTx& packet) override;
+    virtual void send(Packet::RadioTx& radioTx) override;
 
     virtual void receive() override;
 
