@@ -1,6 +1,7 @@
 # See PEP 0563 : Enabling the future behavior in Python 3.7
 # In this current version, it is not allowed to have a return
 # type of the current class, which has not fully been defined yet
+# pylint: disable=no-name-in-module
 from __future__ import annotations # type: ignore
 
 import robocup
