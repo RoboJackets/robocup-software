@@ -2,7 +2,7 @@
 # In this current version, it is not allowed to have a return
 # type of the current class, which has not fully been defined yet
 # pylint: disable=no-name-in-module
-from __future__ import annotations # type: ignore
+from __future__ import annotations  # type: ignore
 
 import robocup
 import single_robot_composite_behavior
@@ -26,7 +26,7 @@ class Position(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._position_class = position_class
         self._str_name = name
         self._relative_pos = None
-        self._pass_options = [] # type: typing.List[Position]
+        self._pass_options = []  # type: typing.List[Position]
 
         # Actual location the controller wants in field XY terms
         # None follows the same rules as the `relative_pos`
