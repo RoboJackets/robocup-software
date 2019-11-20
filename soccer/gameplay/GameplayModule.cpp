@@ -52,12 +52,10 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 
 // TODO: Replace this whole file when we move to ROS2
 Gameplay::GameplayModule::GameplayModule(Context* const context,
-                                         NewRefereeModule* const refereeModule,
-                                         grSimCommunicator* const grCom)
+                                         NewRefereeModule* const refereeModule)
     : _mutex(QMutex::Recursive),
       _context(context),
-      _refereeModule(refereeModule),
-      _grCom(grCom) {
+      _refereeModule(refereeModule) {
     calculateFieldObstacles();
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
@@ -635,7 +633,7 @@ void Gameplay::GameplayModule::loadTest() {
                 ball_replace->mutable_vel()->set_x(extract<float>(ball[2]));
                 ball_replace->mutable_vel()->set_y(extract<float>(ball[3]));
 
-                _grCom->sendSimCommand(simPacket);
+                _context->grsim_command = simPacket;
             }
 
         } catch (error_already_set) {

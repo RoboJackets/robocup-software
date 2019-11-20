@@ -19,9 +19,9 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
+#include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
-#include "grSimCommunicator.hpp"
 #include "motion/MotionControlNode.hpp"
 
 #include "Context.hpp"
@@ -185,7 +185,6 @@ public:
     std::optional<RJ::Time> firstLogTime;
 
     Context* context() { return &_context; }
-    grSimCommunicator* grCom() { return &_grCom; }
 
 protected:
     void run() override;
@@ -238,9 +237,6 @@ private:
     /** global system state */
     Context _context;
 
-    /** Communication to GrSim **/
-    grSimCommunicator _grCom;
-
     // Transformation from world space to team space.
     // This depends on which goal we're defending.
     //
@@ -274,6 +270,7 @@ private:
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
     std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
+    std::unique_ptr<GrSimCommunicator> _grSimCom;
 
     std::vector<Node*> _nodes;
 

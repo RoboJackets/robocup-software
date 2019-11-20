@@ -2,7 +2,6 @@
 
 #include <Constants.hpp>
 #include <Network.hpp>
-#include <grSimCommunicator.hpp>
 
 #include <QFont>
 #include <QMouseEvent>
@@ -20,7 +19,7 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragRobotBlue = false;
 }
 
-void SimFieldView::setGrCom(grSimCommunicator* grCom) { this->grCom = grCom; }
+void SimFieldView::setContext(Context* context) { this->_context = context; }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
     Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
@@ -44,7 +43,8 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         }
 
         if (_dragRobot < 0) {
-            grCom->placeBall(me->pos(), _screenToWorld);
+            _context->ball_command = me->pos();
+            _context->screen_to_world = _screenToWorld;
         }
 
         _dragMode = DRAG_PLACE;
@@ -90,9 +90,10 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 robot_replace->set_yellowteam(!_dragRobotBlue);
                 robot_replace->set_dir(0.0);
 
-                grCom->sendSimCommand(simPacket);
+                _context->grsim_command = simPacket;
             } else {
-                grCom->placeBall(me->pos(), _screenToWorld);
+                _context->ball_command = me->pos();
+                _context->screen_to_world = _screenToWorld;
             }
             break;
 
@@ -112,7 +113,7 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
             _teamToWorld.transformDirection(_shot).x());
         ball_replace->mutable_vel()->set_y(
             _teamToWorld.transformDirection(_shot).y());
-        grCom->sendSimCommand(simPacket);
+        _context->grsim_command = simPacket;
 
         update();
     }

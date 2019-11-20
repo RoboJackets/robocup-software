@@ -1,4 +1,4 @@
-#include "grSimCommunicator.hpp"
+#include "GrSimCommunicator.hpp"
 
 #include <Constants.hpp>
 #include <Network.hpp>
@@ -6,7 +6,23 @@
 using namespace boost;
 using namespace Packet;
 
-void grSimCommunicator::placeBall(QPointF pos,
+GrSimCommunicator::GrSimCommunicator(Context* context) : _context(context) {}
+
+void GrSimCommunicator::run() {
+    if (_context->grsim_command) {
+        sendSimCommand(_context->grsim_command.value());
+        _context->grsim_command = std::nullopt;
+    }
+
+    if (_context->ball_command && _context->screen_to_world) {
+        placeBall(_context->ball_command.value(), _context->screen_to_world.value());
+        _context->ball_command = std::nullopt;
+        _context->screen_to_world = std::nullopt;
+    }
+}
+
+
+void GrSimCommunicator::placeBall(QPointF pos,
                                   Geometry2d::TransformMatrix _screenToWorld) {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace =
@@ -20,7 +36,7 @@ void grSimCommunicator::placeBall(QPointF pos,
     sendSimCommand(simPacket);
 }
 
-void grSimCommunicator::sendSimCommand(const grSim_Packet& cmd) {
+void GrSimCommunicator::sendSimCommand(const grSim_Packet& cmd) {
     std::string out;
     cmd.SerializeToString(&out);
     _simCommandSocket.writeDatagram(&out[0], out.size(),

@@ -8,8 +8,8 @@
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
+#include "GrSimCommunicator.hpp"
 #include "RobotStatusWidget.hpp"
-#include "grSimCommunicator.hpp"
 #include "radio/Radio.hpp"
 #include "rc-fshare/git_version.hpp"
 
@@ -49,8 +49,7 @@ void calcMinimumWidth(QWidget* widget, QString text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, grSimCommunicator* grCom,
-                       QWidget* parent)
+MainWindow::MainWindow(Processor* processor, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _autoExternalReferee(true),
@@ -170,8 +169,8 @@ MainWindow::MainWindow(Processor* processor, grSimCommunicator* grCom,
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
     } else {
-        // Pass grCom into the simFieldView
-        _ui.fieldView->setGrCom(grCom);
+        // Pass context into the simFieldView
+        _ui.fieldView->setContext(_processor->context());
 
         // reset the field initially, grSim will start out in some weird
         // pattern and we want to keep it consistent
@@ -1051,7 +1050,7 @@ void MainWindow::on_actionCenterBall_triggered() {
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
 
-    _ui.fieldView->grCom->sendSimCommand(simPacket);
+    _processor->context()->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopBall_triggered() {
@@ -1065,7 +1064,7 @@ void MainWindow::on_actionStopBall_triggered() {
     ball_replace->mutable_pos()->set_y(ballPos.y());
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
-    _ui.fieldView->grCom->sendSimCommand(simPacket);
+    _processor->context()->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -1110,7 +1109,7 @@ void MainWindow::on_actionResetField_triggered() {
     ball_replace->mutable_vel()->set_x(0.0);
     ball_replace->mutable_vel()->set_y(0.0);
 
-    _ui.fieldView->grCom->sendSimCommand(simPacket);
+    _processor->context()->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
