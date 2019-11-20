@@ -15,12 +15,12 @@ void GrSimCommunicator::run() {
     }
 
     if (_context->ball_command && _context->screen_to_world) {
-        placeBall(_context->ball_command.value(), _context->screen_to_world.value());
+        placeBall(_context->ball_command.value(),
+                  _context->screen_to_world.value());
         _context->ball_command = std::nullopt;
         _context->screen_to_world = std::nullopt;
     }
 }
-
 
 void GrSimCommunicator::placeBall(QPointF pos,
                                   Geometry2d::TransformMatrix _screenToWorld) {
