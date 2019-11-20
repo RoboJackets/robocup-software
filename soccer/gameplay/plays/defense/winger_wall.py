@@ -52,10 +52,6 @@ class WingerWall(standard_play.StandardPlay):
                             WingerWall.State.defending, lambda: True,
                             "immediately")
 
-        # Remove defense if currently using it
-        if self.has_subbehavior_with_name('defense'):
-            self.remove_subbehavior('defense')
-
         self.aggression = 1
         self.kick_eval = robocup.KickEvaluator(main.system_state())
         self.wingers = []
@@ -79,6 +75,10 @@ class WingerWall(standard_play.StandardPlay):
     @classmethod
     def score(cls):
         return 10 if main.game_state().is_playing() else float("inf")
+
+    ## Stop winger wall from using adding standard defense
+    def use_standard_defense(self):
+        pass
 
     ## Classify opponent robots as a 'winger' or 'forward'
     #
