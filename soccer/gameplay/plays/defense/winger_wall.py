@@ -52,6 +52,10 @@ class WingerWall(standard_play.StandardPlay):
                             WingerWall.State.defending, lambda: True,
                             "immediately")
 
+        # Remove defense if currently using it
+        if self.has_subbehavior_with_name('defense'):
+            self.remove_subbehavior('defense')
+
         self.aggression = 1
         self.kick_eval = robocup.KickEvaluator(main.system_state())
         self.wingers = []
