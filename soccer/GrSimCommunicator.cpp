@@ -14,11 +14,11 @@ void GrSimCommunicator::run() {
         _context->grsim_command = std::nullopt;
     }
 
-    if (_context->ball_command && _context->screen_to_world) {
+    if (_context->ball_command && _context->screen_to_world_command) {
         placeBall(_context->ball_command.value(),
-                  _context->screen_to_world.value());
+                  _context->screen_to_world_command.value());
         _context->ball_command = std::nullopt;
-        _context->screen_to_world = std::nullopt;
+        _context->screen_to_world_command = std::nullopt;
     }
 }
 

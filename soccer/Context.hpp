@@ -34,5 +34,5 @@ struct Context {
     std::optional<grSim_Packet> grsim_command;
 
     std::optional<QPointF> ball_command;
-    std::optional<Geometry2d::TransformMatrix> screen_to_world;
+    std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
 };

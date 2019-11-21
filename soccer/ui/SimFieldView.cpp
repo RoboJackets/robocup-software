@@ -44,7 +44,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
 
         if (_dragRobot < 0) {
             _context->ball_command = me->pos();
-            _context->screen_to_world = _screenToWorld;
+            _context->screen_to_world_command = _screenToWorld;
         }
 
         _dragMode = DRAG_PLACE;
@@ -93,7 +93,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 _context->grsim_command = simPacket;
             } else {
                 _context->ball_command = me->pos();
-                _context->screen_to_world = _screenToWorld;
+                _context->screen_to_world_command = _screenToWorld;
             }
             break;
 
