@@ -9,10 +9,10 @@
 namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context) {
-//    planners_.push_back(std::make_unique<PathTargetPlanner>());
-//    planners_.push_back(std::make_unique<SettlePathPlanner>());
-//    planners_.push_back(std::make_unique<CollectPathPlanner>());
-//    planners_.push_back(std::make_unique<PivotPathPlanner>());
+    planners_.push_back(std::make_unique<PathTargetPlanner>());
+    planners_.push_back(std::make_unique<SettlePathPlanner>());
+    planners_.push_back(std::make_unique<CollectPathPlanner>());
+    planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EmptyPlanner>());
@@ -92,12 +92,16 @@ void PlannerNode::run() {
 }
 
 Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
+    Geometry2d::Point robotPos =  request.context->state.self[request.shellID]->pos();
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
+    DebugDrawer* drawer = &request.context->debug_drawer;
     for (auto& planner : planners_) {
         if (planner->isApplicable(request.motionCommand)) {
-            return planner->plan(std::move(request));
+            Trajectory result = planner->plan(std::move(request));
+            result.draw(drawer, robotPos + Geometry2d::Point(.1,0));
+            return std::move(result);
         } else {
 //            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this
         }
@@ -106,8 +110,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
               << std::endl;
     Trajectory result{{}};
     result.setDebugText("Error: No Valid Planners");
-//    Geometry2d::Point robotPos =  request.context->;
-//    result.draw(&request.context->debug_drawer, robotPos);
+    result.draw(&request.context->debug_drawer, robotPos + Geometry2d::Point(.1,0));
     return std::move(result);
 }
 

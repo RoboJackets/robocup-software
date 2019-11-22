@@ -39,7 +39,6 @@ Trajectory PathTargetPlanner::plan(Planning::PlanRequest &&request) {
     bool checkBetter = false;
 
     Trajectory result = std::move(request.prevTrajectory);
-    DebugDrawer* drawer = &request.context->debug_drawer;
 
     RobotInstant current_instant;
     current_instant.pose = request.start.pose;

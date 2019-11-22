@@ -253,20 +253,21 @@ TrajectoryIterator Trajectory::iterator(RJ::Time startTime, RJ::Seconds deltaT) 
 }
 
 void Trajectory::draw(DebugDrawer* drawer, std::optional<Geometry2d::Point> backupTextPos) const {
-    constexpr int kNumSegments = 150;
-    RJ::Seconds dt = duration() / kNumSegments;
-    auto trajectory_it = iterator(begin_time(), dt);
-    Geometry2d::Point from_point = (*trajectory_it).pose.position();
-    ++trajectory_it;
-    Geometry2d::Point to_point = (*trajectory_it).pose.position();
-    Geometry2d::Point last_point = last().pose.position();
-    while (to_point != last_point) {
-        drawer->drawSegment(Geometry2d::Segment(from_point, to_point), Qt::darkCyan);
-        from_point = to_point;
+    if(!empty()) {
+        constexpr int kNumSegments = 150;
+        RJ::Seconds dt = duration() / kNumSegments;
+        auto trajectory_it = iterator(begin_time(), dt);
+        Geometry2d::Point from_point = (*trajectory_it).pose.position();
         ++trajectory_it;
-        to_point = (*trajectory_it).pose.position();
+        Geometry2d::Point to_point = (*trajectory_it).pose.position();
+        Geometry2d::Point last_point = last().pose.position();
+        while (to_point != last_point) {
+            drawer->drawSegment(Geometry2d::Segment(from_point, to_point), Qt::darkCyan);
+            from_point = to_point;
+            ++trajectory_it;
+            to_point = (*trajectory_it).pose.position();
+        }
     }
-
     if (_debugText) {
         Geometry2d::Point textPos;
         if (empty()) {
