@@ -51,6 +51,8 @@ public:
 
     TeamInfo OurInfo;
     TeamInfo TheirInfo;
+    // bool representing if we are the blue team
+    bool blueTeam;
 
     Geometry2d::Point ballPlacementPoint;
 
