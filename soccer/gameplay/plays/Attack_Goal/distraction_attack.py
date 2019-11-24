@@ -10,7 +10,7 @@ import skills.move
 import skills.capture
 
 
-class Distraction(standard_play.StandardPlay):
+class DistractionAttack(standard_play.StandardPlay):
     class State(enum.Enum):
         setup = 1, 'capture ball and move distractor and striker into position'
         optional_adjustment = 2, 'capture and setup a pass to the center right'

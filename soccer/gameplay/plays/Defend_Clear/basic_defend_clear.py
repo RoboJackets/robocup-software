@@ -7,7 +7,7 @@ import main
 ## Simplistic play to handle defend clear situation
 #  Mimicks basic122 offense. One pivot kick and two marking robots
 #
-class DefendClear(standard_play.StandardPlay):
+class BaiscDefendClear(standard_play.StandardPlay):
     def __init__(self, num_supports=2):
         super().__init__(continuous=False)
 
