@@ -66,7 +66,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         if skillkicker == None:
             skillkicker = (skills.pivot_kick.PivotKick(), lambda x: x ==
                            skills.pivot_kick.PivotKick.State.aimed or x ==
-                           skills.pivot_kick.PivotKick.State.kicking)
+                           skills.pivot_kick.PivotKick.State.kicking or x ==
+                           behavior.Behavior.State.completed)
 
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver

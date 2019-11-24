@@ -76,6 +76,10 @@ class WingerWall(standard_play.StandardPlay):
     def score(cls):
         return 10 if main.game_state().is_playing() else float("inf")
 
+    ## Stop winger wall from using adding standard defense
+    def use_standard_defense(self):
+        pass
+
     ## Classify opponent robots as a 'winger' or 'forward'
     #
     # Wingers are positioned away from the ball and may be passed to
