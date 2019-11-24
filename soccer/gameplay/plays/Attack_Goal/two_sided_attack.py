@@ -19,8 +19,7 @@ class TwoSideAttack(standard_play.StandardPlay):
 
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
     ] # yapf: disable
 
 
@@ -72,11 +71,20 @@ class TwoSideAttack(standard_play.StandardPlay):
         self.passRobot2 = None
         self.captureRobot = None
 
+
     @classmethod
     def score(cls):
-        if main.game_state().is_playing():
-            return 9
-        return float("inf")
+        score = super().score()
+
+        #If the score from the super function is valid, use that with some offset
+        if (score != float("inf")):
+            scoreOffset = 0
+            return score + scoreOffset
+        else:
+            return 9 if main.game_state().is_playing() else float("inf")
+
+
+
 
     def on_enter_setup(self):
         # Add subbehaviors based on information

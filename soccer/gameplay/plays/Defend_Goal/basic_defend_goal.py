@@ -11,7 +11,7 @@ import evaluation.opponent as eval_opp
 import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import tactics.defense
-
+import situational_play_selection
 
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal.
@@ -19,7 +19,14 @@ import tactics.defense
 #  By default, we will use standard defense (two submissive 
 #  defenders, one goalie) and two wing defense robots. The
 #  remaining robot will mark the highest threat robot. 
-class DefendGoal(standard_play.StandardPlay):
+class BasicDefendGoal(standard_play.StandardPlay):
+    
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL,
+        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE
+    ] # yapf: disable
+
+
     def __init__(self, num_defenders=3, num_wingers=2):
         super().__init__(continuous=True)
 
@@ -44,6 +51,9 @@ class DefendGoal(standard_play.StandardPlay):
         for i in range(self.num_wingers):
             self.add_subbehavior(wing_defender.WingDefender(),
                                  'winger' + str(i))
+
+    def use_standard_defense(self):
+        pass
 
     def execute_running(self):
         for i in range(self.num_wingers):

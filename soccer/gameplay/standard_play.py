@@ -4,6 +4,7 @@ import tactics
 import main
 import situational_play_selection
 from typing import List
+import random
 
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
@@ -82,6 +83,6 @@ class StandardPlay(play.Play):
             return float('inf')
         else:
             if (cls.is_valid(main.situationAnalysis.getSituation())):
-                return main.situationAnalysis.inSituationScore
+                return main.situationAnalysis.inSituationScore + random.random()
             else:
-                return main.situationAnalysis.outSituationScore
+                return main.situationAnalysis.outSituationScore + random.random()

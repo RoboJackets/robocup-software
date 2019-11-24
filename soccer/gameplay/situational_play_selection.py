@@ -23,7 +23,7 @@ import standard_play
 class SituationalPlaySelector:
 
     ##!!!! This variable will control if plays will be using the situational play selector or not!
-    enabled = False
+    enabled = True
 
     ##This determines if this file will even run, set to false to save computation
     toRun = True
@@ -247,7 +247,7 @@ class SituationalPlaySelector:
     def possesses_the_ball(self,
                            ballPos,
                            robot,
-                           distThresh=0.14,
+                           distThresh=0.2,
                            angleThresh=35):
 
         distance = (ballPos - robot.pos).mag()
@@ -285,7 +285,7 @@ class SituationalPlaySelector:
     situationChanged = False
 
     ##The time after a situation changes before preempting the current play
-    preemptTime = 0.20
+    preemptTime = 0.25
 
     ##Keeps track of if the current play should be preempted
     currentPreempt = False
@@ -372,6 +372,7 @@ class SituationalPlaySelector:
             if (currentPlay != None and isinstance(
                     currentPlay, standard_play.StandardPlay) and self.enabled):
                 if (currentPlay.try_preempt()):
+                    print("Play has been preempted!")
                     self.situationChanged = False
 
     ##Returns the distance from a given robot to the ball

@@ -16,19 +16,18 @@ import skills.capture
 import situational_play_selection
 
 
-class AdaptiveAttack(standard_play.StandardPlay):
+
+#This is essentially a copy of adaptive formation, found in the legacy folder,
+#With the shooting option removed. It is intended to be used as a clearing play
+class AdaptiveClear(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_PILEUP
+        situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
     ] # yapf: disable
 
 
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
-    # Min score to shoot
-    DRIBBLE_TO_SHOOT_CUTOFF = 0.03
     # Max dribble distance per the rules with 10% wiggle room
     MAX_DRIBBLE_DIST = 1 * .9
 
@@ -67,15 +66,13 @@ class AdaptiveAttack(standard_play.StandardPlay):
         dribbling = 2
         # Pass when someone is open
         passing = 3
-        # Shoot when chances are high
-        shooting = 4
         # Clear when pass / dribble is worse and we are in our own zone
-        clearing = 5
+        clearing = 4
 
     def __init__(self):
         super().__init__(continuous=False)
 
-        for s in AdaptiveAttack.State:
+        for s in AdaptiveClear.State:
             self.add_state(s, behavior.Behavior.State.running)
 
         # Dribbling skill
@@ -83,74 +80,57 @@ class AdaptiveAttack(standard_play.StandardPlay):
         # Dribble start point
         self.dribble_start_pt = robocup.Point(0, 0)
 
-        # Kicker for a shot
-        self.kick = None
         # Controls robots while passes are being set up
         self.midfielders = None
 
         # State Decision Variables
-        self.shot_chance = 0
         self.pass_score = 0
         # Prev State Decision Variables
-        self.prev_shot_chance = 0
         self.prev_pass_score = 0
         # Used to keep dribble within rules
         self.check_dribbling_timer = 0
         self.check_dribbling_timer_cutoff = 100
 
-        self.kick_eval = robocup.KickEvaluator(main.system_state())
-
-        for r in main.our_robots():
-            self.kick_eval.add_excluded_robot(r)
-
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
-                            AdaptiveAttack.State.collecting, lambda: True,
+                            AdaptiveClear.State.collecting, lambda: True,
                             'immediately')
 
-        self.add_transition(AdaptiveAttack.State.collecting,
-                            AdaptiveAttack.State.dribbling, lambda: self.
+        self.add_transition(AdaptiveClear.State.collecting,
+                            AdaptiveClear.State.dribbling, lambda: self.
                             subbehavior_with_name('defend').state == behavior.
                             Behavior.State.completed, 'Ball Collected')
 
         self.add_transition(
-            AdaptiveAttack.State.dribbling, AdaptiveAttack.State.passing,
+            AdaptiveClear.State.dribbling, AdaptiveClear.State.passing,
             lambda: self.dribbler_has_ball() and self.should_pass_from_dribble(
-            ) and not self.should_shoot_from_dribble(), 'Passing')
+            ), 'Passing')
 
         self.add_transition(
-            AdaptiveAttack.State.dribbling,
-            AdaptiveAttack.State.shooting, lambda: self.dribbler_has_ball(
-            ) and self.should_shoot_from_dribble(), 'Shooting')
-
-        self.add_transition(
-            AdaptiveAttack.State.dribbling,
-            AdaptiveAttack.State.clearing, lambda: self.dribbler_has_ball(
+            AdaptiveClear.State.dribbling,
+            AdaptiveClear.State.clearing, lambda: self.dribbler_has_ball(
             ) and self.should_clear_from_dribble(
             ) and not self.should_pass_from_dribble(
-            ) and not self.should_shoot_from_dribble(), 'Clearing')
+            ), 'Clearing')
 
         self.add_transition(
-            AdaptiveAttack.State.passing, AdaptiveAttack.State.dribbling,
+            AdaptiveClear.State.passing, AdaptiveClear.State.dribbling,
             lambda: self.subbehavior_with_name(
                 'pass').state == behavior.Behavior.State.completed, 'Passed')
 
         # Reset to collecting when ball is lost at any stage
-        self.add_transition(AdaptiveAttack.State.dribbling,
-                            AdaptiveAttack.State.collecting, lambda:
+        self.add_transition(AdaptiveClear.State.dribbling,
+                            AdaptiveClear.State.collecting, lambda:
                             not self.dribbler_has_ball(), 'Dribble: Ball Lost')
         self.add_transition(
-            AdaptiveAttack.State.passing,
-            AdaptiveAttack.State.collecting, lambda: self.
+            AdaptiveClear.State.passing,
+            AdaptiveClear.State.collecting, lambda: self.
             subbehavior_with_name('pass').state == behavior.Behavior.State.
             cancelled or self.subbehavior_with_name('pass').state == behavior.
             Behavior.State.failed, 'Passing: Ball Lost')
-        self.add_transition(AdaptiveAttack.State.shooting,
-                            AdaptiveAttack.State.collecting, lambda: self.
-                            subbehavior_with_name('kick').is_done_running(),
-                            'Shooting: Ball Lost / Shot')
-        self.add_transition(AdaptiveAttack.State.clearing,
-                            AdaptiveAttack.State.collecting, lambda: self.
+
+        self.add_transition(AdaptiveClear.State.clearing,
+                            AdaptiveClear.State.collecting, lambda: self.
                             subbehavior_with_name('clear').is_done_running(),
                             'Clearing: Ball Lost')
 
@@ -175,55 +155,34 @@ class AdaptiveAttack(standard_play.StandardPlay):
 
     def should_pass_from_dribble(self):
 
-        # If pass is above cutoff and we dont have a good shot
-        if (self.pass_score > AdaptiveAttack.DRIBBLE_TO_PASS_CUTOFF and
-                self.shot_chance < AdaptiveAttack.DRIBBLE_TO_SHOOT_CUTOFF):
-            print("Pass : " + str(self.pass_score) + " Shot : " + str(
-                self.shot_chance))
+        # If pass is above cutoff
+        if (self.pass_score > AdaptiveClear.DRIBBLE_TO_PASS_CUTOFF):
+            print("Pass : " + str(self.pass_score))
             return True
 
         # Force pass if we are near our max dribble dist
         dribble_dist = (main.ball().pos - self.dribble_start_pt).mag()
-        if (dribble_dist > AdaptiveAttack.MAX_DRIBBLE_DIST):
+        if (dribble_dist > AdaptiveClear.MAX_DRIBBLE_DIST):
             return True
 
         # Under cutoff
         return False
 
-    def should_shoot_from_dribble(self):
-
-        # If shot chance is improving significantly, hold off a second
-        if (self.prev_shot_chance + AdaptiveAttack.INCREASING_CHANCE_CUTOFF
-                < self.shot_chance):
-            return False
-
-        # Not in front of the half
-        if (main.ball().pos.y < constants.Field.Length / 2):
-            return False
-
-        # If shot is above cutoff
-        if (self.shot_chance > AdaptiveAttack.DRIBBLE_TO_SHOOT_CUTOFF):
-            print("Pass : " + str(self.pass_score) + " Shot : " + str(
-                self.shot_chance))
-            return True
-
-        # Decreasing and under cutoff
-        return False
 
     def should_clear_from_dribble(self):
         # If outside clear zone
-        if (self.dribbler.pos.y > AdaptiveAttack.CLEAR_FIELD_CUTOFF):
+        if (self.dribbler.pos.y > AdaptiveClear.CLEAR_FIELD_CUTOFF):
             return False
 
         # If pass chances are getting better, hold off
-        if (self.prev_pass_score + AdaptiveAttack.INCREASING_CHANCE_CUTOFF <
+        if (self.prev_pass_score + AdaptiveClear.INCREASING_CHANCE_CUTOFF <
                 self.pass_score):
             return False
 
         # TODO: See if there is space to dribble
         closest_distance = (evaluation.opponent.get_closest_opponent(
             main.ball().pos, 1).pos - main.ball().pos).mag()
-        if (closest_distance > AdaptiveAttack.CLEAR_DISTANCE_CUTOFF):
+        if (closest_distance > AdaptiveClear.CLEAR_DISTANCE_CUTOFF):
             return False
 
         return True
@@ -249,10 +208,10 @@ class AdaptiveAttack(standard_play.StandardPlay):
 
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
-            AdaptiveAttack.FIELD_POS_WEIGHTS,
-            AdaptiveAttack.NELDER_MEAD_ARGS,
-            AdaptiveAttack.DRIBBLING_WEIGHTS)
+            main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
+            AdaptiveClear.FIELD_POS_WEIGHTS,
+            AdaptiveClear.NELDER_MEAD_ARGS,
+            AdaptiveClear.DRIBBLING_WEIGHTS)
 
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
 
@@ -268,55 +227,30 @@ class AdaptiveAttack(standard_play.StandardPlay):
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
-            AdaptiveAttack.FIELD_POS_WEIGHTS,
-            AdaptiveAttack.NELDER_MEAD_ARGS,
-            AdaptiveAttack.PASSING_WEIGHTS)
-
-        # Grab shot chance
-        self.shot_chance = evaluation.shooting.eval_shot(main.ball().pos)
-
+            main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
+            AdaptiveClear.FIELD_POS_WEIGHTS,
+            AdaptiveClear.NELDER_MEAD_ARGS,
+            AdaptiveClear.PASSING_WEIGHTS)
+       
         # Recalculate dribbler pos
         self.check_dribbling_timer += 1
         if (self.check_dribbling_timer > self.check_dribbling_timer_cutoff):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
                 main.ball().pos,
-                main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
-                AdaptiveAttack.FIELD_POS_WEIGHTS,
-                AdaptiveAttack.NELDER_MEAD_ARGS,
-                AdaptiveAttack.DRIBBLING_WEIGHTS)
+                main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
+                AdaptiveClear.FIELD_POS_WEIGHTS,
+                AdaptiveClear.NELDER_MEAD_ARGS,
+                AdaptiveClear.DRIBBLING_WEIGHTS)
 
         # TODO: Get list of top X pass positions and have robots in good positions to reach them
         # Good positions can be definied by offensive / defensive costs
         # Offensive positions move onto the ball in the direction of the goal
         # Defensive cover the center of the field
 
-        # Setup previous values (Basic complementary filter)
-        c = .8
-        self.prev_shot_chance = c * self.shot_chance + \
-                                (1 - c) * self.prev_shot_chance
-        self.prev_pass_score = c * self.pass_score + \
-                               (1 - c) * self.prev_pass_score
-
     def on_exit_dribbling(self):
         self.remove_subbehavior('dribble')
 
-    def on_enter_shooting(self):
-        self.kick = skills.pivot_kick.PivotKick()
-
-        # Same params as basic_122
-        self.kick.aim_params['error_threshold'] = 0.3
-        self.kick.aim_params['max_steady_ang_vel'] = 10
-        self.kick.aim_params['min_steady_duration'] = 0.1
-        self.kick.aim_params['desperate_timeout'] = 1
-
-        self.kick.target = constants.Field.TheirGoalSegment
-        self.add_subbehavior(self.kick, 'kick', required=False)
-
-    def on_exit_shooting(self):
-        self.remove_subbehavior('kick')
-        self.kick = None
 
     def on_enter_clearing(self):
         # Line kick with chip
@@ -324,9 +258,9 @@ class AdaptiveAttack(standard_play.StandardPlay):
         # Decrease weight on sides of field due to complexity of settling
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
             main.ball().pos,
-            main.our_robots(), AdaptiveAttack.FIELD_POS_WEIGHTS,
-            AdaptiveAttack.NELDER_MEAD_ARGS,
-            AdaptiveAttack.PASSING_WEIGHTS)
+            main.our_robots(), AdaptiveClear.FIELD_POS_WEIGHTS,
+            AdaptiveClear.NELDER_MEAD_ARGS,
+            AdaptiveClear.PASSING_WEIGHTS)
 
         clear = skills.pivot_kick.PivotKick()
         clear.target = self.pass_target
