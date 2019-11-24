@@ -122,7 +122,7 @@ void AppendProfiledVelocity(Trajectory& out,
 }
 
 void PlanAngles(Trajectory& trajectory,
-                RobotState initial_state,
+                const RobotInstant& initial_state,
                 const AngleFunction& angle_function,
                 const RotationConstraints& constraints) {
     if(trajectory.empty()) {

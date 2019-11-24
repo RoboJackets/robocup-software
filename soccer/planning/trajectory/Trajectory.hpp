@@ -243,6 +243,7 @@ public:
     TrajectoryIterator iterator(RJ::Time startTime, RJ::Seconds deltaT) const;
 
     void setDebugText(QString str) {_debugText = std::move(str); };
+    QString getDebugText() { return _debugText ? *_debugText: ""; }
 
 protected:
     // A sorted array of RobotInstants (by timestamp)

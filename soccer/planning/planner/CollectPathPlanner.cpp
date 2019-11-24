@@ -61,7 +61,7 @@ Trajectory CollectPathPlanner::plan(PlanRequest&& planRequest) {
     const CollectCommand& command = std::get<CollectCommand>(planRequest.motionCommand);
 
     // Start state for specified robot
-    RobotInstant startInstant{planRequest.start.pose, planRequest.start.velocity, planRequest.start.timestamp};
+    RobotInstant startInstant = planRequest.start;
     RobotInstant partialStartInstant = startInstant;
 
     // All the max velocity / acceleration constraints for translation /
@@ -71,7 +71,7 @@ Trajectory CollectPathPlanner::plan(PlanRequest&& planRequest) {
 
     // Previous RRT path from last iteration
     //todo(Ethan) move here?
-    Trajectory prevPath = planRequest.prevTrajectory;
+    const Trajectory& prevPath = planRequest.prevTrajectory;
 
     // The small beginning part of the previous path
     Trajectory partialPath({});
@@ -142,17 +142,15 @@ Trajectory CollectPathPlanner::plan(PlanRequest&& planRequest) {
     switch (currentState) {
         // Moves from the current location to the slow point of approach
         case CourseApproach: {
-            return courseApproach(planRequest, startInstant, std::move(prevPath));
+            return courseApproach(std::move(planRequest));
         }
         // Moves from the slow point of approach to just before point of contact
         case FineApproach: {
-            return fineApproach(planRequest, startInstant, std::move(prevPath));
+            return fineApproach(std::move(planRequest));
         }
         // Move through the ball and stop
         case Control: {
-            return control(planRequest, partialStartInstant,
-                                     std::move(prevPath),
-                                     std::move(partialPath));
+            return control(std::move(planRequest), std::move(partialPath));
         }
         default: {
             return invalid(planRequest);
@@ -198,10 +196,10 @@ void CollectPathPlanner::processStateTransition(
     }
 }
 
-Trajectory CollectPathPlanner::courseApproach(
-    const PlanRequest& planRequest, const RobotInstant& startInstant,
-    Trajectory&& prevPath) {
+Trajectory CollectPathPlanner::courseApproach(PlanRequest&& planRequest) {
     const Ball& ball = planRequest.context->state.ball;
+    RobotInstant startInstant = planRequest.start;
+    RotationConstraints rotationConstraints = planRequest.constraints.rot;
 
     // There are two paths that get combined together
     //
@@ -231,32 +229,34 @@ Trajectory CollectPathPlanner::courseApproach(
         pathCourseTarget = targetSlowPos;
     }
     //todo(EThan) verify this target
-    RobotInstant targetSlow(Pose(pathCourseTarget, pathCourseTarget.angleTo(ball.pos)),
-            Twist(targetSlowVel, 0), startInstant.stamp);
+    RobotInstant targetSlow(Pose(pathCourseTarget, approachDirection.angle()),
+            Twist(targetSlowVel, 0), RJ::now());
     PathTargetCommand rrtCommand{targetSlow};
 
     auto request = PlanRequest(
-        planRequest.context, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, rrtCommand,
-        planRequest.constraints, std::move(prevPath), planRequest.obstacles,planRequest.shellID);
+        planRequest.context, startInstant, rrtCommand,
+        planRequest.constraints, std::move(planRequest.prevTrajectory),
+        planRequest.obstacles, planRequest.shellID);
 
     Trajectory coursePath = rrtPlanner.plan(std::move(request));
 
     // Build a path from now to the slow point
     std::function<double(Point,Point,double)> angleFunction =
         [&](Point pos, Point vel, double angle) {
-            return vel.angle();
+            //todo(Ethan) change to vel.angle() ?
+            return pos.angleTo(ball.pos);
         };
-    PlanAngles(coursePath, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, request.constraints.rot);
-    coursePath.setDebugText("Course");
+    PlanAngles(coursePath, startInstant, angleFunction, rotationConstraints);
+    coursePath.setDebugText("Course " + coursePath.getDebugText());
     return std::move(coursePath);
 }
 
-Trajectory CollectPathPlanner::fineApproach(
-    const PlanRequest& planRequest, const RobotInstant& startInstant,
-    Trajectory&& prevPath) {
+Trajectory CollectPathPlanner::fineApproach(PlanRequest&& planRequest) {
     const Ball& ball = planRequest.context->state.ball;
     RobotConstraints robotConstraintsHit = planRequest.constraints;
     MotionConstraints& motionConstraintsHit = robotConstraintsHit.mot;
+    RotationConstraints rotationConstraints = robotConstraintsHit.rot;
+    RobotInstant startInstant = planRequest.start;
 
     // There are two paths that get combined together
     //
@@ -278,7 +278,7 @@ Trajectory CollectPathPlanner::fineApproach(
     Point targetHitVel = averageBallVel + approachDirection * *_touchDeltaSpeed;
 
     //todo(Ethan) fix timestamp? fix target angle?
-    RobotInstant targetHit(Pose(targetHitPos, targetHitPos.angleTo(ball.pos)), Twist(targetHitVel, 0), planRequest.start.timestamp);
+    RobotInstant targetHit(Pose(targetHitPos, targetHitPos.angleTo(ball.pos)), Twist(targetHitVel, 0), planRequest.start.stamp);
 
     // Decrease accel at the end so we more smoothly touch the ball
     motionConstraintsHit.maxAcceleration *= *_approachAccelScalePercent;
@@ -290,8 +290,8 @@ Trajectory CollectPathPlanner::fineApproach(
     DirectPathTargetCommand directCommand{targetHit};
 
     auto request = PlanRequest(
-        planRequest.context, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, directCommand,
-        robotConstraintsHit, std::move(prevPath), planRequest.obstacles,planRequest.shellID);
+        planRequest.context, startInstant, directCommand,
+        robotConstraintsHit, std::move(planRequest.prevTrajectory), planRequest.obstacles,planRequest.shellID);
 
     Trajectory pathHit = directPlanner.plan(std::move(request));
 
@@ -299,24 +299,23 @@ Trajectory CollectPathPlanner::fineApproach(
             [&](Point pos, Point vel, double angle) {
                 return pos.angleTo(ball.pos);
             };
-    PlanAngles(pathHit, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, planRequest.constraints.rot);
+    PlanAngles(pathHit, startInstant, angleFunction, rotationConstraints);
     pathHit.setDebugText("Fine");
     return std::move(pathHit);
 }
 
-Trajectory CollectPathPlanner::control(
-    const PlanRequest& planRequest, const RobotInstant& startInstant,
-    Trajectory&& prevPath, Trajectory&& partialPath) {
+Trajectory CollectPathPlanner::control(PlanRequest&& planRequest, Trajectory&& partialPath) {
     const Ball& ball = planRequest.context->state.ball;
     const ShapeSet& obstacles = planRequest.obstacles;
     RobotConstraints robotConstraints = planRequest.constraints;
     MotionConstraints& motionConstraints = robotConstraints.mot;
-    Point startPoint = planRequest.start.pose.position();
+    RobotInstant startInstant = !partialPath.empty() ? partialPath.last() : planRequest.start;
+    Point startPoint = startInstant.pose.position();
 
     // Only plan the path once and run through it
     // Otherwise it will basically push the ball across the field
-    if (controlPathCreated && !prevPath.empty()) {
-        return std::move(prevPath);
+    if (controlPathCreated && !planRequest.prevTrajectory.empty()) {
+        return std::move(planRequest.prevTrajectory);
     }
 
     controlPathCreated = true;
@@ -385,7 +384,7 @@ Trajectory CollectPathPlanner::control(
             [&](Point pos, Point vel, double angle) -> double {
                 return pos.angleTo(facePt);
             };
-    PlanAngles(path, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, robotConstraints.rot);
+    PlanAngles(path, startInstant, angleFunction, robotConstraints.rot);
 
 
 
@@ -404,7 +403,7 @@ Trajectory CollectPathPlanner::control(
         PathTargetCommand rrtCommand{pathTargetGoal};
 
         auto request = PlanRequest(
-            planRequest.context, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, rrtCommand,
+            planRequest.context, startInstant, rrtCommand,
             robotConstraints, Trajectory{{}}, obstacles,
             planRequest.shellID);
         path = rrtPlanner.plan(std::move(request));
@@ -427,13 +426,13 @@ Trajectory CollectPathPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    RobotInstant targetInstant{planRequest.start.pose, Twist{}, planRequest.start.timestamp};
+    RobotInstant targetInstant{planRequest.start.pose, Twist{}, planRequest.start.stamp};
     PathTargetCommand rrtCommand{targetInstant};
-    RobotState startRobotState{planRequest.start.pose, planRequest.start.velocity, planRequest.start.timestamp};
+    RobotInstant startInstant = planRequest.start;
     const Ball& ball = planRequest.context->state.ball;
 
     auto request = PlanRequest(
-        planRequest.context, startRobotState, rrtCommand,
+        planRequest.context, startInstant, rrtCommand,
         planRequest.constraints, Trajectory{{}}, planRequest.obstacles,
         planRequest.shellID);
     auto path = rrtPlanner.plan(std::move(request));
@@ -442,7 +441,7 @@ Trajectory CollectPathPlanner::invalid(
             [&](Point pos, Point vel, double angle) {
                 return pos.angleTo(ball.pos);
             };
-    PlanAngles(path, startRobotState, angleFunction, request.constraints.rot);
+    PlanAngles(path, startInstant, angleFunction, request.constraints.rot);
     path.setDebugText("Invalid state in collect");
     return std::move(path);
 }

@@ -28,7 +28,7 @@ namespace Planning {
         RobotInstant current_instant;
         current_instant.pose = request.start.pose;
         current_instant.velocity = request.start.velocity;
-        current_instant.stamp = request.start.timestamp;
+        current_instant.stamp = request.start.stamp;
 
         Trajectory result = std::move(request.prevTrajectory);
         if(shouldReplan(request)) {
@@ -75,7 +75,7 @@ namespace Planning {
                         return angleToPivot;
                     }
                 };
-            PlanAngles(result, RobotState{current_instant.pose, current_instant.velocity, current_instant.stamp}, angleFunction, request.constraints.rot);
+            PlanAngles(result, current_instant, angleFunction, request.constraints.rot);
         }
         result.setDebugText("Pivot");
         return std::move(result);

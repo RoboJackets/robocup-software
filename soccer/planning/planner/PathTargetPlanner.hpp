@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Planner.hpp"
+#include "planning/trajectory/RoboCupStateSpace.hpp"
+#include <Geometry2d/Point.hpp>
+#include <vector>
 #include <memory>
 
 namespace Planning {
@@ -12,13 +15,14 @@ public:
     Trajectory plan(PlanRequest&& request) override;
 
     std::string name() const override { return "PathTargetPlanner"; }
-    bool shouldReplan(const PlanRequest& request) const override;
     static void createConfiguration(Configuration* cfg);
 
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
+    bool goalChanged(const PlanRequest& request) const;
+    Trajectory planLinear(PlanRequest&& request);
+
     static ConfigDouble* _partialReplanLeadTime;
-    std::optional<RJ::Seconds> findInvalidTime(const PlanRequest& request) const;
 
     int counter;
 };

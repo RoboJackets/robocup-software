@@ -74,13 +74,16 @@ void PlannerNode::run() {
 
         // Construct a plan request.
         if(robot->motionCommand()) {
+            const RobotState& robotState = robot->state();
             PlanRequest request = PlanRequest(
-                    context_, robot->state(), *robot->motionCommand(),
+                    context_, RobotInstant{robotState.pose, robotState.velocity, robotState.timestamp}, *robot->motionCommand(),
                     robot->robotConstraints(), robot->path_movable(),
                     staticObstacles, robot->shell(), robot->getPlanningPriority());
 
             //complete the plan request
-            robot->setPath(std::move(PlanForRobot(std::move(request))));
+            Trajectory plannedPath = PlanForRobot(std::move(request));
+            plannedPath.draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
+            robot->setPath(std::move(plannedPath));
         }
     }
 
@@ -99,9 +102,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     DebugDrawer* drawer = &request.context->debug_drawer;
     for (auto& planner : planners_) {
         if (planner->isApplicable(request.motionCommand)) {
-            Trajectory result = planner->plan(std::move(request));
-            result.draw(drawer, robotPos + Geometry2d::Point(.1,0));
-            return std::move(result);
+            return planner->plan(std::move(request));
         } else {
 //            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this
         }
@@ -110,7 +111,6 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
               << std::endl;
     Trajectory result{{}};
     result.setDebugText("Error: No Valid Planners");
-    result.draw(&request.context->debug_drawer, robotPos + Geometry2d::Point(.1,0));
     return std::move(result);
 }
 

@@ -52,18 +52,11 @@ private:
                                 const Trajectory& prevPath,
                                 const RJ::Seconds& timeIntoPreviousPath);
 
-    Trajectory courseApproach(const PlanRequest& planRequest,
-                                         const RobotInstant& startInstant,
-                                         Trajectory&& prevPaths);
+    Trajectory courseApproach(PlanRequest&& planRequest);
 
-    Trajectory fineApproach(const PlanRequest& planRequest,
-                                       const RobotInstant& startInstant,
-                                       Trajectory&& prevPath);
+    Trajectory fineApproach(PlanRequest&& planRequest);
 
-    Trajectory control(const PlanRequest& planRequest,
-                                  const RobotInstant& startInstant,
-                                  Trajectory&& prevPath,
-                                  Trajectory&& partialPath);
+    Trajectory control(PlanRequest&& planRequest, Trajectory&& partialPath);
 
     Trajectory invalid(const PlanRequest& planRequest);
 

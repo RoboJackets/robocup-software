@@ -18,7 +18,7 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(Context* context, RobotState start,
+    PlanRequest(Context* context, RobotInstant start,
                 MotionCommand command,
                 RobotConstraints constraints, Trajectory&& prevTrajectory,
                 Geometry2d::ShapeSet obs, unsigned shellID, int8_t priority = 0)
@@ -39,7 +39,7 @@ struct PlanRequest {
     /**
      * The robot's starting state.
      */
-    RobotState start;
+    RobotInstant start;
 
     /**
      * The goal to plan for.

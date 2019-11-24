@@ -69,7 +69,7 @@ Trajectory SettlePathPlanner::plan(PlanRequest&& request) {
     RobotInstant startInstant;
     startInstant.pose = request.start.pose;
     startInstant.velocity = request.start.velocity;
-    startInstant.stamp = request.start.timestamp;
+    startInstant.stamp = request.start.stamp;
 
     // List of obstacles
     ShapeSet& obstacles = request.obstacles;
@@ -243,7 +243,7 @@ Trajectory SettlePathPlanner::intercept(
 
         planRequest.start.pose = startInstant.pose;
         planRequest.start.velocity = startInstant.velocity;
-        planRequest.start.timestamp = startInstant.stamp;
+        planRequest.start.stamp = startInstant.stamp;
         Trajectory prevTrajectory = planRequest.prevTrajectory;
         PlanRequest interceptRequest(planRequest.context, planRequest.start, pathTargetCommand,
                                      planRequest.constraints, std::move(prevTrajectory), obstacles, planRequest.shellID);
@@ -355,7 +355,7 @@ Trajectory SettlePathPlanner::intercept(
                     [](Point pos, Point vel_linear, double angle) -> double {
                         return vel_linear.angle();
                     };
-            PlanAngles(shortCut, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, planRequest.constraints.rot);
+            PlanAngles(shortCut, startInstant, angleFunction, planRequest.constraints.rot);
             shortCut.setDebugText("settle - intercept - short cut");
             return shortCut;
         }
@@ -386,7 +386,7 @@ Trajectory SettlePathPlanner::intercept(
     command.pathGoal = targetRobotIntersection;
 
     auto request =
-        PlanRequest(planRequest.context, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, command,
+        PlanRequest(planRequest.context, startInstant, command,
                     planRequest.constraints, std::move(planRequest.prevTrajectory), obstacles,
                     planRequest.shellID);
 
@@ -483,7 +483,7 @@ Trajectory SettlePathPlanner::dampen(PlanRequest&& planRequest,
     DirectPathTargetCommand directCommand = DirectPathTargetCommand{finalStoppingMotion};
 
     auto request =
-        PlanRequest(planRequest.context, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, directCommand,
+        PlanRequest(planRequest.context, startInstant, directCommand,
                     planRequest.constraints, Trajectory({}), planRequest.obstacles, planRequest.shellID);
 
     Trajectory dampenEnd = directPlanner.plan(std::move(request));
@@ -495,7 +495,7 @@ Trajectory SettlePathPlanner::dampen(PlanRequest&& planRequest,
         [](Point pos, Point vel, double angle) -> double {
             return vel.angle();
         };
-    PlanAngles(dampenEnd, RobotState{startInstant.pose, startInstant.velocity, startInstant.stamp}, angleFunction, planRequest.constraints.rot);
+    PlanAngles(dampenEnd, startInstant, angleFunction, planRequest.constraints.rot);
     dampenEnd.setDebugText("Damping");
     return std::move(dampenEnd);
 }
@@ -508,7 +508,7 @@ Trajectory SettlePathPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    RobotInstant target(planRequest.start.pose, Twist(), planRequest.start.timestamp);
+    RobotInstant target(planRequest.start.pose, Twist(), planRequest.start.stamp);
 
     PathTargetCommand rrtCommand = {target};
 

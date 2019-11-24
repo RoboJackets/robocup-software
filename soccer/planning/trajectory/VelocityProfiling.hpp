@@ -44,7 +44,7 @@ void AppendProfiledVelocity(Trajectory& out, const BezierPath& path, double fina
  * @param constraints Constraints on the robot's rotation.
  */
 void PlanAngles(Trajectory& trajectory,
-                RobotState initial_state,
+                const RobotInstant& initial_state,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 

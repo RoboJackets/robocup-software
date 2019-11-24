@@ -31,14 +31,30 @@ namespace Planning {
         //    return true;
         //}
 
+        if(veeredOffPath(planRequest)) return true;
+
         // Evaluate where the path says the robot should be right now
         RJ::Seconds timeIntoPath =
                 (RJ::now() - prevTrajectory.begin_time()) + RJ::Seconds(1) / 60;
 
+        // Replan if we enter new obstacles
+        RJ::Seconds hitTime;
+        if (prevTrajectory.hit(obstacles, timeIntoPath, &hitTime)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool Planner::veeredOffPath(const PlanRequest& request) const {
+        const auto &currentInstant = request.start;
+        const MotionConstraints &motionConstraints = request.constraints.mot;
+        const Trajectory& prevTrajectory = request.prevTrajectory;
+        if (prevTrajectory.empty()) return false;
+        RJ::Seconds timeIntoPath =
+                (RJ::now() - prevTrajectory.begin_time()) + RJ::Seconds(1) / 60;
         std::optional<RobotInstant> optTarget = prevTrajectory.evaluate(timeIntoPath);
         // If we went off the end of the path, use the end for calculations.
         RobotInstant target = optTarget ? *optTarget : prevTrajectory.last();
-
         // invalidate path if current position is more than the replanThreshold away
         // from where it's supposed to be right now
         float pathError = (target.pose.position() - currentInstant.pose.position()).mag();
@@ -46,13 +62,6 @@ namespace Planning {
         if (replanThreshold != 0 && pathError > replanThreshold) {
             return true;
         }
-
-        // Replan if we enter new obstacles
-        RJ::Seconds hitTime;
-        if (prevTrajectory.hit(obstacles, timeIntoPath, &hitTime)) {
-            return true;
-        }
-
         return false;
     }
 }

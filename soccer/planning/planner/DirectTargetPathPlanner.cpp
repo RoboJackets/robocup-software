@@ -14,7 +14,7 @@ double vectorInDirection(Point point, Point direction) {
 }
 
 Trajectory DirectTargetPathPlanner::plan(PlanRequest&& planRequest) {
-    RobotInstant startInstant {planRequest.start.pose, planRequest.start.velocity, planRequest.start.timestamp};
+    RobotInstant startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     DebugDrawer& drawer = planRequest.context->debug_drawer;
@@ -38,7 +38,6 @@ Trajectory DirectTargetPathPlanner::plan(PlanRequest&& planRequest) {
         result = std::move(planRequest.prevTrajectory);
     }
     result.setDebugText("Direct");
-    result.draw(&drawer);
     return std::move(result);
 }
 
