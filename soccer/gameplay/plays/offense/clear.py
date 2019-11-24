@@ -14,6 +14,7 @@ import random
 #Based on clear sitation
 #    Have ball in defense
 #   Want to Kick ball up field and get other robots in position
+#
 
 class Clear(standard_play.StandardPlay):
 
