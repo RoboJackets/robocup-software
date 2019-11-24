@@ -10,14 +10,10 @@ import math
 import situational_play_selection
 
 
-class Basic122Attack(standard_play.StandardPlay):
+class Basic122(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_PILEUP,
-        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_PILEUP
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
     ] # yapf: disable
 
 

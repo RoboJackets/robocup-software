@@ -9,13 +9,20 @@ import enum
 import evaluation
 import tactics.coordinated_pass
 import tactics.defense
-
+import situational_play_selection
 
 class TwoSideAttack(standard_play.StandardPlay):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py
     # Tell where passing from and where to pass to
     # Estimate of which shot is better
+
+
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
+        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+    ] # yapf: disable
+
 
     class State(enum.Enum):
         ## Move A and move B, capture in setup

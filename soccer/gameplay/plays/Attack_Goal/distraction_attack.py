@@ -8,9 +8,18 @@ import evaluation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
+import situational_play_selection
 
 
-class DistractionAttack(standard_play.StandardPlay):
+class Distraction(standard_play.StandardPlay):
+    
+
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
+        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+    ] # yapf: disable
+
+
     class State(enum.Enum):
         setup = 1, 'capture ball and move distractor and striker into position'
         optional_adjustment = 2, 'capture and setup a pass to the center right'
@@ -257,3 +266,20 @@ class DistractionAttack(standard_play.StandardPlay):
             priority=10)
         self.add_subbehavior(
             skills.pivot_kick.PivotKick(), 'shooting', required=True)
+
+
+
+    @classmethod
+    def score(cls):
+        score = super().score()
+
+        #If the score from the super function is valid, use that with some offset
+        if (score != float("inf")):
+            scoreOffset = 0
+            return score + scoreOffset
+        else:
+            return 10 if main.game_state().is_playing() else float("inf")
+
+
+
+
