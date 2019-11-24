@@ -34,11 +34,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
 
     MIN_PASS_DIST = .2
 
-    # Min field Y to clear
-    CLEAR_FIELD_CUTOFF = constants.Field.Length * .2
-    # Min dist to opponent before clear
-    CLEAR_DISTANCE_CUTOFF = constants.Field.Length * .1
-
     # The minimum increase from one cycle to the next to hold off Passing/Shooting/Clearing
     INCREASING_CHANCE_CUTOFF = 0.05
 
@@ -69,8 +64,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
         passing = 3
         # Shoot when chances are high
         shooting = 4
-        # Clear when pass / dribble is worse and we are in our own zone
-        clearing = 5
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -122,14 +115,7 @@ class AdaptiveAttack(standard_play.StandardPlay):
             AdaptiveAttack.State.dribbling,
             AdaptiveAttack.State.shooting, lambda: self.dribbler_has_ball(
             ) and self.should_shoot_from_dribble(), 'Shooting')
-
-        self.add_transition(
-            AdaptiveAttack.State.dribbling,
-            AdaptiveAttack.State.clearing, lambda: self.dribbler_has_ball(
-            ) and self.should_clear_from_dribble(
-            ) and not self.should_pass_from_dribble(
-            ) and not self.should_shoot_from_dribble(), 'Clearing')
-
+     
         self.add_transition(
             AdaptiveAttack.State.passing, AdaptiveAttack.State.dribbling,
             lambda: self.subbehavior_with_name(
@@ -149,10 +135,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
                             AdaptiveAttack.State.collecting, lambda: self.
                             subbehavior_with_name('kick').is_done_running(),
                             'Shooting: Ball Lost / Shot')
-        self.add_transition(AdaptiveAttack.State.clearing,
-                            AdaptiveAttack.State.collecting, lambda: self.
-                            subbehavior_with_name('clear').is_done_running(),
-                            'Clearing: Ball Lost')
 
     @classmethod
     def score(cls):
@@ -209,24 +191,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
 
         # Decreasing and under cutoff
         return False
-
-    def should_clear_from_dribble(self):
-        # If outside clear zone
-        if (self.dribbler.pos.y > AdaptiveAttack.CLEAR_FIELD_CUTOFF):
-            return False
-
-        # If pass chances are getting better, hold off
-        if (self.prev_pass_score + AdaptiveAttack.INCREASING_CHANCE_CUTOFF <
-                self.pass_score):
-            return False
-
-        # TODO: See if there is space to dribble
-        closest_distance = (evaluation.opponent.get_closest_opponent(
-            main.ball().pos, 1).pos - main.ball().pos).mag()
-        if (closest_distance > AdaptiveAttack.CLEAR_DISTANCE_CUTOFF):
-            return False
-
-        return True
 
     def dribbler_has_ball(self):
         return any(r.has_ball() for r in main.our_robots())
@@ -318,24 +282,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
         self.remove_subbehavior('kick')
         self.kick = None
 
-    def on_enter_clearing(self):
-        # Line kick with chip
-        # Choose most open area / Best pass, weight forward
-        # Decrease weight on sides of field due to complexity of settling
-        self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
-            main.our_robots(), AdaptiveAttack.FIELD_POS_WEIGHTS,
-            AdaptiveAttack.NELDER_MEAD_ARGS,
-            AdaptiveAttack.PASSING_WEIGHTS)
-
-        clear = skills.pivot_kick.PivotKick()
-        clear.target = self.pass_target
-        clear.aim_params['desperate_timeout'] = 1
-        clear.use_chipper = True
-        self.add_subbehavior(clear, 'clear', required=False)
-
-    def on_exit_clearing(self):
-        self.remove_subbehavior('clear')
 
     def on_enter_passing(self):
         # TODO: Use the moving receive when finished
