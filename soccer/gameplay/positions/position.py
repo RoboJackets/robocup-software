@@ -1,9 +1,3 @@
-# See PEP 0563 : Enabling the future behavior in Python 3.7
-# In this current version, it is not allowed to have a return
-# type of the current class, which has not fully been defined yet
-# pylint: disable=no-name-in-module
-from __future__ import annotations  # type: ignore
-
 import robocup
 import single_robot_composite_behavior
 import enum
@@ -26,7 +20,7 @@ class Position(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._position_class = position_class
         self._str_name = name
         self._relative_pos = None
-        self._pass_options = []  # type: typing.List[Position]
+        self._pass_options = [] # type: ignore
 
         # Actual location the controller wants in field XY terms
         # None follows the same rules as the `relative_pos`
@@ -62,11 +56,11 @@ class Position(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     # This is sorted from most "forward" option to furthest "back" option
     #  from left to right in formation
     @property
-    def pass_options(self) -> typing.List[Position]:
+    def pass_options(self):# -> typing.List[Position]:
         return self._pass_options
 
     @pass_options.setter
-    def pass_options(self, options: typing.List[Position]):
+    def pass_options(self, options): #: typing.List[Position]
         self._pass_options = options
 
     def __str__(self):
