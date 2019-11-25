@@ -3,12 +3,13 @@ import forces.force
 import robocup
 import behavior
 import main
+import forces.force_visualizer
 
 
 class TestForcePlay(standard_play.StandardPlay):
    
     def __init__(self):
-        super().__init__(continuous=False)  # FIXME: continuous?
+        super().__init__(continuous=False)
         self.context = main.context()
 
         self.add_transition(behavior.Behavior.State.start,
