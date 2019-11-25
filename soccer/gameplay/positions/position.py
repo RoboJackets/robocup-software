@@ -20,7 +20,7 @@ class Position(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._position_class = position_class
         self._str_name = name
         self._relative_pos = None
-        self._pass_options = [] # type: ignore
+        self._pass_options = []  # type: ignore
 
         # Actual location the controller wants in field XY terms
         # None follows the same rules as the `relative_pos`
@@ -56,11 +56,11 @@ class Position(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     # This is sorted from most "forward" option to furthest "back" option
     #  from left to right in formation
     @property
-    def pass_options(self):# -> typing.List[Position]:
+    def pass_options(self):  # -> typing.List[Position]:
         return self._pass_options
 
     @pass_options.setter
-    def pass_options(self, options): #: typing.List[Position]
+    def pass_options(self, options):  #: typing.List[Position]
         self._pass_options = options
 
     def __str__(self):
