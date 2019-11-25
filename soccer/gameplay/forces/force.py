@@ -3,6 +3,8 @@ import robocup
 
 class Force(ABC):
 
+    clipHigh = None
+
     @abstractmethod
     def sample(self):
         return robocup.Point(0,0) 
