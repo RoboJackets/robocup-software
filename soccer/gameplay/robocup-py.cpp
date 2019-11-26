@@ -695,6 +695,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("y", &Point_get_y, &Point_set_y)
         .def(self - self)
         .def(self + self)
+        .def(self * self)
         .def("mag", &Geometry2d::Point::mag)
         .def("magsq", &Geometry2d::Point::magsq)
         .def("__repr__", &Point_repr)
