@@ -20,7 +20,7 @@ public:
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
     bool goalChanged(const PlanRequest& request) const;
-    Trajectory planLinear(PlanRequest&& request);
+    Trajectory planWithoutAngles(PlanRequest&& request);
 
     static ConfigDouble* _partialReplanLeadTime;
 

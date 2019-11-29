@@ -24,7 +24,7 @@ public:
      *      to approximate the time between control points, which is later used
      *      to match up tangent vectors (approximately) with velocities.
      */
-    BezierPath(std::vector<Geometry2d::Point> points,
+    BezierPath(const std::vector<Geometry2d::Point>& points,
                Geometry2d::Point vi,
                Geometry2d::Point vf,
                MotionConstraints motion_constraints);

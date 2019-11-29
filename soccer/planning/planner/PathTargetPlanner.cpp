@@ -22,7 +22,7 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
-Trajectory PathTargetPlanner::planLinear(Planning::PlanRequest &&request) {
+Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request) {
     if(!isApplicable(request.motionCommand)) {
         throw std::invalid_argument("Error in PathTargetPlanner: invalid motionCommand; must be a PathTargetCommand.");
     }
@@ -144,7 +144,8 @@ Trajectory PathTargetPlanner::planLinear(Planning::PlanRequest &&request) {
 }
 Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
     RobotInstant startInstant = request.start;
-    Trajectory path = planLinear(std::move(request));
+    RotationConstraints rotationConstraints = request.constraints.rot;
+    Trajectory path = planWithoutAngles(std::move(request));
     std::function<double(Point, Point, double)> angleFunction =
             [](Point pos, Point vel_linear, double angle) -> double {
                 // Find the nearest angle either matching velocity or at a 180 degree angle.
@@ -157,7 +158,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 //                }
                 return vel_linear.angle();
             };
-    PlanAngles(path, startInstant, angleFunction, request.constraints.rot);
+    PlanAngles(path, startInstant, angleFunction, rotationConstraints);
     return std::move(path);
 }
 

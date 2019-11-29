@@ -69,10 +69,14 @@ std::vector<Geometry2d::Point> GenerateRRT(
         Geometry2d::Point goal,
         std::shared_ptr<RoboCupStateSpace> state_space,
         const std::vector<Geometry2d::Point>& waypoints) {
+    //todo(Ethan) double check this
+    if(state_space->transitionValid(start, goal)) {
+        return std::vector<Point>{start, goal};
+    }
+
     RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
     biRRT.setStartState(start);
     biRRT.setGoalState(goal);
-
     biRRT.setStepSize(*RRTConfig::StepSize);
     biRRT.setMinIterations(*RRTConfig::MinIterations);
     biRRT.setMaxIterations(*RRTConfig::MaxIterations);

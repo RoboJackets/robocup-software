@@ -97,16 +97,18 @@ void FitCubicBezier(Point vi, Point vf,
 
         if (solution_x.hasNaN() || solution_y.hasNaN()) {
             control_out = {};
+            debugThrow("Something went wrong. Points are too close to each other probably");
+            return;
         } else {
             for (int n = 0; n < num_curves; n++) {
-                control_out[n].p1 = Point(answer_x[n * 2], answer_y[n * 2]);
-                control_out[n].p2 = Point(answer_x[n * 2 + 1], answer_y[n * 2 + 1]);
+                control_out[n].p1 = Point(solution_x[n * 2], solution_y[n * 2]);
+                control_out[n].p2 = Point(solution_x[n * 2 + 1], solution_y[n * 2 + 1]);
             }
         }
     }
 }
 
-BezierPath::BezierPath(std::vector<Point> points, Point vi, Point vf, MotionConstraints motion_constraints) {
+BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, MotionConstraints motion_constraints) {
     assert(!points.empty());
 
     size_t length = points.size();
@@ -124,44 +126,32 @@ BezierPath::BezierPath(std::vector<Point> points, Point vi, Point vf, MotionCons
     // Approximate the curves as straight lines between the segments, and then
     // find an ETA at each waypoint based on trapezoidal motion.
 
-    double arc_length = 0.0;
+    double totalPathLength = 0.0;
     for (int i = 0; i < num_curves; i++) {
-        arc_length += (points[i] - points[i + 1]).mag();
+        totalPathLength += (points[i] - points[i + 1]).mag();
     }
 
-    double time_accrued = 0.0;
-    double length_accrued = 0.0;
-    double speed = vi.mag();
+    double pathLengthSoFar = 0.0;
     for (int i = 0; i < num_curves; i++) {
-        double length_approx = (points[i + 1] - points[i]).mag();
-
-        // Calculate the time at which we will arrive at the point, and the
-        // speed we arrive with.
-        // TODO(Kyle) Write one function that does both of these at the same time.
-        // There's a lot of shared logic.
-        double time = Trapezoidal::getTime(
-                length_approx,
-                arc_length - length_accrued,
+        double timeBefore = Trapezoidal::getTime(
+                pathLengthSoFar,
+                totalPathLength,
                 motion_constraints.maxSpeed,
                 motion_constraints.maxAcceleration,
-                speed,
-                vf.mag());
-        double pos = 0;
-        TrapezoidalMotion(
-                arc_length,
+                startSpeed,
+                endSpeed);
+        pathLengthSoFar += (points[i + 1] - points[i]).mag();
+        double timeAfter = Trapezoidal::getTime(
+                pathLengthSoFar,
+                totalPathLength,
                 motion_constraints.maxSpeed,
                 motion_constraints.maxAcceleration,
-                time_accrued + time,
-                vi.mag(),
-                vf.mag(),
-                pos,
-                speed);
+                startSpeed,
+                endSpeed);
 
-        length_accrued += length_approx;
+        ks[i] = 1.0 / (timeAfter - timeBefore);
 
-        ks[i] = 1.0 / time;
-
-        if (std::isnan(ks[i])) {
+        if (std::isnan(ks[i])) {//todo(Ethan) should be std::isinf() ?
             debugThrow(
                     "Something went wrong. Points are too close to each other "
                     "probably");

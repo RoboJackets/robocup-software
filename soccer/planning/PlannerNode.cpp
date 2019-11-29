@@ -84,6 +84,18 @@ void PlannerNode::run() {
             Trajectory plannedPath = PlanForRobot(std::move(request));
             plannedPath.draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
             robot->setPath(std::move(plannedPath));
+            context_->debug_drawer.drawText((const char*[]) {
+                "Empty",
+                "RRT",
+                "WorldVel",
+                "Pivot",
+                "Direct",
+                "TuningPath",
+                "Settle",
+                "Collect",
+                "LineKick",
+                "Intercept"
+            }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255));
         }
     }
 

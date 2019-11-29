@@ -63,7 +63,8 @@ void AppendProfiledVelocity(Trajectory& out,
 
         // Centripetal acceleration: a = v^2 / r => v = sqrt(ra)
         if (std::abs(curvature[n]) > 0) {
-            speed[n] = std::max(speed[n], std::sqrt(constraints.maxAcceleration / curvature[n]));
+            //todo(Ethan) verify with kyle that its fine to switch this to `constraints.maxCentripetalAcceleration`
+            speed[n] = std::min(speed[n], std::sqrt(constraints.maxCentripetalAcceleration / curvature[n]));
         }
     }
 
@@ -117,7 +118,8 @@ void AppendProfiledVelocity(Trajectory& out,
         time = time + RJ::Seconds(t_sec);
 
         // Add point n in
-        out.AppendInstant(RobotInstant{Pose(points[n], n), Twist(derivs1[n].normalized() * speed[n], n), time});
+        //todo(Ethan) verify this default angle w Kyle.
+        out.AppendInstant(RobotInstant{Pose(points[n], derivs1[n].angle()+M_PI), Twist(derivs1[n].normalized() * speed[n], n), time});
     }
 }
 
