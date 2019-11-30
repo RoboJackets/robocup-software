@@ -18,7 +18,7 @@ using AngleFunction = std::function<double(Geometry2d::Point, Geometry2d::Point,
  * @param path
  * @return
  */
-Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double final_speed, const MotionConstraints& constraints);
+Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double final_speed, const MotionConstraints& constraints, RJ::Time initial_time = RJ::now());
 
 /**
  * Create a path starting at the end of the given trajectory using the given

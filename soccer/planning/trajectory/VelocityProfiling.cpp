@@ -11,14 +11,15 @@ using Geometry2d::Twist;
 Trajectory ProfileVelocity(const BezierPath& path,
                            double initial_speed,
                            double final_speed,
-                           const MotionConstraints& constraints) {
+                           const MotionConstraints& constraints,
+                           RJ::Time initial_time) {
     Trajectory result({});
     RobotInstant instant;
 
     // Add an initial point to the trajectory so that we keep track of initial
     // velocity
     path.Evaluate(0, &instant.pose.position(), &instant.velocity.linear());
-    instant.stamp = RJ::now();
+    instant.stamp = initial_time;
 
     // Scale the velocity so that the initial speed is correct
     instant.velocity.linear() = instant.velocity.linear().normalized() * initial_speed;
@@ -107,7 +108,7 @@ void AppendProfiledVelocity(Trajectory& out,
         }
     }
 
-    // TODO(Kyle): Allow the user to pass in an initial time.
+    // TODO(Kyle): Allow the user to pass in an initial time. todo(Ethan) done?
     RJ::Time time = out.last().stamp;
 
     // We skip the first instant.

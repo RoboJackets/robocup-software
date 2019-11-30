@@ -28,23 +28,22 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
     }
     enum ReplanState { Reuse, FullReplan, PartialReplan, CheckBetter };
     ReplanState replanState = Reuse;
-    PathTargetCommand& command = std::get<PathTargetCommand>(request.motionCommand);
+    PathTargetCommand command = std::get<PathTargetCommand>(request.motionCommand);
     RobotInstant startInstant = request.start;
+    RobotInstant goalInstant = command.pathGoal;
     Trajectory result{{}};
 
     // Simple case: no path
-    const Pose &currentPose = startInstant.pose;
-    const Pose &goalPose = command.pathGoal.pose;
-    if (currentPose.position() == goalPose.position()) {
+    if (startInstant.pose.position() == goalInstant.pose.position()) {
         std::vector<RobotInstant> instants;
-        instants.push_back(RobotInstant(currentPose, Twist(), RJ::now()));
-        result = std::move(Trajectory(std::move(instants)));
+        instants.emplace_back(startInstant.pose, Twist(), RJ::now());
+        result = Trajectory(std::move(instants));
         //todo(Ethan) fix this
         result.setDebugText("RRT Basic");
         return std::move(result);
     }
 
-    RJ::Seconds timeIntoTrajectory = RJ::now() - result.begin_time();
+    RJ::Seconds timeIntoTrajectory = RJ::now() - request.prevTrajectory.begin_time();
     RJ::Seconds invalidTime = 0s;
     if(request.prevTrajectory.empty() || veeredOffPath(request)) {
         replanState = FullReplan;
@@ -77,7 +76,7 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
                 replanState = CheckBetter;
             }
         }
-        ++counter;//todo(Ethan) this increment should be able to be changed so it's less everywhere
+        counter++;//todo(Ethan) this increment should be able to be changed so it's less everywhere
     }
 
     result = std::move(request.prevTrajectory);
@@ -86,35 +85,40 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
             Field_Dimensions::Current_Dimensions, std::move(request.obstacles));
     if(replanState == CheckBetter || replanState == PartialReplan) {
         Trajectory preTrajectory = result.subTrajectory(0ms, timeIntoTrajectory + partialReplanTime);
-        const RobotInstant &middleInstant = preTrajectory.last();
+        RobotInstant middleInstant = preTrajectory.last();
         std::vector<Point> biasWaypoints;
         if(replanState == PartialReplan) {
             biasWaypoints.push_back(startInstant.pose.position() + startInstant.velocity.linear() * 0.2);
-            for (auto it = result.iterator(RJ::now(), 100ms); *it != result.last(); ++it) {
+            //todo(Ethan) shouldn't this be less than or equal because rn it doesn't add result.end()
+            for (auto it = result.iterator(RJ::now(), 100ms); (*it).stamp < result.end_time(); ++it) {
                 biasWaypoints.push_back((*it).pose.position());
             }
         }
         //todo(Ethan) handle RRT, Bezier, etc. errors generating the path
-        std::vector<Point> postPoints = GenerateRRT(middleInstant.pose.position(), goalPose.position(), stateSpace,
-                                                    biasWaypoints);
+        counter++;
+        std::vector<Point> postPoints = GenerateRRT(middleInstant.pose.position(), goalInstant.pose.position(), stateSpace, biasWaypoints);
         //todo(ethan) iteratively generate RRTs: the old code would try a bunch of times until it doesn't fail
         if (!postPoints.empty()) {
             RRT::SmoothPath(postPoints, *stateSpace);
-            BezierPath postBezier(postPoints, middleInstant.velocity.linear(), command.pathGoal.velocity.linear(),
+            BezierPath postBezier(postPoints, middleInstant.velocity.linear(), goalInstant.velocity.linear(),
                                   request.constraints.mot);
             Trajectory postTrajectory = ProfileVelocity(postBezier,
                                                         middleInstant.velocity.linear().mag(),
-                                                        command.pathGoal.velocity.linear().mag(),
-                                                        request.constraints.mot);
+                                                        goalInstant.velocity.linear().mag(),
+                                                        request.constraints.mot,
+                                                        middleInstant.stamp);
+            Trajectory comboPath = Trajectory(std::move(preTrajectory), std::move(postTrajectory));
             if(replanState == CheckBetter) {
-                RJ::Seconds remaining = result.duration() - (RJ::now() - result.begin_time());
-                Trajectory comboPath = Trajectory(std::move(preTrajectory), std::move(postTrajectory));
+                RJ::Seconds remaining = result.duration() - timeIntoTrajectory;
+                //todo(Ethan) should be duration of postTrajectory instead of comboPath?
                 if (remaining > comboPath.duration()) {
                     std::cout << "Found A better Path!!!!" << std::endl;
-                    return std::move(comboPath);
+                    result = std::move(comboPath);
                 } else {
                     replanState = Reuse;
                 }
+            } else {
+                result = std::move(comboPath);
             }
         } else if(replanState == PartialReplan) {
             replanState = FullReplan;
@@ -124,21 +128,22 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
     }
 
     if(replanState == FullReplan) {
-        std::vector<Point> newPoints = GenerateRRT(currentPose.position(), goalPose.position(), stateSpace);
+        counter++;
+        std::vector<Point> newPoints = GenerateRRT(startInstant.pose.position(), goalInstant.pose.position(), stateSpace);
         if (newPoints.empty()) {
-            //            std::cout << "RRT failed (full) " << currentPose.position() << " " << goalPose.position() << std::endl;
+            //            std::cout << "RRT failed (full) " << startPose.position() << " " << goalPose.position() << std::endl;
             result = Trajectory{{}};
             result.setDebugText("RRT Fail");
             return std::move(result);
         }
-        result.setDebugText("RRT Full");
         RRT::SmoothPath(newPoints, *stateSpace);
-        BezierPath new_bezier(newPoints, startInstant.velocity.linear(), command.pathGoal.velocity.linear(),
+        BezierPath new_bezier(newPoints, startInstant.velocity.linear(), goalInstant.velocity.linear(),
                               request.constraints.mot);
         result = ProfileVelocity(new_bezier,
                 startInstant.velocity.linear().mag(),
-                command.pathGoal.velocity.linear().mag(),
+                goalInstant.velocity.linear().mag(),
                 request.constraints.mot);
+        result.setDebugText("RRT Full");
     }
     return std::move(result);
 }
@@ -164,7 +169,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 
 bool PathTargetPlanner::goalChanged(const PlanRequest& request) const {
     PathTargetCommand command = std::get<PathTargetCommand>(request.motionCommand);
-    const RobotInstant& last = request.prevTrajectory.last();
+    RobotInstant last = request.prevTrajectory.last();
     const RobotInstant& goal = command.pathGoal;
     double goalPosDiff = (last.pose.position() - goal.pose.position()).mag();
     double goalVelDiff = (last.velocity.linear() - goal.velocity.linear()).mag();

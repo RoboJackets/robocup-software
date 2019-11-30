@@ -233,20 +233,22 @@ Trajectory CollectPathPlanner::courseApproach(PlanRequest&& planRequest) {
             Twist(targetSlowVel, 0), RJ::now());
     PathTargetCommand rrtCommand{targetSlow};
 
-    auto request = PlanRequest(
+    PlanRequest request(
         planRequest.context, startInstant, rrtCommand,
         planRequest.constraints, std::move(planRequest.prevTrajectory),
         planRequest.obstacles, planRequest.shellID);
 
-    Trajectory coursePath = rrtPlanner.plan(std::move(request));
+    Trajectory coursePath = pathTargetPlanner.plan(std::move(request));
 
     // Build a path from now to the slow point
-    std::function<double(Point,Point,double)> angleFunction =
-        [&](Point pos, Point vel, double angle) {
-            //todo(Ethan) change to vel.angle() ?
-            return pos.angleTo(ball.pos);
-        };
-    PlanAngles(coursePath, startInstant, angleFunction, rotationConstraints);
+
+    //todo(Ethan) this is unecessary right?
+//    std::function<double(Point,Point,double)> angleFunction =
+//        [&](Point pos, Point vel, double angle) {
+//            //todo(Ethan) change to vel.angle() ?
+//            return pos.angleTo(ball.pos);
+//        };
+//    PlanAngles(coursePath, startInstant, angleFunction, rotationConstraints);
     coursePath.setDebugText("Course " + coursePath.getDebugText());
     return std::move(coursePath);
 }
@@ -287,13 +289,13 @@ Trajectory CollectPathPlanner::fineApproach(PlanRequest&& planRequest) {
     motionConstraintsHit.maxSpeed =
         min(targetHitVel.mag(), motionConstraintsHit.maxSpeed);
 
-    DirectPathTargetCommand directCommand{targetHit};
+    PathTargetCommand directCommand{targetHit};
 
     auto request = PlanRequest(
         planRequest.context, startInstant, directCommand,
         robotConstraintsHit, std::move(planRequest.prevTrajectory), planRequest.obstacles,planRequest.shellID);
 
-    Trajectory pathHit = directPlanner.plan(std::move(request));
+    Trajectory pathHit = pathTargetPlanner.plan(std::move(request));
 
     std::function<double(Point,Point,double)> angleFunction =
             [&](Point pos, Point vel, double angle) {
@@ -406,7 +408,7 @@ Trajectory CollectPathPlanner::control(PlanRequest&& planRequest, Trajectory&& p
             planRequest.context, startInstant, rrtCommand,
             robotConstraints, Trajectory{{}}, obstacles,
             planRequest.shellID);
-        path = rrtPlanner.plan(std::move(request));
+        path = pathTargetPlanner.plan(std::move(request));
 
         if (!partialPath.empty()) {
             path = Trajectory{std::move(partialPath), std::move(path)};
@@ -435,7 +437,7 @@ Trajectory CollectPathPlanner::invalid(
         planRequest.context, startInstant, rrtCommand,
         planRequest.constraints, Trajectory{{}}, planRequest.obstacles,
         planRequest.shellID);
-    auto path = rrtPlanner.plan(std::move(request));
+    auto path = pathTargetPlanner.plan(std::move(request));
 
     std::function<double(Point,Point,double)> angleFunction =
             [&](Point pos, Point vel, double angle) {

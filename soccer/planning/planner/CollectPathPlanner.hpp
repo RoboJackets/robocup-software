@@ -64,8 +64,7 @@ private:
     static T applyLowPassFilter(const T& oldValue, const T& newValue,
                                 double gain);
 
-    PathTargetPlanner rrtPlanner;
-    DirectTargetPathPlanner directPlanner;
+    PathTargetPlanner pathTargetPlanner;
 
     CollectPathPlannerStates currentState;
 

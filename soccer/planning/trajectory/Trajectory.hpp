@@ -57,6 +57,7 @@ public:
 
     /**
      * Create a trajectory from two other trajectories
+     * assumes a.last() == b.first() so b.first() is skipped
      * This copies all old RobotInstants, so don't use this with too many points
      * (see CompositePath for a more efficient way if needed)
      */

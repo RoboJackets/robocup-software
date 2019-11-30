@@ -31,19 +31,25 @@ Trajectory& Trajectory::operator=(const Trajectory& other) {
 }
 
 Trajectory::Trajectory(const Trajectory& a, const Trajectory& b) {
-    instants_.reserve(a.instants_.size()+b.instants_.size());
-    for(auto it = a.instants_.begin(); it != a.instants_.end(); ++it) {
+    instants_.reserve(a.instants_.size() + b.instants_.size());
+    for (auto it = a.instants_.begin(); it != a.instants_.end(); ++it) {
         instants_.push_back(*it);
     }
-    for(auto it = b.instants_.begin(); it != b.instants_.end(); ++it) {
-        instants_.push_back(*it);
+    if(!b.empty()) {
+        //start at begin+1 so we don't double count the middle instant
+        for (auto it = ++b.instants_.begin(); it != b.instants_.end(); ++it) {
+            instants_.push_back(*it);
+        }
     }
 }
 Trajectory::Trajectory(Trajectory&& a, Trajectory&& b) {
     instants_ = std::move(a.instants_);
     instants_.reserve(instants_.size()+b.instants_.size());
-    for(auto it = b.instants_.begin(); it != b.instants_.end(); ++it) {
-        instants_.push_back(*it);
+    if(!b.empty()) {
+        //start at begin+1 so we don't double count the middle instant
+        for (auto it = ++b.instants_.begin(); it != b.instants_.end(); ++it) {
+            instants_.push_back(*it);
+        }
     }
 }
 
