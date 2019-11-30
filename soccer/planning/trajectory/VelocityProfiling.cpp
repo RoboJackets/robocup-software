@@ -53,24 +53,30 @@ void AppendProfiledVelocity(Trajectory& out,
 
     // Scratch data that we will use later.
     std::vector<Point> points(num_segments + 1), derivs1(num_segments + 1);
-    std::vector<double> curvature(num_segments + 1), speed(num_segments + 1);
+    std::vector<double> curvature(num_segments + 1), speed(num_segments + 1, constraints.maxSpeed);
+
+    //we must make this assumption for the next calculations, otherwise we get NANs
+    assert(constraints.maxAcceleration >= constraints.maxCentripetalAcceleration);
+
+    //note: these are just suggestions. if they are impossible given MotionConstraints, then we'll limit them
+    speed[0] = initial_speed;
+    speed[num_segments] = final_speed;
 
     // Velocity pass: fill points and calculate maximum velocity given curvature
     // at each point.
     for (int n = 0; n < num_segments + 1; n++) {
         double s = n / static_cast<double>(num_segments);
         path.Evaluate(s, &points[n], &derivs1[n], &curvature[n]);
-        speed[n] = constraints.maxSpeed;
+
+        assert(curvature[n] >= 0.0);
+        assert(!std::isnan(curvature[n]) && !std::isinf(curvature[n]));
 
         // Centripetal acceleration: a = v^2 / r => v = sqrt(ra)
-        if (std::abs(curvature[n]) > 0) {
+        if (curvature[n] != 0.0) {
             //todo(Ethan) verify with kyle that its fine to switch this to `constraints.maxCentripetalAcceleration`
             speed[n] = std::min(speed[n], std::sqrt(constraints.maxCentripetalAcceleration / curvature[n]));
         }
     }
-
-    speed[0] = initial_speed;
-    speed[num_segments] = final_speed;
 
     // Acceleration pass: calculate maximum velocity at each point based on
     // acceleration limits forwards in time.
@@ -78,8 +84,8 @@ void AppendProfiledVelocity(Trajectory& out,
         double centripetal = speed[n] * speed[n] * curvature[n];
 
         using std::pow;
-        double accel = std::sqrt(pow(constraints.maxAcceleration, 2) - pow(centripetal, 2));
-
+        double accel = std::sqrt(pow(constraints.maxAcceleration, 2) - pow(centripetal, 2)+0.0000001);
+        assert(!std::isnan(accel) && !std::isinf(accel));
         double distance = (points[n + 1] - points[n]).mag();
 
         // Do a trapezoid profile on maximum acceleration.
@@ -96,8 +102,8 @@ void AppendProfiledVelocity(Trajectory& out,
         double centripetal = speed[n] * speed[n] * curvature[n];
 
         using std::pow;
-        double accel = std::sqrt(pow(constraints.maxAcceleration, 2) - pow(centripetal, 2));
-
+        double accel = std::sqrt(pow(constraints.maxAcceleration, 2) - pow(centripetal, 2) + 0.0000001);
+        assert(!std::isnan(accel) && !std::isinf(accel));
         double distance = (points[n - 1] - points[n]).mag();
 
         // Do a trapezoid profile on maximum acceleration.

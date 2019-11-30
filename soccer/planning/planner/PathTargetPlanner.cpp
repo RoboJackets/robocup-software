@@ -79,6 +79,10 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
         counter++;//todo(Ethan) this increment should be able to be changed so it's less everywhere
     }
 
+    std::optional<Point> prevGoal;
+    if(!result.empty()) {
+        prevGoal = request.prevTrajectory.last().pose.position();
+    }
     result = std::move(request.prevTrajectory);
     result.setDebugText("RRT Prev");
     auto stateSpace = std::make_shared<RoboCupStateSpace>(
@@ -96,7 +100,7 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
         }
         //todo(Ethan) handle RRT, Bezier, etc. errors generating the path
         counter++;
-        std::vector<Point> postPoints = GenerateRRT(middleInstant.pose.position(), goalInstant.pose.position(), stateSpace, biasWaypoints);
+        std::vector<Point> postPoints = GenerateRRT(middleInstant.pose.position(), goalInstant.pose.position(), stateSpace, biasWaypoints, prevGoal);
         //todo(ethan) iteratively generate RRTs: the old code would try a bunch of times until it doesn't fail
         if (!postPoints.empty()) {
             RRT::SmoothPath(postPoints, *stateSpace);
@@ -113,12 +117,12 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
                 //todo(Ethan) should be duration of postTrajectory instead of comboPath?
                 if (remaining > comboPath.duration()) {
                     std::cout << "Found A better Path!!!!" << std::endl;
-                    result = std::move(comboPath);
+                    return std::move(comboPath);
                 } else {
                     replanState = Reuse;
                 }
             } else {
-                result = std::move(comboPath);
+                return std::move(comboPath);
             }
         } else if(replanState == PartialReplan) {
             replanState = FullReplan;
@@ -129,10 +133,10 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
 
     if(replanState == FullReplan) {
         counter++;
-        std::vector<Point> newPoints = GenerateRRT(startInstant.pose.position(), goalInstant.pose.position(), stateSpace);
+        std::vector<Point> newPoints = GenerateRRT(startInstant.pose.position(), goalInstant.pose.position(), stateSpace, {}, prevGoal);
         if (newPoints.empty()) {
             //            std::cout << "RRT failed (full) " << startPose.position() << " " << goalPose.position() << std::endl;
-            result = Trajectory{{}};
+            result = Trajectory{{startInstant}};
             result.setDebugText("RRT Fail");
             return std::move(result);
         }
@@ -140,9 +144,9 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
         BezierPath new_bezier(newPoints, startInstant.velocity.linear(), goalInstant.velocity.linear(),
                               request.constraints.mot);
         result = ProfileVelocity(new_bezier,
-                startInstant.velocity.linear().mag(),
-                goalInstant.velocity.linear().mag(),
-                request.constraints.mot);
+                                 startInstant.velocity.linear().mag(),
+                                 goalInstant.velocity.linear().mag(),
+                                 request.constraints.mot);
         result.setDebugText("RRT Full");
     }
     return std::move(result);
@@ -168,6 +172,9 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 }
 
 bool PathTargetPlanner::goalChanged(const PlanRequest& request) const {
+    if(request.prevTrajectory.empty()) {
+        return false;
+    }
     PathTargetCommand command = std::get<PathTargetCommand>(request.motionCommand);
     RobotInstant last = request.prevTrajectory.last();
     const RobotInstant& goal = command.pathGoal;
