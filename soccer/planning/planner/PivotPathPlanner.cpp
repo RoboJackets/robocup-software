@@ -24,7 +24,6 @@ namespace Planning {
         if(!isApplicable(request.motionCommand)) {
             throw std::invalid_argument("Error in PivotPathPlanner: invalid motionCommand; must be a PivotCommand.");
         }
-        bool replanRequired = shouldReplan(request);
         bool targetIsDifferent = targetChanged(request);
         bool pathTooOld = request.prevTrajectory.duration()
                           - (RJ::now() - request.prevTrajectory.begin_time()) < RJ::Seconds(-0.5);
@@ -37,31 +36,26 @@ namespace Planning {
                 Field_Dimensions::Current_Dimensions, std::move(request.obstacles));
 
 
-        if(replanRequired || targetIsDifferent || pathTooOld) {
-
+        if(result.empty() || targetIsDifferent || pathTooOld) {
             // float radius = command.radius;
-            float radius = Robot_Radius * _pivotRadiusMultiplier->value();
+            double radius = Robot_Radius * _pivotRadiusMultiplier->value();
             Point pivotPoint = command.pivotPoint;
             double targetAngle = command.targetAngle;
-            std::vector<Point> points;
 
             // maxSpeed = maxRadians * radius
             MotionConstraints motionConstraints = constraints.mot;
             motionConstraints.maxSpeed =
                     std::min(motionConstraints.maxSpeed,
                              constraints.rot.maxSpeed * radius) * .5;
-            Point startPoint = startInstant.pose.position();
-            float startAngle = pivotPoint.angleTo(startPoint);
-            float change = fixAngleRadians(targetAngle - startAngle);
+            double startAngle = pivotPoint.angleTo(startInstant.pose.position());
+            double change = fixAngleRadians(targetAngle - startAngle);
 
             const int interpolations = 10;
-
-            points.push_back(startPoint);
+            std::vector points{startInstant.pose.position()};
             for (int i = 1; i <= interpolations; i++) {
                 float percent = (float)i / interpolations;
                 float angle = startAngle + change * percent;
-                Point point =
-                        Point::direction(angle).normalized(radius) + pivotPoint;
+                Point point = Point::direction(angle).normalized(radius) + pivotPoint;
                 points.push_back(point);
             }
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
@@ -92,7 +86,7 @@ return pivotPoint.angleTo(pos);
         PivotCommand command = std::get<PivotCommand>(request.motionCommand);
         Point prevTargetPoint = request.prevTrajectory.last().pose.position();
         Point newTargetPoint = command.pivotPoint + Point::direction(command.targetAngle)
-                .normalized(command.radius * _pivotRadiusMultiplier->value());
+                .normalized(Robot_Radius * _pivotRadiusMultiplier->value()); //todo(Ethan) use command.radius
         return (newTargetPoint - prevTargetPoint).mag() > 0.1;
     }
 }

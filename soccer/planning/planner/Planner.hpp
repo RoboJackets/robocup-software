@@ -83,29 +83,4 @@ public:
     }
 };
 
-/**
- * A universally-applicable "do-nothing" planner. Should be used as a fallthrough.
- */
-class EmptyPlanner : public Planner {
-public:
-    bool isApplicable(const MotionCommand&) const override {
-        return true;
-    }
-
-    Trajectory plan(PlanRequest&& request) override {
-        auto command = request.motionCommand;
-        if (!std::holds_alternative<EmptyCommand>(command)) { //todo(Ethan) uncomment this warning message
-//            std::cout << "Warning: planning for robot "
-//                      << request.shellID << " with empty planner"
-//                      << "(command type has index " << command.index()
-//                      << ")" << std::endl;
-        }
-        Trajectory result = Trajectory{{}};
-        result.setDebugText("Empty");
-        return std::move(result);
-    }
-
-    std::string name() const override { return "EmptyPlaner"; }
-};
-
 }

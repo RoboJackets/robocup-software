@@ -3,6 +3,7 @@
 #include "planning/planner/SettlePathPlanner.hpp"
 #include "planning/planner/PivotPathPlanner.hpp"
 #include "planning/planner/CollectPathPlanner.hpp"
+#include "planning/planner/EscapeObstaclesPathPlanner.hpp"
 #include "PlannerNode.hpp"
 #include "Robot.hpp"
 
@@ -15,7 +16,7 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
     planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
-    planners_.push_back(std::make_unique<EmptyPlanner>());
+    planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
 }
 
 void PlannerNode::run() {

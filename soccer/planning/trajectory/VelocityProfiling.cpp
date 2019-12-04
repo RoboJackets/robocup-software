@@ -129,7 +129,7 @@ void AppendProfiledVelocity(Trajectory& out,
         out.AppendInstant(RobotInstant{Pose(points[n], derivs1[n].angle()+M_PI), Twist(derivs1[n].normalized() * speed[n], n), time});
     }
 }
-
+//todo(Ethan) verify this
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& initial_state,
                 const AngleFunction& angle_function,
@@ -137,31 +137,38 @@ void PlanAngles(Trajectory& trajectory,
     if(trajectory.empty()) {
         return;
     }
-    trajectory.instant(0).pose = initial_state.pose;
-    trajectory.instant(0).velocity = initial_state.velocity;
+    //todo(Ethan) explain?
+//    trajectory.instant(0).pose = initial_state.pose;
+//    trajectory.instant(0).velocity = initial_state.velocity;
 
     // Move forwards in time. At each instant, calculate the goal angle and its
     // time derivative, and try to get there with a trapezoidal profile.
-    for (int i = 0; i < trajectory.num_instants() - 1; i++) {
+    for (int i = 0; i < trajectory.num_instants(); i++) {
+//    for (int i = 0; i < trajectory.num_instants() - 1; i++) {
         RobotInstant& instant_initial = trajectory.instant(i);
-        RobotInstant& instant_final = trajectory.instant(i + 1);
+        instant_initial.pose.heading() =
+                angle_function(instant_initial.pose.position(),
+                        instant_initial.velocity.linear(),
+                        instant_initial.pose.heading());
 
-        double target_angle = angle_function(instant_final.pose.position(),
-                                             instant_final.velocity.linear(),
-                                             instant_initial.pose.heading());
-
-        double target_angle_delta = fixAngleRadians(target_angle - instant_initial.pose.heading());
-        double angle_delta;
-
-        // TODO(Kyle): Calculate a proper final speed instead of specifying zero.
-        TrapezoidalMotion(
-                target_angle_delta,
-                constraints.maxSpeed,
-                constraints.maxAccel,
-                std::chrono::duration_cast<RJ::Seconds>(instant_final.stamp - instant_initial.stamp).count(),
-                instant_initial.velocity.angular(),
-                0, angle_delta, instant_final.velocity.angular());
-        instant_final.pose.heading() = instant_initial.pose.heading() + angle_delta;
+//        RobotInstant& instant_final = trajectory.instant(i + 1);
+//
+//        double target_angle = angle_function(instant_final.pose.position(),
+//                                             instant_final.velocity.linear(),
+//                                             instant_initial.pose.heading());
+//
+//        double target_angle_delta = fixAngleRadians(target_angle - instant_initial.pose.heading());
+//        double angle_delta;
+//
+//        // TODO(Kyle): Calculate a proper final speed instead of specifying zero.
+//        TrapezoidalMotion(
+//                target_angle_delta,
+//                constraints.maxSpeed,
+//                constraints.maxAccel,
+//                std::chrono::duration_cast<RJ::Seconds>(instant_final.stamp - instant_initial.stamp).count(),
+//                instant_initial.velocity.angular(),
+//                0, angle_delta, instant_final.velocity.angular());
+//        instant_final.pose.heading() = instant_initial.pose.heading() + angle_delta;
     }
 }
 

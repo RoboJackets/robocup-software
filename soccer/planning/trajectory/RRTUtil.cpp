@@ -63,56 +63,16 @@ void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
     DrawRRT(biRRT.startTree(), debug_drawer, shellID);
     DrawRRT(biRRT.goalTree(), debug_drawer, shellID);
 }
-using Geometry2d::Point;
-constexpr double escapeObstacleStepSize = 0.1;
-const double escapeObstacleGoalChangeThreshold = Robot_Radius;
-std::optional<Point> findNonBlockedPoint(
-        Point startPoint, std::shared_ptr<RoboCupStateSpace> state_space,
-        int maxItr = 300) {
-    if (!state_space->stateValid(startPoint)) {
-        RRT::Tree<Point> rrt(state_space, Point::hash, 2);
-        rrt.setStartState(startPoint);
-        // note: we don't set goal state because we're not looking for a
-        // particular point, just something that isn't blocked
-        rrt.setStepSize(escapeObstacleStepSize);
 
-        // The starting point is in an obstacle, extend the tree until we find
-        // an unobstructed point
-        for (int i = 0; i < maxItr; ++i) {
-            // extend towards a random point
-            RRT::Node<Point>* newNode = rrt.grow();
-
-            // if the new point is not blocked, we're done
-            if (newNode && state_space->stateValid(newNode->state())) {
-                return newNode->state();
-            }
-        }
-    }
-    return std::nullopt;
-}
-std::vector<Point> GenerateRRT(
-        Point start,
-        Point goal,
+std::vector<Geometry2d::Point> GenerateRRT(
+        Geometry2d::Point start,
+        Geometry2d::Point goal,
         std::shared_ptr<RoboCupStateSpace> state_space,
-        const std::vector<Point>& waypoints,
-        std::optional<Point> prevGoal) {
-    if(!state_space->stateValid(goal)) {
-        std::optional<Point> nonBlockedGoal = findNonBlockedPoint(goal, state_space);
-        if(!nonBlockedGoal) return {};
-        if(prevGoal) {
-            float oldDist = prevGoal->distTo(goal);
-            float newDist = nonBlockedGoal->distTo(goal);
-            goal = newDist < oldDist - escapeObstacleGoalChangeThreshold
-                    ? *nonBlockedGoal
-                    : *prevGoal;
-        } else {
-            goal = *nonBlockedGoal;
-        }
-    }
+        const std::vector<Geometry2d::Point>& waypoints) {
+    //todo(Ethan) double check this
     if(state_space->transitionValid(start, goal)) {
         return std::vector<Point>{start, goal};
     }
-
     RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
     biRRT.setStartState(start);
     biRRT.setGoalState(goal);

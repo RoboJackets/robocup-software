@@ -12,7 +12,7 @@ using Geometry2d::Point;
  * @param vi The initial velocity of the robot on the path.
  * @param vf The final velocity of the robot on the path.
  * @param points The list of endpoints of the curves. The resulting curve will
- *      pass through these points.
+ *      pass through these points. points should have length >= 2
  * @param ks An estimate of the time it will take to travel each curve.
  * @return A vector of control point locations.
  */
@@ -109,7 +109,7 @@ void FitCubicBezier(Point vi, Point vf,
 }
 
 BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, MotionConstraints motion_constraints) {
-    assert(!points.empty());
+    assert(points.size() >= 2); //todo(Ethan) verify this. I think bezier breaks when size is 1
 
     size_t length = points.size();
     size_t num_curves = length - 1;

@@ -45,7 +45,6 @@ std::vector<Geometry2d::Point> GenerateRRT(
         Geometry2d::Point start,
         Geometry2d::Point goal,
         std::shared_ptr<RoboCupStateSpace> state_space,
-        const std::vector<Geometry2d::Point>& waypoints = {},
-        std::optional<Geometry2d::Point> prevGoal = std::nullopt);
+        const std::vector<Geometry2d::Point>& waypoints = {});
 
 }  // Planning

@@ -19,7 +19,7 @@ public:
 
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
-    bool goalChanged(const PlanRequest& request) const;
+    bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;
     Trajectory planWithoutAngles(PlanRequest&& request);
 
     static ConfigDouble* _partialReplanLeadTime;
