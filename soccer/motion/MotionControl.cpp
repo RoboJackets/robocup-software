@@ -80,21 +80,23 @@ void MotionControl::run() {
     // evaluate path - where should we be right now?
     std::optional<RobotInstant> optTarget =
             _robot->path().evaluate(timeIntoPath);
-
-    if (_robot->path().empty()) {
-        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
-        optTarget = target;
-    }
-
+//todo(Ethan) verify this with Kyle
+//    if (_robot->path().empty()) {
+//        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
+//        optTarget = target;
+//    }
+    QColor targetColor = optTarget ? Qt::green : Qt::red;
     if (!optTarget) {
         optTarget = _robot->path().last();
-        _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, Qt::red,
-                                          "Planning");
-    } else {
-        Point start = _robot->pos();
-        _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, Qt::green,
-                                          "Planning");
     }
+    _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, targetColor,"Planning");
+    Point robotPoint = _robot->pose().position();
+    _context->debug_drawer.drawLine(Geometry2d::Segment(
+            robotPoint,
+            robotPoint + Point::direction(optTarget->pose.heading()).normalized(.35)), targetColor, "Planning");
+    _context->debug_drawer.drawLine(Geometry2d::Segment(
+            robotPoint,
+            robotPoint + Point::direction(_robot->pose().heading()).normalized(.3)), Qt::blue, "Planning");
 
     // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
