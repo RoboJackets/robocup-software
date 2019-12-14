@@ -5,7 +5,7 @@
 #include "planning/trajectory/Trajectory.hpp"
 
 namespace Planning {
-
+//todo(Ethan) add virtual destructor?
 class Planner {
 public:
     /**
