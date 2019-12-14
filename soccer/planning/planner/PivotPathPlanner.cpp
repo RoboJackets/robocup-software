@@ -60,18 +60,17 @@ namespace Planning {
             }
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
             result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);
+            Point pivotTarget = pivotPoint + Point::direction(targetAngle) * radius;
             std::function<double(Point, Point, double)> angleFunction =
-                [&](Point pos, Point vel_linear, double angle) -> double {
-//                    auto angleToPivot = pos.angleTo(pivotPoint);
-//                    auto angleToPivotTarget = angle - targetAngle;
-//
-//                    if (abs(angleToPivot - angleToPivotTarget) <
-//                        10 * M_PI / 180) {
-//                        return angleToPivotTarget;
-//                    } else {
-//                        return angleToPivot;
-//                    }
-return pivotPoint.angleTo(pos);
+                [pivotPoint, pivotTarget](Point pos, Point vel_linear, double angle) -> double {
+                    double angleToPivot = pos.angleTo(pivotPoint);
+                    double angleToPivotTarget = pos.angleTo(pivotTarget);
+                    if (abs(angleToPivot - angleToPivotTarget) <
+                        10.0 * M_PI / 180.0) {
+                        return angleToPivotTarget;
+                    } else {
+                        return angleToPivot;
+                    }
                 };
             PlanAngles(result, startInstant, angleFunction, constraints.rot);
             result.setDebugText("Pivot (New)");
