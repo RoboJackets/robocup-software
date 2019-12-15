@@ -38,13 +38,13 @@ void AppendProfiledVelocity(Trajectory& out, const BezierPath& path, double fina
  *
  * @param trajectory The trajectory to fix with angles. This will be modified
  *      in-place.
- * @param initial_state The initial pose and velocity of the robot.
+ * @param initial_instant The initial pose and velocity of the robot.
  * @param angle An angle function describing the desired state of the robot as
  *      a function of the robot's position and linear velocity.
  * @param constraints Constraints on the robot's rotation.
  */
 void PlanAngles(Trajectory& trajectory,
-                const RobotInstant& initial_state,
+                const RobotInstant& initial_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 

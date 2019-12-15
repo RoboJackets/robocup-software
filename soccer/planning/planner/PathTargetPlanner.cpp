@@ -7,6 +7,7 @@
 #include <Geometry2d/Pose.hpp>
 #include <vector>
 #include <rrt/planning/Path.hpp>
+#include "Robot.hpp"
 
 namespace Planning {
 
@@ -163,9 +164,10 @@ Trajectory PathTargetPlanner::planWithoutAngles(Planning::PlanRequest &&request)
 Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
     RobotInstant startInstant = request.start;
     RotationConstraints rotationConstraints = request.constraints.rot;
+    OurRobot* robot = request.context->state.self[request.shellID];
     Trajectory path = planWithoutAngles(std::move(request));
     std::function<double(Point, Point, double)> angleFunction =
-            [](Point pos, Point vel_linear, double angle) -> double {
+            [robot](Point pos, Point vel_linear, double angle) -> double {
                 // Find the nearest angle either matching velocity or at a 180 degree angle.
                 //todo(Ethan) fix this, Point heading is radians, `angle` is garbage data
 //                double angle_delta = fixAngleRadians(vel_linear.angle() - angle);
@@ -174,7 +176,12 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 //                } else {
 //                    return fixAngleRadians(angle + angle_delta + M_PI);
 //                }
-                return vel_linear.angle();
+                Point dir_robot = Point::direction(robot->angle());
+                Point dir_vel = Point::direction(robot->vel().angle());
+                if(dir_robot.angleBetween(dir_vel) > M_PI/2) {
+                    return -dir_vel.angle();
+                }
+                return dir_vel.angle();
             };
     PlanAngles(path, startInstant, angleFunction, rotationConstraints);
     return std::move(path);
