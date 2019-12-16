@@ -117,29 +117,31 @@ void AppendProfiledVelocity(Trajectory& out,
     for (int n = 1; n < num_segments + 1; n++) {
         double distance = (points[n] - points[n - 1]).mag();
         double vbar = (speed[n] + speed[n - 1]) / 2;
+        assert(vbar != 0);
         double t_sec = distance / vbar;
         time = time + RJ::Seconds(t_sec);
 
         // Add point n in
         //todo(Ethan) verify this default angle w Kyle.
-        out.AppendInstant(RobotInstant{Pose(points[n], derivs1[n].angle()+M_PI), Twist(derivs1[n].normalized() * speed[n], n), time});
+        out.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), time});
     }
 }
 //todo(Ethan) verify this
 void PlanAngles(Trajectory& trajectory,
-                const RobotInstant& initial_instant,
+                const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
                 const RotationConstraints& constraints) {
     if(trajectory.empty()) {
         return;
     }
-    trajectory.instant(0).pose.heading() = initial_instant.pose.heading();
-    trajectory.instant(0).velocity.angular() = initial_instant.velocity.angular();
+    trajectory.instant(0).pose.heading() = start_instant.pose.heading();
+    trajectory.instant(0).velocity.angular() = start_instant.velocity.angular();
 
     // Move forwards in time. At each instant, calculate the goal angle and its
     // time derivative, and try to get there with a trapezoidal profile.
 
     // limit velocity
+    // skip the first instant
     for (int i = 0; i < trajectory.num_instants() - 1; i++) {
         RobotInstant& instant_initial = trajectory.instant(i);
         RobotInstant& instant_final = trajectory.instant(i + 1);
@@ -149,8 +151,25 @@ void PlanAngles(Trajectory& trajectory,
                 instant_final.pose.position(),
                 instant_final.velocity.linear(),
                 angle_initial);
-        double maxDeltaAngle = constraints.maxSpeed * RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
-        angle_final = fixAngleRadians(clampAngle(angle_final, angle_initial-maxDeltaAngle, angle_initial+maxDeltaAngle));
+        double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
+        double maxDeltaAngle = constraints.maxSpeed * deltaTime;
+        if(maxDeltaAngle < M_PI) {
+            angle_final = fixAngleRadians(
+                    clampAngle(angle_final, angle_initial - maxDeltaAngle, angle_initial + maxDeltaAngle));
+        } else {
+            angle_final = angle_initial;
+            // The points' timestamps are too far apart
+            // note: This means Angle Planning fails
+            // todo(Ethan)? add more instants
+        }
+    }
+    //update velocity
+    for(int i = 0; i < trajectory.num_instants()-1; i++) {
+        RobotInstant& instant_initial = trajectory.instant(i);
+        RobotInstant& instant_final = trajectory.instant(i+1);
+        double deltaAngle = fixAngleRadians(instant_final.pose.heading() - instant_initial.pose.heading());
+        double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
+        instant_final.velocity.angular() = deltaAngle / deltaTime;
     }
     // limit acceleration (forward)
     for (int i = 0; i < trajectory.num_instants() - 1; i++) {

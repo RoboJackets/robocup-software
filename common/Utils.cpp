@@ -66,14 +66,28 @@ double clampAngle(double a, double lo, double hi) {
     Point dir_lo = Point::direction(lo);
     Point dir_hi = Point::direction(hi);
     Point dir_a = Point::direction(a);
-    double angle_lo_a = dir_lo.angleBetween(dir_a);
-    double angle_hi_a = dir_hi.angleBetween(dir_a);
-    double angle_lo_hi = dir_lo.angleBetween(dir_hi);
-    if(nearlyEqual(angle_lo_a + angle_hi_a, angle_lo_hi)) {
-        return a;
-    } else if (angle_lo_a < angle_hi_a) {
-        return lo;
+    if(dir_lo.cross(dir_hi) > 0) {
+        if (dir_a.cross(dir_lo) > 0) {
+            // a is less than lo
+            return lo;
+        } else if (dir_hi.cross(dir_a) > 0) {
+            // a is greater than hi
+            return hi;
+        } else {
+            // a is between lo and hi (inclusive)
+            return a;
+        }
     } else {
-        return hi;
+        // a is between hi and lo
+        if (dir_hi.cross(dir_a) > 0 && dir_a.cross(dir_lo) > 0) {
+            if(dir_hi.angleBetween(dir_a) < dir_a.angleBetween(dir_lo)) {
+                return hi;
+            } else {
+                return lo;
+            }
+        } else {
+            // a is between lo and hi (inclusive)
+            return a;
+        }
     }
 }
