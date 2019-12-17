@@ -237,7 +237,7 @@ void OurRobot::worldVelocity(Geometry2d::Point v) {
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
 
-    const float radius = Robot_Radius * 1;
+    const float radius = 10; //todo(Ethan) fix pivotCommand
     Geometry2d::Point pivotPoint = _context->state.ball.pos;
 
     // reset other conflicting motion commands

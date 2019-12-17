@@ -24,21 +24,25 @@ namespace Planning {
         if(!isApplicable(request.motionCommand)) {
             throw std::invalid_argument("Error in PivotPathPlanner: invalid motionCommand; must be a PivotCommand.");
         }
-        bool targetIsDifferent = targetChanged(request);
+        PivotCommand command = std::get<PivotCommand>(request.motionCommand);
+        RobotInstant startInstant = request.start;
+        RobotConstraints constraints = request.constraints;
+        Trajectory prevTrajectory = std::move(request.prevTrajectory);
+        auto state_space = std::make_shared<RoboCupStateSpace>(
+                Field_Dimensions::Current_Dimensions, std::move(request.obstacles));
+        double radius = Robot_Radius * _pivotRadiusMultiplier->value();
+
+        bool targetIsDifferent = false;
+        if(prevTrajectory.num_instants() > 0) {
+            Point prevTargetPoint = prevTrajectory.last().pose.position();
+            Point newTargetPoint = command.pivotPoint + Point::direction(command.targetAngle).normalized(radius);
+            targetIsDifferent = (newTargetPoint - prevTargetPoint).mag() > 0.1;
+        }
+
         bool pathTooOld = request.prevTrajectory.duration()
                           - (RJ::now() - request.prevTrajectory.begin_time()) < RJ::Seconds(-0.5);
 
-        RobotInstant startInstant = request.start;
-        RobotConstraints constraints = request.constraints;
-        PivotCommand command = std::get<PivotCommand>(request.motionCommand);
-        Trajectory result = std::move(request.prevTrajectory);
-        auto state_space = std::make_shared<RoboCupStateSpace>(
-                Field_Dimensions::Current_Dimensions, std::move(request.obstacles));
-
-
-        if(result.empty() || targetIsDifferent || pathTooOld) {
-            // float radius = command.radius;
-            double radius = Robot_Radius * _pivotRadiusMultiplier->value();
+        if(prevTrajectory.empty() || targetIsDifferent || pathTooOld) {
             Point pivotPoint = command.pivotPoint;
             double targetAngle = command.targetAngle;
 
@@ -59,7 +63,7 @@ namespace Planning {
                 points.push_back(point);
             }
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
-            result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);
+            Trajectory result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);
             Point pivotTarget = pivotPoint + Point::direction(targetAngle) * radius;
             std::function<double(Point, Point, double)> angleFunction =
                 [pivotPoint, pivotTarget](Point pos, Point vel_linear, double angle) -> double {
@@ -74,18 +78,9 @@ namespace Planning {
                 };
             PlanAngles(result, startInstant, angleFunction, constraints.rot);
             result.setDebugText("Pivot (New)");
-        } else {
-            result.setDebugText("Pivot (Old)");
+            return std::move(result);
         }
-        return std::move(result);
-    }
-
-    bool PivotPathPlanner::targetChanged(const PlanRequest& request) const {
-        if(request.prevTrajectory.empty()) return false;
-        PivotCommand command = std::get<PivotCommand>(request.motionCommand);
-        Point prevTargetPoint = request.prevTrajectory.last().pose.position();
-        Point newTargetPoint = command.pivotPoint + Point::direction(command.targetAngle)
-                .normalized(Robot_Radius * _pivotRadiusMultiplier->value()); //todo(Ethan) use command.radius
-        return (newTargetPoint - prevTargetPoint).mag() > 0.1;
+        prevTrajectory.setDebugText("Pivot (Old)");
+        return std::move(prevTrajectory);
     }
 }

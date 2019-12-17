@@ -13,27 +13,26 @@ Trajectory ProfileVelocity(const BezierPath& path,
                            double final_speed,
                            const MotionConstraints& constraints,
                            RJ::Time initial_time) {
+    if(path.empty()) return Trajectory{{}};
+
     Trajectory result({});
-    RobotInstant instant;
+    RobotInstant start_instant;
 
     // Add an initial point to the trajectory so that we keep track of initial
     // velocity
-    path.Evaluate(0, &instant.pose.position(), &instant.velocity.linear());
-    instant.stamp = initial_time;
+    path.Evaluate(0, &start_instant.pose.position(), &start_instant.velocity.linear());
+    start_instant.stamp = initial_time;
 
     // Scale the velocity so that the initial speed is correct
-    instant.velocity.linear() = instant.velocity.linear().normalized() * initial_speed;
+    start_instant.velocity.linear() = start_instant.velocity.linear().normalized(initial_speed);
 
-    result.AppendInstant(instant);
+    result.AppendInstant(start_instant);
 
     AppendProfiledVelocity(result, path, final_speed, constraints);
     return result;
 }
 
 double limitAccel(double v1, double v2, double deltaX, double maxAccel) {
-    if(v2 < v1) {
-        return v2;
-    }
     double maxV2 = std::sqrt(pow(v1, 2) + 2 * maxAccel * deltaX);
     return std::min(v2, maxV2);
 }
@@ -57,23 +56,28 @@ void AppendProfiledVelocity(Trajectory& out,
     // Planning starts after `out` ends, so we want to capture the ending speed.
     initial_speed = out.last().velocity.linear().mag();
 
-    constexpr int num_segments = 15;
+    // number of points used to interpolate each bezier segment
+    constexpr int interpolations = 40;
+    // number of cubic bezier segments
+    const int num_beziers = path.size();
+    // number of points that will be in the final trajectory
+    const int num_points = num_beziers * interpolations;
 
     // Scratch data that we will use later.
-    std::vector<Point> points(num_segments + 1), derivs1(num_segments + 1);
-    std::vector<double> curvature(num_segments + 1), speed(num_segments + 1, constraints.maxSpeed);
+    std::vector<Point> points(num_points), derivs1(num_points);
+    std::vector<double> curvature(num_points), speed(num_points, constraints.maxSpeed);
 
     //we must make this assumption for the next calculations, otherwise we get NANs
     assert(constraints.maxAcceleration >= constraints.maxCentripetalAcceleration);
 
     //note: these are just suggestions. if they are impossible given MotionConstraints, then we'll limit them
     speed[0] = initial_speed;
-    speed[num_segments] = final_speed;
+    speed[num_points-1] = final_speed;
 
     // Velocity pass: fill points and calculate maximum velocity given curvature
     // at each point.
-    for (int n = 0; n < num_segments + 1; n++) {
-        double s = n / static_cast<double>(num_segments);
+    for (int n = 0; n < num_points; n++) {
+        double s = n / static_cast<double>(num_points-1);
         path.Evaluate(s, &points[n], &derivs1[n], &curvature[n]);
 
         assert(curvature[n] >= 0.0);
@@ -81,7 +85,6 @@ void AppendProfiledVelocity(Trajectory& out,
 
         // Centripetal acceleration: a = v^2 / r => v = sqrt(ra)
         if (curvature[n] != 0.0) {
-            //todo(Ethan) verify with kyle that its fine to switch this to `constraints.maxCentripetalAcceleration`
             speed[n] = std::min(speed[n], std::sqrt(constraints.maxCentripetalAcceleration / curvature[n]));
         }
     }
@@ -89,32 +92,31 @@ void AppendProfiledVelocity(Trajectory& out,
     using std::pow;
     // Acceleration pass: calculate maximum velocity at each point based on
     // acceleration limits forwards in time.
-    for (int n = 0; n < num_segments; n++) {
+    for (int n = 0; n < num_points-1; n++) {
         double centripetal = speed[n] * speed[n] * curvature[n];
         double maxTanAccelSquared = pow(constraints.maxAcceleration, 2) - pow(centripetal, 2);
-        //todo(Ethan) use nearlyEqual()
         double maxTangentAccel = std::abs(maxTanAccelSquared) < 0.0000001 ? 0.0 : std::sqrt(maxTanAccelSquared);
         assert(!std::isnan(maxTangentAccel) && !std::isinf(maxTangentAccel));
         double distance = (points[n + 1] - points[n]).mag();
-        speed[n+1] = limitAccel(speed[n], speed[n+1], distance, maxTangentAccel);
+        speed[n + 1] = limitAccel(speed[n], speed[n + 1], distance, maxTangentAccel);
     }
 
     // Decceleration pass: calculate maximum velocity at each point based on
     // acceleration limits backwards in time.
-    for (int n = num_segments; n > 0; n--) {
+    for (int n = num_points-1; n > 0; n--) {
         double centripetal = speed[n] * speed[n] * curvature[n];
         double maxTanAccelSquared = pow(constraints.maxAcceleration, 2) - pow(centripetal, 2);
         double maxTangentAccel = std::abs(maxTanAccelSquared) < 0.0000001 ? 0.0 : std::sqrt(maxTanAccelSquared);
         assert(!std::isnan(maxTangentAccel) && !std::isinf(maxTangentAccel));
         double distance = (points[n - 1] - points[n]).mag();
-        speed[n-1] = limitAccel(speed[n], speed[n-1], distance, maxTangentAccel);
+        speed[n - 1] = limitAccel(speed[n], speed[n - 1], distance, maxTangentAccel);
     }
 
     // TODO(Kyle): Allow the user to pass in an initial time. todo(Ethan) done?
     RJ::Time time = out.last().stamp;
 
     // We skip the first instant.
-    for (int n = 1; n < num_segments + 1; n++) {
+    for (int n = 1; n < num_points; n++) {
         double distance = (points[n] - points[n - 1]).mag();
         double vbar = (speed[n] + speed[n - 1]) / 2;
         assert(vbar != 0);
@@ -126,7 +128,6 @@ void AppendProfiledVelocity(Trajectory& out,
         out.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), time});
     }
 }
-//todo(Ethan) verify this
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& start_instant,
                 const AngleFunction& angle_function,

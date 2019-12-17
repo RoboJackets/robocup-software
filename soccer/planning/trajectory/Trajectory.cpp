@@ -285,7 +285,7 @@ void Trajectory::draw(DebugDrawer* drawer, std::optional<Geometry2d::Point> back
         } else {
             textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
         }
-        drawer->drawText(_debugText.value(), textPos, Qt::white);
+        drawer->drawText(_debugText.value(), textPos, QColor(100, 100, 255, 100));
     }
 }
 

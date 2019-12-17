@@ -97,7 +97,7 @@ void FitCubicBezier(Point vi, Point vf,
 
         if (solution_x.hasNaN() || solution_y.hasNaN()) {
             control_out = {};
-            debugThrow("Something went wrong. Points are too close to each other probably");
+//            debugThrow("Something went wrong. Points are too close to each other probably");
             return;
         } else {
             for (int n = 0; n < num_curves; n++) {
@@ -151,10 +151,11 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, Mot
 
         ks[i] = 1.0 / (timeAfter - timeBefore);
 
-        if (std::isnan(ks[i])) {//todo(Ethan) should be std::isinf() ?
-            debugThrow(
-                    "Something went wrong. Points are too close to each other "
-                    "probably");
+        if (std::isnan(ks[i]) || std::isinf(ks[i])) {
+//            debugThrow(
+//                    "Something went wrong. Points are too close to each other "
+//                    "probably");
+            return;
         }
     }
 
@@ -209,10 +210,8 @@ void BezierPath::Evaluate(double s, Geometry2d::Point *position, Geometry2d::Poi
                    6 * tb * (p3 - 2 * p2 + p1);
 
         // https://en.wikipedia.org/wiki/Curvature#Local_expressions
-        // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2)
-        *curvature =
-                std::abs(d1.x() * d2.y() - d1.y() * d2.x()) /
-                std::pow(std::pow(d1.x(), 2) + std::pow(d1.y(), 2), 1.5);
+        // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2) = |v x a|/|v|^3
+        *curvature = std::abs(d1.cross(d2)) / std::pow(d1.mag(), 3.0);
 
         if (std::isnan(*curvature)) {
             *curvature = 0;

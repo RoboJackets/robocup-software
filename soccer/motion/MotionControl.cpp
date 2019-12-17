@@ -85,6 +85,8 @@ void MotionControl::run() {
 //        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
 //        optTarget = target;
 //    }
+    assert(!_robot->path().empty());
+
     QColor targetColor = optTarget ? Qt::green : Qt::red;
     if (!optTarget) {
         optTarget = _robot->path().last();
