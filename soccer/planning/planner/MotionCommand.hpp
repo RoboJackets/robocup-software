@@ -37,8 +37,7 @@ struct WorldVelTargetCommand {
  */
 struct PivotCommand {
     Geometry2d::Point pivotPoint;
-    double radius;
-    double targetAngle;
+    Geometry2d::Point pivotTarget;
 };
 
 /**

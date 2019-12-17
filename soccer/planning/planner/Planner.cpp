@@ -15,7 +15,7 @@ namespace Planning {
                 new ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025);
     }
 
-    //todo(Ethan) check for target change --> replan
+    //todo(Ethan) delete this function
     bool Planner::shouldReplan(const PlanRequest &planRequest) const {
         const auto& currentInstant = planRequest.start;
         const MotionConstraints &motionConstraints = planRequest.constraints.mot;

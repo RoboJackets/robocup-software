@@ -259,19 +259,13 @@ TrajectoryIterator Trajectory::iterator(RJ::Time startTime, RJ::Seconds deltaT) 
 }
 
 void Trajectory::draw(DebugDrawer* drawer, std::optional<Geometry2d::Point> backupTextPos) const {
-    if(!empty()) {
-        constexpr int kNumSegments = 150;
-        RJ::Seconds dt = duration() / kNumSegments;
-        auto trajectory_it = iterator(begin_time(), dt);
-        Geometry2d::Point from_point = (*trajectory_it).pose.position();
-        ++trajectory_it;
-        Geometry2d::Point to_point = (*trajectory_it).pose.position();
-        Geometry2d::Point last_point = last().pose.position();
-        while (to_point != last_point) {
-            drawer->drawSegment(Geometry2d::Segment(from_point, to_point), Qt::darkCyan);
-            from_point = to_point;
-            ++trajectory_it;
-            to_point = (*trajectory_it).pose.position();
+    if(instants_.size() > 1) {
+        Packet::DebugRobotPath* dbgPath = drawer->getLogFrame()->add_debug_robot_paths();
+        dbgPath->set_layer(drawer->findDebugLayer("Motion"));
+        for (const RobotInstant& instant : instants_) {
+            Packet::DebugRobotPath::DebugRobotPathPoint* pt = dbgPath->add_points();
+            *pt->mutable_pos() = instant.pose.position();
+            *pt->mutable_vel() = instant.velocity.linear();
         }
     }
     if (_debugText) {

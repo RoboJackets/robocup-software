@@ -203,7 +203,6 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 }
 
 void OurRobot::settle(std::optional<Point> target) {
-    std::cout << "settle" << std::endl;
     if (!visible()) return;
 
     intent().motion_command = std::make_unique<MotionCommand>(Planning::SettleCommand{target});
@@ -236,13 +235,10 @@ void OurRobot::worldVelocity(Geometry2d::Point v) {
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-
-    const float radius = 10; //todo(Ethan) fix pivotCommand
     Geometry2d::Point pivotPoint = _context->state.ball.pos;
 
     // reset other conflicting motion commands
-    intent().motion_command = std::make_unique<MotionCommand>(Planning::PivotCommand{
-        pivotPoint, radius, (pivotPoint - pivotTarget).angle()});
+    intent().motion_command = std::make_unique<MotionCommand>(Planning::PivotCommand{pivotPoint, pivotTarget});
 
     *_cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
               << endl;

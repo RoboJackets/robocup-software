@@ -241,14 +241,12 @@ Trajectory CollectPathPlanner::courseApproach(PlanRequest&& planRequest) {
     Trajectory coursePath = pathTargetPlanner.plan(std::move(request));
 
     // Build a path from now to the slow point
-
-    //todo(Ethan) this is unecessary right?
-//    std::function<double(Point,Point,double)> angleFunction =
-//        [&](Point pos, Point vel, double angle) {
-//            //todo(Ethan) change to vel.angle() ?
-//            return pos.angleTo(ball.pos);
-//        };
-//    PlanAngles(coursePath, startInstant, angleFunction, rotationConstraints);
+    std::function<double(Point,Point,double)> angleFunction =
+        [&](Point pos, Point vel, double angle) {
+            //todo(Ethan) change to vel.angle() ?
+            return pos.angleTo(ball.pos);
+        };
+    PlanAngles(coursePath, startInstant, angleFunction, rotationConstraints);
     coursePath.setDebugText("Course " + coursePath.getDebugText());
     return std::move(coursePath);
 }

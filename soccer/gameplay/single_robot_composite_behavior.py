@@ -86,9 +86,10 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         if (oldBot is not None and self.robot is not None and
                 oldBot.shell_id() != self.robot.shell_id() and
                 self.autorestart()):
-            logging.info("SingleRobotCompositeBehavior: robot changed (" + str(
-                oldBot.shell_id()) + "->" + str(self.robot.shell_id()) +
-                         "), restarting: " + type(self).__name__)
+            # todo(Ethan) uncomment next 3 lines
+            # logging.info("SingleRobotCompositeBehavior: robot changed (" + str(
+            #     oldBot.shell_id()) + "->" + str(self.robot.shell_id()) +
+            #              "), restarting: " + type(self).__name__)
             self.restart()
 
     def __str__(self) -> str:

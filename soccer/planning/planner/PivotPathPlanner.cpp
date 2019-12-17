@@ -25,6 +25,8 @@ namespace Planning {
             throw std::invalid_argument("Error in PivotPathPlanner: invalid motionCommand; must be a PivotCommand.");
         }
         PivotCommand command = std::get<PivotCommand>(request.motionCommand);
+        Point pivotPoint = command.pivotPoint;
+        Point pivotTarget = command.pivotTarget;
         RobotInstant startInstant = request.start;
         RobotConstraints constraints = request.constraints;
         Trajectory prevTrajectory = std::move(request.prevTrajectory);
@@ -35,7 +37,7 @@ namespace Planning {
         bool targetIsDifferent = false;
         if(prevTrajectory.num_instants() > 0) {
             Point prevTargetPoint = prevTrajectory.last().pose.position();
-            Point newTargetPoint = command.pivotPoint + Point::direction(command.targetAngle).normalized(radius);
+            Point newTargetPoint = pivotPoint + (pivotPoint-pivotTarget).normalized(radius);
             targetIsDifferent = (newTargetPoint - prevTargetPoint).mag() > 0.1;
         }
 
@@ -43,8 +45,7 @@ namespace Planning {
                           - (RJ::now() - request.prevTrajectory.begin_time()) < RJ::Seconds(-0.5);
 
         if(prevTrajectory.empty() || targetIsDifferent || pathTooOld) {
-            Point pivotPoint = command.pivotPoint;
-            double targetAngle = command.targetAngle;
+            double targetAngle = pivotTarget.angleTo(pivotPoint);
 
             // maxSpeed = maxRadians * radius
             MotionConstraints motionConstraints = constraints.mot;
@@ -64,13 +65,16 @@ namespace Planning {
             }
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
             Trajectory result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);
-            Point pivotTarget = pivotPoint + Point::direction(targetAngle) * radius;
             std::function<double(Point, Point, double)> angleFunction =
                 [pivotPoint, pivotTarget](Point pos, Point vel_linear, double angle) -> double {
                     double angleToPivot = pos.angleTo(pivotPoint);
                     double angleToPivotTarget = pos.angleTo(pivotTarget);
-                    if (abs(angleToPivot - angleToPivotTarget) <
+                    if (abs(fixAngleRadians(angleToPivot - angleToPivotTarget)) <
                         10.0 * M_PI / 180.0) {
+                        // when we're close to the aim direction, we use the actual pivotTarget
+                        // this is necessary because Gameplay seems to kick early/late
+                        // sometimes so it's important to maintain our aim for more
+                        // than just the final instant of the trajectory.
                         return angleToPivotTarget;
                     } else {
                         return angleToPivot;
