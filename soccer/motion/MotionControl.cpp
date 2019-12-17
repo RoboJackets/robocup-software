@@ -80,7 +80,8 @@ void MotionControl::run() {
     // evaluate path - where should we be right now?
     std::optional<RobotInstant> optTarget =
             _robot->path().evaluate(timeIntoPath);
-//todo(Ethan) verify this with Kyle
+//todo(Ethan) verify this with Kyle,
+//add this in case of planner failure, but this shouldn't ever happen
 //    if (_robot->path().empty()) {
 //        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
 //        optTarget = target;

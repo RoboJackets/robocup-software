@@ -65,24 +65,26 @@ namespace Planning {
             }
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
             Trajectory result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);
-            std::function<double(Point, Point, double)> angleFunction =
-                [pivotPoint, pivotTarget](Point pos, Point vel_linear, double angle) -> double {
-                    double angleToPivot = pos.angleTo(pivotPoint);
-                    double angleToPivotTarget = pos.angleTo(pivotTarget);
-                    if (abs(fixAngleRadians(angleToPivot - angleToPivotTarget)) <
-                        10.0 * M_PI / 180.0) {
-                        // when we're close to the aim direction, we use the actual pivotTarget
-                        // this is necessary because Gameplay seems to kick early/late
-                        // sometimes so it's important to maintain our aim for more
-                        // than just the final instant of the trajectory.
-                        return angleToPivotTarget;
-                    } else {
-                        return angleToPivot;
-                    }
-                };
-            PlanAngles(result, startInstant, angleFunction, constraints.rot);
-            result.setDebugText("Pivot (New)");
-            return std::move(result);
+            if(!result.empty()) {
+                std::function<double(Point, Point, double)> angleFunction =
+                        [pivotPoint, pivotTarget](Point pos, Point vel_linear, double angle) -> double {
+                            double angleToPivot = pos.angleTo(pivotPoint);
+                            double angleToPivotTarget = pos.angleTo(pivotTarget);
+                            if (abs(fixAngleRadians(angleToPivot - angleToPivotTarget)) <
+                                10.0 * M_PI / 180.0) {
+                                // when we're close to the aim direction, we use the actual pivotTarget
+                                // this is necessary because Gameplay seems to kick early/late
+                                // sometimes so it's important to maintain our aim for more
+                                // than just the final instant of the trajectory.
+                                return angleToPivotTarget;
+                            } else {
+                                return angleToPivot;
+                            }
+                        };
+                PlanAngles(result, startInstant, angleFunction, constraints.rot);
+                result.setDebugText("Pivot (New)");
+                return std::move(result);
+            }
         }
         prevTrajectory.setDebugText("Pivot (Old)");
         return std::move(prevTrajectory);
