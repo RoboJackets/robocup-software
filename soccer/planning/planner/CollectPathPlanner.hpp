@@ -16,68 +16,16 @@ namespace Planning {
  */
 class CollectPathPlanner : public PlannerForCommandType<CollectCommand> {
 public:
-    enum CollectPathPlannerStates {
-        // From start of subbehavior to the start of the slow part of the
-        // approach
-        CourseApproach,
-        // From the slow part of the approach to the touching of the ball
-        FineApproach,
-        // From touching the ball to stopped with the ball in the mouth
-        Control
-    };
-
-    CollectPathPlanner()
-        : currentState(CourseApproach),
-          averageBallVel(0, 0),
-          averageBallVelInitialized(false),
-          approachDirection(0, 0),
-          approachDirectionCreated(false),
-          controlPathCreated(false){};
-
-    Trajectory plan(PlanRequest&& planRequest) override;
+    Trajectory plan(PlanRequest&& request) override;
     std::string name() const override {return "CollectPathPlanner";}
 
     static void createConfiguration(Configuration* cfg);
 
 private:
-    // Restarts the state machine if our calculations are whack
-    // and won't intercept ball correctly anymore
-    //todo(Ethan) switch a bunch of these RobotInstants back to MotionInstant
-    void checkSolutionValidity(const Ball& ball,
-                               const RobotInstant& startInstant,
-                               const Trajectory& prevPath);
-
-    void processStateTransition(const Ball& ball,
-                                const RobotInstant& startInstant,
-                                const Trajectory& prevPath,
-                                const RJ::Seconds& timeIntoPreviousPath);
-
-    Trajectory courseApproach(PlanRequest&& planRequest);
-
-    Trajectory fineApproach(PlanRequest&& planRequest);
-
-    Trajectory control(PlanRequest&& planRequest, Trajectory&& partialPath);
-
-    Trajectory invalid(const PlanRequest& planRequest);
-
-    template <typename T>
-    static T applyLowPassFilter(const T& oldValue, const T& newValue,
-                                double gain);
-
     PathTargetPlanner pathTargetPlanner;
 
-    CollectPathPlannerStates currentState;
-
     // Ball Velocity Filtering Variables
-    Geometry2d::Point averageBallVel;
-    bool averageBallVelInitialized;
-
-    Geometry2d::Point approachDirection;
-    bool approachDirectionCreated;
-
-    bool controlPathCreated;
-
-    Geometry2d::Point pathCourseTarget;
+    std::optional<Geometry2d::Point> averageBallVel;
 
     // Controls at which ball speed we should try to go directly to the ball
     // or to move behind it and in the same direction as it
