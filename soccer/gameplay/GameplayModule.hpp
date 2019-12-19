@@ -17,6 +17,8 @@
 
 #include <Configuration.hpp>
 #include <Context.hpp>
+#include <GrSimCommunicator.hpp>
+#include <NewRefereeModule.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 class OurRobot;
@@ -43,7 +45,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context);
+    GameplayModule(Context* const context, NewRefereeModule* refereeModule);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -122,6 +124,18 @@ public:
     /// whenever the current field dimensions change
     void updateFieldDimensions();
 
+    /// adds tests to the list of tests to run
+    void addTests();
+
+    /// remove selected test from the list of tests to run
+    void removeTest();
+
+    /// loads a test for the testing tab
+    void loadTest();
+
+    /// go to the next test for the testing tab
+    void nextTest();
+
 protected:
     boost::python::object getRootPlay();
 
@@ -137,6 +151,7 @@ private:
     double _oldFieldEdgeInset;
 
     Context* const _context;
+    NewRefereeModule* const _refereeModule;
 
     std::set<OurRobot*> _playRobots;
 
@@ -169,5 +184,8 @@ private:
 
     // python
     boost::python::object _mainPyNamespace;
+
+    // Testing
+    bool runningTests = false;
 };
 }
