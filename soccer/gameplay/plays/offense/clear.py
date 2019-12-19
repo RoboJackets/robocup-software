@@ -88,6 +88,7 @@ class Clear(standard_play.StandardPlay):
             skills.move.Move(self.offense_points[1 - num]),
             'keep moving',
             required=False)
+
         # count = 0
         # for k in self.offense_points:
         #     count+=1
