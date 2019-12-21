@@ -10,7 +10,7 @@ namespace Planning {
 
 class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
 public:
-    PathTargetPlanner(): counter(0) {}
+    PathTargetPlanner() {}
 
     Trajectory plan(PlanRequest&& request) override;
 
@@ -23,11 +23,20 @@ public:
 
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
+    Trajectory partialPath(const Trajectory& prevTrajectory) {
+        return prevTrajectory.subTrajectory(0ms, (RJ::now() - prevTrajectory.begin_time()) + getPartialReplanLeadTime());
+    }
+
+    Trajectory fullReplan(PlanRequest&& request);
+    Trajectory partialReplan(PlanRequest&& request);
+    Trajectory reuse(PlanRequest&& request);
+    Trajectory checkBetter(PlanRequest&& request);
+
     bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;
     Trajectory planWithoutAngles(PlanRequest&& request);
 
-    static ConfigDouble* _partialReplanLeadTime;
+    static std::vector<RJ::Time> prevTimes;
 
-    int counter;
+    static ConfigDouble* _partialReplanLeadTime;
 };
 } // namespace Planning

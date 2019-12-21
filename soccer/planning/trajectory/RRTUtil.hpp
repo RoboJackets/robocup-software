@@ -4,9 +4,10 @@
 #include "Configuration.hpp"
 #include "SystemState.hpp"
 #include "RoboCupStateSpace.hpp"
+#include "planning/MotionConstraints.hpp"
+#include "planning/trajectory/Trajectory.hpp"
 
 namespace Planning {
-
 class RRTConfig {
 public:
     static void createConfiguration(Configuration* cfg);
@@ -46,5 +47,7 @@ std::vector<Geometry2d::Point> GenerateRRT(
         Geometry2d::Point goal,
         std::shared_ptr<RoboCupStateSpace> state_space,
         const std::vector<Geometry2d::Point>& waypoints = {});
+
+Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& obstacles, const std::vector<Geometry2d::Point>& biasWaypoints = {});
 
 }  // Planning

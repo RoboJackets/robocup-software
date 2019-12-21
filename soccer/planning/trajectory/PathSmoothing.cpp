@@ -115,7 +115,9 @@ void FitCubicBezier(Point vi, Point vf,
 }
 
 BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, MotionConstraints motion_constraints) {
-    assert(points.size() >= 2); //todo(Ethan) verify this. I think bezier breaks when size is 1
+    if(points.size() < 2) {
+        return;
+    }
 
     size_t length = points.size();
     size_t num_curves = length - 1;

@@ -2,6 +2,10 @@
 #include <array>
 #include <rrt/planning/Path.hpp>
 #include "DebugDrawer.hpp"
+#include "planning/MotionConstraints.hpp"
+#include "planning/trajectory/Trajectory.hpp"
+#include "planning/trajectory/PathSmoothing.hpp"
+#include "planning/trajectory/VelocityProfiling.hpp"
 
 using namespace Geometry2d;
 
@@ -95,6 +99,23 @@ std::vector<Geometry2d::Point> GenerateRRT(
     std::vector<Point> points = biRRT.getPath();
 
     return points;
+}
+
+Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& obstacles, const std::vector<Point>& biasWaypoints) {
+    auto space = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obstacles);
+    std::vector<Geometry2d::Point> points = GenerateRRT(
+            start.pose.position(), goal.pose.position(),
+            space, biasWaypoints);
+    RRT::SmoothPath(points, *space);
+    BezierPath postBezier(points,
+                          start.velocity.linear(),
+                          goal.velocity.linear(),
+                          motionConstraints);
+    return ProfileVelocity(postBezier,
+                                                start.velocity.linear().mag(),
+                                                goal.velocity.linear().mag(),
+                                                motionConstraints,
+                                                start.stamp);
 }
 
 }
