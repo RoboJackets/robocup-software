@@ -435,6 +435,8 @@ void Gameplay::GameplayModule::run() {
         }
     }
     _our_score_last_frame = _context->game_state.ourScore;
+
+    _context->goalie_id = goalieID();
 }
 
 #pragma mark python

@@ -17,23 +17,12 @@ import skills.pass_receive
 class AngleReceive(skills.pass_receive.PassReceive):
     def __init__(self):
         super().__init__(
-            captureFunction=(lambda: skills.settle.Settle(self._target_point)))
-        self._target_point = None
+            captureFunction=(lambda: skills.settle.Settle()))
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
         self.ball_kicked = False
         self.target_angle = 0
 
-    ## The point that the receiver should expect the ball to hit it's mouth
-    # Default: constants.Field.TheirGoalSegment.center()
-    @property
-    def target_point(self):
-        return self._target_point
-
-    @target_point.setter
-    def target_point(self, value):
-        self._target_point = value
-        self.recalculate()
 
     ## Returns an adjusted angle with account for ball speed
     #

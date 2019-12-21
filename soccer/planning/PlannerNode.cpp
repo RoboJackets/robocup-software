@@ -1,5 +1,4 @@
 #include "planning/planner/PathTargetPlanner.hpp"
-#include "planning/planner/DirectTargetPathPlanner.hpp"
 #include "planning/planner/SettlePathPlanner.hpp"
 #include "planning/planner/PivotPathPlanner.hpp"
 #include "planning/planner/CollectPathPlanner.hpp"
@@ -20,26 +19,19 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
 }
 
 void PlannerNode::run() {
-    // TODO(Kyle): Get obstacles.
-    /*
-    Geometry2d::ShapeSet globalObstacles =
-            _gameplayModule->globalObstacles();
-    Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-    Geometry2d::ShapeSet goalZoneObstacles =
-            _gameplayModule->goalZoneObstacles();
-        */
     Geometry2d::ShapeSet globalObstacles;
     Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
     Geometry2d::ShapeSet goalZoneObstacles;
     globalObstaclesWithGoalZones.add(goalZoneObstacles);
 
-
+    std::vector<PlanRequest> requests;
     for (OurRobot* robot : context_->state.self) {
         if (!robot) {
             continue;
         }
 
-        if (!robot->visible() || context_->game_state.state == GameState::Halt) {
+        if (!robot->visible() ||
+            context_->game_state.state == GameState::Halt) {
             Trajectory inactivePath{{}};
             inactivePath.setDebugText("INACTIVE");
             robot->setPath(std::move(inactivePath));
@@ -47,16 +39,15 @@ void PlannerNode::run() {
         }
 
         // Visualize local obstacles
-        for (auto& shape : robot->localObstacles().shapes()) {
+        for (auto &shape : robot->localObstacles().shapes()) {
             context_->debug_drawer.drawShape(shape, Qt::black,
-                                            "LocalObstacles");
+                                             "LocalObstacles");
         }
 
-        // TODO(Kyle) Get the goalie ID
-        int goalieID = 0;
-
-        bool robotIgnoreGoalZone = robot->shell() == goalieID || robot->isPenaltyKicker || robot->isBallPlacer;
-        auto& globalObstaclesForBot =
+        bool robotIgnoreGoalZone = robot->shell() == context_->goalie_id ||
+                                   robot->isPenaltyKicker ||
+                                   robot->isBallPlacer;
+        auto &globalObstaclesForBot =
                 robotIgnoreGoalZone
                 ? globalObstacles
                 : globalObstaclesWithGoalZones;
@@ -67,38 +58,44 @@ void PlannerNode::run() {
                         globalObstaclesForBot,
                         !robotIgnoreGoalZone);
 
-        // TODO(Kyle): Collect dynamic obstacles
-        /*
-        std::vector<Planning::DynamicObstacle> dynamicObstacles =
-                robot->collectDynamicObstacles();
-                */
-
         // Construct a plan request.
-        if(robot->motionCommand()) {
-            const RobotState& robotState = robot->state();
-            PlanRequest request = PlanRequest(
-                    context_, RobotInstant{robotState.pose, robotState.velocity, robotState.timestamp}, *robot->motionCommand(),
+        if (robot->motionCommand()) {
+            const RobotState &robotState = robot->state();
+            requests.emplace_back(
+                    context_, RobotInstant{robotState.pose, robotState.velocity,
+                                           robotState.timestamp},
+                    *robot->motionCommand(),
                     robot->robotConstraints(), robot->path_movable(),
-                    staticObstacles, robot->shell(), robot->getPlanningPriority());
-
-            //complete the plan request
-            Trajectory plannedPath = PlanForRobot(std::move(request));
-            plannedPath.draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
-            robot->setPath(std::move(plannedPath));
-            context_->debug_drawer.drawText((const char*[]) {
-                "Empty",
-                "RRT",
-                "WorldVel",
-                "Pivot",
-                "Direct",
-                "TuningPath",
-                "Settle",
-                "Collect",
-                "LineKick",
-                "Intercept"
-            }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255, 100));
-            context_->debug_drawer.drawText(QString("Path Age: ") + std::to_string(RJ::Seconds(RJ::now() - robot->path().begin_time()).count()).c_str(), robot->pos()+Geometry2d::Point(.1, -.2), QColor(100, 100, 255, 100));
+                    std::move(staticObstacles), std::vector<DynamicObstacle>{},
+                    robot->shell(), robot->getPlanningPriority());
         }
+    }
+    std::sort(requests.begin(), requests.end(), [](const PlanRequest& pr1, const PlanRequest& pr2) {
+        return pr1.priority > pr2.priority;
+    });
+    std::vector<DynamicObstacle> dynamicObstacles;
+    for(PlanRequest& request : requests) {
+        //complete the plan request
+        OurRobot* robot = context_->state.self[request.shellID];
+        request.dynamic_obstacles = dynamicObstacles;
+        Trajectory plannedPath = PlanForRobot(std::move(request));
+        robot->setPath(std::move(plannedPath));
+        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), &robot->path());
+
+        //draw debug info
+        robot->path().draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
+        context_->debug_drawer.drawText((const char*[]) {
+                "EmptyCommand",
+                "PathTargetCommand",
+                "WorldVelTargetCommand",
+                "PivotCommand",
+                "TuningPathCommand",
+                "SettleCommand",
+                "CollectCommand",
+                "LineKickCommand",
+                "InterceptCommand"
+        }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255, 100));
+        context_->debug_drawer.drawText(QString("Path Age: ") + std::to_string(RJ::Seconds(RJ::now() - robot->path().begin_time()).count()).c_str(), robot->pos()+Geometry2d::Point(.1, -.2), QColor(100, 100, 255, 100));
     }
 
     // Visualize obstacles

@@ -67,8 +67,7 @@ void AppendProfiledVelocity(Trajectory& out,
     std::vector<Point> points(num_points), derivs1(num_points);
     std::vector<double> curvature(num_points), speed(num_points, constraints.maxSpeed);
 
-    //we must make this assumption for the next calculations, otherwise we get NANs
-    assert(constraints.maxAcceleration >= constraints.maxCentripetalAcceleration);
+    double maxCentripetalAccel = std::min(constraints.maxAcceleration, constraints.maxCentripetalAcceleration);
 
     //note: these are just suggestions. if they are impossible given MotionConstraints, then we'll limit them
     speed[0] = initial_speed;
@@ -85,7 +84,7 @@ void AppendProfiledVelocity(Trajectory& out,
 
         // Centripetal acceleration: a = v^2 / r => v = sqrt(ra)
         if (curvature[n] != 0.0) {
-            speed[n] = std::min(speed[n], std::sqrt(constraints.maxCentripetalAcceleration / curvature[n]));
+            speed[n] = std::min(speed[n], std::sqrt(maxCentripetalAccel / curvature[n]));
         }
     }
 

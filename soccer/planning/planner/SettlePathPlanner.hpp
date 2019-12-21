@@ -1,34 +1,18 @@
 #pragma once
 
-#include "planning/planner/DirectTargetPathPlanner.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
 #include "planning/planner/Planner.hpp"
 
 namespace Planning {
 
 /**
- * @brief Planner which tries to move around the ball to intercept it
+ * @brief Planner which captures a ball moving quickly towards us
  *
  * TODO: Clean up description
  */
 class SettlePathPlanner : public PlannerForCommandType<SettleCommand> {
 public:
-    enum SettlePathPlannerStates {
-        // Moves to the ball path in front of it
-        Intercept,
-        // Starts to dampen the ball with backward motion
-        Dampen
-    };
-
-    SettlePathPlanner()
-        : avgInstantaneousInterceptTarget(0, 0),
-          averageBallVel(0, 0),
-          firstInterceptTargetFound(false),
-          firstBallVelFound(false),
-          pathCreatedForDampen(false),
-          currentState(Intercept){};
-
-    virtual Trajectory plan(PlanRequest&& request) override;
+    Trajectory plan(PlanRequest&& request) override;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -36,63 +20,23 @@ public:
         return "SettlePathPlanner";
     }
 
+    enum class SettleState {
+        Intercept,
+        Dampen
+    };
 private:
-    // Given the global target in `targetBounceDirection`
-    // Calculate the delta position to get the robot in the correct location
-    // And the face point to get the bounce right
-    // If no targetBounceDirection is given, just get in front and face the ball
-    void calcDeltaPosForDir(const Ball& ball, const RobotInstant& currentInstant,
-                            double& angle, Geometry2d::Point& deltaRobotPos,
-                            Geometry2d::Point& facePos);
+    Trajectory intercept(PlanRequest&& request);
+    Trajectory dampen(PlanRequest&& request);
 
-    // Restarts the state machine if our calculations are whack
-    // and won't intercept ball correctly anymore
-    void checkSolutionValidity(const Ball& ball,
-                               const RobotInstant& startInstant,
-                               const Geometry2d::Point& deltaPos);
-
-    // Figures out when to move to each state
-    // (only in the standard transition)
-    //
-    // Note: startInstant may be changed inside this function
-    //       when we are basically at the correct location and
-    //       need to start the dampen
-    void processStateTransition(const Ball& ball, const Trajectory& prevTrajectory,
-                                RobotInstant& startInstant, const double angle,
-                                const Geometry2d::Point& deltaPos);
-
-    // State functions
-    Trajectory intercept(PlanRequest&& planRequest, RobotInstant& startInstant,
-                                    const Geometry2d::ShapeSet& obstacles,
-                                    const Geometry2d::Point& deltaPos,
-                                    const Geometry2d::Point& facePos);
-
-    Trajectory dampen(PlanRequest&& planRequest, RobotInstant& startInstant,
-                                    const Geometry2d::Point& deltaPos,
-                                    const Geometry2d::Point& facePos);
-
-    Trajectory invalid(const PlanRequest& planRequest);
-
-    template <typename T>
-    static T applyLowPassFilter(const T& oldValue, const T& newValue,
-                                double gain);
-
-    PathTargetPlanner rrtPlanner;
-    DirectTargetPathPlanner directPlanner;
-    std::optional<Geometry2d::Point> targetBounceDirection;
-
-    SettlePathPlannerStates currentState;
+    void processStateTransitions(const Ball& ball, const OurRobot& robot, const RobotInstant& startInstant, SettleState& state);
 
     // Intercept Target Filtering Variables
-    Geometry2d::Point avgInstantaneousInterceptTarget;
-    Geometry2d::Point averageBallVel;
-    bool firstInterceptTargetFound;
-    bool firstBallVelFound;
+    std::optional<Geometry2d::Point> averageBallVel;
 
-    // Only change the target of the path if it changes significantly
-    Geometry2d::Point pathInterceptTarget;
+    PathTargetPlanner pathTargetPlanner;
 
-    bool pathCreatedForDampen;
+    static std::vector<SettleState> settleStates;
+    static std::vector<RJ::Time> planTimes;
 
     // How much of the ball seed to contact the ball with
     // before slowing down to dampen the initial hit

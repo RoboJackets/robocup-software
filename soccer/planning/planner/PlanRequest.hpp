@@ -8,6 +8,7 @@
 #include <memory>
 #include <planning/trajectory/Trajectory.hpp>
 #include "planning/RobotConstraints.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
 
@@ -21,13 +22,14 @@ struct PlanRequest {
     PlanRequest(Context* context, RobotInstant start,
                 MotionCommand command,
                 RobotConstraints constraints, Trajectory&& prevTrajectory,
-                Geometry2d::ShapeSet obs, unsigned shellID, int8_t priority = 0)
+                Geometry2d::ShapeSet statics, std::vector<DynamicObstacle> dynamics, unsigned shellID, int8_t priority = 0)
         : context(context),
           start(start),
           motionCommand(command),
           constraints(constraints),
           prevTrajectory(prevTrajectory),
-          obstacles(obs),
+          static_obstacles(statics),
+          dynamic_obstacles(dynamics),
           shellID(shellID),
           priority(priority) {}
 
@@ -58,10 +60,9 @@ struct PlanRequest {
 
     /**
      * The list of static obstacles.
-     *
-     * For now, we treat all obstacles as static.
      */
-    Geometry2d::ShapeSet obstacles;
+    Geometry2d::ShapeSet static_obstacles;
+    std::vector<DynamicObstacle> dynamic_obstacles;
 
     /**
      * The robot's shell ID. Used for debug drawing.

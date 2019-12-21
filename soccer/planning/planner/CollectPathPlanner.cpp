@@ -7,150 +7,224 @@
 #include <Geometry2d/Pose.hpp>
 #include "Configuration.hpp"
 #include <vector>
+#include "Robot.hpp"
 
 namespace Planning {
 
-REGISTER_CONFIGURABLE(CollectPathPlanner);
+    REGISTER_CONFIGURABLE(CollectPathPlanner);
 
-ConfigDouble* CollectPathPlanner::_ballSpeedApproachDirectionCutoff;
-ConfigDouble* CollectPathPlanner::_approachAccelScalePercent;
-ConfigDouble* CollectPathPlanner::_controlAccelScalePercent;
-ConfigDouble* CollectPathPlanner::_approachDistTarget;
-ConfigDouble* CollectPathPlanner::_touchDeltaSpeed;
-ConfigDouble* CollectPathPlanner::_velocityControlScale;
-ConfigDouble* CollectPathPlanner::_distCutoffToControl;
-ConfigDouble* CollectPathPlanner::_velCutoffToControl;
-ConfigDouble* CollectPathPlanner::_distCutoffToApproach;
-ConfigDouble* CollectPathPlanner::_stopDistScale;
-ConfigDouble* CollectPathPlanner::_targetPointAveragingGain;
+    ConfigDouble *CollectPathPlanner::_ballSpeedApproachDirectionCutoff;
+    ConfigDouble *CollectPathPlanner::_approachAccelScalePercent;
+    ConfigDouble *CollectPathPlanner::_controlAccelScalePercent;
+    ConfigDouble *CollectPathPlanner::_approachDistTarget;
+    ConfigDouble *CollectPathPlanner::_touchDeltaSpeed;
+    ConfigDouble *CollectPathPlanner::_velocityControlScale;
+    ConfigDouble *CollectPathPlanner::_distCutoffToControl;
+    ConfigDouble *CollectPathPlanner::_velCutoffToControl;
+    ConfigDouble *CollectPathPlanner::_distCutoffToApproach;
+    ConfigDouble *CollectPathPlanner::_stopDistScale;
+    ConfigDouble *CollectPathPlanner::_targetPointAveragingGain;
 
-void CollectPathPlanner::createConfiguration(Configuration* cfg) {
-    _ballSpeedApproachDirectionCutoff = new ConfigDouble(
-        cfg, "Capture/Collect/ballSpeedApproachDirectionCutoff", 0.1);
-    _approachAccelScalePercent =
-        new ConfigDouble(cfg, "Capture/Collect/approachAccelScalePercent", 0.7);
-    _controlAccelScalePercent =
-        new ConfigDouble(cfg, "Capture/Collect/controlAccelScalePercent", 0.8);
-    _approachDistTarget =
-        new ConfigDouble(cfg, "Capture/Collect/approachDistTarget", 0.04);
-    _touchDeltaSpeed =
-        new ConfigDouble(cfg, "Capture/Collect/touchDeltaSpeed", 0.1);
-    _velocityControlScale =
-        new ConfigDouble(cfg, "Capture/Collect/velocityControlScale", 1);
-    _distCutoffToControl =
-        new ConfigDouble(cfg, "Capture/Collect/distCutoffToControl", 0.05);
-    _velCutoffToControl =
-        new ConfigDouble(cfg, "Capture/Collect/velCutoffToControl", 1);
-    _distCutoffToApproach =
-        new ConfigDouble(cfg, "Capture/Collect/distCutoffToApproach", 0.3);
-    _stopDistScale = new ConfigDouble(cfg, "Capture/Collect/stopDistScale", 1);
-    _targetPointAveragingGain =
-        new ConfigDouble(cfg, "Capture/Collect/targetPointAveragingGain", 0.8);
-}
-
-// the Collect path consists of segments for Course, Fine, and Control
-// a ---------------- b --- c -------- d
-//      Course          Fine   Control
-// The Course segment aims to get to the ball as fast as possible
-// The Fine segment aims to capture the ball without it bouncing off
-// The Control segment moves through the ball to fully possess it
-// and stop the robot (if it has non-zero velocity at point c)
-enum class CollectState {
-    Course,
-    Fine,
-    Control,
-    None
-};
-std::string collectStateToString(CollectState state) {
-    switch(state) {
-        case CollectState::Course: return "Course";
-        case CollectState::Fine: return "Fine";
-        case CollectState::Control: return "Control";
-        default: return "None";
+    void CollectPathPlanner::createConfiguration(Configuration *cfg) {
+        //todo(Ethan) fix these
+        _ballSpeedApproachDirectionCutoff = new ConfigDouble(
+                cfg, "Capture/Collect/ballSpeedApproachDirectionCutoff", 0.1);
+        _approachAccelScalePercent =
+                new ConfigDouble(cfg,
+                                 "Capture/Collect/approachAccelScalePercent",
+                                 0.7);
+        _controlAccelScalePercent =
+                new ConfigDouble(cfg,
+                                 "Capture/Collect/controlAccelScalePercent",
+                                 0.8);
+        _approachDistTarget =
+                new ConfigDouble(cfg, "Capture/Collect/approachDistTarget",
+                                 0.04);
+        _touchDeltaSpeed =
+                new ConfigDouble(cfg, "Capture/Collect/touchDeltaSpeed", 0.1);
+        _velocityControlScale =
+                new ConfigDouble(cfg, "Capture/Collect/velocityControlScale",
+                                 1);
+        _distCutoffToControl =
+                new ConfigDouble(cfg, "Capture/Collect/distCutoffToControl",
+                                 0.05);
+        _velCutoffToControl =
+                new ConfigDouble(cfg, "Capture/Collect/velCutoffToControl", 1);
+        _distCutoffToApproach =
+                new ConfigDouble(cfg, "Capture/Collect/distCutoffToApproach",
+                                 0.3);
+        _stopDistScale = new ConfigDouble(cfg, "Capture/Collect/stopDistScale",
+                                          1);
+        _targetPointAveragingGain =
+                new ConfigDouble(cfg,
+                                 "Capture/Collect/targetPointAveragingGain",
+                                 0.8);
     }
-}
-Trajectory CollectPathPlanner::plan(PlanRequest&& request) {
+
+    std::vector<CollectPathPlanner::CollectState> CollectPathPlanner::collectStates{
+            Num_Shells, CollectState::Course};
+
     using Geometry2d::Point;
     using Geometry2d::Pose;
     using Geometry2d::Twist;
 
-    static CollectState prevState = CollectState::None;
-    const Ball& ball = request.context->state.ball;
-    const CollectCommand& command = std::get<CollectCommand>(request.motionCommand);
-    RotationConstraints rotationConstraints = request.constraints.rot;
-    MotionConstraints& motionConstraints = request.constraints.mot;
-    RobotInstant startInstant = request.start;
-    Point startPoint = startInstant.pose.position();
+    // todo(Ethan) use Settle Planner if the ball is moving directly toward us
+    // Collect Planner will plan a Bezier that intersects the ball, resulting in
+    // smacking the ball along the way to the target
+    Trajectory CollectPathPlanner::plan(PlanRequest &&request) {
+        const Ball &ball = request.context->state.ball;
+        RotationConstraints rotationConstraints = request.constraints.rot;
+        MotionConstraints &motionConstraints = request.constraints.mot;
+        RobotInstant startInstant = request.start;
+        Point startPoint = startInstant.pose.position();
 
-    const bool veeredOff = veeredOffPath(request);
-    RJ::Seconds invalidTime = 0s;
-    const bool hitObstacle = request.prevTrajectory.hit(request.obstacles, startInstant.stamp - request.prevTrajectory.begin_time(), &invalidTime);
-
-    // Initialize the filter to the ball velocity so there's less ramp up
-    if (!averageBallVel) {
-        averageBallVel = ball.vel;
-    } else {
-        averageBallVel = *_targetPointAveragingGain * *averageBallVel +
-                         (1 - *_targetPointAveragingGain) * ball.vel;
-    }
-
-    Point approachDirection = ball.vel.mag() < *_ballSpeedApproachDirectionCutoff ?
-            (ball.pos - startPoint).norm() : averageBallVel->norm();
-
-    double courseThreshold = *_approachDistTarget + Robot_MouthRadius;
-    RobotInstant pathTarget;
-    double distance = ball.pos.distTo(startPoint);
-    Point targetHitVel = *averageBallVel + approachDirection * *_touchDeltaSpeed;
-    double fineSpeed = std::min(targetHitVel.mag(), motionConstraints.maxSpeed);
-    CollectState currentState = CollectState::None;
-    bool replan = false;
-    if (distance > courseThreshold) {
-        // Course Segment
-        currentState = CollectState::Course;
-        Point targetPoint = ball.pos - approachDirection * courseThreshold;
-        pathTarget = RobotInstant{Pose{ targetPoint, approachDirection.angle() },
-            Twist{ approachDirection * fineSpeed, 0 }, RJ::now() };
-
-
-        if(RJ::Seconds(RJ::now() - request.prevTrajectory.begin_time()).count() > 0.2) {
-            replan = true;
+        // Initialize the filter to the ball velocity so there's less ramp up
+        if (!averageBallVel) {
+            averageBallVel = ball.vel;
+        } else {
+            averageBallVel = applyLowPassFilter(*averageBallVel, ball.vel,
+                                                1 - *_targetPointAveragingGain);
         }
-    } else if (distance > Robot_MouthRadius) {
-        // Fine Segment
-        currentState = CollectState::Fine;
-        //todo(Ethan) should be dot product ?
-        motionConstraints.maxSpeed = fineSpeed;
-        motionConstraints.maxAcceleration *= *_approachAccelScalePercent;
-        Point targetPoint = ball.pos - approachDirection * Robot_MouthRadius;
-        pathTarget = RobotInstant{Pose{ targetPoint, approachDirection.angle() },
-                                  Twist{ approachDirection * fineSpeed * 0.3, 0 }, RJ::now() };
-    } else {
-        currentState = CollectState::Control;
-        motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
-        //todo(Ethan) handle balls coming at us with Settle?
-        //kinematics: v^2 = v0^2 + 2 * a * deltaX
-        double stoppingDist = fineSpeed * fineSpeed / (2 * motionConstraints.maxAcceleration);
-        //travel a bit more at constant speed then decelerate to stop
-        Point targetPoint = ball.pos + approachDirection * (stoppingDist + *_approachDistTarget);
-        pathTarget = RobotInstant{Pose{ targetPoint, approachDirection.angle() },
-                                  Twist{}, RJ::now() };
+        const unsigned int shell = request.shellID;
+        CollectState &state = collectStates[shell];
+        Point approachDirection =
+                (ball.vel.mag() < *_ballSpeedApproachDirectionCutoff ||
+                 state == CollectState::Control) ?
+                (ball.pos - startPoint).norm() : averageBallVel->norm();
+        CollectState prevState = collectStates[shell];
+        processStateTransitions(ball, *request.context->state.self[shell],
+                                startInstant, state);
+        switch (state) {
+            case CollectState::Course:
+                return course(std::move(request), approachDirection);
+            case CollectState::Fine:
+                return fine(std::move(request), approachDirection);
+            case CollectState::Control:
+                if (prevState == CollectState::Control &&
+                    !request.prevTrajectory.empty()) {
+                    // the ball typically bounces after Fine,
+                    // then rolls back into us during Control
+                    // so this tells the robot to wait for the ball
+                    return std::move(request.prevTrajectory);
+                }
+                std::cout << "Control Path Replan" << std::endl;
+                return control(std::move(request), approachDirection);
+            default:
+                debugThrow("Invalid CollectState");
+                return Trajectory{{}};
+        }
     }
-    if(currentState != prevState || veeredOff || hitObstacle) {
-        replan = true;
-    }
-    prevState = currentState;
-    if(replan) {
+
+    Trajectory
+    CollectPathPlanner::course(PlanRequest &&request, Point approachDirection) {
+        RotationConstraints rotationConstraints = request.constraints.rot;
+        RobotInstant startInstant = request.start;
+        const Ball &ball = request.context->state.ball;
+
+        Point targetPoint =
+                ball.pos -
+                approachDirection * (*_approachDistTarget + Robot_MouthRadius);
+        Point targetVel = fineVelocity(approachDirection);
+        RobotInstant pathTarget{
+                Pose{targetPoint, approachDirection.angle()},
+                Twist{targetVel, 0}, RJ::now()};
         request.motionCommand = PathTargetCommand{pathTarget};
         Trajectory trajectory = pathTargetPlanner.plan(std::move(request));
-        trajectory.setDebugText((std::string("Collect: ") + collectStateToString(currentState)).c_str());
+
         std::function<double(Point, Point, double)> angleFunction =
-                [approachDirection](Point pos, Point vel, double angle) {
-            return approachDirection.angle();
-        };
-        PlanAngles(trajectory, startInstant, angleFunction, rotationConstraints);
+                [=](Point pos, Point vel, double angle) {
+                    return vel.angle();
+                };
+        PlanAngles(trajectory, startInstant, angleFunction,
+                   rotationConstraints);
+        trajectory.setDebugText("Course");
         return std::move(trajectory);
-    } else {
-        return std::move(request.prevTrajectory);
     }
-}
+
+    Trajectory
+    CollectPathPlanner::fine(PlanRequest &&request, Point approachDirection) {
+        MotionConstraints &motionConstraints = request.constraints.mot;
+        RotationConstraints rotationConstraints = request.constraints.rot;
+        RobotInstant startInstant = request.start;
+
+        motionConstraints.maxAcceleration *= *_approachAccelScalePercent;
+        const Ball &ball = request.context->state.ball;
+        Point targetPoint = ball.pos - approachDirection * Robot_MouthRadius;
+        Point targetVel = fineVelocity(approachDirection);
+        motionConstraints.maxSpeed = std::min(motionConstraints.maxSpeed,
+                                              targetVel.mag());
+        RobotInstant pathTarget{
+                Pose{targetPoint, approachDirection.angle()},
+                Twist{targetVel, 0},
+                RJ::now()};
+        request.motionCommand = PathTargetCommand{pathTarget};
+        Trajectory trajectory = pathTargetPlanner.plan(std::move(request));
+
+        Point ballPoint = ball.pos;
+        std::function<double(Point, Point, double)> angleFunction =
+                [=](Point pos, Point vel, double angle) {
+                    return pos.angleTo(ballPoint);
+                };
+        PlanAngles(trajectory, startInstant, angleFunction,
+                   rotationConstraints);
+        trajectory.setDebugText("Fine");
+        return std::move(trajectory);
+    }
+
+    Trajectory CollectPathPlanner::control(PlanRequest &&request,
+                                           Point approachDirection) {
+        MotionConstraints &motionConstraints = request.constraints.mot;
+        RotationConstraints rotationConstraints = request.constraints.rot;
+        RobotInstant startInstant = request.start;
+
+        motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
+        motionConstraints.maxSpeed = std::min(motionConstraints.maxSpeed,
+                                              startInstant.velocity.linear().mag());
+        //kinematics: v^2 = v0^2 + 2 * a * deltaX
+        double stoppingDist = std::pow(motionConstraints.maxSpeed, 2) /
+                              (2 * motionConstraints.maxAcceleration);
+        //decelerate to stop
+        Point targetPoint =
+                startInstant.pose.position() + approachDirection * stoppingDist;
+        RobotInstant pathTarget{
+                Pose{targetPoint, approachDirection.angle()},
+                Twist{}, RJ::now()};
+        request.motionCommand = PathTargetCommand{pathTarget};
+        Trajectory trajectory = pathTargetPlanner.plan(std::move(request));
+
+        std::function<double(Point, Point, double)> angleFunction =
+                [=](Point pos, Point vel, double angle) {
+                    return approachDirection.angle();
+                };
+        PlanAngles(trajectory, startInstant, angleFunction,
+                   rotationConstraints);
+        trajectory.setDebugText("Control");
+        return std::move(trajectory);
+    }
+
+    void CollectPathPlanner::processStateTransitions(const Ball &ball,
+                                                     const OurRobot &robot,
+                                                     const RobotInstant &startInstant,
+                                                     CollectState &state) {
+        Point startPoint = startInstant.pose.position();
+        // Do the transitions
+        float dist = startPoint.distTo(ball.pos) - Robot_MouthRadius;
+        float speedDiff =
+                startInstant.velocity.linear().distTo(*averageBallVel) -
+                *_touchDeltaSpeed;
+        if (dist > *_approachDistTarget + Robot_MouthRadius) {
+            //Start at Course
+            state = CollectState::Course;
+        } else if (state == CollectState::Course) {
+            // Course --> Fine
+            state = CollectState::Fine;
+        }
+        if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl &&
+            state == CollectState::Fine && robot.hasBall()) {
+            // Fine --> Control
+            state = CollectState::Control;
+        }
+        //TODO do something with ball sense?
+    }
+
 }  // namespace Planning

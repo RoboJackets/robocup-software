@@ -20,6 +20,8 @@ namespace Planning {
         "Multiplier for the pivotRadius. PivotRadius = RobotRadius * multiplier");
     }
 
+    std::vector<RJ::Time> PivotPathPlanner::planTimes{Num_Shells, RJ::now()-60s};
+
     Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
         if(!isApplicable(request.motionCommand)) {
             throw std::invalid_argument("Error in PivotPathPlanner: invalid motionCommand; must be a PivotCommand.");
@@ -30,8 +32,9 @@ namespace Planning {
         RobotInstant startInstant = request.start;
         RobotConstraints constraints = request.constraints;
         Trajectory prevTrajectory = std::move(request.prevTrajectory);
+        RJ::Time& prevTime = planTimes[request.shellID];
         auto state_space = std::make_shared<RoboCupStateSpace>(
-                Field_Dimensions::Current_Dimensions, std::move(request.obstacles));
+                Field_Dimensions::Current_Dimensions, std::move(request.static_obstacles));
         double radius = Robot_Radius * _pivotRadiusMultiplier->value();
 
         bool targetIsDifferent = false;
@@ -41,10 +44,10 @@ namespace Planning {
             targetIsDifferent = (newTargetPoint - prevTargetPoint).mag() > 0.1;
         }
 
-        bool pathTooOld = request.prevTrajectory.duration()
-                          - (RJ::now() - request.prevTrajectory.begin_time()) < RJ::Seconds(-0.5);
+        bool pathTooOld = false;// RJ::now() - prevTime > 0.5s;
 
-        if(prevTrajectory.empty() || targetIsDifferent || pathTooOld) {
+        if(prevTrajectory.num_instants() < 2 || targetIsDifferent || pathTooOld) {
+            prevTime = RJ::now();
             double targetAngle = pivotTarget.angleTo(pivotPoint);
 
             // maxSpeed = maxRadians * radius

@@ -10,6 +10,9 @@ public:
     Trajectory plan(PlanRequest&& request) override;
     std::string name() const override {return "PivotPathPlanner";}
 private:
+
+    static std::vector<RJ::Time> planTimes;
+
     static ConfigDouble* _pivotRadiusMultiplier;
 };
 }

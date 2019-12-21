@@ -28,13 +28,6 @@ public:
     virtual Trajectory plan(PlanRequest&& request) = 0;
 
     /**
-     * checks if a full replan is necessary
-     * @param planRequest plan reuest
-     * @return true if a full replan is necessary; false otherwise
-     */
-    virtual bool shouldReplan(const PlanRequest &planRequest) const;
-
-    /**
      * checks if the robot is off the desired path
      * @param planRequest
      * @return true if the error > replanThreshold; otherwise false.

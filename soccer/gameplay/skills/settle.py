@@ -10,10 +10,9 @@ import constants
 # while facing the target to either bounce the ball in that
 # direction or kick on breakbeam in that direction
 class Settle(single_robot_behavior.SingleRobotBehavior):
-    def __init__(self, target=None):
+    def __init__(self):
         super().__init__(continuous=False)
 
-        self.target = target
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'immediately')
@@ -22,8 +21,4 @@ class Settle(single_robot_behavior.SingleRobotBehavior):
         if (self.robot is not None):
             self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(constants.Robot.Dribbler.MaxPower)
-
-            if (self.target is None):
-                self.robot.settle()
-            else:
-                self.robot.settle_w_bounce(self.target)
+            self.robot.settle()

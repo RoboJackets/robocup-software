@@ -17,6 +17,10 @@ public:
     std::string name() const override { return "PathTargetPlanner"; }
     static void createConfiguration(Configuration* cfg);
 
+    bool isApplicable(const MotionCommand& command) const override {
+        return std::holds_alternative<PathTargetCommand>(command) || std::holds_alternative<WorldVelTargetCommand>(command);
+    }
+
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
     bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;

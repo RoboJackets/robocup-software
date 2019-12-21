@@ -15,36 +15,6 @@ namespace Planning {
                 new ConfigDouble(cfg, "PlannerForCommandType/goalVelChangeThreshold", 0.025);
     }
 
-    //todo(Ethan) delete this function
-    bool Planner::shouldReplan(const PlanRequest &planRequest) const {
-        const auto& currentInstant = planRequest.start;
-        const MotionConstraints &motionConstraints = planRequest.constraints.mot;
-        const Geometry2d::ShapeSet &obstacles = planRequest.obstacles;
-        const Trajectory& prevTrajectory = planRequest.prevTrajectory;
-
-        if (prevTrajectory.empty()) return true;
-
-        // if this number of microseconds passes since our last path plan, we
-        // automatically replan
-        // const RJ::Seconds kPathExpirationInterval = RJ::Seconds(replanTimeout());
-        // if ((RJ::now() - prevPath->startTime()) > kPathExpirationInterval) {
-        //    return true;
-        //}
-
-        if(veeredOffPath(planRequest)) return true;
-
-        // Evaluate where the path says the robot should be right now
-        RJ::Seconds timeIntoPath =
-                (RJ::now() - prevTrajectory.begin_time()) + RJ::Seconds(1) / 60;
-
-        // Replan if we enter new obstacles
-        RJ::Seconds hitTime;
-        if (prevTrajectory.hit(obstacles, timeIntoPath, &hitTime)) {
-            return true;
-        }
-        return false;
-    }
-
     bool Planner::veeredOffPath(const PlanRequest& request) const {
         const auto &currentInstant = request.start;
         const MotionConstraints &motionConstraints = request.constraints.mot;

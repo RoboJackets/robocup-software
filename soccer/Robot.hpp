@@ -244,10 +244,8 @@ public:
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
      * is given, the robot will try to face in that direction when the ball hits
-     * @param target - the target point in which the robot will try to bounce
-     * the towards
      */
-    void settle(std::optional<Geometry2d::Point> target);
+    void settle();
 
     /**
      * @brief Approaches the ball and moves through it slowly
@@ -420,6 +418,13 @@ public:
 
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
         return intent().motion_command;
+    }
+    void setMotionCommand(std::unique_ptr<Planning::MotionCommand> newCmd) {
+        if(intent().motion_command->index() != newCmd->index()) {
+            //clear path when command type changes
+            _path = Planning::Trajectory{{}};
+        }
+        intent().motion_command = std::move(newCmd);
     }
 
     const RotationConstraints& rotationConstraints() const {

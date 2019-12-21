@@ -4,6 +4,7 @@
 #include <time.hpp>
 #include "WorldState.hpp"
 #include "DebugDrawer.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
 
@@ -112,6 +113,11 @@ public:
      * @return 		true if it hits an obstacle, otherwise false
      */
     bool hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime) const;
+
+    bool intersects(const std::vector<DynamicObstacle>& obstacles,
+                    RJ::Time startTime,
+                    Geometry2d::Point* hitLocation,
+                    RJ::Seconds* hitTime) const;
 
     /**
      * Contract or expand this trajectory by scaling velocities and timestamps

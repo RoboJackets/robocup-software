@@ -1,6 +1,5 @@
 #pragma once
 
-#include "planning/planner/DirectTargetPathPlanner.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
 #include "planning/planner/Planner.hpp"
 
@@ -12,7 +11,13 @@ namespace Planning {
 /**
  * @brief Planner that tries to move onto and gain control of a slow moving ball
  *
- * TODO: Clean up description
+ * the Collect path consists of segments for Course, Fine, and Control
+ * | --------------------------- | -------- | --- |
+ *           Course                  Fine   Control
+ * The Course segment aims to get to the ball as fast as possible
+ * The Fine segment aims to capture the ball without it bouncing off
+ * The Control segment moves through the ball to fully possess it
+ * and stop the robot (if it has non-zero velocity)
  */
 class CollectPathPlanner : public PlannerForCommandType<CollectCommand> {
 public:
@@ -21,11 +26,28 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    enum class CollectState {
+        Course,
+        Fine,
+        Control
+    };
 private:
+    void processStateTransitions(const Ball& ball, const OurRobot& robot, const RobotInstant& startInstant, CollectState& state);
+
+    Geometry2d::Point fineVelocity(Geometry2d::Point approachDirection) {
+        return *averageBallVel + approachDirection * *_touchDeltaSpeed;
+    }
+
+    Trajectory course(PlanRequest&& request, Geometry2d::Point approachDirection);
+    Trajectory fine(PlanRequest&& request, Geometry2d::Point approachDirection);
+    Trajectory control(PlanRequest&& request, Geometry2d::Point approachDirection);
+
     PathTargetPlanner pathTargetPlanner;
 
     // Ball Velocity Filtering Variables
     std::optional<Geometry2d::Point> averageBallVel;
+
+    static std::vector<CollectState> collectStates;
 
     // Controls at which ball speed we should try to go directly to the ball
     // or to move behind it and in the same direction as it

@@ -85,6 +85,12 @@ static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
     return defenseArea.containsPoint(point);
 }
 
+template <typename T>
+T applyLowPassFilter(const T& oldValue, const T& newValue,
+                                         double gain) {
+    return gain * newValue + (1 - gain) * oldValue;
+}
+
 static Geometry2d::Point fromOursToTheirs(Geometry2d::Point& pt) {
     Geometry2d::Point c;
     c.y() = Field_Dimensions::Current_Dimensions.Length() - pt.y();

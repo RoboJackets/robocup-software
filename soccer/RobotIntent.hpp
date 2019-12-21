@@ -36,5 +36,5 @@ struct RobotIntent {
         song = Song::CONTINUE;
     }
 
-    RobotIntent() : is_active(false) { clear(); }
+    RobotIntent() : is_active(false), motion_command(std::make_unique<Planning::MotionCommand>(Planning::EmptyCommand{})) { clear(); }
 };

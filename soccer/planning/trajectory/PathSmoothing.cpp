@@ -37,10 +37,16 @@ void FitCubicBezier(Point vi, Point vf,
         //         ***
         //            ***
         //           c1  ****** p1 ---------> v1
-        // (* represents path, pi represents points, ci represents control
+        // (* represents path, pi represents poi3nts, ci represents control
         // points, vi represents velocity vectors)
         control_out[0].p1 = vi / (3 * ks[0]) + points[0];
         control_out[0].p2 = points[1] - vf / (3 * ks[0]);
+        double assertTestValue = control_out[0].p1.mag() + control_out[0].p1.mag();
+        if(std::isnan(assertTestValue) || std::isinf(assertTestValue)) {
+            control_out = {};
+//            debugThrow("Something went wrong. Points are too close to each other probably");
+            return;
+        }
     } else {
         using Eigen::MatrixXd;
         using Eigen::VectorXd;

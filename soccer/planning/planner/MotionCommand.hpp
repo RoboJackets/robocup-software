@@ -41,15 +41,6 @@ struct PivotCommand {
 };
 
 /**
- * Move directly to a point, ignoring obstacles.
- *
- * Should not be used in regular gameplay.
- */
-struct DirectPathTargetCommand {
-    RobotInstant pathGoal;
-};
-
-/**
  * Move to a particular point, ignoring obstacles.
  *
  * Designed to be used for tuning.
@@ -62,12 +53,10 @@ struct TuningPathCommand {
  * Settle a ball by intercepting it with the mouth facing the ball and
  * perpendicular to it.
  */
-struct SettleCommand {
-    std::optional<Geometry2d::Point> target;
-};
+struct SettleCommand {};
 
 /**
- * Collect a stationary ball.
+ * Collect a stationary/slow moving ball.
  */
 struct CollectCommand {};
 
@@ -92,7 +81,6 @@ using MotionCommand = std::variant<
         PathTargetCommand,
         WorldVelTargetCommand,
         PivotCommand,
-        DirectPathTargetCommand,
         TuningPathCommand,
         SettleCommand,
         CollectCommand,
