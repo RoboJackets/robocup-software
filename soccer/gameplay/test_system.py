@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 import logging
 import test_list
+from playbook import load_from_file
 
 
 class TestSystem:
@@ -60,7 +61,11 @@ class TestSystem:
 
         # Set required plays to selected in the play registry
         plays = self.parsePlayList(self._testNode.test.play_list)
-        self._play_registry.load_playbook(plays)
+        print("final: ", plays)
+
+        # If there are any plays in the play list, set them as the current playbook
+        if(len(plays) > 0):
+            self._play_registry.load_playbook(plays)
 
         self._testNode.status = test_list.Status.running
         self._testList.selectIndex(self._testIndex)
@@ -108,10 +113,17 @@ class TestSystem:
 
     def parsePlayList(self, play_list):
         plays = []
+        
         for play in play_list:
             play = play.strip()
 
             if play:
-                plays.append(play.split('/'))
-        print("final: ", plays)
+                #Check to see if the entry is a playbook file
+                if(".pbk" in play):
+                    plays.extend(load_from_file("./soccer/gameplay/playbooks/" + play))
+                else:
+                    plays.append(play.split('/'))
+       
+        #Currently duplicates are allowed and it dosen't seem to cause any problems
+
         return plays
