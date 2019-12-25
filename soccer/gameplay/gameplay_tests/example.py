@@ -18,5 +18,5 @@ class Example(gameplay_test.GameplayTest):
         # before the test was run
         self.play_list = ["comp2019.pbk", "testing/test_pivot_kick"]
 
-        self.ourRobots = [testRobot(2, -.5), testRobot(2, .5)]
-        self.theirRobots = [testRobot(-2, -.5), testRobot(-2, .5)]
+        self.ourRobots = [testRobot(robocup.Point(2, -.5)), testRobot(robocup.Point(2, .5))]
+        self.theirRobots = [testRobot(robocup.Point(-2, -.5)), testRobot(robocup.Point(-2, .5))]

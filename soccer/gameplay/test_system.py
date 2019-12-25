@@ -94,14 +94,14 @@ class TestSystem:
     def getTestOurRobots(self):
         rtrn = []
         for robot in self._testNode.test.ourRobots:
-            rtrn.append([robot.x, robot.y, robot.angle])
+            rtrn.append([robot.pos.x, robot.pos.y, robot.angle])
 
         return rtrn
 
     def getTestTheirRobots(self):
         rtrn = []
         for robot in self._testNode.test.theirRobots:
-            rtrn.append([robot.x, robot.y, robot.angle])
+            rtrn.append([robot.pos.x, robot.pos.y, robot.angle])
 
         return rtrn
 
