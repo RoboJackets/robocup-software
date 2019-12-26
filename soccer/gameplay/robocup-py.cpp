@@ -842,6 +842,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("settle", &OurRobot_settle)
         .def("collect", &OurRobot::collect)
         .def("set_world_vel", &OurRobot::worldVelocity)
+        .def("face", &OurRobot::face)
         .def("pivot", &OurRobot::pivot)
         .def("line_kick", &OurRobot::lineKick)
         .def("intercept", &OurRobot::intercept)
@@ -860,6 +861,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("last_kick_time", &OurRobot::lastKickTime)
         .def("just_kicked", &OurRobot::justKicked)
         .def("has_chipper", &OurRobot::chipper_available)
+        .def("face_none", &OurRobot::faceNone)
         .def("kick", &OurRobot::kick)
         .def("kick_level", &OurRobot::kickLevel)
         .def("chip", &OurRobot::chip)
@@ -878,6 +880,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("run_pid_tuner", &OurRobot_run_pid_tuner)
         .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
+        .def("is_facing", &OurRobot::isFacing)
         .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,

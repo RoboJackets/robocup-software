@@ -20,6 +20,8 @@ private:
     Context* context_;
 
     std::vector<std::unique_ptr<Planner>> planners_;
+    //stores the planner index corresponding to each robot
+    std::vector<int> plannerIdx;
 
     Trajectory PlanForRobot(Planning::PlanRequest&& request);
 };

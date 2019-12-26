@@ -111,7 +111,7 @@ void AppendProfiledVelocity(Trajectory& out,
         speed[n - 1] = limitAccel(speed[n], speed[n - 1], distance, maxTangentAccel);
     }
 
-    // TODO(Kyle): Allow the user to pass in an initial time. todo(Ethan) done?
+    // TODO(Kyle): Allow the user to pass in an initial time. done?
     RJ::Time time = out.last().stamp;
 
     // We skip the first instant.
@@ -123,7 +123,6 @@ void AppendProfiledVelocity(Trajectory& out,
         time = time + RJ::Seconds(t_sec);
 
         // Add point n in
-        //todo(Ethan) verify this default angle w Kyle.
         out.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), time});
     }
 }
@@ -143,51 +142,33 @@ void PlanAngles(Trajectory& trajectory,
     // limit velocity
     // skip the first instant
     for (int i = 0; i < trajectory.num_instants() - 1; i++) {
-        RobotInstant& instant_initial = trajectory.instant(i);
+        const RobotInstant& instant_initial = trajectory.instant(i);
         RobotInstant& instant_final = trajectory.instant(i + 1);
-        double& angle_initial = instant_initial.pose.heading();
-        double& angle_final = instant_final.pose.heading();
-        angle_final = angle_function(
-                instant_final.pose.position(),
-                instant_final.velocity.linear(),
-                angle_initial);
         double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
-        double maxDeltaAngle = constraints.maxSpeed * deltaTime;
-        if(maxDeltaAngle < M_PI) {
-            angle_final = fixAngleRadians(
-                    clampAngle(angle_final, angle_initial - maxDeltaAngle, angle_initial + maxDeltaAngle));
-        } else {
-            angle_final = angle_initial;
-            // The points' timestamps are too far apart
-            // note: This means Angle Planning fails
-            // todo(Ethan)? add more instants
-        }
-    }
-    //update velocity
-    for(int i = 0; i < trajectory.num_instants()-1; i++) {
-        RobotInstant& instant_initial = trajectory.instant(i);
-        RobotInstant& instant_final = trajectory.instant(i+1);
-        double deltaAngle = fixAngleRadians(instant_final.pose.heading() - instant_initial.pose.heading());
-        double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
-        instant_final.velocity.angular() = deltaAngle / deltaTime;
+        double delta_angle = fixAngleRadians(angle_function(instant_final)
+                                     - instant_initial.pose.heading());
+        double vel = delta_angle / deltaTime;
+        vel = std::clamp(vel, -constraints.maxSpeed, constraints.maxSpeed);
+        instant_final.pose.heading() = instant_initial.pose.heading() + vel * deltaTime;
+        instant_final.velocity.angular() = vel;
     }
     // limit acceleration (forward)
     for (int i = 0; i < trajectory.num_instants() - 1; i++) {
         RobotInstant& instant_initial = trajectory.instant(i);
         RobotInstant& instant_final = trajectory.instant(i + 1);
-        double deltaAngle = fixAngleRadians(instant_final.pose.heading() - instant_initial.pose.heading());
         double w0 = instant_initial.velocity.angular();
-        double wf = instant_final.velocity.angular();
-        instant_final.velocity.angular() = limitAccel(w0, wf, deltaAngle, constraints.maxAccel);
+        double& wf = instant_final.velocity.angular();
+        double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
+        wf = std::clamp(wf, w0 - constraints.maxAccel * deltaTime, w0 + constraints.maxAccel * deltaTime);
     }
     // limit deceleration (backward)
     for (int i = trajectory.num_instants()-1; i > 0; i--) {
         RobotInstant& instant_initial = trajectory.instant(i);
         RobotInstant& instant_final = trajectory.instant(i - 1);
-        double deltaAngle = fixAngleRadians(instant_final.pose.heading() - instant_initial.pose.heading());
         double w0 = instant_initial.velocity.angular();
-        double wf = instant_final.velocity.angular();
-        instant_final.velocity.angular() = limitAccel(w0, wf, deltaAngle, constraints.maxAccel);
+        double& wf = instant_final.velocity.angular();
+        double deltaTime = RJ::Seconds(instant_initial.stamp - instant_final.stamp).count();
+        wf = std::clamp(wf, w0 - constraints.maxAccel * deltaTime, w0 + constraints.maxAccel * deltaTime);
     }
 }
 } // namespace Planning

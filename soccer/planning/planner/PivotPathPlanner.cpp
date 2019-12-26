@@ -31,10 +31,10 @@ namespace Planning {
         Point pivotTarget = command.pivotTarget;
         RobotInstant startInstant = request.start;
         RobotConstraints constraints = request.constraints;
-        Trajectory prevTrajectory = std::move(request.prevTrajectory);
+        Trajectory& prevTrajectory = request.prevTrajectory;
         RJ::Time& prevTime = planTimes[request.shellID];
         auto state_space = std::make_shared<RoboCupStateSpace>(
-                Field_Dimensions::Current_Dimensions, std::move(request.static_obstacles));
+                Field_Dimensions::Current_Dimensions, request.static_obstacles);
         double radius = Robot_Radius * _pivotRadiusMultiplier->value();
 
         bool targetIsDifferent = false;
@@ -69,10 +69,10 @@ namespace Planning {
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
             Trajectory result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);
             if(!result.empty()) {
-                std::function<double(Point, Point, double)> angleFunction =
-                        [pivotPoint, pivotTarget](Point pos, Point vel_linear, double angle) -> double {
-                            double angleToPivot = pos.angleTo(pivotPoint);
-                            double angleToPivotTarget = pos.angleTo(pivotTarget);
+                AngleFunction angleFunction =
+                        [pivotPoint, pivotTarget](const RobotInstant& instant) -> double {
+                            double angleToPivot = instant.pose.position().angleTo(pivotPoint);
+                            double angleToPivotTarget = instant.pose.position().angleTo(pivotTarget);
                             if (abs(fixAngleRadians(angleToPivot - angleToPivotTarget)) <
                                 10.0 * M_PI / 180.0) {
                                 // when we're close to the aim direction, we use the actual pivotTarget

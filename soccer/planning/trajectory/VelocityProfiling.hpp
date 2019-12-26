@@ -9,7 +9,23 @@ namespace Planning {
 /**
  * Returns target angle from (position, linear velocity, previous angle)
  */
-using AngleFunction = std::function<double(Geometry2d::Point, Geometry2d::Point, double)>;
+using AngleFunction = std::function<double(const RobotInstant& instant)>;
+
+namespace AngleFns {
+    inline double tangent(const RobotInstant& instant) {
+        return instant.velocity.linear().angle();
+    };
+    inline AngleFunction facePoint(const Geometry2d::Point point) {
+        return [=](const RobotInstant& instant) -> double {
+            return instant.pose.position().angleTo(point);
+        };
+    }
+    inline AngleFunction faceAngle(double angle) {
+        return [=](const RobotInstant& instant) -> double {
+            return angle;
+        };
+    }
+}
 
 /**
  * Create a trajectory with the given path by calculating the maximum possible

@@ -46,8 +46,9 @@ std::vector<Geometry2d::Point> GenerateRRT(
         Geometry2d::Point start,
         Geometry2d::Point goal,
         std::shared_ptr<RoboCupStateSpace> state_space,
-        const std::vector<Geometry2d::Point>& waypoints = {});
+        const std::vector<Geometry2d::Point>& waypoints = {},
+        std::shared_ptr<RRT::BiRRT<Geometry2d::Point>> rrt = nullptr);
 
-Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& obstacles, const std::vector<Geometry2d::Point>& biasWaypoints = {});
+Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
 
 }  // Planning

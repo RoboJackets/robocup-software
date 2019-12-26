@@ -19,36 +19,28 @@ namespace Planning {
         //move data into *this
         instants_ = std::move(other.instants_);
         _debugText = std::move(other._debugText);
+        angle_override = std::move(other.angle_override);
         //clear data in other
         other.instants_ = std::vector<RobotInstant>{};
         other._debugText = "MOVED FROM";
+        other.angle_override = std::nullopt;
         return *this;
     }
 
     Trajectory &Trajectory::operator=(const Trajectory &other) {
         instants_ = other.instants_;
         _debugText = other._debugText;
+        angle_override = other.angle_override;
         return *this;
     }
 
-    Trajectory::Trajectory(const Trajectory &a, const Trajectory &b) {
-        instants_.reserve(a.instants_.size() + b.instants_.size());
-        for (auto it = a.instants_.begin(); it != a.instants_.end(); ++it) {
-            instants_.push_back(*it);
-        }
-        if (!b.empty()) {
-            //start at begin+1 so we don't double count the middle instant
-            for (auto it = ++b.instants_.begin();
-                 it != b.instants_.end(); ++it) {
-                instants_.push_back(*it);
-            }
-        }
-    }
+    Trajectory::Trajectory(const Trajectory &a, const Trajectory &b):
+    Trajectory(Trajectory{a}, Trajectory{b}) {}
 
     Trajectory::Trajectory(Trajectory &&a, Trajectory &&b) {
         instants_ = std::move(a.instants_);
-        instants_.reserve(instants_.size() + b.instants_.size());
         if (!b.empty()) {
+            instants_.reserve(instants_.size() + b.instants_.size()-1);
             //start at begin+1 so we don't double count the middle instant
             for (auto it = ++b.instants_.begin();
                  it != b.instants_.end(); ++it) {
@@ -229,21 +221,28 @@ namespace Planning {
                                 RJ::Time startTime,
                                 Geometry2d::Point *hitLocation,
                                 RJ::Seconds *hitTime) const {
+        if(empty()) {
+            return false;
+        }
         constexpr RJ::Seconds deltaT = 0.05s;
         for (const DynamicObstacle &obs : obstacles) {
             if (obs.path->empty()) {
                 Geometry2d::ShapeSet set;
-                set.add(obs.shape);
+                set.add(obs.circle);
                 if (hit(set, startTime - begin_time(), hitTime)) {
                     return true;
                 }
             } else {
-                for (auto obsIt = obs.path->iterator(startTime, deltaT);
-                     (*obsIt) != obs.path->last(); ++obsIt) {
-                    Geometry2d::ShapeSet set;
+                for (auto obsIt = obs.path->iterator(startTime, deltaT),
+                        thisIt = iterator(startTime, deltaT);
+                     (*obsIt) != obs.path->last() && (*thisIt) != last();
+                     ++obsIt, ++thisIt) {
                     Geometry2d::Point curPoint = (*obsIt).pose.position();
-                    set.add(std::make_shared<Geometry2d::Circle>(curPoint, Robot_Radius));
-                    if (hit(set, startTime - begin_time(), hitTime)) {
+                    double hitRadius = obs.circle->radius() + Robot_Radius;
+                    if((*thisIt).pose.position().distTo(curPoint) < hitRadius) {
+                        if(hitTime) {
+                            *hitTime = RJ::Seconds((*thisIt).stamp - begin_time());
+                        }
                         if (hitLocation) {
                             *hitLocation = curPoint;
                         }

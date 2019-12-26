@@ -5,14 +5,21 @@
 #include <Geometry2d/Point.hpp>
 #include <vector>
 #include <memory>
+#include "planning/trajectory/VelocityProfiling.hpp"
 
 namespace Planning {
 
 class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
 public:
-    PathTargetPlanner() {}
+    PathTargetPlanner(): prevTimes(Num_Shells, RJ::now()-60s), anglePlanningEnabled(true) {}
 
     Trajectory plan(PlanRequest&& request) override;
+    Trajectory planWithoutAngles(PlanRequest&& request) {
+        anglePlanningEnabled = false;
+        Trajectory path = plan(std::move(request));
+        anglePlanningEnabled = true;
+        return std::move(path);
+    }
 
     std::string name() const override { return "PathTargetPlanner"; }
     static void createConfiguration(Configuration* cfg);
@@ -24,18 +31,18 @@ public:
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
     Trajectory partialPath(const Trajectory& prevTrajectory) {
-        return prevTrajectory.subTrajectory(0ms, (RJ::now() - prevTrajectory.begin_time()) + getPartialReplanLeadTime());
+        return prevTrajectory.subTrajectory(0s, (RJ::now() - prevTrajectory.begin_time()) + getPartialReplanLeadTime());
     }
 
-    Trajectory fullReplan(PlanRequest&& request);
-    Trajectory partialReplan(PlanRequest&& request);
+    Trajectory fullReplan(PlanRequest&& request, AngleFunction angleFunction);
+    Trajectory partialReplan(PlanRequest&& request, AngleFunction angleFunction);
     Trajectory reuse(PlanRequest&& request);
     Trajectory checkBetter(PlanRequest&& request);
 
     bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;
-    Trajectory planWithoutAngles(PlanRequest&& request);
 
-    static std::vector<RJ::Time> prevTimes;
+    std::vector<RJ::Time> prevTimes;
+    bool anglePlanningEnabled;
 
     static ConfigDouble* _partialReplanLeadTime;
 };

@@ -130,12 +130,7 @@ namespace Planning {
                 Twist{targetVel, 0}, RJ::now()};
         request.motionCommand = PathTargetCommand{pathTarget};
         Trajectory trajectory = pathTargetPlanner.plan(std::move(request));
-
-        std::function<double(Point, Point, double)> angleFunction =
-                [=](Point pos, Point vel, double angle) {
-                    return vel.angle();
-                };
-        PlanAngles(trajectory, startInstant, angleFunction,
+        PlanAngles(trajectory, startInstant, AngleFns::tangent,
                    rotationConstraints);
         trajectory.setDebugText("Course");
         return std::move(trajectory);
@@ -159,13 +154,7 @@ namespace Planning {
                 RJ::now()};
         request.motionCommand = PathTargetCommand{pathTarget};
         Trajectory trajectory = pathTargetPlanner.plan(std::move(request));
-
-        Point ballPoint = ball.pos;
-        std::function<double(Point, Point, double)> angleFunction =
-                [=](Point pos, Point vel, double angle) {
-                    return pos.angleTo(ballPoint);
-                };
-        PlanAngles(trajectory, startInstant, angleFunction,
+        PlanAngles(trajectory, startInstant, AngleFns::facePoint(ball.pos),
                    rotationConstraints);
         trajectory.setDebugText("Fine");
         return std::move(trajectory);
@@ -191,12 +180,7 @@ namespace Planning {
                 Twist{}, RJ::now()};
         request.motionCommand = PathTargetCommand{pathTarget};
         Trajectory trajectory = pathTargetPlanner.plan(std::move(request));
-
-        std::function<double(Point, Point, double)> angleFunction =
-                [=](Point pos, Point vel, double angle) {
-                    return approachDirection.angle();
-                };
-        PlanAngles(trajectory, startInstant, angleFunction,
+        PlanAngles(trajectory, startInstant, AngleFns::faceAngle(approachDirection.angle()),
                    rotationConstraints);
         trajectory.setDebugText("Control");
         return std::move(trajectory);

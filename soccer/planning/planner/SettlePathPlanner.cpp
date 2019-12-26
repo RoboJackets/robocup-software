@@ -11,6 +11,7 @@
 #include "planning/trajectory/VelocityProfiling.hpp"
 #include "Robot.hpp"
 #include "motion/TrapezoidalMotion.hpp"
+#include "planning/trajectory/RRTUtil.hpp"
 
 namespace Planning {
 
@@ -96,11 +97,6 @@ namespace Planning {
         RJ::Time prevTime = planTimes[shell];
         switch (state) {
             case SettleState::Intercept:
-                if (prevState == SettleState::Intercept &&
-                    RJ::Seconds(RJ::now() - prevTime) < 0.2s &&
-                    !request.prevTrajectory.empty()) {
-                    return std::move(request.prevTrajectory);
-                }
                 planTimes[shell] = RJ::now();
                 return intercept(std::move(request));
             case SettleState::Dampen:
@@ -115,68 +111,86 @@ namespace Planning {
         }
     }
 
-    Trajectory SettlePathPlanner::intercept(PlanRequest &&request) {
-        RobotInstant startInstant = request.start;
-        RotationConstraints rotationConstraints = request.constraints.rot;
-        const Ball &ball = request.context->state.ball;
-        const Geometry2d::Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
-        Trajectory result = request.prevTrajectory.empty() ? Trajectory{{startInstant}} : std::move(request.prevTrajectory);
-        // Try find best point to intercept using brute force method
-        // where we check ever X distance along the ball velocity vector
-        //
-        // Disallow points outside the field
+    // Try find best point to intercept using brute force method
+    // where we check ever X distance along the ball velocity vector
+    //
+    // Disallow points outside the field
+    RobotInstant SettlePathPlanner::bruteForceGoal(const PlanRequest& request) {
         double distance = _searchStartDist->value();
+        const Ball& ball = request.context->state.ball;
         Point targetPoint = ball.pos;
+        RobotInstant goalInstant = request.start;
         Point targetVel = *averageBallVel * *_ballSpeedPercentForDampen;
         double targetAngle = fixAngleRadians(averageBallVel->angle() + M_PI);
-        RJ::Seconds minPathTime = 1000000s;
+        const Geometry2d::Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
+        Point startPoint = request.start.pose.position();
+        Point closestPoint = Geometry2d::Line{ball.pos, ball.pos + *averageBallVel}.nearestPoint(startPoint);
+        distance = std::max(distance, (closestPoint.distTo(startPoint) / request.constraints.mot.maxSpeed) * averageBallVel->mag());
+        std::optional<RJ::Seconds> minPathTime = std::nullopt;
+        RJ::Time curTime = RJ::now();
+        Trajectory path{{}};
+        int its = 0;
         while (distance < *_searchEndDist) {
+            RJ::Time t0 = RJ::now();
             Point futureBallPoint =
                     ball.pos + averageBallVel->normalized(distance);
-            if (fieldRect.containsPoint(futureBallPoint)) {
-                RJ::Seconds futureBallTime = ball.estimateTimeTo(futureBallPoint, &targetPoint) -
-                        RJ::now();
-                RobotInstant pathTarget{Pose{targetPoint, targetAngle},
-                                        Twist{targetVel, 0}, RJ::now()};
-                PlanRequest pathTargetRequest{request.context, startInstant,
-                                              PathTargetCommand{pathTarget},
-                                              request.constraints,
-                                              Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles,
-                                              request.shellID};
-                Trajectory path = pathTargetPlanner.plan(std::move(pathTargetRequest));
-                if(path.duration() < minPathTime) {
-                    minPathTime = path.duration();
-                    result = std::move(path);
-                }
+            RJ::Seconds futureBallTime = ball.estimateTimeTo(futureBallPoint, &targetPoint) -
+                                         curTime;
+            RobotInstant pathTarget{Pose{targetPoint, targetAngle},
+                                    Twist{targetVel, 0}, RJ::now()};
+//            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
+            path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
+            printf("it time: %.3f sec\n", RJ::Seconds(RJ::now()-t0).count());
+            if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime && fieldRect.containsPoint(futureBallPoint)) {
+                goalInstant = pathTarget;
+                minPathTime = path.duration();
+                break;
             }
             distance += *_searchIncDist;
+            double dt = RJ::Seconds(RJ::now() - t0).count();
+            its++;
         }
+        printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-curTime).count(), its);
+        return goalInstant;
+    }
+
+    constexpr double rotAccelScale = 0.8; // range: [0,1]
+    Trajectory SettlePathPlanner::intercept(PlanRequest &&request) {
+        request.static_obstacles.add(std::make_shared<Geometry2d::Circle>(request.context->state.ball.pos, Robot_Radius + Ball_Radius));
+        RobotInstant startInstant = request.start;
+        RobotInstant goalInstant = bruteForceGoal(request);
+        RotationConstraints rotationConstraints = request.constraints.rot;
+        //now use the PathTargetPlanner's mostly reliable replan strategy
+        PlanRequest pathTargetRequest{request.context, startInstant, PathTargetCommand{goalInstant}, request.constraints, std::move(request.prevTrajectory), request.static_obstacles, request.dynamic_obstacles, request.shellID};
+        Trajectory result = pathTargetPlanner.plan(std::move(pathTargetRequest));
         // Angle Planning strategy: steer tangent to the path for as long as
         // possible, then turn at max speed at the end of the path
+        // the idea is that the robots move faster when tangent to their path
+        // not sure if this is correct tho. TODO: test this irl
         double rotationAngle = fixAngleRadians(
-                targetAngle - startInstant.pose.heading());
+                goalInstant.pose.heading() - startInstant.pose.heading());
         RJ::Seconds rotationTime{
                 Trapezoidal::getTime(rotationAngle, rotationAngle,
                                      rotationConstraints.maxSpeed,
-                                     rotationConstraints.maxAccel,
+                                     rotationConstraints.maxAccel * rotAccelScale,
                                      startInstant.velocity.angular(),
                                      0)};
-        //todo(Ethan) probably change angle planning to be in terms of Time so this doesn't have to be so gross
-        RobotInstant beginRotInstant =
-                result.duration() < rotationTime ? result.first()
-                                                 : *result.evaluate(
-                        result.duration() - rotationTime);
-        double beginRotDist = beginRotInstant.pose.position().distTo(
-                targetPoint);
-        std::function<double(Point, Point, double)> angleFunction =
-                [=](Point pos, Point vel, double angle) {
+        RJ::Time rotStartTime = result.begin_time() + std::max(RJ::Seconds(0), result.duration()-rotationTime);
+        AngleFunction angleFunction =
+                [=](const RobotInstant& instant) {
                     static bool begin = false;
-                    if (pos.distTo(targetPoint) < beginRotDist) begin = true;
-                    return begin ? targetAngle : (vel.angle() + M_PI);
+                    if (instant.stamp > rotStartTime - 0.001s) {
+                        begin = true;
+                    }
+                    if(begin) {
+                        return goalInstant.pose.heading();
+                    } else {
+                        return instant.velocity.linear().angle() + M_PI;
+                    }
                 };
-        PlanAngles(result, startInstant, angleFunction,
-                   rotationConstraints);
+        PlanAngles(result, startInstant, angleFunction, rotationConstraints);
         result.setDebugText("Intercept");
+        assert(!result.empty());
         return std::move(result);
     }
 
@@ -204,11 +218,7 @@ namespace Planning {
                                       request.static_obstacles, request.dynamic_obstacles, request.shellID};
         Trajectory result = pathTargetPlanner.plan(
                 std::move(pathTargetRequest));
-        std::function<double(Point, Point, double)> angleFunction =
-                [=](Point pos, Point vel, double angle) {
-                    return targetAngle;
-                };
-        PlanAngles(result, startInstant, angleFunction,
+        PlanAngles(result, startInstant, AngleFns::faceAngle(targetAngle),
                    rotationConstraints);
         result.setDebugText("Dampen");
         assert(!result.empty());

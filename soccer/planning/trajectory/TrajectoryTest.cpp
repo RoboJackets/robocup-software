@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 #include "Trajectory.hpp"
 #include "PathSmoothing.hpp"
+#include "planning/trajectory/RRTUtil.hpp"
+#include "VelocityProfiling.hpp"
+#include "planning/planner/PathTargetPlanner.hpp"
 
 using Planning::Trajectory;
 using Planning::RobotInstant;
@@ -94,5 +97,74 @@ TEST(PathSmoothing, PathMatches) {
         std::cout << p << ", " << v << std::endl;
         EXPECT_NEAR((p - points[0]).mag(), 0, 1e-6);
         EXPECT_NEAR(v.angleBetween(vi), 0, 1e-3);
+    }
+}
+
+TEST(VelocityProfiling, Linear) {
+    //todo
+    ASSERT_TRUE(true);
+}
+TEST(VelocityProfiling, Anglular) {
+    using namespace Geometry2d;
+    using namespace Planning;
+    using namespace std;
+
+    MotionConstraints mot;
+    RotationConstraints rot;
+    RobotInstant start{Pose{}, Twist{}, RJ::now()};
+    RobotInstant mid{Pose{Point{1,1}, M_PI/2}, Twist{Point{0,1}, 0}, RJ::now()};
+    RobotInstant end{Pose{Point{2,2}, M_PI/2}, Twist{Point{1,0}, 0}, RJ::now()};
+    ShapeSet obs;
+    Trajectory preTraj = RRTTrajectory(start, mid, mot, obs);
+    ASSERT_FALSE(preTraj.empty());
+    RJ::Time t0 = preTraj.begin_time();
+    AngleFunction angleFn = [t0](const RobotInstant& instant) -> double {
+        return RJ::Seconds(instant.stamp - t0).count();
+    };
+    PlanAngles(preTraj, start, angleFn, rot);
+    Trajectory postTraj = RRTTrajectory(preTraj.last(), end, mot, obs);
+    ASSERT_FALSE(postTraj.empty());
+    PlanAngles(postTraj, preTraj.last(), angleFn, rot);
+    Trajectory combo{preTraj, postTraj};
+
+    RJ::Seconds duration = combo.duration();
+    function<void(const RobotInstant&)> printRobotInstant =
+            [&combo](const RobotInstant& inst) {
+                printf("RobotInstant[(%.3f, %.3f, %.3f), (%.3f, %.3f, %.3f), %.3f]\n",
+                       inst.pose.position().x(), inst.pose.position().y(), inst.pose.heading(),
+                       inst.velocity.linear().x(), inst.velocity.linear().y(), inst.velocity.angular(),
+                       RJ::Seconds(inst.stamp-combo.begin_time()).count());
+    };
+
+    Trajectory partialPre = combo.subTrajectory(0s, 1.5s);
+    Trajectory partialPost = RRTTrajectory(partialPre.last(), end, mot, obs);
+    PlanAngles(partialPost, partialPre.last(), angleFn, rot);
+    Trajectory combo2{partialPre, partialPost};
+
+
+    for(int i = 0; i < combo2.num_instants(); i++) {
+        printRobotInstant(combo2.instant(i));
+    }
+    cout << endl;
+
+    for(int i = 0; i < combo.num_instants()-2; i++) {
+        RobotInstant& i1 = combo.instant(i);
+        RobotInstant& i2 = combo.instant(i+1);
+        RobotInstant& i3 = combo.instant(i+2);
+
+        double delta12 = fixAngleRadians(i2.pose.heading() - i1.pose.heading());
+        double delta23 = fixAngleRadians(i3.pose.heading() - i2.pose.heading());
+
+//        printRobotInstant(i1);
+//        printRobotInstant(i2);
+//        printRobotInstant(i3);
+//        cout << endl;
+
+        if(delta23 > .001) EXPECT_GT(delta12, .001);
+        if(delta23 < -.001) EXPECT_LT(delta12, -.001);
+        EXPECT_LT(i1.pose.heading(), i2.pose.heading());
+        EXPECT_LT(i2.pose.heading(), i3.pose.heading());
+        EXPECT_GE(i1.velocity.angular(), 0);
+        EXPECT_GE(i2.velocity.angular(), 0);
     }
 }

@@ -68,11 +68,12 @@ public:
     /**
      * allow copy constructor, copy assignment, move constructor, and move assignment
      */
-    Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)) {
+    Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)), angle_override(std::move(other.angle_override)) {
         other.instants_ = std::vector<RobotInstant>{};
+        other.angle_override = std::nullopt;
         other._debugText = "MOVED FROM";
     }
-    Trajectory(const Trajectory& other): instants_(other.instants_), _debugText(other._debugText) {}
+    Trajectory(const Trajectory& other) = default;
     Trajectory& operator=(Trajectory&& other);
     Trajectory& operator=(const Trajectory& other);
 
@@ -255,6 +256,9 @@ public:
 protected:
     // A sorted array of RobotInstants (by timestamp)
     std::vector<RobotInstant> instants_;
+
+    //a super hacky way to force a change of angle/heading
+    std::optional<double> angle_override;
 
     std::optional<QString> _debugText;
 };

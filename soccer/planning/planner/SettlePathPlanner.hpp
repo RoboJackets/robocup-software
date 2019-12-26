@@ -27,6 +27,7 @@ public:
 private:
     Trajectory intercept(PlanRequest&& request);
     Trajectory dampen(PlanRequest&& request);
+    RobotInstant bruteForceGoal(const PlanRequest& request);
 
     void processStateTransitions(const Ball& ball, const OurRobot& robot, const RobotInstant& startInstant, SettleState& state);
 

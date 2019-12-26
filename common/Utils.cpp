@@ -60,34 +60,3 @@ QDir ApplicationRunDirectory() {
 
     return runDir;
 }
-
-double clampAngle(double a, double lo, double hi) {
-    using Geometry2d::Point;
-    Point dir_lo = Point::direction(lo);
-    Point dir_hi = Point::direction(hi);
-    Point dir_a = Point::direction(a);
-    if(dir_lo.cross(dir_hi) > 0) {
-        if (dir_a.cross(dir_lo) > 0) {
-            // a is less than lo
-            return lo;
-        } else if (dir_hi.cross(dir_a) > 0) {
-            // a is greater than hi
-            return hi;
-        } else {
-            // a is between lo and hi (inclusive)
-            return a;
-        }
-    } else {
-        // a is between hi and lo
-        if (dir_hi.cross(dir_a) > 0 && dir_a.cross(dir_lo) > 0) {
-            if(dir_hi.angleBetween(dir_a) < dir_a.angleBetween(dir_lo)) {
-                return hi;
-            } else {
-                return lo;
-            }
-        } else {
-            // a is between lo and hi (inclusive)
-            return a;
-        }
-    }
-}

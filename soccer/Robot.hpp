@@ -252,6 +252,13 @@ public:
      */
     void collect();
 
+    /*
+     * These methods override the default angle planning strategy
+     */
+    void face(Geometry2d::Point pt);
+    bool isFacing() const;
+    void faceNone();
+
     /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */

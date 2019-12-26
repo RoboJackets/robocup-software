@@ -72,50 +72,78 @@ std::vector<Geometry2d::Point> GenerateRRT(
         Geometry2d::Point start,
         Geometry2d::Point goal,
         std::shared_ptr<RoboCupStateSpace> state_space,
-        const std::vector<Geometry2d::Point>& waypoints) {
+        const std::vector<Geometry2d::Point>& waypoints,
+        std::shared_ptr<RRT::BiRRT<Point>> biRRT) {
     if(state_space->transitionValid(start, goal)) {
         return std::vector<Point>{start, goal};
     }
-    RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
-    biRRT.setStartState(start);
-    biRRT.setGoalState(goal);
-    biRRT.setStepSize(*RRTConfig::StepSize);
-    biRRT.setMinIterations(*RRTConfig::MinIterations);
-    biRRT.setMaxIterations(*RRTConfig::MaxIterations);
-    biRRT.setGoalBias(*RRTConfig::GoalBias);
+    if(!biRRT) {
+        biRRT = std::make_shared<RRT::BiRRT<Point>>(state_space, Point::hash, 2);
+    }
+    biRRT->setStartState(start);
+    biRRT->setGoalState(goal);
+    biRRT->setStepSize(*RRTConfig::StepSize);
+    biRRT->setMinIterations(*RRTConfig::MinIterations);
+    biRRT->setMaxIterations(*RRTConfig::MaxIterations);
+    biRRT->setGoalBias(*RRTConfig::GoalBias);
 
     if (!waypoints.empty()) {
-        biRRT.setWaypoints(waypoints);
-        biRRT.setWaypointBias(*RRTConfig::WaypointBias);
+        biRRT->setWaypoints(waypoints);
+        biRRT->setWaypointBias(*RRTConfig::WaypointBias);
     } else {
-        biRRT.setWaypointBias(0);
+        biRRT->setWaypointBias(0);
     }
 
-    bool success = biRRT.run();
+    bool success = biRRT->run();
     if (!success) {
         return {};
     }
 
-    std::vector<Point> points = biRRT.getPath();
+    std::vector<Point> points = biRRT->getPath();
 
     return points;
 }
 
-Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& obstacles, const std::vector<Point>& biasWaypoints) {
-    auto space = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obstacles);
-    std::vector<Geometry2d::Point> points = GenerateRRT(
-            start.pose.position(), goal.pose.position(),
-            space, biasWaypoints);
-    RRT::SmoothPath(points, *space);
-    BezierPath postBezier(points,
-                          start.velocity.linear(),
-                          goal.velocity.linear(),
-                          motionConstraints);
-    return ProfileVelocity(postBezier,
-                                                start.velocity.linear().mag(),
-                                                goal.velocity.linear().mag(),
-                                                motionConstraints,
-                                                start.stamp);
+Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles, const std::vector<Point>& biasWaypoints) {
+    Geometry2d::ShapeSet statics = static_obstacles;
+    Trajectory path{{}};
+    for(int i = 0; i < 10; i++) {
+        auto space = std::make_shared<RoboCupStateSpace>(
+                Field_Dimensions::Current_Dimensions, statics);
+        RJ::Time t0 = RJ::now();
+        std::vector<Geometry2d::Point> points = GenerateRRT(
+                start.pose.position(), goal.pose.position(),
+                space, biasWaypoints);
+        double dt = RJ::Seconds(RJ::now() - t0).count();
+        t0 = RJ::now();
+        //    assert(dt < .005);
+        RRT::SmoothPath(points, *space);
+        dt = RJ::Seconds(RJ::now() - t0).count();
+        t0 = RJ::now();
+        assert(dt < .005);
+        BezierPath postBezier(points,
+                              start.velocity.linear(),
+                              goal.velocity.linear(),
+                              motionConstraints);
+        dt = RJ::Seconds(RJ::now() - t0).count();
+        t0 = RJ::now();
+        assert(dt < .005);
+        path = ProfileVelocity(postBezier,
+                                         start.velocity.linear().mag(),
+                                         goal.velocity.linear().mag(),
+                                         motionConstraints,
+                                         start.stamp);
+        dt = RJ::Seconds(RJ::now() - t0).count();
+        t0 = RJ::now();
+        assert(dt < .005);
+        Geometry2d::Point hitPoint;
+        if(path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint, nullptr)) {
+            statics.add(std::make_shared<Circle>(hitPoint, Robot_Radius * 1.5));
+        } else {
+            break;
+        }
+    }
+    return std::move(path);
 }
 
 }

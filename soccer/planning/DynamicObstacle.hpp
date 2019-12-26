@@ -6,8 +6,8 @@
 namespace Planning {
     class Trajectory;
     struct DynamicObstacle {
-        DynamicObstacle(std::shared_ptr<Geometry2d::Shape> sHape, const Trajectory* pAth): shape(sHape), path(pAth) {}
-        std::shared_ptr<Geometry2d::Shape> shape;
+        DynamicObstacle(const std::shared_ptr<Geometry2d::Circle>& circ, const Trajectory& pAth): circle(circ), path(&pAth) {}
+        std::shared_ptr<Geometry2d::Circle> circle;
         const Trajectory* path;
     };
 }

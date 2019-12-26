@@ -24,6 +24,8 @@ struct Context {
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
 
     unsigned int goalie_id;
+    Geometry2d::ShapeSet globalObstacles;
+    Geometry2d::ShapeSet goalZoneObstacles;
 
     SystemState state;
     GameState game_state;

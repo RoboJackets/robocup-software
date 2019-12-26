@@ -453,19 +453,6 @@ void Processor::run() {
         // Run high-level soccer logic
         _gameplayModule->run();
 
-        // recalculates Field obstacles on every run through to account for
-        // changing inset
-        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
-            _gameplayModule->calculateFieldObstacles();
-        }
-        /// Collect global obstacles
-        Geometry2d::ShapeSet globalObstacles =
-            _gameplayModule->globalObstacles();
-        Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-        Geometry2d::ShapeSet goalZoneObstacles =
-            _gameplayModule->goalZoneObstacles();
-        globalObstaclesWithGoalZones.add(goalZoneObstacles);
-
         // Run the path planner.
         // TODO(Kyle): Remove when everything is in modules.
         _pathPlanner->run();

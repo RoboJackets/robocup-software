@@ -8,7 +8,7 @@
 
 namespace Planning {
 
-PlannerNode::PlannerNode(Context* context) : context_(context) {
+PlannerNode::PlannerNode(Context* context) : context_(context), plannerIdx(Num_Shells, -1) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePathPlanner>());
     planners_.push_back(std::make_unique<CollectPathPlanner>());
@@ -19,10 +19,9 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
 }
 
 void PlannerNode::run() {
-    Geometry2d::ShapeSet globalObstacles;
+    Geometry2d::ShapeSet globalObstacles = context_->globalObstacles;
     Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-    Geometry2d::ShapeSet goalZoneObstacles;
-    globalObstaclesWithGoalZones.add(goalZoneObstacles);
+    globalObstaclesWithGoalZones.add(context_->goalZoneObstacles);
 
     std::vector<PlanRequest> requests;
     for (OurRobot* robot : context_->state.self) {
@@ -75,12 +74,14 @@ void PlannerNode::run() {
     });
     std::vector<DynamicObstacle> dynamicObstacles;
     for(PlanRequest& request : requests) {
+        //update robot specific obstacles
+        request.dynamic_obstacles = dynamicObstacles;
+
         //complete the plan request
         OurRobot* robot = context_->state.self[request.shellID];
-        request.dynamic_obstacles = dynamicObstacles;
         Trajectory plannedPath = PlanForRobot(std::move(request));
         robot->setPath(std::move(plannedPath));
-        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), &robot->path());
+        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path());
 
         //draw debug info
         robot->path().draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
@@ -111,11 +112,25 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
     DebugDrawer* drawer = &request.context->debug_drawer;
-    for (auto& planner : planners_) {
-        if (planner->isApplicable(request.motionCommand)) {
-            return planner->plan(std::move(request));
-        } else {
-//            std::cout << "Planner " << planner->name() << " is not applicable!" << std::endl; todo(Ethan) uncomment this
+    for (int i = 0; i < planners_.size(); i++) {
+        if (planners_[i]->isApplicable(request.motionCommand)) {
+            //clear path when planner changes
+            if(plannerIdx[request.shellID] != i) {
+                plannerIdx[request.shellID] = i;
+                request.prevTrajectory = Trajectory{{}};
+            }
+            RobotInstant startInstant = request.start;
+            RJ::Time t0 = RJ::now();
+            Trajectory path = planners_[i]->plan(std::move(request));
+            if(path.empty()) {
+                path = Trajectory{{startInstant}};
+                debugLog("Empty Path. Planner: " + planners_[i]->name());
+            }
+            RJ::Seconds deltaTime{RJ::now() - t0};
+            if(deltaTime > 5ms) {
+//                debugLog("Planner " + planners_[i]->name() + " took " + std::to_string((int)(deltaTime.count()*1000)) + " ms");
+            }
+            return std::move(path);
         }
     }
     std::cerr << "No valid planner! Did you forget to specify a default planner?"

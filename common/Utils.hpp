@@ -62,15 +62,6 @@ static inline float fixAngleRadians(float a) {
     return a;
 }
 
-/**
- * @brief constrains an angle between bounds while accounting for -pi <--> pi wrap-around
- *
- * @param a angle in radians
- * @param lo lower bound
- * @param hi upper bound
- */
-double clampAngle(double a, double lo, double hi);
-
 /** Checks whether or not the given ball is in the defense area. */
 static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
     Geometry2d::Point topRight = Geometry2d::Point(

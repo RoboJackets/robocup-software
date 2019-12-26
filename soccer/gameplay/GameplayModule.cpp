@@ -437,6 +437,14 @@ void Gameplay::GameplayModule::run() {
     _our_score_last_frame = _context->game_state.ourScore;
 
     _context->goalie_id = goalieID();
+    // recalculates Field obstacles on every run through to account for
+    // changing inset
+    if (hasFieldEdgeInsetChanged()) {
+        calculateFieldObstacles();
+    }
+    /// Collect global obstacles
+    _context->globalObstacles = globalObstacles();
+    _context->goalZoneObstacles = goalZoneObstacles();
 }
 
 #pragma mark python

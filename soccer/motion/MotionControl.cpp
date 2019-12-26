@@ -95,11 +95,17 @@ void MotionControl::run() {
     _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, targetColor,"Planning");
     Point robotPoint = _robot->pose().position();
     _context->debug_drawer.drawLine(Geometry2d::Segment(
-            robotPoint,
-            robotPoint + Point::direction(optTarget->pose.heading()).normalized(.35)), targetColor, "Planning");
+            optTarget->pose.position(),
+            optTarget->pose.position() + Point::direction(optTarget->pose.heading()).normalized(.35)), targetColor, "Angle Planning");
+    for(auto it = _robot->path().iterator(_robot->path().begin_time(), 100ms); (*it).stamp < _robot->path().last().stamp; ++it) {
+        RobotInstant instant = *it;
+        _context->debug_drawer.drawLine(Geometry2d::Segment(
+                instant.pose.position(),
+                instant.pose.position() + Point::direction(instant.pose.heading()).normalized(.2)), Qt::gray, "Angle Planning");
+    }
     _context->debug_drawer.drawLine(Geometry2d::Segment(
             robotPoint,
-            robotPoint + Point::direction(_robot->pose().heading()).normalized(.3)), Qt::blue, "Planning");
+            robotPoint + Point::direction(_robot->pose().heading()).normalized(.3)), Qt::blue, "Angle Planning");
 
     // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

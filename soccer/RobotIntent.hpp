@@ -11,7 +11,8 @@ struct RobotIntent {
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
     enum class Song { STOP, CONTINUE, FIGHT_SONG };
 
-    std::unique_ptr<Planning::MotionCommand> motion_command; //todo(Ethan) get rid of this unique_ptr?
+    std::unique_ptr<Planning::MotionCommand> motion_command;
+    std::optional<double> angle_override;
 
     /// set of obstacles added by plays
     Geometry2d::ShapeSet local_obstacles;
@@ -34,6 +35,7 @@ struct RobotIntent {
         shoot_mode = ShootMode::KICK;
         trigger_mode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
+        angle_override = std::nullopt;
     }
 
     RobotIntent() : is_active(false), motion_command(std::make_unique<Planning::MotionCommand>(Planning::EmptyCommand{})) { clear(); }
