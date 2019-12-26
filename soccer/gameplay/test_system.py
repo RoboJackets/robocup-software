@@ -114,8 +114,9 @@ class TestSystem:
         ## TODO: The plan is to move this coordinate transform 
         ## to the C++ layer, closer to where the coordinates are
         ## sent to GrSim, this is just a stopgap
-        pos = robocup.Point(pos.y - (constants.Field.Length / 2), -1 * pos.x)
-        vel = robocup.Point(vel.y, -1 * vel.x)
+
+        pos = robocup.Point(1 * pos.y - (constants.Field.Length / 2), -1 * pos.x)
+        vel = robocup.Point(1 * vel.y, -1 * vel.x)
         ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         return [pos.x, pos.y, vel.x, vel.y]
