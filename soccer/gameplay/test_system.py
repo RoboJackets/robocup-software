@@ -2,6 +2,8 @@ from PyQt5 import QtCore, QtWidgets
 import logging
 import test_list
 from playbook import load_from_file
+import constants
+import robocup
 
 
 class TestSystem:
@@ -108,6 +110,13 @@ class TestSystem:
     def getTestBall(self):
         pos = self._testNode.test.ballPosition
         vel = self._testNode.test.ballVelocity
+
+        ## TODO: The plan is to move this coordinate transform 
+        ## to the C++ layer, closer to where the coordinates are
+        ## sent to GrSim, this is just a stopgap
+        pos = robocup.Point(pos.y - (constants.Field.Length / 2), -1 * pos.x)
+        vel = robocup.Point(vel.y, -1 * vel.x)
+        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         return [pos.x, pos.y, vel.x, vel.y]
 

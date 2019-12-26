@@ -1,12 +1,18 @@
 ## @brief A test description containing information about how to initialize and run a specific test
 import play
 import robocup
+import constants
 
 
 # Class to define robot locations/velocities
 class testRobot():
     def __init__(self, pos=robocup.Point(0,0), angle=0):
-        self.pos = pos
+
+        ## TODO: Do this coordinate transform in c++, closer to being sent to grsim
+        ##
+        self.pos = robocup.Point(pos.y - (constants.Field.Length / 2), -1 * pos.x)
+        ## 
+
         self.angle = angle
 
 
