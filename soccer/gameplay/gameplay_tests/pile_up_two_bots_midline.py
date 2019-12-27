@@ -27,9 +27,6 @@ class PileUpTwoBotsMidline(gameplay_test.GameplayTest):
         self.play_list = ["test_book.pbk"]
 
 
-
-
-
         self.ourRobots = [testRobot(zero_zero),
                 testRobot(self.ballPosition + robocup.Point(0, -0.09)),
                 testRobot(center_pos + robocup.Point(0.5, -0.75)),
