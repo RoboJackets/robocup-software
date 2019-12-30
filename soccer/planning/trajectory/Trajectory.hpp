@@ -46,7 +46,6 @@ struct RobotInstant {
  * This uses cubic interpolation between two adjacent instants, fitting a
  * parametric cubic polynomial based on initial and final posiiton and velocity.
  */
-class TrajectoryIterator;
 //todo(Ethan) implement move-constructor, move-assign, copy-constructor, copy-assign
 class Trajectory {
 public:
@@ -54,7 +53,7 @@ public:
      * Create a trajectory from several "instants", each with a pose, velocity,
      * and timestamp.
      */
-    explicit Trajectory(std::vector<RobotInstant> &&instants) : instants_(std::move(instants)) {}
+    explicit Trajectory(std::list<RobotInstant> &&instants) : instants_(std::move(instants)) {}
 
     /**
      * Create a trajectory from two other trajectories
@@ -69,7 +68,7 @@ public:
      * allow copy constructor, copy assignment, move constructor, and move assignment
      */
     Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)), angle_override(std::move(other.angle_override)) {
-        other.instants_ = std::vector<RobotInstant>{};
+        other.instants_ = {};
         other.angle_override = std::nullopt;
         other._debugText = "MOVED FROM";
     }
@@ -77,12 +76,12 @@ public:
     Trajectory& operator=(Trajectory&& other);
     Trajectory& operator=(const Trajectory& other);
 
-    /**
-     * Insert a RobotInstant based on its timestamp.
-     *
-     * @param instant The new RobotInstant to add.
-     */
-    void InsertInstant(RobotInstant instant);
+//    /**
+//     * Insert a RobotInstant based on its timestamp.
+//     *
+//     * @param instant The new RobotInstant to add.
+//     */
+//    void InsertInstant(RobotInstant instant);
 
     /**
      * Append a RobotInstant. instant.stamp must be greater than end()
@@ -161,7 +160,7 @@ public:
         return end_time() - begin_time();
     }
 
-    /**
+    /** todo(Ethan) delete these functions bc they are slow
      * Evaluate this trajectory (calculate position and velocity) at a given
      * point in time.
      *
@@ -175,6 +174,7 @@ public:
     /**
      * Evaluate this trajectory (calculate position and velocity) at a given
      * duration past the beginning of the trajectory.
+     * Complexity: O(n)
      *
      * @param seconds The duration since the beginning of the path.
      * @return The RobotInstant at that duration into the path, or nullopt if
@@ -202,14 +202,17 @@ public:
      */
     int num_instants() const { return instants_.size(); }
 
-    /**
-     * Get a reference to the specified index. Intended for use when editing
-     * a trajectory in-place.
-     * @param index The index of the desired instant. The relation
-     *      0 <= index <= num_instants() must hold.
-     * @return The instant at the given index.
-     */
-    RobotInstant &instant(int index) { return instants_.at(index); }
+    auto instants_begin() { return instants_.begin(); }
+    auto instants_end() { return instants_.end(); }
+
+//    /**
+//     * Get a reference to the specified index. Intended for use when editing
+//     * a trajectory in-place.
+//     * @param index The index of the desired instant. The relation
+//     *      0 <= index <= num_instants() must hold.
+//     * @return The instant at the given index.
+//     */
+//    RobotInstant &instant(int index) { return instants_.at(index); }
 
     /**
      * Check if this is an empty path.
@@ -220,13 +223,27 @@ public:
      * Get the first instant in the past, or crash if the path is empty.
      * @return The first instant in the path.
      */
-    RobotInstant first() const { return instants_.front(); }
+    RobotInstant& first() {
+        assert(!empty());
+        return instants_.front();
+    }
+    const RobotInstant& first() const {
+        assert(!empty());
+        return instants_.front();
+    }
 
     /**
      * Get the last instant in the past, or crash if the path is empty.
      * @return The last instant in the path.
      */
-    RobotInstant last() const { return instants_.back(); }
+    RobotInstant& last() {
+        assert(!empty());
+        return instants_.back();
+    }
+    const RobotInstant& last() const {
+        assert(!empty());
+        return instants_.back();
+    }
 
     /**
      * Draw this trajectory.
@@ -239,7 +256,7 @@ public:
      * @return clone
      */
     Trajectory clone() const {
-        return Trajectory(std::vector<RobotInstant>(instants_));
+        return Trajectory(std::list<RobotInstant>(instants_));
     }
 
     /**
@@ -248,43 +265,85 @@ public:
      * @param deltaT time step
      * @return iterator
      */
+    class TrajectoryIterator;
     TrajectoryIterator iterator(RJ::Time startTime, RJ::Seconds deltaT) const;
+    static RobotInstant interpolatedInstant(const RobotInstant& prev, const RobotInstant& next, RJ::Time time);
 
     void setDebugText(QString str) {_debugText = std::move(str); };
     QString getDebugText() { return _debugText ? *_debugText: ""; }
 
 protected:
     // A sorted array of RobotInstants (by timestamp)
-    std::vector<RobotInstant> instants_;
+    std::list<RobotInstant> instants_;
 
-    //a super hacky way to force a change of angle/heading
+    // force a change of angle/heading
     std::optional<double> angle_override;
 
     std::optional<QString> _debugText;
 };
-
-class TrajectoryIterator {
+class Trajectory::TrajectoryIterator {
 public:
-    explicit TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime, RJ::Seconds deltaT)
-            : _trajectory(trajectory), _time(startTime - trajectory.begin_time()), _deltaT(deltaT) {}
+    TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime, RJ::Seconds deltaT): _trajectory(trajectory), _deltaT(deltaT), _time(startTime) {
+        assert(!trajectory.empty());
+        //todo(Ethan) this is fine right?
+//        _time = std::clamp(startTime, trajectory.begin_time(), trajectory.end_time());
+        if(!trajectory.CheckTime(_time)) return;
+        if(_time < trajectory.begin_time() + trajectory.duration() * 0.5) {
+            iterator = trajectory.instants_.begin();
 
-    virtual RobotInstant operator*() const {
-        auto temp = _trajectory.evaluate(_time);
-        if (temp) {
-            return *temp;
+            ++iterator;
+            while(iterator->stamp <= _time) {
+                ++iterator;
+            }
+            --iterator;
         } else {
-            return _trajectory.last();
+            iterator = trajectory.instants_.end();
+            --iterator;
+            while(iterator->stamp > _time) {
+                --iterator;
+            }
         }
     }
 
-    virtual TrajectoryIterator& operator++() {
-        _time += _deltaT;
+    RobotInstant operator*() const {
+        assert(iterator != _trajectory.instants_.end());
+        if (!hasNext()) {
+            return _trajectory.last();
+        }
+        return interpolatedInstant(*iterator, *(std::next(iterator)), _time);
+    }
+
+    TrajectoryIterator& operator++() {
+        advance(_time + _deltaT);
         return *this;
+    }
+
+    RobotInstant peekNext() const {
+        auto it = *this;
+        return *++it;
+    }
+
+    bool hasNext() const {
+        return _trajectory.CheckTime(_time + _deltaT);
+    }
+    bool hasValue() const {
+        return _trajectory.CheckTime(_time);
+    }
+
+    void advance(RJ::Time time) {
+        _time = time;
+        ++iterator;
+        while (iterator != _trajectory.instants_.end()
+               && iterator->stamp <= _time) {
+            ++iterator;
+        }
+        --iterator;
     }
 
 private:
     const Trajectory& _trajectory;
-    RJ::Seconds _time;
+    std::list<RobotInstant>::const_iterator iterator;
+    RJ::Time _time;
     const RJ::Seconds _deltaT;
 };
 

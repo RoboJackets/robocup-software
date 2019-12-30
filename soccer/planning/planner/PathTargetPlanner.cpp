@@ -61,17 +61,15 @@ namespace Planning {
                                                                    request.static_obstacles);
         // Simple case: no path
         if (request.start.pose.position() == goalPoint) {
-            std::vector<RobotInstant> instants;
+            std::list<RobotInstant> instants;
             instants.emplace_back(request.start.pose, Twist(), RJ::now());
             Trajectory result{std::move(instants)};
             result.setDebugText("RRT Basic");
             return std::move(result);
         }
         if (prevTrajectory.empty() || veeredOffPath(request)) {
-            printf("full replan -> ");
             return fullReplan(std::move(request), angleFunction);
         }
-
         const RJ::Seconds timeIntoTrajectory =
                 RJ::now() - prevTrajectory.begin_time();
         const RJ::Seconds timeRemaining =
@@ -79,6 +77,7 @@ namespace Planning {
 
         RJ::Seconds invalidTime;
         //note: the dynamic check is expensive, so we shortcut it sometimes
+        //todo(Ethan) this could be made more efficient by maintaining a TrajectoryIterator across partial replans
         bool shouldPartialReplan = prevTrajectory.hit(request.static_obstacles, timeIntoTrajectory, &invalidTime)
                 || prevTrajectory.intersects(request.dynamic_obstacles, RJ::now(), nullptr, &invalidTime);
         if(!shouldPartialReplan && goalChanged(prevTrajectory.last(), goalInstant)) {
@@ -94,25 +93,34 @@ namespace Planning {
 //                    std::optional<RobotInstant> inst = prevTrajectory.evaluate(RJ::now());
 //                    if(inst) request.start = *inst;
 //                }
-                printf("full replan -> ");
                 return fullReplan(std::move(request), angleFunction);
             }
-            printf("partial replan -> ");
             return partialReplan(std::move(request), angleFunction);
         }
         if (RJ::now() - prevTimes[request.shellID] > 0.2s && timeRemaining > RJ::Seconds(*_partialReplanLeadTime * 2)) {
-            printf("check better -> ");
-            return checkBetter(std::move(request));
+            return checkBetter(std::move(request), angleFunction);
         }
         return reuse(std::move(request));
     }
 
     Trajectory PathTargetPlanner::reuse(PlanRequest&& request) {
-        printf("reuse\n");
-        return request.prevTrajectory.empty() ? Trajectory{{request.start}} : std::move(request.prevTrajectory);
+        printf("reuse ");
+        if (request.prevTrajectory.empty()) {
+            return Trajectory{{request.start}};
+        } else {
+            RJ::Seconds startTime =
+                    RJ::now() - request.prevTrajectory.begin_time();
+            RJ::Seconds endTime = request.prevTrajectory.duration();
+            if (startTime < endTime) {
+                return request.prevTrajectory.subTrajectory(startTime, endTime);
+            } else {
+                return Trajectory{{request.prevTrajectory.last()}};
+            }
+        }
     }
 
-    Trajectory PathTargetPlanner::checkBetter(PlanRequest&& request) {
+    Trajectory PathTargetPlanner::checkBetter(PlanRequest&& request, AngleFunction angleFunction) {
+        printf("checkbetter ");
         Trajectory& prevTrajectory = request.prevTrajectory;
         std::shared_ptr<RoboCupStateSpace> stateSpace = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, std::move(request.static_obstacles));
         RobotInstant goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
@@ -120,6 +128,9 @@ namespace Planning {
                 RJ::now() - prevTrajectory.begin_time();
         Trajectory preTrajectory = partialPath(prevTrajectory);
         Trajectory postTrajectory = RRTTrajectory(preTrajectory.last(), goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles);
+        if(anglePlanningEnabled) {
+            PlanAngles(postTrajectory, preTrajectory.last(), angleFunction, request.constraints.rot);
+        }
         if (!postTrajectory.empty()) {
             Trajectory comboPath{std::move(preTrajectory),std::move(postTrajectory)};
             if (prevTrajectory.duration() - timeIntoTrajectory > comboPath.duration()) {
@@ -132,6 +143,7 @@ namespace Planning {
     }
 
     Trajectory PathTargetPlanner::partialReplan(PlanRequest&& request, AngleFunction angleFunction) {
+        printf("partial ");
         RobotInstant goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
         Trajectory& prevTrajectory = request.prevTrajectory;
         std::vector<Point> biasWaypoints;
@@ -142,7 +154,6 @@ namespace Planning {
         Trajectory preTrajectory = partialPath(prevTrajectory);
         Trajectory postTrajectory = RRTTrajectory(preTrajectory.last(), goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles, biasWaypoints);
         if (postTrajectory.empty()) {
-            std::cout << "Partial Failed --> Full Replan" << std::endl;
             return fullReplan(std::move(request), angleFunction);
         }
         if(anglePlanningEnabled) {
@@ -155,6 +166,7 @@ namespace Planning {
     }
 
     Trajectory PathTargetPlanner::fullReplan(PlanRequest&& request, AngleFunction angleFunction) {
+        printf("full ");
         const RobotInstant& goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
         Trajectory path = RRTTrajectory(request.start, goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles);
         if(path.empty()) {

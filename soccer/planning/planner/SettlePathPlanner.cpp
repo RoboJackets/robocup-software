@@ -140,7 +140,7 @@ namespace Planning {
                                     Twist{targetVel, 0}, RJ::now()};
 //            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
             path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
-            printf("it time: %.3f sec\n", RJ::Seconds(RJ::now()-t0).count());
+            printf("it time: %.6f sec\n", RJ::Seconds(RJ::now()-t0).count());
             if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime && fieldRect.containsPoint(futureBallPoint)) {
                 goalInstant = pathTarget;
                 minPathTime = path.duration();
@@ -150,6 +150,7 @@ namespace Planning {
             double dt = RJ::Seconds(RJ::now() - t0).count();
             its++;
         }
+//        assert(RJ::Seconds(RJ::now()-curTime).count() < 0.1);
         printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-curTime).count(), its);
         return goalInstant;
     }

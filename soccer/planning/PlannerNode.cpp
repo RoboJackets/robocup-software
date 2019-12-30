@@ -81,7 +81,7 @@ void PlannerNode::run() {
         OurRobot* robot = context_->state.self[request.shellID];
         Trajectory plannedPath = PlanForRobot(std::move(request));
         robot->setPath(std::move(plannedPath));
-        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path());
+//        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path()); todo(Ethan) uncomment this
 
         //draw debug info
         robot->path().draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));

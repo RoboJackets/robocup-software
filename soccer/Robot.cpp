@@ -347,7 +347,7 @@ void OurRobot::kickImmediately() {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-    intent().angle_override = pos().angleTo(pt);
+//    intent().angle_override = pos().angleTo(pt);
 }
 bool OurRobot::isFacing() const {
     return !intent().angle_override;

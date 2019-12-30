@@ -97,7 +97,7 @@ void MotionControl::run() {
     _context->debug_drawer.drawLine(Geometry2d::Segment(
             optTarget->pose.position(),
             optTarget->pose.position() + Point::direction(optTarget->pose.heading()).normalized(.35)), targetColor, "Angle Planning");
-    for(auto it = _robot->path().iterator(_robot->path().begin_time(), 100ms); (*it).stamp < _robot->path().last().stamp; ++it) {
+    for(auto it = _robot->path().iterator(_robot->path().begin_time(), 100ms); it.hasValue(); ++it) {
         RobotInstant instant = *it;
         _context->debug_drawer.drawLine(Geometry2d::Segment(
                 instant.pose.position(),
