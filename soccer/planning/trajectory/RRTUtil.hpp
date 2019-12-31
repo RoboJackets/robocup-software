@@ -31,12 +31,11 @@ void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
                DebugDrawer* debug_drawer, unsigned shellID);
 
 /**
- * Generate a non-smooth path with BiRRT. This will just generate the path
- * through the tree - the user is responsible for removing points later.
+ * Generate a path with BiRRT
  *
  * @param start The starting position.
  * @param goal The goal position.
- * @param state_space The state space to use. See @ref CreateStateSpace.
+ * @param obstacles the obstacles to avoid
  * @param waypoints A vector of points from a previous path. The RRT will be
  *      biased towards these points. If empty, they will be unused.
  * @return A vector of points representing some clear path from the start to
@@ -48,6 +47,16 @@ std::vector<Geometry2d::Point> GenerateRRT(
         const Geometry2d::ShapeSet& obstacles,
         const std::vector<Geometry2d::Point>& waypoints = {});
 
+/**
+ * Generate a smooth profiled velocity path. The user still
+ * needs to plan angles with PlanAngles()
+ * @param start initial instant
+ * @param goal desired instant
+ * @param motionConstraints motion constraints
+ * @param static_obstacles stationary obstacles
+ * @param dynamic_obstacles dynamic obstacles
+ * @return path without angles
+ */
 Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
 
 }  // Planning

@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include <Constants.hpp>
+#include <Utils.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -16,9 +17,9 @@ ConfigDouble* BallBounce::robot_mouth_angle_dampen;
 
 /**
  * Note 0 case returns -1 instead of 0
- * Forced to check with small epsilon since we actually care about 0 being represented
- * correctly as -1. It's ok if the 1.0e-10 doesn't return -1 or 1.
- * 
+ * Forced to check with small epsilon since we actually care about 0 being
+ * represented correctly as -1. It's ok if the 1.0e-10 doesn't return -1 or 1.
+ *
  * This is mostly so the simple test case have the correct behavior
  * If it lands on the 1.0e-10 boundary the code reacts as if there was no hit
  */
@@ -283,6 +284,6 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
         out.push_back(pt1);
         out.push_back(pt2);
     }
-    
+
     return out;
 }

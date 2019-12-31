@@ -162,8 +162,7 @@ class SubmissiveDefender(
 
         # make the defender face the threat it's defending against
         if (self.robot is not None and self.block_line is not None):
-            # self.robot.face(self.block_line.get_pt(0))
-            pass
+            self.robot.face(self.block_line.get_pt(0))
 
         if self.robot.has_ball() and not main.game_state().is_stopped() and not self._self_goal(self.robot):
             self.robot.kick(0.75)

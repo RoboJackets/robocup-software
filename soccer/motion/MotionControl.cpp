@@ -182,7 +182,7 @@ void MotionControl::run() {
     // acceleration factor
     Point acceleration;
     std::optional<RobotInstant> nextTarget =
-            _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
+        _robot->path().evaluate(timeIntoPath + RJ::Seconds(1) / 60.0);
     if (nextTarget) {
         acceleration = (nextTarget->velocity.linear() - target.vel) / 60.0f;
     } else {

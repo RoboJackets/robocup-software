@@ -23,6 +23,7 @@ using namespace boost::python;
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
 #include "KickEvaluator.hpp"
+#include "NewRefereeModule.hpp"
 #include "WindowEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "optimization/NelderMead2D.hpp"
@@ -90,8 +91,6 @@ std::string Point_repr(Geometry2d::Point* self) { return self->toString(); }
 
 std::string Robot_repr(Robot* self) { return self->toString(); }
 
-Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
-
 // Sets a robot's position - this should never be used in gameplay code, but
 // is useful for testing.
 void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
@@ -110,11 +109,17 @@ void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) {
     self->pos = pos;
 }
 
+Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
+
 Geometry2d::Point Robot_vel(Robot* self) { return self->vel(); }
 
 float Robot_angle(Robot* self) { return self->angle(); }
 
 float Robot_angle_vel(Robot* self) { return self->angleVel(); }
+
+Geometry2d::Point Ball_pos(Ball* self) { return self->pos; }
+
+Geometry2d::Point Ball_vel(Ball* self) { return self->vel; }
 
 void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
@@ -685,6 +690,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("y", &Point_get_y, &Point_set_y)
         .def(self - self)
         .def(self + self)
+        .def(self * self)
         .def("mag", &Geometry2d::Point::mag)
         .def("magsq", &Geometry2d::Point::magsq)
         .def("__repr__", &Point_repr)
@@ -880,16 +886,16 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("run_pid_tuner", &OurRobot_run_pid_tuner)
         .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
-        .def("is_facing", &OurRobot::isFacing)
-        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
+        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer)
+        .def("is_facing", &OurRobot::isFacing);
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<Context*, int>());
 
     class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
         .def("set_pos_for_testing", &Ball_set_pos_for_testing)
-        .def_readonly("pos", &Ball::pos)
-        .def_readonly("vel", &Ball::vel)
+        .add_property("pos", &Ball_pos)
+        .add_property("vel", &Ball_vel)
         .def_readonly("valid", &Ball::valid)
         .def("predict_pos", &Ball::predictPosition)
         .def("estimate_seconds_to", &Ball::estimateSecondsTo)
@@ -1058,4 +1064,34 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
         .def_readonly("MaxRobotAccel", &MotionConstraints::_max_acceleration);
+
+    enum_<NewRefereeModuleEnums::Command>("Command")
+        .value("halt", NewRefereeModuleEnums::Command::HALT)
+        .value("stop", NewRefereeModuleEnums::Command::STOP)
+        .value("normal_start", NewRefereeModuleEnums::Command::NORMAL_START)
+        .value("force_start", NewRefereeModuleEnums::Command::FORCE_START)
+        .value("prepare_kickoff_yellow",
+               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
+        .value("prepare_kickoff_blue",
+               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
+        .value("prepare_penalty_yellow",
+               NewRefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
+        .value("prepare_penalty_blue",
+               NewRefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
+        .value("direct_free_yellow",
+               NewRefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
+        .value("direct_free_blue",
+               NewRefereeModuleEnums::Command::DIRECT_FREE_BLUE)
+        .value("indirect_free_yellow",
+               NewRefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
+        .value("indirect_free_blue",
+               NewRefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
+        .value("timeout_yellow", NewRefereeModuleEnums::Command::TIMEOUT_YELLOW)
+        .value("timeout_blue", NewRefereeModuleEnums::Command::TIMEOUT_BLUE)
+        .value("goal_yellow", NewRefereeModuleEnums::Command::GOAL_YELLOW)
+        .value("goal_blue", NewRefereeModuleEnums::Command::GOAL_BLUE)
+        .value("ball_placement_yellow",
+               NewRefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
+        .value("ball_placement_blue",
+               NewRefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
 }

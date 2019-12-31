@@ -83,11 +83,12 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context, _refereeModule.get());
     _pathPlanner = std::make_unique<Planning::PlannerNode>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
+    _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
     _visionChannel = visionChannel;
 
@@ -104,6 +105,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
 
     _nodes.push_back(_visionReceiver.get());
     _nodes.push_back(_motionControl.get());
+    _nodes.push_back(_grSimCom.get());
 }
 
 Processor::~Processor() {
@@ -221,19 +223,23 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         // Collect camera data from all robots
         yellowObservations.reserve(frame->robots_yellow().size());
         for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            yellowObservations.emplace_back(time,
-                                            _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                            fixAngleRadians(robot.orientation() + _teamAngle),
-                                            robot.robot_id());
+            yellowObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         // Collect camera data from all robots
         blueObservations.reserve(frame->robots_blue().size());
         for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            blueObservations.emplace_back(time,
-                                          _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                          fixAngleRadians(robot.orientation() + _teamAngle),
-                                          robot.robot_id());
+            blueObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
@@ -465,6 +471,7 @@ void Processor::run() {
         }
 
         _motionControl->run();
+        _grSimCom->run();
         // Run all nodes in sequence
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to

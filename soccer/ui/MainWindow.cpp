@@ -8,9 +8,10 @@
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
+#include "GrSimCommunicator.hpp"
 #include "RobotStatusWidget.hpp"
-#include "rc-fshare/git_version.hpp"
 #include "radio/Radio.hpp"
+#include "rc-fshare/git_version.hpp"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -169,6 +170,9 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
     } else {
+        // Pass context into the simFieldView
+        _ui.fieldView->setContext(_processor->context());
+
         // reset the field initially, grSim will start out in some weird
         // pattern and we want to keep it consistent
         on_actionResetField_triggered();
@@ -1047,7 +1051,7 @@ void MainWindow::on_actionCenterBall_triggered() {
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
 
-    _ui.fieldView->sendSimCommand(simPacket);
+    _processor->context()->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopBall_triggered() {
@@ -1061,7 +1065,7 @@ void MainWindow::on_actionStopBall_triggered() {
     ball_replace->mutable_pos()->set_y(ballPos.y());
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(simPacket);
+    _processor->context()->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -1106,7 +1110,7 @@ void MainWindow::on_actionResetField_triggered() {
     ball_replace->mutable_vel()->set_x(0.0);
     ball_replace->mutable_vel()->set_y(0.0);
 
-    _ui.fieldView->sendSimCommand(simPacket);
+    _processor->context()->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
@@ -1363,6 +1367,9 @@ void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
     _processor->externalReferee(value);
 }
 
+////////////////
+// Tab Widget Section
+
 ////////
 // Debug layer list
 
@@ -1469,6 +1476,25 @@ void MainWindow::on_savePlaybook_clicked() {
 void MainWindow::on_clearPlays_clicked() {
     _processor->gameplayModule()->clearPlays();
     playIndicatorStatus(true);
+}
+
+////////
+// Testing Tab
+
+void MainWindow::on_testRun_clicked() {
+    _processor->gameplayModule()->loadTest();
+}
+
+void MainWindow::on_addToTable_clicked() {
+    _processor->gameplayModule()->addTests();
+}
+
+void MainWindow::on_removeFromTable_clicked() {
+    _processor->gameplayModule()->removeTest();
+}
+
+void MainWindow::on_testNext_clicked() {
+    _processor->gameplayModule()->nextTest();
 }
 
 void MainWindow::setRadioChannel(RadioChannels channel) {

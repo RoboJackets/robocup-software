@@ -17,6 +17,7 @@
 #include <Logger.hpp>
 #include <NewRefereeModule.hpp>
 #include <SystemState.hpp>
+#include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
@@ -268,6 +269,7 @@ private:
     std::unique_ptr<Planning::PlannerNode> _pathPlanner;
     std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
+    std::unique_ptr<GrSimCommunicator> _grSimCom;
 
     std::vector<Node*> _nodes;
 

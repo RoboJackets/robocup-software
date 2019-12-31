@@ -139,7 +139,6 @@ void OurRobot::resetForNextIteration() {
 
 void OurRobot::resetMotionConstraints() {
     _robotConstraints = RobotConstraints();
-//    intent().motion_command = std::make_unique<MotionCommand>(Planning::EmptyCommand{});
     _planningPriority = 0;
 }
 
@@ -193,6 +192,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << goal.y() << ")" << std::endl;
 
     Planning::RobotInstant goal_instant;
+    //todo(Ethan) fix this angle
     goal_instant.pose = Pose{goal, angle()};
     goal_instant.velocity = Twist{endVelocity, 0};
     setMotionCommand(std::make_unique<MotionCommand>(Planning::PathTargetCommand{goal_instant}));
@@ -347,7 +347,7 @@ void OurRobot::kickImmediately() {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-//    intent().angle_override = pos().angleTo(pt);
+    intent().angle_override = pos().angleTo(pt);
 }
 bool OurRobot::isFacing() const {
     return !intent().angle_override;

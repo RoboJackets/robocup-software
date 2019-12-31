@@ -41,8 +41,6 @@ public:
     Planning::MotionInstant predict(RJ::Time time) const;
     Geometry2d::Point predictPosition(double seconds_from_now) const;
 
-//    std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
-
     RJ::Time estimateTimeTo(const Geometry2d::Point& point,
                             Geometry2d::Point* nearPoint = nullptr) const;
 
@@ -53,19 +51,6 @@ public:
     double predictSecondsToStop() const;
 
 
-};
-
-class BallPath {
-public:
-    BallPath(const Ball& ball) : ball(ball){};
-
-    Planning::MotionInstant EvaluateTime(RJ::Time t) const {
-        return ball.predict(t);
-    }
-
-private:
-
-    const Ball& ball;
 };
 
 class Context;

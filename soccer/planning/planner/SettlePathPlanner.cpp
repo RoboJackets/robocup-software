@@ -116,7 +116,7 @@ namespace Planning {
     //
     // Disallow points outside the field
     RobotInstant SettlePathPlanner::bruteForceGoal(const PlanRequest& request) {
-        double distance = _searchStartDist->value();
+        double distance = *_searchStartDist;
         const Ball& ball = request.context->state.ball;
         Point targetPoint = ball.pos;
         RobotInstant goalInstant = request.start;
@@ -124,33 +124,30 @@ namespace Planning {
         double targetAngle = fixAngleRadians(averageBallVel->angle() + M_PI);
         const Geometry2d::Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
         Point startPoint = request.start.pose.position();
-        Point closestPoint = Geometry2d::Line{ball.pos, ball.pos + *averageBallVel}.nearestPoint(startPoint);
-        distance = std::max(distance, (closestPoint.distTo(startPoint) / request.constraints.mot.maxSpeed) * averageBallVel->mag());
+//        Point closestPoint = Geometry2d::Line{ball.pos, ball.pos + *averageBallVel}.nearestPoint(startPoint);
+//        distance = std::max(distance, (closestPoint.distTo(startPoint) / request.constraints.mot.maxSpeed) * averageBallVel->mag());
         std::optional<RJ::Seconds> minPathTime = std::nullopt;
         RJ::Time curTime = RJ::now();
         Trajectory path{{}};
         int its = 0;
         while (distance < *_searchEndDist) {
-            RJ::Time t0 = RJ::now();
             Point futureBallPoint =
                     ball.pos + averageBallVel->normalized(distance);
             RJ::Seconds futureBallTime = ball.estimateTimeTo(futureBallPoint, &targetPoint) -
                                          curTime;
             RobotInstant pathTarget{Pose{targetPoint, targetAngle},
                                     Twist{targetVel, 0}, RJ::now()};
-//            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
-            path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
-            printf("it time: %.6f sec\n", RJ::Seconds(RJ::now()-t0).count());
+            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
+//            path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
             if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime && fieldRect.containsPoint(futureBallPoint)) {
-                goalInstant = pathTarget;
-                minPathTime = path.duration();
-                break;
+                if(!minPathTime || path.duration() < *minPathTime) {
+                    goalInstant = pathTarget;
+                    minPathTime = path.duration();
+                }
             }
             distance += *_searchIncDist;
-            double dt = RJ::Seconds(RJ::now() - t0).count();
             its++;
         }
-//        assert(RJ::Seconds(RJ::now()-curTime).count() < 0.1);
         printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-curTime).count(), its);
         return goalInstant;
     }

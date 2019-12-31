@@ -106,8 +106,7 @@ class SubmissiveGoalie(
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
         if not self.has_subbehavior_with_name('intercept'):
-            pass
-            # self.robot.face(main.ball().pos)
+            self.robot.face(main.ball().pos)
         self.robot.set_planning_priority(planning_priority.GOALIE)
 
     def execute_clear(self):

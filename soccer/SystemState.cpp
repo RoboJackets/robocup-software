@@ -15,14 +15,6 @@ using namespace Planning;
 using namespace Geometry2d;
 using Planning::MotionInstant;
 
-/*
-std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
-    auto path = std::make_unique<BallPath>(*this);
-    path->setStartTime(startTime);
-    return std::move(path);
-}
- */
-
 constexpr auto ballDecayConstant = 0.180;
 
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {

@@ -26,7 +26,7 @@ namespace Planning {
     using Geometry2d::Pose;
     using Geometry2d::Twist;
 
-
+    // todo(Ethan) use pathGoal heading and angular velocity?
     Trajectory PathTargetPlanner::plan(PlanRequest &&request) {
         //setup angle function and motion command
         AngleFunction angleFunction;
@@ -104,7 +104,6 @@ namespace Planning {
     }
 
     Trajectory PathTargetPlanner::reuse(PlanRequest&& request) {
-        printf("reuse ");
         if (request.prevTrajectory.empty()) {
             return Trajectory{{request.start}};
         } else {
@@ -120,7 +119,6 @@ namespace Planning {
     }
 
     Trajectory PathTargetPlanner::checkBetter(PlanRequest&& request, AngleFunction angleFunction) {
-        printf("checkbetter ");
         Trajectory& prevTrajectory = request.prevTrajectory;
         std::shared_ptr<RoboCupStateSpace> stateSpace = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, std::move(request.static_obstacles));
         RobotInstant goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
@@ -143,7 +141,6 @@ namespace Planning {
     }
 
     Trajectory PathTargetPlanner::partialReplan(PlanRequest&& request, AngleFunction angleFunction) {
-        printf("partial ");
         RobotInstant goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
         Trajectory& prevTrajectory = request.prevTrajectory;
         std::vector<Point> biasWaypoints;
@@ -166,7 +163,6 @@ namespace Planning {
     }
 
     Trajectory PathTargetPlanner::fullReplan(PlanRequest&& request, AngleFunction angleFunction) {
-        printf("full ");
         const RobotInstant& goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
         Trajectory path = RRTTrajectory(request.start, goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles);
         if(path.empty()) {
