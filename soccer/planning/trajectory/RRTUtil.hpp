@@ -45,7 +45,7 @@ void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
 std::vector<Geometry2d::Point> GenerateRRT(
         Geometry2d::Point start,
         Geometry2d::Point goal,
-        const std::shared_ptr<RoboCupStateSpace>& state_space,
+        const Geometry2d::ShapeSet& obstacles,
         const std::vector<Geometry2d::Point>& waypoints = {});
 
 Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});

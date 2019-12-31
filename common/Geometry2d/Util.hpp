@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 
 #ifndef M_PI
 #define M_PI 3.141592653589793
@@ -32,11 +32,4 @@ static inline T sign(T f) {
 static const float FLOAT_EPSILON = 0.00001;
 static bool nearlyEqual(float a, float b) {
     return std::fabs(a - b) < FLOAT_EPSILON;
-}
-
-/** Returns @value if it is in bounds, otherwise returns the bound it is closest
- * to */
-template <class T>
-T clamp(T value, T min, T max) {
-    return std::max(min, std::min(max, value));
 }

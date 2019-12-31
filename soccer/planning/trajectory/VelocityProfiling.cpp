@@ -8,9 +8,8 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
-double limitAccel(double v1, double v2, double deltaX, double maxAccel) {
-    double maxV2 = std::sqrt(pow(v1, 2) + 2 * maxAccel * deltaX);
-    return std::min(v2, maxV2);
+inline double limitAccel(double v1, double v2, double deltaX, double maxAccel) {
+    return std::min(v2, std::sqrt(pow(v1, 2) + 2 * maxAccel * deltaX));
 }
 
 Trajectory ProfileVelocity(const BezierPath& path,
@@ -18,6 +17,9 @@ Trajectory ProfileVelocity(const BezierPath& path,
                            double final_speed,
                             const MotionConstraints& constraints,
                             RJ::Time initial_time) {
+    if(path.empty()) {
+        return Trajectory{{}};
+    }
     // number of points used to interpolate each bezier segment
     constexpr int interpolations = 40;
     // number of cubic bezier segments
@@ -74,17 +76,19 @@ Trajectory ProfileVelocity(const BezierPath& path,
         speed[n - 1] = limitAccel(speed[n], speed[n - 1], distance, maxTangentAccel);
     }
 
-    std::list<RobotInstant> instants;
-    for (int n = 0; n < num_points; n++) {
+    Trajectory trajectory{{}};
+    trajectory.AppendInstant(RobotInstant{Pose{points[0], 0}, Twist{derivs1[0].normalized(speed[0]), 0}, initial_time});
+    RJ::Time current_time = initial_time;
+    for (int n = 1; n < num_points; n++) {
         double distance = (points[n] - points[n - 1]).mag();
         double vbar = (speed[n] + speed[n - 1]) / 2;
         assert(vbar != 0);
         double t_sec = distance / vbar;
-        RJ::Time current_time = initial_time + RJ::Seconds(t_sec);
+        current_time = current_time + RJ::Seconds(t_sec);
         // Add point n in
-        instants.emplace_back(Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), current_time);
+        trajectory.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), current_time});
     }
-    return Trajectory{std::move(instants)};
+    return std::move(trajectory);
 }
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& start_instant,

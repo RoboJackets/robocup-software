@@ -4,6 +4,8 @@
 #include "planning/trajectory/RRTUtil.hpp"
 #include "VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
+#include <rrt/planning/Path.hpp>
+
 
 using Planning::Trajectory;
 using Planning::RobotInstant;
@@ -257,8 +259,25 @@ TEST(Trajectory, Efficiency) {
     Trajectory traj = ProfileVelocity(bezier, 0, 0, mot);
     printf("time for Bezier, Profile: %.6f\n", RJ::Seconds(RJ::now()-effTestStartTime).count());
 
-    RJ::Time t0 = RJ::now();
     ShapeSet obs;
+
+    RJ::Time t0 = RJ::now();
+    auto state_space = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obs);
+    RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
+    biRRT.setStartState(Point{0,0});
+    biRRT.setGoalState(Point{1,1});
+    biRRT.setStepSize(0.15);
+    biRRT.setMinIterations(100);
+    biRRT.setMaxIterations(250);
+    biRRT.setGoalBias(0.3);
+    printf("ConfigTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
+    biRRT.run();
+    vector<Point> points = biRRT.getPath();
+    RRT::SmoothPath(points, *state_space);
+    printf("RRTTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
+
+
+    t0 = RJ::now();
     RRTTrajectory(RobotInstant{{{0,0},0}, {}, RJ::now()},
                   RobotInstant{{{1,1},0},{},RJ::now()},
                   mot, obs);
@@ -270,4 +289,25 @@ TEST(Trajectory, Efficiency) {
             RobotInstant{{{1,1},0},{},RJ::now()},
             mot, obs);
     printf("time for RRTTrajectory obstructed: %.6f\n", RJ::Seconds(RJ::now()-t0).count());
+}
+
+TEST(RRT, Time) {
+    using namespace std;
+    using namespace Planning;
+    using namespace Geometry2d;
+    RJ::Time t0 = RJ::now();
+    ShapeSet obs;
+    auto state_space = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obs);
+    RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
+    biRRT.setStartState(Point{0,0});
+    biRRT.setGoalState(Point{1,1});
+    biRRT.setStepSize(0.15);
+    biRRT.setMinIterations(100);
+    biRRT.setMaxIterations(250);
+    biRRT.setGoalBias(0.3);
+    printf("ConfigTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
+    biRRT.run();
+    vector<Point> points = biRRT.getPath();
+    RRT::SmoothPath(points, *state_space);
+    printf("RRTTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
 }

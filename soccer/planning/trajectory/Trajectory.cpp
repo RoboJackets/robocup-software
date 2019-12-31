@@ -108,6 +108,12 @@ namespace Planning {
 
         // s in [0, 1] is the interpolation factor.
         double s = elapsed / dt;
+        if(std::abs(s) < 1e-6) {
+            s = 0;
+        }
+        if(std::abs(s - 1) < 1e-6) {
+            s = 1;
+        }
         assert(s >= 0 && s <= 1);
 
         Pose pose_0 = prev_entry.pose;

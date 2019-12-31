@@ -74,10 +74,14 @@ void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
 vector<Point> runRRTHelper(
         Point start,
         Point goal,
-        const std::shared_ptr<RoboCupStateSpace>& state_space,
+        const Geometry2d::ShapeSet& obstacles,
         const vector<Point>& waypoints,
         bool straightLine) {
+    RJ::Time t0 = RJ::now();
+    auto state_space = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obstacles);
+    printf("configuring RRT(1) %.6f\n", RJ::Seconds(RJ::now()-t0).count());
     RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
+    printf("configuring RRT(2): %.6f\n", RJ::Seconds(RJ::now()-t0).count());
     biRRT.setStartState(start);
     biRRT.setGoalState(goal);
 
@@ -92,50 +96,57 @@ vector<Point> runRRTHelper(
         biRRT.setMinIterations(0);
         biRRT.setMaxIterations(5);
     } else {
-        biRRT.setStepSize(*RRTConfig::StepSize);
-        biRRT.setMinIterations(*RRTConfig::MinIterations);
-        biRRT.setMaxIterations(*RRTConfig::MaxIterations);
-        biRRT.setGoalBias(*RRTConfig::GoalBias);
+        biRRT.setStepSize(0.15);
+        biRRT.setMinIterations(100);
+        biRRT.setMaxIterations(250);
+        biRRT.setGoalBias(0.3);
 
-        if (!waypoints.empty()) {
-            biRRT.setWaypoints(waypoints);
-            biRRT.setWaypointBias(*RRTConfig::WaypointBias);
-        }
+//        if (!waypoints.empty()) {
+//            biRRT.setWaypoints(waypoints);
+//            biRRT.setWaypointBias(0.3);
+//        }
     }
+    printf("configuring RRT(3) %d %d: %.6f\n",biRRT.minIterations(), biRRT.maxIterations(), RJ::Seconds(RJ::now()-t0).count());
+
+    t0 = RJ::now();
     bool success = biRRT.run();
+    printf("running RRT: %.6f\n", RJ::Seconds(RJ::now()-t0).count());
     if (!success) {
         return {};
     }
+    t0 = RJ::now();
     vector<Point> points = biRRT.getPath();
+    printf("getting path: %.6f\n", RJ::Seconds(RJ::now()-t0).count());
+
+    t0 = RJ::now();
+    RRT::SmoothPath(points, *state_space);
+    printf("smoothing path: %.6f\n", RJ::Seconds(RJ::now()-t0).count());
     return std::move(points);
 }
 
 vector<Point> GenerateRRT(
         Point start,
         Point goal,
-        const std::shared_ptr<RoboCupStateSpace>& state_space,
+        const Geometry2d::ShapeSet& obstacles,
         const vector<Point>& waypoints) {
     // note: we could just use state_space.transitionValid() for the straight
-    // line test, but this way is 1.5ms faster
-    vector<Point> straight = runRRTHelper(start, goal, state_space, waypoints, true);
+    // line test, but this runs quicker
+    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
     if(!straight.empty()) {
         return std::move(straight);
     }
-    return runRRTHelper(start, goal, state_space, waypoints, false);
+    return runRRTHelper(start, goal, obstacles, waypoints, false);
 }
 
 Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const vector<DynamicObstacle>& dynamic_obstacles, const vector<Point>& biasWaypoints) {
-    Geometry2d::ShapeSet statics = static_obstacles;
+    Geometry2d::ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};
     for(int i = 0; i < 10; i++) {
         printf("running RRT...\n");
-        auto space = std::make_shared<RoboCupStateSpace>(
-                Field_Dimensions::Current_Dimensions, statics);
         RJ::Time t0 = RJ::now();
         std::vector<Geometry2d::Point> points = GenerateRRT(
                 start.pose.position(), goal.pose.position(),
-                space, biasWaypoints);
-        RRT::SmoothPath(points, *space);
+                obstacles, biasWaypoints);
         printf("dt: %.6f num_points: %d\n", RJ::Seconds(RJ::now()-t0).count(), (int)points.size());
 
         t0=RJ::now();
@@ -150,14 +161,13 @@ Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, co
                                          motionConstraints,
                                          start.stamp);
         printf("dt: %.6f num_interpolations: %d\n", RJ::Seconds(RJ::now()-t0).count(), (int)path.num_instants());
-        //todo(Ethan) delete this?
-        if(path.num_instants() < 2) {
-            break;
-        }
 
         Geometry2d::Point hitPoint;
-        if(path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint, nullptr)) {
-            statics.add(std::make_shared<Circle>(hitPoint, Robot_Radius * 1.5));
+        t0 = RJ::now();
+        bool dynamic_hit = path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint, nullptr);
+        printf("dynamic_obs_check: %.6f\n", RJ::Seconds(RJ::now()-t0).count());
+        if(dynamic_hit) {
+            obstacles.add(std::make_shared<Circle>(hitPoint, Robot_Radius * 1.5));
         } else {
             break;
         }

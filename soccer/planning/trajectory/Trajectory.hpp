@@ -307,6 +307,7 @@ public:
 
     RobotInstant operator*() const {
         assert(iterator != _trajectory.instants_.end());
+        assert(hasValue());
         if (!hasNext()) {
             return _trajectory.last();
         }
