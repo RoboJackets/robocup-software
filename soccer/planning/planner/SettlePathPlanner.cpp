@@ -137,12 +137,13 @@ namespace Planning {
                                          curTime;
             RobotInstant pathTarget{Pose{targetPoint, targetAngle},
                                     Twist{targetVel, 0}, RJ::now()};
-            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
-//            path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
+//            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
+            path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
             if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime && fieldRect.containsPoint(futureBallPoint)) {
                 if(!minPathTime || path.duration() < *minPathTime) {
                     goalInstant = pathTarget;
                     minPathTime = path.duration();
+                    break;
                 }
             }
             distance += *_searchIncDist;

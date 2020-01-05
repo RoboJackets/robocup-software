@@ -39,10 +39,6 @@ namespace Gameplay {
 class GameplayModule;
 }
 
-namespace Planning {
-class RRTPlanner;
-}
-
 class Robot {
 public:
     Robot(Context* context, unsigned int shell, bool self);

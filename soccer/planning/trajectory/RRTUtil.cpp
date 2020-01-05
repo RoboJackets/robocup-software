@@ -118,6 +118,7 @@ vector<Point> GenerateRRT(
         Point goal,
         const Geometry2d::ShapeSet& obstacles,
         const vector<Point>& waypoints) {
+//    printf("runRRT (%.2f, %.2f) -> (%.2f, %.2f)\n", start.x(), start.y(), goal.x(), goal.y());
     // note: we could just use state_space.transitionValid() for the straight
     // line test, but this runs quicker
     vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
