@@ -118,9 +118,9 @@ namespace Planning {
     RobotInstant SettlePathPlanner::bruteForceGoal(const PlanRequest& request) {
         double distance = *_searchStartDist;
         const Ball& ball = request.context->state.ball;
-        Point targetPoint = ball.pos;
+        Point targetPoint;
         RobotInstant goalInstant = request.start;
-        Point targetVel = *averageBallVel * *_ballSpeedPercentForDampen;
+        Point targetVel;// = *averageBallVel * *_ballSpeedPercentForDampen;
         double targetAngle = fixAngleRadians(averageBallVel->angle() + M_PI);
         const Geometry2d::Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
         Point startPoint = request.start.pose.position();
@@ -135,11 +135,16 @@ namespace Planning {
                     ball.pos + averageBallVel->normalized(distance);
             RJ::Seconds futureBallTime = ball.estimateTimeTo(futureBallPoint, &targetPoint) -
                                          curTime;
+            if(!fieldRect.containsPoint(targetPoint)) {
+                targetPoint = projectPointIntoField(targetPoint, fieldRect, ball.pos);
+                goalInstant = RobotInstant{Pose{targetPoint, targetAngle}, Twist{targetVel, 0}, RJ::now()};
+                break;
+            }
             RobotInstant pathTarget{Pose{targetPoint, targetAngle},
                                     Twist{targetVel, 0}, RJ::now()};
 //            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
             path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
-            if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime && fieldRect.containsPoint(futureBallPoint)) {
+            if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime) {
                 if(!minPathTime || path.duration() < *minPathTime) {
                     goalInstant = pathTarget;
                     minPathTime = path.duration();

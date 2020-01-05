@@ -223,7 +223,7 @@ void OurRobot::lineKick(Point target) {
 
 void OurRobot::intercept(Point target) {
     if (!visible()) return;
-
+    //todo(Ethan) add the InterceptPlanner
     disableAvoidBall();
     setMotionCommand(std::make_unique<MotionCommand>(Planning::InterceptCommand{target}));
 }
