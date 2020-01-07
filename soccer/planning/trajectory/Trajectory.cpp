@@ -100,6 +100,8 @@ namespace Planning {
     }
 
     RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry, const RobotInstant& next_entry, RJ::Time time) {
+        assert(time >= prev_entry.stamp);
+        assert(time <= next_entry.stamp);
         RJ::Seconds dt = next_entry.stamp - prev_entry.stamp;
         if (dt == RJ::Seconds(0)) {
             return next_entry;

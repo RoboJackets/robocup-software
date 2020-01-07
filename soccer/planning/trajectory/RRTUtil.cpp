@@ -129,6 +129,9 @@ vector<Point> GenerateRRT(
 }
 
 Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const vector<DynamicObstacle>& dynamic_obstacles, const vector<Point>& biasWaypoints) {
+    if (start.pose.position().distTo(goal.pose.position()) < 1e-6) {
+        return Trajectory{{RobotInstant{start.pose, Twist(), RJ::now()}}};
+    }
     Geometry2d::ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};
     constexpr int attemptsToAvoidDynamics = 10;

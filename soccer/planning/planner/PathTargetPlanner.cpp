@@ -60,7 +60,8 @@ namespace Planning {
                                                                    prevGoal,
                                                                    request.static_obstacles);
         // Simple case: no path
-        if (request.start.pose.position() == goalPoint) {
+        //todo(Ethan) maybe delete this handle it in RRTTrajectory() ?
+        if (request.start.pose.position().distTo(goalPoint) < 1e-6) {
             std::list<RobotInstant> instants;
             instants.emplace_back(request.start.pose, Twist(), RJ::now());
             Trajectory result{std::move(instants)};
@@ -86,16 +87,18 @@ namespace Planning {
         }
         if (shouldPartialReplan) {
             if (invalidTime - timeIntoTrajectory < RJ::Seconds(*_partialReplanLeadTime) * 2) {
-//                if(!prevTrajectory.empty()) {
-//                    // This handles moving targets. We don't want to use request.start
-//                    // because repeatedly replanning using the robot's current instant
-//                    // causes the robot to wander off course
-//                    std::optional<RobotInstant> inst = prevTrajectory.evaluate(RJ::now());
-//                    if(inst) request.start = *inst;
-//                }
                 return fullReplan(std::move(request), angleFunction);
             }
             return partialReplan(std::move(request), angleFunction);
+        }
+        // make fine corrections when we are realy close to the target
+        // because the old target might be a bit off
+        if(request.start.pose.position().distTo(goalPoint) < Robot_Radius) {
+            std::optional<RobotInstant> nowInstant = prevTrajectory.evaluate(RJ::now());
+            if (nowInstant) {
+                request.start = *nowInstant;
+                return fullReplan(std::move(request), angleFunction);
+            }
         }
         if (RJ::now() - prevTimes[request.shellID] > 0.2s && timeRemaining > RJ::Seconds(*_partialReplanLeadTime * 2)) {
             return checkBetter(std::move(request), angleFunction);

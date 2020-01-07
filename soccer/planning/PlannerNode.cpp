@@ -60,6 +60,8 @@ void PlannerNode::run() {
         // Construct a plan request.
         if (robot->motionCommand()) {
             const RobotState &robotState = robot->state();
+            //todo(Ethan) delete this
+            assert(robotState.timestamp <= RJ::now());
             requests.emplace_back(
                     context_, RobotInstant{robotState.pose, robotState.velocity,
                                            robotState.timestamp},
@@ -125,10 +127,6 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
             if(path.empty()) {
                 path = Trajectory{{startInstant}};
                 debugLog("Empty Path. Planner: " + planners_[i]->name());
-            }
-            RJ::Seconds deltaTime{RJ::now() - t0};
-            if(deltaTime > 5ms) {
-//                debugLog("Planner " + planners_[i]->name() + " took " + std::to_string((int)(deltaTime.count()*1000)) + " ms");
             }
             return std::move(path);
         }

@@ -208,6 +208,11 @@ namespace Planning {
             // Fine --> Control
             state = CollectState::Control;
         }
+        // we are not near the ball and both almost stopped
+        if (ball.pos.distTo(startPoint) >= *_distCutoffToApproach + *_distCutoffToControl && state == CollectState::Control) {
+            // Course <-- Control
+            state = CollectState::Course;
+        }
         //TODO do something with ball sense?
     }
 

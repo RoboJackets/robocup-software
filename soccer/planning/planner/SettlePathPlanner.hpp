@@ -27,7 +27,7 @@ public:
 private:
     Trajectory intercept(PlanRequest&& request);
     Trajectory dampen(PlanRequest&& request);
-    RobotInstant bruteForceGoal(const PlanRequest& request);
+    Geometry2d::Point bruteForceGoal(const PlanRequest& request);
 
     void processStateTransitions(const Ball& ball, const OurRobot& robot, const RobotInstant& startInstant, SettleState& state);
 
@@ -36,6 +36,7 @@ private:
 
     PathTargetPlanner pathTargetPlanner;
 
+    static std::vector<std::optional<Geometry2d::Point>> averageGoalPoints;
     static std::vector<SettleState> settleStates;
     static std::vector<RJ::Time> planTimes;
 

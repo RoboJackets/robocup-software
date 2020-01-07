@@ -66,9 +66,9 @@ namespace Planning {
 
     std::vector<SettlePathPlanner::SettleState> SettlePathPlanner::settleStates{
             Num_Shells, SettleState::Intercept};
-
     std::vector<RJ::Time> SettlePathPlanner::planTimes{Num_Shells,
                                                        RJ::now() - 60s};
+    std::vector<std::optional<Point>> SettlePathPlanner::averageGoalPoints(Num_Shells);
 
     Trajectory SettlePathPlanner::plan(PlanRequest &&request) {
         SystemState &systemState = request.context->state;
@@ -115,18 +115,13 @@ namespace Planning {
     // where we check ever X distance along the ball velocity vector
     //
     // Disallow points outside the field
-    RobotInstant SettlePathPlanner::bruteForceGoal(const PlanRequest& request) {
+    Point SettlePathPlanner::bruteForceGoal(const PlanRequest& request) {
         double distance = *_searchStartDist;
         const Ball& ball = request.context->state.ball;
         Point targetPoint;
-        RobotInstant goalInstant = request.start;
-        Point targetVel;// = *averageBallVel * *_ballSpeedPercentForDampen;
         double targetAngle = fixAngleRadians(averageBallVel->angle() + M_PI);
         const Geometry2d::Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
         Point startPoint = request.start.pose.position();
-//        Point closestPoint = Geometry2d::Line{ball.pos, ball.pos + *averageBallVel}.nearestPoint(startPoint);
-//        distance = std::max(distance, (closestPoint.distTo(startPoint) / request.constraints.mot.maxSpeed) * averageBallVel->mag());
-        std::optional<RJ::Seconds> minPathTime = std::nullopt;
         RJ::Time curTime = RJ::now();
         Trajectory path{{}};
         int its = 0;
@@ -137,36 +132,50 @@ namespace Planning {
                                          curTime;
             if(!fieldRect.containsPoint(targetPoint)) {
                 targetPoint = projectPointIntoField(targetPoint, fieldRect, ball.pos);
-                goalInstant = RobotInstant{Pose{targetPoint, targetAngle}, Twist{targetVel, 0}, RJ::now()};
                 break;
             }
             RobotInstant pathTarget{Pose{targetPoint, targetAngle},
-                                    Twist{targetVel, 0}, RJ::now()};
-//            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
-            path = pathTargetPlanner.planWithoutAngles(PlanRequest{request.context, request.start, PathTargetCommand{pathTarget},  request.constraints, Trajectory{{}}, request.static_obstacles, request.dynamic_obstacles, request.shellID});
+                                    {}, RJ::now()};
+            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
             if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime) {
-                if(!minPathTime || path.duration() < *minPathTime) {
-                    goalInstant = pathTarget;
-                    minPathTime = path.duration();
-                    break;
-                }
+                break;
             }
             distance += *_searchIncDist;
             its++;
         }
         printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-curTime).count(), its);
-        return goalInstant;
+        return targetPoint;
     }
 
     constexpr double rotAccelScale = 0.8; // range: [0,1]
     Trajectory SettlePathPlanner::intercept(PlanRequest &&request) {
-        request.static_obstacles.add(std::make_shared<Geometry2d::Circle>(request.context->state.ball.pos, Robot_Radius + Ball_Radius));
+        const Ball& ball = request.context->state.ball;
+        request.static_obstacles.add(std::make_shared<Geometry2d::Circle>(ball.pos, Robot_Radius + Ball_Radius));
         RobotInstant startInstant = request.start;
-        RobotInstant goalInstant = bruteForceGoal(request);
         RotationConstraints rotationConstraints = request.constraints.rot;
+        std::optional<Point>& averageGoalPoint = averageGoalPoints[request.shellID];
+        Point jitteryGoalPoint = bruteForceGoal(request);
+        if (averageGoalPoint) {
+            averageGoalPoint = jitteryGoalPoint;
+        } else {
+            averageGoalPoint = applyLowPassFilter(*averageGoalPoint,
+                                                    jitteryGoalPoint,
+                                                    *_targetPointGain);
+        }
+        double goalAngle = fixAngleRadians(averageBallVel->angle() + M_PI);
+        RobotInstant goalInstant{Pose{*averageGoalPoint, goalAngle},
+                                 Twist{*_ballSpeedPercentForDampen *
+                                       *averageBallVel, 0}, RJ::now()};
         //now use the PathTargetPlanner's mostly reliable replan strategy
-        PlanRequest pathTargetRequest{request.context, startInstant, PathTargetCommand{goalInstant}, request.constraints, std::move(request.prevTrajectory), request.static_obstacles, request.dynamic_obstacles, request.shellID};
-        Trajectory result = pathTargetPlanner.plan(std::move(pathTargetRequest));
+        PlanRequest pathTargetRequest{request.context, startInstant,
+                                      PathTargetCommand{goalInstant},
+                                      request.constraints,
+                                      std::move(request.prevTrajectory),
+                                      request.static_obstacles,
+                                      request.dynamic_obstacles,
+                                      request.shellID};
+        Trajectory result = pathTargetPlanner.plan(
+                std::move(pathTargetRequest));
         // Angle Planning strategy: steer tangent to the path for as long as
         // possible, then turn at max speed at the end of the path
         // the idea is that the robots move faster when tangent to their path
