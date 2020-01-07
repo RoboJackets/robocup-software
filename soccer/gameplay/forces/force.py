@@ -6,7 +6,6 @@ class Force(ABC):
     ## A maximum magnitude for this force
     highClip = None
 
-
     @abstractmethod
     def sample(self, clipped = True):
         return robocup.Point(0,0) 

@@ -7,13 +7,15 @@ class ForceVisualizer():
         self.context = main.context()
         self.force = force
 
-    def pointVisualize(self, point, force):
+    def pointVisualize(self, point):
         self.context.debug_drawer.draw_text("This is the forcce visualizer",robocup.Point(0, 0.5),(0, 0, 0), "hat")
-        self.context.debug_drawer.draw_circle()
+        self.context.debug_drawer.draw_circle("This is a circle", poin)
         self.context.debug_drawer.draw_segment()
         self.force.clipHigh
 
     def fieldVisualize(self, corner, xSize, ySize, interval):
         pass
+
+
 
 
