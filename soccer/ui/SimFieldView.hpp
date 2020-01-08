@@ -6,8 +6,8 @@
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <protobuf/grSim_Replacement.pb.h>
+#include <Context.hpp>
 
-#include <QUdpSocket>
 #include "FieldView.hpp"
 
 class SimFieldView : public FieldView {
@@ -15,8 +15,7 @@ class SimFieldView : public FieldView {
 
 public:
     SimFieldView(QWidget* parent = nullptr);
-
-    void sendSimCommand(const grSim_Packet& cmd);
+    void setContext(Context* context);
 
 Q_SIGNALS:
     // Emitted when the user selects a robot.
@@ -32,10 +31,6 @@ protected:
     virtual void drawTeamSpace(QPainter& p) override;
 
 private:
-    // Places the ball at a position on the screen
-    void placeBall(QPointF pos);
-
-    QUdpSocket _simCommandSocket;
 
     // True while a line is being dragged from the ball
     enum { DRAG_NONE = 0, DRAG_PLACE, DRAG_SHOOT } _dragMode;
@@ -44,4 +39,5 @@ private:
     int _dragRobotBlue;
     Geometry2d::Point _dragTo;
     Geometry2d::Point _shot;
+    Context* _context;
 };

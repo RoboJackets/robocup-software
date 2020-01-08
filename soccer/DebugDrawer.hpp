@@ -19,7 +19,7 @@ class Context;
 
 class DebugDrawer {
 public:
-    DebugDrawer(Context* context) : _context(context) {}
+    DebugDrawer(Context* context) : _context(context), _numDebugLayers(0) {}
 
     const QStringList& debugLayers() const { return _debugLayers; }
 
