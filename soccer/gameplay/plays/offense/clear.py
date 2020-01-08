@@ -6,6 +6,7 @@ import enum
 
 import standard_play
 import evaluation
+import situational_play_selection
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
@@ -59,6 +60,10 @@ class Clear(standard_play.StandardPlay):
             Clear.State.clear_ball, lambda: self.subbehavior_with_name(
                 'Capture ball').is_done_running(), 'After ball is captured')
 
+    @classmethod
+    def score(cls):
+        return 10
+
     def on_enter_get_ball(self):
         self.remove_all_subbehaviors()
         #Capture the ball and move robot up
@@ -88,10 +93,3 @@ class Clear(standard_play.StandardPlay):
             skills.move.Move(self.offense_points[1 - num]),
             'keep moving',
             required=False)
-
-        # count = 0
-        # for k in self.offense_points:
-        #     count+=1
-        #     self.add_subbehavior(skills.move.Move(k),
-        #                         'move to point ' + str(count) + ' 2',
-        #                         required = False, priority = 1)
