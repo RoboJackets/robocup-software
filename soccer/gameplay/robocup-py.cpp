@@ -931,6 +931,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("draw_line", &DebugDrawer_draw_line)
         .def("draw_line", &DebugDrawer_draw_segment)
         .def("draw_segment", &DebugDrawer_draw_segment)
+        .def("draw_segment_from_points", &DebugDrawer_draw_segment_from_points)
         .def("draw_polygon", &DebugDrawer_draw_polygon)
         .def("draw_arc", &DebugDrawer_draw_arc)
         .def("draw_raw_polygon", &DebugDrawer_draw_raw_polygon)
