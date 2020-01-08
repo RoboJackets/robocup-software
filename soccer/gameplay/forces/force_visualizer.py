@@ -31,6 +31,9 @@ class ForceVisualizer():
     
         points = list()
 
+        #This functionality is basically duplicated in force.py I think
+        #It should probably just be there.
+
         for x in arange(0, xSize, interval):
             for y in arange(0, ySize, interval):
                 points.append(robocup.Point(corner + robocup.Point(x, y)))
