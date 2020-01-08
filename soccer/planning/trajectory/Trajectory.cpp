@@ -267,7 +267,7 @@ namespace Planning {
         // Copy until the time is greater than or equal to endTime. Noninclusive
         // because we always copy eval(endTime)
         RJ::Time absolute_end_time = begin_time() + endTime;
-        RobotInstant instantBeforeEnd = *instants_it;
+        RobotInstant instantBeforeEnd = *std::prev(instants_it);
         while ((*instants_it).stamp < absolute_end_time) {
             instants.push_back(*instants_it);
             instantBeforeEnd = *instants_it;
