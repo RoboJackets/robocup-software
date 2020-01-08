@@ -111,19 +111,11 @@ class TestSystem:
         pos = self._testNode.test.ballPosition
         vel = self._testNode.test.ballVelocity
 
-        ## TODO: The plan is to move this coordinate transform 
-        ## to the C++ layer, closer to where the coordinates are
-        ## sent to GrSim, this is just a stopgap
-
-        pos = robocup.Point(1 * pos.y - (constants.Field.Length / 2), -1 * pos.x)
-        vel = robocup.Point(1 * vel.y, -1 * vel.x)
-        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
         return [pos.x, pos.y, vel.x, vel.y]
 
     def parsePlayList(self, play_list):
         plays = []
-        
+
         for play in play_list:
             play = play.strip()
 
@@ -133,7 +125,7 @@ class TestSystem:
                     plays.extend(load_from_file("./soccer/gameplay/playbooks/" + play))
                 else:
                     plays.append(play.split('/'))
-       
+
         #Currently duplicates are allowed and it dosen't seem to cause any problems
 
         return plays
