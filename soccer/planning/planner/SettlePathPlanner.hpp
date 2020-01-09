@@ -14,6 +14,8 @@ class SettlePathPlanner : public PlannerForCommandType<SettleCommand> {
 public:
     Trajectory plan(PlanRequest&& request) override;
 
+    static Geometry2d::Point bruteForceGoal(const PlanRequest& request, Geometry2d::Point avgBallVel);
+
     static void createConfiguration(Configuration* cfg);
 
     std::string name() const override {
@@ -27,15 +29,15 @@ public:
 private:
     Trajectory intercept(PlanRequest&& request);
     Trajectory dampen(PlanRequest&& request);
-    Geometry2d::Point bruteForceGoal(const PlanRequest& request);
 
     void processStateTransitions(const Ball& ball, const OurRobot& robot, const RobotInstant& startInstant, SettleState& state);
 
     // Intercept Target Filtering Variables
+    //todo(Ethan) delete averageBallVel?
     std::optional<Geometry2d::Point> averageBallVel;
 
     PathTargetPlanner pathTargetPlanner;
-
+    //todo(Ethan) delete these static variables make them members, other planners too
     static std::vector<std::optional<Geometry2d::Point>> averageGoalPoints;
     static std::vector<SettleState> settleStates;
     static std::vector<RJ::Time> planTimes;

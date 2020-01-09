@@ -111,42 +111,6 @@ namespace Planning {
         }
     }
 
-    // Try find best point to intercept using brute force method
-    // where we check ever X distance along the ball velocity vector
-    //
-    // Disallow points outside the field
-    Point SettlePathPlanner::bruteForceGoal(const PlanRequest& request) {
-        double distance = *_searchStartDist;
-        const Ball& ball = request.context->state.ball;
-        Point targetPoint;
-        double targetAngle = fixAngleRadians(averageBallVel->angle() + M_PI);
-        const Geometry2d::Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
-        Point startPoint = request.start.pose.position();
-        RJ::Time curTime = RJ::now();
-        Trajectory path{{}};
-        int its = 0;
-        while (distance < *_searchEndDist) {
-            Point futureBallPoint =
-                    ball.pos + averageBallVel->normalized(distance);
-            RJ::Seconds futureBallTime = ball.estimateTimeTo(futureBallPoint, &targetPoint) -
-                                         curTime;
-            if(!fieldRect.containsPoint(targetPoint)) {
-                targetPoint = projectPointIntoField(targetPoint, fieldRect, ball.pos);
-                break;
-            }
-            RobotInstant pathTarget{Pose{targetPoint, targetAngle},
-                                    {}, RJ::now()};
-            path = RRTTrajectory(request.start, pathTarget, request.constraints.mot, request.static_obstacles);
-            if(!path.empty() && path.duration() * *_interceptBufferTime <= futureBallTime) {
-                break;
-            }
-            distance += *_searchIncDist;
-            its++;
-        }
-        printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-curTime).count(), its);
-        return targetPoint;
-    }
-
     constexpr double rotAccelScale = 0.8; // range: [0,1]
     Trajectory SettlePathPlanner::intercept(PlanRequest &&request) {
         const Ball& ball = request.context->state.ball;
@@ -154,7 +118,7 @@ namespace Planning {
         RobotInstant startInstant = request.start;
         RotationConstraints rotationConstraints = request.constraints.rot;
         std::optional<Point>& averageGoalPoint = averageGoalPoints[request.shellID];
-        Point jitteryGoalPoint = bruteForceGoal(request);
+        Point jitteryGoalPoint = bruteForceGoal(request, *averageBallVel);
         if (averageGoalPoint) {
             averageGoalPoint = jitteryGoalPoint;
         } else {

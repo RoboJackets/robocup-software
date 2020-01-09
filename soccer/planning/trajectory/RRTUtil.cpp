@@ -161,35 +161,4 @@ Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, co
     return std::move(path);
 }
 
-Point projectPointIntoField(Point targetPoint, const Geometry2d::Rect& fieldRect, Point ballPoint){
-    auto intersectReturn = fieldRect.intersects(Geometry2d::Segment(ballPoint, targetPoint));
-
-    bool validIntersect = std::get<0>(intersectReturn);
-    std::vector<Point> intersectPts = std::get<1>(intersectReturn);
-
-    // If the ball intersects the field at some point
-    // Just get the intersect point as the new target
-    if (validIntersect) {
-        // Sorts based on distance to intercept target
-        // The closest one is the intercept point which the ball moves
-        // through leaving the field Not the one on the other side of the
-        // field
-        // Choose a point just inside the field
-        targetPoint = *std::min_element(intersectPts.begin(), intersectPts.end(), [&](Point a, Point b) {
-            return (a - targetPoint).mag() <
-                   (b - targetPoint).mag();
-        });
-
-        // Doesn't intersect
-        // project the ball into the field
-    } else {
-        // Simple projection
-        targetPoint.x() = std::clamp(targetPoint.x(),
-                                     (double)fieldRect.minx(), (double)fieldRect.maxx());
-        targetPoint.y() = std::clamp(targetPoint.y(),
-                                     (double)fieldRect.miny(), (double)fieldRect.maxy());
-    }
-    return targetPoint;
-}
-
 }

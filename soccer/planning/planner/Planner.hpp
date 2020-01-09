@@ -25,7 +25,7 @@ public:
      * @param request The request to plan.
      * @return A trajectory for the robot to follow.
      */
-    virtual Trajectory plan(PlanRequest&& request) = 0;
+    virtual Trajectory plan(PlanRequest&& request) = 0;//todo(Ethan) maybe return just a RobotInstant bc ROS
 
     /**
      * checks if the robot is off the desired path
