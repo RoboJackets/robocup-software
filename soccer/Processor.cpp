@@ -259,15 +259,14 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
  * program loop
  */
 void Processor::run() {
-    Status curStatus;
 
     bool first = true;
     // main loop
     while (_running) {
         RJ::Time startTime = RJ::now();
-        auto deltaTime = startTime - curStatus.lastLoopTime;
+        auto deltaTime = startTime - _context.lastLoopTime;
         _framerate = RJ::Seconds(1) / deltaTime;
-        curStatus.lastLoopTime = startTime;
+        _context.lastLoopTime = startTime;
         _context.state.time = startTime;
 
         if (!firstLogTime) {
@@ -341,7 +340,7 @@ void Processor::run() {
             SSL_WrapperPacket* log = _context.state.logFrame->add_raw_vision();
             log->CopyFrom(packet->wrapper);
 
-            curStatus.lastVisionTime = packet->receivedTime;
+            _context.lastVisionTime = packet->receivedTime;
 
             // If packet has geometry data, attempt to read information and
             // update if changed.
@@ -408,7 +407,7 @@ void Processor::run() {
             Packet::RadioRx rx = _radio->popReversePacket();
             _context.state.logFrame->add_radio_rx()->CopyFrom(rx);
 
-            curStatus.lastRadioRxTime =
+            _context.lastRadioRxTime =
                 RJ::Time(chrono::microseconds(rx.timestamp()));
 
             // Store this packet in the appropriate robot
@@ -437,8 +436,8 @@ void Processor::run() {
         for (NewRefereePacket* packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
-            curStatus.lastRefereeTime =
-                std::max(curStatus.lastRefereeTime, packet->receivedTime);
+            _context.lastRefereeTime =
+                std::max(_context.lastRefereeTime, packet->receivedTime);
             delete packet;
         }
 
@@ -646,11 +645,6 @@ void Processor::run() {
         if (_readLogFile.empty() && !_paused) {
             _logger.addFrame(_context.state.logFrame);
         }
-
-        // Store processing loop status
-        _statusMutex.lock();
-        _status = curStatus;
-        _statusMutex.unlock();
 
         // Processor Initialization Completed
         _initialized = true;
