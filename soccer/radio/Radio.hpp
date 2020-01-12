@@ -28,6 +28,7 @@ public:
 
     /** send out the radio data for the radio program */
     void sendRadioData();
+    vector<int> getJoystickRobotIds();
 
     int channel() const { return _channel; }
 

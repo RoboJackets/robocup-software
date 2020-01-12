@@ -16,6 +16,7 @@ Radio::Radio(Context* context, bool sim)
             : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 
     _multipleManual = false;
+    _manualID = -1;
 }
 
 void Radio::run(){
@@ -109,4 +110,16 @@ void Radio::sendRadioData() {
                            _context.robot_intents, _context.motion_setpoints);
         _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
+}
+
+vector<int> Radio::getJoystickRobotIds() {
+    vector<int> robotIds;
+    for (Joystick* joy : _context.joysticks) {
+        if (joy->valid()) {
+            robotIds.push_back(joy->getRobotId());
+        } else {
+            robotIds.push_back(-2);
+        }
+    }
+    return robotIds;
 }
