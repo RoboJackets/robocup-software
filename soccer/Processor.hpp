@@ -59,14 +59,6 @@ class MultiRobotPathPlanner;
  */
 class Processor : public QThread {
 public:
-    struct Status {
-        Status() {}
-
-        RJ::Time lastLoopTime;
-        RJ::Time lastVisionTime;
-        RJ::Time lastRefereeTime;
-        RJ::Time lastRadioRxTime;
-    };
 
     enum VisionChannel { primary, secondary, full };
 
@@ -142,11 +134,6 @@ public:
 
     void defendPlusX(bool value);
     bool defendPlusX() { return _defendPlusX; }
-
-    Status status() {
-        QMutexLocker lock(&_statusMutex);
-        return _status;
-    }
 
     float framerate() { return _framerate; }
 
@@ -261,7 +248,6 @@ private:
     // This is used by the GUI to indicate status of the processing loop and
     // network
     QMutex _statusMutex;
-    Status _status;
 
     // modules
     std::shared_ptr<VisionFilter> _vision;

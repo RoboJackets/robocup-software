@@ -1,0 +1,55 @@
+"C:\Program Files\JetBrains\CLion 2019.2.2\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - NMake Makefiles" C:\Users\thoma\OneDrive\RoboJackets\Repos\robocup-software
+-- The C compiler identification is MSVC 19.23.28105.4
+-- The CXX compiler identification is MSVC 19.23.28105.4
+-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx86/x86/cl.exe
+-- Check for working C compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx86/x86/cl.exe -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx86/x86/cl.exe
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx86/x86/cl.exe -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+CMake Error at C:/Program Files/JetBrains/CLion 2019.2.2/bin/cmake/win/share/cmake-3.15/Modules/ExternalProject.cmake:1535 (message):
+  error: do not know how to extract
+  'C:/Users/thoma/OneDrive/RoboJackets/Repos/robocup-software/external/googletest/googletest'
+  -- known types are .7z, .tar, .tar.bz2, .tar.gz, .tar.xz, .tbz2, .tgz, .txz
+  and .zip
+Call Stack (most recent call first):
+  C:/Program Files/JetBrains/CLion 2019.2.2/bin/cmake/win/share/cmake-3.15/Modules/ExternalProject.cmake:2602 (_ep_write_extractfile_script)
+  C:/Program Files/JetBrains/CLion 2019.2.2/bin/cmake/win/share/cmake-3.15/Modules/ExternalProject.cmake:3204 (_ep_add_download_command)
+  cmake/SetupGTest.cmake:4 (ExternalProject_Add)
+  CMakeLists.txt:14 (include)
+
+
+
+CMake Error at CMakeLists.txt:21 (add_subdirectory):
+  The source directory
+
+    C:/Users/thoma/OneDrive/RoboJackets/Repos/robocup-software/external/grSim
+
+  does not contain a CMakeLists.txt file.
+
+
+CMake Error at CMakeLists.txt:56 (find_package):
+  By not providing "FindQt5Widgets.cmake" in CMAKE_MODULE_PATH this project
+  has asked CMake to find a package configuration file provided by
+  "Qt5Widgets", but CMake did not find one.
+
+  Could not find a package configuration file provided by "Qt5Widgets" with
+  any of the following names:
+
+    Qt5WidgetsConfig.cmake
+    qt5widgets-config.cmake
+
+  Add the installation prefix of "Qt5Widgets" to CMAKE_PREFIX_PATH or set
+  "Qt5Widgets_DIR" to a directory containing one of the above files.  If
+  "Qt5Widgets" provides a separate development package or SDK, be sure it has
+  been installed.
+
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/thoma/OneDrive/RoboJackets/Repos/robocup-software/cmake-build-debug/CMakeFiles/CMakeOutput.log".
