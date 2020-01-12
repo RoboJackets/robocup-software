@@ -32,6 +32,19 @@ public:
 
     Radio* _radio;
 
+    // True if we are running with a simulator.
+    // This changes network communications.
+    bool _simulation;
+
+    // True if we are blue.
+    // False if we are yellow.
+    bool _blueTeam;
+
+    // Board ID of the robot to manually control or -1 if none
+    int _manualID;
+    // Use multiple joysticks at once
+    bool _multipleManual;
+
     int channel() const { return _channel; }
 
     bool hasReversePackets() {
