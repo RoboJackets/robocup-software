@@ -188,7 +188,7 @@ void Processor::blueTeam(bool value) {
 
     if (_blueTeam != value) {
         _blueTeam = value;
-        if (_radio) _radio->switchTeam(_blueTeam);
+        if (_radio->_radio) _radio->_radio->switchTeam(_blueTeam);
 
         // Try to set the team in the referee module.
         // Note: this will not update if we are being referee controlled.
@@ -853,5 +853,5 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     _gameplayModule->updateFieldDimensions();
 }
 
-bool Processor::isRadioOpen() const { return _radio->isOpen(); }
+bool Processor::isRadioOpen() const { return _radio->_radio->isOpen(); }
 bool Processor::isInitialized() const { return _initialized; }

@@ -30,6 +30,8 @@ public:
     void sendRadioData();
     vector<int> getJoystickRobotIds();
 
+    Radio* _radio;
+
     int channel() const { return _channel; }
 
     bool hasReversePackets() {
