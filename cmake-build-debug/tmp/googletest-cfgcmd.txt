@@ -1,1 +1,0 @@
-cmd='C:/Program Files/JetBrains/CLion 2019.2.2/bin/cmake/win/bin/cmake.exe;-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs;-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs;-GCodeBlocks - NMake Makefiles;<SOURCE_DIR><SOURCE_SUBDIR>'

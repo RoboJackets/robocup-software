@@ -1,3 +1,0 @@
-repository='external project URL'
-module='C:/Users/thoma/OneDrive/RoboJackets/Repos/robocup-software/external/googletest/googletest'
-tag=''
