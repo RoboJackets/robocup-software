@@ -26,6 +26,9 @@ public:
 
     void run() override;
 
+    /** send out the radio data for the radio program */
+    void sendRadioData();
+
     int channel() const { return _channel; }
 
     bool hasReversePackets() {

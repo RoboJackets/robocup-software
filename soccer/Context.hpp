@@ -36,9 +36,12 @@ struct Context {
     std::optional<QPointF> ball_command;
     std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
 
-    //"Status"
+    //"Processor Status"
     RJ::Time lastLoopTime;
     RJ::Time lastVisionTime;
     RJ::Time lastRefereeTime;
     RJ::Time lastRadioRxTime;
+
+    //Joysticks
+    std::vector<Joystick*> joysticks;
 };

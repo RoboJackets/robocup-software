@@ -188,9 +188,6 @@ private:
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;
 
-    /** send out the radio data for the radio program */
-    void sendRadioData();
-
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
     void runModels(const std::vector<const SSL_DetectionFrame*>& detectionFrames);
