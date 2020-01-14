@@ -45,6 +45,9 @@ public:
     // Use multiple joysticks at once
     bool _multipleManual;
 
+    //Joysticks
+    std::vector<Joystick*> _joysticks;
+
     int channel() const { return _channel; }
 
     bool hasReversePackets() {

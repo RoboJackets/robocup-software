@@ -6,10 +6,15 @@
 #include "radio/SimRadio.hpp"
 #include "Radio.hpp"
 
-Radio::Radio(Context* context, bool sim, bool blueTeam, bool multipleManual, int manualID,
-             std::vector<Joystick*> joys)
-    : _context(context), _simulation(sim), _blueTeam(blueTeam), _multipleManual(multipleManual), _manualID(manualID),
-    _joysticks(joys){
+Radio::Radio(Context* context, bool sim, bool blueTeam, bool multipleManual, int manualID, std::vector<Joystick*> joys)
+    : _context(context){
+
+    _simulation = sim;
+    _blueTeam = blueTeam;
+    _multipleManual = multipleManual;
+    _manualID = manualID;
+    _joysticks = joys;
+
     // Create radio socket
     _radio =
             _simulation
