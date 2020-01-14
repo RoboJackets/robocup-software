@@ -2,6 +2,7 @@
 
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
+#include "Node.hpp"
 
 #include <mutex>
 #include <deque>
@@ -14,7 +15,7 @@
  */
 class Radio : public Node {
 public:
-    Radio(Context* context, bool sim) { _channel = 0; }
+    Radio(Context* context, bool sim, bool blueTeam, bool multipleManual, int manualID, std::vector<Joystick*> joys) { _channel = 0; }
 
     virtual bool isOpen() const = 0;
     virtual void send(Packet::RadioTx& radioTx) = 0;
@@ -28,7 +29,7 @@ public:
 
     /** send out the radio data for the radio program */
     void sendRadioData();
-    vector<int> getJoystickRobotIds();
+    std::vector<int> getJoystickRobotIds();
 
     Radio* _radio;
 
@@ -66,7 +67,9 @@ public:
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
         _reversePackets.clear();
     }
-
+private:
+    Context* _context;
+    
 protected:
     // A queue for the reverse packets as they come in through libusb.
     // Access to this queue should be controlled by locking the mutex.

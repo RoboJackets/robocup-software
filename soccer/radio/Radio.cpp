@@ -115,8 +115,8 @@ void Radio::sendRadioData() {
     }
 }
 
-vector<int> Radio::getJoystickRobotIds() {
-    vector<int> robotIds;
+std::vector<int> Radio::getJoystickRobotIds() {
+    std::vector<int> robotIds;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
             robotIds.push_back(joy->getRobotId());
