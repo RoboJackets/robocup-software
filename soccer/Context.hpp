@@ -41,7 +41,4 @@ struct Context {
     RJ::Time lastVisionTime;
     RJ::Time lastRefereeTime;
     RJ::Time lastRadioRxTime;
-
-    //Joysticks
-    std::vector<Joystick*> joysticks;
 };
