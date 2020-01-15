@@ -91,8 +91,10 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
-    _radio = std::make_unique<Radio>(&_context, _simulation, _blueTeam);
-
+    _radio =
+            _simulation
+            ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
+            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
     _visionChannel = visionChannel;
 
 

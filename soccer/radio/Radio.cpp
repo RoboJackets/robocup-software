@@ -1,24 +1,11 @@
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
-#include "radio/NetworkRadio.hpp"
 #include "radio/PacketConvert.hpp"
 #include "soccer/Processor.hpp"
-#include "radio/SimRadio.hpp"
 #include "Radio.hpp"
 
-Radio::Radio(Context* context, bool sim, bool blueTeam)
+Radio::Radio(Context* context)
     : _context(context){
-
-    _simulation = sim;
-    _blueTeam = blueTeam;
-    _multipleManual = multipleManual;
-    _manualID = manualID;
-
-    // Create radio socket
-    _radio =
-            _simulation
-            ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
-            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 }
 
 void Radio::run(){
