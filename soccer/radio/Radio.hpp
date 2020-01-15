@@ -4,6 +4,7 @@
 #include <protobuf/RadioTx.pb.h>
 #include "Node.hpp"
 
+#include <Context.hpp>
 #include <mutex>
 #include <deque>
 
@@ -69,7 +70,7 @@ public:
     }
 private:
     Context* _context;
-    
+
 protected:
     // A queue for the reverse packets as they come in through libusb.
     // Access to this queue should be controlled by locking the mutex.
