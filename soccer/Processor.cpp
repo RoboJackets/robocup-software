@@ -91,7 +91,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
-    _radio = std::make_unique<Radio>(&_context, _simulation, _blueTeam, _multipleManual, _manualID);
+    _radio = std::make_unique<Radio>(&_context, _simulation, _blueTeam);
 
     _visionChannel = visionChannel;
 
@@ -171,7 +171,6 @@ void Processor::setupJoysticks() {
         _joysticks.push_back(new GamepadController());
     }
 
-    _context.joysticks = &_joysticks;
     //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
     // isValid() is working properly
 }
@@ -850,17 +849,6 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
         vals.kickPower *= Max_Kick;
     }
     return vals;
-}
-std::vector<int> Processor::getJoystickRobotIds() {
-    std::vector<int> robotIds;
-    for (Joystick* joy : _joysticks) {
-        if (joy->valid()) {
-            robotIds.push_back(joy->getRobotId());
-        } else {
-            robotIds.push_back(-2);
-        }
-    }
-    return robotIds;
 }
 
 std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
