@@ -20,7 +20,7 @@
  */
 class NetworkRadio : public Radio {
 public:
-    NetworkRadio(int server_port);
+    NetworkRadio(Context* context, int server_port);
 
     virtual bool isOpen() const override;
 

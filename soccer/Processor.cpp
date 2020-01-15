@@ -94,7 +94,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _radio =
             _simulation
             ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
-            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
+            : static_cast<Radio*>(new NetworkRadio(&_context, NetworkRadioServerPort));
     _visionChannel = visionChannel;
 
 

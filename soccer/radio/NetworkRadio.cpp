@@ -7,9 +7,10 @@
 using namespace boost::asio;
 using ip::udp;
 
-NetworkRadio::NetworkRadio(int server_port)
+NetworkRadio::NetworkRadio(Context* context, int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
       _send_buffers(Robots_Per_Team) {
+    Radio(context);
     startReceive();
 }
 

@@ -12,7 +12,7 @@
 class SimRadio : public Radio {
 public:
     static std::size_t instance_count;
-    SimRadio(Context* const context, bool blueTeam = false);
+    SimRadio(Context* context, bool blueTeam = false);
 
     virtual bool isOpen() const override;
     virtual void send(Packet::RadioTx& radioTx) override;

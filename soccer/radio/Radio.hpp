@@ -16,7 +16,7 @@
  */
 class Radio : public Node {
 public:
-    Radio(Context* context, bool sim, bool blueTeam) { _channel = 0; }
+    Radio(Context* context) { _channel = 0; }
 
     virtual bool isOpen() const = 0;
     virtual void send(Packet::RadioTx& radioTx) = 0;
