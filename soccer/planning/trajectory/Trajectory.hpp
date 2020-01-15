@@ -60,6 +60,7 @@ public:
      * assumes a.last() == b.first() so b.first() is skipped
      * This copies all old RobotInstants, so don't use this with too many points
      * (see CompositePath for a more efficient way if needed)
+     * Time Complexity: Constant!
      */
     Trajectory(const Trajectory& a, const Trajectory& b);
     Trajectory(Trajectory&& a, Trajectory&& b);
@@ -112,12 +113,12 @@ public:
      *from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    bool hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime) const;
+    bool hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime = nullptr) const;
 
     bool intersects(const std::vector<DynamicObstacle>& obstacles,
                     RJ::Time startTime,
-                    Geometry2d::Point* hitLocation,
-                    RJ::Seconds* hitTime) const;
+                    Geometry2d::Point* hitLocation = nullptr,
+                    RJ::Seconds* hitTime = nullptr) const;
 
     /**
      * Contract or expand this trajectory by scaling velocities and timestamps
@@ -193,6 +194,14 @@ public:
      * @return a subTrajectory
      */
     Trajectory subTrajectory(RJ::Seconds startTime, RJ::Seconds endTime) const;
+
+    /**
+     * Delete instants in the trajectory before startTime and add a
+     * new intermediate point to the front if necessary.
+     *
+     * @param startTime start time
+     */
+    void trimFront(RJ::Seconds startTime);
 
     /**
      * Get the instant count. Intended for use when editing a trajectory in-

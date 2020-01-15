@@ -73,6 +73,7 @@ namespace Planning {
 
     void Trajectory::ScaleDuration(RJ::Seconds final_duration,
                                    RJ::Time fixed_point) {
+        assert(fixed_point >= begin_time() && fixed_point <= end_time());
         double multiplier = final_duration / duration();
 
         for (RobotInstant &instant : instants_) {
@@ -220,9 +221,6 @@ namespace Planning {
         }
         return false;
     }
-    //todo(Ethan) make this function more efficient, we shouldn't have to copy
-    //this will require being careful about how the subtrajectories are used though.
-    //and the combo trajectory constructors would need to be changed to l-value ref
     Trajectory Trajectory::subTrajectory(RJ::Seconds startTime,
                                          RJ::Seconds endTime) const {
         // Check for valid arguments
@@ -276,6 +274,23 @@ namespace Planning {
         RobotInstant instantAfterEnd = *instants_it;
         instants.push_back(interpolatedInstant(instantBeforeEnd, instantAfterEnd, absolute_end_time));
         return Trajectory{std::move(instants)};
+    }
+
+    void Trajectory::trimFront(RJ::Seconds startTime) {
+        if(startTime == 0s) {
+            return;
+        }
+        std::optional<RobotInstant> startInstant = evaluate(startTime);
+        if(!startInstant) {
+            debugThrow("failed to trim trajectory. startTime invalid.");
+            return;
+        }
+        while(!instants_.empty() && instants_.front().stamp < startInstant->stamp) {
+            instants_.pop_front();
+        }
+        if(startInstant->stamp < instants_.front().stamp) {
+            instants_.push_front(*startInstant);
+        }
     }
 
     Trajectory::TrajectoryIterator

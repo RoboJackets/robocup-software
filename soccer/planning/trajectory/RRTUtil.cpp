@@ -121,10 +121,11 @@ vector<Point> GenerateRRT(
 //    printf("runRRT (%.2f, %.2f) -> (%.2f, %.2f)\n", start.x(), start.y(), goal.x(), goal.y());
     // note: we could just use state_space.transitionValid() for the straight
     // line test, but this runs quicker
-    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
-    if(!straight.empty()) {
-        return std::move(straight);
-    }
+//    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
+//    if(!straight.empty()) {
+//        return std::move(straight);
+//    }
+    //todo(Ethan) get rid of this last parameter if we really don't need it
     return runRRTHelper(start, goal, obstacles, waypoints, false);
 }
 
@@ -132,6 +133,22 @@ Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, co
     if (start.pose.position().distTo(goal.pose.position()) < 1e-6) {
         return Trajectory{{RobotInstant{start.pose, Twist(), RJ::now()}}};
     }
+    //maybe we don't need an RRT
+    BezierPath straightBezier({start.pose.position(), goal.pose.position()},
+                          start.velocity.linear(),
+                          goal.velocity.linear(),
+                          motionConstraints);
+
+    Trajectory straightTrajectory = ProfileVelocity(straightBezier,
+                           start.velocity.linear().mag(),
+                           goal.velocity.linear().mag(),
+                           motionConstraints,
+                           start.stamp);
+    RJ::Time hitTime;
+    if(!straightTrajectory.hit(static_obstacles, 0s) && !straightTrajectory.intersects(dynamic_obstacles, start.stamp)) {
+        return std::move(straightTrajectory);
+    }
+
     Geometry2d::ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};
     constexpr int attemptsToAvoidDynamics = 10;
@@ -152,7 +169,7 @@ Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, co
                                          start.stamp);
 
         Geometry2d::Point hitPoint;
-        if(path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint, nullptr)) {
+        if(path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint)) {
             obstacles.add(std::make_shared<Circle>(hitPoint, Robot_Radius * 1.5));
         } else {
             break;

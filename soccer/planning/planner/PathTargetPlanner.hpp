@@ -31,6 +31,7 @@ public:
     static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
 private:
     Trajectory partialPath(const Trajectory& prevTrajectory) {
+        //todo(Ethan) cut out old parts of the path?
         return prevTrajectory.subTrajectory(0s, (RJ::now() - prevTrajectory.begin_time()) + getPartialReplanLeadTime());
     }
 
@@ -41,6 +42,7 @@ private:
 
     bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;
 
+    //todo(Ethan) delete these probably
     std::vector<RJ::Time> prevTimes;
     bool anglePlanningEnabled;
 

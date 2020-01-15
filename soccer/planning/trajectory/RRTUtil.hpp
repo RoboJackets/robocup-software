@@ -34,7 +34,7 @@ void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
  * Generate a path with BiRRT
  *
  * @param start The starting position.
- * @param goal The goal position.
+ * @param goal The goal position. (note: goal.stamp is unused)
  * @param obstacles the obstacles to avoid
  * @param waypoints A vector of points from a previous path. The RRT will be
  *      biased towards these points. If empty, they will be unused.
