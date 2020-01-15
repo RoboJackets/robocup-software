@@ -16,7 +16,7 @@
  */
 class Radio : public Node {
 public:
-    Radio(Context* context, bool sim, bool blueTeam, bool multipleManual, int manualID, std::vector<Joystick*> joys) { _channel = 0; }
+    Radio(Context* context, bool sim, bool blueTeam) { _channel = 0; }
 
     virtual bool isOpen() const = 0;
     virtual void send(Packet::RadioTx& radioTx) = 0;
@@ -30,7 +30,6 @@ public:
 
     /** send out the radio data for the radio program */
     void sendRadioData();
-    std::vector<int> getJoystickRobotIds();
 
     Radio* _radio;
 
@@ -41,14 +40,6 @@ public:
     // True if we are blue.
     // False if we are yellow.
     bool _blueTeam;
-
-    // Board ID of the robot to manually control or -1 if none
-    int _manualID;
-    // Use multiple joysticks at once
-    bool _multipleManual;
-
-    //Joysticks
-    std::vector<Joystick*> _joysticks;
 
     int channel() const { return _channel; }
 

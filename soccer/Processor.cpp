@@ -401,6 +401,7 @@ void Processor::run() {
             joystick->update();
         }
         GamepadController::joystickRemoved = -1;
+        _context.manualIds = getJoystickRobotIds();
 
         runModels(detectionFrames);
 
@@ -614,6 +615,65 @@ void Processor::run() {
         ////////////////
         // Outputs
 
+        //Send motion commands to robots
+        // Halt overrides normal motion control, but not joystick
+        if (_context.game_state.halt()) {
+            // Force all motor speeds to zero
+            for (OurRobot* r : _context.state.self) {
+                RobotIntent& intent = _context.robot_intents[r->shell()];
+                MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
+                setpoint.xvelocity = 0;
+                setpoint.yvelocity = 0;
+                setpoint.avelocity = 0;
+                intent.dvelocity = 0;
+                intent.kcstrength = 0;
+                intent.shoot_mode = RobotIntent::ShootMode::KICK;
+                intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
+                intent.song = RobotIntent::Song::STOP;
+            }
+        }
+
+        // Add RadioTx commands for visible robots and apply joystick input
+        std::vector<int> manualIds = getJoystickRobotIds();
+        for (OurRobot* r : _context.state.self) {
+            RobotIntent& intent = _context.robot_intents[r->shell()];
+            if (r->visible() || _manualID == r->shell() || _multipleManual) {
+                intent.is_active = true;
+                // MANUAL STUFF
+                if (_multipleManual) {
+                    auto info =
+                            find(manualIds.begin(), manualIds.end(), r->shell());
+                    int index = info - manualIds.begin();
+
+                    // figure out if this shell value has been assigned to a
+                    // joystick
+                    // do stuff with that information such as assign it to the first
+                    // available
+                    if (info == manualIds.end()) {
+                        for (int i = 0; i < manualIds.size(); i++) {
+                            if (manualIds[i] == -1) {
+                                index = i;
+                                _joysticks[i]->setRobotId(r->shell());
+                                manualIds[i] = r->shell();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (index < manualIds.size()) {
+                        applyJoystickControls(
+                                getJoystickControlValue(*_joysticks[index]), r);
+                    }
+                } else if (_manualID == r->shell()) {
+                    auto controlValues = getJoystickControlValues();
+                    if (controlValues.size()) {
+                        applyJoystickControls(controlValues[0], r);
+                    }
+                }
+            } else {
+                intent.is_active = false;
+            }
+        }
 
 
         // Write to the log unless we are viewing logs or main window is paused
@@ -790,6 +850,17 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
         vals.kickPower *= Max_Kick;
     }
     return vals;
+}
+std::vector<int> Processor::getJoystickRobotIds() {
+    std::vector<int> robotIds;
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) {
+            robotIds.push_back(joy->getRobotId());
+        } else {
+            robotIds.push_back(-2);
+        }
+    }
+    return robotIds;
 }
 
 std::vector<JoystickControlValues> Processor::getJoystickControlValues() {

@@ -41,4 +41,8 @@ struct Context {
     RJ::Time lastVisionTime;
     RJ::Time lastRefereeTime;
     RJ::Time lastRadioRxTime;
+
+    //Robot Ids from Joysticks
+    std::vector<int> manualIds;
+
 };
