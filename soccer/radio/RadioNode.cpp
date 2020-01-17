@@ -4,7 +4,8 @@
 #include "RadioNode.hpp"
 #include "SimRadio.hpp"
 
-RadioNode::RadioNode(Context *context, bool simulation, bool _blueTeam): _context(context) {
+RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam): _context(context) {
+    _blueTeam = blueTeam;
     _simulation = simulation;
     _radio = _simulation
              ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))

@@ -5,7 +5,7 @@
 
 class RadioNode : public Node {
 public:
-    RadioNode(Context* context, bool sim);
+    RadioNode(Context* context, bool sim, bool blueTeam);
 
     bool isOpen();
     void run() override;
