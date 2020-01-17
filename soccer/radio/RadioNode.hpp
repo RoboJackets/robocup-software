@@ -9,6 +9,7 @@ public:
 
     bool isOpen();
     RJ::Time getLastRadioRxTime();
+    Radio* getRadio();
     void run() override;
     void switchTeam(bool blueTeam);
 

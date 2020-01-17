@@ -17,8 +17,12 @@ bool RadioNode::isOpen() {
     return _radio.isOpen();
 }
 
-RJ::Time getLastRadioRxTime(){
+RJ::Time RadioNode::getLastRadioRxTime(){
     return _lastRadioRxTime;
+}
+
+Radio* RadioNode::getRadio(){
+    return _radio;
 }
 
 void RadioNode::switchTeam(bool blueTeam) {

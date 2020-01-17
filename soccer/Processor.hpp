@@ -21,6 +21,7 @@
 #include <SystemState.hpp>
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
+#include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
@@ -163,6 +164,8 @@ public:
     void useOpponentHalf(bool value) { _useOpponentHalf = value; }
 
     QMutex& loopMutex() { return _loopMutex; }
+
+    Radio* radio() { return _radio->getRadio(); }
 
     void changeVisionChannel(int port);
 
