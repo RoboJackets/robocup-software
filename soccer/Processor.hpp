@@ -21,6 +21,7 @@
 #include <SystemState.hpp>
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
+#include "radio/RadioNode.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
 
@@ -163,8 +164,6 @@ public:
 
     QMutex& loopMutex() { return _loopMutex; }
 
-    Radio* radio() { return _radio; }
-
     void changeVisionChannel(int port);
 
     VisionChannel visionChannel() { return _visionChannel; }
@@ -212,8 +211,6 @@ private:
     volatile bool _running;
 
     Logger _logger;
-
-    Radio* _radio;
 
     bool _useOurHalf, _useOpponentHalf;
 
@@ -270,6 +267,7 @@ private:
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
     std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
+    std::unique_ptr<RadioNode> _radio;
     std::unique_ptr<GrSimCommunicator> _grSimCom;
 
     std::vector<Node*> _nodes;
