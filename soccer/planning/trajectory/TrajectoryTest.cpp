@@ -5,18 +5,12 @@
 #include "VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
 #include <rrt/planning/Path.hpp>
+#include <random>
 
+using namespace Planning;
+using namespace Geometry2d;
 
-using Planning::Trajectory;
-using Planning::RobotInstant;
-using Geometry2d::Point;
-using Geometry2d::Pose;
-using Geometry2d::Twist;
-
-void assertEqual(const RobotInstant& inst1, const RobotInstant& inst2) {
-    assert(inst1 == inst2);
-    ASSERT_EQ(inst1, inst2);
-}
+void assertPathContinuous(const Trajectory& path, const RobotConstraints& constraints);
 
 TEST(Trajectory, Interpolation) {
     // Test the basics of the Trajectory class, including interpolation, instant
@@ -34,8 +28,8 @@ TEST(Trajectory, Interpolation) {
     trajectory.AppendInstant(start_instant);
     trajectory.AppendInstant(mid_instant);
 
-    assertEqual(*trajectory.evaluate(start), start_instant);
-    assertEqual(*trajectory.evaluate(trajectory.end_time()), mid_instant);
+    ASSERT_EQ(*trajectory.evaluate(start), start_instant);
+    ASSERT_EQ(*trajectory.evaluate(trajectory.end_time()), mid_instant);
     EXPECT_FALSE(trajectory.evaluate(trajectory.begin_time() - RJ::Seconds(1e-3s)));
     EXPECT_FALSE(trajectory.evaluate(trajectory.end_time() + RJ::Seconds(1e-3s)));
 
@@ -75,14 +69,6 @@ TEST(Trajectory, Interpolation) {
     EXPECT_FALSE(trajectory.CheckSeconds(2500ms));
 
     EXPECT_EQ(trajectory.duration(), RJ::Seconds(end_instant.stamp - start_instant.stamp));
-
-//    Trajectory trajectory_2({});
-//    trajectory_2.InsertInstant(start_instant);
-//    trajectory_2.InsertInstant(end_instant);
-//    trajectory_2.InsertInstant(mid_instant);
-//
-//    EXPECT_EQ(trajectory.duration(), trajectory_2.duration());
-//    EXPECT_EQ(trajectory.instant(1), trajectory_2.instant(1));
 }
 
 TEST(Trajectory, TrajectoryIterator) {
@@ -95,22 +81,22 @@ TEST(Trajectory, TrajectoryIterator) {
     instants.push_back(c);
     Trajectory traj{std::move(instants)};
     auto instants_it = traj.instants_begin();
-    assertEqual(*instants_it, a);
+    ASSERT_EQ(*instants_it, a);
     ++instants_it;
     ++instants_it;
-    assertEqual(*instants_it, c);
+    ASSERT_EQ(*instants_it, c);
     ++instants_it;
     ASSERT_EQ(instants_it, traj.instants_end());
 
     auto traj_it = traj.iterator(RJ::Time(1s), 0.5s);
     ASSERT_TRUE(traj_it.hasValue());
     ASSERT_TRUE(traj_it.hasNext());
-    assertEqual(*traj_it, traj.first());
+    ASSERT_EQ(*traj_it, traj.first());
     for(int i = 0; i < 7; i++) ++traj_it;
     ASSERT_TRUE(traj_it.hasValue());
     ASSERT_TRUE(traj_it.hasNext());
     ++traj_it;
-    assertEqual(*traj_it, traj.last());
+    ASSERT_EQ(*traj_it, traj.last());
     ASSERT_TRUE(traj_it.hasValue());
     ASSERT_FALSE(traj_it.hasNext());
     ++traj_it;
@@ -125,7 +111,7 @@ TEST(Trajectory, TrajectoryIterator) {
     ASSERT_FALSE(itAfter.hasNext());
 }
 
-TEST(PathSmoothing, PathMatches) {
+TEST(Trajectory, BezierPath) {
     std::vector<Point> points = {
         Point(0, 0),
         Point(1, 0.5),
@@ -141,106 +127,20 @@ TEST(PathSmoothing, PathMatches) {
 
     Planning::BezierPath path(points, vi, vf, constraints);
 
-    {
+    for(int i = 0; i < 4; i++) {
         Point p, v;
         double k;
-        path.Evaluate(0, &p, &v, &k);
+        path.Evaluate(i / 3.0, &p, &v, &k);
 
         std::cout << p << ", " << v << std::endl;
-        EXPECT_NEAR((p - points[0]).mag(), 0, 1e-6);
-        EXPECT_NEAR(v.angleBetween(vi), 0, 1e-3);
+        EXPECT_NEAR((p - points[i]).mag(), 0, 1e-6);
+        if(i == 0) {
+            EXPECT_NEAR(v.angleBetween(vi), 0, 1e-3);
+        }
+        if(i == 3) {
+            EXPECT_NEAR(v.angleBetween(vf), 0, 1e-3);
+        }
     }
-}
-
-TEST(VelocityProfiling, Linear) {
-    //todo
-    ASSERT_TRUE(true);
-}
-TEST(VelocityProfiling, Angular) {
-    using namespace Geometry2d;
-    using namespace Planning;
-    using namespace std;
-
-    MotionConstraints mot;
-    RotationConstraints rot;
-
-    /*
-     * Test RRTTrajectory(), combo trajectory
-     */
-    RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
-    RobotInstant mid{Pose{Point{1,1}, M_PI/2}, Twist{Point{0,1}, 0}, RJ::now()};
-    RobotInstant end{Pose{Point{2,2}, M_PI/2}, Twist{Point{1,0}, 0}, RJ::now()};
-
-    ShapeSet obs;
-    Trajectory preTraj = RRTTrajectory(start, mid, mot, obs);
-    ASSERT_FALSE(preTraj.empty());
-    RJ::Time t0 = preTraj.begin_time();
-    AngleFunction angleFn = [t0](const RobotInstant &instant) -> double {
-        return RJ::Seconds(instant.stamp - t0).count();
-    };
-    PlanAngles(preTraj, start, angleFn, rot);
-    Trajectory postTraj = RRTTrajectory(preTraj.last(), end, mot, obs);
-    ASSERT_FALSE(postTraj.empty());
-    PlanAngles(postTraj, preTraj.last(), angleFn, rot);
-    Trajectory combo{preTraj, postTraj};
-
-    for (auto it = preTraj.instants_begin();
-         it != preTraj.instants_end(); ++it) {
-        RobotInstant inst = *it;
-//        printf("RobotInstant[(%.3f, %.3f, %.3f), (%.3f, %.3f, %.3f), %.3f]\n",
-//               inst.pose.position().x(), inst.pose.position().y(), inst.pose.heading(),
-//               inst.velocity.linear().x(), inst.velocity.linear().y(), inst.velocity.angular(),
-//               RJ::Seconds(inst.stamp-preTraj.begin_time()).count());
-        if (it != preTraj.instants_begin())
-            EXPECT_NEAR(inst.pose.heading(), angleFn(inst), 1e-3);
-    }
-    cout << endl;
-    for (auto it = postTraj.instants_begin();
-         it != postTraj.instants_end(); ++it) {
-        RobotInstant inst = *it;
-//        printf("RobotInstant[(%.3f, %.3f, %.3f), (%.3f, %.3f, %.3f), %.3f]\n",
-//               inst.pose.position().x(), inst.pose.position().y(), inst.pose.heading(),
-//               inst.velocity.linear().x(), inst.velocity.linear().y(), inst.velocity.angular(),
-//               RJ::Seconds(inst.stamp-postTraj.begin_time()).count());
-        if (it != postTraj.instants_begin())
-            EXPECT_NEAR(inst.pose.heading(), angleFn(inst), 1e-3);
-
-    }
-    cout << endl;
-    for (auto it = combo.instants_begin();
-         it != combo.instants_end(); ++it) {
-        RobotInstant inst = *it;
-//        printf("RobotInstant[(%.3f, %.3f, %.3f), (%.3f, %.3f, %.3f), %.3f]\n",
-//               inst.pose.position().x(), inst.pose.position().y(), inst.pose.heading(),
-//               inst.velocity.linear().x(), inst.velocity.linear().y(), inst.velocity.angular(),
-//               RJ::Seconds(inst.stamp-combo.begin_time()).count());
-        if (it != combo.instants_begin())
-            EXPECT_NEAR(inst.pose.heading(), angleFn(inst), 1e-3);
-
-    }
-    cout << endl;
-
-    /*
-     * Test Partial Paths, Sub Trajectories
-     */
-    RJ::Seconds duration = combo.duration();
-    Trajectory partialPre = combo.subTrajectory(0s, 1.5s);
-    Trajectory partialPost = RRTTrajectory(partialPre.last(), end, mot,
-                                           obs);
-    PlanAngles(partialPost, partialPre.last(), angleFn, rot);
-    Trajectory combo2{partialPre, partialPost};
-    for (auto it = combo2.instants_begin();
-         it != combo2.instants_end(); ++it) {
-        RobotInstant inst = *it;
-        //        printf("RobotInstant[(%.3f, %.3f, %.3f), (%.3f, %.3f, %.3f), %.3f]\n",
-        //               inst.pose.position().x(), inst.pose.position().y(), inst.pose.heading(),
-        //               inst.velocity.linear().x(), inst.velocity.linear().y(), inst.velocity.angular(),
-        //               RJ::Seconds(inst.stamp-combo2.begin_time()).count());
-        if (it != combo2.instants_begin())
-            EXPECT_NEAR(inst.pose.heading(), angleFn(inst), 1e-3);
-
-    }
-    cout << endl;
 }
 
 TEST(Trajectory, Efficiency) {
@@ -310,4 +210,107 @@ TEST(RRT, Time) {
     vector<Point> points = biRRT.getPath();
     RRT::SmoothPath(points, *state_space);
     printf("RRTTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
+}
+namespace Testing {
+double rando(double lo, double hi) {
+    static std::random_device randDevice;
+    static std::mt19937 randGen(randDevice());
+    static std::uniform_real_distribution<> randDistribution(0.0, 1.0);
+    return lo + (hi-lo) * randDistribution(randGen);
+}
+}
+using namespace Testing;
+
+TEST(Trajectory, RRTTrajectorySmall) {
+    RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
+    Trajectory a = RRTTrajectory(start, start, MotionConstraints{}, {});
+    ASSERT_FALSE(a.empty());
+    ASSERT_TRUE(a.num_instants() == 1);
+    ASSERT_NEAR(a.duration().count(), 0.0, 1e-6);
+}
+
+TEST(Trajectory, PivotTurn) {
+    RotationConstraints rot;
+    MotionConstraints mot;
+    RobotInstant start{Pose{{}, 0}, Twist{}, RJ::now()};
+    Trajectory out = RRTTrajectory(start, start, mot, {});
+    ASSERT_FALSE(out.empty());
+    PlanAngles(out, start, AngleFns::faceAngle(M_PI/2), rot);
+
+    std::optional<RobotInstant> evalHalfway = out.evaluate(out.duration() * 0.5);
+    ASSERT_TRUE(evalHalfway);
+    ASSERT_NEAR(evalHalfway->pose.heading(), M_PI/4, 1e-6);
+    ASSERT_NEAR(evalHalfway->pose.position().distTo(start.pose.position()), 0, 1e-6);
+    ASSERT_NEAR(evalHalfway->velocity.linear().mag(), 0, 1e-6);
+    ASSERT_NEAR(evalHalfway->velocity.angular(), std::min(rot.maxSpeed, std::sqrt(2 * rot.maxAccel * M_PI/4)), 1e-3);
+    ASSERT_NEAR(RJ::Seconds(evalHalfway->stamp - out.begin_time()).count(), out.duration().count() * 0.5, 1e-6);
+
+    RobotInstant last = out.last();
+    ASSERT_NEAR(last.pose.heading(), M_PI/2, 1e-6);
+    ASSERT_NEAR(last.pose.position().distTo(start.pose.position()), 0, 1e-6);
+    ASSERT_NEAR(last.velocity.linear().mag(), 0, 1e-6);
+    ASSERT_NEAR(last.velocity.angular(), 0, 1e-3);
+    ASSERT_NEAR(RJ::Seconds(evalHalfway->stamp - out.begin_time()).count(), out.duration().count() * 0.5, 1e-6);
+}
+
+TEST(Trajectory, CombiningTrajectories_and_SubTrajectories) {
+    RobotConstraints constraints;
+    RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
+    RobotInstant mid{Pose{Point{1,1}, 0}, Twist{Point{0,1}, 0}, RJ::now()};
+    RobotInstant end{Pose{Point{2,2}, 0}, Twist{Point{1,0}, 0}, RJ::now()};
+    ShapeSet obs;
+    RJ::Time t0 = start.stamp;
+    AngleFunction angleFn = [t0](const RobotInstant &instant) -> double {
+        return RJ::Seconds(instant.stamp - t0).count();
+    };
+
+    /*
+     * Test RRTTrajectory(), combo trajectory
+     */
+    Trajectory preTraj = RRTTrajectory(start, mid, constraints.mot, obs);
+    PlanAngles(preTraj, start, angleFn, constraints.rot);
+    assertPathContinuous(preTraj, constraints);
+    Trajectory postTraj = RRTTrajectory(preTraj.last(), end, constraints.mot, obs);
+    PlanAngles(postTraj, preTraj.last(), angleFn, constraints.rot);
+    assertPathContinuous(postTraj, constraints);
+    Trajectory combo{preTraj, postTraj};
+    assertPathContinuous(combo, RobotConstraints{});
+
+    /*
+     * Test Partial Paths, Sub Trajectories
+     */
+    Trajectory partialPre = combo.subTrajectory(0s, 1.5s);
+    assertPathContinuous(partialPre, constraints);
+    Trajectory partialPost = RRTTrajectory(partialPre.last(), end, constraints.mot,
+                                           obs);
+    PlanAngles(partialPost, partialPre.last(), angleFn, constraints.rot);
+    assertPathContinuous(partialPost, constraints);
+    Trajectory combo2{partialPre, partialPost};
+    assertPathContinuous(combo2, constraints);
+}
+
+TEST(Trajectory, RRTTrajectorySuccessRate) {
+    int fails = 0;
+    constexpr int iterations = 1000;
+    constexpr int numTries = 300;
+    for(int i = 0; i < iterations; i++) {
+        ShapeSet obstacles;
+        int numObstacles = (int)rando(2, 5);
+        for(int j = 0; j < numObstacles; j++) {
+            obstacles.add(std::make_shared<Circle>(Point{rando(-2, 2), rando(.5, 1.5)}, .2));
+        }
+        RobotInstant start{Pose{Point{rando(-3, 3), rando(0, 6)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
+        RobotInstant goal{Pose{Point{rando(-3, 3), rando(0, 6)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
+        Trajectory path{{}};
+        for (int j = 0; j < numTries && path.empty(); j++){
+            path = RRTTrajectory(start, goal, MotionConstraints{}, obstacles);
+            if(path.empty()) {
+                fails++;
+            }
+            ASSERT_TRUE(j != numTries);
+        }
+        assertPathContinuous(path, RobotConstraints{});
+    }
+    double successRate = (double)(iterations) / (iterations + fails);
+    printf("RRTTrajectory() Success Rate: %.2f%\n", successRate);
 }

@@ -219,7 +219,7 @@ set(SOCCER_TEST_SRC
     "optimization/ParallelGradientAscent1DTest.cpp"
     "optimization/NelderMead2DTest.cpp"
     "planning/trajectory/TrajectoryTest.cpp"
-    "planning/planner/CapturePlannerTest.cpp"
+    "planning/planner/PlannerTest.cpp"
     "TestMain.cpp"
     "vision/tests/CameraBallTest.cpp"
     "vision/tests/KalmanBallTest.cpp"

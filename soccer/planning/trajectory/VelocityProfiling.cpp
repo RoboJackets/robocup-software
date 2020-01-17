@@ -146,5 +146,12 @@ void PlanAngles(Trajectory& trajectory,
         wf = std::clamp(wf, w0 - constraints.maxAccel * deltaTime, w0 + constraints.maxAccel * deltaTime);
         instant_initial = instant_final;
     }
+
+    //add more instants to get to the target heading
+    double angleLeft = fixAngleRadians(angle_function(trajectory.last()) - trajectory.last().pose.heading());
+    if(angleLeft > 1e-5) {
+        constexpr int extra_interpolations = 20;
+        std::list<RobotInstant> extra_instants....
+    }
 }
 } // namespace Planning
