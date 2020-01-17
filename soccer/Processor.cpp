@@ -395,6 +395,8 @@ void Processor::run() {
             }
         }
 
+        if (radio) curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+
         for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
