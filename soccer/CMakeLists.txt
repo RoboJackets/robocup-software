@@ -49,6 +49,7 @@ set(ROBOCUP_LIB_SRC
     "Processor.cpp"
     "radio/NetworkRadio.cpp"
     "radio/PacketConvert.cpp"
+    "radio/RadioNode.cpp"
     "radio/SimRadio.cpp"
     "Robot.cpp"
     "RobotConfig.cpp"
