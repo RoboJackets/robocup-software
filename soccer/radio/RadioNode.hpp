@@ -8,7 +8,7 @@ public:
     RadioNode(Context* context, bool sim, bool blueTeam);
 
     bool isOpen();
-    RJ::Time getLastRadioRxTime;
+    RJ::Time getLastRadioRxTime();
     void run() override;
     void switchTeam(bool blueTeam);
 
