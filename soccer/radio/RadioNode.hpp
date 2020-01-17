@@ -5,7 +5,7 @@
 
 class RadioNode : public Node {
 public:
-    RadioNode(Context* context, bool sim);
+    RadioNode(Context* context, bool sim, bool blueTeam);
 
     bool isOpen();
     void run() override;
@@ -15,6 +15,6 @@ private:
 
     bool _blueTeam;
     Context* _context;
-    Radio _radio;
+    std:unique_ptr<Radio> _radio;
     bool _simulation;
 };

@@ -23,9 +23,8 @@
 #include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
-#include "radio/NetworkRadio.hpp"
+#include "radio/RadioNode.hpp"
 #include "radio/PacketConvert.hpp"
-#include "radio/SimRadio.hpp"
 #include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
@@ -89,17 +88,12 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
     _motionControl = std::make_unique<MotionControlNode>(&_context);
+    _radio = std::make_unique<RadioNode>(&_context, _simulation, _blueTeam);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
     _visionChannel = visionChannel;
-
-    // Create radio socket
-    _radio =
-        _simulation
-            ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
-            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
@@ -398,27 +392,6 @@ void Processor::run() {
                 }
 
                 detectionFrames.push_back(det);
-            }
-        }
-
-        // Read radio reverse packets
-        _radio->receive();
-
-        while (_radio->hasReversePackets()) {
-            Packet::RadioRx rx = _radio->popReversePacket();
-            _context.state.logFrame->add_radio_rx()->CopyFrom(rx);
-
-            curStatus.lastRadioRxTime =
-                RJ::Time(chrono::microseconds(rx.timestamp()));
-
-            // Store this packet in the appropriate robot
-            unsigned int board = rx.robot_id();
-            if (board < Num_Shells) {
-                // We have to copy because the RX packet will survive past this
-                // frame but LogFrame will not (the RadioRx in LogFrame will be
-                // reused).
-                _context.state.self[board]->setRadioRx(rx);
-                _context.state.self[board]->radioRxUpdated();
             }
         }
 
@@ -818,12 +791,6 @@ void Processor::sendRadioData() {
         } else {
             intent.is_active = false;
         }
-    }
-
-    if (_radio) {
-        construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
-                           _context.robot_intents, _context.motion_setpoints);
-        _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }
 
