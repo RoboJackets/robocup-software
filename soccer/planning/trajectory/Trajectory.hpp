@@ -200,19 +200,21 @@ public:
      * @return
      */
     int num_instants() const {
-        if(empty()) {
-            return 0;
-        }
-        int numPost = post_instants ? post_instants->size() : 0;
-        return instants_.size() + numPost;
+        return instants_.size();
     }
 
-
-    class InstantsIterator;
-    InstantsIterator instants_begin();
-    InstantsIterator instants_begin() const;
-    InstantsIterator instants_end();
-    InstantsIterator instants_end() const;
+    auto instants_end() {
+        return instants_.end();
+    }
+    auto instants_end() const {
+        return instants_.end();
+    }
+    auto instants_begin() {
+        return instants_.begin();
+    }
+    auto instants_begin() const {
+        return instants_.begin();
+    }
 
     /**
      * Check if this is an empty path.
@@ -237,10 +239,12 @@ public:
      * @return The last instant in the path.
      */
     RobotInstant& last() {
-        *raw_end_iterator();
+        assert(!instants_.empty());
+        return instants_.back();
     }
     const RobotInstant& last() const {
-        *raw_end_iterator();
+        assert(!instants_.empty());
+        return instants_.back();
     }
 
     /**
@@ -280,82 +284,11 @@ public:
 private:
     // A sorted array of RobotInstants (by timestamp)
     std::list<RobotInstant> instants_;
-    // extra instants to be used after instants_ ends.
-    std::optional<std::list<RobotInstant>> post_instants;
 
     // force a change of angle/heading
     std::optional<double> angle_override;
 
     std::optional<QString> _debugText;
-
-    std::list<RobotInstant>::iterator raw_end_iterator() {
-        assert(!empty());
-        if(post_instants && !post_instants->empty()) {
-            return post_instants->end();
-        }
-        return instants_.end();
-    }
-    std::list<RobotInstant>::const_iterator raw_end_iterator() const {
-        assert(!empty());
-        if(post_instants && !post_instants->empty()) {
-            return post_instants->end();
-        }
-        return instants_.end();
-    }
-};
-
-/*
- * This is a wrapper for std::list<RobotIntant>::iterator to account for
- * the two different lists instants_ and post_instants
- */
-class Trajectory::InstantsIterator {
-public:
-    InstantsIterator(const Trajectory& trajectory, const std::list<RobotInstant>::iterator& iterator): _trajectory(&trajectory), _iterator(iterator) {}
-    InstantsIterator& operator++();
-    InstantsIterator operator++(int) {
-        InstantsIterator tmp = *this;
-        ++(*this);
-        return tmp;
-    }
-    InstantsIterator& operator--();
-    InstantsIterator operator--(int) {
-        InstantsIterator tmp = *this;
-        --(*this);
-        return tmp;
-    }
-    bool operator==(const InstantsIterator& other) const {
-        return _trajectory == other._trajectory && _iterator == other._iterator;
-    };
-    bool operator!=(const InstantsIterator& other) const {
-        return !(*this == other);
-    }
-    RobotInstant& operator*() {
-        assert(hasValue());
-        return *_iterator;
-    }
-    std::list<RobotInstant>::iterator operator->() {
-        assert(hasValue());
-        return _iterator;
-    }
-    InstantsIterator peekNext() const {
-        assert(hasNext());
-        InstantsIterator nextIt = *this;
-        ++nextIt;
-        return nextIt;
-    }
-    bool hasValue() const {
-        return _iterator != _trajectory->instants_.end() && !(_trajectory->post_instants && _iterator == _trajectory->post_instants->end());
-    }
-    bool hasNext() const {
-        if(!hasValue()) return false;
-        InstantsIterator nxt = *this;
-        ++nxt;
-        return nxt.hasValue();
-    }
-
-private:
-    const Trajectory* _trajectory;
-    std::list<RobotInstant>::iterator _iterator;
 };
 
 /*
@@ -388,7 +321,7 @@ public:
 
 private:
     const Trajectory& _trajectory;
-    Trajectory::InstantsIterator _iterator;
+    std::list<RobotInstant>::const_iterator _iterator;
     RJ::Time _time;
     const RJ::Seconds _deltaT;
 };
