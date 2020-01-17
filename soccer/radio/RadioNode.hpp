@@ -17,6 +17,6 @@ private:
     bool _blueTeam;
     Context* _context;
     RJ::Time _lastRadioRxTime;
-    std:unique_ptr<Radio> _radio;
+    std::unique_ptr<Radio> _radio;
     bool _simulation;
 };
