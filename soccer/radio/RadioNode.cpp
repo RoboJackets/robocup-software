@@ -14,7 +14,7 @@ RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam): _context
 }
 
 bool RadioNode::isOpen() {
-    return _radio->.isOpen();
+    return _radio->isOpen();
 }
 
 RJ::Time RadioNode::getLastRadioRxTime(){
@@ -38,7 +38,7 @@ void RadioNode::run(){
         Packet::RadioRx rx = _radio->popReversePacket();
         _context.state.logFrame->add_radio_rx()->CopyFrom(rx);
 
-        _lastRadioRxTime = RJ::Time(chrono::microseconds(rx.timestamp()));
+        _lastRadioRxTime = RJ::Time(std::chrono::microseconds(rx.timestamp()));
 
         // Store this packet in the appropriate robot
         unsigned int board = rx.robot_id();
