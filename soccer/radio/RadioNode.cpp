@@ -1,13 +1,18 @@
+#include <gameplay/GameplayModule.hpp>
+
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <protobuf/LogFrame.pb.h>
 
 #include "Network.hpp"
 #include "NetworkRadio.hpp"
+#include "PacketConvert.hpp"
 #include "Radio.hpp"
 #include "RadioNode.hpp"
+#include <Robot.hpp>
 #include "SimRadio.hpp"
 
 RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam): _context(context) {
