@@ -6,7 +6,7 @@
 
 RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam): _context(context) {
     _blueTeam = blueTeam;
-    _lastRadioRxTime = RJ::Time(chrono::microseconds(RJ::timestamp()));
+    _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
     _simulation = simulation;
     _radio = _simulation
              ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
@@ -26,7 +26,7 @@ Radio* RadioNode::getRadio(){
 }
 
 void RadioNode::switchTeam(bool blueTeam) {
-    _radio.switchTeam(blueTeam);
+    _radio->switchTeam(blueTeam);
 }
 
 void RadioNode::run(){
@@ -36,7 +36,7 @@ void RadioNode::run(){
 
     while (_radio->hasReversePackets()) {
         Packet::RadioRx rx = _radio->popReversePacket();
-        _context.state.logFrame->add_radio_rx()->CopyFrom(rx);
+        _context->state.logFrame->add_radio_rx()->CopyFrom(rx);
 
         _lastRadioRxTime = RJ::Time(std::chrono::microseconds(rx.timestamp()));
 
@@ -46,15 +46,15 @@ void RadioNode::run(){
             // We have to copy because the RX packet will survive past this
             // frame but LogFrame will not (the RadioRx in LogFrame will be
             // reused).
-            _context.state.self[board]->setRadioRx(rx);
-            _context.state.self[board]->radioRxUpdated();
+            _context->state.self[board]->setRadioRx(rx);
+            _context->state.self[board]->radioRxUpdated();
         }
     }
 
     if (_radio) {
-        construct_tx_proto((*_context.state.logFrame->mutable_radio_tx()),
-                           _context.robot_intents, _context.motion_setpoints);
-        _radio->send(*_context.state.logFrame->mutable_radio_tx());
+        construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
+                           _context->robot_intents, _context->motion_setpoints);
+        _radio->send(*_context->state.logFrame->mutable_radio_tx());
     }
 
 }
