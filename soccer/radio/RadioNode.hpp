@@ -15,8 +15,6 @@ public:
     void switchTeam(bool blueTeam);
 
 private:
-
-    bool _blueTeam;
     Context* _context;
     RJ::Time _lastRadioRxTime;
     Radio* _radio;

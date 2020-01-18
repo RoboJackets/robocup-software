@@ -1,15 +1,20 @@
-#include "Constants.hpp"
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+
+#include "Network.hpp"
 #include "NetworkRadio.hpp"
 #include "Radio.hpp"
 #include "RadioNode.hpp"
 #include "SimRadio.hpp"
 
 RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam): _context(context) {
-    _blueTeam = blueTeam;
     _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
     _simulation = simulation;
     _radio = _simulation
-             ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
+             ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
              : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 }
 
