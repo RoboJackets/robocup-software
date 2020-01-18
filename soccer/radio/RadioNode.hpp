@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Context.hpp"
 #include "Node.hpp"
 #include "Radio.hpp"
 
@@ -18,6 +19,6 @@ private:
     bool _blueTeam;
     Context* _context;
     RJ::Time _lastRadioRxTime;
-    std::unique_ptr<Radio> _radio;
+    Radio* _radio;
     bool _simulation;
 };

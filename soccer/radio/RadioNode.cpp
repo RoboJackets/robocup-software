@@ -14,7 +14,7 @@ RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam): _context
 }
 
 bool RadioNode::isOpen() {
-    return _radio.isOpen();
+    return _radio->.isOpen();
 }
 
 RJ::Time RadioNode::getLastRadioRxTime(){
