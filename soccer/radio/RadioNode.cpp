@@ -21,19 +21,19 @@ RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam)
     _simulation = simulation;
     _radio =
         _simulation
-             ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
-             : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
+            ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
+            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 }
 
 bool RadioNode::isOpen() { return _radio->isOpen(); }
 
-RJ::Time RadioNode::getLastRadioRxTime(){ return _lastRadioRxTime; }
+RJ::Time RadioNode::getLastRadioRxTime() { return _lastRadioRxTime; }
 
-Radio* RadioNode::getRadio(){ return _radio; }
+Radio* RadioNode::getRadio() { return _radio; }
 
 void RadioNode::switchTeam(bool blueTeam) { _radio->switchTeam(blueTeam); }
 
-void RadioNode::run(){
+void RadioNode::run() {
     // Read radio reverse packets
     _radio->receive();
 
