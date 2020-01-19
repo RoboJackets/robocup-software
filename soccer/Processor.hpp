@@ -21,10 +21,10 @@
 #include <SystemState.hpp>
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
-#include "radio/Radio.hpp"
-#include "radio/RadioNode.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
+#include "radio/Radio.hpp"
+#include "radio/RadioNode.hpp"
 
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"

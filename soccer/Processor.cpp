@@ -23,8 +23,8 @@
 #include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
-#include "radio/RadioNode.hpp"
 #include "radio/PacketConvert.hpp"
+#include "radio/RadioNode.hpp"
 #include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
