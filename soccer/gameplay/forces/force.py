@@ -22,9 +22,8 @@ class Force(ABC):
         retDict = dict()
         points = list()
 
-        for x in numpy.linspace(0, xSize, )
-
-        pass
+        for x in numpy.linspace(0, xSize, interval):
+            pass
 
     def sampleAreaMag(self, center, xSize, ySize, interval, clipped = True):
         pass

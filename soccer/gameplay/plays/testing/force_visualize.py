@@ -6,6 +6,7 @@ import constants
 from forces import force_visualizer
 from forces import force
 from forces import constant_force
+from forces import test_robot_force
 
 ##
 # A demo/base test play for visualizing forces using the force
@@ -29,6 +30,7 @@ class ForceVisualize(play.Play):
 
     ##You can swap out the force you want to visualize here
     force = constant_force.ConstantForce(robocup.Point(1.2,1.3))
+    #force = test_robot_force.TestRobotForce(scale=5)
 
     def __init__(self):
         super().__init__(continuous=False)
