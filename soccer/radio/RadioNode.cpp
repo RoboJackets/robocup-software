@@ -15,7 +15,7 @@
 #include "RadioNode.hpp"
 #include "SimRadio.hpp"
 
-RadioNode::RadioNode(Context *context, bool simulation, bool blueTeam)
+RadioNode::RadioNode(Context* context, bool simulation, bool blueTeam)
     : _context(context) {
     _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
     _simulation = simulation;
