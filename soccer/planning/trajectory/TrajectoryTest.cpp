@@ -230,29 +230,45 @@ TEST(Trajectory, RRTTrajectorySmall) {
 }
 
 TEST(Trajectory, PivotTurn) {
-    RotationConstraints rot;
-    MotionConstraints mot;
+    RobotConstraints constraints;
     RobotInstant start{Pose{{}, 0}, Twist{}, RJ::now()};
-    Trajectory out = RRTTrajectory(start, start, mot, {});
+    Trajectory out = RRTTrajectory(start, start, constraints.mot, {});
     ASSERT_FALSE(out.empty());
-    PlanAngles(out, start, AngleFns::faceAngle(M_PI/2), rot);
-
+    PlanAngles(out, start, AngleFns::faceAngle(M_PI/2), constraints.rot);
+    // check first instant
+    ASSERT_NEAR(out.first().pose.position().distTo(start.pose.position()), 0, 1e-6);
+    ASSERT_NEAR(out.first().pose.heading(), 0, 1e-6);
+    ASSERT_NEAR(out.first().velocity.angular(), 0, 1e-6);
+    ASSERT_NEAR(out.first().velocity.linear().mag(), 0, 1e-6);
+    // check last instant
+    ASSERT_NEAR(out.last().pose.position().distTo(start.pose.position()), 0, 1e-6);
+    ASSERT_NEAR(out.last().pose.heading(), M_PI/2, 1e-6);
+    ASSERT_NEAR(out.last().velocity.linear().mag(), 0, 1e-6);
+    ASSERT_NEAR(out.last().velocity.angular(), 0, 1e-6);
+    //check middle instant
     std::optional<RobotInstant> evalHalfway = out.evaluate(out.duration() * 0.5);
     ASSERT_TRUE(evalHalfway);
     ASSERT_NEAR(evalHalfway->pose.heading(), M_PI/4, 1e-6);
     ASSERT_NEAR(evalHalfway->pose.position().distTo(start.pose.position()), 0, 1e-6);
     ASSERT_NEAR(evalHalfway->velocity.linear().mag(), 0, 1e-6);
-    ASSERT_NEAR(evalHalfway->velocity.angular(), std::min(rot.maxSpeed, std::sqrt(2 * rot.maxAccel * M_PI/4)), 1e-3);
+    ASSERT_NEAR(evalHalfway->velocity.angular(), std::min(constraints.rot.maxSpeed, std::sqrt(2 * constraints.rot.maxAccel * M_PI/4)), 1e-3);
     ASSERT_NEAR(RJ::Seconds(evalHalfway->stamp - out.begin_time()).count(), out.duration().count() * 0.5, 1e-6);
 
-    RobotInstant last = out.last();
-    ASSERT_NEAR(last.pose.heading(), M_PI/2, 1e-6);
-    ASSERT_NEAR(last.pose.position().distTo(start.pose.position()), 0, 1e-6);
-    ASSERT_NEAR(last.velocity.linear().mag(), 0, 1e-6);
-    ASSERT_NEAR(last.velocity.angular(), 0, 1e-3);
-    ASSERT_NEAR(RJ::Seconds(evalHalfway->stamp - out.begin_time()).count(), out.duration().count() * 0.5, 1e-6);
+    assertPathContinuous(out, constraints);
 }
-
+namespace Planning {
+double clampAccel(double v1, double v2, double deltaX, double maxAccel);
+}
+TEST(Trajectory, VelocityProfileClampAccel) {
+    ASSERT_NEAR(clampAccel(1, 20, 1.5, 1), 2, 1e-6);
+    ASSERT_NEAR(clampAccel(5, -20, 1.5, 3), 4, 1e-6);
+    ASSERT_NEAR(clampAccel(-1, -20, -1.5, 1), -2, 1e-6);
+    ASSERT_NEAR(clampAccel(-5, 20, -1.5, 3), -4, 1e-6);
+    ASSERT_NEAR(clampAccel(0, 5, 0.5, 1), 1, 1e-6);
+    ASSERT_NEAR(clampAccel(0, -5, -0.5, 1), -1, 1e-6);
+    ASSERT_NEAR(clampAccel(1, -1, 0.5, 1), 0, 1e-6);
+    ASSERT_NEAR(clampAccel(-1, 1, -0.5, 1), 0, 1e-6);
+}
 TEST(Trajectory, CombiningTrajectories_and_SubTrajectories) {
     RobotConstraints constraints;
     RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};

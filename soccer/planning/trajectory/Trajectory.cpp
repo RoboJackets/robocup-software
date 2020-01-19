@@ -15,8 +15,7 @@ namespace Planning {
     using Geometry2d::Shape;
     using Geometry2d::Segment;
 
-    Trajectory::Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)), angle_override(std::move(other.angle_override)) {
-        other.angle_override = std::nullopt;
+    Trajectory::Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)) {
         other._debugText = std::nullopt;
     }
 
@@ -24,17 +23,14 @@ namespace Planning {
         //move data into *this
         instants_ = std::move(other.instants_);
         _debugText = std::move(other._debugText);
-        angle_override = std::move(other.angle_override);
         //clear data in other
         other._debugText = std::nullopt;
-        other.angle_override = std::nullopt;
         return *this;
     }
 
     Trajectory &Trajectory::operator=(const Trajectory &other) {
         instants_ = other.instants_;
         _debugText = other._debugText;
-        angle_override = other.angle_override;
         return *this;
     }
 
@@ -322,8 +318,7 @@ namespace Planning {
 
     TrajectoryIterator::TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime, RJ::Seconds deltaT): _trajectory(trajectory), _deltaT(deltaT), _time(startTime) {
         assert(!trajectory.empty());
-        assert(trajectory.CheckTime(_time));
-//        if(!trajectory.CheckTime(_time)) return; todo(Ethan) delete
+        if(!trajectory.CheckTime(_time)) return;
         if(startTime < trajectory.begin_time() + trajectory.duration() * 0.5) {
             _iterator = trajectory.instants_begin();
             ++_iterator;

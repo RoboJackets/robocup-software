@@ -50,13 +50,15 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
 void AppendProfiledVelocity(Trajectory& out, const BezierPath& path, double final_speed, const MotionConstraints& constraints);
 
 /**
- * Use an angle function to modify a trajectory with valid angles.
+ * Applies an angle function to a given trajectory and enforces the angle
+ * constraints. This function may add instants to the end of the trajectory to
+ * allow the angle to match the output from angle_function
+ * (assumes the target angular velocity at the end of the path is 0)
  *
- * @param trajectory The trajectory to fix with angles. This will be modified
- *      in-place.
- * @param start_instant The initial pose and velocity of the robot.
- * @param angle An angle function describing the desired state of the robot as
- *      a function of the robot's position and linear velocity.
+ * @param trajectory The trajectory to plan angles on
+ * @param start_instant The initial robot instant
+ * @param angle An angle function describing the desired angle of the robot as
+ *      a function of the robot's current state.
  * @param constraints Constraints on the robot's rotation.
  */
 void PlanAngles(Trajectory& trajectory,

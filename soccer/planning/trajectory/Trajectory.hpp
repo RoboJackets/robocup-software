@@ -59,11 +59,14 @@ public:
     /**
      * Create a trajectory from two other trajectories
      * assumes a.last() == b.first() so b.first() is skipped
-     * This copies all old RobotInstants, so don't use this with too many points
-     * (see CompositePath for a more efficient way if needed)
-     * Time Complexity: Constant!
+     * Complexity: linear
      */
     Trajectory(const Trajectory& a, const Trajectory& b);
+    /**
+     * Create a trajectory from two other trajectories
+     * assumes a.last() == b.first() so b.first() is skipped
+     * Complexity: constant
+     */
     Trajectory(Trajectory&& a, Trajectory&& b);
 
     /**
@@ -284,9 +287,6 @@ public:
 private:
     // A sorted array of RobotInstants (by timestamp)
     std::list<RobotInstant> instants_;
-
-    // force a change of angle/heading
-    std::optional<double> angle_override;
 
     std::optional<QString> _debugText;
 };

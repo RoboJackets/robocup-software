@@ -28,8 +28,6 @@ void assertPathContinuous(const Trajectory& path, const RobotConstraints& constr
         double distAngle = std::abs(fixAngleRadians(cur.pose.heading() - nxt.pose.heading()));
         double maxJump = std::max((double)Robot_Radius, path.last().pose.position().distTo(path.first().pose.position()) * 0.1);
         ASSERT_LT(dist, maxJump);
-        ASSERT_GT(dist, 1e-6);
-        ASSERT_LT(distAngle, 0.1);
 
         //check velocity from velocity profile
         ASSERT_LT(cur.velocity.linear().mag(), constraints.mot.maxSpeed + 1e-6);
