@@ -23,7 +23,7 @@ void SimFieldView::setContext(Context* context) { this->_context = context; }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
     // Ignore mouse events in the field if not in sim
-    if (!_context->is_simulation){
+    if (!_context->is_simulation) {
         return;
     }
 
