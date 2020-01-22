@@ -24,7 +24,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
         situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_PILEUP
     ] # yapf: disable
 
-
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
     # Min score to shoot
@@ -101,10 +100,10 @@ class AdaptiveAttack(standard_play.StandardPlay):
                             AdaptiveAttack.State.collecting, lambda: True,
                             'immediately')
 
-        self.add_transition(AdaptiveAttack.State.collecting,
-                            AdaptiveAttack.State.dribbling, lambda: self.
-                            subbehavior_with_name('defend').state == behavior.
-                            Behavior.State.completed, 'Ball Collected')
+        self.add_transition(
+            AdaptiveAttack.State.collecting, AdaptiveAttack.State.dribbling,
+            lambda: self.subbehavior_with_name('defend').state == behavior.
+            Behavior.State.completed, 'Ball Collected')
 
         self.add_transition(
             AdaptiveAttack.State.dribbling, AdaptiveAttack.State.passing,
@@ -112,10 +111,10 @@ class AdaptiveAttack(standard_play.StandardPlay):
             ) and not self.should_shoot_from_dribble(), 'Passing')
 
         self.add_transition(
-            AdaptiveAttack.State.dribbling,
-            AdaptiveAttack.State.shooting, lambda: self.dribbler_has_ball(
+            AdaptiveAttack.State.dribbling, AdaptiveAttack.State.shooting,
+            lambda: self.dribbler_has_ball(
             ) and self.should_shoot_from_dribble(), 'Shooting')
-     
+
         self.add_transition(
             AdaptiveAttack.State.passing, AdaptiveAttack.State.dribbling,
             lambda: self.subbehavior_with_name(
@@ -123,24 +122,24 @@ class AdaptiveAttack(standard_play.StandardPlay):
 
         # Reset to collecting when ball is lost at any stage
         self.add_transition(AdaptiveAttack.State.dribbling,
-                            AdaptiveAttack.State.collecting, lambda:
-                            not self.dribbler_has_ball(), 'Dribble: Ball Lost')
+                            AdaptiveAttack.State.collecting,
+                            lambda: not self.dribbler_has_ball(),
+                            'Dribble: Ball Lost')
         self.add_transition(
-            AdaptiveAttack.State.passing,
-            AdaptiveAttack.State.collecting, lambda: self.
-            subbehavior_with_name('pass').state == behavior.Behavior.State.
-            cancelled or self.subbehavior_with_name('pass').state == behavior.
-            Behavior.State.failed, 'Passing: Ball Lost')
-        self.add_transition(AdaptiveAttack.State.shooting,
-                            AdaptiveAttack.State.collecting, lambda: self.
-                            subbehavior_with_name('kick').is_done_running(),
-                            'Shooting: Ball Lost / Shot')
+            AdaptiveAttack.State.passing, AdaptiveAttack.State.collecting,
+            lambda: self.subbehavior_with_name('pass').state == behavior.
+            Behavior.State.cancelled or self.subbehavior_with_name('pass').
+            state == behavior.Behavior.State.failed, 'Passing: Ball Lost')
+        self.add_transition(
+            AdaptiveAttack.State.shooting, AdaptiveAttack.State.collecting,
+            lambda: self.subbehavior_with_name('kick').is_done_running(),
+            'Shooting: Ball Lost / Shot')
 
     @classmethod
     def score(cls):
         score = super().score()
 
-        #If we get a valid score from the super function, then we should calculate 
+        #If we get a valid score from the super function, then we should calculate
         #an offset and sum that with score and return that
         if (score != float("inf")):
             #currently the offset is just 0 because we haven't made one
@@ -153,15 +152,13 @@ class AdaptiveAttack(standard_play.StandardPlay):
                 return float("inf")
             return 8
 
-
-
     def should_pass_from_dribble(self):
 
         # If pass is above cutoff and we dont have a good shot
-        if (self.pass_score > AdaptiveAttack.DRIBBLE_TO_PASS_CUTOFF and
-                self.shot_chance < AdaptiveAttack.DRIBBLE_TO_SHOOT_CUTOFF):
-            print("Pass : " + str(self.pass_score) + " Shot : " + str(
-                self.shot_chance))
+        if (self.pass_score > AdaptiveAttack.DRIBBLE_TO_PASS_CUTOFF
+                and self.shot_chance < AdaptiveAttack.DRIBBLE_TO_SHOOT_CUTOFF):
+            print("Pass : " + str(self.pass_score) + " Shot : " +
+                  str(self.shot_chance))
             return True
 
         # Force pass if we are near our max dribble dist
@@ -175,8 +172,8 @@ class AdaptiveAttack(standard_play.StandardPlay):
     def should_shoot_from_dribble(self):
 
         # If shot chance is improving significantly, hold off a second
-        if (self.prev_shot_chance + AdaptiveAttack.INCREASING_CHANCE_CUTOFF
-                < self.shot_chance):
+        if (self.prev_shot_chance + AdaptiveAttack.INCREASING_CHANCE_CUTOFF <
+                self.shot_chance):
             return False
 
         # Not in front of the half
@@ -185,8 +182,8 @@ class AdaptiveAttack(standard_play.StandardPlay):
 
         # If shot is above cutoff
         if (self.shot_chance > AdaptiveAttack.DRIBBLE_TO_SHOOT_CUTOFF):
-            print("Pass : " + str(self.pass_score) + " Shot : " + str(
-                self.shot_chance))
+            print("Pass : " + str(self.pass_score) + " Shot : " +
+                  str(self.shot_chance))
             return True
 
         # Decreasing and under cutoff
@@ -212,10 +209,8 @@ class AdaptiveAttack(standard_play.StandardPlay):
         # Dribbles toward the best receive point
 
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
-            main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
-            AdaptiveAttack.FIELD_POS_WEIGHTS,
-            AdaptiveAttack.NELDER_MEAD_ARGS,
+            main.ball().pos, main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
+            AdaptiveAttack.FIELD_POS_WEIGHTS, AdaptiveAttack.NELDER_MEAD_ARGS,
             AdaptiveAttack.DRIBBLING_WEIGHTS)
 
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
@@ -225,16 +220,16 @@ class AdaptiveAttack(standard_play.StandardPlay):
         if (not self.has_subbehavior_with_name('midfielders')):
             self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
             )
-            self.add_subbehavior(
-                self.midfielders, 'midfielders', required=False, priority=10)
+            self.add_subbehavior(self.midfielders,
+                                 'midfielders',
+                                 required=False,
+                                 priority=10)
 
     def execute_dribbling(self):
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
-            main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
-            AdaptiveAttack.FIELD_POS_WEIGHTS,
-            AdaptiveAttack.NELDER_MEAD_ARGS,
+            main.ball().pos, main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
+            AdaptiveAttack.FIELD_POS_WEIGHTS, AdaptiveAttack.NELDER_MEAD_ARGS,
             AdaptiveAttack.PASSING_WEIGHTS)
 
         # Grab shot chance
@@ -245,9 +240,8 @@ class AdaptiveAttack(standard_play.StandardPlay):
         if (self.check_dribbling_timer > self.check_dribbling_timer_cutoff):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-                main.ball().pos,
-                main.our_robots(), AdaptiveAttack.MIN_PASS_DIST,
-                AdaptiveAttack.FIELD_POS_WEIGHTS,
+                main.ball().pos, main.our_robots(),
+                AdaptiveAttack.MIN_PASS_DIST, AdaptiveAttack.FIELD_POS_WEIGHTS,
                 AdaptiveAttack.NELDER_MEAD_ARGS,
                 AdaptiveAttack.DRIBBLING_WEIGHTS)
 
@@ -281,7 +275,6 @@ class AdaptiveAttack(standard_play.StandardPlay):
     def on_exit_shooting(self):
         self.remove_subbehavior('kick')
         self.kick = None
-
 
     def on_enter_passing(self):
         # TODO: Use the moving receive when finished

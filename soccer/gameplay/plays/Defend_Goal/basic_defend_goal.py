@@ -15,12 +15,12 @@ import situational_play_selection
 
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal.
-#  
-#  By default, we will use standard defense (two submissive 
+#
+#  By default, we will use standard defense (two submissive
 #  defenders, one goalie) and two wing defense robots. The
-#  remaining robot will mark the highest threat robot. 
+#  remaining robot will mark the highest threat robot.
 class BasicDefendGoal(standard_play.StandardPlay):
-    
+
     _situationList = [
         situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL
     ] # yapf: disable
