@@ -166,12 +166,13 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
                    (git_version_dirty ? "*" : ""));
 
+    // Pass context into fieldview
+    // (apparently simfieldview is used even outside of simulation)
+    _ui.fieldView->setContext(_processor->context());
+
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
     } else {
-        // Pass context into the simFieldView
-        _ui.fieldView->setContext(_processor->context());
-
         // reset the field initially, grSim will start out in some weird
         // pattern and we want to keep it consistent
         on_actionResetField_triggered();
