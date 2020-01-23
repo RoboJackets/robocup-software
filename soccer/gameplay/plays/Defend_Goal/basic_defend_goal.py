@@ -13,6 +13,7 @@ import skills.mark as mark
 import tactics.defense
 import situational_play_selection
 
+
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal.
 #
