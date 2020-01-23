@@ -153,6 +153,7 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       - <<: *load_compile_cache
+      - run: pip3 install -r util/requirements3.txt
       - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle-lines
       - store_artifacts:
           path: /tmp/clean.patch
