@@ -83,7 +83,8 @@ class StandardPlay(play.Play):
             return float('inf')
         else:
             if (cls.is_valid(main.situationAnalysis.getSituation())):
-                return main.situationAnalysis.inSituationScore + random.random()
+                return main.situationAnalysis.inSituationScore + random.random(
+                )
             else:
                 return main.situationAnalysis.outSituationScore + random.random(
                 )
