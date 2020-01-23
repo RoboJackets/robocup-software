@@ -25,9 +25,14 @@ import random
 # needs to have a unique name beyond that
 #
 class Clear(standard_play.StandardPlay):
+
     class State(enum.Enum):
         get_ball = 1, 'Get the ball and movee other robots up'
         clear_ball = 2, 'Kick the ball upfield'
+
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
+    ] # yapf: disable
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -66,9 +71,6 @@ class Clear(standard_play.StandardPlay):
             Clear.State.clear_ball, lambda: self.subbehavior_with_name(
                 'Capture ball').is_done_running(), 'After ball is captured')
 
-    @classmethod
-    def score(cls):
-        return 10
 
     def on_enter_get_ball(self):
         self.remove_all_subbehaviors()
