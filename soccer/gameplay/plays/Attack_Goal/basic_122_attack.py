@@ -10,6 +10,10 @@ import math
 import situational_play_selection
 
 
+##
+#
+# This is just the legacy play basic122 copied over again
+#
 class Basic122(standard_play.StandardPlay):
 
     _situationList = [

@@ -18,6 +18,12 @@ import random
 #
 
 
+##
+# A basic clearing play written in responce to the fact that we didn't have a clearing play
+#
+# It needs to be renamed as "clear" is the name of the situation, and each play that fufills it
+# needs to have a unique name beyond that
+#
 class Clear(standard_play.StandardPlay):
     class State(enum.Enum):
         get_ball = 1, 'Get the ball and movee other robots up'

@@ -16,8 +16,9 @@ import skills.capture
 import situational_play_selection
 
 
-#This is essentially a copy of adaptive formation, found in the legacy folder,
-#With the shooting option removed. It is intended to be used as a clearing play
+##
+# This is essentially a copy of adaptive formation, found in the legacy folder,
+# With the shooting option removed. It is intended to be used as a clearing play
 class AdaptiveClear(standard_play.StandardPlay):
 
     _situationList = [

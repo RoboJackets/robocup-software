@@ -12,6 +12,12 @@ import tactics.defense
 import situational_play_selection
 
 
+##
+#
+# This is a copy of the legacy play two_sided_attack
+#
+# It is unclear the degree to which this play functions at the time of copying.
+#
 class TwoSideAttack(standard_play.StandardPlay):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py

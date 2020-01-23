@@ -16,6 +16,10 @@ import skills.capture
 import situational_play_selection
 
 
+##
+# Adaptive attack is a play derived from the legacy play adaptive formation.
+# It is basically adaptive formation with the clearing state removed.
+#
 class AdaptiveAttack(standard_play.StandardPlay):
 
     _situationList = [

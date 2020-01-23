@@ -11,6 +11,10 @@ import skills.capture
 import situational_play_selection
 
 
+##
+#
+# A play written to use a distraction to draw the opponents defence off center before taking a shot
+#
 class Distraction(standard_play.StandardPlay):
 
 
