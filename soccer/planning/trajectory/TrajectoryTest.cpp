@@ -229,32 +229,65 @@ TEST(Trajectory, RRTTrajectorySmall) {
     ASSERT_NEAR(a.duration().count(), 0.0, 1e-6);
 }
 
-TEST(Trajectory, PivotTurn) {
+void assertPivot(double a0, double af, double w0) {
     RobotConstraints constraints;
-    RobotInstant start{Pose{{}, 0}, Twist{}, RJ::now()};
-    Trajectory out = RRTTrajectory(start, start, constraints.mot, {});
+    RobotInstant start{Pose{{}, a0}, Twist{{}, w0}, RJ::now()};
+    RobotInstant goal{Pose{{}, af}, Twist{{}, 0}, RJ::now()};
+    Trajectory out = RRTTrajectory(start, goal, constraints.mot, {});
     ASSERT_FALSE(out.empty());
-    PlanAngles(out, start, AngleFns::faceAngle(M_PI/2), constraints.rot);
+    PlanAngles(out, start, AngleFns::faceAngle(af), constraints.rot);
     // check first instant
     ASSERT_NEAR(out.first().pose.position().distTo(start.pose.position()), 0, 1e-6);
-    ASSERT_NEAR(out.first().pose.heading(), 0, 1e-6);
-    ASSERT_NEAR(out.first().velocity.angular(), 0, 1e-6);
+    ASSERT_NEAR(fixAngleRadians(out.first().pose.heading()), fixAngleRadians(a0), 1e-6);
+    ASSERT_NEAR(out.first().velocity.angular(), w0, 1e-6);
     ASSERT_NEAR(out.first().velocity.linear().mag(), 0, 1e-6);
     // check last instant
     ASSERT_NEAR(out.last().pose.position().distTo(start.pose.position()), 0, 1e-6);
-    ASSERT_NEAR(out.last().pose.heading(), M_PI/2, 1e-6);
+    ASSERT_NEAR(fixAngleRadians(out.last().pose.heading()), fixAngleRadians(af), 1e-6);
     ASSERT_NEAR(out.last().velocity.linear().mag(), 0, 1e-6);
     ASSERT_NEAR(out.last().velocity.angular(), 0, 1e-6);
     //check middle instant
-    std::optional<RobotInstant> evalHalfway = out.evaluate(out.duration() * 0.5);
+    double deltaAngle = fixAngleRadians(af - a0);
+    RJ::Seconds halfwayTime(-99.0);
+    std::optional<RobotInstant> evalHalfway;
+    if(w0 * deltaAngle > 1e-6) {
+        halfwayTime = out.duration() * 0.5;
+    } else {
+        double returnTime = std::sqrt(2 * std::abs(w0) / constraints.rot.maxAccel);
+        std::optional<RobotInstant> evalReturn = out.evaluate(RJ::Seconds(returnTime));
+        ASSERT_TRUE(evalReturn);
+        ASSERT_NEAR(fixAngleRadians(evalReturn->pose.heading()-a0), 0, 1e-6);
+        ASSERT_NEAR(evalReturn->velocity.angular(), -w0, 1e-6);
+        halfwayTime = RJ::Seconds(out.duration() - RJ::Seconds(returnTime)) * 0.5;
+    }
+    evalHalfway = out.evaluate(halfwayTime);
+    ASSERT_NEAR(RJ::Seconds(evalHalfway->stamp - out.begin_time()).count(), halfwayTime.count(), 1e-6);
     ASSERT_TRUE(evalHalfway);
-    ASSERT_NEAR(evalHalfway->pose.heading(), M_PI/4, 1e-6);
+    double accel = constraints.rot.maxAccel * (deltaAngle > 0 ? 1 : -1);
+    double beginVel = std::abs(w0) *( deltaAngle > 0 ? 1 : -1);
+    double halfwayVel = beginVel + accel * halfwayTime.count();
+    double halfwayAngleDelta = (std::pow(halfwayVel, 2) - std::pow(beginVel, 2)) / (2 * accel);
+    if(std::abs(halfwayVel) > constraints.rot.maxSpeed) {
+        halfwayVel = constraints.rot.maxSpeed * (halfwayVel > 0 ? 1 : -1);
+        double accelTime = (halfwayVel - beginVel) / accel;
+        assert(accelTime > 0);
+        double constantVelTime = halfwayTime.count() - accelTime;
+        halfwayAngleDelta = (std::pow(halfwayVel, 2) - std::pow(beginVel, 2)) / (2 * accel)
+                + halfwayVel * constantVelTime;
+    }
+    ASSERT_NEAR(fixAngleRadians(evalHalfway->pose.heading() - a0), halfwayAngleDelta, 1e-6);//todo(Ethan)
     ASSERT_NEAR(evalHalfway->pose.position().distTo(start.pose.position()), 0, 1e-6);
     ASSERT_NEAR(evalHalfway->velocity.linear().mag(), 0, 1e-6);
-    ASSERT_NEAR(evalHalfway->velocity.angular(), std::min(constraints.rot.maxSpeed, std::sqrt(2 * constraints.rot.maxAccel * M_PI/4)), 1e-3);
-    ASSERT_NEAR(RJ::Seconds(evalHalfway->stamp - out.begin_time()).count(), out.duration().count() * 0.5, 1e-6);
+    ASSERT_NEAR(evalHalfway->velocity.angular(), halfwayVel, 1e-6);
 
     assertPathContinuous(out, constraints);
+}
+
+TEST(Trajectory, PivotTurn) {
+    double maxSpeed = RotationConstraints{}.maxSpeed;
+    for(int i = 0; i < 1000; i++) {
+        assertPivot(rando(-10*M_PI, 10*M_PI), rando(-10*M_PI, 10*M_PI), rando(-maxSpeed, maxSpeed));
+    }
 }
 namespace Planning {
 double clampAccel(double v1, double v2, double deltaX, double maxAccel);
@@ -272,8 +305,8 @@ TEST(Trajectory, VelocityProfileClampAccel) {
 TEST(Trajectory, CombiningTrajectories_and_SubTrajectories) {
     RobotConstraints constraints;
     RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
-    RobotInstant mid{Pose{Point{1,1}, 0}, Twist{Point{0,1}, 0}, RJ::now()};
-    RobotInstant end{Pose{Point{2,2}, 0}, Twist{Point{1,0}, 0}, RJ::now()};
+    RobotInstant mid{Pose{Point{1,1}, 0}, Twist{Point{0,.1}, 0}, RJ::now()};
+    RobotInstant end{Pose{Point{2,2}, 0}, Twist{Point{.1,0}, 0}, RJ::now()};
     ShapeSet obs;
     RJ::Time t0 = start.stamp;
     AngleFunction angleFn = [t0](const RobotInstant &instant) -> double {
@@ -313,20 +346,20 @@ TEST(Trajectory, RRTTrajectorySuccessRate) {
         ShapeSet obstacles;
         int numObstacles = (int)rando(2, 5);
         for(int j = 0; j < numObstacles; j++) {
-            obstacles.add(std::make_shared<Circle>(Point{rando(-2, 2), rando(.5, 1.5)}, .2));
+            obstacles.add(std::make_shared<Circle>(Point{rando(-2, 2), rando(2, 3)}, .2));
         }
-        RobotInstant start{Pose{Point{rando(-3, 3), rando(0, 6)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
-        RobotInstant goal{Pose{Point{rando(-3, 3), rando(0, 6)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
+        RobotInstant start{Pose{Point{rando(-3, 3), rando(5, 5.5)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
+        RobotInstant goal{Pose{Point{rando(-3, 3), rando(0.5, 1)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
         Trajectory path{{}};
         for (int j = 0; j < numTries && path.empty(); j++){
             path = RRTTrajectory(start, goal, MotionConstraints{}, obstacles);
             if(path.empty()) {
                 fails++;
             }
-            ASSERT_TRUE(j != numTries);
+            ASSERT_TRUE(j != numTries-1);
         }
         assertPathContinuous(path, RobotConstraints{});
     }
     double successRate = (double)(iterations) / (iterations + fails);
-    printf("RRTTrajectory() Success Rate: %.2f%\n", successRate);
+    printf("RRTTrajectory() Success Rate: %.6f\n", successRate);
 }

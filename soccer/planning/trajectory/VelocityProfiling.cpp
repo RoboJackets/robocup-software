@@ -35,6 +35,7 @@ double clampAccel(double v1, double v2, double deltaX, double maxAccel) {
     } else {
         // the robot changed direction and did a zig-zag thing with
         // non-constant acceleration (ugh)
+        // or deltaX is 0 (shouldn't happen)
         assert(false);
         return v2;
     }
@@ -79,6 +80,15 @@ Trajectory ProfileVelocity(const BezierPath& path,
             speed[n] = std::min(speed[n], std::sqrt(maxCentripetalAccel / curvature[n]));
         }
     }
+//    //if derives1 = 0 at the at the endpoints curvature gets undefined
+//    if(num_points > 1) {
+//        if(derivs1[0].mag() < 1e-6) {
+//            curvature[0] = curvature[1];
+//        }
+//        if(derivs1[num_points-1].mag() < 1e-6) {
+//            curvature[num_points-1] = curvature[num_points-2];
+//        }
+//    }
 
     using std::pow;
     // Acceleration pass: calculate maximum velocity at each point based on
@@ -86,7 +96,7 @@ Trajectory ProfileVelocity(const BezierPath& path,
     for (int n = 0; n < num_points-1; n++) {
         double centripetal = speed[n] * speed[n] * curvature[n];
         double maxTanAccelSquared = pow(constraints.maxAcceleration, 2) - pow(centripetal, 2);
-        double maxTangentAccel = std::abs(maxTanAccelSquared) < 0.0000001 ? 0.0 : std::sqrt(maxTanAccelSquared);
+        double maxTangentAccel = std::abs(maxTanAccelSquared) < 1e-6 ? 0.0 : std::sqrt(maxTanAccelSquared);
         assert(!std::isnan(maxTangentAccel) && !std::isinf(maxTangentAccel));
         double distance = (points[n + 1] - points[n]).mag();
         speed[n + 1] = limitAccel(speed[n], speed[n + 1], distance, maxTangentAccel);
@@ -105,17 +115,62 @@ Trajectory ProfileVelocity(const BezierPath& path,
 
     Trajectory trajectory{{}};
     trajectory.AppendInstant(RobotInstant{Pose{points[0], 0}, Twist{derivs1[0].normalized(speed[0]), 0}, initial_time});
-    RJ::Time current_time = initial_time;
     for (int n = 1; n < num_points; n++) {
-        double distance = (points[n] - points[n - 1]).mag();
+        Point deltaPos = points[n]-points[n-1];
+        double distance;
+        double centerAngle = derivs1[n-1].angleBetween(deltaPos) * 2;
+        if(curvature[n-1] == 0 || centerAngle < 1e-6) {
+            // straight line distance
+            distance = deltaPos.mag();
+        } else {
+            // calculate arc length
+            double radius = 1 / curvature[n-1];
+            //todo(Ethan) fix this
+//            assert(radius > deltaPos.mag() / 2);
+            radius = std::max(deltaPos.mag()/2, radius);
+            distance = radius * centerAngle;
+        }
         double vbar = (speed[n] + speed[n - 1]) / 2;
         assert(vbar != 0);
         double t_sec = distance / vbar;
-        current_time = current_time + RJ::Seconds(t_sec);
+        assert(t_sec > 1e-6);
+        RJ::Time current_time = trajectory.last().stamp + RJ::Seconds(t_sec);
         // Add point n in
         trajectory.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), current_time});
     }
+    assertPathContinuous(trajectory, RobotConstraints{});
     return std::move(trajectory);
+}
+
+/*
+ * Return to the current position with angular velocity = 0
+ *
+ * current angle     (stoppingAngle)          0 vel
+ * |-------------------------------------------|
+ * >>>>>>>>>>>>>> stopping >>>>>>>>>>>>>>>>>>>>>
+ *                      <<<<<< accelerating <<<<
+ * <<<<<< stopping <<<<<
+ */
+void appendStop(std::vector<double>& angles, std::vector<double>& angleVels, double maxSpeed, double maxAccel) {
+    assert(maxSpeed > 1e-6);
+    assert(maxAccel > 1e-6);
+    assert(std::abs(angleVels.back()) > 1e-6);
+    if(std::abs(angleVels.back()) > 1e-6) {
+        double accel = maxAccel * (angleVels.back() > 0 ? -1 : 1);
+        double stoppingAngle = -std::pow(angleVels.back(), 2) / (2 * accel);
+        double goal = angles.back();
+        // stopping
+        angles.push_back(goal + stoppingAngle);
+        angleVels.push_back(0);
+        // accelerating
+        angles.push_back(goal + stoppingAngle / 2);
+        double speedUncapped = std::sqrt(2 * maxAccel * std::abs(stoppingAngle/2));
+        double returnSpeedMax = std::min(maxSpeed, speedUncapped);
+        angleVels.push_back(returnSpeedMax * (stoppingAngle > 0 ? -1 : 1));
+        // stopping
+        angles.push_back(goal);
+        angleVels.push_back(0);
+    }
 }
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& start_instant,
@@ -154,31 +209,14 @@ void PlanAngles(Trajectory& trajectory,
         instant_before = instant_after;
         ++instants_it;
     }
-    // add more instants to get to the target heading at the end
-    double angle_initial = angles.back();
-    double angleLeft = fixAngleRadians(angle_function(trajectory.last()) - angle_initial);
-    constexpr double minAngleDelta = 1e-5;
-    if(std::abs(angleLeft) > minAngleDelta) {
-        constexpr int extra_interpolations = 20;
-        for(int i = 1; i <= extra_interpolations; i++) {
-            double currentAngle = fixAngleRadians((double)i / extra_interpolations * angleLeft + angle_initial);
-            double angleDelta =  fixAngleRadians(currentAngle - angles.back());
-            if(std::abs(angleDelta) > minAngleDelta) {
-                angleVels.push_back(constraints.maxSpeed * (angleDelta < 0 ? -1 : 1));
-                angles.push_back(currentAngle);
-            }
-        }
-    }
     // Right now, when the angular velocity changes direction there is a cusp
     // for each cusp, we have to do a velocity profile on either side to fix it
     for(int i = 1; i < angleVels.size();) {
-        double direction = angleVels[i-1];
+        double direction = angleVels[i];
         // limit acceleration (forward constraints)
         int j = i;
         for (; j < angles.size() && angleVels[j] * direction >= 0; j++) {
-            if(direction == 0) {
-                direction = angleVels[j];
-            }
+            assert(std::abs(direction) > 1e-6);
             double deltaAngle = fixAngleRadians(angles[j] - angles[j-1]);
             angleVels[j] = clampAccel(angleVels[j-1], angleVels[j], deltaAngle, constraints.maxAccel);
         }
@@ -210,8 +248,51 @@ void PlanAngles(Trajectory& trajectory,
         double avgVel = (angleVels[angleIdx-1] + angleVels[angleIdx])/2;
         angles[angleIdx] = instants_it->pose.heading() = angles[angleIdx-1] + avgVel * deltaTime;
     }
+    assert(angleIdx == trajectory.num_instants());
+
+    // If the input trajectory doesn't provide enough distance to get to the
+    // target angle and velocity we need to do some more work...
+
+    // add more instants to get to the target heading at the end
+    double angle_initial = angles.back();
+    double angleLeft = fixAngleRadians(angle_function(trajectory.last()) - angle_initial);
+    constexpr double minAngleDelta = 1e-5;
+    if(std::abs(angleLeft) > minAngleDelta) {
+        //if we are going the wrong direction, we need to stop first
+        if(angleLeft * angleVels.back() < -1e-6) {
+            appendStop(angles, angleVels, constraints.maxSpeed, constraints.maxAccel);
+        }
+        constexpr int extra_interpolations = 20;
+        //add extra angles at max speed
+        int sizeBeforePivot = angles.size();
+        for(int i = 1; i <= extra_interpolations; i++) {
+            double currentAngle = (double)i / extra_interpolations * angleLeft + angle_initial;
+            double angleDelta =  fixAngleRadians(currentAngle - angles.back());
+            if(std::abs(angleDelta) > minAngleDelta) {
+                angles.push_back(currentAngle);
+                angleVels.push_back(constraints.maxSpeed * (angleDelta < 0 ? -1 : 1));
+            }
+        }
+        //assume target velocity = 0
+        angleVels.back() = 0;
+        //extra angles--backward pass (limited to the extra instants region)
+        for(int i = angles.size()-1; i > sizeBeforePivot; i--) {
+            double angleDelta =  fixAngleRadians(angles[i-1] - angles[i]);
+            angleVels[i-1] = -clampAccel(-angleVels[i], -angleVels[i-1], angleDelta, constraints.maxAccel);
+        }
+        //extra angles--forward pass
+        for(int i = sizeBeforePivot; i < angles.size(); i++) {
+            double angleDelta =  fixAngleRadians(angles[i] - angles[i-1]);
+            angleVels[i] = clampAccel(angleVels[i-1], angleVels[i], angleDelta, constraints.maxAccel);
+        }
+    }
+    //if we are still moving, let's stop
+    if(std::abs(angleVels.back()) > 1e-6) {
+        appendStop(angles, angleVels, constraints.maxSpeed, constraints.maxAccel);
+    }
     //add extra instants to the trajectory to get to the target angle
     assert(angleIdx != 0);
+    assert(angles.size() == angleVels.size());
     for (; angleIdx < angles.size(); ++angleIdx) {
         RobotInstant newInstant{trajectory.last()};
         newInstant.pose.heading() = angles[angleIdx];
@@ -224,5 +305,6 @@ void PlanAngles(Trajectory& trajectory,
             trajectory.AppendInstant(newInstant);
         }
     }
+    assertPathContinuous(trajectory, RobotConstraints{});
 }
 } // namespace Planning

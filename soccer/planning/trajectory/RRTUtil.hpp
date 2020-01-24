@@ -49,7 +49,7 @@ std::vector<Geometry2d::Point> GenerateRRT(
 
 /**
  * Generate a smooth profiled velocity path. The user still
- * needs to plan angles with PlanAngles()
+ * needs to plan angles with PlanAngles() as this function ignores angles
  * @param start initial instant
  * @param goal desired instant
  * @param motionConstraints motion constraints
