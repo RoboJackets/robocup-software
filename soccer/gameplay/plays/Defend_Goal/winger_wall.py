@@ -16,10 +16,19 @@ import evaluation.linear_classification
 import tactics.positions.submissive_goalie as submissive_goalie
 import tactics.positions.wing_defender as wing_defender
 import tactics.wall as wall
-
+import situational_play_selection
 
 ## Defense play that utilizes a wall and wingers
 class WingerWall(standard_play.StandardPlay):
+
+
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL,
+        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE,
+        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_PILEUP
+    ] # yapf: disable
+
+
 
     # Weights for robot risk scores
     # [ball_dist, ball_opp_goal]
@@ -71,10 +80,6 @@ class WingerWall(standard_play.StandardPlay):
         self.classify_opponent_robots()
         # Apply roles
         self.apply_blocking_roles()
-
-    @classmethod
-    def score(cls):
-        return 10 if main.game_state().is_playing() else float("inf")
 
     ## Stop winger wall from using adding standard defense
     def use_standard_defense(self):
@@ -154,7 +159,7 @@ class WingerWall(standard_play.StandardPlay):
 
     ## Set up the wall defenders
     #
-    # After we classify the enemy forward attacker, 
+    # After we classify the enemy forward attacker,
     # we will build a wall to block their shot
     def _setup_wall(self, wall_defenders=3):
         self.forwards = sorted(self.forwards, key=lambda winger: winger[0])
@@ -177,7 +182,7 @@ class WingerWall(standard_play.StandardPlay):
 
     ## Factors how close the robot is to the right side of the field?
     #
-    # Increases as the robot position x increases. 
+    # Increases as the robot position x increases.
     def _calc_wing_distance(self, opp_robot, score):
         return (constants.Robot.Radius + abs(opp_robot.pos.x) /
                 (constants.Field.Width / 2)) / (self.aggression)

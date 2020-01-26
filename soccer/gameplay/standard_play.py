@@ -4,10 +4,11 @@ import tactics
 import main
 import situational_play_selection
 from typing import List
+import random
 
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
-# the play with defense, but any action that a normal play should do can be 
+# the play with defense, but any action that a normal play should do can be
 # placed here
 class StandardPlay(play.Play):
 
@@ -39,7 +40,7 @@ class StandardPlay(play.Play):
             if self.has_subbehavior_with_name('defense'):
                 self.remove_subbehavior('defense')
 
-    ## 
+    ##
     # Handles activity while the play is active. A play wishing to utilize this
     # method in addition to having an "execute_running" method of its own must call
     # it via super
@@ -53,7 +54,7 @@ class StandardPlay(play.Play):
 
     ##
     # Call to attempt to preempt the play
-    # Returns true if the preempt is successful 
+    # Returns true if the preempt is successful
     # Override if you want more complex responce to being preempted
     def try_preempt(self):
         self.terminate()
@@ -82,6 +83,8 @@ class StandardPlay(play.Play):
             return float('inf')
         else:
             if (cls.is_valid(main.situationAnalysis.getSituation())):
-                return main.situationAnalysis.inSituationScore
+                return main.situationAnalysis.inSituationScore + random.random(
+                )
             else:
-                return main.situationAnalysis.outSituationScore
+                return main.situationAnalysis.outSituationScore + random.random(
+                )
