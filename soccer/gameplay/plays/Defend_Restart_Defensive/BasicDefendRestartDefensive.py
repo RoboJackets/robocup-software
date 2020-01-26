@@ -53,12 +53,13 @@ class BasicDefendRestartDefensive(standard_play.StandardPlay):
         # mark highest threat robot
         for i in range(self.num_defenders):
             mark_bhvr = self.subbehavior_with_name('mark' + str(i))
-            
-            highest_threat_pt = eval_opp.get_threat_list([mark_bhvr])[0][0]
-            closest_opp = eval_opp.get_closest_opponent(highest_threat_pt)
-            if (closest_opp.pos - main.ball().pos).mag() > constants.Field.CenterRadius + constants.Robot.Radius * 2:
-                print((closest_opp.pos - main.ball().pos).mag())
-                # print(constants.Field.CenterRadius)
-                mark_bhvr.mark_robot = closest_opp
-            else:
-                mark_bhvr.mark_robot = None
+
+            threat_found = False            
+            for threat_pt, _, _ in eval_opp.get_threat_list([mark_bhvr]):
+                print(threat_pt)
+                closest_opp = eval_opp.get_closest_opponent(threat_pt)
+                if not threat_found and (closest_opp.pos - main.ball().pos).mag() > constants.Field.CenterRadius + constants.Robot.Radius * 2:
+                    print((closest_opp.pos - main.ball().pos).mag())
+                    # print(constants.Field.CenterRadius)
+                    mark_bhvr.mark_robot = closest_opp
+                    threat_found = True
