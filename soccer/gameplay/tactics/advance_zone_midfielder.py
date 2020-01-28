@@ -12,7 +12,6 @@ import evaluation.passing_positioning
 import evaluation.passing
 import evaluation.shooting
 import functools
-import plays.Legacy.adaptive_formation
 
 
 # 2 midfielder rely on the future location of their teammate to pass quickly
@@ -150,7 +149,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
             self.closest_post = left_post
         else:
             self.closest_post = right_post
-        # if interior angles near sum to 0 then robot is inside the the zone.
+        # if interior angles near sum to 0 then robot is inside the the zone. 
         return abs(shot_angle - left_post_alt_pos_angle - right_post_alt_pos_angle) < self.epsilon
 
     # finds closest point to leave zone and goes four robot radius outside the zone
