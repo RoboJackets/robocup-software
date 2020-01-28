@@ -37,12 +37,6 @@ class BasicDefensiveScramble(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'Immediately')
 
-        self.remove_all_subbehaviors()
-
-        # Use standard defense
-        self.add_subbehavior(
-            tactics.defense.Defense(), 'defense', required=False)
-
         self.add_subbehavior(capture.Capture(), 'ball capturer')
 
         # Keep track of which robots are currently being defended
@@ -53,9 +47,6 @@ class BasicDefensiveScramble(standard_play.StandardPlay):
         for i in range(self.num_wingers):
             self.add_subbehavior(wing_defender.WingDefender(),
                                  'winger' + str(i))
-
-    def use_standard_defense(self):
-        pass
 
     def execute_running(self):
 
@@ -73,5 +64,3 @@ class BasicDefensiveScramble(standard_play.StandardPlay):
             if not eval_opp.is_marked(bot.pos):
                 self.defended[i] = False
 
-    def exit_running(self):
-        self.remove_all_subbehaviors()
