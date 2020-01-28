@@ -25,7 +25,8 @@ class Wall(composite_behavior.CompositeBehavior):
                 0, 0),  # what point we are defending (default is goal)
             defender_spacing=2.5,  # number of robot radii between the centers of the defenders in the wall
             dist_from_mark=.75,  # distance from the mark point we want to build the wall
-            defender_priorities=[20, 19, 18, 17, 16]
+            defender_priorities=[20, 19, 18, 17, 16],
+            contest_ball=False
     ):  # default defense priorities                       
         super().__init__(continuous=True)
 
@@ -43,6 +44,7 @@ class Wall(composite_behavior.CompositeBehavior):
         self.dist_from_mark = dist_from_mark
         self.defender_spacing = defender_spacing
         self.defender_priorities = defender_priorities
+        self.contest_ball = contest_ball
 
         # Information for movement calculations to reduce redundancy
         self.midpoint = None
@@ -78,17 +80,19 @@ class Wall(composite_behavior.CompositeBehavior):
                 priority=priority)
 
     def on_enter_scramble(self):
-        self.number_of_defenders = self.number_of_defenders - 1
         self._remove_wall_defenders()
-        self.add_subbehavior(
-            skills.pivot_kick.
-            PivotKick(),  # TODO figure out what to do in scramble
-            name="robotCapture")
+        if self.contest_ball:
+            self.number_of_defenders = self.number_of_defenders - 1
+            self.add_subbehavior(
+                skills.pivot_kick.
+                PivotKick(),  # TODO figure out what to do in scramble
+                name="robotCapture")
 
     def on_exit_scramble(self):
-        self.number_of_defenders = self.number_of_defenders + 1
-        self.remove_subbehavior("robotCapture")
         self._add_wall_defenders()
+        if self.contest_ball:
+            self.number_of_defenders = self.number_of_defenders + 1
+            self.remove_subbehavior("robotCapture")
 
     def execute_scramble(self):
         pass  #print('scrambling')
