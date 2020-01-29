@@ -548,6 +548,7 @@ protected:
     std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
 
     friend class Processor;
+    friend class RadioNode;
 
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed

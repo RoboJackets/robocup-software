@@ -158,7 +158,7 @@ class WingerWall(standard_play.StandardPlay):
 
     ## Set up the wall defenders
     #
-    # After we classify the enemy forward attacker, 
+    # After we classify the enemy forward attacker,
     # we will build a wall to block their shot
     def _setup_wall(self, wall_defenders=3):
         self.forwards = sorted(self.forwards, key=lambda winger: winger[0])
@@ -181,7 +181,7 @@ class WingerWall(standard_play.StandardPlay):
 
     ## Factors how close the robot is to the right side of the field?
     #
-    # Increases as the robot position x increases. 
+    # Increases as the robot position x increases.
     def _calc_wing_distance(self, opp_robot, score):
         return (constants.Robot.Radius + abs(opp_robot.pos.x) /
                 (constants.Field.Width / 2)) / (self.aggression)

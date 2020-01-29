@@ -34,5 +34,3 @@ class BaiscDefendClear(standard_play.StandardPlay):
     def closest_opps_to_our_goal(self, num_bots):
         opp_bots = [bot for bot in main.their_robots()]
         return sorted(opp_bots, key=lambda bot: bot.pos.y)[:num_bots]
-
-

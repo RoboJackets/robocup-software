@@ -324,7 +324,7 @@ class SituationalPlaySelector:
 
     ##
     # Returns if we are in the passed situation
-    # 
+    #
     # @param situation a situation as an enum
     def isSituation(self, situation):
         if (isinstance(situation, self.Situation)):
@@ -338,12 +338,12 @@ class SituationalPlaySelector:
         return self.currentSituation in situations
 
     ##
-    # 
+    #
     # Will determine if the current play has lasted too long over a situation change
     #   and needs to be preempted, it will call try_preempt
     def updatePreempt(self):
 
-        #Since this not actually calls preemption we need to check if we are enabled 
+        #Since this not actually calls preemption we need to check if we are enabled
         if (not self.enabled):
             return
 

@@ -10,13 +10,16 @@ import math
 import situational_play_selection
 
 
+##
+#
+# This is just the legacy play basic122 copied over again
+#
 class Basic122(standard_play.StandardPlay):
 
     _situationList = [
         situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
         situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
     ] # yapf: disable
-
 
     # how far the 2 support robots should stay away from the striker
     SupportAvoidTeammateRadius = 0.5
@@ -66,7 +69,6 @@ class Basic122(standard_play.StandardPlay):
             return score + scoreOffset
         else:
             return 10 if main.game_state().is_playing() else float("inf")
-
 
     def execute_running(self):
         super().execute_running()
@@ -120,11 +122,11 @@ class Basic122(standard_play.StandardPlay):
                     support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
                 if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-                    support_goal.y = max(support_goal.y *
-                                         Basic122.OffenseSupportRatio, 0.3)
+                    support_goal.y = max(
+                        support_goal.y * Basic122.OffenseSupportRatio, 0.3)
                 else:
-                    support_goal.y = max(support_goal.y *
-                                         Basic122.DefenseSupportRatio, 0.3)
+                    support_goal.y = max(
+                        support_goal.y * Basic122.DefenseSupportRatio, 0.3)
 
                 support1.robot.move_to(support_goal)
                 support1.robot.face(ball_proj)
@@ -144,11 +146,11 @@ class Basic122(standard_play.StandardPlay):
                     support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
                 if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-                    support_goal.y = max(support_goal.y *
-                                         Basic122.OffenseSupportRatio, 0.3)
+                    support_goal.y = max(
+                        support_goal.y * Basic122.OffenseSupportRatio, 0.3)
                 else:
-                    support_goal.y = max(support_goal.y *
-                                         Basic122.DefenseSupportRatio, 0.3)
+                    support_goal.y = max(
+                        support_goal.y * Basic122.DefenseSupportRatio, 0.3)
 
                 support2.robot.move_to(support_goal)
                 support2.robot.face(ball_proj)
@@ -162,9 +164,8 @@ class Basic122(standard_play.StandardPlay):
         # Both are done so they won't have the same robot
         clear_all_marks = False
         for i in range(2):
-            if (striker_engaged and
-                supports[i].mark_robot is not None and
-                supports[i].mark_robot == closest_opp_to_striker):
+            if (striker_engaged and supports[i].mark_robot is not None
+                    and supports[i].mark_robot == closest_opp_to_striker):
                 clear_all_marks = True
 
         for i in range(2):
@@ -173,8 +174,8 @@ class Basic122(standard_play.StandardPlay):
                 cur_dist_sq = (
                     support.mark_robot.pos -
                     ball_proj).magsq() if support.mark_robot else float("inf")
-                if (new_dists[i] < cur_dist_sq * Basic122.MarkHysteresisCoeff or
-                    clear_all_marks):
+                if (new_dists[i] < cur_dist_sq * Basic122.MarkHysteresisCoeff
+                        or clear_all_marks):
                     support.mark_robot = new_bots[i]
 
         # if the supports are farther from the ball, they can mark further away

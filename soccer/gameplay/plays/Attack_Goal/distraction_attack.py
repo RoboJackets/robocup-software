@@ -11,8 +11,12 @@ import skills.capture
 import situational_play_selection
 
 
+##
+#
+# A play written to use a distraction to draw the opponents defence off center before taking a shot
+#
 class Distraction(standard_play.StandardPlay):
-    
+
 
     _situationList = [
         situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
@@ -188,7 +192,7 @@ class Distraction(standard_play.StandardPlay):
 
     def on_enter_center_pass(self):
         self.remove_all_subbehaviors()
-        #pass the ball to the robot in the center and move a robot to the distract position 
+        #pass the ball to the robot in the center and move a robot to the distract position
         self.add_subbehavior(
             tactics.coordinated_pass.CoordinatedPass(self.center),
             'center pass',
@@ -201,7 +205,7 @@ class Distraction(standard_play.StandardPlay):
 
     def on_enter_passing(self):
         self.remove_all_subbehaviors()
-        #either pass to striker or distracter depending on shot chance        
+        #either pass to striker or distracter depending on shot chance
         pass_to_distract_chance = evaluation.passing.eval_pass(
             main.ball().pos, self.Distraction_recieve_pass_point,
             main.our_robots())
@@ -266,8 +270,6 @@ class Distraction(standard_play.StandardPlay):
         self.add_subbehavior(
             skills.pivot_kick.PivotKick(), 'shooting', required=True)
 
-
-
     @classmethod
     def score(cls):
         score = super().score()
@@ -278,7 +280,3 @@ class Distraction(standard_play.StandardPlay):
             return score + scoreOffset
         else:
             return 10 if main.game_state().is_playing() else float("inf")
-
-
-
-

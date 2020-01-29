@@ -16,15 +16,14 @@ import skills.capture
 import situational_play_selection
 
 
-
-#This is essentially a copy of adaptive formation, found in the legacy folder,
-#With the shooting option removed. It is intended to be used as a clearing play
+##
+# This is essentially a copy of adaptive formation, found in the legacy folder,
+# With the shooting option removed. It is intended to be used as a clearing play
 class AdaptiveClear(standard_play.StandardPlay):
 
     _situationList = [
         situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
     ] # yapf: disable
-
 
     # Min score to pass
     DRIBBLE_TO_PASS_CUTOFF = 0.1
@@ -96,10 +95,10 @@ class AdaptiveClear(standard_play.StandardPlay):
                             AdaptiveClear.State.collecting, lambda: True,
                             'immediately')
 
-        self.add_transition(AdaptiveClear.State.collecting,
-                            AdaptiveClear.State.dribbling, lambda: self.
-                            subbehavior_with_name('defend').state == behavior.
-                            Behavior.State.completed, 'Ball Collected')
+        self.add_transition(
+            AdaptiveClear.State.collecting, AdaptiveClear.State.dribbling,
+            lambda: self.subbehavior_with_name('defend').state == behavior.
+            Behavior.State.completed, 'Ball Collected')
 
         self.add_transition(
             AdaptiveClear.State.dribbling, AdaptiveClear.State.passing,
@@ -107,10 +106,9 @@ class AdaptiveClear(standard_play.StandardPlay):
             ), 'Passing')
 
         self.add_transition(
-            AdaptiveClear.State.dribbling,
-            AdaptiveClear.State.clearing, lambda: self.dribbler_has_ball(
-            ) and self.should_clear_from_dribble(
-            ) and not self.should_pass_from_dribble(
+            AdaptiveClear.State.dribbling, AdaptiveClear.State.clearing,
+            lambda: self.dribbler_has_ball() and self.
+            should_clear_from_dribble() and not self.should_pass_from_dribble(
             ), 'Clearing')
 
         self.add_transition(
@@ -120,25 +118,25 @@ class AdaptiveClear(standard_play.StandardPlay):
 
         # Reset to collecting when ball is lost at any stage
         self.add_transition(AdaptiveClear.State.dribbling,
-                            AdaptiveClear.State.collecting, lambda:
-                            not self.dribbler_has_ball(), 'Dribble: Ball Lost')
+                            AdaptiveClear.State.collecting,
+                            lambda: not self.dribbler_has_ball(),
+                            'Dribble: Ball Lost')
         self.add_transition(
-            AdaptiveClear.State.passing,
-            AdaptiveClear.State.collecting, lambda: self.
-            subbehavior_with_name('pass').state == behavior.Behavior.State.
-            cancelled or self.subbehavior_with_name('pass').state == behavior.
-            Behavior.State.failed, 'Passing: Ball Lost')
+            AdaptiveClear.State.passing, AdaptiveClear.State.collecting,
+            lambda: self.subbehavior_with_name('pass').state == behavior.
+            Behavior.State.cancelled or self.subbehavior_with_name('pass').
+            state == behavior.Behavior.State.failed, 'Passing: Ball Lost')
 
-        self.add_transition(AdaptiveClear.State.clearing,
-                            AdaptiveClear.State.collecting, lambda: self.
-                            subbehavior_with_name('clear').is_done_running(),
-                            'Clearing: Ball Lost')
+        self.add_transition(
+            AdaptiveClear.State.clearing, AdaptiveClear.State.collecting,
+            lambda: self.subbehavior_with_name('clear').is_done_running(),
+            'Clearing: Ball Lost')
 
     @classmethod
     def score(cls):
         score = super().score()
 
-        #If we get a valid score from the super function, then we should calculate 
+        #If we get a valid score from the super function, then we should calculate
         #an offset and sum that with score and return that
         if (score != float("inf")):
             #currently the offset is just 0 because we haven't made one
@@ -150,8 +148,6 @@ class AdaptiveClear(standard_play.StandardPlay):
             if len(main.our_robots()) < 5:
                 return float("inf")
             return 8
-
-
 
     def should_pass_from_dribble(self):
 
@@ -168,7 +164,6 @@ class AdaptiveClear(standard_play.StandardPlay):
         # Under cutoff
         return False
 
-
     def should_clear_from_dribble(self):
         # If outside clear zone
         if (self.dribbler.pos.y > AdaptiveClear.CLEAR_FIELD_CUTOFF):
@@ -180,8 +175,9 @@ class AdaptiveClear(standard_play.StandardPlay):
             return False
 
         # TODO: See if there is space to dribble
-        closest_distance = (evaluation.opponent.get_closest_opponent(
-            main.ball().pos, 1).pos - main.ball().pos).mag()
+        closest_distance = (
+            evaluation.opponent.get_closest_opponent(main.ball().pos, 1).pos -
+            main.ball().pos).mag()
         if (closest_distance > AdaptiveClear.CLEAR_DISTANCE_CUTOFF):
             return False
 
@@ -207,10 +203,8 @@ class AdaptiveClear(standard_play.StandardPlay):
         # Dribbles toward the best receive point
 
         self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
-            main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
-            AdaptiveClear.FIELD_POS_WEIGHTS,
-            AdaptiveClear.NELDER_MEAD_ARGS,
+            main.ball().pos, main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
+            AdaptiveClear.FIELD_POS_WEIGHTS, AdaptiveClear.NELDER_MEAD_ARGS,
             AdaptiveClear.DRIBBLING_WEIGHTS)
 
         self.add_subbehavior(self.dribbler, 'dribble', required=True)
@@ -220,26 +214,25 @@ class AdaptiveClear(standard_play.StandardPlay):
         if (not self.has_subbehavior_with_name('midfielders')):
             self.midfielders = tactics.simple_zone_midfielder.SimpleZoneMidfielder(
             )
-            self.add_subbehavior(
-                self.midfielders, 'midfielders', required=False, priority=10)
+            self.add_subbehavior(self.midfielders,
+                                 'midfielders',
+                                 required=False,
+                                 priority=10)
 
     def execute_dribbling(self):
         # Grab best pass
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
-            main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
-            AdaptiveClear.FIELD_POS_WEIGHTS,
-            AdaptiveClear.NELDER_MEAD_ARGS,
+            main.ball().pos, main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
+            AdaptiveClear.FIELD_POS_WEIGHTS, AdaptiveClear.NELDER_MEAD_ARGS,
             AdaptiveClear.PASSING_WEIGHTS)
-       
+
         # Recalculate dribbler pos
         self.check_dribbling_timer += 1
         if (self.check_dribbling_timer > self.check_dribbling_timer_cutoff):
             self.check_dribbling_timer = 0
             self.dribbler.pos, _ = evaluation.passing_positioning.eval_best_receive_point(
-                main.ball().pos,
-                main.our_robots(), AdaptiveClear.MIN_PASS_DIST,
-                AdaptiveClear.FIELD_POS_WEIGHTS,
+                main.ball().pos, main.our_robots(),
+                AdaptiveClear.MIN_PASS_DIST, AdaptiveClear.FIELD_POS_WEIGHTS,
                 AdaptiveClear.NELDER_MEAD_ARGS,
                 AdaptiveClear.DRIBBLING_WEIGHTS)
 
@@ -251,15 +244,13 @@ class AdaptiveClear(standard_play.StandardPlay):
     def on_exit_dribbling(self):
         self.remove_subbehavior('dribble')
 
-
     def on_enter_clearing(self):
         # Line kick with chip
         # Choose most open area / Best pass, weight forward
         # Decrease weight on sides of field due to complexity of settling
         self.pass_target, self.pass_score = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
-            main.our_robots(), AdaptiveClear.FIELD_POS_WEIGHTS,
-            AdaptiveClear.NELDER_MEAD_ARGS,
+            main.ball().pos, main.our_robots(),
+            AdaptiveClear.FIELD_POS_WEIGHTS, AdaptiveClear.NELDER_MEAD_ARGS,
             AdaptiveClear.PASSING_WEIGHTS)
 
         clear = skills.pivot_kick.PivotKick()
