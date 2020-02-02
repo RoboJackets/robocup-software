@@ -152,10 +152,10 @@ Trajectory ProfileVelocity(const BezierPath& path,
  * <<<<<< stopping <<<<<
  */
 void appendStop(std::vector<double>& angles, std::vector<double>& angleVels, double maxSpeed, double maxAccel) {
-    assert(maxSpeed > 1e-6);
-    assert(maxAccel > 1e-6);
-    assert(std::abs(angleVels.back()) > 1e-6);
-    if(std::abs(angleVels.back()) > 1e-6) {
+    assert(maxSpeed > 1e-12);
+    assert(maxAccel > 1e-12);
+    assert(std::abs(angleVels.back()) > 1e-12);
+    if(std::abs(angleVels.back()) > 1e-12) {
         double accel = maxAccel * (angleVels.back() > 0 ? -1 : 1);
         double stoppingAngle = -std::pow(angleVels.back(), 2) / (2 * accel);
         double goal = angles.back();
@@ -201,7 +201,11 @@ void PlanAngles(Trajectory& trajectory,
         double velAvg = delta_angle / deltaTime;
         // assuming constant acceleration: vf = vAvg + vAvg - v0
         // but, using this vf will cause oscillation.
-        // using velAvg will cause steady state error.
+        // |-----|-----|-----|------.......
+        //   ^ if we accelerate too much here,
+        //          ^ then we have to slow down here to meet time constraints
+        //                ^ then we will speed up again here
+        //                       ^ ... continues oscillating
         // so we use the value in the middle of vf and vAvg
         angleVels[i] = std::clamp(velAvg + (velAvg - angleVels[i-1])/2, -constraints.maxSpeed, constraints.maxSpeed);
         velAvg = (angleVels[i-1] + angleVels[i]) / 2;
@@ -211,18 +215,19 @@ void PlanAngles(Trajectory& trajectory,
     }
     // Right now, when the angular velocity changes direction there is a cusp
     // for each cusp, we have to do a velocity profile on either side to fix it
+    // profile on both sides, so we don't forget the point where direction changes
     for(int i = 1; i < angleVels.size();) {
-        double direction = angleVels[i];
+        double direction = std::abs(angleVels[i-1]) > 1e-12 ? angleVels[i-1] : angleVels[i];
+        if(std::abs(direction) < 1e-12) continue;
         // limit acceleration (forward constraints)
         int j = i;
         for (; j < angles.size() && angleVels[j] * direction >= 0; j++) {
-            assert(std::abs(direction) > 1e-6);
             double deltaAngle = fixAngleRadians(angles[j] - angles[j-1]);
             angleVels[j] = clampAccel(angleVels[j-1], angleVels[j], deltaAngle, constraints.maxAccel);
         }
         // at this point j is invalid (either off the end of the vector or in
         // a position with opposite direction)
-        assert(j != i);
+
         // set the velocity at the cusp to 0 (also assumes the target angular
         // velocity at the end of the path is 0)
         angleVels[j-1] = 0;
@@ -244,29 +249,35 @@ void PlanAngles(Trajectory& trajectory,
     for (; instants_it != trajectory.instants_end(); ++instants_it, ++angleIdx) {
         double deltaTime = RJ::Seconds(instants_it->stamp - std::prev(instants_it)->stamp).count();
         double maxDeltaVel = constraints.maxAccel * deltaTime;
+        //todo(Ethan) is the clamp necessary? explain.
         angleVels[angleIdx] = instants_it->velocity.angular() = std::clamp(angleVels[angleIdx], angleVels[angleIdx-1] - maxDeltaVel, angleVels[angleIdx-1] + maxDeltaVel);
         double avgVel = (angleVels[angleIdx-1] + angleVels[angleIdx])/2;
         angles[angleIdx] = instants_it->pose.heading() = angles[angleIdx-1] + avgVel * deltaTime;
     }
     assert(angleIdx == trajectory.num_instants());
 
-    // If the input trajectory doesn't provide enough distance to get to the
-    // target angle and velocity we need to do some more work...
+    // If the input trajectory doesn't provide enough time to get to the
+    // target angle and velocity we need to stick some extra instants on the end
 
     // add more instants to get to the target heading at the end
     double angle_initial = angles.back();
-    double angleLeft = fixAngleRadians(angle_function(trajectory.last()) - angle_initial);
-    constexpr double minAngleDelta = 1e-5;
+    double angle_final = angle_function(trajectory.last());
+    double angleLeft = fixAngleRadians(angle_final - angle_initial);
+    constexpr double minAngleDelta = 1e-12;
     if(std::abs(angleLeft) > minAngleDelta) {
         //if we are going the wrong direction, we need to stop first
-        if(angleLeft * angleVels.back() < -1e-6) {
+        if(angleLeft * angleVels.back() < -1e-12) {
             appendStop(angles, angleVels, constraints.maxSpeed, constraints.maxAccel);
         }
         constexpr int extra_interpolations = 20;
         //add extra angles at max speed
         int sizeBeforePivot = angles.size();
         for(int i = 1; i <= extra_interpolations; i++) {
-            double currentAngle = (double)i / extra_interpolations * angleLeft + angle_initial;
+            double percentProgress = (double)i / extra_interpolations;
+            double currentAngle = fixAngleRadians(percentProgress * angleLeft + angle_initial);
+            if(i == extra_interpolations) {
+                currentAngle = angle_final;
+            }
             double angleDelta =  fixAngleRadians(currentAngle - angles.back());
             if(std::abs(angleDelta) > minAngleDelta) {
                 angles.push_back(currentAngle);
@@ -278,7 +289,8 @@ void PlanAngles(Trajectory& trajectory,
         //extra angles--backward pass (limited to the extra instants region)
         for(int i = angles.size()-1; i > sizeBeforePivot; i--) {
             double angleDelta =  fixAngleRadians(angles[i-1] - angles[i]);
-            angleVels[i-1] = -clampAccel(-angleVels[i], -angleVels[i-1], angleDelta, constraints.maxAccel);
+            angleVels[i-1] = -clampAccel(-angleVels[i],
+                    -angleVels[i-1], angleDelta, constraints.maxAccel);
         }
         //extra angles--forward pass
         for(int i = sizeBeforePivot; i < angles.size(); i++) {
@@ -287,7 +299,7 @@ void PlanAngles(Trajectory& trajectory,
         }
     }
     //if we are still moving, let's stop
-    if(std::abs(angleVels.back()) > 1e-6) {
+    if(std::abs(angleVels.back()) > 1e-12) {
         appendStop(angles, angleVels, constraints.maxSpeed, constraints.maxAccel);
     }
     //add extra instants to the trajectory to get to the target angle
@@ -299,7 +311,7 @@ void PlanAngles(Trajectory& trajectory,
         newInstant.velocity.angular() = angleVels[angleIdx];
         double deltaAngle = fixAngleRadians(angles[angleIdx] - trajectory.last().pose.heading());
         double angleVelAvg = (angleVels[angleIdx] + trajectory.last().velocity.angular()) / 2;
-        if(std::abs(angleVelAvg) > 1e-6) {
+        if(std::abs(angleVelAvg) > 1e-9 && std::abs(deltaAngle) > 1e-9) {
             double deltaTime = deltaAngle / angleVelAvg;
             newInstant.stamp = trajectory.last().stamp + RJ::Seconds(deltaTime);
             trajectory.AppendInstant(newInstant);
