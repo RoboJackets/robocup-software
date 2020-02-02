@@ -169,8 +169,8 @@ Trajectory CapturePlanner::bruteForceCapture(const PlanRequest& request) const {
     if(path) {
         return std::move(*path);
     }
-    debugLog("bruteForceCapture failed rip\n");
-    return Trajectory{{}};
+    //sometimes RRT fails, so use the old path and try again next iteration
+    return std::move(request.prevTrajectory);
 }
 
 std::optional<Trajectory> CapturePlanner::attemptCapture(const PlanRequest& request, double distAlongBallLine) const {
@@ -251,6 +251,7 @@ std::optional<Trajectory> CapturePlanner::attemptCapture(const PlanRequest& requ
         //if we aren't in the fine segment
         if(!(inlineWithBall && closeToBall)) {
             coursePath = RRTTrajectory(startInstant, courseTargetInstant, constraints.mot, static_obstacles, dynamic_obstacles);
+            if(coursePath->empty()) return std::nullopt;
             courseTargetInstant.stamp = coursePath->last().stamp;
             contactBallTime = coursePath->last().stamp;
 //            printf("course target: (%.3f, %.3f, %.3f) (%.3f, %.3f, %.3f) %.6f\n",
@@ -273,9 +274,11 @@ std::optional<Trajectory> CapturePlanner::attemptCapture(const PlanRequest& requ
             RobotInstant fineTargetInstant{Geometry2d::Pose{fineTargetPoint, 0}, {}, RJ::Time(0s)};
             RobotInstant contactInstant{Geometry2d::Pose{contactPoint, contactAngle}, Geometry2d::Twist{contactVel, 0}, RJ::Time(0s)};
             Trajectory finePathBeforeContact = RRTTrajectory(courseTargetInstant, contactInstant, fineConstraints.mot, static_obstacles, dynamic_obstacles);
+            if(finePathBeforeContact.empty()) return std::nullopt;
             contactInstant.stamp = finePathBeforeContact.last().stamp;
             contactBallTime = finePathBeforeContact.last().stamp;
             Trajectory finePathAfterContact = RRTTrajectory(contactInstant, fineTargetInstant, fineConstraints.mot, static_obstacles, dynamic_obstacles);
+            if(finePathAfterContact.empty()) return std::nullopt;
             fineTargetInstant.stamp = finePathAfterContact.last().stamp;
             finePath = Trajectory{std::move(finePathBeforeContact), std::move(finePathAfterContact)};
 //            printf("contact (%.3f, %.3f, %.3f) (%.3f, %.3f, %.3f) %.6f\n",

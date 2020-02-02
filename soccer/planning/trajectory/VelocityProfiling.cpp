@@ -49,7 +49,7 @@ Trajectory ProfileVelocity(const BezierPath& path,
         return Trajectory{{}};
     }
     // number of points used to interpolate each bezier segment
-    constexpr int interpolations = 40;
+    constexpr int interpolations = 400;
     // number of cubic bezier segments
     const int num_beziers = path.size();
     // number of points that will be in the final trajectory
@@ -119,17 +119,17 @@ Trajectory ProfileVelocity(const BezierPath& path,
         Point deltaPos = points[n]-points[n-1];
         double distance;
         double centerAngle = derivs1[n-1].angleBetween(deltaPos) * 2;
-        if(curvature[n-1] == 0 || centerAngle < 1e-6) {
+//        if(curvature[n-1] == 0 || centerAngle < 1e-6) {
             // straight line distance
             distance = deltaPos.mag();
-        } else {
-            // calculate arc length
-            double radius = 1 / curvature[n-1];
-            //todo(Ethan) fix this
-//            assert(radius > deltaPos.mag() / 2);
-            radius = std::max(deltaPos.mag()/2, radius);
-            distance = radius * centerAngle;
-        }
+//        } else {
+//            // calculate arc length
+//            double radius = 1 / curvature[n-1];
+//            //todo(Ethan) fix this
+////            assert(radius > deltaPos.mag() / 2);
+//            radius = std::max(deltaPos.mag()/2, radius);
+//            distance = radius * centerAngle;
+//        }
         double vbar = (speed[n] + speed[n - 1]) / 2;
         assert(vbar != 0);
         double t_sec = distance / vbar;

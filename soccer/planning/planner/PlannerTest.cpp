@@ -192,7 +192,7 @@ TEST(Planning, capture_moving_ball_incoming_with_obstacles) {
 
 TEST(Planning, capture_random) {
     Context context;
-    for(int i = 0; i < 1000; i++) {
+    for(int i = 0; i < 50; i++) {
         context.state.ball.pos = Point{rando(-1.5, 1.5),rando(2, 4)};
         context.state.ball.vel = Point{rando(-.3, .3),rando(-1, .1)};
         context.state.ball.time = RJ::now();
