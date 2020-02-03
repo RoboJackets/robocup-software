@@ -1,10 +1,4 @@
 #include "VelocityProfiling.hpp"
-#include <motion/TrapezoidalMotion.hpp>
-#include <Utils.hpp>
-
-//todo(Ethan) delete
-#include "planning/RobotConstraints.hpp"
-void assertPathContinuous(const Planning::Trajectory& path, const RobotConstraints& constraints);
 
 namespace Planning {
 
@@ -138,7 +132,6 @@ Trajectory ProfileVelocity(const BezierPath& path,
         // Add point n in
         trajectory.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), current_time});
     }
-    assertPathContinuous(trajectory, RobotConstraints{});
     return std::move(trajectory);
 }
 
@@ -172,6 +165,23 @@ void appendStop(std::vector<double>& angles, std::vector<double>& angleVels, dou
         angleVels.push_back(0);
     }
 }
+/**
+ * Stop as soon as possible. we will end up at a different position:
+ * current angle     (stoppingAngle)          0 vel
+ * |-------------------------------------------|
+ * >>>>>>>>>>>>>> stopping >>>>>>>>>>>>>>>>>>>>>
+ */
+void appendStopWithDrift(std::vector<double>& angles, std::vector<double>& angleVels, double maxSpeed, double maxAccel) {
+    assert(maxSpeed > 1e-12);
+    assert(maxAccel > 1e-12);
+    assert(std::abs(angleVels.back()) > 1e-12);
+    if(std::abs(angleVels.back()) > 1e-12) {
+        double accel = maxAccel * (angleVels.back() > 0 ? -1 : 1);
+        double stoppingAngle = -std::pow(angleVels.back(), 2) / (2 * accel);
+        angles.push_back(angles.back() + stoppingAngle);
+        angleVels.push_back(0);
+    }
+}
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
@@ -181,8 +191,10 @@ void PlanAngles(Trajectory& trajectory,
     }
     std::vector<double> angles(trajectory.num_instants(), 0.0);
     std::vector<double> angleVels(trajectory.num_instants(), 0.0);
+    const double maxSpeed = constraints.maxSpeed;
+    const double maxAccel = constraints.maxAccel;
     angles[0] = start_instant.pose.heading();
-    angleVels[0] = start_instant.velocity.angular();
+    angleVels[0] = std::clamp(start_instant.velocity.angular(), -maxSpeed, maxSpeed);
 
     // Move forwards in time. At each instant, calculate the goal angle and its
     // time derivative, and try to get there with a trapezoidal profile.
@@ -207,7 +219,7 @@ void PlanAngles(Trajectory& trajectory,
         //                ^ then we will speed up again here
         //                       ^ ... continues oscillating
         // so we use the value in the middle of vf and vAvg
-        angleVels[i] = std::clamp(velAvg + (velAvg - angleVels[i-1])/2, -constraints.maxSpeed, constraints.maxSpeed);
+        angleVels[i] = std::clamp(velAvg + (velAvg - angleVels[i-1])/2, -maxSpeed, maxSpeed);
         velAvg = (angleVels[i-1] + angleVels[i]) / 2;
         angles[i] = angles[i-1] + velAvg * deltaTime;
         instant_before = instant_after;
@@ -223,7 +235,7 @@ void PlanAngles(Trajectory& trajectory,
         int j = i;
         for (; j < angles.size() && angleVels[j] * direction >= 0; j++) {
             double deltaAngle = fixAngleRadians(angles[j] - angles[j-1]);
-            angleVels[j] = clampAccel(angleVels[j-1], angleVels[j], deltaAngle, constraints.maxAccel);
+            angleVels[j] = clampAccel(angleVels[j-1], angleVels[j], deltaAngle, maxAccel);
         }
         // at this point j is invalid (either off the end of the vector or in
         // a position with opposite direction)
@@ -234,7 +246,7 @@ void PlanAngles(Trajectory& trajectory,
         // limit deceleration (backward constraints)
         for (int k = j-1; k >= i; k--) {
             double deltaAngle = fixAngleRadians(angles[k-1] - angles[k]);
-            angleVels[k-1] = -clampAccel(-angleVels[k], -angleVels[k-1], deltaAngle, constraints.maxAccel);
+            angleVels[k-1] = -clampAccel(-angleVels[k], -angleVels[k-1], deltaAngle, maxAccel);
         }
         i = j;
     }
@@ -248,7 +260,7 @@ void PlanAngles(Trajectory& trajectory,
     int angleIdx = 1;
     for (; instants_it != trajectory.instants_end(); ++instants_it, ++angleIdx) {
         double deltaTime = RJ::Seconds(instants_it->stamp - std::prev(instants_it)->stamp).count();
-        double maxDeltaVel = constraints.maxAccel * deltaTime;
+        double maxDeltaVel = maxAccel * deltaTime;
         //todo(Ethan) is the clamp necessary? explain.
         angleVels[angleIdx] = instants_it->velocity.angular() = std::clamp(angleVels[angleIdx], angleVels[angleIdx-1] - maxDeltaVel, angleVels[angleIdx-1] + maxDeltaVel);
         double avgVel = (angleVels[angleIdx-1] + angleVels[angleIdx])/2;
@@ -267,21 +279,24 @@ void PlanAngles(Trajectory& trajectory,
     if(std::abs(angleLeft) > minAngleDelta) {
         //if we are going the wrong direction, we need to stop first
         if(angleLeft * angleVels.back() < -1e-12) {
-            appendStop(angles, angleVels, constraints.maxSpeed, constraints.maxAccel);
+            appendStopWithDrift(angles, angleVels, constraints.maxSpeed, maxAccel);
+            //update these because we have drifted a bit
+            angle_initial = angles.back();
+            angleLeft = fixAngleRadians(angle_final - angle_initial);
         }
         constexpr int extra_interpolations = 20;
         //add extra angles at max speed
         int sizeBeforePivot = angles.size();
         for(int i = 1; i <= extra_interpolations; i++) {
             double percentProgress = (double)i / extra_interpolations;
-            double currentAngle = fixAngleRadians(percentProgress * angleLeft + angle_initial);
+            double currentAngle = percentProgress * angleLeft + angle_initial;
             if(i == extra_interpolations) {
                 currentAngle = angle_final;
             }
             double angleDelta =  fixAngleRadians(currentAngle - angles.back());
             if(std::abs(angleDelta) > minAngleDelta) {
                 angles.push_back(currentAngle);
-                angleVels.push_back(constraints.maxSpeed * (angleDelta < 0 ? -1 : 1));
+                angleVels.push_back(maxSpeed * (angleDelta < 0 ? -1 : 1));
             }
         }
         //assume target velocity = 0
@@ -290,17 +305,17 @@ void PlanAngles(Trajectory& trajectory,
         for(int i = angles.size()-1; i > sizeBeforePivot; i--) {
             double angleDelta =  fixAngleRadians(angles[i-1] - angles[i]);
             angleVels[i-1] = -clampAccel(-angleVels[i],
-                    -angleVels[i-1], angleDelta, constraints.maxAccel);
+                    -angleVels[i-1], angleDelta, maxAccel);
         }
         //extra angles--forward pass
         for(int i = sizeBeforePivot; i < angles.size(); i++) {
             double angleDelta =  fixAngleRadians(angles[i] - angles[i-1]);
-            angleVels[i] = clampAccel(angleVels[i-1], angleVels[i], angleDelta, constraints.maxAccel);
+            angleVels[i] = clampAccel(angleVels[i-1], angleVels[i], angleDelta, maxAccel);
         }
     }
     //if we are still moving, let's stop
     if(std::abs(angleVels.back()) > 1e-12) {
-        appendStop(angles, angleVels, constraints.maxSpeed, constraints.maxAccel);
+        appendStop(angles, angleVels, maxSpeed, maxAccel);
     }
     //add extra instants to the trajectory to get to the target angle
     assert(angleIdx != 0);
@@ -310,13 +325,13 @@ void PlanAngles(Trajectory& trajectory,
         newInstant.pose.heading() = angles[angleIdx];
         newInstant.velocity.angular() = angleVels[angleIdx];
         double deltaAngle = fixAngleRadians(angles[angleIdx] - trajectory.last().pose.heading());
-        double angleVelAvg = (angleVels[angleIdx] + trajectory.last().velocity.angular()) / 2;
+        double angleVelAvg = (angleVels[angleIdx] + angleVels[angleIdx-1]) / 2;
+        assert(deltaAngle * angleVels[angleIdx] > -1e-12);
         if(std::abs(angleVelAvg) > 1e-9 && std::abs(deltaAngle) > 1e-9) {
             double deltaTime = deltaAngle / angleVelAvg;
             newInstant.stamp = trajectory.last().stamp + RJ::Seconds(deltaTime);
             trajectory.AppendInstant(newInstant);
         }
     }
-    assertPathContinuous(trajectory, RobotConstraints{});
 }
 } // namespace Planning

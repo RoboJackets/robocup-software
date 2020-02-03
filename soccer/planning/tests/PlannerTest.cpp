@@ -5,7 +5,7 @@
 #include "planning/trajectory/Trajectory.hpp"
 #include "SystemState.hpp"
 #include "Geometry2d/Pose.hpp"
-#include <random>
+#include "planning/tests/TestingUtils.hpp"
 
 /*
  * If these tests are failing, run again with the flag --gtest_break_on_failure
@@ -14,55 +14,16 @@
 
 using namespace Planning;
 using namespace Geometry2d;
-
-void assertPathContinuous(const Trajectory& path, const RobotConstraints& constraints) {
-    ASSERT_FALSE(path.empty());
-    for(auto it = path.instants_begin(); it != path.instants_end()
-    && it != std::prev(path.instants_end()); ++it) {
-        RobotInstant cur = *it;
-        RobotInstant nxt = *std::next(it);
-        ASSERT_LT(cur.stamp, nxt.stamp);
-
-        //continuous position
-        double dist = cur.pose.position().distTo(nxt.pose.position());
-        double distAngle = std::abs(fixAngleRadians(cur.pose.heading() - nxt.pose.heading()));
-        double maxJump = std::max((double)Robot_Radius, path.last().pose.position().distTo(path.first().pose.position()) * 0.1);
-        ASSERT_LT(dist, maxJump);
-
-        //check velocity from velocity profile
-        ASSERT_LT(cur.velocity.linear().mag(), constraints.mot.maxSpeed + 1e-6);
-        ASSERT_LT(nxt.velocity.linear().mag(), constraints.mot.maxSpeed + 1e-6);
-        ASSERT_LT(cur.velocity.angular(), constraints.rot.maxSpeed + 1e-6);
-        ASSERT_LT(nxt.velocity.angular(), constraints.rot.maxSpeed + 1e-6);
-
-        //check acceleration from velocity profile
-        double dt = RJ::Seconds(nxt.stamp - cur.stamp).count();
-        Point dv = nxt.velocity.linear() - cur.velocity.linear();
-        //todo(Ethan) fix this
-//        ASSERT_LT(dv.mag(), constraints.mot.maxAcceleration * dt * 2);
-        Point unitNormal = (nxt.velocity.linear().norm() - cur.velocity.linear().norm()).norm();
-        double dvNormal = std::abs(dv.dot(unitNormal));
-        // todo(Ethan) fix this too
-//        ASSERT_LT(dvNormal, constraints.mot.maxCentripetalAcceleration * dt + 1e-3);
-        ASSERT_LT(std::abs(nxt.velocity.angular() - cur.velocity.angular()), constraints.rot.maxAccel * dt + 1e-6);
-    }
-}
-
-namespace Testing {
-    double rando(double lo, double hi);
-    RobotInstant randomInstant() {
-        return RobotInstant{Pose{Point{rando(-3, 3), rando(0, 6)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, rando(-.2, .2)}, RJ::now()};
-    }
-}
-using namespace Testing;
+using namespace Planning::TestingUtils;
 
 TEST(Planning, path_target_random) {
     Context context;
     for(int i = 0; i < 1000; i++) {
         ShapeSet obstacles;
-        int numObstacles = (int)rando(2, 5);
+        int numObstacles = (int) random(2, 5);
         for(int j = 0; j < numObstacles; j++) {
-            obstacles.add(std::make_shared<Circle>(Point{rando(-2, 2), rando(.5, 1.5)}, .2));
+            obstacles.add(std::make_shared<Circle>(Point{random(-2, 2),
+                                                         random(.5, 1.5)}, .2));
         }
         RobotInstant goal = randomInstant();
         PlanRequest request{&context, randomInstant(), PathTargetCommand{goal}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
@@ -193,13 +154,14 @@ TEST(Planning, capture_moving_ball_incoming_with_obstacles) {
 TEST(Planning, capture_random) {
     Context context;
     for(int i = 0; i < 50; i++) {
-        context.state.ball.pos = Point{rando(-1.5, 1.5),rando(2, 4)};
-        context.state.ball.vel = Point{rando(-.3, .3),rando(-1, .1)};
+        context.state.ball.pos = Point{random(-1.5, 1.5), random(2, 4)};
+        context.state.ball.vel = Point{random(-.3, .3), random(-1, .1)};
         context.state.ball.time = RJ::now();
         ShapeSet obstacles;
-        int numObstacles = (int)rando(2, 5);
+        int numObstacles = (int) random(2, 5);
         for(int j = 0; j < numObstacles; j++) {
-            obstacles.add(std::make_shared<Circle>(Point{rando(-2, 2), rando(.5, 1.5)}, .2));
+            obstacles.add(std::make_shared<Circle>(Point{random(-2, 2),
+                                                         random(.5, 1.5)}, .2));
         }
         PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
         CapturePlanner planner;

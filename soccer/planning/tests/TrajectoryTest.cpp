@@ -1,16 +1,15 @@
 #include <gtest/gtest.h>
-#include "Trajectory.hpp"
-#include "PathSmoothing.hpp"
+#include "planning/trajectory/Trajectory.hpp"
+#include "planning/trajectory/PathSmoothing.hpp"
 #include "planning/trajectory/RRTUtil.hpp"
-#include "VelocityProfiling.hpp"
+#include "planning/trajectory/VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
 #include <rrt/planning/Path.hpp>
-#include <random>
+#include "TestingUtils.hpp"
 
 using namespace Planning;
 using namespace Geometry2d;
-
-void assertPathContinuous(const Trajectory& path, const RobotConstraints& constraints);
+using namespace Planning::TestingUtils;
 
 TEST(Trajectory, Interpolation) {
     // Test the basics of the Trajectory class, including interpolation, instant
@@ -211,15 +210,6 @@ TEST(RRT, Time) {
     RRT::SmoothPath(points, *state_space);
     printf("RRTTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
 }
-namespace Testing {
-double rando(double lo, double hi) {
-    static std::random_device randDevice;
-    static std::mt19937 randGen(randDevice());
-    static std::uniform_real_distribution<> randDistribution(0.0, 1.0);
-    return lo + (hi-lo) * randDistribution(randGen);
-}
-}
-using namespace Testing;
 
 TEST(Trajectory, RRTTrajectorySmall) {
     RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
@@ -284,12 +274,21 @@ TEST(Trajectory, RRTTrajectorySuccessRate) {
     constexpr int numTries = 300;
     for(int i = 0; i < iterations; i++) {
         ShapeSet obstacles;
-        int numObstacles = (int)rando(2, 5);
+        int numObstacles = (int) random(2, 5);
         for(int j = 0; j < numObstacles; j++) {
-            obstacles.add(std::make_shared<Circle>(Point{rando(-2, 2), rando(2, 3)}, .2));
+            obstacles.add(std::make_shared<Circle>(Point{random(-2, 2),
+                                                         random(2, 3)}, .2));
         }
-        RobotInstant start{Pose{Point{rando(-3, 3), rando(5, 5.5)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
-        RobotInstant goal{Pose{Point{rando(-3, 3), rando(0.5, 1)}, rando(0, 2*M_PI)}, Twist{Point{rando(-.5,.5), rando(-.5,.5)}, 0}, RJ::now()};
+        RobotInstant start{Pose{Point{random(-3, 3), random(5, 5.5)},
+                                random(0, 2 * M_PI)}, Twist{Point{
+                random(-.5, .5),
+                                                                                                   random(-.5,
+                                                                                                          .5)}, 0}, RJ::now()};
+        RobotInstant goal{Pose{Point{random(-3, 3), random(0.5, 1)},
+                               random(0, 2 * M_PI)}, Twist{Point{
+                random(-.5, .5),
+                                                                                                  random(-.5,
+                                                                                                         .5)}, 0}, RJ::now()};
         Trajectory path{{}};
         for (int j = 0; j < numTries && path.empty(); j++){
             path = RRTTrajectory(start, goal, MotionConstraints{}, obstacles);
@@ -383,13 +382,15 @@ void assertPivot(double a0, double af, double w0) {
 TEST(Trajectory, PivotTurnEndpointsOnly) {
     double maxSpeed = RotationConstraints{}.maxSpeed;
     for(int i = 0; i < 1000; i++) {
-        assertPivotEndpoints(rando(-10*M_PI, 10*M_PI), rando(-10*M_PI, 10*M_PI), rando(-maxSpeed, maxSpeed));
+        assertPivotEndpoints(random(-10 * M_PI, 10 * M_PI),
+                             random(-10 * M_PI, 10 * M_PI),
+                             random(-maxSpeed, maxSpeed));
     }
 }
 //todo(Ethan) should probably make this pass...
 //TEST(Trajectory, PivotTurn) {
 //    double maxSpeed = RotationConstraints{}.maxSpeed;
 //    for(int i = 0; i < 1000; i++) {
-//        assertPivot(rando(-10*M_PI, 10*M_PI), rando(-10*M_PI, 10*M_PI), rando(-maxSpeed, maxSpeed));
+//        assertPivot(random(-10*M_PI, 10*M_PI), random(-10*M_PI, 10*M_PI), random(-maxSpeed, maxSpeed));
 //    }
 //}
