@@ -8,9 +8,8 @@ class ScrambleMidlineSymmetric(gameplay_test.GameplayTest):
     def __init__(self):
         super().__init__()
 
-
         center_field = robocup.Point(0, constants.Field.Length / 2)
-        zero_zero = robocup.Point(0,0)
+        zero_zero = robocup.Point(0, 0)
         opposing_goal = robocup.Point(0, constants.Field.Length)
 
         self.ballPosition = center_field
@@ -21,17 +20,20 @@ class ScrambleMidlineSymmetric(gameplay_test.GameplayTest):
         #I've left this using a test playbook as this should be a full stack test as is
         self.play_list = ["test_book.pbk"]
 
-        self.ourRobots = [testRobot(zero_zero),
-                testRobot(center_field + robocup.Point(0, -0.75)),
-                testRobot(center_field + robocup.Point(0.5, -0.75)),
-                testRobot(center_field + robocup.Point(-0.5, -0.75)),
-                testRobot(center_field + robocup.Point(0, -1.7)),
-                testRobot(center_field + robocup.Point(0, -2.1))]
+        self.ourRobots = [
+            testRobot(zero_zero),
+            testRobot(center_field + robocup.Point(0, -0.75)),
+            testRobot(center_field + robocup.Point(0.5, -0.75)),
+            testRobot(center_field + robocup.Point(-0.5, -0.75)),
+            testRobot(center_field + robocup.Point(0, -1.7)),
+            testRobot(center_field + robocup.Point(0, -2.1))
+        ]
 
-        self.theirRobots = [testRobot(opposing_goal),
-                testRobot(center_field + robocup.Point(0, 0.75)),
-                testRobot(center_field + robocup.Point(0.5, 0.75)),
-                testRobot(center_field + robocup.Point(-0.5, 0.75)),
-                testRobot(center_field + robocup.Point(0, 1.7)),
-                testRobot(center_field + robocup.Point(0, 2.1))]
-
+        self.theirRobots = [
+            testRobot(opposing_goal),
+            testRobot(center_field + robocup.Point(0, 0.75)),
+            testRobot(center_field + robocup.Point(0.5, 0.75)),
+            testRobot(center_field + robocup.Point(-0.5, 0.75)),
+            testRobot(center_field + robocup.Point(0, 1.7)),
+            testRobot(center_field + robocup.Point(0, 2.1))
+        ]

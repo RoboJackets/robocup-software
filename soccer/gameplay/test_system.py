@@ -66,7 +66,7 @@ class TestSystem:
         print("final: ", plays)
 
         # If there are any plays in the play list, set them as the current playbook
-        if(len(plays) > 0):
+        if (len(plays) > 0):
             self._play_registry.load_playbook(plays)
 
         self._testNode.status = test_list.Status.running
@@ -121,8 +121,9 @@ class TestSystem:
 
             if play:
                 #Check to see if the entry is a playbook file
-                if(".pbk" in play):
-                    plays.extend(load_from_file("./soccer/gameplay/playbooks/" + play))
+                if (".pbk" in play):
+                    plays.extend(
+                        load_from_file("./soccer/gameplay/playbooks/" + play))
                 else:
                     plays.append(play.split('/'))
 

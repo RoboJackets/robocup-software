@@ -6,7 +6,7 @@ import constants
 
 # Class to define robot locations/velocities
 class testRobot():
-    def __init__(self, pos=robocup.Point(0,0), angle=0):
+    def __init__(self, pos=robocup.Point(0, 0), angle=0):
 
         self.pos = robocup.Point(pos.x, pos.y)
         self.angle = angle

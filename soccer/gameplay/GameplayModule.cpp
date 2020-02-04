@@ -576,7 +576,11 @@ void Gameplay::GameplayModule::loadTest() {
                         float x = extract<float>(robot[0]);
                         float y = extract<float>(robot[1]);
 
-                        rob->set_x(-teamDirection * (y - (Field_Dimensions::Current_Dimensions.Length()/2)));
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
                         rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
@@ -610,7 +614,11 @@ void Gameplay::GameplayModule::loadTest() {
                         float x = extract<float>(robot[0]);
                         float y = extract<float>(robot[1]);
 
-                        rob->set_x(-teamDirection * (y - (Field_Dimensions::Current_Dimensions.Length()/2)));
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
                         rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
@@ -639,7 +647,10 @@ void Gameplay::GameplayModule::loadTest() {
                 float velx = extract<float>(ball[2]);
                 float vely = extract<float>(ball[3]);
 
-                ball_replace->mutable_pos()->set_x(-teamDirection * (posy - (Field_Dimensions::Current_Dimensions.Length()/2)));
+                ball_replace->mutable_pos()->set_x(
+                    -teamDirection *
+                    (posy -
+                     (Field_Dimensions::Current_Dimensions.Length() / 2)));
                 ball_replace->mutable_pos()->set_y(teamDirection * posx);
                 ball_replace->mutable_vel()->set_x(-teamDirection * vely);
                 ball_replace->mutable_vel()->set_y(teamDirection * velx);
