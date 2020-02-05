@@ -22,6 +22,6 @@ class Example(gameplay_test.GameplayTest):
             testRobot(robocup.Point(2, -.5)), testRobot(robocup.Point(2, .5))
         ]
         self.theirRobots = [
-            testRobot(robocup.Point(-2, -.5)), testRobot(
-                robocup.Point(-2, .5))
+            testRobot(robocup.Point(-2, -.5)),
+            testRobot(robocup.Point(-2, .5))
         ]
