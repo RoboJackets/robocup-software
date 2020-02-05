@@ -22,7 +22,7 @@ class ForceVisualizer():
 
         #Planning to make the segment colors correlate with something for pretty rainbows
 
-        drawVector = point + robocup.Point(math.sqrt(forceSample.x) * self.scaleFactor, math.sqrt(forceSample.y) * self.scaleFactor)
+        drawVector = point + robocup.Point(forceSample.x * self.scaleFactor, forceSample.y * self.scaleFactor)
         self.context.debug_drawer.draw_circle(point, 0.05, (0,0,0), "layer?")
         self.context.debug_drawer.draw_segment_from_points(point, drawVector, (255, 0, 0), "hat")
         #self.force.clipHigh

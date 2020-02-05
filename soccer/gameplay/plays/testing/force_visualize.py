@@ -29,8 +29,8 @@ class ForceVisualize(play.Play):
     scaleFactor = 0.3
 
     ##You can swap out the force you want to visualize here
-    force = constant_force.ConstantForce(robocup.Point(1.2,1.3))
-    #force = test_robot_force.TestRobotForce(scale=5)
+    #force = constant_force.ConstantForce(robocup.Point(1.2,1.3))
+    force = test_robot_force.TestRobotForce(scale=5)
 
     def __init__(self):
         super().__init__(continuous=False)
