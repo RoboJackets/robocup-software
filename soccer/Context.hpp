@@ -39,4 +39,6 @@ struct Context {
 
     std::optional<QPointF> ball_command;
     std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
+
+    std::optional<unsigned int> ball_possessor;
 };

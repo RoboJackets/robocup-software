@@ -127,7 +127,7 @@ Trajectory ProfileVelocity(const BezierPath& path,
         double vbar = (speed[n] + speed[n - 1]) / 2;
         assert(vbar != 0);
         double t_sec = distance / vbar;
-        assert(t_sec > 1e-6);
+        assert(t_sec > 1e-12);
         RJ::Time current_time = trajectory.last().stamp + RJ::Seconds(t_sec);
         // Add point n in
         trajectory.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), current_time});
@@ -230,7 +230,10 @@ void PlanAngles(Trajectory& trajectory,
     // profile on both sides, so we don't forget the point where direction changes
     for(int i = 1; i < angleVels.size();) {
         double direction = std::abs(angleVels[i-1]) > 1e-12 ? angleVels[i-1] : angleVels[i];
-        if(std::abs(direction) < 1e-12) continue;
+        if(std::abs(direction) < 1e-12) {
+            i++;
+            continue;
+        }
         // limit acceleration (forward constraints)
         int j = i;
         for (; j < angles.size() && angleVels[j] * direction >= 0; j++) {
@@ -333,5 +336,6 @@ void PlanAngles(Trajectory& trajectory,
             trajectory.AppendInstant(newInstant);
         }
     }
+
 }
 } // namespace Planning

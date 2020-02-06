@@ -274,7 +274,7 @@ namespace Planning {
         }
         std::optional<RobotInstant> startInstant = evaluate(startTime);
         if(!startInstant) {
-            debugThrow("failed to trim trajectory. startTime invalid.");
+            if(startTime > 0s) instants_ = {};
             return;
         }
         while(!instants_.empty() && instants_.front().stamp < startInstant->stamp) {

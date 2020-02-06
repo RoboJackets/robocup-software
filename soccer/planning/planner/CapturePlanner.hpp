@@ -18,13 +18,13 @@ public:
 private:
     Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint, const Geometry2d::Rect& fieldRect, Geometry2d::Point ballPoint) const;
 
-    std::optional<Trajectory> attemptCapture(const PlanRequest& request, double distAlongBallLine) const;
+    std::optional<Trajectory> attemptCapture(const PlanRequest& request, RJ::Time contactTime) const;
 
     /*
      * finds a goal point by brute force along the ball path
      * this method assumes final velocity of 0 which
      */
-    Trajectory bruteForceCapture(const PlanRequest& request) const;
+    std::optional<Trajectory> bruteForceCapture(const PlanRequest& request) const;
 
     //endpoints used for searching along the ball path
     static ConfigDouble* _searchStartDist; // m
@@ -66,5 +66,10 @@ private:
     // percent of the ball vel we match during dampen (when we catch a ball
     // moving fast toward us)
     static ConfigDouble* _ballSpeedPercentForDampen; // %
+
+    static constexpr double stoppedBallVel = 0.001;
+    static constexpr double maxBallPosChange = 0.2;
+    static constexpr double maxBallVelAngleChange = 0.5;
+    std::optional<Ball> prevBall;
 };
 }

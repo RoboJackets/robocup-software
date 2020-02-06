@@ -432,6 +432,12 @@ public:
         if(intent().motion_command->index() != newCmd->index()) {
             //clear path when command type changes
             _path = Planning::Trajectory{{}};
+            if(_context->ball_possessor && *_context->ball_possessor == shell()) {
+                _context->ball_possessor = std::nullopt;
+            }
+        }
+        if(std::holds_alternative<Planning::CaptureCommand>(*newCmd)) {
+            _context->ball_possessor = shell();
         }
         intent().motion_command = std::move(newCmd);
     }

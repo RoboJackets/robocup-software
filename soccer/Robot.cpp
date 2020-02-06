@@ -468,7 +468,8 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
     }
 
     // Add ball
-    if (_context->state.ball.valid) {
+    bool possessBall = _context->ball_possessor && *_context->ball_possessor == shell();
+    if (_context->state.ball.valid && !possessBall) {
         auto ballObs = createBallObstacle();
         if (ballObs) fullObstacles.add(ballObs);
     }

@@ -282,7 +282,7 @@ public:
     static RobotInstant interpolatedInstant(const RobotInstant& prev, const RobotInstant& next, RJ::Time time);
 
     void setDebugText(QString str) {_debugText = std::move(str); };
-    QString getDebugText() { return _debugText ? *_debugText: ""; }
+    QString getDebugText() const { return _debugText ? *_debugText: ""; }
 
 private:
     // A sorted array of RobotInstants (by timestamp)

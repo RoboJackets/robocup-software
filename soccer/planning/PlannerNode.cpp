@@ -84,6 +84,7 @@ void PlannerNode::run() {
 //        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path()); todo(Ethan) uncomment this
 
         //draw debug info
+
         robot->path().draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
         context_->debug_drawer.drawText((const char*[]) {
                 "EmptyCommand",
@@ -131,7 +132,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     }
     std::cerr << "No valid planner! Did you forget to specify a default planner?"
               << std::endl;
-    Trajectory result{{}};
+    Trajectory result{{request.start}};//todo(Ethan) make this empty again
     result.setDebugText("Error: No Valid Planners");
     return std::move(result);
 }
