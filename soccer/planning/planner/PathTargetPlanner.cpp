@@ -78,7 +78,7 @@ namespace Planning {
 
         RJ::Seconds invalidTime;
         //note: the dynamic check is expensive, so we shortcut it sometimes
-        //todo(Ethan) this could be made more efficient by maintaining a TrajectoryIterator across partial replans
+        //todo(Ethan) this could be made more efficient by trimming old trajectories
         bool shouldPartialReplan = prevTrajectory.hit(request.static_obstacles, timeIntoTrajectory, &invalidTime)
                 || prevTrajectory.intersects(request.dynamic_obstacles, RJ::now(), nullptr, &invalidTime);
         if(!shouldPartialReplan && goalChanged(prevTrajectory.last(), goalInstant)) {
@@ -104,21 +104,6 @@ namespace Planning {
             return checkBetter(std::move(request), angleFunction);
         }
         return reuse(std::move(request));
-    }
-
-    Trajectory PathTargetPlanner::reuse(PlanRequest&& request) {
-        if (request.prevTrajectory.empty()) {
-            return Trajectory{{request.start}};
-        } else {
-            RJ::Seconds startTime =
-                    RJ::now() - request.prevTrajectory.begin_time();
-            RJ::Seconds endTime = request.prevTrajectory.duration();
-            if (startTime < endTime) {
-                return request.prevTrajectory.subTrajectory(startTime, endTime);
-            } else {
-                return Trajectory{{request.prevTrajectory.last()}};
-            }
-        }
     }
 
     Trajectory PathTargetPlanner::checkBetter(PlanRequest&& request, AngleFunction angleFunction) {

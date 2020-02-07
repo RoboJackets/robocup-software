@@ -112,74 +112,46 @@ Trajectory CapturePlanner::plan(PlanRequest &&request) {
 //
 //    if(!prevTrajectory.CheckTime(RJ::now())) prevTrajectory = Trajectory{{}};
 
-    // Replan Strategy:
-    // - first plan an initial path
-    // - try to reuse the previous path unless we find something better
-    // - if we'll hit an obstacle soon, partial replan to avoid it
-    // - if we're really close to the target, then full replan
     Trajectory partialPath{{}};
-    std::optional<Trajectory> reusePath;
+    bool fullReplan = false;
+    bool partialReplan = false;
+    bool reusePath = false;
     RJ::Seconds timeElapsed = curTime - prevTrajectory.begin_time();
-    if(!prevTrajectory.empty()) {
+    if(veeredOffPath(request) || prevTrajectory.empty()) {
+        fullReplan = true;
+    } else {
         RJ::Seconds timeRemaining = prevTrajectory.end_time() - curTime;
-        RJ::Seconds hitTime;
-        bool pathObstructed = prevTrajectory.hit(request.static_obstacles, timeElapsed, &hitTime) || prevTrajectory.intersects(request.dynamic_obstacles, curTime, nullptr, &hitTime);
-        if(pathObstructed && hitTime > timeElapsed + RJ::Seconds(2 * *_partialReplanLeadTime)) {
-            // the hit is far away so ignore it for now
-            pathObstructed = false;
-        }
-        bool fullReplan = false;
+        RJ::Seconds invalidTime;
+        partialReplan = prevTrajectory.hit(request.static_obstacles, timeElapsed, &invalidTime) || prevTrajectory.intersects(request.dynamic_obstacles, curTime, nullptr, &invalidTime);
         Point prevGoalPos = prevTrajectory.last().pose.position();
         Point curGoalPos = ball.predict(std::max(RJ::now(), prevTrajectory.end_time())).pos;
         bool goalChanged = prevGoalPos.distTo(curGoalPos) > 0.3; //todo(Ethan) no magic numbers
-        if(goalChanged) {
+        if(!partialReplan && goalChanged) {
+            partialReplan = true;
+            invalidTime = prevTrajectory.duration();
+        }
+        if(partialReplan && invalidTime < timeElapsed + RJ::Seconds(2 * *_partialReplanLeadTime)) {
             fullReplan = true;
         }
-        if(veeredOffPath(request)){
-            fullReplan = true;
-        }
-        if(fullReplan) {
-            //full replan
-        } else if (timeRemaining.count() > *_partialReplanLeadTime) {
-            // partial replan
-            if(prevTrajectory.CheckTime(prevTrajectory.begin_time() + timeElapsed)) {
-                partialPath = prevTrajectory.subTrajectory(timeElapsed,
-                                                           timeElapsed + RJ::Seconds(*_partialReplanLeadTime));
-                request.start = partialPath.last();
-            }
-            if(!pathObstructed) {
-                // reuse previous path unless we find something better
-                prevTrajectory.trimFront(timeElapsed);
-                reusePath = std::move(prevTrajectory);
-            }
-        } else {
-//            // full replan, but use old start to prevent drifting off course
-//            std::optional<RobotInstant> nowInstant = prevTrajectory.evaluate(curTime);
-//            if(nowInstant) {
-//                request.start = *nowInstant;
-//            }
-            // reuse the old path to prevent pushing the ball forever
-            return std::move(prevTrajectory);
-        }
+    }
+    if(fullReplan) {
+        partialPath = Trajectory{{request.start}};
+    } else if(partialReplan) {
+        partialPath = prevTrajectory.subTrajectory(timeElapsed,
+                                                   timeElapsed + RJ::Seconds(*_partialReplanLeadTime));
+        request.start = partialPath.last();
+    } else {
+        return reuse(std::move(request));
     }
     std::optional<Trajectory> brutePath = bruteForceCapture(request);
     if(!brutePath) {
-        if(!reusePath) {
-            prevTrajectory.trimFront(timeElapsed);
-            reusePath = std::move(prevTrajectory);
+        if(!prevTrajectory.empty()) {
+            return reuse(std::move(request));
+        } else {
+            return Trajectory{{request.start}};
         }
-        return std::move(*reusePath);
     }
-    Trajectory outputPath{std::move(partialPath), std::move(*brutePath)};
-    if(!outputPath.empty() && (!reusePath || outputPath.end_time() < reusePath->end_time() - 0.1s)) {
-        return std::move(outputPath);
-    }
-    if(reusePath) {
-        return std::move(*reusePath);
-    }
-    //this shouldn't ever happen
-    assert(false);
-    return Trajectory{{request.start}};
+    return Trajectory{std::move(partialPath), std::move(*brutePath)};
 }
 
 //todo(motion planning) find a better way to handle moving targets
@@ -190,16 +162,20 @@ std::optional<Trajectory> CapturePlanner::bruteForceCapture(const PlanRequest& r
     std::optional<Trajectory> path;
     RJ::Time startTime = RJ::now();
     RJ::Time contactTime = startTime;
+
+    //todo(Ethan) fix
+    return attemptCapture(request, startTime);
     while(contactTime < startTime + maxSearchDuration) {
-        path = attemptCapture(request, contactTime);
-        if (path) {
-            break;
+        std::optional<Trajectory> candidatePath = attemptCapture(request, contactTime);
+        if (candidatePath && !candidatePath->empty() && (!path || candidatePath->duration() < path->duration())) {
+            path = candidatePath;
         }
-        contactTime = RJ::Time{contactTime + RJ::Seconds{0.1}};
+        contactTime = RJ::Time{contactTime + RJ::Seconds{0.15}};
         its++;
     }
-//    printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-startTime).count(), its);
+    printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-startTime).count(), its);
     if(path) {
+        assert(!path->empty());
         return std::move(*path);
     }
     //sometimes RRT fails, so use the old path and try again next iteration
@@ -345,16 +321,10 @@ std::optional<Trajectory> CapturePlanner::attemptCapture(const PlanRequest& requ
         assert(!collectPath.empty());
         if(outputPath.empty() || contactBallTime < outputPathContactBallTime) {
             outputPath = std::move(collectPath);
-            PlanAngles(outputPath, request.start, AngleFns::faceAngle(contactAngle), constraints.rot);
+            PlanAngles(outputPath, startInstant, AngleFns::tangent/*todo(Ethan)fixthisAngleFns::faceAngle(contactAngle)*/, constraints.rot);
             outputPathContactBallTime = contactBallTime;
         }
     }
-    if(outputPathContactBallTime < contactTime || futureBallSpeed < stoppedBallVel) {
-        returnPath = true;
-    }
-    if(returnPath && !outputPath.empty()) {
-        return std::move(outputPath);
-    }
-    return std::nullopt;
+    return std::move(outputPath);
 }
 }

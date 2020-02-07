@@ -5,9 +5,11 @@
 #include "planning/trajectory/Trajectory.hpp"
 
 namespace Planning {
-//todo(Ethan) add virtual destructor?
 class Planner {
 public:
+    Planner() = default;
+    virtual ~Planner() = default; //todo(Ethan) add virtual destructors to all the planners
+
     /**
      * Whether or not this command can be planned by this planner.
      *
@@ -62,6 +64,10 @@ public:
      * @return timeout
      */
     static double replanTimeout() { return *_replanTimeout; }
+
+protected:
+    virtual Trajectory reuse(PlanRequest&& request);
+
 private:
     static ConfigDouble* _goalPosChangeThreshold;
     static ConfigDouble* _goalVelChangeThreshold;
@@ -71,6 +77,9 @@ private:
 template<typename CommandType>
 class PlannerForCommandType : public Planner {
 public:
+    PlannerForCommandType() = default;
+    ~PlannerForCommandType() override = default;
+
     bool isApplicable(const MotionCommand& command) const override {
         return std::holds_alternative<CommandType>(command);
     }

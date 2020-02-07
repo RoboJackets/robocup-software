@@ -10,6 +10,9 @@
 namespace Planning {
 class CapturePlanner: public PlannerForCommandType<CaptureCommand> {
 public:
+    CapturePlanner() = default;
+    ~CapturePlanner() override = default;
+
     Trajectory plan(PlanRequest &&request) override;
     std::string name() const { return "CapturePlanner"; };
 

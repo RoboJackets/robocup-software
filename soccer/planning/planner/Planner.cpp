@@ -34,4 +34,17 @@ namespace Planning {
         }
         return false;
     }
+
+    Trajectory Planner::reuse(PlanRequest&& request) {
+        Trajectory& prevTrajectory = request.prevTrajectory;
+        if(prevTrajectory.empty()) {
+            return Trajectory{{request.start}};
+        }
+        RJ::Seconds timeElapsed = RJ::now() - prevTrajectory.begin_time();
+        if(timeElapsed < prevTrajectory.duration()) {
+            prevTrajectory.trimFront(timeElapsed);
+            return std::move(prevTrajectory);
+        }
+        return Trajectory{{prevTrajectory.last()}};
+    }
 }

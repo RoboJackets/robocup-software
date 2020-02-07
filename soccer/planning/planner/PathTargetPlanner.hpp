@@ -37,7 +37,6 @@ private:
 
     Trajectory fullReplan(PlanRequest&& request, AngleFunction angleFunction);
     Trajectory partialReplan(PlanRequest&& request, AngleFunction angleFunction);
-    Trajectory reuse(PlanRequest&& request);
     Trajectory checkBetter(PlanRequest&& request, AngleFunction angleFunction);
 
     bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;
