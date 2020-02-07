@@ -6,6 +6,13 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
+namespace VelocityProfileConstants{
+    //todo(Ethan) increase
+    constexpr int inerpolationsPerBezier = 10;
+    constexpr int extraAngleInterpolations = 10;
+}
+using namespace VelocityProfileConstants;
+
 double limitAccel(double v1, double v2, double deltaX, double maxAccel) {
     if(deltaX < 0) {
         debugThrow("Error in limitAccel() can't handle negative distance");
@@ -42,13 +49,11 @@ Trajectory ProfileVelocity(const BezierPath& path,
     if(path.empty()) {
         return Trajectory{{}};
     }
-    // number of points used to interpolate each bezier segment
-    constexpr int interpolations = 400;
     // number of cubic bezier segments
     const int num_beziers = path.size();
     // number of points that will be in the final trajectory
     // add one to account for the final instant
-    const int num_points = num_beziers * interpolations + 1;
+    const int num_points = num_beziers * inerpolationsPerBezier + 1;
 
     // Scratch data that we will use later.
     std::vector<Point> points(num_points), derivs1(num_points);
@@ -312,13 +317,12 @@ void PlanAngles(Trajectory& trajectory,
             angle_initial = angles.back();
             angleLeft = fixAngleRadians(angle_final - angle_initial);
         }
-        constexpr int extra_interpolations = 20;
         //add extra angles at max speed
         int sizeBeforePivot = angles.size();
-        for(int i = 1; i <= extra_interpolations; i++) {
-            double percentProgress = (double)i / extra_interpolations;
+        for(int i = 1; i <= extraAngleInterpolations; i++) {
+            double percentProgress = (double)i / extraAngleInterpolations;
             double currentAngle = percentProgress * angleLeft + angle_initial;
-            if(i == extra_interpolations) {
+            if(i == extraAngleInterpolations) {
                 currentAngle = angle_final;
             }
             double angleDelta =  fixAngleRadians(currentAngle - angles.back());

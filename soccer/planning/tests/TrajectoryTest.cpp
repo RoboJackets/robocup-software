@@ -303,6 +303,16 @@ TEST(Trajectory, RRTTrajectorySuccessRate) {
     printf("RRTTrajectory() Success Rate: %.6f\n", successRate);
 }
 
+TEST(Trajectory, AngleProfileNoExtraInstants) {
+    RobotInstant start{Pose{{}, 0}, {}, RJ::now()};
+    RobotInstant goal{Pose{{3,0}, 0}, {}, RJ::now()};
+    Trajectory path = RRTTrajectory(start, goal, MotionConstraints{}, {}, {});
+    RotationConstraints rot;
+    double maxDeltaAngle = rot.maxAccel * std::pow(path.duration().count() / 2.0, 2);
+    PlanAngles(path, start, AngleFns::faceAngle(maxDeltaAngle * 0.5), rot);
+    assertPathContinuous(path, RobotConstraints{});
+}
+
 void assertPivotEndpoints(double a0, double af, double w0) {
     RobotConstraints constraints;
     RobotInstant start{Pose{{}, a0}, Twist{{}, w0}, RJ::now()};
