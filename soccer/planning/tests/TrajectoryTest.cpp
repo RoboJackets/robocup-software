@@ -389,15 +389,22 @@ void assertPivot(double a0, double af, double w0) {
     assertPathContinuous(out, constraints);
 }
 
-TEST(Trajectory, PivotTurnEndpointsOnly) {
-    double maxSpeed = RotationConstraints{}.maxSpeed;
-    for(int i = 0; i < 1000; i++) {
-        assertPivotEndpoints(random(-10 * M_PI, 10 * M_PI),
-                             random(-10 * M_PI, 10 * M_PI),
-                             random(-maxSpeed, maxSpeed));
-    }
-}
-//todo(Ethan) should probably make this pass...
+/*
+ * Note:
+ * These tests are for future use when we actually do angle profiling
+ * For now, they fail because we don't do any fancy-ness with angles
+ */
+
+//todo(Ethan) make this pass
+//TEST(Trajectory, PivotTurnEndpointsOnly) {
+//    double maxSpeed = RotationConstraints{}.maxSpeed;
+//    for(int i = 0; i < 1000; i++) {
+//        assertPivotEndpoints(random(-10 * M_PI, 10 * M_PI),
+//                             random(-10 * M_PI, 10 * M_PI),
+//                             random(-maxSpeed, maxSpeed));
+//    }
+//}
+//todo(Ethan) make this pass
 //TEST(Trajectory, PivotTurn) {
 //    double maxSpeed = RotationConstraints{}.maxSpeed;
 //    for(int i = 0; i < 1000; i++) {
