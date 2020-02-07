@@ -228,34 +228,59 @@ void PlanAngles(Trajectory& trajectory,
     // Right now, when the angular velocity changes direction there is a cusp
     // for each cusp, we have to do a velocity profile on either side to fix it
     // profile on both sides, so we don't forget the point where direction changes
+    instants_it = trajectory.instants_begin();
+    instant_before = *instants_it;
+    ++instants_it;
     for(int i = 1; i < angleVels.size();) {
         double direction = std::abs(angleVels[i-1]) > 1e-12 ? angleVels[i-1] : angleVels[i];
         if(std::abs(direction) < 1e-12) {
             i++;
+            instant_before = *instants_it;
+            ++instants_it;
             continue;
         }
         // limit acceleration (forward constraints)
         int j = i;
         for (; j < angles.size() && angleVels[j] * direction >= 0; j++) {
+            assert(instants_it != trajectory.instants_end());
+            RobotInstant instant_after = *instants_it;
+            double deltaTime = RJ::Seconds(instant_after.stamp-instant_before.stamp).count();
             double deltaAngle = fixAngleRadians(angles[j] - angles[j-1]);
             angleVels[j] = clampAccel(angleVels[j-1], angleVels[j], deltaAngle, maxAccel);
+            double maxDeltaVel = maxAccel*deltaTime;
+            angleVels[i] = std::clamp(angleVels[i], angleVels[i-1] - maxDeltaVel, angleVels[i-1] + maxDeltaVel);
+            instant_before = instant_after;
+            ++instants_it;
         }
         // at this point j is invalid (either off the end of the vector or in
         // a position with opposite direction)
-
+        auto instants_it_at_j = instants_it;
         // set the velocity at the cusp to 0 (also assumes the target angular
         // velocity at the end of the path is 0)
         angleVels[j-1] = 0;
         // limit deceleration (backward constraints)
+        --instants_it;
+        instant_before = *instants_it;
+        if(instants_it != trajectory.instants_begin()) --instants_it;
         for (int k = j-1; k >= i; k--) {
+            RobotInstant instant_after = *instants_it;
+            double deltaTime = RJ::Seconds(instant_before.stamp-instant_after.stamp).count();
             double deltaAngle = fixAngleRadians(angles[k-1] - angles[k]);
             angleVels[k-1] = -clampAccel(-angleVels[k], -angleVels[k-1], deltaAngle, maxAccel);
+            double maxDeltaVel = maxAccel*deltaTime;
+            angleVels[k-1] = std::clamp(angleVels[k-1], angleVels[k] - maxDeltaVel, angleVels[k] + maxDeltaVel);
+            instant_before = instant_after;
+            if(instants_it != trajectory.instants_begin()) {
+                --instants_it;
+            }
         }
         i = j;
+        instants_it = instants_it_at_j;
+        assert(instants_it != trajectory.instants_begin());
+        instant_before = *std::prev(instants_it);
     }
 
     //update the instants in the trajectory with heading and angular velocity
-    //Also, we still need to apply the time constraints from the trajectory
     trajectory.first().pose.heading() = angles[0];
     trajectory.first().velocity.angular() = angleVels[0];
     instants_it = trajectory.instants_begin();
