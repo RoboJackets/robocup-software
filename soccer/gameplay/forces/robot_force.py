@@ -13,7 +13,7 @@ class RobotForce(force.Force):
 
     def __init__(self):
         self.systemState = main.system_state()
-        #self.updateVisibility()        
+        self.updateVisibility()        
 
 
     def updateVisibility(self):

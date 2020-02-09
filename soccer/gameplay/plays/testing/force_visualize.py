@@ -7,6 +7,7 @@ from forces import force_visualizer
 from forces import force
 from forces import constant_force
 from forces import test_robot_force
+from forces import linear_our_robot_force
 
 ##
 # A demo/base test play for visualizing forces using the force
@@ -18,11 +19,12 @@ class ForceVisualize(play.Play):
     
 
     ##This point will be the bottom left corner of the field
-    corner = robocup.Point(0, constants.Field.Length / 2)
-   
+    #corner = robocup.Point(0, constants.Field.Length / 2)
+    corner = robocup.Point(-1 * (constants.Field.Width / 2), 0)
+
     ##Set how you want the points drawn here
-    x_size = 2.0
-    y_size = 2.0
+    x_size = 6.0
+    y_size = 10.0
     interval = 0.5
 
     ##There is a default scale factor, but you can also set it here
@@ -30,7 +32,7 @@ class ForceVisualize(play.Play):
 
     ##You can swap out the force you want to visualize here
     #force = constant_force.ConstantForce(robocup.Point(1.2,1.3))
-    force = test_robot_force.TestRobotForce(scale=5)
+    force = linear_our_robot_force.LinearOurRobotForce()
 
     def __init__(self):
         super().__init__(continuous=False)
