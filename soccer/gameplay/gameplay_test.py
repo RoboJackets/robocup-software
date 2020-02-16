@@ -1,13 +1,14 @@
 ## @brief A test description containing information about how to initialize and run a specific test
 import play
 import robocup
+import constants
 
 
 # Class to define robot locations/velocities
 class testRobot():
-    def __init__(self, x=0, y=0, angle=0):
-        self.x = x
-        self.y = y
+    def __init__(self, pos=robocup.Point(0, 0), angle=0):
+
+        self.pos = robocup.Point(pos.x, pos.y)
         self.angle = angle
 
 
@@ -53,7 +54,12 @@ class GameplayTest():
         self.ballVelocity = robocup.Point(0, 0)
 
         # List of plays to enable e.g. ["stopped", "offense/basic_122"]
+        # You can also add the name of a playbook file i.e.
+        # ["comp2019.pbk", "testing/test_pivot_kick"]
+        # If the list is empty, the enabled play list will remain as it was
+        # before the test was run
         self.play_list = []
+
         # List of referee commands to run at the start (will run 1 each frame)
         # Default value is seen here
         self.start_commands = [

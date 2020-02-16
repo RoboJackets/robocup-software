@@ -573,8 +573,15 @@ void Gameplay::GameplayModule::loadTest() {
                         boost::python::list robot =
                             extract<boost::python::list>(our_robots[i]);
 
-                        rob->set_x(extract<float>(robot[0]));
-                        rob->set_y(extract<float>(robot[1]));
+                        float x = extract<float>(robot[0]);
+                        float y = extract<float>(robot[1]);
+
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
+                        rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
                         double x_pos =
@@ -604,8 +611,15 @@ void Gameplay::GameplayModule::loadTest() {
                         boost::python::list robot =
                             extract<boost::python::list>(their_robots[i]);
 
-                        rob->set_x(extract<float>(robot[0]));
-                        rob->set_y(extract<float>(robot[1]));
+                        float x = extract<float>(robot[0]);
+                        float y = extract<float>(robot[1]);
+
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
+                        rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
                         double x_pos =
@@ -628,10 +642,18 @@ void Gameplay::GameplayModule::loadTest() {
                 boost::python::list ball =
                     extract<boost::python::list>(ball_rtrn);
                 auto ball_replace = replacement->mutable_ball();
-                ball_replace->mutable_pos()->set_x(extract<float>(ball[0]));
-                ball_replace->mutable_pos()->set_y(extract<float>(ball[1]));
-                ball_replace->mutable_vel()->set_x(extract<float>(ball[2]));
-                ball_replace->mutable_vel()->set_y(extract<float>(ball[3]));
+                float posx = extract<float>(ball[0]);
+                float posy = extract<float>(ball[1]);
+                float velx = extract<float>(ball[2]);
+                float vely = extract<float>(ball[3]);
+
+                ball_replace->mutable_pos()->set_x(
+                    -teamDirection *
+                    (posy -
+                     (Field_Dimensions::Current_Dimensions.Length() / 2)));
+                ball_replace->mutable_pos()->set_y(teamDirection * posx);
+                ball_replace->mutable_vel()->set_x(-teamDirection * vely);
+                ball_replace->mutable_vel()->set_y(teamDirection * velx);
 
                 _context->grsim_command = simPacket;
             }

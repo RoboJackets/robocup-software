@@ -80,6 +80,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
 
     QMetaObject::connectSlotsByName(this);
 
+    _context.is_simulation = _simulation;
+
     _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
     _refereeModule->start();
