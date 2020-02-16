@@ -23,7 +23,6 @@ class BasicDefendRestartDefensive(standard_play.StandardPlay):
         situational_play_selection.SituationalPlaySelector.Situation.DEFEND_RESTART_DEFENSIVE
     ] # yapf: disable
 
-
     def __init__(self, num_defenders=2):
         super().__init__(continuous=True)
 
@@ -34,5 +33,3 @@ class BasicDefendRestartDefensive(standard_play.StandardPlay):
                             'Immediately')
 
         self.add_subbehavior(wall.Wall(), 'wall', required=False)
-
-

@@ -17,17 +17,16 @@ class Wall(composite_behavior.CompositeBehavior):
         scramble = 3
 
     def __init__(
-            self,
-            num_defenders=3,  # number of defenders we're making the wall with (default 3)
-            curvature=.3,  # 'curvature' (in radians) of the wall 
-            mark_point=None,  # what point we are defending against (default is ball)
-            defender_point=robocup.Point(
-                0, 0),  # what point we are defending (default is goal)
-            defender_spacing=2.5,  # number of robot radii between the centers of the defenders in the wall
-            dist_from_mark=.75,  # distance from the mark point we want to build the wall
-            defender_priorities=[20, 19, 18, 17, 16],
-            contest_ball=False
-    ):  # default defense priorities                       
+        self,
+        num_defenders=3,  # number of defenders we're making the wall with (default 3)
+        curvature=.3,  # 'curvature' (in radians) of the wall 
+        mark_point=None,  # what point we are defending against (default is ball)
+        defender_point=robocup.Point(
+            0, 0),  # what point we are defending (default is goal)
+        defender_spacing=2.5,  # number of robot radii between the centers of the defenders in the wall
+        dist_from_mark=.75,  # distance from the mark point we want to build the wall
+        defender_priorities=[20, 19, 18, 17, 16],
+        contest_ball=False):  # default defense priorities
         super().__init__(continuous=True)
 
         is_ball_free = lambda: main.ball().vel.mag() < 1 and min([(main.ball(
@@ -84,8 +83,8 @@ class Wall(composite_behavior.CompositeBehavior):
         if self.contest_ball:
             self.number_of_defenders = self.number_of_defenders - 1
             self.add_subbehavior(
-                skills.pivot_kick.
-                PivotKick(),  # TODO figure out what to do in scramble
+                skills.pivot_kick.PivotKick(
+                ),  # TODO figure out what to do in scramble
                 name="robotCapture")
 
     def on_exit_scramble(self):
