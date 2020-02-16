@@ -29,10 +29,7 @@ class Wall(composite_behavior.CompositeBehavior):
         contest_ball=False):  # default defense priorities
         super().__init__(continuous=True)
 
-        is_ball_free = lambda: main.ball().vel.mag() < 1 and min([(main.ball(
-        ).pos - rob.pos).mag() for rob in main.system_state(
-        ).their_robots]) > min([(main.ball().pos - rob.pos).mag()
-                                for rob in main.system_state().our_robots])
+        is_ball_free = self.is_ball_free()
 
         self.mark_moved = False
         self.active_defenders = num_defenders
@@ -105,11 +102,13 @@ class Wall(composite_behavior.CompositeBehavior):
             self._remove_wall_defenders()
             self.active_defenders = self.number_of_defenders
 
-    ## Returns true if some team has possession of the ball
-    def is_ball_not_free(self):
-        return main.ball().vel.mag() > 1 or min([(main.ball().pos - rob.pos).mag() \
-            for rob in main.system_state().their_robots]) <= min([(main.ball().pos - rob.pos).mag() \
-                for rob in main.system_state().our_robots])
+    ## Returns true if no team has possession of the ball
+    def is_ball_free(self):
+        return main.ball().vel.mag() < 1 and min([
+            (main.ball().pos - rob.pos).mag()
+            for rob in main.system_state().their_robots
+        ]) > min([(main.ball().pos - rob.pos).mag()
+                  for rob in main.system_state().our_robots])
 
     ## Returns true if the ball was shot
     def is_ball_shot(self):
