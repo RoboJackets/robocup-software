@@ -14,18 +14,18 @@ import skills.capture as capture
 import tactics.defense
 import situational_play_selection
 
+
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal and cause one robot to capture.
-#  
-#  By default, we will use standard defense (two submissive 
+#
+#  By default, we will use standard defense (two submissive
 #  defenders, one goalie) and two wing defense robots. The
-#  remaining robot will mark the highest threat robot. 
+#  remaining robot will mark the highest threat robot.
 class BasicDefensiveScramble(standard_play.StandardPlay):
-    
+
     _situationList = [
         situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE
     ] # yapf: disable
-
 
     def __init__(self, num_defenders=2, num_wingers=2):
         super().__init__(continuous=True)
@@ -63,4 +63,3 @@ class BasicDefensiveScramble(standard_play.StandardPlay):
         for bot in main.their_robots():
             if not eval_opp.is_marked(bot.pos):
                 self.defended[i] = False
-
