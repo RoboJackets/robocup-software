@@ -18,6 +18,7 @@ import situational_play_selection
 # The robots will move up
 # If the ball is in the fourth quearter of the field,
 # The robots will move to points in a horizontal line with the ball
+#
 
 
 class BasicOffensiveIndirect(standard_play.StandardPlay):
