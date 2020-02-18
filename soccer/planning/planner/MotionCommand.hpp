@@ -76,6 +76,11 @@ struct InterceptCommand {
     Geometry2d::Point target;
 };
 
+struct PosVelCommand {
+    Geometry2d::Pose target;
+    Geometry2d::Twist velocity;
+};
+
 using MotionCommand = std::variant<
         EmptyCommand,
         PathTargetCommand,
@@ -85,7 +90,8 @@ using MotionCommand = std::variant<
         CaptureCommand,
         InterceptCommand,
         SettleCommand,
-        CollectCommand
+        CollectCommand,
+        PosVelCommand
         >;
 
 }  // namespace Planning

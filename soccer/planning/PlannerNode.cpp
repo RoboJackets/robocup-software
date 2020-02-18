@@ -1,3 +1,4 @@
+#include "planning/planner/MPCPlanner.h"
 #include "planning/planner/PathTargetPlanner.hpp"
 #include "planning/planner/PivotPathPlanner.hpp"
 #include "planning/planner/CapturePlanner.hpp"
@@ -8,9 +9,10 @@
 namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context), plannerIdx(Num_Shells, -1) {
-    planners_.push_back(std::make_unique<PathTargetPlanner>());
-    planners_.push_back(std::make_unique<CapturePlanner>());
-    planners_.push_back(std::make_unique<PivotPathPlanner>());
+//    planners_.push_back(std::make_unique<PathTargetPlanner>());
+    planners_.push_back(std::make_unique<MPCPlanner>());
+//    planners_.push_back(std::make_unique<CapturePlanner>());
+//    planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
@@ -94,7 +96,8 @@ void PlannerNode::run() {
                 "CaptureCommand",
                 "InterceptCommand",
                 "SettleCommand",
-                "CollectCommand"
+                "CollectCommand",
+                "PosVelCommand"
         }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255, 100));
         context_->debug_drawer.drawText(QString("Path Age: ") + std::to_string(RJ::Seconds(RJ::now() - robot->path().begin_time()).count()).c_str(), robot->pos()+Geometry2d::Point(.1, -.2), QColor(100, 100, 255, 100));
     }

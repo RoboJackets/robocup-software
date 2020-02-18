@@ -57,11 +57,13 @@ public:
      * @return threshold
      */
     static double goalVelChangeThreshold() { return *_goalVelChangeThreshold; }
+
     /**
      * get replan timeout
      * @return timeout
      */
     static double replanTimeout() { return *_replanTimeout; }
+
 private:
     static ConfigDouble* _goalPosChangeThreshold;
     static ConfigDouble* _goalVelChangeThreshold;

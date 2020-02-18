@@ -4,7 +4,7 @@
 
 //todo(Ethan) delete
 #include "planning/RobotConstraints.hpp"
-void assertPathContinuous(const Planning::Trajectory& path, const RobotConstraints& constraints);
+void assertPathContinuous(const Planning::Trajectory& path, const RobotConstraints& constraints) {}
 
 namespace Planning {
 

@@ -174,8 +174,9 @@ void MotionControl::run() {
     ////////////////////////////////////////////////////////////////////
     MotionInstant target;
     target.pos = optTarget->pose.position();
-    target.vel = optTarget->velocity.linear();
+    target.vel = (target.pos - _robot->pos()) * 60; // - optTarget->velocity.linear();
 
+    /*
     // tracking error
     Point posError = target.pos - _robot->pos();
 
@@ -212,6 +213,7 @@ void MotionControl::run() {
 
     _lastWorldVelCmd = target.vel;
     _lastCmdTime = RJ::now();
+     */
 
     // convert from world to body coordinates
     // the +y axis of the robot points forwards
