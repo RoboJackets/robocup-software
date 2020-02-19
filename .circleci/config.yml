@@ -65,6 +65,7 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       - <<: *load_compile_cache
+      - run: make
       - run: make test-soccer
       - run: make test-python
 
