@@ -39,9 +39,11 @@ static const auto Command_Latency = 0ms;
 RobotConfig* Processor::robotConfig2008;
 RobotConfig* Processor::robotConfig2011;
 RobotConfig* Processor::robotConfig2015;
-std::vector<RobotStatus*>
-    Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
+// TODO: verify that this is correct
+std::vector<RobotStatus*> Processor::robotStatuses;
+
+// TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
 void Processor::createConfiguration(Configuration* cfg) {
@@ -81,6 +83,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     QMetaObject::connectSlotsByName(this);
 
     _context.is_simulation = _simulation;
+
+    _context.field_dimensions = *currentDimensions;
 
     _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
@@ -202,10 +206,11 @@ bool Processor::joystickValid() const {
     return false;
 }
 
-void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFrames) {
+void Processor::runModels() {
     std::vector<CameraFrame> frames;
 
-    for (const SSL_DetectionFrame* frame : detectionFrames) {
+    for (auto& packet : _context.vision_packets) {
+        const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
         vector<CameraBall> ballObservations;
         vector<CameraRobot> yellowObservations;
         vector<CameraRobot> blueObservations;
@@ -282,7 +287,8 @@ void Processor::run() {
         _context.state.logFrame->set_use_opponent_half(_useOpponentHalf);
         _context.state.logFrame->set_manual_id(_manualID);
         _context.state.logFrame->set_blue_team(_blueTeam);
-        _context.state.logFrame->set_defend_plus_x(_defendPlusX);
+        _context.state.logFrame->set_defend_plus_x(
+            _context.game_state.defendPlusX);
         _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
 
         if (first) {
@@ -326,76 +332,11 @@ void Processor::run() {
         // run in order, we can't just do everything via the for loop (yet).
         _visionReceiver->run();
 
-        // Read vision packets
-        vector<const SSL_DetectionFrame*> detectionFrames;
-
-        // TODO(Kyle): Move this logic into the VisionReceiver. Until we have a
-        // non-protobuf logging solution (i.e. ROS) we will still have to log
-        // vision protos directly, but once logging functionality is exposed
-        // through Context it should be okay to move this into VisionReceiver
-        for (auto& packet : _context.vision_packets) {
-            SSL_WrapperPacket* log = _context.state.logFrame->add_raw_vision();
-            log->CopyFrom(packet->wrapper);
-
-            curStatus.lastVisionTime = packet->receivedTime;
-
-            // If packet has geometry data, attempt to read information and
-            // update if changed.
-            if (packet->wrapper.has_geometry()) {
-                updateGeometryPacket(packet->wrapper.geometry().field());
-            }
-
-            if (packet->wrapper.has_detection()) {
-                SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
-
-                double rt =
-                    RJ::numSeconds(packet->receivedTime.time_since_epoch());
-                det->set_t_capture(rt - det->t_sent() + det->t_capture());
-                det->set_t_sent(rt);
-
-                // Remove balls on the excluded half of the field
-                google::protobuf::RepeatedPtrField<SSL_DetectionBall>* balls =
-                    det->mutable_balls();
-                for (int i = 0; i < balls->size(); ++i) {
-                    float x = balls->Get(i).x();
-                    // FIXME - OMG too many terms
-                    if ((!_context.state.logFrame->use_opponent_half() &&
-                         ((_defendPlusX && x < 0) ||
-                          (!_defendPlusX && x > 0))) ||
-                        (!_context.state.logFrame->use_our_half() &&
-                         ((_defendPlusX && x > 0) ||
-                          (!_defendPlusX && x < 0)))) {
-                        balls->SwapElements(i, balls->size() - 1);
-                        balls->RemoveLast();
-                        --i;
-                    }
-                }
-
-                // Remove robots on the excluded half of the field
-                google::protobuf::RepeatedPtrField<SSL_DetectionRobot>*
-                    robots[2] = {det->mutable_robots_yellow(),
-                                 det->mutable_robots_blue()};
-
-                for (int team = 0; team < 2; ++team) {
-                    for (int i = 0; i < robots[team]->size(); ++i) {
-                        float x = robots[team]->Get(i).x();
-                        if ((!_context.state.logFrame->use_opponent_half() &&
-                             ((_defendPlusX && x < 0) ||
-                              (!_defendPlusX && x > 0))) ||
-                            (!_context.state.logFrame->use_our_half() &&
-                             ((_defendPlusX && x > 0) ||
-                              (!_defendPlusX && x < 0)))) {
-                            robots[team]->SwapElements(
-                                i, robots[team]->size() - 1);
-                            robots[team]->RemoveLast();
-                            --i;
-                        }
-                    }
-                }
-
-                detectionFrames.push_back(det);
-            }
+        if (_context.field_dimensions != *currentDimensions) {
+            setFieldDimensions(_context.field_dimensions);
         }
+
+        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
 
         _radio->run();
 
@@ -406,7 +347,7 @@ void Processor::run() {
         }
         GamepadController::joystickRemoved = -1;
 
-        runModels(detectionFrames);
+        runModels();
 
         _context.vision_packets.clear();
 
@@ -652,92 +593,6 @@ void Processor::run() {
     }
 }
 
-/*
- * Updates the geometry packet if different from the existing one,
- * Based on the geometry vision data.
- */
-void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
-    if (fieldSize.field_lines_size() == 0) {
-        return;
-    }
-
-    const SSL_FieldCicularArc* penalty = nullptr;
-    const SSL_FieldCicularArc* center = nullptr;
-    float penaltyShortDist = 0;  // default value
-    float penaltyLongDist = 0;   // default value
-    float displacement =
-        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
-
-    // Loop through field arcs looking for needed fields
-    for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
-        if (arc.name() == "CenterCircle") {
-            // Assume center circle
-            center = &arc;
-        }
-    }
-
-    for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
-        if (line.name() == "RightPenaltyStretch") {
-            displacement = abs(line.p2().y() - line.p1().y());
-            penaltyLongDist = displacement;
-        } else if (line.name() == "RightFieldRightPenaltyStretch") {
-            penaltyShortDist = abs(line.p2().x() - line.p1().x());
-        }
-    }
-
-    float thickness = fieldSize.field_lines().Get(0).thickness() / 1000.0f;
-
-    // The values we get are the center of the lines, we want to use the
-    // outside, so we can add this as an offset.
-    float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
-
-    float fieldBorder = currentDimensions->Border();
-
-    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
-        thickness != 0) {
-        // Force a resize
-        Field_Dimensions newDim = Field_Dimensions(
-
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-            Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penaltyShortDist / 1000.0f,              // PenaltyShortDist
-            penaltyLongDist / 1000.0f,               // PenaltyLongDist
-            center->radius() / 1000.0f + adj,        // CenterRadius
-            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-            displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
-
-        if (newDim != *currentDimensions) {
-            setFieldDimensions(newDim);
-        }
-    } else if (center != nullptr && thickness != 0) {
-        Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
-
-        Field_Dimensions newDim = Field_Dimensions(
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-            Field_Dimensions::Default_Dimensions.GoalHeight(),
-            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
-            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
-            center->radius() / 1000.0f + adj,        // CenterRadius
-            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-            displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
-
-        if (newDim != *currentDimensions) {
-            setFieldDimensions(newDim);
-        }
-    } else {
-        cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field."
-             << endl;
-    }
-}
 
 void Processor::sendRadioData() {
     // Halt overrides normal motion control, but not joystick
@@ -885,9 +740,9 @@ vector<int> Processor::getJoystickRobotIds() {
 }
 
 void Processor::defendPlusX(bool value) {
-    _defendPlusX = value;
+    _context.game_state.defendPlusX = value;
 
-    if (_defendPlusX) {
+    if (value) {
         _teamAngle = -M_PI_2;
     } else {
         _teamAngle = M_PI_2;
@@ -916,7 +771,7 @@ void Processor::recalculateWorldToTeamTransform() {
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     cout << "Updating field geometry based off of vision packet." << endl;
-    Field_Dimensions::Current_Dimensions = dims;
+    *currentDimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
     _gameplayModule->updateFieldDimensions();
