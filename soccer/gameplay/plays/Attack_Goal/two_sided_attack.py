@@ -51,20 +51,20 @@ class TwoSideAttack(standard_play.StandardPlay):
                             TwoSideAttack.State.setup, lambda: True,
                             'immediately')
         self.add_transition(
-            TwoSideAttack.State.setup, TwoSideAttack.State.passing,
-            lambda: self.subbehavior_with_name('capture').is_done_running(),
-            'all subbehaviors completed')
+            TwoSideAttack.State.setup,
+            TwoSideAttack.State.passing, lambda: self.subbehavior_with_name(
+                'capture').is_done_running(), 'all subbehaviors completed')
 
         self.add_transition(
-            TwoSideAttack.State.passing, TwoSideAttack.State.kicking, lambda:
-            (not self.has_subbehavior_with_name(
-                'pass') or self.subbehavior_with_name('pass').state == behavior
-             .Behavior.State.completed), 'Pass completed')
+            TwoSideAttack.State.passing, TwoSideAttack.State.kicking, lambda: (
+                not self.has_subbehavior_with_name(
+                    'pass') or self.subbehavior_with_name('pass').state ==
+                behavior.Behavior.State.completed), 'Pass completed')
 
-        self.add_transition(
-            TwoSideAttack.State.kicking, behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name('kick').state == behavior.
-            Behavior.State.completed, 'Kick completed')
+        self.add_transition(TwoSideAttack.State.kicking,
+                            behavior.Behavior.State.completed, lambda: self.
+                            subbehavior_with_name('kick').state == behavior.
+                            Behavior.State.completed, 'Kick completed')
 
         self.robot_points = [
             robocup.Point(-constants.Field.Width / 4.0,
@@ -90,12 +90,10 @@ class TwoSideAttack(standard_play.StandardPlay):
     def on_enter_setup(self):
         # Add subbehaviors based on information
         capture = skills.capture.Capture()
-        self.add_subbehavior(skills.move.Move(self.robot_points[0]),
-                             'moveA',
-                             required=True)
-        self.add_subbehavior(skills.move.Move(self.robot_points[1]),
-                             'moveB',
-                             required=True)
+        self.add_subbehavior(
+            skills.move.Move(self.robot_points[0]), 'moveA', required=True)
+        self.add_subbehavior(
+            skills.move.Move(self.robot_points[1]), 'moveB', required=True)
         self.add_subbehavior(capture, 'capture', required=True)
 
     def on_exit_setup(self):
@@ -134,8 +132,8 @@ class TwoSideAttack(standard_play.StandardPlay):
             else:
                 direct_success = direct_shot.shot_success
 
-            if (direct_shot and direct_success > rob_1_chance
-                    and direct_success > rob_2_chance):
+            if (direct_shot and direct_success > rob_1_chance and
+                    direct_success > rob_2_chance):
                 return
 
         if rob_1_chance > rob_2_chance:
