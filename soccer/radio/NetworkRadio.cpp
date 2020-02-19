@@ -9,8 +9,8 @@ using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
-      _send_buffers(Robots_Per_Team) {
-    _connections.resize(Robots_Per_Team);
+      _send_buffers(Num_Shells) {
+    _connections.resize(Num_Shells);
     startReceive();
 }
 
