@@ -105,7 +105,7 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
         // to both this ID and this IP address.
         _connections.at(iter->second) = std::nullopt;
         _robot_ip_map.erase(iter);
-        _connections.at(msg->uid) = std::nullopt;
+        _connections.at(robot_id) = std::nullopt;
     }
 
     // Update assignments.
