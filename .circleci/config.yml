@@ -66,6 +66,7 @@ jobs:
       - <<: *load_workspace
       - <<: *load_compile_cache
       - run: make
+      - <<: *save_compile_cache
       - run: make test-soccer
       - run: make test-python
 
