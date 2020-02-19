@@ -20,13 +20,13 @@ defaults_scc: &save_compile_cache
   save_cache:
     key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/.ccache
+      - build
 
 defaults_sctc: &save_compile_test_cache
   save_cache:
     key: ccache-test-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/.ccache
+      - build
 
 defaults_lcc: &load_compile_cache
   restore_cache:
