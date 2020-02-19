@@ -14,7 +14,7 @@ defaults_image: &image
     - image: robojackets/robocup-software:master
 
 defaults_deps: &install_deps
-  run: ./util/ubuntu-setup --yes && sudo ccache -M 100M
+  run: ./util/ubuntu-setup --yes
 
 defaults_scc: &save_compile_cache
   save_cache:
