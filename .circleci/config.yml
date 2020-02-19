@@ -16,27 +16,9 @@ defaults_image: &image
 defaults_deps: &install_deps
   run: ./util/ubuntu-setup --yes && sudo ccache -M 100M
 
-defaults_ssc: &save_src_cache
-  save_cache:
-    key: source-v1-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ".git"
-
-defaults_lsc: &load_src_cache
-  restore_cache:
-    keys:
-      - source-v1-{{ .Branch }}-{{ .Revision }}
-      - source-v1-{{ .Branch }}-
-      - source-v1-
 defaults_scc: &save_compile_cache
   save_cache:
     key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/.ccache
-
-defaults_sccc: &save_compile_coverage_cache
-  save_cache:
-    key: ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
       - ~/.ccache
 
@@ -53,14 +35,6 @@ defaults_lcc: &load_compile_cache
       - ccache-{{ arch }}-{{ .Branch }}
       - ccache-{{ arch }}
       - ccache-
-
-defaults_lccc: &load_compile_coverage_cache
-  restore_cache:
-    keys:
-      - ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - ccache-cov-{{ arch }}-{{ .Branch }}
-      - ccache-cov-{{ arch }}
-      - ccache-cov-
 
 defaults_lctc: &load_compile_test_cache
   restore_cache:
@@ -82,62 +56,27 @@ defaults_lw: &load_workspace
 
 version: 2
 jobs:
-  compile:
+  test-all:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
-      - checkout
-      # Ensure latest deps are installed
-      - <<: *install_deps
-      - <<: *load_compile_cache
-      - run: make
-      - <<: *save_compile_cache
-      - <<: *save_workspace
-
-  test-soccer:
-    <<: *dir
-    <<: *image
-    steps:
-      - <<: *load_src_cache
       - checkout
       # Ensure latest deps are installed
       - <<: *install_deps
       - <<: *load_workspace
-      - <<: *load_compile_test_cache
+      - <<: *load_compile_cache
       - run: make test-soccer
-      - <<: *save_compile_test_cache
-
-  test-python:
-    <<: *dir
-    <<: *image
-    steps:
-      - <<: *load_src_cache
-      - checkout
-      # Ensure latest deps are installed
-      - <<: *install_deps
-      - <<: *load_workspace
-      - <<: *load_compile_cache
       - run: make test-python
 
   # FIXME: pylint is broken on 18.04
-  pylint:
+  python-static:
     <<: *dir
     docker:
       - image: robojackets/robocup-software:16
     steps:
-      - <<: *load_src_cache
       - checkout
       - <<: *install_deps
       - run: make pylint
-
-  mypy:
-    <<: *dir
-    docker:
-      - image: python:3
-    steps:
-      - <<: *load_src_cache
-      - checkout
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
@@ -145,7 +84,6 @@ jobs:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
       # We need environment variables ($GOPATH and $PATH specifically)
       - <<: *setup_env
@@ -158,25 +96,10 @@ jobs:
       - store_artifacts:
           path: /tmp/clean.patch
 
-  coverage:
-    <<: *dir
-    <<: *image
-    steps:
-      - <<: *load_src_cache
-      - checkout
-      # Ensure latest deps are installed
-      - <<: *install_deps
-      # save src cache in coverage task as nothing depends on it, we can take our time.
-      - <<: *save_src_cache
-      - <<: *load_compile_coverage_cache
-      - run: make coverage
-      - <<: *save_compile_coverage_cache
-
   gen-docs:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
       # Ensure latest deps are installed
       - <<: *install_deps
@@ -188,30 +111,15 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - compile
-      - coverage
-      - test-soccer:
-          requires:
-            - compile
-      - test-python:
-          requires:
-            - compile
-      - pylint
-      - mypy:
-          requires:
-            - compile
-      - style:
-          requires:
-            - compile
+      - test-all
+      - python-static
+      - style
 
       - gen-docs:
           requires:
-            - test-soccer
-            - test-python
-            - pylint
-            - mypy
+            - test-all
+            - python-static
             - style
-            - compile
 
           filters:
             branches:
