@@ -144,10 +144,11 @@ Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, co
                            goal.velocity.linear().mag(),
                            motionConstraints,
                            start.stamp);
-    RJ::Time hitTime;
-    if(!straightTrajectory.hit(static_obstacles, 0s) && !straightTrajectory.intersects(dynamic_obstacles, start.stamp)) {
+    if(start.pose.position().distTo(goal.pose.position()) < Robot_Radius
+    || !straightTrajectory.hit(static_obstacles, 0s) && !straightTrajectory.intersects(dynamic_obstacles, start.stamp)) {
         return std::move(straightTrajectory);
     }
+
 
     Geometry2d::ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};

@@ -42,8 +42,8 @@ using namespace Eigen;
 static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles",
     "Planning0",     "Planning1",        "Planning2",
-    "Planning3",     "Planning4",        "Planning5",
-    "Angle Planning"};
+    "Planning3",     "Planning4",        "Planning5"};
+    //todo(Ethan) disable angles by default probably
 
 void calcMinimumWidth(QWidget* widget, QString text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);

@@ -147,13 +147,17 @@ namespace Planning {
         if(empty() || startTimeIntoPath > duration()) {
             return false;
         }
-        TrajectoryIterator it = iterator(begin_time() + startTimeIntoPath, (duration() - startTimeIntoPath) * 0.01);
+        //this fixes the edge case where we increment by a duration of 0s and
+        // end up looping forever TODO do this in a more readable way
+        constexpr int max_iterations = 100;
+        TrajectoryIterator it = iterator(begin_time() + startTimeIntoPath, (duration() - startTimeIntoPath) / (double)max_iterations);
 
         RobotInstant currentInstant = *it;
         // This code disregards obstacles which the robot starts in. This allows the
         // robot to move out a obstacle if it is already in one.
         std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(
                 currentInstant.pose.position());
+        int counter = 0;
         while (it.hasNext()) {
             ++it;
             RobotInstant nextInstant = *it;
@@ -172,6 +176,10 @@ namespace Planning {
                 }
             }
             currentInstant = nextInstant;
+            counter++;
+            if(counter > max_iterations) {
+                break;
+            }
         }
         return false;
     }

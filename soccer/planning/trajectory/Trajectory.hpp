@@ -309,14 +309,14 @@ public:
         auto it = *this;
         return *++it;
     }
-
     bool hasNext() const {
-        return _trajectory.CheckTime(_time + _deltaT);
+        return _trajectory.CheckTime(_time + _deltaT) && std::next(_iterator) != _trajectory.instants_end();
     }
     bool hasValue() const {
-        return _trajectory.CheckTime(_time);
+        return _trajectory.CheckTime(_time) && _iterator != _trajectory.instants_end();
     }
 
+    // note: this never goes past the end
     void advance(RJ::Time time);
 
 private:

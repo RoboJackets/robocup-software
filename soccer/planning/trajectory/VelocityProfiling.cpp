@@ -195,15 +195,13 @@ void PlanAngles(Trajectory& trajectory,
     if(trajectory.empty()) {
         return;
     }
-    const double maxSpeed = constraints.maxSpeed;
-    trajectory.first().pose.heading() = start_instant.pose.heading();
-    trajectory.first().velocity.angular() = std::clamp(start_instant.velocity.angular(), -maxSpeed, maxSpeed);
-
     auto instants_it = trajectory.instants_begin();
+    instants_it->pose.heading() = start_instant.pose.heading();
+    instants_it->velocity.angular() = std::clamp(start_instant.velocity.angular(), -constraints.maxSpeed, constraints.maxSpeed);
     RobotInstant instant_before = *instants_it;
     ++instants_it;
     for (int i = 1; instants_it != trajectory.instants_end(); i++) {
-        RobotInstant instant_after = *instants_it;
+        RobotInstant& instant_after = *instants_it;
         double deltaTime = RJ::Seconds(instant_after.stamp-instant_before.stamp).count();
         instant_after.pose.heading() = angle_function(instant_before);
         double deltaAngle = fixAngleRadians(instant_after.pose.heading() - instant_before.pose.heading());
