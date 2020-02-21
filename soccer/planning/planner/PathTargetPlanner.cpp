@@ -71,8 +71,8 @@ namespace Planning {
         if (prevTrajectory.empty() || veeredOffPath(request)) {
             return fullReplan(std::move(request), angleFunction);
         }
-        const RJ::Seconds timeIntoTrajectory =
-                RJ::now() - prevTrajectory.begin_time();
+        RJ::Seconds timeIntoTrajectory =
+                std::clamp(RJ::Seconds{RJ::now() - prevTrajectory.begin_time()}, RJ::Seconds{0s}, prevTrajectory.duration());
         const RJ::Seconds timeRemaining =
                 prevTrajectory.duration() - timeIntoTrajectory;
 

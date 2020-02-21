@@ -367,7 +367,7 @@
   <maxBallSpeedDirect value="0.1"/>
   <maxApproachAngle value="0.3"/>
   <maxOutrunBallSpeed value="0.7"/>
-  <ballContactAccelPercent value="0.8"/>
+  <ballContactAccelPercent value="0.2"/>
   <bufferDistBeforeContact value="0.156"/>
   <bufferDistAfterContact value="0.0"/>
   <touchDeltaSpeed value="0.2"/>

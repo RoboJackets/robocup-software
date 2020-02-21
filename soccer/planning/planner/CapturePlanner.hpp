@@ -18,10 +18,13 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
+    static double touchDeltaSpeed();
+    static double ballSpeedPercentForDampen();
+
 private:
     Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint, const Geometry2d::Rect& fieldRect, Geometry2d::Point ballPoint) const;
 
-    std::optional<Trajectory> attemptCapture(const PlanRequest& request, RJ::Time contactTime) const;
+    std::optional<std::tuple<Trajectory, bool>> attemptCapture(const PlanRequest& request, RJ::Time contactTime) const;
 
     /*
      * finds a goal point by brute force along the ball path

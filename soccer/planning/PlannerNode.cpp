@@ -81,7 +81,7 @@ void PlannerNode::run() {
         OurRobot* robot = context_->state.self[request.shellID];
         Trajectory plannedPath = PlanForRobot(std::move(request));
         robot->setPath(std::move(plannedPath));
-//        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path()); todo(Ethan) uncomment this
+        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path());
 
         //draw debug info
 
@@ -122,7 +122,9 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
             }
             RobotInstant startInstant = request.start;
             RJ::Time t0 = RJ::now();
+            printf("planning %s...\n", planners_[i]->name().c_str());
             Trajectory path = planners_[i]->plan(std::move(request));
+            printf("done planning\n");
             if(path.empty()) {
                 path = Trajectory{{startInstant}};
                 debugLog("Empty Path. Planner: " + planners_[i]->name());

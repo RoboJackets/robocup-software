@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <utility>
 #include "DebugDrawer.hpp"
+#include "planning/planner/CapturePlanner.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -204,12 +205,20 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 
 void OurRobot::settle() {
     if (!visible()) return;
-    setMotionCommand(std::make_unique<MotionCommand>(Planning::CaptureCommand{}));
+    Planning::CaptureCommand command;
+    Ball& ball = _context->state.ball;
+    command.targetFacePoint = ball.pos - ball.vel.normalized(10);
+    command.targetSpeed = -ball.vel.mag() * Planning::CapturePlanner::ballSpeedPercentForDampen();
+    setMotionCommand(std::make_unique<MotionCommand>(command));
 }
 
 void OurRobot::collect() {
     if (!visible()) return;
-    setMotionCommand(std::make_unique<MotionCommand>(Planning::CaptureCommand{}));
+    Planning::CaptureCommand command;
+    Ball& ball = _context->state.ball;
+    command.targetFacePoint = ball.pos + ball.vel.normalized(10);
+    command.targetSpeed = ball.vel.mag() + Planning::CapturePlanner::touchDeltaSpeed();
+    setMotionCommand(std::make_unique<MotionCommand>(command));
 }
 
 void OurRobot::lineKick(Point target) {
@@ -218,7 +227,7 @@ void OurRobot::lineKick(Point target) {
     disableAvoidBall();
     Planning::CaptureCommand command;
     command.targetFacePoint = target;
-    command.targetSpeed = 0.25;
+    command.targetSpeed = 0.25;//todo(Ethan) no magic numbers
     setMotionCommand(std::make_unique<MotionCommand>(command));
 }
 

@@ -5,6 +5,7 @@
 #include "Geometry2d/Pose.hpp"
 #include "Geometry2d/Rect.hpp"
 #include <functional>
+#include "motion/TrapezoidalMotion.hpp"
 
 namespace Planning {
 
@@ -24,6 +25,13 @@ ConfigDouble* CapturePlanner::_bufferDistAfterContact;
 ConfigDouble* CapturePlanner::_touchDeltaSpeed;
 ConfigDouble* CapturePlanner::_partialReplanLeadTime;
 ConfigDouble* CapturePlanner::_ballSpeedPercentForDampen;
+
+double CapturePlanner::ballSpeedPercentForDampen() {
+    return *_ballSpeedPercentForDampen;
+}
+double CapturePlanner::touchDeltaSpeed() {
+    return *_touchDeltaSpeed;
+}
 
 void CapturePlanner::createConfiguration(Configuration* cfg) {
     _searchStartDist = new ConfigDouble(cfg,
@@ -91,6 +99,9 @@ Trajectory CapturePlanner::plan(PlanRequest &&request) {
     const RJ::Time curTime = RJ::now();
 
     Point ballToBot = request.start.pose.position() - ball.pos;
+    Point currentFaceDir = Point::direction(request.start.pose.heading());
+    const double ballDistFront = (-ballToBot).dot(currentFaceDir);
+    const double ballDistSide = (-ballToBot).cross(currentFaceDir);
     Point ballToBotUnit = ballToBot.norm();
     // the non-negative component of ball.vel pointing toward the robot
     Point ballVelToBot = std::max(0.0, ball.vel.dot(ballToBotUnit)) * ballToBotUnit;
@@ -99,6 +110,7 @@ Trajectory CapturePlanner::plan(PlanRequest &&request) {
     if(awayBallVelocity.mag() > *_maxOutrunBallSpeedPercent * constraints.mot.maxSpeed) {
         //Impossible Capture Request. The ball is running away too fast
         //Todo(Ethan) handle this probably
+        return reuse(std::move(request));
     }
 
 //    // if the ball changed course, the old trajectory is invalid todo(Ethan) uncomment? delete?
@@ -125,14 +137,20 @@ Trajectory CapturePlanner::plan(PlanRequest &&request) {
         partialReplan = prevTrajectory.hit(request.static_obstacles, timeElapsed, &invalidTime) || prevTrajectory.intersects(request.dynamic_obstacles, curTime, nullptr, &invalidTime);
         Point prevGoalPos = prevTrajectory.last().pose.position();
         Point curGoalPos = ball.predict(std::max(RJ::now(), prevTrajectory.end_time())).pos;
-        bool goalChanged = prevGoalPos.distTo(curGoalPos) > 0.3; //todo(Ethan) no magic numbers
-        if(!partialReplan && goalChanged) {
+        bool ballFarAway = ballDistSide > Robot_Radius || ballDistFront > 3 * Robot_MouthRadius;
+        bool goalChanged = prevGoalPos.distTo(curGoalPos) > 0.05; //todo(Ethan) no magic numbers
+        bool goalDistToBallLine = std::abs((prevGoalPos-ball.pos).cross(ball.vel.norm()));
+        if(!partialReplan && (goalChanged && ballFarAway || ball.vel.mag() > 0.2 && ballToBot.mag() > Robot_Radius*1.5 && goalDistToBallLine > Robot_Radius)) {
             partialReplan = true;
-            invalidTime = prevTrajectory.duration();
+            invalidTime = prevTrajectory.duration();//todo(Ethan) delete comment std::min(prevTrajectory.duration(), RJ::Seconds(2 * *_partialReplanLeadTime));
         }
         if(partialReplan && invalidTime < timeElapsed + RJ::Seconds(2 * *_partialReplanLeadTime)) {
             fullReplan = true;
         }
+    }
+//    if(mouthNormalDist > 0 && mouthNormalDist < Robot_MouthRadius && std::abs(mouthOffCenterDist) < )
+    if(ballToBot.mag() < Robot_MouthRadius) {
+        fullReplan = partialReplan = false;
     }
     if(fullReplan) {
         partialPath = Trajectory{{request.start}};
@@ -158,22 +176,38 @@ Trajectory CapturePlanner::plan(PlanRequest &&request) {
 std::optional<Trajectory> CapturePlanner::bruteForceCapture(const PlanRequest& request) const {
     Ball& ball = request.context->state.ball;
     int its = 0;
-    constexpr RJ::Seconds maxSearchDuration = 1.5s;
+    constexpr RJ::Seconds maxSearchDuration = 3s;
+    constexpr RJ::Seconds brute_inc = 0.1s;
     std::optional<Trajectory> path;
     RJ::Time startTime = RJ::now();
-    RJ::Time contactTime = startTime;
-
-    //todo(Ethan) fix
-    return attemptCapture(request, startTime);
+    Point botPos = request.start.pose.position();
+    double botSpeed = request.start.velocity.linear().mag();
+    double distToBallLine = std::abs(ball.vel.norm().cross(ball.pos-botPos));
+    double timeEstimate = Trapezoidal::getTime(distToBallLine, distToBallLine, request.constraints.mot.maxSpeed,request.constraints.mot.maxAcceleration, botSpeed, 0);
+    RJ::Time contactTime = RJ::now() + RJ::Seconds{timeEstimate};
     while(contactTime < startTime + maxSearchDuration) {
-        std::optional<Trajectory> candidatePath = attemptCapture(request, contactTime);
-        if (candidatePath && !candidatePath->empty() && (!path || candidatePath->duration() < path->duration())) {
-            path = candidatePath;
+        std::optional<Trajectory> candidatePath;
+        bool successfulCapture = false;
+        RJ::Time attemptt0 = RJ::now();
+        auto pathResult = attemptCapture(request, contactTime);
+        printf("   attempt took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-attemptt0).count(), its);//todo(Ethan) delete
+        if(pathResult) {
+            std::tie(candidatePath, successfulCapture) = *pathResult;
+            if(successfulCapture) {
+                // use the first successful path found
+                path = candidatePath;
+                break;
+            } else if (candidatePath && !candidatePath->empty() && (!path || candidatePath->duration() < path->duration())) {
+                // find the best path in case none of them are successful
+                path = candidatePath;
+                //todo(Ethan) delete this break
+                break;
+            }
         }
-        contactTime = RJ::Time{contactTime + RJ::Seconds{0.15}};
+        contactTime = RJ::Time{contactTime + brute_inc};
         its++;
     }
-    printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-startTime).count(), its);
+    printf("brute force took %.3f sec, its: %d\n", RJ::Seconds(RJ::now()-startTime).count(), its);//todo(Ethan) delete
     if(path) {
         assert(!path->empty());
         return std::move(*path);
@@ -182,9 +216,12 @@ std::optional<Trajectory> CapturePlanner::bruteForceCapture(const PlanRequest& r
     return std::nullopt;
 }
 
-std::optional<Trajectory> CapturePlanner::attemptCapture(const PlanRequest& request, RJ::Time contactTime) const {
+std::optional<std::tuple<Trajectory, bool>> CapturePlanner::attemptCapture(const PlanRequest& request, RJ::Time contactTime) const {
     const Ball& ball = request.context->state.ball;
     const CaptureCommand& command = std::get<CaptureCommand>(request.motionCommand);
+    if(!(command.targetSpeed && command.targetFacePoint)) {
+        debugThrow("Error: incomplete capture command");
+    }
     const Geometry2d::ShapeSet& static_obstacles = request.static_obstacles;
     const std::vector<DynamicObstacle>& dynamic_obstacles = request.dynamic_obstacles;
     RobotInstant startInstant = request.start;
@@ -202,129 +239,116 @@ std::optional<Trajectory> CapturePlanner::attemptCapture(const PlanRequest& requ
         returnPath = true;
     }
 
-    // collect candidate target states
-    // we might try approaching the ball from a few different directions to see
-    // which one is faster
-    std::vector<double> contactSpeeds;
-    std::vector<double> contactAngles;
-    std::vector<Point> contactDirs;
-    if (ball.vel.mag() > *_maxBallSpeedDirect) {
-        if(ball.vel.mag() > *_maxOutrunBallSpeedPercent * constraints.mot.maxSpeed) {
-            // the ball is moving fast toward us, so approach opposite ball.vel
-            contactSpeeds.push_back(ball.vel.mag() * *_ballSpeedPercentForDampen);
-            contactDirs.push_back(ball.vel.norm());
-            contactAngles.push_back(ball.vel.angle() + M_PI);
-        } else {
-            // Try both Settle and Collect and pick the quicker one
-            contactSpeeds.push_back(ball.vel.mag() * *_ballSpeedPercentForDampen);
-            contactDirs.push_back(ball.vel.norm());
-            contactAngles.push_back(ball.vel.angle() + M_PI);
-            contactSpeeds.push_back(ball.vel.mag() + *_touchDeltaSpeed);
-            contactDirs.push_back(ball.vel.norm());
-            contactAngles.push_back(ball.vel.angle());
-        }
+    Point faceDir;
+    if(command.targetFacePoint->distTo(futureBallPoint) < 1e-9) {
+        faceDir = (futureBallPoint - startInstant.pose.position()).norm();
     } else {
-        if(command.targetSpeed) {
-            contactSpeeds.push_back(*command.targetSpeed);
-        } else {
-            contactSpeeds.push_back(*_touchDeltaSpeed);
-        }
-        contactDirs.push_back((ball.pos - startInstant.pose.position()).norm());
-        contactAngles.push_back(startInstant.pose.position().angleTo(ball.pos));
+        faceDir = (*command.targetFacePoint - futureBallPoint).norm();
     }
-    assert(contactDirs.size() == contactAngles.size() && contactAngles.size() == contactSpeeds.size());
+    Point contactPoint = futureBallPoint - (Robot_MouthRadius + Ball_Radius) * faceDir;
+    double contactSpeed = *command.targetSpeed;
+    //todo(change contactDir during linekick for a one-touch?
+    Point contactDir = faceDir;
+    double contactAngle = faceDir.angle();
+    assert(std::abs(contactSpeed) <= constraints.mot.maxSpeed);
 
-    // Check each candidate target state and pick the trajectory that gets
-    // the ball the fastest
-    Trajectory outputPath{{}};
-    RJ::Time outputPathContactBallTime = RJ::Time::max();
-    constexpr double minMaxContactSpeed = 0.1;
-    for(int i = 0; i < contactDirs.size(); i++) {
-        Point faceDir;
-        if(command.targetFacePoint && command.targetSpeed) {
-            faceDir = (*command.targetFacePoint - futureBallPoint).norm();
-        } else {
-            faceDir = Point::direction(contactAngles[i]);
+    if(contactDir.angleBetween(faceDir) > *_maxApproachAngle) {
+        debugThrow("Attack Angle in Capture too big");
+        return std::nullopt;
+    }
+
+    // Course: approach the ball in line with the ball velocity
+    std::optional<Trajectory> coursePath;
+    Point courseTargetPoint = contactPoint - contactDir.normalized(*_bufferDistBeforeContact);
+    Geometry2d::Pose courseTargetPose{courseTargetPoint, 0};
+    Geometry2d::Twist courseTargetTwist{contactDir.normalized(contactSpeed), 0};
+    RobotInstant courseTargetInstant{courseTargetPose, courseTargetTwist, RJ::now()};
+    Point botToContact = contactPoint-startInstant.pose.position();
+    // robot is in line with the ball and close to it
+    bool inlineWithBall = std::abs(botToContact.cross(contactDir)) < Robot_Radius/2.0;
+    bool closeToBall = std::abs(botToContact.dot(contactDir)) < *_bufferDistBeforeContact;
+    RJ::Time contactBallTime = RJ::Time::max();
+    //if we aren't in the fine segment
+    if(!(inlineWithBall && closeToBall)) {
+        coursePath = RRTTrajectory(startInstant, courseTargetInstant, constraints.mot, static_obstacles, dynamic_obstacles);
+        if(coursePath->empty()) {
+            return std::nullopt;
         }
+        courseTargetInstant.stamp = coursePath->last().stamp;
+        contactBallTime = coursePath->last().stamp;
+    } else {
+        //todo(Ethan) Really? (see below todo)
+        return std::nullopt;
+    }
 
-        Point contactPoint = futureBallPoint - (Robot_MouthRadius + Ball_Radius) * faceDir;
-        double contactSpeed = contactSpeeds[i];
-        Point contactDir = contactDirs[i];
-        double contactAngle = faceDir.angle();
-        assert(contactSpeed <= constraints.mot.maxSpeed);
-
-        if(Point::direction(contactAngle).angleBetween(faceDir) > *_maxApproachAngle) {
-            continue;
-        }
-
-        // Course: approach the ball in line with the ball velocity
-        std::optional<Trajectory> coursePath;
-        Point courseTargetPoint = contactPoint - contactDir.normalized(*_bufferDistBeforeContact);
-        Geometry2d::Pose courseTargetPose{courseTargetPoint, 0};
-        Geometry2d::Twist courseTargetTwist{contactDir.normalized(contactSpeed), 0};
-        RobotInstant courseTargetInstant{courseTargetPose, courseTargetTwist, RJ::now()};
-        Point botToContact = contactPoint-startInstant.pose.position();
-        // robot is in line with the ball and close to it
-        bool inlineWithBall = std::abs(botToContact.cross(contactDir)) < Robot_Radius/2.0;
-        bool closeToBall = botToContact.dot(contactDir) < *_bufferDistBeforeContact;
-        RJ::Time contactBallTime = RJ::Time::max();
-        //if we aren't in the fine segment
-        if(!(inlineWithBall && closeToBall)) {
-            coursePath = RRTTrajectory(startInstant, courseTargetInstant, constraints.mot, static_obstacles, dynamic_obstacles);
-            if(coursePath->empty()) continue;
-            courseTargetInstant.stamp = coursePath->last().stamp;
-            contactBallTime = coursePath->last().stamp;
-        }
-
-        //Fine: constant velocity while contacting the ball
-        RobotConstraints fineConstraints = constraints;
-        fineConstraints.mot.maxAcceleration *= *_ballContactAccelPercent;
-        fineConstraints.mot.maxSpeed = std::max(contactSpeed, minMaxContactSpeed);
+    //Fine: constant velocity while contacting the ball
+    RobotConstraints fineConstraints = constraints;
+    fineConstraints.mot.maxAcceleration *= *_ballContactAccelPercent;
+    fineConstraints.mot.maxSpeed = std::abs(contactSpeed);
+    std::optional<Trajectory> finePathBeforeContact, finePathAfterContact;
+    // if we plan to stop before making contact with the ball (e.g. a Settle)
+    // then we only do a course approach, and wait for the ball to roll into us
+    if(fineConstraints.mot.maxSpeed > 1e-6) {
         //Fine Path Before Contact
         Geometry2d::Pose contactPose{contactPoint, contactAngle};
         Geometry2d::Twist contactTwist{contactDir.normalized(contactSpeed), 0};
         RobotInstant contactInstant{contactPose, contactTwist, RJ::now()};
-        std::optional<Trajectory> finePathBeforeContact;
         bool isBeforeContact = coursePath || botToContact.mag() > Robot_MouthRadius + Ball_Radius;
         if(isBeforeContact) {
             RobotInstant instantBeforeFine = coursePath ? courseTargetInstant : startInstant;
             finePathBeforeContact = RRTTrajectory(instantBeforeFine, contactInstant, fineConstraints.mot, static_obstacles, dynamic_obstacles);
-            if(finePathBeforeContact->empty()) continue;
+            if(finePathBeforeContact->empty()) {
+                if(coursePath) {
+                    return std::make_tuple(std::move(*coursePath), false);
+                }
+                return std::nullopt;
+            }
             contactInstant.stamp = finePathBeforeContact->last().stamp;
         }
+
         contactBallTime = contactInstant.stamp;
         //Fine Path After Contact
-        std::optional<Trajectory> finePathAfterContact;
         if(isBeforeContact) {
             double stoppingDist = std::pow(contactSpeed, 2) / (2 * fineConstraints.mot.maxAcceleration);
             Point fineTargetPoint = contactPoint + contactDir.normalized(*_bufferDistAfterContact + stoppingDist);
             RobotInstant fineTargetInstant{Geometry2d::Pose{fineTargetPoint, 0}, {}, RJ::Time(0s)};
             finePathAfterContact = RRTTrajectory(contactInstant, fineTargetInstant, fineConstraints.mot, static_obstacles, dynamic_obstacles);
-            if(finePathAfterContact->empty()) continue;
+            if(finePathAfterContact->empty()) {
+                if(coursePath && finePathBeforeContact) {
+                    return std::make_tuple(Trajectory{std::move(*coursePath), std::move(*finePathBeforeContact)}, false);
+                } else if(coursePath) {
+                    return std::make_tuple(std::move(*coursePath), false);
+                }
+                return std::nullopt;
+            }
         }
-
-        //combine all the trajectory segments to build the output path
-        Trajectory collectPath{{}};
+    } else {
         if(coursePath) {
-            assert(finePathBeforeContact && finePathAfterContact);
-            Trajectory finePath{std::move(*finePathBeforeContact), std::move(*finePathAfterContact)};
-            collectPath = Trajectory{std::move(*coursePath), std::move(finePath)};
-            collectPath.setDebugText("Course");
+            return std::make_tuple(std::move(*coursePath), false);
+        } else {
+            return std::nullopt;
+        }
+    }
+
+    //combine all the trajectory segments to build the output path
+    Trajectory collectPath{{}};
+    if(coursePath) {
+        assert(finePathBeforeContact && finePathAfterContact);
+        Trajectory finePath{std::move(*finePathBeforeContact), std::move(*finePathAfterContact)};
+        collectPath = Trajectory{std::move(*coursePath), std::move(finePath)};
+        collectPath.setDebugText("Course");
 //        } else if (finePathBeforeContact) {
 //            assert(finePathAfterContact);
 //            collectPath = Trajectory{std::move(*finePathBeforeContact), std::move(*finePathAfterContact)};
 //            collectPath.setDebugText("Fine");
-        } else {
-            //we're too close to the ball to trust anything. just reuse old path
-            return std::nullopt;
-        }
-        assert(!collectPath.empty());
-        if(outputPath.empty() || contactBallTime < outputPathContactBallTime) {
-            outputPath = std::move(collectPath);
-            PlanAngles(outputPath, startInstant, AngleFns::tangent/*todo(Ethan)fixthisAngleFns::faceAngle(contactAngle)*/, constraints.rot);
-            outputPathContactBallTime = contactBallTime;
-        }
+    } else {
+        //we're too close to the ball to trust anything. just reuse old path
+        //todo(Ethan) REeally?
+        return std::nullopt;
     }
-    return std::move(outputPath);
+    assert(!collectPath.empty());
+    bool successfulCapture = contactBallTime - 1e-6s < contactTime;
+    PlanAngles(collectPath, startInstant, AngleFns::faceAngle(contactAngle), constraints.rot);
+    return std::make_tuple(std::move(collectPath), successfulCapture);
 }
 }
