@@ -75,14 +75,12 @@ class Wall(composite_behavior.CompositeBehavior):
         for i in range(self.number_of_defenders):
             pts.append(self.calculate_destination(i))
         
-        # iterate through the list starting from the middle element
-        start = len(pts) // 2
+        # prioritize the middle elements of the wall
         for i in range(len(pts)):
-            ind = (i + start) % len(pts)
-            pt = pts[ind]
+            pt = pts[i]
             self.add_subbehavior(
-                self.WallMove(pt, pt if i==0 else None),
-                name="robot" + str(ind),
+                self.WallMove(pt, pt if i!=0 and i!=len(pts)-1 else None),
+                name="robot" + str(i),
                 required=False)
 
     ## Remove wall behaviors
