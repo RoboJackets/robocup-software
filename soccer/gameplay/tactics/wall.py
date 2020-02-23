@@ -16,24 +16,23 @@ class Wall(composite_behavior.CompositeBehavior):
         shot = 2
         scramble = 3
 
-    ## 
+    ##
     # @param num_defenders: number of robots in the wall (default 3)
     # @param curvature: 'curvature' (in radians) of the wall
-    # @param mark_point: what point are we defending against (default: ball) 
+    # @param mark_point: what point are we defending against (default: ball)
     # @param defender_point: what point are we defending (default: goal)
     # @param defender_spacing: number of robot radii between the centers of the
     #   defenders in the wall
     # @param dist_from_mark: distance from the mark point we want to build the wall
     def __init__(
-            self,
-            num_defenders=3,
-            curvature=.3, 
-            mark_point=None,
-            defender_point=robocup.Point(
-                0, 0), 
-            defender_spacing=2.5,  
-            dist_from_mark=.75, 
-    ):                       
+        self,
+        num_defenders=3,
+        curvature=.3,
+        mark_point=None,
+        defender_point=robocup.Point(0, 0),
+        defender_spacing=2.5,
+        dist_from_mark=.75,
+    ):
         super().__init__(continuous=True)
 
         self.mark_moved = False
@@ -74,14 +73,14 @@ class Wall(composite_behavior.CompositeBehavior):
         pts = []
         for i in range(self.number_of_defenders):
             pts.append(self.calculate_destination(i))
-        
+
         # prioritize the middle elements of the wall
         for i in range(len(pts)):
             pt = pts[i]
-            self.add_subbehavior(
-                self.WallMove(pt, pt if i!=0 and i!=len(pts)-1 else None),
-                name="robot" + str(i),
-                required=False)
+            self.add_subbehavior(self.WallMove(
+                pt, pt if i != 0 and i != len(pts) - 1 else None),
+                                 name="robot" + str(i),
+                                 required=False)
 
     ## Remove wall behaviors
     def _remove_wall_defenders(self):
@@ -97,7 +96,7 @@ class Wall(composite_behavior.CompositeBehavior):
     ## Remove all behaviors from wall and rebuild wall
     def _rebuild_wall(self):
         self.remove_all_subbehaviors()
-        self._add_wall_defenders()        
+        self._add_wall_defenders()
 
     ## Finds the point on the arc the defender should move to
     def calculate_destination(self, robot_number):
