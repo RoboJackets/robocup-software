@@ -11,7 +11,7 @@ import skills.move
 import random
 import situational_play_selection
 
-# A basic play for the Offensive Indect kick
+## A basic play for the Offensive Indect kick
 # Chooses to pass to a close or far robot
 # If it chooses the far bot, it will chip
 # If the ball is in the thrid quarter of the field,
@@ -30,7 +30,7 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
     class State(enum.Enum):
         move = 1  # Move recievers to proper postions
         kick = 2  # Kick the ball to one of the recievers
-        backup_kick = 3 # Kick to the other receiver if the first one is blocked
+        backup_kick = 3  # Kick to the other receiver if the first one is blocked
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)
@@ -67,7 +67,8 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
         self.add_transition(
             BasicOffensiveIndirect.State.kick,
             BasicOffensiveIndirect.State.backup_kick,
-            lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed, 'first pass failed')
+            lambda: self.subbehavior_with_name('pass').state == behavior.
+            Behavior.State.failed, 'first pass failed')
 
         self.add_transition(
             BasicOffensiveIndirect.State.backup_kick,
@@ -89,6 +90,9 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
+    ## Calcluates the two points which the recievers will move to
+    # One is a farther position that will be chipped to
+    # The other is closer and will be lineckicked to
     def calc_pass_point(
         self):  # Determines the position of the recievers and where to pass
         ball = main.ball().pos  # position of ball
@@ -99,10 +103,12 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
         else:
             self.chip = False
         if (ball.x < 0):
-            sign = 1  # If the ball is on the left side of the field the receivers need to be on the right
+            # If the ball is on the left side of the field the receivers need to be on the right
+            sign = 1
         else:
             sign = -1
-        if -constants.Field.Width / 4 < ball.x and ball.x < constants.Field.Width / 4:  # If the ball is near the center then the close receiver needs to be on the same side as the ball
+        if -constants.Field.Width / 4 < ball.x and ball.x < constants.Field.Width / 4:
+            # If the ball is near the center then the close receiver needs to be on the same side as the ball
             ball_mid = -1
         else:
             ball_mid = 1
@@ -124,7 +130,8 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
         self.points = [offense_point_1, offense_point_2
                        ]  #insert the recieve points into the list
         pass_point = self.points[
-            self.num]  # Use the randomly generated int to choose the receiver that will be passed to
+            self.
+            num]  # Use the randomly generated int to choose the receiver that will be passed to
         return pass_point
 
     def on_enter_move(self):  # Move receivers to calculated points
