@@ -8,21 +8,27 @@
  * to figure out what to do next (i.e. pass, shoot, pivot, etc.)
  */
 namespace Planning {
-class CapturePlanner: public PlannerForCommandType<CaptureCommand> {
+class CapturePlanner: public Planner {
 public:
     CapturePlanner() = default;
     ~CapturePlanner() override = default;
+
+    bool isApplicable(const MotionCommand& motionCommand) const override {
+        return std::holds_alternative<CollectCommand>(motionCommand)
+                || std::holds_alternative<SettleCommand>(motionCommand)
+                || std::holds_alternative<LineKickCommand>(motionCommand);
+    };
 
     Trajectory plan(PlanRequest &&request) override;
     std::string name() const { return "CapturePlanner"; };
 
     static void createConfiguration(Configuration* cfg);
 
-    static double touchDeltaSpeed();
-    static double ballSpeedPercentForDampen();
-
 private:
     Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint, const Geometry2d::Rect& fieldRect, Geometry2d::Point ballPoint) const;
+
+    std::tuple<Geometry2d::Point, Geometry2d::Point, RJ::Time, bool>
+    predictFutureBallState(const Ball& ball, RJ::Time contactTime) const;
 
     std::optional<std::tuple<Trajectory, bool>> attemptCapture(const PlanRequest& request, RJ::Time contactTime) const;
 
@@ -63,8 +69,9 @@ private:
 
     // buffer distance for when we contact the ball. between these buffers, the
     // robot will move at a constant velocity
-    static ConfigDouble* _bufferDistBeforeContact;
-    static ConfigDouble* _bufferDistAfterContact;
+    static ConfigDouble* _collectBufferDistBeforeContact;
+    static ConfigDouble* _collectBufferDistAfterContact;
+    static ConfigDouble* _settleBufferTimeBeforeContact;
 
     // amount of the previous trajectory that is kept during a partial replan.
     static ConfigDouble* _partialReplanLeadTime; // s
@@ -73,9 +80,20 @@ private:
     // moving fast toward us)
     static ConfigDouble* _ballSpeedPercentForDampen; // %
 
+    // Controls at which ball speed we should try to go directly to the ball
+    // or to move behind it and in the same direction as it
+    //
+    // Low number indicates that it will always try to choose a point for the
+    // robot behind the velocity vector
+    //
+    // High number indicates that it will always try to choose a point nearest
+    // to the current robot position
+    static ConfigDouble* _collectBallSpeedApproachDirectionCutoff;  // m/s
+
     static constexpr double stoppedBallVel = 0.001;
     static constexpr double maxBallPosChange = 0.2;
     static constexpr double maxBallVelAngleChange = 0.5;
+    static constexpr double lineKickApproachSpeed = 0.25;
     std::optional<Ball> prevBall;
 };
 }

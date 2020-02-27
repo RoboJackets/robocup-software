@@ -14,6 +14,9 @@ namespace Planning {
 //todo(Ethan) delete these
 struct SettleCommand{};
 struct CollectCommand{};
+struct LineKickCommand{
+    Geometry2d::Point target;
+};
 
 /**
  * An empty "do-nothing" motion command.
@@ -53,20 +56,6 @@ struct TuningPathCommand {
     MotionInstant pathGoal;
 };
 
-/*
- * Capture a ball.
- * - targetFacePoint defines a target angle in terms of a point
- *   that we want to aim towards during the final instant of the trajectory
- *   (designed to be used for a Line Kick).
- * - targetSpeed only applies when approaching directly toward a slow moving
- *   ball. Otherwise target speed is defined relative to the ball velocity
- *   (by CapturePlanner::_touchDeltaSpeed and _ballSpeedPercentForDampen)
- */
-struct CaptureCommand {
-    std::optional<Geometry2d::Point> targetFacePoint;
-    std::optional<double> targetSpeed;
-};
-
 /**
  * Intercept a moving ball, disregarding whether or not we can actually capture it.
  *
@@ -82,10 +71,10 @@ using MotionCommand = std::variant<
         WorldVelTargetCommand,
         PivotCommand,
         TuningPathCommand,
-        CaptureCommand,
-        InterceptCommand,
         SettleCommand,
-        CollectCommand
+        CollectCommand,
+        LineKickCommand,
+        InterceptCommand
         >;
 
 }  // namespace Planning

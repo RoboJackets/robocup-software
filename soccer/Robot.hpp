@@ -436,7 +436,9 @@ public:
                 _context->ball_possessor = std::nullopt;
             }
         }
-        if(std::holds_alternative<Planning::CaptureCommand>(*newCmd)) {
+        if(std::holds_alternative<Planning::CollectCommand>(*newCmd)
+            || std::holds_alternative<Planning::SettleCommand>(*newCmd)
+            || std::holds_alternative<Planning::LineKickCommand>(*newCmd)) {
             _context->ball_possessor = shell();
         }
         intent().motion_command = std::move(newCmd);

@@ -38,13 +38,19 @@ namespace Planning {
     Trajectory Planner::reuse(PlanRequest&& request) {
         Trajectory& prevTrajectory = request.prevTrajectory;
         if(prevTrajectory.empty()) {
-            return Trajectory{{request.start}};
+            Trajectory out{{request.start}};
+            out.setDebugText("Empty");
+            return std::move(out);
         }
         RJ::Seconds timeElapsed = RJ::now() - prevTrajectory.begin_time();
         if(timeElapsed < prevTrajectory.duration()) {
             prevTrajectory.trimFront(timeElapsed);
-            return std::move(prevTrajectory);
+            Trajectory out = std::move(prevTrajectory);
+            out.setDebugText("Reuse");
+            return std::move(out);
         }
-        return Trajectory{{prevTrajectory.last()}};
+        Trajectory out{{prevTrajectory.last()}};
+        out.setDebugText("Reusing Past End");
+        return std::move(out);
     }
 }

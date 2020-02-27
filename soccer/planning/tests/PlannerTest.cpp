@@ -33,45 +33,31 @@ TEST(Planning, path_target_random) {
     }
 }
 
-TEST(Planning, capture_basic) {
+TEST(Planning, collect_basic) {
     Context context;
     context.state.ball.pos = Point{1,1};
     context.state.ball.vel = Point{0,0};
     context.state.ball.time = RJ::now();
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, ShapeSet{}, {}, 2};
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, ShapeSet{}, {}, 2};
     CapturePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     assertPathContinuous(path, RobotConstraints{});
-//    printf("produced path with %d instants of duration %.3f sec\n", path.num_instants(), path.duration().count());
-//    printf("iterating with TrajectoryIterator...\n");
-//    for(auto it = path.iterator(path.begin_time(), 100ms); it.hasValue(); ++it) {
-//        printf("(%.2f, %.2f)\n", (*it).pose.position().x(), (*it).pose.position().y());
-//    }
-//    printf("iterating with normal iterator...\n");
-//    for(auto it = path.instants_begin(); it != path.instants_end(); ++it) {
-//        printf("(%.3f, %.3f, %.3f) (%.3f, %.3f, %.3f) %.6f\n",
-//               (*it).pose.position().x(), (*it).pose.position().y(), (*it).pose.heading(),
-//               (*it).velocity.linear().x(), (*it).velocity.linear().y(), (*it).velocity.angular(),
-//               RJ::Seconds((*it).stamp-path.begin_time()).count()
-//        );
-//    }
 }
 
-
-TEST(Planning, capture_obstructed) {
+TEST(Planning, collect_obstructed) {
     Context context;
     context.state.ball.pos = Point{1,1};
     context.state.ball.vel = Point{0,0};
     context.state.ball.time = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{.5,.5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
     CapturePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     assertPathContinuous(path, RobotConstraints{});
 }
 
-TEST(Planning, capture_pointless_obs) {
+TEST(Planning, collect_pointless_obs) {
     Context context;
     context.state.ball.pos = Point{1,1};
     context.state.ball.vel = Point{0,0};
@@ -81,81 +67,102 @@ TEST(Planning, capture_pointless_obs) {
     obstacles.add(std::make_shared<Circle>(Point{3,3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{-2, 3}, .2));
     obstacles.add(std::make_shared<Circle>(Point{0,5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
     CapturePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     assertPathContinuous(path, RobotConstraints{});
 }
 
-TEST(Planning, capture_moving_ball_away_quick) {
+TEST(Planning, collect_moving_ball_quick) {
     Context context;
     context.state.ball.pos = Point{-1,1};
     context.state.ball.vel = Point{-0.03,0.3};
     context.state.ball.time = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0,.5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
-    CapturePlanner planner;
-    Trajectory path = planner.plan(std::move(request));
-    assertPathContinuous(path, RobotConstraints{});
-}
-TEST(Planning, capture_moving_ball_away_slow) {
-    Context context;
-    context.state.ball.pos = Point{-1,1};
-    context.state.ball.vel = Point{0.01,0.05};
-    context.state.ball.time = RJ::now();
-    ShapeSet obstacles;
-    obstacles.add(std::make_shared<Circle>(Point{0,.5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
     CapturePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     assertPathContinuous(path, RobotConstraints{});
 }
 
-TEST(Planning, capture_moving_ball_incoming) {
-    Context context;
-    context.state.ball.pos = Point{1,1};
-    context.state.ball.vel = Point{-1,-1.5};
-    context.state.ball.time = RJ::now();
-    ShapeSet obstacles;
-    obstacles.add(std::make_shared<Circle>(Point{.5,.5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
-    CapturePlanner planner;
-    Trajectory path = planner.plan(std::move(request));
-    assertPathContinuous(path, RobotConstraints{});
-}
-
-TEST(Planning, capture_moving_ball_away_with_obstacles) {
+TEST(Planning, collect_moving_ball_slow) {
     Context context;
     context.state.ball.pos = Point{-1,1};
     context.state.ball.vel = Point{0,0.1};
     context.state.ball.time = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{-0.5,.5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
     CapturePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     assertPathContinuous(path, RobotConstraints{});
 }
 
-TEST(Planning, capture_moving_ball_incoming_with_obstacles) {
+TEST(Planning, collect_moving_ball_slow_2) {
+    Context context;
+    context.state.ball.pos = Point{-1,1};
+    context.state.ball.vel = Point{0.01,0.05};
+    context.state.ball.time = RJ::now();
+    ShapeSet obstacles;
+    obstacles.add(std::make_shared<Circle>(Point{0,.5}, .2));
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    CapturePlanner planner;
+    Trajectory path = planner.plan(std::move(request));
+    assertPathContinuous(path, RobotConstraints{});
+}
+
+TEST(Planning, collect_random) {
+    Context context;
+    for(int i = 0; i < 50; i++) {
+    context.state.ball.pos = Point{random(-1.5, 1.5), random(2, 4)};
+    context.state.ball.vel = Point{random(-.3, .3), random(-1, .1)};
+    context.state.ball.time = RJ::now();
+    ShapeSet obstacles;
+    int numObstacles = (int) random(2, 5);
+    for(int j = 0; j < numObstacles; j++) {
+    obstacles.add(std::make_shared<Circle>(Point{random(-2, 2),
+                                                 random(.5, 1.5)}, .2));
+    }
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CollectCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    CapturePlanner planner;
+    Trajectory path = planner.plan(std::move(request));
+    assertPathContinuous(path, RobotConstraints{});
+    }
+}
+
+TEST(Planning, settle_basic) {
+    Context context;
+    context.state.ball.pos = Point{1,1};
+    context.state.ball.vel = Point{-1,-1.5};
+    context.state.ball.time = RJ::now();
+    ShapeSet obstacles;
+    obstacles.add(std::make_shared<Circle>(Point{.5,.5}, .2));
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, SettleCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    CapturePlanner planner;
+    Trajectory path = planner.plan(std::move(request));
+    assertPathContinuous(path, RobotConstraints{});
+}
+
+
+TEST(Planning, settle_pointless_obs) {
     Context context;
     context.state.ball.pos = Point{1,1};
     context.state.ball.vel = Point{-.1,-.1};
     context.state.ball.time = RJ::now();
     ShapeSet obstacles;
     obstacles.add(std::make_shared<Circle>(Point{0,.5}, .2));
-    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+    PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, SettleCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
     CapturePlanner planner;
     Trajectory path = planner.plan(std::move(request));
     assertPathContinuous(path, RobotConstraints{});
 }
 
-TEST(Planning, capture_random) {
+TEST(Planning, settle_random) {
     Context context;
     for(int i = 0; i < 50; i++) {
         context.state.ball.pos = Point{random(-1.5, 1.5), random(2, 4)};
-        context.state.ball.vel = Point{random(-.3, .3), random(-1, .1)};
+        context.state.ball.vel = Point{random(-.3, .3), random(-1, -.2)};
         context.state.ball.time = RJ::now();
         ShapeSet obstacles;
         int numObstacles = (int) random(2, 5);
@@ -163,7 +170,7 @@ TEST(Planning, capture_random) {
             obstacles.add(std::make_shared<Circle>(Point{random(-2, 2),
                                                          random(.5, 1.5)}, .2));
         }
-        PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, CaptureCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
+        PlanRequest request{&context, RobotInstant{{},{}, RJ::now()}, SettleCommand{}, RobotConstraints{}, Trajectory{{}}, obstacles, {}, 2};
         CapturePlanner planner;
         Trajectory path = planner.plan(std::move(request));
         assertPathContinuous(path, RobotConstraints{});
