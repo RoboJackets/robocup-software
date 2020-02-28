@@ -24,7 +24,6 @@ ConfigDouble* CapturePlanner::_collectBufferDistBeforeContact;
 ConfigDouble* CapturePlanner::_collectBufferDistAfterContact;
 ConfigDouble* CapturePlanner::_settleBufferTimeBeforeContact;
 ConfigDouble* CapturePlanner::_touchDeltaSpeed;
-ConfigDouble* CapturePlanner::_partialReplanLeadTime;
 ConfigDouble* CapturePlanner::_ballSpeedPercentForDampen;
 ConfigDouble* CapturePlanner::_collectBallSpeedApproachDirectionCutoff;
 
@@ -51,136 +50,20 @@ void CapturePlanner::createConfiguration(Configuration* cfg) {
             "Capture/Settle/bufferTimeBeforeContact", 0);
     _touchDeltaSpeed = new ConfigDouble(cfg,
         "Capture/touchDeltaSpeed", 0);
-    _partialReplanLeadTime = new ConfigDouble(cfg,
-        "Capture/partialReplanLeadTime", 0);
     _ballSpeedPercentForDampen = new ConfigDouble(cfg,
             "Capture/ballSpeedPercentForDampen", 0);
     _collectBallSpeedApproachDirectionCutoff = new ConfigDouble(cfg,
             "Capture/Collect/ballSpeedApproachDirectionCutoff",0);
 }
-
-Point CapturePlanner::projectPointIntoField(Point targetPoint, const Geometry2d::Rect& fieldRect, Point ballPoint) const {
-    auto intersectReturn = fieldRect.intersects(Geometry2d::Segment(ballPoint, targetPoint));
-
-    bool validIntersect = std::get<0>(intersectReturn);
-    std::vector<Point> intersectPts = std::get<1>(intersectReturn);
-
-    // If the ball intersects the field at some point
-    // Just get the intersect point as the new target
-    if (validIntersect) {
-        // Sorts based on distance to intercept target
-        // The closest one is the intercept point which the ball moves
-        // through leaving the field Not the one on the other side of the
-        // field
-        // Choose a point just inside the field
-        targetPoint = *std::min_element(intersectPts.begin(), intersectPts.end(), [&](Point a, Point b) {
-            return (a - targetPoint).mag() <
-                   (b - targetPoint).mag();
-        });
-
-        // Doesn't intersect
-        // project the ball into the field
-    } else {
-        // Simple projection
-        targetPoint.x() = std::clamp(targetPoint.x(),
-                                     (double)fieldRect.minx(), (double)fieldRect.maxx());
-        targetPoint.y() = std::clamp(targetPoint.y(),
-                                     (double)fieldRect.miny(), (double)fieldRect.maxy());
+using namespace Geometry2d;
+RobotInstant CapturePlanner::getGoalInstant(const PlanRequest& request) const {
+    std::optional<Trajectory> path = bruteForceCapture(request);
+    if(!path || path->empty()) {
+        Point ballPoint = request.context->state.ball.pos;
+        Point startPoint = request.start.pose.position();
+        return RobotInstant{Pose{ballPoint,ballPoint.angleTo(startPoint)}, {}, RJ::now()};
     }
-    return targetPoint;
-}
-
-Trajectory CapturePlanner::plan(PlanRequest &&request) {
-    //todo(Ethan) either use _context->ball_possessor here or delete it in Context
-    const Ball &ball = request.context->state.ball;
-    RobotConstraints& constraints = request.constraints;
-    Trajectory& prevTrajectory = request.prevTrajectory;
-    const RJ::Time curTime = RJ::now();
-
-    Point ballToBot = request.start.pose.position() - ball.pos;
-    Point currentFaceDir = Point::direction(request.start.pose.heading());
-    const double ballDistFront = (-ballToBot).dot(currentFaceDir);
-    const double ballDistSide = (-ballToBot).cross(currentFaceDir);
-    Point ballToBotUnit = ballToBot.norm();
-    // the non-negative component of ball.vel pointing toward the robot
-    Point ballVelToBot = std::max(0.0, ball.vel.dot(ballToBotUnit)) * ballToBotUnit;
-    // the component of ball.vel the robot will have to outrun
-    Point awayBallVelocity = ball.vel - ballVelToBot;
-    if(awayBallVelocity.mag() > *_maxOutrunBallSpeedPercent * constraints.mot.maxSpeed) {
-        //Impossible Capture Request. The ball is running away too fast
-        //Todo(Ethan) handle this probably
-        return reuse(std::move(request));
-    }
-
-//    // if the ball changed course, the old trajectory is invalid todo(Ethan) uncomment? delete?
-//    if(!prevBall) prevBall = ball;
-//    MotionInstant oldBallInstant = prevBall->predict(ball.time);
-//    double ballPosChange = ball.pos.distTo(oldBallInstant.pos);
-//    double ballVelAngleChange = ball.vel.angleBetween(oldBallInstant.vel);
-//    bool ballChangedCourse = ballPosChange > maxBallPosChange || ballVelAngleChange > maxBallVelAngleChange;
-//    prevBall = ball;
-//    if(ballChangedCourse) prevTrajectory = Trajectory{{}};
-//
-//    if(!prevTrajectory.CheckTime(RJ::now())) prevTrajectory = Trajectory{{}};
-
-    Trajectory partialPath{{}};
-    bool fullReplan = false;
-    bool partialReplan = false;
-    bool reusePath = false;
-    RJ::Seconds timeElapsed = curTime - prevTrajectory.begin_time();
-    if(veeredOffPath(request) || prevTrajectory.empty()) {
-        fullReplan = true;
-    } else {
-        RJ::Seconds timeRemaining = prevTrajectory.end_time() - curTime;
-        RJ::Seconds invalidTime;
-        //TODO consider ball as dynamic obstacle?
-        Geometry2d::ShapeSet static_obstacles = request.static_obstacles;
-        static_obstacles.add(std::make_shared<Geometry2d::Circle>(ball.pos, Robot_Radius+Ball_Radius));
-        partialReplan = prevTrajectory.hit(static_obstacles, timeElapsed, &invalidTime) || prevTrajectory.intersects(request.dynamic_obstacles, curTime, nullptr, &invalidTime);
-        Point prevGoalPos = prevTrajectory.last().pose.position();
-        Point curGoalPos = ball.predict(std::max(RJ::now(), prevTrajectory.end_time())).pos;
-        bool ballFarAway = ballDistSide > Robot_Radius || ballDistFront > 3 * Robot_MouthRadius;
-        bool goalChanged = prevGoalPos.distTo(curGoalPos) > 0.05; //todo(Ethan) no magic numbers
-        bool goalDistToBallLine = std::abs((prevGoalPos-ball.pos).cross(ball.vel.norm()));
-        if(!partialReplan && (goalChanged && ballFarAway || ball.vel.mag() > 0.2 && ballToBot.mag() > Robot_Radius*1.5 && goalDistToBallLine > Robot_Radius)) {
-            partialReplan = true;
-            invalidTime = prevTrajectory.duration();//todo(Ethan) delete comment std::min(prevTrajectory.duration(), RJ::Seconds(2 * *_partialReplanLeadTime));
-        }
-        if(partialReplan && invalidTime < timeElapsed + RJ::Seconds(2 * *_partialReplanLeadTime)) {
-            fullReplan = true;
-        }
-    }
-//    if(mouthNormalDist > 0 && mouthNormalDist < Robot_MouthRadius && std::abs(mouthOffCenterDist) < )
-    if(ballToBot.mag() < Robot_MouthRadius) {
-        fullReplan = partialReplan = false;
-    }
-    std::string debugString;
-    if(fullReplan) {
-        debugString = "full replan";
-        partialPath = Trajectory{{request.start}};
-    } else if(partialReplan) {
-        debugString = "partial replan";
-        partialPath = prevTrajectory.subTrajectory(timeElapsed,
-                                                   timeElapsed + RJ::Seconds(*_partialReplanLeadTime));
-        request.start = partialPath.last();
-    } else {
-        return reuse(std::move(request));
-    }
-    std::optional<Trajectory> brutePath = bruteForceCapture(request);
-    if(!brutePath) {
-        if(!prevTrajectory.empty()) {
-            Trajectory out = reuse(std::move(request));
-            out.setDebugText("Reuse. Brute Force Failed");
-            return std::move(out);
-        } else {
-            Trajectory out{{request.start}};
-            out.setDebugText("Empty. Brute Force Failed");
-            return std::move(out);
-        }
-    }
-    Trajectory out{std::move(partialPath), std::move(*brutePath)};
-    out.setDebugText(debugString.c_str());
-    return std::move(out);
+    return path->last();
 }
 
 //todo(motion planning) find a better way to handle moving targets
@@ -241,6 +124,37 @@ std::tuple<Point, Point, RJ::Time, bool> CapturePlanner::predictFutureBallState(
         contactTime = ball.estimateTimeTo(futureBallPoint, &futureBallPoint);
     }
     return std::make_tuple(futureBallPoint, futureBallVel, contactTime, fake);
+}
+
+Point CapturePlanner::projectPointIntoField(Point targetPoint, const Geometry2d::Rect& fieldRect, Point ballPoint) const {
+    auto intersectReturn = fieldRect.intersects(Geometry2d::Segment(ballPoint, targetPoint));
+
+    bool validIntersect = std::get<0>(intersectReturn);
+    std::vector<Point> intersectPts = std::get<1>(intersectReturn);
+
+    // If the ball intersects the field at some point
+    // Just get the intersect point as the new target
+    if (validIntersect) {
+        // Sorts based on distance to intercept target
+        // The closest one is the intercept point which the ball moves
+        // through leaving the field Not the one on the other side of the
+        // field
+        // Choose a point just inside the field
+        targetPoint = *std::min_element(intersectPts.begin(), intersectPts.end(), [&](Point a, Point b) {
+            return (a - targetPoint).mag() <
+                   (b - targetPoint).mag();
+        });
+
+        // Doesn't intersect
+        // project the ball into the field
+    } else {
+        // Simple projection
+        targetPoint.x() = std::clamp(targetPoint.x(),
+                                     (double)fieldRect.minx(), (double)fieldRect.maxx());
+        targetPoint.y() = std::clamp(targetPoint.y(),
+                                     (double)fieldRect.miny(), (double)fieldRect.maxy());
+    }
+    return targetPoint;
 }
 
 std::optional<std::tuple<Trajectory, bool>> CapturePlanner::attemptCapture(const PlanRequest& request, RJ::Time contactTime) const {

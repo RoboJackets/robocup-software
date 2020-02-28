@@ -30,14 +30,6 @@ public:
     virtual Trajectory plan(PlanRequest&& request) = 0;//todo(Ethan) maybe return just a RobotInstant bc ROS
 
     /**
-     * checks if the robot is off the desired path
-     * @param planRequest
-     * @return true if the error > replanThreshold; otherwise false.
-     *      returns false if planRequest.prevTrajectory is empty
-     */
-    virtual bool veeredOffPath(const PlanRequest &planRequest) const;
-
-    /**
      * Get a user-readable name for this planner.
      */
     virtual std::string name() const = 0;
@@ -64,9 +56,6 @@ public:
      * @return timeout
      */
     static double replanTimeout() { return *_replanTimeout; }
-
-protected:
-    virtual Trajectory reuse(PlanRequest&& request);
 
 private:
     static ConfigDouble* _goalPosChangeThreshold;

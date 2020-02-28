@@ -8,7 +8,7 @@
  * to figure out what to do next (i.e. pass, shoot, pivot, etc.)
  */
 namespace Planning {
-class CapturePlanner: public Planner {
+class CapturePlanner: public LazyPlanner {
 public:
     CapturePlanner() = default;
     ~CapturePlanner() override = default;
@@ -18,8 +18,8 @@ public:
                 || std::holds_alternative<SettleCommand>(motionCommand)
                 || std::holds_alternative<LineKickCommand>(motionCommand);
     };
+    RobotInstant getGoalInstant(const PlanRequest& request) const override;
 
-    Trajectory plan(PlanRequest &&request) override;
     std::string name() const { return "CapturePlanner"; };
 
     static void createConfiguration(Configuration* cfg);
@@ -72,9 +72,6 @@ private:
     static ConfigDouble* _collectBufferDistBeforeContact;
     static ConfigDouble* _collectBufferDistAfterContact;
     static ConfigDouble* _settleBufferTimeBeforeContact;
-
-    // amount of the previous trajectory that is kept during a partial replan.
-    static ConfigDouble* _partialReplanLeadTime; // s
 
     // percent of the ball vel we match during dampen (when we catch a ball
     // moving fast toward us)

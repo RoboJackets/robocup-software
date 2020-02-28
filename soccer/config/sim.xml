@@ -296,9 +296,6 @@
   <robot_std_dev value="0.3"/>
   <start_x_offset value="0.1"/>
  </KickEvaluator>
- <RRTPlanner>
-  <partialReplanLeadTime value="0.2"/>
- </RRTPlanner>
  <VisionFilter>
   <Bounce>
    <robot_body_lin_dampen value="0.9"/>
@@ -360,6 +357,9 @@
    <min value="1"/>
   </Health>
  </VisionFilter>
+ <LazyPlanner>
+  <partialReplanLeadTime value="0.2"/>
+ </LazyPlanner>
  <Capture>
   <searchStartDist value="0"/>
   <searchEndDist value="7"/>
@@ -369,7 +369,6 @@
   <maxOutrunBallSpeed value="0.7"/>
   <ballContactAccelPercent value="0.2"/>
   <touchDeltaSpeed value="0.2"/>
-  <partialReplanLeadTime value="0.2"/>
   <ballSpeedPercentForDampen value="0"/>
   <Collect>
    <bufferDistBeforeContact value="0.156"/>

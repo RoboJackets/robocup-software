@@ -25,6 +25,9 @@ namespace AngleFns {
             return angle;
         };
     }
+    inline double zero(const RobotInstant& instant) {
+        return 0;
+    }
 }
 
 /**

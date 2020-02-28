@@ -1,9 +1,11 @@
+#pragma once
+
 #include <optional>
 #include <functional>
 
 #include "planning/planner/Planner.hpp"
-#include "planning/planner/PathTargetPlanner.hpp"
 #include "planning/planner/PlanRequest.hpp"
+#include "PathTargetPlanner.hpp"
 #include <Geometry2d/Point.hpp>
 #include <rrt/Tree.hpp>
 
@@ -11,8 +13,11 @@ class Configuration;
 class ConfigDouble;
 
 namespace Planning {
-/// This planner finds a path to quickly get out of an obstacle.  If the start
-/// point isn't in an obstacle, returns a path containing only the start point.
+/**
+ * @brief This planner finds a path to quickly get out of an obstacle. If the
+ * start point isn't in an obstacle, returns a path containing only the start
+ * point.
+ */
 class EscapeObstaclesPathPlanner : public Planner {
 public:
     EscapeObstaclesPathPlanner(){};
