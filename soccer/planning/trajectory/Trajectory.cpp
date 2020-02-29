@@ -320,7 +320,8 @@ namespace Planning {
                 textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
             }
             drawer->drawText(_debugText.value(), textPos,
-                             QColor(100, 100, 255, 100));
+                             QColor(100, 100, 255, 100),
+                             "PlanningDebugText");
         }
     }
 

@@ -51,7 +51,7 @@ protected:
      * @param angleFunction
      * @return trajectory
      */
-    virtual Trajectory fullReplan(PlanRequest&& request, AngleFunction angleFunction);
+    virtual Trajectory fullReplan(PlanRequest&& request, RobotInstant goalInstant, AngleFunction angleFunction) = 0;
 
     /**
      * use a small piece of the previous trajectory replan from that point forward
@@ -59,7 +59,7 @@ protected:
      * @param angleFunction
      * @return trajectory
      */
-    virtual Trajectory partialReplan(PlanRequest&& request, AngleFunction angleFunction);
+    virtual Trajectory partialReplan(PlanRequest&& request, RobotInstant goalInstant, AngleFunction angleFunction) = 0;
 
     /**
      * check for a better path even if the current path is valid.
@@ -67,7 +67,7 @@ protected:
      * @param angleFunction
      * @return better trajectory if one is found. otherwise previous trajectory
      */
-    virtual Trajectory checkBetter(PlanRequest&& request, AngleFunction angleFunction);
+    virtual Trajectory checkBetter(PlanRequest&& request, RobotInstant goalInstant, AngleFunction angleFunction) = 0;
 
     /**
      * reuse the previous trajectory
@@ -89,7 +89,7 @@ protected:
      * @param request
      * @return goal instant (time stamp is undefined)
      */
-    virtual RobotInstant getGoalInstant(const PlanRequest& request) const = 0;
+    virtual RobotInstant getGoalInstant(const PlanRequest& request) = 0;
 
     virtual Trajectory partialPath(const Trajectory& prevTrajectory) const {
         //todo(Ethan) cut out old parts of the path?

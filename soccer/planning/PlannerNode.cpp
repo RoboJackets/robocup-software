@@ -84,7 +84,6 @@ void PlannerNode::run() {
         dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path());
 
         //draw debug info
-
         robot->path().draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
         context_->debug_drawer.drawText((const char*[]) {
                 "EmptyCommand",
@@ -96,8 +95,7 @@ void PlannerNode::run() {
                 "CollectCommand",
                 "LineKickCommand",
                 "InterceptCommand"
-        }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255, 100));
-        context_->debug_drawer.drawText(QString("Path Age: ") + std::to_string(RJ::Seconds(RJ::now() - robot->path().begin_time()).count()).c_str(), robot->pos()+Geometry2d::Point(.1, -.2), QColor(100, 100, 255, 100));
+        }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255, 100), "MotionCommands");
     }
 
     // Visualize obstacles

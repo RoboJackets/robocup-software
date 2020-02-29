@@ -368,7 +368,7 @@
   <maxApproachAngle value="0.3"/>
   <maxOutrunBallSpeed value="0.7"/>
   <ballContactAccelPercent value="0.2"/>
-  <touchDeltaSpeed value="0.2"/>
+  <touchDeltaSpeed value="0.1"/>
   <ballSpeedPercentForDampen value="0"/>
   <Collect>
    <bufferDistBeforeContact value="0.156"/>
@@ -376,7 +376,8 @@
    <ballSpeedApproachDirectionCutoff value="0.1"/>
   </Collect>
   <Settle>
-   <bufferTimeBeforeContact value="0"/>
+   <bufferTimeBeforeContact value="0.1"/>
+   <targetSensitivity value="0.5"/>
   </Settle>
  </Capture>
 </config>

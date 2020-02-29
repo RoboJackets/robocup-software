@@ -10,7 +10,7 @@
 namespace Planning {
 class CapturePlanner: public LazyPlanner {
 public:
-    CapturePlanner() = default;
+    CapturePlanner(): _contactTime(0s) {};
     ~CapturePlanner() override = default;
 
     bool isApplicable(const MotionCommand& motionCommand) const override {
@@ -18,7 +18,12 @@ public:
                 || std::holds_alternative<SettleCommand>(motionCommand)
                 || std::holds_alternative<LineKickCommand>(motionCommand);
     };
-    RobotInstant getGoalInstant(const PlanRequest& request) const override;
+
+    Trajectory checkBetter(PlanRequest&& request, RobotInstant goalInstant, AngleFunction angleFunction) override;
+    Trajectory partialReplan(PlanRequest&& request, RobotInstant goalInstant, AngleFunction angleFunction) override;
+    Trajectory fullReplan(PlanRequest&& request, RobotInstant goalInstant, AngleFunction angleFunction) override;
+
+    RobotInstant getGoalInstant(const PlanRequest& request) override;
 
     std::string name() const { return "CapturePlanner"; };
 
@@ -36,7 +41,7 @@ private:
      * finds a goal point by brute force along the ball path
      * this method assumes final velocity of 0 which
      */
-    std::optional<Trajectory> bruteForceCapture(const PlanRequest& request) const;
+    std::optional<std::tuple<RJ::Time, Trajectory>> bruteForceCapture(const PlanRequest& request) const;
 
     //endpoints used for searching along the ball path
     static ConfigDouble* _searchStartDist; // m
@@ -87,10 +92,21 @@ private:
     // to the current robot position
     static ConfigDouble* _collectBallSpeedApproachDirectionCutoff;  // m/s
 
+    // Gain on the averaging function to smooth the ball velocity to for any
+    // motion commands This is due to the high flucations in the ball velocity
+    // frame to frame a*newPoint + (1-a)*oldPoint The lower the number, the less
+    // noise affects the system, but the slower it responds to changes The
+    // higher the number, the more noise affects the system, but the faster it
+    // responds to changes
+    static ConfigDouble* _settleTargetSensitivity;
+
     static constexpr double stoppedBallVel = 0.001;
     static constexpr double maxBallPosChange = 0.2;
     static constexpr double maxBallVelAngleChange = 0.5;
     static constexpr double lineKickApproachSpeed = 0.25;
     std::optional<Ball> prevBall;
+    std::optional<Geometry2d::Point> avgTargetPoint;
+
+    RJ::Time _contactTime;
 };
 }

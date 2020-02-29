@@ -78,8 +78,7 @@ namespace Planning {
         if (!prevTrajectory.empty()) {
             prevGoal = prevTrajectory.last().pose.position();
         }
-        request.motionCommand = PathTargetCommand{getGoalInstant(request)};
-        RobotInstant& goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
+        RobotInstant goalInstant = getGoalInstant(request);
         Point& goalPoint = goalInstant.pose.position();
         goalPoint = EscapeObstaclesPathPlanner::findNonBlockedGoal(goalPoint,
                                                                    prevGoal,
@@ -94,7 +93,7 @@ namespace Planning {
             return std::move(result);
         }
         if (prevTrajectory.empty() || veeredOffPath(request)) {
-            return fullReplan(std::move(request), angleFn);
+            return fullReplan(std::move(request), goalInstant, angleFn);
         }
         RJ::Seconds timeIntoTrajectory =
                 std::clamp(RJ::Seconds{RJ::now() - prevTrajectory.begin_time()}, RJ::Seconds{0s}, prevTrajectory.duration());
@@ -103,7 +102,6 @@ namespace Planning {
 
         RJ::Seconds invalidTime;
         //note: the dynamic check is expensive, so we shortcut it sometimes
-        //todo(Ethan) this could be made more efficient by trimming old trajectories
         bool shouldPartialReplan = prevTrajectory.hit(request.static_obstacles, timeIntoTrajectory, &invalidTime)
                                    || prevTrajectory.intersects(request.dynamic_obstacles, RJ::now(), nullptr, &invalidTime);
         if(!shouldPartialReplan && goalChanged(prevTrajectory.last(), goalInstant)) {
@@ -112,9 +110,9 @@ namespace Planning {
         }
         if (shouldPartialReplan) {
             if (invalidTime - timeIntoTrajectory < partialReplanLeadTime() * 2) {
-                return fullReplan(std::move(request), angleFn);
+                return fullReplan(std::move(request), goalInstant, angleFn);
             }
-            return partialReplan(std::move(request), angleFn);
+            return partialReplan(std::move(request), goalInstant, angleFn);
         }
         // make fine corrections when we are realy close to the target
         // because the old target might be a bit off
@@ -122,69 +120,18 @@ namespace Planning {
             std::optional<RobotInstant> nowInstant = prevTrajectory.evaluate(RJ::now());
             if (nowInstant) {
                 request.start = *nowInstant;
-                return fullReplan(std::move(request), angleFn);
+                return fullReplan(std::move(request), goalInstant, angleFn);
             }
         }
         if (RJ::now() - prevTimes[request.shellID] > 0.2s && timeRemaining > partialReplanLeadTime() * 2) {
-            return checkBetter(std::move(request), angleFn);
+            return checkBetter(std::move(request), goalInstant, angleFn);
         }
         return reuse(std::move(request));
     }
 
     AngleFunction LazyPlanner::getAngleFunction(const PlanRequest& request) const {
         //todo(Ethan) this is probably the wrong angle function to use by default
-        return AngleFns::tangent;
-    }
-
-    Trajectory LazyPlanner::checkBetter(PlanRequest&& request, AngleFunction angleFunction) {
-        Trajectory& prevTrajectory = request.prevTrajectory;
-        std::shared_ptr<RoboCupStateSpace> stateSpace = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, std::move(request.static_obstacles));
-        RobotInstant goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
-        const RJ::Seconds timeIntoTrajectory =
-                RJ::now() - prevTrajectory.begin_time();
-        Trajectory preTrajectory = partialPath(prevTrajectory);
-        Trajectory postTrajectory = RRTTrajectory(preTrajectory.last(), goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles);
-        PlanAngles(postTrajectory, preTrajectory.last(), angleFunction, request.constraints.rot);
-        if (!postTrajectory.empty()) {
-            Trajectory comboPath{std::move(preTrajectory),std::move(postTrajectory)};
-            if (prevTrajectory.duration() - timeIntoTrajectory > comboPath.duration()) {
-                std::cout << "Found A better Path!!!!" << std::endl;
-                updatePrevTime(request.shellID);
-                return std::move(comboPath);
-            }
-        }
-        return reuse(std::move(request));
-    }
-
-    Trajectory LazyPlanner::partialReplan(PlanRequest&& request, AngleFunction angleFunction) {
-        RobotInstant goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
-        Trajectory& prevTrajectory = request.prevTrajectory;
-        std::vector<Geometry2d::Point> biasWaypoints;
-        for (auto it = prevTrajectory.iterator(RJ::now(), 100ms);
-             (*it).stamp < prevTrajectory.end_time(); ++it) {
-            biasWaypoints.push_back((*it).pose.position());
-        }
-        Trajectory preTrajectory = partialPath(prevTrajectory);
-        Trajectory postTrajectory = RRTTrajectory(preTrajectory.last(), goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles, biasWaypoints);
-        if (postTrajectory.empty()) {
-            return fullReplan(std::move(request), angleFunction);
-        }
-        PlanAngles(postTrajectory, preTrajectory.last(), angleFunction, request.constraints.rot);
-        Trajectory comboPath = Trajectory(std::move(preTrajectory),
-                                          std::move(postTrajectory));
-        updatePrevTime(request.shellID);
-        return std::move(comboPath);
-    }
-
-    Trajectory LazyPlanner::fullReplan(PlanRequest&& request, AngleFunction angleFunction) {
-        const RobotInstant& goalInstant = std::get<PathTargetCommand>(request.motionCommand).pathGoal;
-        Trajectory path = RRTTrajectory(request.start, goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles);
-        if(path.empty()) {
-            return reuse(std::move(request));
-        }
-        PlanAngles(path, request.start, angleFunction, request.constraints.rot);
-        updatePrevTime(request.shellID);
-        return std::move(path);
+        return AngleFns::zero;
     }
 
     bool LazyPlanner::goalChanged(const RobotInstant &prevGoal,
