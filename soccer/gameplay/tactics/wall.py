@@ -1,198 +1,101 @@
-import composite_behavior
-import evaluation
+import main
+import robocup
 import behavior
 import constants
-import robocup
-import main
+
+import standard_play
+import skills.line_kick
+import tactics.coordinated_pass
 import enum
-import math
 import skills.move
+import random
+import situational_play_selection
+
+## A basic play for the Defensive restart kick
+# Will have two robots move up onto offensive half of field
+# will chip to the one directly in front of the kicking robot
 
 
-## This tactic builds a wall a certain distance from point A, blocking point B.
-class Wall(composite_behavior.CompositeBehavior):
+class BasicDefensiveKick(standard_play.StandardPlay):
+
+    _situationList = [
+        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_KICK
+    ] # yapf: disable
+
     class State(enum.Enum):
-        defense_wall = 1
-        shot = 2
-        scramble = 3
+        move = 1  # Move recievers to proper postions
+        kick = 2  # Kick the ball to one of the recievers
 
-    def __init__(
-            self,
-            num_defenders=3,  # number of defenders we're making the wall with (default 3)
-            curvature=.3,  # 'curvature' (in radians) of the wall 
-            mark_point=None,  # what point we are defending against (default is ball)
-            defender_point=robocup.Point(
-                0, 0),  # what point we are defending (default is goal)
-            defender_spacing=2.5,  # number of robot radii between the centers of the defenders in the wall
-            dist_from_mark=.75,  # distance from the mark point we want to build the wall
-            defender_priorities=[20, 19, 18, 17, 16]
-    ):  # default defense priorities                       
+    def __init__(self, indirect=None):
         super().__init__(continuous=True)
 
-        is_ball_free = lambda: main.ball().vel.mag() < 1 and min([(main.ball(
-        ).pos - rob.pos).mag() for rob in main.system_state(
-        ).their_robots]) > min([(main.ball().pos - rob.pos).mag()
-                                for rob in main.system_state().our_robots])
+        for s in BasicDefensiveKick.State:
+            self.add_state(s, behavior.Behavior.State.running)
 
-        self.mark_moved = False
-        self.active_defenders = num_defenders
-        self.number_of_defenders = num_defenders
-        self.curvature = 1 * curvature
-        self._mark_point = main.ball().pos if mark_point == None else mark_point
-        self._defense_point = defender_point
-        self.dist_from_mark = dist_from_mark
-        self.defender_spacing = defender_spacing
-        self.defender_priorities = defender_priorities
+        self.points = []  # The list that holds the receive points
 
-        # Information for movement calculations to reduce redundancy
-        self.midpoint = None
-
-        self.add_state(Wall.State.defense_wall,
-                       behavior.Behavior.State.running)
-        self.add_state(Wall.State.shot, behavior.Behavior.State.running)
-        self.add_state(Wall.State.scramble, behavior.Behavior.State.running)
+        self.chip = True  # Determines wether to chip or not
 
         self.add_transition(behavior.Behavior.State.start,
-                            Wall.State.defense_wall, lambda: True,
-                            "immideately")
-        self.add_transition(Wall.State.defense_wall,
-                            Wall.State.shot, lambda: False, "on shot")
+                            BasicDefensiveKick.State.move, lambda: True,
+                            'immediately')
+
         self.add_transition(
-            Wall.State.defense_wall,
-            Wall.State.scramble, lambda: evaluation.ball.we_are_closer(
-            ) and evaluation.ball.moving_slow(), "ball free")
+            BasicDefensiveKick.State.move, BasicDefensiveKick.State.kick,
+            lambda: self.subbehavior_with_name(
+                'move to point 2').state == behavior.Behavior.State.completed,
+            'kick')  # Once the receivers are in position
+
         self.add_transition(
-            Wall.State.scramble,
-            Wall.State.defense_wall, lambda: not evaluation.ball.we_are_closer(
-            ) or not evaluation.ball.moving_slow(), "ball captured")
+            BasicDefensiveKick.State.kick,
+            behavior.Behavior.State.completed,
+            lambda: self.subbehavior_with_name('pass').state == behavior.
+            Behavior.State.completed and self.subbehavior_with_name('pass').
+            state != tactics.coordinated_pass.CoordinatedPass.State.timeout,
+            # Keep trying pass until timeout
+            'pass completes')  # The pass is complete
 
-    def on_enter_defense_wall(self):
-        self.remove_all_subbehaviors()
-        self.update_midpoint()
-        for i, priority in enumerate(self.defender_priorities[:self.number_of_defenders]):
-            pt = self.calculate_destination(i)
-            self.add_subbehavior(
-                skills.move.Move(pt),
-                name="robot" + str(i),
-                required=False,
-                priority=priority)
+    @classmethod
+    def score(cls):
+        gs = main.game_state()
+        return 0 if behavior.Behavior.State.running or (
+            gs.is_ready_state()
+            and gs.is_our_indirect_kick()) else float("inf")
 
-    def on_enter_scramble(self):
-        self.number_of_defenders = self.number_of_defenders - 1
-        self._remove_wall_defenders()
-        self.add_subbehavior(
-            skills.pivot_kick.
-            PivotKick(),  # TODO figure out what to do in scramble
-            name="robotCapture")
+    @classmethod
+    def is_restart(cls):
+        return True
 
-    def on_exit_scramble(self):
-        self.number_of_defenders = self.number_of_defenders + 1
-        self.remove_subbehavior("robotCapture")
-        self._add_wall_defenders()
+    def on_enter_move(self):  # Move receivers to calculated points
+        ball = main.ball().pos
+        self.movepoint1 = robocup.Point(
+            ball.x, constants.Field.Length / 2 + ball.y / 2)
+        self.movepoint2 = robocup.Point(
+            -ball.x, constants.Field.Length / 2 + ball.y / 2)
+        if abs(ball.x) < constants.Field.Width / 6:
+            self.movepoint2.x = ball.x + constants.Field.Width / 4
+        self.points = [self.movepoint1, self.movepoint2]
+        count = 0
+        for i in self.points:
+            count += 1
+            self.add_subbehavior(skills.move.Move(i),
+                                 'move to point ' + str(count))
 
-    def execute_scramble(self):
-        pass  #print('scrambling')
+    def on_enter_kick(self):
+        self.remove_subbehavior('move to point 1')
+        self.remove_subbehavior('move to point 2')
+        kicker = skills.line_kick.LineKick()
+        kicker.use_chipper = True
+        kicker.kick_power = 50
+        # Pass to chosen receiver
+        pass_behavior = tactics.coordinated_pass.CoordinatedPass(
+            self.points[0],
+            None, (kicker, lambda x: True),
+            receiver_required=True,
+            kicker_required=False,
+            prekick_timeout=100,
+            use_chipper=self.chip)
+        self.add_subbehavior(pass_behavior, 'pass')
 
-    def execute_defense_wall(self):
-        if self.active_defenders < self.number_of_defenders:
-            #self._update_wall()
-            self._add_wall_defenders()
-            self.active_defenders = self.number_of_defenders
-        elif self.active_defenders > self.number_of_defenders:
-            self._remove_wall_defenders()
-            self.active_defenders = self.number_of_defenders
-
-    ## Returns true if some team has possession of the ball
-    def is_ball_not_free(self):
-        return main.ball().vel.mag() > 1 or min([(main.ball().pos - rob.pos).mag() \
-            for rob in main.system_state().their_robots]) <= min([(main.ball().pos - rob.pos).mag() \
-                for rob in main.system_state().our_robots])
-
-    ## Returns true if the ball was shot
-    def is_ball_shot(self):
-        SHOT_THRESH = 2
-        return main.ball().vel.mag() > SHOT_THRESH and (
-            main.ball().vel).normalized().dot(main.ball().vel) > .9
-
-    ## moves robot to appropriate positions to form wall
-    def _add_wall_defenders(self):
-        self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.number_of_defenders]):
-            name = "robot" + str(i)
-            pt = self.calculate_destination(i)
-            if i < self.active_defenders:
-                self.subbehavior_with_name(name).pos = pt
-            else:
-                self.add_subbehavior(skills.move.Move(pt), name=name)
-
-    ## Remove wall behaviors
-    def _remove_wall_defenders(self):
-        self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.active_defenders]):
-            name = "robot" + str(i)
-            pt = self.calculate_destination(i)
-            if i < self.number_of_defenders:
-                self.subbehavior_with_name(name).pos = pt
-            else:
-                self.remove_subbehavior(name)
-
-    ## Remove all behaviors from wall and rebuild wall
-    def _rebuild_wall(self):
-        self.remove_all_subbehaviors()
-        self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.active_defenders]):
-            name = "robot" + str(i)
-            pt = self.calculate_destination(i)
-            self.add_subbehavior(skills.move.Move(pt), name=name)
-
-    ## Finds the point on the arc the defender should move to
-    def calculate_destination(self, robot_number):
-        defender_number = robot_number - self.number_of_defenders / 2 + .5
-        direct = (self.mark_point - self.defense_point).normalized()
-        arc_angle = defender_number * self.curvature + math.pi/2
-        direct.rotate_origin(arc_angle)
-        return self.midpoint - direct * constants.Robot.Radius * self.defender_spacing * defender_number
-
-    ## Update wall's midpoint based on the mark and defense points
-    def update_midpoint(self):
-        self.midpoint = self.mark_point + (self.defense_point - self.mark_point).normalized() * self.dist_from_mark
-
-    @property
-    def defense_point(self):
-        return self._defense_point
-
-    # Changes the point we are defending against attack, updates move behaviors
-    @defense_point.setter
-    def defense_point(self, point):
-        self._defense_point = point
-        self._update_wall()
-
-    @property
-    def num_defenders(self):
-        self.number_of_defenders
-
-    @num_defenders.setter
-    def num_defenders(self, value):
-        self.active_defenders = self.number_of_defenders
-        self.number_of_defenders = value
-
-    @property
-    def mark_point(self):
-        return self._mark_point
-
-    # Changes the point we are defending against, updates move behaviors
-    @mark_point.setter
-    def mark_point(self, point):
-        self._mark_point = point
-        self._update_wall()
-
-    ## Recalculate points where the wall defenders should be
-    def _update_wall(self):
-        self.update_midpoint()
-        for i in range(self.number_of_defenders):
-            if self.has_subbehavior_with_name("robot" + str(i)):
-                behavior = self.subbehavior_with_name("robot" + str(i))
-                behavior.pos = self.calculate_destination(i)
+    def on_exit_kick(self):
+        self.remove_subbehavior('pass')

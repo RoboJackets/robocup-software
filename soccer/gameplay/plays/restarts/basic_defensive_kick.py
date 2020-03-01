@@ -41,8 +41,7 @@ class BasicDefensiveKick(standard_play.StandardPlay):
                             'immediately')
 
         self.add_transition(
-            BasicDefensiveKick.State.move,
-            BasicDefensiveKick.State.kick,
+            BasicDefensiveKick.State.move, BasicDefensiveKick.State.kick,
             lambda: self.subbehavior_with_name(
                 'move to point 2').state == behavior.Behavior.State.completed,
             'kick')  # Once the receivers are in position
@@ -70,12 +69,11 @@ class BasicDefensiveKick(standard_play.StandardPlay):
     def on_enter_move(self):  # Move receivers to calculated points
         ball = main.ball().pos
         self.movepoint1 = robocup.Point(
-            ball.x,
-            constants.Field.Length/2 + ball.y/2)
-        self.movepoint2 = robocup.Point(-ball.x,
-            constants.Field.Length/2 + ball.y/2)
-        if abs(ball.x) < constants.Field.Width/6:
-            self.movepoint2.x = ball.x + constants.Field.Width/4
+            ball.x, constants.Field.Length / 2 + ball.y / 2)
+        self.movepoint2 = robocup.Point(
+            -ball.x, constants.Field.Length / 2 + ball.y / 2)
+        if abs(ball.x) < constants.Field.Width / 6:
+            self.movepoint2.x = ball.x + constants.Field.Width / 4
         self.points = [self.movepoint1, self.movepoint2]
         count = 0
         for i in self.points:
@@ -95,7 +93,7 @@ class BasicDefensiveKick(standard_play.StandardPlay):
             None, (kicker, lambda x: True),
             receiver_required=True,
             kicker_required=False,
-            prekick_timeout=100, 
+            prekick_timeout=100,
             use_chipper=self.chip)
         self.add_subbehavior(pass_behavior, 'pass')
 
