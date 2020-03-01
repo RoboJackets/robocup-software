@@ -16,24 +16,24 @@ class Wall(composite_behavior.CompositeBehavior):
         shot = 2
         scramble = 3
 
+    ##
+    # @param num_defenders: number of robots in the wall (default 3)
+    # @param curvature: 'curvature' (in radians) of the wall
+    # @param mark_point: what point are we defending against (default: ball)
+    # @param defender_point: what point are we defending (default: goal)
+    # @param defender_spacing: number of robot radii between the centers of the
+    #   defenders in the wall
+    # @param dist_from_mark: distance from the mark point we want to build the wall
     def __init__(
         self,
-        num_defenders=3,  # number of defenders we're making the wall with (default 3)
-        curvature=.3,  # 'curvature' (in radians) of the wall 
-        mark_point=None,  # what point we are defending against (default is ball)
-        defender_point=robocup.Point(
-            0, 0),  # what point we are defending (default is goal)
-        defender_spacing=2.5,  # number of robot radii between the centers of the defenders in the wall
-        dist_from_mark=.75,  # distance from the mark point we want to build the wall
-        defender_priorities=[20, 19, 18, 17,
-                             16]):  # default defense priorities
+        num_defenders=3,
+        curvature=.3,
+        mark_point=None,
+        defender_point=robocup.Point(0, 0),
+        defender_spacing=2.5,
+        dist_from_mark=.75,
+    ):
         super().__init__(continuous=True)
-
-        is_ball_free = lambda: main.ball().vel.mag() < 1 and min([
-            (main.ball().pos - rob.pos).mag()
-            for rob in main.system_state().their_robots
-        ]) > min([(main.ball().pos - rob.pos).mag()
-                  for rob in main.system_state().our_robots])
 
         self.mark_moved = False
         self.active_defenders = num_defenders
@@ -43,56 +43,20 @@ class Wall(composite_behavior.CompositeBehavior):
         self._defense_point = defender_point
         self.dist_from_mark = dist_from_mark
         self.defender_spacing = defender_spacing
-        self.defender_priorities = defender_priorities
 
         # Information for movement calculations to reduce redundancy
         self.midpoint = None
 
         self.add_state(Wall.State.defense_wall,
                        behavior.Behavior.State.running)
-        self.add_state(Wall.State.shot, behavior.Behavior.State.running)
-        self.add_state(Wall.State.scramble, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
                             Wall.State.defense_wall, lambda: True,
-                            "immideately")
-        self.add_transition(Wall.State.defense_wall, Wall.State.shot,
-                            lambda: False, "on shot")
-        self.add_transition(
-            Wall.State.defense_wall, Wall.State.scramble,
-            lambda: evaluation.ball.we_are_closer(
-            ) and evaluation.ball.moving_slow(), "ball free")
-        self.add_transition(
-            Wall.State.scramble,
-            Wall.State.defense_wall, lambda: not evaluation.ball.we_are_closer(
-            ) or not evaluation.ball.moving_slow(), "ball captured")
+                            "immediately")
 
     def on_enter_defense_wall(self):
         self.remove_all_subbehaviors()
-        self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.number_of_defenders]):
-            pt = self.calculate_destination(i)
-            self.add_subbehavior(skills.move.Move(pt),
-                                 name="robot" + str(i),
-                                 required=False,
-                                 priority=priority)
-
-    def on_enter_scramble(self):
-        self.number_of_defenders = self.number_of_defenders - 1
-        self._remove_wall_defenders()
-        self.add_subbehavior(
-            skills.pivot_kick.PivotKick(
-            ),  # TODO figure out what to do in scramble
-            name="robotCapture")
-
-    def on_exit_scramble(self):
-        self.number_of_defenders = self.number_of_defenders + 1
-        self.remove_subbehavior("robotCapture")
         self._add_wall_defenders()
-
-    def execute_scramble(self):
-        pass  #print('scrambling')
 
     def execute_defense_wall(self):
         if self.active_defenders < self.number_of_defenders:
@@ -103,35 +67,25 @@ class Wall(composite_behavior.CompositeBehavior):
             self._remove_wall_defenders()
             self.active_defenders = self.number_of_defenders
 
-    ## Returns true if some team has possession of the ball
-    def is_ball_not_free(self):
-        return main.ball().vel.mag() > 1 or min([(main.ball().pos - rob.pos).mag() \
-            for rob in main.system_state().their_robots]) <= min([(main.ball().pos - rob.pos).mag() \
-                for rob in main.system_state().our_robots])
-
-    ## Returns true if the ball was shot
-    def is_ball_shot(self):
-        SHOT_THRESH = 2
-        return main.ball().vel.mag() > SHOT_THRESH and (
-            main.ball().vel).normalized().dot(main.ball().vel) > .9
-
     ## moves robot to appropriate positions to form wall
     def _add_wall_defenders(self):
         self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.number_of_defenders]):
-            name = "robot" + str(i)
-            pt = self.calculate_destination(i)
-            if i < self.active_defenders:
-                self.subbehavior_with_name(name).pos = pt
-            else:
-                self.add_subbehavior(skills.move.Move(pt), name=name)
+        pts = []
+        for i in range(self.number_of_defenders):
+            pts.append(self.calculate_destination(i))
+
+        # prioritize the middle elements of the wall
+        for i in range(len(pts)):
+            pt = pts[i]
+            self.add_subbehavior(self.WallMove(
+                pt, pt if i != 0 and i != len(pts) - 1 else None),
+                                 name="robot" + str(i),
+                                 required=False)
 
     ## Remove wall behaviors
     def _remove_wall_defenders(self):
         self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.active_defenders]):
+        for i in range(len(self.active_defenders)):
             name = "robot" + str(i)
             pt = self.calculate_destination(i)
             if i < self.number_of_defenders:
@@ -142,12 +96,7 @@ class Wall(composite_behavior.CompositeBehavior):
     ## Remove all behaviors from wall and rebuild wall
     def _rebuild_wall(self):
         self.remove_all_subbehaviors()
-        self.update_midpoint()
-        for i, priority in enumerate(
-                self.defender_priorities[:self.active_defenders]):
-            name = "robot" + str(i)
-            pt = self.calculate_destination(i)
-            self.add_subbehavior(skills.move.Move(pt), name=name)
+        self._add_wall_defenders()
 
     ## Finds the point on the arc the defender should move to
     def calculate_destination(self, robot_number):
@@ -197,3 +146,15 @@ class Wall(composite_behavior.CompositeBehavior):
             if self.has_subbehavior_with_name("robot" + str(i)):
                 behavior = self.subbehavior_with_name("robot" + str(i))
                 behavior.pos = self.calculate_destination(i)
+
+
+    ## Move behavior that prioritizes the center point of the wall
+    class WallMove(skills.move.Move):
+        def __init__(self, pos=None, center_pt=None):
+            super().__init__(pos)
+            self.center_pt = center_pt
+
+        def role_requirements(self):
+            reqs = super().role_requirements()
+            reqs.destination_shape = self.center_pt if self.center_pt else None
+            return reqs
