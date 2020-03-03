@@ -56,9 +56,8 @@ class Wall(composite_behavior.CompositeBehavior):
     def on_enter_defense_wall(self):
         self.remove_all_subbehaviors()
         self._add_wall_defenders()
-        if self.contest_ball:
-            self.number_of_defenders = self.number_of_defenders + 1
-            self.remove_subbehavior("robotCapture")
+        self.number_of_defenders = self.number_of_defenders + 1
+        self.remove_subbehavior("robotCapture")
 
     def execute_defense_wall(self):
         if self.active_defenders < self.number_of_defenders:
