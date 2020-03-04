@@ -81,11 +81,11 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
         # sets the second point
         alt_point, value2 = evaluation.passing_positioning.eval_best_receive_point(
-                self.passing_point,
-                main.our_robots(),  AdvanceZoneMidfielder.MIN_PASS_DIST, 
-                AdvanceZoneMidfielder.FIELD_POS_WEIGHTS,
-                AdvanceZoneMidfielder.NELDER_MEAD_ARGS,
-                AdvanceZoneMidfielder.PASSING_WEIGHTS)
+            self.passing_point, main.our_robots(),
+            AdvanceZoneMidfielder.MIN_PASS_DIST,
+            AdvanceZoneMidfielder.FIELD_POS_WEIGHTS,
+            AdvanceZoneMidfielder.NELDER_MEAD_ARGS,
+            AdvanceZoneMidfielder.PASSING_WEIGHTS)
 
         # check for futile position i.e the alternate position is in the way of a shot from best position
         if self.in_shot_triangle(best_point, alt_point):
