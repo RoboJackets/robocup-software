@@ -10,9 +10,6 @@
 [submodule "external/rrt"]
 	path = external/rrt
 	url = https://github.com/robojackets/rrt
-[submodule "external/sdlcontrollerdb"]
-	path = external/sdlcontrollerdb
-	url = https://github.com/gabomdq/SDL_GameControllerDB.git
 [submodule "external/grSim"]
 	path = external/grSim
 	url = https://github.com/RoboJackets/grSim
