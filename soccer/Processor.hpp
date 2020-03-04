@@ -143,7 +143,7 @@ public:
     bool simulation() const { return _simulation; }
 
     void defendPlusX(bool value);
-    bool defendPlusX() { return _defendPlusX; }
+    bool defendPlusX() { return _context.game_state.defendPlusX; }
 
     Status status() {
         QMutexLocker lock(&_statusMutex);
@@ -208,7 +208,7 @@ private:
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
-    void runModels(const std::vector<const SSL_DetectionFrame*>& detectionFrames);
+    void runModels();
 
     /** Used to start and stop the thread **/
     volatile bool _running;
@@ -249,8 +249,6 @@ private:
     int _manualID;
     // Use multiple joysticks at once
     bool _multipleManual;
-
-    bool _defendPlusX;
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
