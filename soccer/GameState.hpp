@@ -66,6 +66,8 @@ public:
         secondsRemaining = 0;
     }
 
+    bool defendPlusX;
+
     ////////
     // Rule queries
 
