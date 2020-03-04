@@ -230,11 +230,12 @@ class Distraction(standard_play.StandardPlay):
     def on_enter_cross(self):
         self.remove_all_subbehaviors()
         #if the ball is passed to the distractor the ball is passed to the striker, as the third robot moves to the right to distract more
-        #add chip here if pass chance is low
-        self.add_subbehavior(
-            tactics.coordinated_pass.CoordinatedPass(self.striker_point),
-            'pass to striker',
-            required=True)
+        ball = main.ball().pos
+        self.striker_point.x = -(ball.x / 2 + constants.Field.Width / 4)
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(
+            self.striker_point, use_chipper=True),
+                             'pass to striker',
+                             required=True)
         self.add_subbehavior(
             skills.move.Move(self.Distraction_point),
             'shift right',
