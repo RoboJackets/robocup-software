@@ -25,7 +25,6 @@ import random
 # needs to have a unique name beyond that
 #
 class Clear(standard_play.StandardPlay):
-
     class State(enum.Enum):
         get_ball = 1, 'Get the ball and movee other robots up'
         clear_ball = 2, 'Kick the ball upfield'
@@ -70,7 +69,6 @@ class Clear(standard_play.StandardPlay):
             Clear.State.get_ball,
             Clear.State.clear_ball, lambda: self.subbehavior_with_name(
                 'Capture ball').is_done_running(), 'After ball is captured')
-
 
     def on_enter_get_ball(self):
         self.remove_all_subbehaviors()
