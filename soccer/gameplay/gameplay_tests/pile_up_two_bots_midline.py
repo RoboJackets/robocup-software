@@ -8,8 +8,8 @@ class PileUpTwoBotsMidline(gameplay_test.GameplayTest):
     def __init__(self):
         super().__init__()
 
-        center_pos = robocup.Point(0, constants.Field.Length /
-                                   2) + robocup.Point(0, 1)
+        center_pos = robocup.Point(
+            0, constants.Field.Length / 2) + robocup.Point(0, 1)
         zero_zero = robocup.Point(0, 0)
         opposing_goal = robocup.Point(0, constants.Field.Length)
 

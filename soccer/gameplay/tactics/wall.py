@@ -34,7 +34,6 @@ class Wall(composite_behavior.CompositeBehavior):
         dist_from_mark=.75,
     ):
         super().__init__(continuous=True)
-
         self.mark_moved = False
         self.active_defenders = num_defenders
         self.number_of_defenders = num_defenders
