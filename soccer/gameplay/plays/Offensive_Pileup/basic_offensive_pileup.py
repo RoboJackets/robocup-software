@@ -29,8 +29,7 @@ class BasicOffensivePileup(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=False)
 
-        self.add_transition(
-            behavior.Behavior.State.start,
+        self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'Immediately')
 
