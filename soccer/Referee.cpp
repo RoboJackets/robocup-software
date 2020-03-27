@@ -1,18 +1,18 @@
-#include "NewRefereeModule.hpp"
+#include "Referee.hpp"
 
+#include <unistd.h>
+
+#include <Network.hpp>
+#include <QMutexLocker>
+#include <QUdpSocket>
+#include <Utils.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <multicast.hpp>
+#include <stdexcept>
 
 #include "Constants.hpp"
 
-#include <Network.hpp>
-#include <multicast.hpp>
-#include <Utils.hpp>
-#include <unistd.h>
-#include <QMutexLocker>
-#include <QUdpSocket>
-#include <stdexcept>
-
-namespace NewRefereeModuleEnums {
+namespace RefreeModuleEnums {
 std::string stringFromStage(Stage s) {
     switch (s) {
         case NORMAL_FIRST_HALF_PRE:
@@ -90,10 +90,9 @@ std::string stringFromCommand(Command c) {
             return "";
     }
 }
-}
+}  // namespace RefreeModuleEnums
 
-using namespace std;
-using namespace NewRefereeModuleEnums;
+using namespace RefreeModuleEnums;
 
 /// Distance in meters that the ball must travel for a kick to be detected
 static const float KickThreshold = Ball_Radius * 3;
@@ -108,32 +107,32 @@ static const int KickVerifyTime_ms = 250;
 // the ref halts/stops, make this false
 static const bool CancelBallPlaceOnHalt = true;
 
-NewRefereeModule::NewRefereeModule(Context* const context, bool isBlue)
+Referee::Referee(Context* const context, bool isBlue)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
       _running(false),
       _context(context),
       _blueTeam(isBlue) {}
 
-NewRefereeModule::~NewRefereeModule() { this->stop(); }
+Referee::~Referee() { stop(); }
 
-void NewRefereeModule::stop() {
+void Referee::stop() {
     _running = false;
     wait();
 }
 
-void NewRefereeModule::getPackets(std::vector<NewRefereePacket*>& packets) {
+void Referee::getPackets(std::vector<RefereePacket*>& packets) {
     _mutex.lock();
     packets = _packets;
     _packets.clear();
     _mutex.unlock();
 }
 
-void NewRefereeModule::run() {
+void Referee::run() {
     QUdpSocket socket;
 
     if (!socket.bind(ProtobufRefereePort, QUdpSocket::ShareAddress)) {
-        throw runtime_error("Can't bind to shared referee port");
+        throw std::runtime_error("Can't bind to shared referee port");
     }
 
     multicast_add(&socket, RefereeAddress);
@@ -160,7 +159,7 @@ void NewRefereeModule::run() {
             continue;
         }
 
-        NewRefereePacket* packet = new NewRefereePacket;
+        RefereePacket* packet = new RefereePacket;
         packet->receivedTime = RJ::now();
         this->received_time = packet->receivedTime;
         if (!packet->wrapper.ParseFromArray(buf, size)) {
@@ -212,13 +211,15 @@ void NewRefereeModule::run() {
     }
 }
 
-void NewRefereeModule::overrideTeam(bool isBlue) {
+void Referee::overrideTeam(bool isBlue) {
     if (!_isRefControlled) {
         blueTeam(isBlue);
     }
 }
 
-void NewRefereeModule::spinKickWatcher() {
+void Referee::spin() { spinKickWatcher(); }
+
+void Referee::spinKickWatcher() {
     if (_context->state.ball.valid) {
         /// Only run the kick detector when the ball is visible
         switch (_kickDetectState) {
@@ -262,139 +263,22 @@ void NewRefereeModule::spinKickWatcher() {
     }
 }
 
-void NewRefereeModule::updateGameState(bool blueTeam) {
-    _context->game_state.ourScore =
-        blueTeam ? blue_info.score : yellow_info.score;
-    _context->game_state.theirScore =
-        blueTeam ? yellow_info.score : blue_info.score;
-    using namespace NewRefereeModuleEnums;
-    switch (stage) {
-        case Stage::NORMAL_FIRST_HALF_PRE:
-            _context->game_state.period = GameState::FirstHalf;
-            break;
-        case Stage::NORMAL_FIRST_HALF:
-            _context->game_state.period = GameState::FirstHalf;
-            break;
-        case Stage::NORMAL_HALF_TIME:
-            _context->game_state.period = GameState::Halftime;
-            break;
-        case Stage::NORMAL_SECOND_HALF_PRE:
-            _context->game_state.period = GameState::SecondHalf;
-            break;
-        case Stage::NORMAL_SECOND_HALF:
-            _context->game_state.period = GameState::SecondHalf;
-            break;
-        case Stage::EXTRA_TIME_BREAK:
-            _context->game_state.period = GameState::FirstHalf;
-            break;
-        case Stage::EXTRA_FIRST_HALF_PRE:
-            _context->game_state.period = GameState::Overtime1;
-            break;
-        case Stage::EXTRA_FIRST_HALF:
-            _context->game_state.period = GameState::Overtime1;
-            break;
-        case Stage::EXTRA_HALF_TIME:
-            _context->game_state.period = GameState::Halftime;
-            break;
-        case Stage::EXTRA_SECOND_HALF_PRE:
-            _context->game_state.period = GameState::Overtime2;
-            break;
-        case Stage::EXTRA_SECOND_HALF:
-            _context->game_state.period = GameState::Overtime2;
-            break;
-        case Stage::PENALTY_SHOOTOUT_BREAK:
-            _context->game_state.period = GameState::PenaltyShootout;
-            break;
-        case Stage::PENALTY_SHOOTOUT:
-            _context->game_state.period = GameState::PenaltyShootout;
-            break;
-        case Stage::POST_GAME:
-            _context->game_state.period = GameState::Overtime2;
-            break;
-    }
-    switch (command) {
-        case Command::HALT:
-            _context->game_state.state = GameState::Halt;
+void Referee::update() {
+    _context->game_state = updateGameState(_context->game_state);
 
-            if (CancelBallPlaceOnHalt) {
-                _context->game_state.restart = GameState::None;
-                _context->game_state.ourRestart = false;
-            }
-            break;
-        case Command::STOP:
-            _context->game_state.state = GameState::Stop;
-            break;
+    switch (command) {
         case Command::NORMAL_START:
-            ready();
-            break;
-        case Command::FORCE_START:
-            _context->game_state.state = GameState::Playing;
-            _context->game_state.ourRestart = false;
-            _context->game_state.restart = GameState::None;
-            break;
-        case Command::PREPARE_KICKOFF_YELLOW:
-            _context->game_state.state = GameState::Setup;
-            _context->game_state.restart = GameState::Kickoff;
-            _context->game_state.ourRestart = !blueTeam;
-            break;
-        case Command::PREPARE_KICKOFF_BLUE:
-            _context->game_state.state = GameState::Setup;
-            _context->game_state.restart = GameState::Kickoff;
-            _context->game_state.ourRestart = blueTeam;
-            break;
-        case Command::PREPARE_PENALTY_YELLOW:
-            _context->game_state.state = GameState::Setup;
-            _context->game_state.restart = GameState::Penalty;
-            _context->game_state.ourRestart = !blueTeam;
-            break;
-        case Command::PREPARE_PENALTY_BLUE:
-            _context->game_state.state = GameState::Setup;
-            _context->game_state.restart = GameState::Penalty;
-            _context->game_state.ourRestart = blueTeam;
-            break;
         case Command::DIRECT_FREE_YELLOW:
-            ready();
-            _context->game_state.restart = GameState::Direct;
-            _context->game_state.ourRestart = !blueTeam;
-            break;
         case Command::DIRECT_FREE_BLUE:
-            ready();
-            _context->game_state.restart = GameState::Direct;
-            _context->game_state.ourRestart = blueTeam;
-            break;
         case Command::INDIRECT_FREE_YELLOW:
-            ready();
-            _context->game_state.restart = GameState::Indirect;
-            _context->game_state.ourRestart = !blueTeam;
-            break;
-        case Command::INDIRECT_FREE_BLUE:
-            ready();
-            _context->game_state.restart = GameState::Indirect;
-            _context->game_state.ourRestart = blueTeam;
-            break;
-        case Command::TIMEOUT_YELLOW:
-            _context->game_state.state = GameState::Halt;
-            break;
-        case Command::TIMEOUT_BLUE:
-            _context->game_state.state = GameState::Halt;
-            break;
-        case Command::GOAL_YELLOW:
-            break;
-        case Command::GOAL_BLUE:
-            break;
-        case Command::BALL_PLACEMENT_YELLOW:
-            _context->game_state.state = GameState::Stop;
-            _context->game_state.restart = GameState::Placement;
-            _context->game_state.ourRestart = !blueTeam;
-            _context->game_state.setBallPlacementPoint(ballPlacementx,
-                                                       ballPlacementy);
-            break;
-        case Command::BALL_PLACEMENT_BLUE:
-            _context->game_state.state = GameState::Stop;
-            _context->game_state.restart = GameState::Placement;
-            _context->game_state.ourRestart = blueTeam;
-            _context->game_state.setBallPlacementPoint(ballPlacementx,
-                                                       ballPlacementy);
+        case Command::INDIRECT_FREE_BLUE: {
+            if (_context->game_state.state == GameState::Stop ||
+                _context->game_state.state == GameState::Setup) {
+                _context->game_state.state = GameState::Ready;
+                _kickDetectState = CapturePosition;
+            }
+        }
+        default:
             break;
     }
 
@@ -408,21 +292,153 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
         std::cout << "REFEREE: Stage = " << stringFromStage(stage) << std::endl;
         prev_stage = stage;
     }
-
-    if (_context->game_state.state == GameState::Ready && kicked()) {
-        _context->game_state.state = GameState::Playing;
-    }
-
-    _context->game_state.OurInfo = blueTeam ? blue_info : yellow_info;
-    _context->game_state.TheirInfo = blueTeam ? yellow_info : blue_info;
-
-    _context->game_state.blueTeam = blueTeam;
 }
 
-void NewRefereeModule::ready() {
-    if (_context->game_state.state == GameState::Stop ||
-        _context->game_state.state == GameState::Setup) {
-        _context->game_state.state = GameState::Ready;
-        _kickDetectState = CapturePosition;
+GameState Referee::updateGameState(const GameState& game_state) const {
+    using namespace RefreeModuleEnums;
+
+    const GameState::Period period = [stage =
+                                          this->stage]() -> GameState::Period {
+        switch (stage) {
+            case Stage::NORMAL_FIRST_HALF_PRE:
+                return GameState::FirstHalf;
+            case Stage::NORMAL_FIRST_HALF:
+                return GameState::FirstHalf;
+            case Stage::NORMAL_HALF_TIME:
+                return GameState::Halftime;
+            case Stage::NORMAL_SECOND_HALF_PRE:
+                return GameState::SecondHalf;
+            case Stage::NORMAL_SECOND_HALF:
+                return GameState::SecondHalf;
+            case Stage::EXTRA_TIME_BREAK:
+                return GameState::FirstHalf;
+            case Stage::EXTRA_FIRST_HALF_PRE:
+                return GameState::Overtime1;
+            case Stage::EXTRA_FIRST_HALF:
+                return GameState::Overtime1;
+            case Stage::EXTRA_HALF_TIME:
+                return GameState::Halftime;
+            case Stage::EXTRA_SECOND_HALF_PRE:
+                return GameState::Overtime2;
+            case Stage::EXTRA_SECOND_HALF:
+                return GameState::Overtime2;
+            case Stage::PENALTY_SHOOTOUT_BREAK:
+                return GameState::PenaltyShootout;
+            case Stage::PENALTY_SHOOTOUT:
+                return GameState::PenaltyShootout;
+            case Stage::POST_GAME:
+                return GameState::Overtime2;
+        }
+    }();
+
+    GameState::State state = game_state.state;
+    GameState::Restart restart = game_state.restart;
+    bool our_restart = game_state.ourRestart;
+    Geometry2d::Point ball_placement_point = game_state.ballPlacementPoint;
+
+    switch (command) {
+        case Command::HALT:
+            state = GameState::Halt;
+
+            if constexpr (CancelBallPlaceOnHalt) {
+                restart = GameState::None;
+                our_restart = false;
+            }
+            break;
+        case Command::STOP:
+            state = GameState::Stop;
+            break;
+        case Command::NORMAL_START:
+            break;
+        case Command::FORCE_START:
+            state = GameState::Playing;
+            our_restart = false;
+            restart = GameState::None;
+            break;
+        case Command::PREPARE_KICKOFF_YELLOW:
+            state = GameState::Setup;
+            restart = GameState::Kickoff;
+            our_restart = !_blueTeam;
+            break;
+        case Command::PREPARE_KICKOFF_BLUE:
+            state = GameState::Setup;
+            restart = GameState::Kickoff;
+            our_restart = _blueTeam;
+            break;
+        case Command::PREPARE_PENALTY_YELLOW:
+            state = GameState::Setup;
+            restart = GameState::Penalty;
+            our_restart = !_blueTeam;
+            break;
+        case Command::PREPARE_PENALTY_BLUE:
+            state = GameState::Setup;
+            restart = GameState::Penalty;
+            our_restart = _blueTeam;
+            break;
+        case Command::DIRECT_FREE_YELLOW:
+            restart = GameState::Direct;
+            our_restart = !_blueTeam;
+            break;
+        case Command::DIRECT_FREE_BLUE:
+            restart = GameState::Direct;
+            our_restart = _blueTeam;
+            break;
+        case Command::INDIRECT_FREE_YELLOW:
+            restart = GameState::Indirect;
+            our_restart = !_blueTeam;
+            break;
+        case Command::INDIRECT_FREE_BLUE:
+            restart = GameState::Indirect;
+            our_restart = _blueTeam;
+            break;
+        case Command::TIMEOUT_YELLOW:
+            state = GameState::Halt;
+            break;
+        case Command::TIMEOUT_BLUE:
+            state = GameState::Halt;
+            break;
+        case Command::GOAL_YELLOW:
+            break;
+        case Command::GOAL_BLUE:
+            break;
+        case Command::BALL_PLACEMENT_YELLOW:
+            state = GameState::Stop;
+            restart = GameState::Placement;
+            our_restart = !_blueTeam;
+            ball_placement_point = GameState::getBallPlacementPoint(
+                ballPlacementx, ballPlacementy);
+            break;
+        case Command::BALL_PLACEMENT_BLUE:
+            state = GameState::Stop;
+            restart = GameState::Placement;
+            our_restart = _blueTeam;
+            ball_placement_point = GameState::getBallPlacementPoint(
+                ballPlacementx, ballPlacementy);
+            break;
     }
+
+    if (state == GameState::Ready && kicked()) {
+        state = GameState::Playing;
+    }
+
+    const int our_score = _blueTeam ? blue_info.score : yellow_info.score;
+    const int their_score = _blueTeam ? yellow_info.score : blue_info.score;
+
+    auto our_info = _blueTeam ? blue_info : yellow_info;
+    auto their_info = _blueTeam ? yellow_info : blue_info;
+
+    auto blueTeam = _blueTeam;
+
+    return GameState{period,
+                     state,
+                     restart,
+                     our_restart,
+                     our_score,
+                     their_score,
+                     game_state.secondsRemaining,
+                     our_info,
+                     their_info,
+                     game_state.blueTeam,
+                     ball_placement_point,
+                     game_state.defendPlusX};
 }

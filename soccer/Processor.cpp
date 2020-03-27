@@ -87,7 +87,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _context.field_dimensions = *currentDimensions;
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
+    _refereeModule = std::make_shared<Referee>(&_context, _blueTeam);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
         &_context, _refereeModule.get());
@@ -352,9 +352,9 @@ void Processor::run() {
         _context.vision_packets.clear();
 
         // Log referee data
-        vector<NewRefereePacket*> refereePackets;
+        vector<RefereePacket*> refereePackets;
         _refereeModule.get()->getPackets(refereePackets);
-        for (NewRefereePacket* packet : refereePackets) {
+        for (RefereePacket* packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
             curStatus.lastRefereeTime =
@@ -363,8 +363,8 @@ void Processor::run() {
         }
 
         // Update gamestate w/ referee data
-        _refereeModule->updateGameState(blueTeam());
-        _refereeModule->spinKickWatcher();
+        _refereeModule->update();
+        _refereeModule->spin();
 
         string yellowname, bluename;
 

@@ -23,7 +23,7 @@ using namespace boost::python;
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
 #include "KickEvaluator.hpp"
-#include "NewRefereeModule.hpp"
+#include "Referee.hpp"
 #include "WindowEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "optimization/NelderMead2D.hpp"
@@ -1071,33 +1071,32 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
         .def_readonly("MaxRobotAccel", &MotionConstraints::_max_acceleration);
 
-    enum_<NewRefereeModuleEnums::Command>("Command")
-        .value("halt", NewRefereeModuleEnums::Command::HALT)
-        .value("stop", NewRefereeModuleEnums::Command::STOP)
-        .value("normal_start", NewRefereeModuleEnums::Command::NORMAL_START)
-        .value("force_start", NewRefereeModuleEnums::Command::FORCE_START)
+    enum_<RefreeModuleEnums::Command>("Command")
+        .value("halt", RefreeModuleEnums::Command::HALT)
+        .value("stop", RefreeModuleEnums::Command::STOP)
+        .value("normal_start", RefreeModuleEnums::Command::NORMAL_START)
+        .value("force_start", RefreeModuleEnums::Command::FORCE_START)
         .value("prepare_kickoff_yellow",
-               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
+               RefreeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
         .value("prepare_kickoff_blue",
-               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
+               RefreeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
         .value("prepare_penalty_yellow",
-               NewRefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
+               RefreeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
         .value("prepare_penalty_blue",
-               NewRefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
+               RefreeModuleEnums::Command::PREPARE_PENALTY_BLUE)
         .value("direct_free_yellow",
-               NewRefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
-        .value("direct_free_blue",
-               NewRefereeModuleEnums::Command::DIRECT_FREE_BLUE)
+               RefreeModuleEnums::Command::DIRECT_FREE_YELLOW)
+        .value("direct_free_blue", RefreeModuleEnums::Command::DIRECT_FREE_BLUE)
         .value("indirect_free_yellow",
-               NewRefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
+               RefreeModuleEnums::Command::INDIRECT_FREE_YELLOW)
         .value("indirect_free_blue",
-               NewRefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
-        .value("timeout_yellow", NewRefereeModuleEnums::Command::TIMEOUT_YELLOW)
-        .value("timeout_blue", NewRefereeModuleEnums::Command::TIMEOUT_BLUE)
-        .value("goal_yellow", NewRefereeModuleEnums::Command::GOAL_YELLOW)
-        .value("goal_blue", NewRefereeModuleEnums::Command::GOAL_BLUE)
+               RefreeModuleEnums::Command::INDIRECT_FREE_BLUE)
+        .value("timeout_yellow", RefreeModuleEnums::Command::TIMEOUT_YELLOW)
+        .value("timeout_blue", RefreeModuleEnums::Command::TIMEOUT_BLUE)
+        .value("goal_yellow", RefreeModuleEnums::Command::GOAL_YELLOW)
+        .value("goal_blue", RefreeModuleEnums::Command::GOAL_BLUE)
         .value("ball_placement_yellow",
-               NewRefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
+               RefreeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
         .value("ball_placement_blue",
-               NewRefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
+               RefreeModuleEnums::Command::BALL_PLACEMENT_BLUE);
 }
