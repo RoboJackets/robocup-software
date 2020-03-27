@@ -16,10 +16,10 @@ public:
     void run() override;
 
 private:
-    void runMotion(const WorldState& world_state,
-                   const GameState& game_state,
-                   const std::array<Planning::AngleFunctionPath, Num_Shells>& paths,
-                   std::array<MotionSetpoint, Num_Shells>* setpoints);
+    void runMotion(
+        const WorldState& world_state, const GameState& game_state,
+        const std::array<Planning::AngleFunctionPath, Num_Shells>& paths,
+        std::array<MotionSetpoint, Num_Shells>* setpoints);
     Context* _context;
     std::vector<MotionControl> _controllers;
 };

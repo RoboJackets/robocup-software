@@ -1,9 +1,9 @@
 #pragma once
 
 #include <QDomDocument>
-#include <memory>
 #include <QFile>
 #include <QStringList>
+#include <memory>
 #include <vector>
 
 class QTreeWidget;

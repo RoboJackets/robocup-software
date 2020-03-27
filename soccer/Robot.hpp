@@ -170,7 +170,9 @@ public:
         return _context->robot_constraints[shell()];
     }
 
-    RobotConstraints& robotConstraints() { return _context->robot_constraints[shell()]; }
+    RobotConstraints& robotConstraints() {
+        return _context->robot_constraints[shell()];
+    }
 
     const MotionConstraints& motionConstraints() const {
         return robotConstraints().mot;
@@ -185,9 +187,7 @@ public:
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Path& path() {
-        return _context->paths[shell()];
-    }
+    const Planning::Path& path() { return _context->paths[shell()]; }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -440,7 +440,9 @@ public:
         return robotConstraints().rot;
     }
 
-    RotationConstraints& rotationConstraints() { return robotConstraints().rot; }
+    RotationConstraints& rotationConstraints() {
+        return robotConstraints().rot;
+    }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
@@ -557,9 +559,7 @@ protected:
         return &_context->robot_status[shell()];
     }
 
-    const RobotConfig* config() const {
-        return _context->robot_config.get();
-    }
+    const RobotConfig* config() const { return _context->robot_config.get(); }
 
 private:
     RJ::Time _lastBallSense;

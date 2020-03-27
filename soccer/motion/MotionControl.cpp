@@ -89,11 +89,9 @@ void MotionControl::run(const RobotState& state,
     if (maybe_pose_target) {
         Pose error = maybe_pose_target.value() - state.pose;
         error.heading() = fixAngleRadians(error.heading());
-        correction = Twist(
-                _positionXController.run(error.position().x()),
-                _positionYController.run(error.position().x()),
-                _angleController.run(error.heading())
-                );
+        correction = Twist(_positionXController.run(error.position().x()),
+                           _positionYController.run(error.position().x()),
+                           _angleController.run(error.heading()));
     } else {
         reset();
     }
@@ -101,8 +99,8 @@ void MotionControl::run(const RobotState& state,
     // Apply the correction and rotate into the world frame.
     Twist result_world = velocity_target + correction;
     Twist result_body(
-            result_world.linear().rotated(M_PI_2 - state.pose.heading()),
-            result_world.angular());
+        result_world.linear().rotated(M_PI_2 - state.pose.heading()),
+        result_world.angular());
 
     // Use default constraints. Planning should be in charge of enforcing
     // constraints on the path, here we just follow it.
@@ -110,14 +108,13 @@ void MotionControl::run(const RobotState& state,
     RobotConstraints constraints;
 
     if (result_body.linear().mag() > constraints.mot.maxSpeed) {
-        result_body.linear() *= constraints.mot.maxSpeed
-            / result_body.linear().mag();
+        result_body.linear() *=
+            constraints.mot.maxSpeed / result_body.linear().mag();
     }
 
-    result_body.angular() = std::clamp(
-            result_body.angular(),
-            -constraints.rot.maxSpeed,
-            constraints.rot.maxSpeed);
+    result_body.angular() =
+        std::clamp(result_body.angular(), -constraints.rot.maxSpeed,
+                   constraints.rot.maxSpeed);
 
     setVelocity(setpoint, result_body);
 
@@ -175,7 +172,7 @@ void MotionControl::updateParams() {
     _angleController.kd = *_config->rotation.d;
 }
 
-void MotionControl::stop(MotionSetpoint *setpoint) {
+void MotionControl::stop(MotionSetpoint* setpoint) {
     setpoint->xvelocity = 0;
     setpoint->yvelocity = 0;
     setpoint->avelocity = 0;

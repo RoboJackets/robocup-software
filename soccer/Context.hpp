@@ -1,17 +1,19 @@
 #pragma once
 
 #include <protobuf/grSim_Packet.pb.h>
+
 #include <Constants.hpp>
 #include <set>
+
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
+#include "RobotConfig.hpp"
 #include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
 #include "motion/MotionSetpoint.hpp"
-#include "vision/VisionPacket.hpp"
-#include "RobotConfig.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "vision/VisionPacket.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}

@@ -39,9 +39,9 @@ static const auto Command_Latency = 0ms;
 // TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
-// A temporary place to store RobotStatus/RobotConfig variables as we create them.
-// They are initialized in createConfiguration, before the Processor class is
-// initialized, so we need to temporarily store them somewhere.
+// A temporary place to store RobotStatus/RobotConfig variables as we create
+// them. They are initialized in createConfiguration, before the Processor class
+// is initialized, so we need to temporarily store them somewhere.
 std::vector<RobotStatus> robot_status_init;
 std::unique_ptr<RobotConfig> Processor::robot_config_init;
 
@@ -50,7 +50,7 @@ void Processor::createConfiguration(Configuration* cfg) {
 
     for (size_t s = 0; s < Num_Shells; ++s) {
         robot_status_init.emplace_back(
-                cfg, QString("Robot Statuses/Robot %1").arg(s));
+            cfg, QString("Robot Statuses/Robot %1").arg(s));
     }
 }
 

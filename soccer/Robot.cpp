@@ -286,7 +286,8 @@ void OurRobot::dribble(uint8_t speed) {
               current_dimensions.Length() + offset));
 
     if (modifiedField.containsPoint(pos())) {
-        uint8_t scaled = std::min(*config()->dribbler.multiplier * speed, (double) Max_Dribble);
+        uint8_t scaled = std::min(*config()->dribbler.multiplier * speed,
+                                  (double)Max_Dribble);
         intent().dvelocity = scaled;
 
         *_cmdText << "dribble(" << (float)speed << ")" << endl;

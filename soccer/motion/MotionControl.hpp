@@ -24,8 +24,7 @@ public:
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radioTx packet.
      */
-    void run(const RobotState& state,
-             const Planning::AngleFunctionPath& path,
+    void run(const RobotState& state, const Planning::AngleFunctionPath& path,
              MotionSetpoint* setpoint);
 
     /**
@@ -38,7 +37,6 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-
     /**
      * Reset all PID controllers. To be used while the robot is not under PID
      * control (stopped or joystick-controlled).
