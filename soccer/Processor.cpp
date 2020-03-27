@@ -46,6 +46,13 @@ std::vector<RobotStatus> robot_status_init;
 std::unique_ptr<RobotConfig> Processor::robot_config_init;
 
 void Processor::createConfiguration(Configuration* cfg) {
+    // If robot_config_init is not null, then we've already done this.
+    // That means we're doing FromRegisteredConfigurables() in python code,
+    // and so we shouldn't reinitialize anything.
+    if (robot_config_init) {
+        return;
+    }
+
     robot_config_init = std::make_unique<RobotConfig>(cfg, "Rev2015");
 
     for (size_t s = 0; s < Num_Shells; ++s) {
@@ -75,7 +82,9 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _kickOnBreakBeam = false;
 
     // Configuration-time variables.
+    std::cout << robot_config_init.get() << std::endl;
     _context.robot_config = std::move(robot_config_init);
+    std::cout << _context.robot_config.get() << std::endl;
     for (int i = Num_Shells - 1; i >= 0; i--) {
         // Set up fields in Context
         _context.robot_status[i] = std::move(robot_status_init.back());
@@ -126,6 +135,17 @@ Processor::~Processor() {
     // DEBUG - This is unnecessary, but lets us determine which one breaks.
     //_refereeModule.reset();
     _gameplayModule.reset();
+
+    // Put back configurables where we found them.
+    // This is kind of a hack, but if we don't do that they get destructed
+    // when Processor dies. That normally isn't a problem, but in unit tests,
+    // we create and destroy multiple instances of Processor for each test.
+    robot_config_init = std::move(_context.robot_config);
+    std::cout << robot_config_init.get() << std::endl;
+
+    for (size_t i = 0; i < Num_Shells; i++) {
+        robot_status_init.push_back(std::move(_context.robot_status[i]));
+    }
 }
 
 void Processor::stop() {
