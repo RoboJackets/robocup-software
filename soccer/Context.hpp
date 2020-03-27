@@ -31,6 +31,8 @@ struct Context {
     std::array<RobotStatus, Num_Shells> robot_status;
     std::array<RobotConstraints, Num_Shells> robot_constraints;
 
+    std::array<bool, Num_Shells> is_joystick_controlled;
+
     std::unique_ptr<RobotConfig> robot_config;
 
     SystemState state;

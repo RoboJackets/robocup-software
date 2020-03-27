@@ -641,7 +641,7 @@ void OurRobot::setPID(double p, double i, double d) {
 }
 
 void OurRobot::setJoystickControlled(bool joystickControlled) {
-    _joystickControlled = joystickControlled;
+    _context->is_joystick_controlled[shell()] = joystickControlled;
 }
 
-bool OurRobot::isJoystickControlled() const { return _joystickControlled; }
+bool OurRobot::isJoystickControlled() const { return _context->is_joystick_controlled[shell()]; }

@@ -38,8 +38,11 @@ MotionControl::MotionControl(Context* context, int shell_id)
 
 void MotionControl::run(const RobotState& state,
                         const Planning::AngleFunctionPath& path,
+                        bool is_joystick_controlled,
                         MotionSetpoint* setpoint) {
-    if (!setpoint) {
+    // If we don't have a setpoint (output velocities) or we're under joystick
+    // control, reset our PID controllers and exit (but don't force a stop).
+    if (!setpoint || is_joystick_controlled) {
         reset();
         return;
     }
@@ -49,8 +52,6 @@ void MotionControl::run(const RobotState& state,
         stop(setpoint);
         return;
     }
-
-    // TODO: Reset and return if robot is joystick-controlled.
 
     updateParams();
 

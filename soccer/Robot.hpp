@@ -486,8 +486,6 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    bool _joystickControlled = false;
-
     /**
      * Get a mutable reference to the angle function path.
      */

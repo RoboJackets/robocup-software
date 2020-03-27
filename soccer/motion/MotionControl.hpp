@@ -25,7 +25,7 @@ public:
      * sets values in the robot's radioTx packet.
      */
     void run(const RobotState& state, const Planning::AngleFunctionPath& path,
-             MotionSetpoint* setpoint);
+             bool is_joystick_controlled, MotionSetpoint* setpoint);
 
     /**
      * Force stop the motion by setting the setpoint to zero.
