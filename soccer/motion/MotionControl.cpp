@@ -90,7 +90,7 @@ void MotionControl::run(const RobotState& state,
         Pose error = maybe_pose_target.value() - state.pose;
         error.heading() = fixAngleRadians(error.heading());
         correction = Twist(_positionXController.run(error.position().x()),
-                           _positionYController.run(error.position().x()),
+                           _positionYController.run(error.position().y()),
                            _angleController.run(error.heading()));
     } else {
         reset();
@@ -126,6 +126,15 @@ void MotionControl::run(const RobotState& state,
         } else if (maybe_target) {
             _drawer->drawCircle(maybe_target->motion.pos, .15, Qt::green,
                                 "Planning");
+        }
+
+        // Line for velocity when we have a target
+        if (maybe_pose_target) {
+            Pose pose_target = maybe_pose_target.value();
+            _drawer->drawLine(
+                    pose_target.position(),
+                    pose_target.position() + result_world.linear(),
+                    Qt::blue, "MotionControl");
         }
     }
 }
