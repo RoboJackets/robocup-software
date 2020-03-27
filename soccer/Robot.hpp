@@ -132,9 +132,6 @@ class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
 
-    RobotConfig* config;
-    RobotStatus* status;
-
     /**
      * @brief Construct a new OurRobot
      * @param context A pointer to the global system context object
@@ -170,16 +167,16 @@ public:
 
     // Constraints
     const RobotConstraints& robotConstraints() const {
-        return _robotConstraints;
+        return _context->robot_constraints[shell()];
     }
 
-    RobotConstraints& robotConstraints() { return _robotConstraints; }
+    RobotConstraints& robotConstraints() { return _context->robot_constraints[shell()]; }
 
     const MotionConstraints& motionConstraints() const {
-        return _robotConstraints.mot;
+        return robotConstraints().mot;
     }
 
-    MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
+    MotionConstraints& motionConstraints() { return robotConstraints().mot; }
 
     const Planning::RotationCommand& rotationCommand() const {
         return *intent().rotation_command;
@@ -189,8 +186,7 @@ public:
      * Returns a const reference to the path of the robot.
      */
     const Planning::Path& path() {
-        // return *angleFunctionPath.path;
-        return angleFunctionPath;
+        return _context->paths[shell()];
     }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
@@ -441,10 +437,10 @@ public:
     }
 
     const RotationConstraints& rotationConstraints() const {
-        return _robotConstraints.rot;
+        return robotConstraints().rot;
     }
 
-    RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
+    RotationConstraints& rotationConstraints() { return robotConstraints().rot; }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
@@ -488,11 +484,14 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    RobotConstraints _robotConstraints;
-
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
-
     bool _joystickControlled = false;
+
+    /**
+     * Get a mutable reference to the angle function path.
+     */
+    Planning::AngleFunctionPath& angleFunctionPath() {
+        return _context->paths[shell()];
+    }
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -553,6 +552,14 @@ protected:
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
+
+    const RobotStatus* status() const {
+        return &_context->robot_status[shell()];
+    }
+
+    const RobotConfig* config() const {
+        return _context->robot_config.get();
+    }
 
 private:
     RJ::Time _lastBallSense;

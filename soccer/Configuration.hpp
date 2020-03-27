@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <QDomDocument>
+#include <memory>
 #include <QFile>
 #include <QStringList>
 #include <vector>

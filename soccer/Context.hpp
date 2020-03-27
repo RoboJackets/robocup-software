@@ -10,6 +10,8 @@
 #include "WorldState.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "vision/VisionPacket.hpp"
+#include "RobotConfig.hpp"
+#include "planning/RobotConstraints.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}
@@ -23,6 +25,11 @@ struct Context {
 
     std::array<RobotIntent, Num_Shells> robot_intents;
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
+    std::array<Planning::AngleFunctionPath, Num_Shells> paths;
+    std::array<RobotStatus, Num_Shells> robot_status;
+    std::array<RobotConstraints, Num_Shells> robot_constraints;
+
+    std::unique_ptr<RobotConfig> robot_config;
 
     SystemState state;
     GameState game_state;

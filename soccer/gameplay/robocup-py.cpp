@@ -686,7 +686,7 @@ BOOST_PYTHON_MODULE(robocup) {
     boost::python::register_exception_translator<NullArgumentException>(
         &translateException);
 
-    def("fix_angle_radians", &fixAngleRadians);
+    def("fix_angle_radians", &fixAngleRadians<double>);
     def("get_trapezoidal_time", &Trapezoidal::getTime);
 
     class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
