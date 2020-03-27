@@ -38,8 +38,7 @@ MotionControl::MotionControl(Context* context, int shell_id)
 
 void MotionControl::run(const RobotState& state,
                         const Planning::AngleFunctionPath& path,
-                        bool is_joystick_controlled,
-                        MotionSetpoint* setpoint) {
+                        bool is_joystick_controlled, MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
     if (!setpoint || is_joystick_controlled) {
@@ -132,10 +131,9 @@ void MotionControl::run(const RobotState& state,
         // Line for velocity when we have a target
         if (maybe_pose_target) {
             Pose pose_target = maybe_pose_target.value();
-            _drawer->drawLine(
-                    pose_target.position(),
-                    pose_target.position() + result_world.linear(),
-                    Qt::blue, "MotionControl");
+            _drawer->drawLine(pose_target.position(),
+                              pose_target.position() + result_world.linear(),
+                              Qt::blue, "MotionControl");
         }
     }
 }
