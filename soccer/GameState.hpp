@@ -178,7 +178,7 @@ public:
             _worldToTeam * Geometry2d::Point(x / 1000, y / 1000);
     }
 
-    static Geometry2d::Point getBallPlacementPoint(float x, float y) {
+    static Geometry2d::Point convertToBallPlacementPoint(float x, float y) {
         Geometry2d::TransformMatrix world_to_team =
             Geometry2d::TransformMatrix();
         world_to_team *= Geometry2d::TransformMatrix::translate(

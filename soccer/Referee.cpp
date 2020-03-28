@@ -328,7 +328,9 @@ GameState Referee::updateGameState(const GameState& game_state) const {
                 return GameState::PenaltyShootout;
             case Stage::POST_GAME:
                 return GameState::Overtime2;
-        }
+            default:
+                return GameState::FirstHalf;
+        };
     }();
 
     GameState::State state = game_state.state;
@@ -405,14 +407,14 @@ GameState Referee::updateGameState(const GameState& game_state) const {
             state = GameState::Stop;
             restart = GameState::Placement;
             our_restart = !_blueTeam;
-            ball_placement_point = GameState::getBallPlacementPoint(
+            ball_placement_point = GameState::convertToBallPlacementPoint(
                 ballPlacementx, ballPlacementy);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             state = GameState::Stop;
             restart = GameState::Placement;
             our_restart = _blueTeam;
-            ball_placement_point = GameState::getBallPlacementPoint(
+            ball_placement_point = GameState::convertToBallPlacementPoint(
                 ballPlacementx, ballPlacementy);
             break;
     }
@@ -426,8 +428,6 @@ GameState Referee::updateGameState(const GameState& game_state) const {
 
     auto our_info = _blueTeam ? blue_info : yellow_info;
     auto their_info = _blueTeam ? yellow_info : blue_info;
-
-    auto blueTeam = _blueTeam;
 
     return GameState{period,
                      state,
