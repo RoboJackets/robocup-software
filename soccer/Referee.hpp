@@ -160,7 +160,9 @@ public:
      */
     void overrideTeam(bool isBlue);
 
-    [[nodiscard]] bool isBlueTeam() const { return _context->game_state.blueTeam; }
+    [[nodiscard]] bool isBlueTeam() const {
+        return _context->game_state.blueTeam;
+    }
 
     RefreeModuleEnums::Stage stage;
     RefreeModuleEnums::Command command;

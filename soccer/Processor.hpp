@@ -4,21 +4,21 @@
 
 #pragma once
 
-#include <vector>
-#include <optional>
+#include <protobuf/LogFrame.pb.h>
 #include <string.h>
 
-#include <QMutex>
-#include <QMutexLocker>
-#include <QThread>
-
-#include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QThread>
 #include <Referee.hpp>
 #include <SystemState.hpp>
+#include <optional>
+#include <vector>
+
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
