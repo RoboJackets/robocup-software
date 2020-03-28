@@ -147,7 +147,9 @@ public:
 
     [[nodiscard]] bool kicked() const { return _kickDetectState == Kicked; }
 
-    void useExternalReferee(bool value) { _useExternalRef = value; }
+    void useExternalReferee(bool value) {
+        _useExternalRef = value;
+    }
 
     [[nodiscard]] bool useExternalReferee() const { return _useExternalRef; }
 
