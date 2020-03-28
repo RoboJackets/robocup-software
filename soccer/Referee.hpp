@@ -138,18 +138,18 @@ public:
  */
 class Referee : public QThread {
 public:
-    Referee(Context* const ctx, bool isBlue = false);
-    ~Referee();
+    explicit Referee(Context* const ctx);
+    ~Referee() override;
 
     void stop();
 
     void getPackets(std::vector<RefereePacket*>& packets);
 
-    bool kicked() const { return _kickDetectState == Kicked; }
+    [[nodiscard]] bool kicked() const { return _kickDetectState == Kicked; }
 
     void useExternalReferee(bool value) { _useExternalRef = value; }
 
-    bool useExternalReferee() const { return _useExternalRef; }
+    [[nodiscard]] bool useExternalReferee() const { return _useExternalRef; }
 
     /**
      * Set the team color only if it is not already being controlled by the
@@ -160,7 +160,7 @@ public:
      */
     void overrideTeam(bool isBlue);
 
-    bool isBlueTeam() const { return _blueTeam; }
+    [[nodiscard]] bool isBlueTeam() const { return _context->game_state.blueTeam; }
 
     RefreeModuleEnums::Stage stage;
     RefreeModuleEnums::Command command;
@@ -195,17 +195,17 @@ public:
     TeamInfo yellow_info;
     TeamInfo blue_info;
 
-    void update();
-    GameState updateGameState(const GameState& game_state) const;
+    [[nodiscard]] GameState updateGameState(const GameState& game_state) const;
 
     void spin();
 
 protected:
-    virtual void run() override;
+    void run() override;
+    void update();
 
     // Unconditional setter for the team color.
-    void blueTeam(bool value) { _blueTeam = value; }
-    void spinKickWatcher();
+    void blueTeam(bool value) { _context->game_state.blueTeam = value; }
+    void spinKickWatcher(const SystemState& system_state);
 
     volatile bool _running;
 
@@ -237,8 +237,6 @@ protected:
     // if the ref is connected but our team name doesn't match either of the
     // team names in the packet.
     bool _isRefControlled = false;
-
-    bool _blueTeam = false;
 
     float ballPlacementx;
     float ballPlacementy;

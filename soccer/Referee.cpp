@@ -107,12 +107,11 @@ static const int KickVerifyTime_ms = 250;
 // the ref halts/stops, make this false
 static const bool CancelBallPlaceOnHalt = true;
 
-Referee::Referee(Context* const context, bool isBlue)
+Referee::Referee(Context* const context)
     : stage(NORMAL_FIRST_HALF_PRE),
       command(HALT),
       _running(false),
-      _context(context),
-      _blueTeam(isBlue) {}
+      _context(context) {}
 
 Referee::~Referee() { stop(); }
 
@@ -212,15 +211,16 @@ void Referee::run() {
 }
 
 void Referee::overrideTeam(bool isBlue) {
-    if (!_isRefControlled) {
-        blueTeam(isBlue);
-    }
+    _context->game_state.blueTeam = isBlue;
 }
 
-void Referee::spin() { spinKickWatcher(); }
+void Referee::spin() {
+    spinKickWatcher(_context->state);
+    update();
+}
 
-void Referee::spinKickWatcher() {
-    if (_context->state.ball.valid) {
+void Referee::spinKickWatcher(const SystemState& system_state) {
+    if (system_state.ball.valid) {
         /// Only run the kick detector when the ball is visible
         switch (_kickDetectState) {
             case WaitForReady:
@@ -229,13 +229,13 @@ void Referee::spinKickWatcher() {
 
             case CapturePosition:
                 // Do this in the processing thread
-                _readyBallPos = _context->state.ball.pos;
+                _readyBallPos = system_state.ball.pos;
                 _kickDetectState = WaitForKick;
                 break;
 
             case WaitForKick:
-                if (!_context->state.ball.pos.nearPoint(_readyBallPos,
-                                                        KickThreshold)) {
+                if (!system_state.ball.pos.nearPoint(_readyBallPos,
+                                                     KickThreshold)) {
                     // The ball appears to have moved
                     _kickTime = QTime::currentTime();
                     _kickDetectState = VerifyKick;
@@ -243,8 +243,8 @@ void Referee::spinKickWatcher() {
                 break;
 
             case VerifyKick:
-                if (_context->state.ball.pos.nearPoint(_readyBallPos,
-                                                       KickThreshold)) {
+                if (system_state.ball.pos.nearPoint(_readyBallPos,
+                                                    KickThreshold)) {
                     // The ball is back where it was.  There was probably a
                     // vision error.
                     _kickDetectState = WaitForKick;
@@ -338,6 +338,8 @@ GameState Referee::updateGameState(const GameState& game_state) const {
     bool our_restart = game_state.ourRestart;
     Geometry2d::Point ball_placement_point = game_state.ballPlacementPoint;
 
+    const bool blue_team = game_state.blueTeam;
+
     switch (command) {
         case Command::HALT:
             state = GameState::Halt;
@@ -360,38 +362,38 @@ GameState Referee::updateGameState(const GameState& game_state) const {
         case Command::PREPARE_KICKOFF_YELLOW:
             state = GameState::Setup;
             restart = GameState::Kickoff;
-            our_restart = !_blueTeam;
+            our_restart = !blue_team;
             break;
         case Command::PREPARE_KICKOFF_BLUE:
             state = GameState::Setup;
             restart = GameState::Kickoff;
-            our_restart = _blueTeam;
+            our_restart = blue_team;
             break;
         case Command::PREPARE_PENALTY_YELLOW:
             state = GameState::Setup;
             restart = GameState::Penalty;
-            our_restart = !_blueTeam;
+            our_restart = !blue_team;
             break;
         case Command::PREPARE_PENALTY_BLUE:
             state = GameState::Setup;
             restart = GameState::Penalty;
-            our_restart = _blueTeam;
+            our_restart = blue_team;
             break;
         case Command::DIRECT_FREE_YELLOW:
             restart = GameState::Direct;
-            our_restart = !_blueTeam;
+            our_restart = !blue_team;
             break;
         case Command::DIRECT_FREE_BLUE:
             restart = GameState::Direct;
-            our_restart = _blueTeam;
+            our_restart = blue_team;
             break;
         case Command::INDIRECT_FREE_YELLOW:
             restart = GameState::Indirect;
-            our_restart = !_blueTeam;
+            our_restart = !blue_team;
             break;
         case Command::INDIRECT_FREE_BLUE:
             restart = GameState::Indirect;
-            our_restart = _blueTeam;
+            our_restart = blue_team;
             break;
         case Command::TIMEOUT_YELLOW:
             state = GameState::Halt;
@@ -406,14 +408,14 @@ GameState Referee::updateGameState(const GameState& game_state) const {
         case Command::BALL_PLACEMENT_YELLOW:
             state = GameState::Stop;
             restart = GameState::Placement;
-            our_restart = !_blueTeam;
+            our_restart = !blue_team;
             ball_placement_point = GameState::convertToBallPlacementPoint(
                 ballPlacementx, ballPlacementy);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             state = GameState::Stop;
             restart = GameState::Placement;
-            our_restart = _blueTeam;
+            our_restart = blue_team;
             ball_placement_point = GameState::convertToBallPlacementPoint(
                 ballPlacementx, ballPlacementy);
             break;
@@ -423,11 +425,11 @@ GameState Referee::updateGameState(const GameState& game_state) const {
         state = GameState::Playing;
     }
 
-    const int our_score = _blueTeam ? blue_info.score : yellow_info.score;
-    const int their_score = _blueTeam ? yellow_info.score : blue_info.score;
+    const int our_score = blue_team ? blue_info.score : yellow_info.score;
+    const int their_score = blue_team ? yellow_info.score : blue_info.score;
 
-    auto our_info = _blueTeam ? blue_info : yellow_info;
-    auto their_info = _blueTeam ? yellow_info : blue_info;
+    const auto our_info = blue_team ? blue_info : yellow_info;
+    const auto their_info = blue_team ? yellow_info : blue_info;
 
     return GameState{period,
                      state,
@@ -438,7 +440,7 @@ GameState Referee::updateGameState(const GameState& game_state) const {
                      game_state.secondsRemaining,
                      our_info,
                      their_info,
-                     game_state.blueTeam,
+                     blue_team,
                      ball_placement_point,
                      game_state.defendPlusX};
 }

@@ -87,7 +87,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _context.field_dimensions = *currentDimensions;
 
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<Referee>(&_context, _blueTeam);
+    _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
         &_context, _refereeModule.get());
@@ -363,7 +363,6 @@ void Processor::run() {
         }
 
         // Update gamestate w/ referee data
-        _refereeModule->update();
         _refereeModule->spin();
 
         string yellowname, bluename;
