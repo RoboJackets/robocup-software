@@ -111,12 +111,9 @@ Referee::Referee(Context* const context)
     : stage_(NORMAL_FIRST_HALF_PRE),
       command_(HALT),
       _running(false),
-      _context(context) {
-}
+      _context(context) {}
 
-Referee::~Referee() {
-    stop();
-}
+Referee::~Referee() { stop(); }
 
 void Referee::stop() {
     _running = false;
@@ -213,9 +210,7 @@ void Referee::run() {
     }
 }
 
-void Referee::overrideTeam(bool isBlue) {
-    _game_state.blueTeam = isBlue;
-}
+void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
 
 void Referee::spin() {
     spinKickWatcher(_context->state);
