@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
         if (currentFrame->raw_refbox_size() > 0) {
             SSL_Referee referee = currentFrame->raw_refbox(0);
 
-            using namespace RefreeModuleEnums;
+            using namespace RefereeModuleEnums;
             stage = stringFromStage((Stage)referee.stage());
             command = stringFromCommand((Command)referee.command());
 
