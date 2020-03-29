@@ -1,4 +1,5 @@
 #include <protobuf/LogFrame.pb.h>
+
 #include <Constants.hpp>
 #include <Network.hpp>
 #include <Referee.hpp>
@@ -20,7 +21,7 @@ using namespace boost;
 using namespace boost::python;
 
 using namespace Geometry2d;
-using namespace RefreeModuleEnums;
+using namespace RefereeModuleEnums;
 
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
@@ -391,7 +392,7 @@ void Gameplay::GameplayModule::run() {
 
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
-                    _refereeModule->command = cmd;
+                    _refereeModule->command_ = cmd;
                 }
             }
 
@@ -538,7 +539,7 @@ void Gameplay::GameplayModule::loadTest() {
             runningTests = extract<bool>(rtrn);
 
             if (runningTests) {
-                _refereeModule->command = Command::HALT;
+                _refereeModule->command_ = Command::HALT;
 
                 // Place robots and ball
                 grSim_Packet simPacket;

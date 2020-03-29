@@ -12,7 +12,7 @@
 
 #include "Constants.hpp"
 
-namespace RefreeModuleEnums {
+namespace RefereeModuleEnums {
 std::string stringFromStage(Stage s) {
     switch (s) {
         case NORMAL_FIRST_HALF_PRE:
@@ -90,9 +90,9 @@ std::string stringFromCommand(Command c) {
             return "";
     }
 }
-}  // namespace RefreeModuleEnums
+}  // namespace RefereeModuleEnums
 
-using namespace RefreeModuleEnums;
+using namespace RefereeModuleEnums;
 
 /// Distance in meters that the ball must travel for a kick to be detected
 static const float KickThreshold = Ball_Radius * 3;
@@ -108,12 +108,15 @@ static const int KickVerifyTime_ms = 250;
 static const bool CancelBallPlaceOnHalt = true;
 
 Referee::Referee(Context* const context)
-    : stage(NORMAL_FIRST_HALF_PRE),
-      command(HALT),
+    : stage_(NORMAL_FIRST_HALF_PRE),
+      command_(HALT),
       _running(false),
-      _context(context) {}
+      _context(context) {
+}
 
-Referee::~Referee() { stop(); }
+Referee::~Referee() {
+    stop();
+}
 
 void Referee::stop() {
     _running = false;
@@ -173,8 +176,8 @@ void Referee::run() {
         _mutex.lock();
         _packets.push_back(packet);
 
-        stage = (Stage)packet->wrapper.stage();
-        command = (Command)packet->wrapper.command();
+        stage_ = (Stage)packet->wrapper.stage();
+        command_ = (Command)packet->wrapper.command();
         sent_time = RJ::Time(
             std::chrono::microseconds(packet->wrapper.packet_timestamp()));
         stage_time_left =
@@ -211,7 +214,7 @@ void Referee::run() {
 }
 
 void Referee::overrideTeam(bool isBlue) {
-    _context->game_state.blueTeam = isBlue;
+    _game_state.blueTeam = isBlue;
 }
 
 void Referee::spin() {
@@ -264,9 +267,10 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
 }
 
 void Referee::update() {
-    _context->game_state = updateGameState(_context->game_state);
+    _game_state = updateGameState(command_);
+    _context->game_state = _game_state;
 
-    switch (command) {
+    switch (command_) {
         case Command::NORMAL_START:
         case Command::DIRECT_FREE_YELLOW:
         case Command::DIRECT_FREE_BLUE:
@@ -282,23 +286,24 @@ void Referee::update() {
             break;
     }
 
-    if (command != prev_command) {
-        std::cout << "REFEREE: Command = " << stringFromCommand(command)
+    if (command_ != prev_command_) {
+        std::cout << "REFEREE: Command = " << stringFromCommand(command_)
                   << std::endl;
-        prev_command = command;
+        prev_command_ = command_;
     }
 
-    if (stage != prev_stage) {
-        std::cout << "REFEREE: Stage = " << stringFromStage(stage) << std::endl;
-        prev_stage = stage;
+    if (stage_ != prev_stage_) {
+        std::cout << "REFEREE: Stage = " << stringFromStage(stage_)
+                  << std::endl;
+        prev_stage_ = stage_;
     }
 }
 
-GameState Referee::updateGameState(const GameState& game_state) const {
-    using namespace RefreeModuleEnums;
+GameState Referee::updateGameState(Command command) const {
+    using namespace RefereeModuleEnums;
 
     const GameState::Period period = [stage =
-                                          this->stage]() -> GameState::Period {
+                                          this->stage_]() -> GameState::Period {
         switch (stage) {
             case Stage::NORMAL_FIRST_HALF_PRE:
                 return GameState::FirstHalf;
@@ -333,12 +338,12 @@ GameState Referee::updateGameState(const GameState& game_state) const {
         };
     }();
 
-    GameState::State state = game_state.state;
-    GameState::Restart restart = game_state.restart;
-    bool our_restart = game_state.ourRestart;
-    Geometry2d::Point ball_placement_point = game_state.ballPlacementPoint;
+    GameState::State state = _game_state.state;
+    GameState::Restart restart = _game_state.restart;
+    bool our_restart = _game_state.ourRestart;
+    Geometry2d::Point ball_placement_point = _game_state.ballPlacementPoint;
 
-    const bool blue_team = game_state.blueTeam;
+    const bool blue_team = _game_state.blueTeam;
 
     switch (command) {
         case Command::HALT:
@@ -437,10 +442,10 @@ GameState Referee::updateGameState(const GameState& game_state) const {
                      our_restart,
                      our_score,
                      their_score,
-                     game_state.secondsRemaining,
+                     _game_state.secondsRemaining,
                      our_info,
                      their_info,
                      blue_team,
                      ball_placement_point,
-                     game_state.defendPlusX};
+                     _game_state.defendPlusX};
 }

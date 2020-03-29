@@ -17,7 +17,7 @@
 
 class QUdpSocket;
 
-namespace RefreeModuleEnums {
+namespace RefereeModuleEnums {
 // These are the "coarse" stages of the game.
 enum Stage {
     // The first half is about to start.
@@ -105,7 +105,7 @@ enum Command {
 };
 
 std::string stringFromCommand(Command c);
-}  // namespace RefreeModuleEnums
+}  // namespace RefereeModuleEnums
 
 /**
  * @brief A packet we received over the network from ssl-refbox
@@ -166,8 +166,8 @@ public:
         return _context->game_state.blueTeam;
     }
 
-    RefreeModuleEnums::Stage stage;
-    RefreeModuleEnums::Command command;
+    RefereeModuleEnums::Stage stage_;
+    RefereeModuleEnums::Command command_;
 
     // The UNIX timestamp when the packet was sent, in microseconds.
     // Divide by 1,000,000 to get a time_t.
@@ -199,7 +199,8 @@ public:
     TeamInfo yellow_info;
     TeamInfo blue_info;
 
-    [[nodiscard]] GameState updateGameState(const GameState& game_state) const;
+    [[nodiscard]] GameState updateGameState(
+        RefereeModuleEnums::Command command) const;
 
     void spin();
 
@@ -231,8 +232,8 @@ protected:
     std::vector<RefereePacket*> _packets;
     Context* const _context;
 
-    RefreeModuleEnums::Command prev_command;
-    RefreeModuleEnums::Stage prev_stage;
+    RefereeModuleEnums::Command prev_command_;
+    RefereeModuleEnums::Stage prev_stage_;
 
     bool _useExternalRef = false;
 
@@ -244,4 +245,7 @@ protected:
 
     float ballPlacementx;
     float ballPlacementy;
+
+private:
+    GameState _game_state;
 };

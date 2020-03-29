@@ -511,10 +511,10 @@ void MainWindow::updateViews() {
     }
 
     _ui.refStage->setText(
-        RefreeModuleEnums::stringFromStage(_processor->refereeModule()->stage)
+        RefereeModuleEnums::stringFromStage(_processor->refereeModule()->stage_)
             .c_str());
-    _ui.refCommand->setText(RefreeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command)
+    _ui.refCommand->setText(RefereeModuleEnums::stringFromCommand(
+                                _processor->refereeModule()->command_)
                                 .c_str());
 
     // convert time left from ms to s and display it to two decimal places
@@ -1515,48 +1515,49 @@ void MainWindow::setUseRefChecked(bool use_ref) {
 }
 
 void MainWindow::on_fastHalt_clicked() {
-    _processor->refereeModule()->command = RefreeModuleEnums::HALT;
+    _processor->refereeModule()->command_ = RefereeModuleEnums::HALT;
 }
 
 void MainWindow::on_fastStop_clicked() {
-    _processor->refereeModule()->command = RefreeModuleEnums::STOP;
+    _processor->refereeModule()->command_ = RefereeModuleEnums::STOP;
 }
 
 void MainWindow::on_fastReady_clicked() {
-    _processor->refereeModule()->command = RefreeModuleEnums::NORMAL_START;
+    _processor->refereeModule()->command_ = RefereeModuleEnums::NORMAL_START;
 }
 
 void MainWindow::on_fastForceStart_clicked() {
-    _processor->refereeModule()->command = RefreeModuleEnums::FORCE_START;
+    _processor->refereeModule()->command_ = RefereeModuleEnums::FORCE_START;
 }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
-    _processor->refereeModule()->command =
-        RefreeModuleEnums::PREPARE_KICKOFF_BLUE;
+    _processor->refereeModule()->command_ =
+        RefereeModuleEnums::PREPARE_KICKOFF_BLUE;
 }
 
 void MainWindow::on_fastKickoffYellow_clicked() {
-    _processor->refereeModule()->command =
-        RefreeModuleEnums::PREPARE_KICKOFF_YELLOW;
+    _processor->refereeModule()->command_ =
+        RefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-    _processor->refereeModule()->command = RefreeModuleEnums::DIRECT_FREE_BLUE;
+    _processor->refereeModule()->command_ =
+        RefereeModuleEnums::DIRECT_FREE_BLUE;
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-    _processor->refereeModule()->command =
-        RefreeModuleEnums::DIRECT_FREE_YELLOW;
+    _processor->refereeModule()->command_ =
+        RefereeModuleEnums::DIRECT_FREE_YELLOW;
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-    _processor->refereeModule()->command =
-        RefreeModuleEnums::INDIRECT_FREE_BLUE;
+    _processor->refereeModule()->command_ =
+        RefereeModuleEnums::INDIRECT_FREE_BLUE;
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-    _processor->refereeModule()->command =
-        RefreeModuleEnums::INDIRECT_FREE_YELLOW;
+    _processor->refereeModule()->command_ =
+        RefereeModuleEnums::INDIRECT_FREE_YELLOW;
 }
 
 void MainWindow::on_actionVisionPrimary_Half_triggered() {
