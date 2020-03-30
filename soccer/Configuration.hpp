@@ -25,10 +25,10 @@ public:
 
     void tree(QTreeWidget* tree);
 
-    QTreeWidget* tree() const { return _tree; }
+    [[nodiscard]] QTreeWidget* tree() const { return _tree; }
 
-    // name lookup - returns pointer if exists, null otherwise
-    ConfigItem* nameLookup(const std::string name) const;
+        // name lookup - returns pointer if exists, null otherwise
+        [[nodiscard]] ConfigItem* nameLookup(const std::string& name) const;
 
     bool load(const QString& filename, QString& error);
     bool save(const QString& filename, QString& error);
@@ -73,10 +73,12 @@ public:
 
     // A ConfigItem's name is a sequence of path segments separated by '/'.
     // The path is a list of these segments in order.
-    const QStringList& path() const { return _path; }
+    [[nodiscard]] const QStringList& path() const { return _path; }
 
-    /// Returns the same name that was passed to the constructor
-    const std::string name() const { return _path.join('/').toStdString(); }
+        /// Returns the same name that was passed to the constructor
+        [[nodiscard]] std::string name() const {
+        return _path.join('/').toStdString();
+    }
 
     virtual QString toString() = 0;
 
@@ -102,8 +104,8 @@ protected:
 
 class ConfigBool : public ConfigItem {
 public:
-    ConfigBool(Configuration* tree, QString name, bool value = false,
-               std::string description = "");
+    ConfigBool(Configuration* tree, const QString& name, bool value = false,
+               const std::string& description = "");
 
     bool value();
 
@@ -119,23 +121,23 @@ public:
         return x;
     }
 
-    virtual QString toString() override;
-    virtual void setValueString(const QString& str) override;
+    QString toString() override;
+    void setValueString(const QString& str) override;
 
 protected:
     friend class Configuration;
-    virtual void setupItem() override;
+    void setupItem() override;
 
     bool _value;
 };
 
 class ConfigInt : public ConfigItem {
 public:
-    ConfigInt(Configuration* tree, QString name, int value = 0,
-              std::string description = "");
+    ConfigInt(Configuration* tree, const QString& name, int value = 0,
+              const std::string& description = "");
 
-    virtual QString toString() override;
-    virtual void setValueString(const QString& str) override;
+    QString toString() override;
+    void setValueString(const QString& str) override;
 
     operator int() const { return _value; }
 
@@ -144,7 +146,7 @@ public:
         return x;
     }
 
-    int value() const { return _value; }
+    [[nodiscard]] int value() const { return _value; }
 
     void setValue(int v) {
         _value = v;
@@ -158,11 +160,11 @@ protected:
 
 class ConfigDouble : public ConfigItem {
 public:
-    ConfigDouble(Configuration* tree, QString name, double value = 0,
-                 std::string description = "");
+    ConfigDouble(Configuration* tree, const QString& name, double value = 0,
+                 const std::string& description = "");
 
-    virtual QString toString() override;
-    virtual void setValueString(const QString& str) override;
+    QString toString() override;
+    void setValueString(const QString& str) override;
 
     operator double() const { return _value; }
 
@@ -171,7 +173,7 @@ public:
         return x;
     }
 
-    double value() const { return _value; }
+    [[nodiscard]] double value() const { return _value; }
 
     void setValue(double v) {
         _value = v;
@@ -191,7 +193,7 @@ protected:
 class Configurable {
 public:
     Configurable();
-    virtual ~Configurable() {}
+    virtual ~Configurable() = default;
 
     virtual void createConfiguration(Configuration* cfg) const = 0;
 
@@ -209,7 +211,7 @@ private:
 template <class T>
 class ConfigurableImpl : public Configurable {
 public:
-    virtual void createConfiguration(Configuration* cfg) const override {
+    void createConfiguration(Configuration* cfg) const override {
         T::createConfiguration(cfg);
     }
 };

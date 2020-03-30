@@ -14,15 +14,16 @@
 #include <protobuf/RadioTx.pb.h>
 #include <Utils.hpp>
 
-#include <stdint.h>
 #include <Eigen/Dense>
 #include <QColor>
+#include <algorithm>
 #include <array>
-#include <optional>
 #include <boost/circular_buffer.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <cstdint>
+#include <memory>
+#include <optional>
 #include <vector>
-#include <algorithm>
 
 #include <QReadLocker>
 #include <QReadWriteLock>
@@ -72,21 +73,29 @@ public:
 
     Geometry2d::Point pos() const { return state().pose.position(); }
 
-    double angle() const { return state().pose.heading(); }
+    [[nodiscard]] double angle() const { return state().pose.heading(); }
 
-    Geometry2d::Twist twist() const { return state().velocity; }
+        [[nodiscard]] Geometry2d::Twist twist() const {
+        return state().velocity;
+    }
 
-    Geometry2d::Point vel() const { return state().velocity.linear(); }
+    [[nodiscard]] Geometry2d::Point vel() const {
+        return state().velocity.linear();
+    }
 
-    double angleVel() const { return state().velocity.angular(); }
+        [[nodiscard]] double angleVel() const {
+        return state().velocity.angular();
+    }
 
-    bool visible() const { return state().visible; }
+    [[nodiscard]] bool visible() const { return state().visible; }
 
     /**
      * ID number for the robot.  This is the number that the dot pattern on the
      * top of the robot represents
      */
-    unsigned int shell() const { return _shell; }
+    unsigned int shell() const {
+        return _shell;
+    }
 
     /**
      * Check whether or not this robot is on our team
@@ -132,17 +141,19 @@ class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
 
+    RobotConfig* config{};
+    RobotStatus* status{};
+
     /**
      * @brief Construct a new OurRobot
      * @param context A pointer to the global system context object
      * @param shell The robot ID
      */
     OurRobot(Context* context, int shell);
-    ~OurRobot();
 
     void addStatusText();
 
-    void addText(const QString& text, const QColor& color = Qt::white,
+    void addText(const QString& text, const QColor& qc = Qt::white,
                  const QString& layerPrefix = "RobotText");
 
     /// true if the kicker is ready
@@ -152,7 +163,7 @@ public:
     float kickTimer() const;
 
     /// segment for the location of the kicker
-    const Geometry2d::Segment kickerBar() const;
+    Geometry2d::Segment kickerBar() const;
     /// converts a point to the frame of reference of robot
     Geometry2d::Point pointInRobotSpace(Geometry2d::Point pt) const;
 
@@ -245,7 +256,7 @@ public:
      * @param target - the target point in which the robot will try to bounce
      * the towards
      */
-    void settle(std::optional<Geometry2d::Point> target);
+    void settle(const std::optional<Geometry2d::Point>& target);
 
     /**
      * @brief Approaches the ball and moves through it slowly
@@ -255,7 +266,7 @@ public:
     /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */
-    void worldVelocity(Geometry2d::Point targetWorldVel);
+    void worldVelocity(Geometry2d::Point v);
 
     /**
      * Face a point while remaining in place
@@ -586,17 +597,21 @@ private:
      */
     // note: originally this was not a pointer, but I got weird errors about a
     // deleted copy constructor...
-    std::stringstream* _cmdText;
+    std::stringstream _cmdText;
 
     void _clearCmdText();
 
-    /// default values for avoid radii
-    static ConfigDouble* _selfAvoidRadius;
-    static ConfigDouble* _oppAvoidRadius;
-    static ConfigDouble* _oppGoalieAvoidRadius;
-    static ConfigDouble* _dribbleOutOfBoundsOffset;
+    struct RadiiConfig {
+        std::unique_ptr<ConfigDouble> self_avoid_radius;
+        std::unique_ptr<ConfigDouble> opp_avoid_radius;
+        std::unique_ptr<ConfigDouble> opp_goalie_avoid_radius;
+        std::unique_ptr<ConfigDouble> dribble_out_of_bounds_offset;
+    };
 
-    int8_t _planningPriority;
+    /// default values for avoid radii
+    static RadiiConfig radii_config_;
+
+    int8_t _planningPriority{};
 };
 
 /**

@@ -1,0 +1,21 @@
+---
+Checks:          '-*,
+                  llvm-namespace-comment,
+                  boost-*,
+                  bugprone-*,
+                  cppcoreguidelines-*,
+                  misc-*,
+                  modernize-*,
+                  performance-*,
+                  readability-*,
+                  -modernize-use-trailing-return-type,
+                  -clang-diagnostic-unused-command-line-argument,
+                  -cppcoreguidelines-pro-bounds-constant-array-index,
+                  -cppcoreguidelines-avoid-magic-numbers,
+                  -readability-redundant-member-init,
+                  -readability-magic-numbers,
+                  -readability-uppercase-literal-suffix,
+                  '
+#WarningsAsErrors: '*'
+AnalyzeTemporaryDtors: false
+...

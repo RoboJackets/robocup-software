@@ -1,10 +1,12 @@
 #include "Configuration.hpp"
 
+#include <cassert>
+#include <cstdio>
+
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-
-#include <stdio.h>
-#include <assert.h>
+#include <iostream>
+#include <utility>
 
 std::list<Configurable*>* Configurable::_configurables;
 
@@ -14,12 +16,11 @@ static const int ConfigItemRole = Qt::UserRole;
 Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this
 
 ConfigItem::ConfigItem(Configuration* config, const QString& name,
-                       std::string description) {
-    _config = config;
-    _treeItem = nullptr;
-    _path = name.split('/');
-    _description = description;
-}
+                       std::string description)
+    : _config{config},
+      _treeItem{nullptr},
+      _path{name.split('/')},
+      _description{std::move(description)} {}
 
 ConfigItem::~ConfigItem() {
     if (_treeItem) {
@@ -39,10 +40,9 @@ void ConfigItem::setupItem() { _treeItem->setText(1, toString()); }
 
 ////////
 
-ConfigBool::ConfigBool(Configuration* tree, QString name, bool value,
-                       std::string description)
-    : ConfigItem(tree, name, description) {
-    _value = value;
+ConfigBool::ConfigBool(Configuration* tree, const QString& name, bool value,
+                       const std::string& description)
+    : ConfigItem(tree, name, description), _value{value} {
     addItem();
 }
 
@@ -78,10 +78,9 @@ void ConfigBool::setupItem() {
 
 ////////
 
-ConfigInt::ConfigInt(Configuration* config, QString name, int value,
-                     std::string description)
-    : ConfigItem(config, name, description) {
-    _value = value;
+ConfigInt::ConfigInt(Configuration* config, const QString& name, int value,
+                     const std::string& description)
+    : ConfigItem(config, name, description), _value{value} {
     addItem();
 }
 
@@ -91,10 +90,9 @@ void ConfigInt::setValueString(const QString& str) { _value = str.toInt(); }
 
 ////////
 
-ConfigDouble::ConfigDouble(Configuration* config, QString name, double value,
-                           std::string description)
-    : ConfigItem(config, name, description) {
-    _value = value;
+ConfigDouble::ConfigDouble(Configuration* config, const QString& name,
+                           double value, const std::string& description)
+    : ConfigItem(config, name, description), _value{value} {
     addItem();
 }
 
@@ -192,7 +190,7 @@ void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
     }
 }
 
-ConfigItem* Configuration::nameLookup(const std::string name) const {
+ConfigItem* Configuration::nameLookup(const std::string& name) const {
     QStringList path = QString::fromStdString(name).split('/');
     for (ConfigItem* item : _allItems) {
         if (item->path() == path) {
