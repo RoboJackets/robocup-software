@@ -35,7 +35,6 @@ using namespace Geometry2d;
 //todo(motion planning) find a better way to handle moving targets
 RJ::Time SettlePlanner::bruteForceIntercept(const PlanRequest& request) {
     Ball& ball = request.context->state.ball;
-    RJ::Time startTime = RJ::now();
     std::vector<double> dists;
     double endDist = *_searchEndDist;
     const Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
@@ -64,16 +63,15 @@ RJ::Time SettlePlanner::bruteForceIntercept(const PlanRequest& request) {
         //todo(Ethan) full copy or request.copyNoHistory()?
         Trajectory path = intercept(request.copyNoHistory(), contactTime);
         if(!path.empty()) {
+#pragma omp critical
+{
             if (path.end_time() + RJ::Seconds{*_bufferTimeBeforeContact} < contactTime
             && contactTime < interceptTime) {
-#pragma omp critical
-                {
-                    interceptTime = contactTime;
-                }
+                interceptTime = contactTime;
             }
+}
         }
     }
-    printf("Settle brute force to %.1f took %.3f sec\n", endDist, RJ::Seconds(RJ::now()-startTime).count());//todo(Ethan) delete
     return interceptTime;
 }
 Trajectory SettlePlanner::intercept(PlanRequest&& request, RJ::Time interceptTime) {
@@ -99,9 +97,9 @@ Trajectory SettlePlanner::plan(PlanRequest&& request) {
     Point ballVel = ball.vel;
     Pose targetPose = findTargetPose(request);
     Segment ballLine{ball.pos, targetPose.position()};
-    request.context->debug_drawer.drawLine(ballLine, Qt::white);
-    request.context->debug_drawer.drawCircle(targetPose.position(), Robot_MouthRadius, Qt::black);
-    request.context->debug_drawer.drawLine(targetPose.position(), targetPose.position() + Point::direction(targetPose.heading()) * 2 * Robot_Radius, Qt::black);
+    request.context->debug_drawer.drawLine(ballLine, Qt::white, "Planning");
+    request.context->debug_drawer.drawCircle(targetPose.position(), Robot_MouthRadius, Qt::black, "Planning");
+    request.context->debug_drawer.drawLine(targetPose.position(), targetPose.position() + Point::direction(targetPose.heading()) * 2 * Robot_Radius, Qt::black, "Planning");
 
     // Shortcut Path: if we are almost done, move directly toward the ball line
     // This prevents the planner from suddenly changing the target just before

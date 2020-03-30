@@ -80,19 +80,18 @@ void MotionControl::run() {
     // evaluate path - where should we be right now?
     std::optional<RobotInstant> optTarget =
             _robot->path().evaluate(timeIntoPath);
-//todo(Ethan) verify this with Kyle,
-//add this in case of planner failure, but this shouldn't ever happen
-//    if (_robot->path().empty()) {
-//        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
-//        optTarget = target;
-//    }
-    assert(!_robot->path().empty());
+    //add this in case of planner failure, but this shouldn't ever happen
+    if (_robot->path().empty()) {
+        debugThrow("Error: Planner Failed. empty path.");
+        RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
+        optTarget = target;
+    }
 
     QColor targetColor = optTarget ? Qt::green : Qt::red;
     if (!optTarget) {
         optTarget = _robot->path().last();
     }
-    _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, targetColor,"Planning");
+    _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, targetColor,"Motion");
     Point robotPoint = _robot->pose().position();
     _context->debug_drawer.drawLine(Geometry2d::Segment(
             optTarget->pose.position(),

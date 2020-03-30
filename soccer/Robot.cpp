@@ -174,10 +174,10 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
         cout << " in OurRobot::moveTuning(goal): adding a goal (" << goal.x()
              << ", " << goal.y() << ")" << endl;
 
-    Planning::MotionInstant goal_instant;
-    goal_instant.pos = goal;
-    goal_instant.vel = (goal - pos()).normalized() * endSpeed;
-    setMotionCommand(std::make_unique<MotionCommand>(Planning::TuningPathCommand{goal_instant}));
+    Geometry2d::Point targetPoint = goal;
+    Geometry2d::Point targetVel = (goal - pos()).normalized() * endSpeed;
+    Planning::RobotInstant goal_instant{Geometry2d::Pose{targetPoint,0},Geometry2d::Twist{targetVel, 0}, RJ::Time{0s}};
+    setMotionCommand(std::make_unique<MotionCommand>(Planning::PathTargetCommand{goal_instant}));
 
     *_cmdText << "moveTuning(" << goal << ")" << endl;
     *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
@@ -192,8 +192,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << goal.y() << ")" << std::endl;
 
     Planning::RobotInstant goal_instant;
-    //todo(Ethan) fix this angle
-    goal_instant.pose = Pose{goal, angle()};
+    goal_instant.pose = Pose{goal, 0};
     goal_instant.velocity = Twist{endVelocity, 0};
     setMotionCommand(std::make_unique<MotionCommand>(Planning::PathTargetCommand{goal_instant}));
 
@@ -221,13 +220,12 @@ void OurRobot::lineKick(Point target) {
 
 void OurRobot::intercept(Point target) {
     if (!visible()) return;
-    //todo(Ethan) add the InterceptPlanner
     disableAvoidBall();
     setMotionCommand(std::make_unique<MotionCommand>(Planning::InterceptCommand{target}));
 }
 
 void OurRobot::worldVelocity(Geometry2d::Point v) {
-    setMotionCommand(std::make_unique<MotionCommand>(Planning::WorldVelTargetCommand{Twist{v, 0}}));
+    setMotionCommand(std::make_unique<MotionCommand>(Planning::WorldVelCommand{v}));
     *_cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
 }
 

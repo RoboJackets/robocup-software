@@ -43,7 +43,8 @@ static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles",
     "Planning0",     "Planning1",        "Planning2",
     "Planning3",     "Planning4",        "Planning5",
-    "PlanningDebugText", "MotionCommands", "Angle Planning", "Settle Brute Force"};
+    "PlanningDebugText", "MotionCommands",
+    "Planning", "Angle Planning", "Settle Brute Force"};
 
 void calcMinimumWidth(QWidget* widget, QString text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);

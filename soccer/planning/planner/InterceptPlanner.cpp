@@ -26,6 +26,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
     RobotInstant targetInstant{Pose{targetPoint, 0}, Twist{}, RJ::Time{0s}};
     if (botToTarget.mag() < Robot_Radius / 2) {
         auto path = CreatePath::simple(startInstant, targetInstant, request.constraints.mot);
+        if(path.empty()) return reuse(std::move(request));
         PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos), request.constraints.rot);
         path.setDebugText("AtPoint");
         return std::move(path);
@@ -46,7 +47,8 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
             break;
         }
     }
-    printf("Intercept brute force took %d sec\n", RJ::Seconds{RJ::now()-startTime}.count());
+    printf("Intercept brute force took %.2f sec\n", RJ::Seconds{RJ::now()-startTime}.count());
+    if(path.empty()) return reuse(std::move(request));
     return std::move(path);
 }
 }  // namespace Planning

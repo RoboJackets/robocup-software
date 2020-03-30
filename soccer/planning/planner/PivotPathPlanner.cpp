@@ -43,7 +43,7 @@ namespace Planning {
             Point newTargetPoint = pivotPoint + (pivotPoint-pivotTarget).normalized(radius);
             targetIsDifferent = (newTargetPoint - prevTargetPoint).mag() > 0.1;
         }
-
+        //todo(Ethan) verify this with the old code
         bool pathTooOld = false;// RJ::now() - prevTime > 0.5s;
 
         if(prevTrajectory.num_instants() < 2 || targetIsDifferent || pathTooOld) {

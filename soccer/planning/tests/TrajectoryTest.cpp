@@ -211,7 +211,7 @@ TEST(RRT, Time) {
     printf("RRTTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
 }
 
-TEST(Trajectory, CreatePath::rrtSmall) {
+TEST(Trajectory, createRRTSmall) {
     RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
     Trajectory a = CreatePath::rrt(start, start, MotionConstraints{}, {});
     ASSERT_FALSE(a.empty());
@@ -268,7 +268,7 @@ TEST(Trajectory, CombiningTrajectories_and_SubTrajectories) {
     assertPathContinuous(combo2, constraints);
 }
 
-TEST(Trajectory, CreatePath::rrtSuccessRate) {
+TEST(Trajectory, CreateRRTSuccessRate) {
     int fails = 0;
     constexpr int iterations = 1000;
     constexpr int numTries = 300;

@@ -6,16 +6,16 @@
 namespace Planning {
 class PathTargetPlanner: public PlannerForCommandType<PathTargetCommand> {
 public:
-    PathTargetPlanner(): PlannerForCommandType<PathTargetCommand>("PathTargetPlanner"), drawRadius(Robot_Radius), drawColor(Qt::black), drawLayer("PathTargetPlanner") {}
+    PathTargetPlanner(): PlannerForCommandType("PathTargetPlanner") {}
     ~PathTargetPlanner() override = default;
 
     Trajectory plan(PlanRequest &&request);
 
     static void createConfiguration(Configuration* cfg);
 
-    double drawRadius;
-    QColor drawColor;
-    QString drawLayer;
+    double drawRadius = Robot_Radius;
+    QColor drawColor = Qt::black;
+    QString drawLayer = "Planning";
 
     static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
     static double partialReplanLeadTime() { return *_partialReplanLeadTime; }

@@ -7,8 +7,7 @@ using Geometry2d::Pose;
 using Geometry2d::Twist;
 
 namespace VelocityProfileConstants{
-    //todo(Ethan) increase
-    constexpr int inerpolationsPerBezier = 10;
+    constexpr int interpolationsPerBezier = 40;
     constexpr int extraAngleInterpolations = 10;
 }
 using namespace VelocityProfileConstants;
@@ -53,7 +52,7 @@ Trajectory ProfileVelocity(const BezierPath& path,
     const int num_beziers = path.size();
     // number of points that will be in the final trajectory
     // add one to account for the final instant
-    const int num_points = num_beziers * inerpolationsPerBezier + 1;
+    const int num_points = num_beziers * interpolationsPerBezier + 1;
 
     // Scratch data that we will use later.
     std::vector<Point> points(num_points), derivs1(num_points);

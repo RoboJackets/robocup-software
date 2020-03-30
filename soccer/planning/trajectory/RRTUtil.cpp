@@ -8,7 +8,6 @@
 #include "planning/trajectory/VelocityProfiling.hpp"
 
 namespace Planning {
-//todo(Ethan) fix this
 REGISTER_CONFIGURABLE(RRTConfig)
 
 ConfigBool* RRTConfig::EnableRRTDebugDrawing;
@@ -38,6 +37,7 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
     MinIterations = new ConfigInt(
             cfg, "PathPlanner/RRT/MinIterations", 100,
             "The minimum number of iterations for running RRT");
+    //todo(Ethan) can this be increased. RRT fails sometimes. testing needed
     MaxIterations = new ConfigInt(
             cfg, "PathPlanner/RRT/MaxIterations", 250,
             "The maximum number of iterations for running RRT");

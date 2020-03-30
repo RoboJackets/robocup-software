@@ -11,7 +11,6 @@
 
 namespace Planning {
 
-//todo(Ethan) delete these
 struct SettleCommand{};
 struct CollectCommand{};
 struct LineKickCommand{
@@ -26,7 +25,8 @@ struct EmptyCommand {};
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
- //todo(Ethan) use a MotionInstant instead?
+ // note: as of now the heading and angular velocity are ignored
+ // TODO use heading and angular velocity or change this to a MotionInstant
 struct PathTargetCommand {
     RobotInstant pathGoal;
 };
@@ -34,8 +34,8 @@ struct PathTargetCommand {
 /**
  * Move with a particular velocity.
  */
-struct WorldVelTargetCommand {
-    Geometry2d::Twist worldVel;
+struct WorldVelCommand {
+    Geometry2d::Point worldVel;
 };
 
 /**
@@ -46,15 +46,6 @@ struct WorldVelTargetCommand {
 struct PivotCommand {
     Geometry2d::Point pivotPoint;
     Geometry2d::Point pivotTarget;
-};
-
-/**
- * Move to a particular point, ignoring obstacles.
- *
- * Designed to be used for tuning.
- */
-struct TuningPathCommand {
-    MotionInstant pathGoal;
 };
 
 /**
@@ -69,9 +60,8 @@ struct InterceptCommand {
 using MotionCommand = std::variant<
         EmptyCommand,
         PathTargetCommand,
-        WorldVelTargetCommand,
+        WorldVelCommand,
         PivotCommand,
-        TuningPathCommand,
         SettleCommand,
         CollectCommand,
         LineKickCommand,

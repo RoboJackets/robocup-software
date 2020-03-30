@@ -68,8 +68,6 @@ void PlannerNode::run() {
         // Construct a plan request.
         if (robot->motionCommand()) {
             const RobotState &robotState = robot->state();
-            //todo(Ethan) delete this
-            assert(robotState.timestamp <= RJ::now());
             requests.emplace_back(
                     context_, RobotInstant{robotState.pose, robotState.velocity,
                                            robotState.timestamp},
@@ -98,9 +96,8 @@ void PlannerNode::run() {
         context_->debug_drawer.drawText((const char*[]) {
                 "EmptyCommand",
                 "PathTargetCommand",
-                "WorldVelTargetCommand",
+                "WorldVelCommand",
                 "PivotCommand",
-                "TuningPathCommand",
                 "SettleCommand",
                 "CollectCommand",
                 "LineKickCommand",
