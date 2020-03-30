@@ -15,47 +15,33 @@ namespace Planning {
     using Geometry2d::Shape;
     using Geometry2d::Segment;
 
+    Trajectory::Trajectory(Trajectory&& other): instants_(std::move(other.instants_)), _debugText(std::move(other._debugText)), stamp(other.stamp) {
+        other._debugText = std::nullopt;
+        other.stamp = RJ::Time{0s};
+    }
+
     Trajectory &Trajectory::operator=(Trajectory &&other) {
         //move data into *this
         instants_ = std::move(other.instants_);
         _debugText = std::move(other._debugText);
-        angle_override = std::move(other.angle_override);
+        stamp=other.stamp;
         //clear data in other
-        other.instants_ = {};
-        other._debugText = "MOVED FROM";
-        other.angle_override = std::nullopt;
-        return *this;
-    }
-
-    Trajectory &Trajectory::operator=(const Trajectory &other) {
-        instants_ = other.instants_;
-        _debugText = other._debugText;
-        angle_override = other.angle_override;
+        other._debugText = std::nullopt;
+        other.stamp = RJ::Time{0s};
         return *this;
     }
 
     Trajectory::Trajectory(const Trajectory &a, const Trajectory &b):
     Trajectory(Trajectory{a}, Trajectory{b}) {}
 
-    Trajectory::Trajectory(Trajectory &&a, Trajectory &&b) {
+    Trajectory::Trajectory(Trajectory &&a, Trajectory &&b): stamp(b.stamp) {
         instants_ = std::move(a.instants_);
         if(!b.empty()) b.instants_.pop_front();
         instants_.splice(instants_.end(), std::move(b.instants_));
     }
 
-//    void Trajectory::InsertInstant(RobotInstant instant) {
-//        instants_.insert(std::upper_bound(
-//                instants_.begin(),
-//                instants_.end(),
-//                instant,
-//                [](RobotInstant a, RobotInstant b) {
-//                    return a.stamp < b.stamp;
-//                }), instant);
-//    }
-
     void Trajectory::AppendInstant(RobotInstant instant) {
         assert(empty() || instant.stamp > end_time());
-
         instants_.push_back(instant);
     }
 
@@ -73,6 +59,7 @@ namespace Planning {
 
     void Trajectory::ScaleDuration(RJ::Seconds final_duration,
                                    RJ::Time fixed_point) {
+        assert(fixed_point >= begin_time() && fixed_point <= end_time());
         double multiplier = final_duration / duration();
 
         for (RobotInstant &instant : instants_) {
@@ -100,6 +87,8 @@ namespace Planning {
     }
 
     RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry, const RobotInstant& next_entry, RJ::Time time) {
+        assert(time >= prev_entry.stamp);
+        assert(time <= next_entry.stamp);
         RJ::Seconds dt = next_entry.stamp - prev_entry.stamp;
         if (dt == RJ::Seconds(0)) {
             return next_entry;
@@ -149,16 +138,23 @@ namespace Planning {
     bool Trajectory::hit(const Geometry2d::ShapeSet &obstacles,
                          RJ::Seconds startTimeIntoPath,
                          RJ::Seconds *hitTime) const {
+        if(startTimeIntoPath < 0s) {
+            debugThrow("Error in Trajectory::hit(). Invalid start time\n");
+        }
         if(empty() || startTimeIntoPath > duration()) {
             return false;
         }
-        TrajectoryIterator it = iterator(begin_time() + startTimeIntoPath, (duration() - startTimeIntoPath) * 0.01);
+        //this fixes the edge case where we increment by a duration of 0s and
+        // end up looping forever TODO do this in a more readable way
+        constexpr int max_iterations = 100;
+        TrajectoryIterator it = iterator(begin_time() + startTimeIntoPath, (duration() - startTimeIntoPath) / (double)max_iterations);
 
         RobotInstant currentInstant = *it;
         // This code disregards obstacles which the robot starts in. This allows the
         // robot to move out a obstacle if it is already in one.
         std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(
                 currentInstant.pose.position());
+        int counter = 0;
         while (it.hasNext()) {
             ++it;
             RobotInstant nextInstant = *it;
@@ -177,10 +173,14 @@ namespace Planning {
                 }
             }
             currentInstant = nextInstant;
+            counter++;
+            if(counter > max_iterations) {
+                break;
+            }
         }
         return false;
     }
-
+    //todo(Ethan) delete hitLocation. i think it doesn't work for static hits
     bool Trajectory::intersects(const std::vector<DynamicObstacle> &obstacles,
                                 RJ::Time startTime,
                                 Geometry2d::Point *hitLocation,
@@ -193,7 +193,11 @@ namespace Planning {
             if (obs.path->empty()) {
                 Geometry2d::ShapeSet set;
                 set.add(obs.circle);
-                if (hit(set, startTime - begin_time(), hitTime)) {
+                RJ::Seconds staticHit; //temporary to prevent side effects
+                if (hit(set, startTime - begin_time(), &staticHit)) {
+                    if(hitTime) {
+                        *hitTime = staticHit;
+                    }
                     return true;
                 }
             } else {
@@ -218,9 +222,6 @@ namespace Planning {
         }
         return false;
     }
-    //todo(Ethan) make this function more efficient, we shouldn't have to copy
-    //this will require being careful about how the subtrajectories are used though.
-    //and the combo trajectory constructors would need to be changed to l-value ref
     Trajectory Trajectory::subTrajectory(RJ::Seconds startTime,
                                          RJ::Seconds endTime) const {
         // Check for valid arguments
@@ -265,7 +266,7 @@ namespace Planning {
         // Copy until the time is greater than or equal to endTime. Noninclusive
         // because we always copy eval(endTime)
         RJ::Time absolute_end_time = begin_time() + endTime;
-        RobotInstant instantBeforeEnd = *instants_it;
+        RobotInstant instantBeforeEnd = *std::prev(instants_it);
         while ((*instants_it).stamp < absolute_end_time) {
             instants.push_back(*instants_it);
             instantBeforeEnd = *instants_it;
@@ -276,8 +277,24 @@ namespace Planning {
         return Trajectory{std::move(instants)};
     }
 
-    Trajectory::TrajectoryIterator
-    Trajectory::iterator(RJ::Time startTime, RJ::Seconds deltaT) const {
+    void Trajectory::trimFront(RJ::Seconds startTime) {
+        if(startTime == 0s) {
+            return;
+        }
+        std::optional<RobotInstant> startInstant = evaluate(startTime);
+        if(!startInstant) {
+            if(startTime > 0s) instants_ = {};
+            return;
+        }
+        while(!instants_.empty() && instants_.front().stamp < startInstant->stamp) {
+            instants_.pop_front();
+        }
+        if(startInstant->stamp < instants_.front().stamp) {
+            instants_.push_front(*startInstant);
+        }
+    }
+
+    TrajectoryIterator Trajectory::iterator(RJ::Time startTime, RJ::Seconds deltaT) const {
         return TrajectoryIterator(*this, startTime, deltaT);
     }
 
@@ -304,8 +321,44 @@ namespace Planning {
                 textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
             }
             drawer->drawText(_debugText.value(), textPos,
-                             QColor(100, 100, 255, 100));
+                             QColor(100, 100, 255, 100),
+                             "PlanningDebugText");
         }
     }
 
+    TrajectoryIterator::TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime, RJ::Seconds deltaT): _trajectory(trajectory), _deltaT(deltaT), _time(startTime) {
+        assert(!trajectory.empty());
+        if(!trajectory.CheckTime(_time)) return;
+        if(startTime < trajectory.begin_time() + trajectory.duration() * 0.5) {
+            _iterator = trajectory.instants_begin();
+            ++_iterator;
+            while(_iterator->stamp <= _time) {
+                ++_iterator;
+            }
+            --_iterator;
+        } else {
+            _iterator = trajectory.instants_end();
+            --_iterator;
+            while(_iterator->stamp > _time) {
+                --_iterator;
+            }
+        }
+    }
+
+    RobotInstant TrajectoryIterator::operator*() const {
+        assert(hasValue());
+        if (!hasNext()) {
+            return _trajectory.last();
+        }
+        return Trajectory::interpolatedInstant(*_iterator, *std::next(_iterator), _time);
+    }
+
+    void TrajectoryIterator::advance(RJ::Time time) {
+        _time = time;
+        ++_iterator;
+        while (_iterator != _trajectory.instants_end() && _iterator->stamp <= _time) {
+            ++_iterator;
+        }
+        --_iterator;
+    }
 } // namespace Planning

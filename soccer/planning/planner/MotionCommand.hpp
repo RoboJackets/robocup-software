@@ -11,6 +11,13 @@
 
 namespace Planning {
 
+//todo(Ethan) delete these
+struct SettleCommand{};
+struct CollectCommand{};
+struct LineKickCommand{
+    Geometry2d::Point target;
+};
+
 /**
  * An empty "do-nothing" motion command.
  */
@@ -19,6 +26,7 @@ struct EmptyCommand {};
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
+ //todo(Ethan) use a MotionInstant instead?
 struct PathTargetCommand {
     RobotInstant pathGoal;
 };
@@ -47,24 +55,6 @@ struct PivotCommand {
  */
 struct TuningPathCommand {
     MotionInstant pathGoal;
-};
-
-/**
- * Settle a ball by intercepting it with the mouth facing the ball and
- * perpendicular to it.
- */
-struct SettleCommand {};
-
-/**
- * Collect a stationary/slow moving ball.
- */
-struct CollectCommand {};
-
-/**
- * Kick the ball, with a "windup".
- */
-struct LineKickCommand {
-    Geometry2d::Point target;
 };
 
 /**

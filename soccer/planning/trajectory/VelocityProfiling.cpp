@@ -1,6 +1,4 @@
 #include "VelocityProfiling.hpp"
-#include <motion/TrapezoidalMotion.hpp>
-#include <Utils.hpp>
 
 namespace Planning {
 
@@ -8,10 +6,41 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
-inline double limitAccel(double v1, double v2, double deltaX, double maxAccel) {
+namespace VelocityProfileConstants{
+    //todo(Ethan) increase
+    constexpr int inerpolationsPerBezier = 10;
+    constexpr int extraAngleInterpolations = 10;
+}
+using namespace VelocityProfileConstants;
+
+double limitAccel(double v1, double v2, double deltaX, double maxAccel) {
+    if(deltaX < 0) {
+        debugThrow("Error in limitAccel() can't handle negative distance");
+    } else if (maxAccel < 0) {
+        debugThrow("Error in limitAccel() can't handle negative acceleration");
+    }
     return std::min(v2, std::sqrt(pow(v1, 2) + 2 * maxAccel * deltaX));
 }
-
+double clampAccel(double v1, double v2, double deltaX, double maxAccel) {
+    double two_a_dx = std::abs(2 * maxAccel * deltaX);
+    double lowerBoundSq = v1*v1 - two_a_dx;
+    double lowerBound = lowerBoundSq > 0 ? std::sqrt(lowerBoundSq) : 0;
+    double upperBound = std::sqrt(v1*v1 + two_a_dx);
+    bool thisIsDoAble = (v1 > 0 && deltaX > 0) || (v1 < 0 && deltaX < 0) || (v1*v2 <= 0);
+    if(thisIsDoAble) {
+        if(deltaX > 0) {
+            return std::clamp(v2, lowerBound, upperBound);
+        } else {
+            return std::clamp(v2, -upperBound, -lowerBound);
+        }
+    } else {
+        // the robot changed direction and did a zig-zag thing with
+        // non-constant acceleration (ugh)
+        // or deltaX is 0 (shouldn't happen)
+        assert(false);
+        return v2;
+    }
+}
 Trajectory ProfileVelocity(const BezierPath& path,
                            double initial_speed,
                            double final_speed,
@@ -20,13 +49,11 @@ Trajectory ProfileVelocity(const BezierPath& path,
     if(path.empty()) {
         return Trajectory{{}};
     }
-    // number of points used to interpolate each bezier segment
-    constexpr int interpolations = 40;
     // number of cubic bezier segments
     const int num_beziers = path.size();
     // number of points that will be in the final trajectory
     // add one to account for the final instant
-    const int num_points = num_beziers * interpolations + 1;
+    const int num_points = num_beziers * inerpolationsPerBezier + 1;
 
     // Scratch data that we will use later.
     std::vector<Point> points(num_points), derivs1(num_points);
@@ -52,6 +79,15 @@ Trajectory ProfileVelocity(const BezierPath& path,
             speed[n] = std::min(speed[n], std::sqrt(maxCentripetalAccel / curvature[n]));
         }
     }
+//    //if derives1 = 0 at the at the endpoints curvature gets undefined
+//    if(num_points > 1) {
+//        if(derivs1[0].mag() < 1e-6) {
+//            curvature[0] = curvature[1];
+//        }
+//        if(derivs1[num_points-1].mag() < 1e-6) {
+//            curvature[num_points-1] = curvature[num_points-2];
+//        }
+//    }
 
     using std::pow;
     // Acceleration pass: calculate maximum velocity at each point based on
@@ -59,7 +95,7 @@ Trajectory ProfileVelocity(const BezierPath& path,
     for (int n = 0; n < num_points-1; n++) {
         double centripetal = speed[n] * speed[n] * curvature[n];
         double maxTanAccelSquared = pow(constraints.maxAcceleration, 2) - pow(centripetal, 2);
-        double maxTangentAccel = std::abs(maxTanAccelSquared) < 0.0000001 ? 0.0 : std::sqrt(maxTanAccelSquared);
+        double maxTangentAccel = std::abs(maxTanAccelSquared) < 1e-6 ? 0.0 : std::sqrt(maxTanAccelSquared);
         assert(!std::isnan(maxTangentAccel) && !std::isinf(maxTangentAccel));
         double distance = (points[n + 1] - points[n]).mag();
         speed[n + 1] = limitAccel(speed[n], speed[n + 1], distance, maxTangentAccel);
@@ -78,18 +114,80 @@ Trajectory ProfileVelocity(const BezierPath& path,
 
     Trajectory trajectory{{}};
     trajectory.AppendInstant(RobotInstant{Pose{points[0], 0}, Twist{derivs1[0].normalized(speed[0]), 0}, initial_time});
-    RJ::Time current_time = initial_time;
     for (int n = 1; n < num_points; n++) {
-        double distance = (points[n] - points[n - 1]).mag();
+        Point deltaPos = points[n]-points[n-1];
+        double distance;
+        double centerAngle = derivs1[n-1].angleBetween(deltaPos) * 2;
+//        if(curvature[n-1] == 0 || centerAngle < 1e-6) {
+            // straight line distance
+            distance = deltaPos.mag();
+//        } else {
+//            // calculate arc length
+//            double radius = 1 / curvature[n-1];
+//            //todo(Ethan) fix this
+////            assert(radius > deltaPos.mag() / 2);
+//            radius = std::max(deltaPos.mag()/2, radius);
+//            distance = radius * centerAngle;
+//        }
         double vbar = (speed[n] + speed[n - 1]) / 2;
         assert(vbar != 0);
         double t_sec = distance / vbar;
-        current_time = current_time + RJ::Seconds(t_sec);
+        assert(t_sec > 1e-12);
+        RJ::Time current_time = trajectory.last().stamp + RJ::Seconds(t_sec);
         // Add point n in
         trajectory.AppendInstant(RobotInstant{Pose(points[n], 0), Twist(derivs1[n].normalized(speed[n]), 0), current_time});
     }
     return std::move(trajectory);
 }
+
+/*
+ * Return to the current position with angular velocity = 0
+ *
+ * current angle     (stoppingAngle)          0 vel
+ * |-------------------------------------------|
+ * >>>>>>>>>>>>>> stopping >>>>>>>>>>>>>>>>>>>>>
+ *                      <<<<<< accelerating <<<<
+ * <<<<<< stopping <<<<<
+ */
+void appendStop(std::vector<double>& angles, std::vector<double>& angleVels, double maxSpeed, double maxAccel) {
+    assert(maxSpeed > 1e-12);
+    assert(maxAccel > 1e-12);
+    assert(std::abs(angleVels.back()) > 1e-12);
+    if(std::abs(angleVels.back()) > 1e-12) {
+        double accel = maxAccel * (angleVels.back() > 0 ? -1 : 1);
+        double stoppingAngle = -std::pow(angleVels.back(), 2) / (2 * accel);
+        double goal = angles.back();
+        // stopping
+        angles.push_back(goal + stoppingAngle);
+        angleVels.push_back(0);
+        // accelerating
+        angles.push_back(goal + stoppingAngle / 2);
+        double speedUncapped = std::sqrt(2 * maxAccel * std::abs(stoppingAngle/2));
+        double returnSpeedMax = std::min(maxSpeed, speedUncapped);
+        angleVels.push_back(returnSpeedMax * (stoppingAngle > 0 ? -1 : 1));
+        // stopping
+        angles.push_back(goal);
+        angleVels.push_back(0);
+    }
+}
+/**
+ * Stop as soon as possible. we will end up at a different position:
+ * current angle     (stoppingAngle)          0 vel
+ * |-------------------------------------------|
+ * >>>>>>>>>>>>>> stopping >>>>>>>>>>>>>>>>>>>>>
+ */
+void appendStopWithDrift(std::vector<double>& angles, std::vector<double>& angleVels, double maxSpeed, double maxAccel) {
+    assert(maxSpeed > 1e-12);
+    assert(maxAccel > 1e-12);
+    assert(std::abs(angleVels.back()) > 1e-12);
+    if(std::abs(angleVels.back()) > 1e-12) {
+        double accel = maxAccel * (angleVels.back() > 0 ? -1 : 1);
+        double stoppingAngle = -std::pow(angleVels.back(), 2) / (2 * accel);
+        angles.push_back(angles.back() + stoppingAngle);
+        angleVels.push_back(0);
+    }
+}
+//todo(Ethan) do velocity profile on angles
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
@@ -97,54 +195,19 @@ void PlanAngles(Trajectory& trajectory,
     if(trajectory.empty()) {
         return;
     }
-    trajectory.first().pose.heading() = start_instant.pose.heading();
-    trajectory.first().velocity.angular() = start_instant.velocity.angular();
-
-    // Move forwards in time. At each instant, calculate the goal angle and its
-    // time derivative, and try to get there with a trapezoidal profile.
-
-    // limit velocity
-    // skip the first instant
     auto instants_it = trajectory.instants_begin();
-    RobotInstant instant_initial = *instants_it;
+    instants_it->pose.heading() = start_instant.pose.heading();
+    instants_it->velocity.angular() = std::clamp(start_instant.velocity.angular(), -constraints.maxSpeed, constraints.maxSpeed);
+    RobotInstant instant_before = *instants_it;
     ++instants_it;
-    while (instants_it != trajectory.instants_end()) {
-        RobotInstant& instant_final = *instants_it;
-        double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
-        double delta_angle = fixAngleRadians(angle_function(instant_final)
-                                     - instant_initial.pose.heading());
-        double vel = delta_angle / deltaTime;
-//        vel = std::clamp(vel, -constraints.maxSpeed, constraints.maxSpeed);
-        instant_final.pose.heading() = angle_function(instant_final);//instant_initial.pose.heading() + vel * deltaTime;
-        instant_final.velocity.angular() = vel;
-        instant_initial = instant_final;
+    for (int i = 1; instants_it != trajectory.instants_end(); i++) {
+        RobotInstant& instant_after = *instants_it;
+        double deltaTime = RJ::Seconds(instant_after.stamp-instant_before.stamp).count();
+        instant_after.pose.heading() = angle_function(instant_before);
+        double deltaAngle = fixAngleRadians(instant_after.pose.heading() - instant_before.pose.heading());
+        instant_after.velocity.angular() = deltaAngle / deltaTime;
+        instant_before = instant_after;
         ++instants_it;
-    }
-    instants_it = trajectory.instants_begin();
-    instant_initial = *instants_it;
-    ++instants_it;
-    // limit acceleration (forward)
-    while (instants_it != trajectory.instants_end()) {
-        RobotInstant& instant_final = *instants_it;
-        double w0 = instant_initial.velocity.angular();
-        double& wf = instant_final.velocity.angular();
-        double deltaTime = RJ::Seconds(instant_final.stamp - instant_initial.stamp).count();
-        wf = std::clamp(wf, w0 - constraints.maxAccel * deltaTime, w0 + constraints.maxAccel * deltaTime);
-        instant_initial = instant_final;
-        ++instants_it;
-    }
-    instants_it = trajectory.instants_end();
-    --instants_it;
-    instant_initial = *instants_it;
-    // limit deceleration (backward)
-    while(instants_it != trajectory.instants_begin()) {
-        --instants_it;
-        RobotInstant& instant_final = *instants_it;
-        double w0 = instant_initial.velocity.angular();
-        double& wf = instant_final.velocity.angular();
-        double deltaTime = RJ::Seconds(instant_initial.stamp - instant_final.stamp).count();
-        wf = std::clamp(wf, w0 - constraints.maxAccel * deltaTime, w0 + constraints.maxAccel * deltaTime);
-        instant_initial = instant_final;
     }
 }
 } // namespace Planning

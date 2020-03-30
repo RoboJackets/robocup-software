@@ -1,49 +1,40 @@
 #pragma once
-
-#include "Planner.hpp"
-#include "planning/trajectory/RoboCupStateSpace.hpp"
-#include <Geometry2d/Point.hpp>
 #include <vector>
-#include <memory>
+#include "Planner.hpp"
 #include "planning/trajectory/VelocityProfiling.hpp"
 
 namespace Planning {
-
-class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
+class PathTargetPlanner: public PlannerForCommandType<PathTargetCommand> {
 public:
-    PathTargetPlanner(): prevTimes(Num_Shells, RJ::now()-60s), anglePlanningEnabled(true) {}
+    PathTargetPlanner(): PlannerForCommandType<PathTargetCommand>("PathTargetPlanner"), drawRadius(Robot_Radius), drawColor(Qt::black), drawLayer("PathTargetPlanner") {}
+    ~PathTargetPlanner() override = default;
 
-    Trajectory plan(PlanRequest&& request) override;
-    Trajectory planWithoutAngles(PlanRequest&& request) {
-        anglePlanningEnabled = false;
-        Trajectory path = plan(std::move(request));
-        anglePlanningEnabled = true;
-        return std::move(path);
-    }
+    Trajectory plan(PlanRequest &&request);
 
-    std::string name() const override { return "PathTargetPlanner"; }
     static void createConfiguration(Configuration* cfg);
 
-    bool isApplicable(const MotionCommand& command) const override {
-        return std::holds_alternative<PathTargetCommand>(command) || std::holds_alternative<WorldVelTargetCommand>(command);
-    }
+    double drawRadius;
+    QColor drawColor;
+    QString drawLayer;
 
-    static RJ::Seconds getPartialReplanLeadTime() { return RJ::Seconds(*_partialReplanLeadTime);}
+    static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
+    static double partialReplanLeadTime() { return *_partialReplanLeadTime; }
 private:
+    Trajectory checkBetter(PlanRequest&& request, RobotInstant goalInstant);
+    Trajectory partialReplan(PlanRequest&& request, RobotInstant goalInstant);
+    Trajectory fullReplan(PlanRequest&& request, RobotInstant goalInstant);
+
+    RobotInstant getGoalInstant(const PlanRequest& request) const;
+    bool veeredOffPath(const PlanRequest& request) const;
+    bool goalChanged(const RobotInstant &prevGoal,
+                                        const RobotInstant &goal) const;
+
     Trajectory partialPath(const Trajectory& prevTrajectory) {
-        return prevTrajectory.subTrajectory(0s, (RJ::now() - prevTrajectory.begin_time()) + getPartialReplanLeadTime());
+        return prevTrajectory.subTrajectory(0s, (RJ::now() - prevTrajectory.begin_time()) + RJ::Seconds{*_partialReplanLeadTime});
     }
 
-    Trajectory fullReplan(PlanRequest&& request, AngleFunction angleFunction);
-    Trajectory partialReplan(PlanRequest&& request, AngleFunction angleFunction);
-    Trajectory reuse(PlanRequest&& request);
-    Trajectory checkBetter(PlanRequest&& request, AngleFunction angleFunction);
-
-    bool goalChanged(const RobotInstant& prevGoal, const RobotInstant& goal) const;
-
-    std::vector<RJ::Time> prevTimes;
-    bool anglePlanningEnabled;
-
+    static ConfigDouble* _goalPosChangeThreshold;
+    static ConfigDouble* _goalVelChangeThreshold;
     static ConfigDouble* _partialReplanLeadTime;
 };
 } // namespace Planning

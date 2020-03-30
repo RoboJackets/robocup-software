@@ -34,6 +34,14 @@ struct PlanRequest {
           priority(priority) {}
 
     /**
+    * return a copy with no history
+    */
+    PlanRequest copyNoHistory() const {
+        return PlanRequest{context, start, motionCommand, constraints, Trajectory{{}},
+                           static_obstacles, dynamic_obstacles, shellID, priority};
+    }
+
+    /**
      * The system context. Used for debug drawing and robot state information.
      */
     Context* context;

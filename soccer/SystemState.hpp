@@ -19,6 +19,8 @@
 #include <Utils.hpp>
 #include <Geometry2d/Arc.hpp>
 #include "planning/MotionInstant.hpp"
+#include "planning/trajectory/Trajectory.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 class RobotConfig;
 class OurRobot;
@@ -32,6 +34,8 @@ class LogFrame;
  * @brief Our beliefs about the ball's position and velocity
  */
 class Ball {
+private:
+    Planning::Trajectory _path = Planning::Trajectory{{}};
 public:
     Geometry2d::Point pos;
     Geometry2d::Point vel;
@@ -50,7 +54,7 @@ public:
 
     double predictSecondsToStop() const;
 
-
+    Planning::DynamicObstacle dynamicObs();
 };
 
 class Context;

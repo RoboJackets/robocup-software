@@ -1,7 +1,8 @@
 #include "planning/planner/PathTargetPlanner.hpp"
-#include "planning/planner/SettlePathPlanner.hpp"
 #include "planning/planner/PivotPathPlanner.hpp"
-#include "planning/planner/CollectPathPlanner.hpp"
+#include "planning/planner/CollectPlanner.hpp"
+#include "planning/planner/SettlePlanner.hpp"
+#include "planning/planner/LineKickPlanner.hpp"
 #include "planning/planner/EscapeObstaclesPathPlanner.hpp"
 #include "PlannerNode.hpp"
 #include "Robot.hpp"
@@ -10,17 +11,18 @@ namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context), plannerIdx(Num_Shells, -1) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
-    planners_.push_back(std::make_unique<SettlePathPlanner>());
-    planners_.push_back(std::make_unique<CollectPathPlanner>());
+    planners_.push_back(std::make_unique<SettlePlanner>());
+    planners_.push_back(std::make_unique<CollectPlanner>());
+    planners_.push_back(std::make_unique<LineKickPlanner>());
     planners_.push_back(std::make_unique<PivotPathPlanner>());
 
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
 }
-
+using namespace Geometry2d;
 void PlannerNode::run() {
-    Geometry2d::ShapeSet globalObstacles = context_->globalObstacles;
-    Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
+    ShapeSet globalObstacles = context_->globalObstacles;
+    ShapeSet globalObstaclesWithGoalZones = globalObstacles;
     globalObstaclesWithGoalZones.add(context_->goalZoneObstacles);
 
     std::vector<PlanRequest> requests;
@@ -52,14 +54,22 @@ void PlannerNode::run() {
                 : globalObstaclesWithGoalZones;
 
         // create and visualize obstacles
-        Geometry2d::ShapeSet staticObstacles =
+        ShapeSet staticObstacles =
                 robot->collectStaticObstacles(
                         globalObstaclesForBot,
                         !robotIgnoreGoalZone);
+        for (OurRobot* r2 : context_->state.self) {
+            if(robot == r2) {
+                continue;
+            }
+            staticObstacles.add(std::make_shared<Circle>(r2->pos(), Robot_Radius));
+        }
 
         // Construct a plan request.
         if (robot->motionCommand()) {
             const RobotState &robotState = robot->state();
+            //todo(Ethan) delete this
+            assert(robotState.timestamp <= RJ::now());
             requests.emplace_back(
                     context_, RobotInstant{robotState.pose, robotState.velocity,
                                            robotState.timestamp},
@@ -81,10 +91,10 @@ void PlannerNode::run() {
         OurRobot* robot = context_->state.self[request.shellID];
         Trajectory plannedPath = PlanForRobot(std::move(request));
         robot->setPath(std::move(plannedPath));
-//        dynamicObstacles.emplace_back(std::make_shared<Geometry2d::Circle>(robot->pos(), Robot_Radius), robot->path()); todo(Ethan) uncomment this
+        dynamicObstacles.emplace_back(std::make_shared<Circle>(robot->pos(), Robot_Radius), robot->path());
 
         //draw debug info
-        robot->path().draw(&context_->debug_drawer, robot->pos() + Geometry2d::Point(.1,0));
+        robot->path().draw(&context_->debug_drawer, robot->pos() + Point(.1,0));
         context_->debug_drawer.drawText((const char*[]) {
                 "EmptyCommand",
                 "PathTargetCommand",
@@ -95,8 +105,7 @@ void PlannerNode::run() {
                 "CollectCommand",
                 "LineKickCommand",
                 "InterceptCommand"
-        }[robot->motionCommand()->index()], robot->pos()+Geometry2d::Point(.1,.3), QColor(100, 100, 255, 100));
-        context_->debug_drawer.drawText(QString("Path Age: ") + std::to_string(RJ::Seconds(RJ::now() - robot->path().begin_time()).count()).c_str(), robot->pos()+Geometry2d::Point(.1, -.2), QColor(100, 100, 255, 100));
+        }[robot->motionCommand()->index()], robot->pos()+Point(.1,.3), QColor(100, 100, 255, 100), "MotionCommands");
     }
 
     // Visualize obstacles
@@ -107,7 +116,7 @@ void PlannerNode::run() {
 }
 
 Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
-    Geometry2d::Point robotPos =  request.context->state.self[request.shellID]->pos();
+    Point robotPos =  request.context->state.self[request.shellID]->pos();
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
@@ -126,16 +135,12 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
                 path = Trajectory{{startInstant}};
                 debugLog("Empty Path. Planner: " + planners_[i]->name());
             }
-            RJ::Seconds deltaTime{RJ::now() - t0};
-            if(deltaTime > 5ms) {
-//                debugLog("Planner " + planners_[i]->name() + " took " + std::to_string((int)(deltaTime.count()*1000)) + " ms");
-            }
             return std::move(path);
         }
     }
     std::cerr << "No valid planner! Did you forget to specify a default planner?"
               << std::endl;
-    Trajectory result{{}};
+    Trajectory result{{request.start}};//todo(Ethan) make this empty again
     result.setDebugText("Error: No Valid Planners");
     return std::move(result);
 }

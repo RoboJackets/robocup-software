@@ -34,6 +34,7 @@ struct MotionConstraints {
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_centripetal_acceleration;
     static ConfigDouble* _max_speed;
+    //todo(Ethan) move these somewhere else, probably PathTargetPlanner
     static ConfigDouble* _replan_threshold;
     static ConfigDouble* _replan_lead_time;
 };

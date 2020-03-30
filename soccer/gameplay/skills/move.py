@@ -46,7 +46,8 @@ class Move(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         if self.pos != None:
             self.robot.move_to(self.pos)
-            # TODO(motion-control): Remove this entire statement.
+            # TODO(Ethan) figure out if this worked
+            # TODO(Ethan) maybe use AngleFns::tangent in PathTargetPlanner
             # if (not self.robot.is_facing()):
             #     velPoint = robocup.Point(self.robot.vel.x, self.robot.vel.y)
             #     robotPoint = robocup.Point(

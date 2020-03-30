@@ -103,6 +103,7 @@ void FitCubicBezier(Point vi, Point vf,
 
         if (solution_x.hasNaN() || solution_y.hasNaN()) {
             control_out = {};
+            //todo(Ethan) add this back?
 //            debugThrow("Something went wrong. Points are too close to each other probably");
             return;
         } else {
@@ -160,6 +161,7 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, Mot
         ks[i] = 1.0 / (timeAfter - timeBefore);
 
         if (std::isnan(ks[i]) || std::isinf(ks[i])) {
+            //todo(Ethan) add this back?
 //            debugThrow(
 //                    "Something went wrong. Points are too close to each other "
 //                    "probably");

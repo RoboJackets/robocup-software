@@ -5,9 +5,11 @@
 #include "planning/trajectory/Trajectory.hpp"
 
 namespace Planning {
-//todo(Ethan) add virtual destructor?
 class Planner {
 public:
+    explicit Planner(std::string name): _name(name) {}
+    virtual ~Planner() = default;
+
     /**
      * Whether or not this command can be planned by this planner.
      *
@@ -28,52 +30,35 @@ public:
     virtual Trajectory plan(PlanRequest&& request) = 0;
 
     /**
-     * checks if the robot is off the desired path
-     * @param planRequest
-     * @return true if the error > replanThreshold; otherwise false.
-     *      returns false if planRequest.prevTrajectory is empty
+     * reuse previous path
      */
-    virtual bool veeredOffPath(const PlanRequest &planRequest) const;
+    static Trajectory reuse(PlanRequest&& request);
 
     /**
      * Get a user-readable name for this planner.
      */
-    virtual std::string name() const = 0;
+    std::string name() const {
+        return _name;
+    }
 
-    /**
-     * create configuration for Qt
-     * @param cfg configuration
-     */
-    static void createConfiguration(Configuration* cfg);
-
-    /**
-     * get threshold for change in target position for replanning
-     * @return threshold
-     */
-    static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
-
-    /**
-     * get threshold for change in target velocity for replanning
-     * @return threshold
-     */
-    static double goalVelChangeThreshold() { return *_goalVelChangeThreshold; }
-    /**
-     * get replan timeout
-     * @return timeout
-     */
-    static double replanTimeout() { return *_replanTimeout; }
 private:
-    static ConfigDouble* _goalPosChangeThreshold;
-    static ConfigDouble* _goalVelChangeThreshold;
-    static ConfigDouble* _replanTimeout;
+    const std::string _name;
 };
 
 template<typename CommandType>
 class PlannerForCommandType : public Planner {
 public:
+    PlannerForCommandType(const std::string& name): Planner(name) {};
+    ~PlannerForCommandType() override = default;
+
     bool isApplicable(const MotionCommand& command) const override {
         return std::holds_alternative<CommandType>(command);
     }
 };
 
+template <typename T>
+inline T applyLowPassFilter(const T& oldValue, const T& newValue,
+                     double gain) {
+    return gain * newValue + (1 - gain) * oldValue;
+}
 }

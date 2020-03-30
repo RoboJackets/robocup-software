@@ -8,6 +8,7 @@
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
 #include "DebugDrawer.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 using namespace Packet;
 using namespace std;
@@ -138,4 +139,18 @@ std::vector<int> SystemState::ourValidIds() {
         }
     }
     return validIds;
+}
+DynamicObstacle Ball::dynamicObs() {
+    constexpr int interpolations = 100;
+    constexpr double maxPredictionTime = 7.0;
+    double totalTime = std::min(maxPredictionTime, predictSecondsToStop());
+    std::list<RobotInstant> instants;
+    for(int i = 0; i < interpolations; i++) {
+        double percent = static_cast<double>(i) / (interpolations-1);
+        RJ::Time stamp = RJ::now() + RJ::Seconds{totalTime * percent};
+        MotionInstant ballInstant = predict(stamp);
+        instants.emplace_back(Pose{ballInstant.pos, 0}, Twist{ballInstant.vel, 0}, stamp);
+    }
+    _path = Planning::Trajectory{std::move(instants)};
+    return DynamicObstacle{std::make_shared<Circle>(pos, Ball_Radius), _path};
 }

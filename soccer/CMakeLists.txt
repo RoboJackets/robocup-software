@@ -5,6 +5,9 @@ set(CMAKE_AUTOMOC ON)
 # include Eigen3 for linear algebra
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -fopenmp")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -fopenmp")
+
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
 set(ROBOCUP_LIB_SRC
@@ -28,20 +31,19 @@ set(ROBOCUP_LIB_SRC
     "optimization/PythonFunctionWrapper.cpp"
     "planning/MotionConstraints.cpp"
     "planning/RotationConstraints.cpp"
-    "planning/trajectory/PathSmoothing.cpp"
     "planning/trajectory/RRTUtil.cpp"
     "planning/trajectory/Trajectory.cpp"
     "planning/trajectory/VelocityProfiling.cpp"
-    "planning/trajectory/Trajectory.cpp"
     "planning/trajectory/PathSmoothing.cpp"
-    "planning/trajectory/VelocityProfiling.cpp"
     "planning/PlannerNode.cpp"
     "planning/planner/Planner.cpp"
     "planning/planner/PathTargetPlanner.cpp"
+    "planning/planner/LineKickPlanner.cpp"
     "planning/planner/PivotPathPlanner.cpp"
-    "planning/planner/SettlePathPlanner.cpp"
-    "planning/planner/CollectPathPlanner.cpp"
+    "planning/planner/CollectPlanner.cpp"
+    "planning/planner/SettlePlanner.cpp"
     "planning/planner/EscapeObstaclesPathPlanner.cpp"
+    "planning/planner/InterceptPlanner.cpp"
     "Processor.cpp"
     "radio/NetworkRadio.cpp"
     "radio/PacketConvert.cpp"
@@ -219,7 +221,9 @@ set(SOCCER_TEST_SRC
     "optimization/GradientAscent1DTest.cpp"
     "optimization/ParallelGradientAscent1DTest.cpp"
     "optimization/NelderMead2DTest.cpp"
-    "planning/trajectory/TrajectoryTest.cpp"
+    "planning/tests/TrajectoryTest.cpp"
+    "planning/tests/PlannerTest.cpp"
+    "planning/tests/TestingUtils.cpp"
     "TestMain.cpp"
     "vision/tests/CameraBallTest.cpp"
     "vision/tests/KalmanBallTest.cpp"

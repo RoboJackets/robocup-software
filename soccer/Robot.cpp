@@ -204,13 +204,11 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
 
 void OurRobot::settle() {
     if (!visible()) return;
-
     setMotionCommand(std::make_unique<MotionCommand>(Planning::SettleCommand{}));
 }
 
 void OurRobot::collect() {
     if (!visible()) return;
-
     setMotionCommand(std::make_unique<MotionCommand>(Planning::CollectCommand{}));
 }
 
@@ -223,7 +221,7 @@ void OurRobot::lineKick(Point target) {
 
 void OurRobot::intercept(Point target) {
     if (!visible()) return;
-
+    //todo(Ethan) add the InterceptPlanner
     disableAvoidBall();
     setMotionCommand(std::make_unique<MotionCommand>(Planning::InterceptCommand{target}));
 }
@@ -467,7 +465,8 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
     }
 
     // Add ball
-    if (_context->state.ball.valid) {
+    bool possessBall = _context->ball_possessor && *_context->ball_possessor == shell();
+    if (_context->state.ball.valid && !possessBall) {
         auto ballObs = createBallObstacle();
         if (ballObs) fullObstacles.add(ballObs);
     }

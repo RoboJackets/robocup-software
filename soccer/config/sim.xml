@@ -296,9 +296,6 @@
   <robot_std_dev value="0.3"/>
   <start_x_offset value="0.1"/>
  </KickEvaluator>
- <RRTPlanner>
-  <partialReplanLeadTime value="0.2"/>
- </RRTPlanner>
  <VisionFilter>
   <Bounce>
    <robot_body_lin_dampen value="0.9"/>
@@ -360,38 +357,40 @@
    <min value="1"/>
   </Health>
  </VisionFilter>
+ <PathTargetPlanner>
+  <goalPosChangeThreshold value="0.025"/>
+  <goalVelChangeThreshold value="0.025"/>
+  <partialReplanLeadTime value="0.1"/>
+ </PathTargetPlanner>
+ <LineKickPlanner>
+  <approachSpeed value="0.25"/>
+ </LineKickPlanner>
  <Capture>
+  <searchStartDist value="0"/>
+  <searchEndDist value="7"/>
+  <searchIncDist value="0.2"/>
+  <maxBallSpeedDirect value="0.1"/>
+  <maxApproachAngle value="0.3"/>
+  <maxOutrunBallSpeed value="0.7"/>
+  <ballContactAccelPercent value="0.2"/>
+  <ballSpeedPercentForDampen value="0"/>
+  <Collect>
+   <bufferDistBeforeContact value="0.08"/>
+   <bufferDistAfterContact value="0.08"/>
+   <targetChangeThreshold value="0.025"/>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <touchDeltaSpeed value="0.15"/>
+   <controlAccelScalePercent value="0.8"/>
+   <distCutoffToControl value="0.0285"/>
+  </Collect>
   <Settle>
-   <ballSpeedPercentForDampen value="0"/>
-   <searchStartTime value="0.1"/>
-   <searchEndtime value="10"/>
-   <searchIncTime value="0.2"/>
-   <interceptBufferTime value="1"/>
+   <bufferTimeBeforeContact value="0.0"/>
    <targetPointGain value="0.5"/>
-   <ballVelGain value="0.9"/>
-   <maxAnglePathTargetChange value="20"/>
-   <maxBallVelForPathReset value="2"/>
-   <maxBallAngleForReset value="20"/>
-   <maxNumInvalidPaths value="50"/>
-   <ballAvoidDistance value="0.3"/>
    <searchStartDist value="0"/>
    <searchEndDist value="7"/>
    <searchIncDist value="0.2"/>
+   <targetChangeThreshold value="0.08"/>
    <shortcutDist value="0.09"/>
-   <maxBounceAngle value="45"/>
   </Settle>
-  <Collect>
-   <ballSpeedApproachDirectionCutoff value="0.1"/>
-   <approachAccelScalePercent value="0.6"/>
-   <controlAccelScalePercent value="0.8"/>
-   <approachDistTarget value="0.1"/>
-   <touchDeltaSpeed value="0.2"/>
-   <distCutoffToControl value="0.05"/>
-   <velCutoffToControl value="2"/>
-   <stopDistScale value="0.5"/>
-   <targetPointAveragingGain value="0.8"/>
-   <distCutoffToApproach value="0.15"/>
-   <velocityControlScale value="0"/>
-  </Collect>
  </Capture>
 </config>

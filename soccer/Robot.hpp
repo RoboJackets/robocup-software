@@ -39,10 +39,6 @@ namespace Gameplay {
 class GameplayModule;
 }
 
-namespace Planning {
-class RRTPlanner;
-}
-
 class Robot {
 public:
     Robot(Context* context, unsigned int shell, bool self);
@@ -436,6 +432,14 @@ public:
         if(intent().motion_command->index() != newCmd->index()) {
             //clear path when command type changes
             _path = Planning::Trajectory{{}};
+            if(_context->ball_possessor && *_context->ball_possessor == shell()) {
+                _context->ball_possessor = std::nullopt;
+            }
+        }
+        if(std::holds_alternative<Planning::CollectCommand>(*newCmd)
+            || std::holds_alternative<Planning::SettleCommand>(*newCmd)
+            || std::holds_alternative<Planning::LineKickCommand>(*newCmd)) {
+            _context->ball_possessor = shell();
         }
         intent().motion_command = std::move(newCmd);
     }

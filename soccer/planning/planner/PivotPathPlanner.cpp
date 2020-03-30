@@ -59,12 +59,26 @@ namespace Planning {
             double change = fixAngleRadians(targetAngle - startAngle);
 
             const int interpolations = 10;
-            std::vector points{startInstant.pose.position()};
+            std::vector<Point> points{startInstant.pose.position()};
             for (int i = 1; i <= interpolations; i++) {
                 float percent = (float)i / interpolations;
                 float angle = startAngle + change * percent;
                 Point point = Point::direction(angle).normalized(radius) + pivotPoint;
                 points.push_back(point);
+            }
+            // remove points that are really close together. these points cause
+            // issues during Velocity Profiling due to floating point precision
+            auto pointsIt = points.begin();
+            auto pointsItNext = pointsIt;
+            assert(pointsItNext != points.end());
+            ++pointsItNext;
+            while(pointsItNext != points.end()) {
+                if(pointsIt->distTo(*pointsItNext) < 1e-6) {
+                    pointsItNext = points.erase(pointsItNext);
+                } else {
+                    ++pointsIt;
+                    ++pointsItNext;
+                }
             }
             BezierPath bezier(points, startInstant.velocity.linear(), Point(0, 0), motionConstraints);
             Trajectory result = ProfileVelocity(bezier, startInstant.velocity.linear().mag(), 0, motionConstraints);

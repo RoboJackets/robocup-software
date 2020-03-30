@@ -34,7 +34,7 @@ void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
  * Generate a path with BiRRT
  *
  * @param start The starting position.
- * @param goal The goal position.
+ * @param goal The goal position. (note: goal.stamp is unused)
  * @param obstacles the obstacles to avoid
  * @param waypoints A vector of points from a previous path. The RRT will be
  *      biased towards these points. If empty, they will be unused.
@@ -47,16 +47,27 @@ std::vector<Geometry2d::Point> GenerateRRT(
         const Geometry2d::ShapeSet& obstacles,
         const std::vector<Geometry2d::Point>& waypoints = {});
 
+namespace CreatePath {
 /**
- * Generate a smooth profiled velocity path. The user still
- * needs to plan angles with PlanAngles()
- * @param start initial instant
- * @param goal desired instant
- * @param motionConstraints motion constraints
- * @param static_obstacles stationary obstacles
- * @param dynamic_obstacles dynamic obstacles
- * @return path without angles
+ * Generate a smooth path from start to goal avoiding obstacles.
  */
-Trajectory RRTTrajectory(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
+Trajectory rrt(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
+
+/**
+ * Generate a smooth path from start to goal disregarding obstacles.
+ */
+Trajectory simple(const RobotInstant& start, const RobotInstant& goal,
+        const MotionConstraints& motionConstraints, const std::vector<Geometry2d::Point>& intermediatePoints = {});
+
+/**
+ * Generate a path by RRT. if that fails, fall back on the simple path
+ */
+Trajectory complete(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
+
+}
+/**
+ * project a point into the field rect
+ */
+ Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint, const Geometry2d::Rect& fieldRect, Geometry2d::Point ballPoint);
 
 }  // Planning
