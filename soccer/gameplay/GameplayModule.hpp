@@ -18,7 +18,7 @@
 #include <Configuration.hpp>
 #include <Context.hpp>
 #include <GrSimCommunicator.hpp>
-#include <NewRefereeModule.hpp>
+#include <Referee.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 class OurRobot;
@@ -45,7 +45,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context, NewRefereeModule* refereeModule);
+    GameplayModule(Context* const context, Referee* refereeModule);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -151,7 +151,7 @@ private:
     double _oldFieldEdgeInset;
 
     Context* const _context;
-    NewRefereeModule* const _refereeModule;
+    Referee* const _refereeModule;
 
     std::set<OurRobot*> _playRobots;
 

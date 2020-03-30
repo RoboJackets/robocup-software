@@ -21,7 +21,7 @@ set(ROBOCUP_LIB_SRC
     "motion/MotionControl.cpp"
     "motion/MotionControlNode.cpp"
     "motion/TrapezoidalMotion.cpp"
-    "NewRefereeModule.cpp"
+    "Referee.cpp"
     "optimization/GradientAscent1D.cpp"
     "optimization/ParallelGradientAscent1D.cpp"
     "optimization/NelderMead2D.cpp"

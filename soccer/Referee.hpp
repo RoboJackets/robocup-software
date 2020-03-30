@@ -2,21 +2,22 @@
 
 #include <protobuf/LogFrame.pb.h>
 #include <protobuf/referee.pb.h>
+#include <stdint.h>
+
+#include <QMutex>
+#include <QThread>
+#include <QTime>
 #include <Utils.hpp>
+#include <vector>
+
 #include "Context.hpp"
 #include "GameState.hpp"
 #include "SystemState.hpp"
 #include "TeamInfo.hpp"
 
-#include <QThread>
-#include <QMutex>
-#include <QTime>
-#include <vector>
-#include <stdint.h>
-
 class QUdpSocket;
 
-namespace NewRefereeModuleEnums {
+namespace RefereeModuleEnums {
 // These are the "coarse" stages of the game.
 enum Stage {
     // The first half is about to start.
@@ -104,7 +105,7 @@ enum Command {
 };
 
 std::string stringFromCommand(Command c);
-}
+}  // namespace RefereeModuleEnums
 
 /**
  * @brief A packet we received over the network from ssl-refbox
@@ -112,7 +113,7 @@ std::string stringFromCommand(Command c);
  * @details Contains the protobuf packet from the refbox and a timestamp of when
  * we received it.
  */
-class NewRefereePacket {
+class RefereePacket {
 public:
     /// Local time when the packet was received
     RJ::Time receivedTime;
@@ -135,20 +136,22 @@ public:
  * Each time a new packet arrives, the ref module updates the GameState object
  * with the new information.
  */
-class NewRefereeModule : public QThread {
+class Referee : public QThread {
 public:
-    NewRefereeModule(Context* const ctx, bool isBlue = false);
-    ~NewRefereeModule();
+    explicit Referee(Context* const ctx);
+    ~Referee() override;
 
     void stop();
 
-    void getPackets(std::vector<NewRefereePacket*>& packets);
+    void getPackets(std::vector<RefereePacket*>& packets);
 
-    bool kicked() { return _kickDetectState == Kicked; }
+    [[nodiscard]] bool kicked() const { return _kickDetectState == Kicked; }
 
-    void useExternalReferee(bool value) { _useExternalRef = value; }
+    void useExternalReferee(bool value) {
+        _useExternalRef = value;
+    }
 
-    bool useExternalReferee() { return _useExternalRef; }
+    [[nodiscard]] bool useExternalReferee() const { return _useExternalRef; }
 
     /**
      * Set the team color only if it is not already being controlled by the
@@ -159,10 +162,12 @@ public:
      */
     void overrideTeam(bool isBlue);
 
-    bool isBlueTeam() { return _blueTeam; }
+    [[nodiscard]] bool isBlueTeam() const {
+        return _context->game_state.blueTeam;
+    }
 
-    NewRefereeModuleEnums::Stage stage;
-    NewRefereeModuleEnums::Command command;
+    RefereeModuleEnums::Stage stage_;
+    RefereeModuleEnums::Command command_;
 
     // The UNIX timestamp when the packet was sent, in microseconds.
     // Divide by 1,000,000 to get a time_t.
@@ -194,27 +199,28 @@ public:
     TeamInfo yellow_info;
     TeamInfo blue_info;
 
-    void updateGameState(bool blueTeam);
+    [[nodiscard]] GameState updateGameState(
+        RefereeModuleEnums::Command command) const;
 
-    void spinKickWatcher();
+    void spin();
 
 protected:
-    virtual void run() override;
+    void run() override;
+    void update();
 
     // Unconditional setter for the team color.
-    void blueTeam(bool value) { _blueTeam = value; }
+    void blueTeam(bool value) { _context->game_state.blueTeam = value; }
+    void spinKickWatcher(const SystemState& system_state);
 
     volatile bool _running;
 
-    void ready();
-
-    typedef enum {
+    enum KickDetectState {
         WaitForReady,
         CapturePosition,
         WaitForKick,
         VerifyKick,
         Kicked
-    } KickDetectState;
+    };
     KickDetectState _kickDetectState;
 
     Geometry2d::Point _readyBallPos;
@@ -223,11 +229,11 @@ protected:
     QTime _kickTime;
 
     QMutex _mutex;
-    std::vector<NewRefereePacket*> _packets;
+    std::vector<RefereePacket*> _packets;
     Context* const _context;
 
-    NewRefereeModuleEnums::Command prev_command;
-    NewRefereeModuleEnums::Stage prev_stage;
+    RefereeModuleEnums::Command prev_command_;
+    RefereeModuleEnums::Stage prev_stage_;
 
     bool _useExternalRef = false;
 
@@ -237,8 +243,9 @@ protected:
     // team names in the packet.
     bool _isRefControlled = false;
 
-    bool _blueTeam = false;
-
     float ballPlacementx;
     float ballPlacementy;
+
+private:
+    GameState _game_state;
 };
