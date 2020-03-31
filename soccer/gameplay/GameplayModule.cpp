@@ -1,13 +1,12 @@
-#include <gameplay/GameplayModule.hpp>
-#include <Constants.hpp>
-#include <planning/MotionInstant.hpp>
 #include <protobuf/LogFrame.pb.h>
+
+#include <Constants.hpp>
+#include <Network.hpp>
+#include <Referee.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-
-#include <stdio.h>
-#include <iostream>
-#include <cmath>
+#include <gameplay/GameplayModule.hpp>
+#include <planning/MotionInstant.hpp>
 
 // for python stuff
 #include "DebugDrawer.hpp"
@@ -22,6 +21,7 @@ using namespace boost;
 using namespace boost::python;
 
 using namespace Geometry2d;
+using namespace RefereeModuleEnums;
 
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
@@ -43,8 +43,12 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
     return false;
 }
 
-Gameplay::GameplayModule::GameplayModule(Context* const context)
-    : _mutex(QMutex::Recursive), _context(context) {
+// TODO: Replace this whole file when we move to ROS2
+Gameplay::GameplayModule::GameplayModule(Context* const context,
+                                         Referee* const refereeModule)
+    : _mutex(QMutex::Recursive),
+      _context(context),
+      _refereeModule(refereeModule) {
     calculateFieldObstacles();
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
@@ -378,6 +382,20 @@ void Gameplay::GameplayModule::run() {
 
             getMainModule().attr("set_context")(&_context);
 
+            // Handle Tests
+            if (runningTests) {
+                // I could add a bool to check if this needs to run or not if
+                // this is too inefficient
+                object rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getNextCommand()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+                if (rtrn.ptr() != Py_None) {
+                    Command cmd = extract<Command>(rtrn);
+                    _refereeModule->command_ = cmd;
+                }
+            }
+
         } catch (error_already_set) {
             PyErr_Print();
             throw new runtime_error(
@@ -452,6 +470,191 @@ void Gameplay::GameplayModule::updateFieldDimensions() {
     {
         _mainPyNamespace["constants"].attr("Field") =
             &Field_Dimensions::Current_Dimensions;
+    }
+    PyGILState_Release(state);
+}
+
+void Gameplay::GameplayModule::addTests() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+            handle<> ignored3((PyRun_String(
+                "import ui.main; ui.main._tests.addTests()", Py_file_input,
+                _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+        } catch (error_already_set) {
+            PyErr_Print();
+            throw new runtime_error("Error trying to add tests");
+        }
+    }
+    PyGILState_Release(state);
+
+    // TODO: Implement custom MIME type for tests
+    //      Enable dragdrop in allTestsTable
+    //      Link selectedTestsTable to a python list in main.py
+}
+
+void Gameplay::GameplayModule::removeTest() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+            handle<> ignored3((PyRun_String(
+                "import ui.main; ui.main._tests.removeTest()", Py_file_input,
+                _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+        } catch (error_already_set) {
+            PyErr_Print();
+            throw new runtime_error("Error trying to add tests");
+        }
+    }
+    PyGILState_Release(state);
+}
+
+void Gameplay::GameplayModule::nextTest() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+            object rtrn(handle<>(
+                PyRun_String("ui.main._tests.nextTest()", Py_eval_input,
+                             _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+            runningTests = extract<bool>(rtrn);
+        } catch (error_already_set) {
+            PyErr_Print();
+            throw new runtime_error("Error trying to go to next test");
+        }
+    }
+    PyGILState_Release(state);
+
+    // load the test
+    loadTest();
+}
+
+void Gameplay::GameplayModule::loadTest() {
+    PyGILState_STATE state = PyGILState_Ensure();
+    {
+        try {
+            object rtrn(handle<>(
+                PyRun_String("ui.main._tests.loadTest()", Py_eval_input,
+                             _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+            runningTests = extract<bool>(rtrn);
+
+            if (runningTests) {
+                _refereeModule->command_ = Command::HALT;
+
+                // Place robots and ball
+                grSim_Packet simPacket;
+
+                grSim_Replacement* replacement =
+                    simPacket.mutable_replacement();
+
+                // Load OurRobots information
+                object our_robot_rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getTestOurRobots()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+                boost::python::list our_robots =
+                    extract<boost::python::list>(our_robot_rtrn);
+
+                const int NUM_COLS = 2;
+                const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
+                const int teamDirection =
+                    _context->game_state.blueTeam ? -1 : 1;
+                for (int i = 0; i < Robots_Per_Team; i++) {
+                    auto rob = replacement->add_robots();
+
+                    if (i < len(our_robots)) {
+                        boost::python::list robot =
+                            extract<boost::python::list>(our_robots[i]);
+
+                        float x = extract<float>(robot[0]);
+                        float y = extract<float>(robot[1]);
+
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
+                        rob->set_y(teamDirection * x);
+                        rob->set_dir(extract<float>(robot[2]));
+                    } else {
+                        double x_pos =
+                            teamDirection * (2.5 - i / ROBOTS_PER_COL);
+                        double y_pos =
+                            i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+                        rob->set_x(x_pos);
+                        rob->set_y(y_pos);
+                        rob->set_dir(0);
+                    }
+                    rob->set_id(i);
+                    rob->set_yellowteam(not _context->game_state.blueTeam);
+                }
+
+                // Load TheirRobots information
+                object their_robot_rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getTestTheirRobots()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+                boost::python::list their_robots =
+                    extract<boost::python::list>(their_robot_rtrn);
+
+                for (int i = 0; i < Robots_Per_Team; i++) {
+                    auto rob = replacement->add_robots();
+
+                    if (i < len(their_robots)) {
+                        boost::python::list robot =
+                            extract<boost::python::list>(their_robots[i]);
+
+                        float x = extract<float>(robot[0]);
+                        float y = extract<float>(robot[1]);
+
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
+                        rob->set_y(teamDirection * x);
+                        rob->set_dir(extract<float>(robot[2]));
+                    } else {
+                        double x_pos =
+                            -teamDirection * (2.5 - i / ROBOTS_PER_COL);
+                        double y_pos =
+                            i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
+                        rob->set_x(x_pos);
+                        rob->set_y(y_pos);
+                        rob->set_dir(0);
+                    }
+                    rob->set_id(i);
+                    rob->set_yellowteam(_context->game_state.blueTeam);
+                }
+
+                // Get ball Information
+                object ball_rtrn(handle<>(PyRun_String(
+                    "ui.main._tests.getTestBall()", Py_eval_input,
+                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+
+                boost::python::list ball =
+                    extract<boost::python::list>(ball_rtrn);
+                auto ball_replace = replacement->mutable_ball();
+                float posx = extract<float>(ball[0]);
+                float posy = extract<float>(ball[1]);
+                float velx = extract<float>(ball[2]);
+                float vely = extract<float>(ball[3]);
+
+                ball_replace->mutable_pos()->set_x(
+                    -teamDirection *
+                    (posy -
+                     (Field_Dimensions::Current_Dimensions.Length() / 2)));
+                ball_replace->mutable_pos()->set_y(teamDirection * posx);
+                ball_replace->mutable_vel()->set_x(-teamDirection * vely);
+                ball_replace->mutable_vel()->set_y(teamDirection * velx);
+
+                _context->grsim_command = simPacket;
+            }
+
+        } catch (error_already_set) {
+            PyErr_Print();
+            throw new runtime_error("Error trying to load test");
+        }
     }
     PyGILState_Release(state);
 }

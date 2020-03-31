@@ -9,6 +9,8 @@
 using namespace boost::python;
 
 #include <protobuf/LogFrame.pb.h>
+
+#include <Configuration.hpp>
 #include <Constants.hpp>
 #include <Context.hpp>
 #include <Geometry2d/Arc.hpp>
@@ -20,23 +22,22 @@ using namespace boost::python;
 #include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
+#include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
+#include <exception>
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
+
+#include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
+#include "Referee.hpp"
+#include "RobotConfig.hpp"
 #include "WindowEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "optimization/NelderMead2D.hpp"
 #include "optimization/NelderMead2DConfig.hpp"
 #include "optimization/PythonFunctionWrapper.hpp"
 #include "planning/MotionConstraints.hpp"
-
-#include <boost/python/exception_translator.hpp>
-#include <boost/version.hpp>
-#include <exception>
-
-#include <Configuration.hpp>
-#include "DebugDrawer.hpp"
-#include "RobotConfig.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -694,6 +695,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .add_property("y", &Point_get_y, &Point_set_y)
         .def(self - self)
         .def(self + self)
+        .def(self * self)
         .def("mag", &Geometry2d::Point::mag)
         .def("magsq", &Geometry2d::Point::magsq)
         .def("__repr__", &Point_repr)
@@ -1068,4 +1070,34 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<MotionConstraints>("MotionConstraints")
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
         .def_readonly("MaxRobotAccel", &MotionConstraints::_max_acceleration);
+
+    enum_<RefereeModuleEnums::Command>("Command")
+        .value("halt", RefereeModuleEnums::Command::HALT)
+        .value("stop", RefereeModuleEnums::Command::STOP)
+        .value("normal_start", RefereeModuleEnums::Command::NORMAL_START)
+        .value("force_start", RefereeModuleEnums::Command::FORCE_START)
+        .value("prepare_kickoff_yellow",
+               RefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
+        .value("prepare_kickoff_blue",
+               RefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
+        .value("prepare_penalty_yellow",
+               RefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
+        .value("prepare_penalty_blue",
+               RefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
+        .value("direct_free_yellow",
+               RefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
+        .value("direct_free_blue",
+               RefereeModuleEnums::Command::DIRECT_FREE_BLUE)
+        .value("indirect_free_yellow",
+               RefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
+        .value("indirect_free_blue",
+               RefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
+        .value("timeout_yellow", RefereeModuleEnums::Command::TIMEOUT_YELLOW)
+        .value("timeout_blue", RefereeModuleEnums::Command::TIMEOUT_BLUE)
+        .value("goal_yellow", RefereeModuleEnums::Command::GOAL_YELLOW)
+        .value("goal_blue", RefereeModuleEnums::Command::GOAL_BLUE)
+        .value("ball_placement_yellow",
+               RefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
+        .value("ball_placement_blue",
+               RefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
 }

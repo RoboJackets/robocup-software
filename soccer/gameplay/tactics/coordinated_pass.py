@@ -103,8 +103,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             self.prekick_timeout_exceeded, 'Timed out on prepare')
 
         self.add_transition(
-            CoordinatedPass.State.preparing,
-            behavior.Behavior.State.failed, lambda: self.opponent_in_way(),
+            CoordinatedPass.State.preparing, behavior.Behavior.State.failed,
+            lambda:
+            (self.opponent_in_way() and not self.skillkicker[0].use_chipper),
             'Opponent too close to ball to pass')
 
         self.add_transition(
@@ -122,8 +123,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
         self.add_transition(
             CoordinatedPass.State.kicking, behavior.Behavior.State.failed,
-            lambda: self.subbehavior_with_name('kicker').state == behavior.
-            Behavior.State.failed or self.opponent_in_way(), 'kicker failed')
+            lambda: self.subbehavior_with_name(
+                'kicker').state == behavior.Behavior.State.failed or
+            (self.opponent_in_way() and not self.skillkicker[0].use_chipper),
+            'kicker failed')
 
         self.add_transition(
             CoordinatedPass.State.receiving, behavior.Behavior.State.completed,
@@ -198,7 +201,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
-    # Funciton to find if ball is moving towards receive point
+    ## Funciton to find if ball is moving towards receive point
     def ball_heading_to_receive_point(self):
         ball_velocity = main.ball().vel
         if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
@@ -216,7 +219,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 return False  # If ball is too off course or too slow, fail the pass
         return True
 
-    # Funciton that decides if an opponent robot is in the way of passing
+    ## Funciton that decides if an opponent robot is in the way of passing
+    # Get ignored if we are chipping
     def opponent_in_way(self):
         path_vector = main.ball().pos - self.receive_point
         path_unit = path_vector.normalized()
@@ -228,7 +232,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             cross_product_mag = abs(distance_unit_vector.x * path_unit.y -
                                     distance_unit_vector.y * path_unit.x)
             if pass_distance > distance and cross_product_mag < self.STRICT_CROSS_THRESHOLD:
-                return True  # If the ball is within some threshold of the line of passing, fail the pass
+                return True  # If the opponent is within some threshold of the line of passing, fail the pass
         return False
 
     def on_enter_kicking(self):

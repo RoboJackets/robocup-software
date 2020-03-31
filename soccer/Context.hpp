@@ -1,5 +1,6 @@
 #pragma once
 
+#include <protobuf/grSim_Packet.pb.h>
 #include <Constants.hpp>
 #include <set>
 #include "DebugDrawer.hpp"
@@ -29,4 +30,13 @@ struct Context {
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
     WorldState world_state;
+
+    Field_Dimensions field_dimensions;
+
+    std::optional<grSim_Packet> grsim_command;
+
+    std::optional<QPointF> ball_command;
+    std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
+
+    bool is_simulation;
 };

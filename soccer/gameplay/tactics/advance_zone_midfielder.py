@@ -12,7 +12,7 @@ import evaluation.passing_positioning
 import evaluation.passing
 import evaluation.shooting
 import functools
-import plays.offense.adaptive_formation
+import plays.Legacy.adaptive_formation
 
 
 # 2 midfielder rely on the future location of their teammate to pass quickly
@@ -24,6 +24,8 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
     # Initial arguements for the nelder mead optimization in passing positioning
     NELDER_MEAD_ARGS = (robocup.Point(0.75, 1), robocup.Point(0.01, 0.01), 1,
                         1.1, 0.5, 0.9, 100, 1, 0.1)
+
+    MIN_PASS_DIST = .2
 
     class State(enum.Enum):
         # getting ready to recieve a pass from another robot
@@ -79,10 +81,11 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
 
         # sets the second point
         alt_point, value2 = evaluation.passing_positioning.eval_best_receive_point(
-                self.passing_point,
-                main.our_robots(), AdvanceZoneMidfielder.FIELD_POS_WEIGHTS,
-                AdvanceZoneMidfielder.NELDER_MEAD_ARGS,
-                AdvanceZoneMidfielder.PASSING_WEIGHTS)
+            self.passing_point, main.our_robots(),
+            AdvanceZoneMidfielder.MIN_PASS_DIST,
+            AdvanceZoneMidfielder.FIELD_POS_WEIGHTS,
+            AdvanceZoneMidfielder.NELDER_MEAD_ARGS,
+            AdvanceZoneMidfielder.PASSING_WEIGHTS)
 
         # check for futile position i.e the alternate position is in the way of a shot from best position
         if self.in_shot_triangle(best_point, alt_point):
@@ -150,7 +153,7 @@ class AdvanceZoneMidfielder(composite_behavior.CompositeBehavior):
             self.closest_post = left_post
         else:
             self.closest_post = right_post
-        # if interior angles near sum to 0 then robot is inside the the zone. 
+        # if interior angles near sum to 0 then robot is inside the the zone.
         return abs(shot_angle - left_post_alt_pos_angle - right_post_alt_pos_angle) < self.epsilon
 
     # finds closest point to leave zone and goes four robot radius outside the zone
