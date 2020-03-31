@@ -220,12 +220,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     return make_pair(windows, best);
 }
 
-// https://www.johndcook.com/blog/cpp_phi/
-// cdf of normal
-double phi(double x)
-{
-    return std::erf(x);
-}
+// CDF of a normal distribution
+double phi(double x) { return 0.5 * std::erf(-x / std::sqrt(2)); }
 
 void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto shot_vector = window.segment.center() - origin;
