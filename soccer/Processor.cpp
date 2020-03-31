@@ -18,14 +18,13 @@
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
-#include <motion/MotionControl.hpp>
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
-#include "radio/NetworkRadio.hpp"
-#include "radio/SimRadio.hpp"
+#include "radio/PacketConvert.hpp"
+#include "radio/RadioNode.hpp"
 #include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
@@ -40,9 +39,11 @@ static const auto Command_Latency = 0ms;
 RobotConfig* Processor::robotConfig2008;
 RobotConfig* Processor::robotConfig2011;
 RobotConfig* Processor::robotConfig2015;
-std::vector<RobotStatus*>
-    Processor::robotStatuses;  ///< FIXME: verify that this is correct
 
+// TODO: verify that this is correct
+std::vector<RobotStatus*> Processor::robotStatuses;
+
+// TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
 void Processor::createConfiguration(Configuration* cfg) {
@@ -81,33 +82,33 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
 
     QMetaObject::connectSlotsByName(this);
 
+    _context.is_simulation = _simulation;
+
+    _context.field_dimensions = *currentDimensions;
+
     _vision = std::make_shared<VisionFilter>();
-    _refereeModule = std::make_shared<NewRefereeModule>(&_context, _blueTeam);
+    _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
+        &_context, _refereeModule.get());
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-
-    vision.simulation = _simulation;
-    if (sim) {
-        vision.port = SimVisionPort;
-    }
-    vision.start();
+    _motionControl = std::make_unique<MotionControlNode>(&_context);
+    _radio = std::make_unique<RadioNode>(&_context, _simulation, _blueTeam);
+    _visionReceiver = std::make_unique<VisionReceiver>(
+        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
+    _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
     _visionChannel = visionChannel;
-
-    // Create radio socket
-    _radio =
-        _simulation
-            ? static_cast<Radio*>(new SimRadio(&_context, _blueTeam))
-            : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
         firstLogTime = _logger.startTime();
     }
 
-    _modules.push_back(std::make_unique<MotionControlNode>(&_context));
+    _nodes.push_back(_visionReceiver.get());
+    _nodes.push_back(_motionControl.get());
+    _nodes.push_back(_grSimCom.get());
 }
 
 Processor::~Processor() {
@@ -205,10 +206,11 @@ bool Processor::joystickValid() const {
     return false;
 }
 
-void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFrames) {
+void Processor::runModels() {
     std::vector<CameraFrame> frames;
 
-    for (const SSL_DetectionFrame* frame : detectionFrames) {
+    for (auto& packet : _context.vision_packets) {
+        const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
         vector<CameraBall> ballObservations;
         vector<CameraRobot> yellowObservations;
         vector<CameraRobot> blueObservations;
@@ -225,19 +227,23 @@ void Processor::runModels(const vector<const SSL_DetectionFrame*>& detectionFram
         // Collect camera data from all robots
         yellowObservations.reserve(frame->robots_yellow().size());
         for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            yellowObservations.emplace_back(time,
-                                            _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                            fixAngleRadians(robot.orientation() + _teamAngle),
-                                            robot.robot_id());
+            yellowObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         // Collect camera data from all robots
         blueObservations.reserve(frame->robots_blue().size());
         for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            blueObservations.emplace_back(time,
-                                          _worldToTeam * Point(robot.x() / 1000, robot.y() / 1000),
-                                          fixAngleRadians(robot.orientation() + _teamAngle),
-                                          robot.robot_id());
+            blueObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
@@ -281,7 +287,8 @@ void Processor::run() {
         _context.state.logFrame->set_use_opponent_half(_useOpponentHalf);
         _context.state.logFrame->set_manual_id(_manualID);
         _context.state.logFrame->set_blue_team(_blueTeam);
-        _context.state.logFrame->set_defend_plus_x(_defendPlusX);
+        _context.state.logFrame->set_defend_plus_x(
+            _context.game_state.defendPlusX);
         _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
 
         if (first) {
@@ -320,109 +327,34 @@ void Processor::run() {
         ////////////////
         // Inputs
 
-        // Read vision packets
-        vector<const SSL_DetectionFrame*> detectionFrames;
-        vector<VisionPacket*> visionPackets;
-        vision.getPackets(visionPackets);
-        for (VisionPacket* packet : visionPackets) {
-            SSL_WrapperPacket* log = _context.state.logFrame->add_raw_vision();
-            log->CopyFrom(packet->wrapper);
+        // TODO(Kyle): Don't do this here.
+        // Because not everything is on modules yet, but we still need things to
+        // run in order, we can't just do everything via the for loop (yet).
+        _visionReceiver->run();
 
-            curStatus.lastVisionTime = packet->receivedTime;
-
-            // If packet has geometry data, attempt to read information and
-            // update if changed.
-            if (packet->wrapper.has_geometry()) {
-                updateGeometryPacket(packet->wrapper.geometry().field());
-            }
-
-            if (packet->wrapper.has_detection()) {
-                SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
-
-                double rt =
-                    RJ::numSeconds(packet->receivedTime.time_since_epoch());
-                det->set_t_capture(rt - det->t_sent() + det->t_capture());
-                det->set_t_sent(rt);
-
-                // Remove balls on the excluded half of the field
-                google::protobuf::RepeatedPtrField<SSL_DetectionBall>* balls =
-                    det->mutable_balls();
-                for (int i = 0; i < balls->size(); ++i) {
-                    float x = balls->Get(i).x();
-                    // FIXME - OMG too many terms
-                    if ((!_context.state.logFrame->use_opponent_half() &&
-                         ((_defendPlusX && x < 0) ||
-                          (!_defendPlusX && x > 0))) ||
-                        (!_context.state.logFrame->use_our_half() &&
-                         ((_defendPlusX && x > 0) ||
-                          (!_defendPlusX && x < 0)))) {
-                        balls->SwapElements(i, balls->size() - 1);
-                        balls->RemoveLast();
-                        --i;
-                    }
-                }
-
-                // Remove robots on the excluded half of the field
-                google::protobuf::RepeatedPtrField<SSL_DetectionRobot>*
-                    robots[2] = {det->mutable_robots_yellow(),
-                                 det->mutable_robots_blue()};
-
-                for (int team = 0; team < 2; ++team) {
-                    for (int i = 0; i < robots[team]->size(); ++i) {
-                        float x = robots[team]->Get(i).x();
-                        if ((!_context.state.logFrame->use_opponent_half() &&
-                             ((_defendPlusX && x < 0) ||
-                              (!_defendPlusX && x > 0))) ||
-                            (!_context.state.logFrame->use_our_half() &&
-                             ((_defendPlusX && x > 0) ||
-                              (!_defendPlusX && x < 0)))) {
-                            robots[team]->SwapElements(
-                                i, robots[team]->size() - 1);
-                            robots[team]->RemoveLast();
-                            --i;
-                        }
-                    }
-                }
-
-                detectionFrames.push_back(det);
-            }
+        if (_context.field_dimensions != *currentDimensions) {
+            setFieldDimensions(_context.field_dimensions);
         }
 
-        // Read radio reverse packets
-        _radio->receive();
+        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
 
-        while (_radio->hasReversePackets()) {
-            Packet::RadioRx rx = _radio->popReversePacket();
-            _context.state.logFrame->add_radio_rx()->CopyFrom(rx);
+        _radio->run();
 
-            curStatus.lastRadioRxTime =
-                RJ::Time(chrono::microseconds(rx.timestamp()));
-
-            // Store this packet in the appropriate robot
-            unsigned int board = rx.robot_id();
-            if (board < Num_Shells) {
-                // We have to copy because the RX packet will survive past this
-                // frame but LogFrame will not (the RadioRx in LogFrame will be
-                // reused).
-                _context.state.self[board]->setRadioRx(rx);
-                _context.state.self[board]->radioRxUpdated();
-            }
-        }
+        if (_radio) curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
         GamepadController::joystickRemoved = -1;
 
-        runModels(detectionFrames);
-        for (VisionPacket* packet : visionPackets) {
-            delete packet;
-        }
+        runModels();
+
+        _context.vision_packets.clear();
 
         // Log referee data
-        vector<NewRefereePacket*> refereePackets;
+        vector<RefereePacket*> refereePackets;
         _refereeModule.get()->getPackets(refereePackets);
-        for (NewRefereePacket* packet : refereePackets) {
+        for (RefereePacket* packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
             log->CopyFrom(packet->wrapper);
             curStatus.lastRefereeTime =
@@ -431,8 +363,7 @@ void Processor::run() {
         }
 
         // Update gamestate w/ referee data
-        _refereeModule->updateGameState(blueTeam());
-        _refereeModule->spinKickWatcher();
+        _refereeModule->spin();
 
         string yellowname, bluename;
 
@@ -531,9 +462,16 @@ void Processor::run() {
             robot->setJoystickControlled(robot->shell() == _manualID);
         }
 
-        // Run all modules in sequence
-        for (auto& module : _modules) {
-            module->run();
+        _motionControl->run();
+        _grSimCom->run();
+        // Run all nodes in sequence
+        // TODO(Kyle): This is dead code for now. Once everything is ported over
+        // to modules we can delete the if (false), but for now we still have to
+        // update things manually.
+        if (false) {
+            for (auto& node : _nodes) {
+                node->run();
+            }
         }
 
         ////////////////
@@ -545,7 +483,7 @@ void Processor::run() {
             _context.state.logFrame->add_debug_layers(str.toStdString());
         }
 
-        // Add our robots data to the LogFram
+        // Add our robots data to the LogFrame
         for (OurRobot* r : _context.state.self) {
             if (r->visible()) {
                 r->addStatusText();
@@ -652,127 +590,33 @@ void Processor::run() {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
     }
-    vision.stop();
 }
 
-/*
- * Updates the geometry packet if different from the existing one,
- * Based on the geometry vision data.
- */
-void Processor::updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
-    if (fieldSize.field_lines_size() == 0) {
-        return;
-    }
-
-    const SSL_FieldCicularArc* penalty = nullptr;
-    const SSL_FieldCicularArc* center = nullptr;
-    float penaltyShortDist = 0;  // default value
-    float penaltyLongDist = 0;   // default value
-    float displacement =
-        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
-
-    // Loop through field arcs looking for needed fields
-    for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
-        if (arc.name() == "CenterCircle") {
-            // Assume center circle
-            center = &arc;
-        }
-    }
-
-    for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
-        if (line.name() == "RightPenaltyStretch") {
-            displacement = abs(line.p2().y() - line.p1().y());
-            penaltyLongDist = displacement;
-        } else if (line.name() == "RightFieldRightPenaltyStretch") {
-            penaltyShortDist = abs(line.p2().x() - line.p1().x());
-        }
-    }
-
-    float thickness = fieldSize.field_lines().Get(0).thickness() / 1000.0f;
-
-    // The values we get are the center of the lines, we want to use the
-    // outside, so we can add this as an offset.
-    float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
-
-    float fieldBorder = currentDimensions->Border();
-
-    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
-        thickness != 0) {
-        // Force a resize
-        Field_Dimensions newDim = Field_Dimensions(
-
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-            Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penaltyShortDist / 1000.0f,              // PenaltyShortDist
-            penaltyLongDist / 1000.0f,               // PenaltyLongDist
-            center->radius() / 1000.0f + adj,        // CenterRadius
-            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-            displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
-
-        if (newDim != *currentDimensions) {
-            setFieldDimensions(newDim);
-        }
-    } else if (center != nullptr && thickness != 0) {
-        Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
-
-        Field_Dimensions newDim = Field_Dimensions(
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-            Field_Dimensions::Default_Dimensions.GoalHeight(),
-            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
-            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
-            center->radius() / 1000.0f + adj,        // CenterRadius
-            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-            displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
-
-        if (newDim != *currentDimensions) {
-            setFieldDimensions(newDim);
-        }
-    } else {
-        cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field."
-             << endl;
-    }
-}
 
 void Processor::sendRadioData() {
-    Packet::RadioTx* tx = _context.state.logFrame->mutable_radio_tx();
-    tx->set_txmode(Packet::RadioTx::UNICAST);
-
     // Halt overrides normal motion control, but not joystick
     if (_context.game_state.halt()) {
         // Force all motor speeds to zero
         for (OurRobot* r : _context.state.self) {
-            Packet::Control* control = r->control;
-            control->set_xvelocity(0);
-            control->set_yvelocity(0);
-            control->set_avelocity(0);
-            control->set_dvelocity(0);
-            control->set_kcstrength(0);
-            control->set_shootmode(Packet::Control::KICK);
-            control->set_triggermode(Packet::Control::STAND_DOWN);
-            control->set_song(Packet::Control::STOP);
+            RobotIntent& intent = _context.robot_intents[r->shell()];
+            MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
+            setpoint.xvelocity = 0;
+            setpoint.yvelocity = 0;
+            setpoint.avelocity = 0;
+            intent.dvelocity = 0;
+            intent.kcstrength = 0;
+            intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
+            intent.song = RobotIntent::Song::STOP;
         }
     }
 
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _context.state.self) {
+        RobotIntent& intent = _context.robot_intents[r->shell()];
         if (r->visible() || _manualID == r->shell() || _multipleManual) {
-            Packet::Robot* txRobot = tx->add_robots();
-
-            // Copy motor commands.
-            // Even if we are using the joystick, this sets robot_id and the
-            // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
-
+            intent.is_active = true;
             // MANUAL STUFF
             if (_multipleManual) {
                 auto info =
@@ -796,26 +640,22 @@ void Processor::sendRadioData() {
 
                 if (index < manualIds.size()) {
                     applyJoystickControls(
-                        getJoystickControlValue(*_joysticks[index]),
-                        txRobot->mutable_control(), r);
+                        getJoystickControlValue(*_joysticks[index]), r);
                 }
             } else if (_manualID == r->shell()) {
                 auto controlValues = getJoystickControlValues();
                 if (controlValues.size()) {
-                    applyJoystickControls(controlValues[0],
-                                          txRobot->mutable_control(), r);
+                    applyJoystickControls(controlValues[0], r);
                 }
             }
+        } else {
+            intent.is_active = false;
         }
-    }
-
-    if (_radio) {
-        _radio->send(*_context.state.logFrame->mutable_radio_tx());
     }
 }
 
 void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      Packet::Control* tx, OurRobot* robot) {
+                                      OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
@@ -823,26 +663,27 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     if (robot && robot->visible() && _useFieldOrientedManualDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
-
+    RobotIntent& intent = _context.robot_intents[robot->shell()];
+    MotionSetpoint& setpoint = _context.motion_setpoints[robot->shell()];
     // translation
-    tx->set_xvelocity(translation.x());
-    tx->set_yvelocity(translation.y());
+    setpoint.xvelocity = translation.x();
+    setpoint.yvelocity = translation.y();
 
     // rotation
-    tx->set_avelocity(controlVals.rotation);
+    setpoint.avelocity = controlVals.rotation;
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick
-                            ? (_kickOnBreakBeam ? Packet::Control::ON_BREAK_BEAM
-                                                : Packet::Control::IMMEDIATE)
-                            : Packet::Control::STAND_DOWN);
-    tx->set_kcstrength(controlVals.kickPower);
-    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
-                                       : Packet::Control::CHIP);
+    intent.trigger_mode =
+        (kick ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                  : RobotIntent::TriggerMode::IMMEDIATE)
+              : RobotIntent::TriggerMode::STAND_DOWN);
+    intent.kcstrength = (controlVals.kickPower);
+    intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
+                                          : RobotIntent::ShootMode::CHIP);
 
     // dribbler
-    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
+    intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
@@ -898,9 +739,9 @@ vector<int> Processor::getJoystickRobotIds() {
 }
 
 void Processor::defendPlusX(bool value) {
-    _defendPlusX = value;
+    _context.game_state.defendPlusX = value;
 
-    if (_defendPlusX) {
+    if (value) {
         _teamAngle = -M_PI_2;
     } else {
         _teamAngle = M_PI_2;
@@ -912,11 +753,11 @@ void Processor::defendPlusX(bool value) {
 void Processor::changeVisionChannel(int port) {
     _loopMutex.lock();
 
-    vision.stop();
-
-    vision.simulation = _simulation;
-    vision.port = port;
-    vision.start();
+    // If we're in simulation, the vision channel should never change
+    // from `SimVisionPort`.
+    if (!_simulation) {
+        _visionReceiver->setPort(port);
+    }
 
     _loopMutex.unlock();
 }
@@ -929,7 +770,7 @@ void Processor::recalculateWorldToTeamTransform() {
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     cout << "Updating field geometry based off of vision packet." << endl;
-    Field_Dimensions::Current_Dimensions = dims;
+    *currentDimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
     _gameplayModule->updateFieldDimensions();

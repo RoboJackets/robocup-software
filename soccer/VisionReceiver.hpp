@@ -3,22 +3,13 @@
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Network.hpp>
 #include <Utils.hpp>
+#include <boost/asio.hpp>
 
-#include <QThread>
-#include <QMutex>
-#include <vector>
 #include <stdint.h>
-
-class QUdpSocket;
-
-class VisionPacket {
-public:
-    /// Local time when the packet was received
-    RJ::Time receivedTime;
-
-    /// protobuf message from the vision system
-    SSL_WrapperPacket wrapper;
-};
+#include <vector>
+#include "Context.hpp"
+#include "Node.hpp"
+#include "vision/VisionPacket.hpp"
 
 /**
  * @brief Receives vision packets over UDP and places them in a buffer until
@@ -32,11 +23,10 @@ public:
  * into an SSL_WrapperPacket and placed onto the circular buffer @_packets.
  * They remain there until they are retrieved with getPackets().
  */
-class VisionReceiver : public QThread {
+class VisionReceiver : public Node {
 public:
-    VisionReceiver(bool sim = false, int port = SharedVisionPortSinglePrimary);
-
-    void stop();
+    explicit VisionReceiver(Context* context, bool sim = false,
+                            int port = SharedVisionPortSinglePrimary);
 
     /// Copies the vector of packets and then clears it. The vector contains
     /// only packets received since the last time this was called (or since the
@@ -46,14 +36,35 @@ public:
     /// returns.
     void getPackets(std::vector<VisionPacket*>& packets);
 
-    bool simulation;
-    int port;
-
-protected:
     virtual void run() override;
 
-    volatile bool _running;
-    /// This mutex protects the vector of packets
-    QMutex _mutex;
-    std::vector<VisionPacket*> _packets;
+    void setPort(int port);
+
+    RJ::Time getLastVisionTime() const { return _last_receive_time; }
+
+protected:
+    int port;
+
+    void startReceive();
+    void receivePacket(const boost::system::error_code& error,
+                       std::size_t num_bytes);
+
+    // Helper function to decide whether or not to remove a robot at a given
+    // x position
+    bool shouldRemove(bool defendPlusX, double x);
+
+    void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
+
+    Context* _context;
+
+    std::vector<uint8_t> _recv_buffer;
+
+    boost::asio::io_service _io_context;
+    boost::asio::ip::udp::socket _socket;
+
+    boost::asio::ip::udp::endpoint _sender_endpoint;
+
+    RJ::Time _last_receive_time;
+
+    std::vector<std::unique_ptr<VisionPacket>> _packets;
 };

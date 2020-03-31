@@ -1,4 +1,4 @@
-#include <NewRefereeModule.cpp>
+#include <Referee.cpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <protobuf/LogFrame.pb.h>
@@ -194,7 +194,7 @@ int main(int argc, char* argv[]) {
         if (currentFrame->raw_refbox_size() > 0) {
             SSL_Referee referee = currentFrame->raw_refbox(0);
 
-            using namespace NewRefereeModuleEnums;
+            using namespace RefereeModuleEnums;
             stage = stringFromStage((Stage)referee.stage());
             command = stringFromCommand((Command)referee.command());
 
