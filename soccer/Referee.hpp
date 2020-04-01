@@ -15,6 +15,7 @@
 
 #include "Context.hpp"
 #include "GameState.hpp"
+#include "Node.hpp"
 #include "SystemState.hpp"
 #include "TeamInfo.hpp"
 
@@ -48,7 +49,7 @@ struct RefereePacket {
  * Each time a new packet arrives, the ref module updates the GameState object
  * with the new information.
  */
-class Referee {
+class Referee : public Node {
 public:
     explicit Referee(Context* const context);
     ~Referee();
@@ -58,16 +59,9 @@ public:
     Referee(Referee&&) = delete;
     Referee& operator=(Referee&&) = delete;
 
-    /**
-     * Starts the network thread.
-     */
-    void start();
-
-    /**
-     * Stops and joins the network thread. Called in the
-     * destructor of Referee.
-     */
-    void stop();
+    void start() override;
+    void run() override;
+    void stop() override;
 
     void getPackets(std::vector<RefereePacket>& packets);
 
@@ -131,7 +125,6 @@ public:
     void spin();
 
 protected:
-    void run();
     void update();
 
     // Unconditional setter for the team color.
@@ -167,8 +160,8 @@ protected:
     // team names in the packet.
     bool _isRefControlled = false;
 
-    float ballPlacementx;
-    float ballPlacementy;
+    float ballPlacementX;
+    float ballPlacementY;
 
 private:
     GameState _game_state;
@@ -182,11 +175,6 @@ private:
     boost::asio::io_service _io_service;
     boost::asio::ip::udp::socket _asio_socket;
     boost::asio::ip::udp::endpoint _sender_endpoint;
-
-    std::promise<void> _req_stop_prom;
-    std::promise<void> _stop_prom;
-    std::future<void> _req_stop_fut;
-    std::future<void> _stop_fut;
 
     /**
      * Returns whether a stop is requested, ie. the stop() function is called

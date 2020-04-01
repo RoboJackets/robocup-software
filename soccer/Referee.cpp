@@ -43,23 +43,21 @@ Referee::Referee(Context* const context)
       _context(context),
       prev_command_{},
       prev_stage_{},
-      ballPlacementx{},
-      ballPlacementy{},
+      ballPlacementX{},
+      ballPlacementY{},
       _network_thread(),
-      _asio_socket{_io_service},
-      _req_stop_prom{},
-      _stop_prom{},
-      _req_stop_fut{_req_stop_prom.get_future()},
-      _stop_fut{_stop_prom.get_future()} {}
+      _asio_socket{_io_service} {}
 
 Referee::~Referee() { stop(); }
 
-void Referee::start() { _network_thread = std::thread{&Referee::run, this}; }
+void Referee::start() {
+    setupRefereeMulticast();
+    startReceive();
+}
 
 void Referee::stop() {
-    _req_stop_prom.set_value();
-    _stop_fut.wait();
-    _network_thread.join();
+    _asio_socket.shutdown(boost::asio::ip::udp::socket::shutdown_both);
+    _asio_socket.close();
 }
 
 void Referee::getPackets(std::vector<RefereePacket>& packets) {
@@ -83,6 +81,10 @@ void Referee::receivePacket(const boost::system::error_code& error,
     if (error != boost::system::errc::success) {
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
+        return;
+    }
+
+    if (!_useExternalRef) {
         return;
     }
 
@@ -111,8 +113,8 @@ void Referee::receivePacket(const boost::system::error_code& error,
         RJ::Time(std::chrono::microseconds(packet.wrapper.command_timestamp()));
     yellow_info.ParseRefboxPacket(packet.wrapper.yellow());
     blue_info.ParseRefboxPacket(packet.wrapper.blue());
-    ballPlacementx = packet.wrapper.designated_position().x();
-    ballPlacementy = packet.wrapper.designated_position().y();
+    ballPlacementX = packet.wrapper.designated_position().x();
+    ballPlacementY = packet.wrapper.designated_position().y();
 
     // If we have no name, we're using a default config and there's no
     // sense trying to match the referee's output (because chances are
@@ -154,28 +156,7 @@ void Referee::setupRefereeMulticast() {
         boost::asio::ip::multicast::join_group(multicast_address));
 }
 
-bool Referee::stopRequested() {
-    return _req_stop_fut.wait_for(std::chrono::seconds(0)) ==
-           std::future_status::ready;
-}
-
-void Referee::run() {
-    using namespace std::chrono_literals;
-
-    setupRefereeMulticast();
-    startReceive();
-
-    const auto sleep_duration = 100ms;
-
-    _stop_prom.set_value_at_thread_exit();
-    while (!stopRequested()) {
-        if (!_useExternalRef) {
-            std::this_thread::sleep_for(sleep_duration);
-            continue;
-        }
-        _io_service.poll();
-    }
-}
+void Referee::run() { _io_service.poll(); }
 
 void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
 
@@ -381,14 +362,14 @@ GameState Referee::updateGameState(Command command) const {
             restart = GameState::Placement;
             our_restart = !blue_team;
             ball_placement_point = GameState::convertToBallPlacementPoint(
-                ballPlacementx, ballPlacementy);
+                ballPlacementX, ballPlacementY);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             state = GameState::Stop;
             restart = GameState::Placement;
             our_restart = blue_team;
             ball_placement_point = GameState::convertToBallPlacementPoint(
-                ballPlacementx, ballPlacementy);
+                ballPlacementX, ballPlacementY);
             break;
     }
 

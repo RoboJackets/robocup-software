@@ -352,8 +352,9 @@ void Processor::run() {
         _context.vision_packets.clear();
 
         // Log referee data
+        _refereeModule->run();
         vector<RefereePacket> refereePackets;
-        _refereeModule.get()->getPackets(refereePackets);
+        _refereeModule->getPackets(refereePackets);
         for (const RefereePacket& packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
             log->CopyFrom(packet.wrapper);
