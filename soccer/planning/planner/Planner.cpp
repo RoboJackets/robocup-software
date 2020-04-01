@@ -9,7 +9,6 @@ Trajectory Planner::reuse(PlanRequest&& request) {
         return std::move(out);
     }
     RJ::Seconds timeElapsed = RJ::now() - prevTrajectory.begin_time();
-    //todo(Ethan) does this hurt performance???
     if(timeElapsed < prevTrajectory.duration()) {
         prevTrajectory.trimFront(timeElapsed);
         Trajectory out = std::move(prevTrajectory);

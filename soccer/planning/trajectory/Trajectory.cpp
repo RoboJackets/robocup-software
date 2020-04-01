@@ -134,7 +134,6 @@ namespace Planning {
         // Create a new RobotInstant with the correct values.
         return RobotInstant{interpolated_pose, interpolated_twist, time};
     }
-    //todo(Ethan) make this faster
     bool Trajectory::hit(const Geometry2d::ShapeSet &obstacles,
                          RJ::Seconds startTimeIntoPath,
                          RJ::Seconds *hitTime) const {
@@ -180,7 +179,6 @@ namespace Planning {
         }
         return false;
     }
-    //todo(Ethan) delete hitLocation. i think it doesn't work for static hits
     bool Trajectory::intersects(const std::vector<DynamicObstacle> &obstacles,
                                 RJ::Time startTime,
                                 Geometry2d::Point *hitLocation,

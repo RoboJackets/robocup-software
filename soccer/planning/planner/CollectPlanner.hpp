@@ -60,7 +60,8 @@ private:
     // High number indicates that it will always try to choose a point nearest
     // to the current robot position
     static ConfigDouble* _ballSpeedApproachDirectionCutoff;  // m/s
-    //todo(Ethan) comment
+
+    // the amount the target needs to change before replanning
     static ConfigDouble* _targetChangeThreshold;
 
     std::vector<CollectState> _collectStates;

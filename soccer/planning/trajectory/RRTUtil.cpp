@@ -37,7 +37,7 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
     MinIterations = new ConfigInt(
             cfg, "PathPlanner/RRT/MinIterations", 100,
             "The minimum number of iterations for running RRT");
-    //todo(Ethan) can this be increased. RRT fails sometimes. testing needed
+    //todo(Ethan) can this be increased? RRT fails sometimes. testing needed
     MaxIterations = new ConfigInt(
             cfg, "PathPlanner/RRT/MaxIterations", 250,
             "The maximum number of iterations for running RRT");
@@ -116,14 +116,12 @@ vector<Point> GenerateRRT(
         Point goal,
         const ShapeSet& obstacles,
         const vector<Point>& waypoints) {
-//    printf("runRRT (%.2f, %.2f) -> (%.2f, %.2f)\n", start.x(), start.y(), goal.x(), goal.y());
     // note: we could just use state_space.transitionValid() for the straight
     // line test, but this runs quicker
-//    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
-//    if(!straight.empty()) {
-//        return std::move(straight);
-//    }
-    //todo(Ethan) get rid of this last parameter if we really don't need it
+    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
+    if(!straight.empty()) {
+        return std::move(straight);
+    }
     return runRRTHelper(start, goal, obstacles, waypoints, false);
 }
 

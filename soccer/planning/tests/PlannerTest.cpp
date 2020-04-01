@@ -204,4 +204,4 @@ TEST(Planning, settle_random) {
     }
 }
 
-//TODO(Ethan) test Intercept, LineKick, WorldVel, EscapeObstacle
+//todo: test Intercept, LineKick, WorldVel, EscapeObstacle

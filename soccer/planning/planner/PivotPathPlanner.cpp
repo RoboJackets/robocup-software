@@ -20,8 +20,6 @@ namespace Planning {
         "Multiplier for the pivotRadius. PivotRadius = RobotRadius * multiplier");
     }
 
-    std::vector<RJ::Time> PivotPathPlanner::planTimes{Num_Shells, RJ::now()-60s};
-
     Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
         if(!isApplicable(request.motionCommand)) {
             throw std::invalid_argument("Error in PivotPathPlanner: invalid motionCommand; must be a PivotCommand.");
@@ -32,7 +30,6 @@ namespace Planning {
         RobotInstant startInstant = request.start;
         RobotConstraints constraints = request.constraints;
         Trajectory& prevTrajectory = request.prevTrajectory;
-        RJ::Time& prevTime = planTimes[request.shellID];
         auto state_space = std::make_shared<RoboCupStateSpace>(
                 Field_Dimensions::Current_Dimensions, request.static_obstacles);
         double radius = Robot_Radius * _pivotRadiusMultiplier->value();
@@ -43,11 +40,7 @@ namespace Planning {
             Point newTargetPoint = pivotPoint + (pivotPoint-pivotTarget).normalized(radius);
             targetIsDifferent = (newTargetPoint - prevTargetPoint).mag() > 0.1;
         }
-        //todo(Ethan) verify this with the old code
-        bool pathTooOld = false;// RJ::now() - prevTime > 0.5s;
-
-        if(prevTrajectory.num_instants() < 2 || targetIsDifferent || pathTooOld) {
-            prevTime = RJ::now();
+        if(prevTrajectory.num_instants() < 2 || targetIsDifferent) {
             double targetAngle = pivotTarget.angleTo(pivotPoint);
 
             // maxSpeed = maxRadians * radius

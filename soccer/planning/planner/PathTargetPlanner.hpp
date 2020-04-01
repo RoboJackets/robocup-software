@@ -23,6 +23,7 @@ private:
     Trajectory checkBetter(PlanRequest&& request, RobotInstant goalInstant);
     Trajectory partialReplan(PlanRequest&& request, RobotInstant goalInstant);
     Trajectory fullReplan(PlanRequest&& request, RobotInstant goalInstant);
+    AngleFunction getAngleFunction(const PlanRequest& request);
 
     RobotInstant getGoalInstant(const PlanRequest& request) const;
     bool veeredOffPath(const PlanRequest& request) const;
@@ -36,5 +37,7 @@ private:
     static ConfigDouble* _goalPosChangeThreshold;
     static ConfigDouble* _goalVelChangeThreshold;
     static ConfigDouble* _partialReplanLeadTime;
+
+    static constexpr RJ::Seconds _checkBetterDeltaTime = 0.2s;
 };
 } // namespace Planning

@@ -152,5 +152,5 @@ DynamicObstacle Ball::dynamicObs() {
         instants.emplace_back(Pose{ballInstant.pos, 0}, Twist{ballInstant.vel, 0}, stamp);
     }
     _path = Planning::Trajectory{std::move(instants)};
-    return DynamicObstacle{std::make_shared<Circle>(pos, Ball_Radius), _path};
+    return DynamicObstacle{std::make_shared<Circle>(pos, Ball_Radius), &_path};
 }

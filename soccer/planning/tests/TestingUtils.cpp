@@ -51,7 +51,7 @@ namespace Planning::TestingUtils {
 //        ASSERT_LT(dvNormal, constraints.mot.maxCentripetalAcceleration * dt + 1e-3);
 
 
-            //todo(Ethan) enable these to test angle profiles
+            //todo: enable these to test angle profiles
 //            ASSERT_LT(cur.velocity.angular(), constraints.rot.maxSpeed + 1e-6);
 //            ASSERT_LT(nxt.velocity.angular(), constraints.rot.maxSpeed + 1e-6);
 //            ASSERT_LT(std::abs(nxt.velocity.angular() - cur.velocity.angular()),

@@ -11,9 +11,6 @@ public:
     static void createConfiguration(Configuration* cfg);
     Trajectory plan(PlanRequest&& request) override;
 private:
-    //todo(Ethan) delete
-    static std::vector<RJ::Time> planTimes;
-
     static ConfigDouble* _pivotRadiusMultiplier;
 };
 }

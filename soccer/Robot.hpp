@@ -252,14 +252,6 @@ public:
      * Override the default angle planning strategy and face a point
      */
     void face(Geometry2d::Point pt);
-    /*
-     * Return true if the robot has an angle override i.e. face() was called
-     */
-    bool isFacing() const;
-    /*
-     * removes the angle override or does nothing if there is none
-     */
-    void faceNone();
 
     /**
      * Sets the worldVelocity in the robot's MotionConstraints

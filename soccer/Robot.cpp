@@ -345,13 +345,6 @@ void OurRobot::kickImmediately() {
 void OurRobot::face(Geometry2d::Point pt) {
     intent().angle_override = pos().angleTo(pt);
 }
-bool OurRobot::isFacing() const {
-    return !intent().angle_override;
-}
-void OurRobot::faceNone() {
-    intent().angle_override = std::nullopt;
-}
-
 #pragma mark Robot Avoidance
 
 void OurRobot::resetAvoidRobotRadii() {

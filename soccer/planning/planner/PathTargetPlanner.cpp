@@ -73,15 +73,22 @@ Trajectory PathTargetPlanner::plan(PlanRequest &&request) {
             return fullReplan(std::move(request), goalInstant);
         }
     }
-    //todo(Ethan) no magic values
-    if (RJ::now() - request.prevTrajectory.timeCreated() > 0.2s && timeRemaining > RJ::Seconds{*_partialReplanLeadTime} * 2) {
+    if (RJ::now() - request.prevTrajectory.timeCreated() > _checkBetterDeltaTime && timeRemaining > RJ::Seconds{*_partialReplanLeadTime} * 2) {
         return checkBetter(PlanRequest{request}, goalInstant);
     }
     return reuse(std::move(request));
 }
-
+AngleFunction PathTargetPlanner::getAngleFunction(const PlanRequest& request) {
+    std::optional<double> angle_override =
+            request.context->robot_intents[request.shellID].angle_override;
+    if(angle_override) {
+        return AngleFns::faceAngle(*angle_override);
+    }
+    return AngleFns::tangent;
+}
 Trajectory PathTargetPlanner::partialReplan(PlanRequest&& request, RobotInstant goalInstant) {
     Trajectory& prevTrajectory = request.prevTrajectory;
+    AngleFunction angleFunction = getAngleFunction(request);
     std::vector<Point> biasWaypoints;
     for (auto it = prevTrajectory.iterator(RJ::now(), 100ms);
          (*it).stamp < prevTrajectory.end_time(); ++it) {
@@ -94,26 +101,18 @@ Trajectory PathTargetPlanner::partialReplan(PlanRequest&& request, RobotInstant 
     }
     Trajectory comboPath = Trajectory(std::move(preTrajectory),
                                       std::move(postTrajectory));
-    std::optional<double> angle_override =
-            request.context->robot_intents[request.shellID].angle_override;
-    if(angle_override) {
-        PlanAngles(comboPath, comboPath.first(),
-           AngleFns::faceAngle(*angle_override), request.constraints.rot);
-    }
+
+    PlanAngles(comboPath, comboPath.first(), angleFunction, request.constraints.rot);
     return std::move(comboPath);
 }
 
 Trajectory PathTargetPlanner::fullReplan(PlanRequest&& request, RobotInstant goalInstant) {
+    AngleFunction angleFunction = getAngleFunction(request);
     Trajectory path = CreatePath::rrt(request.start, goalInstant, request.constraints.mot, request.static_obstacles, request.dynamic_obstacles);
     if(path.empty()) {
         return reuse(std::move(request));
     }
-    std::optional<double> angle_override =
-            request.context->robot_intents[request.shellID].angle_override;
-    if(angle_override) {
-        PlanAngles(path, path.first(),
-           AngleFns::faceAngle(*angle_override), request.constraints.rot);
-    }
+    PlanAngles(path, path.first(), angleFunction, request.constraints.rot);
     return std::move(path);
 }
 

@@ -380,8 +380,7 @@ void assertPivot(double a0, double af, double w0) {
         halfwayAngleDelta = (std::pow(halfwayVel, 2) - std::pow(beginVel, 2)) / (2 * accel)
                             + halfwayVel * constantVelTime;
     }
-    //todo fix this
-    ASSERT_NEAR(fixAngleRadians(evalHalfway->pose.heading() - a0), halfwayAngleDelta, 1e-6);//todo(Ethan)
+    ASSERT_NEAR(fixAngleRadians(evalHalfway->pose.heading() - a0), halfwayAngleDelta, 1e-6);
     ASSERT_NEAR(evalHalfway->pose.position().distTo(start.pose.position()), 0, 1e-6);
     ASSERT_NEAR(evalHalfway->velocity.linear().mag(), 0, 1e-6);
     ASSERT_NEAR(evalHalfway->velocity.angular(), halfwayVel, 1e-6);
@@ -392,10 +391,9 @@ void assertPivot(double a0, double af, double w0) {
 /*
  * Note:
  * These tests are for future use when we actually do angle profiling
- * For now, they fail because we don't do any fancy-ness with angles
+ * For now, they fail
  */
 
-//todo(Ethan) make this pass
 //TEST(Trajectory, PivotTurnEndpointsOnly) {
 //    double maxSpeed = RotationConstraints{}.maxSpeed;
 //    for(int i = 0; i < 1000; i++) {
@@ -404,7 +402,6 @@ void assertPivot(double a0, double af, double w0) {
 //                             random(-maxSpeed, maxSpeed));
 //    }
 //}
-//todo(Ethan) make this pass
 //TEST(Trajectory, PivotTurn) {
 //    double maxSpeed = RotationConstraints{}.maxSpeed;
 //    for(int i = 0; i < 1000; i++) {

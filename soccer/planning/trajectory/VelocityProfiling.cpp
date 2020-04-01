@@ -123,7 +123,7 @@ Trajectory ProfileVelocity(const BezierPath& path,
 //        } else {
 //            // calculate arc length
 //            double radius = 1 / curvature[n-1];
-//            //todo(Ethan) fix this
+//            //todo(Ethan) fix this. the assertion sometimes failed
 ////            assert(radius > deltaPos.mag() / 2);
 //            radius = std::max(deltaPos.mag()/2, radius);
 //            distance = radius * centerAngle;
@@ -186,7 +186,7 @@ void appendStopWithDrift(std::vector<double>& angles, std::vector<double>& angle
         angleVels.push_back(0);
     }
 }
-//todo(Ethan) do velocity profile on angles
+//todo: do velocity profile angles
 void PlanAngles(Trajectory& trajectory,
                 const RobotInstant& start_instant,
                 const AngleFunction& angle_function,

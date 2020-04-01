@@ -13,7 +13,14 @@ using AngleFunction = std::function<double(const RobotInstant& instant)>;
 
 namespace AngleFns {
     inline double tangent(const RobotInstant& instant) {
-        return instant.velocity.linear().angle();
+        Geometry2d::Point pt = instant.pose.position();
+        Geometry2d::Point vel = instant.velocity.linear();
+        double angle = instant.pose.heading();
+        double angleError = std::abs(fixAngleRadians(angle-vel.angle()));
+        if (angleError < M_PI / 2) {
+            return vel.angle();
+        }
+        return vel.angle() + M_PI;
     };
     inline AngleFunction facePoint(const Geometry2d::Point point) {
         return [=](const RobotInstant& instant) -> double {

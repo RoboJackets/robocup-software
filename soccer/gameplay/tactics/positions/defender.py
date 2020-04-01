@@ -134,7 +134,6 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
             if main.ball().vel.magsq() > 0.03 and winseg.segment_intersection(
                     shoot_seg) != None:
                 self.robot.move_to(shoot_seg.nearest_point(self.robot.pos))
-                self.robot.face_none()
             else:
                 winsize = winseg.length()
 

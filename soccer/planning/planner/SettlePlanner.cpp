@@ -48,11 +48,7 @@ RJ::Time SettlePlanner::bruteForceIntercept(const PlanRequest& request) {
     for(double x = *_searchStartDist; x < endDist; x += *_searchIncDist) {
         dists.push_back(x);
     }
-    // Run brute force using a parallel for loop thanks to OpenMP
-    // considering the interceptBufferTime constraint:
-    // if the constraint can be satisfied, find the path of minimum contact time
-    // if not, find the path with maximum intercept buffer time
-    // todo(Ethan) ^^^ actually implement that...
+    // brute force to find the path with the soonest contact time
     RJ::Time interceptTime = ball.estimateTimeTo(ball.pos + ball.vel.normalized(endDist));
     _pathTargetPlanner.drawRadius = Ball_Radius;
     _pathTargetPlanner.drawColor = Qt::white;
@@ -60,7 +56,6 @@ RJ::Time SettlePlanner::bruteForceIntercept(const PlanRequest& request) {
 #pragma omp parallel for default(none) shared(request, dists, ball, interceptTime)
     for(int i = 0; i < dists.size(); i++) {
         RJ::Time contactTime = ball.estimateTimeTo(ball.pos + ball.vel.normalized(dists[i]));
-        //todo(Ethan) full copy or request.copyNoHistory()?
         Trajectory path = intercept(request.copyNoHistory(), contactTime);
         if(!path.empty()) {
 #pragma omp critical
@@ -112,11 +107,8 @@ Trajectory SettlePlanner::plan(PlanRequest&& request) {
         RobotInstant goalInstant{Pose{closestPt,0}, {}, RJ::Time{0s}};
         Trajectory path = CreatePath::simple(startInstant, goalInstant, request.constraints.mot);
         if (!path.empty()) {
-            printf("shortcut\n");
             PlanAngles(path, startInstant, AngleFns::faceAngle(ball.vel.angle()+M_PI),rotationConstraints);
             return std::move(path);
-        } else {
-            printf("failed shortcut\n");
         }
     }
 

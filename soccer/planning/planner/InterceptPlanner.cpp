@@ -32,7 +32,6 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
         return std::move(path);
     }
 
-    RJ::Time startTime = RJ::now();
     // Find the minimum viable target velocity using Brute Force
     // a lower target velocity is safer because we are more likely to stay there
     Trajectory path{{}};
@@ -47,7 +46,6 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
             break;
         }
     }
-    printf("Intercept brute force took %.2f sec\n", RJ::Seconds{RJ::now()-startTime}.count());
     if(path.empty()) return reuse(std::move(request));
     return std::move(path);
 }

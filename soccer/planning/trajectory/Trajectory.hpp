@@ -164,7 +164,7 @@ public:
         return end_time() - begin_time();
     }
 
-    /** todo(Ethan) delete these functions bc they are slow
+    /**
      * Evaluate this trajectory (calculate position and velocity) at a given
      * point in time.
      *

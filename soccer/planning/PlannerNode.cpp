@@ -89,7 +89,7 @@ void PlannerNode::run() {
         OurRobot* robot = context_->state.self[request.shellID];
         Trajectory plannedPath = PlanForRobot(std::move(request));
         robot->setPath(std::move(plannedPath));
-        dynamicObstacles.emplace_back(std::make_shared<Circle>(robot->pos(), Robot_Radius), robot->path());
+        dynamicObstacles.emplace_back(std::make_shared<Circle>(robot->pos(), Robot_Radius), &robot->path());
 
         //draw debug info
         robot->path().draw(&context_->debug_drawer, robot->pos() + Point(.1,0));
@@ -137,7 +137,7 @@ Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
     }
     std::cerr << "No valid planner! Did you forget to specify a default planner?"
               << std::endl;
-    Trajectory result{{request.start}};//todo(Ethan) make this empty again
+    Trajectory result{{request.start}};
     result.setDebugText("Error: No Valid Planners");
     return std::move(result);
 }
