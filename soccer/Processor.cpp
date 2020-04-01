@@ -82,9 +82,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _kickOnBreakBeam = false;
 
     // Configuration-time variables.
-    std::cout << robot_config_init.get() << std::endl;
     _context.robot_config = std::move(robot_config_init);
-    std::cout << _context.robot_config.get() << std::endl;
     for (int i = Num_Shells - 1; i >= 0; i--) {
         // Set up fields in Context
         _context.robot_status[i] = std::move(robot_status_init.back());
@@ -141,7 +139,6 @@ Processor::~Processor() {
     // when Processor dies. That normally isn't a problem, but in unit tests,
     // we create and destroy multiple instances of Processor for each test.
     robot_config_init = std::move(_context.robot_config);
-    std::cout << robot_config_init.get() << std::endl;
 
     for (size_t i = 0; i < Num_Shells; i++) {
         robot_status_init.push_back(std::move(_context.robot_status[i]));
