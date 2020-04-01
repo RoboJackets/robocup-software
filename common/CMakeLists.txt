@@ -15,7 +15,7 @@ set(COMMON_SRC
     "Geometry2d/Segment.cpp"
     "multicast.cpp"
     "Utils.cpp"
-)
+        referee_enums.cpp referee_enums.h)
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

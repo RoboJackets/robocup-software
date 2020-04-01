@@ -119,7 +119,7 @@ Processor::~Processor() {
     }
 
     // DEBUG - This is unnecessary, but lets us determine which one breaks.
-    //_refereeModule.reset();
+    //    _refereeModule.reset();
     _gameplayModule.reset();
 }
 
@@ -352,14 +352,13 @@ void Processor::run() {
         _context.vision_packets.clear();
 
         // Log referee data
-        vector<RefereePacket*> refereePackets;
+        vector<RefereePacket> refereePackets;
         _refereeModule.get()->getPackets(refereePackets);
-        for (RefereePacket* packet : refereePackets) {
+        for (const RefereePacket& packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
-            log->CopyFrom(packet->wrapper);
+            log->CopyFrom(packet.wrapper);
             curStatus.lastRefereeTime =
-                std::max(curStatus.lastRefereeTime, packet->receivedTime);
-            delete packet;
+                std::max(curStatus.lastRefereeTime, packet.receivedTime);
         }
 
         // Update gamestate w/ referee data
