@@ -456,39 +456,11 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
     }
 
     // Add ball
-    bool possessBall = _context->ball_possessor && *_context->ball_possessor == shell();
-    if (_context->state.ball.valid && !possessBall) {
-        auto ballObs = createBallObstacle();
-        if (ballObs) fullObstacles.add(ballObs);
-    }
-
-    fullObstacles.add(globalObstacles);
-
-    return fullObstacles;
-}
-
-Geometry2d::ShapeSet OurRobot::collectAllObstacles(
-    const Geometry2d::ShapeSet& globalObstacles) {
-    Geometry2d::ShapeSet fullObstacles(intent().local_obstacles);
-    // Adds our robots as obstacles only if they're within a certain distance
-    // from this robot. This distance increases with velocity.
-    RobotMask self_avoid_mask;
-    std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
-              *_selfAvoidRadius);
-    const Geometry2d::ShapeSet selfObs =
-        createRobotObstacles(_context->state.self, self_avoid_mask, this->pos(),
-                             0.6 + this->vel().mag());
-    const Geometry2d::ShapeSet oppObs =
-        createRobotObstacles(_context->state.opp, intent().opp_avoid_mask);
-
     if (_context->state.ball.valid) {
-        // _state->drawShape(ball_obs, Qt::gray,
-        //                   QString("ball_obstacles_%1").arg(shell()));
         auto ballObs = createBallObstacle();
         if (ballObs) fullObstacles.add(ballObs);
     }
-    fullObstacles.add(selfObs);
-    fullObstacles.add(oppObs);
+
     fullObstacles.add(globalObstacles);
 
     return fullObstacles;

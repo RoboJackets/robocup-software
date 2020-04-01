@@ -42,7 +42,5 @@ struct Context {
     std::optional<QPointF> ball_command;
     std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
 
-    //todo(Ethan) delete this?
-    std::optional<unsigned int> ball_possessor;
     bool is_simulation;
 };

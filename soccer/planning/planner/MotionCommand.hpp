@@ -10,7 +10,7 @@
 #include "Utils.hpp"
 
 namespace Planning {
-
+//todo(Ethan) discuss whether we want to have settle with bounce
 struct SettleCommand{};
 struct CollectCommand{};
 struct LineKickCommand{

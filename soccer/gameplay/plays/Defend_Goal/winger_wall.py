@@ -84,10 +84,6 @@ class WingerWall(standard_play.StandardPlay):
     def use_standard_defense(self):
         pass
 
-    ## Stop winger wall from using adding standard defense
-    def use_standard_defense(self):
-        pass
-
     ## Classify opponent robots as a 'winger' or 'forward'
     #
     # Wingers are positioned away from the ball and may be passed to
