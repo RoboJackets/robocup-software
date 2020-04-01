@@ -122,8 +122,6 @@ public:
     [[nodiscard]] GameState updateGameState(
         RefereeModuleEnums::Command command) const;
 
-    void spin();
-
 protected:
     void update();
 
@@ -166,6 +164,7 @@ protected:
 private:
     GameState _game_state;
 
+    // Arbitrary receive buffer size
     static constexpr size_t RecvBufferSize =
         std::numeric_limits<uint16_t>::max() + 1;
     std::array<char, RecvBufferSize> _recv_buffer;

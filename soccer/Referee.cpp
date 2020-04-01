@@ -156,14 +156,13 @@ void Referee::setupRefereeMulticast() {
         boost::asio::ip::multicast::join_group(multicast_address));
 }
 
-void Referee::run() { _io_service.poll(); }
-
-void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
-
-void Referee::spin() {
+void Referee::run() {
+    _io_service.poll();
     spinKickWatcher(_context->state);
     update();
 }
+
+void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
 
 void Referee::spinKickWatcher(const SystemState& system_state) {
     /// Only run the kick detector when the ball is visible

@@ -117,10 +117,6 @@ Processor::~Processor() {
     for (Joystick* joy : _joysticks) {
         delete joy;
     }
-
-    // DEBUG - This is unnecessary, but lets us determine which one breaks.
-    //    _refereeModule.reset();
-    _gameplayModule.reset();
 }
 
 void Processor::stop() {
