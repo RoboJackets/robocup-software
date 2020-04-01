@@ -90,6 +90,7 @@ Trajectory SettlePlanner::plan(PlanRequest&& request) {
     RotationConstraints rotationConstraints = request.constraints.rot;
     const Ball& ball = request.context->state.ball;
     Point ballVel = ball.vel;
+    // search for a goal with brute force
     Pose targetPose = findTargetPose(request);
     Segment ballLine{ball.pos, targetPose.position()};
     request.context->debug_drawer.drawLine(ballLine, Qt::white, "Planning");
@@ -101,8 +102,7 @@ Trajectory SettlePlanner::plan(PlanRequest&& request) {
     // we get there because it thinks we won't make it in time.
     Point closestPt = ballLine.nearestPoint(startInstant.pose.position());
     bool inFrontOfBall = ball.vel.dot(closestPt - ball.pos) > 0;
-    auto& avgTarget = _avgTargetBallPoints[request.shellID];
-    bool withinShortcut = startInstant.pose.position().distTo(closestPt) < *_shortcutDist;// && avgTarget && closestPt.distTo(targetPose.position()) < *_shortcutDist;
+    bool withinShortcut = startInstant.pose.position().distTo(closestPt) < *_shortcutDist;// && closestPt.distTo(targetPose.position()) < *_shortcutDist;
     if(inFrontOfBall && withinShortcut) {
         RobotInstant goalInstant{Pose{closestPt,0}, {}, RJ::Time{0s}};
         Trajectory path = CreatePath::simple(startInstant, goalInstant, request.constraints.mot);
@@ -112,8 +112,7 @@ Trajectory SettlePlanner::plan(PlanRequest&& request) {
         }
     }
 
-    // Brute Force Path: search for a goal with brute force, then plan toward
-    // the goal with PathTargetPlanner
+    // plan toward the goal with PathTargetPlanner
     RobotInstant targetInstant{targetPose, {}, RJ::Time{0s}};
     request.motionCommand = PathTargetCommand{targetInstant};
     // add ball obstacle at contact time and current time
@@ -127,28 +126,28 @@ Trajectory SettlePlanner::plan(PlanRequest&& request) {
 Pose SettlePlanner::findTargetPose(const PlanRequest& request) {
     RJ::Time interceptTime = bruteForceIntercept(request);
     const Ball& ball = request.context->state.ball;
-    Point noisyTargetBallPoint = ball.predict(interceptTime).pos;
+    Point noisyTargetPoint = ball.predict(interceptTime).pos + ball.vel.normalized(Ball_Radius+Robot_MouthRadius);
 
     // if the intercept target is out of bounds, project it into the field
     const Rect &fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
-    Segment ballLine{ball.pos, noisyTargetBallPoint};
+    Segment ballLine{ball.pos, noisyTargetPoint};
     auto [isBoundaryHit, boundaryHits] = fieldRect.intersects(ballLine);
     if (isBoundaryHit && boundaryHits.size() > 0) {
-        noisyTargetBallPoint = boundaryHits[0];
+        noisyTargetPoint = boundaryHits[0];
     }
 
-    std::optional<Point>& avgTargetBallPoint = _avgTargetBallPoints[request.shellID];
+    std::optional<Point>& avgTargetPoint = _avgTargetPoints[request.shellID];
     // reduce high frequency noise by applying a low pass filter
-    if(!avgTargetBallPoint) {
-        avgTargetBallPoint = noisyTargetBallPoint;
+    if(!avgTargetPoint) {
+        avgTargetPoint = noisyTargetPoint;
     } else {
-        avgTargetBallPoint = applyLowPassFilter(*avgTargetBallPoint, noisyTargetBallPoint, *_targetPointGain);
+        avgTargetPoint = applyLowPassFilter(*avgTargetPoint, noisyTargetPoint, *_targetPointGain);
     }
     // reduce low frequency movement by applying a threshold on position change
-    std::optional<Point>& targetBallPoint = _targetBallPoints[request.shellID];
-    if (!targetBallPoint || targetBallPoint->distTo(*avgTargetBallPoint) > *_targetChangeThreshold) {
-        targetBallPoint = *avgTargetBallPoint;
+    std::optional<Point>& targetPoint = _targetPoints[request.shellID];
+    if (!targetPoint || targetPoint->distTo(*avgTargetPoint) > *_targetChangeThreshold) {
+        targetPoint = *avgTargetPoint;
     }
-    return Pose{*targetBallPoint + ball.vel.normalized(Ball_Radius+Robot_MouthRadius), ball.vel.angle() + M_PI};
+    return Pose{*targetPoint, ball.vel.angle() + M_PI};
 }
 }

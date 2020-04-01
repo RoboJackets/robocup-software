@@ -4,8 +4,7 @@
 namespace Planning {
 class SettlePlanner: public PlannerForCommandType<SettleCommand> {
 public:
-    SettlePlanner(): PlannerForCommandType<SettleCommand>("SettleCommand"),
-            _avgTargetBallPoints(Num_Shells, std::nullopt) {}
+    SettlePlanner(): PlannerForCommandType("SettleCommand") {}
     ~SettlePlanner() override = default;
 
     static void createConfiguration(Configuration* cfg);
@@ -36,12 +35,17 @@ private:
     // What dist increment to search for intercepts
     static ConfigDouble* _searchIncDist;  // m
 
+    // minimum distance the target needs to change before replanning
     static ConfigDouble* _targetChangeThreshold;
 
+    // Distance between robot and closest point on ball line such that we move
+    // directly into the ball line instead of trying to find the point we hit
+    // first This does take into account slow moving balls in which we should
+    // move onto the ball to capture it
     static ConfigDouble* _shortcutDist;
 
-    std::vector<std::optional<Geometry2d::Point>> _avgTargetBallPoints;
-    std::array<std::optional<Geometry2d::Point>, Num_Shells> _targetBallPoints;
+    std::array<std::optional<Geometry2d::Point>, Num_Shells> _avgTargetPoints;
+    std::array<std::optional<Geometry2d::Point>, Num_Shells> _targetPoints;
 
     PathTargetPlanner _pathTargetPlanner;
 };

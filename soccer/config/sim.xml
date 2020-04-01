@@ -389,7 +389,7 @@
    <searchStartDist value="0"/>
    <searchEndDist value="7"/>
    <searchIncDist value="0.2"/>
-   <targetChangeThreshold value="0.08"/>
+   <targetChangeThreshold value="0.09"/>
    <shortcutDist value="0.09"/>
   </Settle>
  </Capture>

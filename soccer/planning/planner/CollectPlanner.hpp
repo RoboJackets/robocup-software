@@ -65,7 +65,7 @@ private:
     static ConfigDouble* _targetChangeThreshold;
 
     std::vector<CollectState> _collectStates;
-    std::array<std::optional<Geometry2d::Point>, Num_Shells> _courseTargetPoints;
+    std::array<std::optional<RobotInstant>, Num_Shells> _courseTargetInstants;
 
     PathTargetPlanner _pathTargetPlanner;
 };
