@@ -1,4 +1,4 @@
-#include <referee_enums.h>
+#include <RefereeEnums.h>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <protobuf/LogFrame.pb.h>

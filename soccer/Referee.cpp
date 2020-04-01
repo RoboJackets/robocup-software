@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 #include "Constants.hpp"
-#include "referee_enums.h"
+#include "RefereeEnums.h"
 
 using namespace RefereeModuleEnums;
 

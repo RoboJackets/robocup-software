@@ -5,7 +5,7 @@
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>
-#include "referee_enums.h"
+#include "RefereeEnums.h"
 
 #include <Utils.hpp>
 #include <future>

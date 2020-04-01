@@ -1,5 +1,5 @@
-#ifndef GT_ROBOJACKETS_ROBOCUP_REFEREE_ENUMS_H
-#define GT_ROBOJACKETS_ROBOCUP_REFEREE_ENUMS_H
+#ifndef GT_ROBOJACKETS_ROBOCUP_REFEREEENUMS_H
+#define GT_ROBOJACKETS_ROBOCUP_REFEREEENUMS_H
 
 #include <string>
 
@@ -93,4 +93,4 @@ enum Command {
 std::string stringFromCommand(Command c);
 }  // namespace RefereeModuleEnums
 
-#endif  // GT_ROBOJACKETS_ROBOCUP_REFEREE_ENUMS_H
+#endif  // GT_ROBOJACKETS_ROBOCUP_REFEREEENUMS_H

@@ -15,7 +15,7 @@ set(COMMON_SRC
     "Geometry2d/Segment.cpp"
     "multicast.cpp"
     "Utils.cpp"
-    "referee_enums.cpp"
+    "RefereeEnums.cpp"
 )
 
 
