@@ -88,7 +88,8 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context, _refereeModule.get());
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
+        &_context, _refereeModule.get());
     _pathPlanner = std::make_unique<Planning::PlannerNode>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, _simulation, _blueTeam);

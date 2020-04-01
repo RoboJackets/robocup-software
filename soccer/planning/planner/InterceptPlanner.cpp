@@ -1,18 +1,19 @@
 #include "InterceptPlanner.hpp"
-#include "planning/trajectory/Trajectory.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
 #include "PlanRequest.hpp"
 #include "Planner.hpp"
+#include "planning/trajectory/RRTUtil.hpp"
+#include "planning/trajectory/Trajectory.hpp"
+#include "planning/trajectory/VelocityProfiling.hpp"
 namespace Planning {
 using namespace Geometry2d;
 Trajectory InterceptPlanner::plan(PlanRequest&& request) {
     RobotInstant startInstant = request.start;
     const Ball& ball = request.context->state.ball;
-    Point targetPoint = std::get<InterceptCommand>(request.motionCommand).target;
+    Point targetPoint =
+        std::get<InterceptCommand>(request.motionCommand).target;
 
     RJ::Seconds ballToPointTime =
-            ball.estimateTimeTo(targetPoint, &targetPoint) - RJ::now();
+        ball.estimateTimeTo(targetPoint, &targetPoint) - RJ::now();
     if ((targetPoint - _prevTargetPoint).mag() < Robot_Radius / 2) {
         targetPoint = _prevTargetPoint;
     } else {
@@ -25,9 +26,11 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
     // Saves some frames and is much more consistent
     RobotInstant targetInstant{Pose{targetPoint, 0}, Twist{}, RJ::Time{0s}};
     if (botToTarget.mag() < Robot_Radius / 2) {
-        auto path = CreatePath::simple(startInstant, targetInstant, request.constraints.mot);
-        if(path.empty()) return reuse(std::move(request));
-        PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos), request.constraints.rot);
+        auto path = CreatePath::simple(startInstant, targetInstant,
+                                       request.constraints.mot);
+        if (path.empty()) return reuse(std::move(request));
+        PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos),
+                   request.constraints.rot);
         path.setDebugText("AtPoint");
         return std::move(path);
     }
@@ -37,16 +40,18 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
     Trajectory path{{}};
     constexpr int interpolations = 21;
     for (int i = 0; i < interpolations; i++) {
-        double percent = static_cast<double>(i) / (interpolations-1);
+        double percent = static_cast<double>(i) / (interpolations - 1);
         targetInstant.velocity.linear() =
-                percent * request.constraints.mot.maxSpeed * botToTarget.norm();
-        path = CreatePath::simple(startInstant, targetInstant, request.constraints.mot);
-        PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos), request.constraints.rot);
+            percent * request.constraints.mot.maxSpeed * botToTarget.norm();
+        path = CreatePath::simple(startInstant, targetInstant,
+                                  request.constraints.mot);
+        PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos),
+                   request.constraints.rot);
         if (path.duration() <= ballToPointTime) {
             break;
         }
     }
-    if(path.empty()) return reuse(std::move(request));
+    if (path.empty()) return reuse(std::move(request));
     return std::move(path);
 }
 }  // namespace Planning

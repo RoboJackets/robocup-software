@@ -1,12 +1,13 @@
 #pragma once
-#include "Planner.hpp"
 #include "PathTargetPlanner.hpp"
+#include "Planner.hpp"
 namespace Planning {
 enum class CollectState { Course, Fine, Control };
-class CollectPlanner: public PlannerForCommandType<CollectCommand> {
+class CollectPlanner : public PlannerForCommandType<CollectCommand> {
 public:
-    CollectPlanner(): PlannerForCommandType<CollectCommand>("CollectPlanner"),
-            _collectStates(Num_Shells, CollectState::Course) {}
+    CollectPlanner()
+        : PlannerForCommandType<CollectCommand>("CollectPlanner"),
+          _collectStates(Num_Shells, CollectState::Course) {}
     ~CollectPlanner() override = default;
 
     static void createConfiguration(Configuration* cfg);
@@ -26,7 +27,9 @@ private:
     // find the direction the robot will approach the ball (as a unit vector)
     Geometry2d::Point findApproachDirection(const PlanRequest& request) const {
         const Ball& ball = request.context->state.ball;
-        return ball.vel.mag() < *_ballSpeedApproachDirectionCutoff ? (ball.pos - request.start.pose.position()).norm() : ball.vel.norm();
+        return ball.vel.mag() < *_ballSpeedApproachDirectionCutoff
+                   ? (ball.pos - request.start.pose.position()).norm()
+                   : ball.vel.norm();
     }
 
     // At what speed should we be when we touch the ball (Well, the difference
@@ -34,7 +37,7 @@ private:
     // we still are able to touch the ball and control it If we are slamming
     // into the ball decrease this number If we aren't even touching it to the
     // dribbler, increase this number
-    static ConfigDouble* _touchDeltaSpeed; // m/s
+    static ConfigDouble* _touchDeltaSpeed;  // m/s
 
     // buffer distance for when we contact the ball. between these buffers, the
     // robot will move at a constant velocity
@@ -69,4 +72,4 @@ private:
 
     PathTargetPlanner _pathTargetPlanner;
 };
-}
+}  // namespace Planning

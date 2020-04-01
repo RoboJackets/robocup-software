@@ -7,7 +7,7 @@
 namespace Planning {
 class Planner {
 public:
-    explicit Planner(std::string name): _name(name) {}
+    explicit Planner(std::string name) : _name(name) {}
     virtual ~Planner() = default;
 
     /**
@@ -37,18 +37,16 @@ public:
     /**
      * Get a user-readable name for this planner.
      */
-    std::string name() const {
-        return _name;
-    }
+    std::string name() const { return _name; }
 
 private:
     const std::string _name;
 };
 
-template<typename CommandType>
+template <typename CommandType>
 class PlannerForCommandType : public Planner {
 public:
-    PlannerForCommandType(const std::string& name): Planner(name) {};
+    PlannerForCommandType(const std::string& name) : Planner(name){};
     ~PlannerForCommandType() override = default;
 
     bool isApplicable(const MotionCommand& command) const override {
@@ -57,8 +55,7 @@ public:
 };
 
 template <typename T>
-inline T applyLowPassFilter(const T& oldValue, const T& newValue,
-                     double gain) {
+inline T applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
     return gain * newValue + (1 - gain) * oldValue;
 }
-}
+}  // namespace Planning

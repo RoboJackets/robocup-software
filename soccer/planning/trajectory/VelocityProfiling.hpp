@@ -12,30 +12,26 @@ namespace Planning {
 using AngleFunction = std::function<double(const RobotInstant& instant)>;
 
 namespace AngleFns {
-    inline double tangent(const RobotInstant& instant) {
-        Geometry2d::Point pt = instant.pose.position();
-        Geometry2d::Point vel = instant.velocity.linear();
-        double angle = instant.pose.heading();
-        double angleError = std::abs(fixAngleRadians(angle-vel.angle()));
-        if (angleError < M_PI / 2) {
-            return vel.angle();
-        }
-        return vel.angle() + M_PI;
+inline double tangent(const RobotInstant& instant) {
+    Geometry2d::Point pt = instant.pose.position();
+    Geometry2d::Point vel = instant.velocity.linear();
+    double angle = instant.pose.heading();
+    double angleError = std::abs(fixAngleRadians(angle - vel.angle()));
+    if (angleError < M_PI / 2) {
+        return vel.angle();
+    }
+    return vel.angle() + M_PI;
+};
+inline AngleFunction facePoint(const Geometry2d::Point point) {
+    return [=](const RobotInstant& instant) -> double {
+        return instant.pose.position().angleTo(point);
     };
-    inline AngleFunction facePoint(const Geometry2d::Point point) {
-        return [=](const RobotInstant& instant) -> double {
-            return instant.pose.position().angleTo(point);
-        };
-    }
-    inline AngleFunction faceAngle(double angle) {
-        return [=](const RobotInstant& instant) -> double {
-            return angle;
-        };
-    }
-    inline double zero(const RobotInstant& instant) {
-        return 0;
-    }
 }
+inline AngleFunction faceAngle(double angle) {
+    return [=](const RobotInstant& instant) -> double { return angle; };
+}
+inline double zero(const RobotInstant& instant) { return 0; }
+}  // namespace AngleFns
 
 /**
  * Create a trajectory with the given path by calculating the maximum possible
@@ -44,7 +40,10 @@ namespace AngleFns {
  * @param path
  * @return
  */
-Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double final_speed, const MotionConstraints& constraints, RJ::Time initial_time = RJ::now());
+Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
+                           double final_speed,
+                           const MotionConstraints& constraints,
+                           RJ::Time initial_time = RJ::now());
 
 /**
  * Create a path starting at the end of the given trajectory using the given
@@ -53,11 +52,14 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double 
  * will be appended to the given trajectory.
  *
  * @param out The trajectory to which the new path should be appended
- * @param path The (spatial) Bezier path to follow after the trajectory is finished
+ * @param path The (spatial) Bezier path to follow after the trajectory is
+ * finished
  * @param final_speed The final speed along the path, once the end is reached
  * @param constraints Constraints on linear acceleration.
  */
-void AppendProfiledVelocity(Trajectory& out, const BezierPath& path, double final_speed, const MotionConstraints& constraints);
+void AppendProfiledVelocity(Trajectory& out, const BezierPath& path,
+                            double final_speed,
+                            const MotionConstraints& constraints);
 
 /**
  * Applies an angle function to a given trajectory and enforces the angle
@@ -71,9 +73,8 @@ void AppendProfiledVelocity(Trajectory& out, const BezierPath& path, double fina
  *      a function of the robot's current state.
  * @param constraints Constraints on the robot's rotation.
  */
-void PlanAngles(Trajectory& trajectory,
-                const RobotInstant& start_instant,
+void PlanAngles(Trajectory& trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 
-} // namespace Planning
+}  // namespace Planning

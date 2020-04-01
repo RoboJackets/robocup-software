@@ -1,9 +1,11 @@
+#pragma once
+#include "Field_Dimensions.hpp"
+#include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
 #include <rrt/BiRRT.hpp>
-#include <DebugDrawer.hpp>
 #include "Configuration.hpp"
-#include "SystemState.hpp"
 #include "RoboCupStateSpace.hpp"
+#include "SystemState.hpp"
 #include "planning/MotionConstraints.hpp"
 #include "planning/trajectory/Trajectory.hpp"
 
@@ -42,32 +44,43 @@ void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
  *      the end.
  */
 std::vector<Geometry2d::Point> GenerateRRT(
-        Geometry2d::Point start,
-        Geometry2d::Point goal,
-        const Geometry2d::ShapeSet& obstacles,
-        const std::vector<Geometry2d::Point>& waypoints = {});
+    Geometry2d::Point start, Geometry2d::Point goal,
+    const Geometry2d::ShapeSet& obstacles,
+    const std::vector<Geometry2d::Point>& waypoints = {});
 
 namespace CreatePath {
 /**
  * Generate a smooth path from start to goal avoiding obstacles.
  */
-Trajectory rrt(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
+Trajectory rrt(const RobotInstant& start, const RobotInstant& goal,
+               const MotionConstraints& motionConstraints,
+               const Geometry2d::ShapeSet& static_obstacles,
+               const std::vector<DynamicObstacle>& dynamic_obstacles = {},
+               const std::vector<Geometry2d::Point>& biasWaypoints = {});
 
 /**
  * Generate a smooth path from start to goal disregarding obstacles.
  */
-Trajectory simple(const RobotInstant& start, const RobotInstant& goal,
-        const MotionConstraints& motionConstraints, const std::vector<Geometry2d::Point>& intermediatePoints = {});
+Trajectory simple(
+    const RobotInstant& start, const RobotInstant& goal,
+    const MotionConstraints& motionConstraints,
+    const std::vector<Geometry2d::Point>& intermediatePoints = {});
 
 /**
  * Generate a path by RRT. if that fails, fall back on the simple path
  */
-Trajectory complete(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const Geometry2d::ShapeSet& static_obstacles, const std::vector<DynamicObstacle>& dynamic_obstacles = {},const std::vector<Geometry2d::Point>& biasWaypoints = {});
+Trajectory complete(const RobotInstant& start, const RobotInstant& goal,
+                    const MotionConstraints& motionConstraints,
+                    const Geometry2d::ShapeSet& static_obstacles,
+                    const std::vector<DynamicObstacle>& dynamic_obstacles = {},
+                    const std::vector<Geometry2d::Point>& biasWaypoints = {});
 
-}
-/**
- * project a point into the field rect
- */
- Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint, const Geometry2d::Rect& fieldRect, Geometry2d::Point ballPoint);
+}  // namespace CreatePath
+   /**
+    * project a point into the field rect
+    */
+Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint,
+                                        const Geometry2d::Rect& fieldRect,
+                                        Geometry2d::Point ballPoint);
 
-}  // Planning
+}  // namespace Planning

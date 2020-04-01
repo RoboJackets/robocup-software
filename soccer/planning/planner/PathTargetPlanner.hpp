@@ -4,12 +4,12 @@
 #include "planning/trajectory/VelocityProfiling.hpp"
 
 namespace Planning {
-class PathTargetPlanner: public PlannerForCommandType<PathTargetCommand> {
+class PathTargetPlanner : public PlannerForCommandType<PathTargetCommand> {
 public:
-    PathTargetPlanner(): PlannerForCommandType("PathTargetPlanner") {}
+    PathTargetPlanner() : PlannerForCommandType("PathTargetPlanner") {}
     ~PathTargetPlanner() override = default;
 
-    Trajectory plan(PlanRequest &&request);
+    Trajectory plan(PlanRequest&& request);
 
     static void createConfiguration(Configuration* cfg);
 
@@ -19,6 +19,7 @@ public:
 
     static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
     static double partialReplanLeadTime() { return *_partialReplanLeadTime; }
+
 private:
     Trajectory checkBetter(PlanRequest&& request, RobotInstant goalInstant);
     Trajectory partialReplan(PlanRequest&& request, RobotInstant goalInstant);
@@ -27,11 +28,13 @@ private:
 
     RobotInstant getGoalInstant(const PlanRequest& request) const;
     bool veeredOffPath(const PlanRequest& request) const;
-    bool goalChanged(const RobotInstant &prevGoal,
-                                        const RobotInstant &goal) const;
+    bool goalChanged(const RobotInstant& prevGoal,
+                     const RobotInstant& goal) const;
 
     Trajectory partialPath(const Trajectory& prevTrajectory) {
-        return prevTrajectory.subTrajectory(0s, (RJ::now() - prevTrajectory.begin_time()) + RJ::Seconds{*_partialReplanLeadTime});
+        return prevTrajectory.subTrajectory(
+            0s, (RJ::now() - prevTrajectory.begin_time()) +
+                    RJ::Seconds{*_partialReplanLeadTime});
     }
 
     static ConfigDouble* _goalPosChangeThreshold;
@@ -40,4 +43,4 @@ private:
 
     static constexpr RJ::Seconds _checkBetterDeltaTime = 0.2s;
 };
-} // namespace Planning
+}  // namespace Planning

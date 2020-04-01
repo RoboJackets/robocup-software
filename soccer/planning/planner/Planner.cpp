@@ -3,13 +3,13 @@
 namespace Planning {
 Trajectory Planner::reuse(PlanRequest&& request) {
     Trajectory& prevTrajectory = request.prevTrajectory;
-    if(prevTrajectory.empty()) {
+    if (prevTrajectory.empty()) {
         Trajectory out{{request.start}};
         out.setDebugText("Empty");
         return std::move(out);
     }
     RJ::Seconds timeElapsed = RJ::now() - prevTrajectory.begin_time();
-    if(timeElapsed < prevTrajectory.duration()) {
+    if (timeElapsed < prevTrajectory.duration()) {
         prevTrajectory.trimFront(timeElapsed);
         Trajectory out = std::move(prevTrajectory);
         out.setDebugText("Reuse");
@@ -19,4 +19,4 @@ Trajectory Planner::reuse(PlanRequest&& request) {
     out.setDebugText("Reusing Past End");
     return std::move(out);
 }
-}
+}  // namespace Planning

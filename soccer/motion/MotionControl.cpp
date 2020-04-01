@@ -79,8 +79,8 @@ void MotionControl::run() {
 
     // evaluate path - where should we be right now?
     std::optional<RobotInstant> optTarget =
-            _robot->path().evaluate(timeIntoPath);
-    //add this in case of planner failure, but this shouldn't ever happen
+        _robot->path().evaluate(timeIntoPath);
+    // add this in case of planner failure, but this shouldn't ever happen
     if (_robot->path().empty()) {
         debugThrow("Error: Planner Failed. empty path.");
         RobotInstant target{_robot->pose(), Twist::Zero(), RJ::now()};
@@ -91,20 +91,31 @@ void MotionControl::run() {
     if (!optTarget) {
         optTarget = _robot->path().last();
     }
-    _context->debug_drawer.drawCircle(optTarget->pose.position(), .15, targetColor,"Motion");
+    _context->debug_drawer.drawCircle(optTarget->pose.position(), .15,
+                                      targetColor, "Motion");
     Point robotPoint = _robot->pose().position();
-    _context->debug_drawer.drawLine(Geometry2d::Segment(
+    _context->debug_drawer.drawLine(
+        Geometry2d::Segment(
             optTarget->pose.position(),
-            optTarget->pose.position() + Point::direction(optTarget->pose.heading()).normalized(.35)), targetColor, "Angle Planning");
-    for(auto it = _robot->path().iterator(_robot->path().begin_time(), 100ms); it.hasValue(); ++it) {
+            optTarget->pose.position() +
+                Point::direction(optTarget->pose.heading()).normalized(.35)),
+        targetColor, "Angle Planning");
+    for (auto it = _robot->path().iterator(_robot->path().begin_time(), 100ms);
+         it.hasValue(); ++it) {
         RobotInstant instant = *it;
-        _context->debug_drawer.drawLine(Geometry2d::Segment(
+        _context->debug_drawer.drawLine(
+            Geometry2d::Segment(
                 instant.pose.position(),
-                instant.pose.position() + Point::direction(instant.pose.heading()).normalized(.2)), Qt::gray, "Angle Planning");
+                instant.pose.position() +
+                    Point::direction(instant.pose.heading()).normalized(.2)),
+            Qt::gray, "Angle Planning");
     }
-    _context->debug_drawer.drawLine(Geometry2d::Segment(
+    _context->debug_drawer.drawLine(
+        Geometry2d::Segment(
             robotPoint,
-            robotPoint + Point::direction(_robot->pose().heading()).normalized(.3)), Qt::blue, "Angle Planning");
+            robotPoint +
+                Point::direction(_robot->pose().heading()).normalized(.3)),
+        Qt::blue, "Angle Planning");
 
     // Angle control //////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////

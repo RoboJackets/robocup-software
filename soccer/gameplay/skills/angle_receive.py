@@ -16,8 +16,7 @@ import skills.pass_receive
 # Kick is a single_robot_behavior, so no need to import both
 class AngleReceive(skills.pass_receive.PassReceive):
     def __init__(self):
-        super().__init__(
-            captureFunction=(lambda: skills.settle.Settle()))
+        super().__init__(captureFunction=(lambda: skills.settle.Settle()))
         self.kick_power = 1
         self.target_point = constants.Field.TheirGoalSegment.center()
         self.ball_kicked = False

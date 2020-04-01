@@ -2,10 +2,10 @@
 
 #include <Geometry2d/Pose.hpp>
 #include <time.hpp>
-#include "WorldState.hpp"
 #include "DebugDrawer.hpp"
-#include "planning/DynamicObstacle.hpp"
 #include "Utils.hpp"
+#include "WorldState.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
 
@@ -13,7 +13,8 @@ namespace Planning {
  * Represents the current state of a robot in a planned trajectory.
  */
 struct RobotInstant {
-    RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist velocity, RJ::Time stamp)
+    RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist velocity,
+                 RJ::Time stamp)
         : pose(pose), velocity(velocity), stamp(stamp) {}
 
     RobotInstant() = default;
@@ -26,14 +27,16 @@ struct RobotInstant {
      * Equality comparison operator.
      */
     bool operator==(const RobotInstant& other) const {
-        return pose == other.pose && velocity == other.velocity && stamp == other.stamp;
+        return pose == other.pose && velocity == other.velocity &&
+               stamp == other.stamp;
     }
 
     /**
      * Inequality comparison operator.
      */
     bool operator!=(const RobotInstant& other) const {
-        return pose != other.pose || velocity != other.velocity || stamp != other.stamp;
+        return pose != other.pose || velocity != other.velocity ||
+               stamp != other.stamp;
     }
 };
 
@@ -54,7 +57,8 @@ public:
      * Create a trajectory from several "instants", each with a pose, velocity,
      * and timestamp.
      */
-    explicit Trajectory(std::list<RobotInstant> &&instants) : instants_(std::move(instants)), stamp(RJ::now()) {}
+    explicit Trajectory(std::list<RobotInstant>&& instants)
+        : instants_(std::move(instants)), stamp(RJ::now()) {}
 
     /**
      * Create a trajectory from two other trajectories
@@ -70,7 +74,8 @@ public:
     Trajectory(Trajectory&& a, Trajectory&& b);
 
     /**
-     * allow copy constructor, copy assignment, move constructor, and move assignment
+     * allow copy constructor, copy assignment, move constructor, and move
+     * assignment
      */
     Trajectory(Trajectory&& other);
     Trajectory(const Trajectory& other) = default;
@@ -106,7 +111,9 @@ public:
      *from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    bool hit(const Geometry2d::ShapeSet& obstacles, RJ::Seconds startTimeIntoPath, RJ::Seconds* hitTime = nullptr) const;
+    bool hit(const Geometry2d::ShapeSet& obstacles,
+             RJ::Seconds startTimeIntoPath,
+             RJ::Seconds* hitTime = nullptr) const;
 
     /**
      * determine if this path intersects any of the dynamic obstacles
@@ -160,9 +167,7 @@ public:
     /**
      * @return The duration of the trajectory.
      */
-    RJ::Seconds duration() const {
-        return end_time() - begin_time();
-    }
+    RJ::Seconds duration() const { return end_time() - begin_time(); }
 
     /**
      * Evaluate this trajectory (calculate position and velocity) at a given
@@ -191,9 +196,9 @@ public:
      *
      * @param startTime The startTime for from which the subTrajectory should be
      *     taken.
-     * @param endTime The endTime from which the subTrajectory should be taken. If it
-     *     is greater than the duration fo the trajectory, it should go to the end of
-     *     the trajectory.
+     * @param endTime The endTime from which the subTrajectory should be taken.
+     * If it is greater than the duration fo the trajectory, it should go to the
+     * end of the trajectory.
      * @return a subTrajectory
      */
     Trajectory subTrajectory(RJ::Seconds startTime, RJ::Seconds endTime) const;
@@ -212,22 +217,12 @@ public:
      *
      * @return
      */
-    int num_instants() const {
-        return instants_.size();
-    }
+    int num_instants() const { return instants_.size(); }
 
-    auto instants_end() {
-        return instants_.end();
-    }
-    auto instants_end() const {
-        return instants_.end();
-    }
-    auto instants_begin() {
-        return instants_.begin();
-    }
-    auto instants_begin() const {
-        return instants_.begin();
-    }
+    auto instants_end() { return instants_.end(); }
+    auto instants_end() const { return instants_.end(); }
+    auto instants_begin() { return instants_.begin(); }
+    auto instants_begin() const { return instants_.begin(); }
 
     /**
      * Check if this is an empty path.
@@ -264,7 +259,8 @@ public:
      * Draw this trajectory.
      * @param drawer The debug drawer to use.
      */
-    void draw(DebugDrawer* drawer, std::optional<Geometry2d::Point> backupPos = std::nullopt) const;
+    void draw(DebugDrawer* drawer,
+              std::optional<Geometry2d::Point> backupPos = std::nullopt) const;
 
     /**
      * make a clone
@@ -289,18 +285,19 @@ public:
      * @param time time between previous and next
      * @return the interpolated robot instant at the given time
      */
-    static RobotInstant interpolatedInstant(const RobotInstant& prev, const RobotInstant& next, RJ::Time time);
+    static RobotInstant interpolatedInstant(const RobotInstant& prev,
+                                            const RobotInstant& next,
+                                            RJ::Time time);
 
-    void setDebugText(QString str) {_debugText = std::move(str); };
-    QString getDebugText() const { return _debugText ? *_debugText: ""; }
+    void setDebugText(QString str) { _debugText = std::move(str); };
+    QString getDebugText() const { return _debugText ? *_debugText : ""; }
 
     /**
      * get the time this trajectory was created
      * @return time stamp
      */
-    RJ::Time timeCreated() {
-        return stamp;
-    }
+    RJ::Time timeCreated() { return stamp; }
+
 private:
     // A sorted array of RobotInstants (by timestamp)
     std::list<RobotInstant> instants_;
@@ -315,7 +312,8 @@ private:
  */
 class TrajectoryIterator {
 public:
-    TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime, RJ::Seconds deltaT);
+    TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime,
+                       RJ::Seconds deltaT);
 
     RobotInstant operator*() const;
 
@@ -329,10 +327,12 @@ public:
         return *++it;
     }
     bool hasNext() const {
-        return _trajectory.CheckTime(_time + _deltaT) && std::next(_iterator) != _trajectory.instants_end();
+        return _trajectory.CheckTime(_time + _deltaT) &&
+               std::next(_iterator) != _trajectory.instants_end();
     }
     bool hasValue() const {
-        return _trajectory.CheckTime(_time) && _iterator != _trajectory.instants_end();
+        return _trajectory.CheckTime(_time) &&
+               _iterator != _trajectory.instants_end();
     }
 
     // note: this never goes past the end
@@ -345,4 +345,4 @@ private:
     const RJ::Seconds _deltaT;
 };
 
-} // namespace Planning
+}  // namespace Planning

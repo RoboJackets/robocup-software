@@ -3,8 +3,8 @@
 #include <rrt/planning/Path.hpp>
 #include "DebugDrawer.hpp"
 #include "planning/MotionConstraints.hpp"
-#include "planning/trajectory/Trajectory.hpp"
 #include "planning/trajectory/PathSmoothing.hpp"
+#include "planning/trajectory/Trajectory.hpp"
 #include "planning/trajectory/VelocityProfiling.hpp"
 
 namespace Planning {
@@ -34,13 +34,13 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
         "Value from 0 to 1 that determines the portion of the time that the "
         "RRT will"
         " grow towards given waypoints rather than towards a random point");
-    MinIterations = new ConfigInt(
-            cfg, "PathPlanner/RRT/MinIterations", 100,
-            "The minimum number of iterations for running RRT");
-    //todo(Ethan) can this be increased? RRT fails sometimes. testing needed
-    MaxIterations = new ConfigInt(
-            cfg, "PathPlanner/RRT/MaxIterations", 250,
-            "The maximum number of iterations for running RRT");
+    MinIterations =
+        new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
+                      "The minimum number of iterations for running RRT");
+    // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
+    MaxIterations =
+        new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
+                      "The maximum number of iterations for running RRT");
 }
 
 ConfigBool EnableExpensiveRRTDebugDrawing();
@@ -69,18 +69,15 @@ void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
     DrawRRT(biRRT.goalTree(), debug_drawer, shellID);
 }
 
-vector<Point> runRRTHelper(
-        Point start,
-        Point goal,
-        const ShapeSet& obstacles,
-        const vector<Point>& waypoints,
-        bool straightLine) {
-    auto state_space = std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obstacles);
+vector<Point> runRRTHelper(Point start, Point goal, const ShapeSet& obstacles,
+                           const vector<Point>& waypoints, bool straightLine) {
+    auto state_space = std::make_shared<RoboCupStateSpace>(
+        Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
     biRRT.setStartState(start);
     biRRT.setGoalState(goal);
 
-    if(straightLine) {
+    if (straightLine) {
         // Set the step size to be the distance between the start and goal.
         biRRT.setStepSize(state_space->distance(start, goal));
         // Plan straight toward the goal.
@@ -111,15 +108,13 @@ vector<Point> runRRTHelper(
     return std::move(points);
 }
 
-vector<Point> GenerateRRT(
-        Point start,
-        Point goal,
-        const ShapeSet& obstacles,
-        const vector<Point>& waypoints) {
+vector<Point> GenerateRRT(Point start, Point goal, const ShapeSet& obstacles,
+                          const vector<Point>& waypoints) {
     // note: we could just use state_space.transitionValid() for the straight
     // line test, but this runs quicker
-    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
-    if(!straight.empty()) {
+    vector<Point> straight =
+        runRRTHelper(start, goal, obstacles, waypoints, true);
+    if (!straight.empty()) {
         return std::move(straight);
     }
     return runRRTHelper(start, goal, obstacles, waypoints, false);
@@ -127,54 +122,56 @@ vector<Point> GenerateRRT(
 
 namespace CreatePath {
 Trajectory simple(const RobotInstant& start, const RobotInstant& goal,
-        const MotionConstraints& motionConstraints, const std::vector<Point>& intermediatePoints) {
+                  const MotionConstraints& motionConstraints,
+                  const std::vector<Point>& intermediatePoints) {
     std::vector<Point> points;
     points.push_back(start.pose.position());
-    for(const Point& pt : intermediatePoints) points.push_back(pt);
+    for (const Point& pt : intermediatePoints) points.push_back(pt);
     points.push_back(goal.pose.position());
     BezierPath bezier(points, start.velocity.linear(), goal.velocity.linear(),
-            motionConstraints);
-    Trajectory path = ProfileVelocity(bezier,
-                                      start.velocity.linear().mag(),
+                      motionConstraints);
+    Trajectory path = ProfileVelocity(bezier, start.velocity.linear().mag(),
                                       goal.velocity.linear().mag(),
-                                      motionConstraints,
-                                      start.stamp);
+                                      motionConstraints, start.stamp);
     return std::move(path);
 }
 
-Trajectory rrt(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const ShapeSet& static_obstacles, const vector<DynamicObstacle>& dynamic_obstacles, const vector<Point>& biasWaypoints) {
+Trajectory rrt(const RobotInstant& start, const RobotInstant& goal,
+               const MotionConstraints& motionConstraints,
+               const ShapeSet& static_obstacles,
+               const vector<DynamicObstacle>& dynamic_obstacles,
+               const vector<Point>& biasWaypoints) {
     if (start.pose.position().distTo(goal.pose.position()) < 1e-6) {
         return Trajectory{{RobotInstant{start.pose, Twist(), RJ::now()}}};
     }
-    //maybe we don't need an RRT
-    Trajectory straightTrajectory = CreatePath::simple(start, goal, motionConstraints);
-    if(start.pose.position().distTo(goal.pose.position()) < Robot_Radius
-    || !straightTrajectory.hit(static_obstacles, 0s) && !straightTrajectory.intersects(dynamic_obstacles, start.stamp)) {
+    // maybe we don't need an RRT
+    Trajectory straightTrajectory =
+        CreatePath::simple(start, goal, motionConstraints);
+    if (start.pose.position().distTo(goal.pose.position()) < Robot_Radius ||
+        !straightTrajectory.hit(static_obstacles, 0s) &&
+            !straightTrajectory.intersects(dynamic_obstacles, start.stamp)) {
         return std::move(straightTrajectory);
     }
 
     ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};
     constexpr int attemptsToAvoidDynamics = 10;
-    for(int i = 0; i < attemptsToAvoidDynamics; i++) {
-        std::vector<Point> points = GenerateRRT(
-                start.pose.position(), goal.pose.position(),
-                obstacles, biasWaypoints);
+    for (int i = 0; i < attemptsToAvoidDynamics; i++) {
+        std::vector<Point> points =
+            GenerateRRT(start.pose.position(), goal.pose.position(), obstacles,
+                        biasWaypoints);
 
-        BezierPath postBezier(points,
-                              start.velocity.linear(),
-                              goal.velocity.linear(),
-                              motionConstraints);
+        BezierPath postBezier(points, start.velocity.linear(),
+                              goal.velocity.linear(), motionConstraints);
 
-        path = ProfileVelocity(postBezier,
-                                         start.velocity.linear().mag(),
-                                         goal.velocity.linear().mag(),
-                                         motionConstraints,
-                                         start.stamp);
+        path = ProfileVelocity(postBezier, start.velocity.linear().mag(),
+                               goal.velocity.linear().mag(), motionConstraints,
+                               start.stamp);
 
         Point hitPoint;
-        if(path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint)) {
-            obstacles.add(std::make_shared<Circle>(hitPoint, Robot_Radius * 1.5));
+        if (path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint)) {
+            obstacles.add(
+                std::make_shared<Circle>(hitPoint, Robot_Radius * 1.5));
         } else {
             break;
         }
@@ -182,12 +179,18 @@ Trajectory rrt(const RobotInstant& start, const RobotInstant& goal, const Motion
     return std::move(path);
 }
 
-Trajectory complete(const RobotInstant& start, const RobotInstant& goal, const MotionConstraints& motionConstraints, const ShapeSet& static_obstacles, const vector<DynamicObstacle>& dynamic_obstacles, const vector<Point>& biasWaypoints) {
-    Trajectory rrtPath = CreatePath::rrt(start, goal, motionConstraints, static_obstacles, dynamic_obstacles, biasWaypoints);
-    if(!rrtPath.empty()) {
+Trajectory complete(const RobotInstant& start, const RobotInstant& goal,
+                    const MotionConstraints& motionConstraints,
+                    const ShapeSet& static_obstacles,
+                    const vector<DynamicObstacle>& dynamic_obstacles,
+                    const vector<Point>& biasWaypoints) {
+    Trajectory rrtPath =
+        CreatePath::rrt(start, goal, motionConstraints, static_obstacles,
+                        dynamic_obstacles, biasWaypoints);
+    if (!rrtPath.empty()) {
         return std::move(rrtPath);
     }
     return CreatePath::simple(start, goal, motionConstraints);
 }
-}
-}
+}  // namespace CreatePath
+}  // namespace Planning

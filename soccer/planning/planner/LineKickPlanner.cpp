@@ -45,19 +45,22 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
         RJ::Time time = ball.estimateTimeTo(*_targetKickPos, &targetPos);
         RJ::Seconds timeToHit = time - curTime;
         if (timeLeft < RJ::Seconds(1.0)) {
-            Point targetVel = (aimTarget - targetPos).normalized(*_approachSpeed);
+            Point targetVel =
+                (aimTarget - targetPos).normalized(*_approachSpeed);
             targetPos -= targetVel.normalized(Robot_Radius + Ball_Radius * 2);
 
             _finalApproach = true;
-            RobotInstant goalInstant{Pose{targetPos, 0}, Twist{targetVel, 0}, RJ::Time{0s}};
-            Trajectory path = CreatePath::simple(startInstant, goalInstant, request.constraints.mot);
+            RobotInstant goalInstant{Pose{targetPos, 0}, Twist{targetVel, 0},
+                                     RJ::Time{0s}};
+            Trajectory path = CreatePath::simple(startInstant, goalInstant,
+                                                 request.constraints.mot);
             if (!path.empty()) {
                 path.setDebugText(
-                        "FinalPath" +
-                        QString::number(path.duration().count()) +
-                        " " + QString::number(timeToHit.count()) + " " +
-                        QString::number(time.time_since_epoch().count()));
-                PlanAngles(path, startInstant, AngleFns::facePoint(aimTarget), rotationConstraints);
+                    "FinalPath" + QString::number(path.duration().count()) +
+                    " " + QString::number(timeToHit.count()) + " " +
+                    QString::number(time.time_since_epoch().count()));
+                PlanAngles(path, startInstant, AngleFns::facePoint(aimTarget),
+                           rotationConstraints);
                 return std::move(path);
             }
         }
@@ -67,7 +70,8 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
             _reusePathCount++;
             Point nearPoint;
             prevTrajectory.setDebugText("Reuse prevPath");
-            if (ball.estimateTimeTo(prevTrajectory.last().pose.position(), &nearPoint) >=
+            if (ball.estimateTimeTo(prevTrajectory.last().pose.position(),
+                                    &nearPoint) >=
                 RJ::now() + timeLeft - 1000ms) {
                 return reuse(std::move(request));
             }
@@ -75,18 +79,20 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
     }
 
     std::optional<Trajectory> brutePath = attemptBruteForce(request);
-    if(brutePath) return std::move(*brutePath);
+    if (brutePath) return std::move(*brutePath);
 
     Point targetVel = (aimTarget - ball.pos).normalized(*_approachSpeed);
     Point targetPos = ball.pos - targetVel.normalized(Robot_Radius * 3);
 
     request.dynamic_obstacles.push_back(ball.dynamicObs());
-    RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel, 0}, RJ::Time{0s}};
+    RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel, 0},
+                               RJ::Time{0s}};
     request.motionCommand = PathTargetCommand{targetInstant};
     Trajectory path = _pathTargetPlanner.plan(std::move(request));
     path.setDebugText("Gives ups");
     _targetKickPos = std::nullopt;
-    PlanAngles(path, startInstant, AngleFns::facePoint(aimTarget), rotationConstraints);
+    PlanAngles(path, startInstant, AngleFns::facePoint(aimTarget),
+               rotationConstraints);
     return std::move(path);
 }
 
@@ -99,19 +105,27 @@ Trajectory LineKickPlanner::planForSlowMovingBall(PlanRequest&& request) {
     RotationConstraints rotationConstraints = request.constraints.rot;
     Point targetVel = (aimTarget - ball.pos).normalized(*_approachSpeed);
     Point targetPos;
-    if (std::abs(targetVel.angleBetween(ball.pos - startInstant.pose.position())) > 10 * M_PI / 180.0) {
-        targetPos = ball.pos - targetVel.normalized(ballAvoidDistance * 2 + Robot_Radius);
-        if (!prevTrajectory.empty() && targetPos.distTo(prevTrajectory.last().pose.position()) < PathTargetPlanner::goalPosChangeThreshold() && _reusePathCount < 20) {
+    if (std::abs(targetVel.angleBetween(
+            ball.pos - startInstant.pose.position())) > 10 * M_PI / 180.0) {
+        targetPos = ball.pos -
+                    targetVel.normalized(ballAvoidDistance * 2 + Robot_Radius);
+        if (!prevTrajectory.empty() &&
+            targetPos.distTo(prevTrajectory.last().pose.position()) <
+                PathTargetPlanner::goalPosChangeThreshold() &&
+            _reusePathCount < 20) {
             targetVel = prevTrajectory.last().velocity.linear();
             _reusePathCount++;
         } else {
             _reusePathCount = 0;
         }
-        request.static_obstacles.add(std::make_shared<Circle>(ball.pos, ballAvoidDistance));
+        request.static_obstacles.add(
+            std::make_shared<Circle>(ball.pos, ballAvoidDistance));
     } else {
         targetPos = ball.pos + targetVel.normalized(Robot_Radius);
-        if (!prevTrajectory.empty() && ball.pos.distTo(prevTrajectory.last().pose.position()) <
-                                       PathTargetPlanner::goalPosChangeThreshold() && _reusePathCount < 20) {
+        if (!prevTrajectory.empty() &&
+            ball.pos.distTo(prevTrajectory.last().pose.position()) <
+                PathTargetPlanner::goalPosChangeThreshold() &&
+            _reusePathCount < 20) {
             targetVel = prevTrajectory.last().velocity.linear();
             _reusePathCount++;
         } else {
@@ -119,26 +133,32 @@ Trajectory LineKickPlanner::planForSlowMovingBall(PlanRequest&& request) {
         }
     }
     _targetKickPos = std::nullopt;
-    RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel,0},RJ::Time{0s}};
+    RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel, 0},
+                               RJ::Time{0s}};
     request.motionCommand = PathTargetCommand{targetInstant};
     Trajectory path = _pathTargetPlanner.plan(std::move(request));
-    PlanAngles(path, startInstant, AngleFns::facePoint(aimTarget), rotationConstraints);
+    PlanAngles(path, startInstant, AngleFns::facePoint(aimTarget),
+               rotationConstraints);
     path.setDebugText("Slow Moving Ball");
     return std::move(path);
 }
 
-std::optional<Trajectory> LineKickPlanner::attemptBruteForce(const PlanRequest& request) {
+std::optional<Trajectory> LineKickPlanner::attemptBruteForce(
+    const PlanRequest& request) {
     Trajectory partialPath{{}};
     RJ::Seconds partialPathTime = 0ms;
     RobotInstant tmpStartInstant = request.start;
     const Trajectory& prevTrajectory = request.prevTrajectory;
     const Ball& ball = request.context->state.ball;
     Point aimTarget = std::get<LineKickCommand>(request.motionCommand).target;
-    const double partialReplanLeadTime = PathTargetPlanner::partialReplanLeadTime();
+    const double partialReplanLeadTime =
+        PathTargetPlanner::partialReplanLeadTime();
     if (!prevTrajectory.empty()) {
         RJ::Seconds timeInto = RJ::now() - prevTrajectory.begin_time();
-        if (timeInto < prevTrajectory.duration() - RJ::Seconds{partialReplanLeadTime * 2}) {
-            partialPath = prevTrajectory.subTrajectory(0ms, timeInto + RJ::Seconds{partialReplanLeadTime});
+        if (timeInto < prevTrajectory.duration() -
+                           RJ::Seconds{partialReplanLeadTime * 2}) {
+            partialPath = prevTrajectory.subTrajectory(
+                0ms, timeInto + RJ::Seconds{partialReplanLeadTime});
             partialPathTime = RJ::Seconds{partialReplanLeadTime};
             tmpStartInstant = partialPath.last();
         }
@@ -149,23 +169,31 @@ std::optional<Trajectory> LineKickPlanner::attemptBruteForce(const PlanRequest& 
         _targetKickPos = targetPos;
         Point targetVel = (aimTarget - targetPos).normalized(*_approachSpeed);
         targetPos -= targetVel.normalized(Robot_Radius + Ball_Radius * 2);
-        RobotInstant targetInstant{Pose{targetPos,0},Twist{targetVel,0},RJ::Time{0s}};
+        RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel, 0},
+                                   RJ::Time{0s}};
         std::vector<Point> intermediatePoints;
-        if (std::abs(targetVel.angleBetween(targetPos - tmpStartInstant.pose.position())) > M_PI/3.0) {
-            intermediatePoints.push_back(targetPos - targetVel.normalized(Robot_Radius * 2.0 + Ball_Radius * 2.0));
+        if (std::abs(targetVel.angleBetween(
+                targetPos - tmpStartInstant.pose.position())) > M_PI / 3.0) {
+            intermediatePoints.push_back(
+                targetPos -
+                targetVel.normalized(Robot_Radius * 2.0 + Ball_Radius * 2.0));
         }
-        Trajectory path = CreatePath::simple(tmpStartInstant, targetInstant, request.constraints.mot, intermediatePoints);
+        Trajectory path =
+            CreatePath::simple(tmpStartInstant, targetInstant,
+                               request.constraints.mot, intermediatePoints);
         RJ::Seconds hitTime;
         if (!path.empty()) {
             if (path.duration() + partialPathTime <= t) {
-                if (path.hit(request.static_obstacles, RJ::Seconds::zero(), &hitTime)) {
+                if (path.hit(request.static_obstacles, RJ::Seconds::zero(),
+                             &hitTime)) {
                     continue;
                 }
                 if (!partialPath.empty()) {
                     path = Trajectory{std::move(partialPath), std::move(path)};
                 }
                 _reusePathCount = 0;
-                PlanAngles(path, request.start, AngleFns::facePoint(aimTarget), request.constraints.rot);
+                PlanAngles(path, request.start, AngleFns::facePoint(aimTarget),
+                           request.constraints.rot);
                 path.setDebugText("Brute Force");
                 return std::move(path);
             }
@@ -173,4 +201,4 @@ std::optional<Trajectory> LineKickPlanner::attemptBruteForce(const PlanRequest& 
     }
     return std::nullopt;
 }
-}
+}  // namespace Planning

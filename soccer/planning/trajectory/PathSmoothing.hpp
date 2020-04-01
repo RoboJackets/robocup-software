@@ -25,21 +25,20 @@ public:
      *      to match up tangent vectors (approximately) with velocities.
      */
     BezierPath(const std::vector<Geometry2d::Point>& points,
-               Geometry2d::Point vi,
-               Geometry2d::Point vf,
+               Geometry2d::Point vi, Geometry2d::Point vf,
                MotionConstraints motion_constraints);
 
     /**
      * Evaluate the path at a particular instant drawn from [0, 1].
-     * Calculates only those values requested (by passing in a non-null pointer).
+     * Calculates only those values requested (by passing in a non-null
+     * pointer).
      *
      * @param s The index to sample along, in the range of [0, 1].
      * @param position Output parameter for the position at s, if non-null.
      * @param tangent Output parameter for the tangent vector at s, if non-null.
      * @param curvature Output parameter for the curvature at s, if non-null.
      */
-    void Evaluate(double s,
-                  Geometry2d::Point* position = nullptr,
+    void Evaluate(double s, Geometry2d::Point* position = nullptr,
                   Geometry2d::Point* tangent = nullptr,
                   double* curvature = nullptr) const;
 
@@ -53,11 +52,11 @@ public:
 
         CubicBezierControlPoints(Geometry2d::Point p0, Geometry2d::Point p1,
                                  Geometry2d::Point p2, Geometry2d::Point p3)
-                : p0(p0), p1(p1), p2(p2), p3(p3) {}
+            : p0(p0), p1(p1), p2(p2), p3(p3) {}
     };
 
 private:
     std::vector<CubicBezierControlPoints> control;
 };
 
-} // namespace Planning
+}  // namespace Planning

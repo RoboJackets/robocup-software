@@ -1,10 +1,10 @@
 #pragma once
-#include "Planner.hpp"
 #include "PathTargetPlanner.hpp"
+#include "Planner.hpp"
 namespace Planning {
-class SettlePlanner: public PlannerForCommandType<SettleCommand> {
+class SettlePlanner : public PlannerForCommandType<SettleCommand> {
 public:
-    SettlePlanner(): PlannerForCommandType("SettleCommand") {}
+    SettlePlanner() : PlannerForCommandType("SettleCommand") {}
     ~SettlePlanner() override = default;
 
     static void createConfiguration(Configuration* cfg);
@@ -49,4 +49,4 @@ private:
 
     PathTargetPlanner _pathTargetPlanner;
 };
-}
+}  // namespace Planning

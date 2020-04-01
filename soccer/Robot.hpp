@@ -1,23 +1,23 @@
 #pragma once
 
 #include <Constants.hpp>
-#include <planning/planner/MotionCommand.hpp>
 #include <planning/RobotConstraints.hpp>
+#include <planning/planner/MotionCommand.hpp>
 
 #include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <Utils.hpp>
 
-#include <cstdint>
 #include <Eigen/Dense>
 #include <QColor>
+#include <algorithm>
 #include <array>
-#include <optional>
 #include <boost/circular_buffer.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <cstdint>
+#include <optional>
 #include <vector>
-#include <algorithm>
 
 #include <QReadLocker>
 #include <QReadWriteLock>
@@ -176,16 +176,12 @@ public:
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Trajectory& path() const {
-        return _path;
-    }
+    const Planning::Trajectory& path() const { return _path; }
 
     /**
      * Returns a movable reference to the path of the robot.
      */
-    Planning::Trajectory&& path_movable() {
-        return std::move(_path);
-    }
+    Planning::Trajectory&& path_movable() { return std::move(_path); }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -413,13 +409,12 @@ public:
         return _radioRx;
     }
 
-
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
         return intent().motion_command;
     }
     void setMotionCommand(std::unique_ptr<Planning::MotionCommand> newCmd) {
-        if(intent().motion_command->index() != newCmd->index()) {
-            //clear path when command type changes
+        if (intent().motion_command->index() != newCmd->index()) {
+            // clear path when command type changes
             _path = Planning::Trajectory{{}};
         }
         intent().motion_command = std::move(newCmd);

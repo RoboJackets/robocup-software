@@ -1,6 +1,6 @@
+#include "PathSmoothing.hpp"
 #include <Utils.hpp>
 #include <motion/TrapezoidalMotion.hpp>
-#include "PathSmoothing.hpp"
 
 namespace Planning {
 
@@ -16,10 +16,10 @@ using Geometry2d::Point;
  * @param ks An estimate of the time it will take to travel each curve.
  * @return A vector of control point locations.
  */
-void FitCubicBezier(Point vi, Point vf,
-                   const std::vector<Point>& points,
-                   const std::vector<double>& ks,
-                   std::vector<BezierPath::CubicBezierControlPoints>& control_out) {
+void FitCubicBezier(
+    Point vi, Point vf, const std::vector<Point>& points,
+    const std::vector<double>& ks,
+    std::vector<BezierPath::CubicBezierControlPoints>& control_out) {
     int num_curves = points.size() - 1;
     assert(ks.size() == num_curves);
 
@@ -41,10 +41,12 @@ void FitCubicBezier(Point vi, Point vf,
         // points, vi represents velocity vectors)
         control_out[0].p1 = vi / (3 * ks[0]) + points[0];
         control_out[0].p2 = points[1] - vf / (3 * ks[0]);
-        double assertTestValue = control_out[0].p1.mag() + control_out[0].p1.mag();
-        if(std::isnan(assertTestValue) || std::isinf(assertTestValue)) {
+        double assertTestValue =
+            control_out[0].p1.mag() + control_out[0].p1.mag();
+        if (std::isnan(assertTestValue) || std::isinf(assertTestValue)) {
             control_out = {};
-//            debugThrow("Something went wrong. Points are too close to each other probably");
+            //            debugThrow("Something went wrong. Points are too close
+            //            to each other probably");
             return;
         }
     } else {
@@ -65,14 +67,17 @@ void FitCubicBezier(Point vi, Point vf,
         answer_x(0) = vi.x() / (3.0 * ks[0]) + points[0].x();
         answer_y(0) = vi.y() / (3.0 * ks[0]) + points[0].y();
         equations(1, matrixSize - 1) = 1;
-        answer_x(1) = points[num_curves].x() - vf.x() / (3 * ks[num_curves - 1]);
-        answer_y(1) = points[num_curves].y() - vf.y() / (3 * ks[num_curves - 1]);
+        answer_x(1) =
+            points[num_curves].x() - vf.x() / (3 * ks[num_curves - 1]);
+        answer_y(1) =
+            points[num_curves].y() - vf.y() / (3 * ks[num_curves - 1]);
 
         // Keep track of which equation we're on.
         int i = 2;
 
         // Equation i represents the constraint that for the border between
-        // two given curves, their tangents should match (up to a rescaling by ks)
+        // two given curves, their tangents should match (up to a rescaling by
+        // ks)
         for (int n = 0; n < num_curves - 1; n++) {
             // ks[n]*(c1[n]-p1[n]) + ks[n+1]*(c0[n+1] - p0[n+1]) = 0
             // With p0[n+1] = p1[n].
@@ -87,13 +92,16 @@ void FitCubicBezier(Point vi, Point vf,
         // Specifically, we want the second derivatives ("acceleration") to
         // match up at the junctions between curves.
         for (int n = 0; n < num_curves - 1; n++) {
-            // ks[n]^2 * c0[n] - 2 * ks[n]^2 * c1[n] + 2 * ks[n+1]^2 * c0[n+1] - ks[n+1]^2 * c1[n+1]
+            // ks[n]^2 * c0[n] - 2 * ks[n]^2 * c1[n] + 2 * ks[n+1]^2 * c0[n+1] -
+            // ks[n+1]^2 * c1[n+1]
             equations(i, n * 2) = ks[n] * ks[n];
             equations(i, n * 2 + 1) = -2 * ks[n] * ks[n];
             equations(i, n * 2 + 2) = 2 * ks[n + 1] * ks[n + 1];
             equations(i, n * 2 + 3) = -ks[n + 1] * ks[n + 1];
-            answer_x(i) = points[n + 1].x() * (ks[n + 1] * ks[n + 1] - ks[n] * ks[n]);
-            answer_y(i) = points[n + 1].y() * (ks[n + 1] * ks[n + 1] - ks[n] * ks[n]);
+            answer_x(i) =
+                points[n + 1].x() * (ks[n + 1] * ks[n + 1] - ks[n] * ks[n]);
+            answer_y(i) =
+                points[n + 1].y() * (ks[n + 1] * ks[n + 1] - ks[n] * ks[n]);
             i++;
         }
 
@@ -103,19 +111,23 @@ void FitCubicBezier(Point vi, Point vf,
 
         if (solution_x.hasNaN() || solution_y.hasNaN()) {
             control_out = {};
-            debugThrow("Something went wrong. Points are too close to each other probably");
+            debugThrow(
+                "Something went wrong. Points are too close to each other "
+                "probably");
             return;
         } else {
             for (int n = 0; n < num_curves; n++) {
                 control_out[n].p1 = Point(solution_x[n * 2], solution_y[n * 2]);
-                control_out[n].p2 = Point(solution_x[n * 2 + 1], solution_y[n * 2 + 1]);
+                control_out[n].p2 =
+                    Point(solution_x[n * 2 + 1], solution_y[n * 2 + 1]);
             }
         }
     }
 }
 
-BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, MotionConstraints motion_constraints) {
-    if(points.size() < 2) {
+BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
+                       MotionConstraints motion_constraints) {
+    if (points.size() < 2) {
         return;
     }
 
@@ -142,37 +154,30 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf, Mot
     double pathLengthSoFar = 0.0;
     for (int i = 0; i < num_curves; i++) {
         double timeBefore = Trapezoidal::getTime(
-                pathLengthSoFar,
-                totalPathLength,
-                motion_constraints.maxSpeed,
-                motion_constraints.maxAcceleration,
-                startSpeed,
-                endSpeed);
+            pathLengthSoFar, totalPathLength, motion_constraints.maxSpeed,
+            motion_constraints.maxAcceleration, startSpeed, endSpeed);
         pathLengthSoFar += (points[i + 1] - points[i]).mag();
         double timeAfter = Trapezoidal::getTime(
-                pathLengthSoFar,
-                totalPathLength,
-                motion_constraints.maxSpeed,
-                motion_constraints.maxAcceleration,
-                startSpeed,
-                endSpeed);
+            pathLengthSoFar, totalPathLength, motion_constraints.maxSpeed,
+            motion_constraints.maxAcceleration, startSpeed, endSpeed);
 
         ks[i] = 1.0 / (timeAfter - timeBefore);
 
         if (std::isnan(ks[i]) || std::isinf(ks[i])) {
             debugThrow(
-                    "Something went wrong. Points are too close to each other "
-                    "probably");
+                "Something went wrong. Points are too close to each other "
+                "probably");
             return;
         }
     }
 
-    // Finally, we can find our control points as the solutions to a set of equations.
-    // This computation is carried out by cubicBezierCalc.
+    // Finally, we can find our control points as the solutions to a set of
+    // equations. This computation is carried out by cubicBezierCalc.
     FitCubicBezier(vi, vf, points, ks, control);
 }
 
-void BezierPath::Evaluate(double s, Geometry2d::Point *position, Geometry2d::Point *tangent, double *curvature) const {
+void BezierPath::Evaluate(double s, Geometry2d::Point* position,
+                          Geometry2d::Point* tangent, double* curvature) const {
     assert(s >= 0 && s <= 1);
 
     // First, find the curve to use.
@@ -193,16 +198,14 @@ void BezierPath::Evaluate(double s, Geometry2d::Point *position, Geometry2d::Poi
     Point p2 = control[index].p2;
     Point p3 = control[index].p3;
 
-    // Equations from https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves.
+    // Equations from
+    // https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves.
     double tb = t, te = 1 - t;
     using std::pow;
-    Point pos = pow(te, 3) * p0 +
-                3 * te * te * tb * p1 +
-                3 * te * tb * tb * p2 +
-                pow(tb, 3) * p3;
+    Point pos = pow(te, 3) * p0 + 3 * te * te * tb * p1 +
+                3 * te * tb * tb * p2 + pow(tb, 3) * p3;
 
-    Point d1 = 3 * pow(te, 2) * (p1 - p0) +
-               6 * te * tb * (p2 - p1) +
+    Point d1 = 3 * pow(te, 2) * (p1 - p0) + 6 * te * tb * (p2 - p1) +
                3 * tb * tb * (p3 - p2);
 
     if (position) {
@@ -214,8 +217,7 @@ void BezierPath::Evaluate(double s, Geometry2d::Point *position, Geometry2d::Poi
     }
 
     if (curvature) {
-        Point d2 = 6 * te * (p2 - 2 * p1 + p0) +
-                   6 * tb * (p3 - 2 * p2 + p1);
+        Point d2 = 6 * te * (p2 - 2 * p1 + p0) + 6 * tb * (p3 - 2 * p2 + p1);
 
         // https://en.wikipedia.org/wiki/Curvature#Local_expressions
         // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2) = |v x a|/|v|^3
@@ -227,4 +229,4 @@ void BezierPath::Evaluate(double s, Geometry2d::Point *position, Geometry2d::Poi
     }
 }
 
-} // namespace Planning
+}  // namespace Planning

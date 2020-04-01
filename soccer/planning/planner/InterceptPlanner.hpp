@@ -16,7 +16,8 @@ namespace Planning {
 
 class InterceptPlanner : public PlannerForCommandType<InterceptCommand> {
 public:
-    InterceptPlanner(): PlannerForCommandType<InterceptCommand>("InterceptPlanner"){};
+    InterceptPlanner()
+        : PlannerForCommandType<InterceptCommand>("InterceptPlanner"){};
 
     Trajectory plan(PlanRequest&& request) override;
 

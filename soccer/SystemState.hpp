@@ -7,20 +7,20 @@
 #include <QMap>
 #include <QColor>
 
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <Constants.hpp>
+#include <GameState.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/ShapeSet.hpp>
-#include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/RadioRx.pb.h>
-#include <GameState.hpp>
-#include <Constants.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Utils.hpp>
-#include <Geometry2d/Arc.hpp>
+#include "planning/DynamicObstacle.hpp"
 #include "planning/MotionInstant.hpp"
 #include "planning/trajectory/Trajectory.hpp"
-#include "planning/DynamicObstacle.hpp"
 
 class RobotConfig;
 class OurRobot;
@@ -36,6 +36,7 @@ class LogFrame;
 class Ball {
 private:
     Planning::Trajectory _path = Planning::Trajectory{{}};
+
 public:
     Geometry2d::Point pos;
     Geometry2d::Point vel;

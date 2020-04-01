@@ -1,14 +1,14 @@
 #pragma once
 
-#include <planning/planner/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
+#include <planning/planner/MotionCommand.hpp>
 #include "Context.hpp"
 
 #include <map>
 #include <memory>
 #include <planning/trajectory/Trajectory.hpp>
-#include "planning/RobotConstraints.hpp"
 #include "planning/DynamicObstacle.hpp"
+#include "planning/RobotConstraints.hpp"
 
 namespace Planning {
 
@@ -19,10 +19,11 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(Context* context, RobotInstant start,
-                MotionCommand command,
+    PlanRequest(Context* context, RobotInstant start, MotionCommand command,
                 RobotConstraints constraints, Trajectory&& prevTrajectory,
-                Geometry2d::ShapeSet statics, std::vector<DynamicObstacle> dynamics, unsigned shellID, int8_t priority = 0)
+                Geometry2d::ShapeSet statics,
+                std::vector<DynamicObstacle> dynamics, unsigned shellID,
+                int8_t priority = 0)
         : context(context),
           start(start),
           motionCommand(command),
@@ -34,11 +35,12 @@ struct PlanRequest {
           priority(priority) {}
 
     /**
-    * return a copy with no history
-    */
+     * return a copy with no history
+     */
     PlanRequest copyNoHistory() const {
-        return PlanRequest{context, start, motionCommand, constraints, Trajectory{{}},
-                           static_obstacles, dynamic_obstacles, shellID, priority};
+        return PlanRequest{context,           start,          motionCommand,
+                           constraints,       Trajectory{{}}, static_obstacles,
+                           dynamic_obstacles, shellID,        priority};
     }
 
     /**
@@ -83,4 +85,4 @@ struct PlanRequest {
     int8_t priority;
 };
 
-}
+}  // namespace Planning
