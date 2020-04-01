@@ -40,12 +40,20 @@ public:
 
     void setPort(int port);
 
+    RJ::Time getLastVisionTime() const { return _last_receive_time; }
+
 protected:
     int port;
 
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
+
+    // Helper function to decide whether or not to remove a robot at a given
+    // x position
+    bool shouldRemove(bool defendPlusX, double x);
+
+    void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
     Context* _context;
 
@@ -55,6 +63,8 @@ protected:
     boost::asio::ip::udp::socket _socket;
 
     boost::asio::ip::udp::endpoint _sender_endpoint;
+
+    RJ::Time _last_receive_time;
 
     std::vector<std::unique_ptr<VisionPacket>> _packets;
 };

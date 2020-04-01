@@ -20,6 +20,8 @@ class OurFreeKick(standard_play.StandardPlay):
     MaxChipRange = 3
     MinChipRange = 0.3
 
+    MIN_PASS_DIST = 0.2
+
     class State(enum.Enum):
 
         move = 1
@@ -50,7 +52,9 @@ class OurFreeKick(standard_play.StandardPlay):
                             'kick')
 
         self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos, field_weights=(2.0, 10.0, 0.1))
+            main.ball().pos,
+            OurFreeKick.MIN_PASS_DIST,
+            field_weights=(2.0, 10.0, 0.1))
         self.gap = evaluation.shooting.find_gap(
             max_shooting_angle=OurFreeKick.MaxShootingAngle)
 

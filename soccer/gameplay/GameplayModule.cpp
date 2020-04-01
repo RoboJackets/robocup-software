@@ -1,19 +1,12 @@
 #include <protobuf/LogFrame.pb.h>
+
 #include <Constants.hpp>
 #include <Network.hpp>
-#include <NewRefereeModule.hpp>
+#include <Referee.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <planning/MotionInstant.hpp>
-
-#include <stdio.h>
-#include <iostream>
-#include <cmath>
-
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/grSim_Replacement.pb.h>
 
 // for python stuff
 #include "DebugDrawer.hpp"
@@ -28,7 +21,7 @@ using namespace boost;
 using namespace boost::python;
 
 using namespace Geometry2d;
-using namespace NewRefereeModuleEnums;
+using namespace RefereeModuleEnums;
 
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
@@ -52,7 +45,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 
 // TODO: Replace this whole file when we move to ROS2
 Gameplay::GameplayModule::GameplayModule(Context* const context,
-                                         NewRefereeModule* const refereeModule)
+                                         Referee* const refereeModule)
     : _mutex(QMutex::Recursive),
       _context(context),
       _refereeModule(refereeModule) {
@@ -399,7 +392,7 @@ void Gameplay::GameplayModule::run() {
 
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
-                    _refereeModule->command = cmd;
+                    _refereeModule->command_ = cmd;
                 }
             }
 
@@ -460,16 +453,6 @@ void Gameplay::GameplayModule::run() {
         }
     }
     _our_score_last_frame = _context->game_state.ourScore;
-
-    _context->goalie_id = goalieID();
-    // recalculates Field obstacles on every run through to account for
-    // changing inset
-    if (hasFieldEdgeInsetChanged()) {
-        calculateFieldObstacles();
-    }
-    /// Collect global obstacles
-    _context->globalObstacles = globalObstacles();
-    _context->goalZoneObstacles = goalZoneObstacles();
 }
 
 #pragma mark python
@@ -556,7 +539,7 @@ void Gameplay::GameplayModule::loadTest() {
             runningTests = extract<bool>(rtrn);
 
             if (runningTests) {
-                _refereeModule->command = Command::HALT;
+                _refereeModule->command_ = Command::HALT;
 
                 // Place robots and ball
                 grSim_Packet simPacket;
@@ -583,8 +566,15 @@ void Gameplay::GameplayModule::loadTest() {
                         boost::python::list robot =
                             extract<boost::python::list>(our_robots[i]);
 
-                        rob->set_x(extract<float>(robot[0]));
-                        rob->set_y(extract<float>(robot[1]));
+                        float x = extract<float>(robot[0]);
+                        float y = extract<float>(robot[1]);
+
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
+                        rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
                         double x_pos =
@@ -614,8 +604,15 @@ void Gameplay::GameplayModule::loadTest() {
                         boost::python::list robot =
                             extract<boost::python::list>(their_robots[i]);
 
-                        rob->set_x(extract<float>(robot[0]));
-                        rob->set_y(extract<float>(robot[1]));
+                        float x = extract<float>(robot[0]);
+                        float y = extract<float>(robot[1]);
+
+                        rob->set_x(
+                            -teamDirection *
+                            (y -
+                             (Field_Dimensions::Current_Dimensions.Length() /
+                              2)));
+                        rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
                         double x_pos =
@@ -638,10 +635,18 @@ void Gameplay::GameplayModule::loadTest() {
                 boost::python::list ball =
                     extract<boost::python::list>(ball_rtrn);
                 auto ball_replace = replacement->mutable_ball();
-                ball_replace->mutable_pos()->set_x(extract<float>(ball[0]));
-                ball_replace->mutable_pos()->set_y(extract<float>(ball[1]));
-                ball_replace->mutable_vel()->set_x(extract<float>(ball[2]));
-                ball_replace->mutable_vel()->set_y(extract<float>(ball[3]));
+                float posx = extract<float>(ball[0]);
+                float posy = extract<float>(ball[1]);
+                float velx = extract<float>(ball[2]);
+                float vely = extract<float>(ball[3]);
+
+                ball_replace->mutable_pos()->set_x(
+                    -teamDirection *
+                    (posy -
+                     (Field_Dimensions::Current_Dimensions.Length() / 2)));
+                ball_replace->mutable_pos()->set_y(teamDirection * posx);
+                ball_replace->mutable_vel()->set_x(-teamDirection * vely);
+                ball_replace->mutable_vel()->set_y(teamDirection * velx);
 
                 _context->grsim_command = simPacket;
             }

@@ -11,7 +11,18 @@ class Example(gameplay_test.GameplayTest):
 
         self.name = "Simple Example Test"
 
-        self.play_list = ["offense/basic_122", "testing/test_pivot_kick"]
+        # List of plays to enable e.g. ["stopped", "offense/basic_122"]
+        # You can also add the name of a playbook file i.e.
+        # ["comp2019.pbk", "testing/test_pivot_kick"]
+        # If the list is empty, the enabled play list will remain as it was
+        # before the test was run
+        self.play_list = ["comp2019.pbk", "testing/test_pivot_kick"]
 
-        self.ourRobots = [testRobot(2, -.5), testRobot(2, .5)]
-        self.theirRobots = [testRobot(-2, -.5), testRobot(-2, .5)]
+        self.ourRobots = [
+            testRobot(robocup.Point(2, -.5)),
+            testRobot(robocup.Point(2, .5))
+        ]
+        self.theirRobots = [
+            testRobot(robocup.Point(-2, -.5)),
+            testRobot(robocup.Point(-2, .5))
+        ]

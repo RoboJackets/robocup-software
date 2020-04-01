@@ -9,6 +9,8 @@
 using namespace boost::python;
 
 #include <protobuf/LogFrame.pb.h>
+
+#include <Configuration.hpp>
 #include <Constants.hpp>
 #include <Context.hpp>
 #include <Geometry2d/Arc.hpp>
@@ -20,24 +22,22 @@ using namespace boost::python;
 #include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
+#include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
+#include <exception>
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
+
+#include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
-#include "NewRefereeModule.hpp"
+#include "Referee.hpp"
+#include "RobotConfig.hpp"
 #include "WindowEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 #include "optimization/NelderMead2D.hpp"
 #include "optimization/NelderMead2DConfig.hpp"
 #include "optimization/PythonFunctionWrapper.hpp"
 #include "planning/MotionConstraints.hpp"
-
-#include <boost/python/exception_translator.hpp>
-#include <boost/version.hpp>
-#include <exception>
-
-#include <Configuration.hpp>
-#include "DebugDrawer.hpp"
-#include "RobotConfig.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -142,7 +142,12 @@ void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
     self->move(*to);
 }
 
-void OurRobot_settle(OurRobot* self) { self->settle(); }
+void OurRobot_settle(OurRobot* self) { self->settle(std::nullopt); }
+
+void OurRobot_settle_w_bounce(OurRobot* self, Geometry2d::Point* bounceTarget) {
+    if (bounceTarget == nullptr) throw NullArgumentException("bounceTarget");
+    self->settle(*bounceTarget);
+}
 
 void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
     if (obs == nullptr) throw NullArgumentException("obs");
@@ -846,6 +851,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("move_to_direct", &OurRobot_move_to_direct)
         .def("move_tuning", &OurRobot_move_tuning)
         .def("settle", &OurRobot_settle)
+        .def("settle_w_bounce", &OurRobot_settle_w_bounce)
         .def("collect", &OurRobot::collect)
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)
@@ -867,6 +873,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("last_kick_time", &OurRobot::lastKickTime)
         .def("just_kicked", &OurRobot::justKicked)
         .def("has_chipper", &OurRobot::chipper_available)
+        .def("face_none", &OurRobot::faceNone)
         .def("kick", &OurRobot::kick)
         .def("kick_level", &OurRobot::kickLevel)
         .def("chip", &OurRobot::chip)
@@ -885,7 +892,8 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("run_pid_tuner", &OurRobot_run_pid_tuner)
         .def("end_pid_tuner", &OurRobot_end_pid_tuner)
         .def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
-        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer);
+        .def_readwrite("is_ball_placer", &OurRobot::isBallPlacer)
+        .def("is_facing", &OurRobot::isFacing);
 
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<Context*, int>());
@@ -1063,33 +1071,33 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("MaxRobotSpeed", &MotionConstraints::_max_speed)
         .def_readonly("MaxRobotAccel", &MotionConstraints::_max_acceleration);
 
-    enum_<NewRefereeModuleEnums::Command>("Command")
-        .value("halt", NewRefereeModuleEnums::Command::HALT)
-        .value("stop", NewRefereeModuleEnums::Command::STOP)
-        .value("normal_start", NewRefereeModuleEnums::Command::NORMAL_START)
-        .value("force_start", NewRefereeModuleEnums::Command::FORCE_START)
+    enum_<RefereeModuleEnums::Command>("Command")
+        .value("halt", RefereeModuleEnums::Command::HALT)
+        .value("stop", RefereeModuleEnums::Command::STOP)
+        .value("normal_start", RefereeModuleEnums::Command::NORMAL_START)
+        .value("force_start", RefereeModuleEnums::Command::FORCE_START)
         .value("prepare_kickoff_yellow",
-               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
+               RefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
         .value("prepare_kickoff_blue",
-               NewRefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
+               RefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
         .value("prepare_penalty_yellow",
-               NewRefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
+               RefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
         .value("prepare_penalty_blue",
-               NewRefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
+               RefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
         .value("direct_free_yellow",
-               NewRefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
+               RefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
         .value("direct_free_blue",
-               NewRefereeModuleEnums::Command::DIRECT_FREE_BLUE)
+               RefereeModuleEnums::Command::DIRECT_FREE_BLUE)
         .value("indirect_free_yellow",
-               NewRefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
+               RefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
         .value("indirect_free_blue",
-               NewRefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
-        .value("timeout_yellow", NewRefereeModuleEnums::Command::TIMEOUT_YELLOW)
-        .value("timeout_blue", NewRefereeModuleEnums::Command::TIMEOUT_BLUE)
-        .value("goal_yellow", NewRefereeModuleEnums::Command::GOAL_YELLOW)
-        .value("goal_blue", NewRefereeModuleEnums::Command::GOAL_BLUE)
+               RefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
+        .value("timeout_yellow", RefereeModuleEnums::Command::TIMEOUT_YELLOW)
+        .value("timeout_blue", RefereeModuleEnums::Command::TIMEOUT_BLUE)
+        .value("goal_yellow", RefereeModuleEnums::Command::GOAL_YELLOW)
+        .value("goal_blue", RefereeModuleEnums::Command::GOAL_BLUE)
         .value("ball_placement_yellow",
-               NewRefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
+               RefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
         .value("ball_placement_blue",
-               NewRefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
+               RefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
 }
