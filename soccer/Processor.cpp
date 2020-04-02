@@ -358,9 +358,6 @@ void Processor::run() {
                 std::max(curStatus.lastRefereeTime, packet.receivedTime);
         }
 
-        // Update gamestate w/ referee data
-        _refereeModule->spin();
-
         string yellowname, bluename;
 
         if (blueTeam()) {
