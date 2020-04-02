@@ -45,7 +45,6 @@ Referee::Referee(Context* const context)
       prev_stage_{},
       ballPlacementX{},
       ballPlacementY{},
-      _network_thread(),
       _asio_socket{_io_service} {}
 
 Referee::~Referee() { stop(); }
@@ -190,7 +189,7 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
             _kickDetectState = VerifyKick;
             break;
 
-        case VerifyKick:
+        case VerifyKick: {
             const auto ms_elapsed =
                 std::chrono::duration_cast<std::chrono::milliseconds>(
                     RJ::Time() - _kickTime)
@@ -205,7 +204,7 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
                 _kickDetectState = Kicked;
             }
             break;
-
+        }
         case Kicked:
             // Stay here until the referee puts us back in Ready
             break;
