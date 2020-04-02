@@ -4,29 +4,27 @@
 
 #pragma once
 
-#include <vector>
-#include <optional>
+#include <protobuf/LogFrame.pb.h>
 #include <string.h>
 
-#include <QMutex>
-#include <QMutexLocker>
-#include <QThread>
-
-#include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
-#include <NewRefereeModule.hpp>
+#include <QMutex>
+#include <QMutexLocker>
+#include <QThread>
+#include <Referee.hpp>
 #include <SystemState.hpp>
+#include <optional>
+#include <vector>
+
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
 #include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
-
-#include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
@@ -134,9 +132,7 @@ public:
         return _gameplayModule;
     }
 
-    std::shared_ptr<NewRefereeModule> refereeModule() const {
-        return _refereeModule;
-    }
+    std::shared_ptr<Referee> refereeModule() const { return _refereeModule; }
 
     SystemState* state() { return &_context.state; }
 
@@ -195,10 +191,9 @@ protected:
                                OurRobot* robot);
 
 private:
-    // Configuration for different models of robots
-    static RobotConfig* robotConfig2008;
-    static RobotConfig* robotConfig2011;
-    static RobotConfig* robotConfig2015;
+    // Configuration for the robot.
+    // TODO(Kyle): Add back in configuration values for different years.
+    static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;
@@ -263,7 +258,7 @@ private:
 
     // modules
     std::shared_ptr<VisionFilter> _vision;
-    std::shared_ptr<NewRefereeModule> _refereeModule;
+    std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
     std::unique_ptr<VisionReceiver> _visionReceiver;

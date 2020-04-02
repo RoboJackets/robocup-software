@@ -1,19 +1,12 @@
 #include <protobuf/LogFrame.pb.h>
+
 #include <Constants.hpp>
 #include <Network.hpp>
-#include <NewRefereeModule.hpp>
+#include <Referee.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <planning/MotionInstant.hpp>
-
-#include <stdio.h>
-#include <iostream>
-#include <cmath>
-
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/grSim_Replacement.pb.h>
 
 // for python stuff
 #include "DebugDrawer.hpp"
@@ -28,7 +21,7 @@ using namespace boost;
 using namespace boost::python;
 
 using namespace Geometry2d;
-using namespace NewRefereeModuleEnums;
+using namespace RefereeModuleEnums;
 
 ConfigDouble* GameplayModule::_fieldEdgeInset;
 
@@ -52,7 +45,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 
 // TODO: Replace this whole file when we move to ROS2
 Gameplay::GameplayModule::GameplayModule(Context* const context,
-                                         NewRefereeModule* const refereeModule)
+                                         Referee* const refereeModule)
     : _mutex(QMutex::Recursive),
       _context(context),
       _refereeModule(refereeModule) {
@@ -399,7 +392,7 @@ void Gameplay::GameplayModule::run() {
 
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
-                    _refereeModule->command = cmd;
+                    _refereeModule->command_ = cmd;
                 }
             }
 
@@ -546,7 +539,7 @@ void Gameplay::GameplayModule::loadTest() {
             runningTests = extract<bool>(rtrn);
 
             if (runningTests) {
-                _refereeModule->command = Command::HALT;
+                _refereeModule->command_ = Command::HALT;
 
                 // Place robots and ball
                 grSim_Packet simPacket;

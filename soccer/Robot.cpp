@@ -139,7 +139,7 @@ void OurRobot::resetForNextIteration() {
 }
 
 void OurRobot::resetMotionConstraints() {
-    _robotConstraints = RobotConstraints();
+    robotConstraints() = RobotConstraints();
     intent().motion_command = std::make_unique<Planning::EmptyCommand>();
     intent().rotation_command = std::make_unique<Planning::EmptyAngleCommand>();
     _planningPriority = 0;
@@ -286,7 +286,8 @@ void OurRobot::dribble(uint8_t speed) {
               current_dimensions.Length() + offset));
 
     if (modifiedField.containsPoint(pos())) {
-        uint8_t scaled = std::min(*config->dribbler.multiplier * speed, (double) Max_Dribble);
+        uint8_t scaled = std::min(*config()->dribbler.multiplier * speed,
+                                  (double)Max_Dribble);
         intent().dvelocity = scaled;
 
         *_cmdText << "dribble(" << (float)speed << ")" << endl;
@@ -315,7 +316,7 @@ void OurRobot::faceNone() {
 }
 
 void OurRobot::kick(float strength) {
-    double maxKick = *config->kicker.maxKick;
+    double maxKick = *config()->kicker.maxKick;
     _kick(roundf(strength * ((float)maxKick)));
 
     *_cmdText << "kick(" << strength * 100 << "%)" << endl;
@@ -328,7 +329,7 @@ void OurRobot::kickLevel(uint8_t strength) {
 }
 
 void OurRobot::chip(float strength) {
-    double maxChip = *config->kicker.maxChip;
+    double maxChip = *config()->kicker.maxChip;
     _chip(roundf(strength * ((float)maxChip)));
     *_cmdText << "chip(" << strength * 100 << "%)" << endl;
 }
@@ -340,14 +341,14 @@ void OurRobot::chipLevel(uint8_t strength) {
 }
 
 void OurRobot::_kick(uint8_t strength) {
-    uint8_t max = *config->kicker.maxKick;
+    uint8_t max = *config()->kicker.maxKick;
     intent().kcstrength = (strength > max ? max : strength);
     intent().shoot_mode = RobotIntent::ShootMode::KICK;
     intent().trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
 }
 
 void OurRobot::_chip(uint8_t strength) {
-    uint8_t max = *config->kicker.maxChip;
+    uint8_t max = *config()->kicker.maxChip;
     intent().kcstrength = (strength > max ? max : strength);
     intent().shoot_mode = RobotIntent::ShootMode::CHIP;
     intent().trigger_mode = RobotIntent::TriggerMode::ON_BREAK_BEAM;
@@ -460,7 +461,7 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    angleFunctionPath.path = std::move(path);
+    angleFunctionPath().path = std::move(path);
 }
 
 std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
@@ -555,15 +556,15 @@ bool OurRobot::kickerWorks() const {
 }
 
 bool OurRobot::chipper_available() const {
-    return kickerWorks() && *status->chipper_enabled;
+    return kickerWorks() && *status()->chipper_enabled;
 }
 
 bool OurRobot::kicker_available() const {
-    return kickerWorks() && *status->kicker_enabled;
+    return kickerWorks() && *status()->kicker_enabled;
 }
 
 bool OurRobot::dribbler_available() const {
-    return *status->dribbler_enabled && _radioRx.motor_status_size() == 5 &&
+    return *status()->dribbler_enabled && _radioRx.motor_status_size() == 5 &&
            _radioRx.motor_status(4) == Packet::Good;
 }
 
@@ -622,25 +623,27 @@ void OurRobot::radioRxUpdated() {
 }
 
 double OurRobot::distanceToChipLanding(int chipPower) {
-    return max(0., min(190., *(config->chipper.calibrationSlope) * chipPower +
-                                 *(config->chipper.calibrationOffset)));
+    return max(0., min(190., *(config()->chipper.calibrationSlope) * chipPower +
+                                 *(config()->chipper.calibrationOffset)));
 }
 
 uint8_t OurRobot::chipPowerForDistance(double distance) {
-    double b = *(config->chipper.calibrationOffset) / 2.;
+    double b = *(config()->chipper.calibrationOffset) / 2.;
     if (distance < b) return 0;
     if (distance > distanceToChipLanding(255)) return 255;
     return 0.5 * distance + b;
 }
 
 void OurRobot::setPID(double p, double i, double d) {
-    config->translation.p->setValueString(QString(std::to_string(p).c_str()));
-    config->translation.i->setValueString(QString(std::to_string(i).c_str()));
-    config->translation.d->setValueString(QString(std::to_string(d).c_str()));
+    config()->translation.p->setValueString(QString(std::to_string(p).c_str()));
+    config()->translation.i->setValueString(QString(std::to_string(i).c_str()));
+    config()->translation.d->setValueString(QString(std::to_string(d).c_str()));
 }
 
 void OurRobot::setJoystickControlled(bool joystickControlled) {
-    _joystickControlled = joystickControlled;
+    _context->is_joystick_controlled[shell()] = joystickControlled;
 }
 
-bool OurRobot::isJoystickControlled() const { return _joystickControlled; }
+bool OurRobot::isJoystickControlled() const {
+    return _context->is_joystick_controlled[shell()];
+}
