@@ -172,13 +172,6 @@ private:
     boost::asio::ip::udp::socket _asio_socket;
     boost::asio::ip::udp::endpoint _sender_endpoint;
 
-    /**
-     * Returns whether a stop is requested, ie. the stop() function is called
-     * and we are trying to join _network_thread
-     * @return
-     */
-    bool stopRequested();
-
     void setupRefereeMulticast();
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
