@@ -46,8 +46,6 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
           0.0)) {}
 
-RobotConfig::~RobotConfig() {}
-
 ///////    RobotStatus
 
 RobotStatus::RobotStatus(Configuration* config, QString prefix)

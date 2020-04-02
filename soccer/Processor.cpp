@@ -36,24 +36,28 @@ using namespace google::protobuf;
 
 static const auto Command_Latency = 0ms;
 
-RobotConfig* Processor::robotConfig2008;
-RobotConfig* Processor::robotConfig2011;
-RobotConfig* Processor::robotConfig2015;
-
-// TODO: verify that this is correct
-std::vector<RobotStatus*> Processor::robotStatuses;
-
 // TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
+// A temporary place to store RobotStatus/RobotConfig variables as we create
+// them. They are initialized in createConfiguration, before the Processor class
+// is initialized, so we need to temporarily store them somewhere.
+std::vector<RobotStatus> robot_status_init;
+std::unique_ptr<RobotConfig> Processor::robot_config_init;
+
 void Processor::createConfiguration(Configuration* cfg) {
-    robotConfig2008 = new RobotConfig(cfg, "Rev2008");
-    robotConfig2011 = new RobotConfig(cfg, "Rev2011");
-    robotConfig2015 = new RobotConfig(cfg, "Rev2015");
+    // If robot_config_init is not null, then we've already done this.
+    // That means we're doing FromRegisteredConfigurables() in python code,
+    // and so we shouldn't reinitialize anything.
+    if (robot_config_init) {
+        return;
+    }
+
+    robot_config_init = std::make_unique<RobotConfig>(cfg, "Rev2015");
 
     for (size_t s = 0; s < Num_Shells; ++s) {
-        robotStatuses.push_back(
-            new RobotStatus(cfg, QString("Robot Statuses/Robot %1").arg(s)));
+        robot_status_init.emplace_back(
+            cfg, QString("Robot Statuses/Robot %1").arg(s));
     }
 }
 
@@ -76,6 +80,14 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _dampedRotation = true;
 
     _kickOnBreakBeam = false;
+
+    // Configuration-time variables.
+    _context.robot_config = std::move(robot_config_init);
+    for (int i = Num_Shells - 1; i >= 0; i--) {
+        // Set up fields in Context
+        _context.robot_status[i] = std::move(robot_status_init.back());
+        robot_status_init.pop_back();
+    }
 
     // Initialize team-space transformation
     defendPlusX(defendPlus);
@@ -116,6 +128,16 @@ Processor::~Processor() {
 
     for (Joystick* joy : _joysticks) {
         delete joy;
+    }
+
+    // Put back configurables where we found them.
+    // This is kind of a hack, but if we don't do that they get destructed
+    // when Processor dies. That normally isn't a problem, but in unit tests,
+    // we create and destroy multiple instances of Processor for each test.
+    robot_config_init = std::move(_context.robot_config);
+
+    for (size_t i = 0; i < Num_Shells; i++) {
+        robot_status_init.push_back(std::move(_context.robot_status[i]));
     }
 }
 
@@ -298,28 +320,6 @@ void Processor::run() {
             logConfig->set_simulation(_simulation);
         }
 
-        for (OurRobot* robot : _context.state.self) {
-            // overall robot config
-            switch (robot->hardwareVersion()) {
-                case Packet::RJ2008:
-                    robot->config = robotConfig2008;
-                    break;
-                case Packet::RJ2011:
-                    robot->config = robotConfig2011;
-                    break;
-                case Packet::RJ2015:
-                    robot->config = robotConfig2015;
-                    break;
-                case Packet::Unknown:
-                    robot->config =
-                        robotConfig2011;  // FIXME: defaults to 2011 robots
-                    break;
-            }
-
-            // per-robot configs
-            robot->status = robotStatuses.at(robot->shell());
-        }
-
         ////////////////
         // Inputs
 
@@ -423,7 +423,7 @@ void Processor::run() {
                     Planning::PlanRequest(
                         &_context, Planning::MotionInstant(r->pos(), r->vel()),
                         r->motionCommand()->clone(), r->robotConstraints(),
-                        std::move(r->angleFunctionPath.path),
+                        std::move(r->angleFunctionPath().path),
                         std::move(staticObstacles), std::move(dynamicObstacles),
                         r->shell(), r->getPlanningPriority()));
             }
@@ -438,7 +438,7 @@ void Processor::run() {
             path->drawDebugText(&_context.debug_drawer);
             r->setPath(std::move(path));
 
-            r->angleFunctionPath.angleFunction =
+            r->angleFunctionPath().angleFunction =
                 angleFunctionForCommandType(r->rotationCommand());
         }
 

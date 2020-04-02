@@ -191,10 +191,9 @@ protected:
                                OurRobot* robot);
 
 private:
-    // Configuration for different models of robots
-    static RobotConfig* robotConfig2008;
-    static RobotConfig* robotConfig2011;
-    static RobotConfig* robotConfig2015;
+    // Configuration for the robot.
+    // TODO(Kyle): Add back in configuration values for different years.
+    static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;

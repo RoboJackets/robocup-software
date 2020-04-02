@@ -47,7 +47,7 @@ bool veeredOffPath(Point currentPos, const Path& path,
     // invalidate path if current position is more than the replanThreshold away
     // from where it's supposed to be right now
     auto pathError = (target.pos - currentPos).mag();
-    auto replanThreshold = *motionConstraints._replan_threshold;
+    double replanThreshold = *motionConstraints._replan_threshold;
     return replanThreshold != 0 && pathError > replanThreshold;
 }
 

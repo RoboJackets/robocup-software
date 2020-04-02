@@ -1,14 +1,18 @@
 #pragma once
 
 #include <protobuf/grSim_Packet.pb.h>
+
 #include <Constants.hpp>
 #include <set>
+
 #include "DebugDrawer.hpp"
 #include "GameState.hpp"
+#include "RobotConfig.hpp"
 #include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
 #include "motion/MotionSetpoint.hpp"
+#include "planning/RobotConstraints.hpp"
 #include "vision/VisionPacket.hpp"
 
 struct Context {
@@ -23,6 +27,13 @@ struct Context {
 
     std::array<RobotIntent, Num_Shells> robot_intents;
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
+    std::array<Planning::AngleFunctionPath, Num_Shells> paths;
+    std::array<RobotStatus, Num_Shells> robot_status;
+    std::array<RobotConstraints, Num_Shells> robot_constraints;
+
+    std::array<bool, Num_Shells> is_joystick_controlled;
+
+    std::unique_ptr<RobotConfig> robot_config;
 
     SystemState state;
     GameState game_state;

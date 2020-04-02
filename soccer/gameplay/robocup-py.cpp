@@ -686,7 +686,7 @@ BOOST_PYTHON_MODULE(robocup) {
     boost::python::register_exception_translator<NullArgumentException>(
         &translateException);
 
-    def("fix_angle_radians", &fixAngleRadians);
+    def("fix_angle_radians", &fixAngleRadians<double>);
     def("get_trapezoidal_time", &Trapezoidal::getTime);
 
     class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
@@ -1054,16 +1054,18 @@ BOOST_PYTHON_MODULE(robocup) {
         .staticmethod("FromRegisteredConfigurables");
 
     // Add wrappers for ConfigItem subclasses
-    class_<ConfigBool, ConfigBool*, bases<ConfigItem>>("ConfigBool", no_init)
+    class_<ConfigBool, ConfigBool*, boost::noncopyable, bases<ConfigItem>>(
+        "ConfigBool", no_init)
         .add_property("value", &ConfigBool::value, &ConfigBool::setValue)
         .def("__str__", &ConfigBool::toString);
 
-    class_<ConfigDouble, ConfigDouble*, bases<ConfigItem>>("ConfigDouble",
-                                                           no_init)
+    class_<ConfigDouble, ConfigDouble*, boost::noncopyable, bases<ConfigItem>>(
+        "ConfigDouble", no_init)
         .add_property("value", &ConfigDouble::value, &ConfigDouble::setValue)
         .def("__str__", &ConfigDouble::toString);
 
-    class_<ConfigInt, ConfigInt*, bases<ConfigItem>>("ConfigInt", no_init)
+    class_<ConfigInt, ConfigInt*, boost::noncopyable, bases<ConfigItem>>(
+        "ConfigInt", no_init)
         .add_property("value", &ConfigInt::value, &ConfigInt::setValue)
         .def("__str__", &ConfigInt::toString);
 
