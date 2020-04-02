@@ -1,4 +1,4 @@
-#include <Referee.cpp>
+#include <RefereeEnums.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <protobuf/LogFrame.pb.h>
@@ -10,7 +10,8 @@
 #include <vector>
 
 #include <fcntl.h>
-#include <time.h>
+#include <unistd.h>
+#include <ctime>
 
 using namespace Packet;
 using namespace std;
