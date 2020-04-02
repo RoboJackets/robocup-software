@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 #include "Constants.hpp"
-#include "RefereeEnums.h"
+#include "RefereeEnums.hpp"
 
 using namespace RefereeModuleEnums;
 
@@ -61,7 +61,7 @@ void Referee::stop() {
 }
 
 void Referee::getPackets(std::vector<RefereePacket>& packets) {
-    std::unique_lock<std::mutex> lock(_mutex);
+    std::lock_guard<std::mutex> lock(_mutex);
     packets = _packets;
     _packets.clear();
 }
@@ -99,7 +99,7 @@ void Referee::receivePacket(const boost::system::error_code& error,
         return;
     }
 
-    std::unique_lock<std::mutex> lock{_mutex};
+    std::lock_guard<std::mutex> lock{_mutex};
     _packets.push_back(packet);
 
     stage_ = static_cast<Stage>(packet.wrapper.stage());
@@ -191,15 +191,15 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
             break;
 
         case VerifyKick:
+            const auto ms_elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    RJ::Time() - _kickTime)
+                    .count();
             if (system_state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
                 // The ball is back where it was.  There was probably a
                 // vision error.
                 _kickDetectState = WaitForKick;
-            } else if (auto ms_elapsed = std::chrono::duration_cast<
-                                             std::chrono::milliseconds>(
-                                             RJ::Time() - _kickTime)
-                                             .count();
-                       ms_elapsed >= KickVerifyTime_ms) {
+            } else if (ms_elapsed >= KickVerifyTime_ms) {
                 // The ball has been far enough away for enough time, so
                 // call this a kick.
                 _kickDetectState = Kicked;

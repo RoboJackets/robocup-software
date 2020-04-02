@@ -1,4 +1,4 @@
-#include "RefereeEnums.h"
+#include "RefereeEnums.hpp"
 
 namespace RefereeModuleEnums {
 std::string stringFromStage(Stage s) {

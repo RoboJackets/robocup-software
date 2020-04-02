@@ -5,10 +5,9 @@
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>
-#include "RefereeEnums.h"
+#include "RefereeEnums.hpp"
 
 #include <Utils.hpp>
-#include <future>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -168,8 +167,6 @@ private:
     static constexpr size_t RecvBufferSize =
         std::numeric_limits<uint16_t>::max() + 1;
     std::array<char, RecvBufferSize> _recv_buffer;
-
-    std::thread _network_thread;
 
     boost::asio::io_service _io_service;
     boost::asio::ip::udp::socket _asio_socket;
