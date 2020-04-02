@@ -3,6 +3,7 @@ import robocup
 import behavior
 import constants
 import enum
+import math
 
 import standard_play
 import evaluation
@@ -11,7 +12,7 @@ import tactics.coordinated_pass
 import skills.move
 import skills.capture
 import random
-import math
+
 ## Basic Offensive Pileup play
 # Has one robot capture the ball
 # One robot goes to a dropback point behind the pileup
