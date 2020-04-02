@@ -41,7 +41,7 @@ class BasicOffensivePileup(standard_play.StandardPlay):
         if (ball.x == 0):
             ball.x += 0.01
         side_point = robocup.Point(
-            math.copysign(0.4 * constants.Field.Width, -ball.x)  + ball.x,
+            math.copysign(0.4 * constants.Field.Width, -ball.x) + ball.x,
             ball.y)
         self.add_subbehavior(skills.move.Move(dropback_point),
                              'move to drop back')
