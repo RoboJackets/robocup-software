@@ -220,30 +220,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     return make_pair(windows, best);
 }
 
-// https://www.johndcook.com/blog/cpp_phi/
-// cdf of normal
-double phi(double x)
-{
-    // constants
-    double a1 =  0.254829592;
-    double a2 = -0.284496736;
-    double a3 =  1.421413741;
-    double a4 = -1.453152027;
-    double a5 =  1.061405429;
-    double p  =  0.3275911;
-
-    // Save the sign of x
-    int sign = 1;
-    if (x < 0)
-        sign = -1;
-    x = fabs(x)/sqrt(2.0);
-
-    // A&S formula 7.1.26
-    double t = 1.0/(1.0 + p*x);
-    double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
-
-    return 0.5*(1.0 + sign*y);
-}
+// CDF of a normal distribution
+double phi(double x) { return 0.5 * std::erf(-x / std::sqrt(2)); }
 
 void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto shot_vector = window.segment.center() - origin;
