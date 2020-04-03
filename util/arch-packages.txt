@@ -1,4 +1,3 @@
-
 # python 3
 python
 python-pip
@@ -12,11 +11,6 @@ ninja
 clang
 clang-analyzer
 
-# required to compile gcc toolchain for ARM
-mpfr
-gmp
-libmpc
-
 qt5-base
 qt5-tools
 qt5-svg
@@ -26,9 +20,6 @@ python-pyqt5
 
 # Documentation
 doxygen
-
-bullet
-freeglut
 
 eigen
 
@@ -54,11 +45,13 @@ sdl2
 # GNU debugger
 gdb
 
-# verilog synthesis and simulation tool
-iverilog
-
 # grSim
 qt4
 ode
+flann
+freeglut
 
 go
+
+mypy
+python-pylint
