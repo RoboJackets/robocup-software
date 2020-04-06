@@ -158,9 +158,9 @@ void VisionReceiver::receivePacket(const boost::system::error_code& error,
 }
 
 bool VisionReceiver::shouldRemove(bool defendPlusX, double x) {
-    return (!_context->state.logFrame->use_our_half() &&
+    return (!_context->game_settings.useOurHalf &&
             ((defendPlusX && x < 0) || (!defendPlusX && x > 0))) ||
-           (!_context->state.logFrame->use_our_half() &&
+           (!_context->game_settings.useOurHalf &&
             ((defendPlusX && x > 0) || (!defendPlusX && x < 0)));
 }
 

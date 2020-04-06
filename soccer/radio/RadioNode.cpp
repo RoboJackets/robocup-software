@@ -18,9 +18,9 @@
 RadioNode::RadioNode(Context* context, bool simulation, bool blueTeam)
     : _context(context) {
     _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
-    _simulation = simulation;
+    _context->game_settings.simulation = simulation;
     _radio =
-        _simulation
+        _context->game_settings.simulation
             ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
             : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
 }

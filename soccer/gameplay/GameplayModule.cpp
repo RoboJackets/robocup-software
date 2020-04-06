@@ -303,11 +303,11 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
         obstacles.add(_sideObstacle);
     }
 
-    if (!_context->state.logFrame->use_our_half()) {
+    if (!_context->game_settings.useOurHalf) {
         obstacles.add(_ourHalf);
     }
 
-    if (!_context->state.logFrame->use_opponent_half()) {
+    if (!_context->game_settings.useOpponentHalf) {
         obstacles.add(_opponentHalf);
     }
 

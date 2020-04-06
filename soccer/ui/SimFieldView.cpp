@@ -23,7 +23,7 @@ void SimFieldView::setContext(Context* context) { this->_context = context; }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
     // Ignore mouse events in the field if not in sim
-    if (!_context->is_simulation) {
+    if (!_context->game_settings.is_simulation) {
         return;
     }
 
@@ -35,14 +35,14 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         for (const LogFrame::Robot& r : frame->self()) {
             if (pos.nearPoint(r.pos(), Robot_Radius)) {
                 _dragRobot = r.shell();
-                _dragRobotBlue = frame->blue_team();
+                _dragRobotBlue = _context->game_settings.blueTeam;
                 break;
             }
         }
         for (const LogFrame::Robot& r : frame->opp()) {
             if (pos.nearPoint(r.pos(), Robot_Radius)) {
                 _dragRobot = r.shell();
-                _dragRobotBlue = !frame->blue_team();
+                _dragRobotBlue = !_context->game_settings.blueTeam;
                 break;
             }
         }
@@ -69,7 +69,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
                 }
             }
 
-            if (newID != frame->manual_id()) {
+            if (newID != _context->game_settings.manualID) {
                 robotSelected(newID);
             }
         }

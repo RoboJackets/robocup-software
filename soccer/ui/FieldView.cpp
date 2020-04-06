@@ -249,14 +249,14 @@ void FieldView::drawTeamSpace(QPainter& p) {
     }
 
     // Block off half the field
-    if (!frame->use_our_half()) {
+    if (!_context->game_settings.useOurHalf) {
         const float FX = Field_Dimensions::Current_Dimensions.FloorWidth() / 2;
         const float FY1 = -Field_Dimensions::Current_Dimensions.Border();
         const float FY2 = Field_Dimensions::Current_Dimensions.Length() / 2;
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
                    QColor(0, 0, 0, 128));
     }
-    if (!frame->use_opponent_half()) {
+    if (!_context->game_settings.useOpponentHalf) {
         const float FX = Field_Dimensions::Current_Dimensions.FloorWidth() / 2;
         const float FY1 = Field_Dimensions::Current_Dimensions.Length() / 2;
         const float FY2 = Field_Dimensions::Current_Dimensions.Length() +
@@ -437,7 +437,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
     for (auto& kv : cometTrails) {
         // note: kv.first.first is 1 for our team and 2 for their team
         bool ourTeam = kv.first.first == 1;
-        bool blue = frame->blue_team();
+        bool blue = _context->game_settings.blueTeam;
         const QColor color = (ourTeam ^ blue) ? Qt::yellow : Qt::blue;
         QPen pen(color, cometTrailPenSize);
         pen.setCapStyle(Qt::RoundCap);
@@ -451,12 +451,13 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Opponent robots
     for (const LogFrame::Robot& r : frame->opp()) {
-        drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()),
-                  r.angle(), r.ball_sense_status() == HasBall);
+        drawRobot(p, !_context->game_settings.blueTeam, r.shell(),
+                  qpointf(r.pos()), r.angle(),
+                  r.ball_sense_status() == HasBall);
     }
 
     // Our robots
-    int manualID = frame->manual_id();
+    int manualID = _context->game_settings.manualID;
     for (const LogFrame::Robot& r : frame->self()) {
         QPointF center = qpointf(r.pos());
 
@@ -477,8 +478,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
             faulty = true;
         }
 
-        drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(),
-                  r.ball_sense_status() == HasBall, faulty);
+        drawRobot(p, _context->game_settings.blueTeam, r.shell(), center,
+                  r.angle(), r.ball_sense_status() == HasBall, faulty);
 
         // Highlight the manually controlled robot
         if (manualID == r.shell()) {
@@ -622,7 +623,7 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     float y[2] = {Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0f,
                   -Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0f};
 
-    bool flip = frame->blue_team() ^ frame->defend_plus_x();
+    bool flip = _context->game_settings.blueTeam ^ frame->defend_plus_x();
 
     QColor goalColor = flip ? Qt::yellow : Qt::blue;
     p.setPen(

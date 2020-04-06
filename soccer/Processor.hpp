@@ -93,16 +93,18 @@ public:
     }
 
     void manualID(int value);
-    int manualID() const { return _manualID; }
+    int manualID() const { return _context.game_settings.manualID; }
 
     void multipleManual(bool value);
-    bool multipleManual() const { return _multipleManual; }
+    bool multipleManual() const {
+        return _context.game_settings.multipleManual;
+    }
 
     bool useFieldOrientedManualDrive() const {
-        return _useFieldOrientedManualDrive;
+        return _context.game_settings.useFieldOrientedManualDrive;
     }
     void setUseFieldOrientedManualDrive(bool foc) {
-        _useFieldOrientedManualDrive = foc;
+        _context.game_settings.useFieldOrientedManualDrive = foc;
     }
 
     /**
@@ -126,7 +128,7 @@ public:
     std::vector<int> getJoystickRobotIds();
 
     void blueTeam(bool value);
-    bool blueTeam() const { return _blueTeam; }
+    bool blueTeam() const { return _context.game_settings.blueTeam; }
 
     std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
         return _gameplayModule;
@@ -136,7 +138,7 @@ public:
 
     SystemState* state() { return &_context.state; }
 
-    bool simulation() const { return _simulation; }
+    bool simulation() const { return _context.game_settings.simulation; }
 
     void defendPlusX(bool value);
     bool defendPlusX() { return _context.game_state.defendPlusX; }
@@ -146,7 +148,7 @@ public:
         return _status;
     }
 
-    float framerate() { return _framerate; }
+    float framerate() { return _context.game_settings.framerate; }
 
     const Logger& logger() const { return _logger; }
 
@@ -155,9 +157,11 @@ public:
     void closeLog() { _logger.close(); }
 
     // Use all/part of the field
-    void useOurHalf(bool value) { _useOurHalf = value; }
+    void useOurHalf(bool value) { _context.game_settings.useOurHalf = value; }
 
-    void useOpponentHalf(bool value) { _useOpponentHalf = value; }
+    void useOpponentHalf(bool value) {
+        _context.game_settings.useOpponentHalf = value;
+    }
 
     QMutex& loopMutex() { return _loopMutex; }
 
@@ -175,7 +179,7 @@ public:
 
     bool isInitialized() const;
 
-    void setPaused(bool paused) { _paused = paused; }
+    void setPaused(bool paused) { _context.game_settings.paused = paused; }
 
     ////////
 
@@ -210,16 +214,6 @@ private:
 
     Logger _logger;
 
-    bool _useOurHalf, _useOpponentHalf;
-
-    // True if we are running with a simulator.
-    // This changes network communications.
-    bool _simulation;
-
-    // True if we are blue.
-    // False if we are yellow.
-    bool _blueTeam;
-
     // A logfile to read from.
     // When empty, don't read logs at all.
     std::string _readLogFile;
@@ -234,22 +228,10 @@ private:
 
     // Transformation from world space to team space.
     // This depends on which goal we're defending.
-    //
-    // _teamTrans is used for positions, not angles.
-    // _teamAngle is used for angles.
     Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle;
-
-    // Board ID of the robot to manually control or -1 if none
-    int _manualID;
-    // Use multiple joysticks at once
-    bool _multipleManual;
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
-
-    /// Measured framerate
-    float _framerate;
 
     // This is used by the GUI to indicate status of the processing loop and
     // network
@@ -271,19 +253,5 @@ private:
     // joystick control
     std::vector<Joystick*> _joysticks;
 
-    // joystick damping
-    bool _dampedRotation;
-    bool _dampedTranslation;
-
-    bool _kickOnBreakBeam;
-
-    // If true, rotates robot commands from the joystick based on its
-    // orientation on the field
-    bool _useFieldOrientedManualDrive = false;
-
     VisionChannel _visionChannel;
-
-    bool _initialized;
-
-    bool _paused;
 };

@@ -3,9 +3,10 @@
 
 #include <QGLWidget>
 
+#include <protobuf/LogFrame.pb.h>
+#include <Context.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-#include <protobuf/LogFrame.pb.h>
 
 #include <set>
 #include <memory>
@@ -92,4 +93,7 @@ protected:
     const std::vector<std::shared_ptr<Packet::LogFrame> >* _history;
 
     QVector<bool> _layerVisible;
+
+private:
+    Context* _context;
 };
