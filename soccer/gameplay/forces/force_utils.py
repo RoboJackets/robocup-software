@@ -2,6 +2,16 @@
 import math
 import robocup
 
+
+
+#
+# A bunch of functions that will help with using the forces system
+# If you want to create or tune a force, this should be the starting point
+#
+# It will definatly all be butifully documented in doxygen format because it will be super confusing otherwise
+#
+
+
 def push(anchor, sample):
     return anchor - sample
 
@@ -37,6 +47,8 @@ def clipLowHigh(x, low, high):
 #
 # x0 is essentially your base here
 #
+# realizing that offset should be included for poly and trig responces, oof, going to be a lot of optional parameters
+#
 def poly_push(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
     pushVector = push(anchor, sample)
     vectorMag = pushVector.mag()
@@ -45,21 +57,23 @@ def poly_push(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHig
     return vectorNorm * logMag 
 
 
-def poly_pull(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+def poly_pull(anchor, sample, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
     return vec_invert(poly_push(anchor, sample, x0))
 
-def poly_responce(mag, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+def poly_responce(mag, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+    mag += offset 
     responce = x0 + mag * x1 + mag * x2**2 + mag * x3**3 + mag * x4**4
     return clipLowHigh(responce, clipLow, clipHigh)
 
 
-def trig_pull(anchor, sample, base, decay, decay_range, clipLow=0.0, clipHigh=float('inf')):
+def trig_pull(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
     return None
 
-def trig_push(anchor, sample, base, decay, decay_range, clipLow=0.0, clipHigh=float('inf')):
+def trig_push(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
     return None
 
-def trig_response(mag, base, decay, decay_range, clipLow=0.0, clipHigh=float('inf')):
+def trig_response(mag, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
+    mag += offset
     responce = base - ((2 * responce_range)/(math.pi)) * math.atan(mag * decay)
     return clipLowHigh(responce, clipLow, clipHigh)
 
