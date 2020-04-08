@@ -24,7 +24,7 @@ import random
 # It needs to be renamed as "clear" is the name of the situation, and each play that fufills it
 # needs to have a unique name beyond that
 #
-class Clear(standard_play.StandardPlay):
+class BasicClear(standard_play.StandardPlay):
     class State(enum.Enum):
         get_ball = 1, 'Get the ball and movee other robots up'
         clear_ball = 2, 'Kick the ball upfield'
@@ -36,7 +36,7 @@ class Clear(standard_play.StandardPlay):
     def __init__(self):
         super().__init__(continuous=False)
 
-        for s in Clear.State:
+        for s in BasicClear.State:
             self.add_state(s, behavior.Behavior.State.running)
 
         #Points to move up offense bots to
@@ -63,11 +63,12 @@ class Clear(standard_play.StandardPlay):
         self.midfield_points = [self.midfield_point_1, self.midfield_point_2]
 
         self.add_transition(behavior.Behavior.State.start,
-                            Clear.State.get_ball, lambda: True, 'Immidiatley')
+                            BasicClear.State.get_ball, lambda: True,
+                            'Immidiatley')
 
         self.add_transition(
-            Clear.State.get_ball,
-            Clear.State.clear_ball, lambda: self.subbehavior_with_name(
+            BasicClear.State.get_ball,
+            BasicClear.State.clear_ball, lambda: self.subbehavior_with_name(
                 'Capture ball').is_done_running(), 'After ball is captured')
 
     def on_enter_get_ball(self):

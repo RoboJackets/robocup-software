@@ -10,7 +10,7 @@ import situational_play_selection
 class BaiscDefendClear(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_CLEAR,
+        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_CLEAR
     ] # yapf: disable
 
     def __init__(self, num_supports=2):

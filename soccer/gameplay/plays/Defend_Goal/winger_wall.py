@@ -23,8 +23,7 @@ class WingerWall(standard_play.StandardPlay):
 
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_PILEUP
+        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL
     ] # yapf: disable
 
 
