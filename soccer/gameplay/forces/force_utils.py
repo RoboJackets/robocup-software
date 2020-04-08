@@ -1,63 +1,126 @@
 
 import math
+import robocup
 
+def push(anchor, sample):
+    return anchor - sample
 
-#Ok, so I should have an increasing and decreasing version of each function?
-#I've got some figuring out to do.
-#I really want like n-log(2,x) where n is the magnatude at 0
-
-
-#Out of all the bullcrap I've written I think these are probably what I would want
-#I can't think of a reason that you would need more granular control?
-
-#I should possibly change "push" and "pull" arguments to sample, to represent that is the point you are sampling the field at
-
-#It's also possible that I should just do a "push" and then have you negate that to get a pull, but they need to decay and be offset differently so IDK.
-#I think this can be made to work to cover all types of fields that you would want.
-
+def pull(anchor, sample):
+    return sample - anchor
 
 #Be really careful when changing clipLow, keeping in mind that this will allow your force to change directions i.e. from a push to a pull, in the middle of the field, which can get confusing
 def log_push(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf')):
-    return None
+    pushVector = push(anchor, sample)
+    vectorMag = pushVector.mag()
+    vectorNorm = pushVector.norm()
+    logMag = log_responce(vectorMag, base, decay, clipLow, clipHigh)
+    return vectorNorm * logMag 
 
 def log_pull(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf')):
+    return vec_invert(log_push(anchor, sample, base, decay, clipLow, clipHigh))
+
+
+def log_responce(mag, base, decay, clipLow, clipHigh):
+    if(decay < 1):
+        decay -= 1
+     return clipLowHigh((base - math.log(mag + 1, 1 + (1 / decay))))
+
+def clipLowHigh(x, low, high):
+    if(x < low):
+        return low
+    elif(x > high):
+        return high
+    else:
+        return x
+
+##
+#
+#
+# x0 is essentially your base here
+#
+def poly_push(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+    pushVector = push(anchor, sample)
+    vectorMag = pushVector.mag()
+    vectorNorm = pushVector.norm()
+    polyMag = poly_responce(vectorMag, x0, x1, x2, x3, x4, clipLow, clipHigh)
+    return vectorNorm * logMag 
+
+
+def poly_pull(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+    return vec_invert(poly_push(anchor, sample, x0))
+
+
+def poly_responce(mag, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+    responce = x0 + mag * x1 + mag * x2**2 + mag * x3**3 + mag * x4**4
+    return clipLowHigh(responce, clipLow, clipHigh)
+
+
+def trig_pull(anchor, sample, base, decay, responce_range, clipLow=0.0, clipHigh=float('inf')):
+    return None
+
+def trig_push(anchor, sample, base, decay, responce_range):
+    return None
+
+def trig_response(mag, base, decay, responce_range):
+    return None
+
+def force_thermal_color(force, minimum=0, maximum=10):
+    return thermal_rgb_convert(force.mag(), minimum, maximum)
+
+##
+#
+# Turns a magnatude into rgb values according to a "thermal" colorscheme
+# taken from stack overflow here:
+# https://stackoverflow.com/questions/20792445/calculate-rgb-value-for-a-range-of-values-to-create-heat-map
+#
+def thermal_rgb_convert(value, minimum=0, maximum=10):
+    minimum, maximum = float(minimum), float(maximum)
+    ratio = 2 * (value-minimum) / (maximum - minimum)
+    b = int(max(0, 255*(1 - ratio)))
+    r = int(max(0, 255*(ratio - 1)))
+    g = 255 - b - r
+    return r, g, b
+
+
+
+
+
+
+#Laziness is something that I'll have to consider, the intent is to scale existing force vectors based on their distance from 
+def linear_lazy(origin, sample, force):
+    return None
+
+def log_lazy(origin, sample, force):
+    return None
+
+def poly_lazy(origin, sample, force):
+    return None
+
+def trig_lazy(origin, sample, force):
     return None
 
 
 
-def poly_push(anchor, sample, x0=0, x1=0, x2=3, x3=4):
-    return None
 
-def poly_pull(anchor, sample):
-
-#This might have 
-def distance_maigntain()
 
 
 #Flips a vector 
-def invert(input_vec):
-    return input_vec
+def vec_invert(input_vec):
+    return input_vec * -1
 
+
+#Rotates a vector
 def rotate(input_vec, degrees):
-    return input_vec
+    toRadians = math.radians(degrees)
+    return robocup.Point(input_vec.x * math.cos(toRadians), input_vec.y * math.sin(toRadians))
 
 
-def norm_split(input_vec):
-    return input_vec.norm(), input_vec.mag()
-
-
+'''
 def log_compress(input_vec, base=2):
     mag = input_vec.mag()
     norm = 
     return input_vec
     #I should probably not allow negatives here
-
-
-
-def log_decay(input_vec, base=2):
-    return None
-
-
 
 #Roots are not as intense as log functinos in many cases
 def scale_root_compress(input_vec, root=2, signed=False):
@@ -131,6 +194,7 @@ def push_line_away_from_point(sample_point, target, push_point, high_clip=None):
 #Its like pull line away from point but the oppisite
 def pull_line_to_point():
     return None
+'''
 
 
 
