@@ -7,6 +7,10 @@ class Force(ABC):
     #It should probably exist somewhere but I'm not sure if here is the best place
     #Especially if children are expected to overwrite sample
 
+
+    #Some stuff needs to change here? Should a force sample return like a tuple or a specific object?
+
+
     ## A maximum magnitude for this force
     highClip = None
 

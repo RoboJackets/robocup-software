@@ -19,7 +19,6 @@ def log_push(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf')):
 def log_pull(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf')):
     return vec_invert(log_push(anchor, sample, base, decay, clipLow, clipHigh))
 
-
 def log_responce(mag, base, decay, clipLow, clipHigh):
     if(decay < 1):
         decay -= 1
@@ -49,20 +48,20 @@ def poly_push(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHig
 def poly_pull(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
     return vec_invert(poly_push(anchor, sample, x0))
 
-
 def poly_responce(mag, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
     responce = x0 + mag * x1 + mag * x2**2 + mag * x3**3 + mag * x4**4
     return clipLowHigh(responce, clipLow, clipHigh)
 
 
-def trig_pull(anchor, sample, base, decay, responce_range, clipLow=0.0, clipHigh=float('inf')):
+def trig_pull(anchor, sample, base, decay, decay_range, clipLow=0.0, clipHigh=float('inf')):
     return None
 
-def trig_push(anchor, sample, base, decay, responce_range):
+def trig_push(anchor, sample, base, decay, decay_range, clipLow=0.0, clipHigh=float('inf')):
     return None
 
-def trig_response(mag, base, decay, responce_range):
-    return None
+def trig_response(mag, base, decay, decay_range, clipLow=0.0, clipHigh=float('inf')):
+    responce = base - ((2 * responce_range)/(math.pi)) * math.atan(mag * decay)
+    return clipLowHigh(responce, clipLow, clipHigh)
 
 def force_thermal_color(force, minimum=0, maximum=10):
     return thermal_rgb_convert(force.mag(), minimum, maximum)
@@ -83,10 +82,7 @@ def thermal_rgb_convert(value, minimum=0, maximum=10):
 
 
 
-
-
-
-#Laziness is something that I'll have to consider, the intent is to scale existing force vectors based on their distance from 
+#Laziness is something that I'll have to consider, the intent is to scale down nearby force vectors? 
 def linear_lazy(origin, sample, force):
     return None
 
@@ -97,6 +93,13 @@ def poly_lazy(origin, sample, force):
     return None
 
 def trig_lazy(origin, sample, force):
+    return None
+
+def lazy_clip(force, threshold):
+
+
+
+def force_clip_low_high(force, clipLow=0.0, clipHigh=float('inf')):
     return None
 
 
