@@ -12,7 +12,16 @@ import tactics.positions.submissive_defender as submissive_defender
 import role_assignment
 
 
-class Defense(composite_behavior.CompositeBehavior):
+
+##
+#
+# A tactic that coordinates a submissive goalie with two 
+# defensive bots to block threats to the goal
+#
+# Note that this tactic handles the goalie, so the handles goalie
+# function in standard play must be overridden to reflect that
+#
+class CoordinatedBlock(composite_behavior.CompositeBehavior):
 
     DEFENSE_ROBOT_CHANGE_COST = 0.05
 
@@ -26,11 +35,11 @@ class Defense(composite_behavior.CompositeBehavior):
         if len(defender_priorities) != 2:
             raise RuntimeError("defender_priorities should have a length of 2")
 
-        self.add_state(Defense.State.defending,
+        self.add_state(CoordinatedBlock.State.defending,
                        behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            Defense.State.defending, lambda: True,
+                            CoordinatedBlock.State.defending, lambda: True,
                             "immediately")
  
         goalie = submissive_goalie.SubmissiveGoalie()
@@ -334,6 +343,6 @@ class Defense(composite_behavior.CompositeBehavior):
                 subbehavior_req_tree = reqs[subbehavior_name]
                 for r in role_assignment.iterate_role_requirements_tree_leaves(
                         subbehavior_req_tree):
-                    r.robot_change_cost = Defense.DEFENSE_ROBOT_CHANGE_COST
+                    r.robot_change_cost = CoordinatedBlock.DEFENSE_ROBOT_CHANGE_COST
 
         return reqs
