@@ -28,7 +28,8 @@ class TestBlockAndKicker(play.Play):
     def execute_running(self):
         kick = self.subbehavior_with_name('kick')
 
-        sublist = self.subbehavior_with_name('coordinated block').all_subbehaviors()
+        sublist = self.subbehavior_with_name(
+            'coordinated block').all_subbehaviors()
         roblist = []
         for behavior in sublist:
             roblist.append(behavior.robot)

@@ -12,10 +12,9 @@ import tactics.positions.submissive_defender as submissive_defender
 import role_assignment
 
 
-
 ##
 #
-# A tactic that coordinates a submissive goalie with two 
+# A tactic that coordinates a submissive goalie with two
 # defensive bots to block threats to the goal
 #
 # Note that this tactic handles the goalie, so the handles goalie
