@@ -32,7 +32,7 @@ class Defense(composite_behavior.CompositeBehavior):
         self.add_transition(behavior.Behavior.State.start,
                             Defense.State.defending, lambda: True,
                             "immediately")
- 
+
         goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
         self.add_subbehavior(goalie, "goalie", required=False)
@@ -85,7 +85,7 @@ class Defense(composite_behavior.CompositeBehavior):
         threats.sort(key=lambda threat: threat[1], reverse=True)
         threats_to_block = threats[0:2]
         assigned_handlers = [[], []]
-        
+
         self.assign_handlers_to_threats(
             assigned_handlers, unused_threat_handlers, threats_to_block)
 

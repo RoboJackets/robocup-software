@@ -46,6 +46,7 @@ class StandardPlay(play.Play):
     # it via super
     def execute_running(self):
         pass
+
     #    self.use_standard_defense()
 
     #Since the standard_play handles defense, it will always handle the goalie
