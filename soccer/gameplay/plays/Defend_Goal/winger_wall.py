@@ -80,10 +80,6 @@ class WingerWall(standard_play.StandardPlay):
         # Apply roles
         self.apply_blocking_roles()
 
-    ## Stop winger wall from using adding standard defense
-    def use_standard_defense(self):
-        pass
-
     ## Classify opponent robots as a 'winger' or 'forward'
     #
     # Wingers are positioned away from the ball and may be passed to
