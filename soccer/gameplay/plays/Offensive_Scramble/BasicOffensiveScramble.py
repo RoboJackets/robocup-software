@@ -37,10 +37,6 @@ class BasicOffensiveScramble(standard_play.StandardPlay):
             subbehavior_with_name('Capture ball').is_done_running(),
             'Captured')
 
-    @classmethod
-    def score(cls):
-        return 10
-
     #Gets the point that the robot that will behind the capturing one will be
     def get_dropback_point(self):
         ball_pos = main.ball().pos

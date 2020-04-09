@@ -17,8 +17,7 @@ import situational_play_selection
 class Basic122(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
     ] # yapf: disable
 
     # how far the 2 support robots should stay away from the striker
