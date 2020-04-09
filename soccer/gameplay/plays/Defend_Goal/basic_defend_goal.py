@@ -10,7 +10,7 @@ import tactics.positions.submissive_defender as submissive_defender
 import evaluation.opponent as eval_opp
 import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
-import tactics.defense
+import tactics.coordinated_block
 import situational_play_selection
 
 
@@ -37,9 +37,9 @@ class BasicDefendGoal(standard_play.StandardPlay):
                             behavior.Behavior.State.running, lambda: True,
                             'Immediately')
 
-        # Use standard defense
+        # Add a coordinated block tactic
         self.add_subbehavior(
-            tactics.defense.Defense(), 'defense', required=False)
+            tactics.coordinated_block.CoordinatedBlock(), 'coordinated block', required=False)
 
         self.add_subbehavior(mark.Mark(), 'mark')
 
@@ -52,8 +52,11 @@ class BasicDefendGoal(standard_play.StandardPlay):
             self.add_subbehavior(wing_defender.WingDefender(),
                                  'winger' + str(i))
 
-    def use_standard_defense(self):
-        pass
+    #This play handles the goalie through the coordinated block tactic
+    @classmethod
+    def handles_goalie(cls):
+        return True
+
 
     def execute_running(self):
         for i in range(self.num_wingers):
