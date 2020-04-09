@@ -38,10 +38,9 @@ class BasicDefendGoal(standard_play.StandardPlay):
                             'Immediately')
 
         # Add a coordinated block tactic
-        self.add_subbehavior(
-            tactics.coordinated_block.CoordinatedBlock(),
-            'coordinated block',
-            required=False)
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'coordinated block',
+                             required=False)
 
         self.add_subbehavior(mark.Mark(), 'mark')
 
