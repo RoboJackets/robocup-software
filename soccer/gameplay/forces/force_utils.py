@@ -3,14 +3,12 @@ import math
 import robocup
 
 
-
 #
 # A bunch of functions that will help with using the forces system
 # If you want to create or tune a force, this should be the starting point
 #
 # It will definatly all be butifully documented in doxygen format because it will be super confusing otherwise
 #
-
 
 def push(anchor, sample):
     return anchor - sample
@@ -54,8 +52,7 @@ def poly_push(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHig
     vectorMag = pushVector.mag()
     vectorNorm = pushVector.norm()
     polyMag = poly_responce(vectorMag, x0, x1, x2, x3, x4, clipLow, clipHigh)
-    return vectorNorm * logMag 
-
+    return vectorNorm * polyMag 
 
 def poly_pull(anchor, sample, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
     return vec_invert(poly_push(anchor, sample, x0))
@@ -65,12 +62,15 @@ def poly_responce(mag, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, cl
     responce = x0 + mag * x1 + mag * x2**2 + mag * x3**3 + mag * x4**4
     return clipLowHigh(responce, clipLow, clipHigh)
 
-
 def trig_pull(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
-    return None
+    pushVector = push(anchor, sample)
+    vectorMag = pushVector.mag()
+    vectorNorm = pushVector.norm()
+    trigMag = trig_responce(vectorMag, base, decay, decay_range, offset, clipLow, clipHigh)
+    return vectorNorm * trigMag 
 
 def trig_push(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
-    return None
+    return vec_invert(trig_pull(anchor, sample, base, decay, decay_range, offset, clipLow, clipHigh))
 
 def trig_response(mag, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
     mag += offset
@@ -87,6 +87,10 @@ def force_thermal_color(force, minimum=0, maximum=10):
 # https://stackoverflow.com/questions/20792445/calculate-rgb-value-for-a-range-of-values-to-create-heat-map
 #
 def thermal_rgb_convert(value, minimum=0, maximum=10):
+    if(value > maximum):
+        value = maximum
+    if(value < minimum):
+        value = minimum
     minimum, maximum = float(minimum), float(maximum)
     ratio = 2 * (value-minimum) / (maximum - minimum)
     b = int(max(0, 255*(1 - ratio)))
@@ -109,22 +113,19 @@ def poly_lazy(origin, sample, force):
 def trig_lazy(origin, sample, force):
     return None
 
-def lazy_clip(force, threshold):
-
-
-
-def force_clip_low_high(force, clipLow=0.0, clipHigh=float('inf')):
-    return None
-
-
-
-
-
+##
+# Drops the force to zero if it is below the threshold
+def lazy_threshold(force, threshold):
+    mag = force.mag()
+    if(mag < threshold):
+        return robocup.Point(0,0)
+#Clips the magnitude of a vector low and high
+def force_clip_low_high(input_vec, clipLow=0.0, clipHigh=float('inf')):
+    return force.norm() * clipLowHigh(force.mag(), clipLow, clipHigh) 
 
 #Flips a vector 
 def vec_invert(input_vec):
     return input_vec * -1
-
 
 #Rotates a vector
 def rotate(input_vec, degrees):

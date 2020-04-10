@@ -5,20 +5,17 @@ class ForceField():
     samples = None
     force = None #Should I do it this way???
 
+    def __init__(self, samples=None, force=None):
+        self.samples = samples
+        self.force = force 
+     
+    #Regenerate the field
+    def generate(self):
+        self.samples = list()
+        pass
 
-    def __init__(self, samples=None):
-        if(samples is not None):
-            self.samples = samples
+    #Augment the current field, some things to figure out here
+    def augment(self, func)
+        self.samples = [func(x) for x in samples]
 
-    def sampleThis
-
-
-    #This won't work because the lambda would need unknown parameters, IDK if this class should actually exist then
-    #No wait, you can just put those into the lambda? Is there already an easy way to perform a lambda on each element of a list?
-    #I bet there is, list comprehension should work
-    def augment(func)
-        samples = [func(x) for x in samples]
-
-
-    def lazy(point, lazy_type="hat"):
 
