@@ -17,20 +17,23 @@ def pull(anchor, sample):
     return sample - anchor
 
 #Be really careful when changing clipLow, keeping in mind that this will allow your force to change directions i.e. from a push to a pull, in the middle of the field, which can get confusing
-def log_push(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf')):
+def log_push(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf'), threshold=float("-inf")):
     pushVector = push(anchor, sample)
     vectorMag = pushVector.mag()
     vectorNorm = pushVector.norm()
-    logMag = log_responce(vectorMag, base, decay, clipLow, clipHigh)
+    logMag = log_responce(vectorMag, base, decay, clipLow, clipHigh, threshold)
     return vectorNorm * logMag 
 
-def log_pull(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf')):
-    return vec_invert(log_push(anchor, sample, base, decay, clipLow, clipHigh))
+def log_pull(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf'), threshold=float("-inf")):
+    return vec_invert(log_push(anchor, sample, base, decay, clipLow, clipHigh, threshold))
 
-def log_responce(mag, base, decay, clipLow, clipHigh):
+def log_responce(mag, base, decay, clipLow=0.0, clipHigh=float('inf'), threshold=float('-inf')):
     if(decay < 1):
         decay -= 1
-     return clipLowHigh((base - math.log(mag + 1, 1 + (1 / decay))))
+    responce = base - math.log(mag + 1, 1 + (1 / decay))
+    if(responce < threshold):
+        return 0.0
+    return clipLowHigh(responce)
 
 def clipLowHigh(x, low, high):
     if(x < low):
@@ -47,22 +50,24 @@ def clipLowHigh(x, low, high):
 #
 # realizing that offset should be included for poly and trig responces, oof, going to be a lot of optional parameters
 #
-def poly_push(anchor, sample, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+def poly_push(anchor, sample, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf'), threshold=float('-inf')):
     pushVector = push(anchor, sample)
     vectorMag = pushVector.mag()
     vectorNorm = pushVector.norm()
-    polyMag = poly_responce(vectorMag, x0, x1, x2, x3, x4, clipLow, clipHigh)
+    polyMag = poly_responce(vectorMag, x0, x1, x2, x3, x4, clipLow, clipHigh, threshold)
     return vectorNorm * polyMag 
 
-def poly_pull(anchor, sample, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
-    return vec_invert(poly_push(anchor, sample, x0))
+def poly_pull(anchor, sample, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf'), threshold=float('-inf')):
+    return vec_invert(poly_push(anchor, sample, offset, x0, x1, x2, x3, x4, clipLow, clipHigh, threshold))
 
-def poly_responce(mag, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf')):
+def poly_responce(mag, offset=0.0, x0=0, x1=0, x2=0, x3=0, x4=0, clipLow=0.0, clipHigh=float('inf'), threshold=float('-inf')):
     mag += offset 
     responce = x0 + mag * x1 + mag * x2**2 + mag * x3**3 + mag * x4**4
+    if(responce < threshold):
+        return 0.0
     return clipLowHigh(responce, clipLow, clipHigh)
 
-def trig_pull(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
+def trig_pull(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf'), threshold=float('-inf')):
     pushVector = push(anchor, sample)
     vectorMag = pushVector.mag()
     vectorNorm = pushVector.norm()
@@ -72,13 +77,19 @@ def trig_pull(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0,
 def trig_push(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
     return vec_invert(trig_pull(anchor, sample, base, decay, decay_range, offset, clipLow, clipHigh))
 
-def trig_response(mag, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
+def trig_response(mag, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf'), theshold=float('-inf')):
     mag += offset
     responce = base - ((2 * responce_range)/(math.pi)) * math.atan(mag * decay)
+    if(responce < threshold):
+        return 0.0
     return clipLowHigh(responce, clipLow, clipHigh)
 
 def force_thermal_color(force, minimum=0, maximum=10):
     return thermal_rgb_convert(force.mag(), minimum, maximum)
+
+#UGGGG, I don't know how I should do this but these functions are getting redic but I want to add thresholding but that would mean another argument. Do i
+#threshold(offset(clip_low_high(trig_responce()),1),0.2)
+
 
 ##
 #
@@ -119,6 +130,11 @@ def lazy_threshold(force, threshold):
     mag = force.mag()
     if(mag < threshold):
         return robocup.Point(0,0)
+
+
+def threshold(mag, )
+
+
 #Clips the magnitude of a vector low and high
 def force_clip_low_high(input_vec, clipLow=0.0, clipHigh=float('inf')):
     return force.norm() * clipLowHigh(force.mag(), clipLow, clipHigh) 

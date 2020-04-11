@@ -8,28 +8,41 @@ import numpy as np
 from forces import force_utils
 from forces import force_sample
 from forces import direction
-
+from forces import point
 ##
 # Should this serve as a base class or should it have functionality all it's own?
 #
-class EdgeForce(force.Force):
+class EdgeForce(force.For):
 
     borders = robocup.Field_Dimensions.CurrentDimensions.FieldBorders 
 
-    responce_function = lambda x : force_utils.trig_responce(x, 2.0, 1.0, 2.0, clipLow=0.15)
+    #These are what I might consider typical values, but you can make these whatever you want
+    responce_function = lambda x : force_utils.trig_responce(x, 2.0, 1.0, 2.0)
     responce_type = direction.Direction.PUSH
+    merge_function = lambda x : max(x)
 
+    #This should be like the betterer version
+    def sample(self, point):
+        self.points = [x.nearest_point(point) for x in borders] #If the borders aren't segments this may not work
+        super(point)
+
+
+    """
+    #This is the sketch way of doing this, I guess what I should do is make this a points force?
     #So I've got an implementation here, with a lambda for customization
     def sample(self, point):
 
-        dists = [x.dist_to(point) for x in robocup.Field_Dimensions.CurrentDimensions.FieldBorders]
-        ind = np.argmin(dists) 
+        dists = [x.dist_to(point) for x in borders]
+        
+        #ind = np.argmin(dists) 
         vec = None
 
         if(dists[ind] == 0):
             return robocup.Point(0,0)
- 
-        mag = self.responce_function(dists[ind])
+
+        #should be a list of the magnitudes
+        mags = [self.responce_function(x) for x in dists]
+
 
         if(ind == 0):
             vec = robocup.Point(mag,0)
@@ -44,6 +57,6 @@ class EdgeForce(force.Force):
             vec = force_utils.vec_invert(vec)
 
         return force_sample.ForceSample(vec, point)
-    
+   """ 
 
 

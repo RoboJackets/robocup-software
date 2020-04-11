@@ -3,28 +3,25 @@ import forces
 from forces import force
 import main
 from abc import abstractmethod
-
+from forces import direction
+from forces import points_force
 
 #So this is just a force that can keep track of robots for you
 #Intended to act as a base class for forces that need this functionality
 #Extend if you need something more, but actually I think I can make this
 #do most of what you would want at a basic level?? IDK.
-class RobotForce(force.Force):
+class RobotForce(points_force.PointsForce):
 
     systemState = None
     activeRobots = list()
 
     ## A boolean lambda function for if a robot is a source for this force
-    robot_criteria = lambda x : 
-    ## The responce function 
-    responce_function = lambda x :   
+    robot_criteria = lambda x : True
 
-    ##I feel like I just remembered lambda functions exist and now want to use them for everything
-    ##This is questionable?
-    ##The main alternative would be sum I guess, but you could have more complex functions pretty easily
-    merge_fucntion = lambda x : max(x)
-    #Does this existing mean that I need to calculate for every robot? I guess the responces function should be pretty much trivial so it should hardly be slower.
-
+    #Examples of robot criteria functions
+    #robot_criteria = lambda x : not x.is_ours()
+    #robot_criteria = lambda x : x.pos.x > 2
+    
     def __init__(self):
         self.systemState = main.system_state()
         self.updateVisibility()        
@@ -39,18 +36,10 @@ class RobotForce(force.Force):
             if (g.visible):
                 self.activeRobots.append(g)
 
-
-        self.ourRobots = list()
-        self.theirRobots = list()
-        
-        for g in self.systemState.our_robots:
-            self.ourRobots.append(g)
-        for g in self.systemState.their_robots:
-            self.theirRobots.append(g)
-
+    #So ideally this will call the super function from points force
     def sample(self, point, update_visibility=True):
-        target_bots = filter(robot_criteria, activeRobots)
-
-
+        updateVisibility()
+        self.points = filter(robot_criteria, activeRobots)
+        return super(point) 
 
 
