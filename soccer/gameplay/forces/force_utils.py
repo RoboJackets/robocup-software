@@ -148,6 +148,9 @@ def rotate(input_vec, degrees):
     toRadians = math.radians(degrees)
     return robocup.Point(input_vec.x * math.cos(toRadians), input_vec.y * math.sin(toRadians))
 
+#Scales a vector to the 
+def vec_scale(input_vec, scale):
+    return input_vec.norm() * scale
 
 '''
 def log_compress(input_vec, base=2):
