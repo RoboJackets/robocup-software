@@ -36,6 +36,10 @@ class RootPlay(Play, QtCore.QObject):
         # cache and calculate the score() function for each play class
         main.play_registry().recalculate_scores()
 
+        # Goalie ID
+        ################################################################################
+        goalie_id(main.context().game_settings.goalieID);
+
         # Play Selection
         ################################################################################
 

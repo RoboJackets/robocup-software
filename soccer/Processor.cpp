@@ -26,6 +26,7 @@
 #include "radio/PacketConvert.hpp"
 #include "radio/RadioNode.hpp"
 #include "vision/VisionFilter.hpp"
+#include "Network.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -64,23 +65,24 @@ void Processor::createConfiguration(Configuration* cfg) {
 Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
                      bool blueTeam, std::string readLogFile = "")
     : _loopMutex(), _readLogFile(readLogFile) {
-    _context.game_settings.blueTeam = blueTeam;
     _running = true;
-    _context.game_settings.manualID = -1;
-    _context.game_settings.framerate = 0;
     _context.game_settings.useOurHalf = true;
     _context.game_settings.useOpponentHalf = true;
-    _context.game_settings.initialized = false;
     _context.game_settings.simulation = sim;
-    _radio = nullptr;
-
+    _context.game_settings.requestedBlueTeam = blueTeam;
+    _context.game_settings.manualID = -1;
     _context.game_settings.multipleManual = false;
     setupJoysticks();
-
-    _context.game_settings.dampedTranslation = true;
+    _context.game_settings.framerate = 0;
     _context.game_settings.dampedRotation = true;
-
+    _context.game_settings.dampedTranslation = true;
     _context.game_settings.kickOnBreakBeam = false;
+    _context.game_settings.initialized = false;
+    _radio = nullptr;
+    _defendPlus = defendPlus;
+
+
+
 
     // Configuration-time variables.
     _context.robot_config = std::move(robot_config_init);
@@ -90,12 +92,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         robot_status_init.pop_back();
     }
 
-    // Initialize team-space transformation
-    defendPlusX(defendPlus);
-
     QMetaObject::connectSlotsByName(this);
-
-    _context.game_settings.is_simulation = _context.game_settings.simulation;
 
     _context.field_dimensions = *currentDimensions;
 
@@ -109,7 +106,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context,
                                          _context.game_settings.simulation,
-                                         _context.game_settings.blueTeam);
+                                         _context.game_settings.requestedBlueTeam);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
@@ -151,44 +148,6 @@ void Processor::stop() {
     }
 }
 
-void Processor::manualID(int value) {
-    QMutexLocker locker(&_loopMutex);
-    _context.game_settings.manualID = value;
-
-    for (Joystick* joy : _joysticks) {
-        joy->reset();
-    }
-}
-
-void Processor::multipleManual(bool value) {
-    _context.game_settings.multipleManual = value;
-}
-
-void Processor::goalieID(int value) {
-    QMutexLocker locker(&_loopMutex);
-    _gameplayModule->goalieID(value);
-}
-
-int Processor::goalieID() {
-    QMutexLocker locker(&_loopMutex);
-    return _gameplayModule->goalieID();
-}
-
-void Processor::dampedRotation(bool value) {
-    QMutexLocker locker(&_loopMutex);
-    _context.game_settings.dampedRotation = value;
-}
-
-void Processor::dampedTranslation(bool value) {
-    QMutexLocker locker(&_loopMutex);
-    _context.game_settings.dampedTranslation = value;
-}
-
-void Processor::joystickKickOnBreakBeam(bool value) {
-    QMutexLocker locker(&_loopMutex);
-    _context.game_settings.kickOnBreakBeam = value;
-}
-
 void Processor::setupJoysticks() {
     _joysticks.clear();
 
@@ -212,9 +171,9 @@ void Processor::blueTeam(bool value) {
     // This is called from the GUI thread
     QMutexLocker locker(&_loopMutex);
 
-    if (_context.game_settings.blueTeam != value) {
-        _context.game_settings.blueTeam = value;
-        if (_radio) _radio->switchTeam(_context.game_settings.blueTeam);
+    if (_context.game_settings.requestedBlueTeam != value) {
+        _context.game_settings.requestedBlueTeam = value;
+        if (_radio) _radio->switchTeam(_context.game_settings.requestedBlueTeam);
 
         // Try to set the team in the referee module.
         // Note: this will not update if we are being referee controlled.
@@ -278,7 +237,7 @@ void Processor::runModels() {
 
     // Fill the list of our robots/balls based on whether we are the blue team or not
     _vision->fillBallState(_context.state);
-    _vision->fillRobotState(_context.state, _context.game_settings.blueTeam);
+    _vision->fillRobotState(_context.state, _context.game_settings.requestedBlueTeam);
 }
 
 /**
@@ -313,7 +272,7 @@ void Processor::run() {
         _context.state.logFrame->set_use_opponent_half(
             _context.game_settings.useOpponentHalf);
         _context.state.logFrame->set_manual_id(_context.game_settings.manualID);
-        _context.state.logFrame->set_blue_team(_context.game_settings.blueTeam);
+        _context.state.logFrame->set_blue_team(_context.game_settings.requestedBlueTeam);
         _context.state.logFrame->set_defend_plus_x(
             _context.game_state.defendPlusX);
         _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
@@ -369,7 +328,7 @@ void Processor::run() {
 
         string yellowname, bluename;
 
-        if (blueTeam()) {
+        if (_context.game_settings.requestedBlueTeam) {
             bluename = _context.game_state.OurInfo.name;
             yellowname = _context.game_state.TheirInfo.name;
         } else {
@@ -464,6 +423,16 @@ void Processor::run() {
             robot->setJoystickControlled(robot->shell() ==
                                          _context.game_settings.manualID);
         }
+
+        //Team Transfrom
+        _context.game_state.defendPlusX = _defendPlus;
+
+        if (_defendPlus) {
+            _context.game_settings.teamAngle = -M_PI_2;
+        } else {
+            _context.game_settings.teamAngle = M_PI_2;
+        }
+        recalculateWorldToTeamTransform();
 
         _motionControl->run();
         _grSimCom->run();
@@ -741,18 +710,6 @@ vector<int> Processor::getJoystickRobotIds() {
         }
     }
     return robotIds;
-}
-
-void Processor::defendPlusX(bool value) {
-    _context.game_state.defendPlusX = value;
-
-    if (value) {
-        _context.game_settings.teamAngle = -M_PI_2;
-    } else {
-        _context.game_settings.teamAngle = M_PI_2;
-    }
-
-    recalculateWorldToTeamTransform();
 }
 
 void Processor::changeVisionChannel(int port) {

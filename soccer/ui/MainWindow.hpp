@@ -251,6 +251,15 @@ private:
     QLabel* _procFPS;
     QLabel* _logMemory;
 
+    // Locked when processing loop stuff is happening (not when blocked for
+    // timing or I/O). This is public so the GUI thread can lock it to access
+    // SystemState, etc.
+    QMutex _loopMutex;
+
+    Context* _context;
+
+    GameSettings _settings_copy{true, true, true, true, -1, -1, false, 0, true, true, false, true, false};
+
     // QActionGroups for Radio Menu Actions
     std::map<std::string, QActionGroup*> qActionGroups{};
 

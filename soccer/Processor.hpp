@@ -122,13 +122,10 @@ public:
 
     void dampedRotation(bool value);
     void dampedTranslation(bool value);
-
+    void blueTeam(bool value);
     void joystickKickOnBreakBeam(bool value);
     void setupJoysticks();
     std::vector<int> getJoystickRobotIds();
-
-    void blueTeam(bool value);
-    bool blueTeam() const { return _context.game_settings.blueTeam; }
 
     std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
         return _gameplayModule;
@@ -139,9 +136,6 @@ public:
     SystemState* state() { return &_context.state; }
 
     bool simulation() const { return _context.game_settings.simulation; }
-
-    void defendPlusX(bool value);
-    bool defendPlusX() { return _context.game_state.defendPlusX; }
 
     Status status() {
         QMutexLocker lock(&_statusMutex);
@@ -154,22 +148,13 @@ public:
 
     bool openLog(const QString& filename) { return _logger.open(filename); }
 
+    VisionChannel visionChannel() { return _visionChannel; }
+
     void closeLog() { _logger.close(); }
-
-    // Use all/part of the field
-    void useOurHalf(bool value) { _context.game_settings.useOurHalf = value; }
-
-    void useOpponentHalf(bool value) {
-        _context.game_settings.useOpponentHalf = value;
-    }
 
     QMutex& loopMutex() { return _loopMutex; }
 
     Radio* radio() { return _radio->getRadio(); }
-
-    void changeVisionChannel(int port);
-
-    VisionChannel visionChannel() { return _visionChannel; }
 
     void recalculateWorldToTeamTransform();
 
@@ -179,8 +164,7 @@ public:
 
     bool isInitialized() const;
 
-    void setPaused(bool paused) { _context.game_settings.paused = paused; }
-
+    void changeVisionChannel(int port);
     ////////
 
     // Time of the first LogFrame
@@ -229,6 +213,8 @@ private:
     // Transformation from world space to team space.
     // This depends on which goal we're defending.
     Geometry2d::TransformMatrix _worldToTeam;
+
+    bool _defendPlus;
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;

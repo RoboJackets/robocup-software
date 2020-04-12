@@ -275,25 +275,6 @@ bool Gameplay::GameplayModule::checkPlaybookStatus() {
     return change;
 }
 
-void Gameplay::GameplayModule::goalieID(int value) {
-    _goalieID = value;
-
-    // pass this value to python
-    PyGILState_STATE state = PyGILState_Ensure();
-    {
-        try {
-            getRootPlay().attr("goalie_id") = _goalieID;
-        } catch (error_already_set) {
-            cout << "PYTHON ERROR!!!" << endl;
-            PyErr_Print();
-            cout << "END PYTHON ERROR" << endl;
-            throw new runtime_error(
-                "Error trying to set python goalie_id on root_play");
-        }
-    }
-    PyGILState_Release(state);
-}
-
 /**
  * returns the group of obstacles for the field
  */

@@ -1,6 +1,4 @@
 struct GameSettings {
-    
-    bool is_simulation;
 
     bool useOurHalf, useOpponentHalf;
 
@@ -10,14 +8,15 @@ struct GameSettings {
 
     // True if we are blue.
     // False if we are yellow.
-    bool blueTeam;
+    bool requestedBlueTeam;
 
-    // _teamTrans is used for positions, not angles.
     // _teamAngle is used for angles.
     float teamAngle;
 
     // Board ID of the robot to manually control or -1 if none
     int manualID;
+    //Board ID of the goalie robot
+    int goalieID;
     // Use multiple joysticks at once
     bool multipleManual;
 
