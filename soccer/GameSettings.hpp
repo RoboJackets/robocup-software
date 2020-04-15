@@ -36,4 +36,6 @@ struct GameSettings {
     bool initialized;
 
     bool paused;
+
+    int visionChannel;
 };

@@ -52,7 +52,7 @@ class MultiRobotPathPlanner;
  * - radio IO (see Radio)
  * - running the BallTracker
  * - running the Gameplay::GameplayModule
- * - running the Logger
+ * - running the Loggercout 
  * - handling the Configuration
  * - handling the Joystick
  * - running motion control for each robot (see OurRobot#motionControl)

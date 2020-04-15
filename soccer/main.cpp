@@ -181,6 +181,9 @@ int main(int argc, char* argv[]) {
         std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam, readLogFile);
     processor->refereeModule()->useExternalReferee(!noref);
 
+    Context* context = processor->context();
+
+
     // Load config file
     QString error;
     if (!config->load(cfgFile, error)) {
@@ -190,7 +193,7 @@ int main(int argc, char* argv[]) {
                 .arg(cfgFile, error));
     }
 
-    auto win = std::make_unique<MainWindow>(processor.get());
+    auto win = std::make_unique<MainWindow>(processor.get(), context);
     win->configuration(config.get());
     win->initialize();
 

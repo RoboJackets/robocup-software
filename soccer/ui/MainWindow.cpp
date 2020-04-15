@@ -49,7 +49,7 @@ void calcMinimumWidth(QWidget* widget, QString text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, QWidget* parent)
+MainWindow::MainWindow(Processor* processor,Context* context, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _autoExternalReferee(true),
@@ -57,7 +57,8 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _lastUpdateTime(RJ::now()),
       _history(2 * 60),
       _longHistory(10000),
-      _processor(processor) {
+      _processor(processor),
+      _context(context) {
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
@@ -192,15 +193,11 @@ void MainWindow::configuration(Configuration* config) {
 
 void MainWindow::initialize() {
     // Team
-    cout << "GETs HERE 1" << endl;
     if (_context->game_settings.requestedBlueTeam) {
-        cout << "GETs HERE 1.1" << endl;
         _ui.actionTeamBlue->trigger();
     } else {
-        cout << "GETs HERE 1.2" << endl;
         _ui.actionTeamYellow->trigger();
     }
-    cout << "GETs HERE 2" << endl;
     if (_processor->logger().recording()) {
         _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
                                          _processor->logger().filename());
@@ -218,7 +215,6 @@ void MainWindow::initialize() {
     if (_context->game_settings.simulation) {
         _ui.actionVisionFull_Field->trigger();
     }
-    cout << "GETs HERE 3" << endl;
     updateTimer.setSingleShot(true);
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
@@ -232,8 +228,7 @@ void MainWindow::initialize() {
         on_actionDefendMinusX_triggered();
         _ui.actionDefendMinusX->setChecked(true);
     }
-    cout << "GETs HERE 4" << endl;
-    switch (_processor->visionChannel()) {
+    switch (_context->game_settings.visionChannel) {
         case 0:
             on_actionVisionPrimary_Half_triggered();
             _ui.actionVisionPrimary_Half->setChecked(true);
@@ -247,7 +242,6 @@ void MainWindow::initialize() {
             _ui.actionVisionFull_Field->setChecked(true);
             break;
     }
-    cout << "GETs END" << endl;
 }
 
 void MainWindow::logFileChanged() {
@@ -292,9 +286,9 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() !=
-            _processor->context()->game_state.getGoalieId() + 1) {
+            _settings_copy.goalieID + 1) {
             _ui.goalieID->setCurrentIndex(
-                _processor->context()->game_state.getGoalieId() + 1);
+                _settings_copy.goalieID + 1);
         }
 
         bool blueTeam = _processor->refereeModule()->isBlueTeam();
@@ -1029,11 +1023,11 @@ void MainWindow::on_action180_triggered() { _ui.fieldView->rotate(2); }
 void MainWindow::on_action270_triggered() { _ui.fieldView->rotate(3); }
 
 void MainWindow::on_actionUseOurHalf_toggled(bool value) {
-    _context->game_settings.useOurHalf = value;
+    _settings_copy.useOurHalf = value;
 }
 
 void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
-    _context->game_settings.useOpponentHalf = value;
+    _settings_copy.useOpponentHalf = value;
 }
 
 void MainWindow::on_action916MHz_triggered() { channel(0); }

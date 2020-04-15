@@ -111,7 +111,7 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
-    _visionChannel = visionChannel;
+    _context.game_settings.visionChannel = visionChannel;
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
@@ -714,7 +714,7 @@ vector<int> Processor::getJoystickRobotIds() {
 
 void Processor::changeVisionChannel(int port) {
     _loopMutex.lock();
-
+    _context.game_settings.visionChannel = port;
     // If we're in simulation, the vision channel should never change
     // from `SimVisionPort`.
     if (!_context.game_settings.simulation) {

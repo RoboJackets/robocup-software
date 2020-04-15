@@ -941,7 +941,25 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<Context, Context*, boost::noncopyable>("Context")
         .def_readonly("state", &Context::state)
         .def_readonly("debug_drawer", &Context::debug_drawer)
-        .def_readonly("game_state", &Context::game_state);
+        .def_readonly("game_state", &Context::game_state)
+        .def_readonly("game_settings", &Context::game_settings);
+
+    class_<GameSettings>("GameSettings")
+        .def_readonly("useOurHalf", &GameSettings::useOurHalf)
+        .def_readonly("useOpponentHalf", &GameSettings::useOpponentHalf)
+        .def_readonly("simulation", &GameSettings::simulation)
+        .def_readonly("requestedBlueTeam", &GameSettings::requestedBlueTeam)
+        .def_readonly("teamAngle", &GameSettings::teamAngle)
+        .def_readonly("manualID", &GameSettings::manualID)
+        .def_readonly("goalieID", &GameSettings::goalieID)
+        .def_readonly("multipleManual", &GameSettings::multipleManual)
+        .def_readonly("framerate", &GameSettings::framerate)
+        .def_readonly("dampedRotation", &GameSettings::dampedRotation)
+        .def_readonly("dampedTranslation", &GameSettings::dampedTranslation)
+        .def_readonly("kickOnBreakBeam", &GameSettings::kickOnBreakBeam)
+        .def_readonly("useFieldOrientedManualDrive", &GameSettings::useFieldOrientedManualDrive)
+        .def_readonly("initialized", &GameSettings::initialized)
+        .def_readonly("paused", &GameSettings::paused);
 
     class_<Field_Dimensions>("Field_Dimensions")
         .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)

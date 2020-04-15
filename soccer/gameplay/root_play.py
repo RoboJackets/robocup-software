@@ -38,7 +38,7 @@ class RootPlay(Play, QtCore.QObject):
 
         # Goalie ID
         ################################################################################
-        goalie_id(main.context().game_settings.goalieID);
+        self._goalie_id = main.context().game_settings.goalieID;
 
         # Play Selection
         ################################################################################

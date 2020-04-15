@@ -53,7 +53,7 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
 
-    _goalieID = -1;
+    _context->game_settings.goalieID = -1;
 
     //
     // setup python interpreter

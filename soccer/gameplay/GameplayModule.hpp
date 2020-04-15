@@ -72,7 +72,7 @@ public:
     bool checkPlaybookStatus();
 
     void goalieID(int value);
-    int goalieID() { return _goalieID; }
+    int goalieID() { return _context->game_settings.goalieID; }
 
     /**
      * @defgroup matrices Coordinate Conversion Matrices
