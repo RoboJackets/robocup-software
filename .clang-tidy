@@ -17,6 +17,7 @@ Checks:          '-*,
                   -readability-magic-numbers,
                   -readability-uppercase-literal-suffix,
                   -misc-non-private-member-variables-in-classes,
+                  -cppcoreguidelines-non-private-member-variables-in-classes,
                   '
 #WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false
