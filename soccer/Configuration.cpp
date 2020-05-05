@@ -13,7 +13,7 @@ std::list<Configurable*>* Configurable::_configurables;
 // Role for tree column zero for storing ConfigItem pointers.
 static const int ConfigItemRole = Qt::UserRole;
 
-Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this
+Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this NOLINT
 
 ConfigItem::ConfigItem(Configuration* config, const QString& name,
                        std::string description)
@@ -23,7 +23,7 @@ ConfigItem::ConfigItem(Configuration* config, const QString& name,
       _description{std::move(description)} {}
 
 ConfigItem::~ConfigItem() {
-    if (_treeItem) {
+    if (_treeItem != nullptr) {
         // FIXME - Things are getting deleted in a non-GUI thread
         // 		delete _treeItem;
         _treeItem = nullptr;
@@ -31,7 +31,7 @@ ConfigItem::~ConfigItem() {
 }
 
 void ConfigItem::valueChanged(const QString& str) {
-    if (_treeItem) {
+    if (_treeItem != nullptr) {
         _treeItem->setText(1, str);
     }
 }
@@ -49,7 +49,7 @@ ConfigBool::ConfigBool(Configuration* tree, const QString& name, bool value,
 QString ConfigBool::toString() { return _value ? "true" : "false"; }
 
 bool ConfigBool::value() {
-    if (_treeItem) {
+    if (_treeItem != nullptr) {
         _value = _treeItem->checkState(1) == Qt::Checked;
     }
     return _value;
@@ -69,7 +69,7 @@ void ConfigBool::setValueString(const QString& str) {
 }
 
 void ConfigBool::setupItem() {
-    if (_treeItem) {
+    if (_treeItem != nullptr) {
         _treeItem->setCheckState(1, _value ? Qt::Checked : Qt::Unchecked);
         // FIXME - Can't change the checkbox anymore.  Why not?
         _treeItem->setFlags(_treeItem->flags() | Qt::ItemIsUserCheckable);
@@ -120,7 +120,7 @@ std::shared_ptr<Configuration> Configuration::FromRegisteredConfigurables() {
 void Configuration::addItem(ConfigItem* item) {
     _allItems.push_back(item);
 
-    if (_tree) {
+    if (_tree != nullptr) {
         addToTree(item);
     }
 }
@@ -142,9 +142,9 @@ void Configuration::addToTree(ConfigItem* item) {
             }
         }
 
-        if (!next) {
+        if (next == nullptr) {
             // Create this item
-            next = new QTreeWidgetItem(parent);
+            next = new QTreeWidgetItem(parent); // NOLINT
             next->setText(0, *i);
         }
 
@@ -152,12 +152,12 @@ void Configuration::addToTree(ConfigItem* item) {
     }
 
     // Create a tree item
-    item->_treeItem = new QTreeWidgetItem(parent);
+    item->_treeItem = new QTreeWidgetItem(parent); // NOLINT
     item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
     item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
     item->_treeItem->setText(0, path.back());
 
-    if (item->_description != "") {
+    if (item->_description.empty()) {
         item->_treeItem->setToolTip(0, QString(item->_description.c_str()));
     }
 
@@ -165,7 +165,7 @@ void Configuration::addToTree(ConfigItem* item) {
 }
 
 void Configuration::tree(QTreeWidget* tree) {
-    assert(!_tree);
+    assert(_tree == nullptr);
 
     _tree = tree;
     connect(_tree, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this,
@@ -184,7 +184,7 @@ ConfigItem* Configuration::configItem(QTreeWidgetItem* ti) {
 void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
     if (column == 1) {
         ConfigItem* ci = configItem(item);
-        if (ci) {
+        if (ci != nullptr) {
             ci->setValueString(item->text(1));
         }
     }
@@ -209,7 +209,8 @@ bool Configuration::load(const QString& filename, QString& error) {
 
     QDomDocument newDoc;
     QString domError;
-    int errorLine = 0, errorColumn = 0;
+    int errorLine = 0;
+    int errorColumn = 0;
     if (!newDoc.setContent(&file, &domError, &errorLine, &errorColumn)) {
         error = QString("%1:%2: %3")
                     .arg(QString::number(errorLine),
@@ -304,7 +305,7 @@ bool Configuration::save(const QString& filename, QString& error) {
 }
 
 Configurable::Configurable() {
-    if (!_configurables) {
+    if (_configurables == nullptr) {
         _configurables = new std::list<Configurable*>();
     }
 
@@ -312,7 +313,7 @@ Configurable::Configurable() {
 }
 
 const std::list<Configurable*>& Configurable::configurables() {
-    if (!_configurables) {
+    if (_configurables == nullptr) {
         _configurables = new std::list<Configurable*>();
     }
 

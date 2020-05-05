@@ -60,7 +60,7 @@ public:
 
     void start() override;
     void run() override;
-    void stop() override;
+    void stop() noexcept override;
 
     void getPackets(std::vector<RefereePacket>& packets);
 

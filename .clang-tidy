@@ -12,9 +12,11 @@ Checks:          '-*,
                   -clang-diagnostic-unused-command-line-argument,
                   -cppcoreguidelines-pro-bounds-constant-array-index,
                   -cppcoreguidelines-avoid-magic-numbers,
+                  -fuchsia-default-arguments,
                   -readability-redundant-member-init,
                   -readability-magic-numbers,
                   -readability-uppercase-literal-suffix,
+                  -misc-non-private-member-variables-in-classes,
                   '
 #WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false

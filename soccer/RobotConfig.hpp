@@ -8,11 +8,11 @@
 class RobotConfig {
 public:
     RobotConfig() {}
-    RobotConfig(Configuration* config, QString prefix);
+    RobotConfig(Configuration* config, const QString& prefix);
 
     struct PID {
         PID() {}
-        PID(Configuration* config, QString prefix);
+        PID(Configuration* config, const QString& prefix);
 
         std::unique_ptr<ConfigDouble> p;
         std::unique_ptr<ConfigDouble> i;
@@ -25,7 +25,7 @@ public:
 
     struct Kicker {
         Kicker() {}
-        Kicker(Configuration* config, QString prefix);
+        Kicker(Configuration* config, const QString& prefix);
 
         /// these limits are applied before sending the actual commands to the
         /// robots
@@ -36,7 +36,7 @@ public:
 
     struct Dribbler {
         Dribbler() {}
-        Dribbler(Configuration* config, QString prefix);
+        Dribbler(Configuration* config, const QString& prefix);
 
         /// dribber values are multiplied by this before being sent to the robot
         /// this was added because 2011 bots needed lower dribbler values than
@@ -46,7 +46,7 @@ public:
 
     struct Chipper {
         Chipper() {}
-        Chipper(Configuration* config, QString prefix);
+        Chipper(Configuration* config, const QString& prefix);
 
         std::unique_ptr<ConfigDouble> calibrationSlope;
         std::unique_ptr<ConfigDouble> calibrationOffset;
@@ -85,7 +85,7 @@ public:
 class RobotStatus {
 public:
     RobotStatus() {}
-    RobotStatus(Configuration* config, QString prefix);
+    RobotStatus(Configuration* config, const QString& prefix);
 
     RobotStatus(RobotStatus&&) = default;
     RobotStatus& operator=(RobotStatus&&) = default;

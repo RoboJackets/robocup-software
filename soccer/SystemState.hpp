@@ -1,23 +1,23 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
 
-#include <QMap>
-#include <QColor>
-
+#include <Constants.hpp>
+#include <GameState.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/ShapeSet.hpp>
-#include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/RadioRx.pb.h>
-#include <GameState.hpp>
-#include <Constants.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <Geometry2d/ShapeSet.hpp>
+#include <QColor>
+#include <QMap>
 #include <Utils.hpp>
-#include <Geometry2d/Arc.hpp>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "planning/MotionInstant.hpp"
 #include "planning/Path.hpp"
 
@@ -27,7 +27,7 @@ class OpponentRobot;
 
 namespace Packet {
 class LogFrame;
-}
+} // namespace Packet
 
 /**
  * @brief Our beliefs about the ball's position and velocity
@@ -39,21 +39,22 @@ public:
     RJ::Time time;
     bool valid = false;
 
-    Planning::MotionInstant predict(RJ::Time time) const;
-    Geometry2d::Point predictPosition(double seconds_from_now) const;
+    [[nodiscard]] Planning::MotionInstant predict(RJ::Time estimateTime) const;
+    [[nodiscard]] Geometry2d::Point predictPosition(
+        double seconds_from_now) const;
 
-    std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
+    [[nodiscard]] std::unique_ptr<Planning::Path> path(
+        RJ::Time startTime) const;
 
     RJ::Time estimateTimeTo(const Geometry2d::Point& point,
-                            Geometry2d::Point* nearPoint = nullptr) const;
+                            Geometry2d::Point* nearPointOut = nullptr) const;
 
-    double estimateSecondsTo(const Geometry2d::Point &point) const;
+    [[nodiscard]] double estimateSecondsTo(
+        const Geometry2d::Point& point) const;
 
-    double estimateSecondsToDist(double dist) const;
+    [[nodiscard]] double estimateSecondsToDist(double dist) const;
 
-    double predictSecondsToStop() const;
-
-
+    [[nodiscard]] double predictSecondsToStop() const;
 };
 
 class Context;
@@ -67,7 +68,7 @@ class Context;
  */
 class SystemState {
 public:
-    SystemState(Context* const context);
+    SystemState(Context* context);
     ~SystemState();
 
     /**
@@ -84,7 +85,7 @@ public:
 
     RJ::Time time;
 
-    RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
+    [[nodiscard]] RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
 
     /// All possible robots.
     ///

@@ -32,19 +32,19 @@ double BatteryProfile::getChargeLevel(double voltage) const {
 
     if (nextBiggest == _dataPoints.end()) {
         return 1;  //  this voltage is off the charts!
-    } else if (nextBiggest == _dataPoints.begin()) {
-        return 0;  //  this voltage is super low
-    } else {
-        int i = nextBiggest - _dataPoints.begin();
-        double after = nextBiggest->first;
-        double before = (nextBiggest - 1)->first;
-
-        //  slope of this line segment
-        double m = (_dataPoints[i].second - _dataPoints[i - 1].second) /
-                   (after - before);
-
-        //  y1-y2 = m(x1-x2)
-        //  m(x1-x2) + y2 = y1
-        return m * (voltage - before) + _dataPoints[i - 1].second;
     }
+    if (nextBiggest == _dataPoints.begin()) {
+        return 0;  //  this voltage is super low
+    }
+    int i = nextBiggest - _dataPoints.begin();
+    double after = nextBiggest->first;
+    double before = (nextBiggest - 1)->first;
+
+    //  slope of this line segment
+    double m = (_dataPoints[i].second - _dataPoints[i - 1].second) /
+               (after - before);
+
+    //  y1-y2 = m(x1-x2)
+    //  m(x1-x2) + y2 = y1
+    return m * (voltage - before) + _dataPoints[i - 1].second;
 }

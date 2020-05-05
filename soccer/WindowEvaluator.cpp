@@ -64,9 +64,11 @@ WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
 void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0,
                                      double& t1) {
     // Ignore degenerate obstacles
-    if (t0 == t1) return;
+    if (t0 == t1) { return;
+}
 
-    if (t0 > t1) swap(t0, t1);
+    if (t0 > t1) { swap(t0, t1);
+}
 
     auto iter = windows.begin();
     while (iter != windows.end()) {
@@ -119,12 +121,13 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin,
         if (edge.intersects(Line(target), &intersect) &&
             (intersect - origin).dot(edge.delta()) > d) {
             auto f = (intersect - target.pt[0]).dot(target.delta());
-            if (f < 0)
+            if (f < 0) {
                 extent[i] = 0;
-            else if (f > end)
+            } else if (f > end) {
                 extent[i] = end;
-            else
+            } else {
                 extent[i] = f;
+}
         } else {
             return;
         }
@@ -136,7 +139,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     auto end = target.delta().magsq();
 
     // if target is a zero-length segment, there are no windows
-    if (end == 0) return make_pair(vector<Window>{}, std::nullopt);
+    if (end == 0) { return make_pair(vector<Window>{}, std::nullopt);
+}
 
     if (debug) {
         context->debug_drawer.drawLine(target, QColor{"Blue"}, "Debug");
@@ -188,8 +192,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     for (auto& w : windows) {
         w.segment = Segment{p0 + delta * w.t0, p0 + delta * w.t1};
-        w.a0 = RadiansToDegrees((w.segment.pt[0] - origin).angle());
-        w.a1 = RadiansToDegrees((w.segment.pt[1] - origin).angle());
+        w.a0 = RadiansToDegrees(static_cast<float>((w.segment.pt[0] - origin).angle()));
+        w.a1 = RadiansToDegrees(static_cast<float>((w.segment.pt[1] - origin).angle()));
         fill_shot_success(w, origin);
     }
 

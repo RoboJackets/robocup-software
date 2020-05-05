@@ -18,33 +18,33 @@ class Segment;
  */
 class Shape {
 public:
-    Shape() {}
-    virtual ~Shape() {}
+    Shape() = default;
+    virtual ~Shape() = default;
+    Shape(const Shape& other) = default;
+    Shape(Shape&& other) = default;
+    Shape& operator=(const Shape& other) = default;
+    Shape& operator=(Shape&& other) = default;
 
-    virtual Shape* clone() const {
+
+    [[nodiscard]] virtual Shape* clone() const {
         throw std::runtime_error("Unimplemented method");
-        return nullptr;
     }
 
-    virtual bool containsPoint(Point pt) const {
+    [[nodiscard]] virtual bool containsPoint(Point  /*pt*/) const {
         throw std::runtime_error("Unimplemented method");
-        return false;
     }
 
     /// Returns true if the given point is within one robot radius of the shape
-    virtual bool hit(Point pt) const {
+    [[nodiscard]] virtual bool hit(Point  /*pt*/) const {
         throw std::runtime_error("Unimplemented method");
-        return false;
     }
 
-    virtual bool hit(const Segment& seg) const {
+    [[nodiscard]] virtual bool hit(const Segment&  /*seg*/) const {
         throw std::runtime_error("Unimplemented method");
-        return false;
     }
 
-    virtual bool nearPoint(Point other, float threshold) const {
+    [[nodiscard]] virtual bool nearPoint(Point  /*other*/, float  /*threshold*/) const {
         throw std::runtime_error("Unimplemented method");
-        return false;
     }
 
     virtual std::string toString() { return "Shape"; }

@@ -48,7 +48,7 @@ protected:
 
     QTreeWidget* _tree;
 
-    ConfigItem* configItem(QTreeWidgetItem* ti);
+    static ConfigItem* configItem(QTreeWidgetItem* ti);
 
     QDomDocument _doc;
 };
@@ -60,7 +60,7 @@ protected:
  */
 class ConfigItem {
 protected:
-    ConfigItem(Configuration* tree, const QString& name,
+    ConfigItem(Configuration* config, const QString& name,
                std::string description = "");
 
     ConfigItem(const ConfigItem&) = delete;
@@ -133,7 +133,7 @@ protected:
 
 class ConfigInt : public ConfigItem {
 public:
-    ConfigInt(Configuration* tree, const QString& name, int value = 0,
+    ConfigInt(Configuration* config, const QString& name, int value = 0,
               const std::string& description = "");
 
     QString toString() override;
@@ -160,7 +160,7 @@ protected:
 
 class ConfigDouble : public ConfigItem {
 public:
-    ConfigDouble(Configuration* tree, const QString& name, double value = 0,
+    ConfigDouble(Configuration* config, const QString& name, double value = 0,
                  const std::string& description = "");
 
     QString toString() override;

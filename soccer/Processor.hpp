@@ -73,7 +73,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
     Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
-              bool blueTeam, std::string readLogFile);
+              bool blueTeam, const std::string& readLogFile);
     virtual ~Processor();
 
     void stop();
@@ -238,7 +238,7 @@ private:
     // _teamTrans is used for positions, not angles.
     // _teamAngle is used for angles.
     Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle;
+    float _teamAngle{};
 
     // Board ID of the robot to manually control or -1 if none
     int _manualID;
@@ -285,5 +285,5 @@ private:
 
     bool _initialized;
 
-    bool _paused;
+    bool _paused{};
 };

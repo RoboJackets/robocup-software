@@ -33,7 +33,7 @@ public:
     virtual bool containsPoint(Point pt) const override;
     virtual bool nearPoint(Point pt, float threshold) const override;
 
-    void add(const std::shared_ptr<Shape> shape);
+    void add(const std::shared_ptr<Shape>& shape);
 
     /// adds @compShape's subshapes to the receiver
     void add(const CompositeShape& compShape);

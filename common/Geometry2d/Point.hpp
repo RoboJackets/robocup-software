@@ -1,6 +1,7 @@
 #pragma once
 
 #include <protobuf/Point.pb.h>
+
 #include <Eigen/Dense>
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
@@ -14,8 +15,8 @@ Simple class to represent a point in 2d space. Uses floating point coordinates
 */
 class Point {
 public:
-    const double& x() const { return _x; }
-    const double& y() const { return _y; }
+    [[nodiscard]] const double& x() const { return _x; }
+    [[nodiscard]] const double& y() const { return _y; }
     double& x() { return _x; }
     double& y() { return _y; }
 
@@ -59,12 +60,12 @@ public:
     /**
      * to draw stuff and interface with QT
      */
-    QPointF toQPointF() const { return QPointF(x(), y()); }
+    [[nodiscard]] QPointF toQPointF() const { return QPointF(x(), y()); }
 
     operator Packet::Point() const {
         Packet::Point out;
-        out.set_x(x());
-        out.set_y(y());
+        out.set_x(static_cast<float>(x()));
+        out.set_y(static_cast<float>(y()));
         return out;
     }
 
@@ -72,7 +73,7 @@ public:
      * does vector addition
      * adds the + operator, shorthand
      */
-    Point operator+(Point other) const {
+    [[nodiscard]] Point operator+(Point other) const {
         return Point(x() + other.x(), y() + other.y());
     }
 
@@ -80,14 +81,14 @@ public:
      * see operator+
      * does vector division, note the operator
      */
-    Point operator/(Point other) const {
+    [[nodiscard]] Point operator/(Point other) const {
         return Point(x() / other.x(), y() / other.y());
     }
 
     /**
      * @returns (x*x,y*y)
      */
-    Point operator*(Point other) const {
+    [[nodiscard]] Point operator*(Point other) const {
         return Point(x() * other.x(), y() * other.y());
     }
 
@@ -96,14 +97,14 @@ public:
      * does vector subtraction, note the operator
      * without parameter, it is the negative
      */
-    Point operator-(Point other) const {
+    [[nodiscard]] Point operator-(Point other) const {
         return Point(x() - other.x(), y() - other.y());
     }
 
     /**
      * multiplies the point by a -1 vector
      */
-    Point operator-() const { return Point(-x(), -y()); }
+    [[nodiscard]] Point operator-() const { return Point(-x(), -y()); }
 
     /**
      * see operator+
@@ -153,41 +154,50 @@ public:
      * adds the / operator for vectors
      *  scalar division
      */
-    Point operator/(double s) const { return Point(x() / s, y() / s); }
+    [[nodiscard]] Point operator/(double s) const {
+        return Point(x() / s, y() / s);
+    }
     /**
      * adds the * operator for vectors
      * scalar multiplication
      */
-    Point operator*(double s) const { return Point(x() * s, y() * s); }
+    [[nodiscard]] Point operator*(double s) const {
+        return Point(x() * s, y() * s);
+    }
 
     /**
      * compares two points to see if both x and y are the same
      * adds the == operator
      */
-    bool operator==(Point other) const {
+    [[nodiscard]] bool operator==(Point other) const {
         return x() == other.x() && y() == other.y();
     }
 
     /**
      * this is the negation of operator operator !=
      */
-    bool operator!=(Point other) const {
+    [[nodiscard]] bool operator!=(Point other) const {
         return x() != other.x() || y() != other.y();
     }
 
-    const double& operator[](int i) const {
+    [[nodiscard]] const double& operator[](int i) const {
         if (0 == i) {
             return _x;
-        } else if (1 == i) {
-            return _y;
-        } else {
-            throw std::out_of_range("Out of range index for Geometry2d::Point");
         }
+        if (1 == i) {
+            return _y;
+        }
+        throw std::out_of_range("Out of range index for Geometry2d::Point");
     }
 
     double& operator[](int i) {
-        return const_cast<double&>(
-            (static_cast<const Point*>(this))->operator[](i));
+        if (0 == i) {
+            return _x;
+        }
+        if (1 == i) {
+            return _y;
+        }
+        throw std::out_of_range("Out of range index for Geometry2d::Point");
     }
 
     /**
@@ -206,20 +216,22 @@ public:
     @param p the second point
     @return the dot product of the two
     */
-    double dot(Point p) const { return x() * p.x() + y() * p.y(); }
+    [[nodiscard]] double dot(Point p) const {
+        return x() * p.x() + y() * p.y();
+    }
 
     /**
     computes the magnitude of the point, as if it were a vector
     @return the magnitude of the point
     */
-    double mag() const { return sqrtf(x() * x() + y() * y()); }
+    [[nodiscard]] double mag() const { return sqrtf(static_cast<float>(x() * x() + y() * y())); }
 
     /**
     computes magnitude squared
     this is faster than mag()
     @return the magnitude squared
     */
-    double magsq() const { return x() * x() + y() * y(); }
+    [[nodiscard]] double magsq() const { return x() * x() + y() * y(); }
 
     /**
      * @brief Restricts the point to a given magnitude
@@ -261,7 +273,7 @@ public:
     /**
      * Like rotate(), but returns a new point instead of changing *this
      */
-    Point rotated(double angle) const {
+    [[nodiscard]] Point rotated(double angle) const {
         double newX = x() * cos(angle) - y() * sin(angle);
         double newY = y() * cos(angle) + x() * sin(angle);
         return Point(newX, newY);
@@ -270,7 +282,7 @@ public:
     /**
      * Returns a new Point rotated around the origin
      */
-    Point rotated(const Point& origin, double angle) const {
+    [[nodiscard]] Point rotated(const Point& origin, double angle) const {
         return rotated(*this, origin, angle);
     }
 
@@ -288,7 +300,7 @@ public:
     @param other the point to find the distance to
     @return the distance between the points
     */
-    double distTo(const Point& other) const {
+    [[nodiscard]] double distTo(const Point& other) const {
         Point delta = other - *this;
         return delta.mag();
     }
@@ -298,7 +310,7 @@ public:
      * magnitude given, unless this vector is zero. If the vector is (0,0),
      * Point(0,0) is returned
      */
-    Point normalized(double magnitude = 1.0) const {
+    [[nodiscard]] Point normalized(double magnitude = 1.0) const {
         double m = mag();
         if (m == 0) {
             return Point(0, 0);
@@ -308,20 +320,20 @@ public:
     }
 
     /// Alias for normalized() - matches Eigen's syntax
-    Point norm() const { return normalized(); }
+    [[nodiscard]] Point norm() const { return normalized(); }
 
     /**
      * Returns true if this point is within the given distance (threshold) of
      * (pt)
      */
-    bool nearPoint(const Point& other, double threshold) const {
+    [[nodiscard]] bool nearPoint(const Point& other, double threshold) const {
         return (*this - other).magsq() <= (threshold * threshold);
     }
 
     /**
      * Returns the angle of this point in radians CCW from +X.
      */
-    double angle() const { return atan2(y(), x()); }
+    [[nodiscard]] double angle() const { return atan2(y(), x()); }
 
     /**
      * Returns a unit vector in the given direction (in radians)
@@ -331,10 +343,10 @@ public:
     }
 
     /** returns the perpendicular to the point, Clockwise */
-    Point perpCW() const { return Point(y(), -x()); }
+    [[nodiscard]] Point perpCW() const { return Point(y(), -x()); }
 
     /** returns the perpendicular to the point, Counter Clockwise */
-    Point perpCCW() const { return Point(-y(), x()); }
+    [[nodiscard]] Point perpCCW() const { return Point(-y(), x()); }
 
     /** saturates the magnitude of a vector */
     static Geometry2d::Point saturate(Geometry2d::Point value, double max) {
@@ -345,21 +357,23 @@ public:
         return value;
     }
 
-    double angleTo(const Point& other) const { return (other - *this).angle(); }
+    [[nodiscard]] double angleTo(const Point& other) const {
+        return (other - *this).angle();
+    }
 
-    double cross(const Point& other) const {
+    [[nodiscard]] double cross(const Point& other) const {
         return x() * other.y() - y() * other.x();
     }
 
     /** returns the angle between the two normalized points (radians) */
-    double angleBetween(const Point& other) const {
+    [[nodiscard]] double angleBetween(const Point& other) const {
         double angle = normalized().dot(other.normalized());
         return acos(std::max(std::min(angle, 1.0), -1.0));
     }
 
-    bool nearlyEquals(Point other) const;
+    [[nodiscard]] bool nearlyEquals(Point other) const;
 
-    std::string toString() const {
+    [[nodiscard]] std::string toString() const {
         std::stringstream str;
         str << "Point(" << x() << ", " << y() << ")";
         return str.str();

@@ -34,7 +34,7 @@ constexpr float Ball_Avoid_Small = Ball_Avoid_Small_Mult * Ball_Radius;
  */
 constexpr bool verbose = false;
 
-Robot::Robot(Context* context, unsigned int shell, bool self)
+Robot::Robot(Context* context, int shell, bool self)
     : _context(context), _shell(shell), _self(self) {}
 
 #pragma mark OurRobot
@@ -250,11 +250,11 @@ void OurRobot::intercept(Point target) {
         std::make_unique<Planning::InterceptCommand>(target);
 }
 
-void OurRobot::worldVelocity(Geometry2d::Point v) {
+void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
-        std::make_unique<Planning::WorldVelTargetCommand>(v);
+        std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
     setPath(nullptr);
-    _cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
+    _cmdText << "worldVel(" << targetWorldVelocity.x() << ", " << targetWorldVelocity.y() << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
