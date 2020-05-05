@@ -10,7 +10,7 @@
 using namespace std;
 using boost::asio::ip::udp;
 
-VisionReceiver::VisionReceiver(Context* context, bool  /*sim*/, int port)
+VisionReceiver::VisionReceiver(Context* context, bool /*sim*/, int port)
     : port(port), _context(context), _socket(_io_context) {
     _recv_buffer.resize(65536);
 
@@ -37,7 +37,8 @@ void VisionReceiver::setPort(int port) {
     _socket.set_option(udp::socket::reuse_address(true));
 
     // Set up multicast.
-    if (!multicast_add_native(_socket.native_handle(), SharedVisionAddress.c_str())) {
+    if (!multicast_add_native(_socket.native_handle(),
+                              SharedVisionAddress.c_str())) {
         std::cerr << "Multicast add failed" << std::endl;
         return;
     }
@@ -98,7 +99,7 @@ void VisionReceiver::run() {
             google::protobuf::RepeatedPtrField<SSL_DetectionRobot>* robots[2] =
                 {det->mutable_robots_yellow(), det->mutable_robots_blue()};
 
-            for (auto & robot : robots) {
+            for (auto& robot : robots) {
                 for (int i = 0; i < robot->size(); ++i) {
                     float x = robot->Get(i).x();
                     if (shouldRemove(defendPlusX, x)) {

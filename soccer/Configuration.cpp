@@ -1,10 +1,9 @@
 #include "Configuration.hpp"
 
-#include <cassert>
-#include <cstdio>
-
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <cassert>
+#include <cstdio>
 #include <iostream>
 #include <utility>
 
@@ -144,7 +143,7 @@ void Configuration::addToTree(ConfigItem* item) {
 
         if (next == nullptr) {
             // Create this item
-            next = new QTreeWidgetItem(parent); // NOLINT
+            next = new QTreeWidgetItem(parent);  // NOLINT
             next->setText(0, *i);
         }
 
@@ -152,7 +151,7 @@ void Configuration::addToTree(ConfigItem* item) {
     }
 
     // Create a tree item
-    item->_treeItem = new QTreeWidgetItem(parent); // NOLINT
+    item->_treeItem = new QTreeWidgetItem(parent);  // NOLINT
     item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
     item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
     item->_treeItem->setText(0, path.back());

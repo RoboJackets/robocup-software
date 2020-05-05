@@ -1,6 +1,7 @@
 #include "TransformMatrix.hpp"
 
 #include <cmath>
+
 #include "Util.hpp"
 
 namespace Geometry2d {
@@ -21,8 +22,9 @@ TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror,
 
     *this *= rotate(rotation);
     *this *= scale(s);
-    if (mirror) { *this *= mirrorX;
-}
+    if (mirror) {
+        *this *= mirrorX;
+    }
 }
 
 float TransformMatrix::transformAngle(float angle) const {
@@ -57,8 +59,9 @@ TransformMatrix TransformMatrix::mirrorAroundPoint(const Point& center) {
 
 float TransformMatrix::rotation() const {
     auto angle = static_cast<float>(std::atan2(_m[4], _m[1]) - M_PI_2);
-    if (angle < 0) { angle += 2.0 * M_PI;
-}
+    if (angle < 0) {
+        angle += 2.0 * M_PI;
+    }
 
     return angle;
 }

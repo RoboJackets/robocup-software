@@ -27,8 +27,8 @@ public:
 
     [[nodiscard]] QTreeWidget* tree() const { return _tree; }
 
-        // name lookup - returns pointer if exists, null otherwise
-        [[nodiscard]] ConfigItem* nameLookup(const std::string& name) const;
+    // name lookup - returns pointer if exists, null otherwise
+    [[nodiscard]] ConfigItem* nameLookup(const std::string& name) const;
 
     bool load(const QString& filename, QString& error);
     bool save(const QString& filename, QString& error);
@@ -75,8 +75,8 @@ public:
     // The path is a list of these segments in order.
     [[nodiscard]] const QStringList& path() const { return _path; }
 
-        /// Returns the same name that was passed to the constructor
-        [[nodiscard]] std::string name() const {
+    /// Returns the same name that was passed to the constructor
+    [[nodiscard]] std::string name() const {
         return _path.join('/').toStdString();
     }
 

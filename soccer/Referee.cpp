@@ -11,8 +11,8 @@
 #include "Constants.hpp"
 #include "RefereeEnums.hpp"
 
-using RefereeModuleEnums::Stage;
 using RefereeModuleEnums::Command;
+using RefereeModuleEnums::Stage;
 
 /// Distance in meters that the ball must travel for a kick to be detected
 static const float KickThreshold = Ball_Radius * 3;

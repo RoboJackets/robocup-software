@@ -25,25 +25,25 @@ public:
     Shape& operator=(const Shape& other) = default;
     Shape& operator=(Shape&& other) = default;
 
-
     [[nodiscard]] virtual Shape* clone() const {
         throw std::runtime_error("Unimplemented method");
     }
 
-    [[nodiscard]] virtual bool containsPoint(Point  /*pt*/) const {
+    [[nodiscard]] virtual bool containsPoint(Point /*pt*/) const {
         throw std::runtime_error("Unimplemented method");
     }
 
     /// Returns true if the given point is within one robot radius of the shape
-    [[nodiscard]] virtual bool hit(Point  /*pt*/) const {
+    [[nodiscard]] virtual bool hit(Point /*pt*/) const {
         throw std::runtime_error("Unimplemented method");
     }
 
-    [[nodiscard]] virtual bool hit(const Segment&  /*seg*/) const {
+    [[nodiscard]] virtual bool hit(const Segment& /*seg*/) const {
         throw std::runtime_error("Unimplemented method");
     }
 
-    [[nodiscard]] virtual bool nearPoint(Point  /*other*/, float  /*threshold*/) const {
+    [[nodiscard]] virtual bool nearPoint(Point /*other*/,
+                                         float /*threshold*/) const {
         throw std::runtime_error("Unimplemented method");
     }
 

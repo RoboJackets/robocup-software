@@ -1,6 +1,7 @@
 #pragma once
 
 #include <protobuf/LogFrame.pb.h>
+
 #include <QColor>
 #include <QPointF>
 

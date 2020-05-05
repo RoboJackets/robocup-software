@@ -57,7 +57,8 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     const float ta = static_cast<float>((ip - pt[0]).dot(da) / da.magsq());
 
     Point db = other.delta();
-    const float tb = static_cast<float>((ip - other.pt[0]).dot(db) / db.magsq());
+    const float tb =
+        static_cast<float>((ip - other.pt[0]).dot(db) / db.magsq());
 
     if (ta < 0 || ta > 1 || tb < 0 || tb > 1) {
         return false;
@@ -71,7 +72,9 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     return true;
 }
 
-bool Segment::intersects(const Circle& circle) const { return nearPoint(circle.center, circle.radius()); }
+bool Segment::intersects(const Circle& circle) const {
+    return nearPoint(circle.center, circle.radius());
+}
 
 bool Segment::intersects(const Line& line, Point* intr) const {
     Point intersection_point;
@@ -85,7 +88,9 @@ bool Segment::intersects(const Line& line, Point* intr) const {
     return false;
 }
 
-bool Segment::nearPoint(const Point& point, float threshold) const { return distTo(point) <= threshold; }
+bool Segment::nearPoint(const Point& point, float threshold) const {
+    return distTo(point) <= threshold;
+}
 
 // Fixed/Audited by Albert.
 // Some simple Tests
@@ -120,7 +125,9 @@ Point Segment::nearestPoint(const Line& l) const {
 }
 
 bool Segment::nearSegment(const Segment& other, float threshold) const {
-    return intersects(other) || other.nearPoint(pt[0], threshold) || other.nearPoint(pt[1], threshold) ||
-           nearPoint(other.pt[0], threshold) || nearPoint(other.pt[1], threshold);
+    return intersects(other) || other.nearPoint(pt[0], threshold) ||
+           other.nearPoint(pt[1], threshold) ||
+           nearPoint(other.pt[0], threshold) ||
+           nearPoint(other.pt[1], threshold);
 }
 }  // namespace Geometry2d

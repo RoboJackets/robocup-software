@@ -18,7 +18,7 @@ Shape* Rect::clone() const { return new Rect(*this); }
 
 bool Rect::intersects(const Rect& other) const {
     return !(other.maxx() < minx() || other.minx() > maxx() ||
-        other.maxy() < miny() || other.miny() > maxy());
+             other.maxy() < miny() || other.miny() > maxy());
 }
 
 int Rect::CohenSutherlandOutCode(const Point& other) const{
@@ -29,16 +29,16 @@ int Rect::CohenSutherlandOutCode(const Point& other) const{
     y = other.y();
 
     code = INSIDE;          // initialised as being inside of [[clip window]]
-    if (x < minx()) {           // to the left of clip window
+    if (x < minx()) {       // to the left of clip window
         code |= LEFT;
-    } else if (x > maxx()) {      // to the right of clip window
+    } else if (x > maxx()) {  // to the right of clip window
         code |= RIGHT;
-}
-    if (y < miny()) {           // below the clip window
+    }
+    if (y < miny()) {  // below the clip window
         code |= BOTTOM;
-    } else if (y > maxy()) {      // above the clip window
+    } else if (y > maxy()) {  // above the clip window
         code |= TOP;
-}
+    }
 
     return code;
 }
@@ -63,7 +63,8 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
             // bitwise OR is 0: both points inside window; trivially accept and exit loop
             accept = true;
             break;
-        } if ((outcode0 & outcode1) != 0) {
+        }
+        if ((outcode0 & outcode1) != 0) {
             // bitwise AND is not 0: both points share an outside zone (LEFT, RIGHT, TOP,
             // or BOTTOM), so both must be outside window; exit loop (accept is false)
             break;
@@ -87,13 +88,16 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
         if ((outcodeOut & TOP) != 0) {  // point is above the clip window
             x = x0 + (x1 - x0) * (maxy() - y0) / (y1 - y0);
             y = maxy();
-        } else if ((outcodeOut & BOTTOM) != 0) { // point is below the clip window
+        } else if ((outcodeOut & BOTTOM) !=
+                   0) {  // point is below the clip window
             x = x0 + (x1 - x0) * (miny() - y0) / (y1 - y0);
             y = miny();
-        } else if ((outcodeOut & RIGHT) != 0) {  // point is to the right of clip window
+        } else if ((outcodeOut & RIGHT) !=
+                   0) {  // point is to the right of clip window
             y = y0 + (y1 - y0) * (maxx() - x0) / (x1 - x0);
             x = maxx();
-        } else if ((outcodeOut & LEFT) != 0) {   // point is to the left of clip window
+        } else if ((outcodeOut & LEFT) !=
+                   0) {  // point is to the left of clip window
             y = y0 + (y1 - y0) * (minx() - x0) / (x1 - x0);
             x = minx();
         }
@@ -105,8 +109,8 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
             y0 = y;
             Point pt = Point(x0, y0);
             outcode0 = CohenSutherlandOutCode(pt);
-            //Save point iff it is inside the Rect
-            if (outcode0==INSIDE){
+            // Save point iff it is inside the Rect
+            if (outcode0 == INSIDE) {
                 intersectionPoints.push_back(pt);
             }
         } else {
@@ -114,8 +118,8 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
             y1 = y;
             Point pt = Point(x1, y1);
             outcode1 = CohenSutherlandOutCode(pt);
-            //Save point iff it is inside the Rect
-            if (outcode1==INSIDE){
+            // Save point iff it is inside the Rect
+            if (outcode1 == INSIDE) {
                 intersectionPoints.push_back(pt);
             }
         }
@@ -184,11 +188,12 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
     if (pt[0] == pt[1]) {
         // return pt[0].nearSegment(seg, threshold);
         return seg.nearPoint(pt[0], threshold);
-}
+    }
 
     // If either endpoint is inside this rect the the segment intersects it.
-    if (this->containsPoint(p1) || this->containsPoint(p2)) { return true;
-}
+    if (this->containsPoint(p1) || this->containsPoint(p2)) {
+        return true;
+    }
 
     // If any corner of this rect is near the segment,
     // then the segment is near this rect.
@@ -207,14 +212,15 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
     for (Segment& edge : edges) {
         if (edge.nearPoint(p1, threshold) || edge.nearPoint(p2, threshold)) {
             return true;
-}
+        }
     }
 
     // If any edge of this rect intersects the segment, then the segment is near
     // this rect.
     for (Segment& edge : edges) {
-        if (seg.intersects(edge)) { return true;
-}
+        if (seg.intersects(edge)) {
+            return true;
+        }
     }
 
     return false;
@@ -222,12 +228,14 @@ bool Rect::nearSegment(const Segment& seg, float threshold) const {
 
 bool Rect::nearPoint(Point other, float threshold) const {
     // Simpler case if this rect is degenerate
-    if (pt[0] == pt[1]) { return pt[0].distTo(other) <= threshold;
-}
+    if (pt[0] == pt[1]) {
+        return pt[0].distTo(other) <= threshold;
+    }
 
     // If the point is inside this rect then it is near it.
-    if (this->containsPoint(other)) { return true;
-}
+    if (this->containsPoint(other)) {
+        return true;
+    }
 
     Point ur = Point(pt[1].x(), pt[0].y());
     Point ll = Point(pt[0].x(), pt[1].y());
@@ -237,8 +245,9 @@ bool Rect::nearPoint(Point other, float threshold) const {
     // If any edge of this rect is near the point, then the point is near the
     // rect.
     for (Segment& edge : edges) {
-        if (edge.nearPoint(other, threshold)) { return true;
-}
+        if (edge.nearPoint(other, threshold)) {
+            return true;
+        }
     }
 
     return false;

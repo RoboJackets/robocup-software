@@ -56,12 +56,13 @@ void Processor::createConfiguration(Configuration* cfg) {
     robot_config_init = std::make_unique<RobotConfig>(cfg, "Rev2015");
 
     for (size_t s = 0; s < Num_Shells; ++s) {
-        robot_status_init.emplace_back(cfg, QString("Robot Statuses/Robot %1").arg(s));
+        robot_status_init.emplace_back(
+            cfg, QString("Robot Statuses/Robot %1").arg(s));
     }
 }
 
-Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel, bool blueTeam,
-                     const std::string& readLogFile = "")
+Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
+                     bool blueTeam, const std::string& readLogFile = "")
     : _loopMutex(), _blueTeam(blueTeam), _readLogFile(readLogFile) {
     _running = true;
     _manualID = -1;
@@ -100,12 +101,14 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel, boo
     _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context, _refereeModule.get());
-    _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(new Planning::IndependentMultiRobotPathPlanner());
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
+        &_context, _refereeModule.get());
+    _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
+        new Planning::IndependentMultiRobotPathPlanner());
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, _simulation, _blueTeam);
-    _visionReceiver =
-        std::make_unique<VisionReceiver>(&_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
+    _visionReceiver = std::make_unique<VisionReceiver>(
+        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
     _visionChannel = visionChannel;
@@ -234,7 +237,8 @@ void Processor::runModels() {
         vector<CameraRobot> yellowObservations;
         vector<CameraRobot> blueObservations;
 
-        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(RJ::Seconds(frame->t_capture())));
+        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
+            RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
         ballObservations.reserve(frame->balls().size());
@@ -245,19 +249,23 @@ void Processor::runModels() {
         // Collect camera data from all robots
         yellowObservations.reserve(frame->robots_yellow().size());
         for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            yellowObservations.emplace_back(time,
-                                            Pose(Point(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000)),
-                                                 fixAngleRadians(robot.orientation() + _teamAngle)),
-                                            robot.robot_id());
+            yellowObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         // Collect camera data from all robots
         blueObservations.reserve(frame->robots_blue().size());
         for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            blueObservations.emplace_back(time,
-                                          Pose(Point(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000)),
-                                               fixAngleRadians(robot.orientation() + _teamAngle)),
-                                          robot.robot_id());
+            blueObservations.emplace_back(
+                time,
+                Pose(Point(_worldToTeam *
+                           Point(robot.x() / 1000, robot.y() / 1000)),
+                     fixAngleRadians(robot.orientation() + _teamAngle)),
+                robot.robot_id());
         }
 
         frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
@@ -295,18 +303,21 @@ void Processor::run() {
         // Make a new log frame
         _context.state.logFrame = std::make_shared<Packet::LogFrame>();
         _context.state.logFrame->set_timestamp(RJ::timestamp());
-        _context.state.logFrame->set_command_time(RJ::timestamp(startTime + Command_Latency));
+        _context.state.logFrame->set_command_time(
+            RJ::timestamp(startTime + Command_Latency));
         _context.state.logFrame->set_use_our_half(_useOurHalf);
         _context.state.logFrame->set_use_opponent_half(_useOpponentHalf);
         _context.state.logFrame->set_manual_id(_manualID);
         _context.state.logFrame->set_blue_team(_blueTeam);
-        _context.state.logFrame->set_defend_plus_x(_context.game_state.defendPlusX);
+        _context.state.logFrame->set_defend_plus_x(
+            _context.game_state.defendPlusX);
         _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
 
         if (first) {
             first = false;
 
-            Packet::LogConfig* logConfig = _context.state.logFrame->mutable_log_config();
+            Packet::LogConfig* logConfig =
+                _context.state.logFrame->mutable_log_config();
             logConfig->set_generator("soccer");
             logConfig->set_git_version_hash(git_version_hash);
             logConfig->set_git_version_dirty(git_version_dirty);
@@ -349,7 +360,8 @@ void Processor::run() {
         for (const RefereePacket& packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
             log->CopyFrom(packet.wrapper);
-            curStatus.lastRefereeTime = std::max(curStatus.lastRefereeTime, packet.receivedTime);
+            curStatus.lastRefereeTime =
+                std::max(curStatus.lastRefereeTime, packet.receivedTime);
         }
 
         std::string yellowname;
@@ -375,9 +387,11 @@ void Processor::run() {
             _gameplayModule->calculateFieldObstacles();
         }
         /// Collect global obstacles
-        Geometry2d::ShapeSet globalObstacles = _gameplayModule->globalObstacles();
+        Geometry2d::ShapeSet globalObstacles =
+            _gameplayModule->globalObstacles();
         Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-        Geometry2d::ShapeSet goalZoneObstacles = _gameplayModule->goalZoneObstacles();
+        Geometry2d::ShapeSet goalZoneObstacles =
+            _gameplayModule->goalZoneObstacles();
         globalObstaclesWithGoalZones.add(goalZoneObstacles);
 
         // Build a plan request for each robot.
@@ -391,26 +405,34 @@ void Processor::run() {
 
                 // Visualize local obstacles
                 for (auto& shape : r->localObstacles().shapes()) {
-                    _context.debug_drawer.drawShape(shape, Qt::black, "LocalObstacles");
+                    _context.debug_drawer.drawShape(shape, Qt::black,
+                                                    "LocalObstacles");
                 }
 
                 auto& globalObstaclesForBot =
-                    (r->shell() == _gameplayModule->goalieID() || r->isPenaltyKicker || r->isBallPlacer)
+                    (r->shell() == _gameplayModule->goalieID() ||
+                     r->isPenaltyKicker || r->isBallPlacer)
                         ? globalObstacles
                         : globalObstaclesWithGoalZones;
 
                 // create and visualize obstacles
-                Geometry2d::ShapeSet staticObstacles = r->collectStaticObstacles(
-                    globalObstaclesForBot,
-                    !(r->shell() == _gameplayModule->goalieID() || r->isPenaltyKicker || r->isBallPlacer));
+                Geometry2d::ShapeSet staticObstacles =
+                    r->collectStaticObstacles(
+                        globalObstaclesForBot,
+                        !(r->shell() == _gameplayModule->goalieID() ||
+                          r->isPenaltyKicker || r->isBallPlacer));
 
-                std::vector<Planning::DynamicObstacle> dynamicObstacles = r->collectDynamicObstacles();
+                std::vector<Planning::DynamicObstacle> dynamicObstacles =
+                    r->collectDynamicObstacles();
 
-                requests.emplace(r->shell(), Planning::PlanRequest(
-                                                 &_context, Planning::MotionInstant(r->pos(), r->vel()),
-                                                 r->motionCommand()->clone(), r->robotConstraints(),
-                                                 std::move(r->angleFunctionPath().path), std::move(staticObstacles),
-                                                 std::move(dynamicObstacles), r->shell(), r->getPlanningPriority()));
+                requests.emplace(
+                    r->shell(),
+                    Planning::PlanRequest(
+                        &_context, Planning::MotionInstant(r->pos(), r->vel()),
+                        r->motionCommand()->clone(), r->robotConstraints(),
+                        std::move(r->angleFunctionPath().path),
+                        std::move(staticObstacles), std::move(dynamicObstacles),
+                        r->shell(), r->getPlanningPriority()));
             }
         }
 
@@ -423,12 +445,14 @@ void Processor::run() {
             path->drawDebugText(&_context.debug_drawer);
             r->setPath(std::move(path));
 
-            r->angleFunctionPath().angleFunction = angleFunctionForCommandType(r->rotationCommand());
+            r->angleFunctionPath().angleFunction =
+                angleFunctionForCommandType(r->rotationCommand());
         }
 
         // Visualize obstacles
         for (auto& shape : globalObstacles.shapes()) {
-            _context.debug_drawer.drawShape(shape, Qt::black, "Global Obstacles");
+            _context.debug_drawer.drawShape(shape, Qt::black,
+                                            "Global Obstacles");
         }
 
         // TODO(Kyle, Collin): This is a horrible hack to get around the fact
@@ -444,7 +468,6 @@ void Processor::run() {
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to
         // update things manually.
-        
 
         ////////////////
         // Store logging information
@@ -460,10 +483,12 @@ void Processor::run() {
             if (r->visible()) {
                 r->addStatusText();
 
-                Packet::LogFrame::Robot* log = _context.state.logFrame->add_self();
+                Packet::LogFrame::Robot* log =
+                    _context.state.logFrame->add_self();
                 *log->mutable_pos() = r->pos();
                 *log->mutable_world_vel() = r->vel();
-                *log->mutable_body_vel() = r->vel().rotated(M_PI_2 - r->angle());
+                *log->mutable_body_vel() =
+                    r->vel().rotated(M_PI_2 - r->angle());
                 //*log->mutable_cmd_body_vel() = r->
                 // *log->mutable_cmd_vel() = r->cmd_vel;
                 // log->set_cmd_w(r->cmd_w);
@@ -476,7 +501,8 @@ void Processor::run() {
 
                 if (radioRx.has_kicker_status()) {
                     log->set_charged((radioRx.kicker_status() & 0x01) != 0u);
-                    log->set_kicker_works((radioRx.kicker_status() & 0x90) == 0u);
+                    log->set_kicker_works((radioRx.kicker_status() & 0x90) ==
+                                          0u);
                 }
 
                 if (radioRx.has_ball_sense_status()) {
@@ -506,18 +532,21 @@ void Processor::run() {
         // Opponent robots
         for (OpponentRobot* r : _context.state.opp) {
             if (r->visible()) {
-                Packet::LogFrame::Robot* log = _context.state.logFrame->add_opp();
+                Packet::LogFrame::Robot* log =
+                    _context.state.logFrame->add_opp();
                 *log->mutable_pos() = r->pos();
                 log->set_shell(r->shell());
                 log->set_angle(r->angle());
                 *log->mutable_world_vel() = r->vel();
-                *log->mutable_body_vel() = r->vel().rotated(2 * M_PI - r->angle());
+                *log->mutable_body_vel() =
+                    r->vel().rotated(2 * M_PI - r->angle());
             }
         }
 
         // Ball
         if (_context.state.ball.valid) {
-            Packet::LogFrame::Ball* log = _context.state.logFrame->mutable_ball();
+            Packet::LogFrame::Ball* log =
+                _context.state.logFrame->mutable_ball();
             *log->mutable_pos() = _context.state.ball.pos;
             *log->mutable_vel() = _context.state.ball.vel;
         }
@@ -585,7 +614,8 @@ void Processor::sendRadioData() {
             intent.is_active = true;
             // MANUAL STUFF
             if (_multipleManual) {
-                auto info = find(manualIds.begin(), manualIds.end(), r->shell());
+                auto info =
+                    find(manualIds.begin(), manualIds.end(), r->shell());
                 int index = info - manualIds.begin();
 
                 // figure out if this shell value has been assigned to a
@@ -604,7 +634,8 @@ void Processor::sendRadioData() {
                 }
 
                 if (index < manualIds.size()) {
-                    applyJoystickControls(getJoystickControlValue(*_joysticks[index]), r);
+                    applyJoystickControls(
+                        getJoystickControlValue(*_joysticks[index]), r);
                 }
             } else if (_manualID == r->shell()) {
                 auto controlValues = getJoystickControlValues();
@@ -618,12 +649,14 @@ void Processor::sendRadioData() {
     }
 }
 
-void Processor::applyJoystickControls(const JoystickControlValues& controlVals, OurRobot* robot) {
+void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
+                                      OurRobot* robot) {
     Geometry2d::Point translation(controlVals.translation);
 
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
-    if ((robot != nullptr) && robot->visible() && _useFieldOrientedManualDrive) {
+    if ((robot != nullptr) && robot->visible() &&
+        _useFieldOrientedManualDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
     RobotIntent& intent = _context.robot_intents[robot->shell()];
@@ -638,13 +671,16 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals, 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
     intent.trigger_mode =
-        (kick ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM : RobotIntent::TriggerMode::IMMEDIATE)
+        (kick ? (_kickOnBreakBeam ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                  : RobotIntent::TriggerMode::IMMEDIATE)
               : RobotIntent::TriggerMode::STAND_DOWN);
     intent.kcstrength = static_cast<int>(controlVals.kickPower);
-    intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK : RobotIntent::ShootMode::CHIP);
+    intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
+                                          : RobotIntent::ShootMode::CHIP);
 
     // dribbler
-    intent.dvelocity = static_cast<float>(controlVals.dribble ? controlVals.dribblerPower : 0);
+    intent.dvelocity =
+        static_cast<float>(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
@@ -652,16 +688,19 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
     if (joy.valid()) {
         // keep it in range
         vals.translation.clamp(sqrt(2.0));
-        if (vals.rotation > 1) { vals.rotation = 1;
-}
-        if (vals.rotation < -1) { vals.rotation = -1;
-}
+        if (vals.rotation > 1) {
+            vals.rotation = 1;
+        }
+        if (vals.rotation < -1) {
+            vals.rotation = -1;
+        }
 
         // Gets values from the configured joystick control
         // values,respecting damped
         // state
         if (_dampedTranslation) {
-            vals.translation *= Joystick::JoystickTranslationMaxDampedSpeed->value();
+            vals.translation *=
+                Joystick::JoystickTranslationMaxDampedSpeed->value();
         } else {
             vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
         }
@@ -725,7 +764,8 @@ void Processor::changeVisionChannel(int port) {
 }
 
 void Processor::recalculateWorldToTeamTransform() {
-    _worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+    _worldToTeam = Geometry2d::TransformMatrix::translate(
+        0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
     _worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }
 

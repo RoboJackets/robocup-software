@@ -14,9 +14,13 @@
 #define M_E 2.718281828459045
 #endif
 
-constexpr float DegreesToRadians(float x) { return (x)*static_cast<float>(M_PI) / 180.f; }
+constexpr float DegreesToRadians(float x) {
+    return (x) * static_cast<float>(M_PI) / 180.f;
+}
 
-constexpr float RadiansToDegrees(float x) { return (x)*180.f / static_cast<float>(M_PI); }
+constexpr float RadiansToDegrees(float x) {
+    return (x)*180.f / static_cast<float>(M_PI);
+}
 
 template <typename T>
 static inline T sign(T f) {

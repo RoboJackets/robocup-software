@@ -11,10 +11,13 @@ namespace Geometry2d {
 Line::Line(const Segment& segment) : Line(segment.pt[0], segment.pt[1]) {}
 
 // Uses Tested Function
-bool Line::intersects(const Line& other, Point* intersection) const { return intersects(*this, other, intersection); }
+bool Line::intersects(const Line& other, Point* intersection) const {
+    return intersects(*this, other, intersection);
+}
 
 // Has Simple Test
-bool Line::intersects(const Line& line1, const Line& line2, Point* intersection) {
+bool Line::intersects(const Line& line1, const Line& line2,
+                      Point* intersection) {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line-LineIntersection.html
 
@@ -45,7 +48,8 @@ bool Line::intersects(const Line& line1, const Line& line2, Point* intersection)
 // Has Simple Test
 float Line::distTo(Point other) const {
     Point delta = pt[1] - pt[0];
-    const auto top = static_cast<float>(delta.x() * (pt[0].y() - other.y()) - (pt[0].x() - other.x()) * delta.y());
+    const auto top = static_cast<float>(delta.x() * (pt[0].y() - other.y()) -
+                                        (pt[0].x() - other.x()) * delta.y());
 
     return std::fabs(top) / static_cast<float>(delta.mag());
 }
@@ -108,5 +112,7 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
     return true;
 }
 
-bool Line::intersects(const Segment& other, Point* intersection) const { return other.intersects(*this, intersection); }
+bool Line::intersects(const Segment& other, Point* intersection) const {
+    return other.intersects(*this, intersection);
+}
 }  // namespace Geometry2d

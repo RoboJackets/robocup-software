@@ -198,7 +198,7 @@ public:
      *
      * Called deltaFixed because it operates fixed to the origin frame.
      */
-    [[nodiscard]] Pose deltaFixed(double  /*t*/) const {
+    [[nodiscard]] Pose deltaFixed(double /*t*/) const {
         return Pose(linear().x(), linear().y(), angular());
     }
 
@@ -249,7 +249,9 @@ public:
                     vx * cosine_frac + vy * sine_frac, vh * t);
     }
 
-    [[nodiscard]] double curvature() const { return angular() / linear().mag(); }
+    [[nodiscard]] double curvature() const {
+        return angular() / linear().mag();
+    }
 
     /**
      * Operators

@@ -254,7 +254,8 @@ void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
         std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
     setPath(nullptr);
-    _cmdText << "worldVel(" << targetWorldVelocity.x() << ", " << targetWorldVelocity.y() << ")" << endl;
+    _cmdText << "worldVel(" << targetWorldVelocity.x() << ", "
+             << targetWorldVelocity.y() << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {

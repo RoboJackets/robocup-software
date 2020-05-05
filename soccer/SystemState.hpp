@@ -27,7 +27,7 @@ class OpponentRobot;
 
 namespace Packet {
 class LogFrame;
-} // namespace Packet
+}  // namespace Packet
 
 /**
  * @brief Our beliefs about the ball's position and velocity
@@ -85,7 +85,9 @@ public:
 
     RJ::Time time;
 
-    [[nodiscard]] RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
+    [[nodiscard]] RJ::Timestamp timestamp() const {
+        return RJ::timestamp(time);
+    }
 
     /// All possible robots.
     ///

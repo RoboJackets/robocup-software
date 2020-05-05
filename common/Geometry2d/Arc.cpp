@@ -37,10 +37,8 @@ vector<Point> Arc::intersects(const Line& line) const {
         auto angle = _center.angleBetween(p);
         if (angle > _start_angle && angle < _end_angle) {
             return {p};
-        } 
-            return {};
-        
-
+        }
+        return {};
     }
     float sgn_dy = (dy < 0) ? -1 : 1;
     float sqrt_disc = sqrtf(disc);

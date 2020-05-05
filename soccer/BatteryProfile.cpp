@@ -41,8 +41,8 @@ double BatteryProfile::getChargeLevel(double voltage) const {
     double before = (nextBiggest - 1)->first;
 
     //  slope of this line segment
-    double m = (_dataPoints[i].second - _dataPoints[i - 1].second) /
-               (after - before);
+    double m =
+        (_dataPoints[i].second - _dataPoints[i - 1].second) / (after - before);
 
     //  y1-y2 = m(x1-x2)
     //  m(x1-x2) + y2 = y1

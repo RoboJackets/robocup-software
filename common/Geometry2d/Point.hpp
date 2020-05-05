@@ -224,7 +224,9 @@ public:
     computes the magnitude of the point, as if it were a vector
     @return the magnitude of the point
     */
-    [[nodiscard]] double mag() const { return sqrtf(static_cast<float>(x() * x() + y() * y())); }
+    [[nodiscard]] double mag() const {
+        return sqrtf(static_cast<float>(x() * x() + y() * y()));
+    }
 
     /**
     computes magnitude squared

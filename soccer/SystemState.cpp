@@ -21,29 +21,41 @@ class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
 
-    bool hit(const Geometry2d::ShapeSet& /*obstacles*/, RJ::Seconds /*startTimeIntoPath*/,
+    bool hit(const Geometry2d::ShapeSet& /*obstacles*/,
+             RJ::Seconds /*startTimeIntoPath*/,
              RJ::Seconds* /*hitTime*/) const override {
         throw std::runtime_error("Unsupported Opperation");
     }
 
-    void draw(DebugDrawer* /*constdebug_drawer*/, const QColor& /*color*/ = Qt::black,
+    void draw(DebugDrawer* /*constdebug_drawer*/,
+              const QColor& /*color*/ = Qt::black,
               const QString& /*layer*/ = "Motion") const override {
         throw std::runtime_error("Unsupported Opperation");
     }
 
-    [[nodiscard]] RJ::Seconds getDuration() const override { return RJ::Seconds::max(); }
+    [[nodiscard]] RJ::Seconds getDuration() const override {
+        return RJ::Seconds::max();
+    }
 
-    [[nodiscard]] std::unique_ptr<Path> subPath(RJ::Seconds /*startTime*/, RJ::Seconds /*endTime*/) const override {
+    [[nodiscard]] std::unique_ptr<Path> subPath(
+        RJ::Seconds /*startTime*/, RJ::Seconds /*endTime*/) const override {
         throw std::runtime_error("Unsupported Operation");
     }
 
-    [[nodiscard]] RobotInstant start() const override { return RobotInstant(ball.predict(startTime())); }
-    [[nodiscard]] RobotInstant end() const override { throw std::runtime_error("Unsupported Operation"); }
+    [[nodiscard]] RobotInstant start() const override {
+        return RobotInstant(ball.predict(startTime()));
+    }
+    [[nodiscard]] RobotInstant end() const override {
+        throw std::runtime_error("Unsupported Operation");
+    }
 
-    [[nodiscard]] std::unique_ptr<Path> clone() const override { return std::make_unique<BallPath>(*this); }
+    [[nodiscard]] std::unique_ptr<Path> clone() const override {
+        return std::make_unique<BallPath>(*this);
+    }
 
 protected:
-    [[nodiscard]] std::optional<RobotInstant> eval(RJ::Seconds t) const override {
+    [[nodiscard]] std::optional<RobotInstant> eval(
+        RJ::Seconds t) const override {
         return RobotInstant(ball.predict(startTime() + t));
     }
 
@@ -62,8 +74,11 @@ constexpr auto ballDecayConstant = 0.180;
 Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     if (estimateTime < time) {
         // debugThrow("Estimated Time can't be before observation time.");
-        std::cout << "CRITICAL ERROR: Estimated Time can't be before observation time" << std::endl;
-        std::cout << "estimateTime: " << RJ::timestamp(estimateTime) << std::endl;
+        std::cout
+            << "CRITICAL ERROR: Estimated Time can't be before observation time"
+            << std::endl;
+        std::cout << "estimateTime: " << RJ::timestamp(estimateTime)
+                  << std::endl;
         std::cout << "actualTime: " << RJ::timestamp(time) << std::endl;
         estimateTime = time;
 
@@ -106,7 +121,8 @@ Geometry2d::Point Ball::predictPosition(double seconds_from_now) const {
     return motionInstant.pos;
 }
 
-RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point, Geometry2d::Point* nearPointOut) const {
+RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
+                              Geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
     auto nearPoint = line.nearestPoint(point);
     if (nearPointOut != nullptr) {
@@ -133,7 +149,9 @@ double Ball::estimateSecondsTo(const Geometry2d::Point& point) const {
     return RJ::Seconds(time - RJ::now()).count();
 }
 
-double Ball::predictSecondsToStop() const { return vel.mag() / ballDecayConstant; }
+double Ball::predictSecondsToStop() const {
+    return vel.mag() / ballDecayConstant;
+}
 
 double Ball::estimateSecondsToDist(double dist) const {
     auto v = vel.mag();
