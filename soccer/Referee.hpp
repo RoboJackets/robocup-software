@@ -49,7 +49,7 @@ struct RefereePacket {
 class Referee : public Node {
 public:
     explicit Referee(Context* const context);
-    ~Referee() override{};
+    ~Referee() override = default;
 
     Referee(const Referee&) = delete;
     Referee& operator=(const Referee&) = delete;
