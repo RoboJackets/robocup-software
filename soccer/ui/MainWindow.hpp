@@ -1,14 +1,13 @@
 #pragma once
 
-#include <optional>
-
+#include <Configuration.hpp>
 #include <QMainWindow>
 #include <QTime>
 #include <QTimer>
+#include <mutex>
+#include <optional>
 
-#include <Configuration.hpp>
 #include "FieldView.hpp"
-
 #include "Processor.hpp"
 #include "rc-fshare/rtp.hpp"
 #include "ui_MainWindow.h"
@@ -16,8 +15,6 @@
 class TestResultTab;
 class StripChart;
 class ConfigBool;
-
-enum RadioChannels { MHz_916, MHz_918 };
 
 namespace {
 // Style sheets used for live/non-live controls
@@ -72,8 +69,6 @@ public:
     // Call this to update the status bar when the log file has changed
     void logFileChanged();
 
-    void setRadioChannel(RadioChannels channel);
-
     QTimer updateTimer;
 
     void setUseRefChecked(bool use_ref);
@@ -109,15 +104,6 @@ private Q_SLOTS:
     void on_action90_triggered();
     void on_action180_triggered();
     void on_action270_triggered();
-
-    /// Radio channels
-    void on_action916MHz_triggered();
-    void on_action918MHz_triggered();
-
-    /// Vision port
-    void on_actionVisionPrimary_Half_triggered();
-    void on_actionVisionSecondary_Half_triggered();
-    void on_actionVisionFull_Field_triggered();
 
     /// Simulator commands
     void on_actionCenterBall_triggered();
@@ -263,4 +249,7 @@ private:
     std::vector<QComboBox*> _robotConfigQComboBoxes{};
 
     std::vector<QComboBox*> _robotDebugResponseQComboBoxes{};
+
+    std::mutex _context_mutex;
+    Context* _context;
 };

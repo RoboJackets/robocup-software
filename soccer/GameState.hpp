@@ -1,8 +1,11 @@
 #pragma once
+
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <time.hpp>
 
 #include "Constants.hpp"
+#include "RefereeEnums.hpp"
 #include "TeamInfo.hpp"
 
 /**
@@ -48,14 +51,18 @@ public:
     int theirScore;
 
     // Time in seconds remaining in the current period
-    int secondsRemaining;
+    RJ::Seconds stage_time_left;
 
     TeamInfo OurInfo;
     TeamInfo TheirInfo;
-    // bool representing if we are the blue team
+
+    // Bool representing if we are the blue team
     bool blueTeam;
 
     Geometry2d::Point ballPlacementPoint;
+
+    RefereeModuleEnums::Stage raw_stage;
+    RefereeModuleEnums::Command raw_command;
 
     GameState()
         : period{FirstHalf},
@@ -64,31 +71,32 @@ public:
           ourRestart{false},
           ourScore{0},
           theirScore{0},
-          secondsRemaining{0},
           OurInfo{},
           TheirInfo{},
           blueTeam{false},
           ballPlacementPoint{},
-          defendPlusX{false} {}
+          raw_stage{RefereeModuleEnums::Stage::NORMAL_FIRST_HALF_PRE},
+          raw_command{RefereeModuleEnums::Command::HALT} {}
 
     GameState(Period period, State state, Restart restart, bool ourRestart,
-              int ourScore, int theirScore, int secondsRemaining,
+              int ourScore, int theirScore, RJ::Seconds stage_time_left,
               TeamInfo our_info, TeamInfo their_info, bool blueTeam,
-              Geometry2d::Point ballPlacementPoint, bool defendPlusX)
+              Geometry2d::Point ballPlacementPoint,
+              RefereeModuleEnums::Stage stage,
+              RefereeModuleEnums::Command command)
         : period{period},
           state{state},
           restart{restart},
           ourRestart{ourRestart},
           ourScore{ourScore},
           theirScore{theirScore},
-          secondsRemaining{secondsRemaining},
+          stage_time_left{stage_time_left},
           OurInfo{our_info},
           TheirInfo{their_info},
           blueTeam{blueTeam},
           ballPlacementPoint{ballPlacementPoint},
-          defendPlusX{defendPlusX} {}
-
-    bool defendPlusX;
+          raw_stage{stage},
+          raw_command{command} {}
 
     ////////
     // Rule queries

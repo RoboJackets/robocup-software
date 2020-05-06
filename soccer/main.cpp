@@ -36,13 +36,10 @@ void usage(const char* prog) {
             "\t-vlog <file>: view <file> instead of launching normally\n");
     fprintf(stderr, "\t-ng:          no goalie\n");
     fprintf(stderr, "\t-sim:         use simulator\n");
-    fprintf(stderr, "\t-freq:        specify radio frequency (918 or 916)\n");
     fprintf(stderr, "\t-nolog:       don't write log files\n");
     fprintf(stderr, "\t-noref:       don't use external referee commands\n");
     fprintf(stderr,
             "\t-defend:      specify half of field to defend (plus or minus)\n");
-    fprintf(stderr,
-            "\t-vision       specify the vision channel (1,2, or full)\n");
     exit(0);
 }
 
@@ -76,7 +73,6 @@ int main(int argc, char* argv[]) {
     bool noref = false;
     bool defendPlus = false;
     string readLogFile;
-    Processor::VisionChannel visionChannel = Processor::VisionChannel::full;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -143,20 +139,6 @@ int main(int argc, char* argv[]) {
                 printf("Invalid option for defendX\n");
                 usage(argv[0]);
             }
-        } else if (strcmp(var, "-vision") == 0) {
-            if (i + 1 >= argc) {
-                printf("No vision channel specified after -vision\n");
-                usage(argv[0]);
-            }
-            i++;
-            if (strcmp(argv[i], "1") == 0) {
-                visionChannel = Processor::VisionChannel::primary;
-            } else if (strcmp(argv[i], "2") == 0) {
-                visionChannel = Processor::VisionChannel::secondary;
-            } else if (strcmp(argv[i], "full") != 0) {
-                printf("Invalid option for vision channel\n");
-                usage(argv[0]);
-            }
         } else {
             printf("Not a valid flag: %s\n", argv[i]);
             usage(argv[0]);
@@ -178,8 +160,14 @@ int main(int argc, char* argv[]) {
         Configuration::FromRegisteredConfigurables();
 
     auto processor =
-        std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam, readLogFile);
-    processor->refereeModule()->useExternalReferee(!noref);
+        std::make_unique<Processor>(sim, defendPlus, blueTeam, readLogFile);
+
+    Context* context = processor->context();
+    context->game_settings.simulation = sim;
+    context->game_settings.use_external_referee = !noref;
+    context->game_settings.requestBlueTeam = blueTeam;
+    context->game_settings.defendPlusX = defendPlus;
+    context->game_settings.requestGoalieID = 0;
 
     // Load config file
     QString error;
@@ -207,16 +195,6 @@ int main(int argc, char* argv[]) {
         if (!processor->openLog(logFile)) {
             printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
         }
-    }
-
-    if (!radioFreq.isEmpty()) {
-        if (radioFreq == "916")
-            win->setRadioChannel(RadioChannels::MHz_916);
-        else if (radioFreq == "918")
-            win->setRadioChannel(RadioChannels::MHz_918);
-        else
-            printf("Cannot recognize radio frequency : %s\n",
-                   radioFreq.toStdString().c_str());
     }
 
     win->logFileChanged();

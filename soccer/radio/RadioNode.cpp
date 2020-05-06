@@ -19,6 +19,7 @@ RadioNode::RadioNode(Context* context, bool simulation, bool blueTeam)
     : _context(context) {
     _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
     _simulation = simulation;
+    _was_blue_team = blueTeam;
     _radio =
         _simulation
             ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
@@ -34,6 +35,11 @@ Radio* RadioNode::getRadio() { return _radio; }
 void RadioNode::switchTeam(bool blueTeam) { _radio->switchTeam(blueTeam); }
 
 void RadioNode::run() {
+    if (_context->game_state.blueTeam != _was_blue_team) {
+        _was_blue_team = _context->game_state.blueTeam;
+        _radio->switchTeam(_was_blue_team);
+    }
+
     // Read radio reverse packets
     _radio->receive();
 
@@ -54,9 +60,7 @@ void RadioNode::run() {
         }
     }
 
-    if (_radio) {
-        construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
-                           _context->robot_intents, _context->motion_setpoints);
-        _radio->send(*_context->state.logFrame->mutable_radio_tx());
-    }
+    construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
+                       _context->robot_intents, _context->motion_setpoints);
+    _radio->send(*_context->state.logFrame->mutable_radio_tx());
 }

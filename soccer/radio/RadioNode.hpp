@@ -19,4 +19,5 @@ private:
     RJ::Time _lastRadioRxTime;
     Radio* _radio;
     bool _simulation;
+    bool _was_blue_team;
 };

@@ -18,7 +18,6 @@ class RootPlay(Play, QtCore.QObject):
         QtCore.QObject.__init__(self)
         Play.__init__(self, continuous=True)
         self._play = None
-        self._goalie_id = None
         self.add_transition(Behavior.State.start, Behavior.State.running,
                             lambda: True, 'immediately')
 
@@ -191,13 +190,8 @@ class RootPlay(Play, QtCore.QObject):
     # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None
     @property
     def goalie_id(self):
-        return self._goalie_id
-
-    @goalie_id.setter
-    def goalie_id(self, value):
-        self._goalie_id = None if value == -1 else value
-        self.setup_goalie_if_needed()
-        logging.info("goalie_id set to: " + str(self._goalie_id))
+        goalie = main.context().game_state.get_goalie_id()
+        return None if goalie == -1 else goalie
 
     def setup_goalie_if_needed(self):
         if self.goalie_id is None:

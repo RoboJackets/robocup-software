@@ -63,25 +63,11 @@ public:
 
     [[nodiscard]] bool kicked() const { return _kickDetectState == Kicked; }
 
-    void useExternalReferee(bool value) {
-        _useExternalRef = value;
-    }
-
-    [[nodiscard]] bool useExternalReferee() const { return _useExternalRef; }
-
-    /**
-     * Set the team color only if it is not already being controlled by the
-     * refbox. This will set the team color in the event that none of the
-     * names in the referee packet match our team name.
-     *
-     * @param isBlue
-     */
-    void overrideTeam(bool isBlue);
-
     [[nodiscard]] bool isBlueTeam() const {
         return _context->game_state.blueTeam;
     }
 
+protected:
     RefereeModuleEnums::Stage stage_;
     RefereeModuleEnums::Command command_;
 
@@ -103,7 +89,7 @@ public:
     //
     // If the stage runs over its specified time, this value
     // becomes negative.
-    RJ::Seconds stage_time_left;
+    RJ::Seconds stage_time_left_;
 
     // The number of commands issued since startup (mod 2^32).
     int64_t command_counter;
@@ -118,7 +104,6 @@ public:
     [[nodiscard]] GameState updateGameState(
         RefereeModuleEnums::Command command) const;
 
-protected:
     void update();
 
     // Unconditional setter for the team color.
@@ -145,8 +130,6 @@ protected:
 
     RefereeModuleEnums::Command prev_command_;
     RefereeModuleEnums::Stage prev_stage_;
-
-    bool _useExternalRef = false;
 
     // Whether or not WE are currently controlled by the ref. This is not the
     // same as whether the referee is connected, because it will still be false

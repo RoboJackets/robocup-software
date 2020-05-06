@@ -190,11 +190,10 @@ void SimRadio::switchTeam(bool blueTeam) {
         // We don't really care what port the tx is on, just the rx
         stopRobots();
         _socket.close();
+        _socket.open(ip::udp::v4());
     }
 
     int status_port = blueTeam ? SimBlueStatusPort : SimYellowStatusPort;
-
-    std::cout << status_port << std::endl;
 
     // Let them throw exceptions
     _socket.bind(ip::udp::endpoint(ip::udp::v4(), status_port));

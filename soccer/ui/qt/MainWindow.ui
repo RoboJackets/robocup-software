@@ -2198,7 +2198,7 @@
           <attribute name="title">
            <string>Testing Tab</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_12">
+          <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
             <widget class="QSplitter" name="splitter_3">
              <property name="frameShadow">
@@ -2210,7 +2210,7 @@
              <property name="handleWidth">
               <number>10</number>
              </property>
-             <widget class="QWidget" name="layoutWidget">
+             <widget class="QWidget" name="layoutWidget2">
               <layout class="QVBoxLayout" name="verticalLayout_testingTable">
                <property name="spacing">
                 <number>2</number>
@@ -2291,7 +2291,7 @@
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="layoutWidget1">
+             <widget class="QWidget" name="layoutWidget3">
               <layout class="QVBoxLayout" name="verticalLayout_testingList">
                <property name="spacing">
                 <number>2</number>
@@ -2440,21 +2440,6 @@
     <property name="title">
      <string>&amp;Field</string>
     </property>
-    <widget class="QMenu" name="menu_Radio_channel">
-     <property name="title">
-      <string>&amp;Radio channel</string>
-     </property>
-     <addaction name="action916MHz"/>
-     <addaction name="action918MHz"/>
-    </widget>
-    <widget class="QMenu" name="menuVision_Channel">
-     <property name="title">
-      <string>Vision Channel</string>
-     </property>
-     <addaction name="actionVisionPrimary_Half"/>
-     <addaction name="actionVisionSecondary_Half"/>
-     <addaction name="actionVisionFull_Field"/>
-    </widget>
     <addaction name="actionDefendMinusX"/>
     <addaction name="actionDefendPlusX"/>
     <addaction name="separator"/>
@@ -2463,8 +2448,6 @@
     <addaction name="separator"/>
     <addaction name="actionUseOurHalf"/>
     <addaction name="actionUseOpponentHalf"/>
-    <addaction name="menu_Radio_channel"/>
-    <addaction name="menuVision_Channel"/>
     <addaction name="separator"/>
     <addaction name="actionUse_External_Referee"/>
    </widget>
