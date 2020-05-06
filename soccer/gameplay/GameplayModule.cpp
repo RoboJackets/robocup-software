@@ -46,9 +46,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 // TODO: Replace this whole file when we move to ROS2
 Gameplay::GameplayModule::GameplayModule(Context* const context,
                                          Referee* const refereeModule)
-    : _mutex(QMutex::Recursive),
-      _context(context),
-      _refereeModule(refereeModule) {
+    : _context(context), _refereeModule(refereeModule) {
     calculateFieldObstacles();
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
@@ -333,8 +331,6 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
  * runs the current play
  */
 void Gameplay::GameplayModule::run() {
-    QMutexLocker lock(&_mutex);
-
     bool verbose = false;
     if (verbose) cout << "Starting GameplayModule::run()" << endl;
 

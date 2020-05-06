@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
 
     win->logFileChanged();
 
-    processor->start();
+    std::thread processor_thread(&Processor::run, processor.get());
 
     while (
         !processor
@@ -244,6 +244,7 @@ int main(int argc, char* argv[]) {
 
     int ret = app.exec();
     processor->stop();
+    processor_thread.join();
 
     return ret;
 }

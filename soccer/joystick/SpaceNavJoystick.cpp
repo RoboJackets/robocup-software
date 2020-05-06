@@ -21,7 +21,7 @@ SpaceNavJoystick::~SpaceNavJoystick() { close(); }
 bool SpaceNavJoystick::valid() const { return _daemonConnected; }
 
 void SpaceNavJoystick::update() {
-    QMutexLocker(&mutex());
+    auto lock = lock_mutex();
 
     //  try again if we failed last time
     if (!_daemonConnected && !_daemonTried) open();

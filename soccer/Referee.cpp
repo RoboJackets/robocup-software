@@ -47,16 +47,9 @@ Referee::Referee(Context* const context)
       ballPlacementY{},
       _asio_socket{_io_service} {}
 
-Referee::~Referee() { stop(); }
-
 void Referee::start() {
     setupRefereeMulticast();
     startReceive();
-}
-
-void Referee::stop() {
-    _asio_socket.shutdown(boost::asio::ip::udp::socket::shutdown_both);
-    _asio_socket.close();
 }
 
 void Referee::getPackets(std::vector<RefereePacket>& packets) {

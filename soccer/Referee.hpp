@@ -18,8 +18,6 @@
 #include "SystemState.hpp"
 #include "TeamInfo.hpp"
 
-class QUdpSocket;
-
 /**
  * @brief A packet we received over the network from ssl-refbox
  *
@@ -51,7 +49,7 @@ struct RefereePacket {
 class Referee : public Node {
 public:
     explicit Referee(Context* const context);
-    ~Referee();
+    ~Referee() override{};
 
     Referee(const Referee&) = delete;
     Referee& operator=(const Referee&) = delete;
@@ -60,7 +58,6 @@ public:
 
     void start() override;
     void run() override;
-    void stop() override;
 
     void getPackets(std::vector<RefereePacket>& packets);
 

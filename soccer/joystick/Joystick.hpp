@@ -1,13 +1,12 @@
 
 #pragma once
 
-#include <Robot.hpp>
 #include <protobuf/RadioTx.pb.h>
 
-#include <QMutex>
+#include <Robot.hpp>
 #include <boost/utility.hpp>
+#include <mutex>
 #include <stdexcept>
-#include <stdint.h>
 #include <vector>
 
 struct JoystickControlValues {
@@ -35,7 +34,7 @@ public:
  */
 class Joystick : boost::noncopyable {
 public:
-    Joystick() : _mutex(QMutex::Recursive){};
+    Joystick(){};
     virtual ~Joystick(){};
 
     /**
@@ -75,9 +74,9 @@ public:
     static ConfigDouble* JoystickTranslationMaxDampedSpeed;
 
 protected:
-    QMutex& mutex() { return _mutex; }
+    std::lock_guard<std::mutex> lock_mutex() { return std::lock_guard(_mutex); }
     int robotId;
 
 private:
-    QMutex _mutex;
+    std::mutex _mutex;
 };
