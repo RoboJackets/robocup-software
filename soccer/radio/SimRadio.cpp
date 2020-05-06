@@ -25,8 +25,7 @@ SimRadio::SimRadio(Context* const context, bool blueTeam)
                                                       : SimYellowStatusPort)) {
     _grsim_endpoint = ip::udp::endpoint(ip::udp::v4(), SimCommandPort);
 
-    // TODO: Make sure the buffer is big enough.
-    _buffer.resize(128);
+    _buffer.resize(2);
     startReceive();
 }
 
