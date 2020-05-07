@@ -7,7 +7,7 @@ InputDeviceManager::InputDeviceManager(Context* context) : _context(context) {
 }
 
 void InputDeviceManager::setupInputDevices(
-    std::array<bool, Num_Shells> _is_joystick_controlled) {
+    std::array<bool, Num_Shells>& _is_joystick_controlled) {
     _inputDevices.clear();
     _inputDevices.reserve(Num_Shells);
 
@@ -75,7 +75,7 @@ void InputDeviceManager::update(Context* _context) {
     }
 
     // Apply input device updates to robots
-    applyInputDeviceControls(_context->robot_intents, _context->_is_joystick_controlled);
+    applyInputDeviceControls(_context->robot_intents, _context->is_joystick_controlled);
 
 }
 
@@ -164,12 +164,13 @@ void InputDeviceManager::applyInputDeviceControls(
     std::array<RobotIntent, Num_Shells>& robot_intents,
     const std::array<bool, Num_Shells>& _is_joystick_controlled) {
     for (InputDevice* dev: _inputDevices) {
-        int targetId = dev->robotId;
+        int targetId = dev->getRobotId();
         // check if dev is valid and robot is supposed to be manually controlled
-        if (dev->valid && _is_joystick_controlled[targetId]) {
+        if (dev->valid() && _is_joystick_controlled[targetId]) {
             InputDeviceControlValues val = getInputDeviceControlValue(*dev);
-            RobotIntent intent = new RobotIntent();
-            intent.motion_command = new WorldVelTargetCommand(val.translation);
+            RobotIntent& intent = robot_intents[targetId];
+            Planning::WorldVelTargetCommand* cmd = new Planning::WorldVelTargetCommand(val.translation);
+            intent.motion_command = cmd->clone();
             // intent.rotation_command = new FacePointCommand(val.rotation);
             if (val.kick) {
                 intent.shoot_mode = RobotIntent::ShootMode::KICK;
@@ -177,7 +178,6 @@ void InputDeviceManager::applyInputDeviceControls(
                 intent.shoot_mode = RobotIntent::ShootMode::CHIP;
             }
             intent.kcstrength = val.kickPower;
-            robot_intents[targetId] = intent;
         }
     }
 

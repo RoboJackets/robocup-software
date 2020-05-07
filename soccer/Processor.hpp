@@ -1,7 +1,4 @@
 
-// FIXME - Move a lot of stuff like blueTeam and worldToTeam to a globally
-// accessible place
-
 #pragma once
 
 #include <protobuf/LogFrame.pb.h>
@@ -27,11 +24,10 @@
 #include "radio/RadioNode.hpp"
 #include "rc-fshare/rtp.hpp"
 
-#include "joystick/InputDeviceManager.hpp"
-#include "joystick/InputDevice.hpp"
-
 class Configuration;
 class RobotStatus;
+class Joystick;
+struct JoystickControlValues;
 class Radio;
 class VisionFilter;
 
@@ -80,6 +76,10 @@ public:
     void stop();
 
     bool autonomous();
+    bool joystickValid() const;
+
+    JoystickControlValues getJoystickControlValue(Joystick& joy);
+    std::vector<JoystickControlValues> getJoystickControlValues();
 
     void externalReferee(bool value) {
         _refereeModule->useExternalReferee(value);
@@ -87,6 +87,19 @@ public:
 
     bool externalReferee() const {
         return _refereeModule->useExternalReferee();
+    }
+
+    void manualID(int value);
+    int manualID() const { return _manualID; }
+
+    void multipleManual(bool value);
+    bool multipleManual() const { return _multipleManual; }
+
+    bool useFieldOrientedManualDrive() const {
+        return _useFieldOrientedManualDrive;
+    }
+    void setUseFieldOrientedManualDrive(bool foc) {
+        _useFieldOrientedManualDrive = foc;
     }
 
     /**
@@ -102,8 +115,12 @@ public:
      */
     int goalieID();
 
-    // void dampedRotation(bool value);
-    // void dampedTranslation(bool value);
+    void dampedRotation(bool value);
+    void dampedTranslation(bool value);
+
+    void joystickKickOnBreakBeam(bool value);
+    void setupJoysticks();
+    std::vector<int> getJoystickRobotIds();
 
     void blueTeam(bool value);
     bool blueTeam() const { return _blueTeam; }
@@ -157,25 +174,18 @@ public:
 
     void setPaused(bool paused) { _paused = paused; }
 
-    std::shared_ptr<InputDeviceManager> getInputDeviceManager() { return _inputDeviceManager; }
-
     ////////
 
     // Time of the first LogFrame
     std::optional<RJ::Time> firstLogTime;
-
-
 
     Context* context() { return &_context; }
 
 protected:
     void run() override;
 
-<<<<<<< HEAD
-=======
     void applyJoystickControls(const JoystickControlValues& controlVals,
                                OurRobot* robot);
->>>>>>> staging
 
 private:
     // Configuration for the robot.
@@ -227,6 +237,10 @@ private:
     Geometry2d::TransformMatrix _worldToTeam;
     float _teamAngle;
 
+    // Board ID of the robot to manually control or -1 if none
+    int _manualID;
+    // Use multiple joysticks at once
+    bool _multipleManual;
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
@@ -244,7 +258,6 @@ private:
     std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-    //std::vector<std::unique_ptr<Node>> _modules;
     std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<RadioNode> _radio;
@@ -253,7 +266,17 @@ private:
     std::vector<Node*> _nodes;
 
     // joystick control
-    std::shared_ptr<InputDeviceManager> _inputDeviceManager;
+    std::vector<Joystick*> _joysticks;
+
+    // joystick damping
+    bool _dampedRotation;
+    bool _dampedTranslation;
+
+    bool _kickOnBreakBeam;
+
+    // If true, rotates robot commands from the joystick based on its
+    // orientation on the field
+    bool _useFieldOrientedManualDrive = false;
 
     VisionChannel _visionChannel;
 

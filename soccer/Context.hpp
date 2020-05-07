@@ -32,6 +32,7 @@ struct Context {
     std::array<RobotConstraints, Num_Shells> robot_constraints;
 
     std::array<bool, Num_Shells> is_joystick_controlled;
+    // std::vector<int> joystick_robot_ids;
 
     std::unique_ptr<RobotConfig> robot_config;
 

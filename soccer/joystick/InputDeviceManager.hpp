@@ -9,6 +9,7 @@
 #include "InputDevice.hpp"
 #include "RobotIntent.hpp"
 #include <Context.hpp>
+#include "planning/MotionCommand.hpp"
 
 using namespace std;
 
@@ -30,11 +31,11 @@ public:
   // Use multiple joysticks at once
   bool _multipleManual;
 
-  void setupInputDevices();
+  void setupInputDevices(std::array<bool, Num_Shells>& _is_joystick_controlled);
 
   void attachVirtual();
 
-  void update(std::vector<OurRobot*>& robots, Packet::RadioTx* tx);
+  void update(Context* _context);
 
   bool joystickValid() const;
 

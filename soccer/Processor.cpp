@@ -15,15 +15,9 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <joystick/GamepadController.hpp>
-<<<<<<< HEAD
-#include <joystick/InputDevice.hpp>
-#include <joystick/InputDeviceManager.hpp>
-#include <motion/MotionControl.hpp>
-=======
 #include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
 #include <joystick/SpaceNavJoystick.hpp>
->>>>>>> staging
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
@@ -71,13 +65,21 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
                      bool blueTeam, std::string readLogFile="")
     : _loopMutex(), _blueTeam(blueTeam), _readLogFile(readLogFile) {
     _running = true;
+    _manualID = -1;
     _framerate = 0;
     _useOurHalf = true;
     _useOpponentHalf = true;
     _initialized = false;
     _simulation = sim;
     _radio = nullptr;
-    _inputDeviceManager = nullptr;
+
+    _multipleManual = false;
+    setupJoysticks();
+
+    _dampedTranslation = true;
+    _dampedRotation = true;
+
+    _kickOnBreakBeam = false;
 
     // Configuration-time variables.
     _context.robot_config = std::move(robot_config_init);
@@ -103,7 +105,6 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
         &_context, _refereeModule.get());
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-    _inputDeviceManager = std::make_shared<InputDeviceManager>();
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, _simulation, _blueTeam);
     _visionReceiver = std::make_unique<VisionReceiver>(
@@ -125,8 +126,9 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
 Processor::~Processor() {
     stop();
 
-    // TODO Destructor the Manual Controller
-
+    for (Joystick* joy : _joysticks) {
+        delete joy;
+    }
 
     // Put back configurables where we found them.
     // This is kind of a hack, but if we don't do that they get destructed
@@ -146,6 +148,17 @@ void Processor::stop() {
     }
 }
 
+void Processor::manualID(int value) {
+    QMutexLocker locker(&_loopMutex);
+    _manualID = value;
+
+    for (Joystick* joy : _joysticks) {
+        joy->reset();
+    }
+}
+
+void Processor::multipleManual(bool value) { _multipleManual = value; }
+
 void Processor::goalieID(int value) {
     QMutexLocker locker(&_loopMutex);
     _gameplayModule->goalieID(value);
@@ -154,6 +167,35 @@ void Processor::goalieID(int value) {
 int Processor::goalieID() {
     QMutexLocker locker(&_loopMutex);
     return _gameplayModule->goalieID();
+}
+
+void Processor::dampedRotation(bool value) {
+    QMutexLocker locker(&_loopMutex);
+    _dampedRotation = value;
+}
+
+void Processor::dampedTranslation(bool value) {
+    QMutexLocker locker(&_loopMutex);
+    _dampedTranslation = value;
+}
+
+void Processor::joystickKickOnBreakBeam(bool value) {
+    QMutexLocker locker(&_loopMutex);
+    _kickOnBreakBeam = value;
+}
+
+void Processor::setupJoysticks() {
+    _joysticks.clear();
+
+    GamepadController::controllersInUse.clear();
+    GamepadController::joystickRemoved = -1;
+
+    for (int i = 0; i < Robots_Per_Team; i++) {
+        _joysticks.push_back(new GamepadController());
+    }
+
+    //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
+    // isValid() is working properly
 }
 
 /**
@@ -175,6 +217,12 @@ void Processor::blueTeam(bool value) {
     }
 }
 
+bool Processor::joystickValid() const {
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) return true;
+    }
+    return false;
+}
 
 void Processor::runModels() {
     std::vector<CameraFrame> frames;
@@ -255,7 +303,7 @@ void Processor::run() {
             RJ::timestamp(startTime + Command_Latency));
         _context.state.logFrame->set_use_our_half(_useOurHalf);
         _context.state.logFrame->set_use_opponent_half(_useOpponentHalf);
-        _context.state.logFrame->set_manual_id(_inputDeviceManager->manualID());
+        _context.state.logFrame->set_manual_id(_manualID);
         _context.state.logFrame->set_blue_team(_blueTeam);
         _context.state.logFrame->set_defend_plus_x(
             _context.game_state.defendPlusX);
@@ -290,15 +338,10 @@ void Processor::run() {
 
         if (_radio) curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
 
-        /* runModels(detectionFrames);
-        for (VisionPacket* packet : visionPackets) {
-            delete packet;
-        } */
-        
-        /* for (Joystick* joystick : _joysticks) {
+        for (Joystick* joystick : _joysticks) {
             joystick->update();
         }
-        GamepadController::joystickRemoved = -1; */
+        GamepadController::joystickRemoved = -1;
 
         runModels();
 
@@ -405,10 +448,6 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
-        // Run all modules in sequence
-        /* for (auto& module : _modules) {
-            module->run(); */
-        
         // TODO(Kyle, Collin): This is a horrible hack to get around the fact
         // that joystick code only (sort of) supports one joystick at a time.
         // Figure out which robots are manual controlled.
@@ -565,13 +604,6 @@ void Processor::sendRadioData() {
         }
     }
 
-    /* _inputDeviceManager->update(_context.state.self, tx);
-
-    if (_radio) {
-        _radio->send(*_context.state.logFrame->mutable_radio_tx());
-    } */
-}
-
     // Add RadioTx commands for visible robots and apply joystick input
     std::vector<int> manualIds = getJoystickRobotIds();
     for (OurRobot* r : _context.state.self) {
@@ -647,6 +679,57 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
+JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
+    JoystickControlValues vals = joy.getJoystickControlValues();
+    if (joy.valid()) {
+        // keep it in range
+        vals.translation.clamp(sqrt(2.0));
+        if (vals.rotation > 1) vals.rotation = 1;
+        if (vals.rotation < -1) vals.rotation = -1;
+
+        // Gets values from the configured joystick control
+        // values,respecting damped
+        // state
+        if (_dampedTranslation) {
+            vals.translation *=
+                Joystick::JoystickTranslationMaxDampedSpeed->value();
+        } else {
+            vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
+        }
+        if (_dampedRotation) {
+            vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
+        } else {
+            vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
+        }
+
+        // scale up kicker and dribbler speeds
+        vals.dribblerPower *= Max_Dribble;
+        vals.kickPower *= Max_Kick;
+    }
+    return vals;
+}
+
+std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
+    std::vector<JoystickControlValues> vals;
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) {
+            vals.push_back(getJoystickControlValue(*joy));
+        }
+    }
+    return vals;
+}
+
+vector<int> Processor::getJoystickRobotIds() {
+    vector<int> robotIds;
+    for (Joystick* joy : _joysticks) {
+        if (joy->valid()) {
+            robotIds.push_back(joy->getRobotId());
+        } else {
+            robotIds.push_back(-2);
+        }
+    }
+    return robotIds;
+}
 
 void Processor::defendPlusX(bool value) {
     _context.game_state.defendPlusX = value;
@@ -687,4 +770,4 @@ void Processor::setFieldDimensions(const Field_Dimensions& dims) {
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }
-bool Processor::isInitialized() const { return _initialized; }
+bool Processor::isInitialized() const { return _initialized; }ool Processor::isInitialized() const { return _initialized; }
