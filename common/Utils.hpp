@@ -16,6 +16,11 @@
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
+template <typename T>
+inline int signum(T val) {
+    return (0 < val) - (val <= 0);
+}
+
 inline void debugLog(const std::string& e) { std::cerr << e << std::endl; }
 
 inline void debugLog(const std::exception& e) {
@@ -54,7 +59,8 @@ inline void debugThrowIf(const std::string& string, bool condition) {
  * @param a An angle in radians
  * @return An equivalent angle in radians restricted to [-pi, pi]
  */
-static inline float fixAngleRadians(float a) {
+template <typename T>
+static inline T fixAngleRadians(T a) {
     a = remainder(a, 2 * M_PI);
     while (a < -M_PI) a += 2.0 * M_PI;
     while (a > M_PI) a -= 2.0 * M_PI;

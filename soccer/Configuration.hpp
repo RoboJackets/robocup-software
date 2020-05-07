@@ -1,9 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <QDomDocument>
 #include <QFile>
 #include <QStringList>
+#include <memory>
 #include <vector>
 
 class QTreeWidget;
@@ -62,6 +62,11 @@ class ConfigItem {
 protected:
     ConfigItem(Configuration* tree, const QString& name,
                std::string description = "");
+
+    ConfigItem(const ConfigItem&) = delete;
+    ConfigItem& operator=(const ConfigItem&) = delete;
+    ConfigItem(ConfigItem&&) = delete;
+    ConfigItem& operator=(ConfigItem&&) = delete;
 
 public:
     virtual ~ConfigItem();

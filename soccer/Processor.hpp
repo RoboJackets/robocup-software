@@ -4,24 +4,27 @@
 
 #pragma once
 
-#include <vector>
-#include <optional>
+#include <protobuf/LogFrame.pb.h>
 #include <string.h>
 
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
+#include <Logger.hpp>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QThread>
-
-#include <protobuf/LogFrame.pb.h>
-#include <Geometry2d/TransformMatrix.hpp>
-#include <Logger.hpp>
-#include <NewRefereeModule.hpp>
+#include <Referee.hpp>
 #include <SystemState.hpp>
+#include <optional>
+#include <vector>
+
+#include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
 #include "motion/MotionControlNode.hpp"
-
-#include "Context.hpp"
+#include "radio/Radio.hpp"
+#include "radio/RadioNode.hpp"
 #include "rc-fshare/rtp.hpp"
 
 #include "joystick/InputDeviceManager.hpp"
@@ -109,16 +112,14 @@ public:
         return _gameplayModule;
     }
 
-    std::shared_ptr<NewRefereeModule> refereeModule() const {
-        return _refereeModule;
-    }
+    std::shared_ptr<Referee> refereeModule() const { return _refereeModule; }
 
     SystemState* state() { return &_context.state; }
 
     bool simulation() const { return _simulation; }
 
     void defendPlusX(bool value);
-    bool defendPlusX() { return _defendPlusX; }
+    bool defendPlusX() { return _context.game_state.defendPlusX; }
 
     Status status() {
         QMutexLocker lock(&_statusMutex);
@@ -140,7 +141,7 @@ public:
 
     QMutex& loopMutex() { return _loopMutex; }
 
-    Radio* radio() { return _radio; }
+    Radio* radio() { return _radio->getRadio(); }
 
     void changeVisionChannel(int port);
 
@@ -170,12 +171,16 @@ public:
 protected:
     void run() override;
 
+<<<<<<< HEAD
+=======
+    void applyJoystickControls(const JoystickControlValues& controlVals,
+                               OurRobot* robot);
+>>>>>>> staging
 
 private:
-    // Configuration for different models of robots
-    static RobotConfig* robotConfig2008;
-    static RobotConfig* robotConfig2011;
-    static RobotConfig* robotConfig2015;
+    // Configuration for the robot.
+    // TODO(Kyle): Add back in configuration values for different years.
+    static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;
@@ -185,14 +190,12 @@ private:
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
-    void runModels(const std::vector<const SSL_DetectionFrame*>& detectionFrames);
+    void runModels();
 
     /** Used to start and stop the thread **/
     volatile bool _running;
 
     Logger _logger;
-
-    Radio* _radio;
 
     bool _useOurHalf, _useOpponentHalf;
 
@@ -225,8 +228,6 @@ private:
     float _teamAngle;
 
 
-    bool _defendPlusX;
-
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
 
@@ -240,15 +241,19 @@ private:
 
     // modules
     std::shared_ptr<VisionFilter> _vision;
-    std::shared_ptr<NewRefereeModule> _refereeModule;
+    std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
-    std::vector<std::unique_ptr<Node>> _modules;
+    //std::vector<std::unique_ptr<Node>> _modules;
+    std::unique_ptr<VisionReceiver> _visionReceiver;
+    std::unique_ptr<MotionControlNode> _motionControl;
+    std::unique_ptr<RadioNode> _radio;
+    std::unique_ptr<GrSimCommunicator> _grSimCom;
+
+    std::vector<Node*> _nodes;
 
     // joystick control
     std::shared_ptr<InputDeviceManager> _inputDeviceManager;
-
-    VisionReceiver vision;
 
     VisionChannel _visionChannel;
 

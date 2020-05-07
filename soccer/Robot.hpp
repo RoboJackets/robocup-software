@@ -132,13 +132,6 @@ class OurRobot : public Robot {
 public:
     typedef std::array<float, Num_Shells> RobotMask;
 
-    /** radio packets */
-    Packet::Robot robotPacket;
-    Packet::Control* control;
-
-    RobotConfig* config;
-    RobotStatus* status;
-
     /**
      * @brief Construct a new OurRobot
      * @param context A pointer to the global system context object
@@ -174,28 +167,27 @@ public:
 
     // Constraints
     const RobotConstraints& robotConstraints() const {
-        return _robotConstraints;
+        return _context->robot_constraints[shell()];
     }
 
-    RobotConstraints& robotConstraints() { return _robotConstraints; }
+    RobotConstraints& robotConstraints() {
+        return _context->robot_constraints[shell()];
+    }
 
     const MotionConstraints& motionConstraints() const {
-        return _robotConstraints.mot;
+        return robotConstraints().mot;
     }
 
-    MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
+    MotionConstraints& motionConstraints() { return robotConstraints().mot; }
 
     const Planning::RotationCommand& rotationCommand() const {
-        return *_rotationCommand;
+        return *intent().rotation_command;
     }
 
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Path& path() {
-        // return *angleFunctionPath.path;
-        return angleFunctionPath;
-    }
+    const Planning::Path& path() { return _context->paths[shell()]; }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -364,12 +356,12 @@ public:
      * Cleared after every frame
      */
     void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
-        _local_obstacles.add(obs);
+        intent().local_obstacles.add(obs);
     }
     const Geometry2d::ShapeSet& localObstacles() const {
-        return _local_obstacles;
+        return intent().local_obstacles;
     }
-    void clearLocalObstacles() { _local_obstacles.clear(); }
+    void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
@@ -441,14 +433,16 @@ public:
     }
 
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
-        return _motionCommand;
+        return intent().motion_command;
     }
 
     const RotationConstraints& rotationConstraints() const {
-        return _robotConstraints.rot;
+        return robotConstraints().rot;
     }
 
-    RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
+    RotationConstraints& rotationConstraints() {
+        return robotConstraints().rot;
+    }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
@@ -459,9 +453,9 @@ public:
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(Packet::Control::Song song = Packet::Control::FIGHT_SONG) {
+    void sing(RobotIntent::Song song = RobotIntent::Song::FIGHT_SONG) {
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        control->set_song(song);
+        intent().song = song;
     }
 
     bool isPenaltyKicker = false;
@@ -492,20 +486,12 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    /// set of obstacles added by plays
-    Geometry2d::ShapeSet _local_obstacles;
-
-    /// masks for obstacle avoidance
-    RobotMask _opp_avoid_mask;
-    float _avoidBallRadius;  /// radius of ball obstacle
-
-    std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    std::unique_ptr<Planning::RotationCommand> _rotationCommand;
-    RobotConstraints _robotConstraints;
-
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
-
-    bool _joystickControlled = false;
+    /**
+     * Get a mutable reference to the angle function path.
+     */
+    Planning::AngleFunctionPath& angleFunctionPath() {
+        return _context->paths[shell()];
+    }
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -561,10 +547,17 @@ protected:
     std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
 
     friend class Processor;
+    friend class RadioNode;
 
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
+
+    const RobotStatus* status() const {
+        return &_context->robot_status[shell()];
+    }
+
+    const RobotConfig* config() const { return _context->robot_config.get(); }
 
 private:
     RJ::Time _lastBallSense;
@@ -580,6 +573,11 @@ private:
     RJ::Time _lastChargedTime;
 
     Packet::RadioRx _radioRx;
+
+    RobotIntent& intent() { return _context->robot_intents[shell()]; }
+    const RobotIntent& intent() const {
+        return _context->robot_intents[shell()];
+    }
 
     /**
      * We build a string of commands such as face(), move(), etc at each

@@ -12,7 +12,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LANG en_US.UTF-8
 
 # setup apt tools and other goodies we want
-RUN apt-get update --fix-missing && apt-get -y install apt-utils wget curl htop iputils-ping vim-nox less bsdmainutils debconf-utils w3m git software-properties-common sudo scons screen && apt-get clean
+RUN apt-get update --fix-missing && apt-get -y install apt-utils wget curl nano htop iputils-ping vim-nox less bsdmainutils debconf-utils w3m git software-properties-common sudo scons screen && apt-get clean
 
 # set up user <this is for running soccer later on>
 # Replace 1000 with your user / group id

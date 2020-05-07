@@ -5,12 +5,13 @@ import math
 from enum import Enum
 import constants
 from typing import List, Dict
+import standard_play
 
 
 ## Class for breaking gameplay down into discrete states to aid in play selection
 #
 # An instance of this class exists in main.py where its updateAnalysis function
-# every frame.
+# is called every frame.
 #
 # The purpose of this class is to inform plays of the current gameplay situation
 # so that they can change their score function based on their applicability to
@@ -20,6 +21,18 @@ from typing import List, Dict
 #
 #
 class SituationalPlaySelector:
+
+    ##!!!! This variable will control if plays will be using the situational play selector or not!
+    enabled = True
+
+    ##This determines if this file will even run, set to false to save computation
+    toRun = True
+
+    ##Score for when the current situation is valid
+    inSituationScore = 100
+
+    ##Score for when the current situation is not valid
+    outSituationScore = 1000
 
     ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
     #
@@ -56,8 +69,7 @@ class SituationalPlaySelector:
 
     ##Enum for representing where the ball is on the field
     #
-    # The regions are defined in the update function
-    #
+    # The regions are defined in the update field Location
     class FieldLoc(Enum):
         DEFENDSIDE = 1
         MIDFIELD = 2
@@ -144,17 +156,19 @@ class SituationalPlaySelector:
         else:
             self.updateRobotList()
 
-        self.updatePileup()
-        self.locationUpdate()
-        self.ballPossessionUpdate()
-        self.situationUpdate()
+        if (self.toRun):
+            self.updatePileup()
+            self.locationUpdate()
+            self.updatePreempt()
+            self.ballPossessionUpdate()
+            self.situationUpdate()
 
-        #print(abs(startTime - time.time()))
+            #print(abs(startTime - time.time()))
 
-        #Print the current situation in the corner of the soccer gui
-        self.context.debug_drawer.draw_text(self.currentSituation.name,
-                                            robocup.Point(-3, -0.3), (0, 0, 0),
-                                            "hat")
+            #Print the current situation in the corner of the soccer gui
+            self.context.debug_drawer.draw_text(self.currentSituation.name,
+                                                robocup.Point(-3, -0.3),
+                                                (0, 0, 0), "hat")
 
     ## Returns a list of the robots in the path of the ball
     #
@@ -233,7 +247,7 @@ class SituationalPlaySelector:
     def possesses_the_ball(self,
                            ballPos,
                            robot,
-                           distThresh=0.14,
+                           distThresh=0.2,
                            angleThresh=35):
 
         distance = (ballPos - robot.pos).mag()
@@ -261,11 +275,17 @@ class SituationalPlaySelector:
     ##Keeps track of what the situaion was for the last frame for the purpose of preemption
     lastSituation = None
 
+    ##Keeps track of the last play for the purposes of determining preemption
+    lastPlay = None
+
     ##Keeps track of the time at which the situation last changed
     situationChangeTime = None
 
+    ##Keeps track of if the situation has changes while the play has not
+    situationChanged = False
+
     ##The time after a situation changes before preempting the current play
-    playPreemptTime = 0.20
+    preemptTime = 0.25
 
     ##Keeps track of if the current play should be preempted
     currentPreempt = False
@@ -298,60 +318,69 @@ class SituationalPlaySelector:
     def isPileup(self):
         return self.currentPileup
 
-    ##Returns if we are in the specified situation without regard to capitalization
-    #If the check variable is true, it will check if the situation exists and throw an
-    #exception is it does now.
-    def isSituation(self, situation, check=False):
-        up = situation.upper()
+    ##Returns the current situation
+    def getSituation(self):
+        return self.currentSituation
 
-        if (check):
-            found = False
-            for g in self.Situation:
-                if (up == g):
-                    found = True
-                    break
-            if not found:
-                raise Exception("Passed situation " + situation + " / " + up +
-                                " is not an existing situation")
-
-        if (self.currentSituaion.name == up):
-            return True
+    ##
+    # Returns if we are in the passed situation
+    #
+    # @param situation a situation as an enum
+    def isSituation(self, situation):
+        if (isinstance(situation, self.Situation)):
+            return situation == self.currentSituation
         else:
-            return False
+            raise TypeError("isSituation only takes enums")
 
-    ##Update determining if we want to preempt the current play or not
+    ##Returns true if we are in any of the situations in the passed list
+    #passed situation list must be enums
+    def isSituations(self, situations):
+        return self.currentSituation in situations
+
+    ##
     #
-    # Preemption is still an open question but this is a prototype of
-    # of how a non-invasive preemption system might work
-    #
+    # Will determine if the current play has lasted too long over a situation change
+    #   and needs to be preempted, it will call try_preempt
     def updatePreempt(self):
-        if (self.lastSituation != self.currentSituaion and
-                self.situationChangeTime == None):
+
+        #Since this not actually calls preemption we need to check if we are enabled
+        if (not self.enabled):
+            return
+
+        #Get the current play, may want to add a getter, as this is a "private" variable
+        currentPlay = main._root_play.play
+
+        #If the last situation is not the current situation, and the situationChanged flag
+        #is not already up, put it up and record the time, and change last situation to be the current situation
+        if (self.lastSituation != self.currentSituation and
+                not self.situationChanged):
             self.situationChangeTime = time.time()
+            self.lastSituation = self.currentSituation
+            self.situationChanged = True
 
-        if (self.currentPreempt):
-            self.currentPreempt = False
-        elif (self.situationChangeTime != None):
-            if (abs(time.time() - self.situationChangeTime) >
-                    self.playPreemptTime):
-                self.situationChangeTime = None
-                self.currentPreempt = True
-                self.LastSituation = self.currentSituaion
+        #If the play changes, put the situationChanged flag down and change lastPlay
+        if (self.lastPlay != currentPlay):
+            self.lastPlay = currentPlay
+            self.situationChanged = False
 
-    '''def addPreempt(play) possibly a function to add transition out of every state to the completed state with preemptPlay as the lambda
-        for g in states:
-            play.add_transition(g -> completed , preemptPlay)'''
-
-    ##A function to determine if the currently running play should be preempted
-    def preemptPlay(self):
-        return self.currentPreempt
+        #If the situation has changed and its been longer than situationChange
+        #time without a play change, try to preempt the current play
+        if (self.situationChanged and
+                abs(time.time() - self.situationChangeTime) >
+                self.preemptTime):
+            #Check to see if the play is a standard play before trying to preempt
+            if (currentPlay != None and isinstance(
+                    currentPlay, standard_play.StandardPlay) and self.enabled):
+                if (currentPlay.try_preempt()):
+                    print("Play has been preempted!")
+                    self.situationChanged = False
 
     ##Returns the distance from a given robot to the ball
     def ballToRobotDist(self, robot):
         return (robot.pos - self.systemState.ball.pos).mag()
 
-    ##Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
-    #
+    ##
+    # Returns a tuple of the closest robot to the ball and the distance that robot is away from the ball
     #
     def closestRobot(self):
         closestRobot = None
@@ -612,7 +641,7 @@ class SituationalPlaySelector:
         fieldLen = constants.Field.Length
         midfield = fieldLen / 2
 
-        if (ballPos.y < midfield - (midfieldFactor / 2) * fieldLen):
+        if (ballPos.y <= midfield - (midfieldFactor / 2) * fieldLen):
             self.ballLocation = self.FieldLoc.DEFENDSIDE
         elif (ballPos.y > midfield + (midfieldFactor / 2) * fieldLen):
             self.ballLocation = self.FieldLoc.ATTACKSIDE

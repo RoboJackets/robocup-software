@@ -5,9 +5,8 @@
 #include <Geometry2d/Point.hpp>
 #include <rc-fshare/pid.hpp>
 #include <time.hpp>
-
-class OurRobot;
-
+#include "Robot.hpp"
+#include "motion/MotionSetpoint.hpp"
 /**
  * @brief Handles computer-side motion control
  * @details This class handles the details of creating velocity commands for a
@@ -19,44 +18,42 @@ class OurRobot;
  */
 class MotionControl {
 public:
-    MotionControl(Context* context, OurRobot* robot);
-
-    /**
-     * Stops the robot.
-     * The robot will decelerate at max acceleration until it stops.
-     */
-    void stopped();
+    MotionControl(Context* context, int shell_id);
 
     /**
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radioTx packet.
      */
-    void run();
+    void run(const RobotState& state, const Planning::AngleFunctionPath& path,
+             bool is_joystick_controlled, MotionSetpoint* setpoint);
 
     /**
-     *This returns the PID controller denoted by the char passed in
-     *Accepts characters 'x' and 'y' for x and y position controllers
-     *as well as 'a' for the angle controller
+     * Force stop the motion by setting the setpoint to zero.
+     * Also resets PID controllers.
+     * @param setpoint
      */
-    Pid* getPid(char controller);
+    void stop(MotionSetpoint* setpoint);
 
     static void createConfiguration(Configuration* cfg);
 
 private:
-    // sets the target velocity in the robot's radio packet
-    // this method is used by both run() and stopped() and does the
-    // velocity and acceleration limiting
-    void _targetBodyVel(Geometry2d::Point targetVel);
+    /**
+     * Reset all PID controllers. To be used while the robot is not under PID
+     * control (stopped or joystick-controlled).
+     */
+    void reset();
 
-    /// sets the target angle velocity in the robot's radio packet
-    /// does velocity limiting and conversion
-    void _targetAngleVel(float angleVel);
+    /**
+     * Update PID parameters.
+     */
+    void updateParams();
 
-    Context* _context;
-    OurRobot* _robot;
+    void setVelocity(MotionSetpoint* setpoint, Geometry2d::Twist target_vel);
+
+    int _shell_id;
 
     /// The last velocity command (in m/s) that we sent / to the robot
-    Geometry2d::Point _lastWorldVelCmd;
+    Geometry2d::Twist _last_world_vel_command;
 
     /// the time when the last velocity command was sent
     RJ::Time _lastCmdTime;
@@ -68,4 +65,7 @@ private:
     static ConfigDouble* _max_acceleration;
     static ConfigDouble* _max_velocity;
     static ConfigDouble* _x_multiplier;
+
+    DebugDrawer* _drawer;
+    RobotConfig* _config;
 };

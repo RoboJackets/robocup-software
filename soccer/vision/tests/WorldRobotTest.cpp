@@ -17,10 +17,9 @@ TEST(WorldRobot, no_robot) {
 
 TEST(WorldRobot, one_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
-    double th = 1;
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
     int rID = 1;
-    CameraRobot b = CameraRobot(t, p, th, rID);
+    CameraRobot b = CameraRobot(t, pose, rID);
     int cID = 1;
     WorldRobot w;
 
@@ -43,9 +42,9 @@ TEST(WorldRobot, one_robot) {
 
     EXPECT_TRUE(wb.getIsValid());
     EXPECT_EQ(wb.getRobotID(), rID);
-    EXPECT_EQ(rp.x(), p.x());
-    EXPECT_EQ(rp.y(), p.y());
-    EXPECT_EQ(rt, th);
+    EXPECT_EQ(rp.x(), pose.position().x());
+    EXPECT_EQ(rp.y(), pose.position().y());
+    EXPECT_EQ(rt, pose.heading());
     EXPECT_EQ(rv.x(), 0);
     EXPECT_EQ(rv.y(), 0);
     EXPECT_EQ(ro, 0);
@@ -58,13 +57,16 @@ TEST(WorldRobot, one_robot) {
 
 TEST(WorldRobot, two_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p1 = Geometry2d::Point(1,1);
-    Geometry2d::Point p2 = Geometry2d::Point(2,2);
-    double th1 = 1;
-    double th2 = 2;
+    Geometry2d::Pose pose1(Geometry2d::Point(1, 1), 1);
+    Geometry2d::Pose pose2(Geometry2d::Point(2, 2), 2);
+
+    // Geometry2d::Point p1 = Geometry2d::Point(1,1);
+    // Geometry2d::Point p2 = Geometry2d::Point(2,2);
+    // double th1 = 1;
+    // double th2 = 2;
     int rID = 1;
-    CameraRobot b1 = CameraRobot(t, p1, th1, rID);
-    CameraRobot b2 = CameraRobot(t, p2, th2, rID);
+    CameraRobot b1 = CameraRobot(t, pose1, rID);
+    CameraRobot b2 = CameraRobot(t, pose2, rID);
     int cID = 1;
     WorldRobot w;
 
@@ -87,9 +89,9 @@ TEST(WorldRobot, two_robot) {
     std::list<KalmanRobot> list = wb.getRobotComponents();
 
     EXPECT_TRUE(wb.getIsValid());
-    EXPECT_EQ(rp.x(), (p1.x() + p2.x()) / 2);
-    EXPECT_EQ(rp.y(), (p1.y() + p2.y()) / 2);
-    EXPECT_EQ(rt, (th1 + th2) / 2);
+    EXPECT_EQ(rp.x(), (pose1.position().x() + pose2.position().x()) / 2);
+    EXPECT_EQ(rp.y(), (pose1.position().y() + pose2.position().y()) / 2);
+    EXPECT_EQ(rt, (pose1.heading() + pose2.heading()) / 2);
     EXPECT_EQ(rv.x(), 0);
     EXPECT_EQ(rv.y(), 0);
     EXPECT_EQ(ro, 0);

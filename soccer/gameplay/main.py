@@ -1,6 +1,8 @@
 import play_registry as play_registry_module
+import test_registry as test_registry_module
 import playbook
 import play
+import gameplay_test
 import fs_watcher
 import class_import
 import logging
@@ -11,6 +13,7 @@ import sys
 import os
 import constants
 import situational_play_selection
+import robocup
 
 ## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -50,6 +53,19 @@ def init(log_errors=True):
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
 
+    #TODO: finish test registry
+    # init test registry
+    global _test_registry
+    _test_registry = test_registry_module.TestRegistry()
+    test_classes = class_import.recursive_import_classes(
+        GAMEPLAY_DIR, ['gameplay_tests'], gameplay_test.GameplayTest)
+
+    for entry in test_classes:
+        # keep in mind that @entry is a tuple
+        mod_path = entry[0][1:]
+        _test_registry.insert(mod_path, entry[1])
+
+
     def _module_blacklisted(module):
         """Return true if a module has been filtered out of autoloading."""
         return (module[0] == '.' or
@@ -59,7 +75,8 @@ def init(log_errors=True):
     def fswatch_callback(event_type, module_path):
         # the top-level folders we care about watching
         autoloadables = [
-            'plays', 'skills', 'tactics', 'evaluation', 'visualization'
+            'plays', 'skills', 'tactics', 'evaluation', 'visualization',
+            'formation', 'positions'
         ]
 
         # Don't load if we aren't a special module or if the filename is hidden
@@ -226,6 +243,13 @@ def play_registry():
     global _play_registry
     return _play_registry
 
+
+_test_registry = None
+
+
+def test_registry():
+    global _test_registry
+    return _test_registry
 
 # returns the first robot in our robots with matching ID,
 # or None if no robots have the given ID
