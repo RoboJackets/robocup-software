@@ -403,7 +403,7 @@ void Gameplay::GameplayModule::run() {
                 // record the state of our behavior tree
                 std::string bhvrTreeDesc =
                     extract<std::string>(getRootPlay().attr("__str__")());
-                _context->state.logFrame->set_behavior_tree(bhvrTreeDesc);
+                _context->logFrame->set_behavior_tree(bhvrTreeDesc);
             } catch (error_already_set) {
                 PyErr_Print();
             }

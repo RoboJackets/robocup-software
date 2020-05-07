@@ -1,6 +1,7 @@
 #pragma once
 
 #include <protobuf/grSim_Packet.pb.h>
+#include <protobuf/referee.pb.h>
 
 #include <Constants.hpp>
 #include <set>
@@ -41,6 +42,10 @@ struct Context {
     DebugDrawer debug_drawer;
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
+    std::vector<SSL_Referee> referee_packets;
+
+    std::shared_ptr<Packet::LogFrame> logFrame;
+
     WorldState world_state;
 
     Field_Dimensions field_dimensions;

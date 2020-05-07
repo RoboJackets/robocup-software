@@ -34,20 +34,26 @@
 
 #include <protobuf/LogFrame.pb.h>
 
-#include <QString>
 #include <QReadLocker>
-#include <QWriteLocker>
 #include <QReadWriteLock>
-#include <vector>
+#include <QString>
+#include <QWriteLocker>
 #include <algorithm>
-#include <memory>
-#include "time.hpp"
 #include <boost/circular_buffer.hpp>
+#include <memory>
+#include <vector>
 
-class Logger {
+#include "Context.hpp"
+#include "Node.hpp"
+#include "time.hpp"
+
+class Logger : public Node {
 public:
-    Logger(size_t logSize = 10000);
+    Logger(Context* context, size_t logSize = 10000);
     ~Logger();
+
+    void start() override;
+    void run() override;
 
     bool open(QString filename);
     void close();
@@ -133,4 +139,8 @@ private:
 
     // Clears our history
     void clear();
+
+    bool _viewing = false;
+
+    Context* _context;
 };

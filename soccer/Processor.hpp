@@ -115,9 +115,6 @@ public:
 
     bool isInitialized() const;
 
-    // Time of the first LogFrame
-    std::optional<RJ::Time> firstLogTime;
-
     Context* context() { return &_context; }
 
     void run();

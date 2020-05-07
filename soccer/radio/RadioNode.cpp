@@ -45,7 +45,7 @@ void RadioNode::run() {
 
     while (_radio->hasReversePackets()) {
         Packet::RadioRx rx = _radio->popReversePacket();
-        _context->state.logFrame->add_radio_rx()->CopyFrom(rx);
+        _context->logFrame->add_radio_rx()->CopyFrom(rx);
 
         _lastRadioRxTime = RJ::Time(std::chrono::microseconds(rx.timestamp()));
 
@@ -60,7 +60,7 @@ void RadioNode::run() {
         }
     }
 
-    construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
+    construct_tx_proto((*_context->logFrame->mutable_radio_tx()),
                        _context->robot_intents, _context->motion_setpoints);
-    _radio->send(*_context->state.logFrame->mutable_radio_tx());
+    _radio->send(*_context->logFrame->mutable_radio_tx());
 }

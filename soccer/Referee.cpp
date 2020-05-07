@@ -37,9 +37,7 @@ Referee::Referee(Context* const context)
       _kickDetectState{},
       _readyBallPos{},
       _kickTime{},
-      _mutex{},
-      _packets{},
-      _context(context),
+      _context{context},
       prev_command_{},
       prev_stage_{},
       ballPlacementX{},
@@ -49,12 +47,6 @@ Referee::Referee(Context* const context)
 void Referee::start() {
     setupRefereeMulticast();
     startReceive();
-}
-
-void Referee::getPackets(std::vector<RefereePacket>& packets) {
-    std::lock_guard<std::mutex> lock(_mutex);
-    packets = _packets;
-    _packets.clear();
 }
 
 void Referee::startReceive() {
@@ -90,9 +82,6 @@ void Referee::receivePacket(const boost::system::error_code& error,
         return;
     }
 
-    std::lock_guard<std::mutex> lock{_mutex};
-    _packets.push_back(packet);
-
     stage_ = static_cast<Stage>(packet.wrapper.stage());
     command_ = static_cast<Command>(packet.wrapper.command());
     sent_time =
@@ -106,6 +95,8 @@ void Referee::receivePacket(const boost::system::error_code& error,
     blue_info.ParseRefboxPacket(packet.wrapper.blue());
     ballPlacementX = packet.wrapper.designated_position().x();
     ballPlacementY = packet.wrapper.designated_position().y();
+
+    _context->referee_packets.push_back(packet.wrapper);
 
     // If we have no name, we're using a default config and there's no
     // sense trying to match the referee's output (because chances are

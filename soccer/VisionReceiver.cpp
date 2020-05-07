@@ -59,7 +59,7 @@ void VisionReceiver::run() {
     _io_context.poll();
 
     for (auto& packet : _packets) {
-        SSL_WrapperPacket* log = _context->state.logFrame->add_raw_vision();
+        SSL_WrapperPacket* log = _context->logFrame->add_raw_vision();
         log->CopyFrom(packet->wrapper);
 
         _last_receive_time = packet->receivedTime;

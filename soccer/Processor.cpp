@@ -10,7 +10,6 @@
 #include <joystick/GamepadController.hpp>
 #include <joystick/Joystick.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
-#include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
 #include "Processor.hpp"
 #include "radio/PacketConvert.hpp"
@@ -23,8 +22,6 @@ using namespace std;
 using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
-
-static const auto Command_Latency = 0ms;
 
 // TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
@@ -53,7 +50,7 @@ void Processor::createConfiguration(Configuration* cfg) {
 
 Processor::Processor(bool sim, bool defendPlus, bool blueTeam,
                      std::string readLogFile = "")
-    : _loopMutex(), _readLogFile(readLogFile) {
+    : _loopMutex(), _readLogFile(readLogFile), _logger(&_context) {
     _running = true;
     _framerate = 0;
     _initialized = false;
@@ -86,12 +83,14 @@ Processor::Processor(bool sim, bool defendPlus, bool blueTeam,
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
-        firstLogTime = _logger.startTime();
     }
+
+    _logger.start();
 
     _nodes.push_back(_visionReceiver.get());
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
+    _nodes.push_back(&_logger);
 }
 
 Processor::~Processor() {
@@ -204,39 +203,6 @@ void Processor::run() {
         curStatus.lastLoopTime = startTime;
         _context.state.time = startTime;
 
-        if (!firstLogTime) {
-            firstLogTime = startTime;
-        }
-
-        ////////////////
-        // Reset
-
-        // Make a new log frame
-        _context.state.logFrame = std::make_shared<Packet::LogFrame>();
-        _context.state.logFrame->set_timestamp(RJ::timestamp());
-        _context.state.logFrame->set_command_time(
-            RJ::timestamp(startTime + Command_Latency));
-        _context.state.logFrame->set_use_our_half(
-            _context.game_settings.use_our_half);
-        _context.state.logFrame->set_use_opponent_half(
-            _context.game_settings.use_their_half);
-        _context.state.logFrame->set_manual_id(_context.game_settings.manualID);
-        _context.state.logFrame->set_blue_team(_context.game_state.blueTeam);
-        _context.state.logFrame->set_defend_plus_x(
-            _context.game_settings.defendPlusX);
-        _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
-
-        if (first) {
-            first = false;
-
-            Packet::LogConfig* logConfig =
-                _context.state.logFrame->mutable_log_config();
-            logConfig->set_generator("soccer");
-            logConfig->set_git_version_hash(git_version_hash);
-            logConfig->set_git_version_dirty(git_version_dirty);
-            logConfig->set_simulation(_context.game_settings.simulation);
-        }
-
         ////////////////
         // Inputs
 
@@ -270,27 +236,6 @@ void Processor::run() {
 
         // Log referee data
         _refereeModule->run();
-        vector<RefereePacket> refereePackets;
-        _refereeModule->getPackets(refereePackets);
-        for (const RefereePacket& packet : refereePackets) {
-            SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
-            log->CopyFrom(packet.wrapper);
-            curStatus.lastRefereeTime =
-                std::max(curStatus.lastRefereeTime, packet.receivedTime);
-        }
-
-        string yellowname, bluename;
-
-        if (_context.game_state.blueTeam) {
-            bluename = _context.game_state.OurInfo.name;
-            yellowname = _context.game_state.TheirInfo.name;
-        } else {
-            yellowname = _context.game_state.OurInfo.name;
-            bluename = _context.game_state.TheirInfo.name;
-        }
-
-        _context.state.logFrame->set_team_name_blue(bluename);
-        _context.state.logFrame->set_team_name_yellow(yellowname);
 
         // Run high-level soccer logic
         _gameplayModule->run();
@@ -300,6 +245,7 @@ void Processor::run() {
         if (_gameplayModule->hasFieldEdgeInsetChanged()) {
             _gameplayModule->calculateFieldObstacles();
         }
+
         /// Collect global obstacles
         Geometry2d::ShapeSet globalObstacles =
             _gameplayModule->globalObstacles();
@@ -379,6 +325,7 @@ void Processor::run() {
 
         _motionControl->run();
         _grSimCom->run();
+
         // Run all nodes in sequence
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to
@@ -389,97 +336,12 @@ void Processor::run() {
             }
         }
 
-        ////////////////
-        // Store logging information
-
-        // Debug layers
-        const QStringList& layers = _context.debug_drawer.debugLayers();
-        for (const QString& str : layers) {
-            _context.state.logFrame->add_debug_layers(str.toStdString());
-        }
-
-        // Add our robots data to the LogFrame
-        for (OurRobot* r : _context.state.self) {
-            if (r->visible()) {
-                r->addStatusText();
-
-                Packet::LogFrame::Robot* log =
-                    _context.state.logFrame->add_self();
-                *log->mutable_pos() = r->pos();
-                *log->mutable_world_vel() = r->vel();
-                *log->mutable_body_vel() =
-                    r->vel().rotated(M_PI_2 - r->angle());
-                //*log->mutable_cmd_body_vel() = r->
-                // *log->mutable_cmd_vel() = r->cmd_vel;
-                // log->set_cmd_w(r->cmd_w);
-                log->set_shell(r->shell());
-                log->set_angle(r->angle());
-                auto radioRx = r->radioRx();
-                if (radioRx.has_kicker_voltage()) {
-                    log->set_kicker_voltage(radioRx.kicker_voltage());
-                }
-
-                if (radioRx.has_kicker_status()) {
-                    log->set_charged(radioRx.kicker_status() & 0x01);
-                    log->set_kicker_works(!(radioRx.kicker_status() & 0x90));
-                }
-
-                if (radioRx.has_ball_sense_status()) {
-                    log->set_ball_sense_status(radioRx.ball_sense_status());
-                }
-
-                if (radioRx.has_battery()) {
-                    log->set_battery_voltage(radioRx.battery());
-                }
-
-                log->mutable_motor_status()->Clear();
-                log->mutable_motor_status()->MergeFrom(radioRx.motor_status());
-
-                if (radioRx.has_quaternion()) {
-                    log->mutable_quaternion()->Clear();
-                    log->mutable_quaternion()->MergeFrom(radioRx.quaternion());
-                } else {
-                    log->clear_quaternion();
-                }
-
-                for (const Packet::DebugText& t : r->robotText) {
-                    log->add_text()->CopyFrom(t);
-                }
-            }
-        }
-
-        // Opponent robots
-        for (OpponentRobot* r : _context.state.opp) {
-            if (r->visible()) {
-                Packet::LogFrame::Robot* log =
-                    _context.state.logFrame->add_opp();
-                *log->mutable_pos() = r->pos();
-                log->set_shell(r->shell());
-                log->set_angle(r->angle());
-                *log->mutable_world_vel() = r->vel();
-                *log->mutable_body_vel() =
-                    r->vel().rotated(2 * M_PI - r->angle());
-            }
-        }
-
-        // Ball
-        if (_context.state.ball.valid) {
-            Packet::LogFrame::Ball* log =
-                _context.state.logFrame->mutable_ball();
-            *log->mutable_pos() = _context.state.ball.pos;
-            *log->mutable_vel() = _context.state.ball.vel;
-        }
 
         ////////////////
         // Outputs
 
         // Send motion commands to the robots
         sendRadioData();
-
-        // Write to the log unless we are viewing logs or main window is paused
-        if (_readLogFile.empty() && !_context.game_settings.paused) {
-            _logger.addFrame(_context.state.logFrame);
-        }
 
         // Store processing loop status
         _statusMutex.lock();
@@ -488,6 +350,9 @@ void Processor::run() {
 
         // Processor Initialization Completed
         _initialized = true;
+
+        // Log this entire frame
+        _logger.run();
 
         ////////////////
         // Timing
