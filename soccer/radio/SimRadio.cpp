@@ -7,7 +7,6 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <cmath>
-#include <iostream>
 #include <stdexcept>
 #include "PacketConvert.hpp"
 
@@ -192,8 +191,6 @@ void SimRadio::switchTeam(bool blueTeam) {
     }
 
     int status_port = blueTeam ? SimBlueStatusPort : SimYellowStatusPort;
-
-    std::cout << status_port << std::endl;
 
     // Let them throw exceptions
     _socket.bind(ip::udp::endpoint(ip::udp::v4(), status_port));
