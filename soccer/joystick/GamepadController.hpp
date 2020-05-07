@@ -9,6 +9,7 @@
  */
 class GamepadController : public InputDevice {
 public:
+    GamepadController();
     GamepadController(SDL_Event& event);
     ~GamepadController();
 

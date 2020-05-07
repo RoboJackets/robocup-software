@@ -14,6 +14,12 @@ const float TRIGGER_CUTOFF = 0.9;
 std::vector<int> GamepadController::controllersInUse = {};
 int GamepadController::deviceRemoved = -1;
 
+GamepadController::GamepadController()
+    : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {
+
+    controllerId = -1;
+    robotId = -1;
+}
 
 GamepadController::GamepadController(SDL_Event& event)
     : _controller(nullptr), _lastDribblerTime(), _lastKickerTime() {

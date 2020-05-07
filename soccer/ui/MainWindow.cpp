@@ -9,10 +9,9 @@
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
-#include "GrSimCommunicator.hpp"
 #include "RobotStatusWidget.hpp"
-#include "radio/Radio.hpp"
 #include "rc-fshare/git_version.hpp"
+#include "radio/Radio.hpp"
 
 #include <QActionGroup>
 #include <QFileDialog>
@@ -168,10 +167,6 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     // current Git index is dirty
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
                    (git_version_dirty ? "*" : ""));
-
-    // Pass context into fieldview
-    // (apparently simfieldview is used even outside of simulation)
-    _ui.fieldView->setContext(_processor->context());
 
     if (!_processor->simulation()) {
         _ui.menu_Simulator->setEnabled(false);
@@ -485,7 +480,6 @@ void MainWindow::updateViews() {
                                        .arg(QString::number(frameNumber()))
                                        .arg(QString::number(frameNum)));
 
-        /*
         // Update non-message tree items
         _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                                   frameNumber());
@@ -503,7 +497,6 @@ void MainWindow::updateViews() {
             _ui.logTree->sortItems(ProtobufTree::Column_Tag,
                                    Qt::AscendingOrder);
         }
-        */
 
         // update the behavior tree view
         QString behaviorStr =
@@ -513,12 +506,10 @@ void MainWindow::updateViews() {
         }
     }
 
-    _ui.refStage->setText(
-        RefereeModuleEnums::stringFromStage(_processor->refereeModule()->stage_)
-            .c_str());
+    _ui.refStage->setText(RefereeModuleEnums::stringFromStage(
+                              _processor->refereeModule()->stage_).c_str());
     _ui.refCommand->setText(RefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command_)
-                                .c_str());
+                                _processor->refereeModule()->command_).c_str());
 
     // convert time left from ms to s and display it to two decimal places
     int timeSeconds =
@@ -1056,7 +1047,7 @@ void MainWindow::on_actionCenterBall_triggered() {
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
 
-    _processor->context()->grsim_command = simPacket;
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopBall_triggered() {
@@ -1070,7 +1061,7 @@ void MainWindow::on_actionStopBall_triggered() {
     ball_replace->mutable_pos()->set_y(ballPos.y());
     ball_replace->mutable_vel()->set_x(0);
     ball_replace->mutable_vel()->set_y(0);
-    _processor->context()->grsim_command = simPacket;
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -1115,7 +1106,7 @@ void MainWindow::on_actionResetField_triggered() {
     ball_replace->mutable_vel()->set_x(0.0);
     ball_replace->mutable_vel()->set_y(0.0);
 
-    _processor->context()->grsim_command = simPacket;
+    _ui.fieldView->sendSimCommand(simPacket);
 }
 
 void MainWindow::on_actionStopRobots_triggered() {
@@ -1360,7 +1351,7 @@ void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
 
 void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
     _inputDeviceManager->multipleManual(value);
-    _inputDeviceManager->setupInputDevices();
+    _inputDeviceManager->setupInputDevices(_processor->context()->is_joystick_controlled);
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
@@ -1371,9 +1362,6 @@ void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
     _autoExternalReferee = value;
     _processor->externalReferee(value);
 }
-
-////////////////
-// Tab Widget Section
 
 ////////
 // Debug layer list
@@ -1481,25 +1469,6 @@ void MainWindow::on_savePlaybook_clicked() {
 void MainWindow::on_clearPlays_clicked() {
     _processor->gameplayModule()->clearPlays();
     playIndicatorStatus(true);
-}
-
-////////
-// Testing Tab
-
-void MainWindow::on_testRun_clicked() {
-    _processor->gameplayModule()->loadTest();
-}
-
-void MainWindow::on_addToTable_clicked() {
-    _processor->gameplayModule()->addTests();
-}
-
-void MainWindow::on_removeFromTable_clicked() {
-    _processor->gameplayModule()->removeTest();
-}
-
-void MainWindow::on_testNext_clicked() {
-    _processor->gameplayModule()->nextTest();
 }
 
 void MainWindow::setRadioChannel(RadioChannels channel) {
