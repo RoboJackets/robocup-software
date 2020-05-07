@@ -6,7 +6,9 @@
 
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
-#include <manual/InputDevice.hpp>
+#include "InputDevice.hpp"
+#include "RobotIntent.hpp"
+#include <Context.hpp>
 
 using namespace std;
 
@@ -18,7 +20,7 @@ protected:
   void applyInputDeviceControls(OurRobot* robot, Packet::Control* txRobot);
 
 public:
-  InputDeviceManager();
+  InputDeviceManager(Context* context);
 
   // input devices index represents robot id
   std::vector<InputDevice*> _inputDevices;
@@ -29,6 +31,8 @@ public:
   bool _multipleManual;
 
   void setupInputDevices();
+
+  void attachVirtual();
 
   void update(std::vector<OurRobot*>& robots, Packet::RadioTx* tx);
 
@@ -55,9 +59,8 @@ public:
     _useFieldOrientedManualDrive = foc;
   }
 
-  void applyInputDeviceControls(std::vector<OurRobot*>& robots, Packet::RadioTx* tx);
-
-  void applyInputDeviceControls(const InputDeviceControlValues& controlVals, Packet::Control* tx, OurRobot* robot);
+  void applyInputDeviceControls(std::array<RobotIntent, Num_Shells>& robot_intents,
+    const std::array<bool, Num_Shells>& _is_joystick_controlled);
 
   std::vector<int> getInputDeviceRobotIds();
 
@@ -71,4 +74,6 @@ private:
   // If true, rotates robot commands from the joystick based on its
   // orientation on the field
   bool _useFieldOrientedManualDrive = false;
+  
+  Context* _context;
 };

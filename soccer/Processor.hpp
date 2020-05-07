@@ -24,8 +24,8 @@
 #include "Context.hpp"
 #include "rc-fshare/rtp.hpp"
 
-#include "manual/InputDeviceManager.hpp"
-#include "manual/InputDevice.hpp"
+#include "joystick/InputDeviceManager.hpp"
+#include "joystick/InputDevice.hpp"
 
 class Configuration;
 class RobotStatus;

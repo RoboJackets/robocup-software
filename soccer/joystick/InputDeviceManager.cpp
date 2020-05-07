@@ -1,44 +1,40 @@
-#include <manual/InputDeviceManager.hpp>
-#include <manual/GamepadController.hpp>
-#include <manual/GamepadJoystick.hpp>
-#include <manual/SpaceNavJoystick.hpp>
+#include "InputDeviceManager.hpp"
+#include "GamepadController.hpp"
+#include <SDL.h>
 
-InputDeviceManager::InputDeviceManager() {
-  setupInputDevices();
+InputDeviceManager::InputDeviceManager(Context* context) : _context(context) {
+  setupInputDevices(_context->is_joystick_controlled);
 }
 
-void InputDeviceManager::setupInputDevices() {
+void InputDeviceManager::setupInputDevices(
+    std::array<bool, Num_Shells> _is_joystick_controlled) {
     _inputDevices.clear();
+    _inputDevices.reserve(Num_Shells);
 
     // Init event system
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_EVENTS) != 0) {
         cerr << "ERROR: SDL could not Initialize event system! SDL "
             "Error: " << SDL_GetError() << endl;
         return;
     }
 
-    //TODO
-    // run static init functions for each type of devices
-    GamepadController::initDeviceType();
-    GamepadJoystick::initDeviceType();
-
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
+        cerr << "ERROR: SDL could not initialize game controller! SDL "
+            "Error: " << SDL_GetError() << endl;
+    }
+    
     _manualID = -1;
     _multipleManual = false;
     _dampedTranslation = true;
     _dampedRotation = true;
-
-    // _inputDevices.resize(Robots_Per_Team);
 }
 
-void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx* tx) {
-    // TODO This is where the bulk of event handling and checking should be done for new controllers
+void InputDeviceManager::update(Context* _context) {
     // Pump sdl update for each type
     SDL_GameControllerUpdate();
 
-    // TODO Only serve so many events
     SDL_Event event;
 
-    // TODO Opens on number of robots but currently indexes by SDL connection number
     // Iterate eventqueue
     while (SDL_PollEvent(&event)) {
         // Figure out what event it is
@@ -79,7 +75,7 @@ void InputDeviceManager::update(std::vector<OurRobot*>& robots, Packet::RadioTx*
     }
 
     // Apply input device updates to robots
-    applyInputDeviceControls(robots, tx);
+    applyInputDeviceControls(_context->robot_intents, _context->_is_joystick_controlled);
 
 }
 
@@ -164,58 +160,26 @@ InputDeviceControlValues InputDeviceManager::getInputDeviceControlValue(InputDev
 }
 
 
-// TODO Remove joystick controlVals from pass and use in header
-void InputDeviceManager::applyInputDeviceControls(std::vector<OurRobot*>& robots, Packet::RadioTx* tx) {
-
-    // Add RadioTx commands for visible robots and apply joystick input
-    // TODO I think this radio tx application needs to be removed and only the final packets passed here
-    // TODO I think this needs to be moved outside this
-    Packet::Robot* txRobot = tx->add_robots();
-    for (OurRobot* r : robots) {
-        if (r->visible() || _manualID == r->shell()) {
-
-            // Copy motor commands.
-            // Even if we are using the joystick, this sets robot_id and the
-            // number of motors.
-            txRobot->CopyFrom(r->robotPacket);
+void InputDeviceManager::applyInputDeviceControls(
+    std::array<RobotIntent, Num_Shells>& robot_intents,
+    const std::array<bool, Num_Shells>& _is_joystick_controlled) {
+    for (InputDevice* dev: _inputDevices) {
+        int targetId = dev->robotId;
+        // check if dev is valid and robot is supposed to be manually controlled
+        if (dev->valid && _is_joystick_controlled[targetId]) {
+            InputDeviceControlValues val = getInputDeviceControlValue(*dev);
+            RobotIntent intent = new RobotIntent();
+            intent.motion_command = new WorldVelTargetCommand(val.translation);
+            // intent.rotation_command = new FacePointCommand(val.rotation);
+            if (val.kick) {
+                intent.shoot_mode = RobotIntent::ShootMode::KICK;
+            } else if (val.chip) {
+                intent.shoot_mode = RobotIntent::ShootMode::CHIP;
+            }
+            intent.kcstrength = val.kickPower;
+            robot_intents[targetId] = intent;
         }
     }
-    for (InputDevice* dev : _inputDevices) {
-        int robot_id = dev->getRobotId();
-        if (robot_id != -1) {
-            applyInputDeviceControls(dev->getInputDeviceControlValues(),
-                                     txRobot->mutable_control(), robots.at(robot_id));
-        }
-    }
+
 }
 
-void InputDeviceManager::applyInputDeviceControls(const InputDeviceControlValues& controlVals, Packet::Control* tx, OurRobot* robot) {
-
-    Geometry2d::Point translation(controlVals.translation);
-
-    // use world coordinates if we can see the robot
-    // otherwise default to body coordinates
-    if (robot && robot->visible() && _useFieldOrientedManualDrive) {
-      translation.rotate(-M_PI / 2 - robot->angle());
-    }
-
-    // translation
-    tx->set_xvelocity(translation.x());
-    tx->set_yvelocity(translation.y());
-
-    // rotation
-    tx->set_avelocity(controlVals.rotation);
-
-    // kick/chip
-    bool kick = controlVals.kick || controlVals.chip;
-    tx->set_triggermode(kick
-                            ? (_kickOnBreakBeam ? Packet::Control::ON_BREAK_BEAM
-                                                : Packet::Control::IMMEDIATE)
-                            : Packet::Control::STAND_DOWN);
-    tx->set_kcstrength(controlVals.kickPower);
-    tx->set_shootmode(controlVals.kick ? Packet::Control::KICK
-                                       : Packet::Control::CHIP);
-
-    // dribbler
-    tx->set_dvelocity(controlVals.dribble ? controlVals.dribblerPower : 0);
-}

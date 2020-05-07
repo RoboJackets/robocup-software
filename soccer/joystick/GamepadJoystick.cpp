@@ -8,16 +8,25 @@ static constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 
 static constexpr float AXIS_MAX = 32768.0f;
 
-std::vector<int> GamepadJoystick::joysticksInUse = {};
-int GamepadJoystick::deviceRemoved = -1;
-
-GamepadJoystick::GamepadJoystick(SDL_Event& event)
-: _joystick(nullptr), _lastDribblerTime(), _lastKickerTime() {
-    connected = false;
-    robotId = -1;
-    openInputDevice(event);
+GamepadJoystick::GamepadJoystick()
+    : _joystick(nullptr), _lastDribblerTime(), _lastKickerTime() {
+    if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
+        cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
+             << endl;
+        return;
+    }
+    if (SDL_NumJoysticks() < 1) {
+        cout << "Warning: No joysticks connected!" << endl;
+    } else {
+        _joystick = SDL_JoystickOpen(0);
+        if (_joystick == nullptr) {
+            cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
+                 << endl;
+        } else {
+            cout << "Joystick connected to " << SDL_JoystickName(0) << endl;
+        }
+    }
 }
-
 
 GamepadJoystick::~GamepadJoystick() {
     QMutexLocker(&mutex());
@@ -26,51 +35,9 @@ GamepadJoystick::~GamepadJoystick() {
     SDL_Quit();
 }
 
-
-void GamepadJoystick::initDeviceType() {
-    if (SDL_Init(SDL_INIT_JOYSTICK) < 0) {
-      cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
-           << endl;
-      return;
-    }
-}
-
-
-void GamepadJoystick::openInputDevice(SDL_Event& event) {
-    if (SDL_NumJoysticks()) {
-        // Open the first available joystick
-        for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-            // setup the joystick as a game joystick if available
-            if (std::find(joysticksInUse.begin(), joysticksInUse.end(),
-                          i) == joysticksInUse.end() &&
-                SDL_IsGameController(i)) {
-                SDL_Joystick* joystick;
-                joystick = SDL_JoystickOpen(i);
-
-                if (joystick != nullptr) {
-                    _joystick = joystick;
-                    connected = true;
-                    joystickId = i;
-                    joysticksInUse.push_back(i);
-                    sort(joysticksInUse.begin(), joysticksInUse.end());
-                    cout << "Using " << SDL_JoystickName(_joystick)
-                         << " game joystick as joystick # "
-                         << joysticksInUse.size() << endl;
-                    break;
-                } else {
-                    cerr << "ERROR: Could not open joystick! SDL Error: "
-                         << SDL_GetError() << endl;
-                }
-                return;
-            }
-        }
-    }
-}
-
-
 bool GamepadJoystick::valid() const { return _joystick != nullptr; }
 
-void GamepadJoystick::update(SDL_Event& event) {
+void GamepadJoystick::update() {
     QMutexLocker(&mutex());
     SDL_JoystickUpdate();
 
@@ -120,6 +87,9 @@ void GamepadJoystick::update(SDL_Event& event) {
 
     _controls.chip = SDL_JoystickGetButton(_joystick, 5);
 
+    // for(int i = 0; i < SDL_JoystickNumButtons(_joystick); i++)
+    //    cout << static_cast<int>(SDL_JoystickGetButton(_joystick, i));
+    // cout << endl;
 
     // Rotation
     auto rightX = SDL_JoystickGetAxis(_joystick, 2) / AXIS_MAX;
@@ -151,7 +121,7 @@ void GamepadJoystick::update(SDL_Event& event) {
     _controls.rotation = -rightX;
 }
 
-InputDeviceControlValues GamepadJoystick::getInputDeviceControlValues() {
+JoystickControlValues GamepadJoystick::getJoystickControlValues() {
     QMutexLocker(&mutex());
     return _controls;
 }

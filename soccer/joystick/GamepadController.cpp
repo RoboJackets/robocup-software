@@ -30,13 +30,13 @@ GamepadController::~GamepadController() {
     SDL_Quit();
 }
 
-void GamepadController::initDeviceType() {
-  if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
+/* void GamepadController::initDeviceType() {
+  if (SDL_Init(SDL_INIT_GAMECONTROLLER) != 0) {
     cerr << "SDL could not initialize! SDL Error: " << SDL_GetError()
          << endl;
     return;
   }
-}
+} */
 
 bool GamepadController::valid() const { return _controller != nullptr; }
 

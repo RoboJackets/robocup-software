@@ -14,11 +14,9 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
-#include <manual/GamepadController.hpp>
-#include <manual/GamepadJoystick.hpp>
-#include <manual/InputDevice.hpp>
-#include <manual/InputDeviceManager.hpp>
-#include <manual/SpaceNavJoystick.hpp>
+#include <joystick/GamepadController.hpp>
+#include <joystick/InputDevice.hpp>
+#include <joystick/InputDeviceManager.hpp>
 #include <motion/MotionControl.hpp>
 #include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>

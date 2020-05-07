@@ -1,4 +1,4 @@
-#include "manual/InputDevice.hpp"
+#include "InputDevice.hpp"
 
 REGISTER_CONFIGURABLE(InputDevice);
 

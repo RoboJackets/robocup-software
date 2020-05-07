@@ -3,9 +3,9 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <manual/InputDeviceManager.hpp>
-#include <manual/InputDevice.hpp>
-#include <manual/GamepadController.hpp>
+#include <joystick/InputDeviceManager.hpp>
+#include <joystick/InputDevice.hpp>
+#include <joystick/GamepadController.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"

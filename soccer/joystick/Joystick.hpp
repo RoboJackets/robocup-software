@@ -9,11 +9,10 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <vector>
-#include <SDL.h>
 
-struct InputDeviceControlValues {
+struct JoystickControlValues {
 public:
-    InputDeviceControlValues()
+    JoystickControlValues()
         : translation(0, 0),
           rotation(0),
           kickPower(0),
@@ -32,21 +31,21 @@ public:
 /**
  * @brief Used for manually controlling robots
  * @details The joystick's main jobs are to report its status (valid or not) and
- * to return a InputDeviceControlValues object indicating the desired driving
+ * to return a JoystickControlValues object indicating the desired driving
  */
-class InputDevice : boost::noncopyable {
+class Joystick : boost::noncopyable {
 public:
-    InputDevice() : _mutex(QMutex::Recursive){};
-    virtual ~InputDevice(){};
+    Joystick() : _mutex(QMutex::Recursive){};
+    virtual ~Joystick(){};
 
     /**
-     * @brief Whether or not this InputDevice is connected to a real device
+     * @brief Whether or not this Joystick is connected to a real device
      */
     virtual bool valid() const = 0;
 
     /**
      * @brief Resets any stored values
-     * @details InputDevices are reset whenever the robot they're controlling is
+     * @details Joysticks are reset whenever the robot they're controlling is
      * switched
      */
     virtual void reset() = 0;
@@ -54,7 +53,7 @@ public:
     /**
      * @brief Instructs the joystick to updates its values
      */
-    virtual void update(SDL_Event& event) = 0;
+    virtual void update() = 0;
 
     /**
      * @brief Returns the control values from this joystick
@@ -62,7 +61,7 @@ public:
      * The processor handles scaling to real world values.
      * @return The control values for this joystick
      */
-    virtual InputDeviceControlValues getInputDeviceControlValues() = 0;
+    virtual JoystickControlValues getJoystickControlValues() = 0;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -70,10 +69,10 @@ public:
     void setRobotId(int rId) { robotId = rId; }
 
     // declaration of Config values
-    static ConfigDouble* InputDeviceRotationMaxSpeed;
-    static ConfigDouble* InputDeviceRotationMaxDampedSpeed;
-    static ConfigDouble* InputDeviceTranslationMaxSpeed;
-    static ConfigDouble* InputDeviceTranslationMaxDampedSpeed;
+    static ConfigDouble* JoystickRotationMaxSpeed;
+    static ConfigDouble* JoystickRotationMaxDampedSpeed;
+    static ConfigDouble* JoystickTranslationMaxSpeed;
+    static ConfigDouble* JoystickTranslationMaxDampedSpeed;
 
 protected:
     QMutex& mutex() { return _mutex; }

@@ -12,7 +12,7 @@ public:
     GamepadController(SDL_Event& event);
     ~GamepadController();
 
-    static void initDeviceType();
+    // static void initDeviceType();
 
     void reset() override;
     void update(SDL_Event& event) override;

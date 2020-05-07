@@ -1,6 +1,6 @@
 #pragma once
 
-#include "InputDevice.hpp"
+#include "Joystick.hpp"
 
 /**
  * @brief Joystick class for using a SpaceNavigator 3d mouse for controlling the
@@ -17,7 +17,7 @@
  * Note: usage of this joystick requires the spacenavd userspace driver daemon
  * to be running.
  */
-class SpaceNavJoystick : public InputDevice {
+class SpaceNavJoystick : public Joystick {
 public:
     SpaceNavJoystick();
     ~SpaceNavJoystick();
@@ -34,9 +34,9 @@ public:
     bool valid() const override;
 
     void reset() override;
-    void update(SDL_Event& event) override;
+    void update() override;
 
-    InputDeviceControlValues getInputDeviceControlValues() override;
+    JoystickControlValues getJoystickControlValues() override;
 
     static void createConfiguration(Configuration* cfg);
     static ConfigDouble* DribblerPositiveDeadzone;
@@ -50,7 +50,7 @@ protected:
     bool _daemonTried;
 
     //  store normalized values
-    InputDeviceControlValues _controls;
+    JoystickControlValues _controlValues;
 
     RJ::Time _lastDribbleTime;
 };
