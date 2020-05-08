@@ -3,14 +3,10 @@ import forces
 from forces import force, robot_force
 import main
 
-##
-# Also a bit of a prototype
-# I'm thinking that we should easily be able to tune first and second
-# degree terms for most of the simple forces like this one.
-# In addition to like clipping and things
-#
-class LinearOurRobotForce(robot_force.RobotForce):
 
+class LinearOurRobotForce(robot_force.RobotForce):
+    pass
+"""
     def __init__(self, scale=5.0, cap=1.0):
         super()
         self.scale = scale
@@ -43,4 +39,4 @@ class LinearOurRobotForce(robot_force.RobotForce):
 
 
         return outVec
-
+"""

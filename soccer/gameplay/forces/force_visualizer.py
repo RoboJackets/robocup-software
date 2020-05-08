@@ -2,34 +2,56 @@ import main
 import robocup
 import math
 from numpy import arange
+from forces import force_utils
 
-#A class for visualizing forces using the debug drawer.
+
+##
+#
+# Visualizes a force field
+#
+#
 class ForceVisualizer():
 
-    def __init__(self, force, scaleFactor = 0.3):
-        self.context = main.context()
-        self.force = force
-        self.scaleFactor = scaleFactor
 
-    def pointVisualize(self, point):
-        forceSample = self.force.sample(point)
+    force_field = None
 
-        drawVector = forceSample.origin + robocup.Point(forceSample.vector.x * self.scaleFactor, forceSample.vector.y * self.scaleFactor)
-        self.context.debug_drawer.draw_circle(forceSample.origin, 0.05, (0,0,0), "layer?")
-        self.context.debug_drawer.draw_segment_from_points(forceSample.origin, drawVector, (255, 0, 0), "hat")
+    #Some parameters for how the field is to be visualized
 
-    def fieldVisualize(self, corner, xSize, ySize, interval):
-    
-        points = list()
+    ## A lambda for the line length based on the sample magnitude
+    line_length = lambda x : x
+    ## A lambda for the color based on the sample magnitude
+    color = lambda mag : (255, 0, 0)   
+    circle_radius = lambda mag : 0.05
 
-        for x in arange(0, xSize, interval):
-            for y in arange(0, ySize, interval):
-                points.append(robocup.Point(corner + robocup.Point(x, y)))
+    def __init__(self, force_field = None):
+        self.force_field = force_field
 
-        for g in points:
-            self.pointVisualize(g)
+    ##
+    # Visualize a single sample
+    #
+    def visualizeSample(self, sample):
+        mag = sample.vector.mag()
+        vectorEnd = sample.origin + robocup.Point(sample.vector.x, sample.vector.y)
+        self.context.debug_drawer.draw_circle(sample.origin, self.circle_radius(mag), self.color(mag), "layer?")
+        self.context.debug_drawer.draw_segment_from_points(sample.origin, vectorEnd, self.color(mag), "hat")
 
+    ##
+    # Sets the colors to be a thermal colorscheme
+    #
+    #
+    def set_color_thermal(self, exp_min=0, exp_max=10):
+        self.color = lambda mag : force_utils.thermal_rgb_convert(mag, exp_min, exp_max)
 
+    ##
+    #
+    # Visualize the field
+    #
+    def visualizeField(self, generate=True):
+        if(generate):
+            force_field.generate()
+
+        for g in force_field.samples:
+            visualizeSample(g)
 
 
 

@@ -9,23 +9,30 @@ from forces import force_utils
 from forces import force_sample
 from forces import direction
 from forces import point
+from forces import points_force
+
+
 ##
 # Should this serve as a base class or should it have functionality all it's own?
 #
-class EdgeForce(force.For):
+class EdgeForce(points_force.PointsForce):
 
     borders = robocup.Field_Dimensions.CurrentDimensions.FieldBorders 
 
-    #These are what I might consider typical values, but you can make these whatever you want
     responce_function = lambda x : force_utils.trig_responce(x, 2.0, 1.0, 2.0)
     responce_type = direction.Direction.PUSH
     merge_function = lambda x : max(x)
 
-    #This should be like the betterer version
+    ##I don't know if this is horrible or butiful
+    points = [lambda x : border.nearest_point(x) for border in self.borders]
+
+
+
+    """
     def sample(self, point):
         self.points = [x.nearest_point(point) for x in borders] #If the borders aren't segments this may not work
         super(point)
-
+    """
 
     """
     #This is the sketch way of doing this, I guess what I should do is make this a points force?

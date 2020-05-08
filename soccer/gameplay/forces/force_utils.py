@@ -90,7 +90,6 @@ def force_thermal_color(force, minimum=0, maximum=10):
 #UGGGG, I don't know how I should do this but these functions are getting redic but I want to add thresholding but that would mean another argument. Do i
 #threshold(offset(clip_low_high(trig_responce()),1),0.2)
 
-
 ##
 #
 # Turns a magnatude into rgb values according to a "thermal" colorscheme
@@ -110,19 +109,14 @@ def thermal_rgb_convert(value, minimum=0, maximum=10):
     return r, g, b
 
 
-
-#Laziness is something that I'll have to consider, the intent is to scale down nearby force vectors? 
-def linear_lazy(origin, sample, force):
-    return None
-
-def log_lazy(origin, sample, force):
-    return None
-
-def poly_lazy(origin, sample, force):
-    return None
-
-def trig_lazy(origin, sample, force):
-    return None
+##
+# Function intended to augment a force field with a laziness factor
+#
+def lazy_function(origin, sample, responce = lambda x : x):
+    magMult = responce((origin - sample.origin).mag())
+    sample.vector.x = sample.vector.x * magMult
+    sample.vector.y = sample.vector.y * magMult
+   
 
 ##
 # Drops the force to zero if it is below the threshold
@@ -130,9 +124,6 @@ def lazy_threshold(force, threshold):
     mag = force.mag()
     if(mag < threshold):
         return robocup.Point(0,0)
-
-
-def threshold(mag, )
 
 
 #Clips the magnitude of a vector low and high
