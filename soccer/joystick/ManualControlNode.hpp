@@ -14,9 +14,6 @@ public:
     explicit ManualControlNode(Context* context);
 
     void run() override; 
-
-    std::vector<InputDevice*> _inputDevices;
-    
     
 
 private:
@@ -24,4 +21,5 @@ private:
     
     Context* _context;
     
+    std::vector<InputDevice*> _inputDevices;
 };
