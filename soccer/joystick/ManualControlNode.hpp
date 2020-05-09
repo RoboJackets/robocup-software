@@ -6,6 +6,7 @@
 #include "InputDevice.hpp"
 #include "Node.hpp"
 #include <Context.hpp>
+#include "InputDeviceManager.hpp"
 
 using namespace std;
 
@@ -22,4 +23,6 @@ private:
     Context* _context;
     
     std::vector<InputDevice*> _inputDevices;
+
+    InputDeviceManager* manager;
 };

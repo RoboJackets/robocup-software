@@ -1,16 +1,14 @@
 #include "ManualControlNode.hpp"
-#include "GamepadController.hpp"
-#include "InputDeviceManager.hpp"
 
 
 ManualControlNode::ManualControlNode(Context* context) : _context(context) {
     // initialise device manager
-    InputDeviceManager::setupInputDevices(_context->is_joystick_controlled);
+    manager = new InputDeviceManager(_context);
+    manager->setupInputDevices(_context->is_joystick_controlled);
 }
 
 
-
-ManualControlNode::run(Context* context) : _context(context) {
-    InputDeviceManager::(_context);
+void ManualControlNode::run() {
+    manager->update(_context->robot_intents, _context->is_joystick_controlled);
 }
 

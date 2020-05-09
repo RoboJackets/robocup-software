@@ -29,7 +29,9 @@ void InputDeviceManager::setupInputDevices(
     _dampedRotation = true;
 }
 
-void InputDeviceManager::update(Context* _context) {
+void InputDeviceManager::update(
+    std::array<RobotIntent, Num_Shells>& _robot_intents,
+    std::array<bool, Num_Shells>& _is_joystick_controlled) {
     // Pump sdl update for each type
     SDL_GameControllerUpdate();
 
@@ -75,7 +77,7 @@ void InputDeviceManager::update(Context* _context) {
     }
 
     // Apply input device updates to robots
-    applyInputDeviceControls(_context->robot_intents, _context->is_joystick_controlled);
+    applyInputDeviceControls(_robot_intents, _is_joystick_controlled);
 
 }
 

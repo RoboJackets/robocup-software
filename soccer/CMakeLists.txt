@@ -15,7 +15,7 @@ set(ROBOCUP_LIB_SRC
     "joystick/InputDevice.cpp"
     "joystick/InputDeviceManager.cpp"
     "joystick/GamepadController.cpp"
-    # "joystick/ManualControlNode.cpp"
+    "joystick/ManualControlNode.cpp"
     "KickEvaluator.cpp"
     "Logger.cpp"
     "motion/MotionControl.cpp"

@@ -35,7 +35,8 @@ public:
 
   void attachVirtual();
 
-  void update(Context* _context);
+  void update(std::array<RobotIntent, Num_Shells>& _robot_intents,
+    std::array<bool, Num_Shells>& _is_joystick_controlled);
 
   bool joystickValid() const;
 
