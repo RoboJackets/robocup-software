@@ -1453,7 +1453,7 @@ void MainWindow::on_loadPlaybook_clicked() {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
                                                        true);
             playIndicatorStatus(true);
-        } catch (runtime_error* error) {
+        } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
@@ -1469,7 +1469,7 @@ void MainWindow::on_savePlaybook_clicked() {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
                                                        true);
             playIndicatorStatus(true);
-        } catch (runtime_error* error) {
+        } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }

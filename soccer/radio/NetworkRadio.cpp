@@ -9,6 +9,7 @@ using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
+      _recv_buffer{},
       _send_buffers(Num_Shells) {
     _connections.resize(Num_Shells);
     startReceive();
@@ -39,7 +40,7 @@ void NetworkRadio::send(Packet::RadioTx& radioTx) {
             reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
-        rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
+        auto* body = reinterpret_cast<rtp::RobotTxMessage*>(
             &forward_packet_buffer[rtp::HeaderSize]);
 
         from_robot_tx_proto(radioTx.robots(robot_idx), body);
@@ -91,7 +92,7 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
         return;
     }
 
-    rtp::RobotStatusMessage* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
         &_recv_buffer[rtp::HeaderSize]);
 
     _robot_endpoint.port(25566);

@@ -13,11 +13,11 @@ class RobotStatusWidget : public QWidget {
 public:
     RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
 
-    int shellID() const;
+    [[nodiscard]] int shellID() const;
     void setShellID(int shellID);
 
     void setBlueTeam(bool blueTeam);
-    bool blueTeam() const;
+    [[nodiscard]] bool blueTeam() const;
 
     /**
      * @brief This error text is displayed in a text box
@@ -27,7 +27,7 @@ public:
     /**
      * @brief ID of control board (4 hex digits)
      */
-    const QString& boardID() const;
+    [[nodiscard]] const QString& boardID() const;
     void setBoardID(const QString& boardID);
 
     void setWheelFault(int wheelIndex, bool faulty = true);
@@ -37,28 +37,28 @@ public:
     /**
      * @brief ID of mechanical base (4 hex digits)
      */
-    const QString& baseID() const;
+    [[nodiscard]] const QString& baseID() const;
     void setBaseID(const QString& baseID);
 
     /**
      * @brief A string describing the robot model (i.e. "RJ 2015")
      */
-    QString robotModel() const;
+    [[nodiscard]] QString robotModel() const;
     void setRobotModel(const QString& robotModel);
 
-    bool hasRadio() const;
+    [[nodiscard]] bool hasRadio() const;
     void setHasRadio(bool hasRadio);
 
-    bool hasVision() const;
+    [[nodiscard]] bool hasVision() const;
     void setHasVision(bool hasVision);
 
-    float batteryLevel() const;
+    [[nodiscard]] float batteryLevel() const;
     void setBatteryLevel(float batteryLevel);
 
     /**
      * @brief True: kicker is ready, False: kicker is charging
      */
-    bool kickerState() const;
+    [[nodiscard]] bool kickerState() const;
     void setKickerState(bool kickerState);
 
     /**
