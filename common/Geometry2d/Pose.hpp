@@ -69,7 +69,7 @@ public:
      * ------|------
      *       |
      */
-    Pose withOrigin(Pose other) const {
+    [[nodiscard]] Pose withOrigin(Pose other) const {
         Point rotated = position().rotated(other.heading());
         return other + Pose(rotated, heading());
     }
