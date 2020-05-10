@@ -11,7 +11,9 @@ def parse_args() -> Tuple[str, bool]:
         "Summarizes the output from clang-tidy to show the number of each warning and locations."
     )
     parser.add_argument("path", type=str, help="Path to output of clang-tidy")
-    parser.add_argument("--show_files", default=False, action="store_true",
+    parser.add_argument("--show_files",
+                        default=False,
+                        action="store_true",
                         help="Whether to show the files for each warning")
     args = parser.parse_args()
     return args.path, args.show_files
