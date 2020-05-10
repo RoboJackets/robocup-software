@@ -51,7 +51,5 @@ ode
 flann
 freeglut
 
-go
-
 mypy
 python-pylint

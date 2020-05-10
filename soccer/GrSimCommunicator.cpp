@@ -3,10 +3,14 @@
 #include <Constants.hpp>
 #include <Network.hpp>
 
-using namespace boost;
+using namespace boost::asio;
 using namespace Packet;
 
-GrSimCommunicator::GrSimCommunicator(Context* context) : _context(context) {}
+GrSimCommunicator::GrSimCommunicator(Context* context)
+    : _context(context), _asio_socket(_io_service) {
+    _asio_socket.open(ip::udp::v4());
+    _grsim_endpoint = ip::udp::endpoint(ip::udp::v4(), SimCommandPort);
+}
 
 void GrSimCommunicator::run() {
     if (_context->grsim_command) {
@@ -39,7 +43,9 @@ void GrSimCommunicator::placeBall(QPointF pos,
 void GrSimCommunicator::sendSimCommand(const grSim_Packet& cmd) {
     std::string out;
     cmd.SerializeToString(&out);
-    _simCommandSocket.writeDatagram(&out[0], out.size(),
-                                    QHostAddress(QHostAddress::LocalHost),
-                                    SimCommandPort);
+    size_t bytes =
+        _asio_socket.send_to(boost::asio::buffer(out), _grsim_endpoint);
+    if (bytes == 0) {
+        std::cerr << "Sent 0 bytes in " __FILE__ << std::endl;
+    }
 }

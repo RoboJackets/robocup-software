@@ -41,7 +41,7 @@ GamepadController::GamepadController()
 }
 
 GamepadController::~GamepadController() {
-    QMutexLocker(&mutex());
+    auto lock = lock_mutex();
     SDL_GameControllerClose(_controller);
     _controller = nullptr;
     SDL_Quit();
@@ -104,6 +104,7 @@ void GamepadController::closeJoystick() {
 bool GamepadController::valid() const { return connected; }
 
 void GamepadController::update() {
+    auto lock = lock_mutex();
     SDL_GameControllerUpdate();
 
     RJ::Time now = RJ::now();
@@ -260,10 +261,11 @@ void GamepadController::update() {
 }
 
 JoystickControlValues GamepadController::getJoystickControlValues() {
+    auto lock = lock_mutex();
     return _controls;
 }
 
 void GamepadController::reset() {
-    
+    auto lock = lock_mutex();
     _controls.dribble = false;
 }

@@ -1,12 +1,6 @@
 #include "Processor.hpp"
 
-#include <poll.h>
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-
 #include <Constants.hpp>
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
@@ -16,10 +10,7 @@
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <joystick/GamepadController.hpp>
-#include <joystick/GamepadJoystick.hpp>
 #include <joystick/Joystick.hpp>
-#include <joystick/SpaceNavJoystick.hpp>
-#include <multicast.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 
@@ -92,8 +83,6 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     // Initialize team-space transformation
     defendPlusX(defendPlus);
 
-    QMetaObject::connectSlotsByName(this);
-
     _context.is_simulation = _simulation;
 
     _context.field_dimensions = *currentDimensions;
@@ -144,12 +133,11 @@ Processor::~Processor() {
 void Processor::stop() {
     if (_running) {
         _running = false;
-        wait();
     }
 }
 
 void Processor::manualID(int value) {
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
     _manualID = value;
 
     for (Joystick* joy : _joysticks) {
@@ -160,27 +148,27 @@ void Processor::manualID(int value) {
 void Processor::multipleManual(bool value) { _multipleManual = value; }
 
 void Processor::goalieID(int value) {
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
     _gameplayModule->goalieID(value);
 }
 
 int Processor::goalieID() {
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
     return _gameplayModule->goalieID();
 }
 
 void Processor::dampedRotation(bool value) {
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
     _dampedRotation = value;
 }
 
 void Processor::dampedTranslation(bool value) {
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
     _dampedTranslation = value;
 }
 
 void Processor::joystickKickOnBreakBeam(bool value) {
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
     _kickOnBreakBeam = value;
 }
 
@@ -205,7 +193,7 @@ void Processor::setupJoysticks() {
  */
 void Processor::blueTeam(bool value) {
     // This is called from the GUI thread
-    QMutexLocker locker(&_loopMutex);
+    std::lock_guard locker(_loopMutex);
 
     if (_blueTeam != value) {
         _blueTeam = value;

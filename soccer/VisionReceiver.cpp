@@ -1,8 +1,6 @@
 #include "VisionReceiver.hpp"
 
 #include <unistd.h>
-#include <QMutexLocker>
-#include <QUdpSocket>
 #include <Utils.hpp>
 #include <multicast.hpp>
 #include <stdexcept>

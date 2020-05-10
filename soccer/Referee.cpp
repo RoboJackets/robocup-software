@@ -49,16 +49,9 @@ Referee::Referee(Context* const context)
       _recv_buffer{},
       _asio_socket{_io_service} {}
 
-Referee::~Referee() { this->Referee::stop(); }
-
 void Referee::start() {
     setupRefereeMulticast();
     startReceive();
-}
-
-void Referee::stop() noexcept {
-    _asio_socket.shutdown(boost::asio::ip::udp::socket::shutdown_both);
-    _asio_socket.close();
 }
 
 void Referee::getPackets(std::vector<RefereePacket>& packets) {

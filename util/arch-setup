@@ -29,14 +29,10 @@ sudo pip install -r $BASE/util/requirements3.txt
 
 sudo pip2 install -r $BASE/util/requirements2.txt
 
-# install stylize
-if [ -z "$GOPATH" ]; then
-    echo "[WARN] No GOPATH set, not installing stylize."
-else
-    go get github.com/justbuchanan/stylize
-    go install github.com/justbuchanan/stylize
-fi
-
 echo "-- Updating submodules"
 git submodule sync
 git submodule update --init --recursive
+
+echo "-----------------------------------------------------------------------------------------------------------------------------"
+echo "- NOTE: clang_format_10 is required so if you're using this then you probably need to edit arch-setup / install it manually -"
+echo "-----------------------------------------------------------------------------------------------------------------------------"

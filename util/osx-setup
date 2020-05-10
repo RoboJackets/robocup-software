@@ -39,14 +39,6 @@ brew linkapps qt5
 echo "-- Installing python3 dependencies"
 sudo pip3 install -r "$BASE/util/requirements3.txt"
 
-# install stylize
-if [ -z "$GOPATH" ]; then
-    echo "[WARN] No GOPATH set, not installing stylize."
-else
-    go get github.com/justbuchanan/stylize
-    go install github.com/justbuchanan/stylize
-fi
-
 # prevent OS X's AppNap "feature" from sleeping the simulator
 echo "-- Disabling AppNap for simulator"
 defaults write org.robojackets.robocup.simulator NSAppSleepDisabled -bool YES
@@ -54,3 +46,7 @@ defaults write org.robojackets.robocup.simulator NSAppSleepDisabled -bool YES
 echo "-- Updating submodules"
 git submodule sync
 git submodule update --init --recursive
+
+echo "----------------------------------------------------------------------------------------------------------------------------"
+echo "- NOTE: clang_format_10 is required so if you're using this then you probably need to edit osx-setup / install it manually -"
+echo "----------------------------------------------------------------------------------------------------------------------------"
