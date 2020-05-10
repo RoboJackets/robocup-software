@@ -49,6 +49,10 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
         echo "Ubuntu 19.04 Detected..."
         SYSTEM="ubuntu-19.04"
         ADD_REPOS=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*20.04'; then # Using Ubuntu 20.04
+        echo "Ubuntu 20.04 Detected..."
+        SYSTEM="ubuntu-20.04"
+        ADD_REPOS=false
     else
         echo "$DISTRO_STR" >&2
         exit 1
@@ -161,6 +165,18 @@ apt-get install $ARGS $PACKAGES
 if [ "$SYSTEM" = "ubuntu-18.04" ] && ! command -v clang-format >/dev/null; then
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-6.0 100
 fi
+
+# Install clang-format-10 using llvm repo
+if [ "$SYSTEM" = "ubuntu-20.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
+elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
+elif [ "$SYSTEM" = "ubuntu-16.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main"
+fi
+# Add the llvm key
+# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
