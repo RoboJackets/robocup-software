@@ -135,6 +135,12 @@ if $ADD_REPOS; then
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
 fi
 
+# Add the llvm key
+# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
+echo "Adding LLVM apt key"
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+echo "Done adding LLVM apt key"
+
 # Install clang-format-10 using llvm repo
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
     sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
@@ -143,12 +149,6 @@ elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
 elif [ "$SYSTEM" = "ubuntu-16.04" ]; then
     sudo add-apt-repository -s "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main"
 fi
-
-# Add the llvm key
-# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
-echo "Adding LLVM apt key"
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-echo "Done adding LLVM apt key"
 
 apt-get update
 
