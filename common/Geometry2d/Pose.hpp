@@ -36,13 +36,8 @@ public:
         : _position(other(0), other(1)), _heading(other(2)) {}
 
     /**
-     * Copy-constructor - default
-     */
-    Pose(const Pose& other) = default;
-
-    /**
-     * Compute the pose specified using this pose as coordinates in a frame of
-     * reference specified by `other`, in the global space.
+     * Compute the pose specified using this pose as coordinates in a
+     * frame of reference specified by `other`, in the global space.
      *
      * i.e.
      *
@@ -69,7 +64,7 @@ public:
      * ------|------
      *       |
      */
-    Pose withOrigin(Pose other) const {
+    [[nodiscard]] Pose withOrigin(Pose other) const {
         Point rotated = position().rotated(other.heading());
         return other + Pose(rotated, heading());
     }
