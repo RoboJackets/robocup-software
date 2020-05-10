@@ -156,16 +156,6 @@ fi
 
 PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 
-# install all of the packages listed in required_packages.txt
-apt-get install $ARGS $PACKAGES
-
-# Use ubuntu's 'update-alternatives' to select the newer compiler as the default
-# See issue #468 on GitHub
-# https://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-on-ubuntu
-if [ "$SYSTEM" = "ubuntu-18.04" ] && ! command -v clang-format >/dev/null; then
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-6.0 100
-fi
-
 # Install clang-format-10 using llvm repo
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
     sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
@@ -174,9 +164,20 @@ elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
 elif [ "$SYSTEM" = "ubuntu-16.04" ]; then
     sudo add-apt-repository -s "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main"
 fi
+
 # Add the llvm key
 # Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+
+# install all of the packages listed in required_packages.txt
+apt update && apt install $ARGS $PACKAGES
+
+# Use ubuntu's 'update-alternatives' to select the newer compiler as the default
+# See issue #468 on GitHub
+# https://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-on-ubuntu
+if [ "$SYSTEM" = "ubuntu-18.04" ] && ! command -v clang-format >/dev/null; then
+    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-6.0 100
+fi
 
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
