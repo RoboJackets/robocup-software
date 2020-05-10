@@ -137,10 +137,8 @@ fi
 
 # Add the llvm key
 # Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
-echo "Adding LLVM apt key"
-apt-get install wget # Somehow we don't have wget
+apt-get install wget apt-transport-https ca-certificates # Somehow we don't have wget, and 16.04 doesn't support https lmao
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-echo "Done adding LLVM apt key"
 
 # Install clang-format-10 using llvm repo
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
