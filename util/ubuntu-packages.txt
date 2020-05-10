@@ -39,6 +39,7 @@ g++
 
 # C/C++ (and more) code-formatting tool
 clang-format
+clang-format-9
 
 # contains a ton of great C++ libraries
 libboost-all-dev
