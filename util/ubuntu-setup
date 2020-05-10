@@ -135,6 +135,21 @@ if $ADD_REPOS; then
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
 fi
 
+# Install clang-format-10 using llvm repo
+if [ "$SYSTEM" = "ubuntu-20.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
+elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
+elif [ "$SYSTEM" = "ubuntu-16.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main"
+fi
+
+# Add the llvm key
+# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
+echo "Adding LLVM apt key"
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+echo "Done adding LLVM apt key"
+
 apt-get update
 
 MACH=$(uname -m)
@@ -156,23 +171,8 @@ fi
 
 PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 
-# Install clang-format-10 using llvm repo
-if [ "$SYSTEM" = "ubuntu-20.04" ]; then
-    sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
-elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
-    sudo add-apt-repository -s "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
-elif [ "$SYSTEM" = "ubuntu-16.04" ]; then
-    sudo add-apt-repository -s "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main"
-fi
-
-# Add the llvm key
-# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
-echo "Adding LLVM apt key"
-wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-echo "Done adding LLVM apt key"
-
 # install all of the packages listed in required_packages.txt
-apt update && apt install $ARGS $PACKAGES
+apt-get install $ARGS $PACKAGES
 
 # Use ubuntu's 'update-alternatives' to select the newer compiler as the default
 # See issue #468 on GitHub
