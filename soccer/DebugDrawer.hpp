@@ -61,8 +61,7 @@ public:
                       const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawLine(const Geometry2d::Segment& line,
-                  const QColor& qw = Qt::black,
+    void drawLine(const Geometry2d::Segment& line, const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */

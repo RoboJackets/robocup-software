@@ -6,7 +6,8 @@ import argparse
 
 def parse_args() -> str:
     parser = argparse.ArgumentParser(
-        description="Summarizes the output from clang-tidy to show the number of each warning and locations."
+        description=
+        "Summarizes the output from clang-tidy to show the number of each warning and locations."
     )
     parser.add_argument("path", help="Path to output of clang-tidy", type=str)
     args = parser.parse_args()

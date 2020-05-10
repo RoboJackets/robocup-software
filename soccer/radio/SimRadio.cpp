@@ -158,7 +158,7 @@ void SimRadio::stopRobots() {
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
 
-    for (auto *const our_robot : _context->state.self) {
+    for (auto* const our_robot : _context->state.self) {
         grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
         simRobot->set_id(our_robot->shell());
         simRobot->set_veltangent(0);
