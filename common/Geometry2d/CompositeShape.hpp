@@ -65,9 +65,7 @@ public:
         return false;
     }
 
-        [[nodiscard]] bool hit(Point pt) const override {
-        return hit<Point>(pt);
-    }
+    [[nodiscard]] bool hit(Point pt) const override { return hit<Point>(pt); }
 
     [[nodiscard]] bool hit(const Segment& seg) const override {
         return hit<Segment>(seg);
@@ -79,11 +77,8 @@ public:
     using value_type = std::shared_ptr<Shape>;
 
     // STL Interface
-    [[nodiscard]] const_iterator begin() const {
-        return _subshapes.begin();
-    }[[nodiscard]] const_iterator end() const {
-        return _subshapes.end();
-    }
+    [[nodiscard]] const_iterator begin() const { return _subshapes.begin(); }
+    [[nodiscard]] const_iterator end() const { return _subshapes.end(); }
 
     iterator begin() { return _subshapes.begin(); }
     iterator end() { return _subshapes.end(); }

@@ -15,10 +15,8 @@ Simple class to represent a point in 2d space. Uses floating point coordinates
 */
 class Point {
 public:
-    [[nodiscard]] const double& x() const { return _x; }[[nodiscard]] const
-        double& y() const {
-        return _y;
-    }
+    [[nodiscard]] const double& x() const { return _x; }
+    [[nodiscard]] const double& y() const { return _y; }
     double& x() { return _x; }
     double& y() { return _y; }
 
@@ -222,11 +220,11 @@ public:
         return x() * p.x() + y() * p.y();
     }
 
-        /**
-        computes the magnitude of the point, as if it were a vector
-        @return the magnitude of the point
-        */
-        [[nodiscard]] double mag() const {
+    /**
+    computes the magnitude of the point, as if it were a vector
+    @return the magnitude of the point
+    */
+    [[nodiscard]] double mag() const {
         return sqrtf(static_cast<float>(x() * x() + y() * y()));
     }
 
@@ -283,10 +281,10 @@ public:
         return Point(newX, newY);
     }
 
-        /**
-         * Returns a new Point rotated around the origin
-         */
-        [[nodiscard]] Point rotated(const Point& origin, double angle) const {
+    /**
+     * Returns a new Point rotated around the origin
+     */
+    [[nodiscard]] Point rotated(const Point& origin, double angle) const {
         return rotated(*this, origin, angle);
     }
 
@@ -309,12 +307,12 @@ public:
         return delta.mag();
     }
 
-        /**
-         * Returns a vector with the same direction as this vector but with
-         * magnitude given, unless this vector is zero. If the vector is (0,0),
-         * Point(0,0) is returned
-         */
-        [[nodiscard]] Point normalized(double magnitude = 1.0) const {
+    /**
+     * Returns a vector with the same direction as this vector but with
+     * magnitude given, unless this vector is zero. If the vector is (0,0),
+     * Point(0,0) is returned
+     */
+    [[nodiscard]] Point normalized(double magnitude = 1.0) const {
         double m = mag();
         if (m == 0) {
             return Point(0, 0);
@@ -326,12 +324,11 @@ public:
     /// Alias for normalized() - matches Eigen's syntax
     [[nodiscard]] Point norm() const { return normalized(); }
 
-        /**
-         * Returns true if this point is within the given distance (threshold)
-         * of (pt)
-         */
-        [[nodiscard]] bool nearPoint(const Point& other,
-                                     double threshold) const {
+    /**
+     * Returns true if this point is within the given distance (threshold)
+     * of (pt)
+     */
+    [[nodiscard]] bool nearPoint(const Point& other, double threshold) const {
         return (*this - other).magsq() <= (threshold * threshold);
     }
 
@@ -350,10 +347,8 @@ public:
     /** returns the perpendicular to the point, Clockwise */
     [[nodiscard]] Point perpCW() const { return Point(y(), -x()); }
 
-        /** returns the perpendicular to the point, Counter Clockwise */
-        [[nodiscard]] Point perpCCW() const {
-        return Point(-y(), x());
-    }
+    /** returns the perpendicular to the point, Counter Clockwise */
+    [[nodiscard]] Point perpCCW() const { return Point(-y(), x()); }
 
     /** saturates the magnitude of a vector */
     static Geometry2d::Point saturate(Geometry2d::Point value, double max) {
@@ -368,7 +363,7 @@ public:
         return (other - *this).angle();
     }
 
-        [[nodiscard]] double cross(const Point& other) const {
+    [[nodiscard]] double cross(const Point& other) const {
         return x() * other.y() - y() * other.x();
     }
 
@@ -378,7 +373,7 @@ public:
         return acos(std::max(std::min(angle, 1.0), -1.0));
     }
 
-        [[nodiscard]] bool nearlyEquals(Point other) const;
+    [[nodiscard]] bool nearlyEquals(Point other) const;
 
     [[nodiscard]] std::string toString() const {
         std::stringstream str;
@@ -386,8 +381,7 @@ public:
         return str.str();
     }
 
-    friend std::ostream&
-    operator<<(std::ostream& stream, const Point& point) {
+    friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
         stream << point.toString();
         return stream;
     }

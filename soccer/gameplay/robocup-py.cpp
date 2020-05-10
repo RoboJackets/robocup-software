@@ -53,9 +53,8 @@ struct NullArgumentException : public std::exception {
     NullArgumentException() = default;
     NullArgumentException(std::string name)
         : argument_name{std::move(name)},
-          message{"'" + argument_name + "'' was 'None'."} {}[[nodiscard]] const
-              char *
-              what() const noexcept override {
+          message{"'" + argument_name + "'' was 'None'."} {}
+    [[nodiscard]] const char* what() const noexcept override {
         return message.c_str();
     }
 };

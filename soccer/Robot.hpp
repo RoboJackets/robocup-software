@@ -69,41 +69,34 @@ public:
 
     [[nodiscard]] Geometry2d::Pose pose() const { return state().pose; }
 
-        [[nodiscard]] Geometry2d::Point pos() const {
+    [[nodiscard]] Geometry2d::Point pos() const {
         return state().pose.position();
     }
 
     [[nodiscard]] double angle() const { return state().pose.heading(); }
 
-        [[nodiscard]] Geometry2d::Twist twist() const {
-        return state().velocity;
-    }
+    [[nodiscard]] Geometry2d::Twist twist() const { return state().velocity; }
 
     [[nodiscard]] Geometry2d::Point vel() const {
         return state().velocity.linear();
     }
 
-        [[nodiscard]] double angleVel() const {
-        return state().velocity.angular();
-    }
+    [[nodiscard]] double angleVel() const { return state().velocity.angular(); }
 
     [[nodiscard]] bool visible() const { return state().visible; }
 
-        /**
-         * ID number for the robot.  This is the number that the dot pattern on
-         * the top of the robot represents
-         */
-        [[nodiscard]] int shell() const {
-        return _shell;
-    }
+    /**
+     * ID number for the robot.  This is the number that the dot pattern on
+     * the top of the robot represents
+     */
+    [[nodiscard]] int shell() const { return _shell; }
 
     /**
      * Check whether or not this robot is on our team
      */
     [[nodiscard]] bool self() const { return _self; }
 
-    bool
-    operator==(const Robot& other) const {
+    bool operator==(const Robot& other) const {
         return shell() == other.shell() && self() == other.self();
     }
 
@@ -112,8 +105,7 @@ public:
                std::to_string(shell()) + "], pos=" + pos().toString() + ">";
     }
 
-    friend std::ostream&
-    operator<<(std::ostream& stream, const Robot& robot) {
+    friend std::ostream& operator<<(std::ostream& stream, const Robot& robot) {
         stream << robot.toString();
         return stream;
     }

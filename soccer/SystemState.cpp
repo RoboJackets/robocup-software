@@ -37,14 +37,15 @@ public:
         return RJ::Seconds::max();
     }
 
-        [[nodiscard]] std::unique_ptr<Path> subPath(
-            RJ::Seconds /*startTime*/, RJ::Seconds /*endTime*/) const override {
+    [[nodiscard]] std::unique_ptr<Path> subPath(
+        RJ::Seconds /*startTime*/, RJ::Seconds /*endTime*/) const override {
         throw std::runtime_error("Unsupported Operation");
     }
 
     [[nodiscard]] RobotInstant start() const override {
         return RobotInstant(ball.predict(startTime()));
-    }[[nodiscard]] RobotInstant end() const override {
+    }
+    [[nodiscard]] RobotInstant end() const override {
         throw std::runtime_error("Unsupported Operation");
     }
 
@@ -52,11 +53,14 @@ public:
         return std::make_unique<BallPath>(*this);
     }
 
-    protected :
-        [[nodiscard]] std::optional<RobotInstant> eval(RJ::Seconds t) const
-        override { return RobotInstant(ball.predict(startTime() + t)); }
+protected:
+    [[nodiscard]] std::optional<RobotInstant> eval(
+        RJ::Seconds t) const override {
+        return RobotInstant(ball.predict(startTime() + t));
+    }
 
-        private : const Ball& ball;
+private:
+    const Ball& ball;
 };
 
 std::unique_ptr<Planning::Path> Ball::path(RJ::Time startTime) const {
