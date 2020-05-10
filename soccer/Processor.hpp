@@ -11,11 +11,9 @@
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QThread>
 #include <Referee.hpp>
 #include <SystemState.hpp>
+#include <mutex>
 #include <optional>
 #include <vector>
 
@@ -57,7 +55,7 @@ class MultiRobotPathPlanner;
  * - handling the Joystick
  * - running motion control for each robot (see OurRobot#motionControl)
  */
-class Processor : public QThread {
+class Processor {
 public:
     struct Status {
         Status() {}
@@ -142,7 +140,7 @@ public:
     bool defendPlusX() { return _context.game_state.defendPlusX; }
 
     Status status() {
-        QMutexLocker lock(&_statusMutex);
+        std::lock_guard lock(_statusMutex);
         return _status;
     }
 
@@ -159,7 +157,9 @@ public:
 
     void useOpponentHalf(bool value) { _useOpponentHalf = value; }
 
-    QMutex& loopMutex() { return _loopMutex; }
+    std::lock_guard<std::mutex> lockLoopMutex() {
+        return std::lock_guard(_loopMutex);
+    }
 
     Radio* radio() { return _radio->getRadio(); }
 
@@ -184,9 +184,9 @@ public:
 
     Context* context() { return &_context; }
 
-protected:
-    void run() override;
+    void run();
 
+protected:
     void applyJoystickControls(const JoystickControlValues& controlVals,
                                OurRobot* robot);
 
@@ -227,7 +227,7 @@ private:
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
     // SystemState, etc.
-    QMutex _loopMutex;
+    std::mutex _loopMutex;
 
     /** global system state */
     Context _context;
@@ -253,7 +253,7 @@ private:
 
     // This is used by the GUI to indicate status of the processing loop and
     // network
-    QMutex _statusMutex;
+    std::mutex _statusMutex;
     Status _status;
 
     // modules

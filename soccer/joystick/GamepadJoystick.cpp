@@ -29,7 +29,7 @@ GamepadJoystick::GamepadJoystick()
 }
 
 GamepadJoystick::~GamepadJoystick() {
-    QMutexLocker(&mutex());
+    auto lock = lock_mutex();
     SDL_JoystickClose(_joystick);
     _joystick = nullptr;
     SDL_Quit();
@@ -38,7 +38,7 @@ GamepadJoystick::~GamepadJoystick() {
 bool GamepadJoystick::valid() const { return _joystick != nullptr; }
 
 void GamepadJoystick::update() {
-    QMutexLocker(&mutex());
+    auto lock = lock_mutex();
     SDL_JoystickUpdate();
 
     // DRIBBLER CONTROL
@@ -122,11 +122,11 @@ void GamepadJoystick::update() {
 }
 
 JoystickControlValues GamepadJoystick::getJoystickControlValues() {
-    QMutexLocker(&mutex());
+    auto lock = lock_mutex();
     return _controls;
 }
 
 void GamepadJoystick::reset() {
-    QMutexLocker(&mutex());
+    auto lock = lock_mutex();
     _controls.dribble = false;
 }
