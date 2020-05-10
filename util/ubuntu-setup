@@ -101,7 +101,7 @@ done
 # Become root
 if [ $UID -ne 0 ]; then
 	echo "-- Becoming root"
-	exec sudo GOPATH=$GOPATH $0 $@
+	exec sudo $0 $@
 fi
 
 if $OVERWRITE_SOURCES; then
@@ -177,13 +177,6 @@ PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $PACKAGES
-
-# Use ubuntu's 'update-alternatives' to select the newer compiler as the default
-# See issue #468 on GitHub
-# https://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-on-ubuntu
-if [ "$SYSTEM" = "ubuntu-18.04" ] && ! command -v clang-format >/dev/null; then
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-6.0 100
-fi
 
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
