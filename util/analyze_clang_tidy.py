@@ -1,21 +1,24 @@
+from typing import Tuple
 import re
 from collections import defaultdict
 import os
 import argparse
 
 
-def parse_args() -> str:
+def parse_args() -> Tuple[str, bool]:
     parser = argparse.ArgumentParser(
         description=
         "Summarizes the output from clang-tidy to show the number of each warning and locations."
     )
-    parser.add_argument("path", help="Path to output of clang-tidy", type=str)
+    parser.add_argument("path", type=str, help="Path to output of clang-tidy")
+    parser.add_argument("--show_files", default=False, action="store_true",
+                        help="Whether to show the files for each warning")
     args = parser.parse_args()
-    return args.path
+    return args.path, args.show_files
 
 
 def main():
-    log_path = parse_args()
+    log_path, show_files = parse_args()
     try:
         log = open(log_path)
     except FileNotFoundError:
@@ -43,12 +46,18 @@ def main():
     longest_key = max([len(k) for k in warning_dict.keys()])
 
     for k in sorted(warning_dict, key=warning_dict.get, reverse=True):
-        locations_str = ", ".join(locations_dict[k])
-        max_length = 80
-        if len(locations_str) > max_length:
-            locations_str = locations_str[:max_length] + "..."
         justified_key = k.ljust(longest_key, '·')
-        print(f"{justified_key}: {warning_dict[k]:3} - {locations_str}")
+
+        # Show files for each
+        if show_files:
+            locations_str = ", ".join(locations_dict[k])
+            max_length = 80
+            if len(locations_str) > max_length:
+                locations_str = locations_str[:max_length] + "..."
+            file_part = f" - {locations_str}"
+        else:
+            file_part = ""
+        print(f"{justified_key}: {warning_dict[k]:3}{file_part}")
     print("--------------------------------")
     print(f"Total warnings: {total_matches}")
 
