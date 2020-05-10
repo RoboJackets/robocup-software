@@ -68,7 +68,7 @@ public:
     void setShowstopper(bool showstopper = true);
 
 private:
-    Ui_RobotStatusWidget _ui;
+    Ui_RobotStatusWidget _ui{};
 
     int _shellID;
     bool _blueTeam;

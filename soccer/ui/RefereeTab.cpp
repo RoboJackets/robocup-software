@@ -3,7 +3,7 @@
 
 void command(char ch) {}
 
-RefereeTab::RefereeTab(QWidget* parent) { ui.setupUi(this); }
+RefereeTab::RefereeTab(QWidget*  /*parent*/) { ui.setupUi(this); }
 
 void RefereeTab::on_externalReferee_toggled(bool value) {}
 

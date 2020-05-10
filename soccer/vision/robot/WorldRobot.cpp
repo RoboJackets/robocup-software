@@ -12,7 +12,7 @@ void WorldRobot::createConfiguration(Configuration* cfg) {
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
-WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots)
+WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, const std::list<KalmanRobot>& kalmanRobots)
     : team(team), robotID(robotID), isValid(true), time(calcTime) {
     // Theta's are converted to rect coords then back to polar to convert
     Geometry2d::Point posCartesianAvg;
@@ -30,7 +30,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
              << std::endl;
     }
 
-    if (kalmanRobots.size() == 0) {
+    if (kalmanRobots.empty()) {
         std::cout
              << "ERROR: Zero robots are given to the WorldRobot constructor"
              << std::endl;
@@ -46,7 +46,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<Kalm
         return;
     }
 
-    for (KalmanRobot& robot : kalmanRobots) {
+    for (const KalmanRobot& robot : kalmanRobots) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
         Geometry2d::Pose poseCov{robot.getPosCov(), robot.getThetaCov()};

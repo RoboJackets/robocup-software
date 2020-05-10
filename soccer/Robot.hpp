@@ -596,15 +596,10 @@ private:
 
     void _clearCmdText();
 
-    struct RadiiConfig {
-        std::unique_ptr<ConfigDouble> self_avoid_radius;
-        std::unique_ptr<ConfigDouble> opp_avoid_radius;
-        std::unique_ptr<ConfigDouble> opp_goalie_avoid_radius;
-        std::unique_ptr<ConfigDouble> dribble_out_of_bounds_offset;
-    };
-
-    /// default values for avoid radii
-    static RadiiConfig radii_config_;
+    static ConfigDouble* self_avoid_radius;
+    static ConfigDouble* opp_avoid_radius;
+    static ConfigDouble* opp_goalie_avoid_radius;
+    static ConfigDouble* dribble_out_of_bounds_offset;
 
     int8_t _planningPriority{};
 };

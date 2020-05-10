@@ -1,11 +1,10 @@
 #include "FastKickDetector.hpp"
 
-#include <iterator>
-#include <deque>
-#include <math.h>
-#include <limits>
-
 #include <Geometry2d/Point.hpp>
+#include <cmath>
+#include <deque>
+#include <iterator>
+#include <limits>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -17,9 +16,9 @@ void FastKickDetector::createConfiguration(Configuration* cfg) {
     acceleration_trigger = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/fast_acceleration_trigger", 750);
 }
 
-bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
-                                 std::vector<WorldRobot> yellowRobots,
-                                 std::vector<WorldRobot> blueRobots,
+bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
+                                 const std::vector<WorldRobot>& yellowRobots,
+                                 const std::vector<WorldRobot>& blueRobots,
                                  KickEvent& kickEvent) {
 
     // Keep it a certain length

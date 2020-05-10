@@ -233,17 +233,19 @@ void Processor::runModels() {
 
     for (auto& packet : _context.vision_packets) {
         const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
-        vector<CameraBall> ballObservations;
-        vector<CameraRobot> yellowObservations;
-        vector<CameraRobot> blueObservations;
+        std::vector<CameraBall> ballObservations;
+        std::vector<CameraRobot> yellowObservations;
+        std::vector<CameraRobot> blueObservations;
 
-        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
-            RJ::Seconds(frame->t_capture())));
+        RJ::Time time =
+            RJ::Time(std::chrono::duration_cast<std::chrono::microseconds>(
+                RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
         ballObservations.reserve(frame->balls().size());
         for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
+            ballObservations.emplace_back(
+                time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
 
         // Collect camera data from all robots
@@ -268,12 +270,14 @@ void Processor::runModels() {
                 robot.robot_id());
         }
 
-        frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
+        frames.emplace_back(time, frame->camera_id(), ballObservations,
+                            yellowObservations, blueObservations);
     }
 
     _vision->addFrames(frames);
 
-    // Fill the list of our robots/balls based on whether we are the blue team or not
+    // Fill the list of our robots/balls based on whether we are the blue team
+    // or not
     _vision->fillBallState(_context.state);
     _vision->fillRobotState(_context.state, _blueTeam);
 }
@@ -355,7 +359,7 @@ void Processor::run() {
 
         // Log referee data
         _refereeModule->run();
-        vector<RefereePacket> refereePackets;
+        std::vector<RefereePacket> refereePackets;
         _refereeModule->getPackets(refereePackets);
         for (const RefereePacket& packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
@@ -727,8 +731,8 @@ std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
     return vals;
 }
 
-vector<int> Processor::getJoystickRobotIds() {
-    vector<int> robotIds;
+std::vector<int> Processor::getJoystickRobotIds() {
+    std::vector<int> robotIds;
     for (Joystick* joy : _joysticks) {
         if (joy->valid()) {
             robotIds.push_back(joy->getRobotId());
@@ -770,7 +774,7 @@ void Processor::recalculateWorldToTeamTransform() {
 }
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
-    cout << "Updating field geometry based off of vision packet." << endl;
+    std::cout << "Updating field geometry based off of vision packet." << std::endl;
     *currentDimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();

@@ -18,6 +18,7 @@ Checks:          '-*,
                   -readability-uppercase-literal-suffix,
                   -misc-non-private-member-variables-in-classes,
                   -cppcoreguidelines-non-private-member-variables-in-classes,
+                  -cppcoreguidelines-owning-memory,
                   '
 #WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false

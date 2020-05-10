@@ -49,7 +49,7 @@ public:
     Logger(size_t logSize = 10000);
     ~Logger();
 
-    bool open(QString filename);
+    bool open(const QString& filename);
     void close();
 
     // Returns the size of the circular buffer

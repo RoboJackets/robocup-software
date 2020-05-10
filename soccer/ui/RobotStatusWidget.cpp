@@ -1,5 +1,8 @@
 #include "RobotStatusWidget.hpp"
 
+#include <cmath>
+
+
 RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
     : QWidget(parent, f) {
     _ui.setupUi(this);
@@ -109,7 +112,7 @@ void RobotStatusWidget::setHasVision(bool hasVision) {
 float RobotStatusWidget::batteryLevel() const { return _batteryLevel; }
 
 void RobotStatusWidget::setBatteryLevel(float batteryLevel) {
-    if (fabs(batteryLevel - _batteryLevel) > 0.01) {
+    if (std::fabs(batteryLevel - _batteryLevel) > 0.01) {
         _batteryLevel = batteryLevel;
         _ui.batteryIndicator->setBatteryLevel(_batteryLevel);
     }

@@ -1,16 +1,15 @@
 #include "WindowEvaluator.hpp"
+
 #include <Geometry2d/Util.hpp>
+#include <algorithm>
+#include <array>
+
 #include "Constants.hpp"
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
 
-#include <algorithm>
-#include <array>
-#include <iostream>
-
 REGISTER_CONFIGURABLE(WindowEvaluator)
 
-using namespace std;
 using namespace Geometry2d;
 
 ConfigDouble* WindowEvaluator::angle_score_coefficient;
@@ -61,7 +60,7 @@ WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
     return eval_pt_to_seg(origin, our_goal);
 }
 
-void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0,
+void WindowEvaluator::obstacle_range(std::vector<Window>& windows, double& t0,
                                      double& t1) {
     // Ignore degenerate obstacles
     if (t0 == t1) {
@@ -69,7 +68,7 @@ void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0,
     }
 
     if (t0 > t1) {
-        swap(t0, t1);
+        std::swap(t0, t1);
     }
 
     auto iter = windows.begin();
@@ -98,7 +97,7 @@ void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0,
     }
 }
 
-void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin,
+void WindowEvaluator::obstacle_robot(std::vector<Window>& windows, Point origin,
                                      Segment target, Point bot_pos) {
     auto n = (bot_pos - origin).normalized();
     auto t = n.perpCCW();
@@ -113,7 +112,7 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin,
 
     auto end = target.delta().magsq();
 
-    array<double, 2> extent = {0, end};
+    std::array<double, 2> extent = {0, end};
 
     for (int i = 0; i < 2; i++) {
         Line edge{origin, seg.pt[i]};
@@ -142,18 +141,19 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     // if target is a zero-length segment, there are no windows
     if (end == 0) {
-        return make_pair(vector<Window>{}, std::nullopt);
+        return make_pair(std::vector<Window>{}, std::nullopt);
     }
 
     if (debug) {
         context->debug_drawer.drawLine(target, QColor{"Blue"}, "Debug");
     }
 
-    vector<Window> windows = {Window{0, end}};
+    std::vector<Window> windows = {Window{0, end}};
 
     // apply the obstacles
 
-    vector<Robot*> bots(context->state.self.size() + context->state.opp.size());
+    std::vector<Robot*> bots(context->state.self.size() +
+                             context->state.opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
         return bot != nullptr && bot->visible() &&
@@ -170,7 +170,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     bots.resize(distance(bots.begin(), end_it));
 
-    vector<Point> bot_locations;
+    std::vector<Point> bot_locations;
     for_each(bots.begin(), bots.end(), [&bot_locations](Robot* bot) {
         bot_locations.push_back(bot->pos());
     });
@@ -205,10 +205,9 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     std::optional<Window> best;
     if (!windows.empty()) {
         best = *max_element(
-                    windows.begin(), windows.end(),
-                    [](Window& a, Window& b) -> bool {
-                        return a.segment.delta().magsq() < b.segment.delta().magsq();
-                    });
+            windows.begin(), windows.end(), [](Window& a, Window& b) -> bool {
+                return a.segment.delta().magsq() < b.segment.delta().magsq();
+            });
     }
     if (debug) {
         if (best) {
@@ -236,7 +235,7 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto shot_vector = window.segment.center() - origin;
     auto shot_distance = shot_vector.mag();
 
-    // get the angle between the shot vector and the target segment, then
+    // get the angle between the shot std::vector and the target segment, then
     // normalize and positivize it
     auto angle_between_shot_and_window =
         abs(shot_vector.angle() - window.segment.delta().angle());
@@ -257,16 +256,17 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     // the farther the shot has to travel, the more likely that defenders can
     // block it in time
     auto shot_angle_baseline = (M_PI / 20.0);
-    auto angle_score = min(angle / shot_angle_baseline, 1.0);
+    auto angle_score = std::min(angle / shot_angle_baseline, 1.0);
 
     float longest_possible_shot =
         std::sqrt(pow(Field_Dimensions::Current_Dimensions.Length(), 2.0f) +
                   pow(Field_Dimensions::Current_Dimensions.Width(), 2.0f));
-    const auto &std = *KickEvaluator::kick_std_dev;
-    auto angle_prob = phi(angle_between_shot_and_window / (std)) - phi(-angle_between_shot_and_window / (std));
+    const auto& std = *KickEvaluator::kick_std_dev;
+    auto angle_prob = phi(angle_between_shot_and_window / (std)) -
+                      phi(-angle_between_shot_and_window / (std));
 
     auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
-    window.shot_success = angle_prob +
-                          *distance_score_coefficient * distance_score;
+    window.shot_success =
+        angle_prob + *distance_score_coefficient * distance_score;
 }

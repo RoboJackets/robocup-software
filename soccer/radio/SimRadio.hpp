@@ -26,6 +26,6 @@ private:
 
     QUdpSocket _tx_socket;
     QUdpSocket _rx_socket;
-    int _channel;
+    int _channel{};
     bool _blueTeam;
 };

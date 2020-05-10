@@ -80,11 +80,11 @@ void NetworkRadio::receive() {
 
 void NetworkRadio::receivePacket(const boost::system::error_code& error,
                                  std::size_t num_bytes) {
-    if (error) {
+    if (error != nullptr) {
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
         return;
-    } else if (num_bytes != rtp::ReverseSize) {
+    } if (num_bytes != rtp::ReverseSize) {
         std::cerr << "Invalid packet length: expected " << rtp::ReverseSize
                   << ", got " << num_bytes << std::endl;
         return;
@@ -130,4 +130,4 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
     startReceive();
 }
 
-void NetworkRadio::switchTeam(bool) {}
+void NetworkRadio::switchTeam(bool /*blueTeam*/) {}

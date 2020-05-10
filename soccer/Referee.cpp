@@ -61,7 +61,7 @@ void Referee::stop() noexcept {
     _asio_socket.close();
 }
 
-void Referee::getPackets(std::vector<RefereePacket>& packets) {
+void Referee::getPackets(std::vector<RefereePacket>&  packets) {
     std::lock_guard<std::mutex> lock(_mutex);
     packets = _packets;
     _packets.clear();
@@ -277,7 +277,7 @@ GameState Referee::updateGameState(Command command) const {
                 return GameState::Overtime2;
             default:
                 return GameState::FirstHalf;
-        };
+        }
     }();
 
     GameState::State state = _game_state.state;

@@ -1,20 +1,22 @@
 #include "ProtobufTree.hpp"
-#include "StripChart.hpp"
 
-#include <QMenu>
+#include <google/protobuf/descriptor.h>
+
 #include <QContextMenuEvent>
 #include <QDockWidget>
 #include <QMainWindow>
+#include <QMenu>
 #include <QTimer>
-#include <stdio.h>
-#include <google/protobuf/descriptor.h>
+#include <cstdio>
 #include <iostream>
+
+#include "StripChart.hpp"
 
 using namespace std;
 using namespace google::protobuf;
 
 // Map from protobuf field ID to tree item
-typedef QMap<int, QTreeWidgetItem*> FieldMap;
+using FieldMap = QMap<int, QTreeWidgetItem*>;
 Q_DECLARE_METATYPE(FieldMap)
 Q_DECLARE_METATYPE(const FieldDescriptor*)
 
@@ -61,7 +63,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
     ref->ListFields(msg, &fields);
 
     // Get map of field numbers to child items
-    FieldMap fieldMap =
+    auto fieldMap =
         parent->data(Column_Tag, FieldMapRole).value<FieldMap>();
 
     bool newFields = false;
@@ -71,7 +73,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
     for (FieldMap::const_iterator i = fieldMap.begin(); i != fieldMap.end();
          ++i) {
         const FieldDescriptor* field = desc->FindFieldByNumber(i.key());
-        if (!field) {
+        if (field == nullptr) {
             // Field has left the descriptor - should never happen
             printf("Lost field %s.%d\n", desc->name().c_str(), i.key());
             continue;
@@ -81,9 +83,9 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
 
         bool hasData;
         if (field->is_repeated()) {
-            hasData = ref->FieldSize(msg, field);
+            hasData = (ref->FieldSize(msg, field) != 0);
 
-            if (!hasData && item->childCount()) {
+            if (!hasData && (item->childCount() != 0)) {
                 // Remove and delete children
                 for (QTreeWidgetItem* child : item->takeChildren()) {
                     delete child;
@@ -140,10 +142,10 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
             if (children < n) {
                 // Add children
                 for (int i = children; i < n; ++i) {
-                    QTreeWidgetItem* child = new QTreeWidgetItem(item);
+                    auto* child = new QTreeWidgetItem(item);
                     child->setText(Column_Field, QString("[%1]").arg(i));
 
-                    child->setData(Column_Tag, FieldDescriptorRole, field);
+                    child->setData(Column_Tag, FieldDescriptorRole, field != nullptr);
 
                     // For repeated items, the tag column holds the index in the
                     // field
@@ -247,7 +249,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                         break;
                 }
             }
-        } else
+        } else {
             switch (field->type()) {
                 case FieldDescriptor::TYPE_INT32:
                 case FieldDescriptor::TYPE_SINT32:
@@ -318,6 +320,8 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                                   QString("??? %1").arg(field->type()));
                     break;
             }
+
+}
     }
 
     return newFields;
@@ -331,7 +335,7 @@ void ProtobufTree::addBytes(QTreeWidgetItem* parent, const std::string& bytes) {
     if (children < n) {
         // Add children
         for (int i = children; i < n; ++i) {
-            QTreeWidgetItem* child = new QTreeWidgetItem(parent);
+            auto* child = new QTreeWidgetItem(parent);
             child->setText(Column_Field, QString("[%1]").arg(i));
 
             // For bytes, the tag column holds the index in the field
@@ -354,7 +358,7 @@ void ProtobufTree::addBytes(QTreeWidgetItem* parent, const std::string& bytes) {
 }
 
 void ProtobufTree::expandMessages(QTreeWidgetItem* item) {
-    if (!item) {
+    if (item == nullptr) {
         item = invisibleRootItem();
     }
 
@@ -390,7 +394,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
 
     QAction* expandItemAction = nullptr, * collapseItemAction = nullptr;
     QTreeWidgetItem* item = itemAt(e->pos());
-    if (item) {
+    if (item != nullptr) {
         expandItemAction = menu.addAction("Expand");
         collapseItemAction = menu.addAction("Collapse");
         menu.addSeparator();
@@ -415,10 +419,10 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
 
     QList<QDockWidget*> dockWidgets;
     const FieldDescriptor* field = nullptr;
-    if (mainWindow && item) {
+    if ((mainWindow != nullptr) && (item != nullptr)) {
         field = item->data(Column_Tag, FieldDescriptorRole)
                     .value<const FieldDescriptor*>();
-        if (field) {
+        if (field != nullptr) {
             int t = field->type();
             if (t == FieldDescriptor::TYPE_FLOAT ||
                 t == FieldDescriptor::TYPE_DOUBLE ||
@@ -452,15 +456,15 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         collapseAll();
     } else if (act == showTags) {
         setColumnHidden(Column_Tag, !showTags->isChecked());
-    } else if (expandItemAction && act == expandItemAction) {
+    } else if ((expandItemAction != nullptr) && act == expandItemAction) {
         expandSubtree(item);
-    } else if (collapseItemAction && act == collapseItemAction) {
+    } else if ((collapseItemAction != nullptr) && act == collapseItemAction) {
         collapseSubtree(item);
-    } else if (chartAction && act == chartAction) {
+    } else if ((chartAction != nullptr) && act == chartAction) {
         // Find the path from LogFrame to the chosen item
         QVector<int> path;
         QStringList names;
-        for (QTreeWidgetItem* i = item; i; i = i->parent()) {
+        for (QTreeWidgetItem* i = item; i != nullptr; i = i->parent()) {
             int tag = i->data(Column_Tag, Qt::DisplayRole).toInt();
             path.push_back(tag);
             names.append(i->text(Column_Field));
@@ -469,17 +473,17 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         reverse(path.begin(), path.end());
         reverse(names.begin(), names.end());
 
-        QDockWidget* dock = new QDockWidget(names.join("."), mainWindow);
-        StripChart* chart = new StripChart(dock);
+        auto* dock = new QDockWidget(names.join("."), mainWindow);
+        auto* chart = new StripChart(dock);
         chart->history(_history);
 
         if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
-            Chart::PointMagnitude* f = new Chart::PointMagnitude;
+            auto* f = new Chart::PointMagnitude;
             f->path = path;
             f->name = names.join(".");
             chart->function(f);
         } else {
-            Chart::NumericField* f = new Chart::NumericField;
+            auto* f = new Chart::NumericField;
             f->path = path;
             f->name = names.join(".");
             chart->function(f);
@@ -487,34 +491,34 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         dock->setAttribute(Qt::WA_DeleteOnClose);
         dock->setWidget(chart);
         mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dock);
-        if (updateTimer) {
+        if (updateTimer != nullptr) {
             connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
         }
-    } else if (exportAction && act == exportAction) {
+    } else if ((exportAction != nullptr) && act == exportAction) {
         // If export button was pressed
 
-        StripChart* chart = new StripChart();
+        auto* chart = new StripChart();
         chart->history(_history);
 
         // Loop through all open charts and add their data to one chart
-        for (int i = 0; i < dockWidgets.size(); i++) {
-            StripChart* cChart = (StripChart*)dockWidgets[i]->widget();
+        for (auto & dockWidget : dockWidgets) {
+            auto* cChart = dynamic_cast<StripChart*>(dockWidget->widget());
             QList<Chart::Function*> functions = cChart->getFunctions();
-            for (int j = 0; j < functions.size(); j++) {
-                chart->function(functions[j]);
+            for (auto & function : functions) {
+                chart->function(function);
             }
         }
 
         // export that chart
         chart->exportChart();
 
-    } else if (chartMenuActions.size() > 0) {
+    } else if (!chartMenuActions.empty()) {
         int i = chartMenuActions.indexOf(act);
         if (i != -1) {
-            StripChart* chart = (StripChart*)dockWidgets[i]->widget();
+            auto* chart = dynamic_cast<StripChart*>(dockWidgets[i]->widget());
             QVector<int> path;
             QStringList names;
-            for (QTreeWidgetItem* i = item; i; i = i->parent()) {
+            for (QTreeWidgetItem* i = item; i != nullptr; i = i->parent()) {
                 int tag = i->data(Column_Tag, Qt::DisplayRole).toInt();
                 path.push_back(tag);
                 names.append(i->text(Column_Field));
@@ -528,18 +532,18 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
             chart->history(_history);
 
             if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
-                Chart::PointMagnitude* f = new Chart::PointMagnitude;
+                auto* f = new Chart::PointMagnitude;
                 f->path = path;
                 f->name = names.join(".");
                 chart->function(f);
             } else {
-                Chart::NumericField* f = new Chart::NumericField;
+                auto* f = new Chart::NumericField;
                 f->path = path;
                 f->name = names.join(".");
                 chart->function(f);
             }
 
-            if (updateTimer) {
+            if (updateTimer != nullptr) {
                 connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
             }
         }

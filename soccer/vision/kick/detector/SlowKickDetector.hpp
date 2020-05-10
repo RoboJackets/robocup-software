@@ -34,9 +34,9 @@ public:
      * @note kickEvent is only filled if it returns true
      * It will change, but will have invalid data in it
      */
-    bool addRecord(RJ::Time calcTime, WorldBall ball,
-                   std::vector<WorldRobot> yellowRobots,
-                   std::vector<WorldRobot> blueRobots,
+    bool addRecord(RJ::Time calcTime, const WorldBall& ball,
+                   const std::vector<WorldRobot>& yellowRobots,
+                   const std::vector<WorldRobot>& blueRobots,
                    KickEvent& kickEvent);
 
     static void createConfiguration(Configuration* cfg);
@@ -69,7 +69,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    bool distanceValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool distanceValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -79,7 +79,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    bool velocityValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool velocityValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -89,7 +89,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    bool distanceIncreasingValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool distanceIncreasingValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
 
     /**
      * Checks that the ball is being shot from the robot mouth
@@ -99,7 +99,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    bool inFrontValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool inFrontValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
 
     std::deque<VisionState> stateHistory;
 

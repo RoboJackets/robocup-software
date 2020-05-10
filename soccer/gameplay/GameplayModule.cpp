@@ -36,11 +36,9 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
-    if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
-        numeric_limits<double>::epsilon()) {
-        return true;
-    }
-    return false;
+    return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
+
+        numeric_limits<double>::epsilon();
 }
 
 // TODO: Replace this whole file when we move to ROS2
@@ -128,7 +126,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
                       Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
 
     float y = -(float)_fieldEdgeInset->value();
-    float deadspace = (float)_fieldEdgeInset->value();
+    auto deadspace = (float)_fieldEdgeInset->value();
     x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
     _nonFloor[0] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});

@@ -13,7 +13,7 @@ void WorldBall::createConfiguration(Configuration* cfg) {
 
 WorldBall::WorldBall() : isValid(false) {}
 
-WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls) 
+WorldBall::WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls) 
     : isValid(true), time(calcTime){
         
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
@@ -30,7 +30,7 @@ WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls)
              << std::endl;
     }
 
-    if (kalmanBalls.size() == 0) {
+    if (kalmanBalls.empty()) {
         std::cout
              << "ERROR: Zero balls are given to the WorldBall constructor"
              << std::endl;
@@ -44,7 +44,7 @@ WorldBall::WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls)
         return;
     }
 
-    for (KalmanBall& ball : kalmanBalls) {
+    for (const KalmanBall& ball : kalmanBalls) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
         Geometry2d::Point posCov = ball.getPosCov();

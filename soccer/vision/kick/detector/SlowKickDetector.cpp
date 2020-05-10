@@ -23,9 +23,9 @@ void SlowKickDetector::createConfiguration(Configuration* cfg) {
     max_kick_angle           = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/slow_max_kick_angle", .34);
 }
 
-bool SlowKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
-                                 std::vector<WorldRobot> yellowRobots,
-                                 std::vector<WorldRobot> blueRobots,
+bool SlowKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
+                                 const std::vector<WorldRobot>& yellowRobots,
+                                 const std::vector<WorldRobot>& blueRobots,
                                  KickEvent& kickEvent) {
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
@@ -152,7 +152,7 @@ bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot, std::ve
     return numClose == 1 && numFar > 0;
 }
 
-bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball) {
+bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>&  /*robot*/, std::vector<WorldBall>& ball) {
     // Make sure all ball velocities are above a certain amount
 
     std::vector<double> vel(ball.size() - 1, 0);

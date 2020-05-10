@@ -1,9 +1,11 @@
 #include "Logger.hpp"
 
-#include <QString>
 #include <fcntl.h>
-#include <stdio.h>
 #include <unistd.h>
+
+#include <QString>
+#include <cstdio>
+
 #include "Utils.hpp"
 
 using namespace std;
@@ -17,7 +19,7 @@ Logger::Logger(size_t logSize) : _history(logSize) {
 
 Logger::~Logger() { close(); }
 
-bool Logger::open(QString filename) {
+bool Logger::open(const QString& filename) {
     QWriteLocker locker(&_lock);
 
     if (_fd >= 0) {
@@ -48,7 +50,7 @@ void Logger::addFrame(shared_ptr<LogFrame> frame) {
     this->addFrame(frame, false);
 }
 
-void Logger::addFrame(shared_ptr<LogFrame> frame, bool force) {
+void Logger::addFrame(shared_ptr<LogFrame>  frame, bool force) {
     QWriteLocker locker(&_lock);
 
     if (_history.empty()) {

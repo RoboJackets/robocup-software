@@ -12,10 +12,10 @@ using Geometry2d::Point, Geometry2d::Segment, Geometry2d::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function,
     std::pair, std::get;
 
-std::unique_ptr<ConfigDouble> KickEvaluator::kick_std_dev;
-std::unique_ptr<ConfigDouble> KickEvaluator::kick_mean;
-std::unique_ptr<ConfigDouble> KickEvaluator::robot_std_dev;
-std::unique_ptr<ConfigDouble> KickEvaluator::start_x_offset;
+ ConfigDouble* KickEvaluator::kick_std_dev;
+ ConfigDouble* KickEvaluator::kick_mean;
+ ConfigDouble* KickEvaluator::robot_std_dev;
+ ConfigDouble* KickEvaluator::start_x_offset;
 
 // Fast exp function, valid within 4% at +- 100
 inline double fast_exp(double x) {
@@ -30,14 +30,10 @@ inline float fast_exp(float x) {
 }
 
 void KickEvaluator::createConfiguration(Configuration* cfg) {
-    kick_std_dev =
-        std::make_unique<ConfigDouble>(cfg, "KickEvaluator/kick_std_dev", 0.04);
-    kick_mean =
-        std::make_unique<ConfigDouble>(cfg, "KickEvaluator/kick_mean", 0);
-    robot_std_dev =
-        std::make_unique<ConfigDouble>(cfg, "KickEvaluator/robot_std_dev", 0.3);
-    start_x_offset = std::make_unique<ConfigDouble>(
-        cfg, "KickEvaluator/start_x_offset", 0.1);
+    kick_std_dev = new ConfigDouble(cfg, "KickEvaluator/kick_std_dev", 0.04);
+    kick_mean = new ConfigDouble(cfg, "KickEvaluator/kick_mean", 0);
+    robot_std_dev = new ConfigDouble(cfg, "KickEvaluator/robot_std_dev", 0.3);
+    start_x_offset = new ConfigDouble(cfg, "KickEvaluator/start_x_offset", 0.1);
 }
 
 KickEvaluator::KickEvaluator(SystemState* systemState) : system(systemState) {}
