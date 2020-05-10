@@ -108,7 +108,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
     update();
 }
 
-void SimFieldView::mouseReleaseEvent(QMouseEvent*  /*me*/) {
+void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
     if (_dragMode == DRAG_SHOOT) {
         grSim_Packet simPacket;
         grSim_BallReplacement* ball_replace =

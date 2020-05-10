@@ -1075,7 +1075,7 @@ void MainWindow::on_actionResetField_triggered() {
 
     grSim_Replacement* replacement = simPacket.mutable_replacement();
     for (int i = 0; i < Robots_Per_Team; ++i) {
-        auto *rob = replacement->add_robots();
+        auto* rob = replacement->add_robots();
 
         const int NUM_COLS = 2;
         const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
@@ -1238,7 +1238,8 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
     printf("Update timer: active %d, singleShot %d, interval %d\n",
-           static_cast<int>(updateTimer.isActive()), static_cast<int>(updateTimer.isSingleShot()),
+           static_cast<int>(updateTimer.isActive()),
+           static_cast<int>(updateTimer.isSingleShot()),
            updateTimer.interval());
     updateTimer.stop();
     updateTimer.start(30);
@@ -1510,7 +1511,7 @@ void MainWindow::setRadioChannel(RadioChannels channel) {
     }
 }
 
-void MainWindow::setUseRefChecked(bool  /*use_ref*/) {
+void MainWindow::setUseRefChecked(bool /*use_ref*/) {
     _ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }
 

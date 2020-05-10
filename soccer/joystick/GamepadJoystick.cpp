@@ -23,7 +23,8 @@ GamepadJoystick::GamepadJoystick()
             cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
                  << endl;
         } else {
-            cout << "Joystick connected to " << SDL_JoystickName(0) << endl;
+            cout << "Joystick connected to " << SDL_JoystickName(nullptr)
+                 << endl;
         }
     }
 }
@@ -38,7 +39,6 @@ GamepadJoystick::~GamepadJoystick() {
 bool GamepadJoystick::valid() const { return _joystick != nullptr; }
 
 void GamepadJoystick::update() {
-    
     SDL_JoystickUpdate();
 
     // DRIBBLER CONTROL
@@ -83,7 +83,7 @@ void GamepadJoystick::update() {
     // Kicking is triggered by a chip as well. If you only want a chip, remove
     // 5.
     _controls.kick = ((SDL_JoystickGetButton(_joystick, 7) |
-                     SDL_JoystickGetButton(_joystick, 5)) != 0);
+                       SDL_JoystickGetButton(_joystick, 5)) != 0);
 
     _controls.chip = (SDL_JoystickGetButton(_joystick, 5) != 0u);
 
@@ -122,11 +122,7 @@ void GamepadJoystick::update() {
 }
 
 JoystickControlValues GamepadJoystick::getJoystickControlValues() {
-    
     return _controls;
 }
 
-void GamepadJoystick::reset() {
-    
-    _controls.dribble = false;
-}
+void GamepadJoystick::reset() { _controls.dribble = false; }

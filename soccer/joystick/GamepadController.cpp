@@ -9,7 +9,7 @@ constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 const float AXIS_MAX = 32768.0f;
 // cutoff for counting triggers as 'on'
 const float TRIGGER_CUTOFF = 0.9;
-} // namespace
+}  // namespace
 
 std::vector<int> GamepadController::controllersInUse = {};
 int GamepadController::joystickRemoved = -1;
@@ -68,10 +68,10 @@ void GamepadController::openJoystick() {
                          << " game controller as controller # "
                          << controllersInUse.size() << endl;
                     break;
-                } 
-                    cerr << "ERROR: Could not open controller! SDL Error: "
-                         << SDL_GetError() << endl;
-                
+                }
+                cerr << "ERROR: Could not open controller! SDL Error: "
+                     << SDL_GetError() << endl;
+
                 return;
             }
         }
@@ -97,13 +97,13 @@ void GamepadController::closeJoystick() {
 
     // Clear events from queue
     SDL_Event event;
-    while (SDL_PollEvent(&event) != 0) {}
+    while (SDL_PollEvent(&event) != 0) {
+    }
 }
 
 bool GamepadController::valid() const { return connected; }
 
 void GamepadController::update() {
-    
     SDL_GameControllerUpdate();
 
     RJ::Time now = RJ::now();
@@ -131,8 +131,7 @@ void GamepadController::update() {
     // TODO stop abusing the queue here and use the event api.
     if (SDL_HasEvents(SDL_CONTROLLERAXISMOTION, SDL_CONTROLLERBUTTONUP) == 0u) {
         return;
-
-}
+    }
 
     /*
      *  DRIBBLER ON/OFF
@@ -150,7 +149,8 @@ void GamepadController::update() {
     /*
      *  DRIBBLER POWER
      */
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A) != 0u) {
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_A) !=
+        0u) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
@@ -169,7 +169,8 @@ void GamepadController::update() {
     /*
      *  KICKER POWER
      */
-    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X) != 0u) {
+    if (SDL_GameControllerGetButton(_controller, SDL_CONTROLLER_BUTTON_X) !=
+        0u) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
@@ -187,8 +188,9 @@ void GamepadController::update() {
     /*
      *  KICK TRUE/FALSE
      */
-    _controls.kick = (SDL_GameControllerGetButton(
-        _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) != 0u);
+    _controls.kick =
+        (SDL_GameControllerGetButton(
+             _controller, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER) != 0u);
 
     /*
      *  CHIP TRUE/FALSE
@@ -223,42 +225,41 @@ void GamepadController::update() {
                                     SDL_CONTROLLER_BUTTON_DPAD_DOWN) != 0u) {
         input.y() = -fabs(leftY);
         input.x() = 0;
-    } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_DPAD_UP) != 0u) {
+    } else if (SDL_GameControllerGetButton(
+                   _controller, SDL_CONTROLLER_BUTTON_DPAD_UP) != 0u) {
         input.y() = fabs(leftY);
         input.x() = 0;
-    } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_DPAD_LEFT) != 0u) {
+    } else if (SDL_GameControllerGetButton(
+                   _controller, SDL_CONTROLLER_BUTTON_DPAD_LEFT) != 0u) {
         input.y() = 0;
         input.x() = -fabs(leftX);
-    } else if (SDL_GameControllerGetButton(_controller,
-                                           SDL_CONTROLLER_BUTTON_DPAD_RIGHT) != 0u) {
+    } else if (SDL_GameControllerGetButton(
+                   _controller, SDL_CONTROLLER_BUTTON_DPAD_RIGHT) != 0u) {
         input.y() = 0;
         input.x() = fabs(leftX);
     }
 
     // Floating point precision error rounding
-    if (_controls.kickPower < 1e-1) { _controls.kickPower = 0;
-
-}
-    if (_controls.dribblerPower < 1e-1) { _controls.dribblerPower = 0;
-
-}
-    if (fabs(_controls.rotation) < 5e-2) { _controls.rotation = 0;
-
-}
-    if (fabs(input.y()) < 5e-2) { input.y() = 0;
-
-}
-    if (fabs(input.x()) < 5e-2) { input.x() = 0;
-
-}
+    if (_controls.kickPower < 1e-1) {
+        _controls.kickPower = 0;
+    }
+    if (_controls.dribblerPower < 1e-1) {
+        _controls.dribblerPower = 0;
+    }
+    if (fabs(_controls.rotation) < 5e-2) {
+        _controls.rotation = 0;
+    }
+    if (fabs(input.y()) < 5e-2) {
+        input.y() = 0;
+    }
+    if (fabs(input.x()) < 5e-2) {
+        input.x() = 0;
+    }
 
     _controls.translation = Geometry2d::Point(input.x(), input.y());
 }
 
 JoystickControlValues GamepadController::getJoystickControlValues() {
-    
     return _controls;
 }
 

@@ -63,8 +63,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
     ref->ListFields(msg, &fields);
 
     // Get map of field numbers to child items
-    auto fieldMap =
-        parent->data(Column_Tag, FieldMapRole).value<FieldMap>();
+    auto fieldMap = parent->data(Column_Tag, FieldMapRole).value<FieldMap>();
 
     bool newFields = false;
 
@@ -145,7 +144,8 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                     auto* child = new QTreeWidgetItem(item);
                     child->setText(Column_Field, QString("[%1]").arg(i));
 
-                    child->setData(Column_Tag, FieldDescriptorRole, field != nullptr);
+                    child->setData(Column_Tag, FieldDescriptorRole,
+                                   field != nullptr);
 
                     // For repeated items, the tag column holds the index in the
                     // field
@@ -320,8 +320,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem* parent,
                                   QString("??? %1").arg(field->type()));
                     break;
             }
-
-}
+        }
     }
 
     return newFields;
@@ -501,10 +500,10 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e) {
         chart->history(_history);
 
         // Loop through all open charts and add their data to one chart
-        for (auto & dockWidget : dockWidgets) {
+        for (auto& dockWidget : dockWidgets) {
             auto* cChart = dynamic_cast<StripChart*>(dockWidget->widget());
             QList<Chart::Function*> functions = cChart->getFunctions();
-            for (auto & function : functions) {
+            for (auto& function : functions) {
                 chart->function(function);
             }
         }

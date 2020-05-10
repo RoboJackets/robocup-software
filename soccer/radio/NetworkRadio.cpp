@@ -35,7 +35,7 @@ void NetworkRadio::send(Packet::RadioTx& radioTx) {
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
             forward_packet_buffer = _send_buffers[robot_idx];
 
-        rtp::Header* header =
+        auto* header =
             reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
@@ -84,7 +84,8 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
         return;
-    } if (num_bytes != rtp::ReverseSize) {
+    }
+    if (num_bytes != rtp::ReverseSize) {
         std::cerr << "Invalid packet length: expected " << rtp::ReverseSize
                   << ", got " << num_bytes << std::endl;
         return;

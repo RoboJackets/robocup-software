@@ -774,7 +774,8 @@ void Processor::recalculateWorldToTeamTransform() {
 }
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
-    std::cout << "Updating field geometry based off of vision packet." << std::endl;
+    std::cout << "Updating field geometry based off of vision packet."
+              << std::endl;
     *currentDimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();

@@ -69,7 +69,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distanceValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool distanceValidator(std::vector<WorldRobot>& robot,
+                                  std::vector<WorldBall>& ball);
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -79,7 +80,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool velocityValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool velocityValidator(std::vector<WorldRobot>& robot,
+                                  std::vector<WorldBall>& ball);
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -89,7 +91,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distanceIncreasingValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool distanceIncreasingValidator(std::vector<WorldRobot>& robot,
+                                            std::vector<WorldBall>& ball);
 
     /**
      * Checks that the ball is being shot from the robot mouth
@@ -99,7 +102,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool inFrontValidator(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool inFrontValidator(std::vector<WorldRobot>& robot,
+                                 std::vector<WorldBall>& ball);
 
     std::deque<VisionState> stateHistory;
 

@@ -13,9 +13,9 @@ void WorldBall::createConfiguration(Configuration* cfg) {
 
 WorldBall::WorldBall() : isValid(false) {}
 
-WorldBall::WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls) 
-    : isValid(true), time(calcTime){
-        
+WorldBall::WorldBall(RJ::Time calcTime,
+                     const std::list<KalmanBall>& kalmanBalls)
+    : isValid(true), time(calcTime) {
     Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
     Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
     double totalPosWeight = 0;

@@ -23,7 +23,7 @@ VisionFilter::~VisionFilter() {
     worker.join();
 }
 
-void VisionFilter::addFrames(const std::vector<CameraFrame>&  frames) {
+void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
     std::lock_guard<std::mutex> lock(frameLock);
     frameBuffer.insert(frameBuffer.end(), frames.begin(), frames.end());
 }

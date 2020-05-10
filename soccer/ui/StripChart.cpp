@@ -22,7 +22,7 @@ using namespace Packet;
 using namespace boost;
 using namespace google::protobuf;
 
-StripChart::StripChart(QWidget*  /*parent*/) {
+StripChart::StripChart(QWidget* /*parent*/) {
     _history = nullptr;
     _minValue = 0;
     _maxValue = 1;
@@ -102,7 +102,7 @@ int StripChart::indexAtPoint(const QPoint& point) {
     return (width() - point.x()) * chartSize / width();
 }
 
-void StripChart::paintEvent(QPaintEvent*  /*e*/) {
+void StripChart::paintEvent(QPaintEvent* /*e*/) {
     if (!_history || _history->empty() || _functions.isEmpty()) {
         return;
     }
@@ -298,11 +298,10 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float& v) const {
                     }
                 }
                 return true;
-            } 
-                // Non-message field in the middle of a path
-                fprintf(stderr, "NumericField: expected a message field\n");
-                return false;
-            
+            }
+            // Non-message field in the middle of a path
+            fprintf(stderr, "NumericField: expected a message field\n");
+            return false;
         }
 
         if (fd->is_repeated()) {

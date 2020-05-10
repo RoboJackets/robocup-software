@@ -80,9 +80,9 @@ double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
         }
         if (temp1 > 0 && temp1 < rampUpTime) {
             return temp1;
-        } 
-            return temp2;
-        
+        }
+        return temp2;
+
     } else if (distance <= rampUpDist + plateauDist) {
         double position = distance - rampUpDist;
         return rampUpTime + position / maxSpeed;
@@ -109,9 +109,9 @@ double Trapezoidal::getTime(double distance, double pathLength, double maxSpeed,
         }
         if (temp1 > 0 && temp1 < rampDownTime) {
             return rampUpTime + plateauTime + temp1;
-        } 
-            return rampUpTime + plateauTime + temp2;
-        
+        }
+        return rampUpTime + plateauTime + temp2;
+
     } else {
         return rampUpTime + plateauTime + rampDownTime;
     }
@@ -172,7 +172,8 @@ bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
         posOut = 0;
         speedOut = startSpeed;
         return false;
-    } if (timeIntoLap < rampUpTime) {
+    }
+    if (timeIntoLap < rampUpTime) {
         /// on the ramp-up, we're accelerating at @maxAcc
         posOut =
             0.5 * maxAcc * timeIntoLap * timeIntoLap + startSpeed * timeIntoLap;

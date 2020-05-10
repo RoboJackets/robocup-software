@@ -33,11 +33,12 @@ public:
      * Implicit conversion from Eigen::Vector3d
      */
     Pose(const Eigen::Vector3d& other)
-        : _position(other(0), other(1)), _heading(other(2)) {}
+        : _position(other(0), other(1)),
+          _heading(other(2)){}
 
     /**
-     * Compute the pose specified using this pose as coordinates in a frame of
-     * reference specified by `other`, in the global space.
+     * Compute the pose specified using this pose as coordinates in a
+     * frame of reference specified by `other`, in the global space.
      *
      * i.e.
      *
@@ -87,15 +88,21 @@ public:
     /**
      * Accessors
      */
-    Point& position() { return _position; }
-    [[nodiscard]] Point const& position() const { return _position; }
-    double& heading() { return _heading; }
+    Point& position() {
+        return _position;
+    }
+    [[nodiscard]] Point const& position() const {
+        return _position;
+    } double& heading() {
+        return _heading;
+    }
     [[nodiscard]] double const& heading() const { return _heading; }
 
-    /**
-     * Operators
-     */
-    [[nodiscard]] Pose operator+(const Pose& other) const {
+        /**
+         * Operators
+         */
+        [[nodiscard]] Pose
+        operator+(const Pose& other) const {
         return Pose(position() + other.position(), heading() + other.heading());
     }
     [[nodiscard]] Pose operator-(const Pose& other) const {
@@ -183,22 +190,25 @@ public:
      * Accessors
      */
     Point& linear() { return _linear; }
-    [[nodiscard]] Point const& linear() const { return _linear; }
-    double& angular() { return _angular; }
+    [[nodiscard]] Point const& linear() const {
+        return _linear;
+    } double& angular() {
+        return _angular;
+    }
     [[nodiscard]] double const& angular() const { return _angular; }
 
-    /**
-     * Find the resulting pose (delta) of an object starting at the origin and
-     * continuing with constant (world-space) velocity for the specified time
-     * (in seconds).
-     *
-     * Throughout the movement, linear velocity relative to the origin is
-     * constant (but velocity in the pose's reference frame is changing in
-     * direction as the pose rotates)
-     *
-     * Called deltaFixed because it operates fixed to the origin frame.
-     */
-    [[nodiscard]] Pose deltaFixed(double /*t*/) const {
+        /**
+         * Find the resulting pose (delta) of an object starting at the origin
+         * and continuing with constant (world-space) velocity for the specified
+         * time (in seconds).
+         *
+         * Throughout the movement, linear velocity relative to the origin is
+         * constant (but velocity in the pose's reference frame is changing in
+         * direction as the pose rotates)
+         *
+         * Called deltaFixed because it operates fixed to the origin frame.
+         */
+            [[nodiscard]] Pose deltaFixed(double /*t*/) const {
         return Pose(linear().x(), linear().y(), angular());
     }
 
@@ -249,7 +259,7 @@ public:
                     vx * cosine_frac + vy * sine_frac, vh * t);
     }
 
-    [[nodiscard]] double curvature() const {
+        [[nodiscard]] double curvature() const {
         return angular() / linear().mag();
     }
 

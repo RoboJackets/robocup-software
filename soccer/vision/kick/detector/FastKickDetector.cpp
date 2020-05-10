@@ -20,7 +20,6 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
                                  const std::vector<WorldRobot>& yellowRobots,
                                  const std::vector<WorldRobot>& blueRobots,
                                  KickEvent& kickEvent) {
-
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
     if (stateHistory.size() > *VisionFilterConfig::fast_kick_detector_history_length) {
@@ -49,7 +48,7 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
     }
 
     // Assume the kick happened in the middle of the history
-    int midIdx = (int)floor(stateHistory.size() / 2);
+    int midIdx = static_cast<int>(std::floor(stateHistory.size() / 2));
 
     WorldRobot closestRobot = getClosestRobot();
     RJ::Time kickTime = stateHistory.at(midIdx).calcTime;

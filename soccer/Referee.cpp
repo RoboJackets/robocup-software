@@ -61,7 +61,7 @@ void Referee::stop() noexcept {
     _asio_socket.close();
 }
 
-void Referee::getPackets(std::vector<RefereePacket>&  packets) {
+void Referee::getPackets(std::vector<RefereePacket>& packets) {
     std::lock_guard<std::mutex> lock(_mutex);
     packets = _packets;
     _packets.clear();

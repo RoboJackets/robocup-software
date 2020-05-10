@@ -152,7 +152,8 @@ bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot, std::ve
     return numClose == 1 && numFar > 0;
 }
 
-bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>&  /*robot*/, std::vector<WorldBall>& ball) {
+bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& /*robot*/,
+                                         std::vector<WorldBall>& ball) {
     // Make sure all ball velocities are above a certain amount
 
     std::vector<double> vel(ball.size() - 1, 0);

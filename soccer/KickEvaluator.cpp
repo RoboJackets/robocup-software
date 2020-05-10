@@ -12,10 +12,10 @@ using Geometry2d::Point, Geometry2d::Segment, Geometry2d::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function,
     std::pair, std::get;
 
- ConfigDouble* KickEvaluator::kick_std_dev;
- ConfigDouble* KickEvaluator::kick_mean;
- ConfigDouble* KickEvaluator::robot_std_dev;
- ConfigDouble* KickEvaluator::start_x_offset;
+ConfigDouble* KickEvaluator::kick_std_dev;
+ConfigDouble* KickEvaluator::kick_mean;
+ConfigDouble* KickEvaluator::robot_std_dev;
+ConfigDouble* KickEvaluator::start_x_offset;
 
 // Fast exp function, valid within 4% at +- 100
 inline double fast_exp(double x) {

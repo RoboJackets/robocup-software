@@ -216,8 +216,7 @@ int main(int argc, char* argv[]) {
         } else {
             printf("Cannot recognize radio frequency : %s\n",
                    radioFreq.toStdString().c_str());
-
-}
+        }
     }
 
     win->logFileChanged();
@@ -229,7 +228,7 @@ int main(int argc, char* argv[]) {
              ->isInitialized()) {  // Wait until processor finishes initializing
     }
 
-    if (playbookFile.size() > 0)
+    if (!playbookFile.empty())
         processor->gameplayModule()->loadPlaybook(playbookFile);
 
     // Sets the initial stylesheet for the application

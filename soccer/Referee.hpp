@@ -51,7 +51,7 @@ struct RefereePacket {
 class Referee : public Node {
 public:
     explicit Referee(Context* const context);
-    ~Referee();
+    ~Referee() noexcept;
 
     Referee(const Referee&) = delete;
     Referee& operator=(const Referee&) = delete;

@@ -48,7 +48,8 @@ private:
      */
     void updateParams();
 
-    static void setVelocity(MotionSetpoint* setpoint, Geometry2d::Twist target_vel);
+    static void setVelocity(MotionSetpoint* setpoint,
+                            Geometry2d::Twist target_vel);
 
     int _shell_id;
 

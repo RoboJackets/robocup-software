@@ -65,7 +65,8 @@ protected:
     virtual void drawWorldSpace(QPainter& p);
     virtual void drawTeamSpace(QPainter& p);
 
-    void drawText(QPainter& p, QPointF pos, const QString& text, bool center = true) const;
+    void drawText(QPainter& p, QPointF pos, const QString& text,
+                  bool center = true) const;
     static void drawField(QPainter& p, const Packet::LogFrame* frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);

@@ -24,14 +24,14 @@ void SpaceNavJoystick::update() {
     QMutexLocker(&mutex());
 
     //  try again if we failed last time
-    if (!_daemonConnected && !_daemonTried) { open();
-
-}
+    if (!_daemonConnected && !_daemonTried) {
+        open();
+    }
 
     //  abort
-    if (!_daemonConnected) { return;
-
-}
+    if (!_daemonConnected) {
+        return;
+    }
 
     _controlValues.kick = false;
     _controlValues.chip = false;
@@ -60,12 +60,10 @@ void SpaceNavJoystick::update() {
                         0.1 * -sign<int>(sev.motion.y);
                     if (_controlValues.dribblerPower < 0) {
                         _controlValues.dribblerPower = 0;
-
-}
+                    }
                     if (_controlValues.dribblerPower > 1) {
                         _controlValues.dribblerPower = 1;
-
-}
+                    }
                 }
 
                 _controlValues.translation = Geometry2d::Point(0, 0);

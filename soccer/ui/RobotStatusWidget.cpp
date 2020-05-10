@@ -2,7 +2,6 @@
 
 #include <cmath>
 
-
 RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
     : QWidget(parent, f) {
     _ui.setupUi(this);

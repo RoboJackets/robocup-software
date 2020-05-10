@@ -56,7 +56,7 @@ public:
      */
     template <typename T>
     [[nodiscard]] bool hit(const T& obj) const {
-        for (const auto & it : *this) {
+        for (const auto& it : *this) {
             if (it->hit(obj)) {
                 return true;
             }
@@ -65,9 +65,13 @@ public:
         return false;
     }
 
-    [[nodiscard]] bool hit(Point pt) const override { return hit<Point>(pt); }
+        [[nodiscard]] bool hit(Point pt) const override {
+        return hit<Point>(pt);
+    }
 
-    [[nodiscard]] bool hit(const Segment& seg) const override { return hit<Segment>(seg); }
+    [[nodiscard]] bool hit(const Segment& seg) const override {
+        return hit<Segment>(seg);
+    }
 
     // STL typedefs
     using const_iterator = std::vector<std::shared_ptr<Shape>>::const_iterator;
@@ -75,8 +79,11 @@ public:
     using value_type = std::shared_ptr<Shape>;
 
     // STL Interface
-    [[nodiscard]] const_iterator begin() const { return _subshapes.begin(); }
-    [[nodiscard]] const_iterator end() const { return _subshapes.end(); }
+    [[nodiscard]] const_iterator begin() const {
+        return _subshapes.begin();
+    }[[nodiscard]] const_iterator end() const {
+        return _subshapes.end();
+    }
 
     iterator begin() { return _subshapes.begin(); }
     iterator end() { return _subshapes.end(); }
@@ -84,7 +91,7 @@ public:
     std::string toString() override {
         std::stringstream str;
         str << "CompositeShape<";
-        for (auto & _subshape : _subshapes) {
+        for (auto& _subshape : _subshapes) {
             str << _subshape->toString() << ", ";
         }
         str << ">";

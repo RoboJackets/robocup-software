@@ -23,7 +23,9 @@ ConfigDouble* BallBounce::robot_mouth_angle_dampen;
  * This is mostly so the simple test case have the correct behavior
  * If it lands on the 1.0e-10 boundary the code reacts as if there was no hit
  */
-int sign(double val) { return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10); }
+int sign(double val) {
+    return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10);
+}
 
 void BallBounce::createConfiguration(Configuration* cfg) {
     robot_body_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_lin_dampen", .9);
