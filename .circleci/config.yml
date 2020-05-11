@@ -24,7 +24,7 @@ save_workspace: &save_workspace
 
 load_workspace: &load_workspace
   attach_workspace:
-    at: ~/robocup-software/build
+    at: ~/robocup-software
 
 version: 2
 jobs:
