@@ -31,7 +31,8 @@ public:
      * @param team The team color
      * @param kalmanRobots List of kalman robots from each of the cameras to merger
      */
-    WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
+    WorldRobot(RJ::Time calcTime, Team team, int robotID,
+               const std::list<KalmanRobot>& kalmanRobots);
 
     /**
      * @return If the robot actually represents a real robot
@@ -102,11 +103,11 @@ public:
 
 private:
     Team team;
-    int robotID;
+    int robotID{};
     Geometry2d::Pose pose;
     Geometry2d::Twist twist;
-    double posCov;
-    double velCov;
+    double posCov{};
+    double velCov{};
     std::list<KalmanRobot> robotComponents;
     RJ::Time time;
 

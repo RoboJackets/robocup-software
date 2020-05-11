@@ -1,19 +1,20 @@
-#include <Robot.hpp>
-#include <LogUtils.hpp>
-#include <planning/RRTPlanner.hpp>
-#include <planning/TrapezoidalPath.hpp>
+#include <execinfo.h>
 #include <protobuf/LogFrame.pb.h>
+
+#include <LogUtils.hpp>
+#include <QString>
+#include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
 #include <Utils.hpp>
-
-#include <execinfo.h>
-#include <stdio.h>
-#include <QString>
 #include <cmath>
+#include <cstdio>
 #include <iostream>
+#include <planning/RRTPlanner.hpp>
+#include <planning/TrapezoidalPath.hpp>
 #include <stdexcept>
 #include <utility>
+
 #include "DebugDrawer.hpp"
 
 using namespace std;
@@ -22,16 +23,18 @@ using Planning::MotionInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
-const float Opp_Avoid_Small = Robot_Radius - 0.03;
+constexpr float Opp_Avoid_Small_Thresh = 0.03;
+constexpr float Opp_Avoid_Small = Robot_Radius - Opp_Avoid_Small_Thresh;
 /** threshold for avoiding the ball*/
-const float Ball_Avoid_Small = 2.0 * Ball_Radius;
+constexpr float Ball_Avoid_Small_Mult = 2.0;
+constexpr float Ball_Avoid_Small = Ball_Avoid_Small_Mult * Ball_Radius;
 /**
  * When verbose is true, a lot of extra debug info is printed
  * to the console about path planning, etc
  */
-const bool verbose = false;
+constexpr bool verbose = false;
 
-Robot::Robot(Context* context, unsigned int shell, bool self)
+Robot::Robot(Context* context, int shell, bool self)
     : _context(context), _shell(shell), _self(self) {}
 
 #pragma mark OurRobot
@@ -54,21 +57,16 @@ void OurRobot::createConfiguration(Configuration* cfg) {
         cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
-OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
-    _cmdText = new std::stringstream();
-
+OurRobot::OurRobot(Context* context, int shell)
+    : Robot(context, shell, true),
+      _lastKickerStatus{0},
+      _lastBallSense{RJ::Time()} {
     //_lastChargedTime = 0;
-    _lastKickerStatus = 0;
     //_lastKickTime = 0;
-    _lastBallSense = RJ::Time();
 
     resetAvoidRobotRadii();
 
     _clearCmdText();
-}
-
-OurRobot::~OurRobot() {
-    delete _cmdText;
 }
 
 void OurRobot::addStatusText() {
@@ -81,7 +79,7 @@ void OurRobot::addStatusText() {
 
 void OurRobot::addText(const QString& text, const QColor& qc,
                        const QString& layerPrefix) {
-    Packet::DebugText* dbg = new Packet::DebugText;
+    auto* dbg = new Packet::DebugText;  // NOLINT
     QString layer = layerPrefix + QString::number(shell());
     dbg->set_layer(_context->debug_drawer.findDebugLayer(layer));
     dbg->set_text(text.toStdString());
@@ -92,31 +90,36 @@ void OurRobot::addText(const QString& text, const QColor& qc,
 bool OurRobot::avoidOpponents() const {
     // checks for avoiding all opponents
     for (size_t i = 0; i < Num_Shells; ++i) {
-        if (_context->state.opp[i] && _context->state.opp[i]->visible() &&
-            intent().opp_avoid_mask[i] < 0.1)
+        if ((_context->state.opp[i] != nullptr) &&
+            _context->state.opp[i]->visible() &&
+            intent().opp_avoid_mask[i] < 0.1) {
             return false;
+        }
     }
     return true;
 }
 
 void OurRobot::avoidOpponents(bool enable) {
-    for (float& a : intent().opp_avoid_mask)
-        if (enable)
+    for (float& a : intent().opp_avoid_mask) {
+        if (enable) {
             a = Robot_Radius - 0.03;
-        else
+        } else {
             a = -1.0;
+        }
+    }
 }
 
-std::string OurRobot::getCmdText() const { return _cmdText->str(); }
+std::string OurRobot::getCmdText() const { return _cmdText.str(); }
 
 void OurRobot::_clearCmdText() {
-    _cmdText->str("");
-    _cmdText->clear();
+    _cmdText.str("");
+    _cmdText.clear();
 }
 
 void OurRobot::resetForNextIteration() {
-    if (verbose && visible())
+    if (verbose && visible()) {
         cout << "in OurRobot::resetForNextIteration()" << std::endl;
+    }
     robotText.clear();
 
     _clearCmdText();
@@ -148,70 +151,85 @@ void OurRobot::resetMotionConstraints() {
 void OurRobot::stop() {
     resetMotionConstraints();
 
-    *_cmdText << "stop()\n";
+    _cmdText << "stop()\n";
 }
 
 void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
-    if (!visible()) return;
+    if (!visible()) {
+        return;
+    }
 
     // sets flags for future movement
-    if (verbose)
+    if (verbose) {
         cout << " in OurRobot::moveDirect(goal): adding a goal (" << goal.x()
              << ", " << goal.y() << ")" << endl;
+    }
 
     intent().motion_command =
         std::make_unique<Planning::DirectPathTargetCommand>(
             MotionInstant(goal, (goal - pos()).normalized() * endSpeed));
 
-    *_cmdText << "moveDirect(" << goal << ")" << endl;
-    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
+    _cmdText << "moveDirect(" << goal << ")" << endl;
+    _cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
 void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
-    if (!visible()) return;
+    if (!visible()) {
+        return;
+    }
 
     // sets flags for future movement
-    if (verbose)
+    if (verbose) {
         cout << " in OurRobot::moveTuning(goal): adding a goal (" << goal.x()
              << ", " << goal.y() << ")" << endl;
+    }
 
     intent().motion_command = std::make_unique<Planning::TuningPathCommand>(
         MotionInstant(goal, (goal - pos()).normalized() * endSpeed));
 
-    *_cmdText << "moveTuning(" << goal << ")" << endl;
-    *_cmdText << "endSpeed(" << endSpeed << ")" << endl;
+    _cmdText << "moveTuning(" << goal << ")" << endl;
+    _cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
 void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
-    if (!visible()) return;
+    if (!visible()) {
+        return;
+    }
 
     // sets flags for future movement
-    if (verbose)
+    if (verbose) {
         cout << " in OurRobot::move(goal): adding a goal (" << goal.x() << ", "
              << goal.y() << ")" << std::endl;
+    }
 
     intent().motion_command = std::make_unique<Planning::PathTargetCommand>(
         MotionInstant(goal, endVelocity));
 
-    *_cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
-    *_cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
-              << ")" << endl;
+    _cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
+    _cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
+             << ")" << endl;
 }
 
-void OurRobot::settle(std::optional<Point> target) {
-    if (!visible()) return;
+void OurRobot::settle(const std::optional<Point>& target) {
+    if (!visible()) {
+        return;
+    }
 
     intent().motion_command = std::make_unique<Planning::SettleCommand>(target);
 }
 
 void OurRobot::collect() {
-    if (!visible()) return;
+    if (!visible()) {
+        return;
+    }
 
     intent().motion_command = std::make_unique<Planning::CollectCommand>();
 }
 
 void OurRobot::lineKick(Point target) {
-    if (!visible()) return;
+    if (!visible()) {
+        return;
+    }
 
     disableAvoidBall();
     intent().motion_command =
@@ -219,18 +237,21 @@ void OurRobot::lineKick(Point target) {
 }
 
 void OurRobot::intercept(Point target) {
-    if (!visible()) return;
+    if (!visible()) {
+        return;
+    }
 
     disableAvoidBall();
     intent().motion_command =
         std::make_unique<Planning::InterceptCommand>(target);
 }
 
-void OurRobot::worldVelocity(Geometry2d::Point v) {
+void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
-        std::make_unique<Planning::WorldVelTargetCommand>(v);
+        std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
     setPath(nullptr);
-    *_cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
+    _cmdText << "worldVel(" << targetWorldVelocity.x() << ", "
+             << targetWorldVelocity.y() << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
@@ -243,8 +264,8 @@ void OurRobot::pivot(Geometry2d::Point pivotTarget) {
     intent().motion_command = std::make_unique<Planning::PivotCommand>(
         pivotPoint, pivotTarget, radius);
 
-    *_cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
-              << endl;
+    _cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
+             << endl;
 }
 
 Geometry2d::Point OurRobot::pointInRobotSpace(Geometry2d::Point pt) const {
@@ -253,8 +274,8 @@ Geometry2d::Point OurRobot::pointInRobotSpace(Geometry2d::Point pt) const {
     return p;
 }
 
-const Geometry2d::Segment OurRobot::kickerBar() const {
-    TransformMatrix pose(pos(), angle());
+Geometry2d::Segment OurRobot::kickerBar() const {
+    TransformMatrix pose(pos(), static_cast<float>(angle()));
     const float mouthHalf = Robot_MouthWidth / 2.0f;
     float x = sin(acos(mouthHalf / Robot_Radius)) * Robot_Radius;
     Point L(x, Robot_MouthWidth / 2.0f);
@@ -272,13 +293,15 @@ bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-    return (charged()) ? 0.0 : RJ::numSeconds(RJ::now() - _lastChargedTime);
+    return (charged()) ? 0.0f
+                       : static_cast<float>(
+                             RJ::numSeconds(RJ::now() - _lastChargedTime));
 }
 
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
     Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
-    float offset = *_dribbleOutOfBoundsOffset;
+    auto offset = static_cast<float>(*_dribbleOutOfBoundsOffset);
 
     Geometry2d::Rect modifiedField = Geometry2d::Rect(
         Point((-current_dimensions.Width() / 2) - offset, -offset),
@@ -287,10 +310,10 @@ void OurRobot::dribble(uint8_t speed) {
 
     if (modifiedField.containsPoint(pos())) {
         uint8_t scaled = std::min(*config()->dribbler.multiplier * speed,
-                                  (double)Max_Dribble);
+                                  static_cast<double>(Max_Dribble));
         intent().dvelocity = scaled;
 
-        *_cmdText << "dribble(" << (float)speed << ")" << endl;
+        _cmdText << "dribble(" << (float)speed << ")" << endl;
     } else {
         intent().dvelocity = 0;
     }
@@ -300,7 +323,7 @@ void OurRobot::face(Geometry2d::Point pt) {
     intent().rotation_command =
         std::make_unique<Planning::FacePointCommand>(pt);
 
-    *_cmdText << "face(" << pt.x() << ", " << pt.y() << ")" << endl;
+    _cmdText << "face(" << pt.x() << ", " << pt.y() << ")" << endl;
 }
 
 bool OurRobot::isFacing() {
@@ -312,32 +335,32 @@ bool OurRobot::isFacing() {
 void OurRobot::faceNone() {
     intent().rotation_command = std::make_unique<Planning::EmptyAngleCommand>();
 
-    *_cmdText << "faceNone()" << endl;
+    _cmdText << "faceNone()" << endl;
 }
 
 void OurRobot::kick(float strength) {
     double maxKick = *config()->kicker.maxKick;
     _kick(roundf(strength * ((float)maxKick)));
 
-    *_cmdText << "kick(" << strength * 100 << "%)" << endl;
+    _cmdText << "kick(" << strength * 100 << "%)" << endl;
 }
 
 void OurRobot::kickLevel(uint8_t strength) {
     _kick(strength);
 
-    *_cmdText << "kick(" << (float)strength << ")" << endl;
+    _cmdText << "kick(" << (float)strength << ")" << endl;
 }
 
 void OurRobot::chip(float strength) {
     double maxChip = *config()->kicker.maxChip;
     _chip(roundf(strength * ((float)maxChip)));
-    *_cmdText << "chip(" << strength * 100 << "%)" << endl;
+    _cmdText << "chip(" << strength * 100 << "%)" << endl;
 }
 
 void OurRobot::chipLevel(uint8_t strength) {
     _chip(strength);
 
-    *_cmdText << "chip(" << (float)strength << ")" << endl;
+    _cmdText << "chip(" << (float)strength << ")" << endl;
 }
 
 void OurRobot::_kick(uint8_t strength) {
@@ -363,7 +386,7 @@ void OurRobot::_unkick() {
 void OurRobot::unkick() {
     _unkick();
 
-    *_cmdText << "unkick()" << endl;
+    _cmdText << "unkick()" << endl;
 }
 
 void OurRobot::kickImmediately() {
@@ -382,12 +405,14 @@ void OurRobot::resetAvoidRobotRadii() {
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
-    for (float& ar : intent().opp_avoid_mask)
-        ar = (enable) ? Opp_Avoid_Small : *_oppAvoidRadius;
+    for (float& ar : intent().opp_avoid_mask) {
+        ar = (enable) ? Opp_Avoid_Small : static_cast<float>(*_oppAvoidRadius);
+    }
 }
 void OurRobot::avoidAllOpponents(bool enable) {
-    for (float& ar : intent().opp_avoid_mask)
-        ar = (enable) ? -1.0 : *_oppAvoidRadius;
+    for (float& ar : intent().opp_avoid_mask) {
+        ar = (enable) ? -1.0f : static_cast<float>(*_oppAvoidRadius);
+    }
 }
 
 bool OurRobot::avoidOpponent(unsigned shell_id) const {
@@ -404,17 +429,19 @@ float OurRobot::avoidOpponentRadius(unsigned shell_id) const {
 }
 
 void OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid) {
-    if (enable_avoid)
+    if (enable_avoid) {
         intent().opp_avoid_mask[shell_id] = *_oppAvoidRadius;
-    else
+    } else {
         intent().opp_avoid_mask[shell_id] = -1.0;
+    }
 }
 
 void OurRobot::approachOpponent(unsigned shell_id, bool enable_approach) {
-    if (enable_approach)
+    if (enable_approach) {
         intent().opp_avoid_mask[shell_id] = Opp_Avoid_Small;
-    else
+    } else {
         intent().opp_avoid_mask[shell_id] = *_oppAvoidRadius;
+    }
 }
 
 void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
@@ -422,7 +449,9 @@ void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
 }
 
 void OurRobot::avoidAllOpponentRadius(float radius) {
-    for (float& ar : intent().opp_avoid_mask) ar = radius;
+    for (float& ar : intent().opp_avoid_mask) {
+        ar = radius;
+    }
 }
 
 #pragma mark Ball Avoidance
@@ -432,7 +461,7 @@ void OurRobot::disableAvoidBall() { avoidBallRadius(-1); }
 void OurRobot::avoidBallRadius(float radius) {
     intent().avoid_ball_radius = radius;
 
-    *_cmdText << "avoidBall(" << radius << ")" << endl;
+    _cmdText << "avoidBall(" << radius << ")" << endl;
 }
 
 float OurRobot::avoidBallRadius() const { return intent().avoid_ball_radius; }
@@ -453,9 +482,8 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
     if (intent().avoid_ball_radius > 0.0) {
         return std::make_shared<Geometry2d::Circle>(_context->state.ball.pos,
                                                     intent().avoid_ball_radius);
-    } else {
-        return nullptr;
     }
+    return nullptr;
 }
 
 #pragma mark Motion
@@ -470,15 +498,18 @@ std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
     // Add Opponent Robots
     auto& mask = intent().opp_avoid_mask;
     auto& robots = _context->state.opp;
-    for (size_t i = 0; i < mask.size(); ++i)
-        if (mask[i] > 0 && robots[i] && robots[i]->visible())
-            obstacles.push_back(
-                Planning::DynamicObstacle(robots[i]->pos(), mask[i]));
+    for (size_t i = 0; i < mask.size(); ++i) {
+        if (mask[i] > 0 && (robots[i] != nullptr) && robots[i]->visible()) {
+            obstacles.emplace_back(robots[i]->pos(), mask[i]);
+        }
+    }
 
     // Add ball
     if (_context->state.ball.valid) {
         auto ballObs = createBallObstacle();
-        if (ballObs) obstacles.emplace_back(*ballObs);
+        if (ballObs) {
+            obstacles.emplace_back(*ballObs);
+        }
     }
 
     return obstacles;
@@ -503,10 +534,10 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
     // from this robot. This distance increases with velocity.
     RobotMask self_avoid_mask;
     std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
-              *_selfAvoidRadius);
+              *_oppAvoidRadius);
     const Geometry2d::ShapeSet selfObs =
         createRobotObstacles(_context->state.self, self_avoid_mask, this->pos(),
-                             0.6 + this->vel().mag());
+                             0.6f + static_cast<float>(this->vel().mag()));
     const Geometry2d::ShapeSet oppObs =
         createRobotObstacles(_context->state.opp, intent().opp_avoid_mask);
 
@@ -514,7 +545,9 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
         // _state->drawShape(ball_obs, Qt::gray,
         //                   QString("ball_obstacles_%1").arg(shell()));
         auto ballObs = createBallObstacle();
-        if (ballObs) fullObstacles.add(ballObs);
+        if (ballObs) {
+            fullObstacles.add(ballObs);
+        }
     }
     fullObstacles.add(selfObs);
     fullObstacles.add(oppObs);
@@ -524,8 +557,8 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
 }
 
 bool OurRobot::charged() const {
-    return _radioRx.has_kicker_status() && (_radioRx.kicker_status() & 0x01) &&
-           rxIsFresh();
+    return _radioRx.has_kicker_status() &&
+           ((_radioRx.kicker_status() & 0x01u) != 0u) && rxIsFresh();
 }
 
 /*
@@ -552,7 +585,7 @@ bool OurRobot::ballSenseWorks() const {
 
 bool OurRobot::kickerWorks() const {
     return _radioRx.has_kicker_status() &&
-           (_radioRx.kicker_status() & Kicker_Enabled) && rxIsFresh();
+           ((_radioRx.kicker_status() & Kicker_Enabled) != 0u) && rxIsFresh();
 }
 
 bool OurRobot::chipper_available() const {
@@ -569,7 +602,9 @@ bool OurRobot::dribbler_available() const {
 }
 
 bool OurRobot::driving_available(bool require_all) const {
-    if (_radioRx.motor_status_size() != 5) return false;
+    if (_radioRx.motor_status_size() != 5) {
+        return false;
+    }
     int c = 0;
     for (int i = 0; i < 4; ++i) {
         if (_radioRx.motor_status(i) == Packet::Good) {
@@ -582,17 +617,15 @@ bool OurRobot::driving_available(bool require_all) const {
 float OurRobot::kickerVoltage() const {
     if (_radioRx.has_kicker_voltage() && rxIsFresh()) {
         return _radioRx.kicker_voltage();
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 Packet::HardwareVersion OurRobot::hardwareVersion() const {
     if (rxIsFresh()) {
         return _radioRx.hardware_version();
-    } else {
-        return Packet::Unknown;
     }
+    return Packet::Unknown;
 }
 
 std::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
@@ -601,9 +634,8 @@ std::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
                                   _radioRx.quaternion().q1() / 16384.0,
                                   _radioRx.quaternion().q2() / 16384.0,
                                   _radioRx.quaternion().q3() / 16384.0);
-    } else {
-        return std::nullopt;
     }
+    return std::nullopt;
 }
 
 bool OurRobot::rxIsFresh(RJ::Seconds age) const {
@@ -629,8 +661,12 @@ double OurRobot::distanceToChipLanding(int chipPower) {
 
 uint8_t OurRobot::chipPowerForDistance(double distance) {
     double b = *(config()->chipper.calibrationOffset) / 2.;
-    if (distance < b) return 0;
-    if (distance > distanceToChipLanding(255)) return 255;
+    if (distance < b) {
+        return 0;
+    }
+    if (distance > distanceToChipLanding(255)) {
+        return 255;
+    }
     return 0.5 * distance + b;
 }
 

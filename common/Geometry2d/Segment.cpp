@@ -1,5 +1,6 @@
 
 #include "Segment.hpp"
+
 #include "Util.hpp"
 
 using namespace std;
@@ -18,7 +19,7 @@ Rect Segment::bbox() const {
 }
 
 float Segment::distTo(const Point& other) const {
-    float dist = nearestPoint(other).distTo(other);
+    const auto dist = static_cast<float>(nearestPoint(other).distTo(other));
     if (nearlyEqual(dist, 0)) {
         return 0;
     }
@@ -30,16 +31,16 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     // From Mathworld:
     // http://mathworld.wolfram.com/Line2d-Line2dIntersection.html
 
-    float x1 = pt[0].x();
-    float y1 = pt[0].y();
-    float x2 = pt[1].x();
-    float y2 = pt[1].y();
-    float x3 = other.pt[0].x();
-    float y3 = other.pt[0].y();
-    float x4 = other.pt[1].x();
-    float y4 = other.pt[1].y();
+    const auto x1 = static_cast<float>(pt[0].x());
+    const auto y1 = static_cast<float>(pt[0].y());
+    const auto x2 = static_cast<float>(pt[1].x());
+    const auto y2 = static_cast<float>(pt[1].y());
+    const auto x3 = static_cast<float>(other.pt[0].x());
+    const auto y3 = static_cast<float>(other.pt[0].y());
+    const auto x4 = static_cast<float>(other.pt[1].x());
+    const auto y4 = static_cast<float>(other.pt[1].y());
 
-    float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    const float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     if (denom == 0) {
         return false;
     }
@@ -53,16 +54,17 @@ bool Segment::intersects(const Segment& other, Point* intr) const {
     Point ip(ix, iy);
 
     Point da = delta();
-    float ta = (ip - pt[0]).dot(da) / da.magsq();
+    const float ta = static_cast<float>((ip - pt[0]).dot(da) / da.magsq());
 
     Point db = other.delta();
-    float tb = (ip - other.pt[0]).dot(db) / db.magsq();
+    const float tb =
+        static_cast<float>((ip - other.pt[0]).dot(db) / db.magsq());
 
     if (ta < 0 || ta > 1 || tb < 0 || tb > 1) {
         return false;
     }
 
-    if (intr) {
+    if (intr != nullptr) {
         intr->x() = ix;
         intr->y() = iy;
     }
@@ -82,9 +84,8 @@ bool Segment::intersects(const Line& line, Point* intr) const {
             *intr = intersection_point;
         }
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 bool Segment::nearPoint(const Point& point, float threshold) const {
@@ -97,13 +98,16 @@ Point Segment::nearestPoint(const Point& p) const {
     // http://stackoverflow.com/a/1501725
 
     const double magsq = delta().magsq();
-    if (magsq == 0) return pt[0];
+    if (magsq == 0) {
+        return pt[0];
+    }
 
     const double t = delta().dot(p - pt[0]) / magsq;
 
     if (t <= 0) {
         return pt[0];
-    } else if (t >= 1) {
+    }
+    if (t >= 1) {
         return pt[1];
     }
     return pt[0] + delta() * t;
@@ -113,11 +117,11 @@ Point Segment::nearestPoint(const Line& l) const {
     Point intersection;
     if (intersects(l, &intersection)) {
         return intersection;
-    } else if (l.distTo(pt[0]) < l.distTo(pt[1])) {
-        return pt[0];
-    } else {
-        return pt[1];
     }
+    if (l.distTo(pt[0]) < l.distTo(pt[1])) {
+        return pt[0];
+    }
+    return pt[1];
 }
 
 bool Segment::nearSegment(const Segment& other, float threshold) const {

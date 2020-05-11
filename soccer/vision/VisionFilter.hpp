@@ -59,8 +59,8 @@ private:
     std::mutex worldLock;
     World world;
 
-    std::atomic_bool threadEnd;
+    std::atomic_bool threadEnd{};
 
     std::mutex frameLock;
-    std::vector<CameraFrame> frameBuffer;
+    std::vector<CameraFrame> frameBuffer{};
 };

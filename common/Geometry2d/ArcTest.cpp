@@ -13,7 +13,8 @@ namespace Geometry2d::Testing {
 TEST(Arc, Intersections) {
     // Line-arc
     auto check_all_near = [](std::vector<Point> actual,
-                             std::vector<Point> expected, std::string name) {
+                             const std::vector<Point>& expected,
+                             const std::string& name) {
         for (Point pt : expected) {
             auto it =
                 std::find_if(actual.begin(), actual.end(),

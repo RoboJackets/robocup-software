@@ -49,7 +49,7 @@ public:
     Logger(size_t logSize = 10000);
     ~Logger();
 
-    bool open(QString filename);
+    bool open(const QString& filename);
     void close();
 
     // Returns the size of the circular buffer
@@ -62,7 +62,7 @@ public:
     std::shared_ptr<Packet::LogFrame> lastFrame() const;
 
     // Adds a frame to this logger. force will force the frame to be added even if we are full.
-    void addFrame(std::shared_ptr<Packet::LogFrame> frame, bool force);
+    void addFrame(const std::shared_ptr<Packet::LogFrame>& frame, bool force);
     void addFrame(std::shared_ptr<Packet::LogFrame> frame);
 
     // Read in frames from a log file.

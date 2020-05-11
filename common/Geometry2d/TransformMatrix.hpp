@@ -164,6 +164,6 @@ protected:
     // Indices:
     //   [0 1 2
     //    3 4 5]
-    float _m[6];
+    float _m[6]{};
 };
 }  // namespace Geometry2d

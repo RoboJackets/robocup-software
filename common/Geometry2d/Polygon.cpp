@@ -17,7 +17,7 @@ Shape* Polygon::clone() const { return new Polygon(*this); }
 
 void Polygon::init(const Segment& seg, float r, float length) {
     Point dir;
-    if (length) {
+    if (length != 0.0f) {
         dir = seg.delta() / length;
     } else {
         // Degenerate segment, so direction doesn't matter as long as it's a
@@ -54,8 +54,8 @@ bool Polygon::intersects(const Polygon& other) const {
 }
 
 bool Polygon::containsVertex(const Polygon& other) const {
-    for (unsigned int i = 0; i < other.vertices.size(); ++i) {
-        if (containsPoint(other.vertices[i])) {
+    for (auto vertice : other.vertices) {
+        if (containsPoint(vertice)) {
             return true;
         }
     }

@@ -23,7 +23,7 @@ void MotionControlNode::runMotion(
         MotionControl& controller = _controllers[i];
         MotionSetpoint* setpoint = &(*setpoints)[i];
         if (force_stop) {
-            controller.stop(setpoint);
+            MotionControl::stop(setpoint);
         } else {
             controller.run(world_state.get_robot(true, i), paths[i],
                            joystick_controlled[i], setpoint);
