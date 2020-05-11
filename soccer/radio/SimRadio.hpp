@@ -25,7 +25,7 @@ public:
 private:
     Context* const _context;
 
-    void handleReceive(uint8_t data);
+    void handleReceive(const std::string& data);
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
                        size_t num_bytes);
@@ -34,7 +34,7 @@ private:
     boost::asio::ip::udp::socket _socket;
     boost::asio::ip::udp::endpoint _grsim_endpoint;
 
-    std::vector<char> _buffer;
+    std::string _buffer;
 
     bool _blueTeam;
 };

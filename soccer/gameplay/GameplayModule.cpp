@@ -636,13 +636,13 @@ void Gameplay::GameplayModule::loadTest() {
                 float velx = extract<float>(ball[2]);
                 float vely = extract<float>(ball[3]);
 
-                ball_replace->mutable_pos()->set_x(
+                ball_replace->set_x(
                     -teamDirection *
                     (posy -
                      (Field_Dimensions::Current_Dimensions.Length() / 2)));
-                ball_replace->mutable_pos()->set_y(teamDirection * posx);
-                ball_replace->mutable_vel()->set_x(-teamDirection * vely);
-                ball_replace->mutable_vel()->set_y(teamDirection * velx);
+                ball_replace->set_y(teamDirection * posx);
+                ball_replace->set_vx(-teamDirection * vely);
+                ball_replace->set_vy(teamDirection * velx);
 
                 _context->grsim_command = simPacket;
             }

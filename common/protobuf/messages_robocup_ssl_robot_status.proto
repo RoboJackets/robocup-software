@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+message Robots_Status{
+  repeated Robot_Status robots_status = 1;
+}
+
+message Robot_Status {
+  required int32 robot_id  = 1;
+  required bool infrared   = 2;
+  required bool flat_kick  = 3;
+  required bool chip_kick  = 4;
+}

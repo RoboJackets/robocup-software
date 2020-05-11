@@ -1048,10 +1048,10 @@ void MainWindow::on_actionCenterBall_triggered() {
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    ball_replace->mutable_pos()->set_x(0);
-    ball_replace->mutable_pos()->set_y(0);
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x(0);
+    ball_replace->set_y(0);
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
 
     _processor->context()->grsim_command = simPacket;
 }
@@ -1063,10 +1063,10 @@ void MainWindow::on_actionStopBall_triggered() {
 
     Geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    ball_replace->mutable_pos()->set_x(ballPos.x());
-    ball_replace->mutable_pos()->set_y(ballPos.y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x(ballPos.x());
+    ball_replace->set_y(ballPos.y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
     _processor->context()->grsim_command = simPacket;
 }
 
@@ -1107,94 +1107,19 @@ void MainWindow::on_actionResetField_triggered() {
     }
 
     auto ball_replace = replacement->mutable_ball();
-    ball_replace->mutable_pos()->set_x(0.0);
-    ball_replace->mutable_pos()->set_y(0.0);
-    ball_replace->mutable_vel()->set_x(0.0);
-    ball_replace->mutable_vel()->set_y(0.0);
+    ball_replace->set_x(0.0);
+    ball_replace->set_y(0.0);
+    ball_replace->set_vx(0.0);
+    ball_replace->set_vy(0.0);
 
     _processor->context()->grsim_command = simPacket;
 }
 
-void MainWindow::on_actionStopRobots_triggered() {
-    // TODO: check that this handles threads properly
-    /*
-    for (OurRobot* robot : state()->self) {
-        if (robot->visible) {
-            SimCommand::Robot* r = cmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(_processor->blueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    for (OpponentRobot* robot : state()->opp) {
-        if (robot->visible) {
-            SimCommand::Robot* r = cmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->isBlueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    */
-    //_ui.fieldView->sendSimCommand(cmd);
-}
+void MainWindow::on_actionStopRobots_triggered() {}
 
-void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
-    /*
-    _ui.actionQuickloadRobotLocations->setEnabled(true);
-    _quickLoadCmd.reset();
-    for (OurRobot* robot : state()->self) {
-        if (robot->visible) {
-            SimCommand::Robot* r = _quickLoadCmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(_processor->blueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    for (OpponentRobot* robot : state()->opp) {
-        if (robot->visible) {
-            SimCommand::Robot* r = _quickLoadCmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->isBlueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
+void MainWindow::on_actionQuicksaveRobotLocations_triggered() {}
 
-    Geometry2d::Point ballPos =
-        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x());
-    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y());
-    _quickLoadCmd.mutable_ball_vel()->set_x(0);
-    _quickLoadCmd.mutable_ball_vel()->set_y(0);
-    */
-}
-
-void MainWindow::on_actionQuickloadRobotLocations_triggered() {
-    //_ui.fieldView->sendSimCommand(_quickLoadCmd);
-}
+void MainWindow::on_actionQuickloadRobotLocations_triggered() {}
 
 // Style Sheets
 

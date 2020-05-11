@@ -8,3 +8,7 @@ pylint # static checker for python
 mypy # static arugment checker
 
 yapf # python checker
+
+# Computing libraries
+numpy
+matplotlib
