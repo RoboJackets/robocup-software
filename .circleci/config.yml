@@ -79,7 +79,7 @@ jobs:
   clang-tidy:
     <<: *dir
     <<: *image
-    setps:
+    steps:
       - checkout
       - <<: *setup_env
       - <<: *install_deps
