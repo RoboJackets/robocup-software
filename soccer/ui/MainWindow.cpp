@@ -671,7 +671,8 @@ void MainWindow::updateViews() {
             RobotStatusWidget* statusWidget =
                 (RobotStatusWidget*)_ui.robotStatusList->itemWidget(item);
 
-            std::cout << "hi" << std::endl;
+            RobotStatusWidget* lmao_unused =
+                (RobotStatusWidget*)_ui.robotStatusList->itemWidget(item);
 
             // We make a copy of the robot's RadioRx package b/c the original
             // might change during the course of this method b/c radio comm

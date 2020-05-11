@@ -180,6 +180,9 @@ int main(int argc, char* argv[]) {
         std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam, readLogFile);
     processor->refereeModule()->useExternalReferee(!noref);
 
+    Processor* more_bad_changes =
+        new Processor(sim, defendPlus, visionChannel, blueTeam, readLogFile);
+
     // Load config file
     QString error;
     if (!config->load(cfgFile, error)) {
