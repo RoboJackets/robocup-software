@@ -47,7 +47,6 @@ void MotionControl::run(const RobotState& state,
     }
 
     if (!state.visible || !path.path) {
-        reset();
         stop(setpoint);
         return;
     }
@@ -180,8 +179,13 @@ void MotionControl::updateParams() {
     _angleController.kd = *_config->rotation.d;
 }
 
+void MotionControl::resetPIDControllers() {
+    _positionXController.reset();
+    _positionYController.reset();
+    _angleController.reset();
+}
+
 void MotionControl::stop(MotionSetpoint* setpoint) {
-    setpoint->xvelocity = 0;
-    setpoint->yvelocity = 0;
-    setpoint->avelocity = 0;
+    setpoint->clear();
+    resetPIDControllers();
 }

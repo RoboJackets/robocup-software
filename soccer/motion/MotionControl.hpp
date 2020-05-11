@@ -34,6 +34,11 @@ public:
      */
     void stop(MotionSetpoint* setpoint);
 
+    /**
+     * Resets all PID controllers.
+     */
+    void resetPIDControllers();
+
     static void createConfiguration(Configuration* cfg);
 
 private:
