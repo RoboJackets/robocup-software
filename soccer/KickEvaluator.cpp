@@ -173,10 +173,9 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 }
 
 tuple<float, float> KickEvaluator::eval_calculation(
-    float x, float kmean, float kstdev,
-    const vector<float>& robotMeans, const vector<float>& robotStDevs,
-    const vector<float>& robotVertScales, float bLeft,
-    float bRight) {
+    float x, float kmean, float kstdev, const vector<float>& robotMeans,
+    const vector<float>& robotStDevs, const vector<float>& robotVertScales,
+    float bLeft, float bRight) {
     // 3 Main distribution sets
     // Set #1 : A set of each normal distribution for the obstacles
     // Set #2 : A band pass style distribution that represents a valid target
@@ -267,8 +266,7 @@ tuple<float, float> KickEvaluator::eval_calculation(
     return make_tuple(minResults, derivative);
 }
 
-float KickEvaluator::get_target_angle(Point origin,
-                                      Segment target) {
+float KickEvaluator::get_target_angle(Point origin, Segment target) {
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
@@ -295,8 +293,7 @@ vector<Robot*> KickEvaluator::get_valid_robots() {
     return bots;
 }
 
-tuple<float, float> KickEvaluator::rect_to_polar(Point origin,
-                                                 Point target,
+tuple<float, float> KickEvaluator::rect_to_polar(Point origin, Point target,
                                                  Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
