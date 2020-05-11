@@ -173,10 +173,10 @@ KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 }
 
 tuple<float, float> KickEvaluator::eval_calculation(
-    const float x, const float kmean, const float kstdev,
+    float x, float kmean, float kstdev,
     const vector<float>& robotMeans, const vector<float>& robotStDevs,
-    const vector<float>& robotVertScales, const float bLeft,
-    const float bRight) {
+    const vector<float>& robotVertScales, float bLeft,
+    float bRight) {
     // 3 Main distribution sets
     // Set #1 : A set of each normal distribution for the obstacles
     // Set #2 : A band pass style distribution that represents a valid target
@@ -267,8 +267,8 @@ tuple<float, float> KickEvaluator::eval_calculation(
     return make_tuple(minResults, derivative);
 }
 
-float KickEvaluator::get_target_angle(const Point origin,
-                                      const Segment target) {
+float KickEvaluator::get_target_angle(Point origin,
+                                      Segment target) {
     Point left = target.pt[0] - origin;
     Point right = target.pt[1] - origin;
 
@@ -295,9 +295,9 @@ vector<Robot*> KickEvaluator::get_valid_robots() {
     return bots;
 }
 
-tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
-                                                 const Point target,
-                                                 const Point obstacle) {
+tuple<float, float> KickEvaluator::rect_to_polar(Point origin,
+                                                 Point target,
+                                                 Point obstacle) {
     Point obstacleDir = obstacle - origin;
     Point targetDir = target - origin;
 
@@ -306,7 +306,7 @@ tuple<float, float> KickEvaluator::rect_to_polar(const Point origin,
 }
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
-    const Point origin, const Point target) {
+    Point origin, Point target) {
     vector<Robot*> bots = get_valid_robots();
     vector<tuple<float, float> > botLocations;
     botLocations.reserve(bots.size() + botLocations.size());
@@ -330,8 +330,8 @@ vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
 void KickEvaluator::init_gradient_configs(
     ParallelGradient1DConfig& pConfig,
     function<tuple<float, float>(float)>& func, const vector<float>& robotMeans,
-    const vector<float>& robotStDevs, const float boundaryLower,
-    const float boundaryUpper) {
+    const vector<float>& robotStDevs, float boundaryLower,
+    float boundaryUpper) {
     pConfig.GA1DConfig.reserve(robotStDevs.size());
 
     // Standard Gradient Configs
