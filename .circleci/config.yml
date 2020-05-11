@@ -36,7 +36,7 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - run: make
+      - run: make all_including_tests
       - <<: *save_workspace
 
   # Use the saved build folder for testing
@@ -48,8 +48,9 @@ jobs:
       # Ensure latest deps are installed
       - <<: *install_deps
       - <<: *load_workspace
-      - run: make test-soccer
-      - run: make test-python
+      # Run test without building anything
+      - run: make test-soccer-nobuild
+      - run: make test-python-nobuild
 
   # FIXME: pylint is broken on 18.04
   python-static:

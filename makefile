@@ -30,6 +30,10 @@ endef
 all:
 	$(call cmake_build_target, all)
 
+all_including_tests:
+	$(call cmake_build_target, all)
+	$(call cmake_build_target, test-soccer)
+
 all-release:
 	$(call cmake_build_target_release, all)
 
@@ -102,7 +106,12 @@ test-cpp: test-soccer
 test-soccer:
 	$(call cmake_build_target, test-soccer)
 	run/test-soccer --gtest_filter=$(TESTS)
+test-soccer-nobuild:
+	run/test-soccer --gtest_filter=$(TESTS)
+
 test-python: all
+	cd soccer/gameplay && ./run_tests.sh
+test-python-nobuild:
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
 	pylint -j8 --reports=n soccer/gameplay
