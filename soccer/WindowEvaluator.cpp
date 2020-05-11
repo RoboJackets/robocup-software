@@ -235,7 +235,7 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto shot_vector = window.segment.center() - origin;
     auto shot_distance = shot_vector.mag();
 
-    // get the angle between the shot std::vector and the target segment, then
+    // get the angle between the shot vector and the target segment, then
     // normalize and positivize it
     auto angle_between_shot_and_window =
         abs(shot_vector.angle() - window.segment.delta().angle());

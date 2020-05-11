@@ -37,7 +37,6 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
     return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
-
            numeric_limits<double>::epsilon();
 }
 
