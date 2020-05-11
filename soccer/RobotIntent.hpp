@@ -5,7 +5,7 @@
 #include "planning/MotionCommand.hpp"
 #include "planning/RotationCommand.hpp"
 
-typedef std::array<float, Num_Shells> RobotMask;
+using RobotMask = std::array<float, Num_Shells>;
 
 struct RobotIntent {
     enum class ShootMode { KICK, CHIP };

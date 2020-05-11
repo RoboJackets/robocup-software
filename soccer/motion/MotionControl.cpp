@@ -41,7 +41,7 @@ void MotionControl::run(const RobotState& state,
                         bool is_joystick_controlled, MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
-    if (!setpoint || is_joystick_controlled) {
+    if ((setpoint == nullptr) || is_joystick_controlled) {
         reset();
         return;
     }

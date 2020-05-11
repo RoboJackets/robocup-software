@@ -41,7 +41,7 @@ struct NumericField : public Function {
 class StripChart : public QWidget {
 public:
     StripChart(QWidget* parent = nullptr);
-    ~StripChart();
+    ~StripChart() override;
 
     void history(const std::vector<std::shared_ptr<Packet::LogFrame> >* value) {
         _history = value;

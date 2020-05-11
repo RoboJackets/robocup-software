@@ -10,7 +10,7 @@ Geometry2d::Point CameraBall::getPos() const {
 
 CameraBall CameraBall::CombineBalls(const std::vector<CameraBall>& balls) {
     // Make sure we don't divide by zero due to some weird error
-    if (balls.size() == 0) {
+    if (balls.empty()) {
         std::cout << "ERROR: Number of balls to combine is zero" << std::endl;
 
         return CameraBall(RJ::now(), Geometry2d::Point(0,0));

@@ -1,8 +1,8 @@
 #include "KickEvent.hpp"
 
-void KickEvent::addState(RJ::Time calcTime, WorldBall ball,
-                         std::vector<WorldRobot> yellowRobots,
-                         std::vector<WorldRobot> blueRobots) {
+void KickEvent::addState(RJ::Time calcTime, const WorldBall& ball,
+                         const std::vector<WorldRobot>& yellowRobots,
+                         const std::vector<WorldRobot>& blueRobots) {
     statesSinceKick.emplace_back(calcTime, ball, yellowRobots, blueRobots);
 }
 

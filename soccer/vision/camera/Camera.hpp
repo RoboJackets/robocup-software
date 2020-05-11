@@ -111,8 +111,7 @@ private:
      * @param ballList Unsorted list of balls measurements
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
-    void updateBalls(RJ::Time calcTime,
-                     const std::vector<CameraBall> ballList,
+    void updateBalls(RJ::Time calcTime, const std::vector<CameraBall>& ballList,
                      const WorldBall& previousWorldBall);
 
     /**
@@ -123,7 +122,7 @@ private:
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBallsMHKF(RJ::Time calcTime,
-                         const std::vector<CameraBall> ballList,
+                         const std::vector<CameraBall>& ballList,
                          const WorldBall& previousWorldBall);
 
     /**
@@ -134,7 +133,7 @@ private:
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
     void updateBallsAKF(RJ::Time calcTime,
-                        const std::vector<CameraBall> ballList,
+                        const std::vector<CameraBall>& ballList,
                         const WorldBall& previousWorldBall);
 
     /**
@@ -193,11 +192,12 @@ private:
      * @param calcTime Time of this calculation
      * @param robotListList Either kalmanRobotYellowList or kalmanRobotBlueList
      */
-    void predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRobot>>& robotListList);
+    static void predictAllRobots(
+        RJ::Time calcTime, std::vector<std::list<KalmanRobot>>& robotListList);
 
     bool isValid;
 
-    int cameraID;
+    int cameraID{};
     std::list<KalmanBall> kalmanBallList;
     std::vector<std::list<KalmanRobot>> kalmanRobotYellowList;
     std::vector<std::list<KalmanRobot>> kalmanRobotBlueList;

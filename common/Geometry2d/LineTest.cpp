@@ -14,7 +14,8 @@ TEST(Line, intersectsCircle) {
     Circle circle(Point(0, 0), 1);
     Line line(Point(-5, -1), Point(0, -1.001));
 
-    Point p1, p2;
+    Point p1;
+    Point p2;
     bool intersects = line.intersects(circle, &p1, &p2);
     EXPECT_FALSE(intersects) << p1 << " " << p2;
 

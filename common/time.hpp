@@ -10,9 +10,9 @@ using namespace std::chrono_literals;
 namespace RJ {
 
 /// type for storing time in microseconds
-typedef std::chrono::system_clock::time_point Time;
-typedef int64_t Timestamp;  // Time in microseconds
-typedef std::chrono::duration<double> Seconds;
+using Time = std::chrono::system_clock::time_point;
+using Timestamp = int64_t;  // Time in microseconds
+using Seconds = std::chrono::duration<double>;
 /** returns the local system timestamp in microseconds */
 
 template <class Duration>

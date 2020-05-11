@@ -1,24 +1,19 @@
 
 #include "FieldView.hpp"
 
-#include <stdio.h>
-
-#include <Network.hpp>
-#include <LogUtils.hpp>
 #include <Constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Util.hpp>
-#include <planning/MotionConstraints.hpp>
-
-#include <QStyleOption>
+#include <LogUtils.hpp>
 #include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
-#include <algorithm>
-#include <sys/socket.h>
-
+#include <QStyleOption>
 #include <VisionDotPattern.hpp>
+#include <algorithm>
+#include <cstdio>
+#include <planning/MotionConstraints.hpp>
 
 using namespace std;
 
@@ -67,26 +62,25 @@ FieldView::FieldView(QWidget* parent) : QWidget(parent) {
     show();
 }
 
-void FieldView::leaveEvent(QEvent* event) { _posLabel->setVisible(false); }
+void FieldView::leaveEvent(QEvent* /*event*/) { _posLabel->setVisible(false); }
 
-void FieldView::enterEvent(QEvent* event) { _posLabel->setVisible(true); }
+void FieldView::enterEvent(QEvent* /*event*/) { _posLabel->setVisible(true); }
 
 void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
     Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
     QString s = "X: ";
-    s += QString::number(roundf(pos.x() * 100) / 100);
+    s += QString::number(std::round(pos.x() * 100) / 100);
     s += " Y: ";
-    s += QString::number(roundf(pos.y() * 100) / 100);
+    s += QString::number(std::round(pos.y() * 100) / 100);
     _posLabel->setText(s);
 }
 
 std::shared_ptr<LogFrame> FieldView::currentFrame() {
-    if (_history && !_history->empty()) {
+    if (_history != nullptr && !_history->empty()) {
         return _history->at(0);
-    } else {
-        return std::shared_ptr<LogFrame>();
     }
+    return std::shared_ptr<LogFrame>();
 }
 
 void FieldView::rotate(int value) {
@@ -98,7 +92,7 @@ void FieldView::rotate(int value) {
     update();
 }
 
-void FieldView::paintEvent(QPaintEvent* e) {
+void FieldView::paintEvent(QPaintEvent* /*e*/) {
     QPainter p(this);
     QStyleOption opt;
     opt.init(this);
@@ -140,12 +134,13 @@ void FieldView::paintEvent(QPaintEvent* e) {
     _screenToWorld *= Geometry2d::TransformMatrix::scale(
         Field_Dimensions::Current_Dimensions.FloorLength(),
         Field_Dimensions::Current_Dimensions.FloorWidth());
-    _screenToWorld *=
-        Geometry2d::TransformMatrix::rotate(-_rotate * M_PI / 2.0);
-    _screenToWorld *=
-        Geometry2d::TransformMatrix::scale(1.0 / width(), -1.0 / height());
-    _screenToWorld *=
-        Geometry2d::TransformMatrix::translate(-width() / 2.0, -height() / 2.0);
+    _screenToWorld *= Geometry2d::TransformMatrix::rotate(
+        -static_cast<float>(_rotate * M_PI / 2.0));
+    _screenToWorld *= Geometry2d::TransformMatrix::scale(
+        static_cast<float>(1.0 / width()), static_cast<float>(-1.0 / height()));
+    _screenToWorld *= Geometry2d::TransformMatrix::translate(
+        static_cast<float>(-width() / 2.0),
+        static_cast<float>(-height() / 2.0));
 
     _worldToTeam = Geometry2d::TransformMatrix();
     _worldToTeam *= Geometry2d::TransformMatrix::translate(
@@ -275,14 +270,15 @@ void FieldView::drawTeamSpace(QPainter& p) {
     bool move = false;
     for (unsigned int i = 0; i < 200 && i < _history->size(); ++i) {
         const LogFrame* oldFrame = _history->at(i).get();
-        if (oldFrame && oldFrame->has_ball()) {
+        if (oldFrame != nullptr && oldFrame->has_ball()) {
             QPointF pos = qpointf(oldFrame->ball().pos());
 
             if (!move) {
                 ballTrail.moveTo(pos);
                 move = true;
-            } else
+            } else {
                 ballTrail.lineTo(pos);
+            }
         }
     }
     QPen ballTrailPen(ballColor, 0.03);
@@ -315,8 +311,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                     (Geometry2d::Point(path.points(i).vel()) +
                      Geometry2d::Point(path.points(i + 1).vel())) /
                     2;
-                float pcntMaxSpd =
-                    avgVel.mag() / MotionConstraints::defaultMaxSpeed();
+                auto pcntMaxSpd = static_cast<float>(
+                    avgVel.mag() / MotionConstraints::defaultMaxSpeed());
                 QColor mixedColor(
                     std::max(0, std::min((int)(255 * pcntMaxSpd), 255)), 0,
                     std::max(0, std::min((int)(255 * (1 - pcntMaxSpd)), 255)));
@@ -347,7 +343,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
             tempPen.setColor(a.color());
             p.setPen(tempPen);
 
-            auto c = a.center();
+            const auto& c = a.center();
             auto t1 = a.start();
             auto t2 = a.end();
             auto R = a.radius();
@@ -361,7 +357,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
             t1 *= -(180 / M_PI) * 16;
             t2 *= -(180 / M_PI) * 16;
 
-            p.drawArc(rect, t1, t2 - t1);
+            p.drawArc(rect, t1, static_cast<int>(t2 - t1));
         }
     }
 
@@ -407,15 +403,16 @@ void FieldView::drawTeamSpace(QPainter& p) {
     int pastLocationCount = 40;  // number of past locations to show
     for (int i = 0; i < pastLocationCount + 1 && i < _history->size(); i++) {
         const LogFrame* oldFrame = _history->at(i).get();
-        if (oldFrame) {
+        if (oldFrame != nullptr) {
             for (const LogFrame::Robot& r : oldFrame->self()) {
                 pair<int, int> key(1, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == 0) {
                     QPointF pt = qpointf(r.pos());
-                    if (i == 0)
+                    if (i == 0) {
                         cometTrails[key].moveTo(pt);
-                    else
+                    } else {
                         cometTrails[key].lineTo(pt);
+                    }
                 }
             }
 
@@ -438,7 +435,7 @@ void FieldView::drawTeamSpace(QPainter& p) {
         // note: kv.first.first is 1 for our team and 2 for their team
         bool ourTeam = kv.first.first == 1;
         bool blue = frame->blue_team();
-        const QColor color = (ourTeam ^ blue) ? Qt::yellow : Qt::blue;
+        const QColor color = (ourTeam ^ blue) != 0 ? Qt::yellow : Qt::blue;
         QPen pen(color, cometTrailPenSize);
         pen.setCapStyle(Qt::RoundCap);
         p.setPen(pen);
@@ -516,7 +513,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
     }
 }
 
-void FieldView::drawText(QPainter& p, QPointF pos, QString text, bool center) {
+void FieldView::drawText(QPainter& p, QPointF pos, const QString& text,
+                         bool center) const {
     p.save();
     p.translate(pos);
     p.rotate(_textRotation);
@@ -718,21 +716,26 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID,
 void FieldView::resizeEvent(QResizeEvent* e) {
     int givenW = e->size().width();
     int givenH = e->size().height();
-    int needW, needH;
-    if (_rotate & 1) {
-        needH =
-            roundf(givenW * Field_Dimensions::Current_Dimensions.FloorLength() /
-                   Field_Dimensions::Current_Dimensions.FloorWidth());
-        needW =
-            roundf(givenH * Field_Dimensions::Current_Dimensions.FloorWidth() /
-                   Field_Dimensions::Current_Dimensions.FloorLength());
+    int needW;
+    int needH;
+    if ((_rotate & 1) != 0) {
+        needH = static_cast<int>(
+            std::round(static_cast<float>(givenW) *
+                       Field_Dimensions::Current_Dimensions.FloorLength() /
+                       Field_Dimensions::Current_Dimensions.FloorWidth()));
+        needW = static_cast<int>(
+            std::round(static_cast<float>(givenH) *
+                       Field_Dimensions::Current_Dimensions.FloorWidth() /
+                       Field_Dimensions::Current_Dimensions.FloorLength()));
     } else {
-        needH =
-            roundf(givenW * Field_Dimensions::Current_Dimensions.FloorWidth() /
-                   Field_Dimensions::Current_Dimensions.FloorLength());
-        needW =
-            roundf(givenH * Field_Dimensions::Current_Dimensions.FloorLength() /
-                   Field_Dimensions::Current_Dimensions.FloorWidth());
+        needH = static_cast<int>(
+            std::round(static_cast<float>(givenW) *
+                       Field_Dimensions::Current_Dimensions.FloorWidth() /
+                       Field_Dimensions::Current_Dimensions.FloorLength()));
+        needW = static_cast<int>(
+            std::round(static_cast<float>(givenH) *
+                       Field_Dimensions::Current_Dimensions.FloorLength() /
+                       Field_Dimensions::Current_Dimensions.FloorWidth()));
     }
 
     QSize size;

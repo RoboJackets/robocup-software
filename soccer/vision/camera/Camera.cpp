@@ -84,11 +84,11 @@ void Camera::updateWithoutFrame(RJ::Time calcTime) {
 }
 
 void Camera::updateBalls(RJ::Time calcTime,
-                         const std::vector<CameraBall> ballList,
+                         const std::vector<CameraBall>& ballList,
                          const WorldBall& previousWorldBall) {
     // Make sure there are actually balls in the measurement
     // and only predict if that's the case
-    if (ballList.size() == 0) {
+    if (ballList.empty()) {
         for (KalmanBall& b : kalmanBallList) {
             b.predict(calcTime);
         }
@@ -105,12 +105,12 @@ void Camera::updateBalls(RJ::Time calcTime,
 }
 
 void Camera::updateBallsMHKF(RJ::Time calcTime,
-                             const std::vector<CameraBall> ballList,
+                             const std::vector<CameraBall>& ballList,
                              const WorldBall& previousWorldBall) {
     // If we have no existing filters, create a new one from average of everything
     // Easier than trying to figure out which ones are more than X meters away from each other
     // Only delays the filter collection by a camera frame or two
-    if (kalmanBallList.size() == 0) {
+    if (kalmanBallList.empty()) {
         CameraBall avgBall = CameraBall::CombineBalls(ballList);
         kalmanBallList.emplace_back(cameraID, calcTime, avgBall, previousWorldBall);
 
@@ -154,7 +154,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
         std::vector<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
 
         // We had at least one measurement near this ball
-        if (measurementBalls.size() > 0) {
+        if (!measurementBalls.empty()) {
             CameraBall avgBall = CameraBall::CombineBalls(measurementBalls);
             kalmanBall.predictAndUpdate(calcTime, avgBall);
 
@@ -182,13 +182,13 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
 }
 
 void Camera::updateBallsAKF(RJ::Time calcTime,
-                            const std::vector<CameraBall> ballList,
+                            const std::vector<CameraBall>& ballList,
                             const WorldBall& previousWorldBall) {
     // Average everything and add as measuremnet
     CameraBall avgBall = CameraBall::CombineBalls(ballList);
 
     // If we have no existing filters, create a new one from average of everything
-    if (kalmanBallList.size() == 0) {
+    if (kalmanBallList.empty()) {
         kalmanBallList.emplace_back(cameraID, calcTime, avgBall, previousWorldBall);
 
         return;
@@ -209,7 +209,7 @@ void Camera::updateRobots(RJ::Time calcTime,
         const std::list<CameraRobot>& singleBlueRobotList = blueRobotList.at(i);
 
         // Make sure we actually have robots for the yellow team
-        if (singleYellowRobotList.size() == 0) {
+        if (singleYellowRobotList.empty()) {
             for (KalmanRobot& robot : kalmanRobotYellowList.at(i)) {
                 robot.predict(calcTime);
             }
@@ -230,7 +230,7 @@ void Camera::updateRobots(RJ::Time calcTime,
         }
 
         // Make sure we actually have robots for the blue team
-        if (singleBlueRobotList.size() == 0) {
+        if (singleBlueRobotList.empty()) {
             for (KalmanRobot& robot : kalmanRobotBlueList.at(i)) {
                 robot.predict(calcTime);
             }
@@ -259,7 +259,7 @@ void Camera::updateRobotsMHKF(RJ::Time calcTime,
     // If we have no existing filters, create a new one from average of everything
     // Easier than trying to figure out which ones are more than X meters away from each other
     // Only delays the filter collection by a camera frame or two
-    if (singleKalmanRobotList.size() == 0) {
+    if (singleKalmanRobotList.empty()) {
         CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
         singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
 
@@ -304,7 +304,7 @@ void Camera::updateRobotsMHKF(RJ::Time calcTime,
         std::list<CameraRobot>& measurementRobots = appliedRobotsList.at(kalmanRobotIdx);
 
         // We had at least one measurement near this Robot
-        if (measurementRobots.size() > 0) {
+        if (!measurementRobots.empty()) {
             CameraRobot avgRobot = CameraRobot::CombineRobots(measurementRobots);
             kalmanRobot.predictAndUpdate(calcTime, avgRobot);
 
@@ -336,7 +336,7 @@ void Camera::updateRobotsAKF(RJ::Time calcTime,
     CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
 
     // If we have no existing filters, create a new one from average of everything
-    if (singleKalmanRobotList.size() == 0) {
+    if (singleKalmanRobotList.empty()) {
         singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
 
         return;
