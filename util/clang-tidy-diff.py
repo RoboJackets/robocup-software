@@ -7,7 +7,6 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 #===------------------------------------------------------------------------===#
-
 r"""
 ClangTidy Diff Checker
 ======================
@@ -72,7 +71,8 @@ def run_tidy(task_queue, lock, timeout):
                     sys.stderr.flush()
         except Exception as e:
             with lock:
-                sys.stderr.write('Failed: ' + str(e) + ': '.join(command) + '\n')
+                sys.stderr.write('Failed: ' + str(e) + ': '.join(command) +
+                                 '\n')
         finally:
             with lock:
                 if (not timeout is None) and (not watchdog is None):
@@ -85,9 +85,11 @@ def run_tidy(task_queue, lock, timeout):
 
 def start_workers(max_tasks, tidy_caller, task_queue, lock, timeout):
     for _ in range(max_tasks):
-        t = threading.Thread(target=tidy_caller, args=(task_queue, lock, timeout))
+        t = threading.Thread(target=tidy_caller,
+                             args=(task_queue, lock, timeout))
         t.daemon = True
         t.start()
+
 
 def merge_replacement_files(tmpdir, mergefile):
     """Merge all replacement files in a directory into a single file"""
@@ -98,7 +100,7 @@ def merge_replacement_files(tmpdir, mergefile):
     for replacefile in glob.iglob(os.path.join(tmpdir, '*.yaml')):
         content = yaml.safe_load(open(replacefile, 'r'))
         if not content:
-            continue # Skip empty files.
+            continue  # Skip empty files.
         merged.extend(content.get(mergekey, []))
 
     if merged:
@@ -106,7 +108,7 @@ def merge_replacement_files(tmpdir, mergefile):
         # include/clang/Tooling/ReplacementsYaml.h, but the value
         # is actually never used inside clang-apply-replacements,
         # so we set it to '' here.
-        output = { 'MainSourceFile': '', mergekey: merged }
+        output = {'MainSourceFile': '', mergekey: merged}
         with open(mergefile, 'w') as out:
             yaml.safe_dump(output, out)
     else:
@@ -115,47 +117,70 @@ def merge_replacement_files(tmpdir, mergefile):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=
-                                     'Run clang-tidy against changed files, and '
-                                     'output diagnostics only for modified '
-                                     'lines.')
-    parser.add_argument('-clang-tidy-binary', metavar='PATH',
+    parser = argparse.ArgumentParser(
+        description='Run clang-tidy against changed files, and '
+        'output diagnostics only for modified '
+        'lines.')
+    parser.add_argument('-clang-tidy-binary',
+                        metavar='PATH',
                         default='clang-tidy',
                         help='path to clang-tidy binary')
-    parser.add_argument('-p', metavar='NUM', default=0,
+    parser.add_argument('-p',
+                        metavar='NUM',
+                        default=0,
                         help='strip the smallest prefix containing P slashes')
-    parser.add_argument('-regex', metavar='PATTERN', default=None,
+    parser.add_argument('-regex',
+                        metavar='PATTERN',
+                        default=None,
                         help='custom pattern selecting file paths to check '
-                             '(case sensitive, overrides -iregex)')
-    parser.add_argument('-iregex', metavar='PATTERN', default=
-    r'.*\.(cpp|cc|c\+\+|cxx|c|cl|h|hpp|m|mm|inc)',
+                        '(case sensitive, overrides -iregex)')
+    parser.add_argument('-iregex',
+                        metavar='PATTERN',
+                        default=r'.*\.(cpp|cc|c\+\+|cxx|c|cl|h|hpp|m|mm|inc)',
                         help='custom pattern selecting file paths to check '
-                             '(case insensitive, overridden by -regex)')
-    parser.add_argument('-j', type=int, default=1,
+                        '(case insensitive, overridden by -regex)')
+    parser.add_argument('-j',
+                        type=int,
+                        default=1,
                         help='number of tidy instances to be run in parallel.')
-    parser.add_argument('-timeout', type=int, default=None,
+    parser.add_argument('-timeout',
+                        type=int,
+                        default=None,
                         help='timeout per each file in seconds.')
-    parser.add_argument('-fix', action='store_true', default=False,
+    parser.add_argument('-fix',
+                        action='store_true',
+                        default=False,
                         help='apply suggested fixes')
-    parser.add_argument('-checks',
-                        help='checks filter, when not specified, use clang-tidy '
-                             'default',
-                        default='')
-    parser.add_argument('-path', dest='build_path',
+    parser.add_argument(
+        '-checks',
+        help='checks filter, when not specified, use clang-tidy '
+        'default',
+        default='')
+    parser.add_argument('-path',
+                        dest='build_path',
                         help='Path used to read a compile command database.')
     if yaml:
-        parser.add_argument('-export-fixes', metavar='FILE', dest='export_fixes',
-                            help='Create a yaml file to store suggested fixes in, '
-                                 'which can be applied with clang-apply-replacements.')
-    parser.add_argument('-extra-arg', dest='extra_arg',
-                        action='append', default=[],
+        parser.add_argument(
+            '-export-fixes',
+            metavar='FILE',
+            dest='export_fixes',
+            help='Create a yaml file to store suggested fixes in, '
+            'which can be applied with clang-apply-replacements.')
+    parser.add_argument('-extra-arg',
+                        dest='extra_arg',
+                        action='append',
+                        default=[],
                         help='Additional argument to append to the compiler '
-                             'command line.')
-    parser.add_argument('-extra-arg-before', dest='extra_arg_before',
-                        action='append', default=[],
+                        'command line.')
+    parser.add_argument('-extra-arg-before',
+                        dest='extra_arg_before',
+                        action='append',
+                        default=[],
                         help='Additional argument to prepend to the compiler '
-                             'command line.')
-    parser.add_argument('-quiet', action='store_true', default=False,
+                        'command line.')
+    parser.add_argument('-quiet',
+                        action='store_true',
+                        default=False,
                         help='Run clang-tidy in quiet mode')
     clang_tidy_args = []
     argv = sys.argv[1:]
@@ -191,7 +216,8 @@ def main():
             if line_count == 0:
                 continue
             end_line = start_line + line_count - 1
-            lines_by_file.setdefault(filename, []).append([start_line, end_line])
+            lines_by_file.setdefault(filename,
+                                     []).append([start_line, end_line])
 
     if not any(lines_by_file):
         print("No relevant changes found.")
@@ -230,9 +256,11 @@ def main():
         common_clang_tidy_args.append('-extra-arg-before=%s' % arg)
 
     for name in lines_by_file:
-        line_filter_json = json.dumps(
-            [{"name": name, "lines": lines_by_file[name]}],
-            separators=(',', ':'))
+        line_filter_json = json.dumps([{
+            "name": name,
+            "lines": lines_by_file[name]
+        }],
+                                      separators=(',', ':'))
 
         # Run clang-tidy on files containing changes.
         command = [args.clang_tidy_binary]

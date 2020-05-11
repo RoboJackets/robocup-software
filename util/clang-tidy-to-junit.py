@@ -41,24 +41,28 @@ class ClangTidyConverter:
         sorted_errors = sorted(self.errors, key=lambda x: x.file)
 
         # Iterate through the errors, grouped by file.
-        for file, errorIterator in itertools.groupby(sorted_errors, key=lambda x: x.file):
+        for file, errorIterator in itertools.groupby(sorted_errors,
+                                                     key=lambda x: x.file):
             errors = list(errorIterator)
             error_count = len(errors)
 
             # Each file gets a test-suite
-            output_file.write("""\n    <testsuite errors="{error_count}" name="{file}" tests="{error_count}" failures="0" time="0">\n"""
-                              .format(error_count=error_count, file=file))
+            output_file.write(
+                """\n    <testsuite errors="{error_count}" name="{file}" tests="{error_count}" failures="0" time="0">\n"""
+                .format(error_count=error_count, file=file))
             for i, error in enumerate(errors):
                 if i != 0:
                     output_file.write("\n")
                 # Write each error as a test case.
-                output_file.write(" "*8)
+                output_file.write(" " * 8)
                 output_file.write("""<testcase id="{id}" name="{id}" time="0">
             <failure message="{message}">
 {htmldata}
             </failure>
-        </testcase>""".format(id="[{}/{}] {}".format(error.line, error.column, error.error_identifier),
-                              message=escape(error.error, entities={"\"": "&quot;"}),
+        </testcase>""".format(id="[{}/{}] {}".format(error.line, error.column,
+                                                     error.error_identifier),
+                              message=escape(error.error,
+                                             entities={"\"": "&quot;"}),
                               htmldata=escape(error.description)))
             output_file.write("\n    </testsuite>\n")
         output_file.write("</testsuites>\n")
@@ -69,8 +73,8 @@ class ClangTidyConverter:
 
         result = self.error_regex.match(error_array[0])
         if result is None:
-            logging.warning(
-                'Could not match error_array to regex: %s', error_array)
+            logging.warning('Could not match error_array to regex: %s',
+                            error_array)
             return
 
         # Remove ending newlines
@@ -80,7 +84,7 @@ class ClangTidyConverter:
         # Check for "note" in each line. If it's a note, make sure it's indented properly
         for i, line in enumerate(error_array):
             if "note" in error_array[i]:
-                error_array[i] = " "*12 + line
+                error_array[i] = " " * 12 + line
 
         line = int(result.group(2))
         col = int(result.group(3))
@@ -95,7 +99,8 @@ class ClangTidyConverter:
         # Also remove `basename` from the message if it contains the path
         error_message = error_message.replace(self.basename, "")
 
-        error = ErrorDescription(file_path, line, col, error, error_identifier, error_message)
+        error = ErrorDescription(file_path, line, col, error, error_identifier,
+                                 error_message)
         self.errors.append(error)
 
     def convert(self, input_file, output_file):
