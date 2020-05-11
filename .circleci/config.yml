@@ -21,6 +21,7 @@ save_workspace: &save_workspace
     root: ~/robocup-software
     paths:
       - build/*
+      - run/*
 
 load_workspace: &load_workspace
   attach_workspace:
