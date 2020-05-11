@@ -114,10 +114,8 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
         grSim_BallReplacement* ball_replace =
             simPacket.mutable_replacement()->mutable_ball();
 
-        ball_replace->set_vx(
-            _teamToWorld.transformDirection(_shot).x());
-        ball_replace->set_vy(
-            _teamToWorld.transformDirection(_shot).y());
+        ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
+        ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
         _context->grsim_command = simPacket;
 
         update();

@@ -3,14 +3,15 @@
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <protobuf/messages_robocup_ssl_robot_status.pb.h>
+
 #include <Geometry2d/Util.hpp>
 #include <Network.hpp>
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <cmath>
 #include <stdexcept>
-#include "PacketConvert.hpp"
 
+#include "PacketConvert.hpp"
 #include "status.h"
 
 using namespace std;
@@ -140,8 +141,8 @@ void SimRadio::handleReceive(const std::string& data) {
         rx.set_timestamp(RJ::timestamp());
 
         const uint8_t kicker_status_charging = Kicker_Enabled | Kicker_I2C_OK;
-        const uint8_t kicker_status_ready = Kicker_Charged | kicker_status_charging;
-        ;
+        const uint8_t kicker_status_ready =
+            Kicker_Charged | kicker_status_charging;
 
         rx.set_kicker_status(just_kicked ? kicker_status_charging
                                          : kicker_status_ready);
