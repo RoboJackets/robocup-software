@@ -88,13 +88,13 @@ jobs:
       - <<: *load_workspace
       - run: |
           STYLIZE_DIFFBASE=origin/staging make checktidy-lines
-          cat /tmp/checktidy.patch | python3 util/clang-tidy-to-junit.py > /tmp/clang_tidy.xml
+          cat /tmp/checktidy.patch | python3 util/clang-tidy-to-junit.py > /tmp/test-results/clang-tidy/results.xml
           if [[ -n $(grep '[^[:space:]]' /tmp/checktidy.patch) ]]; then
             echo "****************************** clang-tidy errors *******************************"
             exit 1
           fi
       - store_test_results:
-          path: /tmp/clang_tidy.xml
+          path: /tmp/test-results
 
   gen-docs:
     <<: *dir
