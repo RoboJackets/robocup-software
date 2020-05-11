@@ -156,7 +156,7 @@ checkstyle:
 CLANG_FORMAT_BINARY=clang-format-10
 
 pretty-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
 checkstyle-lines:
