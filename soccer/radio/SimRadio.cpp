@@ -122,8 +122,6 @@ void SimRadio::handleReceive(const std::string& data) {
         int this_robot_id = status.robot_id();
         bool ball_sense = status.infrared();
         bool just_kicked = status.has_flat_kick() || status.has_chip_kick();
-        // TODO: do we even get results if the robot isn't on?
-        bool robot_on = true;
 
         RadioRx rx;
         rx.set_robot_id(this_robot_id);
