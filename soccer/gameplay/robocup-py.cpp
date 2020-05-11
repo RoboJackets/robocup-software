@@ -29,7 +29,6 @@ using namespace boost::python;
 #include <exception>
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
-#include <utility>
 
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
@@ -365,7 +364,6 @@ boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
                                             Geometry2d::Circle* circle) {
     if (circle == nullptr) throw NullArgumentException("circle");
     Geometry2d::Point a;
-
     Geometry2d::Point b;
     boost::python::list lst;
 
