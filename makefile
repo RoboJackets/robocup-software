@@ -7,11 +7,14 @@ ifeq ($(CIRCLECI), true)
 	NINJA_FLAGS=-j2
 endif
 
+# Tell CMake to create compile_commands.json for debug builds for clang-tidy
+DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 define cmake_build_target_release
@@ -154,12 +157,31 @@ checkstyle:
 	@stylize.v1 --git_diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
 
 CLANG_FORMAT_BINARY=clang-format-10
+CLANG_TIDY_BINARY=clang-tidy-10
+
+# circleci has 2 cores, but advertises 32
+ifeq ($(CIRCLECI), true)
+	CORES=2
+else
+	CORES=$(shell nproc)
+endif
 
 pretty-lines:
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
+tidy-lines:
+ifeq ("$(wildcard ./build/compile_commands.json)","")
+	@printf "build/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
+	exit 1
+endif
+	@printf "Running clang-tidy-diff...\n"
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES)
+
 checkstyle-lines:
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
+
+checktidy-lines:
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) > /tmp/checktidy.patch
