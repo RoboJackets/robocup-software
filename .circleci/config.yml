@@ -29,11 +29,11 @@ jobs:
       - run: make test-soccer
       - run: make test-python
 
-  # FIXME: pylint is broken on 18.04
   python-static:
     <<: *dir
-    docker:
-      - image: robojackets/robocup-software:16
+    <<: *image
+#    docker:
+#      - image: robojackets/robocup-software:16
     steps:
       - checkout
       - <<: *install_deps
