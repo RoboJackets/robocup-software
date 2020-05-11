@@ -179,6 +179,7 @@ PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 apt-get install $ARGS $PACKAGES
 
 # install python3 requirements
+pip3 install --upgrade pip
 pip3 install -r $BASE/util/requirements3.txt
 
 # This script is run as sudo, but we don't want submodules to be owned by the
