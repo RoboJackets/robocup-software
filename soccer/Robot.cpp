@@ -41,25 +41,20 @@ Robot::Robot(Context* context, int shell, bool self)
 
 REGISTER_CONFIGURABLE(OurRobot)
 
-ConfigDouble* OurRobot::self_avoid_radius;
-ConfigDouble* OurRobot::opp_avoid_radius;
-ConfigDouble* OurRobot::opp_goalie_avoid_radius;
-ConfigDouble* OurRobot::dribble_out_of_bounds_offset;
+ConfigDouble* OurRobot::_selfAvoidRadius;
+ConfigDouble* OurRobot::_oppAvoidRadius;
+ConfigDouble* OurRobot::_oppGoalieAvoidRadius;
+ConfigDouble* OurRobot::_dribbleOutOfBoundsOffset;
 
 void OurRobot::createConfiguration(Configuration* cfg) {
-    constexpr float kOppAvoidRadiusThresh = 0.01;
-    constexpr float kOppGoalieAvoidRadiusBuffer = 0.05;
-    constexpr float kDribbleOutOfBoundsOffset = 0.01;
-
-    self_avoid_radius =
+    _selfAvoidRadius =
         new ConfigDouble(cfg, "PathPlanner/selfAvoidRadius", Robot_Radius);
-    opp_avoid_radius = new ConfigDouble(cfg, "PathPlanner/oppAvoidRadius",
-                                        Robot_Radius - kOppAvoidRadiusThresh);
-    opp_goalie_avoid_radius =
-        new ConfigDouble(cfg, "PathPlanner/oppGoalieAvoidRadius",
-                         Robot_Radius + kOppGoalieAvoidRadiusBuffer);
-    dribble_out_of_bounds_offset = new ConfigDouble(
-        cfg, "PathPlanner/dribbleOutOfBoundsOffset", kDribbleOutOfBoundsOffset);
+    _oppAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppAvoidRadius",
+                                       Robot_Radius - 0.01);
+    _oppGoalieAvoidRadius = new ConfigDouble(
+        cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+    _dribbleOutOfBoundsOffset = new ConfigDouble(
+        cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
 OurRobot::OurRobot(Context* context, int shell)
@@ -306,7 +301,7 @@ float OurRobot::kickTimer() const {
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
     Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
-    auto offset = static_cast<float>(*dribble_out_of_bounds_offset);
+    auto offset = static_cast<float>(*_dribbleOutOfBoundsOffset);
 
     Geometry2d::Rect modifiedField = Geometry2d::Rect(
         Point((-current_dimensions.Width() / 2) - offset, -offset),
@@ -404,19 +399,19 @@ void OurRobot::resetAvoidRobotRadii() {
     for (size_t i = 0; i < Num_Shells; ++i) {
         intent().opp_avoid_mask[i] =
             (i == _context->game_state.TheirInfo.goalie)
-                ? *opp_goalie_avoid_radius
-                : *opp_avoid_radius;
+                ? *_oppGoalieAvoidRadius
+                : *_oppAvoidRadius;
     }
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
     for (float& ar : intent().opp_avoid_mask) {
-        ar = (enable) ? Opp_Avoid_Small : static_cast<float>(*opp_avoid_radius);
+        ar = (enable) ? Opp_Avoid_Small : static_cast<float>(*_oppAvoidRadius);
     }
 }
 void OurRobot::avoidAllOpponents(bool enable) {
     for (float& ar : intent().opp_avoid_mask) {
-        ar = (enable) ? -1.0f : static_cast<float>(*opp_avoid_radius);
+        ar = (enable) ? -1.0f : static_cast<float>(*_oppAvoidRadius);
     }
 }
 
@@ -435,7 +430,7 @@ float OurRobot::avoidOpponentRadius(unsigned shell_id) const {
 
 void OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid) {
     if (enable_avoid) {
-        intent().opp_avoid_mask[shell_id] = *opp_avoid_radius;
+        intent().opp_avoid_mask[shell_id] = *_oppAvoidRadius;
     } else {
         intent().opp_avoid_mask[shell_id] = -1.0;
     }
@@ -445,7 +440,7 @@ void OurRobot::approachOpponent(unsigned shell_id, bool enable_approach) {
     if (enable_approach) {
         intent().opp_avoid_mask[shell_id] = Opp_Avoid_Small;
     } else {
-        intent().opp_avoid_mask[shell_id] = *opp_avoid_radius;
+        intent().opp_avoid_mask[shell_id] = *_oppAvoidRadius;
     }
 }
 
@@ -539,7 +534,7 @@ Geometry2d::ShapeSet OurRobot::collectAllObstacles(
     // from this robot. This distance increases with velocity.
     RobotMask self_avoid_mask;
     std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
-              *self_avoid_radius);
+              *_oppAvoidRadius);
     const Geometry2d::ShapeSet selfObs =
         createRobotObstacles(_context->state.self, self_avoid_mask, this->pos(),
                              0.6f + static_cast<float>(this->vel().mag()));

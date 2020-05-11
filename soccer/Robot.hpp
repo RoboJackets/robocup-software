@@ -596,10 +596,11 @@ private:
 
     void _clearCmdText();
 
-    static ConfigDouble* self_avoid_radius;
-    static ConfigDouble* opp_avoid_radius;
-    static ConfigDouble* opp_goalie_avoid_radius;
-    static ConfigDouble* dribble_out_of_bounds_offset;
+    /// default values for avoid radii
+    static ConfigDouble* _selfAvoidRadius;
+    static ConfigDouble* _oppAvoidRadius;
+    static ConfigDouble* _oppGoalieAvoidRadius;
+    static ConfigDouble* _dribbleOutOfBoundsOffset;
 
     int8_t _planningPriority{};
 };
