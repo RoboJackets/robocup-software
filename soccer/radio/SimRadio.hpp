@@ -34,7 +34,7 @@ private:
     boost::asio::ip::udp::socket _socket;
     boost::asio::ip::udp::endpoint _grsim_endpoint;
 
-    std::string _buffer;
+    std::vector<char> _buffer;
 
     bool _blueTeam;
 };

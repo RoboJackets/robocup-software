@@ -107,7 +107,8 @@ void SimRadio::startReceive() {
 
 void SimRadio::receivePacket(const boost::system::error_code& error,
                              std::size_t num_bytes) {
-    handleReceive(_buffer);
+    std::string data(_buffer.begin(), _buffer.end());
+    handleReceive(data);
     startReceive();
 }
 
