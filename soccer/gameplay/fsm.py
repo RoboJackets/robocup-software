@@ -62,13 +62,13 @@ class StateMachine:
         if self.state is not None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 method_name = "execute_" + state.name
-                state_method: Optional[StateMethod] = None
+                exec_callback: Optional[StateMethod] = None
                 try:
-                    state_method = getattr(self, method_name)
+                    exec_callback = getattr(self, method_name)
                 except AttributeError:
                     pass
-                if state_method is not None:
-                    state_method()
+                if exec_callback is not None:
+                    exec_callback()
 
         if self.state is None:
             self.transition(self.start_state)
@@ -123,13 +123,13 @@ class StateMachine:
             for state in state_ancestors:
                 if not self.state_is_substate(new_state, state):
                     method_name = "on_exit_" + state.name
-                    state_method: Optional[OnExitMethod] = None
+                    exit_callback: Optional[OnExitMethod] = None
                     try:
-                        state_method = getattr(self, method_name)  # call the transition FROM method if it exists
+                        exit_callback = getattr(self, method_name)  # call the transition FROM method if it exists
                     except AttributeError:
                         pass
-                    if state_method is not None:
-                        state_method()
+                    if exit_callback is not None:
+                        exit_callback()
 
         new_state_ancestors: List[State] = self.ancestors_of_state(
             new_state) + [new_state]
@@ -137,13 +137,13 @@ class StateMachine:
             if not self.state_is_substate(self.state, state):
                 # Somehow pylint is dying in the below statement even though the types are clear as day
                 method_name = "on_enter_" + state.name  # pylint: disable=no-member
-                state_method: Optional[OnEnterMethod] = None
+                enter_callback: Optional[OnEnterMethod] = None
                 try:
-                    state_method = getattr(self, method_name)  # call the transition TO method if it exists
+                    enter_callback = getattr(self, method_name)  # call the transition TO method if it exists
                 except AttributeError:
                     pass
-                if state_method is not None:
-                    state_method()
+                if enter_callback is not None:
+                    enter_callback()
 
         self._state = new_state
 
