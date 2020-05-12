@@ -62,7 +62,7 @@ class StateMachine:
         if self.state is not None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 method_name = "execute_" + state.name
-                state_method = None
+                state_method: Optional[StateMethod] = None
                 try:
                     state_method = getattr(self, method_name)
                 except AttributeError:
@@ -123,7 +123,7 @@ class StateMachine:
             for state in state_ancestors:
                 if not self.state_is_substate(new_state, state):
                     method_name = "on_exit_" + state.name
-                    state_method = None
+                    state_method: Optional[OnExitMethod] = None
                     try:
                         state_method = getattr(self, method_name)  # call the transition FROM method if it exists
                     except AttributeError:
@@ -137,7 +137,7 @@ class StateMachine:
             if not self.state_is_substate(self.state, state):
                 # Somehow pylint is dying in the below statement even though the types are clear as day
                 method_name = "on_enter_" + state.name  # pylint: disable=no-member
-                state_method = None
+                state_method: Optional[OnEnterMethod] = None
                 try:
                     state_method = getattr(self, method_name)  # call the transition TO method if it exists
                 except AttributeError:
