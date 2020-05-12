@@ -18,7 +18,6 @@ StateMethod = Callable[[], None]  # Takes nothing, returns nothing
 OnEnterMethod = Callable[[], None]  # Takes nothing, returns nothing
 OnExitMethod = Callable[[], None]  # Takes nothing, returns nothing
 
-
 ## @brief generic hierarchial state machine class.
 #
 # states can have substates.  If the machine is in a state, then it is also implicitly in that state's parent state
@@ -77,7 +76,8 @@ class StateMachine:
             # transition if an 'event' fires
             next_states = []
             if self.state in self._transitions:
-                for next_state, transition in self._transitions[self.state].items():
+                for next_state, transition in self._transitions[
+                        self.state].items():
                     if transition['condition']():
                         next_states += [next_state]
 
@@ -110,8 +110,10 @@ class StateMachine:
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
 
-        self._transitions[from_state][to_state] = {'condition': condition_fn,
-                                                   'name': event_name}
+        self._transitions[from_state][to_state] = {
+            'condition': condition_fn,
+            'name': event_name
+        }
 
     # sets @state to the new_state given
     # calls 'on_exit_STATENAME()' if it exists
@@ -119,7 +121,8 @@ class StateMachine:
     def transition(self, new_state: State) -> None:
         # print("TRANSITION: " + str(self.__class__.__name__) + ": " + str(self.state) + " -> " + str(new_state))
         if self.state is not None:
-            state_ancestors: List[State] = self.ancestors_of_state(self.state) + [self.state]
+            state_ancestors: List[State] = self.ancestors_of_state(
+                self.state) + [self.state]
             for state in state_ancestors:
                 if not self.state_is_substate(new_state, state):
                     method_name = "on_exit_" + state.name
@@ -131,7 +134,8 @@ class StateMachine:
                     if state_method is not None:
                         state_method()
 
-        new_state_ancestors: List[State] = self.ancestors_of_state(new_state) + [new_state]
+        new_state_ancestors: List[State] = self.ancestors_of_state(
+            new_state) + [new_state]
         for state in new_state_ancestors:
             if not self.state_is_substate(self.state, state):
                 # Somehow pylint is dying in the below statement even though the types are clear as day
@@ -150,7 +154,8 @@ class StateMachine:
     def is_in_state(self, state: State) -> bool:
         return self.state_is_substate(self.state, state)
 
-    def state_is_substate(self, state: Optional[State], possible_parent: State) -> bool:
+    def state_is_substate(self, state: Optional[State],
+                          possible_parent: State) -> bool:
         ancestor = state
         while ancestor is not None:
             if possible_parent == ancestor: return True
@@ -160,7 +165,8 @@ class StateMachine:
 
     # looks at the list @ancestors and returns the one that the current state is a descendant of
     # returns None if the current state doesn't descend from one in the list
-    def corresponding_ancestor_state(self, ancestors: Iterable[State]) -> Optional[State]:
+    def corresponding_ancestor_state(
+            self, ancestors: Iterable[State]) -> Optional[State]:
         state = self.state
         while state is not None:
             if state in ancestors:
