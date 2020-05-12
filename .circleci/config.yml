@@ -88,11 +88,16 @@ jobs:
       - <<: *load_workspace
       - run: |
           STYLIZE_DIFFBASE=origin/staging make checktidy-lines
+          cat /tmp/checktidy.patch
+          if grep -q 'No relevant changes found' /tmp/checktidy.patch; then
+            echo "No relevant changes found"
+            exit 0
+          fi
+
           mkdir -p /tmp/test-results/clang-tidy
           cat /tmp/checktidy.patch | python3 util/clang-tidy-to-junit.py > /tmp/test-results/clang-tidy/results.xml
           if [[ -n $(grep '[^[:space:]]' /tmp/checktidy.patch) ]]; then
             echo "****************************** clang-tidy errors *******************************"
-            cat /tmp/checktidy.patch
             exit 1
           fi
       - store_test_results:
