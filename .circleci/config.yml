@@ -52,11 +52,11 @@ jobs:
       - run: make test-soccer-nobuild
       - run: make test-python-nobuild
 
-  # FIXME: pylint is broken on 18.04
   python-static:
     <<: *dir
-    docker:
-      - image: robojackets/robocup-software:16
+    <<: *image
+#    docker:
+#      - image: robojackets/robocup-software:16
     steps:
       - checkout
       - <<: *install_deps
