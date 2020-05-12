@@ -32,7 +32,12 @@ public:
      * Also resets PID controllers.
      * @param setpoint
      */
-    static void stop(MotionSetpoint* setpoint);
+    void stop(MotionSetpoint* setpoint);
+
+    /**
+     * Resets all PID controllers.
+     */
+    void resetPIDControllers();
 
     static void createConfiguration(Configuration* cfg);
 
