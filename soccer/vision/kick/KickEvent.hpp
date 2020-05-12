@@ -44,9 +44,9 @@ public:
      * @param yellowRobots Yellow robots at current frame
      * @param blueRobots Blue robots at current frame
      */
-    void addState(RJ::Time calcTime, WorldBall ball,
-                  std::vector<WorldRobot> yellowRobots,
-                  std::vector<WorldRobot> blueRobots);
+    void addState(RJ::Time calcTime, const WorldBall& ball,
+                  const std::vector<WorldRobot>& yellowRobots,
+                  const std::vector<WorldRobot>& blueRobots);
 
     /**
      * @return true if the kick is a valid one

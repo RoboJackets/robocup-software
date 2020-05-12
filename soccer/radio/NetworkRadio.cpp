@@ -9,6 +9,7 @@ using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
+      _recv_buffer{},
       _send_buffers(Num_Shells) {
     _connections.resize(Num_Shells);
     startReceive();
@@ -35,11 +36,11 @@ void NetworkRadio::send(Packet::RadioTx& radioTx) {
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
             forward_packet_buffer = _send_buffers[robot_idx];
 
-        rtp::Header* header =
+        auto* header =
             reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
-        rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
+        auto* body = reinterpret_cast<rtp::RobotTxMessage*>(
             &forward_packet_buffer[rtp::HeaderSize]);
 
         from_robot_tx_proto(radioTx.robots(robot_idx), body);
@@ -80,17 +81,18 @@ void NetworkRadio::receive() {
 
 void NetworkRadio::receivePacket(const boost::system::error_code& error,
                                  std::size_t num_bytes) {
-    if (error) {
+    if (error != nullptr) {
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
         return;
-    } else if (num_bytes != rtp::ReverseSize) {
+    }
+    if (num_bytes != rtp::ReverseSize) {
         std::cerr << "Invalid packet length: expected " << rtp::ReverseSize
                   << ", got " << num_bytes << std::endl;
         return;
     }
 
-    rtp::RobotStatusMessage* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
         &_recv_buffer[rtp::HeaderSize]);
 
     _robot_endpoint.port(25566);
@@ -130,4 +132,4 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
     startReceive();
 }
 
-void NetworkRadio::switchTeam(bool) {}
+void NetworkRadio::switchTeam(bool /*blueTeam*/) {}

@@ -26,6 +26,7 @@ namespace Planning {
  */
 class SingleRobotPathPlanner {
 public:
+    virtual ~SingleRobotPathPlanner() = default;
     /**
      * Returns an obstacle-free Path subject to the specified MotionContraints.
      */

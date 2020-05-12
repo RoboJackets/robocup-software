@@ -1,11 +1,10 @@
 #include "FastKickDetector.hpp"
 
-#include <iterator>
-#include <deque>
-#include <math.h>
-#include <limits>
-
 #include <Geometry2d/Point.hpp>
+#include <cmath>
+#include <deque>
+#include <iterator>
+#include <limits>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -17,11 +16,10 @@ void FastKickDetector::createConfiguration(Configuration* cfg) {
     acceleration_trigger = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/fast_acceleration_trigger", 750);
 }
 
-bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
-                                 std::vector<WorldRobot> yellowRobots,
-                                 std::vector<WorldRobot> blueRobots,
+bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
+                                 const std::vector<WorldRobot>& yellowRobots,
+                                 const std::vector<WorldRobot>& blueRobots,
                                  KickEvent& kickEvent) {
-
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
     if (stateHistory.size() > *VisionFilterConfig::fast_kick_detector_history_length) {
@@ -50,7 +48,7 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
     }
 
     // Assume the kick happened in the middle of the history
-    int midIdx = (int)floor(stateHistory.size() / 2);
+    int midIdx = static_cast<int>(std::floor(stateHistory.size() / 2));
 
     WorldRobot closestRobot = getClosestRobot();
     RJ::Time kickTime = stateHistory.at(midIdx).calcTime;

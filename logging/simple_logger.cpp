@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    multicast_add(&visionSocket, SharedVisionAddress);
+    multicast_add(&visionSocket, SharedVisionAddress.c_str());
 
     // Create referee socket
     QUdpSocket refereeSocket;
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
         throw runtime_error("Can't bind to shared referee port");
     }
 
-    multicast_add(&refereeSocket, RefereeAddress);
+    multicast_add(&refereeSocket, RefereeAddress.c_str());
 
     // Create log file
     int fd = creat(logFile.toLatin1(), 0666);

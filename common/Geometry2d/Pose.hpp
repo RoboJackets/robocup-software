@@ -72,7 +72,7 @@ public:
     /**
      * Implicit conversion to Eigen::Vector3d
      */
-    operator Eigen::Vector3d() const {
+    [[nodiscard]] operator Eigen::Vector3d() const {
         return Eigen::Vector3d(position().x(), position().y(), heading());
     }
 
@@ -80,31 +80,31 @@ public:
      * Calculate a TransformMatrix corresponding to using this pose as the
      * origin of the coordinate system.
      */
-    TransformMatrix transform() const {
-        return TransformMatrix(position(), heading());
+    [[nodiscard]] TransformMatrix transform() const {
+        return TransformMatrix(position(), static_cast<float>(heading()));
     }
 
     /**
      * Accessors
      */
     Point& position() { return _position; }
-    Point const& position() const { return _position; }
+    [[nodiscard]] Point const& position() const { return _position; }
     double& heading() { return _heading; }
-    double const& heading() const { return _heading; }
+    [[nodiscard]] double const& heading() const { return _heading; }
 
     /**
      * Operators
      */
-    Pose operator+(const Pose& other) const {
+    [[nodiscard]] Pose operator+(const Pose& other) const {
         return Pose(position() + other.position(), heading() + other.heading());
     }
-    Pose operator-(const Pose& other) const {
+    [[nodiscard]] Pose operator-(const Pose& other) const {
         return Pose(position() - other.position(), heading() - other.heading());
     }
-    Pose operator*(double s) const {
+    [[nodiscard]] Pose operator*(double s) const {
         return Pose(position() * s, heading() * s);
     }
-    Pose operator/(double s) const {
+    [[nodiscard]] Pose operator/(double s) const {
         return Pose(position() / s, heading() / s);
     }
     Pose& operator+=(const Pose& other) {
@@ -168,11 +168,6 @@ public:
         : _linear(other(0), other(1)), _angular(other(2)) {}
 
     /**
-     * Copy-constructor - default
-     */
-    Twist(const Twist& other) = default;
-
-    /**
      * Zero
      */
     static Twist Zero() { return Twist(Eigen::Vector3d::Zero()); }
@@ -188,14 +183,14 @@ public:
      * Accessors
      */
     Point& linear() { return _linear; }
-    Point const& linear() const { return _linear; }
+    [[nodiscard]] Point const& linear() const { return _linear; }
     double& angular() { return _angular; }
-    double const& angular() const { return _angular; }
+    [[nodiscard]] double const& angular() const { return _angular; }
 
     /**
-     * Find the resulting pose (delta) of an object starting at the origin and
-     * continuing with constant (world-space) velocity for the specified time
-     * (in seconds).
+     * Find the resulting pose (delta) of an object starting at the origin
+     * and continuing with constant (world-space) velocity for the specified
+     * time (in seconds).
      *
      * Throughout the movement, linear velocity relative to the origin is
      * constant (but velocity in the pose's reference frame is changing in
@@ -203,7 +198,7 @@ public:
      *
      * Called deltaFixed because it operates fixed to the origin frame.
      */
-    Pose deltaFixed(double t) const {
+    [[nodiscard]] Pose deltaFixed(double /*t*/) const {
         return Pose(linear().x(), linear().y(), angular());
     }
 
@@ -222,7 +217,7 @@ public:
      * In mathematical terms, this is the exponential mapping that takes the Lie
      * algebra se(2) (twists) to the Lie group SE(2) (poses).
      */
-    Pose deltaRelative(double t) const {
+    [[nodiscard]] Pose deltaRelative(double t) const {
         // twist = (x', y', h')
         // dh(world) = h' * dt
         // dx(world) = dx(local)cos(dh(world)) - dy(local)sin(dh(world))
@@ -236,7 +231,8 @@ public:
         double vh = angular();
 
         // From above: sin(h't)/h' and (1 - cos(h't))/h' respectively
-        double sine_frac, cosine_frac;
+        double sine_frac;
+        double cosine_frac;
 
         if (std::abs(vh) < 1e-6) {
             // Small-angle approximations
@@ -253,21 +249,23 @@ public:
                     vx * cosine_frac + vy * sine_frac, vh * t);
     }
 
-    double curvature() const { return angular() / linear().mag(); }
+    [[nodiscard]] double curvature() const {
+        return angular() / linear().mag();
+    }
 
     /**
      * Operators
      */
-    Twist operator+(const Twist& other) const {
+    [[nodiscard]] Twist operator+(const Twist& other) const {
         return Twist(linear() + other.linear(), angular() + other.angular());
     }
-    Twist operator-(const Twist& other) const {
+    [[nodiscard]] Twist operator-(const Twist& other) const {
         return Twist(linear() - other.linear(), angular() - other.angular());
     }
-    Twist operator*(double s) const {
+    [[nodiscard]] Twist operator*(double s) const {
         return Twist(linear() * s, angular() * s);
     }
-    Twist operator/(double s) const {
+    [[nodiscard]] Twist operator/(double s) const {
         return Twist(linear() / s, angular() / s);
     }
     Twist& operator+=(const Twist& other) {

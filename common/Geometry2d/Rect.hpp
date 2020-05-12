@@ -57,9 +57,9 @@ public:
 
     bool containsRect(const Rect& other) const;
 
-    bool containsPoint(Point other) const override;
+    bool containsPoint(Point point) const override;
 
-    bool hit(Point pt) const override;
+    bool hit(Point point) const override;
 
     bool hit(const Segment& seg) const override;
 
@@ -103,8 +103,7 @@ public:
     */
     std::vector<Point> corners();
 
-
-    bool nearPoint(Point pt, float threshold) const override;
+    bool nearPoint(Point other, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;
 
     bool intersects(const Rect& other) const;
