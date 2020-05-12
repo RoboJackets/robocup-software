@@ -81,7 +81,7 @@ void NetworkRadio::receive() {
 
 void NetworkRadio::receivePacket(const boost::system::error_code& error,
                                  std::size_t num_bytes) {
-    if (error != nullptr) {
+    if (error) {
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
         return;

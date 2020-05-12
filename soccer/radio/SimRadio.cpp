@@ -188,6 +188,8 @@ void SimRadio::switchTeam(bool blueTeam) {
         _socket.close();
     }
 
+    _socket.open(ip::udp::v4());
+
     int status_port = blueTeam ? SimBlueStatusPort : SimYellowStatusPort;
 
     // Let them throw exceptions
