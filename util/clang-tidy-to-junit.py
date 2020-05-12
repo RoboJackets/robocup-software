@@ -81,11 +81,6 @@ class ClangTidyConverter:
         for i, line in enumerate(error_array):
             error_array[i] = line.rstrip("\n")
 
-        # Check for "note" in each line. If it's a note, make sure it's indented properly
-        for i, line in enumerate(error_array):
-            if "note" in error_array[i]:
-                error_array[i] = " " * 12 + line
-
         line = int(result.group(2))
         col = int(result.group(3))
         error = result.group(4)
