@@ -20,6 +20,11 @@ YES=false
 SYSTEM="unknown"
 NO_SUBMODULES=false
 
+BASE=$(readlink -f $(dirname $0)/..)
+
+echo "-- Installing grSim default configuration"
+ln -vs "$BASE"/grsim.xml $HOME/.grsim.xml
+
 if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # dont add repositories on debian, unsupported
     echo "[WARN] You are using a flavor of debian. This configuration is not officially supported..." >&2
     SYSTEM="debian"
@@ -164,8 +169,6 @@ apt-get update
 
 MACH=$(uname -m)
 unset DPKG_FLAGS
-
-BASE=$(readlink -f $(dirname $0)/..)
 
 echo "-- Installing udev rules"
 cp -f "$BASE"/util/robocup.rules /etc/udev/rules.d/
