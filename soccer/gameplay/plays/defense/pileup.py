@@ -23,7 +23,9 @@ class Pileup(play.Play):
         y = main.ball().pos.y #y-coordinate of ball's position
         us = main.our_robots()
         them = main.their_robots()
-        '''
+
+        ''' THIS IS TO BE IMPLEMENTED NEXT. GOAL IS TO CALCULATE AVERAGE POSITION OF OUR BOTS AND THEIR BOTS TO DETERMINE WHERE TO PLACE COLLECTING ROBOTS IN THE EVENT OF A GIVEN PILEUP
+
         combatants = [] #robots that are actively fighting for the ball at the moment
         #directions = []
         for u in us:
