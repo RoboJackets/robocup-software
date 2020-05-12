@@ -16,8 +16,30 @@ defaults_image: &image
 defaults_deps: &install_deps
   run: ./util/ubuntu-setup --yes
 
+save_workspace: &save_workspace
+  persist_to_workspace:
+    root: ~/robocup-software
+    paths:
+      - build/*
+      - run/*
+
+load_workspace: &load_workspace
+  attach_workspace:
+    at: ~/robocup-software
+
 version: 2
 jobs:
+  # Compile everything and save the build folder
+  compile:
+    <<: *dir
+    <<: *image
+    steps:
+      - checkout
+      - <<: *install_deps
+      - run: make all_including_tests
+      - <<: *save_workspace
+
+  # Use the saved build folder for testing
   test-all:
     <<: *dir
     <<: *image
@@ -25,9 +47,10 @@ jobs:
       - checkout
       # Ensure latest deps are installed
       - <<: *install_deps
-      - run: make
-      - run: make test-soccer
-      - run: make test-python
+      - <<: *load_workspace
+      # Run test without building anything
+      - run: make test-soccer-nobuild
+      - run: make test-python-nobuild
 
   python-static:
     <<: *dir
@@ -55,6 +78,31 @@ jobs:
       - store_artifacts:
           path: /tmp/clean.patch
 
+  clang-tidy:
+    <<: *dir
+    <<: *image
+    steps:
+      - checkout
+      - <<: *setup_env
+      - <<: *install_deps
+      - <<: *load_workspace
+      - run: |
+          STYLIZE_DIFFBASE=origin/staging make checktidy-lines
+          cat /tmp/checktidy.patch
+          if grep -q 'No relevant changes found' /tmp/checktidy.patch; then
+            echo "No relevant changes found"
+            exit 0
+          fi
+
+          mkdir -p /tmp/test-results/clang-tidy
+          cat /tmp/checktidy.patch | python3 util/clang-tidy-to-junit.py > /tmp/test-results/clang-tidy/results.xml
+          if [[ -n $(grep '[^[:space:]]' /tmp/checktidy.patch) ]]; then
+            echo "****************************** clang-tidy errors *******************************"
+            exit 1
+          fi
+      - store_test_results:
+          path: /tmp/test-results
+
   gen-docs:
     <<: *dir
     <<: *image
@@ -68,9 +116,15 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - test-all
+      - compile
+      - test-all:
+          requires:
+            - compile
       - python-static
       - style
+      - clang-tidy:
+          requires:
+            - compile
 
       - gen-docs:
           requires:
