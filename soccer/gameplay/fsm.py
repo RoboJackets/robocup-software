@@ -100,10 +100,7 @@ class StateMachine:
                        condition: Union[bool, TransitionFunction],
                        event_name: str) -> None:
         if isinstance(condition, bool):
-            condition_bool: bool = cast(bool, condition)
-
-            def condition_fn() -> bool:
-                return condition_bool
+            condition_fn = lambda: condition
         else:
             condition_fn = condition
 
