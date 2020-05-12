@@ -1,11 +1,11 @@
 import logging
 from enum import Enum
 import graphviz as gv
-from typing import Union, Callable, Dict, Optional, Iterable, List, Any
+from typing import Union, Callable, Dict, Optional, Iterable, List, Any, cast
 
 State = Enum
-StateHierarchy = Dict[State, State]
-TransitionFunction = Callable[[None], bool]  # Takes no args, returns a bool
+StateHierarchy = Dict[State, Optional[State]]
+TransitionFunction = Callable[[], bool]  # Takes no args, returns a bool
 
 # Rip TypedDict requires 3.8
 # class Event(TypedDict):
@@ -14,9 +14,9 @@ TransitionFunction = Callable[[None], bool]  # Takes no args, returns a bool
 
 Event = Any
 TransitionTable = Dict[State, Dict[State, Event]]  # [from][to] = Event
-StateMethod = Callable[[None], None]  # Takes nothing, returns nothing
-OnEnterMethod = Callable[[None], None]  # Takes nothing, returns nothing
-OnExitMethod = Callable[[None], None]  # Takes nothing, returns nothing
+StateMethod = Callable[[], None]  # Takes nothing, returns nothing
+OnEnterMethod = Callable[[], None]  # Takes nothing, returns nothing
+OnExitMethod = Callable[[], None]  # Takes nothing, returns nothing
 
 
 ## @brief generic hierarchial state machine class.
@@ -100,12 +100,17 @@ class StateMachine:
                        condition: Union[bool, TransitionFunction],
                        event_name: str) -> None:
         if isinstance(condition, bool):
-            condition = lambda: condition
+            condition_bool: bool = cast(bool, condition)
+
+            def condition_fn() -> bool:
+                return condition_bool
+        else:
+            condition_fn = condition
 
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
 
-        self._transitions[from_state][to_state] = {'condition': condition,
+        self._transitions[from_state][to_state] = {'condition': condition_fn,
                                                    'name': event_name}
 
     # sets @state to the new_state given
@@ -114,7 +119,8 @@ class StateMachine:
     def transition(self, new_state: State) -> None:
         # print("TRANSITION: " + str(self.__class__.__name__) + ": " + str(self.state) + " -> " + str(new_state))
         if self.state is not None:
-            for state in self.ancestors_of_state(self.state) + [self.state]:
+            state_ancestors: List[State] = self.ancestors_of_state(self.state) + [self.state]
+            for state in state_ancestors:
                 if not self.state_is_substate(new_state, state):
                     method_name = "on_exit_" + state.name
                     state_method = None
@@ -125,10 +131,11 @@ class StateMachine:
                     if state_method is not None:
                         state_method()
 
-        for state in self.ancestors_of_state(new_state) + [new_state]:
-            state: State
+        new_state_ancestors: List[State] = self.ancestors_of_state(new_state) + [new_state]
+        for state in new_state_ancestors:
             if not self.state_is_substate(self.state, state):
-                method_name = "on_enter_" + state.name
+                # Somehow pylint is dying in the below statement even though the types are clear as day
+                method_name = "on_enter_" + state.name  # pylint: disable=no-member
                 state_method = None
                 try:
                     state_method = getattr(self, method_name)  # call the transition TO method if it exists
@@ -143,7 +150,7 @@ class StateMachine:
     def is_in_state(self, state: State) -> bool:
         return self.state_is_substate(self.state, state)
 
-    def state_is_substate(self, state: State, possible_parent: State) -> bool:
+    def state_is_substate(self, state: Optional[State], possible_parent: State) -> bool:
         ancestor = state
         while ancestor is not None:
             if possible_parent == ancestor: return True
@@ -166,7 +173,7 @@ class StateMachine:
     # if B is a child state of A and C is a child state of B, ancestors_of_state(C) == [A, B]
     # if @state has no ancestors, returns an empty list
     def ancestors_of_state(self, state) -> List[State]:
-        ancestors = []
+        ancestors: List[State] = []
         state = self._state_hierarchy[state]
         while state is not None:
             ancestors.insert(0, state)
@@ -178,7 +185,7 @@ class StateMachine:
         g = gv.Digraph(self.__class__.__name__, format='png')
 
         cluster_index = 0
-        subgraphs = {}
+        subgraphs: Dict[Optional[State], gv.Digraph] = {}
         subgraphs[None] = g
         for state in self._state_hierarchy:
             if state not in subgraphs and state in self._state_hierarchy.values(
@@ -202,9 +209,9 @@ class StateMachine:
                     label=state.__module__ + "::" + state.name,
                     shape=shape)
 
-        for state, subgraph in subgraphs.items():
-            if state is not None:
-                subgraphs[self._state_hierarchy[state]].subgraph(subgraph)
+        for opt_state, subgraph in subgraphs.items():
+            if opt_state is not None:
+                subgraphs[self._state_hierarchy[opt_state]].subgraph(subgraph)
 
         for start in self._transitions:
             for end, event in self._transitions[start].items():
