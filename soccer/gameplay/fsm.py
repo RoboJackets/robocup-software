@@ -125,7 +125,9 @@ class StateMachine:
                     method_name = "on_exit_" + state.name
                     exit_callback: Optional[OnExitMethod] = None
                     try:
-                        exit_callback = getattr(self, method_name)  # call the transition FROM method if it exists
+                        exit_callback = getattr(
+                            self, method_name
+                        )  # call the transition FROM method if it exists
                     except AttributeError:
                         pass
                     if exit_callback is not None:
@@ -139,7 +141,9 @@ class StateMachine:
                 method_name = "on_enter_" + state.name  # pylint: disable=no-member
                 enter_callback: Optional[OnEnterMethod] = None
                 try:
-                    enter_callback = getattr(self, method_name)  # call the transition TO method if it exists
+                    enter_callback = getattr(
+                        self, method_name
+                    )  # call the transition TO method if it exists
                 except AttributeError:
                     pass
                 if enter_callback is not None:
