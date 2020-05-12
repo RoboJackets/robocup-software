@@ -44,7 +44,7 @@ void VisionReceiver::setPort(int port) {
     // Bind the socket.
     boost::system::error_code bind_error;
     _socket.bind(udp::endpoint(udp::v4(), port), bind_error);
-    if (bind_error) {
+    if (static_cast<bool>(bind_error)) {
         std::cerr << "Vision port bind failed with error: "
                   << bind_error.message() << std::endl;
         return;
@@ -134,7 +134,7 @@ void VisionReceiver::startReceive() {
 void VisionReceiver::receivePacket(const boost::system::error_code& error,
                                    std::size_t num_bytes) {
     // Check for error
-    if (error) {
+    if (static_cast<bool>(error)) {
         std::cerr << "Vision receive failed with error: " << error.message()
                   << std::endl;
         return;

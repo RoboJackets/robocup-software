@@ -64,7 +64,7 @@ void NetworkRadio::send(Packet::RadioTx& radioTx) {
                     [](const boost::system::error_code& error,
                        std::size_t num_bytes) {
                         // Handle errors.
-                        if (error) {
+                        if (static_cast<bool>(error)) {
                             std::cerr << "Error sending: " << error
                                       << " in " __FILE__ << std::endl;
                         }
@@ -81,7 +81,7 @@ void NetworkRadio::receive() {
 
 void NetworkRadio::receivePacket(const boost::system::error_code& error,
                                  std::size_t num_bytes) {
-    if (error) {
+    if (static_cast<bool>(error)) {
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
         return;
