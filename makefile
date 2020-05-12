@@ -52,7 +52,7 @@ run-headmore: all backend-simulator-soccer
 
 run-sim2play: all
 	-pkill -f './grSim'
-	./run/grSim &
+	-(cd run && ./grSim) &
 	@echo '!!![WARNING]!!! Multiple soccer instances will not work unless your grSim is broadcasting over the proper IP.'
 	@echo 'Please set your grSim broadcast IP to "224.5.23.2:10020", or you will experience issues.'
 	./run/soccer -sim -b & sleep 2 && ./run/soccer -sim -y -defend plus
@@ -70,7 +70,7 @@ view:
 # backend targets to launch soccer with grSim in headless
 backend-headless-simulator-soccer:
 	-pkill -f './grSim'
-	./run/grSim --headless &
+	-(cd run && ./grSim --headless) &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
 	-pkill -f './grSim'
@@ -78,7 +78,7 @@ backend-headless-simulator-soccer:
 # backend targets to launch soccer with a grSim window
 backend-simulator-soccer:
 	-pkill -f './grSim'
-	./run/grSim &
+	-(cd run && ./grSim) &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
 	-pkill -f './grSim'
@@ -93,7 +93,7 @@ endif
 
 debug-sim: all
 	-pkill -f './grSim'
-	./run/grSim &
+	-(cd run && ./grSim) &
 ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else

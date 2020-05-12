@@ -117,13 +117,13 @@
 			</Var>
 		</Var>
 		<Var name="Blue Team" type="stringenum">
-			Parsian
+			robojackets-grsim
 			<Var name="0" type="string">
 				mypy
 			</Var>
 		</Var>
 		<Var name="Yellow Team" type="stringenum">
-			Parsian
+			robojackets-grsim
 			<Var name="0" type="string">
 				mypy
 			</Var>
