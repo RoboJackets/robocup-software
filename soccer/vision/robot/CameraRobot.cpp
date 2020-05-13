@@ -17,7 +17,7 @@ Geometry2d::Pose CameraRobot::getPose() const { return pose; }
 
 CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     // Make sure we don't divide by zero due to some weird error
-    if (robots.size() == 0) {
+    if (robots.empty()) {
         std::cout << "ERROR: Number of robots to combine is zero" << std::endl;
 
         return CameraRobot(RJ::now(), Geometry2d::Pose(), -1);

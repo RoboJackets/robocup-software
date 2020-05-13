@@ -1,25 +1,27 @@
-#include <gameplay/GameplayModule.hpp>
+#include "Processor.hpp"
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
+
 #include <Constants.hpp>
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
+#include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
+#include <gameplay/GameplayModule.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/Joystick.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
+
 #include "DebugDrawer.hpp"
-#include "Processor.hpp"
 #include "radio/PacketConvert.hpp"
 #include "radio/RadioNode.hpp"
 #include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
-using namespace std;
 using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
@@ -134,7 +136,9 @@ void Processor::setupJoysticks() {
 
 bool Processor::joystickValid() const {
     for (Joystick* joy : _joysticks) {
-        if (joy->valid()) return true;
+        if (joy->valid()) {
+            return true;
+        }
     }
     return false;
 }
@@ -144,17 +148,19 @@ void Processor::runModels() {
 
     for (auto& packet : _context.vision_packets) {
         const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
-        vector<CameraBall> ballObservations;
-        vector<CameraRobot> yellowObservations;
-        vector<CameraRobot> blueObservations;
+        std::vector<CameraBall> ballObservations;
+        std::vector<CameraRobot> yellowObservations;
+        std::vector<CameraRobot> blueObservations;
 
-        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
-            RJ::Seconds(frame->t_capture())));
+        RJ::Time time =
+            RJ::Time(std::chrono::duration_cast<std::chrono::microseconds>(
+                RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
         ballObservations.reserve(frame->balls().size());
         for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
+            ballObservations.emplace_back(
+                time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
 
         // Collect camera data from all robots
@@ -179,12 +185,14 @@ void Processor::runModels() {
                 robot.robot_id());
         }
 
-        frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
+        frames.emplace_back(time, frame->camera_id(), ballObservations,
+                            yellowObservations, blueObservations);
     }
 
     _vision->addFrames(frames);
 
-    // Fill the list of our robots/balls based on whether we are the blue team or not
+    // Fill the list of our robots/balls based on whether we are the blue team
+    // or not
     _vision->fillBallState(_context.state);
     _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
 }
@@ -248,7 +256,7 @@ void Processor::run() {
         _visionReceiver->run();
 
         if (_context.field_dimensions != *currentDimensions) {
-            cout << "Updating field geometry based off of vision packet."
+            std::cout << "Updating field geometry based off of vision packet."
                  << endl;
             setFieldDimensions(_context.field_dimensions);
         }
@@ -257,7 +265,9 @@ void Processor::run() {
 
         _radio->run();
 
-        if (_radio) curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+        if (_radio) {
+            curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+        }
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
@@ -270,7 +280,7 @@ void Processor::run() {
 
         // Log referee data
         _refereeModule->run();
-        vector<RefereePacket> refereePackets;
+        std::vector<RefereePacket> refereePackets;
         _refereeModule->getPackets(refereePackets);
         for (const RefereePacket& packet : refereePackets) {
             SSL_Referee* log = _context.state.logFrame->add_raw_refbox();
@@ -279,7 +289,8 @@ void Processor::run() {
                 std::max(curStatus.lastRefereeTime, packet.receivedTime);
         }
 
-        string yellowname, bluename;
+        std::string yellowname;
+        std::string bluename;
 
         if (_context.game_state.blueTeam) {
             bluename = _context.game_state.OurInfo.name;
@@ -311,7 +322,7 @@ void Processor::run() {
         // Build a plan request for each robot.
         std::map<int, Planning::PlanRequest> requests;
         for (OurRobot* r : _context.state.self) {
-            if (r && r->visible()) {
+            if (r != nullptr && r->visible()) {
                 if (_context.game_state.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
@@ -383,11 +394,6 @@ void Processor::run() {
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to
         // update things manually.
-        if (false) {
-            for (auto& node : _nodes) {
-                node->run();
-            }
-        }
 
         ////////////////
         // Store logging information
@@ -412,16 +418,17 @@ void Processor::run() {
                 //*log->mutable_cmd_body_vel() = r->
                 // *log->mutable_cmd_vel() = r->cmd_vel;
                 // log->set_cmd_w(r->cmd_w);
-                log->set_shell(r->shell());
-                log->set_angle(r->angle());
+                log->set_shell(static_cast<float>(r->shell()));
+                log->set_angle(static_cast<float>(r->angle()));
                 auto radioRx = r->radioRx();
                 if (radioRx.has_kicker_voltage()) {
                     log->set_kicker_voltage(radioRx.kicker_voltage());
                 }
 
                 if (radioRx.has_kicker_status()) {
-                    log->set_charged(radioRx.kicker_status() & 0x01);
-                    log->set_kicker_works(!(radioRx.kicker_status() & 0x90));
+                    log->set_charged((radioRx.kicker_status() & 0x01) != 0u);
+                    log->set_kicker_works((radioRx.kicker_status() & 0x90) ==
+                                          0u);
                 }
 
                 if (radioRx.has_ball_sense_status()) {
@@ -568,7 +575,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
                                           : RobotIntent::ShootMode::CHIP);
 
     // dribbler
-    intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);
+    intent.dvelocity =
+        static_cast<float>(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
@@ -576,8 +584,12 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
     if (joy.valid()) {
         // keep it in range
         vals.translation.clamp(sqrt(2.0));
-        if (vals.rotation > 1) vals.rotation = 1;
-        if (vals.rotation < -1) vals.rotation = -1;
+        if (vals.rotation > 1) {
+            vals.rotation = 1;
+        }
+        if (vals.rotation < -1) {
+            vals.rotation = -1;
+        }
 
         // Gets values from the configured joystick control
         // values,respecting damped

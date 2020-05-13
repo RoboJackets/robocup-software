@@ -34,6 +34,11 @@ public:
      */
     void stop(MotionSetpoint* setpoint);
 
+    /**
+     * Resets all PID controllers.
+     */
+    void resetPIDControllers();
+
     static void createConfiguration(Configuration* cfg);
 
 private:
@@ -48,7 +53,8 @@ private:
      */
     void updateParams();
 
-    void setVelocity(MotionSetpoint* setpoint, Geometry2d::Twist target_vel);
+    static void setVelocity(MotionSetpoint* setpoint,
+                            Geometry2d::Twist target_vel);
 
     int _shell_id;
 
@@ -66,6 +72,6 @@ private:
     static ConfigDouble* _max_velocity;
     static ConfigDouble* _x_multiplier;
 
-    DebugDrawer* _drawer;
-    RobotConfig* _config;
+    DebugDrawer* _drawer{};
+    RobotConfig* _config{};
 };

@@ -7,7 +7,7 @@
 
 void from_robot_tx_proto(const Packet::Robot& proto_packet,
                          rtp::RobotTxMessage* msg) {
-    Packet::Control control = proto_packet.control();
+    const Packet::Control& control = proto_packet.control();
     msg->uid = proto_packet.uid();
     msg->message.controlMessage.bodyX = static_cast<int16_t>(
         control.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
@@ -54,7 +54,7 @@ Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
 
     // Motor errors
     for (int i = 0; i < 5; i++) {
-        bool err = msg.motorErrors & (1 << i);
+        bool err = (msg.motorErrors & (1 << i)) != 0;
         packet.add_motor_status(err ? Packet::MotorStatus::Hall_Failure
                                     : Packet::MotorStatus::Good);
     }

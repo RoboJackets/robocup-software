@@ -166,7 +166,7 @@ private:
     // _teamTrans is used for positions, not angles.
     // _teamAngle is used for angles.
     Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle;
+    float _teamAngle{};
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;

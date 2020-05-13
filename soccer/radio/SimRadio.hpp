@@ -25,7 +25,7 @@ public:
 private:
     Context* const _context;
 
-    void handleReceive(uint8_t data);
+    void handleReceive(const std::string& data);
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
                        size_t num_bytes);

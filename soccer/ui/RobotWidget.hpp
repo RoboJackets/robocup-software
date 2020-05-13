@@ -21,7 +21,7 @@ public:
     void paintEvent(QPaintEvent* event) override;
 
 private:
-    bool _wheelFaults[4];
+    bool _wheelFaults[4]{};
     bool _ballSenseFault;
     bool _hasBall;
     int _shellID;

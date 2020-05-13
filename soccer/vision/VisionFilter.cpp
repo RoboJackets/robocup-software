@@ -96,7 +96,7 @@ void VisionFilter::updateLoop() {
             {
                 std::lock_guard<std::mutex> lock2(worldLock);
 
-                if (frameBuffer.size() > 0) {
+                if (!frameBuffer.empty()) {
                     world.updateWithCameraFrame(RJ::now(), frameBuffer);
                     frameBuffer.clear();
                 } else {
