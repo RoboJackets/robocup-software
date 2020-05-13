@@ -633,18 +633,18 @@ void Gameplay::GameplayModule::loadTest() {
                 boost::python::list ball =
                     extract<boost::python::list>(ball_rtrn);
                 auto* ball_replace = replacement->mutable_ball();
-                float posx = extract<float>(ball[0]);
-                float posy = extract<float>(ball[1]);
-                float velx = extract<float>(ball[2]);
-                float vely = extract<float>(ball[3]);
+                double posx = extract<double>(ball[0]);
+                double posy = extract<double>(ball[1]);
+                double velx = extract<double>(ball[2]);
+                double vely = extract<double>(ball[3]);
 
-                ball_replace->mutable_pos()->set_x(
+                ball_replace->set_x(
                     -teamDirection *
                     (posy -
                      (Field_Dimensions::Current_Dimensions.Length() / 2)));
-                ball_replace->mutable_pos()->set_y(teamDirection * posx);
-                ball_replace->mutable_vel()->set_x(-teamDirection * vely);
-                ball_replace->mutable_vel()->set_y(teamDirection * velx);
+                ball_replace->set_y(teamDirection * posx);
+                ball_replace->set_vx(-teamDirection * vely);
+                ball_replace->set_vy(teamDirection * velx);
 
                 _context->grsim_command = simPacket;
             }

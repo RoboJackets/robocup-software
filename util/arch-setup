@@ -10,6 +10,9 @@ AUR_HELPER=${AUR_HELPER:-yaourt}
 
 BASE=$(readlink -f $(dirname $0)/..)
 
+echo "-- Installing grSim default configuration"
+ln -vs "$BASE"/grsim.xml $HOME/.grsim.xml
+
 echo "-- Installing udev rules"
 sudo cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 sudo udevadm control --reload || true # reload rules

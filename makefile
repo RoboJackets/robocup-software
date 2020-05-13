@@ -51,12 +51,12 @@ run-sim: all backend-headless-simulator-soccer
 run-headmore: all backend-simulator-soccer
 
 run-sim2play: all
-	-pkill -f './grsim'
-	./run/grsim &
+	-pkill -f './grSim'
+	-(cd run && ./grSim) &
 	@echo '!!![WARNING]!!! Multiple soccer instances will not work unless your grSim is broadcasting over the proper IP.'
 	@echo 'Please set your grSim broadcast IP to "224.5.23.2:10020", or you will experience issues.'
 	./run/soccer -sim -b & sleep 2 && ./run/soccer -sim -y -defend plus
-	-pkill -f './grsim'
+	-pkill -f './grSim'
 
 run-release: all-release
 	./run/soccer
@@ -67,21 +67,21 @@ rr: run-release
 view: 
 	./run/soccer -vlog $(file)
 
-# backend targets to launch soccer with grsim in headless
+# backend targets to launch soccer with grSim in headless
 backend-headless-simulator-soccer:
-	-pkill -f './grsim'
-	./run/grsim --headless &
+	-pkill -f './grSim'
+	-(cd run && ./grSim --headless) &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
-	-pkill -f './grsim'
+	-pkill -f './grSim'
 
-# backend targets to launch soccer with a grsim window
+# backend targets to launch soccer with a grSim window
 backend-simulator-soccer:
-	-pkill -f './grsim'
-	./run/grsim &
+	-pkill -f './grSim'
+	-(cd run && ./grSim) &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
-	-pkill -f './grsim'
+	-pkill -f './grSim'
 
 
 debug: all
@@ -92,8 +92,8 @@ else
 endif
 
 debug-sim: all
-	-pkill -f './grsim'
-	./run/grsim &
+	-pkill -f './grSim'
+	-(cd run && ./grSim) &
 ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else
@@ -176,7 +176,7 @@ else
 endif
 
 pretty-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
 tidy-lines:
@@ -188,7 +188,7 @@ endif
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES)
 
 checkstyle-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 

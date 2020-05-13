@@ -32,10 +32,10 @@ void GrSimCommunicator::placeBall(QPointF pos,
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    ball_replace->mutable_pos()->set_x((_screenToWorld * pos).x());
-    ball_replace->mutable_pos()->set_y((_screenToWorld * pos).y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x((_screenToWorld * pos).x());
+    ball_replace->set_y((_screenToWorld * pos).y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
 
     sendSimCommand(simPacket);
 }

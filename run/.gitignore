@@ -1,6 +1,6 @@
 client
 vartype_example
-grsim
+grSim
 lib/
 libprotobuf.so*
 soccsim
