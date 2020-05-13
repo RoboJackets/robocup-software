@@ -228,7 +228,7 @@ void Processor::run() {
             _context.game_settings.use_our_half);
         _context.state.logFrame->set_use_opponent_half(
             _context.game_settings.use_their_half);
-        _context.state.logFrame->set_manual_id(_context.game_settings.manualID);
+        _context.state.logFrame->set_manual_id(_context.game_settings.joystick_config.manualID);
         _context.state.logFrame->set_blue_team(_context.game_state.blueTeam);
         _context.state.logFrame->set_defend_plus_x(
             _context.game_settings.defendPlusX);
@@ -385,7 +385,7 @@ void Processor::run() {
         // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
             robot->setJoystickControlled(robot->shell() ==
-                                         _context.game_settings.manualID);
+                                         _context.game_settings.joystick_config.manualID);
         }
 
         _motionControl->run();
@@ -531,7 +531,7 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _context.state.self) {
         RobotIntent& intent = _context.robot_intents[r->shell()];
-        if (_context.game_settings.manualID == r->shell()) {
+        if (_context.game_settings.joystick_config.manualID == r->shell()) {
             intent.is_active = true;
             auto controlValues = getJoystickControlValues();
             if (controlValues.size()) {
@@ -552,7 +552,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
     if (robot && robot->visible() &&
-        _context.game_settings.useFieldOrientedDrive) {
+        _context.game_settings.joystick_config.useFieldOrientedDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
     RobotIntent& intent = _context.robot_intents[robot->shell()];
@@ -566,7 +566,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    intent.trigger_mode = (kick ? (_context.game_settings.useKickOnBreakBeam
+    intent.trigger_mode = (kick ? (_context.game_settings.joystick_config.useKickOnBreakBeam
                                        ? RobotIntent::TriggerMode::ON_BREAK_BEAM
                                        : RobotIntent::TriggerMode::IMMEDIATE)
                                 : RobotIntent::TriggerMode::STAND_DOWN);
@@ -594,13 +594,13 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
         // Gets values from the configured joystick control
         // values,respecting damped
         // state
-        if (_context.game_settings.dampedTranslation) {
+        if (_context.game_settings.joystick_config.dampedTranslation) {
             vals.translation *=
                 Joystick::JoystickTranslationMaxDampedSpeed->value();
         } else {
             vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
         }
-        if (_context.game_settings.dampedRotation) {
+        if (_context.game_settings.joystick_config.dampedRotation) {
             vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
         } else {
             vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();

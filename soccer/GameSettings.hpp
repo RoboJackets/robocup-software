@@ -32,12 +32,15 @@ struct GameSettings {
 
     bool paused = false;
 
-    // Joystick configuration
-    int manualID = -1;
-    bool dampedTranslation = true;
-    bool dampedRotation = true;
-    bool useKickOnBreakBeam = false;
-    bool useFieldOrientedDrive = false;
+    struct JoystickConfig {
+        int manualID = -1;
+        bool dampedTranslation = true;
+        bool dampedRotation = true;
+        bool useKickOnBreakBeam = false;
+        bool useFieldOrientedDrive = false;
+    };
+
+    JoystickConfig joystick_config;
 
     /**
      * Copy from another struct, but don't clear optional values (RPCs) unless

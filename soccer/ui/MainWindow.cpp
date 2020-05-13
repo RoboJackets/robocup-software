@@ -289,12 +289,12 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 }
 
 void MainWindow::updateViews() {
-    int manual = _context->game_settings.manualID;
+    int manual = _context->game_settings.joystick_config.manualID;
     if ((manual >= 0 || _ui.manualID->isEnabled()) &&
         !_processor->joystickValid()) {
         // Joystick is gone - turn off manual control
         _ui.manualID->setCurrentIndex(0);
-        _context->game_settings.manualID = -1;
+        _context->game_settings.joystick_config.manualID = -1;
         _ui.manualID->setEnabled(false);
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
@@ -870,7 +870,7 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if (_context->game_settings.manualID >= 0) {
+    if (_context->game_settings.joystick_config.manualID >= 0) {
         // Mixed auto/manual control
         status("MANUAL", StatusType::Status_Warning);
         return;
@@ -960,7 +960,7 @@ void MainWindow::on_fieldView_robotSelected(int shell) {
         _ui.manualID->setCurrentIndex(shell + 1);
 
         std::lock_guard<std::mutex> lock(_context_mutex);
-        _context->game_settings.manualID = shell;
+        _context->game_settings.joystick_config.manualID = shell;
     }
 }
 
@@ -1129,7 +1129,7 @@ void MainWindow::on_actionDampedRotation_toggled(bool value) {
         cout << "Disabled" << endl;
 
     std::lock_guard<std::mutex> lock(_context_mutex);
-    _context->game_settings.dampedRotation = value;
+    _context->game_settings.joystick_config.dampedRotation = value;
 }
 
 void MainWindow::on_actionDampedTranslation_toggled(bool value) {
@@ -1140,7 +1140,7 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
         cout << "Disabled" << endl;
 
     std::lock_guard<std::mutex> lock(_context_mutex);
-    _context->game_settings.dampedTranslation = value;
+    _context->game_settings.joystick_config.dampedTranslation = value;
 }
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
@@ -1187,7 +1187,7 @@ void MainWindow::on_actionSeed_triggered() {
 // Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
     std::lock_guard<std::mutex> lock(_context_mutex);
-    _context->game_settings.useKickOnBreakBeam =
+    _context->game_settings.joystick_config.useKickOnBreakBeam =
         _ui.joystickKickOnBreakBeam->checkState();
 }
 
@@ -1262,12 +1262,12 @@ void MainWindow::on_actionTeamYellow_triggered() {
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
     std::lock_guard<std::mutex> lock(_context_mutex);
-    _context->game_settings.manualID = value - 1;
+    _context->game_settings.joystick_config.manualID = value - 1;
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
     std::lock_guard<std::mutex> lock(_context_mutex);
-    _context->game_settings.useFieldOrientedDrive = value;
+    _context->game_settings.joystick_config.useFieldOrientedDrive = value;
 }
 
 void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
