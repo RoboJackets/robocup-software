@@ -363,8 +363,8 @@ void Gameplay::GameplayModule::run() {
                     "ui.main._tests.getNextCommand()", Py_eval_input,
                     _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-                // TODO: Part two of the multiple-places-publishing-to-the-same-
-                // struct garbage-fest.
+                // TODO(Kyle): Part two of the
+                //  multiple-places-publishing-to-the-same-struct garbage-fest.
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
                     _context->game_settings.requestRefCommand = cmd;
@@ -517,13 +517,13 @@ void Gameplay::GameplayModule::loadTest() {
 
             runningTests = extract<bool>(rtrn);
 
-            // TODO: Okay, so really all of this testing logic should be removed
-            // from Gameplay and put behind some sort of GameController
+            // TODO(Kyle): Okay, so really all of this testing logic should be
+            // removed from Gameplay and put behind some sort of GameController
             // abstraction that it shares with the main UI code. However, for
             // now we can hack around it by publishing to the same struct twice
             // from two different places. This is the big sad.
             //
-            // See the other TODO in this file for the other instance of the
+            // See the other to-do in this file for the other instance of the
             // same issue.
             if (runningTests) {
                 _context->game_settings.requestRefCommand = Command::HALT;

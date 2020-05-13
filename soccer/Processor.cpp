@@ -53,8 +53,7 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim, bool defendPlus, bool blueTeam,
-                     std::string readLogFile = "")
+Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     : _loopMutex(), _readLogFile(readLogFile) {
     _running = true;
     _framerate = 0;
@@ -228,7 +227,8 @@ void Processor::run() {
             _context.game_settings.use_our_half);
         _context.state.logFrame->set_use_opponent_half(
             _context.game_settings.use_their_half);
-        _context.state.logFrame->set_manual_id(_context.game_settings.joystick_config.manualID);
+        _context.state.logFrame->set_manual_id(
+            _context.game_settings.joystick_config.manualID);
         _context.state.logFrame->set_blue_team(_context.game_state.blueTeam);
         _context.state.logFrame->set_defend_plus_x(
             _context.game_settings.defendPlusX);
@@ -257,7 +257,7 @@ void Processor::run() {
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
-                 << endl;
+                      << std::endl;
             setFieldDimensions(_context.field_dimensions);
         }
 
@@ -384,8 +384,9 @@ void Processor::run() {
         // that joystick code only (sort of) supports one joystick at a time.
         // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
-            robot->setJoystickControlled(robot->shell() ==
-                                         _context.game_settings.joystick_config.manualID);
+            robot->setJoystickControlled(
+                robot->shell() ==
+                _context.game_settings.joystick_config.manualID);
         }
 
         _motionControl->run();
@@ -534,7 +535,7 @@ void Processor::sendRadioData() {
         if (_context.game_settings.joystick_config.manualID == r->shell()) {
             intent.is_active = true;
             auto controlValues = getJoystickControlValues();
-            if (controlValues.size()) {
+            if (!controlValues.empty()) {
                 applyJoystickControls(controlValues[0], r);
             }
         } else if (r->visible()) {
@@ -551,7 +552,7 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
-    if (robot && robot->visible() &&
+    if (robot != nullptr && robot->visible() &&
         _context.game_settings.joystick_config.useFieldOrientedDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
@@ -566,11 +567,12 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    intent.trigger_mode = (kick ? (_context.game_settings.joystick_config.useKickOnBreakBeam
-                                       ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                                       : RobotIntent::TriggerMode::IMMEDIATE)
-                                : RobotIntent::TriggerMode::STAND_DOWN);
-    intent.kcstrength = (controlVals.kickPower);
+    intent.trigger_mode =
+        (kick ? (_context.game_settings.joystick_config.useKickOnBreakBeam
+                     ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                     : RobotIntent::TriggerMode::IMMEDIATE)
+              : RobotIntent::TriggerMode::STAND_DOWN);
+    intent.kcstrength = static_cast<int>(controlVals.kickPower);
     intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
                                           : RobotIntent::ShootMode::CHIP);
 

@@ -32,6 +32,7 @@ Referee::Referee(Context* const context)
       command_(Command::HALT),
       sent_time{},
       received_time{},
+      stage_time_left_{},
       command_counter{},
       yellow_info{},
       blue_info{},

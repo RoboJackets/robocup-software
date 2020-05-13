@@ -510,7 +510,8 @@ void MainWindow::updateViews() {
         RefereeModuleEnums::stringFromCommand(game_state.raw_command).c_str());
 
     // convert time left from ms to s and display it to two decimal places
-    int timeSeconds = game_state.stage_time_left.count() / 1000;
+    int timeSeconds =
+        static_cast<int>(game_state.stage_time_left.count() / 1000);
     int timeMinutes = timeSeconds / 60;
     timeSeconds = timeSeconds % 60;
     _ui.refTimeLeft->setText(tr("%1:%2").arg(
@@ -1188,7 +1189,7 @@ void MainWindow::on_actionSeed_triggered() {
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
     std::lock_guard<std::mutex> lock(_context_mutex);
     _context->game_settings.joystick_config.useKickOnBreakBeam =
-        _ui.joystickKickOnBreakBeam->checkState();
+        _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
 }
 
 // choose between kick on break beam and immeditate
@@ -1416,6 +1417,7 @@ void MainWindow::on_testNext_clicked() {
     _processor->gameplayModule()->nextTest();
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const): this modifies state
 void MainWindow::setUseRefChecked(bool /* use_ref */) {
     _ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }

@@ -61,8 +61,9 @@ public:
 
     Geometry2d::Point ballPlacementPoint;
 
-    RefereeModuleEnums::Stage raw_stage;
-    RefereeModuleEnums::Command raw_command;
+    RefereeModuleEnums::Stage raw_stage =
+        RefereeModuleEnums::NORMAL_FIRST_HALF_PRE;
+    RefereeModuleEnums::Command raw_command = RefereeModuleEnums::Command::HALT;
 
     GameState()
         : period{FirstHalf},
@@ -74,9 +75,7 @@ public:
           OurInfo{},
           TheirInfo{},
           blueTeam{false},
-          ballPlacementPoint{},
-          raw_stage{RefereeModuleEnums::Stage::NORMAL_FIRST_HALF_PRE},
-          raw_command{RefereeModuleEnums::Command::HALT} {}
+          ballPlacementPoint{} {}
 
     GameState(Period period, State state, Restart restart, bool ourRestart,
               int ourScore, int theirScore, RJ::Seconds stage_time_left,

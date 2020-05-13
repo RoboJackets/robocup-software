@@ -19,7 +19,8 @@ struct GameSettings {
 
     // Requests. These can be overridden by the referee if it's enabled
     bool requestBlueTeam = true;
-    int requestGoalieID;
+    int requestGoalieID = 0;
+
     // One-off command. This should be set once, and acknowledged by setting it
     // back to nullopt.
     std::optional<RefereeModuleEnums::Command> requestRefCommand = std::nullopt;

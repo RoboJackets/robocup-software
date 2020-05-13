@@ -158,8 +158,7 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
-    auto processor =
-        std::make_unique<Processor>(sim, defendPlus, blueTeam, readLogFile);
+    auto processor = std::make_unique<Processor>(sim, blueTeam, readLogFile);
 
     Context* context = processor->context();
     context->game_settings.simulation = sim;

@@ -67,8 +67,7 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim, bool defendPlus, bool blueTeam,
-              std::string readLogFile);
+    Processor(bool sim, bool blueTeam, const std::string& readLogFile = "");
     virtual ~Processor();
 
     void stop();
