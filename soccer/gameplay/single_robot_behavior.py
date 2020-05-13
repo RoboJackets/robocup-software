@@ -2,32 +2,29 @@ import behavior
 import role_assignment
 import re
 import robocup
-from typing import Tuple
+from typing import Tuple, Optional
 
 
 class SingleRobotBehavior(behavior.Behavior):
-    def __init__(self, continuous):
+    def __init__(self, continuous: bool):
         super().__init__(continuous)
-        self.robot = None
+        self.robot: Optional[robocup.OurRobot] = None
 
     def execute_running(self):
         if self.robot is None:
             raise AssertionError(
                 "Error: execute_running() called on a single robot behavior that doesn't have a robot!")
 
-    def role_requirements(self):
+    def role_requirements(self) -> role_assignment.RoleRequirements:
         reqs = role_assignment.RoleRequirements()
         if self.robot is not None:
             reqs.previous_shell_id = self.robot.shell_id()
         return reqs
 
     # assignments is a (RoleRequirements, OurRobot) tuple
+    Assignments = Tuple[role_assignment.RoleRequirements, robocup.OurRobot]
 
-    # Waiting on https://github.com/PyCQA/pylint/issues/1452 to upgrade pylint
-    # pylint: disable=invalid-sequence-index
-    def assign_roles(
-            self, assignments:
-        Tuple[role_assignment.RoleRequirements, robocup.OurRobot]):
+    def assign_roles(self, assignments: Assignments) -> None:
         if not isinstance(assignments, tuple) or len(assignments) > 2:
             raise AssertionError(
                 "Invalid call to assign_roles.  Expected a tuple")
@@ -39,7 +36,7 @@ class SingleRobotBehavior(behavior.Behavior):
                     + str(assignments[1]))
             self.robot = assignments[1]
 
-    def __str__(self):
+    def __str__(self) -> str:
         desc = super().__str__()
         desc += "[robot=" + (str(self.robot.shell_id())
                              if self.robot is not None else "None") + "]"

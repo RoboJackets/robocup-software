@@ -1,10 +1,16 @@
 import pkgutil
 import importlib
 import inspect
+from typing import List, Type, TypeVar, Tuple
+from importlib.machinery import FileFinder
+from types import ModuleType
+
+C = TypeVar('C')
+ClassTuple = Tuple[List[str], Type[C]]
 
 
 # Recursively imports all subclasses of a given class from a given directory
-# 
+#
 # module_path is a list of package names (in order) and must have 1+ items
 # to import plays.offense and everything in it, call `recursive_import_classes(['plays', 'offense'])`
 #
@@ -17,28 +23,34 @@ import inspect
 # FIXME: clarify module_path vs base_path better
 # FIXME: fix so that we can import multiple classes from a single file
 #
-def recursive_import_classes(base_path, module_path, parent_class):
+def recursive_import_classes(base_path: str, module_path: List[str],
+                             parent_class: Type[C]) -> List[ClassTuple]:
     classes = []
 
     if not isinstance(module_path, list):
         raise AssertionError('module_path must be a list of strings')
 
     path = base_path + '/' + '/'.join(module_path)
+    loader: FileFinder
+    module_name: str
+    is_pkg: bool
     for loader, module_name, is_pkg in pkgutil.walk_packages([path]):
-        new_module_path = module_path + [module_name]
+        new_module_path: List[str] = module_path + [module_name]
 
         if is_pkg:
             classes += recursive_import_classes(base_path, new_module_path,
                                                 parent_class)
         else:
-            module = importlib.import_module('.'.join(new_module_path))
+            module: ModuleType = importlib.import_module(
+                '.'.join(new_module_path))
             entry = (new_module_path, find_subclasses(module, parent_class)[0])
             classes.append(entry)
     return classes
 
 
 # Returns a list of all subclasses of @parent_class that are found in @module
-def find_subclasses(module, parent_class):
+def find_subclasses(module: ModuleType,
+                    parent_class: Type[C]) -> List[Type[C]]:
     classes = []
     for name, obj in inspect.getmembers(module):
         if inspect.isclass(obj) and issubclass(
@@ -51,6 +63,7 @@ def find_subclasses(module, parent_class):
 if __name__ == '__main__':
     print("finding plays...")
     import play
+
     results = recursive_import_classes('.', ['plays'], play.Play)
     print("imports:")
     for res in results:

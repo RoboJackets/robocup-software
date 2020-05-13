@@ -1,11 +1,15 @@
+from typing import Optional, Dict, Union, Any
+from role_assignment import RoleRequirements
 from enum import Enum
 import fsm
 import logging
 
+# mypy cannot handle recursive types, so Any is put instead :(
+RoleRequirementsTree = Dict[str, Union[RoleRequirements, Any]]
+
 
 ## Behavior is an abstract superclass for Skill, Play, etc
 class Behavior(fsm.StateMachine):
-
     ## These are the core states of the Behavior class
     # Subclasses may extend this by adding substates of the following
     class State(Enum):
@@ -28,13 +32,16 @@ class Behavior(fsm.StateMachine):
 
         self._is_continuous = continuous
 
-    def add_state(self, state, parent_state=None):
+    def add_state(self,
+                  state: fsm.State,
+                  parent_state: Optional[fsm.State] = None) -> None:
         super().add_state(state, parent_state)
-        #TODO: raise exception if @state doesn't have a Behavior.State ancestor
+        # TODO: raise exception if @state doesn't have a Behavior.State ancestor
 
         ## Whether or not the Behavior is running
         # Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it
         # This is a convenience method to check whether or not the play is running
+
     def is_done_running(self) -> bool:
         for state in [Behavior.State.completed, Behavior.State.failed,
                       Behavior.State.cancelled]:
@@ -45,7 +52,7 @@ class Behavior(fsm.StateMachine):
     ## Transitions the Behavior into a terminal state (either completed or cancelled)
     def terminate(self):
         if self.is_done_running():
-            logging.warn(
+            logging.warning(
                 "Attempt to terminate behavior that's already done running")
         else:
             if self.is_continuous:
@@ -73,7 +80,7 @@ class Behavior(fsm.StateMachine):
     ## Returns a tree of RoleRequirements keyed by subbehavior reference name
     # This is used by the dynamic role assignment system to
     # intelligently select which robot will run which behavior
-    def role_requirements(self):
+    def role_requirements(self) -> RoleRequirementsTree:
         raise NotImplementedError()
 
     ## assignments is a tree of (RoleRequirements, OurRobot) tuples

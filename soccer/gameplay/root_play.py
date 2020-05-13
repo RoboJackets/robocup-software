@@ -1,4 +1,6 @@
+from typing import Tuple, List, Type, Optional
 from play import Play
+import robocup
 from behavior import Behavior
 import plays.stopped
 import plays.testing.test_coach
@@ -17,15 +19,16 @@ class RootPlay(Play, QtCore.QObject):
     def __init__(self):
         QtCore.QObject.__init__(self)
         Play.__init__(self, continuous=True)
-        self._play = None
+        self._play: Optional[Play] = None
         self._goalie_id = None
         self.add_transition(Behavior.State.start, Behavior.State.running,
                             lambda: True, 'immediately')
 
         # if a play fails for some reason, we can temporarily blacklist it, which removes it from play
         # selection for the next iteration, then enables it again
-        self.temporarily_blacklisted_play_class = None
+        self.temporarily_blacklisted_play_class: Optional[Type[Play]] = None
         self._currently_restarting = False
+        self._robots: List[robocup.Robot] = []
 
     play_changed = QtCore.pyqtSignal("QString")
 
@@ -58,9 +61,9 @@ class RootPlay(Play, QtCore.QObject):
             self.play = None
         else:
             # (play_class, score value) tuples
-            enabled_plays_and_scores = [
-                p for p in main.play_registry().get_enabled_plays_and_scores()
-            ]
+            enabled_plays_and_scores: List[Tuple[
+                Type[Play],
+                float]] = main.play_registry().get_enabled_plays_and_scores()
 
             # only let restart play run once
             enabled_plays_and_scores = [
@@ -161,7 +164,7 @@ class RootPlay(Play, QtCore.QObject):
         self.setup_goalie_if_needed()
 
     @property
-    def play(self):
+    def play(self) -> Optional[Play]:
         return self._play
 
     @play.setter
@@ -184,8 +187,8 @@ class RootPlay(Play, QtCore.QObject):
         self.setup_goalie_if_needed()
 
         # change notification so ui can update if necessary
-        self.play_changed.emit(self.play.__class__.__name__ if self._play is
-                               not None else "(No Play)")
+        self.play_changed.emit(self.play.__class__.__name__ if self.
+                               _play is not None else "(No Play)")
 
     ## the c++ GameplayModule reaches through the language portal and sets this
     # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None
@@ -220,7 +223,7 @@ class RootPlay(Play, QtCore.QObject):
         return self._robots
 
     @robots.setter
-    def robots(self, robots):
+    def robots(self, robots: Optional[List[robocup.OurRobot]]):
         self._robots = robots if robots is not None else []
 
     def __str__(self):

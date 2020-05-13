@@ -6,6 +6,7 @@ import situational_play_selection
 from typing import List
 import random
 
+
 ## @brief A standardized play that handles actions that an average play needs
 # Right now, this is only used to implement a standard way to run or not run
 # the play with defense, but any action that a normal play should do can be
@@ -16,23 +17,23 @@ class StandardPlay(play.Play):
     # Performs actions that all "Standard Plays" should do on initialization
     # Note: This method is called many times during the duration of a play,
     # Not just on selection
-    def __init__(self, continuous):
+    def __init__(self, continuous: bool):
         super().__init__(continuous)
         self.use_standard_defense()
 
-        #If the "Use Defense" checkbox is checked and the play isn't already running
-        #defense, then it adds the defense behavior. If the box isn't checked and the
-        #play is running defense then it removes the behavior. Also note: it ignores
-        #the requirement for goalie if the box is checked.
+        # If the "Use Defense" checkbox is checked and the play isn't already running
+        # defense, then it adds the defense behavior. If the box isn't checked and the
+        # play is running defense then it removes the behavior. Also note: it ignores
+        # the requirement for goalie if the box is checked.
 
     ##A private list of situations that are applicable to this play
 
     _situationList = list(
     )  # type: List[situational_play_selection.SituationalPlaySelector.Situation]
 
-    def use_standard_defense(self):
-        if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
-                'defense'):
+    def use_standard_defense(self) -> None:
+        if ui.main.defenseEnabled(
+        ) and not self.has_subbehavior_with_name('defense'):
             self.add_subbehavior(tactics.defense.Defense(),
                                  'defense',
                                  required=False)
@@ -47,7 +48,7 @@ class StandardPlay(play.Play):
     def execute_running(self):
         self.use_standard_defense()
 
-    #Since the standard_play handles defense, it will always handle the goalie
+    # Since the standard_play handles defense, it will always handle the goalie
     @classmethod
     def handles_goalie(cls):
         return True

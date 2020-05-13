@@ -1,3 +1,5 @@
+from typing import Type, List, Optional
+
 import play_registry as play_registry_module
 import test_registry as test_registry_module
 import playbook
@@ -14,16 +16,20 @@ import os
 import constants
 import situational_play_selection
 import robocup
+from root_play import RootPlay
 
 ## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
+from play import Play
+
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
 PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 
 # main init method for the python side of things
 _has_initialized = False
 
-#situationalPlaySelector
+# situationalPlaySelector
 situationAnalysis = situational_play_selection.SituationalPlaySelector()
+
 
 def init(log_errors=True):
     # by default, the logger only shows messages at the WARNING level or greater
@@ -32,7 +38,7 @@ def init(log_errors=True):
     global _has_initialized
     if _has_initialized:
         if log_errors:
-            logging.warn(
+            logging.warning(
                 "main robocoup python init() method called twice - ignoring")
         return
 
@@ -48,12 +54,13 @@ def init(log_errors=True):
     # load all plays
     play_classes = class_import.recursive_import_classes(GAMEPLAY_DIR,
                                                          ['plays'], play.Play)
-    for entry in play_classes:
-        # keep in mind that @entry is a tuple
-        mod_path = entry[0][1:]
-        _play_registry.insert(mod_path, entry[1])
+    module_path: List[str]
+    play_class: Type[Play]
+    for module_path, play_class in play_classes:
+        mod_path = module_path[1:]
+        _play_registry.insert(mod_path, play_class)
 
-    #TODO: finish test registry
+    # TODO: finish test registry
     # init test registry
     global _test_registry
     _test_registry = test_registry_module.TestRegistry()
@@ -64,7 +71,6 @@ def init(log_errors=True):
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _test_registry.insert(mod_path, entry[1])
-
 
     def _module_blacklisted(module):
         """Return true if a module has been filtered out of autoloading."""
@@ -80,8 +86,8 @@ def init(log_errors=True):
         ]
 
         # Don't load if we aren't a special module or if the filename is hidden
-        if (module_path[0] in autoloadables and
-                not _module_blacklisted(module_path[-1])):
+        if (module_path[0] in autoloadables
+                and not _module_blacklisted(module_path[-1])):
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
@@ -132,7 +138,7 @@ def init(log_errors=True):
                     logging.info("reloaded module '" + '.'.join(module_path) +
                                  "'")
                     # TODO: https://github.com/PyCQA/pylint/issues/1328
-                    #pylint: disable=no-member
+                    # pylint: disable=no-member
                     if is_play:
                         # re-register the new play class
                         # FIXME: this logic should go inside the play_registry
@@ -184,8 +190,8 @@ def init(log_errors=True):
     _has_initialized = True
 
 
-#loads the specified file_name from the playbooks folder
-#isAbsolute should be passed as True if the file_name is an absolute path
+# loads the specified file_name from the playbooks folder
+# isAbsolute should be passed as True if the file_name is an absolute path
 def load_playbook(file_name, isAbsolute=False):
     global _play_registry
     _play_registry.load_playbook(
@@ -193,8 +199,8 @@ def load_playbook(file_name, isAbsolute=False):
                                  if not isAbsolute else '') + file_name))
 
 
-#saves the playbook into the specified file_name in the playbooks folder
-#isAbsolute should be passed as True if the file_name is an absolute path
+# saves the playbook into the specified file_name in the playbooks folder
+# isAbsolute should be passed as True if the file_name is an absolute path
 def save_playbook(file_name, isAbsolute=False):
     global _play_registry
     playbook.save_to_file((PLAYBOOKS_DIR + '/'
@@ -229,10 +235,10 @@ def run():
         traceback.print_exc()
 
 
-_root_play = None
+_root_play: Optional[RootPlay] = None
 
 
-def root_play():
+def root_play() -> Optional[RootPlay]:
     return _root_play
 
 
@@ -250,6 +256,7 @@ _test_registry = None
 def test_registry():
     global _test_registry
     return _test_registry
+
 
 # returns the first robot in our robots with matching ID,
 # or None if no robots have the given ID
@@ -287,26 +294,34 @@ def system_state():
     global _context
     return _context.state
 
-_our_robots = None
 
-def set_our_robots(robots):
+_our_robots: Optional[List[robocup.OurRobot]] = None
+
+
+def set_our_robots(robots: List[robocup.OurRobot]):
     global _our_robots
-    root_play().robots = robots
+    if _root_play is not None:
+        _root_play.robots = robots
     _our_robots = robots
+
 
 def our_robots():
     global _our_robots
     return _our_robots
 
-_their_robots = None
 
-def set_their_robots(robots):
+_their_robots: Optional[List[robocup.OpponentRobot]] = None
+
+
+def set_their_robots(robots: List[robocup.OpponentRobot]):
     global _their_robots
     _their_robots = robots
+
 
 def their_robots():
     global _their_robots
     return _their_robots
+
 
 def ball():
     return system_state().ball
