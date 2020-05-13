@@ -1,11 +1,9 @@
 from typing import Optional, Dict, Union, Any
-from role_assignment import RoleRequirements
+from role_assignment import RoleReqTree
 from enum import Enum
 import fsm
 import logging
 
-# mypy cannot handle recursive types, so Any is put instead :(
-RoleRequirementsTree = Dict[str, Union[RoleRequirements, Any]]
 
 
 ## Behavior is an abstract superclass for Skill, Play, etc
@@ -80,7 +78,7 @@ class Behavior(fsm.StateMachine):
     ## Returns a tree of RoleRequirements keyed by subbehavior reference name
     # This is used by the dynamic role assignment system to
     # intelligently select which robot will run which behavior
-    def role_requirements(self) -> RoleRequirementsTree:
+    def role_requirements(self) -> RoleReqTree:
         raise NotImplementedError()
 
     ## assignments is a tree of (RoleRequirements, OurRobot) tuples

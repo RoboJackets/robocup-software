@@ -3,6 +3,8 @@ import evaluation.double_touch
 import robocup
 import logging
 import math
+from typing import List, Dict, Union, Any, Optional, Tuple
+
 
 # TODO arbitrary cost lambda property
 
@@ -176,6 +178,7 @@ class RoleRequirements:
     def cost_func(self, value):
         self._cost_func = value
 
+
 # given a role requirements tree (with RoleRequirements or assignment tuples as leaves),
 # yields all of the RoleRequiements objects
 def iterate_role_requirements_tree_leaves(reqs_tree):
@@ -203,6 +206,11 @@ IntScale = 1000
 # this is tunable
 PreferChipper = 2.5
 
+# mypy cannot handle recursive types, so Any is put instead :(
+RoleReqTree = Dict[str, Union[RoleRequirements, Dict[str, Any]]]
+Assignment = Tuple[RoleRequirements, Optional[robocup.OurRobot]]
+AssignedRoleReqTree = Dict[str, Union[Assignment, Dict[str, Any]]]
+
 
 # uses the munkres/hungarian algorithm to find the optimal role assignments
 # works by building a cost matrix for reach robot, role pair, then choosing the assignments to minimize total cost
@@ -211,23 +219,25 @@ PreferChipper = 2.5
 # role_reqs is a tree structure containing RoleRequirements
 #
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
-def assign_roles(robots, role_reqs):
-
+def assign_roles(robots: List[robocup.OurRobot],
+                 role_reqs: RoleReqTree) -> AssignedRoleReqTree:
     fail_reason = ""
 
     # check for empty request set
     if len(role_reqs) == 0:
         return {}
 
+    TreeMapping = Dict[RoleRequirements, List[str]]
+
     # first we flatten the role_reqs tree structure into a simple list of RoleRequirements
-    role_reqs_list = []
-    tree_mapping = {
+    role_reqs_list: List[RoleRequirements] = []
+    tree_mapping: TreeMapping = {
     }  # holds key paths so we can map the flattened list back into the tree at the end
 
     # The input and output to assign_roles() are in a tree form that maps to the behavior tree that we're assigning robots for
     # To do our calculations though, we need to have a flat list of RoleRequirements to match to our list of robots
     # The flatten_tree() method does this and keeps track of how to rebuild the tree so we can do so at the end
-    def flatten_tree(tree, path_prefix=[]):
+    def flatten_tree(tree: RoleReqTree, path_prefix: List[str] = []):
         valid_shell_ids = [bot.shell_id() for bot in robots]
         for key, subtree in tree.items():
             if isinstance(subtree, dict):
@@ -249,21 +259,22 @@ def assign_roles(robots, role_reqs):
         key=lambda r: r.priority)
 
     # logs the assignment parameters and raises an ImpossibleAssignmentError
-    def fail(errStr, extended_desc=None):
+    def fail(errStr: str, extended_desc: Optional[str] = None):
         if extended_desc is None:
             extended_desc = ""
         botsDesc = 'Robots:\n\t' + '\n\t'.join(map(str, robots))
         rolesDesc = 'Roles:\n\t' + '\n\t'.join(map(str, role_reqs_list))
         extDesc = 'Reason: {}\n\t'.format(errStr) \
-            + '\n\t'.join(extended_desc.split('\n'))
+                  + '\n\t'.join(extended_desc.split('\n'))
         logging.error('Failed Assignment:\n' + botsDesc + '\n' +
                       rolesDesc + '\n' + extDesc)
         raise ImpossibleAssignmentError(
             "No assignments possible that satisfy all constraints")
 
     # make sure there's enough robots
-    unassigned_role_requirements = [
+    unassigned_role_requirements: List[RoleRequirements] = [
     ]  # roles that won't be assigned because there aren't enough bots
+
     if len(required_roles) > len(robots):
         fail("More required roles than available robots")
     elif len(role_reqs_list) > len(robots):
@@ -278,9 +289,9 @@ def assign_roles(robots, role_reqs):
         return {}
 
     # build the cost matrix
-    cost_matrix = []
+    cost_matrix: List[List[int]] = []
     for robot in robots:
-        cost_row = []
+        cost_row: List[int] = []
         for req in role_reqs_list:
             cost = 0
 
@@ -296,18 +307,18 @@ def assign_roles(robots, role_reqs):
                 fail_reason += "Robot {}: does not have ball\n".format(
                     robot.shell_id())
             elif req.require_kicking and (
-                    robot.shell_id() == evaluation.double_touch.tracker()
-                    .forbidden_ball_toucher() or not robot.kicker_works() or
-                    not robot.ball_sense_works()):
+                robot.shell_id() == evaluation.double_touch.tracker()
+                .forbidden_ball_toucher() or not robot.kicker_works() or
+                not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += (
                     "Robot {}: does not have a fully working kicking setup"
                     " (or double touched)\n"
                         .format(robot.shell_id()))
             elif req.require_chipping and (
-                    robot.shell_id() == evaluation.double_touch.tracker()
-                    .forbidden_ball_toucher() or not robot.has_chipper() or
-                    not robot.ball_sense_works()):
+                robot.shell_id() == evaluation.double_touch.tracker()
+                .forbidden_ball_toucher() or not robot.has_chipper() or
+                not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += ("Robot {}: does not have a chipper"
                                 " (or double touched)\n"
@@ -316,7 +327,8 @@ def assign_roles(robots, role_reqs):
                 if req.prohibited_shell_id is not None and req.prohibited_shell_id == robot.shell_id():
                     cost = MaxWeight
                 if req.destination_shape is not None:
-                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(robot.pos)
+                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(
+                        robot.pos)
                 if req.previous_shell_id is not None and req.previous_shell_id != robot.shell_id():
                     cost += req.robot_change_cost
                 if not robot.has_chipper():
@@ -340,20 +352,24 @@ def assign_roles(robots, role_reqs):
     solver = munkres.Munkres()
     indexes = solver.compute(cost_matrix)
 
-    results = {}
+    results: AssignedRoleReqTree = {}
 
-    def insert_into_results(results, tree_mapping, role_reqs, robot):
+    def insert_into_results(results: AssignedRoleReqTree,
+                            tree_mapping: TreeMapping,
+                            role_reqs: RoleRequirements,
+                            robot: Optional[robocup.OurRobot]):
         # get the keypath of this entry so we can insert back into the tree
         tree_path = tree_mapping[role_reqs]
         parent = results
         for key in tree_path[:-1]:
             if key not in parent:
                 parent[key] = {}
-            parent = parent[key]
+            # We are assigning a recursive dict to a recursive dict,
+            # by mypy can't handle recursive types :(
+            parent = parent[key]  # type: ignore
         parent[tree_path[-1]] = (role_reqs, robot)
 
     # build assignments mapping
-    assignments = {}
     total = 0
     for row, col in indexes:
         total += cost_matrix[row][col] / IntScale

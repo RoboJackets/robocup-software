@@ -87,7 +87,7 @@ def init(log_errors=True):
 
         # Don't load if we aren't a special module or if the filename is hidden
         if (module_path[0] in autoloadables
-                and not _module_blacklisted(module_path[-1])):
+            and not _module_blacklisted(module_path[-1])):
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
@@ -235,7 +235,7 @@ def run():
         traceback.print_exc()
 
 
-_root_play: Optional[RootPlay] = None
+_root_play = None  # type: Optional[RootPlay]
 
 
 def root_play() -> Optional[RootPlay]:
