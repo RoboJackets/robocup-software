@@ -10,6 +10,7 @@ import main
 import evaluation.double_touch
 import tactics.positions.goalie
 import role_assignment
+from role_assignment import AssignedRoleReqTree
 import traceback
 
 
@@ -130,7 +131,7 @@ class RootPlay(Play, QtCore.QObject):
         # Role Assignment
         ################################################################################
         try:
-            assignments = role_assignment.assign_roles(
+            assignments: AssignedRoleReqTree = role_assignment.assign_roles(
                 self.robots, self.role_requirements())
         except role_assignment.ImpossibleAssignmentError as e:
             logging.error(

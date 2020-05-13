@@ -2,12 +2,14 @@ import main
 import robocup
 import constants
 import math
+from typing import List, Optional, Tuple
+from single_robot_behavior import SingleRobotBehavior
 
 
 ## Estimates the number of robots on offense on the opposing team
 #
 # @return Num of robots on offense
-def num_on_offense():
+def num_on_offense() -> int:
     # Complementary filter based on...
     #	Distance to their goal
     #	Distance to the ball
@@ -49,7 +51,13 @@ def num_on_offense():
 # @param direction_weight: How much to weight the positive y direction,
 #     0 <= direction weight <= 2
 #     If < 1, then robots < pos.y are weighted by direction_weight
-def get_closest_opponent(pos, direction_weight=0, excluded_robots=[]):
+def get_closest_opponent(
+    pos: robocup.Point,
+    direction_weight: float = 0,
+    excluded_robots: Optional[List[robocup.Robot]] = None
+) -> robocup.OpponentRobot:
+    if excluded_robots is None:
+        excluded_robots = []
 
     closest_bot, closest_dist = None, float("inf")
     for bot in main.their_robots():
@@ -68,15 +76,19 @@ def get_closest_opponent(pos, direction_weight=0, excluded_robots=[]):
     return closest_bot
 
 
+Threat = Tuple[robocup.Point, float, Optional[robocup.OpponentRobot]]
+
+
 ## Gets list of threats
 #
-# @return sorted tuple of threat positions and score 
-def get_threat_list(unused_threat_handlers):
+# @return sorted tuple of threat positions and score
+def get_threat_list(
+        unused_threat_handlers: List[SingleRobotBehavior]) -> List[Threat]:
     import evaluation.ball as ball_eval
     kick_eval = robocup.KickEvaluator(main.system_state())
 
     # List of (position, score, Robot/None)
-    threats = []
+    threats: List[Threat] = []
     potential_threats = main.their_robots()
 
     # find the primary threat
@@ -136,7 +148,7 @@ def get_threat_list(unused_threat_handlers):
             threats.append((opp.pos, 0.5 * shotChance, opp))
 
     # Prevent threats from being below our goal line (causes incorrect pos)
-    def _adjust_pt(threat):
+    def _adjust_pt(threat: Threat):
         pt = threat[0]
         pt.y = max(pt.y, 0.1)
         return (pt, ) + threat[1:]
@@ -148,10 +160,10 @@ def get_threat_list(unused_threat_handlers):
 
 
 ## Estimate potential reciever score (likelihood of opponent passing to this robot)
-#  
+#
 #  @param bot Robot to estimate score at
 #  @return The potential receiver score at that point
-def estimate_potential_recievers_score(bot):
+def estimate_potential_recievers_score(bot: robocup.OpponentRobot) -> float:
     ball_travel_line = robocup.Line(main.ball().pos,
                                     main.ball().pos + main.ball().vel)
 
@@ -171,11 +183,15 @@ def estimate_potential_recievers_score(bot):
 
 
 ## Estimate risk score based on old defense.py play
-#  
+#
 #  @param bot Robot to estimate score at
-#  @param exluded_Bots Robots to exclude from the defense when calculating shot
+#  @param excluded_Bots Robots to exclude from the defense when calculating shot
 #  @return The risk score at that point (Shot chance * pass chance)
-def estimate_risk_score(bot, excluded_bots=[]):
+def estimate_risk_score(
+        bot: robocup.OpponentRobot,
+        excluded_bots: Optional[List[robocup.Robot]] = None) -> float:
+    if excluded_bots is None:
+        excluded_bots = []
     import evaluation.passing as pass_eval
     kick_eval = robocup.KickEvaluator(main.system_state())
 
@@ -197,7 +213,7 @@ def estimate_risk_score(bot, excluded_bots=[]):
 #
 # @param pos Position to check
 # @return True or False if a robot is on the mark line
-def is_marked(pos):
+def is_marked(pos: robocup.Point) -> bool:
     line = robocup.Line(pos, robocup.Point(0, 0))
 
     for bot in main.our_robots():

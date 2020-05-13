@@ -1,8 +1,9 @@
 import behavior
 import role_assignment
+from role_assignment import Assignment
 import re
 import robocup
-from typing import Tuple, Optional
+from typing import Optional
 
 
 class SingleRobotBehavior(behavior.Behavior):
@@ -15,16 +16,15 @@ class SingleRobotBehavior(behavior.Behavior):
             raise AssertionError(
                 "Error: execute_running() called on a single robot behavior that doesn't have a robot!")
 
-    def role_requirements(self) -> role_assignment.RoleRequirements:
+    def role_requirements(  # type: ignore
+            self) -> role_assignment.RoleRequirements:
         reqs = role_assignment.RoleRequirements()
         if self.robot is not None:
             reqs.previous_shell_id = self.robot.shell_id()
         return reqs
 
     # assignments is a (RoleRequirements, OurRobot) tuple
-    Assignments = Tuple[role_assignment.RoleRequirements, robocup.OurRobot]
-
-    def assign_roles(self, assignments: Assignments) -> None:
+    def assign_roles(self, assignments: Assignment) -> None:
         if not isinstance(assignments, tuple) or len(assignments) > 2:
             raise AssertionError(
                 "Invalid call to assign_roles.  Expected a tuple")

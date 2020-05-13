@@ -306,19 +306,19 @@ def assign_roles(robots: List[robocup.OurRobot],
                 cost = MaxWeight
                 fail_reason += "Robot {}: does not have ball\n".format(
                     robot.shell_id())
-            elif req.require_kicking and (
-                robot.shell_id() == evaluation.double_touch.tracker()
-                .forbidden_ball_toucher() or not robot.kicker_works() or
-                not robot.ball_sense_works()):
+            elif req.require_kicking and (robot.shell_id(
+            ) == evaluation.double_touch.tracker().forbidden_ball_toucher()
+                                          or not robot.kicker_works()
+                                          or not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += (
                     "Robot {}: does not have a fully working kicking setup"
                     " (or double touched)\n"
                         .format(robot.shell_id()))
-            elif req.require_chipping and (
-                robot.shell_id() == evaluation.double_touch.tracker()
-                .forbidden_ball_toucher() or not robot.has_chipper() or
-                not robot.ball_sense_works()):
+            elif req.require_chipping and (robot.shell_id(
+            ) == evaluation.double_touch.tracker().forbidden_ball_toucher()
+                                           or not robot.has_chipper()
+                                           or not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += ("Robot {}: does not have a chipper"
                                 " (or double touched)\n"

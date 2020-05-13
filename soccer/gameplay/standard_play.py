@@ -2,7 +2,7 @@ import play
 import ui.main
 import tactics
 import main
-import situational_play_selection
+from situational_play_selection import SituationalPlaySelector
 from typing import List
 import random
 
@@ -28,8 +28,7 @@ class StandardPlay(play.Play):
 
     ##A private list of situations that are applicable to this play
 
-    _situationList = list(
-    )  # type: List[situational_play_selection.SituationalPlaySelector.Situation]
+    _situationList: List[SituationalPlaySelector.Situation] = list()
 
     def use_standard_defense(self) -> None:
         if ui.main.defenseEnabled(
@@ -50,14 +49,14 @@ class StandardPlay(play.Play):
 
     # Since the standard_play handles defense, it will always handle the goalie
     @classmethod
-    def handles_goalie(cls):
+    def handles_goalie(cls) -> bool:
         return True
 
     ##
     # Call to attempt to preempt the play
     # Returns true if the preempt is successful
     # Override if you want more complex responce to being preempted
-    def try_preempt(self):
+    def try_preempt(self) -> bool:
         self.terminate()
         return True
 
@@ -65,7 +64,7 @@ class StandardPlay(play.Play):
     # Returns true if this play is valid for the passed situation
     #
     @classmethod
-    def is_valid(cls, situation):
+    def is_valid(cls, situation: SituationalPlaySelector.Situation) -> bool:
         return situation in cls._situationList
 
     ##
@@ -79,11 +78,11 @@ class StandardPlay(play.Play):
     # is not running and you will need to overwrite that with some other score
     #
     @classmethod
-    def score(cls):
-        if (not main.situationAnalysis.enabled):
+    def score(cls) -> float:
+        if not main.situationAnalysis.enabled:
             return float('inf')
         else:
-            if (cls.is_valid(main.situationAnalysis.getSituation())):
+            if cls.is_valid(main.situationAnalysis.getSituation()):
                 return main.situationAnalysis.inSituationScore + random.random(
                 )
             else:

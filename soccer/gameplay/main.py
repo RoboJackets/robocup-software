@@ -87,7 +87,7 @@ def init(log_errors=True):
 
         # Don't load if we aren't a special module or if the filename is hidden
         if (module_path[0] in autoloadables
-            and not _module_blacklisted(module_path[-1])):
+                and not _module_blacklisted(module_path[-1])):
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
@@ -267,10 +267,10 @@ def our_robot_with_id(ID):
 # set by the C++ GameplayModule
 ############################################################
 
-_context = None
+_context: Optional[robocup.Context] = None
 
 
-def context():
+def context() -> robocup.Context:
     global _context
     return _context
 

@@ -1,5 +1,3 @@
-from types import TracebackType
-
 import behavior
 import single_robot_behavior
 import role_assignment
@@ -7,11 +5,10 @@ import traceback
 import logging
 import re
 import sys
-from typing import Callable, Dict, Union, List, Type, Any, Tuple
+from typing import Callable, Dict, Union, List, Type
 from typing_extensions import TypedDict
-from robocup import OurRobot
 
-from role_assignment import RoleRequirements
+from role_assignment import AssignedRoleReqTree, RoleReqTree, Assignment
 
 PriorityFn = Callable[[], int]
 
@@ -20,10 +17,6 @@ class SubbehaviorInfo(TypedDict):
     required: bool
     priority: PriorityFn
     behavior: behavior.Behavior
-
-
-Assignment = Tuple[RoleRequirements, OurRobot]
-AssignmentTree = Dict[str, Union[Assignment, Any]]
 
 
 ## A composite behavior is one that has 0+ named subbehaviors
@@ -129,8 +122,8 @@ class CompositeBehavior(behavior.Behavior):
         raise
 
     ## returns a tree of role_requirements
-    def role_requirements(self) -> behavior.RoleRequirementsTree:
-        reqs: behavior.RoleRequirementsTree = {}
+    def role_requirements(self) -> RoleReqTree:
+        reqs: RoleReqTree = {}
         for name, info in self._subbehavior_info.items():
             r = info['behavior'].role_requirements()
             # r could be a RoleRequirements or a dict forming a subtree
@@ -144,7 +137,9 @@ class CompositeBehavior(behavior.Behavior):
     # assignments is a tree with the same structure as that returned by role_requirements()
     # the only difference is that leaf nodes are (RoleRequirements, OurRobot) tuples
     # instead of just RoleRequirements
-    def assign_roles(self, assignments: AssignmentTree):
+    def assign_roles(self, assignments: AssignedRoleReqTree) -> None:
+        name: str
+        subtree: Union[Assignment, AssignedRoleReqTree]
         for name, subtree in assignments.items():
             self.subbehavior_with_name(name).assign_roles(subtree)
 
