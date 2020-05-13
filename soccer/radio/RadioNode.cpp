@@ -54,7 +54,7 @@ void RadioNode::run() {
         }
     }
 
-    if (_radio) {
+    if (_radio != nullptr) {
         construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
                            _context->robot_intents, _context->motion_setpoints);
         _radio->send(*_context->state.logFrame->mutable_radio_tx());

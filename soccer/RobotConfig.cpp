@@ -4,28 +4,28 @@
 
 ///////    RobotConfig
 
-RobotConfig::PID::PID(Configuration* config, QString prefix)
+RobotConfig::PID::PID(Configuration* config, const QString& prefix)
     : p(new ConfigDouble(config, QString("%1/p").arg(prefix))),
       i(new ConfigDouble(config, QString("%1/i").arg(prefix))),
       i_windup(new ConfigInt(config, QString("%1/i_windup").arg(prefix))),
       d(new ConfigDouble(config, QString("%1/d").arg(prefix))) {}
 
-RobotConfig::Kicker::Kicker(Configuration* config, QString prefix)
+RobotConfig::Kicker::Kicker(Configuration* config, const QString& prefix)
     : maxKick(new ConfigDouble(config, QString("%1/maxKick").arg(prefix), 255)),
       maxChip(
           new ConfigDouble(config, QString("%1/maxChip").arg(prefix), 150)) {}
 
-RobotConfig::Dribbler::Dribbler(Configuration* config, QString prefix)
+RobotConfig::Dribbler::Dribbler(Configuration* config, const QString& prefix)
     : multiplier(new ConfigDouble(config, QString("%1/multiplier").arg(prefix),
                                   1.0)) {}
 
-RobotConfig::Chipper::Chipper(Configuration* config, QString prefix)
+RobotConfig::Chipper::Chipper(Configuration* config, const QString& prefix)
     : calibrationSlope(new ConfigDouble(
           config, QString("%1/calibSlope").arg(prefix), 2.20227272727)),
       calibrationOffset(new ConfigDouble(
           config, QString("%1/calibOffset").arg(prefix), 70.0727272727)) {}
 
-RobotConfig::RobotConfig(Configuration* config, QString prefix)
+RobotConfig::RobotConfig(Configuration* config, const QString& prefix)
     : translation(config, QString("%1/translation").arg(prefix)),
       rotation(config, QString("%1/rotation").arg(prefix)),
       kicker(config, QString("%1/kicker").arg(prefix)),
@@ -46,11 +46,9 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix)
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
           0.0)) {}
 
-RobotConfig::~RobotConfig() {}
-
 ///////    RobotStatus
 
-RobotStatus::RobotStatus(Configuration* config, QString prefix)
+RobotStatus::RobotStatus(Configuration* config, const QString& prefix)
     : chipper_enabled(new ConfigBool(
           config, QString("%1/Chipper Enabled").arg(prefix), true)),
       kicker_enabled(new ConfigBool(

@@ -62,7 +62,7 @@ public:
 
     bool hit(Point pt) const override;
 
-    bool hit(const Segment& pt) const override;
+    bool hit(const Segment& seg) const override;
 
     bool nearPoint(Point pt, float threshold) const override;
 

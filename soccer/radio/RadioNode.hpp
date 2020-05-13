@@ -17,6 +17,6 @@ public:
 private:
     Context* _context;
     RJ::Time _lastRadioRxTime;
-    Radio* _radio;
+    Radio* _radio{};
     bool _simulation;
 };

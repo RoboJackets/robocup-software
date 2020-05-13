@@ -1,9 +1,12 @@
 #include "Logger.hpp"
 
-#include <QString>
 #include <fcntl.h>
-#include <stdio.h>
 #include <unistd.h>
+
+#include <QString>
+#include <cstdio>
+#include <utility>
+
 #include "Utils.hpp"
 
 using namespace std;
@@ -12,12 +15,13 @@ using namespace google::protobuf::io;
 
 Logger::Logger(size_t logSize) : _history(logSize) {
     _fd = -1;
-    _spaceUsed = sizeof(shared_ptr<Packet::LogFrame>) * _history.size();
+    _spaceUsed = static_cast<int>(sizeof(shared_ptr<Packet::LogFrame>) *
+                                  _history.size());
 }
 
 Logger::~Logger() { close(); }
 
-bool Logger::open(QString filename) {
+bool Logger::open(const QString& filename) {
     QWriteLocker locker(&_lock);
 
     if (_fd >= 0) {
@@ -45,10 +49,10 @@ void Logger::close() {
 }
 
 void Logger::addFrame(shared_ptr<LogFrame> frame) {
-    this->addFrame(frame, false);
+    this->addFrame(std::move(frame), false);
 }
 
-void Logger::addFrame(shared_ptr<LogFrame> frame, bool force) {
+void Logger::addFrame(const shared_ptr<LogFrame>& frame, bool force) {
     QWriteLocker locker(&_lock);
 
     if (_history.empty()) {
@@ -110,7 +114,8 @@ bool Logger::readFrames(const char* filename) {
     int n = 0;
     while (!file.atEnd()) {
         uint32_t size = 0;
-        if (file.read((char*)&size, sizeof(size)) != sizeof(size)) {
+        if (file.read(reinterpret_cast<char*>(&size), sizeof(size)) !=
+            sizeof(size)) {
             // Broken length
             printf("Broken length\n");
             return false;

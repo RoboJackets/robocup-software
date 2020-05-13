@@ -241,7 +241,7 @@ Trajectory Trajectory::subTrajectory(RJ::Seconds startTime,
             "InterpolatedPath::subPath(): startTime(" + to_string(startTime) +
             ") can't be greater than the duration(" + to_string(duration()) +
             ") of the path"));
-        return Trajectory({});
+        return Trajectory();
     }
     if (startTime == RJ::Seconds::zero() && endTime >= duration()) {
         return this->clone();

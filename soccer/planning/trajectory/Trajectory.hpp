@@ -53,6 +53,8 @@ struct RobotInstant {
 class TrajectoryIterator;
 class Trajectory {
 public:
+    Trajectory() {}
+
     /**
      * Create a trajectory from several "instants", each with a pose, velocity,
      * and timestamp.

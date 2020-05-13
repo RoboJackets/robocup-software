@@ -1,28 +1,32 @@
 #include "MotionControlNode.hpp"
 #include "Robot.hpp"
 
-MotionControlNode::MotionControlNode(Context* context)
-    : _context(context), _controllers(Num_Shells, std::nullopt) {
+MotionControlNode::MotionControlNode(Context* context) : _context(context) {
     _controllers.reserve(Num_Shells);
-    for (OurRobot* robot : context->state.self) {
-        _controllers[robot->shell()] = MotionControl(context, robot);
+    for (int i = 0; i < Num_Shells; i++) {
+        _controllers.emplace_back(MotionControl(context, i));
     }
 }
 
 void MotionControlNode::run() {
-    bool force_stop = _context->game_state.state == GameState::State::Halt;
-    for (auto& maybe_controller : _controllers) {
-        if (!maybe_controller) {
-            continue;
-        }
+    runMotion(_context->world_state, _context->game_state, _context->trajectories,
+              _context->is_joystick_controlled, &_context->motion_setpoints);
+}
 
-        auto controller = maybe_controller.value();
-
+void MotionControlNode::runMotion(
+    const WorldState& world_state, const GameState& game_state,
+    const std::array<Planning::Trajectory, Num_Shells>& paths,
+    const std::array<bool, Num_Shells>& joystick_controlled,
+    std::array<MotionSetpoint, Num_Shells>* setpoints) {
+    bool force_stop = game_state.state == GameState::State::Halt;
+    for (int i = 0; i < Num_Shells; i++) {
+        MotionControl& controller = _controllers[i];
+        MotionSetpoint* setpoint = &(*setpoints)[i];
         if (force_stop) {
-            controller.stopped();
+            controller.stop(setpoint);
         } else {
-            // TODO(Kyle): Ignore this if it's manually controlled.
-            controller.run();
+            controller.run(world_state.get_robot(true, i), paths[i],
+                           joystick_controlled[i], setpoint);
         }
     }
 }

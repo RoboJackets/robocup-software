@@ -4,7 +4,7 @@
 #include <Geometry2d/ShapeSet.hpp>
 #include "planning/planner/MotionCommand.hpp"
 
-typedef std::array<float, Num_Shells> RobotMask;
+using RobotMask = std::array<float, Num_Shells>;
 
 struct RobotIntent {
     enum class ShootMode { KICK, CHIP };

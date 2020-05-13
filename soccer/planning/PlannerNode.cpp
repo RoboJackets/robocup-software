@@ -36,7 +36,7 @@ void PlannerNode::run() {
             context_->game_state.state == GameState::Halt) {
             Trajectory inactivePath{{}};
             inactivePath.setDebugText("INACTIVE");
-            robot->setPath(std::move(inactivePath));
+            context_->trajectories[robot->shell()] = std::move(inactivePath);
             continue;
         }
 
@@ -89,7 +89,7 @@ void PlannerNode::run() {
         // complete the plan request
         OurRobot* robot = context_->state.self[request.shellID];
         Trajectory plannedPath = PlanForRobot(std::move(request));
-        robot->setPath(std::move(plannedPath));
+        context_->trajectories[robot->shell()] = std::move(plannedPath);
         dynamicObstacles.emplace_back(
             std::make_shared<Circle>(robot->pos(), Robot_Radius),
             &robot->path());

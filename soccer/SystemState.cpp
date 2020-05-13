@@ -1,12 +1,13 @@
-#include <optional>
-
 #include <protobuf/LogFrame.pb.h>
+
 #include <Geometry2d/Line.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
+#include <optional>
+
 #include "DebugDrawer.hpp"
 #include "planning/DynamicObstacle.hpp"
 
@@ -72,7 +73,7 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
                               Geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
     auto nearPoint = line.nearestPoint(point);
-    if (nearPointOut) {
+    if (nearPointOut != nullptr) {
         *nearPointOut = nearPoint;
     }
     auto dist = nearPoint.distTo(pos);
@@ -85,20 +86,19 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
     if (part > 0) {
         auto t = (v - sqrt(part)) / ballDecayConstant;
         return time + RJ::Seconds(t);
-    } else {
-        return RJ::Time::max();
     }
+    return RJ::Time::max();
 
     // auto part = vel.mag() * -3.43289;
 }
 
-double Ball::estimateSecondsTo(const Geometry2d::Point &point) const {
+double Ball::estimateSecondsTo(const Geometry2d::Point& point) const {
     const auto time = estimateTimeTo(point);
     return RJ::Seconds(time - RJ::now()).count();
 }
 
 double Ball::predictSecondsToStop() const {
-    return vel.mag()/ballDecayConstant;
+    return vel.mag() / ballDecayConstant;
 }
 
 double Ball::estimateSecondsToDist(double dist) const {
@@ -108,9 +108,8 @@ double Ball::estimateSecondsToDist(double dist) const {
     if (part > 0) {
         auto t = (v - sqrt(part)) / ballDecayConstant;
         return t;
-    } else {
-        return std::numeric_limits<double>::infinity();
     }
+    return std::numeric_limits<double>::infinity();
 }
 
 SystemState::SystemState(Context* const context) {
@@ -118,24 +117,24 @@ SystemState::SystemState(Context* const context) {
     paused = false;
     self.resize(Num_Shells);
     opp.resize(Num_Shells);
-    for (unsigned int i = 0; i < Num_Shells; ++i) {
-        self[i] = new OurRobot(context, i);
-        opp[i] = new OpponentRobot(context, i);
+    for (int i = 0; i < Num_Shells; ++i) {
+        self[i] = new OurRobot(context, i);      // NOLINT
+        opp[i] = new OpponentRobot(context, i);  // NOLINT
     }
 }
 
 SystemState::~SystemState() {
-    for (unsigned int i = 0; i < Num_Shells; ++i) {
-        delete self[i];
-        delete opp[i];
+    for (int i = 0; i < Num_Shells; ++i) {
+        delete self[i];  // NOLINT
+        delete opp[i];   // NOLINT
     }
 }
 
 std::vector<int> SystemState::ourValidIds() {
     std::vector<int> validIds;
-    for (int i = 0; i < self.size(); i++) {
-        if (self[i]->visible()) {
-            validIds.push_back(self[i]->shell());
+    for (auto& i : self) {
+        if (i->visible()) {
+            validIds.push_back(i->shell());
         }
     }
     return validIds;

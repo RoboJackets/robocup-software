@@ -15,7 +15,7 @@ public:
         // assert(p1 != p2);
     }
 
-    explicit Line(const Segment& other);
+    explicit Line(const Segment& segment);
 
     Point delta() const { return pt[1] - pt[0]; }
 

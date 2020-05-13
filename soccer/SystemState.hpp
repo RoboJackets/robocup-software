@@ -1,11 +1,7 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <memory>
-
-#include <QMap>
-#include <QColor>
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
 
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
@@ -28,7 +24,7 @@ class OpponentRobot;
 
 namespace Packet {
 class LogFrame;
-}
+}  // namespace Packet
 
 /**
  * @brief Our beliefs about the ball's position and velocity
@@ -43,17 +39,18 @@ public:
     RJ::Time time;
     bool valid = false;
 
-    Planning::MotionInstant predict(RJ::Time time) const;
-    Geometry2d::Point predictPosition(double seconds_from_now) const;
+    [[nodiscard]] Planning::MotionInstant predict(RJ::Time estimateTime) const;
+    [[nodiscard]] Geometry2d::Point predictPosition(
+        double seconds_from_now) const;
 
     RJ::Time estimateTimeTo(const Geometry2d::Point& point,
-                            Geometry2d::Point* nearPoint = nullptr) const;
+                            Geometry2d::Point* nearPointOut = nullptr) const;
 
-    double estimateSecondsTo(const Geometry2d::Point &point) const;
+    [[nodiscard]] double estimateSecondsTo(
+        const Geometry2d::Point& point) const;
 
-    double estimateSecondsToDist(double dist) const;
-
-    double predictSecondsToStop() const;
+    [[nodiscard]] double predictSecondsToStop() const;
+    [[nodiscard]] double estimateSecondsToDist(double dist) const;
 
     Planning::DynamicObstacle dynamicObs();
 };
@@ -86,7 +83,9 @@ public:
 
     RJ::Time time;
 
-    RJ::Timestamp timestamp() const { return RJ::timestamp(time); }
+    [[nodiscard]] RJ::Timestamp timestamp() const {
+        return RJ::timestamp(time);
+    }
 
     /// All possible robots.
     ///

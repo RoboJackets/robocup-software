@@ -11,11 +11,9 @@
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QThread>
 #include <Referee.hpp>
 #include <SystemState.hpp>
+#include <mutex>
 #include <optional>
 #include <vector>
 
@@ -60,7 +58,7 @@ class MultiRobotPathPlanner;
  * - handling the Joystick
  * - running motion control for each robot (see OurRobot#motionControl)
  */
-class Processor : public QThread {
+class Processor {
 public:
     struct Status {
         Status() {}
@@ -76,7 +74,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
     Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
-              bool blueTeam, std::string readLogFile);
+              bool blueTeam, const std::string& readLogFile);
     virtual ~Processor();
 
     void stop();
@@ -145,7 +143,7 @@ public:
     bool defendPlusX() { return _context.game_state.defendPlusX; }
 
     Status status() {
-        QMutexLocker lock(&_statusMutex);
+        std::lock_guard lock(_statusMutex);
         return _status;
     }
 
@@ -162,7 +160,9 @@ public:
 
     void useOpponentHalf(bool value) { _useOpponentHalf = value; }
 
-    QMutex& loopMutex() { return _loopMutex; }
+    std::lock_guard<std::mutex> lockLoopMutex() {
+        return std::lock_guard(_loopMutex);
+    }
 
     Radio* radio() { return _radio->getRadio(); }
 
@@ -187,17 +187,16 @@ public:
 
     Context* context() { return &_context; }
 
-protected:
-    void run() override;
+    void run();
 
+protected:
     void applyJoystickControls(const JoystickControlValues& controlVals,
                                OurRobot* robot);
 
 private:
-    // Configuration for different models of robots
-    static RobotConfig* robotConfig2008;
-    static RobotConfig* robotConfig2011;
-    static RobotConfig* robotConfig2015;
+    // Configuration for the robot.
+    // TODO(Kyle): Add back in configuration values for different years.
+    static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;
@@ -231,7 +230,7 @@ private:
     // Locked when processing loop stuff is happening (not when blocked for
     // timing or I/O). This is public so the GUI thread can lock it to access
     // SystemState, etc.
-    QMutex _loopMutex;
+    std::mutex _loopMutex;
 
     /** global system state */
     Context _context;
@@ -242,7 +241,7 @@ private:
     // _teamTrans is used for positions, not angles.
     // _teamAngle is used for angles.
     Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle;
+    float _teamAngle{};
 
     // Board ID of the robot to manually control or -1 if none
     int _manualID;
@@ -257,7 +256,7 @@ private:
 
     // This is used by the GUI to indicate status of the processing loop and
     // network
-    QMutex _statusMutex;
+    std::mutex _statusMutex;
     Status _status;
 
     // modules
@@ -289,5 +288,5 @@ private:
 
     bool _initialized;
 
-    bool _paused;
+    bool _paused{};
 };

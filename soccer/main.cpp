@@ -1,11 +1,4 @@
-#include <gameplay/GameplayModule.hpp>
-#include <ui/StyleSheetManager.hpp>
-
-#include <assert.h>
 #include <fcntl.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <QApplication>
@@ -14,6 +7,12 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QString>
+#include <cassert>
+#include <csignal>
+#include <cstdio>
+#include <cstring>
+#include <gameplay/GameplayModule.hpp>
+#include <ui/StyleSheetManager.hpp>
 
 #include "Configuration.hpp"
 #include "ui/MainWindow.hpp"
@@ -210,30 +209,31 @@ int main(int argc, char* argv[]) {
     }
 
     if (!radioFreq.isEmpty()) {
-        if (radioFreq == "916")
+        if (radioFreq == "916") {
             win->setRadioChannel(RadioChannels::MHz_916);
-        else if (radioFreq == "918")
+        } else if (radioFreq == "918") {
             win->setRadioChannel(RadioChannels::MHz_918);
-        else
+        } else {
             printf("Cannot recognize radio frequency : %s\n",
                    radioFreq.toStdString().c_str());
+        }
     }
 
     win->logFileChanged();
 
-    processor->start();
+    std::thread processor_thread(&Processor::run, processor.get());
 
     while (
         !processor
              ->isInitialized()) {  // Wait until processor finishes initializing
     }
 
-    if (playbookFile.size() > 0)
+    if (!playbookFile.empty())
         processor->gameplayModule()->loadPlaybook(playbookFile);
 
     // Sets the initial stylesheet for the application
     // based on the environment variable "SOCCER_THEME"
-    if (getenv("SOCCER_THEME")) {
+    if (getenv("SOCCER_THEME") != nullptr) {
         StyleSheetManager::changeStyleSheet(win.get(),
                                             QString(getenv("SOCCER_THEME")));
     }
@@ -242,8 +242,9 @@ int main(int argc, char* argv[]) {
 
     processor->gameplayModule()->setupUI();
 
-    int ret = app.exec();
+    int ret = QApplication::exec();
     processor->stop();
+    processor_thread.join();
 
     return ret;
 }

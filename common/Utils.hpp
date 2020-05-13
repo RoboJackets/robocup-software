@@ -59,7 +59,8 @@ inline void debugThrowIf(const std::string& string, bool condition) {
  * @param a An angle in radians
  * @return An equivalent angle in radians restricted to [-pi, pi]
  */
-static inline float fixAngleRadians(float a) {
+template <typename T>
+static inline T fixAngleRadians(T a) {
     a = remainder(a, 2 * M_PI);
     while (a < -M_PI) a += 2.0 * M_PI;
     while (a > M_PI) a -= 2.0 * M_PI;
@@ -131,7 +132,7 @@ typename Map::mapped_type map_lookup(const Map& map,
 template <typename T>
 class FIRFilter {
 public:
-    typedef std::vector<float> Coeffs;
+    using Coeffs = std::vector<float>;
 
     FIRFilter(const T& zero, size_t nrTaps) : _zero(zero) {
         if (nrTaps == 0)

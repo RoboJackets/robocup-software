@@ -1,17 +1,13 @@
-// An extension of FieldView that generates SimCommands in response
-// to clicks/drags when live.
-
 #pragma once
 
 #include <protobuf/grSim_Commands.pb.h>
 #include <protobuf/grSim_Packet.pb.h>
 #include <protobuf/grSim_Replacement.pb.h>
 
-#include <Geometry2d/TransformMatrix.hpp>
-#include <QUdpSocket>
-
 #include <Context.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
 #include <Node.hpp>
+#include <boost/asio.hpp>
 
 class GrSimCommunicator : public Node {
 public:
@@ -26,5 +22,7 @@ public:
 
 private:
     Context* _context;
-    QUdpSocket _simCommandSocket;
+    boost::asio::io_service _io_service;
+    boost::asio::ip::udp::socket _asio_socket;
+    boost::asio::ip::udp::endpoint _grsim_endpoint;
 };

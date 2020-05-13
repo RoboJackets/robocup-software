@@ -3,96 +3,16 @@
 #include <unistd.h>
 
 #include <Network.hpp>
-#include <QMutexLocker>
-#include <QUdpSocket>
 #include <Utils.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <multicast.hpp>
 #include <stdexcept>
 
 #include "Constants.hpp"
+#include "RefereeEnums.hpp"
 
-namespace RefereeModuleEnums {
-std::string stringFromStage(Stage s) {
-    switch (s) {
-        case NORMAL_FIRST_HALF_PRE:
-            return "Normal First Half Prep";
-        case NORMAL_FIRST_HALF:
-            return "Normal First Half";
-        case NORMAL_HALF_TIME:
-            return "Normal Half Time";
-        case NORMAL_SECOND_HALF_PRE:
-            return "Normal Second Half Prep";
-        case NORMAL_SECOND_HALF:
-            return "Normal Second Half";
-        case EXTRA_TIME_BREAK:
-            return "Extra Time Break";
-        case EXTRA_FIRST_HALF_PRE:
-            return "Extra First Half Prep";
-        case EXTRA_FIRST_HALF:
-            return "Extra First Half";
-        case EXTRA_HALF_TIME:
-            return "Extra Half Time";
-        case EXTRA_SECOND_HALF_PRE:
-            return "Extra Second Half Prep";
-        case EXTRA_SECOND_HALF:
-            return "Extra Second Half";
-        case PENALTY_SHOOTOUT_BREAK:
-            return "Penalty Shootout Break";
-        case PENALTY_SHOOTOUT:
-            return "Penalty Shootout";
-        case POST_GAME:
-            return "Post Game";
-        default:
-            return "";
-    }
-}
-
-std::string stringFromCommand(Command c) {
-    switch (c) {
-        case HALT:
-            return "Halt";
-        case STOP:
-            return "Stop";
-        case NORMAL_START:
-            return "Normal Start";
-        case FORCE_START:
-            return "Force Start";
-        case PREPARE_KICKOFF_YELLOW:
-            return "Yellow Kickoff Prep";
-        case PREPARE_KICKOFF_BLUE:
-            return "Blue Kickoff Prep";
-        case PREPARE_PENALTY_YELLOW:
-            return "Yellow Penalty Prep";
-        case PREPARE_PENALTY_BLUE:
-            return "Blue Penalty Prep";
-        case DIRECT_FREE_YELLOW:
-            return "Direct Yellow Free Kick";
-        case DIRECT_FREE_BLUE:
-            return "Direct Blue Free Kick";
-        case INDIRECT_FREE_YELLOW:
-            return "Indirect Yellow Free Kick";
-        case INDIRECT_FREE_BLUE:
-            return "Indirect Blue Free Kick";
-        case TIMEOUT_YELLOW:
-            return "Timeout Yellow";
-        case TIMEOUT_BLUE:
-            return "Timeout Blue";
-        case GOAL_YELLOW:
-            return "Goal Yellow";
-        case GOAL_BLUE:
-            return "Goal Blue";
-        case BALL_PLACEMENT_YELLOW:
-            return "Ball Placement Yellow";
-        case BALL_PLACEMENT_BLUE:
-            return "Ball Placement Blue";
-        default:
-            return "";
-    }
-}
-}  // namespace RefereeModuleEnums
-
-using namespace RefereeModuleEnums;
+using RefereeModuleEnums::Command;
+using RefereeModuleEnums::Stage;
 
 /// Distance in meters that the ball must travel for a kick to be detected
 static const float KickThreshold = Ball_Radius * 3;
@@ -108,156 +28,181 @@ static const int KickVerifyTime_ms = 250;
 static const bool CancelBallPlaceOnHalt = true;
 
 Referee::Referee(Context* const context)
-    : stage_(NORMAL_FIRST_HALF_PRE),
-      command_(HALT),
-      _running(false),
-      _context(context) {}
+    : stage_(Stage::NORMAL_FIRST_HALF_PRE),
+      command_(Command::HALT),
+      sent_time{},
+      received_time{},
+      stage_time_left{},
+      command_counter{},
+      yellow_info{},
+      blue_info{},
+      _kickDetectState{},
+      _readyBallPos{},
+      _kickTime{},
+      _mutex{},
+      _packets{},
+      _context(context),
+      prev_command_{},
+      prev_stage_{},
+      ballPlacementX{},
+      ballPlacementY{},
+      _recv_buffer{},
+      _asio_socket{_io_service} {}
 
-Referee::~Referee() { stop(); }
-
-void Referee::stop() {
-    _running = false;
-    wait();
+void Referee::start() {
+    setupRefereeMulticast();
+    startReceive();
 }
 
-void Referee::getPackets(std::vector<RefereePacket*>& packets) {
-    _mutex.lock();
+void Referee::getPackets(std::vector<RefereePacket>& packets) {
+    std::lock_guard<std::mutex> lock(_mutex);
     packets = _packets;
     _packets.clear();
-    _mutex.unlock();
+}
+
+void Referee::startReceive() {
+    // Set a receive callback
+    _asio_socket.async_receive_from(
+        boost::asio::buffer(_recv_buffer), _sender_endpoint,
+        [this](const boost::system::error_code& error, std::size_t num_bytes) {
+            receivePacket(error, num_bytes);
+            startReceive();
+        });
+}
+
+void Referee::receivePacket(const boost::system::error_code& error,
+                            size_t num_bytes) {
+    if (error != boost::system::errc::success) {
+        std::cerr << "Error receiving: " << error << " in " __FILE__
+                  << std::endl;
+        return;
+    }
+
+    if (!_useExternalRef) {
+        return;
+    }
+
+    RefereePacket packet{};
+    packet.receivedTime = RJ::now();
+    this->received_time = packet.receivedTime;
+
+    if (!packet.wrapper.ParseFromArray(_recv_buffer.data(), num_bytes)) {
+        std::cerr << "NewRefereeModule: got bad packet of " << num_bytes
+                  << " bytes from " << _sender_endpoint << std::endl;
+        std::cerr << "Address: " << &RefereeAddress << std::endl;
+        return;
+    }
+
+    std::lock_guard<std::mutex> lock{_mutex};
+    _packets.push_back(packet);
+
+    stage_ = static_cast<Stage>(packet.wrapper.stage());
+    command_ = static_cast<Command>(packet.wrapper.command());
+    sent_time =
+        RJ::Time(std::chrono::microseconds(packet.wrapper.packet_timestamp()));
+    stage_time_left =
+        std::chrono::milliseconds(packet.wrapper.stage_time_left());
+    command_counter = packet.wrapper.command_counter();
+    command_timestamp =
+        RJ::Time(std::chrono::microseconds(packet.wrapper.command_timestamp()));
+    yellow_info.ParseRefboxPacket(packet.wrapper.yellow());
+    blue_info.ParseRefboxPacket(packet.wrapper.blue());
+    ballPlacementX = packet.wrapper.designated_position().x();
+    ballPlacementY = packet.wrapper.designated_position().y();
+
+    // If we have no name, we're using a default config and there's no
+    // sense trying to match the referee's output (because chances are
+    // everything is just on default configuration with no names, so
+    // more than one team/soccer instance will be trying to use the same
+    // color)
+    if (Team_Name_Lower.length() > 0) {
+        // We only want to change teams if we get something that
+        // actually matches our team name (either yellow or blue).
+        // Otherwise, keep the current color.
+        if (boost::iequals(yellow_info.name, Team_Name_Lower)) {
+            blueTeam(false);
+            _isRefControlled = true;
+        } else if (boost::iequals(blue_info.name, Team_Name_Lower)) {
+            blueTeam(true);
+            _isRefControlled = true;
+        } else {
+            _isRefControlled = false;
+        }
+    }
+}
+
+void Referee::setupRefereeMulticast() {
+    const auto any_address = boost::asio::ip::address_v4::any();
+    boost::asio::ip::udp::endpoint listen_endpoint{any_address,
+                                                   ProtobufRefereePort};
+
+    _asio_socket.open(listen_endpoint.protocol());
+    _asio_socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
+    try {
+        _asio_socket.bind(listen_endpoint);
+    } catch (const boost::system::system_error& e) {
+        throw std::runtime_error("Failed to bind to shared referee port");
+    }
+    // Join multicast group
+    const boost::asio::ip::address multicast_address =
+        boost::asio::ip::address::from_string(RefereeAddress);
+    _asio_socket.set_option(
+        boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void Referee::run() {
-    QUdpSocket socket;
-
-    if (!socket.bind(ProtobufRefereePort, QUdpSocket::ShareAddress)) {
-        throw std::runtime_error("Can't bind to shared referee port");
-    }
-
-    multicast_add(&socket, RefereeAddress);
-
-    _packets.reserve(4);
-
-    _running = true;
-    while (_running) {
-        if (!_useExternalRef) continue;
-
-        char buf[65536];
-
-        if (!socket.waitForReadyRead(500)) {
-            continue;
-        }
-
-        QHostAddress host;
-        quint16 port = 0;
-        qint64 size = socket.readDatagram(buf, sizeof(buf), &host, &port);
-        if (size < 1) {
-            fprintf(stderr, "NewRefereeModule: %s/n",
-                    (const char*)socket.errorString().toLatin1());
-            ::usleep(100000);
-            continue;
-        }
-
-        RefereePacket* packet = new RefereePacket;
-        packet->receivedTime = RJ::now();
-        this->received_time = packet->receivedTime;
-        if (!packet->wrapper.ParseFromArray(buf, size)) {
-            fprintf(stderr,
-                    "NewRefereeModule: got bad packet of %d bytes from %s:%d\n",
-                    (int)size, (const char*)host.toString().toLatin1(), port);
-            fprintf(stderr, "Packet: %s\n", buf);
-            fprintf(stderr, "Address: %s\n", RefereeAddress);
-            continue;
-        }
-
-        _mutex.lock();
-        _packets.push_back(packet);
-
-        stage_ = (Stage)packet->wrapper.stage();
-        command_ = (Command)packet->wrapper.command();
-        sent_time = RJ::Time(
-            std::chrono::microseconds(packet->wrapper.packet_timestamp()));
-        stage_time_left =
-            std::chrono::milliseconds(packet->wrapper.stage_time_left());
-        command_counter = packet->wrapper.command_counter();
-        command_timestamp = RJ::Time(
-            std::chrono::microseconds(packet->wrapper.command_timestamp()));
-        yellow_info.ParseRefboxPacket(packet->wrapper.yellow());
-        blue_info.ParseRefboxPacket(packet->wrapper.blue());
-        ballPlacementx = packet->wrapper.designated_position().x();
-        ballPlacementy = packet->wrapper.designated_position().y();
-
-        // If we have no name, we're using a default config and there's no
-        // sense trying to match the referee's output (because chances are
-        // everything is just on default configuration with no names, so more
-        // than one team/soccer instance will be trying to use the same color)
-        if (Team_Name_Lower.length() > 0) {
-            // We only want to change teams if we get something that actually
-            // matches our team name (either yellow or blue).
-            // Otherwise, keep the current color.
-            if (boost::iequals(yellow_info.name, Team_Name_Lower)) {
-                blueTeam(false);
-                _isRefControlled = true;
-            } else if (boost::iequals(blue_info.name, Team_Name_Lower)) {
-                blueTeam(true);
-                _isRefControlled = true;
-            } else {
-                _isRefControlled = false;
-            }
-        }
-
-        _mutex.unlock();
-    }
-}
-
-void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
-
-void Referee::spin() {
+    _io_service.poll();
     spinKickWatcher(_context->state);
     update();
 }
 
+void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
+
 void Referee::spinKickWatcher(const SystemState& system_state) {
-    if (system_state.ball.valid) {
-        /// Only run the kick detector when the ball is visible
-        switch (_kickDetectState) {
-            case WaitForReady:
-                /// Never kicked and not ready for a restart
-                break;
+    /// Only run the kick detector when the ball is visible
+    if (!system_state.ball.valid) {
+        return;
+    }
 
-            case CapturePosition:
-                // Do this in the processing thread
-                _readyBallPos = system_state.ball.pos;
+    switch (_kickDetectState) {
+        case WaitForReady:
+            /// Never kicked and not ready for a restart
+            break;
+
+        case CapturePosition:
+            // Do this in the processing thread
+            _readyBallPos = system_state.ball.pos;
+            _kickDetectState = WaitForKick;
+            break;
+
+        case WaitForKick:
+            if (system_state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
+                return;
+            }
+            // The ball appears to have moved
+            _kickTime = RJ::Time();
+            _kickDetectState = VerifyKick;
+            break;
+
+        case VerifyKick: {
+            const auto ms_elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(
+                    RJ::Time() - _kickTime)
+                    .count();
+            if (system_state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
+                // The ball is back where it was.  There was probably a
+                // vision error.
                 _kickDetectState = WaitForKick;
-                break;
-
-            case WaitForKick:
-                if (!system_state.ball.pos.nearPoint(_readyBallPos,
-                                                     KickThreshold)) {
-                    // The ball appears to have moved
-                    _kickTime = QTime::currentTime();
-                    _kickDetectState = VerifyKick;
-                }
-                break;
-
-            case VerifyKick:
-                if (system_state.ball.pos.nearPoint(_readyBallPos,
-                                                    KickThreshold)) {
-                    // The ball is back where it was.  There was probably a
-                    // vision error.
-                    _kickDetectState = WaitForKick;
-                } else if (_kickTime.msecsTo(QTime::currentTime()) >=
-                           KickVerifyTime_ms) {
-                    // The ball has been far enough away for enough time, so
-                    // call this a kick.
-                    _kickDetectState = Kicked;
-                }
-                break;
-
-            case Kicked:
-                // Stay here until the referee puts us back in Ready
-                break;
+            } else if (ms_elapsed >= KickVerifyTime_ms) {
+                // The ball has been far enough away for enough time, so
+                // call this a kick.
+                _kickDetectState = Kicked;
+            }
+            break;
         }
+        case Kicked:
+            // Stay here until the referee puts us back in Ready
+            break;
     }
 }
 
@@ -301,36 +246,31 @@ GameState Referee::updateGameState(Command command) const {
                                           this->stage_]() -> GameState::Period {
         switch (stage) {
             case Stage::NORMAL_FIRST_HALF_PRE:
-                return GameState::FirstHalf;
             case Stage::NORMAL_FIRST_HALF:
                 return GameState::FirstHalf;
             case Stage::NORMAL_HALF_TIME:
                 return GameState::Halftime;
             case Stage::NORMAL_SECOND_HALF_PRE:
-                return GameState::SecondHalf;
             case Stage::NORMAL_SECOND_HALF:
                 return GameState::SecondHalf;
             case Stage::EXTRA_TIME_BREAK:
                 return GameState::FirstHalf;
             case Stage::EXTRA_FIRST_HALF_PRE:
-                return GameState::Overtime1;
             case Stage::EXTRA_FIRST_HALF:
                 return GameState::Overtime1;
             case Stage::EXTRA_HALF_TIME:
                 return GameState::Halftime;
             case Stage::EXTRA_SECOND_HALF_PRE:
-                return GameState::Overtime2;
             case Stage::EXTRA_SECOND_HALF:
                 return GameState::Overtime2;
             case Stage::PENALTY_SHOOTOUT_BREAK:
-                return GameState::PenaltyShootout;
             case Stage::PENALTY_SHOOTOUT:
                 return GameState::PenaltyShootout;
             case Stage::POST_GAME:
                 return GameState::Overtime2;
             default:
                 return GameState::FirstHalf;
-        };
+        }
     }();
 
     GameState::State state = _game_state.state;
@@ -396,13 +336,10 @@ GameState Referee::updateGameState(Command command) const {
             our_restart = blue_team;
             break;
         case Command::TIMEOUT_YELLOW:
-            state = GameState::Halt;
-            break;
         case Command::TIMEOUT_BLUE:
             state = GameState::Halt;
             break;
         case Command::GOAL_YELLOW:
-            break;
         case Command::GOAL_BLUE:
             break;
         case Command::BALL_PLACEMENT_YELLOW:
@@ -410,14 +347,14 @@ GameState Referee::updateGameState(Command command) const {
             restart = GameState::Placement;
             our_restart = !blue_team;
             ball_placement_point = GameState::convertToBallPlacementPoint(
-                ballPlacementx, ballPlacementy);
+                ballPlacementX, ballPlacementY);
             break;
         case Command::BALL_PLACEMENT_BLUE:
             state = GameState::Stop;
             restart = GameState::Placement;
             our_restart = blue_team;
             ball_placement_point = GameState::convertToBallPlacementPoint(
-                ballPlacementx, ballPlacementy);
+                ballPlacementX, ballPlacementY);
             break;
     }
 

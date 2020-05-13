@@ -23,9 +23,7 @@ import situational_play_selection
 class AdaptiveAttack(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_PILEUP
+        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
     ] # yapf: disable
 
     # Min score to pass
