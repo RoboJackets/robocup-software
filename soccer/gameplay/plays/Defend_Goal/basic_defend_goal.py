@@ -11,7 +11,7 @@ import evaluation.opponent as eval_opp
 import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import tactics.defense
-import situational_play_selection
+from situations import Situation
 
 
 ## Play that uses submissive defenders and wingers to defend
@@ -23,7 +23,7 @@ import situational_play_selection
 class BasicDefendGoal(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL
+        Situation.DEFEND_GOAL
     ] # yapf: disable
 
 

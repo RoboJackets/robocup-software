@@ -2,7 +2,7 @@ import play
 import ui.main
 import tactics
 import main
-from situational_play_selection import SituationalPlaySelector
+from situations import Situation
 from typing import List
 import random
 
@@ -28,7 +28,7 @@ class StandardPlay(play.Play):
 
     ##A private list of situations that are applicable to this play
 
-    _situationList: List[SituationalPlaySelector.Situation] = list()
+    _situationList: List[Situation] = list()
 
     def use_standard_defense(self) -> None:
         if ui.main.defenseEnabled(
@@ -64,7 +64,7 @@ class StandardPlay(play.Play):
     # Returns true if this play is valid for the passed situation
     #
     @classmethod
-    def is_valid(cls, situation: SituationalPlaySelector.Situation) -> bool:
+    def is_valid(cls, situation: Situation) -> bool:
         return situation in cls._situationList
 
     ##

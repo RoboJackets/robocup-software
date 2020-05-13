@@ -6,7 +6,7 @@ import enum
 
 import standard_play
 import evaluation
-import situational_play_selection
+from situations import Situation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
@@ -21,7 +21,7 @@ import skills.capture
 class BasicOffensiveScramble(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+        Situation.OFFENSIVE_SCRAMBLE
     ] # yapf: disable
 
     def __init__(self):

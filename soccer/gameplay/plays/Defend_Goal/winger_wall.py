@@ -16,14 +16,14 @@ import evaluation.linear_classification
 import tactics.positions.submissive_goalie as submissive_goalie
 import tactics.positions.wing_defender as wing_defender
 import tactics.wall as wall
-import situational_play_selection
+from situations import Situation
 
 ## Defense play that utilizes a wall and wingers
 class WingerWall(standard_play.StandardPlay):
 
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_GOAL
+        Situation.DEFEND_GOAL
     ] # yapf: disable
 
 
