@@ -268,7 +268,7 @@ def find_defense_positions(
 # @param kick_eval: kick evaluator, not required, but fewer steps if it's included here vs. recreated
 # @return Tuple: LineSegment to defend on , shot_pt from kick_eval
 def goalside_mark_segment(
-    mark_pos,
+    mark_pos: robocup.Point,
     robot: robocup.OurRobot,
     ball: bool = False,
     kick_eval: Optional[robocup.KickEvaluator] = None
@@ -312,7 +312,8 @@ def goalside_mark_segment(
 ## Finds the line segment between the mark_pos and the ball
 # @param mark_pos: Point (usually robot position) to defend against
 # @return: LineSegment to defend on
-def ballside_mark_segment(mark_pos: robocup.Point, ball_pos=None):
+def ballside_mark_segment(mark_pos: robocup.Point,
+                          ball_pos: robocup.Point = None) -> robocup.Line:
     # offsets on ball and mark_pos sides
     if ball_pos is None:
         ball_pos = main.ball().pos

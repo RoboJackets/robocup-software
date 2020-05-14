@@ -48,7 +48,7 @@ def field_pos_coeff_at_pos(pos: robocup.Point,
                            center: float = 0.2,
                            dist: float = 1,
                            angl: float = 1,
-                           attacking_their_goal=True) -> float:
+                           attacking_their_goal: bool = True) -> float:
     # Percent closeness to the center (Line between the two goals is the 'center line')
     centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2))
 
