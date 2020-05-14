@@ -19,7 +19,6 @@ import robocup
 from root_play import RootPlay
 
 ## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
-from play import Play
 
 GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
 PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
@@ -55,7 +54,7 @@ def init(log_errors=True):
     play_classes = class_import.recursive_import_classes(GAMEPLAY_DIR,
                                                          ['plays'], play.Play)
     module_path: List[str]
-    play_class: Type[Play]
+    play_class: Type[play.Play]
     for module_path, play_class in play_classes:
         mod_path = module_path[1:]
         _play_registry.insert(mod_path, play_class)
