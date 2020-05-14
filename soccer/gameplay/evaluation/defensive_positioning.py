@@ -58,16 +58,13 @@ def get_points_from_rect(rect, step=0.5):
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
 #   Risk score in that position
-#   Availbity of opponent robots to reach that point
+#   Availability of opponent robots to reach that point
 #   Space in that area
 #
 # @param ignore_robots: Ignore these robots in defensive calculations
 # @return Returns the best position to cover an error
 def create_area_defense_zones(
-    ignore_robots: Optional[List[robocup.Robot]] = None
-) -> Optional[robocup.Point]:
-    if ignore_robots is None:
-        ignore_robots = []
+        ignore_robots: List[robocup.Robot] = []) -> Optional[robocup.Point]:
     # Create a 2D list [N][M] where N is the bucket
     # and M is the index along that point
     # The lists contains (robocup.Point, score)
@@ -159,11 +156,8 @@ def create_area_defense_zones(
 #
 # @param pos: Position in which to estimate score at
 # @return Risk score at that point
-def estimate_risk_score(
-        pos: robocup.Point,
-        ignore_robots: Optional[List[robocup.Robot]] = None) -> float:
-    if ignore_robots is None:
-        ignore_robots = []
+def estimate_risk_score(pos: robocup.Point,
+                        ignore_robots: List[robocup.Robot] = []) -> float:
     # Caches some kick eval functions
     max_time = 1
     max_ball_vel = 8  # m/s per the rules
@@ -235,10 +229,8 @@ def estimate_risk_score(
 #
 # @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
 def find_defense_positions(
-    ignore_robots: Optional[List[robocup.Robot]] = None
+    ignore_robots: List[robocup.Robot] = []
 ) -> Tuple[robocup.Point, robocup.OpponentRobot, robocup.OpponentRobot]:
-    if ignore_robots is None:
-        ignore_robots = []
 
     their_risk_scores = []
 
@@ -312,8 +304,9 @@ def goalside_mark_segment(
 ## Finds the line segment between the mark_pos and the ball
 # @param mark_pos: Point (usually robot position) to defend against
 # @return: LineSegment to defend on
-def ballside_mark_segment(mark_pos: robocup.Point,
-                          ball_pos: robocup.Point = None) -> robocup.Line:
+def ballside_mark_segment(
+        mark_pos: robocup.Point,
+        ball_pos: Optional[robocup.Point] = None) -> robocup.Line:
     # offsets on ball and mark_pos sides
     if ball_pos is None:
         ball_pos = main.ball().pos

@@ -3,7 +3,7 @@ import robocup
 import constants
 import math
 from typing import List, Optional, Tuple
-from single_robot_behavior import SingleRobotBehavior
+import single_robot_behavior
 
 
 ## Estimates the number of robots on offense on the opposing team
@@ -83,7 +83,8 @@ Threat = Tuple[robocup.Point, float, Optional[robocup.OpponentRobot]]
 #
 # @return sorted tuple of threat positions and score
 def get_threat_list(
-        unused_threat_handlers: List[SingleRobotBehavior]) -> List[Threat]:
+    unused_threat_handlers: List[single_robot_behavior.SingleRobotBehavior]
+) -> List[Threat]:
     import evaluation.ball as ball_eval
     kick_eval = robocup.KickEvaluator(main.system_state())
 
@@ -185,7 +186,7 @@ def estimate_potential_recievers_score(bot: robocup.OpponentRobot) -> float:
 ## Estimate risk score based on old defense.py play
 #
 #  @param bot Robot to estimate score at
-#  @param excluded_Bots Robots to exclude from the defense when calculating shot
+#  @param excluded_bots Robots to exclude from the defense when calculating shot
 #  @return The risk score at that point (Shot chance * pass chance)
 def estimate_risk_score(
         bot: robocup.OpponentRobot,
