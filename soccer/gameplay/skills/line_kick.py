@@ -14,8 +14,9 @@ import evaluation.ball
 # Note: LineKick recalculates the aim_target_point ONLY when the target point/segment changes
 #
 # See Also: LineKickOld is the old, python-only implementation of line_kick
-class LineKick(skills._kick._Kick,
-               single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class LineKick(  # type: ignore
+        skills._kick._Kick,
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
     ClosenessThreshold = constants.Robot.Radius * 3 + 0.04
 
     class State(enum.Enum):
@@ -38,9 +39,9 @@ class LineKick(skills._kick._Kick,
                             'kicker is enabled')
 
         self.add_transition(
-            LineKick.State.kick,
-            behavior.Behavior.State.completed, lambda: self.robot is not None
-            and self._got_close and self.robot.just_kicked(), "robot kicked")
+            LineKick.State.kick, behavior.Behavior.State.completed,
+            lambda: self.robot is not None and self._got_close and self.robot.
+            just_kicked(), "robot kicked")
         self.shell_id = None
 
         self.max_speed = None

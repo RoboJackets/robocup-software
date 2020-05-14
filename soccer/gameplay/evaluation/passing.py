@@ -2,6 +2,7 @@ import constants
 import math
 import robocup
 import main
+from typing import Optional, List
 
 
 ## Find the chance of a pass succeeding by looking at pass distance and what robots are in the way
@@ -9,7 +10,11 @@ import main
 # @param to_point The Point the pass is being received at
 # @param excluded_robots A list of robots that shouldn't be counted as obstacles to this shot
 # @return a value from zero to one that estimates the probability of the pass succeeding
-def eval_pass(from_point, to_point, excluded_robots=[]):
+def eval_pass(from_point: robocup.Point,
+              to_point: robocup.Point,
+              excluded_robots: Optional[List[robocup.Robot]] = None) -> float:
+    if excluded_robots is None:
+        excluded_robots = []
     # we make a pass triangle with the far corner at the ball and the opposing side touching the receiver's mouth
     # the side along the receiver's mouth is the 'receive_seg'
     # we then use the window evaluator on this scenario to see if the pass is open

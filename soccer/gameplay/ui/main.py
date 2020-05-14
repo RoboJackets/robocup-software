@@ -31,7 +31,7 @@ def setup():
     global _tests
 
     if _has_setup_ui == True:
-        logging.warn("ui setup() function called more than once")
+        logging.warning("ui setup() function called more than once")
         return
 
     win = getMainWindow()

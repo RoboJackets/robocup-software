@@ -13,7 +13,7 @@ import tactics.simple_zone_midfielder
 import tactics.advance_zone_midfielder
 import skills.move
 import skills.capture
-import situational_play_selection
+from situations import Situation
 
 
 ##
@@ -23,7 +23,7 @@ import situational_play_selection
 class AdaptiveAttack(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
+        Situation.ATTACK_GOAL
     ] # yapf: disable
 
     # Min score to pass

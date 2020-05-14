@@ -11,7 +11,7 @@ import evaluation.opponent as eval_opp
 import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import tactics.wall as wall
-import situational_play_selection
+from situations import Situation
 
 
 ## Restart that uses standard defense and uses the remaining
@@ -20,7 +20,7 @@ import situational_play_selection
 class BasicDefendRestartOffensive(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_RESTART_OFFENSIVE
+        Situation.DEFEND_RESTART_OFFENSIVE
     ] # yapf: disable
 
     def __init__(self, num_defenders=2):

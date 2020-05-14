@@ -9,7 +9,7 @@ import tactics.coordinated_pass
 import enum
 import skills.move
 import random
-import situational_play_selection
+from situations import Situation
 
 ## A basic play for the Offensive Indect kick
 # Chooses to pass to a close or far robot
@@ -24,7 +24,7 @@ import situational_play_selection
 class BasicOffensiveIndirect(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_KICK
+        Situation.OFFENSIVE_KICK
     ] # yapf: disable
 
     class State(enum.Enum):

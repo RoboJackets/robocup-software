@@ -9,7 +9,7 @@ import enum
 import evaluation
 import tactics.coordinated_pass
 import tactics.defense
-import situational_play_selection
+from situations import Situation
 
 
 ##
@@ -25,7 +25,7 @@ class TwoSideAttack(standard_play.StandardPlay):
     # Estimate of which shot is better
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
+        Situation.ATTACK_GOAL
     ] # yapf: disable
 
     class State(enum.Enum):

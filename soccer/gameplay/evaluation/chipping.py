@@ -1,14 +1,14 @@
 import main
 import robocup
 import constants
-import math
+from typing import List
 
 
 #
-# Returns an array of their robots that we can chip over based on the current ball position 
+# Returns an array of their robots that we can chip over based on the current ball position
 # this only operates on the distances from the ball to each robot and the Chip distances in constants.py
 #
-def chippable_robots():
+def chippable_robots() -> List[robocup.OpponentRobot]:
     bp = main.ball().pos
     return [
         rob for rob in main.system_state().their_robots
