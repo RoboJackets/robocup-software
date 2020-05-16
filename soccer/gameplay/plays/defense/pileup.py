@@ -23,6 +23,11 @@ class Pileup(play.Play):
         y = main.ball().pos.y #y-coordinate of ball's position
         us = main.our_robots()
         them = main.their_robots()
+        width = constants.Field.Width
+        base_width = -(width / 2)
+        length = constants.Field.Length
+        #print((length * 5)/6)
+        print(base_width, base_width + ((width * 2)/3))
 
         ''' THIS IS TO BE IMPLEMENTED NEXT. GOAL IS TO CALCULATE AVERAGE POSITION OF OUR BOTS AND THEIR BOTS TO DETERMINE WHERE TO PLACE COLLECTING ROBOTS IN THE EVENT OF A GIVEN PILEUP
 
@@ -47,27 +52,32 @@ class Pileup(play.Play):
         self.standbyBot1 = None
         self.standbyBot2 = None
         '''
+       
+        their_end = (length * 7)/8
+        our_end = length/8
+        left = base_width + (width/3)
+        right = base_width + (width*2)/3
 
-        if (y >= 7.5):
-            if (x <= -1): # left corner of attacking half
+        if (y >= their_end): 
+            if (x <= left): # left corner of attacking half
                 print("pileup in attacking left corner")
                 pos1 = robocup.Point(x, y - 1)
                 self.add_subbehavior(skills.move.Move(pos1), 'move', required=True)
                 self.standbyBot1 = self.subbehavior_with_name('move').robot
-            elif (x >= 1): #right corner of attacking half
+            elif (x >= right): #right corner of attacking half
                 print("pileup in attacking right corner")
                 pos1 = robocup.Point(x, y - 1)
                 self.add_subbehavior(skills.move.Move(pos1), 'move', required=True)
                 self.standbyBot1 = self.subbehavior_with_name('move').robot
             else: #attacking box
                 print("pileup in illegal zone. let go immediately.")
-        elif (y <= 1.5):
-            if (x <= -1): #left corner of defending half
+        elif (y <= our_end):
+            if (x <= left): #left corner of defending half
                 print("pileup in defending left corner")
                 pos1 = robocup.Point(x, y + 1)
                 self.add_subbehavior(skills.move.Move(pos1), 'move', required=True)
                 self.standbyBot1 = self.subbehavior_with_name('move').robot
-            elif (x >= 1): #right corner of defending half
+            elif (x >= right): #right corner of defending half
                 print("pileup in defending right corner")
                 pos1 = robocup.Point(x, y + 1)
                 self.add_subbehavior(skills.move.Move(pos1), 'move', required=True)
@@ -75,7 +85,7 @@ class Pileup(play.Play):
             else: #defending box
                 print("pileup in illegal zone. this should never occur.")
         else:
-            if (x <= -1): #left flank
+            if (x <= left): #left flank
                 print("pileup on left flank")
                 pos1 = robocup.Point(x + math.sqrt(.5), y + math.sqrt(.5))
                 pos2 = robocup.Point(x + math.sqrt(.5), y - math.sqrt(.5))
@@ -83,7 +93,7 @@ class Pileup(play.Play):
                 self.add_subbehavior(skills.move.Move(pos2), 'move2', required=True)
                 self.standbyBot1 = self.subbehavior_with_name('move1').robot
                 self.standbyBot2 = self.subbehavior_with_name('move2').robot
-            elif (x >= 1): #right flank
+            elif (x >= right): #right flank
                 print("pileup in right flank")
                 pos1 = robocup.Point(x - math.sqrt(.5), y + math.sqrt(.5))
                 pos2 = robocup.Point(x - math.sqrt(.5), y - math.sqrt(.5))
