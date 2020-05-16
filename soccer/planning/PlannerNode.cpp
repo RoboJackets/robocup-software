@@ -92,7 +92,7 @@ void PlannerNode::run() {
         Trajectory plannedPath = PlanForRobot(std::move(request));
         context_->trajectories[robot->shell()] = std::move(plannedPath);
         dynamicObstacles.emplace_back(
-            std::make_shared<Circle>(robot->pos(), Robot_Radius),
+            Circle(robot->pos(), Robot_Radius),
             &robot->path());
 
         // draw debug info

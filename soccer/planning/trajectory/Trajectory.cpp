@@ -193,7 +193,7 @@ bool Trajectory::intersects(const std::vector<DynamicObstacle>& obstacles,
     for (const DynamicObstacle& obs : obstacles) {
         if (obs.path->empty()) {
             Geometry2d::ShapeSet set;
-            set.add(obs.circle);
+            set.add(std::make_shared<Geometry2d::Circle>(obs.circle));
             RJ::Seconds staticHit;  // temporary to prevent side effects
             if (hit(set, startTime - begin_time(), &staticHit)) {
                 if (hitTime) {
@@ -206,7 +206,7 @@ bool Trajectory::intersects(const std::vector<DynamicObstacle>& obstacles,
                       thisIt = iterator(startTime, deltaT);
                  obsIt.hasValue() && thisIt.hasValue(); ++obsIt, ++thisIt) {
                 Geometry2d::Point obsPoint = (*obsIt).pose.position();
-                double hitRadius = obs.circle->radius() + Robot_Radius;
+                double hitRadius = obs.circle.radius() + Robot_Radius;
                 RobotInstant thisInstant = *thisIt;
                 if (thisInstant.pose.position().distTo(obsPoint) < hitRadius) {
                     if (hitTime) {

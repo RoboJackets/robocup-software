@@ -86,9 +86,8 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
 
     Trajectory ball_trajectory = ball.make_trajectory();
     request.dynamic_obstacles.emplace_back(
-        std::make_shared<Geometry2d::Circle>(
-            Geometry2d::Point(0, 0),
-            Ball_Radius), &ball_trajectory);
+        Geometry2d::Circle(Geometry2d::Point(0, 0), Ball_Radius),
+        &ball_trajectory);
 
     RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel, 0},
                                RJ::Time{0s}};
