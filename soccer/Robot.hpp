@@ -416,15 +416,15 @@ public:
         return _radioRx;
     }
 
-    const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
+    const Planning::MotionCommand& motionCommand() const {
         return intent().motion_command;
     }
-    void setMotionCommand(std::unique_ptr<Planning::MotionCommand> newCmd) {
-        if (intent().motion_command->index() != newCmd->index()) {
+    void setMotionCommand(Planning::MotionCommand newCmd) {
+        if (intent().motion_command.index() != newCmd.index()) {
             // clear path when command type changes
             _context->trajectories[shell()] = Planning::Trajectory{{}};
         }
-        intent().motion_command = std::move(newCmd);
+        intent().motion_command = newCmd;
     }
 
     const RotationConstraints& rotationConstraints() const {

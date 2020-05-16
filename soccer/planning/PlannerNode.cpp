@@ -65,18 +65,16 @@ void PlannerNode::run() {
         }
 
         // Construct a plan request.
-        if (robot->motionCommand()) {
-            const RobotState& robotState = robot->state();
-            requests.emplace_back(
-                RobotInstant{robotState.pose, robotState.velocity,
-                             robotState.timestamp},
-                *robot->motionCommand(), robot->robotConstraints(),
-                robot->path_movable(), std::move(staticObstacles),
-                std::vector<DynamicObstacle>{}, robot->shell(),
-                &context_->world_state,
-                robot->getPlanningPriority(),
-                &context_->debug_drawer);
-        }
+        const RobotState& robotState = robot->state();
+        requests.emplace_back(
+            RobotInstant{robotState.pose, robotState.velocity,
+                         robotState.timestamp},
+            robot->motionCommand(), robot->robotConstraints(),
+            robot->path_movable(), std::move(staticObstacles),
+            std::vector<DynamicObstacle>{}, robot->shell(),
+            &context_->world_state,
+            robot->getPlanningPriority(),
+            &context_->debug_drawer);
     }
     std::sort(requests.begin(), requests.end(),
               [](const PlanRequest& pr1, const PlanRequest& pr2) {
@@ -103,7 +101,7 @@ void PlannerNode::run() {
                 "EmptyCommand", "PathTargetCommand", "WorldVelCommand",
                 "PivotCommand", "SettleCommand", "CollectCommand",
                 "LineKickCommand",
-                "InterceptCommand"}[robot->motionCommand()->index()],
+                "InterceptCommand"}[robot->motionCommand().index()],
             robot->pos() + Point(.1, .3), QColor(100, 100, 255, 100),
             "MotionCommands");
     }
