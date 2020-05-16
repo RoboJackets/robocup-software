@@ -223,6 +223,7 @@ bool Trajectory::intersects(const std::vector<DynamicObstacle>& obstacles,
     }
     return false;
 }
+
 Trajectory Trajectory::subTrajectory(RJ::Seconds startTime,
                                      RJ::Seconds endTime) const {
     // Check for valid arguments

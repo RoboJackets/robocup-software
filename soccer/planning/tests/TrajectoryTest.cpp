@@ -23,7 +23,7 @@ TEST(Trajectory, Interpolation) {
     RobotInstant end_instant =
         Planning::RobotInstant(Pose(2, 0, 6), Twist(1, 0, 0), start + 1500ms);
 
-    Trajectory trajectory({});
+    Trajectory trajectory;
     trajectory.AppendInstant(start_instant);
     trajectory.AppendInstant(mid_instant);
 

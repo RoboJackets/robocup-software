@@ -123,7 +123,7 @@ protected:
 
     // Unconditional setter for the team color.
     void blueTeam(bool value) { _context->game_state.blueTeam = value; }
-    void spinKickWatcher(const SystemState& system_state);
+    void spinKickWatcher(const BallState& ball);
 
     enum KickDetectState {
         WaitForReady,

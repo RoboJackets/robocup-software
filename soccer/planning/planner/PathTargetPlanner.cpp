@@ -41,8 +41,10 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
     RobotInstant goalInstant = getGoalInstant(request);
     Point& goalPoint = goalInstant.pose.position();
 #pragma omp critical(debug_drawer)
-    request.context->debug_drawer.drawCircle(goalPoint, drawRadius, drawColor,
-                                             drawLayer);
+    if (request.debug_drawer != nullptr) {
+        request.debug_drawer->drawCircle(
+            goalPoint, drawRadius, drawColor, drawLayer);
+    }
     if (prevTrajectory.empty() || veeredOffPath(request)) {
         return fullReplan(std::move(request), goalInstant);
     }
@@ -92,7 +94,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 }
 AngleFunction PathTargetPlanner::getAngleFunction(const PlanRequest& request) {
     std::optional<double> angle_override =
-        request.context->robot_intents[request.shellID].angle_override;
+        std::get<PathTargetCommand>(request.motionCommand).angle_override;
     if (angle_override) {
         return AngleFns::faceAngle(*angle_override);
     }

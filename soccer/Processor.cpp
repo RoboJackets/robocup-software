@@ -265,8 +265,8 @@ void Processor::runModels() {
 
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
-    _vision->fillBallState(_context.state);
-    _vision->fillRobotState(_context.state, _blueTeam);
+    _vision->fillBallState(_context.world_state);
+    _vision->fillRobotState(_context.world_state, _blueTeam);
 }
 
 /**
@@ -465,11 +465,11 @@ void Processor::run() {
         }
 
         // Ball
-        if (_context.state.ball.valid) {
+        if (_context.world_state.ball.visible) {
             Packet::LogFrame::Ball* log =
                 _context.state.logFrame->mutable_ball();
-            *log->mutable_pos() = _context.state.ball.pos;
-            *log->mutable_vel() = _context.state.ball.vel;
+            *log->mutable_pos() = _context.world_state.ball.position;
+            *log->mutable_vel() = _context.world_state.ball.velocity;
         }
 
         ////////////////

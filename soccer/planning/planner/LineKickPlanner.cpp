@@ -13,7 +13,7 @@ using namespace Geometry2d;
 Trajectory LineKickPlanner::plan(PlanRequest&& request) {
     Point aimTarget = std::get<LineKickCommand>(request.motionCommand).target;
     RobotInstant startInstant = request.start;
-    Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     RotationConstraints rotationConstraints = request.constraints.rot;
     const RJ::Time curTime = RJ::now();
     Trajectory& prevTrajectory = request.prevTrajectory;
@@ -33,7 +33,7 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
     }
 
     // The ball is moving slowly so we can pretty much treat it as stationary
-    if (ball.vel.mag() < 0.2) {
+    if (ball.velocity.mag() < 0.2) {
         return planForSlowMovingBall(std::move(request));
     }
 
@@ -42,7 +42,7 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
         RJ::Seconds timeLeft = prevTrajectory.duration() - timeInto;
 
         Point targetPos;
-        RJ::Time time = ball.estimateTimeTo(*_targetKickPos, &targetPos);
+        RJ::Time time = ball.query_time_at(*_targetKickPos, &targetPos);
         RJ::Seconds timeToHit = time - curTime;
         if (timeLeft < RJ::Seconds(1.0)) {
             Point targetVel =
@@ -70,8 +70,8 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
             _reusePathCount++;
             Point nearPoint;
             prevTrajectory.setDebugText("Reuse prevPath");
-            if (ball.estimateTimeTo(prevTrajectory.last().pose.position(),
-                                    &nearPoint) >=
+            if (ball.query_time_at(prevTrajectory.last().pose.position(),
+                                   &nearPoint) >=
                 RJ::now() + timeLeft - 1000ms) {
                 return reuse(std::move(request));
             }
@@ -81,10 +81,15 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
     std::optional<Trajectory> brutePath = attemptBruteForce(request);
     if (brutePath) return std::move(*brutePath);
 
-    Point targetVel = (aimTarget - ball.pos).normalized(*_approachSpeed);
-    Point targetPos = ball.pos - targetVel.normalized(Robot_Radius * 3);
+    Point targetVel = (aimTarget - ball.position).normalized(*_approachSpeed);
+    Point targetPos = ball.position - targetVel.normalized(Robot_Radius * 3);
 
-    request.dynamic_obstacles.push_back(ball.dynamicObs());
+    Trajectory ball_trajectory = ball.make_trajectory();
+    request.dynamic_obstacles.emplace_back(
+        std::make_shared<Geometry2d::Circle>(
+            Geometry2d::Point(0, 0),
+            Ball_Radius), &ball_trajectory);
+
     RobotInstant targetInstant{Pose{targetPos, 0}, Twist{targetVel, 0},
                                RJ::Time{0s}};
     request.motionCommand = PathTargetCommand{targetInstant};
@@ -99,15 +104,15 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
 Trajectory LineKickPlanner::planForSlowMovingBall(PlanRequest&& request) {
     constexpr double ballAvoidDistance = 0.05;
     Point aimTarget = std::get<LineKickCommand>(request.motionCommand).target;
-    const Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     Trajectory& prevTrajectory = request.prevTrajectory;
     RobotInstant startInstant = request.start;
     RotationConstraints rotationConstraints = request.constraints.rot;
-    Point targetVel = (aimTarget - ball.pos).normalized(*_approachSpeed);
+    Point targetVel = (aimTarget - ball.position).normalized(*_approachSpeed);
     Point targetPos;
     if (std::abs(targetVel.angleBetween(
-            ball.pos - startInstant.pose.position())) > 10 * M_PI / 180.0) {
-        targetPos = ball.pos -
+            ball.position - startInstant.pose.position())) > 10 * M_PI / 180.0) {
+        targetPos = ball.position -
                     targetVel.normalized(ballAvoidDistance * 2 + Robot_Radius);
         if (!prevTrajectory.empty() &&
             targetPos.distTo(prevTrajectory.last().pose.position()) <
@@ -119,11 +124,11 @@ Trajectory LineKickPlanner::planForSlowMovingBall(PlanRequest&& request) {
             _reusePathCount = 0;
         }
         request.static_obstacles.add(
-            std::make_shared<Circle>(ball.pos, ballAvoidDistance));
+            std::make_shared<Circle>(ball.position, ballAvoidDistance));
     } else {
-        targetPos = ball.pos + targetVel.normalized(Robot_Radius);
+        targetPos = ball.position + targetVel.normalized(Robot_Radius);
         if (!prevTrajectory.empty() &&
-            ball.pos.distTo(prevTrajectory.last().pose.position()) <
+            ball.position.distTo(prevTrajectory.last().pose.position()) <
                 PathTargetPlanner::goalPosChangeThreshold() &&
             _reusePathCount < 20) {
             targetVel = prevTrajectory.last().velocity.linear();
@@ -149,7 +154,7 @@ std::optional<Trajectory> LineKickPlanner::attemptBruteForce(
     RJ::Seconds partialPathTime = 0ms;
     RobotInstant tmpStartInstant = request.start;
     const Trajectory& prevTrajectory = request.prevTrajectory;
-    const Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     Point aimTarget = std::get<LineKickCommand>(request.motionCommand).target;
     const double partialReplanLeadTime =
         PathTargetPlanner::partialReplanLeadTime();
@@ -165,7 +170,7 @@ std::optional<Trajectory> LineKickPlanner::attemptBruteForce(
     }
     RJ::Time curTime = RJ::now();
     for (auto t = RJ::Seconds(0.4); t < RJ::Seconds(6); t += RJ::Seconds(0.2)) {
-        Point targetPos = ball.predict(curTime + t).pos;
+        Point targetPos = ball.predict_at(curTime + t).position;
         _targetKickPos = targetPos;
         Point targetVel = (aimTarget - targetPos).normalized(*_approachSpeed);
         targetPos -= targetVel.normalized(Robot_Radius + Ball_Radius * 2);

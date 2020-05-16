@@ -84,7 +84,7 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp")
+    "WindowEvaluator.cpp" WorldState.cpp)
 
 
 if(APPLE)
@@ -235,7 +235,7 @@ set(SOCCER_TEST_SRC
     "vision/tests/BallBounceTest.cpp"
     "vision/tests/CameraTest.cpp"
     "WindowEvaluatorTest.cpp"
-)
+        BallTest.cpp)
 
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

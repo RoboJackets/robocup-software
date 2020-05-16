@@ -68,13 +68,14 @@ void PlannerNode::run() {
         if (robot->motionCommand()) {
             const RobotState& robotState = robot->state();
             requests.emplace_back(
-                context_,
                 RobotInstant{robotState.pose, robotState.velocity,
                              robotState.timestamp},
                 *robot->motionCommand(), robot->robotConstraints(),
                 robot->path_movable(), std::move(staticObstacles),
                 std::vector<DynamicObstacle>{}, robot->shell(),
-                robot->getPlanningPriority());
+                &context_->world_state,
+                robot->getPlanningPriority(),
+                &context_->debug_drawer);
         }
     }
     std::sort(requests.begin(), requests.end(),
@@ -114,11 +115,9 @@ void PlannerNode::run() {
 }
 
 Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
-    Point robotPos = request.context->state.self[request.shellID]->pos();
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
-    DebugDrawer* drawer = &request.context->debug_drawer;
     for (int i = 0; i < planners_.size(); i++) {
         if (planners_[i]->isApplicable(request.motionCommand)) {
             // clear path when planner changes

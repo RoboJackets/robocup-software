@@ -8,12 +8,12 @@ namespace Planning {
 using namespace Geometry2d;
 Trajectory InterceptPlanner::plan(PlanRequest&& request) {
     RobotInstant startInstant = request.start;
-    const Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     Point targetPoint =
         std::get<InterceptCommand>(request.motionCommand).target;
 
     RJ::Seconds ballToPointTime =
-        ball.estimateTimeTo(targetPoint, &targetPoint) - RJ::now();
+        ball.query_time_at(targetPoint, &targetPoint) - RJ::now();
     if ((targetPoint - _prevTargetPoint).mag() < Robot_Radius / 2) {
         targetPoint = _prevTargetPoint;
     } else {
@@ -29,7 +29,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
         auto path = CreatePath::simple(startInstant, targetInstant,
                                        request.constraints.mot);
         if (path.empty()) return reuse(std::move(request));
-        PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos),
+        PlanAngles(path, startInstant, AngleFns::facePoint(ball.position),
                    request.constraints.rot);
         path.setDebugText("AtPoint");
         return std::move(path);
@@ -45,7 +45,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& request) {
             percent * request.constraints.mot.maxSpeed * botToTarget.norm();
         path = CreatePath::simple(startInstant, targetInstant,
                                   request.constraints.mot);
-        PlanAngles(path, startInstant, AngleFns::facePoint(ball.pos),
+        PlanAngles(path, startInstant, AngleFns::facePoint(ball.position),
                    request.constraints.rot);
         if (path.duration() <= ballToPointTime) {
             break;

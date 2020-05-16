@@ -6,7 +6,7 @@
 #include <vector>
 #include <thread>
 
-#include <SystemState.hpp>
+#include <WorldState.hpp>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
@@ -41,7 +41,7 @@ public:
      *
      * @param state Current system state pointer
      */
-    void fillBallState(SystemState& state);
+    void fillBallState(WorldState& state);
 
     /**
      * Fills system state with the robots pos/vel
@@ -49,7 +49,7 @@ public:
      * @param state Current system state pointer
      * @param usBlue True if we are blue
      */
-    void fillRobotState(SystemState& state, bool usBlue);
+    void fillRobotState(WorldState& state, bool usBlue);
 
 private:
     void updateLoop();

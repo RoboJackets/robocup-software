@@ -1,5 +1,6 @@
 #include "robocup-py.hpp"
 
+#include "WorldState.hpp"
 #include <boost/python/register_ptr_to_python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <functional>
@@ -109,8 +110,8 @@ void Robot_set_vis_for_testing(Robot* self, bool vis) {
 
 // Sets a ball's position - this should never be used in gameplay code, but
 // is useful for testing.
-void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) {
-    self->pos = pos;
+void Ball_set_pos_for_testing(BallState* self, Geometry2d::Point pos) {
+    self->position = pos;
 }
 
 Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
@@ -121,9 +122,29 @@ float Robot_angle(Robot* self) { return self->angle(); }
 
 float Robot_angle_vel(Robot* self) { return self->angleVel(); }
 
-Geometry2d::Point Ball_pos(Ball* self) { return self->pos; }
+Geometry2d::Point Ball_pos(BallState* self) { return self->position; }
 
-Geometry2d::Point Ball_vel(Ball* self) { return self->vel; }
+Geometry2d::Point Ball_vel(BallState* self) { return self->velocity; }
+
+Geometry2d::Point Ball_predict_pos(BallState* ball, double s) {
+    return ball->predict_in(RJ::Seconds(s)).position;
+}
+
+double Ball_estimate_seconds_to(BallState* ball, Geometry2d::Point p) {
+    return ball->query_seconds_to(p).count();
+}
+
+double Ball_predict_seconds_to_stop(BallState* ball) {
+    return ball->query_stop_time().count();
+}
+
+double Ball_estimate_seconds_to_dist(BallState* ball, double dist) {
+    std::optional<RJ::Seconds> maybe_time = ball->query_seconds_to_dist(dist);
+    if (!maybe_time.has_value()) {
+        maybe_time = RJ::Seconds(std::numeric_limits<double>::infinity());
+    }
+    return maybe_time.value().count();
+}
 
 void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
@@ -902,15 +923,15 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<OpponentRobot, OpponentRobot*, std::shared_ptr<OpponentRobot>,
            bases<Robot>>("OpponentRobot", init<Context*, int>());
 
-    class_<Ball, std::shared_ptr<Ball>>("Ball", init<>())
+    class_<BallState, BallState*>("Ball", init<>())
         .def("set_pos_for_testing", &Ball_set_pos_for_testing)
         .add_property("pos", &Ball_pos)
         .add_property("vel", &Ball_vel)
-        .def_readonly("valid", &Ball::valid)
-        .def("predict_pos", &Ball::predictPosition)
-        .def("estimate_seconds_to", &Ball::estimateSecondsTo);
-        .def("predict_seconds_to_stop", &Ball::predictSecondsToStop)
-        .def("estimate_seconds_to_dist", &Ball::estimateSecondsToDist);
+        .def_readonly("valid", &BallState::visible)
+        .def("predict_pos", &Ball_predict_pos)
+        .def("estimate_seconds_to", &Ball_estimate_seconds_to)
+        .def("predict_seconds_to_stop", &Ball_predict_seconds_to_stop)
+        .def("estimate_seconds_to_dist", &Ball_estimate_seconds_to_dist);
 
     class_<std::vector<Robot*>>("vector_Robot")
         .def(vector_indexing_suite<std::vector<Robot*>>())
@@ -926,7 +947,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("our_robots", &SystemState::self)
         .def_readonly("their_robots", &SystemState::opp)
         .def_readonly("ball", &SystemState::ball)
-
         .add_property("timestamp", &SystemState::timestamp);
 
     // debug drawing methods

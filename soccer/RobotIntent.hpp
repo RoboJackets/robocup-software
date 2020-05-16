@@ -12,7 +12,6 @@ struct RobotIntent {
     enum class Song { STOP, CONTINUE, FIGHT_SONG };
 
     std::unique_ptr<Planning::MotionCommand> motion_command;
-    std::optional<double> angle_override;
 
     /// set of obstacles added by plays
     Geometry2d::ShapeSet local_obstacles;
@@ -35,7 +34,10 @@ struct RobotIntent {
         shoot_mode = ShootMode::KICK;
         trigger_mode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
-        angle_override = std::nullopt;
+
+        if (std::holds_alternative<Planning::PathTargetCommand>(*motion_command)) {
+            std::get<Planning::PathTargetCommand>(*motion_command).angle_override = std::nullopt;
+        }
     }
 
     RobotIntent()

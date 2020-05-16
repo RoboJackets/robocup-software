@@ -4,7 +4,6 @@
 #include <time.hpp>
 #include "DebugDrawer.hpp"
 #include "Utils.hpp"
-#include "WorldState.hpp"
 #include "planning/DynamicObstacle.hpp"
 
 namespace Planning {

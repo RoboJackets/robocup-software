@@ -152,15 +152,15 @@ void Referee::setupRefereeMulticast() {
 
 void Referee::run() {
     _io_service.poll();
-    spinKickWatcher(_context->state);
+    spinKickWatcher(_context->world_state.ball);
     update();
 }
 
 void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
 
-void Referee::spinKickWatcher(const SystemState& system_state) {
+void Referee::spinKickWatcher(const BallState& ball) {
     /// Only run the kick detector when the ball is visible
-    if (!system_state.ball.valid) {
+    if (!ball.visible) {
         return;
     }
 
@@ -171,12 +171,12 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
 
         case CapturePosition:
             // Do this in the processing thread
-            _readyBallPos = system_state.ball.pos;
+            _readyBallPos = ball.position;
             _kickDetectState = WaitForKick;
             break;
 
         case WaitForKick:
-            if (system_state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
+            if (ball.position.nearPoint(_readyBallPos, KickThreshold)) {
                 return;
             }
             // The ball appears to have moved
@@ -189,7 +189,7 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
                 std::chrono::duration_cast<std::chrono::milliseconds>(
                     RJ::Time() - _kickTime)
                     .count();
-            if (system_state.ball.pos.nearPoint(_readyBallPos, KickThreshold)) {
+            if (ball.position.nearPoint(_readyBallPos, KickThreshold)) {
                 // The ball is back where it was.  There was probably a
                 // vision error.
                 _kickDetectState = WaitForKick;

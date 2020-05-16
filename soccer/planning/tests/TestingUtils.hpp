@@ -1,5 +1,8 @@
 #pragma once
 
+#include "planning/trajectory/Trajectory.hpp"
+#include "planning/RobotConstraints.hpp"
+
 namespace Planning::TestingUtils {
 /**
  * test if a path is continuous and well behaved

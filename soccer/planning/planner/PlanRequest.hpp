@@ -3,12 +3,13 @@
 #include <planning/MotionConstraints.hpp>
 #include <planning/planner/MotionCommand.hpp>
 #include "Context.hpp"
-
 #include <map>
 #include <memory>
 #include <planning/trajectory/Trajectory.hpp>
+#include <utility>
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "WorldState.hpp"
 
 namespace Planning {
 
@@ -19,34 +20,39 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(Context* context, RobotInstant start, MotionCommand command,
+    PlanRequest(RobotInstant start, MotionCommand command,
                 RobotConstraints constraints, Trajectory&& prevTrajectory,
                 Geometry2d::ShapeSet statics,
                 std::vector<DynamicObstacle> dynamics, unsigned shellID,
-                int8_t priority = 0)
-        : context(context),
-          start(start),
+                const WorldState* world_state,
+                int8_t priority = 0,
+                DebugDrawer* debug_drawer = nullptr)
+        : start(start),
           motionCommand(command),
           constraints(constraints),
           prevTrajectory(prevTrajectory),
-          static_obstacles(statics),
-          dynamic_obstacles(dynamics),
+          static_obstacles(std::move(statics)),
+          dynamic_obstacles(std::move(dynamics)),
           shellID(shellID),
-          priority(priority) {}
+          priority(priority),
+          world_state(world_state),
+          debug_drawer(debug_drawer) {}
 
     /**
      * return a copy with no history
      */
     PlanRequest copyNoHistory() const {
-        return PlanRequest{context,           start,          motionCommand,
-                           constraints,       Trajectory{{}}, static_obstacles,
-                           dynamic_obstacles, shellID,        priority};
+        return PlanRequest(start,
+                           motionCommand,
+                           constraints,
+                           Trajectory{{}},
+                           static_obstacles,
+                           dynamic_obstacles,
+                           shellID,
+                           world_state,
+                           priority,
+                           debug_drawer);
     }
-
-    /**
-     * The system context. Used for debug drawing and robot state information.
-     */
-    Context* context;
 
     /**
      * The robot's starting state.
@@ -80,9 +86,23 @@ struct PlanRequest {
     unsigned shellID;
 
     /**
+     * The state of the world, containing robot and ball states.
+     *
+     * For obstacle-avoidance purposes, obstacles should be used instead. This
+     * can be used for lookup of robots/balls by ID.
+     */
+    const WorldState* world_state;
+
+    /**
      * The priority of this plan request.
      */
     int8_t priority;
+
+    /**
+     * Allows debug drawing in the world. If this is nullptr, no debug drawing
+     * should be performed.
+     */
+    DebugDrawer* debug_drawer;
 };
 
 }  // namespace Planning

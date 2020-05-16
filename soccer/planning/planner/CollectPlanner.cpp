@@ -45,13 +45,13 @@ Trajectory CollectPlanner::plan(PlanRequest&& request) {
 Trajectory CollectPlanner::course(PlanRequest&& request) {
     RobotInstant startInstant = request.start;
     RotationConstraints rotationConstraints = request.constraints.rot;
-    const Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     Point approachDir = findApproachDirection(request);
     Point noisyTargetPoint =
-        ball.pos - approachDir * (Ball_Radius + Robot_MouthRadius +
+        ball.position - approachDir * (Ball_Radius + Robot_MouthRadius +
                                   *_bufferDistBeforeContact);
     Point noisyTargetVel =
-        approachDir * (ball.vel.dot(approachDir) + *_touchDeltaSpeed);
+        approachDir * (ball.velocity.dot(approachDir) + *_touchDeltaSpeed);
     auto& targetInstant = _courseTargetInstants[request.shellID];
     if (!targetInstant || targetInstant->pose.position().distTo(
                               noisyTargetPoint) > *_targetChangeThreshold) {
@@ -60,7 +60,7 @@ Trajectory CollectPlanner::course(PlanRequest&& request) {
     }
     request.motionCommand = PathTargetCommand{*targetInstant};
     request.static_obstacles.add(
-        std::make_shared<Circle>(ball.pos, Ball_Radius));
+        std::make_shared<Circle>(ball.position, Ball_Radius));
     Trajectory path = _pathTargetPlanner.plan(std::move(request));
     PlanAngles(path, startInstant, AngleFns::faceAngle(approachDir.angle()),
                rotationConstraints);
@@ -68,13 +68,13 @@ Trajectory CollectPlanner::course(PlanRequest&& request) {
 }
 Trajectory CollectPlanner::fine(PlanRequest&& request) {
     Point approachDir = findApproachDirection(request);
-    const Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     RobotInstant startInstant = request.start;
     RotationConstraints rotationConstraints = request.constraints.rot;
     Point targetPoint =
-        ball.pos - approachDir * (Ball_Radius + Robot_MouthRadius);
+        ball.position - approachDir * (Ball_Radius + Robot_MouthRadius);
     request.constraints.mot.maxSpeed =
-        ball.vel.dot(approachDir) + *_touchDeltaSpeed;
+        ball.velocity.dot(approachDir) + *_touchDeltaSpeed;
     Point targetVel = request.constraints.mot.maxSpeed * approachDir;
     RobotInstant targetInstant{Pose{targetPoint, 0}, Twist{targetVel, 0},
                                RJ::Time{0s}};
@@ -106,9 +106,9 @@ Trajectory CollectPlanner::control(PlanRequest&& request) {
     return std::move(path);
 }
 void CollectPlanner::processStateTransitions(const PlanRequest& request) {
-    const Ball& ball = request.context->state.ball;
+    BallState ball = request.world_state->ball;
     RobotInstant startInstant = request.start;
-    double distToBall = (startInstant.pose.position() - ball.pos).mag();
+    double distToBall = (startInstant.pose.position() - ball.position).mag();
     double distToBallAtContact = Ball_Radius + Robot_MouthRadius;
     CollectState& collectState = _collectStates[request.shellID];
     const double distCutoffToFine = *_bufferDistBeforeContact + 0.0765;

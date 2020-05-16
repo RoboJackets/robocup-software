@@ -257,7 +257,7 @@ void OurRobot::worldVelocity(Geometry2d::Point v) {
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-    Geometry2d::Point pivotPoint = _context->state.ball.pos;
+    Geometry2d::Point pivotPoint = _context->world_state.ball.position;
 
     // reset other conflicting motion commands
     setMotionCommand(std::make_unique<MotionCommand>(
@@ -374,7 +374,12 @@ void OurRobot::kickImmediately() {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-    intent().angle_override = pos().angleTo(pt);
+    if (!std::holds_alternative<Planning::PathTargetCommand>(*intent().motion_command)) {
+        intent().motion_command->emplace<Planning::PathTargetCommand>();
+    }
+
+    auto& command = std::get<Planning::PathTargetCommand>(*intent().motion_command);
+    command.angle_override = pos().angleTo(pt);
 }
 #pragma mark Robot Avoidance
 
@@ -457,13 +462,13 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
         !(_context->game_state.ourRestart ||
           _context->game_state.theirPenalty())) {
         return std::make_shared<Geometry2d::Circle>(
-            _context->state.ball.pos,
+            _context->world_state.ball.position,
             Field_Dimensions::Current_Dimensions.CenterRadius());
     }
 
     // create an obstacle if necessary
     if (intent().avoid_ball_radius > 0.0) {
-        return std::make_shared<Geometry2d::Circle>(_context->state.ball.pos,
+        return std::make_shared<Geometry2d::Circle>(_context->world_state.ball.position,
                                                     intent().avoid_ball_radius);
     }
     return nullptr;
@@ -489,7 +494,7 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
     }
 
     // Add ball
-    if (_context->state.ball.valid) {
+    if (_context->world_state.ball.visible) {
         auto ballObs = createBallObstacle();
         if (ballObs) {
             fullObstacles.add(ballObs);

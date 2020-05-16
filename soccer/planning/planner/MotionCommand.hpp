@@ -29,6 +29,7 @@ struct EmptyCommand {};
 // TODO use heading and angular velocity or change this to a MotionInstant
 struct PathTargetCommand {
     RobotInstant pathGoal;
+    std::optional<double> angle_override;
 };
 
 /**

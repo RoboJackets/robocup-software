@@ -26,10 +26,10 @@ private:
 
     // find the direction the robot will approach the ball (as a unit vector)
     Geometry2d::Point findApproachDirection(const PlanRequest& request) const {
-        const Ball& ball = request.context->state.ball;
-        return ball.vel.mag() < *_ballSpeedApproachDirectionCutoff
-                   ? (ball.pos - request.start.pose.position()).norm()
-                   : ball.vel.norm();
+        BallState ball = request.world_state->ball;
+        return ball.velocity.mag() < *_ballSpeedApproachDirectionCutoff
+                   ? (ball.position - request.start.pose.position()).norm()
+                   : ball.velocity.norm();
     }
 
     // At what speed should we be when we touch the ball (Well, the difference
