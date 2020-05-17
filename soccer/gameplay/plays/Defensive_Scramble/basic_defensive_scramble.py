@@ -11,7 +11,7 @@ import evaluation.opponent as eval_opp
 import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import skills.capture as capture
-import tactics.defense
+import situational_play_selection
 from situations import Situation
 
 

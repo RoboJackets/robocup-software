@@ -8,7 +8,7 @@ import skills.capture
 import enum
 import evaluation
 import tactics.coordinated_pass
-import tactics.defense
+import situational_play_selection
 from situations import Situation
 
 

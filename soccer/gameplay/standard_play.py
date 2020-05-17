@@ -19,38 +19,22 @@ class StandardPlay(play.Play):
     # Not just on selection
     def __init__(self, continuous: bool):
         super().__init__(continuous)
-        self.use_standard_defense()
-
-        # If the "Use Defense" checkbox is checked and the play isn't already running
-        # defense, then it adds the defense behavior. If the box isn't checked and the
-        # play is running defense then it removes the behavior. Also note: it ignores
-        # the requirement for goalie if the box is checked.
 
     ##A private list of situations that are applicable to this play
 
     _situationList: List[Situation] = list()
-
-    def use_standard_defense(self) -> None:
-        if ui.main.defenseEnabled(
-        ) and not self.has_subbehavior_with_name('defense'):
-            self.add_subbehavior(tactics.defense.Defense(),
-                                 'defense',
-                                 required=False)
-        elif not ui.main.defenseEnabled():
-            if self.has_subbehavior_with_name('defense'):
-                self.remove_subbehavior('defense')
 
     ##
     # Handles activity while the play is active. A play wishing to utilize this
     # method in addition to having an "execute_running" method of its own must call
     # it via super
     def execute_running(self):
-        self.use_standard_defense()
+        pass
 
-    # Since the standard_play handles defense, it will always handle the goalie
+    # Plays that handle the goalie should override this and return true
     @classmethod
     def handles_goalie(cls) -> bool:
-        return True
+        return False
 
     ##
     # Call to attempt to preempt the play
