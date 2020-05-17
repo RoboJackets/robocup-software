@@ -7,11 +7,14 @@ ifeq ($(CIRCLECI), true)
 	NINJA_FLAGS=-j2
 endif
 
+# Tell CMake to create compile_commands.json for debug builds for clang-tidy
+DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
 endef
 
 define cmake_build_target_release
@@ -26,6 +29,10 @@ endef
 
 all:
 	$(call cmake_build_target, all)
+
+all_including_tests:
+	$(call cmake_build_target, all)
+	$(call cmake_build_target, test-soccer)
 
 all-release:
 	$(call cmake_build_target_release, all)
@@ -44,12 +51,12 @@ run-sim: all backend-headless-simulator-soccer
 run-headmore: all backend-simulator-soccer
 
 run-sim2play: all
-	-pkill -f './grsim'
-	./run/grsim &
+	-pkill -f './grSim'
+	-(cd run && ./grSim) &
 	@echo '!!![WARNING]!!! Multiple soccer instances will not work unless your grSim is broadcasting over the proper IP.'
 	@echo 'Please set your grSim broadcast IP to "224.5.23.2:10020", or you will experience issues.'
 	./run/soccer -sim -b & sleep 2 && ./run/soccer -sim -y -defend plus
-	-pkill -f './grsim'
+	-pkill -f './grSim'
 
 run-release: all-release
 	./run/soccer
@@ -60,21 +67,21 @@ rr: run-release
 view: 
 	./run/soccer -vlog $(file)
 
-# backend targets to launch soccer with grsim in headless
+# backend targets to launch soccer with grSim in headless
 backend-headless-simulator-soccer:
-	-pkill -f './grsim'
-	./run/grsim --headless &
+	-pkill -f './grSim'
+	-(cd run && ./grSim --headless) &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
-	-pkill -f './grsim'
+	-pkill -f './grSim'
 
-# backend targets to launch soccer with a grsim window
+# backend targets to launch soccer with a grSim window
 backend-simulator-soccer:
-	-pkill -f './grsim'
-	./run/grsim &
+	-pkill -f './grSim'
+	-(cd run && ./grSim) &
 	./run/soccer -sim -pbk testing.pbk
 # Kill grSim once we unblock
-	-pkill -f './grsim'
+	-pkill -f './grSim'
 
 
 debug: all
@@ -85,8 +92,8 @@ else
 endif
 
 debug-sim: all
-	-pkill -f './grsim'
-	./run/grsim &
+	-pkill -f './grSim'
+	-(cd run && ./grSim) &
 ifeq ($(shell uname), Linux)
 	gdb --args ./run/soccer -sim
 else
@@ -99,7 +106,12 @@ test-cpp: test-soccer
 test-soccer:
 	$(call cmake_build_target, test-soccer)
 	run/test-soccer --gtest_filter=$(TESTS)
+test-soccer-nobuild:
+	run/test-soccer --gtest_filter=$(TESTS)
+
 test-python: all
+	cd soccer/gameplay && ./run_tests.sh
+test-python-nobuild:
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
 	pylint -j8 --reports=n soccer/gameplay
@@ -146,32 +158,39 @@ apidocs:
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
 STYLIZE_DIFFBASE ?= staging
-# automatically format code according to our style config defined in .clang-format
-pretty:
-	@stylize.v1 -i --git_diffbase=$(STYLIZE_DIFFBASE)
+
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
 	@stylize.v1 --git_diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
 
+CLANG_FORMAT_BINARY=clang-format-10
+CLANG_TIDY_BINARY=clang-tidy-10
+
+# circleci has 2 cores, but advertises 32
+ifeq ($(CIRCLECI), true)
+	CORES=2
+else
+	CORES=$(shell nproc)
+endif
+
 pretty-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary clang-format -i -p1
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
+tidy-lines:
+ifeq ("$(wildcard ./build/compile_commands.json)","")
+	@printf "build/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
+	exit 1
+endif
+	@printf "Running clang-tidy-diff...\n"
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES)
+
 checkstyle-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python2 util/clang-format-diff.py -binary clang-format -p1 | tee /tmp/checkstyle.patch
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
-# Option to use old version of stylize
-STYLE_EXCLUDE_DIRS=build \
-	external
-# automatically format code according to our style config defined in .clang-format
-pretty-old:
-	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS)
-# check if everything in our codebase is in accordance with the style config defined in .clang-format
-# a nonzero exit code indicates that there's a formatting error somewhere
-checkstyle-old:
-	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
-	@stylize --diffbase=$(STYLIZE_DIFFBASE) --clang_style=file --yapf_style=.style.yapf --exclude_dirs $(STYLE_EXCLUDE_DIRS) --check --output_patch_file="/tmp/clean.patch"
+checktidy-lines:
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) > /tmp/checktidy.patch

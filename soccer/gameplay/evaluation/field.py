@@ -2,6 +2,7 @@ import main
 import robocup
 import constants
 import math
+from typing import List, Optional
 
 
 ## Determines how much "space" there is at a pos
@@ -9,9 +10,13 @@ import math
 # @param pos: point to evalute
 # @returns Number between 0 and 1 representing the closeness of robots
 # The higher the number, the more robots closer to the position
-def space_coeff_at_pos(pos, excluded_robots=[], robots=None):
+def space_coeff_at_pos(pos: robocup.Point,
+                       excluded_robots: Optional[List[robocup.Robot]] = None,
+                       robots: Optional[robocup.Robot] = None) -> float:
     # TODO: Add in velocity prediction
-    if robots == None:
+    if excluded_robots is None:
+        excluded_robots = []
+    if robots is None:
         robots = main.their_robots()
 
     max_dist = robocup.Point(constants.Field.Width / 2,
@@ -39,11 +44,11 @@ def space_coeff_at_pos(pos, excluded_robots=[], robots=None):
 # @param angl: How much to weight the angle between the robot and the goal (In turn, how small the goal is)
 # @param attacking_their_goal: Are we attacking their goal
 # @return Returns a number between 0 and 1 representing how good the position is
-def field_pos_coeff_at_pos(pos,
-                           center=0.2,
-                           dist=1,
-                           angl=1,
-                           attacking_their_goal=True):
+def field_pos_coeff_at_pos(pos: robocup.Point,
+                           center: float = 0.2,
+                           dist: float = 1,
+                           angl: float = 1,
+                           attacking_their_goal: bool = True) -> float:
     # Percent closeness to the center (Line between the two goals is the 'center line')
     centerValue = 1 - math.fabs(pos.x / (constants.Field.Width / 2))
 

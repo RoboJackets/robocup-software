@@ -9,7 +9,7 @@ import tactics.coordinated_pass
 import enum
 import skills.move
 import random
-import situational_play_selection
+from situations import Situation
 
 ## A basic play for the Defensive restart kick
 # Will have two robots move up onto offensive half of field
@@ -19,7 +19,7 @@ import situational_play_selection
 class BasicDefensiveKick(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_KICK
+        Situation.DEFENSIVE_KICK
     ] # yapf: disable
 
     class State(enum.Enum):

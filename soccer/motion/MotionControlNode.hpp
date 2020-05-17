@@ -22,5 +22,5 @@ private:
         const std::array<bool, Num_Shells>& joystick_controlled,
         std::array<MotionSetpoint, Num_Shells>* setpoints);
     Context* _context;
-    std::vector<MotionControl> _controllers;
+    std::vector<MotionControl> _controllers{};
 };

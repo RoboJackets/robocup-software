@@ -6,7 +6,7 @@ import enum
 
 import standard_play
 import evaluation
-import situational_play_selection
+from situations import Situation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
@@ -21,7 +21,7 @@ import skills.capture
 class BasicOffensiveScramble(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+        Situation.OFFENSIVE_SCRAMBLE
     ] # yapf: disable
 
     def __init__(self):
@@ -36,10 +36,6 @@ class BasicOffensiveScramble(standard_play.StandardPlay):
             behavior.Behavior.State.completed, lambda: self.
             subbehavior_with_name('Capture ball').is_done_running(),
             'Captured')
-
-    @classmethod
-    def score(cls):
-        return 10
 
     #Gets the point that the robot that will behind the capturing one will be
     def get_dropback_point(self):

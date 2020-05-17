@@ -1,11 +1,15 @@
 #include "RobotWidget.hpp"
-#include <VisionDotPattern.hpp>
+
 #include <Constants.hpp>
 #include <Geometry2d/Util.hpp>
+#include <VisionDotPattern.hpp>
+#include <cmath>
 #include <stdexcept>
 
-RobotWidget::RobotWidget(QWidget* parent, Qt::WindowFlags f) {
-    for (int i = 0; i < 4; i++) setWheelFault(i, false);
+RobotWidget::RobotWidget(QWidget* /*parent*/, Qt::WindowFlags /*f*/) {
+    for (int i = 0; i < 4; i++) {
+        setWheelFault(i, false);
+    }
     setBallSenseFault(false);
 
     _blueTeam = true;
@@ -13,7 +17,9 @@ RobotWidget::RobotWidget(QWidget* parent, Qt::WindowFlags f) {
 
     _hasBall = false;
     _ballSenseFault = false;
-    for (int i = 0; i < 4; i++) _wheelFaults[i] = false;
+    for (bool& _wheelFault : _wheelFaults) {
+        _wheelFault = false;
+    }
 }
 
 void RobotWidget::setShellID(int shellID) { _shellID = shellID; }
@@ -67,7 +73,7 @@ void drawRedX(QPainter& painter, const QPointF& center, float size,
     painter.restore();
 }
 
-void RobotWidget::paintEvent(QPaintEvent* event) {
+void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -76,8 +82,8 @@ void RobotWidget::paintEvent(QPaintEvent* event) {
 
     //  scale so we can draw robot in units of meters
     float minPadding = 9;
-    float scale = fmin((width() - minPadding * 2) / Robot_Radius,
-                       (height() - minPadding * 2) / Robot_Radius) /
+    float scale = std::fmin((width() - minPadding * 2) / Robot_Radius,
+                            (height() - minPadding * 2) / Robot_Radius) /
                   2;
     painter.scale(scale, scale);
 

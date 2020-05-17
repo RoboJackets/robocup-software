@@ -45,8 +45,8 @@ class TestRegistry(QtCore.QAbstractItemModel):
             if node is not None:
                 node.enabled = True
             else:
-                logging.warn("Attempt to load non-existent test " + '/'.join(
-                    test) + " from testbook.")
+                logging.warning("Attempt to load non-existent test " +
+                                '/'.join(test) + " from testbook.")
 
     def delete(self, module_path):
         node = self.node_for_module_path(module_path)

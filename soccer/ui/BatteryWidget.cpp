@@ -10,17 +10,21 @@ BatteryWidget::BatteryWidget(QWidget* parent, Qt::WindowFlags f)
 float BatteryWidget::batteryLevel() const { return _batteryLevel; }
 
 void BatteryWidget::setBatteryLevel(float batteryLevel) {
-    if (fabs(batteryLevel - _batteryLevel) > 0.01) {
+    if (std::fabs(batteryLevel - _batteryLevel) > 0.01) {
         _batteryLevel = batteryLevel;
-        if (_batteryLevel > 1) _batteryLevel = 1;
-        if (_batteryLevel < 0) _batteryLevel = 0;
+        if (_batteryLevel > 1) {
+            _batteryLevel = 1;
+        }
+        if (_batteryLevel < 0) {
+            _batteryLevel = 0;
+        }
 
         //  trigger a redraw
         update();
     }
 }
 
-void BatteryWidget::paintEvent(QPaintEvent* event) {
+void BatteryWidget::paintEvent(QPaintEvent* /*event*/) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -30,7 +34,8 @@ void BatteryWidget::paintEvent(QPaintEvent* event) {
 
     float minPadding = 2;
     float h2w = 2;
-    float w = fmin(width() - minPadding * 2, (height() - minPadding * 2) * h2w);
+    float w =
+        std::fmin(width() - minPadding * 2, (height() - minPadding * 2) * h2w);
     float h = w / h2w;
     QRectF battBounds((width() - w) / 2, (height() - h) / 2, w, h);
 

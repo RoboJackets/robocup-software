@@ -1,8 +1,6 @@
 # python 3
 python
 python-pip
-python2
-python2-pip
 
 # Build system
 cmake
@@ -50,8 +48,6 @@ qt4
 ode
 flann
 freeglut
-
-go
 
 mypy
 python-pylint

@@ -44,7 +44,7 @@ static const std::vector<QString> defaultHiddenLayers{
     "Planning0",     "Planning1",        "Planning2",
     "Planning3",     "Planning4",        "Planning5"};
 
-void calcMinimumWidth(QWidget* widget, QString text) {
+void calcMinimumWidth(QWidget* widget, const QString& text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);
     widget->setMinimumWidth(rect.width());
 }
@@ -257,8 +257,8 @@ void MainWindow::logFileChanged() {
     }
 }
 
-void MainWindow::addLayer(int i, QString name, bool checked) {
-    QListWidgetItem* item = new QListWidgetItem(name);
+void MainWindow::addLayer(int i, const QString& name, bool checked) {
+    auto* item = new QListWidgetItem(name);
     Qt::CheckState checkState = checked ? Qt::Checked : Qt::Unchecked;
     item->setCheckState(checkState);
     item->setData(Qt::UserRole, i);
@@ -266,7 +266,7 @@ void MainWindow::addLayer(int i, QString name, bool checked) {
     on_debugLayers_itemChanged(item);
 }
 
-string MainWindow::formatLabelBold(Side side, string label) {
+string MainWindow::formatLabelBold(Side side, const string& label) {
     string color;
     // Colors match up with those statically defined in MainWindow.ui
     if (side == Side::Yellow) {
@@ -809,8 +809,8 @@ void MainWindow::updateStatus() {
     // The order of these checks is important to help debugging.
     // More specific or unlikely problems should be tested earlier.
 
-    if (!_processor) {
-        status("NO PROCESSOR", Status_Fail);
+    if (_processor == nullptr) {
+        status("NO PROCESSOR", StatusType::Status_Fail);
         return;
     }
 
@@ -874,20 +874,20 @@ void MainWindow::updateStatus() {
         // Likely causes:
         //    Mutex deadlock (need a recursive mutex?)
         //    Excessive computation
-        status("PROCESSING HUNG", Status_Fail);
+        status("PROCESSING HUNG", StatusType::Status_Fail);
         return;
     }
 
     // Check network activity
     if (curTime - ps.lastVisionTime > RJ::Seconds(0.1)) {
         // We must always have vision
-        status("NO VISION", Status_Fail);
+        status("NO VISION", StatusType::Status_Fail);
         return;
     }
 
     if (_processor->manualID() >= 0) {
         // Mixed auto/manual control
-        status("MANUAL", Status_Warning);
+        status("MANUAL", StatusType::Status_Warning);
         return;
     }
 
@@ -895,7 +895,7 @@ void MainWindow::updateStatus() {
     // so test this after manual driving.
     if (curTime - ps.lastRadioRxTime > RJ::Seconds(1)) {
         // Allow a long timeout in case of poor radio performance
-        status("NO RADIO RX", Status_Fail);
+        status("NO RADIO RX", StatusType::Status_Fail);
         return;
     }
 
@@ -908,47 +908,47 @@ void MainWindow::updateStatus() {
             // it a warning.
             // There is a separate status for non-simulation with internal
             // referee.
-            status("NO REFEREE", Status_Fail);
+            status("NO REFEREE", StatusType::Status_Fail);
             return;
         }
     }
 
     if (sim) {
         // Everything is good for simulation, but not for competition.
-        status("SIMULATION", Status_Warning);
+        status("SIMULATION", StatusType::Status_Warning);
         return;
     }
 
     if (!sim && !_processor->externalReferee()) {
         // Competition must use external referee
-        status("INTERNAL REF", Status_Warning);
+        status("INTERNAL REF", StatusType::Status_Warning);
         return;
     }
 
     if (!sim && !_processor->logger().recording()) {
         // We should record logs during competition
-        status("NOT RECORDING", Status_Warning);
+        status("NOT RECORDING", StatusType::Status_Warning);
         return;
     }
 
-    status("COMPETITION", Status_OK);
+    status("COMPETITION", StatusType::Status_OK);
 }
 
-void MainWindow::status(QString text, MainWindow::StatusType status) {
+void MainWindow::status(const QString& text, MainWindow::StatusType status) {
     // Assume that the status type alone won't change.
     if (_ui.statusLabel->text() != text) {
         _ui.statusLabel->setText(text);
 
         switch (status) {
-            case Status_OK:
+            case StatusType::Status_OK:
                 _ui.statusLabel->setStyleSheet("background-color: #00ff00");
                 break;
 
-            case Status_Warning:
+            case StatusType::Status_Warning:
                 _ui.statusLabel->setStyleSheet("background-color: #ffff00");
                 break;
 
-            case Status_Fail:
+            case StatusType::Status_Fail:
                 _ui.statusLabel->setStyleSheet("background-color: #ff4040");
                 break;
         }
@@ -1035,7 +1035,7 @@ void MainWindow::on_action916MHz_triggered() { channel(0); }
 void MainWindow::on_action918MHz_triggered() { channel(1); }
 
 void MainWindow::channel(int n) {
-    if (_processor && _processor->radio()) {
+    if ((_processor != nullptr) && (_processor->radio() != nullptr)) {
         _processor->radio()->channel(n);
     }
     _ui.radioLabel->setText(QString("%1MHz").arg(916.0 + 0.2 * n, 0, 'f', 1));
@@ -1048,10 +1048,10 @@ void MainWindow::on_actionCenterBall_triggered() {
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    ball_replace->mutable_pos()->set_x(0);
-    ball_replace->mutable_pos()->set_y(0);
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x(0);
+    ball_replace->set_y(0);
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
 
     _processor->context()->grsim_command = simPacket;
 }
@@ -1063,10 +1063,10 @@ void MainWindow::on_actionStopBall_triggered() {
 
     Geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    ball_replace->mutable_pos()->set_x(ballPos.x());
-    ball_replace->mutable_pos()->set_y(ballPos.y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x(ballPos.x());
+    ball_replace->set_y(ballPos.y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
     _processor->context()->grsim_command = simPacket;
 }
 
@@ -1075,7 +1075,7 @@ void MainWindow::on_actionResetField_triggered() {
 
     grSim_Replacement* replacement = simPacket.mutable_replacement();
     for (int i = 0; i < Robots_Per_Team; ++i) {
-        auto rob = replacement->add_robots();
+        auto* rob = replacement->add_robots();
 
         const int NUM_COLS = 2;
         const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
@@ -1107,94 +1107,19 @@ void MainWindow::on_actionResetField_triggered() {
     }
 
     auto ball_replace = replacement->mutable_ball();
-    ball_replace->mutable_pos()->set_x(0.0);
-    ball_replace->mutable_pos()->set_y(0.0);
-    ball_replace->mutable_vel()->set_x(0.0);
-    ball_replace->mutable_vel()->set_y(0.0);
+    ball_replace->set_x(0.0);
+    ball_replace->set_y(0.0);
+    ball_replace->set_vx(0.0);
+    ball_replace->set_vy(0.0);
 
     _processor->context()->grsim_command = simPacket;
 }
 
-void MainWindow::on_actionStopRobots_triggered() {
-    // TODO: check that this handles threads properly
-    /*
-    for (OurRobot* robot : state()->self) {
-        if (robot->visible) {
-            SimCommand::Robot* r = cmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(_processor->blueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    for (OpponentRobot* robot : state()->opp) {
-        if (robot->visible) {
-            SimCommand::Robot* r = cmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->isBlueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    */
-    //_ui.fieldView->sendSimCommand(cmd);
-}
+void MainWindow::on_actionStopRobots_triggered() {}
 
-void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
-    /*
-    _ui.actionQuickloadRobotLocations->setEnabled(true);
-    _quickLoadCmd.reset();
-    for (OurRobot* robot : state()->self) {
-        if (robot->visible) {
-            SimCommand::Robot* r = _quickLoadCmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(_processor->blueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    for (OpponentRobot* robot : state()->opp) {
-        if (robot->visible) {
-            SimCommand::Robot* r = _quickLoadCmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->isBlueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
+void MainWindow::on_actionQuicksaveRobotLocations_triggered() {}
 
-    Geometry2d::Point ballPos =
-        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x());
-    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y());
-    _quickLoadCmd.mutable_ball_vel()->set_x(0);
-    _quickLoadCmd.mutable_ball_vel()->set_y(0);
-    */
-}
-
-void MainWindow::on_actionQuickloadRobotLocations_triggered() {
-    //_ui.fieldView->sendSimCommand(_quickLoadCmd);
-}
+void MainWindow::on_actionQuickloadRobotLocations_triggered() {}
 
 // Style Sheets
 
@@ -1238,7 +1163,8 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
     printf("Update timer: active %d, singleShot %d, interval %d\n",
-           updateTimer.isActive(), updateTimer.isSingleShot(),
+           static_cast<int>(updateTimer.isActive()),
+           static_cast<int>(updateTimer.isSingleShot()),
            updateTimer.interval());
     updateTimer.stop();
     updateTimer.start(30);
@@ -1279,7 +1205,7 @@ void MainWindow::on_actionSeed_triggered() {
 // Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
     _processor->joystickKickOnBreakBeam(
-        _ui.joystickKickOnBreakBeam->checkState());
+        _ui.joystickKickOnBreakBeam->checkState() != 0u);
 }
 
 // choose between kick on break beam and immeditate
@@ -1394,7 +1320,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
     QAction* single = nullptr, * notSingle = nullptr;
-    if (item) {
+    if (item != nullptr) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");
     }
@@ -1404,10 +1330,10 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
         allDebugOn();
     } else if (act == none) {
         allDebugOff();
-    } else if (single && act == single) {
+    } else if ((single != nullptr) && act == single) {
         allDebugOff();
         item->setCheckState(Qt::Checked);
-    } else if (notSingle && act == notSingle) {
+    } else if ((notSingle != nullptr) && act == notSingle) {
         allDebugOn();
         item->setCheckState(Qt::Unchecked);
     }
@@ -1452,7 +1378,7 @@ void MainWindow::on_loadPlaybook_clicked() {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
                                                        true);
             playIndicatorStatus(true);
-        } catch (runtime_error* error) {
+        } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
@@ -1468,7 +1394,7 @@ void MainWindow::on_savePlaybook_clicked() {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
                                                        true);
             playIndicatorStatus(true);
-        } catch (runtime_error* error) {
+        } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
@@ -1510,7 +1436,7 @@ void MainWindow::setRadioChannel(RadioChannels channel) {
     }
 }
 
-void MainWindow::setUseRefChecked(bool use_ref) {
+void MainWindow::setUseRefChecked(bool /*use_ref*/) {
     _ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }
 

@@ -15,6 +15,7 @@ namespace Planning {
  */
 class MultiRobotPathPlanner {
 public:
+    virtual ~MultiRobotPathPlanner() = default;
     virtual std::map<int, std::unique_ptr<Path>> run(
         std::map<int, PlanRequest> requests) = 0;
 };

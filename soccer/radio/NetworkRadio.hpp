@@ -40,10 +40,10 @@ protected:
     };
 
     // Connections to the robots, indexed by robot ID.
-    std::vector<std::optional<RobotConnection>> _connections;
+    std::vector<std::optional<RobotConnection>> _connections{};
 
     // Map from IP address to robot ID.
-    std::map<boost::asio::ip::udp::endpoint, int> _robot_ip_map;
+    std::map<boost::asio::ip::udp::endpoint, int> _robot_ip_map{};
 
     bool open();
     void receivePacket(const boost::system::error_code& error,
@@ -61,7 +61,7 @@ protected:
     // Read from by `async_send_to`
     std::vector<
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>>
-        _send_buffers;
+        _send_buffers{};
 
     constexpr static std::chrono::duration kTimeout =
         std::chrono::milliseconds(250);

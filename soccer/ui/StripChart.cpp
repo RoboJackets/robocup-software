@@ -1,28 +1,28 @@
 #include "StripChart.hpp"
-#include "time.hpp"
-
-#include <QPainter>
-#include <QFileDialog>
-#include <QDateTime>
-
-#include <stdio.h>
-#include <cmath>
-#include <algorithm>
-#include <protobuf/LogFrame.pb.h>
-#include <Geometry2d/Point.hpp>
-#include <Constants.hpp>
-#include <time.hpp>
-#include <iostream>
-#include <fstream>
 
 #include <google/protobuf/descriptor.h>
+#include <protobuf/LogFrame.pb.h>
+
+#include <Constants.hpp>
+#include <Geometry2d/Point.hpp>
+#include <QDateTime>
+#include <QFileDialog>
+#include <QPainter>
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <time.hpp>
+
+#include "time.hpp"
 
 using namespace std;
 using namespace Packet;
 using namespace boost;
 using namespace google::protobuf;
 
-StripChart::StripChart(QWidget* parent) {
+StripChart::StripChart(QWidget* /*parent*/) {
     _history = nullptr;
     _minValue = 0;
     _maxValue = 1;
@@ -47,7 +47,7 @@ StripChart::~StripChart() {
 }
 
 void StripChart::function(Chart::Function* function) {
-    if (function) {
+    if (function != nullptr) {
         _functions.append(function);
     }
 }
@@ -59,8 +59,7 @@ void StripChart::exportChart() {
 
     // output column names
     outfile << "Time";
-    for (unsigned int x = 0; x < _functions.size(); x++) {
-        auto function = _functions[x];
+    for (auto function : _functions) {
         outfile << ", " << function->name.toStdString();
     }
     outfile << std::endl;
@@ -79,8 +78,7 @@ void StripChart::exportChart() {
             outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() -
                                            startTime);
 
-            for (unsigned int x = 0; x < _functions.size(); x++) {
-                auto function = _functions[x];
+            for (auto function : _functions) {
                 float v = 0;
 
                 if (function->value(*_history->at(i).get(), v)) {
@@ -104,7 +102,7 @@ int StripChart::indexAtPoint(const QPoint& point) {
     return (width() - point.x()) * chartSize / width();
 }
 
-void StripChart::paintEvent(QPaintEvent* e) {
+void StripChart::paintEvent(QPaintEvent* /*e*/) {
     if (!_history || _history->empty() || _functions.isEmpty()) {
         return;
     }
@@ -154,7 +152,9 @@ void StripChart::paintEvent(QPaintEvent* e) {
                         (" V: " + std::to_string(v)).c_str());
 
                     if (i > 0 && i < _history->size() - 1) {
-                        float v1, v2;
+                        float v1;
+
+                        float v2;
 
                         function->value(*_history->at(i - 1).get(), v1);
                         function->value(*_history->at(i + 1).get(), v2);
@@ -298,11 +298,10 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float& v) const {
                     }
                 }
                 return true;
-            } else {
-                // Non-message field in the middle of a path
-                fprintf(stderr, "NumericField: expected a message field\n");
-                return false;
             }
+            // Non-message field in the middle of a path
+            fprintf(stderr, "NumericField: expected a message field\n");
+            return false;
         }
 
         if (fd->is_repeated()) {

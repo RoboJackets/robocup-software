@@ -16,7 +16,7 @@ static const float ShootScale = 5;
 SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragMode = DRAG_NONE;
     _dragRobot = -1;
-    _dragRobotBlue = false;
+    _dragRobotBlue = 0;
 }
 
 void SimFieldView::setContext(Context* context) { this->_context = context; }
@@ -92,7 +92,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 robot_replace->set_x((_screenToWorld * me->pos()).x());
                 robot_replace->set_y((_screenToWorld * me->pos()).y());
                 robot_replace->set_id(_dragRobot);
-                robot_replace->set_yellowteam(!_dragRobotBlue);
+                robot_replace->set_yellowteam(_dragRobotBlue == 0);
                 robot_replace->set_dir(0.0);
 
                 _context->grsim_command = simPacket;
@@ -108,16 +108,14 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
     update();
 }
 
-void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
+void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
     if (_dragMode == DRAG_SHOOT) {
         grSim_Packet simPacket;
         grSim_BallReplacement* ball_replace =
             simPacket.mutable_replacement()->mutable_ball();
 
-        ball_replace->mutable_vel()->set_x(
-            _teamToWorld.transformDirection(_shot).x());
-        ball_replace->mutable_vel()->set_y(
-            _teamToWorld.transformDirection(_shot).y());
+        ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
+        ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
         _context->grsim_command = simPacket;
 
         update();

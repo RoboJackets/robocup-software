@@ -132,7 +132,7 @@ typename Map::mapped_type map_lookup(const Map& map,
 template <typename T>
 class FIRFilter {
 public:
-    typedef std::vector<float> Coeffs;
+    using Coeffs = std::vector<float>;
 
     FIRFilter(const T& zero, size_t nrTaps) : _zero(zero) {
         if (nrTaps == 0)

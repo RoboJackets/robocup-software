@@ -15,7 +15,7 @@
 class BatteryProfile {
 public:
     /// Each Entry in the profile is a <voltage, charge level> pair.
-    typedef std::pair<double, double> Entry;
+    using Entry = std::pair<double, double>;
 
     /**
      * @brief Construct a battery profile with the given <voltage, charge level>

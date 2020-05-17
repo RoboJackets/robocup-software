@@ -3,10 +3,14 @@
 #include <Constants.hpp>
 #include <Network.hpp>
 
-using namespace boost;
+using namespace boost::asio;
 using namespace Packet;
 
-GrSimCommunicator::GrSimCommunicator(Context* context) : _context(context) {}
+GrSimCommunicator::GrSimCommunicator(Context* context)
+    : _context(context), _asio_socket(_io_service) {
+    _asio_socket.open(ip::udp::v4());
+    _grsim_endpoint = ip::udp::endpoint(ip::udp::v4(), SimCommandPort);
+}
 
 void GrSimCommunicator::run() {
     if (_context->grsim_command) {
@@ -28,10 +32,10 @@ void GrSimCommunicator::placeBall(QPointF pos,
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    ball_replace->mutable_pos()->set_x((_screenToWorld * pos).x());
-    ball_replace->mutable_pos()->set_y((_screenToWorld * pos).y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x((_screenToWorld * pos).x());
+    ball_replace->set_y((_screenToWorld * pos).y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
 
     sendSimCommand(simPacket);
 }
@@ -39,7 +43,9 @@ void GrSimCommunicator::placeBall(QPointF pos,
 void GrSimCommunicator::sendSimCommand(const grSim_Packet& cmd) {
     std::string out;
     cmd.SerializeToString(&out);
-    _simCommandSocket.writeDatagram(&out[0], out.size(),
-                                    QHostAddress(QHostAddress::LocalHost),
-                                    SimCommandPort);
+    size_t bytes =
+        _asio_socket.send_to(boost::asio::buffer(out), _grsim_endpoint);
+    if (bytes == 0) {
+        std::cerr << "Sent 0 bytes in " __FILE__ << std::endl;
+    }
 }

@@ -12,6 +12,7 @@ import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import skills.capture as capture
 import situational_play_selection
+from situations import Situation
 
 
 ## Play that uses submissive defenders and wingers to defend
@@ -23,7 +24,7 @@ import situational_play_selection
 class BasicDefensiveScramble(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFENSIVE_SCRAMBLE
+        Situation.DEFENSIVE_SCRAMBLE
     ] # yapf: disable
 
     def __init__(self, num_defenders=2, num_wingers=2):

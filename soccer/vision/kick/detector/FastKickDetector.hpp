@@ -35,9 +35,9 @@ public:
      * @note kickEvent is only filled if it returns true
      * It is not touched otherwise
      */
-    bool addRecord(RJ::Time calcTime, WorldBall ball,
-                   std::vector<WorldRobot> yellowRobots,
-                   std::vector<WorldRobot> blueRobots,
+    bool addRecord(RJ::Time calcTime, const WorldBall& ball,
+                   const std::vector<WorldRobot>& yellowRobots,
+                   const std::vector<WorldRobot>& blueRobots,
                    KickEvent& kickEvent);
 
     static void createConfiguration(Configuration* cfg);

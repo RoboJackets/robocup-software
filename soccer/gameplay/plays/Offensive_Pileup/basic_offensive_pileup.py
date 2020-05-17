@@ -7,7 +7,7 @@ import math
 
 import standard_play
 import evaluation
-import situational_play_selection
+from situations import Situation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
@@ -23,9 +23,9 @@ import random
 class BasicOffensivePileup(standard_play.StandardPlay):
 
     _situation_list = [
-        situational_play_selection.SituationalPlaySelector.Situation.
-        OFFENSIVE_PILEUP
-    ]
+        Situation.OFFENSIVE_PILEUP,
+        Situation.DEFENSIVE_PILEUP
+    ] # yapf: disable
 
     def __init__(self):
         super().__init__(continuous=False)
