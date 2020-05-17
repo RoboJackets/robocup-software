@@ -8,7 +8,7 @@ import evaluation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
-import situational_play_selection
+from situations import Situation
 
 
 ##
@@ -19,7 +19,7 @@ class Distraction(standard_play.StandardPlay):
 
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL
+        Situation.ATTACK_GOAL
     ] # yapf: disable
 
 

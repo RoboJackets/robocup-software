@@ -3,7 +3,6 @@ import play
 import behavior
 import robocup
 import tactics.line_up
-import tactics.defense
 import main
 
 

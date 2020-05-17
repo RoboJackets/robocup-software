@@ -1,22 +1,24 @@
 import logging
 from enum import Enum
 import graphviz as gv
-from typing import Union, Callable, Dict, Optional, Iterable, List, Any, cast
+from typing import Union, Callable, Dict, Optional, Iterable, List, Any
+from typing_extensions import TypedDict
 
 State = Enum
 StateHierarchy = Dict[State, Optional[State]]
 TransitionFunction = Callable[[], bool]  # Takes no args, returns a bool
 
-# Rip TypedDict requires 3.8
-# class Event(TypedDict):
-#     condition: TransitionFunction
-#     name: str
 
-Event = Any
+class Event(TypedDict):
+    condition: TransitionFunction
+    name: str
+
+
 TransitionTable = Dict[State, Dict[State, Event]]  # [from][to] = Event
 StateMethod = Callable[[], None]  # Takes nothing, returns nothing
 OnEnterMethod = Callable[[], None]  # Takes nothing, returns nothing
 OnExitMethod = Callable[[], None]  # Takes nothing, returns nothing
+
 
 ## @brief generic hierarchial state machine class.
 #
@@ -82,10 +84,10 @@ class StateMachine:
                         next_states += [next_state]
 
             if len(next_states) > 1:
-                logging.warn(
+                logging.warning(
                     "Ambiguous fsm transitions from state'" + str(self.state) +
-                    "'.  The following states are reachable now: " + str(
-                        next_states) +
+                    "'.  The following states are reachable now: " +
+                    str(next_states) +
                     ";  Proceeding by taking the first option.")
             if len(next_states) > 0:
                 self.transition(next_states[0])

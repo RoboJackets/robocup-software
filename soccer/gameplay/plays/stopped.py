@@ -1,6 +1,5 @@
 import standard_play
 import behavior
-import tactics.defense
 import tactics.stopped.circle_near_ball
 import tactics.stopped.circle_on_center
 import main
