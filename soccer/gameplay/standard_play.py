@@ -19,11 +19,11 @@ class StandardPlay(play.Play):
     # Not just on selection
     def __init__(self, continuous: bool):
         super().__init__(continuous)
-       
+
     ##A private list of situations that are applicable to this play
 
     _situationList: List[Situation] = list()
-   
+
     ##
     # Handles activity while the play is active. A play wishing to utilize this
     # method in addition to having an "execute_running" method of its own must call
