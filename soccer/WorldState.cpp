@@ -100,7 +100,7 @@ std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) con
     return RJ::Seconds(speed - std::sqrt(vf_sq)) / kBallDecayConstant;
 }
 
-Planning::Trajectory BallState::make_trajectory() {
+Planning::Trajectory BallState::make_trajectory() const {
     // The trajectory interface fits cubic splines. Luckily, a cubic spline
     // between two instants that can be connected by a constant acceleration
     // (like we have here) will be, and so we can use this for our trajectory.

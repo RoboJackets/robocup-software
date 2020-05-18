@@ -34,8 +34,6 @@ Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
     RobotInstant startInstant = request.start;
     RobotConstraints constraints = request.constraints;
     Trajectory& prevTrajectory = request.prevTrajectory;
-    auto state_space = std::make_shared<RoboCupStateSpace>(
-        Field_Dimensions::Current_Dimensions, request.static_obstacles);
     double radius = Robot_Radius * _pivotRadiusMultiplier->value();
 
     bool targetIsDifferent = false;

@@ -9,8 +9,77 @@
 
 namespace Planning {
 
-PlannerNode::PlannerNode(Context* context)
-    : context_(context), plannerIdx(Num_Shells, -1) {
+PlannerNode::PlannerNode(Context* context) : context_(context) {
+    robots_planners_.resize(Num_Shells);
+}
+
+using namespace Geometry2d;
+void PlannerNode::run() {
+    const ShapeSet& global_obstacles = context_->globalObstacles;
+    const WorldState& world_state = context_->world_state;
+    const auto& robot_intents = context_->robot_intents;
+    DebugDrawer* debug_drawer = &context_->debug_drawer;
+    auto* trajectories = &context_->trajectories;
+
+    if (context_->game_state.state == GameState::Halt) {
+        context_->trajectories.fill(Trajectory());
+        return;
+    }
+
+    std::array<Trajectory*, Num_Shells> planned{};
+
+    // Sort the robots by priority
+    std::array<int, Num_Shells> shells{};
+    for (int i = 0; i < Num_Shells; i++) {
+        shells[i] = i;
+    }
+    std::sort(shells.begin(), shells.end(), [&] (int a, int b) {
+        return robot_intents.at(a).priority > robot_intents.at(b).priority;
+    });
+
+    for (int i = 0; i < Num_Shells; i++) {
+        unsigned int shell = shells.at(i);
+        const auto& robot = world_state.our_robots.at(shell);
+        const auto& intent = robot_intents.at(shell);
+
+        if (!robot.visible) {
+            // For invalid robots, early return with an empty path.
+            trajectories->at(shell) = Trajectory();
+            planned.at(shell) = &trajectories->at(shell);
+            continue;
+        }
+
+        RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
+
+        if (!trajectories->at(shell).empty() &&
+            trajectories->at(shell).end_time() >= RJ::now()) {
+            start = trajectories->at(shell).evaluate(RJ::now()).value();
+        }
+
+        // TODO: Put motion constraints in intent.
+        PlanRequest request{
+            start,
+            intent.motion_command,
+            RobotConstraints(),
+            std::move(trajectories->at(shell)),
+            global_obstacles,
+            intent.local_obstacles,
+            planned,
+            shell,
+            &world_state,
+            intent.priority,
+            debug_drawer
+        };
+
+        Trajectory trajectory = robots_planners_.at(shell).PlanForRobot(std::move(request));
+        trajectory.draw(&context_->debug_drawer);
+        trajectories->at(shell) = std::move(trajectory);
+        planned.at(shell) = &trajectories->at(shell);
+    }
+}
+
+PlannerForRobot::PlannerForRobot()
+    : planner_idx_(-1) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
@@ -20,109 +89,21 @@ PlannerNode::PlannerNode(Context* context)
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
 }
-using namespace Geometry2d;
-void PlannerNode::run() {
-    ShapeSet globalObstacles = context_->globalObstacles;
-    ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-    globalObstaclesWithGoalZones.add(context_->goalZoneObstacles);
 
-    std::vector<PlanRequest> requests;
-    for (OurRobot* robot : context_->state.self) {
-        if (!robot) {
-            continue;
-        }
 
-        if (!robot->visible() ||
-            context_->game_state.state == GameState::Halt) {
-            Trajectory inactivePath{{}};
-            inactivePath.setDebugText("INACTIVE");
-            context_->trajectories[robot->shell()] = std::move(inactivePath);
-            continue;
-        }
-
-        // Visualize local obstacles
-        for (auto& shape : robot->localObstacles().shapes()) {
-            context_->debug_drawer.drawShape(shape, Qt::black,
-                                             "LocalObstacles");
-        }
-
-        bool robotIgnoreGoalZone = robot->shell() == context_->goalie_id ||
-                                   robot->isPenaltyKicker ||
-                                   robot->isBallPlacer;
-        auto& globalObstaclesForBot = robotIgnoreGoalZone
-                                          ? globalObstacles
-                                          : globalObstaclesWithGoalZones;
-
-        // create and visualize obstacles
-        ShapeSet staticObstacles = robot->collectStaticObstacles(
-            globalObstaclesForBot, !robotIgnoreGoalZone);
-        for (OurRobot* r2 : context_->state.self) {
-            if (robot == r2) {
-                continue;
-            }
-            staticObstacles.add(
-                std::make_shared<Circle>(r2->pos(), Robot_Radius));
-        }
-
-        // Construct a plan request.
-        const RobotState& robotState = robot->state();
-        requests.emplace_back(
-            RobotInstant{robotState.pose, robotState.velocity,
-                         robotState.timestamp},
-            robot->motionCommand(), robot->robotConstraints(),
-            robot->path_movable(), std::move(staticObstacles),
-            std::vector<DynamicObstacle>{}, robot->shell(),
-            &context_->world_state,
-            robot->getPlanningPriority(),
-            &context_->debug_drawer);
-    }
-    std::sort(requests.begin(), requests.end(),
-              [](const PlanRequest& pr1, const PlanRequest& pr2) {
-                  return pr1.priority > pr2.priority;
-              });
-    std::vector<DynamicObstacle> dynamicObstacles;
-    for (PlanRequest& request : requests) {
-        // update robot specific obstacles
-        request.dynamic_obstacles = dynamicObstacles;
-
-        // complete the plan request
-        OurRobot* robot = context_->state.self[request.shellID];
-        Trajectory plannedPath = PlanForRobot(std::move(request));
-        context_->trajectories[robot->shell()] = std::move(plannedPath);
-        dynamicObstacles.emplace_back(
-            Circle(robot->pos(), Robot_Radius),
-            &robot->path());
-
-        // draw debug info
-        robot->path().draw(&context_->debug_drawer,
-                           robot->pos() + Point(.1, 0));
-        context_->debug_drawer.drawText(
-            (const char* []){
-                "EmptyCommand", "PathTargetCommand", "WorldVelCommand",
-                "PivotCommand", "SettleCommand", "CollectCommand",
-                "LineKickCommand",
-                "InterceptCommand"}[robot->motionCommand().index()],
-            robot->pos() + Point(.1, .3), QColor(100, 100, 255, 100),
-            "MotionCommands");
-    }
-
-    // Visualize obstacles
-    for (auto& shape : globalObstacles.shapes()) {
-        context_->debug_drawer.drawShape(shape, Qt::black, "Global Obstacles");
-    }
-}
-
-Trajectory PlannerNode::PlanForRobot(Planning::PlanRequest&& request) {
+Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
     for (int i = 0; i < planners_.size(); i++) {
         if (planners_[i]->isApplicable(request.motionCommand)) {
             // clear path when planner changes
-            if (plannerIdx[request.shellID] != i) {
-                plannerIdx[request.shellID] = i;
+            if (planner_idx_ != i) {
+                planner_idx_ = i;
                 request.prevTrajectory = Trajectory{{}};
+//            planners_[i]->reset();
             }
+
             RobotInstant startInstant = request.start;
             RJ::Time t0 = RJ::now();
             Trajectory path = planners_[i]->plan(std::move(request));

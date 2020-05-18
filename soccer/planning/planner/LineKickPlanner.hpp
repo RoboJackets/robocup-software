@@ -11,14 +11,23 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
+    enum class LineKickStates {
+        Approach,
+        FollowThrough
+    };
+
+    LineKickStates state;
+
     std::optional<Trajectory> attemptBruteForce(const PlanRequest& request);
-    Trajectory planForSlowMovingBall(PlanRequest&& request);
+    Trajectory planForSlowMovingBall(
+        RobotInstant start, BallState ball, Geometry2d::Point target,
+        Geometry2d::ShapeSet static_obstacles,
+        const std::vector<DynamicObstacle>& dynamic_obstacles,
+        RobotConstraints constraints);
 
     static ConfigDouble* _approachSpeed;
 
-    PathTargetPlanner _pathTargetPlanner;
-    bool _finalApproach = false;
-    std::optional<Geometry2d::Point> _targetKickPos;
-    int _reusePathCount = 0;
+    Replanner _rrtPlanner;
+    Trajectory previous;
 };
 }  // namespace Planning

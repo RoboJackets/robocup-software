@@ -17,16 +17,18 @@ struct RobotIntent {
     Geometry2d::ShapeSet local_obstacles;
 
     /// masks for obstacle avoidance
-    RobotMask opp_avoid_mask;
-    float avoid_ball_radius;  /// radius of ball obstacle
+    RobotMask opp_avoid_mask{};
+    float avoid_ball_radius{};  /// radius of ball obstacle
 
-    ShootMode shoot_mode;
-    TriggerMode trigger_mode;
-    Song song;
-    int kcstrength;
-    float dvelocity;
+    ShootMode shoot_mode = ShootMode::KICK;
+    TriggerMode trigger_mode = TriggerMode::STAND_DOWN;
+    Song song = Song::STOP;
+    int kcstrength = 0;
+    float dvelocity = 0;
 
-    bool is_active;
+    bool is_active = false;
+
+    int8_t priority = 0;
 
     void clear() {
         dvelocity = 0;
@@ -35,14 +37,15 @@ struct RobotIntent {
         trigger_mode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
 
+        priority = 0;
+
         if (std::holds_alternative<Planning::PathTargetCommand>(motion_command)) {
             std::get<Planning::PathTargetCommand>(motion_command).angle_override = std::nullopt;
         }
     }
 
     RobotIntent()
-        : is_active(false),
-          motion_command(Planning::EmptyCommand{}) {
+        : motion_command(Planning::EmptyCommand{}) {
         clear();
     }
 };

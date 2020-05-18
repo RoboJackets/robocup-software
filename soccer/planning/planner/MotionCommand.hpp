@@ -11,7 +11,9 @@
 
 namespace Planning {
 // todo(Ethan) discuss whether we want to have settle with bounce
-struct SettleCommand {};
+struct SettleCommand {
+    std::optional<Geometry2d::Point> target;
+};
 struct CollectCommand {};
 struct LineKickCommand {
     Geometry2d::Point target;

@@ -18,7 +18,7 @@ public:
      * @param command The command to check.
      * @return Whether or not this planner can plan that type of command.
      */
-    virtual bool isApplicable(const MotionCommand& command) const = 0;
+    [[nodiscard]] virtual bool isApplicable(const MotionCommand& command) const = 0;
 
     /**
      * Plan a trajectory for this request. This is guaranteed to be a request
@@ -32,12 +32,12 @@ public:
     /**
      * reuse previous path
      */
-    static Trajectory reuse(PlanRequest&& request);
+    static Trajectory reuse(RJ::Time now, RobotInstant start, Trajectory previous);
 
     /**
      * Get a user-readable name for this planner.
      */
-    std::string name() const { return _name; }
+    [[nodiscard]] std::string name() const { return _name; }
 
 private:
     const std::string _name;
@@ -49,7 +49,7 @@ public:
     PlannerForCommandType(const std::string& name) : Planner(name){};
     ~PlannerForCommandType() override = default;
 
-    bool isApplicable(const MotionCommand& command) const override {
+    [[nodiscard]] bool isApplicable(const MotionCommand& command) const override {
         return std::holds_alternative<CommandType>(command);
     }
 };
@@ -58,4 +58,5 @@ template <typename T>
 inline T applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
     return gain * newValue + (1 - gain) * oldValue;
 }
+
 }  // namespace Planning

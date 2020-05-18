@@ -1,57 +1,78 @@
 #include "InterceptPlanner.hpp"
-#include "PlanRequest.hpp"
-#include "Planner.hpp"
+
+#include <Configuration.hpp>
+#include <Constants.hpp>
 #include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/Trajectory.hpp"
 #include "planning/trajectory/VelocityProfiling.hpp"
+
 namespace Planning {
-using namespace Geometry2d;
-Trajectory InterceptPlanner::plan(PlanRequest&& request) {
-    RobotInstant startInstant = request.start;
-    BallState ball = request.world_state->ball;
-    Point targetPoint =
-        std::get<InterceptCommand>(request.motionCommand).target;
 
+Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
+    InterceptCommand command = std::get<InterceptCommand>(planRequest.motionCommand);
+
+    // Start state for the specified robot
+    RobotInstant startInstant = planRequest.start;
+
+    // All the max velocity / acceleration constraints for translation /
+    // rotation
+    const MotionConstraints& motionConstraints = planRequest.constraints.mot;
+
+    BallState ball = planRequest.world_state->ball;
+
+    // Time for ball to hit target point
+    // Target point is projected into ball vel line
+    Geometry2d::Point targetPosOnLine;
     RJ::Seconds ballToPointTime =
-        ball.query_time_at(targetPoint, &targetPoint) - RJ::now();
-    if ((targetPoint - _prevTargetPoint).mag() < Robot_Radius / 2) {
-        targetPoint = _prevTargetPoint;
-    } else {
-        _prevTargetPoint = targetPoint;
-    }
-    Point botToTarget = (targetPoint - startInstant.pose.position());
+        ball.query_seconds_to(command.target, &targetPosOnLine);
 
-    // Try to shortcut
-    // If we are almost in the way of the ball already, just stay still
-    // Saves some frames and is much more consistent
-    RobotInstant targetInstant{Pose{targetPoint, 0}, Twist{}, RJ::Time{0s}};
-    if (botToTarget.mag() < Robot_Radius / 2) {
-        auto path = CreatePath::simple(startInstant, targetInstant,
-                                       request.constraints.mot);
-        if (path.empty()) return reuse(std::move(request));
-        PlanAngles(path, startInstant, AngleFns::facePoint(ball.position),
-                   request.constraints.rot);
-        path.setDebugText("AtPoint");
-        return std::move(path);
-    }
+    // vector from robot to target
+    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pose.position());
 
-    // Find the minimum viable target velocity using Brute Force
-    // a lower target velocity is safer because we are more likely to stay there
-    Trajectory path{{}};
-    constexpr int interpolations = 21;
-    for (int i = 0; i < interpolations; i++) {
-        double percent = static_cast<double>(i) / (interpolations - 1);
-        targetInstant.velocity.linear() =
-            percent * request.constraints.mot.maxSpeed * botToTarget.norm();
-        path = CreatePath::simple(startInstant, targetInstant,
-                                  request.constraints.mot);
-        PlanAngles(path, startInstant, AngleFns::facePoint(ball.position),
-                   request.constraints.rot);
-        if (path.duration() <= ballToPointTime) {
-            break;
+    // Max speed we can reach given the distance to target and constant
+    // acceleration If we don't constrain the speed, there is a velocity
+    // discontinuity in the middle of the path
+    double maxSpeed = std::min(
+        startInstant.velocity.linear().mag() +
+        sqrt(2 * motionConstraints.maxAcceleration * botToTarget.mag()),
+        motionConstraints.maxSpeed);
+
+    // Scale the end velocity by % of max velocity to see if we can reach the
+    // target at the same time as the ball
+    Trajectory trajectory;
+
+    for (double mag = 0.0; mag <= 1.0; mag += .05) {
+        RobotInstant finalStoppingMotion(
+            Geometry2d::Pose(targetPosOnLine, startInstant.pose.heading()),
+            Geometry2d::Twist(mag * maxSpeed * botToTarget.normalized(), 0),
+            RJ::now());
+
+        trajectory = CreatePath::simple(startInstant, finalStoppingMotion, planRequest.constraints.mot);
+
+        // First path where we can reach the point at or before the ball
+        // If the end velocity is not 0, you should reach the point as close
+        // to the ball time as possible to just ram it
+        if (trajectory.duration() <= ballToPointTime) {
+            trajectory.setDebugText(
+                "RT " + QString::number(trajectory.duration().count(), 'g', 2) +
+                " BT " + QString::number(trajectory.duration().count(), 'g', 2));
+
+            PlanAngles(trajectory, startInstant,
+                       AngleFns::facePoint(ball.position),
+                       planRequest.constraints.rot);
+            return trajectory;
         }
     }
-    if (path.empty()) return reuse(std::move(request));
-    return std::move(path);
+
+    // We couldn't get to the target point in time
+    // Just give up and do the max vel across ball vel
+    // Which ends up being the path after the final loop
+    trajectory.setDebugText("GivingUp");
+
+    PlanAngles(trajectory, startInstant,
+               AngleFns::facePoint(ball.position),
+               planRequest.constraints.rot);
+
+    return trajectory;
 }
+
 }  // namespace Planning

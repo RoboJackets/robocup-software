@@ -95,7 +95,7 @@ struct BallState {
     /**
      * Create a trajectory for the ball.
      */
-    [[nodiscard]] Planning::Trajectory make_trajectory();
+    [[nodiscard]] Planning::Trajectory make_trajectory() const;
 };
 
 struct WorldState {

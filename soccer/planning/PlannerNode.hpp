@@ -10,6 +10,17 @@
 
 namespace Planning {
 
+class PlannerForRobot {
+public:
+    PlannerForRobot();
+
+    Trajectory PlanForRobot(Planning::PlanRequest&& request);
+
+private:
+    std::vector<std::unique_ptr<Planner>> planners_;
+    int planner_idx_;
+};
+
 class PlannerNode : public Node {
 public:
     PlannerNode(Context* context);
@@ -19,11 +30,7 @@ public:
 private:
     Context* context_;
 
-    std::vector<std::unique_ptr<Planner>> planners_;
-    // stores the planner index corresponding to each robot
-    std::vector<int> plannerIdx;
-
-    Trajectory PlanForRobot(Planning::PlanRequest&& request);
+    std::vector<PlannerForRobot> robots_planners_;
 };
 
 }  // namespace Planning

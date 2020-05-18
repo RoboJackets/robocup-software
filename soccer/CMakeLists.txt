@@ -84,7 +84,7 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp" WorldState.cpp)
+    "WindowEvaluator.cpp" WorldState.cpp planning/planner/PlanRequest.cpp planning/low_level/Replanner.cpp planning/low_level/Replanner.hpp)
 
 
 if(APPLE)
