@@ -32,7 +32,7 @@ Referee::Referee(Context* const context)
       command_(Command::HALT),
       sent_time{},
       received_time{},
-      stage_time_left{},
+      stage_time_left_{},
       command_counter{},
       yellow_info{},
       blue_info{},
@@ -78,7 +78,7 @@ void Referee::receivePacket(const boost::system::error_code& error,
         return;
     }
 
-    if (!_useExternalRef) {
+    if (!_context->game_settings.use_external_referee) {
         return;
     }
 
@@ -100,7 +100,7 @@ void Referee::receivePacket(const boost::system::error_code& error,
     command_ = static_cast<Command>(packet.wrapper.command());
     sent_time =
         RJ::Time(std::chrono::microseconds(packet.wrapper.packet_timestamp()));
-    stage_time_left =
+    stage_time_left_ =
         std::chrono::milliseconds(packet.wrapper.stage_time_left());
     command_counter = packet.wrapper.command_counter();
     command_timestamp =
@@ -156,8 +156,6 @@ void Referee::run() {
     update();
 }
 
-void Referee::overrideTeam(bool isBlue) { _game_state.blueTeam = isBlue; }
-
 void Referee::spinKickWatcher(const SystemState& system_state) {
     /// Only run the kick detector when the ball is visible
     if (!system_state.ball.valid) {
@@ -207,6 +205,15 @@ void Referee::spinKickWatcher(const SystemState& system_state) {
 }
 
 void Referee::update() {
+    if (!_isRefControlled) {
+        // The command in game_settings acts like an RPC or a signal. We
+        // acknowledge it as completed by clearing its value.
+        if (_context->game_settings.requestRefCommand != std::nullopt) {
+            command_ = _context->game_settings.requestRefCommand.value();
+            _context->game_settings.requestRefCommand.reset();
+        }
+    }
+
     _game_state = updateGameState(command_);
     _context->game_state = _game_state;
 
@@ -278,9 +285,13 @@ GameState Referee::updateGameState(Command command) const {
     bool our_restart = _game_state.ourRestart;
     Geometry2d::Point ball_placement_point = _game_state.ballPlacementPoint;
 
-    const bool blue_team = _game_state.blueTeam;
+    bool blue_team = _game_state.blueTeam;
 
-    switch (command) {
+    if (!_isRefControlled) {
+        blue_team = _context->game_settings.requestBlueTeam;
+    }
+
+    switch (command_) {
         case Command::HALT:
             state = GameState::Halt;
 
@@ -365,8 +376,12 @@ GameState Referee::updateGameState(Command command) const {
     const int our_score = blue_team ? blue_info.score : yellow_info.score;
     const int their_score = blue_team ? yellow_info.score : blue_info.score;
 
-    const auto our_info = blue_team ? blue_info : yellow_info;
+    auto our_info = blue_team ? blue_info : yellow_info;
     const auto their_info = blue_team ? yellow_info : blue_info;
+
+    if (!_isRefControlled) {
+        our_info.goalie = _context->game_settings.requestGoalieID;
+    }
 
     return GameState{period,
                      state,
@@ -374,10 +389,11 @@ GameState Referee::updateGameState(Command command) const {
                      our_restart,
                      our_score,
                      their_score,
-                     _game_state.secondsRemaining,
+                     stage_time_left_,
                      our_info,
                      their_info,
                      blue_team,
                      ball_placement_point,
-                     _game_state.defendPlusX};
+                     stage_,
+                     command_};
 }

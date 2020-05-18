@@ -71,7 +71,7 @@ void VisionReceiver::run() {
             updateGeometryPacket(packet->wrapper.geometry().field());
         }
 
-        bool defendPlusX = _context->game_state.defendPlusX;
+        bool defendPlusX = _context->game_settings.defendPlusX;
 
         if (packet->wrapper.has_detection()) {
             SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
@@ -157,9 +157,9 @@ void VisionReceiver::receivePacket(const boost::system::error_code& error,
 }
 
 bool VisionReceiver::shouldRemove(bool defendPlusX, double x) {
-    return (!_context->state.logFrame->use_our_half() &&
+    return (!_context->game_settings.use_their_half &&
             ((defendPlusX && x < 0) || (!defendPlusX && x > 0))) ||
-           (!_context->state.logFrame->use_our_half() &&
+           (!_context->game_settings.use_our_half &&
             ((defendPlusX && x > 0) || (!defendPlusX && x < 0)));
 }
 
@@ -208,7 +208,6 @@ void VisionReceiver::updateGeometryPacket(
         thickness != 0) {
         // Force a resize
         _context->field_dimensions = Field_Dimensions(
-
             fieldSize.field_length() / 1000.0f,
             fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
             fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,

@@ -183,7 +183,6 @@ void SimRadio::switchTeam(bool blueTeam) {
     _blueTeam = blueTeam;
 
     if (_socket.is_open()) {
-        // We don't really care what port the tx is on, just the rx
         stopRobots();
         _socket.close();
     }

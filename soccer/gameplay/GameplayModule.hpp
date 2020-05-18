@@ -70,9 +70,6 @@ public:
     void clearPlays();
     bool checkPlaybookStatus();
 
-    void goalieID(int value);
-    int goalieID() { return _goalieID; }
-
     /**
      * @defgroup matrices Coordinate Conversion Matrices
      * Each of these matrices converts coordinates from some other system

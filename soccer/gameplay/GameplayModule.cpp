@@ -48,8 +48,6 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
 
-    _goalieID = -1;
-
     //
     // setup python interpreter
     //
@@ -269,25 +267,6 @@ bool Gameplay::GameplayModule::checkPlaybookStatus() {
     return change;
 }
 
-void Gameplay::GameplayModule::goalieID(int value) {
-    _goalieID = value;
-
-    // pass this value to python
-    PyGILState_STATE state = PyGILState_Ensure();
-    {
-        try {
-            getRootPlay().attr("goalie_id") = _goalieID;
-        } catch (const error_already_set&) {
-            cout << "PYTHON ERROR!!!" << endl;
-            PyErr_Print();
-            cout << "END PYTHON ERROR" << endl;
-            throw runtime_error(
-                "Error trying to set python goalie_id on root_play");
-        }
-    }
-    PyGILState_Release(state);
-}
-
 /**
  * returns the group of obstacles for the field
  */
@@ -297,11 +276,11 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
         obstacles.add(_sideObstacle);
     }
 
-    if (!_context->state.logFrame->use_our_half()) {
+    if (!_context->game_settings.use_our_half) {
         obstacles.add(_ourHalf);
     }
 
-    if (!_context->state.logFrame->use_opponent_half()) {
+    if (!_context->game_settings.use_their_half) {
         obstacles.add(_opponentHalf);
     }
 
@@ -384,9 +363,11 @@ void Gameplay::GameplayModule::run() {
                     "ui.main._tests.getNextCommand()", Py_eval_input,
                     _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
+                // TODO(Kyle): Part two of the
+                //  multiple-places-publishing-to-the-same-struct garbage-fest.
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
-                    _refereeModule->command_ = cmd;
+                    _context->game_settings.requestRefCommand = cmd;
                 }
             }
 
@@ -536,8 +517,16 @@ void Gameplay::GameplayModule::loadTest() {
 
             runningTests = extract<bool>(rtrn);
 
+            // TODO(Kyle): Okay, so really all of this testing logic should be
+            // removed from Gameplay and put behind some sort of GameController
+            // abstraction that it shares with the main UI code. However, for
+            // now we can hack around it by publishing to the same struct twice
+            // from two different places. This is the big sad.
+            //
+            // See the other to-do in this file for the other instance of the
+            // same issue.
             if (runningTests) {
-                _refereeModule->command_ = Command::HALT;
+                _context->game_settings.requestRefCommand = Command::HALT;
 
                 // Place robots and ball
                 grSim_Packet simPacket;

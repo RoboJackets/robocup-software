@@ -6,6 +6,7 @@
 #include <set>
 
 #include "DebugDrawer.hpp"
+#include "GameSettings.hpp"
 #include "GameState.hpp"
 #include "RobotConfig.hpp"
 #include "RobotIntent.hpp"
@@ -49,5 +50,5 @@ struct Context {
     std::optional<QPointF> ball_command;
     std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
 
-    bool is_simulation;
+    GameSettings game_settings;
 };
