@@ -108,6 +108,9 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
     //   LeftStickY     - Translation Y
     //
     //   DPAD           - "Align along an axis using the DPAD"
+    if (msg.unique_id != gamepad_stack_.front()) {
+        return;
+    }
 
     const auto now = RJ::now();
     // Dribbler Power
