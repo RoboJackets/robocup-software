@@ -15,6 +15,7 @@ set(ROBOCUP_LIB_SRC
     "joystick/Joystick.cpp"
     "joystick/SDLJoystickNode.cpp"
     "joystick/SDLGamepad.cpp"
+    "joystick/ManualControlNode.cpp"
     "joystick/GamepadController.cpp"
     "joystick/GamepadJoystick.cpp"
     "joystick/SpaceNavJoystick.cpp"

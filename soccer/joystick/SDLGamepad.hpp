@@ -1,10 +1,13 @@
 #pragma once
 
 #include <SDL.h>
-#include <string>
-#include <sstream>
+
 #include <array>
 #include <iomanip>
+#include <sstream>
+#include <string>
+
+#include "GamepadMessage.hpp"
 
 namespace joystick {
 struct SDLGUID {
@@ -49,13 +52,36 @@ public:
 
     [[nodiscard]] std::string toString() const;
 
-    friend std::ostream& operator<<(std::ostream& stream, const SDLGamepad& gamepad);
+    /**
+     * Returns a unique ID for the passed in GUID
+     * @param guid
+     * @return Unique ID for the given GUID
+     */
+    static int getUniqueID(const SDLGUID& guid);
 
+    bool getButton(SDL_GameControllerButton button);
+    int32_t getAxis(SDL_GameControllerAxis axis);
+
+    /**
+     * Updates the internal state_ variable and returns a const ref to it
+     * @return A const ref to the internal GamepadMessage
+     */
+    const GamepadMessage& update();
+
+    friend std::ostream& operator<<(std::ostream& stream,
+                                    const SDLGamepad& gamepad);
+
+    /** \brief Name of the gamepad. */
     std::string name;
+    /** \brief Instance ID given by libsdl. */
     int instance_id;
+    /** \brief GUID assigned by libsdl. */
     SDLGUID guid;
+    /** \brief Unique ID for each unique guid. Increments from 0. */
+    int unique_id;
 
 private:
     SDL_GameController* controller_;
+    GamepadMessage state_;
 };
 }  // namespace joystick
