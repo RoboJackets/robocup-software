@@ -84,6 +84,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
+    _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>();
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
@@ -247,6 +248,7 @@ void Processor::run() {
 
         ////////////////
         // Inputs
+        _sdl_joystick_node->run();
 
         updateOrientation();
 

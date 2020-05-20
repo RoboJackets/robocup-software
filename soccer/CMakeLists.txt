@@ -13,6 +13,8 @@ set(ROBOCUP_LIB_SRC
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
     "joystick/Joystick.cpp"
+    "joystick/SDLJoystickNode.cpp"
+    "joystick/SDLGamepad.cpp"
     "joystick/GamepadController.cpp"
     "joystick/GamepadJoystick.cpp"
     "joystick/SpaceNavJoystick.cpp"
