@@ -35,13 +35,13 @@ public:
     /**
      * Performs all logic, ie.
      * - Finding joysticks
-     * - Processing joystick input
+     * - Processing joystick input and calling callbacks
      */
     void run() override;
 
     using GamepadCallbackFn = std::function<void(const GamepadMessage&)>;
-    using JoystickConnectedFn = std::function<void(int unique_id)>;
-    using JoystickDisconnectedFn = std::function<void(int unique_id)>;
+    using GamepadConnectedFn = std::function<void(int unique_id)>;
+    using GamepadDisconnectedFn = std::function<void(int unique_id)>;
 
     /**
      * Add a callback function
@@ -49,8 +49,8 @@ public:
      * each update
      */
     void addCallbacks(const GamepadCallbackFn& callback,
-                      const JoystickConnectedFn& on_connected,
-                      const JoystickDisconnectedFn& on_disconnected);
+                      const GamepadConnectedFn& on_connected,
+                      const GamepadDisconnectedFn& on_disconnected);
 
 private:
     /**
@@ -85,7 +85,7 @@ private:
     std::vector<std::unique_ptr<SDLGamepad>> gamepads_;
 
     std::vector<GamepadCallbackFn> callback_fns_;
-    std::vector<JoystickConnectedFn> on_connected_fns_;
-    std::vector<JoystickDisconnectedFn> on_disconnected_fns_;
+    std::vector<GamepadConnectedFn> on_connected_fns_;
+    std::vector<GamepadDisconnectedFn> on_disconnected_fns_;
 };
 }  // namespace joystick

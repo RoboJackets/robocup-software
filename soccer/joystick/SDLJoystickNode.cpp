@@ -83,8 +83,8 @@ SDLJoystickNode::getGamepadByInstanceID(int instance_id) const {
 }
 
 void SDLJoystickNode::addCallbacks(
-    const GamepadCallbackFn& callback, const JoystickConnectedFn& on_connected,
-    const JoystickDisconnectedFn& on_disconnected) {
+    const GamepadCallbackFn& callback, const GamepadConnectedFn& on_connected,
+    const GamepadDisconnectedFn& on_disconnected) {
     callback_fns_.emplace_back(callback);
     on_connected_fns_.emplace_back(on_connected);
     on_disconnected_fns_.emplace_back(on_disconnected);

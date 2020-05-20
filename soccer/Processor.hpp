@@ -19,6 +19,7 @@
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
+#include "joystick/ManualControlNode.hpp"
 #include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
 #include "radio/Radio.hpp"
@@ -192,6 +193,7 @@ private:
     std::vector<Node*> _nodes;
 
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
+    std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
 
     // joystick control
     std::vector<Joystick*> _joysticks;

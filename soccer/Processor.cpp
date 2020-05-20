@@ -84,7 +84,16 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
+
+    // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>();
+    _manual_control_node =
+        std::make_unique<joystick::ManualControlNode>(&_context);
+
+    // Register callbacks
+    _sdl_joystick_node->addCallbacks(_manual_control_node->getCallback(),
+                                     _manual_control_node->getOnConnect(),
+                                     _manual_control_node->getOnDisconnect());
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());

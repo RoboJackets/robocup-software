@@ -33,6 +33,8 @@ struct SDLGUID {
         return ss.str();
     }
 
+    bool operator==(const SDLGUID& other) const { return data == other.data; }
+
     friend std::ostream& operator<<(std::ostream& stream, const SDLGUID& guid) {
         stream << guid.toString();
         return stream;
