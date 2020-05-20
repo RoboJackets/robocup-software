@@ -11,6 +11,12 @@ using GamepadCallbackFn = std::function<void(const GamepadMessage&)>;
 using GamepadConnectedFn = std::function<void(int unique_id)>;
 using GamepadDisconnectedFn = std::function<void(int unique_id)>;
 
+static constexpr auto DribbleStepTime = RJ::Seconds(0.125);
+static constexpr auto KickerStepTime = RJ::Seconds(0.125);
+
+static constexpr float AXIS_MAX = 32768.0f;
+static constexpr float TRIGGER_CUTOFF = 0.9;
+
 /**
  * A node that receives joystick::GamepadMessage and converts that to
  * RobotIntent.
@@ -31,10 +37,19 @@ public:
      */
     void applyControlsToRobots(std::vector<OurRobot*>* robots);
 
-    inline void setManualID(int manual_id) { manual_id_ = manual_id; }
-
+    /**
+     * @return std::function for the callback
+     */
     GamepadCallbackFn getCallback();
+
+    /**
+     * @return std::function for onJoystickConnected
+     */
     GamepadConnectedFn getOnConnect();
+
+    /**
+     * @return std::function for onJoystickDisconnected
+     */
     GamepadDisconnectedFn getOnDisconnect();
 
 private:
@@ -42,7 +57,6 @@ private:
     void onJoystickConnected(int unique_id);
     void onJoystickDisconnected(int unique_id);
 
-    std::optional<int> manual_id_;
     std::vector<int> gamepad_stack_;
 
     struct ManualControls {
@@ -56,7 +70,12 @@ private:
         bool chip;
     };
 
-    ManualControls manual_controls_;
     Context* context_;
+
+    ManualControls controls_;
+
+    // And then random state needed for the control logic
+    RJ::Time last_dribbler_time_;
+    RJ::Time last_kicker_time_;
 };
 }  // namespace joystick

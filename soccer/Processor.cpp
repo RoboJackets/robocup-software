@@ -391,15 +391,6 @@ void Processor::run() {
                                             "Global Obstacles");
         }
 
-        // TODO(Kyle, Collin): This is a horrible hack to get around the fact
-        // that joystick code only (sort of) supports one joystick at a time.
-        // Figure out which robots are manual controlled.
-        for (OurRobot* robot : _context.state.self) {
-            robot->setJoystickControlled(
-                robot->shell() ==
-                _context.game_settings.joystick_config.manualID);
-        }
-
         _motionControl->run();
         _grSimCom->run();
         // Run all nodes in sequence
@@ -494,6 +485,7 @@ void Processor::run() {
 
         // Send motion commands to the robots
         sendRadioData();
+        _manual_control_node->applyControlsToRobots(&_context.state.self);
 
         // Write to the log unless we are viewing logs or main window is paused
         if (_readLogFile.empty() && !_context.game_settings.paused) {
@@ -543,97 +535,12 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _context.state.self) {
         RobotIntent& intent = _context.robot_intents[r->shell()];
-        if (_context.game_settings.joystick_config.manualID == r->shell()) {
-            intent.is_active = true;
-            auto controlValues = getJoystickControlValues();
-            if (!controlValues.empty()) {
-                applyJoystickControls(controlValues[0], r);
-            }
-        } else if (r->visible()) {
+        if (r->visible()) {
             intent.is_active = true;
         } else {
             intent.is_active = false;
         }
     }
-}
-
-void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
-                                      OurRobot* robot) {
-    Geometry2d::Point translation(controlVals.translation);
-
-    // use world coordinates if we can see the robot
-    // otherwise default to body coordinates
-    if (robot != nullptr && robot->visible() &&
-        _context.game_settings.joystick_config.useFieldOrientedDrive) {
-        translation.rotate(-M_PI / 2 - robot->angle());
-    }
-    RobotIntent& intent = _context.robot_intents[robot->shell()];
-    MotionSetpoint& setpoint = _context.motion_setpoints[robot->shell()];
-    // translation
-    setpoint.xvelocity = translation.x();
-    setpoint.yvelocity = translation.y();
-
-    // rotation
-    setpoint.avelocity = controlVals.rotation;
-
-    // kick/chip
-    bool kick = controlVals.kick || controlVals.chip;
-    intent.trigger_mode =
-        (kick ? (_context.game_settings.joystick_config.useKickOnBreakBeam
-                     ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                     : RobotIntent::TriggerMode::IMMEDIATE)
-              : RobotIntent::TriggerMode::STAND_DOWN);
-    intent.kcstrength = static_cast<int>(controlVals.kickPower);
-    intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
-                                          : RobotIntent::ShootMode::CHIP);
-
-    // dribbler
-    intent.dvelocity =
-        static_cast<float>(controlVals.dribble ? controlVals.dribblerPower : 0);
-}
-
-JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
-    JoystickControlValues vals = joy.getJoystickControlValues();
-    if (joy.valid()) {
-        // keep it in range
-        vals.translation.clamp(sqrt(2.0));
-        if (vals.rotation > 1) {
-            vals.rotation = 1;
-        }
-        if (vals.rotation < -1) {
-            vals.rotation = -1;
-        }
-
-        // Gets values from the configured joystick control
-        // values,respecting damped
-        // state
-        if (_context.game_settings.joystick_config.dampedTranslation) {
-            vals.translation *=
-                Joystick::JoystickTranslationMaxDampedSpeed->value();
-        } else {
-            vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
-        }
-        if (_context.game_settings.joystick_config.dampedRotation) {
-            vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
-        } else {
-            vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();
-        }
-
-        // scale up kicker and dribbler speeds
-        vals.dribblerPower *= Max_Dribble;
-        vals.kickPower *= Max_Kick;
-    }
-    return vals;
-}
-
-std::vector<JoystickControlValues> Processor::getJoystickControlValues() {
-    std::vector<JoystickControlValues> vals;
-    for (Joystick* joy : _joysticks) {
-        if (joy->valid()) {
-            vals.push_back(getJoystickControlValue(*joy));
-        }
-    }
-    return vals;
 }
 
 void Processor::recalculateWorldToTeamTransform() {
