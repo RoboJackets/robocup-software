@@ -74,13 +74,6 @@ public:
 
     void stop();
 
-    bool joystickValid() const;
-
-    JoystickControlValues getJoystickControlValue(Joystick& joy);
-    std::vector<JoystickControlValues> getJoystickControlValues();
-
-    void setupJoysticks();
-
     std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
         return _gameplayModule;
     }
@@ -122,10 +115,6 @@ public:
     Context* context() { return &_context; }
 
     void run();
-
-protected:
-    void applyJoystickControls(const JoystickControlValues& controlVals,
-                               OurRobot* robot);
 
 private:
     // Configuration for the robot.
@@ -194,9 +183,6 @@ private:
 
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
-
-    // joystick control
-    std::vector<Joystick*> _joysticks;
 
     bool _initialized;
 };

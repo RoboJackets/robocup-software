@@ -33,6 +33,8 @@ struct Context {
     std::array<RobotConstraints, Num_Shells> robot_constraints;
 
     std::array<bool, Num_Shells> is_joystick_controlled;
+    /** \brief Whether at least one joystick is connected */
+    bool joystick_valid;
 
     std::unique_ptr<RobotConfig> robot_config;
 

@@ -1,6 +1,13 @@
 #include "ManualControlNode.hpp"
 
 namespace joystick {
+REGISTER_CONFIGURABLE(ManualControlNode);
+
+ConfigDouble* ManualControlNode::JoystickRotationMaxSpeed;
+ConfigDouble* ManualControlNode::JoystickRotationMaxDampedSpeed;
+ConfigDouble* ManualControlNode::JoystickTranslationMaxSpeed;
+ConfigDouble* ManualControlNode::JoystickTranslationMaxDampedSpeed;
+
 ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
 
 void ManualControlNode::applyControlsToRobots(std::vector<OurRobot*>* robots) {
@@ -140,10 +147,11 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
     controls_.kick = msg.buttons.right_shoulder;
 
     // Chip
-    controls_.chip = msg.triggers.right / AXIS_MAX > TRIGGER_CUTOFF;
+    controls_.chip =
+        static_cast<float>(msg.triggers.right) / AXIS_MAX > TRIGGER_CUTOFF;
 
     // Rotation Velocity
-    controls_.a_vel = -1 * msg.sticks.right.x / AXIS_MAX;
+    controls_.a_vel = -1.f * static_cast<float>(msg.sticks.right.x) / AXIS_MAX;
 
     // Translation Velocity
     float left_x = static_cast<float>(msg.sticks.left.x) / AXIS_MAX;
@@ -185,10 +193,46 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
 
     controls_.x_vel = trans_x;
     controls_.y_vel = trans_y;
+
+    applyControlModifiers();
+}
+
+void ManualControlNode::applyControlModifiers() {
+    Geometry2d::Point trans{controls_.x_vel, controls_.y_vel};
+    trans.clamp(std::sqrt(2.0));
+    controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
+
+    if (context_->game_settings.joystick_config.dampedTranslation) {
+        trans *= JoystickTranslationMaxDampedSpeed->value();
+    } else {
+        trans *= JoystickTranslationMaxSpeed->value();
+    }
+
+    if (context_->game_settings.joystick_config.dampedRotation) {
+        trans *= JoystickRotationMaxDampedSpeed->value();
+    } else {
+        trans *= JoystickRotationMaxSpeed->value();
+    }
+
+    // Scale up kicker and dribbler speeds
+    controls_.dribbler_power *= Max_Dribble;
+    controls_.kick_power *= Max_Kick;
+}
+
+void ManualControlNode::createConfiguration(Configuration* cfg) {
+    JoystickRotationMaxSpeed =  // NOLINT
+        new ConfigDouble(cfg, "Joystick/Max Rotation Speed", .5);
+    JoystickRotationMaxDampedSpeed =  // NOLINT
+        new ConfigDouble(cfg, "Joystick/Max Damped Rotation Speed", .25);
+    JoystickTranslationMaxSpeed =  // NOLINT
+        new ConfigDouble(cfg, "Joystick/Max Translation Speed", 3.0);
+    JoystickTranslationMaxDampedSpeed =  // NOLINT
+        new ConfigDouble(cfg, "Joystick/Max Damped Translation Speed", 1.0);
 }
 
 void ManualControlNode::onJoystickConnected(int unique_id) {
     gamepad_stack_.emplace_back(unique_id);
+    updateJoystickValid();
 }
 
 void ManualControlNode::onJoystickDisconnected(int unique_id) {
@@ -200,6 +244,12 @@ void ManualControlNode::onJoystickDisconnected(int unique_id) {
     gamepad_stack_.erase(std::remove_if(gamepad_stack_.begin(),
                                         gamepad_stack_.end(), is_instance),
                          gamepad_stack_.end());
+
+    updateJoystickValid();
+}
+
+void ManualControlNode::updateJoystickValid() const {
+    context_->joystick_valid = !gamepad_stack_.empty();
 }
 
 }  // namespace joystick

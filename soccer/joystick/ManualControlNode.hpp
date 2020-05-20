@@ -52,10 +52,22 @@ public:
      */
     GamepadDisconnectedFn getOnDisconnect();
 
+    static void createConfiguration(Configuration* cfg);
+
 private:
     void callback(const GamepadMessage& msg);
     void onJoystickConnected(int unique_id);
     void onJoystickDisconnected(int unique_id);
+
+    /**
+     * Updates the context_->joystick_valid
+     */
+    void updateJoystickValid() const;
+
+    /**
+     * Apply things like translation damping, rotation damping etc.
+     */
+    void applyControlModifiers();
 
     std::vector<int> gamepad_stack_;
 
@@ -72,7 +84,12 @@ private:
 
     Context* context_;
 
-    ManualControls controls_;
+    ManualControls controls_{};
+
+    static ConfigDouble* JoystickRotationMaxSpeed;
+    static ConfigDouble* JoystickRotationMaxDampedSpeed;
+    static ConfigDouble* JoystickTranslationMaxSpeed;
+    static ConfigDouble* JoystickTranslationMaxDampedSpeed;
 
     // And then random state needed for the control logic
     RJ::Time last_dribbler_time_;

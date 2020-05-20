@@ -10,8 +10,6 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <joystick/GamepadController.hpp>
-#include <joystick/Joystick.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 
@@ -60,8 +58,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _initialized = false;
     _radio = nullptr;
 
-    setupJoysticks();
-
     // Configuration-time variables.
     _context.robot_config = std::move(robot_config_init);
     for (int i = Num_Shells - 1; i >= 0; i--) {
@@ -108,10 +104,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 Processor::~Processor() {
     stop();
 
-    for (Joystick* joy : _joysticks) {
-        delete joy;
-    }
-
     // Put back configurables where we found them.
     // This is kind of a hack, but if we don't do that they get destructed
     // when Processor dies. That normally isn't a problem, but in unit tests,
@@ -127,29 +119,6 @@ void Processor::stop() {
     if (_running) {
         _running = false;
     }
-}
-
-void Processor::setupJoysticks() {
-    _joysticks.clear();
-
-    GamepadController::controllersInUse.clear();
-    GamepadController::joystickRemoved = -1;
-
-    for (int i = 0; i < Robots_Per_Team; i++) {
-        _joysticks.push_back(new GamepadController());
-    }
-
-    //_joysticks.push_back(new SpaceNavJoystick()); //Add this back when
-    // isValid() is working properly
-}
-
-bool Processor::joystickValid() const {
-    for (Joystick* joy : _joysticks) {
-        if (joy->valid()) {
-            return true;
-        }
-    }
-    return false;
 }
 
 void Processor::runModels() {
@@ -279,11 +248,6 @@ void Processor::run() {
         if (_radio) {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
-
-        for (Joystick* joystick : _joysticks) {
-            joystick->update();
-        }
-        GamepadController::joystickRemoved = -1;
 
         runModels();
 
