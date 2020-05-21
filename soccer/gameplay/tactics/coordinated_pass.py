@@ -136,11 +136,9 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             Behavior.State.completed, 'pass received!')
 
         self.add_transition(
-            CoordinatedPass.State.receiving,
-            behavior.Behavior.State.failed, lambda: not self.
-            ball_heading_to_receive_point() or self.subbehavior_with_name(
-                'receiver').state == behavior.Behavior.State.failed,
-            'pass failed :(')
+            CoordinatedPass.State.receiving, behavior.Behavior.State.failed, 
+            lambda: self.subbehavior_with_name('receiver').state == behavior.
+            Behavior.State.failed, 'pass failed :(')
 
     ## Handles restarting this behaivor.
     # Since we save a few sub-behaviors, we need to restart those when we restart.
