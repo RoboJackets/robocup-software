@@ -82,14 +82,9 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
     // Joystick
-    _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>();
+    _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
     _manual_control_node =
         std::make_unique<joystick::ManualControlNode>(&_context);
-
-    // Register callbacks
-    _sdl_joystick_node->addCallbacks(_manual_control_node->getCallback(),
-                                     _manual_control_node->getOnConnect(),
-                                     _manual_control_node->getOnDisconnect());
 
     if (!readLogFile.empty()) {
         _logger.readFrames(readLogFile.c_str());
@@ -227,6 +222,7 @@ void Processor::run() {
         ////////////////
         // Inputs
         _sdl_joystick_node->run();
+        _manual_control_node->run();
 
         updateOrientation();
 
@@ -447,8 +443,10 @@ void Processor::run() {
         ////////////////
         // Outputs
 
-        // Send motion commands to the robots
-        sendRadioData();
+        if (_context.game_state.halt()) {
+            stopRobots();
+        }
+        updateIntentActive();
         _manual_control_node->run();
 
         // Write to the log unless we are viewing logs or main window is paused
@@ -477,33 +475,26 @@ void Processor::run() {
     }
 }
 
-void Processor::sendRadioData() {
-    // Halt overrides normal motion control, but not joystick
-    if (_context.game_state.halt()) {
-        // Force all motor speeds to zero
-        for (OurRobot* r : _context.state.self) {
-            RobotIntent& intent = _context.robot_intents[r->shell()];
-            MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
-            setpoint.xvelocity = 0;
-            setpoint.yvelocity = 0;
-            setpoint.avelocity = 0;
-            intent.dvelocity = 0;
-            intent.kcstrength = 0;
-            intent.shoot_mode = RobotIntent::ShootMode::KICK;
-            intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
-            intent.song = RobotIntent::Song::STOP;
-        }
-    }
-
-    // TODO(Kyle): Reimplement multiple manual code
-    // Add RadioTx commands for visible robots and apply joystick input
+void Processor::stopRobots() {
     for (OurRobot* r : _context.state.self) {
         RobotIntent& intent = _context.robot_intents[r->shell()];
-        if (r->visible()) {
-            intent.is_active = true;
-        } else {
-            intent.is_active = false;
-        }
+        MotionSetpoint& setpoint = _context.motion_setpoints[r->shell()];
+
+        setpoint.clear();
+        intent.dvelocity = 0;
+        intent.kcstrength = 0;
+        intent.shoot_mode = RobotIntent::ShootMode::KICK;
+        intent.trigger_mode = RobotIntent::TriggerMode::STAND_DOWN;
+        intent.song = RobotIntent::Song::STOP;
+    }
+}
+
+void Processor::updateIntentActive() {
+    // Intent is active if it's being joystick controlled, or
+    // if it's visible.
+    for (OurRobot* r : _context.state.self) {
+        RobotIntent& intent = _context.robot_intents[r->shell()];
+        intent.is_active = r->isJoystickControlled() || r->visible();
     }
 }
 

@@ -11,6 +11,14 @@ ConfigDouble* ManualControlNode::JoystickTranslationMaxDampedSpeed;
 ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
 
 void ManualControlNode::run() {
+    // Update list of connected gamepads
+    updateGamepadList();
+
+    // "Manually" call the fake callback on the data in context_
+    for (const auto& msg : context_->gamepad_messages) {
+        callback(msg);
+    }
+
     const auto robots = context_->state.self;
     // Set all robots to not be joystick controlled
     for (OurRobot* robot : robots) {
@@ -36,9 +44,14 @@ void ManualControlNode::run() {
     }
 
     OurRobot* robot = *it;
-    int shell = robot->shell();
 
     robot->setJoystickControlled(true);
+
+    updateIntentAndSetpoint(robot);
+}
+
+void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
+    int shell = robot->shell();
 
     // Modify robot->setpoint and robot->intent
     RobotIntent& intent = context_->robot_intents[shell];
@@ -81,16 +94,9 @@ void ManualControlNode::run() {
     intent.dvelocity = controls_.dribble ? controls_.dribbler_power : 0;
 }
 
-GamepadCallbackFn ManualControlNode::getCallback() {
-    return [this](const GamepadMessage& msg) { callback(msg); };
-}
-
-GamepadConnectedFn ManualControlNode::getOnConnect() {
-    return [this](int unique_id) { onJoystickConnected(unique_id); };
-}
-
-GamepadDisconnectedFn ManualControlNode::getOnDisconnect() {
-    return [this](int unique_id) { onJoystickDisconnected(unique_id); };
+void ManualControlNode::updateGamepadList() {
+    gamepad_stack_ = context_->gamepad_stack;
+    updateJoystickValid();
 }
 
 void ManualControlNode::callback(const GamepadMessage& msg) {
@@ -234,26 +240,7 @@ void ManualControlNode::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "Joystick/Max Damped Translation Speed", 1.0);
 }
 
-void ManualControlNode::onJoystickConnected(int unique_id) {
-    gamepad_stack_.emplace_back(unique_id);
-    updateJoystickValid();
-}
-
-void ManualControlNode::onJoystickDisconnected(int unique_id) {
-    const auto is_instance = [unique_id](int other) -> bool {
-        return unique_id == other;
-    };
-
-    // Remove it from the stack
-    gamepad_stack_.erase(std::remove_if(gamepad_stack_.begin(),
-                                        gamepad_stack_.end(), is_instance),
-                         gamepad_stack_.end());
-
-    updateJoystickValid();
-}
-
 void ManualControlNode::updateJoystickValid() const {
     context_->joystick_valid = !gamepad_stack_.empty();
 }
-
 }  // namespace joystick

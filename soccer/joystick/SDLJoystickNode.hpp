@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 
+#include <Context.hpp>
 #include <Node.hpp>
 #include <functional>
 #include <joystick/GamepadMessage.hpp>
@@ -19,7 +20,7 @@ public:
     /**
      * Initializes SDL
      */
-    SDLJoystickNode();
+    SDLJoystickNode(Context* context);
 
     /**
      * Cleans up SDL
@@ -60,15 +61,16 @@ private:
     void queryAndUpdateGamepadList();
 
     /**
-     * Get the updated states for each gamepad we have
-     */
-    void callCallbacks();
-
-    /**
      * Add a joystick with the specified device id
      * @param device_index
      */
     void addJoystick(int device_index);
+
+    /**
+     * Calls update on each gamepad and puts all
+     * messages into a vector (for now this lives in context)
+     */
+    void updateGamepadMessages();
 
     /**
      * Remove a joystick with the specified instance_id
@@ -76,16 +78,10 @@ private:
      */
     void removeJoystick(int instance_id);
 
-    void callDisconnectFns(int unique_id) const;
-    void callConnectFns(int unique_id) const;
-
     [[nodiscard]] std::optional<std::reference_wrapper<const SDLGamepad>>
     getGamepadByInstanceID(int instance_id) const;
 
     std::vector<std::unique_ptr<SDLGamepad>> gamepads_;
-
-    std::vector<GamepadCallbackFn> callback_fns_;
-    std::vector<GamepadConnectedFn> on_connected_fns_;
-    std::vector<GamepadDisconnectedFn> on_disconnected_fns_;
+    Context* context_;
 };
 }  // namespace joystick

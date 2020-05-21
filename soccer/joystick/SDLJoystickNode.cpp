@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace joystick {
-SDLJoystickNode::SDLJoystickNode() {
+SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
         std::cerr
@@ -44,7 +44,7 @@ void SDLJoystickNode::queryAndUpdateGamepadList() {
 
 void SDLJoystickNode::addJoystick(int device_index) {
     auto new_joystick = std::make_unique<SDLGamepad>(device_index);
-    callConnectFns(new_joystick->unique_id);
+    context_->gamepad_stack.emplace_back(new_joystick->unique_id);
     gamepads_.emplace_back(std::move(new_joystick));
 }
 
@@ -57,8 +57,14 @@ void SDLJoystickNode::removeJoystick(int instance_id) {
     std::optional<std::reference_wrapper<const SDLGamepad>> gamepad;
     gamepad = getGamepadByInstanceID(instance_id);
     if (gamepad) {
-        callDisconnectFns(gamepad->get().unique_id);
+        const int unique_id = gamepad->get().unique_id;
+        // Remove gamepad from context gamepad_stack
+        std::vector<int>& gamepad_stack = context_->gamepad_stack;
+        gamepad_stack.erase(
+            std::remove(gamepad_stack.begin(), gamepad_stack.end(), unique_id),
+            gamepad_stack.end());
 
+        // Remove own list
         gamepads_.erase(
             std::remove_if(gamepads_.begin(), gamepads_.end(), is_instance),
             gamepads_.end());
@@ -82,36 +88,15 @@ SDLJoystickNode::getGamepadByInstanceID(int instance_id) const {
     return std::cref(**it);
 }
 
-void SDLJoystickNode::addCallbacks(
-    const GamepadCallbackFn& callback, const GamepadConnectedFn& on_connected,
-    const GamepadDisconnectedFn& on_disconnected) {
-    callback_fns_.emplace_back(callback);
-    on_connected_fns_.emplace_back(on_connected);
-    on_disconnected_fns_.emplace_back(on_disconnected);
-}
-
-void SDLJoystickNode::callCallbacks() {
-    for (const auto& callback_fn : callback_fns_) {
-        for (auto& gamepad : gamepads_) {
-            callback_fn(gamepad->update());
-        }
-    }
-}
-
-void SDLJoystickNode::callDisconnectFns(int unique_id) const {
-    for (const auto& callback_fn : on_disconnected_fns_) {
-        callback_fn(unique_id);
-    }
-};
-
-void SDLJoystickNode::callConnectFns(int unique_id) const {
-    for (const auto& callback_fn : on_connected_fns_) {
-        callback_fn(unique_id);
+void SDLJoystickNode::updateGamepadMessages() {
+    context_->gamepad_messages.clear();
+    for (auto& gamepad : gamepads_) {
+        context_->gamepad_messages.emplace_back(gamepad->update());
     }
 }
 
 void SDLJoystickNode::run() {
     queryAndUpdateGamepadList();
-    callCallbacks();
+    updateGamepadMessages();
 }
 }  // namespace joystick

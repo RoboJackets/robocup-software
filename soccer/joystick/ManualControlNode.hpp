@@ -36,27 +36,26 @@ public:
      */
     void run() override;
 
-    /**
-     * @return std::function for the callback
-     */
-    GamepadCallbackFn getCallback();
-
-    /**
-     * @return std::function for onJoystickConnected
-     */
-    GamepadConnectedFn getOnConnect();
-
-    /**
-     * @return std::function for onJoystickDisconnected
-     */
-    GamepadDisconnectedFn getOnDisconnect();
-
     static void createConfiguration(Configuration* cfg);
 
 private:
+    /**
+     * Performs the logic for converting from a gamepad scheme
+     * to controls for a robot.
+     * @param msg
+     */
     void callback(const GamepadMessage& msg);
-    void onJoystickConnected(int unique_id);
-    void onJoystickDisconnected(int unique_id);
+
+    /**
+     * Updates the current list of gamepads.
+     */
+    void updateGamepadList();
+
+    /**
+     * Updates the intent and setpoint using controls_;
+     * @param robot
+     */
+    void updateIntentAndSetpoint(OurRobot* robot);
 
     /**
      * Updates the context_->joystick_valid

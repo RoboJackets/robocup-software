@@ -10,6 +10,11 @@
 #include "GamepadMessage.hpp"
 
 namespace joystick {
+/**
+ * \brief Struct that represents a libsdl SDL_JoystickGUID
+ *
+ * Mainly used for pretty printing and comparisons.
+ */
 struct SDLGUID {
     std::array<uint8_t, 16> data{};
 
@@ -41,6 +46,12 @@ struct SDLGUID {
     }
 };
 
+/**
+ * \brief RAII class for a libsdl gamepad
+ *
+ * Also creates a unique id for each unique gamepad so that we can
+ * easily handle reconnecting
+ */
 class SDLGamepad {
 public:
     SDLGamepad(int device_index);

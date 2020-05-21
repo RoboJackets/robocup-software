@@ -101,6 +101,11 @@ public:
 
     Radio* radio() { return _radio->getRadio(); }
 
+    /**
+     * Stops all robots by clearing their intents and setpoints
+     */
+    void stopRobots();
+
     void recalculateWorldToTeamTransform();
 
     void setFieldDimensions(const Field_Dimensions& dims);
@@ -124,8 +129,13 @@ private:
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;
 
-    /** send out the radio data for the radio program */
-    void sendRadioData();
+    /**
+     * Updates the intent.active for each robot.
+     *
+     * The intent is active if it's being joystick controlled or
+     * if it's visible
+     */
+    void updateIntentActive();
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
