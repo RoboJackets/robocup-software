@@ -178,11 +178,10 @@ private:
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<RadioNode> _radio;
     std::unique_ptr<GrSimCommunicator> _grSimCom;
-
-    std::vector<Node*> _nodes;
-
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
+
+    std::vector<Node*> _nodes;
 
     bool _initialized;
 };
