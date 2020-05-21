@@ -8,10 +8,6 @@
 #include <unordered_map>
 
 namespace joystick {
-using GamepadCallbackFn = std::function<void(const GamepadMessage&)>;
-using GamepadConnectedFn = std::function<void(int unique_id)>;
-using GamepadDisconnectedFn = std::function<void(int unique_id)>;
-
 static constexpr auto DribbleStepTime = RJ::Seconds(0.125);
 static constexpr auto KickerStepTime = RJ::Seconds(0.125);
 
