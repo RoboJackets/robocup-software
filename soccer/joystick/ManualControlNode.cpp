@@ -10,9 +10,10 @@ ConfigDouble* ManualControlNode::JoystickTranslationMaxDampedSpeed;
 
 ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
 
-void ManualControlNode::applyControlsToRobots(std::vector<OurRobot*>* robots) {
+void ManualControlNode::run() {
+    const auto robots = context_->state.self;
     // Set all robots to not be joystick controlled
-    for (OurRobot* robot : *robots) {
+    for (OurRobot* robot : robots) {
         robot->setJoystickControlled(false);
     }
 
@@ -27,10 +28,10 @@ void ManualControlNode::applyControlsToRobots(std::vector<OurRobot*>* robots) {
     const auto pred = [manual_id](const OurRobot* r) {
         return r->shell() == manual_id;
     };
-    const auto it = std::find_if(robots->begin(), robots->end(), pred);
+    const auto it = std::find_if(robots.begin(), robots.end(), pred);
 
     // Return if we can't find the robot we're supposed to control
-    if (it == robots->end()) {
+    if (it == robots.end()) {
         return;
     }
 

@@ -449,7 +449,7 @@ void Processor::run() {
 
         // Send motion commands to the robots
         sendRadioData();
-        _manual_control_node->applyControlsToRobots(&_context.state.self);
+        _manual_control_node->run();
 
         // Write to the log unless we are viewing logs or main window is paused
         if (_readLogFile.empty() && !_context.game_settings.paused) {

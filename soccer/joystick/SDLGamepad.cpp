@@ -21,13 +21,10 @@ SDLGamepad::SDLGamepad(int device_index) {
     unique_id = SDLGamepad::getUniqueID(guid);
 
     state_.unique_id = unique_id;
-
-    std::cout << "[DEBUG] Connecting " << *this << std::endl;
 }
 
 SDLGamepad::~SDLGamepad() {
     if (controller_ != nullptr) {
-        std::cout << "[DEBUG] Disconnecting " << *this << std::endl;
         SDL_GameControllerClose(controller_);
         controller_ = nullptr;
     }

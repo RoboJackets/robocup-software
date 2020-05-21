@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Node.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <functional>
@@ -25,17 +26,15 @@ static constexpr float TRIGGER_CUTOFF = 0.9;
  * joysticks) it maintains a stack of which gamepad connected first,
  * and uses the oldest connected gamepad.
  */
-class ManualControlNode {
+class ManualControlNode : Node {
 public:
     ManualControlNode(Context* context);
 
     /**
-     * Perform manual control things to the robots passed in by
+     * Perform manual control things to our robots by
      * modifying intent and setpoint.
-     *
-     * @param robots
      */
-    void applyControlsToRobots(std::vector<OurRobot*>* robots);
+    void run() override;
 
     /**
      * @return std::function for the callback
