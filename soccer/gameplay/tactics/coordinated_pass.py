@@ -55,7 +55,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  prekick_timeout=None,
                  receiver_required=True,
                  kicker_required=True,
-                 use_chipper=False):
+                 use_chipper=False,
+                 heuristic=None):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -76,6 +77,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.prekick_timeout = prekick_timeout
         self.receiver_required = receiver_required
         self.kicker_required = kicker_required
+        self.heuristic = heuristic
 
         self.add_state(CoordinatedPass.State.preparing,
                        behavior.Behavior.State.running)
@@ -165,6 +167,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 'receiver').receive_point = self.receive_point
 
     def on_enter_running(self):
+        if self.heuristic != None:
+            self.receive_point = self.heuristic.calc_pass_point()
         kicker = self.skillkicker[0]
         kicker.target = self.receive_point
         kickpower = (main.ball().pos - self.receive_point).mag() / 17
@@ -200,24 +204,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
-
-    ## Funciton to find if ball is moving towards receive point
-    def ball_heading_to_receive_point(self):
-        ball_velocity = main.ball().vel
-        if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
-            ball_velocity_unit = ball_velocity.normalized()
-            path_vector = main.ball().pos - self.receive_point
-            path_unit = path_vector.normalized()
-            cross_product_mag = abs(ball_velocity_unit.x * path_unit.y -
-                                    ball_velocity_unit.y * path_unit.x)
-            distance = path_vector.mag()
-            if distance < self.TOO_CLOSE_TO_FAIL_DISTANCE:
-                return True  # If the ball is already close to the receive point but not heading towards it, dont fail
-            if (distance > self.FAR_DISTANCE and cross_product_mag > self.STRICT_CROSS_THRESHOLD)\
-               or (distance < self.FAR_DISTANCE and cross_product_mag > self.RELAXED_CROSS_THRESHOLD)\
-               or ball_velocity.mag() < self.BALL_STOPPED_SPEED:
-                return False  # If ball is too off course or too slow, fail the pass
-        return True
 
     ## Funciton that decides if an opponent robot is in the way of passing
     # Get ignored if we are chipping
