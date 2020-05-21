@@ -8,3 +8,4 @@ pylint # static checker for python
 mypy # static arugment checker
 
 yapf # python checker
+typing-extensions # For TypedDict
