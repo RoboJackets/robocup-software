@@ -177,12 +177,11 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
-    auto processor =
-        std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam, readLogFile);
+    auto processor = std::make_unique<Processor>(sim, defendPlus, visionChannel,
+                                                 blueTeam, readLogFile);
     processor->refereeModule()->useExternalReferee(!noref);
 
     Context* context = processor->context();
-
 
     // Load config file
     QString error;

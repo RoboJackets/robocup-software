@@ -37,8 +37,7 @@ public:
      */
     bool addRecord(RJ::Time calcTime, WorldBall ball,
                    std::vector<WorldRobot> yellowRobots,
-                   std::vector<WorldRobot> blueRobots,
-                   KickEvent& kickEvent);
+                   std::vector<WorldRobot> blueRobots, KickEvent& kickEvent);
 
     static void createConfiguration(Configuration* cfg);
 

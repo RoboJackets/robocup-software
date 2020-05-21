@@ -27,18 +27,18 @@ bool Rect::intersects(const Rect& other) const {
 
 int Rect::CohenSutherlandOutCode(const Point& other) const{
     int code;
-    double x,y;
+    double x, y;
     x = other.x();
     y = other.y();
 
     code = INSIDE;          // initialised as being inside of [[clip window]]
-    if (x < minx())           // to the left of clip window
+    if (x < minx())         // to the left of clip window
         code |= LEFT;
-    else if (x > maxx())      // to the right of clip window
+    else if (x > maxx())  // to the right of clip window
         code |= RIGHT;
-    if (y < miny())           // below the clip window
+    if (y < miny())  // below the clip window
         code |= BOTTOM;
-    else if (y > maxy())      // above the clip window
+    else if (y > maxy())  // above the clip window
         code |= TOP;
 
     return code;
@@ -83,21 +83,23 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
             //   y = y0 + slope * (xm - x0), where xm is xmin or xmax
             // No need to worry about divide-by-zero because, in each case, the
             // outcode bit being tested guarantees the denominator is non-zero
-      
+
             if (outcodeOut & TOP) {  // point is above the clip window
                 x = x0 + (x1 - x0) * (maxy() - y0) / (y1 - y0);
                 y = maxy();
-            } else if (outcodeOut & BOTTOM) { // point is below the clip window
+            } else if (outcodeOut & BOTTOM) {  // point is below the clip window
                 x = x0 + (x1 - x0) * (miny() - y0) / (y1 - y0);
                 y = miny();
-            } else if (outcodeOut & RIGHT) {  // point is to the right of clip window
+            } else if (outcodeOut &
+                       RIGHT) {  // point is to the right of clip window
                 y = y0 + (y1 - y0) * (maxx() - x0) / (x1 - x0);
                 x = maxx();
-            } else if (outcodeOut & LEFT) {   // point is to the left of clip window
+            } else if (outcodeOut &
+                       LEFT) {  // point is to the left of clip window
                 y = y0 + (y1 - y0) * (minx() - x0) / (x1 - x0);
                 x = minx();
             }
-            
+
             // Now we move outside point to intersection point to clip
             // and get ready for next pass.
             if (outcodeOut == outcode0) {
@@ -105,8 +107,8 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
                 y0 = y;
                 Point pt = Point(x0, y0);
                 outcode0 = CohenSutherlandOutCode(pt);
-                //Save point iff it is inside the Rect
-                if (outcode0==INSIDE){
+                // Save point iff it is inside the Rect
+                if (outcode0 == INSIDE) {
                     intersectionPoints.push_back(pt);
                 }
             } else {
@@ -114,8 +116,8 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
                 y1 = y;
                 Point pt = Point(x1, y1);
                 outcode1 = CohenSutherlandOutCode(pt);
-                //Save point iff it is inside the Rect
-                if (outcode1==INSIDE){
+                // Save point iff it is inside the Rect
+                if (outcode1 == INSIDE) {
                     intersectionPoints.push_back(pt);
                 }
             }

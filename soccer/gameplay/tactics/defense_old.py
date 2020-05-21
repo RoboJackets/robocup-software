@@ -45,14 +45,14 @@ class DefenseOld(composite_behavior.CompositeBehavior):
         self.add_transition(behavior.Behavior.State.start,
                             DefenseOld.State.defending, lambda: True,
                             "immediately")
-        self.add_transition(
-            DefenseOld.State.defending,
-            DefenseOld.State.clearing, lambda: self.should_clear_ball(),
-            "when it is safe to clear the ball")
-        self.add_transition(
-            DefenseOld.State.clearing,
-            DefenseOld.State.defending, lambda: not self.should_clear_ball(),
-            "done clearing")
+        self.add_transition(DefenseOld.State.defending,
+                            DefenseOld.State.clearing,
+                            lambda: self.should_clear_ball(),
+                            "when it is safe to clear the ball")
+        self.add_transition(DefenseOld.State.clearing,
+                            DefenseOld.State.defending,
+                            lambda: not self.should_clear_ball(),
+                            "done clearing")
 
         goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -61,11 +61,10 @@ class DefenseOld(composite_behavior.CompositeBehavior):
         # add defenders at the specified priority levels
         for num, priority in enumerate(defender_priorities):
             defender = submissive_defender.SubmissiveDefender()
-            self.add_subbehavior(
-                defender,
-                'defender' + str(num + 1),
-                required=False,
-                priority=priority)
+            self.add_subbehavior(defender,
+                                 'defender' + str(num + 1),
+                                 required=False,
+                                 priority=priority)
 
         self.debug = True
 
@@ -103,9 +102,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                     their_max_vel = max(max_vel, robot.vel.mag())
 
                 #calculate time for the closest opponent to reach ball based on current /vel/pos data * .9 for safety
-                their_time_to_ball = (
-                    their_dist_to_ball /
-                    their_max_vel) * defender1.safety_multiplier
+                their_time_to_ball = (their_dist_to_ball / their_max_vel
+                                      ) * defender1.safety_multiplier
 
                 if their_time_to_ball > evaluation.ball.time_to_ball(
                         defender1.robot
@@ -248,8 +246,9 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             angle_widths = []
             for handler in threat.assigned_handlers:
                 dist_from_threat = handler.robot.pos.dist_to(threat.pos)
-                w = min(2.0 * math.atan2(constants.Robot.Radius,
-                                         dist_from_threat), 0.15)
+                w = min(
+                    2.0 * math.atan2(constants.Robot.Radius, dist_from_threat),
+                    0.15)
                 angle_widths.append(w)
 
             # start on one edge of our available angle coverage and work counter-clockwise,
@@ -257,8 +256,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
             spacing = 0.01 if len(
                 threat.assigned_handlers
             ) < 3 else 0.0  # spacing between each bot in radians
-            total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1
-                                                        ) * spacing
+            total_angle_coverage = sum(angle_widths) + (len(angle_widths) -
+                                                        1) * spacing
             start_vec = center_line.delta().normalized()
             start_vec.rotate(robocup.Point(0, 0), -total_angle_coverage / 2.0)
             for i in range(len(angle_widths)):
@@ -325,8 +324,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                 potential_receivers = []
                 for opp in potential_threats:
                     # see if the bot is in the direction the ball is moving
-                    if (opp.pos - ball_travel_line.get_pt(0)
-                        ).dot(ball_travel_line.delta()) > 0:
+                    if (opp.pos - ball_travel_line.get_pt(0)).dot(
+                            ball_travel_line.delta()) > 0:
                         # calculate the angle and add it to the list if it's within reason
                         nearest_pt = ball_travel_line.nearest_point(opp.pos)
                         dx = (nearest_pt - main.ball().pos).mag()
@@ -479,7 +478,8 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                 if threat.best_shot_window is not None:
                     # draw shot triangle
                     pts = [
-                        threat.pos, threat.best_shot_window.segment.get_pt(0),
+                        threat.pos,
+                        threat.best_shot_window.segment.get_pt(0),
                         threat.best_shot_window.segment.get_pt(1)
                     ]
                     shot_color = (255, 0, 0, 150)  # translucent red
@@ -506,13 +506,14 @@ class DefenseOld(composite_behavior.CompositeBehavior):
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)
-                    main.debug_drawer().draw_line(
-                        pass_line, constants.Colors.Red, "DefenseOld")
-                    main.debug_drawer().draw_text("Pass: " + str(
-                        int(threat.ball_acquire_chance * 100.0)) + "%",
-                                                  pass_line.center(),
-                                                  constants.Colors.White,
+                    main.debug_drawer().draw_line(pass_line,
+                                                  constants.Colors.Red,
                                                   "DefenseOld")
+                    main.debug_drawer().draw_text(
+                        "Pass: " +
+                        str(int(threat.ball_acquire_chance * 100.0)) + "%",
+                        pass_line.center(), constants.Colors.White,
+                        "DefenseOld")
 
     def role_requirements(self):
         reqs = super().role_requirements()

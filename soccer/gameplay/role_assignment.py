@@ -295,19 +295,19 @@ def assign_roles(robots, role_reqs):
                 cost = MaxWeight
                 fail_reason += "Robot {}: does not have ball\n".format(
                     robot.shell_id())
-            elif req.require_kicking and (
-                    robot.shell_id() == evaluation.double_touch.tracker()
-                    .forbidden_ball_toucher() or not robot.kicker_works() or
-                    not robot.ball_sense_works()):
+            elif req.require_kicking and (robot.shell_id(
+            ) == evaluation.double_touch.tracker().forbidden_ball_toucher()
+                                          or not robot.kicker_works()
+                                          or not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += (
                     "Robot {}: does not have a fully working kicking setup"
                     " (or double touched)\n"
                         .format(robot.shell_id()))
-            elif req.require_chipping and (
-                    robot.shell_id() == evaluation.double_touch.tracker()
-                    .forbidden_ball_toucher() or not robot.has_chipper() or
-                    not robot.ball_sense_works()):
+            elif req.require_chipping and (robot.shell_id(
+            ) == evaluation.double_touch.tracker().forbidden_ball_toucher()
+                                           or not robot.has_chipper()
+                                           or not robot.ball_sense_works()):
                 cost = MaxWeight
                 fail_reason += ("Robot {}: does not have a chipper"
                                 " (or double touched)\n"
@@ -316,7 +316,8 @@ def assign_roles(robots, role_reqs):
                 if req.prohibited_shell_id is not None and req.prohibited_shell_id == robot.shell_id():
                     cost = MaxWeight
                 if req.destination_shape is not None:
-                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(robot.pos)
+                    cost += req.position_cost_multiplier * req.destination_shape.dist_to(
+                        robot.pos)
                 if req.previous_shell_id is not None and req.previous_shell_id != robot.shell_id():
                     cost += req.robot_change_cost
                 if not robot.has_chipper():

@@ -17,7 +17,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     # @param autorestart function governing the behavior's restarting itself when its robot is switched. Defaults to true
     def __init__(self,
                  continuous=False,
-                 autorestart: Callable[[], bool]=lambda: True) -> None:
+                 autorestart: Callable[[], bool] = lambda: True) -> None:
         single_robot_behavior.SingleRobotBehavior.__init__(
             self, continuous=continuous)
         composite_behavior.CompositeBehavior.__init__(
@@ -39,8 +39,8 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     def add_subbehavior(self,
                         bhvr: behavior.Behavior,
                         name: str,
-                        required: bool=True,
-                        priority: Union[int, Callable[[], int]]=100):
+                        required: bool = True,
+                        priority: Union[int, Callable[[], int]] = 100):
         if self.has_subbehaviors():
             raise AssertionError(
                 "Attempt to add more than one subbehavior to SingleRobotCompositeBehavior"
@@ -83,9 +83,9 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         # middle of the behavior. For some plays, this means we shouild restart the whole
         # behavior for the new robot (autorestart = True). For others, it is more important to continue the new
         # robot where the old robot left off (autorestart = False).
-        if (oldBot is not None and self.robot is not None and
-                oldBot.shell_id() != self.robot.shell_id() and
-                self.autorestart()):
+        if (oldBot is not None and self.robot is not None
+                and oldBot.shell_id() != self.robot.shell_id()
+                and self.autorestart()):
             logging.info("SingleRobotCompositeBehavior: robot changed (" + str(
                 oldBot.shell_id()) + "->" + str(self.robot.shell_id()) +
                          "), restarting: " + type(self).__name__)

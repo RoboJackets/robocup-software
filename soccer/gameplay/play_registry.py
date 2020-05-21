@@ -47,8 +47,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             if node is not None:
                 node.enabled = True
             else:
-                logging.warn("Attempt to load non-existent play " + '/'.join(
-                    play) + " from playbook.")
+                logging.warn("Attempt to load non-existent play " +
+                             '/'.join(play) + " from playbook.")
 
     def delete(self, module_path):
         node = self.node_for_module_path(module_path)
@@ -70,8 +70,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             if node is not None:
                 node.enabled = False
             else:
-                logging.warn("Attempt to clear non-existent play " + '/'.join(
-                    play) + " from play registry.")
+                logging.warn("Attempt to clear non-existent play " +
+                             '/'.join(play) + " from play registry.")
 
     # cache and calculate the score() function for each play class
     def recalculate_scores(self):

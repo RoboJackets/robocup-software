@@ -1,13 +1,13 @@
 #include "ProtobufTree.hpp"
 #include "StripChart.hpp"
 
-#include <QMenu>
+#include <google/protobuf/descriptor.h>
+#include <stdio.h>
 #include <QContextMenuEvent>
 #include <QDockWidget>
 #include <QMainWindow>
+#include <QMenu>
 #include <QTimer>
-#include <stdio.h>
-#include <google/protobuf/descriptor.h>
 #include <iostream>
 
 using namespace std;

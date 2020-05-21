@@ -33,7 +33,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(Processor* processor, Context* context, QWidget* parent = nullptr);
+    MainWindow(Processor* processor, Context* context,
+               QWidget* parent = nullptr);
 
     void configuration(Configuration* config);
 
@@ -258,7 +259,8 @@ private:
 
     Context* _context;
 
-    GameSettings _settings_copy{true, true, true, true, -1, -1, false, 0, true, true, false, true, false};
+    GameSettings _settings_copy{true, true, true, true,  -1,   -1,   false,
+                                0,    true, true, false, true, false};
 
     // QActionGroups for Radio Menu Actions
     std::map<std::string, QActionGroup*> qActionGroups{};

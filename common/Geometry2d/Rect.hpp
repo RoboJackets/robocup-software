@@ -103,7 +103,6 @@ public:
     */
     std::vector<Point> corners();
 
-
     bool nearPoint(Point pt, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;
 

@@ -80,8 +80,8 @@ def init(log_errors=True):
         ]
 
         # Don't load if we aren't a special module or if the filename is hidden
-        if (module_path[0] in autoloadables and
-                not _module_blacklisted(module_path[-1])):
+        if (module_path[0] in autoloadables
+                and not _module_blacklisted(module_path[-1])):
             logging.info('.'.join(module_path) + " " + event_type)
 
             is_play = module_path[0] == 'plays'
@@ -287,7 +287,9 @@ def system_state():
     global _context
     return _context.state
 
+
 _our_robots = None
+
 
 def set_our_robots(robots):
     global _our_robots
@@ -298,7 +300,9 @@ def our_robots():
     global _our_robots
     return _our_robots
 
+
 _their_robots = None
+
 
 def set_their_robots(robots):
     global _their_robots

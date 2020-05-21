@@ -1,5 +1,5 @@
 // At RoboCup-SSL/ssl-vision 2a604f1
-syntax="proto2";
+syntax = "proto2";
 
 // A 2D float vector.
 message Vector2f {

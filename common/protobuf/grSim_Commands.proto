@@ -1,8 +1,7 @@
 syntax = "proto2";
 
 message grSim_Robot_Command {
-    enum TriggerMode
-    {
+    enum TriggerMode {
         STAND_DOWN = 0;
         IMMEDIATE = 1;
         ON_BREAK_BEAM = 2;
@@ -13,7 +12,7 @@ message grSim_Robot_Command {
     required float kickspeedz = 3;
     optional TriggerMode triggermode = 4;
     required float veltangent = 5;
-    required float velnormal  = 6;
+    required float velnormal = 6;
     required float velangular = 7;
     required bool spinner = 8;
     required bool wheelsspeed = 9;

@@ -10,7 +10,7 @@ import functools
 ## Finds the best location with a rectangle to pass the ball into
 #
 # By default, this is use the half of the field in front of the ball (Or the opponents half)
-# The best location is found by combining the pass chance by the 
+# The best location is found by combining the pass chance by the
 # openness, field position coefficients, and shot chance
 #
 # Example usage:
@@ -22,7 +22,7 @@ import functools
 # @param kick_point: Point where we are kicking from
 # @param ignore_robots: Robots to ignore
 # @param min_pass_dist: Minimum distance that we should ever pass
-# @param field_weights: A tuple of the 3 difference weights to apply to field position 
+# @param field_weights: A tuple of the 3 difference weights to apply to field position
 #               (Centerness, Distance to their goal, Angle off their goal)
 # @param weights: A tuple of the 4 different weights to apply to the evaulations overall
 #               (space, field_position, shot_chance, kick_proximty)
@@ -48,24 +48,23 @@ def eval_single_point(kick_point, ignore_robots, min_pass_dist, field_weights,
     # Check boundaries
     # Can be smoothed for a better solution
     robot_offset = constants.Robot.Radius * 6
-    if (receive_point.x - x_offset < w / -2 or
-            receive_point.x + x_offset > w / 2 or
-            receive_point.y - y_offset < 0 or
-            receive_point.y + y_offset > constants.Field.Length or
-            constants.Field.TheirGoalZoneShape.contains_point(
-                receive_point + robocup.Point(0, y_offset)
-                + robocup.Point(robot_offset, robot_offset)) or
-            constants.Field.TheirGoalZoneShape.contains_point(
-                receive_point + robocup.Point(0, y_offset)
-                - robocup.Point(robot_offset, robot_offset))):
+    if (receive_point.x - x_offset < w / -2
+            or receive_point.x + x_offset > w / 2
+            or receive_point.y - y_offset < 0
+            or receive_point.y + y_offset > constants.Field.Length
+            or constants.Field.TheirGoalZoneShape.contains_point(
+                receive_point + robocup.Point(0, y_offset) +
+                robocup.Point(robot_offset, robot_offset))
+            or constants.Field.TheirGoalZoneShape.contains_point(
+                receive_point + robocup.Point(0, y_offset) -
+                robocup.Point(robot_offset, robot_offset))):
         return 0
 
     # Check if we are too close to the ball
     if ((receive_point - kick_point).mag() < min_pass_dist):
         return 0
 
-    shotChance = evaluation.shooting.eval_shot(receive_point,
-                                                   ignore_robots)
+    shotChance = evaluation.shooting.eval_shot(receive_point, ignore_robots)
 
     passChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                               ignore_robots)
@@ -88,7 +87,7 @@ def eval_single_point(kick_point, ignore_robots, min_pass_dist, field_weights,
 #
 # @param kick_point: Point that we are passing from
 # @param ignore_robots: Robots to ignore when calculating scores
-# @param field_weights: A tuple of the 3 difference weights to apply to field position 
+# @param field_weights: A tuple of the 3 difference weights to apply to field position
 #               (Centerness, Distance to their goal, Angle off their goal)
 # @param nelder_mead_args: A tuple of the nelder mead optimization args
 #               (Starting point, Starting step, Exit condition, Reflection, Expansion,

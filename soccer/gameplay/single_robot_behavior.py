@@ -25,9 +25,8 @@ class SingleRobotBehavior(behavior.Behavior):
 
     # Waiting on https://github.com/PyCQA/pylint/issues/1452 to upgrade pylint
     # pylint: disable=invalid-sequence-index
-    def assign_roles(
-            self, assignments:
-        Tuple[role_assignment.RoleRequirements, robocup.OurRobot]):
+    def assign_roles(self, assignments: Tuple[role_assignment.RoleRequirements,
+                                              robocup.OurRobot]):
         if not isinstance(assignments, tuple) or len(assignments) > 2:
             raise AssertionError(
                 "Invalid call to assign_roles.  Expected a tuple")

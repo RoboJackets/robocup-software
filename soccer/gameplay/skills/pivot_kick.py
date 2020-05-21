@@ -136,7 +136,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             return False
 
         # Closest opp robot in any direction
-        # To us, not the ball   
+        # To us, not the ball
         closest_opp_robot = None
         closest_opp_dist = float("inf")
         for r in main.their_robots():

@@ -38,8 +38,8 @@ def get_points_from_rect(rect, step=0.5):
 
     while currenty <= rect.max_y():
         while currentx <= rect.max_x():
-            if constants.Field.OurGoalZoneShape.contains_point(robocup.Point(
-                    currentx, currenty)):
+            if constants.Field.OurGoalZoneShape.contains_point(
+                    robocup.Point(currentx, currenty)):
                 currentx += step
                 continue
 
@@ -127,7 +127,7 @@ def create_area_defense_zones(ignore_robots=[]):
     min_bucket_amnt = 0.25 * len(points[largest_bucket])
 
     # Move a max of X buckets in either direction
-    # where the number of buckets is > N and 
+    # where the number of buckets is > N and
     # the number of buckets is decreasing a certain amount
     # based on how far away it is
     bucket_list = []

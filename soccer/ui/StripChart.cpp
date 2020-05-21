@@ -1,19 +1,19 @@
 #include "StripChart.hpp"
 #include "time.hpp"
 
-#include <QPainter>
-#include <QFileDialog>
 #include <QDateTime>
+#include <QFileDialog>
+#include <QPainter>
 
-#include <stdio.h>
-#include <cmath>
-#include <algorithm>
 #include <protobuf/LogFrame.pb.h>
-#include <Geometry2d/Point.hpp>
+#include <stdio.h>
 #include <Constants.hpp>
-#include <time.hpp>
-#include <iostream>
+#include <Geometry2d/Point.hpp>
+#include <algorithm>
+#include <cmath>
 #include <fstream>
+#include <iostream>
+#include <time.hpp>
 
 #include <google/protobuf/descriptor.h>
 

@@ -5,9 +5,9 @@
 #include <QApplication>
 #include <QFile>
 
-#include <algorithm>
 #include <fcntl.h>
 #include <stdio.h>
+#include <algorithm>
 
 using namespace std;
 using namespace boost;

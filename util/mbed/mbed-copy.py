@@ -14,8 +14,8 @@ from subprocess import check_call
 
 # parse in the given file(s)
 parser = argparse.ArgumentParser(
-    description=
-    'copies one or more given files to all connected mbed devices.')
+    description='copies one or more given files to all connected mbed devices.'
+)
 parser.add_argument('files',
                     nargs='+',
                     help='files to move to all connected mbeds')
@@ -37,6 +37,7 @@ def sync_os():
             libc.sync()
     except:
         check_call(['sync'], shell=True)
+
 
 # only select the files that exist from what was given
 files = []
@@ -63,6 +64,7 @@ def find_mbed_disk(mbed):
         if mbed['target_id'] in path:
             return os.path.join(dirpath, path)
     return None
+
 
 # sort alphabetically by serial port
 mbeds.sort(key=lambda m: m['serial_port'])
@@ -92,8 +94,8 @@ for i in range(len(mbeds)):
         check_call(['mount', find_mbed_disk(mbed), mount_point])
 
     for f in files:
-        print("Copying '{}' to '{}'...".format(
-            os.path.basename(f), mount_point))
+        print("Copying '{}' to '{}'...".format(os.path.basename(f),
+                                               mount_point))
         shutil.copy2(f, mount_point)
         sync_os()
 
@@ -111,5 +113,6 @@ for i in range(len(mbeds)):
         ss.sendBreak()
     except serial.serialutil.SerialException as exc:
         print(
-            "Unable to open MBED serial port.  Are you already connected to it via the 'screen' program?")
+            "Unable to open MBED serial port.  Are you already connected to it via the 'screen' program?"
+        )
         sys.exit(1)

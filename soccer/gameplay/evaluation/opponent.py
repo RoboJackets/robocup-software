@@ -70,7 +70,7 @@ def get_closest_opponent(pos, direction_weight=0, excluded_robots=[]):
 
 ## Gets list of threats
 #
-# @return sorted tuple of threat positions and score 
+# @return sorted tuple of threat positions and score
 def get_threat_list(unused_threat_handlers):
     import evaluation.ball as ball_eval
     kick_eval = robocup.KickEvaluator(main.system_state())
@@ -148,7 +148,7 @@ def get_threat_list(unused_threat_handlers):
 
 
 ## Estimate potential reciever score (likelihood of opponent passing to this robot)
-#  
+#
 #  @param bot Robot to estimate score at
 #  @return The potential receiver score at that point
 def estimate_potential_recievers_score(bot):
@@ -171,7 +171,7 @@ def estimate_potential_recievers_score(bot):
 
 
 ## Estimate risk score based on old defense.py play
-#  
+#
 #  @param bot Robot to estimate score at
 #  @param exluded_Bots Robots to exclude from the defense when calculating shot
 #  @return The risk score at that point (Shot chance * pass chance)

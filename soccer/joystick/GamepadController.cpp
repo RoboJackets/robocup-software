@@ -9,7 +9,7 @@ constexpr auto Kicker_Step_Time = RJ::Seconds(0.125);
 const float AXIS_MAX = 32768.0f;
 // cutoff for counting triggers as 'on'
 const float TRIGGER_CUTOFF = 0.9;
-}
+}  // namespace
 
 std::vector<int> GamepadController::controllersInUse = {};
 int GamepadController::joystickRemoved = -1;
@@ -97,7 +97,8 @@ void GamepadController::closeJoystick() {
 
     // Clear events from queue
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {}
+    while (SDL_PollEvent(&event)) {
+    }
 }
 
 bool GamepadController::valid() const { return connected; }

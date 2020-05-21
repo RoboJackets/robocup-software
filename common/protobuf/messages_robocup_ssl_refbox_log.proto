@@ -1,4 +1,4 @@
-syntax="proto2";
+syntax = "proto2";
 import "messages_robocup_ssl_detection.proto";
 
 message Log_Frame

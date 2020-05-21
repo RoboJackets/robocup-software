@@ -58,8 +58,8 @@ def get_segments_from_rect(rect, threshold=0.75):
     while currentx <= rect.max_x():
         currenty = rect.max_y()
         # Don't include goal area.
-        if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
-                currentx, rect.min_y())):
+        if constants.Field.TheirGoalZoneShape.contains_point(
+                robocup.Point(currentx, rect.min_y())):
             continue
         while constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
             currentx, currenty)):

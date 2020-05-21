@@ -12,7 +12,8 @@ void WorldRobot::createConfiguration(Configuration* cfg) {
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
-WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots)
+WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
+                       std::list<KalmanRobot> kalmanRobots)
     : team(team), robotID(robotID), isValid(true), time(calcTime) {
     // Theta's are converted to rect coords then back to polar to convert
     Geometry2d::Point posCartesianAvg;

@@ -38,7 +38,7 @@ class RootPlay(Play, QtCore.QObject):
 
         # Goalie ID
         ################################################################################
-        self._goalie_id = main.context().game_settings.goalieID;
+        self._goalie_id = main.context().game_settings.goalieID
 
         # Play Selection
         ################################################################################
@@ -188,8 +188,8 @@ class RootPlay(Play, QtCore.QObject):
         self.setup_goalie_if_needed()
 
         # change notification so ui can update if necessary
-        self.play_changed.emit(self.play.__class__.__name__ if self._play is
-                               not None else "(No Play)")
+        self.play_changed.emit(self.play.__class__.__name__
+                               if self._play is not None else "(No Play)")
 
     ## the c++ GameplayModule reaches through the language portal and sets this
     # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None

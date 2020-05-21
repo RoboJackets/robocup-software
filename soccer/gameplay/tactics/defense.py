@@ -35,14 +35,12 @@ class Defense(composite_behavior.CompositeBehavior):
         self.add_transition(behavior.Behavior.State.start,
                             Defense.State.defending, lambda: True,
                             "immediately")
-        self.add_transition(
-            Defense.State.defending,
-            Defense.State.clearing, lambda: self.should_clear_ball(),
-            "Clearing the ball")
-        self.add_transition(
-            Defense.State.clearing,
-            Defense.State.defending, lambda: not self.should_clear_ball(),
-            "Done clearing")
+        self.add_transition(Defense.State.defending, Defense.State.clearing,
+                            lambda: self.should_clear_ball(),
+                            "Clearing the ball")
+        self.add_transition(Defense.State.clearing, Defense.State.defending,
+                            lambda: not self.should_clear_ball(),
+                            "Done clearing")
 
         goalie = submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
@@ -74,10 +72,10 @@ class Defense(composite_behavior.CompositeBehavior):
             return False
 
         safe_to_clear = False
-        if (abs(main.ball().pos.x) < constants.Field.PenaltyLongDist and
-                main.ball().pos.y < constants.Field.PenaltyShortDist * 2 and
-                main.ball().vel.mag() < .75 and
-                not evaluation.ball.is_in_our_goalie_zone()):
+        if (abs(main.ball().pos.x) < constants.Field.PenaltyLongDist
+                and main.ball().pos.y < constants.Field.PenaltyShortDist * 2
+                and main.ball().vel.mag() < .75
+                and not evaluation.ball.is_in_our_goalie_zone()):
             defender1 = self.subbehavior_with_name('defender1')
             defender2 = self.subbehavior_with_name('defender2')
             if (defender1.robot != None and defender2.robot != None):

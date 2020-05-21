@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include <Robot.hpp>
 #include <protobuf/RadioTx.pb.h>
+#include <Robot.hpp>
 
+#include <stdint.h>
 #include <QMutex>
 #include <boost/utility.hpp>
 #include <stdexcept>
-#include <stdint.h>
 #include <vector>
 
 struct JoystickControlValues {

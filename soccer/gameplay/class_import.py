@@ -4,7 +4,7 @@ import inspect
 
 
 # Recursively imports all subclasses of a given class from a given directory
-# 
+#
 # module_path is a list of package names (in order) and must have 1+ items
 # to import plays.offense and everything in it, call `recursive_import_classes(['plays', 'offense'])`
 #

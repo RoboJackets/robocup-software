@@ -3,20 +3,20 @@
 
 #include <stdio.h>
 
-#include <Network.hpp>
-#include <LogUtils.hpp>
 #include <Constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Util.hpp>
+#include <LogUtils.hpp>
+#include <Network.hpp>
 #include <planning/MotionConstraints.hpp>
 
-#include <QStyleOption>
+#include <sys/socket.h>
 #include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
+#include <QStyleOption>
 #include <algorithm>
-#include <sys/socket.h>
 
 #include <VisionDotPattern.hpp>
 
@@ -451,9 +451,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Opponent robots
     for (const LogFrame::Robot& r : frame->opp()) {
-        drawRobot(p, !frame->blue_team(), r.shell(),
-                  qpointf(r.pos()), r.angle(),
-                  r.ball_sense_status() == HasBall);
+        drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()),
+                  r.angle(), r.ball_sense_status() == HasBall);
     }
 
     // Our robots
@@ -478,8 +477,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
             faulty = true;
         }
 
-        drawRobot(p,frame->blue_team(), r.shell(), center,
-                  r.angle(), r.ball_sense_status() == HasBall, faulty);
+        drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(),
+                  r.ball_sense_status() == HasBall, faulty);
 
         // Highlight the manually controlled robot
         if (manualID == r.shell()) {

@@ -17,12 +17,12 @@
 #include <stdint.h>
 #include <Eigen/Dense>
 #include <QColor>
+#include <algorithm>
 #include <array>
-#include <optional>
 #include <boost/circular_buffer.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <optional>
 #include <vector>
-#include <algorithm>
 
 #include <QReadLocker>
 #include <QReadWriteLock>
@@ -92,7 +92,6 @@ public:
      * Check whether or not this robot is on our team
      */
     bool self() const { return _self; }
-
 
     bool operator==(const Robot& other) {
         return shell() == other.shell() && self() == other.self();

@@ -38,8 +38,9 @@ class BasicDefendGoal(standard_play.StandardPlay):
                             'Immediately')
 
         # Use standard defense
-        self.add_subbehavior(
-            tactics.defense.Defense(), 'defense', required=False)
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False)
 
         self.add_subbehavior(mark.Mark(), 'mark')
 

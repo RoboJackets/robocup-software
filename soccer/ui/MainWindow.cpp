@@ -49,7 +49,7 @@ void calcMinimumWidth(QWidget* widget, QString text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor,Context* context, QWidget* parent)
+MainWindow::MainWindow(Processor* processor, Context* context, QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _autoExternalReferee(true),
@@ -285,10 +285,8 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         qActionGroups["teamGroup"]->setEnabled(false);
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
-        if (_ui.goalieID->currentIndex() !=
-            _settings_copy.goalieID + 1) {
-            _ui.goalieID->setCurrentIndex(
-                _settings_copy.goalieID + 1);
+        if (_ui.goalieID->currentIndex() != _settings_copy.goalieID + 1) {
+            _ui.goalieID->setCurrentIndex(_settings_copy.goalieID + 1);
         }
 
         bool blueTeam = _processor->refereeModule()->isBlueTeam();

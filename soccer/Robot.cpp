@@ -1,11 +1,11 @@
-#include <Robot.hpp>
-#include <LogUtils.hpp>
-#include <planning/RRTPlanner.hpp>
-#include <planning/TrapezoidalPath.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <LogUtils.hpp>
+#include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
 #include <Utils.hpp>
+#include <planning/RRTPlanner.hpp>
+#include <planning/TrapezoidalPath.hpp>
 
 #include <execinfo.h>
 #include <stdio.h>
@@ -67,9 +67,7 @@ OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
     _clearCmdText();
 }
 
-OurRobot::~OurRobot() {
-    delete _cmdText;
-}
+OurRobot::~OurRobot() { delete _cmdText; }
 
 void OurRobot::addStatusText() {
     const QColor statusColor(255, 32, 32);

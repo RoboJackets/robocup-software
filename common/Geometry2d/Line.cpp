@@ -1,8 +1,8 @@
 #include "Line.hpp"
-#include "Point.hpp"
 #include "Circle.hpp"
-#include "Util.hpp"
+#include "Point.hpp"
 #include "Segment.hpp"
+#include "Util.hpp"
 namespace Geometry2d {
 
 Line::Line(const Segment& segment) : Line(segment.pt[0], segment.pt[1]) {}

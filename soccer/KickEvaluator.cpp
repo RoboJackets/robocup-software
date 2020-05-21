@@ -1,11 +1,11 @@
 #include "KickEvaluator.hpp"
-#include <Utils.hpp>
 #include <Geometry2d/Util.hpp>
+#include <Utils.hpp>
 
-#include <algorithm>
-#include <vector>
 #include <math.h>
+#include <algorithm>
 #include <cmath>
+#include <vector>
 
 REGISTER_CONFIGURABLE(KickEvaluator)
 
@@ -226,8 +226,9 @@ tuple<float, float> KickEvaluator::eval_calculation(
         rstdev2 = rstdev * rstdev;
         robotV = robotVertScales[i];
 
-        fterm = -1.0f * fast_exp(-0.5f * (kx + rmean) * (kx + rmean) /
-                                 (kstdev2 + rstdev2)) *
+        fterm = -1.0f *
+                fast_exp(-0.5f * (kx + rmean) * (kx + rmean) /
+                         (kstdev2 + rstdev2)) *
                 robotV * sqrt2pi;
         fterm = fterm / sqrt(1.0f / kstdev2 + 1.0f / rstdev2);
 

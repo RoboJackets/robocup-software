@@ -1,8 +1,8 @@
 #include "FastKickDetector.hpp"
 
-#include <iterator>
-#include <deque>
 #include <math.h>
+#include <deque>
+#include <iterator>
 #include <limits>
 
 #include <Geometry2d/Point.hpp>
@@ -21,7 +21,6 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, WorldBall ball,
                                  std::vector<WorldRobot> yellowRobots,
                                  std::vector<WorldRobot> blueRobots,
                                  KickEvent& kickEvent) {
-
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
     if (stateHistory.size() > *VisionFilterConfig::fast_kick_detector_history_length) {

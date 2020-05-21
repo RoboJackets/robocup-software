@@ -11,9 +11,9 @@
 #include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/ShapeSet.hpp>
 
-#include <set>
 #include <QMutex>
 #include <QString>
+#include <set>
 
 #include <Configuration.hpp>
 #include <Context.hpp>

@@ -21,8 +21,8 @@ class CompositeBehavior(behavior.Behavior):
     def add_subbehavior(self,
                         bhvr: behavior.Behavior,
                         name: str,
-                        required: bool=True,
-                        priority: Union[int, Callable[[], int]]=100):
+                        required: bool = True,
+                        priority: Union[int, Callable[[], int]] = 100):
         if name in self._subbehavior_info:
             raise AssertionError("There's already a subbehavior with name: '" +
                                  name + "'")
@@ -83,8 +83,8 @@ class CompositeBehavior(behavior.Behavior):
             # multi-robot behaviors always get spun
             # only spin single robot behaviors when they have a robot
             should_spin = True
-            if isinstance(bhvr, single_robot_behavior.
-                          SingleRobotBehavior) and bhvr.robot is None:
+            if isinstance(bhvr, single_robot_behavior.SingleRobotBehavior
+                          ) and bhvr.robot is None:
                 should_spin = False
 
             # try executing the subbehavior

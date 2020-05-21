@@ -31,7 +31,8 @@ public:
      * @param team The team color
      * @param kalmanRobots List of kalman robots from each of the cameras to merger
      */
-    WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
+    WorldRobot(RJ::Time calcTime, Team team, int robotID,
+               std::list<KalmanRobot> kalmanRobots);
 
     /**
      * @return If the robot actually represents a real robot

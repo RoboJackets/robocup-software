@@ -5,8 +5,8 @@ import role_assignment
 
 #A sequence to be carried out by a single robot, attempting to add non-single robot behaviors will raise exceptons
 class SingleRobotSequence(
-    behavior_sequence.BehaviorSequence,
-    single_robot_composite_behavior.SingleRobotCompositeBehavior):
+        behavior_sequence.BehaviorSequence,
+        single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def __init__(self, repeat=False, behaviors=[], continuous=False):
         single_robot_composite_behavior.SingleRobotCompositeBehavior \
                                        .__init__(self, continuous)

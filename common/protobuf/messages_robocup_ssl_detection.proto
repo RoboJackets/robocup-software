@@ -1,4 +1,4 @@
-syntax="proto2";
+syntax = "proto2";
 message SSL_DetectionBall {
   required float  confidence = 1;
   optional uint32 area       = 2;

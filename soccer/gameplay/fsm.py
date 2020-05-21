@@ -62,16 +62,16 @@ class StateMachine:
             next_states = []
             if self.state in self._transitions:
                 for next_state, transition in self._transitions[
-                    self.state].items():
+                        self.state].items():
                     if transition['condition']():
                         next_states += [next_state]
 
             if len(next_states) > 1:
-                logging.warn(
-                    "Ambiguous fsm transitions from state'" + str(self.state) +
-                    "'.  The following states are reachable now: " + str(
-                        next_states) +
-                    ";  Proceeding by taking the first option.")
+                logging.warn("Ambiguous fsm transitions from state'" +
+                             str(self.state) +
+                             "'.  The following states are reachable now: " +
+                             str(next_states) +
+                             ";  Proceeding by taking the first option.")
             if len(next_states) > 0:
                 self.transition(next_states[0])
 
@@ -82,16 +82,17 @@ class StateMachine:
 
     # if you add a transition that already exists, the old one will be overwritten
     def add_transition(self, from_state, to_state,
-                       condition: Union[bool, Callable],
-                       event_name: str):
+                       condition: Union[bool, Callable], event_name: str):
         if isinstance(condition, bool):
             condition = lambda: condition
 
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
 
-        self._transitions[from_state][to_state] = {'condition': condition,
-                                                   'name': event_name}
+        self._transitions[from_state][to_state] = {
+            'condition': condition,
+            'name': event_name
+        }
 
     # sets @state to the new_state given
     # calls 'on_exit_STATENAME()' if it exists
@@ -104,7 +105,9 @@ class StateMachine:
                     method_name = "on_exit_" + state.name
                     state_method = None
                     try:
-                        state_method = getattr(self, method_name)  # call the transition FROM method if it exists
+                        state_method = getattr(
+                            self, method_name
+                        )  # call the transition FROM method if it exists
                     except AttributeError:
                         pass
                     if state_method is not None:
@@ -115,7 +118,9 @@ class StateMachine:
                 method_name = "on_enter_" + state.name
                 state_method = None
                 try:
-                    state_method = getattr(self, method_name)  # call the transition TO method if it exists
+                    state_method = getattr(
+                        self, method_name
+                    )  # call the transition TO method if it exists
                 except AttributeError:
                     pass
                 if state_method is not None:

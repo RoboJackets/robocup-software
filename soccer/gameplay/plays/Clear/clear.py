@@ -66,9 +66,9 @@ class Clear(standard_play.StandardPlay):
                             Clear.State.get_ball, lambda: True, 'Immidiatley')
 
         self.add_transition(
-            Clear.State.get_ball,
-            Clear.State.clear_ball, lambda: self.subbehavior_with_name(
-                'Capture ball').is_done_running(), 'After ball is captured')
+            Clear.State.get_ball, Clear.State.clear_ball,
+            lambda: self.subbehavior_with_name('Capture ball').is_done_running(
+            ), 'After ball is captured')
 
     def on_enter_get_ball(self):
         self.remove_all_subbehaviors()

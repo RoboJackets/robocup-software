@@ -111,8 +111,7 @@ private:
      * @param ballList Unsorted list of balls measurements
      * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
      */
-    void updateBalls(RJ::Time calcTime,
-                     const std::vector<CameraBall> ballList,
+    void updateBalls(RJ::Time calcTime, const std::vector<CameraBall> ballList,
                      const WorldBall& previousWorldBall);
 
     /**
@@ -193,7 +192,8 @@ private:
      * @param calcTime Time of this calculation
      * @param robotListList Either kalmanRobotYellowList or kalmanRobotBlueList
      */
-    void predictAllRobots(RJ::Time calcTime, std::vector<std::list<KalmanRobot>>& robotListList);
+    void predictAllRobots(RJ::Time calcTime,
+                          std::vector<std::list<KalmanRobot>>& robotListList);
 
     bool isValid;
 

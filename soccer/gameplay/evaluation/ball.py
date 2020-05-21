@@ -3,6 +3,7 @@ import robocup
 import constants
 import math
 
+
 def is_moving_towards_our_goal():
     # see if the ball is moving much
     if main.ball().vel.mag() > 0.18:  # Tuned based on vision noise
@@ -34,19 +35,17 @@ def is_in_our_goalie_zone():
 # TODO use for situation analysis
 def we_are_closer():
     return min([(main.ball().pos - rob.pos).mag()
-                for rob in main.system_state().their_robots]) > min([
-                    (main.ball().pos - rob.pos).mag()
-                    for rob in main.system_state().our_robots
-                ])
+                for rob in main.system_state().their_robots]) > min(
+                    [(main.ball().pos - rob.pos).mag()
+                     for rob in main.system_state().our_robots])
 
 
 # TODO use for situation analysis
 def opponent_is_much_closer():
     return min([(main.ball().pos - rob.pos).mag()
-                for rob in main.system_state().their_robots]) * 3 < min([
-                    (main.ball().pos - rob.pos).mag()
-                    for rob in main.system_state().our_robots
-                ])
+                for rob in main.system_state().their_robots]) * 3 < min(
+                    [(main.ball().pos - rob.pos).mag()
+                     for rob in main.system_state().our_robots])
 
 
 def moving_slow():
@@ -63,6 +62,7 @@ def predict_stop_time():
 
 def predict_stop():
     return main.ball().predict_pos(main.ball().predict_seconds_to_stop())
+
 
 def rev_predict(dist):
     """predict how much time it will take the ball to travel the given distance"""
@@ -88,7 +88,7 @@ def opponent_with_ball():
 
 ## If our robot has the ball, then returns that robot. Otherwise None
 #
-# @return Robot: a robot or None 
+# @return Robot: a robot or None
 def our_robot_with_ball():
     closest_bot, closest_dist = None, float("inf")
     for bot in main.our_robots():
@@ -107,24 +107,27 @@ def our_robot_with_ball():
 
 # based on face angle and distance, determines if the robot has the ball
 def robot_has_ball(robot):
-    mouth_half_angle = 15*math.pi/180 # Angle from front
+    mouth_half_angle = 15 * math.pi / 180  # Angle from front
     max_dist_from_mouth = 1.13 * (
         constants.Robot.Radius + constants.Ball.Radius)
 
     # Create triangle between bot pos and two points of the mouth
     A = robot.pos
     B = A + robocup.Point(
-            max_dist_from_mouth*math.cos(robot.angle - mouth_half_angle),
-            max_dist_from_mouth*math.sin(robot.angle - mouth_half_angle))
+        max_dist_from_mouth * math.cos(robot.angle - mouth_half_angle),
+        max_dist_from_mouth * math.sin(robot.angle - mouth_half_angle))
     C = A + robocup.Point(
-            max_dist_from_mouth*math.cos(robot.angle + mouth_half_angle),
-            max_dist_from_mouth*math.sin(robot.angle + mouth_half_angle))
+        max_dist_from_mouth * math.cos(robot.angle + mouth_half_angle),
+        max_dist_from_mouth * math.sin(robot.angle + mouth_half_angle))
     D = main.ball().pos
 
     # Barycentric coordinates to solve whether the ball is in that triangle
-    area = 0.5*(-B.y*C.x + A.y*(-B.x+C.x) + A.x*(B.y - C.y) + B.x*C.y)
-    s = 1/(2*area) * (A.y*C.x - A.x*C.y + (C.y - A.y)*D.x + (A.x - C.x)*D.y)
-    t = 1/(2*area) * (A.x*B.y - A.y*B.x + (A.y - B.y)*D.x + (B.x - A.x)*D.y)
+    area = 0.5 * (-B.y * C.x + A.y * (-B.x + C.x) + A.x *
+                  (B.y - C.y) + B.x * C.y)
+    s = 1 / (2 * area) * (A.y * C.x - A.x * C.y + (C.y - A.y) * D.x +
+                          (A.x - C.x) * D.y)
+    t = 1 / (2 * area) * (A.x * B.y - A.y * B.x + (A.y - B.y) * D.x +
+                          (B.x - A.x) * D.y)
 
     # Due to the new camera configuration in the 2019 year,
     # the ball dissapears consistently when we go to capture a ball near the

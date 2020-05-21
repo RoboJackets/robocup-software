@@ -9,13 +9,13 @@ required bool yellowteam=5;
 }
 
 message grSim_BallReplacement {
-optional point pos=1;
-optional point vel=2;
+    optional point pos = 1;
+    optional point vel = 2;
 }
 
 message point {
-required double x=1;
-required double y=2;
+    required double x = 1;
+    required double y = 2;
 }
 
 message grSim_Replacement {

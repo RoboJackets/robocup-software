@@ -1,5 +1,4 @@
 struct GameSettings {
-
     bool useOurHalf, useOpponentHalf;
 
     // True if we are running with a simulator.
@@ -15,7 +14,7 @@ struct GameSettings {
 
     // Board ID of the robot to manually control or -1 if none
     int manualID;
-    //Board ID of the goalie robot
+    // Board ID of the goalie robot
     int goalieID;
     // Use multiple joysticks at once
     bool multipleManual;

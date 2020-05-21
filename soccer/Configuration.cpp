@@ -3,8 +3,8 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 std::list<Configurable*>* Configurable::_configurables;
 

@@ -31,8 +31,8 @@ class StandardPlay(play.Play):
     )  # type: List[situational_play_selection.SituationalPlaySelector.Situation]
 
     def use_standard_defense(self):
-        if ui.main.defenseEnabled() and not self.has_subbehavior_with_name(
-                'defense'):
+        if ui.main.defenseEnabled(
+        ) and not self.has_subbehavior_with_name('defense'):
             self.add_subbehavior(tactics.defense.Defense(),
                                  'defense',
                                  required=False)

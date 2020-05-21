@@ -139,7 +139,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
         description=
-        'Returns a list of officially supported target for the mbed SDK build system')
+        'Returns a list of officially supported target for the mbed SDK build system'
+    )
     parser.add_argument('-p',
                         '--path',
                         help='The path to the mbed repository root',

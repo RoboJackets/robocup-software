@@ -1,9 +1,9 @@
 #include "Logger.hpp"
 
-#include <QString>
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <QString>
 #include "Utils.hpp"
 
 using namespace std;

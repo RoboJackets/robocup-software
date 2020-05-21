@@ -22,11 +22,11 @@
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
 #include <rc-fshare/git_version.hpp>
 #include "DebugDrawer.hpp"
+#include "Network.hpp"
 #include "Processor.hpp"
 #include "radio/PacketConvert.hpp"
 #include "radio/RadioNode.hpp"
 #include "vision/VisionFilter.hpp"
-#include "Network.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -81,9 +81,6 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _radio = nullptr;
     _defendPlus = defendPlus;
 
-
-
-
     // Configuration-time variables.
     _context.robot_config = std::move(robot_config_init);
     for (int i = Num_Shells - 1; i >= 0; i--) {
@@ -104,9 +101,9 @@ Processor::Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
     _motionControl = std::make_unique<MotionControlNode>(&_context);
-    _radio = std::make_unique<RadioNode>(&_context,
-                                         _context.game_settings.simulation,
-                                         _context.game_settings.requestedBlueTeam);
+    _radio = std::make_unique<RadioNode>(
+        &_context, _context.game_settings.simulation,
+        _context.game_settings.requestedBlueTeam);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
@@ -173,7 +170,8 @@ void Processor::blueTeam(bool value) {
 
     if (_context.game_settings.requestedBlueTeam != value) {
         _context.game_settings.requestedBlueTeam = value;
-        if (_radio) _radio->switchTeam(_context.game_settings.requestedBlueTeam);
+        if (_radio)
+            _radio->switchTeam(_context.game_settings.requestedBlueTeam);
 
         // Try to set the team in the referee module.
         // Note: this will not update if we are being referee controlled.
@@ -203,7 +201,8 @@ void Processor::runModels() {
         // Add ball observations
         ballObservations.reserve(frame->balls().size());
         for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
+            ballObservations.emplace_back(
+                time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
 
         // Collect camera data from all robots
@@ -230,14 +229,17 @@ void Processor::runModels() {
                 robot.robot_id());
         }
 
-        frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
+        frames.emplace_back(time, frame->camera_id(), ballObservations,
+                            yellowObservations, blueObservations);
     }
 
     _vision->addFrames(frames);
 
-    // Fill the list of our robots/balls based on whether we are the blue team or not
+    // Fill the list of our robots/balls based on whether we are the blue team
+    // or not
     _vision->fillBallState(_context.state);
-    _vision->fillRobotState(_context.state, _context.game_settings.requestedBlueTeam);
+    _vision->fillRobotState(_context.state,
+                            _context.game_settings.requestedBlueTeam);
 }
 
 /**
@@ -272,7 +274,8 @@ void Processor::run() {
         _context.state.logFrame->set_use_opponent_half(
             _context.game_settings.useOpponentHalf);
         _context.state.logFrame->set_manual_id(_context.game_settings.manualID);
-        _context.state.logFrame->set_blue_team(_context.game_settings.requestedBlueTeam);
+        _context.state.logFrame->set_blue_team(
+            _context.game_settings.requestedBlueTeam);
         _context.state.logFrame->set_defend_plus_x(
             _context.game_state.defendPlusX);
         _context.debug_drawer.setLogFrame(_context.state.logFrame.get());
@@ -424,7 +427,7 @@ void Processor::run() {
                                          _context.game_settings.manualID);
         }
 
-        //Team Transfrom
+        // Team Transfrom
         _context.game_state.defendPlusX = _defendPlus;
 
         if (_defendPlus) {
@@ -563,7 +566,6 @@ void Processor::run() {
         }
     }
 }
-
 
 void Processor::sendRadioData() {
     // Halt overrides normal motion control, but not joystick

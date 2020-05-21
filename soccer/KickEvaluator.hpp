@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Segment.hpp>
 #include "Robot.hpp"
 #include "SystemState.hpp"
 
-#include "optimization/ParallelGradientAscent1D.hpp"
 #include "optimization/ParallelGradient1DConfig.hpp"
+#include "optimization/ParallelGradientAscent1D.hpp"
 
 #include <functional>
 #include <vector>

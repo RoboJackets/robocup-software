@@ -1,23 +1,23 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
-#include <QMap>
 #include <QColor>
+#include <QMap>
 
+#include <protobuf/RadioRx.pb.h>
+#include <protobuf/RadioTx.pb.h>
+#include <Constants.hpp>
+#include <GameState.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/ShapeSet.hpp>
-#include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/RadioRx.pb.h>
-#include <GameState.hpp>
-#include <Constants.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <Geometry2d/ShapeSet.hpp>
 #include <Utils.hpp>
-#include <Geometry2d/Arc.hpp>
 #include "planning/MotionInstant.hpp"
 #include "planning/Path.hpp"
 
@@ -47,13 +47,11 @@ public:
     RJ::Time estimateTimeTo(const Geometry2d::Point& point,
                             Geometry2d::Point* nearPoint = nullptr) const;
 
-    double estimateSecondsTo(const Geometry2d::Point &point) const;
+    double estimateSecondsTo(const Geometry2d::Point& point) const;
 
     double estimateSecondsToDist(double dist) const;
 
     double predictSecondsToStop() const;
-
-
 };
 
 class Context;

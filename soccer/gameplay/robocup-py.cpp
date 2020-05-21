@@ -268,35 +268,36 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
-bool Rect_rect_intersection(Geometry2d::Rect* self,
-                                  Geometry2d::Rect* other) {
+bool Rect_rect_intersection(Geometry2d::Rect* self, Geometry2d::Rect* other) {
     if (other == nullptr) throw NullArgumentException{"other"};
     return self->intersects(*other);
 }
 
-boost::python::object Rect_segment_intersection(Geometry2d::Rect *self,
-                                                Geometry2d::Segment* segment){
-    if (segment==nullptr) throw NullArgumentException{"segment"};
+boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
+                                                Geometry2d::Segment* segment) {
+    if (segment == nullptr) throw NullArgumentException{"segment"};
     boost::python::list lst;
-    std::tuple<bool, std::vector<Geometry2d::Point> > result = self->intersects(*segment);
+    std::tuple<bool, std::vector<Geometry2d::Point>> result =
+        self->intersects(*segment);
     bool doesIntersect = std::get<0>(result);
-    if (!doesIntersect){
+    if (!doesIntersect) {
         return boost::python::object();
     }
 
     std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
     std::vector<Geometry2d::Point>::iterator it;
-    for (it=intersectionPoints.begin(); it!=intersectionPoints.end(); it++){
+    for (it = intersectionPoints.begin(); it != intersectionPoints.end();
+         it++) {
         lst.append(*it);
     }
     return lst;
 }
 
-boost::python::object Rect_corners(Geometry2d::Rect *self){
+boost::python::object Rect_corners(Geometry2d::Rect* self) {
     boost::python::list lst;
-    std::vector<Geometry2d::Point> corners= self->corners();
+    std::vector<Geometry2d::Point> corners = self->corners();
     std::vector<Geometry2d::Point>::iterator it;
-    for (it=corners.begin(); it!=corners.end(); it++){
+    for (it = corners.begin(); it != corners.end(); it++) {
         lst.append(*it);
     }
     return lst;
@@ -650,8 +651,8 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(Point_overloads, normalized, 0, 1)
 
 boost::shared_ptr<PythonFunctionWrapper> PythonFunctionWrapper_constructor(
     PyObject* pf) {
-
-    return boost::shared_ptr<PythonFunctionWrapper>(new PythonFunctionWrapper(pf));
+    return boost::shared_ptr<PythonFunctionWrapper>(
+        new PythonFunctionWrapper(pf));
 }
 
 float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
@@ -957,12 +958,14 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("dampedRotation", &GameSettings::dampedRotation)
         .def_readonly("dampedTranslation", &GameSettings::dampedTranslation)
         .def_readonly("kickOnBreakBeam", &GameSettings::kickOnBreakBeam)
-        .def_readonly("useFieldOrientedManualDrive", &GameSettings::useFieldOrientedManualDrive)
+        .def_readonly("useFieldOrientedManualDrive",
+                      &GameSettings::useFieldOrientedManualDrive)
         .def_readonly("initialized", &GameSettings::initialized)
         .def_readonly("paused", &GameSettings::paused);
 
     class_<Field_Dimensions>("Field_Dimensions")
-        .def("OurGoalZoneShapePadded", &Field_Dimensions::OurGoalZoneShapePadded)
+        .def("OurGoalZoneShapePadded",
+             &Field_Dimensions::OurGoalZoneShapePadded)
         .add_property("Length", &Field_Dimensions::Length)
         .add_property("Width", &Field_Dimensions::Width)
         .add_property("Border", &Field_Dimensions::Border)

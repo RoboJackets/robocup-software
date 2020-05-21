@@ -160,7 +160,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def score(cls):
         score = super().score()
 
-        #If we get a valid score from the super function, then we should calculate 
+        #If we get a valid score from the super function, then we should calculate
         #an offset and sum that with score and return that
         if (score != float("inf")):
             #currently the offset is just 0 because we haven't made one

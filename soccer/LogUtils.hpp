@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QColor>
 #include <protobuf/LogFrame.pb.h>
+#include <QColor>
 
 static inline QColor qcolor(uint32_t value) {
     uint8_t r = value >> 16;

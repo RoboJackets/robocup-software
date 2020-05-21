@@ -141,13 +141,13 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
     // auto part = vel.mag() * -3.43289;
 }
 
-double Ball::estimateSecondsTo(const Geometry2d::Point &point) const {
+double Ball::estimateSecondsTo(const Geometry2d::Point& point) const {
     const auto time = estimateTimeTo(point);
     return RJ::Seconds(time - RJ::now()).count();
 }
 
 double Ball::predictSecondsToStop() const {
-    return vel.mag()/ballDecayConstant;
+    return vel.mag() / ballDecayConstant;
 }
 
 double Ball::estimateSecondsToDist(double dist) const {
