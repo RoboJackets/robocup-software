@@ -32,4 +32,4 @@ class TestHeuristic(standard_play.StandardPlay):
 
     def on_enter_start(self):
         self.heuristic = tactics.pass_to_point_heuristic.PassToPointHeuristic(1,2)
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.heuristic), 'pass')
+        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(heuristic=self.heuristic), 'pass')
