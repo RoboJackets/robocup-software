@@ -44,7 +44,7 @@ void SDLJoystickNode::queryAndUpdateGamepadList() {
 
 void SDLJoystickNode::addJoystick(int device_index) {
     auto new_joystick = std::make_unique<SDLGamepad>(device_index);
-    context_->gamepad_stack.emplace_back(new_joystick->unique_id);
+    context_->gamepads.emplace_back(new_joystick->unique_id);
     gamepads_.emplace_back(std::move(new_joystick));
 }
 
@@ -58,8 +58,8 @@ void SDLJoystickNode::removeJoystick(int instance_id) {
     gamepad = getGamepadByInstanceID(instance_id);
     if (gamepad) {
         const int unique_id = gamepad->get().unique_id;
-        // Remove gamepad from context gamepad_stack
-        std::vector<int>& gamepad_stack = context_->gamepad_stack;
+        // Remove gamepad from context gamepads
+        std::vector<int>& gamepad_stack = context_->gamepads;
         gamepad_stack.erase(
             std::remove(gamepad_stack.begin(), gamepad_stack.end(), unique_id),
             gamepad_stack.end());

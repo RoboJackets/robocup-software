@@ -63,8 +63,15 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
     float y_vel = controls_.y_vel;
 
     // Field oriented control
-    if (robot->visible() &&
-        context_->game_settings.joystick_config.useFieldOrientedDrive) {
+    if (context_->game_settings.joystick_config.useFieldOrientedDrive) {
+        // If robot isn't visible, then stop
+        if (!robot->visible()) {
+            intent.clear();
+            setpoint.clear();
+            return;
+        }
+
+        // Rotate x_vel and y_vel so that it's the field's x and y
         Geometry2d::Point translation{x_vel, y_vel};
         translation.rotate(-M_PI / 2 - robot->angle());
 
@@ -95,7 +102,7 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
 }
 
 void ManualControlNode::updateGamepadList() {
-    gamepad_stack_ = context_->gamepad_stack;
+    gamepad_stack_ = context_->gamepads;
     updateJoystickValid();
 }
 

@@ -40,19 +40,6 @@ public:
      */
     void run() override;
 
-    using GamepadCallbackFn = std::function<void(const GamepadMessage&)>;
-    using GamepadConnectedFn = std::function<void(int unique_id)>;
-    using GamepadDisconnectedFn = std::function<void(int unique_id)>;
-
-    /**
-     * Add a callback function
-     * @param callback Function that will get called on every connected joystick
-     * each update
-     */
-    void addCallbacks(const GamepadCallbackFn& callback,
-                      const GamepadConnectedFn& on_connected,
-                      const GamepadDisconnectedFn& on_disconnected);
-
 private:
     /**
      * Queries for joysticks, and updates the current

@@ -43,8 +43,8 @@ struct Context {
     GameState game_state;
     DebugDrawer debug_drawer;
 
-    /** \brief Stack of unique IDs of gamepads. First is oldest to connect. */
-    std::vector<int> gamepad_stack;
+    /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */
+    std::vector<int> gamepads;
     std::vector<joystick::GamepadMessage> gamepad_messages;
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;

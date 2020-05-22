@@ -60,8 +60,8 @@ public:
     // Noncopyable
     SDLGamepad(const SDLGamepad&) = delete;
     SDLGamepad& operator=(const SDLGamepad&) = delete;
-    SDLGamepad(SDLGamepad&&) = delete;
-    SDLGamepad& operator=(SDLGamepad&&) = delete;
+    SDLGamepad(SDLGamepad&&) = default;
+    SDLGamepad& operator=(SDLGamepad&&) = default;
 
     [[nodiscard]] std::string toString() const;
 
