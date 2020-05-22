@@ -10,8 +10,7 @@
 #include <vector>
 
 namespace joystick {
-constexpr auto GameControllerDBPath =
-    "../external/sdlcontrollerdb/gamecontrollerdb.txt";
+constexpr auto GameControllerDBPath = "gamecontrollerdb.txt";
 /**
  * Node that uses libsdl for handling joysticks input
  */
