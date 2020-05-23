@@ -19,6 +19,8 @@
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
+#include "joystick/ManualControlNode.hpp"
+#include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
 #include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
@@ -72,13 +74,6 @@ public:
 
     void stop();
 
-    bool joystickValid() const;
-
-    JoystickControlValues getJoystickControlValue(Joystick& joy);
-    std::vector<JoystickControlValues> getJoystickControlValues();
-
-    void setupJoysticks();
-
     std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
         return _gameplayModule;
     }
@@ -106,6 +101,11 @@ public:
 
     Radio* radio() { return _radio->getRadio(); }
 
+    /**
+     * Stops all robots by clearing their intents and setpoints
+     */
+    void stopRobots();
+
     void recalculateWorldToTeamTransform();
 
     void setFieldDimensions(const Field_Dimensions& dims);
@@ -121,10 +121,6 @@ public:
 
     void run();
 
-protected:
-    void applyJoystickControls(const JoystickControlValues& controlVals,
-                               OurRobot* robot);
-
 private:
     // Configuration for the robot.
     // TODO(Kyle): Add back in configuration values for different years.
@@ -133,8 +129,13 @@ private:
     // per-robot status configs
     static std::vector<RobotStatus*> robotStatuses;
 
-    /** send out the radio data for the radio program */
-    void sendRadioData();
+    /**
+     * Updates the intent.active for each robot.
+     *
+     * The intent is active if it's being joystick controlled or
+     * if it's visible
+     */
+    void updateIntentActive();
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
@@ -187,11 +188,10 @@ private:
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<RadioNode> _radio;
     std::unique_ptr<GrSimCommunicator> _grSimCom;
+    std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
+    std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
 
     std::vector<Node*> _nodes;
-
-    // joystick control
-    std::vector<Joystick*> _joysticks;
 
     bool _initialized;
 };

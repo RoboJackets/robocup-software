@@ -3,8 +3,6 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <joystick/GamepadController.hpp>
-#include <joystick/Joystick.hpp>
 #include <ui/StyleSheetManager.hpp>
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
@@ -291,14 +289,14 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 void MainWindow::updateViews() {
     int manual = _context->game_settings.joystick_config.manualID;
     if ((manual >= 0 || _ui.manualID->isEnabled()) &&
-        !_processor->joystickValid()) {
+        !_context->joystick_valid) {
         // Joystick is gone - turn off manual control
         _ui.manualID->setCurrentIndex(0);
         _context->game_settings.joystick_config.manualID = -1;
         _ui.manualID->setEnabled(false);
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
-    } else if (!_ui.manualID->isEnabled() && _processor->joystickValid()) {
+    } else if (!_ui.manualID->isEnabled() && _context->joystick_valid) {
         // Joystick reconnected
         _ui.manualID->setEnabled(true);
         _ui.joystickTab->setVisible(true);
@@ -957,7 +955,7 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
 }
 
 void MainWindow::on_fieldView_robotSelected(int shell) {
-    if (_processor->joystickValid()) {
+    if (_context->joystick_valid) {
         _ui.manualID->setCurrentIndex(shell + 1);
 
         std::lock_guard<std::mutex> lock(_context_mutex);
