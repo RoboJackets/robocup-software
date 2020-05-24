@@ -6,7 +6,7 @@ import enum
 
 import standard_play
 import evaluation
-import situational_play_selection
+from situations import Situation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
@@ -30,7 +30,7 @@ class BasicClear(standard_play.StandardPlay):
         clear_ball = 2, 'Kick the ball upfield'
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.CLEAR,
+        Situation.CLEAR,
     ] # yapf: disable
 
     def __init__(self):

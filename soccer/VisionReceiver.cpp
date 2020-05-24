@@ -8,7 +8,7 @@
 using namespace std;
 using boost::asio::ip::udp;
 
-VisionReceiver::VisionReceiver(Context* context, bool sim, int port)
+VisionReceiver::VisionReceiver(Context* context, bool /*sim*/, int port)
     : port(port), _context(context), _socket(_io_context) {
     _recv_buffer.resize(65536);
 
@@ -35,7 +35,8 @@ void VisionReceiver::setPort(int port) {
     _socket.set_option(udp::socket::reuse_address(true));
 
     // Set up multicast.
-    if (!multicast_add_native(_socket.native_handle(), SharedVisionAddress)) {
+    if (!multicast_add_native(_socket.native_handle(),
+                              SharedVisionAddress.c_str())) {
         std::cerr << "Multicast add failed" << std::endl;
         return;
     }
@@ -43,7 +44,7 @@ void VisionReceiver::setPort(int port) {
     // Bind the socket.
     boost::system::error_code bind_error;
     _socket.bind(udp::endpoint(udp::v4(), port), bind_error);
-    if (bind_error) {
+    if (static_cast<bool>(bind_error)) {
         std::cerr << "Vision port bind failed with error: "
                   << bind_error.message() << std::endl;
         return;
@@ -96,12 +97,12 @@ void VisionReceiver::run() {
             google::protobuf::RepeatedPtrField<SSL_DetectionRobot>* robots[2] =
                 {det->mutable_robots_yellow(), det->mutable_robots_blue()};
 
-            for (int team = 0; team < 2; ++team) {
-                for (int i = 0; i < robots[team]->size(); ++i) {
-                    float x = robots[team]->Get(i).x();
+            for (auto& robot : robots) {
+                for (int i = 0; i < robot->size(); ++i) {
+                    float x = robot->Get(i).x();
                     if (shouldRemove(defendPlusX, x)) {
-                        robots[team]->SwapElements(i, robots[team]->size() - 1);
-                        robots[team]->RemoveLast();
+                        robot->SwapElements(i, robot->size() - 1);
+                        robot->RemoveLast();
                         --i;
                     }
                 }
@@ -133,7 +134,7 @@ void VisionReceiver::startReceive() {
 void VisionReceiver::receivePacket(const boost::system::error_code& error,
                                    std::size_t num_bytes) {
     // Check for error
-    if (error) {
+    if (static_cast<bool>(error)) {
         std::cerr << "Vision receive failed with error: " << error.message()
                   << std::endl;
         return;

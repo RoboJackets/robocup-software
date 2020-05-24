@@ -11,7 +11,8 @@
 #include "Constants.hpp"
 #include "RefereeEnums.hpp"
 
-using namespace RefereeModuleEnums;
+using RefereeModuleEnums::Command;
+using RefereeModuleEnums::Stage;
 
 /// Distance in meters that the ball must travel for a kick to be detected
 static const float KickThreshold = Ball_Radius * 3;
@@ -27,10 +28,11 @@ static const int KickVerifyTime_ms = 250;
 static const bool CancelBallPlaceOnHalt = true;
 
 Referee::Referee(Context* const context)
-    : stage_(NORMAL_FIRST_HALF_PRE),
-      command_(HALT),
+    : stage_(Stage::NORMAL_FIRST_HALF_PRE),
+      command_(Command::HALT),
       sent_time{},
       received_time{},
+      stage_time_left_{},
       command_counter{},
       yellow_info{},
       blue_info{},
@@ -42,6 +44,7 @@ Referee::Referee(Context* const context)
       prev_stage_{},
       ballPlacementX{},
       ballPlacementY{},
+      _recv_buffer{},
       _asio_socket{_io_service} {}
 
 void Referee::start() {
@@ -241,36 +244,31 @@ GameState Referee::updateGameState(Command command) const {
                                           this->stage_]() -> GameState::Period {
         switch (stage) {
             case Stage::NORMAL_FIRST_HALF_PRE:
-                return GameState::FirstHalf;
             case Stage::NORMAL_FIRST_HALF:
                 return GameState::FirstHalf;
             case Stage::NORMAL_HALF_TIME:
                 return GameState::Halftime;
             case Stage::NORMAL_SECOND_HALF_PRE:
-                return GameState::SecondHalf;
             case Stage::NORMAL_SECOND_HALF:
                 return GameState::SecondHalf;
             case Stage::EXTRA_TIME_BREAK:
                 return GameState::FirstHalf;
             case Stage::EXTRA_FIRST_HALF_PRE:
-                return GameState::Overtime1;
             case Stage::EXTRA_FIRST_HALF:
                 return GameState::Overtime1;
             case Stage::EXTRA_HALF_TIME:
                 return GameState::Halftime;
             case Stage::EXTRA_SECOND_HALF_PRE:
-                return GameState::Overtime2;
             case Stage::EXTRA_SECOND_HALF:
                 return GameState::Overtime2;
             case Stage::PENALTY_SHOOTOUT_BREAK:
-                return GameState::PenaltyShootout;
             case Stage::PENALTY_SHOOTOUT:
                 return GameState::PenaltyShootout;
             case Stage::POST_GAME:
                 return GameState::Overtime2;
             default:
                 return GameState::FirstHalf;
-        };
+        }
     }();
 
     GameState::State state = _game_state.state;
@@ -340,13 +338,10 @@ GameState Referee::updateGameState(Command command) const {
             our_restart = blue_team;
             break;
         case Command::TIMEOUT_YELLOW:
-            state = GameState::Halt;
-            break;
         case Command::TIMEOUT_BLUE:
             state = GameState::Halt;
             break;
         case Command::GOAL_YELLOW:
-            break;
         case Command::GOAL_BLUE:
             break;
         case Command::BALL_PLACEMENT_YELLOW:

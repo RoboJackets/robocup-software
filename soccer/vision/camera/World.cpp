@@ -107,7 +107,7 @@ void World::updateWorldObjects(RJ::Time calcTime) {
             std::vector<std::list<KalmanRobot>> cameraRobotsYellow = camera.getKalmanRobotsYellow();
             std::vector<std::list<KalmanRobot>> cameraRobotsBlue = camera.getKalmanRobotsBlue();
 
-            if (cameraBalls.size() > 0) {
+            if (!cameraBalls.empty()) {
                 // Sort by health of the kalman filter
                 cameraBalls.sort([](KalmanBall& a, KalmanBall& b) -> bool {
                                     return a.getHealth() > b.getHealth();
@@ -118,7 +118,7 @@ void World::updateWorldObjects(RJ::Time calcTime) {
 
             // Take the best kalman filter from the camera
             for (int i = 0; i < cameraRobotsYellow.size(); i++) {
-                if (cameraRobotsYellow.at(i).size() > 0) {
+                if (!cameraRobotsYellow.at(i).empty()) {
                     cameraRobotsYellow.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
                                                          return a.getHealth() > b.getHealth();
                                                      });
@@ -129,7 +129,7 @@ void World::updateWorldObjects(RJ::Time calcTime) {
 
             // Take the best kalman filter from the camera
             for (int i = 0; i < cameraRobotsBlue.size(); i++) {
-                if (cameraRobotsBlue.at(i).size() > 0) {
+                if (!cameraRobotsBlue.at(i).empty()) {
                     cameraRobotsBlue.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
                                                        return a.getHealth() > b.getHealth();
                                                    });
@@ -141,18 +141,18 @@ void World::updateWorldObjects(RJ::Time calcTime) {
     }
 
     // Only replace the invalid result if we have measurements on any camera
-    if (kalmanBalls.size() > 0) {
+    if (!kalmanBalls.empty()) {
         ball = WorldBall(calcTime, kalmanBalls);
     }
 
     for (int i = 0; i < robotsYellow.size(); i++) {
-        if (kalmanRobotsYellow.at(i).size() > 0) {
+        if (!kalmanRobotsYellow.at(i).empty()) {
             robotsYellow.at(i) = WorldRobot(calcTime, WorldRobot::Team::YELLOW, i, kalmanRobotsYellow.at(i));
         }
     }
 
     for (int i = 0; i < robotsBlue.size(); i++) {
-        if (kalmanRobotsBlue.at(i).size() > 0) {
+        if (!kalmanRobotsBlue.at(i).empty()) {
             robotsBlue.at(i) = WorldRobot(calcTime, WorldRobot::Team::BLUE, i, kalmanRobotsBlue.at(i));
         }
     }

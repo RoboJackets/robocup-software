@@ -1,6 +1,7 @@
 import main
 import robocup
 import constants
+from typing import List, Optional, Tuple
 
 
 ## Estimates the length of a path given a start and end point
@@ -9,7 +10,9 @@ import constants
 #  @param blocking_robots The list of robots to dodge
 #  @param dodge_dist The amount of distance to dodge left or right to miss a robot
 #  @return the distance from start to end
-def estimate_path_length(start, end, blocking_robots, dodge_dist):
+def estimate_path_length(start: robocup.Point, end: robocup.Point,
+                         blocking_robots: List[robocup.Robot],
+                         dodge_dist: float) -> float:
     total = 0
     next_pt = start
     prev_pt = start
@@ -58,11 +61,12 @@ def estimate_path_length(start, end, blocking_robots, dodge_dist):
 #       Whether we can collect the ball before the opponen
 #       The closest robot on our team
 #  @note If any imputs are None, their values are defaulted
-def can_collect_ball_before_opponent(our_robots_to_check=None,
-                                     their_robots_to_check=None,
-                                     our_robots_to_dodge=None,
-                                     their_robots_to_dodge=None,
-                                     valid_error_percent=0.05):
+def can_collect_ball_before_opponent(
+        our_robots_to_check: Optional[List[robocup.OurRobot]] = None,
+        their_robots_to_check: Optional[List[robocup.OpponentRobot]] = None,
+        our_robots_to_dodge: Optional[List[robocup.OurRobot]] = None,
+        their_robots_to_dodge: Optional[List[robocup.OpponentRobot]] = None,
+        valid_error_percent: float = 0.05) -> Tuple[bool, robocup.Robot]:
     if our_robots_to_check is None:
         our_robots_to_check = main.our_robots()
 
@@ -116,7 +120,9 @@ def can_collect_ball_before_opponent(our_robots_to_check=None,
 #  @param blocking_robots List of robots to check against the line
 #  @param dodge_dist Distance cutoff between the line and robot positions
 #  @return The robot (or None) that intersects the line within dodge_dist
-def find_intersecting_robot(line, blocking_robots, dodge_dist):
+def find_intersecting_robot(line: robocup.Segment,
+                            blocking_robots: List[robocup.Robot],
+                            dodge_dist: float) -> Optional[robocup.Robot]:
     for bot in blocking_robots:
         if (line.dist_to(bot.pos) < dodge_dist):
             return bot

@@ -67,8 +67,7 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim, bool defendPlus, bool blueTeam,
-              std::string readLogFile);
+    Processor(bool sim, bool blueTeam, const std::string& readLogFile = "");
     virtual ~Processor();
 
     void stop();
@@ -163,7 +162,7 @@ private:
     // _teamTrans is used for positions, not angles.
     // _teamAngle is used for angles.
     Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle;
+    float _teamAngle{};
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;

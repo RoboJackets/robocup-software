@@ -13,10 +13,9 @@ int DebugDrawer::findDebugLayer(QString layer) {
         _debugLayerMap[layer] = n;
         _debugLayers.append(layer);
         return n;
-    } else {
-        // Existing layer
-        return i.value();
     }
+    // Existing layer
+    return i.value();
 }
 
 void DebugDrawer::drawPolygon(const Geometry2d::Point* pts, int n,

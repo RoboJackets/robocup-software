@@ -16,7 +16,7 @@ private:
      *
      * @see changeStyleSheet()
      */
-    static void setStyleSheet(QMainWindow* window, QString path);
+    static void setStyleSheet(QMainWindow* window, const QString& path);
 
 public:
     /**
@@ -26,5 +26,5 @@ public:
      * @param name the name of the style to apply. We must know about this style
      * To add new styles, add them to the hashmap in StyleSheetManager
      */
-    static void changeStyleSheet(QMainWindow* window, QString name);
+    static void changeStyleSheet(QMainWindow* window, const QString& name);
 };

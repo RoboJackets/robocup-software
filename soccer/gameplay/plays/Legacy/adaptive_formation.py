@@ -13,7 +13,7 @@ import tactics.simple_zone_midfielder
 import tactics.advance_zone_midfielder
 import skills.move
 import skills.capture
-import situational_play_selection
+from situations import Situation
 
 
 class AdaptiveFormation(standard_play.StandardPlay):
@@ -21,9 +21,9 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.ATTACK_GOAL,
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_CLEAR,
-        situational_play_selection.SituationalPlaySelector.Situation.OFFENSIVE_SCRAMBLE
+        Situation.ATTACK_GOAL,
+        Situation.DEFEND_CLEAR,
+        Situation.OFFENSIVE_SCRAMBLE
     ] # yapf: disable
 
 
@@ -160,7 +160,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     def score(cls):
         score = super().score()
 
-        #If we get a valid score from the super function, then we should calculate 
+        #If we get a valid score from the super function, then we should calculate
         #an offset and sum that with score and return that
         if (score != float("inf")):
             #currently the offset is just 0 because we haven't made one

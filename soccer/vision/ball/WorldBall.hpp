@@ -27,7 +27,7 @@ public:
      * @param calcTime Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
      */
-    WorldBall(RJ::Time calcTime, std::list<KalmanBall> kalmanBalls);
+    WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls);
 
     /**
      * @return If the ball actually represents a real ball
@@ -70,8 +70,8 @@ private:
     bool isValid;
     Geometry2d::Point pos;
     Geometry2d::Point vel;
-    double posCov;
-    double velCov;
+    double posCov{};
+    double velCov{};
     std::list<KalmanBall> ballComponents;
     RJ::Time time;
 

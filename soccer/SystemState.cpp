@@ -1,12 +1,13 @@
-#include <optional>
-
 #include <protobuf/LogFrame.pb.h>
+
 #include <Geometry2d/Line.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
+#include <optional>
+
 #include "DebugDrawer.hpp"
 #include "planning/Path.hpp"
 
@@ -20,38 +21,41 @@ class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
 
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
-                     RJ::Seconds startTimeIntoPath,
-                     RJ::Seconds* hitTime) const {
-        throw new std::runtime_error("Unsupported Opperation");
+    bool hit(const Geometry2d::ShapeSet& /*obstacles*/,
+             RJ::Seconds /*startTimeIntoPath*/,
+             RJ::Seconds* /*hitTime*/) const override {
+        throw std::runtime_error("Unsupported Opperation");
     }
 
-    virtual void draw(DebugDrawer* constdebug_drawer,
-                      const QColor& color = Qt::black,
-                      const QString& layer = "Motion") const {
-        throw new std::runtime_error("Unsupported Opperation");
+    void draw(DebugDrawer* /*constdebug_drawer*/,
+              const QColor& /*color*/ = Qt::black,
+              const QString& /*layer*/ = "Motion") const override {
+        throw std::runtime_error("Unsupported Opperation");
     }
 
-    virtual RJ::Seconds getDuration() const { return RJ::Seconds::max(); }
-
-    virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
-                                          RJ::Seconds endTime) const {
-        throw new std::runtime_error("Unsupported Opperation");
+    [[nodiscard]] RJ::Seconds getDuration() const override {
+        return RJ::Seconds::max();
     }
 
-    virtual RobotInstant start() const {
+    [[nodiscard]] std::unique_ptr<Path> subPath(
+        RJ::Seconds /*startTime*/, RJ::Seconds /*endTime*/) const override {
+        throw std::runtime_error("Unsupported Operation");
+    }
+
+    [[nodiscard]] RobotInstant start() const override {
         return RobotInstant(ball.predict(startTime()));
     }
-    virtual RobotInstant end() const {
-        throw new std::runtime_error("Unsupported Opperation");
+    [[nodiscard]] RobotInstant end() const override {
+        throw std::runtime_error("Unsupported Operation");
     }
 
-    virtual std::unique_ptr<Path> clone() const {
+    [[nodiscard]] std::unique_ptr<Path> clone() const override {
         return std::make_unique<BallPath>(*this);
     }
 
 protected:
-    virtual std::optional<RobotInstant> eval(RJ::Seconds t) const {
+    [[nodiscard]] std::optional<RobotInstant> eval(
+        RJ::Seconds t) const override {
         return RobotInstant(ball.predict(startTime() + t));
     }
 
@@ -121,7 +125,7 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
                               Geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
     auto nearPoint = line.nearestPoint(point);
-    if (nearPointOut) {
+    if (nearPointOut != nullptr) {
         *nearPointOut = nearPoint;
     }
     auto dist = nearPoint.distTo(pos);
@@ -134,20 +138,19 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
     if (part > 0) {
         auto t = (v - sqrt(part)) / ballDecayConstant;
         return time + RJ::Seconds(t);
-    } else {
-        return RJ::Time::max();
     }
+    return RJ::Time::max();
 
     // auto part = vel.mag() * -3.43289;
 }
 
-double Ball::estimateSecondsTo(const Geometry2d::Point &point) const {
+double Ball::estimateSecondsTo(const Geometry2d::Point& point) const {
     const auto time = estimateTimeTo(point);
     return RJ::Seconds(time - RJ::now()).count();
 }
 
 double Ball::predictSecondsToStop() const {
-    return vel.mag()/ballDecayConstant;
+    return vel.mag() / ballDecayConstant;
 }
 
 double Ball::estimateSecondsToDist(double dist) const {
@@ -157,9 +160,8 @@ double Ball::estimateSecondsToDist(double dist) const {
     if (part > 0) {
         auto t = (v - sqrt(part)) / ballDecayConstant;
         return t;
-    } else {
-        return std::numeric_limits<double>::infinity();
     }
+    return std::numeric_limits<double>::infinity();
 }
 
 SystemState::SystemState(Context* const context) {
@@ -167,24 +169,24 @@ SystemState::SystemState(Context* const context) {
     paused = false;
     self.resize(Num_Shells);
     opp.resize(Num_Shells);
-    for (unsigned int i = 0; i < Num_Shells; ++i) {
-        self[i] = new OurRobot(context, i);
-        opp[i] = new OpponentRobot(context, i);
+    for (int i = 0; i < Num_Shells; ++i) {
+        self[i] = new OurRobot(context, i);      // NOLINT
+        opp[i] = new OpponentRobot(context, i);  // NOLINT
     }
 }
 
 SystemState::~SystemState() {
-    for (unsigned int i = 0; i < Num_Shells; ++i) {
-        delete self[i];
-        delete opp[i];
+    for (int i = 0; i < Num_Shells; ++i) {
+        delete self[i];  // NOLINT
+        delete opp[i];   // NOLINT
     }
 }
 
 std::vector<int> SystemState::ourValidIds() {
     std::vector<int> validIds;
-    for (int i = 0; i < self.size(); i++) {
-        if (self[i]->visible()) {
-            validIds.push_back(self[i]->shell());
+    for (auto& i : self) {
+        if (i->visible()) {
+            validIds.push_back(i->shell());
         }
     }
     return validIds;

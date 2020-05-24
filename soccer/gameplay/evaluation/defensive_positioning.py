@@ -3,6 +3,9 @@ import robocup
 import math
 import constants
 import evaluation.ball
+import evaluation.opponent
+import evaluation.field
+from typing import List, Optional, Tuple
 
 
 ## Predicts the impending kick direction based on the orientation of the robot and the
@@ -10,7 +13,7 @@ import evaluation.ball
 #
 # @param robot: The robot which we want to estimate
 # @return Angle of most likely kick
-def predict_kick_direction(robot):
+def predict_kick_direction(robot: robocup.Robot) -> float:
     angle = robot.angle
     pos = robot.pos
     angle_vel = robot.angle_vel
@@ -38,8 +41,8 @@ def get_points_from_rect(rect, step=0.5):
 
     while currenty <= rect.max_y():
         while currentx <= rect.max_x():
-            if constants.Field.OurGoalZoneShape.contains_point(robocup.Point(
-                    currentx, currenty)):
+            if constants.Field.OurGoalZoneShape.contains_point(
+                    robocup.Point(currentx, currenty)):
                 currentx += step
                 continue
 
@@ -55,16 +58,17 @@ def get_points_from_rect(rect, step=0.5):
 ## Creates a zone that may cause a risk in the future
 #  Based off the...
 #   Risk score in that position
-#   Availbity of opponent robots to reach that point
+#   Availability of opponent robots to reach that point
 #   Space in that area
 #
 # @param ignore_robots: Ignore these robots in defensive calculations
 # @return Returns the best position to cover an error
-def create_area_defense_zones(ignore_robots=[]):
+def create_area_defense_zones(
+        ignore_robots: List[robocup.Robot] = []) -> Optional[robocup.Point]:
     # Create a 2D list [N][M] where N is the bucket
     # and M is the index along that point
     # The lists contains (robocup.Point, score)
-    points = [[]]
+    points: List[List[Tuple[robocup.Point, float]]] = [[]]
 
     # Amnt each bucket holds
     angle_inc = math.pi / 10
@@ -72,13 +76,13 @@ def create_area_defense_zones(ignore_robots=[]):
     dist_inc = 2.5
 
     # Holds the float angle (Radians)
-    angle = 0
+    angle = 0.0
     # Holds the integer bucket based on angle
     angle_cnt = 0
     # Holds dist
     dist = dist_inc
 
-    score_sum = 0
+    score_sum = 0.0
     point_cnt = 0
 
     # Populates all the buckets with values
@@ -127,7 +131,7 @@ def create_area_defense_zones(ignore_robots=[]):
     min_bucket_amnt = 0.25 * len(points[largest_bucket])
 
     # Move a max of X buckets in either direction
-    # where the number of buckets is > N and 
+    # where the number of buckets is > N and
     # the number of buckets is decreasing a certain amount
     # based on how far away it is
     bucket_list = []
@@ -152,7 +156,8 @@ def create_area_defense_zones(ignore_robots=[]):
 #
 # @param pos: Position in which to estimate score at
 # @return Risk score at that point
-def estimate_risk_score(pos, ignore_robots=[]):
+def estimate_risk_score(pos: robocup.Point,
+                        ignore_robots: List[robocup.Robot] = []) -> float:
     # Caches some kick eval functions
     max_time = 1
     max_ball_vel = 8  # m/s per the rules
@@ -215,7 +220,7 @@ def estimate_risk_score(pos, ignore_robots=[]):
             weights[2] * pos_score + \
             weights[3] * (1 - space_coeff) + \
             weights[4] * angle_coeff + \
-            weights[5] * (1 - dist / max_dist)**2
+            weights[5] * (1 - dist / max_dist) ** 2
 
     return score / sum(weights)
 
@@ -223,7 +228,9 @@ def estimate_risk_score(pos, ignore_robots=[]):
 ## Decides where the best positions for defense is
 #
 # @return area_defense_position, highest_risk_robot, 2nd_highest_risk_robot
-def find_defense_positions(ignore_robots=[]):
+def find_defense_positions(
+    ignore_robots: List[robocup.Robot] = []
+) -> Tuple[robocup.Point, robocup.OpponentRobot, robocup.OpponentRobot]:
 
     their_risk_scores = []
 
@@ -252,22 +259,26 @@ def find_defense_positions(ignore_robots=[]):
 # @param ball: Is the marked position the ball? Defaults to robot - used for offsets
 # @param kick_eval: kick evaluator, not required, but fewer steps if it's included here vs. recreated
 # @return Tuple: LineSegment to defend on , shot_pt from kick_eval
-def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
-
+def goalside_mark_segment(
+    mark_pos: robocup.Point,
+    robot: robocup.OurRobot,
+    ball: bool = False,
+    kick_eval: Optional[robocup.KickEvaluator] = None
+) -> Tuple[robocup.Segment, robocup.Point]:
     if kick_eval is None:
         kick_eval = robocup.KickEvaluator(main.system_state())
 
-    #Define the segments where the defender can go closest the goal
+    # Define the segments where the defender can go closest the goal
     offset = constants.Robot.Radius
     goal_rect_padded = constants.Field.OurGoalZoneShapePadded(offset)
 
-    #Find best shot point from threat
+    # Find best shot point from threat
     kick_eval.add_excluded_robot(robot)
     shot_pt, shot_score = kick_eval.eval_pt_to_our_goal(mark_pos)
     kick_eval.excluded_robots.clear()
 
-    #End the mark line segment 1 radius away from the opposing robot
-    #Or 1 ball radius away if marking a position
+    # End the mark line segment 1 radius away from the opposing robot
+    # Or 1 ball radius away if marking a position
     if not ball:
         adjusted_mark_pos = mark_pos - (
             mark_pos - shot_pt).normalized() * 2 * constants.Robot.Radius
@@ -283,7 +294,7 @@ def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
 
     intersections = sorted(tmp, key=lambda pt: pt.y, reverse=True)
 
-    #Correction for when there is no segment because the opposing robot is inside a radius of our goalzone
+    # Correction for when there is no segment because the opposing robot is inside a radius of our goalzone
     if len(intersections) == 0:
         intersections.append(adjusted_mark_pos)
 
@@ -293,8 +304,10 @@ def goalside_mark_segment(mark_pos, robot, ball=False, kick_eval=None):
 ## Finds the line segment between the mark_pos and the ball
 # @param mark_pos: Point (usually robot position) to defend against
 # @return: LineSegment to defend on
-def ballside_mark_segment(mark_pos, ball_pos=None):
-    #offsets on ball and mark_pos sides
+def ballside_mark_segment(
+        mark_pos: robocup.Point,
+        ball_pos: Optional[robocup.Point] = None) -> robocup.Line:
+    # offsets on ball and mark_pos sides
     if ball_pos is None:
         ball_pos = main.ball().pos
     offsets = [constants.Robot.Radius, constants.Ball.Radius]
@@ -302,6 +315,6 @@ def ballside_mark_segment(mark_pos, ball_pos=None):
     ball_mark_line = robocup.Segment(
         ball_pos - mark_line_dir * constants.Ball.Radius,
         mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
-    #End the mark line segment 1 radius away from the opposing robot
-    #Or 1 ball radius away if marking a position
+    # End the mark line segment 1 radius away from the opposing robot
+    # Or 1 ball radius away if marking a position
     return ball_mark_line

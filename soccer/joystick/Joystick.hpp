@@ -34,8 +34,7 @@ public:
  */
 class Joystick : boost::noncopyable {
 public:
-    Joystick(){};
-    virtual ~Joystick(){};
+    virtual ~Joystick() = default;
 
     /**
      * @brief Whether or not this Joystick is connected to a real device

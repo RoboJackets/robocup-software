@@ -24,10 +24,14 @@ void SpaceNavJoystick::update() {
     auto lock = lock_mutex();
 
     //  try again if we failed last time
-    if (!_daemonConnected && !_daemonTried) open();
+    if (!_daemonConnected && !_daemonTried) {
+        open();
+    }
 
     //  abort
-    if (!_daemonConnected) return;
+    if (!_daemonConnected) {
+        return;
+    }
 
     _controlValues.kick = false;
     _controlValues.chip = false;
@@ -36,7 +40,7 @@ void SpaceNavJoystick::update() {
     //  interested in the latest motion event, but we want to take note of any
     //  button event that happens
     spnav_event sev;
-    while (spnav_poll_event(&sev)) {
+    while (spnav_poll_event(&sev) != 0) {
         if (sev.type == SPNAV_EVENT_MOTION) {
             //  note: spacenav axes range from -350 to 350
 
@@ -54,10 +58,12 @@ void SpaceNavJoystick::update() {
 
                     _controlValues.dribblerPower +=
                         0.1 * -sign<int>(sev.motion.y);
-                    if (_controlValues.dribblerPower < 0)
+                    if (_controlValues.dribblerPower < 0) {
                         _controlValues.dribblerPower = 0;
-                    if (_controlValues.dribblerPower > 1)
+                    }
+                    if (_controlValues.dribblerPower > 1) {
                         _controlValues.dribblerPower = 1;
+                    }
                 }
 
                 _controlValues.translation = Geometry2d::Point(0, 0);
@@ -87,7 +93,7 @@ void SpaceNavJoystick::update() {
 
         } else {
             //  it's a button event!
-            if (sev.button.press) {
+            if (sev.button.press != 0) {
                 // spacenav button 0 is left, button 1 is right
                 // we chose 0 == kicker, 1 == chipper
                 if (sev.button.bnum == 1) {

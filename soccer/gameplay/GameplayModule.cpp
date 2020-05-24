@@ -36,11 +36,8 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
-    if (abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
-        numeric_limits<double>::epsilon()) {
-        return true;
-    }
-    return false;
+    return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
+           numeric_limits<double>::epsilon();
 }
 
 // TODO: Replace this whole file when we move to ROS2
@@ -97,10 +94,9 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
         }
         PyEval_SaveThread();
-    } catch (error_already_set) {
+    } catch (const error_already_set&) {
         PyErr_Print();
-        throw new runtime_error(
-            "Unable to initialize embedded python interpreter");
+        throw runtime_error("Unable to initialize embedded python interpreter");
     }
 }
 
@@ -124,7 +120,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
                       Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
 
     float y = -(float)_fieldEdgeInset->value();
-    float deadspace = (float)_fieldEdgeInset->value();
+    auto deadspace = (float)_fieldEdgeInset->value();
     x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
     _nonFloor[0] = make_shared<Polygon>(vector<Point>{
         Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
@@ -142,7 +138,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
         vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
                       Point(x + 1000, y), Point(x, y)});
 
-    const float halfFlat = dimensions.GoalFlat() / 2.0;
+    const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
     const float shortDist = dimensions.PenaltyShortDist();
     const float longDist = dimensions.PenaltyLongDist();
 
@@ -215,9 +211,9 @@ void Gameplay::GameplayModule::setupUI() {
             handle<> ignored3(
                 (PyRun_String("import ui.main; ui.main.setup()", Py_file_input,
                               _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error("Error trying to setup python-based UI");
+            throw runtime_error("Error trying to setup python-based UI");
         }
     }
     PyGILState_Release(state);
@@ -228,10 +224,10 @@ void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile,
     PyGILState_STATE state = PyGILState_Ensure();
     try {
         getMainModule().attr("load_playbook")(playbookFile, isAbsolute);
-    } catch (error_already_set) {
+    } catch (const error_already_set&) {
         PyErr_Print();
         PyGILState_Release(state);
-        throw new runtime_error("Error trying to load playbook.");
+        throw runtime_error("Error trying to load playbook.");
     }
     PyGILState_Release(state);
 }
@@ -241,10 +237,10 @@ void Gameplay::GameplayModule::savePlaybook(const string& playbookFile,
     PyGILState_STATE state = PyGILState_Ensure();
     try {
         getMainModule().attr("save_playbook")(playbookFile, isAbsolute);
-    } catch (error_already_set) {
+    } catch (const error_already_set&) {
         PyErr_Print();
         PyGILState_Release(state);
-        throw new runtime_error("Error trying to save playbook.");
+        throw runtime_error("Error trying to save playbook.");
     }
     PyGILState_Release(state);
 }
@@ -311,14 +307,16 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
  */
 void Gameplay::GameplayModule::run() {
     bool verbose = false;
-    if (verbose) cout << "Starting GameplayModule::run()" << endl;
+    if (verbose) {
+        cout << "Starting GameplayModule::run()" << endl;
+    }
 
     _ballMatrix =
         Geometry2d::TransformMatrix::translate(_context->state.ball.pos);
 
     /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : _context->state.self) {
-        if (robot) {
+        if (robot != nullptr) {
             robot->resetAvoidBall();
             robot->resetAvoidRobotRadii();
             robot->resetForNextIteration();
@@ -338,7 +336,7 @@ void Gameplay::GameplayModule::run() {
         try {
             // vector of shared pointers to pass to python
             vector<OurRobot*> botVector;
-            for (auto ourBot : _playRobots) {
+            for (auto* ourBot : _playRobots) {
                 // don't attempt to drive the robot that's joystick-controlled
                 // FIXME: exclude manual id robot
                 // if (ourBot->shell() != MANUAL_ID) {
@@ -348,8 +346,8 @@ void Gameplay::GameplayModule::run() {
             getMainModule().attr("set_our_robots")(botVector);
 
             vector<OpponentRobot*> theirBotVector;
-            for (auto bot : _context->state.opp) {
-                if (bot && bot->visible()) {
+            for (auto* bot : _context->state.opp) {
+                if (bot != nullptr && bot->visible()) {
                     theirBotVector.push_back(bot);
                 }
             }
@@ -365,23 +363,25 @@ void Gameplay::GameplayModule::run() {
                     "ui.main._tests.getNextCommand()", Py_eval_input,
                     _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
-                // TODO: Part two of the multiple-places-publishing-to-the-same-
-                // struct garbage-fest.
+                // TODO(Kyle): Part two of the
+                //  multiple-places-publishing-to-the-same-struct garbage-fest.
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
                     _context->game_settings.requestRefCommand = cmd;
                 }
             }
 
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error(
+            throw runtime_error(
                 "Error trying to pass robots and/or ball and/or game state to "
                 "python");
         }
 
         /// Run the current play
-        if (verbose) cout << "  Running play" << endl;
+        if (verbose) {
+            cout << "  Running play" << endl;
+        }
         try {
             /*
              We wrap this in a try catch block because main.run() should NEVER
@@ -403,13 +403,18 @@ void Gameplay::GameplayModule::run() {
                 // record the state of our behavior tree
                 std::string bhvrTreeDesc =
                     extract<std::string>(getRootPlay().attr("__str__")());
+<<<<<<< HEAD
                 _context->logFrame->set_behavior_tree(bhvrTreeDesc);
             } catch (error_already_set) {
+=======
+                _context->state.logFrame->set_behavior_tree(bhvrTreeDesc);
+            } catch (const error_already_set&) {
+>>>>>>> 757b8d3b90c290e2da23fd829c3efb279a7969a0
                 PyErr_Print();
             }
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error("Error trying to run root play");
+            throw runtime_error("Error trying to run root play");
         }
     }
     PyGILState_Release(state);
@@ -422,7 +427,9 @@ void Gameplay::GameplayModule::run() {
             "Rules");
     }
 
-    if (verbose) cout << "Finishing GameplayModule::run()" << endl;
+    if (verbose) {
+        cout << "Finishing GameplayModule::run()" << endl;
+    }
 
     if (_context->game_state.ourScore > _our_score_last_frame) {
         for (OurRobot* r : _context->state.self) {
@@ -458,9 +465,9 @@ void Gameplay::GameplayModule::addTests() {
             handle<> ignored3((PyRun_String(
                 "import ui.main; ui.main._tests.addTests()", Py_file_input,
                 _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error("Error trying to add tests");
+            throw runtime_error("Error trying to add tests");
         }
     }
     PyGILState_Release(state);
@@ -477,9 +484,9 @@ void Gameplay::GameplayModule::removeTest() {
             handle<> ignored3((PyRun_String(
                 "import ui.main; ui.main._tests.removeTest()", Py_file_input,
                 _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error("Error trying to add tests");
+            throw runtime_error("Error trying to add tests");
         }
     }
     PyGILState_Release(state);
@@ -494,9 +501,9 @@ void Gameplay::GameplayModule::nextTest() {
                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
             runningTests = extract<bool>(rtrn);
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error("Error trying to go to next test");
+            throw runtime_error("Error trying to go to next test");
         }
     }
     PyGILState_Release(state);
@@ -515,13 +522,13 @@ void Gameplay::GameplayModule::loadTest() {
 
             runningTests = extract<bool>(rtrn);
 
-            // TODO: Okay, so really all of this testing logic should be removed
-            // from Gameplay and put behind some sort of GameController
+            // TODO(Kyle): Okay, so really all of this testing logic should be
+            // removed from Gameplay and put behind some sort of GameController
             // abstraction that it shares with the main UI code. However, for
             // now we can hack around it by publishing to the same struct twice
             // from two different places. This is the big sad.
             //
-            // See the other TODO in this file for the other instance of the
+            // See the other to-do in this file for the other instance of the
             // same issue.
             if (runningTests) {
                 _context->game_settings.requestRefCommand = Command::HALT;
@@ -545,7 +552,7 @@ void Gameplay::GameplayModule::loadTest() {
                 const int teamDirection =
                     _context->game_state.blueTeam ? -1 : 1;
                 for (int i = 0; i < Robots_Per_Team; i++) {
-                    auto rob = replacement->add_robots();
+                    auto* rob = replacement->add_robots();
 
                     if (i < len(our_robots)) {
                         boost::python::list robot =
@@ -583,7 +590,7 @@ void Gameplay::GameplayModule::loadTest() {
                     extract<boost::python::list>(their_robot_rtrn);
 
                 for (int i = 0; i < Robots_Per_Team; i++) {
-                    auto rob = replacement->add_robots();
+                    auto* rob = replacement->add_robots();
 
                     if (i < len(their_robots)) {
                         boost::python::list robot =
@@ -619,26 +626,26 @@ void Gameplay::GameplayModule::loadTest() {
 
                 boost::python::list ball =
                     extract<boost::python::list>(ball_rtrn);
-                auto ball_replace = replacement->mutable_ball();
-                float posx = extract<float>(ball[0]);
-                float posy = extract<float>(ball[1]);
-                float velx = extract<float>(ball[2]);
-                float vely = extract<float>(ball[3]);
+                auto* ball_replace = replacement->mutable_ball();
+                double posx = extract<double>(ball[0]);
+                double posy = extract<double>(ball[1]);
+                double velx = extract<double>(ball[2]);
+                double vely = extract<double>(ball[3]);
 
-                ball_replace->mutable_pos()->set_x(
+                ball_replace->set_x(
                     -teamDirection *
                     (posy -
                      (Field_Dimensions::Current_Dimensions.Length() / 2)));
-                ball_replace->mutable_pos()->set_y(teamDirection * posx);
-                ball_replace->mutable_vel()->set_x(-teamDirection * vely);
-                ball_replace->mutable_vel()->set_y(teamDirection * velx);
+                ball_replace->set_y(teamDirection * posx);
+                ball_replace->set_vx(-teamDirection * vely);
+                ball_replace->set_vy(teamDirection * velx);
 
                 _context->grsim_command = simPacket;
             }
 
-        } catch (error_already_set) {
+        } catch (const error_already_set&) {
             PyErr_Print();
-            throw new runtime_error("Error trying to load test");
+            throw runtime_error("Error trying to load test");
         }
     }
     PyGILState_Release(state);

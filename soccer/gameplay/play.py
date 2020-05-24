@@ -7,17 +7,17 @@ import composite_behavior
 # however, by overriding the handles_goalie() class method, a Play can choose to handle
 # the goalie on its own, which allows for greater coordination.
 class Play(composite_behavior.CompositeBehavior):
-    def __init__(self, continuous):
+    def __init__(self, continuous: bool):
         super().__init__(continuous)
 
     ## Used to determine when to run a play
     # Return float("inf") if the play cannot be used or a score (lower is better) used to select the best play.
     @classmethod
-    def score(cls):
+    def score(cls) -> float:
         return 10
 
     @classmethod
-    def is_restart(cls):
+    def is_restart(cls) -> bool:
         return False
 
     ## Override to opt-in to handling the Goalie
@@ -30,7 +30,7 @@ class Play(composite_behavior.CompositeBehavior):
     # that that bot will fulfill
     # Note: keep in mind that the global goalie_id can be None and it may change from time to time
     @classmethod
-    def handles_goalie(cls):
+    def handles_goalie(cls) -> bool:
         return False
 
     ## Override to allow a play to run during the stopped state
@@ -39,5 +39,5 @@ class Play(composite_behavior.CompositeBehavior):
     # to stopped.py, so stopped.py is the only play that should be overriding
     # this.
     @classmethod
-    def run_during_stopped(cls):
+    def run_during_stopped(cls) -> bool:
         return False

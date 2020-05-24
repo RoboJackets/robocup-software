@@ -23,7 +23,8 @@ GamepadJoystick::GamepadJoystick()
             cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError()
                  << endl;
         } else {
-            cout << "Joystick connected to " << SDL_JoystickName(0) << endl;
+            cout << "Joystick connected to " << SDL_JoystickName(nullptr)
+                 << endl;
         }
     }
 }
@@ -42,20 +43,20 @@ void GamepadJoystick::update() {
     SDL_JoystickUpdate();
 
     // DRIBBLER CONTROL
-    if (SDL_JoystickGetButton(_joystick, 6)) {
+    if (SDL_JoystickGetButton(_joystick, 6) != 0u) {
         _controls.dribble = false;
-    } else if (SDL_JoystickGetButton(_joystick, 4)) {
+    } else if (SDL_JoystickGetButton(_joystick, 4) != 0u) {
         _controls.dribble = true;
     }
 
     // DRIBBLER POWER CONTROL
     const auto now = RJ::now();
-    if (SDL_JoystickGetButton(_joystick, 1)) {
+    if (SDL_JoystickGetButton(_joystick, 1) != 0u) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = max(_controls.dribblerPower - 0.1, 0.0);
             _lastDribblerTime = now;
         }
-    } else if (SDL_JoystickGetButton(_joystick, 3)) {
+    } else if (SDL_JoystickGetButton(_joystick, 3) != 0u) {
         if ((now - _lastDribblerTime) >= Dribble_Step_Time) {
             _controls.dribblerPower = min(_controls.dribblerPower + 0.1, 1.0);
             _lastDribblerTime = now;
@@ -66,12 +67,12 @@ void GamepadJoystick::update() {
     }
 
     // KICKER POWER CONTROL
-    if (SDL_JoystickGetButton(_joystick, 0)) {
+    if (SDL_JoystickGetButton(_joystick, 0) != 0u) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
             _lastKickerTime = now;
         }
-    } else if (SDL_JoystickGetButton(_joystick, 2)) {
+    } else if (SDL_JoystickGetButton(_joystick, 2) != 0u) {
         if ((now - _lastKickerTime) >= Kicker_Step_Time) {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
             _lastKickerTime = now;
@@ -82,10 +83,10 @@ void GamepadJoystick::update() {
 
     // Kicking is triggered by a chip as well. If you only want a chip, remove
     // 5.
-    _controls.kick = SDL_JoystickGetButton(_joystick, 7) |
-                     SDL_JoystickGetButton(_joystick, 5);
+    _controls.kick = ((SDL_JoystickGetButton(_joystick, 7) |
+                       SDL_JoystickGetButton(_joystick, 5)) != 0);
 
-    _controls.chip = SDL_JoystickGetButton(_joystick, 5);
+    _controls.chip = (SDL_JoystickGetButton(_joystick, 5) != 0u);
 
     // for(int i = 0; i < SDL_JoystickNumButtons(_joystick); i++)
     //    cout << static_cast<int>(SDL_JoystickGetButton(_joystick, i));

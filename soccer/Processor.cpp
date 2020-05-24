@@ -1,24 +1,26 @@
-#include <gameplay/GameplayModule.hpp>
+#include "Processor.hpp"
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
+
 #include <Constants.hpp>
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
+#include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
+#include <gameplay/GameplayModule.hpp>
 #include <joystick/GamepadController.hpp>
 #include <joystick/Joystick.hpp>
 #include <planning/IndependentMultiRobotPathPlanner.hpp>
+
 #include "DebugDrawer.hpp"
-#include "Processor.hpp"
 #include "radio/PacketConvert.hpp"
 #include "radio/RadioNode.hpp"
 #include "vision/VisionFilter.hpp"
 
 REGISTER_CONFIGURABLE(Processor)
 
-using namespace std;
 using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
@@ -26,10 +28,10 @@ using namespace google::protobuf;
 // TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
-// A temporary place to store RobotStatus/RobotConfig variables as we create
+// A temporary place to store RobotLocalConfig/RobotConfig variables as we create
 // them. They are initialized in createConfiguration, before the Processor class
 // is initialized, so we need to temporarily store them somewhere.
-std::vector<RobotStatus> robot_status_init;
+std::vector<RobotLocalConfig> robot_status_init;
 std::unique_ptr<RobotConfig> Processor::robot_config_init;
 
 void Processor::createConfiguration(Configuration* cfg) {
@@ -62,7 +64,7 @@ Processor::Processor(bool sim, bool defendPlus, bool blueTeam,
     _context.robot_config = std::move(robot_config_init);
     for (int i = Num_Shells - 1; i >= 0; i--) {
         // Set up fields in Context
-        _context.robot_status[i] = std::move(robot_status_init.back());
+        _context.local_configs[i] = std::move(robot_status_init.back());
         robot_status_init.pop_back();
     }
 
@@ -107,7 +109,7 @@ Processor::~Processor() {
     robot_config_init = std::move(_context.robot_config);
 
     for (size_t i = 0; i < Num_Shells; i++) {
-        robot_status_init.push_back(std::move(_context.robot_status[i]));
+        robot_status_init.push_back(std::move(_context.local_configs[i]));
     }
 }
 
@@ -133,7 +135,9 @@ void Processor::setupJoysticks() {
 
 bool Processor::joystickValid() const {
     for (Joystick* joy : _joysticks) {
-        if (joy->valid()) return true;
+        if (joy->valid()) {
+            return true;
+        }
     }
     return false;
 }
@@ -143,17 +147,19 @@ void Processor::runModels() {
 
     for (auto& packet : _context.vision_packets) {
         const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
-        vector<CameraBall> ballObservations;
-        vector<CameraRobot> yellowObservations;
-        vector<CameraRobot> blueObservations;
+        std::vector<CameraBall> ballObservations;
+        std::vector<CameraRobot> yellowObservations;
+        std::vector<CameraRobot> blueObservations;
 
-        RJ::Time time = RJ::Time(chrono::duration_cast<chrono::microseconds>(
-            RJ::Seconds(frame->t_capture())));
+        RJ::Time time =
+            RJ::Time(std::chrono::duration_cast<std::chrono::microseconds>(
+                RJ::Seconds(frame->t_capture())));
 
         // Add ball observations
         ballObservations.reserve(frame->balls().size());
         for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.emplace_back(time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
+            ballObservations.emplace_back(
+                time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
         }
 
         // Collect camera data from all robots
@@ -178,12 +184,14 @@ void Processor::runModels() {
                 robot.robot_id());
         }
 
-        frames.emplace_back(time, frame->camera_id(), ballObservations, yellowObservations, blueObservations);
+        frames.emplace_back(time, frame->camera_id(), ballObservations,
+                            yellowObservations, blueObservations);
     }
 
     _vision->addFrames(frames);
 
-    // Fill the list of our robots/balls based on whether we are the blue team or not
+    // Fill the list of our robots/balls based on whether we are the blue team
+    // or not
     _vision->fillBallState(_context.state);
     _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
 }
@@ -214,8 +222,8 @@ void Processor::run() {
         _visionReceiver->run();
 
         if (_context.field_dimensions != *currentDimensions) {
-            cout << "Updating field geometry based off of vision packet."
-                 << endl;
+            std::cout << "Updating field geometry based off of vision packet."
+                      << std::endl;
             setFieldDimensions(_context.field_dimensions);
         }
 
@@ -223,7 +231,9 @@ void Processor::run() {
 
         _radio->run();
 
-        if (_radio) curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+        if (_radio) {
+            curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+        }
 
         for (Joystick* joystick : _joysticks) {
             joystick->update();
@@ -257,7 +267,7 @@ void Processor::run() {
         // Build a plan request for each robot.
         std::map<int, Planning::PlanRequest> requests;
         for (OurRobot* r : _context.state.self) {
-            if (r && r->visible()) {
+            if (r != nullptr && r->visible()) {
                 if (_context.game_state.state == GameState::Halt) {
                     r->setPath(nullptr);
                     continue;
@@ -319,8 +329,9 @@ void Processor::run() {
         // that joystick code only (sort of) supports one joystick at a time.
         // Figure out which robots are manual controlled.
         for (OurRobot* robot : _context.state.self) {
-            robot->setJoystickControlled(robot->shell() ==
-                                         _context.game_settings.manualID);
+            robot->setJoystickControlled(
+                robot->shell() ==
+                _context.game_settings.joystick_config.manualID);
         }
 
         _motionControl->run();
@@ -330,12 +341,6 @@ void Processor::run() {
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to
         // update things manually.
-        if (false) {
-            for (auto& node : _nodes) {
-                node->run();
-            }
-        }
-
 
         ////////////////
         // Outputs
@@ -389,10 +394,10 @@ void Processor::sendRadioData() {
     // Add RadioTx commands for visible robots and apply joystick input
     for (OurRobot* r : _context.state.self) {
         RobotIntent& intent = _context.robot_intents[r->shell()];
-        if (_context.game_settings.manualID == r->shell()) {
+        if (_context.game_settings.joystick_config.manualID == r->shell()) {
             intent.is_active = true;
             auto controlValues = getJoystickControlValues();
-            if (controlValues.size()) {
+            if (!controlValues.empty()) {
                 applyJoystickControls(controlValues[0], r);
             }
         } else if (r->visible()) {
@@ -409,8 +414,8 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // use world coordinates if we can see the robot
     // otherwise default to body coordinates
-    if (robot && robot->visible() &&
-        _context.game_settings.useFieldOrientedDrive) {
+    if (robot != nullptr && robot->visible() &&
+        _context.game_settings.joystick_config.useFieldOrientedDrive) {
         translation.rotate(-M_PI / 2 - robot->angle());
     }
     RobotIntent& intent = _context.robot_intents[robot->shell()];
@@ -424,16 +429,18 @@ void Processor::applyJoystickControls(const JoystickControlValues& controlVals,
 
     // kick/chip
     bool kick = controlVals.kick || controlVals.chip;
-    intent.trigger_mode = (kick ? (_context.game_settings.useKickOnBreakBeam
-                                       ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                                       : RobotIntent::TriggerMode::IMMEDIATE)
-                                : RobotIntent::TriggerMode::STAND_DOWN);
-    intent.kcstrength = (controlVals.kickPower);
+    intent.trigger_mode =
+        (kick ? (_context.game_settings.joystick_config.useKickOnBreakBeam
+                     ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                     : RobotIntent::TriggerMode::IMMEDIATE)
+              : RobotIntent::TriggerMode::STAND_DOWN);
+    intent.kcstrength = static_cast<int>(controlVals.kickPower);
     intent.shoot_mode = (controlVals.kick ? RobotIntent::ShootMode::KICK
                                           : RobotIntent::ShootMode::CHIP);
 
     // dribbler
-    intent.dvelocity = (controlVals.dribble ? controlVals.dribblerPower : 0);
+    intent.dvelocity =
+        static_cast<float>(controlVals.dribble ? controlVals.dribblerPower : 0);
 }
 
 JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
@@ -441,19 +448,23 @@ JoystickControlValues Processor::getJoystickControlValue(Joystick& joy) {
     if (joy.valid()) {
         // keep it in range
         vals.translation.clamp(sqrt(2.0));
-        if (vals.rotation > 1) vals.rotation = 1;
-        if (vals.rotation < -1) vals.rotation = -1;
+        if (vals.rotation > 1) {
+            vals.rotation = 1;
+        }
+        if (vals.rotation < -1) {
+            vals.rotation = -1;
+        }
 
         // Gets values from the configured joystick control
         // values,respecting damped
         // state
-        if (_context.game_settings.dampedTranslation) {
+        if (_context.game_settings.joystick_config.dampedTranslation) {
             vals.translation *=
                 Joystick::JoystickTranslationMaxDampedSpeed->value();
         } else {
             vals.translation *= Joystick::JoystickTranslationMaxSpeed->value();
         }
-        if (_context.game_settings.dampedRotation) {
+        if (_context.game_settings.joystick_config.dampedRotation) {
             vals.rotation *= Joystick::JoystickRotationMaxDampedSpeed->value();
         } else {
             vals.rotation *= Joystick::JoystickRotationMaxSpeed->value();

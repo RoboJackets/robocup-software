@@ -74,7 +74,7 @@ public:
     void setUseRefChecked(bool use_ref);
 
 private Q_SLOTS:
-    void addLayer(int i, QString name, bool checked);
+    void addLayer(int i, const QString& name, bool checked);
     void updateViews();
 
     void on_fieldView_robotSelected(int shell);
@@ -185,29 +185,29 @@ Q_SIGNALS:
 private:
     void updateStatus();
     void updateFromRefPacket(bool haveExternalReferee);
-    static std::string formatLabelBold(Side side, std::string label);
+    static std::string formatLabelBold(Side side, const std::string& label);
 
-    typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
+    enum class StatusType { Status_OK, Status_Warning, Status_Fail };
 
-    void status(QString text, StatusType status);
+    void status(const QString& text, StatusType status);
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
 
-    Ui_MainWindow _ui;
-    const QStandardItemModel* goalieModel;
+    Ui_MainWindow _ui{};
+    const QStandardItemModel* goalieModel{};
 
     Processor* const _processor;
-    Configuration* _config;
+    Configuration* _config{};
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
     // again from the Logger.
-    std::vector<std::shared_ptr<Packet::LogFrame> > _history;
+    std::vector<std::shared_ptr<Packet::LogFrame> > _history{};
 
     // Longer log history, copied from Logger.
     // This is used specificially via StripChart and ProtobufTree
     // To export a larger amount of data.
-    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory;
+    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory{};
 
     // When true, External Referee is automatically set.
     // This is cleared by manually changing the checkbox or after the
@@ -215,8 +215,8 @@ private:
     bool _autoExternalReferee;
 
     // Tree items that are not in LogFrame
-    QTreeWidgetItem* _frameNumberItem;
-    QTreeWidgetItem* _elapsedTimeItem;
+    QTreeWidgetItem* _frameNumberItem{};
+    QTreeWidgetItem* _elapsedTimeItem{};
 
     /// playback rate of the viewer - a value of 1 means realtime
     std::optional<double> _playbackRate;
@@ -231,11 +231,11 @@ private:
 
     RJ::Time _lastUpdateTime;
 
-    QLabel* _currentPlay;
-    QLabel* _logFile;
-    QLabel* _viewFPS;
-    QLabel* _procFPS;
-    QLabel* _logMemory;
+    QLabel* _currentPlay{};
+    QLabel* _logFile{};
+    QLabel* _viewFPS{};
+    QLabel* _procFPS{};
+    QLabel* _logMemory{};
 
     // QActionGroups for Radio Menu Actions
     std::map<std::string, QActionGroup*> qActionGroups{};

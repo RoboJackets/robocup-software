@@ -6,8 +6,7 @@
  */
 class Node {
 public:
-    virtual ~Node() {}
-
+    virtual ~Node() = default;
     virtual void start(){};
 
     // The callback

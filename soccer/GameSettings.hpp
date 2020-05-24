@@ -19,7 +19,8 @@ struct GameSettings {
 
     // Requests. These can be overridden by the referee if it's enabled
     bool requestBlueTeam = true;
-    int requestGoalieID;
+    int requestGoalieID = 0;
+
     // One-off command. This should be set once, and acknowledged by setting it
     // back to nullopt.
     std::optional<RefereeModuleEnums::Command> requestRefCommand = std::nullopt;
@@ -32,12 +33,15 @@ struct GameSettings {
 
     bool paused = false;
 
-    // Joystick configuration
-    int manualID = -1;
-    bool dampedTranslation = true;
-    bool dampedRotation = true;
-    bool useKickOnBreakBeam = false;
-    bool useFieldOrientedDrive = false;
+    struct JoystickConfig {
+        int manualID = -1;
+        bool dampedTranslation = true;
+        bool dampedRotation = true;
+        bool useKickOnBreakBeam = false;
+        bool useFieldOrientedDrive = false;
+    };
+
+    JoystickConfig joystick_config;
 
     /**
      * Copy from another struct, but don't clear optional values (RPCs) unless

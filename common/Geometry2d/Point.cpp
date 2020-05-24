@@ -1,8 +1,11 @@
 #include "Point.hpp"
+
 #include "Util.hpp"
 
 namespace Geometry2d {
 bool Point::nearlyEquals(Point other) const {
-    return nearlyEqual(x(), other.x()) && nearlyEqual(y(), other.y());
+    return nearlyEqual(static_cast<float>(x()),
+                       static_cast<float>(other.x())) &&
+           nearlyEqual(static_cast<float>(y()), static_cast<float>(other.y()));
 }
-}
+}  // namespace Geometry2d
