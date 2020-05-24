@@ -1,6 +1,6 @@
 from typing import Optional
 import composite_behavior
-from role_assignment import RoleRequirements
+import role_assignment
 import evaluation
 import behavior
 import constants
@@ -177,7 +177,8 @@ class Wall(composite_behavior.CompositeBehavior):
             super().__init__(pos)
             self.center_pt = center_pt
 
-        def role_requirements(self) -> RoleRequirements:  # type: ignore
+        def role_requirements(  # type: ignore
+                self) -> role_assignment.RoleRequirements:
             reqs = super().role_requirements()
             reqs.destination_shape = self.center_pt if self.center_pt else None
             return reqs

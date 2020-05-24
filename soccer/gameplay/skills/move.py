@@ -1,5 +1,5 @@
 import single_robot_behavior
-from role_assignment import RoleRequirements
+import role_assignment
 import behavior
 import robocup
 import math
@@ -66,7 +66,8 @@ class Move(single_robot_behavior.SingleRobotBehavior):
                                       self.robot.pos.y + self.robot.vel.y *
                                       -5))
 
-    def role_requirements(self) -> RoleRequirements:  # type: ignore
+    def role_requirements(  # type: ignore
+            self) -> role_assignment.RoleRequirements:
         reqs = super().role_requirements()
         reqs.destination_shape = self.pos
         return reqs
