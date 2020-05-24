@@ -40,7 +40,8 @@ class Wall(composite_behavior.CompositeBehavior):
         self.active_defenders = num_defenders
         self.number_of_defenders = num_defenders
         self.curvature = 1 * curvature
-        self._mark_point = main.ball().pos if mark_point is None else mark_point
+        self._mark_point = main.ball(
+        ).pos if mark_point is None else mark_point
         self._defense_point = defender_point
         self.dist_from_mark = dist_from_mark
         self.defender_spacing = defender_spacing
@@ -83,8 +84,8 @@ class Wall(composite_behavior.CompositeBehavior):
                 self.remove_subbehavior(subbhvr_name)
             self.add_subbehavior(self.WallMove(
                 pt, pt if i != 0 and i != len(pts) - 1 else None),
-                name=subbhvr_name,
-                required=False)
+                                 name=subbhvr_name,
+                                 required=False)
 
     ## Remove wall behaviors
     def _remove_wall_defenders(self) -> None:
@@ -107,16 +108,16 @@ class Wall(composite_behavior.CompositeBehavior):
     ## Finds the point on the arc the defender should move to
     def calculate_destination(self, robot_number: int) -> robocup.Point:
         defender_number = robot_number - self.number_of_defenders / 2 + .5
-        direct: robocup.Point = (
-            self.mark_point - self.defense_point).normalized()
+        direct: robocup.Point = (self.mark_point -
+                                 self.defense_point).normalized()
         arc_angle = defender_number * self.curvature + math.pi / 2
         direct.rotate_origin(arc_angle)
         return self.midpoint - direct * constants.Robot.Radius * self.defender_spacing * defender_number
 
     ## Update wall's midpoint based on the mark and defense points
     def update_midpoint(self) -> None:
-        self.midpoint = self.mark_point + (
-            self.defense_point - self.mark_point).normalized() * self.dist_from_mark
+        self.midpoint = self.mark_point + (self.defense_point - self.mark_point
+                                           ).normalized() * self.dist_from_mark
 
     @property
     def defense_point(self) -> robocup.Point:
@@ -158,7 +159,8 @@ class Wall(composite_behavior.CompositeBehavior):
 
     ## Move behavior that prioritizes the center point of the wall
     class WallMove(skills.move.Move):
-        def __init__(self, pos: Optional[robocup.Point] = None,
+        def __init__(self,
+                     pos: Optional[robocup.Point] = None,
                      center_pt: Optional[robocup.Point] = None):
             super().__init__(pos)
             self.center_pt = center_pt
