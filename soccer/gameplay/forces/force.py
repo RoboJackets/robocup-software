@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 import robocup
-import force_sample
-import composite_force
+from forces import force_sample
 import copy
 
 class Force(ABC):
@@ -17,6 +16,7 @@ class Force(ABC):
     def __str__(self):
         return name
 
+    """
     def __add__(self, other):
         if(other.compositable):
             newComposite = copy.deepcopy(other)  
@@ -24,6 +24,6 @@ class Force(ABC):
             return newComposite
         else:
             return composite_force(forces=[self, other], merge_function=lambda x : sum(x))
-
+    """
     
 

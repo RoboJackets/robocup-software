@@ -1,17 +1,14 @@
 
 import robocup
-import forces
-from forces import force
 import main
 from abc import abstractmethod
 import copy
-from forces import points_force
+from forces import force
 
 class CompositeForce(force.Force):
 
     forces = list()
     compositable = True
-
 
     merge_function = lambda x : sum(x)
 
@@ -21,6 +18,7 @@ class CompositeForce(force.Force):
         if(merge_function is not None):
             self.merge_function = merge_function
 
+    """
     def __add__(self, other):
         newComposite = copy.deepcopy(self) 
         if(other.compositable):
@@ -29,6 +27,8 @@ class CompositeForce(force.Force):
         else:
             newComposite.append(other)
             return newComposite
+    """
+
 
     def addForce(self, force):
         force_list.append(force)

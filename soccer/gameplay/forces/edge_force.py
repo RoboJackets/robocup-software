@@ -8,7 +8,7 @@ import numpy as np
 from forces import force_utils
 from forces import force_sample
 from forces import direction
-from forces import point
+from forces import point_force
 from forces import points_force
 
 
@@ -24,7 +24,7 @@ class EdgeForce(points_force.PointsForce):
     merge_function = lambda x : max(x)
 
     ##I don't know if this is horrible or butiful
-    points = [lambda x : border.nearest_point(x) for border in self.borders]
+    points = [lambda x : border.nearest_point(x) for border in borders]
 
 
 

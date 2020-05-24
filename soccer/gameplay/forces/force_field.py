@@ -1,6 +1,8 @@
 
 import numpy as np
-import force_utils
+from forces import force_utils
+import robocup
+
 
 ##
 # A field of forces that can be continually generated
@@ -35,7 +37,7 @@ class ForceField():
     # Augment the field samples with a passed in function
     # Note that your lambda function needs to operate on force samples
     # 
-    def augment(self, func = lambda x : x)
+    def augment(self, func = lambda x : x):
         self.samples = [func(x) for x in samples]
 
     ## A function to augment the force field with laziness

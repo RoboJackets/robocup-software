@@ -1,12 +1,14 @@
 from forces import force
 from forces import force_utils
 from forces import force_sample
+from forces import direction
+
 
 ##
 #
 # A force that eminates from a point
 #
-class PointForce(forces.force.Force):
+class PointForce(force.Force):
 
     #Does this need to be a lambda??? if you are doing the location of a robot than it could be like a refrence but that's kind of sketch
     ## A lambda that returns the point from which the force is originating as a function of the sample point

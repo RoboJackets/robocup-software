@@ -1,6 +1,7 @@
 
 from forces import force_utils
-
+from forces import composite_force
+from forces import direction
 
 #A force origonating from  number of points symmetrically
 #
@@ -20,7 +21,8 @@ class PointsForce(composite_force.CompositeForce):
     compositable = False
     
     def __init__(self): 
-        
+        pass
+
     def add_point(self, point):
         self.initalized = False
         self.points.append(point)

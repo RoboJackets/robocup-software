@@ -38,7 +38,6 @@ class ForceVisualizer():
     ##
     # Sets the colors to be a thermal colorscheme
     #
-    #
     def set_color_thermal(self, exp_min=0, exp_max=10):
         self.color = lambda mag : force_utils.thermal_rgb_convert(mag, exp_min, exp_max)
 
