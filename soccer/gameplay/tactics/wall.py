@@ -78,9 +78,12 @@ class Wall(composite_behavior.CompositeBehavior):
         # prioritize the middle elements of the wall
         for i in range(len(pts)):
             pt = pts[i]
+            subbhvr_name = f"robot{i}"
+            if self.has_subbehavior_with_name(subbhvr_name):
+                self.remove_subbehavior(subbhvr_name)
             self.add_subbehavior(self.WallMove(
                 pt, pt if i != 0 and i != len(pts) - 1 else None),
-                name="robot" + str(i),
+                name=subbhvr_name,
                 required=False)
 
     ## Remove wall behaviors
