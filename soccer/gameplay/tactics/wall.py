@@ -80,10 +80,22 @@ class Wall(composite_behavior.CompositeBehavior):
         for i in range(len(pts)):
             pt = pts[i]
             subbhvr_name = f"robot{i}"
+            # Oswin: I'm not sure why we have this logic here...
+            center_pt = pt if i != 0 and i != len(pts) - 1 else None
+
+            # We might have 0 < active_defenders < number_of_defenders
+            # so we need to check that we're not adding a duplicate
             if self.has_subbehavior_with_name(subbhvr_name):
-                self.remove_subbehavior(subbhvr_name)
-            self.add_subbehavior(self.WallMove(
-                pt, pt if i != 0 and i != len(pts) - 1 else None),
+                move_subbhvr = self.subbehavior_with_name(subbhvr_name)
+                assert isinstance(move_subbhvr, self.WallMove)
+
+                # Update pos and center_pt instead of removing and adding
+                # the subbehavior so it doesn't cause swapping of roles
+                move_subbhvr.pos = pt
+                move_subbhvr.center_pt = center_pt
+                continue
+
+            self.add_subbehavior(self.WallMove(pt, center_pt),
                                  name=subbhvr_name,
                                  required=False)
 
