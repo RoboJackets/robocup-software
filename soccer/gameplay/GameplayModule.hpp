@@ -12,11 +12,12 @@
 #include <Geometry2d/ShapeSet.hpp>
 
 #include <set>
-#include <QMutex>
 #include <QString>
 
 #include <Configuration.hpp>
 #include <Context.hpp>
+#include <GrSimCommunicator.hpp>
+#include <Referee.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 class OurRobot;
@@ -43,7 +44,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context);
+    GameplayModule(Context* const context, Referee* refereeModule);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -68,9 +69,6 @@ public:
 
     void clearPlays();
     bool checkPlaybookStatus();
-
-    void goalieID(int value);
-    int goalieID() { return _goalieID; }
 
     /**
      * @defgroup matrices Coordinate Conversion Matrices
@@ -122,6 +120,18 @@ public:
     /// whenever the current field dimensions change
     void updateFieldDimensions();
 
+    /// adds tests to the list of tests to run
+    void addTests();
+
+    /// remove selected test from the list of tests to run
+    void removeTest();
+
+    /// loads a test for the testing tab
+    void loadTest();
+
+    /// go to the next test for the testing tab
+    void nextTest();
+
 protected:
     boost::python::object getRootPlay();
 
@@ -129,14 +139,11 @@ protected:
     boost::python::object getMainModule();
 
 private:
-    /// This protects all of Gameplay.
-    /// This is held while plays are running.
-    QMutex _mutex;
-
     static ConfigDouble* _fieldEdgeInset;
     double _oldFieldEdgeInset;
 
     Context* const _context;
+    Referee* const _refereeModule;
 
     std::set<OurRobot*> _playRobots;
 
@@ -169,5 +176,8 @@ private:
 
     // python
     boost::python::object _mainPyNamespace;
+
+    // Testing
+    bool runningTests = false;
 };
 }

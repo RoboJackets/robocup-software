@@ -1,13 +1,11 @@
-#include <LogViewer.hpp>
-
+#include <fcntl.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
+#include <LogViewer.hpp>
 #include <QApplication>
 #include <QFile>
-
 #include <algorithm>
-#include <fcntl.h>
-#include <stdio.h>
+#include <cstdio>
 
 using namespace std;
 using namespace boost;
@@ -31,7 +29,7 @@ int main(int argc, char* argv[]) {
     win.readFrames(argv[1]);
     win.showMaximized();
 
-    return app.exec();
+    return QApplication::exec();
 }
 
 LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {

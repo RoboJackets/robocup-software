@@ -14,130 +14,53 @@ defaults_image: &image
     - image: robojackets/robocup-software:master
 
 defaults_deps: &install_deps
-  run: ./util/ubuntu-setup --yes && sudo ccache -M 100M
+  run: ./util/ubuntu-setup --yes
 
-defaults_ssc: &save_src_cache
-  save_cache:
-    key: source-v1-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ".git"
-
-defaults_lsc: &load_src_cache
-  restore_cache:
-    keys:
-      - source-v1-{{ .Branch }}-{{ .Revision }}
-      - source-v1-{{ .Branch }}-
-      - source-v1-
-defaults_scc: &save_compile_cache
-  save_cache:
-    key: ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/.ccache
-
-defaults_sccc: &save_compile_coverage_cache
-  save_cache:
-    key: ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/.ccache
-
-defaults_sctc: &save_compile_test_cache
-  save_cache:
-    key: ccache-test-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - ~/.ccache
-
-defaults_lcc: &load_compile_cache
-  restore_cache:
-    keys:
-      - ccache-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - ccache-{{ arch }}-{{ .Branch }}
-      - ccache-{{ arch }}
-      - ccache-
-
-defaults_lccc: &load_compile_coverage_cache
-  restore_cache:
-    keys:
-      - ccache-cov-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - ccache-cov-{{ arch }}-{{ .Branch }}
-      - ccache-cov-{{ arch }}
-      - ccache-cov-
-
-defaults_lctc: &load_compile_test_cache
-  restore_cache:
-    keys:
-      - ccache-test-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - ccache-test-{{ arch }}-{{ .Branch }}
-      - ccache-test-{{ arch }}
-      - ccache-test-
-
-defaults_sw: &save_workspace
+save_workspace: &save_workspace
   persist_to_workspace:
-    root: build
+    root: ~/robocup-software
     paths:
-      - ./*
+      - build/*
+      - run/*
 
-defaults_lw: &load_workspace
+load_workspace: &load_workspace
   attach_workspace:
-    at: build
+    at: ~/robocup-software
 
 version: 2
 jobs:
+  # Compile everything and save the build folder
   compile:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
-      # Ensure latest deps are installed
       - <<: *install_deps
-      - <<: *load_compile_cache
-      - run: make
-      - <<: *save_compile_cache
+      - run: make all_including_tests
       - <<: *save_workspace
 
-  test-soccer:
+  # Use the saved build folder for testing
+  test-all:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
       # Ensure latest deps are installed
       - <<: *install_deps
       - <<: *load_workspace
-      - <<: *load_compile_test_cache
-      - run: make test-soccer
-      - <<: *save_compile_test_cache
+      # Run test without building anything
+      - run: make test-soccer-nobuild
+      - run: make test-python-nobuild
 
-  test-python:
+  python-static:
     <<: *dir
     <<: *image
+#    docker:
+#      - image: robojackets/robocup-software:16
     steps:
-      - <<: *load_src_cache
-      - checkout
-      # Ensure latest deps are installed
-      - <<: *install_deps
-      - <<: *load_workspace
-      - <<: *load_compile_cache
-      - run: make test-python
-
-  # FIXME: pylint is broken on 18.04
-  pylint:
-    <<: *dir
-    docker:
-      - image: robojackets/robocup-software:16
-    steps:
-      - <<: *load_src_cache
       - checkout
       - <<: *install_deps
       - run: make pylint
-
-  mypy:
-    <<: *dir
-    docker:
-      - image: python:3
-    steps:
-      - <<: *load_src_cache
-      - checkout
       - run: pip3 install -r util/requirements3.txt
       - run: make mypy
 
@@ -145,42 +68,48 @@ jobs:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
       # We need environment variables ($GOPATH and $PATH specifically)
       - <<: *setup_env
       # Ensure latest deps are installed
       - <<: *install_deps
-      - <<: *load_workspace
-      - <<: *load_compile_cache
-      - run: git fetch origin && STYLIZE_DIFFBASE=origin/master make checkstyle-lines
+      - run: pip3 install --upgrade -r util/requirements3.txt
+      - run: git fetch origin && STYLIZE_DIFFBASE=origin/staging make checkstyle-lines
       - store_artifacts:
           path: /tmp/clean.patch
 
-  coverage:
+  clang-tidy:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
-      # Ensure latest deps are installed
+      - <<: *setup_env
       - <<: *install_deps
-      # save src cache in coverage task as nothing depends on it, we can take our time.
-      - <<: *save_src_cache
-      - <<: *load_compile_coverage_cache
-      - run: make coverage
-      - <<: *save_compile_coverage_cache
+      - <<: *load_workspace
+      - run: |
+          STYLIZE_DIFFBASE=origin/staging make checktidy-lines
+          cat /tmp/checktidy.patch
+          if grep -q 'No relevant changes found' /tmp/checktidy.patch; then
+            echo "No relevant changes found"
+            exit 0
+          fi
+
+          mkdir -p /tmp/test-results/clang-tidy
+          cat /tmp/checktidy.patch | python3 util/clang-tidy-to-junit.py > /tmp/test-results/clang-tidy/results.xml
+          if [[ -n $(grep '[^[:space:]]' /tmp/checktidy.patch) ]]; then
+            echo "****************************** clang-tidy errors *******************************"
+            exit 1
+          fi
+      - store_test_results:
+          path: /tmp/test-results
 
   gen-docs:
     <<: *dir
     <<: *image
     steps:
-      - <<: *load_src_cache
       - checkout
       # Ensure latest deps are installed
       - <<: *install_deps
-      - <<: *load_workspace
-      - <<: *load_compile_test_cache
       - run: ./autoupdate-docs.sh
 
 workflows:
@@ -188,29 +117,20 @@ workflows:
   build_and_test:
     jobs:
       - compile
-      - coverage
-      - test-soccer:
+      - test-all:
           requires:
             - compile
-      - test-python:
-          requires:
-            - compile
-      - pylint
-      - mypy:
-          requires:
-            - compile
-      - style:
+      - python-static
+      - style
+      - clang-tidy:
           requires:
             - compile
 
       - gen-docs:
           requires:
-            - test-soccer
-            - test-python
-            - pylint
-            - mypy
+            - test-all
+            - python-static
             - style
-            - compile
 
           filters:
             branches:

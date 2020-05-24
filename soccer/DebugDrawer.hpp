@@ -19,7 +19,7 @@ class Context;
 
 class DebugDrawer {
 public:
-    DebugDrawer(Context* context) : _context(context) {}
+    DebugDrawer(Context* context) : _context(context), _numDebugLayers(0) {}
 
     const QStringList& debugLayers() const { return _debugLayers; }
 
@@ -28,56 +28,55 @@ public:
 
     /** @ingroup drawing_functions */
     void drawPolygon(const Geometry2d::Point* pts, int n,
-                     const QColor& color = Qt::black,
+                     const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawPolygon(const std::vector<Geometry2d::Point>& pts,
-                     const QColor& color = Qt::black,
+                     const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawPolygon(const Geometry2d::Polygon& pts,
-                     const QColor& color = Qt::black,
+                     const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawCircle(Geometry2d::Point center, float radius,
-                    const QColor& color = Qt::black,
+                    const QColor& qc = Qt::black,
                     const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawArc(const Geometry2d::Arc& arc, const QColor& color = Qt::black,
+    void drawArc(const Geometry2d::Arc& arc, const QColor& qw = Qt::black,
                  const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawShape(const std::shared_ptr<Geometry2d::Shape>& obs,
-                   const QColor& color = Qt::black,
+                   const QColor& qw = Qt::black,
                    const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawShapeSet(const Geometry2d::ShapeSet& shapes,
-                      const QColor& color = Qt::black,
+                      const QColor& qw = Qt::black,
                       const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawLine(const Geometry2d::Segment& line,
-                  const QColor& color = Qt::black,
+    void drawLine(const Geometry2d::Segment& line, const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
-                  const QColor& color = Qt::black,
+                  const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawText(const QString& text, Geometry2d::Point pos,
-                  const QColor& color = Qt::black,
+                  const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
     void drawSegment(const Geometry2d::Segment& line,
-                     const QColor& color = Qt::black,
+                     const QColor& qw = Qt::black,
                      const QString& layer = QString());
 
     void setLogFrame(Packet::LogFrame* logFrame) { _logFrame = logFrame; }

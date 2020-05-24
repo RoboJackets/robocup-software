@@ -126,9 +126,10 @@ public:
 private:
     Context* context;
 
-    void fill_shot_success(Window& window, Geometry2d::Point origin);
+    static void fill_shot_success(Window& window, Geometry2d::Point origin);
 
-    void obstacle_range(std::vector<Window>& windows, double& t0, double& t1);
+    static void obstacle_range(std::vector<Window>& windows, double& t0,
+                               double& t1);
 
     void obstacle_robot(std::vector<Window>& windows, Geometry2d::Point origin,
                         Geometry2d::Segment target, Geometry2d::Point bot_pos);

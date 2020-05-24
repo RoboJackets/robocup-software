@@ -20,6 +20,8 @@ YES=false
 SYSTEM="unknown"
 NO_SUBMODULES=false
 
+BASE=$(readlink -f $(dirname $0)/..)
+
 if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # dont add repositories on debian, unsupported
     echo "[WARN] You are using a flavor of debian. This configuration is not officially supported..." >&2
     SYSTEM="debian"
@@ -48,6 +50,10 @@ elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a vers
     elif cat /etc/os-release | grep -iq '^VERSION=.*19.04'; then # Using Ubuntu 19.04
         echo "Ubuntu 19.04 Detected..."
         SYSTEM="ubuntu-19.04"
+        ADD_REPOS=false
+    elif cat /etc/os-release | grep -iq '^VERSION=.*20.04'; then # Using Ubuntu 20.04
+        echo "Ubuntu 20.04 Detected..."
+        SYSTEM="ubuntu-20.04"
         ADD_REPOS=false
     else
         echo "$DISTRO_STR" >&2
@@ -97,7 +103,7 @@ done
 # Become root
 if [ $UID -ne 0 ]; then
 	echo "-- Becoming root"
-	exec sudo GOPATH=$GOPATH $0 $@
+	exec sudo $0 $@
 fi
 
 if $OVERWRITE_SOURCES; then
@@ -131,47 +137,63 @@ if $ADD_REPOS; then
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
 fi
 
-apt-get update
-
-MACH=$(uname -m)
-unset DPKG_FLAGS
-
-BASE=$(readlink -f $(dirname $0)/..)
-
-echo "-- Installing udev rules"
-cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
-udevadm control --reload || true # reload rules
-
-echo "-- Installing required packages"
-
 # if yes option is checked, add  a -y
 ARGS=""
 if $YES; then
     ARGS="-y"
 fi
 
+# Add the llvm key
+# Fingerprint: 6084 F3CF 814B 57C1 CF12 EFD5 15CF 4D18 AF4F 7421
+apt-get install $ARGS wget # Somehow we don't have wget
+
+# Somehow 16.04 doesn't support https
+if [ "$SYSTEM" = "ubuntu-16.04" ]; then
+  apt-get install $ARGS apt-transport-https
+fi
+wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
+
+# Install clang-format-10 using llvm repo
+if [ "$SYSTEM" = "ubuntu-20.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
+elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
+elif [ "$SYSTEM" = "ubuntu-16.04" ]; then
+    sudo add-apt-repository -s "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-10 main"
+fi
+
+apt-get update
+
+MACH=$(uname -m)
+unset DPKG_FLAGS
+
+echo "-- Installing udev rules"
+cp -f "$BASE"/util/robocup.rules /etc/udev/rules.d/
+udevadm control --reload || true # reload rules
+
+echo "-- Installing required packages"
+
 PACKAGES="$(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)"
 
 # install all of the packages listed in required_packages.txt
 apt-get install $ARGS $PACKAGES
 
-# Use ubuntu's 'update-alternatives' to select the newer compiler as the default
-# See issue #468 on GitHub
-# https://askubuntu.com/questions/466651/how-do-i-use-the-latest-gcc-on-ubuntu
-if [ "$SYSTEM" = "ubuntu-18.04" ] && ! command -v clang-format >/dev/null; then
-    update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-6.0 100
-fi
-
 # install python3 requirements
+pip3 install --upgrade pip
 pip3 install -r $BASE/util/requirements3.txt
-# install python2 requirements
-pip2 install -r $BASE/util/requirements2.txt
 
-# install stylize
-if [ -z "$GOPATH" ]; then
-    echo "[WARN] No GOPATH set, not installing stylize."
+echo "-- Installing grSim default configuration"
+GRSIM_XML_INSTALL_LOCATION="$HOME/.grsim.xml"
+SOURCE_GRSIM_XML_LOCATION="$BASE"/grsim.xml
+
+if [ "$(readlink -f "$GRSIM_XML_INSTALL_LOCATION")" == "$SOURCE_GRSIM_XML_LOCATION" ]; then
+    echo "-- grSim default configuration is already installed! Doing nothing."
 else
-    go get gopkg.in/justbuchanan/stylize.v1
+    if test -f "$GRSIM_XML_INSTALL_LOCATION"; then
+        echo "$HOME/.grsim.xml exists! Renaming it to grsim.xml.old..."
+        mv "$HOME/.grsim.xml" "$HOME/.grsim.xml.old"
+    fi
+    ln -vsf "$SOURCE_GRSIM_XML_LOCATION" "$GRSIM_XML_INSTALL_LOCATION"
 fi
 
 # This script is run as sudo, but we don't want submodules to be owned by the

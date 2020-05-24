@@ -34,21 +34,22 @@ public:
     virtual void switchTeam(bool) override;
 
 protected:
-    // Bidrectional mapping from IP address <-> robot ID
-    // TODO(Kyle): Add a timeout to remove robots from this once they're no
-    // longer communicating with soccer
-    using RobotIpMap = boost::bimaps::bimap<
-        boost::bimaps::multiset_of<int>,
-        boost::bimaps::set_of<boost::asio::ip::udp::endpoint>>;
-    RobotIpMap _robot_ip_map;
+    struct RobotConnection {
+        boost::asio::ip::udp::endpoint endpoint;
+        RJ::Time last_received;
+    };
+
+    // Connections to the robots, indexed by robot ID.
+    std::vector<std::optional<RobotConnection>> _connections{};
+
+    // Map from IP address to robot ID.
+    std::map<boost::asio::ip::udp::endpoint, int> _robot_ip_map{};
 
     bool open();
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
 
     void startReceive();
-
-    void registerRobot(int robot, boost::asio::ip::udp::endpoint ip);
 
     boost::asio::io_service _context;
     boost::asio::ip::udp::socket _socket;
@@ -60,5 +61,8 @@ protected:
     // Read from by `async_send_to`
     std::vector<
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>>
-        _send_buffers;
+        _send_buffers{};
+
+    constexpr static std::chrono::duration kTimeout =
+        std::chrono::milliseconds(250);
 };
