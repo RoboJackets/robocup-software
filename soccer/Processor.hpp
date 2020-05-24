@@ -25,7 +25,7 @@
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
-class RobotStatus;
+class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
@@ -96,13 +96,18 @@ public:
 
     const Logger& logger() const { return _logger; }
 
-    bool openLog(const QString& filename) { return _logger.open(filename); }
+    bool openLog(const QString& filename) {
+        _logger.write(filename.toStdString());
+        return true;
+    }
 
     void closeLog() { _logger.close(); }
 
     std::lock_guard<std::mutex> lockLoopMutex() {
         return std::lock_guard(_loopMutex);
     }
+
+    std::mutex* loopMutex() { return &_loopMutex; }
 
     Radio* radio() { return _radio->getRadio(); }
 
@@ -128,7 +133,7 @@ private:
     static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
-    static std::vector<RobotStatus*> robotStatuses;
+    static std::vector<RobotLocalConfig*> robotStatuses;
 
     /** send out the radio data for the radio program */
     void sendRadioData();

@@ -28,9 +28,10 @@ using namespace google::protobuf;
 // TODO: Remove this and just use the one in Context.
 Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
 
-// A temporary place to store RobotLocalConfig/RobotConfig variables as we create
-// them. They are initialized in createConfiguration, before the Processor class
-// is initialized, so we need to temporarily store them somewhere.
+// A temporary place to store RobotLocalConfig/RobotConfig variables as we
+// create them. They are initialized in createConfiguration, before the
+// Processor class is initialized, so we need to temporarily store them
+// somewhere.
 std::vector<RobotLocalConfig> robot_status_init;
 std::unique_ptr<RobotConfig> Processor::robot_config_init;
 
@@ -50,8 +51,7 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim, bool defendPlus, bool blueTeam,
-                     std::string readLogFile = "")
+Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     : _loopMutex(), _readLogFile(readLogFile), _logger(&_context) {
     _running = true;
     _framerate = 0;
@@ -84,7 +84,7 @@ Processor::Processor(bool sim, bool defendPlus, bool blueTeam,
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
 
     if (!readLogFile.empty()) {
-        _logger.readFrames(readLogFile.c_str());
+        _logger.read(readLogFile);
     }
 
     _logger.start();
@@ -210,6 +210,14 @@ void Processor::run() {
         _framerate = RJ::Seconds(1) / deltaTime;
         curStatus.lastLoopTime = startTime;
         _context.state.time = startTime;
+
+        while (_context.game_settings.paused) {
+            std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
+        }
+
+        loopMutex()->lock();
+
+        // If we're paused, don't do anything until we get unpaused.
 
         ////////////////
         // Inputs
@@ -361,6 +369,8 @@ void Processor::run() {
 
         ////////////////
         // Timing
+
+        loopMutex()->unlock();
 
         auto endTime = RJ::now();
         auto timeLapse = endTime - startTime;

@@ -24,10 +24,9 @@ public:
 
     virtual bool isOpen() const override;
 
-    // This `send` method actually sends separate control packets to all robots
-    // to maintain backwards compatibility with the old radio API.
-    // TODO(Kyle) Rearchitect radio code to avoid needing to do this.
-    virtual void send(Packet::RadioTx& radioTx) override;
+    virtual void send(
+        const std::array<RobotIntent, Num_Shells>& robot,
+        const std::array<MotionSetpoint, Num_Shells>& setpoint) override;
 
     virtual void receive() override;
 

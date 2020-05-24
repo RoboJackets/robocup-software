@@ -82,13 +82,13 @@ public:
  * Provides per-robot overrides for a robot
  * Should be updated for hardware revision
  */
-class RobotStatus {
+class RobotLocalConfig {
 public:
-    RobotStatus() {}
-    RobotStatus(Configuration* config, const QString& prefix);
+    RobotLocalConfig() = default;
+    RobotLocalConfig(Configuration* config, const QString& prefix);
 
-    RobotStatus(RobotStatus&&) = default;
-    RobotStatus& operator=(RobotStatus&&) = default;
+    RobotLocalConfig(RobotLocalConfig&&) = default;
+    RobotLocalConfig& operator=(RobotLocalConfig&&) = default;
 
     std::unique_ptr<ConfigBool> chipper_enabled;
     std::unique_ptr<ConfigBool> kicker_enabled;

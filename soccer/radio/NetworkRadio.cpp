@@ -26,15 +26,20 @@ void NetworkRadio::startReceive() {
 
 bool NetworkRadio::isOpen() const { return _socket.is_open(); }
 
-void NetworkRadio::send(Packet::RadioTx& radioTx) {
-    // Get a list of all the IP addresses this packet needs to be sent to
-    for (int robot_idx = 0; robot_idx < radioTx.robots_size(); robot_idx++) {
-        const Packet::Control& control = radioTx.robots(robot_idx).control();
-        uint32_t robot_id = radioTx.robots(robot_idx).uid();
+void NetworkRadio::send(
+    const std::array<RobotIntent, Num_Shells>& intents,
+    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
+    for (int shell = 0; shell < Num_Shells; shell++) {
+        const auto& intent = intents[shell];
+        if (!intent.is_active) {
+            continue;
+        }
+
+        const auto& setpoint = setpoints[shell];
 
         // Build the control packet for this robot.
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
-            forward_packet_buffer = _send_buffers[robot_idx];
+            forward_packet_buffer = _send_buffers[shell];
 
         auto* header =
             reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
@@ -43,10 +48,10 @@ void NetworkRadio::send(Packet::RadioTx& radioTx) {
         auto* body = reinterpret_cast<rtp::RobotTxMessage*>(
             &forward_packet_buffer[rtp::HeaderSize]);
 
-        from_robot_tx_proto(radioTx.robots(robot_idx), body);
+        ConvertTx::to_rtp(intent, setpoint, shell, body);
 
         // Fetch the connection
-        auto maybe_connection = _connections.at(robot_id);
+        auto maybe_connection = _connections.at(shell);
 
         // If there exists a connection, we can send.
         if (maybe_connection) {
@@ -55,7 +60,7 @@ void NetworkRadio::send(Packet::RadioTx& radioTx) {
             if (RJ::now() + kTimeout < connection.last_received) {
                 // Remove the endpoint from the IP map and the connection list
                 assert(_robot_ip_map.erase(connection.endpoint) == 1);
-                _connections.at(robot_id) = std::nullopt;
+                _connections.at(shell) = std::nullopt;
             } else {
                 // Send to the given IP address
                 const udp::endpoint& robot_endpoint = connection.endpoint;
@@ -97,7 +102,6 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
 
     _robot_endpoint.port(25566);
 
-    // Find out which robot this corresponds to.
     int robot_id = msg->uid;
 
     auto iter = _robot_ip_map.find(_robot_endpoint);
@@ -119,13 +123,14 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error,
         _connections.at(robot_id)->last_received = RJ::now();
     }
 
-    // Extract the protobuf form
-    Packet::RadioRx packet = convert_rx_rtp_to_proto(*msg);
+    // Extract the rtp to a regular struct.
+    RobotStatus status;
+    ConvertRx::rtp_to_status(*msg, &status);
 
     {
         // Add reverse packets
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-        _reversePackets.push_back(packet);
+        _reversePackets.push_back(status);
     }
 
     // Restart receiving

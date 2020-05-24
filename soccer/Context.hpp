@@ -9,12 +9,14 @@
 #include "DebugDrawer.hpp"
 #include "GameSettings.hpp"
 #include "GameState.hpp"
+#include "Logger.hpp"
 #include "RobotConfig.hpp"
 #include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "radio/RobotStatus.hpp"
 #include "vision/VisionPacket.hpp"
 
 struct Context {
@@ -27,14 +29,19 @@ struct Context {
     Context(Context&&) = delete;
     Context& operator=(Context&&) = delete;
 
+    // Gameplay -> Planning, Radio
     std::array<RobotIntent, Num_Shells> robot_intents;
+    // Planning -> Motion control
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
+    // Planning -> Motion control
     std::array<Planning::AngleFunctionPath, Num_Shells> paths;
+    // Radio -> Gameplay
     std::array<RobotStatus, Num_Shells> robot_status;
-    std::array<RobotConstraints, Num_Shells> robot_constraints;
-
+    // MainWindow -> Manual control
     std::array<bool, Num_Shells> is_joystick_controlled;
 
+    std::array<RobotLocalConfig, Num_Shells> local_configs;
+    std::array<RobotConstraints, Num_Shells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
     SystemState state;
@@ -42,9 +49,9 @@ struct Context {
     DebugDrawer debug_drawer;
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
-    std::vector<SSL_Referee> referee_packets;
 
-    std::shared_ptr<Packet::LogFrame> logFrame;
+    std::vector<SSL_Referee> referee_packets;
+    std::vector<SSL_WrapperPacket> raw_vision_packets;
 
     WorldState world_state;
 
@@ -56,4 +63,7 @@ struct Context {
     std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
 
     GameSettings game_settings;
+
+    Logs logs;
+    std::string behavior_tree;
 };

@@ -67,13 +67,9 @@ void StripChart::exportChart() {
     // output data
 
     // Get the oldest datapoint to use as the starting time
-    unsigned int start = _history->size() - 1;
-    while (!_history->at(start)) {
-        start--;
-    }
-    auto startTime = _history->at(start).get()->timestamp();
+    auto startTime = _history->at(0).get()->timestamp();
 
-    for (unsigned int i = start; i > 0; i--) {
+    for (unsigned int i = 0; i < _history->size(); i++) {
         if (_history->at(i)) {
             outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() -
                                            startTime);
@@ -92,14 +88,14 @@ void StripChart::exportChart() {
 }
 
 QPointF StripChart::dataPoint(int i, float value) {
-    float x = width() - (i * width() / chartSize);
+    float x = i * width() / chartSize;
     int h = height();
     float y = h - (value - _minValue) * h / (_maxValue - _minValue);
     return QPointF(x, y);
 }
 
 int StripChart::indexAtPoint(const QPoint& point) {
-    return (width() - point.x()) * chartSize / width();
+    return chartSize - 1 - (width() - point.x()) * chartSize / width();
 }
 
 void StripChart::paintEvent(QPaintEvent* /*e*/) {
@@ -133,10 +129,17 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
         } else {
             p.setPen(Qt::red);
         }
-        // for (unsigned int i = 0; i < _history->size(); ++i) {
+
+        int start;
+        if (chartSize < _history->size()) {
+            start = _history->size() - chartSize;
+        }
+
         for (unsigned int i = 0; i < chartSize; ++i) {
             float v = 0;
-            if (_history->at(i) && function->value(*_history->at(i).get(), v)) {
+            int hist_idx = start + i;
+            if (hist_idx < _history->size() && _history->at(hist_idx) &&
+                function->value(*_history->at(hist_idx).get(), v)) {
                 if (autoRange) {
                     newMin = min(newMin, v);
                     newMax = max(newMax, v);
@@ -151,16 +154,16 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
                         mappedCursorPos + QPointF(15, 0 + fontHeight * 2 * x),
                         (" V: " + std::to_string(v)).c_str());
 
-                    if (i > 0 && i < _history->size() - 1) {
+                    if (hist_idx > 0 && hist_idx < _history->size() - 1) {
                         float v1;
 
                         float v2;
 
-                        function->value(*_history->at(i - 1).get(), v1);
-                        function->value(*_history->at(i + 1).get(), v2);
+                        function->value(*_history->at(hist_idx - 1).get(), v1);
+                        function->value(*_history->at(hist_idx + 1).get(), v2);
 
-                        auto t1 = _history->at(i - 1)->timestamp();
-                        auto t2 = _history->at(i + 1)->timestamp();
+                        auto t1 = _history->at(hist_idx - 1)->timestamp();
+                        auto t2 = _history->at(hist_idx + 1)->timestamp();
                         auto deltaTime = RJ::TimestampToSecs(t2 - t1);
 
                         auto derivative = (v2 - v1) / (deltaTime);

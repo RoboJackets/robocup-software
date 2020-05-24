@@ -86,7 +86,7 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp")
+    "WindowEvaluator.cpp" radio/RobotStatus.hpp)
 
 
 if(APPLE)

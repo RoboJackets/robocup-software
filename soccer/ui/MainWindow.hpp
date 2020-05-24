@@ -250,6 +250,6 @@ private:
 
     std::vector<QComboBox*> _robotDebugResponseQComboBoxes{};
 
-    std::mutex _context_mutex;
+    std::mutex* _context_mutex;
     Context* _context;
 };

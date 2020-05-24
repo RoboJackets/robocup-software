@@ -30,6 +30,8 @@ enum HardwareVersion
 	RJ2008 = 1;
 	RJ2011 = 2;
 	RJ2015 = 3;
+    RJ2018 = 4;
+    Simulation = 5;
 }
 
 message Quaternion

@@ -60,8 +60,9 @@ void VisionReceiver::run() {
     _io_context.poll();
 
     for (auto& packet : _packets) {
-        SSL_WrapperPacket* log = _context->logFrame->add_raw_vision();
-        log->CopyFrom(packet->wrapper);
+        SSL_WrapperPacket log;
+        log.CopyFrom(packet->wrapper);
+        _context->raw_vision_packets.emplace_back(std::move(log));
 
         _last_receive_time = packet->receivedTime;
 

@@ -15,8 +15,7 @@ class ConstPathIterator;
 // the path at fixed time intervals form t = 0 to t = duration.
 void Path::draw(DebugDrawer* const debug_drawer, const QColor& color,
                 const QString& layer) const {
-    Packet::DebugRobotPath* dbg =
-        debug_drawer->getLogFrame()->add_debug_robot_paths();
+    Packet::DebugRobotPath* dbg = debug_drawer->addDebugPath();
     dbg->set_layer(debug_drawer->findDebugLayer(layer));
 
     auto addPoint = [dbg](MotionInstant instant) {

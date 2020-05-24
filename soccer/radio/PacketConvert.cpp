@@ -1,129 +1,263 @@
 #include "PacketConvert.hpp"
+
 #include <status.h>
+
 #include <Geometry2d/Util.hpp>
 #include <iostream>
 #include <time.hpp>
+
+#include "RobotIntent.hpp"
+#include "RobotStatus.hpp"
 #include "motion/MotionSetpoint.hpp"
 
-void from_robot_tx_proto(const Packet::Robot& proto_packet,
-                         rtp::RobotTxMessage* msg) {
-    const Packet::Control& control = proto_packet.control();
-    msg->uid = proto_packet.uid();
-    msg->message.controlMessage.bodyX = static_cast<int16_t>(
-        control.xvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    msg->message.controlMessage.bodyY = static_cast<int16_t>(
-        control.yvelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    msg->message.controlMessage.bodyW = static_cast<int16_t>(
-        control.avelocity() * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    msg->message.controlMessage.dribbler =
-        std::clamp(static_cast<uint16_t>(control.dvelocity()) * 2, 0, 255);
+namespace ConvertRx {
 
-    msg->message.controlMessage.shootMode = control.shootmode();
-    msg->message.controlMessage.kickStrength = control.kcstrength();
-    msg->message.controlMessage.triggerMode = control.triggermode();
-    msg->message.controlMessage.song = control.song();
-    msg->messageType = rtp::RobotTxMessage::ControlMessageType;
-}
-
-void convert_tx_proto_to_rtp(const Packet::RadioTx& proto_packet,
-                             rtp::RobotTxMessage* messages) {
-    from_robot_tx_proto(proto_packet.robots(0), messages);
-}
-
-Packet::RadioRx convert_rx_rtp_to_proto(const rtp::RobotStatusMessage& msg) {
-    Packet::RadioRx packet;
-
-    packet.set_timestamp(RJ::timestamp());
-    packet.set_robot_id(msg.uid);
-
-    packet.set_hardware_version(Packet::RJ2015);
-    packet.set_battery(msg.battVoltage *
-                       rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR);
-
-    if (Packet::BallSenseStatus_IsValid(msg.ballSenseStatus)) {
-        packet.set_ball_sense_status(
-            Packet::BallSenseStatus(msg.ballSenseStatus));
+void rtp_to_status(const rtp::RobotStatusMessage& rtp_message,
+                   RobotStatus* status) {
+    if (status == nullptr) {
+        return;
     }
 
-    // Using same flags as 2011 robot. See common/status.h
-    // Report that everything is good b/c the bot currently has no way of
-    // detecting kicker issues
-    packet.set_kicker_status((msg.kickStatus ? Kicker_Charged : 0) |
-                             (msg.kickHealthy ? Kicker_Enabled : 0) |
-                             Kicker_I2C_OK);
+    status->shell_id = rtp_message.uid;
 
-    // Motor errors
+    status->timestamp = RJ::now();
+    status->version = RobotStatus::HardwareVersion::kFleet2018;
+    status->twist_estimate = std::nullopt;
+    status->pose_estimate = std::nullopt;
+    status->battery_voltage =
+        rtp_message.battVoltage * rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
+    status->kicker_voltage = 0;
+    status->has_ball = rtp_message.ballSenseStatus;
+    status->kicker =
+        rtp_message.kickHealthy
+            ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
+                                      : RobotStatus::KickerState::kCharging)
+            : RobotStatus::KickerState::kFailed;
     for (int i = 0; i < 5; i++) {
-        bool err = (msg.motorErrors & (1 << i)) != 0;
-        packet.add_motor_status(err ? Packet::MotorStatus::Hall_Failure
-                                    : Packet::MotorStatus::Good);
+        status->motors_healthy[i] = (rtp_message.motorErrors & (1u << i)) == 0;
     }
-
-    /*for (std::size_t i = 0; i < 14; i++) {
-        packet.add_encoders(msg.encDeltas[i]);
-        //printf("%9.3f,", (float)msg.encDeltas[i] / 1000);
-    }*/
-    // printf("\r\n");
-
-    // FPGA status
-    if (Packet::FpgaStatus_IsValid(msg.fpgaStatus)) {
-        packet.set_fpga_status(Packet::FpgaStatus(msg.fpgaStatus));
-    }
-
-    return packet;
+    status->fpga_healthy = rtp_message.fpgaStatus == 0u;
 }
 
-void construct_tx_proto(
-    Packet::RadioTx& radioTx,
-    const std::array<RobotIntent, Num_Shells>& intents,
-    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
-    radioTx.set_txmode(Packet::RadioTx::UNICAST);
-    for (int i = 0; i < Num_Shells; ++i) {
-        const RobotIntent& intent = intents[i];
-        if (!intent.is_active) {
-            continue;
-        }
-        const MotionSetpoint& setpoint = setpoints[i];
-        Packet::Robot* robotPacket = radioTx.add_robots();
-        robotPacket->set_uid(i);
-        Packet::Control* controlPacket = robotPacket->mutable_control();
-        switch (intent.shoot_mode) {
-            case RobotIntent::ShootMode::KICK:
-                controlPacket->set_shootmode(Packet::Control::KICK);
-                break;
-            case RobotIntent::ShootMode::CHIP:
-                controlPacket->set_shootmode(Packet::Control::CHIP);
-                break;
-        }
-        switch (intent.trigger_mode) {
-            case RobotIntent::TriggerMode::STAND_DOWN:
-                controlPacket->set_triggermode(Packet::Control::STAND_DOWN);
-                break;
-            case RobotIntent::TriggerMode::IMMEDIATE:
-                controlPacket->set_triggermode(Packet::Control::IMMEDIATE);
-                break;
-            case RobotIntent::TriggerMode::ON_BREAK_BEAM:
-                controlPacket->set_triggermode(Packet::Control::ON_BREAK_BEAM);
-                break;
-        }
-        switch (intent.song) {
-            case RobotIntent::Song::STOP:
-                controlPacket->set_song(Packet::Control::STOP);
-                break;
-            case RobotIntent::Song::CONTINUE:
-                controlPacket->set_song(Packet::Control::CONTINUE);
-                break;
-            case RobotIntent::Song::FIGHT_SONG:
-                controlPacket->set_song(Packet::Control::FIGHT_SONG);
-                break;
-        }
-        controlPacket->set_xvelocity(setpoint.xvelocity);
-        controlPacket->set_yvelocity(setpoint.yvelocity);
-        controlPacket->set_avelocity(setpoint.avelocity);
-        controlPacket->set_dvelocity(intent.dvelocity);
-        controlPacket->set_kcstrength(intent.kcstrength);
+void grsim_to_status(const Robot_Status& grsim, RobotStatus* status) {
+    if (status == nullptr) {
+        return;
+    }
+
+    status->shell_id = grsim.robot_id();
+    status->timestamp = RJ::now();
+    status->version = RobotStatus::HardwareVersion::kSimulated;
+    status->twist_estimate = std::nullopt;
+    status->pose_estimate = std::nullopt;
+
+    // Field view is dumb and ignores hardware version, so give it a fake
+    // battery voltage for grSim
+    status->battery_voltage = 20.0;
+
+    status->kicker_voltage = 0;
+    status->has_ball = grsim.infrared();
+
+    bool kicked = grsim.chip_kick() || grsim.flat_kick();
+    status->kicker = kicked ? RobotStatus::KickerState::kCharging
+                            : RobotStatus::KickerState::kCharged;
+    for (int i = 0; i < 5; i++) {
+        status->motors_healthy[i] = true;
+    }
+    status->fpga_healthy = true;
+}
+
+void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
+    using namespace std::chrono;
+
+    proto->set_timestamp(
+        duration_cast<microseconds>(status.timestamp.time_since_epoch())
+            .count());
+    proto->set_robot_id(status.shell_id);
+    proto->set_battery(status.battery_voltage);
+
+    proto->set_ball_sense_status(status.has_ball
+                                     ? Packet::BallSenseStatus::HasBall
+                                     : Packet::BallSenseStatus::NoBall);
+
+    for (int i = 0; i < 5; i++) {
+        proto->add_motor_status(status.motors_healthy[i]
+                                    ? Packet::MotorStatus::Good
+                                    : Packet::MotorStatus::Encoder_Failure);
+    }
+
+    // No encoders or RSSI
+
+    switch (status.kicker) {
+        case RobotStatus::KickerState::kFailed:
+            proto->set_kicker_status(0 | Kicker_I2C_OK);
+            break;
+        case RobotStatus::KickerState::kCharging:
+            proto->set_kicker_status(Kicker_Enabled | Kicker_I2C_OK);
+            break;
+        case RobotStatus::KickerState::kCharged:
+            proto->set_kicker_status(Kicker_Charged | Kicker_Enabled |
+                                     Kicker_I2C_OK);
+            break;
+    }
+
+    proto->set_kicker_voltage(status.kicker_voltage);
+    proto->set_fpga_status(status.fpga_healthy ? Packet::FpgaStatus::FpgaGood
+                                               : Packet::FpgaStatus::FpgaError);
+
+    switch (status.version) {
+        case RobotStatus::HardwareVersion::kUnknown:
+            proto->set_hardware_version(Packet::HardwareVersion::Unknown);
+            break;
+        case RobotStatus::HardwareVersion::kFleet2018:
+            proto->set_hardware_version(Packet::HardwareVersion::RJ2018);
+            break;
+        case RobotStatus::HardwareVersion::kSimulated:
+            proto->set_hardware_version(Packet::HardwareVersion::Simulation);
+            break;
     }
 }
+
+}  // namespace ConvertRx
+
+namespace ConvertTx {
+
+void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
+            int shell, rtp::RobotTxMessage* rtp_message) {
+    rtp_message->uid = shell;
+    rtp_message->message.controlMessage.bodyX = static_cast<int16_t>(
+        setpoint.xvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp_message->message.controlMessage.bodyY = static_cast<int16_t>(
+        setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp_message->message.controlMessage.bodyW = static_cast<int16_t>(
+        setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    rtp_message->message.controlMessage.dribbler =
+        std::clamp(static_cast<uint16_t>(intent.dvelocity) * 2, 0, 255);
+
+    rtp_message->message.controlMessage.shootMode =
+        intent.shoot_mode == RobotIntent::ShootMode::CHIP;
+    rtp_message->message.controlMessage.kickStrength = intent.kcstrength;
+
+    switch (intent.trigger_mode) {
+        case RobotIntent::TriggerMode::STAND_DOWN:
+            rtp_message->message.controlMessage.triggerMode = 0;
+            break;
+        case RobotIntent::TriggerMode::IMMEDIATE:
+            rtp_message->message.controlMessage.triggerMode = 1;
+            break;
+        case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+            rtp_message->message.controlMessage.triggerMode = 2;
+            break;
+    }
+
+    switch (intent.song) {
+        case RobotIntent::Song::STOP:
+            rtp_message->message.controlMessage.song = 0;
+            break;
+        case RobotIntent::Song::CONTINUE:
+            rtp_message->message.controlMessage.song = 1;
+            break;
+        case RobotIntent::Song::FIGHT_SONG:
+            rtp_message->message.controlMessage.song = 2;
+            break;
+    }
+
+    rtp_message->messageType = rtp::RobotTxMessage::ControlMessageType;
+}
+
+void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
+              int shell, Packet::Robot* proto) {
+    if (proto == nullptr) {
+        return;
+    }
+
+    proto->set_uid(shell);
+
+    Packet::Control* control = proto->mutable_control();
+
+    control->set_xvelocity(setpoint.xvelocity);
+    control->set_yvelocity(setpoint.yvelocity);
+    control->set_avelocity(setpoint.avelocity);
+    control->set_dvelocity(intent.dvelocity);
+    control->set_kcstrength(intent.kcstrength);
+
+    switch (intent.shoot_mode) {
+        case RobotIntent::ShootMode::KICK:
+            control->set_shootmode(Packet::Control_ShootMode_KICK);
+            break;
+        case RobotIntent::ShootMode::CHIP:
+            control->set_shootmode(Packet::Control_ShootMode_CHIP);
+            break;
+    }
+
+    switch (intent.trigger_mode) {
+        case RobotIntent::TriggerMode::STAND_DOWN:
+            control->set_triggermode(Packet::Control_TriggerMode_STAND_DOWN);
+            break;
+        case RobotIntent::TriggerMode::IMMEDIATE:
+            control->set_triggermode(Packet::Control_TriggerMode_IMMEDIATE);
+            break;
+        case RobotIntent::TriggerMode::ON_BREAK_BEAM:
+            control->set_triggermode(Packet::Control_TriggerMode_ON_BREAK_BEAM);
+            break;
+    }
+
+    switch (intent.song) {
+        case RobotIntent::Song::STOP:
+            control->set_song(Packet::Control_Song_STOP);
+            break;
+        case RobotIntent::Song::CONTINUE:
+            control->set_song(Packet::Control_Song_CONTINUE);
+            break;
+        case RobotIntent::Song::FIGHT_SONG:
+            control->set_song(Packet::Control_Song_FIGHT_SONG);
+            break;
+    }
+}
+
+void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
+              int shell, grSim_Robot_Command* grsim) {
+    if (grsim == nullptr) {
+        return;
+    }
+
+    grsim->set_id(shell);
+
+    if (intent.trigger_mode == RobotIntent::TriggerMode::STAND_DOWN) {
+        grsim->set_kickspeedx(0);
+        grsim->set_kickspeedz(0);
+    } else {
+        if (intent.shoot_mode == RobotIntent::ShootMode::KICK) {
+            // Flat kick
+            constexpr double kMaxKickSpeed = 7.0;
+            constexpr double kMinKickSpeed = 2.1;
+            constexpr double kStrengthToSpeed =
+                (kMaxKickSpeed - kMinKickSpeed) / 255;
+            double speed = kStrengthToSpeed * intent.kcstrength + kMinKickSpeed;
+            grsim->set_kickspeedx(speed);
+            grsim->set_kickspeedz(0);
+        } else {
+            // Chip kick
+            constexpr double kMaxChipSpeed = 4.0;
+            constexpr double kMinChipSpeed = 1.0;
+            constexpr double kStrengthToSpeed =
+                (kMaxChipSpeed - kMinChipSpeed) / 255;
+            constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
+
+            double speed = kStrengthToSpeed * intent.kcstrength + kMinChipSpeed;
+            grsim->set_kickspeedx(std::cos(kChipAngle) * speed);
+            grsim->set_kickspeedz(std::sin(kChipAngle) * speed);
+        }
+    }
+
+    grsim->set_veltangent(setpoint.yvelocity);
+    grsim->set_velnormal(-setpoint.xvelocity);
+    grsim->set_velangular(setpoint.avelocity);
+
+    grsim->set_spinner(intent.dvelocity > 0);
+    grsim->set_wheelsspeed(false);
+}
+
+}  // namespace ConvertTx
 
 void fill_header(rtp::Header* header) {
     header->port = rtp::PortType::CONTROL;
