@@ -239,7 +239,7 @@ void Logger::read(const std::string& filename) {
 
     _context->logs.frames.clear();
 
-    if (!_log_file->is_open() || !std::filesystem::exists(filename)) {
+    if (!_log_file->good()) {
         std::cerr << "Log file " << filename << " does not exist." << std::endl;
         std::exit(-1);
     }

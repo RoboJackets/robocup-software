@@ -3,7 +3,6 @@
 #include <protobuf/LogFrame.pb.h>
 
 #include <deque>
-#include <filesystem>
 #include <fstream>
 #include <optional>
 #include <time.hpp>
