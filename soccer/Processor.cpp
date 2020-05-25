@@ -50,7 +50,7 @@ void Processor::createConfiguration(Configuration* cfg) {
 }
 
 Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
-    : _loopMutex(), _readLogFile(readLogFile), _logger(&_context) {
+    : _loopMutex(), _readLogFile(readLogFile) {
     _running = true;
     _framerate = 0;
     _initialized = false;
@@ -78,6 +78,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
+    _logger = std::make_unique<Logger>(&_context);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
@@ -85,15 +86,15 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
         std::make_unique<joystick::ManualControlNode>(&_context);
 
     if (!readLogFile.empty()) {
-        _logger.read(readLogFile);
+        _logger->read(readLogFile);
     }
 
-    _logger.start();
+    _logger->start();
 
     _nodes.push_back(_visionReceiver.get());
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
-    _nodes.push_back(&_logger);
+    _nodes.push_back(_logger.get());
 }
 
 Processor::~Processor() {
@@ -333,7 +334,7 @@ void Processor::run() {
         _initialized = true;
 
         // Log this entire frame
-        _logger.run();
+        _logger->run();
 
         ////////////////
         // Timing

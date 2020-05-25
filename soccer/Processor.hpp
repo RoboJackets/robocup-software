@@ -89,14 +89,12 @@ public:
 
     float framerate() { return _framerate; }
 
-    const Logger& logger() const { return _logger; }
-
     bool openLog(const QString& filename) {
-        _logger.write(filename.toStdString());
+        _logger->write(filename.toStdString());
         return true;
     }
 
-    void closeLog() { _logger.close(); }
+    void closeLog() { _logger->close(); }
 
     std::lock_guard<std::mutex> lockLoopMutex() {
         return std::lock_guard(_loopMutex);
@@ -148,8 +146,6 @@ private:
     /** Used to start and stop the thread **/
     volatile bool _running;
 
-    Logger _logger;
-
     // A logfile to read from.
     // When empty, don't read logs at all.
     std::string _readLogFile;
@@ -192,6 +188,7 @@ private:
     std::unique_ptr<GrSimCommunicator> _grSimCom;
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
+    std::unique_ptr<Logger> _logger;
 
     std::vector<Node*> _nodes;
 
