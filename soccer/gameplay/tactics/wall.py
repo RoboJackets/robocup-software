@@ -38,7 +38,8 @@ class Wall(composite_behavior.CompositeBehavior):
         self.active_defenders = num_defenders
         self.number_of_defenders = num_defenders
         self.curvature = 1 * curvature
-        self._mark_point = main.ball().pos if mark_point == None else mark_point
+        self._mark_point = main.ball(
+        ).pos if mark_point == None else mark_point
         self._defense_point = defender_point
         self.dist_from_mark = dist_from_mark
         self.defender_spacing = defender_spacing
@@ -101,13 +102,14 @@ class Wall(composite_behavior.CompositeBehavior):
     def calculate_destination(self, robot_number):
         defender_number = robot_number - self.number_of_defenders / 2 + .5
         direct = (self.mark_point - self.defense_point).normalized()
-        arc_angle = defender_number * self.curvature + math.pi/2
+        arc_angle = defender_number * self.curvature + math.pi / 2
         direct.rotate_origin(arc_angle)
         return self.midpoint - direct * constants.Robot.Radius * self.defender_spacing * defender_number
 
     ## Update wall's midpoint based on the mark and defense points
     def update_midpoint(self):
-        self.midpoint = self.mark_point + (self.defense_point - self.mark_point).normalized() * self.dist_from_mark
+        self.midpoint = self.mark_point + (self.defense_point - self.mark_point
+                                           ).normalized() * self.dist_from_mark
 
     @property
     def defense_point(self):
