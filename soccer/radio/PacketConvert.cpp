@@ -88,7 +88,7 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
 
     switch (status.kicker) {
         case RobotStatus::KickerState::kFailed:
-            proto->set_kicker_status(0 | Kicker_I2C_OK);
+            proto->set_kicker_status(Kicker_I2C_OK);
             break;
         case RobotStatus::KickerState::kCharging:
             proto->set_kicker_status(Kicker_Enabled | Kicker_I2C_OK);

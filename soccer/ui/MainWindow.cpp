@@ -359,6 +359,7 @@ void MainWindow::updateViews() {
     _lastUpdateTime = now;
     double framerate = RJ::Seconds(1) / delta_time;
 
+    // Update status line displays
     ++_updateCount;
     if (_updateCount == 4) {
         _updateCount = 0;
@@ -423,11 +424,8 @@ void MainWindow::updateViews() {
             _context->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
-    // update history slider in ui
-    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
-    _ui.logHistoryLocation->setValue(_doubleFrameNumber);
-
-    // Set the original history vector
+    // Set the history vector by taking the last kHistorySize elements of the
+    // "long" history, or fewer if _longHistory is shorter.
     _history.assign(
         _longHistory.end() - std::min(kHistorySize, (int)_longHistory.size()),
         _longHistory.end());
@@ -435,9 +433,16 @@ void MainWindow::updateViews() {
     // Update field view
     _ui.fieldView->update();
 
+    /**************************************************************************/
+    /***************** Update the history/playback interface ******************/
+    /**************************************************************************/
+    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
+    _ui.logHistoryLocation->setValue(static_cast<int>(_doubleFrameNumber));
+
     // enable playback buttons based on playback rate
-    for (QPushButton* playbackBtn : _logPlaybackButtons)
+    for (QPushButton* playbackBtn : _logPlaybackButtons) {
         playbackBtn->setEnabled(true);
+    }
     _ui.logPlaybackLive->setEnabled(!live());
 
     if (live() || abs<float>(*_playbackRate) > 0.01) {
@@ -464,9 +469,8 @@ void MainWindow::updateViews() {
     // Get the frame at the log playback time
     const std::shared_ptr<LogFrame> currentFrame = _history.back();
 
+    // Update the playback labels
     if (currentFrame) {
-        _ui.logTree->message(*currentFrame);
-
         auto gametime =
             RJ::Time(chrono::microseconds(currentFrame->timestamp())) -
             start_time;
@@ -485,6 +489,13 @@ void MainWindow::updateViews() {
         _ui.frameNumLabel->setText(QString("%1/%2")
                                        .arg(QString::number(frameNumber()))
                                        .arg(QString::number(maxFrame)));
+    }
+
+    /**************************************************************************/
+    /***************** Update log tree and behavior tree **********************/
+    /**************************************************************************/
+    if (currentFrame != nullptr) {
+        _ui.logTree->message(*currentFrame);
 
         // update the behavior tree view
         QString behaviorStr =
@@ -494,12 +505,15 @@ void MainWindow::updateViews() {
         }
     }
 
+    /**************************************************************************/
+    /******************** Update referee information **************************/
+    /**************************************************************************/
     _ui.refStage->setText(
         RefereeModuleEnums::stringFromStage(game_state.raw_stage).c_str());
     _ui.refCommand->setText(
         RefereeModuleEnums::stringFromCommand(game_state.raw_command).c_str());
 
-    // convert time left from ms to s and display it to two decimal places
+    // Convert time left from ms to s and display it to two decimal places
     int timeSeconds =
         static_cast<int>(game_state.stage_time_left.count() / 1000);
     int timeMinutes = timeSeconds / 60;
@@ -536,6 +550,9 @@ void MainWindow::updateViews() {
     _ui.actionUse_External_Referee->setChecked(
         _context->game_settings.use_external_referee);
 
+    /**************************************************************************/
+    /********************** Update robot status list **************************/
+    /**************************************************************************/
     if (currentFrame != nullptr) {
         // update robot status list
         for (int shell = 0; shell < Num_Shells; shell++) {
@@ -572,13 +589,16 @@ void MainWindow::updateViews() {
             bool shouldDisplay =
                 currentFrame->timestamp() - rx.timestamp() < 5000000;
 
+            auto statusItemIt = _robotStatusItemMap.find(shell);
+
             // see if it's already in the robot status list widget
-            bool displaying =
-                _robotStatusItemMap.find(shell) != _robotStatusItemMap.end();
+            bool displaying = statusItemIt != _robotStatusItemMap.end();
+
+            // The status widget corresponding to this robot
+            RobotStatusWidget* statusWidget = nullptr;
 
             if (shouldDisplay && !displaying) {
                 // add a widget to the list for this robot
-
                 auto item_owned = std::make_unique<QListWidgetItem>();
                 auto* item = item_owned.get();
                 _robotStatusItemMap[shell] = std::move(item_owned);
@@ -586,92 +606,18 @@ void MainWindow::updateViews() {
 
                 // The item's widget is managed by Qt
                 // (setItemWidget takes ownership).
-                auto* statusWidget = new RobotStatusWidget();  // NOLINT
+                statusWidget = new RobotStatusWidget();  // NOLINT
                 item->setSizeHint(statusWidget->minimumSizeHint());
                 _ui.robotStatusList->setItemWidget(item, statusWidget);
-
-                // set shell ID
-                statusWidget->setShellID(shell);
-
-                // set team
-                statusWidget->setBlueTeam(
-                    _context->game_settings.requestBlueTeam);
-
-                // TODO(Kyle): set board ID
-
-                // set robot model
-                QString robotModel;
-                switch (rx.hardware_version()) {
-                    case RJ2008:
-                        robotModel = "RJ2008";
-                        break;
-                    case RJ2011:
-                        robotModel = "RJ2011";
-                        break;
-                    case RJ2015:
-                        robotModel = "RJ2015";
-                        break;
-                    case RJ2018:
-                        robotModel = "RJ2018";
-                        break;
-                    case Simulation:
-                        robotModel = "Simulation";
-                        break;
-                    default:
-                        robotModel = "Unknown Bot";
-                }
-                statusWidget->setRobotModel(robotModel);
-
-                // uncomment this #define to test the display of a variety of
-                // different errors #define DEMO_ROBOT_STATUS
-
-#ifdef DEMO_ROBOT_STATUS
-                // set board ID
-                QString hex("");
-                for (int i = 0; i < 4; i++)
-                    hex += QString::number(rand() % 16, 16).toUpper();
-                statusWidget->setBoardID(hex);
-
-                // fake vision
-                bool vision = rand() % 5 != 0;
-                statusWidget->setHasVision(vision);
-
-                // fake battery
-                float battery = robot->shell() / 6.0f;
-                statusWidget->setBatteryLevel(battery);
-
-                // fake radio
-                bool radio = rand() % 5 != 0;
-                statusWidget->setHasRadio(radio);
-
-                // fake error text
-                QString error =
-                    "Kicker Fault, Motor Fault FR, Ball Sense Fault";
-                statusWidget->setErrorText(error);
-
-                // fake ball status
-                bool ball = rand() % 4 == 0;
-                statusWidget->setHasBall(ball);
-
-                // fake ball sense error
-                bool ballFault = rand() % 4 == 0;
-                statusWidget->setBallSenseFault(ballFault);
-                bool hasWheelFault = false;
-                if (rand() % 4 == 0) {
-                    statusWidget->setWheelFault(rand() % 4);
-                    hasWheelFault = true;
-                }
-
-                bool showstopper =
-                    !vision || !radio || hasWheelFault || battery < 0.25;
-                statusWidget->setShowstopper(showstopper);
-#endif
+            } else if (shouldDisplay && displaying) {
+                statusWidget = dynamic_cast<RobotStatusWidget*>(
+                    _ui.robotStatusList->itemWidget(
+                        statusItemIt->second.get()));
             } else if (!shouldDisplay && displaying) {
-                // remove the widget for this robot from the list
-
+                // Remove it from the list.
                 QListWidgetItem* item = _robotStatusItemMap[shell].get();
 
-                // delete widget from list
+                // Delete widget from list
                 for (int row = 0; row < _ui.robotStatusList->count(); row++) {
                     if (_ui.robotStatusList->item(row) == item) {
                         _ui.robotStatusList->takeItem(row);
@@ -682,143 +628,9 @@ void MainWindow::updateViews() {
                 _robotStatusItemMap.erase(shell);
             }
 
-            // update displayed attributes for valid robots
-            if (shouldDisplay) {
-                QListWidgetItem* item = _robotStatusItemMap[shell].get();
-                auto* statusWidget = dynamic_cast<RobotStatusWidget*>(
-                    _ui.robotStatusList->itemWidget(item));
-
-#ifndef DEMO_ROBOT_STATUS
-                // radio status
-                bool hasRadio = shouldDisplay;
-                statusWidget->setHasRadio(hasRadio);
-
-                // vision status
-                bool hasVision = maybe_robot.has_value();
-                statusWidget->setHasVision(hasVision);
-
-                // build a list of errors to display in the widget
-                QStringList errorList;
-
-                // motor faults
-                // each motor fault is shown as text in the error text display
-                // as well as being drawn as a red X on the graphic of a robot
-                bool hasMotorFault = false;
-                if (rx.motor_status().size() == 5) {
-                    std::array<const char*, 5> motorNames = {"FL", "BL", "BR",
-                                                             "FR", "Dribbler"};
-
-                    // examine status of each motor (including the dribbler)
-                    for (int i = 0; i < 5; ++i) {
-                        bool motorIFault = true;
-                        switch (rx.motor_status(i)) {
-                            case Packet::Hall_Failure:
-                                errorList << QString("Motor Fault %1")
-                                                 .arg(motorNames[i]);
-                                break;
-                            case Packet::Stalled:
-                                errorList
-                                    << QString("Stall %1").arg(motorNames[i]);
-                                break;
-                            case Packet::Encoder_Failure:
-                                errorList << QString("Encoder Fault %1")
-                                                 .arg(motorNames[i]);
-                                break;
-
-                            default:
-                                motorIFault = false;
-                                break;
-                        }
-
-                        // show wheel faults (exluding dribbler, which is index
-                        // 4)
-                        if (i != 4) {
-                            statusWidget->setWheelFault(i, motorIFault);
-                        }
-
-                        hasMotorFault = hasMotorFault || motorIFault;
-
-                        // show dribbler fault on painted robot widget
-                        if (i == 4) {
-                            statusWidget->setBallSenseFault(motorIFault);
-                        }
-                    }
-                }
-
-                // check for kicker error code
-                bool kickerFault =
-                    rx.has_kicker_status() &&
-                    ((rx.kicker_status() & Kicker_Enabled) == 0u);
-
-                bool kicker_charging = rx.has_kicker_status() &&
-                                       ((rx.kicker_status() & 0x01) != 0u);
-                statusWidget->setKickerState(kicker_charging);
-                bool ballSenseFault =
-                    rx.has_ball_sense_status() &&
-                    !(rx.ball_sense_status() == Packet::NoBall ||
-                      rx.ball_sense_status() == Packet::HasBall);
-
-                if (kickerFault) {
-                    errorList << "Kicker Fault";
-                }
-
-                if (ballSenseFault) {
-                    errorList << "Ball Sense Fault";
-                }
-                statusWidget->setBallSenseFault(ballSenseFault);
-
-                // check fpga status
-                bool fpgaWorking = true;
-                if (rx.has_fpga_status() &&
-                    rx.fpga_status() != Packet::FpgaGood) {
-                    if (rx.fpga_status() == Packet::FpgaNotInitialized) {
-                        errorList << "FPGA not initialized";
-                    } else {
-                        errorList << "FPGA error";
-                    }
-                    fpgaWorking = false;
-                }
-
-                // display error text
-                statusWidget->setErrorText(errorList.join(", "));
-
-                // show the ball in the robot's mouth if it has one
-                bool hasBall = rx.has_ball_sense_status() &&
-                               rx.ball_sense_status() == Packet::HasBall;
-                statusWidget->setHasBall(hasBall);
-
-                // battery
-                // convert battery voltage to a percentage and show it with the
-                // battery indicator
-                float batteryLevel = 1;
-                if (rx.has_battery()) {
-                    if (rx.hardware_version() == RJ2008 ||
-                        rx.hardware_version() == RJ2011) {
-                        batteryLevel = static_cast<float>(
-                            RJ2008BatteryProfile.getChargeLevel(rx.battery()));
-                    } else if (rx.hardware_version() == RJ2015 ||
-                               rx.hardware_version() == RJ2018) {
-                        batteryLevel = static_cast<float>(
-                            RJ2015BatteryProfile.getChargeLevel(rx.battery()));
-                    } else if (rx.hardware_version() == Simulation) {
-                        batteryLevel = 1;
-                    } else {
-                        cerr << "Unknown hardware revision "
-                             << rx.hardware_version()
-                             << ", unable to calculate battery %" << endl;
-                    }
-                }
-                statusWidget->setBatteryLevel(batteryLevel);
-
-                // if there is an error bad enough that we should get this robot
-                // off the field, alert the user through the UI that there is a
-                // "showstopper"
-                bool showstopper = !hasVision || !hasRadio || hasMotorFault ||
-                                   kickerFault || ballSenseFault ||
-                                   (batteryLevel < 0.25) || !fpgaWorking;
-                statusWidget->setShowstopper(showstopper);
-
-#endif
+            if (statusWidget != nullptr) {
+                statusWidget->loadFromLogFrame(rx, maybe_robot,
+                                               currentFrame->blue_team());
             }
         }
     }
