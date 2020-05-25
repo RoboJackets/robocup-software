@@ -2,16 +2,18 @@ import standard_play
 import behavior
 import skills.move
 import skills.pivot_kick
+import skills.line_kick
 import constants
 import robocup
 import math
 import main
 import tactics.coordinated_pass
 import evaluation.passing_positioning
+import evaluation.shooting
 import enum
 
-class OurFreeKick(standard_play.StandardPlay):
 
+class OurFreeKick(standard_play.StandardPlay):
     Running = False
     BumpKickPower = 0.01
     FullKickPower = 1
@@ -52,7 +54,7 @@ class OurFreeKick(standard_play.StandardPlay):
                             'kick')
 
         self.receive_pt, self.receive_value = evaluation.passing_positioning.eval_best_receive_point(
-            main.ball().pos,
+            main.ball().pos, [],
             OurFreeKick.MIN_PASS_DIST,
             field_weights=(2.0, 10.0, 0.1))
         self.gap = evaluation.shooting.find_gap(
@@ -65,16 +67,20 @@ class OurFreeKick(standard_play.StandardPlay):
             coordinated_pass.CoordinatedPass.State.timeout, 'kicker completes')
 
     @classmethod
-    def score(cls):
+    def score(cls) -> float:
         gs = main.game_state()
         return 3 if OurFreeKick.Running or (
             gs.is_ready_state() and gs.is_our_free_kick()) else float("inf")
 
     def receiver_near_pos(self):
-        return len(main.our_robots()) <= 4 or (self.has_subbehavior_with_name('receiver') and (self.subbehavior_with_name('receiver').robot is not None)) and \
-            ((self.subbehavior_with_name('receiver').robot.pos - self.pos_up_field).mag() < 0.5)
+        receiver_subbhvr = self.has_subbehavior_with_name('receiver')
+        assert receiver_subbhvr is None or isinstance(receiver_subbhvr,
+                                                      skills.move.Move)
+        return len(main.our_robots()) <= 4 or (
+            receiver_subbhvr and receiver_subbhvr.robot is not None) and \
+               (receiver_subbhvr.robot.pos - self.pos_up_field).mag() < 0.5
 
-    def on_enter_move(self):
+    def on_enter_move(self) -> None:
         self.move_pos = self.calc_move_pos()
 
         self.pos_up_field = robocup.Point(main.ball().pos.x,
@@ -94,18 +100,18 @@ class OurFreeKick(standard_play.StandardPlay):
                 required=False,
                 priority=5)
 
-    def execute_move(self):
+    def execute_move(self) -> None:
         self.move_pos = self.calc_move_pos()
 
     # def on_exit_move(self):
     # self.remove_all_subbehaviors()
 
-    def on_enter_kick(self):
+    def on_enter_kick(self) -> None:
         OurFreeKick.Running = False
         kicker = skills.line_kick.LineKick()
         kicker.use_chipper = True
-        kicker.min_chip_range = OurFreeKick.MinChipRange
-        kicker.max_chip_range = OurFreeKick.MaxChipRange
+        kicker.min_chip_range = OurFreeKick.MinChipRange  # type: ignore
+        kicker.max_chip_range = OurFreeKick.MaxChipRange  # type: ignore
 
         kicker.target = self.gap
 
@@ -150,9 +156,10 @@ class OurFreeKick(standard_play.StandardPlay):
             kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
-    def execute_kick(self):
+    def execute_kick(self) -> None:
         if self.indirect \
-           and self.subbehavior_with_name('kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
+            and self.subbehavior_with_name(
+            'kicker').state == tactics.coordinated_pass.CoordinatedPass.State.timeout:
             self.indirect = False
             self.remove_subbehavior('kicker')
             kicker = skills.line_kick.LineKick()
@@ -164,14 +171,14 @@ class OurFreeKick(standard_play.StandardPlay):
             OurFreeKick.Running = passState == tactics.coordinated_pass.CoordinatedPass.State.receiving or \
                                   passState == tactics.coordinated_pass.CoordinatedPass.State.kicking
 
-    def on_exit_kick(self):
+    def on_exit_kick(self) -> None:
         OurFreeKick.Running = False
 
     @classmethod
-    def is_restart(cls):
+    def is_restart(cls) -> bool:
         return True
 
-    def calc_move_pos(self):
+    def calc_move_pos(self) -> robocup.Point:
         point = self.gap
         if (self.indirect and self.receive_value != 0):
             point = self.receive_pt

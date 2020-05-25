@@ -1,7 +1,9 @@
 import single_robot_behavior
+import role_assignment
 import behavior
 import robocup
 import math
+
 
 ## Behavior that moves a robot to a specified location
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
@@ -64,7 +66,8 @@ class Move(single_robot_behavior.SingleRobotBehavior):
                                       self.robot.pos.y + self.robot.vel.y *
                                       -5))
 
-    def role_requirements(self):
+    def role_requirements(  # type: ignore
+            self) -> role_assignment.RoleRequirements:
         reqs = super().role_requirements()
         reqs.destination_shape = self.pos
         return reqs
