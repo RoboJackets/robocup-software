@@ -157,9 +157,6 @@ public:
     // FIXME - Function name and comment don't match
     bool behindBall(Geometry2d::Point ballPos) const;
 
-    // Gets the robot quaternion.  Returns nullopt if not available.
-    std::optional<Eigen::Quaternionf> quaternion() const;
-
     // Constraints
     const RobotConstraints& robotConstraints() const {
         return _context->robot_constraints[shell()];

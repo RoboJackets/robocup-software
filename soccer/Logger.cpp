@@ -4,6 +4,8 @@
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
+#include <rc-fshare/git_version.hpp>
+
 #include "Context.hpp"
 #include "radio/PacketConvert.hpp"
 
@@ -78,7 +80,23 @@ bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
     return true;
 }
 
-void Logger::start() { _context->logs.start_time = RJ::now(); }
+void Logger::start() {
+    _context->logs.start_time = RJ::now();
+
+    // Log a message that is empty except for a log config and a start time.
+    std::shared_ptr<Packet::LogFrame> log_frame =
+        std::make_shared<Packet::LogFrame>();
+    log_frame->set_timestamp(
+        std::chrono::duration_cast<std::chrono::microseconds>(
+            RJ::now().time_since_epoch())
+            .count());
+
+    log_frame->mutable_log_config()->set_generator("soccer");
+    log_frame->mutable_log_config()->set_git_version_hash(git_version_hash);
+    log_frame->mutable_log_config()->set_git_version_dirty(git_version_dirty);
+    log_frame->mutable_log_config()->set_simulation(
+        _context->game_settings.simulation);
+}
 
 void Logger::run() {
     std::shared_ptr<Packet::LogFrame> log_frame = createLogFrame(_context);
@@ -190,8 +208,6 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
         Packet::Robot* tx = log_frame->mutable_radio_tx()->add_robots();
         ConvertTx::to_proto(intent, setpoint, shell, tx);
     }
-
-    log_frame->mutable_radio_tx()->set_txmode(Packet::RadioTx_TxMode_MULTICAST);
 
     // Opponent robots
     for (int shell = 0; shell < Num_Shells; shell++) {

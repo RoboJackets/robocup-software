@@ -4,6 +4,7 @@
 
 #include <BatteryProfile.hpp>
 #include <cmath>
+#include <iostream>
 
 RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
     : QWidget(parent, f) {

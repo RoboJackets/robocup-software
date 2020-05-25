@@ -30,18 +30,6 @@ enum HardwareVersion {
     Simulation = 5;
 }
 
-message Quaternion {
-    required float q0 = 1;
-    required float q1 = 2;
-    required float q2 = 3;
-    required float q3 = 4;
-}
-
-message DebugResponses {
-    optional string key = 1;
-    optional float value = 2;
-}
-
 // Packet going out from radio program to control program
 message RadioRx {
     required uint64 timestamp = 1;
@@ -61,6 +49,4 @@ message RadioRx {
     optional FpgaStatus fpga_status = 14 [default = FpgaGood];
 
     optional HardwareVersion hardware_version = 12 [default = Unknown];
-
-    optional Quaternion quaternion = 13;
 }

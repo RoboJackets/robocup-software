@@ -624,10 +624,6 @@ RobotStatus::HardwareVersion OurRobot::hardwareVersion() const {
     return RobotStatus::HardwareVersion::kUnknown;
 }
 
-std::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
-    return std::nullopt;
-}
-
 bool OurRobot::statusIsFresh(RJ::Seconds age) const {
     return (RJ::now() - radioStatus().timestamp) < age;
 }
