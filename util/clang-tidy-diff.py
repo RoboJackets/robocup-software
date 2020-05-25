@@ -139,6 +139,11 @@ def main():
                         default=r'.*\.(cpp|cc|c\+\+|cxx|c|cl|h|hpp|m|mm|inc)',
                         help='custom pattern selecting file paths to check '
                         '(case insensitive, overridden by -regex)')
+    parser.add_argument('-ignore',
+                        metavar='PATTERN',
+                        default=None,
+                        help='custom pattern selecting file paths to ignore '
+                        '(case sensitive)')
     parser.add_argument('-j',
                         type=int,
                         default=1,
@@ -199,6 +204,10 @@ def main():
             filename = match.group(2)
         if filename is None:
             continue
+
+        if args.ignore is not None:
+            if re.match('^%s$' % args.ignore, filename):
+                continue
 
         if args.regex is not None:
             if not re.match('^%s$' % args.regex, filename):

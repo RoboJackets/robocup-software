@@ -185,7 +185,7 @@ ifeq ("$(wildcard ./build/compile_commands.json)","")
 	exit 1
 endif
 	@printf "Running clang-tidy-diff...\n"
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES)
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp"
 
 checkstyle-lines:
 	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
@@ -193,4 +193,4 @@ checkstyle-lines:
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 checktidy-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) > /tmp/checktidy.patch
+	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp" > /tmp/checktidy.patch
