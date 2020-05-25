@@ -3,6 +3,33 @@
 #include "Util.hpp"
 using namespace Geometry2d;
 
+TEST(Line, delta) {
+    Line l({-1, -1}, {1, 1});
+    
+    EXPECT_NEAR(l.delta().x(), 2, 0.01);
+    EXPECT_NEAR(l.delta().y(), 2, 0.01);
+}
+
+TEST(Line, equality) {
+    Line l1({-1, -1}, {1, 1});
+    Line l2({-1, -1}, {1, 1});
+    Line l3({-2, -1}, {1, 1});
+    
+    // TODO: During code review, add issue for incorrect equality check
+    //EXPECT_TRUE(l1 == l2);
+    EXPECT_FALSE(l1 == l3);
+}
+
+TEST(Line, transform) {
+    Line l({-1, -1}, {1, 1});
+
+    l.transform(TransformMatrix::mirrorX);
+    EXPECT_NEAR(l.pt[0].x(), 1, 0.01);
+    EXPECT_NEAR(l.pt[0].y(), -1, 0.01);
+    EXPECT_NEAR(l.pt[1].x(), -1, 0.01);
+    EXPECT_NEAR(l.pt[1].y(), 1, 0.01);
+}
+
 TEST(Line, badLineIntersectsCircle) {
     Circle circle(Point(0, 0), 1);
     Line line(Point(-5, -1), Point(0, -1.001));
@@ -66,4 +93,15 @@ TEST(Line, nearestPoint) {
     Line test(Point(-2.5, 4.5), Point(-4.5, 6.5));
     ASSERT_TRUE(Point(1, 1).nearlyEquals(test.nearestPoint(Point(1, 1))));
     ASSERT_TRUE(Point(1, 1).nearlyEquals(test.nearestPoint(Point(0, 0))));
+}
+
+TEST(Line, pointSide) {
+    Line l({-1, -1}, {1, 1});
+
+    Point p1(0, 10);
+    Point p2(0, -10);
+
+
+    EXPECT_NEAR(l.pointSide(p1), 20, 0.1);
+    EXPECT_NEAR(l.pointSide(p2), -20, 0.1);
 }
