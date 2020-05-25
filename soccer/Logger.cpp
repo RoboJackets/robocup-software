@@ -81,146 +81,12 @@ bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
 void Logger::start() { _context->logs.start_time = RJ::now(); }
 
 void Logger::run() {
-    // Add everything to the log frame.
-    auto log_frame = std::make_shared<LogFrame>();
-
-    // Debug drawing
-    _context->debug_drawer.fillLogFrame(log_frame.get());
-
-    for (const SSL_WrapperPacket& packet : _context->raw_vision_packets) {
-        log_frame->add_raw_vision()->CopyFrom(packet);
-    }
-    _context->raw_vision_packets.clear();
-
-    for (const auto& packet : _context->referee_packets) {
-        SSL_Referee* referee = log_frame->add_raw_refbox();
-        referee->CopyFrom(packet);
-    }
-
-    log_frame->set_blue_team(_context->game_state.blueTeam);
-    log_frame->set_command_time(RJ::timestamp());
-
-    // Our robots
-    for (int shell = 0; shell < Num_Shells; shell++) {
-        const auto& state = _context->world_state.our_robots.at(shell);
-        const auto& status = _context->robot_status.at(shell);
-        const auto& intent = _context->robot_intents.at(shell);
-        const auto& setpoint = _context->motion_setpoints.at(shell);
-
-        if (!state.visible) {
-            continue;
-        }
-
-        LogFrame::Robot* robot = log_frame->add_self();
-
-        robot->mutable_pos()->set_x(
-            static_cast<float>(state.pose.position().x()));
-        robot->mutable_pos()->set_y(
-            static_cast<float>(state.pose.position().y()));
-        robot->set_angle(static_cast<float>(state.pose.heading()));
-        robot->mutable_world_vel()->set_x(
-            static_cast<float>(state.velocity.linear().x()));
-        robot->mutable_world_vel()->set_y(
-            static_cast<float>(state.velocity.linear().y()));
-
-        robot->set_shell(shell);
-
-        robot->set_ball_sense_status(status.has_ball ? BallSenseStatus::HasBall
-                                                     : BallSenseStatus::NoBall);
-
-        robot->mutable_cmd_vel()->set_x(static_cast<float>(setpoint.xvelocity));
-        robot->mutable_cmd_vel()->set_y(static_cast<float>(setpoint.yvelocity));
-        robot->set_cmd_w(static_cast<float>(setpoint.avelocity));
-
-        robot->set_charged(status.kicker == RobotStatus::KickerState::kCharged);
-        robot->set_kicker_voltage(static_cast<float>(status.kicker_voltage));
-
-        for (int i = 0; i < 5; i++) {
-            robot->add_motor_status(status.motors_healthy[i]
-                                        ? MotorStatus::Good
-                                        : MotorStatus::Encoder_Failure);
-        }
-
-        robot->set_kicker_works(status.kicker !=
-                                RobotStatus::KickerState::kFailed);
-        robot->set_battery_voltage(static_cast<float>(status.battery_voltage));
-    }
-
-    // Radio RX/TX for each robot
-    for (int shell = 0; shell < Num_Shells; shell++) {
-        const auto& status = _context->robot_status.at(shell);
-        if (RJ::now() - status.timestamp > RJ::Seconds(0.5)) {
-            continue;
-        }
-        const auto& intent = _context->robot_intents.at(shell);
-        const auto& setpoint = _context->motion_setpoints.at(shell);
-
-        RadioRx* rx = log_frame->add_radio_rx();
-        ConvertRx::status_to_proto(status, rx);
-
-        Packet::Robot* tx = log_frame->mutable_radio_tx()->add_robots();
-        ConvertTx::to_proto(intent, setpoint, shell, tx);
-    }
-
-    log_frame->mutable_radio_tx()->set_txmode(Packet::RadioTx_TxMode_MULTICAST);
-
-    // Opponent robots
-    for (int shell = 0; shell < Num_Shells; shell++) {
-        const auto& state = _context->world_state.their_robots.at(shell);
-        if (!state.visible) {
-            continue;
-        }
-
-        LogFrame::Robot* robot = log_frame->add_opp();
-
-        robot->mutable_pos()->set_x(
-            static_cast<float>(state.pose.position().x()));
-        robot->mutable_pos()->set_y(
-            static_cast<float>(state.pose.position().y()));
-        robot->set_angle(static_cast<float>(state.pose.heading()));
-        robot->mutable_world_vel()->set_x(
-            static_cast<float>(state.velocity.linear().x()));
-        robot->mutable_world_vel()->set_y(
-            static_cast<float>(state.velocity.linear().y()));
-
-        robot->set_shell(shell);
-    }
-
-    // Ball
-    if (_context->state.ball.valid) {
-        log_frame->mutable_ball()->mutable_pos()->set_x(
-            static_cast<float>(_context->state.ball.pos.x()));
-        log_frame->mutable_ball()->mutable_pos()->set_y(
-            static_cast<float>(_context->state.ball.pos.y()));
-        log_frame->mutable_ball()->mutable_vel()->set_x(
-            static_cast<float>(_context->state.ball.vel.x()));
-        log_frame->mutable_ball()->mutable_vel()->set_y(
-            static_cast<float>(_context->state.ball.vel.y()));
-    }
-
-    log_frame->set_manual_id(_context->game_settings.joystick_config.manualID);
-    log_frame->set_defend_plus_x(_context->game_settings.defendPlusX);
-    log_frame->set_use_our_half(_context->game_settings.use_our_half);
-    log_frame->set_use_opponent_half(_context->game_settings.use_their_half);
-
-    // Behavior tree
-    log_frame->set_behavior_tree(_context->behavior_tree);
-
-    // Team names
-    if (_context->game_state.blueTeam) {
-        log_frame->set_team_name_yellow(_context->game_state.TheirInfo.name);
-        log_frame->set_team_name_blue(_context->game_state.OurInfo.name);
-    } else {
-        log_frame->set_team_name_yellow(_context->game_state.OurInfo.name);
-        log_frame->set_team_name_blue(_context->game_state.TheirInfo.name);
-    }
-
-    log_frame->set_timestamp(RJ::timestamp());
+    std::shared_ptr<Packet::LogFrame> log_frame = createLogFrame(_context);
 
     if (_context->logs.state == Logs::State::kWriting) {
         _context->logs.size_bytes += log_frame->ByteSize();
         google::protobuf::io::OstreamOutputStream output(&_log_file.value());
-        writeDelimitedTo(*log_frame, &output);
+        writeToFile(log_frame.get(), &output);
     }
 
     while (_context->logs.frames.size() + 1 >= kMaxLogFrames) {
@@ -246,10 +112,9 @@ void Logger::read(const std::string& filename) {
     }
 
     // Populate the entire logs struct.
-    google::protobuf::io::IstreamInputStream input(&_log_file.value());
-
     auto frame = std::make_shared<LogFrame>();
-    while (readDelimitedFrom(&input, frame.get())) {
+    google::protobuf::io::IstreamInputStream input(&_log_file.value());
+    while (readFromFile(frame.get(), &input)) {
         _context->logs.size_bytes += frame->ByteSize();
         _context->logs.frames.emplace_back(std::move(frame));
         frame = std::make_shared<LogFrame>();
@@ -262,9 +127,9 @@ void Logger::write(const std::string& filename) {
     _context->logs.filename = filename;
     _context->logs.state = Logs::State::kWriting;
 
+    google::protobuf::io::OstreamOutputStream output(&_log_file.value());
     for (const auto& frame : _context->logs.frames) {
-        google::protobuf::io::OstreamOutputStream output(&_log_file.value());
-        writeDelimitedTo(*frame, &output);
+        writeToFile(frame.get(), &output);
     }
 }
 
@@ -272,4 +137,155 @@ void Logger::close() {
     _log_file = std::nullopt;
     _context->logs.filename = std::nullopt;
     _context->logs.state = Logs::State::kNoFile;
+}
+
+std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
+    // Add everything to the log frame.
+    auto log_frame = std::make_shared<LogFrame>();
+
+    // Debug drawing
+    context->debug_drawer.fillLogFrame(log_frame.get());
+
+    // Copy raw vision packets.
+    for (const SSL_WrapperPacket& packet : context->raw_vision_packets) {
+        log_frame->add_raw_vision()->CopyFrom(packet);
+    }
+    context->raw_vision_packets.clear();
+
+    // Copy referee packets.
+    for (const auto& packet : context->referee_packets) {
+        SSL_Referee* referee = log_frame->add_raw_refbox();
+        referee->CopyFrom(packet);
+    }
+
+    log_frame->set_blue_team(context->game_state.blueTeam);
+    log_frame->set_command_time(RJ::timestamp());
+
+    // Our robots
+    for (int shell = 0; shell < Num_Shells; shell++) {
+        const auto& state = context->world_state.our_robots.at(shell);
+        const auto& status = context->robot_status.at(shell);
+        const auto& setpoint = context->motion_setpoints.at(shell);
+
+        if (!state.visible) {
+            continue;
+        }
+
+        LogFrame::Robot* robot = log_frame->add_self();
+        fillRobot(robot, shell, &state, &status, &setpoint);
+    }
+
+    // Radio RX/TX for each robot
+    for (int shell = 0; shell < Num_Shells; shell++) {
+        const auto& status = context->robot_status.at(shell);
+        if (RJ::now() - status.timestamp > RJ::Seconds(0.5)) {
+            continue;
+        }
+        const auto& intent = context->robot_intents.at(shell);
+        const auto& setpoint = context->motion_setpoints.at(shell);
+
+        RadioRx* rx = log_frame->add_radio_rx();
+        ConvertRx::status_to_proto(status, rx);
+
+        Packet::Robot* tx = log_frame->mutable_radio_tx()->add_robots();
+        ConvertTx::to_proto(intent, setpoint, shell, tx);
+    }
+
+    log_frame->mutable_radio_tx()->set_txmode(Packet::RadioTx_TxMode_MULTICAST);
+
+    // Opponent robots
+    for (int shell = 0; shell < Num_Shells; shell++) {
+        const auto& state = context->world_state.their_robots.at(shell);
+        if (!state.visible) {
+            continue;
+        }
+
+        LogFrame::Robot* robot = log_frame->add_opp();
+        fillRobot(robot, shell, &state, nullptr, nullptr);
+    }
+
+    // Ball
+    if (context->state.ball.valid) {
+        log_frame->mutable_ball()->mutable_pos()->set_x(
+            static_cast<float>(context->state.ball.pos.x()));
+        log_frame->mutable_ball()->mutable_pos()->set_y(
+            static_cast<float>(context->state.ball.pos.y()));
+        log_frame->mutable_ball()->mutable_vel()->set_x(
+            static_cast<float>(context->state.ball.vel.x()));
+        log_frame->mutable_ball()->mutable_vel()->set_y(
+            static_cast<float>(context->state.ball.vel.y()));
+    }
+
+    log_frame->set_manual_id(context->game_settings.joystick_config.manualID);
+    log_frame->set_defend_plus_x(context->game_settings.defendPlusX);
+    log_frame->set_use_our_half(context->game_settings.use_our_half);
+    log_frame->set_use_opponent_half(context->game_settings.use_their_half);
+
+    // Behavior tree
+    log_frame->set_behavior_tree(context->behavior_tree);
+
+    // Team names
+    if (context->game_state.blueTeam) {
+        log_frame->set_team_name_yellow(context->game_state.TheirInfo.name);
+        log_frame->set_team_name_blue(context->game_state.OurInfo.name);
+    } else {
+        log_frame->set_team_name_yellow(context->game_state.OurInfo.name);
+        log_frame->set_team_name_blue(context->game_state.TheirInfo.name);
+    }
+
+    log_frame->set_timestamp(RJ::timestamp());
+
+    return log_frame;
+}
+
+bool Logger::writeToFile(Packet::LogFrame* frame,
+                         google::protobuf::io::ZeroCopyOutputStream* out) {
+    return writeDelimitedTo(*frame, out);
+}
+
+bool Logger::readFromFile(Packet::LogFrame* frame,
+                          google::protobuf::io::ZeroCopyInputStream* in) {
+    return readDelimitedFrom(in, frame);
+}
+
+void Logger::fillRobot(Packet::LogFrame::Robot* out, int shell_id,
+                       RobotState const* state, RobotStatus const* status,
+                       MotionSetpoint const* setpoint) {
+    out->set_shell(shell_id);
+
+    if (state != nullptr) {
+        out->mutable_pos()->set_x(
+            static_cast<float>(state->pose.position().x()));
+        out->mutable_pos()->set_y(
+            static_cast<float>(state->pose.position().y()));
+        out->set_angle(static_cast<float>(state->pose.heading()));
+        out->mutable_world_vel()->set_x(
+            static_cast<float>(state->velocity.linear().x()));
+        out->mutable_world_vel()->set_y(
+            static_cast<float>(state->velocity.linear().y()));
+    }
+
+    if (status != nullptr) {
+        out->set_ball_sense_status(status->has_ball ? BallSenseStatus::HasBall
+                                                    : BallSenseStatus::NoBall);
+
+        out->set_charged(status->kicker == RobotStatus::KickerState::kCharged);
+        out->set_kicker_voltage(static_cast<float>(status->kicker_voltage));
+
+        for (int i = 0; i < 5; i++) {
+            out->add_motor_status(status->motors_healthy[i]
+                                      ? MotorStatus::Good
+                                      : MotorStatus::Encoder_Failure);
+        }
+
+        out->set_kicker_works(status->kicker !=
+                              RobotStatus::KickerState::kFailed);
+        out->set_battery_voltage(static_cast<float>(status->battery_voltage));
+    }
+
+    if (setpoint != nullptr) {
+        out->mutable_cmd_vel()->set_x(static_cast<float>(setpoint->xvelocity));
+        out->mutable_cmd_vel()->set_y(static_cast<float>(setpoint->yvelocity));
+        out->set_cmd_w(static_cast<float>(setpoint->avelocity));
+    }
 }

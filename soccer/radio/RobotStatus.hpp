@@ -9,7 +9,7 @@
  * state updates from an on-board Kalman filter.
  */
 struct RobotStatus {
-    RJ::Time timestamp = RJ::Time::min();
+    RJ::Time timestamp;
 
     int shell_id = 0;
 

@@ -4,10 +4,17 @@
 
 #include <deque>
 #include <fstream>
+#include <motion/MotionSetpoint.hpp>
 #include <optional>
+#include <radio/RobotStatus.hpp>
 #include <time.hpp>
 
 #include "Node.hpp"
+#include "RobotIntent.hpp"
+#include "WorldState.hpp"
+
+// For FRIEND_TEST
+#include <gtest/gtest.h>
 
 // Keep the past thirty minutes of logs by default.
 constexpr size_t kMaxLogFrames = 60 * 60 * 30;
@@ -90,6 +97,18 @@ public:
     void stop() override;
 
 private:
+    static std::shared_ptr<Packet::LogFrame> createLogFrame(Context* context);
+    static bool writeToFile(Packet::LogFrame* frame,
+                            google::protobuf::io::ZeroCopyOutputStream* out);
+    static bool readFromFile(Packet::LogFrame* frame,
+                             google::protobuf::io::ZeroCopyInputStream* in);
+    static void fillRobot(Packet::LogFrame::Robot* out, int shell_id,
+                          RobotState const* state, RobotStatus const* status,
+                          MotionSetpoint const* setpoint);
+
+    FRIEND_TEST(Logger, SaveContext);
+    FRIEND_TEST(Logger, SerializeDeserialize);
+
     std::optional<std::fstream> _log_file;
 
     Context* _context;
