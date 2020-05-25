@@ -3,29 +3,25 @@ package Packet;
 
 import "Robot.proto";
 
-message RadioTx
-{
-	enum TxMode
-	{
-		UNICAST   = 1;
-		MULTICAST = 2;
-	}
+message RadioTx {
+    enum TxMode {
+        UNICAST = 1;
+        MULTICAST = 2;
+    }
 
-	required TxMode txMode = 1;
-	repeated Robot robots = 2;
-	repeated ConfigCommunication configs = 3;
-	repeated DebugCommunication debug_communication = 4;
+    required TxMode txMode = 1;
+    repeated Robot robots = 2;
+    repeated ConfigCommunication configs = 3;
+    repeated DebugCommunication debug_communication = 4;
 }
 
-message ConfigCommunication
-{
+message ConfigCommunication {
     optional uint32 key = 1;
     optional string key_name = 2;
     optional float value = 3;
 }
 
-message DebugCommunication
-{
+message DebugCommunication {
     optional uint32 key = 1;
     optional string key_name = 2;
 }
