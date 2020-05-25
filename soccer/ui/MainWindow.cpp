@@ -416,7 +416,7 @@ void MainWindow::updateViews() {
         live_frame = _context->logs.frames.back();
 
         // Cast to ints so that subtraction doesn't overflow.
-        int start = std::max((int)frameNumber() - kLongHistorySize, minFrame);
+        int start = std::max(frameNumber() - kLongHistorySize, minFrame);
 
         // Read the latest frames
         _longHistory.assign(
@@ -427,7 +427,8 @@ void MainWindow::updateViews() {
     // Set the history vector by taking the last kHistorySize elements of the
     // "long" history, or fewer if _longHistory is shorter.
     _history.assign(
-        _longHistory.end() - std::min(kHistorySize, (int)_longHistory.size()),
+        _longHistory.end() -
+            std::min(kHistorySize, static_cast<int>(_longHistory.size())),
         _longHistory.end());
 
     // Update field view

@@ -404,7 +404,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     /// populate @cometTrails with the past locations of each robot
     int pastLocationCount = 40;  // number of past locations to show
-    int start = std::max(0, (int)_history->size() - pastLocationCount);
+    int start =
+        std::max(0, static_cast<int>(_history->size()) - pastLocationCount);
     for (int i = start; i < _history->size(); i++) {
         const LogFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr) {
