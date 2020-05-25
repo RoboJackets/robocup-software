@@ -14,6 +14,7 @@
 #include "RobotIntent.hpp"
 #include "SystemState.hpp"
 #include "WorldState.hpp"
+#include "joystick/GamepadMessage.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "radio/RobotStatus.hpp"
@@ -39,6 +40,8 @@ struct Context {
     std::array<RobotStatus, Num_Shells> robot_status;
     // MainWindow -> Manual control
     std::array<bool, Num_Shells> is_joystick_controlled;
+    /** \brief Whether at least one joystick is connected */
+    bool joystick_valid;
 
     std::array<RobotLocalConfig, Num_Shells> local_configs;
     std::array<RobotConstraints, Num_Shells> robot_constraints;
@@ -47,6 +50,10 @@ struct Context {
     SystemState state;
     GameState game_state;
     DebugDrawer debug_drawer;
+
+    /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */
+    std::vector<int> gamepads;
+    std::vector<joystick::GamepadMessage> gamepad_messages;
 
     std::vector<std::unique_ptr<VisionPacket>> vision_packets;
 
