@@ -211,13 +211,16 @@ void Processor::run() {
         curStatus.lastLoopTime = startTime;
         _context.state.time = startTime;
 
-        while (_context.game_settings.paused) {
+        // Don't run processor while we're paused or reading logs after the
+        // first cycle (we need to run one because MainWindow waits on a single
+        // cycle of processor to initialize).
+        while (_initialized && _running &&
+               (_context.game_settings.paused ||
+                _context.logs.state == Logs::State::kReading)) {
             std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
         }
 
         loopMutex()->lock();
-
-        // If we're paused, don't do anything until we get unpaused.
 
         ////////////////
         // Inputs

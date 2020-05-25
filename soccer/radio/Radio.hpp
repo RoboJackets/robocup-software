@@ -17,10 +17,11 @@ class Radio {
 public:
     Radio() { _channel = 0; }
 
-    virtual bool isOpen() const = 0;
+    [[nodiscard]] virtual bool isOpen() const = 0;
+
     virtual void send(
-        const std::array<RobotIntent, Num_Shells>& intent,
-        const std::array<MotionSetpoint, Num_Shells>& setpoint) = 0;
+        const std::array<RobotIntent, Num_Shells>& intents,
+        const std::array<MotionSetpoint, Num_Shells>& setpoints) = 0;
     virtual void receive() = 0;
 
     virtual void switchTeam(bool blueTeam) = 0;
@@ -36,7 +37,7 @@ public:
 
     RobotStatus popReversePacket() {
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-        RobotStatus packet = std::move(_reversePackets.front());
+        RobotStatus packet = _reversePackets.front();
         _reversePackets.pop_front();
         return packet;
     }

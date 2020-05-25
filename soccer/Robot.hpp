@@ -415,7 +415,7 @@ public:
     bool hasBallRaw() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
-    float kickerVoltage() const;
+    double kickerVoltage() const;
     RobotStatus::HardwareVersion hardwareVersion() const;
 
     const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {

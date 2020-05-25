@@ -424,10 +424,11 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pair<int, int> key(2, r.shell());
                 if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
-                    if (i == start)
+                    if (i == start) {
                         cometTrails[key].moveTo(pt);
-                    else
+                    } else {
                         cometTrails[key].lineTo(pt);
+                    }
                 }
             }
         }

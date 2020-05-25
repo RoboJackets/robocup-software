@@ -167,6 +167,9 @@ int main(int argc, char* argv[]) {
     context->game_settings.defendPlusX = defendPlus;
     context->game_settings.requestGoalieID = 0;
 
+    // If we're reading a log file, we should start off paused.
+    context->game_settings.paused = !readLogFile.empty();
+
     // Load config file
     QString error;
     if (!config->load(cfgFile, error)) {

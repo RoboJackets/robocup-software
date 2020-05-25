@@ -192,6 +192,7 @@ private:
     void status(const QString& text, StatusType status);
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
+    void updateDebugLayers(const Packet::LogFrame& frame);
 
     Ui_MainWindow _ui{};
     const QStandardItemModel* goalieModel{};
@@ -241,7 +242,7 @@ private:
     std::map<std::string, QActionGroup*> qActionGroups{};
 
     // maps robot shell IDs to items in the list
-    std::map<int, QListWidgetItem*> _robotStatusItemMap{};
+    std::map<int, std::unique_ptr<QListWidgetItem>> _robotStatusItemMap{};
 
     /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons{};

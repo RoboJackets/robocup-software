@@ -18,7 +18,7 @@ using namespace std;
 using namespace Packet;
 using namespace boost::asio;
 
-SimRadio::SimRadio(Context* const context, bool blueTeam)
+SimRadio::SimRadio(Context* context, bool blueTeam)
     : _context(context),
       _blueTeam(blueTeam),
       _socket(_io_service, ip::udp::endpoint(ip::udp::v4(),

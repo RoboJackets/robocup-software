@@ -13,11 +13,11 @@
 class SimRadio : public Radio {
 public:
     static std::size_t instance_count;
-    SimRadio(Context* const context, bool blueTeam = false);
+    SimRadio(Context* context, bool blueTeam = false);
 
-    bool isOpen() const override;
-    void send(const std::array<RobotIntent, Num_Shells>& intent,
-              const std::array<MotionSetpoint, Num_Shells>& setpoint) override;
+    [[nodiscard]] bool isOpen() const override;
+    void send(const std::array<RobotIntent, Num_Shells>& intents,
+              const std::array<MotionSetpoint, Num_Shells>& setpoints) override;
     void receive() override;
     void switchTeam(bool blueTeam) override;
 

@@ -22,15 +22,14 @@ class NetworkRadio : public Radio {
 public:
     NetworkRadio(int server_port);
 
-    virtual bool isOpen() const override;
+    [[nodiscard]] bool isOpen() const override;
 
-    virtual void send(
-        const std::array<RobotIntent, Num_Shells>& robot,
-        const std::array<MotionSetpoint, Num_Shells>& setpoint) override;
+    void send(const std::array<RobotIntent, Num_Shells>& intents,
+              const std::array<MotionSetpoint, Num_Shells>& setpoints) override;
 
-    virtual void receive() override;
+    void receive() override;
 
-    virtual void switchTeam(bool) override;
+    void switchTeam(bool blueTeam) override;
 
 protected:
     struct RobotConnection {
@@ -44,7 +43,6 @@ protected:
     // Map from IP address to robot ID.
     std::map<boost::asio::ip::udp::endpoint, int> _robot_ip_map{};
 
-    bool open();
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
 

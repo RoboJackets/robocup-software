@@ -36,7 +36,7 @@ struct Logs {
     /**
      * \brief Whether we are recording (or viewing) logs.
      */
-    State state;
+    State state = State::kNoFile;
 
     /**
      * \brief The start time of the entire system.
@@ -93,6 +93,5 @@ public:
 private:
     std::optional<std::fstream> _log_file;
 
-    Logs::State _state = Logs::State::kNoFile;
     Context* _context;
 };

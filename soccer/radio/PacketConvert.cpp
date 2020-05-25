@@ -3,7 +3,6 @@
 #include <status.h>
 
 #include <Geometry2d/Util.hpp>
-#include <iostream>
 #include <time.hpp>
 
 #include "RobotIntent.hpp"
@@ -24,8 +23,8 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message,
     status->version = RobotStatus::HardwareVersion::kFleet2018;
     status->twist_estimate = std::nullopt;
     status->pose_estimate = std::nullopt;
-    status->battery_voltage =
-        rtp_message.battVoltage * rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
+    status->battery_voltage = static_cast<float>(rtp_message.battVoltage) *
+                              rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
     status->kicker_voltage = 0;
     status->has_ball = rtp_message.ballSenseStatus;
     status->kicker =
@@ -73,7 +72,7 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
         duration_cast<microseconds>(status.timestamp.time_since_epoch())
             .count());
     proto->set_robot_id(status.shell_id);
-    proto->set_battery(status.battery_voltage);
+    proto->set_battery(static_cast<float>(status.battery_voltage));
 
     proto->set_ball_sense_status(status.has_ball
                                      ? Packet::BallSenseStatus::HasBall
@@ -121,45 +120,51 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
 
 namespace ConvertTx {
 
+// NOLINT(cppcoreguidelines-pro-type-union-access)
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
             int shell, rtp::RobotTxMessage* rtp_message) {
     rtp_message->uid = shell;
-    rtp_message->message.controlMessage.bodyX = static_cast<int16_t>(
+    rtp::ControlMessage controlMessage{};
+
+    controlMessage.bodyX = static_cast<int16_t>(
         setpoint.xvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->message.controlMessage.bodyY = static_cast<int16_t>(
+    controlMessage.bodyY = static_cast<int16_t>(
         setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->message.controlMessage.bodyW = static_cast<int16_t>(
+    controlMessage.bodyW = static_cast<int16_t>(
         setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    rtp_message->message.controlMessage.dribbler =
+    controlMessage.dribbler =
         std::clamp(static_cast<uint16_t>(intent.dvelocity) * 2, 0, 255);
 
-    rtp_message->message.controlMessage.shootMode =
+    controlMessage.shootMode =
         intent.shoot_mode == RobotIntent::ShootMode::CHIP;
-    rtp_message->message.controlMessage.kickStrength = intent.kcstrength;
+    controlMessage.kickStrength = intent.kcstrength;
 
     switch (intent.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
-            rtp_message->message.controlMessage.triggerMode = 0;
+            controlMessage.triggerMode = 0;
             break;
         case RobotIntent::TriggerMode::IMMEDIATE:
-            rtp_message->message.controlMessage.triggerMode = 1;
+            controlMessage.triggerMode = 1;
             break;
         case RobotIntent::TriggerMode::ON_BREAK_BEAM:
-            rtp_message->message.controlMessage.triggerMode = 2;
+            controlMessage.triggerMode = 2;
             break;
     }
 
     switch (intent.song) {
         case RobotIntent::Song::STOP:
-            rtp_message->message.controlMessage.song = 0;
+            controlMessage.song = 0;
             break;
         case RobotIntent::Song::CONTINUE:
-            rtp_message->message.controlMessage.song = 1;
+            controlMessage.song = 1;
             break;
         case RobotIntent::Song::FIGHT_SONG:
-            rtp_message->message.controlMessage.song = 2;
+            controlMessage.song = 2;
             break;
     }
+
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
+    rtp_message->message.controlMessage = controlMessage;
 
     rtp_message->messageType = rtp::RobotTxMessage::ControlMessageType;
 }
@@ -174,9 +179,9 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
 
     Packet::Control* control = proto->mutable_control();
 
-    control->set_xvelocity(setpoint.xvelocity);
-    control->set_yvelocity(setpoint.yvelocity);
-    control->set_avelocity(setpoint.avelocity);
+    control->set_xvelocity(static_cast<float>(setpoint.xvelocity));
+    control->set_yvelocity(static_cast<float>(setpoint.yvelocity));
+    control->set_avelocity(static_cast<float>(setpoint.avelocity));
     control->set_dvelocity(intent.dvelocity);
     control->set_kcstrength(intent.kcstrength);
 
@@ -233,7 +238,7 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
             constexpr double kStrengthToSpeed =
                 (kMaxKickSpeed - kMinKickSpeed) / 255;
             double speed = kStrengthToSpeed * intent.kcstrength + kMinKickSpeed;
-            grsim->set_kickspeedx(speed);
+            grsim->set_kickspeedx(static_cast<float>(speed));
             grsim->set_kickspeedz(0);
         } else {
             // Chip kick
@@ -244,14 +249,16 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
             constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
 
             double speed = kStrengthToSpeed * intent.kcstrength + kMinChipSpeed;
-            grsim->set_kickspeedx(std::cos(kChipAngle) * speed);
-            grsim->set_kickspeedz(std::sin(kChipAngle) * speed);
+            grsim->set_kickspeedx(
+                static_cast<float>(std::cos(kChipAngle) * speed));
+            grsim->set_kickspeedz(
+                static_cast<float>(std::sin(kChipAngle) * speed));
         }
     }
 
-    grsim->set_veltangent(setpoint.yvelocity);
-    grsim->set_velnormal(-setpoint.xvelocity);
-    grsim->set_velangular(setpoint.avelocity);
+    grsim->set_veltangent(static_cast<float>(setpoint.yvelocity));
+    grsim->set_velnormal(-static_cast<float>(setpoint.xvelocity));
+    grsim->set_velangular(static_cast<float>(setpoint.avelocity));
 
     grsim->set_spinner(intent.dvelocity > 0);
     grsim->set_wheelsspeed(false);

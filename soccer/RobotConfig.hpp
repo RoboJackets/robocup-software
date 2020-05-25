@@ -85,10 +85,14 @@ public:
 class RobotLocalConfig {
 public:
     RobotLocalConfig() = default;
+    ~RobotLocalConfig() = default;
+
     RobotLocalConfig(Configuration* config, const QString& prefix);
 
     RobotLocalConfig(RobotLocalConfig&&) = default;
     RobotLocalConfig& operator=(RobotLocalConfig&&) = default;
+    RobotLocalConfig(const RobotLocalConfig&) = delete;
+    RobotLocalConfig& operator=(const RobotLocalConfig&) = delete;
 
     std::unique_ptr<ConfigBool> chipper_enabled;
     std::unique_ptr<ConfigBool> kicker_enabled;

@@ -226,6 +226,16 @@ void MainWindow::initialize() {
         on_actionDefendMinusX_triggered();
         _ui.actionDefendMinusX->setChecked(true);
     }
+
+    // If we're reading logs, we should already have some data. Update frames
+    // for all of it.
+    for (const auto& frame : _context->logs.frames) {
+        updateDebugLayers(*frame);
+    }
+
+    if (_context->logs.state == Logs::State::kReading) {
+        _playbackRate = 0;
+    }
 }
 
 void MainWindow::logFileChanged() {
@@ -308,7 +318,7 @@ void MainWindow::updateViews() {
 
     GameState game_state;
     {
-        //        std::lock_guard<std::mutex> lock(*_context_mutex);
+        std::lock_guard<std::mutex> lock(*_context_mutex);
         game_state = _context->game_state;
     }
     bool blueTeam = game_state.blueTeam;
@@ -370,12 +380,13 @@ void MainWindow::updateViews() {
 
     std::shared_ptr<LogFrame> live_frame;
     RJ::Time start_time;
-    int minFrame, maxFrame;
+    int minFrame = 0;
+    int maxFrame = 0;
 
     // Grab frames
     {
-        //        std::lock_guard<std::mutex> lock(*_context_mutex);
-        if (_context->logs.frames.size() == 0) {
+        std::lock_guard<std::mutex> lock(*_context_mutex);
+        if (_context->logs.frames.empty()) {
             // No log frames, nothing else to update.
             return;
         }
@@ -385,17 +396,18 @@ void MainWindow::updateViews() {
         size_t num_dropped = _context->logs.dropped_frames;
 
         if (live()) {
-            _doubleFrameNumber = _context->logs.frames.size() + num_dropped;
+            _doubleFrameNumber =
+                static_cast<double>(_context->logs.frames.size() + num_dropped);
         } else {
             _doubleFrameNumber += *_playbackRate;
         }
 
         minFrame = num_dropped;
-        maxFrame = num_dropped + _context->logs.frames.size() - 1;
+        maxFrame =
+            static_cast<int>(num_dropped + _context->logs.frames.size()) - 1;
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
-            setPlayBackRate(1.0);
         } else if (_doubleFrameNumber >= maxFrame) {
             _doubleFrameNumber = maxFrame;
             setLive();
@@ -412,7 +424,7 @@ void MainWindow::updateViews() {
         // Read the latest frames
         _longHistory.assign(
             _context->logs.frames.begin() + start - num_dropped,
-            _context->logs.frames.begin() + frameNumber() - num_dropped);
+            _context->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
     // update history slider in ui
@@ -449,20 +461,8 @@ void MainWindow::updateViews() {
 
     // Check if any debug layers have been added
     // (layers should never be removed)
-    if (live_frame &&
-        live_frame->debug_layers_size() > _ui.debugLayers->count()) {
-        // Add the missing layers and turn them on
-        for (int i = _ui.debugLayers->count();
-             i < live_frame->debug_layers_size(); ++i) {
-            const QString name =
-                QString::fromStdString(live_frame->debug_layers(i));
-            bool enabled = !std::any_of(
-                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
-                [&](QString string) { return string == name; });
-            addLayer(i, name, enabled);
-        }
-
-        _ui.debugLayers->sortItems();
+    if (live_frame) {
+        updateDebugLayers(*live_frame);
     }
 
     // Get the frame at the log playback time
@@ -583,11 +583,14 @@ void MainWindow::updateViews() {
             if (shouldDisplay && !displaying) {
                 // add a widget to the list for this robot
 
-                QListWidgetItem* item = new QListWidgetItem();
-                _robotStatusItemMap[shell] = item;
+                auto item_owned = std::make_unique<QListWidgetItem>();
+                auto* item = item_owned.get();
+                _robotStatusItemMap[shell] = std::move(item_owned);
                 _ui.robotStatusList->addItem(item);
 
-                RobotStatusWidget* statusWidget = new RobotStatusWidget();
+                // The item's widget is managed by Qt
+                // (setItemWidget takes ownership).
+                auto* statusWidget = new RobotStatusWidget();  // NOLINT
                 item->setSizeHint(statusWidget->minimumSizeHint());
                 _ui.robotStatusList->setItemWidget(item, statusWidget);
 
@@ -598,7 +601,7 @@ void MainWindow::updateViews() {
                 statusWidget->setBlueTeam(
                     _context->game_settings.requestBlueTeam);
 
-                // TODO: set board ID
+                // TODO(Kyle): set board ID
 
                 // set robot model
                 QString robotModel;
@@ -670,7 +673,7 @@ void MainWindow::updateViews() {
             } else if (!shouldDisplay && displaying) {
                 // remove the widget for this robot from the list
 
-                QListWidgetItem* item = _robotStatusItemMap[shell];
+                QListWidgetItem* item = _robotStatusItemMap[shell].get();
 
                 // delete widget from list
                 for (int row = 0; row < _ui.robotStatusList->count(); row++) {
@@ -681,14 +684,13 @@ void MainWindow::updateViews() {
                 }
 
                 _robotStatusItemMap.erase(shell);
-                delete item;
             }
 
             // update displayed attributes for valid robots
             if (shouldDisplay) {
-                QListWidgetItem* item = _robotStatusItemMap[shell];
-                RobotStatusWidget* statusWidget =
-                    (RobotStatusWidget*)_ui.robotStatusList->itemWidget(item);
+                QListWidgetItem* item = _robotStatusItemMap[shell].get();
+                auto* statusWidget = dynamic_cast<RobotStatusWidget*>(
+                    _ui.robotStatusList->itemWidget(item));
 
 #ifndef DEMO_ROBOT_STATUS
                 // radio status
@@ -707,8 +709,8 @@ void MainWindow::updateViews() {
                 // as well as being drawn as a red X on the graphic of a robot
                 bool hasMotorFault = false;
                 if (rx.motor_status().size() == 5) {
-                    const char* motorNames[] = {"FL", "BL", "BR", "FR",
-                                                "Dribbler"};
+                    std::array<const char*, 5> motorNames = {"FL", "BL", "BR",
+                                                             "FR", "Dribbler"};
 
                     // examine status of each motor (including the dribbler)
                     for (int i = 0; i < 5; ++i) {
@@ -734,29 +736,39 @@ void MainWindow::updateViews() {
 
                         // show wheel faults (exluding dribbler, which is index
                         // 4)
-                        if (i != 4) statusWidget->setWheelFault(i, motorIFault);
+                        if (i != 4) {
+                            statusWidget->setWheelFault(i, motorIFault);
+                        }
 
                         hasMotorFault = hasMotorFault || motorIFault;
 
                         // show dribbler fault on painted robot widget
-                        if (i == 4)
+                        if (i == 4) {
                             statusWidget->setBallSenseFault(motorIFault);
+                        }
                     }
                 }
 
                 // check for kicker error code
-                bool kickerFault = rx.has_kicker_status() &&
-                                   !(rx.kicker_status() & Kicker_Enabled);
+                bool kickerFault =
+                    rx.has_kicker_status() &&
+                    ((rx.kicker_status() & Kicker_Enabled) == 0u);
 
-                bool kicker_charging =
-                    rx.has_kicker_status() && rx.kicker_status() & 0x01;
+                bool kicker_charging = rx.has_kicker_status() &&
+                                       ((rx.kicker_status() & 0x01) != 0u);
                 statusWidget->setKickerState(kicker_charging);
                 bool ballSenseFault =
                     rx.has_ball_sense_status() &&
                     !(rx.ball_sense_status() == Packet::NoBall ||
                       rx.ball_sense_status() == Packet::HasBall);
-                if (kickerFault) errorList << "Kicker Fault";
-                if (ballSenseFault) errorList << "Ball Sense Fault";
+
+                if (kickerFault) {
+                    errorList << "Kicker Fault";
+                }
+
+                if (ballSenseFault) {
+                    errorList << "Ball Sense Fault";
+                }
                 statusWidget->setBallSenseFault(ballSenseFault);
 
                 // check fpga status
@@ -786,12 +798,12 @@ void MainWindow::updateViews() {
                 if (rx.has_battery()) {
                     if (rx.hardware_version() == RJ2008 ||
                         rx.hardware_version() == RJ2011) {
-                        batteryLevel =
-                            RJ2008BatteryProfile.getChargeLevel(rx.battery());
+                        batteryLevel = static_cast<float>(
+                            RJ2008BatteryProfile.getChargeLevel(rx.battery()));
                     } else if (rx.hardware_version() == RJ2015 ||
                                rx.hardware_version() == RJ2018) {
-                        batteryLevel =
-                            RJ2015BatteryProfile.getChargeLevel(rx.battery());
+                        batteryLevel = static_cast<float>(
+                            RJ2015BatteryProfile.getChargeLevel(rx.battery()));
                     } else if (rx.hardware_version() == Simulation) {
                         batteryLevel = 1;
                     } else {
@@ -988,9 +1000,9 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
         QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
     if (_ui.radioBaseStatus->text() != label) {
         _ui.radioBaseStatus->setText(label);
-        _ui.radioBaseStatus->setStyleSheet(usbRadio
-                                               ? "background-color: #00ff00"
-                                               : "background-color: #ff4040");
+        _ui.radioBaseStatus->setStyleSheet(
+            usbRadio ? QString("background-color: #00ff00")
+                     : QString("background-color: #ff4040"));
     }
 }
 
@@ -1349,7 +1361,8 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction *single = nullptr, *notSingle = nullptr;
+    QAction* single = nullptr;
+    QAction* notSingle = nullptr;
     if (item != nullptr) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");
@@ -1518,3 +1531,20 @@ void MainWindow::on_fastIndirectYellow_clicked() {
 }
 
 bool MainWindow::live() { return !_playbackRate; }
+void MainWindow::updateDebugLayers(const LogFrame& frame) {
+    // Check if any debug layers have been added
+    // (layers should never be removed)
+    if (frame.debug_layers_size() > _ui.debugLayers->count()) {
+        // Add the missing layers and turn them on
+        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size();
+             ++i) {
+            const QString name = QString::fromStdString(frame.debug_layers(i));
+            bool enabled = !std::any_of(
+                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                [&](const QString& string) { return string == name; });
+            addLayer(i, name, enabled);
+        }
+
+        _ui.debugLayers->sortItems();
+    }
+}

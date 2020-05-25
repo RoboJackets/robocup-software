@@ -102,7 +102,7 @@ public:
 private:
     void resetLogFrame() {
         _logFrame.Clear();
-        for (QString string : _debugLayers) {
+        for (const QString& string : _debugLayers) {
             _logFrame.add_debug_layers(string.toStdString());
         }
     }

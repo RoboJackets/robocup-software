@@ -609,7 +609,7 @@ bool OurRobot::driving_available(bool require_all) const {
     return require_all ? (c == 4) : (c == 3);
 }
 
-float OurRobot::kickerVoltage() const {
+double OurRobot::kickerVoltage() const {
     if (!statusIsFresh()) {
         return 0;
     }
