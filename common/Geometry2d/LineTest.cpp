@@ -5,7 +5,7 @@ using namespace Geometry2d;
 
 TEST(Line, delta) {
     Line l({-1, -1}, {1, 1});
-    
+
     EXPECT_NEAR(l.delta().x(), 2, 0.01);
     EXPECT_NEAR(l.delta().y(), 2, 0.01);
 }
@@ -14,9 +14,9 @@ TEST(Line, equality) {
     Line l1({-1, -1}, {1, 1});
     Line l2({-1, -1}, {1, 1});
     Line l3({-2, -1}, {1, 1});
-    
+
     // TODO: Inavlid test due to bug. See issue #1470
-    //EXPECT_TRUE(l1 == l2);
+    // EXPECT_TRUE(l1 == l2);
     EXPECT_FALSE(l1 == l3);
 }
 
@@ -100,7 +100,6 @@ TEST(Line, pointSide) {
 
     Point p1(0, 10);
     Point p2(0, -10);
-
 
     EXPECT_NEAR(l.pointSide(p1), 20, 0.1);
     EXPECT_NEAR(l.pointSide(p2), -20, 0.1);

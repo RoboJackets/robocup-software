@@ -23,7 +23,7 @@ TEST(Arc, GetterSetter) {
     EXPECT_NEAR(a.radius(), radius, 0.001f);
     EXPECT_NEAR(a.start(), start, 0.001f);
     EXPECT_NEAR(a.end(), end, 0.001f);
-    EXPECT_NEAR(a.radius_sq(), radius*radius, 0.001f);
+    EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
 
     center = Point(2, 2);
     a.setCenter(center);
@@ -39,7 +39,7 @@ TEST(Arc, GetterSetter) {
     EXPECT_NEAR(a.radius(), radius, 0.001f);
     EXPECT_NEAR(a.start(), start, 0.001f);
     EXPECT_NEAR(a.end(), end, 0.001f);
-    EXPECT_NEAR(a.radius_sq(), radius*radius, 0.001f);
+    EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
 }
 
 TEST(Arc, Intersections) {
@@ -80,7 +80,8 @@ TEST(Arc, Intersections) {
                    {{0, 1}}, "Arc-Line 4");
 
     // Arc-Line No intersection
-    std::vector<Point> v = Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({-1, -1}, {1, -1}));
+    std::vector<Point> v =
+        Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({-1, -1}, {1, -1}));
     EXPECT_TRUE(v.empty());
 
     // Arc-Segment

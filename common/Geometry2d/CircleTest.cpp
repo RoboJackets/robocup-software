@@ -13,25 +13,25 @@ namespace Geometry2d::Testing {
 TEST(Circle, GetterSetter) {
     Point center(1, 1);
     float radius = 1.1;
-    
+
     Circle c(center, radius);
-    
+
     EXPECT_NEAR(c.center.x(), center.x(), 0.001);
     EXPECT_NEAR(c.center.y(), center.y(), 0.001);
     EXPECT_NEAR(c.radius(), radius, 0.001);
-    EXPECT_NEAR(c.radius_sq(), radius*radius, 0.001);
+    EXPECT_NEAR(c.radius_sq(), radius * radius, 0.001);
 
     radius = 2.2;
-    c.radius_sq(radius*radius);
+    c.radius_sq(radius * radius);
 
     EXPECT_NEAR(c.radius(), radius, 0.001);
-    EXPECT_NEAR(c.radius_sq(), radius*radius, 0.001);
+    EXPECT_NEAR(c.radius_sq(), radius * radius, 0.001);
 
     radius = 3.3;
     c.radius(radius);
 
     EXPECT_NEAR(c.radius(), radius, 0.001);
-    EXPECT_NEAR(c.radius_sq(), radius*radius, 0.001);
+    EXPECT_NEAR(c.radius_sq(), radius * radius, 0.001);
 }
 
 TEST(Circle, ContainsPt) {
@@ -90,7 +90,6 @@ TEST(Circle, Intersects) {
     Line l1({0, -1}, {0, 1});
     Line l2({1, -1}, {1, 1});
     Line l3({2, -1}, {2, 1});
-
 
     // With nullptr
     EXPECT_EQ(c.intersects(l1), 2);
