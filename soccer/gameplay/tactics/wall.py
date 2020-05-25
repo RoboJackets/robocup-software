@@ -82,7 +82,7 @@ class Wall(composite_behavior.CompositeBehavior):
             subbhvr_name = f"robot{i}"
 
             # This logic is so that the center robots are prioritized for role
-            # selection, and we don't leave a whole in the middle
+            # selection, and we don't leave a hole in the middle
             is_center = i != 0 and i != len(pts) - 1
             center_pt = pt if is_center else None
 
