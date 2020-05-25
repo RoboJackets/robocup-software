@@ -218,7 +218,7 @@ void Logger::run() {
     log_frame->set_timestamp(RJ::timestamp());
 
     if (_context->logs.state == Logs::State::kWriting) {
-        _context->logs.size_bytes += log_frame->ByteSizeLong();
+        _context->logs.size_bytes += log_frame->ByteSize();
         google::protobuf::io::OstreamOutputStream output(&_log_file.value());
         writeDelimitedTo(*log_frame, &output);
     }
@@ -250,7 +250,7 @@ void Logger::read(const std::string& filename) {
 
     auto frame = std::make_shared<LogFrame>();
     while (readDelimitedFrom(&input, frame.get())) {
-        _context->logs.size_bytes += frame->ByteSizeLong();
+        _context->logs.size_bytes += frame->ByteSize();
         _context->logs.frames.emplace_back(std::move(frame));
         frame = std::make_shared<LogFrame>();
     }
