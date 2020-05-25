@@ -112,7 +112,8 @@ class OurFreeKick(standard_play.StandardPlay):
         shooting_line = robocup.Line(main.ball().pos, self.gap)
 
         # If we are at their goal, shoot full power
-        if shooting_line.segment_intersection(constants.Field.TheirGoalSegment) is not None:
+        if shooting_line.segment_intersection(
+                constants.Field.TheirGoalSegment) is not None:
             kicker.kick_power = self.FullKickPower
         # If we are aiming in the forward direction and not at one of the "endzones", shoot full power
         elif (shooting_line.line_intersection(constants.Field.FieldBorders[0])
@@ -141,7 +142,10 @@ class OurFreeKick(standard_play.StandardPlay):
                 self.add_subbehavior(pass_behavior, 'kicker')
             else:
                 kicker.target = (self.pos_up_field)
-                self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
+                self.add_subbehavior(kicker,
+                                     'kicker',
+                                     required=False,
+                                     priority=5)
         else:
             kicker.target = constants.Field.TheirGoalSegment
             self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
