@@ -578,26 +578,38 @@ void MainWindow::updateViews() {
                 return std::nullopt;
             }();
 
-            // If rx is missing, skip this one.
-            if (!maybe_rx.has_value()) {
-                continue;
-            }
-
-            const auto& rx = maybe_rx.value().get();
-
-            // a robot shows up in the status list if it's reachable via radio
-            bool shouldDisplay =
-                currentFrame->timestamp() - rx.timestamp() < 5000000;
-
             auto statusItemIt = _robotStatusItemMap.find(shell);
 
             // see if it's already in the robot status list widget
             bool displaying = statusItemIt != _robotStatusItemMap.end();
 
+            // If rx is missing, exit early.
+            if (!maybe_rx.has_value()) {
+                if (displaying) {
+                    // We need to remove it from the list.
+                    QListWidgetItem* item = statusItemIt->second.get();
+
+                    // Delete widget from list
+                    for (int row = 0; row < _ui.robotStatusList->count();
+                         row++) {
+                        if (_ui.robotStatusList->item(row) == item) {
+                            _ui.robotStatusList->takeItem(row);
+                            break;
+                        }
+                    }
+
+                    _robotStatusItemMap.erase(shell);
+                }
+                continue;
+            }
+
+            // If we get here, we know there is an rx.
+            const auto& rx = maybe_rx.value().get();
+
             // The status widget corresponding to this robot
             RobotStatusWidget* statusWidget = nullptr;
 
-            if (shouldDisplay && !displaying) {
+            if (!displaying) {
                 // add a widget to the list for this robot
                 auto item_owned = std::make_unique<QListWidgetItem>();
                 auto* item = item_owned.get();
@@ -609,23 +621,10 @@ void MainWindow::updateViews() {
                 statusWidget = new RobotStatusWidget();  // NOLINT
                 item->setSizeHint(statusWidget->minimumSizeHint());
                 _ui.robotStatusList->setItemWidget(item, statusWidget);
-            } else if (shouldDisplay && displaying) {
+            } else {
                 statusWidget = dynamic_cast<RobotStatusWidget*>(
                     _ui.robotStatusList->itemWidget(
                         statusItemIt->second.get()));
-            } else if (!shouldDisplay && displaying) {
-                // Remove it from the list.
-                QListWidgetItem* item = _robotStatusItemMap[shell].get();
-
-                // Delete widget from list
-                for (int row = 0; row < _ui.robotStatusList->count(); row++) {
-                    if (_ui.robotStatusList->item(row) == item) {
-                        _ui.robotStatusList->takeItem(row);
-                        break;
-                    }
-                }
-
-                _robotStatusItemMap.erase(shell);
             }
 
             if (statusWidget != nullptr) {

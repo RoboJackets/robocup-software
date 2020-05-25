@@ -10,7 +10,7 @@ RobotStatusWidget::RobotStatusWidget(QWidget* parent, Qt::WindowFlags f)
     : QWidget(parent, f) {
     _ui.setupUi(this);
 
-    setBoardID("?\?-??");
+    setBoardID("RJ");
 
     _shellID = -2;
     setShellID(-1);
@@ -148,8 +148,6 @@ void RobotStatusWidget::loadFromLogFrame(
 
     // Set team
     setBlueTeam(blueTeam);
-
-    // TODO(Kyle): set board ID
 
     // set robot model
     QString robotModel;
