@@ -1,3 +1,4 @@
+SHELL=/bin/bash -o pipefail
 MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
@@ -64,7 +65,7 @@ run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
-view: 
+view:
 	./run/soccer -vlog $(file)
 
 # backend targets to launch soccer with grSim in headless
