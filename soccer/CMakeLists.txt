@@ -15,10 +15,9 @@ set(ROBOCUP_LIB_SRC
     "Configuration.cpp"
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
-    "joystick/Joystick.cpp"
-    "joystick/GamepadController.cpp"
-    "joystick/GamepadJoystick.cpp"
-    "joystick/SpaceNavJoystick.cpp"
+    "joystick/SDLJoystickNode.cpp"
+    "joystick/SDLGamepad.cpp"
+    "joystick/ManualControlNode.cpp"
     "KickEvaluator.cpp"
     "Logger.cpp"
     "motion/MotionControl.cpp"
@@ -85,7 +84,6 @@ set(ROBOCUP_LIB_SRC
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
     "WindowEvaluator.cpp" WorldState.cpp planning/planner/PlanRequest.cpp planning/low_level/Replanner.cpp planning/low_level/Replanner.hpp)
-
 
 if(APPLE)
     # help CMake find gl.h, glu.h, etc on OS X
@@ -208,14 +206,15 @@ target_link_libraries(log_viewer robocup)
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CircleTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/TransformMatrixTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
     "BatteryProfileTest.cpp"
     "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
@@ -235,7 +234,8 @@ set(SOCCER_TEST_SRC
     "vision/tests/BallBounceTest.cpp"
     "vision/tests/CameraTest.cpp"
     "WindowEvaluatorTest.cpp"
-        BallTest.cpp)
+    "BallTest.cpp"
+    "LoggerTest.cpp")
 
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

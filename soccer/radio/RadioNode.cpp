@@ -19,6 +19,7 @@ RadioNode::RadioNode(Context* context, bool simulation, bool blueTeam)
     : _context(context) {
     _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
     _simulation = simulation;
+    _was_blue_team = blueTeam;
     _radio =
         _simulation
             ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
@@ -34,29 +35,25 @@ Radio* RadioNode::getRadio() { return _radio; }
 void RadioNode::switchTeam(bool blueTeam) { _radio->switchTeam(blueTeam); }
 
 void RadioNode::run() {
+    if (_context->game_state.blueTeam != _was_blue_team) {
+        _was_blue_team = _context->game_state.blueTeam;
+        _radio->switchTeam(_was_blue_team);
+    }
+
     // Read radio reverse packets
     _radio->receive();
 
     while (_radio->hasReversePackets()) {
-        Packet::RadioRx rx = _radio->popReversePacket();
-        _context->state.logFrame->add_radio_rx()->CopyFrom(rx);
+        RobotStatus rx = _radio->popReversePacket();
 
-        _lastRadioRxTime = RJ::Time(std::chrono::microseconds(rx.timestamp()));
+        _lastRadioRxTime = rx.timestamp;
 
         // Store this packet in the appropriate robot
-        unsigned int board = rx.robot_id();
-        if (board < Num_Shells) {
-            // We have to copy because the RX packet will survive past this
-            // frame but LogFrame will not (the RadioRx in LogFrame will be
-            // reused).
-            _context->state.self[board]->setRadioRx(rx);
-            _context->state.self[board]->radioRxUpdated();
+        if (rx.shell_id < Num_Shells) {
+            _context->robot_status[rx.shell_id] = rx;
+            _context->state.self[rx.shell_id]->radioRxUpdated();
         }
     }
 
-    if (_radio != nullptr) {
-        construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
-                           _context->robot_intents, _context->motion_setpoints);
-        _radio->send(*_context->state.logFrame->mutable_radio_tx());
-    }
+    _radio->send(_context->robot_intents, _context->motion_setpoints);
 }

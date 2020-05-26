@@ -65,8 +65,6 @@ public:
      */
     BallState* ball;
 
-    std::shared_ptr<Packet::LogFrame> logFrame;
-
     std::vector<int> ourValidIds();
 
     bool paused;

@@ -2,7 +2,7 @@ import standard_play
 import behavior
 import skills
 import main
-import situational_play_selection
+from situations import Situation
 
 ## Simplistic play to handle defend clear situation
 #  Mimicks basic122 offense. One pivot kick and two marking robots
@@ -10,7 +10,7 @@ import situational_play_selection
 class BaiscDefendClear(standard_play.StandardPlay):
 
     _situationList = [
-        situational_play_selection.SituationalPlaySelector.Situation.DEFEND_CLEAR
+        Situation.DEFEND_CLEAR
     ] # yapf: disable
 
     def __init__(self, num_supports=2):

@@ -18,7 +18,7 @@ using namespace std;
 using namespace Packet;
 using namespace boost::asio;
 
-SimRadio::SimRadio(Context* const context, bool blueTeam)
+SimRadio::SimRadio(Context* context, bool blueTeam)
     : _context(context),
       _blueTeam(blueTeam),
       _socket(_io_service, ip::udp::endpoint(ip::udp::v4(),
@@ -32,59 +32,23 @@ SimRadio::SimRadio(Context* const context, bool blueTeam)
 
 bool SimRadio::isOpen() const { return _socket.is_open(); }
 
-void SimRadio::send(Packet::RadioTx& radioTx) {
+void SimRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
+                    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
     grSim_Packet simPacket;
     grSim_Commands* simRobotCommands = simPacket.mutable_commands();
-    for (int i = 0; i < radioTx.robots_size(); i++) {
-        const Packet::Robot& robot = radioTx.robots(i);
-        grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
-        simRobot->set_id(robot.uid());
-        simRobot->set_veltangent(robot.control().yvelocity());
-        simRobot->set_velnormal(-robot.control().xvelocity());
-        simRobot->set_velangular(robot.control().avelocity());
 
-        // rough approximation of kick strength assuming the max of 255
-        // corresponds to 8 m / s and min is 1 m / s
-        const float min_kick_m_s = 2.1f;
-        const float max_kick_m_s = 7.0f;
-        const float min_chip_m_s = 2.1f;
-        const float max_chip_m_s = 5.0f;
-        const float chip_angle = 40 * M_PI / 180;  // degrees
-        float kc_strength_to_ms;
-        uint kick_strength;
-
-        // If we're standing down, kicking is disabled. Otherwise, we should set
-        // the kick value unconditionally - grSim will only kick if there's a
-        // break beam signal anyway.
-        if (robot.control().triggermode() == Packet::Control::STAND_DOWN) {
-            simRobot->set_kickspeedx(0);
-            simRobot->set_kickspeedz(0);
-        } else {
-            switch (robot.control().shootmode()) {
-                case Packet::Control::KICK:
-                    kc_strength_to_ms = (max_kick_m_s - min_kick_m_s) / 255;
-                    kick_strength =
-                        kc_strength_to_ms * robot.control().kcstrength() +
-                        min_kick_m_s;
-                    simRobot->set_kickspeedx(kick_strength);
-                    simRobot->set_kickspeedz(0);
-                    break;
-                case Packet::Control::CHIP:
-                    kc_strength_to_ms = (max_chip_m_s - min_chip_m_s) / 255;
-                    kick_strength =
-                        kc_strength_to_ms * robot.control().kcstrength() +
-                        min_chip_m_s;
-                    simRobot->set_kickspeedx(cos(chip_angle) * kick_strength);
-                    simRobot->set_kickspeedz(sin(chip_angle) * kick_strength);
-                    break;
-                default:
-                    break;
-            }
+    for (int i = 0; i < Num_Shells; i++) {
+        const auto& intent = intents[i];
+        if (!intent.is_active) {
+            continue;
         }
 
-        simRobot->set_spinner(robot.control().dvelocity() > 0);
-        simRobot->set_wheelsspeed(false);
+        const auto& setpoint = setpoints[i];
+
+        grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
+        ConvertTx::to_grsim(intent, setpoint, i, simRobot);
     }
+
     simRobotCommands->set_isteamyellow(!_blueTeam);
     simRobotCommands->set_timestamp(RJ::timestamp());
 
@@ -118,37 +82,12 @@ void SimRadio::handleReceive(const std::string& data) {
     packet.ParseFromString(data);
 
     for (size_t pkt_idx = 0; pkt_idx < packet.robots_status_size(); pkt_idx++) {
-        const Robot_Status& status = packet.robots_status(pkt_idx);
-        int this_robot_id = status.robot_id();
-        bool ball_sense = status.infrared();
-        bool just_kicked = status.has_flat_kick() || status.has_chip_kick();
-
-        RadioRx rx;
-        rx.set_robot_id(this_robot_id);
-        rx.set_hardware_version(RJ2015);
-        rx.set_battery(100);
-
-        rx.set_ball_sense_status(ball_sense ? Packet::HasBall : Packet::NoBall);
-
-        const int num_motors = 5;
-        // 5 motors including dribbler
-        for (int i = 0; i < num_motors; i++) {
-            rx.add_motor_status(MotorStatus::Good);
-        }
-
-        rx.set_fpga_status(FpgaGood);
-        rx.set_timestamp(RJ::timestamp());
-
-        const uint8_t kicker_status_charging = Kicker_Enabled | Kicker_I2C_OK;
-        const uint8_t kicker_status_ready =
-            Kicker_Charged | kicker_status_charging;
-
-        rx.set_kicker_status(just_kicked ? kicker_status_charging
-                                         : kicker_status_ready);
-        rx.set_kicker_voltage(200);
+        RobotStatus status;
+        const Robot_Status& grsim_status = packet.robots_status(pkt_idx);
+        ConvertRx::grsim_to_status(grsim_status, &status);
 
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-        _reversePackets.push_back(rx);
+        _reversePackets.push_back(status);
     }
 }
 
@@ -183,7 +122,6 @@ void SimRadio::switchTeam(bool blueTeam) {
     _blueTeam = blueTeam;
 
     if (_socket.is_open()) {
-        // We don't really care what port the tx is on, just the rx
         stopRobots();
         _socket.close();
     }

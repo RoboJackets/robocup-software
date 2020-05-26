@@ -3,7 +3,8 @@ import composite_behavior
 import role_assignment
 import logging
 import behavior
-from typing import Callable, Union
+import robocup
+from typing import Callable, Union, Optional
 
 
 ## Behavior that applies to a single ROBOT and may have up to one subbehavior at any time
@@ -17,14 +18,14 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     # @param autorestart function governing the behavior's restarting itself when its robot is switched. Defaults to true
     def __init__(self,
                  continuous=False,
-                 autorestart: Callable[[], bool]=lambda: True) -> None:
+                 autorestart: Callable[[], bool] = lambda: True) -> None:
         single_robot_behavior.SingleRobotBehavior.__init__(
             self, continuous=continuous)
         composite_behavior.CompositeBehavior.__init__(
             self, continuous=continuous)
         self.autorestart = autorestart
-        # for pylint
-        self.robot = self.robot
+        # mypy is retarded and doesn't know the type of self.robot
+        self.robot: Optional[robocup.OurRobot]
 
     @property
     def autorestart(self) -> Callable[[], bool]:
@@ -39,14 +40,13 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
     def add_subbehavior(self,
                         bhvr: behavior.Behavior,
                         name: str,
-                        required: bool=True,
-                        priority: Union[int, Callable[[], int]]=100):
+                        required: bool = True,
+                        priority: Union[int, Callable[[], int]] = 100):
         if self.has_subbehaviors():
             raise AssertionError(
                 "Attempt to add more than one subbehavior to SingleRobotCompositeBehavior"
             )
         super().add_subbehavior(bhvr, name, required, priority)
-        self.robot_shell_id = None
 
     def has_subbehaviors(self) -> bool:
         return len(self.all_subbehaviors()) > 0
@@ -64,7 +64,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
             return single_robot_behavior.SingleRobotBehavior.role_requirements(
                 self)
 
-    def assign_roles(self, assignments):
+    def assign_roles(self, assignments) -> None:
         oldBot = self.robot
         if self.has_subbehaviors():
             composite_behavior.CompositeBehavior.assign_roles(self,
@@ -83,9 +83,9 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior,
         # middle of the behavior. For some plays, this means we shouild restart the whole
         # behavior for the new robot (autorestart = True). For others, it is more important to continue the new
         # robot where the old robot left off (autorestart = False).
-        if (oldBot is not None and self.robot is not None and
-                oldBot.shell_id() != self.robot.shell_id() and
-                self.autorestart()):
+        if (oldBot is not None and self.robot is not None
+                and oldBot.shell_id() != self.robot.shell_id()
+                and self.autorestart()):
             logging.info("SingleRobotCompositeBehavior: robot changed (" + str(
                 oldBot.shell_id()) + "->" + str(self.robot.shell_id()) +
                          "), restarting: " + type(self).__name__)

@@ -19,7 +19,9 @@ class Context;
 
 class DebugDrawer {
 public:
-    DebugDrawer(Context* context) : _context(context), _numDebugLayers(0) {}
+    DebugDrawer(Context* context) : _context(context), _numDebugLayers(0) {
+        resetLogFrame();
+    }
 
     const QStringList& debugLayers() const { return _debugLayers; }
 
@@ -79,10 +81,31 @@ public:
                      const QColor& qw = Qt::black,
                      const QString& layer = QString());
 
-    void setLogFrame(Packet::LogFrame* logFrame) { _logFrame = logFrame; }
-    Packet::LogFrame* getLogFrame() { return _logFrame; }
+    /**
+     * Fill the given log frame with the current debug drawing information,
+     * and reset our current debug drawing data for the next cycle.
+     *
+     * @param log_frame
+     */
+    void fillLogFrame(Packet::LogFrame* log_frame) {
+        log_frame->MergeFrom(_logFrame);
+        resetLogFrame();
+    }
+
+    /**
+     * Helper pass-through method to create a new debug path.
+     */
+    Packet::DebugRobotPath* addDebugPath() {
+        return _logFrame.add_debug_robot_paths();
+    }
 
 private:
+    void resetLogFrame() {
+        _logFrame.Clear();
+        for (const QString& string : _debugLayers) {
+            _logFrame.add_debug_layers(string.toStdString());
+        }
+    }
     /// Number of debug layers
     int _numDebugLayers;
 
@@ -93,5 +116,9 @@ private:
     QStringList _debugLayers;
 
     Context* _context;
-    Packet::LogFrame* _logFrame;
+
+    // Keep an entire log frame, but only fill the parts related to debug
+    // drawing. Then we can use protobuf's merge functionality to merge it into
+    // the main log frame.
+    Packet::LogFrame _logFrame;
 };

@@ -1,136 +1,115 @@
-/**
- * @brief The Logger stores and saves the state of the game at each point in
- * time.
- *
- * @details
- * The log stores things such as robot and ball position and velocity as well as
- * debug information about the current play. See the LogFrame.proto file for a
- * full list of what is stored in the log.
- *
- * This logger implements a circular buffer for recent history and writes all
- * frames to disk.
- *
- * _history is a circular buffer.
- *
- * Consider a sequence number for each frame, where the first frame passed
- * to addFrame() has a sequence number of zero and the sequence number is one
- * greater for each subsequent frame.
- *
- * _nextFrameNumber is the sequence number of the next frame to be stored by
- * addFrame().
- *
- * lastFrame() returns the sequence number of the latest available frame.
- * It returns -1 if no frames have been stored.
- *
- * You can get a copy of a frame by passing its sequence number to getFrame().
- * If the frame is too old to be in the circular buffer (or the sequence number
- * is beyond the most recent available) then getFrame() will return false.
- *
- * Frames are allocated as they are first needed.  The size of the circular
- * buffer limits total memory usage.
- */
-
 #pragma once
 
 #include <protobuf/LogFrame.pb.h>
 
-#include <QString>
-#include <QReadLocker>
-#include <QWriteLocker>
-#include <QReadWriteLock>
-#include <vector>
-#include <algorithm>
-#include <memory>
-#include "time.hpp"
-#include <boost/circular_buffer.hpp>
+#include <deque>
+#include <fstream>
+#include <motion/MotionSetpoint.hpp>
+#include <optional>
+#include <radio/RobotStatus.hpp>
+#include <time.hpp>
 
-class Logger {
-public:
-    Logger(size_t logSize = 10000);
-    ~Logger();
+#include "Node.hpp"
+#include "RobotIntent.hpp"
+#include "WorldState.hpp"
 
-    bool open(const QString& filename);
-    void close();
+// For FRIEND_TEST
+#include <gtest/gtest.h>
 
-    // Returns the size of the circular buffer
-    size_t capacity() const { return _history.capacity(); }
+// Keep the past thirty minutes of logs by default.
+constexpr size_t kMaxLogFrames = 60 * 60 * 30;
 
-    // Returns the sequence number of the most recently added frame.
-    // Returns -1 if no frames have been added.
-    size_t size() const { return _history.size(); }
+struct Logs {
+    /**
+     * \brief A list of all log frames. This will contain at most
+     * `kMaxLogFrames` frames.
+     *
+     * This should not be accessed from the Processor thread, other
+     * than to add frames. The container may be accessed by the MainWindow
+     * thread while the Context mutex is locked, and frames may be retained
+     * and used even while the mutex is not locked (provided a shared_ptr
+     * is kept).
+     */
+    std::deque<std::shared_ptr<Packet::LogFrame>> frames;
 
-    std::shared_ptr<Packet::LogFrame> lastFrame() const;
-
-    // Adds a frame to this logger. force will force the frame to be added even if we are full.
-    void addFrame(const std::shared_ptr<Packet::LogFrame>& frame, bool force);
-    void addFrame(std::shared_ptr<Packet::LogFrame> frame);
-
-    // Read in frames from a log file.
-    bool readFrames(const char* filename);
-
-    // Gets frames.size() frames starting at start and working backwards.
-    // Clears any frames that couldn't be populated.
-    // Returns the number of frames copied.
-    int getFrames(int start,
-                  std::vector<std::shared_ptr<Packet::LogFrame>>& frames) const;
-
-    // Returns the amount of memory used by all LogFrames in the history.
-    int spaceUsed() const { return _spaceUsed; }
-
-    bool recording() const { return _fd >= 0; }
-
-    QString filename() const { return _filename; }
-
-    int firstFrameNumber() const {
-        return currentFrameNumber() - _history.size() + 1;
-    }
-
-    int currentFrameNumber() const { return _nextFrameNumber - 1; }
-
-    template <typename OutputIterator>
-    int getFrames(int endIndex, int num, OutputIterator result) const {
-        QReadLocker locker(&_lock);
-        auto end = _history.rbegin();
-        endIndex = std::min(_nextFrameNumber, endIndex);
-        int numFromBack = _nextFrameNumber - endIndex;
-        if (numFromBack >= _history.size()) {
-            return 0;
-        } else {
-            std::advance(end, numFromBack);
-            int startFrame = _nextFrameNumber - _history.size();
-            int numToCopy = std::min(endIndex - 1 - startFrame, num);
-            copy_n(end, numToCopy, result);
-            return std::max(numToCopy, 0);
-        }
-    }
-
-    RJ::Time startTime() const { return _startTime; }
-
-private:
-    RJ::Time _startTime;
-    mutable QReadWriteLock _lock;
-
-    QString _filename;
+    enum class State { kNoFile, kWriting, kReading };
 
     /**
-     * Frame history.
-     * Increasing indices correspond to earlier times.
-     * This must only be accessed while _mutex is locked.
-     *
-     * It is not safe to modify a single std::shared_ptr from multiple threads,
-     * but after it is copied the copies can be used and destroyed freely in
-     * different threads.
+     * \brief The name of the log file, if it exists.
      */
-    boost::circular_buffer<std::shared_ptr<Packet::LogFrame>> _history;
+    std::optional<std::string> filename;
 
-    int _spaceUsed;
+    /**
+     * \brief Whether we are recording (or viewing) logs.
+     */
+    State state = State::kNoFile;
 
-    // File descriptor for log file
-    int _fd;
+    /**
+     * \brief The start time of the entire system.
+     */
+    RJ::Time start_time;
 
-    // Sequence number of the next frame to be written
-    int _nextFrameNumber = 0;
+    /**
+     * \brief The log file size in bytes.
+     */
+    size_t size_bytes = 0;
 
-    // Clears our history
-    void clear();
+    /**
+     * The count of frames that existed before the given history
+     * but were dropped.
+     */
+    size_t dropped_frames = 0;
+};
+
+// Forward-declare context, which needs to use Logs as above
+class Context;
+
+/**
+ * \brief Populates the log frame in Context, and writes it to a file.
+ *
+ * When viewing logs, reads logs from a file and populates the log frame.
+ */
+class Logger : public Node {
+public:
+    Logger(Context* context) : _context(context) {}
+
+    /**
+     * \brief Open the given file for reading
+     */
+    void read(const std::string& filename);
+
+    /**
+     * \brief Open the given file for writing.
+     */
+    void write(const std::string& filename);
+
+    /**
+     * \brief Close the current log file.
+     */
+    void close();
+
+    /**
+     * \brief Flush the file to disk.
+     */
+
+    void start() override;
+    void run() override;
+    void stop() override;
+
+private:
+    static std::shared_ptr<Packet::LogFrame> createLogFrame(Context* context);
+    static bool writeToFile(Packet::LogFrame* frame,
+                            google::protobuf::io::ZeroCopyOutputStream* out);
+    static bool readFromFile(Packet::LogFrame* frame,
+                             google::protobuf::io::ZeroCopyInputStream* in);
+    static void fillRobot(Packet::LogFrame::Robot* out, int shell_id,
+                          RobotState const* state, RobotStatus const* status,
+                          MotionSetpoint const* setpoint);
+
+    FRIEND_TEST(Logger, SaveContext);
+    FRIEND_TEST(Logger, SerializeDeserialize);
+
+    std::optional<std::fstream> _log_file;
+
+    Context* _context;
 };

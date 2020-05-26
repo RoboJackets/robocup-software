@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-extern unsigned int robot_id;
-
 // If nonzero, we are on a 2008 base:
 //  - Motors run backwards (outside gears)
 //  - No encoders

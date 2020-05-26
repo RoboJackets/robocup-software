@@ -67,19 +67,15 @@ OurRobot::OurRobot(Context* context, int shell)
 void OurRobot::addStatusText() {
     const QColor statusColor(255, 32, 32);
 
-    if (!rxIsFresh()) {
+    if (!statusIsFresh()) {
         addText("No RX", statusColor, "Status");
     }
 }
 
 void OurRobot::addText(const QString& text, const QColor& qc,
                        const QString& layerPrefix) {
-    auto* dbg = new Packet::DebugText;  // NOLINT
     QString layer = layerPrefix + QString::number(shell());
-    dbg->set_layer(_context->debug_drawer.findDebugLayer(layer));
-    dbg->set_text(text.toStdString());
-    dbg->set_color(color(qc));
-    robotText.push_back(dbg);
+    _context->debug_drawer.drawText(text, pos(), qc, layer);
 }
 
 bool OurRobot::avoidOpponents() const {
@@ -115,7 +111,6 @@ void OurRobot::resetForNextIteration() {
     if (verbose && visible()) {
         cout << "in OurRobot::resetForNextIteration()" << std::endl;
     }
-    robotText.clear();
 
     _clearCmdText();
 
@@ -498,8 +493,8 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
 }
 
 bool OurRobot::charged() const {
-    return _radioRx.has_kicker_status() &&
-           ((_radioRx.kicker_status() & 0x01u) != 0u) && rxIsFresh();
+    return radioStatus().kicker == RobotStatus::KickerState::kCharged &&
+           statusIsFresh();
 }
 
 /*
@@ -514,19 +509,17 @@ bool OurRobot::hasBall() const {
 }
 
 bool OurRobot::hasBallRaw() const {
-    return _radioRx.has_ball_sense_status() &&
-           _radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
+    return radioStatus().has_ball && statusIsFresh();
 }
 
 bool OurRobot::ballSenseWorks() const {
-    return rxIsFresh() && _radioRx.has_ball_sense_status() &&
-           (_radioRx.ball_sense_status() == Packet::NoBall ||
-            _radioRx.ball_sense_status() == Packet::HasBall);
+    // TODO(Kyle): Get error code from robot.
+    return statusIsFresh();
 }
 
 bool OurRobot::kickerWorks() const {
-    return _radioRx.has_kicker_status() &&
-           ((_radioRx.kicker_status() & Kicker_Enabled) != 0u) && rxIsFresh();
+    return radioStatus().kicker != RobotStatus::KickerState::kFailed &&
+           statusIsFresh();
 }
 
 bool OurRobot::chipper_available() const {
@@ -538,50 +531,42 @@ bool OurRobot::kicker_available() const {
 }
 
 bool OurRobot::dribbler_available() const {
-    return *status()->dribbler_enabled && _radioRx.motor_status_size() == 5 &&
-           _radioRx.motor_status(4) == Packet::Good;
+    return *status()->dribbler_enabled && radioStatus().motors_healthy[4] &&
+           statusIsFresh();
 }
 
 bool OurRobot::driving_available(bool require_all) const {
-    if (_radioRx.motor_status_size() != 5) {
+    if (!statusIsFresh()) {
         return false;
     }
+
     int c = 0;
     for (int i = 0; i < 4; ++i) {
-        if (_radioRx.motor_status(i) == Packet::Good) {
+        if (radioStatus().motors_healthy[i]) {
             ++c;
         }
     }
-    return (require_all) ? c == 4 : c == 3;
+
+    return require_all ? (c == 4) : (c == 3);
 }
 
-float OurRobot::kickerVoltage() const {
-    if (_radioRx.has_kicker_voltage() && rxIsFresh()) {
-        return _radioRx.kicker_voltage();
+double OurRobot::kickerVoltage() const {
+    if (!statusIsFresh()) {
+        return 0;
     }
-    return 0;
+
+    return radioStatus().kicker_voltage;
 }
 
-Packet::HardwareVersion OurRobot::hardwareVersion() const {
-    if (rxIsFresh()) {
-        return _radioRx.hardware_version();
+RobotStatus::HardwareVersion OurRobot::hardwareVersion() const {
+    if (statusIsFresh()) {
+        return radioStatus().version;
     }
-    return Packet::Unknown;
+    return RobotStatus::HardwareVersion::kUnknown;
 }
 
-std::optional<Eigen::Quaternionf> OurRobot::quaternion() const {
-    if (_radioRx.has_quaternion() && rxIsFresh(RJ::Seconds(0.05))) {
-        return Eigen::Quaternionf(_radioRx.quaternion().q0() / 16384.0,
-                                  _radioRx.quaternion().q1() / 16384.0,
-                                  _radioRx.quaternion().q2() / 16384.0,
-                                  _radioRx.quaternion().q3() / 16384.0);
-    }
-    return std::nullopt;
-}
-
-bool OurRobot::rxIsFresh(RJ::Seconds age) const {
-    return (RJ::now() - RJ::Time(chrono::microseconds(_radioRx.timestamp()))) <
-           age;
+bool OurRobot::statusIsFresh(RJ::Seconds age) const {
+    return (RJ::now() - radioStatus().timestamp) < age;
 }
 
 RJ::Timestamp OurRobot::lastKickTime() const {
@@ -589,10 +574,11 @@ RJ::Timestamp OurRobot::lastKickTime() const {
 }
 
 void OurRobot::radioRxUpdated() {
-    if (_radioRx.kicker_status() < _lastKickerStatus) {
+    if (radioStatus().kicker == RobotStatus::KickerState::kCharging &&
+        _lastKickerStatus == RobotStatus::KickerState::kCharged) {
         _lastKickTime = RJ::now();
     }
-    _lastKickerStatus = _radioRx.kicker_status();
+    _lastKickerStatus = radioStatus().kicker;
 }
 
 double OurRobot::distanceToChipLanding(int chipPower) {

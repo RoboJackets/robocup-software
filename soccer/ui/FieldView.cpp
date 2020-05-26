@@ -78,7 +78,7 @@ void FieldView::mouseMoveEvent(QMouseEvent* me) {
 
 std::shared_ptr<LogFrame> FieldView::currentFrame() {
     if (_history != nullptr && !_history->empty()) {
-        return _history->at(0);
+        return _history->back();
     }
     return std::shared_ptr<LogFrame>();
 }
@@ -180,7 +180,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
 
 void FieldView::drawWorldSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->at(0).get();
+    const LogFrame* frame = _history->back().get();
 
     // Draw the field
     drawField(p, frame);
@@ -225,7 +225,7 @@ void FieldView::drawWorldSpace(QPainter& p) {
 
 void FieldView::drawTeamSpace(QPainter& p) {
     // Get the latest LogFrame
-    const LogFrame* frame = _history->at(0).get();
+    const LogFrame* frame = _history->back().get();
 
     if (showTeamNames) {
         // Draw Team Names
@@ -268,7 +268,10 @@ void FieldView::drawTeamSpace(QPainter& p) {
     p.setBrush(Qt::NoBrush);
     QPainterPath ballTrail;
     bool move = false;
-    for (unsigned int i = 0; i < 200 && i < _history->size(); ++i) {
+    int ballTrailLength = 60;
+    for (unsigned int i = _history->size() -
+                          std::min<int>(_history->size(), ballTrailLength);
+         i < _history->size(); ++i) {
         const LogFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr && oldFrame->has_ball()) {
             QPointF pos = qpointf(oldFrame->ball().pos());
@@ -401,14 +404,16 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     /// populate @cometTrails with the past locations of each robot
     int pastLocationCount = 40;  // number of past locations to show
-    for (int i = 0; i < pastLocationCount + 1 && i < _history->size(); i++) {
+    int start =
+        std::max(0, static_cast<int>(_history->size()) - pastLocationCount);
+    for (int i = start; i < _history->size(); i++) {
         const LogFrame* oldFrame = _history->at(i).get();
         if (oldFrame != nullptr) {
             for (const LogFrame::Robot& r : oldFrame->self()) {
                 pair<int, int> key(1, r.shell());
-                if (cometTrails.find(key) != cometTrails.end() || i == 0) {
+                if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
-                    if (i == 0) {
+                    if (i == start) {
                         cometTrails[key].moveTo(pt);
                     } else {
                         cometTrails[key].lineTo(pt);
@@ -418,12 +423,13 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
             for (const LogFrame::Robot& r : oldFrame->opp()) {
                 pair<int, int> key(2, r.shell());
-                if (cometTrails.find(key) != cometTrails.end() || i == 0) {
+                if (cometTrails.find(key) != cometTrails.end() || i == start) {
                     QPointF pt = qpointf(r.pos());
-                    if (i == 0)
+                    if (i == start) {
                         cometTrails[key].moveTo(pt);
-                    else
+                    } else {
                         cometTrails[key].lineTo(pt);
+                    }
                 }
             }
         }

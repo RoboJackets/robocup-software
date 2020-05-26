@@ -1,3 +1,4 @@
+SHELL=/bin/bash -o pipefail
 MAKE_FLAGS = --no-print-directory
 TESTS = *
 FIRMWR_TESTS = -i2c -io-expander -fpga -piezo -neopixel -attiny -led -radio-sender -radio-receiver
@@ -64,7 +65,7 @@ run-sim-release: all-release backend-headless-simulator-soccer
 rsr: run-sim-release
 rrs: rsr
 rr: run-release
-view: 
+view:
 	./run/soccer -vlog $(file)
 
 # backend targets to launch soccer with grSim in headless
@@ -157,13 +158,15 @@ apidocs:
 	cp doc/doxygen.css api_docs/html/
 	@echo "\n=> Open up 'api_docs/html/index.html' in a browser to view a local copy of the documentation"
 
-STYLIZE_DIFFBASE ?= staging
+# Find the most recent common ancestor. This prevents new commits on staging from registering as diffs.
+DIFFBRANCH ?= staging
+DIFFBASE ?= $(shell git merge-base $(DIFFBRANCH) HEAD)
 
 # check if everything in our codebase is in accordance with the style config defined in .clang-format
 # a nonzero exit code indicates that there's a formatting error somewhere
 checkstyle:
 	@printf "Run this command to reformat code if needed:\n\ngit apply <(curl -L $${LINK_PREFIX:-file://}clean.patch)\n\n"
-	@stylize.v1 --git_diffbase=$(STYLIZE_DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
+	@stylize.v1 --git_diffbase=$(DIFFBASE) --patch_output "$${CIRCLE_ARTIFACTS:-.}/clean.patch"
 
 CLANG_FORMAT_BINARY=clang-format-10
 CLANG_TIDY_BINARY=clang-tidy-10
@@ -176,8 +179,8 @@ else
 endif
 
 pretty-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -i -p1
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
 tidy-lines:
 ifeq ("$(wildcard ./build/compile_commands.json)","")
@@ -185,12 +188,12 @@ ifeq ("$(wildcard ./build/compile_commands.json)","")
 	exit 1
 endif
 	@printf "Running clang-tidy-diff...\n"
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES)
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp"
 
 checkstyle-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -p1 | tee -a /tmp/checkstyle.patch
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 checktidy-lines:
-	@git diff -U0 --no-color $(STYLIZE_DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) > /tmp/checktidy.patch
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp" > /tmp/checktidy.patch

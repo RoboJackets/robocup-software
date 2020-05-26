@@ -18,8 +18,8 @@ class LogFrame;
 // Returns false with v undefined if the value was not available.
 namespace Chart {
 struct Function {
-    virtual ~Function() {}
-    virtual bool value(const Packet::LogFrame& frame, float& v) const = 0;
+    virtual ~Function() = default;
+    virtual bool value(const Packet::LogFrame& frame, float* v) const = 0;
 
     // Vector of tags from LogFrame to the float, double, or point field to be
     // used.
@@ -30,18 +30,18 @@ struct Function {
 };
 
 struct PointMagnitude : public Function {
-    virtual bool value(const Packet::LogFrame& frame, float& v) const override;
+    bool value(const Packet::LogFrame& frame, float* v) const override;
 };
 
 struct NumericField : public Function {
-    virtual bool value(const Packet::LogFrame& frame, float& v) const override;
+    bool value(const Packet::LogFrame& frame, float* v) const override;
 };
 }
 
 class StripChart : public QWidget {
 public:
     StripChart(QWidget* parent = nullptr);
-    ~StripChart() override;
+    ~StripChart() override = default;
 
     void history(const std::vector<std::shared_ptr<Packet::LogFrame> >* value) {
         _history = value;

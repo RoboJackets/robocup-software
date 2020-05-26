@@ -28,12 +28,7 @@
 #include "status.h"
 
 class RobotConfig;
-class RobotStatus;
-
-namespace Packet {
-class DebugText;
-class LogFrame_Robot;
-};  // namespace Packet
+class RobotLocalConfig;
 
 namespace Gameplay {
 class GameplayModule;
@@ -154,10 +149,6 @@ public:
     /** returns true if the position specified is behind the robot */
     // FIXME - Function name and comment don't match
     bool behindBall(Geometry2d::Point ballPos) const;
-
-    // Gets the robot quaternion.  Returns false (and does not change q) if not
-    // available.
-    std::optional<Eigen::Quaternionf> quaternion() const;
 
     // Constraints
     const RobotConstraints& robotConstraints() const {
@@ -309,9 +300,13 @@ public:
 
     RJ::Timestamp lastKickTime() const;
 
+    const RobotStatus& radioStatus() const {
+        return _context->robot_status.at(shell());
+    }
+
     /// checks if the bot has kicked/chipped very recently.
     bool justKicked() {
-        return (_radioRx.kicker_status() & Kicker_Charged) == 0u;
+        return radioStatus().kicker == RobotStatus::KickerState::kCharging;
     }
 
     /**
@@ -325,8 +320,6 @@ public:
      * ignore ball sense and kick immediately
      */
     void kickImmediately();
-
-    boost::ptr_vector<Packet::DebugText> robotText;
 
     // True if this robot will treat opponents as obstacles
     // Set to false for defenders to avoid being herded
@@ -400,21 +393,8 @@ public:
     bool hasBallRaw() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
-    float kickerVoltage() const;
-    Packet::HardwareVersion hardwareVersion() const;
-
-    void setRadioRx(const Packet::RadioRx& packet) {
-        QWriteLocker locker(&radioRxMutex);
-        _radioRx = packet;
-        if (hasBallRaw()) {
-            _lastBallSense = RJ::now();
-        }
-    }
-
-    Packet::RadioRx radioRx() const {
-        QReadLocker locker(&radioRxMutex);
-        return _radioRx;
-    }
+    double kickerVoltage() const;
+    RobotStatus::HardwareVersion hardwareVersion() const;
 
     const Planning::MotionCommand& motionCommand() const {
         return intent().motion_command;
@@ -438,7 +418,7 @@ public:
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool rxIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
+    bool statusIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
     /**
      * @brief start the robot playing a song
@@ -542,8 +522,8 @@ protected:
     /// it know that it changed
     void radioRxUpdated();
 
-    const RobotStatus* status() const {
-        return &_context->robot_status[shell()];
+    const RobotLocalConfig* status() const {
+        return &_context->local_configs[shell()];
     }
 
     const RobotConfig* config() const { return _context->robot_config.get(); }
@@ -552,16 +532,13 @@ private:
     RJ::Time _lastBallSense;
     const RJ::Seconds _lostBallDuration = RJ::Seconds(0.1);
 
-    mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
     void _unkick();
 
-    uint32_t _lastKickerStatus;
+    RobotStatus::KickerState _lastKickerStatus;
     RJ::Time _lastKickTime;
     RJ::Time _lastChargedTime;
-
-    Packet::RadioRx _radioRx;
 
     RobotIntent& intent() { return _context->robot_intents[shell()]; }
     const RobotIntent& intent() const {

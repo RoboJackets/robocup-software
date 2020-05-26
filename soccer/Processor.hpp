@@ -5,7 +5,6 @@
 #pragma once
 
 #include <protobuf/LogFrame.pb.h>
-#include <string.h>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
@@ -20,6 +19,8 @@
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
+#include "joystick/ManualControlNode.hpp"
+#include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
 #include "planning/PlannerNode.hpp"
 
@@ -29,7 +30,7 @@
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
-class RobotStatus;
+class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
@@ -69,65 +70,12 @@ public:
         RJ::Time lastRadioRxTime;
     };
 
-    enum VisionChannel { primary, secondary, full };
-
     static void createConfiguration(Configuration* cfg);
 
-    Processor(bool sim, bool defendPlus, VisionChannel visionChannel,
-              bool blueTeam, const std::string& readLogFile);
+    Processor(bool sim, bool blueTeam, const std::string& readLogFile = "");
     virtual ~Processor();
 
     void stop();
-
-    bool autonomous();
-    bool joystickValid() const;
-
-    JoystickControlValues getJoystickControlValue(Joystick& joy);
-    std::vector<JoystickControlValues> getJoystickControlValues();
-
-    void externalReferee(bool value) {
-        _refereeModule->useExternalReferee(value);
-    }
-
-    bool externalReferee() const {
-        return _refereeModule->useExternalReferee();
-    }
-
-    void manualID(int value);
-    int manualID() const { return _manualID; }
-
-    void multipleManual(bool value);
-    bool multipleManual() const { return _multipleManual; }
-
-    bool useFieldOrientedManualDrive() const {
-        return _useFieldOrientedManualDrive;
-    }
-    void setUseFieldOrientedManualDrive(bool foc) {
-        _useFieldOrientedManualDrive = foc;
-    }
-
-    /**
-     * @brief Set the shell ID of the goalie
-     * @details The rules require us to specify at the start of a match/period
-     * which
-     * robot will be the goalie.  A value of -1 indicates that there is no one
-     * assigned.
-     */
-    void goalieID(int value);
-    /**
-     * @brief Shell ID of the goalie robot
-     */
-    int goalieID();
-
-    void dampedRotation(bool value);
-    void dampedTranslation(bool value);
-
-    void joystickKickOnBreakBeam(bool value);
-    void setupJoysticks();
-    std::vector<int> getJoystickRobotIds();
-
-    void blueTeam(bool value);
-    bool blueTeam() const { return _blueTeam; }
 
     std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
         return _gameplayModule;
@@ -137,11 +85,6 @@ public:
 
     SystemState* state() { return &_context.state; }
 
-    bool simulation() const { return _simulation; }
-
-    void defendPlusX(bool value);
-    bool defendPlusX() { return _context.game_state.defendPlusX; }
-
     Status status() {
         std::lock_guard lock(_statusMutex);
         return _status;
@@ -149,26 +92,25 @@ public:
 
     float framerate() { return _framerate; }
 
-    const Logger& logger() const { return _logger; }
+    bool openLog(const QString& filename) {
+        _logger->write(filename.toStdString());
+        return true;
+    }
 
-    bool openLog(const QString& filename) { return _logger.open(filename); }
-
-    void closeLog() { _logger.close(); }
-
-    // Use all/part of the field
-    void useOurHalf(bool value) { _useOurHalf = value; }
-
-    void useOpponentHalf(bool value) { _useOpponentHalf = value; }
+    void closeLog() { _logger->close(); }
 
     std::lock_guard<std::mutex> lockLoopMutex() {
         return std::lock_guard(_loopMutex);
     }
 
+    std::mutex* loopMutex() { return &_loopMutex; }
+
     Radio* radio() { return _radio->getRadio(); }
 
-    void changeVisionChannel(int port);
-
-    VisionChannel visionChannel() { return _visionChannel; }
+    /**
+     * Stops all robots by clearing their intents and setpoints
+     */
+    void stopRobots();
 
     void recalculateWorldToTeamTransform();
 
@@ -178,20 +120,9 @@ public:
 
     bool isInitialized() const;
 
-    void setPaused(bool paused) { _paused = paused; }
-
-    ////////
-
-    // Time of the first LogFrame
-    std::optional<RJ::Time> firstLogTime;
-
     Context* context() { return &_context; }
 
     void run();
-
-protected:
-    void applyJoystickControls(const JoystickControlValues& controlVals,
-                               OurRobot* robot);
 
 private:
     // Configuration for the robot.
@@ -199,29 +130,24 @@ private:
     static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
-    static std::vector<RobotStatus*> robotStatuses;
+    static std::vector<RobotLocalConfig*> robotStatuses;
 
-    /** send out the radio data for the radio program */
-    void sendRadioData();
+    /**
+     * Updates the intent.active for each robot.
+     *
+     * The intent is active if it's being joystick controlled or
+     * if it's visible
+     */
+    void updateIntentActive();
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
+
+    void updateOrientation();
 
     void runModels();
 
     /** Used to start and stop the thread **/
     volatile bool _running;
-
-    Logger _logger;
-
-    bool _useOurHalf, _useOpponentHalf;
-
-    // True if we are running with a simulator.
-    // This changes network communications.
-    bool _simulation;
-
-    // True if we are blue.
-    // False if we are yellow.
-    bool _blueTeam;
 
     // A logfile to read from.
     // When empty, don't read logs at all.
@@ -243,11 +169,6 @@ private:
     Geometry2d::TransformMatrix _worldToTeam;
     float _teamAngle{};
 
-    // Board ID of the robot to manually control or -1 if none
-    int _manualID;
-    // Use multiple joysticks at once
-    bool _multipleManual;
-
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
 
@@ -268,25 +189,11 @@ private:
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<RadioNode> _radio;
     std::unique_ptr<GrSimCommunicator> _grSimCom;
+    std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
+    std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
+    std::unique_ptr<Logger> _logger;
 
     std::vector<Node*> _nodes;
 
-    // joystick control
-    std::vector<Joystick*> _joysticks;
-
-    // joystick damping
-    bool _dampedRotation;
-    bool _dampedTranslation;
-
-    bool _kickOnBreakBeam;
-
-    // If true, rotates robot commands from the joystick based on its
-    // orientation on the field
-    bool _useFieldOrientedManualDrive = false;
-
-    VisionChannel _visionChannel;
-
     bool _initialized;
-
-    bool _paused{};
 };

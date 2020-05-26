@@ -15,8 +15,9 @@ from enum import Enum
 
 # PivotKick drives up to the ball and captures it, then aims at a specified target and kicks/chips
 # Note: PivotKick recalculates aim_target_point from the target at every iteration
-class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
-                skills._kick._Kick):
+class PivotKick(  # type: ignore
+        single_robot_composite_behavior.SingleRobotCompositeBehavior,
+        skills._kick._Kick):
     class State(Enum):
         capturing = 1
         aiming = 2
@@ -136,7 +137,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior,
             return False
 
         # Closest opp robot in any direction
-        # To us, not the ball   
+        # To us, not the ball
         closest_opp_robot = None
         closest_opp_dist = float("inf")
         for r in main.their_robots():

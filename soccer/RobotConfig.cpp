@@ -46,9 +46,9 @@ RobotConfig::RobotConfig(Configuration* config, const QString& prefix)
           config, QString("%1/rotation/minEffectiveAngularSpeed").arg(prefix),
           0.0)) {}
 
-///////    RobotStatus
+///////    RobotLocalConfig
 
-RobotStatus::RobotStatus(Configuration* config, const QString& prefix)
+RobotLocalConfig::RobotLocalConfig(Configuration* config, const QString& prefix)
     : chipper_enabled(new ConfigBool(
           config, QString("%1/Chipper Enabled").arg(prefix), true)),
       kicker_enabled(new ConfigBool(
