@@ -23,7 +23,7 @@ class ForceVisualize(play.Play):
 
     ##This point will be the bottom left corner of the field
     #corner = robocup.Point(0, constants.Field.Length / 2)
-    corner = robocup.Point(-1 * (constants.Field.Width / 2),0)
+    plot_corner = robocup.Point(-1 * (constants.Field.Width / 2),0)
 
     ##Set how you want the points drawn here
     x_size = 6.0
@@ -46,7 +46,7 @@ class ForceVisualize(play.Play):
         cForce = constant_force.ConstantForce(robocup.Point(1.2,1.3))
 
         field = force_field.ForceField(force=cForce)
-        field.set_sample_grid(corner=self.corner, x_range=self.x_size, y_range=self.y_size, step=self.interval)
+        field.set_sample_grid(corner=self.plot_corner, x_range=self.x_size, y_range=self.y_size, step=self.interval)
 
 
         #Create the visualizer object

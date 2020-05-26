@@ -18,13 +18,17 @@ class ForceVisualizer():
     #Some parameters for how the field is to be visualized
 
     ## A lambda for the line length based on the sample magnitude
-    line_length = lambda x : x
+    line_length = lambda s, x : x
     ## A lambda for the color based on the sample magnitude
-    color = lambda mag : (255, 0, 0)   
-    circle_radius = lambda mag : 0.05
+    color = lambda s, mag : (255, 0, 0)   
+    circle_radius = lambda s, mag : 0.05
+
+    context = None
 
     def __init__(self, force_field = None):
         self.force_field = force_field
+        self.context = main.context()
+
 
     ##
     # Visualize a single sample
@@ -47,10 +51,10 @@ class ForceVisualizer():
     #
     def visualizeField(self, generate=True):
         if(generate):
-            force_field.generate()
+            self.force_field.generate()
 
-        for g in force_field.samples:
-            visualizeSample(g)
+        for g in self.force_field.samples:
+            self.visualizeSample(g)
 
 
 

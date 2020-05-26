@@ -23,7 +23,7 @@ class ForceField():
     ## 
     # Sets the sample point list to the specified grid
     #
-    def set_sample_grid(corner=robocup.Point(0,0), x_range=1, y_range=1, step=0.5):
+    def set_sample_grid(self, corner=robocup.Point(0,0), x_range=1, y_range=1, step=0.5):
         self.sample_points = [robocup.Point(x,y) for x in np.arange(corner.x, corner.x + x_range, step) for y in np.arange(corner.y, corner.y + y_range, step)]
 
 
@@ -31,7 +31,7 @@ class ForceField():
     # Generate the field 
     #
     def generate(self):
-        self.samples = [self.force.sample(sample_point) in self.sample_points()] 
+        self.samples = [self.force.sample(sample_point) for sample_point in self.sample_points] 
         
     ##
     # Augment the field samples with a passed in function
