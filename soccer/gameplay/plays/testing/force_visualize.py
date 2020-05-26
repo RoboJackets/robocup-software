@@ -17,6 +17,8 @@ from forces import directional_force
 from forces import force_sample
 from forces import point_force
 from forces import force_utils
+from forces import robot_force
+from forces import direction
 
 
 ##
@@ -76,15 +78,26 @@ class ForceVisualize(play.Play):
         pForce = point_force.PointForce()
         pForce.point_lam = lambda sample_point : self.systemState.ball.pos
         #pForce.responce_function = lambda x : force_utils.log_responce(x, 2.0, 3.0)
-        
+
+        #An edge force, that repels from the edges of the field
         eForce = edge_force.EdgeForce()
-        
+       
+        #A composite force of the edge force and the directional force
         comp_force2 = composite_force.CompositeForce()
         comp_force2.addForce(pForce)
         comp_force2.addForce(eForce)
-       
+      
+        #rForce = robot_force.RobotForce()
 
-        field = force_field.ForceField(force=comp_force2)
+        pForce2 = point_force.PointForce()
+        pForce2.point_lam = lambda sample_point : self.systemState.our_robots[0].pos
+
+        comp_force3 = composite_force.CompositeForce()
+        comp_force3.addForce(pForce2)
+        comp_force3.addForce(pForce)
+        pForce.responce_direction = direction.Direction.PULL
+
+        field = force_field.ForceField(force=comp_force3)
         field.set_sample_grid(corner=self.plot_corner, x_range=self.x_size, y_range=self.y_size, step=self.interval)
 
 
