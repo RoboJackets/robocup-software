@@ -59,8 +59,6 @@ public:
     void start() override;
     void run() override;
 
-    void getPackets(std::vector<RefereePacket>& packets);
-
     [[nodiscard]] bool kicked() const { return _kickDetectState == Kicked; }
 
     [[nodiscard]] bool isBlueTeam() const {
@@ -125,7 +123,6 @@ protected:
     RJ::Time _kickTime;
 
     std::mutex _mutex;
-    std::vector<RefereePacket> _packets;
     Context* const _context;
 
     RefereeModuleEnums::Command prev_command_;

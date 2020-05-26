@@ -104,7 +104,6 @@ public:
     std::vector<OpponentRobot*> opp;
 
     Ball ball;
-    std::shared_ptr<Packet::LogFrame> logFrame;
 
     std::vector<int> ourValidIds();
 

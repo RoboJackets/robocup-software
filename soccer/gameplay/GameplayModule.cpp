@@ -326,7 +326,7 @@ void Gameplay::GameplayModule::run() {
     /// Build a list of visible robots
     _playRobots.clear();
     for (OurRobot* r : _context->state.self) {
-        if (r->visible() && r->rxIsFresh()) {
+        if (r->visible() && r->statusIsFresh()) {
             _playRobots.insert(r);
         }
     }
@@ -403,7 +403,7 @@ void Gameplay::GameplayModule::run() {
                 // record the state of our behavior tree
                 std::string bhvrTreeDesc =
                     extract<std::string>(getRootPlay().attr("__str__")());
-                _context->state.logFrame->set_behavior_tree(bhvrTreeDesc);
+                _context->behavior_tree = bhvrTreeDesc;
             } catch (const error_already_set&) {
                 PyErr_Print();
             }

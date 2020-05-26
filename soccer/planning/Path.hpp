@@ -281,7 +281,7 @@ public:
                                RJ::Seconds deltaT)
         : path(path), time(startTime - path->startTime()), deltaT(deltaT) {}
 
-    virtual RobotInstant operator*() const {
+    RobotInstant operator*() const {
         auto temp = path->evaluate(time);
         if (temp) {
             return *temp;
@@ -290,7 +290,7 @@ public:
         }
     }
 
-    virtual ConstPathIterator& operator++() {
+    ConstPathIterator& operator++() {
         time += deltaT;
         return *this;
     }

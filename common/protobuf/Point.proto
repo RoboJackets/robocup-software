@@ -1,8 +1,7 @@
-syntax="proto2";
+syntax = "proto2";
 package Packet;
 
-message Point
-{
-	required float x = 1;
-	required float y = 2;
+message Point {
+    required float x = 1;
+    required float y = 2;
 }

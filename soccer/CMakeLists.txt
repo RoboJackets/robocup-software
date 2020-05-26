@@ -87,7 +87,6 @@ set(ROBOCUP_LIB_SRC
     "vision/VisionFilter.cpp"
     "WindowEvaluator.cpp")
 
-
 if(APPLE)
     # help CMake find gl.h, glu.h, etc on OS X
     link_directories(/opt/X11/lib/)
@@ -237,7 +236,8 @@ set(SOCCER_TEST_SRC
     "vision/tests/BallBounceTest.cpp"
     "vision/tests/CameraTest.cpp"
     "WindowEvaluatorTest.cpp"
-)
+    "LoggerTest.cpp")
+
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)
 qt5_use_modules(test-soccer Core Widgets Xml)

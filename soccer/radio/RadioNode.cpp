@@ -44,23 +44,16 @@ void RadioNode::run() {
     _radio->receive();
 
     while (_radio->hasReversePackets()) {
-        Packet::RadioRx rx = _radio->popReversePacket();
-        _context->state.logFrame->add_radio_rx()->CopyFrom(rx);
+        RobotStatus rx = _radio->popReversePacket();
 
-        _lastRadioRxTime = RJ::Time(std::chrono::microseconds(rx.timestamp()));
+        _lastRadioRxTime = rx.timestamp;
 
         // Store this packet in the appropriate robot
-        unsigned int board = rx.robot_id();
-        if (board < Num_Shells) {
-            // We have to copy because the RX packet will survive past this
-            // frame but LogFrame will not (the RadioRx in LogFrame will be
-            // reused).
-            _context->state.self[board]->setRadioRx(rx);
-            _context->state.self[board]->radioRxUpdated();
+        if (rx.shell_id < Num_Shells) {
+            _context->robot_status[rx.shell_id] = rx;
+            _context->state.self[rx.shell_id]->radioRxUpdated();
         }
     }
 
-    construct_tx_proto((*_context->state.logFrame->mutable_radio_tx()),
-                       _context->robot_intents, _context->motion_setpoints);
-    _radio->send(*_context->state.logFrame->mutable_radio_tx());
+    _radio->send(_context->robot_intents, _context->motion_setpoints);
 }

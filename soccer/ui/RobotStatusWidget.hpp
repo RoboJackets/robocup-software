@@ -1,8 +1,11 @@
 #pragma once
 
-#include "ui_RobotStatusWidget.h"
+#include <protobuf/LogFrame.pb.h>
+
 #include <QtWidgets>
 #include <string>
+
+#include "ui_RobotStatusWidget.h"
 
 /**
  * @brief Shows the status of a single robot
@@ -12,6 +15,11 @@
 class RobotStatusWidget : public QWidget {
 public:
     RobotStatusWidget(QWidget* parent = nullptr, Qt::WindowFlags f = nullptr);
+
+    void loadFromLogFrame(
+        const Packet::RadioRx& rx,
+        const std::optional<Packet::LogFrame::Robot>& maybe_robot,
+        bool blueTeam);
 
     [[nodiscard]] int shellID() const;
     void setShellID(int shellID);

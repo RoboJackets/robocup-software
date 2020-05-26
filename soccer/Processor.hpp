@@ -27,7 +27,7 @@
 #include "rc-fshare/rtp.hpp"
 
 class Configuration;
-class RobotStatus;
+class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
@@ -89,15 +89,18 @@ public:
 
     float framerate() { return _framerate; }
 
-    const Logger& logger() const { return _logger; }
+    bool openLog(const QString& filename) {
+        _logger->write(filename.toStdString());
+        return true;
+    }
 
-    bool openLog(const QString& filename) { return _logger.open(filename); }
-
-    void closeLog() { _logger.close(); }
+    void closeLog() { _logger->close(); }
 
     std::lock_guard<std::mutex> lockLoopMutex() {
         return std::lock_guard(_loopMutex);
     }
+
+    std::mutex* loopMutex() { return &_loopMutex; }
 
     Radio* radio() { return _radio->getRadio(); }
 
@@ -114,9 +117,6 @@ public:
 
     bool isInitialized() const;
 
-    // Time of the first LogFrame
-    std::optional<RJ::Time> firstLogTime;
-
     Context* context() { return &_context; }
 
     void run();
@@ -127,7 +127,7 @@ private:
     static std::unique_ptr<RobotConfig> robot_config_init;
 
     // per-robot status configs
-    static std::vector<RobotStatus*> robotStatuses;
+    static std::vector<RobotLocalConfig*> robotStatuses;
 
     /**
      * Updates the intent.active for each robot.
@@ -145,8 +145,6 @@ private:
 
     /** Used to start and stop the thread **/
     volatile bool _running;
-
-    Logger _logger;
 
     // A logfile to read from.
     // When empty, don't read logs at all.
@@ -190,6 +188,7 @@ private:
     std::unique_ptr<GrSimCommunicator> _grSimCom;
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
+    std::unique_ptr<Logger> _logger;
 
     std::vector<Node*> _nodes;
 
