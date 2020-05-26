@@ -1,18 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 #===- clang-format-diff.py - ClangFormat Diff Reformatter ----*- python -*--===#
 #
-#                     The LLVM Compiler Infrastructure
-#
-# This file is distributed under the University of Illinois Open Source
-# License. See LICENSE.TXT for details.
+# Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+# See https://llvm.org/LICENSE.txt for license information.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 #===------------------------------------------------------------------------===#
 
-r"""
-ClangFormat Diff Reformatter
-============================
-
+"""
 This script reads input from a unified diff and reformats all the changed
 lines. This is useful to reformat all the lines touched by a specific patch.
 Example usage for git/svn users:
@@ -21,21 +17,24 @@ Example usage for git/svn users:
   svn diff --diff-cmd=diff -x-U0 | clang-format-diff.py -i
 
 """
+from __future__ import absolute_import, division, print_function
 
 import argparse
 import difflib
 import re
-import string
 import subprocess
 import sys
-from io import StringIO
+
+if sys.version_info.major >= 3:
+    from io import StringIO
+else:
+    from io import BytesIO as StringIO
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Reformat changed lines in diff. Without -i '
-        'option just output the diff that would be '
-        'introduced.')
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
         '-i',
         action='store_true',
@@ -53,8 +52,8 @@ def main():
     parser.add_argument(
         '-iregex',
         metavar='PATTERN',
-        default=r'.*\.(cpp|cc|c\+\+|cxx|c|cl|h|hpp|m|mm|inc|js|ts|proto'
-        r'|protodevel|java)',
+        default=r'.*\.(cpp|cc|c\+\+|cxx|c|cl|h|hh|hpp|m|mm|inc|js|ts|proto'
+        r'|protodevel|java|cs)',
         help='custom pattern selecting file paths to reformat '
         '(case insensitive, overridden by -regex)')
     parser.add_argument('-sort-includes',
@@ -70,7 +69,7 @@ def main():
         help='formatting style to apply (LLVM, Google, Chromium, '
         'Mozilla, WebKit)')
     parser.add_argument('-binary',
-                        default='clang-format-6.0',
+                        default='clang-format-10',
                         help='location of binary to use for clang-format')
     args = parser.parse_args()
 
@@ -78,7 +77,7 @@ def main():
     filename = None
     lines_by_file = {}
     for line in sys.stdin:
-        match = re.search('^\+\+\+\ (.*?/){%s}(\S*)' % args.p, line)
+        match = re.search(r'^\+\+\+\ (.*?/){%s}(\S*)' % args.p, line)
         if match:
             filename = match.group(2)
         if filename == None:
@@ -91,7 +90,7 @@ def main():
             if not re.match('^%s$' % args.iregex, filename, re.IGNORECASE):
                 continue
 
-        match = re.search('^@@.*\+(\d+)(,(\d+))?', line)
+        match = re.search(r'^@@.*\+(\d+)(,(\d+))?', line)
         if match:
             start_line = int(match.group(1))
             line_count = 1
@@ -106,7 +105,7 @@ def main():
     # Reformat files containing changes in place.
     for filename, lines in lines_by_file.items():
         if args.i and args.verbose:
-            print('Formatting', filename)
+            print('Formatting {}'.format(filename))
         command = [args.binary, filename]
         if args.i:
             command.append('-i')
@@ -118,7 +117,8 @@ def main():
         p = subprocess.Popen(command,
                              stdout=subprocess.PIPE,
                              stderr=None,
-                             stdin=subprocess.PIPE)
+                             stdin=subprocess.PIPE,
+                             universal_newlines=True)
         stdout, stderr = p.communicate()
         if p.returncode != 0:
             sys.exit(p.returncode)
@@ -133,7 +133,6 @@ def main():
             diff_string = ''.join(diff)
             if len(diff_string) > 0:
                 sys.stdout.write(diff_string)
-
 
 if __name__ == '__main__':
     main()
