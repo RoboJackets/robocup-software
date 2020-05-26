@@ -47,6 +47,9 @@ struct Context {
     std::array<RobotConstraints, Num_Shells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
+    Geometry2d::ShapeSet globalObstacles;
+    Geometry2d::ShapeSet goalZoneObstacles;
+
     SystemState state;
     GameState game_state;
     DebugDrawer debug_drawer;

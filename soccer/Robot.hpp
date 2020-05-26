@@ -468,14 +468,14 @@ public:
     void setJoystickControlled(bool joystickControlled);
     bool isJoystickControlled() const;
 
-protected:
     /**
-     * Get a mutable reference to the angle function path.
+     * \brief Get a mutable reference to the angle function path.
      */
     Planning::AngleFunctionPath& angleFunctionPath() {
         return _context->paths[shell()];
     }
 
+protected:
     /**
      * Creates a set of obstacles from a given robot team mask,
      * where mask values < 0 create no obstacle, and larger values
