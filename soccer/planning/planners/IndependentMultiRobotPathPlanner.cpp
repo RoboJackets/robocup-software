@@ -1,6 +1,7 @@
 #include "IndependentMultiRobotPathPlanner.hpp"
-#include "RobotConstraints.hpp"
-#include "InterpolatedPath.hpp"
+
+#include "planning/RobotConstraints.hpp"
+#include "planning/paths/InterpolatedPath.hpp"
 
 using namespace std;
 namespace Planning {

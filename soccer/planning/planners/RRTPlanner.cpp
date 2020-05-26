@@ -1,20 +1,22 @@
 #include "RRTPlanner.hpp"
-#include <Constants.hpp>
-#include <Utils.hpp>
-#include <rrt/planning/Path.hpp>
-#include <rrt/Tree.hpp>
-#include "EscapeObstaclesPathPlanner.hpp"
-#include "RRTUtil.hpp"
-#include "RoboCupStateSpace.hpp"
-#include "motion/TrapezoidalMotion.hpp"
-#include "CompositePath.hpp"
-#include "Configuration.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <Constants.hpp>
 #include <Eigen/Dense>
+#include <Utils.hpp>
 #include <algorithm>
 #include <iostream>
+#include <rrt/Tree.hpp>
+#include <rrt/planning/Path.hpp>
+
+#include "Configuration.hpp"
+#include "EscapeObstaclesPathPlanner.hpp"
+#include "RRTUtil.hpp"
+#include "motion/TrapezoidalMotion.hpp"
+#include "planning/RoboCupStateSpace.hpp"
+#include "planning/paths/CompositePath.hpp"
 
 using namespace std;
 using namespace Eigen;

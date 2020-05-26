@@ -18,11 +18,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
-#include <planning/CompositePath.hpp>
-#include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
-#include <planning/RRTPlanner.hpp>
 #include <planning/RobotConstraints.hpp>
+#include <planning/paths/CompositePath.hpp>
+#include <planning/paths/InterpolatedPath.hpp>
+#include <planning/planners/RRTPlanner.hpp>
 #include <vector>
 
 #include "Context.hpp"

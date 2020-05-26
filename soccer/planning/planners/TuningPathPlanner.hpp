@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SingleRobotPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
+#include "planning/paths/TrapezoidalPath.hpp"
 
 namespace Planning {
 

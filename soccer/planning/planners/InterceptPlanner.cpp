@@ -4,8 +4,8 @@
 #include <Constants.hpp>
 #include <motion/TrapezoidalMotion.hpp>
 
-#include "MotionInstant.hpp"
 #include "RRTPlanner.hpp"
+#include "planning/MotionInstant.hpp"
 
 namespace Planning {
 std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {

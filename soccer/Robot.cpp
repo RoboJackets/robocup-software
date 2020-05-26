@@ -10,8 +10,8 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
-#include <planning/RRTPlanner.hpp>
-#include <planning/TrapezoidalPath.hpp>
+#include <planning/paths/TrapezoidalPath.hpp>
+#include <planning/planners/RRTPlanner.hpp>
 #include <stdexcept>
 #include <utility>
 

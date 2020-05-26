@@ -1,12 +1,14 @@
 #include "LineKickPlanner.hpp"
+
 #include <Configuration.hpp>
 #include <Geometry2d/Util.hpp>
 #include <motion/TrapezoidalMotion.hpp>
+
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "RRTPlanner.hpp"
 #include "motion/TrapezoidalMotion.hpp"
-#include "CompositePath.hpp"
-#include "MotionInstant.hpp"
+#include "planning/MotionInstant.hpp"
+#include "planning/paths/CompositePath.hpp"
 
 using namespace std;
 using namespace Geometry2d;

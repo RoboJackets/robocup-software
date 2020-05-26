@@ -1,12 +1,12 @@
 #pragma once
 
-#include <planning/Path.hpp>
-#include <planning/PlanRequest.hpp>
-#include "SystemState.hpp"
-#include "planning/DynamicObstacle.hpp"
-
 #include <map>
 #include <memory>
+#include <planning/PlanRequest.hpp>
+#include <planning/paths/Path.hpp>
+
+#include "SystemState.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
 

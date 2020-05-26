@@ -1,14 +1,13 @@
 #pragma once
 
-#include <optional>
-
 #include <Configuration.hpp>
 #include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <planning/Path.hpp>
+#include <optional>
+#include <planning/paths/Path.hpp>
 
 namespace Planning {
 /**

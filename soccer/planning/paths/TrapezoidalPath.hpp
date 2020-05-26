@@ -1,17 +1,17 @@
 #pragma once
 
-#include <optional>
+#include <protobuf/LogFrame.pb.h>
 
-#include "motion/TrapezoidalMotion.hpp"
-#include "MotionConstraints.hpp"
-#include "MotionInstant.hpp"
 #include <Configuration.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <planning/Path.hpp>
-#include <protobuf/LogFrame.pb.h>
+#include <Geometry2d/ShapeSet.hpp>
+#include <optional>
+#include <planning/paths/Path.hpp>
+
+#include "motion/TrapezoidalMotion.hpp"
+#include "planning/MotionConstraints.hpp"
+#include "planning/MotionInstant.hpp"
 
 namespace Planning {
 

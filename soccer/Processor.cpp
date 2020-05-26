@@ -10,7 +10,8 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <planning/IndependentMultiRobotPathPlanner.hpp>
+#include <planning/planners/IndependentMultiRobotPathPlanner.hpp>
+#include <rc-fshare/git_version.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
