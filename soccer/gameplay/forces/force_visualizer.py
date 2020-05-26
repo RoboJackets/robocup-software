@@ -35,9 +35,14 @@ class ForceVisualizer():
     #
     def visualizeSample(self, sample):
         mag = sample.vector.mag()
-        vectorEnd = sample.origin + robocup.Point(sample.vector.x, sample.vector.y)
-        self.context.debug_drawer.draw_circle(sample.origin, self.circle_radius(mag), self.color(mag), "layer?")
-        self.context.debug_drawer.draw_segment_from_points(sample.origin, vectorEnd, self.color(mag), "hat")
+        if(mag != 0):
+            plot_mag = self.line_length(mag)
+            vectorEnd = sample.origin + robocup.Point((sample.vector.x/mag)*plot_mag, (sample.vector.y/mag)*plot_mag)
+            self.context.debug_drawer.draw_circle(sample.origin, self.circle_radius(mag), self.color(mag), "layer?")
+            self.context.debug_drawer.draw_segment_from_points(sample.origin, vectorEnd, self.color(mag), "hat")
+        else:
+            self.context.debug_drawer.draw_circle(sample.origin, 0.025, (0,0,0), "layer?")
+
 
     ##
     # Sets the colors to be a thermal colorscheme

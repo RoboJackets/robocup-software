@@ -19,13 +19,25 @@ class EdgeForce(points_force.PointsForce):
 
     borders = robocup.Field_Dimensions.CurrentDimensions.FieldBorders 
 
-    responce_function = lambda x : force_utils.trig_responce(x, 2.0, 1.0, 2.0)
+    #responce_function = lambda s, x : force_utils.trig_responce(x, 2.0, 1.0, 2.0)
     responce_type = direction.Direction.PUSH
-    merge_function = lambda x : max(x)
+    #A max merge function probably makes more sense here but it was breaking
+    merge_function = lambda s, x : sum(x)
 
+    responce_function = lambda s, x : force_utils.log_responce(x, 2.0, 3.0, 0.1)
+    
     ##I don't know if this is horrible or butiful
-    points = [lambda x : border.nearest_point(x) for border in borders]
-
+    #points = [lambda x : border.nearest_point(x) for border in borders]
+    #Why these arent the same I have absolutly no idea
+    #points = [lambda x : border.nearest_point(x) for border in borders]
+    #test_point = lambda x : borders[0].nearest_point(x)
+    
+    #This was such a cute one liner and now look at it :(
+    points = [lambda x : robocup.Field_Dimensions.CurrentDimensions.FieldBorders[0].nearest_point(x),
+              lambda x : robocup.Field_Dimensions.CurrentDimensions.FieldBorders[1].nearest_point(x),
+              lambda x : robocup.Field_Dimensions.CurrentDimensions.FieldBorders[2].nearest_point(x),
+              lambda x : robocup.Field_Dimensions.CurrentDimensions.FieldBorders[3].nearest_point(x)]
+ 
 
 
     """

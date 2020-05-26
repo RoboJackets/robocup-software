@@ -4,17 +4,25 @@ import main
 from abc import abstractmethod
 import copy
 from forces import force
+from forces import force_sample
+
 
 class CompositeForce(force.Force):
 
     forces = list()
     compositable = True
 
-    merge_function = lambda x : sum(x)
+    #Kill me
+    #merge_function = lambda s, x : sum(x,start=force_sample.ForceSample(origin=None, vector=robocup.Point(0,0)))
+    #Wait, I've found something better, leave me alive
+    merge_function = lambda s, x : sum(x)
+   
 
-    def __init__(self, forces=None, merge_function=None):
+    def __init__(self, force_list=None, merge_function=None):
         if(force_list is not None):
-            self.force_list = force_list
+            self.forces = force_list
+        else:
+            self.forces = list()
         if(merge_function is not None):
             self.merge_function = merge_function
 
@@ -31,13 +39,14 @@ class CompositeForce(force.Force):
 
 
     def addForce(self, force):
-        force_list.append(force)
+        self.forces.append(force)
 
     def sample(self, point):
         retForce = robocup.Point(0,0)
-        sample_list = list()
-        sample_list = [x.sample(point) for x in self.force_list]
-        retSample = self.merge_function(sample_list)   
+        sample_list = [x.sample(point) for x in self.forces]
+        if(len(sample_list) == 0):
+            return force_sample.ForceSample(origin=point, vector=robocup.Point(0,0))
+        retSample = self.merge_function(sample_list) 
         return retSample
     
 

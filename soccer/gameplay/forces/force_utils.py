@@ -11,10 +11,10 @@ import robocup
 #
 
 def push(anchor, sample):
-    return anchor - sample
+    return sample - anchor
 
 def pull(anchor, sample):
-    return sample - anchor
+    return anchor - sample
 
 #Be really careful when changing clipLow, keeping in mind that this will allow your force to change directions i.e. from a push to a pull, in the middle of the field, which can get confusing
 def log_push(anchor, sample, base, decay, clipLow=0.0, clipHigh=float('inf'), threshold=float("-inf")):
@@ -33,7 +33,7 @@ def log_responce(mag, base, decay, clipLow=0.0, clipHigh=float('inf'), threshold
     responce = base - math.log(mag + 1, 1 + (1 / decay))
     if(responce < threshold):
         return 0.0
-    return clipLowHigh(responce)
+    return clipLowHigh(responce, clipLow, clipHigh)
 
 def clipLowHigh(x, low, high):
     if(x < low):
@@ -77,9 +77,9 @@ def trig_pull(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0,
 def trig_push(anchor, sample, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf')):
     return vec_invert(trig_pull(anchor, sample, base, decay, decay_range, offset, clipLow, clipHigh))
 
-def trig_response(mag, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf'), theshold=float('-inf')):
+def trig_responce(mag, base, decay, decay_range, offset=0.0, clipLow=0.0, clipHigh=float('inf'), threshold=float('-inf')):
     mag += offset
-    responce = base - ((2 * responce_range)/(math.pi)) * math.atan(mag * decay)
+    responce = base - ((2 * decay_range)/(math.pi)) * math.atan(mag * decay)
     if(responce < threshold):
         return 0.0
     return clipLowHigh(responce, clipLow, clipHigh)
@@ -141,7 +141,12 @@ def rotate(input_vec, degrees):
 
 #Scales a vector to the 
 def vec_scale(input_vec, scale):
-    return input_vec.norm() * scale
+    if(input_vec.x == 0 and input_vec.y == 0):
+        return robocup.Point(0,0)
+    #I think there is a normalize function for this but its not norm
+    #Point is I think there is a better way to do this
+    mag = input_vec.mag()
+    return robocup.Point((input_vec.x / mag) * scale, (input_vec.y / mag) * scale)
 
 '''
 def log_compress(input_vec, base=2):

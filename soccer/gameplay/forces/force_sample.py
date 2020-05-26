@@ -17,7 +17,9 @@ class ForceSample():
         return "Origin: (" + str(origin.x) + ", " + str(origin.y) + "), Sample: (" + str(vector.x) + ", " + str(vector.y) + ")"
 
     def checkOrigin(self, other):
-        if(self.origin != other.origin):
+        #Allowing None as either origin allows for forces that have no origin, which is a workaround for
+        # trying the start=ForceSample() in sum and not have this error, although I think now I have another better work around
+        if(self.origin != other.origin and self.origin is not None and other.origin is not None):
             raise ValueError("The origins of the force samples are not aligned, which is not allowed for most operations")
 
     def mag(self):
@@ -30,33 +32,39 @@ class ForceSample():
         return not self.__eq__(self, other) 
 
     def __lt__(self, other):
-        self.checkOrigin(self, other)
+        self.checkOrigin(other)
         return self.mag() < other.mag()
 
     def __le__(self, other):
-        self.checkOrigin(self, other)
+        self.checkOrigin(other)
         return self.mag() <= other.mag()
 
     def __gt__(self, other):
-        self.checkOrigin(self, other)
+        self.checkOrigin(other)
         return self.mag() <= other.mag()
 
     def __ge__(self, other):
-        self.checkOrigin(self, other)
+        self.checkOrigin(other)
         return self.mag() >= other.mag()
 
     def __add__(self, other):
-        self.checkOrigin(self, other)
+        self.checkOrigin(other)
         return ForceSample(origin=self.origin, vector=self.vector + other.vector)
 
+    def __radd__(self, other):
+        if(other == 0):
+            return ForceSample(origin=self.origin, vector=self.vector)
+        else:
+            raise ValueError("Couldn't reverse add with non-zero value")
+
     def __sub__(self, other):
-        self.checkOrigin(self, other)
+        self.checkOrigin(other)
         return ForceSample(origin=self.origin, vector=self.vector - other.vector)
 
     def __mul__(self, other):
         newSample = copy.deepcopy(sample)        
         if(isinstance(other, ForceSample)):
-            self.checkOrigin(self, other)
+            self.checkOrigin(other)
             newSample.vector.x *= other.vector.x
             newSample.vector.y *= other.vector.y
         else:
@@ -68,7 +76,7 @@ class ForceSample():
     def __div__(self, other):
         newSample = copy.deepcopy(self)        
         if(isinstance(other, ForceSample)):
-            self.checkOrigin(self, other)
+            self.checkOrigin(other)
             newSample.vector.x /= other.vector.x
             newSample.vector.y /= other.vector.y
         else:
