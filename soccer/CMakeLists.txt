@@ -209,14 +209,15 @@ target_link_libraries(log_viewer robocup)
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CircleTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/Geometry2d/TransformMatrixTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
     "BatteryProfileTest.cpp"
     "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
