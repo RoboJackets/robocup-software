@@ -39,9 +39,7 @@ struct RobotIntent {
 
         priority = 0;
 
-        if (std::holds_alternative<Planning::PathTargetCommand>(motion_command)) {
-            std::get<Planning::PathTargetCommand>(motion_command).angle_override = std::nullopt;
-        }
+        motion_command = Planning::EmptyCommand();
     }
 
     RobotIntent()

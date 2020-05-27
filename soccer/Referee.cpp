@@ -147,7 +147,7 @@ void Referee::run() {
     update();
 }
 
-void Referee::spinKickWatcher(const SystemState& system_state) {
+void Referee::spinKickWatcher(const BallState& ball) {
     /// Only run the kick detector when the ball is visible
     if (!ball.visible) {
         return;

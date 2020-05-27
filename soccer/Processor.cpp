@@ -10,8 +10,6 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <joystick/GamepadController.hpp>
-#include <joystick/Joystick.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"

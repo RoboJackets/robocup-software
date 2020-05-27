@@ -211,8 +211,6 @@
    <MinIterations value="100"/>
    <MaxIterations value="250"/>
   </RRT>
-  <goalPosChangeThreshold value="0.025"/>
-  <goalVelChangeThreshold value="0.025"/>
   <dribbleOutOfBoundsOffset value="0.05"/>
  </PathPlanner>
  <MotionConstraints>
@@ -357,11 +355,11 @@
    <min value="1"/>
   </Health>
  </VisionFilter>
- <PathTargetPlanner>
+ <Replanner>
   <goalPosChangeThreshold value="0.025"/>
   <goalVelChangeThreshold value="0.025"/>
   <partialReplanLeadTime value="0.1"/>
- </PathTargetPlanner>
+ </Replanner>
  <LineKickPlanner>
   <approachSpeed value="0.25"/>
  </LineKickPlanner>
