@@ -28,14 +28,13 @@ public:
     CollectPlanner()
         : PlannerForCommandType<CollectCommand>("collect"),
           averageBallVel(0, 0),
-          averageBallVelInitialized(false),
-          approachDirection(0, 0),
-          approachDirectionCreated(false),
-          controlPathCreated(false){};
+          approachDirection(0, 0) {}
 
     Trajectory plan(PlanRequest&& planRequest) override;
 
     static void createConfiguration(Configuration* cfg);
+
+    void reset() override;
 
 private:
     // Restarts the state machine if our calculations are whack
@@ -76,14 +75,15 @@ private:
 
     // Ball Velocity Filtering Variables
     Geometry2d::Point averageBallVel;
-    bool averageBallVelInitialized;
+    bool averageBallVelInitialized = false;
 
     Geometry2d::Point approachDirection;
-    bool approachDirectionCreated;
+    bool approachDirectionCreated = false;
 
-    bool controlPathCreated;
+    bool controlPathCreated = false;
 
     Geometry2d::Point pathCourseTarget;
+    bool pathCoarseTargetInitialized = false;
 
     // Controls at which ball speed we should try to go directly to the ball
     // or to move behind it and in the same direction as it

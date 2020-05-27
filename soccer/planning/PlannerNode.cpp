@@ -95,31 +95,26 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
-    for (int i = 0; i < planners_.size(); i++) {
-        if (planners_[i]->isApplicable(request.motionCommand)) {
-            // clear path when planner changes
-            if (planner_idx_ != i) {
-                planner_idx_ = i;
-                request.prevTrajectory = Trajectory{{}};
-//            planners_[i]->reset();
-            }
-
+    Trajectory trajectory;
+    for (auto& planner : planners_) {
+        // If we've already planned this request, or this planner can't plan
+        // this request, we're not using `planner` so it should be reset.
+        if (!trajectory.empty() || !planner->isApplicable(request.motionCommand)) {
+            planner->reset();
+        } else {
             RobotInstant startInstant = request.start;
             RJ::Time t0 = RJ::now();
-            Trajectory path = planners_[i]->plan(std::move(request));
-            if (path.empty()) {
-                path = Trajectory{{startInstant}};
-                debugLog("Empty Path. Planner: " + planners_[i]->name());
-            }
-            return std::move(path);
+            trajectory = planner->plan(std::move(request));
         }
     }
-    std::cerr
-        << "No valid planner! Did you forget to specify a default planner?"
-        << std::endl;
-    Trajectory result{{request.start}};
-    result.setDebugText("Error: No Valid Planners");
-    return std::move(result);
+    if (trajectory.empty()) {
+        std::cerr
+            << "No valid planner! Did you forget to specify a default planner?"
+            << std::endl;
+        trajectory = Trajectory {{request.start}};
+        trajectory.setDebugText("Error: No Valid Planners");
+    }
+    return trajectory;
 }
 
 }  // namespace Planning

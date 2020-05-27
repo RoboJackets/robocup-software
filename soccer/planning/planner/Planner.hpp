@@ -30,6 +30,12 @@ public:
     virtual Trajectory plan(PlanRequest&& request) = 0;
 
     /**
+     * Reset this planner. Called after the planner is _not_ used to handle a
+     * given command for the robot.
+     */
+    virtual void reset() {}
+
+    /**
      * reuse previous path
      */
     static Trajectory reuse(RJ::Time now, RobotInstant start, Trajectory previous);

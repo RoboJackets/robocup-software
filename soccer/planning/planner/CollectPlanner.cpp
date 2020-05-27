@@ -4,7 +4,6 @@
 #include "Constants.hpp"
 #include "planning/trajectory/RRTUtil.hpp"
 
-using namespace std;
 using namespace Geometry2d;
 
 namespace Planning {
@@ -224,7 +223,8 @@ Trajectory CollectPlanner::courseApproach(
         averageBallVel + approachDirection * *_touchDeltaSpeed;
 
     // Force the path to use the same target if it doesn't move too much
-    if ((pathCourseTarget - targetSlowPos).mag() >
+    if (!pathCoarseTargetInitialized ||
+        (pathCourseTarget - targetSlowPos).mag() >
         (*_approachDistTarget - *_distCutoffToControl) / 2) {
         pathCourseTarget = targetSlowPos;
     }
@@ -336,7 +336,7 @@ Trajectory CollectPlanner::control(
 
     motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
     motionConstraints.maxSpeed =
-        min((double)currentSpeed, motionConstraints.maxSpeed);
+        std::min((double)currentSpeed, motionConstraints.maxSpeed);
 
     // Using the current velocity
     // Calculate stopping distance given the acceleration
@@ -363,7 +363,7 @@ Trajectory CollectPlanner::control(
 
     // Try to use the RRTPlanner to generate the path first
     // It reaches the target better for some reason
-    vector<Point> startEndPoints{start.pose.position(), target.pose.position()};
+    std::vector<Point> startEndPoints{start.pose.position(), target.pose.position()};
     Trajectory path = CreatePath::rrt(start, target, motionConstraints, staticObstacles, dynamicObstacles);
 
     if (planRequest.debug_drawer != nullptr) {
@@ -372,26 +372,6 @@ Trajectory CollectPlanner::control(
                     start.pose.position() + (target.pose.position() - start.pose.position()) * 10),
             QColor(255, 255, 255), "Control");
     }
-
-#if 0
-    // Try to use the plan request if the above fails
-    // This sometimes doesn't reach the target commanded though
-    if (path.empty()) {
-        std::unique_ptr<MotionCommand> rrtCommand =
-            std::make_unique<PathTargetCommand>(target);
-
-        auto request = PlanRequest(
-            planRequest.context, startInstant, std::move(rrtCommand),
-            robotConstraints, nullptr, obstacles, planRequest.dynamicObstacles,
-            planRequest.shellID);
-        path = rrtPlanner.run(request);
-
-        if (!partialPath.empty()) {
-            path = make_unique<CompositePath>(move(partialPath), move(path));
-            path->setStartTime(prevPath->startTime());
-        }
-    }
-#endif
 
     path.setDebugText("stopping");
 
@@ -437,4 +417,14 @@ T CollectPlanner::applyLowPassFilter(const T& oldValue, const T& newValue,
                                          double gain) {
     return gain * newValue + (1 - gain) * oldValue;
 }
+
+void CollectPlanner::reset() {
+    previous = Trajectory();
+    currentState = CollectPathPlannerStates::CourseApproach;
+    averageBallVelInitialized = false;
+    approachDirectionCreated = false;
+    controlPathCreated = false;
+    pathCoarseTargetInitialized = false;
+}
+
 }  // namespace Planning

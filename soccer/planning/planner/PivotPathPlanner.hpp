@@ -13,6 +13,8 @@ public:
     Trajectory plan(PlanRequest&& request) override;
 
 private:
+    bool shouldReplan(const PivotCommand& command) const;
+    Trajectory previous;
     static ConfigDouble* _pivotRadiusMultiplier;
 };
 }  // namespace Planning
