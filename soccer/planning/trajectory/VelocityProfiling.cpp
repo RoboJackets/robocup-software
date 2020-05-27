@@ -187,6 +187,7 @@ void appendStop(std::vector<double>& angles, std::vector<double>& angleVels,
         angleVels.push_back(0);
     }
 }
+
 /**
  * Stop as soon as possible. we will end up at a different position:
  * current angle     (stoppingAngle)          0 vel
@@ -206,6 +207,7 @@ void appendStopWithDrift(std::vector<double>& angles,
         angleVels.push_back(0);
     }
 }
+
 // todo: do velocity profile angles
 void PlanAngles(Trajectory& trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
@@ -213,23 +215,35 @@ void PlanAngles(Trajectory& trajectory, const RobotInstant& start_instant,
     if (trajectory.empty()) {
         return;
     }
-    auto instants_it = trajectory.instants_begin();
-    instants_it->pose.heading() = start_instant.pose.heading();
-    instants_it->velocity.angular() =
-        std::clamp(start_instant.velocity.angular(), -constraints.maxSpeed,
-                   constraints.maxSpeed);
-    RobotInstant instant_before = *instants_it;
-    ++instants_it;
-    for (int i = 1; instants_it != trajectory.instants_end(); i++) {
-        RobotInstant& instant_after = *instants_it;
-        double deltaTime =
-            RJ::Seconds(instant_after.stamp - instant_before.stamp).count();
-        instant_after.pose.heading() = angle_function(instant_before);
-        double deltaAngle = fixAngleRadians(instant_after.pose.heading() -
-                                            instant_before.pose.heading());
-        instant_after.velocity.angular() = deltaAngle / deltaTime;
-        instant_before = instant_after;
-        ++instants_it;
+
+    // Start with the second instant.
+    auto it = trajectory.instants_begin();
+
+    // Start at the first instant...
+    double heading = it->pose.heading();
+    RJ::Time previous = it->stamp;
+
+    // And move on, because at each instant we compare against the previous.
+    it++;
+
+    for (; it != trajectory.instants_end(); ++it) {
+        double dt = (it->stamp - previous).count();
+        double target = angle_function(*it);
+
+        // Take a naive finite-difference approach, limiting speed while ignoring
+        // acceleration. This is terrible, but it'll work for now.
+        double angular_velocity = (target - heading) / dt;
+        if (std::abs(angular_velocity) > constraints.maxSpeed) {
+            angular_velocity = std::copysign(constraints.maxSpeed, angular_velocity);
+        }
+
+        heading += angular_velocity * dt;
+
+        it->pose.heading() = heading;
+        it->velocity.angular() = angular_velocity;
+
+        previous = it->stamp;
     }
 }
+
 }  // namespace Planning

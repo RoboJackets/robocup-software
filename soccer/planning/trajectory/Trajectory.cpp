@@ -303,8 +303,7 @@ TrajectoryIterator Trajectory::iterator(RJ::Time startTime,
 void Trajectory::draw(DebugDrawer* drawer,
                       std::optional<Geometry2d::Point> backupTextPos) const {
     if (instants_.size() > 1) {
-        Packet::DebugRobotPath* dbgPath =
-            drawer->getLogFrame()->add_debug_robot_paths();
+        Packet::DebugRobotPath* dbgPath = drawer->addDebugPath();
         dbgPath->set_layer(drawer->findDebugLayer("Motion"));
         for (const RobotInstant& instant : instants_) {
             Packet::DebugRobotPath::DebugRobotPathPoint* pt =

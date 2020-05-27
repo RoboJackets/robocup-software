@@ -1,9 +1,10 @@
 #include "CollectPlanner.hpp"
 
-#include <vector>
 #include "Configuration.hpp"
 #include "Constants.hpp"
+#include "planning/trajectory/RRTUtil.hpp"
 
+using namespace std;
 using namespace Geometry2d;
 
 namespace Planning {
@@ -51,11 +52,12 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
 
     const RJ::Time curTime = RJ::now();
 
-    CollectCommand command = std::get<CollectCommand>(planRequest.motionCommand);
+    const CollectCommand& command =
+        std::get<CollectCommand>(planRequest.motionCommand);
 
     // Start state for specified robot
-    RobotInstant start = planRequest.start;
-    RobotInstant partialStartInstant = start;
+    RobotInstant startInstant = planRequest.start;
+    RobotInstant partialStartInstant = startInstant;
 
     // All the max velocity / acceleration constraints for translation /
     // rotation
@@ -63,12 +65,9 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
     MotionConstraints& motionConstraints = robotConstraints.mot;
 
     // List of obstacles
-    ShapeSet staticObstacles;
+    ShapeSet obstacles;
     std::vector<DynamicObstacle> dynamicObstacles;
-    FillObstacles(planRequest, &staticObstacles, &dynamicObstacles, false);
-
-    // Previous RRT path from last iteration
-    Trajectory prevPath;
+    FillObstacles(planRequest, &obstacles, &dynamicObstacles, false);
 
     // The small beginning part of the previous path
     Trajectory partialPath;
@@ -83,18 +82,18 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
     RJ::Seconds partialPathTime = 0ms;
 
     // How much of the previous path to steal
-    const RJ::Seconds partialReplanLeadTime =
-        RJ::Seconds(Replanner::partialReplanLeadTime());
+    const RJ::Seconds partialReplanLeadTime(
+        Replanner::partialReplanLeadTime());
 
     // Check and see if we should reset the entire thing if we are super far off
     // course or the ball state changes significantly
-    checkSolutionValidity(ball, start);
+    checkSolutionValidity(ball, startInstant);
 
     // Change start instant to be the partial path end instead of the robot
     // current location if we actually have already calculated a path the frame
     // before
-    if (!prevPath.empty()) {
-        timeIntoPreviousPath = curTime - prevPath.begin_time();
+    if (!previous.empty()) {
+        timeIntoPreviousPath = curTime - previous.begin_time();
 
         // Make sure we still have time in the path to replan and correct
         // since it's likely that the old path is slightly off
@@ -104,9 +103,9 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
         //                     |-----------------|
         //          Amount of the path we can change this iteration
         if (timeIntoPreviousPath <
-            prevPath.duration() - 2 * partialReplanLeadTime &&
+            previous.duration() - 2 * partialReplanLeadTime &&
             timeIntoPreviousPath > 0ms) {
-            partialPath = prevPath.subTrajectory(
+            partialPath = previous.subTrajectory(
                 0ms, timeIntoPreviousPath + partialReplanLeadTime);
             partialPathTime = partialPath.duration() - timeIntoPreviousPath;
             partialStartInstant = partialPath.last();
@@ -126,45 +125,42 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
     // it
     if (ball.velocity.mag() < *_ballSpeedApproachDirectionCutoff) {
         // Move directly to the ball
-        approachDirection = (ball.position - start.pose.position()).norm();
+        approachDirection = (ball.position - startInstant.pose.position()).norm();
     } else {
         // Approach the ball from behind
         approachDirection = averageBallVel.norm();
     }
 
     // Check if we should transition to control from approach
-    processStateTransition(ball, start);
+    processStateTransition(ball, startInstant);
 
     switch (currentState) {
         // Moves from the current location to the slow point of approach
-        case CourseApproach: {
-            return courseApproach(planRequest, start,
-                                  staticObstacles,
+        case CourseApproach:
+            previous = courseApproach(planRequest, startInstant, obstacles,
+                                      dynamicObstacles);
+            break;
+        // Moves from the slow point of approach to just before point of contact
+        case FineApproach:
+            previous = fineApproach(planRequest, startInstant, obstacles,
                                   dynamicObstacles);
-        }
-            // Moves from the slow point of approach to just before point of contact
-        case FineApproach: {
-            return fineApproach(planRequest, start,
-                                staticObstacles,
-                                dynamicObstacles);
-        }
-            // Move through the ball and stop
-        case Control: {
-            return control(planRequest, partialStartInstant,
-                           partialPath,
-                           staticObstacles,
-                           dynamicObstacles);
-        }
-        default: {
-            return invalid(planRequest,
-                           staticObstacles,
-                           dynamicObstacles);
-        }
+            break;
+        // Move through the ball and stop
+        case Control:
+            previous = control(planRequest, partialStartInstant,
+                             partialPath, obstacles,
+                             dynamicObstacles);
+            break;
+        default:
+            previous = invalid(planRequest, obstacles, dynamicObstacles);
+            break;
     }
+
+    return previous;
 }
 
-void CollectPlanner::checkSolutionValidity(
-    BallState ball, RobotInstant start) {
+void CollectPlanner::checkSolutionValidity(BallState ball,
+                                           RobotInstant start) {
     bool nearBall = (ball.position - start.pose.position()).mag() <
                     *_distCutoffToApproach + *_distCutoffToControl;
 
@@ -178,14 +174,11 @@ void CollectPlanner::checkSolutionValidity(
     }
 }
 
-void CollectPlanner::processStateTransition(BallState ball,
-                                            RobotInstant startInstant) {
+void CollectPlanner::processStateTransition(BallState ball, RobotInstant startInstant) {
     // Do the transitions
     double dist = (startInstant.pose.position() - ball.position).mag() - Robot_MouthRadius;
     double speedDiff =
         (startInstant.velocity.linear() - averageBallVel).mag() - *_touchDeltaSpeed;
-
-    CollectPathPlannerStates prevState = currentState;
 
     // If we are in range to the slow dist
     if (dist < *_approachDistTarget + Robot_MouthRadius &&
@@ -200,16 +193,11 @@ void CollectPlanner::processStateTransition(BallState ball,
         currentState == FineApproach) {
         currentState = Control;
     }
-
-    if (prevState != currentState) {
-        previous = Trajectory();
-        std::cout << "Resetting trajectory for collect" << std::endl;
-    }
 }
 
 Trajectory CollectPlanner::courseApproach(
-    const PlanRequest& planRequest, RobotInstant startInstant,
-    const ShapeSet& staticObstacles,
+    const PlanRequest& planRequest, RobotInstant start,
+    const Geometry2d::ShapeSet& staticObstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     BallState ball = planRequest.world_state->ball;
 
@@ -243,17 +231,15 @@ Trajectory CollectPlanner::courseApproach(
 
     RobotInstant targetSlow;
     targetSlow.pose.position() = pathCourseTarget;
-    targetSlow.pose.heading() = startInstant.pose.heading();
     targetSlow.velocity.linear() = targetSlowVel;
-    targetSlow.velocity.angular() = 0;
 
-    Replanner::PlanParams params{
-        startInstant,
+    Replanner::PlanParams params {
+        start,
         targetSlow,
         staticObstacles,
         dynamicObstacles,
         planRequest.constraints,
-        AngleFns::faceAngle(approachDirection.angle())
+        AngleFns::facePoint(ball.position)
     };
     Trajectory coarsePath = rrtPlanner.CreatePlan(params, previous);
 
@@ -264,8 +250,9 @@ Trajectory CollectPlanner::courseApproach(
 }
 
 Trajectory CollectPlanner::fineApproach(
-    const PlanRequest& planRequest, RobotInstant startInstant,
-    const ShapeSet& staticObstacles,
+    const PlanRequest& planRequest,
+    RobotInstant startInstant,
+    const Geometry2d::ShapeSet& staticObstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     BallState ball = planRequest.world_state->ball;
     RobotConstraints robotConstraintsHit = planRequest.constraints;
@@ -290,6 +277,10 @@ Trajectory CollectPlanner::fineApproach(
     Point targetHitPos = ball.position - Robot_MouthRadius * approachDirection;
     Point targetHitVel = averageBallVel + approachDirection * *_touchDeltaSpeed;
 
+    RobotInstant targetHit;
+    targetHit.pose.position() = targetHitPos;
+    targetHit.velocity.linear() = targetHitVel;
+
     // Decrease accel at the end so we more smoothly touch the ball
     motionConstraintsHit.maxAcceleration *= *_approachAccelScalePercent;
     // Prevent a last minute accel at the end if the approach dist allows for
@@ -297,32 +288,20 @@ Trajectory CollectPlanner::fineApproach(
     motionConstraintsHit.maxSpeed =
         std::min(targetHitVel.mag(), motionConstraintsHit.maxSpeed);
 
-    RobotInstant targetHit;
-    targetHit.pose.position() = targetHitPos;
-    targetHit.pose.heading() = startInstant.pose.heading();
-    targetHit.velocity.linear() = targetHitVel;
-    targetHit.velocity.angular() = 0;
-
-    Replanner::PlanParams params{
-        planRequest.start,
-        targetHit,
-        staticObstacles,
-        dynamicObstacles,
-        planRequest.constraints,
-        AngleFns::faceAngle(approachDirection.angle())
-    };
-
-    Trajectory pathHit = rrtPlanner.CreatePlan(params, std::move(previous));
-
+    Trajectory pathHit = CreatePath::simple(startInstant,
+                                            targetHit,
+                                            planRequest.constraints.mot);
     pathHit.setDebugText("fine");
+    PlanAngles(pathHit, startInstant, AngleFns::facePoint(ball.position),
+               planRequest.constraints.rot);
 
     return pathHit;
 }
 
 Trajectory CollectPlanner::control(
-    const PlanRequest& planRequest, RobotInstant startInstant,
+    const PlanRequest& planRequest, RobotInstant start,
     const Trajectory& partialPath,
-    const ShapeSet& staticObstacles,
+    const Geometry2d::ShapeSet& staticObstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     BallState ball = planRequest.world_state->ball;
     RobotConstraints robotConstraints = planRequest.constraints;
@@ -350,14 +329,14 @@ Trajectory CollectPlanner::control(
     float velocityScale = *_velocityControlScale;
 
     // Moving at us
-    if (averageBallVel.angleBetween((ball.position - startInstant.pose.position())) > M_PI / 2) {
+    if (averageBallVel.angleBetween((ball.position - start.pose.position())) > 3.14 / 2) {
         currentSpeed = *_touchDeltaSpeed;
         velocityScale = 0;
     }
 
     motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
     motionConstraints.maxSpeed =
-        std::min((double)currentSpeed, motionConstraints.maxSpeed);
+        min((double)currentSpeed, motionConstraints.maxSpeed);
 
     // Using the current velocity
     // Calculate stopping distance given the acceleration
@@ -377,53 +356,58 @@ Trajectory CollectPlanner::control(
     double distFromBall = *_stopDistScale * stoppingDist;
     RobotInstant target;
     target.pose.position() =
-        startInstant.pose.position() +
-        distFromBall * (ball.position - startInstant.pose.position() +
+        start.pose.position() +
+        distFromBall * (ball.position - start.pose.position() +
                         velocityScale * averageBallVel * nonZeroVelTimeDelta)
             .norm();
-    target.pose.heading() = startInstant.pose.heading();
-    target.velocity.linear() = Point(0, 0);
-    target.velocity.angular() = 0;
 
-    // Make sure that when the path ends, we don't end up spinning around
-    // because we hit go past the ball position at the time of path creation
-    Point facePt = startInstant.pose.position() +
-                   10 * (target.pose.position() - startInstant.pose.position())
-                       .norm();  // startInstant.pos + 10 * (ball.pos -
-
-    Replanner::PlanParams params{
-        startInstant,
-        target,
-        staticObstacles,
-        dynamicObstacles,
-        planRequest.constraints,
-        AngleFns::facePoint(ball.position)
-    };
-
-    Trajectory path = rrtPlanner.CreatePlan(params, std::move(previous));
-
-    if (!partialPath.empty()) {
-        path = Trajectory(partialPath, path);
-    }
+    // Try to use the RRTPlanner to generate the path first
+    // It reaches the target better for some reason
+    vector<Point> startEndPoints{start.pose.position(), target.pose.position()};
+    Trajectory path = CreatePath::rrt(start, target, motionConstraints, staticObstacles, dynamicObstacles);
 
     if (planRequest.debug_drawer != nullptr) {
         planRequest.debug_drawer->drawLine(
-            Segment(
-                startInstant.pose.position(),
-                startInstant.pose.position() +
-                    (target.pose.position() - startInstant.pose.position()) *
-                        10),
+            Segment(start.pose.position(),
+                    start.pose.position() + (target.pose.position() - start.pose.position()) * 10),
             QColor(255, 255, 255), "Control");
     }
 
+#if 0
+    // Try to use the plan request if the above fails
+    // This sometimes doesn't reach the target commanded though
+    if (path.empty()) {
+        std::unique_ptr<MotionCommand> rrtCommand =
+            std::make_unique<PathTargetCommand>(target);
+
+        auto request = PlanRequest(
+            planRequest.context, startInstant, std::move(rrtCommand),
+            robotConstraints, nullptr, obstacles, planRequest.dynamicObstacles,
+            planRequest.shellID);
+        path = rrtPlanner.run(request);
+
+        if (!partialPath.empty()) {
+            path = make_unique<CompositePath>(move(partialPath), move(path));
+            path->setStartTime(prevPath->startTime());
+        }
+    }
+#endif
+
     path.setDebugText("stopping");
 
+    // Make sure that when the path ends, we don't end up spinning around
+    // because we hit go past the ball position at the time of path creation
+    Point facePt = start.pose.position() +
+                   10 * (target.pose.position() - start.pose.position())
+                       .norm();
+
+    PlanAngles(path, start, AngleFns::facePoint(facePt), robotConstraints.rot);
     return path;
 }
 
 Trajectory CollectPlanner::invalid(
     const PlanRequest& planRequest,
-    const ShapeSet& staticObstacles,
+    const Geometry2d::ShapeSet& staticObstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     std::cout << "WARNING: Invalid state in collect planner. Restarting"
               << std::endl;
@@ -431,10 +415,10 @@ Trajectory CollectPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    RobotInstant target(planRequest.start);
-    target.velocity = Twist();
+    RobotInstant target = planRequest.start;
+    target.velocity = Geometry2d::Twist::Zero();
 
-    Replanner::PlanParams params{
+    Replanner::PlanParams params {
         planRequest.start,
         target,
         staticObstacles,
@@ -442,8 +426,7 @@ Trajectory CollectPlanner::invalid(
         planRequest.constraints,
         AngleFns::facePoint(planRequest.world_state->ball.position)
     };
-
-    Trajectory path = rrtPlanner.CreatePlan(params, std::move(previous));
+    Trajectory path = rrtPlanner.CreatePlan(params, previous);
     path.setDebugText("Invalid state in collect");
 
     return path;
