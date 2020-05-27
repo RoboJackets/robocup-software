@@ -4,7 +4,7 @@ import behavior
 import constants
 import enum
 
-import standard_play
+import play
 import evaluation
 from situations import Situation
 import tactics.coordinated_pass
@@ -24,7 +24,7 @@ import random
 # It needs to be renamed as "clear" is the name of the situation, and each play that fufills it
 # needs to have a unique name beyond that
 #
-class BasicClear(standard_play.StandardPlay):
+class BasicClear(play.Play):
     class State(enum.Enum):
         get_ball = 1, 'Get the ball and movee other robots up'
         clear_ball = 2, 'Kick the ball upfield'

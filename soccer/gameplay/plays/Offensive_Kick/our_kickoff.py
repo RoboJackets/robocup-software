@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import robocup
 import skills.line_kick
@@ -8,7 +8,7 @@ import enum
 import role_assignment
 
 
-class OurKickoff(standard_play.StandardPlay):
+class OurKickoff(play.Play):
 
     KickPower = 0.5
     ChipPower = 1.0

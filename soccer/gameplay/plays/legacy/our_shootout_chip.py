@@ -1,4 +1,3 @@
-import standard_play
 import behavior
 import skills.move
 import skills.pivot_kick

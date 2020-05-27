@@ -1,5 +1,5 @@
 import robocup
-import standard_play
+import play
 import behavior
 import constants
 import main
@@ -10,7 +10,7 @@ import evaluation
 import tactics.coordinated_pass
 
 
-class TwoSideAttack(standard_play.StandardPlay):
+class TwoSideAttack(play.Play):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py
     # Tell where passing from and where to pass to

@@ -13,7 +13,7 @@ import skills.capture
 import skills.dribble
 import skills.move
 import skills.pivot_kick
-import standard_play
+import play
 import tactics.advance_zone_midfielder
 import tactics.coordinated_pass
 import tactics.defensive_forward
@@ -24,7 +24,7 @@ from situations import Situation
 ##
 # This is essentially a copy of adaptive formation, found in the legacy folder,
 # With the shooting option removed. It is intended to be used as a clearing play
-class AdaptiveClear(standard_play.StandardPlay):
+class AdaptiveClear(play.Play):
     _situationList = [
         Situation.CLEAR,
     ]  # yapf: disable

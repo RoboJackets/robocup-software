@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills
 import tactics
@@ -8,7 +8,7 @@ import main
 import enum
 
 
-class OurCornerKick(standard_play.StandardPlay):
+class OurCornerKick(play.Play):
 
     MinChipRange = 0.3
     MaxChipRange = 3.0

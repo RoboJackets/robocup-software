@@ -4,7 +4,6 @@ import behavior
 import constants
 import enum
 
-import standard_play
 import evaluation.ball
 import evaluation.passing_positioning
 import tactics.coordinated_pass
@@ -14,9 +13,9 @@ import tactics.advance_zone_midfielder
 import skills.move
 import skills.capture
 from situations import Situation
+import play
 
-
-class AdaptiveFormation(standard_play.StandardPlay):
+class AdaptiveFormation(play.Play):
 
 
 

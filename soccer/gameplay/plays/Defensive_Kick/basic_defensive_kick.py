@@ -3,7 +3,7 @@ import robocup
 import behavior
 import constants
 
-import standard_play
+import play
 import skills.line_kick
 import tactics.coordinated_pass
 import enum
@@ -16,7 +16,7 @@ from situations import Situation
 # will chip to the one directly in front of the kicking robot
 
 
-class BasicDefensiveKick(standard_play.StandardPlay):
+class BasicDefensiveKick(play.Play):
 
     _situationList = [
         Situation.DEFENSIVE_KICK

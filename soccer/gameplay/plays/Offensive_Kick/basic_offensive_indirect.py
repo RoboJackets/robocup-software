@@ -3,7 +3,7 @@ import robocup
 import behavior
 import constants
 
-import standard_play
+import play
 import skills.line_kick
 import tactics.coordinated_pass
 import enum
@@ -21,7 +21,7 @@ from situations import Situation
 #
 
 
-class BasicOffensiveIndirect(standard_play.StandardPlay):
+class BasicOffensiveIndirect(play.Play):
 
     _situationList = [
         Situation.OFFENSIVE_KICK

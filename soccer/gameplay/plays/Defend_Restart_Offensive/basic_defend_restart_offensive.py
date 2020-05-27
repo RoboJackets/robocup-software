@@ -4,7 +4,7 @@ import behavior
 import constants
 import enum
 
-import standard_play
+import play
 import tactics.positions.submissive_goalie as submissive_goalie
 import tactics.positions.submissive_defender as submissive_defender
 import evaluation.opponent as eval_opp
@@ -17,10 +17,10 @@ from situations import Situation
 ## Restart that uses standard defense and uses the remaining
 #  robots to form a wall
 #
-class BasicDefendRestartDefensive(standard_play.StandardPlay):
+class BasicDefendRestartOffensive(play.Play):
 
     _situationList = [
-        Situation.DEFEND_RESTART_DEFENSIVE
+        Situation.DEFEND_RESTART_OFFENSIVE
     ] # yapf: disable
 
     def __init__(self, num_defenders=2):

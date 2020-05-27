@@ -4,10 +4,11 @@ import behavior
 import constants
 import enum
 
-import standard_play
+import play
 import evaluation.ball
 import evaluation.passing_positioning
 import tactics.coordinated_pass
+import tactics.coordinated_block
 import tactics.defensive_forward
 import tactics.simple_zone_midfielder
 import tactics.advance_zone_midfielder
@@ -20,7 +21,7 @@ from situations import Situation
 # Adaptive attack is a play derived from the legacy play adaptive formation.
 # It is basically adaptive formation with the clearing state removed.
 #
-class AdaptiveAttack(standard_play.StandardPlay):
+class AdaptiveAttack(play.Play):
 
     _situationList = [
         Situation.ATTACK_GOAL
@@ -55,6 +56,7 @@ class AdaptiveAttack(standard_play.StandardPlay):
     NELDER_MEAD_ARGS = (robocup.Point(0.5, 2), \
                         robocup.Point(0.01, 0.01), 1, 2, \
                         0.75, 0.5, 50, 1, 0.1)
+
 
     class State(enum.Enum):
         # Collect the ball / Full court defense
@@ -93,6 +95,8 @@ class AdaptiveAttack(standard_play.StandardPlay):
         self.check_dribbling_timer_cutoff = 100
 
         self.kick_eval = robocup.KickEvaluator(main.system_state())
+
+        self.cord_block = tactics.coordinated_block.CoordinatedBlock()
 
         for r in main.our_robots():
             self.kick_eval.add_excluded_robot(r)
@@ -136,6 +140,8 @@ class AdaptiveAttack(standard_play.StandardPlay):
             AdaptiveAttack.State.shooting, AdaptiveAttack.State.collecting,
             lambda: self.subbehavior_with_name('kick').is_done_running(),
             'Shooting: Ball Lost / Shot')
+
+        self.add_subbehavior(self.cord_block, 'block', required=True)
 
     @classmethod
     def score(cls):
@@ -195,14 +201,16 @@ class AdaptiveAttack(standard_play.StandardPlay):
         return any(r.has_ball() for r in main.our_robots())
 
     def on_enter_collecting(self):
-        self.remove_all_subbehaviors()
+        #We shouldn't need this here, I suspect this was a quick bug fix
+        #self.remove_all_subbehaviors()
 
         # 2 man to man defenders and 1 zone defender
         defensive_forward = tactics.defensive_forward.DefensiveForward()
         self.add_subbehavior(defensive_forward, 'defend', required=True)
 
     def on_exit_collecting(self):
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior('defend')
+        #self.remove_all_subbehaviors()
 
     def on_enter_dribbling(self):
         self.dribbler = skills.dribble.Dribble()

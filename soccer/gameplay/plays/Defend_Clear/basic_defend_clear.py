@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills
 import main
@@ -7,7 +7,7 @@ from situations import Situation
 ## Simplistic play to handle defend clear situation
 #  Mimicks basic122 offense. One pivot kick and two marking robots
 #
-class BaiscDefendClear(standard_play.StandardPlay):
+class BaiscDefendClear(play.Play):
 
     _situationList = [
         Situation.DEFEND_CLEAR

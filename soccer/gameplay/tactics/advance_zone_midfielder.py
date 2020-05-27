@@ -12,7 +12,6 @@ import evaluation.passing_positioning
 import evaluation.passing
 import evaluation.shooting
 import functools
-import plays.Legacy.adaptive_formation
 
 
 # 2 midfielder rely on the future location of their teammate to pass quickly

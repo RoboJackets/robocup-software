@@ -5,7 +5,7 @@ import constants
 import enum
 import math
 
-import standard_play
+import play
 import evaluation
 from situations import Situation
 import tactics.coordinated_pass
@@ -20,7 +20,7 @@ import random
 #
 
 
-class BasicOffensivePileup(standard_play.StandardPlay):
+class BasicOffensivePileup(play.Play):
 
     _situation_list = [
         Situation.OFFENSIVE_PILEUP,

@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills.move
 import skills.pivot_kick
@@ -13,7 +13,7 @@ import evaluation.shooting
 import enum
 
 
-class OurFreeKick(standard_play.StandardPlay):
+class OurFreeKick(play.Play):
     Running = False
     BumpKickPower = 0.01
     FullKickPower = 1

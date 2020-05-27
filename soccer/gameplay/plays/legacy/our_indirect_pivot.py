@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills
 import tactics
@@ -9,7 +9,7 @@ import enum
 import evaluation.passing
 
 
-class OurIndirectPivot(standard_play.StandardPlay):
+class OurIndirectPivot(play.Play):
     class State(enum.Enum):
         passing = 1
         kicking = 2

@@ -1,4 +1,3 @@
-import standard_play
 import behavior
 import main
 import robocup

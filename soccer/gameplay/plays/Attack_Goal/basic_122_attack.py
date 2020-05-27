@@ -1,4 +1,3 @@
-import standard_play
 import behavior
 import skills
 import tactics
@@ -8,13 +7,13 @@ import evaluation
 import constants
 import math
 from situations import Situation
-
+import play
 
 ##
 #
 # This is just the legacy play basic122 copied over again
 #
-class Basic122(standard_play.StandardPlay):
+class Basic122(play.Play):
 
     _situationList = [
         Situation.ATTACK_GOAL

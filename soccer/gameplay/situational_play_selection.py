@@ -6,7 +6,7 @@ from enum import Enum
 import constants
 from situations import Situation
 from typing import List, Dict
-import standard_play
+import play
 
 
 ## Class for breaking gameplay down into discrete states to aid in play selection
@@ -341,8 +341,7 @@ class SituationalPlaySelector:
                 abs(time.time() - self.situationChangeTime) >
                 self.preemptTime):
             #Check to see if the play is a standard play before trying to preempt
-            if (currentPlay != None and isinstance(
-                    currentPlay, standard_play.StandardPlay) and self.enabled):
+            if (currentPlay != None and self.enabled):
                 if (currentPlay.try_preempt()):
                     print("Play has been preempted!")
                     self.situationChanged = False

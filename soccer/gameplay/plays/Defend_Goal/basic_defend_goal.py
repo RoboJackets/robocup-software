@@ -4,7 +4,7 @@ import behavior
 import constants
 import enum
 
-import standard_play
+import play
 import tactics.positions.submissive_goalie as submissive_goalie
 import tactics.positions.submissive_defender as submissive_defender
 import evaluation.opponent as eval_opp
@@ -21,7 +21,7 @@ from situations import Situation
 #  By default, we will use standard defense (two submissive
 #  defenders, one goalie) and two wing defense robots. The
 #  remaining robot will mark the highest threat robot.
-class BasicDefendGoal(standard_play.StandardPlay):
+class BasicDefendGoal(play.Play):
 
     _situationList = [
         Situation.DEFEND_GOAL

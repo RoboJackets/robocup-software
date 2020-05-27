@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import tactics.positions.defender
 import tactics.stopped.circle_on_center
@@ -9,7 +9,7 @@ import constants
 import planning_priority
 
 
-class TheirKickoff(standard_play.StandardPlay):
+class TheirKickoff(play.Play):
 
     # Distance from the center line we should mark from (the mark target distance from the line)
     LineBuffer = constants.Robot.Radius * 3

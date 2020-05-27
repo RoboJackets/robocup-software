@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import tactics.positions.defender
 import skills.mark
@@ -7,7 +7,7 @@ import main
 import robocup
 import constants
 
-class TheirRestart(standard_play.StandardPlay):
+class TheirRestart(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 

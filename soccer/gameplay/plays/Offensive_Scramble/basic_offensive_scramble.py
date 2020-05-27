@@ -4,7 +4,7 @@ import behavior
 import constants
 import enum
 
-import standard_play
+import play
 import evaluation
 from situations import Situation
 import tactics.coordinated_pass
@@ -18,7 +18,7 @@ import skills.capture
 #
 
 
-class BasicOffensiveScramble(standard_play.StandardPlay):
+class BasicOffensiveScramble(play.Play):
 
     _situationList = [
         Situation.OFFENSIVE_SCRAMBLE

@@ -1,4 +1,3 @@
-import standard_play
 import behavior
 import tactics.stopped.circle_near_ball
 import tactics.stopped.circle_on_center
@@ -6,11 +5,11 @@ import main
 import enum
 import robocup
 import constants
-
+import play
 
 ## When we get the Stopped command from the referee, we run this play.
 # See the rules to see what we're allowed to do while the game is stopped
-class Stopped(standard_play.StandardPlay):
+class Stopped(play.Play):
     class State(enum.Enum):
         normal = 1  # Normal
         center = 2  # Ball is in the center

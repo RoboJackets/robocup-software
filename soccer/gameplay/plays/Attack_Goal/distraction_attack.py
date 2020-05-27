@@ -3,11 +3,11 @@ import robocup
 import behavior
 import constants
 import enum
-import standard_play
 import evaluation
 import tactics.coordinated_pass
 import skills.move
 import skills.capture
+import play
 from situations import Situation
 
 
@@ -15,7 +15,7 @@ from situations import Situation
 #
 # A play written to use a distraction to draw the opponents defence off center before taking a shot
 #
-class Distraction(standard_play.StandardPlay):
+class Distraction(play.Play):
 
 
     _situationList = [

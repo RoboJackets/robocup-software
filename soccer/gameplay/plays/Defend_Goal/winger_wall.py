@@ -2,7 +2,7 @@ import composite_behavior
 import behavior
 import constants
 import robocup
-import standard_play
+import play
 import evaluation.passing
 import evaluation.defensive_positioning
 import evaluation.path
@@ -19,7 +19,7 @@ import tactics.wall as wall
 from situations import Situation
 
 ## Defense play that utilizes a wall and wingers
-class WingerWall(standard_play.StandardPlay):
+class WingerWall(play.Play):
 
 
     _situationList = [

@@ -3,13 +3,13 @@ import robocup
 import behavior
 import constants
 
-import standard_play
+import play
 import skills.line_kick
 import tactics.coordinated_pass
 import enum
 import skills.move
 
-class BasicIndirect(standard_play.StandardPlay):
+class BasicIndirect(play.Play):
 
     class State(enum.Enum):
 

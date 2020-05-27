@@ -8,7 +8,7 @@ import logging
 from PyQt5 import QtCore
 import main
 import evaluation.double_touch
-import tactics.positions.goalie
+#import tactics.positions.goalie
 import role_assignment
 from role_assignment import AssignedRoleReqTree
 import traceback
@@ -140,28 +140,34 @@ class RootPlay(Play, QtCore.QObject):
             self.assign_roles(assignments)
 
     def handle_subbehavior_exception(self, name, exception):
+        """ 
         if name == 'goalie':
             logging.error("Goalie encountered an exception: " + str(exception)
                           + ".  Reloading goalie behavior")
             traceback.print_exc()
             self.drop_goalie_behavior()
         else:
-            logging.error("Play '" + self.play.__class__.__name__ +
-                          "' encountered an exception: " + str(exception) +
-                          ".  Dropping and temp. blacklisting current play...")
-            traceback.print_exc()
-            self.drop_current_play(temporarily_blacklist=True)
+        """
+        logging.error("Play '" + self.play.__class__.__name__ +
+                      "' encountered an exception: " + str(exception) +
+                      ".  Dropping and temp. blacklisting current play...")
+        traceback.print_exc()
+        self.drop_current_play(temporarily_blacklist=True)
+    
 
     # this is used to force a reselection of a play
     def drop_current_play(self, temporarily_blacklist=False):
-        self.temporarily_blacklisted_play_class = self.play.__class__
+        if(temporarily_blacklist): 
+            self.temporarily_blacklisted_play_class = self.play.__class__
         self.play = None
 
     # this is called when the goalie behavior must be reloaded (for example when the goalie.py file is modified)
+    """ 
     def drop_goalie_behavior(self):
         if self.has_subbehavior_with_name('goalie'):
             self.remove_subbehavior('goalie')
         self.setup_goalie_if_needed()
+    """
 
     @property
     def play(self) -> Optional[Play]:
@@ -178,13 +184,13 @@ class RootPlay(Play, QtCore.QObject):
             self._play = value
 
             # see if this play handles the goalie by itself
-            if value.__class__.handles_goalie():
-                self.drop_goalie_behavior()
+            #if value.__class__.handles_goalie():
+            #    self.drop_goalie_behavior()
 
             self.add_subbehavior(value, name='play', required=True)
 
         # make sure somebody handles the goalie
-        self.setup_goalie_if_needed()
+        #self.setup_goalie_if_needed()
 
         # change notification so ui can update if necessary
         self.play_changed.emit(self.play.__class__.__name__ if self.
@@ -197,6 +203,7 @@ class RootPlay(Play, QtCore.QObject):
         goalie = main.context().game_state.get_goalie_id()
         return None if goalie == -1 else goalie
 
+    """
     def setup_goalie_if_needed(self):
         if self.goalie_id is None:
             if self.has_subbehavior_with_name('goalie'):
@@ -212,6 +219,7 @@ class RootPlay(Play, QtCore.QObject):
 
             if goalie is not None:
                 goalie.shell_id = self.goalie_id
+    """
 
     @property
     def robots(self):

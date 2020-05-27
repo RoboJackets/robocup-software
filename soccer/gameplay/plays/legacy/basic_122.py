@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import skills
 import tactics
@@ -10,7 +10,7 @@ import math
 from situations import Situation
 
 
-class Basic122(standard_play.StandardPlay):
+class Basic122(play.Play):
 
     _situationList = [
         Situation.CLEAR,
@@ -72,7 +72,6 @@ class Basic122(standard_play.StandardPlay):
 
 
     def execute_running(self):
-        super().execute_running()
         striker = self.subbehavior_with_name('striker')
         support1 = self.subbehavior_with_name('support1')
         support2 = self.subbehavior_with_name('support2')

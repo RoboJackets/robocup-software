@@ -1,4 +1,4 @@
-import standard_play
+import play
 import behavior
 import robocup
 import skills
@@ -13,7 +13,7 @@ import enum
 # otherwise, chips/kicks the ball to opposite side of field and
 # sends another robot to go intercept
 # NOTE: this is a por of the C++ OurGoalKick2, NOT OurGoalKick (it was trashed)
-class OurGoalKick(standard_play.StandardPlay):
+class OurGoalKick(play.Play):
 
     # tunable params
     MinChipRange = 0.3
