@@ -34,8 +34,6 @@ class Distraction(play.Play):
     def __init__(self):
         super().__init__(continuous=False)
 
-        raise NotImplementedError("This play currently has subbehavior adding and removal issues")
-
         for s in Distraction.State:
             self.add_state(s, behavior.Behavior.State.running)
 
@@ -165,6 +163,9 @@ class Distraction(play.Play):
         #capture ball and get striker and distractor in position
         self.add_subbehavior(
             skills.capture.Capture(), 'capture', required=True)
+
+        #I've put this here instead of in init in part to test the new blacklist system
+        raise NotImplementedError("This play has subbehavior removal issues, has no defense, and needs some work in general")
 
         if not self.distracter_get_close_ball:
             self.add_subbehavior(

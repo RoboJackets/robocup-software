@@ -39,7 +39,6 @@ class TwoSideAttack(play.Play):
     def __init__(self):
         super().__init__(continuous=False)
 
-        raise NotImplementedError("This play does not have a defense and must be fixed before it can be used")
     
         self.add_state(TwoSideAttack.State.setup,
                        behavior.Behavior.State.running)
@@ -90,6 +89,10 @@ class TwoSideAttack(play.Play):
             return 9 if main.game_state().is_playing() else float("inf")
 
     def on_enter_setup(self):
+   
+        #I've put this here partially to test the blacklist system
+        raise NotImplementedError("This play does not have a defense and must be fixed before it can be used")
+        
         # Add subbehaviors based on information
         capture = skills.capture.Capture()
         self.add_subbehavior(skills.move.Move(self.robot_points[0]),

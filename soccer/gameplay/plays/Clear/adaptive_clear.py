@@ -136,6 +136,8 @@ class AdaptiveClear(play.Play):
             lambda: self.subbehavior_with_name('clear').is_done_running(),
             'Clearing: Ball Lost')
 
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+
     @classmethod
     def score(cls) -> float:
         score = super().score()
@@ -192,14 +194,13 @@ class AdaptiveClear(play.Play):
         return any(r.has_ball() for r in main.our_robots())
 
     def on_enter_collecting(self) -> None:
-        self.remove_all_subbehaviors()
 
         # 2 man to man defenders and 1 zone defender
         defensive_forward = tactics.defensive_forward.DefensiveForward()
         self.add_subbehavior(defensive_forward, 'defend', required=True)
 
     def on_exit_collecting(self) -> None:
-        self.remove_all_subbehaviors()
+        self.remove_subbehavior('defend')
 
     def on_enter_dribbling(self) -> None:
         self.dribbler = skills.dribble.Dribble()

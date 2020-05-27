@@ -8,6 +8,7 @@ import play
 import evaluation
 from situations import Situation
 import tactics.coordinated_pass
+import tactics.coordinated_block
 import skills.move
 import skills.capture
 import random
@@ -71,8 +72,9 @@ class BasicClear(play.Play):
             lambda: self.subbehavior_with_name('Capture ball').is_done_running(
             ), 'After ball is captured')
 
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+
     def on_enter_get_ball(self):
-        self.remove_all_subbehaviors()
         #Capture the ball and move robot up
         self.add_subbehavior(
             skills.capture.Capture(), 'Capture ball', required=True)
@@ -85,9 +87,16 @@ class BasicClear(play.Play):
                 'move to point ' + str(count),
                 required=False)
 
+    def on_exit_get_ball(self):
+        self.remove_subbehavior('Capture ball')
+        count = 0
+        for i in self.offense_points:
+            count += 1
+            self.remove_subbehavior('move to point ' + str(count))
+
+
     def on_enter_clear_ball(self):
         #Chip ball to either offense points, while still moving robots up
-        self.remove_all_subbehaviors()
 
         num = random.randint(0, 1)
         self.add_subbehavior(
@@ -100,3 +109,13 @@ class BasicClear(play.Play):
             skills.move.Move(self.offense_points[1 - num]),
             'keep moving',
             required=False)
+
+    def on_exit_clear_ball(self):
+        self.remove_subbehavior('clear')
+        self.remove_subbehavior('keep moving')
+
+
+
+
+
+
