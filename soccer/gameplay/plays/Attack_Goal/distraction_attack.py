@@ -34,6 +34,8 @@ class Distraction(play.Play):
     def __init__(self):
         super().__init__(continuous=False)
 
+        raise NotImplementedError("This play currently has subbehavior adding and removal issues")
+
         for s in Distraction.State:
             self.add_state(s, behavior.Behavior.State.running)
 
@@ -181,6 +183,7 @@ class Distraction(play.Play):
     def on_exit_setup(self):
         #Somthing wack is going on here because sometimes this capture subbehavior does not exist, which is the only one that should always exist
         self.remove_subbehavior('capture')
+        #TODO: fix the removals so that they actually work, I've fixed the remove_all abuse but the regular removed need some work and I don't get why they are breaking
         self.remove_subbehavior('distract moves')
         self.remove_subbehavior('striker moves')
 

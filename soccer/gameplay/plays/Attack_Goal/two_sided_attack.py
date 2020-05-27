@@ -39,6 +39,8 @@ class TwoSideAttack(play.Play):
     def __init__(self):
         super().__init__(continuous=False)
 
+        raise NotImplementedError("This play does not have a defense and must be fixed before it can be used")
+    
         self.add_state(TwoSideAttack.State.setup,
                        behavior.Behavior.State.running)
         self.add_state(TwoSideAttack.State.passing,
