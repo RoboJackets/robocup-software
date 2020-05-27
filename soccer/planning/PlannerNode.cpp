@@ -17,17 +17,20 @@ void PlannerNode::run() {
     std::map<int, Planning::PlanRequest> requests =
         buildPlanRequests(global_obstacles);
 
+    const double granularity = 0.1;
+
     // Run path planner and set the path for each robot that was planned for
     auto pathsById = path_planner_->run(std::move(requests));
-    for (auto& entry : pathsById) {
-        OurRobot* r = context_->state.self[entry.first];
-        auto& path = entry.second;
+    for (auto&& [shell, path] : pathsById) {
+        OurRobot* r = context_->state.self[shell];
         path->draw(&context_->debug_drawer, Qt::magenta, "Planning");
         path->drawDebugText(&context_->debug_drawer);
-        r->setPath(std::move(path));
 
-        r->angleFunctionPath().angleFunction =
+        const auto angle_function =
             angleFunctionForCommandType(r->rotationCommand());
+
+        context_->trajectories[shell] = Trajectory::Trajectory{
+            std::move(path), angle_function, granularity};
     }
 
     // Visualize obstacles
@@ -53,7 +56,7 @@ std::map<int, Planning::PlanRequest> PlannerNode::buildPlanRequests(
     for (OurRobot* r : context_->state.self) {
         if (r != nullptr && r->visible()) {
             if (context_->game_state.state == GameState::Halt) {
-                r->setPath(nullptr);
+                r->clearTrajectory();
                 continue;
             }
 
@@ -83,9 +86,9 @@ std::map<int, Planning::PlanRequest> PlannerNode::buildPlanRequests(
                 Planning::PlanRequest(
                     context_, Planning::MotionInstant(r->pos(), r->vel()),
                     r->motionCommand()->clone(), r->robotConstraints(),
-                    std::move(r->angleFunctionPath().path),
-                    std::move(staticObstacles), std::move(dynamicObstacles),
-                    r->shell(), r->getPlanningPriority()));
+                    r->trajectory_mut().takePath(), std::move(staticObstacles),
+                    std::move(dynamicObstacles), r->shell(),
+                    r->getPlanningPriority()));
         }
     }
     return requests;

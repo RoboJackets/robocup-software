@@ -177,9 +177,18 @@ public:
     }
 
     /**
-     * Returns a const reference to the path of the robot.
+     * \brief Returns a const reference to the trajectory of the robot.
      */
-    const Planning::Path& path() { return _context->paths[shell()]; }
+    [[nodiscard]] const Trajectory::Trajectory& trajectory() const {
+        return _context->trajectories[shell()];
+    }
+
+    /**
+     * \brief Returns a mutable reference to the trajectory of the robot.
+     */
+    Trajectory::Trajectory& trajectory_mut() {
+        return _context->trajectories[shell()];
+    }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -449,8 +458,6 @@ public:
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
 
-    void setPath(std::unique_ptr<Planning::Path> path);
-
     /**
      * Sets the priority which paths are planned.
      * Higher priority values are planned first.
@@ -465,15 +472,13 @@ public:
 
     void setPID(double p, double i, double d);
 
+    /**
+     * \brief Clears the trajectory for the current robot
+     */
+    void clearTrajectory() { _context->trajectories[shell()].clear(); }
+
     void setJoystickControlled(bool joystickControlled);
     bool isJoystickControlled() const;
-
-    /**
-     * \brief Get a mutable reference to the angle function path.
-     */
-    Planning::AngleFunctionPath& angleFunctionPath() {
-        return _context->paths[shell()];
-    }
 
 protected:
     /**

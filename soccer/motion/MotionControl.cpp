@@ -36,7 +36,7 @@ MotionControl::MotionControl(Context* context, int shell_id)
       _config(context->robot_config.get()) {}
 
 void MotionControl::run(const RobotState& state,
-                        const Planning::AngleFunctionPath& path,
+                        const Trajectory::Trajectory& trajectory,
                         bool is_joystick_controlled, MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -45,7 +45,7 @@ void MotionControl::run(const RobotState& state,
         return;
     }
 
-    if (!state.visible || !path.path) {
+    if (!state.visible || !trajectory.hasPath()) {
         stop(setpoint);
         return;
     }
@@ -55,14 +55,15 @@ void MotionControl::run(const RobotState& state,
     // We run this at 60Hz, so we want to do motion control off of the goal
     // position for the next frame. Evaluate the path there.
     RJ::Seconds dt(1.0 / 60);
-    RJ::Seconds time_into_path = (RJ::now() - path.startTime()) + dt;
+    RJ::Seconds time_into_path = (RJ::now() - trajectory.startTime()) + dt;
 
-    std::optional<RobotInstant> maybe_target = path.evaluate(time_into_path);
+    std::optional<RobotInstant> maybe_target =
+        trajectory.evaluate(time_into_path);
 
     // If we're past the end of the path, do motion control off of the end.
-    bool at_end = time_into_path > path.getDuration();
+    bool at_end = time_into_path > trajectory.getDuration();
     if (at_end) {
-        maybe_target = path.end();
+        maybe_target = trajectory.end();
     }
 
     std::optional<Pose> maybe_pose_target;

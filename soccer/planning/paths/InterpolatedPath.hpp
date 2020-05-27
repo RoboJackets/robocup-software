@@ -67,6 +67,13 @@ public:
     /** constructor from two points */
     InterpolatedPath(RobotInstant p0, RobotInstant p1);
 
+    /**
+     * \brief Constructor for when you have all the entries
+     * @param entries
+     */
+    InterpolatedPath(std::vector<Entry>&& entries)
+        : waypoints{std::move(entries)} {};
+
     /// Adds an instant at the end of the path for the given time.
     /// Time should not bet less than the last time.
     void addInstant(RJ::Seconds time, RobotInstant instant) {

@@ -244,7 +244,7 @@ void OurRobot::intercept(Point target) {
 void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
         std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
-    setPath(nullptr);
+    clearTrajectory();
     _cmdText << "worldVel(" << targetWorldVelocity.x() << ", "
              << targetWorldVelocity.y() << ")" << endl;
 }
@@ -482,10 +482,6 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
 }
 
 #pragma mark Motion
-
-void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    angleFunctionPath().path = std::move(path);
-}
 
 std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
     vector<Planning::DynamicObstacle> obstacles;
