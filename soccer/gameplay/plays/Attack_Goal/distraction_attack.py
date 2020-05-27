@@ -9,7 +9,7 @@ import skills.move
 import skills.capture
 import play
 from situations import Situation
-
+import tactics.coordinated_block
 
 ##
 #
@@ -160,7 +160,6 @@ class Distraction(play.Play):
             subbehavior_with_name('shooting').is_done_running(), 'repeat')
 
     def on_enter_setup(self):
-        self.remove_all_subbehaviors()
         #capture ball and get striker and distractor in position
         self.add_subbehavior(
             skills.capture.Capture(), 'capture', required=True)
@@ -178,8 +177,14 @@ class Distraction(play.Play):
                 required=False,
                 priority=10)
 
+
+    def on_exit_setup(self):
+        #Somthing wack is going on here because sometimes this capture subbehavior does not exist, which is the only one that should always exist
+        self.remove_subbehavior('capture')
+        self.remove_subbehavior('distract moves')
+        self.remove_subbehavior('striker moves')
+
     def on_enter_optional_adjustment(self):
-        self.remove_all_subbehaviors()
         #if the ball is too far then the distractor moves to the center
         self.add_subbehavior(
             skills.capture.Capture(), 'capture 2', required=True)
@@ -190,8 +195,12 @@ class Distraction(play.Play):
             'make striker stay',
             required=True)
 
+    def on_exit_optional_adjustment(self):
+        self.remove_subbehavior('capture 2')
+        self.remove_subbehavior('move half')
+        self.remove_subbehavior('make striker stay')
+
     def on_enter_center_pass(self):
-        self.remove_all_subbehaviors()
         #pass the ball to the robot in the center and move a robot to the distract position
         self.add_subbehavior(
             tactics.coordinated_pass.CoordinatedPass(self.center),
@@ -203,8 +212,11 @@ class Distraction(play.Play):
             required=False,
             priority=10)
 
+    def on_exit_center_pass(self):
+        self.remove_subbehavior('center pass')
+        self.remove_subbehavior('move back to distract')
+
     def on_enter_passing(self):
-        self.remove_all_subbehaviors()
         #either pass to striker or distracter depending on shot chance
         pass_to_distract_chance = evaluation.passing.eval_pass(
             main.ball().pos, self.Distraction_recieve_pass_point,
@@ -227,8 +239,11 @@ class Distraction(play.Play):
             'distract pass',
             required=True)
 
+    def on_exit_passing(self):
+        self.remove_subbehavior('make striker stay again')
+        self.remove_subbehavior('distract pass') 
+
     def on_enter_cross(self):
-        self.remove_all_subbehaviors()
         #if the ball is passed to the distractor the ball is passed to the striker, as the third robot moves to the right to distract more
         #add chip here if pass chance is low
         self.add_subbehavior(
@@ -241,8 +256,11 @@ class Distraction(play.Play):
             required=False,
             priority=10)
 
+    def on_exit_cross(self):
+        self.remove_subbehavior('pass to striker')
+        self.remove_subbehavior('shift right')
+
     def on_enter_shoot(self):
-        self.remove_all_subbehaviors()
         #Depending on shot and pass chances,
         #the striker will shoot
         #or
@@ -264,11 +282,15 @@ class Distraction(play.Play):
             required=True)
         self.add_subbehavior(
             skills.move.Move(self.Distraction_point),
-            'make distracor stay',
+            'make distractor stay',
             required=False,
             priority=10)
         self.add_subbehavior(
             skills.pivot_kick.PivotKick(), 'shooting', required=True)
+
+    def on_exit_shoot(self):
+        self.remove_subbehavior('make first distractor stay again')
+        self.remove_subbehavior('make distractor stay')
 
     @classmethod
     def score(cls):
