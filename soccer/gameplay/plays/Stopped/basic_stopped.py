@@ -9,7 +9,7 @@ import play
 
 ## When we get the Stopped command from the referee, we run this play.
 # See the rules to see what we're allowed to do while the game is stopped
-class Stopped(play.Play):
+class BasicStopped(play.Play):
     class State(enum.Enum):
         normal = 1  # Normal
         center = 2  # Ball is in the center

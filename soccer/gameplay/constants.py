@@ -29,6 +29,10 @@ class Robot:
     ChipClearance = (
         .1, .6)  # min and max distance a chip will go over another robot
 
+    class Chipper:
+        MinChipRange = 0.3
+        MaxChipRange = 3
+
     class Dribbler:
         MaxPower = 127
 

@@ -7,7 +7,6 @@ import constants
 import robocup
 import math
 import main
-import plays.restarts.our_free_kick as our_free_kick
 import tactics.coordinated_pass
 import evaluation.passing_positioning
 from enum import Enum
@@ -139,8 +138,8 @@ class OurShootoutChip(play.Play):
         # setup chipper
         kicker = skills.pivot_kick.PivotKick()
         kicker.use_chipper = True
-        kicker.min_chip_range = our_free_kick.OurFreeKick.MinChipRange
-        kicker.max_chip_range = our_free_kick.OurFreeKick.MaxChipRange
+        kicker.min_chip_range = constants.Robot.Chipper.MinChipRange
+        kicker.max_chip_range = constants.Robot.Chipper.MaxChipRange
         #calculate target
         kicker.target = constants.Field.TheirGoalSegment
         kicker.aim_params['desperate_timeout'] = 3

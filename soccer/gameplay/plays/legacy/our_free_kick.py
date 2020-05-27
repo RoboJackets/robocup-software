@@ -19,8 +19,8 @@ class OurFreeKick(play.Play):
     FullKickPower = 1
     MaxShootingAngle = 80
     # Untested as of now
-    MaxChipRange = 3
-    MinChipRange = 0.3
+    MaxChipRange = constants.Robot.Chipper.MaxChipRange
+    MinChipRange = constants.Robot.Chipper.MinChipRange
 
     MIN_PASS_DIST = 0.2
 

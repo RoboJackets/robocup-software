@@ -8,6 +8,7 @@ import constants
 import math
 from situations import Situation
 import play
+import tactics.coordinated_block
 
 ##
 #
@@ -56,6 +57,8 @@ class Basic122(play.Play):
         support2 = skills.mark.Mark()
         support2.mark_line_thresh = 1.0
         self.add_subbehavior(support2, 'support2', required=False, priority=1)
+        
+        self.add_subbehavior(coordinated_block.CoordinatedBlock, 'block', required=True)
 
     @classmethod
     def score(cls):
@@ -69,7 +72,6 @@ class Basic122(play.Play):
             return 10 if main.game_state().is_playing() else float("inf")
 
     def execute_running(self):
-        super().execute_running()
         striker = self.subbehavior_with_name('striker')
         support1 = self.subbehavior_with_name('support1')
         support2 = self.subbehavior_with_name('support2')
