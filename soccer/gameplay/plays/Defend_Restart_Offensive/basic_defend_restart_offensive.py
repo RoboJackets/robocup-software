@@ -12,6 +12,7 @@ import tactics.positions.wing_defender as wing_defender
 import skills.mark as mark
 import tactics.wall as wall
 from situations import Situation
+import tactics.coordinated_block
 
 
 ## Restart that uses standard defense and uses the remaining
@@ -33,3 +34,4 @@ class BasicDefendRestartOffensive(play.Play):
                             'Immediately')
 
         self.add_subbehavior(wall.Wall(), 'wall', required=False)
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal', required=True)

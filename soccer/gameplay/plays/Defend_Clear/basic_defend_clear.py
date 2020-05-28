@@ -3,6 +3,8 @@ import behavior
 import skills
 import main
 from situations import Situation
+import tactics.coordinated_block
+
 
 ## Simplistic play to handle defend clear situation
 #  Mimicks basic122 offense. One pivot kick and two marking robots
@@ -26,6 +28,9 @@ class BaiscDefendClear(play.Play):
             mark_skill = skills.mark.Mark()
             mark_skill.mark_robot = best_opps_to_mark[i]
             self.add_subbehavior(mark_skill, 'mark' + str(i))
+    
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+
 
     ## Returns the robots that are closest to our goal
     #

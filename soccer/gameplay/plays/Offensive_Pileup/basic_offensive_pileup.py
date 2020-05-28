@@ -12,6 +12,7 @@ import tactics.coordinated_pass
 import skills.move
 import skills.capture
 import random
+import tactics.coordinated_block
 
 ## Basic Offensive Pileup play
 # Has one robot capture the ball
@@ -33,6 +34,9 @@ class BasicOffensivePileup(play.Play):
         self.add_transition(behavior.Behavior.State.start,
                             behavior.Behavior.State.running, lambda: True,
                             'Immediately')
+
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+
 
     def on_enter_running(self):
         ball = main.ball().pos

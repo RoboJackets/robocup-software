@@ -13,7 +13,7 @@ import skills.mark as mark
 import skills.capture as capture
 import situational_play_selection
 from situations import Situation
-
+import tactics.coordinated_block
 
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal and cause one robot to capture.
@@ -47,6 +47,9 @@ class BasicDefensiveScramble(play.Play):
         for i in range(self.num_wingers):
             self.add_subbehavior(wing_defender.WingDefender(),
                                  'winger' + str(i))
+
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+
 
     def execute_running(self):
 
