@@ -15,6 +15,7 @@ import skills.capture
 from situations import Situation
 import play
 
+
 class AdaptiveFormation(play.Play):
 
 

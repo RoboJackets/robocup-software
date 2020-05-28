@@ -72,7 +72,8 @@ class BasicClear(play.Play):
             lambda: self.subbehavior_with_name('Capture ball').is_done_running(
             ), 'After ball is captured')
 
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal')
 
     def on_enter_get_ball(self):
         #Capture the ball and move robot up
@@ -94,7 +95,6 @@ class BasicClear(play.Play):
             count += 1
             self.remove_subbehavior('move to point ' + str(count))
 
-
     def on_enter_clear_ball(self):
         #Chip ball to either offense points, while still moving robots up
 
@@ -113,9 +113,3 @@ class BasicClear(play.Play):
     def on_exit_clear_ball(self):
         self.remove_subbehavior('clear')
         self.remove_subbehavior('keep moving')
-
-
-
-
-
-

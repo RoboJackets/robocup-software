@@ -34,4 +34,6 @@ class BasicDefendRestartDefensive(play.Play):
                             'Immediately')
 
         self.add_subbehavior(wall.Wall(), 'wall', required=False)
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal', required=True)
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal',
+                             required=True)

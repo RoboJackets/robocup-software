@@ -57,8 +57,9 @@ class Basic122(play.Play):
         support2 = skills.mark.Mark()
         support2.mark_line_thresh = 1.0
         self.add_subbehavior(support2, 'support2', required=False, priority=1)
-        
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block')
+
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block')
 
     @classmethod
     def score(cls):

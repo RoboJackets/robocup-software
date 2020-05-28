@@ -7,6 +7,7 @@ import main
 import robocup
 import constants
 
+
 class TheirRestart(play.Play):
     def __init__(self):
         super().__init__(continuous=True)

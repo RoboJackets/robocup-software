@@ -88,13 +88,12 @@ class RootPlay(Play, QtCore.QObject):
             self.temporarily_blacklisted_play_class = None
 
             # checks how many times a play has been dropped and excludes those who exceed the threshold
-            # This does mean that we now have two blacklist systems, one that just drops the play and 
+            # This does mean that we now have two blacklist systems, one that just drops the play and
             # prevents it from being selected next, and another one that tracks overall drops and prevents
             # constantly dropping plays from being run.
             enabled_plays_and_scores = [
-                p
-                for p in enabled_plays_and_scores
-                if self.play_drop_count.get(p[0],0) <= self.play_drop_threshold
+                p for p in enabled_plays_and_scores if
+                self.play_drop_count.get(p[0], 0) <= self.play_drop_threshold
             ]
 
             # see if we need to kill current play or if it's done running
@@ -165,16 +164,19 @@ class RootPlay(Play, QtCore.QObject):
                       ".  Dropping and temp. blacklisting current play...")
         traceback.print_exc()
         self.drop_current_play(temporarily_blacklist=True)
-    
+
 
     # this is used to force a reselection of a play
     def drop_current_play(self, temporarily_blacklist=False):
         print("Drop current play is being run!!!!!")
-        if(temporarily_blacklist): 
+        if (temporarily_blacklist):
             self.temporarily_blacklisted_play_class = self.play.__class__
-            self.play_drop_count[self.play.__class__] = self.play_drop_count.get(self.play.__class__,0) + 1
+            self.play_drop_count[
+                self.play.__class__] = self.play_drop_count.get(
+                    self.play.__class__, 0) + 1
             print("Play blacklisted and drop count incremented")
-            print("New drop count for " + str(self.play.__class__) + " is " + str(self.play_drop_count[self.play.__class__]))
+            print("New drop count for " + str(self.play.__class__) + " is " +
+                  str(self.play_drop_count[self.play.__class__]))
         self.play = None
 
     @property

@@ -35,8 +35,8 @@ class BasicOffensivePileup(play.Play):
                             behavior.Behavior.State.running, lambda: True,
                             'Immediately')
 
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
-
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal')
 
     def on_enter_running(self):
         ball = main.ball().pos

@@ -28,8 +28,9 @@ class BaiscDefendClear(play.Play):
             mark_skill = skills.mark.Mark()
             mark_skill.mark_robot = best_opps_to_mark[i]
             self.add_subbehavior(mark_skill, 'mark' + str(i))
-    
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal')
 
 
     ## Returns the robots that are closest to our goal

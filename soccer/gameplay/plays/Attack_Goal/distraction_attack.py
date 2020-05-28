@@ -165,7 +165,9 @@ class Distraction(play.Play):
             skills.capture.Capture(), 'capture', required=True)
 
         #I've put this here instead of in init in part to test the new blacklist system
-        raise NotImplementedError("This play has subbehavior removal issues, has no defense, and needs some work in general")
+        raise NotImplementedError(
+            "This play has subbehavior removal issues, has no defense, and needs some work in general"
+        )
 
         if not self.distracter_get_close_ball:
             self.add_subbehavior(
@@ -179,7 +181,6 @@ class Distraction(play.Play):
                 'striker moves',
                 required=False,
                 priority=10)
-
 
     def on_exit_setup(self):
         #Somthing wack is going on here because sometimes this capture subbehavior does not exist, which is the only one that should always exist
@@ -245,7 +246,7 @@ class Distraction(play.Play):
 
     def on_exit_passing(self):
         self.remove_subbehavior('make striker stay again')
-        self.remove_subbehavior('distract pass') 
+        self.remove_subbehavior('distract pass')
 
     def on_enter_cross(self):
         #if the ball is passed to the distractor the ball is passed to the striker, as the third robot moves to the right to distract more
@@ -284,11 +285,10 @@ class Distraction(play.Play):
             skills.move.Move(self.Distraction_recieve_pass_point),
             'make first distractor stay again',
             required=True)
-        self.add_subbehavior(
-            skills.move.Move(self.Distraction_point),
-            'make distractor stay',
-            required=False,
-            priority=10)
+        self.add_subbehavior(skills.move.Move(self.Distraction_point),
+                             'make distractor stay',
+                             required=False,
+                             priority=10)
         self.add_subbehavior(
             skills.pivot_kick.PivotKick(), 'shooting', required=True)
 

@@ -136,7 +136,8 @@ class AdaptiveClear(play.Play):
             lambda: self.subbehavior_with_name('clear').is_done_running(),
             'Clearing: Ball Lost')
 
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal')
 
     @classmethod
     def score(cls) -> float:

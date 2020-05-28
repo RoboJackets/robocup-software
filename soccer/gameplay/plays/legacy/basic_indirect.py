@@ -9,6 +9,7 @@ import tactics.coordinated_pass
 import enum
 import skills.move
 
+
 class BasicIndirect(play.Play):
 
     class State(enum.Enum):

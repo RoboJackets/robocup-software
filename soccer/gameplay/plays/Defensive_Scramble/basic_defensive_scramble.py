@@ -48,8 +48,8 @@ class BasicDefensiveScramble(play.Play):
             self.add_subbehavior(wing_defender.WingDefender(),
                                  'winger' + str(i))
 
-        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(), 'block goal')
-
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal')
 
     def execute_running(self):
 
