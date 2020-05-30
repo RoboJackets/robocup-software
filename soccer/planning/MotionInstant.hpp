@@ -36,7 +36,16 @@ struct AngleInstant {
     std::optional<float> angle;
     std::optional<float> angleVel;
 
-    // TODO ashaw596 implement stream operator
+    friend std::ostream& operator<<(std::ostream& stream,
+                                    const AngleInstant& angle_instant) {
+        const auto angle_str =
+            angle_instant.angle ? std::to_string(*angle_instant.angle) : "None";
+        const auto angle_vel_str = angle_instant.angleVel
+                                       ? std::to_string(*angle_instant.angleVel)
+                                       : "None";
+        stream << "AngleInstant(" << angle_str << ", " << angle_vel_str << ")";
+        return stream;
+    }
 };
 
 /**

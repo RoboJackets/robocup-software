@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+#include <sstream>
 #include "Geometry2d/Point.hpp"
 
 namespace Planning {
@@ -10,6 +12,14 @@ public:
     virtual ~RotationCommand() = default;
 
     CommandType getCommandType() const { return commandType; }
+
+    [[nodiscard]] virtual std::string print() const = 0;
+
+    friend std::ostream& operator<<(std::ostream& stream,
+                                    const RotationCommand& rot_cmd) {
+        stream << rot_cmd.print();
+        return stream;
+    }
 
 protected:
     RotationCommand(CommandType command) : commandType(command) {}
@@ -23,6 +33,12 @@ struct FacePointCommand : public RotationCommand {
         : RotationCommand(FacePoint), targetPos(target) {}
 
     const Geometry2d::Point targetPos;
+
+  [[nodiscard]] std::string print() const override {
+      std::stringstream ss;
+      ss << "FacePointCommand(" << targetPos << ")";
+      return ss.str();
+  }
 };
 
 struct FaceAngleCommand : public RotationCommand {
@@ -30,9 +46,19 @@ struct FaceAngleCommand : public RotationCommand {
         : RotationCommand(FaceAngle), targetAngle(radians) {}
 
     const float targetAngle;
+
+  [[nodiscard]] std::string print() const override {
+    std::stringstream ss;
+    ss << "FaceAngleCommand(" << targetAngle << ")";
+    return ss.str();
+  }
 };
 
 struct EmptyAngleCommand : public RotationCommand {
     EmptyAngleCommand() : RotationCommand(None) {}
+
+  [[nodiscard]] std::string print() const override {
+    return "EmptyAngleCommand()";
+  }
 };
-}
+}  // namespace Planning

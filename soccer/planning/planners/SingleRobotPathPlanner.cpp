@@ -102,13 +102,14 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
                     .targetPos;
             std::function<AngleInstant(MotionInstant)> function =
                 [targetPt](MotionInstant instant) {
-                    return AngleInstant(instant.pos.angleTo(targetPt));
+                        return AngleInstant(instant.pos.angleTo(targetPt));
                 };
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle = static_cast<const Planning::FaceAngleCommand&>(
-                              command).targetAngle;
+            float angle =
+                static_cast<const Planning::FaceAngleCommand&>(command)
+                    .targetAngle;
             std::function<AngleInstant(MotionInstant)> function =
                 [angle](MotionInstant instant) { return AngleInstant(angle); };
             return function;

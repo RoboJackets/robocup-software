@@ -63,7 +63,14 @@ public:
      */
     [[nodiscard]] inline std::optional<RobotInstant> evaluate(
         RJ::Seconds t) const {
-        return path_->evaluate(t);
+        RobotInstant instant;
+
+        std::optional<RobotInstant> maybe_instant = path_->evaluate(t);
+
+        if (maybe_instant) {
+            instant = *maybe_instant;
+        }
+        return addAngles(instant);
     }
 
     /**
@@ -79,7 +86,9 @@ public:
     /**
      * @return Destination instant of the path
      */
-    [[nodiscard]] RobotInstant end() const { return path_->end(); };
+    [[nodiscard]] RobotInstant end() const {
+        return addAngles(path_->end());
+    };
 
     /**
      * \brief Clears the trajectory.
@@ -123,5 +132,12 @@ private:
      */
     static std::unique_ptr<InterpolatedPath> rasterizePath(
         std::unique_ptr<Path>&& path, double granularity);
+
+    [[nodiscard]] RobotInstant addAngles(RobotInstant instant) const {
+        if (angle_function_) {
+            instant.angle = (*angle_function_)(instant.motion);
+        }
+        return instant;
+    }
 };
 }  // namespace Trajectory
