@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <sstream>
+#include <string>
+
 #include "Geometry2d/Point.hpp"
 
 namespace Planning {
@@ -34,11 +35,11 @@ struct FacePointCommand : public RotationCommand {
 
     const Geometry2d::Point targetPos;
 
-  [[nodiscard]] std::string print() const override {
-      std::stringstream ss;
-      ss << "FacePointCommand(" << targetPos << ")";
-      return ss.str();
-  }
+    [[nodiscard]] std::string print() const override {
+        std::stringstream ss;
+        ss << "FacePointCommand(" << targetPos << ")";
+        return ss.str();
+    }
 };
 
 struct FaceAngleCommand : public RotationCommand {
@@ -47,18 +48,18 @@ struct FaceAngleCommand : public RotationCommand {
 
     const float targetAngle;
 
-  [[nodiscard]] std::string print() const override {
-    std::stringstream ss;
-    ss << "FaceAngleCommand(" << targetAngle << ")";
-    return ss.str();
-  }
+    [[nodiscard]] std::string print() const override {
+        std::stringstream ss;
+        ss << "FaceAngleCommand(" << targetAngle << ")";
+        return ss.str();
+    }
 };
 
 struct EmptyAngleCommand : public RotationCommand {
     EmptyAngleCommand() : RotationCommand(None) {}
 
-  [[nodiscard]] std::string print() const override {
-    return "EmptyAngleCommand()";
-  }
+    [[nodiscard]] std::string print() const override {
+        return "EmptyAngleCommand()";
+    }
 };
 }  // namespace Planning

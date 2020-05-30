@@ -26,7 +26,7 @@ void PlannerNode::run() {
         path->draw(&context_->debug_drawer, Qt::magenta, "Planning");
         path->drawDebugText(&context_->debug_drawer);
 
-      const auto angle_function =
+        const auto angle_function =
             angleFunctionForCommandType(r->rotationCommand());
 
         context_->trajectories[shell] = Trajectory::Trajectory{

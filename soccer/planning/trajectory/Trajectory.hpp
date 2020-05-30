@@ -86,9 +86,7 @@ public:
     /**
      * @return Destination instant of the path
      */
-    [[nodiscard]] RobotInstant end() const {
-        return addAngles(path_->end());
-    };
+    [[nodiscard]] RobotInstant end() const { return addAngles(path_->end()); };
 
     /**
      * \brief Clears the trajectory.

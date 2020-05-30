@@ -102,7 +102,7 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
                     .targetPos;
             std::function<AngleInstant(MotionInstant)> function =
                 [targetPt](MotionInstant instant) {
-                        return AngleInstant(instant.pos.angleTo(targetPt));
+                    return AngleInstant(instant.pos.angleTo(targetPt));
                 };
             return function;
         }
