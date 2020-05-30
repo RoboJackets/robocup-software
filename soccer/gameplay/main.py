@@ -1,6 +1,5 @@
 from typing import Type, List, Optional
 
-import math
 import play_registry as play_registry_module
 import test_registry as test_registry_module
 import playbook
@@ -233,14 +232,6 @@ def run():
         logging.error("Exception occurred in main.run(): " + str(exc) +
                       "ignoring for now")
         traceback.print_exc()
-
-    for robot in our_robots():
-        robot_pt = robot.pos
-        r = 0.5
-        theta = robot.angle
-        robot_heading_pt = robot_pt + robocup.Point(r * math.cos(theta), r * math.sin(theta))
-        heading_line = robocup.Line(robot_pt, robot_heading_pt)
-        debug_drawer().draw_line(heading_line, constants.Colors.Red, "Heading")
 
 
 _root_play = None  # type: Optional[RootPlay]
