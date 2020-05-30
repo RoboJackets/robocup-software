@@ -35,7 +35,9 @@ std::unique_ptr<InterpolatedPath> Trajectory::rasterizePath(
         }
     }
 
-    return std::make_unique<InterpolatedPath>(std::move(entries));
+    const auto& start_time = path->startTime();
+
+    return std::make_unique<InterpolatedPath>(std::move(entries), start_time);
 }
 
 }  // namespace Trajectory

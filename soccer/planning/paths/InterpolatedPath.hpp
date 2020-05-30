@@ -59,7 +59,7 @@ public:
     std::vector<Entry> waypoints;
 
     /** default path is empty */
-    InterpolatedPath() {}
+    InterpolatedPath() = default;
 
     /** constructor with a single point */
     InterpolatedPath(RobotInstant p0);
@@ -70,9 +70,10 @@ public:
     /**
      * \brief Constructor for when you have all the entries
      * @param entries
+     * @param start_time
      */
-    InterpolatedPath(std::vector<Entry>&& entries)
-        : waypoints{std::move(entries)} {};
+    InterpolatedPath(std::vector<Entry>&& entries, RJ::Time start_time)
+        : Path(start_time), waypoints{std::move(entries)} {};
 
     /// Adds an instant at the end of the path for the given time.
     /// Time should not bet less than the last time.
