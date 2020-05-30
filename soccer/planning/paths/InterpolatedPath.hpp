@@ -97,7 +97,7 @@ public:
     virtual RJ::Seconds getDuration() const override;
     virtual std::unique_ptr<Path> clone() const override;
 
-    bool empty() const { return waypoints.empty(); }
+    [[nodiscard]] bool empty() const { return waypoints.empty(); }
 
     /// Erase all path contents
     void clear() { waypoints.clear(); }

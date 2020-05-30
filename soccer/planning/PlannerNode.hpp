@@ -13,9 +13,20 @@ struct GlobalObstacles {
     Geometry2d::ShapeSet global_obstacles_with_goal_zones;
 };
 
+/**
+ * \brief Node that is responsible for running all the planners.
+ *
+ * Input: Global obstacles
+ * Output:
+ *     - context_->trajectories
+ */
 class PlannerNode : public Node {
 public:
     PlannerNode(Context* context);
+
+    /**
+     * \brief
+     */
     void run() override;
 
 private:

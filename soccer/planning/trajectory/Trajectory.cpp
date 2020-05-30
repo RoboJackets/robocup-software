@@ -23,9 +23,10 @@ std::unique_ptr<InterpolatedPath> Trajectory::rasterizePath(
 
     // Evaluate it at a grid of points
     for (int i = 0; i < iterations; i++) {
-        bool final_iteration = i == iterations - 1;
-        double time = final_iteration ? path_duration : i * granularity;
-        RJ::Seconds t{time};
+        const bool final_iteration = i == iterations - 1;
+        const double time = final_iteration ? path_duration : i * granularity;
+
+        const RJ::Seconds t{time};
 
         std::optional<RobotInstant> maybe_instant = path->evaluate(t);
 

@@ -239,8 +239,14 @@ void Processor::run() {
             _gameplayModule->calculateFieldObstacles();
         }
 
+        // In: Global Obstacles
+        // Out: context_->trajectories
         _planner_node->run();
+
+        // In: context_->trajectories
+        // Out: context_->motion_setpoints
         _motionControl->run();
+
         _grSimCom->run();
 
         // Run all nodes in sequence

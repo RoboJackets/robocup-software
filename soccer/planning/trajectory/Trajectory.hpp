@@ -44,7 +44,7 @@ public:
      * @return Whether the trajectory contains a valid nonempty path
      */
     [[nodiscard]] inline bool hasPath() const {
-        return path_ != nullptr && path_->size() != 0;
+        return path_ != nullptr && !path_->empty();
     }
 
     /**
