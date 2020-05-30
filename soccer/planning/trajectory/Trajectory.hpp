@@ -10,6 +10,8 @@ namespace Trajectory {
 using Planning::AngleInstant, Planning::MotionInstant, Planning::Path,
     Planning::InterpolatedPath, Planning::RobotInstant;
 
+using AngleFn = std::function<AngleInstant(MotionInstant)>;
+
 /**
  * \brief Represents a trajectory x(t), y(t), h(t) that is sent from the
  * PlannerNode to the MotionControlNode.
@@ -34,11 +36,8 @@ public:
      * trajectory
      */
     Trajectory(std::unique_ptr<Path> path,
-               std::optional<std::function<AngleInstant(MotionInstant)>>
-                   angle_function,
-               double granularity)
-        : path_(rasterizePath(std::move(path), granularity)),
-          angle_function_(std::move(angle_function)) {}
+               std::optional<AngleFn> angle_function, double granularity)
+        : path_(rasterizePath(std::move(path), angle_function, granularity)) {}
 
     /**
      * @return Whether the trajectory contains a valid nonempty path
@@ -70,7 +69,7 @@ public:
         if (maybe_instant) {
             instant = *maybe_instant;
         }
-        return addAngles(instant);
+        return instant;
     }
 
     /**
@@ -86,15 +85,12 @@ public:
     /**
      * @return Destination instant of the path
      */
-    [[nodiscard]] RobotInstant end() const { return addAngles(path_->end()); };
+    [[nodiscard]] RobotInstant end() const { return path_->end(); };
 
     /**
      * \brief Clears the trajectory.
      */
-    void clear() {
-        path_ = nullptr;
-        angle_function_ = std::nullopt;
-    }
+    void clear() { path_ = nullptr; }
 
     /**
      * \brief Moves the current path_ out, replacing it with nullptr.
@@ -108,7 +104,6 @@ public:
 
 private:
     std::unique_ptr<InterpolatedPath> path_;
-    std::optional<std::function<AngleInstant(MotionInstant)>> angle_function_;
 
     /**
      * \brief Calculates the number of evaluations needed for the given
@@ -129,13 +124,7 @@ private:
      * @return The "rasterized" InterpolatedPath
      */
     static std::unique_ptr<InterpolatedPath> rasterizePath(
-        std::unique_ptr<Path>&& path, double granularity);
-
-    [[nodiscard]] RobotInstant addAngles(RobotInstant instant) const {
-        if (angle_function_) {
-            instant.angle = (*angle_function_)(instant.motion);
-        }
-        return instant;
-    }
+        std::unique_ptr<Path>&& path, const std::optional<AngleFn>& angle_fn,
+        double granularity);
 };
 }  // namespace Trajectory

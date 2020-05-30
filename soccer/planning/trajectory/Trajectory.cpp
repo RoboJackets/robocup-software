@@ -8,7 +8,8 @@ int Trajectory::getNumEvals(double duration, double granularity) {
 }
 
 std::unique_ptr<InterpolatedPath> Trajectory::rasterizePath(
-    std::unique_ptr<Path>&& path, double granularity) {
+    std::unique_ptr<Path>&& path, const std::optional<AngleFn>& angle_fn,
+    double granularity) {
     using Entry = Planning::InterpolatedPath::Entry;
 
     // First off, path shouldn't be nullptr
@@ -31,6 +32,12 @@ std::unique_ptr<InterpolatedPath> Trajectory::rasterizePath(
         std::optional<RobotInstant> maybe_instant = path->evaluate(t);
 
         if (maybe_instant) {
+            // Append the angles to InterpolatedPath
+            if (angle_fn) {
+                const auto angle = (*angle_fn)(maybe_instant->motion);
+                maybe_instant->angle = angle;
+            }
+
             entries.emplace_back(*maybe_instant, t);
         }
     }
