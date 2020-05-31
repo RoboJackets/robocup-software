@@ -55,8 +55,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                  prekick_timeout=None,
                  receiver_required=True,
                  kicker_required=True,
-                 use_chipper=False,
-                 heuristic=None):
+                 use_chipper=False):
         super().__init__(continuous=False)
 
         # This creates a new instance of skillreceiver every time the constructor is
@@ -77,7 +76,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.prekick_timeout = prekick_timeout
         self.receiver_required = receiver_required
         self.kicker_required = kicker_required
-        self.heuristic = heuristic
 
         self.add_state(CoordinatedPass.State.preparing,
                        behavior.Behavior.State.running)
@@ -165,8 +163,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 'receiver').receive_point = self.receive_point
 
     def on_enter_running(self):
-        if self.heuristic != None:
-            self.receive_point = self.heuristic.calc_pass_point()
         kicker = self.skillkicker[0]
         kicker.target = self.receive_point
         kickpower = (main.ball().pos - self.receive_point).mag() / 17
