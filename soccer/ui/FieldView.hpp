@@ -79,9 +79,9 @@ protected:
      * @param heading_color
      * @param heading_line_len
      */
-    void drawRobotHeading(QPainter& painter, QPointF pos, float theta,
-                          const QColor& heading_color = {0xffc1da},
-                          float heading_line_len = 0.5);
+    static void drawRobotHeading(QPainter* painter, QPointF pos, float theta,
+                                 const QColor& heading_color = {0xffc1da},
+                                 float heading_line_len = 0.5);
 
 protected:
     // Returns a pointer to the most recent frame, or null if none is available.

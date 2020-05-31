@@ -718,25 +718,25 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID,
     drawText(painter, QPointF(), QString::number(ID));
     painter.restore();
 
-    drawRobotHeading(painter, pos, theta);
+    drawRobotHeading(&painter, pos, theta);
 }
 
-void FieldView::drawRobotHeading(QPainter& painter, QPointF pos, float theta,
+void FieldView::drawRobotHeading(QPainter* painter, QPointF pos, float theta,
                                  const QColor& heading_color,
                                  float heading_line_len) {
-    painter.save();
-    painter.translate(pos.x(), pos.y());
-    painter.rotate(RadiansToDegrees(theta));
+    painter->save();
+    painter->translate(pos.x(), pos.y());
+    painter->rotate(RadiansToDegrees(theta));
 
     const QPen heading_pen(heading_color, 0);
-    painter.setPen(heading_pen);
+    painter->setPen(heading_pen);
 
     const QPointF start_pt{0, 0};
     const QPointF end_pt{heading_line_len, 0};
     const QLineF heading_line{start_pt, end_pt};
 
-    painter.drawLine(heading_line);
-    painter.restore();
+    painter->drawLine(heading_line);
+    painter->restore();
 }
 
 void FieldView::resizeEvent(QResizeEvent* e) {
