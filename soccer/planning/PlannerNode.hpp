@@ -17,15 +17,15 @@ struct GlobalObstacles {
  * \brief Node that is responsible for running all the planners.
  *
  * Input: Global obstacles
- * Output:
- *     - context_->trajectories
+ * Output: context_->trajectories
  */
 class PlannerNode : public Node {
 public:
     PlannerNode(Context* context);
 
     /**
-     * \brief
+     * \brief Collects global obstacles, builds plan request per robot, runs
+     * the planner, builds a Trajectory and sets context_->trajectories
      */
     void run() override;
 

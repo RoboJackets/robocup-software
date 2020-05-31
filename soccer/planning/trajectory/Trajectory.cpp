@@ -9,7 +9,7 @@ int Trajectory::getNumEvals(double duration, double granularity) {
 
 std::unique_ptr<InterpolatedPath> Trajectory::rasterizePath(
     std::unique_ptr<Path>&& path, const std::optional<AngleFn>& angle_fn,
-    double granularity) {
+    RJ::Seconds granularity) {
     using Entry = Planning::InterpolatedPath::Entry;
 
     // First off, path shouldn't be nullptr
@@ -17,15 +17,16 @@ std::unique_ptr<InterpolatedPath> Trajectory::rasterizePath(
 
     // Calculate the number of ticks to evaluate it at
     double path_duration = path->getDuration().count();
-    int iterations = getNumEvals(path_duration, granularity);
+    int iterations = getNumEvals(path_duration, granularity.count());
 
     std::vector<Entry> entries;
     entries.reserve(iterations);
 
-    // Evaluate it at a grid of points
+    // Evaluate it at a sequence of points
     for (int i = 0; i < iterations; i++) {
         const bool final_iteration = i == iterations - 1;
-        const double time = final_iteration ? path_duration : i * granularity;
+        const double time =
+            final_iteration ? path_duration : i * granularity.count();
 
         const RJ::Seconds t{time};
 

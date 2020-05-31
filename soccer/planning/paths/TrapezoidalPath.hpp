@@ -1,7 +1,5 @@
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
-
 #include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>

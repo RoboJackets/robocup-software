@@ -17,7 +17,7 @@ void PlannerNode::run() {
     std::map<int, Planning::PlanRequest> requests =
         buildPlanRequests(global_obstacles);
 
-    const double granularity = 0.1;
+    constexpr RJ::Seconds granularity{0.005};
 
     // Run path planner and set the path for each robot that was planned for
     auto pathsById = path_planner_->run(std::move(requests));

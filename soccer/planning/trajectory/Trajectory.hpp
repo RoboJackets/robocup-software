@@ -36,7 +36,8 @@ public:
      * trajectory
      */
     Trajectory(std::unique_ptr<Path> path,
-               std::optional<AngleFn> angle_function, double granularity)
+               const std::optional<AngleFn>& angle_function,
+               RJ::Seconds granularity)
         : path_(rasterizePath(std::move(path), angle_function, granularity)) {}
 
     /**
@@ -50,6 +51,7 @@ public:
      * @return The start time of the path
      */
     [[nodiscard]] inline RJ::Time startTime() const {
+        assert(path_ != nullptr);  // NOLINT
         return path_->startTime();
     }
 
@@ -62,6 +64,8 @@ public:
      */
     [[nodiscard]] inline std::optional<RobotInstant> evaluate(
         RJ::Seconds t) const {
+        assert(path_ != nullptr);  // NOLINT
+
         RobotInstant instant;
 
         std::optional<RobotInstant> maybe_instant = path_->evaluate(t);
@@ -79,13 +83,17 @@ public:
      * stops
      */
     [[nodiscard]] RJ::Seconds getDuration() const {
+        assert(path_ != nullptr);  // NOLINT
         return path_->getDuration();
     }
 
     /**
      * @return Destination instant of the path
      */
-    [[nodiscard]] RobotInstant end() const { return path_->end(); };
+    [[nodiscard]] RobotInstant end() const {
+        assert(path_ != nullptr);  // NOLINT
+        return path_->end();
+    };
 
     /**
      * \brief Clears the trajectory.
@@ -94,7 +102,7 @@ public:
 
     /**
      * \brief Moves the current path_ out, replacing it with nullptr.
-     * @return
+     * @return The current path. This CAN BE nullptr, if it was nullptr before.
      */
     std::unique_ptr<InterpolatedPath> takePath() {
         std::unique_ptr<InterpolatedPath> current_path = std::move(path_);
@@ -125,6 +133,6 @@ private:
      */
     static std::unique_ptr<InterpolatedPath> rasterizePath(
         std::unique_ptr<Path>&& path, const std::optional<AngleFn>& angle_fn,
-        double granularity);
+        RJ::Seconds granularity);
 };
 }  // namespace Trajectory
