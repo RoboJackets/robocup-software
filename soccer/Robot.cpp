@@ -53,8 +53,8 @@ void OurRobot::createConfiguration(Configuration* cfg) {
                                        Robot_Radius - 0.01);
     _oppGoalieAvoidRadius = new ConfigDouble(
         cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
-    _dribbleOutOfBoundsOffset = new ConfigDouble(
-        cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
+    _dribbleOutOfBoundsOffset =
+        new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
 OurRobot::OurRobot(Context* context, int shell)
@@ -244,7 +244,9 @@ void OurRobot::intercept(Point target) {
 void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
         std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
-    clearTrajectory();
+
+    _context->trajectories[shell()].clear();
+
     _cmdText << "worldVel(" << targetWorldVelocity.x() << ", "
              << targetWorldVelocity.y() << ")" << endl;
 }

@@ -56,7 +56,7 @@ std::map<int, Planning::PlanRequest> PlannerNode::buildPlanRequests(
     for (OurRobot* r : context_->state.self) {
         if (r != nullptr && r->visible()) {
             if (context_->game_state.state == GameState::Halt) {
-                r->clearTrajectory();
+                context_->trajectories[r->shell()].clear();
                 continue;
             }
 
@@ -81,12 +81,15 @@ std::map<int, Planning::PlanRequest> PlannerNode::buildPlanRequests(
             std::vector<Planning::DynamicObstacle> dynamicObstacles =
                 r->collectDynamicObstacles();
 
+            std::unique_ptr<InterpolatedPath> trajectory =
+                context_->trajectories[r->shell()].takePath();
+
             requests.emplace(
                 r->shell(),
                 Planning::PlanRequest(
                     context_, Planning::MotionInstant(r->pos(), r->vel()),
                     r->motionCommand()->clone(), r->robotConstraints(),
-                    r->trajectory_mut().takePath(), std::move(staticObstacles),
+                    std::move(trajectory), std::move(staticObstacles),
                     std::move(dynamicObstacles), r->shell(),
                     r->getPlanningPriority()));
         }

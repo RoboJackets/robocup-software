@@ -176,20 +176,6 @@ public:
         return *intent().rotation_command;
     }
 
-    /**
-     * \brief Returns a const reference to the trajectory of the robot.
-     */
-    [[nodiscard]] const Trajectory::Trajectory& trajectory() const {
-        return _context->trajectories[shell()];
-    }
-
-    /**
-     * \brief Returns a mutable reference to the trajectory of the robot.
-     */
-    Trajectory::Trajectory& trajectory_mut() {
-        return _context->trajectories[shell()];
-    }
-
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
     void resetForNextIteration();
@@ -471,11 +457,6 @@ public:
     int8_t getPlanningPriority() const { return _planningPriority; }
 
     void setPID(double p, double i, double d);
-
-    /**
-     * \brief Clears the trajectory for the current robot
-     */
-    void clearTrajectory() { _context->trajectories[shell()].clear(); }
 
     void setJoystickControlled(bool joystickControlled);
     bool isJoystickControlled() const;

@@ -16,7 +16,7 @@ struct GlobalObstacles {
 /**
  * \brief Node that is responsible for running all the planners.
  *
- * Input: Global obstacles
+ * Input: Global obstacles, Robot Intents, World State
  * Output: context_->trajectories
  */
 class PlannerNode : public Node {
