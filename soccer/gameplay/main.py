@@ -13,7 +13,6 @@ import traceback
 import imp
 import sys
 import os
-import visualization.robot_viz as robot_viz
 import constants
 import situational_play_selection
 import robocup
@@ -228,7 +227,6 @@ def run():
         if root_play() is not None:
             situationAnalysis.updateAnalysis()
             root_play().spin()
-        robot_viz.draw_robot_viz(our_robots(), their_robots(), debug_drawer())
     except:
         exc = sys.exc_info()[0]
         logging.error("Exception occurred in main.run(): " + str(exc) +
@@ -281,9 +279,8 @@ def set_context(value):
     _context = value
 
 
-def debug_drawer() -> robocup.DebugDrawer:
+def debug_drawer():
     global _context
-    assert _context is not None
     return _context.debug_drawer
 
 
