@@ -3,7 +3,8 @@ import robocup
 from math import sin, cos
 
 
-def draw_heading(robot: robocup.Robot, debug_drawer: robocup.DebugDrawer,
+def draw_heading(robot: robocup.Robot,
+                 debug_drawer: robocup.DebugDrawer,
                  r: float = 0.5,
                  color: Tuple[int, int, int] = (0xff, 0xc1, 0xda)):
     """ Draws a line representing the heading of the robot
