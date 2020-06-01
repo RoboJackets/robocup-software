@@ -1,9 +1,9 @@
 #include "CollectPathPlanner.hpp"
 
-#include "CompositePath.hpp"
 #include "Configuration.hpp"
 #include "Constants.hpp"
-#include "MotionInstant.hpp"
+#include "planning/MotionInstant.hpp"
+#include "planning/paths/CompositePath.hpp"
 
 using namespace std;
 using namespace Geometry2d;

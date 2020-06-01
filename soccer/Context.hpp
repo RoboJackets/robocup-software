@@ -4,6 +4,7 @@
 #include <protobuf/referee.pb.h>
 
 #include <Constants.hpp>
+#include <planning/trajectory/Trajectory.hpp>
 #include <set>
 
 #include "DebugDrawer.hpp"
@@ -35,7 +36,7 @@ struct Context {
     // Planning -> Motion control
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
     // Planning -> Motion control
-    std::array<Planning::AngleFunctionPath, Num_Shells> paths;
+    std::array<Trajectory::Trajectory, Num_Shells> trajectories;
     // Radio -> Gameplay
     std::array<RobotStatus, Num_Shells> robot_status;
     // MainWindow -> Manual control
@@ -46,6 +47,9 @@ struct Context {
     std::array<RobotLocalConfig, Num_Shells> local_configs;
     std::array<RobotConstraints, Num_Shells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
+
+    Geometry2d::ShapeSet globalObstacles;
+    Geometry2d::ShapeSet goalZoneObstacles;
 
     SystemState state;
     GameState game_state;

@@ -1,4 +1,5 @@
 #include "SingleRobotPathPlanner.hpp"
+
 #include "DirectTargetPathPlanner.hpp"
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "InterceptPlanner.hpp"
@@ -98,7 +99,8 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
         case RotationCommand::FacePoint: {
             Geometry2d::Point targetPt =
-                static_cast<const Planning::FacePointCommand&>(command)
+                static_cast<const Planning::FacePointCommand&>(  // NOLINT
+                    command)
                     .targetPos;
             std::function<AngleInstant(MotionInstant)> function =
                 [targetPt](MotionInstant instant) {
@@ -107,8 +109,10 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
             return function;
         }
         case RotationCommand::FaceAngle: {
-            float angle = static_cast<const Planning::FaceAngleCommand&>(
-                              command).targetAngle;
+            float angle =
+                static_cast<const Planning::FaceAngleCommand&>(  // NOLINT
+                    command)
+                    .targetAngle;
             std::function<AngleInstant(MotionInstant)> function =
                 [angle](MotionInstant instant) { return AngleInstant(angle); };
             return function;

@@ -1,12 +1,11 @@
 #pragma once
 
-#include <optional>
-
-#include <planning/Path.hpp>
+#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <Configuration.hpp>
+#include <optional>
+#include <planning/paths/Path.hpp>
 
 namespace Planning {
 

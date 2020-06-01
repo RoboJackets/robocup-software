@@ -1,9 +1,11 @@
 #include "Path.hpp"
+
 #include <protobuf/LogFrame.pb.h>
+
 #include "DebugDrawer.hpp"
-#include "DynamicObstacle.hpp"
 #include "Geometry2d/ShapeSet.hpp"
 #include "SystemState.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 using namespace std;
 using namespace Geometry2d;

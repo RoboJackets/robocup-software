@@ -1,12 +1,11 @@
 #pragma once
 
-#include <optional>
-
 #include <Configuration.hpp>
+#include <optional>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
-#include <planning/Path.hpp>
+#include <planning/paths/Path.hpp>
 //#include "MultiRobotPathPlanner.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/PlanRequest.hpp"

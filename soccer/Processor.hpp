@@ -22,6 +22,7 @@
 #include "joystick/ManualControlNode.hpp"
 #include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
+#include "planning/PlannerNode.hpp"
 #include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
 #include "rc-fshare/rtp.hpp"
@@ -181,9 +182,9 @@ private:
     std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-    std::unique_ptr<Planning::MultiRobotPathPlanner> _pathPlanner;
     std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
+    std::unique_ptr<Planning::PlannerNode> _planner_node;
     std::unique_ptr<RadioNode> _radio;
     std::unique_ptr<GrSimCommunicator> _grSimCom;
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;

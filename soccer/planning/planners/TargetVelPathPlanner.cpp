@@ -1,9 +1,11 @@
 #include "TargetVelPathPlanner.hpp"
+
 #include <Configuration.hpp>
 #include <boost/range/irange.hpp>
 #include <cmath>
+
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "TrapezoidalPath.hpp"
+#include "planning/paths/TrapezoidalPath.hpp"
 
 using namespace std;
 using namespace Geometry2d;

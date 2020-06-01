@@ -10,7 +10,6 @@
 #include <RobotConfig.hpp>
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <planning/IndependentMultiRobotPathPlanner.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
@@ -71,9 +70,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
         &_context, _refereeModule.get());
-    _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
-        new Planning::IndependentMultiRobotPathPlanner());
     _motionControl = std::make_unique<MotionControlNode>(&_context);
+    _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
@@ -239,76 +237,14 @@ void Processor::run() {
             _gameplayModule->calculateFieldObstacles();
         }
 
-        /// Collect global obstacles
-        Geometry2d::ShapeSet globalObstacles =
-            _gameplayModule->globalObstacles();
-        Geometry2d::ShapeSet globalObstaclesWithGoalZones = globalObstacles;
-        Geometry2d::ShapeSet goalZoneObstacles =
-            _gameplayModule->goalZoneObstacles();
-        globalObstaclesWithGoalZones.add(goalZoneObstacles);
+        // In: Global Obstacles
+        // Out: context_->trajectories
+        _planner_node->run();
 
-        // Build a plan request for each robot.
-        std::map<int, Planning::PlanRequest> requests;
-        for (OurRobot* r : _context.state.self) {
-            if (r != nullptr && r->visible()) {
-                if (_context.game_state.state == GameState::Halt) {
-                    r->setPath(nullptr);
-                    continue;
-                }
-
-                // Visualize local obstacles
-                for (auto& shape : r->localObstacles().shapes()) {
-                    _context.debug_drawer.drawShape(shape, Qt::black,
-                                                    "LocalObstacles");
-                }
-
-                auto& globalObstaclesForBot =
-                    (r->shell() == _context.game_state.getGoalieId() ||
-                     r->isPenaltyKicker || r->isBallPlacer)
-                        ? globalObstacles
-                        : globalObstaclesWithGoalZones;
-
-                // create and visualize obstacles
-                Geometry2d::ShapeSet staticObstacles =
-                    r->collectStaticObstacles(
-                        globalObstaclesForBot,
-                        !(r->shell() == _context.game_state.getGoalieId() ||
-                          r->isPenaltyKicker || r->isBallPlacer));
-
-                std::vector<Planning::DynamicObstacle> dynamicObstacles =
-                    r->collectDynamicObstacles();
-
-                requests.emplace(
-                    r->shell(),
-                    Planning::PlanRequest(
-                        &_context, Planning::MotionInstant(r->pos(), r->vel()),
-                        r->motionCommand()->clone(), r->robotConstraints(),
-                        std::move(r->angleFunctionPath().path),
-                        std::move(staticObstacles), std::move(dynamicObstacles),
-                        r->shell(), r->getPlanningPriority()));
-            }
-        }
-
-        // Run path planner and set the path for each robot that was planned for
-        auto pathsById = _pathPlanner->run(std::move(requests));
-        for (auto& entry : pathsById) {
-            OurRobot* r = _context.state.self[entry.first];
-            auto& path = entry.second;
-            path->draw(&_context.debug_drawer, Qt::magenta, "Planning");
-            path->drawDebugText(&_context.debug_drawer);
-            r->setPath(std::move(path));
-
-            r->angleFunctionPath().angleFunction =
-                angleFunctionForCommandType(r->rotationCommand());
-        }
-
-        // Visualize obstacles
-        for (auto& shape : globalObstacles.shapes()) {
-            _context.debug_drawer.drawShape(shape, Qt::black,
-                                            "Global Obstacles");
-        }
-
+        // In: context_->trajectories
+        // Out: context_->motion_setpoints
         _motionControl->run();
+
         _grSimCom->run();
 
         // Run all nodes in sequence

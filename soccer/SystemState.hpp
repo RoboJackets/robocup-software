@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "planning/MotionInstant.hpp"
-#include "planning/Path.hpp"
+#include "planning/paths/Path.hpp"
 
 class RobotConfig;
 class OurRobot;

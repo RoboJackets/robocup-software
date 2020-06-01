@@ -1,5 +1,6 @@
 #include "DynamicObstacle.hpp"
-#include "Path.hpp"
+
+#include "planning/paths/Path.hpp"
 
 using namespace std;
 using namespace Geometry2d;

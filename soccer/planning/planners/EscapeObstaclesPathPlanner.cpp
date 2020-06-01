@@ -1,11 +1,11 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 
+#include <Configuration.hpp>
 #include <optional>
 
-#include <Configuration.hpp>
 #include "RRTUtil.hpp"
-#include "RoboCupStateSpace.hpp"
-#include "TrapezoidalPath.hpp"
+#include "planning/RoboCupStateSpace.hpp"
+#include "planning/paths/TrapezoidalPath.hpp"
 
 using namespace Geometry2d;
 using namespace std;
