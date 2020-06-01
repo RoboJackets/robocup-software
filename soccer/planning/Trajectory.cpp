@@ -1,10 +1,12 @@
 #include "Trajectory.hpp"
+
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Shape.hpp>
 #include <memory>
-
 #include <stdexcept>
+
+#include "Instant.hpp"
 #include "Utils.hpp"
 
 namespace Planning {

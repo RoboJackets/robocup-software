@@ -2,8 +2,10 @@
 
 #include <Configuration.hpp>
 #include <Constants.hpp>
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
+
+#include "planning/Instant.hpp"
+#include "planning/low_level/RRTUtil.hpp"
+#include "planning/low_level/VelocityProfiling.hpp"
 
 namespace Planning {
 
@@ -20,19 +22,19 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     BallState ball = planRequest.world_state->ball;
 
     // Time for ball to hit target point
-    // Target point is projected into ball vel line
+    // Target point is projected into ball velocity line
     Geometry2d::Point targetPosOnLine;
     RJ::Seconds ballToPointTime =
-        ball.query_seconds_to(command.target, &targetPosOnLine);
+        ball.query_seconds_near(command.target, &targetPosOnLine);
 
     // vector from robot to target
-    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pose.position());
+    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.position());
 
     // Max speed we can reach given the distance to target and constant
     // acceleration If we don't constrain the speed, there is a velocity
     // discontinuity in the middle of the path
     double maxSpeed = std::min(
-        startInstant.velocity.linear().mag() +
+        startInstant.linear_velocity().mag() +
         sqrt(2 * motionConstraints.maxAcceleration * botToTarget.mag()),
         motionConstraints.maxSpeed);
 
@@ -41,12 +43,14 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     Trajectory trajectory;
 
     for (double mag = 0.0; mag <= 1.0; mag += .05) {
-        RobotInstant finalStoppingMotion(
-            Geometry2d::Pose(targetPosOnLine, startInstant.pose.heading()),
-            Geometry2d::Twist(mag * maxSpeed * botToTarget.normalized(), 0),
-            RJ::now());
+        LinearMotionInstant finalStoppingMotion{
+            targetPosOnLine,
+            mag * maxSpeed * botToTarget.normalized()};
 
-        trajectory = CreatePath::simple(startInstant, finalStoppingMotion, planRequest.constraints.mot);
+        trajectory = CreatePath::simple(startInstant.linear_motion(),
+                                        finalStoppingMotion,
+                                        planRequest.constraints.mot,
+                                        startInstant.stamp);
 
         // First path where we can reach the point at or before the ball
         // If the end velocity is not 0, you should reach the point as close
@@ -64,7 +68,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     }
 
     // We couldn't get to the target point in time
-    // Just give up and do the max vel across ball vel
+    // Just give up and do the max velocity across ball velocity
     // Which ends up being the path after the final loop
     trajectory.setDebugText("GivingUp");
 

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "planning/trajectory/Trajectory.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
+#include "VelocityProfiling.hpp"
+#include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "planning/Trajectory.hpp"
 
 namespace Planning {
 

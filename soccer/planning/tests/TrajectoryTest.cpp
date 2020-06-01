@@ -1,11 +1,14 @@
 #include <gtest/gtest.h>
+
 #include <rrt/planning/Path.hpp>
+
+#include "Instant.hpp"
 #include "TestingUtils.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/low_level/PathSmoothing.hpp"
+#include "planning/low_level/RRTUtil.hpp"
+#include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
-#include "planning/trajectory/PathSmoothing.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/Trajectory.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
 
 using namespace Planning;
 using namespace Geometry2d;
@@ -17,11 +20,11 @@ TEST(Trajectory, Interpolation) {
     RJ::Time start = RJ::now();
 
     RobotInstant start_instant =
-        Planning::RobotInstant(Pose(0, 0, 0), Twist(1, 0, 0), start);
+        RobotInstant(Pose(0, 0, 0), Twist(1, 0, 0), start);
     RobotInstant mid_instant =
-        Planning::RobotInstant(Pose(1, 1, 3), Twist(1, 0, 0), start + 1s);
+        RobotInstant(Pose(1, 1, 3), Twist(1, 0, 0), start + 1s);
     RobotInstant end_instant =
-        Planning::RobotInstant(Pose(2, 0, 6), Twist(1, 0, 0), start + 1500ms);
+        RobotInstant(Pose(2, 0, 6), Twist(1, 0, 0), start + 1500ms);
 
     Trajectory trajectory;
     trajectory.AppendInstant(start_instant);
@@ -35,13 +38,13 @@ TEST(Trajectory, Interpolation) {
         trajectory.evaluate(trajectory.end_time() + RJ::Seconds(1e-3s)));
 
     EXPECT_FALSE(Trajectory{{}}.evaluate(RJ::Seconds(0s)));
-    EXPECT_FALSE(Trajectory{{}}.evaluate(RJ::now()));
+    EXPECT_FALSE(Trajectory{{}}.evaluate(start));
 
     Twist mid_twist;
     {
         RobotInstant instant = *trajectory.evaluate(start + 500ms);
-        EXPECT_NEAR(instant.pose.position().x(), 0.5, 1e-6);
-        EXPECT_NEAR(instant.pose.position().y(), 0.5, 1e-6);
+        EXPECT_NEAR(instant.position().x(), 0.5, 1e-6);
+        EXPECT_NEAR(instant.position().y(), 0.5, 1e-6);
         EXPECT_NEAR(instant.pose.heading(), 1.5, 1e-6);
         mid_twist = instant.velocity;
     }
@@ -50,8 +53,8 @@ TEST(Trajectory, Interpolation) {
     trajectory.AppendInstant(end_instant);
     {
         RobotInstant instant = *trajectory.evaluate(start + 1250ms);
-        EXPECT_NEAR(instant.pose.position().x(), 1.5, 1e-6);
-        EXPECT_NEAR(instant.pose.position().y(), 0.5, 1e-6);
+        EXPECT_NEAR(instant.position().x(), 1.5, 1e-6);
+        EXPECT_NEAR(instant.position().y(), 0.5, 1e-6);
         EXPECT_NEAR(instant.pose.heading(), 4.5, 1e-6);
 
         // Twist should be the same as halfway through the other segment, but
@@ -175,15 +178,17 @@ TEST(Trajectory, Efficiency) {
     printf("RRTTime: %.6f\n", RJ::Seconds(RJ::now() - t0).count());
 
     t0 = RJ::now();
-    CreatePath::rrt(RobotInstant{{{0, 0}, 0}, {}, RJ::now()},
-                    RobotInstant{{{1, 1}, 0}, {}, RJ::now()}, mot, obs);
+    CreatePath::rrt(LinearMotionInstant{Point(0, 0)},
+                    LinearMotionInstant{Point(1, 1)},
+                    mot, RJ::now(), obs);
     printf("time for PathGen::rrt direct: %.6f\n",
            RJ::Seconds(RJ::now() - t0).count());
 
     t0 = RJ::now();
     obs.add(std::make_shared<Circle>(Point{.5, .5}, 0.2));
-    CreatePath::rrt(RobotInstant{{{0, 0}, 0}, {}, RJ::now()},
-                    RobotInstant{{{1, 1}, 0}, {}, RJ::now()}, mot, obs);
+    CreatePath::rrt(LinearMotionInstant{Point()},
+                    LinearMotionInstant{Point(1, 1)},
+                    mot, RJ::now(), obs);
     printf("time for PathGen::rrt obstructed: %.6f\n",
            RJ::Seconds(RJ::now() - t0).count());
 }
@@ -211,8 +216,12 @@ TEST(RRT, Time) {
 }
 
 TEST(Trajectory, createRRTSmall) {
-    RobotInstant start{Pose{{}, .1}, Twist{}, RJ::now()};
-    Trajectory a = CreatePath::rrt(start, start, MotionConstraints{}, {});
+    RJ::Time time = RJ::now();
+    RobotInstant start{Pose{{}, .1}, Twist{}, time};
+    Trajectory a = CreatePath::rrt(start.linear_motion(),
+                                   start.linear_motion(),
+                                   MotionConstraints{},
+                                   start.stamp, {});
     ASSERT_FALSE(a.empty());
     ASSERT_TRUE(a.num_instants() == 1);
     ASSERT_NEAR(a.duration().count(), 0.0, 1e-6);
@@ -245,11 +254,18 @@ TEST(Trajectory, CombiningTrajectories_and_SubTrajectories) {
     /*
      * Test PathGen::rrt(), combo trajectory
      */
-    Trajectory preTraj = CreatePath::rrt(start, mid, constraints.mot, obs);
+    Trajectory preTraj = CreatePath::rrt(start.linear_motion(),
+                                         mid.linear_motion(),
+                                         constraints.mot,
+                                         start.stamp, obs);
     PlanAngles(preTraj, start, angleFn, constraints.rot);
     assertPathContinuous(preTraj, constraints);
+
     Trajectory postTraj =
-        CreatePath::rrt(preTraj.last(), end, constraints.mot, obs);
+        CreatePath::rrt(preTraj.last().linear_motion(),
+                        end.linear_motion(), constraints.mot,
+                        preTraj.end_time(), obs);
+
     PlanAngles(postTraj, preTraj.last(), angleFn, constraints.rot);
     assertPathContinuous(postTraj, constraints);
     Trajectory combo{preTraj, postTraj};
@@ -261,7 +277,9 @@ TEST(Trajectory, CombiningTrajectories_and_SubTrajectories) {
     Trajectory partialPre = combo.subTrajectory(0s, 1.5s);
     assertPathContinuous(partialPre, constraints);
     Trajectory partialPost =
-        CreatePath::rrt(partialPre.last(), end, constraints.mot, obs);
+        CreatePath::rrt(partialPre.last().linear_motion(),
+                        end.linear_motion(), constraints.mot,
+                        partialPre.end_time(), obs);
     PlanAngles(partialPost, partialPre.last(), angleFn, constraints.rot);
     assertPathContinuous(partialPost, constraints);
     Trajectory combo2{partialPre, partialPost};
@@ -287,7 +305,8 @@ TEST(Trajectory, CreateRRTSuccessRate) {
             Twist{Point{random(-.5, .5), random(-.5, .5)}, 0}, RJ::now()};
         Trajectory path{{}};
         for (int j = 0; j < numTries && path.empty(); j++) {
-            path = CreatePath::rrt(start, goal, MotionConstraints{}, obstacles);
+            path = CreatePath::rrt(start.linear_motion(), goal.linear_motion(),
+                                   MotionConstraints{}, start.stamp, obstacles);
             if (path.empty()) {
                 fails++;
             }
@@ -302,7 +321,10 @@ TEST(Trajectory, CreateRRTSuccessRate) {
 TEST(Trajectory, AngleProfileNoExtraInstants) {
     RobotInstant start{Pose{{}, 0}, {}, RJ::now()};
     RobotInstant goal{Pose{{3, 0}, 0}, {}, RJ::now()};
-    Trajectory path = CreatePath::rrt(start, goal, MotionConstraints{}, {}, {});
+    Trajectory path = CreatePath::rrt(start.linear_motion(),
+                                      goal.linear_motion(),
+                                      MotionConstraints{},
+                                      start.stamp, {}, {});
     RotationConstraints rot;
     double maxDeltaAngle =
         rot.maxAccel * std::pow(path.duration().count() / 2.0, 2);
@@ -314,18 +336,20 @@ void assertPivotEndpoints(double a0, double af, double w0) {
     RobotConstraints constraints;
     RobotInstant start{Pose{{}, a0}, Twist{{}, w0}, RJ::now()};
     RobotInstant goal{Pose{{}, af}, Twist{{}, 0}, RJ::now()};
-    Trajectory out = CreatePath::rrt(start, goal, constraints.mot, {});
+    Trajectory out = CreatePath::rrt(start.linear_motion(),
+                                     goal.linear_motion(),
+                                     constraints.mot, start.stamp, {});
     ASSERT_FALSE(out.empty());
     PlanAngles(out, start, AngleFns::faceAngle(af), constraints.rot);
     // check first instant
-    ASSERT_NEAR(out.first().pose.position().distTo(start.pose.position()), 0,
+    ASSERT_NEAR(out.first().position().distTo(start.position()), 0,
                 1e-6);
     ASSERT_NEAR(fixAngleRadians(out.first().pose.heading()),
                 fixAngleRadians(a0), 1e-6);
     ASSERT_NEAR(out.first().velocity.angular(), w0, 1e-6);
     ASSERT_NEAR(out.first().velocity.linear().mag(), 0, 1e-6);
     // check last instant
-    ASSERT_NEAR(out.last().pose.position().distTo(start.pose.position()), 0,
+    ASSERT_NEAR(out.last().position().distTo(start.position()), 0,
                 1e-6);
     double fao = fixAngleRadians(a0);
     double faf = fixAngleRadians(af);
@@ -338,18 +362,20 @@ void assertPivot(double a0, double af, double w0) {
     RobotConstraints constraints;
     RobotInstant start{Pose{{}, a0}, Twist{{}, w0}, RJ::now()};
     RobotInstant goal{Pose{{}, af}, Twist{{}, 0}, RJ::now()};
-    Trajectory out = CreatePath::rrt(start, goal, constraints.mot, {});
+    Trajectory out = CreatePath::rrt(start.linear_motion(),
+                                     goal.linear_motion(),
+                                     constraints.mot, start.stamp, {});
     ASSERT_FALSE(out.empty());
     PlanAngles(out, start, AngleFns::faceAngle(af), constraints.rot);
     // check first instant
-    ASSERT_NEAR(out.first().pose.position().distTo(start.pose.position()), 0,
+    ASSERT_NEAR(out.first().position().distTo(start.position()), 0,
                 1e-6);
     ASSERT_NEAR(fixAngleRadians(out.first().pose.heading()),
                 fixAngleRadians(a0), 1e-6);
     ASSERT_NEAR(out.first().velocity.angular(), w0, 1e-6);
     ASSERT_NEAR(out.first().velocity.linear().mag(), 0, 1e-6);
     // check last instant
-    ASSERT_NEAR(out.last().pose.position().distTo(start.pose.position()), 0,
+    ASSERT_NEAR(out.last().position().distTo(start.position()), 0,
                 1e-6);
     ASSERT_NEAR(fixAngleRadians(out.last().pose.heading()), fixAngleRadians(af),
                 1e-6);
@@ -392,7 +418,7 @@ void assertPivot(double a0, double af, double w0) {
     }
     ASSERT_NEAR(fixAngleRadians(evalHalfway->pose.heading() - a0),
                 halfwayAngleDelta, 1e-6);
-    ASSERT_NEAR(evalHalfway->pose.position().distTo(start.pose.position()), 0,
+    ASSERT_NEAR(evalHalfway->position().distTo(start.position()), 0,
                 1e-6);
     ASSERT_NEAR(evalHalfway->velocity.linear().mag(), 0, 1e-6);
     ASSERT_NEAR(evalHalfway->velocity.angular(), halfwayVel, 1e-6);

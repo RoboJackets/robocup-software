@@ -2,42 +2,13 @@
 
 #include <Geometry2d/Pose.hpp>
 #include <time.hpp>
+
 #include "DebugDrawer.hpp"
+#include "Instant.hpp"
 #include "Utils.hpp"
 #include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
-
-/**
- * Represents the current state of a robot in a planned trajectory.
- */
-struct RobotInstant {
-    RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist velocity,
-                 RJ::Time stamp)
-        : pose(pose), velocity(velocity), stamp(stamp) {}
-
-    RobotInstant() = default;
-
-    Geometry2d::Pose pose;
-    Geometry2d::Twist velocity;
-    RJ::Time stamp;
-
-    /**
-     * Equality comparison operator.
-     */
-    bool operator==(const RobotInstant& other) const {
-        return pose == other.pose && velocity == other.velocity &&
-               stamp == other.stamp;
-    }
-
-    /**
-     * Inequality comparison operator.
-     */
-    bool operator!=(const RobotInstant& other) const {
-        return pose != other.pose || velocity != other.velocity ||
-               stamp != other.stamp;
-    }
-};
 
 /**
  * Represents a trajectory x(t), y(t), h(t), with a smooth velocity and

@@ -53,7 +53,6 @@ void VisionFilter::fillRobotState(WorldState& state, bool usBlue) {
 
         RobotState robot_state;
         robot_state.visible = wr.getIsValid();
-        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
@@ -71,7 +70,6 @@ void VisionFilter::fillRobotState(WorldState& state, bool usBlue) {
 
         RobotState robot_state;
         robot_state.visible = wr.getIsValid();
-        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());

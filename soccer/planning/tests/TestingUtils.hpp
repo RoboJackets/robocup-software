@@ -1,7 +1,8 @@
 #pragma once
 
-#include "planning/trajectory/Trajectory.hpp"
+#include "MotionInstant.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "planning/Trajectory.hpp"
 
 namespace Planning::TestingUtils {
 /**

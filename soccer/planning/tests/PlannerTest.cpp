@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
+
 #include "Geometry2d/Pose.hpp"
+#include "MotionInstant.hpp"
 #include "SystemState.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/low_level/RRTUtil.hpp"
 #include "planning/planner/CollectPlanner.hpp"
 #include "planning/planner/MotionCommand.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
@@ -8,8 +12,6 @@
 #include "planning/planner/Planner.hpp"
 #include "planning/planner/SettlePlanner.hpp"
 #include "planning/tests/TestingUtils.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/Trajectory.hpp"
 
 /*
  * If these tests are failing, run again with the flag --gtest_break_on_failure
@@ -34,8 +36,8 @@ TEST(Planning, path_target_random) {
         PlanRequest request{randomInstant(),
                             PathTargetCommand{goal},
                             RobotConstraints{},
-                            Trajectory{{}},
                             obstacles,
+                            {},
                             {},
                             0,
                             &world_state,
@@ -54,8 +56,8 @@ TEST(Planning, collect_basic) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         CollectCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         ShapeSet{},
+                        {},
                         {},
                         0,
                         &world_state,
@@ -76,8 +78,8 @@ TEST(Planning, collect_obstructed) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         CollectCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -101,8 +103,8 @@ TEST(Planning, collect_pointless_obs) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         CollectCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -123,8 +125,8 @@ TEST(Planning, collect_moving_ball_quick) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         CollectCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -145,8 +147,8 @@ TEST(Planning, collect_moving_ball_slow) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         CollectCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -167,8 +169,8 @@ TEST(Planning, collect_moving_ball_slow_2) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         CollectCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -194,8 +196,8 @@ TEST(Planning, collect_random) {
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             CollectCommand{},
                             RobotConstraints{},
-                            Trajectory{{}},
                             obstacles,
+                            {},
                             {},
                             0,
                             &world_state,
@@ -217,8 +219,8 @@ TEST(Planning, settle_basic) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         SettleCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -239,8 +241,8 @@ TEST(Planning, settle_pointless_obs) {
     PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                         SettleCommand{},
                         RobotConstraints{},
-                        Trajectory{{}},
                         obstacles,
+                        {},
                         {},
                         0,
                         &world_state,
@@ -266,8 +268,8 @@ TEST(Planning, settle_random) {
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             SettleCommand{},
                             RobotConstraints{},
-                            Trajectory{{}},
                             obstacles,
+                            {},
                             {},
                             0,
                             &world_state,

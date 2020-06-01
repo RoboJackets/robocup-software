@@ -2,7 +2,8 @@
 
 #include "Configuration.hpp"
 #include "Constants.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
+#include "planning/Instant.hpp"
+#include "planning/low_level/RRTUtil.hpp"
 
 using namespace Geometry2d;
 
@@ -72,7 +73,7 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
     Trajectory partialPath;
 
     // The is from the original robot position to the ball
-    // We only care about the replan lead time from the current pos in the path
+    // We only care about the replan lead time from the current position in the path
     // to the intercept point
     RJ::Seconds timeIntoPreviousPath;
 
@@ -124,10 +125,10 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
     // it
     if (ball.velocity.mag() < *_ballSpeedApproachDirectionCutoff) {
         // Move directly to the ball
-        approachDirection = (ball.position - startInstant.pose.position()).norm();
+        approachDirection = (ball.position - startInstant.position()).norm();
     } else {
         // Approach the ball from behind
-        approachDirection = averageBallVel.norm();
+        approachDirection = -averageBallVel.norm();
     }
 
     // Check if we should transition to control from approach
@@ -160,7 +161,7 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
 
 void CollectPlanner::checkSolutionValidity(BallState ball,
                                            RobotInstant start) {
-    bool nearBall = (ball.position - start.pose.position()).mag() <
+    bool nearBall = (ball.position - start.position()).mag() <
                     *_distCutoffToApproach + *_distCutoffToControl;
 
     // Check if we need to go back into approach
@@ -175,9 +176,9 @@ void CollectPlanner::checkSolutionValidity(BallState ball,
 
 void CollectPlanner::processStateTransition(BallState ball, RobotInstant startInstant) {
     // Do the transitions
-    double dist = (startInstant.pose.position() - ball.position).mag() - Robot_MouthRadius;
+    double dist = (startInstant.position() - ball.position).mag() - Robot_MouthRadius;
     double speedDiff =
-        (startInstant.velocity.linear() - averageBallVel).mag() - *_touchDeltaSpeed;
+        (startInstant.linear_velocity() - averageBallVel).mag() - *_touchDeltaSpeed;
 
     // If we are in range to the slow dist
     if (dist < *_approachDistTarget + Robot_MouthRadius &&
@@ -204,9 +205,9 @@ Trajectory CollectPlanner::courseApproach(
     //
     //
     //     |------------------------|-------| (ball)
-    // robot pos                 slow pt  hit pt
+    // robot position                 slow pt  hit pt
     //
-    // Robot pos is where we are at now
+    // Robot position is where we are at now
     // Slow point is where we want to start the const velocity approach
     //     This is due to our acceleration being not exact causing us to
     //     perpetually bump the ball away
@@ -230,8 +231,8 @@ Trajectory CollectPlanner::courseApproach(
     }
 
     RobotInstant targetSlow;
-    targetSlow.pose.position() = pathCourseTarget;
-    targetSlow.velocity.linear() = targetSlowVel;
+    targetSlow.position() = pathCourseTarget;
+    targetSlow.linear_velocity() = targetSlowVel;
 
     Replanner::PlanParams params {
         start,
@@ -241,7 +242,7 @@ Trajectory CollectPlanner::courseApproach(
         planRequest.constraints,
         AngleFns::facePoint(ball.position)
     };
-    Trajectory coarsePath = rrtPlanner.CreatePlan(params, previous);
+    Trajectory coarsePath = replanner.CreatePlan(params, previous);
 
     // Build a path from now to the slow point
     coarsePath.setDebugText("course");
@@ -262,9 +263,9 @@ Trajectory CollectPlanner::fineApproach(
     //
     //
     //     |------------------------|-------| (ball)
-    // robot pos                 slow pt  hit pt
+    // robot position                 slow pt  hit pt
     //
-    // Robot pos is where we are at now
+    // Robot position is where we are at now
     // Slow point is where we want to start the const velocity approach
     //     This is due to our acceleration being not exact causing us to
     //     perpetually bump the ball away
@@ -277,9 +278,7 @@ Trajectory CollectPlanner::fineApproach(
     Point targetHitPos = ball.position - Robot_MouthRadius * approachDirection;
     Point targetHitVel = averageBallVel + approachDirection * *_touchDeltaSpeed;
 
-    RobotInstant targetHit;
-    targetHit.pose.position() = targetHitPos;
-    targetHit.velocity.linear() = targetHitVel;
+    LinearMotionInstant targetHit{targetHitPos, targetHitVel};
 
     // Decrease accel at the end so we more smoothly touch the ball
     motionConstraintsHit.maxAcceleration *= *_approachAccelScalePercent;
@@ -288,9 +287,12 @@ Trajectory CollectPlanner::fineApproach(
     motionConstraintsHit.maxSpeed =
         std::min(targetHitVel.mag(), motionConstraintsHit.maxSpeed);
 
-    Trajectory pathHit = CreatePath::simple(startInstant,
-                                            targetHit,
-                                            planRequest.constraints.mot);
+    Trajectory pathHit = CreatePath::simple(
+        startInstant.linear_motion(),
+        targetHit,
+        planRequest.constraints.mot,
+        startInstant.stamp);
+
     pathHit.setDebugText("fine");
     PlanAngles(pathHit, startInstant, AngleFns::facePoint(ball.position),
                planRequest.constraints.rot);
@@ -329,7 +331,7 @@ Trajectory CollectPlanner::control(
     float velocityScale = *_velocityControlScale;
 
     // Moving at us
-    if (averageBallVel.angleBetween((ball.position - start.pose.position())) > 3.14 / 2) {
+    if (averageBallVel.angleBetween((ball.position - start.position())) > 3.14 / 2) {
         currentSpeed = *_touchDeltaSpeed;
         velocityScale = 0;
     }
@@ -354,22 +356,23 @@ Trajectory CollectPlanner::control(
     // The initial part will be at a constant speed, then it will decelerate to
     // 0 m/s
     double distFromBall = *_stopDistScale * stoppingDist;
-    RobotInstant target;
-    target.pose.position() =
-        start.pose.position() +
-        distFromBall * (ball.position - start.pose.position() +
-                        velocityScale * averageBallVel * nonZeroVelTimeDelta)
-            .norm();
+
+    Point targetPos = start.position() +
+                      distFromBall * (ball.position - start.position() +
+                                      velocityScale * averageBallVel * nonZeroVelTimeDelta).norm();
+    LinearMotionInstant target{targetPos};
 
     // Try to use the RRTPlanner to generate the path first
     // It reaches the target better for some reason
-    std::vector<Point> startEndPoints{start.pose.position(), target.pose.position()};
-    Trajectory path = CreatePath::rrt(start, target, motionConstraints, staticObstacles, dynamicObstacles);
+    std::vector<Point> startEndPoints{start.position(), target.position};
+    Trajectory path = CreatePath::rrt(
+        start.linear_motion(), target, motionConstraints,
+        start.stamp, staticObstacles, dynamicObstacles);
 
     if (planRequest.debug_drawer != nullptr) {
         planRequest.debug_drawer->drawLine(
-            Segment(start.pose.position(),
-                    start.pose.position() + (target.pose.position() - start.pose.position()) * 10),
+            Segment(start.position(),
+                    start.position() + (target.position - start.position()) * 10),
             QColor(255, 255, 255), "Control");
     }
 
@@ -377,8 +380,8 @@ Trajectory CollectPlanner::control(
 
     // Make sure that when the path ends, we don't end up spinning around
     // because we hit go past the ball position at the time of path creation
-    Point facePt = start.pose.position() +
-                   10 * (target.pose.position() - start.pose.position())
+    Point facePt = start.position() +
+                   10 * (target.position - start.position())
                        .norm();
 
     PlanAngles(path, start, AngleFns::facePoint(facePt), robotConstraints.rot);
@@ -406,7 +409,7 @@ Trajectory CollectPlanner::invalid(
         planRequest.constraints,
         AngleFns::facePoint(planRequest.world_state->ball.position)
     };
-    Trajectory path = rrtPlanner.CreatePlan(params, previous);
+    Trajectory path = replanner.CreatePlan(params, previous);
     path.setDebugText("Invalid state in collect");
 
     return path;
@@ -428,3 +431,4 @@ void CollectPlanner::reset() {
 }
 
 }  // namespace Planning
+

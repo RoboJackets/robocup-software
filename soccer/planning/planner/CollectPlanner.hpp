@@ -1,5 +1,6 @@
 #pragma once
 
+#include "planning/Instant.hpp"
 #include "planning/low_level/Replanner.hpp"
 #include "planning/planner/Planner.hpp"
 
@@ -68,7 +69,7 @@ private:
     static T applyLowPassFilter(const T& oldValue, const T& newValue,
                                 double gain);
 
-    Replanner rrtPlanner;
+    Replanner replanner;
     Trajectory previous;
 
     CollectPathPlannerStates currentState;

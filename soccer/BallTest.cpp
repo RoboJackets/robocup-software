@@ -28,7 +28,8 @@ TEST(BallState, QuerySecondsTo) {
     BallState in_3_seconds = state.predict_in(RJ::Seconds(3));
 
     Geometry2d::Point actual;
-    EXPECT_NEAR(state.query_seconds_to(in_3_seconds.position, &actual).count(),
+    EXPECT_NEAR(
+        state.query_seconds_near(in_3_seconds.position, &actual).count(),
               3, 1e-6);
     EXPECT_TRUE(actual.nearPoint(in_3_seconds.position, 1e-6));
 }
@@ -41,8 +42,11 @@ TEST(BallState, QueryFar) {
         start);
 
     Geometry2d::Point actual;
-    RJ::Seconds t = state.query_seconds_to(Geometry2d::Point(5, 0), &actual);
+    RJ::Seconds t = state.query_seconds_near(Geometry2d::Point(5, 0), &actual);
 
-    EXPECT_EQ(t, RJ::Seconds::max());
+    // TODO: For some reason query_stop_time and query_seconds_to_dist give slightly
+    //  different results, which results in this error being really high (2e-3).
+    //  Diagnose this and make sure it isn't a bug.
+    EXPECT_NEAR(state.query_stop_time().count(), t.count(), 2e-3);
     EXPECT_TRUE(actual.nearPoint(state.predict_in(t).position, 1e-6));
 }

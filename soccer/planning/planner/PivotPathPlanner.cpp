@@ -6,10 +6,10 @@
 #include <memory>
 #include <vector>
 
-#include "planning/trajectory/PathSmoothing.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/Trajectory.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
+#include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/low_level/PathSmoothing.hpp"
+#include "planning/low_level/VelocityProfiling.hpp"
 
 namespace Planning {
 using namespace Geometry2d;
@@ -55,40 +55,43 @@ Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
                  rotationConstraints.maxSpeed * radius) *
         .5;
 
-    float startAngle = pivotPoint.angleTo(startInstant.pose.position());
-    float targetAngle = pivotPoint.angleTo(endTarget);
-    float change = fixAngleRadians(targetAngle - startAngle);
+    double startAngle = pivotPoint.angleTo(startInstant.position());
+    double targetAngle = pivotPoint.angleTo(endTarget);
+    double change = fixAngleRadians(targetAngle - startAngle);
 
     const int interpolations = 10;
 
-    points.push_back(startInstant.pose.position());
+    points.push_back(startInstant.position());
     for (int i = 1; i <= interpolations; i++) {
-        float percent = (float)i / interpolations;
-        float angle = startAngle + change * percent;
+        double percent = (double)i / interpolations;
+        double angle = startAngle + change * percent;
         Point point =
             Point::direction(angle).normalized(radius) + pivotPoint;
         points.push_back(point);
     }
 
-    BezierPath postBezier(points, startInstant.velocity.linear(),
+    BezierPath pathBezier(points, startInstant.linear_velocity(),
                           Point(0, 0), motionConstraints);
 
     Trajectory path = ProfileVelocity(
-        postBezier, startInstant.velocity.linear().mag(),
-        0, motionConstraints, startInstant.stamp);
+        pathBezier,
+        startInstant.linear_velocity().mag(),
+        0,
+        motionConstraints,
+        startInstant.stamp);
 
     AngleFunction function =
         [pivotPoint, pivotTarget] (const RobotInstant& instant) -> double {
-            Point position = instant.pose.position();
+            Point position = instant.position();
             auto angleToPivot = position.angleTo(pivotPoint);
             auto angleToPivotTarget = position.angleTo(pivotTarget);
 
             if (abs(angleToPivot - angleToPivotTarget) <
                 DegreesToRadians(10)) {
                 return angleToPivotTarget;
-            } else {
-                return angleToPivot;
             }
+
+            return angleToPivot;
         };
 
     PlanAngles(path, startInstant,
@@ -110,7 +113,7 @@ bool PivotPathPlanner::shouldReplan(const PivotCommand& command) const {
     double radius = _pivotRadiusMultiplier->value() * Robot_Radius;
     auto endTarget =
         pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
-    double targetChange = (previous.last().pose.position() - endTarget).mag();
+    double targetChange = (previous.last().position() - endTarget).mag();
 
     // If the target has changed significantly, we need to replan.
     if (targetChange > 0.1) {

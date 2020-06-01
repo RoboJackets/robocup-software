@@ -131,7 +131,7 @@ Geometry2d::Point Ball_predict_pos(BallState* ball, double s) {
 }
 
 double Ball_estimate_seconds_to(BallState* ball, Geometry2d::Point p) {
-    return ball->query_seconds_to(p).count();
+    return ball->query_seconds_near(p).count();
 }
 
 double Ball_predict_seconds_to_stop(BallState* ball) {
@@ -439,7 +439,7 @@ void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text,
                            Geometry2d::Point* pos,
                            const boost::python::tuple& rgb,
                            const std::string& layer) {
-    if (pos == nullptr) throw NullArgumentException("pos");
+    if (pos == nullptr) throw NullArgumentException("position");
     self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }

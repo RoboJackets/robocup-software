@@ -5,9 +5,6 @@ set(CMAKE_AUTOMOC ON)
 # include Eigen3 for linear algebra
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3 -fopenmp")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O3 -fopenmp")
-
 # All sources for the robocup library used for the python module, soccer, and log log viewer
 # Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
 set(ROBOCUP_LIB_SRC
@@ -30,10 +27,10 @@ set(ROBOCUP_LIB_SRC
     "optimization/PythonFunctionWrapper.cpp"
     "planning/MotionConstraints.cpp"
     "planning/RotationConstraints.cpp"
-    "planning/trajectory/RRTUtil.cpp"
-    "planning/trajectory/Trajectory.cpp"
-    "planning/trajectory/VelocityProfiling.cpp"
-    "planning/trajectory/PathSmoothing.cpp"
+    "planning/low_level/RRTUtil.cpp"
+    "planning/Trajectory.cpp"
+    "planning/low_level/VelocityProfiling.cpp"
+    "planning/low_level/PathSmoothing.cpp"
     "planning/PlannerNode.cpp"
     "planning/planner/Planner.cpp"
     "planning/planner/PathTargetPlanner.cpp"

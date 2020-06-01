@@ -20,8 +20,5 @@ public:
         : PlannerForCommandType<InterceptCommand>("InterceptPlanner"){};
 
     Trajectory plan(PlanRequest&& request) override;
-
-private:
-    Geometry2d::Point _prevTargetPoint;
 };
 }  // namespace Planning

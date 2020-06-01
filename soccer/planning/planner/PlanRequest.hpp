@@ -1,15 +1,17 @@
 #pragma once
 
-#include <planning/MotionConstraints.hpp>
-#include <planning/planner/MotionCommand.hpp>
-#include "Context.hpp"
 #include <map>
 #include <memory>
-#include <planning/trajectory/Trajectory.hpp>
+#include <planning/MotionConstraints.hpp>
+#include <planning/Trajectory.hpp>
+#include <planning/planner/MotionCommand.hpp>
 #include <utility>
+
+#include "Context.hpp"
+#include "planning/Instant.hpp"
+#include "WorldState.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RobotConstraints.hpp"
-#include "WorldState.hpp"
 
 namespace Planning {
 
@@ -21,7 +23,7 @@ namespace Planning {
  */
 struct PlanRequest {
     PlanRequest(RobotInstant start, MotionCommand command,
-                RobotConstraints constraints, Trajectory&& prevTrajectory,
+                RobotConstraints constraints,
                 Geometry2d::ShapeSet field_obstacles,
                 Geometry2d::ShapeSet virtual_obstacles,
                 std::array<Trajectory*, Num_Shells> planned_trajectories,
@@ -32,7 +34,6 @@ struct PlanRequest {
         : start(start),
           motionCommand(command),
           constraints(constraints),
-          prevTrajectory(prevTrajectory),
           field_obstacles(std::move(field_obstacles)),
           virtual_obstacles(std::move(virtual_obstacles)),
           planned_trajectories(planned_trajectories),
@@ -48,7 +49,6 @@ struct PlanRequest {
         return PlanRequest(start,
                            motionCommand,
                            constraints,
-                           Trajectory{{}},
                            field_obstacles,
                            virtual_obstacles,
                            planned_trajectories,
@@ -72,11 +72,6 @@ struct PlanRequest {
      * Angular and linear acceleration and velocity constraints on the robot.
      */
     RobotConstraints constraints;
-
-    /**
-     * The previous trajectory planned, or nullptr.
-     */
-    Trajectory prevTrajectory;
 
     /**
      * The list of field obstacles.

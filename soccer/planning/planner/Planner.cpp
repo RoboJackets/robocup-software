@@ -1,6 +1,10 @@
 #include "Planner.hpp"
-#include "planning/trajectory/Trajectory.hpp"
+
+#include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
+
 namespace Planning {
+
 Trajectory Planner::reuse(RJ::Time now, RobotInstant start, Trajectory previous) {
     if (previous.empty()) {
         Trajectory out({start});
@@ -18,4 +22,5 @@ Trajectory Planner::reuse(RJ::Time now, RobotInstant start, Trajectory previous)
     out.setDebugText("Reusing Past End");
     return std::move(out);
 }
+
 }  // namespace Planning

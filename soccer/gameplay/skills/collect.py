@@ -74,7 +74,6 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         self.probably_held_cnt = 0
 
     def execute_running(self):
-        print("Collect")
         if (self.robot is not None):
             self.robot.disable_avoid_ball()
             self.robot.set_dribble_speed(

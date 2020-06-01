@@ -1,5 +1,6 @@
 #pragma once
 
+#include "planning/Instant.hpp"
 #include "planning/low_level/Replanner.hpp"
 #include "planning/planner/Planner.hpp"
 
@@ -15,7 +16,7 @@ namespace Planning {
  */
 class SettlePlanner : public PlannerForCommandType<SettleCommand> {
 public:
-    enum SettlePlannerStates {
+    enum class SettlePlannerStates {
         // Moves to the ball path in front of it
         Intercept,
         // Starts to dampen the ball with backward motion
@@ -25,19 +26,16 @@ public:
     SettlePlanner()
         : PlannerForCommandType("settle"),
           avgInstantaneousInterceptTarget(0, 0),
-          averageBallVel(0, 0),
-          firstInterceptTargetFound(false),
-          firstBallVelFound(false),
-          pathCreatedForDampen(false),
-          currentState(Intercept){};
+          averageBallVel(0, 0)
+          {}
 
     Trajectory plan(PlanRequest&& planRequest) override;
+
+    void reset() override;
 
     static void createConfiguration(Configuration* cfg);
 
 private:
-    bool shouldReplan(const PlanRequest& planRequest) const;
-
     // Given the global target in `targetBounceDirection`
     // Calculate the delta position to get the robot in the correct location
     // And the face point to get the bounce right
@@ -58,22 +56,20 @@ private:
     // Note: startInstant may be changed inside this function
     //       when we are basically at the correct location and
     //       need to start the dampen
-    void processStateTransition(BallState ball, RobotInstant startInstant,
+    void processStateTransition(BallState ball, RobotInstant* startInstant,
                                 double angle, Geometry2d::Point deltaPos);
 
     // State functions
     Trajectory intercept(const PlanRequest& planRequest,
-                         RJ::Time curTime,
                          RobotInstant startInstant,
                          const Geometry2d::ShapeSet& staticObstacles,
                          const std::vector<DynamicObstacle>& dynamicObstacles,
                          Geometry2d::Point deltaPos,
                          Geometry2d::Point facePos);
 
+    // Dampen doesn't need to take obstacles into account.
     Trajectory dampen(const PlanRequest& planRequest,
                       RobotInstant startInstant,
-                      const Geometry2d::ShapeSet& staticObstacles,
-                      const std::vector<DynamicObstacle>& dynamicObstacles,
                       Geometry2d::Point deltaPos,
                       Geometry2d::Point facePos);
 
@@ -85,21 +81,23 @@ private:
     static T applyLowPassFilter(const T& oldValue, const T& newValue,
                                 double gain);
 
-    Replanner rrtPlanner;
     std::optional<Geometry2d::Point> targetBounceDirection;
 
-    SettlePlannerStates currentState;
+    SettlePlannerStates currentState = SettlePlannerStates::Intercept;
 
     // Intercept Target Filtering Variables
     Geometry2d::Point avgInstantaneousInterceptTarget;
     Geometry2d::Point averageBallVel;
-    bool firstInterceptTargetFound;
-    bool firstBallVelFound;
+    bool firstInterceptTargetFound = false;
+    bool firstBallVelFound = false;
 
     // Only change the target of the path if it changes significantly
     Geometry2d::Point pathInterceptTarget;
 
-    bool pathCreatedForDampen;
+    bool pathCreatedForDampen = false;
+
+    Replanner replanner;
+    Trajectory previous;
 
     // How much of the ball seed to contact the ball with
     // before slowing down to dampen the initial hit
@@ -155,7 +153,5 @@ private:
 
     // Max angle between ball and target bounce direction
     static ConfigDouble* _maxBounceAngle;  // Deg
-
-    Trajectory previous;
 };
 }  // namespace Planning

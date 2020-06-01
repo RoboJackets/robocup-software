@@ -1,11 +1,14 @@
 #include "RRTUtil.hpp"
+
 #include <array>
 #include <rrt/planning/Path.hpp>
+
 #include "DebugDrawer.hpp"
+#include "PathSmoothing.hpp"
+#include "VelocityProfiling.hpp"
 #include "planning/MotionConstraints.hpp"
-#include "planning/trajectory/PathSmoothing.hpp"
-#include "planning/trajectory/Trajectory.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/Instant.hpp"
 
 namespace Planning {
 REGISTER_CONFIGURABLE(RRTConfig)
@@ -121,35 +124,42 @@ vector<Point> GenerateRRT(Point start, Point goal, const ShapeSet& obstacles,
 }
 
 namespace CreatePath {
-Trajectory simple(const RobotInstant& start, const RobotInstant& goal,
+Trajectory simple(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                   const MotionConstraints& motionConstraints,
+                  RJ::Time startTime,
                   const std::vector<Point>& intermediatePoints) {
     std::vector<Point> points;
-    points.push_back(start.pose.position());
+    points.push_back(start.position);
     for (const Point& pt : intermediatePoints) points.push_back(pt);
-    points.push_back(goal.pose.position());
-    BezierPath bezier(points, start.velocity.linear(), goal.velocity.linear(),
+    points.push_back(goal.position);
+    BezierPath bezier(points, start.velocity, goal.velocity,
                       motionConstraints);
-    Trajectory path = ProfileVelocity(bezier, start.velocity.linear().mag(),
-                                      goal.velocity.linear().mag(),
-                                      motionConstraints, start.stamp);
+    Trajectory path = ProfileVelocity(bezier, start.velocity.mag(),
+                                      goal.velocity.mag(),
+                                      motionConstraints, startTime);
     return std::move(path);
 }
 
-Trajectory rrt(const RobotInstant& start, const RobotInstant& goal,
+Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                const MotionConstraints& motionConstraints,
+               RJ::Time startTime,
                const ShapeSet& static_obstacles,
                const vector<DynamicObstacle>& dynamic_obstacles,
                const vector<Point>& biasWaypoints) {
-    if (start.pose.position().distTo(goal.pose.position()) < 1e-6) {
-        return Trajectory{{RobotInstant{start.pose, Twist(), RJ::now()}}};
+    if (start.position.distTo(goal.position) < 1e-6) {
+        return Trajectory{{
+            RobotInstant{
+                Pose(start.position, 0),
+                Twist(),
+                RJ::now()
+            }}};
     }
     // maybe we don't need an RRT
     Trajectory straightTrajectory =
-        CreatePath::simple(start, goal, motionConstraints);
-    if (start.pose.position().distTo(goal.pose.position()) < Robot_Radius ||
+        CreatePath::simple(start, goal, motionConstraints, startTime);
+    if (start.position.distTo(goal.position) < Robot_Radius ||
         !straightTrajectory.hit(static_obstacles, 0s) &&
-            !straightTrajectory.intersects(dynamic_obstacles, start.stamp)) {
+            !straightTrajectory.intersects(dynamic_obstacles, startTime)) {
         return std::move(straightTrajectory);
     }
 
@@ -158,15 +168,15 @@ Trajectory rrt(const RobotInstant& start, const RobotInstant& goal,
     constexpr int attemptsToAvoidDynamics = 10;
     for (int i = 0; i < attemptsToAvoidDynamics; i++) {
         std::vector<Point> points =
-            GenerateRRT(start.pose.position(), goal.pose.position(), obstacles,
+            GenerateRRT(start.position, goal.position, obstacles,
                         biasWaypoints);
 
-        BezierPath postBezier(points, start.velocity.linear(),
-                              goal.velocity.linear(), motionConstraints);
+        BezierPath postBezier(points, start.velocity,
+                              goal.velocity, motionConstraints);
 
-        path = ProfileVelocity(postBezier, start.velocity.linear().mag(),
-                               goal.velocity.linear().mag(), motionConstraints,
-                               start.stamp);
+        path = ProfileVelocity(postBezier, start.velocity.mag(),
+                               goal.velocity.mag(), motionConstraints,
+                               startTime);
 
         Point hitPoint;
         if (path.intersects(dynamic_obstacles, path.begin_time(), &hitPoint)) {
@@ -179,18 +189,19 @@ Trajectory rrt(const RobotInstant& start, const RobotInstant& goal,
     return std::move(path);
 }
 
-Trajectory complete(const RobotInstant& start, const RobotInstant& goal,
+Trajectory complete(const LinearMotionInstant& start, const LinearMotionInstant& goal,
                     const MotionConstraints& motionConstraints,
+                    RJ::Time startTime,
                     const ShapeSet& static_obstacles,
                     const vector<DynamicObstacle>& dynamic_obstacles,
                     const vector<Point>& biasWaypoints) {
     Trajectory rrtPath =
-        CreatePath::rrt(start, goal, motionConstraints, static_obstacles,
-                        dynamic_obstacles, biasWaypoints);
+        CreatePath::rrt(start, goal, motionConstraints, startTime,
+                        static_obstacles, dynamic_obstacles, biasWaypoints);
     if (!rrtPath.empty()) {
         return std::move(rrtPath);
     }
-    return CreatePath::simple(start, goal, motionConstraints);
+    return CreatePath::simple(start, goal, motionConstraints, startTime);
 }
 }  // namespace CreatePath
 }  // namespace Planning

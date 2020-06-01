@@ -24,7 +24,7 @@ public:
     ~EscapeObstaclesPathPlanner() override = default;
 
     Trajectory plan(PlanRequest&& planRequest) override {
-        planRequest.motionCommand = PathTargetCommand{planRequest.start};
+        planRequest.motionCommand = PathTargetCommand{planRequest.findNonBlo};
         return _planner.plan(std::move(planRequest));
     };
     bool isApplicable(const MotionCommand& command) const override {

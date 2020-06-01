@@ -2,7 +2,8 @@
 
 #include "MotionCommand.hpp"
 #include "PlanRequest.hpp"
-#include "planning/trajectory/Trajectory.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/Instant.hpp"
 
 namespace Planning {
 class Planner {

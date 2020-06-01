@@ -1,12 +1,12 @@
 #pragma once
 
+#include <Context.hpp>
 #include <vector>
 
-#include <Context.hpp>
 #include "Node.hpp"
+#include "Trajectory.hpp"
 #include "planner/PlanRequest.hpp"
 #include "planner/Planner.hpp"
-#include "trajectory/Trajectory.hpp"
 
 namespace Planning {
 

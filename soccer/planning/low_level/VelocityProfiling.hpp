@@ -1,8 +1,10 @@
 #pragma once
 
 #include <planning/RotationConstraints.hpp>
+
+#include "planning/Instant.hpp"
 #include "PathSmoothing.hpp"
-#include "Trajectory.hpp"
+#include "planning/Trajectory.hpp"
 
 namespace Planning {
 
@@ -12,19 +14,25 @@ namespace Planning {
 using AngleFunction = std::function<double(const RobotInstant& instant)>;
 
 namespace AngleFns {
+
 inline double tangent(const RobotInstant& instant) {
-    Geometry2d::Point pt = instant.pose.position();
-    Geometry2d::Point vel = instant.velocity.linear();
-    double angle = instant.pose.heading();
+    Geometry2d::Point vel = instant.linear_velocity();
+
+    if (vel.mag() < 1e-3) {
+        return instant.heading();
+    }
+
+    double angle = instant.heading();
     double angleError = std::abs(fixAngleRadians(angle - vel.angle()));
     if (angleError < M_PI / 2) {
         return vel.angle();
     }
     return vel.angle() + M_PI;
 };
+
 inline AngleFunction facePoint(const Geometry2d::Point point) {
     return [=](const RobotInstant& instant) -> double {
-        return instant.pose.position().angleTo(point);
+        return instant.position().angleTo(point);
     };
 }
 inline AngleFunction faceAngle(double angle) {

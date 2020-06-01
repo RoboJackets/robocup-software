@@ -1,5 +1,7 @@
 #include "VelocityProfiling.hpp"
 
+#include "planning/Instant.hpp"
+
 namespace Planning {
 
 using Geometry2d::Point;
@@ -158,7 +160,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
 /*
  * Return to the current position with angular velocity = 0
  *
- * current angle     (stoppingAngle)          0 vel
+ * current angle     (stoppingAngle)          0 velocity
  * |-------------------------------------------|
  * >>>>>>>>>>>>>> stopping >>>>>>>>>>>>>>>>>>>>>
  *                      <<<<<< accelerating <<<<
@@ -190,7 +192,7 @@ void appendStop(std::vector<double>& angles, std::vector<double>& angleVels,
 
 /**
  * Stop as soon as possible. we will end up at a different position:
- * current angle     (stoppingAngle)          0 vel
+ * current angle     (stoppingAngle)          0 velocity
  * |-------------------------------------------|
  * >>>>>>>>>>>>>> stopping >>>>>>>>>>>>>>>>>>>>>
  */

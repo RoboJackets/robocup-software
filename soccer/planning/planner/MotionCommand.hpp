@@ -1,13 +1,13 @@
 #pragma once
 
-#include <variant>
-
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <WorldState.hpp>
+#include <variant>
+
 #include "Utils.hpp"
-#include "planning/MotionInstant.hpp"
-#include "planning/trajectory/Trajectory.hpp"
+#include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
 
 namespace Planning {
 // todo(Ethan) discuss whether we want to have settle with bounce
@@ -28,7 +28,7 @@ struct EmptyCommand {};
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
 // note: as of now the heading and angular velocity are ignored
-// TODO use heading and angular velocity or change this to a MotionInstant
+// TODO use heading and angular velocity or change this to a LinearMotionInstant
 struct PathTargetCommand {
     RobotInstant pathGoal;
     std::optional<double> angle_override;

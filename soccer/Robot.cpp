@@ -1,5 +1,3 @@
-#include <Robot.hpp>
-#include <LogUtils.hpp>
 #include <protobuf/LogFrame.pb.h>
 
 #include <LogUtils.hpp>
@@ -18,8 +16,8 @@
 
 using namespace std;
 using namespace Geometry2d;
+using Planning::RobotInstant;
 using Planning::MotionCommand;
-using Planning::MotionInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
@@ -153,7 +151,7 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
              << ", " << goal.y() << ")" << endl;
     }
 
-    Planning::RobotInstant goal_instant;
+    RobotInstant goal_instant;
     goal_instant.pose = Pose{goal, angle()};
     goal_instant.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
     setMotionCommand(Planning::PathTargetCommand{goal_instant});
@@ -175,9 +173,10 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
 
     Geometry2d::Point targetPoint = goal;
     Geometry2d::Point targetVel = (goal - pos()).normalized() * endSpeed;
-    Planning::RobotInstant goal_instant{Geometry2d::Pose{targetPoint, 0},
-                                        Geometry2d::Twist{targetVel, 0},
-                                        RJ::Time{0s}};
+    RobotInstant goal_instant{
+        Geometry2d::Pose{targetPoint, 0},
+        Geometry2d::Twist{targetVel, 0},
+        RJ::Time{0s}};
     setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "moveTuning(" << goal << ")" << endl;
@@ -195,7 +194,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << goal.y() << ")" << std::endl;
     }
 
-    Planning::RobotInstant goal_instant;
+    RobotInstant goal_instant;
     goal_instant.pose = Pose{goal, 0};
     goal_instant.velocity = Twist{endVelocity, 0};
     setMotionCommand(Planning::PathTargetCommand{goal_instant});

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <Constants.hpp>
-#include <Geometry2d/Pose.hpp>
-#include <planning/trajectory/Trajectory.hpp>
+#include "Constants.hpp"
+#include "Geometry2d/Pose.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/Instant.hpp"
 
 #include "time.hpp"
 
@@ -20,7 +21,6 @@ struct RobotState {
     Geometry2d::Twist velocity;
     RJ::Time timestamp;
     bool visible = false;
-    bool velocity_valid = false;
 };
 
 /**
@@ -64,28 +64,31 @@ struct BallState {
 
     /**
      * Estimate the instant in time at which the ball will reach the given
-     * position (or the nearest point along its path to this position).
-     * @param position the query point
-     * @param out the nearest point to `position` along the path.
-     * @return the instant in time at which the ball is nearest to `position`.
+     * position (or the nearest point along the line of its path).
+     * @param near_to the query point
+     * @param out the nearest point to `near_to` along the path.
+     * @return the instant in time at which the ball is nearest to `near_to`.
      */
-    [[nodiscard]] RJ::Time query_time_at(
-        Geometry2d::Point position,
+    [[nodiscard]] RJ::Time query_time_near(
+        Geometry2d::Point near_to,
         Geometry2d::Point* out = nullptr) const;
 
     /**
-     * Similar to \ref predict_at "query_time_at(RJ::Time)", but for a duration
+     * Similar to \ref predict_at "query_time_near(RJ::Time)", but for a duration
      * in the future
      */
-    [[nodiscard]] RJ::Seconds query_seconds_to(
-        Geometry2d::Point position,
+    [[nodiscard]] RJ::Seconds query_seconds_near(
+        Geometry2d::Point near_to,
         Geometry2d::Point* out = nullptr) const;
 
     /**
      * Predict the stop time of the ball.
+     * @param out will be filled with the stopping position,
+     *  if it is not nullptr.
      * @return the duration until the ball stops.
      */
-    [[nodiscard]] RJ::Seconds query_stop_time() const;
+    [[nodiscard]] RJ::Seconds query_stop_time(
+        Geometry2d::Point* out = nullptr) const;
 
     /**
      * Query the time before the ball goes a certain distance.

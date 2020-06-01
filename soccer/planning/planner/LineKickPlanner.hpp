@@ -1,6 +1,9 @@
 #pragma once
-#include "PathTargetPlanner.hpp"
+
+#include "planning/Instant.hpp"
+#include "planning/low_level/Replanner.hpp"
 #include "Planner.hpp"
+
 namespace Planning {
 class LineKickPlanner : public PlannerForCommandType<LineKickCommand> {
 public:
@@ -27,7 +30,7 @@ private:
 
     static ConfigDouble* _approachSpeed;
 
-    Replanner _rrtPlanner;
+    Replanner replanner;
     Trajectory previous;
 };
 }  // namespace Planning

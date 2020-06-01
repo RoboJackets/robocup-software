@@ -3,8 +3,6 @@
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
 #include <Constants.hpp>
 #include <GameState.hpp>
 #include <Geometry2d/Arc.hpp>
@@ -14,9 +12,10 @@
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
 #include <Utils.hpp>
+
 #include "planning/DynamicObstacle.hpp"
-#include "planning/MotionInstant.hpp"
-#include "planning/trajectory/Trajectory.hpp"
+#include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
 
 class RobotConfig;
 class OurRobot;

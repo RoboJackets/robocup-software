@@ -1,9 +1,10 @@
 #include "Replanner.hpp"
 
-#include <planning/planner/Planner.hpp>
 #include <vector>
 
-#include "planning/trajectory/RRTUtil.hpp"
+#include "planning/planner/Planner.hpp"
+#include "planning/Instant.hpp"
+#include "RRTUtil.hpp"
 
 using namespace Geometry2d;
 
@@ -29,12 +30,17 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
     std::vector<Point> biasWaypoints;
     for (auto it = previous.iterator(RJ::now(), 100ms);
          (*it).stamp < previous.end_time(); ++it) {
-        biasWaypoints.push_back((*it).pose.position());
+        biasWaypoints.push_back((*it).position());
     }
     Trajectory preTrajectory = partialPath(previous);
     Trajectory postTrajectory = CreatePath::rrt(
-        preTrajectory.last(), params.goal, params.constraints.mot,
-        params.static_obstacles, params.dynamic_obstacles, biasWaypoints);
+        preTrajectory.last().linear_motion(),
+        params.goal.linear_motion(),
+        params.constraints.mot,
+        preTrajectory.end_time(),
+        params.static_obstacles,
+        params.dynamic_obstacles,
+        biasWaypoints);
 
     if (postTrajectory.empty()) {
         return fullReplan(params);
@@ -51,8 +57,13 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
 Trajectory Replanner::fullReplan(
     const Replanner::PlanParams& params) {
     Trajectory path =
-        CreatePath::rrt(params.start, params.goal, params.constraints.mot,
-                        params.static_obstacles, params.dynamic_obstacles);
+        CreatePath::rrt(
+            params.start.linear_motion(),
+            params.goal.linear_motion(),
+            params.constraints.mot,
+            params.start.stamp,
+            params.static_obstacles,
+            params.dynamic_obstacles);
 
     if (!path.empty()) {
         PlanAngles(path, path.first(), params.angle_function,
@@ -73,7 +84,7 @@ Trajectory Replanner::checkBetter(
 
 Trajectory Replanner::CreatePlan(Replanner::PlanParams params,
                                   Trajectory previous) {
-    Geometry2d::Point goalPoint = params.goal.pose.position();
+    Geometry2d::Point goalPoint = params.goal.position();
 
     RJ::Time now = RJ::now();
 
@@ -108,7 +119,7 @@ Trajectory Replanner::CreatePlan(Replanner::PlanParams params,
 
     // make fine corrections when we are close to the target
     // because the old target might be a bit off
-    if (params.start.pose.position().distTo(goalPoint) < Robot_Radius) {
+    if (params.start.position().distTo(goalPoint) < Robot_Radius) {
         std::optional<RobotInstant> nowInstant =
             previous_trajectory.evaluate(RJ::now());
         if (nowInstant) {
@@ -137,16 +148,16 @@ bool Replanner::veeredOffPath(const Trajectory& trajectory,
     RobotInstant instant = maybe_instant.value();
 
     double path_error =
-        (instant.pose.position() - actual.pose.position()).mag();
+        (instant.position() - actual.position()).mag();
     return path_error > kReplanThreshold;
 }
 
 bool Replanner::goalChanged(const RobotInstant& prevGoal,
                              const RobotInstant& goal) {
     double goalPosDiff =
-        (prevGoal.pose.position() - goal.pose.position()).mag();
+        (prevGoal.position() - goal.position()).mag();
     double goalVelDiff =
-        (prevGoal.velocity.linear() - goal.velocity.linear()).mag();
+        (prevGoal.linear_velocity() - goal.linear_velocity()).mag();
     return goalPosDiff > *_goalPosChangeThreshold ||
            goalVelDiff > *_goalVelChangeThreshold;
 }

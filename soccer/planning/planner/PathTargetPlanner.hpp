@@ -4,7 +4,7 @@
 
 #include "Planner.hpp"
 #include "planning/low_level/Replanner.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
+#include "planning/low_level/VelocityProfiling.hpp"
 
 namespace Planning {
 
@@ -14,7 +14,7 @@ public:
     ~PathTargetPlanner() override = default;
 
     Trajectory plan(PlanRequest&& request) override;
-    void reset() { previous = Trajectory(); }
+    void reset() override { previous = Trajectory(); }
 
     double drawRadius = Robot_Radius;
     QColor drawColor = Qt::black;
@@ -23,7 +23,7 @@ public:
 private:
     [[nodiscard]] static AngleFunction getAngleFunction(const PlanRequest& request);
 
-    Replanner rrt;
+    Replanner replanner;
     Trajectory previous;
 };
 

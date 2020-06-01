@@ -15,7 +15,7 @@ using namespace Packet;
 using namespace std;
 using namespace Planning;
 using namespace Geometry2d;
-using Planning::MotionInstant;
+using Planning::LinearMotionInstant;
 
 SystemState::SystemState(Context* const context) {
     // FIXME - boost::array?

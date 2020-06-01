@@ -17,9 +17,9 @@
 #include "joystick/GamepadMessage.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "planning/Trajectory.hpp"
 #include "radio/RobotStatus.hpp"
 #include "vision/VisionPacket.hpp"
-#include "planning/trajectory/Trajectory.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this), goalie_id(1337) {}

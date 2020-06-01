@@ -1,11 +1,13 @@
 #include "EscapeObstaclesPathPlanner.hpp"
+
 #include <Configuration.hpp>
 #include <optional>
 #include <vector>
-#include "planning/trajectory/PathSmoothing.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/RoboCupStateSpace.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
+
+#include "planning/low_level/PathSmoothing.hpp"
+#include "planning/low_level/RRTUtil.hpp"
+#include "planning/low_level/RoboCupStateSpace.hpp"
+#include "planning/low_level/VelocityProfiling.hpp"
 using namespace Geometry2d;
 namespace Planning {
 

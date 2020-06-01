@@ -1,11 +1,11 @@
 #include "planning/planner/PathTargetPlanner.hpp"
 
 #include <utility>
-#include "EscapeObstaclesPathPlanner.hpp"
+
+#include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
+#include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PlanRequest.hpp"
-#include "planning/trajectory/RRTUtil.hpp"
-#include "planning/trajectory/Trajectory.hpp"
-#include "planning/trajectory/VelocityProfiling.hpp"
 
 using namespace Geometry2d;
 
@@ -21,7 +21,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
-    if (static_obstacles.hit(request.start.pose.position())) {
+    if (static_obstacles.hit(request.start.position())) {
         std::cout << "Hit static obstacle" << std::endl;
         reset();
         return Trajectory();
@@ -29,7 +29,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 
     auto command = std::get<PathTargetCommand>(request.motionCommand);
     RobotInstant goalInstant = command.pathGoal;
-    Point goalPoint = goalInstant.pose.position();
+    Point goalPoint = goalInstant.position();
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
@@ -40,7 +40,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
     AngleFunction angle_function = getAngleFunction(request);
 
     // Call into the sub-object to actually execute the plan.
-    Trajectory trajectory = rrt.CreatePlan(
+    Trajectory trajectory = replanner.CreatePlan(
         Replanner::PlanParams{
         request.start,
         goalInstant,

@@ -1,4 +1,6 @@
 #include "PlannerNode.hpp"
+
+#include "Instant.hpp"
 #include "Robot.hpp"
 #include "planning/planner/CollectPlanner.hpp"
 #include "planning/planner/EscapeObstaclesPathPlanner.hpp"
@@ -6,6 +8,9 @@
 #include "planning/planner/PathTargetPlanner.hpp"
 #include "planning/planner/PivotPathPlanner.hpp"
 #include "planning/planner/SettlePlanner.hpp"
+
+#pragma GCC push_options
+#pragma GCC optimize("O0")
 
 namespace Planning {
 
@@ -61,7 +66,6 @@ void PlannerNode::run() {
             start,
             intent.motion_command,
             RobotConstraints(),
-            std::move(trajectories->at(shell)),
             global_obstacles,
             intent.local_obstacles,
             planned,
@@ -97,16 +101,22 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
     // the empty planner is always last.
     Trajectory trajectory;
     for (auto& planner : planners_) {
-        // If we've already planned this request, or this planner can't plan
-        // this request, we're not using `planner` so it should be reset.
-        if (!trajectory.empty() || !planner->isApplicable(request.motionCommand)) {
-            planner->reset();
-        } else {
+        // If this planner could possibly plan for this command, try to make
+        // a plan.
+        if (trajectory.empty() &&
+            planner->isApplicable(request.motionCommand)) {
             RobotInstant startInstant = request.start;
             RJ::Time t0 = RJ::now();
             trajectory = planner->plan(std::move(request));
         }
+
+        // If it fails, or if the planner was not used, the trajectory will
+        // still be empty. Reset the planner.
+        if (trajectory.empty()) {
+            planner->reset();
+        }
     }
+
     if (trajectory.empty()) {
         std::cerr
             << "No valid planner! Did you forget to specify a default planner?"
@@ -114,7 +124,10 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
         trajectory = Trajectory {{request.start}};
         trajectory.setDebugText("Error: No Valid Planners");
     }
+
     return trajectory;
 }
 
 }  // namespace Planning
+
+#pragma GCC pop_options

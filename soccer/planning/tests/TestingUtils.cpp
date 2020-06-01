@@ -1,8 +1,11 @@
 #include <gtest/gtest.h>
+
 #include <random>
+
 #include "Geometry2d/Point.hpp"
+#include "MotionInstant.hpp"
 #include "planning/RobotConstraints.hpp"
-#include "planning/trajectory/Trajectory.hpp"
+#include "planning/Trajectory.hpp"
 
 namespace Planning::TestingUtils {
 

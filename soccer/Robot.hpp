@@ -1,27 +1,25 @@
 #pragma once
 
-#include <Constants.hpp>
-#include <planning/RobotConstraints.hpp>
-#include <planning/planner/MotionCommand.hpp>
-
 #include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
 
+#include <Constants.hpp>
 #include <Eigen/Dense>
 #include <QColor>
+#include <QReadLocker>
+#include <QReadWriteLock>
+#include <QWriteLocker>
 #include <algorithm>
 #include <array>
 #include <boost/circular_buffer.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <cstdint>
 #include <optional>
+#include <planning/RobotConstraints.hpp>
+#include <planning/Trajectory.hpp>
+#include <planning/planner/MotionCommand.hpp>
 #include <vector>
-
-#include <QReadLocker>
-#include <QReadWriteLock>
-#include <QWriteLocker>
-#include <planning/trajectory/Trajectory.hpp>
 
 #include "Context.hpp"
 #include "planning/DynamicObstacle.hpp"
