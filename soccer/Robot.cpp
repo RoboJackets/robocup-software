@@ -53,7 +53,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
                                        Robot_Radius - 0.01);
     _oppGoalieAvoidRadius = new ConfigDouble(
         cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
-    _dribbleOutOfBoundsOffset =
+    _dribbleOutOfBoundsOffset =  // NOLINT
         new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
