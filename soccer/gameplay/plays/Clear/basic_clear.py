@@ -114,8 +114,3 @@ class BasicClear(play.Play):
         self.remove_subbehavior('clear')
         self.remove_subbehavior('keep moving')
 
-
-
-
-
-

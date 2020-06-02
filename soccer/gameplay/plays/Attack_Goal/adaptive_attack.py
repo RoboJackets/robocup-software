@@ -201,16 +201,12 @@ class AdaptiveAttack(play.Play):
         return any(r.has_ball() for r in main.our_robots())
 
     def on_enter_collecting(self):
-        #We shouldn't need this here, I suspect this was a quick bug fix
-        #self.remove_all_subbehaviors()
-
         # 2 man to man defenders and 1 zone defender
         defensive_forward = tactics.defensive_forward.DefensiveForward()
         self.add_subbehavior(defensive_forward, 'defend', required=True)
 
     def on_exit_collecting(self):
         self.remove_subbehavior('defend')
-        #self.remove_all_subbehaviors()
 
     def on_enter_dribbling(self):
         self.dribbler = skills.dribble.Dribble()
