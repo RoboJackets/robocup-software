@@ -3,5 +3,5 @@ import robocup
 import time
 
 
-def pass_to_point_heuristic(x, y):
-	return robocup.Point(x, y)
+def pass_to_point_heuristic(x: int, y: int) -> robocup.Point:
+    return robocup.Point(x, y)
