@@ -43,3 +43,11 @@ else()
     find_package(Qt5Widgets REQUIRED)
 endif()
 qt5_use_modules(common Core Network Widgets)
+
+# ROS2 messages
+rosidl_generate_interfaces(geometry_2d
+        "Geometry2d/msg/Line.msg"
+        "Geometry2d/msg/Point.msg"
+        "Geometry2d/msg/Rect.msg"
+        "Geometry2d/msg/Segment.msg"
+        )
