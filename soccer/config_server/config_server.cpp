@@ -1,4 +1,5 @@
 #include <config_server/config_server.h>
+
 #include <rclcpp/rclcpp.hpp>
 
 namespace config_server {
@@ -6,12 +7,17 @@ using namespace std::chrono_literals;
 
 ConfigServer::ConfigServer(rclcpp::NodeOptions node_options)
     : Node{"config_server", node_options} {
-    publisher_ = create_publisher<GameSettingsMsg>("config/game_settings", 10);
+    const auto latching_qos = rclcpp::QoS(1).transient_local();
+    publisher_ =
+        create_publisher<GameSettingsMsg>("config/game_settings", latching_qos);
     server_ = create_service<SetGameSettingsSrv>(
         "config/set_game_settings",
-        [this](const SetGameSettingsSrv::Request::SharedPtr request, SetGameSettingsSrv::Response::SharedPtr) {
+        [this](const SetGameSettingsSrv::Request::SharedPtr request,
+               SetGameSettingsSrv::Response::SharedPtr /*response*/) {
             setGameSettingsCallback(request->game_settings);
         });
+
+    broadcastGameSettings();
 }
 
 void ConfigServer::broadcastGameSettings() {
@@ -20,7 +26,7 @@ void ConfigServer::broadcastGameSettings() {
 
 void ConfigServer::setGameSettingsCallback(const GameSettingsMsg& msg) {
     game_settings_ = msg;
-    RCLCPP_INFO_STREAM(get_logger(), "callback!");
+    broadcastGameSettings();
 }
 
 }  // namespace config_server
