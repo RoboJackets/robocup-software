@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rj-robocup)
+project(rj_robocup)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -23,6 +23,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)

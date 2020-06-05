@@ -160,6 +160,14 @@ target_link_libraries(robocup ${SDL2_LIBRARIES})
 
 ament_target_dependencies(robocup ament_index_cpp)
 
+# ROS2 messages
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/GameSettings.msg"
+  "srv/SetGameSettings.srv"
+  )
+rosidl_target_interfaces(robocup ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+
 # RRT
 include_directories(${RRT_INCLUDE_DIR})
 target_link_libraries(robocup RRT)
@@ -249,3 +257,5 @@ add_dependencies(test-soccer googletest)
 
 # Don't build the tests by default
 set_target_properties(test-soccer PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+add_subdirectory(config_server)

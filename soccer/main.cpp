@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
     if (cfgFile.isNull()) {
         const auto filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
         const auto share_dir =
-            ament_index_cpp::get_package_share_directory("rj-robocup");
+            ament_index_cpp::get_package_share_directory("rj_robocup");
         auto config_path = share_dir + "/config/" + filename;
 
         cfgFile = QString::fromStdString(config_path);

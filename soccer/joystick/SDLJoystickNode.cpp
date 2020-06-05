@@ -17,7 +17,7 @@ SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
 
     // Attempt to add additional mappings (relative to run)
     const auto share_dir =
-        ament_index_cpp::get_package_share_directory("rj-robocup");
+        ament_index_cpp::get_package_share_directory("rj_robocup");
     std::stringstream sdl_path;
     sdl_path << share_dir << "/gamecontrollerdb.txt";
     if (SDL_GameControllerAddMappingsFromFile(sdl_path.str().c_str()) == -1) {

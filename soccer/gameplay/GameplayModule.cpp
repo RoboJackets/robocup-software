@@ -78,7 +78,7 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
             // Get the location of the share directory (where the python files
             // are installed)
             const auto share_dir =
-                ament_index_cpp::get_package_share_directory("rj-robocup");
+                ament_index_cpp::get_package_share_directory("rj_robocup");
             std::stringstream command;
             command << "import sys; sys.path.append('" << share_dir
                     << "/gameplay/')";
