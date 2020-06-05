@@ -10,12 +10,14 @@ ConfigServer::ConfigServer(rclcpp::NodeOptions node_options)
     const auto latching_qos = rclcpp::QoS(1).transient_local();
     publisher_ =
         create_publisher<GameSettingsMsg>("config/game_settings", latching_qos);
-    server_ = create_service<SetGameSettingsSrv>(
-        "config/set_game_settings",
+
+    const auto service_cb =
         [this](const SetGameSettingsSrv::Request::SharedPtr request,
                SetGameSettingsSrv::Response::SharedPtr /*response*/) {
             setGameSettingsCallback(request->game_settings);
-        });
+        };
+    server_ = create_service<SetGameSettingsSrv>("config/set_game_settings",
+                                                 service_cb);
 
     broadcastGameSettings();
 }

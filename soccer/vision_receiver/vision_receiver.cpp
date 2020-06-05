@@ -1,15 +1,17 @@
-#include "VisionReceiver.hpp"
+#include "vision_receiver.hpp"
 
-#include <unistd.h>
-#include <Utils.hpp>
+#include <Field_Dimensions.hpp>
 #include <multicast.hpp>
 #include <stdexcept>
 
-using namespace std;
+namespace vision_receiver {
 using boost::asio::ip::udp;
 
-VisionReceiver::VisionReceiver(Context* context, bool /*sim*/, int port)
-    : port(port), _context(context), _socket(_io_context) {
+VisionReceiver::VisionReceiver(int port)
+    : Node{"vision_receiver"},
+      config_{"vision_receiver_config", rclcpp::NodeOptions{}},
+      port_{port},
+      _socket{_io_context} {
     _recv_buffer.resize(65536);
 
     _last_receive_time = RJ::now();
@@ -62,7 +64,7 @@ void VisionReceiver::run() {
     for (auto& packet : _packets) {
         SSL_WrapperPacket log;
         log.CopyFrom(packet->wrapper);
-        _context->raw_vision_packets.emplace_back(std::move(log));
+//        _context->raw_vision_packets.emplace_back(std::move(log));
 
         _last_receive_time = packet->receivedTime;
 
@@ -72,7 +74,8 @@ void VisionReceiver::run() {
             updateGeometryPacket(packet->wrapper.geometry().field());
         }
 
-        bool defendPlusX = _context->game_settings.defendPlusX;
+        const bool defendPlusX = config_.gameSettings().defend_plus_x;
+        //      bool defendPlusX = _context->game_settings.defendPlusX;
 
         if (packet->wrapper.has_detection()) {
             SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
@@ -112,9 +115,9 @@ void VisionReceiver::run() {
     }
 
     // Move new packets into context using a move_iterator.
-    _context->vision_packets.insert(_context->vision_packets.begin(),
-                                    std::make_move_iterator(_packets.begin()),
-                                    std::make_move_iterator(_packets.end()));
+//    _context->vision_packets.insert(_context->vision_packets.begin(),
+//                                    std::make_move_iterator(_packets.begin()),
+//                                    std::make_move_iterator(_packets.end()));
 
     // Remove the nullptr packets that we just moved to context.
     _packets.clear();
@@ -158,9 +161,12 @@ void VisionReceiver::receivePacket(const boost::system::error_code& error,
 }
 
 bool VisionReceiver::shouldRemove(bool defendPlusX, double x) {
-    return (!_context->game_settings.use_their_half &&
+    const auto use_their_half = config_.gameSettings().use_their_half;
+    const auto use_our_half = config_.gameSettings().use_our_half;
+
+    return (!use_their_half &&
             ((defendPlusX && x < 0) || (!defendPlusX && x > 0))) ||
-           (!_context->game_settings.use_our_half &&
+           (!use_our_half &&
             ((defendPlusX && x > 0) || (!defendPlusX && x < 0)));
 }
 
@@ -203,41 +209,46 @@ void VisionReceiver::updateGeometryPacket(
     // outside, so we can add this as an offset.
     float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
-    float fieldBorder = _context->field_dimensions.Border();
+//    float fieldBorder = _context->field_dimensions.Border();
 
     if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
         thickness != 0) {
         // Force a resize
-        _context->field_dimensions = Field_Dimensions(
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-            Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penaltyShortDist / 1000.0f,              // PenaltyShortDist
-            penaltyLongDist / 1000.0f,               // PenaltyLongDist
-            center->radius() / 1000.0f + adj,        // CenterRadius
-            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-            displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+//        _context->field_dimensions = Field_Dimensions(
+//            fieldSize.field_length() / 1000.0f,
+//            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+//            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
+//            Field_Dimensions::Default_Dimensions.GoalHeight(),
+//            penaltyShortDist / 1000.0f,              // PenaltyShortDist
+//            penaltyLongDist / 1000.0f,               // PenaltyLongDist
+//            center->radius() / 1000.0f + adj,        // CenterRadius
+//            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+//            displacement / 1000.0f,                  // GoalFlat
+//            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
+//            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
     } else if (center != nullptr && thickness != 0) {
         Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
 
-        _context->field_dimensions = Field_Dimensions(
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-            Field_Dimensions::Default_Dimensions.GoalHeight(),
-            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
-            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
-            center->radius() / 1000.0f + adj,        // CenterRadius
-            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-            displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+//        _context->field_dimensions = Field_Dimensions(
+//            fieldSize.field_length() / 1000.0f,
+//            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+//            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
+//            Field_Dimensions::Default_Dimensions.GoalHeight(),
+//            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
+//            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
+//            center->radius() / 1000.0f + adj,        // CenterRadius
+//            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
+//            displacement / 1000.0f,                  // GoalFlat
+//            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
+//            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
     } else {
-        cerr << "Error: failed to decode SSL geometry packet. Not resizing "
+        std::cerr << "Error: failed to decode SSL geometry packet. Not resizing "
                 "field."
-             << endl;
+             << std::endl;
     }
+}
+}  // namespace vision_receiver
+
+int main(int argc, char** argv)
+{
 }

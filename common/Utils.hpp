@@ -8,7 +8,7 @@
 #include <deque>
 #include <QString>
 #include <stdexcept>
-#include <stdint.h>
+#include <cstdint>
 #include <sys/time.h>
 #include <vector>
 #include <QtWidgets>

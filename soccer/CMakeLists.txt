@@ -67,7 +67,6 @@ set(ROBOCUP_LIB_SRC
     "ui/StripChart.cpp"
     "ui/StyleSheetManager.cpp"
     "GrSimCommunicator.cpp"
-    "VisionReceiver.cpp"
     "vision/ball/BallBounce.cpp"
     "vision/ball/CameraBall.cpp"
     "vision/ball/KalmanBall.cpp"
@@ -145,12 +144,13 @@ include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
+message(WARNING "\n\nSoccer UIS: ${SOCCER_UIS}\n\n")
 add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
 target_link_libraries(robocup common rc-fshare)
-qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
+target_link_libraries(robocup Qt5::Widgets Qt5::Xml Qt5::Core Qt5::OpenGL Qt5::Network Qt5::Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
 target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
 target_link_libraries(robocup GL GLU glut)
@@ -165,7 +165,6 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/GameSettings.msg"
   "srv/SetGameSettings.srv"
   )
-rosidl_target_interfaces(robocup ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 
 # RRT
@@ -180,41 +179,19 @@ link_directories(${PYTHON_LINK_DIRS})
 target_link_libraries(robocup ${PYTHON_LIBRARIES})
 
 # 'soccer' program
-if(APPLE)
-    include(BundleUtilities)
-
-    # app icon
-    set(OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt/SoccerBall.icns)
-    set_source_files_properties(${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-    set(MACOSX_BUNDLE_ICON_FILE SoccerBall)
-
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.robojackets.robocup.soccer")
-
-    add_executable(soccer MACOSX_BUNDLE main.cpp ${OSX_ICON_FILES})
-
-    # add a script called "soccer" in the run/ dir that launches the soccer app and passes on all args,
-    # so it can be used the same way the soccer executable is used on Linux
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/soccer
-        "#!/bin/sh\n"
-        "$(dirname $0)/soccer.app/Contents/MacOS/soccer $@")
-    file(INSTALL ${CMAKE_CURRENT_BINARY_DIR}/soccer
-        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
-else()
-    add_executable(soccer main.cpp)
-endif()
-qt5_use_modules(soccer Widgets Xml Core OpenGL Network Svg)
+add_executable(soccer main.cpp)
+target_link_libraries(soccer Qt5::Widgets Qt5::Xml Qt5::Core Qt5::OpenGL Qt5::Network Qt5::Svg)
 target_link_libraries(soccer robocup)
 
-# build the 'log_viewer' program
-qt5_add_resources(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
-qt5_wrap_ui(LOG_VIEWER_UI ui/qt/LogViewer.ui)
-set(LOG_VIEWER_SRC
-    "LogViewer.cpp"
-)
-add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
-qt5_use_modules(log_viewer Core Widgets OpenGL Svg Xml)
-target_link_libraries(log_viewer robocup)
+## build the 'log_viewer' program
+#qt5_add_resources(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
+#qt5_wrap_ui(LOG_VIEWER_UI ui/qt/LogViewer.ui)
+#set(LOG_VIEWER_SRC
+#    "LogViewer.cpp"
+#)
+#add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
+#qt5_use_modules(log_viewer Core Widgets OpenGL Svg Xml)
+#target_link_libraries(log_viewer robocup)
 
 
 # Add a test runner target "test-soccer" to run all tests in this directory
@@ -259,3 +236,5 @@ add_dependencies(test-soccer googletest)
 set_target_properties(test-soccer PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 add_subdirectory(config_server)
+add_subdirectory(vision_receiver)
+add_subdirectory(config_client)

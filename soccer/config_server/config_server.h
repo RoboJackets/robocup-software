@@ -19,6 +19,5 @@ private:
     GameSettingsMsg game_settings_;
     rclcpp::Service<SetGameSettingsSrv>::SharedPtr server_;
     rclcpp::Publisher<GameSettingsMsg>::SharedPtr publisher_;
-    rclcpp::TimerBase::SharedPtr timer_;
 };
 }  // namespace config_server

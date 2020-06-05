@@ -1,16 +1,17 @@
 #pragma once
 
+#include <config_client/config_client.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+
 #include <Network.hpp>
-#include <Utils.hpp>
 #include <boost/asio.hpp>
-
-#include <stdint.h>
+#include <cstdint>
+#include <rclcpp/rclcpp.hpp>
+#include <time.hpp>
 #include <vector>
-#include "Context.hpp"
-#include "Node.hpp"
-#include "vision/VisionPacket.hpp"
+#include <vision/VisionPacket.hpp>
 
+namespace vision_receiver {
 /**
  * @brief Receives vision packets over UDP and places them in a buffer until
  * they are read.
@@ -23,10 +24,9 @@
  * into an SSL_WrapperPacket and placed onto the circular buffer @_packets.
  * They remain there until they are retrieved with getPackets().
  */
-class VisionReceiver : public Node {
+class VisionReceiver : public rclcpp::Node {
 public:
-    explicit VisionReceiver(Context* context, bool sim = false,
-                            int port = SharedVisionPortSinglePrimary);
+    explicit VisionReceiver(int port = SharedVisionPortSinglePrimary);
 
     /// Copies the vector of packets and then clears it. The vector contains
     /// only packets received since the last time this was called (or since the
@@ -36,15 +36,13 @@ public:
     /// returns.
     void getPackets(std::vector<VisionPacket*>& packets);
 
-    virtual void run() override;
+    void run();
 
     void setPort(int port);
 
     RJ::Time getLastVisionTime() const { return _last_receive_time; }
 
-protected:
-    int port;
-
+private:
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
@@ -55,9 +53,10 @@ protected:
 
     void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
-    Context* _context;
+    config_client::ConfigClient config_;
+    int port_;
 
-    std::vector<uint8_t> _recv_buffer;
+    std::vector<uint8_t> _recv_buffer{};
 
     boost::asio::io_service _io_context;
     boost::asio::ip::udp::socket _socket;
@@ -66,5 +65,6 @@ protected:
 
     RJ::Time _last_receive_time;
 
-    std::vector<std::unique_ptr<VisionPacket>> _packets;
+    std::vector<std::unique_ptr<VisionPacket>> _packets{};
 };
+}  // namespace vision_receiver

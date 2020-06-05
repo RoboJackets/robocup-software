@@ -18,7 +18,6 @@
 
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
-#include "VisionReceiver.hpp"
 #include "joystick/ManualControlNode.hpp"
 #include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
@@ -182,7 +181,6 @@ private:
     std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-    std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<Planning::PlannerNode> _planner_node;
     std::unique_ptr<RadioNode> _radio;

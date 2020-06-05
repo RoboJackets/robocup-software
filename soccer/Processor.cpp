@@ -73,8 +73,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
-    _visionReceiver = std::make_unique<VisionReceiver>(
-        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
+//    _visionReceiver = std::make_unique<VisionReceiver>(
+//        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
     _logger = std::make_unique<Logger>(&_context);
 
@@ -89,7 +89,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _logger->start();
 
-    _nodes.push_back(_visionReceiver.get());
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
     _nodes.push_back(_logger.get());
@@ -205,7 +204,7 @@ void Processor::run() {
         // TODO(Kyle): Don't do this here.
         // Because not everything is on modules yet, but we still need things to
         // run in order, we can't just do everything via the for loop (yet).
-        _visionReceiver->run();
+//        _visionReceiver->run();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
@@ -213,7 +212,7 @@ void Processor::run() {
             setFieldDimensions(_context.field_dimensions);
         }
 
-        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
+//        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
 
         _radio->run();
 

@@ -15,4 +15,4 @@ install(TARGETS
 
 install(TARGETS
   config_server_standalone
-  DESTINATION lib/${PROJECT_NAME})
+  DESTINATION lib/config_server_standalone)
