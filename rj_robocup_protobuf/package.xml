@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format ="3">
+    <name>rj_robocup_protobuf</name>
+    <version>0.0.1</version>
+    <description>Protobuf messages for RJ Robocup</description>
+    <maintainer email="oswinso@gmail.com">Oswin So</maintainer>
+    <license>TODO</license>
+
+    <buildtool_depend>ament_cmake</buildtool_depend>
+    <build_depend>rj_robocup_cmake_utils</build_depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>

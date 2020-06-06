@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>rj_robocup_cmake_utils</name>
+    <version>0.3.4</version>
+    <description>CMake utils for ROS2 packages for rj_robocup</description>
+    <maintainer email="oswinso@gmail.com">Oswin So</maintainer>
+    <license>TODO</license>
+
+    <buildtool_depend>ament_cmake_core</buildtool_depend>
+    <buildtool_export_depend>ament_cmake_core</buildtool_export_depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>
