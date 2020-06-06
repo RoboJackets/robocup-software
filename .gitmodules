@@ -1,20 +1,17 @@
-[submodule "external/mbed_lib_build_tools"]
-	path = external/mbed_lib_build_tools
-	url = https://github.com/mbedmicro/mbed.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest
 [submodule "external/style-configs"]
 	path = external/style-configs
 	url = https://github.com/robojackets/style-configs
-[submodule "external/rrt"]
-	path = external/rrt
+[submodule "rj_robocup_rrt/external/rrt"]
+	path = rj_robocup_rrt/external/rrt
 	url = https://github.com/robojackets/rrt
-[submodule "external/grSim"]
-	path = external/grSim
+[submodule "grsim/external/grSim"]
+	path = grsim/external/grSim
 	url = https://github.com/RoboJackets/grSim
-[submodule "external/robocup-fshare"]
-	path = external/robocup-fshare
+[submodule "rj_robocup_fshare/external/robocup-fshare"]
+	path = rj_robocup_fshare/external/robocup-fshare
 	url = https://github.com/robojackets/robocup-fshare
 [submodule "external/sdlcontrollerdb"]
 	path = external/sdlcontrollerdb

@@ -18,12 +18,11 @@ function(colcon_add_subdirectories)
             OUTPUT_VARIABLE paths)
 
     string(STRIP "${paths}" paths)
+    MESSAGE("Paths:\n${paths}")
     string(REPLACE "\n" ";" paths "${paths}")
 
-    MESSAGE("colcon shows paths ${paths}")
-
     foreach (path IN LISTS paths)
-        message("...examining ${path}")
+        message("... Examining ${path}")
 
         execute_process(
                 COMMAND colcon info --paths "${path}"
@@ -37,7 +36,7 @@ function(colcon_add_subdirectories)
             message(WARNING "could not identify package at ${path}")
         else ()
             set(name "${CMAKE_MATCH_1}")
-            message("...adding package ${name} from path ${path}")
+            message("    Adding package ${name} from path ${path}")
 
             string(REGEX MATCH "build: ([A-Za-z0-9_ ]*)" _ "${package_info}")
             set(raw_dependencies_str "${CMAKE_MATCH_1}")
@@ -45,8 +44,6 @@ function(colcon_add_subdirectories)
             # Convert the space-delimited list to a string
             string(REPLACE " " ";" raw_dependencies_list ${raw_dependencies_str})
 
-            message("\n>>>> processed_packages: ${processed_packages}")
-            message(">>>> raw_dependencies_list: ${raw_dependencies_list}")
             unset(dependencies)
             foreach (dependency IN LISTS raw_dependencies_list)
                 if (${dependency} IN_LIST processed_packages)
@@ -54,17 +51,16 @@ function(colcon_add_subdirectories)
                 endif()
             endforeach ()
 
-            message(">>>> dependencies: ${dependencies}")
-
             get_filename_component(BUILD_PATH "${name}" ABSOLUTE BASE_DIR "${ARG_BUILD_BASE}")
 
-            ExternalProject_Add(${name}
-                    SOURCE_DIR ${path}
-                    PREFIX ${name}
-                    INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/${name}
-                    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}
-                    DEPENDS "${dependencies}"
-                    )
+#            ExternalProject_Add(${name}
+#                    SOURCE_DIR ${path}
+#                    PREFIX ${name}
+#                    INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/${name}
+#                    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR> -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}
+#                    DEPENDS "${dependencies}"
+#                    )
+            add_subdirectory(${path} "${CMAKE_CURRENT_BINARY_DIR}/${name}")
 
             # Add to processed_packages
             list(APPEND processed_packages ${name})
@@ -72,14 +68,31 @@ function(colcon_add_subdirectories)
     endforeach ()
 endfunction()
 
-set(ROS2_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../")
+set(ROS2_SRC_DIR_REL "${CMAKE_CURRENT_SOURCE_DIR}/../../")
+get_filename_component(ROS2_SRC_DIR "${ROS2_SRC_DIR_REL}" ABSOLUTE)
 
+set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_BINARY_DIR})
+
+# This is just for clion, only include packages with code
 colcon_add_subdirectories(
         BUILD_BASE "${PROJECT_SOURCE_DIR}/../build"
         BASE_PATHS "${ROS2_SRC_DIR}/robocup-software/"
         --packages-select
+        # Utils
         rj_robocup_cmake_utils
+        # Libraries
         rj_robocup_protobuf
         geometry2d
+        # Messages
         geometry2d_msgs
+        rj_robocup_msgs
+        # Third party wrappers
+        rj_robocup_rrt
+        grsim
+        rj_robocup_fshare
+        # Config
+        rj_config_client
+        rj_config_server
+        # rj_robocup
+        rj_vision_receiver
 )
