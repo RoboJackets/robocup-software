@@ -215,9 +215,17 @@ void Processor::run() {
 
         _executor.spin_some();
 
+        if (!_config_client->connected()) {
+            loopMutex()->unlock();
+            continue;
+        }
+
         // Update context.field_dimensions (since vision_receiver changes this)
         _context.field_dimensions =
             FieldDimensions::fromMsg(_config_client->fieldDimensions());
+
+        tempFillInVisionPackets();
+        tempFillInRawPackets();
 
         ////////////////
         // Inputs
@@ -354,4 +362,21 @@ void Processor::updateOrientation() {
     }
 
     recalculateWorldToTeamTransform();
+}
+
+void Processor::tempFillInVisionPackets() {
+    for (const auto msg : _vision_receiver_sub->vision_packets) {
+        std::unique_ptr<VisionPacket> packet = VisionPacket::fromMsg(msg);
+        _context.vision_packets.emplace_back(std::move(packet));
+    }
+    _vision_receiver_sub->vision_packets.clear();
+}
+
+void Processor::tempFillInRawPackets() {
+    for (const auto msg : _vision_receiver_sub->raw_protobufs) {
+        SSL_WrapperPacket wrapper_packet{};
+        wrapper_packet.ParseFromArray(msg.data.data(), msg.data.size());
+        _context.raw_vision_packets.emplace_back(std::move(wrapper_packet));
+    }
+    _vision_receiver_sub->raw_protobufs.clear();
 }

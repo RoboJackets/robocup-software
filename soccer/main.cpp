@@ -166,6 +166,9 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
+    // ROS2 init
+    rclcpp::init(argc, argv);
+
     auto processor = std::make_unique<Processor>(sim, blueTeam, readLogFile);
 
     Context* context = processor->context();
@@ -232,6 +235,8 @@ int main(int argc, char* argv[]) {
     int ret = QApplication::exec();
     processor->stop();
     processor_thread.join();
+
+    rclcpp::shutdown();
 
     return ret;
 }

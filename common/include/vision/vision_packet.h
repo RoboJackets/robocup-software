@@ -33,5 +33,12 @@ public:
         return msg;
     }
 
-    static VisionPacket fromMsg(const VisionPacketMsg& msg) {}
+    static std::unique_ptr<VisionPacket> fromMsg(const VisionPacketMsg& msg) {
+        auto packet = std::make_unique<VisionPacket>();
+        packet->receivedTime = RJ::fromROS(rclcpp::Time{msg.time});
+        packet->wrapper.ParseFromArray(msg.wrapper.data.data(),
+                                       msg.wrapper.data.size());
+
+        return packet;
+    }
 };

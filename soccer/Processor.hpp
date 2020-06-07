@@ -146,6 +146,22 @@ private:
 
     void runModels();
 
+    /**
+     * \brief Transfer from _vision_receiver_sub to context.vision_packets
+     *
+     * Temporary function until we split off more things into nodes
+     * and can dismantle processor
+     */
+    void tempFillInVisionPackets();
+
+    /**
+     * \brief Transfer from _vision_receiver_sub to context.raw_vision_packets
+     *
+     * Temporary function until we split off more things into nodes
+     * and can dismantle processor
+     */
+    void tempFillInRawPackets();
+
     /** Used to start and stop the thread **/
     volatile bool _running;
 

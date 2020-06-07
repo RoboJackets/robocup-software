@@ -13,14 +13,14 @@ using VisionPacketMsg = rj_robocup::msg::VisionPacket;
  * puts it on a vector for Processor to consume
  */
 class VisionReceiverSub : public rclcpp::Node {
- public:
-  VisionReceiverSub();
+public:
+    VisionReceiverSub();
 
-  std::vector<RawProtobufMsg> raw_protobufs{};
-  std::vector<VisionPacketMsg> vision_packets{};
+    std::vector<RawProtobufMsg> raw_protobufs{};
+    std::vector<VisionPacketMsg> vision_packets{};
 
- private:
-  rclcpp::Subscription<RawProtobufMsg>::SharedPtr raw_vision_sub_;
-  rclcpp::Subscription<VisionPacketMsg>::SharedPtr vision_packet_sub_;
+private:
+    rclcpp::Subscription<RawProtobufMsg>::SharedPtr raw_vision_sub_;
+    rclcpp::Subscription<VisionPacketMsg>::SharedPtr vision_packet_sub_;
 };
 }  // namespace receiver_nodes

@@ -43,6 +43,11 @@ inline rclcpp::Time ToROS(RJ::Time time) {
     return rclcpp::Time{nanos};
 }
 
+inline RJ::Time fromROS(const rclcpp::Time& time) {
+    const std::chrono::nanoseconds dur(time.nanoseconds());
+    return RJ::Time{dur};
+}
+
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
 constexpr RJ::Timestamp SecsToTimestamp(double secs) {
     return secs * 1000000.0f;

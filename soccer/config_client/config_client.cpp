@@ -9,12 +9,16 @@ ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
     };
     game_settings_sub_ = node->create_subscription<GameSettingsMsg>(
         "/config/game_settings", latching_qos, game_settings_cb);
+    game_settings_client_ =
+        node->create_client<SetGameSettingsSrv>("config/set_game_settings");
 
     const auto field_dimensions_cb = [this](FieldDimensionsMsg::UniquePtr msg) {
         field_dimensions_ = *msg;
     };
     field_dimensions_sub_ = node->create_subscription<FieldDimensionsMsg>(
         "/config/field_dimensions", latching_qos, field_dimensions_cb);
+    field_dimensions_client_ = node->create_client<SetFieldDimensionsSrv>(
+        "config/set_field_dimensions");
 }
 
 void ConfigClient::updateGameSettings(const GameSettingsMsg& msg) {
