@@ -72,42 +72,42 @@ int InterpolatedPath::nearestIndex(Point pt) const {
 bool InterpolatedPath::hit(const geometry2d::ShapeSet& obstacles,
                            RJ::Seconds startTimeIntoPath,
                            RJ::Seconds* hitTime) const {
-  size_t start = 0;
-  for (auto& entry : waypoints) {
-    start++;
-    if (entry.time > startTimeIntoPath) {
-      start--;
-      break;
-    }
-  }
-
-  if (start >= waypoints.size()) {
-    // Empty path or starting beyond end of path
-    return false;
-  }
-
-  // This code disregards obstacles which the robot starts in. This allows the
-  // robot to move out a obstacle if it is already in one.
-  std::set<std::shared_ptr<Shape>> startHitSet =
-      obstacles.hitSet(waypoints[start].pose.position());
-
-  for (size_t i = start; i < waypoints.size() - 1; i++) {
-    std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(Segment(
-        waypoints[i].pose.position(), waypoints[i + 1].pose.position()));
-    if (!newHitSet.empty()) {
-      for (std::shared_ptr<Shape> hit : newHitSet) {
-        // If it hits something, check if the hit was in the original
-        // hitSet
-        if (startHitSet.find(hit) == startHitSet.end()) {
-          if (hitTime) {
-            *hitTime = waypoints[i].time;
-          }
-          return true;
+    size_t start = 0;
+    for (auto& entry : waypoints) {
+        start++;
+        if (entry.time > startTimeIntoPath) {
+            start--;
+            break;
         }
-      }
     }
-  }
-  return false;
+
+    if (start >= waypoints.size()) {
+        // Empty path or starting beyond end of path
+        return false;
+    }
+
+    // This code disregards obstacles which the robot starts in. This allows the
+    // robot to move out a obstacle if it is already in one.
+    std::set<std::shared_ptr<Shape>> startHitSet =
+        obstacles.hitSet(waypoints[start].pose.position());
+
+    for (size_t i = start; i < waypoints.size() - 1; i++) {
+        std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(Segment(
+            waypoints[i].pose.position(), waypoints[i + 1].pose.position()));
+        if (!newHitSet.empty()) {
+            for (std::shared_ptr<Shape> hit : newHitSet) {
+                // If it hits something, check if the hit was in the original
+                // hitSet
+                if (startHitSet.find(hit) == startHitSet.end()) {
+                    if (hitTime) {
+                        *hitTime = waypoints[i].time;
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 float InterpolatedPath::distanceTo(Point pt) const {

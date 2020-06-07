@@ -161,7 +161,7 @@ public:
     virtual bool hit(const geometry2d::ShapeSet& obstacles,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override {
-      return path->hit(obstacles, startTimeIntoPath, hitTime);
+        return path->hit(obstacles, startTimeIntoPath, hitTime);
     }
 
     /**

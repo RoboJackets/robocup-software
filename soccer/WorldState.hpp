@@ -10,16 +10,16 @@
  * what time it was last seen.
  */
 struct RobotState {
-  geometry2d::Pose pose;
-  geometry2d::Twist velocity;
-  RJ::Time timestamp;
-  bool visible = false;
-  bool velocity_valid = false;
+    geometry2d::Pose pose;
+    geometry2d::Twist velocity;
+    RJ::Time timestamp;
+    bool visible = false;
+    bool velocity_valid = false;
 };
 
 struct BallState {
-  geometry2d::Point position;
-  geometry2d::Point velocity;
+    geometry2d::Point position;
+    geometry2d::Point velocity;
 };
 
 struct WorldState {

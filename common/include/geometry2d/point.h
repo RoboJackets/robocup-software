@@ -355,11 +355,11 @@ public:
 
     /** saturates the magnitude of a vector */
     static geometry2d::Point saturate(geometry2d::Point value, double max) {
-      double mag = value.mag();
-      if (mag > fabs(max)) {
-        return value.normalized() * fabs(max);
-      }
-      return value;
+        double mag = value.mag();
+        if (mag > fabs(max)) {
+            return value.normalized() * fabs(max);
+        }
+        return value;
     }
 
     [[nodiscard]] double angleTo(const Point& other) const {
@@ -385,10 +385,10 @@ public:
     }
 
     [[nodiscard]] inline PointMsg toMsg() const {
-      PointMsg msg{};
-      msg.x = _x;
-      msg.y = _y;
-      return msg;
+        PointMsg msg{};
+        msg.x = _x;
+        msg.y = _y;
+        return msg;
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Point& point) {

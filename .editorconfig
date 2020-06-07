@@ -24,9 +24,6 @@ indent_style = space
 indent_size = 4
 max_line_length = 80
 
-[{*.cpp, *.h, *.hpp}]
-indent_size = 2
-
 # Use 2 spaces for travis files
 [{package.json,*.yml}]
 indent_style = space

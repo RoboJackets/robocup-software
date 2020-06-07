@@ -476,67 +476,68 @@ vector<CubicBezierControlPoints> RRTPlanner::generateCubicBezierPath(
     const vector<geometry2d::Point>& points,
     const MotionConstraints& motionConstraints, geometry2d::Point vi,
     geometry2d::Point vf, const std::optional<vector<double>>& times) {
-  size_t length = points.size();
-  size_t curvesNum = length - 1;
-  vector<double> pointsX(length);
-  vector<double> pointsY(length);
-  vector<double> ks(length - 1);
-  vector<double> ks2(length - 1);
+    size_t length = points.size();
+    size_t curvesNum = length - 1;
+    vector<double> pointsX(length);
+    vector<double> pointsY(length);
+    vector<double> ks(length - 1);
+    vector<double> ks2(length - 1);
 
-  for (int i = 0; i < length; i++) {
-    pointsX[i] = points[i].x();
-    pointsY[i] = points[i].y();
-  }
-  const double startSpeed = vi.mag();
-
-  const double endSpeed = vf.mag();
-
-  if (times) {
-    assert(times->size() == points.size());
-    for (int i = 0; i < curvesNum; i++) {
-      ks[i] = 1.0 / (times->at(i + 1) - times->at(i));
-      ks2[i] = ks[i] * ks[i];
-      if (std::isnan(ks[i])) {
-        debugThrow(
-            "Something went wrong. Points are too close to each other "
-            "probably");
-        return vector<CubicBezierControlPoints>();
-      }
+    for (int i = 0; i < length; i++) {
+        pointsX[i] = points[i].x();
+        pointsY[i] = points[i].y();
     }
-  } else {
-    for (int i = 0; i < curvesNum; i++) {
-      ks[i] = 1.0 /
-              (getTime(points, i + 1, motionConstraints, startSpeed, endSpeed) -
-               getTime(points, i, motionConstraints, startSpeed, endSpeed));
-      ks2[i] = ks[i] * ks[i];
-      if (std::isnan(ks[i])) {
-        debugThrow(
-            "Something went wrong. Points are too close to each other "
-            "probably");
-        return vector<CubicBezierControlPoints>();
-      }
+    const double startSpeed = vi.mag();
+
+    const double endSpeed = vf.mag();
+
+    if (times) {
+        assert(times->size() == points.size());
+        for (int i = 0; i < curvesNum; i++) {
+            ks[i] = 1.0 / (times->at(i + 1) - times->at(i));
+            ks2[i] = ks[i] * ks[i];
+            if (std::isnan(ks[i])) {
+                debugThrow(
+                    "Something went wrong. Points are too close to each other "
+                    "probably");
+                return vector<CubicBezierControlPoints>();
+            }
+        }
+    } else {
+        for (int i = 0; i < curvesNum; i++) {
+            ks[i] = 1.0 / (getTime(points, i + 1, motionConstraints, startSpeed,
+                                   endSpeed) -
+                           getTime(points, i, motionConstraints, startSpeed,
+                                   endSpeed));
+            ks2[i] = ks[i] * ks[i];
+            if (std::isnan(ks[i])) {
+                debugThrow(
+                    "Something went wrong. Points are too close to each other "
+                    "probably");
+                return vector<CubicBezierControlPoints>();
+            }
+        }
     }
-  }
 
-  VectorXd solutionX =
-      RRTPlanner::cubicBezierCalc(vi.x(), vf.x(), pointsX, ks, ks2);
-  VectorXd solutionY =
-      RRTPlanner::cubicBezierCalc(vi.y(), vf.y(), pointsY, ks, ks2);
+    VectorXd solutionX =
+        RRTPlanner::cubicBezierCalc(vi.x(), vf.x(), pointsX, ks, ks2);
+    VectorXd solutionY =
+        RRTPlanner::cubicBezierCalc(vi.y(), vf.y(), pointsY, ks, ks2);
 
-  if (solutionX.hasNaN() || solutionY.hasNaN()) {
-    return vector<CubicBezierControlPoints>();
-  }
+    if (solutionX.hasNaN() || solutionY.hasNaN()) {
+        return vector<CubicBezierControlPoints>();
+    }
 
-  vector<CubicBezierControlPoints> path;
+    vector<CubicBezierControlPoints> path;
 
-  for (int i = 0; i < curvesNum; i++) {
-    Point p0 = points[i];
-    Point p1 = Point(solutionX(i * 2), solutionY(i * 2));
-    Point p2 = Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
-    Point p3 = points[i + 1];
-    path.emplace_back(p0, p1, p2, p3);
-  }
-  return path;
+    for (int i = 0; i < curvesNum; i++) {
+        Point p0 = points[i];
+        Point p1 = Point(solutionX(i * 2), solutionY(i * 2));
+        Point p2 = Point(solutionX(i * 2 + 1), solutionY(i * 2 + 1));
+        Point p3 = points[i + 1];
+        path.emplace_back(p0, p1, p2, p3);
+    }
+    return path;
 }
 
 double oneStepLimitAcceleration(double maxAceleration, double d1, double v1,

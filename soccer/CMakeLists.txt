@@ -86,6 +86,7 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
+    "receiver_nodes/vision_receiver_sub.cpp"
     "WindowEvaluator.cpp")
 
 if(APPLE)
@@ -162,7 +163,7 @@ target_link_libraries(robocup ${SDL2_LIBRARIES})
 target_link_libraries(robocup geometry2d rj_robocup_network proto_messages common)
 target_include_directories(robocup PRIVATE ${COMMON_INCLUDE_DIR})
 
-ament_target_dependencies(robocup ament_index_cpp)
+ament_target_dependencies(robocup rclcpp ament_index_cpp)
 
 
 # RRT
@@ -236,3 +237,5 @@ set_target_properties(test-soccer PROPERTIES EXCLUDE_FROM_ALL TRUE)
 add_subdirectory(config_server)
 add_subdirectory(vision_receiver)
 add_subdirectory(config_client)
+
+target_link_libraries(soccer config_client)

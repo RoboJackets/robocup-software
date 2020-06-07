@@ -105,100 +105,101 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
 }
 
 void Gameplay::GameplayModule::calculateFieldObstacles() {
-  auto dimensions = FieldDimensions::Current_Dimensions;
+    auto dimensions = FieldDimensions::Current_Dimensions;
 
-  _centerMatrix = TransformMatrix::translate(Point(0, dimensions.Length() / 2));
-  _oppMatrix = TransformMatrix::translate(Point(0, dimensions.Length())) *
-               TransformMatrix::rotate(M_PI);
+    _centerMatrix =
+        TransformMatrix::translate(Point(0, dimensions.Length() / 2));
+    _oppMatrix = TransformMatrix::translate(Point(0, dimensions.Length())) *
+                 TransformMatrix::rotate(M_PI);
 
-  //// Make an obstacle to cover the opponent's half of the field except for
-  /// one robot diameter across the center line.
-  // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
-  float x = dimensions.Width() / 2 + (float)_fieldEdgeInset->value();
-  const float y1 = dimensions.Length() / 2;
-  const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
-  const float r = dimensions.CenterRadius();
-  _sideObstacle = make_shared<Polygon>(
-      vector<Point>{Point(-x, y1), Point(-r, y1), Point(0, y1 + r),
-                    Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
+    //// Make an obstacle to cover the opponent's half of the field except for
+    /// one robot diameter across the center line.
+    // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
+    float x = dimensions.Width() / 2 + (float)_fieldEdgeInset->value();
+    const float y1 = dimensions.Length() / 2;
+    const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
+    const float r = dimensions.CenterRadius();
+    _sideObstacle = make_shared<Polygon>(
+        vector<Point>{Point(-x, y1), Point(-r, y1), Point(0, y1 + r),
+                      Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
 
-  float y = -(float)_fieldEdgeInset->value();
-  auto deadspace = (float)_fieldEdgeInset->value();
-  x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
-  _nonFloor[0] = make_shared<Polygon>(vector<Point>{
-      Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
+    float y = -(float)_fieldEdgeInset->value();
+    auto deadspace = (float)_fieldEdgeInset->value();
+    x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
+    _nonFloor[0] = make_shared<Polygon>(vector<Point>{
+        Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
 
-  y = dimensions.Length() + (float)_fieldEdgeInset->value();
-  _nonFloor[1] = make_shared<Polygon>(vector<Point>{
-      Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
+    y = dimensions.Length() + (float)_fieldEdgeInset->value();
+    _nonFloor[1] = make_shared<Polygon>(vector<Point>{
+        Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
 
-  y = dimensions.FloorLength();
-  _nonFloor[2] = make_shared<Polygon>(
-      vector<Point>{Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
-                    Point(-x - 1000, y), Point(-x, y)});
+    y = dimensions.FloorLength();
+    _nonFloor[2] = make_shared<Polygon>(vector<Point>{
+        Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
+        Point(-x - 1000, y), Point(-x, y)});
 
-  _nonFloor[3] = make_shared<Polygon>(
-      vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
-                    Point(x + 1000, y), Point(x, y)});
+    _nonFloor[3] = make_shared<Polygon>(
+        vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
+                      Point(x + 1000, y), Point(x, y)});
 
-  const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
-  const float shortDist = dimensions.PenaltyShortDist();
-  const float longDist = dimensions.PenaltyLongDist();
+    const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
+    const float shortDist = dimensions.PenaltyShortDist();
+    const float longDist = dimensions.PenaltyLongDist();
 
-  auto ourGoalArea = make_shared<Polygon>(vector<Point>{
-      Point(-longDist / 2, 0), Point(longDist / 2, 0),
-      Point(longDist / 2, shortDist), Point(-longDist / 2, shortDist)});
-  _ourGoalArea = make_shared<CompositeShape>();
+    auto ourGoalArea = make_shared<Polygon>(vector<Point>{
+        Point(-longDist / 2, 0), Point(longDist / 2, 0),
+        Point(longDist / 2, shortDist), Point(-longDist / 2, shortDist)});
+    _ourGoalArea = make_shared<CompositeShape>();
 
-  _ourGoalArea->add(ourGoalArea);
+    _ourGoalArea->add(ourGoalArea);
 
-  auto theirGoalArea = make_shared<Polygon>(
-      vector<Point>{Point(-longDist / 2, dimensions.Length()),
-                    Point(longDist / 2, dimensions.Length()),
-                    Point(longDist / 2, dimensions.Length() - shortDist),
-                    Point(-longDist / 2, dimensions.Length() - shortDist)});
-  _theirGoalArea = make_shared<CompositeShape>();
+    auto theirGoalArea = make_shared<Polygon>(
+        vector<Point>{Point(-longDist / 2, dimensions.Length()),
+                      Point(longDist / 2, dimensions.Length()),
+                      Point(longDist / 2, dimensions.Length() - shortDist),
+                      Point(-longDist / 2, dimensions.Length() - shortDist)});
+    _theirGoalArea = make_shared<CompositeShape>();
 
-  _theirGoalArea->add(theirGoalArea);
+    _theirGoalArea->add(theirGoalArea);
 
-  _ourHalf = make_shared<Polygon>(
-      vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),
-                    Point(x, y1), Point(x, -dimensions.Border())});
+    _ourHalf = make_shared<Polygon>(
+        vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),
+                      Point(x, y1), Point(x, -dimensions.Border())});
 
-  _opponentHalf = make_shared<Polygon>(
-      vector<Point>{Point(-x, y1), Point(-x, y2), Point(x, y2), Point(x, y1)});
+    _opponentHalf = make_shared<Polygon>(vector<Point>{
+        Point(-x, y1), Point(-x, y2), Point(x, y2), Point(x, y1)});
 
-  _ourGoal = make_shared<Polygon>(vector<Point>{
-      Point(-dimensions.GoalWidth() / 2, 0),
-      Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
-      Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
-            -dimensions.GoalDepth() - dimensions.LineWidth()),
-      Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-            -dimensions.GoalDepth() - dimensions.LineWidth()),
-      Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(), 0),
-      Point(dimensions.GoalWidth() / 2, 0),
-      Point(dimensions.GoalWidth() / 2, -dimensions.GoalDepth()),
-      Point(-dimensions.GoalWidth() / 2, -dimensions.GoalDepth())});
+    _ourGoal = make_shared<Polygon>(vector<Point>{
+        Point(-dimensions.GoalWidth() / 2, 0),
+        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
+        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
+              -dimensions.GoalDepth() - dimensions.LineWidth()),
+        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
+              -dimensions.GoalDepth() - dimensions.LineWidth()),
+        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(), 0),
+        Point(dimensions.GoalWidth() / 2, 0),
+        Point(dimensions.GoalWidth() / 2, -dimensions.GoalDepth()),
+        Point(-dimensions.GoalWidth() / 2, -dimensions.GoalDepth())});
 
-  _theirGoal = make_shared<Polygon>(
-      vector<Point>{Point(-dimensions.GoalWidth() / 2, dimensions.Length()),
-                    Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
-                          dimensions.Length()),
-                    Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
-                          dimensions.Length() + dimensions.GoalDepth() +
-                              dimensions.LineWidth()),
-                    Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-                          dimensions.Length() + dimensions.GoalDepth() +
-                              dimensions.LineWidth()),
-                    Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-                          dimensions.Length()),
-                    Point(dimensions.GoalWidth() / 2, dimensions.Length()),
-                    Point(dimensions.GoalWidth() / 2,
-                          dimensions.Length() + dimensions.GoalDepth()),
-                    Point(-dimensions.GoalWidth() / 2,
-                          dimensions.Length() + dimensions.GoalDepth())});
+    _theirGoal = make_shared<Polygon>(vector<Point>{
+        Point(-dimensions.GoalWidth() / 2, dimensions.Length()),
+        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
+              dimensions.Length()),
+        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
+              dimensions.Length() + dimensions.GoalDepth() +
+                  dimensions.LineWidth()),
+        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
+              dimensions.Length() + dimensions.GoalDepth() +
+                  dimensions.LineWidth()),
+        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
+              dimensions.Length()),
+        Point(dimensions.GoalWidth() / 2, dimensions.Length()),
+        Point(dimensions.GoalWidth() / 2,
+              dimensions.Length() + dimensions.GoalDepth()),
+        Point(-dimensions.GoalWidth() / 2,
+              dimensions.Length() + dimensions.GoalDepth())});
 
-  _oldFieldEdgeInset = _fieldEdgeInset->value();
+    _oldFieldEdgeInset = _fieldEdgeInset->value();
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
@@ -274,35 +275,35 @@ bool Gameplay::GameplayModule::checkPlaybookStatus() {
  * returns the group of obstacles for the field
  */
 geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
-  geometry2d::ShapeSet obstacles;
-  if (_context->game_state.stayOnSide()) {
-    obstacles.add(_sideObstacle);
-  }
+    geometry2d::ShapeSet obstacles;
+    if (_context->game_state.stayOnSide()) {
+        obstacles.add(_sideObstacle);
+    }
 
-  if (!_context->game_settings.use_our_half) {
-    obstacles.add(_ourHalf);
-  }
+    if (!_context->game_settings.use_our_half) {
+        obstacles.add(_ourHalf);
+    }
 
-  if (!_context->game_settings.use_their_half) {
-    obstacles.add(_opponentHalf);
-  }
+    if (!_context->game_settings.use_their_half) {
+        obstacles.add(_opponentHalf);
+    }
 
-  /// Add non floor obstacles
-  for (const std::shared_ptr<Shape>& ptr : _nonFloor) {
-    obstacles.add(ptr);
-  }
+    /// Add non floor obstacles
+    for (const std::shared_ptr<Shape>& ptr : _nonFloor) {
+        obstacles.add(ptr);
+    }
 
-  obstacles.add(_ourGoal);
-  obstacles.add(_theirGoal);
+    obstacles.add(_ourGoal);
+    obstacles.add(_theirGoal);
 
-  return obstacles;
+    return obstacles;
 }
 
 geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
-  geometry2d::ShapeSet zones;
-  zones.add(_theirGoalArea);
-  zones.add(_ourGoalArea);
-  return zones;
+    geometry2d::ShapeSet zones;
+    zones.add(_theirGoalArea);
+    zones.add(_ourGoalArea);
+    return zones;
 }
 
 /**
@@ -419,10 +420,10 @@ void Gameplay::GameplayModule::run() {
 
     /// visualize
     if (_context->game_state.stayAwayFromBall() && _context->state.ball.valid) {
-      _context->debug_drawer.drawCircle(
-          _context->state.ball.pos,
-          FieldDimensions::Current_Dimensions.CenterRadius(), Qt::black,
-          "Rules");
+        _context->debug_drawer.drawCircle(
+            _context->state.ball.pos,
+            FieldDimensions::Current_Dimensions.CenterRadius(), Qt::black,
+            "Rules");
     }
 
     if (verbose) {
@@ -450,8 +451,8 @@ boost::python::object Gameplay::GameplayModule::getMainModule() {
 void Gameplay::GameplayModule::updateFieldDimensions() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
-      _mainPyNamespace["constants"].attr("Field") =
-          &FieldDimensions::Current_Dimensions;
+        _mainPyNamespace["constants"].attr("Field") =
+            &FieldDimensions::Current_Dimensions;
     }
     PyGILState_Release(state);
 }

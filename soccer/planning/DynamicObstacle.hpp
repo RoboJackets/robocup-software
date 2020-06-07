@@ -22,7 +22,7 @@ private:
     const geometry2d::Point staticPoint;
     const std::shared_ptr<geometry2d::Circle> staticObstacle;
 
-   public:
+public:
     DynamicObstacle(geometry2d::Point staticPoint, float radius,
                     const Path* path = nullptr)
         : staticPoint(staticPoint),
@@ -49,7 +49,7 @@ private:
     float getRadius() const { return radius; }
 
     std::shared_ptr<geometry2d::Circle> getStaticObstacle() const {
-      return staticObstacle;
+        return staticObstacle;
     }
 };
 }  // namespace Planning

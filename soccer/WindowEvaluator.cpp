@@ -44,20 +44,21 @@ WindowingResult WindowEvaluator::eval_pt_to_robot(Point origin, Point target) {
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_opp_goal(Point origin) {
-  Segment their_goal{Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2,
-                           FieldDimensions::Current_Dimensions.Length()},
-                     Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2,
-                           FieldDimensions::Current_Dimensions.Length()}};
+    Segment their_goal{
+        Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2,
+              FieldDimensions::Current_Dimensions.Length()},
+        Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2,
+              FieldDimensions::Current_Dimensions.Length()}};
 
-  return eval_pt_to_seg(origin, their_goal);
+    return eval_pt_to_seg(origin, their_goal);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
-  Segment our_goal{
-      Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0},
-      Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0}};
+    Segment our_goal{
+        Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0},
+        Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0}};
 
-  return eval_pt_to_seg(origin, our_goal);
+    return eval_pt_to_seg(origin, our_goal);
 }
 
 void WindowEvaluator::obstacle_range(std::vector<Window>& windows, double& t0,

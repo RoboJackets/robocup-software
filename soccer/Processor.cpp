@@ -73,9 +73,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
-    //    _visionReceiver = std::make_unique<VisionReceiver>(
-    //        &_context, sim, sim ? SimVisionPort :
-    //        SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
     _logger = std::make_unique<Logger>(&_context);
 
@@ -87,6 +84,19 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     if (!readLogFile.empty()) {
         _logger->read(readLogFile);
     }
+
+    //    _visionReceiver = std::make_unique<VisionReceiver>(
+    //        &_context, sim, sim ? SimVisionPort :
+    //        SharedVisionPortSinglePrimary);
+
+    // ROS2 nodes
+    _vision_receiver_sub =
+        std::make_shared<receiver_nodes::VisionReceiverSub>();
+    _config_client = std::make_shared<config_client::ConfigClientNode>(
+        "processor_config_client");
+
+    _executor.add_node(_vision_receiver_sub);
+    _executor.add_node(_config_client);
 
     _logger->start();
 
@@ -196,16 +206,25 @@ void Processor::run() {
         loopMutex()->lock();
 
         ////////////////
+        // ROS2 temp exectuor spin stuff
+        // Update the config server (temp until whoever changes the game
+        // settings does so with the config client themselves)
+        _config_client->updateGameSettings(_context.game_settings.toMsg());
+        _config_client->updateFieldDimensions(
+            _context.field_dimensions.toMsg());
+
+        _executor.spin_some();
+
+        // Update context.field_dimensions (since vision_receiver changes this)
+        _context.field_dimensions =
+            FieldDimensions::fromMsg(_config_client->fieldDimensions());
+
+        ////////////////
         // Inputs
         _sdl_joystick_node->run();
         _manual_control_node->run();
 
         updateOrientation();
-
-        // TODO(Kyle): Don't do this here.
-        // Because not everything is on modules yet, but we still need things to
-        // run in order, we can't just do everything via the for loop (yet).
-        //        _visionReceiver->run();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
@@ -312,16 +331,16 @@ void Processor::updateIntentActive() {
 }
 
 void Processor::recalculateWorldToTeamTransform() {
-  _worldToTeam = geometry2d::TransformMatrix::translate(
-      0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
-  _worldToTeam *= geometry2d::TransformMatrix::rotate(_teamAngle);
+    _worldToTeam = geometry2d::TransformMatrix::translate(
+        0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
+    _worldToTeam *= geometry2d::TransformMatrix::rotate(_teamAngle);
 }
 
 void Processor::setFieldDimensions(const FieldDimensions& dims) {
-  *currentDimensions = dims;
-  recalculateWorldToTeamTransform();
-  _gameplayModule->calculateFieldObstacles();
-  _gameplayModule->updateFieldDimensions();
+    *currentDimensions = dims;
+    recalculateWorldToTeamTransform();
+    _gameplayModule->calculateFieldObstacles();
+    _gameplayModule->updateFieldDimensions();
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }

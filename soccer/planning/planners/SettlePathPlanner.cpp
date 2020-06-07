@@ -180,35 +180,35 @@ void SettlePathPlanner::processStateTransition(const Ball& ball, Path* prevPath,
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
     if (prevPath && (RJ::now() - prevPath->startTime() > RJ::Seconds(0)) &&
         prevPath->getDuration() > RJ::Seconds(0)) {
-      geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
+        geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
 
-      const RJ::Seconds timeIntoPreviousPath =
-          RJ::now() - prevPath->startTime();
-      std::unique_ptr<Path> pathSoFar =
-          prevPath->subPath(0ms, timeIntoPreviousPath);
-      float botDistToBallMovementLine =
-          ballMovementLine.distTo(pathSoFar->end().motion.pos - deltaPos);
+        const RJ::Seconds timeIntoPreviousPath =
+            RJ::now() - prevPath->startTime();
+        std::unique_ptr<Path> pathSoFar =
+            prevPath->subPath(0ms, timeIntoPreviousPath);
+        float botDistToBallMovementLine =
+            ballMovementLine.distTo(pathSoFar->end().motion.pos - deltaPos);
 
-      // Intercept -> Dampen
-      //  Almost interescting the ball path and
-      //  Almost at end of the target path or
-      //  Already in line with the ball
-      //
-      // TODO: Check ball sense?
+        // Intercept -> Dampen
+        //  Almost interescting the ball path and
+        //  Almost at end of the target path or
+        //  Already in line with the ball
+        //
+        // TODO: Check ball sense?
 
-      // Within X seconds of the end of path
-      bool almostAtEndPath =
-          timeIntoPreviousPath > prevPath->getDuration() - RJ::Seconds(.5);
-      bool inlineWithBall =
-          botDistToBallMovementLine < cos(angle) * Robot_MouthWidth / 2;
-      bool inFrontOfBall =
-          averageBallVel.angleBetween(startInstant.pos - ball.pos) < 3.14 / 2;
+        // Within X seconds of the end of path
+        bool almostAtEndPath =
+            timeIntoPreviousPath > prevPath->getDuration() - RJ::Seconds(.5);
+        bool inlineWithBall =
+            botDistToBallMovementLine < cos(angle) * Robot_MouthWidth / 2;
+        bool inFrontOfBall =
+            averageBallVel.angleBetween(startInstant.pos - ball.pos) < 3.14 / 2;
 
-      if (inFrontOfBall && inlineWithBall && currentState == Intercept) {
-        // Start the next section of the path from the end of our current
-        // path
-        startInstant = pathSoFar->end().motion;
-        currentState = Dampen;
+        if (inFrontOfBall && inlineWithBall && currentState == Intercept) {
+            // Start the next section of the path from the end of our current
+            // path
+            startInstant = pathSoFar->end().motion;
+            currentState = Dampen;
         }
     }
 }
@@ -540,40 +540,40 @@ void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball,
                                            double& angle,
                                            geometry2d::Point& deltaRobotPos,
                                            geometry2d::Point& facePos) {
-  // If we have a valid bounce target
-  if (targetBounceDirection) {
-    // Get angle between target and normal hit
-    Point normalFaceVector = ball.pos - startInstant.pos;
-    Point targetFaceVector = *targetBounceDirection - startInstant.pos;
+    // If we have a valid bounce target
+    if (targetBounceDirection) {
+        // Get angle between target and normal hit
+        Point normalFaceVector = ball.pos - startInstant.pos;
+        Point targetFaceVector = *targetBounceDirection - startInstant.pos;
 
-    // Get the angle between the vectors
-    angle = normalFaceVector.angleBetween(targetFaceVector);
+        // Get the angle between the vectors
+        angle = normalFaceVector.angleBetween(targetFaceVector);
 
-    // Clamp so we don't try to bounce behind us
-    angle = min(angle, (double)*_maxBounceAngle);
+        // Clamp so we don't try to bounce behind us
+        angle = min(angle, (double)*_maxBounceAngle);
 
-    // Since we loose the sign for the angle between call, there are two
-    // possibilities
-    Point positiveAngle = Point(0, -Robot_MouthRadius * sin(angle))
-                              .rotate(normalFaceVector.angle());
-    Point negativeAngle = Point(0, Robot_MouthRadius * sin(angle))
-                              .rotate(normalFaceVector.angle());
+        // Since we loose the sign for the angle between call, there are two
+        // possibilities
+        Point positiveAngle = Point(0, -Robot_MouthRadius * sin(angle))
+                                  .rotate(normalFaceVector.angle());
+        Point negativeAngle = Point(0, Robot_MouthRadius * sin(angle))
+                                  .rotate(normalFaceVector.angle());
 
-    // Choose the closest one to the true angle
-    if (targetFaceVector.angleBetween(positiveAngle) <
-        targetFaceVector.angleBetween(negativeAngle)) {
-      deltaRobotPos = negativeAngle;
-      facePos = startInstant.pos +
-                Point::direction(-angle + normalFaceVector.angle()) * 10;
+        // Choose the closest one to the true angle
+        if (targetFaceVector.angleBetween(positiveAngle) <
+            targetFaceVector.angleBetween(negativeAngle)) {
+            deltaRobotPos = negativeAngle;
+            facePos = startInstant.pos +
+                      Point::direction(-angle + normalFaceVector.angle()) * 10;
+        } else {
+            deltaRobotPos = positiveAngle;
+            facePos = startInstant.pos +
+                      Point::direction(angle + normalFaceVector.angle()) * 10;
+        }
     } else {
-      deltaRobotPos = positiveAngle;
-      facePos = startInstant.pos +
-                Point::direction(angle + normalFaceVector.angle()) * 10;
+        deltaRobotPos = Point(0, 0);
+        facePos = ball.pos - averageBallVel.normalized();
     }
-  } else {
-    deltaRobotPos = Point(0, 0);
-    facePos = ball.pos - averageBallVel.normalized();
-  }
 }
 
 template <typename T>

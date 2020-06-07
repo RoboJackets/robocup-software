@@ -22,12 +22,12 @@ KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
       lastUpdateTime(creationTime), lastPredictTime(creationTime),
       unwrapThetaCtr(0), robotID(initMeasurement.getRobotID()),
       previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length) {
-  geometry2d::Pose initPose = initMeasurement.getPose();
-  geometry2d::Twist initTwist(0, 0, 0);
+    geometry2d::Pose initPose = initMeasurement.getPose();
+    geometry2d::Twist initTwist(0, 0, 0);
 
-  if (previousWorldRobot.getIsValid()) {
-    initTwist.linear() = previousWorldRobot.getVel();
-    initTwist.angular() = previousWorldRobot.getOmega();
+    if (previousWorldRobot.getIsValid()) {
+        initTwist.linear() = previousWorldRobot.getVel();
+        initTwist.angular() = previousWorldRobot.getOmega();
     }
 
     filter = KalmanFilter3D(initPose, initTwist);

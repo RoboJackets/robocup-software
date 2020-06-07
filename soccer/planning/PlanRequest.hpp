@@ -20,29 +20,29 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-  PlanRequest(Context* context, MotionInstant start,
-              std::unique_ptr<MotionCommand> command,
-              RobotConstraints constraints, std::unique_ptr<Path> prevPath,
-              geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
-              unsigned shellID, int8_t priority = 0)
-      : context(context),
-        start(start),
-        motionCommand(std::move(command)),
-        constraints(constraints),
-        prevPath(std::move(prevPath)),
-        obstacles(obs),
-        dynamicObstacles(dObs),
-        shellID(shellID) {}
+    PlanRequest(Context* context, MotionInstant start,
+                std::unique_ptr<MotionCommand> command,
+                RobotConstraints constraints, std::unique_ptr<Path> prevPath,
+                geometry2d::ShapeSet obs, std::vector<DynamicObstacle> dObs,
+                unsigned shellID, int8_t priority = 0)
+        : context(context),
+          start(start),
+          motionCommand(std::move(command)),
+          constraints(constraints),
+          prevPath(std::move(prevPath)),
+          obstacles(obs),
+          dynamicObstacles(dObs),
+          shellID(shellID) {}
 
-  Context* context;    /**< Allows debug drawing, position info */
-  MotionInstant start; /**< Starting state of the robot */
-  std::unique_ptr<MotionCommand>
-      motionCommand;              /**< Specific type of motion desired */
-  RobotConstraints constraints;   /**< Constraint parameters on motion */
-  std::unique_ptr<Path> prevPath; /**< Last path planned or nullptr */
-  geometry2d::ShapeSet obstacles; /**< Static obstacles */
-  std::vector<DynamicObstacle> dynamicObstacles; /**< Dynamic obstacles */
-  unsigned shellID; /**< Shell ID used for debug drawing */
-  int8_t priority;  /**< Higher priority planned first */
+    Context* context;    /**< Allows debug drawing, position info */
+    MotionInstant start; /**< Starting state of the robot */
+    std::unique_ptr<MotionCommand>
+        motionCommand;              /**< Specific type of motion desired */
+    RobotConstraints constraints;   /**< Constraint parameters on motion */
+    std::unique_ptr<Path> prevPath; /**< Last path planned or nullptr */
+    geometry2d::ShapeSet obstacles; /**< Static obstacles */
+    std::vector<DynamicObstacle> dynamicObstacles; /**< Dynamic obstacles */
+    unsigned shellID; /**< Shell ID used for debug drawing */
+    int8_t priority;  /**< Higher priority planned first */
 };
 }

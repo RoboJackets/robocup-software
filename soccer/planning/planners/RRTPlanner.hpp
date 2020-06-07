@@ -18,11 +18,11 @@
 namespace Planning {
 
 struct CubicBezierControlPoints {
-  geometry2d::Point p0, p1, p2, p3;
+    geometry2d::Point p0, p1, p2, p3;
 
-  CubicBezierControlPoints(geometry2d::Point p0, geometry2d::Point p1,
-                           geometry2d::Point p2, geometry2d::Point p3)
-      : p0(p0), p1(p1), p2(p2), p3(p3) {}
+    CubicBezierControlPoints(geometry2d::Point p0, geometry2d::Point p1,
+                             geometry2d::Point p2, geometry2d::Point p3)
+        : p0(p0), p1(p1), p2(p2), p3(p3) {}
 };
 
 /**

@@ -57,9 +57,10 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
         robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
-          robot_state.pose = geometry2d::Pose(wr.getPos(), wr.getTheta());
-          robot_state.velocity = geometry2d::Twist(wr.getVel(), wr.getOmega());
-          robot_state.timestamp = wr.getTime();
+            robot_state.pose = geometry2d::Pose(wr.getPos(), wr.getTheta());
+            robot_state.velocity =
+                geometry2d::Twist(wr.getVel(), wr.getOmega());
+            robot_state.timestamp = wr.getTime();
         }
 
         robot->mutable_state() = robot_state;
@@ -75,9 +76,10 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
         robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
-          robot_state.pose = geometry2d::Pose(wr.getPos(), wr.getTheta());
-          robot_state.velocity = geometry2d::Twist(wr.getVel(), wr.getOmega());
-          robot_state.timestamp = wr.getTime();
+            robot_state.pose = geometry2d::Pose(wr.getPos(), wr.getTheta());
+            robot_state.velocity =
+                geometry2d::Twist(wr.getVel(), wr.getOmega());
+            robot_state.timestamp = wr.getTime();
         }
 
         robot->mutable_state() = robot_state;

@@ -3,7 +3,9 @@
 #include <referee_enums.h>
 
 #include <optional>
+#include <rj_robocup/msg/game_settings.hpp>
 
+using GameSettingsMsg = rj_robocup::msg::GameSettings;
 /**
  * Settings for the game, set by MainWindow to be consumed by the rest of the
  * soccer program. This includes playbooks and general settings.
@@ -57,5 +59,19 @@ struct GameSettings {
 
         *this = other;
         requestRefCommand = refCommand;
+    }
+
+    [[nodiscard]] GameSettingsMsg toMsg() const {
+        GameSettingsMsg msg{};
+        msg.simulation = simulation;
+        msg.use_external_referee = use_external_referee;
+        msg.request_blue_team = requestBlueTeam;
+        msg.request_goalie_id = requestGoalieID;
+        msg.defend_plus_x = defendPlusX;
+        msg.use_our_half = use_our_half;
+        msg.use_their_half = use_their_half;
+        msg.paused = paused;
+
+        return msg;
     }
 };

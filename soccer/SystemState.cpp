@@ -24,7 +24,7 @@ public:
     bool hit(const geometry2d::ShapeSet& /*obstacles*/,
              RJ::Seconds /*startTimeIntoPath*/,
              RJ::Seconds* /*hitTime*/) const override {
-      throw std::runtime_error("Unsupported Opperation");
+        throw std::runtime_error("Unsupported Opperation");
     }
 
     void draw(DebugDrawer* /*constdebug_drawer*/,
@@ -117,37 +117,37 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
 }
 
 geometry2d::Point Ball::predictPosition(double seconds_from_now) const {
-  const auto motionInstant =
-      this->predict(RJ::now() + RJ::Seconds(seconds_from_now));
-  return motionInstant.pos;
+    const auto motionInstant =
+        this->predict(RJ::now() + RJ::Seconds(seconds_from_now));
+    return motionInstant.pos;
 }
 
 RJ::Time Ball::estimateTimeTo(const geometry2d::Point& point,
                               geometry2d::Point* nearPointOut) const {
-  Line line(pos, pos + vel);
-  auto nearPoint = line.nearestPoint(point);
-  if (nearPointOut != nullptr) {
-    *nearPointOut = nearPoint;
-  }
-  auto dist = nearPoint.distTo(pos);
-  // d = v0t - 1/2*t^2*Constant
-  // d = v0t - 1/2*t^2*Constant
-  // t = (v - sqrt(-2 C d + v^2))/C
+    Line line(pos, pos + vel);
+    auto nearPoint = line.nearestPoint(point);
+    if (nearPointOut != nullptr) {
+        *nearPointOut = nearPoint;
+    }
+    auto dist = nearPoint.distTo(pos);
+    // d = v0t - 1/2*t^2*Constant
+    // d = v0t - 1/2*t^2*Constant
+    // t = (v - sqrt(-2 C d + v^2))/C
 
-  auto v = vel.mag();
-  auto part = pow(v, 2) - 2 * ballDecayConstant * dist;
-  if (part > 0) {
-    auto t = (v - sqrt(part)) / ballDecayConstant;
-    return time + RJ::Seconds(t);
-  }
-  return RJ::Time::max();
+    auto v = vel.mag();
+    auto part = pow(v, 2) - 2 * ballDecayConstant * dist;
+    if (part > 0) {
+        auto t = (v - sqrt(part)) / ballDecayConstant;
+        return time + RJ::Seconds(t);
+    }
+    return RJ::Time::max();
 
-  // auto part = vel.mag() * -3.43289;
+    // auto part = vel.mag() * -3.43289;
 }
 
 double Ball::estimateSecondsTo(const geometry2d::Point& point) const {
-  const auto time = estimateTimeTo(point);
-  return RJ::Seconds(time - RJ::now()).count();
+    const auto time = estimateTimeTo(point);
+    return RJ::Seconds(time - RJ::now()).count();
 }
 
 double Ball::predictSecondsToStop() const {

@@ -22,8 +22,8 @@ SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     std::stringstream sdl_path;
     sdl_path << share_dir << "/gamecontrollerdb.txt";
     if (SDL_GameControllerAddMappingsFromFile(sdl_path.str().c_str()) == -1) {
-      std::cout << "Failed adding additional SDL Gamecontroller Mappings: "
-                << SDL_GetError() << std::endl;
+        std::cout << "Failed adding additional SDL Gamecontroller Mappings: "
+                  << SDL_GetError() << std::endl;
     }
 }
 

@@ -36,12 +36,12 @@ bool Camera::getIsValid() const {
 void Camera::processBallBounce(const std::vector<WorldRobot>& yellowRobots,
                                const std::vector<WorldRobot>& blueRobots) {
     for (KalmanBall& b : kalmanBallList) {
-      geometry2d::Point newVel;
-      bool isCollision =
-          BallBounce::CalcBallBounce(b, yellowRobots, blueRobots, newVel);
+        geometry2d::Point newVel;
+        bool isCollision =
+            BallBounce::CalcBallBounce(b, yellowRobots, blueRobots, newVel);
 
-      if (isCollision) {
-        b.setVel(newVel);
+        if (isCollision) {
+            b.setVel(newVel);
         }
     }
 }

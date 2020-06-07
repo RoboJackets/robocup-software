@@ -189,16 +189,16 @@ bool SlowKickDetector::inFrontValidator(std::vector<WorldRobot>& robot, std::vec
 
     // robot and ball are the same
     for (int i = 0; i < robot.size(); i++) {
-      geometry2d::Point normal = geometry2d::Point(cos(robot.at(i).getTheta()),
-                                                   sin(robot.at(i).getTheta()));
+        geometry2d::Point normal = geometry2d::Point(
+            cos(robot.at(i).getTheta()), sin(robot.at(i).getTheta()));
 
-      geometry2d::Point robotToBall =
-          ball.at(i).getPos() - robot.at(i).getPos();
+        geometry2d::Point robotToBall =
+            ball.at(i).getPos() - robot.at(i).getPos();
 
-      double angle = normal.angleBetween(robotToBall);
+        double angle = normal.angleBetween(robotToBall);
 
-      if (angle > *max_kick_angle) {
-        return false;
+        if (angle > *max_kick_angle) {
+            return false;
         }
     }
 

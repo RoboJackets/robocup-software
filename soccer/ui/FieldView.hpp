@@ -41,7 +41,7 @@ public:
     void rotate(int value);
 
     const geometry2d::TransformMatrix& getTeamToWorld() const {
-      return _teamToWorld;
+        return _teamToWorld;
     }
 
     // True if this control is showing live (vs. historical) data.

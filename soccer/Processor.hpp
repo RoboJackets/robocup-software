@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include <config_client/config_client_node.h>
 #include <geometry2d/point.h>
 #include <geometry2d/pose.h>
 #include <geometry2d/transform_matrix.h>
+#include <receiver_nodes/vision_receiver_sub.h>
 #include <rj_robocup_protobuf/LogFrame.pb.h>
 
 #include <Logger.hpp>
@@ -14,6 +16,7 @@
 #include <SystemState.hpp>
 #include <mutex>
 #include <optional>
+#include <rclcpp/rclcpp.hpp>
 #include <vector>
 
 #include "GrSimCommunicator.hpp"
@@ -192,4 +195,9 @@ private:
     std::vector<Node*> _nodes;
 
     bool _initialized;
+
+    // ROS2 stuff
+    rclcpp::executors::SingleThreadedExecutor _executor;
+    std::shared_ptr<receiver_nodes::VisionReceiverSub> _vision_receiver_sub;
+    std::shared_ptr<config_client::ConfigClientNode> _config_client;
 };

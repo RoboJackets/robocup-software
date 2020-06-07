@@ -13,25 +13,25 @@ using VisionPacketMsg = rj_robocup::msg::VisionPacket;
  * Only the vision filter should attempt to use this directly.
  */
 class VisionPacket {
- public:
-  /// Local time when the packet was received
-  RJ::Time receivedTime;
+public:
+    /// Local time when the packet was received
+    RJ::Time receivedTime;
 
-  /// protobuf message from the vision system
-  SSL_WrapperPacket wrapper;
+    /// protobuf message from the vision system
+    SSL_WrapperPacket wrapper;
 
-  [[nodiscard]] VisionPacketMsg toMsg() const {
-    VisionPacketMsg msg{};
+    [[nodiscard]] VisionPacketMsg toMsg() const {
+        VisionPacketMsg msg{};
 
-    msg.time = RJ::ToROS(receivedTime);
+        msg.time = RJ::ToROS(receivedTime);
 
-    const auto packet_size = wrapper.ByteSizeLong();
-    msg.wrapper.data.reserve(packet_size);
+        const auto packet_size = wrapper.ByteSizeLong();
+        msg.wrapper.data.reserve(packet_size);
 
-    wrapper.SerializeWithCachedSizesToArray(msg.wrapper.data.data());
+        wrapper.SerializeWithCachedSizesToArray(msg.wrapper.data.data());
 
-    return msg;
-  }
+        return msg;
+    }
 
-  static VisionPacket fromMsg(const VisionPacketMsg& msg) {}
+    static VisionPacket fromMsg(const VisionPacketMsg& msg) {}
 };

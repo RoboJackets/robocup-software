@@ -124,7 +124,7 @@ public:
      */
     std::vector<geometry2d::Point> hypothetical_robot_locations;
 
-   private:
+private:
     Context* context;
 
     static void fill_shot_success(Window& window, geometry2d::Point origin);
