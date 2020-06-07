@@ -77,36 +77,36 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 void SingleRobotPathPlanner::allDynamicToStatic(
     geometry2d::ShapeSet& obstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
-    for (auto& dynObs : dynamicObstacles) {
-        obstacles.add(dynObs.getStaticObstacle());
-    }
+  for (auto& dynObs : dynamicObstacles) {
+    obstacles.add(dynObs.getStaticObstacle());
+  }
 }
 
 void SingleRobotPathPlanner::splitDynamic(
     geometry2d::ShapeSet& obstacles, std::vector<DynamicObstacle>& dynamicOut,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
-    for (auto& dynObs : dynamicObstacles) {
-        if (dynObs.hasPath()) {
-            dynamicOut.push_back(dynObs);
-        } else {
-            obstacles.add(dynObs.getStaticObstacle());
-        }
+  for (auto& dynObs : dynamicObstacles) {
+    if (dynObs.hasPath()) {
+      dynamicOut.push_back(dynObs);
+    } else {
+      obstacles.add(dynObs.getStaticObstacle());
     }
+  }
 }
 
 std::optional<std::function<AngleInstant(MotionInstant)>>
 angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
         case RotationCommand::FacePoint: {
-            geometry2d::Point targetPt =
-                static_cast<const Planning::FacePointCommand&>(  // NOLINT
-                    command)
-                    .targetPos;
-            std::function<AngleInstant(MotionInstant)> function =
-                [targetPt](MotionInstant instant) {
-                    return AngleInstant(instant.pos.angleTo(targetPt));
-                };
-            return function;
+          geometry2d::Point targetPt =
+              static_cast<const Planning::FacePointCommand&>(  // NOLINT
+                  command)
+                  .targetPos;
+          std::function<AngleInstant(MotionInstant)> function =
+              [targetPt](MotionInstant instant) {
+                return AngleInstant(instant.pos.angleTo(targetPt));
+              };
+          return function;
         }
         case RotationCommand::FaceAngle: {
             float angle =

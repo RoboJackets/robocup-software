@@ -1,11 +1,10 @@
-#include <geometry2d/line.h>
-
-#include <cmath>
-
 #include <geometry2d/circle.h>
+#include <geometry2d/line.h>
 #include <geometry2d/point.h>
 #include <geometry2d/segment.h>
 #include <geometry2d/util.h>
+
+#include <cmath>
 
 namespace geometry2d {
 

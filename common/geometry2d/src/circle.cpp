@@ -1,7 +1,5 @@
-#include <geometry2d/circle.h>
-
 #include <constants.h>
-
+#include <geometry2d/circle.h>
 #include <geometry2d/segment.h>
 
 namespace geometry2d {

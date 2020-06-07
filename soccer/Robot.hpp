@@ -65,7 +65,7 @@ public:
     [[nodiscard]] geometry2d::Pose pose() const { return state().pose; }
 
     [[nodiscard]] geometry2d::Point pos() const {
-        return state().pose.position();
+      return state().pose.position();
     }
 
     [[nodiscard]] double angle() const { return state().pose.heading(); }
@@ -73,7 +73,7 @@ public:
     [[nodiscard]] geometry2d::Twist twist() const { return state().velocity; }
 
     [[nodiscard]] geometry2d::Point vel() const {
-        return state().velocity.linear();
+      return state().velocity.linear();
     }
 
     [[nodiscard]] double angleVel() const { return state().velocity.angular(); }
@@ -347,10 +347,10 @@ public:
      * Cleared after every frame
      */
     void localObstacles(const std::shared_ptr<geometry2d::Shape>& obs) {
-        intent().local_obstacles.add(obs);
+      intent().local_obstacles.add(obs);
     }
     const geometry2d::ShapeSet& localObstacles() const {
-        return intent().local_obstacles;
+      return intent().local_obstacles;
     }
     void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
@@ -472,18 +472,18 @@ protected:
      * @param robots is the set of robots to use to create a mask - either self
      * or opp from _state
      */
-    template <class ROBOT>
-    geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
-                                              const RobotMask& mask) const {
-        geometry2d::ShapeSet result;
-        for (size_t i = 0; i < mask.size(); ++i) {
-            if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                result.add(std::make_shared<geometry2d::Circle>(
-                    robots[i]->pos(), mask[i]));
-            }
-        }
-        return result;
-    }
+ template <class ROBOT>
+ geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+                                           const RobotMask& mask) const {
+   geometry2d::ShapeSet result;
+   for (size_t i = 0; i < mask.size(); ++i) {
+     if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
+       result.add(
+           std::make_shared<geometry2d::Circle>(robots[i]->pos(), mask[i]));
+     }
+   }
+   return result;
+ }
 
     /**
      * Only adds obstacles within the checkRadius of the passed in position
@@ -496,37 +496,37 @@ protected:
      * @param robots is the set of robots to use to create a mask - either self
      * or opp from _state
      */
-    template <class ROBOT>
-    geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
-                                              const RobotMask& mask,
-                                              geometry2d::Point currentPosition,
-                                              float checkRadius) const {
-        geometry2d::ShapeSet result;
-        for (size_t i = 0; i < mask.size(); ++i) {
-            if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                if (currentPosition.distTo(robots[i]->pos()) <= checkRadius) {
-                    result.add(std::make_shared<geometry2d::Circle>(
-                        robots[i]->pos(), mask[i]));
-                }
-            }
-        }
-        return result;
-    }
+ template <class ROBOT>
+ geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+                                           const RobotMask& mask,
+                                           geometry2d::Point currentPosition,
+                                           float checkRadius) const {
+   geometry2d::ShapeSet result;
+   for (size_t i = 0; i < mask.size(); ++i) {
+     if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
+       if (currentPosition.distTo(robots[i]->pos()) <= checkRadius) {
+         result.add(
+             std::make_shared<geometry2d::Circle>(robots[i]->pos(), mask[i]));
+       }
+     }
+   }
+   return result;
+ }
 
     /**
      * Creates an obstacle for the ball if necessary
      */
-    std::shared_ptr<geometry2d::Circle> createBallObstacle() const;
+ std::shared_ptr<geometry2d::Circle> createBallObstacle() const;
 
-    friend class Processor;
-    friend class RadioNode;
+ friend class Processor;
+ friend class RadioNode;
 
-    /// The processor mutates RadioRx in place and calls this afterwards to let
-    /// it know that it changed
-    void radioRxUpdated();
+ /// The processor mutates RadioRx in place and calls this afterwards to let
+ /// it know that it changed
+ void radioRxUpdated();
 
-    const RobotLocalConfig* status() const {
-        return &_context->local_configs[shell()];
+ const RobotLocalConfig* status() const {
+   return &_context->local_configs[shell()];
     }
 
     const RobotConfig* config() const { return _context->robot_config.get(); }

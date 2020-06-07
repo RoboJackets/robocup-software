@@ -1,5 +1,5 @@
-#include <geometry2d/polygon.h>
 #include <constants.h>
+#include <geometry2d/polygon.h>
 
 namespace geometry2d {
 

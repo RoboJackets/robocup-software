@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Eigen/Dense>
-
 #include <geometry2d/point.h>
+
+#include <Eigen/Dense>
 
 namespace geometry2d {
 // A 2x3 transformation matrix.

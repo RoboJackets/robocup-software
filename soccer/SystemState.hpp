@@ -34,27 +34,24 @@ class LogFrame;
  */
 class Ball {
 public:
-    geometry2d::Point pos;
-    geometry2d::Point vel;
-    RJ::Time time;
-    bool valid = false;
+ geometry2d::Point pos;
+ geometry2d::Point vel;
+ RJ::Time time;
+ bool valid = false;
 
-    [[nodiscard]] Planning::MotionInstant predict(RJ::Time estimateTime) const;
-    [[nodiscard]] geometry2d::Point predictPosition(
-        double seconds_from_now) const;
+ [[nodiscard]] Planning::MotionInstant predict(RJ::Time estimateTime) const;
+ [[nodiscard]] geometry2d::Point predictPosition(double seconds_from_now) const;
 
-    [[nodiscard]] std::unique_ptr<Planning::Path> path(
-        RJ::Time startTime) const;
+ [[nodiscard]] std::unique_ptr<Planning::Path> path(RJ::Time startTime) const;
 
-    RJ::Time estimateTimeTo(const geometry2d::Point& point,
-                            geometry2d::Point* nearPointOut = nullptr) const;
+ RJ::Time estimateTimeTo(const geometry2d::Point& point,
+                         geometry2d::Point* nearPointOut = nullptr) const;
 
-    [[nodiscard]] double estimateSecondsTo(
-        const geometry2d::Point& point) const;
+ [[nodiscard]] double estimateSecondsTo(const geometry2d::Point& point) const;
 
-    [[nodiscard]] double estimateSecondsToDist(double dist) const;
+ [[nodiscard]] double estimateSecondsToDist(double dist) const;
 
-    [[nodiscard]] double predictSecondsToStop() const;
+ [[nodiscard]] double predictSecondsToStop() const;
 };
 
 class Context;

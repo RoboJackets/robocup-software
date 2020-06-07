@@ -1,8 +1,8 @@
 #pragma once
 
+#include <geometry2d/line.h>
 #include <geometry2d/point.h>
 #include <geometry2d/shape.h>
-#include <geometry2d/line.h>
 
 namespace geometry2d {
 
@@ -98,4 +98,4 @@ protected:
     // Radius squared
     mutable float _rsq;
 };
-}
+}  // namespace geometry2d

@@ -58,49 +58,49 @@ std::optional<RobotInstant> CompositePath::eval(RJ::Seconds t) const {
 bool CompositePath::hit(const geometry2d::ShapeSet& obstacles,
                         RJ::Seconds startTimeIntoPath,
                         RJ::Seconds* hitTime) const {
-    if (paths.empty()) {
-        return false;
-    }
-    int start = 0;
-    RJ::Seconds totalTime(0);
-    for (const std::unique_ptr<Path>& path : paths) {
-        start++;
-        RJ::Seconds timeLength = path->getDuration();
-        if (timeLength == RJ::Seconds::max()) {
-            if (path->hit(obstacles, startTimeIntoPath, hitTime)) {
-                if (hitTime) {
-                    *hitTime += totalTime;
-                }
-                return true;
-            } else {
-                return false;
-            }
-        }
-        startTimeIntoPath -= timeLength;
-        if (startTimeIntoPath <= RJ::Seconds::zero()) {
-            startTimeIntoPath += timeLength;
-            if (path->hit(obstacles, startTimeIntoPath, hitTime)) {
-                if (hitTime) {
-                    *hitTime += totalTime;
-                }
-                return true;
-            }
-            totalTime += timeLength;
-            break;
-        }
-        totalTime += timeLength;
-    }
-
-    for (; start < paths.size(); start++) {
-        if (paths.at(start)->hit(obstacles, 0ms, hitTime)) {
-            if (hitTime) {
-                *hitTime += totalTime;
-            }
-            return true;
-        }
-        totalTime += paths.at(start)->getDuration();
-    }
+  if (paths.empty()) {
     return false;
+  }
+  int start = 0;
+  RJ::Seconds totalTime(0);
+  for (const std::unique_ptr<Path>& path : paths) {
+    start++;
+    RJ::Seconds timeLength = path->getDuration();
+    if (timeLength == RJ::Seconds::max()) {
+      if (path->hit(obstacles, startTimeIntoPath, hitTime)) {
+        if (hitTime) {
+          *hitTime += totalTime;
+        }
+        return true;
+      } else {
+        return false;
+      }
+    }
+    startTimeIntoPath -= timeLength;
+    if (startTimeIntoPath <= RJ::Seconds::zero()) {
+      startTimeIntoPath += timeLength;
+      if (path->hit(obstacles, startTimeIntoPath, hitTime)) {
+        if (hitTime) {
+          *hitTime += totalTime;
+        }
+        return true;
+      }
+      totalTime += timeLength;
+      break;
+    }
+    totalTime += timeLength;
+  }
+
+  for (; start < paths.size(); start++) {
+    if (paths.at(start)->hit(obstacles, 0ms, hitTime)) {
+      if (hitTime) {
+        *hitTime += totalTime;
+      }
+      return true;
+    }
+    totalTime += paths.at(start)->getDuration();
+  }
+  return false;
 }
 
 void CompositePath::draw(DebugDrawer* const debug_drawer, const QColor& color,

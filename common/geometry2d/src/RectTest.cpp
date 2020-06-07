@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-#include <geometry2d/rect.h>
 #include <constants.h>
+#include <geometry2d/rect.h>
+#include <gtest/gtest.h>
 
 namespace geometry2d {
 

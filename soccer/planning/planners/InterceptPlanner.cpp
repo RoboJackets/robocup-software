@@ -55,23 +55,23 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // Saves some frames trying to compute that
     // Also is much more consistent
     if (botToTarget.mag() < Robot_Radius / 2) {
-        MotionInstant finalStoppingMotion(targetPosOnLine,
-                                          geometry2d::Point(0, 0));
+      MotionInstant finalStoppingMotion(targetPosOnLine,
+                                        geometry2d::Point(0, 0));
 
-        std::unique_ptr<MotionCommand> directCommand =
-            std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
+      std::unique_ptr<MotionCommand> directCommand =
+          std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);
 
-        PlanRequest request = PlanRequest(
-            planRequest.context, startInstant, std::move(directCommand),
-            planRequest.constraints, nullptr, planRequest.obstacles,
-            planRequest.dynamicObstacles, planRequest.shellID);
+      PlanRequest request = PlanRequest(
+          planRequest.context, startInstant, std::move(directCommand),
+          planRequest.constraints, nullptr, planRequest.obstacles,
+          planRequest.dynamicObstacles, planRequest.shellID);
 
-        std::unique_ptr<Path> path = directPlanner.run(request);
-        path->setDebugText("AtPoint");
+      std::unique_ptr<Path> path = directPlanner.run(request);
+      path->setDebugText("AtPoint");
 
-        return std::make_unique<AngleFunctionPath>(
-            std::move(path),
-            angleFunctionForCommandType(FacePointCommand(ball.pos)));
+      return std::make_unique<AngleFunctionPath>(
+          std::move(path),
+          angleFunctionForCommandType(FacePointCommand(ball.pos)));
     }
 
     // Scale the end velocity by % of max velocity to see if we can reach the

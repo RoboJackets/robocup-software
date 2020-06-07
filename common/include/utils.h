@@ -70,29 +70,29 @@ static inline T fixAngleRadians(T a) {
 
 /** Checks whether or not the given ball is in the defense area. */
 static inline bool ballIsInGoalieBox(geometry2d::Point point) {
-    geometry2d::Point topRight = geometry2d::Point(
-        FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2,
-        FieldDimensions::Current_Dimensions.PenaltyShortDist());
+  geometry2d::Point topRight = geometry2d::Point(
+      FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2,
+      FieldDimensions::Current_Dimensions.PenaltyShortDist());
 
-    geometry2d::Point bottomLeft = geometry2d::Point(
-        FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2, 0);
+  geometry2d::Point bottomLeft = geometry2d::Point(
+      FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2, 0);
 
-    geometry2d::Rect defenseArea = geometry2d::Rect(topRight, bottomLeft);
+  geometry2d::Rect defenseArea = geometry2d::Rect(topRight, bottomLeft);
 
-    return defenseArea.containsPoint(point);
+  return defenseArea.containsPoint(point);
 }
 
 static geometry2d::Point fromOursToTheirs(geometry2d::Point& pt) {
-    geometry2d::Point c;
-    c.y() = FieldDimensions::Current_Dimensions.Length() - pt.y();
-    c.x() = -pt.x();
+  geometry2d::Point c;
+  c.y() = FieldDimensions::Current_Dimensions.Length() - pt.y();
+  c.x() = -pt.x();
 
-    return c;
+  return c;
 }
 
 static bool ballIsInTheirGoalieBox(geometry2d::Point& pt) {
-    geometry2d::Point converted = fromOursToTheirs(pt);
-    return ballIsInGoalieBox(converted);
+  geometry2d::Point converted = fromOursToTheirs(pt);
+  return ballIsInGoalieBox(converted);
 }
 
 // Removes all entries in a std::map which associate to the given value.

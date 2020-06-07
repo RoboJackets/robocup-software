@@ -26,36 +26,35 @@ public:
      * @param maxThresh threshold for the max vlaue before exit
      * @note Set maxValue = maxThresh to disable
      */
-    NelderMead2DConfig(std::function<float(geometry2d::Point)>& f,
-                       geometry2d::Point start = geometry2d::Point(0, 0),
-                       geometry2d::Point step = geometry2d::Point(1, 1),
-                       geometry2d::Point minDist = geometry2d::Point(0.001,
-                                                                     0.001),
-                       float reflectionCoeff = 1, float expansionCoeff = 2,
-                       float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
-                       int maxIterations = 100, float maxValue = 0,
-                       float maxThresh = 0)
-        : f(f),
-          start(start),
-          step(step),
-          minDist(minDist),
-          reflectionCoeff(reflectionCoeff),
-          expansionCoeff(expansionCoeff),
-          contractionCoeff(contractionCoeff),
-          shrinkCoeff(shrinkCoeff),
-          maxIterations(maxIterations),
-          maxValue(maxValue),
-          maxThresh(maxThresh) {}
+ NelderMead2DConfig(std::function<float(geometry2d::Point)>& f,
+                    geometry2d::Point start = geometry2d::Point(0, 0),
+                    geometry2d::Point step = geometry2d::Point(1, 1),
+                    geometry2d::Point minDist = geometry2d::Point(0.001, 0.001),
+                    float reflectionCoeff = 1, float expansionCoeff = 2,
+                    float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
+                    int maxIterations = 100, float maxValue = 0,
+                    float maxThresh = 0)
+     : f(f),
+       start(start),
+       step(step),
+       minDist(minDist),
+       reflectionCoeff(reflectionCoeff),
+       expansionCoeff(expansionCoeff),
+       contractionCoeff(contractionCoeff),
+       shrinkCoeff(shrinkCoeff),
+       maxIterations(maxIterations),
+       maxValue(maxValue),
+       maxThresh(maxThresh) {}
 
-    std::function<float(geometry2d::Point)>& f;
-    geometry2d::Point start;
-    geometry2d::Point step;
-    geometry2d::Point minDist;
-    float reflectionCoeff;
-    float expansionCoeff;
-    float contractionCoeff;
-    float shrinkCoeff;
-    int maxIterations;
-    float maxValue;
-    float maxThresh;
+ std::function<float(geometry2d::Point)>& f;
+ geometry2d::Point start;
+ geometry2d::Point step;
+ geometry2d::Point minDist;
+ float reflectionCoeff;
+ float expansionCoeff;
+ float contractionCoeff;
+ float shrinkCoeff;
+ int maxIterations;
+ float maxValue;
+ float maxThresh;
 };

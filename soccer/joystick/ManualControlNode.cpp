@@ -215,12 +215,12 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
 }
 
 void ManualControlNode::applyControlModifiers() {
-    geometry2d::Point trans{controls_.x_vel, controls_.y_vel};
-    trans.clamp(std::sqrt(2.0));
-    controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
+  geometry2d::Point trans{controls_.x_vel, controls_.y_vel};
+  trans.clamp(std::sqrt(2.0));
+  controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
 
-    if (context_->game_settings.joystick_config.dampedTranslation) {
-        trans *= JoystickTranslationMaxDampedSpeed->value();
+  if (context_->game_settings.joystick_config.dampedTranslation) {
+    trans *= JoystickTranslationMaxDampedSpeed->value();
     } else {
         trans *= JoystickTranslationMaxSpeed->value();
     }

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <ostream>
 #include <geometry2d/point.h>
 #include <geometry2d/transform_matrix.h>
+
+#include <ostream>
 
 namespace geometry2d {
 

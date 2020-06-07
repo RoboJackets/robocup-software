@@ -1,12 +1,12 @@
 #pragma once
 
-#include <vector>
+#include <geometry2d/point.h>
+#include <geometry2d/segment.h>
+#include <geometry2d/shape.h>
+
 #include <memory>
 #include <set>
-
-#include <geometry2d/point.h>
-#include <geometry2d/shape.h>
-#include <geometry2d/segment.h>
+#include <vector>
 
 namespace geometry2d {
 

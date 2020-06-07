@@ -147,16 +147,16 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     _worldToTeam *= geometry2d::TransformMatrix::translate(
         0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
     if (frame->defend_plus_x()) {
-        _worldToTeam *= geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
+      _worldToTeam *= geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
-        _worldToTeam *= geometry2d::TransformMatrix::rotate(M_PI / 2.0);
+      _worldToTeam *= geometry2d::TransformMatrix::rotate(M_PI / 2.0);
     }
 
     _teamToWorld = geometry2d::TransformMatrix();
     if (frame->defend_plus_x()) {
-        _teamToWorld *= geometry2d::TransformMatrix::rotate(M_PI / 2.0);
+      _teamToWorld *= geometry2d::TransformMatrix::rotate(M_PI / 2.0);
     } else {
-        _teamToWorld *= geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
+      _teamToWorld *= geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
     }
     _teamToWorld *= geometry2d::TransformMatrix::translate(
         0, -FieldDimensions::Current_Dimensions.Length() / 2.0f);
@@ -246,19 +246,19 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Block off half the field
     if (!frame->use_our_half()) {
-        const float FX = FieldDimensions::Current_Dimensions.FloorWidth() / 2;
-        const float FY1 = -FieldDimensions::Current_Dimensions.Border();
-        const float FY2 = FieldDimensions::Current_Dimensions.Length() / 2;
-        p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
-                   QColor(0, 0, 0, 128));
+      const float FX = FieldDimensions::Current_Dimensions.FloorWidth() / 2;
+      const float FY1 = -FieldDimensions::Current_Dimensions.Border();
+      const float FY2 = FieldDimensions::Current_Dimensions.Length() / 2;
+      p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
+                 QColor(0, 0, 0, 128));
     }
     if (!frame->use_opponent_half()) {
-        const float FX = FieldDimensions::Current_Dimensions.FloorWidth() / 2;
-        const float FY1 = FieldDimensions::Current_Dimensions.Length() / 2;
-        const float FY2 = FieldDimensions::Current_Dimensions.Length() +
-                          FieldDimensions::Current_Dimensions.Border();
-        p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
-                   QColor(0, 0, 0, 128));
+      const float FX = FieldDimensions::Current_Dimensions.FloorWidth() / 2;
+      const float FY1 = FieldDimensions::Current_Dimensions.Length() / 2;
+      const float FY2 = FieldDimensions::Current_Dimensions.Length() +
+                        FieldDimensions::Current_Dimensions.Border();
+      p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
+                 QColor(0, 0, 0, 128));
     }
 
     if (showCoords) {
@@ -745,23 +745,23 @@ void FieldView::resizeEvent(QResizeEvent* e) {
     int needW;
     int needH;
     if ((_rotate & 1) != 0) {
-        needH = static_cast<int>(
-            std::round(static_cast<float>(givenW) *
-                       FieldDimensions::Current_Dimensions.FloorLength() /
-                       FieldDimensions::Current_Dimensions.FloorWidth()));
-        needW = static_cast<int>(
-            std::round(static_cast<float>(givenH) *
-                       FieldDimensions::Current_Dimensions.FloorWidth() /
-                       FieldDimensions::Current_Dimensions.FloorLength()));
+      needH = static_cast<int>(
+          std::round(static_cast<float>(givenW) *
+                     FieldDimensions::Current_Dimensions.FloorLength() /
+                     FieldDimensions::Current_Dimensions.FloorWidth()));
+      needW = static_cast<int>(
+          std::round(static_cast<float>(givenH) *
+                     FieldDimensions::Current_Dimensions.FloorWidth() /
+                     FieldDimensions::Current_Dimensions.FloorLength()));
     } else {
-        needH = static_cast<int>(
-            std::round(static_cast<float>(givenW) *
-                       FieldDimensions::Current_Dimensions.FloorWidth() /
-                       FieldDimensions::Current_Dimensions.FloorLength()));
-        needW = static_cast<int>(
-            std::round(static_cast<float>(givenH) *
-                       FieldDimensions::Current_Dimensions.FloorLength() /
-                       FieldDimensions::Current_Dimensions.FloorWidth()));
+      needH = static_cast<int>(
+          std::round(static_cast<float>(givenW) *
+                     FieldDimensions::Current_Dimensions.FloorWidth() /
+                     FieldDimensions::Current_Dimensions.FloorLength()));
+      needW = static_cast<int>(
+          std::round(static_cast<float>(givenH) *
+                     FieldDimensions::Current_Dimensions.FloorLength() /
+                     FieldDimensions::Current_Dimensions.FloorWidth()));
     }
 
     QSize size;

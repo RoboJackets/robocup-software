@@ -312,16 +312,16 @@ void Processor::updateIntentActive() {
 }
 
 void Processor::recalculateWorldToTeamTransform() {
-    _worldToTeam = geometry2d::TransformMatrix::translate(
-        0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
-    _worldToTeam *= geometry2d::TransformMatrix::rotate(_teamAngle);
+  _worldToTeam = geometry2d::TransformMatrix::translate(
+      0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
+  _worldToTeam *= geometry2d::TransformMatrix::rotate(_teamAngle);
 }
 
 void Processor::setFieldDimensions(const FieldDimensions& dims) {
-    *currentDimensions = dims;
-    recalculateWorldToTeamTransform();
-    _gameplayModule->calculateFieldObstacles();
-    _gameplayModule->updateFieldDimensions();
+  *currentDimensions = dims;
+  recalculateWorldToTeamTransform();
+  _gameplayModule->calculateFieldObstacles();
+  _gameplayModule->updateFieldDimensions();
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }

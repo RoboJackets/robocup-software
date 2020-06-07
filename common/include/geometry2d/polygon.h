@@ -1,10 +1,10 @@
 #pragma once
 
-#include <vector>
-
-#include <geometry2d/shape.h>
 #include <geometry2d/rect.h>
 #include <geometry2d/segment.h>
+#include <geometry2d/shape.h>
+
+#include <vector>
 
 namespace geometry2d {
 
@@ -57,4 +57,4 @@ protected:
     /// Used by constructors
     void init(const Segment& seg, float r, float length);
 };
-}
+}  // namespace geometry2d

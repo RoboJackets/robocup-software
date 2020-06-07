@@ -57,24 +57,24 @@ struct PathTargetCommand : public MotionCommand {
 };
 
 struct WorldVelTargetCommand : public MotionCommand {
-    explicit WorldVelTargetCommand(geometry2d::Point vel)
-        : MotionCommand(MotionCommand::WorldVel), worldVel(vel){};
-    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
-        return std::make_unique<WorldVelTargetCommand>(*this);
+  explicit WorldVelTargetCommand(geometry2d::Point vel)
+      : MotionCommand(MotionCommand::WorldVel), worldVel(vel){};
+  virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+    return std::make_unique<WorldVelTargetCommand>(*this);
     }
     const geometry2d::Point worldVel;
 };
 
 struct PivotCommand : public MotionCommand {
-    explicit PivotCommand(geometry2d::Point pivotPoint,
-                          geometry2d::Point target, float radius)
-        : MotionCommand(MotionCommand::Pivot),
-          pivotPoint(pivotPoint),
-          pivotTarget(target),
-          radius(radius) {}
+  explicit PivotCommand(geometry2d::Point pivotPoint, geometry2d::Point target,
+                        float radius)
+      : MotionCommand(MotionCommand::Pivot),
+        pivotPoint(pivotPoint),
+        pivotTarget(target),
+        radius(radius) {}
 
-    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
-        return std::make_unique<PivotCommand>(*this);
+  virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+    return std::make_unique<PivotCommand>(*this);
     }
 
     geometry2d::Point pivotTarget;
@@ -117,22 +117,22 @@ struct CollectCommand : public MotionCommand {
 };
 
 struct LineKickCommand : public MotionCommand {
-    explicit LineKickCommand(geometry2d::Point target)
-        : MotionCommand(MotionCommand::LineKick), target(target){};
+  explicit LineKickCommand(geometry2d::Point target)
+      : MotionCommand(MotionCommand::LineKick), target(target){};
 
-    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
-        return std::make_unique<LineKickCommand>(*this);
+  virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+    return std::make_unique<LineKickCommand>(*this);
     };
 
     const geometry2d::Point target;
 };
 
 struct InterceptCommand : public MotionCommand {
-    explicit InterceptCommand(geometry2d::Point target)
-        : MotionCommand(MotionCommand::Intercept), target(target){};
+  explicit InterceptCommand(geometry2d::Point target)
+      : MotionCommand(MotionCommand::Intercept), target(target){};
 
-    virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
-        return std::make_unique<InterceptCommand>(*this);
+  virtual std::unique_ptr<Planning::MotionCommand> clone() const override {
+    return std::make_unique<InterceptCommand>(*this);
     };
 
     const geometry2d::Point target;

@@ -18,12 +18,12 @@ KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
     : lastUpdateTime(creationTime), lastPredictTime(creationTime),
       previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length),
       health(*VisionFilterConfig::filter_health_init), cameraID(cameraID) {
-    geometry2d::Point initPos = initMeasurement.getPos();
-    geometry2d::Point initVel = geometry2d::Point(0, 0);
+  geometry2d::Point initPos = initMeasurement.getPos();
+  geometry2d::Point initVel = geometry2d::Point(0, 0);
 
-    // If we have a world ball, use that vel as init to smooth cam transitions
-    if (previousWorldBall.getIsValid()) {
-        initVel = previousWorldBall.getVel();
+  // If we have a world ball, use that vel as init to smooth cam transitions
+  if (previousWorldBall.getIsValid()) {
+    initVel = previousWorldBall.getVel();
     }
 
     filter = KalmanFilter2D(initPos, initVel);

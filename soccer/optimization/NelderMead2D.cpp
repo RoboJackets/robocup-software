@@ -7,11 +7,11 @@ NelderMead2D::NelderMead2D(NelderMead2DConfig& config)
     : config(config), iterationCount(0) {
     // Creates starting points at [start], [start] + [-x, y], [start] + [x, y]
     for (int i = -1; i < 2; i++) {
-        geometry2d::Point p =
-            config.start +
-            i * geometry2d::Point(config.step.x(), i * config.step.y());
+      geometry2d::Point p =
+          config.start +
+          i * geometry2d::Point(config.step.x(), i * config.step.y());
 
-        vertices.push_back(std::make_tuple((config.f)(p), p));
+      vertices.push_back(std::make_tuple((config.f)(p), p));
     }
 }
 
@@ -46,13 +46,13 @@ bool NelderMead2D::singleStep() {
 
     // If best point so far, expand in that reflected direction
     if (reflectedScore > bestScore) {
-        geometry2d::Point expanded =
-            centroid + config.expansionCoeff * (reflected - centroid);
-        float expandedScore = (config.f)(expanded);
+      geometry2d::Point expanded =
+          centroid + config.expansionCoeff * (reflected - centroid);
+      float expandedScore = (config.f)(expanded);
 
-        // If expanded is better than reflected, replace worst
-        if (expandedScore > reflectedScore) {
-            return replaceWorst(expandedScore, expanded);
+      // If expanded is better than reflected, replace worst
+      if (expandedScore > reflectedScore) {
+        return replaceWorst(expandedScore, expanded);
         } else {
             return replaceWorst(reflectedScore, reflected);
         }
@@ -96,9 +96,9 @@ void NelderMead2D::execute() {
  * @return the XY coordinate of the current guess of the max
  */
 geometry2d::Point NelderMead2D::getPoint() {
-    sortVertices();
+  sortVertices();
 
-    return std::get<1>(vertices.at(0));
+  return std::get<1>(vertices.at(0));
 }
 
 /**
@@ -148,6 +148,6 @@ void NelderMead2D::sortVertices() {
 }
 
 bool NelderMead2D::replaceWorst(float newScore, geometry2d::Point newPoint) {
-    vertices.at(2) = std::make_tuple(newScore, newPoint);
-    return continueExecution();
+  vertices.at(2) = std::make_tuple(newScore, newPoint);
+  return continueExecution();
 }

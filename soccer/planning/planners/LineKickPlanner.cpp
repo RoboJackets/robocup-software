@@ -241,8 +241,8 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
         }
         if (geometry2d::Segment(ball.pos, target.pos)
                 .distTo(tmpStartInstant.pos) < Robot_Radius) {
-            debug = "meh";
-            // break;
+          debug = "meh";
+          // break;
         }
 
         std::unique_ptr<Path> path =

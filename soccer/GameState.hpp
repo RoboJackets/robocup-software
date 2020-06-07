@@ -178,25 +178,22 @@ public:
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
 
     void setBallPlacementPoint(float x, float y) {
-        geometry2d::TransformMatrix _worldToTeam =
-            geometry2d::TransformMatrix();
-        _worldToTeam *= geometry2d::TransformMatrix::translate(
-            0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
-        ballPlacementPoint =
-            _worldToTeam * geometry2d::Point(x / 1000, y / 1000);
+      geometry2d::TransformMatrix _worldToTeam = geometry2d::TransformMatrix();
+      _worldToTeam *= geometry2d::TransformMatrix::translate(
+          0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
+      ballPlacementPoint = _worldToTeam * geometry2d::Point(x / 1000, y / 1000);
     }
 
     static geometry2d::Point convertToBallPlacementPoint(float x, float y) {
-        geometry2d::TransformMatrix world_to_team =
-            geometry2d::TransformMatrix();
-        world_to_team *= geometry2d::TransformMatrix::translate(
-            0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
+      geometry2d::TransformMatrix world_to_team = geometry2d::TransformMatrix();
+      world_to_team *= geometry2d::TransformMatrix::translate(
+          0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
 
-        return world_to_team * geometry2d::Point(x / 1000, y / 1000);
+      return world_to_team * geometry2d::Point(x / 1000, y / 1000);
     }
 
     geometry2d::Point getBallPlacementPoint() const {
-        return ballPlacementPoint;
+      return ballPlacementPoint;
     }
 
     uint getGoalieId() const { return OurInfo.goalie; }

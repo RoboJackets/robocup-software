@@ -109,10 +109,10 @@ if(NOT STATIC_ANALYSIS)
 endif()
 
 # run all the other CMakeLists files
+add_subdirectory(msgs)
 add_subdirectory(external)
 add_subdirectory(protobuf)
 add_subdirectory(common)
-add_subdirectory(msgs)
 add_subdirectory(soccer)
 add_subdirectory(logging)
 

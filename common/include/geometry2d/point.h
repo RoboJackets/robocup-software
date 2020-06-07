@@ -6,10 +6,13 @@
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
 #include <cmath>
+#include <rj_robocup/msg/point.hpp>
 #include <sstream>
 #include <string>
 
 namespace geometry2d {
+using PointMsg = rj_robocup::msg::Point;
+
 /**
 Simple class to represent a point in 2d space. Uses floating point coordinates
 */
@@ -352,11 +355,11 @@ public:
 
     /** saturates the magnitude of a vector */
     static geometry2d::Point saturate(geometry2d::Point value, double max) {
-        double mag = value.mag();
-        if (mag > fabs(max)) {
-            return value.normalized() * fabs(max);
-        }
-        return value;
+      double mag = value.mag();
+      if (mag > fabs(max)) {
+        return value.normalized() * fabs(max);
+      }
+      return value;
     }
 
     [[nodiscard]] double angleTo(const Point& other) const {
@@ -379,6 +382,13 @@ public:
         std::stringstream str;
         str << "Point(" << x() << ", " << y() << ")";
         return str.str();
+    }
+
+    [[nodiscard]] inline PointMsg toMsg() const {
+      PointMsg msg{};
+      msg.x = _x;
+      msg.y = _y;
+      return msg;
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Point& point) {

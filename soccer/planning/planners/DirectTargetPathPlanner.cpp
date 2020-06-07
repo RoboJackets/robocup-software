@@ -21,16 +21,16 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
             *planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
-        geometry2d::Point endTarget = command.pathGoal.pos;
-        const auto direction = (endTarget - startInstant.pos).normalized();
+      geometry2d::Point endTarget = command.pathGoal.pos;
+      const auto direction = (endTarget - startInstant.pos).normalized();
 
-        float endSpeed = command.pathGoal.vel.mag();
-        auto path = std::make_unique<TrapezoidalPath>(
-            startInstant.pos, vectorInDirection(startInstant.vel, direction),
-            endTarget, vectorInDirection(command.pathGoal.vel, direction),
-            motionConstraints);
-        path->setStartTime(RJ::now());
-        return std::move(path);
+      float endSpeed = command.pathGoal.vel.mag();
+      auto path = std::make_unique<TrapezoidalPath>(
+          startInstant.pos, vectorInDirection(startInstant.vel, direction),
+          endTarget, vectorInDirection(command.pathGoal.vel, direction),
+          motionConstraints);
+      path->setStartTime(RJ::now());
+      return std::move(path);
     } else {
         return std::move(prevPath);
     }

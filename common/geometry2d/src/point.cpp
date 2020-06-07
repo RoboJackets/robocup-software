@@ -1,5 +1,4 @@
 #include <geometry2d/point.h>
-
 #include <geometry2d/util.h>
 
 namespace geometry2d {

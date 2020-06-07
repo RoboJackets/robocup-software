@@ -1,8 +1,7 @@
 #include <geometry2d/transform_matrix.h>
+#include <geometry2d/util.h>
 
 #include <cmath>
-
-#include <geometry2d/util.h>
 
 namespace geometry2d {
 

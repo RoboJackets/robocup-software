@@ -1,6 +1,7 @@
 #pragma once
 
 #include <geometry2d/point.h>
+
 #include <stdexcept>
 
 namespace geometry2d {

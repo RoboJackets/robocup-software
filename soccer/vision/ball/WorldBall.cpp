@@ -16,18 +16,16 @@ WorldBall::WorldBall() : isValid(false) {}
 WorldBall::WorldBall(RJ::Time calcTime,
                      const std::list<KalmanBall>& kalmanBalls)
     : isValid(true), time(calcTime) {
-    geometry2d::Point posAvg = geometry2d::Point(0, 0);
-    geometry2d::Point velAvg = geometry2d::Point(0, 0);
-    double totalPosWeight = 0;
-    double totalVelWeight = 0;
+  geometry2d::Point posAvg = geometry2d::Point(0, 0);
+  geometry2d::Point velAvg = geometry2d::Point(0, 0);
+  double totalPosWeight = 0;
+  double totalVelWeight = 0;
 
-    // Below 1 would invert the ratio of scaling
-    // Above 2 would just be super noisy
-    if (*ball_merger_power < 1 || *ball_merger_power > 2) {
-
-        std::cout
-             << "WARN: ball_merger_power should be between 1 and 2"
-             << std::endl;
+  // Below 1 would invert the ratio of scaling
+  // Above 2 would just be super noisy
+  if (*ball_merger_power < 1 || *ball_merger_power > 2) {
+    std::cout << "WARN: ball_merger_power should be between 1 and 2"
+              << std::endl;
     }
 
     if (kalmanBalls.empty()) {

@@ -26,13 +26,13 @@ public:
     struct Entry {
         Entry(RobotInstant inst, RJ::Seconds t) : time(t) {
             if (inst.angle) {
-                pose = geometry2d::Pose(inst.motion.pos,
-                                        inst.angle->angle.value_or(0));
-                vel = geometry2d::Twist(inst.motion.vel,
-                                        inst.angle->angleVel.value_or(0));
+              pose = geometry2d::Pose(inst.motion.pos,
+                                      inst.angle->angle.value_or(0));
+              vel = geometry2d::Twist(inst.motion.vel,
+                                      inst.angle->angleVel.value_or(0));
             } else {
-                pose = geometry2d::Pose(inst.motion.pos, 0);
-                vel = geometry2d::Twist(inst.motion.vel, 0);
+              pose = geometry2d::Pose(inst.motion.pos, 0);
+              vel = geometry2d::Twist(inst.motion.vel, 0);
             }
         }
 
@@ -150,10 +150,10 @@ public:
     RJ::Seconds getTime(int index) const;
 
     static std::unique_ptr<Path> emptyPath(geometry2d::Point position) {
-        auto path = std::make_unique<InterpolatedPath>(
-            RobotInstant(MotionInstant(position)));
-        path->setDebugText("Empty Path");
-        return std::move(path);
+      auto path = std::make_unique<InterpolatedPath>(
+          RobotInstant(MotionInstant(position)));
+      path->setDebugText("Empty Path");
+      return std::move(path);
     }
 
 protected:

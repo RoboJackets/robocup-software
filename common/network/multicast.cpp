@@ -1,9 +1,9 @@
+#include <arpa/inet.h>
 #include <network/multicast.h>
 
 #include <cstring>
-#include <arpa/inet.h>
 
-//bool multicast_add(QAbstractSocket* socket, const char* addr) {
+// bool multicast_add(QAbstractSocket* socket, const char* addr) {
 //    return multicast_add_native(socket->socketDescriptor(), addr);
 //}
 

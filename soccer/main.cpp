@@ -141,10 +141,10 @@ int main(int argc, char* argv[]) {
                 usage(argv[0]);
             }
         } else if (strcmp(var, "--ros-args") == 0) {
-            // Nothing to do for ROS for now, skip
+          // Nothing to do for ROS for now, skip
         } else {
-            printf("Not a valid flag: %s\n", argv[i]);
-            usage(argv[0]);
+          printf("Not a valid flag: %s\n", argv[i]);
+          usage(argv[0]);
         }
     }
 
@@ -155,12 +155,12 @@ int main(int argc, char* argv[]) {
 
     // Default config file name
     if (cfgFile.isNull()) {
-        const auto filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
-        const auto share_dir =
-            ament_index_cpp::get_package_share_directory("rj_robocup");
-        auto config_path = share_dir + "/config/" + filename;
+      const auto filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
+      const auto share_dir =
+          ament_index_cpp::get_package_share_directory("rj_robocup");
+      auto config_path = share_dir + "/config/" + filename;
 
-        cfgFile = QString::fromStdString(config_path);
+      cfgFile = QString::fromStdString(config_path);
     }
 
     std::shared_ptr<Configuration> config =

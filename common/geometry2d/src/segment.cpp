@@ -1,5 +1,4 @@
 #include <geometry2d/segment.h>
-
 #include <geometry2d/util.h>
 
 using namespace std;

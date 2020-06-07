@@ -17,6 +17,7 @@
     <depend>rclcpp</depend>
     <depend>rcutils</depend>
     <depend>std_msgs</depend>
+    <depend>builtin_interfaces</depend>
     <depend>rmw</depend>
 
     <build_depend>rmw_implementation</build_depend>

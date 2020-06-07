@@ -3,6 +3,7 @@
 #include <constants.h>
 #include <rj_robocup_protobuf/grSim_Packet.pb.h>
 #include <rj_robocup_protobuf/referee.pb.h>
+#include <vision/vision_packet.h>
 
 #include <planning/trajectory/Trajectory.hpp>
 #include <set>
@@ -19,7 +20,6 @@
 #include "motion/MotionSetpoint.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "radio/RobotStatus.hpp"
-#include "vision/VisionPacket.hpp"
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}

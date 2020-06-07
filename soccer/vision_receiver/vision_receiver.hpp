@@ -3,15 +3,20 @@
 #include <config_client/config_client.h>
 #include <network/network_constants.h>
 #include <rj_robocup_protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <vision/vision_packet.h>
 
 #include <boost/asio.hpp>
 #include <cstdint>
 #include <rclcpp/rclcpp.hpp>
+#include <rj_robocup/msg/raw_protobuf.hpp>
+#include <rj_robocup/msg/vision_packet.hpp>
 #include <time.hpp>
 #include <vector>
-#include <vision/VisionPacket.hpp>
 
 namespace vision_receiver {
+using RawProtobufMsg = rj_robocup::msg::RawProtobuf;
+using VisionPacketMsg = rj_robocup::msg::VisionPacket;
+
 /**
  * @brief Receives vision packets over UDP and places them in a buffer until
  * they are read.
@@ -25,46 +30,73 @@ namespace vision_receiver {
  * They remain there until they are retrieved with getPackets().
  */
 class VisionReceiver : public rclcpp::Node {
-public:
-    explicit VisionReceiver(int port = SharedVisionPortSinglePrimary);
+ public:
+  explicit VisionReceiver();
 
-    /// Copies the vector of packets and then clears it. The vector contains
-    /// only packets received since the last time this was called (or since the
-    /// VisionReceiver was started, if getPackets has never been called).
-    ///
-    /// The caller is responsible for freeing the packets after this function
-    /// returns.
-    void getPackets(std::vector<VisionPacket*>& packets);
+  /// Copies the vector of packets and then clears it. The vector contains
+  /// only packets received since the last time this was called (or since the
+  /// VisionReceiver was started, if getPackets has never been called).
+  ///
+  /// The caller is responsible for freeing the packets after this function
+  /// returns.
+  void getPackets(std::vector<VisionPacket*>& packets);
 
-    void run();
+  void run();
 
-    void setPort(int port);
+  void setPort(int port);
 
-    RJ::Time getLastVisionTime() const { return _last_receive_time; }
+  RJ::Time getLastVisionTime() const { return _last_receive_time; }
 
-private:
-    void startReceive();
-    void receivePacket(const boost::system::error_code& error,
-                       std::size_t num_bytes);
+ private:
+  void startReceive();
+  void receivePacket(const boost::system::error_code& error,
+                     std::size_t num_bytes);
 
-    // Helper function to decide whether or not to remove a robot at a given
-    // x position
-    bool shouldRemove(bool defendPlusX, double x);
+  // Helper function to decide whether or not to remove a robot at a given
+  // x position
+  bool shouldRemove(bool defendPlusX, double x);
 
-    void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
+  /**
+   * \brief Process new packets
+   *
+   * 1. Publish the raw packet
+   * 2. If packet has geometry info, publish that
+   * 3. Remove balls detected on the excluded half of the field
+   * 4. Remove robots detected on the excluded half of the field
+   */
+  void processNewPackets();
 
-    config_client::ConfigClient config_;
-    int port_;
+  /**
+   * \brief Serializes the SSL_WrapperPacket and publishes it to raw_packet_pub
+   *
+   * @param packet
+   */
+  void publishRawPacket(const SSL_WrapperPacket& packet);
 
-    std::vector<uint8_t> _recv_buffer{};
+  /**
+   * \brief Publishes the passed in VisionPacket
+   * @param packet
+   */
+  void publishVisionPacket(std::unique_ptr<VisionPacket> packet);
 
-    boost::asio::io_service _io_context;
-    boost::asio::ip::udp::socket _socket;
+  void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
-    boost::asio::ip::udp::endpoint _sender_endpoint;
+  config_client::ConfigClient config_;
+  int port_;
 
-    RJ::Time _last_receive_time;
+  std::vector<uint8_t> _recv_buffer{};
 
-    std::vector<std::unique_ptr<VisionPacket>> _packets{};
+  boost::asio::io_service _io_context;
+  boost::asio::ip::udp::socket _socket;
+
+  boost::asio::ip::udp::endpoint _sender_endpoint;
+
+  RJ::Time _last_receive_time;
+
+  std::vector<std::unique_ptr<VisionPacket>> _packets{};
+  rclcpp::TimerBase::SharedPtr timer_;
+
+  rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;
+  rclcpp::Publisher<VisionPacketMsg>::SharedPtr vision_packet_pub_;
 };
 }  // namespace vision_receiver

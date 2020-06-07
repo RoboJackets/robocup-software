@@ -12,17 +12,17 @@ namespace Planning {
  * position and velocity.
  */
 struct MotionInstant {
-    explicit MotionInstant(geometry2d::Point pos = {0, 0},
-                           geometry2d::Point vel = {0, 0})
-        : pos(pos), vel(vel) {}
+  explicit MotionInstant(geometry2d::Point pos = {0, 0},
+                         geometry2d::Point vel = {0, 0})
+      : pos(pos), vel(vel) {}
 
-    geometry2d::Point pos;
-    geometry2d::Point vel;
+  geometry2d::Point pos;
+  geometry2d::Point vel;
 
-    friend std::ostream& operator<<(std::ostream& stream,
-                                    const MotionInstant& instant) {
-        return stream << "MotionInstant(pos=" << instant.pos
-                      << ", vel=" << instant.vel << ")";
+  friend std::ostream& operator<<(std::ostream& stream,
+                                  const MotionInstant& instant) {
+    return stream << "MotionInstant(pos=" << instant.pos
+                  << ", vel=" << instant.vel << ")";
     }
 };
 
@@ -62,19 +62,19 @@ struct RobotInstant {
     std::optional<AngleInstant> angle;
 
     geometry2d::Pose pose() {
-        if (angle && angle->angle) {
-            return geometry2d::Pose(motion.pos, angle->angle.value());
-        } else {
-            return geometry2d::Pose(motion.pos, 0);
-        }
+      if (angle && angle->angle) {
+        return geometry2d::Pose(motion.pos, angle->angle.value());
+      } else {
+        return geometry2d::Pose(motion.pos, 0);
+      }
     }
 
     geometry2d::Twist twist() {
-        if (angle && angle->angleVel) {
-            return geometry2d::Twist(motion.vel, angle->angleVel.value());
-        } else {
-            return geometry2d::Twist(motion.vel, 0);
-        }
+      if (angle && angle->angleVel) {
+        return geometry2d::Twist(motion.vel, angle->angleVel.value());
+      } else {
+        return geometry2d::Twist(motion.vel, 0);
+      }
     }
 
     // TODO ashaw596  implement stream operator

@@ -30,15 +30,15 @@ private:
 };
 
 struct FacePointCommand : public RotationCommand {
-    explicit FacePointCommand(geometry2d::Point target)
-        : RotationCommand(FacePoint), targetPos(target) {}
+  explicit FacePointCommand(geometry2d::Point target)
+      : RotationCommand(FacePoint), targetPos(target) {}
 
-    const geometry2d::Point targetPos;
+  const geometry2d::Point targetPos;
 
-    [[nodiscard]] std::string print() const override {
-        std::stringstream ss;
-        ss << "FacePointCommand(" << targetPos << ")";
-        return ss.str();
+  [[nodiscard]] std::string print() const override {
+    std::stringstream ss;
+    ss << "FacePointCommand(" << targetPos << ")";
+    return ss.str();
     }
 };
 

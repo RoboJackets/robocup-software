@@ -23,36 +23,35 @@ namespace Planning {
  */
 class TrapezoidalPath : public Path {
 private:
-    const geometry2d::Point _startPos, _endPos;
-    const geometry2d::Point _pathDirection;
-    const double _startSpeed, _endSpeed;
+ const geometry2d::Point _startPos, _endPos;
+ const geometry2d::Point _pathDirection;
+ const double _startSpeed, _endSpeed;
 
-    const double _pathLength;
-    const double _maxAcc;
-    const double _maxSpeed;
-    const MotionConstraints _constraints;
+ const double _pathLength;
+ const double _maxAcc;
+ const double _maxSpeed;
+ const MotionConstraints _constraints;
 
-    const RJ::Seconds _duration;
+ const RJ::Seconds _duration;
 
 public:
-    TrapezoidalPath(geometry2d::Point startPos, double startSpeed,
-                    geometry2d::Point endPos, double endSpeed,
-                    const MotionConstraints constraints);
+ TrapezoidalPath(geometry2d::Point startPos, double startSpeed,
+                 geometry2d::Point endPos, double endSpeed,
+                 const MotionConstraints constraints);
 
-    // TODO: only return true for *new* obstacles
-    virtual bool hit(const geometry2d::ShapeSet& obstacles,
-                     RJ::Seconds initialTime,
-                     RJ::Seconds* hitTime) const override;
+ // TODO: only return true for *new* obstacles
+ virtual bool hit(const geometry2d::ShapeSet& obstacles,
+                  RJ::Seconds initialTime, RJ::Seconds* hitTime) const override;
 
-    virtual RJ::Seconds getDuration() const override { return _duration; }
+ virtual RJ::Seconds getDuration() const override { return _duration; }
 
-    double maxSpeed() const { return _maxSpeed; }
+ double maxSpeed() const { return _maxSpeed; }
 
-    virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
-                                          RJ::Seconds endTime) const override;
+ virtual std::unique_ptr<Path> subPath(RJ::Seconds startTime,
+                                       RJ::Seconds endTime) const override;
 
-    virtual RobotInstant end() const override {
-        return RobotInstant(MotionInstant(_endPos, _pathDirection * _endSpeed));
+ virtual RobotInstant end() const override {
+   return RobotInstant(MotionInstant(_endPos, _pathDirection * _endSpeed));
     }
 
     virtual RobotInstant start() const override {

@@ -15,16 +15,16 @@ std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
             *planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
-        geometry2d::Point endTarget = command.pathGoal.pos;
-        float endSpeed = command.pathGoal.vel.mag();
-        // Tells the robot that is actually in a different location
-        // This forces the PID Tuner to kick in to move the robot to its new
-        // location
-        auto path = std::unique_ptr<Path>(
-            new TrapezoidalPath(endTarget, startInstant.vel.mag(), endTarget,
-                                endSpeed, motionConstraints));
-        path->setStartTime(RJ::now());
-        return std::move(path);
+      geometry2d::Point endTarget = command.pathGoal.pos;
+      float endSpeed = command.pathGoal.vel.mag();
+      // Tells the robot that is actually in a different location
+      // This forces the PID Tuner to kick in to move the robot to its new
+      // location
+      auto path = std::unique_ptr<Path>(
+          new TrapezoidalPath(endTarget, startInstant.vel.mag(), endTarget,
+                              endSpeed, motionConstraints));
+      path->setStartTime(RJ::now());
+      return std::move(path);
     } else {
         return std::move(prevPath);
     }
@@ -42,18 +42,16 @@ bool TuningPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     if (!prevPath) {
         return true;
     } else {
-        geometry2d::Point endTarget = command.pathGoal.pos;
-        float endSpeed = command.pathGoal.vel.mag();
-        float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
-        float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;
+      geometry2d::Point endTarget = command.pathGoal.pos;
+      float endSpeed = command.pathGoal.vel.mag();
+      float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
+      float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;
 
-        if (targetPosChange >
-                SingleRobotPathPlanner::goalPosChangeThreshold() ||
-            targetVelChange >
-                SingleRobotPathPlanner::goalVelChangeThreshold()) {
-            // FIXME: goalChangeThreshold shouldn't be used for checking
-            // speed differences as it is in the above 'if' statement
-            return true;
+      if (targetPosChange > SingleRobotPathPlanner::goalPosChangeThreshold() ||
+          targetVelChange > SingleRobotPathPlanner::goalVelChangeThreshold()) {
+        // FIXME: goalChangeThreshold shouldn't be used for checking
+        // speed differences as it is in the above 'if' statement
+        return true;
         }
     }
 

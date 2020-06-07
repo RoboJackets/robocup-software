@@ -1,7 +1,7 @@
-#include <geometry2d/rect.h>
-#include <geometry2d/point.h>
-#include <geometry2d/segment.h>
 #include <constants.h>
+#include <geometry2d/point.h>
+#include <geometry2d/rect.h>
+#include <geometry2d/segment.h>
 
 namespace geometry2d {
 using namespace std;

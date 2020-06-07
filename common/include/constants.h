@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>  // for size_t
-
 #include <field_dimensions.h>
+
+#include <string>  // for size_t
 
 /// all distances in meters
 /// all times in seconds

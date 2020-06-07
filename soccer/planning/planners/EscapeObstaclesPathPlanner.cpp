@@ -63,26 +63,26 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     Point goal, std::optional<Point> prevGoal, const ShapeSet& obstacles,
     int maxItr, std::function<void(const RRT::Tree<Point>&)> rrtLogger) {
     if (obstacles.hit(goal)) {
-        auto stateSpace = make_shared<RoboCupStateSpace>(
-            FieldDimensions::Current_Dimensions, obstacles);
-        RRT::Tree<Point> rrt(stateSpace, Point::hash, 2);
-        rrt.setStartState(goal);
-        // note: we don't set goal state because we're not looking for a
-        // particular point, just something that isn't blocked
-        rrt.setStepSize(stepSize());
+      auto stateSpace = make_shared<RoboCupStateSpace>(
+          FieldDimensions::Current_Dimensions, obstacles);
+      RRT::Tree<Point> rrt(stateSpace, Point::hash, 2);
+      rrt.setStartState(goal);
+      // note: we don't set goal state because we're not looking for a
+      // particular point, just something that isn't blocked
+      rrt.setStepSize(stepSize());
 
-        // The starting point is in an obstacle, extend the tree until we find
-        // an unobstructed point
-        Point newGoal;
-        for (int i = 0; i < maxItr; ++i) {
-            // extend towards a random point
-            RRT::Node<Point>* newNode = rrt.grow();
+      // The starting point is in an obstacle, extend the tree until we find
+      // an unobstructed point
+      Point newGoal;
+      for (int i = 0; i < maxItr; ++i) {
+        // extend towards a random point
+        RRT::Node<Point>* newNode = rrt.grow();
 
-            // if the new point is not blocked, it becomes the new goal
-            if (newNode && !obstacles.hit(newNode->state())) {
-                newGoal = newNode->state();
-                break;
-            }
+        // if the new point is not blocked, it becomes the new goal
+        if (newNode && !obstacles.hit(newNode->state())) {
+          newGoal = newNode->state();
+          break;
+        }
         }
 
         if (rrtLogger) rrtLogger(rrt);

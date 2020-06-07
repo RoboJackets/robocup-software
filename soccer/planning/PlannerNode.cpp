@@ -40,14 +40,13 @@ void PlannerNode::run() {
 }
 
 GlobalObstacles PlannerNode::getGlobalObstacles() {
-    const geometry2d::ShapeSet global_obstacles = context_->globalObstacles;
-    const geometry2d::ShapeSet goal_zone_obstacles =
-        context_->goalZoneObstacles;
-    geometry2d::ShapeSet global_obstacles_with_goal_zones = global_obstacles;
-    global_obstacles_with_goal_zones.add(goal_zone_obstacles);
+  const geometry2d::ShapeSet global_obstacles = context_->globalObstacles;
+  const geometry2d::ShapeSet goal_zone_obstacles = context_->goalZoneObstacles;
+  geometry2d::ShapeSet global_obstacles_with_goal_zones = global_obstacles;
+  global_obstacles_with_goal_zones.add(goal_zone_obstacles);
 
-    return {global_obstacles, goal_zone_obstacles,
-            global_obstacles_with_goal_zones};
+  return {global_obstacles, goal_zone_obstacles,
+          global_obstacles_with_goal_zones};
 }
 
 std::map<int, Planning::PlanRequest> PlannerNode::buildPlanRequests(
