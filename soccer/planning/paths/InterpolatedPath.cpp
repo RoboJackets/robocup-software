@@ -1,14 +1,16 @@
 #include "InterpolatedPath.hpp"
-#include <protobuf/LogFrame.pb.h>
-#include "DebugDrawer.hpp"
-#include "LogUtils.hpp"
-#include "SystemState.hpp"
-#include "Utils.hpp"
+
+#include <rj_robocup_protobuf/LogFrame.pb.h>
+#include <utils.h>
 
 #include <stdexcept>
 
+#include "DebugDrawer.hpp"
+#include "LogUtils.hpp"
+#include "SystemState.hpp"
+
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 
@@ -67,7 +69,7 @@ int InterpolatedPath::nearestIndex(Point pt) const {
     return index;
 }
 
-bool InterpolatedPath::hit(const Geometry2d::ShapeSet& obstacles,
+bool InterpolatedPath::hit(const geometry2d::ShapeSet& obstacles,
                            RJ::Seconds startTimeIntoPath,
                            RJ::Seconds* hitTime) const {
     size_t start = 0;

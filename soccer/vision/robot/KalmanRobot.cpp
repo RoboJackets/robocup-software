@@ -22,8 +22,8 @@ KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
       lastUpdateTime(creationTime), lastPredictTime(creationTime),
       unwrapThetaCtr(0), robotID(initMeasurement.getRobotID()),
       previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length) {
-    Geometry2d::Pose initPose = initMeasurement.getPose();
-    Geometry2d::Twist initTwist(0, 0, 0);
+    geometry2d::Pose initPose = initMeasurement.getPose();
+    geometry2d::Twist initTwist(0, 0, 0);
 
     if (previousWorldRobot.getIsValid()) {
         initTwist.linear() = previousWorldRobot.getVel();
@@ -93,33 +93,25 @@ int KalmanRobot::getHealth() const {
     return health;
 }
 
-Geometry2d::Point KalmanRobot::getPos() const {
-    return filter.getPos();
-}
+geometry2d::Point KalmanRobot::getPos() const { return filter.getPos(); }
 
 double KalmanRobot::getTheta() const {
     return filter.getTheta();
 }
 
-Geometry2d::Point KalmanRobot::getVel() const {
-    return filter.getVel();
-}
+geometry2d::Point KalmanRobot::getVel() const { return filter.getVel(); }
 
 double KalmanRobot::getOmega() const {
     return filter.getOmega();
 }
 
-Geometry2d::Point KalmanRobot::getPosCov() const {
-    return filter.getPosCov();
-}
+geometry2d::Point KalmanRobot::getPosCov() const { return filter.getPosCov(); }
 
 double KalmanRobot::getThetaCov() const {
     return filter.getThetaCov();
 }
 
-Geometry2d::Point KalmanRobot::getVelCov() const {
-    return filter.getVelCov();
-}
+geometry2d::Point KalmanRobot::getVelCov() const { return filter.getVelCov(); }
 
 double KalmanRobot::getOmegaCov() const {
     return filter.getOmegaCov();

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include "SingleRobotPathPlanner.hpp"
 
 class Configuration;

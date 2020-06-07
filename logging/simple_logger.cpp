@@ -1,20 +1,18 @@
-#include <QDir>
-#include <QDateTime>
-#include <QUdpSocket>
-
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-#include <protobuf/LogFrame.pb.h>
-#include <protobuf/referee.pb.h>
-#include <rc-fshare/git_version.hpp>
-
-#include <multicast.hpp>
-#include <Network.hpp>
-#include <Utils.hpp>
-
-#include <unistd.h>
 #include <fcntl.h>
+#include <network/multicast.h>
+#include <network/network_constants.h>
 #include <poll.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <rj_robocup_protobuf/referee.pb.h>
 #include <termios.h>
+#include <unistd.h>
+#include <utils.h>
+
+#include <QDateTime>
+#include <QDir>
+#include <QUdpSocket>
+#include <rc-fshare/git_version.hpp>
 
 using namespace std;
 using namespace Packet;

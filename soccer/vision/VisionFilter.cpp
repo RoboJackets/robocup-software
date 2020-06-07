@@ -1,15 +1,15 @@
 #include "VisionFilter.hpp"
 
-#include <iostream>
+#include <constants.h>
 
-#include <Constants.hpp>
 #include <Robot.hpp>
+#include <iostream>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
 VisionFilter::VisionFilter() {
     threadEnd.store(false, std::memory_order::memory_order_seq_cst);
-    
+
     // Have to be careful so the entire initialization list
     // is created before the thread starts
     worker = std::thread(&VisionFilter::updateLoop, this);
@@ -57,9 +57,9 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
         robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
-            robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
+            robot_state.pose = geometry2d::Pose(wr.getPos(), wr.getTheta());
             robot_state.velocity =
-                Geometry2d::Twist(wr.getVel(), wr.getOmega());
+                geometry2d::Twist(wr.getVel(), wr.getOmega());
             robot_state.timestamp = wr.getTime();
         }
 
@@ -76,9 +76,9 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
         robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
-            robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
+            robot_state.pose = geometry2d::Pose(wr.getPos(), wr.getTheta());
             robot_state.velocity =
-                Geometry2d::Twist(wr.getVel(), wr.getOmega());
+                geometry2d::Twist(wr.getVel(), wr.getOmega());
             robot_state.timestamp = wr.getTime();
         }
 

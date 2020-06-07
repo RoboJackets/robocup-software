@@ -1,9 +1,10 @@
 #pragma once
 
+#include <geometry2d/point.h>
+#include <geometry2d/segment.h>
+#include <geometry2d/shape_set.h>
+
 #include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <optional>
 #include <planning/paths/Path.hpp>
 
@@ -22,8 +23,8 @@ namespace Planning {
  */
 class TrapezoidalPath : public Path {
 private:
-    const Geometry2d::Point _startPos, _endPos;
-    const Geometry2d::Point _pathDirection;
+    const geometry2d::Point _startPos, _endPos;
+    const geometry2d::Point _pathDirection;
     const double _startSpeed, _endSpeed;
 
     const double _pathLength;
@@ -34,12 +35,12 @@ private:
     const RJ::Seconds _duration;
 
 public:
-    TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
-                    Geometry2d::Point endPos, double endSpeed,
+    TrapezoidalPath(geometry2d::Point startPos, double startSpeed,
+                    geometry2d::Point endPos, double endSpeed,
                     const MotionConstraints constraints);
 
     // TODO: only return true for *new* obstacles
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+    virtual bool hit(const geometry2d::ShapeSet& obstacles,
                      RJ::Seconds initialTime,
                      RJ::Seconds* hitTime) const override;
 

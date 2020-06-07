@@ -18,7 +18,7 @@ int DebugDrawer::findDebugLayer(QString layer) {
     return i.value();
 }
 
-void DebugDrawer::drawPolygon(const Geometry2d::Point* pts, int n,
+void DebugDrawer::drawPolygon(const geometry2d::Point* pts, int n,
                               const QColor& qc, const QString& layer) {
     Packet::DebugPath* dbg = _logFrame.add_debug_polygons();
     dbg->set_layer(findDebugLayer(layer));
@@ -28,17 +28,17 @@ void DebugDrawer::drawPolygon(const Geometry2d::Point* pts, int n,
     dbg->set_color(color(qc));
 }
 
-void DebugDrawer::drawPolygon(const std::vector<Geometry2d::Point>& pts,
+void DebugDrawer::drawPolygon(const std::vector<geometry2d::Point>& pts,
                               const QColor& qc, const QString& layer) {
     drawPolygon(pts.data(), pts.size(), qc, layer);
 }
 
-void DebugDrawer::drawPolygon(const Geometry2d::Polygon& polygon,
+void DebugDrawer::drawPolygon(const geometry2d::Polygon& polygon,
                               const QColor& qc, const QString& layer) {
     this->drawPolygon(polygon.vertices, qc, layer);
 }
 
-void DebugDrawer::drawCircle(Geometry2d::Point center, float radius,
+void DebugDrawer::drawCircle(geometry2d::Point center, float radius,
                              const QColor& qc, const QString& layer) {
     Packet::DebugCircle* dbg = _logFrame.add_debug_circles();
     dbg->set_layer(findDebugLayer(layer));
@@ -47,7 +47,7 @@ void DebugDrawer::drawCircle(Geometry2d::Point center, float radius,
     dbg->set_color(color(qc));
 }
 
-void DebugDrawer::drawArc(const Geometry2d::Arc& arc, const QColor& qc,
+void DebugDrawer::drawArc(const geometry2d::Arc& arc, const QColor& qc,
                           const QString& layer) {
     Packet::DebugArc* dbg = _logFrame.add_debug_arcs();
     dbg->set_layer(findDebugLayer(layer));
@@ -58,33 +58,33 @@ void DebugDrawer::drawArc(const Geometry2d::Arc& arc, const QColor& qc,
     dbg->set_color(color(qc));
 }
 
-void DebugDrawer::drawShape(const std::shared_ptr<Geometry2d::Shape>& obs,
+void DebugDrawer::drawShape(const std::shared_ptr<geometry2d::Shape>& obs,
                             const QColor& color, const QString& layer) {
-    std::shared_ptr<Geometry2d::Circle> circObs =
-        std::dynamic_pointer_cast<Geometry2d::Circle>(obs);
-    std::shared_ptr<Geometry2d::Polygon> polyObs =
-        std::dynamic_pointer_cast<Geometry2d::Polygon>(obs);
-    std::shared_ptr<Geometry2d::CompositeShape> compObs =
-        std::dynamic_pointer_cast<Geometry2d::CompositeShape>(obs);
+    std::shared_ptr<geometry2d::Circle> circObs =
+        std::dynamic_pointer_cast<geometry2d::Circle>(obs);
+    std::shared_ptr<geometry2d::Polygon> polyObs =
+        std::dynamic_pointer_cast<geometry2d::Polygon>(obs);
+    std::shared_ptr<geometry2d::CompositeShape> compObs =
+        std::dynamic_pointer_cast<geometry2d::CompositeShape>(obs);
     if (circObs)
         drawCircle(circObs->center, circObs->radius(), color, layer);
     else if (polyObs)
         drawPolygon(polyObs->vertices, color, layer);
     else if (compObs) {
-        for (const std::shared_ptr<Geometry2d::Shape>& obs :
+        for (const std::shared_ptr<geometry2d::Shape>& obs :
              compObs->subshapes())
             drawShape(obs, color, layer);
     }
 }
 
-void DebugDrawer::drawShapeSet(const Geometry2d::ShapeSet& shapes,
+void DebugDrawer::drawShapeSet(const geometry2d::ShapeSet& shapes,
                                const QColor& color, const QString& layer) {
     for (auto& shape : shapes.shapes()) {
         drawShape(shape, color, layer);
     }
 }
 
-void DebugDrawer::drawLine(const Geometry2d::Segment& line, const QColor& qc,
+void DebugDrawer::drawLine(const geometry2d::Segment& line, const QColor& qc,
                            const QString& layer) {
     Packet::DebugPath* dbg = _logFrame.add_debug_paths();
     dbg->set_layer(findDebugLayer(layer));
@@ -93,12 +93,12 @@ void DebugDrawer::drawLine(const Geometry2d::Segment& line, const QColor& qc,
     dbg->set_color(color(qc));
 }
 
-void DebugDrawer::drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
+void DebugDrawer::drawLine(geometry2d::Point p0, geometry2d::Point p1,
                            const QColor& color, const QString& layer) {
-    drawLine(Geometry2d::Segment(p0, p1), color, layer);
+    drawLine(geometry2d::Segment(p0, p1), color, layer);
 }
 
-void DebugDrawer::drawText(const QString& text, Geometry2d::Point pos,
+void DebugDrawer::drawText(const QString& text, geometry2d::Point pos,
                            const QColor& qc, const QString& layer) {
     Packet::DebugText* dbg = _logFrame.add_debug_texts();
     dbg->set_layer(findDebugLayer(layer));
@@ -107,7 +107,7 @@ void DebugDrawer::drawText(const QString& text, Geometry2d::Point pos,
     dbg->set_color(color(qc));
 }
 
-void DebugDrawer::drawSegment(const Geometry2d::Segment& line, const QColor& qc,
+void DebugDrawer::drawSegment(const geometry2d::Segment& line, const QColor& qc,
                               const QString& layer) {
     Packet::DebugPath* dbg = _logFrame.add_debug_paths();
     dbg->set_layer(findDebugLayer(layer));

@@ -10,18 +10,18 @@
 
 using namespace boost::python;
 
-#include <protobuf/LogFrame.pb.h>
+#include <constants.h>
+#include <geometry2d/arc.h>
+#include <geometry2d/circle.h>
+#include <geometry2d/composite_shape.h>
+#include <geometry2d/line.h>
+#include <geometry2d/point.h>
+#include <geometry2d/polygon.h>
+#include <geometry2d/rect.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
 #include <Configuration.hpp>
-#include <Constants.hpp>
 #include <Context.hpp>
-#include <Geometry2d/Arc.hpp>
-#include <Geometry2d/Circle.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/Line.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <boost/python/exception_translator.hpp>
@@ -91,13 +91,13 @@ QColor Color_from_tuple(const boost::python::tuple& rgb) {
     return QColor(r, g, b);
 }
 
-std::string Point_repr(Geometry2d::Point* self) { return self->toString(); }
+std::string Point_repr(geometry2d::Point* self) { return self->toString(); }
 
 std::string Robot_repr(Robot* self) { return self->toString(); }
 
 // Sets a robot's position - this should never be used in gameplay code, but
 // is useful for testing.
-void Robot_set_pos_for_testing(Robot* self, Geometry2d::Point pos) {
+void Robot_set_pos_for_testing(Robot* self, geometry2d::Point pos) {
     self->mutable_state().pose.position() = pos;
 }
 
@@ -109,55 +109,55 @@ void Robot_set_vis_for_testing(Robot* self, bool vis) {
 
 // Sets a ball's position - this should never be used in gameplay code, but
 // is useful for testing.
-void Ball_set_pos_for_testing(Ball* self, Geometry2d::Point pos) {
+void Ball_set_pos_for_testing(Ball* self, geometry2d::Point pos) {
     self->pos = pos;
 }
 
-Geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
+geometry2d::Point Robot_pos(Robot* self) { return self->pos(); }
 
-Geometry2d::Point Robot_vel(Robot* self) { return self->vel(); }
+geometry2d::Point Robot_vel(Robot* self) { return self->vel(); }
 
 float Robot_angle(Robot* self) { return self->angle(); }
 
 float Robot_angle_vel(Robot* self) { return self->angleVel(); }
 
-Geometry2d::Point Ball_pos(Ball* self) { return self->pos; }
+geometry2d::Point Ball_pos(Ball* self) { return self->pos; }
 
-Geometry2d::Point Ball_vel(Ball* self) { return self->vel; }
+geometry2d::Point Ball_vel(Ball* self) { return self->vel; }
 
-void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
+void OurRobot_move_to_direct(OurRobot* self, geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
     self->moveDirect(*to);
 }
 
-void OurRobot_move_tuning(OurRobot* self, Geometry2d::Point* to) {
+void OurRobot_move_tuning(OurRobot* self, geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
     self->moveTuning(*to);
 }
 
-void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
-                              Geometry2d::Point* vf) {
+void OurRobot_move_to_end_vel(OurRobot* self, geometry2d::Point* endPos,
+                              geometry2d::Point* vf) {
     if (endPos == nullptr || vf == nullptr) {
         throw NullArgumentException();
     }
     self->move(*endPos, *vf);
 }
 
-void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
+void OurRobot_move_to(OurRobot* self, geometry2d::Point* to) {
     if (to == nullptr) throw NullArgumentException("to");
     self->move(*to);
 }
 
 void OurRobot_settle(OurRobot* self) { self->settle(std::nullopt); }
 
-void OurRobot_settle_w_bounce(OurRobot* self, Geometry2d::Point* bounceTarget) {
+void OurRobot_settle_w_bounce(OurRobot* self, geometry2d::Point* bounceTarget) {
     if (bounceTarget == nullptr) throw NullArgumentException("bounceTarget");
     self->settle(*bounceTarget);
 }
 
-void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
+void OurRobot_add_local_obstacle(OurRobot* self, geometry2d::Shape* obs) {
     if (obs == nullptr) throw NullArgumentException("obs");
-    std::shared_ptr<Geometry2d::Shape> sharedObs(obs->clone());
+    std::shared_ptr<geometry2d::Shape> sharedObs(obs->clone());
     self->localObstacles(sharedObs);
 }
 
@@ -218,53 +218,53 @@ bool OurRobot_end_pid_tuner(OurRobot* /*self*/, char /*controller*/) {
     return false;
 }
 
-bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
+bool Rect_contains_rect(geometry2d::Rect* self, geometry2d::Rect* other) {
     if (other == nullptr) throw NullArgumentException("other");
     return self->containsRect(*other);
 }
 
-bool Rect_contains_point(Geometry2d::Rect* self, Geometry2d::Point* pt) {
+bool Rect_contains_point(geometry2d::Rect* self, geometry2d::Point* pt) {
     if (pt == nullptr) throw NullArgumentException("pt");
     return self->containsPoint(*pt);
 }
 
-void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
+void Point_rotate(geometry2d::Point* self, geometry2d::Point* origin,
                   float angle) {
     if (origin == nullptr) throw NullArgumentException("origin");
     self->rotate(*origin, angle);
 }
 
-void Point_rotate_origin(Geometry2d::Point* self, float angle) {
+void Point_rotate_origin(geometry2d::Point* self, float angle) {
     self->rotate(angle);
 }
 
-void CompositeShape_add_shape(Geometry2d::CompositeShape* self,
-                              Geometry2d::Shape* shape) {
+void CompositeShape_add_shape(geometry2d::CompositeShape* self,
+                              geometry2d::Shape* shape) {
     if (shape == nullptr) throw NullArgumentException("shape");
-    self->add(std::shared_ptr<Geometry2d::Shape>(shape->clone()));
+    self->add(std::shared_ptr<geometry2d::Shape>(shape->clone()));
 }
 
-void Polygon_add_vertex(Geometry2d::Polygon* self, Geometry2d::Point* pt) {
+void Polygon_add_vertex(geometry2d::Polygon* self, geometry2d::Point* pt) {
     if (pt == nullptr) throw NullArgumentException("pt");
     self->addVertex(*pt);
 }
 
-Geometry2d::Point* Line_get_pt(Geometry2d::Line* self, int index) {
+geometry2d::Point* Line_get_pt(geometry2d::Line* self, int index) {
     return &(self->pt[index]);
 }
 
-Geometry2d::Point* Segment_get_pt(Geometry2d::Segment* self, int index) {
+geometry2d::Point* Segment_get_pt(geometry2d::Segment* self, int index) {
     return &(self->pt[index]);
 }
 
-Geometry2d::Point* Rect_get_pt(Geometry2d::Rect* self, int index) {
+geometry2d::Point* Rect_get_pt(geometry2d::Rect* self, int index) {
     return &(self->pt[index]);
 }
 
-boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
-                                                   Geometry2d::Segment* other) {
+boost::python::object Segment_segment_intersection(geometry2d::Segment* self,
+                                                   geometry2d::Segment* other) {
     if (other == nullptr) throw NullArgumentException("other");
-    Geometry2d::Point pt;
+    geometry2d::Point pt;
     if (self->intersects(*other, &pt)) {
         boost::python::object obj(pt);
         return obj;
@@ -274,24 +274,24 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
     }
 }
 
-bool Rect_rect_intersection(Geometry2d::Rect* self, Geometry2d::Rect* other) {
+bool Rect_rect_intersection(geometry2d::Rect* self, geometry2d::Rect* other) {
     if (other == nullptr) throw NullArgumentException{"other"};
     return self->intersects(*other);
 }
 
-boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
-                                                Geometry2d::Segment* segment) {
+boost::python::object Rect_segment_intersection(geometry2d::Rect* self,
+                                                geometry2d::Segment* segment) {
     if (segment == nullptr) throw NullArgumentException{"segment"};
     boost::python::list lst;
-    std::tuple<bool, std::vector<Geometry2d::Point>> result =
+    std::tuple<bool, std::vector<geometry2d::Point>> result =
         self->intersects(*segment);
     bool doesIntersect = std::get<0>(result);
     if (!doesIntersect) {
         return boost::python::object();
     }
 
-    std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
-    std::vector<Geometry2d::Point>::iterator it;
+    std::vector<geometry2d::Point> intersectionPoints = std::get<1>(result);
+    std::vector<geometry2d::Point>::iterator it;
     for (it = intersectionPoints.begin(); it != intersectionPoints.end();
          it++) {
         lst.append(*it);
@@ -299,20 +299,20 @@ boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
     return lst;
 }
 
-boost::python::object Rect_corners(Geometry2d::Rect* self) {
+boost::python::object Rect_corners(geometry2d::Rect* self) {
     boost::python::list lst;
-    std::vector<Geometry2d::Point> corners = self->corners();
-    std::vector<Geometry2d::Point>::iterator it;
+    std::vector<geometry2d::Point> corners = self->corners();
+    std::vector<geometry2d::Point>::iterator it;
     for (it = corners.begin(); it != corners.end(); it++) {
         lst.append(*it);
     }
     return lst;
 }
 
-boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
-                                                Geometry2d::Line* line) {
+boost::python::object Segment_line_intersection(geometry2d::Segment* self,
+                                                geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException{"line"};
-    Geometry2d::Point pt;
+    geometry2d::Point pt;
     if (self->intersects(*line, &pt)) {
         boost::python::object obj{pt};
         return obj;
@@ -321,23 +321,23 @@ boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
     }
 }
 
-boost::python::object Segment_nearest_point_to_point(Geometry2d::Segment* self,
-                                                     Geometry2d::Point* point) {
+boost::python::object Segment_nearest_point_to_point(geometry2d::Segment* self,
+                                                     geometry2d::Point* point) {
     if (point == nullptr) throw NullArgumentException{"point"};
     return boost::python::object{self->nearestPoint(*point)};
 }
 
-boost::python::object Segment_nearest_point_to_line(Geometry2d::Segment* self,
-                                                    Geometry2d::Line* line) {
+boost::python::object Segment_nearest_point_to_line(geometry2d::Segment* self,
+                                                    geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException{"line"};
     return boost::python::object{self->nearestPoint(*line)};
 }
 
-// returns None or a Geometry2d::Point
-boost::python::object Line_line_intersection(Geometry2d::Line* self,
-                                             Geometry2d::Line* other) {
+// returns None or a geometry2d::Point
+boost::python::object Line_line_intersection(geometry2d::Line* self,
+                                             geometry2d::Line* other) {
     if (other == nullptr) throw NullArgumentException("other");
-    Geometry2d::Point pt;
+    geometry2d::Point pt;
     if (self->intersects(*other, &pt)) {
         boost::python::object obj(pt);
         return obj;
@@ -347,10 +347,10 @@ boost::python::object Line_line_intersection(Geometry2d::Line* self,
     }
 };
 
-boost::python::object Line_segment_intersection(Geometry2d::Line* self,
-                                                Geometry2d::Segment* other) {
+boost::python::object Line_segment_intersection(geometry2d::Line* self,
+                                                geometry2d::Segment* other) {
     if (other == nullptr) throw NullArgumentException("other");
-    Geometry2d::Point pt;
+    geometry2d::Point pt;
     if (self->intersects(*other, &pt)) {
         boost::python::object obj(pt);
         return obj;
@@ -360,11 +360,11 @@ boost::python::object Line_segment_intersection(Geometry2d::Line* self,
     }
 };
 
-boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
-                                            Geometry2d::Circle* circle) {
+boost::python::tuple Line_intersects_circle(geometry2d::Line* self,
+                                            geometry2d::Circle* circle) {
     if (circle == nullptr) throw NullArgumentException("circle");
-    Geometry2d::Point a;
-    Geometry2d::Point b;
+    geometry2d::Point a;
+    geometry2d::Point b;
     boost::python::list lst;
 
     bool intersects = self->intersects(*circle, &a, &b);
@@ -375,7 +375,7 @@ boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
     return boost::python::tuple(lst);
 }
 
-void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center,
+void DebugDrawer_draw_circle(DebugDrawer* self, const geometry2d::Point* center,
                              float radius, const boost::python::tuple& rgb,
                              const std::string& layer) {
     if (center == nullptr) throw NullArgumentException("center");
@@ -383,7 +383,7 @@ void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center,
                      QString::fromStdString(layer));
 }
 
-void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
+void DebugDrawer_draw_arc(DebugDrawer* self, const geometry2d::Arc* arc,
                           const boost::python::tuple& rgb,
                           const std::string& layer) {
     if (arc == nullptr) throw NullArgumentException{"arc"};
@@ -391,16 +391,16 @@ void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
 }
 
 // TODO(ashaw596) Fix this lie of a function
-void DebugDrawer_draw_line(DebugDrawer* self, const Geometry2d::Line* line,
+void DebugDrawer_draw_line(DebugDrawer* self, const geometry2d::Line* line,
                            const boost::python::tuple& rgb,
                            const std::string& layer) {
     if (line == nullptr) throw NullArgumentException("line");
-    self->drawLine(Geometry2d::Segment(*line), Color_from_tuple(rgb),
+    self->drawLine(geometry2d::Segment(*line), Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }
 
 void DebugDrawer_draw_segment(DebugDrawer* self,
-                              const Geometry2d::Segment* segment,
+                              const geometry2d::Segment* segment,
                               const boost::python::tuple& rgb,
                               const std::string& layer) {
     if (segment == nullptr) throw NullArgumentException("segment");
@@ -409,8 +409,8 @@ void DebugDrawer_draw_segment(DebugDrawer* self,
 }
 
 void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
-                                          const Geometry2d::Point* p0,
-                                          const Geometry2d::Point* p1,
+                                          const geometry2d::Point* p0,
+                                          const geometry2d::Point* p1,
                                           const boost::python::tuple& rgb,
                                           const std::string& layer) {
     if (p0 == nullptr) throw NullArgumentException{"p0"};
@@ -420,7 +420,7 @@ void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
 }
 
 void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text,
-                           Geometry2d::Point* pos,
+                           geometry2d::Point* pos,
                            const boost::python::tuple& rgb,
                            const std::string& layer) {
     if (pos == nullptr) throw NullArgumentException("pos");
@@ -432,9 +432,9 @@ void DebugDrawer_draw_polygon(DebugDrawer* self,
                               const boost::python::list& points,
                               const boost::python::tuple& rgb,
                               const std::string& layer) {
-    std::vector<Geometry2d::Point> ptVec;
+    std::vector<geometry2d::Point> ptVec;
     for (int i = 0; i < len(points); i++) {
-        ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
+        ptVec.push_back(boost::python::extract<geometry2d::Point>(points[i]));
     }
 
     self->drawPolygon(ptVec, Color_from_tuple(rgb),
@@ -442,19 +442,19 @@ void DebugDrawer_draw_polygon(DebugDrawer* self,
 }
 
 void DebugDrawer_draw_raw_polygon(DebugDrawer* self,
-                                  const Geometry2d::Polygon& points,
+                                  const geometry2d::Polygon& points,
                                   const boost::python::tuple& rgb,
                                   const std::string& layer) {
     self->drawPolygon(points, Color_from_tuple(rgb),
                       QString::fromStdString(layer));
 }
 
-boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
-                                           const Geometry2d::Line* line) {
+boost::python::list Circle_intersects_line(geometry2d::Circle* self,
+                                           const geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException("line");
     boost::python::list lst;
 
-    Geometry2d::Point intersectionPoints[2];
+    geometry2d::Point intersectionPoints[2];
     int numIntersects = self->intersects(*line, intersectionPoints);
     for (int i = 0; i < numIntersects; i++) {
         lst.append(intersectionPoints[i]);
@@ -463,8 +463,8 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
     return lst;
 }
 
-boost::python::list Arc_intersects_line(Geometry2d::Arc* self,
-                                        const Geometry2d::Line* line) {
+boost::python::list Arc_intersects_line(geometry2d::Arc* self,
+                                        const geometry2d::Line* line) {
     if (line == nullptr) throw NullArgumentException{"line"};
     boost::python::list lst;
 
@@ -477,8 +477,8 @@ boost::python::list Arc_intersects_line(Geometry2d::Arc* self,
     return lst;
 }
 
-boost::python::list Arc_intersects_segment(Geometry2d::Arc* self,
-                                           const Geometry2d::Segment* segment) {
+boost::python::list Arc_intersects_segment(geometry2d::Arc* self,
+                                           const geometry2d::Segment* segment) {
     if (segment == nullptr) throw NullArgumentException{"segment"};
     boost::python::list lst;
 
@@ -492,8 +492,8 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc* self,
 }
 
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self,
-                                            const Geometry2d::Point* origin,
-                                            const Geometry2d::Segment* target) {
+                                            const geometry2d::Point* origin,
+                                            const geometry2d::Segment* target) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -510,8 +510,8 @@ boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self,
 }
 
 boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator* self,
-                                              const Geometry2d::Point* origin,
-                                              const Geometry2d::Point* target) {
+                                              const geometry2d::Point* origin,
+                                              const geometry2d::Point* target) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -528,8 +528,8 @@ boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator* self,
 }
 
 boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
-                                           const Geometry2d::Point* origin,
-                                           const Geometry2d::Point* target,
+                                           const geometry2d::Point* origin,
+                                           const geometry2d::Point* target,
                                            float targetWidth) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
@@ -547,7 +547,7 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
 }
 
 boost::python::tuple WinEval_eval_pt_to_opp_goal(
-    WindowEvaluator* self, const Geometry2d::Point* origin) {
+    WindowEvaluator* self, const geometry2d::Point* origin) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     boost::python::list lst;
 
@@ -563,7 +563,7 @@ boost::python::tuple WinEval_eval_pt_to_opp_goal(
 }
 
 boost::python::tuple WinEval_eval_pt_to_our_goal(
-    WindowEvaluator* self, const Geometry2d::Point* origin) {
+    WindowEvaluator* self, const geometry2d::Point* origin) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     boost::python::list lst;
 
@@ -583,8 +583,8 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
 }
 
 boost::python::tuple KickEval_eval_pt_to_seg(
-    KickEvaluator* self, const Geometry2d::Point* origin,
-    const Geometry2d::Segment* target) {
+    KickEvaluator* self, const geometry2d::Point* origin,
+    const geometry2d::Segment* target) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -598,8 +598,8 @@ boost::python::tuple KickEval_eval_pt_to_seg(
 }
 
 boost::python::tuple KickEval_eval_pt_to_robot(
-    KickEvaluator* self, const Geometry2d::Point* origin,
-    const Geometry2d::Point* target) {
+    KickEvaluator* self, const geometry2d::Point* origin,
+    const geometry2d::Point* target) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
     boost::python::list lst;
@@ -613,8 +613,8 @@ boost::python::tuple KickEval_eval_pt_to_robot(
 }
 
 boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
-                                            const Geometry2d::Point* origin,
-                                            const Geometry2d::Point* target,
+                                            const geometry2d::Point* origin,
+                                            const geometry2d::Point* target,
                                             float targetWidth) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     if (target == nullptr) throw NullArgumentException{"target"};
@@ -629,7 +629,7 @@ boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
 }
 
 boost::python::tuple KickEval_eval_pt_to_opp_goal(
-    KickEvaluator* self, const Geometry2d::Point* origin) {
+    KickEvaluator* self, const geometry2d::Point* origin) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     boost::python::list lst;
 
@@ -642,7 +642,7 @@ boost::python::tuple KickEval_eval_pt_to_opp_goal(
 }
 
 boost::python::tuple KickEval_eval_pt_to_our_goal(
-    KickEvaluator* self, const Geometry2d::Point* origin) {
+    KickEvaluator* self, const geometry2d::Point* origin) {
     if (origin == nullptr) throw NullArgumentException{"origin"};
     boost::python::list lst;
 
@@ -666,16 +666,16 @@ boost::shared_ptr<PythonFunctionWrapper> PythonFunctionWrapper_constructor(
         new PythonFunctionWrapper(pf));
 }
 
-float Point_get_x(const Geometry2d::Point* self) { return self->x(); }
-float Point_get_y(const Geometry2d::Point* self) { return self->y(); }
-void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
-void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
+float Point_get_x(const geometry2d::Point* self) { return self->x(); }
+float Point_get_y(const geometry2d::Point* self) { return self->y(); }
+void Point_set_x(geometry2d::Point* self, float x) { self->x() = x; }
+void Point_set_y(geometry2d::Point* self, float y) { self->y() = y; }
 
 boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
     PythonFunctionWrapper* functionWrapper,
-    Geometry2d::Point start = Geometry2d::Point(0, 0),
-    Geometry2d::Point step = Geometry2d::Point(1, 1),
-    Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
+    geometry2d::Point start = geometry2d::Point(0, 0),
+    geometry2d::Point step = geometry2d::Point(1, 1),
+    geometry2d::Point minDist = geometry2d::Point(0.001, 0.001),
     float reflectionCoeff = 1, float expansionCoeff = 2,
     float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
     int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
@@ -701,105 +701,105 @@ BOOST_PYTHON_MODULE(robocup) {
     def("fix_angle_radians", &fixAngleRadians<double>);
     def("get_trapezoidal_time", &Trapezoidal::getTime);
 
-    class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
-        .def(init<const Geometry2d::Point&>())
+    class_<geometry2d::Point, geometry2d::Point*>("Point", init<float, float>())
+        .def(init<const geometry2d::Point&>())
         .add_property("x", &Point_get_x, &Point_set_x)
         .add_property("y", &Point_get_y, &Point_set_y)
         .def(self - self)
         .def(self + self)
         .def(self * self)
-        .def("mag", &Geometry2d::Point::mag)
-        .def("magsq", &Geometry2d::Point::magsq)
+        .def("mag", &geometry2d::Point::mag)
+        .def("magsq", &geometry2d::Point::magsq)
         .def("__repr__", &Point_repr)
-        .def("normalized", &Geometry2d::Point::normalized, Point_overloads())
+        .def("normalized", &geometry2d::Point::normalized, Point_overloads())
         .def("rotate", &Point_rotate)
         .def("rotate_origin", &Point_rotate_origin)
         .def(self * float())
         .def(self / float())
-        .def("perp_ccw", &Geometry2d::Point::perpCCW)
-        .def("perp_cw", &Geometry2d::Point::perpCW)
-        .def("angle", &Geometry2d::Point::angle)
-        .def("dot", &Geometry2d::Point::dot)
-        .def("near_point", &Geometry2d::Point::nearPoint)
-        .def("dist_to", &Geometry2d::Point::distTo)
-        .def("direction", &Geometry2d::Point::direction)
-        .def("angle_between", &Geometry2d::Point::angleBetween)
-        .def("nearly_equals", &Geometry2d::Point::nearlyEquals)
+        .def("perp_ccw", &geometry2d::Point::perpCCW)
+        .def("perp_cw", &geometry2d::Point::perpCW)
+        .def("angle", &geometry2d::Point::angle)
+        .def("dot", &geometry2d::Point::dot)
+        .def("near_point", &geometry2d::Point::nearPoint)
+        .def("dist_to", &geometry2d::Point::distTo)
+        .def("direction", &geometry2d::Point::direction)
+        .def("angle_between", &geometry2d::Point::angleBetween)
+        .def("nearly_equals", &geometry2d::Point::nearlyEquals)
         .staticmethod("direction");
 
-    class_<std::vector<Geometry2d::Point>>("vector_Point")
-        .def(vector_indexing_suite<std::vector<Geometry2d::Point>>());
+    class_<std::vector<geometry2d::Point>>("vector_Point")
+        .def(vector_indexing_suite<std::vector<geometry2d::Point>>());
 
-    class_<Geometry2d::Line, Geometry2d::Line*>(
-        "Line", init<Geometry2d::Point, Geometry2d::Point>())
-        .def("delta", &Geometry2d::Line::delta)
+    class_<geometry2d::Line, geometry2d::Line*>(
+        "Line", init<geometry2d::Point, geometry2d::Point>())
+        .def("delta", &geometry2d::Line::delta)
         .def("line_intersection", &Line_line_intersection)
         .def("segment_intersection", &Line_segment_intersection)
-        .def("dist_to", &Geometry2d::Line::distTo)
+        .def("dist_to", &geometry2d::Line::distTo)
         .def("intersects_circle", &Line_intersects_circle)
         .def("get_pt", &Line_get_pt,
              return_value_policy<reference_existing_object>())
-        .def("nearest_point", &Geometry2d::Line::nearestPoint);
+        .def("nearest_point", &geometry2d::Line::nearestPoint);
 
-    class_<Geometry2d::Segment, Geometry2d::Segment*>(
-        "Segment", init<Geometry2d::Point, Geometry2d::Point>())
-        .def("center", &Geometry2d::Segment::center)
-        .def("length", &Geometry2d::Segment::length)
-        .def("dist_to", &Geometry2d::Segment::distTo)
+    class_<geometry2d::Segment, geometry2d::Segment*>(
+        "Segment", init<geometry2d::Point, geometry2d::Point>())
+        .def("center", &geometry2d::Segment::center)
+        .def("length", &geometry2d::Segment::length)
+        .def("dist_to", &geometry2d::Segment::distTo)
         .def("get_pt", &Segment_get_pt,
              return_value_policy<reference_existing_object>())
         .def("nearest_point", &Segment_nearest_point_to_point)
         .def("segment_intersection", &Segment_segment_intersection)
         .def("line_intersection", &Segment_line_intersection)
-        .def("near_point", &Geometry2d::Segment::nearPoint)
+        .def("near_point", &geometry2d::Segment::nearPoint)
         .def("nearest_point_to_line", &Segment_nearest_point_to_line)
-        .def("__str__", &Geometry2d::Segment::toString);
+        .def("__str__", &geometry2d::Segment::toString);
 
-    class_<Geometry2d::Shape, boost::noncopyable>("Shape");
+    class_<geometry2d::Shape, boost::noncopyable>("Shape");
 
-    class_<Geometry2d::Rect, bases<Geometry2d::Shape>>(
-        "Rect", init<Geometry2d::Point, Geometry2d::Point>())
+    class_<geometry2d::Rect, bases<geometry2d::Shape>>(
+        "Rect", init<geometry2d::Point, geometry2d::Point>())
         .def("contains_rect", &Rect_contains_rect)
-        .def("min_x", &Geometry2d::Rect::minx)
-        .def("min_y", &Geometry2d::Rect::miny)
-        .def("max_x", &Geometry2d::Rect::maxx)
-        .def("max_y", &Geometry2d::Rect::maxy)
+        .def("min_x", &geometry2d::Rect::minx)
+        .def("min_y", &geometry2d::Rect::miny)
+        .def("max_x", &geometry2d::Rect::maxx)
+        .def("max_y", &geometry2d::Rect::maxy)
         .def("corners", &Rect_corners)
-        .def("pad", &Geometry2d::Rect::pad)
-        .def("near_point", &Geometry2d::Rect::nearPoint)
+        .def("pad", &geometry2d::Rect::pad)
+        .def("near_point", &geometry2d::Rect::nearPoint)
         .def("rect_intersection", &Rect_rect_intersection)
         .def("segment_intersection", &Rect_segment_intersection)
-        .def("contains_point", &Geometry2d::Rect::containsPoint)
+        .def("contains_point", &geometry2d::Rect::containsPoint)
         .def("get_pt", &Rect_get_pt,
              return_value_policy<reference_existing_object>());
 
-    class_<Geometry2d::Circle, bases<Geometry2d::Shape>>(
-        "Circle", init<Geometry2d::Point, float>())
+    class_<geometry2d::Circle, bases<geometry2d::Shape>>(
+        "Circle", init<geometry2d::Point, float>())
         .def("intersects_line", &Circle_intersects_line)
-        .def("nearest_point", &Geometry2d::Circle::nearestPoint)
-        .def("contains_point", &Geometry2d::Circle::containsPoint)
-        .def_readonly("center", &Geometry2d::Circle::center);
+        .def("nearest_point", &geometry2d::Circle::nearestPoint)
+        .def("contains_point", &geometry2d::Circle::containsPoint)
+        .def_readonly("center", &geometry2d::Circle::center);
 
-    class_<Geometry2d::Arc>("Arc",
-                            init<Geometry2d::Point, float, float, float>())
+    class_<geometry2d::Arc>("Arc",
+                            init<geometry2d::Point, float, float, float>())
         .def("intersects_line", &Arc_intersects_line)
         .def("intersects_segment", &Arc_intersects_segment)
-        .def("center", &Geometry2d::Arc::center)
-        .def("radius", &Geometry2d::Arc::radius)
-        .def("start", &Geometry2d::Arc::start)
-        .def("end", &Geometry2d::Arc::end);
+        .def("center", &geometry2d::Arc::center)
+        .def("radius", &geometry2d::Arc::radius)
+        .def("start", &geometry2d::Arc::start)
+        .def("end", &geometry2d::Arc::end);
 
-    class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape>>(
+    class_<geometry2d::CompositeShape, bases<geometry2d::Shape>>(
         "CompositeShape", init<>())
-        .def("clear", &Geometry2d::CompositeShape::clear)
-        .def("is_empty", &Geometry2d::CompositeShape::empty)
-        .def("size", &Geometry2d::CompositeShape::size)
+        .def("clear", &geometry2d::CompositeShape::clear)
+        .def("is_empty", &geometry2d::CompositeShape::empty)
+        .def("size", &geometry2d::CompositeShape::size)
         .def("add_shape", &CompositeShape_add_shape)
-        .def("contains_point", &Geometry2d::CompositeShape::containsPoint);
+        .def("contains_point", &geometry2d::CompositeShape::containsPoint);
 
-    class_<Geometry2d::Polygon, bases<Geometry2d::Shape>>("Polygon", init<>())
+    class_<geometry2d::Polygon, bases<geometry2d::Shape>>("Polygon", init<>())
         .def("add_vertex", &Polygon_add_vertex)
-        .def("contains_point", &Geometry2d::Polygon::containsPoint);
+        .def("contains_point", &geometry2d::Polygon::containsPoint);
 
     class_<GameState>("GameState")
         .def_readonly("our_score", &GameState::ourScore)
@@ -955,42 +955,41 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("debug_drawer", &Context::debug_drawer)
         .def_readonly("game_state", &Context::game_state);
 
-    class_<Field_Dimensions>("Field_Dimensions")
-        .def("OurGoalZoneShapePadded",
-             &Field_Dimensions::OurGoalZoneShapePadded)
-        .add_property("Length", &Field_Dimensions::Length)
-        .add_property("Width", &Field_Dimensions::Width)
-        .add_property("Border", &Field_Dimensions::Border)
-        .add_property("LineWidth", &Field_Dimensions::LineWidth)
-        .add_property("GoalWidth", &Field_Dimensions::GoalWidth)
-        .add_property("GoalDepth", &Field_Dimensions::GoalDepth)
-        .add_property("GoalHeight", &Field_Dimensions::GoalHeight)
-        .add_property("PenaltyShortDist", &Field_Dimensions::PenaltyShortDist)
-        .add_property("PenaltyLongDist", &Field_Dimensions::PenaltyLongDist)
-        .add_property("CenterRadius", &Field_Dimensions::CenterRadius)
-        .add_property("CenterDiameter", &Field_Dimensions::CenterDiameter)
-        .add_property("GoalFlat", &Field_Dimensions::GoalFlat)
-        .add_property("FloorLength", &Field_Dimensions::FloorLength)
-        .add_property("FloorWidth", &Field_Dimensions::FloorWidth)
-        .add_property("CenterPoint", &Field_Dimensions::CenterPoint)
-        .add_property("OurGoalZoneShape", &Field_Dimensions::OurGoalZoneShape)
+    class_<FieldDimensions>("FieldDimensions")
+        .def("OurGoalZoneShapePadded", &FieldDimensions::OurGoalZoneShapePadded)
+        .add_property("Length", &FieldDimensions::Length)
+        .add_property("Width", &FieldDimensions::Width)
+        .add_property("Border", &FieldDimensions::Border)
+        .add_property("LineWidth", &FieldDimensions::LineWidth)
+        .add_property("GoalWidth", &FieldDimensions::GoalWidth)
+        .add_property("GoalDepth", &FieldDimensions::GoalDepth)
+        .add_property("GoalHeight", &FieldDimensions::GoalHeight)
+        .add_property("PenaltyShortDist", &FieldDimensions::PenaltyShortDist)
+        .add_property("PenaltyLongDist", &FieldDimensions::PenaltyLongDist)
+        .add_property("CenterRadius", &FieldDimensions::CenterRadius)
+        .add_property("CenterDiameter", &FieldDimensions::CenterDiameter)
+        .add_property("GoalFlat", &FieldDimensions::GoalFlat)
+        .add_property("FloorLength", &FieldDimensions::FloorLength)
+        .add_property("FloorWidth", &FieldDimensions::FloorWidth)
+        .add_property("CenterPoint", &FieldDimensions::CenterPoint)
+        .add_property("OurGoalZoneShape", &FieldDimensions::OurGoalZoneShape)
         .add_property("TheirGoalZoneShape",
-                      &Field_Dimensions::TheirGoalZoneShape)
-        .add_property("OurGoalSegment", &Field_Dimensions::OurGoalSegment)
-        .add_property("TheirGoalSegment", &Field_Dimensions::TheirGoalSegment)
-        .add_property("OurHalf", &Field_Dimensions::OurHalf)
-        .add_property("TheirHalf", &Field_Dimensions::TheirHalf)
-        .add_property("FieldRect", &Field_Dimensions::FieldRect)
-        .add_property("FieldBorders", &Field_Dimensions::FieldBorders)
+                      &FieldDimensions::TheirGoalZoneShape)
+        .add_property("OurGoalSegment", &FieldDimensions::OurGoalSegment)
+        .add_property("TheirGoalSegment", &FieldDimensions::TheirGoalSegment)
+        .add_property("OurHalf", &FieldDimensions::OurHalf)
+        .add_property("TheirHalf", &FieldDimensions::TheirHalf)
+        .add_property("FieldRect", &FieldDimensions::FieldRect)
+        .add_property("FieldBorders", &FieldDimensions::FieldBorders)
         .def_readonly("SingleFieldDimensions",
-                      &Field_Dimensions::Single_Field_Dimensions)
+                      &FieldDimensions::Single_FieldDimensions)
         .def_readonly("DoubleFieldDimensions",
-                      &Field_Dimensions::Double_Field_Dimensions)
+                      &FieldDimensions::Double_FieldDimensions)
         .def_readonly("CurrentDimensions",
-                      &Field_Dimensions::Current_Dimensions);
+                      &FieldDimensions::Current_Dimensions);
 
-    class_<std::vector<Geometry2d::Line>>("vector_Line")
-        .def(vector_indexing_suite<std::vector<Geometry2d::Line>>());
+    class_<std::vector<geometry2d::Line>>("vector_Line")
+        .def(vector_indexing_suite<std::vector<geometry2d::Line>>());
 
     class_<Window>("Window")
         .def_readwrite("a0", &Window::a0)

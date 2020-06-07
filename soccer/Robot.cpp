@@ -1,12 +1,12 @@
 #include <execinfo.h>
-#include <protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
+#include <utils.h>
 
 #include <LogUtils.hpp>
 #include <QString>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
-#include <Utils.hpp>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
@@ -18,7 +18,7 @@
 #include "DebugDrawer.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 using Planning::MotionInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
@@ -149,7 +149,7 @@ void OurRobot::stop() {
     _cmdText << "stop()\n";
 }
 
-void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
+void OurRobot::moveDirect(geometry2d::Point goal, float endSpeed) {
     if (!visible()) {
         return;
     }
@@ -168,7 +168,7 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
     _cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
-void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
+void OurRobot::moveTuning(geometry2d::Point goal, float endSpeed) {
     if (!visible()) {
         return;
     }
@@ -186,7 +186,7 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
     _cmdText << "endSpeed(" << endSpeed << ")" << endl;
 }
 
-void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
+void OurRobot::move(geometry2d::Point goal, geometry2d::Point endVelocity) {
     if (!visible()) {
         return;
     }
@@ -241,7 +241,7 @@ void OurRobot::intercept(Point target) {
         std::make_unique<Planning::InterceptCommand>(target);
 }
 
-void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
+void OurRobot::worldVelocity(geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
         std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
 
@@ -251,11 +251,11 @@ void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
              << targetWorldVelocity.y() << ")" << endl;
 }
 
-void OurRobot::pivot(Geometry2d::Point pivotTarget) {
+void OurRobot::pivot(geometry2d::Point pivotTarget) {
     intent().rotation_command = std::make_unique<Planning::EmptyAngleCommand>();
 
     const float radius = Robot_Radius * 1;
-    Geometry2d::Point pivotPoint = _context->state.ball.pos;
+    geometry2d::Point pivotPoint = _context->state.ball.pos;
 
     // reset other conflicting motion commands
     intent().motion_command = std::make_unique<Planning::PivotCommand>(
@@ -265,13 +265,13 @@ void OurRobot::pivot(Geometry2d::Point pivotTarget) {
              << endl;
 }
 
-Geometry2d::Point OurRobot::pointInRobotSpace(Geometry2d::Point pt) const {
+geometry2d::Point OurRobot::pointInRobotSpace(geometry2d::Point pt) const {
     Point p = pt;
     p.rotate(pos(), -angle());
     return p;
 }
 
-Geometry2d::Segment OurRobot::kickerBar() const {
+geometry2d::Segment OurRobot::kickerBar() const {
     TransformMatrix pose(pos(), static_cast<float>(angle()));
     const float mouthHalf = Robot_MouthWidth / 2.0f;
     float x = sin(acos(mouthHalf / Robot_Radius)) * Robot_Radius;
@@ -280,11 +280,11 @@ Geometry2d::Segment OurRobot::kickerBar() const {
     return Segment(pose * L, pose * R);
 }
 
-Geometry2d::Point OurRobot::mouthCenterPos() const {
+geometry2d::Point OurRobot::mouthCenterPos() const {
     return kickerBar().center();
 }
 
-bool OurRobot::behindBall(Geometry2d::Point ballPos) const {
+bool OurRobot::behindBall(geometry2d::Point ballPos) const {
     Point ballTransformed = pointInRobotSpace(ballPos);
     return ballTransformed.x() < -Robot_Radius;
 }
@@ -297,10 +297,10 @@ float OurRobot::kickTimer() const {
 
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
-    Field_Dimensions current_dimensions = Field_Dimensions::Current_Dimensions;
+    FieldDimensions current_dimensions = FieldDimensions::Current_Dimensions;
     auto offset = static_cast<float>(*_dribbleOutOfBoundsOffset);
 
-    Geometry2d::Rect modifiedField = Geometry2d::Rect(
+    geometry2d::Rect modifiedField = geometry2d::Rect(
         Point((-current_dimensions.Width() / 2) - offset, -offset),
         Point((current_dimensions.Width() / 2) + offset,
               current_dimensions.Length() + offset));
@@ -316,7 +316,7 @@ void OurRobot::dribble(uint8_t speed) {
     }
 }
 
-void OurRobot::face(Geometry2d::Point pt) {
+void OurRobot::face(geometry2d::Point pt) {
     intent().rotation_command =
         std::make_unique<Planning::FacePointCommand>(pt);
 
@@ -465,19 +465,19 @@ float OurRobot::avoidBallRadius() const { return intent().avoid_ball_radius; }
 
 void OurRobot::resetAvoidBall() { avoidBallRadius(Ball_Avoid_Small); }
 
-std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
+std::shared_ptr<geometry2d::Circle> OurRobot::createBallObstacle() const {
     // if game is stopped, large obstacle regardless of flags
     if (_context->game_state.state != GameState::Playing &&
         !(_context->game_state.ourRestart ||
           _context->game_state.theirPenalty())) {
-        return std::make_shared<Geometry2d::Circle>(
+        return std::make_shared<geometry2d::Circle>(
             _context->state.ball.pos,
-            Field_Dimensions::Current_Dimensions.CenterRadius());
+            FieldDimensions::Current_Dimensions.CenterRadius());
     }
 
     // create an obstacle if necessary
     if (intent().avoid_ball_radius > 0.0) {
-        return std::make_shared<Geometry2d::Circle>(_context->state.ball.pos,
+        return std::make_shared<geometry2d::Circle>(_context->state.ball.pos,
                                                     intent().avoid_ball_radius);
     }
     return nullptr;
@@ -508,9 +508,9 @@ std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
     return obstacles;
 }
 
-Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
-    const Geometry2d::ShapeSet& globalObstacles, bool localObstacles) {
-    Geometry2d::ShapeSet fullObstacles{};
+geometry2d::ShapeSet OurRobot::collectStaticObstacles(
+    const geometry2d::ShapeSet& globalObstacles, bool localObstacles) {
+    geometry2d::ShapeSet fullObstacles{};
     if (localObstacles) {
         fullObstacles = intent().local_obstacles;
     }
@@ -520,18 +520,18 @@ Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
     return fullObstacles;
 }
 
-Geometry2d::ShapeSet OurRobot::collectAllObstacles(
-    const Geometry2d::ShapeSet& globalObstacles) {
-    Geometry2d::ShapeSet fullObstacles(intent().local_obstacles);
+geometry2d::ShapeSet OurRobot::collectAllObstacles(
+    const geometry2d::ShapeSet& globalObstacles) {
+    geometry2d::ShapeSet fullObstacles(intent().local_obstacles);
     // Adds our robots as obstacles only if they're within a certain distance
     // from this robot. This distance increases with velocity.
     RobotMask self_avoid_mask;
     std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
               *_oppAvoidRadius);
-    const Geometry2d::ShapeSet selfObs =
+    const geometry2d::ShapeSet selfObs =
         createRobotObstacles(_context->state.self, self_avoid_mask, this->pos(),
                              0.6f + static_cast<float>(this->vel().mag()));
-    const Geometry2d::ShapeSet oppObs =
+    const geometry2d::ShapeSet oppObs =
         createRobotObstacles(_context->state.opp, intent().opp_avoid_mask);
 
     if (_context->state.ball.valid) {

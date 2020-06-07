@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
+
 #include <optional>
 
 namespace Planning {
@@ -11,12 +12,12 @@ namespace Planning {
  * position and velocity.
  */
 struct MotionInstant {
-    explicit MotionInstant(Geometry2d::Point pos = {0, 0},
-                           Geometry2d::Point vel = {0, 0})
+    explicit MotionInstant(geometry2d::Point pos = {0, 0},
+                           geometry2d::Point vel = {0, 0})
         : pos(pos), vel(vel) {}
 
-    Geometry2d::Point pos;
-    Geometry2d::Point vel;
+    geometry2d::Point pos;
+    geometry2d::Point vel;
 
     friend std::ostream& operator<<(std::ostream& stream,
                                     const MotionInstant& instant) {
@@ -60,19 +61,19 @@ struct RobotInstant {
     MotionInstant motion;
     std::optional<AngleInstant> angle;
 
-    Geometry2d::Pose pose() {
+    geometry2d::Pose pose() {
         if (angle && angle->angle) {
-            return Geometry2d::Pose(motion.pos, angle->angle.value());
+            return geometry2d::Pose(motion.pos, angle->angle.value());
         } else {
-            return Geometry2d::Pose(motion.pos, 0);
+            return geometry2d::Pose(motion.pos, 0);
         }
     }
 
-    Geometry2d::Twist twist() {
+    geometry2d::Twist twist() {
         if (angle && angle->angleVel) {
-            return Geometry2d::Twist(motion.vel, angle->angleVel.value());
+            return geometry2d::Twist(motion.vel, angle->angleVel.value());
         } else {
-            return Geometry2d::Twist(motion.vel, 0);
+            return geometry2d::Twist(motion.vel, 0);
         }
     }
 

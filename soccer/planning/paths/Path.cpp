@@ -1,14 +1,14 @@
 #include "Path.hpp"
 
-#include <protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
 #include "DebugDrawer.hpp"
-#include "Geometry2d/ShapeSet.hpp"
 #include "SystemState.hpp"
+#include "geometry2d/shape_set.h"
 #include "planning/DynamicObstacle.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 namespace Planning {
 
 class ConstPathIterator;
@@ -60,7 +60,7 @@ std::unique_ptr<ConstPathIterator> Path::iterator(RJ::Time startTime,
 }
 
 bool Path::pathsIntersect(const std::vector<DynamicObstacle>& obstacles,
-                          RJ::Time startTime, Geometry2d::Point* hitLocation,
+                          RJ::Time startTime, geometry2d::Point* hitLocation,
                           RJ::Seconds* hitTime) const {
     const RJ::Seconds deltaT = RJ::Seconds(0.05);
 

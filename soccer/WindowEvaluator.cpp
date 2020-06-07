@@ -1,16 +1,17 @@
 #include "WindowEvaluator.hpp"
 
-#include <Geometry2d/Util.hpp>
+#include <geometry2d/util.h>
+
 #include <algorithm>
 #include <array>
 
-#include "Constants.hpp"
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
+#include "constants.h"
 
 REGISTER_CONFIGURABLE(WindowEvaluator)
 
-using namespace Geometry2d;
+using namespace geometry2d;
 
 ConfigDouble* WindowEvaluator::angle_score_coefficient;
 ConfigDouble* WindowEvaluator::distance_score_coefficient;
@@ -44,18 +45,18 @@ WindowingResult WindowEvaluator::eval_pt_to_robot(Point origin, Point target) {
 
 WindowingResult WindowEvaluator::eval_pt_to_opp_goal(Point origin) {
     Segment their_goal{
-        Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()}};
+        Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2,
+              FieldDimensions::Current_Dimensions.Length()},
+        Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2,
+              FieldDimensions::Current_Dimensions.Length()}};
 
     return eval_pt_to_seg(origin, their_goal);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
     Segment our_goal{
-        Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}};
+        Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0},
+        Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0}};
 
     return eval_pt_to_seg(origin, our_goal);
 }
@@ -259,8 +260,8 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto angle_score = std::min(angle / shot_angle_baseline, 1.0);
 
     float longest_possible_shot =
-        std::sqrt(pow(Field_Dimensions::Current_Dimensions.Length(), 2.0f) +
-                  pow(Field_Dimensions::Current_Dimensions.Width(), 2.0f));
+        std::sqrt(pow(FieldDimensions::Current_Dimensions.Length(), 2.0f) +
+                  pow(FieldDimensions::Current_Dimensions.Width(), 2.0f));
     const auto& std = *KickEvaluator::kick_std_dev;
     auto angle_prob = phi(angle_between_shot_and_window / (std)) -
                       phi(-angle_between_shot_and_window / (std));

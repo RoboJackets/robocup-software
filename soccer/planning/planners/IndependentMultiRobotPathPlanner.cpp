@@ -10,7 +10,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
     std::map<int, PlanRequest> requests) {
     std::map<int, std::unique_ptr<Path>> paths;
 
-    std::map<int, shared_ptr<Geometry2d::Circle>> staticRobotObstacles;
+    std::map<int, shared_ptr<geometry2d::Circle>> staticRobotObstacles;
     std::vector<int> staticRequests;
     std::vector<int> dynamicRequests;
     for (auto& entry : requests) {
@@ -33,7 +33,7 @@ std::map<int, std::unique_ptr<Path>> IndependentMultiRobotPathPlanner::run(
         } else {
             staticRequests.push_back(shell);
         }
-        staticRobotObstacles[shell] = std::make_shared<Geometry2d::Circle>(
+        staticRobotObstacles[shell] = std::make_shared<geometry2d::Circle>(
             request.start.pos, Robot_Radius);
     }
 

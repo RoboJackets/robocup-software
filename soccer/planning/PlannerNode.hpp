@@ -8,9 +8,9 @@
 namespace Planning {
 
 struct GlobalObstacles {
-    Geometry2d::ShapeSet global_obstacles;
-    Geometry2d::ShapeSet goal_zones;
-    Geometry2d::ShapeSet global_obstacles_with_goal_zones;
+    geometry2d::ShapeSet global_obstacles;
+    geometry2d::ShapeSet goal_zones;
+    geometry2d::ShapeSet global_obstacles_with_goal_zones;
 };
 
 /**

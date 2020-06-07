@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
+#include <geometry2d/point.h>
+#include <geometry2d/transform_matrix.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/TransformMatrix.hpp>
 #include <QGLWidget>
 #include <QLabel>
 #include <memory>
@@ -40,7 +40,7 @@ public:
 
     void rotate(int value);
 
-    const Geometry2d::TransformMatrix& getTeamToWorld() const {
+    const geometry2d::TransformMatrix& getTeamToWorld() const {
         return _teamToWorld;
     }
 
@@ -88,9 +88,9 @@ protected:
     std::shared_ptr<Packet::LogFrame> currentFrame();
 
     // Coordinate transformations
-    Geometry2d::TransformMatrix _screenToWorld;
-    Geometry2d::TransformMatrix _worldToTeam;
-    Geometry2d::TransformMatrix _teamToWorld;
+    geometry2d::TransformMatrix _screenToWorld;
+    geometry2d::TransformMatrix _worldToTeam;
+    geometry2d::TransformMatrix _teamToWorld;
 
     // Label used to display current coordinates of mouse
     QLabel* _posLabel{};

@@ -1,16 +1,17 @@
 #pragma once
 
-#include <protobuf/Control.pb.h>
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
+#include <constants.h>
+#include <rj_robocup_protobuf/Control.pb.h>
+#include <rj_robocup_protobuf/RadioRx.pb.h>
+#include <rj_robocup_protobuf/RadioTx.pb.h>
+#include <status.h>
+#include <utils.h>
 
-#include <Constants.hpp>
 #include <Eigen/Dense>
 #include <QColor>
 #include <QReadLocker>
 #include <QReadWriteLock>
 #include <QWriteLocker>
-#include <Utils.hpp>
 #include <algorithm>
 #include <array>
 #include <boost/circular_buffer.hpp>
@@ -28,7 +29,6 @@
 #include "Context.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
-#include "status.h"
 
 class RobotConfig;
 class RobotLocalConfig;
@@ -62,17 +62,17 @@ public:
         return _context->world_state.get_robot(self(), shell());
     }
 
-    [[nodiscard]] Geometry2d::Pose pose() const { return state().pose; }
+    [[nodiscard]] geometry2d::Pose pose() const { return state().pose; }
 
-    [[nodiscard]] Geometry2d::Point pos() const {
+    [[nodiscard]] geometry2d::Point pos() const {
         return state().pose.position();
     }
 
     [[nodiscard]] double angle() const { return state().pose.heading(); }
 
-    [[nodiscard]] Geometry2d::Twist twist() const { return state().velocity; }
+    [[nodiscard]] geometry2d::Twist twist() const { return state().velocity; }
 
-    [[nodiscard]] Geometry2d::Point vel() const {
+    [[nodiscard]] geometry2d::Point vel() const {
         return state().velocity.linear();
     }
 
@@ -148,14 +148,14 @@ public:
     float kickTimer() const;
 
     /// segment for the location of the kicker
-    Geometry2d::Segment kickerBar() const;
+    geometry2d::Segment kickerBar() const;
     /// converts a point to the frame of reference of robot
-    Geometry2d::Point pointInRobotSpace(Geometry2d::Point pt) const;
+    geometry2d::Point pointInRobotSpace(geometry2d::Point pt) const;
 
     // simple checks to do geometry
     /** returns true if the position specified is behind the robot */
     // FIXME - Function name and comment don't match
-    bool behindBall(Geometry2d::Point ballPos) const;
+    bool behindBall(geometry2d::Point ballPos) const;
 
     // Constraints
     const RobotConstraints& robotConstraints() const {
@@ -192,7 +192,7 @@ public:
      *
      * @param target - The target to kick towards (aiming point)
      */
-    void lineKick(Geometry2d::Point target);
+    void lineKick(geometry2d::Point target);
 
     /**
      * Intercept the ball as quickly as possible
@@ -200,15 +200,15 @@ public:
      *
      * @param target - The target position to intercept the ball at
      */
-    void intercept(Geometry2d::Point target);
+    void intercept(geometry2d::Point target);
 
     /**
      * @brief Move to a given point using the default RRT planner
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
      */
-    void move(Geometry2d::Point goal,
-              Geometry2d::Point endVelocity = Geometry2d::Point());
+    void move(geometry2d::Point goal,
+              geometry2d::Point endVelocity = geometry2d::Point());
 
     /**
      * @brief Move to a given point bypassing the RRT Path planner. This will
@@ -216,7 +216,7 @@ public:
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path
      */
-    void moveDirect(Geometry2d::Point goal, float endSpeed = 0);
+    void moveDirect(geometry2d::Point goal, float endSpeed = 0);
 
     /**
      * @brief Move to a given point while breaking everything. Tells the robot
@@ -224,7 +224,7 @@ public:
      * @param endSpeed - the speed we should be going when we reach the end of
      * the path. I'm not even sure if this part makes any sense here.
      */
-    void moveTuning(Geometry2d::Point goal, float endSpeed = 0);
+    void moveTuning(geometry2d::Point goal, float endSpeed = 0);
 
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
@@ -232,7 +232,7 @@ public:
      * @param target - the target point in which the robot will try to bounce
      * the towards
      */
-    void settle(const std::optional<Geometry2d::Point>& target);
+    void settle(const std::optional<geometry2d::Point>& target);
 
     /**
      * @brief Approaches the ball and moves through it slowly
@@ -242,12 +242,12 @@ public:
     /**
      * Sets the worldVelocity in the robot's MotionConstraints
      */
-    void worldVelocity(Geometry2d::Point targetWorldVelocity);
+    void worldVelocity(geometry2d::Point targetWorldVelocity);
 
     /**
      * Face a point while remaining in place
      */
-    void face(Geometry2d::Point pt);
+    void face(geometry2d::Point pt);
 
     /**
      * Returns true if the robot currently has a face command
@@ -262,7 +262,7 @@ public:
     /**
      * The robot pivots around it's mouth toward the given target
      */
-    void pivot(Geometry2d::Point pivotTarget);
+    void pivot(geometry2d::Point pivotTarget);
 
     /*
      * Enable dribbler (0 to 127)
@@ -346,22 +346,22 @@ public:
      * Adds an obstacle to the local set of obstacles for avoidance
      * Cleared after every frame
      */
-    void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
+    void localObstacles(const std::shared_ptr<geometry2d::Shape>& obs) {
         intent().local_obstacles.add(obs);
     }
-    const Geometry2d::ShapeSet& localObstacles() const {
+    const geometry2d::ShapeSet& localObstacles() const {
         return intent().local_obstacles;
     }
     void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
     std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
 
-    Geometry2d::ShapeSet collectStaticObstacles(
-        const Geometry2d::ShapeSet& globalObstacles,
+    geometry2d::ShapeSet collectStaticObstacles(
+        const geometry2d::ShapeSet& globalObstacles,
         bool localObstacles = true);
 
-    Geometry2d::ShapeSet collectAllObstacles(
-        const Geometry2d::ShapeSet& globalObstacles);
+    geometry2d::ShapeSet collectAllObstacles(
+        const geometry2d::ShapeSet& globalObstacles);
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -389,7 +389,7 @@ public:
 
     void avoidOpponentRadius(unsigned shell_id, float radius);
 
-    Geometry2d::Point mouthCenterPos() const;
+    geometry2d::Point mouthCenterPos() const;
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
@@ -473,12 +473,12 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+    geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask) const {
-        Geometry2d::ShapeSet result;
+        geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i) {
             if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                result.add(std::make_shared<Geometry2d::Circle>(
+                result.add(std::make_shared<geometry2d::Circle>(
                     robots[i]->pos(), mask[i]));
             }
         }
@@ -497,15 +497,15 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
+    geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask,
-                                              Geometry2d::Point currentPosition,
+                                              geometry2d::Point currentPosition,
                                               float checkRadius) const {
-        Geometry2d::ShapeSet result;
+        geometry2d::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i) {
             if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
                 if (currentPosition.distTo(robots[i]->pos()) <= checkRadius) {
-                    result.add(std::make_shared<Geometry2d::Circle>(
+                    result.add(std::make_shared<geometry2d::Circle>(
                         robots[i]->pos(), mask[i]));
                 }
             }
@@ -516,7 +516,7 @@ protected:
     /**
      * Creates an obstacle for the ball if necessary
      */
-    std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
+    std::shared_ptr<geometry2d::Circle> createBallObstacle() const;
 
     friend class Processor;
     friend class RadioNode;

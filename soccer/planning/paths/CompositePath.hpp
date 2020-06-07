@@ -1,9 +1,10 @@
 #pragma once
 
+#include <geometry2d/point.h>
+#include <geometry2d/segment.h>
+#include <geometry2d/shape_set.h>
+
 #include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <optional>
 #include <planning/paths/Path.hpp>
 
@@ -48,7 +49,7 @@ public:
         append(std::forward<Args>(args)...);
     }
 
-    virtual bool hit(const Geometry2d::ShapeSet& shape,
+    virtual bool hit(const geometry2d::ShapeSet& shape,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override;
     virtual void draw(DebugDrawer* constdebug_drawer,

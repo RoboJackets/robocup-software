@@ -1,7 +1,8 @@
 #include "InterceptPlanner.hpp"
 
+#include <constants.h>
+
 #include <Configuration.hpp>
-#include <Constants.hpp>
 #include <motion/TrapezoidalMotion.hpp>
 
 #include "RRTPlanner.hpp"
@@ -24,7 +25,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
 
     // Time for ball to hit target point
     // Target point is projected into ball vel line
-    Geometry2d::Point targetPosOnLine;
+    geometry2d::Point targetPosOnLine;
     RJ::Seconds ballToPointTime =
         ball.estimateTimeTo(command.target, &targetPosOnLine) - RJ::now();
 
@@ -37,9 +38,9 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     }
 
     // vector from robot to target
-    Geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pos);
+    geometry2d::Point botToTarget = (targetPosOnLine - startInstant.pos);
     // Normalized vector from robot to target
-    Geometry2d::Point botToTargetNorm = botToTarget.normalized();
+    geometry2d::Point botToTargetNorm = botToTarget.normalized();
 
     // Max speed we can reach given the distance to target and constant
     // acceleration If we don't constrain the speed, there is a velocity
@@ -55,7 +56,7 @@ std::unique_ptr<Path> InterceptPlanner::run(PlanRequest& planRequest) {
     // Also is much more consistent
     if (botToTarget.mag() < Robot_Radius / 2) {
         MotionInstant finalStoppingMotion(targetPosOnLine,
-                                          Geometry2d::Point(0, 0));
+                                          geometry2d::Point(0, 0));
 
         std::unique_ptr<MotionCommand> directCommand =
             std::make_unique<DirectPathTargetCommand>(finalStoppingMotion);

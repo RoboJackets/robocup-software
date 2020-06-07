@@ -2,7 +2,7 @@
 #include <array>
 #include "DebugDrawer.hpp"
 
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 

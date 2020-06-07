@@ -1,7 +1,8 @@
 #include "vision_receiver.hpp"
 
-#include <Field_Dimensions.hpp>
-#include <multicast.hpp>
+#include <field_dimensions.h>
+#include <network/multicast.h>
+
 #include <stdexcept>
 
 namespace vision_receiver {
@@ -64,7 +65,7 @@ void VisionReceiver::run() {
     for (auto& packet : _packets) {
         SSL_WrapperPacket log;
         log.CopyFrom(packet->wrapper);
-//        _context->raw_vision_packets.emplace_back(std::move(log));
+        //        _context->raw_vision_packets.emplace_back(std::move(log));
 
         _last_receive_time = packet->receivedTime;
 
@@ -115,9 +116,9 @@ void VisionReceiver::run() {
     }
 
     // Move new packets into context using a move_iterator.
-//    _context->vision_packets.insert(_context->vision_packets.begin(),
-//                                    std::make_move_iterator(_packets.begin()),
-//                                    std::make_move_iterator(_packets.end()));
+    //    _context->vision_packets.insert(_context->vision_packets.begin(),
+    //                                    std::make_move_iterator(_packets.begin()),
+    //                                    std::make_move_iterator(_packets.end()));
 
     // Remove the nullptr packets that we just moved to context.
     _packets.clear();
@@ -184,7 +185,7 @@ void VisionReceiver::updateGeometryPacket(
     float penaltyShortDist = 0;  // default value
     float penaltyLongDist = 0;   // default value
     float displacement =
-        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
+        FieldDimensions::Default_Dimensions.GoalFlat();  // default displacment
 
     // Loop through field arcs looking for needed fields
     for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
@@ -209,46 +210,47 @@ void VisionReceiver::updateGeometryPacket(
     // outside, so we can add this as an offset.
     float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
-//    float fieldBorder = _context->field_dimensions.Border();
+    //    float fieldBorder = _context->field_dimensions.Border();
 
     if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
         thickness != 0) {
         // Force a resize
-//        _context->field_dimensions = Field_Dimensions(
-//            fieldSize.field_length() / 1000.0f,
-//            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-//            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-//            Field_Dimensions::Default_Dimensions.GoalHeight(),
-//            penaltyShortDist / 1000.0f,              // PenaltyShortDist
-//            penaltyLongDist / 1000.0f,               // PenaltyLongDist
-//            center->radius() / 1000.0f + adj,        // CenterRadius
-//            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-//            displacement / 1000.0f,                  // GoalFlat
-//            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-//            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+        //        _context->field_dimensions = FieldDimensions(
+        //            fieldSize.field_length() / 1000.0f,
+        //            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+        //            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() /
+        //            1000.0f, FieldDimensions::Default_Dimensions.GoalHeight(),
+        //            penaltyShortDist / 1000.0f,              //
+        //            PenaltyShortDist penaltyLongDist / 1000.0f, //
+        //            PenaltyLongDist center->radius() / 1000.0f + adj, //
+        //            CenterRadius (center->radius()) * 2 / 1000.0f + adj,  //
+        //            CenterDiameter displacement / 1000.0f,                  //
+        //            GoalFlat (fieldSize.field_length() / 1000.0f +
+        //            (fieldBorder)*2), (fieldSize.field_width() / 1000.0f +
+        //            (fieldBorder)*2));
     } else if (center != nullptr && thickness != 0) {
-        Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
+        FieldDimensions defaultDim = FieldDimensions::Default_Dimensions;
 
-//        _context->field_dimensions = Field_Dimensions(
-//            fieldSize.field_length() / 1000.0f,
-//            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
-//            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() / 1000.0f,
-//            Field_Dimensions::Default_Dimensions.GoalHeight(),
-//            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
-//            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
-//            center->radius() / 1000.0f + adj,        // CenterRadius
-//            (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
-//            displacement / 1000.0f,                  // GoalFlat
-//            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-//            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2));
+        //        _context->field_dimensions = FieldDimensions(
+        //            fieldSize.field_length() / 1000.0f,
+        //            fieldSize.field_width() / 1000.0f, fieldBorder, thickness,
+        //            fieldSize.goal_width() / 1000.0f, fieldSize.goal_depth() /
+        //            1000.0f, FieldDimensions::Default_Dimensions.GoalHeight(),
+        //            defaultDim.PenaltyShortDist(),           //
+        //            PenaltyShortDist defaultDim.PenaltyLongDist(), //
+        //            PenaltyLongDist center->radius() / 1000.0f + adj, //
+        //            CenterRadius (center->radius()) * 2 / 1000.0f + adj,  //
+        //            CenterDiameter displacement / 1000.0f,                  //
+        //            GoalFlat (fieldSize.field_length() / 1000.0f +
+        //            (fieldBorder)*2), (fieldSize.field_width() / 1000.0f +
+        //            (fieldBorder)*2));
     } else {
-        std::cerr << "Error: failed to decode SSL geometry packet. Not resizing "
-                "field."
-             << std::endl;
+        std::cerr
+            << "Error: failed to decode SSL geometry packet. Not resizing "
+               "field."
+            << std::endl;
     }
 }
 }  // namespace vision_receiver
 
-int main(int argc, char** argv)
-{
-}
+int main(int argc, char** argv) {}

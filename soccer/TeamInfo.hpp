@@ -1,9 +1,10 @@
 #pragma once
 
+#include <rj_robocup_protobuf/referee.pb.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
-#include <protobuf/referee.pb.h>
 
 // Information about a single team.
 class TeamInfo {

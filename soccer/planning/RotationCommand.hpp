@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 
-#include "Geometry2d/Point.hpp"
+#include "geometry2d/point.h"
 
 namespace Planning {
 struct RotationCommand {
@@ -30,10 +30,10 @@ private:
 };
 
 struct FacePointCommand : public RotationCommand {
-    explicit FacePointCommand(Geometry2d::Point target)
+    explicit FacePointCommand(geometry2d::Point target)
         : RotationCommand(FacePoint), targetPos(target) {}
 
-    const Geometry2d::Point targetPos;
+    const geometry2d::Point targetPos;
 
     [[nodiscard]] std::string print() const override {
         std::stringstream ss;

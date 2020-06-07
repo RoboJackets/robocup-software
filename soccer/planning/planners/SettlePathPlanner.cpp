@@ -4,12 +4,12 @@
 #include <cmath>
 
 #include "Configuration.hpp"
-#include "Constants.hpp"
+#include "constants.h"
 #include "planning/MotionInstant.hpp"
 #include "planning/paths/CompositePath.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 
@@ -180,7 +180,7 @@ void SettlePathPlanner::processStateTransition(const Ball& ball, Path* prevPath,
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
     if (prevPath && (RJ::now() - prevPath->startTime() > RJ::Seconds(0)) &&
         prevPath->getDuration() > RJ::Seconds(0)) {
-        Geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
+        geometry2d::Line ballMovementLine(ball.pos, ball.pos + averageBallVel);
 
         const RJ::Seconds timeIntoPreviousPath =
             RJ::now() - prevPath->startTime();
@@ -223,7 +223,7 @@ std::unique_ptr<Path> SettlePathPlanner::intercept(
     // where we check ever X distance along the ball velocity vector
     //
     // Disallow points outside the field
-    const Rect& fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
+    const Rect& fieldRect = FieldDimensions::Current_Dimensions.FieldRect();
 
     Point ballVelIntercept;
     for (float dist = *_searchStartDist; dist < *_searchEndDist;
@@ -538,8 +538,8 @@ std::unique_ptr<Path> SettlePathPlanner::invalid(
 void SettlePathPlanner::calcDeltaPosForDir(const Ball& ball,
                                            const MotionInstant& startInstant,
                                            double& angle,
-                                           Geometry2d::Point& deltaRobotPos,
-                                           Geometry2d::Point& facePos) {
+                                           geometry2d::Point& deltaRobotPos,
+                                           geometry2d::Point& facePos) {
     // If we have a valid bounce target
     if (targetBounceDirection) {
         // Get angle between target and normal hit

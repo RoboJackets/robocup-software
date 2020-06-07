@@ -1,10 +1,10 @@
 #include "BallBounce.hpp"
 
+#include <constants.h>
+#include <utils.h>
+
 #include <algorithm>
 #include <cmath>
-
-#include <Constants.hpp>
-#include <Utils.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -37,8 +37,7 @@ void BallBounce::createConfiguration(Configuration* cfg) {
 bool BallBounce::CalcBallBounce(const KalmanBall& ball,
                                 const std::vector<WorldRobot>& yellowRobots,
                                 const std::vector<WorldRobot>& blueRobots,
-                                Geometry2d::Point& outNewVel) {
-
+                                geometry2d::Point& outNewVel) {
     // Figures out if there is an intersection and what the resulting velocity should be
     auto findEndVel = [&ball, &outNewVel] (const std::vector<WorldRobot>& robots) {
         for (const WorldRobot& robot : robots) {
@@ -51,7 +50,8 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
                 continue;
             }
 
-            std::vector<Geometry2d::Point> intersectPts = PossibleBallIntersectionPts(ball, robot);
+            std::vector<geometry2d::Point> intersectPts =
+                PossibleBallIntersectionPts(ball, robot);
 
             // Doesn't intersect
             if (intersectPts.empty()) {
@@ -88,13 +88,14 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
 
             // We want to make sure that the ball is never inside the robot when doing this math, so we go back in time
             // This doesn't affect the results since we are just doing vectors
-            Geometry2d::Point ballPosSafePt = ball.getPos() - ball.getVel().normalized();
+            geometry2d::Point ballPosSafePt =
+                ball.getPos() - ball.getVel().normalized();
 
             // Find the closest point
             // AKA: the first point the ball will hit off the robot
             // May actually be slightly off because we add the ball radius to the calculation circle
             // Does not account for the mouth just yet
-            Geometry2d::Point closestIntersectPt = intersectPts.at(0);
+            geometry2d::Point closestIntersectPt = intersectPts.at(0);
             if ((ballPosSafePt - closestIntersectPt).magsq() > (ballPosSafePt - intersectPts.at(1)).magsq()) {
                 closestIntersectPt = intersectPts.at(1);
             }
@@ -105,13 +106,19 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
             // If there is no line intersect point (within that angle range)
             // then the ball is moving across the mouth of the robot
             // Note: No intersection across mouth is not accounted for
-            Geometry2d::Line intersectLine = Geometry2d::Line(intersectPts.at(0), intersectPts.at(1));
-            Geometry2d::Point mouthHalfUnitVec = Geometry2d::Point(0, 1).rotate(robot.getTheta());
-            Geometry2d::Point mouthCenterPos = Geometry2d::Point(Robot_MouthRadius, 0).rotate(robot.getTheta()) + robot.getPos();
-            Geometry2d::Line mouthLine = Geometry2d::Line(mouthCenterPos + mouthHalfUnitVec,
-                                                        mouthCenterPos - mouthHalfUnitVec);
+            geometry2d::Line intersectLine =
+                geometry2d::Line(intersectPts.at(0), intersectPts.at(1));
+            geometry2d::Point mouthHalfUnitVec =
+                geometry2d::Point(0, 1).rotate(robot.getTheta());
+            geometry2d::Point mouthCenterPos =
+                geometry2d::Point(Robot_MouthRadius, 0)
+                    .rotate(robot.getTheta()) +
+                robot.getPos();
+            geometry2d::Line mouthLine =
+                geometry2d::Line(mouthCenterPos + mouthHalfUnitVec,
+                                 mouthCenterPos - mouthHalfUnitVec);
 
-            Geometry2d::Point mouthIntersect;
+            geometry2d::Point mouthIntersect;
             bool intersects = intersectLine.intersects(mouthLine, &mouthIntersect);
 
             // The mouth is a chord across the circle.
@@ -137,27 +144,35 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
             //                    A-----D-----C
 
             // B->A
-            Geometry2d::Point intersectPtBallVector = ballPosSafePt - closestIntersectPt;
+            geometry2d::Point intersectPtBallVector =
+                ballPosSafePt - closestIntersectPt;
             // B->D (Officially R->B, but B->D makes more sense visually)
-            Geometry2d::Point robotIntersectPtVector = closestIntersectPt - robot.getPos();
-            Geometry2d::Point robotIntersectPtUnitVector = robotIntersectPtVector.normalized();
+            geometry2d::Point robotIntersectPtVector =
+                closestIntersectPt - robot.getPos();
+            geometry2d::Point robotIntersectPtUnitVector =
+                robotIntersectPtVector.normalized();
 
             // If it hit the mouth, the reflection line is pointing straight out
             if (didHitMouth) {
-                robotIntersectPtVector = Geometry2d::Point(1, 0).rotate(robot.getTheta());
+                robotIntersectPtVector =
+                    geometry2d::Point(1, 0).rotate(robot.getTheta());
                 robotIntersectPtUnitVector = robotIntersectPtVector;
             }
 
             // Project B->A vector onto B->D
             // This is so we can get D->A and D->C later
             double projectionMag = intersectPtBallVector.normalized().dot(robotIntersectPtUnitVector);
-            Geometry2d::Point projection = projectionMag * robotIntersectPtUnitVector;
+            geometry2d::Point projection =
+                projectionMag * robotIntersectPtUnitVector;
 
             // A->D, which is the same as D->C
-            Geometry2d::Point projectionDiff = projection - intersectPtBallVector;
+            geometry2d::Point projectionDiff =
+                projection - intersectPtBallVector;
 
-            Geometry2d::Point intersectPtReflectionVector = projection + projectionDiff;
-            Geometry2d::Point intersectPtReflectionUnitVector = intersectPtReflectionVector.normalized();
+            geometry2d::Point intersectPtReflectionVector =
+                projection + projectionDiff;
+            geometry2d::Point intersectPtReflectionUnitVector =
+                intersectPtReflectionVector.normalized();
 
             // Scale magnitude of velocity by a percentage
             double dampenLinCoeff   = *robot_body_lin_dampen;
@@ -221,27 +236,27 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
     return bounceFound;
 }
 
-
 bool BallBounce::BallInRobot(const KalmanBall& ball, const WorldRobot& robot) {
-    Geometry2d::Point nextPos = ball.getPos() + ball.getVel() * *VisionFilterConfig::vision_loop_dt;
+    geometry2d::Point nextPos =
+        ball.getPos() + ball.getVel() * *VisionFilterConfig::vision_loop_dt;
 
     return (robot.getPos() - nextPos).mag() < Robot_Radius + Ball_Radius;
 }
 
-std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
-        const KalmanBall& ball, const WorldRobot& robot) {
+std::vector<geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
+    const KalmanBall& ball, const WorldRobot& robot) {
     // http://mathworld.wolfram.com/Circle-LineIntersection.html
 
-    std::vector<Geometry2d::Point> out;
+    std::vector<geometry2d::Point> out;
 
     // ballPos is the ball pos in robot centered coordinates
     // ballVel is the ball vel vector in robot centered coordinates
     // We really just want a line in the direction of ball vel motion
-    Geometry2d::Point ballPos = ball.getPos() - robot.getPos();
-    Geometry2d::Point ballVel = ball.getPos() + ball.getVel() - robot.getPos();
+    geometry2d::Point ballPos = ball.getPos() - robot.getPos();
+    geometry2d::Point ballVel = ball.getPos() + ball.getVel() - robot.getPos();
 
     // Magnitude of the line
-    Geometry2d::Point d = ballVel - ballPos;
+    geometry2d::Point d = ballVel - ballPos;
     double dr = d.mag();
     // Determinant
     double D = ballPos.x()*ballVel.y() - ballPos.y()*ballVel.x();
@@ -270,8 +285,8 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
     y2 /= dr*dr;
     y2 += robot.getPos().y();
 
-    Geometry2d::Point pt1 = Geometry2d::Point(x1, y1);
-    Geometry2d::Point pt2 = Geometry2d::Point(x2, y2);
+    geometry2d::Point pt1 = geometry2d::Point(x1, y1);
+    geometry2d::Point pt2 = geometry2d::Point(x2, y2);
 
     double delta = r*r*dr*dr - D*D;
 

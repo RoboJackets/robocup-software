@@ -1,8 +1,9 @@
 #include "RobotWidget.hpp"
 
-#include <Constants.hpp>
-#include <Geometry2d/Util.hpp>
-#include <VisionDotPattern.hpp>
+#include <constants.h>
+#include <geometry2d/util.h>
+#include <vision_dot_pattern.h>
+
 #include <cmath>
 #include <stdexcept>
 

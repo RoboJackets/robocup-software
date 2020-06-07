@@ -1,13 +1,14 @@
 #pragma once
 
+#include <geometry2d/point.h>
+#include <geometry2d/shape_set.h>
+#include <utils.h>
+
 #include <DebugDrawer.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <QColor>
 #include <QString>
 #include <optional>
 
-#include "Utils.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/MotionInstant.hpp"
 
@@ -53,7 +54,7 @@ public:
      *from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+    virtual bool hit(const geometry2d::ShapeSet& obstacles,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime = nullptr) const = 0;
 
@@ -117,7 +118,7 @@ public:
 
     virtual bool pathsIntersect(const std::vector<DynamicObstacle>& paths,
                                 RJ::Time startTime,
-                                Geometry2d::Point* hitLocation,
+                                geometry2d::Point* hitLocation,
                                 RJ::Seconds* hitTime) const;
 
     virtual std::unique_ptr<ConstPathIterator> iterator(
@@ -157,7 +158,7 @@ public:
      *from
      * @return 		true if it hits an obstacle, otherwise false
      */
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+    virtual bool hit(const geometry2d::ShapeSet& obstacles,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override {
         return path->hit(obstacles, startTimeIntoPath, hitTime);

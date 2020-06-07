@@ -7,9 +7,9 @@ NelderMead2D::NelderMead2D(NelderMead2DConfig& config)
     : config(config), iterationCount(0) {
     // Creates starting points at [start], [start] + [-x, y], [start] + [x, y]
     for (int i = -1; i < 2; i++) {
-        Geometry2d::Point p =
+        geometry2d::Point p =
             config.start +
-            i * Geometry2d::Point(config.step.x(), i * config.step.y());
+            i * geometry2d::Point(config.step.x(), i * config.step.y());
 
         vertices.push_back(std::make_tuple((config.f)(p), p));
     }
@@ -31,9 +31,9 @@ bool NelderMead2D::singleStep() {
     auto& bestScore = std::get<0>(vertices.at(0));
 
     // Centroid of two best points
-    Geometry2d::Point centroid = (bestPoint + std::get<1>(vertices.at(1))) / 2;
+    geometry2d::Point centroid = (bestPoint + std::get<1>(vertices.at(1))) / 2;
 
-    Geometry2d::Point reflected =
+    geometry2d::Point reflected =
         centroid +
         config.reflectionCoeff * (centroid - std::get<1>(vertices.at(2)));
     float reflectedScore = (config.f)(reflected);
@@ -46,7 +46,7 @@ bool NelderMead2D::singleStep() {
 
     // If best point so far, expand in that reflected direction
     if (reflectedScore > bestScore) {
-        Geometry2d::Point expanded =
+        geometry2d::Point expanded =
             centroid + config.expansionCoeff * (reflected - centroid);
         float expandedScore = (config.f)(expanded);
 
@@ -59,7 +59,7 @@ bool NelderMead2D::singleStep() {
     }
 
     // reflectedScore > second worst
-    Geometry2d::Point contracted =
+    geometry2d::Point contracted =
         centroid +
         config.contractionCoeff * (std::get<1>(vertices.at(2)) - centroid);
     float contractedScore = (config.f)(contracted);
@@ -95,7 +95,7 @@ void NelderMead2D::execute() {
 /**
  * @return the XY coordinate of the current guess of the max
  */
-Geometry2d::Point NelderMead2D::getPoint() {
+geometry2d::Point NelderMead2D::getPoint() {
     sortVertices();
 
     return std::get<1>(vertices.at(0));
@@ -147,7 +147,7 @@ void NelderMead2D::sortVertices() {
                   -> bool { return std::get<0>(a) > std::get<0>(b); });
 }
 
-bool NelderMead2D::replaceWorst(float newScore, Geometry2d::Point newPoint) {
+bool NelderMead2D::replaceWorst(float newScore, geometry2d::Point newPoint) {
     vertices.at(2) = std::make_tuple(newScore, newPoint);
     return continueExecution();
 }

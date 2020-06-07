@@ -32,6 +32,3 @@ void ConfigServer::setGameSettingsCallback(const GameSettingsMsg& msg) {
 }
 
 }  // namespace config_server
-
-#include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(config_server::ConfigServer)

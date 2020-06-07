@@ -16,8 +16,8 @@ WorldBall::WorldBall() : isValid(false) {}
 WorldBall::WorldBall(RJ::Time calcTime,
                      const std::list<KalmanBall>& kalmanBalls)
     : isValid(true), time(calcTime) {
-    Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
-    Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
+    geometry2d::Point posAvg = geometry2d::Point(0, 0);
+    geometry2d::Point velAvg = geometry2d::Point(0, 0);
     double totalPosWeight = 0;
     double totalVelWeight = 0;
 
@@ -47,13 +47,13 @@ WorldBall::WorldBall(RJ::Time calcTime,
     for (const KalmanBall& ball : kalmanBalls) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Point posCov = ball.getPosCov();
-        Geometry2d::Point velCov = ball.getVelCov();
+        geometry2d::Point posCov = ball.getPosCov();
+        geometry2d::Point velCov = ball.getVelCov();
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Point posStdDev;
-        Geometry2d::Point velStdDev;
+        geometry2d::Point posStdDev;
+        geometry2d::Point velStdDev;
         posStdDev.x() = std::sqrt(posCov.x());
         posStdDev.y() = std::sqrt(posCov.y());
         velStdDev.x() = std::sqrt(velCov.x());
@@ -96,13 +96,9 @@ bool WorldBall::getIsValid() const {
     return isValid;
 }
 
-Geometry2d::Point WorldBall::getPos() const {
-    return pos;
-}
+geometry2d::Point WorldBall::getPos() const { return pos; }
 
-Geometry2d::Point WorldBall::getVel() const {
-    return vel;
-}
+geometry2d::Point WorldBall::getVel() const { return vel; }
 
 double WorldBall::getPosCov() const {
     return posCov;
@@ -116,6 +112,4 @@ const std::list<KalmanBall>& WorldBall::getBallComponents() const {
     return ballComponents;
 }
 
-RJ::Time WorldBall::getTime() const {
-    return time;
-}
+RJ::Time WorldBall::getTime() const { return time; }

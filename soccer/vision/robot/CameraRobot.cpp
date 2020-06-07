@@ -5,7 +5,7 @@ RJ::Time CameraRobot::getTimeCaptured() const {
     return timeCaptured;
 }
 
-Geometry2d::Point CameraRobot::getPos() const { return pose.position(); }
+geometry2d::Point CameraRobot::getPos() const { return pose.position(); }
 
 double CameraRobot::getTheta() const { return pose.heading(); }
 
@@ -13,14 +13,14 @@ int CameraRobot::getRobotID() const {
     return robotID;
 }
 
-Geometry2d::Pose CameraRobot::getPose() const { return pose; }
+geometry2d::Pose CameraRobot::getPose() const { return pose; }
 
 CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     // Make sure we don't divide by zero due to some weird error
     if (robots.empty()) {
         std::cout << "ERROR: Number of robots to combine is zero" << std::endl;
 
-        return CameraRobot(RJ::now(), Geometry2d::Pose(), -1);
+        return CameraRobot(RJ::now(), geometry2d::Pose(), -1);
     }
 
     // Have to do the average like Ti + sum(Tn - Ti)/N
@@ -28,15 +28,15 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     RJ::Time initTime = robots.front().getTimeCaptured();
     RJ::Seconds timeAvg = RJ::Seconds(0);
     // Adding angles are done through conversion to rect coords then back to polar
-    Geometry2d::Point posAvg;
-    Geometry2d::Point thetaCartesianAvg;
+    geometry2d::Point posAvg;
+    geometry2d::Point thetaCartesianAvg;
     int robotID = -1;
 
     for (const CameraRobot& cr : robots) {
         timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
         posAvg += cr.getPos();
         thetaCartesianAvg +=
-            Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
+            geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
         robotID = cr.getRobotID(); // Shouldn't change besides the first iteration
     }
 

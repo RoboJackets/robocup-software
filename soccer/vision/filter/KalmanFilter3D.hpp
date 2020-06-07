@@ -1,8 +1,10 @@
 #pragma once
 
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
+
 #include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+
 #include "KalmanFilter.hpp"
 
 class KalmanFilter3D : public KalmanFilter {
@@ -18,7 +20,7 @@ public:
      * @param initPose initial pose
      * @param initTwist initial twist
      */
-    KalmanFilter3D(Geometry2d::Pose initPose, Geometry2d::Twist initTwist);
+    KalmanFilter3D(geometry2d::Pose initPose, geometry2d::Twist initTwist);
 
     /**
      * Predicts with update
@@ -26,12 +28,12 @@ public:
      *
      * @param observation The observation for the current frame
      */
-    void predictWithUpdate(Geometry2d::Pose observation);
+    void predictWithUpdate(geometry2d::Pose observation);
 
     /**
      * @return Current position estimate
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return Current heading angle estimate
@@ -41,7 +43,7 @@ public:
     /**
      * @return Current velocity estimate
      */
-    Geometry2d::Point getVel() const;
+    geometry2d::Point getVel() const;
 
     /**
      * @return Current heading angle velocity estimate
@@ -51,7 +53,7 @@ public:
     /**
      * @return Current position covariance (X and Y)
      */
-    Geometry2d::Point getPosCov() const;
+    geometry2d::Point getPosCov() const;
 
     /**
      * @return Current heading covariance
@@ -61,7 +63,7 @@ public:
     /**
      * @return Current velocity covariance (X and Y)
      */
-    Geometry2d::Point getVelCov() const;
+    geometry2d::Point getVelCov() const;
 
     /**
      * @return Current heading angle velocity covariance

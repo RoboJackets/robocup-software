@@ -1,15 +1,15 @@
 #pragma once
 
-#include <deque>
+#include <geometry2d/point.h>
+#include <utils.h>
 
 #include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Utils.hpp>
+#include <deque>
 
 #include "vision/ball/WorldBall.hpp"
-#include "vision/robot/WorldRobot.hpp"
 #include "vision/kick/KickEvent.hpp"
 #include "vision/kick/VisionState.hpp"
+#include "vision/robot/WorldRobot.hpp"
 
 /**
  * Accurately detects kicks by robots using 5 or more samples

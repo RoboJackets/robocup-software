@@ -1,19 +1,19 @@
 #pragma once
 
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
+#include <constants.h>
+#include <geometry2d/arc.h>
+#include <geometry2d/composite_shape.h>
+#include <geometry2d/point.h>
+#include <geometry2d/polygon.h>
+#include <geometry2d/segment.h>
+#include <geometry2d/shape_set.h>
+#include <rj_robocup_protobuf/RadioRx.pb.h>
+#include <rj_robocup_protobuf/RadioTx.pb.h>
+#include <utils.h>
 
-#include <Constants.hpp>
 #include <GameState.hpp>
-#include <Geometry2d/Arc.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <QColor>
 #include <QMap>
-#include <Utils.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,23 +34,23 @@ class LogFrame;
  */
 class Ball {
 public:
-    Geometry2d::Point pos;
-    Geometry2d::Point vel;
+    geometry2d::Point pos;
+    geometry2d::Point vel;
     RJ::Time time;
     bool valid = false;
 
     [[nodiscard]] Planning::MotionInstant predict(RJ::Time estimateTime) const;
-    [[nodiscard]] Geometry2d::Point predictPosition(
+    [[nodiscard]] geometry2d::Point predictPosition(
         double seconds_from_now) const;
 
     [[nodiscard]] std::unique_ptr<Planning::Path> path(
         RJ::Time startTime) const;
 
-    RJ::Time estimateTimeTo(const Geometry2d::Point& point,
-                            Geometry2d::Point* nearPointOut = nullptr) const;
+    RJ::Time estimateTimeTo(const geometry2d::Point& point,
+                            geometry2d::Point* nearPointOut = nullptr) const;
 
     [[nodiscard]] double estimateSecondsTo(
-        const Geometry2d::Point& point) const;
+        const geometry2d::Point& point) const;
 
     [[nodiscard]] double estimateSecondsToDist(double dist) const;
 

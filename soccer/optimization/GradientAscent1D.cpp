@@ -1,6 +1,8 @@
 #include "GradientAscent1D.hpp"
+
 #include <math.h>
-#include <Utils.hpp>
+#include <utils.h>
+
 #include <algorithm>
 #include <tuple>
 

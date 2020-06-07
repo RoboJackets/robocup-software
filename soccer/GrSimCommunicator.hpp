@@ -1,11 +1,11 @@
 #pragma once
 
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/grSim_Replacement.pb.h>
+#include <geometry2d/transform_matrix.h>
+#include <rj_robocup_protobuf/grSim_Commands.pb.h>
+#include <rj_robocup_protobuf/grSim_Packet.pb.h>
+#include <rj_robocup_protobuf/grSim_Replacement.pb.h>
 
 #include <Context.hpp>
-#include <Geometry2d/TransformMatrix.hpp>
 #include <Node.hpp>
 #include <boost/asio.hpp>
 
@@ -16,7 +16,7 @@ public:
     void sendSimCommand(const grSim_Packet& cmd);
 
     // Places the ball at a position on the screen
-    void placeBall(QPointF pos, Geometry2d::TransformMatrix _screenToWorld);
+    void placeBall(QPointF pos, geometry2d::TransformMatrix _screenToWorld);
 
     void run() override;
 

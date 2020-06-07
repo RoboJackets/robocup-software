@@ -1,5 +1,7 @@
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include <rrt/BiRRT.hpp>
+
 #include "Configuration.hpp"
 #include "SystemState.hpp"
 
@@ -19,8 +21,8 @@ public:
 };
 
 /// Drawing
-void DrawRRT(const RRT::Tree<Geometry2d::Point>& rrt, DebugDrawer* debug_drawer,
+void DrawRRT(const RRT::Tree<geometry2d::Point>& rrt, DebugDrawer* debug_drawer,
              unsigned shellID);
-void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
+void DrawBiRRT(const RRT::BiRRT<geometry2d::Point>& biRRT,
                DebugDrawer* debug_drawer, unsigned shellID);
 }  // Planning

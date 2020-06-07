@@ -1,12 +1,12 @@
 #include "CollectPathPlanner.hpp"
 
 #include "Configuration.hpp"
-#include "Constants.hpp"
+#include "constants.h"
 #include "planning/MotionInstant.hpp"
 #include "planning/paths/CompositePath.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 

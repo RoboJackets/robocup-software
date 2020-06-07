@@ -8,7 +8,7 @@ PlannerNode::PlannerNode(Context* context)
       path_planner_{
           std::make_unique<Planning::IndependentMultiRobotPathPlanner>()} {}
 
-using namespace Geometry2d;
+using namespace geometry2d;
 void PlannerNode::run() {
     /// Collect global obstacles
     const GlobalObstacles global_obstacles = getGlobalObstacles();
@@ -40,10 +40,10 @@ void PlannerNode::run() {
 }
 
 GlobalObstacles PlannerNode::getGlobalObstacles() {
-    const Geometry2d::ShapeSet global_obstacles = context_->globalObstacles;
-    const Geometry2d::ShapeSet goal_zone_obstacles =
+    const geometry2d::ShapeSet global_obstacles = context_->globalObstacles;
+    const geometry2d::ShapeSet goal_zone_obstacles =
         context_->goalZoneObstacles;
-    Geometry2d::ShapeSet global_obstacles_with_goal_zones = global_obstacles;
+    geometry2d::ShapeSet global_obstacles_with_goal_zones = global_obstacles;
     global_obstacles_with_goal_zones.add(goal_zone_obstacles);
 
     return {global_obstacles, goal_zone_obstacles,
@@ -73,7 +73,7 @@ std::map<int, Planning::PlanRequest> PlannerNode::buildPlanRequests(
                     : global_obstacles.global_obstacles_with_goal_zones;
 
             // create and visualize obstacles
-            Geometry2d::ShapeSet staticObstacles = r->collectStaticObstacles(
+            geometry2d::ShapeSet staticObstacles = r->collectStaticObstacles(
                 globalObstaclesForBot,
                 !(r->shell() == context_->game_state.getGoalieId() ||
                   r->isPenaltyKicker || r->isBallPlacer));

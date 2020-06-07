@@ -2,7 +2,7 @@
 #include <DebugDrawer.hpp>
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 
@@ -55,7 +55,7 @@ std::optional<RobotInstant> CompositePath::eval(RJ::Seconds t) const {
     return std::nullopt;
 }
 
-bool CompositePath::hit(const Geometry2d::ShapeSet& obstacles,
+bool CompositePath::hit(const geometry2d::ShapeSet& obstacles,
                         RJ::Seconds startTimeIntoPath,
                         RJ::Seconds* hitTime) const {
     if (paths.empty()) {

@@ -1,6 +1,8 @@
 
 #include "StyleSheetManager.hpp"
-#include <Utils.hpp>
+
+#include <utils.h>
+
 #include <map>
 
 // To add a new style sheet, declare the static variable

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <list>
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
 
 #include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <list>
 
 #include "KalmanRobot.hpp"
 
@@ -52,7 +52,7 @@ public:
     /**
      * @return The best estimated position of the robot
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return The best estimated heading of the robot
@@ -62,12 +62,12 @@ public:
     /**
      * @return The best estimated pose of the robot
      */
-    Geometry2d::Pose getPose() const;
+    geometry2d::Pose getPose() const;
 
     /**
      * @return The best estimated velocity of the robot
      */
-    Geometry2d::Point getVel() const;
+    geometry2d::Point getVel() const;
 
     /**
      * @return The best estimated angular velocity of the robot
@@ -77,7 +77,7 @@ public:
     /**
      * @return The best estimated twist of the robot
      */
-    Geometry2d::Twist getTwist() const;
+    geometry2d::Twist getTwist() const;
 
     /**
      * @return The average position covariance of the filter including theta
@@ -104,8 +104,8 @@ public:
 private:
     Team team;
     int robotID{};
-    Geometry2d::Pose pose;
-    Geometry2d::Twist twist;
+    geometry2d::Pose pose;
+    geometry2d::Twist twist;
     double posCov{};
     double velCov{};
     std::list<KalmanRobot> robotComponents;

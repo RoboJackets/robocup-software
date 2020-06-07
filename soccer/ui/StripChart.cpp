@@ -1,10 +1,10 @@
 #include "StripChart.hpp"
 
+#include <constants.h>
+#include <geometry2d/point.h>
 #include <google/protobuf/descriptor.h>
-#include <protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
-#include <Constants.hpp>
-#include <Geometry2d/Point.hpp>
 #include <QDateTime>
 #include <QFileDialog>
 #include <QPainter>
@@ -231,7 +231,7 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
     }
 
     *v = static_cast<float>(
-        Geometry2d::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
+        geometry2d::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
     return true;
 }
 

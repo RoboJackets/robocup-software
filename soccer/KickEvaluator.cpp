@@ -1,14 +1,15 @@
 #include "KickEvaluator.hpp"
 
-#include <Geometry2d/Util.hpp>
-#include <Utils.hpp>
+#include <geometry2d/util.h>
+#include <utils.h>
+
 #include <algorithm>
 #include <cmath>
 #include <vector>
 
 REGISTER_CONFIGURABLE(KickEvaluator)
 
-using Geometry2d::Point, Geometry2d::Segment, Geometry2d::Line;
+using geometry2d::Point, geometry2d::Segment, geometry2d::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function,
     std::pair, std::get;
 
@@ -53,18 +54,18 @@ KickResults KickEvaluator::eval_pt_to_robot(Point origin, Point target) {
 
 KickResults KickEvaluator::eval_pt_to_opp_goal(Point origin) {
     Segment their_goal{
-        Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-              Field_Dimensions::Current_Dimensions.Length()}};
+        Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2,
+              FieldDimensions::Current_Dimensions.Length()},
+        Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2,
+              FieldDimensions::Current_Dimensions.Length()}};
 
     return eval_pt_to_seg(origin, their_goal);
 }
 
 KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
     Segment our_goal{
-        Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0},
-        Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}};
+        Point{-FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0},
+        Point{FieldDimensions::Current_Dimensions.GoalWidth() / 2, 0}};
 
     return eval_pt_to_seg(origin, our_goal);
 }

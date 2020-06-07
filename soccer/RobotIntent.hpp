@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Constants.hpp>
-#include <Geometry2d/ShapeSet.hpp>
+#include <constants.h>
+#include <geometry2d/shape_set.h>
+
 #include "planning/MotionCommand.hpp"
 #include "planning/RotationCommand.hpp"
 
@@ -16,7 +17,7 @@ struct RobotIntent {
     std::unique_ptr<Planning::RotationCommand> rotation_command;
 
     /// set of obstacles added by plays
-    Geometry2d::ShapeSet local_obstacles;
+    geometry2d::ShapeSet local_obstacles;
 
     /// masks for obstacle avoidance
     RobotMask opp_avoid_mask;

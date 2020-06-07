@@ -149,7 +149,7 @@ add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
-target_link_libraries(robocup common rc-fshare)
+target_link_libraries(robocup rc-fshare)
 target_link_libraries(robocup Qt5::Widgets Qt5::Xml Qt5::Core Qt5::OpenGL Qt5::Network Qt5::Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
 target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
@@ -158,13 +158,11 @@ target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL2_LIBRARIES})
 
-ament_target_dependencies(robocup ament_index_cpp)
+# Common libs
+target_link_libraries(robocup geometry2d rj_robocup_network proto_messages common)
+target_include_directories(robocup PRIVATE ${COMMON_INCLUDE_DIR})
 
-# ROS2 messages
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/GameSettings.msg"
-  "srv/SetGameSettings.srv"
-  )
+ament_target_dependencies(robocup ament_index_cpp)
 
 
 # RRT
@@ -196,15 +194,15 @@ target_link_libraries(soccer robocup)
 
 # Add a test runner target "test-soccer" to run all tests in this directory
 set(SOCCER_TEST_SRC
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CircleTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/TransformMatrixTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/ArcTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/CircleTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/CompositeShapeTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/LineTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/PointTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/PoseTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/RectTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/SegmentTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/geometry2d/TransformMatrixTest.cpp"
     "BatteryProfileTest.cpp"
     "KickEvaluatorTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"

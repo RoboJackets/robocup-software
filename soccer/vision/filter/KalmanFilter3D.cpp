@@ -20,8 +20,8 @@ void KalmanFilter3D::createConfiguration(Configuration* cfg) {
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1,1) {}
 
-KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
-                               Geometry2d::Twist initTwist)
+KalmanFilter3D::KalmanFilter3D(geometry2d::Pose initPose,
+                               geometry2d::Twist initTwist)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1 << initPose.position().x(), initTwist.linear().x(),
@@ -100,42 +100,39 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
            0,   0, s*o;
 }
 
-void KalmanFilter3D::predictWithUpdate(Geometry2d::Pose observation) {
+void KalmanFilter3D::predictWithUpdate(geometry2d::Pose observation) {
     z_k << observation.position().x(), observation.position().y(),
         observation.heading();
 
     KalmanFilter::predictWithUpdate();
 }
 
-
-Geometry2d::Point KalmanFilter3D::getPos() const {
-    return Geometry2d::Point(x_k_k(0), x_k_k(2));
+geometry2d::Point KalmanFilter3D::getPos() const {
+    return geometry2d::Point(x_k_k(0), x_k_k(2));
 }
 
 double KalmanFilter3D::getTheta() const {
     return x_k_k(4);
 }
 
-Geometry2d::Point KalmanFilter3D::getVel() const {
-    return Geometry2d::Point(x_k_k(1), x_k_k(3));
+geometry2d::Point KalmanFilter3D::getVel() const {
+    return geometry2d::Point(x_k_k(1), x_k_k(3));
 }
 
 double KalmanFilter3D::getOmega() const {
     return x_k_k(5);
 }
 
-Geometry2d::Point KalmanFilter3D::getPosCov() const {
-    return Geometry2d::Point(P_k_k(0,0), P_k_k(2,2));
+geometry2d::Point KalmanFilter3D::getPosCov() const {
+    return geometry2d::Point(P_k_k(0, 0), P_k_k(2, 2));
 }
 
 double KalmanFilter3D::getThetaCov() const {
     return P_k_k(4,4);
 }
 
-Geometry2d::Point KalmanFilter3D::getVelCov() const {
-    return Geometry2d::Point(P_k_k(1,1), P_k_k(3,3));
+geometry2d::Point KalmanFilter3D::getVelCov() const {
+    return geometry2d::Point(P_k_k(1, 1), P_k_k(3, 3));
 }
 
-double KalmanFilter3D::getOmegaCov() const {
-    return P_k_k(5,5);
-}
+double KalmanFilter3D::getOmegaCov() const { return P_k_k(5, 5); }

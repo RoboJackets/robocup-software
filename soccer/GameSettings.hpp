@@ -1,8 +1,8 @@
 #pragma once
 
-#include <optional>
+#include <referee_enums.h>
 
-#include "RefereeEnums.hpp"
+#include <optional>
 
 /**
  * Settings for the game, set by MainWindow to be consumed by the rest of the

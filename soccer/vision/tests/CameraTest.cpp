@@ -1,5 +1,6 @@
+#include <constants.h>
 #include <gtest/gtest.h>
-#include <Constants.hpp>
+
 #include "vision/camera/Camera.hpp"
 
 TEST(Camera, invalid_camera) {
@@ -76,16 +77,16 @@ TEST(Camera, update_with_single_frame) {
     std::vector<WorldRobot> wry(Num_Shells, WorldRobot());
     std::vector<WorldRobot> wrb(Num_Shells, WorldRobot());
 
-    b.emplace_back(RJ::now(), Geometry2d::Point(0, 0));
-    b.emplace_back(RJ::now(), Geometry2d::Point(0.5, 0.5));
+    b.emplace_back(RJ::now(), geometry2d::Point(0, 0));
+    b.emplace_back(RJ::now(), geometry2d::Point(0.5, 0.5));
 
     yr.at(0).emplace_back(RJ::now(),
-                          Geometry2d::Pose(Geometry2d::Point(1, 1), 0), 0);
+                          geometry2d::Pose(geometry2d::Point(1, 1), 0), 0);
     yr.at(0).emplace_back(
-        RJ::now(), Geometry2d::Pose(Geometry2d::Point(1.5, 1.5), 0.5), 0);
+        RJ::now(), geometry2d::Pose(geometry2d::Point(1.5, 1.5), 0.5), 0);
 
     br.at(0).emplace_back(
-        RJ::now(), Geometry2d::Pose(Geometry2d::Point(1.5, 1.5), 0.5), 0);
+        RJ::now(), geometry2d::Pose(geometry2d::Point(1.5, 1.5), 0.5), 0);
 
     c.updateWithFrame(t, b, yr, br, wb, wry, wrb);
 

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
-#include <protobuf/referee.pb.h>
+#include <referee_enums.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/referee.pb.h>
+#include <utils.h>
+
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>
-#include "RefereeEnums.hpp"
-
-#include <Utils.hpp>
 #include <mutex>
 #include <thread>
 #include <vector>
@@ -117,7 +117,7 @@ protected:
     };
     KickDetectState _kickDetectState;
 
-    Geometry2d::Point _readyBallPos;
+    geometry2d::Point _readyBallPos;
 
     // Time the ball was first beyond KickThreshold from its original position
     RJ::Time _kickTime;

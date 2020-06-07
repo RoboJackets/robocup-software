@@ -71,7 +71,7 @@ private:
                                   const MotionInstant& startInstant,
                                   std::unique_ptr<Path> prevPath,
                                   std::unique_ptr<Path> partialPath,
-                                  const Geometry2d::ShapeSet& obstacles);
+                                  const geometry2d::ShapeSet& obstacles);
 
     std::unique_ptr<Path> invalid(const PlanRequest& planRequest);
 
@@ -85,15 +85,15 @@ private:
     CollectPathPlannerStates currentState;
 
     // Ball Velocity Filtering Variables
-    Geometry2d::Point averageBallVel;
+    geometry2d::Point averageBallVel;
     bool averageBallVelInitialized;
 
-    Geometry2d::Point approachDirection;
+    geometry2d::Point approachDirection;
     bool approachDirectionCreated;
 
     bool controlPathCreated;
 
-    Geometry2d::Point pathCourseTarget;
+    geometry2d::Point pathCourseTarget;
 
     // Controls at which ball speed we should try to go directly to the ball
     // or to move behind it and in the same direction as it

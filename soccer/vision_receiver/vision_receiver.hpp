@@ -1,9 +1,9 @@
 #pragma once
 
 #include <config_client/config_client.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <network/network_constants.h>
+#include <rj_robocup_protobuf/messages_robocup_ssl_wrapper.pb.h>
 
-#include <Network.hpp>
 #include <boost/asio.hpp>
 #include <cstdint>
 #include <rclcpp/rclcpp.hpp>

@@ -1,12 +1,13 @@
+#include <geometry2d/point.h>
+#include <gtest/gtest.h>
+
+#include <Context.hpp>
 #include <optional>
 
-#include <gtest/gtest.h>
-#include <Context.hpp>
-#include <Geometry2d/Point.hpp>
 #include "TargetVelPathPlanner.hpp"
 #include "planning/MotionCommand.hpp"
 
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 

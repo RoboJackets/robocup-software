@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
+#include <geometry2d/point.h>
+#include <utils.h>
 
-#include <Geometry2d/Point.hpp>
-#include <Utils.hpp>
+#include <vector>
 
 /**
  * Wrapper for the protobuf observation
@@ -14,7 +14,7 @@ public:
      * @param timeCaptured Time that the picture was taken
      * @param pos Position of the ball at that time
      */
-    CameraBall(RJ::Time timeCaptured, Geometry2d::Point pos)
+    CameraBall(RJ::Time timeCaptured, geometry2d::Point pos)
         : timeCaptured(timeCaptured), pos(pos) {}
 
     /**
@@ -25,7 +25,7 @@ public:
     /**
      * @return Position of the measurement
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * Combines all the balls in the list and returns a ball
@@ -37,5 +37,5 @@ public:
 
 private:
     RJ::Time timeCaptured;
-    Geometry2d::Point pos;
+    geometry2d::Point pos;
 };

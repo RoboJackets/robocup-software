@@ -72,7 +72,7 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
         }
 
         // Rotate x_vel and y_vel so that it's the field's x and y
-        Geometry2d::Point translation{x_vel, y_vel};
+        geometry2d::Point translation{x_vel, y_vel};
         translation.rotate(-M_PI / 2 - robot->angle());
 
         x_vel = static_cast<float>(translation.x());
@@ -215,7 +215,7 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
 }
 
 void ManualControlNode::applyControlModifiers() {
-    Geometry2d::Point trans{controls_.x_vel, controls_.y_vel};
+    geometry2d::Point trans{controls_.x_vel, controls_.y_vel};
     trans.clamp(std::sqrt(2.0));
     controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
 

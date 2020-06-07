@@ -1,15 +1,15 @@
 #include "MotionControl.hpp"
 
+#include <geometry2d/util.h>
+#include <utils.h>
+
 #include <Context.hpp>
-#include <Geometry2d/Util.hpp>
-#include <Robot.hpp>
 #include <RobotConfig.hpp>
-#include <Utils.hpp>
 #include <optional>
 #include <planning/MotionInstant.hpp>
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 using namespace Planning;
 
 #pragma mark Config Variables

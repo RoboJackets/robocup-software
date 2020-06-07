@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
@@ -25,9 +26,9 @@ public:
 private:
     bool shouldReplan(const PlanRequest& planRequest) const;
 
-    Geometry2d::Point calculateNonblockedPathEndpoint(
-        Geometry2d::Point start, Geometry2d::Point dir,
-        const Geometry2d::ShapeSet& obstacles) const;
+    geometry2d::Point calculateNonblockedPathEndpoint(
+        geometry2d::Point start, geometry2d::Point dir,
+        const geometry2d::ShapeSet& obstacles) const;
 
     /// If the desired target velocity changes by this much, the path is
     /// replanned

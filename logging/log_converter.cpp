@@ -1,17 +1,14 @@
-#include <RefereeEnums.hpp>
-
+#include <fcntl.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <protobuf/LogFrame.pb.h>
-#include <protobuf/referee.pb.h>
+#include <referee_enums.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/referee.pb.h>
+#include <unistd.h>
 
 #include <QFile>
 #include <QTextStream>
-
-#include <vector>
-
-#include <fcntl.h>
-#include <unistd.h>
 #include <ctime>
+#include <vector>
 
 using namespace Packet;
 using namespace std;

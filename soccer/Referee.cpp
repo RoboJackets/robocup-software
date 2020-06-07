@@ -1,15 +1,15 @@
 #include "Referee.hpp"
 
+#include <network/multicast.h>
+#include <network/network_constants.h>
+#include <referee_enums.h>
 #include <unistd.h>
+#include <utils.h>
 
-#include <Network.hpp>
-#include <Utils.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <multicast.hpp>
 #include <stdexcept>
 
-#include "Constants.hpp"
-#include "RefereeEnums.hpp"
+#include "constants.h"
 
 using RefereeModuleEnums::Command;
 using RefereeModuleEnums::Stage;
@@ -274,7 +274,7 @@ GameState Referee::updateGameState(Command command) const {
     GameState::State state = _game_state.state;
     GameState::Restart restart = _game_state.restart;
     bool our_restart = _game_state.ourRestart;
-    Geometry2d::Point ball_placement_point = _game_state.ballPlacementPoint;
+    geometry2d::Point ball_placement_point = _game_state.ballPlacementPoint;
 
     bool blue_team = _game_state.blueTeam;
 

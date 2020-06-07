@@ -15,14 +15,14 @@ TEST(Logger, SaveContext) {
 
     // It should save robot states, and their radio packets
     context.world_state.our_robots.at(0) =
-        RobotState{Geometry2d::Pose(1, 2, 3), Geometry2d::Twist(4, 5, 6),
+        RobotState{geometry2d::Pose(1, 2, 3), geometry2d::Twist(4, 5, 6),
                    start_time, true, true};
     context.robot_status.at(0).timestamp = start_time;
     context.robot_status.at(0).kicker = RobotStatus::KickerState::kCharged;
 
     // It should not save invisible robots though
     context.world_state.our_robots.at(1) =
-        RobotState{Geometry2d::Pose(1, 2, 3), Geometry2d::Twist(4, 5, 6),
+        RobotState{geometry2d::Pose(1, 2, 3), geometry2d::Twist(4, 5, 6),
                    start_time, false, true};
 
     // Or their radio packets
@@ -51,7 +51,7 @@ TEST(Logger, SerializeDeserialize) {
 
     RJ::Time start_time = RJ::now();
     context.world_state.our_robots.at(0) =
-        RobotState{Geometry2d::Pose(1, 2, 3), Geometry2d::Twist(4, 5, 6),
+        RobotState{geometry2d::Pose(1, 2, 3), geometry2d::Twist(4, 5, 6),
                    start_time, true, true};
     context.robot_status.at(0).timestamp = start_time;
     context.robot_status.at(0).kicker = RobotStatus::KickerState::kCharged;

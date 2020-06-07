@@ -2,11 +2,11 @@
 
 #include <stdexcept>
 
-using namespace Geometry2d;
+using namespace geometry2d;
 namespace Planning {
 
-TrapezoidalPath::TrapezoidalPath(Geometry2d::Point startPos, double startSpeed,
-                                 Geometry2d::Point endPos, double endSpeed,
+TrapezoidalPath::TrapezoidalPath(geometry2d::Point startPos, double startSpeed,
+                                 geometry2d::Point endPos, double endSpeed,
                                  const MotionConstraints constraints)
     : _startPos(startPos),
       _startSpeed(std::min(startSpeed, constraints.maxSpeed)),
@@ -40,7 +40,7 @@ std::optional<RobotInstant> TrapezoidalPath::eval(RJ::Seconds time) const {
                                       _pathDirection * speedOut));
 }
 
-bool TrapezoidalPath::hit(const Geometry2d::ShapeSet& obstacles,
+bool TrapezoidalPath::hit(const geometry2d::ShapeSet& obstacles,
                           RJ::Seconds initialTime, RJ::Seconds* hitTime) const {
     std::set<std::shared_ptr<Shape>> startHitSet = obstacles.hitSet(_startPos);
     for (RJ::Seconds t = initialTime; t < _duration; t += RJ::Seconds(0.1)) {
@@ -90,8 +90,8 @@ std::unique_ptr<Path> TrapezoidalPath::subPath(RJ::Seconds startTime,
             "TrapezoidalPath::subPath(): startTime(" + to_string(startTime) +
             ") can't be greater than the duration(" + to_string(_duration) +
             ") of the path"));
-        return std::make_unique<TrapezoidalPath>(Geometry2d::Point(0, 0), 0,
-                                                 Geometry2d::Point(0, 0), 0,
+        return std::make_unique<TrapezoidalPath>(geometry2d::Point(0, 0), 0,
+                                                 geometry2d::Point(0, 0), 0,
                                                  _constraints);
     }
 

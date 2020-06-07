@@ -3,7 +3,7 @@
 
 TEST(CameraBall, get_time_captured) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
 
     CameraBall b = CameraBall(t, p);
 
@@ -14,11 +14,11 @@ TEST(CameraBall, get_time_captured) {
 
 TEST(CameraBall, get_pos) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
 
     CameraBall b = CameraBall(t, p);
 
-    Geometry2d::Point r = b.getPos();
+    geometry2d::Point r = b.getPos();
 
     EXPECT_EQ(p.x(), r.x());
     EXPECT_EQ(p.x(), r.x());
@@ -36,7 +36,7 @@ TEST(CameraBall, combine_zero) {
 
 TEST(CameraBall, combine_one) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
 
     std::vector<CameraBall> balls;
     balls.emplace_back(t, p);
@@ -50,10 +50,10 @@ TEST(CameraBall, combine_one) {
 
 TEST(CameraBall, combine_two) {
     RJ::Time t1 = RJ::now();
-    Geometry2d::Point p1 = Geometry2d::Point(1,1);
+    geometry2d::Point p1 = geometry2d::Point(1, 1);
 
     RJ::Time t2 = t1;
-    Geometry2d::Point p2 = Geometry2d::Point(2,2);
+    geometry2d::Point p2 = geometry2d::Point(2, 2);
 
     std::vector<CameraBall> balls;
     balls.emplace_back(t1, p1);

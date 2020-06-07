@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
-#include <Constants.hpp>
-#include <Geometry2d/Point.hpp>
+#include <constants.h>
+#include <geometry2d/point.h>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -36,7 +36,7 @@ bool Camera::getIsValid() const {
 void Camera::processBallBounce(const std::vector<WorldRobot>& yellowRobots,
                                const std::vector<WorldRobot>& blueRobots) {
     for (KalmanBall& b : kalmanBallList) {
-        Geometry2d::Point newVel;
+        geometry2d::Point newVel;
         bool isCollision = BallBounce::CalcBallBounce(b, yellowRobots,
                                                       blueRobots, newVel);
 
@@ -322,7 +322,7 @@ void Camera::updateRobotsMHKF(RJ::Time calcTime,
         if (!wasUsed && singleKalmanRobotList.size() < *max_num_kalman_robots) {
             singleKalmanRobotList.emplace_back(cameraID, calcTime, cameraRobot, previousWorldRobot);
         }
-        
+
         cameraRobotIdx++;
     }
 }

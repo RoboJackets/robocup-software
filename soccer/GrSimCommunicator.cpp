@@ -1,7 +1,7 @@
 #include "GrSimCommunicator.hpp"
 
-#include <Constants.hpp>
-#include <Network.hpp>
+#include <constants.h>
+#include <network/network_constants.h>
 
 using namespace boost::asio;
 using namespace Packet;
@@ -27,7 +27,7 @@ void GrSimCommunicator::run() {
 }
 
 void GrSimCommunicator::placeBall(QPointF pos,
-                                  Geometry2d::TransformMatrix _screenToWorld) {
+                                  geometry2d::TransformMatrix _screenToWorld) {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();

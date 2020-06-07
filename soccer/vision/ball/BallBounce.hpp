@@ -1,9 +1,9 @@
 #pragma once
 
-#include <vector>
+#include <geometry2d/point.h>
 
-#include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
+#include <vector>
 
 #include "KalmanBall.hpp"
 #include "vision/robot/WorldRobot.hpp"
@@ -32,7 +32,7 @@ public:
     static bool CalcBallBounce(const KalmanBall& ball,
                                const std::vector<WorldRobot>& yellowRobots,
                                const std::vector<WorldRobot>& blueRobots,
-                               Geometry2d::Point& outNewVel);
+                               geometry2d::Point& outNewVel);
 
     static void createConfiguration(Configuration* cfg);
 
@@ -58,8 +58,8 @@ private:
      * 1 means tangental intersection
      * 2 means chord based intersection
      */
-    static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
-            const KalmanBall& ball, const WorldRobot& robot);
+    static std::vector<geometry2d::Point> PossibleBallIntersectionPts(
+        const KalmanBall& ball, const WorldRobot& robot);
 
     // Linear velocity dampen
     // Body is bouncing off the circular shell

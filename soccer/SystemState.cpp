@@ -1,7 +1,7 @@
-#include <protobuf/LogFrame.pb.h>
+#include <geometry2d/line.h>
+#include <geometry2d/polygon.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
-#include <Geometry2d/Line.hpp>
-#include <Geometry2d/Polygon.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
@@ -14,14 +14,14 @@
 using namespace Packet;
 using namespace std;
 using namespace Planning;
-using namespace Geometry2d;
+using namespace geometry2d;
 using Planning::MotionInstant;
 
 class BallPath : public Planning::Path {
 public:
     BallPath(const Ball& ball) : ball(ball){};
 
-    bool hit(const Geometry2d::ShapeSet& /*obstacles*/,
+    bool hit(const geometry2d::ShapeSet& /*obstacles*/,
              RJ::Seconds /*startTimeIntoPath*/,
              RJ::Seconds* /*hitTime*/) const override {
         throw std::runtime_error("Unsupported Opperation");
@@ -116,13 +116,13 @@ Planning::MotionInstant Ball::predict(RJ::Time estimateTime) const {
     return MotionInstant(pos + vel.normalized(distance), vel.normalized(speed));
 }
 
-Geometry2d::Point Ball::predictPosition(double seconds_from_now) const {
+geometry2d::Point Ball::predictPosition(double seconds_from_now) const {
     const auto motionInstant = this->predict(RJ::now() + RJ::Seconds(seconds_from_now));
     return motionInstant.pos;
 }
 
-RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
-                              Geometry2d::Point* nearPointOut) const {
+RJ::Time Ball::estimateTimeTo(const geometry2d::Point& point,
+                              geometry2d::Point* nearPointOut) const {
     Line line(pos, pos + vel);
     auto nearPoint = line.nearestPoint(point);
     if (nearPointOut != nullptr) {
@@ -144,7 +144,7 @@ RJ::Time Ball::estimateTimeTo(const Geometry2d::Point& point,
     // auto part = vel.mag() * -3.43289;
 }
 
-double Ball::estimateSecondsTo(const Geometry2d::Point& point) const {
+double Ball::estimateSecondsTo(const geometry2d::Point& point) const {
     const auto time = estimateTimeTo(point);
     return RJ::Seconds(time - RJ::now()).count();
 }

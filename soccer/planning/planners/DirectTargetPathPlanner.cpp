@@ -2,7 +2,7 @@
 
 #include "planning/MotionCommand.hpp"
 
-using namespace Geometry2d;
+using namespace geometry2d;
 namespace Planning {
 
 double vectorInDirection(Point point, Point direction) {
@@ -13,7 +13,7 @@ double vectorInDirection(Point point, Point direction) {
 std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     const Planning::DirectPathTargetCommand& command =
@@ -21,7 +21,7 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
             *planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
-        Geometry2d::Point endTarget = command.pathGoal.pos;
+        geometry2d::Point endTarget = command.pathGoal.pos;
         const auto direction = (endTarget - startInstant.pos).normalized();
 
         float endSpeed = command.pathGoal.vel.mag();
@@ -39,7 +39,7 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
 bool DirectTargetPathPlanner::shouldReplan(
     const PlanRequest& planRequest) const {
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const Planning::DirectPathTargetCommand& command =
@@ -51,7 +51,7 @@ bool DirectTargetPathPlanner::shouldReplan(
     } else {
         // For DirectTarget commands, we replan if the goal position or velocity
         // have changed beyond a certain threshold
-        Geometry2d::Point endTarget = command.pathGoal.pos;
+        geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
         float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;

@@ -17,7 +17,7 @@ TEST(WorldRobot, no_robot) {
 
 TEST(WorldRobot, one_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
+    geometry2d::Pose pose(geometry2d::Point(1, 1), 1);
     int rID = 1;
     CameraRobot b = CameraRobot(t, pose, rID);
     int cID = 1;
@@ -30,11 +30,11 @@ TEST(WorldRobot, one_robot) {
 
     WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, rID, kbl);
 
-    Geometry2d::Point rp = wb.getPos();
+    geometry2d::Point rp = wb.getPos();
     double rt = wb.getTheta();
-    Geometry2d::Point rv = wb.getVel();
+    geometry2d::Point rv = wb.getVel();
     double ro = wb.getOmega();
-    
+
     double rpc = wb.getPosCov();
     double rvc = wb.getVelCov();
 
@@ -57,11 +57,11 @@ TEST(WorldRobot, one_robot) {
 
 TEST(WorldRobot, two_robot) {
     RJ::Time t = RJ::now();
-    Geometry2d::Pose pose1(Geometry2d::Point(1, 1), 1);
-    Geometry2d::Pose pose2(Geometry2d::Point(2, 2), 2);
+    geometry2d::Pose pose1(geometry2d::Point(1, 1), 1);
+    geometry2d::Pose pose2(geometry2d::Point(2, 2), 2);
 
-    // Geometry2d::Point p1 = Geometry2d::Point(1,1);
-    // Geometry2d::Point p2 = Geometry2d::Point(2,2);
+    // geometry2d::Point p1 = geometry2d::Point(1,1);
+    // geometry2d::Point p2 = geometry2d::Point(2,2);
     // double th1 = 1;
     // double th2 = 2;
     int rID = 1;
@@ -79,9 +79,9 @@ TEST(WorldRobot, two_robot) {
 
     WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, rID, kbl);
 
-    Geometry2d::Point rp = wb.getPos();
+    geometry2d::Point rp = wb.getPos();
     double rt = wb.getTheta();
-    Geometry2d::Point rv = wb.getVel();
+    geometry2d::Point rv = wb.getVel();
     double ro = wb.getOmega();
     double rpc = wb.getPosCov();
     double rvc = wb.getVelCov();

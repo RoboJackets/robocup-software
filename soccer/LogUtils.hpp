@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
 #include <QColor>
 #include <QPointF>

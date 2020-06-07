@@ -1,6 +1,6 @@
 #include "World.hpp"
 
-#include <Constants.hpp>
+#include <constants.h>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -167,7 +167,6 @@ void World::detectKicks(RJ::Time calcTime) {
 
     // If there isn't a kick recorded already
     if (!bestKickEstimate.getIsValid()) {
-        
         // Try to use the slow kick as it's a better estimate
         // but take fast kick if there isn't a corrsponding slow kick yet
         if (isSlowKick) {

@@ -1,16 +1,17 @@
 
 #include "FieldView.hpp"
 
-#include <Constants.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/Util.hpp>
+#include <constants.h>
+#include <geometry2d/point.h>
+#include <geometry2d/segment.h>
+#include <geometry2d/util.h>
+#include <vision_dot_pattern.h>
+
 #include <LogUtils.hpp>
 #include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyleOption>
-#include <VisionDotPattern.hpp>
 #include <algorithm>
 #include <cstdio>
 #include <planning/MotionConstraints.hpp>
@@ -68,7 +69,7 @@ void FieldView::enterEvent(QEvent* /*event*/) { _posLabel->setVisible(true); }
 
 void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
-    Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
     QString s = "X: ";
     s += QString::number(std::round(pos.x() * 100) / 100);
     s += " Y: ";
@@ -111,8 +112,8 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     p.translate(width() / 2.0, height() / 2.0);
     p.scale(width(), -height());
     p.rotate(_rotate * 90);
-    p.scale(1.0 / Field_Dimensions::Current_Dimensions.FloorLength(),
-            1.0 / Field_Dimensions::Current_Dimensions.FloorWidth());
+    p.scale(1.0 / FieldDimensions::Current_Dimensions.FloorLength(),
+            1.0 / FieldDimensions::Current_Dimensions.FloorWidth());
 
     // Set text rotation for world space
     _textRotation = -_rotate * 90;
@@ -130,35 +131,35 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Make coordinate transformations
-    _screenToWorld = Geometry2d::TransformMatrix();
-    _screenToWorld *= Geometry2d::TransformMatrix::scale(
-        Field_Dimensions::Current_Dimensions.FloorLength(),
-        Field_Dimensions::Current_Dimensions.FloorWidth());
-    _screenToWorld *= Geometry2d::TransformMatrix::rotate(
+    _screenToWorld = geometry2d::TransformMatrix();
+    _screenToWorld *= geometry2d::TransformMatrix::scale(
+        FieldDimensions::Current_Dimensions.FloorLength(),
+        FieldDimensions::Current_Dimensions.FloorWidth());
+    _screenToWorld *= geometry2d::TransformMatrix::rotate(
         -static_cast<float>(_rotate * M_PI / 2.0));
-    _screenToWorld *= Geometry2d::TransformMatrix::scale(
+    _screenToWorld *= geometry2d::TransformMatrix::scale(
         static_cast<float>(1.0 / width()), static_cast<float>(-1.0 / height()));
-    _screenToWorld *= Geometry2d::TransformMatrix::translate(
+    _screenToWorld *= geometry2d::TransformMatrix::translate(
         static_cast<float>(-width() / 2.0),
         static_cast<float>(-height() / 2.0));
 
-    _worldToTeam = Geometry2d::TransformMatrix();
-    _worldToTeam *= Geometry2d::TransformMatrix::translate(
-        0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+    _worldToTeam = geometry2d::TransformMatrix();
+    _worldToTeam *= geometry2d::TransformMatrix::translate(
+        0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
     if (frame->defend_plus_x()) {
-        _worldToTeam *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
+        _worldToTeam *= geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
-        _worldToTeam *= Geometry2d::TransformMatrix::rotate(M_PI / 2.0);
+        _worldToTeam *= geometry2d::TransformMatrix::rotate(M_PI / 2.0);
     }
 
-    _teamToWorld = Geometry2d::TransformMatrix();
+    _teamToWorld = geometry2d::TransformMatrix();
     if (frame->defend_plus_x()) {
-        _teamToWorld *= Geometry2d::TransformMatrix::rotate(M_PI / 2.0);
+        _teamToWorld *= geometry2d::TransformMatrix::rotate(M_PI / 2.0);
     } else {
-        _teamToWorld *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
+        _teamToWorld *= geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
     }
-    _teamToWorld *= Geometry2d::TransformMatrix::translate(
-        0, -Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+    _teamToWorld *= geometry2d::TransformMatrix::translate(
+        0, -FieldDimensions::Current_Dimensions.Length() / 2.0f);
 
     // Draw world-space graphics
     drawWorldSpace(p);
@@ -170,7 +171,7 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     } else {
         p.rotate(-90);
     }
-    p.translate(0, -Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+    p.translate(0, -FieldDimensions::Current_Dimensions.Length() / 2.0f);
 
     // Text has to be rotated so it is always upright on screen
     _textRotation = -_rotate * 90 + (frame->defend_plus_x() ? -90 : 90);
@@ -245,17 +246,17 @@ void FieldView::drawTeamSpace(QPainter& p) {
 
     // Block off half the field
     if (!frame->use_our_half()) {
-        const float FX = Field_Dimensions::Current_Dimensions.FloorWidth() / 2;
-        const float FY1 = -Field_Dimensions::Current_Dimensions.Border();
-        const float FY2 = Field_Dimensions::Current_Dimensions.Length() / 2;
+        const float FX = FieldDimensions::Current_Dimensions.FloorWidth() / 2;
+        const float FY1 = -FieldDimensions::Current_Dimensions.Border();
+        const float FY2 = FieldDimensions::Current_Dimensions.Length() / 2;
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
                    QColor(0, 0, 0, 128));
     }
     if (!frame->use_opponent_half()) {
-        const float FX = Field_Dimensions::Current_Dimensions.FloorWidth() / 2;
-        const float FY1 = Field_Dimensions::Current_Dimensions.Length() / 2;
-        const float FY2 = Field_Dimensions::Current_Dimensions.Length() +
-                          Field_Dimensions::Current_Dimensions.Border();
+        const float FX = FieldDimensions::Current_Dimensions.FloorWidth() / 2;
+        const float FY1 = FieldDimensions::Current_Dimensions.Length() / 2;
+        const float FY2 = FieldDimensions::Current_Dimensions.Length() +
+                          FieldDimensions::Current_Dimensions.Border();
         p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)),
                    QColor(0, 0, 0, 128));
     }
@@ -310,9 +311,9 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 const DebugRobotPath::DebugRobotPathPoint& to =
                     path.points(i + 1);
 
-                Geometry2d::Point avgVel =
-                    (Geometry2d::Point(path.points(i).vel()) +
-                     Geometry2d::Point(path.points(i + 1).vel())) /
+                geometry2d::Point avgVel =
+                    (geometry2d::Point(path.points(i).vel()) +
+                     geometry2d::Point(path.points(i + 1).vel())) /
                     2;
                 auto pcntMaxSpd = static_cast<float>(
                     avgVel.mag() / MotionConstraints::defaultMaxSpeed());
@@ -324,8 +325,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pen.setWidthF(0.03);
                 p.setPen(pen);
 
-                const Geometry2d::Point fromPos = Geometry2d::Point(from.pos());
-                const Geometry2d::Point toPos = Geometry2d::Point(to.pos());
+                const geometry2d::Point fromPos = geometry2d::Point(from.pos());
+                const geometry2d::Point toPos = geometry2d::Point(to.pos());
                 p.drawLine(fromPos.toQPointF(), toPos.toQPointF());
             }
         }
@@ -449,8 +450,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
     }
 
     // Text positioning vectors
-    QPointF rtX = qpointf(Geometry2d::Point(0, 1).rotated(-_rotate * 90));
-    QPointF rtY = qpointf(Geometry2d::Point(-1, 0).rotated(-_rotate * 90));
+    QPointF rtX = qpointf(geometry2d::Point(0, 1).rotated(-_rotate * 90));
+    QPointF rtY = qpointf(geometry2d::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
     for (const LogFrame::Robot& r : frame->opp()) {
@@ -557,93 +558,92 @@ void FieldView::drawField(QPainter& p, const LogFrame* frame) {
     p.save();
 
     // reset to center
-    p.translate(-Field_Dimensions::Current_Dimensions.FloorLength() / 2.0,
-                -Field_Dimensions::Current_Dimensions.FloorWidth() / 2.0);
+    p.translate(-FieldDimensions::Current_Dimensions.FloorLength() / 2.0,
+                -FieldDimensions::Current_Dimensions.FloorWidth() / 2.0);
 
-    p.translate(Field_Dimensions::Current_Dimensions.Border(),
-                Field_Dimensions::Current_Dimensions.Border());
+    p.translate(FieldDimensions::Current_Dimensions.Border(),
+                FieldDimensions::Current_Dimensions.Border());
 
-    p.setPen(QPen(Qt::white, Field_Dimensions::Current_Dimensions.LineWidth() *
+    p.setPen(QPen(Qt::white, FieldDimensions::Current_Dimensions.LineWidth() *
                                  2.0));  // double-width pen for visibility
                                          //(although its less accurate)
     p.setBrush(Qt::NoBrush);
-    p.drawRect(QRectF(0, 0, Field_Dimensions::Current_Dimensions.Length(),
-                      Field_Dimensions::Current_Dimensions.Width()));
+    p.drawRect(QRectF(0, 0, FieldDimensions::Current_Dimensions.Length(),
+                      FieldDimensions::Current_Dimensions.Width()));
 
     // set brush alpha to 0
     p.setBrush(QColor(0, 130, 0, 0));
 
     // reset to center
-    p.translate(Field_Dimensions::Current_Dimensions.Length() / 2.0,
-                Field_Dimensions::Current_Dimensions.Width() / 2.0);
+    p.translate(FieldDimensions::Current_Dimensions.Length() / 2.0,
+                FieldDimensions::Current_Dimensions.Width() / 2.0);
 
     // centerline
-    p.drawLine(QLineF(0, Field_Dimensions::Current_Dimensions.Width() / 2, 0,
-                      -Field_Dimensions::Current_Dimensions.Width() / 2.0));
+    p.drawLine(QLineF(0, FieldDimensions::Current_Dimensions.Width() / 2, 0,
+                      -FieldDimensions::Current_Dimensions.Width() / 2.0));
 
     // center circle
-    p.drawEllipse(
-        QRectF(-Field_Dimensions::Current_Dimensions.CenterRadius(),
-               -Field_Dimensions::Current_Dimensions.CenterRadius(),
-               Field_Dimensions::Current_Dimensions.CenterDiameter(),
-               Field_Dimensions::Current_Dimensions.CenterDiameter()));
+    p.drawEllipse(QRectF(-FieldDimensions::Current_Dimensions.CenterRadius(),
+                         -FieldDimensions::Current_Dimensions.CenterRadius(),
+                         FieldDimensions::Current_Dimensions.CenterDiameter(),
+                         FieldDimensions::Current_Dimensions.CenterDiameter()));
 
-    p.translate(-Field_Dimensions::Current_Dimensions.Length() / 2.0, 0);
+    p.translate(-FieldDimensions::Current_Dimensions.Length() / 2.0, 0);
 
     // goal areas
     p.drawLine(
-        QLineF(0, -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-               Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+        QLineF(0, -FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               -FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2));
     p.drawLine(
-        QLineF(Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-               Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+        QLineF(FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               -FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2));
     p.drawLine(
-        QLineF(Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
-               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+        QLineF(FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
+               FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2));
 
-    p.translate(Field_Dimensions::Current_Dimensions.Length(), 0);
+    p.translate(FieldDimensions::Current_Dimensions.Length(), 0);
 
     p.drawLine(
-        QLineF(0, -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-               -Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+        QLineF(0, -FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               -FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               -FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2));
     p.drawLine(
-        QLineF(-Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2,
-               -Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               -Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+        QLineF(-FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2,
+               -FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               -FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2));
     p.drawLine(
-        QLineF(-Field_Dimensions::Current_Dimensions.PenaltyShortDist(),
-               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
-               Field_Dimensions::Current_Dimensions.PenaltyLongDist() / 2));
+        QLineF(-FieldDimensions::Current_Dimensions.PenaltyShortDist(),
+               FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2, 0,
+               FieldDimensions::Current_Dimensions.PenaltyLongDist() / 2));
 
     // goals
-    float x[2] = {0, Field_Dimensions::Current_Dimensions.GoalDepth()};
-    float y[2] = {Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0f,
-                  -Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0f};
+    float x[2] = {0, FieldDimensions::Current_Dimensions.GoalDepth()};
+    float y[2] = {FieldDimensions::Current_Dimensions.GoalWidth() / 2.0f,
+                  -FieldDimensions::Current_Dimensions.GoalWidth() / 2.0f};
 
     bool flip = frame->blue_team() ^ frame->defend_plus_x();
 
     QColor goalColor = flip ? Qt::yellow : Qt::blue;
     p.setPen(
         QPen(goalColor,
-             Field_Dimensions::Current_Dimensions.LineWidth() *
+             FieldDimensions::Current_Dimensions.LineWidth() *
                  2.0));  // double-width for visibility, not real-life accuracy
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
 
-    x[0] -= Field_Dimensions::Current_Dimensions.Length();
-    x[1] -= Field_Dimensions::Current_Dimensions.Length() +
-            2 * Field_Dimensions::Current_Dimensions.GoalDepth();
+    x[0] -= FieldDimensions::Current_Dimensions.Length();
+    x[1] -= FieldDimensions::Current_Dimensions.Length() +
+            2 * FieldDimensions::Current_Dimensions.GoalDepth();
 
     goalColor = flip ? Qt::blue : Qt::yellow;
-    p.setPen(QPen(goalColor,
-                  Field_Dimensions::Current_Dimensions.LineWidth() * 2.0));
+    p.setPen(
+        QPen(goalColor, FieldDimensions::Current_Dimensions.LineWidth() * 2.0));
     p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
     p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
     p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -747,21 +747,21 @@ void FieldView::resizeEvent(QResizeEvent* e) {
     if ((_rotate & 1) != 0) {
         needH = static_cast<int>(
             std::round(static_cast<float>(givenW) *
-                       Field_Dimensions::Current_Dimensions.FloorLength() /
-                       Field_Dimensions::Current_Dimensions.FloorWidth()));
+                       FieldDimensions::Current_Dimensions.FloorLength() /
+                       FieldDimensions::Current_Dimensions.FloorWidth()));
         needW = static_cast<int>(
             std::round(static_cast<float>(givenH) *
-                       Field_Dimensions::Current_Dimensions.FloorWidth() /
-                       Field_Dimensions::Current_Dimensions.FloorLength()));
+                       FieldDimensions::Current_Dimensions.FloorWidth() /
+                       FieldDimensions::Current_Dimensions.FloorLength()));
     } else {
         needH = static_cast<int>(
             std::round(static_cast<float>(givenW) *
-                       Field_Dimensions::Current_Dimensions.FloorWidth() /
-                       Field_Dimensions::Current_Dimensions.FloorLength()));
+                       FieldDimensions::Current_Dimensions.FloorWidth() /
+                       FieldDimensions::Current_Dimensions.FloorLength()));
         needW = static_cast<int>(
             std::round(static_cast<float>(givenH) *
-                       Field_Dimensions::Current_Dimensions.FloorLength() /
-                       Field_Dimensions::Current_Dimensions.FloorWidth()));
+                       FieldDimensions::Current_Dimensions.FloorLength() /
+                       FieldDimensions::Current_Dimensions.FloorWidth()));
     }
 
     QSize size;

@@ -1,9 +1,11 @@
 
-#include "gtest/gtest.h"
-#include <Geometry2d/Point.hpp>
-#include <motion/TrapezoidalMotion.hpp>
+#include <geometry2d/point.h>
+
 #include <cmath>
 #include <iostream>
+#include <motion/TrapezoidalMotion.hpp>
+
+#include "gtest/gtest.h"
 
 using namespace std;
 

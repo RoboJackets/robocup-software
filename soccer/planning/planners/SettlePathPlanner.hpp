@@ -50,14 +50,14 @@ private:
     // And the face point to get the bounce right
     // If no targetBounceDirection is given, just get in front and face the ball
     void calcDeltaPosForDir(const Ball& ball, const MotionInstant& startInstant,
-                            double& angle, Geometry2d::Point& deltaRobotPos,
-                            Geometry2d::Point& facePos);
+                            double& angle, geometry2d::Point& deltaRobotPos,
+                            geometry2d::Point& facePos);
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
     void checkSolutionValidity(const Ball& ball,
                                const MotionInstant& startInstant,
-                               const Geometry2d::Point& deltaPos);
+                               const geometry2d::Point& deltaPos);
 
     // Figures out when to move to each state
     // (only in the standard transition)
@@ -67,22 +67,22 @@ private:
     //       need to start the dampen
     void processStateTransition(const Ball& ball, Path* prevPath,
                                 MotionInstant& startInstant, const double angle,
-                                const Geometry2d::Point& deltaPos);
+                                const geometry2d::Point& deltaPos);
 
     // State functions
     std::unique_ptr<Path> intercept(const PlanRequest& planRequest,
                                     const RJ::Time curTime,
                                     const MotionInstant& startInstant,
                                     std::unique_ptr<Path> prevPath,
-                                    const Geometry2d::ShapeSet& obstacles,
-                                    const Geometry2d::Point& deltaPos,
-                                    const Geometry2d::Point& facePos);
+                                    const geometry2d::ShapeSet& obstacles,
+                                    const geometry2d::Point& deltaPos,
+                                    const geometry2d::Point& facePos);
 
     std::unique_ptr<Path> dampen(const PlanRequest& planRequest,
                                  MotionInstant& startInstant,
                                  std::unique_ptr<Path> prevPath,
-                                 const Geometry2d::Point& deltaPos,
-                                 const Geometry2d::Point& facePos);
+                                 const geometry2d::Point& deltaPos,
+                                 const geometry2d::Point& facePos);
 
     std::unique_ptr<Path> invalid(const PlanRequest& planRequest);
 
@@ -92,18 +92,18 @@ private:
 
     RRTPlanner rrtPlanner;
     DirectTargetPathPlanner directPlanner;
-    std::optional<Geometry2d::Point> targetBounceDirection;
+    std::optional<geometry2d::Point> targetBounceDirection;
 
     SettlePathPlannerStates currentState;
 
     // Intercept Target Filtering Variables
-    Geometry2d::Point avgInstantaneousInterceptTarget;
-    Geometry2d::Point averageBallVel;
+    geometry2d::Point avgInstantaneousInterceptTarget;
+    geometry2d::Point averageBallVel;
     bool firstInterceptTargetFound;
     bool firstBallVelFound;
 
     // Only change the target of the path if it changes significantly
-    Geometry2d::Point pathInterceptTarget;
+    geometry2d::Point pathInterceptTarget;
 
     bool pathCreatedForDampen;
 

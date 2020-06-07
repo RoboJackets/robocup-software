@@ -1,8 +1,10 @@
 #pragma once
 
-#include "KalmanFilter.hpp"
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include <Configuration.hpp>
+
+#include "KalmanFilter.hpp"
 
 class KalmanFilter2D : public KalmanFilter {
 public:
@@ -17,7 +19,7 @@ public:
      * @param initPos initial position
      * @param initVel initial velocity
      */
-    KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point initVel);
+    KalmanFilter2D(geometry2d::Point initPos, geometry2d::Point initVel);
 
     /**
      * Predicts with update
@@ -25,34 +27,34 @@ public:
      *
      * @param observation The position observation for the current frame
      */
-    void predictWithUpdate(Geometry2d::Point observation);
+    void predictWithUpdate(geometry2d::Point observation);
 
     /**
      * @return Current position estimate
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return Current velocity estimate
      */
-    Geometry2d::Point getVel() const;
+    geometry2d::Point getVel() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    Geometry2d::Point getPosCov() const;
+    geometry2d::Point getPosCov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    Geometry2d::Point getVelCov() const;
+    geometry2d::Point getVelCov() const;
 
     /**
      * Set's state velocity given XY velocity
-     * 
+     *
      * @param newVel New velocity to use
      */
-    void setVel(Geometry2d::Point newVel);
+    void setVel(geometry2d::Point newVel);
 
     static void createConfiguration(Configuration* cfg);
 

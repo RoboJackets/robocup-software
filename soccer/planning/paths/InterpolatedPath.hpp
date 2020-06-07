@@ -1,11 +1,12 @@
 #pragma once
 
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
+#include <geometry2d/segment.h>
+#include <geometry2d/shape_set.h>
+
 #include <Configuration.hpp>
 #include <DebugDrawer.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <optional>
 #include <planning/paths/Path.hpp>
 
@@ -25,24 +26,24 @@ public:
     struct Entry {
         Entry(RobotInstant inst, RJ::Seconds t) : time(t) {
             if (inst.angle) {
-                pose = Geometry2d::Pose(inst.motion.pos,
+                pose = geometry2d::Pose(inst.motion.pos,
                                         inst.angle->angle.value_or(0));
-                vel = Geometry2d::Twist(inst.motion.vel,
+                vel = geometry2d::Twist(inst.motion.vel,
                                         inst.angle->angleVel.value_or(0));
             } else {
-                pose = Geometry2d::Pose(inst.motion.pos, 0);
-                vel = Geometry2d::Twist(inst.motion.vel, 0);
+                pose = geometry2d::Pose(inst.motion.pos, 0);
+                vel = geometry2d::Twist(inst.motion.vel, 0);
             }
         }
 
-        Entry(Geometry2d::Pose pose, Geometry2d::Twist twist, RJ::Seconds t)
+        Entry(geometry2d::Pose pose, geometry2d::Twist twist, RJ::Seconds t)
             : pose(pose), vel(twist), time(t) {}
 
         Entry(MotionInstant inst, RJ::Seconds t)
             : Entry(RobotInstant(inst), t) {}
 
-        Geometry2d::Pose pose;
-        Geometry2d::Twist vel;
+        geometry2d::Pose pose;
+        geometry2d::Twist vel;
         RJ::Seconds time;
 
         RobotInstant instant() const {
@@ -87,7 +88,7 @@ public:
     // Overridden Path Methods
     virtual RobotInstant start() const override;
     virtual RobotInstant end() const override;
-    virtual bool hit(const Geometry2d::ShapeSet& obstacles,
+    virtual bool hit(const geometry2d::ShapeSet& obstacles,
                      RJ::Seconds startTimeIntoPath,
                      RJ::Seconds* hitTime) const override;
     virtual std::unique_ptr<Path> subPath(
@@ -123,19 +124,19 @@ public:
     float length(unsigned int start, unsigned int end) const;
 
     /** Returns the length of the path from the closet point found to @a pt */
-    float length(Geometry2d::Point pt) const;
+    float length(geometry2d::Point pt) const;
 
     /** Returns number of waypoints */
     size_t size() const;
 
     // Returns the index of the point in this path nearest to pt.
-    int nearestIndex(Geometry2d::Point pt) const;
+    int nearestIndex(geometry2d::Point pt) const;
 
     /** returns the nearest segement of @a pt to the path */
-    Geometry2d::Segment nearestSegment(Geometry2d::Point pt) const;
+    geometry2d::Segment nearestSegment(geometry2d::Point pt) const;
 
     // Returns the shortest distance from this path to the given point
-    float distanceTo(Geometry2d::Point pt) const;
+    float distanceTo(geometry2d::Point pt) const;
 
     /**
      * Estimates how long it would take for the robot to get to a certain point
@@ -148,7 +149,7 @@ public:
      */
     RJ::Seconds getTime(int index) const;
 
-    static std::unique_ptr<Path> emptyPath(Geometry2d::Point position) {
+    static std::unique_ptr<Path> emptyPath(geometry2d::Point position) {
         auto path = std::make_unique<InterpolatedPath>(
             RobotInstant(MotionInstant(position)));
         path->setDebugText("Empty Path");

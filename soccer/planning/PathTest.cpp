@@ -5,7 +5,7 @@
 #include <planning/paths/InterpolatedPath.hpp>
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 

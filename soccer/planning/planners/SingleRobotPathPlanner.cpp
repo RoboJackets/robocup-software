@@ -75,7 +75,7 @@ std::unique_ptr<SingleRobotPathPlanner> PlannerForCommandType(
 }
 
 void SingleRobotPathPlanner::allDynamicToStatic(
-    Geometry2d::ShapeSet& obstacles,
+    geometry2d::ShapeSet& obstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     for (auto& dynObs : dynamicObstacles) {
         obstacles.add(dynObs.getStaticObstacle());
@@ -83,7 +83,7 @@ void SingleRobotPathPlanner::allDynamicToStatic(
 }
 
 void SingleRobotPathPlanner::splitDynamic(
-    Geometry2d::ShapeSet& obstacles, std::vector<DynamicObstacle>& dynamicOut,
+    geometry2d::ShapeSet& obstacles, std::vector<DynamicObstacle>& dynamicOut,
     const std::vector<DynamicObstacle>& dynamicObstacles) {
     for (auto& dynObs : dynamicObstacles) {
         if (dynObs.hasPath()) {
@@ -98,7 +98,7 @@ std::optional<std::function<AngleInstant(MotionInstant)>>
 angleFunctionForCommandType(const Planning::RotationCommand& command) {
     switch (command.getCommandType()) {
         case RotationCommand::FacePoint: {
-            Geometry2d::Point targetPt =
+            geometry2d::Point targetPt =
                 static_cast<const Planning::FacePointCommand&>(  // NOLINT
                     command)
                     .targetPos;
@@ -128,7 +128,7 @@ angleFunctionForCommandType(const Planning::RotationCommand& command) {
 bool SingleRobotPathPlanner::shouldReplan(const PlanRequest& planRequest) {
     const auto currentInstant = planRequest.start;
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     if (!prevPath) return true;

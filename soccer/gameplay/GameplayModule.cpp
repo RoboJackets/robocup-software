@@ -1,7 +1,7 @@
-#include <protobuf/LogFrame.pb.h>
+#include <constants.h>
+#include <network/network_constants.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
-#include <Constants.hpp>
-#include <Network.hpp>
 #include <Referee.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
@@ -23,7 +23,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::python;
 
-using namespace Geometry2d;
+using namespace geometry2d;
 using namespace RefereeModuleEnums;
 
 ConfigDouble* GameplayModule::_fieldEdgeInset;
@@ -90,7 +90,7 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
                 handle<>(PyImport_ImportModule("constants"));
 
             _mainPyNamespace["constants"].attr("Field") =
-                &Field_Dimensions::Current_Dimensions;
+                &FieldDimensions::Current_Dimensions;
 
             // instantiate the root play
             handle<> ignored3(
@@ -105,7 +105,7 @@ Gameplay::GameplayModule::GameplayModule(Context* const context,
 }
 
 void Gameplay::GameplayModule::calculateFieldObstacles() {
-    auto dimensions = Field_Dimensions::Current_Dimensions;
+    auto dimensions = FieldDimensions::Current_Dimensions;
 
     _centerMatrix =
         TransformMatrix::translate(Point(0, dimensions.Length() / 2));
@@ -274,8 +274,8 @@ bool Gameplay::GameplayModule::checkPlaybookStatus() {
 /**
  * returns the group of obstacles for the field
  */
-Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
-    Geometry2d::ShapeSet obstacles;
+geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
+    geometry2d::ShapeSet obstacles;
     if (_context->game_state.stayOnSide()) {
         obstacles.add(_sideObstacle);
     }
@@ -299,8 +299,8 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
     return obstacles;
 }
 
-Geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
-    Geometry2d::ShapeSet zones;
+geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
+    geometry2d::ShapeSet zones;
     zones.add(_theirGoalArea);
     zones.add(_ourGoalArea);
     return zones;
@@ -316,7 +316,7 @@ void Gameplay::GameplayModule::run() {
     }
 
     _ballMatrix =
-        Geometry2d::TransformMatrix::translate(_context->state.ball.pos);
+        geometry2d::TransformMatrix::translate(_context->state.ball.pos);
 
     /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : _context->state.self) {
@@ -422,7 +422,7 @@ void Gameplay::GameplayModule::run() {
     if (_context->game_state.stayAwayFromBall() && _context->state.ball.valid) {
         _context->debug_drawer.drawCircle(
             _context->state.ball.pos,
-            Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black,
+            FieldDimensions::Current_Dimensions.CenterRadius(), Qt::black,
             "Rules");
     }
 
@@ -452,7 +452,7 @@ void Gameplay::GameplayModule::updateFieldDimensions() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         _mainPyNamespace["constants"].attr("Field") =
-            &Field_Dimensions::Current_Dimensions;
+            &FieldDimensions::Current_Dimensions;
     }
     PyGILState_Release(state);
 }
@@ -562,9 +562,8 @@ void Gameplay::GameplayModule::loadTest() {
 
                         rob->set_x(
                             -teamDirection *
-                            (y -
-                             (Field_Dimensions::Current_Dimensions.Length() /
-                              2)));
+                            (y - (FieldDimensions::Current_Dimensions.Length() /
+                                  2)));
                         rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
@@ -600,9 +599,8 @@ void Gameplay::GameplayModule::loadTest() {
 
                         rob->set_x(
                             -teamDirection *
-                            (y -
-                             (Field_Dimensions::Current_Dimensions.Length() /
-                              2)));
+                            (y - (FieldDimensions::Current_Dimensions.Length() /
+                                  2)));
                         rob->set_y(teamDirection * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
@@ -634,7 +632,7 @@ void Gameplay::GameplayModule::loadTest() {
                 ball_replace->set_x(
                     -teamDirection *
                     (posy -
-                     (Field_Dimensions::Current_Dimensions.Length() / 2)));
+                     (FieldDimensions::Current_Dimensions.Length() / 2)));
                 ball_replace->set_y(teamDirection * posx);
                 ball_replace->set_vx(-teamDirection * vely);
                 ball_replace->set_vy(teamDirection * velx);

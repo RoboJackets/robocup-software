@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
+#include <geometry2d/transform_matrix.h>
+#include <rj_robocup_protobuf/LogFrame.pb.h>
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
-#include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
 #include <Referee.hpp>
 #include <SystemState.hpp>
@@ -111,7 +111,7 @@ public:
 
     void recalculateWorldToTeamTransform();
 
-    void setFieldDimensions(const Field_Dimensions& dims);
+    void setFieldDimensions(const FieldDimensions& dims);
 
     bool isRadioOpen() const;
 
@@ -163,7 +163,7 @@ private:
     //
     // _teamTrans is used for positions, not angles.
     // _teamAngle is used for angles.
-    Geometry2d::TransformMatrix _worldToTeam;
+    geometry2d::TransformMatrix _worldToTeam;
     float _teamAngle{};
 
     // Processing period in microseconds

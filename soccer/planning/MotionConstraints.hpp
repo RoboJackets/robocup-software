@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include <Configuration.hpp>
 
 /**

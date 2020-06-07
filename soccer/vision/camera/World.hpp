@@ -1,18 +1,16 @@
+#include <utils.h>
+
+#include <Configuration.hpp>
 #include <list>
 #include <vector>
 
-#include <Utils.hpp>
-#include <Configuration.hpp>
-
+#include "vision/ball/WorldBall.hpp"
 #include "vision/camera/Camera.hpp"
 #include "vision/camera/CameraFrame.hpp"
-
-#include "vision/ball/WorldBall.hpp"
-#include "vision/robot/WorldRobot.hpp"
-
+#include "vision/kick/KickEvent.hpp"
 #include "vision/kick/detector/FastKickDetector.hpp"
 #include "vision/kick/detector/SlowKickDetector.hpp"
-#include "vision/kick/KickEvent.hpp"
+#include "vision/robot/WorldRobot.hpp"
 
 /**
  * Keeps list of all the cameras and sends camera data down to the correct location

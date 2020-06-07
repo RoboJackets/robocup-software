@@ -1,6 +1,7 @@
 #include "SDLJoystickNode.hpp"
 
-#include <Utils.hpp>
+#include <utils.h>
+
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <iostream>
 

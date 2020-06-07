@@ -16,9 +16,9 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
                        const std::list<KalmanRobot>& kalmanRobots)
     : team(team), robotID(robotID), isValid(true), time(calcTime) {
     // Theta's are converted to rect coords then back to polar to convert
-    Geometry2d::Point posCartesianAvg;
-    Geometry2d::Point thetaCartesianAvg;
-    Geometry2d::Twist twistAvg;
+    geometry2d::Point posCartesianAvg;
+    geometry2d::Point thetaCartesianAvg;
+    geometry2d::Twist twistAvg;
 
     double totalPosWeight = 0;
     double totalVelWeight = 0;
@@ -50,13 +50,13 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
     for (const KalmanRobot& robot : kalmanRobots) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Pose poseCov{robot.getPosCov(), robot.getThetaCov()};
-        Geometry2d::Twist twistCov{robot.getVelCov(), robot.getOmegaCov()};
+        geometry2d::Pose poseCov{robot.getPosCov(), robot.getThetaCov()};
+        geometry2d::Twist twistCov{robot.getVelCov(), robot.getOmegaCov()};
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Pose poseStdDev;
-        Geometry2d::Twist twistStdDev;
+        geometry2d::Pose poseStdDev;
+        geometry2d::Twist twistStdDev;
         poseStdDev.position().x() = std::sqrt(poseCov.position().x());
         poseStdDev.position().y() = std::sqrt(poseCov.position().y());
         twistStdDev.linear().x() = std::sqrt(twistCov.linear().x());
@@ -83,7 +83,7 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
 
         posCartesianAvg += filterPosWeight * robot.getPos();
         thetaCartesianAvg +=
-            Geometry2d::Point(filterPosWeight * cos(robot.getTheta()),
+            geometry2d::Point(filterPosWeight * cos(robot.getTheta()),
                               filterPosWeight * sin(robot.getTheta()));
         twistAvg.linear() += filterVelWeight * robot.getVel();
         twistAvg.angular() += filterVelWeight * robot.getOmega();
@@ -114,17 +114,17 @@ int WorldRobot::getRobotID() const {
     return robotID;
 }
 
-Geometry2d::Point WorldRobot::getPos() const { return pose.position(); }
+geometry2d::Point WorldRobot::getPos() const { return pose.position(); }
 
 double WorldRobot::getTheta() const { return pose.heading(); }
 
-Geometry2d::Pose WorldRobot::getPose() const { return pose; }
+geometry2d::Pose WorldRobot::getPose() const { return pose; }
 
-Geometry2d::Point WorldRobot::getVel() const { return twist.linear(); }
+geometry2d::Point WorldRobot::getVel() const { return twist.linear(); }
 
 double WorldRobot::getOmega() const { return twist.angular(); }
 
-Geometry2d::Twist WorldRobot::getTwist() const { return twist; }
+geometry2d::Twist WorldRobot::getTwist() const { return twist; }
 
 double WorldRobot::getPosCov() const {
     return posCov;
@@ -138,6 +138,4 @@ const std::list<KalmanRobot>& WorldRobot::getRobotComponents() const {
     return robotComponents;
 }
 
-RJ::Time WorldRobot::getTime() const {
-    return time;
-}
+RJ::Time WorldRobot::getTime() const { return time; }

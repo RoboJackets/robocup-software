@@ -4,15 +4,15 @@
 
 TEST(KalmanBall, invalid_world_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
 
     KalmanBall kb = KalmanBall(cID, t, b, w);
 
-    Geometry2d::Point rv = kb.getVel();
-    Geometry2d::Point rp = kb.getPos();
+    geometry2d::Point rv = kb.getVel();
+    geometry2d::Point rp = kb.getPos();
 
     EXPECT_EQ(rp.x(), p.x());
     EXPECT_EQ(rp.y(), p.y());
@@ -25,7 +25,7 @@ TEST(KalmanBall, invalid_world_ball) {
 
 TEST(KalmanBall, valid_world_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -39,8 +39,8 @@ TEST(KalmanBall, valid_world_ball) {
 
     KalmanBall kb2 = KalmanBall(cID, t, b, wb);
 
-    Geometry2d::Point rv = kb2.getVel();
-    Geometry2d::Point rp = kb2.getPos();
+    geometry2d::Point rv = kb2.getVel();
+    geometry2d::Point rp = kb2.getPos();
 
     EXPECT_EQ(rp.x(), p.x());
     EXPECT_EQ(rp.y(), p.y());
@@ -50,7 +50,7 @@ TEST(KalmanBall, valid_world_ball) {
 
 TEST(KalmanBall, predict) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -60,8 +60,8 @@ TEST(KalmanBall, predict) {
 
     kb.predict(RJ::now());
 
-    Geometry2d::Point rp = kb.getPos();
-    Geometry2d::Point rv = kb.getVel();
+    geometry2d::Point rp = kb.getPos();
+    geometry2d::Point rv = kb.getVel();
 
     EXPECT_GT(rp.x(), p.x());
     EXPECT_GT(rp.y(), p.y());
@@ -73,7 +73,7 @@ TEST(KalmanBall, predict) {
 
 TEST(KalmanBall, predict_and_update) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -83,8 +83,8 @@ TEST(KalmanBall, predict_and_update) {
 
     kb.predictAndUpdate(RJ::now(), b);
 
-    Geometry2d::Point rp = kb.getPos();
-    Geometry2d::Point rv = kb.getVel();
+    geometry2d::Point rp = kb.getPos();
+    geometry2d::Point rv = kb.getVel();
 
     EXPECT_NEAR(rp.x(), p.x(), 0.1);
     EXPECT_NEAR(rp.y(), p.y(), 0.01);
@@ -96,7 +96,7 @@ TEST(KalmanBall, predict_and_update) {
 
 TEST(KalmanBall, is_unhealthy) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -110,7 +110,7 @@ TEST(KalmanBall, is_unhealthy) {
 
 TEST(KalmanBall, max_measurement_size) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -129,20 +129,20 @@ TEST(KalmanBall, max_measurement_size) {
 
 TEST(KalmanBall, getters) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    geometry2d::Point p = geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
 
     KalmanBall kb = KalmanBall(cID, t, b, w);
 
-    Geometry2d::Point rpc = kb.getPosCov();
-    Geometry2d::Point rvc = kb.getVelCov();
-    Geometry2d::Point rp = kb.getPos();
-    Geometry2d::Point rv = kb.getVel();
+    geometry2d::Point rpc = kb.getPosCov();
+    geometry2d::Point rvc = kb.getVelCov();
+    geometry2d::Point rp = kb.getPos();
+    geometry2d::Point rv = kb.getVel();
 
     kb.setVel(p);
-    Geometry2d::Point rv2 = kb.getVel();
+    geometry2d::Point rv2 = kb.getVel();
 
     boost::circular_buffer<CameraBall> list = kb.getPrevMeasurements();
 

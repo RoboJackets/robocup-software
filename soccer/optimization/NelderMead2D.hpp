@@ -1,9 +1,11 @@
 #pragma once
 
-#include "NelderMead2DConfig.hpp"
-#include <Geometry2d/Point.hpp>
-#include <vector>
+#include <geometry2d/point.h>
+
 #include <tuple>
+#include <vector>
+
+#include "NelderMead2DConfig.hpp"
 
 /**
  * Nelder-Mead in 2 Dimensions
@@ -39,7 +41,7 @@ public:
     /**
      * @return the XY coordinate of the current guess of the max
      */
-    Geometry2d::Point getPoint();
+    geometry2d::Point getPoint();
 
     /**
      * @return the current guess of the max value
@@ -54,8 +56,8 @@ public:
 private:
     NelderMead2DConfig& config;
     int iterationCount;
-    std::vector<std::tuple<float, Geometry2d::Point>> vertices;
+    std::vector<std::tuple<float, geometry2d::Point>> vertices;
 
     void sortVertices();
-    bool replaceWorst(float newScore, Geometry2d::Point newPoint);
+    bool replaceWorst(float newScore, geometry2d::Point newPoint);
 };

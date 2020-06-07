@@ -1,8 +1,9 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
-#include <Utils.hpp>
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
+#include <utils.h>
+
 #include <vector>
 
 /**
@@ -16,7 +17,7 @@ public:
      * @param theta Heading of the robot observation
      * @param robotID ID of the robot
      */
-    CameraRobot(RJ::Time timeCaptured, Geometry2d::Pose pose, int robotID)
+    CameraRobot(RJ::Time timeCaptured, geometry2d::Pose pose, int robotID)
         : timeCaptured(timeCaptured), pose(pose), robotID(robotID) {}
 
     /**
@@ -27,7 +28,7 @@ public:
     /**
      * @return the position of the measurement
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return the heading of the measurement
@@ -42,7 +43,7 @@ public:
     /**
      * @return the pose of the measurement
      */
-    Geometry2d::Pose getPose() const;
+    geometry2d::Pose getPose() const;
 
     /**
      * Combines all the robots in the list and returns a robot
@@ -56,7 +57,7 @@ public:
 
 private:
     RJ::Time timeCaptured;
-    Geometry2d::Pose pose;
+    geometry2d::Pose pose;
 
     int robotID;
 };

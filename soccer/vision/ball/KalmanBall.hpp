@@ -1,10 +1,10 @@
 #pragma once
 
-#include <boost/circular_buffer.hpp>
+#include <geometry2d/point.h>
+#include <utils.h>
 
-#include <Geometry2d/Point.hpp>
-#include <Utils.hpp>
 #include <Configuration.hpp>
+#include <boost/circular_buffer.hpp>
 
 #include "vision/ball/CameraBall.hpp"
 #include "vision/filter/KalmanFilter2D.hpp"
@@ -64,22 +64,22 @@ public:
     /**
      * @return Best estimate of the position of the ball
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return Best estimate of the velocity of the ball
      */
-    Geometry2d::Point getVel() const;
+    geometry2d::Point getVel() const;
 
     /**
      * @return Covariance in X and Y direction of the position of the ball
      */
-    Geometry2d::Point getPosCov() const;
+    geometry2d::Point getPosCov() const;
 
     /**
      * @return Covariance in X and Y direction of the velocity of the ball
      */
-    Geometry2d::Point getVelCov() const;
+    geometry2d::Point getVelCov() const;
 
     /**
      * @return List of previous camera ball measurements for kick detection/estimation
@@ -92,7 +92,7 @@ public:
      * Note: Only used to set the velocity when we think the ball will bounce
      * off another robot
      */
-    void setVel(Geometry2d::Point newVel);
+    void setVel(geometry2d::Point newVel);
 
     static void createConfiguration(Configuration* cfg);
 

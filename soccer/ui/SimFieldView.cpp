@@ -1,7 +1,7 @@
 #include "SimFieldView.hpp"
 
-#include <Constants.hpp>
-#include <Network.hpp>
+#include <constants.h>
+#include <network/network_constants.h>
 
 #include <QFont>
 #include <QMouseEvent>
@@ -27,7 +27,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         return;
     }
 
-    Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
 
     std::shared_ptr<LogFrame> frame = currentFrame();
     if (me->button() == Qt::LeftButton && frame) {
@@ -131,7 +131,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     std::shared_ptr<LogFrame> frame = currentFrame();
     if (_dragMode == DRAG_SHOOT && frame) {
         p.setPen(QPen(Qt::white, 0.025f));
-        Geometry2d::Point ball = frame->ball().pos();
+        geometry2d::Point ball = frame->ball().pos();
         p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 
         if (ball != _dragTo) {
@@ -139,7 +139,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
 
             _shot = (ball - _dragTo) * ShootScale;
             float speed = _shot.mag();
-            Geometry2d::Point shotExtension = ball + _shot / speed * 8;
+            geometry2d::Point shotExtension = ball + _shot / speed * 8;
 
             p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
 

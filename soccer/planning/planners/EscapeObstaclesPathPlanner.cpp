@@ -7,7 +7,7 @@
 #include "planning/RoboCupStateSpace.hpp"
 #include "planning/paths/TrapezoidalPath.hpp"
 
-using namespace Geometry2d;
+using namespace geometry2d;
 using namespace std;
 
 namespace Planning {
@@ -28,7 +28,7 @@ std::unique_ptr<Path> EscapeObstaclesPathPlanner::run(
     PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     std::optional<Point> optPrevPt;
@@ -64,7 +64,7 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     int maxItr, std::function<void(const RRT::Tree<Point>&)> rrtLogger) {
     if (obstacles.hit(goal)) {
         auto stateSpace = make_shared<RoboCupStateSpace>(
-            Field_Dimensions::Current_Dimensions, obstacles);
+            FieldDimensions::Current_Dimensions, obstacles);
         RRT::Tree<Point> rrt(stateSpace, Point::hash, 2);
         rrt.setStartState(goal);
         // note: we don't set goal state because we're not looking for a

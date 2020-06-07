@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include <functional>
 
 class NelderMead2DConfig {
@@ -25,10 +26,10 @@ public:
      * @param maxThresh threshold for the max vlaue before exit
      * @note Set maxValue = maxThresh to disable
      */
-    NelderMead2DConfig(std::function<float(Geometry2d::Point)>& f,
-                       Geometry2d::Point start = Geometry2d::Point(0, 0),
-                       Geometry2d::Point step = Geometry2d::Point(1, 1),
-                       Geometry2d::Point minDist = Geometry2d::Point(0.001,
+    NelderMead2DConfig(std::function<float(geometry2d::Point)>& f,
+                       geometry2d::Point start = geometry2d::Point(0, 0),
+                       geometry2d::Point step = geometry2d::Point(1, 1),
+                       geometry2d::Point minDist = geometry2d::Point(0.001,
                                                                      0.001),
                        float reflectionCoeff = 1, float expansionCoeff = 2,
                        float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
@@ -46,10 +47,10 @@ public:
           maxValue(maxValue),
           maxThresh(maxThresh) {}
 
-    std::function<float(Geometry2d::Point)>& f;
-    Geometry2d::Point start;
-    Geometry2d::Point step;
-    Geometry2d::Point minDist;
+    std::function<float(geometry2d::Point)>& f;
+    geometry2d::Point start;
+    geometry2d::Point step;
+    geometry2d::Point minDist;
     float reflectionCoeff;
     float expansionCoeff;
     float contractionCoeff;

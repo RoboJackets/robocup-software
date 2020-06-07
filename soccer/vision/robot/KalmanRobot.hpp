@@ -1,14 +1,14 @@
 #pragma once
 
-#include <boost/circular_buffer.hpp>
+#include <geometry2d/point.h>
+#include <geometry2d/pose.h>
+#include <utils.h>
 
 #include <Configuration.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
-#include <Utils.hpp>
+#include <boost/circular_buffer.hpp>
 
-#include "vision/robot/CameraRobot.hpp"
 #include "vision/filter/KalmanFilter3D.hpp"
+#include "vision/robot/CameraRobot.hpp"
 
 class WorldRobot;
 
@@ -66,7 +66,7 @@ public:
     /**
      * @return Best estimate of the linear position of the robot
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return Best estimate of the heading. Not bounded
@@ -76,7 +76,7 @@ public:
     /**
      * @return Best estimate of the linear velocity of the robot
      */
-    Geometry2d::Point getVel() const;
+    geometry2d::Point getVel() const;
 
     /**
      * @return Best estimate of the angular velocity
@@ -86,7 +86,7 @@ public:
     /**
      * @return Covariance in X and Y linear direction of the position of the robot
      */
-    Geometry2d::Point getPosCov() const;
+    geometry2d::Point getPosCov() const;
 
     /**
      * @return Covariance of theta of the robot
@@ -96,7 +96,7 @@ public:
     /**
      * @return Covariance in X and Y linear direction of the velocity of the robot
      */
-    Geometry2d::Point getVelCov() const;
+    geometry2d::Point getVelCov() const;
 
     /**
      * @return Covariance of omega of the robot

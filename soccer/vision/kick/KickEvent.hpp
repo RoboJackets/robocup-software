@@ -1,13 +1,13 @@
 #pragma once
 
-#include <vector>
+#include <utils.h>
+
 #include <deque>
+#include <vector>
 
-#include <Utils.hpp>
-
-#include "vision/robot/WorldRobot.hpp"
-#include "vision/ball/WorldBall.hpp"
 #include "VisionState.hpp"
+#include "vision/ball/WorldBall.hpp"
+#include "vision/robot/WorldRobot.hpp"
 
 /**
  * Contains all the useful information for a kick

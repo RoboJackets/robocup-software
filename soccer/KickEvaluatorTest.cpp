@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 
-using namespace Geometry2d;
+using namespace geometry2d;
 
 TEST(KickEvaluator, no_robots) {
     Context context;

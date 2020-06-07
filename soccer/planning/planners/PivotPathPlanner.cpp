@@ -1,10 +1,13 @@
 #include "PivotPathPlanner.hpp"
+
+#include <geometry2d/util.h>
+
 #include <Configuration.hpp>
+
 #include "EscapeObstaclesPathPlanner.hpp"
-#include "Geometry2d/Util.hpp"
 #include "RRTPlanner.hpp"
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 
@@ -21,7 +24,7 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
 
 bool PivotPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const auto& command =
@@ -53,7 +56,7 @@ std::unique_ptr<Path> PivotPathPlanner::run(PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     const auto& rotationConstraints = planRequest.constraints.rot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     const auto& command =

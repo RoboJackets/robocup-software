@@ -3,9 +3,10 @@
 
 #pragma once
 
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/grSim_Replacement.pb.h>
+#include <rj_robocup_protobuf/grSim_Commands.pb.h>
+#include <rj_robocup_protobuf/grSim_Packet.pb.h>
+#include <rj_robocup_protobuf/grSim_Replacement.pb.h>
+
 #include <Context.hpp>
 
 #include "FieldView.hpp"
@@ -37,7 +38,7 @@ private:
 
     int _dragRobot;
     int _dragRobotBlue;
-    Geometry2d::Point _dragTo;
-    Geometry2d::Point _shot;
+    geometry2d::Point _dragTo;
+    geometry2d::Point _shot;
     Context* _context{};
 };

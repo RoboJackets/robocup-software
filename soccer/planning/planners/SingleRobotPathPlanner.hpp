@@ -11,9 +11,10 @@
 #include "planning/PlanRequest.hpp"
 #include "planning/RotationCommand.hpp"
 /*
+#include <utils.h>
+
 #include "RobotConstraints.hpp"
 #include "SystemState.hpp"
-#include "Utils.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
 */
@@ -43,11 +44,11 @@ public:
     // Adds all static obstacle portions of the dynamic obstacle to static
     // obstacles
     static void allDynamicToStatic(
-        Geometry2d::ShapeSet& obstacles,
+        geometry2d::ShapeSet& obstacles,
         const std::vector<DynamicObstacle>& dynamicObstacles);
 
     static void splitDynamic(
-        Geometry2d::ShapeSet& obstacles,
+        geometry2d::ShapeSet& obstacles,
         std::vector<DynamicObstacle>& dynamicOut,
         const std::vector<DynamicObstacle>& dynamicObstacles);
     /// Checks if the previous path is no longer valid and needs to be

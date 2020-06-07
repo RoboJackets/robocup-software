@@ -7,7 +7,7 @@ namespace Planning {
 std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     const Planning::TuningPathCommand& command =
@@ -15,7 +15,7 @@ std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
             *planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
-        Geometry2d::Point endTarget = command.pathGoal.pos;
+        geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         // Tells the robot that is actually in a different location
         // This forces the PID Tuner to kick in to move the robot to its new
@@ -32,7 +32,7 @@ std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
 
 bool TuningPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const Planning::TuningPathCommand& command =
@@ -42,7 +42,7 @@ bool TuningPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     if (!prevPath) {
         return true;
     } else {
-        Geometry2d::Point endTarget = command.pathGoal.pos;
+        geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
         float targetVelChange = prevPath->end().motion.vel.mag() - endSpeed;

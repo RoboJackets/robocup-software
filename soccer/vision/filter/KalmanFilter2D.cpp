@@ -18,9 +18,9 @@ void KalmanFilter2D::createConfiguration(Configuration* cfg) {
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1,1) {}
 
-KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point initVel)
+KalmanFilter2D::KalmanFilter2D(geometry2d::Point initPos,
+                               geometry2d::Point initVel)
     : KalmanFilter(4, 2) {
-
     // States are X pos, X vel, Y pos, Y vel
     x_k1_k1 << initPos.x(),
                initVel.x(),
@@ -88,30 +88,30 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point init
            0, o;
 }
 
-void KalmanFilter2D::predictWithUpdate(Geometry2d::Point observation) {
+void KalmanFilter2D::predictWithUpdate(geometry2d::Point observation) {
     z_k << observation.x(),
            observation.y();
 
     KalmanFilter::predictWithUpdate();
 }
 
-Geometry2d::Point KalmanFilter2D::getPos() const {
-    return Geometry2d::Point(x_k_k(0), x_k_k(2));
+geometry2d::Point KalmanFilter2D::getPos() const {
+    return geometry2d::Point(x_k_k(0), x_k_k(2));
 }
 
-Geometry2d::Point KalmanFilter2D::getVel() const {
-    return Geometry2d::Point(x_k_k(1), x_k_k(3));
+geometry2d::Point KalmanFilter2D::getVel() const {
+    return geometry2d::Point(x_k_k(1), x_k_k(3));
 }
 
-Geometry2d::Point KalmanFilter2D::getPosCov() const {
-    return Geometry2d::Point(P_k_k(0,0), P_k_k(2,2));
+geometry2d::Point KalmanFilter2D::getPosCov() const {
+    return geometry2d::Point(P_k_k(0, 0), P_k_k(2, 2));
 }
 
-Geometry2d::Point KalmanFilter2D::getVelCov() const {
-    return Geometry2d::Point(P_k_k(1,1), P_k_k(3,3));
+geometry2d::Point KalmanFilter2D::getVelCov() const {
+    return geometry2d::Point(P_k_k(1, 1), P_k_k(3, 3));
 }
 
-void KalmanFilter2D::setVel(Geometry2d::Point newVel) {
+void KalmanFilter2D::setVel(geometry2d::Point newVel) {
     x_k_k(1) = newVel.x();
     x_k_k(3) = newVel.y();
 }

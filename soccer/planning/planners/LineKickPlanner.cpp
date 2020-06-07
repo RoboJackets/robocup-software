@@ -1,7 +1,8 @@
 #include "LineKickPlanner.hpp"
 
+#include <geometry2d/util.h>
+
 #include <Configuration.hpp>
-#include <Geometry2d/Util.hpp>
 #include <motion/TrapezoidalMotion.hpp>
 
 #include "EscapeObstaclesPathPlanner.hpp"
@@ -11,13 +12,13 @@
 #include "planning/paths/CompositePath.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 
 bool LineKickPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
     const auto& command =
@@ -238,7 +239,7 @@ std::unique_ptr<Path> LineKickPlanner::run(PlanRequest& planRequest) {
             //    make_shared<Circle>(ballNow.pos, Robot_Radius + Ball_Radius));
             // debug = "additional ";
         }
-        if (Geometry2d::Segment(ball.pos, target.pos)
+        if (geometry2d::Segment(ball.pos, target.pos)
                 .distTo(tmpStartInstant.pos) < Robot_Radius) {
             debug = "meh";
             // break;

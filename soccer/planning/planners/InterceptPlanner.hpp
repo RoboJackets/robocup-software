@@ -31,6 +31,6 @@ public:
 
 private:
     DirectTargetPathPlanner directPlanner;
-    Geometry2d::Point prevPathTarget;
+    geometry2d::Point prevPathTarget;
 };
 }  // namespace Planning

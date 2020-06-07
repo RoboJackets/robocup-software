@@ -1,10 +1,12 @@
+#include <geometry2d/circle.h>
+#include <geometry2d/point.h>
 #include <gtest/gtest.h>
+
 #include <Context.hpp>
-#include <Geometry2d/Circle.hpp>
-#include <Geometry2d/Point.hpp>
+
 #include "EscapeObstaclesPathPlanner.hpp"
 
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 

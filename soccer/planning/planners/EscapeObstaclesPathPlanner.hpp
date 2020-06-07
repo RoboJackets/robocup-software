@@ -1,8 +1,9 @@
-#include <optional>
-#include <functional>
+#include <geometry2d/point.h>
 
-#include <Geometry2d/Point.hpp>
+#include <functional>
+#include <optional>
 #include <rrt/Tree.hpp>
+
 #include "SingleRobotPathPlanner.hpp"
 
 class Configuration;
@@ -27,10 +28,10 @@ public:
     /// If @prevPt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.
     /// @param rrtLogger Optional callback to log the rrt tree after it's built
-    static Geometry2d::Point findNonBlockedGoal(
-        Geometry2d::Point pt, std::optional<Geometry2d::Point> prevPt,
-        const Geometry2d::ShapeSet& obstacles, int maxItr = 300,
-        std::function<void(const RRT::Tree<Geometry2d::Point>&)> rrtLogger =
+    static geometry2d::Point findNonBlockedGoal(
+        geometry2d::Point pt, std::optional<geometry2d::Point> prevPt,
+        const geometry2d::ShapeSet& obstacles, int maxItr = 300,
+        std::function<void(const RRT::Tree<geometry2d::Point>&)> rrtLogger =
             nullptr);
 
     static void createConfiguration(Configuration* cfg);

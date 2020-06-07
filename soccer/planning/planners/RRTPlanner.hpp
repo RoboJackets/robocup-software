@@ -1,8 +1,9 @@
 #pragma once
 
+#include <geometry2d/point.h>
+#include <geometry2d/shape_set.h>
+
 #include <Eigen/Dense>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/ShapeSet.hpp>
 #include <list>
 #include <optional>
 #include <planning/MotionCommand.hpp>
@@ -17,10 +18,10 @@
 namespace Planning {
 
 struct CubicBezierControlPoints {
-    Geometry2d::Point p0, p1, p2, p3;
+    geometry2d::Point p0, p1, p2, p3;
 
-    CubicBezierControlPoints(Geometry2d::Point p0, Geometry2d::Point p1,
-                             Geometry2d::Point p2, Geometry2d::Point p3)
+    CubicBezierControlPoints(geometry2d::Point p0, geometry2d::Point p1,
+                             geometry2d::Point p2, geometry2d::Point p3)
         : p0(p0), p1(p1), p2(p2), p3(p3) {}
 };
 
@@ -58,10 +59,10 @@ public:
      * Velocity Profile.
      */
     static std::unique_ptr<Planning::InterpolatedPath> generatePath(
-        const std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+        const std::vector<geometry2d::Point>& points,
+        const geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, geometry2d::Point vi,
+        geometry2d::Point vf);
 
     // Overridden methods
 
@@ -90,21 +91,21 @@ protected:
                       std::string* debugOut = nullptr) const;
 
     /// Runs a bi-directional RRT to attempt to join the start and end states.
-    std::vector<Geometry2d::Point> runRRT(
+    std::vector<geometry2d::Point> runRRT(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles, Context* context,
+        const geometry2d::ShapeSet& obstacles, Context* context,
         unsigned shellID,
-        const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints =
+        const std::optional<std::vector<geometry2d::Point>>& biasWaypoints =
             std::nullopt);
 
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& origional,
+        geometry2d::ShapeSet& origional,
         const std::vector<DynamicObstacle> dyObs, Context* context,
         unsigned shellID,
-        const std::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
+        const std::optional<std::vector<geometry2d::Point>>& biasWayPoints =
             std::nullopt);
 
     /**
@@ -117,17 +118,17 @@ protected:
      *velocity profile
      */
     static std::unique_ptr<Planning::InterpolatedPath> generateCubicBezier(
-        const std::vector<Geometry2d::Point>& points,
-        const Geometry2d::ShapeSet& obstacles,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+        const std::vector<geometry2d::Point>& points,
+        const geometry2d::ShapeSet& obstacles,
+        const MotionConstraints& motionConstraints, geometry2d::Point vi,
+        geometry2d::Point vf);
 
     /**
      *  Removes unnecesary waypoints in the path
      */
-    static void optimize(std::vector<Geometry2d::Point>& path,
-                         const Geometry2d::ShapeSet& obstacles,
-                         Geometry2d::Point vi, Geometry2d::Point vf);
+    static void optimize(std::vector<geometry2d::Point>& path,
+                         const geometry2d::ShapeSet& obstacles,
+                         geometry2d::Point vi, geometry2d::Point vf);
 
     /**
      * Generates a Cubic Bezier Path based on Albert's Bezier Velocity
@@ -136,9 +137,9 @@ protected:
      * that estimates speed using the trapezoidal motion heuristic
      */
     static std::vector<CubicBezierControlPoints> generateCubicBezierPath(
-        const std::vector<Geometry2d::Point>& points,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf,
+        const std::vector<geometry2d::Point>& points,
+        const MotionConstraints& motionConstraints, geometry2d::Point vi,
+        geometry2d::Point vf,
         const std::optional<std::vector<double>>& times = std::nullopt);
 
     /**
@@ -147,17 +148,17 @@ protected:
      */
     static std::vector<InterpolatedPath::Entry> generateVelocityPath(
         const std::vector<CubicBezierControlPoints>& controlPoints,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf, int interpolations = 40);
+        const MotionConstraints& motionConstraints, geometry2d::Point vi,
+        geometry2d::Point vf, int interpolations = 40);
 
     /**
      * Generates a Cubic Bezier Path based on some attempted heuristical Control
      * Point Placement
      */
     static std::vector<CubicBezierControlPoints> generateNormalCubicBezierPath(
-        const std::vector<Geometry2d::Point>& points,
-        const MotionConstraints& motionConstraints, Geometry2d::Point vi,
-        Geometry2d::Point vf);
+        const std::vector<geometry2d::Point>& points,
+        const MotionConstraints& motionConstraints, geometry2d::Point vi,
+        geometry2d::Point vf);
 
     /**
      * Helper function for cubicBezier() which uses Eigen matrices to solve for
@@ -173,12 +174,12 @@ protected:
  * Helper method for runRRT(), which creates a vector of points representing
  * the RRT path.
  */
-    std::vector<Geometry2d::Point> runRRTHelper(
+    std::vector<geometry2d::Point> runRRTHelper(
         MotionInstant start, MotionInstant goal,
         const MotionConstraints& motionConstraints,
-        const Geometry2d::ShapeSet& obstacles, Context* context,
+        const geometry2d::ShapeSet& obstacles, Context* context,
         unsigned shellID,
-        const std::optional<std::vector<Geometry2d::Point>>& biasWaypoints,
+        const std::optional<std::vector<geometry2d::Point>>& biasWaypoints,
         bool straightLine);
 
     static ConfigDouble* _partialReplanLeadTime;

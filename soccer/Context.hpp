@@ -1,9 +1,9 @@
 #pragma once
 
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/referee.pb.h>
+#include <constants.h>
+#include <rj_robocup_protobuf/grSim_Packet.pb.h>
+#include <rj_robocup_protobuf/referee.pb.h>
 
-#include <Constants.hpp>
 #include <planning/trajectory/Trajectory.hpp>
 #include <set>
 
@@ -48,8 +48,8 @@ struct Context {
     std::array<RobotConstraints, Num_Shells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
-    Geometry2d::ShapeSet globalObstacles;
-    Geometry2d::ShapeSet goalZoneObstacles;
+    geometry2d::ShapeSet globalObstacles;
+    geometry2d::ShapeSet goalZoneObstacles;
 
     SystemState state;
     GameState game_state;
@@ -66,12 +66,12 @@ struct Context {
 
     WorldState world_state;
 
-    Field_Dimensions field_dimensions;
+    FieldDimensions field_dimensions;
 
     std::optional<grSim_Packet> grsim_command;
 
     std::optional<QPointF> ball_command;
-    std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
+    std::optional<geometry2d::TransformMatrix> screen_to_world_command;
 
     GameSettings game_settings;
 

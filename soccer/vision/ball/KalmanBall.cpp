@@ -18,10 +18,9 @@ KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
     : lastUpdateTime(creationTime), lastPredictTime(creationTime),
       previousMeasurements(*VisionFilterConfig::slow_kick_detector_history_length),
       health(*VisionFilterConfig::filter_health_init), cameraID(cameraID) {
+    geometry2d::Point initPos = initMeasurement.getPos();
+    geometry2d::Point initVel = geometry2d::Point(0, 0);
 
-    Geometry2d::Point initPos = initMeasurement.getPos();
-    Geometry2d::Point initVel = Geometry2d::Point(0,0);
-    
     // If we have a world ball, use that vel as init to smooth cam transitions
     if (previousWorldBall.getIsValid()) {
         initVel = previousWorldBall.getVel();
@@ -70,26 +69,16 @@ int KalmanBall::getHealth() const {
     return health;
 }
 
-Geometry2d::Point KalmanBall::getPos() const {
-    return filter.getPos();
-}
+geometry2d::Point KalmanBall::getPos() const { return filter.getPos(); }
 
-Geometry2d::Point KalmanBall::getVel() const {
-    return filter.getVel();
-}
+geometry2d::Point KalmanBall::getVel() const { return filter.getVel(); }
 
-Geometry2d::Point KalmanBall::getPosCov() const {
-    return filter.getPosCov();
-}
+geometry2d::Point KalmanBall::getPosCov() const { return filter.getPosCov(); }
 
-Geometry2d::Point KalmanBall::getVelCov() const {
-    return filter.getVelCov();
-}
+geometry2d::Point KalmanBall::getVelCov() const { return filter.getVelCov(); }
 
 const boost::circular_buffer<CameraBall>& KalmanBall::getPrevMeasurements() const {
     return previousMeasurements;
 }
 
-void KalmanBall::setVel(Geometry2d::Point newVel) {
-    filter.setVel(newVel);
-}
+void KalmanBall::setVel(geometry2d::Point newVel) { filter.setVel(newVel); }

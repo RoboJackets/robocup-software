@@ -40,10 +40,6 @@ endif()
 # include cmake files in the 'cmake folder'
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-# put executables in the 'run' folder
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run/lib)
-
 # Google test
 enable_testing()
 include(SetupGTest)
@@ -114,7 +110,9 @@ endif()
 
 # run all the other CMakeLists files
 add_subdirectory(external)
+add_subdirectory(protobuf)
 add_subdirectory(common)
+add_subdirectory(msgs)
 add_subdirectory(soccer)
 add_subdirectory(logging)
 

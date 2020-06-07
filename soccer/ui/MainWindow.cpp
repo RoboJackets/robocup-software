@@ -1,12 +1,13 @@
 #include "MainWindow.hpp"
 
 #include <google/protobuf/descriptor.h>
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/grSim_Replacement.pb.h>
+#include <network/network_constants.h>
+#include <rj_robocup_protobuf/grSim_Commands.pb.h>
+#include <rj_robocup_protobuf/grSim_Packet.pb.h>
+#include <rj_robocup_protobuf/grSim_Replacement.pb.h>
 #include <ui_MainWindow.h>
+#include <utils.h>
 
-#include <Network.hpp>
 #include <QActionGroup>
 #include <QDateTime>
 #include <QDir>
@@ -16,7 +17,6 @@
 #include <QMessageBox>
 #include <QString>
 #include <Robot.hpp>
-#include <Utils.hpp>
 #include <ctime>
 #include <gameplay/GameplayModule.hpp>
 #include <ui/StyleSheetManager.hpp>
@@ -895,7 +895,7 @@ void MainWindow::on_actionStopBall_triggered() {
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    Geometry2d::Point ballPos =
+    geometry2d::Point ballPos =
         _ui.fieldView->getTeamToWorld() * state()->ball.pos;
     ball_replace->set_x(ballPos.x());
     ball_replace->set_y(ballPos.y());

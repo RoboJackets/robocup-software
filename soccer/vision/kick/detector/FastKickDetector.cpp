@@ -1,6 +1,7 @@
 #include "FastKickDetector.hpp"
 
-#include <Geometry2d/Point.hpp>
+#include <geometry2d/point.h>
+
 #include <cmath>
 #include <deque>
 #include <iterator>
@@ -69,19 +70,22 @@ bool FastKickDetector::detectKick() {
     int endIdx = stateHistory.size() - 1;
 
     // Change in position between two adjacent measurements
-    Geometry2d::Point dpStart = stateHistory.at(1).ball.getPos() - stateHistory.at(0).ball.getPos();
-    Geometry2d::Point dpEnd = stateHistory.at(endIdx).ball.getPos() - stateHistory.at(endIdx - 1).ball.getPos();
+    geometry2d::Point dpStart =
+        stateHistory.at(1).ball.getPos() - stateHistory.at(0).ball.getPos();
+    geometry2d::Point dpEnd = stateHistory.at(endIdx).ball.getPos() -
+                              stateHistory.at(endIdx - 1).ball.getPos();
 
     // Velocity at the start and end measurements
-    Geometry2d::Point vStart = dpStart / *VisionFilterConfig::vision_loop_dt;
-    Geometry2d::Point vEnd = dpEnd / *VisionFilterConfig::vision_loop_dt;
+    geometry2d::Point vStart = dpStart / *VisionFilterConfig::vision_loop_dt;
+    geometry2d::Point vEnd = dpEnd / *VisionFilterConfig::vision_loop_dt;
 
     // Change in velocity between start and end measurements
-    Geometry2d::Point dv = vEnd - vStart;
+    geometry2d::Point dv = vEnd - vStart;
 
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to have to retune it
-    Geometry2d::Point accel = dv / (*VisionFilterConfig::vision_loop_dt * stateHistory.size());
+    geometry2d::Point accel =
+        dv / (*VisionFilterConfig::vision_loop_dt * stateHistory.size());
 
     // Check for large accelerations and only going from slow->fast transitions
     return accel.mag() > *acceleration_trigger && vStart.mag() < vEnd.mag();
@@ -93,7 +97,7 @@ WorldRobot FastKickDetector::getClosestRobot() {
     // Valid assumption as long as history length is small
 
     int midIdx = (int)floor(stateHistory.size() / 2);
-    Geometry2d::Point midBallPos = stateHistory.at(midIdx).ball.getPos();
+    geometry2d::Point midBallPos = stateHistory.at(midIdx).ball.getPos();
 
     WorldRobot minRobot;
     double minDist = std::numeric_limits<double>::infinity();

@@ -1,14 +1,14 @@
 #include "Processor.hpp"
 
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <constants.h>
+#include <geometry2d/util.h>
+#include <rj_robocup_protobuf/messages_robocup_ssl_detection.pb.h>
+#include <utils.h>
 
-#include <Constants.hpp>
-#include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
 #include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
-#include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 
 #include "DebugDrawer.hpp"
@@ -19,11 +19,11 @@
 REGISTER_CONFIGURABLE(Processor)
 
 using namespace boost;
-using namespace Geometry2d;
+using namespace geometry2d;
 using namespace google::protobuf;
 
 // TODO: Remove this and just use the one in Context.
-Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
+FieldDimensions* currentDimensions = &FieldDimensions::Current_Dimensions;
 
 // A temporary place to store RobotLocalConfig/RobotConfig variables as we
 // create them. They are initialized in createConfiguration, before the
@@ -73,8 +73,9 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
-//    _visionReceiver = std::make_unique<VisionReceiver>(
-//        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
+    //    _visionReceiver = std::make_unique<VisionReceiver>(
+    //        &_context, sim, sim ? SimVisionPort :
+    //        SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
     _logger = std::make_unique<Logger>(&_context);
 
@@ -204,7 +205,7 @@ void Processor::run() {
         // TODO(Kyle): Don't do this here.
         // Because not everything is on modules yet, but we still need things to
         // run in order, we can't just do everything via the for loop (yet).
-//        _visionReceiver->run();
+        //        _visionReceiver->run();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
@@ -212,7 +213,8 @@ void Processor::run() {
             setFieldDimensions(_context.field_dimensions);
         }
 
-//        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
+        //        curStatus.lastVisionTime =
+        //        _visionReceiver->getLastVisionTime();
 
         _radio->run();
 
@@ -310,12 +312,12 @@ void Processor::updateIntentActive() {
 }
 
 void Processor::recalculateWorldToTeamTransform() {
-    _worldToTeam = Geometry2d::TransformMatrix::translate(
-        0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
-    _worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+    _worldToTeam = geometry2d::TransformMatrix::translate(
+        0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
+    _worldToTeam *= geometry2d::TransformMatrix::rotate(_teamAngle);
 }
 
-void Processor::setFieldDimensions(const Field_Dimensions& dims) {
+void Processor::setFieldDimensions(const FieldDimensions& dims) {
     *currentDimensions = dims;
     recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();

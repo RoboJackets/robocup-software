@@ -1,8 +1,10 @@
 #include "NetworkRadio.hpp"
-#include <Utils.hpp>
-#include "Geometry2d/Util.hpp"
+
+#include <geometry2d/util.h>
+#include <status.h>
+#include <utils.h>
+
 #include "PacketConvert.hpp"
-#include "status.h"
 
 using namespace boost::asio;
 using ip::udp;

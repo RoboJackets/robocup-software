@@ -3,7 +3,7 @@
 #include "SystemState.hpp"
 #include "Configuration.hpp"
 
-using namespace Geometry2d;
+using namespace geometry2d;
 
 Configuration config;
 
@@ -17,8 +17,8 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     obstacleBot->mutable_state().pose = Pose(1, 1, 0);
 
     Segment ourGoalSegment(
-        Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
-        Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
+        Point(FieldDimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
+        Point(-FieldDimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
     WindowEvaluator winEval(&context);
     WindowingResult result =

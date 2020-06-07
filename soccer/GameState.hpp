@@ -1,12 +1,13 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/TransformMatrix.hpp>
+#include <geometry2d/point.h>
+#include <geometry2d/transform_matrix.h>
+#include <referee_enums.h>
+
 #include <time.hpp>
 
-#include "Constants.hpp"
-#include "RefereeEnums.hpp"
 #include "TeamInfo.hpp"
+#include "constants.h"
 
 /**
  * @brief Holds the state of the game according to the referee
@@ -59,7 +60,7 @@ public:
     // Bool representing if we are the blue team
     bool blueTeam;
 
-    Geometry2d::Point ballPlacementPoint;
+    geometry2d::Point ballPlacementPoint;
 
     RefereeModuleEnums::Stage raw_stage =
         RefereeModuleEnums::NORMAL_FIRST_HALF_PRE;
@@ -80,7 +81,7 @@ public:
     GameState(Period period, State state, Restart restart, bool ourRestart,
               int ourScore, int theirScore, RJ::Seconds stage_time_left,
               TeamInfo our_info, TeamInfo their_info, bool blueTeam,
-              Geometry2d::Point ballPlacementPoint,
+              geometry2d::Point ballPlacementPoint,
               RefereeModuleEnums::Stage stage,
               RefereeModuleEnums::Command command)
         : period{period},
@@ -177,24 +178,24 @@ public:
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
 
     void setBallPlacementPoint(float x, float y) {
-        Geometry2d::TransformMatrix _worldToTeam =
-            Geometry2d::TransformMatrix();
-        _worldToTeam *= Geometry2d::TransformMatrix::translate(
-            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+        geometry2d::TransformMatrix _worldToTeam =
+            geometry2d::TransformMatrix();
+        _worldToTeam *= geometry2d::TransformMatrix::translate(
+            0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
         ballPlacementPoint =
-            _worldToTeam * Geometry2d::Point(x / 1000, y / 1000);
+            _worldToTeam * geometry2d::Point(x / 1000, y / 1000);
     }
 
-    static Geometry2d::Point convertToBallPlacementPoint(float x, float y) {
-        Geometry2d::TransformMatrix world_to_team =
-            Geometry2d::TransformMatrix();
-        world_to_team *= Geometry2d::TransformMatrix::translate(
-            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+    static geometry2d::Point convertToBallPlacementPoint(float x, float y) {
+        geometry2d::TransformMatrix world_to_team =
+            geometry2d::TransformMatrix();
+        world_to_team *= geometry2d::TransformMatrix::translate(
+            0, FieldDimensions::Current_Dimensions.Length() / 2.0f);
 
-        return world_to_team * Geometry2d::Point(x / 1000, y / 1000);
+        return world_to_team * geometry2d::Point(x / 1000, y / 1000);
     }
 
-    Geometry2d::Point getBallPlacementPoint() const {
+    geometry2d::Point getBallPlacementPoint() const {
         return ballPlacementPoint;
     }
 

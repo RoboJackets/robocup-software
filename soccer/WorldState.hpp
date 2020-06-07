@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Constants.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <constants.h>
+#include <geometry2d/pose.h>
 
 /**
  * @brief Contains robot motion state data
@@ -10,16 +10,16 @@
  * what time it was last seen.
  */
 struct RobotState {
-    Geometry2d::Pose pose;
-    Geometry2d::Twist velocity;
+    geometry2d::Pose pose;
+    geometry2d::Twist velocity;
     RJ::Time timestamp;
     bool visible = false;
     bool velocity_valid = false;
 };
 
 struct BallState {
-    Geometry2d::Point position;
-    Geometry2d::Point velocity;
+    geometry2d::Point position;
+    geometry2d::Point velocity;
 };
 
 struct WorldState {

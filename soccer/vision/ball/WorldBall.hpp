@@ -1,10 +1,10 @@
 #pragma once
 
-#include <list>
+#include <geometry2d/point.h>
+#include <utils.h>
 
-#include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
-#include <Utils.hpp>
+#include <list>
 
 #include "KalmanBall.hpp"
 
@@ -37,12 +37,12 @@ public:
     /**
      * @return The best estimated position of the ball
      */
-    Geometry2d::Point getPos() const;
+    geometry2d::Point getPos() const;
 
     /**
      * @return The best estimated velocity of the ball
      */
-    Geometry2d::Point getVel() const;
+    geometry2d::Point getVel() const;
 
     /**
      * @return The average position covariance of the filter
@@ -68,8 +68,8 @@ public:
 
 private:
     bool isValid;
-    Geometry2d::Point pos;
-    Geometry2d::Point vel;
+    geometry2d::Point pos;
+    geometry2d::Point vel;
     double posCov{};
     double velCov{};
     std::list<KalmanBall> ballComponents;

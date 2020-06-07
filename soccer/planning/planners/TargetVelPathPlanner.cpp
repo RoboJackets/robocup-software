@@ -8,7 +8,7 @@
 #include "planning/paths/TrapezoidalPath.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace geometry2d;
 
 namespace Planning {
 
@@ -33,8 +33,8 @@ Point TargetVelPathPlanner::calculateNonblockedPathEndpoint(
     // @maxDist is the diagonal distance across the floor - no robot can travel
     // a straightline distance further than this
     float maxDist =
-        sqrtf(powf(Field_Dimensions::Current_Dimensions.FloorLength(), 2) +
-              powf(Field_Dimensions::Current_Dimensions.FloorWidth(), 2));
+        sqrtf(powf(FieldDimensions::Current_Dimensions.FloorLength(), 2) +
+              powf(FieldDimensions::Current_Dimensions.FloorWidth(), 2));
 
     // We iteratively test different distances from the current point in the
     // direction of the target velocity.  We choose the furthest point away that
@@ -101,7 +101,7 @@ std::unique_ptr<Path> TargetVelPathPlanner::run(PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
     const MotionCommand& cmd = *planRequest.motionCommand;
     const auto& motionConstraints = planRequest.constraints.mot;
-    const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
+    const geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
     // If the start point is in an obstacle, escape from it
