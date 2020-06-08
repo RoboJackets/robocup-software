@@ -78,6 +78,10 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
 
+        if (strcmp(var, "") == 0) {
+            continue;
+        }
+
         if (strcmp(var, "--help") == 0) {
             usage(argv[0]);
         } else if (strcmp(var, "-y") == 0) {
@@ -141,7 +145,8 @@ int main(int argc, char* argv[]) {
                 usage(argv[0]);
             }
         } else if (strcmp(var, "--ros-args") == 0) {
-            // Nothing to do for ROS for now, skip
+            // ROS args follow this one, we're done parsing
+            break;
         } else {
             printf("Not a valid flag: %s\n", argv[i]);
             usage(argv[0]);

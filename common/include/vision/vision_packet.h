@@ -26,7 +26,7 @@ public:
         msg.time = RJ::ToROS(receivedTime);
 
         const auto packet_size = wrapper.ByteSizeLong();
-        msg.wrapper.data.reserve(packet_size);
+        msg.wrapper.data.resize(packet_size);
 
         wrapper.SerializeWithCachedSizesToArray(msg.wrapper.data.data());
 
@@ -36,8 +36,11 @@ public:
     static std::unique_ptr<VisionPacket> fromMsg(const VisionPacketMsg& msg) {
         auto packet = std::make_unique<VisionPacket>();
         packet->receivedTime = RJ::fromROS(rclcpp::Time{msg.time});
-        packet->wrapper.ParseFromArray(msg.wrapper.data.data(),
-                                       msg.wrapper.data.size());
+        auto success = packet->wrapper.ParseFromArray(msg.wrapper.data.data(),
+                                                      msg.wrapper.data.size());
+        if (!success) {
+            std::cerr << "Failed to deserialize VisionPacketMsg!" << std::endl;
+        }
 
         return packet;
     }

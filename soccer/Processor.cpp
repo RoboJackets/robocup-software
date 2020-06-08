@@ -64,6 +64,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     }
 
     _context.field_dimensions = *currentDimensions;
+    _context.game_state.blueTeam = blueTeam;
 
     _vision = std::make_shared<VisionFilter>();
     _refereeModule = std::make_shared<Referee>(&_context);
@@ -227,6 +228,17 @@ void Processor::run() {
         tempFillInVisionPackets();
         tempFillInRawPackets();
 
+        if (_context.field_dimensions != *currentDimensions) {
+            std::cout << "Updating field geometry based off of vision packet."
+                      << std::endl;
+            setFieldDimensions(_context.field_dimensions);
+        }
+
+        if (!_context.vision_packets.empty()) {
+            curStatus.lastVisionTime =
+                _context.vision_packets.back()->receivedTime;
+        }
+
         ////////////////
         // Inputs
         _sdl_joystick_node->run();
@@ -239,9 +251,6 @@ void Processor::run() {
                       << std::endl;
             setFieldDimensions(_context.field_dimensions);
         }
-
-        //        curStatus.lastVisionTime =
-        //        _visionReceiver->getLastVisionTime();
 
         _radio->run();
 

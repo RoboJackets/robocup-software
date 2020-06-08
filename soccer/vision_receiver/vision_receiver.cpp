@@ -1,6 +1,7 @@
 #include <field_dimensions.h>
 #include <network/multicast.h>
 
+#include <boost/exception/diagnostic_information.hpp>
 #include <stdexcept>
 
 #include "vision_receiver_sub.hpp"
@@ -41,21 +42,21 @@ VisionReceiver::VisionReceiver()
 }
 
 void VisionReceiver::setPort(int port) {
-    // If the socket is already open, close it to cancel any pending operations
-    // before we reopen it on a new port.
+    // If the socket is already open, close it to cancel any pending
+    // operations before we reopen it on a new port.
     if (_socket.is_open()) {
         _socket.close();
     }
 
-    // Open the socket and allow address reuse. We need this to allow multiple
-    // instances of soccer to listen on the same multicast port.
+    // Open the socket and allow address reuse. We need this to allow
+    // multiple instances of soccer to listen on the same multicast port.
     _socket.open(udp::v4());
     _socket.set_option(udp::socket::reuse_address(true));
 
     // Set up multicast.
     if (!multicast_add_native(_socket.native_handle(),
                               SharedVisionAddress.c_str())) {
-        std::cerr << "Multicast add failed" << std::endl;
+        RCLCPP_ERROR(get_logger(), "Multicast add failed");
         return;
     }
 
@@ -63,8 +64,8 @@ void VisionReceiver::setPort(int port) {
     boost::system::error_code bind_error;
     _socket.bind(udp::endpoint(udp::v4(), port), bind_error);
     if (static_cast<bool>(bind_error)) {
-        std::cerr << "Vision port bind failed with error: "
-                  << bind_error.message() << std::endl;
+        RCLCPP_ERROR_STREAM(get_logger(), "Vision port bind failed with error: "
+                                              << bind_error.message());
         return;
     }
 
@@ -77,6 +78,11 @@ void VisionReceiver::run() {
     // If we haven't received config from the config server yet, return
     if (!config_.connected()) {
         return;
+    }
+    static bool connected = false;
+    if (!connected) {
+        connected = true;
+        RCLCPP_INFO_STREAM(get_logger(), "Connected!");
     }
 
     // Let boost::asio check for new packets
@@ -149,7 +155,7 @@ void VisionReceiver::publishVisionPacket(std::unique_ptr<VisionPacket> packet) {
 void VisionReceiver::publishRawPacket(const SSL_WrapperPacket& packet) {
     RawProtobufMsg::UniquePtr msg = std::make_unique<RawProtobufMsg>();
     const auto packet_size = packet.ByteSizeLong();
-    msg->data.reserve(packet_size);
+    msg->data.resize(packet_size);
 
     packet.SerializeWithCachedSizesToArray(msg->data.data());
 
