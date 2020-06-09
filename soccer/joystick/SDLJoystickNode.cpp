@@ -1,6 +1,7 @@
 #include "SDLJoystickNode.hpp"
 
 #include <Utils.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <iostream>
 
 namespace joystick {
@@ -15,11 +16,11 @@ SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     }
 
     // Attempt to add additional mappings (relative to run)
-    if (SDL_GameControllerAddMappingsFromFile(
-            ApplicationRunDirectory()
-                .filePath(GameControllerDBPath)
-                .toStdString()
-                .c_str()) == -1) {
+    const auto share_dir =
+        ament_index_cpp::get_package_share_directory("rj_robocup");
+    std::stringstream sdl_path;
+    sdl_path << share_dir << "/gamecontrollerdb.txt";
+    if (SDL_GameControllerAddMappingsFromFile(sdl_path.str().c_str()) == -1) {
         std::cout << "Failed adding additional SDL Gamecontroller Mappings: "
                   << SDL_GetError() << std::endl;
     }

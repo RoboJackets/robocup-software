@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QString>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cassert>
 #include <csignal>
 #include <cstdio>
@@ -37,8 +38,9 @@ void usage(const char* prog) {
     fprintf(stderr, "\t-sim:         use simulator\n");
     fprintf(stderr, "\t-nolog:       don't write log files\n");
     fprintf(stderr, "\t-noref:       don't use external referee commands\n");
-    fprintf(stderr,
-            "\t-defend:      specify half of field to defend (plus or minus)\n");
+    fprintf(
+        stderr,
+        "\t-defend:      specify half of field to defend (plus or minus)\n");
     exit(0);
 }
 
@@ -75,6 +77,10 @@ int main(int argc, char* argv[]) {
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
+
+        if (strcmp(var, "") == 0) {
+            continue;
+        }
 
         if (strcmp(var, "--help") == 0) {
             usage(argv[0]);
@@ -138,6 +144,9 @@ int main(int argc, char* argv[]) {
                 printf("Invalid option for defendX\n");
                 usage(argv[0]);
             }
+        } else if (strcmp(var, "--ros-args") == 0) {
+            // ROS args follow this one, we're done parsing
+            break;
         } else {
             printf("Not a valid flag: %s\n", argv[i]);
             usage(argv[0]);
@@ -151,8 +160,12 @@ int main(int argc, char* argv[]) {
 
     // Default config file name
     if (cfgFile.isNull()) {
-        cfgFile = ApplicationRunDirectory().filePath(sim ? "soccer-sim.cfg"
-                                                         : "soccer-real.cfg");
+        const auto filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
+        const auto share_dir =
+            ament_index_cpp::get_package_share_directory("rj_robocup");
+        auto config_path = share_dir + "/config/" + filename;
+
+        cfgFile = QString::fromStdString(config_path);
     }
 
     std::shared_ptr<Configuration> config =
