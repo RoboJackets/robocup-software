@@ -170,6 +170,7 @@ checkstyle:
 
 CLANG_FORMAT_BINARY=clang-format-10
 CLANG_TIDY_BINARY=clang-tidy-10
+COMPILE_COMMANDS_DIR=../../build
 
 # circleci has 2 cores, but advertises 32
 ifeq ($(CIRCLECI), true)
@@ -183,12 +184,12 @@ pretty-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
 tidy-lines:
-ifeq ("$(wildcard ./build/compile_commands.json)","")
-	@printf "build/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
+ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")
+	@printf "$(COMPILE_COMMANDS_DIR)/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
 	exit 1
 endif
 	@printf "Running clang-tidy-diff...\n"
-	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp"
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*Test.cpp"
 
 checkstyle-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
@@ -196,4 +197,4 @@ checkstyle-lines:
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 checktidy-lines:
-	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp" > /tmp/checktidy.patch
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*Test.cpp" > /tmp/checktidy.patch
