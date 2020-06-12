@@ -1,6 +1,6 @@
 # Use phusion/baseimage if problems arise
-FROM ubuntu:18.04
-MAINTAINER Jay Kamat jaygkamat@gmail.com
+FROM ros:eloquent-ros-base-bionic
+LABEL maintainer="oswinso@gmail.com"
 
 # Setup apt to be happy with no console input
 ENV DEBIAN_FRONTEND noninteractive
@@ -15,23 +15,7 @@ RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && dpkg-reconfigu
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-# set up user <this is for running soccer later on>
-# Replace 1000 with your user / group id
-# RUN export uid=1000 gid=1000 && \
-#     mkdir -p /home/developer && \
-#     echo "developer:x:${uid}:${gid}:Developer,,,:/home/developer:/bin/bash" >> /etc/passwd && \
-#     echo "developer:x:${uid}:" >> /etc/group && \
-#     echo "developer ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/developer && \
-#     chmod 0440 /etc/sudoers.d/developer && \
-#     chown ${uid}:${gid} -R /home/developer && mkdir -p /etc/udev/rules.d/
+COPY . ~/robocup_ws/src/robocup-software
+WORKDIR ~/robocup_ws
 
-# USER developer
-# ENV HOME /home/developer
-
-# # do everything in developers's home
-# RUN mkdir -p /home/developer
-
-COPY . ~/robocup-software
-WORKDIR ~/robocup-software
-
-RUN sudo ./util/ubuntu-setup --yes --no-submodules
+RUN sudo ./src/robocup-software/util/ubuntu-setup --yes --no-submodules

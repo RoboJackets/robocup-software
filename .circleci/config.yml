@@ -6,8 +6,11 @@ defaults_env: &setup_env
       echo 'export PATH="$PATH:$HOME/go/bin"' >> $BASH_ENV
       source $BASH_ENV
 
-defaults_dir: &dir
-  working_directory: ~/robocup-software
+robocup_software_dir: &robocup_software_dir
+  working_directory: ~/robocup_ws/src/robocup-software
+
+robocup_ws_dir: &robocup_ws_dir
+  working_directory: ~/robocup_ws/src/robocup-software
 
 defaults_image: &image
   docker:
@@ -18,20 +21,21 @@ defaults_deps: &install_deps
 
 save_workspace: &save_workspace
   persist_to_workspace:
-    root: ~/robocup-software
+    root: ~/robocup_ws
     paths:
+      - install/*
       - build/*
-      - run/*
+      - log/*
 
 load_workspace: &load_workspace
   attach_workspace:
-    at: ~/robocup-software
+    at: ~/robocup_ws
 
 version: 2
 jobs:
   # Compile everything and save the build folder
   compile:
-    <<: *dir
+    <<: *robocup_software_dir
     <<: *image
     steps:
       - checkout
@@ -41,7 +45,7 @@ jobs:
 
   # Use the saved build folder for testing
   test-all:
-    <<: *dir
+    <<: *robocup_software_dir
     <<: *image
     steps:
       - checkout
@@ -53,7 +57,7 @@ jobs:
       - run: make test-python-nobuild
 
   python-static:
-    <<: *dir
+    <<: *robocup_software_dir
     <<: *image
 #    docker:
 #      - image: robojackets/robocup-software:16
@@ -65,7 +69,7 @@ jobs:
       - run: make mypy
 
   style:
-    <<: *dir
+    <<: *robocup_software_dir
     <<: *image
     steps:
       - checkout
@@ -79,7 +83,7 @@ jobs:
           path: /tmp/clean.patch
 
   clang-tidy:
-    <<: *dir
+    <<: *robocup_software_dir
     <<: *image
     steps:
       - checkout
@@ -104,7 +108,7 @@ jobs:
           path: /tmp/test-results
 
   gen-docs:
-    <<: *dir
+    <<: *robocup_software_dir
     <<: *image
     steps:
       - checkout
