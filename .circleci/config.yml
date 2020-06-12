@@ -16,12 +16,6 @@ eloquent_image: &eloquent_image
   docker:
     - image: robojackets/robocup-software:eloquent
 
-source_eloquent: &source_eloquent
-  run: source /opt/ros/eloquent/setup.sh
-
-source_workspace: &source_workspace
-  run: source ~/robocup_ws/install/setup.sh
-
 defaults_deps: &install_deps
   run: ./util/ubuntu-setup --yes
 
@@ -46,8 +40,9 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - <<: *source_eloquent
-      - run: colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON
+      - run: |
+          source /opt/ros/eloquent/setup.sh && \
+          colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON
       - <<: *save_workspace
 
   # Use the saved build folder for testing
@@ -59,10 +54,11 @@ jobs:
       # Ensure latest deps are installed
       - <<: *install_deps
       - <<: *load_workspace
-      - <<: *source_eloquent
-      - <<: *source_workspace
       # Run test without building anything
-      - run: ./install/rj_robocup/lib/rj_robocup/test-soccer
+      - run: |
+          source /opt/ros/eloquent/setup.sh && \
+          source install/setup.sh && \
+          ./install/rj_robocup/lib/rj_robocup/test-soccer
       - run: cd src/robocup-software && make test-python-nobuild
 
   python-static:
