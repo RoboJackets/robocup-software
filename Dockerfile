@@ -6,7 +6,7 @@ LABEL maintainer="oswinso@gmail.com"
 ENV DEBIAN_FRONTEND noninteractive
 
 # setup apt tools and other goodies we want
-RUN apt-get update --fix-missing && apt-get -y install udev locales git nano vim software-properties-common sudo tzdata && apt-get clean
+RUN apt-get update --fix-missing && apt-get -y install udev locales git ssh nano vim software-properties-common sudo tzdata && apt-get clean
 
 # Prevent bugging us later about timezones
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
