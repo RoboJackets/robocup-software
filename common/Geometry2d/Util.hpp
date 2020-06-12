@@ -34,7 +34,7 @@ static inline T sign(T f) {
 }
 
 // TODO(1485): Make this smaller once we figure out why test are failing in O3.
-//static const float FLOAT_EPSILON = 0.00001;
+// static const float FLOAT_EPSILON = 0.00001;
 static const float FLOAT_EPSILON = 1e-4;
 static bool nearlyEqual(float a, float b) {
     return std::fabs(a - b) < FLOAT_EPSILON;
