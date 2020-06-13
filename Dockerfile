@@ -1,5 +1,5 @@
 # Use phusion/baseimage if problems arise
-FROM ros:eloquent-ros-base-bionic
+FROM ros:foxy-ros-base-focal
 LABEL maintainer="oswinso@gmail.com"
 
 # Setup apt to be happy with no console input

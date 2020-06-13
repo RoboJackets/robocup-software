@@ -27,16 +27,12 @@ if cat /etc/os-release | grep -iq '^NAME=.*Debian'; then # dont add repositories
     SYSTEM="debian"
     ADD_REPOS=false
 elif cat /etc/os-release | grep -iq '^NAME=.*Ubuntu'; then # We are using a version of ubuntu...
-    if cat /etc/os-release | grep -iq '^VERSION=.*18.04'; then # Using Ubuntu 18.04
-        echo "Ubuntu 18.04 Detected..."
-        SYSTEM="ubuntu-18.04"
-        ADD_REPOS=false
-    elif cat /etc/os-release | grep -iq '^VERSION=.*20.04'; then # Using Ubuntu 20.04
+    if cat /etc/os-release | grep -iq '^VERSION=.*20.04'; then # Using Ubuntu 20.04
         echo "Ubuntu 20.04 Detected..."
         SYSTEM="ubuntu-20.04"
         ADD_REPOS=false
     else
-        echo "Sorry, we only support 18.04 and 20.04 due to ROS2." >&2
+        echo "Sorry, we only support 20.04 due to ROS2." >&2
         echo "$DISTRO_STR" >&2
         exit 1
     fi
@@ -134,8 +130,6 @@ wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
 # Install clang-format-10 using llvm repo
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
     sudo add-apt-repository -s "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-10 main"
-elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
-    sudo add-apt-repository -s "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
 fi
 
 # Add ROS key and repo
@@ -149,8 +143,6 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main
 # Install eloquent for 18.04, foxy for 20.04
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
     sudo apt-get install -y ros-foxy-desktop
-elif [ "$SYSTEM" = "ubuntu-18.04" ]; then
-    sudo apt-get install -y ros-eloquent-desktop
 fi
 
 MACH=$(uname -m)
