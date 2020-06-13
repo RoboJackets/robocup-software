@@ -26,8 +26,7 @@ public:
     SettlePlanner()
         : PlannerForCommandType("settle"),
           avgInstantaneousInterceptTarget(0, 0),
-          averageBallVel(0, 0)
-          {}
+          averageBallVel(0, 0) {}
 
     Trajectory plan(PlanRequest&& planRequest) override;
 
@@ -46,8 +45,7 @@ private:
 
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void checkSolutionValidity(BallState ball,
-                               RobotInstant startInstant,
+    void checkSolutionValidity(BallState ball, RobotInstant startInstant,
                                Geometry2d::Point deltaPos);
 
     // Figures out when to move to each state
@@ -64,14 +62,11 @@ private:
                          RobotInstant startInstant,
                          const Geometry2d::ShapeSet& staticObstacles,
                          const std::vector<DynamicObstacle>& dynamicObstacles,
-                         Geometry2d::Point deltaPos,
-                         Geometry2d::Point facePos);
+                         Geometry2d::Point deltaPos, Geometry2d::Point facePos);
 
     // Dampen doesn't need to take obstacles into account.
-    Trajectory dampen(const PlanRequest& planRequest,
-                      RobotInstant startInstant,
-                      Geometry2d::Point deltaPos,
-                      Geometry2d::Point facePos);
+    Trajectory dampen(const PlanRequest& planRequest, RobotInstant startInstant,
+                      Geometry2d::Point deltaPos, Geometry2d::Point facePos);
 
     Trajectory invalid(const PlanRequest& planRequest,
                        const Geometry2d::ShapeSet& staticObstacles,

@@ -46,4 +46,3 @@ std::vector<int> SystemState::ourValidIds() {
     }
     return validIds;
 }
-

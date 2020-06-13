@@ -2,6 +2,7 @@
 
 #include <Constants.hpp>
 #include <Geometry2d/ShapeSet.hpp>
+
 #include "planning/planner/MotionCommand.hpp"
 
 using RobotMask = std::array<float, Num_Shells>;
@@ -42,8 +43,5 @@ struct RobotIntent {
         motion_command = Planning::EmptyCommand();
     }
 
-    RobotIntent()
-        : motion_command(Planning::EmptyCommand{}) {
-        clear();
-    }
+    RobotIntent() : motion_command(Planning::EmptyCommand{}) { clear(); }
 };

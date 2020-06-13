@@ -21,7 +21,8 @@ public:
     QString drawLayer = "Planning";
 
 private:
-    [[nodiscard]] static AngleFunction getAngleFunction(const PlanRequest& request);
+    [[nodiscard]] static AngleFunction getAngleFunction(
+        const PlanRequest& request);
 
     Replanner replanner;
     Trajectory previous;

@@ -16,8 +16,8 @@
 
 using namespace std;
 using namespace Geometry2d;
-using Planning::RobotInstant;
 using Planning::MotionCommand;
+using Planning::RobotInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
@@ -55,8 +55,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
-OurRobot::OurRobot(Context* context, int shell)
-    : Robot(context, shell, true) {
+OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
     resetAvoidRobotRadii();
 
     _clearCmdText();
@@ -173,10 +172,8 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
 
     Geometry2d::Point targetPoint = goal;
     Geometry2d::Point targetVel = (goal - pos()).normalized() * endSpeed;
-    RobotInstant goal_instant{
-        Geometry2d::Pose{targetPoint, 0},
-        Geometry2d::Twist{targetVel, 0},
-        RJ::Time{0s}};
+    RobotInstant goal_instant{Geometry2d::Pose{targetPoint, 0},
+                              Geometry2d::Twist{targetVel, 0}, RJ::Time{0s}};
     setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "moveTuning(" << goal << ")" << endl;
@@ -359,11 +356,13 @@ void OurRobot::kickImmediately() {
 }
 
 void OurRobot::face(Geometry2d::Point pt) {
-    if (!std::holds_alternative<Planning::PathTargetCommand>(intent().motion_command)) {
+    if (!std::holds_alternative<Planning::PathTargetCommand>(
+            intent().motion_command)) {
         intent().motion_command.emplace<Planning::PathTargetCommand>();
     }
 
-    auto& command = std::get<Planning::PathTargetCommand>(intent().motion_command);
+    auto& command =
+        std::get<Planning::PathTargetCommand>(intent().motion_command);
     command.angle_override = pos().angleTo(pt);
 }
 #pragma mark Robot Avoidance
@@ -453,8 +452,8 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
 
     // create an obstacle if necessary
     if (intent().avoid_ball_radius > 0.0) {
-        return std::make_shared<Geometry2d::Circle>(_context->world_state.ball.position,
-                                                    intent().avoid_ball_radius);
+        return std::make_shared<Geometry2d::Circle>(
+            _context->world_state.ball.position, intent().avoid_ball_radius);
     }
     return nullptr;
 }

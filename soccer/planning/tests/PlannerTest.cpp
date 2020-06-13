@@ -2,8 +2,8 @@
 
 #include "Geometry2d/Pose.hpp"
 #include "SystemState.hpp"
-#include "planning/Trajectory.hpp"
 #include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
 #include "planning/low_level/RRTUtil.hpp"
 #include "planning/planner/CollectPlanner.hpp"
 #include "planning/planner/MotionCommand.hpp"
@@ -248,9 +248,9 @@ TEST(Planning, settle_pointless_obs) {
                         &world_state,
                         2,
                         nullptr};
-SettlePlanner planner;
-Trajectory path = planner.plan(std::move(request));
-assertPathContinuous(path, RobotConstraints{});
+    SettlePlanner planner;
+    Trajectory path = planner.plan(std::move(request));
+    assertPathContinuous(path, RobotConstraints{});
 }
 
 TEST(Planning, settle_random) {

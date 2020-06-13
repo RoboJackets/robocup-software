@@ -4,8 +4,7 @@ namespace Planning {
 
 bool TrajectoryHitsStatic(const Trajectory& trajectory,
                           const Geometry2d::ShapeSet& obstacles,
-                          RJ::Time start_time,
-                          RJ::Time* hit_time) {
+                          RJ::Time start_time, RJ::Time* hit_time) {
     if (trajectory.empty()) {
         return false;
     }
@@ -30,8 +29,7 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
     constexpr RJ::Seconds expected_dt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
-    RJ::Seconds dt = std::max(expected_dt,
-                              time_left / max_iterations);
+    RJ::Seconds dt = std::max(expected_dt, time_left / max_iterations);
 
     const auto& start_hits = obstacles.hitSet(cursor.value().position());
     while (cursor.has_value()) {
@@ -88,8 +86,7 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
     constexpr RJ::Seconds expected_dt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
-    RJ::Seconds dt = std::max(expected_dt,
-                              time_left / max_iterations);
+    RJ::Seconds dt = std::max(expected_dt, time_left / max_iterations);
 
     // The time of the earliest hit, if there is one. This is needed so that
     // we get the _first_ time we hit an obstacle, not necessarily the time we
@@ -98,8 +95,7 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
 
     for (const DynamicObstacle& obs : obstacles) {
         if (obs.path->empty()) {
-            throw std::runtime_error(
-                "Empty trajectory in dynamic obstacle");
+            throw std::runtime_error("Empty trajectory in dynamic obstacle");
         }
 
         cursor.seek(start_time);
@@ -142,6 +138,4 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
     return maybe_hit_time.has_value();
 }
 
-
-
-} // namespace Planning
+}  // namespace Planning

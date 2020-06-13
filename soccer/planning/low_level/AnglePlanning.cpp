@@ -4,8 +4,7 @@
 
 namespace Planning {
 
-void PlanAngles(Trajectory* trajectory,
-                const RobotInstant& start_instant,
+void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
                 const RotationConstraints& constraints) {
     RJ::Time start_time = start_instant.stamp;
@@ -31,8 +30,7 @@ void PlanAngles(Trajectory* trajectory,
     target_angles.resize(trajectory->num_instants());
     Eigen::Vector2d gradient;
     target_angles.at(0) = angle_function(start_instant.linear_motion(),
-                                         start_instant.heading(),
-                                         &gradient);
+                                         start_instant.heading(), &gradient);
 
     std::vector<double> velocity;
     velocity.resize(trajectory->num_instants());
@@ -42,11 +40,10 @@ void PlanAngles(Trajectory* trajectory,
         // Get a temporary copy of the previous state and modify it to have
         // the correct heading (we'll actually edit in-place later).
         LinearMotionInstant instant = trajectory->instant_at(i).linear_motion();
-        target_angles.at(i) = angle_function(instant,
-                                             target_angles.at(i - 1),
-                                             &gradient);
-        velocity.at(i) = trajectory->instant_at(i).linear_velocity()
-                             .dot(Geometry2d::Point(gradient));
+        target_angles.at(i) =
+            angle_function(instant, target_angles.at(i - 1), &gradient);
+        velocity.at(i) = trajectory->instant_at(i).linear_velocity().dot(
+            Geometry2d::Point(gradient));
     }
 
     /*
@@ -141,5 +138,4 @@ void PlanAngles(Trajectory* trajectory,
     trajectory->mark_angles_valid();
 }
 
-} // namespace Planning
-
+}  // namespace Planning

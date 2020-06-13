@@ -20,7 +20,7 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
     const RJ::Time curTime = RJ::now();
 
     if (previous.empty()) {
-         state = LineKickStates::Approach;
+        state = LineKickStates::Approach;
     }
 
 #if 0
@@ -119,10 +119,10 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
 }
 
 Trajectory LineKickPlanner::planForSlowMovingBall(
-        RobotInstant start, BallState ball, Geometry2d::Point target,
-        Geometry2d::ShapeSet static_obstacles,
-        const std::vector<DynamicObstacle>& dynamic_obstacles,
-        RobotConstraints constraints) {
+    RobotInstant start, BallState ball, Geometry2d::Point target,
+    Geometry2d::ShapeSet static_obstacles,
+    const std::vector<DynamicObstacle>& dynamic_obstacles,
+    RobotConstraints constraints) {
 #if 0
     constexpr double ballAvoidDistance = 0.05;
 

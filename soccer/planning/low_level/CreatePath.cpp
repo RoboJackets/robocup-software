@@ -28,8 +28,7 @@ Trajectory simple(const LinearMotionInstant& start,
 
 Trajectory rrt(const LinearMotionInstant& start,
                const LinearMotionInstant& goal,
-               const MotionConstraints& motionConstraints,
-               RJ::Time startTime,
+               const MotionConstraints& motionConstraints, RJ::Time startTime,
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
                const std::vector<Point>& biasWaypoints) {
@@ -44,15 +43,10 @@ Trajectory rrt(const LinearMotionInstant& start,
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.distTo(goal.position) < Robot_Radius ||
-        !TrajectoryHitsStatic(straightTrajectory,
-                              static_obstacles,
-                              startTime,
+        !TrajectoryHitsStatic(straightTrajectory, static_obstacles, startTime,
                               nullptr) &&
-            !TrajectoryHitsDynamic(straightTrajectory,
-                                   dynamic_obstacles,
-                                   startTime,
-                                   nullptr,
-                                   nullptr)) {
+            !TrajectoryHitsDynamic(straightTrajectory, dynamic_obstacles,
+                                   startTime, nullptr, nullptr)) {
         return std::move(straightTrajectory);
     }
 
@@ -84,4 +78,4 @@ Trajectory rrt(const LinearMotionInstant& start,
     return std::move(path);
 }
 
-} // namespace Planning::CreatePath
+}  // namespace Planning::CreatePath

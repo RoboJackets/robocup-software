@@ -15,10 +15,10 @@ import tactics.defense
 
 ## Play that uses submissive defenders and wingers to defend
 #  an attack close to our goal.
-#  
-#  By default, we will use standard defense (two submissive 
+#
+#  By default, we will use standard defense (two submissive
 #  defenders, one goalie) and two wing defense robots. The
-#  remaining robot will mark the highest threat robot. 
+#  remaining robot will mark the highest threat robot.
 class DefendGoal(standard_play.StandardPlay):
     def __init__(self, num_defenders=3, num_wingers=2):
         super().__init__(continuous=True)
@@ -31,8 +31,9 @@ class DefendGoal(standard_play.StandardPlay):
                             'Immediately')
 
         # Use standard defense
-        self.add_subbehavior(
-            tactics.defense.Defense(), 'defense', required=False)
+        self.add_subbehavior(tactics.defense.Defense(),
+                             'defense',
+                             required=False)
 
         self.add_subbehavior(mark.Mark(), 'mark')
 

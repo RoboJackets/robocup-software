@@ -142,7 +142,8 @@ public:
      * @return The RobotInstant at that duration into the path, or nullopt if
      *      seconds is out-of-bounds.
      */
-    [[nodiscard]] std::optional<RobotInstant> evaluate(RJ::Seconds seconds) const;
+    [[nodiscard]] std::optional<RobotInstant> evaluate(
+        RJ::Seconds seconds) const;
 
     /**
      * @brief Returns a trajectory formed using an interval subset of this
@@ -285,9 +286,7 @@ public:
     /**
      * @brief Stamp this trajectory for completion at the specified time.
      */
-    void stamp(RJ::Time time) {
-        creation_stamp_ = time;
-    }
+    void stamp(RJ::Time time) { creation_stamp_ = time; }
 
     /*
      * @brief Allows seeking to arbitrary positions in a Trajectory and
@@ -298,8 +297,7 @@ public:
         /**
          * @brief Construct a cursor from the given trajectory and start time.
          */
-        Cursor(const Trajectory& trajectory,
-               RJ::Time start_time);
+        Cursor(const Trajectory& trajectory, RJ::Time start_time);
 
         /**
          * @brief Construct a cursor at the beginning of the given trajectory.
@@ -360,13 +358,13 @@ public:
          * @return The time associated with the knot point immediately after
          *  this cursor, or nullopt if there is no such knot (this is the end).
          */
-         [[nodiscard]] std::optional<RJ::Time> time_next() const {
-             if (iterator_ == trajectory_.instants_end() ||
-                 iterator_ + 1 == trajectory_.instants_end()) {
-                 return std::nullopt;
-             }
-             return (iterator_ + 1)->stamp;
-         }
+        [[nodiscard]] std::optional<RJ::Time> time_next() const {
+            if (iterator_ == trajectory_.instants_end() ||
+                iterator_ + 1 == trajectory_.instants_end()) {
+                return std::nullopt;
+            }
+            return (iterator_ + 1)->stamp;
+        }
 
     private:
         const Trajectory& trajectory_;

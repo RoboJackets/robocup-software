@@ -1,7 +1,7 @@
 #include "VelocityProfiling.hpp"
 
-#include "planning/Instant.hpp"
 #include "TrapezoidalMotion.hpp"
+#include "planning/Instant.hpp"
 
 namespace Planning {
 
@@ -98,9 +98,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
         assert(std::isfinite(max_tangential_acceleration));
 
         double distance = (points[n + 1] - points[n]).mag();
-        speed[n + 1] = limit_acceleration(speed[n],
-                                          speed[n + 1],
-                                          distance,
+        speed[n + 1] = limit_acceleration(speed[n], speed[n + 1], distance,
                                           max_tangential_acceleration);
     }
 
@@ -129,9 +127,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
         assert(std::isfinite(max_tangential_acceleration));
 
         double distance = (points[n - 1] - points[n]).mag();
-        speed[n - 1] = limit_acceleration(speed[n],
-                                          speed[n - 1],
-                                          distance,
+        speed[n - 1] = limit_acceleration(speed[n], speed[n - 1], distance,
                                           max_tangential_acceleration);
     }
 
@@ -155,7 +151,8 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
         assert(average_speed != 0 && std::isfinite(average_speed));
         assert(interval_time > 0 && std::isfinite(interval_time));
 
-        RJ::Time current_time = trajectory.last().stamp + RJ::Seconds(interval_time);
+        RJ::Time current_time =
+            trajectory.last().stamp + RJ::Seconds(interval_time);
 
         Pose pose{points[n], 0};
         Twist twist{derivs1[n].normalized(speed[n]), 0};

@@ -32,8 +32,7 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
 
     instants_ = std::move(a.instants_);
     instants_.reserve(instants_.size() + b.instants_.size() - 1);
-    instants_.insert(instants_.end(),
-                     b.instants_.begin() + 1,
+    instants_.insert(instants_.end(), b.instants_.begin() + 1,
                      b.instants_.end());
 
     has_angle_profile_ = false;
@@ -65,14 +64,16 @@ bool Trajectory::CheckSeconds(RJ::Seconds seconds) const {
 
 void Trajectory::ScaleDuration(RJ::Seconds final_duration) {
     // Note: even though this modifies the trajectory, it does not break
-    // angle planning and so we do not need to mark the angle profile as invalid.
+    // angle planning and so we do not need to mark the angle profile as
+    // invalid.
     ScaleDuration(final_duration, begin_time());
 }
 
 void Trajectory::ScaleDuration(RJ::Seconds final_duration,
                                RJ::Time fixed_point) {
     // Note: even though this modifies the trajectory, it does not break
-    // angle planning and so we do not need to mark the angle profile as invalid.
+    // angle planning and so we do not need to mark the angle profile as
+    // invalid.
     double multiplier = final_duration / duration();
 
     for (RobotInstant& instant : instants_) {
@@ -154,8 +155,7 @@ RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
 Trajectory Trajectory::subTrajectory(RJ::Time startTime,
                                      RJ::Time endTime) const {
     if (startTime > endTime) {
-        throw std::invalid_argument(
-            "End time must not come before start time");
+        throw std::invalid_argument("End time must not come before start time");
     }
 
     Cursor cursor(*this, startTime);
@@ -181,10 +181,8 @@ Trajectory Trajectory::subTrajectory(RJ::Time startTime,
     }
 
     // The above calculation will always miss the last instant.
-    result_instants.push_back(
-        Trajectory::interpolatedInstant(result_instants.back(),
-                                        cursor.value(),
-                                        actual_end));
+    result_instants.push_back(Trajectory::interpolatedInstant(
+        result_instants.back(), cursor.value(), actual_end));
 
     return Trajectory{std::move(result_instants)};
 }
@@ -223,10 +221,8 @@ void Trajectory::draw(DebugDrawer* drawer,
             return;
         }
 
-        drawer->drawText(QString::fromStdString(debug_text_.value()),
-                         textPos,
-                         QColor(100, 100, 255, 100),
-                         "PlanningDebugText");
+        drawer->drawText(QString::fromStdString(debug_text_.value()), textPos,
+                         QColor(100, 100, 255, 100), "PlanningDebugText");
     }
 }
 
@@ -234,7 +230,8 @@ bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b,
                               double tolerance) {
     auto a_it = a.instants_begin();
     auto b_it = b.instants_begin();
-    for (; a_it != a.instants_end() && b_it != b.instants_end(); ++a_it, ++b_it) {
+    for (; a_it != a.instants_end() && b_it != b.instants_end();
+         ++a_it, ++b_it) {
         if (!RobotInstant::nearly_equals(*a_it, *b_it, tolerance)) {
             return false;
         }
@@ -247,14 +244,12 @@ bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b,
 
 Trajectory::Cursor::Cursor(const Trajectory& trajectory,
                            RobotInstantSequence::const_iterator iterator)
-    : trajectory_{trajectory},
-      iterator_{iterator},
-      time_{iterator->stamp} {}
+    : trajectory_{trajectory}, iterator_{iterator}, time_{iterator->stamp} {}
 
-Trajectory::Cursor::Cursor(const Trajectory &trajectory)
+Trajectory::Cursor::Cursor(const Trajectory& trajectory)
     : Cursor{trajectory, trajectory.instants_.begin()} {}
 
-Trajectory::Cursor::Cursor(const Trajectory &trajectory, RJ::Time start_time)
+Trajectory::Cursor::Cursor(const Trajectory& trajectory, RJ::Time start_time)
     : Cursor{trajectory} {
     seek(start_time);
 }
@@ -280,8 +275,8 @@ void Trajectory::Cursor::seek(RJ::Time time) {
     }
 
     // Note that this comparison is less than or equal to.
-    auto compare_times = [] (const RobotInstant& a,
-                             const RobotInstant& b) -> bool {
+    auto compare_times = [](const RobotInstant& a,
+                            const RobotInstant& b) -> bool {
         return a.stamp <= b.stamp;
     };
 
@@ -293,8 +288,7 @@ void Trajectory::Cursor::seek(RJ::Time time) {
     // We actually want the _last_ instant with instant.stamp <= time, so we
     // can use the call to lower_bound and then take a step back.
     iterator_ = std::lower_bound(trajectory_.instants_.begin(),
-                                 trajectory_.instants_.end(),
-                                 dummy_instant,
+                                 trajectory_.instants_.end(), dummy_instant,
                                  compare_times);
 
     assert(iterator_ != trajectory_.instants_.begin());

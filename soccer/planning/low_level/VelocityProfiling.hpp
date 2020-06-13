@@ -2,8 +2,8 @@
 
 #include <planning/RotationConstraints.hpp>
 
-#include "planning/Instant.hpp"
 #include "PathSmoothing.hpp"
+#include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
 
 namespace Planning {
@@ -15,8 +15,7 @@ namespace Planning {
  * @param path
  * @return
  */
-Trajectory ProfileVelocity(const BezierPath& path,
-                           double initial_speed,
+Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
                            double final_speed,
                            const MotionConstraints& constraints,
                            RJ::Time initial_time = RJ::now());

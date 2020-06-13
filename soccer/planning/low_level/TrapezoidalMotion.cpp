@@ -8,8 +8,7 @@ namespace Planning::Trapezoid {
  * Is the profile "inverted"? That is, do we first accelerate in the positive
  *  or negative direction? true = inverted profile (negative direction)
  */
-bool shouldFlipAcceleration(State initial,
-                            State goal,
+bool shouldFlipAcceleration(State initial, State goal,
                             double max_acceleration) {
     // Calculate the distance travelled by a linear ramp from initial velocity
     // to final velocity. If this displacement is more positive than our desired
@@ -20,17 +19,15 @@ bool shouldFlipAcceleration(State initial,
     return displacement < ramp_time * (initial.velocity + goal.velocity) / 2;
 }
 
-void getMotionTimes(State initial,
-                    State goal,
-                    double max_velocity,
-                    double max_acceleration,
-                    double* end_accel,
-                    double* end_constant,
-                    double* end) {
+void getMotionTimes(State initial, State goal, double max_velocity,
+                    double max_acceleration, double* end_accel,
+                    double* end_constant, double* end) {
     // Calculate the time to ramp up to max speed and the time to get from max
     // speed down to the goal speed.
-    double time_accel = std::abs(max_velocity - initial.velocity) / max_acceleration;
-    double time_decel = std::abs(max_velocity - goal.velocity) / max_acceleration;
+    double time_accel =
+        std::abs(max_velocity - initial.velocity) / max_acceleration;
+    double time_decel =
+        std::abs(max_velocity - goal.velocity) / max_acceleration;
 
     double distance_accel = time_accel * (initial.velocity + max_velocity) / 2;
     double distance_decel = time_decel * (goal.velocity + max_velocity) / 2;
@@ -48,8 +45,8 @@ void getMotionTimes(State initial,
         // and the deceleration movements. Solve for final velocity using
         // kinematics equations:
         // vf^2 - vi^2 = 2ad, where d = distance_remaining/2
-        double vi_squared = std::pow(max_velocity, 2)
-                            + max_acceleration * distance_remaining;
+        double vi_squared =
+            std::pow(max_velocity, 2) + max_acceleration * distance_remaining;
 
         // We want the positive root, because the negative root will give us a
         // negative time.
@@ -64,13 +61,9 @@ void getMotionTimes(State initial,
     *end = time_accel + time_constant + time_decel;
 }
 
-double timeRemaining(State initial,
-                     State goal,
-                     double max_velocity,
+double timeRemaining(State initial, State goal, double max_velocity,
                      double max_acceleration) {
-    bool flipped = shouldFlipAcceleration(initial,
-                                          goal,
-                                          max_acceleration);
+    bool flipped = shouldFlipAcceleration(initial, goal, max_acceleration);
 
     if (flipped) {
         initial.position *= -1;
@@ -82,23 +75,14 @@ double timeRemaining(State initial,
     double time_accel_end = 0;
     double time_constant_end = 0;
     double time_end = 0;
-    getMotionTimes(initial,
-                   goal,
-                   max_velocity,
-                   max_acceleration,
-                   &time_accel_end,
-                   &time_constant_end,
-                   &time_end);
+    getMotionTimes(initial, goal, max_velocity, max_acceleration,
+                   &time_accel_end, &time_constant_end, &time_end);
     return time_end;
 }
 
-State trapezoidInterpolate(State initial,
-                           State goal,
-                           double max_velocity,
-                           double max_acceleration,
-                           double time_now,
-                           double time_accel_end,
-                           double time_constant_end,
+State trapezoidInterpolate(State initial, State goal, double max_velocity,
+                           double max_acceleration, double time_now,
+                           double time_accel_end, double time_constant_end,
                            double time_end) {
     State result{0, 0};
 
@@ -106,9 +90,8 @@ State trapezoidInterpolate(State initial,
         result = initial;
     } else if (time_now < time_accel_end) {
         result.velocity = initial.velocity + max_acceleration * time_now;
-        result.position =
-            initial.position +
-            time_now * (initial.velocity + result.velocity) / 2;
+        result.position = initial.position +
+                          time_now * (initial.velocity + result.velocity) / 2;
     } else if (time_now < time_constant_end) {
         double distance_accel =
             initial.position +
@@ -129,14 +112,9 @@ State trapezoidInterpolate(State initial,
     return result;
 }
 
-State predictIn(State initial,
-                State goal,
-                double max_velocity,
-                double max_acceleration,
-                double time_now) {
-    bool flipped = shouldFlipAcceleration(initial,
-                                          goal,
-                                          max_acceleration);
+State predictIn(State initial, State goal, double max_velocity,
+                double max_acceleration, double time_now) {
+    bool flipped = shouldFlipAcceleration(initial, goal, max_acceleration);
 
     if (flipped) {
         initial.position *= -1;
@@ -148,22 +126,12 @@ State predictIn(State initial,
     double time_accel_end = 0;
     double time_constant_end = 0;
     double time_end = 0;
-    getMotionTimes(initial,
-                   goal,
-                   max_velocity,
-                   max_acceleration,
-                   &time_accel_end,
-                   &time_constant_end,
-                   &time_end);
+    getMotionTimes(initial, goal, max_velocity, max_acceleration,
+                   &time_accel_end, &time_constant_end, &time_end);
 
-    State result = trapezoidInterpolate(initial,
-                                        goal,
-                                        max_velocity,
-                                        max_acceleration,
-                                        time_now,
-                                        time_accel_end,
-                                        time_constant_end,
-                                        time_end);
+    State result = trapezoidInterpolate(
+        initial, goal, max_velocity, max_acceleration, time_now, time_accel_end,
+        time_constant_end, time_end);
 
     if (flipped) {
         result.position *= -1;
@@ -173,8 +141,7 @@ State predictIn(State initial,
     return result;
 }
 
-std::optional<State> predictWithExactEndTime(State initial,
-                                             State goal,
+std::optional<State> predictWithExactEndTime(State initial, State goal,
                                              double max_velocity,
                                              double max_acceleration,
                                              double time_now,
@@ -193,13 +160,14 @@ std::optional<State> predictWithExactEndTime(State initial,
     double fast_t2 = 0;
     double fast_end = 0;
 
-    getMotionTimes(initial, goal, max_velocity, max_acceleration, &fast_t1, &fast_t2, &fast_end);
+    getMotionTimes(initial, goal, max_velocity, max_acceleration, &fast_t1,
+                   &fast_t2, &fast_end);
     double fast_constant_time = fast_t2 - fast_t1;
     double fast_vmax = initial.velocity + max_acceleration * fast_t1;
 
     if (fast_end > request_end) {
-        // We have requested to complete the motion faster than physically possible, given the constraints.
-        // Return nullopt.
+        // We have requested to complete the motion faster than physically
+        // possible, given the constraints. Return nullopt.
         return std::nullopt;
     }
 
@@ -256,14 +224,8 @@ std::optional<State> predictWithExactEndTime(State initial,
     double time_end =
         truncated_accel_time + constant_time + truncated_decel_time;
 
-    State result = trapezoidInterpolate(initial,
-                                        goal,
-                                        vmax,
-                                        max_acceleration,
-                                        time_now,
-                                        t1,
-                                        t2,
-                                        time_end);
+    State result = trapezoidInterpolate(initial, goal, vmax, max_acceleration,
+                                        time_now, t1, t2, time_end);
 
     if (flipped) {
         result.position *= -1;
@@ -273,5 +235,4 @@ std::optional<State> predictWithExactEndTime(State initial,
     return result;
 }
 
-} // namespace Planning::Trapezoid
-
+}  // namespace Planning::Trapezoid

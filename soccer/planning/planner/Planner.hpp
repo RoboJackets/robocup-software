@@ -2,8 +2,8 @@
 
 #include "MotionCommand.hpp"
 #include "PlanRequest.hpp"
-#include "planning/Trajectory.hpp"
 #include "planning/Instant.hpp"
+#include "planning/Trajectory.hpp"
 
 namespace Planning {
 class Planner {
@@ -19,7 +19,8 @@ public:
      * @param command The command to check.
      * @return Whether or not this planner can plan that type of command.
      */
-    [[nodiscard]] virtual bool isApplicable(const MotionCommand& command) const = 0;
+    [[nodiscard]] virtual bool isApplicable(
+        const MotionCommand& command) const = 0;
 
     /**
      * Plan a trajectory for this request. This is guaranteed to be a request
@@ -58,7 +59,8 @@ public:
     PlannerForCommandType(const std::string& name) : Planner(name){};
     ~PlannerForCommandType() override = default;
 
-    [[nodiscard]] bool isApplicable(const MotionCommand& command) const override {
+    [[nodiscard]] bool isApplicable(
+        const MotionCommand& command) const override {
         return std::holds_alternative<CommandType>(command);
     }
 };

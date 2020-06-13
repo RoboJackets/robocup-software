@@ -60,7 +60,8 @@ void MotionControl::run(const RobotState& state,
     std::optional<RobotInstant> maybe_target =
         trajectory.evaluate(time_into_path);
 
-    // If we're past the end of the trajectory, do motion control off of the end.
+    // If we're past the end of the trajectory, do motion control off of the
+    // end.
     bool at_end = time_into_path > trajectory.duration();
     if (at_end) {
         maybe_target = trajectory.last();

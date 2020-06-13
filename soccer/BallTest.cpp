@@ -1,12 +1,10 @@
-#include "WorldState.hpp"
 #include <gtest/gtest.h>
+
+#include "WorldState.hpp"
 
 TEST(BallState, Predict) {
     RJ::Time start = RJ::now();
-    BallState state(
-        Geometry2d::Point(0, 0),
-        Geometry2d::Point(1, 0),
-        start);
+    BallState state(Geometry2d::Point(0, 0), Geometry2d::Point(1, 0), start);
 
     BallState in_3_seconds = state.predict_in(RJ::Seconds(3));
 
@@ -20,31 +18,26 @@ TEST(BallState, Predict) {
 
 TEST(BallState, QuerySecondsTo) {
     RJ::Time start = RJ::now();
-    BallState state(
-        Geometry2d::Point(0, 0),
-        Geometry2d::Point(1, 0),
-        start);
+    BallState state(Geometry2d::Point(0, 0), Geometry2d::Point(1, 0), start);
 
     BallState in_3_seconds = state.predict_in(RJ::Seconds(3));
 
     Geometry2d::Point actual;
     EXPECT_NEAR(
-        state.query_seconds_near(in_3_seconds.position, &actual).count(),
-              3, 1e-6);
+        state.query_seconds_near(in_3_seconds.position, &actual).count(), 3,
+        1e-6);
     EXPECT_TRUE(actual.nearPoint(in_3_seconds.position, 1e-6));
 }
 
 TEST(BallState, QueryFar) {
     RJ::Time start = RJ::now();
-    BallState state(
-        Geometry2d::Point(0, 0),
-        Geometry2d::Point(1, 0),
-        start);
+    BallState state(Geometry2d::Point(0, 0), Geometry2d::Point(1, 0), start);
 
     Geometry2d::Point actual;
     RJ::Seconds t = state.query_seconds_near(Geometry2d::Point(5, 0), &actual);
 
-    // TODO: For some reason query_stop_time and query_seconds_to_dist give slightly
+    // TODO: For some reason query_stop_time and query_seconds_to_dist give
+    // slightly
     //  different results, which results in this error being really high (2e-3).
     //  Diagnose this and make sure it isn't a bug.
     EXPECT_NEAR(state.query_stop_time().count(), t.count(), 2e-3);

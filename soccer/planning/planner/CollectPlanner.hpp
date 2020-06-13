@@ -40,23 +40,21 @@ public:
 private:
     // Restarts the state machine if our calculations are whack
     // and won't intercept ball correctly anymore
-    void checkSolutionValidity(BallState ball,
-                               RobotInstant start);
+    void checkSolutionValidity(BallState ball, RobotInstant start);
 
     void processStateTransition(BallState ball, RobotInstant startInstant);
 
-    Trajectory courseApproach(const PlanRequest& planRequest,
-                              RobotInstant start,
-                              const Geometry2d::ShapeSet& staticObstacles,
-                              const std::vector<DynamicObstacle>& dynamicObstacles);
+    Trajectory courseApproach(
+        const PlanRequest& planRequest, RobotInstant start,
+        const Geometry2d::ShapeSet& staticObstacles,
+        const std::vector<DynamicObstacle>& dynamicObstacles);
 
-    Trajectory fineApproach(const PlanRequest& planRequest,
-                            RobotInstant startInstant,
-                            const Geometry2d::ShapeSet& staticObstacles,
-                            const std::vector<DynamicObstacle>& dynamicObstacles);
+    Trajectory fineApproach(
+        const PlanRequest& planRequest, RobotInstant startInstant,
+        const Geometry2d::ShapeSet& staticObstacles,
+        const std::vector<DynamicObstacle>& dynamicObstacles);
 
-    Trajectory control(const PlanRequest& planRequest,
-                       RobotInstant start,
+    Trajectory control(const PlanRequest& planRequest, RobotInstant start,
                        const Trajectory& partialPath,
                        const Geometry2d::ShapeSet& staticObstacles,
                        const std::vector<DynamicObstacle>& dynamicObstacles);

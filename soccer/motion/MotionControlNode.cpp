@@ -9,8 +9,9 @@ MotionControlNode::MotionControlNode(Context* context) : _context(context) {
 }
 
 void MotionControlNode::run() {
-    runMotion(_context->world_state, _context->game_state, _context->trajectories,
-              _context->is_joystick_controlled, &_context->motion_setpoints);
+    runMotion(_context->world_state, _context->game_state,
+              _context->trajectories, _context->is_joystick_controlled,
+              &_context->motion_setpoints);
 }
 
 void MotionControlNode::runMotion(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
+
 #include "planning/MotionConstraints.hpp"
 
 namespace Planning {

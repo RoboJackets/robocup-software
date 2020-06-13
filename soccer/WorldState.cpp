@@ -7,7 +7,8 @@ BallState BallState::predict_at(RJ::Time time) const {
     }
 
     if (time < timestamp) {
-        throw std::runtime_error("Estimated Time can't be before observation time.");
+        throw std::runtime_error(
+            "Estimated Time can't be before observation time.");
     }
 
     auto dt = RJ::Seconds(time - timestamp);
@@ -28,12 +29,12 @@ BallState BallState::predict_at(RJ::Time time) const {
         distance = s0 * max_time - pow(max_time, 2) / 2.0 * kBallDecayConstant;
     } else {
         speed = s0 - (dt.count() * kBallDecayConstant);
-        distance = s0 * dt.count() - pow(dt.count(), 2) / 2.0 * kBallDecayConstant;
+        distance =
+            s0 * dt.count() - pow(dt.count(), 2) / 2.0 * kBallDecayConstant;
     }
 
     return BallState(position + velocity.normalized(distance),
-                     velocity.normalized(speed),
-                     time);
+                     velocity.normalized(speed), time);
 }
 
 BallState BallState::predict_in(RJ::Seconds seconds) const {
@@ -41,7 +42,7 @@ BallState BallState::predict_in(RJ::Seconds seconds) const {
 }
 
 RJ::Time BallState::query_time_near(Geometry2d::Point near_to,
-                                  Geometry2d::Point* out) const {
+                                    Geometry2d::Point* out) const {
     // If the ball isn't moving we're as close as we're ever going to get.
     if (velocity.mag() == 0) {
         if (out != nullptr) {
@@ -56,7 +57,8 @@ RJ::Time BallState::query_time_near(Geometry2d::Point near_to,
 
     double distance_to_nearest = (position - nearest).mag();
 
-    std::optional<RJ::Seconds> maybe_seconds = query_seconds_to_dist(distance_to_nearest);
+    std::optional<RJ::Seconds> maybe_seconds =
+        query_seconds_to_dist(distance_to_nearest);
 
     RJ::Seconds seconds;
     if (maybe_seconds.has_value()) {
@@ -73,7 +75,7 @@ RJ::Time BallState::query_time_near(Geometry2d::Point near_to,
 }
 
 RJ::Seconds BallState::query_seconds_near(Geometry2d::Point near_to,
-                                        Geometry2d::Point* out) const {
+                                          Geometry2d::Point* out) const {
     return query_time_near(near_to, out) - timestamp;
 }
 
@@ -82,8 +84,8 @@ RJ::Seconds BallState::query_stop_time(Geometry2d::Point* out) const {
 
     if (out) {
         // vf^2 - vi^2 = 2ad => d = -vi^2 / 2a
-        *out = position + velocity.normalized(
-                              std::pow(speed, 2) / (2 * kBallDecayConstant));
+        *out = position + velocity.normalized(std::pow(speed, 2) /
+                                              (2 * kBallDecayConstant));
     }
 
     // Use the formula for time until zero velocity:
@@ -91,7 +93,8 @@ RJ::Seconds BallState::query_stop_time(Geometry2d::Point* out) const {
     return RJ::Seconds(speed / kBallDecayConstant);
 }
 
-std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) const {
+std::optional<RJ::Seconds> BallState::query_seconds_to_dist(
+    double distance) const {
     // vf^2 - vi^2 = 2ad => vf = sqrt(vi^2 + 2ad)
     double speed = velocity.mag();
     double vf_sq = std::pow(speed, 2) - 2 * kBallDecayConstant * distance;
@@ -121,8 +124,8 @@ Planning::Trajectory BallState::make_trajectory() const {
 
     Point stop_position;
     RJ::Time stop_time = timestamp + query_stop_time(&stop_position);
-    Planning::RobotInstant instant1{Pose{stop_position, 0},
-                                    Twist::Zero(), stop_time};
+    Planning::RobotInstant instant1{Pose{stop_position, 0}, Twist::Zero(),
+                                    stop_time};
 
     return Planning::Trajectory({instant0, instant1});
 }

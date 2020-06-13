@@ -1,10 +1,10 @@
 #pragma once
 
-#include <optional>
-#include <functional>
-
 #include <Geometry2d/Point.hpp>
+#include <functional>
+#include <optional>
 #include <rrt/Tree.hpp>
+
 #include "PathTargetPlanner.hpp"
 #include "planning/planner/PlanRequest.hpp"
 #include "planning/planner/Planner.hpp"
@@ -28,7 +28,8 @@ public:
         return _planner.plan(std::move(planRequest));
     }
 
-    [[nodiscard]] bool isApplicable(const MotionCommand& command) const override {
+    [[nodiscard]] bool isApplicable(
+        const MotionCommand& command) const override {
         return true;
     }
 

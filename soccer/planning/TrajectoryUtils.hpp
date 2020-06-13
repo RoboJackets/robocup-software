@@ -20,8 +20,7 @@ namespace Planning {
  */
 bool TrajectoryHitsStatic(const Trajectory& trajectory,
                           const Geometry2d::ShapeSet& obstacles,
-                          RJ::Time start_time,
-                          RJ::Time* hit_time);
+                          RJ::Time start_time, RJ::Time* hit_time);
 
 /**
  * @brief Whether the given trajectory intersects any of the dynamic obstacles
@@ -40,4 +39,4 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
                            Geometry2d::Circle* out_hit_obstacle,
                            RJ::Time* out_hit_time);
 
-} // namespace Planning
+}  // namespace Planning

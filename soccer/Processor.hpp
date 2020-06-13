@@ -16,6 +16,7 @@
 #include <optional>
 #include <vector>
 
+#include "Context.hpp"
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"
@@ -23,7 +24,6 @@
 #include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
 #include "planning/PlannerNode.hpp"
-#include "Context.hpp"
 #include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
 #include "rc-fshare/rtp.hpp"

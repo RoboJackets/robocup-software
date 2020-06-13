@@ -2,9 +2,8 @@
 
 #include "Constants.hpp"
 #include "Geometry2d/Pose.hpp"
-#include "planning/Trajectory.hpp"
 #include "planning/Instant.hpp"
-
+#include "planning/Trajectory.hpp"
 #include "time.hpp"
 
 // TODO: Make this configurable
@@ -40,12 +39,9 @@ struct BallState {
     /**
      * Construct a BallState with a valid estimate.
      */
-    BallState(Geometry2d::Point position,
-              Geometry2d::Point velocity,
+    BallState(Geometry2d::Point position, Geometry2d::Point velocity,
               RJ::Time timestamp = RJ::now())
-        : position(position),
-          velocity(velocity),
-          timestamp(timestamp) {
+        : position(position), velocity(velocity), timestamp(timestamp) {
         visible = true;
     }
 
@@ -70,16 +66,14 @@ struct BallState {
      * @return the instant in time at which the ball is nearest to `near_to`.
      */
     [[nodiscard]] RJ::Time query_time_near(
-        Geometry2d::Point near_to,
-        Geometry2d::Point* out = nullptr) const;
+        Geometry2d::Point near_to, Geometry2d::Point* out = nullptr) const;
 
     /**
-     * Similar to \ref predict_at "query_time_near(RJ::Time)", but for a duration
-     * in the future
+     * Similar to \ref predict_at "query_time_near(RJ::Time)", but for a
+     * duration in the future
      */
     [[nodiscard]] RJ::Seconds query_seconds_near(
-        Geometry2d::Point near_to,
-        Geometry2d::Point* out = nullptr) const;
+        Geometry2d::Point near_to, Geometry2d::Point* out = nullptr) const;
 
     /**
      * Predict the stop time of the ball.
@@ -93,7 +87,8 @@ struct BallState {
     /**
      * Query the time before the ball goes a certain distance.
      */
-    [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(double distance) const;
+    [[nodiscard]] std::optional<RJ::Seconds> query_seconds_to_dist(
+        double distance) const;
 
     /**
      * Create a trajectory for the ball.

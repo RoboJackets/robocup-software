@@ -1,12 +1,10 @@
 #pragma once
 
+#include <WorldState.hpp>
 #include <atomic>
 #include <mutex>
-#include <vector>
-#include <vector>
 #include <thread>
-
-#include <WorldState.hpp>
+#include <vector>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"

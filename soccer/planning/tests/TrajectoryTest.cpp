@@ -3,13 +3,13 @@
 #include <rrt/planning/Path.hpp>
 
 #include "TestingUtils.hpp"
+#include "math.h"
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
 #include "planning/low_level/PathSmoothing.hpp"
 #include "planning/low_level/RRTUtil.hpp"
 #include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
-#include "math.h"
 
 using namespace Planning;
 using namespace Geometry2d;
@@ -130,9 +130,7 @@ TEST(Trajectory, TrajectoryCursor) {
 }
 
 TEST(Trajectory, BezierPath) {
-    std::vector<Point> points = {Point(0, 0),
-                                 Point(1, 0.5),
-                                 Point(1.5, 1),
+    std::vector<Point> points = {Point(0, 0), Point(1, 0.5), Point(1.5, 1),
                                  Point(2, 2)};
 
     Point vi(1, 0);
@@ -219,7 +217,8 @@ TEST(Trajectory, Combining) {
     Trajectory traj_2{{b, c}};
 
     Trajectory combined(std::move(traj_1), traj_2);
-    EXPECT_TRUE(traj_1.empty()) << "Should have moved out of the first trajectory";
+    EXPECT_TRUE(traj_1.empty())
+        << "Should have moved out of the first trajectory";
     EXPECT_TRUE(Trajectory::nearly_equal(combined, Trajectory{{a, b, c}}));
 }
 
@@ -232,7 +231,8 @@ TEST(Trajectory, CombiningFail) {
     Trajectory traj_1{{a, b1}};
     Trajectory traj_2{{b2, c}};
 
-    EXPECT_THROW((Trajectory{std::move(traj_1), traj_2}), std::invalid_argument);
+    EXPECT_THROW((Trajectory{std::move(traj_1), traj_2}),
+                 std::invalid_argument);
 }
 
 /*

@@ -53,7 +53,8 @@ Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
     MotionConstraints new_constraints = request.constraints.mot;
     new_constraints.maxSpeed =
         std::min(new_constraints.maxSpeed,
-                 rotation_constraints.maxSpeed * radius) * .5;
+                 rotation_constraints.maxSpeed * radius) *
+        .5;
 
     double start_angle = pivot_point.angleTo(start_instant.position());
     double target_angle = pivot_point.angleTo(final_position);
@@ -66,38 +67,33 @@ Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
     for (int i = 1; i <= interpolations; i++) {
         double percent = (double)i / interpolations;
         double angle = start_angle + angle_change * percent;
-        Point point =
-            Point::direction(angle).normalized(radius) + pivot_point;
+        Point point = Point::direction(angle).normalized(radius) + pivot_point;
         points.push_back(point);
     }
 
-    BezierPath pathBezier(points, start_instant.linear_velocity(),
-                          Point(0, 0),
+    BezierPath pathBezier(points, start_instant.linear_velocity(), Point(0, 0),
                           linear_constraints);
 
-    Trajectory path = ProfileVelocity(
-        pathBezier, start_instant.linear_velocity().mag(),
-        0,
+    Trajectory path =
+        ProfileVelocity(pathBezier, start_instant.linear_velocity().mag(), 0,
                         linear_constraints, start_instant.stamp);
 
-    AngleFunction function =
-        [pivot_point, pivot_target] (const LinearMotionInstant& instant,
-                                   double /*previous_angle*/,
-                                   Eigen::Vector2d* /*jacobian*/) -> double {
-            Point position = instant.position;
-            auto angleToPivot = position.angleTo(pivot_point);
-            auto angleToPivotTarget = position.angleTo(pivot_target);
+    AngleFunction function = [pivot_point, pivot_target](
+                                 const LinearMotionInstant& instant,
+                                 double /*previous_angle*/, Eigen::Vector2d *
+                                 /*jacobian*/) -> double {
+        Point position = instant.position;
+        auto angleToPivot = position.angleTo(pivot_point);
+        auto angleToPivotTarget = position.angleTo(pivot_target);
 
-            if (abs(angleToPivot - angleToPivotTarget) <
-                DegreesToRadians(10)) {
-                return angleToPivotTarget;
-            }
+        if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(10)) {
+            return angleToPivotTarget;
+        }
 
-            return angleToPivot;
-        };
+        return angleToPivot;
+    };
 
-    PlanAngles(&path, start_instant,
-               AngleFns::facePoint(pivot_point),
+    PlanAngles(&path, start_instant, AngleFns::facePoint(pivot_point),
                request.constraints.rot);
     path.stamp(RJ::now());
 
@@ -119,12 +115,13 @@ bool PivotPathPlanner::shouldReplan(const PivotCommand& command) const {
 
     // The vector from the end-of-trajectory to the pivot point should be nearly
     // parallel to the pivot point -> pivot target vector...
-    double angle_vector_error = (target_point - pivot_point)
-                                    .angleBetween(pivot_point - end.position());
+    double angle_vector_error =
+        (target_point - pivot_point).angleBetween(pivot_point - end.position());
 
     // In addition, we should be facing the right way at the end.
-    Point face_point = end.position() + Point::direction(end.heading())
-                           .normalized((target_point - end.position()).mag());
+    Point face_point =
+        end.position() + Point::direction(end.heading())
+                             .normalized((target_point - end.position()).mag());
 
     return face_point.distTo(target_point) > 0.05;
 }

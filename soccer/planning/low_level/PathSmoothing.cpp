@@ -1,4 +1,5 @@
 #include "PathSmoothing.hpp"
+
 #include <Utils.hpp>
 #include <motion/TrapezoidalMotion.hpp>
 
@@ -17,9 +18,7 @@ using Geometry2d::Point;
  * @return A vector of control point locations.
  */
 void FitCubicBezier(
-    Point vi,
-    Point vf,
-    const std::vector<Point>& points,
+    Point vi, Point vf, const std::vector<Point>& points,
     const std::vector<double>& ks,
     std::vector<BezierPath::CubicBezierControlPoints>& control_out) {
     int num_curves = points.size() - 1;

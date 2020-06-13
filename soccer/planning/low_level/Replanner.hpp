@@ -27,15 +27,17 @@ public:
 
 private:
     Trajectory checkBetter(const PlanParams& params, Trajectory previous);
-    Trajectory partialReplan(const PlanParams& params, const Trajectory& previous);
+    Trajectory partialReplan(const PlanParams& params,
+                             const Trajectory& previous);
     static Trajectory fullReplan(const PlanParams& params);
 
-    static bool veeredOffPath(const Trajectory& trajectory,
-                              RobotInstant actual, RJ::Time now);
+    static bool veeredOffPath(const Trajectory& trajectory, RobotInstant actual,
+                              RJ::Time now);
     static bool goalChanged(const RobotInstant& prevGoal,
                             const RobotInstant& goal);
 
-    static Trajectory partialPath(const Trajectory& prevTrajectory, RJ::Time now) {
+    static Trajectory partialPath(const Trajectory& prevTrajectory,
+                                  RJ::Time now) {
         RJ::Time end_time = now + RJ::Seconds(*_partialReplanLeadTime);
         return prevTrajectory.subTrajectory(prevTrajectory.begin_time(),
                                             end_time);
@@ -48,4 +50,4 @@ private:
     static constexpr RJ::Seconds _checkBetterDeltaTime = 0.2s;
 };
 
-} // namespace Planning
+}  // namespace Planning

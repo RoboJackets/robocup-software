@@ -1,6 +1,5 @@
 #include "robocup-py.hpp"
 
-#include "WorldState.hpp"
 #include <boost/python/register_ptr_to_python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <functional>
@@ -8,6 +7,8 @@
 #include <sstream>
 #include <string>
 #include <utility>
+
+#include "WorldState.hpp"
 
 using namespace boost::python;
 

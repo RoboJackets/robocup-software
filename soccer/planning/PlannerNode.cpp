@@ -35,7 +35,7 @@ void PlannerNode::run() {
     for (int i = 0; i < Num_Shells; i++) {
         shells[i] = i;
     }
-    std::sort(shells.begin(), shells.end(), [&] (int a, int b) {
+    std::sort(shells.begin(), shells.end(), [&](int a, int b) {
         return robot_intents.at(a).priority > robot_intents.at(b).priority;
     });
 
@@ -54,20 +54,19 @@ void PlannerNode::run() {
         RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
 
         // TODO: Put motion constraints in intent.
-        PlanRequest request{
-            start,
-            intent.motion_command,
-            RobotConstraints(),
-            global_obstacles,
-            intent.local_obstacles,
-            planned,
-            shell,
-            &world_state,
-            intent.priority,
-            debug_drawer
-        };
+        PlanRequest request{start,
+                            intent.motion_command,
+                            RobotConstraints(),
+                            global_obstacles,
+                            intent.local_obstacles,
+                            planned,
+                            shell,
+                            &world_state,
+                            intent.priority,
+                            debug_drawer};
 
-        Trajectory trajectory = robots_planners_.at(shell).PlanForRobot(std::move(request));
+        Trajectory trajectory =
+            robots_planners_.at(shell).PlanForRobot(std::move(request));
         trajectory.draw(&context_->debug_drawer);
         trajectories->at(shell) = std::move(trajectory);
 
@@ -75,8 +74,7 @@ void PlannerNode::run() {
     }
 }
 
-PlannerForRobot::PlannerForRobot()
-    : planner_idx_(-1) {
+PlannerForRobot::PlannerForRobot() : planner_idx_(-1) {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
@@ -86,7 +84,6 @@ PlannerForRobot::PlannerForRobot()
     // The empty planner should always be last.
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
 }
-
 
 Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
     // Try each planner in sequence until we find one that is applicable.
@@ -109,13 +106,15 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
             planner->reset();
         } else {
             if (!trajectory.angles_valid()) {
-                throw std::runtime_error(
-                    "Trajectory returned from " + planner->name() + " has no angle profile!");
+                throw std::runtime_error("Trajectory returned from " +
+                                         planner->name() +
+                                         " has no angle profile!");
             }
 
             if (!trajectory.timeCreated().has_value()) {
-                throw std::runtime_error(
-                    "Trajectory returned from " + planner->name() + " has no timestamp!");
+                throw std::runtime_error("Trajectory returned from " +
+                                         planner->name() +
+                                         " has no timestamp!");
             }
         }
     }
@@ -124,7 +123,7 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
         std::cerr
             << "No valid planner! Did you forget to specify a default planner?"
             << std::endl;
-        trajectory = Trajectory {{request.start}};
+        trajectory = Trajectory{{request.start}};
         trajectory.setDebugText("Error: No Valid Planners");
     }
 
@@ -132,4 +131,3 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
 }
 
 }  // namespace Planning
-

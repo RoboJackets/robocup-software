@@ -16,8 +16,8 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
     Geometry2d::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
-    FillObstacles(request, &static_obstacles, &dynamic_obstacles,
-                  true, &ball_trajectory);
+    FillObstacles(request, &static_obstacles, &dynamic_obstacles, true,
+                  &ball_trajectory);
 
     // If we start inside of an obstacle, give up and let another planner take
     // care of it.
@@ -33,21 +33,18 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
-        request.debug_drawer->drawCircle(
-            goalPoint, drawRadius, drawColor, drawLayer);
+        request.debug_drawer->drawCircle(goalPoint, drawRadius, drawColor,
+                                         drawLayer);
     }
 
     AngleFunction angle_function = getAngleFunction(request);
 
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = replanner.CreatePlan(
-        Replanner::PlanParams{
-        request.start,
-        goalInstant,
-        static_obstacles,
-        dynamic_obstacles,
-        request.constraints,
-        angle_function}, std::move(previous));
+        Replanner::PlanParams{request.start, goalInstant, static_obstacles,
+                              dynamic_obstacles, request.constraints,
+                              angle_function},
+        std::move(previous));
     previous = trajectory;
     return trajectory;
 }
@@ -60,6 +57,5 @@ AngleFunction PathTargetPlanner::getAngleFunction(const PlanRequest& request) {
     }
     return AngleFns::tangent;
 }
-
 
 }  // namespace Planning

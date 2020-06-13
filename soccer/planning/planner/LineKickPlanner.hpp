@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Planner.hpp"
 #include "planning/Instant.hpp"
 #include "planning/low_level/Replanner.hpp"
-#include "Planner.hpp"
 
 namespace Planning {
 class LineKickPlanner : public PlannerForCommandType<LineKickCommand> {
@@ -14,10 +14,7 @@ public:
     static void createConfiguration(Configuration* cfg);
 
 private:
-    enum class LineKickStates {
-        Approach,
-        FollowThrough
-    };
+    enum class LineKickStates { Approach, FollowThrough };
 
     LineKickStates state;
 

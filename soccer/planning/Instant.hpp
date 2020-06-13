@@ -17,7 +17,7 @@ namespace Planning {
  */
 struct LinearMotionInstant {
     explicit LinearMotionInstant(Geometry2d::Point pos = {0, 0},
-                           Geometry2d::Point vel = {0, 0})
+                                 Geometry2d::Point vel = {0, 0})
         : position(pos), velocity(vel) {}
 
     Geometry2d::Point position;
@@ -46,7 +46,8 @@ struct RobotInstant {
     static bool nearly_equals(const RobotInstant& a, const RobotInstant& b,
                               double tolerance = 1e-6) {
         return Geometry2d::Pose::nearly_equals(a.pose, b.pose, tolerance) &&
-               Geometry2d::Twist::nearly_equals(a.velocity, b.velocity, tolerance) &&
+               Geometry2d::Twist::nearly_equals(a.velocity, b.velocity,
+                                                tolerance) &&
                a.stamp == b.stamp;
     }
 
@@ -58,8 +59,12 @@ struct RobotInstant {
 
     [[nodiscard]] Geometry2d::Point& position() { return pose.position(); }
     [[nodiscard]] Geometry2d::Point position() const { return pose.position(); }
-    [[nodiscard]] Geometry2d::Point& linear_velocity() { return velocity.linear(); }
-    [[nodiscard]] Geometry2d::Point linear_velocity() const { return velocity.linear(); }
+    [[nodiscard]] Geometry2d::Point& linear_velocity() {
+        return velocity.linear();
+    }
+    [[nodiscard]] Geometry2d::Point linear_velocity() const {
+        return velocity.linear();
+    }
     [[nodiscard]] double& heading() { return pose.heading(); }
     [[nodiscard]] double heading() const { return pose.heading(); }
     [[nodiscard]] double& angular_velocity() { return velocity.angular(); }

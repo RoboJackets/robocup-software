@@ -12,7 +12,8 @@
 namespace Planning {
 
 Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
-    InterceptCommand command = std::get<InterceptCommand>(planRequest.motionCommand);
+    InterceptCommand command =
+        std::get<InterceptCommand>(planRequest.motionCommand);
 
     // Start state for the specified robot
     RobotInstant startInstant = planRequest.start;
@@ -37,7 +38,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     // discontinuity in the middle of the path
     double maxSpeed = std::min(
         startInstant.linear_velocity().mag() +
-        sqrt(2 * motionConstraints.maxAcceleration * botToTarget.mag()),
+            sqrt(2 * motionConstraints.maxAcceleration * botToTarget.mag()),
         motionConstraints.maxSpeed);
 
     // Scale the end velocity by % of max velocity to see if we can reach the
@@ -46,13 +47,11 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
 
     for (double mag = 0.0; mag <= 1.0; mag += .05) {
         LinearMotionInstant finalStoppingMotion{
-            targetPosOnLine,
-            mag * maxSpeed * botToTarget.normalized()};
+            targetPosOnLine, mag * maxSpeed * botToTarget.normalized()};
 
-        trajectory = CreatePath::simple(startInstant.linear_motion(),
-                                        finalStoppingMotion,
-                                        planRequest.constraints.mot,
-                                        startInstant.stamp);
+        trajectory = CreatePath::simple(
+            startInstant.linear_motion(), finalStoppingMotion,
+            planRequest.constraints.mot, startInstant.stamp);
 
         // First path where we can reach the point at or before the ball
         // If the end velocity is not 0, you should reach the point as close
@@ -63,8 +62,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
             debug_text_out << "Time " << trajectory.duration().count();
             trajectory.setDebugText(debug_text_out.str());
 
-            PlanAngles(&trajectory,
-                       startInstant,
+            PlanAngles(&trajectory, startInstant,
                        AngleFns::facePoint(ball.position),
                        planRequest.constraints.rot);
             trajectory.stamp(RJ::now());
@@ -77,9 +75,7 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     // Which ends up being the path after the final loop
     trajectory.setDebugText("GivingUp");
 
-    PlanAngles(&trajectory,
-               startInstant,
-               AngleFns::facePoint(ball.position),
+    PlanAngles(&trajectory, startInstant, AngleFns::facePoint(ball.position),
                planRequest.constraints.rot);
     trajectory.stamp(RJ::now());
 

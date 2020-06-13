@@ -9,12 +9,13 @@ namespace Planning {
 /**
  * Returns target angle from (position, linear velocity, previous angle)
  */
-using AngleFunction = std::function<double(const LinearMotionInstant& instant, double previous_angle, Eigen::Vector2d* jacobian)>;
+using AngleFunction =
+    std::function<double(const LinearMotionInstant& instant,
+                         double previous_angle, Eigen::Vector2d* jacobian)>;
 
 namespace AngleFns {
 
-inline double tangent(const LinearMotionInstant& instant,
-                      double previous_angle,
+inline double tangent(const LinearMotionInstant& instant, double previous_angle,
                       Eigen::Vector2d* jacobian) {
     Geometry2d::Point vel = instant.velocity;
 
@@ -29,14 +30,13 @@ inline double tangent(const LinearMotionInstant& instant,
 }
 
 inline AngleFunction facePoint(const Geometry2d::Point point) {
-    return [=](const LinearMotionInstant& instant,
-               double /*previous_angle*/,
+    return [=](const LinearMotionInstant& instant, double /*previous_angle*/,
                Eigen::Vector2d* jacobian) -> double {
         if (jacobian != nullptr) {
             Geometry2d::Point displacement = point - instant.position;
             double distance_sq = displacement.magsq();
-            *jacobian = Eigen::Vector2d(
-                displacement.rotate(-M_PI / 2) / distance_sq);
+            *jacobian =
+                Eigen::Vector2d(displacement.rotate(-M_PI / 2) / distance_sq);
         }
 
         return instant.position.angleTo(point);
@@ -44,9 +44,8 @@ inline AngleFunction facePoint(const Geometry2d::Point point) {
 }
 
 inline AngleFunction faceAngle(double angle) {
-    return [=](const LinearMotionInstant&  /*instant*/,
-               double /*previous_angle*/,
-               Eigen::Vector2d* jacobian) -> double {
+    return [=](const LinearMotionInstant& /*instant*/,
+               double /*previous_angle*/, Eigen::Vector2d* jacobian) -> double {
         if (jacobian != nullptr) {
             *jacobian = Eigen::Vector2d::Zero();
         }
@@ -69,9 +68,8 @@ inline AngleFunction faceAngle(double angle) {
  *      a function of the robot's current state.
  * @param constraints Constraints on the robot's rotation.
  */
-void PlanAngles(Trajectory* trajectory,
-                const RobotInstant& start_instant,
+void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle,
                 const RotationConstraints& constraints);
 
-} // namespace Planning
+}  // namespace Planning

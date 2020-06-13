@@ -8,9 +8,9 @@
 #include <utility>
 
 #include "Context.hpp"
-#include "planning/Instant.hpp"
 #include "WorldState.hpp"
 #include "planning/DynamicObstacle.hpp"
+#include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 
 namespace Planning {
@@ -27,10 +27,8 @@ struct PlanRequest {
                 Geometry2d::ShapeSet field_obstacles,
                 Geometry2d::ShapeSet virtual_obstacles,
                 std::array<Trajectory*, Num_Shells> planned_trajectories,
-                unsigned shellID,
-                const WorldState* world_state,
-                int8_t priority = 0,
-                DebugDrawer* debug_drawer = nullptr)
+                unsigned shellID, const WorldState* world_state,
+                int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
         : start(start),
           motionCommand(command),
           constraints(constraints),
@@ -46,16 +44,9 @@ struct PlanRequest {
      * return a copy with no history
      */
     PlanRequest copyNoHistory() const {
-        return PlanRequest(start,
-                           motionCommand,
-                           constraints,
-                           field_obstacles,
-                           virtual_obstacles,
-                           planned_trajectories,
-                           shellID,
-                           world_state,
-                           priority,
-                           debug_drawer);
+        return PlanRequest(start, motionCommand, constraints, field_obstacles,
+                           virtual_obstacles, planned_trajectories, shellID,
+                           world_state, priority, debug_drawer);
     }
 
     /**
@@ -131,10 +122,8 @@ struct PlanRequest {
  *  outlive the usage of out_dynamic. If avoid_ball == false, this should be
  *  nullptr.
  */
-void FillObstacles(const PlanRequest& in,
-                   Geometry2d::ShapeSet* out_static,
-                   std::vector<DynamicObstacle>* out_dynamic,
-                   bool avoid_ball,
+void FillObstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
+                   std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                    Trajectory* out_ball_trajectory = nullptr);
 
 }  // namespace Planning
