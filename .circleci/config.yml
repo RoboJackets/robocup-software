@@ -10,7 +10,7 @@ robocup_software_dir: &robocup_software_dir
   working_directory: ~/robocup_ws/src/robocup-software
 
 robocup_ws_dir: &robocup_ws_dir
-  working_directory: ~/robocup_ws/src/robocup-software
+  working_directory: ~/robocup_ws
 
 foxy_image: &foxy_image
   docker:
