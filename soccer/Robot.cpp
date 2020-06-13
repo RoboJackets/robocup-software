@@ -51,8 +51,8 @@ void OurRobot::createConfiguration(Configuration* cfg) {
                                        Robot_Radius - 0.01);
     _oppGoalieAvoidRadius = new ConfigDouble(
         cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
-    _dribbleOutOfBoundsOffset = new ConfigDouble(
-        cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
+    _dribbleOutOfBoundsOffset =  // NOLINT
+        new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
 OurRobot::OurRobot(Context* context, int shell)
@@ -460,36 +460,6 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
 }
 
 #pragma mark Motion
-
-Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
-    const Geometry2d::ShapeSet& globalObstacles, bool localObstacles) {
-    Geometry2d::ShapeSet fullObstacles{};
-    if (localObstacles) {
-        fullObstacles = intent().local_obstacles;
-    }
-
-    // Add Opponent Robots
-    auto& mask = intent().opp_avoid_mask;
-    auto& robots = _context->state.opp;
-    for (size_t i = 0; i < mask.size(); ++i) {
-        if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-            fullObstacles.add(
-                std::make_shared<Circle>(robots[i]->pos(), mask[i]));
-        }
-    }
-
-    // Add ball
-    if (_context->world_state.ball.visible) {
-        auto ballObs = createBallObstacle();
-        if (ballObs) {
-            fullObstacles.add(ballObs);
-        }
-    }
-
-    fullObstacles.add(globalObstacles);
-
-    return fullObstacles;
-}
 
 bool OurRobot::charged() const {
     return radioStatus().kicker == RobotStatus::KickerState::kCharged &&

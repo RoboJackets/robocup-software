@@ -36,7 +36,7 @@ MotionControl::MotionControl(Context* context, int shell_id)
       _config(context->robot_config.get()) {}
 
 void MotionControl::run(const RobotState& state,
-                        const Planning::Trajectory& path,
+                        const Planning::Trajectory& trajectory,
                         bool is_joystick_controlled, MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -45,7 +45,7 @@ void MotionControl::run(const RobotState& state,
         return;
     }
 
-    if (!state.visible || path.empty()) {
+    if (!state.visible || trajectory.empty()) {
         stop(setpoint);
         return;
     }
@@ -53,16 +53,17 @@ void MotionControl::run(const RobotState& state,
     updateParams();
 
     // We run this at 60Hz, so we want to do motion control off of the goal
-    // position for the next frame. Evaluate the path there.
+    // position for the next frame. Evaluate the trajectory there.
     RJ::Seconds dt(1.0 / 60);
-    RJ::Seconds time_into_path = (RJ::now() - path.begin_time()) + dt;
+    RJ::Seconds time_into_path = (RJ::now() - trajectory.begin_time()) + dt;
 
-    std::optional<RobotInstant> maybe_target = path.evaluate(time_into_path);
+    std::optional<RobotInstant> maybe_target =
+        trajectory.evaluate(time_into_path);
 
-    // If we're past the end of the path, do motion control off of the end.
-    bool at_end = time_into_path > path.duration();
+    // If we're past the end of the trajectory, do motion control off of the end.
+    bool at_end = time_into_path > trajectory.duration();
     if (at_end) {
-        maybe_target = path.last();
+        maybe_target = trajectory.last();
     }
 
     std::optional<Pose> maybe_pose_target;
@@ -96,7 +97,7 @@ void MotionControl::run(const RobotState& state,
         result_world.angular());
 
     // Use default constraints. Planning should be in charge of enforcing
-    // constraints on the path, here we just follow it.
+    // constraints on the trajectory, here we just follow it.
     // TODO(Kyle): Use this robot's constraints here.
     RobotConstraints constraints;
 

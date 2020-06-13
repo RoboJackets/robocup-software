@@ -70,8 +70,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
         &_context, _refereeModule.get());
-    _pathPlanner = std::make_unique<Planning::PlannerNode>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
+    _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
     _visionReceiver = std::make_unique<VisionReceiver>(
         &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
@@ -231,11 +231,20 @@ void Processor::run() {
         // Run high-level soccer logic
         _gameplayModule->run();
 
-        // Run the path planner.
-        // TODO(Kyle): Remove when everything is in modules.
-        _pathPlanner->run();
+        // recalculates Field obstacles on every run through to account for
+        // changing inset
+        if (_gameplayModule->hasFieldEdgeInsetChanged()) {
+            _gameplayModule->calculateFieldObstacles();
+        }
 
+        // In: Global Obstacles
+        // Out: context_->trajectories
+        _planner_node->run();
+
+        // In: context_->trajectories
+        // Out: context_->motion_setpoints
         _motionControl->run();
+
         _grSimCom->run();
 
         // Run all nodes in sequence

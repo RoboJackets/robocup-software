@@ -455,8 +455,6 @@ public:
 protected:
     RobotConstraints _robotConstraints;
 
-    bool _joystickControlled = false;
-
     /**
      * Creates a set of obstacles from a given robot team mask,
      * where mask values < 0 create no obstacle, and larger values

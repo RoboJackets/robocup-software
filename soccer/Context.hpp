@@ -22,7 +22,7 @@
 #include "vision/VisionPacket.hpp"
 
 struct Context {
-    Context() : state(this), debug_drawer(this), goalie_id(1337) {}
+    Context() : state(this), debug_drawer(this) {}
 
     // Delete copy, copy-assign, move, and move-assign because
     // many places are expected to hold Context* pointers.
@@ -48,7 +48,6 @@ struct Context {
     std::array<RobotConstraints, Num_Shells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
-    unsigned int goalie_id;
     Geometry2d::ShapeSet globalObstacles;
     Geometry2d::ShapeSet goalZoneObstacles;
 
