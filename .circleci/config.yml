@@ -36,12 +36,14 @@ jobs:
   compile:
     <<: *robocup_ws_dir
     <<: *foxy_image
+    environment:
+      CMAKE_BUILD_PARALLEL_LEVEL: 2
     steps:
       - checkout
       - <<: *install_deps
       - run: |
           source /opt/ros/foxy/setup.sh && \
-          colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON
+          colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON -GNinja
       - <<: *save_workspace
 
   # Use the saved build folder for testing
