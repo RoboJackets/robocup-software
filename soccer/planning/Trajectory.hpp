@@ -11,206 +11,225 @@
 namespace Planning {
 
 /**
- * Represents a trajectory x(t), y(t), h(t), with a smooth velocity and
+ * @brief An ordered sequence (by time) of RobotInstants
+ */
+using RobotInstantSequence = std::vector<RobotInstant>;
+
+/**
+ * @brief Represents a trajectory x(t), y(t), h(t), with a smooth velocity and
  * piecewise-continuous acceleration.
  *
- * Note that this provides two interfaces: one accepting RJ::Seconds, which is
- * a duration, and one accepting RJ::Time, an instant in time.
+ * @details Note that this provides two interfaces: one accepting RJ::Seconds,
+ * which is a duration, and one accepting RJ::Time, an instant in time.
  *
  * This uses cubic interpolation between two adjacent instants, fitting a
  * parametric cubic polynomial based on initial and final posiiton and velocity.
+ *
+ * A trajectory also carries a timestamp representing the time at which it was
+ * planned. This should be filled in using `trajectory.stamp(RJ::Time)` before
+ * publishing, and will be reset to `nullopt` when the trajectory is modified.
  */
-class TrajectoryIterator;
 class Trajectory {
 public:
-    Trajectory() {}
+    Trajectory() = default;
 
     /**
-     * Create a trajectory from several "instants", each with a pose, velocity,
-     * and timestamp.
+     * @brief Create a trajectory from several "instants", each with a pose,
+     * velocity, and timestamp. This
      */
-    explicit Trajectory(std::list<RobotInstant>&& instants)
-        : instants_(std::move(instants)), stamp(RJ::now()) {}
+    explicit Trajectory(RobotInstantSequence instants)
+        : instants_(std::move(instants)) {}
 
     /**
-     * Create a trajectory from two other trajectories
-     * assumes a.last() == b.first() so b.first() is skipped
-     * Complexity: linear
+     * @brief Create a trajectory from two other trajectories.
+     *  Assumes a.last() == b.first() so b.first() is skipped.
+     *
+     * @details Is able to move out of the first trajectory, but not the second.
      */
-    Trajectory(const Trajectory& a, const Trajectory& b);
-    /**
-     * Create a trajectory from two other trajectories
-     * assumes a.last() == b.first() so b.first() is skipped
-     * Complexity: constant
-     */
-    Trajectory(Trajectory&& a, Trajectory&& b);
+    Trajectory(Trajectory a, const Trajectory& b);
 
     /**
-     * allow copy constructor, copy assignment, move constructor, and move
+     * Allow copy constructor, copy assignment, move constructor, and move
      * assignment
      */
-    Trajectory(Trajectory&& other);
+    Trajectory(Trajectory&& other) = default;
     Trajectory(const Trajectory& other) = default;
-    Trajectory& operator=(Trajectory&& other);
+    Trajectory& operator=(Trajectory&& other) = default;
     Trajectory& operator=(const Trajectory& other) = default;
 
     /**
-     * Append a RobotInstant. instant.stamp must be greater than end()
+     * @brief Append a RobotInstant. instant.stamp must be greater than end()
      *
      * @param instant The new RobotInstant to add.
      */
     void AppendInstant(RobotInstant instant);
 
     /**
-     * Check that the given time is within bounds. Operates on a timestamp,
-     * not a delta time.
+     * @brief Check that the given point in time is within bounds.
      */
-    bool CheckTime(RJ::Time time) const;
+    [[nodiscard]] bool CheckTime(RJ::Time time) const;
 
     /**
-     * Check that the given time is within bounds. Operates on a duration (time
-     * into the path) rather than a timestamp.
+     * @brief Check that the given time is within bounds. Operates on a duration
+     * (time into the path) rather than a timestamp.
      */
-    bool CheckSeconds(RJ::Seconds seconds) const;
+    [[nodiscard]] bool CheckSeconds(RJ::Seconds seconds) const;
 
     /**
-     * Returns true if the path hits an obstacle
-     *
-     * @param[in]	shape The obstacles on the field
-     * @param[out]  hitTime the approximate time when the path hits an obstacle.
-     * If no obstacles are hit, this value is not modified
-     * @param[in] 	startTimeIntoPath The time on the path to start checking
-     *from
-     * @return 		true if it hits an obstacle, otherwise false
-     */
-    bool hit(const Geometry2d::ShapeSet& obstacles,
-             RJ::Seconds startTimeIntoPath,
-             RJ::Seconds* hitTime = nullptr) const;
-
-    /**
-     * determine if this path intersects any of the dynamic obstacles
-     * @param obstacles[in[
-     * @param startTime[in]
-     * @param hitLocation[out] the approximate location where the path hits an
-     * obstacle. if no obstacles are hit, this value is not modified
-     * @param hitTime[out] the approximate time when the path hits an obstacle.
-     * If no obstacles are hit, this value is not modified
-     * @return true if it intersects an obstacles, otherwise false
-     */
-    bool intersects(const std::vector<DynamicObstacle>& obstacles,
-                    RJ::Time startTime,
-                    Geometry2d::Point* hitLocation = nullptr,
-                    RJ::Seconds* hitTime = nullptr) const;
-
-    /**
-     * Contract or expand this trajectory by scaling velocities and timestamps
-     * (relative to the beginning).
+     * @brief Contract or expand this trajectory by scaling velocities and
+     * timestamps (relative to the beginning).
      *
      * @param final_duration The final duration of the trajectory.
      * @param fixed_point The time point that should remain unchanged. Defaults
-     *      to the beginning of the trajectory.
+     *  to the beginning of the trajectory.
      */
     void ScaleDuration(RJ::Seconds final_duration, RJ::Time fixed_point);
 
+    /**
+     * @copydoc Trajectory::ScaleDuration(RJ::Seconds, RJ::Time)
+     */
     void ScaleDuration(RJ::Seconds final_duration);
 
     /**
      * @return The time point at the beginning of the trajectory.
      */
-    RJ::Time begin_time() const {
+    [[nodiscard]] RJ::Time begin_time() const {
         if (instants_.empty()) {
             return RJ::now();
-        } else {
-            return first().stamp;
         }
+
+        return first().stamp;
     }
 
     /**
      * @return The time point at the end of the trajectory.
      */
-    RJ::Time end_time() const {
+    [[nodiscard]] RJ::Time end_time() const {
         if (instants_.empty()) {
             return RJ::now();
-        } else {
-            return last().stamp;
         }
+
+        return last().stamp;
     }
 
     /**
      * @return The duration of the trajectory.
      */
-    RJ::Seconds duration() const { return end_time() - begin_time(); }
+    [[nodiscard]] RJ::Seconds duration() const {
+        return end_time() - begin_time();
+    }
 
     /**
-     * Evaluate this trajectory (calculate position and velocity) at a given
-     * point in time.
+     * @brief Evaluate this trajectory (calculate position and velocity) at a
+     *  given point in time.
+     *
+     * @note When iterating over a trajectory, prefer the cursor interface.
      *
      * @param time The time point to evaluate at (absolute time, not a duration
      *      into the path)
      * @return The RobotInstant at that point, or nullopt if time is
      *      out-of-bounds.
      */
-    std::optional<RobotInstant> evaluate(RJ::Time time) const;
+    [[nodiscard]] std::optional<RobotInstant> evaluate(RJ::Time time) const;
 
     /**
-     * Evaluate this trajectory (calculate position and velocity) at a given
-     * duration past the beginning of the trajectory.
-     * Complexity: O(n)
+     * @brief Evaluate this trajectory (calculate position and velocity) at a
+     *  given duration past the beginning of the trajectory.
+     *
+     * @note When iterating over a trajectory, prefer the cursor interface.
      *
      * @param seconds The duration since the beginning of the path.
      * @return The RobotInstant at that duration into the path, or nullopt if
      *      seconds is out-of-bounds.
      */
-    std::optional<RobotInstant> evaluate(RJ::Seconds seconds) const;
+    [[nodiscard]] std::optional<RobotInstant> evaluate(RJ::Seconds seconds) const;
 
     /**
-     * Returns a subTrajectory
+     * @brief Returns a trajectory formed using an interval subset of this
+     *  trajectory.
      *
-     * @param startTime The startTime for from which the subTrajectory should be
-     *     taken.
-     * @param endTime The endTime from which the subTrajectory should be taken.
-     * If it is greater than the duration fo the trajectory, it should go to the
-     * end of the trajectory.
-     * @return a subTrajectory
-     */
-    Trajectory subTrajectory(RJ::Seconds startTime, RJ::Seconds endTime) const;
-
-    /**
-     * Delete instants in the trajectory before startTime and add a
-     * new intermediate point to the front if necessary.
+     * @param start_time The time from which the sub-trajectory should start.
+     * @param end_time The time at which the sub-trajectory should end.
+     *  If it is after the trajectory's end, the sub-trajectory will be taken
+     *  to the end of the trajectory.
      *
-     * @param startTime start time
+     * @return a sub-trajectory of the original trajectory.
      */
-    void trimFront(RJ::Seconds startTime);
+    [[nodiscard]] Trajectory subTrajectory(RJ::Time startTime,
+                                           RJ::Time endTime) const;
 
     /**
-     * Get the instant count. Intended for use when editing a trajectory in-
-     * place.
+     * @return the instant count. Intended for use when editing a trajectory
+     *  in-place.
+     */
+    [[nodiscard]] int num_instants() const { return instants_.size(); }
+
+    /**
+     * @brief Get a reference to the ith instant.
      *
-     * @return
+     * @param i the instant index to retrieve. Must be in range
+     *  [0, num_instants())
+     * @return a reference to the ith instant.
+     *
+     * @details Intended for use when editing a trajectory in-place; for other
+     *  cases it may be simpler to use the iterator or Cursor interfaces.
      */
-    int num_instants() const { return instants_.size(); }
-
-    auto instants_end() { return instants_.end(); }
-    auto instants_end() const { return instants_.end(); }
-    auto instants_begin() { return instants_.begin(); }
-    auto instants_begin() const { return instants_.begin(); }
+    [[nodiscard]] auto& instant_at(int i) { return instants_.at(i); }
 
     /**
-     * Check if this is an empty path.
+     * @copydoc Trajectory::instant_at()
      */
-    bool empty() const { return instants_.empty(); }
+    [[nodiscard]] auto instant_at(int i) const { return instants_.at(i); }
 
     /**
-     * Get the first instant in the past, or crash if the path is empty.
+     * @brief Iterator interface. Should only be used for working with STL
+     *  functions, not for iterating over trajectories.
+     */
+    [[nodiscard]] auto instants_end() { return instants_.end(); }
+    /**
+     * @copydoc Trajectory::instants_end()
+     */
+    [[nodiscard]] auto instants_end() const { return instants_.end(); }
+    /**
+     * @copydoc Trajectory::instants_end()
+     */
+    [[nodiscard]] auto instants_begin() { return instants_.begin(); }
+    /**
+     * @copydoc Trajectory::instants_end()
+     */
+    [[nodiscard]] auto instants_begin() const { return instants_.begin(); }
+
+    /**
+     * @brief Check if this is an empty path.
+     */
+    [[nodiscard]] bool empty() const { return instants_.empty(); }
+
+    /**
+     * @brief Check whether all poses in two trajectories are nearly equal.
+     */
+    static bool nearly_equal(const Trajectory& a, const Trajectory& b,
+                             double tolerance = 1e-6);
+
+    /**
+     * @brief Get the first instant in the past, or crash if the path is empty.
      * @return The first instant in the path.
      */
     RobotInstant& first() {
-        assert(!instants_.empty());
+        if (empty()) {
+            throw std::runtime_error(
+                "Can't get the first() instant in an empty trajectory");
+        }
         return instants_.front();
     }
-    const RobotInstant& first() const {
-        assert(!instants_.empty());
+
+    /**
+     * @copydoc Trajectory::first()
+     */
+    [[nodiscard]] const RobotInstant& first() const {
+        if (empty()) {
+            throw std::runtime_error(
+                "Can't get the first() instant in an empty trajectory");
+        }
         return instants_.front();
     }
 
@@ -219,11 +238,18 @@ public:
      * @return The last instant in the path.
      */
     RobotInstant& last() {
-        assert(!instants_.empty());
+        if (empty()) {
+            throw std::runtime_error(
+                "Can't get the last() instant in an empty trajectory");
+        }
         return instants_.back();
     }
-    const RobotInstant& last() const {
-        assert(!instants_.empty());
+
+    [[nodiscard]] const RobotInstant& last() const {
+        if (empty()) {
+            throw std::runtime_error(
+                "Can't get the last() instant in an empty trajectory");
+        }
         return instants_.back();
     }
 
@@ -233,22 +259,6 @@ public:
      */
     void draw(DebugDrawer* drawer,
               std::optional<Geometry2d::Point> backupPos = std::nullopt) const;
-
-    /**
-     * make a clone
-     * @return clone
-     */
-    Trajectory clone() const {
-        return Trajectory(std::list<RobotInstant>(instants_));
-    }
-
-    /**
-     * get an iterator
-     * @param startTime start time
-     * @param deltaT time step
-     * @return iterator
-     */
-    TrajectoryIterator iterator(RJ::Time startTime, RJ::Seconds deltaT) const;
 
     /**
      * Interpolate between two robot instants
@@ -261,60 +271,148 @@ public:
                                             const RobotInstant& next,
                                             RJ::Time time);
 
-    void setDebugText(QString str) { _debugText = std::move(str); };
-    QString getDebugText() const { return _debugText ? *_debugText : ""; }
+    void setDebugText(std::string str) { debug_text_ = std::move(str); };
+    [[nodiscard]] std::string getDebugText() const {
+        return debug_text_ ? *debug_text_ : "";
+    }
 
     /**
-     * get the time this trajectory was created
-     * @return time stamp
+     * @brief Get the time this trajectory was created, or nullopt if it has not
+     * yet been stamped.
      */
-    RJ::Time timeCreated() { return stamp; }
+    std::optional<RJ::Time> timeCreated() { return creation_stamp_; }
+
+    /**
+     * @brief Stamp this trajectory for completion at the specified time.
+     */
+    void stamp(RJ::Time time) {
+        creation_stamp_ = time;
+    }
+
+    /*
+     * @brief Allows seeking to arbitrary positions in a Trajectory and
+     *  incrementing by arbitrary steps.
+     */
+    class Cursor {
+    public:
+        /**
+         * @brief Construct a cursor from the given trajectory and start time.
+         */
+        Cursor(const Trajectory& trajectory,
+               RJ::Time start_time);
+
+        /**
+         * @brief Construct a cursor at the beginning of the given trajectory.
+         */
+        Cursor(const Trajectory& trajectory);
+
+        /**
+         * @brief Construct a cursor starting at a given iterator.
+         */
+        Cursor(const Trajectory& trajectory,
+               RobotInstantSequence::const_iterator iterator);
+
+        /**
+         * @brief Whether or not there exists an instant at the time specified
+         *  by this cursor.
+         */
+        [[nodiscard]] bool has_value() const {
+            return trajectory_.CheckTime(time_);
+        }
+
+        /**
+         * @brief Evaluate the trajectory at the time specified by this cursor.
+         */
+        [[nodiscard]] RobotInstant value() const;
+
+        /**
+         * @brief Set this cursor to an arbitrary point in time.
+         * @details Operates in O(log n) average case with n points in the
+         *  trajectory.
+         */
+        void seek(RJ::Time time);
+
+        /**
+         * @brief Advance this cursor (forwards only) by a particular increment,
+         *  in seconds. Reverse advancing (negative arguments) not supported.
+         *
+         * @details Operates in linear time with the number of knot points
+         *  forward to jump (larger increments will mean longer runtime).
+         *  If this steps to after the end of the trajectory, this cursor will
+         *  not point to a value.
+         */
+        void advance(RJ::Seconds seconds);
+
+        /**
+         * @brief Move this cursor to the next knot point. If it is already at a
+         *  knot, move to the next one. If it is in an interval between a and b,
+         *  move to b. If it is at the end, it will move off of the trajectory.
+         */
+        void next_knot();
+
+        /**
+         * @return The current time associated with this cursor. Not guaranteed
+         *  to be a valid time within the trajectory's bounds.
+         */
+        [[nodiscard]] RJ::Time time() const { return time_; }
+
+        /**
+         * @return The time associated with the knot point immediately after
+         *  this cursor, or nullopt if there is no such knot (this is the end).
+         */
+         [[nodiscard]] std::optional<RJ::Time> time_next() const {
+             if (iterator_ == trajectory_.instants_end() ||
+                 iterator_ + 1 == trajectory_.instants_end()) {
+                 return std::nullopt;
+             }
+             return (iterator_ + 1)->stamp;
+         }
+
+    private:
+        const Trajectory& trajectory_;
+
+        // An iterator pointing to the knot point at or immediately before the
+        // time point referred to by `time_`.
+        RobotInstantSequence::const_iterator iterator_;
+        RJ::Time time_;
+    };
+
+    /**
+     * @brief Get a Cursor into this trajectory. Useful for iterating over it.
+     */
+    [[nodiscard]] Cursor cursor(RJ::Time startTime) const;
+
+    /**
+     * @brief Get a cursor to the beginning of the trajectory.
+     */
+    [[nodiscard]] Cursor cursor_begin() const;
+
+    /**
+     * Mark this trajectory as having a valid angle profile.
+     *
+     * This will be reset upon the following conditions:
+     *  - New instants are appended
+     *  - The trajectory is concatenated with another trajectory.
+     */
+    void mark_angles_valid() { has_angle_profile_ = true; }
+
+    /**
+     * @return True when this trajectory is properly angle profiled.
+     */
+    [[nodiscard]] bool angles_valid() const { return has_angle_profile_; }
 
 private:
     // A sorted array of RobotInstants (by timestamp)
-    std::list<RobotInstant> instants_;
-    // time this trajectory was created
-    RJ::Time stamp;
+    RobotInstantSequence instants_;
 
-    std::optional<QString> _debugText;
-};
+    // Time this trajectory was created. If the trajectory is not yet finished,
+    // this will be std::nullopt.
+    std::optional<RJ::Time> creation_stamp_;
 
-/*
- * Interpolates over a trajectory in equal time steps.
- */
-class TrajectoryIterator {
-public:
-    TrajectoryIterator(const Trajectory& trajectory, RJ::Time startTime,
-                       RJ::Seconds deltaT);
+    std::optional<std::string> debug_text_;
 
-    RobotInstant operator*() const;
-
-    TrajectoryIterator& operator++() {
-        advance(_time + _deltaT);
-        return *this;
-    }
-
-    RobotInstant peekNext() const {
-        auto it = *this;
-        return *++it;
-    }
-    bool hasNext() const {
-        return _trajectory.CheckTime(_time + _deltaT) &&
-               std::next(_iterator) != _trajectory.instants_end();
-    }
-    bool hasValue() const {
-        return _trajectory.CheckTime(_time) &&
-               _iterator != _trajectory.instants_end();
-    }
-
-    // note: this never goes past the end
-    void advance(RJ::Time time);
-
-private:
-    const Trajectory& _trajectory;
-    std::list<RobotInstant>::const_iterator _iterator;
-    RJ::Time _time;
-    const RJ::Seconds _deltaT;
+    // Whether or not this has been profiled.
+    bool has_angle_profile_{false};
 };
 
 }  // namespace Planning

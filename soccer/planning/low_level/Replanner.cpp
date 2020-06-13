@@ -4,6 +4,9 @@
 
 #include "planning/planner/Planner.hpp"
 #include "planning/Instant.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/low_level/CreatePath.hpp"
+#include "planning/TrajectoryUtils.hpp"
 #include "RRTUtil.hpp"
 
 using namespace Geometry2d;
@@ -26,13 +29,13 @@ void Replanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory Replanner::partialReplan(const PlanParams& params,
-                                     const Trajectory& previous) {
+                                    const Trajectory& previous) {
     std::vector<Point> biasWaypoints;
-    for (auto it = previous.iterator(RJ::now(), 100ms);
-         (*it).stamp < previous.end_time(); ++it) {
-        biasWaypoints.push_back((*it).position());
+    for (auto cursor = previous.cursor(params.start.stamp); cursor.has_value(); cursor.advance(100ms)) {
+        biasWaypoints.push_back(cursor.value().position());
     }
-    Trajectory preTrajectory = partialPath(previous);
+
+    Trajectory preTrajectory = partialPath(previous, params.start.stamp);
     Trajectory postTrajectory = CreatePath::rrt(
         preTrajectory.last().linear_motion(),
         params.goal.linear_motion(),
@@ -46,11 +49,15 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
         return fullReplan(params);
     }
 
-    Trajectory combined =
-        Trajectory(std::move(preTrajectory), std::move(postTrajectory));
+    Trajectory combined = Trajectory(std::move(preTrajectory), postTrajectory);
 
-    PlanAngles(combined, combined.first(), params.angle_function,
+    PlanAngles(&combined,
+               params.start,
+               params.angle_function,
                params.constraints.rot);
+
+    combined.stamp(RJ::now());
+
     return combined;
 }
 
@@ -66,9 +73,19 @@ Trajectory Replanner::fullReplan(
             params.dynamic_obstacles);
 
     if (!path.empty()) {
-        PlanAngles(path, path.first(), params.angle_function,
+        if (path.begin_time() > path.end_time()) {
+            throw std::runtime_error("Invalid trajectory");
+        }
+
+        PlanAngles(&path,
+                   params.start,
+                   params.angle_function,
                    params.constraints.rot);
     }
+
+    path.stamp(RJ::now());
+
+    assert(path.empty() || path.angles_valid());
 
     return std::move(path);
 }
@@ -76,63 +93,79 @@ Trajectory Replanner::fullReplan(
 Trajectory Replanner::checkBetter(
     const Replanner::PlanParams& params, Trajectory previous) {
     Trajectory newTrajectory = partialReplan(params, previous);
-    if (newTrajectory.end_time() < previous.end_time()) {
+    if (!newTrajectory.empty() &&
+        newTrajectory.end_time() < previous.end_time()) {
         return std::move(newTrajectory);
     }
-    return Planner::reuse(RJ::now(), params.start, std::move(previous));
+
+    return std::move(previous);
 }
 
 Trajectory Replanner::CreatePlan(Replanner::PlanParams params,
                                   Trajectory previous) {
     Geometry2d::Point goalPoint = params.goal.position();
 
-    RJ::Time now = RJ::now();
+    if (!previous.empty() && !previous.timeCreated().has_value()) {
+        throw std::invalid_argument("CreatePlan must be called with a trajectory with a valid creation time!");
+    }
+
+    RJ::Time now = params.start.stamp;
 
     if (previous.empty() || veeredOffPath(previous, params.start, now) ||
         goalChanged(previous.last(), params.goal)) {
         return fullReplan(params);
     }
 
+    // If we get here, we definitely should have a valid previous trajectory
+    // and so it should have a valid creation time (or we would have thrown).
+    RJ::Time previous_created_time = previous.timeCreated().value();
+
     Trajectory previous_trajectory = std::move(previous);
 
-    RJ::Seconds timeIntoTrajectory =
-        std::clamp(RJ::Seconds{RJ::now() - previous_trajectory.begin_time()},
-                   RJ::Seconds{0s}, previous_trajectory.duration());
-    const RJ::Seconds timeRemaining =
-        previous_trajectory.duration() - timeIntoTrajectory;
+    RJ::Time start_time = std::clamp(now,
+                                     previous_trajectory.begin_time(),
+                                     previous_trajectory.end_time());
+    const RJ::Seconds timeRemaining{previous_trajectory.end_time() - start_time};
 
-    RJ::Seconds invalidTime = RJ::Seconds::max();
+    RJ::Time hit_time = RJ::Time::max();
 
+    // Use short-circuiting to only check dynamic trajectories if necessary.
     bool shouldPartialReplan =
-        previous_trajectory.hit(params.static_obstacles, timeIntoTrajectory,
-                           &invalidTime) ||
-        previous_trajectory.intersects(params.dynamic_obstacles, RJ::now(), nullptr,
-                                  &invalidTime);
+        TrajectoryHitsStatic(previous_trajectory,
+                             params.static_obstacles,
+                             start_time,
+                             &hit_time) ||
+        TrajectoryHitsDynamic(previous_trajectory,
+                              params.dynamic_obstacles,
+                              start_time,
+                              nullptr,
+                              &hit_time);
 
     if (shouldPartialReplan) {
-        if (invalidTime.count() - timeIntoTrajectory.count() <
-            *_partialReplanLeadTime * 2) {
+        if (RJ::Seconds(hit_time - start_time).count() < *_partialReplanLeadTime * 2) {
             return fullReplan(params);
         }
         return partialReplan(params, previous_trajectory);
     }
 
-    // make fine corrections when we are close to the target
+    // Make fine corrections when we are close to the target
     // because the old target might be a bit off
     if (params.start.position().distTo(goalPoint) < Robot_Radius) {
         std::optional<RobotInstant> nowInstant =
-            previous_trajectory.evaluate(RJ::now());
+            previous_trajectory.evaluate(now);
         if (nowInstant) {
             params.start = *nowInstant;
             return fullReplan(params);
         }
     }
-    if (RJ::now() - previous_trajectory.timeCreated() > _checkBetterDeltaTime &&
+
+    if (now - previous_created_time > _checkBetterDeltaTime &&
         timeRemaining > RJ::Seconds{*_partialReplanLeadTime} * 2) {
         return checkBetter(params, previous_trajectory);
     }
 
-    return Planner::reuse(RJ::now(), params.start, previous_trajectory);
+    previous_trajectory.stamp(RJ::now());
+    return previous_trajectory;
 }
 
 bool Replanner::veeredOffPath(const Trajectory& trajectory,

@@ -24,10 +24,11 @@ public:
     ~EscapeObstaclesPathPlanner() override = default;
 
     Trajectory plan(PlanRequest&& planRequest) override {
-        planRequest.motionCommand = PathTargetCommand{planRequest.findNonBlo};
+        planRequest.motionCommand = PathTargetCommand{planRequest.start};
         return _planner.plan(std::move(planRequest));
-    };
-    bool isApplicable(const MotionCommand& command) const override {
+    }
+
+    [[nodiscard]] bool isApplicable(const MotionCommand& command) const override {
         return true;
     }
 

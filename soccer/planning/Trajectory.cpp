@@ -1,9 +1,7 @@
 #include "Trajectory.hpp"
 
 #include <Geometry2d/Pose.hpp>
-#include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Shape.hpp>
-#include <memory>
 #include <stdexcept>
 
 #include "Instant.hpp"
@@ -16,37 +14,45 @@ using Geometry2d::Segment;
 using Geometry2d::Shape;
 using Geometry2d::Twist;
 
-Trajectory::Trajectory(Trajectory&& other)
-    : instants_(std::move(other.instants_)),
-      _debugText(std::move(other._debugText)),
-      stamp(other.stamp) {
-    other._debugText = std::nullopt;
-    other.stamp = RJ::Time{0s};
-}
+Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
+    if (a.empty() || b.empty()) {
+        throw std::invalid_argument("Cannot splice empty trajectories");
+    }
 
-Trajectory& Trajectory::operator=(Trajectory&& other) {
-    // move data into *this
-    instants_ = std::move(other.instants_);
-    _debugText = std::move(other._debugText);
-    stamp = other.stamp;
-    // clear data in other
-    other._debugText = std::nullopt;
-    other.stamp = RJ::Time{0s};
-    return *this;
-}
+    RobotInstant a_end = a.last();
+    RobotInstant b_begin = b.first();
 
-Trajectory::Trajectory(const Trajectory& a, const Trajectory& b)
-    : Trajectory(Trajectory{a}, Trajectory{b}) {}
+    using Geometry2d::Point;
+    if (!a_end.position().nearPoint(b_begin.position(), 1e-6) ||
+        !a_end.linear_velocity().nearPoint(b_begin.linear_velocity(), 1e-6) ||
+        a_end.stamp != b_begin.stamp) {
+        throw std::invalid_argument(
+            "Cannot splice trajectories a and b, where a.last() != b.first()");
+    }
 
-Trajectory::Trajectory(Trajectory&& a, Trajectory&& b) : stamp(b.stamp) {
     instants_ = std::move(a.instants_);
-    if (!b.empty()) b.instants_.pop_front();
-    instants_.splice(instants_.end(), std::move(b.instants_));
+    instants_.reserve(instants_.size() + b.instants_.size() - 1);
+    instants_.insert(instants_.end(),
+                     b.instants_.begin() + 1,
+                     b.instants_.end());
+
+    has_angle_profile_ = false;
+    creation_stamp_ = std::nullopt;
 }
 
 void Trajectory::AppendInstant(RobotInstant instant) {
-    assert(empty() || instant.stamp > end_time());
+    if (!empty() && instant.stamp <= end_time()) {
+        throw std::invalid_argument(
+            "Cannot append instant at or before the "
+            "last instant in the trajectory");
+    }
+
     instants_.push_back(instant);
+
+    // This is not profiled correctly, so we should mark the entire
+    // trajectory's angle profile as invalid.
+    has_angle_profile_ = false;
+    creation_stamp_ = std::nullopt;
 }
 
 bool Trajectory::CheckTime(RJ::Time time) const {
@@ -58,12 +64,15 @@ bool Trajectory::CheckSeconds(RJ::Seconds seconds) const {
 }
 
 void Trajectory::ScaleDuration(RJ::Seconds final_duration) {
+    // Note: even though this modifies the trajectory, it does not break
+    // angle planning and so we do not need to mark the angle profile as invalid.
     ScaleDuration(final_duration, begin_time());
 }
 
 void Trajectory::ScaleDuration(RJ::Seconds final_duration,
                                RJ::Time fixed_point) {
-    assert(fixed_point >= begin_time() && fixed_point <= end_time());
+    // Note: even though this modifies the trajectory, it does not break
+    // angle planning and so we do not need to mark the angle profile as invalid.
     double multiplier = final_duration / duration();
 
     for (RobotInstant& instant : instants_) {
@@ -71,13 +80,11 @@ void Trajectory::ScaleDuration(RJ::Seconds final_duration,
         instant.stamp =
             fixed_point + RJ::Seconds(instant.stamp - fixed_point) * multiplier;
     }
+
+    creation_stamp_ = std::nullopt;
 }
 
 std::optional<RobotInstant> Trajectory::evaluate(RJ::Seconds seconds) const {
-    if (instants_.empty()) {
-        return std::nullopt;
-    }
-
     return evaluate(begin_time() + seconds);
 }
 
@@ -85,28 +92,33 @@ std::optional<RobotInstant> Trajectory::evaluate(RJ::Time time) const {
     if (instants_.empty() || !CheckTime(time)) {
         return std::nullopt;
     }
-    return *iterator(time, 10ms);
+
+    Cursor cursor(*this);
+    cursor.seek(time);
+    return cursor.value();
 }
 
 RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
                                              const RobotInstant& next_entry,
                                              RJ::Time time) {
-    assert(time >= prev_entry.stamp);
-    assert(time <= next_entry.stamp);
-    RJ::Seconds dt = next_entry.stamp - prev_entry.stamp;
-    if (dt == RJ::Seconds(0)) {
+    if (time < prev_entry.stamp || time > next_entry.stamp) {
+        throw std::invalid_argument(
+            "Interpolant time is not between prev_ and next_ timestamps");
+    }
+
+    if (time == prev_entry.stamp) {
+        return prev_entry;
+    }
+
+    if (time == next_entry.stamp) {
         return next_entry;
     }
+
+    RJ::Seconds dt = next_entry.stamp - prev_entry.stamp;
     RJ::Seconds elapsed = time - prev_entry.stamp;
 
     // s in [0, 1] is the interpolation factor.
     double s = elapsed / dt;
-    if (std::abs(s) < 1e-6) {
-        s = 0;
-    }
-    if (std::abs(s - 1) < 1e-6) {
-        s = 1;
-    }
     assert(s >= 0 && s <= 1);
 
     Pose pose_0 = prev_entry.pose;
@@ -138,168 +150,51 @@ RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
     // Create a new RobotInstant with the correct values.
     return RobotInstant{interpolated_pose, interpolated_twist, time};
 }
-bool Trajectory::hit(const Geometry2d::ShapeSet& obstacles,
-                     RJ::Seconds startTimeIntoPath,
-                     RJ::Seconds* hitTime) const {
-    if (startTimeIntoPath < 0s) {
-        debugThrow("Error in Trajectory::hit(). Invalid start time\n");
-    }
-    if (empty() || startTimeIntoPath > duration()) {
-        return false;
-    }
-    // this fixes the edge case where we increment by a duration of 0s and
-    // end up looping forever TODO do this in a more readable way
-    constexpr int max_iterations = 100;
-    TrajectoryIterator it =
-        iterator(begin_time() + startTimeIntoPath,
-                 (duration() - startTimeIntoPath) / (double)max_iterations);
 
-    RobotInstant currentInstant = *it;
-    // This code disregards obstacles which the robot starts in. This allows the
-    // robot to move out a obstacle if it is already in one.
-    std::set<std::shared_ptr<Shape>> startHitSet =
-        obstacles.hitSet(currentInstant.pose.position());
-    int counter = 0;
-    while (it.hasNext()) {
-        ++it;
-        RobotInstant nextInstant = *it;
-        std::set<std::shared_ptr<Shape>> newHitSet = obstacles.hitSet(Segment(
-            currentInstant.pose.position(), nextInstant.pose.position()));
-        if (!newHitSet.empty()) {
-            for (const std::shared_ptr<Shape>& hit : newHitSet) {
-                // If it hits something, check if the hit was in the original
-                // hitSet
-                if (startHitSet.find(hit) == startHitSet.end()) {
-                    if (hitTime) {
-                        *hitTime = currentInstant.stamp - begin_time();
-                    }
-                    return true;
-                }
-            }
-        }
-        currentInstant = nextInstant;
-        counter++;
-        if (counter > max_iterations) {
-            break;
-        }
-    }
-    return false;
-}
-bool Trajectory::intersects(const std::vector<DynamicObstacle>& obstacles,
-                            RJ::Time startTime, Geometry2d::Point* hitLocation,
-                            RJ::Seconds* hitTime) const {
-    if (empty()) {
-        return false;
-    }
-    constexpr RJ::Seconds deltaT = 0.05s;
-    for (const DynamicObstacle& obs : obstacles) {
-        if (obs.path->empty()) {
-            Geometry2d::ShapeSet set;
-            set.add(std::make_shared<Geometry2d::Circle>(obs.circle));
-            RJ::Seconds staticHit;  // temporary to prevent side effects
-            if (hit(set, startTime - begin_time(), &staticHit)) {
-                if (hitTime) {
-                    *hitTime = staticHit;
-                }
-                return true;
-            }
-        } else {
-            for (auto obsIt = obs.path->iterator(startTime, deltaT),
-                      thisIt = iterator(startTime, deltaT);
-                 obsIt.hasValue() && thisIt.hasValue(); ++obsIt, ++thisIt) {
-                Geometry2d::Point obsPoint = (*obsIt).pose.position();
-                double hitRadius = obs.circle.radius() + Robot_Radius;
-                RobotInstant thisInstant = *thisIt;
-                if (thisInstant.pose.position().distTo(obsPoint) < hitRadius) {
-                    if (hitTime) {
-                        *hitTime =
-                            RJ::Seconds(thisInstant.stamp - begin_time());
-                    }
-                    if (hitLocation) {
-                        *hitLocation = obsPoint;
-                    }
-                    return true;
-                }
-            }
-        }
-    }
-    return false;
-}
-
-Trajectory Trajectory::subTrajectory(RJ::Seconds startTime,
-                                     RJ::Seconds endTime) const {
-    // Check for valid arguments
-    if (startTime < RJ::Seconds::zero()) {
-        throw std::invalid_argument("InterpolatedPath::subPath(): startTime(" +
-                                    to_string(startTime) +
-                                    ") can't be less than zero");
-    }
+Trajectory Trajectory::subTrajectory(RJ::Time startTime,
+                                     RJ::Time endTime) const {
     if (startTime > endTime) {
         throw std::invalid_argument(
-            "InterpolatedPath::subPath(): startTime(" + to_string(startTime) +
-            ") can't be after endTime(" + to_string(endTime) + ")");
+            "End time must not come before start time");
     }
-    if (startTime >= duration()) {
-        debugThrow(std::invalid_argument(
-            "InterpolatedPath::subPath(): startTime(" + to_string(startTime) +
-            ") can't be greater than the duration(" + to_string(duration()) +
-            ") of the path"));
-        return Trajectory();
-    }
-    if (startTime == RJ::Seconds::zero() && endTime >= duration()) {
-        return this->clone();
-    }
-    endTime = std::min(endTime, duration());
-    std::list<RobotInstant> instants{};
-    // Find the first point in the vector of points which will be included in
-    // the subPath. Noninclusive because we always copy eval(startTime)
-    auto instants_it = instants_.begin();
-    RJ::Time absolute_start_time = begin_time() + startTime;
-    RobotInstant instantBeforeStart;
-    while ((*instants_it).stamp <= absolute_start_time) {
-        instantBeforeStart = *instants_it;
-        ++instants_it;
-    }
-    RobotInstant instantAfterStart = *instants_it;
-    instants.push_back(interpolatedInstant(
-        instantBeforeStart, instantAfterStart, absolute_start_time));
 
-    // Copy until the time is greater than or equal to endTime. Noninclusive
-    // because we always copy eval(endTime)
-    RJ::Time absolute_end_time = begin_time() + endTime;
-    RobotInstant instantBeforeEnd = *std::prev(instants_it);
-    while ((*instants_it).stamp < absolute_end_time) {
-        instants.push_back(*instants_it);
-        instantBeforeEnd = *instants_it;
-        ++instants_it;
+    Cursor cursor(*this, startTime);
+
+    if (!cursor.has_value()) {
+        throw std::invalid_argument(
+            "Sub-trajectory start time is outside of trajectory");
     }
-    RobotInstant instantAfterEnd = *instants_it;
-    instants.push_back(interpolatedInstant(instantBeforeEnd, instantAfterEnd,
-                                           absolute_end_time));
-    return Trajectory{std::move(instants)};
+
+    RJ::Time actual_end = std::min(endTime, end_time());
+
+    // If the start and end times are identical, we are trying to grab an
+    // infinitesimal trajectory. This is weird but technically not wrong.
+    if (startTime == actual_end) {
+        return Trajectory({cursor.value()});
+    }
+
+    RobotInstantSequence result_instants;
+    // TODO: Reserve space in result_instants.
+    while (cursor.has_value() && cursor.value().stamp < actual_end) {
+        result_instants.push_back(cursor.value());
+        cursor.next_knot();
+    }
+
+    // The above calculation will always miss the last instant.
+    result_instants.push_back(
+        Trajectory::interpolatedInstant(result_instants.back(),
+                                        cursor.value(),
+                                        actual_end));
+
+    return Trajectory{std::move(result_instants)};
 }
 
-void Trajectory::trimFront(RJ::Seconds startTime) {
-    if (startTime == 0s) {
-        return;
-    }
-    std::optional<RobotInstant> startInstant = evaluate(startTime);
-    if (!startInstant) {
-        if (startTime > 0s) instants_ = {};
-        return;
-    }
-    while (!instants_.empty() &&
-           instants_.front().stamp < startInstant->stamp) {
-        instants_.pop_front();
-    }
-    if (startInstant->stamp < instants_.front().stamp) {
-        instants_.push_front(*startInstant);
-    }
+Trajectory::Cursor Trajectory::cursor(RJ::Time start_time) const {
+    return Cursor{*this, start_time};
 }
 
-TrajectoryIterator Trajectory::iterator(RJ::Time startTime,
-                                        RJ::Seconds deltaT) const {
-    return TrajectoryIterator(*this, startTime, deltaT);
+Trajectory::Cursor Trajectory::cursor_begin() const {
+    return Cursor{*this, instants_.begin()};
 }
 
 void Trajectory::draw(DebugDrawer* drawer,
@@ -307,6 +202,7 @@ void Trajectory::draw(DebugDrawer* drawer,
     if (instants_.size() > 1) {
         Packet::DebugRobotPath* dbgPath = drawer->addDebugPath();
         dbgPath->set_layer(drawer->findDebugLayer("Motion"));
+
         for (const RobotInstant& instant : instants_) {
             Packet::DebugRobotPath::DebugRobotPathPoint* pt =
                 dbgPath->add_points();
@@ -314,59 +210,133 @@ void Trajectory::draw(DebugDrawer* drawer,
             *pt->mutable_vel() = instant.velocity.linear();
         }
     }
-    if (_debugText) {
+
+    if (debug_text_) {
         Geometry2d::Point textPos;
-        if (empty()) {
-            if (backupTextPos) {
-                textPos = *backupTextPos;
-            } else {
-                return;
-            }
-        } else {
+
+        // Only use the backup position if there's no trajectory.
+        if (!empty()) {
             textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
+        } else if (backupTextPos.has_value()) {
+            textPos = backupTextPos.value();
+        } else {
+            return;
         }
-        drawer->drawText(_debugText.value(), textPos,
-                         QColor(100, 100, 255, 100), "PlanningDebugText");
+
+        drawer->drawText(QString::fromStdString(debug_text_.value()),
+                         textPos,
+                         QColor(100, 100, 255, 100),
+                         "PlanningDebugText");
     }
 }
 
-TrajectoryIterator::TrajectoryIterator(const Trajectory& trajectory,
-                                       RJ::Time startTime, RJ::Seconds deltaT)
-    : _trajectory(trajectory), _deltaT(deltaT), _time(startTime) {
-    assert(!trajectory.empty());
-    if (!trajectory.CheckTime(_time)) return;
-    if (startTime < trajectory.begin_time() + trajectory.duration() * 0.5) {
-        _iterator = trajectory.instants_begin();
-        ++_iterator;
-        while (_iterator->stamp <= _time) {
-            ++_iterator;
+bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b,
+                              double tolerance) {
+    auto a_it = a.instants_begin();
+    auto b_it = b.instants_begin();
+    for (; a_it != a.instants_end() && b_it != b.instants_end(); ++a_it, ++b_it) {
+        if (!RobotInstant::nearly_equals(*a_it, *b_it, tolerance)) {
+            return false;
         }
-        --_iterator;
+    }
+
+    // If there is more time to go in either trajectory, they are different.
+    // Otherwise, they are identical.
+    return a_it == a.instants_end() && b_it == b.instants_end();
+}
+
+Trajectory::Cursor::Cursor(const Trajectory& trajectory,
+                           RobotInstantSequence::const_iterator iterator)
+    : trajectory_{trajectory},
+      iterator_{iterator},
+      time_{iterator->stamp} {}
+
+Trajectory::Cursor::Cursor(const Trajectory &trajectory)
+    : Cursor{trajectory, trajectory.instants_.begin()} {}
+
+Trajectory::Cursor::Cursor(const Trajectory &trajectory, RJ::Time start_time)
+    : Cursor{trajectory} {
+    seek(start_time);
+}
+
+RobotInstant Trajectory::Cursor::value() const {
+    RobotInstant instant_0 = *iterator_;
+    if (instant_0.stamp == time_) {
+        return instant_0;
+    }
+    RobotInstant instant_1 = *(iterator_ + 1);
+
+    return Trajectory::interpolatedInstant(instant_0, instant_1, time_);
+}
+
+void Trajectory::Cursor::seek(RJ::Time time) {
+    // If we are seeking past the end (or before the beginning) it's not an
+    // error, we just don't have a valid value anymore. We do this to be
+    // consistent with the behavior of advance().
+    if (!trajectory_.CheckTime(time)) {
+        time_ = time;
+        iterator_ = trajectory_.instants_end();
+        return;
+    }
+
+    // Note that this comparison is less than or equal to.
+    auto compare_times = [] (const RobotInstant& a,
+                             const RobotInstant& b) -> bool {
+        return a.stamp <= b.stamp;
+    };
+
+    RobotInstant dummy_instant;
+    dummy_instant.stamp = time;
+
+    // std::lower_bound finds the first iterator such that the above comparison
+    // _fails_ - that is, the first instant with time < instant.stamp.
+    // We actually want the _last_ instant with instant.stamp <= time, so we
+    // can use the call to lower_bound and then take a step back.
+    iterator_ = std::lower_bound(trajectory_.instants_.begin(),
+                                 trajectory_.instants_.end(),
+                                 dummy_instant,
+                                 compare_times);
+
+    assert(iterator_ != trajectory_.instants_.begin());
+    iterator_--;
+
+    time_ = time;
+}
+
+void Trajectory::Cursor::advance(RJ::Seconds seconds) {
+    time_ = RJ::Time(time_ + seconds);
+
+    if (!trajectory_.CheckTime(time_)) {
+        time_ = RJ::Time::max();
+        return;
+    }
+
+    if (seconds < RJ::Seconds(0)) {
+        throw std::invalid_argument("Argument `seconds` must not be negative.");
+    }
+
+    // If we're moving forwards, we want to step for as long as our current
+    // knot point is _before or at_ the target time. This will leave us with
+    // a step one past the proper start instant, so we then step back.
+    while (iterator_ != trajectory_.instants_.end() &&
+           iterator_->stamp <= time_) {
+        iterator_++;
+    }
+
+    assert(iterator_ != trajectory_.instants_.begin());
+    iterator_--;
+}
+
+void Trajectory::Cursor::next_knot() {
+    if (iterator_ != trajectory_.instants_end()) {
+        iterator_++;
+    }
+
+    if (iterator_ == trajectory_.instants_end()) {
+        time_ = RJ::Time::max();
     } else {
-        _iterator = trajectory.instants_end();
-        --_iterator;
-        while (_iterator->stamp > _time) {
-            --_iterator;
-        }
+        time_ = iterator_->stamp;
     }
 }
 
-RobotInstant TrajectoryIterator::operator*() const {
-    assert(hasValue());
-    if (!hasNext()) {
-        return _trajectory.last();
-    }
-    return Trajectory::interpolatedInstant(*_iterator, *std::next(_iterator),
-                                           _time);
-}
-
-void TrajectoryIterator::advance(RJ::Time time) {
-    _time = time;
-    ++_iterator;
-    while (_iterator != _trajectory.instants_end() &&
-           _iterator->stamp <= _time) {
-        ++_iterator;
-    }
-    --_iterator;
-}
 }  // namespace Planning

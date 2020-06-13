@@ -17,11 +17,14 @@ using Geometry2d::Point;
  * @return A vector of control point locations.
  */
 void FitCubicBezier(
-    Point vi, Point vf, const std::vector<Point>& points,
+    Point vi,
+    Point vf,
+    const std::vector<Point>& points,
     const std::vector<double>& ks,
     std::vector<BezierPath::CubicBezierControlPoints>& control_out) {
     int num_curves = points.size() - 1;
     assert(ks.size() == num_curves);
+    assert(num_curves > 0);
 
     control_out.resize(num_curves);
     for (int i = 0; i < num_curves; i++) {
@@ -144,7 +147,7 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     const double endSpeed = vf.mag();
 
     // Approximate the curves as straight lines between the segments, and then
-    // find an ETA at each waypoint based on trapezoidal motion.
+    // find an approximate ETA at each waypoint based on trapezoidal motion.
 
     double totalPathLength = 0.0;
     for (int i = 0; i < num_curves; i++) {

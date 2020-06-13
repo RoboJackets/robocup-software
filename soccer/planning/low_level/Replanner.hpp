@@ -4,6 +4,7 @@
 #include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
 
 namespace Planning {
 
@@ -34,10 +35,10 @@ private:
     static bool goalChanged(const RobotInstant& prevGoal,
                             const RobotInstant& goal);
 
-    Trajectory partialPath(const Trajectory& prevTrajectory) {
-        return prevTrajectory.subTrajectory(
-            0s, (RJ::now() - prevTrajectory.begin_time()) +
-                RJ::Seconds{*_partialReplanLeadTime});
+    static Trajectory partialPath(const Trajectory& prevTrajectory, RJ::Time now) {
+        RJ::Time end_time = now + RJ::Seconds(*_partialReplanLeadTime);
+        return prevTrajectory.subTrajectory(prevTrajectory.begin_time(),
+                                            end_time);
     }
 
     static ConfigDouble* _goalPosChangeThreshold;

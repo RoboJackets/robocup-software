@@ -80,7 +80,14 @@ set(ROBOCUP_LIB_SRC
     "vision/robot/WorldRobot.cpp"
     "vision/util/VisionFilterConfig.cpp"
     "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp" WorldState.cpp planning/planner/PlanRequest.cpp planning/low_level/Replanner.cpp planning/low_level/Replanner.hpp)
+    "WindowEvaluator.cpp"
+    "WorldState.cpp"
+    "planning/planner/PlanRequest.cpp"
+    "planning/low_level/Replanner.cpp"
+    "planning/low_level/TrapezoidalMotion.cpp"
+    "planning/low_level/AnglePlanning.cpp"
+    "planning/TrajectoryUtils.cpp"
+    "planning/low_level/CreatePath.cpp")
 
 if(APPLE)
     # help CMake find gl.h, glu.h, etc on OS X
@@ -221,6 +228,7 @@ set(SOCCER_TEST_SRC
     "planning/tests/TrajectoryTest.cpp"
     "planning/tests/PlannerTest.cpp"
     "planning/tests/TestingUtils.cpp"
+    "planning/tests/TrapezoidalMotionTest.cpp"
     "TestMain.cpp"
     "vision/tests/CameraBallTest.cpp"
     "vision/tests/KalmanBallTest.cpp"
@@ -232,7 +240,11 @@ set(SOCCER_TEST_SRC
     "vision/tests/CameraTest.cpp"
     "WindowEvaluatorTest.cpp"
     "BallTest.cpp"
-    "LoggerTest.cpp")
+    "LoggerTest.cpp"
+    "planning/tests/AnglePlanningTest.cpp"
+    "planning/tests/RRTTest.cpp"
+    "planning/tests/BezierPathTest.cpp"
+    "planning/tests/VelocityProfilingTest.cpp")
 
 add_executable(test-soccer ${SOCCER_TEST_SRC})
 target_link_libraries(test-soccer robocup)

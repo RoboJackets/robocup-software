@@ -6,7 +6,10 @@
 #include "Configuration.hpp"
 #include "Constants.hpp"
 #include "planning/Instant.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/low_level/CreatePath.hpp"
 #include "planning/low_level/RRTUtil.hpp"
+#include <planning/TrajectoryUtils.hpp>
 
 using namespace Geometry2d;
 
@@ -54,7 +57,7 @@ void SettlePlanner::createConfiguration(Configuration* cfg) {
 Trajectory SettlePlanner::plan(PlanRequest&& planRequest) {
     BallState ball = planRequest.world_state->ball;
 
-    const RJ::Time curTime = RJ::now();
+    const RJ::Time curTime = planRequest.start.stamp;
 
     auto command = std::get<SettleCommand>(planRequest.motionCommand);
 
@@ -174,13 +177,11 @@ void SettlePlanner::processStateTransition(
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
-    if (!previous.empty() && (RJ::now() - previous.begin_time() > RJ::Seconds(0)) &&
-        previous.duration() > RJ::Seconds(0)) {
+    if (!previous.empty() && startInstant->stamp > previous.begin_time() &&
+        startInstant->stamp <= previous.end_time()) {
         Geometry2d::Line ballMovementLine(ball.position, ball.position + averageBallVel);
 
-        const RJ::Seconds timeIntoPreviousPath =
-            RJ::now() - previous.begin_time();
-        Trajectory pathSoFar = previous.subTrajectory(0ms, timeIntoPreviousPath);
+        Trajectory pathSoFar = previous.subTrajectory(previous.begin_time(), startInstant->stamp);
         float botDistToBallMovementLine =
             ballMovementLine.distTo(pathSoFar.last().position() - deltaPos);
 
@@ -216,8 +217,11 @@ Trajectory SettlePlanner::intercept(const PlanRequest& planRequest,
     BallState ball = planRequest.world_state->ball;
 
     // First, if the previous trajectory is still valid, try to use that.
-    if (!previous.empty() && !previous.hit(staticObstacles, RJ::Seconds(0)) &&
-        !previous.intersects(dynamicObstacles, startInstant.stamp)) {
+    if (!previous.empty() && previous.CheckTime(startInstant.stamp) &&
+        !TrajectoryHitsStatic(previous, staticObstacles,
+                              startInstant.stamp, nullptr) &&
+        !TrajectoryHitsDynamic(previous, dynamicObstacles, startInstant.stamp,
+                               nullptr, nullptr)) {
         RJ::Seconds timeRemaining = previous.end_time() - startInstant.stamp;
         Point pathAtEnd = previous.last().position();
 
@@ -373,8 +377,12 @@ Trajectory SettlePlanner::intercept(const PlanRequest& planRequest,
         Trajectory shortcut = CreatePath::rrt(startInstant.linear_motion(), target, planRequest.constraints.mot, startInstant.stamp, staticObstacles, dynamicObstacles);
 
         if (!shortcut.empty()) {
-            PlanAngles(shortcut, startInstant, AngleFns::facePoint(facePos),
+            PlanAngles(&shortcut,
+                       startInstant,
+                       AngleFns::facePoint(facePos),
                        planRequest.constraints.rot);
+            shortcut.stamp(RJ::now());
+            return shortcut;
         }
     }
 
@@ -409,14 +417,17 @@ Trajectory SettlePlanner::intercept(const PlanRequest& planRequest,
     Trajectory newTargetPath = replanner.CreatePlan(params, previous);
 
     RJ::Seconds timeOfArrival = newTargetPath.duration();
-    newTargetPath.setDebugText(QString::number(timeOfArrival.count()) + " s");
+    newTargetPath.setDebugText(std::to_string(timeOfArrival.count()) + " s");
 
     if (newTargetPath.empty()) {
         return previous;
     }
 
-    PlanAngles(newTargetPath, startInstant, AngleFns::facePoint(facePos),
+    PlanAngles(&newTargetPath,
+               startInstant,
+               AngleFns::facePoint(facePos),
                planRequest.constraints.rot);
+    newTargetPath.stamp(RJ::now());
     return newTargetPath;
 }
 
@@ -518,8 +529,11 @@ Trajectory SettlePlanner::dampen(
         dampenEnd = Trajectory(previous, dampenEnd);
     }
 
-    PlanAngles(dampenEnd, startInstant, AngleFns::facePoint(facePos),
+    PlanAngles(&dampenEnd,
+               startInstant,
+               AngleFns::facePoint(facePos),
                planRequest.constraints.rot);
+    dampenEnd.stamp(RJ::now());
     return dampenEnd;
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MotionInstant.hpp"
+#include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
 

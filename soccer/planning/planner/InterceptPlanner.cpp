@@ -4,6 +4,8 @@
 #include <Constants.hpp>
 
 #include "planning/Instant.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/low_level/CreatePath.hpp"
 #include "planning/low_level/RRTUtil.hpp"
 #include "planning/low_level/VelocityProfiling.hpp"
 
@@ -56,13 +58,16 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
         // If the end velocity is not 0, you should reach the point as close
         // to the ball time as possible to just ram it
         if (trajectory.duration() <= ballToPointTime) {
-            trajectory.setDebugText(
-                "RT " + QString::number(trajectory.duration().count(), 'g', 2) +
-                " BT " + QString::number(trajectory.duration().count(), 'g', 2));
+            std::ostringstream debug_text_out;
+            debug_text_out.precision(2);
+            debug_text_out << "Time " << trajectory.duration().count();
+            trajectory.setDebugText(debug_text_out.str());
 
-            PlanAngles(trajectory, startInstant,
+            PlanAngles(&trajectory,
+                       startInstant,
                        AngleFns::facePoint(ball.position),
                        planRequest.constraints.rot);
+            trajectory.stamp(RJ::now());
             return trajectory;
         }
     }
@@ -72,9 +77,11 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     // Which ends up being the path after the final loop
     trajectory.setDebugText("GivingUp");
 
-    PlanAngles(trajectory, startInstant,
+    PlanAngles(&trajectory,
+               startInstant,
                AngleFns::facePoint(ball.position),
                planRequest.constraints.rot);
+    trajectory.stamp(RJ::now());
 
     return trajectory;
 }

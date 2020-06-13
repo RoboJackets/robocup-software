@@ -49,43 +49,4 @@ std::vector<Geometry2d::Point> GenerateRRT(
     const Geometry2d::ShapeSet& obstacles,
     const std::vector<Geometry2d::Point>& waypoints = {});
 
-namespace CreatePath {
-/**
- * Generate a smooth path from start to goal avoiding obstacles.
- */
-Trajectory rrt(const LinearMotionInstant& start, const LinearMotionInstant& goal,
-               const MotionConstraints& motionConstraints,
-               RJ::Time startTime,
-               const Geometry2d::ShapeSet& static_obstacles,
-               const std::vector<DynamicObstacle>& dynamic_obstacles = {},
-               const std::vector<Geometry2d::Point>& biasWaypoints = {});
-
-/**
- * Generate a smooth path from start to goal disregarding obstacles.
- */
-Trajectory simple(
-    const LinearMotionInstant& start, const LinearMotionInstant& goal,
-    const MotionConstraints& motionConstraints,
-    RJ::Time startTime,
-    const std::vector<Geometry2d::Point>& intermediatePoints = {});
-
-/**
- * Generate a path by RRT. if that fails, fall back on the simple path
- */
-Trajectory complete(const LinearMotionInstant& start, const LinearMotionInstant& goal,
-                    const MotionConstraints& motionConstraints,
-                    RJ::Time startTime,
-                    const Geometry2d::ShapeSet& static_obstacles,
-                    const std::vector<DynamicObstacle>& dynamic_obstacles = {},
-                    const std::vector<Geometry2d::Point>& biasWaypoints = {});
-
-}  // namespace CreatePath
-
-/**
- * project a point into the field rect
- */
-Geometry2d::Point projectPointIntoField(Geometry2d::Point targetPoint,
-                                        const Geometry2d::Rect& fieldRect,
-                                        Geometry2d::Point ballPoint);
-
 }  // namespace Planning

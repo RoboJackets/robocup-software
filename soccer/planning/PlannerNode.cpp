@@ -9,9 +9,6 @@
 #include "planning/planner/PivotPathPlanner.hpp"
 #include "planning/planner/SettlePlanner.hpp"
 
-#pragma GCC push_options
-#pragma GCC optimize("O0")
-
 namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context) {
@@ -56,11 +53,6 @@ void PlannerNode::run() {
 
         RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
 
-        if (!trajectories->at(shell).empty() &&
-            trajectories->at(shell).end_time() >= RJ::now()) {
-            start = trajectories->at(shell).evaluate(RJ::now()).value();
-        }
-
         // TODO: Put motion constraints in intent.
         PlanRequest request{
             start,
@@ -78,6 +70,7 @@ void PlannerNode::run() {
         Trajectory trajectory = robots_planners_.at(shell).PlanForRobot(std::move(request));
         trajectory.draw(&context_->debug_drawer);
         trajectories->at(shell) = std::move(trajectory);
+
         planned.at(shell) = &trajectories->at(shell);
     }
 }
@@ -114,6 +107,16 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
         // still be empty. Reset the planner.
         if (trajectory.empty()) {
             planner->reset();
+        } else {
+            if (!trajectory.angles_valid()) {
+                throw std::runtime_error(
+                    "Trajectory returned from " + planner->name() + " has no angle profile!");
+            }
+
+            if (!trajectory.timeCreated().has_value()) {
+                throw std::runtime_error(
+                    "Trajectory returned from " + planner->name() + " has no timestamp!");
+            }
         }
     }
 
@@ -130,4 +133,3 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
 
 }  // namespace Planning
 
-#pragma GCC pop_options

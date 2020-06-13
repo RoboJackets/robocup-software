@@ -12,6 +12,8 @@ public:
     static void createConfiguration(Configuration* cfg);
     Trajectory plan(PlanRequest&& request) override;
 
+    void reset() override { previous = Trajectory{}; }
+
 private:
     bool shouldReplan(const PivotCommand& command) const;
     Trajectory previous;

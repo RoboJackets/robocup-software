@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 
 #include "Geometry2d/Pose.hpp"
-#include "MotionInstant.hpp"
 #include "SystemState.hpp"
 #include "planning/Trajectory.hpp"
+#include "planning/Instant.hpp"
 #include "planning/low_level/RRTUtil.hpp"
 #include "planning/planner/CollectPlanner.hpp"
 #include "planning/planner/MotionCommand.hpp"

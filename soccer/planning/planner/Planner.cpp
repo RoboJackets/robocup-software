@@ -5,6 +5,7 @@
 
 namespace Planning {
 
+#if 0
 Trajectory Planner::reuse(RJ::Time now, RobotInstant start, Trajectory previous) {
     if (previous.empty()) {
         Trajectory out({start});
@@ -22,5 +23,6 @@ Trajectory Planner::reuse(RJ::Time now, RobotInstant start, Trajectory previous)
     out.setDebugText("Reusing Past End");
     return std::move(out);
 }
+#endif
 
 }  // namespace Planning

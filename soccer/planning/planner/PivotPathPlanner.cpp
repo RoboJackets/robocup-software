@@ -4,10 +4,12 @@
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Util.hpp>
 #include <memory>
+#include <planning/low_level/TrapezoidalMotion.hpp>
 #include <vector>
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
 #include "planning/low_level/PathSmoothing.hpp"
 #include "planning/low_level/VelocityProfiling.hpp"
 
@@ -26,65 +28,65 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
-    const RobotInstant& startInstant = request.start;
-    const auto& motionConstraints = request.constraints.mot;
-    const auto& rotationConstraints = request.constraints.rot;
+    const RobotInstant& start_instant = request.start;
+    const auto& linear_constraints = request.constraints.mot;
+    const auto& rotation_constraints = request.constraints.rot;
 
-    Geometry2d::ShapeSet staticObstacles;
-    std::vector<DynamicObstacle> dynamicObstacles;
-    FillObstacles(request, &staticObstacles, &dynamicObstacles, false);
+    Geometry2d::ShapeSet static_obstacles;
+    std::vector<DynamicObstacle> dynamic_obstacles;
+    FillObstacles(request, &static_obstacles, &dynamic_obstacles, false);
 
-    const auto& command =
-        std::get<PivotCommand>(request.motionCommand);
+    const auto& command = std::get<PivotCommand>(request.motionCommand);
 
     if (!shouldReplan(command)) {
         return previous;
     }
 
     double radius = _pivotRadiusMultiplier->value() * Robot_Radius;
-    auto pivotPoint = command.pivotPoint;
-    auto pivotTarget = command.pivotTarget;
-    auto endTarget =
-        pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
+    auto pivot_point = command.pivotPoint;
+    auto pivot_target = command.pivotTarget;
+    auto final_position =
+        pivot_point + (pivot_point - pivot_target).normalized(radius);
     std::vector<Point> points;
 
     // maxSpeed = maxRadians * radius
-    MotionConstraints newConstraints = request.constraints.mot;
-    newConstraints.maxSpeed =
-        std::min(newConstraints.maxSpeed,
-                 rotationConstraints.maxSpeed * radius) *
-        .5;
+    MotionConstraints new_constraints = request.constraints.mot;
+    new_constraints.maxSpeed =
+        std::min(new_constraints.maxSpeed,
+                 rotation_constraints.maxSpeed * radius) * .5;
 
-    double startAngle = pivotPoint.angleTo(startInstant.position());
-    double targetAngle = pivotPoint.angleTo(endTarget);
-    double change = fixAngleRadians(targetAngle - startAngle);
+    double start_angle = pivot_point.angleTo(start_instant.position());
+    double target_angle = pivot_point.angleTo(final_position);
+    double angle_change = fixAngleRadians(target_angle - start_angle);
+    double distance = angle_change * radius;
 
     const int interpolations = 10;
 
-    points.push_back(startInstant.position());
+    points.push_back(start_instant.position());
     for (int i = 1; i <= interpolations; i++) {
         double percent = (double)i / interpolations;
-        double angle = startAngle + change * percent;
+        double angle = start_angle + angle_change * percent;
         Point point =
-            Point::direction(angle).normalized(radius) + pivotPoint;
+            Point::direction(angle).normalized(radius) + pivot_point;
         points.push_back(point);
     }
 
-    BezierPath pathBezier(points, startInstant.linear_velocity(),
-                          Point(0, 0), motionConstraints);
+    BezierPath pathBezier(points, start_instant.linear_velocity(),
+                          Point(0, 0),
+                          linear_constraints);
 
     Trajectory path = ProfileVelocity(
-        pathBezier,
-        startInstant.linear_velocity().mag(),
+        pathBezier, start_instant.linear_velocity().mag(),
         0,
-        motionConstraints,
-        startInstant.stamp);
+                        linear_constraints, start_instant.stamp);
 
     AngleFunction function =
-        [pivotPoint, pivotTarget] (const RobotInstant& instant) -> double {
-            Point position = instant.position();
-            auto angleToPivot = position.angleTo(pivotPoint);
-            auto angleToPivotTarget = position.angleTo(pivotTarget);
+        [pivot_point, pivot_target] (const LinearMotionInstant& instant,
+                                   double /*previous_angle*/,
+                                   Eigen::Vector2d* /*jacobian*/) -> double {
+            Point position = instant.position;
+            auto angleToPivot = position.angleTo(pivot_point);
+            auto angleToPivotTarget = position.angleTo(pivot_target);
 
             if (abs(angleToPivot - angleToPivotTarget) <
                 DegreesToRadians(10)) {
@@ -94,8 +96,10 @@ Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
             return angleToPivot;
         };
 
-    PlanAngles(path, startInstant,
-               AngleFns::facePoint(pivotPoint), request.constraints.rot);
+    PlanAngles(&path, start_instant,
+               AngleFns::facePoint(pivot_point),
+               request.constraints.rot);
+    path.stamp(RJ::now());
 
     previous = path;
     return path;
@@ -108,20 +112,21 @@ bool PivotPathPlanner::shouldReplan(const PivotCommand& command) const {
 
     // Calculate the endpoint of this maneuver.
     RobotInstant start = previous.first();
-    auto pivotPoint = command.pivotPoint;
-    auto pivotTarget = command.pivotTarget;
-    double radius = _pivotRadiusMultiplier->value() * Robot_Radius;
-    auto endTarget =
-        pivotPoint + (pivotPoint - pivotTarget).normalized(radius);
-    double targetChange = (previous.last().position() - endTarget).mag();
+    RobotInstant end = previous.last();
 
-    // If the target has changed significantly, we need to replan.
-    if (targetChange > 0.1) {
-        return true;
-    }
+    Point target_point = command.pivotTarget;
+    Point pivot_point = command.pivotPoint;
 
-    // Finally, if the previous trajectory ended more than 0.5s ago, replan.
-    return previous.end_time() + RJ::Seconds(0.5) < RJ::now();
+    // The vector from the end-of-trajectory to the pivot point should be nearly
+    // parallel to the pivot point -> pivot target vector...
+    double angle_vector_error = (target_point - pivot_point)
+                                    .angleBetween(pivot_point - end.position());
+
+    // In addition, we should be facing the right way at the end.
+    Point face_point = end.position() + Point::direction(end.heading())
+                           .normalized((target_point - end.position()).mag());
+
+    return face_point.distTo(target_point) > 0.05;
 }
 
 }  // namespace Planning

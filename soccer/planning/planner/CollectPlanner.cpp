@@ -3,6 +3,8 @@
 #include "Configuration.hpp"
 #include "Constants.hpp"
 #include "planning/Instant.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/low_level/CreatePath.hpp"
 #include "planning/low_level/RRTUtil.hpp"
 
 using namespace Geometry2d;
@@ -50,7 +52,7 @@ void CollectPlanner::createConfiguration(Configuration* cfg) {
 Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
     BallState ball = planRequest.world_state->ball;
 
-    const RJ::Time curTime = RJ::now();
+    const RJ::Time curTime = planRequest.start.stamp;
 
     const CollectCommand& command =
         std::get<CollectCommand>(planRequest.motionCommand);
@@ -105,8 +107,10 @@ Trajectory CollectPlanner::plan(PlanRequest&& planRequest) {
         if (timeIntoPreviousPath <
             previous.duration() - 2 * partialReplanLeadTime &&
             timeIntoPreviousPath > 0ms) {
-            partialPath = previous.subTrajectory(
-                0ms, timeIntoPreviousPath + partialReplanLeadTime);
+            RJ::Time new_start = previous.begin_time();
+            RJ::Time new_end =
+                new_start + timeIntoPreviousPath + partialReplanLeadTime;
+            partialPath = previous.subTrajectory(new_start, new_end);
             partialPathTime = partialPath.duration() - timeIntoPreviousPath;
             partialStartInstant = partialPath.last();
         }
@@ -244,6 +248,10 @@ Trajectory CollectPlanner::courseApproach(
     };
     Trajectory coarsePath = replanner.CreatePlan(params, previous);
 
+    if (planRequest.debug_drawer) {
+        planRequest.debug_drawer->drawLine(Segment(start.position(), start.position() + Point::direction(AngleFns::facePoint(ball.position)(start.linear_motion(), start.heading(), nullptr))));
+    }
+
     // Build a path from now to the slow point
     coarsePath.setDebugText("course");
 
@@ -294,8 +302,15 @@ Trajectory CollectPlanner::fineApproach(
         startInstant.stamp);
 
     pathHit.setDebugText("fine");
-    PlanAngles(pathHit, startInstant, AngleFns::facePoint(ball.position),
+    PlanAngles(&pathHit,
+               startInstant,
+               AngleFns::facePoint(ball.position),
                planRequest.constraints.rot);
+    pathHit.stamp(RJ::now());
+
+    if (planRequest.debug_drawer) {
+        planRequest.debug_drawer->drawLine(Segment(startInstant.position(), startInstant.position() + Point::direction(AngleFns::facePoint(ball.position)(startInstant.linear_motion(), startInstant.heading(), nullptr))));
+    }
 
     return pathHit;
 }
@@ -384,7 +399,16 @@ Trajectory CollectPlanner::control(
                    10 * (target.position - start.position())
                        .norm();
 
-    PlanAngles(path, start, AngleFns::facePoint(facePt), robotConstraints.rot);
+    PlanAngles(&path,
+               start,
+               AngleFns::facePoint(facePt),
+               robotConstraints.rot);
+
+    if (planRequest.debug_drawer) {
+        planRequest.debug_drawer->drawLine(Segment(start.position(), start.position() + Point::direction(AngleFns::facePoint(facePt)(start.linear_motion(), start.heading(), nullptr))));
+    }
+
+    path.stamp(RJ::now());
     return path;
 }
 

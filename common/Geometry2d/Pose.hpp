@@ -148,6 +148,18 @@ public:
         return stream;
     }
 
+    /**
+     * Check whether two poses are "nearly equal", with RSSE
+     * less than some tolerance (default: 1e-6).
+     */
+    static bool nearly_equals(const Pose& a, const Pose& b,
+                              double tolerance = 1e-6) {
+        double dx = a.position().x() - b.position().x();
+        double dy = a.position().y() - b.position().y();
+        double dh = a.heading() - b.heading();
+        return dx * dx + dy * dy + dh * dh < tolerance * tolerance;
+    }
+
 private:
     Point _position;
     double _heading;
@@ -321,6 +333,18 @@ public:
         stream << "Twist(" << twist.linear().x() << ", " << twist.linear().y()
                << ", " << twist.angular() << ")";
         return stream;
+    }
+
+    /**
+     * Check whether two twists are "nearly equal", with RSSE
+     * less than some tolerance (default: 1e-6).
+     */
+    static bool nearly_equals(const Twist& a, const Twist& b,
+                              double tolerance = 1e-6) {
+        double dx = a.linear().x() - b.linear().x();
+        double dy = a.linear().y() - b.linear().y();
+        double dh = a.angular() - b.angular();
+        return dx * dx + dy * dy + dh * dh < tolerance * tolerance;
     }
 
 private:

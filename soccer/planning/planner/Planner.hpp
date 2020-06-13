@@ -36,10 +36,12 @@ public:
      */
     virtual void reset() {}
 
+#if 0
     /**
      * reuse previous path
      */
     static Trajectory reuse(RJ::Time now, RobotInstant start, Trajectory previous);
+#endif
 
     /**
      * Get a user-readable name for this planner.

@@ -43,6 +43,13 @@ struct RobotInstant {
         : pose(linear_motion.position, heading),
           velocity(linear_motion.velocity, angular_velocity) {}
 
+    static bool nearly_equals(const RobotInstant& a, const RobotInstant& b,
+                              double tolerance = 1e-6) {
+        return Geometry2d::Pose::nearly_equals(a.pose, b.pose, tolerance) &&
+               Geometry2d::Twist::nearly_equals(a.velocity, b.velocity, tolerance) &&
+               a.stamp == b.stamp;
+    }
+
     RobotInstant() = default;
 
     Geometry2d::Pose pose;

@@ -3,7 +3,7 @@
 #include <random>
 
 #include "Geometry2d/Point.hpp"
-#include "MotionInstant.hpp"
+#include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
 
