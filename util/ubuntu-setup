@@ -142,7 +142,7 @@ sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu `lsb_release -cs` main
 
 # Install eloquent for 18.04, foxy for 20.04
 if [ "$SYSTEM" = "ubuntu-20.04" ]; then
-    sudo apt-get install -y ros-foxy-base
+    sudo apt-get install -y ros-foxy-ros-base
 fi
 
 MACH=$(uname -m)
