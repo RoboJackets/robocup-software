@@ -14,7 +14,7 @@ robocup_ws_dir: &robocup_ws_dir
 
 eloquent_image: &eloquent_image
   docker:
-    - image: robojackets/robocup-software:eloquent
+    - image: robojackets/robocup-software:foxy
 
 defaults_deps: &install_deps
   run: ./util/ubuntu-setup --yes
