@@ -25,7 +25,6 @@ save_workspace: &save_workspace
     paths:
       - install/*
       - build/*
-      - log/*
 
 load_workspace: &load_workspace
   attach_workspace:
