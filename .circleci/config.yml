@@ -23,8 +23,8 @@ save_workspace: &save_workspace
   persist_to_workspace:
     root: ~/robocup_ws
     paths:
-      - install/*
-      - build/*
+      - install
+      - build
 
 load_workspace: &load_workspace
   attach_workspace:
