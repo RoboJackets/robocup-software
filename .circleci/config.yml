@@ -43,7 +43,7 @@ jobs:
       - <<: *install_deps
       - run: |
           source /opt/ros/foxy/setup.sh && \
-          colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON -GNinja
+          colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON -GNinja --parallel-workers 2
       - <<: *save_workspace
 
   # Use the saved build folder for testing
