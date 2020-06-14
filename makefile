@@ -16,17 +16,17 @@ CMAKE_FLAGS="$(shell pwd)/install"
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	CMAKE_PREFIX_PATH=/opt/ros/foxy source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_release
 	mkdir -p build
-	source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	CMAKE_PREFIX_PATH=/opt/ros/foxy source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_perf
 	mkdir -p build
-	source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	CMAKE_PREFIX_PATH=/opt/ros/foxy source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all:
