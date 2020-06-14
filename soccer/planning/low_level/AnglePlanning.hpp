@@ -7,7 +7,16 @@
 namespace Planning {
 
 /**
- * Returns target angle from (position, linear velocity, previous angle)
+ * @brief Represents a functor that calculates the next angular target given the
+ * linear position and velocity as well as the (rough) previous angle. The
+ * previous angle only exists to calculate a good local minimum.
+ *
+ * @param instant The current linear motion of the robot
+ * @param previous_angle Represents a general area of the previous angle. Used
+ * for selecting the correct local minimum.
+ * @param jacobian Output parameter for the Jacobian of the angle with respect
+ * to position. Used to calculate angular velocity.
+ * @return A target angle to attempt to follow.
  */
 using AngleFunction =
     std::function<double(const LinearMotionInstant& instant,
@@ -15,6 +24,10 @@ using AngleFunction =
 
 namespace AngleFns {
 
+/**
+ * @brief An angle function to move tangent to the path. `previous_angle` is
+ * used to decide whether to target forwards or backwards motion.
+ */
 inline double tangent(const LinearMotionInstant& instant, double previous_angle,
                       Eigen::Vector2d* jacobian) {
     Geometry2d::Point vel = instant.velocity;
@@ -37,6 +50,10 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
     return result;
 }
 
+/**
+ * @brief Create an @ref AngleFunction for facing a particular point on the
+ * field.
+ */
 inline AngleFunction facePoint(const Geometry2d::Point point) {
     return [=](const LinearMotionInstant& instant, double /*previous_angle*/,
                Eigen::Vector2d* jacobian) -> double {
@@ -51,6 +68,9 @@ inline AngleFunction facePoint(const Geometry2d::Point point) {
     };
 }
 
+/**
+ * @brief Create an @ref AngleFunction for facing a particular constant angle.
+ */
 inline AngleFunction faceAngle(double angle) {
     return [=](const LinearMotionInstant& /*instant*/,
                double /*previous_angle*/, Eigen::Vector2d* jacobian) -> double {
