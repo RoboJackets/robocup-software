@@ -1,4 +1,26 @@
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/protobuf")
+#======================================================================
+# Preamble
+#======================================================================
+cmake_minimum_required(VERSION 3.16)
+project(common LANGUAGES CXX)
+
+#======================================================================
+# Find package
+#======================================================================
+find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
+find_package(ament_cmake REQUIRED)
+
+#======================================================================
+# Define Targets
+#======================================================================
+add_library(common STATIC)
+
+# position-independent-code flag
+target_compile_options(common PRIVATE "-fPIC")
+
+#======================================================================
+# Find package
+#======================================================================
 
 set(COMMON_SRC
     "Field_Dimensions.cpp"
@@ -19,25 +41,28 @@ set(COMMON_SRC
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-# positon-independent-code flag
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-
 # build the 'common' static library (and include our protobuf messages in it)
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
-add_library(common STATIC ${COMMON_SRC})
-target_link_libraries(common proto_messages)
+target_link_libraries(common PUBLIC rj_protos)
 
-if(APPLE)
-    # look for the homebrew-installed version of Qt5
-    find_package(Qt5Widgets
-        REQUIRED
-        PATHS /usr/local/Cellar/qt/* /usr/local/Cellar/qt5/*)
+#======================================================================
+# Add sources
+#======================================================================
+target_sources(common
+    PRIVATE
+    ${COMMON_SRC})
 
-    # this directory is included by default, but we mark it as SYSTEM so
-    # warnings in external headers don't show up every time we build
-    include_directories(SYSTEM /usr/local/include/)
+#======================================================================
+# Include and Linking
+#======================================================================
+target_link_libraries(common PUBLIC Qt5::Core Qt5::Network Qt5::Widgets)
 
-else()
-    find_package(Qt5Widgets REQUIRED)
-endif()
-qt5_use_modules(common Core Network Widgets)
+#======================================================================
+# Packaging
+#======================================================================
+
+#======================================================================
+# Ament packaging
+#======================================================================
+ament_export_libraries(common)
+ament_package()

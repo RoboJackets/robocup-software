@@ -100,7 +100,7 @@ add_subdirectory(src)
 # Include and Linking
 #======================================================================
 
-target_link_libraries(robocup common rc-fshare)
+target_link_libraries(robocup common rc-fshare rj_protos)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
 target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})

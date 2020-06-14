@@ -46,12 +46,13 @@ protobuf_generate_cpp(PROTO_SRC PROTO_INCLUDE ${PROTO_FILES})
 
 target_sources(rj_protos
     PRIVATE
-    ${PROTO_SRC}
-    )
+    ${PROTO_SRC})
 
 #======================================================================
 # Include and Linking
 #======================================================================
+set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include/)
+
 target_link_libraries(rj_protos ${PROTOBUF_LIBRARIES})
 target_include_directories(rj_protos PUBLIC ${PROTO_INCLUDE_DIR})
 
@@ -59,7 +60,6 @@ target_include_directories(rj_protos PUBLIC ${PROTO_INCLUDE_DIR})
 # Packaging
 #======================================================================
 # Copy the protos to include/rj_protos
-set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include/)
 file(MAKE_DIRECTORY ${PROTO_INCLUDE_DIR}/rj_protos)
 add_custom_command(TARGET rj_protos
     POST_BUILD

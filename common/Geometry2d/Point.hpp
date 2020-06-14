@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protobuf/Point.pb.h>
+#include <rj_protos/Point.pb.h>
 
 #include <Eigen/Dense>
 #include <QtCore/QPointF>

@@ -63,8 +63,8 @@ endif()
 # Subdirectories
 #======================================================================
 # This is manually topologically sorted becuse we're not using colcon
-add_subdirectory(protobuf)
 add_subdirectory(external)
+add_subdirectory(rj_protos)
 add_subdirectory(common)
 add_subdirectory(soccer)
 #
