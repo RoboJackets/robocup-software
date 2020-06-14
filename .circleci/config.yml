@@ -54,8 +54,8 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       # Run test without building anything
-      - run: make test-soccer-nobuild
-      - run: make test-python-nobuild
+      - run: source install/setup.sh && make test-soccer-nobuild
+      - run: source install/setup.sh && make test-python-nobuild
 
   python-static:
     <<: *dir

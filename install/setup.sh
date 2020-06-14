@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script emulates what the colcon generated setup.bash does
 # kind of in that it sets the PATH, LD_LIBRARY_PATH and AMENT_PREFIX_PATH
