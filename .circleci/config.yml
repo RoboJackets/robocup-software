@@ -56,7 +56,7 @@ jobs:
       # Run test without building anything
       - run: |
           pwd && source /opt/ros/foxy/setup.sh && source install/setup.bash && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
-      - run: source install/setup.sh && cd soccer/gameplay && ./run_tests.sh
+      - run: source install/setup.bash && cd soccer/gameplay && ./run_tests.sh
   python-static:
     <<: *dir
     <<: *image
