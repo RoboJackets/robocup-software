@@ -61,10 +61,7 @@ inline void debugThrowIf(const std::string& string, bool condition) {
  */
 template <typename T>
 static inline T fixAngleRadians(T a) {
-    a = remainder(a, 2 * M_PI);
-    while (a < -M_PI) a += 2.0 * M_PI;
-    while (a > M_PI) a -= 2.0 * M_PI;
-    return a;
+    return std::atan2(std::sin(a), std::cos(a));
 }
 
 /** Checks whether or not the given ball is in the defense area. */

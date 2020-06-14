@@ -128,10 +128,36 @@ public:
         return *this;
     }
 
+    /**
+     * Equality comparison operation.
+     */
+    bool operator==(const Pose& other) const {
+        return _position == other._position && _heading == other._heading;
+    }
+
+    /**
+     * Inequality comparison operation.
+     */
+    bool operator!=(const Pose& other) const {
+        return _position != other._position || _heading != other._heading;
+    }
+
     friend std::ostream& operator<<(std::ostream& stream, const Pose& pose) {
         stream << "Pose(" << pose.position().x() << ", " << pose.position().y()
                << ", " << pose.heading() << ")";
         return stream;
+    }
+
+    /**
+     * Check whether two poses are "nearly equal", with RSSE
+     * less than some tolerance (default: 1e-6).
+     */
+    static bool nearly_equals(const Pose& a, const Pose& b,
+                              double tolerance = 1e-6) {
+        double dx = a.position().x() - b.position().x();
+        double dy = a.position().y() - b.position().y();
+        double dh = a.heading() - b.heading();
+        return dx * dx + dy * dy + dh * dh < tolerance * tolerance;
     }
 
 private:
@@ -289,10 +315,36 @@ public:
         return *this;
     }
 
+    /**
+     * Equality comparison operation.
+     */
+    bool operator==(const Twist& other) const {
+        return _linear == other._linear && _angular == other._angular;
+    }
+
+    /**
+     * Inequality comparison operation.
+     */
+    bool operator!=(const Twist& other) const {
+        return _linear != other._linear || _angular != other._angular;
+    }
+
     friend std::ostream& operator<<(std::ostream& stream, const Twist& twist) {
         stream << "Twist(" << twist.linear().x() << ", " << twist.linear().y()
                << ", " << twist.angular() << ")";
         return stream;
+    }
+
+    /**
+     * Check whether two twists are "nearly equal", with RSSE
+     * less than some tolerance (default: 1e-6).
+     */
+    static bool nearly_equals(const Twist& a, const Twist& b,
+                              double tolerance = 1e-6) {
+        double dx = a.linear().x() - b.linear().x();
+        double dy = a.linear().y() - b.linear().y();
+        double dh = a.angular() - b.angular();
+        return dx * dx + dy * dy + dh * dh < tolerance * tolerance;
     }
 
 private:
