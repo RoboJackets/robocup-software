@@ -13,7 +13,12 @@ public:
     PathTargetPlanner() : PlannerForCommandType("PathTargetPlanner") {}
     ~PathTargetPlanner() override = default;
 
-    Trajectory plan(PlanRequest&& request) override;
+    PathTargetPlanner(PathTargetPlanner&&) noexcept = default;
+    PathTargetPlanner& operator=(PathTargetPlanner&&) noexcept = default;
+    PathTargetPlanner(const PathTargetPlanner&) = default;
+    PathTargetPlanner& operator=(const PathTargetPlanner&) = default;
+
+    Trajectory plan(const PlanRequest& request) override;
     void reset() override { previous = Trajectory(); }
 
     double drawRadius = Robot_Radius;
@@ -24,7 +29,6 @@ private:
     [[nodiscard]] static AngleFunction getAngleFunction(
         const PlanRequest& request);
 
-    Replanner replanner;
     Trajectory previous;
 };
 

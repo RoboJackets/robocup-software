@@ -148,12 +148,16 @@ double Ball_estimate_seconds_to_dist(BallState* ball, double dist) {
 }
 
 void OurRobot_move_to_direct(OurRobot* self, Geometry2d::Point* to) {
-    if (to == nullptr) throw NullArgumentException("to");
+    if (to == nullptr) {
+        throw NullArgumentException("to");
+    }
     self->moveDirect(*to);
 }
 
 void OurRobot_move_tuning(OurRobot* self, Geometry2d::Point* to) {
-    if (to == nullptr) throw NullArgumentException("to");
+    if (to == nullptr) {
+        throw NullArgumentException("to");
+    }
     self->moveTuning(*to);
 }
 
@@ -166,14 +170,18 @@ void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
 }
 
 void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
-    if (to == nullptr) throw NullArgumentException("to");
+    if (to == nullptr) {
+        throw NullArgumentException("to");
+    }
     self->move(*to);
 }
 
 void OurRobot_settle(OurRobot* self) { self->settle(); }
 
 void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
-    if (obs == nullptr) throw NullArgumentException("obs");
+    if (obs == nullptr) {
+        throw NullArgumentException("obs");
+    }
     std::shared_ptr<Geometry2d::Shape> sharedObs(obs->clone());
     self->localObstacles(sharedObs);
 }
@@ -236,18 +244,24 @@ bool OurRobot_end_pid_tuner(OurRobot* /*self*/, char /*controller*/) {
 }
 
 bool Rect_contains_rect(Geometry2d::Rect* self, Geometry2d::Rect* other) {
-    if (other == nullptr) throw NullArgumentException("other");
+    if (other == nullptr) {
+        throw NullArgumentException("other");
+    }
     return self->containsRect(*other);
 }
 
 bool Rect_contains_point(Geometry2d::Rect* self, Geometry2d::Point* pt) {
-    if (pt == nullptr) throw NullArgumentException("pt");
+    if (pt == nullptr) {
+        throw NullArgumentException("pt");
+    }
     return self->containsPoint(*pt);
 }
 
 void Point_rotate(Geometry2d::Point* self, Geometry2d::Point* origin,
                   float angle) {
-    if (origin == nullptr) throw NullArgumentException("origin");
+    if (origin == nullptr) {
+        throw NullArgumentException("origin");
+    }
     self->rotate(*origin, angle);
 }
 
@@ -257,12 +271,16 @@ void Point_rotate_origin(Geometry2d::Point* self, float angle) {
 
 void CompositeShape_add_shape(Geometry2d::CompositeShape* self,
                               Geometry2d::Shape* shape) {
-    if (shape == nullptr) throw NullArgumentException("shape");
+    if (shape == nullptr) {
+        throw NullArgumentException("shape");
+    }
     self->add(std::shared_ptr<Geometry2d::Shape>(shape->clone()));
 }
 
 void Polygon_add_vertex(Geometry2d::Polygon* self, Geometry2d::Point* pt) {
-    if (pt == nullptr) throw NullArgumentException("pt");
+    if (pt == nullptr) {
+        throw NullArgumentException("pt");
+    }
     self->addVertex(*pt);
 }
 
@@ -280,7 +298,9 @@ Geometry2d::Point* Rect_get_pt(Geometry2d::Rect* self, int index) {
 
 boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
                                                    Geometry2d::Segment* other) {
-    if (other == nullptr) throw NullArgumentException("other");
+    if (other == nullptr) {
+        throw NullArgumentException("other");
+    }
     Geometry2d::Point pt;
     if (self->intersects(*other, &pt)) {
         boost::python::object obj(pt);
@@ -292,13 +312,17 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment* self,
 }
 
 bool Rect_rect_intersection(Geometry2d::Rect* self, Geometry2d::Rect* other) {
-    if (other == nullptr) throw NullArgumentException{"other"};
+    if (other == nullptr) {
+        throw NullArgumentException{"other"};
+    }
     return self->intersects(*other);
 }
 
 boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
                                                 Geometry2d::Segment* segment) {
-    if (segment == nullptr) throw NullArgumentException{"segment"};
+    if (segment == nullptr) {
+        throw NullArgumentException{"segment"};
+    }
     boost::python::list lst;
     std::tuple<bool, std::vector<Geometry2d::Point>> result =
         self->intersects(*segment);
@@ -328,7 +352,9 @@ boost::python::object Rect_corners(Geometry2d::Rect* self) {
 
 boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
                                                 Geometry2d::Line* line) {
-    if (line == nullptr) throw NullArgumentException{"line"};
+    if (line == nullptr) {
+        throw NullArgumentException{"line"};
+    }
     Geometry2d::Point pt;
     if (self->intersects(*line, &pt)) {
         boost::python::object obj{pt};
@@ -340,20 +366,26 @@ boost::python::object Segment_line_intersection(Geometry2d::Segment* self,
 
 boost::python::object Segment_nearest_point_to_point(Geometry2d::Segment* self,
                                                      Geometry2d::Point* point) {
-    if (point == nullptr) throw NullArgumentException{"point"};
+    if (point == nullptr) {
+        throw NullArgumentException{"point"};
+    }
     return boost::python::object{self->nearestPoint(*point)};
 }
 
 boost::python::object Segment_nearest_point_to_line(Geometry2d::Segment* self,
                                                     Geometry2d::Line* line) {
-    if (line == nullptr) throw NullArgumentException{"line"};
+    if (line == nullptr) {
+        throw NullArgumentException{"line"};
+    }
     return boost::python::object{self->nearestPoint(*line)};
 }
 
 // returns None or a Geometry2d::Point
 boost::python::object Line_line_intersection(Geometry2d::Line* self,
                                              Geometry2d::Line* other) {
-    if (other == nullptr) throw NullArgumentException("other");
+    if (other == nullptr) {
+        throw NullArgumentException("other");
+    }
     Geometry2d::Point pt;
     if (self->intersects(*other, &pt)) {
         boost::python::object obj(pt);
@@ -366,7 +398,9 @@ boost::python::object Line_line_intersection(Geometry2d::Line* self,
 
 boost::python::object Line_segment_intersection(Geometry2d::Line* self,
                                                 Geometry2d::Segment* other) {
-    if (other == nullptr) throw NullArgumentException("other");
+    if (other == nullptr) {
+        throw NullArgumentException("other");
+    }
     Geometry2d::Point pt;
     if (self->intersects(*other, &pt)) {
         boost::python::object obj(pt);
@@ -379,7 +413,9 @@ boost::python::object Line_segment_intersection(Geometry2d::Line* self,
 
 boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
                                             Geometry2d::Circle* circle) {
-    if (circle == nullptr) throw NullArgumentException("circle");
+    if (circle == nullptr) {
+        throw NullArgumentException("circle");
+    }
     Geometry2d::Point a;
     Geometry2d::Point b;
     boost::python::list lst;
@@ -395,7 +431,9 @@ boost::python::tuple Line_intersects_circle(Geometry2d::Line* self,
 void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center,
                              float radius, const boost::python::tuple& rgb,
                              const std::string& layer) {
-    if (center == nullptr) throw NullArgumentException("center");
+    if (center == nullptr) {
+        throw NullArgumentException("center");
+    }
     self->drawCircle(*center, radius, Color_from_tuple(rgb),
                      QString::fromStdString(layer));
 }
@@ -403,7 +441,9 @@ void DebugDrawer_draw_circle(DebugDrawer* self, const Geometry2d::Point* center,
 void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
                           const boost::python::tuple& rgb,
                           const std::string& layer) {
-    if (arc == nullptr) throw NullArgumentException{"arc"};
+    if (arc == nullptr) {
+        throw NullArgumentException{"arc"};
+    }
     self->drawArc(*arc, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
@@ -411,7 +451,9 @@ void DebugDrawer_draw_arc(DebugDrawer* self, const Geometry2d::Arc* arc,
 void DebugDrawer_draw_line(DebugDrawer* self, const Geometry2d::Line* line,
                            const boost::python::tuple& rgb,
                            const std::string& layer) {
-    if (line == nullptr) throw NullArgumentException("line");
+    if (line == nullptr) {
+        throw NullArgumentException("line");
+    }
     self->drawLine(Geometry2d::Segment(*line), Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }
@@ -420,7 +462,9 @@ void DebugDrawer_draw_segment(DebugDrawer* self,
                               const Geometry2d::Segment* segment,
                               const boost::python::tuple& rgb,
                               const std::string& layer) {
-    if (segment == nullptr) throw NullArgumentException("segment");
+    if (segment == nullptr) {
+        throw NullArgumentException("segment");
+    }
     self->drawSegment(*segment, Color_from_tuple(rgb),
                       QString::fromStdString(layer));
 }
@@ -430,8 +474,12 @@ void DebugDrawer_draw_segment_from_points(DebugDrawer* self,
                                           const Geometry2d::Point* p1,
                                           const boost::python::tuple& rgb,
                                           const std::string& layer) {
-    if (p0 == nullptr) throw NullArgumentException{"p0"};
-    if (p1 == nullptr) throw NullArgumentException{"p1"};
+    if (p0 == nullptr) {
+        throw NullArgumentException{"p0"};
+    }
+    if (p1 == nullptr) {
+        throw NullArgumentException{"p1"};
+    }
     self->drawLine(*p0, *p1, Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }
@@ -440,7 +488,9 @@ void DebugDrawer_draw_text(DebugDrawer* self, const std::string& text,
                            Geometry2d::Point* pos,
                            const boost::python::tuple& rgb,
                            const std::string& layer) {
-    if (pos == nullptr) throw NullArgumentException("position");
+    if (pos == nullptr) {
+        throw NullArgumentException("position");
+    }
     self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb),
                    QString::fromStdString(layer));
 }
@@ -468,7 +518,9 @@ void DebugDrawer_draw_raw_polygon(DebugDrawer* self,
 
 boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
                                            const Geometry2d::Line* line) {
-    if (line == nullptr) throw NullArgumentException("line");
+    if (line == nullptr) {
+        throw NullArgumentException("line");
+    }
     boost::python::list lst;
 
     Geometry2d::Point intersectionPoints[2];
@@ -482,7 +534,9 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
 
 boost::python::list Arc_intersects_line(Geometry2d::Arc* self,
                                         const Geometry2d::Line* line) {
-    if (line == nullptr) throw NullArgumentException{"line"};
+    if (line == nullptr) {
+        throw NullArgumentException{"line"};
+    }
     boost::python::list lst;
 
     auto intersections = self->intersects(*line);
@@ -496,7 +550,9 @@ boost::python::list Arc_intersects_line(Geometry2d::Arc* self,
 
 boost::python::list Arc_intersects_segment(Geometry2d::Arc* self,
                                            const Geometry2d::Segment* segment) {
-    if (segment == nullptr) throw NullArgumentException{"segment"};
+    if (segment == nullptr) {
+        throw NullArgumentException{"segment"};
+    }
     boost::python::list lst;
 
     auto intersections = self->intersects(*segment);
@@ -511,8 +567,12 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc* self,
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self,
                                             const Geometry2d::Point* origin,
                                             const Geometry2d::Segment* target) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
-    if (target == nullptr) throw NullArgumentException{"target"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
+    if (target == nullptr) {
+        throw NullArgumentException{"target"};
+    }
     boost::python::list lst;
 
     auto window_results = self->eval_pt_to_seg(*origin, *target);
@@ -529,8 +589,12 @@ boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator* self,
 boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator* self,
                                               const Geometry2d::Point* origin,
                                               const Geometry2d::Point* target) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
-    if (target == nullptr) throw NullArgumentException{"target"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
+    if (target == nullptr) {
+        throw NullArgumentException{"target"};
+    }
     boost::python::list lst;
 
     auto window_results = self->eval_pt_to_robot(*origin, *target);
@@ -548,8 +612,12 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
                                            const Geometry2d::Point* origin,
                                            const Geometry2d::Point* target,
                                            float targetWidth) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
-    if (target == nullptr) throw NullArgumentException{"target"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
+    if (target == nullptr) {
+        throw NullArgumentException{"target"};
+    }
     boost::python::list lst;
 
     auto window_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
@@ -565,7 +633,9 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
 
 boost::python::tuple WinEval_eval_pt_to_opp_goal(
     WindowEvaluator* self, const Geometry2d::Point* origin) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
     boost::python::list lst;
 
     auto window_results = self->eval_pt_to_opp_goal(*origin);
@@ -581,7 +651,9 @@ boost::python::tuple WinEval_eval_pt_to_opp_goal(
 
 boost::python::tuple WinEval_eval_pt_to_our_goal(
     WindowEvaluator* self, const Geometry2d::Point* origin) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
     boost::python::list lst;
 
     auto window_results = self->eval_pt_to_our_goal(*origin);
@@ -602,8 +674,12 @@ void WinEval_add_excluded_robot(WindowEvaluator* self, Robot* robot) {
 boost::python::tuple KickEval_eval_pt_to_seg(
     KickEvaluator* self, const Geometry2d::Point* origin,
     const Geometry2d::Segment* target) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
-    if (target == nullptr) throw NullArgumentException{"target"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
+    if (target == nullptr) {
+        throw NullArgumentException{"target"};
+    }
     boost::python::list lst;
 
     auto kick_results = self->eval_pt_to_seg(*origin, *target);
@@ -617,8 +693,12 @@ boost::python::tuple KickEval_eval_pt_to_seg(
 boost::python::tuple KickEval_eval_pt_to_robot(
     KickEvaluator* self, const Geometry2d::Point* origin,
     const Geometry2d::Point* target) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
-    if (target == nullptr) throw NullArgumentException{"target"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
+    if (target == nullptr) {
+        throw NullArgumentException{"target"};
+    }
     boost::python::list lst;
 
     auto kick_results = self->eval_pt_to_robot(*origin, *target);
@@ -633,8 +713,12 @@ boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
                                             const Geometry2d::Point* origin,
                                             const Geometry2d::Point* target,
                                             float targetWidth) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
-    if (target == nullptr) throw NullArgumentException{"target"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
+    if (target == nullptr) {
+        throw NullArgumentException{"target"};
+    }
     boost::python::list lst;
 
     auto kick_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
@@ -647,7 +731,9 @@ boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
 
 boost::python::tuple KickEval_eval_pt_to_opp_goal(
     KickEvaluator* self, const Geometry2d::Point* origin) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
     boost::python::list lst;
 
     auto kick_results = self->eval_pt_to_opp_goal(*origin);
@@ -660,7 +746,9 @@ boost::python::tuple KickEval_eval_pt_to_opp_goal(
 
 boost::python::tuple KickEval_eval_pt_to_our_goal(
     KickEvaluator* self, const Geometry2d::Point* origin) {
-    if (origin == nullptr) throw NullArgumentException{"origin"};
+    if (origin == nullptr) {
+        throw NullArgumentException{"origin"};
+    }
     boost::python::list lst;
 
     auto kick_results = self->eval_pt_to_our_goal(*origin);

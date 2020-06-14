@@ -28,21 +28,21 @@ void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
     frameBuffer.insert(frameBuffer.end(), frames.begin(), frames.end());
 }
 
-void VisionFilter::fillBallState(WorldState& state) {
+void VisionFilter::fillBallState(WorldState* state) {
     std::lock_guard<std::mutex> lock(worldLock);
     const WorldBall& wb = world.getWorldBall();
 
     if (wb.getIsValid()) {
-        state.ball.visible = true;
-        state.ball.position = wb.getPos();
-        state.ball.velocity = wb.getVel();
-        state.ball.timestamp = wb.getTime();
+        state->ball.visible = true;
+        state->ball.position = wb.getPos();
+        state->ball.velocity = wb.getVel();
+        state->ball.timestamp = wb.getTime();
     } else {
-        state.ball.visible = false;
+        state->ball.visible = false;
     }
 }
 
-void VisionFilter::fillRobotState(WorldState& state, bool usBlue) {
+void VisionFilter::fillRobotState(WorldState* state, bool usBlue) {
     std::lock_guard<std::mutex> lock(worldLock);
     const auto& ourWorldRobot = usBlue ? world.getRobotsBlue() : world.getRobotsYellow();
     const auto& oppWorldRobot = usBlue ? world.getRobotsYellow() : world.getRobotsBlue();
@@ -61,7 +61,7 @@ void VisionFilter::fillRobotState(WorldState& state, bool usBlue) {
             robot_state.timestamp = wr.getTime();
         }
 
-        state.our_robots.at(i) = robot_state;
+        state->our_robots.at(i) = robot_state;
     }
 
     // Fill opp robots
@@ -78,7 +78,7 @@ void VisionFilter::fillRobotState(WorldState& state, bool usBlue) {
             robot_state.timestamp = wr.getTime();
         }
 
-        state.their_robots.at(i) = robot_state;
+        state->their_robots.at(i) = robot_state;
     }
 }
 

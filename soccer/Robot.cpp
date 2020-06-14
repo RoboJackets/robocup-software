@@ -234,9 +234,10 @@ void OurRobot::intercept(Point target) {
     setMotionCommand(Planning::InterceptCommand{target});
 }
 
-void OurRobot::worldVelocity(Geometry2d::Point v) {
-    setMotionCommand(Planning::WorldVelCommand{v});
-    _cmdText << "worldVel(" << v.x() << ", " << v.y() << ")" << endl;
+void OurRobot::worldVelocity(Geometry2d::Point targetWorldVel) {
+    setMotionCommand(Planning::WorldVelCommand{targetWorldVel});
+    _cmdText << "worldVel(" << targetWorldVel.x() << ", " << targetWorldVel.y()
+             << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {

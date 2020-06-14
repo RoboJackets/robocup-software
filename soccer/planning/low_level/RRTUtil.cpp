@@ -26,22 +26,28 @@ using std::vector;
 using namespace Geometry2d;
 
 void RRTConfig::createConfiguration(Configuration* cfg) {
+    // NOLINTNEXTLINE
     EnableRRTDebugDrawing =
         new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
+    // NOLINTNEXTLINE
     StepSize = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
+    // NOLINTNEXTLINE
     GoalBias = new ConfigDouble(
         cfg, "PathPlanner/RRT/GoalBias", 0.3,
         "Value from 0 to 1 that determines what proportion of the time the RRT "
         "will grow towards the goal rather than towards a random point");
+    // NOLINTNEXTLINE
     WaypointBias = new ConfigDouble(
         cfg, "PathPlanner/RRT/WayPointBias", 0.5,
         "Value from 0 to 1 that determines the portion of the time that the "
         "RRT will"
         " grow towards given waypoints rather than towards a random point");
+    // NOLINTNEXTLINE
     MinIterations =
         new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
                       "The minimum number of iterations for running RRT");
     // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
+    // //NOLINTNEXTLINE
     MaxIterations =
         new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
                       "The maximum number of iterations for running RRT");
@@ -58,8 +64,8 @@ void DrawRRT(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer,
         QColor("red"),   QColor("purple"), QColor("orange")};
     QColor color = colors[shellID % colors.size()];
 
-    for (auto& node : rrt.allNodes()) {
-        if (node.parent()) {
+    for (const auto& node : rrt.allNodes()) {
+        if (node.parent() != nullptr) {
             debug_drawer->drawLine(
                 Segment(node.state(), node.parent()->state()), color,
                 QString("RobotRRT%1").arg(shellID));

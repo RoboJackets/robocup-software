@@ -53,7 +53,7 @@ void PlannerNode::run() {
 
         RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
 
-        // TODO: Put motion constraints in intent.
+        // TODO(Kyle): Put motion constraints in intent.
         PlanRequest request{start,
                             intent.motion_command,
                             RobotConstraints(),
@@ -66,7 +66,7 @@ void PlannerNode::run() {
                             debug_drawer};
 
         Trajectory trajectory =
-            robots_planners_.at(shell).PlanForRobot(std::move(request));
+            robots_planners_.at(shell).PlanForRobot(request);
         trajectory.draw(&context_->debug_drawer);
         trajectories->at(shell) = std::move(trajectory);
 
@@ -85,7 +85,7 @@ PlannerForRobot::PlannerForRobot() : planner_idx_(-1) {
     planners_.push_back(std::make_unique<EscapeObstaclesPathPlanner>());
 }
 
-Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
+Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
     // Try each planner in sequence until we find one that is applicable.
     // This gives the planners a sort of "priority" - this makes sense, because
     // the empty planner is always last.
@@ -96,8 +96,7 @@ Trajectory PlannerForRobot::PlanForRobot(Planning::PlanRequest&& request) {
         if (trajectory.empty() &&
             planner->isApplicable(request.motionCommand)) {
             RobotInstant startInstant = request.start;
-            RJ::Time t0 = RJ::now();
-            trajectory = planner->plan(std::move(request));
+            trajectory = planner->plan(request);
         }
 
         // If it fails, or if the planner was not used, the trajectory will

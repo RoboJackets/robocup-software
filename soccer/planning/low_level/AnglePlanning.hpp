@@ -22,11 +22,19 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
     double delta_forward = fixAngleRadians(vel.angle() - previous_angle);
     double delta_reverse = fixAngleRadians(M_PI + vel.angle() - previous_angle);
 
-    if (std::abs(delta_forward) < std::abs(delta_reverse)) {
-        return delta_forward + previous_angle;
-    } else {
-        return delta_reverse + previous_angle;
+    if (jacobian != nullptr) {
+        *jacobian = Eigen::Vector2d::Zero();
     }
+
+    double result = 0.0;
+
+    if (std::abs(delta_forward) < std::abs(delta_reverse)) {
+        result = delta_forward + previous_angle;
+    } else {
+        result = delta_reverse + previous_angle;
+    }
+
+    return result;
 }
 
 inline AngleFunction facePoint(const Geometry2d::Point point) {

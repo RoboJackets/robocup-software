@@ -11,7 +11,7 @@ using namespace Geometry2d;
 
 namespace Planning {
 
-Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
+Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
     Geometry2d::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
@@ -40,7 +40,7 @@ Trajectory PathTargetPlanner::plan(PlanRequest&& request) {
     AngleFunction angle_function = getAngleFunction(request);
 
     // Call into the sub-object to actually execute the plan.
-    Trajectory trajectory = replanner.CreatePlan(
+    Trajectory trajectory = Replanner::CreatePlan(
         Replanner::PlanParams{request.start, goalInstant, static_obstacles,
                               dynamic_obstacles, request.constraints,
                               angle_function},

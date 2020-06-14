@@ -6,7 +6,7 @@
 #include "planning/Trajectory.hpp"
 #include "time.hpp"
 
-// TODO: Make this configurable
+// TODO(Kyle): Make this configurable
 constexpr double kBallDecayConstant = 0.180;
 
 /**

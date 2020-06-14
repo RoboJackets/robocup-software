@@ -23,13 +23,21 @@ public:
     EscapeObstaclesPathPlanner() : Planner("EscapeObstaclesPathPlanner"){};
     ~EscapeObstaclesPathPlanner() override = default;
 
-    Trajectory plan(PlanRequest&& planRequest) override {
-        planRequest.motionCommand = PathTargetCommand{planRequest.start};
-        return _planner.plan(std::move(planRequest));
+    EscapeObstaclesPathPlanner(EscapeObstaclesPathPlanner&&) noexcept = default;
+    EscapeObstaclesPathPlanner& operator=(
+        EscapeObstaclesPathPlanner&&) noexcept = default;
+    EscapeObstaclesPathPlanner(const EscapeObstaclesPathPlanner&) = default;
+    EscapeObstaclesPathPlanner& operator=(const EscapeObstaclesPathPlanner&) =
+        default;
+
+    Trajectory plan(const PlanRequest& planRequest) override {
+        PlanRequest modified = planRequest;
+        modified.motionCommand = PathTargetCommand{planRequest.start};
+        return _planner.plan(modified);
     }
 
     [[nodiscard]] bool isApplicable(
-        const MotionCommand& command) const override {
+        const MotionCommand& /* command */) const override {
         return true;
     }
 

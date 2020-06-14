@@ -8,8 +8,13 @@
 namespace Planning {
 class Planner {
 public:
-    explicit Planner(std::string name) : _name(name) {}
+    explicit Planner(std::string name) : _name(std::move(name)) {}
     virtual ~Planner() = default;
+
+    Planner(Planner&&) noexcept = default;
+    Planner& operator=(Planner&&) noexcept = default;
+    Planner(const Planner&) = default;
+    Planner& operator=(const Planner&) = default;
 
     /**
      * Whether or not this command can be planned by this planner.
@@ -29,7 +34,7 @@ public:
      * @param request The request to plan.
      * @return A trajectory for the robot to follow.
      */
-    virtual Trajectory plan(PlanRequest&& request) = 0;
+    virtual Trajectory plan(const PlanRequest& request) = 0;
 
     /**
      * Reset this planner. Called after the planner is _not_ used to handle a
@@ -37,20 +42,13 @@ public:
      */
     virtual void reset() {}
 
-#if 0
-    /**
-     * reuse previous path
-     */
-    static Trajectory reuse(RJ::Time now, RobotInstant start, Trajectory previous);
-#endif
-
     /**
      * Get a user-readable name for this planner.
      */
     [[nodiscard]] std::string name() const { return _name; }
 
 private:
-    const std::string _name;
+    std::string _name;
 };
 
 template <typename CommandType>
@@ -58,6 +56,13 @@ class PlannerForCommandType : public Planner {
 public:
     PlannerForCommandType(const std::string& name) : Planner(name){};
     ~PlannerForCommandType() override = default;
+
+    PlannerForCommandType(const PlannerForCommandType& other) = default;
+    PlannerForCommandType& operator=(const PlannerForCommandType& other) =
+        default;
+    PlannerForCommandType(PlannerForCommandType&& other) noexcept = default;
+    PlannerForCommandType& operator=(PlannerForCommandType&& other) noexcept =
+        default;
 
     [[nodiscard]] bool isApplicable(
         const MotionCommand& command) const override {

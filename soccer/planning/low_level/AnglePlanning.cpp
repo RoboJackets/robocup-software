@@ -6,7 +6,7 @@ namespace Planning {
 
 void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
-                const RotationConstraints& constraints) {
+                const RotationConstraints& /* constraints */) {
     RJ::Time start_time = start_instant.stamp;
 
     // Clip the front of the trajectory.

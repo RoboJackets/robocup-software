@@ -19,6 +19,6 @@ public:
     InterceptPlanner()
         : PlannerForCommandType<InterceptCommand>("InterceptPlanner"){};
 
-    Trajectory plan(PlanRequest&& request) override;
+    Trajectory plan(const PlanRequest& request) override;
 };
 }  // namespace Planning

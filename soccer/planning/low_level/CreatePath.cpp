@@ -72,7 +72,7 @@ Trajectory rrt(const LinearMotionInstant& start,
 
         // Inflate the radius slightly so we don't try going super close to
         // it and hitting it again.
-        hitCircle.radius(hitCircle.radius() * 1.5);
+        hitCircle.radius(hitCircle.radius() * 1.5f);
         obstacles.add(std::make_shared<Circle>(hitCircle));
     }
     return std::move(path);

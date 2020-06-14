@@ -11,8 +11,6 @@ namespace Planning {
 
 /**
  * @brief Planner which tries to move around the ball to intercept it
- *
- * TODO: Clean up description
  */
 class SettlePlanner : public PlannerForCommandType<SettleCommand> {
 public:
@@ -28,7 +26,7 @@ public:
           avgInstantaneousInterceptTarget(0, 0),
           averageBallVel(0, 0) {}
 
-    Trajectory plan(PlanRequest&& planRequest) override;
+    Trajectory plan(const PlanRequest& planRequest) override;
 
     void reset() override;
 
@@ -91,7 +89,6 @@ private:
 
     bool pathCreatedForDampen = false;
 
-    Replanner replanner;
     Trajectory previous;
 
     // How much of the ball seed to contact the ball with

@@ -21,13 +21,14 @@ REGISTER_CONFIGURABLE(PivotPathPlanner);
 ConfigDouble* PivotPathPlanner::_pivotRadiusMultiplier;
 
 void PivotPathPlanner::createConfiguration(Configuration* cfg) {
+    // NOLINTNEXTLINE
     _pivotRadiusMultiplier =
         new ConfigDouble(cfg, "Pivot/radius", 1.0,
                          "Multiplier for the pivotRadius. PivotRadius = "
                          "RobotRadius * multiplier");
 }
 
-Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
+Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     const RobotInstant& start_instant = request.start;
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
@@ -59,7 +60,6 @@ Trajectory PivotPathPlanner::plan(PlanRequest&& request) {
     double start_angle = pivot_point.angleTo(start_instant.position());
     double target_angle = pivot_point.angleTo(final_position);
     double angle_change = fixAngleRadians(target_angle - start_angle);
-    double distance = angle_change * radius;
 
     const int interpolations = 10;
 
@@ -112,11 +112,6 @@ bool PivotPathPlanner::shouldReplan(const PivotCommand& command) const {
 
     Point target_point = command.pivotTarget;
     Point pivot_point = command.pivotPoint;
-
-    // The vector from the end-of-trajectory to the pivot point should be nearly
-    // parallel to the pivot point -> pivot target vector...
-    double angle_vector_error =
-        (target_point - pivot_point).angleBetween(pivot_point - end.position());
 
     // In addition, we should be facing the right way at the end.
     Point face_point =

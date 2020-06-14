@@ -11,7 +11,7 @@
 
 namespace Planning {
 
-Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
+Trajectory InterceptPlanner::plan(const PlanRequest& planRequest) {
     InterceptCommand command =
         std::get<InterceptCommand>(planRequest.motionCommand);
 
@@ -45,7 +45,10 @@ Trajectory InterceptPlanner::plan(PlanRequest&& planRequest) {
     // target at the same time as the ball
     Trajectory trajectory;
 
-    for (double mag = 0.0; mag <= 1.0; mag += .05) {
+    int num_iterations = 20;
+    for (int i = 0; i <= num_iterations; i++) {
+        double mag = i * 0.05;
+
         LinearMotionInstant finalStoppingMotion{
             targetPosOnLine, mag * maxSpeed * botToTarget.normalized()};
 

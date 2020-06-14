@@ -20,8 +20,8 @@ BallState BallState::predict_at(RJ::Time time) const {
         return *this;
     }
 
-    double speed;
-    double distance;
+    double speed = 0.0;
+    double distance = 0.0;
 
     double max_time = s0 / kBallDecayConstant;
     if (dt.count() >= max_time) {
@@ -82,7 +82,7 @@ RJ::Seconds BallState::query_seconds_near(Geometry2d::Point near_to,
 RJ::Seconds BallState::query_stop_time(Geometry2d::Point* out) const {
     double speed = velocity.mag();
 
-    if (out) {
+    if (out != nullptr) {
         // vf^2 - vi^2 = 2ad => d = -vi^2 / 2a
         *out = position + velocity.normalized(std::pow(speed, 2) /
                                               (2 * kBallDecayConstant));

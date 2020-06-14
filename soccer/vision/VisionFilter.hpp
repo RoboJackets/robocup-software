@@ -39,7 +39,7 @@ public:
      *
      * @param state Current system state pointer
      */
-    void fillBallState(WorldState& state);
+    void fillBallState(WorldState* state);
 
     /**
      * Fills system state with the robots pos/vel
@@ -47,7 +47,7 @@ public:
      * @param state Current system state pointer
      * @param usBlue True if we are blue
      */
-    void fillRobotState(WorldState& state, bool usBlue);
+    void fillRobotState(WorldState* state, bool usBlue);
 
 private:
     void updateLoop();

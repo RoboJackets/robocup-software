@@ -41,15 +41,6 @@ struct PlanRequest {
           debug_drawer(debug_drawer) {}
 
     /**
-     * return a copy with no history
-     */
-    PlanRequest copyNoHistory() const {
-        return PlanRequest(start, motionCommand, constraints, field_obstacles,
-                           virtual_obstacles, planned_trajectories, shellID,
-                           world_state, priority, debug_drawer);
-    }
-
-    /**
      * The robot's starting state.
      */
     RobotInstant start;

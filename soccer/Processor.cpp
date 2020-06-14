@@ -165,8 +165,9 @@ void Processor::runModels() {
 
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
-    _vision->fillBallState(_context.world_state);
-    _vision->fillRobotState(_context.world_state, _context.game_state.blueTeam);
+    _vision->fillBallState(&_context.world_state);
+    _vision->fillRobotState(&_context.world_state,
+                            _context.game_state.blueTeam);
 }
 
 /**
@@ -251,11 +252,11 @@ void Processor::run() {
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to
         // update things manually.
-        if (false) {
-            for (auto* node : _nodes) {
-                node->run();
-            }
+#if 0
+        for (auto* node : _nodes) {
+            node->run();
         }
+#endif
 
         ////////////////
         // Outputs

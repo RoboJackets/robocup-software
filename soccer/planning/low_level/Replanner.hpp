@@ -19,16 +19,17 @@ public:
         const AngleFunction& angle_function;
     };
 
-    Trajectory CreatePlan(PlanParams params, Trajectory previous);
+    static Trajectory CreatePlan(PlanParams params, Trajectory previous);
 
     static void createConfiguration(Configuration* cfg);
     static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
     static double partialReplanLeadTime() { return *_partialReplanLeadTime; }
 
 private:
-    Trajectory checkBetter(const PlanParams& params, Trajectory previous);
-    Trajectory partialReplan(const PlanParams& params,
-                             const Trajectory& previous);
+    static Trajectory checkBetter(const PlanParams& params,
+                                  Trajectory previous);
+    static Trajectory partialReplan(const PlanParams& params,
+                                    const Trajectory& previous);
     static Trajectory fullReplan(const PlanParams& params);
 
     static bool veeredOffPath(const Trajectory& trajectory, RobotInstant actual,

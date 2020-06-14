@@ -9,13 +9,18 @@ public:
         : PlannerForCommandType<PivotCommand>("PivotPathPlanner") {}
     ~PivotPathPlanner() override = default;
 
+    PivotPathPlanner(PivotPathPlanner&&) noexcept = default;
+    PivotPathPlanner& operator=(PivotPathPlanner&&) noexcept = default;
+    PivotPathPlanner(const PivotPathPlanner&) = default;
+    PivotPathPlanner& operator=(const PivotPathPlanner&) = default;
+
     static void createConfiguration(Configuration* cfg);
-    Trajectory plan(PlanRequest&& request) override;
+    Trajectory plan(const PlanRequest& request) override;
 
     void reset() override { previous = Trajectory{}; }
 
 private:
-    bool shouldReplan(const PivotCommand& command) const;
+    [[nodiscard]] bool shouldReplan(const PivotCommand& command) const;
     Trajectory previous;
     static ConfigDouble* _pivotRadiusMultiplier;
 };

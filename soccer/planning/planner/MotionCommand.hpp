@@ -28,7 +28,8 @@ struct EmptyCommand {};
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
 // note: as of now the heading and angular velocity are ignored
-// TODO use heading and angular velocity or change this to a LinearMotionInstant
+// TODO(Kyle) use heading and angular velocity or change this to a
+// LinearMotionInstant
 struct PathTargetCommand {
     RobotInstant pathGoal;
     std::optional<double> angle_override;

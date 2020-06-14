@@ -38,7 +38,7 @@ void DebugDrawer::drawPolygon(const Geometry2d::Polygon& polygon,
     this->drawPolygon(polygon.vertices, qc, layer);
 }
 
-void DebugDrawer::drawCircle(Geometry2d::Point center, float radius,
+void DebugDrawer::drawCircle(Geometry2d::Point center, double radius,
                              const QColor& qc, const QString& layer) {
     Packet::DebugCircle* dbg = _logFrame.add_debug_circles();
     dbg->set_layer(findDebugLayer(layer));

@@ -30,31 +30,42 @@ ConfigDouble* SettlePlanner::_maxBallAngleForReset;
 ConfigDouble* SettlePlanner::_maxBounceAngle;
 
 void SettlePlanner::createConfiguration(Configuration* cfg) {
+    // NOLINTNEXTLINE
     _ballSpeedPercentForDampen = new ConfigDouble(
         cfg, "Capture/Settle/ballSpeedPercentForDampen", 0.1);  // %
+    // NOLINTNEXTLINE
     _searchStartDist =
         new ConfigDouble(cfg, "Capture/Settle/searchStartDist", 0.0);  // m
+    // NOLINTNEXTLINE
     _searchEndDist =
         new ConfigDouble(cfg, "Capture/Settle/searchEndDist", 7.0);  // m
+    // NOLINTNEXTLINE
     _searchIncDist =
         new ConfigDouble(cfg, "Capture/Settle/searchIncDist", 0.2);  // m
+    // NOLINTNEXTLINE
     _interceptBufferTime =
         new ConfigDouble(cfg, "Capture/Settle/interceptBufferTime", 0.0);  // %
+    // NOLINTNEXTLINE
     _targetPointGain = new ConfigDouble(cfg, "Capture/Settle/targetPointGain",
                                         0.5);  // gain between 0 and 1
+    // NOLINTNEXTLINE
     _ballVelGain = new ConfigDouble(cfg, "Capture/Settle/ballVelGain",
                                     0.5);  // gain between 0 and 1
+    // NOLINTNEXTLINE
     _shortcutDist = new ConfigDouble(cfg, "Capture/Settle/shortcutDist",
                                      Robot_Radius);  // m
+    // NOLINTNEXTLINE
     _maxBallVelForPathReset = new ConfigDouble(
         cfg, "Capture/Settle/maxBallVelForPathReset", 2);  // m/s
+    // NOLINTNEXTLINE
     _maxBallAngleForReset = new ConfigDouble(
         cfg, "Capture/Settle/maxBallAngleForReset", 20);  // Deg
+    // NOLINTNEXTLINE
     _maxBounceAngle =
         new ConfigDouble(cfg, "Capture/Settle/maxBounceAngle", 45);  // Deg
 }
 
-Trajectory SettlePlanner::plan(PlanRequest&& planRequest) {
+Trajectory SettlePlanner::plan(const PlanRequest& planRequest) {
     BallState ball = planRequest.world_state->ball;
 
     const RJ::Time curTime = planRequest.start.stamp;
@@ -183,7 +194,7 @@ void SettlePlanner::processStateTransition(BallState ball,
 
         Trajectory pathSoFar =
             previous.subTrajectory(previous.begin_time(), startInstant->stamp);
-        float botDistToBallMovementLine =
+        double botDistToBallMovementLine =
             ballMovementLine.distTo(pathSoFar.last().position() - deltaPos);
 
         // Intercept -> Dampen
@@ -191,7 +202,7 @@ void SettlePlanner::processStateTransition(BallState ball,
         //  Almost at end of the target path or
         //  Already in line with the ball
         //
-        // TODO: Check ball sense?
+        // TODO(Kyle): Check ball sense?
 
         // Within X seconds of the end of path
         bool inlineWithBall =
@@ -243,8 +254,10 @@ Trajectory SettlePlanner::intercept(
     const Rect& fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
 
     Point ballVelIntercept = Geometry2d::Point(0, 0);
-    for (double dist = *_searchStartDist; dist < *_searchEndDist;
-         dist += *_searchIncDist) {
+    int num_iterations =
+        std::ceil((*_searchEndDist - *_searchStartDist) / *_searchIncDist);
+    for (int iteration = 0; iteration < num_iterations; iteration++) {
+        double dist = *_searchStartDist + iteration * *_searchIncDist;
         // Time for ball to reach the target point
         std::optional<RJ::Seconds> maybeBallTime =
             ball.query_seconds_to_dist(dist);
@@ -277,7 +290,7 @@ Trajectory SettlePlanner::intercept(
                                      dynamicObstacles,
                                      planRequest.constraints,
                                      AngleFns::facePoint(facePos)};
-        Trajectory path = replanner.CreatePlan(params, previous);
+        Trajectory path = Replanner::CreatePlan(params, previous);
 
         // If valid path to location
         // and we can reach the target point before ball
@@ -417,7 +430,7 @@ Trajectory SettlePlanner::intercept(
                                  dynamicObstacles,
                                  planRequest.constraints,
                                  AngleFns::facePoint(facePos)};
-    Trajectory newTargetPath = replanner.CreatePlan(params, previous);
+    Trajectory newTargetPath = Replanner::CreatePlan(params, previous);
 
     RJ::Seconds timeOfArrival = newTargetPath.duration();
     newTargetPath.setDebugText(std::to_string(timeOfArrival.count()) + " s");
@@ -448,7 +461,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& planRequest,
 
     // Uses constant acceleration to create a linear velocity profile
 
-    // TODO: Realize the ball will probably bounce off the robot
+    // TODO(Kyle): Realize the ball will probably bounce off the robot
     // so we can use that vector to stop
     // Save vector and use that?
     BallState ball = planRequest.world_state->ball;
@@ -525,7 +538,6 @@ Trajectory SettlePlanner::dampen(const PlanRequest& planRequest,
     dampenEnd.setDebugText("Damping");
 
     if (!previous.empty()) {
-        RJ::Time newStartTime = previous.begin_time();
         dampenEnd = Trajectory(previous, dampenEnd);
     }
 
@@ -554,7 +566,7 @@ Trajectory SettlePlanner::invalid(
         dynamicObstacles,
         planRequest.constraints,
         AngleFns::facePoint(planRequest.world_state->ball.position)};
-    Trajectory path = replanner.CreatePlan(params, previous);
+    Trajectory path = Replanner::CreatePlan(params, previous);
     path.setDebugText("Invalid state in settle");
     return path;
 }

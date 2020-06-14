@@ -1,7 +1,6 @@
 #pragma once
+#include <Geometry2d/Circle.hpp>
 #include <memory>
-
-#include "Geometry2d/Shape.hpp"
 
 namespace Planning {
 class Trajectory;

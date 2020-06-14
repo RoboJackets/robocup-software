@@ -8,11 +8,13 @@ ConfigDouble* LineKickPlanner::_approachSpeed;
 REGISTER_CONFIGURABLE(LineKickPlanner);
 
 void LineKickPlanner::createConfiguration(Configuration* cfg) {
+    // NOLINTNEXTLINE
     _approachSpeed = new ConfigDouble(cfg, "LineKickPlanner/approachSpeed");
 }
 
 using namespace Geometry2d;
-Trajectory LineKickPlanner::plan(PlanRequest&& request) {
+Trajectory LineKickPlanner::plan(const PlanRequest& /* request */) {
+#if 0
     Point aimTarget = std::get<LineKickCommand>(request.motionCommand).target;
     RobotInstant startInstant = request.start;
     BallState ball = request.world_state->ball;
@@ -23,7 +25,6 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
         state = LineKickStates::Approach;
     }
 
-#if 0
     if (state == LineKickStates::FollowThrough) {
         if (!previous.empty()) {
             // Create the actual plan. This will be followed for the rest of the
@@ -119,10 +120,11 @@ Trajectory LineKickPlanner::plan(PlanRequest&& request) {
 }
 
 Trajectory LineKickPlanner::planForSlowMovingBall(
-    RobotInstant start, BallState ball, Geometry2d::Point target,
-    Geometry2d::ShapeSet static_obstacles,
-    const std::vector<DynamicObstacle>& dynamic_obstacles,
-    RobotConstraints constraints) {
+    RobotInstant /* start */, BallState /* ball */,
+    Geometry2d::Point /* target */,
+    const Geometry2d::ShapeSet& /* static_obstacles */,
+    const std::vector<DynamicObstacle>& /* dynamic_obstacles */,
+    RobotConstraints /* constraints */) {
 #if 0
     constexpr double ballAvoidDistance = 0.05;
 
@@ -180,7 +182,7 @@ Trajectory LineKickPlanner::planForSlowMovingBall(
 }
 
 std::optional<Trajectory> LineKickPlanner::attemptBruteForce(
-    const PlanRequest& request) {
+    const PlanRequest& /* request */) {
 #if 0
     Trajectory partialPath{{}};
     RJ::Seconds partialPathTime = 0ms;

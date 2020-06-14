@@ -532,7 +532,8 @@ private:
     void _chip(uint8_t strength);
     void _unkick();
 
-    RobotStatus::KickerState _lastKickerStatus;
+    RobotStatus::KickerState _lastKickerStatus =
+        RobotStatus::KickerState::kCharging;
     RJ::Time _lastKickTime;
     RJ::Time _lastChargedTime;
 

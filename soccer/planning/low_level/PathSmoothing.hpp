@@ -43,8 +43,8 @@ public:
                   Geometry2d::Point* tangent = nullptr,
                   double* curvature = nullptr) const;
 
-    bool empty() const { return control.empty(); }
-    int size() const { return control.size(); }
+    [[nodiscard]] bool empty() const { return control.empty(); }
+    [[nodiscard]] int size() const { return control.size(); }
 
     struct CubicBezierControlPoints {
         Geometry2d::Point p0, p1, p2, p3;

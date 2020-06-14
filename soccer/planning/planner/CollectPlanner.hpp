@@ -31,7 +31,7 @@ public:
           averageBallVel(0, 0),
           approachDirection(0, 0) {}
 
-    Trajectory plan(PlanRequest&& planRequest) override;
+    Trajectory plan(const PlanRequest& planRequest) override;
 
     static void createConfiguration(Configuration* cfg);
 
@@ -67,10 +67,10 @@ private:
     static T applyLowPassFilter(const T& oldValue, const T& newValue,
                                 double gain);
 
-    Replanner replanner;
     Trajectory previous;
 
-    CollectPathPlannerStates currentState;
+    CollectPathPlannerStates currentState =
+        CollectPathPlannerStates::CourseApproach;
 
     // Ball Velocity Filtering Variables
     Geometry2d::Point averageBallVel;

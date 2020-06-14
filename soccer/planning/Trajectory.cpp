@@ -1,7 +1,6 @@
 #include "Trajectory.hpp"
 
 #include <Geometry2d/Pose.hpp>
-#include <Geometry2d/Shape.hpp>
 #include <stdexcept>
 
 #include "Instant.hpp"
@@ -10,8 +9,6 @@
 namespace Planning {
 
 using Geometry2d::Pose;
-using Geometry2d::Segment;
-using Geometry2d::Shape;
 using Geometry2d::Twist;
 
 Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
@@ -120,7 +117,9 @@ RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
 
     // s in [0, 1] is the interpolation factor.
     double s = elapsed / dt;
-    assert(s >= 0 && s <= 1);
+    if (s < 0 || s > 1) {
+        throw std::runtime_error("Interpolant `s` is out of bounds!");
+    }
 
     Pose pose_0 = prev_entry.pose;
     Pose pose_1 = next_entry.pose;
@@ -174,7 +173,7 @@ Trajectory Trajectory::subTrajectory(RJ::Time startTime,
     }
 
     RobotInstantSequence result_instants;
-    // TODO: Reserve space in result_instants.
+    // TODO(Kyle): Reserve space in result_instants.
     while (cursor.has_value() && cursor.value().stamp < actual_end) {
         result_instants.push_back(cursor.value());
         cursor.next_knot();
@@ -195,8 +194,9 @@ Trajectory::Cursor Trajectory::cursor_begin() const {
     return Cursor{*this, instants_.begin()};
 }
 
-void Trajectory::draw(DebugDrawer* drawer,
-                      std::optional<Geometry2d::Point> backupTextPos) const {
+void Trajectory::draw(
+    DebugDrawer* drawer,
+    std::optional<Geometry2d::Point> alt_text_position) const {
     if (instants_.size() > 1) {
         Packet::DebugRobotPath* dbgPath = drawer->addDebugPath();
         dbgPath->set_layer(drawer->findDebugLayer("Motion"));
@@ -215,8 +215,8 @@ void Trajectory::draw(DebugDrawer* drawer,
         // Only use the backup position if there's no trajectory.
         if (!empty()) {
             textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
-        } else if (backupTextPos.has_value()) {
-            textPos = backupTextPos.value();
+        } else if (alt_text_position.has_value()) {
+            textPos = alt_text_position.value();
         } else {
             return;
         }
@@ -291,7 +291,11 @@ void Trajectory::Cursor::seek(RJ::Time time) {
                                  trajectory_.instants_.end(), dummy_instant,
                                  compare_times);
 
-    assert(iterator_ != trajectory_.instants_.begin());
+    if (iterator_ == trajectory_.instants_.begin()) {
+        throw std::runtime_error(
+            "Cannot seek before beginning of trajectory. This should be "
+            "unreachable.");
+    }
     iterator_--;
 
     time_ = time;
@@ -317,7 +321,11 @@ void Trajectory::Cursor::advance(RJ::Seconds seconds) {
         iterator_++;
     }
 
-    assert(iterator_ != trajectory_.instants_.begin());
+    if (iterator_ == trajectory_.instants_.begin()) {
+        throw std::runtime_error(
+            "Cannot seek before beginning of trajectory. This should be "
+            "unreachable.");
+    }
     iterator_--;
 }
 

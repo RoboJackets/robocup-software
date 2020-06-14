@@ -32,6 +32,7 @@ using RobotInstantSequence = std::vector<RobotInstant>;
 class Trajectory {
 public:
     Trajectory() = default;
+    ~Trajectory() = default;
 
     /**
      * @brief Create a trajectory from several "instants", each with a pose,
@@ -52,9 +53,9 @@ public:
      * Allow copy constructor, copy assignment, move constructor, and move
      * assignment
      */
-    Trajectory(Trajectory&& other) = default;
+    Trajectory(Trajectory&& other) noexcept = default;
     Trajectory(const Trajectory& other) = default;
-    Trajectory& operator=(Trajectory&& other) = default;
+    Trajectory& operator=(Trajectory&& other) noexcept = default;
     Trajectory& operator=(const Trajectory& other) = default;
 
     /**
@@ -257,9 +258,12 @@ public:
     /**
      * Draw this trajectory.
      * @param drawer The debug drawer to use.
+     * @param alt_text_position Optional position at which to draw the text in
+     * the event that the trajectory is empty.
      */
     void draw(DebugDrawer* drawer,
-              std::optional<Geometry2d::Point> backupPos = std::nullopt) const;
+              std::optional<Geometry2d::Point> alt_text_position =
+                  std::nullopt) const;
 
     /**
      * Interpolate between two robot instants
@@ -378,7 +382,7 @@ public:
     /**
      * @brief Get a Cursor into this trajectory. Useful for iterating over it.
      */
-    [[nodiscard]] Cursor cursor(RJ::Time startTime) const;
+    [[nodiscard]] Cursor cursor(RJ::Time start_time) const;
 
     /**
      * @brief Get a cursor to the beginning of the trajectory.

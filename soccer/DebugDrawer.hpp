@@ -44,7 +44,7 @@ public:
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawCircle(Geometry2d::Point center, float radius,
+    void drawCircle(Geometry2d::Point center, double radius,
                     const QColor& qc = Qt::black,
                     const QString& layer = QString());
 

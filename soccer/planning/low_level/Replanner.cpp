@@ -20,10 +20,13 @@ ConfigDouble* Replanner::_partialReplanLeadTime;
 REGISTER_CONFIGURABLE(Replanner);
 
 void Replanner::createConfiguration(Configuration* cfg) {
+    // NOLINTNEXTLINE
     _goalPosChangeThreshold =
         new ConfigDouble(cfg, "Replanner/goalPosChangeThreshold");
+    // NOLINTNEXTLINE
     _goalVelChangeThreshold =
         new ConfigDouble(cfg, "Replanner/goalVelChangeThreshold");
+    // NOLINTNEXTLINE
     _partialReplanLeadTime =
         new ConfigDouble(cfg, "Replanner/partialReplanLeadTime");
 }
@@ -73,7 +76,9 @@ Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
 
     path.stamp(RJ::now());
 
-    assert(path.empty() || path.angles_valid());
+    if (!path.empty() && !path.angles_valid()) {
+        throw std::runtime_error("Path has invalid angles.");
+    }
 
     return std::move(path);
 }
