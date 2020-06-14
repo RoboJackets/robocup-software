@@ -36,7 +36,11 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - run: make all_including_tests
+      - run: |
+          mkdir -p build && cd build
+          source /opt/ros/foxy/setup.sh
+          cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=../install --target -DBUILD_TESTS=ON ..
+          ninja -j2 install
       - <<: *save_workspace
 
   # Use the saved build folder for testing
