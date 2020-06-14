@@ -176,7 +176,14 @@ void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
     self->move(*to);
 }
 
-void OurRobot_settle(OurRobot* self) { self->settle(); }
+void OurRobot_settle(OurRobot* self) { self->settle(std::nullopt); }
+
+void OurRobot_settle_w_bounce(OurRobot* self, Geometry2d::Point* bounceTarget) {
+    if (bounceTarget == nullptr) {
+        throw NullArgumentException("bounceTarget");
+    }
+    self->settle(*bounceTarget);
+}
 
 void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
     if (obs == nullptr) {
@@ -968,6 +975,7 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("move_to_direct", &OurRobot_move_to_direct)
         .def("move_tuning", &OurRobot_move_tuning)
         .def("settle", &OurRobot_settle)
+        .def("settle_w_bounce", &OurRobot_settle_w_bounce)
         .def("collect", &OurRobot::collect)
         .def("set_world_vel", &OurRobot::worldVelocity)
         .def("face", &OurRobot::face)

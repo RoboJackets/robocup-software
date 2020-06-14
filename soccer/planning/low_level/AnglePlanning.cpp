@@ -7,11 +7,11 @@ namespace Planning {
 void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const AngleFunction& angle_function,
                 const RotationConstraints& /* constraints */) {
-    RJ::Time start_time = start_instant.stamp;
+    const RJ::Time start_time = start_instant.stamp;
 
     // Clip the front of the trajectory.
-    // TODO(Kyle): Handle this slightly more gracefully, by only profiling the
-    //  required portion of the trajectory.
+    // TODO(#1506): Handle this slightly more gracefully, by only profiling the
+    // required portion of the trajectory.
     *trajectory = trajectory->subTrajectory(start_time, trajectory->end_time());
 
     if (trajectory->num_instants() < 2) {
@@ -59,12 +59,11 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
     // The sample to which we need to do a regular trapezoid profile.
     int num_trapezoid_samples = trajectory->num_instants();
 
-    // TODO(Kyle): If we are unable to finish the motion in time at all,
-    //  profile all the way until the end, and then append points to the
-    //  trajectory containing the remainder of the trapezoid motion.
-    for (int i = static_cast<int>(velocity.size() - 1); i > 0; i--) {
-        double next_heading = target_angles.at(i);
-        double next_velocity = velocity.at(i);
+    // TODO(#1506): If we are unable to finish the motion in time at all,
+    profile all the way until the end, and then append points to the trajectory
+    containing the remainder of the trapezoid motion. for (int i =
+    static_cast<int>(velocity.size() - 1); i > 0; i--) { double next_heading =
+    target_angles.at(i); double next_velocity = velocity.at(i);
 
         double target_heading = target_angles.at(i - 1);
         double delta = fixAngleRadians(next_heading - target_heading);
@@ -82,7 +81,7 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
             2 * (next_velocity * dt - delta) / std::pow(dt, 2);
 
         // Clamp acceleration to our given limits.
-        // TODO(Kyle): Also clamp based on maximum velocity. That shouldn't
+        // TODO(#1506): Also clamp based on maximum velocity. That shouldn't
         //  be necessary in most situations though, as angle functions are
         //  not expected to have rapid discontinuities (possible exception:
         //  face point, when moving near the point).

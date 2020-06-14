@@ -173,7 +173,7 @@ Trajectory Trajectory::subTrajectory(RJ::Time startTime,
     }
 
     RobotInstantSequence result_instants;
-    // TODO(Kyle): Reserve space in result_instants.
+    // TODO(#1502): Reserve space in result_instants.
     while (cursor.has_value() && cursor.value().stamp < actual_end) {
         result_instants.push_back(cursor.value());
         cursor.next_knot();

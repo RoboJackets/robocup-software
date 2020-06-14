@@ -4,7 +4,7 @@
 
 namespace Planning {
 
-// TODO(Kyle): both of these functions should be able to be abstracted under a
+// TODO(#1501): both of these functions should be able to be abstracted under a
 //  single interface templated on either a shape set or a collection of dynamic
 //  obstacles.
 

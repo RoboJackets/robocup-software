@@ -36,10 +36,9 @@ TEST(BallState, QueryFar) {
     Geometry2d::Point actual;
     RJ::Seconds t = state.query_seconds_near(Geometry2d::Point(5, 0), &actual);
 
-    // TODO: For some reason query_stop_time and query_seconds_to_dist give
-    // slightly
-    //  different results, which results in this error being really high (2e-3).
-    //  Diagnose this and make sure it isn't a bug.
+    // TODO(#1499): For some reason query_stop_time and query_seconds_to_dist
+    // give slightly different results, which results in this error being really
+    // high (2e-3). Diagnose this and make sure it isn't a bug.
     EXPECT_NEAR(state.query_stop_time().count(), t.count(), 2e-3);
     EXPECT_TRUE(actual.nearPoint(state.predict_in(t).position, 1e-6));
 }
