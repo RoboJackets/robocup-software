@@ -176,12 +176,14 @@ public:
      * @details Intended for use when editing a trajectory in-place; for other
      *  cases it may be simpler to use the iterator or Cursor interfaces.
      */
-    [[nodiscard]] auto& instant_at(int i) { return instants_.at(i); }
+    [[nodiscard]] RobotInstant& instant_at(int i) { return instants_.at(i); }
 
     /**
      * @copydoc Trajectory::instant_at()
      */
-    [[nodiscard]] auto instant_at(int i) const { return instants_.at(i); }
+    [[nodiscard]] RobotInstant instant_at(int i) const {
+        return instants_.at(i);
+    }
 
     /**
      * @brief Iterator interface. Should only be used for working with STL
