@@ -252,6 +252,11 @@ void Processor::run() {
         // TODO(Kyle): This is dead code for now. Once everything is ported over
         // to modules we can delete the if (false), but for now we still have to
         // update things manually.
+#if 0
+        for (auto* node : _nodes) {
+            node->run();
+        }
+#endif
 
         ////////////////
         // Outputs

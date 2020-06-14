@@ -10,24 +10,19 @@
 #include <QReadLocker>
 #include <QReadWriteLock>
 #include <QWriteLocker>
-#include <Utils.hpp>
 #include <algorithm>
 #include <array>
 #include <boost/circular_buffer.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <cstdint>
-#include <memory>
 #include <optional>
-#include <planning/MotionCommand.hpp>
 #include <planning/RobotConstraints.hpp>
-#include <planning/paths/CompositePath.hpp>
-#include <planning/paths/InterpolatedPath.hpp>
-#include <planning/planners/RRTPlanner.hpp>
+#include <planning/Trajectory.hpp>
+#include <planning/planner/MotionCommand.hpp>
 #include <vector>
 
 #include "Context.hpp"
 #include "planning/DynamicObstacle.hpp"
-#include "planning/RotationCommand.hpp"
 #include "status.h"
 
 class RobotConfig;
@@ -36,10 +31,6 @@ class RobotLocalConfig;
 namespace Gameplay {
 class GameplayModule;
 }  // namespace Gameplay
-
-namespace Planning {
-class RRTPlanner;
-}  // namespace Planning
 
 class Robot {
 public:
@@ -172,8 +163,18 @@ public:
 
     MotionConstraints& motionConstraints() { return robotConstraints().mot; }
 
-    const Planning::RotationCommand& rotationCommand() const {
-        return *intent().rotation_command;
+    /**
+     * Returns a const reference to the path of the robot.
+     */
+    const Planning::Trajectory& path() const {
+        return _context->trajectories[shell()];
+    }
+
+    /**
+     * Returns a movable reference to the path of the robot.
+     */
+    Planning::Trajectory&& path_movable() {
+        return std::move(_context->trajectories[shell()]);
     }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
@@ -229,35 +230,23 @@ public:
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
      * is given, the robot will try to face in that direction when the ball hits
-     * @param target - the target point in which the robot will try to bounce
-     * the towards
      */
-    void settle(const std::optional<Geometry2d::Point>& target);
+    void settle();
 
     /**
      * @brief Approaches the ball and moves through it slowly
      */
     void collect();
 
-    /**
-     * Sets the worldVelocity in the robot's MotionConstraints
-     */
-    void worldVelocity(Geometry2d::Point targetWorldVelocity);
-
-    /**
-     * Face a point while remaining in place
+    /*
+     * Override the default angle planning strategy and face a point
      */
     void face(Geometry2d::Point pt);
 
     /**
-     * Returns true if the robot currently has a face command
+     * Sets the worldVelocity in the robot's MotionConstraints
      */
-    bool isFacing();
-
-    /**
-     * Remove the facing command
-     */
-    void faceNone();
+    void worldVelocity(Geometry2d::Point targetWorldVel);
 
     /**
      * The robot pivots around it's mouth toward the given target
@@ -354,14 +343,9 @@ public:
     }
     void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
-    std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
-
     Geometry2d::ShapeSet collectStaticObstacles(
         const Geometry2d::ShapeSet& globalObstacles,
         bool localObstacles = true);
-
-    Geometry2d::ShapeSet collectAllObstacles(
-        const Geometry2d::ShapeSet& globalObstacles);
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -410,8 +394,15 @@ public:
     double kickerVoltage() const;
     RobotStatus::HardwareVersion hardwareVersion() const;
 
-    const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
+    const Planning::MotionCommand& motionCommand() const {
         return intent().motion_command;
+    }
+    void setMotionCommand(Planning::MotionCommand newCmd) {
+        if (intent().motion_command.index() != newCmd.index()) {
+            // clear path when command type changes
+            _context->trajectories[shell()] = Planning::Trajectory{{}};
+        }
+        intent().motion_command = newCmd;
     }
 
     const RotationConstraints& rotationConstraints() const {
@@ -462,6 +453,8 @@ public:
     bool isJoystickControlled() const;
 
 protected:
+    RobotConstraints _robotConstraints;
+
     /**
      * Creates a set of obstacles from a given robot team mask,
      * where mask values < 0 create no obstacle, and larger values
@@ -539,7 +532,8 @@ private:
     void _chip(uint8_t strength);
     void _unkick();
 
-    RobotStatus::KickerState _lastKickerStatus;
+    RobotStatus::KickerState _lastKickerStatus =
+        RobotStatus::KickerState::kCharging;
     RJ::Time _lastKickTime;
     RJ::Time _lastChargedTime;
 

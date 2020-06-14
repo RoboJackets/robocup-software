@@ -9,8 +9,6 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
-#include <planning/paths/TrapezoidalPath.hpp>
-#include <planning/planners/RRTPlanner.hpp>
 #include <stdexcept>
 #include <utility>
 
@@ -18,7 +16,8 @@
 
 using namespace std;
 using namespace Geometry2d;
-using Planning::MotionInstant;
+using Planning::MotionCommand;
+using Planning::RobotInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
@@ -56,13 +55,7 @@ void OurRobot::createConfiguration(Configuration* cfg) {
         new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
-OurRobot::OurRobot(Context* context, int shell)
-    : Robot(context, shell, true),
-      _lastKickerStatus{0},
-      _lastBallSense{RJ::Time()} {
-    //_lastChargedTime = 0;
-    //_lastKickTime = 0;
-
+OurRobot::OurRobot(Context* context, int shell) : Robot(context, shell, true) {
     resetAvoidRobotRadii();
 
     _clearCmdText();
@@ -137,8 +130,6 @@ void OurRobot::resetForNextIteration() {
 
 void OurRobot::resetMotionConstraints() {
     robotConstraints() = RobotConstraints();
-    intent().motion_command = std::make_unique<Planning::EmptyCommand>();
-    intent().rotation_command = std::make_unique<Planning::EmptyAngleCommand>();
     _planningPriority = 0;
 }
 
@@ -159,9 +150,10 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
              << ", " << goal.y() << ")" << endl;
     }
 
-    intent().motion_command =
-        std::make_unique<Planning::DirectPathTargetCommand>(
-            MotionInstant(goal, (goal - pos()).normalized() * endSpeed));
+    RobotInstant goal_instant;
+    goal_instant.pose = Pose{goal, angle()};
+    goal_instant.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
+    setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "moveDirect(" << goal << ")" << endl;
     _cmdText << "endSpeed(" << endSpeed << ")" << endl;
@@ -178,8 +170,11 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
              << ", " << goal.y() << ")" << endl;
     }
 
-    intent().motion_command = std::make_unique<Planning::TuningPathCommand>(
-        MotionInstant(goal, (goal - pos()).normalized() * endSpeed));
+    Geometry2d::Point targetPoint = goal;
+    Geometry2d::Point targetVel = (goal - pos()).normalized() * endSpeed;
+    RobotInstant goal_instant{Geometry2d::Pose{targetPoint, 0},
+                              Geometry2d::Twist{targetVel, 0}, RJ::Time{0s}};
+    setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "moveTuning(" << goal << ")" << endl;
     _cmdText << "endSpeed(" << endSpeed << ")" << endl;
@@ -196,20 +191,22 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << goal.y() << ")" << std::endl;
     }
 
-    intent().motion_command = std::make_unique<Planning::PathTargetCommand>(
-        MotionInstant(goal, endVelocity));
+    RobotInstant goal_instant;
+    goal_instant.pose = Pose{goal, 0};
+    goal_instant.velocity = Twist{endVelocity, 0};
+    setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
     _cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
              << ")" << endl;
 }
 
-void OurRobot::settle(const std::optional<Point>& target) {
+void OurRobot::settle() {
     if (!visible()) {
         return;
     }
 
-    intent().motion_command = std::make_unique<Planning::SettleCommand>(target);
+    setMotionCommand(Planning::SettleCommand{});
 }
 
 void OurRobot::collect() {
@@ -217,7 +214,7 @@ void OurRobot::collect() {
         return;
     }
 
-    intent().motion_command = std::make_unique<Planning::CollectCommand>();
+    setMotionCommand(Planning::CollectCommand{});
 }
 
 void OurRobot::lineKick(Point target) {
@@ -226,39 +223,28 @@ void OurRobot::lineKick(Point target) {
     }
 
     disableAvoidBall();
-    intent().motion_command =
-        std::make_unique<Planning::LineKickCommand>(target);
+    setMotionCommand(Planning::LineKickCommand{target});
 }
 
 void OurRobot::intercept(Point target) {
     if (!visible()) {
         return;
     }
-
     disableAvoidBall();
-    intent().motion_command =
-        std::make_unique<Planning::InterceptCommand>(target);
+    setMotionCommand(Planning::InterceptCommand{target});
 }
 
-void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
-    intent().motion_command =
-        std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
-
-    _context->trajectories[shell()].clear();
-
-    _cmdText << "worldVel(" << targetWorldVelocity.x() << ", "
-             << targetWorldVelocity.y() << ")" << endl;
+void OurRobot::worldVelocity(Geometry2d::Point targetWorldVel) {
+    setMotionCommand(Planning::WorldVelCommand{targetWorldVel});
+    _cmdText << "worldVel(" << targetWorldVel.x() << ", " << targetWorldVel.y()
+             << ")" << endl;
 }
 
 void OurRobot::pivot(Geometry2d::Point pivotTarget) {
-    intent().rotation_command = std::make_unique<Planning::EmptyAngleCommand>();
-
-    const float radius = Robot_Radius * 1;
-    Geometry2d::Point pivotPoint = _context->state.ball.pos;
+    Geometry2d::Point pivotPoint = _context->world_state.ball.position;
 
     // reset other conflicting motion commands
-    intent().motion_command = std::make_unique<Planning::PivotCommand>(
-        pivotPoint, pivotTarget, radius);
+    setMotionCommand(Planning::PivotCommand{pivotPoint, pivotTarget});
 
     _cmdText << "pivot(" << pivotTarget.x() << ", " << pivotTarget.y() << ")"
              << endl;
@@ -313,25 +299,6 @@ void OurRobot::dribble(uint8_t speed) {
     } else {
         intent().dvelocity = 0;
     }
-}
-
-void OurRobot::face(Geometry2d::Point pt) {
-    intent().rotation_command =
-        std::make_unique<Planning::FacePointCommand>(pt);
-
-    _cmdText << "face(" << pt.x() << ", " << pt.y() << ")" << endl;
-}
-
-bool OurRobot::isFacing() {
-    return intent().rotation_command &&
-           intent().rotation_command->getCommandType() ==
-               Planning::RotationCommand::CommandType::None;
-}
-
-void OurRobot::faceNone() {
-    intent().rotation_command = std::make_unique<Planning::EmptyAngleCommand>();
-
-    _cmdText << "faceNone()" << endl;
 }
 
 void OurRobot::kick(float strength) {
@@ -389,6 +356,16 @@ void OurRobot::kickImmediately() {
     intent().trigger_mode = RobotIntent::TriggerMode::IMMEDIATE;
 }
 
+void OurRobot::face(Geometry2d::Point pt) {
+    if (!std::holds_alternative<Planning::PathTargetCommand>(
+            intent().motion_command)) {
+        intent().motion_command.emplace<Planning::PathTargetCommand>();
+    }
+
+    auto& command =
+        std::get<Planning::PathTargetCommand>(intent().motion_command);
+    command.angle_override = pos().angleTo(pt);
+}
 #pragma mark Robot Avoidance
 
 void OurRobot::resetAvoidRobotRadii() {
@@ -470,83 +447,19 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
         !(_context->game_state.ourRestart ||
           _context->game_state.theirPenalty())) {
         return std::make_shared<Geometry2d::Circle>(
-            _context->state.ball.pos,
+            _context->world_state.ball.position,
             Field_Dimensions::Current_Dimensions.CenterRadius());
     }
 
     // create an obstacle if necessary
     if (intent().avoid_ball_radius > 0.0) {
-        return std::make_shared<Geometry2d::Circle>(_context->state.ball.pos,
-                                                    intent().avoid_ball_radius);
+        return std::make_shared<Geometry2d::Circle>(
+            _context->world_state.ball.position, intent().avoid_ball_radius);
     }
     return nullptr;
 }
 
 #pragma mark Motion
-
-std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
-    vector<Planning::DynamicObstacle> obstacles;
-
-    // Add Opponent Robots
-    auto& mask = intent().opp_avoid_mask;
-    auto& robots = _context->state.opp;
-    for (size_t i = 0; i < mask.size(); ++i) {
-        if (mask[i] > 0 && (robots[i] != nullptr) && robots[i]->visible()) {
-            obstacles.emplace_back(robots[i]->pos(), mask[i]);
-        }
-    }
-
-    // Add ball
-    if (_context->state.ball.valid) {
-        auto ballObs = createBallObstacle();
-        if (ballObs) {
-            obstacles.emplace_back(*ballObs);
-        }
-    }
-
-    return obstacles;
-}
-
-Geometry2d::ShapeSet OurRobot::collectStaticObstacles(
-    const Geometry2d::ShapeSet& globalObstacles, bool localObstacles) {
-    Geometry2d::ShapeSet fullObstacles{};
-    if (localObstacles) {
-        fullObstacles = intent().local_obstacles;
-    }
-
-    fullObstacles.add(globalObstacles);
-
-    return fullObstacles;
-}
-
-Geometry2d::ShapeSet OurRobot::collectAllObstacles(
-    const Geometry2d::ShapeSet& globalObstacles) {
-    Geometry2d::ShapeSet fullObstacles(intent().local_obstacles);
-    // Adds our robots as obstacles only if they're within a certain distance
-    // from this robot. This distance increases with velocity.
-    RobotMask self_avoid_mask;
-    std::fill(std::begin(self_avoid_mask), std::end(self_avoid_mask),
-              *_oppAvoidRadius);
-    const Geometry2d::ShapeSet selfObs =
-        createRobotObstacles(_context->state.self, self_avoid_mask, this->pos(),
-                             0.6f + static_cast<float>(this->vel().mag()));
-    const Geometry2d::ShapeSet oppObs =
-        createRobotObstacles(_context->state.opp, intent().opp_avoid_mask);
-
-    if (_context->state.ball.valid) {
-        // _state->drawShape(ball_obs, Qt::gray,
-        //                   QString("ball_obstacles_%1").arg(shell()));
-        auto ballObs = createBallObstacle();
-        if (ballObs) {
-            fullObstacles.add(ballObs);
-        }
-    }
-    fullObstacles.add(selfObs);
-    fullObstacles.add(oppObs);
-    fullObstacles.add(globalObstacles);
-
-    return fullObstacles;
-}
 
 bool OurRobot::charged() const {
     return radioStatus().kicker == RobotStatus::KickerState::kCharged &&
