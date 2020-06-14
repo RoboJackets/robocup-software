@@ -15,8 +15,8 @@ struct DynamicObstacle {
      * @brief Create a new dynamic obstacle. The trajectory provided must
      * outlive the usage of this object.
      */
-    DynamicObstacle(const Geometry2d::Circle& circle, const Trajectory* path)
-        : circle(circle), path(path) {}
+    DynamicObstacle(double radius, const Trajectory* path)
+        : circle(Geometry2d::Point(), radius), path(path) {}
     Geometry2d::Circle circle;
     const Trajectory* path;
 };
