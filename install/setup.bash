@@ -4,7 +4,7 @@
 # kind of in that it sets the PATH, LD_LIBRARY_PATH and AMENT_PREFIX_PATH
 # variables.
 
-_INSTALL_PATH="$(readlink -f $(dirname -- "$(readlink -f -- "$0")")/install)"
+_INSTALL_PATH=$(builtin cd "`dirname "${BASH_SOURCE[0]}"`" && pwd)
 
 echo "INSTALL_PATH: $_INSTALL_PATH"
 
