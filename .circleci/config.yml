@@ -39,6 +39,7 @@ jobs:
       - run: |
           mkdir -p build && cd build
           source /opt/ros/foxy/setup.sh
+          export CMAKE_PREFIX_PATH=/opt/ros/foxy
           cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=../install --target -DBUILD_TESTS=ON ..
           ninja -j2 install
       - <<: *save_workspace
