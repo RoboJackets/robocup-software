@@ -1,6 +1,6 @@
 #include "Path.hpp"
 
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include "DebugDrawer.hpp"
 #include "Geometry2d/ShapeSet.hpp"

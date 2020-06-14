@@ -1,8 +1,6 @@
 #======================================================================
 # Set Sources
 #======================================================================
-set(SRC_PREFIX ${CMAKE_CURRENT_SOURCE_DIR})
-
 set(SOCCER_UIS
     ui/qt/ConfigFileTab.ui
     ui/qt/LogViewer.ui

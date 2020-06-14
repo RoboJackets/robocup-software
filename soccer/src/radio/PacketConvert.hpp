@@ -1,16 +1,16 @@
 #pragma once
 
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/Robot.pb.h>
+#include <rj_protos/RadioRx.pb.h>
+#include <rj_protos/RadioTx.pb.h>
+#include <rj_protos/Robot.pb.h>
 
 #include <RobotIntent.hpp>
 #include <motion/MotionSetpoint.hpp>
 #include <set>
 
 #include "RobotStatus.hpp"
-#include "protobuf/grSim_Commands.pb.h"
-#include "protobuf/messages_robocup_ssl_robot_status.pb.h"
+#include <rj_protos/grSim_Commands.pb.h>
+#include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
 #include "rc-fshare/rtp.hpp"
 
 /**

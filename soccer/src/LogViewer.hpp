@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ui_LogViewer.h>
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <QTime>
 #include <QTimer>

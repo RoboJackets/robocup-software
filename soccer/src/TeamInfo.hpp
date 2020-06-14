@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <protobuf/referee.pb.h>
+#include <rj_protos/referee.pb.h>
 
 // Information about a single team.
 class TeamInfo {

@@ -1,6 +1,6 @@
 #include "Processor.hpp"
 
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <rj_protos/messages_robocup_ssl_detection.pb.h>
 
 #include <Constants.hpp>
 #include <Geometry2d/Util.hpp>

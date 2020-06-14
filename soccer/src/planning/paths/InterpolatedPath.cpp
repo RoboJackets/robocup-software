@@ -1,5 +1,5 @@
 #include "InterpolatedPath.hpp"
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 #include "DebugDrawer.hpp"
 #include "LogUtils.hpp"
 #include "SystemState.hpp"

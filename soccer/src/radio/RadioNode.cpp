@@ -1,11 +1,11 @@
 #include <gameplay/GameplayModule.hpp>
 
-#include <protobuf/LogFrame.pb.h>
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <rj_protos/LogFrame.pb.h>
+#include <rj_protos/RadioRx.pb.h>
+#include <rj_protos/RadioTx.pb.h>
+#include <rj_protos/messages_robocup_ssl_detection.pb.h>
+#include <rj_protos/messages_robocup_ssl_geometry.pb.h>
+#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 
 #include <Robot.hpp>
 #include "Network.hpp"

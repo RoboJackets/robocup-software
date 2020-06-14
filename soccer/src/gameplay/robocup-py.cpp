@@ -10,7 +10,7 @@
 
 using namespace boost::python;
 
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <Configuration.hpp>
 #include <Constants.hpp>

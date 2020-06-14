@@ -1,7 +1,7 @@
 #include "StripChart.hpp"
 
 #include <google/protobuf/descriptor.h>
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <Constants.hpp>
 #include <Geometry2d/Point.hpp>

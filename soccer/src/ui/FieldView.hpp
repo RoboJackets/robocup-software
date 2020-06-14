@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>

@@ -1,8 +1,8 @@
 #include "SimRadio.hpp"
 
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/messages_robocup_ssl_robot_status.pb.h>
+#include <rj_protos/grSim_Commands.pb.h>
+#include <rj_protos/grSim_Packet.pb.h>
+#include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
 
 #include <Geometry2d/Util.hpp>
 #include <Network.hpp>

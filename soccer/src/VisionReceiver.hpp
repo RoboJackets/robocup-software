@@ -1,6 +1,6 @@
 #pragma once
 
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <Network.hpp>
 #include <Utils.hpp>
 #include <boost/asio.hpp>

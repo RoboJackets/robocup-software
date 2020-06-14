@@ -1,7 +1,7 @@
 #pragma once
 
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
+#include <rj_protos/RadioRx.pb.h>
+#include <rj_protos/RadioTx.pb.h>
 
 #include <Constants.hpp>
 #include <GameState.hpp>

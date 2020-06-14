@@ -1,7 +1,7 @@
 #pragma once
 
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/referee.pb.h>
+#include <rj_protos/grSim_Packet.pb.h>
+#include <rj_protos/referee.pb.h>
 
 #include <Constants.hpp>
 #include <planning/trajectory/Trajectory.hpp>

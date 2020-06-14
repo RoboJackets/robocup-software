@@ -1,9 +1,9 @@
 #include "MainWindow.hpp"
 
 #include <google/protobuf/descriptor.h>
-#include <protobuf/grSim_Commands.pb.h>
-#include <protobuf/grSim_Packet.pb.h>
-#include <protobuf/grSim_Replacement.pb.h>
+#include <rj_protos/grSim_Commands.pb.h>
+#include <rj_protos/grSim_Packet.pb.h>
+#include <rj_protos/grSim_Replacement.pb.h>
 #include <ui_MainWindow.h>
 
 #include <Network.hpp>

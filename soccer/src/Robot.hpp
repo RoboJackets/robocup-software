@@ -1,8 +1,8 @@
 #pragma once
 
-#include <protobuf/Control.pb.h>
-#include <protobuf/RadioRx.pb.h>
-#include <protobuf/RadioTx.pb.h>
+#include <rj_protos/Control.pb.h>
+#include <rj_protos/RadioRx.pb.h>
+#include <rj_protos/RadioTx.pb.h>
 
 #include <Constants.hpp>
 #include <Eigen/Dense>

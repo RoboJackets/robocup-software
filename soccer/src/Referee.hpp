@@ -1,7 +1,7 @@
 #pragma once
 
-#include <protobuf/LogFrame.pb.h>
-#include <protobuf/referee.pb.h>
+#include <rj_protos/LogFrame.pb.h>
+#include <rj_protos/referee.pb.h>
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>

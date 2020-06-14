@@ -13,7 +13,7 @@
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
 
-#include "protobuf/LogFrame.pb.h"
+#include <rj_protos/LogFrame.pb.h>
 
 class Context;
 

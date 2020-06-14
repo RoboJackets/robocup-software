@@ -1,5 +1,5 @@
 #include <execinfo.h>
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <LogUtils.hpp>
 #include <QString>

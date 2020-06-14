@@ -100,6 +100,10 @@ add_subdirectory(src)
 # Include and Linking
 #======================================================================
 
+# Set the directory so AUTOUIC know where to find .ui files
+set(UI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/qt)
+set_target_properties(robocup PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
 target_link_libraries(robocup common rc-fshare rj_protos)
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})

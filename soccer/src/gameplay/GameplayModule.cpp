@@ -1,4 +1,4 @@
-#include <protobuf/LogFrame.pb.h>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <Constants.hpp>
 #include <Network.hpp>
