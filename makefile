@@ -10,22 +10,23 @@ endif
 
 # Tell CMake to create compile_commands.json for debug builds for clang-tidy
 DEBUG_FLAGS=-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+CMAKE_FLAGS="-DCMAKE_INSTALL_PREFIX=$(shell pwd)/install"
 
 # build a specified target with CMake and Ninja
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_release
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_perf
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo --target $1 $2 .. && ninja $(NINJA_FLAGS) $1
+	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all:
@@ -106,14 +107,14 @@ tests: test-cpp test-python
 test-cpp: test-soccer
 test-soccer:
 	$(call cmake_build_target, test-soccer)
-	run/test-soccer --gtest_filter=$(TESTS)
+	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 test-soccer-nobuild:
-	run/test-soccer --gtest_filter=$(TESTS)
+	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 
 test-python: all
-	cd soccer/gameplay && ./run_tests.sh
+	cd soccer/gameplay && source /opt/foxy/setup.sh && ./run_tests.sh
 test-python-nobuild:
-	cd soccer/gameplay && ./run_tests.sh
+	cd soccer/gameplay && source /opt/foxy/setup.sh && ./run_tests.sh
 pylint:
 	pylint -j8 --reports=n soccer/gameplay
 mypy:
@@ -170,6 +171,7 @@ checkstyle:
 
 CLANG_FORMAT_BINARY=clang-format-10
 CLANG_TIDY_BINARY=clang-tidy-10
+COMPILE_COMMANDS_DIR=build
 
 # circleci has 2 cores, but advertises 32
 ifeq ($(CIRCLECI), true)
@@ -183,12 +185,12 @@ pretty-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/yapf-diff.py -style .style.yapf -i -p1
 
 tidy-lines:
-ifeq ("$(wildcard ./build/compile_commands.json)","")
-	@printf "build/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
+ifeq ("$(wildcard $(COMPILE_COMMANDS_DIR)/compile_commands.json)","")
+	@printf "$(COMPILE_COMMANDS_DIR)/compile_commands.json file is missing! Run 'make all' to generate the compile db for clang-tidy."
 	exit 1
 endif
 	@printf "Running clang-tidy-diff...\n"
-	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp"
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*Test.cpp"
 
 checkstyle-lines:
 	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-format-diff.py -binary $(CLANG_FORMAT_BINARY) -p1 | tee /tmp/checkstyle.patch
@@ -196,4 +198,4 @@ checkstyle-lines:
 	@bash -c '[[ ! "$$(cat /tmp/checkstyle.patch)" ]] || (echo "****************************** Checkstyle errors *******************************" && exit 1)'
 
 checktidy-lines:
-	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path build -j$(CORES) -ignore ".*Test.cpp" > /tmp/checktidy.patch
+	@git diff -U0 --no-color $(DIFFBASE) | python3 util/clang-tidy-diff.py -clang-tidy-binary $(CLANG_TIDY_BINARY) -p1 -path $(COMPILE_COMMANDS_DIR) -j$(CORES) -ignore ".*Test.cpp" > /tmp/checktidy.patch
