@@ -12,7 +12,9 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON) # Don't fall back to older versions
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+option(NO_WALL "Disables -Wall for CI so it doesn't print as much." OFF)
+
+if(NOT NO_WALL AND CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
@@ -27,6 +29,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 # A separate flag for now
 option(BUILD_TESTS "Build tests." ON)
+
 
 if(BUILD_TESTING)
     find_package(ament_lint_auto REQUIRED)
