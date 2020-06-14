@@ -16,17 +16,17 @@ CMAKE_FLAGS="$(shell pwd)/install"
 # usage: $(call cmake_build_target, target, extraCmakeFlags)
 define cmake_build_target
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Debug $(DEBUG_FLAGS) $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_release
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=Release $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 define cmake_build_target_perf
 	mkdir -p build
-	cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
+	source /opt/ros/foxy/setup.sh && cd build && cmake -GNinja -Wno-dev -DCMAKE_BUILD_TYPE=RelWithDebInfo $(CMAKE_FLAGS) --target $1 $2 .. && ninja $(NINJA_FLAGS) $1 install
 endef
 
 all:
@@ -107,9 +107,9 @@ tests: test-cpp test-python
 test-cpp: test-soccer
 test-soccer:
 	$(call cmake_build_target, test-soccer)
-	run/test-soccer --gtest_filter=$(TESTS)
+	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 test-soccer-nobuild:
-	run/test-soccer --gtest_filter=$(TESTS)
+	./install/lib/rj_robocup/test-soccer --gtest_filter=$(TESTS)
 
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
