@@ -311,8 +311,8 @@ void Gameplay::GameplayModule::run() {
         cout << "Starting GameplayModule::run()" << endl;
     }
 
-    _ballMatrix =
-        Geometry2d::TransformMatrix::translate(_context->state.ball.pos);
+    _ballMatrix = Geometry2d::TransformMatrix::translate(
+        _context->world_state.ball.position);
 
     /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : _context->state.self) {
@@ -415,9 +415,10 @@ void Gameplay::GameplayModule::run() {
     PyGILState_Release(state);
 
     /// visualize
-    if (_context->game_state.stayAwayFromBall() && _context->state.ball.valid) {
+    if (_context->game_state.stayAwayFromBall() &&
+        _context->world_state.ball.visible) {
         _context->debug_drawer.drawCircle(
-            _context->state.ball.pos,
+            _context->world_state.ball.position,
             Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black,
             "Rules");
     }

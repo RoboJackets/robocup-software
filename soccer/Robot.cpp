@@ -1,4 +1,3 @@
-#include <execinfo.h>
 #include <protobuf/LogFrame.pb.h>
 
 #include <LogUtils.hpp>
