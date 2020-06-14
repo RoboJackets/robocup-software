@@ -171,7 +171,7 @@ checkstyle:
 
 CLANG_FORMAT_BINARY=clang-format-10
 CLANG_TIDY_BINARY=clang-tidy-10
-COMPILE_COMMANDS_DIR=../../build
+COMPILE_COMMANDS_DIR=build
 
 # circleci has 2 cores, but advertises 32
 ifeq ($(CIRCLECI), true)
