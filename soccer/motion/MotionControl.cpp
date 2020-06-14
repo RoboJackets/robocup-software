@@ -99,7 +99,7 @@ void MotionControl::run(const RobotState& state,
 
     // Use default constraints. Planning should be in charge of enforcing
     // constraints on the trajectory, here we just follow it.
-    // TODO(Kyle): Use this robot's constraints here.
+    // TODO(#1500): Use this robot's constraints here.
     RobotConstraints constraints;
 
     if (result_body.linear().mag() > constraints.mot.maxSpeed) {

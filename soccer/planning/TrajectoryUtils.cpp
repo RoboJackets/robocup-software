@@ -36,7 +36,7 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
         RobotInstant instant = cursor.value();
 
         // Calculate the list of hits.
-        // TODO(Kyle): We could save a lot of allocation and smart pointer
+        // TODO(#1503): We could save a lot of allocation and smart pointer
         //  reference counting overhead by making hitSet return a custom
         //  iterator type. Then, we could use that to construct a set at the
         //  beginning but just iterate over it in standard fashion here.
