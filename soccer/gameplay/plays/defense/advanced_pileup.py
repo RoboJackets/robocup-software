@@ -15,7 +15,7 @@ class AdvancedPileup(play.Play):
         ball = main.ball().pos
         us = main.our_robots()
         them = main.their_robots()
-        radius = constants.ball.radius
+        radius = constants.Ball.Radius
         range = 5 * radius
         c, pos = evaluation.position.ball_vicinity(us, them, radius)
         print(c, pos)

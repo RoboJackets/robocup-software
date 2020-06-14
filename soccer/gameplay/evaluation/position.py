@@ -27,13 +27,17 @@ def ball_vicinity(us, them, radius):
     		#contending_them.append(t)
 
     cpos = 0 #position sum to calculate average position of robots (-pi to pi)
-
+   
     for w in contending:
         x = w.pos.x - main.ball().pos.x
         y = w.pos.y - main.ball().pos.y
 
         cpos += math.atan2(y,x)
 
-    avgpos = cpos / len(contending)
+
+    if len(contending) == 0:
+    	avgpos = 0
+    else:
+        avgpos = cpos / len(contending)
 
     return contending, avgpos
