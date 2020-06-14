@@ -6,13 +6,10 @@ defaults_env: &setup_env
       echo 'export PATH="$PATH:$HOME/go/bin"' >> $BASH_ENV
       source $BASH_ENV
 
-robocup_software_dir: &robocup_software_dir
-  working_directory: ~/robocup_ws/src/robocup-software
+defaults_dir: &dir
+  working_directory: ~/robocup-software
 
-robocup_ws_dir: &robocup_ws_dir
-  working_directory: ~/robocup_ws
-
-foxy_image: &foxy_image
+image: &image
   docker:
     - image: robojackets/robocup-software:foxy
 
@@ -21,50 +18,43 @@ defaults_deps: &install_deps
 
 save_workspace: &save_workspace
   persist_to_workspace:
-    root: ~/robocup_ws
+    root: ~/robocup-software
     paths:
-      - install
-      - build
+      - build/*
+      - install/*
 
 load_workspace: &load_workspace
   attach_workspace:
-    at: ~/robocup_ws
+    at: ~/robocup-software
 
 version: 2
 jobs:
   # Compile everything and save the build folder
   compile:
-    <<: *robocup_ws_dir
-    <<: *foxy_image
-    environment:
-      CMAKE_BUILD_PARALLEL_LEVEL: 2
+    <<: *dir
+    <<: *image
     steps:
       - checkout
       - <<: *install_deps
-      - run: |
-          source /opt/ros/foxy/setup.sh && \
-          colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_TESTS=ON -GNinja --parallel-workers 2
+      - run: make all_including_tests
       - <<: *save_workspace
 
   # Use the saved build folder for testing
   test-all:
-    <<: *robocup_ws_dir
-    <<: *foxy_image
+    <<: *dir
+    <<: *image
     steps:
       - checkout
       # Ensure latest deps are installed
       - <<: *install_deps
       - <<: *load_workspace
       # Run test without building anything
-      - run: |
-          source /opt/ros/foxy/setup.sh && \
-          source install/setup.sh && \
-          ./install/rj_robocup/lib/rj_robocup/test-soccer
-      - run: cd src/robocup-software && make test-python-nobuild
+      - run: make test-soccer-nobuild
+      - run: make test-python-nobuild
 
   python-static:
-    <<: *robocup_software_dir
-    <<: *foxy_image
+    <<: *dir
+    <<: *image
     steps:
       - checkout
       - <<: *install_deps
@@ -73,8 +63,8 @@ jobs:
       - run: make mypy
 
   style:
-    <<: *robocup_software_dir
-    <<: *foxy_image
+    <<: *dir
+    <<: *image
     steps:
       - checkout
       # We need environment variables ($GOPATH and $PATH specifically)
@@ -87,8 +77,8 @@ jobs:
           path: /tmp/clean.patch
 
   clang-tidy:
-    <<: *robocup_software_dir
-    <<: *foxy_image
+    <<: *dir
+    <<: *image
     steps:
       - checkout
       - <<: *setup_env
@@ -112,8 +102,8 @@ jobs:
           path: /tmp/test-results
 
   gen-docs:
-    <<: *robocup_software_dir
-    <<: *foxy_image
+    <<: *dir
+    <<: *image
     steps:
       - checkout
       # Ensure latest deps are installed
