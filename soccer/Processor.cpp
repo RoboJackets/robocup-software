@@ -248,15 +248,8 @@ void Processor::run() {
 
         _grSimCom->run();
 
-        // Run all nodes in sequence
-        // TODO(Kyle): This is dead code for now. Once everything is ported over
-        // to modules we can delete the if (false), but for now we still have to
-        // update things manually.
-#if 0
-        for (auto* node : _nodes) {
-            node->run();
-        }
-#endif
+        // TODO(#1505): Run all modules in sequence using the vector. For now we
+        // still have to update things manually.
 
         ////////////////
         // Outputs
