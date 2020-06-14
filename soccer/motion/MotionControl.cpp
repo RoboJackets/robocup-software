@@ -1,12 +1,12 @@
 #include "MotionControl.hpp"
 
-#include <Context.hpp>
-#include <Geometry2d/Util.hpp>
-#include <Robot.hpp>
-#include <RobotConfig.hpp>
-#include <Utils.hpp>
 #include <optional>
-#include <planning/MotionInstant.hpp>
+
+#include "Context.hpp"
+#include "Geometry2d/Util.hpp"
+#include "RobotConfig.hpp"
+#include "Utils.hpp"
+#include "planning/Instant.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -36,7 +36,7 @@ MotionControl::MotionControl(Context* context, int shell_id)
       _config(context->robot_config.get()) {}
 
 void MotionControl::run(const RobotState& state,
-                        const Trajectory::Trajectory& trajectory,
+                        const Planning::Trajectory& trajectory,
                         bool is_joystick_controlled, MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -45,7 +45,7 @@ void MotionControl::run(const RobotState& state,
         return;
     }
 
-    if (!state.visible || !trajectory.hasPath()) {
+    if (!state.visible || trajectory.empty()) {
         stop(setpoint);
         return;
     }
@@ -53,17 +53,18 @@ void MotionControl::run(const RobotState& state,
     updateParams();
 
     // We run this at 60Hz, so we want to do motion control off of the goal
-    // position for the next frame. Evaluate the path there.
+    // position for the next frame. Evaluate the trajectory there.
     RJ::Seconds dt(1.0 / 60);
-    RJ::Seconds time_into_path = (RJ::now() - trajectory.startTime()) + dt;
+    RJ::Seconds time_into_path = (RJ::now() - trajectory.begin_time()) + dt;
 
     std::optional<RobotInstant> maybe_target =
         trajectory.evaluate(time_into_path);
 
-    // If we're past the end of the path, do motion control off of the end.
-    bool at_end = time_into_path > trajectory.getDuration();
+    // If we're past the end of the trajectory, do motion control off of the
+    // end.
+    bool at_end = time_into_path > trajectory.duration();
     if (at_end) {
-        maybe_target = trajectory.end();
+        maybe_target = trajectory.last();
     }
 
     std::optional<Pose> maybe_pose_target;
@@ -72,13 +73,8 @@ void MotionControl::run(const RobotState& state,
     // Set up goals from our target motion instant.
     if (maybe_target) {
         auto target = maybe_target.value();
-        maybe_pose_target = target.pose();
-        velocity_target = target.twist();
-
-        // If we have no goal angle, set it to the current angle.
-        if (!(target.angle && target.angle.value().angle)) {
-            maybe_pose_target.value().heading() = state.pose.heading();
-        }
+        maybe_pose_target = target.pose;
+        velocity_target = target.velocity;
     }
 
     // TODO: Calculate acceleration and use it to improve response.
@@ -102,7 +98,7 @@ void MotionControl::run(const RobotState& state,
         result_world.angular());
 
     // Use default constraints. Planning should be in charge of enforcing
-    // constraints on the path, here we just follow it.
+    // constraints on the trajectory, here we just follow it.
     // TODO(Kyle): Use this robot's constraints here.
     RobotConstraints constraints;
 
@@ -120,10 +116,10 @@ void MotionControl::run(const RobotState& state,
     // Debug drawing
     {
         if (at_end) {
-            _drawer->drawCircle(maybe_target->motion.pos, .15, Qt::red,
+            _drawer->drawCircle(maybe_target->pose.position(), .15, Qt::red,
                                 "Planning");
         } else if (maybe_target) {
-            _drawer->drawCircle(maybe_target->motion.pos, .15, Qt::green,
+            _drawer->drawCircle(maybe_target->pose.position(), .15, Qt::green,
                                 "Planning");
         }
 

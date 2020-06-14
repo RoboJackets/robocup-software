@@ -16,7 +16,7 @@ void MotionControlNode::run() {
 
 void MotionControlNode::runMotion(
     const WorldState& world_state, const GameState& game_state,
-    const std::array<Trajectory::Trajectory, Num_Shells>& trajectories,
+    const std::array<Planning::Trajectory, Num_Shells>& trajectories,
     const std::array<bool, Num_Shells>& joystick_controlled,
     std::array<MotionSetpoint, Num_Shells>* setpoints) {
     bool force_stop = game_state.state == GameState::State::Halt;
