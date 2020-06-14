@@ -10,9 +10,8 @@ class ConfigDouble;
 namespace Planning {
 
 /**
- * @brief Planner that tries to move onto and gain control of a slow moving ball
- *
- * TODO: Clean up description
+ * @brief Planner that tries to move onto and gain control of a slow moving
+ * ball.
  */
 class CollectPlanner : public PlannerForCommandType<CollectCommand> {
 public:

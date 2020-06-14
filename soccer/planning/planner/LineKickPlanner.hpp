@@ -5,6 +5,12 @@
 #include "planning/low_level/Replanner.hpp"
 
 namespace Planning {
+
+/**
+ * @brief Planner to kick a (possibly moving) ball without stopping to pivot
+ * around it. The robot will move "through" the ball, and kick just as it comes
+ * into contact with it.
+ */
 class LineKickPlanner : public PlannerForCommandType<LineKickCommand> {
 public:
     LineKickPlanner()
@@ -36,4 +42,5 @@ private:
     Replanner replanner;
     Trajectory previous;
 };
+
 }  // namespace Planning
