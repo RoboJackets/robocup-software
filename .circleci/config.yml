@@ -54,7 +54,8 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       # Run test without building anything
-      - run: source install/setup.sh && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
+      - run: |
+          source /opt/ros/foxy/setup.sh && source install/setup.sh && echo "LD_LIBRARY_PATH: $LD_LIBRARY_PATH" && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
       - run: source install/setup.sh && cd soccer/gameplay && ./run_tests.sh
   python-static:
     <<: *dir
