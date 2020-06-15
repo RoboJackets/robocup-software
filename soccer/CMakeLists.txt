@@ -1,113 +1,43 @@
+#======================================================================
+# Preamble
+#======================================================================
+cmake_minimum_required(VERSION 3.16)
+project(soccer LANGUAGES CXX)
 
-# Qt
-set(CMAKE_AUTOMOC ON)
+#======================================================================
+# Find package
+#======================================================================
+find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
-# include Eigen3 for linear algebra
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
+# Qt5
+find_package(Qt5 COMPONENTS Widgets Xml Core OpenGL Network Svg REQUIRED)
+message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
+add_definitions(-DQT_NO_KEYWORDS) # Remove QT slots/signals/emit keywords
 
-# All sources for the robocup library used for the python module, soccer, and log log viewer
-# Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
-set(ROBOCUP_LIB_SRC
-    "BatteryProfile.cpp"
-    "Configuration.cpp"
-    "gameplay/GameplayModule.cpp"
-    "gameplay/robocup-py.cpp"
-    "joystick/SDLJoystickNode.cpp"
-    "joystick/SDLGamepad.cpp"
-    "joystick/ManualControlNode.cpp"
-    "KickEvaluator.cpp"
-    "Logger.cpp"
-    "motion/MotionControl.cpp"
-    "motion/MotionControlNode.cpp"
-    "motion/TrapezoidalMotion.cpp"
-    "Referee.cpp"
-    "optimization/GradientAscent1D.cpp"
-    "optimization/ParallelGradientAscent1D.cpp"
-    "optimization/NelderMead2D.cpp"
-    "optimization/PythonFunctionWrapper.cpp"
-    "planning/paths/CompositePath.cpp"
-    "planning/DynamicObstacle.cpp"
-    "planning/planners/DirectTargetPathPlanner.cpp"
-    "planning/planners/TuningPathPlanner.cpp"
-    "planning/planners/EscapeObstaclesPathPlanner.cpp"
-    "planning/paths/InterpolatedPath.cpp"
-    "planning/planners/IndependentMultiRobotPathPlanner.cpp"
-    "planning/planners/InterceptPlanner.cpp"
-    "planning/MotionConstraints.cpp"
-    "planning/RotationConstraints.cpp"
-    "planning/paths/Path.cpp"
-    "planning/trajectory/Trajectory.cpp"
-    "planning/planners/RRTPlanner.cpp"
-    "planning/planners/RRTUtil.cpp"
-    "planning/planners/PivotPathPlanner.cpp"
-    "planning/planners/SettlePathPlanner.cpp"
-    "planning/planners/CollectPathPlanner.cpp"
-    "planning/planners/LineKickPlanner.cpp"
-    "planning/planners/SingleRobotPathPlanner.cpp"
-    "planning/planners/TargetVelPathPlanner.cpp"
-    "planning/PlannerNode.cpp"
-    "planning/paths/TrapezoidalPath.cpp"
-    "Processor.cpp"
-    "radio/NetworkRadio.cpp"
-    "radio/PacketConvert.cpp"
-    "radio/RadioNode.cpp"
-    "radio/SimRadio.cpp"
-    "Robot.cpp"
-    "RobotConfig.cpp"
-    "SystemState.cpp"
-    "DebugDrawer.cpp"
-    "ui/BatteryWidget.cpp"
-    "ui/FieldView.cpp"
-    "ui/MainWindow.cpp"
-    "ui/ProtobufTree.cpp"
-    "ui/RefereeTab.cpp"
-    "ui/RobotStatusWidget.cpp"
-    "ui/RobotWidget.cpp"
-    "ui/SimFieldView.cpp"
-    "ui/StripChart.cpp"
-    "ui/StyleSheetManager.cpp"
-    "GrSimCommunicator.cpp"
-    "VisionReceiver.cpp"
-    "vision/ball/BallBounce.cpp"
-    "vision/ball/CameraBall.cpp"
-    "vision/ball/KalmanBall.cpp"
-    "vision/ball/WorldBall.cpp"
-    "vision/camera/Camera.cpp"
-    "vision/camera/World.cpp"
-    "vision/filter/KalmanFilter.cpp"
-    "vision/filter/KalmanFilter2D.cpp"
-    "vision/filter/KalmanFilter3D.cpp"
-    "vision/kick/detector/FastKickDetector.cpp"
-    "vision/kick/detector/SlowKickDetector.cpp"
-    "vision/kick/estimator/ChipKickEstimator.cpp"
-    "vision/kick/estimator/FlatKickEstimator.cpp"
-    "vision/kick/KickEvent.cpp"
-    "vision/robot/CameraRobot.cpp"
-    "vision/robot/KalmanRobot.cpp"
-    "vision/robot/WorldRobot.cpp"
-    "vision/util/VisionFilterConfig.cpp"
-    "vision/VisionFilter.cpp"
-    "WindowEvaluator.cpp")
+# Google Protobuf
+find_package(Protobuf REQUIRED)
+include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIR})
 
-if(APPLE)
-    # help CMake find gl.h, glu.h, etc on OS X
-    link_directories(/opt/X11/lib/)
-    include_directories(SYSTEM /opt/X11/include/)
-    # lib dir for spnav
-    link_directories(/usr/local/lib/)
-endif()
+# Python
+find_package(PythonInterp 3.2 REQUIRED)
+find_package(PythonLibs 3.2 REQUIRED)
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+# Eigen - used for linear algebra
+find_package(Eigen3 REQUIRED)
 
-file(GLOB SOCCER_UIS "${CMAKE_CURRENT_SOURCE_DIR}/ui/qt/*.ui")
-qt5_wrap_ui(SOCCER_UIS ${SOCCER_UIS})
+# libusb
+find_package(libusb-1.0 REQUIRED)
 
-qt5_add_resources(SOCCER_RSRC ui/qt/main_icons.qrc)
+# SDL2
+include(FindPkgConfig)
+pkg_search_module(SDL2 REQUIRED sdl2)
 
+# Pthread
+find_package(Threads REQUIRED)
 
 # Boost Python
-set(Boost_USE_STATIC_LIBS   OFF)
+set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost COMPONENTS system REQUIRED)
@@ -118,133 +48,184 @@ set(FOUND_A_BOOST_PYTHON FALSE)
 # Find the matching boost python implementation
 set(version ${PYTHONLIBS_VERSION_STRING})
 
-if(APPLE)
-    set(boost_py_version "")
-else()
-    STRING( REGEX REPLACE "[^0-9]" "" boost_py_version "${version}" )
-    # Get first two numbers of python string
-    STRING( REGEX MATCH "^[0-9][0-9]" boost_py_version "${boost_py_version}" )
-endif()
+STRING(REGEX REPLACE "[^0-9]" "" boost_py_version "${version}")
+# Get first two numbers of python string
+STRING(REGEX MATCH "^[0-9][0-9]" boost_py_version "${boost_py_version}")
 
-foreach(possible_name python3 python-py${boost_py_version} python)
+foreach (possible_name python3 python-py${boost_py_version} python)
     find_package(Boost COMPONENTS ${possible_name} QUIET)
     if (Boost_FOUND)
         set(FOUND_A_BOOST_PYTHON TRUE)
         break()
-    endif()
-endforeach()
+    endif ()
+endforeach ()
 if (NOT FOUND_A_BOOST_PYTHON)
     message(FATAL_ERROR "Unable to find a suitable version of boost python")
-endif()
+endif ()
 
-# libusb
-include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
-# SDL
-include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
+#======================================================================
+# QT build tool things
+#======================================================================
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
+#======================================================================
+# Define Targets
+#======================================================================
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
-add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
+add_library(robocup SHARED)
+
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
-target_link_libraries(robocup common rc-fshare)
-qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
-target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
-target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
-target_link_libraries(robocup GL GLU glut)
-target_link_libraries(robocup pthread)
-target_link_libraries(robocup spnav)
-target_link_libraries(robocup ${SDL2_LIBRARIES})
+add_executable(soccer)
+add_executable(log_viewer)
 
-ament_target_dependencies(robocup ament_index_cpp)
-
-# RRT
-include_directories(${RRT_INCLUDE_DIR})
-target_link_libraries(robocup RRT)
-
-
-# python
-# note: these are set in the root CMakeLists.txt file
-include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
-link_directories(${PYTHON_LINK_DIRS})
-target_link_libraries(robocup ${PYTHON_LIBRARIES})
-
-# 'soccer' program
-if(APPLE)
-    include(BundleUtilities)
-
-    # app icon
-    set(OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt/SoccerBall.icns)
-    set_source_files_properties(${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-    set(MACOSX_BUNDLE_ICON_FILE SoccerBall)
-
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.robojackets.robocup.soccer")
-
-    add_executable(soccer MACOSX_BUNDLE main.cpp ${OSX_ICON_FILES})
-
-    # add a script called "soccer" in the run/ dir that launches the soccer app and passes on all args,
-    # so it can be used the same way the soccer executable is used on Linux
-    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/soccer
-        "#!/bin/sh\n"
-        "$(dirname $0)/soccer.app/Contents/MacOS/soccer $@")
-    file(INSTALL ${CMAKE_CURRENT_BINARY_DIR}/soccer
-        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
-else()
-    add_executable(soccer main.cpp)
+if (BUILD_TESTING)
+    add_executable(test-soccer)
 endif()
-qt5_use_modules(soccer Widgets Xml Core OpenGL Network Svg)
-target_link_libraries(soccer robocup)
 
-# build the 'log_viewer' program
-qt5_add_resources(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
-qt5_wrap_ui(LOG_VIEWER_UI ui/qt/LogViewer.ui)
-set(LOG_VIEWER_SRC
-    "LogViewer.cpp"
-)
-add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
-qt5_use_modules(log_viewer Core Widgets OpenGL Svg Xml)
-target_link_libraries(log_viewer robocup)
+add_subdirectory(src)
 
+#======================================================================
+# Dependencies List
+#======================================================================
 
-# Add a test runner target "test-soccer" to run all tests in this directory
-set(SOCCER_TEST_SRC
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CircleTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp"
-    "${CMAKE_SOURCE_DIR}/common/Geometry2d/TransformMatrixTest.cpp"
-    "BatteryProfileTest.cpp"
-    "KickEvaluatorTest.cpp"
-    "motion/TrapezoidalMotionTest.cpp"
-    "optimization/GradientAscent1DTest.cpp"
-    "optimization/ParallelGradientAscent1DTest.cpp"
-    "optimization/NelderMead2DTest.cpp"
-    "planning/PathTest.cpp"
-    "planning/planners/EscapeObstaclesPathPlannerTest.cpp"
-    "planning/planners/TargetVelPathPlannerTest.cpp"
-    "TestMain.cpp"
-    "vision/tests/CameraBallTest.cpp"
-    "vision/tests/KalmanBallTest.cpp"
-    "vision/tests/WorldBallTest.cpp"
-    "vision/tests/CameraRobotTest.cpp"
-    "vision/tests/KalmanRobotTest.cpp"
-    "vision/tests/WorldRobotTest.cpp"
-    "vision/tests/BallBounceTest.cpp"
-    "vision/tests/CameraTest.cpp"
-    "WindowEvaluatorTest.cpp"
-    "LoggerTest.cpp")
+# Robocup (static lib)
+set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS
+    ${EIGEN_INCLUDE_DIRS}
+    ${LIBUSB_1_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
+    ${RRT_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIRS})
 
-if(BUILD_TESTS)
-    add_executable(test-soccer ${SOCCER_TEST_SRC})
-    target_link_libraries(test-soccer robocup)
-    qt5_use_modules(test-soccer Core Widgets Xml)
-    target_link_libraries(test-soccer ${GTEST_LIBRARIES})
+set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
+    ${Boost_LIBRARIES}
+    ${Boost_SYSTEM_LIBRARY}
+    GL
+    GLU
+    glut
+    ${PYTHON_LINK_DIRS}
+    ${PYTHON_LIBRARIES}
+    Qt5::Widgets
+    Qt5::Xml
+    Qt5::Core
+    Qt5::OpenGL
+    Qt5::Network
+    Qt5::Svg
+    Threads::Threads
+    RRT
+    spnav
+    ${SDL2_LIBRARIES}
+    )
+
+set(ROBOCUP_DEPS_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include
+    )
+
+set(ROBOCUP_DEPS_LIBRARIES
+    rj_common
+    rj_protos
+    rc-fshare
+    )
+
+# Soccer (executable)
+set(SOCCER_DEPS_SYSTEM_LIBRARIES
+    Qt5::Widgets
+    Qt5::Xml
+    Qt5::Core
+    Qt5::OpenGL
+    Qt5::Network
+    Qt5::Svg)
+
+set(SOCCER_DEPS_LIBRARIES
+    robocup)
+
+# log_viewer
+set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
+    Qt5::Core
+    Qt5::Widgets
+    Qt5::OpenGL
+    Qt5::Xml
+    Qt5::Svg)
+
+set(LOG_VIEWER_DEPS_LIBRARIES
+    robocup)
+
+#======================================================================
+# Include and Linking
+#======================================================================
+
+# ---- Robocup ----
+ament_target_dependencies(robocup PUBLIC ament_index_cpp)
+
+target_include_directories(robocup
+    SYSTEM PUBLIC
+    ${ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS})
+target_include_directories(robocup
+    PUBLIC
+    ${ROBOCUP_DEPS_INCLUDE_DIRS})
+target_link_libraries(robocup
+    PUBLIC
+    ${ROBOCUP_DEPS_SYSTEM_LIBRARIES}
+    ${ROBOCUP_DEPS_LIBRARIES})
+
+ament_target_dependencies(robocup PUBLIC ament_index_cpp)
+
+# ---- Soccer ----
+target_link_libraries(soccer
+    PUBLIC
+    ${SOCCER_DEPS_SYSTEM_LIBRARIES}
+    ${SOCCER_DEPS_LIBRARIES})
+
+# ---- log_viewer ----
+target_link_libraries(log_viewer
+    PRIVATE
+    ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
+    ${LOG_VIEWER_DEPS_LIBRARIES})
+
+## Add a test runner target "test-soccer" to run all tests in this directory
+if (BUILD_TESTING)
+    target_link_libraries(test-soccer PRIVATE robocup)
+    target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
+    target_link_libraries(test-soccer PRIVATE geometry2d_testing)
+    target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
     add_dependencies(test-soccer googletest)
+endif ()
+
+#======================================================================
+# Packaging
+#======================================================================
+install(TARGETS robocup log_viewer
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(TARGETS soccer
+        DESTINATION lib/${CMAKE_PROJECT_NAME})
+
+install(DIRECTORY
+        src/gameplay
+        DESTINATION share/${CMAKE_PROJECT_NAME}
+        FILES_MATCHING
+        PATTERN "*.py"
+        PATTERN "*.pbk")
+
+install(FILES
+        config/realShopField.xml
+        DESTINATION share/${CMAKE_PROJECT_NAME}/config
+        RENAME soccer-real.cfg)
+
+install(FILES
+        config/sim.xml
+        DESTINATION share/${CMAKE_PROJECT_NAME}/config
+        RENAME soccer-sim.cfg)
+
+if(BUILD_TESTING)
+    install(TARGETS test-soccer
+            DESTINATION lib/${CMAKE_PROJECT_NAME})
 endif()
