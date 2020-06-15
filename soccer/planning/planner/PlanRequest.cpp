@@ -28,9 +28,8 @@ void FillObstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
 
         if (in.planned_trajectories.at(shell) != nullptr) {
             // Dynamic obstacle
-            out_dynamic->emplace_back(
-                Robot_Radius,
-                in.planned_trajectories.at(shell));
+            out_dynamic->emplace_back(Robot_Radius,
+                                      in.planned_trajectories.at(shell));
         } else {
             // Static obstacle
             out_static->add(std::make_shared<Geometry2d::Circle>(

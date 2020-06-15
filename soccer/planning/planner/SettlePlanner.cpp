@@ -419,8 +419,7 @@ Trajectory SettlePlanner::intercept(
     // Since the replanner exists, we don't have to deal with partial paths,
     // just use the interface
     LinearMotionInstant targetRobotIntersection{
-        pathInterceptTarget,
-        *_ballSpeedPercentForDampen * averageBallVel};
+        pathInterceptTarget, *_ballSpeedPercentForDampen * averageBallVel};
 
     Replanner::PlanParams params{startInstant,
                                  targetRobotIntersection,

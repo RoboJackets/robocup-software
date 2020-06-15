@@ -61,9 +61,8 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
 
 Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
     Trajectory path = CreatePath::rrt(
-        params.start.linear_motion(), params.goal,
-        params.constraints.mot, params.start.stamp, params.static_obstacles,
-        params.dynamic_obstacles);
+        params.start.linear_motion(), params.goal, params.constraints.mot,
+        params.start.stamp, params.static_obstacles, params.dynamic_obstacles);
 
     if (!path.empty()) {
         if (path.begin_time() > path.end_time()) {
