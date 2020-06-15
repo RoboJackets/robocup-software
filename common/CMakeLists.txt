@@ -24,15 +24,6 @@ target_compile_options(common PRIVATE "-fPIC")
 
 set(COMMON_SRC
     "Field_Dimensions.cpp"
-    "Geometry2d/Arc.cpp"
-    "Geometry2d/Circle.cpp"
-    "Geometry2d/Line.cpp"
-    "Geometry2d/Rect.cpp"
-    "Geometry2d/TransformMatrix.cpp"
-    "Geometry2d/CompositeShape.cpp"
-    "Geometry2d/Point.cpp"
-    "Geometry2d/Polygon.cpp"
-    "Geometry2d/Segment.cpp"
     "multicast.cpp"
     "Utils.cpp"
     "RefereeEnums.cpp"

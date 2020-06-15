@@ -1,7 +1,7 @@
 #include "Rect.hpp"
 #include "Point.hpp"
 #include "Segment.hpp"
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 
 using namespace std;
 
@@ -55,7 +55,7 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
 
     int outcode0 = CohenSutherlandOutCode(p0);
     int outcode1 = CohenSutherlandOutCode(p1);
-    
+
     std::vector<Point> intersectionPoints;
     bool accept = false;
     while (true) {

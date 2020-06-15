@@ -8,7 +8,7 @@
 #include <multicast.hpp>
 #include <stdexcept>
 
-#include "Constants.hpp"
+#include <rj_constants/constants.hpp>
 #include "RefereeEnums.hpp"
 
 using RefereeModuleEnums::Command;

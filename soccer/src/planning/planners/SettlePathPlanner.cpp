@@ -4,7 +4,7 @@
 #include <cmath>
 
 #include "Configuration.hpp"
-#include "Constants.hpp"
+#include <rj_constants/constants.hpp>
 #include "planning/MotionInstant.hpp"
 #include "planning/paths/CompositePath.hpp"
 

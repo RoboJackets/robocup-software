@@ -65,6 +65,8 @@ endif()
 # This is manually topologically sorted becuse we're not using colcon
 add_subdirectory(external)
 add_subdirectory(rj_protos)
+add_subdirectory(rj_constants)
+add_subdirectory(Geometry2d)
 add_subdirectory(common)
 add_subdirectory(soccer)
 #

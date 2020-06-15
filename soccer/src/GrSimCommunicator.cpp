@@ -1,6 +1,6 @@
 #include "GrSimCommunicator.hpp"
 
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 #include <Network.hpp>
 
 using namespace boost::asio;

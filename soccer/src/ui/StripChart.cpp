@@ -3,7 +3,7 @@
 #include <google/protobuf/descriptor.h>
 #include <rj_protos/LogFrame.pb.h>
 
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <QDateTime>
 #include <QFileDialog>

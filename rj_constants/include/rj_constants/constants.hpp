@@ -1,9 +1,6 @@
-
 #pragma once
 
 #include <string>  // for size_t
-
-#include "Field_Dimensions.hpp"
 
 /// all distances in meters
 /// all times in seconds

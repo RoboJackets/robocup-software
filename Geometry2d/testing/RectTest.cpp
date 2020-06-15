@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <Geometry2d/Rect.hpp>
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 
 namespace Geometry2d {
 
@@ -79,4 +79,4 @@ TEST(Rect, SegmentIntersection){
     }
 }
 
-}  // namespace Geometry2d  
+}  // namespace Geometry2d

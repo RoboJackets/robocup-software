@@ -1,6 +1,6 @@
 #include <rj_protos/LogFrame.pb.h>
 
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 #include <Network.hpp>
 #include <Referee.hpp>
 #include <Robot.hpp>

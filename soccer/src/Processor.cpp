@@ -2,7 +2,7 @@
 
 #include <rj_protos/messages_robocup_ssl_detection.pb.h>
 
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
 #include <QMutexLocker>

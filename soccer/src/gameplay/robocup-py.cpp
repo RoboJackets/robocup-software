@@ -13,7 +13,7 @@ using namespace boost::python;
 #include <rj_protos/LogFrame.pb.h>
 
 #include <Configuration.hpp>
-#include <Constants.hpp>
+#include <rj_constants/constants.hpp>
 #include <Context.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
