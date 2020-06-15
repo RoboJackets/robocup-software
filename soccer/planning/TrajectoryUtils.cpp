@@ -81,7 +81,8 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
 
     // Limit iterations to 400. This will continue to operate at dt = 0.05 until
     // we hit a 20 second trajectory. If our trajectory is longer than that,
-    // something is probably wrong.
+    // something is probably wrong, but we'll still handle it (just scale dt
+    // accordingly)
     constexpr int max_iterations = 400;
     constexpr RJ::Seconds expected_dt{0.05};
 
