@@ -7,7 +7,6 @@ project(geometry2d LANGUAGES CXX)
 #======================================================================
 # Find package
 #======================================================================
-find_package(ament_cmake REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
@@ -66,9 +65,3 @@ endif()
 #======================================================================
 install(DIRECTORY include/
     DESTINATION include/)
-
-#======================================================================
-# Ament Packaging
-#======================================================================
-ament_export_libraries(geometry2d)
-ament_package()

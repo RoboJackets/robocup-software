@@ -15,9 +15,3 @@ target_include_directories(rj_constants INTERFACE include)
 #======================================================================
 install(DIRECTORY include/
     DESTINATION include/)
-
-#======================================================================
-# Ament Packaging
-#======================================================================
-ament_export_include_directories(include)
-ament_package()

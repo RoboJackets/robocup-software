@@ -8,7 +8,6 @@ project(rj_protos LANGUAGES CXX)
 # Find package
 #======================================================================
 find_package(Protobuf REQUIRED)
-find_package(ament_cmake REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -69,9 +68,3 @@ add_custom_command(TARGET rj_protos
 install(DIRECTORY ${PROTO_INCLUDE_DIR}
     DESTINATION include/
     )
-
-#======================================================================
-# Ament packaging
-#======================================================================
-ament_export_libraries(rj_protos)
-ament_package()

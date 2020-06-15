@@ -8,7 +8,6 @@ project(rj_common LANGUAGES CXX)
 # Find package
 #======================================================================
 find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
-find_package(ament_cmake REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -64,9 +63,3 @@ install( TARGETS rj_common
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
 )
-
-#======================================================================
-# Ament packaging
-#======================================================================
-ament_export_libraries(common)
-ament_package()
