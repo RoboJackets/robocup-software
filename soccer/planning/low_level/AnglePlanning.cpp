@@ -46,13 +46,18 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
             Geometry2d::Point(gradient));
     }
 
-    /*
+    // TODO(#1506): Re-enable this. Currently the forward-tracking is disabled
+    // because it was slightly buggy. As a result, we will provide an angular
+    // target where the start doesn't necessarily match up with the robot's
+    // current angle/velocity, which makes motion control a bit harder.
+    //
     // We want to do a best-effort tracking of those values while still ending
     // up in the right place. Do acceleration-limited backwards in time, with
     // a final goal velocity of zero, until we get to a point where we couldn't
     // get back to the initial position in time. From there, fill the rest up
     // with a trapezoidal motion from the beginning.
 
+    /*
     Trapezoid::State initial{start_instant.heading(),
                              start_instant.angular_velocity()};
 

@@ -150,9 +150,9 @@ void OurRobot::moveDirect(Geometry2d::Point goal, float endSpeed) {
              << ", " << goal.y() << ")" << endl;
     }
 
-    RobotInstant goal_instant;
-    goal_instant.pose = Pose{goal, angle()};
-    goal_instant.velocity = Twist{(goal - pos()).normalized() * endSpeed, 0};
+    LinearMotionInstant goal_instant;
+    goal_instant.position = goal;
+    goal_instant.velocity = (goal - pos()).normalized(endSpeed);
     setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "moveDirect(" << goal << ")" << endl;
@@ -170,10 +170,10 @@ void OurRobot::moveTuning(Geometry2d::Point goal, float endSpeed) {
              << ", " << goal.y() << ")" << endl;
     }
 
+    // TODO(#1510): Add in a tuning planner.
     Geometry2d::Point targetPoint = goal;
     Geometry2d::Point targetVel = (goal - pos()).normalized() * endSpeed;
-    RobotInstant goal_instant{Geometry2d::Pose{targetPoint, 0},
-                              Geometry2d::Twist{targetVel, 0}, RJ::Time{0s}};
+    LinearMotionInstant goal_instant{targetPoint, targetVel};
     setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "moveTuning(" << goal << ")" << endl;
@@ -191,9 +191,7 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << goal.y() << ")" << std::endl;
     }
 
-    RobotInstant goal_instant;
-    goal_instant.pose = Pose{goal, 0};
-    goal_instant.velocity = Twist{endVelocity, 0};
+    LinearMotionInstant goal_instant{goal, endVelocity};
     setMotionCommand(Planning::PathTargetCommand{goal_instant});
 
     _cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
@@ -201,12 +199,12 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << ")" << endl;
 }
 
-void OurRobot::settle() {
+void OurRobot::settle(std::optional<Point> target) {
     if (!visible()) {
         return;
     }
 
-    setMotionCommand(Planning::SettleCommand{});
+    setMotionCommand(Planning::SettleCommand{target});
 }
 
 void OurRobot::collect() {

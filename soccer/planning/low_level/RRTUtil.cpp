@@ -88,7 +88,9 @@ vector<Point> runRRTHelper(Point start, Point goal, const ShapeSet& obstacles,
     biRRT.setGoalState(goal);
 
     if (straightLine) {
-        // Set the step size to be the distance between the start and goal.
+        // TODO(#1511): Replace this with a check that a straight line doesn't
+        // hit any static obstacles. Set the step size to be the distance
+        // between the start and goal.
         biRRT.setStepSize(state_space->distance(start, goal));
         // Plan straight toward the goal.
         biRRT.setGoalBias(1);

@@ -53,7 +53,7 @@ void PlannerNode::run() {
 
         RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
 
-        // TODO(Kyle): Put motion constraints in intent.
+        // TODO(#1500): Put motion constraints in intent.
         PlanRequest request{start,
                             intent.motion_command,
                             RobotConstraints(),
@@ -74,7 +74,7 @@ void PlannerNode::run() {
     }
 }
 
-PlannerForRobot::PlannerForRobot() : planner_idx_(-1) {
+PlannerForRobot::PlannerForRobot() {
     planners_.push_back(std::make_unique<PathTargetPlanner>());
     planners_.push_back(std::make_unique<SettlePlanner>());
     planners_.push_back(std::make_unique<CollectPlanner>());
