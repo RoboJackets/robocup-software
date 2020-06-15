@@ -62,7 +62,7 @@ target_include_directories(rj_protos PUBLIC ${PROTO_INCLUDE_DIR})
 # Copy the protos to include/rj_protos
 file(MAKE_DIRECTORY ${PROTO_INCLUDE_DIR}/rj_protos)
 add_custom_command(TARGET rj_protos
-    POST_BUILD
+    PRE_LINK
     COMMAND ${CMAKE_COMMAND} -E copy ${PROTO_INCLUDE} ${PROTO_INCLUDE_DIR}/rj_protos
     )
 
