@@ -36,7 +36,7 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
         RobotInstant instant = cursor.value();
 
         // Calculate the list of hits.
-        // TODO(Kyle): We could save a lot of allocation and smart pointer
+        // TODO(#1503): We could save a lot of allocation and smart pointer
         //  reference counting overhead by making hitSet return a custom
         //  iterator type. Then, we could use that to construct a set at the
         //  beginning but just iterate over it in standard fashion here.
@@ -81,7 +81,8 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
 
     // Limit iterations to 400. This will continue to operate at dt = 0.05 until
     // we hit a 20 second trajectory. If our trajectory is longer than that,
-    // something is probably wrong.
+    // something is probably wrong, but we'll still handle it (just scale dt
+    // accordingly)
     constexpr int max_iterations = 400;
     constexpr RJ::Seconds expected_dt{0.05};
 

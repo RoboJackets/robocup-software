@@ -12,8 +12,8 @@
 namespace Planning {
 
 /**
- * This class represents a robot's motion "state" at a given time, including
- * position and velocity.
+ * @brief This class represents a robot's motion "state" at a given time,
+ * including position and velocity.
  */
 struct LinearMotionInstant {
     explicit LinearMotionInstant(Geometry2d::Point pos = {0, 0},
@@ -31,7 +31,7 @@ struct LinearMotionInstant {
 };
 
 /**
- * Represents the current state of a robot in a planned trajectory.
+ * @brief Represents the current state of a robot in a planned trajectory.
  */
 struct RobotInstant {
     RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist velocity,
