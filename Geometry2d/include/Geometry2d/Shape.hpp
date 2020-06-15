@@ -33,6 +33,8 @@ public:
         throw std::runtime_error("Unimplemented method");
     }
 
+    // TODO: Refactor hit so that it doesn't force implementations to
+    // have a dependency on RobotRadius in rj_constants
     /// Returns true if the given point is within one robot radius of the shape
     [[nodiscard]] virtual bool hit(Point /*pt*/) const {
         throw std::runtime_error("Unimplemented method");
