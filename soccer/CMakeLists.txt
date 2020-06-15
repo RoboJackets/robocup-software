@@ -82,7 +82,7 @@ set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
 add_executable(soccer)
-#add_executable(log_viewer)
+add_executable(log_viewer)
 
 if (BUILD_TESTING)
     add_executable(test-soccer)
@@ -145,6 +145,17 @@ set(SOCCER_DEPS_SYSTEM_LIBRARIES
 set(SOCCER_DEPS_LIBRARIES
     robocup)
 
+# log_viewer
+set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
+    Qt5::Core
+    Qt5::Widgets
+    Qt5::OpenGL
+    Qt5::Xml
+    Qt5::Svg)
+
+set(LOG_VIEWER_DEPS_LIBRARIES
+    robocup)
+
 #======================================================================
 # Include and Linking
 #======================================================================
@@ -171,9 +182,11 @@ target_link_libraries(soccer
     ${SOCCER_DEPS_SYSTEM_LIBRARIES}
     ${SOCCER_DEPS_LIBRARIES})
 
-## build the 'log_viewer' program
-#target_link_libraries(log_viewer Core Widgets OpenGL Svg Xml)
-#target_link_libraries(log_viewer robocup)
+# ---- log_viewer ----
+target_link_libraries(log_viewer
+    PRIVATE
+    ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
+    ${LOG_VIEWER_DEPS_LIBRARIES})
 
 ## Add a test runner target "test-soccer" to run all tests in this directory
 if (BUILD_TESTING)
@@ -187,7 +200,7 @@ endif ()
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS robocup
+install(TARGETS robocup log_viewer
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)

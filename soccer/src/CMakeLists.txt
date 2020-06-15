@@ -118,10 +118,14 @@ set(SOCCER_TEST_SRC
     WindowEvaluatorTest.cpp
     LoggerTest.cpp)
 
-#qt5_add_resources(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
-#qt5_wrap_ui(LOG_VIEWER_UI ui/qt/LogViewer.ui)
-#set(LOG_VIEWER_SRC
-#    LogViewer.cpp)
+set(LOG_VIEWER_RSRC
+    ui/qt/log_icons.qrc)
+
+set(LOG_VIEWER_UIS
+    ui/qt/LogViewer.ui)
+
+set(LOG_VIEWER_SRC
+    LogViewer.cpp)
 
 #======================================================================
 # Add sources
@@ -146,19 +150,23 @@ target_sources(
         main.cpp
 )
 
+# ---- log_viewer ----
+target_sources(
+    log_viewer
+    PRIVATE
+        ${LOG_VIEWER_SRC}
+        ${LOG_VIEWER_UIS}
+        ${LOG_VIEWER_RSRC}
+)
+
+# Set the directory so AUTOUIC know where to find .ui files
+set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
 # ---- testing ----
 if (BUILD_TESTING)
     target_sources(
         test-soccer
         PRIVATE
-        ${SOCCER_TEST_SRC}
+            ${SOCCER_TEST_SRC}
     )
 endif()
-
-#target_sources(
-#    log_viewer
-#    PRIVATE
-#        ${LOG_VIEWER_SRC}
-#        ${LOG_VIEWER_UI}
-#        ${LOG_VIEWER_RSRC})
-#
