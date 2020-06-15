@@ -32,7 +32,7 @@ TEST(Planning, path_target_random) {
             obstacles.add(std::make_shared<Circle>(
                 Point{random(-2, 2), random(.5, 1.5)}, .2));
         }
-        RobotInstant goal = randomInstant();
+        LinearMotionInstant goal = randomInstant().linear_motion();
         PlanRequest request{randomInstant(),
                             PathTargetCommand{goal},
                             RobotConstraints{},
