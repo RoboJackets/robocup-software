@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <sys/time.h>
 
 #include <Geometry2d/Point.hpp>
