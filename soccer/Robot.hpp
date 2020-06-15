@@ -229,9 +229,10 @@ public:
 
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
-     * is given, the robot will try to face in that direction when the ball hits
+     * is given, the robot will try to face in that direction when the ball
+     * hits.
      */
-    void settle();
+    void settle(std::optional<Point> target);
 
     /**
      * @brief Approaches the ball and moves through it slowly
