@@ -8,7 +8,7 @@
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 
 #include <Robot.hpp>
-#include "Network.hpp"
+#include <rj_common/Network.hpp>
 #include "NetworkRadio.hpp"
 #include "PacketConvert.hpp"
 #include "Radio.hpp"

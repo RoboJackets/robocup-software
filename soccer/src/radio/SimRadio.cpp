@@ -5,7 +5,7 @@
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
 
 #include <Geometry2d/Util.hpp>
-#include <Network.hpp>
+#include <rj_common/Network.hpp>
 #include <Robot.hpp>
 #include <rj_common/Utils.hpp>
 #include <cmath>

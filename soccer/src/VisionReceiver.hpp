@@ -1,7 +1,7 @@
 #pragma once
 
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
-#include <Network.hpp>
+#include <rj_common/Network.hpp>
 #include <rj_common/Utils.hpp>
 #include <boost/asio.hpp>
 

@@ -6,7 +6,7 @@
 #include <rj_protos/grSim_Replacement.pb.h>
 #include <ui_MainWindow.h>
 
-#include <Network.hpp>
+#include <rj_common/Network.hpp>
 #include <QActionGroup>
 #include <QDateTime>
 #include <QDir>
