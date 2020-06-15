@@ -5,7 +5,7 @@
 
 #include <rj_constants/constants.hpp>
 #include <Eigen/Dense>
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <algorithm>
 #include <iostream>
 #include <rrt/Tree.hpp>

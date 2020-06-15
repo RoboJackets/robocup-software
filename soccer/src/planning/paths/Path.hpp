@@ -7,7 +7,7 @@
 #include <QString>
 #include <optional>
 
-#include "Utils.hpp"
+#include <rj_common/Utils.hpp>
 #include "planning/DynamicObstacle.hpp"
 #include "planning/MotionInstant.hpp"
 

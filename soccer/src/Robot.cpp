@@ -6,7 +6,7 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <cmath>
 #include <cstdio>
 #include <iostream>

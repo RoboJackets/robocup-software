@@ -146,7 +146,7 @@ ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
 target_include_directories(robocup
     SYSTEM PUBLIC
-    ${ROBOCUP_DEPS_SYSTEM_INLCUDE_DIRS})
+    ${ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS})
 target_include_directories(robocup
     PUBLIC
     ${ROBOCUP_DEPS_INCLUDE_DIRS})

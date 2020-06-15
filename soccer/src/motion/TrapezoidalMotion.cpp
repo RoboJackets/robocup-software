@@ -1,7 +1,7 @@
 #include "TrapezoidalMotion.hpp"
 #include <cmath>
 #include <iostream>
-#include "Utils.hpp"
+#include <rj_common/Utils.hpp>
 
 using namespace std;
 

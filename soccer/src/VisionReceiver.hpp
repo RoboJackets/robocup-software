@@ -2,7 +2,7 @@
 
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <Network.hpp>
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <boost/asio.hpp>
 
 #include <stdint.h>

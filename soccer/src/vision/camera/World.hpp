@@ -1,7 +1,7 @@
 #include <list>
 #include <vector>
 
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <Configuration.hpp>
 
 #include "vision/camera/Camera.hpp"

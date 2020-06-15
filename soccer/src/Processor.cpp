@@ -8,7 +8,7 @@
 #include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 
 #include "DebugDrawer.hpp"

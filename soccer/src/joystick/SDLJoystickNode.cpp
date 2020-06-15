@@ -1,6 +1,6 @@
 #include "SDLJoystickNode.hpp"
 
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <iostream>
 
 namespace joystick {

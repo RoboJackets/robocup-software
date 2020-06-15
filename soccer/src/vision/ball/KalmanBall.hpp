@@ -3,7 +3,7 @@
 #include <boost/circular_buffer.hpp>
 
 #include <Geometry2d/Point.hpp>
-#include <Utils.hpp>
+#include <rj_common/Utils.hpp>
 #include <Configuration.hpp>
 
 #include "vision/ball/CameraBall.hpp"
