@@ -86,8 +86,7 @@ struct RobotInstant {
      * Inequality comparison operator.
      */
     bool operator!=(const RobotInstant& other) const {
-        return pose != other.pose || velocity != other.velocity ||
-               stamp != other.stamp;
+        return !(*this == other);
     }
 };
 
