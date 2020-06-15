@@ -11,6 +11,7 @@
 #include <QResizeEvent>
 #include <QStyleOption>
 #include <rj_common/VisionDotPattern.hpp>
+#include <rj_common/Field_Dimensions.hpp>
 #include <algorithm>
 #include <cstdio>
 #include <planning/MotionConstraints.hpp>
