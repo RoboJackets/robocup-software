@@ -4,6 +4,7 @@
 
 #pragma once
 
+// TODO(1483): Sort and group / style includes with clang-format
 #include "Line.hpp"
 #include "Point.hpp"
 #include "Segment.hpp"

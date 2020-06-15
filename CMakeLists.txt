@@ -66,7 +66,7 @@ endif()
 add_subdirectory(external)
 add_subdirectory(rj_protos)
 add_subdirectory(rj_constants)
-add_subdirectory(Geometry2d)
+add_subdirectory(Geometry2d) # TODO(1516)
 add_subdirectory(rj_common)
 add_subdirectory(soccer)
 
