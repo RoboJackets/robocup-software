@@ -163,7 +163,7 @@ target_link_libraries(robocup
     ${ROBOCUP_DEPS_SYSTEM_LIBRARIES}
     ${ROBOCUP_DEPS_LIBRARIES})
 
-ament_target_dependencies(robocup ament_index_cpp)
+ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
 # ---- Soccer ----
 target_link_libraries(soccer
