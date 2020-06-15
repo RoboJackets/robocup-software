@@ -135,6 +135,7 @@ set(SOCCER_TEST_SRC
 #======================================================================
 # Add sources
 #======================================================================
+# ---- robocup ----
 target_sources(
     robocup
     PRIVATE
@@ -145,6 +146,14 @@ target_sources(
 # Set the directory so AUTOUIC know where to find .ui files
 set(UI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt)
 set_target_properties(robocup PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
+
+
+# ---- soccer ----
+target_sources(
+    soccer
+    PRIVATE
+        main.cpp
+)
 
 #target_sources(
 #    log_viewer
