@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "Segment.hpp"
-#include "Util.hpp"
+#include "Geometry2d/Segment.hpp"
+#include "Geometry2d/Util.hpp"
 using namespace Geometry2d;
 
 TEST(Segment, distTo) {

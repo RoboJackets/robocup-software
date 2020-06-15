@@ -97,15 +97,6 @@ set(ROBOCUP_LIB_SRC
 
 
 set(SOCCER_TEST_SRC
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/ArcTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/CircleTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/CompositeShapeTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/LineTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/PointTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/PoseTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/RectTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/SegmentTest.cpp
-    ${CMAKE_SOURCE_DIR}/common/Geometry2d/TransformMatrixTest.cpp
     BatteryProfileTest.cpp
     KickEvaluatorTest.cpp
     motion/TrapezoidalMotionTest.cpp
@@ -154,6 +145,15 @@ target_sources(
     PRIVATE
         main.cpp
 )
+
+# ---- testing ----
+if (BUILD_TESTING)
+    target_sources(
+        test-soccer
+        PRIVATE
+        ${SOCCER_TEST_SRC}
+    )
+endif()
 
 #target_sources(
 #    log_viewer

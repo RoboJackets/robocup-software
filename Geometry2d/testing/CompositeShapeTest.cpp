@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "Arc.hpp"
-#include "Circle.hpp"
-#include "CompositeShape.hpp"
-#include "Polygon.hpp"
-#include "Rect.hpp"
-#include "Util.hpp"
+#include "Geometry2d/Arc.hpp"
+#include "Geometry2d/Circle.hpp"
+#include "Geometry2d/CompositeShape.hpp"
+#include "Geometry2d/Polygon.hpp"
+#include "Geometry2d/Rect.hpp"
+#include "Geometry2d/Util.hpp"
 
 #include <vector>
 

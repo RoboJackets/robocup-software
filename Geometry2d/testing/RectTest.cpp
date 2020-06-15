@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <Geometry2d/Rect.hpp>
+#include <Geometry2d/Segment.hpp>
 #include <rj_constants/constants.hpp>
 
 namespace Geometry2d {

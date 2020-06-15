@@ -7,8 +7,10 @@ set(GEOMETRY2D_TESTING_SRCS
     CompositeShapeTest.cpp
     LineTest.cpp
     PointTest.cpp
+    PoseTest.cpp
     RectTest.cpp
-    SegmentTest.cpp)
+    SegmentTest.cpp
+    TransformMatrixTest.cpp)
 
 #======================================================================
 # Add Sources

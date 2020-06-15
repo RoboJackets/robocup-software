@@ -81,9 +81,12 @@ add_library(robocup SHARED)
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
-
 add_executable(soccer)
 #add_executable(log_viewer)
+
+if (BUILD_TESTING)
+    add_executable(test-soccer)
+endif()
 
 add_subdirectory(src)
 
@@ -175,19 +178,44 @@ target_link_libraries(soccer
 #target_link_libraries(log_viewer Core Widgets OpenGL Svg Xml)
 #target_link_libraries(log_viewer robocup)
 
-#======================================================================
-# Testing
-#======================================================================
-
 ## Add a test runner target "test-soccer" to run all tests in this directory
-#if (BUILD_TESTS)
-#    add_executable(test-soccer ${SOCCER_TEST_SRC})
-#    target_link_libraries(test-soccer robocup)
-#    qt5_use_modules(test-soccer Core Widgets Xml)
-#    target_link_libraries(test-soccer ${GTEST_LIBRARIES})
-#    add_dependencies(test-soccer googletest)
-#endif ()
+if (BUILD_TESTING)
+    target_link_libraries(test-soccer PRIVATE robocup)
+    target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
+    target_link_libraries(test-soccer PRIVATE geometry2d_testing)
+    target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
+    add_dependencies(test-soccer googletest)
+endif ()
 
 #======================================================================
 # Packaging
 #======================================================================
+install(TARGETS robocup
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(TARGETS soccer
+        DESTINATION lib/${CMAKE_PROJECT_NAME})
+
+install(DIRECTORY
+        src/gameplay
+        DESTINATION share/${CMAKE_PROJECT_NAME}
+        FILES_MATCHING
+        PATTERN "*.py"
+        PATTERN "*.pbk")
+
+install(FILES
+        config/realShopField.xml
+        DESTINATION share/${CMAKE_PROJECT_NAME}/config
+        RENAME soccer-real.cfg)
+
+install(FILES
+        config/sim.xml
+        DESTINATION share/${CMAKE_PROJECT_NAME}/config
+        RENAME soccer-sim.cfg)
+
+if(BUILD_TESTING)
+    install(TARGETS test-soccer
+            DESTINATION lib/${CMAKE_PROJECT_NAME})
+endif()

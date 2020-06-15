@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
-#include "Circle.hpp"
-#include "Util.hpp"
+#include "Geometry2d/Circle.hpp"
+#include "Geometry2d/Util.hpp"
+
 using namespace Geometry2d;
 
 TEST(Line, delta) {
