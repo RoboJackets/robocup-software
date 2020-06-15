@@ -2,7 +2,7 @@
 
 #include <optional>
 
-#include "RefereeEnums.hpp"
+#include <rj_common/RefereeEnums.hpp>
 
 /**
  * Settings for the game, set by MainWindow to be consumed by the rest of the

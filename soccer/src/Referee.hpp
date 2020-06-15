@@ -5,7 +5,7 @@
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>
-#include "RefereeEnums.hpp"
+#include <rj_common/RefereeEnums.hpp>
 
 #include <rj_common/Utils.hpp>
 #include <mutex>

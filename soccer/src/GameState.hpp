@@ -5,7 +5,7 @@
 #include <rj_common/time.hpp>
 
 #include <rj_constants/constants.hpp>
-#include "RefereeEnums.hpp"
+#include <rj_common/RefereeEnums.hpp>
 #include "TeamInfo.hpp"
 
 /**

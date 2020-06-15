@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 #include <rj_constants/constants.hpp>
-#include "RefereeEnums.hpp"
+#include <rj_common/RefereeEnums.hpp>
 
 using RefereeModuleEnums::Command;
 using RefereeModuleEnums::Stage;
