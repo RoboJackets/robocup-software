@@ -1,7 +1,7 @@
 
-#include "Segment.hpp"
+#include "geometry2d/Segment.hpp"
 
-#include "Util.hpp"
+#include "geometry2d/Util.hpp"
 
 using namespace std;
 

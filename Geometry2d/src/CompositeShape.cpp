@@ -1,4 +1,4 @@
-#include "CompositeShape.hpp"
+#include "geometry2d/CompositeShape.hpp"
 
 namespace Geometry2d {
 

@@ -1,11 +1,11 @@
-#include "Line.hpp"
+#include "geometry2d/Line.hpp"
 
 #include <cmath>
 
-#include "Circle.hpp"
-#include "Point.hpp"
-#include "Segment.hpp"
-#include "Util.hpp"
+#include "geometry2d/Circle.hpp"
+#include "geometry2d/Point.hpp"
+#include "geometry2d/Segment.hpp"
+
 namespace Geometry2d {
 
 Line::Line(const Segment& segment) : Line(segment.pt[0], segment.pt[1]) {}

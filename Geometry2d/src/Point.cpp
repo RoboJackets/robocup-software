@@ -1,6 +1,6 @@
-#include "Point.hpp"
+#include "geometry2d/Point.hpp"
 
-#include "Util.hpp"
+#include "geometry2d/Util.hpp"
 
 namespace Geometry2d {
 bool Point::nearlyEquals(Point other) const {

@@ -1,6 +1,6 @@
-#include "Rect.hpp"
-#include "Point.hpp"
-#include "Segment.hpp"
+#include "geometry2d/Rect.hpp"
+#include "geometry2d/Point.hpp"
+#include "geometry2d/Segment.hpp"
 #include <rj_constants/constants.hpp>
 
 using namespace std;

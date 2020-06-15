@@ -2,7 +2,7 @@
 # Preamble
 #======================================================================
 cmake_minimum_required(VERSION 3.16)
-project(common LANGUAGES CXX)
+project(rj_common LANGUAGES CXX)
 
 #======================================================================
 # Find package
@@ -11,46 +11,59 @@ find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
 find_package(ament_cmake REQUIRED)
 
 #======================================================================
+# Dependencies List
+#======================================================================
+set(RJ_COMMON_DEPS_SYSTEM_INCLUDE_DIRS
+    ${EIGEN_INCLUDE_DIRS})
+
+set(RJ_COMMON_DEPS_SYSTEM_LIBRARIES
+    Qt5::Core
+    Qt5::Network
+    Qt5::Widgets)
+
+set(RJ_COMMON_DEPS_INCLUDE_DIRS
+    include)
+
+set(RJ_COMMON_DEPS_LIBRARIES
+    geometry2d
+    rj_constants)
+
+#======================================================================
 # Define Targets
 #======================================================================
-add_library(common STATIC)
+add_library(rj_common STATIC)
 
 # position-independent-code flag
-target_compile_options(common PRIVATE "-fPIC")
+target_compile_options(rj_common PRIVATE "-fPIC")
 
-#======================================================================
-# Find package
-#======================================================================
-
-set(COMMON_SRC
-    "Field_Dimensions.cpp"
-    "multicast.cpp"
-    "Utils.cpp"
-    "RefereeEnums.cpp"
-)
-
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-# build the 'common' static library (and include our protobuf messages in it)
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
-target_link_libraries(common PUBLIC rj_protos)
-
-#======================================================================
-# Add sources
-#======================================================================
-target_sources(common
-    PRIVATE
-    ${COMMON_SRC})
+add_subdirectory(src)
 
 #======================================================================
 # Include and Linking
 #======================================================================
-target_link_libraries(common PUBLIC Qt5::Core Qt5::Network Qt5::Widgets)
+target_include_directories(rj_common
+    SYSTEM PUBLIC
+    ${RJ_COMMON_DEPS_SYSTEM_INCLUDE_DIRS})
+target_include_directories(rj_common
+    PUBLIC
+    ${RJ_COMMON_DEPS_INCLUDE_DIRS})
+
+target_link_libraries(rj_common
+    PUBLIC
+    ${RJ_COMMON_DEPS_SYSTEM_LIBRARIES}
+    ${RJ_COMMON_DEPS_LIBRARIES})
 
 #======================================================================
 # Packaging
 #======================================================================
+install(DIRECTORY include/
+    DESTINATION include/)
+
+install( TARGETS rj_common
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 
 #======================================================================
 # Ament packaging

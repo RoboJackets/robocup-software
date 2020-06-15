@@ -4,13 +4,13 @@
 #include <cfloat>
 #include <cmath>
 
-#include <Geometry2d/Arc.hpp>
-#include <Geometry2d/Circle.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Rect.hpp>
-#include <Geometry2d/Line.hpp>
+#include <geometry2d/Arc.hpp>
+#include <geometry2d/Circle.hpp>
+#include <geometry2d/CompositeShape.hpp>
+#include <geometry2d/Point.hpp>
+#include <geometry2d/Polygon.hpp>
+#include <geometry2d/Rect.hpp>
+#include <geometry2d/Line.hpp>
 
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
@@ -44,7 +44,7 @@ struct Field_Dimensions {
     float FloorWidth() const { return _FloorWidth; }
 
     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
-    
+
     Geometry2d::Rect OurGoalZoneShape() const {
         return _OurGoalZoneShape;
     }
@@ -68,7 +68,7 @@ struct Field_Dimensions {
     Geometry2d::Rect OurHalf() const { return _OurHalf; }
     Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
     Geometry2d::Rect FieldRect() const { return _FieldRect; }
-    
+
     /*
     * Provides a rect that is a padded version of our goalbox
     * used mostly for movement at the play level
@@ -94,7 +94,7 @@ struct Field_Dimensions {
         : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 
     Field_Dimensions(float fl, float fw, float fb, float flw, float gw,
-                     float gd, float gh, float psd, float pld, float cr, 
+                     float gd, float gh, float psd, float pld, float cr,
                      float cd, float gf, float ffl, float ffw)
         : _Length(fl),
           _Width(fw),
@@ -118,7 +118,7 @@ struct Field_Dimensions {
             _Length * scalar, _Width * scalar, _Border * scalar,
             _LineWidth * scalar, _GoalWidth * scalar, _GoalDepth * scalar,
             _GoalHeight * scalar, _PenaltyShortDist * scalar, _PenaltyLongDist * scalar,
-            _CenterRadius * scalar, _CenterDiameter * scalar, 
+            _CenterRadius * scalar, _CenterDiameter * scalar,
             _GoalFlat * scalar, _FloorLength * scalar, _FloorWidth * scalar);
     }
 
