@@ -1,7 +1,7 @@
 # -*-mode: conf-*-
 
 [MASTER]
-init-hook='import sys; sys.path.append("./soccer/gameplay")'
+init-hook='import sys; sys.path.append("./soccer/src/gameplay")'
 
 [TYPECHECK]
 ignored-modules = PyQt5.*, robocup
