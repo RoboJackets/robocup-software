@@ -11,6 +11,16 @@ find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
 find_package(ament_cmake REQUIRED)
 
 #======================================================================
+# Define Targets
+#======================================================================
+add_library(rj_common STATIC)
+
+# position-independent-code flag
+target_compile_options(rj_common PRIVATE "-fPIC")
+
+add_subdirectory(src)
+
+#======================================================================
 # Dependencies List
 #======================================================================
 set(RJ_COMMON_DEPS_SYSTEM_INCLUDE_DIRS
@@ -27,16 +37,6 @@ set(RJ_COMMON_DEPS_INCLUDE_DIRS
 set(RJ_COMMON_DEPS_LIBRARIES
     geometry2d
     rj_constants)
-
-#======================================================================
-# Define Targets
-#======================================================================
-add_library(rj_common STATIC)
-
-# position-independent-code flag
-target_compile_options(rj_common PRIVATE "-fPIC")
-
-add_subdirectory(src)
 
 #======================================================================
 # Include and Linking

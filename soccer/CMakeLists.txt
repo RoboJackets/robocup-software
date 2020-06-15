@@ -33,6 +33,9 @@ find_package(libusb-1.0 REQUIRED)
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
 
+# Pthread
+find_package(Threads REQUIRED)
+
 # Boost Python
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
@@ -61,27 +64,6 @@ if (NOT FOUND_A_BOOST_PYTHON)
 endif ()
 
 #======================================================================
-# Dependencies List
-#======================================================================
-
-set(SOCCER_DEPS_SYSTEM_INCLUDE_DIRS
-    ${EIGEN_INCLUDE_DIRS}
-    ${LIBUSB_1_INCLUDE_DIRS}
-    ${SDL2_INCLUDE_DIRS}
-    )
-
-# Qt
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
-
-# include Eigen3 for linear algebra
-include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
-
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-#======================================================================
 # Define Targets
 #======================================================================
 # Build stand-alone soccer dylib
@@ -91,38 +73,98 @@ add_library(robocup SHARED)
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
+# Qt
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 add_executable(soccer)
 #add_executable(log_viewer)
 
 add_subdirectory(src)
 
 #======================================================================
+# Dependencies List
+#======================================================================
+
+# Robocup (static lib)
+set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS
+    ${EIGEN_INCLUDE_DIRS}
+    ${LIBUSB_1_INCLUDE_DIRS}
+    ${PYTHON_INCLUDE_DIRS}
+    ${RRT_INCLUDE_DIR}
+    ${SDL2_INCLUDE_DIRS})
+
+set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
+    ${Boost_LIBRARIES}
+    ${Boost_SYSTEM_LIBRARY}
+    GL
+    GLU
+    glut
+    ${PYTHON_LINK_DIRS}
+    ${PYTHON_LIBRARIES}
+    Qt5::Widgets
+    Qt5::Xml
+    Qt5::Core
+    Qt5::OpenGL
+    Qt5::Network
+    Qt5::Svg
+    Threads::Threads
+    RRT
+    spnav
+    ${SDL2_LIBRARIES}
+    )
+
+set(ROBOCUP_DEPS_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+
+set(ROBOCUP_DEPS_LIBRARIES
+    rj_common
+    rj_protos
+    rc-fshare
+    )
+
+# Soccer (executable)
+set(SOCCER_DEPS_SYSTEM_LIBRARIES
+    Qt5::Widgets
+    Qt5::Xml
+    Qt5::Core
+    Qt5::OpenGL
+    Qt5::Network
+    Qt5::Svg)
+
+set(SOCCER_DEPS_LIBRARIES
+    robocup)
+
+#======================================================================
 # Include and Linking
 #======================================================================
 
-target_link_libraries(robocup common rc-fshare rj_protos)
-qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
-target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
-target_link_libraries(robocup ${Boost_LIBRARIES} ${Boost_SYSTEM_LIBRARY})
-target_link_libraries(robocup GL GLU glut)
-target_link_libraries(robocup pthread)
-target_link_libraries(robocup spnav)
-target_link_libraries(robocup ${SDL2_LIBRARIES})
+# ---- Robocup ----
+ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
-ament_target_dependencies(robocup ament_index_cpp)
+target_include_directories(robocup
+    SYSTEM PUBLIC
+    ${ROBOCUP_DEPS_SYSTEM_INLCUDE_DIRS})
+target_include_directories(robocup
+    PUBLIC
+    ${ROBOCUP_DEPS_INCLUDE_DIRS})
+target_link_libraries(robocup
+    PUBLIC
+    ${ROBOCUP_DEPS_SYSTEM_LIBRARIES}
+    ${ROBOCUP_DEPS_LIBRARIES})
 
-# RRT
-include_directories(${RRT_INCLUDE_DIR})
-target_link_libraries(robocup RRT)
+target_link_libraries(rj_common
+    PUBLIC
+    ${RJ_COMMON_DEPS_SYSTEM_LIBRARIES}
+    ${RJ_COMMON_DEPS_LIBRARIES})
 
-# python
-# note: these are set in the root CMakeLists.txt file
-include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
-link_directories(${PYTHON_LINK_DIRS})
-target_link_libraries(robocup ${PYTHON_LIBRARIES})
-
-target_link_libraries(soccer Qt5::Widgets Qt5::Xml Qt5::Core Qt5::OpenGL Qt5::Network Qt5::Svg)
-target_link_libraries(soccer robocup)
+# ---- Soccer ----
+target_link_libraries(soccer
+    PUBLIC
+    ${SOCCER_DEPS_SYSTEM_LIBRARIES}
+    ${SOCCER_DEPS_LIBRARIES})
 
 ## build the 'log_viewer' program
 #target_link_libraries(log_viewer Core Widgets OpenGL Svg Xml)

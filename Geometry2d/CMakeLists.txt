@@ -12,6 +12,13 @@ find_package(Eigen3 REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
 #======================================================================
+# Define Targets
+#======================================================================
+add_library(geometry2d STATIC)
+
+add_subdirectory(src)
+
+#======================================================================
 # Dependencies List
 #======================================================================
 set(GEOMETRY2D_DEPS_SYSTEM_INCLUDE_DIRS
@@ -26,13 +33,6 @@ set(GEOMETRY2D_DEPS_INCLUDE_DIRS
 set(GEOMETRY2D_DEPS_LIBRARIES
     rj_protos
     rj_constants)
-
-#======================================================================
-# Define Targets
-#======================================================================
-add_library(geometry2d STATIC)
-
-add_subdirectory(src)
 
 #======================================================================
 # Include and Linking
