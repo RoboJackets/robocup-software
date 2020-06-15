@@ -33,10 +33,8 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
-        request.debug_drawer->drawCircle(goalPoint,
-                                         static_cast<float>(drawRadius),
-                                         drawColor,
-                                         drawLayer);
+        request.debug_drawer->drawCircle(
+            goalPoint, static_cast<float>(drawRadius), drawColor, drawLayer);
     }
 
     AngleFunction angle_function = getAngleFunction(request);
