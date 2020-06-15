@@ -18,7 +18,6 @@ using namespace std;
 using namespace Geometry2d;
 using Planning::LinearMotionInstant;
 using Planning::MotionCommand;
-using Planning::RobotInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
