@@ -41,30 +41,28 @@ set(PROTO_FILES
 #======================================================================
 # Add sources
 #======================================================================
-protobuf_generate_cpp(PROTO_SRC PROTO_INCLUDE ${PROTO_FILES})
+set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include/)
+
+protobuf_generate_cpp(RJ_PROTOS_SRC PROTO_HDRS ${PROTO_FILES})
+# Copy the headers to PROTO_INCLUDE_DIR/rj_protos
+include(CopyProtobufHeaders)
+copy_protobuf_headers("${PROTO_INCLUDE_DIR}/rj_protos"
+    RJ_PROTOS_HDRS ${PROTO_HDRS})
 
 target_sources(rj_protos
     PRIVATE
-    ${PROTO_SRC})
+    ${RJ_PROTOS_SRC}
+    ${RJ_PROTOS_HDRS})
 
 #======================================================================
 # Include and Linking
 #======================================================================
-set(PROTO_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/include/)
-
 target_link_libraries(rj_protos ${PROTOBUF_LIBRARIES})
 target_include_directories(rj_protos PUBLIC ${PROTO_INCLUDE_DIR})
 
 #======================================================================
 # Packaging
 #======================================================================
-# Copy the protos to include/rj_protos
-file(MAKE_DIRECTORY ${PROTO_INCLUDE_DIR}/rj_protos)
-add_custom_command(TARGET rj_protos
-    PRE_LINK
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROTO_INCLUDE} ${PROTO_INCLUDE_DIR}/rj_protos
-    )
-
 install(DIRECTORY ${PROTO_INCLUDE_DIR}
     DESTINATION include/
     )
