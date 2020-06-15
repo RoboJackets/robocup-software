@@ -63,6 +63,14 @@ if (NOT FOUND_A_BOOST_PYTHON)
     message(FATAL_ERROR "Unable to find a suitable version of boost python")
 endif ()
 
+
+#======================================================================
+# QT build tool things
+#======================================================================
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 #======================================================================
 # Define Targets
 #======================================================================
@@ -73,10 +81,6 @@ add_library(robocup SHARED)
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
-# Qt
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
 
 add_executable(soccer)
 #add_executable(log_viewer)
