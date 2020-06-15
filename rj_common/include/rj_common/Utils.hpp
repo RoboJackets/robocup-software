@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <sys/time.h>
 
 #include <Geometry2d/Point.hpp>
@@ -8,6 +7,7 @@
 #include <QString>
 #include <QtWidgets>
 #include <cmath>
+#include <cstdint>
 #include <deque>
 #include <memory>
 #include <rj_common/Field_Dimensions.hpp>
