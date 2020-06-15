@@ -12,7 +12,7 @@
 #include <stdexcept>
 
 #include "PacketConvert.hpp"
-#include "status.h"
+#include <rj_common/status.h>
 
 using namespace std;
 using namespace Packet;

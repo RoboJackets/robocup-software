@@ -1,6 +1,6 @@
 #include "RobotStatusWidget.hpp"
 
-#include <status.h>
+#include <rj_common/status.h>
 
 #include <BatteryProfile.hpp>
 #include <cmath>

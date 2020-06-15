@@ -28,7 +28,7 @@
 #include "Context.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
-#include "status.h"
+#include <rj_common/status.h>
 
 class RobotConfig;
 class RobotLocalConfig;
