@@ -10,7 +10,7 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyleOption>
-#include <VisionDotPattern.hpp>
+#include <rj_common/VisionDotPattern.hpp>
 #include <algorithm>
 #include <cstdio>
 #include <planning/MotionConstraints.hpp>

@@ -2,7 +2,7 @@
 
 #include <rj_constants/constants.hpp>
 #include <Geometry2d/Util.hpp>
-#include <VisionDotPattern.hpp>
+#include <rj_common/VisionDotPattern.hpp>
 #include <cmath>
 #include <stdexcept>
 

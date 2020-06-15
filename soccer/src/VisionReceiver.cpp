@@ -2,7 +2,7 @@
 
 #include <unistd.h>
 #include <rj_common/Utils.hpp>
-#include <multicast.hpp>
+#include <rj_common/multicast.hpp>
 #include <stdexcept>
 
 using namespace std;
