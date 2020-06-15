@@ -69,43 +69,6 @@ add_subdirectory(rj_constants)
 add_subdirectory(Geometry2d)
 add_subdirectory(rj_common)
 add_subdirectory(soccer)
-#
-#
-## Qt5
-#find_package(Qt5 COMPONENTS Widgets Xml Core OpenGL Network Svg REQUIRED)
-#message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
-#
-## Google Protobuf
-#find_package(Protobuf REQUIRED)
-#include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIR})
-#
-## Remove QT slots/signals/emit keywords
-#add_definitions(-DQT_NO_KEYWORDS)
-## Python
-#find_package(PythonInterp 3.2 REQUIRED)
-#find_package(PythonLibs 3.2 REQUIRED)
-#
-#
-## Eigen - used for linear algebra
-#find_package(Eigen3 REQUIRED)
-#
-## libusb
-#find_package(libusb-1.0 REQUIRED)
-#
-## SDL2
-#include(FindPkgConfig)
-#pkg_search_module(SDL2 REQUIRED sdl2)
-#
-## Several things depend on the headers in the 'common' directory
-#include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
-#include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf headers
-#include_directories("${CMAKE_BINARY_DIR}/common") # for generated protobuf headers
-
-
-#
-## run all the other CMakeLists files
-#
-## Installing Targets
 
 #======================================================================
 # Packaging
@@ -116,44 +79,3 @@ install(DIRECTORY launch
 install(FILES
         external/sdlcontrollerdb/gamecontrollerdb.txt
         DESTINATION share/${CMAKE_PROJECT_NAME})
-
-
-# Installing Targets
-install(TARGETS robocup
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
-
-install(TARGETS grSim soccer
-        DESTINATION lib/${PROJECT_NAME})
-
-if(BUILD_TESTS)
-    install(TARGETS test-soccer
-            DESTINATION lib/${PROJECT_NAME})
-endif()
-
-install(DIRECTORY launch
-        DESTINATION share/${PROJECT_NAME})
-
-install(DIRECTORY
-        soccer/gameplay
-        DESTINATION share/${PROJECT_NAME}
-        FILES_MATCHING
-        PATTERN "*.py"
-        PATTERN "*.pbk")
-
-install(FILES
-        soccer/config/realShopField.xml
-        DESTINATION share/${PROJECT_NAME}/config
-        RENAME soccer-real.cfg)
-
-install(FILES
-        soccer/config/sim.xml
-        DESTINATION share/${PROJECT_NAME}/config
-        RENAME soccer-sim.cfg)
-
-install(FILES
-        external/sdlcontrollerdb/gamecontrollerdb.txt
-        DESTINATION share/${PROJECT_NAME})
-
-ament_package()
