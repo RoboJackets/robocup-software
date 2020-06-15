@@ -117,3 +117,43 @@ install(FILES
         external/sdlcontrollerdb/gamecontrollerdb.txt
         DESTINATION share/${CMAKE_PROJECT_NAME})
 
+
+# Installing Targets
+install(TARGETS robocup
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(TARGETS grSim soccer
+        DESTINATION lib/${PROJECT_NAME})
+
+if(BUILD_TESTS)
+    install(TARGETS test-soccer
+            DESTINATION lib/${PROJECT_NAME})
+endif()
+
+install(DIRECTORY launch
+        DESTINATION share/${PROJECT_NAME})
+
+install(DIRECTORY
+        soccer/gameplay
+        DESTINATION share/${PROJECT_NAME}
+        FILES_MATCHING
+        PATTERN "*.py"
+        PATTERN "*.pbk")
+
+install(FILES
+        soccer/config/realShopField.xml
+        DESTINATION share/${PROJECT_NAME}/config
+        RENAME soccer-real.cfg)
+
+install(FILES
+        soccer/config/sim.xml
+        DESTINATION share/${PROJECT_NAME}/config
+        RENAME soccer-sim.cfg)
+
+install(FILES
+        external/sdlcontrollerdb/gamecontrollerdb.txt
+        DESTINATION share/${PROJECT_NAME})
+
+ament_package()

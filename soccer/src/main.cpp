@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QString>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cassert>
 #include <csignal>
 #include <cstdio>
@@ -23,23 +24,21 @@ using namespace std;
 void signal_handler(int signum) { exit(signum); }
 
 void usage(const char* prog) {
-    fprintf(stderr, "usage: %s [options...]\n", prog);
-    fprintf(stderr, "\t-y:           run as the yellow team\n");
-    fprintf(stderr, "\t-b:           run as the blue team\n");
-    fprintf(stderr, "\t-c <file>:    specify the configuration file\n");
-    fprintf(stderr, "\t-s <seed>:    set random seed (hexadecimal)\n");
-    fprintf(stderr,
-            "\t-pbk <file>:  playbook file name as contained in "
-            "'soccer/gameplay/playbooks/'\n");
-    fprintf(stderr,
-            "\t-vlog <file>: view <file> instead of launching normally\n");
-    fprintf(stderr, "\t-ng:          no goalie\n");
-    fprintf(stderr, "\t-sim:         use simulator\n");
-    fprintf(stderr, "\t-nolog:       don't write log files\n");
-    fprintf(stderr, "\t-noref:       don't use external referee commands\n");
-    fprintf(stderr,
-            "\t-defend:      specify half of field to defend (plus or minus)\n");
-    exit(0);
+    std::cerr << "usage: " << prog << " [options...]\n";
+    std::cerr << "\t-y:           run as the yellow team\n";
+    std::cerr << "\t-b:           run as the blue team\n";
+    std::cerr << "\t-c <file>:    specify the configuration file\n";
+    std::cerr << "\t-s <seed>:    set random seed (hexadecimal)\n";
+    std::cerr << "\t-pbk <file>:  playbook file name as contained in "
+                 "'soccer/gameplay/playbooks/'\n";
+    std::cerr << "\t-vlog <file>: view <file> instead of launching normally\n";
+    std::cerr << "\t-ng:          no goalie\n";
+    std::cerr << "\t-sim:         use simulator\n";
+    std::cerr << "\t-nolog:       don't write log files\n";
+    std::cerr << "\t-noref:       don't use external referee commands\n";
+    std::cerr
+        << "\t-defend:      specify half of field to defend (plus or minus)\n";
+    std::exit(0);
 }
 
 int main(int argc, char* argv[]) {
@@ -75,6 +74,10 @@ int main(int argc, char* argv[]) {
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
+
+        if (strcmp(var, "") == 0) {
+            continue;
+        }
 
         if (strcmp(var, "--help") == 0) {
             usage(argv[0]);
@@ -138,6 +141,9 @@ int main(int argc, char* argv[]) {
                 printf("Invalid option for defendX\n");
                 usage(argv[0]);
             }
+        } else if (strcmp(var, "--ros-args") == 0) {
+            // ROS args follow this one, we're done parsing
+            break;
         } else {
             printf("Not a valid flag: %s\n", argv[i]);
             usage(argv[0]);
@@ -151,8 +157,12 @@ int main(int argc, char* argv[]) {
 
     // Default config file name
     if (cfgFile.isNull()) {
-        cfgFile = ApplicationRunDirectory().filePath(sim ? "soccer-sim.cfg"
-                                                         : "soccer-real.cfg");
+        const auto* filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
+        const auto share_dir =
+            ament_index_cpp::get_package_share_directory("rj_robocup");
+        const std::string config_path = share_dir + "/config/" + filename;
+
+        cfgFile = QString::fromStdString(config_path);
     }
 
     std::shared_ptr<Configuration> config =

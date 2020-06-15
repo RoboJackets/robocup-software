@@ -9,9 +9,9 @@ defaults_env: &setup_env
 defaults_dir: &dir
   working_directory: ~/robocup-software
 
-defaults_image: &image
+image: &image
   docker:
-    - image: robojackets/robocup-software:master
+    - image: robojackets/robocup-software:foxy
 
 defaults_deps: &install_deps
   run: ./util/ubuntu-setup --yes
@@ -21,7 +21,7 @@ save_workspace: &save_workspace
     root: ~/robocup-software
     paths:
       - build/*
-      - run/*
+      - install/*
 
 load_workspace: &load_workspace
   attach_workspace:
@@ -36,7 +36,12 @@ jobs:
     steps:
       - checkout
       - <<: *install_deps
-      - run: make all_including_tests
+      - run: |
+          mkdir -p build && cd build
+          source /opt/ros/foxy/setup.bash
+          export CMAKE_PREFIX_PATH=/opt/ros/foxy
+          cmake -GNinja -Wno-dev -DNO_WALL=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=../install --target -DBUILD_TESTS=ON ..
+          ninja -j2 install
       - <<: *save_workspace
 
   # Use the saved build folder for testing
@@ -49,14 +54,13 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       # Run test without building anything
-      - run: make test-soccer-nobuild
-      - run: make test-python-nobuild
-
+      - run: |
+          source /opt/ros/foxy/setup.sh && source install/setup.bash && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
+      - run: |
+          source /opt/ros/foxy/setup.sh && source install/setup.bash && cd soccer/gameplay && ./run_tests.sh
   python-static:
     <<: *dir
     <<: *image
-#    docker:
-#      - image: robojackets/robocup-software:16
     steps:
       - checkout
       - <<: *install_deps
