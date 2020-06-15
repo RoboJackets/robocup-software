@@ -13,9 +13,9 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
-#include <time.hpp>
+#include <rj_common/time.hpp>
 
-#include "time.hpp"
+#include <rj_common/time.hpp>
 
 using namespace std;
 using namespace Packet;

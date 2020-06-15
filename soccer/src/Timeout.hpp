@@ -2,7 +2,7 @@
 #pragma once
 
 #include <rj_common/Utils.hpp>
-#include <time.hpp>
+#include <rj_common/time.hpp>
 
 /**
  * This is a simple timeout timer.

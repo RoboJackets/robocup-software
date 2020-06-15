@@ -7,7 +7,7 @@
 #include <motion/MotionSetpoint.hpp>
 #include <optional>
 #include <radio/RobotStatus.hpp>
-#include <time.hpp>
+#include <rj_common/time.hpp>
 
 #include "Node.hpp"
 #include "RobotIntent.hpp"
