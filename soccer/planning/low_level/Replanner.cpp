@@ -41,7 +41,7 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
 
     Trajectory preTrajectory = partialPath(previous, params.start.stamp);
     Trajectory postTrajectory = CreatePath::rrt(
-        preTrajectory.last().linear_motion(), params.goal.linear_motion(),
+        preTrajectory.last().linear_motion(), params.goal,
         params.constraints.mot, preTrajectory.end_time(),
         params.static_obstacles, params.dynamic_obstacles, biasWaypoints);
 
@@ -61,7 +61,7 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
 
 Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
     Trajectory path = CreatePath::rrt(
-        params.start.linear_motion(), params.goal.linear_motion(),
+        params.start.linear_motion(), params.goal,
         params.constraints.mot, params.start.stamp, params.static_obstacles,
         params.dynamic_obstacles);
 
@@ -96,7 +96,7 @@ Trajectory Replanner::checkBetter(const Replanner::PlanParams& params,
 
 Trajectory Replanner::CreatePlan(Replanner::PlanParams params,
                                  Trajectory previous) {
-    Geometry2d::Point goalPoint = params.goal.position();
+    Geometry2d::Point goalPoint = params.goal.position;
 
     if (!previous.empty() && !previous.timeCreated().has_value()) {
         throw std::invalid_argument(
@@ -107,7 +107,7 @@ Trajectory Replanner::CreatePlan(Replanner::PlanParams params,
     RJ::Time now = params.start.stamp;
 
     if (previous.empty() || veeredOffPath(previous, params.start, now) ||
-        goalChanged(previous.last(), params.goal)) {
+        goalChanged(previous.last().linear_motion(), params.goal)) {
         return fullReplan(params);
     }
 
@@ -175,11 +175,10 @@ bool Replanner::veeredOffPath(const Trajectory& trajectory, RobotInstant actual,
     return path_error > kReplanThreshold;
 }
 
-bool Replanner::goalChanged(const RobotInstant& prevGoal,
-                            const RobotInstant& goal) {
-    double goalPosDiff = (prevGoal.position() - goal.position()).mag();
-    double goalVelDiff =
-        (prevGoal.linear_velocity() - goal.linear_velocity()).mag();
+bool Replanner::goalChanged(const LinearMotionInstant& prevGoal,
+                            const LinearMotionInstant& goal) {
+    double goalPosDiff = (prevGoal.position - goal.position).mag();
+    double goalVelDiff = (prevGoal.velocity - goal.velocity).mag();
     return goalPosDiff > *_goalPosChangeThreshold ||
            goalVelDiff > *_goalVelChangeThreshold;
 }

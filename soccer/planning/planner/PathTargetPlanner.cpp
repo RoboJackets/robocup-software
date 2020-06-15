@@ -28,8 +28,8 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     }
 
     auto command = std::get<PathTargetCommand>(request.motionCommand);
-    RobotInstant goalInstant = command.pathGoal;
-    Point goalPoint = goalInstant.position();
+    LinearMotionInstant goalInstant = command.goal;
+    Point goalPoint = goalInstant.position;
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {

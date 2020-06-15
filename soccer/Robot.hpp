@@ -232,7 +232,7 @@ public:
      * is given, the robot will try to face in that direction when the ball
      * hits.
      */
-    void settle(std::optional<Point> target);
+    void settle(std::optional<Geometry2d::Point> target);
 
     /**
      * @brief Approaches the ball and moves through it slowly

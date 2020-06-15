@@ -6,7 +6,7 @@
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <planning/MotionInstant.hpp>
+#include <planning/Instant.hpp>
 
 // for python stuff
 #include "DebugDrawer.hpp"

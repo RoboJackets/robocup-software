@@ -243,9 +243,7 @@ Trajectory CollectPlanner::courseApproach(
         pathCourseTarget = targetSlowPos;
     }
 
-    RobotInstant targetSlow;
-    targetSlow.position() = pathCourseTarget;
-    targetSlow.linear_velocity() = targetSlowVel;
+    LinearMotionInstant targetSlow{pathCourseTarget, targetSlowVel};
 
     Replanner::PlanParams params{start,
                                  targetSlow,
@@ -436,8 +434,7 @@ Trajectory CollectPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    RobotInstant target = planRequest.start;
-    target.velocity = Geometry2d::Twist::Zero();
+    LinearMotionInstant target{planRequest.start.position(), Point()};
 
     Replanner::PlanParams params{
         planRequest.start,

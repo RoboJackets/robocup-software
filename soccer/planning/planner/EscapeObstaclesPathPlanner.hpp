@@ -32,7 +32,7 @@ public:
 
     Trajectory plan(const PlanRequest& planRequest) override {
         PlanRequest modified = planRequest;
-        modified.motionCommand = PathTargetCommand{planRequest.start};
+        modified.motionCommand = PathTargetCommand{planRequest.start.linear_motion()};
         return _planner.plan(modified);
     }
 
