@@ -18,7 +18,6 @@ public:
 
 private:
     std::vector<std::unique_ptr<Planner>> planners_;
-    int planner_idx_;
 };
 
 class PlannerNode : public Node {
