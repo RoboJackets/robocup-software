@@ -46,7 +46,7 @@ static void FitCubicBezier(
         //         ***
         //            ***
         //           c1  ****** p1 ---------> v1
-        // (* represents path, pi represents poi3nts, ci represents control
+        // (* represents path, pi represents points, ci represents control
         // points, vi represents velocity vectors)
         control_out->at(0).p1 = vi / (3 * ks[0]) + points[0];
         control_out->at(0).p2 = points[1] - vf / (3 * ks[0]);
