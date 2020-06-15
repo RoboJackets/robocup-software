@@ -398,11 +398,12 @@ public:
     const Planning::MotionCommand& motionCommand() const {
         return intent().motion_command;
     }
-    void setMotionCommand(Planning::MotionCommand newCmd) {
+    void setMotionCommand(const Planning::MotionCommand& newCmd) {
         if (intent().motion_command.index() != newCmd.index()) {
             // clear path when command type changes
             _context->trajectories[shell()] = Planning::Trajectory{{}};
         }
+
         intent().motion_command = newCmd;
     }
 
