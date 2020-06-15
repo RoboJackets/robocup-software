@@ -4,13 +4,13 @@
 #include <cfloat>
 #include <cmath>
 
-#include <geometry2d/Arc.hpp>
-#include <geometry2d/Circle.hpp>
-#include <geometry2d/CompositeShape.hpp>
-#include <geometry2d/Point.hpp>
-#include <geometry2d/Polygon.hpp>
-#include <geometry2d/Rect.hpp>
-#include <geometry2d/Line.hpp>
+#include <Geometry2d/Arc.hpp>
+#include <Geometry2d/Circle.hpp>
+#include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Polygon.hpp>
+#include <Geometry2d/Rect.hpp>
+#include <Geometry2d/Line.hpp>
 
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:

@@ -1,5 +1,5 @@
-#include "geometry2d/Circle.hpp"
-#include "geometry2d/Segment.hpp"
+#include <Geometry2d/Circle.hpp>
+#include <Geometry2d/Segment.hpp>
 #include <rj_constants/constants.hpp>
 
 namespace Geometry2d {

@@ -7,8 +7,8 @@
 #include <QtWidgets>
 #include <cmath>
 #include <deque>
-#include <geometry2d/Point.hpp>
-#include <geometry2d/Rect.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Rect.hpp>
 #include <memory>
 #include <stdexcept>
 #include <vector>

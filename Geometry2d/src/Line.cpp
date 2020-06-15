@@ -1,10 +1,10 @@
-#include "geometry2d/Line.hpp"
+#include <Geometry2d/Line.hpp>
 
 #include <cmath>
 
-#include "geometry2d/Circle.hpp"
-#include "geometry2d/Point.hpp"
-#include "geometry2d/Segment.hpp"
+#include <Geometry2d/Circle.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Segment.hpp>
 
 namespace Geometry2d {
 
