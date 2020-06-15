@@ -4,7 +4,7 @@
 # kind of in that it sets the PATH, LD_LIBRARY_PATH and AMENT_PREFIX_PATH
 # variables.
 
-_INSTALL_PATH=$(builtin cd -q "`dirname "${(%):-%N}"`" > /dev/null && pwd)
+_INSTALL_PATH=$(builtin cd -q "$(dirname "${(%):-%N}")" > /dev/null && pwd)
 
 _path_add() {
     if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then

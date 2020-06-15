@@ -4,7 +4,7 @@
 # kind of in that it sets the PATH, LD_LIBRARY_PATH and AMENT_PREFIX_PATH
 # variables.
 
-_INSTALL_PATH=$(builtin cd "`dirname "${BASH_SOURCE[0]}"`" && pwd)
+_INSTALL_PATH=$(builtin cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 _path_add() {
     if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
