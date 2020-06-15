@@ -1,7 +1,8 @@
 
 #include "StyleSheetManager.hpp"
-#include <rj_common/Utils.hpp>
+
 #include <map>
+#include <rj_common/Utils.hpp>
 
 // To add a new style sheet, declare the static variable
 std::map<QString, QString> filePaths = {

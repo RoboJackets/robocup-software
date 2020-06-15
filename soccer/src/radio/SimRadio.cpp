@@ -1,18 +1,18 @@
 #include "SimRadio.hpp"
 
+#include <rj_common/status.h>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
 
 #include <Geometry2d/Util.hpp>
-#include <rj_common/Network.hpp>
 #include <Robot.hpp>
-#include <rj_common/Utils.hpp>
 #include <cmath>
+#include <rj_common/Network.hpp>
+#include <rj_common/Utils.hpp>
 #include <stdexcept>
 
 #include "PacketConvert.hpp"
-#include <rj_common/status.h>
 
 using namespace std;
 using namespace Packet;

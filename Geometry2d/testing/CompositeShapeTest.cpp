@@ -1,12 +1,13 @@
 #include <gtest/gtest.h>
+
+#include <vector>
+
 #include "Geometry2d/Arc.hpp"
 #include "Geometry2d/Circle.hpp"
 #include "Geometry2d/CompositeShape.hpp"
 #include "Geometry2d/Polygon.hpp"
 #include "Geometry2d/Rect.hpp"
 #include "Geometry2d/Util.hpp"
-
-#include <vector>
 
 using namespace Geometry2d;
 using namespace std;

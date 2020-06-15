@@ -1,7 +1,8 @@
 #include "CollectPathPlanner.hpp"
 
-#include "Configuration.hpp"
 #include <rj_constants/constants.hpp>
+
+#include "Configuration.hpp"
 #include "planning/MotionInstant.hpp"
 #include "planning/paths/CompositePath.hpp"
 

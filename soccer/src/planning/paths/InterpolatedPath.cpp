@@ -1,11 +1,13 @@
 #include "InterpolatedPath.hpp"
+
 #include <rj_protos/LogFrame.pb.h>
+
+#include <rj_common/Utils.hpp>
+#include <stdexcept>
+
 #include "DebugDrawer.hpp"
 #include "LogUtils.hpp"
 #include "SystemState.hpp"
-#include <rj_common/Utils.hpp>
-
-#include <stdexcept>
 
 using namespace std;
 using namespace Geometry2d;

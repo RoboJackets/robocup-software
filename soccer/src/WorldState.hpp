@@ -1,7 +1,7 @@
 #pragma once
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Pose.hpp>
+#include <rj_constants/constants.hpp>
 
 /**
  * @brief Contains robot motion state data

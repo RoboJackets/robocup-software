@@ -1,9 +1,9 @@
 #include "RobotWidget.hpp"
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Util.hpp>
-#include <rj_common/VisionDotPattern.hpp>
 #include <cmath>
+#include <rj_common/VisionDotPattern.hpp>
+#include <rj_constants/constants.hpp>
 #include <stdexcept>
 
 RobotWidget::RobotWidget(QWidget* /*parent*/, Qt::WindowFlags /*f*/) {

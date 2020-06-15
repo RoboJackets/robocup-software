@@ -1,7 +1,9 @@
 #include "GradientAscent1D.hpp"
+
 #include <math.h>
-#include <rj_common/Utils.hpp>
+
 #include <algorithm>
+#include <rj_common/Utils.hpp>
 #include <tuple>
 
 GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {

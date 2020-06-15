@@ -2,9 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
-
-#include <rj_constants/constants.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 

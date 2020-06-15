@@ -2,14 +2,13 @@
 
 #include <unistd.h>
 
-#include <rj_common/Network.hpp>
-#include <rj_common/Utils.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <rj_common/multicast.hpp>
-#include <stdexcept>
-
-#include <rj_constants/constants.hpp>
+#include <rj_common/Network.hpp>
 #include <rj_common/RefereeEnums.hpp>
+#include <rj_common/Utils.hpp>
+#include <rj_common/multicast.hpp>
+#include <rj_constants/constants.hpp>
+#include <stdexcept>
 
 using RefereeModuleEnums::Command;
 using RefereeModuleEnums::Stage;

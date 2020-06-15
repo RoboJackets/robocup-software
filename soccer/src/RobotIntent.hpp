@@ -1,7 +1,8 @@
 #pragma once
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/ShapeSet.hpp>
+#include <rj_constants/constants.hpp>
+
 #include "planning/MotionCommand.hpp"
 #include "planning/RotationCommand.hpp"
 

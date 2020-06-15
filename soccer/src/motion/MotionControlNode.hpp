@@ -1,8 +1,8 @@
 #pragma once
 
+#include <rj_constants/constants.hpp>
 #include <vector>
 
-#include <rj_constants/constants.hpp>
 #include "MotionControl.hpp"
 #include "Node.hpp"
 

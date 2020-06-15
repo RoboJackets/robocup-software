@@ -2,14 +2,14 @@
 
 #include <rj_protos/messages_robocup_ssl_detection.pb.h>
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
 #include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
-#include <rj_common/Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
+#include <rj_common/Utils.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"

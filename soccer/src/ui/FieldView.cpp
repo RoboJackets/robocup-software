@@ -1,7 +1,6 @@
 
 #include "FieldView.hpp"
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/Util.hpp>
@@ -10,11 +9,12 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyleOption>
-#include <rj_common/VisionDotPattern.hpp>
-#include <rj_common/Field_Dimensions.hpp>
 #include <algorithm>
 #include <cstdio>
 #include <planning/MotionConstraints.hpp>
+#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/VisionDotPattern.hpp>
+#include <rj_constants/constants.hpp>
 
 using namespace std;
 

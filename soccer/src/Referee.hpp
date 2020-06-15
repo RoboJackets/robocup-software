@@ -2,13 +2,13 @@
 
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_protos/referee.pb.h>
+
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>
-#include <rj_common/RefereeEnums.hpp>
-
-#include <rj_common/Utils.hpp>
 #include <mutex>
+#include <rj_common/RefereeEnums.hpp>
+#include <rj_common/Utils.hpp>
 #include <thread>
 #include <vector>
 

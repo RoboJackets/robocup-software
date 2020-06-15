@@ -117,9 +117,10 @@ struct Field_Dimensions {
         return Field_Dimensions(
             _Length * scalar, _Width * scalar, _Border * scalar,
             _LineWidth * scalar, _GoalWidth * scalar, _GoalDepth * scalar,
-            _GoalHeight * scalar, _PenaltyShortDist * scalar, _PenaltyLongDist * scalar,
-            _CenterRadius * scalar, _CenterDiameter * scalar,
-            _GoalFlat * scalar, _FloorLength * scalar, _FloorWidth * scalar);
+            _GoalHeight * scalar, _PenaltyShortDist * scalar,
+            _PenaltyLongDist * scalar, _CenterRadius * scalar,
+            _CenterDiameter * scalar, _GoalFlat * scalar, _FloorLength * scalar,
+            _FloorWidth * scalar);
     }
 
     bool operator==(const Field_Dimensions& a) const {

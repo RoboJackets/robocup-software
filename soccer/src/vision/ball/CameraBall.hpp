@@ -1,9 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include <Geometry2d/Point.hpp>
 #include <rj_common/Utils.hpp>
+#include <vector>
 
 /**
  * Wrapper for the protobuf observation

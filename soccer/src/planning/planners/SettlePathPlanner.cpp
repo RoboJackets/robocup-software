@@ -2,9 +2,9 @@
 
 #include <algorithm>
 #include <cmath>
+#include <rj_constants/constants.hpp>
 
 #include "Configuration.hpp"
-#include <rj_constants/constants.hpp>
 #include "planning/MotionInstant.hpp"
 #include "planning/paths/CompositePath.hpp"
 

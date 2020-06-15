@@ -1,9 +1,10 @@
 #pragma once
 
+#include <rj_protos/referee.pb.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
-#include <rj_protos/referee.pb.h>
 
 // Information about a single team.
 class TeamInfo {

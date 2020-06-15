@@ -13,7 +13,6 @@ using namespace boost::python;
 #include <rj_protos/LogFrame.pb.h>
 
 #include <Configuration.hpp>
-#include <rj_constants/constants.hpp>
 #include <Context.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
@@ -29,6 +28,7 @@ using namespace boost::python;
 #include <exception>
 #include <motion/MotionControl.hpp>
 #include <rc-fshare/pid.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"

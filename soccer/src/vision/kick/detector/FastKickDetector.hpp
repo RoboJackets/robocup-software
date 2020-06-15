@@ -1,14 +1,13 @@
 #pragma once
 
-#include <deque>
-
 #include <Configuration.hpp>
+#include <deque>
 #include <rj_common/Utils.hpp>
 
 #include "vision/ball/WorldBall.hpp"
-#include "vision/robot/WorldRobot.hpp"
 #include "vision/kick/KickEvent.hpp"
 #include "vision/kick/VisionState.hpp"
+#include "vision/robot/WorldRobot.hpp"
 
 /**
  * Detects extremely fast kicks in the case where the

@@ -3,8 +3,8 @@
 #include <Geometry2d/Util.hpp>
 #include <algorithm>
 #include <array>
-
 #include <rj_constants/constants.hpp>
+
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
 

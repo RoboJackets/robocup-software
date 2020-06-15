@@ -1,7 +1,6 @@
 #pragma once
 
 #include <optional>
-
 #include <rj_common/RefereeEnums.hpp>
 
 /**

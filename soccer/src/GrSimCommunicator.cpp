@@ -1,7 +1,7 @@
 #include "GrSimCommunicator.hpp"
 
-#include <rj_constants/constants.hpp>
 #include <rj_common/Network.hpp>
+#include <rj_constants/constants.hpp>
 
 using namespace boost::asio;
 using namespace Packet;

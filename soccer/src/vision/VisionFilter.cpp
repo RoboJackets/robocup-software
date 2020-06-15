@@ -1,9 +1,8 @@
 #include "VisionFilter.hpp"
 
-#include <iostream>
-
-#include <rj_constants/constants.hpp>
 #include <Robot.hpp>
+#include <iostream>
+#include <rj_constants/constants.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 

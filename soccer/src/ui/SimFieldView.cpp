@@ -1,11 +1,10 @@
 #include "SimFieldView.hpp"
 
-#include <rj_constants/constants.hpp>
-#include <rj_common/Network.hpp>
-
 #include <QFont>
 #include <QMouseEvent>
 #include <QPainter>
+#include <rj_common/Network.hpp>
+#include <rj_constants/constants.hpp>
 
 using namespace boost;
 using namespace Packet;

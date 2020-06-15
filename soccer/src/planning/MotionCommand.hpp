@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include "planning/MotionInstant.hpp"
 #include <rj_common/Utils.hpp>
+
+#include "planning/MotionInstant.hpp"
 
 namespace Planning {
 

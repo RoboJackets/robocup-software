@@ -1,9 +1,9 @@
 #include "KickEvaluator.hpp"
 
 #include <Geometry2d/Util.hpp>
-#include <rj_common/Utils.hpp>
 #include <algorithm>
 #include <cmath>
+#include <rj_common/Utils.hpp>
 #include <vector>
 
 REGISTER_CONFIGURABLE(KickEvaluator)

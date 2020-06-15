@@ -11,9 +11,10 @@
 #include "planning/PlanRequest.hpp"
 #include "planning/RotationCommand.hpp"
 /*
+#include <rj_common/Utils.hpp>
+
 #include "RobotConstraints.hpp"
 #include "SystemState.hpp"
-#include <rj_common/Utils.hpp>
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
 */

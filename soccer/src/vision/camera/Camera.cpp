@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Point.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 

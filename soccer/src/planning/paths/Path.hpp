@@ -6,8 +6,8 @@
 #include <QColor>
 #include <QString>
 #include <optional>
-
 #include <rj_common/Utils.hpp>
+
 #include "planning/DynamicObstacle.hpp"
 #include "planning/MotionInstant.hpp"
 

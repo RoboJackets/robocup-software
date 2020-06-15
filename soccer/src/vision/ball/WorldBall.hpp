@@ -1,9 +1,8 @@
 #pragma once
 
-#include <list>
-
-#include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
+#include <Geometry2d/Point.hpp>
+#include <list>
 #include <rj_common/Utils.hpp>
 
 #include "KalmanBall.hpp"

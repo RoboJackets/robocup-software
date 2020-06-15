@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "Geometry2d/Segment.hpp"
 #include "Geometry2d/Util.hpp"
 using namespace Geometry2d;

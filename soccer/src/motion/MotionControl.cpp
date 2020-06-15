@@ -4,9 +4,9 @@
 #include <Geometry2d/Util.hpp>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
-#include <rj_common/Utils.hpp>
 #include <optional>
 #include <planning/MotionInstant.hpp>
+#include <rj_common/Utils.hpp>
 
 using namespace std;
 using namespace Geometry2d;

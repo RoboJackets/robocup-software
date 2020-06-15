@@ -1,7 +1,6 @@
 #pragma once
-#include <vector>
-
 #include <rj_common/Utils.hpp>
+#include <vector>
 
 #include "vision/ball/CameraBall.hpp"
 #include "vision/robot/CameraRobot.hpp"

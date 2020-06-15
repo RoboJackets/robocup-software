@@ -6,12 +6,12 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
-#include <rj_common/Utils.hpp>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <planning/paths/TrapezoidalPath.hpp>
 #include <planning/planners/RRTPlanner.hpp>
+#include <rj_common/Utils.hpp>
 #include <stdexcept>
 #include <utility>
 

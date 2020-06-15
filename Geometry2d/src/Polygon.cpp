@@ -1,5 +1,4 @@
 #include <Geometry2d/Polygon.hpp>
-
 #include <rj_constants/constants.hpp>
 
 namespace Geometry2d {

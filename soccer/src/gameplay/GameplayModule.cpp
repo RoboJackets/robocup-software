@@ -1,13 +1,13 @@
 #include <rj_protos/LogFrame.pb.h>
 
-#include <rj_constants/constants.hpp>
-#include <rj_common/Field_Dimensions.hpp>
-#include <rj_common/Network.hpp>
 #include <Referee.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <planning/MotionInstant.hpp>
+#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/Network.hpp>
+#include <rj_constants/constants.hpp>
 
 // for python stuff
 #include "DebugDrawer.hpp"

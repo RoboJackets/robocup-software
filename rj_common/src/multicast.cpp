@@ -1,7 +1,7 @@
 #include "rj_common/multicast.hpp"
 
-#include <netdb.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 
 bool multicast_add(QAbstractSocket* socket, const char* addr) {
     return multicast_add_native(socket->socketDescriptor(), addr);

@@ -3,7 +3,6 @@
 #include <google/protobuf/descriptor.h>
 #include <rj_protos/LogFrame.pb.h>
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <QDateTime>
 #include <QFileDialog>
@@ -14,8 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <rj_common/time.hpp>
-
-#include <rj_common/time.hpp>
+#include <rj_constants/constants.hpp>
 
 using namespace std;
 using namespace Packet;

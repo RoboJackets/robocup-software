@@ -6,7 +6,6 @@
 #include <rj_protos/grSim_Replacement.pb.h>
 #include <ui_MainWindow.h>
 
-#include <rj_common/Network.hpp>
 #include <QActionGroup>
 #include <QDateTime>
 #include <QDir>
@@ -16,9 +15,10 @@
 #include <QMessageBox>
 #include <QString>
 #include <Robot.hpp>
-#include <rj_common/Utils.hpp>
 #include <ctime>
 #include <gameplay/GameplayModule.hpp>
+#include <rj_common/Network.hpp>
+#include <rj_common/Utils.hpp>
 #include <ui/StyleSheetManager.hpp>
 
 #include "BatteryProfile.hpp"

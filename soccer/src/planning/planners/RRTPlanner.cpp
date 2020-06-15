@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <rj_constants/constants.hpp>
 #include <Eigen/Dense>
-#include <rj_common/Utils.hpp>
 #include <algorithm>
 #include <iostream>
+#include <rj_common/Utils.hpp>
+#include <rj_constants/constants.hpp>
 #include <rrt/Tree.hpp>
 #include <rrt/planning/Path.hpp>
 

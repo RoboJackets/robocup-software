@@ -1,6 +1,7 @@
 #include "VisionReceiver.hpp"
 
 #include <unistd.h>
+
 #include <rj_common/Utils.hpp>
 #include <rj_common/multicast.hpp>
 #include <stdexcept>

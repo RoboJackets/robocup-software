@@ -1,10 +1,6 @@
 #pragma once
 
-#include <QColor>
-#include <QMap>
-#include <memory>
-#include <string>
-#include <vector>
+#include <rj_protos/LogFrame.pb.h>
 
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/CompositeShape.hpp>
@@ -12,8 +8,11 @@
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-
-#include <rj_protos/LogFrame.pb.h>
+#include <QColor>
+#include <QMap>
+#include <memory>
+#include <string>
+#include <vector>
 
 class Context;
 

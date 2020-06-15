@@ -1,10 +1,9 @@
 #pragma once
 
-#include <boost/circular_buffer.hpp>
-
-#include <Geometry2d/Point.hpp>
-#include <rj_common/Utils.hpp>
 #include <Configuration.hpp>
+#include <Geometry2d/Point.hpp>
+#include <boost/circular_buffer.hpp>
+#include <rj_common/Utils.hpp>
 
 #include "vision/ball/CameraBall.hpp"
 #include "vision/filter/KalmanFilter2D.hpp"

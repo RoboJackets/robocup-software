@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "Geometry2d/Circle.hpp"
 #include "Geometry2d/Util.hpp"
 

@@ -1,8 +1,8 @@
 #include "InterceptPlanner.hpp"
 
 #include <Configuration.hpp>
-#include <rj_constants/constants.hpp>
 #include <motion/TrapezoidalMotion.hpp>
+#include <rj_constants/constants.hpp>
 
 #include "RRTPlanner.hpp"
 #include "planning/MotionInstant.hpp"

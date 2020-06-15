@@ -1,16 +1,15 @@
 #pragma once
 
+#include <rj_common/status.h>
 #include <rj_protos/Control.pb.h>
 #include <rj_protos/RadioRx.pb.h>
 #include <rj_protos/RadioTx.pb.h>
 
-#include <rj_constants/constants.hpp>
 #include <Eigen/Dense>
 #include <QColor>
 #include <QReadLocker>
 #include <QReadWriteLock>
 #include <QWriteLocker>
-#include <rj_common/Utils.hpp>
 #include <algorithm>
 #include <array>
 #include <boost/circular_buffer.hpp>
@@ -23,12 +22,13 @@
 #include <planning/paths/CompositePath.hpp>
 #include <planning/paths/InterpolatedPath.hpp>
 #include <planning/planners/RRTPlanner.hpp>
+#include <rj_common/Utils.hpp>
+#include <rj_constants/constants.hpp>
 #include <vector>
 
 #include "Context.hpp"
 #include "planning/DynamicObstacle.hpp"
 #include "planning/RotationCommand.hpp"
-#include <rj_common/status.h>
 
 class RobotConfig;
 class RobotLocalConfig;

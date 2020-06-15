@@ -1,8 +1,6 @@
 #include <Geometry2d/TransformMatrix.hpp>
-
-#include <cmath>
-
 #include <Geometry2d/Util.hpp>
+#include <cmath>
 
 namespace Geometry2d {
 

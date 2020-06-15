@@ -3,18 +3,17 @@
 #include <stdint.h>
 #include <sys/time.h>
 
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Rect.hpp>
 #include <QString>
 #include <QtWidgets>
 #include <cmath>
 #include <deque>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Rect.hpp>
 #include <memory>
-#include <stdexcept>
-#include <vector>
-
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/time.hpp>
+#include <stdexcept>
+#include <vector>
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 

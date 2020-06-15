@@ -3,7 +3,6 @@
 #include <rj_protos/RadioRx.pb.h>
 #include <rj_protos/RadioTx.pb.h>
 
-#include <rj_constants/constants.hpp>
 #include <GameState.hpp>
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/CompositeShape.hpp>
@@ -13,8 +12,9 @@
 #include <Geometry2d/ShapeSet.hpp>
 #include <QColor>
 #include <QMap>
-#include <rj_common/Utils.hpp>
 #include <memory>
+#include <rj_common/Utils.hpp>
+#include <rj_constants/constants.hpp>
 #include <string>
 #include <vector>
 

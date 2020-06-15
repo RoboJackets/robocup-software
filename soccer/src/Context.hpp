@@ -3,8 +3,8 @@
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/referee.pb.h>
 
-#include <rj_constants/constants.hpp>
 #include <planning/trajectory/Trajectory.hpp>
+#include <rj_constants/constants.hpp>
 #include <set>
 
 #include "DebugDrawer.hpp"

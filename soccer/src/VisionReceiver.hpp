@@ -1,12 +1,13 @@
 #pragma once
 
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
+#include <stdint.h>
+
+#include <boost/asio.hpp>
 #include <rj_common/Network.hpp>
 #include <rj_common/Utils.hpp>
-#include <boost/asio.hpp>
-
-#include <stdint.h>
 #include <vector>
+
 #include "Context.hpp"
 #include "Node.hpp"
 #include "vision/VisionPacket.hpp"

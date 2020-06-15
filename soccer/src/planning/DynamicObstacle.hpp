@@ -1,10 +1,11 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
 #include <Geometry2d/Circle.hpp>
-#include "planning/MotionInstant.hpp"
+#include <Geometry2d/Point.hpp>
 #include <rj_common/Utils.hpp>
+
 #include "Geometry2d/Shape.hpp"
+#include "planning/MotionInstant.hpp"
 
 namespace Planning {
 

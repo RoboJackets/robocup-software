@@ -1,4 +1,4 @@
-#include <gameplay/GameplayModule.hpp>
+#include "RadioNode.hpp"
 
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_protos/RadioRx.pb.h>
@@ -8,11 +8,12 @@
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 
 #include <Robot.hpp>
+#include <gameplay/GameplayModule.hpp>
 #include <rj_common/Network.hpp>
+
 #include "NetworkRadio.hpp"
 #include "PacketConvert.hpp"
 #include "Radio.hpp"
-#include "RadioNode.hpp"
 #include "SimRadio.hpp"
 
 RadioNode::RadioNode(Context* context, bool simulation, bool blueTeam)

@@ -1,20 +1,18 @@
 #include <list>
 #pragma once
 
+#include <Configuration.hpp>
+#include <rj_common/Utils.hpp>
 #include <vector>
 
-#include <rj_common/Utils.hpp>
-#include <Configuration.hpp>
-
+#include "CameraFrame.hpp"
+#include "vision/ball/BallBounce.hpp"
 #include "vision/ball/CameraBall.hpp"
 #include "vision/ball/KalmanBall.hpp"
 #include "vision/ball/WorldBall.hpp"
 #include "vision/robot/CameraRobot.hpp"
 #include "vision/robot/KalmanRobot.hpp"
 #include "vision/robot/WorldRobot.hpp"
-#include "CameraFrame.hpp"
-#include "vision/ball/BallBounce.hpp"
-
 
 /**
  * Contains all the kalman balls/robots for the specific camera
