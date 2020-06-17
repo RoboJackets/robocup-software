@@ -15,7 +15,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
 
     const auto game_settings_cb =
         [this](const SetGameSettingsSrvReqPtr request,   // NOLINT
-               SetGameSettingsSrvReqPtr /*response*/) {  // NOLINT
+               SetGameSettingsSrvRespPtr /*response*/) {  // NOLINT
             setGameSettingsCallback(request->game_settings);
         };
     game_settings_server_ = create_service<SetGameSettingsSrv>(
@@ -27,7 +27,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
 
     const auto field_dimensions_cb =
         [this](const SetFieldDimensionsSrvReqPtr request,   // NOLINT
-               SetFieldDimensionsSrvReqPtr /*response*/) {  // NOLINT
+               SetFieldDimensionsSrvRespPtr /*response*/) {  // NOLINT
             setFieldDimensionsCallback(request->field_dimensions);
         };
     field_dimensions_server_ = create_service<SetFieldDimensionsSrv>(
