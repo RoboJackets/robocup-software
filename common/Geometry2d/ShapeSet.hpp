@@ -24,7 +24,9 @@ public:
     }
 
     std::vector<std::shared_ptr<Shape>> shapes() { return _shapes; }
-    const std::vector<std::shared_ptr<Shape>> shapes() const { return _shapes; }
+    const std::vector<std::shared_ptr<Shape>>& shapes() const {
+        return _shapes;
+    }
 
     void add(std::shared_ptr<Shape> shape) {
         assert(shape != nullptr);
@@ -65,7 +67,12 @@ public:
      */
     template <typename T>
     bool hit(const T& obj) const {
-        return !hitSet<T>(obj).empty();
+        for (const auto& shape : _shapes) {
+            if (shape->hit(obj)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     friend std::ostream& operator<<(std::ostream& out,

@@ -35,14 +35,10 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
     while (cursor.has_value()) {
         RobotInstant instant = cursor.value();
 
-        // Calculate the list of hits.
-        // TODO(#1503): We could save a lot of allocation and smart pointer
-        //  reference counting overhead by making hitSet return a custom
-        //  iterator type. Then, we could use that to construct a set at the
-        //  beginning but just iterate over it in standard fashion here.
-        const auto& hits = obstacles.hitSet(instant.position());
-        for (const auto& hit : hits) {
-            if (start_hits.find(hit) == start_hits.end()) {
+        // Only count hits that we didn't start in.
+        for (const auto& obstacle : obstacles.shapes()) {
+            if (obstacle->hit(instant.position()) &&
+                start_hits.find(obstacle) == start_hits.end()) {
                 if (hit_time != nullptr) {
                     *hit_time = instant.stamp;
                 }
