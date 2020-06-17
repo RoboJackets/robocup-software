@@ -23,6 +23,3 @@ rosidl_generate_interfaces(rj_geometry_msgs
     msg/Segment.msg
     DEPENDENCIES std_msgs
     )
-
-ament_export_dependencies(rosidl_default_runtime)
-ament_package()

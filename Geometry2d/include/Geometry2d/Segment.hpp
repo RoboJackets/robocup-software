@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include "Rect.hpp"
-#include "Point.hpp"
-#include "Line.hpp"
-#include "Circle.hpp"
-
-#include <rj_geometry_msgs/msg/segment.hpp>
 #include <memory>
+#include <rj_geometry_msgs/msg/segment.hpp>
+
+#include "Circle.hpp"
+#include "Line.hpp"
+#include "Point.hpp"
+#include "Rect.hpp"
 
 namespace Geometry2d {
 using SegmentMsg = rj_geometry_msgs::msg::Segment;

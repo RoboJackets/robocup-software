@@ -7,7 +7,7 @@
 #
 # This is used in the same way as target_link_libraries, ie.
 #
-# rosidl_target_link_interfaces(<target> <PRIVATE|PUBLIC|INTERFACE> <interface>...)
+# rosidl_target_link_interfaces(<target> <|PRIVATE|PUBLIC|INTERFACE> <interface>...)
 #
 function(rosidl_target_link_interfaces target)
     set(options PUBLIC PRIVATE INTERFACE)
@@ -58,7 +58,7 @@ function(rosidl_target_link_interfaces target)
 
         add_dependencies(${target} ${interface_target})
         get_target_property(include_directories ${typesupport_target} INTERFACE_INCLUDE_DIRECTORIES)
-        target_include_directories(${target} ${visibility} ${include_directories})
+        target_include_directories(${target} PUBLIC ${include_directories})
         target_link_libraries(${target} ${visibility} ${typesupport_target})
     endforeach()
 endfunction()
