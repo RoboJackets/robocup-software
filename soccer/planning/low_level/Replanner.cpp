@@ -16,6 +16,7 @@ namespace Planning {
 ConfigDouble* Replanner::_goalPosChangeThreshold;
 ConfigDouble* Replanner::_goalVelChangeThreshold;
 ConfigDouble* Replanner::_partialReplanLeadTime;
+ConfigDouble* Replanner::_offPathErrorThreshold;
 
 REGISTER_CONFIGURABLE(Replanner);
 
@@ -29,6 +30,9 @@ void Replanner::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
     _partialReplanLeadTime =
         new ConfigDouble(cfg, "Replanner/partialReplanLeadTime");
+    // NOLINTNEXTLINE
+    _offPathErrorThreshold =
+        new ConfigDouble(cfg, "Replanner/offPathErrorThreshold", 0.5);
 }
 
 Trajectory Replanner::partialReplan(const PlanParams& params,
@@ -161,8 +165,6 @@ Trajectory Replanner::CreatePlan(Replanner::PlanParams params,
 
 bool Replanner::veeredOffPath(const Trajectory& trajectory, RobotInstant actual,
                               RJ::Time now) {
-    constexpr double kReplanThreshold = 0.5;
-
     std::optional<RobotInstant> maybe_instant = trajectory.evaluate(now);
 
     // If we don't have an instant, assume we're past the end of the path.
@@ -172,7 +174,7 @@ bool Replanner::veeredOffPath(const Trajectory& trajectory, RobotInstant actual,
     RobotInstant instant = maybe_instant.value();
 
     double path_error = (instant.position() - actual.position()).mag();
-    return path_error > kReplanThreshold;
+    return path_error > *_offPathErrorThreshold;
 }
 
 bool Replanner::goalChanged(const RobotInstant& prevGoal,
