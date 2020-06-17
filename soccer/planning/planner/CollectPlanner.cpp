@@ -338,7 +338,7 @@ Trajectory CollectPlanner::control(
     // Only plan the path once and run through it
     // Otherwise it will basically push the ball across the field
     if (controlPathCreated && !previous.empty()) {
-        return std::move(previous);
+        return previous;
     }
 
     controlPathCreated = true;
