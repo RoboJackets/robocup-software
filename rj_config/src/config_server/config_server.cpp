@@ -14,8 +14,8 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
         topics::kGameSettingsPub, latching_qos);
 
     const auto game_settings_cb =
-        [this](const SetGameSettingsSrv::Request::SharedPtr request, // NOLINT
-               SetGameSettingsSrv::Response::SharedPtr /*response*/) { // NOLINT
+        [this](const SetGameSettingsSrvReqPtr request,   // NOLINT
+               SetGameSettingsSrvReqPtr /*response*/) {  // NOLINT
             setGameSettingsCallback(request->game_settings);
         };
     game_settings_server_ = create_service<SetGameSettingsSrv>(
@@ -26,8 +26,8 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
         topics::kFieldDimensionsPub, latching_qos);
 
     const auto field_dimensions_cb =
-        [this](const SetFieldDimensionsSrv::Request::SharedPtr request, // NOLINT
-               SetFieldDimensionsSrv::Response::SharedPtr /*response*/) { // NOLINT
+        [this](const SetFieldDimensionsSrvReqPtr request,   // NOLINT
+               SetFieldDimensionsSrvReqPtr /*response*/) {  // NOLINT
             setFieldDimensionsCallback(request->field_dimensions);
         };
     field_dimensions_server_ = create_service<SetFieldDimensionsSrv>(

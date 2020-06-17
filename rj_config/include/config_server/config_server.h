@@ -9,9 +9,11 @@
 namespace config_server {
 using GameSettingsMsg = rj_msgs::msg::GameSettings;
 using SetGameSettingsSrv = rj_msgs::srv::SetGameSettings;
+using SetGameSettingsSrvReqPtr = SetGameSettingsSrv::Request::SharedPtr;
 
 using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
 using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
+using SetFieldDimensionsSrvReqPtr = SetFieldDimensionsSrv::Request::SharedPtr;
 
 class ConfigServer : public rclcpp::Node {
 public:
