@@ -26,7 +26,8 @@ void FillObstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
             continue;
         }
 
-        if (in.planned_trajectories.at(shell) != nullptr) {
+        if (out_dynamic != nullptr &&
+            in.planned_trajectories.at(shell) != nullptr) {
             // Dynamic obstacle
             out_dynamic->emplace_back(Robot_Radius,
                                       in.planned_trajectories.at(shell));
@@ -38,7 +39,8 @@ void FillObstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
     }
 
     // Finally, add the ball as a dynamic obstacle.
-    if (avoid_ball && out_ball_trajectory != nullptr) {
+    if (avoid_ball && out_dynamic != nullptr &&
+        out_ball_trajectory != nullptr) {
         // Where should we store the ball trajectory?
         *out_ball_trajectory = in.world_state->ball.make_trajectory();
         out_dynamic->emplace_back(Ball_Radius, out_ball_trajectory);

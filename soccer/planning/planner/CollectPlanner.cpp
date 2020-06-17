@@ -1,8 +1,8 @@
 #include "CollectPlanner.hpp"
 
-#include <Utils.hpp>
 #include <Configuration.hpp>
 #include <Constants.hpp>
+#include <Utils.hpp>
 
 #include "planning/Instant.hpp"
 #include "planning/low_level/AnglePlanning.hpp"

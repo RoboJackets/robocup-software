@@ -1,17 +1,16 @@
 #include "SettlePlanner.hpp"
 
+#include <Configuration.hpp>
+#include <Constants.hpp>
+#include <Utils.hpp>
 #include <algorithm>
 #include <cmath>
 
-#include <Utils.hpp>
-#include <Configuration.hpp>
-#include <Constants.hpp>
-
 #include "planning/Instant.hpp"
+#include "planning/TrajectoryUtils.hpp"
 #include "planning/low_level/AnglePlanning.hpp"
 #include "planning/low_level/CreatePath.hpp"
 #include "planning/low_level/RRTUtil.hpp"
-#include "planning/TrajectoryUtils.hpp"
 
 using namespace Geometry2d;
 

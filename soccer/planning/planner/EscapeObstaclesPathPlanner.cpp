@@ -4,10 +4,11 @@
 #include <optional>
 #include <vector>
 
-#include "planning/low_level/PathSmoothing.hpp"
+#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/low_level/CreatePath.hpp"
 #include "planning/low_level/RRTUtil.hpp"
 #include "planning/low_level/RoboCupStateSpace.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
+
 using namespace Geometry2d;
 namespace Planning {
 
@@ -23,11 +24,38 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
         cfg, "EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
 }
 
-// TODO(justbuchanan): We could potentially even use a kinodynamic RRT in
-// findNonBlockedGoal() so it takes initial velocity into account
+Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
+    const RobotInstant& startInstant = planRequest.start;
+    const auto& motionConstraints = planRequest.constraints.mot;
+
+    Geometry2d::ShapeSet obstacles;
+    FillObstacles(planRequest, &obstacles, nullptr, false, nullptr);
+
+    if (!obstacles.hit(startInstant.position())) {
+        // Stop in place
+        Trajectory result{{RobotInstant{startInstant.pose, Twist::Zero(),
+                                        startInstant.stamp}}};
+        result.mark_angles_valid();
+        result.stamp(RJ::now());
+        return result;
+    }
+
+    std::optional<Point> optPrevPt;
+    const Point unblocked =
+        findNonBlockedGoal(startInstant.position(), optPrevPt, obstacles, 300);
+
+    LinearMotionInstant goal{unblocked, Point()};
+    auto result = CreatePath::simple(startInstant.linear_motion(), goal,
+                                     motionConstraints, startInstant.stamp);
+    PlanAngles(&result, startInstant, AngleFns::tangent,
+               planRequest.constraints.rot);
+    result.stamp(RJ::now());
+    return std::move(result);
+}
+
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
     Point goal, std::optional<Point> prevGoal, const ShapeSet& obstacles,
-    int maxItr, std::function<void(const RRT::Tree<Point>&)> rrtLogger) {
+    int maxItr) {
     if (obstacles.hit(goal)) {
         auto stateSpace = std::make_shared<RoboCupStateSpace>(
             Field_Dimensions::Current_Dimensions, obstacles);
@@ -50,8 +78,6 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
                 break;
             }
         }
-
-        if (rrtLogger) rrtLogger(rrt);
 
         if (!prevGoal || obstacles.hit(*prevGoal)) return newGoal;
 
