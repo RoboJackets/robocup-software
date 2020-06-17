@@ -70,10 +70,6 @@ private:
                        const Geometry2d::ShapeSet& staticObstacles,
                        const std::vector<DynamicObstacle>& dynamicObstacles);
 
-    template <typename T>
-    static T applyLowPassFilter(const T& oldValue, const T& newValue,
-                                double gain);
-
     std::optional<Geometry2d::Point> targetBounceDirection;
 
     SettlePlannerStates currentState = SettlePlannerStates::Intercept;
