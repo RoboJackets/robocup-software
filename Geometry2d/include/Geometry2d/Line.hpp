@@ -1,9 +1,13 @@
 #pragma once
 
+#include <rj_geometry_msgs/msg/line.hpp>
+
 #include "Point.hpp"
 #include "TransformMatrix.hpp"
 
 namespace Geometry2d {
+using LineMsg = rj_geometry_msgs::msg::Line;
+
 class Circle;
 class Segment;
 
@@ -67,6 +71,16 @@ public:
         return (d.x() * v.y() - v.x() * d.y());
     }
 
+    [[nodiscard]] LineMsg toROS() const {
+        LineMsg msg{};
+        msg.pt = {pt[0].toROS(), pt[1].toROS()};
+        return msg;
+    }
+
+    static Line fromROS(const LineMsg& msg) {
+        return Line{Point::fromROS(msg.pt[0]), Point::fromROS(msg.pt[1])};
+    }
+
     /**
      * Returns the point on the line closest to p.
      */
@@ -81,4 +95,4 @@ public:
         return str.str();
     }
 };
-}
+}  // namespace Geometry2d

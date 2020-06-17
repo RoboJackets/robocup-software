@@ -6,10 +6,13 @@
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
 #include <cmath>
+#include <rj_geometry_msgs/msg/point.hpp>
 #include <sstream>
 #include <string>
 
 namespace Geometry2d {
+using PointMsg = rj_geometry_msgs::msg::Point;
+
 /**
 Simple class to represent a point in 2d space. Uses floating point coordinates
 */
@@ -380,6 +383,15 @@ public:
         str << "Point(" << x() << ", " << y() << ")";
         return str.str();
     }
+
+    [[nodiscard]] PointMsg toROS() const {
+        PointMsg msg{};
+        msg.x = _x;
+        msg.y = _y;
+        return msg;
+    }
+
+    static Point fromROS(const PointMsg& msg) { return Point{msg.x, msg.y}; }
 
     friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
         stream << point.toString();

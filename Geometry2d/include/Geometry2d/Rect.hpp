@@ -1,9 +1,13 @@
 #pragma once
 
-#include "Shape.hpp"
+#include <rj_geometry_msgs/msg/rect.hpp>
+
 #include "Point.hpp"
+#include "Shape.hpp"
 
 namespace Geometry2d {
+using RectMsg = rj_geometry_msgs::msg::Rect;
+
 class Segment;
 
 /// Represents a rectangle by storing two opposite corners.  They may be upper-
@@ -11,6 +15,7 @@ class Segment;
 class Rect : public Shape {
 private:
     int CohenSutherlandOutCode(const Point& other) const;
+
 public:
     Rect() {}
 
@@ -66,27 +71,27 @@ public:
     Point center() const { return (pt[0] + pt[1]) / 2; }
 
     /*
-    * The expand function will make the rectangle larger to include
-    * the given point (just large enough) 
-    * This function will alter the points defining the rect to the bottom left
-    * and the top right
-    */
+     * The expand function will make the rectangle larger to include
+     * the given point (just large enough)
+     * This function will alter the points defining the rect to the bottom left
+     * and the top right
+     */
     void expand(Point pt);
-    
+
     /*
-    * The expand function will make the rectangle larger to include
-    * the given rectangle (just large enough)
-    * This function will alter the points defining the rect to the bottom left
-    * and the top right
-    */
+     * The expand function will make the rectangle larger to include
+     * the given rectangle (just large enough)
+     * This function will alter the points defining the rect to the bottom left
+     * and the top right
+     */
     void expand(const Rect& rect);
 
     /*
-    * Makes the rectangle bigger in all direction by the padding amount
-    * especially useful around the goalboxes to movement
-    * This function will alter the points defining the rect to the bottom left
-    * and the top right
-    */
+     * Makes the rectangle bigger in all direction by the padding amount
+     * especially useful around the goalboxes to movement
+     * This function will alter the points defining the rect to the bottom left
+     * and the top right
+     */
     void pad(float padding);
 
     float minx() const { return std::min(pt[0].x(), pt[1].x()); }
@@ -95,30 +100,35 @@ public:
     float maxy() const { return std::max(pt[0].y(), pt[1].y()); }
 
     /*
-    * The corners() function lists the 4 corners of the rectangle
-    * in a predictable order regardless of the 2 corners defined on
-    * construction.
-    * BottomLeft, TopLeft, TopRight, BottomRight
-    * exposed to python as corners()
-    */
+     * The corners() function lists the 4 corners of the rectangle
+     * in a predictable order regardless of the 2 corners defined on
+     * construction.
+     * BottomLeft, TopLeft, TopRight, BottomRight
+     * exposed to python as corners()
+     */
     std::vector<Point> corners();
 
     bool nearPoint(Point other, float threshold) const override;
     bool nearSegment(const Segment& seg, float threshold) const;
 
     bool intersects(const Rect& other) const;
-    
-    /*
-    * Calculates intersection point(s) between the rectangle and a line segment
-    * Uses Cohen Sutherland line clipping algorithm
-    */
-    std::tuple<bool, std::vector<Point> > intersects(const Segment& other) const;
 
     /*
-    * Calculates the code for the Cohen Sutherland algorithm
-    * bit string represents how a point relates to the rect 
-    */
-    
+     * Calculates intersection point(s) between the rectangle and a line segment
+     * Uses Cohen Sutherland line clipping algorithm
+     */
+    std::tuple<bool, std::vector<Point> > intersects(
+        const Segment& other) const;
+
+    [[nodiscard]] RectMsg toROS() const {
+        RectMsg msg{};
+        msg.pt = {pt[0].toROS(), pt[1].toROS()};
+        return msg;
+    }
+
+    static Rect fromROS(const RectMsg& msg) {
+        return Rect{Point::fromROS(msg.pt[0]), Point::fromROS(msg.pt[1])};
+    }
 
     Point pt[2];
 
@@ -132,4 +142,4 @@ public:
         return out << "Rect<" << rect.pt[0] << ", " << rect.pt[1] << ">";
     }
 };
-}
+}  // namespace Geometry2d

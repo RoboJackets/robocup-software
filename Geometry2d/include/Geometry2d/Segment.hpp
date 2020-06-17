@@ -6,9 +6,12 @@
 #include "Line.hpp"
 #include "Circle.hpp"
 
+#include <rj_geometry_msgs/msg/segment.hpp>
 #include <memory>
 
 namespace Geometry2d {
+using SegmentMsg = rj_geometry_msgs::msg::Segment;
+
 class Segment {
 public:
     /** the Segement consists of two points */
@@ -56,6 +59,16 @@ public:
         std::stringstream str;
         str << "Segment<" << pt[0] << ", " << pt[1] << ">";
         return str.str();
+    }
+
+    [[nodiscard]] SegmentMsg toROS() const {
+        SegmentMsg msg{};
+        msg.pt = {pt[0].toROS(), pt[1].toROS()};
+        return msg;
+    }
+
+    static Segment fromROS(const SegmentMsg& msg) {
+        return Segment{Point::fromROS(msg.pt[0]), Point::fromROS(msg.pt[1])};
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Segment& seg) {

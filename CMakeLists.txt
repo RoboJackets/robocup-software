@@ -66,6 +66,8 @@ endif()
 #======================================================================
 # This is manually topologically sorted becuse we're not using colcon
 add_subdirectory(external)
+add_subdirectory(rj_geometry_msgs)
+add_subdirectory(rj_msgs)
 add_subdirectory(rj_protos)
 add_subdirectory(rj_constants)
 add_subdirectory(Geometry2d) # TODO(1516)
