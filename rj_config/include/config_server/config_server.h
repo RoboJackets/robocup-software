@@ -15,7 +15,7 @@ using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
 
 class ConfigServer : public rclcpp::Node {
 public:
-    ConfigServer(rclcpp::NodeOptions node_options);
+    ConfigServer(const rclcpp::NodeOptions& node_options);
 
 private:
     void setGameSettingsCallback(const GameSettingsMsg& game_settings);

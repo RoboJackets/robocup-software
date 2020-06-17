@@ -24,6 +24,9 @@ add_subdirectory(src)
 set(RJ_CONFIG_DEPS_INCLUDE_DIRS
     include)
 
+set(RJ_CONFIG_DEPS_LIBRARIES
+    rj_constants)
+
 #======================================================================
 # Include and Linking
 #======================================================================
@@ -34,12 +37,19 @@ target_include_directories(config_server
     PRIVATE
     ${RJ_CONFIG_DEPS_INCLUDE_DIRS})
 
-ament_target_dependencies(config_client rclcpp)
-ament_target_dependencies(config_server rclcpp)
+target_link_libraries(config_client
+    PUBLIC
+    ${RJ_CONFIG_DEPS_LIBRARIES})
+target_link_libraries(config_server
+    PRIVATE
+    ${RJ_CONFIG_DEPS_LIBRARIES})
+
+ament_target_dependencies(config_client PUBLIC rclcpp)
+ament_target_dependencies(config_server PUBLIC rclcpp)
 
 include(ROSIDLUtils)
-rosidl_target_link_interfaces(config_client rj_msgs)
-rosidl_target_link_interfaces(config_server rj_msgs)
+rosidl_target_link_interfaces(config_client PUBLIC rj_msgs)
+rosidl_target_link_interfaces(config_server PRIVATE rj_msgs)
 
 #======================================================================
 # Packaging

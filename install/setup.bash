@@ -24,9 +24,16 @@ _ament_prefix_path_add() {
     fi
 }
 
+_pythonpath_add() {
+    if [ -d "$1" ] && [[ ":$PYTHONPATH:" != *":$1:"* ]]; then
+        export PYTHONPATH="$1${PYTHONPATH:+":$PYTHONPATH"}"
+    fi
+}
+
 _path_add "${_INSTALL_PATH}/bin"
 _ld_library_path_add "${_INSTALL_PATH}/lib"
 _ament_prefix_path_add "${_INSTALL_PATH}"
+_pythonpath_add "${_INSTALL_PATH}/lib/python3.6/site-packages"
 
 unset _pathadd
 unset _ld_library_path_add
