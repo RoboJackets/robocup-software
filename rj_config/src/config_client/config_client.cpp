@@ -1,5 +1,7 @@
 #include <config_client/config_client.h>
 
+#include <rj_utils/logging.hpp>
+
 namespace config_client {
 ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
@@ -19,6 +21,21 @@ ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
         "config/field_dimensions", latching_qos, field_dimensions_cb);
     field_dimensions_client_ = node->create_client<SetFieldDimensionsSrv>(
         "config/set_field_dimensions");
+}
+
+bool ConfigClient::connected() const {
+    const bool has_game_settings = game_settings_.has_value();
+    const bool has_field_dimensions = field_dimensions_.has_value();
+
+    const bool have_msg = has_game_settings && has_field_dimensions;
+
+    if (!have_msg) {
+        auto& clk = *node_->get_clock();
+        const auto throttle_ms = 1000;
+        RJ_INFO_STREAM_THROTTLE(node_->get_logger(), clk, throttle_ms,
+                                "[ConfigClient] Waiting on ConfigServer...");
+    }
+    return have_msg;
 }
 
 void ConfigClient::updateGameSettings(const GameSettingsMsg& msg) {

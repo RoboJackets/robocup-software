@@ -18,10 +18,10 @@ public:
     ConfigServer(const rclcpp::NodeOptions& node_options);
 
 private:
-    void setGameSettingsCallback(const GameSettingsMsg& game_settings);
+    void setGameSettingsCallback(const GameSettingsMsg& msg);
     void broadcastGameSettings();
 
-    void setFieldDimensionsCallback(const FieldDimensionsMsg& field_dimensions);
+    void setFieldDimensionsCallback(const FieldDimensionsMsg& msg);
     void broadcastFieldDimensions();
 
     GameSettingsMsg game_settings_;

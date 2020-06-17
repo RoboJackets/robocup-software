@@ -22,6 +22,7 @@ Checks:          '-*,
                   -readability-uppercase-literal-suffix,
                   -misc-non-private-member-variables-in-classes,
                   -cppcoreguidelines-non-private-member-variables-in-classes,
+                  -clang-analyzer-cplusplus.Move,
                   '
 #WarningsAsErrors: '*'
 AnalyzeTemporaryDtors: false

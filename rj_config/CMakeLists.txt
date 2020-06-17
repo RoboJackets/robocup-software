@@ -25,7 +25,8 @@ set(RJ_CONFIG_DEPS_INCLUDE_DIRS
     include)
 
 set(RJ_CONFIG_DEPS_LIBRARIES
-    rj_constants)
+    rj_constants
+    rj_utils)
 
 #======================================================================
 # Include and Linking

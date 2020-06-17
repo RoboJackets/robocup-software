@@ -31,21 +31,7 @@ public:
         return field_dimensions_.value();
     }
 
-    [[nodiscard]] bool connected() const {
-        const bool has_game_settings = game_settings_.has_value();
-        const bool has_field_dimensions = field_dimensions_.has_value();
-
-        const bool have_msg = has_game_settings && has_field_dimensions;
-
-        if (!have_msg) {
-            auto& clk = *node_->get_clock();
-            const auto throttle_ms = 1000;
-            RCLCPP_INFO_STREAM_THROTTLE(
-                node_->get_logger(), clk, throttle_ms,
-                "[ConfigClient] Waiting on ConfigServer...");
-        }
-        return have_msg;
-    }
+    [[nodiscard]] bool connected() const;
 
     void updateGameSettings(const GameSettingsMsg& msg);
     void updateFieldDimensions(const FieldDimensionsMsg& msg);

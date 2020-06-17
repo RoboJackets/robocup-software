@@ -117,7 +117,7 @@ public:
      * Calculates intersection point(s) between the rectangle and a line segment
      * Uses Cohen Sutherland line clipping algorithm
      */
-    std::tuple<bool, std::vector<Point> > intersects(
+    [[nodiscard]] std::tuple<bool, std::vector<Point> > intersects(
         const Segment& other) const;
 
     [[nodiscard]] RectMsg toROS() const {

@@ -2,6 +2,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_utils/logging.hpp>
 
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
@@ -13,8 +14,8 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
         topics::kGameSettingsPub, latching_qos);
 
     const auto game_settings_cb =
-        [this](const SetGameSettingsSrv::Request::SharedPtr request,
-               SetGameSettingsSrv::Response::SharedPtr /*response*/) {
+        [this](const SetGameSettingsSrv::Request::SharedPtr request, // NOLINT
+               SetGameSettingsSrv::Response::SharedPtr /*response*/) { // NOLINT
             setGameSettingsCallback(request->game_settings);
         };
     game_settings_server_ = create_service<SetGameSettingsSrv>(
@@ -25,8 +26,8 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
         topics::kFieldDimensionsPub, latching_qos);
 
     const auto field_dimensions_cb =
-        [this](const SetFieldDimensionsSrv::Request::SharedPtr request,
-               SetFieldDimensionsSrv::Response::SharedPtr /*response*/) {
+        [this](const SetFieldDimensionsSrv::Request::SharedPtr request, // NOLINT
+               SetFieldDimensionsSrv::Response::SharedPtr /*response*/) { // NOLINT
             setFieldDimensionsCallback(request->field_dimensions);
         };
     field_dimensions_server_ = create_service<SetFieldDimensionsSrv>(
@@ -35,7 +36,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     broadcastGameSettings();
     broadcastFieldDimensions();
 
-    RCLCPP_INFO(get_logger(), "config_server is up!");
+    EZ_INFO("config_server is up!");
 }
 
 void ConfigServer::broadcastGameSettings() {
