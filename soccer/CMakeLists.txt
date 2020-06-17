@@ -39,7 +39,6 @@ set(ROBOCUP_LIB_SRC
     "planning/planner/LineKickPlanner.cpp"
     "planning/planner/PathTargetPlanner.cpp"
     "planning/planner/PivotPathPlanner.cpp"
-    "planning/planner/Planner.cpp"
     "planning/planner/PlanRequest.cpp"
     "planning/planner/SettlePlanner.cpp"
     "planning/MotionConstraints.cpp"

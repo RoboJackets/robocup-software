@@ -230,25 +230,6 @@ Trajectory SettlePlanner::intercept(
     Geometry2d::Point deltaPos, Geometry2d::Point facePos) {
     BallState ball = planRequest.world_state->ball;
 
-    // First, if the previous trajectory is still valid, try to use that.
-    if (!previous.empty() && previous.CheckTime(startInstant.stamp) &&
-        !TrajectoryHitsStatic(previous, staticObstacles, startInstant.stamp,
-                              nullptr) &&
-        !TrajectoryHitsDynamic(previous, dynamicObstacles, startInstant.stamp,
-                               nullptr, nullptr)) {
-        RJ::Seconds timeRemaining = previous.end_time() - startInstant.stamp;
-        Point pathAtEnd = previous.last().position();
-
-        Point nearPoint;
-        RJ::Seconds timeToIntersect =
-            ball.query_seconds_near(pathAtEnd, &nearPoint);
-        if (timeRemaining <
-                timeToIntersect + RJ::Seconds(*_interceptBufferTime) &&
-            nearPoint.distTo(pathAtEnd) < Replanner::goalPosChangeThreshold()) {
-            return previous;
-        }
-    }
-
     // Try find best point to intercept using brute force method
     // where we check ever X distance along the ball velocity vector
     //
