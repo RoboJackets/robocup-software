@@ -87,6 +87,7 @@ private:
     static ConfigDouble* _goalPosChangeThreshold;
     static ConfigDouble* _goalVelChangeThreshold;
     static ConfigDouble* _partialReplanLeadTime;
+    static ConfigDouble* _offPathErrorThreshold;
 
     static constexpr RJ::Seconds _checkBetterDeltaTime = 0.2s;
 };
