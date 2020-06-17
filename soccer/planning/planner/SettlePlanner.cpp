@@ -2,14 +2,16 @@
 
 #include <algorithm>
 #include <cmath>
-#include <planning/TrajectoryUtils.hpp>
 
-#include "Configuration.hpp"
-#include "Constants.hpp"
+#include <Utils.hpp>
+#include <Configuration.hpp>
+#include <Constants.hpp>
+
 #include "planning/Instant.hpp"
 #include "planning/low_level/AnglePlanning.hpp"
 #include "planning/low_level/CreatePath.hpp"
 #include "planning/low_level/RRTUtil.hpp"
+#include "planning/TrajectoryUtils.hpp"
 
 using namespace Geometry2d;
 
@@ -202,7 +204,7 @@ void SettlePlanner::processStateTransition(BallState ball,
         //  Almost at end of the target path or
         //  Already in line with the ball
         //
-        // TODO(Kyle): Check ball sense?
+        // TODO(#1518): Check ball sense?
 
         // Within X seconds of the end of path
         bool inlineWithBall =
@@ -609,12 +611,6 @@ void SettlePlanner::calcDeltaPosForDir(BallState ball,
         *deltaRobotPos = Point(0, 0);
         *facePos = ball.position - averageBallVel.normalized();
     }
-}
-
-template <typename T>
-T SettlePlanner::applyLowPassFilter(const T& oldValue, const T& newValue,
-                                    double gain) {
-    return gain * newValue + (1 - gain) * oldValue;
 }
 
 void SettlePlanner::reset() {

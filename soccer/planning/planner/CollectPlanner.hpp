@@ -62,10 +62,6 @@ private:
                        const Geometry2d::ShapeSet& staticObstacles,
                        const std::vector<DynamicObstacle>& dynamicObstacles);
 
-    template <typename T>
-    static T applyLowPassFilter(const T& oldValue, const T& newValue,
-                                double gain);
-
     Trajectory previous;
 
     CollectPathPlannerStates currentState =

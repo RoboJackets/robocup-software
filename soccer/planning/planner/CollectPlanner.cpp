@@ -1,7 +1,9 @@
 #include "CollectPlanner.hpp"
 
-#include "Configuration.hpp"
-#include "Constants.hpp"
+#include <Utils.hpp>
+#include <Configuration.hpp>
+#include <Constants.hpp>
+
 #include "planning/Instant.hpp"
 #include "planning/low_level/AnglePlanning.hpp"
 #include "planning/low_level/CreatePath.hpp"
@@ -201,7 +203,7 @@ void CollectPlanner::processStateTransition(BallState ball,
 
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
-    // TODO(Kyle): Check for ball sense?
+    // TODO(#1518): Check for ball sense?
     if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl &&
         currentState == FineApproach) {
         currentState = Control;
@@ -447,12 +449,6 @@ Trajectory CollectPlanner::invalid(
     path.setDebugText("Invalid state in collect");
 
     return path;
-}
-
-template <typename T>
-T CollectPlanner::applyLowPassFilter(const T& oldValue, const T& newValue,
-                                     double gain) {
-    return gain * newValue + (1 - gain) * oldValue;
 }
 
 void CollectPlanner::reset() {
