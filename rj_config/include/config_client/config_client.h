@@ -15,6 +15,8 @@ using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
 using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
 using SetFieldDimensionsReq = SetFieldDimensionsSrv::Request;
 
+// TODO(1520): Add callback functionality to ConfigClient.
+
 /**
  * \brief Helper util that sets up the proper subscribers for
  * receiving config updates
