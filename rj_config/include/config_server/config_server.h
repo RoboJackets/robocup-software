@@ -17,15 +17,42 @@ using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
 using SetFieldDimensionsSrvReqPtr = SetFieldDimensionsSrv::Request::SharedPtr;
 using SetFieldDimensionsSrvRespPtr = SetFieldDimensionsSrv::Response::SharedPtr;
 
+/**
+ * @brief This node acts as a configuration server, serving all the configs
+ * by publishing them with a "Transient local" durability. The node exposes
+ * a service call to allow clients to update the configuration, which triggers
+ * a republish.
+ */
 class ConfigServer : public rclcpp::Node {
 public:
+    /**
+     * @brief Constructor.
+     * @param node_options
+     */
     ConfigServer(const rclcpp::NodeOptions& node_options);
 
 private:
+    /**
+     * @brief Callback for the GameSettings service. Updates game_settings_.
+     * @param msg
+     */
     void setGameSettingsCallback(const GameSettingsMsg& msg);
+
+    /**
+     * @brief Publishes game_settings_.
+     */
     void broadcastGameSettings();
 
+    /**
+     * @brief Callback for the FieldDimensions service.
+     * Updates field_dimensions_.
+     * @param msg
+     */
     void setFieldDimensionsCallback(const FieldDimensionsMsg& msg);
+
+    /**
+     * @brief Publishes field_dimensions_.
+     */
     void broadcastFieldDimensions();
 
     GameSettingsMsg game_settings_;

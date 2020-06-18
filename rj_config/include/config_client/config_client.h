@@ -31,9 +31,24 @@ public:
         return field_dimensions_.value();
     }
 
+    /**
+     * @brief Returns whether it is connected to the ConfigServer. All other
+     * functions are invalid if this returns false.
+     * @return
+     */
     [[nodiscard]] bool connected() const;
 
+    /**
+     * @brief Sends a service call to ConfigServer to update the GameSettings.
+     * @param msg
+     */
     void updateGameSettings(const GameSettingsMsg& msg);
+
+    /**
+     * @brief Sends a service call to ConfigServer to update the
+     * FieldDimensions.
+     * @param msg
+     */
     void updateFieldDimensions(const FieldDimensionsMsg& msg);
 
 private:

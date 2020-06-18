@@ -5,6 +5,12 @@
 #include <rclcpp/rclcpp.hpp>
 
 namespace config_client {
+/**
+ * @brief A temporary node to be used by Processor during the ROS2 migration
+ * to access the config without being a rclcpp::Node itself.
+ *
+ * This node simply acts as a wrapper for ConfigClient.
+ */
 class ConfigClientNode : public rclcpp::Node {
 public:
     ConfigClientNode(const std::string& name);
@@ -24,6 +30,7 @@ public:
     inline void updateGameSettings(const GameSettingsMsg& msg) {
         return config_client_.updateGameSettings(msg);
     }
+
     inline void updateFieldDimensions(const FieldDimensionsMsg& msg) {
         return config_client_.updateFieldDimensions(msg);
     }
