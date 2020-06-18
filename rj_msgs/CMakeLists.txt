@@ -21,8 +21,6 @@ rosidl_generate_interfaces(rj_msgs
     # Messages
     msg/FieldDimensions.msg
     msg/GameSettings.msg
-    msg/RawProtobuf.msg
-    msg/VisionPacket.msg
     # Services
     srv/SetFieldDimensions.srv
     srv/SetGameSettings.srv
