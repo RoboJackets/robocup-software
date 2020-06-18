@@ -14,7 +14,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
         topics::kGameSettingsPub, latching_qos);
 
     const auto game_settings_cb =
-        [this](const SetGameSettingsSrvReqPtr request,   // NOLINT
+        [this](const SetGameSettingsSrvReqPtr request,
                SetGameSettingsSrvRespPtr /*response*/) {  // NOLINT
             setGameSettingsCallback(request->game_settings);
         };
@@ -26,7 +26,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
         topics::kFieldDimensionsPub, latching_qos);
 
     const auto field_dimensions_cb =
-        [this](const SetFieldDimensionsSrvReqPtr request,   // NOLINT
+        [this](const SetFieldDimensionsSrvReqPtr request,    // NOLINT
                SetFieldDimensionsSrvRespPtr /*response*/) {  // NOLINT
             setFieldDimensionsCallback(request->field_dimensions);
         };
