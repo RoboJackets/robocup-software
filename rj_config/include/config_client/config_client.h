@@ -18,7 +18,7 @@ using SetFieldDimensionsReq = SetFieldDimensionsSrv::Request;
 // TODO(1520): Add callback functionality to ConfigClient.
 
 /**
- * \brief Helper util that sets up the proper subscribers for
+ * @brief Helper util that sets up the proper subscribers for
  * receiving config updates
  */
 class ConfigClient {
