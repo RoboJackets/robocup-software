@@ -13,8 +13,9 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     game_settings_publisher_ = create_publisher<GameSettingsMsg>(
         topics::kGameSettingsPub, latching_qos);
 
+    // NOLINTS below are to disable performance-unnecessary-value-param
     const auto game_settings_cb =
-        [this](const SetGameSettingsSrvReqPtr request,
+        [this](const SetGameSettingsSrvReqPtr request,    // NOLINT
                SetGameSettingsSrvRespPtr /*response*/) {  // NOLINT
             setGameSettingsCallback(request->game_settings);
         };
@@ -25,6 +26,7 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     field_dimensions_publisher_ = create_publisher<FieldDimensionsMsg>(
         topics::kFieldDimensionsPub, latching_qos);
 
+    // NOLINTS below are to disable performance-unnecessary-value-param
     const auto field_dimensions_cb =
         [this](const SetFieldDimensionsSrvReqPtr request,    // NOLINT
                SetFieldDimensionsSrvRespPtr /*response*/) {  // NOLINT

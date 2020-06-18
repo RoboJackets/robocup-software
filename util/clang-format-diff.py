@@ -134,5 +134,6 @@ def main():
             if len(diff_string) > 0:
                 sys.stdout.write(diff_string)
 
+
 if __name__ == '__main__':
     main()

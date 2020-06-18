@@ -16,12 +16,6 @@ function(rosidl_target_link_interfaces target)
     cmake_parse_arguments(PARSED "${options}"
         "${one_value_args}" "${multi_value_args}" ${ARGN})
 
-    message("target: ${target}")
-    message("PARSED_PUBLIC: ${PARSED_PUBLIC}")
-    message("PARSED_PRIVATE: ${PARSED_PRIVATE}")
-    message("PARSED_INTERFACE: ${PARSED_INTERFACE}")
-    message("PARSED_UNPARSED_ARGUMENTS: ${PARSED_UNPARSED_ARGUMENTS}")
-
     if(NOT TARGET ${target})
         message(FATAL_ERROR "rosidl_target_link_interfaces() the first argument '${target}' must be a valid target name")
     endif()

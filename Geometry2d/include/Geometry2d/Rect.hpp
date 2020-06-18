@@ -31,6 +31,12 @@ public:
         pt[1] = other.pt[1];
     }
 
+    /**
+     * Constructor from RectMsg.
+     * @param msg
+     */
+    Rect(const RectMsg& msg) : Rect{msg.pt[0], msg.pt[1]} {}
+
     Shape* clone() const override;
 
     Rect& operator+=(Point offset) {
@@ -120,14 +126,14 @@ public:
     [[nodiscard]] std::tuple<bool, std::vector<Point> > intersects(
         const Segment& other) const;
 
-    [[nodiscard]] RectMsg toROS() const {
+    /**
+     * @brief Implicit conversion to RectMsg.
+     * @return
+     */
+    [[nodiscard]] operator RectMsg() const {
         RectMsg msg{};
-        msg.pt = {pt[0].toROS(), pt[1].toROS()};
+        msg.pt = {pt[0], pt[1]};
         return msg;
-    }
-
-    static Rect fromROS(const RectMsg& msg) {
-        return Rect{Point::fromROS(msg.pt[0]), Point::fromROS(msg.pt[1])};
     }
 
     Point pt[2];

@@ -7,7 +7,8 @@
  * we make a logging call. This also defines EZ prefixed log calls that
  * automatically use get_logger() to get the current logger, so that logging
  * calls can be shorter.
- * See link for log descriptions  http://docs.ros2.org/foxy/api/rclcpp/logging_8hpp.html
+ * See link for log descriptions
+ * http://docs.ros2.org/foxy/api/rclcpp/logging_8hpp.html
  */
 
 #include <rclcpp/logging.hpp>

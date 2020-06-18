@@ -21,6 +21,12 @@ public:
 
     explicit Line(const Segment& segment);
 
+    /**
+     * @brief Constructor from LineMsg.
+     * @param msg
+     */
+    Line(const LineMsg& msg) : Line{msg.pt[0], msg.pt[1]} {}
+
     Point delta() const { return pt[1] - pt[0]; }
 
     bool operator==(const Line& other) { return pt == other.pt; }
@@ -71,14 +77,14 @@ public:
         return (d.x() * v.y() - v.x() * d.y());
     }
 
-    [[nodiscard]] LineMsg toROS() const {
+    /**
+     * @brief Implicit conversion to LineMsg
+     * @return
+     */
+    [[nodiscard]] operator LineMsg() const {
         LineMsg msg{};
-        msg.pt = {pt[0].toROS(), pt[1].toROS()};
+        msg.pt = {pt[0], pt[1]};
         return msg;
-    }
-
-    static Line fromROS(const LineMsg& msg) {
-        return Line{Point::fromROS(msg.pt[0]), Point::fromROS(msg.pt[1])};
     }
 
     /**

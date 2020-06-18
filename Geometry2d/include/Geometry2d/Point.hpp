@@ -56,6 +56,12 @@ public:
     Point(const Eigen::Vector2d& other) : Point(other(0), other(1)) {}
 
     /**
+     * \brief Implicit conversion from PointMsg
+     * @param msg
+     */
+    Point(const PointMsg& msg) : Point{msg.x, msg.y} {}
+
+    /**
      * Implicit conversion to Eigen::Vector2d
      */
     operator Eigen::Vector2d() const { return Eigen::Vector2d(x(), y()); }
@@ -384,14 +390,16 @@ public:
         return str.str();
     }
 
-    [[nodiscard]] PointMsg toROS() const {
+    /**
+     * @brief Implicit conversion to PointMsg
+     * @return
+     */
+    [[nodiscard]] operator PointMsg() const {
         PointMsg msg{};
         msg.x = _x;
         msg.y = _y;
         return msg;
     }
-
-    static Point fromROS(const PointMsg& msg) { return Point{msg.x, msg.y}; }
 
     friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
         stream << point.toString();

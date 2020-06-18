@@ -23,6 +23,12 @@ public:
 
     explicit Segment(const Line& other) : Segment(other.pt[0], other.pt[1]) {}
 
+    /**
+     * Implicit conversion from Segment Message.
+     * @param msg
+     */
+    Segment(const SegmentMsg& msg) : pt{msg.pt[0], msg.pt[1]} {}
+
     Segment& operator+=(const Point& delta) {
         pt[0] += delta;
         pt[1] += delta;
@@ -61,14 +67,14 @@ public:
         return str.str();
     }
 
-    [[nodiscard]] SegmentMsg toROS() const {
+    /**
+     * Implicit conversion to SegmentMsg.
+     * @return
+     */
+    [[nodiscard]] operator SegmentMsg() const {
         SegmentMsg msg{};
-        msg.pt = {pt[0].toROS(), pt[1].toROS()};
+        msg.pt = {pt[0], pt[1]};
         return msg;
-    }
-
-    static Segment fromROS(const SegmentMsg& msg) {
-        return Segment{Point::fromROS(msg.pt[0]), Point::fromROS(msg.pt[1])};
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Segment& seg) {
