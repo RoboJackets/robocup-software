@@ -9,7 +9,7 @@ REGISTER_CONFIGURABLE(LineKickPlanner);
 
 void LineKickPlanner::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
-    _approachSpeed = new ConfigDouble(cfg, "LineKickPlanner/approachSpeed");
+    _approachSpeed = new ConfigDouble(cfg, "PathPlanner/LineKickPlanner/approachSpeed");
 }
 
 using namespace Geometry2d;

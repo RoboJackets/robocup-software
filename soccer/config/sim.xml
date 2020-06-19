@@ -1,208 +1,6 @@
 <config>
- <Rev2008>
-  <translation>
-   <p value="3.2"/>
-   <i value="0"/>
-   <i_windup value="0"/>
-   <d value="0.4"/>
-   <velMultiplier value="1.3"/>
-   <accelMultiplier value="20"/>
-   <minEffectiveVelocity value="0.3"/>
-  </translation>
-  <rotation>
-   <p value="0.3"/>
-   <i value="0.003"/>
-   <i_windup value="0"/>
-   <d value="0.05"/>
-   <velMultiplier value="0.1"/>
-   <minEffectiveAngularSpeed value="1.2"/>
-  </rotation>
-  <kicker>
-   <maxKick value="200"/>
-   <maxChip value="150"/>
-  </kicker>
-  <pivot>
-   <velMultiplier value="0.3"/>
-  </pivot>
-  <dribbler>
-   <multiplier value="1"/>
-  </dribbler>
-  <chipper>
-   <calibSlope value="2.20227"/>
-   <calibOffset value="70.0727"/>
-  </chipper>
-  <velocity>
-   <p value="0"/>
-   <i value="0"/>
-   <i_windup value="0"/>
-   <d value="0"/>
-  </velocity>
- </Rev2008>
- <Rev2011>
-  <translation>
-   <p value="4"/>
-   <i value="0"/>
-   <i_windup value="0"/>
-   <accelMultiplier value="16"/>
-   <d value="0.2"/>
-   <velMultiplier value="1.2"/>
-   <minEffectiveVelocity value="0.35"/>
-  </translation>
-  <rotation>
-   <p value="0.1"/>
-   <i value="0.0025"/>
-   <i_windup value="0"/>
-   <d value="0.05"/>
-   <velMultiplier value="0.1"/>
-   <minEffectiveAngularSpeed value="1.6"/>
-  </rotation>
-  <kicker>
-   <maxKick value="255"/>
-   <maxChip value="200"/>
-  </kicker>
-  <pivot>
-   <velMultiplier value="0.01"/>
-  </pivot>
-  <dribbler>
-   <multiplier value="1"/>
-  </dribbler>
-  <chipper>
-   <calibSlope value="2.20227"/>
-   <calibOffset value="70.0727"/>
-  </chipper>
-  <velocity>
-   <p value="0"/>
-   <i value="0"/>
-   <i_windup value="0"/>
-   <d value="0"/>
-  </velocity>
- </Rev2011>
- <Robot_Statuses>
-  <Robot_0>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_0>
-  <Robot_1>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_1>
-  <Robot_2>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_2>
-  <Robot_3>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_3>
-  <Robot_4>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_4>
-  <Robot_5>
-   <Chipper_Enabled value="false"/>
-   <Kicker_Enabled value="false"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_5>
-  <Robot_6>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_6>
-  <Robot_7>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_7>
-  <Robot_8>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_8>
-  <Robot_9>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_9>
-  <Robot_10>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_10>
-  <Robot_11>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_11>
-  <Robot_12>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_12>
-  <Robot_13>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_13>
-  <Robot_14>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_14>
-  <Robot_15>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
-   <Ball_Sense_Enabled value="true"/>
-   <Dribbler_Enabled value="true"/>
-  </Robot_15>
- </Robot_Statuses>
- <ChipCalibration>
-  <_a0 value="-3.90845"/>
-  <_a1 value="0.0873787"/>
-  <_a2 value="-0.000365537"/>
-  <_a3 value="4.37278e-07"/>
-  <Dribble_Speed value="40"/>
-  <Max_Chip_Distance value="2.5"/>
-  <Roll_Distance value="0.1"/>
- </ChipCalibration>
- <MotionControl>
-  <Max_Acceleration value="2"/>
-  <Max_Velocity value="2"/>
-  <PathJitterCompensationFactor value="2"/>
-  <PathChangeBoost value="50"/>
-  <X_Multiplier value="1"/>
- </MotionControl>
  <PathPlanner>
-  <Max_Acceleration value="1"/>
-  <Max_Velocity value="2"/>
-  <selfAvoidRadius value="0.09"/>
-  <oppAvoidRadius value="0.08"/>
-  <oppGoalieAvoidRadius value="0.14"/>
-  <replanTimeout value="5"/>
-  <goalChangeThreshold value="0.1"/>
   <Field_Edge_Obstacle value="0.33"/>
-  <EscapeObstaclesPathPlanner>
-   <stepSize value="0.1"/>
-  </EscapeObstaclesPathPlanner>
   <RRT>
    <EnableDebugDrawing value="false"/>
    <StepSize value="0.15"/>
@@ -211,25 +9,89 @@
    <MinIterations value="100"/>
    <MaxIterations value="250"/>
   </RRT>
+  <EscapeObstaclesPathPlanner>
+   <stepSize value="0.1"/>
+   <goalChangeThreshold value="0.09"/>
+  </EscapeObstaclesPathPlanner>
+  <LineKickPlanner>
+   <approachSpeed value="0"/>
+  </LineKickPlanner>
+  <Pivot>
+   <radiusMultiplier value="1"/>
+  </Pivot>
+  <Replanner>
+   <goalPosChangeThreshold value="0.025"/>
+   <goalVelChangeThreshold value="0.025"/>
+   <partialReplanLeadTime value="0.1"/>
+   <offPathErrorThreshold value="0.5"/>
+  </Replanner>
+  <selfAvoidRadius value="0.09"/>
+  <oppAvoidRadius value="0.08"/>
+  <oppGoalieAvoidRadius value="0.14"/>
   <dribbleOutOfBoundsOffset value="0.05"/>
  </PathPlanner>
+ <Joystick>
+  <Max_Rotation_Speed value="12"/>
+  <Max_Damped_Rotation_Speed value="4"/>
+  <Max_Translation_Speed value="3"/>
+  <Max_Damped_Translation_Speed value="0.7"/>
+ </Joystick>
+ <KickEvaluator>
+  <kick_std_dev value="0.08"/>
+  <kick_mean value="0"/>
+  <robot_std_dev value="0.3"/>
+  <start_x_offset value="0.1"/>
+ </KickEvaluator>
+ <MotionControl>
+  <Max_Acceleration value="2"/>
+  <Max_Velocity value="2"/>
+  <X_Multiplier value="1"/>
+ </MotionControl>
+ <Capture>
+  <Collect>
+   <ballSpeedApproachDirectionCutoff value="0.1"/>
+   <approachAccelScalePercent value="0.7"/>
+   <controlAccelScalePercent value="0.8"/>
+   <approachDistTarget value="0.04"/>
+   <touchDeltaSpeed value="0.15"/>
+   <velocityControlScale value="1"/>
+   <distCutoffToControl value="0.0285"/>
+   <velCutoffToControl value="1"/>
+   <distCutoffToApproach value="0.3"/>
+   <stopDistScale value="1"/>
+   <targetPointAveragingGain value="0.8"/>
+  </Collect>
+  <Settle>
+   <ballSpeedPercentForDampen value="0.1"/>
+   <searchStartDist value="0"/>
+   <searchEndDist value="3"/>
+   <searchIncDist value="0.2"/>
+   <interceptBufferTime value="0.3"/>
+   <targetPointGain value="0.5"/>
+   <ballVelGain value="0.9"/>
+   <shortcutDist value="0.09"/>
+   <maxBallVelForPathReset value="2"/>
+   <maxBallAngleForReset value="20"/>
+   <maxBounceAngle value="45"/>
+  </Settle>
+ </Capture>
  <MotionConstraints>
   <Max_Acceleration value="1"/>
   <Max_Velocity value="1"/>
-  <Max_Angle_Speed value="0.436"/>
-  <Replan_Threshold value="0.3"/>
-  <Replan_Lead_Time value="0"/>
-  <Max_Centripetal_Acceleration value="0.5"/>
  </MotionConstraints>
+ <RotationConstraints>
+  <Max_Rotation_Speed value="2"/>
+  <Max_Rotation_Acceleration value="2"/>
+ </RotationConstraints>
  <Rev2015>
   <translation>
    <p value="2.2"/>
    <i value="0"/>
    <i_windup value="10"/>
-   <accelMultiplier value="0"/>
    <d value="0.4"/>
-   <velMultiplier value="1.2"/>
+   <velMultiplier value="1"/>
    <minEffectiveVelocity value="0.1"/>
+   <accelMultiplier value="0"/>
   </translation>
   <rotation>
    <p value="7"/>
@@ -241,11 +103,8 @@
   </rotation>
   <kicker>
    <maxKick value="255"/>
-   <maxChip value="200"/>
+   <maxChip value="150"/>
   </kicker>
-  <pivot>
-   <velMultiplier value="0.01"/>
-  </pivot>
   <dribbler>
    <multiplier value="1"/>
   </dribbler>
@@ -253,47 +112,10 @@
    <calibSlope value="2.20227"/>
    <calibOffset value="70.0727"/>
   </chipper>
-  <velocity>
-   <p value="0"/>
-   <i value="0"/>
-   <i_windup value="0"/>
-   <d value="0"/>
-  </velocity>
+  <pivot>
+   <velMultiplier value="0.01"/>
+  </pivot>
  </Rev2015>
- <WindowEvaluator>
-  <angleScoreCoeff value="0.7"/>
-  <distScoreCoeff value="0.3"/>
- </WindowEvaluator>
- <Joystick>
-  <Max_Rotation_Speed value="12.5664"/>
-  <Max_Damped_Rotation_Speed value="4"/>
-  <Max_Translation_Speed value="3"/>
-  <Max_Damped_Translation_Speed value="0.7"/>
- </Joystick>
- <SpaceNavJoystick>
-  <Positive_Dribbler_Deadzone value="100"/>
-  <Negative_Dribbler_Deadzone value="-150"/>
- </SpaceNavJoystick>
- <EscapeObstaclesPathPlanner>
-  <stepSize value="0.1"/>
-  <goalChangeThreshold value="0.09"/>
- </EscapeObstaclesPathPlanner>
- <RotationConstraints>
-  <Max_Rotation_Speed value="4"/>
-  <Max_Rotation_Acceleration value="4"/>
- </RotationConstraints>
- <Pivot>
-  <radius value="1.1"/>
- </Pivot>
- <TargetVelPathPlanner>
-  <velChangeReplanThreshold value="0.05"/>
- </TargetVelPathPlanner>
- <KickEvaluator>
-  <kick_std_dev value="0.08"/>
-  <kick_mean value="0"/>
-  <robot_std_dev value="0.3"/>
-  <start_x_offset value="0.1"/>
- </KickEvaluator>
  <VisionFilter>
   <Bounce>
    <robot_body_lin_dampen value="0.9"/>
@@ -355,40 +177,8 @@
    <min value="1"/>
   </Health>
  </VisionFilter>
- <Replanner>
-  <goalPosChangeThreshold value="0.025"/>
-  <goalVelChangeThreshold value="0.025"/>
-  <partialReplanLeadTime value="0.1"/>
- </Replanner>
- <LineKickPlanner>
-  <approachSpeed value="0.25"/>
- </LineKickPlanner>
- <Capture>
-  <searchStartDist value="0"/>
-  <searchEndDist value="7"/>
-  <searchIncDist value="0.2"/>
-  <maxBallSpeedDirect value="0.1"/>
-  <maxApproachAngle value="0.3"/>
-  <maxOutrunBallSpeed value="0.7"/>
-  <ballContactAccelPercent value="0.2"/>
-  <ballSpeedPercentForDampen value="0"/>
-  <Collect>
-   <bufferDistBeforeContact value="0.08"/>
-   <bufferDistAfterContact value="0.08"/>
-   <targetChangeThreshold value="0.025"/>
-   <ballSpeedApproachDirectionCutoff value="0.1"/>
-   <touchDeltaSpeed value="0.15"/>
-   <controlAccelScalePercent value="0.8"/>
-   <distCutoffToControl value="0.0285"/>
-  </Collect>
-  <Settle>
-   <bufferTimeBeforeContact value="0.0"/>
-   <targetPointGain value="0.5"/>
-   <searchStartDist value="0"/>
-   <searchEndDist value="7"/>
-   <searchIncDist value="0.2"/>
-   <targetChangeThreshold value="0.09"/>
-   <shortcutDist value="0.09"/>
-  </Settle>
- </Capture>
+ <WindowEvaluator>
+  <angleScoreCoeff value="0.7"/>
+  <distScoreCoeff value="0.3"/>
+ </WindowEvaluator>
 </config>

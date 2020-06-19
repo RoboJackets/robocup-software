@@ -21,7 +21,7 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
     _stepSize = new ConfigDouble(
         cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
     _goalChangeThreshold = new ConfigDouble(
-        cfg, "EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
+        cfg, "PathPlanner/EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
 }
 
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
@@ -31,12 +31,14 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
     Geometry2d::ShapeSet obstacles;
     FillObstacles(planRequest, &obstacles, nullptr, false, nullptr);
 
-    if (!obstacles.hit(startInstant.position())) {
-        // Stop in place
-        Trajectory result{{RobotInstant{startInstant.pose, Twist::Zero(),
-                                        startInstant.stamp}}};
+    // TODO(#
+    if (!obstacles.hit(startInstant.position()) ||
+        std::holds_alternative<EmptyCommand>(planRequest.motionCommand)) {
+        // Keep moving, but slow down the current velocity.
+        Trajectory result{{RobotInstant{startInstant.pose, Twist::Zero(), startInstant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
+        result.setDebugText("[ESCAPE " + std::to_string(planRequest.motionCommand.index()) + "]");
         return result;
     }
 

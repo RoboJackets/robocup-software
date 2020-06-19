@@ -23,16 +23,16 @@ REGISTER_CONFIGURABLE(Replanner);
 void Replanner::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
     _goalPosChangeThreshold =
-        new ConfigDouble(cfg, "Replanner/goalPosChangeThreshold");
+        new ConfigDouble(cfg, "PathPlanner/Replanner/goalPosChangeThreshold");
     // NOLINTNEXTLINE
     _goalVelChangeThreshold =
-        new ConfigDouble(cfg, "Replanner/goalVelChangeThreshold");
+        new ConfigDouble(cfg, "PathPlanner/Replanner/goalVelChangeThreshold");
     // NOLINTNEXTLINE
     _partialReplanLeadTime =
-        new ConfigDouble(cfg, "Replanner/partialReplanLeadTime");
+        new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
     // NOLINTNEXTLINE
     _offPathErrorThreshold =
-        new ConfigDouble(cfg, "Replanner/offPathErrorThreshold", 0.5);
+        new ConfigDouble(cfg, "PathPlanner/Replanner/offPathErrorThreshold", 0.5);
 }
 
 Trajectory Replanner::partialReplan(const PlanParams& params,
