@@ -32,12 +32,16 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
     Geometry2d::ShapeSet obstacles;
     FillObstacles(planRequest, &obstacles, nullptr, false, nullptr);
 
-    // TODO(#
     if (!obstacles.hit(startInstant.position()) ||
         std::holds_alternative<EmptyCommand>(planRequest.motionCommand)) {
-        // Keep moving, but slow down the current velocity.
-        Trajectory result{{RobotInstant{startInstant.pose, Twist::Zero(),
-                                        startInstant.stamp}}};
+        // Keep moving, but slow down the current velocity. This allows us to
+        // keep continuity when we have short disruptions in planners (i.e.
+        // single frame delay).
+        // TODO(#1464): When the assignment delay is fixed, remove this horrible
+        // hack by using Twist::Zero() instead of startInstant.velocity * 0.8
+        Trajectory result{
+            {RobotInstant{startInstant.pose, startInstant.velocity * 0.8,
+                          startInstant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
         result.setDebugText("[ESCAPE " +
