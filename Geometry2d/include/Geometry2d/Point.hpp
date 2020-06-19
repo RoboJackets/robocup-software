@@ -6,10 +6,13 @@
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
 #include <cmath>
+#include <rj_geometry_msgs/msg/point.hpp>
 #include <sstream>
 #include <string>
 
 namespace Geometry2d {
+using PointMsg = rj_geometry_msgs::msg::Point;
+
 /**
 Simple class to represent a point in 2d space. Uses floating point coordinates
 */
@@ -51,6 +54,12 @@ public:
      * Implicit conversion from Eigen::Vector2d
      */
     Point(const Eigen::Vector2d& other) : Point(other(0), other(1)) {}
+
+    /**
+     * \brief Implicit conversion from PointMsg
+     * @param msg
+     */
+    Point(const PointMsg& msg) : Point{msg.x, msg.y} {}
 
     /**
      * Implicit conversion to Eigen::Vector2d
@@ -379,6 +388,17 @@ public:
         std::stringstream str;
         str << "Point(" << x() << ", " << y() << ")";
         return str.str();
+    }
+
+    /**
+     * @brief Implicit conversion to PointMsg
+     * @return
+     */
+    [[nodiscard]] operator PointMsg() const {
+        PointMsg msg{};
+        msg.x = _x;
+        msg.y = _y;
+        return msg;
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Point& point) {

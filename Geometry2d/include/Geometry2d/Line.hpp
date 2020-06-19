@@ -1,9 +1,13 @@
 #pragma once
 
+#include <rj_geometry_msgs/msg/line.hpp>
+
 #include "Point.hpp"
 #include "TransformMatrix.hpp"
 
 namespace Geometry2d {
+using LineMsg = rj_geometry_msgs::msg::Line;
+
 class Circle;
 class Segment;
 
@@ -16,6 +20,12 @@ public:
     }
 
     explicit Line(const Segment& segment);
+
+    /**
+     * @brief Constructor from LineMsg.
+     * @param msg
+     */
+    Line(const LineMsg& msg) : Line{msg.pt[0], msg.pt[1]} {}
 
     Point delta() const { return pt[1] - pt[0]; }
 
@@ -68,6 +78,16 @@ public:
     }
 
     /**
+     * @brief Implicit conversion to LineMsg
+     * @return
+     */
+    [[nodiscard]] operator LineMsg() const {
+        LineMsg msg{};
+        msg.pt = {pt[0], pt[1]};
+        return msg;
+    }
+
+    /**
      * Returns the point on the line closest to p.
      */
     Point nearestPoint(Point p) const;
@@ -81,4 +101,4 @@ public:
         return str.str();
     }
 };
-}
+}  // namespace Geometry2d

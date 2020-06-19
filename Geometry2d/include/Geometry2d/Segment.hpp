@@ -1,14 +1,17 @@
 
 #pragma once
 
-#include "Rect.hpp"
-#include "Point.hpp"
-#include "Line.hpp"
-#include "Circle.hpp"
-
 #include <memory>
+#include <rj_geometry_msgs/msg/segment.hpp>
+
+#include "Circle.hpp"
+#include "Line.hpp"
+#include "Point.hpp"
+#include "Rect.hpp"
 
 namespace Geometry2d {
+using SegmentMsg = rj_geometry_msgs::msg::Segment;
+
 class Segment {
 public:
     /** the Segement consists of two points */
@@ -19,6 +22,12 @@ public:
     Segment(Point p1, Point p2) : pt{p1, p2} {}
 
     explicit Segment(const Line& other) : Segment(other.pt[0], other.pt[1]) {}
+
+    /**
+     * Implicit conversion from Segment Message.
+     * @param msg
+     */
+    Segment(const SegmentMsg& msg) : pt{msg.pt[0], msg.pt[1]} {}
 
     Segment& operator+=(const Point& delta) {
         pt[0] += delta;
@@ -56,6 +65,16 @@ public:
         std::stringstream str;
         str << "Segment<" << pt[0] << ", " << pt[1] << ">";
         return str.str();
+    }
+
+    /**
+     * Implicit conversion to SegmentMsg.
+     * @return
+     */
+    [[nodiscard]] operator SegmentMsg() const {
+        SegmentMsg msg{};
+        msg.pt = {pt[0], pt[1]};
+        return msg;
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Segment& seg) {

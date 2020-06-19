@@ -23,6 +23,9 @@ function(copy_protobuf_headers DST_DIR OUT_DST_NAMES)
             FATAL_ERROR "copy_protobuf_headers() requires at least 1 input file.")
     endif ()
 
+    # Normalize the path
+    file(TO_CMAKE_PATH "${DST_DIR}" DST_DIR)
+
     # Get a list of the names of all the output files after copying
     set(proto_hdr_dst "")
     foreach (proto_hdr IN LISTS ARGN)
@@ -36,11 +39,14 @@ function(copy_protobuf_headers DST_DIR OUT_DST_NAMES)
         list(APPEND proto_hdr_dst ${proto_hdr_dst_path})
     endforeach ()
 
-    # Get a list of the names of all the output files
+    # Create the directory
+    add_custom_target(create_proto_include_dir
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${DST_DIR})
+    # Copy the headers into the directory
     add_custom_command(
         OUTPUT ${proto_hdr_dst}
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${ARGN} ${DST_DIR}
-        DEPENDS ${ARGN}
+        DEPENDS ${ARGN} create_proto_include_dir
         VERBATIM)
 
     set(${OUT_DST_NAMES}

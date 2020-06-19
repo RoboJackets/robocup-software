@@ -24,6 +24,16 @@ _ament_prefix_path_add() {
     fi
 }
 
+_pythonpath_add() {
+    if [[ ":$PYTHONPATH:" != *":$1:"* ]]; then
+        export PYTHONPATH="$1${PYTHONPATH:+":$PYTHONPATH"}"
+    fi
+}
+
+_PYTHON_LIB_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(prefix='${_INSTALL_PATH}'))")
+_pythonpath_add "${_PYTHON_LIB_PATH}"
+unset _PYTHON_LIB_PATH
+
 _path_add "${_INSTALL_PATH}/bin"
 _ld_library_path_add "${_INSTALL_PATH}/lib"
 _ament_prefix_path_add "${_INSTALL_PATH}"

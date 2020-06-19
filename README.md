@@ -42,7 +42,7 @@ Compiled programs and some configuration files are stored here.
 
 ## Setup
 
-Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on Ubuntu Linux and Arch Linux, although it shouldn't be too difficult to port to other operating systems.
+Here's a quick guide to getting this RoboCup project setup on your computer.  We recommend and only provide directions for installing on 20.04 Ubuntu Linux due to the limitations of ROS2.
 
 1) Clone the repository
 
@@ -62,14 +62,25 @@ $ util/<SYSTEM>-setup
 
 3) Build the project
 
+TODO(1521): Fix makefile scripts.
 ```sh
-$ make
+mkdir build && cd build
+source /opt/ros/foxy/setup.sh
+export CMAKE_PREFIX_PATH=/opt/ros/foxy
+cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+ninja install
 ```
 
-We use CMake as our build system and have a simple `makefile` setup that invokes CMake.
+We use CMake as our build system ~~and have a simple `makefile` setup that invokes CMake~~.
 
-After running `make`, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.
+~~After running `make`, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.~~
 
+To run simulation:
+```sh
+source /opt/ros/foxy/setup.sh
+source install/setup.sh
+ros2 launch rj_robocup sim.launch.py
+```
 
 ## Documentation
 

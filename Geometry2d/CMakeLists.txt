@@ -48,6 +48,9 @@ target_link_libraries(geometry2d
     ${GEOMETRY2D_DEPS_SYSTEM_LIBRARIES}
     ${GEOMETRY2D_DEPS_LIBRARIES})
 
+include(ROSIDLUtils)
+rosidl_target_link_interfaces(geometry2d PUBLIC rj_geometry_msgs)
+
 #======================================================================
 # Testing
 #======================================================================
