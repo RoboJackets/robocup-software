@@ -31,8 +31,8 @@ void Replanner::createConfiguration(Configuration* cfg) {
     _partialReplanLeadTime =
         new ConfigDouble(cfg, "PathPlanner/Replanner/partialReplanLeadTime");
     // NOLINTNEXTLINE
-    _offPathErrorThreshold =
-        new ConfigDouble(cfg, "PathPlanner/Replanner/offPathErrorThreshold", 0.5);
+    _offPathErrorThreshold = new ConfigDouble(
+        cfg, "PathPlanner/Replanner/offPathErrorThreshold", 0.5);
 }
 
 Trajectory Replanner::partialReplan(const PlanParams& params,
