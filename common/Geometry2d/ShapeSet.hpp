@@ -23,8 +23,8 @@ public:
         }
     }
 
-    std::vector<std::shared_ptr<Shape>> shapes() { return _shapes; }
-    const std::vector<std::shared_ptr<Shape>>& shapes() const {
+    std::vector<std::shared_ptr<Shape>>& shapes() { return _shapes; }
+    [[nodiscard]] const std::vector<std::shared_ptr<Shape>>& shapes() const {
         return _shapes;
     }
 

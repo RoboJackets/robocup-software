@@ -30,7 +30,7 @@ struct PlanRequest {
                 unsigned shellID, const WorldState* world_state,
                 int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
         : start(start),
-          motionCommand(std::move(command)),
+          motionCommand(command),
           constraints(constraints),
           field_obstacles(std::move(field_obstacles)),
           virtual_obstacles(std::move(virtual_obstacles)),

@@ -204,7 +204,7 @@ void OurRobot::settle(std::optional<Point> target) {
         return;
     }
 
-    setMotionCommand(Planning::SettleCommand{std::move(target)});
+    setMotionCommand(Planning::SettleCommand{target});
 }
 
 void OurRobot::collect() {
