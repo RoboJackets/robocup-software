@@ -22,10 +22,12 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
         return false;
     }
 
-    // Limit iterations to 400. This will continue to operate at dt = 0.05 until
-    // we hit a 20 second trajectory. If our trajectory is longer than that,
-    // something is probably wrong.
-    constexpr int max_iterations = 400;
+    // Limit iterations to 100. This will continue to operate at dt = 0.05 until
+    // we hit a 5 second trajectory. If our trajectory is longer than that,
+    // something is probably wrong, but we'll still handle it (just scale dt
+    // accordingly).
+    // TODO(#1525): Make these config variables.
+    constexpr int max_iterations = 100;
     constexpr RJ::Seconds expected_dt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
@@ -78,7 +80,8 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
     // Limit iterations to 100. This will continue to operate at dt = 0.05 until
     // we hit a 5 second trajectory. If our trajectory is longer than that,
     // something is probably wrong, but we'll still handle it (just scale dt
-    // accordingly)
+    // accordingly).
+    // TODO(#1525): Make these config variables.
     constexpr int max_iterations = 100;
     constexpr RJ::Seconds expected_dt{0.05};
 
