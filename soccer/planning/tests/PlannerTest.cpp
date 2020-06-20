@@ -24,7 +24,7 @@ using namespace Planning;
 using namespace Geometry2d;
 using namespace Planning::TestingUtils;
 
-TEST(Planning, path_target_random) {
+TEST(Planning, DISABLED_path_target_random) {
     WorldState world_state;
     PathTargetPlanner planner;
 
