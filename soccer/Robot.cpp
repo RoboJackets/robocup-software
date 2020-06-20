@@ -204,6 +204,7 @@ void OurRobot::settle(std::optional<Point> target) {
         return;
     }
 
+    // NOLINTNEXTLINE: the CI clang-tidy version (wrongly) suggests std::move
     setMotionCommand(Planning::SettleCommand{target});
 }
 
