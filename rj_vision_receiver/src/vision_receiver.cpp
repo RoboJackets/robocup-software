@@ -95,8 +95,8 @@ void VisionReceiver::run() {
 void VisionReceiver::processNewPackets() {
     for (StampedSSLWrapperPacket::UniquePtr& packet : _packets) {
         // Publish raw packet
-        RawProtobufMsg::UniquePtr msg = ToROSMsg(packet->wrapper);
-        raw_packet_pub_->publish(std::move(msg));
+        RawProtobufMsg::UniquePtr raw_protobuf_msg = ToROSMsg(packet->wrapper);
+        raw_packet_pub_->publish(std::move(raw_protobuf_msg));
 
         // If packet has geometry data, attempt to read information and
         // update if changed.
@@ -108,10 +108,12 @@ void VisionReceiver::processNewPackets() {
         if (packet->wrapper.has_detection()) {
             SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
-            DetectionFrameMsg::UniquePtr msg = ToROSMsg(*det);
-            SyncDetectionTimestamp(msg.get(), packet->receive_time);
+            DetectionFrameMsg::UniquePtr detection_frame_msg =
+                std::make_unique<DetectionFrameMsg>(ToROSMsg(*det));
+            SyncDetectionTimestamp(detection_frame_msg.get(),
+                                   packet->receive_time);
 
-            detection_frame_pub_->publish(std::move(msg));
+            detection_frame_pub_->publish(std::move(detection_frame_msg));
         }
     }
     _packets.clear();
@@ -128,46 +130,56 @@ void VisionReceiver::processNewPackets() {
     return msg;
 }
 
-DetectionFrameMsg::UniquePtr VisionReceiver::ToROSMsg(
+DetectionFrameMsg VisionReceiver::ToROSMsg(
     const SSL_DetectionFrame& frame) const {
-    DetectionFrameMsg::UniquePtr msg = std::make_unique<DetectionFrameMsg>();
+    DetectionFrameMsg msg{};
+
+    msg.t_sent = ToROSTime(frame.t_sent());
+    msg.t_capture = ToROSTime(frame.t_capture());
 
     const bool defend_plus_x = config_.gameSettings().defend_plus_x;
 
     // Only add balls that are in a used half
     const google::protobuf::RepeatedPtrField<SSL_DetectionBall>& balls =
         frame.balls();
-    msg->balls.reserve(balls.size());
+    msg.balls.reserve(balls.size());
     for (int i = 0; i < balls.size(); ++i) {
         const SSL_DetectionBall& ball = balls.Get(i);
         if (InUsedHalf(defend_plus_x, ball.x())) {
-            msg->balls.emplace_back(ToROSMsg(ball));
+            msg.balls.emplace_back(ToROSMsg(ball));
         }
     }
 
     // Add blue robots that are in a used half
     const google::protobuf::RepeatedPtrField<SSL_DetectionRobot>& robots_blue =
         frame.robots_blue();
-    msg->robots_blue.reserve(robots_blue.size());
+    msg.robots_blue.reserve(robots_blue.size());
     for (int i = 0; i < robots_blue.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_blue.Get(i);
         if (InUsedHalf(defend_plus_x, robot.x())) {
-            msg->robots_blue.emplace_back(ToROSMsg(robot));
+            msg.robots_blue.emplace_back(ToROSMsg(robot));
         }
     }
 
     // Add yellow robots that are in a used half
     const google::protobuf::RepeatedPtrField<SSL_DetectionRobot>&
         robots_yellow = frame.robots_yellow();
-    msg->robots_yellow.reserve(robots_yellow.size());
+    msg.robots_yellow.reserve(robots_yellow.size());
     for (int i = 0; i < robots_yellow.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_yellow.Get(i);
         if (InUsedHalf(defend_plus_x, robot.x())) {
-            msg->robots_yellow.emplace_back(ToROSMsg(robot));
+            msg.robots_yellow.emplace_back(ToROSMsg(robot));
         }
     }
 
     return msg;
+}
+
+rclcpp::Time VisionReceiver::ToROSTime(double time_since_epoch_s) {
+    const auto seconds = static_cast<int32_t>(time_since_epoch_s);
+    const auto nanoseconds =
+        static_cast<uint32_t>((time_since_epoch_s - seconds) * 10e9);
+    return rclcpp::Time{seconds, nanoseconds, RCL_ROS_TIME};
 }
 
 DetectionBallMsg VisionReceiver::ToROSMsg(const SSL_DetectionBall& ball) {
@@ -204,48 +216,6 @@ void VisionReceiver::SyncDetectionTimestamp(DetectionFrameMsg* frame,
     frame->t_sent = receive_time;
 }
 
-void VisionReceiver::removeFromExcludedHalf(SSL_DetectionFrame* frame) const {
-    const bool defend_plus_x = config_.gameSettings().defend_plus_x;
-
-    // Remove balls on the excluded half of the field
-    google::protobuf::RepeatedPtrField<SSL_DetectionBall>* balls =
-        frame->mutable_balls();
-    for (int i = 0; i < balls->size(); ++i) {
-        const float x = balls->Get(i).x();
-
-        if (!InUsedHalf(defend_plus_x, balls->Get(i).x())) {
-            balls->SwapElements(i, balls->size() - 1);
-            balls->RemoveLast();
-            --i;
-        }
-    }
-
-    // Remove robots on the excluded half of the field
-    google::protobuf::RepeatedPtrField<SSL_DetectionRobot>* robots[2] = {
-        frame->mutable_robots_yellow(), frame->mutable_robots_blue()};
-
-    for (auto& robot : robots) {
-        for (int i = 0; i < robot->size(); ++i) {
-            // Remove if it isn't in a used half
-            if (!InUsedHalf(defend_plus_x, robot->Get(i).x())) {
-                robot->SwapElements(i, robot->size() - 1);
-                robot->RemoveLast();
-                --i;
-            }
-        }
-    }
-}
-
-void VisionReceiver::publishRawPacket(const SSL_WrapperPacket& packet) {
-    RawProtobufMsg::UniquePtr msg = std::make_unique<RawProtobufMsg>();
-    const auto packet_size = packet.ByteSizeLong();
-    msg->data.resize(packet_size);
-
-    packet.SerializeWithCachedSizesToArray(msg->data.data());
-
-    raw_packet_pub_->publish(std::move(msg));
-}
-
 void VisionReceiver::startReceive() {
     // Set a receive callback
     _socket.async_receive_from(
@@ -270,8 +240,8 @@ void VisionReceiver::receivePacket(const boost::system::error_code& error,
     // Parse the protobuf message and tack on the receive time.
     StampedSSLWrapperPacket::UniquePtr stamped_packet =
         std::make_unique<StampedSSLWrapperPacket>();
-    stamped_packet->receive_time = rclcpp::Clock().now();
-    if (stamped_packet->wrapper.ParseFromArray(&_recv_buffer[0], num_bytes)) {
+    stamped_packet->receive_time = get_clock()->now();
+    if (!stamped_packet->wrapper.ParseFromArray(&_recv_buffer[0], num_bytes)) {
         EZ_ERROR_STREAM("Got bad packet of " << num_bytes << " bytes from "
                                              << _sender_endpoint.address()
                                              << ":" << _sender_endpoint.port());
@@ -353,7 +323,7 @@ void VisionReceiver::UpdateGeometryPacket(
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
 
-        config_.updateFieldDimensions(new_field_dim.toMsg());
+        config_.updateFieldDimensions(new_field_dim);
     } else if (center != nullptr && thickness != 0) {
         const Field_Dimensions defaultDim =
             Field_Dimensions::Default_Dimensions;
@@ -374,7 +344,7 @@ void VisionReceiver::UpdateGeometryPacket(
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
 
-        config_.updateFieldDimensions(new_field_dim.toMsg());
+        config_.updateFieldDimensions(new_field_dim);
 
     } else {
         EZ_ERROR_STREAM(
@@ -383,3 +353,10 @@ void VisionReceiver::UpdateGeometryPacket(
     }
 }
 }  // namespace vision_receiver
+
+int main(int argc, char** argv) {
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<vision_receiver::VisionReceiver>());
+    rclcpp::shutdown();
+    return 0;
+}

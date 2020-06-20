@@ -63,20 +63,12 @@ private:
     void processNewPackets();
 
     /**
-     * @brief Serializes the SSL_WrapperPacket and publishes it to
-     * raw_packet_pub
-     *
-     * @param packet
-     */
-    void publishRawPacket(const SSL_WrapperPacket& packet);
-
-    /**
      * @brief Converts from the janky floating point time that is used in
      * SSL_DetectionFrame to a proper time that uses integers.
      * @param time_since_epoch_s Floating point time
      * @return rclcpp::Time
      */
-    static rclcpp::Time ToRosTime(double time_since_epoch_s);
+    static rclcpp::Time ToROSTime(double time_since_epoch_s);
 
     /**
      * @brief "Syncs" up the timestamp of the proto (because the computer clock
@@ -87,24 +79,7 @@ private:
      * @param receive_time The time we received the message on this computer.
      */
     static void SyncDetectionTimestamp(DetectionFrameMsg* frame,
-                                const rclcpp::Time& receive_time) ;
-
-    /**
-     * @brief Filters out information from an excluded half, if we are only
-     * using half of the field and another team's robots are on the other half
-     * of the field.
-     * @param frame
-     * @param receive_time_s The time in seconds from epoch. For some reason,
-     * protobuf has this field as a double instead of in uint64_t as nanoseconds
-     * or something, but oh well.
-     */
-    void removeFromExcludedHalf(SSL_DetectionFrame* frame) const;
-
-    /**
-     * @brief Publishes the passed in SSL_DetectionFrame.
-     * @param frame
-     */
-    void publishDetectionFrame(const SSL_DetectionFrame& frame);
+                                const rclcpp::Time& receive_time);
 
     void UpdateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
@@ -115,13 +90,30 @@ private:
      * @param packet
      * @return
      */
-    [[nodiscard]] DetectionFrameMsg::UniquePtr ToROSMsg(
+    [[nodiscard]] DetectionFrameMsg ToROSMsg(
         const SSL_DetectionFrame& detection_frame) const;
 
+    /**
+     * @brief Converts from SSL_WrapperPacket to a RawProtobufMsg.
+     * @param wrapper
+     * @return
+     */
     [[nodiscard]] static RawProtobufMsg::UniquePtr ToROSMsg(
         const SSL_WrapperPacket& wrapper) ;
+
+    /**
+     * @brief Converts from SSL_DetectionBall to a DetectionBallMsg.
+     * @param ball
+     * @return
+     */
     [[nodiscard]] static DetectionBallMsg ToROSMsg(
         const SSL_DetectionBall& ball) ;
+
+    /**
+     * @brief Converts from SSL_DetectionRobot to a DetectionRobotMsg.
+     * @param robot
+     * @return
+     */
     [[nodiscard]] static DetectionRobotMsg ToROSMsg(
         const SSL_DetectionRobot& robot) ;
 

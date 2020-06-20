@@ -52,6 +52,9 @@ target_link_libraries(rj_common
     ${RJ_COMMON_DEPS_SYSTEM_LIBRARIES}
     ${RJ_COMMON_DEPS_LIBRARIES})
 
+include(ROSIDLUtils)
+rosidl_target_link_interfaces(rj_common PRIVATE rj_msgs)
+
 #======================================================================
 # Packaging
 #======================================================================

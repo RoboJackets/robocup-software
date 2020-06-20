@@ -1,16 +1,18 @@
 #pragma once
 
-#include <iostream>
-#include <cfloat>
-#include <cmath>
-
 #include <Geometry2d/Arc.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Line.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Rect.hpp>
-#include <Geometry2d/Line.hpp>
+#include <cfloat>
+#include <cmath>
+#include <iostream>
+#include <rj_msgs/msg/field_dimensions.hpp>
+
+using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
 
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
@@ -45,22 +47,18 @@ struct Field_Dimensions {
 
     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
 
-    Geometry2d::Rect OurGoalZoneShape() const {
-        return _OurGoalZoneShape;
-    }
-    Geometry2d::Rect TheirGoalZoneShape() const {
-        return _TheirGoalZoneShape;
-    }
+    Geometry2d::Rect OurGoalZoneShape() const { return _OurGoalZoneShape; }
+    Geometry2d::Rect TheirGoalZoneShape() const { return _TheirGoalZoneShape; }
 
     /*
-    * Provides a rect that is a padded version of their goalbox
-    * used mostly for movement at the play level
-    * exposed to python via constants.Field
-    */
-    Geometry2d::Rect TheirGoalZoneShapePadded(float padding){
-      Geometry2d::Rect tmp = Geometry2d::Rect(_TheirGoalZoneShape);
-      tmp.pad(padding);
-      return tmp;
+     * Provides a rect that is a padded version of their goalbox
+     * used mostly for movement at the play level
+     * exposed to python via constants.Field
+     */
+    Geometry2d::Rect TheirGoalZoneShapePadded(float padding) {
+        Geometry2d::Rect tmp = Geometry2d::Rect(_TheirGoalZoneShape);
+        tmp.pad(padding);
+        return tmp;
     };
 
     Geometry2d::Segment OurGoalSegment() const { return _OurGoalSegment; }
@@ -70,14 +68,14 @@ struct Field_Dimensions {
     Geometry2d::Rect FieldRect() const { return _FieldRect; }
 
     /*
-    * Provides a rect that is a padded version of our goalbox
-    * used mostly for movement at the play level
-    * exposed to python via constants.Field
-    */
-    Geometry2d::Rect OurGoalZoneShapePadded(float padding){
-      Geometry2d::Rect tmp = Geometry2d::Rect(_OurGoalZoneShape);
-      tmp.pad(padding);
-      return tmp;
+     * Provides a rect that is a padded version of our goalbox
+     * used mostly for movement at the play level
+     * exposed to python via constants.Field
+     */
+    Geometry2d::Rect OurGoalZoneShapePadded(float padding) {
+        Geometry2d::Rect tmp = Geometry2d::Rect(_OurGoalZoneShape);
+        tmp.pad(padding);
+        return tmp;
     };
 
     std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
@@ -113,6 +111,26 @@ struct Field_Dimensions {
         updateGeometry();
     }
 
+    /**
+     * @brief Implicit conversion from FieldDimensionsMsg.
+     * @param msg
+     */
+    Field_Dimensions(const FieldDimensionsMsg& msg)
+        : Field_Dimensions{msg.length,
+                           msg.width,
+                           msg.border,
+                           msg.line_width,
+                           msg.goal_width,
+                           msg.goal_depth,
+                           msg.goal_height,
+                           msg.penalty_short_dist,
+                           msg.penalty_long_dist,
+                           msg.center_radius,
+                           msg.center_diameter,
+                           msg.goal_flat,
+                           msg.floor_length,
+                           msg.floor_width} {}
+
     Field_Dimensions operator*(float scalar) const {
         return Field_Dimensions(
             _Length * scalar, _Width * scalar, _Border * scalar,
@@ -124,21 +142,21 @@ struct Field_Dimensions {
     }
 
     bool operator==(const Field_Dimensions& a) const {
-        return !(std::abs(Length() - a.Length()) > FLT_EPSILON ||
-                 std::abs(Width() - a.Width()) > FLT_EPSILON ||
-                 std::abs(Border() - a.Border()) > FLT_EPSILON ||
-                 std::abs(LineWidth() - a.LineWidth()) > FLT_EPSILON ||
-                 std::abs(GoalWidth() - a.GoalWidth()) > FLT_EPSILON ||
-                 std::abs(GoalDepth() - a.GoalDepth()) > FLT_EPSILON ||
-                 std::abs(GoalHeight() - a.GoalHeight()) > FLT_EPSILON ||
-                 std::abs(PenaltyShortDist() - a.PenaltyShortDist()) > FLT_EPSILON ||
-                 std::abs(PenaltyLongDist() - a.PenaltyLongDist()) > FLT_EPSILON ||
-                 std::abs(CenterRadius() - a.CenterRadius()) > FLT_EPSILON ||
-                 std::abs(CenterDiameter() - a.CenterDiameter()) >
-                     FLT_EPSILON ||
-                 std::abs(GoalFlat() - a.GoalFlat()) > FLT_EPSILON ||
-                 std::abs(FloorLength() - a.FloorLength()) > FLT_EPSILON ||
-                 std::abs(FloorWidth() - a.FloorWidth()) > FLT_EPSILON);
+        return !(
+            std::abs(Length() - a.Length()) > FLT_EPSILON ||
+            std::abs(Width() - a.Width()) > FLT_EPSILON ||
+            std::abs(Border() - a.Border()) > FLT_EPSILON ||
+            std::abs(LineWidth() - a.LineWidth()) > FLT_EPSILON ||
+            std::abs(GoalWidth() - a.GoalWidth()) > FLT_EPSILON ||
+            std::abs(GoalDepth() - a.GoalDepth()) > FLT_EPSILON ||
+            std::abs(GoalHeight() - a.GoalHeight()) > FLT_EPSILON ||
+            std::abs(PenaltyShortDist() - a.PenaltyShortDist()) > FLT_EPSILON ||
+            std::abs(PenaltyLongDist() - a.PenaltyLongDist()) > FLT_EPSILON ||
+            std::abs(CenterRadius() - a.CenterRadius()) > FLT_EPSILON ||
+            std::abs(CenterDiameter() - a.CenterDiameter()) > FLT_EPSILON ||
+            std::abs(GoalFlat() - a.GoalFlat()) > FLT_EPSILON ||
+            std::abs(FloorLength() - a.FloorLength()) > FLT_EPSILON ||
+            std::abs(FloorWidth() - a.FloorWidth()) > FLT_EPSILON);
     }
 
     bool operator!=(const Field_Dimensions& a) const { return !(*this == a); }
@@ -147,12 +165,13 @@ struct Field_Dimensions {
         _CenterPoint = Geometry2d::Point(0.0, _Length / 2.0);
 
         _OurGoalZoneShape = Geometry2d::Rect(
-          Geometry2d::Point(_PenaltyLongDist / 2, _PenaltyShortDist),
-          Geometry2d::Point(-_PenaltyLongDist / 2, 0));
+            Geometry2d::Point(_PenaltyLongDist / 2, _PenaltyShortDist),
+            Geometry2d::Point(-_PenaltyLongDist / 2, 0));
 
-        _TheirGoalZoneShape = Geometry2d::Rect(
-          Geometry2d::Point(-_PenaltyLongDist / 2, _Length),
-          Geometry2d::Point(_PenaltyLongDist / 2, _Length - _PenaltyShortDist));
+        _TheirGoalZoneShape =
+            Geometry2d::Rect(Geometry2d::Point(-_PenaltyLongDist / 2, _Length),
+                             Geometry2d::Point(_PenaltyLongDist / 2,
+                                               _Length - _PenaltyShortDist));
 
         _TheirGoalSegment =
             Geometry2d::Segment(Geometry2d::Point(_GoalWidth / 2.0, _Length),
@@ -179,6 +198,31 @@ struct Field_Dimensions {
                              Geometry2d::Point(_Width / 2.0, 0)),
             Geometry2d::Line(Geometry2d::Point(_Width / 2.0, 0),
                              Geometry2d::Point(-_Width / 2.0, 0))};
+    }
+
+    /**
+     * @brief Implicit conversion to FieldDimensionsMsg.
+     * @return
+     */
+    [[nodiscard]] operator FieldDimensionsMsg() const {
+        FieldDimensionsMsg msg{};
+
+        msg.length = _Length;
+        msg.width = _Width;
+        msg.border = _Border;
+        msg.line_width = _LineWidth;
+        msg.goal_width = _GoalWidth;
+        msg.goal_depth = _GoalDepth;
+        msg.goal_height = _GoalHeight;
+        msg.penalty_short_dist = _PenaltyShortDist;
+        msg.penalty_long_dist = _PenaltyLongDist;
+        msg.center_radius = _CenterRadius;
+        msg.center_diameter = _CenterDiameter;
+        msg.goal_flat = _GoalFlat;
+        msg.floor_length = _FloorLength;
+        msg.floor_width = _FloorWidth;
+
+        return msg;
     }
 
 private:
