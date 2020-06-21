@@ -2,8 +2,8 @@
 
 #include <Constants.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include "planning/MotionCommand.hpp"
-#include "planning/RotationCommand.hpp"
+
+#include "planning/planner/MotionCommand.hpp"
 
 using RobotMask = std::array<float, Num_Shells>;
 
@@ -12,23 +12,24 @@ struct RobotIntent {
     enum class TriggerMode { STAND_DOWN, IMMEDIATE, ON_BREAK_BEAM };
     enum class Song { STOP, CONTINUE, FIGHT_SONG };
 
-    std::unique_ptr<Planning::MotionCommand> motion_command;
-    std::unique_ptr<Planning::RotationCommand> rotation_command;
+    Planning::MotionCommand motion_command;
 
     /// set of obstacles added by plays
     Geometry2d::ShapeSet local_obstacles;
 
     /// masks for obstacle avoidance
-    RobotMask opp_avoid_mask;
-    float avoid_ball_radius;  /// radius of ball obstacle
+    RobotMask opp_avoid_mask{};
+    float avoid_ball_radius{};  /// radius of ball obstacle
 
-    ShootMode shoot_mode;
-    TriggerMode trigger_mode;
-    Song song;
-    int kcstrength;
-    float dvelocity;
+    ShootMode shoot_mode = ShootMode::KICK;
+    TriggerMode trigger_mode = TriggerMode::STAND_DOWN;
+    Song song = Song::STOP;
+    int kcstrength = 0;
+    float dvelocity = 0;
 
-    bool is_active;
+    bool is_active = false;
+
+    int8_t priority = 0;
 
     void clear() {
         dvelocity = 0;
@@ -36,7 +37,11 @@ struct RobotIntent {
         shoot_mode = ShootMode::KICK;
         trigger_mode = TriggerMode::STAND_DOWN;
         song = Song::CONTINUE;
+
+        priority = 0;
+
+        motion_command = Planning::EmptyCommand();
     }
 
-    RobotIntent() : is_active(false) { clear(); }
+    RobotIntent() : motion_command(Planning::EmptyCommand{}) { clear(); }
 };

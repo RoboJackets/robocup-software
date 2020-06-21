@@ -4,7 +4,6 @@
 #include <protobuf/referee.pb.h>
 
 #include <Constants.hpp>
-#include <planning/trajectory/Trajectory.hpp>
 #include <set>
 
 #include "DebugDrawer.hpp"
@@ -18,6 +17,7 @@
 #include "joystick/GamepadMessage.hpp"
 #include "motion/MotionSetpoint.hpp"
 #include "planning/RobotConstraints.hpp"
+#include "planning/Trajectory.hpp"
 #include "radio/RobotStatus.hpp"
 #include "vision/VisionPacket.hpp"
 
@@ -33,10 +33,10 @@ struct Context {
 
     // Gameplay -> Planning, Radio
     std::array<RobotIntent, Num_Shells> robot_intents;
-    // Planning -> Motion control
+    // Motion control -> Radio
     std::array<MotionSetpoint, Num_Shells> motion_setpoints;
     // Planning -> Motion control
-    std::array<Trajectory::Trajectory, Num_Shells> trajectories;
+    std::array<Planning::Trajectory, Num_Shells> trajectories;
     // Radio -> Gameplay
     std::array<RobotStatus, Num_Shells> robot_status;
     // MainWindow -> Manual control
