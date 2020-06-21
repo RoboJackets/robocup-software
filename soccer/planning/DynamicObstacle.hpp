@@ -16,7 +16,7 @@ struct DynamicObstacle {
      * outlive the usage of this object.
      */
     DynamicObstacle(double radius, const Trajectory* path)
-        : circle(Geometry2d::Point(), radius), path(path) {}
+        : circle(Geometry2d::Point(), static_cast<float>(radius)), path(path) {}
     Geometry2d::Circle circle;
     const Trajectory* path;
 };

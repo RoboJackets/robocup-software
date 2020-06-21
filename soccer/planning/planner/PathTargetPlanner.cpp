@@ -28,13 +28,13 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     }
 
     auto command = std::get<PathTargetCommand>(request.motionCommand);
-    RobotInstant goalInstant = command.pathGoal;
-    Point goalPoint = goalInstant.position();
+    LinearMotionInstant goalInstant = command.goal;
+    Point goalPoint = goalInstant.position;
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
-        request.debug_drawer->drawCircle(goalPoint, drawRadius, drawColor,
-                                         drawLayer);
+        request.debug_drawer->drawCircle(
+            goalPoint, static_cast<float>(drawRadius), drawColor, drawLayer);
     }
 
     AngleFunction angle_function = getAngleFunction(request);

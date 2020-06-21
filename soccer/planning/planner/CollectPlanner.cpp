@@ -245,9 +245,7 @@ Trajectory CollectPlanner::courseApproach(
         pathCourseTarget = targetSlowPos;
     }
 
-    RobotInstant targetSlow;
-    targetSlow.position() = pathCourseTarget;
-    targetSlow.linear_velocity() = targetSlowVel;
+    LinearMotionInstant targetSlow{pathCourseTarget, targetSlowVel};
 
     Replanner::PlanParams params{start,
                                  targetSlow,
@@ -340,7 +338,7 @@ Trajectory CollectPlanner::control(
     // Only plan the path once and run through it
     // Otherwise it will basically push the ball across the field
     if (controlPathCreated && !previous.empty()) {
-        return std::move(previous);
+        return previous;
     }
 
     controlPathCreated = true;
@@ -438,8 +436,7 @@ Trajectory CollectPlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    RobotInstant target = planRequest.start;
-    target.velocity = Geometry2d::Twist::Zero();
+    LinearMotionInstant target{planRequest.start.position(), Point()};
 
     Replanner::PlanParams params{
         planRequest.start,

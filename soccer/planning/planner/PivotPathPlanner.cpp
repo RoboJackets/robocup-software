@@ -23,7 +23,7 @@ ConfigDouble* PivotPathPlanner::_pivotRadiusMultiplier;
 void PivotPathPlanner::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
     _pivotRadiusMultiplier =
-        new ConfigDouble(cfg, "Pivot/radius", 1.0,
+        new ConfigDouble(cfg, "PathPlanner/Pivot/radiusMultiplier", 1.0,
                          "Multiplier for the pivotRadius. PivotRadius = "
                          "RobotRadius * multiplier");
 }

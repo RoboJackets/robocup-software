@@ -47,7 +47,7 @@ public:
 
     static void createConfiguration(Configuration* cfg);
 
-    static float stepSize() { return *_stepSize; }
+    static double stepSize() { return *_stepSize; }
 
 private:
     PathTargetPlanner _planner;

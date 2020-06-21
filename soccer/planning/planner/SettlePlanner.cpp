@@ -229,25 +229,6 @@ Trajectory SettlePlanner::intercept(
     Geometry2d::Point deltaPos, Geometry2d::Point facePos) {
     BallState ball = planRequest.world_state->ball;
 
-    // First, if the previous trajectory is still valid, try to use that.
-    if (!previous.empty() && previous.CheckTime(startInstant.stamp) &&
-        !TrajectoryHitsStatic(previous, staticObstacles, startInstant.stamp,
-                              nullptr) &&
-        !TrajectoryHitsDynamic(previous, dynamicObstacles, startInstant.stamp,
-                               nullptr, nullptr)) {
-        RJ::Seconds timeRemaining = previous.end_time() - startInstant.stamp;
-        Point pathAtEnd = previous.last().position();
-
-        Point nearPoint;
-        RJ::Seconds timeToIntersect =
-            ball.query_seconds_near(pathAtEnd, &nearPoint);
-        if (timeRemaining <
-                timeToIntersect + RJ::Seconds(*_interceptBufferTime) &&
-            nearPoint.distTo(pathAtEnd) < Replanner::goalPosChangeThreshold()) {
-            return previous;
-        }
-    }
-
     // Try find best point to intercept using brute force method
     // where we check ever X distance along the ball velocity vector
     //
@@ -280,8 +261,7 @@ Trajectory SettlePlanner::intercept(
         // It should be about stopped at that location.
         // Could add a little backwards motion, but it isn't as clean in the
         // planning side
-        RobotInstant targetRobotIntersection;
-        targetRobotIntersection.position() = ballVelIntercept;
+        LinearMotionInstant targetRobotIntersection{ballVelIntercept, Point()};
 
         // Plan a path from our partial path start location to the intercept
         // test location
@@ -420,10 +400,8 @@ Trajectory SettlePlanner::intercept(
     // Build a new path with the target
     // Since the replanner exists, we don't have to deal with partial paths,
     // just use the interface
-    RobotInstant targetRobotIntersection;
-    targetRobotIntersection.position() = pathInterceptTarget;
-    targetRobotIntersection.linear_velocity() =
-        *_ballSpeedPercentForDampen * averageBallVel;
+    LinearMotionInstant targetRobotIntersection{
+        pathInterceptTarget, *_ballSpeedPercentForDampen * averageBallVel};
 
     Replanner::PlanParams params{startInstant,
                                  targetRobotIntersection,
@@ -557,8 +535,7 @@ Trajectory SettlePlanner::invalid(
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    RobotInstant target;
-    target.pose = planRequest.start.pose;
+    LinearMotionInstant target{planRequest.start.position(), Point()};
 
     Replanner::PlanParams params{
         planRequest.start,
