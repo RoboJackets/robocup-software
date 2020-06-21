@@ -315,6 +315,7 @@ void Gameplay::GameplayModule::run() {
         _context->world_state.ball.position);
 
     _context->globalObstacles = globalObstacles();
+    _context->goalZoneObstacles = goalZoneObstacles();
 
     /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : _context->state.self) {
