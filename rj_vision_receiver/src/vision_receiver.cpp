@@ -1,13 +1,12 @@
 #include <rj_vision_receiver/vision_receiver.h>
 
 #include <boost/exception/diagnostic_information.hpp>
+#include <cmath>
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
 #include <stdexcept>
-
-#include "math.h"
 
 namespace vision_receiver {
 using boost::asio::ip::udp;

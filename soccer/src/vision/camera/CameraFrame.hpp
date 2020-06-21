@@ -1,6 +1,7 @@
 #pragma once
 #include <rj_common/Utils.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
+#include <utility>
 #include <vector>
 
 #include "vision/ball/CameraBall.hpp"
@@ -28,9 +29,9 @@ public:
                 std::vector<CameraRobot> cameraRobotsBlue)
         : tCapture(tCapture),
           cameraID(cameraID),
-          cameraBalls(cameraBalls),
-          cameraRobotsYellow(cameraRobotsYellow),
-          cameraRobotsBlue(cameraRobotsBlue) {}
+          cameraBalls(std::move(cameraBalls)),
+          cameraRobotsYellow(std::move(cameraRobotsYellow)),
+          cameraRobotsBlue(std::move(cameraRobotsBlue)) {}
 
     /**
      * @brief Implicit conversion from DetectionFrameMsg.

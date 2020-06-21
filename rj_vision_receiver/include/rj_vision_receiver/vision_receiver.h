@@ -87,12 +87,12 @@ private:
      * @brief Converts from a SSL_WrapperPacket to a DetectionFrameMsg,
      * respecting the "exclude half" config as well as performing timestamp
      * synchronization.
-     * @param packet
+     * @param frame
      * @param received_time Time that this packet was received.
      * @return
      */
     [[nodiscard]] DetectionFrameMsg ToROSMsg(
-        const SSL_DetectionFrame& detection_frame,
+        const SSL_DetectionFrame& frame,
         const rclcpp::Time& received_time) const;
 
     /**
