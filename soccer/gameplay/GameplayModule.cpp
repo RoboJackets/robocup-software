@@ -314,6 +314,8 @@ void Gameplay::GameplayModule::run() {
     _ballMatrix = Geometry2d::TransformMatrix::translate(
         _context->world_state.ball.position);
 
+    _context->globalObstacles = globalObstacles();
+
     /// prepare each bot for the next iteration by resetting temporary things
     for (OurRobot* robot : _context->state.self) {
         if (robot != nullptr) {
