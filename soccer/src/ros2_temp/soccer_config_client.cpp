@@ -9,7 +9,6 @@ SoccerConfigClient::SoccerConfigClient(Context* context) : context_{context} {
 
 void SoccerConfigClient::run() {
     config_client_->updateGameSettings(context_->game_settings);
-    config_client_->updateFieldDimensions(context_->field_dimensions);
 
     executor_.spin_some();
 

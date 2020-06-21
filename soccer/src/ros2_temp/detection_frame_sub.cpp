@@ -11,15 +11,19 @@ DetectionFrameSub::DetectionFrameSub() {
 
     executor_.add_node(queue_);
     executor_.add_node(config_client_);
+
+    worker_ = std::thread(&DetectionFrameSub::spin, this);
 }
 
 std::vector<DetectionFrameMsg::UniquePtr> DetectionFrameSub::GetFrames() {
     std::vector<DetectionFrameMsg::UniquePtr> msgs;
-    if (!queue_->GetAll(msgs)) {
+    if (!queue_->GetAllThreaded(msgs)) {
         std::cout << "Got no messages!" << std::endl;
     }
     return msgs;
 }
 
-void DetectionFrameSub::run() { executor_.spin_some(); }
+void DetectionFrameSub::spin() {
+    executor_.spin();
+};
 }  // namespace ros2_temp

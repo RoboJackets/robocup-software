@@ -110,7 +110,7 @@ void VisionReceiver::processNewPackets() {
             SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
             DetectionFrameMsg::UniquePtr detection_frame_msg =
-                std::make_unique<DetectionFrameMsg>(ToROSMsg(*det, packet->receive_time));
+                std::make_unique<DetectionFrameMsg>(*detection_frame_msg = ToROSMsg(*det, packet->receive_time));
             SyncDetectionTimestamp(detection_frame_msg.get(),
                                    packet->receive_time);
 
@@ -262,7 +262,6 @@ bool VisionReceiver::InUsedHalf(bool defend_plus_x, double x) const {
         (defend_plus_x && x > 0) || (!defend_plus_x && x < 0);
     const bool in_their_half = !in_our_half;
 
-    // If we're not using their half, then
     return (use_their_half && in_their_half) || (use_our_half && in_our_half);
 }
 
@@ -324,7 +323,6 @@ void VisionReceiver::UpdateGeometryPacket(
             displacement / 1000.0f,                  // GoalFlat
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
-
         config_.updateFieldDimensions(new_field_dim);
     } else if (center != nullptr && thickness != 0) {
         const Field_Dimensions defaultDim =
@@ -347,7 +345,6 @@ void VisionReceiver::UpdateGeometryPacket(
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
 
         config_.updateFieldDimensions(new_field_dim);
-
     } else {
         EZ_ERROR_STREAM(
             "Error: failed to decode SSL geometry packet. Not resizing "

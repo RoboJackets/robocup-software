@@ -17,11 +17,17 @@ def generate_launch_description():
     grsim = Node(package='rj_robocup',
                  executable='grSim',
                  arguments=['--headless'])
+
     soccer = Node(package='rj_robocup',
                   executable='soccer',
                   output='screen',
                   arguments=['-b', '-sim'],
                   on_exit=Shutdown())
+
+    config_server = Node(package='rj_robocup',
+                         executable='config_server',
+                         output='screen',
+                         on_exit=Shutdown())
 
     vision_receiver = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -29,6 +35,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         stdout_linebuf_envvar,
+        config_server,
         grsim,
         soccer,
         vision_receiver

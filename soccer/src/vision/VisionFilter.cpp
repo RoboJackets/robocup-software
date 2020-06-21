@@ -26,14 +26,6 @@ VisionFilter::~VisionFilter() {
 }
 
 void VisionFilter::run() {
-    detection_frame_sub_->run();
-    if (!detection_frame_sub_->ok()) {
-        return;
-    }
-
-    GetFrames();
-    addFrames();
-
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
     fillBallState(context_->state);
@@ -43,25 +35,18 @@ void VisionFilter::run() {
 void VisionFilter::GetFrames() {
     std::vector<DetectionFrameMsg::UniquePtr> raw_frames =
         detection_frame_sub_->GetFrames();
-    if (!raw_frames.empty()) {
-        last_update_time_ = raw_frames.back()->t_received;
+    if (raw_frames.empty()) {
+        return;
     }
+
+    last_update_time_ = raw_frames.back()->t_received;
 
     const double team_angle = detection_frame_sub_->TeamAngle();
     const Geometry2d::TransformMatrix world_to_team =
         detection_frame_sub_->WorldToTeam();
     for (const DetectionFrameMsg::UniquePtr& msg : raw_frames) {
-        new_frames_.emplace_back(*msg, world_to_team, team_angle);
+        frameBuffer.emplace_back(*msg, world_to_team, team_angle);
     }
-}
-
-void VisionFilter::addFrames() {
-    {
-        std::lock_guard<std::mutex> lock(frameLock);
-        frameBuffer.insert(frameBuffer.end(), new_frames_.begin(),
-                           new_frames_.end());
-    }
-    new_frames_.clear();
 }
 
 void VisionFilter::fillBallState(SystemState& state) {
@@ -130,7 +115,7 @@ void VisionFilter::updateLoop() {
 
         {
             // Do update with whatever is in frame buffer
-            std::lock_guard<std::mutex> lock1(frameLock);
+            GetFrames();
             {
                 std::lock_guard<std::mutex> lock2(worldLock);
 

@@ -200,9 +200,9 @@ void Processor::run() {
         _sdl_joystick_node->run();
         _manual_control_node->run();
 
-        updateOrientation();
-
         _config_client->run();
+
+        updateOrientation();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."

@@ -33,11 +33,6 @@ public:
     void run();
 
     /**
-     * Adds a list of frames that arrived in frames_.
-     */
-    void addFrames();
-
-    /**
      * Fills system state with the ball pos/vel
      *
      * @param state Current system state pointer
@@ -77,10 +72,8 @@ private:
 
     std::atomic_bool threadEnd{};
 
-    std::mutex frameLock;
     std::vector<CameraFrame> frameBuffer{};
     Context* context_;
-    std::vector<CameraFrame> new_frames_;
     std::unique_ptr<ros2_temp::DetectionFrameSub> detection_frame_sub_;
     rclcpp::Time last_update_time_;
 };
