@@ -16,8 +16,8 @@
 
 using namespace std;
 using namespace Geometry2d;
+using Planning::LinearMotionInstant;
 using Planning::MotionCommand;
-using Planning::RobotInstant;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an
  * approach (small)*/
@@ -204,6 +204,7 @@ void OurRobot::settle(std::optional<Point> target) {
         return;
     }
 
+    // NOLINTNEXTLINE: the CI clang-tidy version (wrongly) suggests std::move
     setMotionCommand(Planning::SettleCommand{target});
 }
 
