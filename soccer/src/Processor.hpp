@@ -138,11 +138,7 @@ private:
      */
     void updateIntentActive();
 
-    void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
-
     void updateOrientation();
-
-    void runModels();
 
     /** Used to start and stop the thread **/
     volatile bool _running;

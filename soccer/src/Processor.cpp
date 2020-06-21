@@ -115,60 +115,6 @@ void Processor::stop() {
     }
 }
 
-void Processor::runModels() {
-    std::vector<CameraFrame> frames;
-
-    for (auto& packet : _context.vision_packets) {
-        const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
-        std::vector<CameraBall> ballObservations;
-        std::vector<CameraRobot> yellowObservations;
-        std::vector<CameraRobot> blueObservations;
-
-        RJ::Time time =
-            RJ::Time(std::chrono::duration_cast<std::chrono::microseconds>(
-                RJ::Seconds(frame->t_capture())));
-
-        // Add ball observations
-        ballObservations.reserve(frame->balls().size());
-        for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.emplace_back(
-                time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
-        }
-
-        // Collect camera data from all robots
-        yellowObservations.reserve(frame->robots_yellow().size());
-        for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            yellowObservations.emplace_back(
-                time,
-                Pose(Point(_worldToTeam *
-                           Point(robot.x() / 1000, robot.y() / 1000)),
-                     fixAngleRadians(robot.orientation() + _teamAngle)),
-                robot.robot_id());
-        }
-
-        // Collect camera data from all robots
-        blueObservations.reserve(frame->robots_blue().size());
-        for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            blueObservations.emplace_back(
-                time,
-                Pose(Point(_worldToTeam *
-                           Point(robot.x() / 1000, robot.y() / 1000)),
-                     fixAngleRadians(robot.orientation() + _teamAngle)),
-                robot.robot_id());
-        }
-
-        frames.emplace_back(time, frame->camera_id(), ballObservations,
-                            yellowObservations, blueObservations);
-    }
-
-    //    _vision->addFrames(frames);
-
-    // Fill the list of our robots/balls based on whether we are the blue team
-    // or not
-    //    _vision->fillBallState(_context.state);
-    //    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
-}
-
 /**
  * program loop
  */
@@ -218,8 +164,6 @@ void Processor::run() {
 
         _vision->run();
         curStatus.lastVisionTime = _vision->GetLastVisionTime();
-
-        _context.vision_packets.clear();
 
         // Log referee data
         _refereeModule->run();
