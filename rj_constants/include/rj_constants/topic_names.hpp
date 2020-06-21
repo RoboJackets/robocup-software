@@ -15,4 +15,4 @@ constexpr auto kFieldDimensionsSrv = "config/set_field_dimensions";
 namespace vision_receiver::topics {
 constexpr auto kRawProtobufPub = "vision/raw_protobuf";
 constexpr auto kDetectionFramePub = "vision/detection_frame";
-}
+}  // namespace vision_receiver::topics

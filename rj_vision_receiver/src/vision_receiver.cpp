@@ -110,7 +110,8 @@ void VisionReceiver::processNewPackets() {
             SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
             DetectionFrameMsg::UniquePtr detection_frame_msg =
-                std::make_unique<DetectionFrameMsg>(*detection_frame_msg = ToROSMsg(*det, packet->receive_time));
+                std::make_unique<DetectionFrameMsg>(
+                    ToROSMsg(*det, packet->receive_time));
             SyncDetectionTimestamp(detection_frame_msg.get(),
                                    packet->receive_time);
 

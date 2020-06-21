@@ -161,12 +161,12 @@ void Processor::runModels() {
                             yellowObservations, blueObservations);
     }
 
-//    _vision->addFrames(frames);
+    //    _vision->addFrames(frames);
 
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
-//    _vision->fillBallState(_context.state);
-//    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
+    //    _vision->fillBallState(_context.state);
+    //    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
 }
 
 /**
@@ -218,7 +218,7 @@ void Processor::run() {
 
         _vision->run();
         curStatus.lastVisionTime = _vision->GetLastVisionTime();
-//        runModels();
+        //        runModels();
 
         _context.vision_packets.clear();
 

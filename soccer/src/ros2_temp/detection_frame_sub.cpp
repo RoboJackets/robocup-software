@@ -17,13 +17,10 @@ DetectionFrameSub::DetectionFrameSub() {
 
 std::vector<DetectionFrameMsg::UniquePtr> DetectionFrameSub::GetFrames() {
     std::vector<DetectionFrameMsg::UniquePtr> msgs;
-    if (!queue_->GetAllThreaded(msgs)) {
-        std::cout << "Got no messages!" << std::endl;
-    }
+    queue_->GetAllThreaded(msgs);
+
     return msgs;
 }
 
-void DetectionFrameSub::spin() {
-    executor_.spin();
-};
+void DetectionFrameSub::spin() { executor_.spin(); };
 }  // namespace ros2_temp

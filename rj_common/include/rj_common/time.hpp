@@ -1,10 +1,11 @@
 #pragma once
 
 #include <sys/time.h>
+
 #include <chrono>
-#include <string>
 #include <iostream>
 #include <rclcpp/time.hpp>
+#include <string>
 
 using namespace std::chrono_literals;
 
@@ -36,8 +37,8 @@ inline Timestamp timestamp() { return timestamp(now()); }
 
 inline rclcpp::Time ToROSTime(RJ::Time time) {
     int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
-        time.time_since_epoch())
-        .count();
+                        time.time_since_epoch())
+                        .count();
 
     return rclcpp::Time{nanos};
 }

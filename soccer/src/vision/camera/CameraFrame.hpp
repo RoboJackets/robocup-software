@@ -36,7 +36,9 @@ public:
      * @brief Implicit conversion from DetectionFrameMsg.
      * @param msg
      */
-    CameraFrame(const DetectionFrameMsg& msg, const Geometry2d::TransformMatrix& world_to_team, double team_angle)
+    CameraFrame(const DetectionFrameMsg& msg,
+                const Geometry2d::TransformMatrix& world_to_team,
+                double team_angle)
         : tCapture{RJ::FromROSTime(msg.t_capture)},
           cameraID{static_cast<int>(msg.camera_id)},
           cameraBalls{},
@@ -47,10 +49,12 @@ public:
         }
 
         for (const DetectionRobotMsg& robot_msg : msg.robots_blue) {
-            cameraRobotsBlue.emplace_back(tCapture, robot_msg, world_to_team, team_angle);
+            cameraRobotsBlue.emplace_back(tCapture, robot_msg, world_to_team,
+                                          team_angle);
         }
         for (const DetectionRobotMsg& robot_msg : msg.robots_yellow) {
-            cameraRobotsYellow.emplace_back(tCapture, robot_msg, world_to_team, team_angle);
+            cameraRobotsYellow.emplace_back(tCapture, robot_msg, world_to_team,
+                                            team_angle);
         }
     }
 

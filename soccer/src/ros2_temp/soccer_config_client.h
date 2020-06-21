@@ -1,6 +1,7 @@
-#include <rclcpp/rclcpp.hpp>
 #include <config_client/config_client_node.h>
+
 #include <Context.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace ros2_temp {
 
@@ -24,4 +25,4 @@ private:
     std::shared_ptr<config_client::ConfigClientNode> config_client_;
     rclcpp::executors::SingleThreadedExecutor executor_;
 };
-}
+}  // namespace ros2_temp

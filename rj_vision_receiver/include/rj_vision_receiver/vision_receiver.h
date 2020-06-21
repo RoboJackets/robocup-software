@@ -79,7 +79,7 @@ private:
      * @param receive_time The time we received the message on this computer.
      */
     static void SyncDetectionTimestamp(DetectionFrameMsg* frame,
-                                const rclcpp::Time& receive_time);
+                                       const rclcpp::Time& receive_time);
 
     void UpdateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
 
@@ -92,7 +92,8 @@ private:
      * @return
      */
     [[nodiscard]] DetectionFrameMsg ToROSMsg(
-        const SSL_DetectionFrame& detection_frame, const rclcpp::Time& received_time) const;
+        const SSL_DetectionFrame& detection_frame,
+        const rclcpp::Time& received_time) const;
 
     /**
      * @brief Converts from SSL_WrapperPacket to a RawProtobufMsg.
@@ -100,7 +101,7 @@ private:
      * @return
      */
     [[nodiscard]] static RawProtobufMsg::UniquePtr ToROSMsg(
-        const SSL_WrapperPacket& wrapper) ;
+        const SSL_WrapperPacket& wrapper);
 
     /**
      * @brief Converts from SSL_DetectionBall to a DetectionBallMsg.
@@ -108,7 +109,7 @@ private:
      * @return
      */
     [[nodiscard]] static DetectionBallMsg ToROSMsg(
-        const SSL_DetectionBall& ball) ;
+        const SSL_DetectionBall& ball);
 
     /**
      * @brief Converts from SSL_DetectionRobot to a DetectionRobotMsg.
@@ -116,7 +117,7 @@ private:
      * @return
      */
     [[nodiscard]] static DetectionRobotMsg ToROSMsg(
-        const SSL_DetectionRobot& robot) ;
+        const SSL_DetectionRobot& robot);
 
     config_client::ConfigClient config_;
     int port_;

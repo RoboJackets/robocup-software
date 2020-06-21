@@ -1,13 +1,12 @@
 #pragma once
 
-#include <atomic>
-#include <mutex>
-#include <vector>
-#include <vector>
-#include <thread>
+#include <ros2_temp/detection_frame_sub.h>
 
 #include <SystemState.hpp>
-#include <ros2_temp/detection_frame_sub.h>
+#include <atomic>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"

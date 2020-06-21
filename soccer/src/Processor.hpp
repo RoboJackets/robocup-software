@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
+#include <ros2_temp/soccer_config_client.h>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
@@ -26,7 +27,6 @@
 #include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
 #include "rc-fshare/rtp.hpp"
-#include <ros2_temp/soccer_config_client.h>
 
 class Configuration;
 class RobotLocalConfig;
