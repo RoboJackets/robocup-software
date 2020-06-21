@@ -103,7 +103,8 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
         // Inflate obstacles by our robot's radius.
         const double total_radius = obs.circle.radius() + Robot_Radius;
 
-        // Only use the trajectory cursor in the loop condition; we use the static position after the obstacle cursor runs off the end.
+        // Only use the trajectory cursor in the loop condition; we use the
+        // static position after the obstacle cursor runs off the end.
         for (auto cursor_obstacle = obs.path->cursor_begin();
              cursor.has_value();
              cursor_obstacle.advance(dt), cursor.advance(dt)) {
