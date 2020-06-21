@@ -110,8 +110,6 @@ public:
      */
     void stopRobots();
 
-    void recalculateWorldToTeamTransform();
-
     void setFieldDimensions(const Field_Dimensions& dims);
 
     bool isRadioOpen() const;
@@ -138,8 +136,6 @@ private:
      */
     void updateIntentActive();
 
-    void updateOrientation();
-
     /** Used to start and stop the thread **/
     volatile bool _running;
 
@@ -154,14 +150,6 @@ private:
 
     /** global system state */
     Context _context;
-
-    // Transformation from world space to team space.
-    // This depends on which goal we're defending.
-    //
-    // _teamTrans is used for positions, not angles.
-    // _teamAngle is used for angles.
-    Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle{};
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;

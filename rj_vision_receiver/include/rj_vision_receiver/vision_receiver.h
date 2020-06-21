@@ -43,11 +43,11 @@ private:
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
 
-    // Helper function to decide whether or not to remove a robot at a given
-    // x position
     /**
      * @brief Given the current config on which half we are enabling vision on,
-     * return whether the x coordinate lies in an enabled half.
+     * return whether the x coordinate lies in an enabled half. Used to
+     * determine whether to remove irrelevant robots (ie. a different team
+     * practicing on the other half) or not.
      * @param defend_plus_x Whether we are defending x>0.
      * @param x The x coordinate.
      * @return Whether the x coordinate lies in an enabled half.

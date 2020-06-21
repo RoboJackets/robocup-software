@@ -18,6 +18,7 @@ VisionReceiver::VisionReceiver()
     // There should be at most four packets: one for each camera on each of two
     // frames, assuming some clock skew between this
     // computer and the vision computer.
+    // TODO(#1528): Don't hardcode the number of cameras.
     _packets.reserve(4);
 
     // Parameters

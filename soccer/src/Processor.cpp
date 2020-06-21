@@ -148,8 +148,6 @@ void Processor::run() {
 
         _config_client->run();
 
-        updateOrientation();
-
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
                       << std::endl;
@@ -250,28 +248,11 @@ void Processor::updateIntentActive() {
     }
 }
 
-void Processor::recalculateWorldToTeamTransform() {
-    _worldToTeam = Geometry2d::TransformMatrix::translate(
-        0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
-    _worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
-}
-
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     *currentDimensions = dims;
-    recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
     _gameplayModule->updateFieldDimensions();
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }
 bool Processor::isInitialized() const { return _initialized; }
-
-void Processor::updateOrientation() {
-    if (_context.game_settings.defendPlusX) {
-        _teamAngle = -M_PI_2;
-    } else {
-        _teamAngle = M_PI_2;
-    }
-
-    recalculateWorldToTeamTransform();
-}

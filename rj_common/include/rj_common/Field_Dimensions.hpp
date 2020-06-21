@@ -47,8 +47,12 @@ struct Field_Dimensions {
 
     Geometry2d::Point CenterPoint() const { return _CenterPoint; }
 
-    [[nodiscard]] Geometry2d::Rect OurGoalZoneShape() const { return _OurGoalZoneShape; }
-    [[nodiscard]] Geometry2d::Rect TheirGoalZoneShape() const { return _TheirGoalZoneShape; }
+    [[nodiscard]] Geometry2d::Rect OurGoalZoneShape() const {
+        return _OurGoalZoneShape;
+    }
+    [[nodiscard]] Geometry2d::Rect TheirGoalZoneShape() const {
+        return _TheirGoalZoneShape;
+    }
 
     /*
      * Provides a rect that is a padded version of their goalbox

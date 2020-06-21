@@ -9,9 +9,7 @@ SoccerConfigClient::SoccerConfigClient(Context* context) : context_{context} {
     worker_ = std::thread{&SoccerConfigClient::run, this};
 }
 
-void SoccerConfigClient::spin() {
-    executor_.spin();
-}
+void SoccerConfigClient::spin() { executor_.spin(); }
 
 void SoccerConfigClient::run() {
     config_client_->updateGameSettings(context_->game_settings);
