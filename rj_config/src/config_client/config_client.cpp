@@ -1,4 +1,5 @@
 #include <config_client/config_client.h>
+#include <rj_constants/topic_names.hpp>
 
 #include <rj_utils/logging.hpp>
 
@@ -10,17 +11,17 @@ ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
         game_settings_ = *msg;
     };
     game_settings_sub_ = node->create_subscription<GameSettingsMsg>(
-        "config/game_settings", latching_qos, game_settings_cb);
+        config_server::topics::kGameSettingsPub, latching_qos, game_settings_cb);
     game_settings_client_ =
-        node->create_client<SetGameSettingsSrv>("config/set_game_settings");
+        node->create_client<SetGameSettingsSrv>(config_server::topics::kGameSettingsSrv);
 
     const auto field_dimensions_cb = [this](FieldDimensionsMsg::UniquePtr msg) {
         field_dimensions_ = *msg;
     };
     field_dimensions_sub_ = node->create_subscription<FieldDimensionsMsg>(
-        "config/field_dimensions", latching_qos, field_dimensions_cb);
+        config_server::topics::kFieldDimensionsPub, latching_qos, field_dimensions_cb);
     field_dimensions_client_ = node->create_client<SetFieldDimensionsSrv>(
-        "config/set_field_dimensions");
+        config_server::topics::kFieldDimensionsSrv);
 }
 
 bool ConfigClient::connected() const {

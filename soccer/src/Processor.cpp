@@ -65,7 +65,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
-    _vision = std::make_shared<VisionFilter>();
+    _vision = std::make_shared<VisionFilter>(&_context);
     _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
@@ -73,10 +73,11 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
-    _visionReceiver = std::make_unique<VisionReceiver>(
-        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
     _logger = std::make_unique<Logger>(&_context);
+
+    // ROS2 temp nodes
+    _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
@@ -89,7 +90,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _logger->start();
 
-    _nodes.push_back(_visionReceiver.get());
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
     _nodes.push_back(_logger.get());
@@ -161,12 +161,12 @@ void Processor::runModels() {
                             yellowObservations, blueObservations);
     }
 
-    _vision->addFrames(frames);
+//    _vision->addFrames(frames);
 
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
-    _vision->fillBallState(_context.state);
-    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
+//    _vision->fillBallState(_context.state);
+//    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
 }
 
 /**
@@ -202,10 +202,7 @@ void Processor::run() {
 
         updateOrientation();
 
-        // TODO(Kyle): Don't do this here.
-        // Because not everything is on modules yet, but we still need things to
-        // run in order, we can't just do everything via the for loop (yet).
-        _visionReceiver->run();
+        _config_client->run();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
@@ -213,15 +210,15 @@ void Processor::run() {
             setFieldDimensions(_context.field_dimensions);
         }
 
-        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
-
         _radio->run();
 
         if (_radio) {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        runModels();
+        _vision->run();
+        curStatus.lastVisionTime = _vision->GetLastVisionTime();
+//        runModels();
 
         _context.vision_packets.clear();
 

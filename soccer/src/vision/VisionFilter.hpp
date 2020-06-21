@@ -7,6 +7,7 @@
 #include <thread>
 
 #include <SystemState.hpp>
+#include <ros2_temp/detection_frame_sub.h>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
@@ -26,15 +27,15 @@ public:
     /**
      * Starts a worker thread to do the vision processing
      */
-    VisionFilter();
+    VisionFilter(Context* context);
     ~VisionFilter();
 
+    void run();
+
     /**
-     * Adds a list of frames that arrived
-     *
-     * @param frames List of new frames
+     * Adds a list of frames that arrived in frames_.
      */
-    void addFrames(const std::vector<CameraFrame>& frames);
+    void addFrames();
 
     /**
      * Fills system state with the ball pos/vel
@@ -51,8 +52,23 @@ public:
      */
     void fillRobotState(SystemState& state, bool usBlue);
 
+    /**
+     * @brief Returns the latest timestamp of the received vision packets.
+     * @return
+     */
+    [[nodiscard]] RJ::Time GetLastVisionTime() const {
+        return RJ::FromROSTime(last_update_time_);
+    }
+
 private:
     void updateLoop();
+
+    /**
+     * @brief Obtains a std::vector<DetectionFrameMsg::UniqePtr> from
+     * detection_frame_sub_, then converts that to std::vector<CameraFrame>
+     * and stores it in new_frames_.
+     */
+    void GetFrames();
 
     std::thread worker;
 
@@ -63,4 +79,8 @@ private:
 
     std::mutex frameLock;
     std::vector<CameraFrame> frameBuffer{};
+    Context* context_;
+    std::vector<CameraFrame> new_frames_;
+    std::unique_ptr<ros2_temp::DetectionFrameSub> detection_frame_sub_;
+    rclcpp::Time last_update_time_;
 };

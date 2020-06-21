@@ -26,6 +26,7 @@
 #include "radio/Radio.hpp"
 #include "radio/RadioNode.hpp"
 #include "rc-fshare/rtp.hpp"
+#include <ros2_temp/soccer_config_client.h>
 
 class Configuration;
 class RobotLocalConfig;
@@ -182,7 +183,6 @@ private:
     std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-    std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<Planning::PlannerNode> _planner_node;
     std::unique_ptr<RadioNode> _radio;
@@ -190,6 +190,9 @@ private:
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
     std::unique_ptr<Logger> _logger;
+
+    // ROS2 temporary modules
+    std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
 
     std::vector<Node*> _nodes;
 

@@ -2,6 +2,9 @@
 
 #include <optional>
 #include <rj_common/RefereeEnums.hpp>
+#include <rj_msgs/msg/game_settings.hpp>
+
+using GameSettingsMsg = rj_msgs::msg::GameSettings;
 
 /**
  * Settings for the game, set by MainWindow to be consumed by the rest of the
@@ -56,5 +59,23 @@ struct GameSettings {
 
         *this = other;
         requestRefCommand = refCommand;
+    }
+
+    /**
+     * @brief Implicit conversion to GameSettingsMsg.
+     * @return
+     */
+    operator GameSettingsMsg() const {
+        GameSettingsMsg msg{};
+        msg.simulation = simulation;
+        msg.use_external_referee = use_external_referee;
+        msg.request_blue_team = requestBlueTeam;
+        msg.request_goalie_id = requestGoalieID;
+        msg.defend_plus_x = defendPlusX;
+        msg.use_our_half = use_our_half;
+        msg.use_their_half = use_their_half;
+        msg.paused = paused;
+
+        return msg;
     }
 };

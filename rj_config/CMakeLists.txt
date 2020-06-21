@@ -13,6 +13,7 @@ find_package(rclcpp REQUIRED)
 # Define Targets
 #======================================================================
 add_library(config_client STATIC)
+target_compile_options(config_client PRIVATE "-fPIC")
 
 add_executable(config_server)
 

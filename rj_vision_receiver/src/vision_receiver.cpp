@@ -3,6 +3,7 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/multicast.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
 #include <stdexcept>
 
@@ -33,9 +34,9 @@ VisionReceiver::VisionReceiver()
     auto period = std::chrono::duration<double>(1 / hz);
 
     raw_packet_pub_ =
-        create_publisher<RawProtobufMsg>("vision/raw_protobuf", 10);
+        create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ =
-        create_publisher<DetectionFrameMsg>("vision/detection_frame", 10);
+        create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
 
     // Create timer for callback
     timer_ = this->create_wall_timer(period, [this]() { run(); });
@@ -109,7 +110,7 @@ void VisionReceiver::processNewPackets() {
             SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
             DetectionFrameMsg::UniquePtr detection_frame_msg =
-                std::make_unique<DetectionFrameMsg>(ToROSMsg(*det));
+                std::make_unique<DetectionFrameMsg>(ToROSMsg(*det, packet->receive_time));
             SyncDetectionTimestamp(detection_frame_msg.get(),
                                    packet->receive_time);
 
@@ -131,11 +132,12 @@ void VisionReceiver::processNewPackets() {
 }
 
 DetectionFrameMsg VisionReceiver::ToROSMsg(
-    const SSL_DetectionFrame& frame) const {
+    const SSL_DetectionFrame& frame, const rclcpp::Time& received_time) const {
     DetectionFrameMsg msg{};
 
     msg.t_sent = ToROSTime(frame.t_sent());
     msg.t_capture = ToROSTime(frame.t_capture());
+    msg.t_received = received_time;
 
     const bool defend_plus_x = config_.gameSettings().defend_plus_x;
 

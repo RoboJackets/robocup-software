@@ -88,10 +88,11 @@ private:
      * respecting the "exclude half" config as well as performing timestamp
      * synchronization.
      * @param packet
+     * @param received_time Time that this packet was received.
      * @return
      */
     [[nodiscard]] DetectionFrameMsg ToROSMsg(
-        const SSL_DetectionFrame& detection_frame) const;
+        const SSL_DetectionFrame& detection_frame, const rclcpp::Time& received_time) const;
 
     /**
      * @brief Converts from SSL_WrapperPacket to a RawProtobufMsg.
