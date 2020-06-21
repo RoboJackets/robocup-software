@@ -896,7 +896,7 @@ void MainWindow::on_actionStopBall_triggered() {
         simPacket.mutable_replacement()->mutable_ball();
 
     Geometry2d::Point ballPos =
-        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
+        _ui.fieldView->getTeamToWorld() * state()->ball->position;
     ball_replace->set_x(ballPos.x());
     ball_replace->set_y(ballPos.y());
     ball_replace->set_vx(0);

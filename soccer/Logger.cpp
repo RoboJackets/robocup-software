@@ -221,15 +221,15 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
     }
 
     // Ball
-    if (context->state.ball.valid) {
+    if (context->world_state.ball.visible) {
         log_frame->mutable_ball()->mutable_pos()->set_x(
-            static_cast<float>(context->state.ball.pos.x()));
+            static_cast<float>(context->world_state.ball.position.x()));
         log_frame->mutable_ball()->mutable_pos()->set_y(
-            static_cast<float>(context->state.ball.pos.y()));
+            static_cast<float>(context->world_state.ball.position.y()));
         log_frame->mutable_ball()->mutable_vel()->set_x(
-            static_cast<float>(context->state.ball.vel.x()));
+            static_cast<float>(context->world_state.ball.velocity.x()));
         log_frame->mutable_ball()->mutable_vel()->set_y(
-            static_cast<float>(context->state.ball.vel.y()));
+            static_cast<float>(context->world_state.ball.velocity.y()));
     }
 
     log_frame->set_manual_id(context->game_settings.joystick_config.manualID);
