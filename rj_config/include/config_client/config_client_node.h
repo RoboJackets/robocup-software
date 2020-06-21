@@ -23,6 +23,14 @@ public:
         return config_client_.fieldDimensions();
     }
 
+    [[nodiscard]] inline const GameSettingsMsg& gameSettingsThreaded() const {
+        return config_client_.gameSettingsThreaded();
+    }
+
+    [[nodiscard]] inline const FieldDimensionsMsg& fieldDimensionsThreaded() const {
+        return config_client_.fieldDimensionsThreaded();
+    }
+
     [[nodiscard]] inline bool connected() const {
         return config_client_.connected();
     }

@@ -24,5 +24,11 @@ private:
     Context* context_;
     std::shared_ptr<config_client::ConfigClientNode> config_client_;
     rclcpp::executors::SingleThreadedExecutor executor_;
+    std::thread worker_;
+
+    /**
+     * @brief Calls executor_.spin().
+     */
+    void spin();
 };
 }  // namespace ros2_temp

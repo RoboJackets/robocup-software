@@ -8,6 +8,7 @@ ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
 
     const auto game_settings_cb = [this](GameSettingsMsg::UniquePtr msg) {
+        std::lock_guard<std::mutex> guard{mutex_};
         game_settings_ = *msg;
     };
     game_settings_sub_ = node->create_subscription<GameSettingsMsg>(
@@ -17,6 +18,7 @@ ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
         config_server::topics::kGameSettingsSrv);
 
     const auto field_dimensions_cb = [this](FieldDimensionsMsg::UniquePtr msg) {
+        std::lock_guard<std::mutex> guard{mutex_};
         field_dimensions_ = *msg;
     };
     field_dimensions_sub_ = node->create_subscription<FieldDimensionsMsg>(
