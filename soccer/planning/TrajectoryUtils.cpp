@@ -22,10 +22,12 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
         return false;
     }
 
-    // Limit iterations to 400. This will continue to operate at dt = 0.05 until
-    // we hit a 20 second trajectory. If our trajectory is longer than that,
-    // something is probably wrong.
-    constexpr int max_iterations = 400;
+    // Limit iterations to 100. This will continue to operate at dt = 0.05 until
+    // we hit a 5 second trajectory. If our trajectory is longer than that,
+    // something is probably wrong, but we'll still handle it (just scale dt
+    // accordingly).
+    // TODO(#1525): Make these config variables.
+    constexpr int max_iterations = 100;
     constexpr RJ::Seconds expected_dt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
@@ -35,14 +37,10 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
     while (cursor.has_value()) {
         RobotInstant instant = cursor.value();
 
-        // Calculate the list of hits.
-        // TODO(#1503): We could save a lot of allocation and smart pointer
-        //  reference counting overhead by making hitSet return a custom
-        //  iterator type. Then, we could use that to construct a set at the
-        //  beginning but just iterate over it in standard fashion here.
-        const auto& hits = obstacles.hitSet(instant.position());
-        for (const auto& hit : hits) {
-            if (start_hits.find(hit) == start_hits.end()) {
+        // Only count hits that we didn't start in.
+        for (const auto& obstacle : obstacles.shapes()) {
+            if (obstacle->hit(instant.position()) &&
+                start_hits.find(obstacle) == start_hits.end()) {
                 if (hit_time != nullptr) {
                     *hit_time = instant.stamp;
                 }
@@ -79,11 +77,12 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
         return false;
     }
 
-    // Limit iterations to 400. This will continue to operate at dt = 0.05 until
-    // we hit a 20 second trajectory. If our trajectory is longer than that,
+    // Limit iterations to 100. This will continue to operate at dt = 0.05 until
+    // we hit a 5 second trajectory. If our trajectory is longer than that,
     // something is probably wrong, but we'll still handle it (just scale dt
-    // accordingly)
-    constexpr int max_iterations = 400;
+    // accordingly).
+    // TODO(#1525): Make these config variables.
+    constexpr int max_iterations = 100;
     constexpr RJ::Seconds expected_dt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};

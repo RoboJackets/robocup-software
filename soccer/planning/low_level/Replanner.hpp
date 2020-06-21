@@ -20,7 +20,7 @@ public:
      */
     struct PlanParams {
         RobotInstant start;
-        RobotInstant goal;
+        LinearMotionInstant goal;
         const Geometry2d::ShapeSet& static_obstacles;
         const std::vector<DynamicObstacle>& dynamic_obstacles;
         RobotConstraints constraints;
@@ -72,8 +72,8 @@ private:
                               RJ::Time now);
 
     // Whether the goal has changed past the `goalPosChangeThreshold()`.
-    static bool goalChanged(const RobotInstant& prevGoal,
-                            const RobotInstant& goal);
+    static bool goalChanged(const LinearMotionInstant& prevGoal,
+                            const LinearMotionInstant& goal);
 
     // Get the partial path starting at `now`, plus the partial replan lead time
     // duration.

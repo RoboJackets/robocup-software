@@ -91,6 +91,11 @@ static bool ballIsInTheirGoalieBox(Geometry2d::Point& pt) {
     return ballIsInGoalieBox(converted);
 }
 
+template <typename T>
+inline T applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
+    return gain * newValue + (1 - gain) * oldValue;
+}
+
 // Removes all entries in a std::map which associate to the given value.
 template <class Map_Type, class Data_Type>
 void map_remove(Map_Type& map, Data_Type& value) {
