@@ -19,7 +19,6 @@
 
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
-#include "VisionReceiver.hpp"
 #include "joystick/ManualControlNode.hpp"
 #include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"

@@ -73,7 +73,6 @@ set(ROBOCUP_LIB_SRC
     ui/StripChart.cpp
     ui/StyleSheetManager.cpp
     GrSimCommunicator.cpp
-    VisionReceiver.cpp
     vision/ball/BallBounce.cpp
     vision/ball/CameraBall.cpp
     vision/ball/KalmanBall.cpp

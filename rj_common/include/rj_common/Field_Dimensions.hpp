@@ -225,6 +225,25 @@ struct Field_Dimensions {
         return msg;
     }
 
+    friend std::ostream& operator<<(std::ostream& stream,
+                                    const Field_Dimensions& fd) {
+        stream << "length: " << fd.Length() << "\n";
+        stream << "width: " << fd.Width() << "\n";
+        stream << "border: " << fd.Border() << "\n";
+        stream << "line_width: " << fd.LineWidth() << "\n";
+        stream << "goal_width: " << fd.GoalWidth() << "\n";
+        stream << "goal_depth: " << fd.GoalDepth() << "\n";
+        stream << "goal_height: " << fd.GoalHeight() << "\n";
+        stream << "penalty_short_dist: " << fd.PenaltyShortDist() << "\n";
+        stream << "penalty_long_dist: " << fd.PenaltyLongDist() << "\n";
+        stream << "center_radius: " << fd.CenterRadius() << "\n";
+        stream << "center_diameter: " << fd.CenterDiameter() << "\n";
+        stream << "goal_flat: " << fd.GoalFlat() << "\n";
+        stream << "floor_length: " << fd.FloorLength() << "\n";
+        stream << "floor_width: " << fd.FloorWidth();
+        return stream;
+    }
+
 private:
     float _Length;
     float _Width;

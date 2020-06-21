@@ -218,7 +218,6 @@ void Processor::run() {
 
         _vision->run();
         curStatus.lastVisionTime = _vision->GetLastVisionTime();
-        //        runModels();
 
         _context.vision_packets.clear();
 

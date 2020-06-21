@@ -29,14 +29,9 @@ def generate_launch_description():
                          output='screen',
                          on_exit=Shutdown())
 
-    # vision_receiver = IncludeLaunchDescription(
-    #     PythonLaunchDescriptionSource(
-    #         os.path.join(launch_dir, "vision_receiver.launch.py")))
+    vision_receiver = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(launch_dir, "vision_receiver.launch.py")))
 
-    return LaunchDescription([
-        stdout_linebuf_envvar,
-        config_server,
-        grsim,
-        soccer,
-        # vision_receiver
-    ])
+    return LaunchDescription(
+        [stdout_linebuf_envvar, config_server, grsim, soccer, vision_receiver])
