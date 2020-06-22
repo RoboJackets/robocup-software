@@ -97,11 +97,11 @@ private:
 
     /**
      * @brief Converts from SSL_WrapperPacket to a RawProtobufMsg.
-     * @param wrapper
+     * @param packet
      * @return
      */
     [[nodiscard]] static RawProtobufMsg::UniquePtr ToROSMsg(
-        const SSL_WrapperPacket& wrapper);
+        const SSL_WrapperPacket& packet);
 
     /**
      * @brief Converts from SSL_DetectionBall to a DetectionBallMsg.
