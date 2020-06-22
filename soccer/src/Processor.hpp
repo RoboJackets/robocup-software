@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
+#include <ros2_temp/raw_vision_packet_sub.h>
 #include <ros2_temp/soccer_config_client.h>
 
 #include <Geometry2d/Point.hpp>
@@ -176,6 +177,7 @@ private:
 
     // ROS2 temporary modules
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
+    std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
 
     std::vector<Node*> _nodes;
 

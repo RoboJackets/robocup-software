@@ -1,3 +1,5 @@
+#pragma once
+
 #include <queue>
 #include <rclcpp/rclcpp.hpp>
 #include <rj_utils/logging.hpp>

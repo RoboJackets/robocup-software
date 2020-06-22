@@ -78,6 +78,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     // ROS2 temp nodes
     _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
+    _raw_vision_packet_sub =
+        std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
@@ -146,7 +148,11 @@ void Processor::run() {
         _sdl_joystick_node->run();
         _manual_control_node->run();
 
+        // Updates context_->field_dimensions
         _config_client->run();
+
+        // Updates context_->raw_vision_packets
+        _raw_vision_packet_sub->run();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."

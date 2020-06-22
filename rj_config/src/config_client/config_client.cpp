@@ -4,7 +4,10 @@
 #include <rj_utils/logging.hpp>
 
 namespace config_client {
-ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
+ConfigClient::ConfigClient(rclcpp::Node* node)
+    : node_{node},
+      game_settings_{std::nullopt},
+      field_dimensions_{std::nullopt} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
 
     const auto game_settings_cb = [this](GameSettingsMsg::UniquePtr msg) {

@@ -6,7 +6,7 @@ SoccerConfigClient::SoccerConfigClient(Context* context) : context_{context} {
         "soccer_config_client");
     executor_.add_node(config_client_);
 
-    worker_ = std::thread{&SoccerConfigClient::run, this};
+    worker_ = std::thread{&SoccerConfigClient::spin, this};
 }
 
 void SoccerConfigClient::spin() { executor_.spin(); }
