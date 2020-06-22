@@ -23,7 +23,7 @@ public:
      * @brief Inserts all of the messages in the queue into the passed in
      * vector.
      * @param vector
-     * @return
+     * @return Whether at least one item was added to the vector.
      */
     bool GetAll(std::vector<std::unique_ptr<T>>& vector);
 
@@ -31,14 +31,15 @@ public:
      * @brief Inserts all of the messages in the queue into the passed in
      * vector. Multithread safe version that uses a mutex.
      * @param vector
-     * @return
+     * @return Whether at least one item was added to the vector.
      */
     bool GetAllThreaded(std::vector<std::unique_ptr<T>>& vector);
 
     /**
      * @brief Returns the first message in the queue, if any.
      * @param ptr
-     * @return
+     * @return Whether an item was popped off the queue and into the passed in
+     * ptr.
      */
     bool Get(std::unique_ptr<T>& ptr);
 

@@ -116,15 +116,13 @@ void VisionFilter::updateLoop() {
         {
             // Do update with whatever is in frame buffer
             GetFrames();
-            {
-                std::lock_guard<std::mutex> lock2(worldLock);
+            std::lock_guard<std::mutex> lock2(worldLock);
 
-                if (!frameBuffer.empty()) {
-                    world.updateWithCameraFrame(RJ::now(), frameBuffer);
-                    frameBuffer.clear();
-                } else {
-                    world.updateWithoutCameraFrame(RJ::now());
-                }
+            if (!frameBuffer.empty()) {
+                world.updateWithCameraFrame(RJ::now(), frameBuffer);
+                frameBuffer.clear();
+            } else {
+                world.updateWithoutCameraFrame(RJ::now());
             }
         }
 
