@@ -21,7 +21,7 @@ VisionReceiver::VisionReceiver()
     // TODO(#1528): Don't hardcode the number of cameras.
     _packets.reserve(4);
 
-    // Parameters
+    // Parameters. TODO(#1529): Better parameter "library".
     declare_parameter<int>("port", SharedVisionPortSinglePrimary);
     get_parameter<int>("port", port_);
 
