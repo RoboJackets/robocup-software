@@ -130,7 +130,7 @@ class CompositeBehavior(behavior.Behavior):
             if isinstance(r, role_assignment.RoleRequirements):
                 r.required = info['required']
                 r.priority = info['priority']()
-            # FIXME: should required and priority propogate if it's a tree?
+            # FIXME: should required and priority propagate if it's a tree?
             reqs[name] = r
         return reqs
 

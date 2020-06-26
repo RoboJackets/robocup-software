@@ -19,7 +19,7 @@ import random
 
 
 ##
-# A basic clearing play written in responce to the fact that we didn't have a clearing play
+# A basic clearing play written in response to the fact that we didn't have a clearing play
 #
 # It needs to be renamed as "clear" is the name of the situation, and each play that fufills it
 # needs to have a unique name beyond that

@@ -11,7 +11,7 @@ using namespace std;
 //   A class not in a namespace is <n><name> where <n> in the number of
 //   characters in <name>.
 //   A class in a namespace is N<a><namespace><b><namespace>...<n><classname>E,
-//   where each namespace name is preceeded by the number of characters in that
+//   where each namespace name is preceded by the number of characters in that
 //   name.
 QString typeName(const std::type_info& info) {
     const char* name = info.name();

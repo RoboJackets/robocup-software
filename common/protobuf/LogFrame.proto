@@ -85,7 +85,7 @@ message LogFrame {
     repeated SSL_Referee raw_refbox = 27;
     repeated RadioRx radio_rx = 3;
 
-    // Deprecated field kept for compatability with old logs
+    // Deprecated field kept for compatibility with old logs
     repeated bytes raw_referee = 2;
 
     // Which team are we playing as?

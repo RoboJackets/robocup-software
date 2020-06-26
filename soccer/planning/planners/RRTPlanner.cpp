@@ -289,11 +289,11 @@ std::unique_ptr<Path> RRTPlanner::run(PlanRequest& planRequest) {
 
 std::unique_ptr<InterpolatedPath> RRTPlanner::generateRRTPath(
     const MotionInstant& start, const MotionInstant& goal,
-    const MotionConstraints& motionConstraints, ShapeSet& origional,
+    const MotionConstraints& motionConstraints, ShapeSet& original,
     const std::vector<DynamicObstacle> dyObs, Context* context,
     unsigned shellID, const optional<vector<Point>>& biasWayPoints) {
     const int tries = 10;
-    ShapeSet obstacles = origional;
+    ShapeSet obstacles = original;
     unique_ptr<InterpolatedPath> lastPath;
     for (int i = 0; i < tries; i++) {
         // Run bi-directional RRT to generate a path.
@@ -393,7 +393,7 @@ vector<Point> RRTPlanner::runRRTHelper(
 
     vector<Point> points = biRRT.getPath();
 
-    // Optimize out uneccesary waypoints
+    // Optimize out unnecessary waypoints
     RRT::SmoothPath(points, *stateSpace);
 
     return points;
@@ -599,13 +599,13 @@ std::vector<InterpolatedPath::Entry> RRTPlanner::generateVelocityPath(
                 pow(1.0 - t, 3) * p0 + 3.0 * pow(1.0 - t, 2) * t * p1 +
                 3 * (1.0 - t) * pow(t, 2) * p2 + pow(t, 3) * p3;
 
-            // Derivitive 1
+            // Derivative 1
             // 3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k
             // t + 3 k^2 t^2))
             Point d1 = 3 * pow(1 - t, 2) * (p1 - p0) +
                        6 * (1 - t) * t * (p2 - p1) + 3 * pow(t, 2) * (p3 - p2);
 
-            // Derivitive 2
+            // Derivative 2
             // https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves
             // B''(t) = 6(1-t)(P2 - 2*P1 + P0) + 6*t(P3 - 2 * P2 + P1)
             Point d2 =

@@ -14,7 +14,7 @@ from situations import Situation
 ## A basic play for the Offensive Indect kick
 # Chooses to pass to a close or far robot
 # If it chooses the far bot, it will chip
-# If the ball is in the thrid quarter of the field,
+# If the ball is in the third quarter of the field,
 # The robots will move up
 # If the ball is in the fourth quearter of the field,
 # The robots will move to points in a horizontal line with the ball
@@ -28,8 +28,8 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
     ] # yapf: disable
 
     class State(enum.Enum):
-        move = 1  # Move recievers to proper postions
-        kick = 2  # Kick the ball to one of the recievers
+        move = 1  # Move receivers to proper postions
+        kick = 2  # Kick the ball to one of the receivers
         backup_kick = 3  # Kick to the other receiver if the first one is blocked
 
     def __init__(self, indirect=None):
@@ -90,16 +90,16 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
     def is_restart(cls):
         return True
 
-    ## Calcluates the two points which the recievers will move to
+    ## Calcluates the two points which the receivers will move to
     # One is a farther position that will be chipped to
     # The other is closer and will be lineckicked to
     def calc_pass_point(
-        self):  # Determines the position of the recievers and where to pass
+        self):  # Determines the position of the receivers and where to pass
         ball = main.ball().pos  # position of ball
         self.num = random.randint(
             0, 1)  # a random int to choose which receiver to pass to
         if (self.num == 1):
-            self.chip = True  # If the reciever is the second one, it will be far away and require a chip
+            self.chip = True  # If the receiver is the second one, it will be far away and require a chip
         else:
             self.chip = False
         if (ball.x < 0):
@@ -126,9 +126,9 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
         if (ball.y < constants.Field.Length * 0.75):
             offense_point_2.y += constants.Field.Length * 0.07
             offense_point_1.y += constants.Field.Length * 0.1
-            # If the ball is near the midfield have the recievers move further up
+            # If the ball is near the midfield have the receivers move further up
         self.points = [offense_point_1, offense_point_2
-                       ]  #insert the recieve points into the list
+                       ]  #insert the receive points into the list
         pass_point = self.points[
             self.
             num]  # Use the randomly generated int to choose the receiver that will be passed to

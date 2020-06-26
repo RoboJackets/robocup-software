@@ -10,9 +10,9 @@ import enum
 import copy
 
 
-## A testing play to demonstrate our ability to pass and recieve balls
+## A testing play to demonstrate our ability to pass and receive balls
 # One robot will pursue the ball while three other robots will pass the ball amongst themselves
-# they can only pass the ball at the corners and recieve at the corners and they cannot move
+# they can only pass the ball at the corners and receive at the corners and they cannot move
 # through the center of the square
 class FourCornerPass(play.Play):
     class State(enum.Enum):
@@ -64,7 +64,7 @@ class FourCornerPass(play.Play):
 
         #radius of robot
         self.bot_buffer = constants.Robot.Radius * 3
-        # the largest and smallest x and y postion possible for the square
+        # the largest and smallest x and y position possible for the square
         self.max_x = (self.variable_square / 2 - self.bot_buffer)
         self.min_x = -self.max_x
         self.max_y = self.length / 2 + self.max_x
@@ -88,7 +88,7 @@ class FourCornerPass(play.Play):
         # picks the direction to pass to. TODO make actual smart pass selection
         self.direction = 1
 
-    # constanly running changes and updates
+    # constantly running changes and updates
     def execute_running(self):
         # checks if there is an offensive behavior for the various plays and set the normal speed
         for sub in self.subbehaviors_by_name():
@@ -102,7 +102,7 @@ class FourCornerPass(play.Play):
                     else:
                         robo.set_max_speed(self.normal_speed)
 
-        # chasing robot positon should always follow the ball within a smaller inside box of the
+        # chasing robot position should always follow the ball within a smaller inside box of the
         # four corners.
         if (self.has_subbehavior_with_name('chasing')):
             self.chaser.pos = self.cut_off_pos(main.ball().pos)

@@ -79,7 +79,7 @@ def eval_single_point(kick_point: robocup.Point,
     distance = math.exp(-1 * (kick_point - receive_point).mag())
 
     # All of the other scores are based on whether the pass will actually make it to it
-    # Not worth returning a great position if we cant even get a pass there
+    # Not worth returning a great position if we can't even get a pass there
     totalChance = passChance * (
         weights[0] * (1 - space) + weights[1] * fieldPos + weights[2] *
         shotChance + weights[3] * (1 - distance))

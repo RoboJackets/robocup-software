@@ -183,7 +183,7 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
             // We are trying to increase the angle CBD more when angle CBD is large
             // When angle CBD is 0, we want to keep the same angle
 
-            // We dont want any extra rotation when angle CBD is 0 degrees or 90 degrees
+            // We don't want any extra rotation when angle CBD is 0 degrees or 90 degrees
             // Just to simplify implementation, I'm going to do a triangle
             //
             // df*45  -              /  \

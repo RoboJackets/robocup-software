@@ -68,7 +68,7 @@ class TestField(unittest.TestCase):
 
 		# Robots are bottom right corner, check bottom left position 
 		self.set_robot_pos(width / 2, 0) 
-		self.assertAlmostEqual(run_function(width * -1 / 2, 0), 0, msg = "Postion devoid of robots is not considered open")
+		self.assertAlmostEqual(run_function(width * -1 / 2, 0), 0, msg = "Position devoid of robots is not considered open")
 
 		# 6 Robots are located around position, distance around ~.9 from position
 		self.set_robots_around_pos(0, length / 2, 5)

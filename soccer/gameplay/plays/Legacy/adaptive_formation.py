@@ -57,7 +57,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
     CHIP_FIELD_POS_WEIGHTS = (0.1, .2, 0.02)
     CHIP_PASS_WEIGHTS = (2, 10, 0, 10)
 
-    # Initial arguements for the nelder mead optimization in passing positioning
+    # Initial arguments for the nelder mead optimization in passing positioning
     NELDER_MEAD_ARGS = (robocup.Point(0.5, 2), \
                         robocup.Point(0.01, 0.01), 1, 2, \
                         0.75, 0.5, 50, 1, 0.1)
@@ -177,7 +177,7 @@ class AdaptiveFormation(standard_play.StandardPlay):
 
     def should_pass_from_dribble(self):
 
-        # If pass is above cutoff and we dont have a good shot
+        # If pass is above cutoff and we don't have a good shot
         if (self.pass_score > AdaptiveFormation.DRIBBLE_TO_PASS_CUTOFF and
                 self.shot_chance < AdaptiveFormation.DRIBBLE_TO_SHOOT_CUTOFF):
             print("Pass : " + str(self.pass_score) + " Shot : " + str(

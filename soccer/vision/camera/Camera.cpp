@@ -168,7 +168,7 @@ void Camera::updateBallsMHKF(RJ::Time calcTime,
     //
     // If there are two measurements which too far away from any
     // current kalman filter, the two measurements will be form
-    // two individual kalman filters intead of a single one
+    // two individual kalman filters instead of a single one
     // with an update.
     // A slight delay in will most likely be seen in these cases
     for (int i = 0; i < ballList.size(); i++) {

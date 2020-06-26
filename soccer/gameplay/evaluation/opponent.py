@@ -113,7 +113,7 @@ def get_threat_list(
                                  key=lambda rcrv_tuple: rcrv_tuple[1])
                 threats.append((best_tuple[0], .81, best_tuple[2]))
             else:
-                # Just deal with ball if no recievers
+                # Just deal with ball if no receivers
                 threats.append((main.ball().pos, .9, None))
     else:
         # Assume opp is dribbling ball
@@ -160,7 +160,7 @@ def get_threat_list(
     return threats
 
 
-## Estimate potential reciever score (likelihood of opponent passing to this robot)
+## Estimate potential receiver score (likelihood of opponent passing to this robot)
 #
 #  @param bot Robot to estimate score at
 #  @return The potential receiver score at that point

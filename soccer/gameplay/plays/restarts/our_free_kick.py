@@ -127,7 +127,7 @@ class OurFreeKick(standard_play.StandardPlay):
               shooting_line.line_intersection(constants.Field.FieldBorders[2])
               and self.gap.y - main.ball().pos.y > 0):
             kicker.kick_power = self.FullKickPower
-        # If we are probably aiming down the field, slowly kick so we dont carpet
+        # If we are probably aiming down the field, slowly kick so we don't carpet
         else:
             kicker.kick_power = self.BumpKickPower
 

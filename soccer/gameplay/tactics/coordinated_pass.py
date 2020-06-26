@@ -201,7 +201,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
-    ## Funciton to find if ball is moving towards receive point
+    ## Function to find if ball is moving towards receive point
     def ball_heading_to_receive_point(self):
         ball_velocity = main.ball().vel
         if ball_velocity.mag() > self.MIN_BALL_MOVING_SPEED:
@@ -212,14 +212,14 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                                     ball_velocity_unit.y * path_unit.x)
             distance = path_vector.mag()
             if distance < self.TOO_CLOSE_TO_FAIL_DISTANCE:
-                return True  # If the ball is already close to the receive point but not heading towards it, dont fail
+                return True  # If the ball is already close to the receive point but not heading towards it, don't fail
             if (distance > self.FAR_DISTANCE and cross_product_mag > self.STRICT_CROSS_THRESHOLD)\
                or (distance < self.FAR_DISTANCE and cross_product_mag > self.RELAXED_CROSS_THRESHOLD)\
                or ball_velocity.mag() < self.BALL_STOPPED_SPEED:
                 return False  # If ball is too off course or too slow, fail the pass
         return True
 
-    ## Funciton that decides if an opponent robot is in the way of passing
+    ## Function that decides if an opponent robot is in the way of passing
     # Get ignored if we are chipping
     def opponent_in_way(self):
         path_vector = main.ball().pos - self.receive_point

@@ -212,7 +212,7 @@ TEST(CompositePath, CompositeSubPath) {
     }
     subPaths.push_back(compositePath.subPath(8000ms));
 
-    // Compare the subPaths of the compositePaths to the origional path and
+    // Compare the subPaths of the compositePaths to the original path and
     // check that the results of evaluating the paths are close enough
     for (int i = 0; i < 9; i++) {
         for (auto j = 0ms; j < 1s; j += 100ms) {

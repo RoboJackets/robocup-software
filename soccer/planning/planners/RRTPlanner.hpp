@@ -101,7 +101,7 @@ protected:
     std::unique_ptr<InterpolatedPath> generateRRTPath(
         const MotionInstant& start, const MotionInstant& goal,
         const MotionConstraints& motionConstraints,
-        Geometry2d::ShapeSet& origional,
+        Geometry2d::ShapeSet& original,
         const std::vector<DynamicObstacle> dyObs, Context* context,
         unsigned shellID,
         const std::optional<std::vector<Geometry2d::Point>>& biasWayPoints =
@@ -123,7 +123,7 @@ protected:
         Geometry2d::Point vf);
 
     /**
-     *  Removes unnecesary waypoints in the path
+     *  Removes unnecessary waypoints in the path
      */
     static void optimize(std::vector<Geometry2d::Point>& path,
                          const Geometry2d::ShapeSet& obstacles,

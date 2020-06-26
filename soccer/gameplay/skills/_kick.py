@@ -84,7 +84,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     def current_shot_point(self):
         return self.aim_target_point
 
-    ## Generic compatibilty with pivot_kick
+    ## Generic compatibility with pivot_kick
     # This method should be overriden if possible
     def is_steady(self):
         return True

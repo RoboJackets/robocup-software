@@ -10,7 +10,7 @@ import positions.simple_position
 
 # Create the formation
 # Position for every robot
-# In their prominant location
+# In their prominent location
 # Positions will take influence areas
 # that they should avoid
 # All robots are idle

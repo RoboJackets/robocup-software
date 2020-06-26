@@ -12,7 +12,7 @@ This should not be discouraging, but rather informative. Most initial
 contributions will be small; it takes time to learn the project structure and any
 languages and skills each particular project requires. Contributions of any size
 will be greatly appreciated, and you should have realistic expectations of what
-a first contribution might be (if you dont believe me, you can look at my first
+a first contribution might be (if you don't believe me, you can look at my first
 contribution [here](https://github.com/RoboJackets/robocup-software/commit/6ce98fc0f8d88b6d145700779e126c0f1b99bb92#diff-71a3477f37bd5b20744e292eda2e3fbc). It's two lines of 'code'). This guide will help you learn to navigate our code base, and 
 work toward an initial contribution.
 
@@ -70,7 +70,7 @@ without distuirbing others.
 
 Forking a repository on GitHub duplicates the project, but you are given full
 write access to your own duplicate. Now you can delete, recreate, and add code
-relevent to your contribution without harming the progress of others. This 
+relevant to your contribution without harming the progress of others. This 
 duplicate is known as your repository and every team member has a fork. This is 
 different from the main repository which belongs to the team rather than an 
 individual. Don't confuse the main repository with the master branch. The
@@ -126,7 +126,7 @@ how data moves between team members and GitHub.
 Ensure you have a fork of the main repository and that you've cloned it onto
 your desktop. 
 
-You now have a copy of your repository's master branch avaliable to you. When
+You now have a copy of your repository's master branch available to you. When
 you have an idea of what you'd like to contribute, create a new branch before
 starting work. Assume you want to write some radio firmware, so you name your
 branch radioFirmware.

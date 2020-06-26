@@ -35,7 +35,7 @@ class SituationalPlaySelector:
     ##Score for when the current situation is not valid
     outSituationScore = 1000
 
-    ## Enum for representing the current game situation, each of which acts as a catagory of play to be run
+    ## Enum for representing the current game situation, each of which acts as a category of play to be run
     #
     # The none situation should never be encountered during gameplay
     #
@@ -262,7 +262,7 @@ class SituationalPlaySelector:
     ##Keeps track of if the current play should be preempted
     currentPreempt = False
 
-    ## Returns true if no one posseses the ball
+    ## Returns true if no one possesses the ball
     def isFreeBall(self):
         return self.currentPossession == self.BallPos.FREEBALL
 
@@ -442,7 +442,7 @@ class SituationalPlaySelector:
         return robotsWithTheBall
 
     ##
-    #Returns the number of robots that currenly possess the ball
+    #Returns the number of robots that currently possess the ball
     #
     def withBallCount(self):
         ourBots = 0
@@ -456,7 +456,7 @@ class SituationalPlaySelector:
         return (ourBots, theirBots)
 
     ##
-    # Returns a list of the robots that are currenly near the ball based on the passed distance parameter
+    # Returns a list of the robots that are currently near the ball based on the passed distance parameter
     #
     def robotsNearTheBall(self, distance=0.5):
         robotsNearTheBall = list()
@@ -528,10 +528,10 @@ class SituationalPlaySelector:
     #
     def ballPossessionUpdate(self):
 
-        minimumPassSpeed = 2.2  #The minumum speed for the ball to be traveling to look for recieving robots
+        minimumPassSpeed = 2.2  #The minimum speed for the ball to be traveling to look for receiving robots
         ballRatioFactor = 6.0  #The ratio of robot closeness for automatic possession
 
-        intercept_time = 0.7  #The remaining travel time for the ball to a robot for that robot to be considered recieving the ball
+        intercept_time = 0.7  #The remaining travel time for the ball to a robot for that robot to be considered receiving the ball
 
         for g in self.activeRobots:
             hasBall = self.possesses_the_ball(self.systemState.ball.pos, g)
@@ -585,7 +585,7 @@ class SituationalPlaySelector:
             return None
 
         #This should probably eventually be updated to take the intercept location into accoutn rather
-        #than the current location for determining what situation we are in. Or not, I could see an arguement for both.
+        #than the current location for determining what situation we are in. Or not, I could see an argument for both.
         if (self.systemState.ball.vel.mag() > minimumPassSpeed):
             recvr = self.closestReciever()
             if (recvr[0] != None and

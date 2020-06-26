@@ -12,7 +12,7 @@
 #include "vision/camera/World.hpp"
 
 /**
- * Uses a seperate thread to filter the vision measurements into
+ * Uses a separate thread to filter the vision measurements into
  * a smoother velocity/position estimate for both the ball and robots.
  *
  * Add vision frames directly into the filter call the fill states functions

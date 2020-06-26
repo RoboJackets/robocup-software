@@ -42,7 +42,7 @@ class TrianglePass(play.Play):
                             lambda: self.all_subbehaviors_completed(),
                             'all subbehaviors completed')
 
-        # This play runs forever, so it dosen't need a transition out of 'passing'
+        # This play runs forever, so it doesn't need a transition out of 'passing'
 
         # Define any member variables you need here:
         # Eg:
