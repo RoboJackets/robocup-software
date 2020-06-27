@@ -8,7 +8,6 @@ import logging
 from PyQt5 import QtCore
 import main
 import evaluation.double_touch
-#import tactics.positions.goalie
 import role_assignment
 from role_assignment import AssignedRoleReqTree
 import traceback
