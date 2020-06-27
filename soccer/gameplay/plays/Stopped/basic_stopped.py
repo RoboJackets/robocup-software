@@ -46,7 +46,7 @@ class BasicStopped(play.Play):
         return True
 
     def try_preempt(self) -> bool:
-        if(main.game_state().is_stopped()):
+        if (main.game_state().is_stopped()):
             return False
         else:
             self.terminate()
