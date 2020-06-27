@@ -8,6 +8,7 @@ import play
 import evaluation
 from situations import Situation
 import tactics.coordinated_pass
+import tactics.coordinated_block
 import skills.move
 import skills.capture
 
@@ -36,6 +37,10 @@ class BasicOffensiveScramble(play.Play):
             behavior.Behavior.State.completed, lambda: self.
             subbehavior_with_name('Capture ball').is_done_running(),
             'Captured')
+
+
+        self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
+                             'block goal')
 
     #Gets the point that the robot that will behind the capturing one will be
     def get_dropback_point(self):

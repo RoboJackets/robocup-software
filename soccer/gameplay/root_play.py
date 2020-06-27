@@ -29,11 +29,6 @@ class RootPlay(Play, QtCore.QObject):
         self._currently_restarting = False
         self._robots: List[robocup.Robot] = []
 
-        ##Counts the number of times a given play has been dropped
-        self.play_drop_count = dict()
-        ##Once a play has been dropped more than this number of times, it won't be considered to be run in the future
-        self.play_drop_threshold = 3
-
     play_changed = QtCore.pyqtSignal("QString")
 
     def execute_running(self):
@@ -86,15 +81,6 @@ class RootPlay(Play, QtCore.QObject):
             ]
             self.temporarily_blacklisted_play_class = None
 
-            # checks how many times a play has been dropped and excludes those who exceed the threshold
-            # This does mean that we now have two blacklist systems, one that just drops the play and
-            # prevents it from being selected next, and another one that tracks overall drops and prevents
-            # constantly dropping plays from being run.
-            enabled_plays_and_scores = [
-                p for p in enabled_plays_and_scores if
-                self.play_drop_count.get(p[0], 0) <= self.play_drop_threshold
-            ]
-
             # see if we need to kill current play or if it's done running
             if self.play is not None:
                 if self.play.__class__ not in map(lambda tup: tup[0],
@@ -131,11 +117,7 @@ class RootPlay(Play, QtCore.QObject):
                             self.play = play_class()  # instantiate it
                     else:
                         # there's no available plays to run
-
-                        #Wipe away the drop counters so that crashed plays can be run again
-                        #Mostly for when you are changing code, but it also means that if all plays
-                        #exceed the drop counter than all will be reset
-                        self.play_drop_count.clear()
+                        pass
 
                 except Exception as e:
                     logging.error("Exception occurred during play selection: "
@@ -167,15 +149,8 @@ class RootPlay(Play, QtCore.QObject):
 
     # this is used to force a reselection of a play
     def drop_current_play(self, temporarily_blacklist=False):
-        print("Drop current play is being run!!!!!")
         if (temporarily_blacklist):
             self.temporarily_blacklisted_play_class = self.play.__class__
-            self.play_drop_count[
-                self.play.__class__] = self.play_drop_count.get(
-                    self.play.__class__, 0) + 1
-            print("Play blacklisted and drop count incremented")
-            print("New drop count for " + str(self.play.__class__) + " is " +
-                  str(self.play_drop_count[self.play.__class__]))
         self.play = None
 
     @property
