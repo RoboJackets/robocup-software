@@ -17,17 +17,20 @@ class BasicStopped(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
-        for state in Stopped.State:
+        for state in BasicStopped.State:
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                            Stopped.State.normal, lambda: True, 'immediately')
+                            BasicStopped.State.normal, lambda: True,
+                            'immediately')
 
-        self.add_transition(Stopped.State.normal, Stopped.State.center,
+        self.add_transition(BasicStopped.State.normal,
+                            BasicStopped.State.center,
                             lambda: self.is_in_center(),
                             'Switched into center mode')
 
-        self.add_transition(Stopped.State.center, Stopped.State.normal,
+        self.add_transition(BasicStopped.State.center,
+                            BasicStopped.State.normal,
                             lambda: not self.is_in_center(),
                             'Switched into normal mode')
 

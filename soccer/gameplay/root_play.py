@@ -44,11 +44,13 @@ class RootPlay(Play, QtCore.QObject):
         if main.game_state().is_stopped():
             evaluation.double_touch.tracker().restart()
             if main.game_state().is_placement():
-                if not isinstance(self.play,
-                                  plays.restarts.placement.Placement):
-                    logging.info("Placing Ball")
-                    self.play = plays.restarts.placement.Placement()
-                    self._currently_restarting = True
+                #Our only placement code is in legacy currently
+                pass
+                #if not isinstance(self.play,
+                #                  plays.restarts.placement.Placement):
+                #    logging.info("Placing Ball")
+                #    self.play = plays.restarts.placement.Placement()
+                #    self._currently_restarting = True
             else:
                 if self.play is None or not self.play.run_during_stopped():
                     logging.info(

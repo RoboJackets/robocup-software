@@ -13,12 +13,6 @@ class Play(composite_behavior.CompositeBehavior):
     def __init__(self, continuous: bool):
         super().__init__(continuous)
 
-    ## Used to determine when to run a play
-    # Return float("inf") if the play cannot be used or a score (lower is better) used to select the best play.
-    @classmethod
-    def score(cls) -> float:
-        return 10
-
     _situationList: List[Situation] = list()
 
     @classmethod
