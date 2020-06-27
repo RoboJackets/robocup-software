@@ -90,7 +90,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             Capture.State.captured, Capture.State.settle, lambda: self.
             probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF or self.
             frames_in_captured > Capture.MAX_FRAMES_IN_CAPTURED,
-            'actually don't have ball')
+            'actually dont have ball')
 
         # Actually do have the ball, we can just leave
         self.add_transition(Capture.State.captured,
