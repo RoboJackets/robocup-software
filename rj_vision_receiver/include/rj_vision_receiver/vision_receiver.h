@@ -4,13 +4,13 @@
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <rj_vision_receiver/stamped_wrapper_packet.h>
 
-#include <rj_utils/concurrent_queue.hpp>
 #include <boost/asio.hpp>
 #include <cstdint>
 #include <rclcpp/rclcpp.hpp>
 #include <rj_common/Network.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_msgs/msg/raw_protobuf.hpp>
+#include <rj_utils/concurrent_queue.hpp>
 #include <vector>
 
 namespace vision_receiver {

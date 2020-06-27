@@ -28,7 +28,8 @@ public:
     bool TryGet(T& item, const std::chrono::milliseconds& timeout) {
         std::unique_lock<std::mutex> lock{mutex_};
         const auto timeout_time = std::chrono::steady_clock::now() + timeout;
-        cv_.wait_until(lock, timeout_time, [this]() { return !queue_.empty(); });
+        cv_.wait_until(lock, timeout_time,
+                       [this]() { return !queue_.empty(); });
 
         // If it's empty by the time we time out, return false.
         if (queue_.empty()) {
