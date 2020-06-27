@@ -38,7 +38,6 @@ class BasicOffensiveScramble(play.Play):
             subbehavior_with_name('Capture ball').is_done_running(),
             'Captured')
 
-
         self.add_subbehavior(tactics.coordinated_block.CoordinatedBlock(),
                              'block goal')
 
