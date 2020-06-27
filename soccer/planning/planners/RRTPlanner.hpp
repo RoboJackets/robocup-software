@@ -1,21 +1,18 @@
 #pragma once
 
-#include <optional>
-
+#include <Eigen/Dense>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include <planning/InterpolatedPath.hpp>
+#include <list>
+#include <optional>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
-#include "SingleRobotPathPlanner.hpp"
-
+#include <planning/paths/InterpolatedPath.hpp>
 #include <rrt/BiRRT.hpp>
 
+#include "SingleRobotPathPlanner.hpp"
 #include "SystemState.hpp"
-
-#include <Eigen/Dense>
-#include <list>
 
 namespace Planning {
 

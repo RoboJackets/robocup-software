@@ -9,13 +9,14 @@ MotionControlNode::MotionControlNode(Context* context) : _context(context) {
 }
 
 void MotionControlNode::run() {
-    runMotion(_context->world_state, _context->game_state, _context->paths,
-              _context->is_joystick_controlled, &_context->motion_setpoints);
+    runMotion(_context->world_state, _context->game_state,
+              _context->trajectories, _context->is_joystick_controlled,
+              &_context->motion_setpoints);
 }
 
 void MotionControlNode::runMotion(
     const WorldState& world_state, const GameState& game_state,
-    const std::array<Planning::AngleFunctionPath, Num_Shells>& paths,
+    const std::array<Trajectory::Trajectory, Num_Shells>& trajectories,
     const std::array<bool, Num_Shells>& joystick_controlled,
     std::array<MotionSetpoint, Num_Shells>* setpoints) {
     bool force_stop = game_state.state == GameState::State::Halt;
@@ -25,7 +26,7 @@ void MotionControlNode::runMotion(
         if (force_stop) {
             controller.stop(setpoint);
         } else {
-            controller.run(world_state.get_robot(true, i), paths[i],
+            controller.run(world_state.get_robot(true, i), trajectories[i],
                            joystick_controlled[i], setpoint);
         }
     }

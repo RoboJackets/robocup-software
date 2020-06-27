@@ -9,7 +9,7 @@
 #include <optional>
 
 #include "DebugDrawer.hpp"
-#include "planning/Path.hpp"
+#include "planning/paths/Path.hpp"
 
 using namespace Packet;
 using namespace std;

@@ -10,8 +10,8 @@
 #include <cmath>
 #include <cstdio>
 #include <iostream>
-#include <planning/RRTPlanner.hpp>
-#include <planning/TrapezoidalPath.hpp>
+#include <planning/paths/TrapezoidalPath.hpp>
+#include <planning/planners/RRTPlanner.hpp>
 #include <stdexcept>
 #include <utility>
 
@@ -53,8 +53,8 @@ void OurRobot::createConfiguration(Configuration* cfg) {
                                        Robot_Radius - 0.01);
     _oppGoalieAvoidRadius = new ConfigDouble(
         cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
-    _dribbleOutOfBoundsOffset = new ConfigDouble(
-        cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
+    _dribbleOutOfBoundsOffset =  // NOLINT
+        new ConfigDouble(cfg, "PathPlanner/dribbleOutOfBoundsOffset", 0.05);
 }
 
 OurRobot::OurRobot(Context* context, int shell)
@@ -244,7 +244,9 @@ void OurRobot::intercept(Point target) {
 void OurRobot::worldVelocity(Geometry2d::Point targetWorldVelocity) {
     intent().motion_command =
         std::make_unique<Planning::WorldVelTargetCommand>(targetWorldVelocity);
-    setPath(nullptr);
+
+    _context->trajectories[shell()].clear();
+
     _cmdText << "worldVel(" << targetWorldVelocity.x() << ", "
              << targetWorldVelocity.y() << ")" << endl;
 }
@@ -482,10 +484,6 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
 }
 
 #pragma mark Motion
-
-void OurRobot::setPath(unique_ptr<Planning::Path> path) {
-    angleFunctionPath().path = std::move(path);
-}
 
 std::vector<Planning::DynamicObstacle> OurRobot::collectDynamicObstacles() {
     vector<Planning::DynamicObstacle> obstacles;

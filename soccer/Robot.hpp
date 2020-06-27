@@ -18,11 +18,11 @@
 #include <cstdint>
 #include <memory>
 #include <optional>
-#include <planning/CompositePath.hpp>
-#include <planning/InterpolatedPath.hpp>
 #include <planning/MotionCommand.hpp>
-#include <planning/RRTPlanner.hpp>
 #include <planning/RobotConstraints.hpp>
+#include <planning/paths/CompositePath.hpp>
+#include <planning/paths/InterpolatedPath.hpp>
+#include <planning/planners/RRTPlanner.hpp>
 #include <vector>
 
 #include "Context.hpp"
@@ -175,11 +175,6 @@ public:
     const Planning::RotationCommand& rotationCommand() const {
         return *intent().rotation_command;
     }
-
-    /**
-     * Returns a const reference to the path of the robot.
-     */
-    const Planning::Path& path() { return _context->paths[shell()]; }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
     /// obstacles
@@ -449,8 +444,6 @@ public:
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
 
-    void setPath(std::unique_ptr<Planning::Path> path);
-
     /**
      * Sets the priority which paths are planned.
      * Higher priority values are planned first.
@@ -469,13 +462,6 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    /**
-     * Get a mutable reference to the angle function path.
-     */
-    Planning::AngleFunctionPath& angleFunctionPath() {
-        return _context->paths[shell()];
-    }
-
     /**
      * Creates a set of obstacles from a given robot team mask,
      * where mask values < 0 create no obstacle, and larger values

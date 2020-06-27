@@ -1,33 +1,28 @@
-#include "DirectTargetPathPlanner.hpp"
-#include "MotionCommand.hpp"
+#include "TuningPathPlanner.hpp"
 
-using namespace Geometry2d;
+#include "planning/MotionCommand.hpp"
+
 namespace Planning {
 
-double vectorInDirection(Point point, Point direction) {
-    const auto vector = point.dot(direction.normalized());
-    return std::max(vector, 0.0);
-}
-
-std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
+std::unique_ptr<Path> TuningPathPlanner::run(PlanRequest& planRequest) {
     const MotionInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     std::unique_ptr<Path>& prevPath = planRequest.prevPath;
 
-    const Planning::DirectPathTargetCommand& command =
-        dynamic_cast<const Planning::DirectPathTargetCommand&>(
+    const Planning::TuningPathCommand& command =
+        dynamic_cast<const Planning::TuningPathCommand&>(
             *planRequest.motionCommand);
 
     if (shouldReplan(planRequest)) {
         Geometry2d::Point endTarget = command.pathGoal.pos;
-        const auto direction = (endTarget - startInstant.pos).normalized();
-
         float endSpeed = command.pathGoal.vel.mag();
-        auto path = std::make_unique<TrapezoidalPath>(
-            startInstant.pos, vectorInDirection(startInstant.vel, direction),
-            endTarget, vectorInDirection(command.pathGoal.vel, direction),
-            motionConstraints);
+        // Tells the robot that is actually in a different location
+        // This forces the PID Tuner to kick in to move the robot to its new
+        // location
+        auto path = std::unique_ptr<Path>(
+            new TrapezoidalPath(endTarget, startInstant.vel.mag(), endTarget,
+                                endSpeed, motionConstraints));
         path->setStartTime(RJ::now());
         return std::move(path);
     } else {
@@ -35,21 +30,18 @@ std::unique_ptr<Path> DirectTargetPathPlanner::run(PlanRequest& planRequest) {
     }
 }
 
-bool DirectTargetPathPlanner::shouldReplan(
-    const PlanRequest& planRequest) const {
+bool TuningPathPlanner::shouldReplan(const PlanRequest& planRequest) const {
     const MotionConstraints& motionConstraints = planRequest.constraints.mot;
     const Geometry2d::ShapeSet& obstacles = planRequest.obstacles;
     const Path* prevPath = planRequest.prevPath.get();
 
-    const Planning::DirectPathTargetCommand& command =
-        dynamic_cast<const Planning::DirectPathTargetCommand&>(
+    const Planning::TuningPathCommand& command =
+        dynamic_cast<const Planning::TuningPathCommand&>(
             *planRequest.motionCommand);
 
     if (!prevPath) {
         return true;
     } else {
-        // For DirectTarget commands, we replan if the goal position or velocity
-        // have changed beyond a certain threshold
         Geometry2d::Point endTarget = command.pathGoal.pos;
         float endSpeed = command.pathGoal.vel.mag();
         float targetPosChange = (prevPath->end().motion.pos - endTarget).mag();
@@ -58,7 +50,7 @@ bool DirectTargetPathPlanner::shouldReplan(
         if (targetPosChange >
                 SingleRobotPathPlanner::goalPosChangeThreshold() ||
             targetVelChange >
-                SingleRobotPathPlanner::goalPosChangeThreshold()) {
+                SingleRobotPathPlanner::goalVelChangeThreshold()) {
             // FIXME: goalChangeThreshold shouldn't be used for checking
             // speed differences as it is in the above 'if' statement
             return true;

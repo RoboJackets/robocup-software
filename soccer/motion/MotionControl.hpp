@@ -5,6 +5,7 @@
 #include <Geometry2d/Point.hpp>
 #include <rc-fshare/pid.hpp>
 #include <time.hpp>
+
 #include "Robot.hpp"
 #include "motion/MotionSetpoint.hpp"
 /**
@@ -24,7 +25,7 @@ public:
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radioTx packet.
      */
-    void run(const RobotState& state, const Planning::AngleFunctionPath& path,
+    void run(const RobotState& state, const Trajectory::Trajectory& trajectory,
              bool is_joystick_controlled, MotionSetpoint* setpoint);
 
     /**

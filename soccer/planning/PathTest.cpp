@@ -1,7 +1,8 @@
-#include <iostream>
 #include <gtest/gtest.h>
-#include <planning/InterpolatedPath.hpp>
-#include <planning/CompositePath.hpp>
+
+#include <iostream>
+#include <planning/paths/CompositePath.hpp>
+#include <planning/paths/InterpolatedPath.hpp>
 
 using namespace std;
 using namespace Geometry2d;

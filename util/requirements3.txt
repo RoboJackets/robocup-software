@@ -5,7 +5,7 @@ watchdog # file-system event notifications
 munkres	# provides the 'hungarian algorithm', which we use for robot role assignment
 
 pylint # static checker for python
-mypy # static arugment checker
+mypy == 0.770 # static arugment checker. Pinned to 0.770 because something is broken with 0.780
 
 yapf # python checker
 typing-extensions # For TypedDict

@@ -1,17 +1,15 @@
 #pragma once
 
-#include <optional>
-
+#include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/ShapeSet.hpp>
-#include "MotionInstant.hpp"
-#include "Utils.hpp"
-
-#include <DebugDrawer.hpp>
 #include <QColor>
 #include <QString>
+#include <optional>
 
-#include "DynamicObstacle.hpp"
+#include "Utils.hpp"
+#include "planning/DynamicObstacle.hpp"
+#include "planning/MotionInstant.hpp"
 
 class SystemState;
 namespace Planning {

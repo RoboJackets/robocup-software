@@ -1,15 +1,15 @@
 #pragma once
 
+#include <map>
+#include <memory>
 #include <planning/MotionCommand.hpp>
 #include <planning/MotionConstraints.hpp>
 #include <planning/MotionInstant.hpp>
-#include <planning/Path.hpp>
-#include "Context.hpp"
-#include "planning/DynamicObstacle.hpp"
+#include <planning/paths/Path.hpp>
 
-#include <map>
-#include <memory>
+#include "Context.hpp"
 #include "RobotConstraints.hpp"
+#include "planning/DynamicObstacle.hpp"
 
 namespace Planning {
 
