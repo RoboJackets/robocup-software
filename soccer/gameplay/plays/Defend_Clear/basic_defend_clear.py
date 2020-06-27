@@ -9,7 +9,7 @@ import tactics.coordinated_block
 ## Simplistic play to handle defend clear situation
 #  Mimicks basic122 offense. One pivot kick and two marking robots
 #
-class BaiscDefendClear(play.Play):
+class BasicDefendClear(play.Play):
 
     _situationList = [
         Situation.DEFEND_CLEAR
