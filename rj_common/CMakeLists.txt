@@ -8,6 +8,7 @@ project(rj_common LANGUAGES CXX)
 # Find package
 #======================================================================
 find_package(Qt5 COMPONENTS Core Network Widgets REQUIRED)
+find_package(rclcpp REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -51,6 +52,10 @@ target_link_libraries(rj_common
     PUBLIC
     ${RJ_COMMON_DEPS_SYSTEM_LIBRARIES}
     ${RJ_COMMON_DEPS_LIBRARIES})
+
+ament_target_dependencies(rj_common PUBLIC rclcpp)
+include(ROSIDLUtils)
+rosidl_target_link_interfaces(rj_common PRIVATE rj_msgs)
 
 #======================================================================
 # Packaging

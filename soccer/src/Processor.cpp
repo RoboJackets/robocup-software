@@ -65,7 +65,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
-    _vision = std::make_shared<VisionFilter>();
+    _vision = std::make_shared<VisionFilter>(&_context);
     _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
@@ -73,10 +73,13 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
-    _visionReceiver = std::make_unique<VisionReceiver>(
-        &_context, sim, sim ? SimVisionPort : SharedVisionPortSinglePrimary);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
     _logger = std::make_unique<Logger>(&_context);
+
+    // ROS2 temp nodes
+    _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
+    _raw_vision_packet_sub =
+        std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
@@ -89,7 +92,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _logger->start();
 
-    _nodes.push_back(_visionReceiver.get());
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
     _nodes.push_back(_logger.get());
@@ -113,60 +115,6 @@ void Processor::stop() {
     if (_running) {
         _running = false;
     }
-}
-
-void Processor::runModels() {
-    std::vector<CameraFrame> frames;
-
-    for (auto& packet : _context.vision_packets) {
-        const SSL_DetectionFrame* frame = packet->wrapper.mutable_detection();
-        std::vector<CameraBall> ballObservations;
-        std::vector<CameraRobot> yellowObservations;
-        std::vector<CameraRobot> blueObservations;
-
-        RJ::Time time =
-            RJ::Time(std::chrono::duration_cast<std::chrono::microseconds>(
-                RJ::Seconds(frame->t_capture())));
-
-        // Add ball observations
-        ballObservations.reserve(frame->balls().size());
-        for (const SSL_DetectionBall& ball : frame->balls()) {
-            ballObservations.emplace_back(
-                time, _worldToTeam * Point(ball.x() / 1000, ball.y() / 1000));
-        }
-
-        // Collect camera data from all robots
-        yellowObservations.reserve(frame->robots_yellow().size());
-        for (const SSL_DetectionRobot& robot : frame->robots_yellow()) {
-            yellowObservations.emplace_back(
-                time,
-                Pose(Point(_worldToTeam *
-                           Point(robot.x() / 1000, robot.y() / 1000)),
-                     fixAngleRadians(robot.orientation() + _teamAngle)),
-                robot.robot_id());
-        }
-
-        // Collect camera data from all robots
-        blueObservations.reserve(frame->robots_blue().size());
-        for (const SSL_DetectionRobot& robot : frame->robots_blue()) {
-            blueObservations.emplace_back(
-                time,
-                Pose(Point(_worldToTeam *
-                           Point(robot.x() / 1000, robot.y() / 1000)),
-                     fixAngleRadians(robot.orientation() + _teamAngle)),
-                robot.robot_id());
-        }
-
-        frames.emplace_back(time, frame->camera_id(), ballObservations,
-                            yellowObservations, blueObservations);
-    }
-
-    _vision->addFrames(frames);
-
-    // Fill the list of our robots/balls based on whether we are the blue team
-    // or not
-    _vision->fillBallState(_context.state);
-    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
 }
 
 /**
@@ -200,12 +148,11 @@ void Processor::run() {
         _sdl_joystick_node->run();
         _manual_control_node->run();
 
-        updateOrientation();
+        // Updates context_->field_dimensions
+        _config_client->run();
 
-        // TODO(Kyle): Don't do this here.
-        // Because not everything is on modules yet, but we still need things to
-        // run in order, we can't just do everything via the for loop (yet).
-        _visionReceiver->run();
+        // Updates context_->raw_vision_packets
+        _raw_vision_packet_sub->run();
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
@@ -213,17 +160,14 @@ void Processor::run() {
             setFieldDimensions(_context.field_dimensions);
         }
 
-        curStatus.lastVisionTime = _visionReceiver->getLastVisionTime();
-
         _radio->run();
 
         if (_radio) {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        runModels();
-
-        _context.vision_packets.clear();
+        _vision->run();
+        curStatus.lastVisionTime = _vision->GetLastVisionTime();
 
         // Log referee data
         _refereeModule->run();
@@ -310,28 +254,11 @@ void Processor::updateIntentActive() {
     }
 }
 
-void Processor::recalculateWorldToTeamTransform() {
-    _worldToTeam = Geometry2d::TransformMatrix::translate(
-        0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
-    _worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
-}
-
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
     *currentDimensions = dims;
-    recalculateWorldToTeamTransform();
     _gameplayModule->calculateFieldObstacles();
     _gameplayModule->updateFieldDimensions();
 }
 
 bool Processor::isRadioOpen() const { return _radio->isOpen(); }
 bool Processor::isInitialized() const { return _initialized; }
-
-void Processor::updateOrientation() {
-    if (_context.game_settings.defendPlusX) {
-        _teamAngle = -M_PI_2;
-    } else {
-        _teamAngle = M_PI_2;
-    }
-
-    recalculateWorldToTeamTransform();
-}

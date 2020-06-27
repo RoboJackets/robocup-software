@@ -1,9 +1,11 @@
 #pragma once
 
 #include <sys/time.h>
+
 #include <chrono>
-#include <string>
 #include <iostream>
+#include <rclcpp/time.hpp>
+#include <string>
 
 using namespace std::chrono_literals;
 
@@ -32,6 +34,19 @@ constexpr Timestamp timestamp(Time time) {
 }
 
 inline Timestamp timestamp() { return timestamp(now()); }
+
+inline rclcpp::Time ToROSTime(RJ::Time time) {
+    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                        time.time_since_epoch())
+                        .count();
+
+    return rclcpp::Time{nanos};
+}
+
+inline RJ::Time FromROSTime(const rclcpp::Time& time) {
+    const std::chrono::nanoseconds dur(time.nanoseconds());
+    return RJ::Time{dur};
+}
 
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
 constexpr RJ::Timestamp SecsToTimestamp(double secs) {

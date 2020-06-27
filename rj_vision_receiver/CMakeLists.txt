@@ -2,66 +2,53 @@
 # Preamble
 #======================================================================
 cmake_minimum_required(VERSION 3.16)
-project(rj_config)
+project(rj_vision_receiver)
 
 #======================================================================
 # Find package
 #======================================================================
 find_package(rclcpp REQUIRED)
+find_package(Boost REQUIRED)
 
 #======================================================================
 # Define Targets
 #======================================================================
-add_library(config_client STATIC)
-target_compile_options(config_client PRIVATE "-fPIC")
-
-add_executable(config_server)
+add_executable(vision_receiver)
 
 add_subdirectory(src)
 
 #======================================================================
 # Dependencies List
 #======================================================================
-set(RJ_CONFIG_DEPS_INCLUDE_DIRS
+set(RJ_VISION_RECEIVER_DEPS_INCLUDE_DIRS
     include)
 
-set(RJ_CONFIG_DEPS_LIBRARIES
-    rj_constants
+set(RJ_VISION_RECEIVER_DEPS_SYSTEM_LIBRARIES
+    Boost::asio)
+
+set(RJ_VISION_RECEIVER_DEPS_LIBRARIES
+    config_client
     rj_common
     rj_utils)
 
 #======================================================================
 # Include and Linking
 #======================================================================
-target_include_directories(config_client
-    PUBLIC
-    ${RJ_CONFIG_DEPS_INCLUDE_DIRS})
-target_include_directories(config_server
+target_include_directories(vision_receiver
     PRIVATE
-    ${RJ_CONFIG_DEPS_INCLUDE_DIRS})
+    ${RJ_VISION_RECEIVER_DEPS_INCLUDE_DIRS})
 
-target_link_libraries(config_client
-    PUBLIC
-    ${RJ_CONFIG_DEPS_LIBRARIES})
-target_link_libraries(config_server
+target_link_libraries(vision_receiver
     PRIVATE
-    ${RJ_CONFIG_DEPS_LIBRARIES})
+    ${RJ_VISION_RECEIVER_DEPS_LIBRARIES})
 
-ament_target_dependencies(config_client PUBLIC rclcpp)
-ament_target_dependencies(config_server PUBLIC rclcpp)
+ament_target_dependencies(vision_receiver PUBLIC rclcpp)
 
 include(ROSIDLUtils)
-rosidl_target_link_interfaces(config_client PUBLIC rj_msgs)
-rosidl_target_link_interfaces(config_server PRIVATE rj_msgs)
+rosidl_target_link_interfaces(vision_receiver PRIVATE rj_msgs)
 
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS
-    config_client
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin)
-
-install(TARGETS config_server
+install(TARGETS vision_receiver
     DESTINATION lib/${CMAKE_PROJECT_NAME})

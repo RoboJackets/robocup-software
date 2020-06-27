@@ -3,7 +3,10 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_msgs/msg/detection_robot.hpp>
 #include <vector>
+
+using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
 
 /**
  * Wrapper for the protobuf observation
@@ -18,6 +21,17 @@ public:
      */
     CameraRobot(RJ::Time timeCaptured, Geometry2d::Pose pose, int robotID)
         : timeCaptured(timeCaptured), pose(pose), robotID(robotID) {}
+
+    /**
+     * Constructor that takes in a DetectionRobotMsg.
+     * @param time_captured
+     * @param msg
+     * @param world_to_team
+     * @param team_angle
+     */
+    CameraRobot(const RJ::Time& time_captured, const DetectionRobotMsg& msg,
+                const Geometry2d::TransformMatrix& world_to_team,
+                double team_angle);
 
     /**
      * @return the time the detection was captured

@@ -1,26 +1,34 @@
 #include <config_client/config_client.h>
 
+#include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
 
 namespace config_client {
-ConfigClient::ConfigClient(rclcpp::Node* node) : node_{node} {
+ConfigClient::ConfigClient(rclcpp::Node* node)
+    : node_{node},
+      game_settings_{std::nullopt},
+      field_dimensions_{std::nullopt} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
 
     const auto game_settings_cb = [this](GameSettingsMsg::UniquePtr msg) {
+        std::lock_guard<std::mutex> guard{mutex_};
         game_settings_ = *msg;
     };
     game_settings_sub_ = node->create_subscription<GameSettingsMsg>(
-        "config/game_settings", latching_qos, game_settings_cb);
-    game_settings_client_ =
-        node->create_client<SetGameSettingsSrv>("config/set_game_settings");
+        config_server::topics::kGameSettingsPub, latching_qos,
+        game_settings_cb);
+    game_settings_client_ = node->create_client<SetGameSettingsSrv>(
+        config_server::topics::kGameSettingsSrv);
 
     const auto field_dimensions_cb = [this](FieldDimensionsMsg::UniquePtr msg) {
+        std::lock_guard<std::mutex> guard{mutex_};
         field_dimensions_ = *msg;
     };
     field_dimensions_sub_ = node->create_subscription<FieldDimensionsMsg>(
-        "config/field_dimensions", latching_qos, field_dimensions_cb);
+        config_server::topics::kFieldDimensionsPub, latching_qos,
+        field_dimensions_cb);
     field_dimensions_client_ = node->create_client<SetFieldDimensionsSrv>(
-        "config/set_field_dimensions");
+        config_server::topics::kFieldDimensionsSrv);
 }
 
 bool ConfigClient::connected() const {
@@ -29,13 +37,26 @@ bool ConfigClient::connected() const {
 
     const bool have_msg = has_game_settings && has_field_dimensions;
 
+    static bool prev_connected = false;
+
     if (!have_msg) {
         auto& clk = *node_->get_clock();
         const auto throttle_ms = 1000;
         RJ_INFO_STREAM_THROTTLE(node_->get_logger(), clk, throttle_ms,
                                 "[ConfigClient] Waiting on ConfigServer...");
     }
+
+    if (!prev_connected && have_msg) {
+        prev_connected = true;
+        RJ_INFO(node_->get_logger(), "[ConfigClient] Connected!");
+    }
+
     return have_msg;
+}
+
+bool ConfigClient::connectedThreaded() const {
+    std::lock_guard<std::mutex> guard{mutex_};
+    return connected();
 }
 
 void ConfigClient::updateGameSettings(const GameSettingsMsg& msg) {
@@ -50,7 +71,17 @@ void ConfigClient::updateFieldDimensions(const FieldDimensionsMsg& msg) {
     SetFieldDimensionsReq::SharedPtr request =
         std::make_shared<SetFieldDimensionsReq>();
     request->field_dimensions = msg;
-
     field_dimensions_client_->async_send_request(request);
+}
+
+bool ConfigClient::waitUntilConnected() const {
+    constexpr std::chrono::milliseconds kSleepDuration{100};
+    while (rclcpp::ok()) {
+        if (connectedThreaded()) {
+            return true;
+        }
+        rclcpp::sleep_for(kSleepDuration);
+    }
+    return false;
 }
 }  // namespace config_client

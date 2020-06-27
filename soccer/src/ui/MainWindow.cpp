@@ -174,6 +174,8 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     } else {
         // reset the field initially, grSim will start out in some weird
         // pattern and we want to keep it consistent
+        // TODO(#1524) Fix the race condition here. If grsim isn't up when this
+        // is run, nothing happens.
         on_actionResetField_triggered();
     }
 

@@ -5,6 +5,8 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
+#include <ros2_temp/raw_vision_packet_sub.h>
+#include <ros2_temp/soccer_config_client.h>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
@@ -18,7 +20,6 @@
 
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
-#include "VisionReceiver.hpp"
 #include "joystick/ManualControlNode.hpp"
 #include "joystick/SDLJoystickNode.hpp"
 #include "motion/MotionControlNode.hpp"
@@ -110,8 +111,6 @@ public:
      */
     void stopRobots();
 
-    void recalculateWorldToTeamTransform();
-
     void setFieldDimensions(const Field_Dimensions& dims);
 
     bool isRadioOpen() const;
@@ -138,12 +137,6 @@ private:
      */
     void updateIntentActive();
 
-    void updateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
-
-    void updateOrientation();
-
-    void runModels();
-
     /** Used to start and stop the thread **/
     volatile bool _running;
 
@@ -158,14 +151,6 @@ private:
 
     /** global system state */
     Context _context;
-
-    // Transformation from world space to team space.
-    // This depends on which goal we're defending.
-    //
-    // _teamTrans is used for positions, not angles.
-    // _teamAngle is used for angles.
-    Geometry2d::TransformMatrix _worldToTeam;
-    float _teamAngle{};
 
     // Processing period in microseconds
     RJ::Seconds _framePeriod = RJ::Seconds(1) / 60;
@@ -182,7 +167,6 @@ private:
     std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-    std::unique_ptr<VisionReceiver> _visionReceiver;
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<Planning::PlannerNode> _planner_node;
     std::unique_ptr<RadioNode> _radio;
@@ -190,6 +174,10 @@ private:
     std::unique_ptr<joystick::SDLJoystickNode> _sdl_joystick_node;
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
     std::unique_ptr<Logger> _logger;
+
+    // ROS2 temporary modules
+    std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
+    std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
 
     std::vector<Node*> _nodes;
 

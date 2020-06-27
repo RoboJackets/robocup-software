@@ -2,7 +2,10 @@
 
 #include <Geometry2d/Point.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_msgs/msg/detection_ball.hpp>
 #include <vector>
+
+using DetectionBallMsg = rj_msgs::msg::DetectionBall;
 
 /**
  * Wrapper for the protobuf observation
@@ -15,6 +18,13 @@ public:
      */
     CameraBall(RJ::Time timeCaptured, Geometry2d::Point pos)
         : timeCaptured(timeCaptured), pos(pos) {}
+
+    /**
+     * @brief Constructor from DetectionBallMsg.
+     * @param msg
+     */
+    CameraBall(RJ::Time time_captured, const DetectionBallMsg& msg,
+               const Geometry2d::TransformMatrix& world_to_team);
 
     /**
      * @return Time this measurement was captured

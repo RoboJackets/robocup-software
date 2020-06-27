@@ -15,23 +15,29 @@ class ConfigClientNode : public rclcpp::Node {
 public:
     ConfigClientNode(const std::string& name);
 
-    [[nodiscard]] inline const GameSettingsMsg& gameSettings() const {
+    [[nodiscard]] const GameSettingsMsg& gameSettings() const {
         return config_client_.gameSettings();
     }
 
-    [[nodiscard]] inline const FieldDimensionsMsg& fieldDimensions() const {
+    [[nodiscard]] const FieldDimensionsMsg& fieldDimensions() const {
         return config_client_.fieldDimensions();
     }
 
-    [[nodiscard]] inline bool connected() const {
-        return config_client_.connected();
+    [[nodiscard]] const GameSettingsMsg& gameSettingsThreaded() const {
+        return config_client_.gameSettingsThreaded();
     }
 
-    inline void updateGameSettings(const GameSettingsMsg& msg) {
+    [[nodiscard]] const FieldDimensionsMsg& fieldDimensionsThreaded() const {
+        return config_client_.fieldDimensionsThreaded();
+    }
+
+    [[nodiscard]] bool connected() const { return config_client_.connected(); }
+
+    void updateGameSettings(const GameSettingsMsg& msg) {
         return config_client_.updateGameSettings(msg);
     }
 
-    inline void updateFieldDimensions(const FieldDimensionsMsg& msg) {
+    void updateFieldDimensions(const FieldDimensionsMsg& msg) {
         return config_client_.updateFieldDimensions(msg);
     }
 

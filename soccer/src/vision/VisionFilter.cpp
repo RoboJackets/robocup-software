@@ -3,10 +3,13 @@
 #include <Robot.hpp>
 #include <iostream>
 #include <rj_constants/constants.hpp>
+#include <rj_msgs/msg/detection_frame.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
-VisionFilter::VisionFilter() {
+VisionFilter::VisionFilter(Context* context) : context_{context} {
+    detection_frame_sub_ = std::make_unique<ros2_temp::DetectionFrameSub>();
+
     threadEnd.store(false, std::memory_order::memory_order_seq_cst);
 
     // Have to be careful so the entire initialization list
@@ -22,9 +25,28 @@ VisionFilter::~VisionFilter() {
     worker.join();
 }
 
-void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
-    std::lock_guard<std::mutex> lock(frameLock);
-    frameBuffer.insert(frameBuffer.end(), frames.begin(), frames.end());
+void VisionFilter::run() {
+    // Fill the list of our robots/balls based on whether we are the blue team
+    // or not
+    fillBallState(context_->state);
+    fillRobotState(context_->state, context_->game_state.blueTeam);
+}
+
+void VisionFilter::GetFrames() {
+    std::vector<DetectionFrameMsg::UniquePtr> raw_frames =
+        detection_frame_sub_->GetFrames();
+    if (raw_frames.empty()) {
+        return;
+    }
+
+    last_update_time_ = RJ::FromROSTime(raw_frames.back()->t_received);
+
+    const double team_angle = detection_frame_sub_->TeamAngle();
+    const Geometry2d::TransformMatrix world_to_team =
+        detection_frame_sub_->WorldToTeam();
+    for (const DetectionFrameMsg::UniquePtr& msg : raw_frames) {
+        frameBuffer.emplace_back(*msg, world_to_team, team_angle);
+    }
 }
 
 void VisionFilter::fillBallState(SystemState& state) {
@@ -43,8 +65,10 @@ void VisionFilter::fillBallState(SystemState& state) {
 
 void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
     std::lock_guard<std::mutex> lock(worldLock);
-    const auto& ourWorldRobot = usBlue ? world.getRobotsBlue() : world.getRobotsYellow();
-    const auto& oppWorldRobot = usBlue ? world.getRobotsYellow() : world.getRobotsBlue();
+    const auto& ourWorldRobot =
+        usBlue ? world.getRobotsBlue() : world.getRobotsYellow();
+    const auto& oppWorldRobot =
+        usBlue ? world.getRobotsYellow() : world.getRobotsBlue();
 
     // Fill our robots
     for (int i = 0; i < Num_Shells; i++) {
@@ -91,27 +115,27 @@ void VisionFilter::updateLoop() {
 
         {
             // Do update with whatever is in frame buffer
-            std::lock_guard<std::mutex> lock1(frameLock);
-            {
-                std::lock_guard<std::mutex> lock2(worldLock);
+            GetFrames();
+            std::lock_guard<std::mutex> lock2(worldLock);
 
-                if (!frameBuffer.empty()) {
-                    world.updateWithCameraFrame(RJ::now(), frameBuffer);
-                    frameBuffer.clear();
-                } else {
-                    world.updateWithoutCameraFrame(RJ::now());
-                }
+            if (!frameBuffer.empty()) {
+                world.updateWithCameraFrame(RJ::now(), frameBuffer);
+                frameBuffer.clear();
+            } else {
+                world.updateWithoutCameraFrame(RJ::now());
             }
         }
 
         // Wait for the correct loop timings
         RJ::Seconds diff = RJ::now() - start;
-        RJ::Seconds sleepLeft = RJ::Seconds(*VisionFilterConfig::vision_loop_dt) - diff;
+        RJ::Seconds sleepLeft =
+            RJ::Seconds(*VisionFilterConfig::vision_loop_dt) - diff;
 
         if (diff > RJ::Seconds(0)) {
             std::this_thread::sleep_for(sleepLeft);
         } else {
-            std::cout << "WARNING : Filter is not running fast enough" << std::endl;
+            std::cout << "WARNING : Filter is not running fast enough"
+                      << std::endl;
         }
     }
 }

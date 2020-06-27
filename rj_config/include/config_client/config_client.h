@@ -34,11 +34,43 @@ public:
     }
 
     /**
+     * @brief Thread safe version of gameSettings(), returns
+     * game_settings_ but uses a mutex.
+     * @return
+     */
+    [[nodiscard]] const GameSettingsMsg& gameSettingsThreaded() const {
+        std::lock_guard<std::mutex> guard{mutex_};
+        return game_settings_.value();
+    }
+
+    /**
+     * @brief Thread safe version of fieldDimensions(), returns
+     * field_dimensions_ but uses a mutex.
+     * @return
+     */
+    [[nodiscard]] const FieldDimensionsMsg& fieldDimensionsThreaded() const {
+        std::lock_guard<std::mutex> guard{mutex_};
+        return field_dimensions_.value();
+    }
+
+    /**
      * @brief Returns whether it is connected to the ConfigServer. All other
      * functions are invalid if this returns false.
      * @return
      */
     [[nodiscard]] bool connected() const;
+
+    /**
+     * @brief Thread safe version of connected().
+     * @return
+     */
+    [[nodiscard]] bool connectedThreaded() const;
+
+    /**
+     * @brief Blocks until the config client is connected. Should only be called
+     * from a different thread than the one that is spinning.
+     */
+    bool waitUntilConnected() const;
 
     /**
      * @brief Sends a service call to ConfigServer to update the GameSettings.
@@ -63,5 +95,7 @@ private:
     rclcpp::Subscription<FieldDimensionsMsg>::SharedPtr field_dimensions_sub_;
     rclcpp::Client<SetFieldDimensionsSrv>::SharedPtr field_dimensions_client_;
     std::optional<FieldDimensionsMsg> field_dimensions_;
+
+    mutable std::mutex mutex_;
 };
 }  // namespace config_client

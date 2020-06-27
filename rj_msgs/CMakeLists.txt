@@ -19,8 +19,12 @@ find_package(builtin_interfaces REQUIRED)
 # rj_geometry_msgs__rosidl_typesupport_cpp
 rosidl_generate_interfaces(rj_msgs
     # Messages
+    msg/DetectionBall.msg
+    msg/DetectionFrame.msg
+    msg/DetectionRobot.msg
     msg/FieldDimensions.msg
     msg/GameSettings.msg
+    msg/RawProtobuf.msg
     # Services
     srv/SetFieldDimensions.srv
     srv/SetGameSettings.srv

@@ -1,17 +1,23 @@
 #include "CameraRobot.hpp"
+
 #include <iostream>
 
-RJ::Time CameraRobot::getTimeCaptured() const {
-    return timeCaptured;
-}
+CameraRobot::CameraRobot(const RJ::Time& time_captured,
+                         const DetectionRobotMsg& msg,
+                         const Geometry2d::TransformMatrix& world_to_team,
+                         double team_angle)
+    : timeCaptured{time_captured},
+      pose{world_to_team * Geometry2d::Point{msg.x / 1000, msg.y / 1000},
+           fixAngleRadians(msg.orientation + team_angle)},
+      robotID{static_cast<int>(msg.robot_id)} {}
+
+RJ::Time CameraRobot::getTimeCaptured() const { return timeCaptured; }
 
 Geometry2d::Point CameraRobot::getPos() const { return pose.position(); }
 
 double CameraRobot::getTheta() const { return pose.heading(); }
 
-int CameraRobot::getRobotID() const {
-    return robotID;
-}
+int CameraRobot::getRobotID() const { return robotID; }
 
 Geometry2d::Pose CameraRobot::getPose() const { return pose; }
 
@@ -27,7 +33,8 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     // so that we aren't trying to add time_points. It's durations instead.
     RJ::Time initTime = robots.front().getTimeCaptured();
     RJ::Seconds timeAvg = RJ::Seconds(0);
-    // Adding angles are done through conversion to rect coords then back to polar
+    // Adding angles are done through conversion to rect coords then back to
+    // polar
     Geometry2d::Point posAvg;
     Geometry2d::Point thetaCartesianAvg;
     int robotID = -1;
@@ -37,7 +44,8 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
         posAvg += cr.getPos();
         thetaCartesianAvg +=
             Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
-        robotID = cr.getRobotID(); // Shouldn't change besides the first iteration
+        robotID =
+            cr.getRobotID();  // Shouldn't change besides the first iteration
     }
 
     timeAvg /= robots.size();

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <atomic>
-#include <mutex>
-#include <vector>
-#include <vector>
-#include <thread>
+#include <ros2_temp/detection_frame_sub.h>
 
 #include <SystemState.hpp>
+#include <atomic>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
@@ -26,15 +26,10 @@ public:
     /**
      * Starts a worker thread to do the vision processing
      */
-    VisionFilter();
+    VisionFilter(Context* context);
     ~VisionFilter();
 
-    /**
-     * Adds a list of frames that arrived
-     *
-     * @param frames List of new frames
-     */
-    void addFrames(const std::vector<CameraFrame>& frames);
+    void run();
 
     /**
      * Fills system state with the ball pos/vel
@@ -51,8 +46,23 @@ public:
      */
     void fillRobotState(SystemState& state, bool usBlue);
 
+    /**
+     * @brief Returns the latest timestamp of the received vision packets.
+     * @return
+     */
+    [[nodiscard]] RJ::Time GetLastVisionTime() const {
+        return last_update_time_;
+    }
+
 private:
     void updateLoop();
+
+    /**
+     * @brief Obtains a std::vector<DetectionFrameMsg::UniqePtr> from
+     * detection_frame_sub_, then converts that to std::vector<CameraFrame>
+     * and stores it in new_frames_.
+     */
+    void GetFrames();
 
     std::thread worker;
 
@@ -61,6 +71,8 @@ private:
 
     std::atomic_bool threadEnd{};
 
-    std::mutex frameLock;
     std::vector<CameraFrame> frameBuffer{};
+    Context* context_;
+    std::unique_ptr<ros2_temp::DetectionFrameSub> detection_frame_sub_;
+    RJ::Time last_update_time_;
 };

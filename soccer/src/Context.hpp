@@ -59,8 +59,6 @@ struct Context {
     std::vector<int> gamepads;
     std::vector<joystick::GamepadMessage> gamepad_messages;
 
-    std::vector<std::unique_ptr<VisionPacket>> vision_packets;
-
     std::vector<SSL_Referee> referee_packets;
     std::vector<SSL_WrapperPacket> raw_vision_packets;
 

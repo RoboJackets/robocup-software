@@ -73,7 +73,6 @@ set(ROBOCUP_LIB_SRC
     ui/StripChart.cpp
     ui/StyleSheetManager.cpp
     GrSimCommunicator.cpp
-    VisionReceiver.cpp
     vision/ball/BallBounce.cpp
     vision/ball/CameraBall.cpp
     vision/ball/KalmanBall.cpp
@@ -93,6 +92,9 @@ set(ROBOCUP_LIB_SRC
     vision/robot/WorldRobot.cpp
     vision/util/VisionFilterConfig.cpp
     vision/VisionFilter.cpp
+    ros2_temp/soccer_config_client.cpp
+    ros2_temp/detection_frame_sub.cpp
+    ros2_temp/raw_vision_packet_sub.cpp
     WindowEvaluator.cpp)
 
 
