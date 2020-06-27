@@ -45,6 +45,13 @@ class BasicStopped(play.Play):
     def handles_goalie(self):
         return True
 
+    def try_preempt(self) -> bool:
+        if(main.game_state().is_stopped()):
+            return False
+        else:
+            self.terminate()
+            return True
+
     ## Allow the stopped play to run during the stopped play.
     # Without this, the stopped play would be killed in the stopped state.
     @classmethod
