@@ -110,7 +110,7 @@ void VisionReceiver::processOnePacket() {
 
         DetectionFrameMsg::UniquePtr detection_frame_msg =
             std::make_unique<DetectionFrameMsg>(
-                ToROSMsg(*det, packet->receive_time));
+                ConstructROSMsg(*det, packet->receive_time));
         SyncDetectionTimestamp(detection_frame_msg.get(), packet->receive_time);
 
         detection_frame_pub_->publish(std::move(detection_frame_msg));
@@ -128,7 +128,7 @@ void VisionReceiver::processOnePacket() {
     return msg;
 }
 
-DetectionFrameMsg VisionReceiver::ToROSMsg(
+DetectionFrameMsg VisionReceiver::ConstructROSMsg(
     const SSL_DetectionFrame& frame, const rclcpp::Time& received_time) const {
     DetectionFrameMsg msg{};
 

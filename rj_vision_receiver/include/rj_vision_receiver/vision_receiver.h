@@ -103,7 +103,7 @@ private:
      * @param received_time Time that this packet was received.
      * @return
      */
-    [[nodiscard]] DetectionFrameMsg ToROSMsg(
+    [[nodiscard]] DetectionFrameMsg ConstructROSMsg(
         const SSL_DetectionFrame& frame,
         const rclcpp::Time& received_time) const;
 
