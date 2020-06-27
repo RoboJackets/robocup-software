@@ -51,7 +51,7 @@ public:
      * @return
      */
     [[nodiscard]] RJ::Time GetLastVisionTime() const {
-        return RJ::FromROSTime(last_update_time_);
+        return last_update_time_;
     }
 
 private:
@@ -74,5 +74,5 @@ private:
     std::vector<CameraFrame> frameBuffer{};
     Context* context_;
     std::unique_ptr<ros2_temp::DetectionFrameSub> detection_frame_sub_;
-    rclcpp::Time last_update_time_;
+    RJ::Time last_update_time_;
 };

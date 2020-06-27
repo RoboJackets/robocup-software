@@ -39,7 +39,7 @@ void VisionFilter::GetFrames() {
         return;
     }
 
-    last_update_time_ = raw_frames.back()->t_received;
+    last_update_time_ = RJ::FromROSTime(raw_frames.back()->t_received);
 
     const double team_angle = detection_frame_sub_->TeamAngle();
     const Geometry2d::TransformMatrix world_to_team =

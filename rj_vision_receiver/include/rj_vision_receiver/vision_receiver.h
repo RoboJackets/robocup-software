@@ -107,30 +107,6 @@ private:
         const SSL_DetectionFrame& frame,
         const rclcpp::Time& received_time) const;
 
-    /**
-     * @brief Converts from SSL_WrapperPacket to a RawProtobufMsg.
-     * @param packet
-     * @return
-     */
-    [[nodiscard]] static RawProtobufMsg::UniquePtr ToROSMsg(
-        const SSL_WrapperPacket& packet);
-
-    /**
-     * @brief Converts from SSL_DetectionBall to a DetectionBallMsg.
-     * @param ball
-     * @return
-     */
-    [[nodiscard]] static DetectionBallMsg ToROSMsg(
-        const SSL_DetectionBall& ball);
-
-    /**
-     * @brief Converts from SSL_DetectionRobot to a DetectionRobotMsg.
-     * @param robot
-     * @return
-     */
-    [[nodiscard]] static DetectionRobotMsg ToROSMsg(
-        const SSL_DetectionRobot& robot);
-
     config_client::ConfigClient config_;
     int port_;
 
@@ -143,7 +119,6 @@ private:
     std::thread publish_thread_;
 
     rj_utils::ConcurrentQueue<StampedSSLWrapperPacket::UniquePtr> packets_;
-    rclcpp::TimerBase::SharedPtr timer_;
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;

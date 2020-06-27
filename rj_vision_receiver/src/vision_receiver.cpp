@@ -5,6 +5,7 @@
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_utils/conversions.hpp>
 #include <rj_utils/logging.hpp>
 #include <stdexcept>
 
@@ -117,17 +118,6 @@ void VisionReceiver::processOnePacket() {
     }
 }
 
-[[nodiscard]] RawProtobufMsg::UniquePtr VisionReceiver::ToROSMsg(
-    const SSL_WrapperPacket& packet) {
-    RawProtobufMsg::UniquePtr msg = std::make_unique<RawProtobufMsg>();
-    const auto packet_size = packet.ByteSizeLong();
-    msg->data.resize(packet_size);
-
-    packet.SerializeWithCachedSizesToArray(msg->data.data());
-
-    return msg;
-}
-
 DetectionFrameMsg VisionReceiver::ConstructROSMsg(
     const SSL_DetectionFrame& frame, const rclcpp::Time& received_time) const {
     DetectionFrameMsg msg{};
@@ -179,31 +169,6 @@ rclcpp::Time VisionReceiver::ToROSTime(double time_since_epoch_s) {
     const auto nanoseconds =
         static_cast<uint32_t>((time_since_epoch_s - seconds) * 10e9);
     return rclcpp::Time{seconds, nanoseconds, RCL_ROS_TIME};
-}
-
-DetectionBallMsg VisionReceiver::ToROSMsg(const SSL_DetectionBall& ball) {
-    DetectionBallMsg msg{};
-    msg.confidence = ball.confidence();
-    msg.area = ball.area();
-    msg.x = ball.x();
-    msg.y = ball.y();
-    msg.z = ball.z();
-    msg.pixel_x = ball.pixel_x();
-    msg.pixel_y = ball.pixel_y();
-    return msg;
-}
-
-DetectionRobotMsg VisionReceiver::ToROSMsg(const SSL_DetectionRobot& robot) {
-    DetectionRobotMsg msg{};
-    msg.confidence = robot.confidence();
-    msg.robot_id = robot.robot_id();
-    msg.x = robot.x();
-    msg.y = robot.y();
-    msg.orientation = robot.orientation();
-    msg.pixel_x = robot.pixel_x();
-    msg.pixel_y = robot.pixel_y();
-    msg.height = robot.height();
-    return msg;
 }
 
 void VisionReceiver::SyncDetectionTimestamp(DetectionFrameMsg* frame,
