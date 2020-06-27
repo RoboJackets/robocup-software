@@ -20,7 +20,7 @@ public:
         : timeCaptured(timeCaptured), pos(pos) {}
 
     /**
-     * @brief Implicit conversion from DetectionBallMsg.
+     * @brief Constructor from DetectionBallMsg.
      * @param msg
      */
     CameraBall(RJ::Time time_captured, const DetectionBallMsg& msg,

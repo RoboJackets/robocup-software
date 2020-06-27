@@ -61,6 +61,18 @@ public:
     [[nodiscard]] bool connected() const;
 
     /**
+     * @brief Thread safe version of connected().
+     * @return
+     */
+    [[nodiscard]] bool connectedThreaded() const;
+
+    /**
+     * @brief Blocks until the config client is connected. Should only be called
+     * from a different thread than the one that is spinning.
+     */
+    bool waitUntilConnected() const;
+
+    /**
      * @brief Sends a service call to ConfigServer to update the GameSettings.
      * @param msg
      */

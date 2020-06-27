@@ -7,7 +7,7 @@ RawVisionPacketSub::RawVisionPacketSub(Context* context) : context_{context} {
     queue_ = std::make_shared<MessageQueueNode<RawProtobufMsg>>(
         "RawVisionPacketSub_queue", vision_receiver::topics::kRawProtobufPub);
     executor_.add_node(queue_);
-    worker_ = std::thread{&RawVisionPacketSub::spin, this};
+    worker_ = std::thread{&RawVisionPacketSub::spinForever, this};
 }
 
 void RawVisionPacketSub::run() {
@@ -24,6 +24,6 @@ void RawVisionPacketSub::run() {
     }
 }
 
-void RawVisionPacketSub::spin() { executor_.spin(); }
+void RawVisionPacketSub::spinForever() { executor_.spin(); }
 
 }  // namespace ros2_temp

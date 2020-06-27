@@ -37,13 +37,26 @@ bool ConfigClient::connected() const {
 
     const bool have_msg = has_game_settings && has_field_dimensions;
 
+    static bool prev_connected = false;
+
     if (!have_msg) {
         auto& clk = *node_->get_clock();
         const auto throttle_ms = 1000;
         RJ_INFO_STREAM_THROTTLE(node_->get_logger(), clk, throttle_ms,
                                 "[ConfigClient] Waiting on ConfigServer...");
     }
+
+    if (!prev_connected && have_msg) {
+        prev_connected = true;
+        RJ_INFO(node_->get_logger(), "[ConfigClient] Connected!");
+    }
+
     return have_msg;
+}
+
+bool ConfigClient::connectedThreaded() const {
+    std::lock_guard<std::mutex> guard{mutex_};
+    return connected();
 }
 
 void ConfigClient::updateGameSettings(const GameSettingsMsg& msg) {
@@ -59,5 +72,16 @@ void ConfigClient::updateFieldDimensions(const FieldDimensionsMsg& msg) {
         std::make_shared<SetFieldDimensionsReq>();
     request->field_dimensions = msg;
     field_dimensions_client_->async_send_request(request);
+}
+
+bool ConfigClient::waitUntilConnected() const {
+    constexpr std::chrono::milliseconds kSleepDuration{100};
+    while (rclcpp::ok()) {
+        if (connectedThreaded()) {
+            return true;
+        }
+        rclcpp::sleep_for(kSleepDuration);
+    }
+    return false;
 }
 }  // namespace config_client

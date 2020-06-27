@@ -33,6 +33,6 @@ private:
     /**
      * @brief Calls executor_.spin().
      */
-    void spin();
+    void spinForever();
 };
 }  // namespace ros2_temp

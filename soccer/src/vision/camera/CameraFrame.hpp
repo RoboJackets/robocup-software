@@ -34,7 +34,7 @@ public:
           cameraRobotsBlue(std::move(cameraRobotsBlue)) {}
 
     /**
-     * @brief Implicit conversion from DetectionFrameMsg.
+     * @brief Constructor from DetectionFrameMsg.
      * @param msg
      */
     CameraFrame(const DetectionFrameMsg& msg,

@@ -4,6 +4,7 @@
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <rj_vision_receiver/stamped_wrapper_packet.h>
 
+#include <rj_utils/concurrent_queue.hpp>
 #include <boost/asio.hpp>
 #include <cstdint>
 #include <rclcpp/rclcpp.hpp>
@@ -32,9 +33,9 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
  */
 class VisionReceiver : public rclcpp::Node {
 public:
-    explicit VisionReceiver();
+    static constexpr std::chrono::milliseconds kTimeout{100};
 
-    void run();
+    VisionReceiver();
 
     void setPort(int port);
 
@@ -42,6 +43,17 @@ private:
     void startReceive();
     void receivePacket(const boost::system::error_code& error,
                        std::size_t num_bytes);
+
+    /**
+     * @brief Handles the network packets for vision.
+     */
+    void ReceiveThread();
+
+    /**
+     * @brief Consumes the raw vision packets, converts them to ROS messages
+     * and publishes them.
+     */
+    void PublishThread();
 
     /**
      * @brief Given the current config on which half we are enabling vision on,
@@ -60,7 +72,7 @@ private:
      * Publishes the raw packet. If the packet has geometry info, publish that.
      * If it has detection information, also publish that.
      */
-    void processNewPackets();
+    void processOnePacket();
 
     /**
      * @brief Converts from the janky floating point time that is used in
@@ -126,10 +138,11 @@ private:
 
     boost::asio::io_service _io_context;
     boost::asio::ip::udp::socket _socket;
-
     boost::asio::ip::udp::endpoint _sender_endpoint;
+    std::thread network_thread_;
+    std::thread publish_thread_;
 
-    std::vector<StampedSSLWrapperPacket::UniquePtr> _packets{};
+    rj_utils::ConcurrentQueue<StampedSSLWrapperPacket::UniquePtr> packets_;
     rclcpp::TimerBase::SharedPtr timer_;
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;

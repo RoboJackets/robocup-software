@@ -15,31 +15,43 @@ VisionReceiver::VisionReceiver()
     : Node{"vision_receiver"}, config_{this}, port_{-1}, _socket{_io_context} {
     _recv_buffer.resize(65536);
 
-    // There should be at most four packets: one for each camera on each of two
-    // frames, assuming some clock skew between this
-    // computer and the vision computer.
-    // TODO(#1528): Don't hardcode the number of cameras.
-    _packets.reserve(4);
-
     // Parameters. TODO(#1529): Better parameter "library".
     declare_parameter<int>("port", SharedVisionPortSinglePrimary);
     get_parameter<int>("port", port_);
-
-    double hz{};
-    declare_parameter<double>("hz", 60.0);
-    get_parameter<double>("hz", hz);
-
     setPort(port_);
-
-    auto period = std::chrono::duration<double>(1 / hz);
 
     raw_packet_pub_ =
         create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
     detection_frame_pub_ =
         create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
 
-    // Create timer for callback
-    timer_ = this->create_wall_timer(period, [this]() { run(); });
+    // Spin off threads for the networking part and the publishing part.
+    network_thread_ = std::thread{&VisionReceiver::ReceiveThread, this};
+    publish_thread_ = std::thread{&VisionReceiver::PublishThread, this};
+
+    rclcpp::on_shutdown([this]() {
+        network_thread_.join();
+        publish_thread_.join();
+    });
+}
+
+void VisionReceiver::ReceiveThread() {
+    while (rclcpp::ok()) {
+        _io_context.run_for(kTimeout);
+    }
+}
+
+void VisionReceiver::PublishThread() {
+    // Block wait until either ConfigClient is connected or rclcpp::ok returns
+    // false.
+    if (!config_.waitUntilConnected()) {
+        return;
+    }
+
+    while (rclcpp::ok()) {
+        // Blocking call to get one packet and process it.
+        processOnePacket();
+    }
 }
 
 void VisionReceiver::setPort(int port) {
@@ -75,50 +87,34 @@ void VisionReceiver::setPort(int port) {
     startReceive();
 }
 
-void VisionReceiver::run() {
-    // If we haven't received config from the config server yet, return
-    if (!config_.connected()) {
+void VisionReceiver::processOnePacket() {
+    // Get a packet, with blocking.
+    StampedSSLWrapperPacket::UniquePtr packet;
+    if (!packets_.TryGet(packet, kTimeout)) {
         return;
     }
-    static bool connected = false;
-    if (!connected) {
-        connected = true;
-        EZ_INFO("Connected!");
+
+    // Publish raw packet
+    RawProtobufMsg::UniquePtr raw_protobuf_msg = ToROSMsg(packet->wrapper);
+    raw_packet_pub_->publish(std::move(raw_protobuf_msg));
+
+    // If packet has geometry data, attempt to read information and
+    // update if changed.
+    if (packet->wrapper.has_geometry()) {
+        UpdateGeometryPacket(packet->wrapper.geometry().field());
     }
 
-    // Let boost::asio check for new packets
-    _io_context.poll();
+    // If the packet has detection data, publish it.
+    if (packet->wrapper.has_detection()) {
+        SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
-    // Process and clear new packets.
-    processNewPackets();
-}
+        DetectionFrameMsg::UniquePtr detection_frame_msg =
+            std::make_unique<DetectionFrameMsg>(
+                ToROSMsg(*det, packet->receive_time));
+        SyncDetectionTimestamp(detection_frame_msg.get(), packet->receive_time);
 
-void VisionReceiver::processNewPackets() {
-    for (StampedSSLWrapperPacket::UniquePtr& packet : _packets) {
-        // Publish raw packet
-        RawProtobufMsg::UniquePtr raw_protobuf_msg = ToROSMsg(packet->wrapper);
-        raw_packet_pub_->publish(std::move(raw_protobuf_msg));
-
-        // If packet has geometry data, attempt to read information and
-        // update if changed.
-        if (packet->wrapper.has_geometry()) {
-            UpdateGeometryPacket(packet->wrapper.geometry().field());
-        }
-
-        // If the packet has detection data, publish it.
-        if (packet->wrapper.has_detection()) {
-            SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
-
-            DetectionFrameMsg::UniquePtr detection_frame_msg =
-                std::make_unique<DetectionFrameMsg>(
-                    ToROSMsg(*det, packet->receive_time));
-            SyncDetectionTimestamp(detection_frame_msg.get(),
-                                   packet->receive_time);
-
-            detection_frame_pub_->publish(std::move(detection_frame_msg));
-        }
+        detection_frame_pub_->publish(std::move(detection_frame_msg));
     }
-    _packets.clear();
 }
 
 [[nodiscard]] RawProtobufMsg::UniquePtr VisionReceiver::ToROSMsg(
@@ -252,7 +248,7 @@ void VisionReceiver::receivePacket(const boost::system::error_code& error,
     }
 
     // Put the message into the list
-    _packets.emplace_back(std::move(stamped_packet));
+    packets_.Push(std::move(stamped_packet));
 }
 
 bool VisionReceiver::InUsedHalf(bool defend_plus_x, double x) const {
