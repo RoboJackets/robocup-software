@@ -228,6 +228,7 @@ set(SOCCER_TEST_SRC
     "planning/tests/AnglePlanningTest.cpp"
     "planning/tests/BezierPathTest.cpp"
     "planning/tests/PlannerTest.cpp"
+    "planning/tests/CreatePathTest.cpp"
     "planning/tests/RRTTest.cpp"
     "planning/tests/TestingUtils.cpp"
     "planning/tests/TrajectoryTest.cpp"

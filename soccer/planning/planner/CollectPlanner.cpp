@@ -406,6 +406,10 @@ Trajectory CollectPlanner::control(
             QColor(255, 255, 255), "Control");
     }
 
+    if (path.empty()) {
+        return Trajectory{};
+    }
+
     path.setDebugText("stopping");
 
     // Make sure that when the path ends, we don't end up spinning around

@@ -235,7 +235,7 @@ Trajectory SettlePlanner::intercept(
     // Disallow points outside the field
     const Rect& fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
 
-    Point ballVelIntercept = Geometry2d::Point(0, 0);
+    std::optional<Point> ball_intercept_maybe;
     int num_iterations =
         std::ceil((*_searchEndDist - *_searchStartDist) / *_searchIncDist);
     for (int iteration = 0; iteration < num_iterations; iteration++) {
@@ -252,7 +252,7 @@ Trajectory SettlePlanner::intercept(
 
         // Account for the target point causing a slight offset in robot
         // position since we want the ball to still hit the mouth
-        ballVelIntercept =
+        Point ballVelIntercept =
             ball.position + averageBallVel.normalized() * dist + deltaPos;
 
         // Use the mouth to center vector, rotate by X degrees
@@ -265,13 +265,12 @@ Trajectory SettlePlanner::intercept(
 
         // Plan a path from our partial path start location to the intercept
         // test location
-        Replanner::PlanParams params{startInstant,
-                                     targetRobotIntersection,
-                                     staticObstacles,
-                                     dynamicObstacles,
-                                     planRequest.constraints,
-                                     AngleFns::facePoint(facePos)};
-        Trajectory path = Replanner::CreatePlan(params, previous);
+        Trajectory path = CreatePath::rrt(startInstant.linear_motion(),
+                                          targetRobotIntersection,
+                                          planRequest.constraints.mot,
+                                          startInstant.stamp,
+                                          staticObstacles,
+                                          dynamicObstacles);
 
         // If valid path to location
         // and we can reach the target point before ball
@@ -282,8 +281,16 @@ Trajectory SettlePlanner::intercept(
                 path.duration() + RJ::Seconds(*_interceptBufferTime) <=
                     ballTime ||
             !fieldRect.containsPoint(ballVelIntercept)) {
+            ball_intercept_maybe = ballVelIntercept;
             break;
         }
+    }
+
+    Geometry2d::Point ballVelIntercept;
+    if (ball_intercept_maybe.has_value()) {
+        ballVelIntercept = ball_intercept_maybe.value();
+    } else {
+        ballVelIntercept = ball.query_stop_position() + deltaPos;
     }
 
     // Make sure targetRobotIntersection is inside the field

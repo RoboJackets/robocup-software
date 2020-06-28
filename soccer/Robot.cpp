@@ -191,8 +191,13 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
              << goal.y() << ")" << std::endl;
     }
 
+    Planning::AngleOverride angle_override = Planning::TargetFaceTangent{};
+    if (std::holds_alternative<Planning::PathTargetCommand>(intent().motion_command)) {
+        angle_override = std::get<Planning::PathTargetCommand>(intent().motion_command).angle_override;
+    }
+
     LinearMotionInstant goal_instant{goal, endVelocity};
-    setMotionCommand(Planning::PathTargetCommand{goal_instant});
+    setMotionCommand(Planning::PathTargetCommand{goal_instant, angle_override});
 
     _cmdText << "move(" << goal.x() << ", " << goal.y() << ")" << endl;
     _cmdText << "endVelocity(" << endVelocity.x() << ", " << endVelocity.y()
@@ -361,9 +366,11 @@ void OurRobot::face(Geometry2d::Point pt) {
         intent().motion_command.emplace<Planning::PathTargetCommand>();
     }
 
+    _cmdText << "face(" << pt << ")" << endl;
+
     auto& command =
         std::get<Planning::PathTargetCommand>(intent().motion_command);
-    command.angle_override = pos().angleTo(pt);
+    command.angle_override = Planning::TargetFacePoint{pt};
 }
 #pragma mark Robot Avoidance
 

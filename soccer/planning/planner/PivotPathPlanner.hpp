@@ -17,11 +17,16 @@ public:
     static void createConfiguration(Configuration* cfg);
     Trajectory plan(const PlanRequest& request) override;
 
-    void reset() override { previous = Trajectory{}; }
+    void reset() override {
+        previous = Trajectory{};
+        cached_pivot_point = std::nullopt;
+    }
 
 private:
-    [[nodiscard]] bool shouldReplan(const PivotCommand& command) const;
     Trajectory previous;
+
+    std::optional<Geometry2d::Point> cached_pivot_point;
+
     static ConfigDouble* _pivotRadiusMultiplier;
 };
 }  // namespace Planning
