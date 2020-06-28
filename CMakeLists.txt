@@ -93,3 +93,9 @@ install(DIRECTORY launch
 install(FILES
         external/sdlcontrollerdb/gamecontrollerdb.txt
         DESTINATION share/${CMAKE_PROJECT_NAME})
+
+#======================================================================
+# Ament packaging
+#======================================================================
+find_package(ament_cmake REQUIRED)
+ament_package()

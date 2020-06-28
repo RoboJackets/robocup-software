@@ -13,7 +13,7 @@ find_package(rj_msgs REQUIRED)
 #======================================================================
 # Define Targets
 #======================================================================
-add_library(rj_utils)
+add_library(rj_utils STATIC)
 
 # position-independent-code flag
 target_compile_options(rj_utils PRIVATE "-fPIC")
@@ -41,3 +41,9 @@ ament_target_dependencies(rj_utils PUBLIC rclcpp rj_msgs)
 #======================================================================
 install(DIRECTORY include/
     DESTINATION include/)
+
+install( TARGETS rj_utils
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    )
