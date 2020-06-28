@@ -52,7 +52,7 @@ Trajectory rrt(const LinearMotionInstant& start,
 
     ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};
-    constexpr int attemptsToAvoidDynamics = 3;
+    constexpr int attemptsToAvoidDynamics = 10;
     for (int i = 0; i < attemptsToAvoidDynamics; i++) {
         std::vector<Point> points = GenerateRRT(start.position, goal.position,
                                                 obstacles, biasWaypoints);

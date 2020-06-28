@@ -189,17 +189,19 @@ void BezierPath::Evaluate(double s, Geometry2d::Point* position,
         throw std::invalid_argument("Interpolant out of range.");
     }
 
+    size_t num_curves = control.size();
+
     // First, find the curve to use.
-    int index = static_cast<int>(s * control.size());
+    int index = static_cast<int>(s * num_curves);
 
     // This will only happen when s = 1 - in that case, we actually want to use
     // the last segment.
-    if (index == control.size()) {
+    if (index == num_curves) {
         index--;
     }
 
     // The remainder, from [0, 1] of how much of the curve at [index] is left.
-    double t = s * control.size() - index;
+    double t = s * num_curves - index;
 
     // Control points for this curve.
     Point p0 = control[index].p0;
@@ -227,7 +229,7 @@ void BezierPath::Evaluate(double s, Geometry2d::Point* position,
     }
 
     if (curvature != nullptr) {
-        Point d2 = 6 * te * (p2 - 2 * p1 + p0) + 6 * tb * (p3 - 2 * p2 + p1);
+        Point d2 = (6 * te * (p2 - 2 * p1 + p0) + 6 * tb * (p3 - 2 * p2 + p1)) * num_curves;
 
         // https://en.wikipedia.org/wiki/Curvature#Local_expressions
         // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2) = |v x a|/|v|^3

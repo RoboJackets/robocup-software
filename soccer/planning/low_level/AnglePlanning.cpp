@@ -9,6 +9,14 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
                 const RotationConstraints& /* constraints */) {
     const RJ::Time start_time = start_instant.stamp;
 
+    if (trajectory->empty()) {
+        throw std::invalid_argument("Cannot profile angles for empty trajectory.");
+    }
+
+    if (!trajectory->CheckTime(start_time)) {
+        throw std::runtime_error("Tried to profile from invalid start time.");
+    }
+
     // Clip the front of the trajectory.
     // TODO(#1506): Handle this slightly more gracefully, by only profiling the
     // required portion of the trajectory.
@@ -18,9 +26,6 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
         trajectory->first() = start_instant;
         trajectory->mark_angles_valid();
         return;
-    }
-    if (!trajectory->CheckTime(start_time)) {
-        throw std::runtime_error("Tried to profile from invalid start time.");
     }
 
     // Find the target angles for each point along the trajectory. This is
