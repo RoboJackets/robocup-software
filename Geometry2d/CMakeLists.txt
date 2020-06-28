@@ -9,6 +9,7 @@ project(geometry2d LANGUAGES CXX)
 #======================================================================
 find_package(Eigen3 REQUIRED)
 find_package(Qt5 COMPONENTS Core REQUIRED)
+find_package(rj_geometry_msgs REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -48,8 +49,7 @@ target_link_libraries(geometry2d
     ${GEOMETRY2D_DEPS_SYSTEM_LIBRARIES}
     ${GEOMETRY2D_DEPS_LIBRARIES})
 
-include(ROSIDLUtils)
-rosidl_target_link_interfaces(geometry2d PUBLIC rj_geometry_msgs)
+ament_target_dependencies(geometry2d PUBLIC rj_geometry_msgs)
 
 #======================================================================
 # Testing

@@ -8,6 +8,7 @@ project(rj_config)
 # Find package
 #======================================================================
 find_package(rclcpp REQUIRED)
+find_package(rj_msgs REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -47,12 +48,8 @@ target_link_libraries(config_server
     PRIVATE
     ${RJ_CONFIG_DEPS_LIBRARIES})
 
-ament_target_dependencies(config_client PUBLIC rclcpp)
-ament_target_dependencies(config_server PUBLIC rclcpp)
-
-include(ROSIDLUtils)
-rosidl_target_link_interfaces(config_client PUBLIC rj_msgs)
-rosidl_target_link_interfaces(config_server PRIVATE rj_msgs)
+ament_target_dependencies(config_client PUBLIC rclcpp rj_msgs)
+ament_target_dependencies(config_server PUBLIC rclcpp rj_msgs)
 
 #======================================================================
 # Packaging

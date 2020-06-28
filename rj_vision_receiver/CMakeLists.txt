@@ -9,6 +9,7 @@ project(rj_vision_receiver)
 #======================================================================
 find_package(rclcpp REQUIRED)
 find_package(Boost REQUIRED)
+find_package(rj_msgs REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -42,10 +43,7 @@ target_link_libraries(vision_receiver
     PRIVATE
     ${RJ_VISION_RECEIVER_DEPS_LIBRARIES})
 
-ament_target_dependencies(vision_receiver PUBLIC rclcpp)
-
-include(ROSIDLUtils)
-rosidl_target_link_interfaces(vision_receiver PRIVATE rj_msgs)
+ament_target_dependencies(vision_receiver PUBLIC rclcpp rj_msgs)
 
 #======================================================================
 # Packaging
