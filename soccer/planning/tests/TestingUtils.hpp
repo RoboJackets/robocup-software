@@ -10,8 +10,8 @@ namespace Planning::TestingUtils {
  * @param path
  * @param constraints
  */
-bool checkPathContinuous(const Trajectory& path,
-                         const RobotConstraints& constraints);
+bool checkTrajectoryContinuous(const Trajectory& trajectory,
+                               const RobotConstraints& constraints);
 
 /**
  * generate a random number between lo and hi

@@ -13,24 +13,24 @@ using Geometry2d::Point;
 using Geometry2d::Pose;
 using Geometry2d::Twist;
 
-bool checkPathContinuous(const Trajectory& path,
-                         const RobotConstraints& constraints) {
-    if (path.empty()) {
+bool checkTrajectoryContinuous(const Trajectory& trajectory,
+                               const RobotConstraints& constraints) {
+    if (trajectory.empty()) {
         return false;
     }
 
-    auto it = path.instants_begin();
+    auto it = trajectory.instants_begin();
     RobotInstant previous = *it;
     it++;
-    while (it != path.instants_end()) {
+    while (it != trajectory.instants_end()) {
         RobotInstant current = *it++;
         double dt = RJ::Seconds(current.stamp - previous.stamp).count();
 
         // Known issue: for very small delta-times, estimated acceleration (from
-        // change in velocity) can be arbibtrarily high.
+        // change in velocity) can be arbitrarily high.
         // TODO(PR #1492): Resolve this problem, and create velocity profiling
         // tests.
-        if (dt < 1e-2) {
+        if (dt < 1e-4) {
             previous = current;
             continue;
         }

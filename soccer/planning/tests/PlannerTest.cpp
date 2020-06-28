@@ -54,7 +54,7 @@ TEST(Planning, DISABLED_path_target_random) {
             continue;
         }
 
-        if (!checkPathContinuous(path, RobotConstraints{})) {
+        if (!checkTrajectoryContinuous(path, RobotConstraints{})) {
             std::cout << "Saving to /tmp/out.csv" << std::endl;
             std::ofstream file("/tmp/out.csv");
             for (auto cursor = path.cursor_begin(); cursor.has_value();
@@ -68,7 +68,7 @@ TEST(Planning, DISABLED_path_target_random) {
             EXPECT_FALSE(true);
         }
 
-        // EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+        // EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
     }
 
     EXPECT_LT(failure_count, 100)
@@ -92,7 +92,7 @@ TEST(Planning, collect_basic) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_obstructed) {
@@ -114,7 +114,7 @@ TEST(Planning, collect_obstructed) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_pointless_obs) {
@@ -139,7 +139,7 @@ TEST(Planning, collect_pointless_obs) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_moving_ball_quick) {
@@ -161,7 +161,7 @@ TEST(Planning, collect_moving_ball_quick) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_moving_ball_slow) {
@@ -183,7 +183,7 @@ TEST(Planning, collect_moving_ball_slow) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_moving_ball_slow_2) {
@@ -205,7 +205,7 @@ TEST(Planning, collect_moving_ball_slow_2) {
                         nullptr};
     CollectPlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, collect_random) {
@@ -241,7 +241,7 @@ TEST(Planning, collect_random) {
             continue;
         }
 
-        EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+        EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
     }
 
     EXPECT_LT(failure_count, 50)
@@ -267,7 +267,7 @@ TEST(Planning, settle_basic) {
                         nullptr};
     SettlePlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, settle_pointless_obs) {
@@ -289,7 +289,7 @@ TEST(Planning, settle_pointless_obs) {
                         nullptr};
     SettlePlanner planner;
     Trajectory path = planner.plan(std::move(request));
-    EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+    EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
 }
 
 TEST(Planning, settle_random) {
@@ -325,7 +325,7 @@ TEST(Planning, settle_random) {
             continue;
         }
 
-        EXPECT_TRUE(checkPathContinuous(path, RobotConstraints{}));
+        EXPECT_TRUE(checkTrajectoryContinuous(path, RobotConstraints{}));
     }
 
     EXPECT_LT(failure_count, 50)
