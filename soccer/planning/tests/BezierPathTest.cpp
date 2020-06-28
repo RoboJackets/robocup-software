@@ -6,35 +6,96 @@
 
 using Geometry2d::Point;
 
-TEST(BezierPath, SmoothPath) {
-    // Smoothed paths should have reasonably low curvature everywhere on the
-    // path. Sadly, this does not hold with our current system, which uses
-    // Bezier curves and places keypoints in a fairly naive manner.
-    // TODO(Kyle): Switch to a scheme that minimizes sum of squared
-    //  {acceleration/curvature/etc}. This should be fairly simple with Hermite
-    //  splines, as acceleration on a point in a curve is a linear function of
-    //  the endpoints' positions and velocities (so sub of squared acceleration
-    //  is a quadratic in the velocities (decision variables))
-    MotionConstraints constraints;
-    std::vector<Point> points{Point{0, 0}, Point{1, 0}, Point{2, 0}};
-    Planning::BezierPath path(std::move(points), Point(0.01, 0), Point(0.01, 0),
-                              constraints);
-
-    const int N = 1000;
-
-    std::ofstream out("/tmp/bezier.csv");
+static void check_bezier_low_curvature(const Planning::BezierPath& path) {
+    // Expected error is O(1/N)
+    constexpr int N = 1000;
+    double ds = 1.0 / static_cast<double>(N);
 
     for (int i = 0; i <= N; i++) {
-        double s = i / static_cast<double>(N);
+        double s = i * ds;
+        double curvature = 0;
+        path.Evaluate(s, nullptr, nullptr, &curvature);
+
+        EXPECT_LE(std::abs(curvature), 100);
+    }
+}
+
+static void check_bezier_smooth(const Planning::BezierPath& path) {
+    // Expected error decreases with high N
+    constexpr int N = 10000;
+    constexpr double epsilon = 1e-2;
+
+    Point previous_position;
+    Point previous_velocity;
+    path.Evaluate(0, &previous_position, &previous_velocity, nullptr);
+
+    double ds = 1.0 / static_cast<double>(N);
+
+    for (int i = 1; i <= N; i++) {
+        double s = i * ds;
         Point position;
         Point tangent;
         double curvature = 0;
         path.Evaluate(s, &position, &tangent, &curvature);
 
-        out << s << ", " << position.x() << ", " << position.y() << ", "
-            << tangent.x() << ", " << tangent.y() << ", " << curvature
-            << std::endl;
+        EXPECT_LE((0.5 * (previous_velocity + tangent) * ds).distTo(position - previous_position), epsilon);
 
-        EXPECT_LT(curvature, 100);
+        double curvature_expected = (tangent.normalized() - previous_velocity.normalized()).mag() / ds / tangent.mag();
+
+        // Make sure that the approximate curvature is consistent with the calculated exact value.
+        EXPECT_NEAR(curvature, std::abs(curvature_expected), epsilon);
+
+        previous_position = position;
+        previous_velocity = tangent;
     }
+}
+
+TEST(BezierPath, two_points_path_smooth_and_consistent) {
+    MotionConstraints constraints;
+    std::vector<Point> points{Point{0, 0}, Point{1, 1}};
+    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0),
+                              constraints);
+    check_bezier_smooth(path);
+}
+
+TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
+    MotionConstraints constraints;
+    std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
+    Planning::BezierPath path(std::move(points), Point(1, 0), Point(1, 0),
+                              constraints);
+    check_bezier_smooth(path);
+}
+
+TEST(BezierPath, zero_velocity_endpoints_straight_smooth_and_consistent) {
+    MotionConstraints constraints;
+    std::vector<Point> points{Point{0, 0}, Point{2, 0}};
+    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0),
+                              constraints);
+    check_bezier_smooth(path);
+}
+
+// Smoothed paths should have reasonably low curvature everywhere on the
+// path. Sadly, this does not hold with our current system, which uses
+// Bezier curves and places keypoints in a fairly naive manner.
+// TODO(Kyle): Switch to a scheme that minimizes sum of squared
+//  {acceleration/curvature/etc}. This should be fairly simple with Hermite
+//  splines, as acceleration on a point in a curve is a linear function of
+//  the endpoints' positions and velocities (so sub of squared acceleration
+//  is a quadratic in the velocities (decision variables))
+TEST(BezierPath, DISABLED_zero_endpoints_curved_smooth_and_consistent) {
+    MotionConstraints constraints;
+    std::vector<Point> points{Point{0, 0}, Point{1, 1}, Point{2, 0}};
+    Planning::BezierPath path(std::move(points), Point(0, 0), Point(0, 0),
+                              constraints);
+    check_bezier_smooth(path);
+    check_bezier_low_curvature(path);
+}
+
+TEST(BezierPath, DISABLED_nonzero_start_zero_end_curved_smooth_and_consistent) {
+    MotionConstraints constraints;
+    std::vector<Point> points{Point{0, 0}, Point{2, 2}};
+    Planning::BezierPath path(std::move(points), Point(1, 0), Point(0, 0),
+                              constraints);
+    check_bezier_smooth(path);
+    check_bezier_low_curvature(path);
 }
