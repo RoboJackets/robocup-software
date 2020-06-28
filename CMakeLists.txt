@@ -64,10 +64,16 @@ endif()
 #======================================================================
 # Subdirectories
 #======================================================================
+include(AddROSIDLSubdirectory)
+
+# First call add_idl_subdirectory on all ROSIDL subdirectories.
+# This will build + install them at configure time so that find_package will work on them.
+add_rosidl_subdirectory(rj_geometry_msgs)
+add_rosidl_subdirectory(rj_msgs)
+
+
 # This is manually topologically sorted because we're not using colcon
 add_subdirectory(external)
-add_subdirectory(rj_geometry_msgs)
-add_subdirectory(rj_msgs)
 add_subdirectory(rj_protos)
 add_subdirectory(rj_constants)
 add_subdirectory(rj_utils)

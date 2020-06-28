@@ -8,6 +8,7 @@ project(rj_utils LANGUAGES CXX)
 # Find package
 #======================================================================
 find_package(rclcpp REQUIRED)
+find_package(rj_msgs REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -33,10 +34,7 @@ set(RJ_UTILS_DEPS_LIBRARIES
 #======================================================================
 target_include_directories(rj_utils PUBLIC ${RJ_UTILS_DEPS_INCLUDE_DIRS})
 target_link_libraries(rj_utils PUBLIC ${RJ_UTILS_DEPS_LIBRARIES})
-ament_target_dependencies(rj_utils PUBLIC rclcpp)
-
-include(ROSIDLUtils)
-rosidl_target_link_interfaces(rj_utils PUBLIC rj_msgs)
+ament_target_dependencies(rj_utils PUBLIC rclcpp rj_msgs)
 
 #======================================================================
 # Packaging
