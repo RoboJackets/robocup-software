@@ -265,12 +265,10 @@ Trajectory SettlePlanner::intercept(
 
         // Plan a path from our partial path start location to the intercept
         // test location
-        Trajectory path = CreatePath::rrt(startInstant.linear_motion(),
-                                          targetRobotIntersection,
-                                          planRequest.constraints.mot,
-                                          startInstant.stamp,
-                                          staticObstacles,
-                                          dynamicObstacles);
+        Trajectory path = CreatePath::rrt(
+            startInstant.linear_motion(), targetRobotIntersection,
+            planRequest.constraints.mot, startInstant.stamp, staticObstacles,
+            dynamicObstacles);
 
         // If valid path to location
         // and we can reach the target point before ball

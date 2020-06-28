@@ -192,8 +192,11 @@ void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point endVelocity) {
     }
 
     Planning::AngleOverride angle_override = Planning::TargetFaceTangent{};
-    if (std::holds_alternative<Planning::PathTargetCommand>(intent().motion_command)) {
-        angle_override = std::get<Planning::PathTargetCommand>(intent().motion_command).angle_override;
+    if (std::holds_alternative<Planning::PathTargetCommand>(
+            intent().motion_command)) {
+        angle_override =
+            std::get<Planning::PathTargetCommand>(intent().motion_command)
+                .angle_override;
     }
 
     LinearMotionInstant goal_instant{goal, endVelocity};

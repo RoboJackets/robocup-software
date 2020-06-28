@@ -272,7 +272,8 @@ TEST(Planning, settle_basic) {
 
 TEST(Planning, settle_pointless_obs) {
     WorldState world_state;
-    // Use some initial velocity, settle doesn't always work for non-moving balls
+    // Use some initial velocity, settle doesn't always work for non-moving
+    // balls
     world_state.ball.position = Point{1, 3};
     world_state.ball.velocity = Point{-.1, -1};
     world_state.ball.timestamp = RJ::now();

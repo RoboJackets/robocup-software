@@ -53,11 +53,13 @@ AngleFunction PathTargetPlanner::getAngleFunction(const PlanRequest& request) {
     auto angle_override =
         std::get<PathTargetCommand>(request.motionCommand).angle_override;
     if (std::holds_alternative<TargetFacePoint>(angle_override)) {
-        return AngleFns::facePoint(std::get<TargetFacePoint>(angle_override).face_point);
+        return AngleFns::facePoint(
+            std::get<TargetFacePoint>(angle_override).face_point);
     }
 
     if (std::holds_alternative<TargetFaceAngle>(angle_override)) {
-        return AngleFns::faceAngle(std::get<TargetFaceAngle>(angle_override).target);
+        return AngleFns::faceAngle(
+            std::get<TargetFaceAngle>(angle_override).target);
     }
 
     return AngleFns::tangent;

@@ -10,7 +10,8 @@ void PlanAngles(Trajectory* trajectory, const RobotInstant& start_instant,
     const RJ::Time start_time = start_instant.stamp;
 
     if (trajectory->empty()) {
-        throw std::invalid_argument("Cannot profile angles for empty trajectory.");
+        throw std::invalid_argument(
+            "Cannot profile angles for empty trajectory.");
     }
 
     if (!trajectory->CheckTime(start_time)) {

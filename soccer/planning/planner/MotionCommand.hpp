@@ -32,7 +32,8 @@ struct TargetFacePoint {
     Geometry2d::Point face_point;
 };
 
-using AngleOverride = std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
+using AngleOverride =
+    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
