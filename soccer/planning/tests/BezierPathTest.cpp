@@ -77,7 +77,7 @@ TEST(BezierPath, multiple_points_path_smooth_and_consistent) {
 // All examples with zero-velocity endpoints are broken because of numerical
 // issues (in this case, the second and third control points go on top of the
 // first and fourth, respectively).
-// TODO(Kyle): Switch to a scheme that minimizes sum of squared
+// TODO(#1539): Switch to a scheme that minimizes sum of squared
 //  {acceleration/curvature/etc}. This should be fairly simple with Hermite
 //  splines, as acceleration on a point in a curve is a linear function of
 //  the endpoints' positions and velocities (so sub of squared acceleration
