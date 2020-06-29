@@ -31,12 +31,13 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
 
     ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
-    FillObstacles(planRequest, &static_obstacles, &dynamic_obstacles, false, nullptr);
+    FillObstacles(planRequest, &static_obstacles, &dynamic_obstacles, false,
+                  nullptr);
 
     auto obstacles_with_ball = static_obstacles;
     const RJ::Time curTime = startInstant.stamp;
-    obstacles_with_ball.add(
-        make_shared<Circle>(ball.predict_at(curTime).position, ballAvoidDistance));
+    obstacles_with_ball.add(make_shared<Circle>(
+        ball.predict_at(curTime).position, ballAvoidDistance));
 
     if (finalApproach && targetKickPos) {
         RJ::Seconds duration_into_path = curTime - prevPath.begin_time();
@@ -50,11 +51,14 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
             finalApproach = false;
             prevPath = {};
         } else if (timeLeft < RJ::Seconds(0)) {
-            prevPath.setDebugText("reuse past done " + std::to_string(timeLeft.count()));
+            prevPath.setDebugText("reuse past done " +
+                                  std::to_string(timeLeft.count()));
             return prevPath;
         } else {
             RJ::Seconds timeForBall = time - curTime;
-            prevPath.ScaleDuration(prevPath.duration() * (timeLeft / timeForBall), startInstant.stamp);
+            prevPath.ScaleDuration(
+                prevPath.duration() * (timeLeft / timeForBall),
+                startInstant.stamp);
             prevPath.setDebugText("reuse final slow " +
                                   std::to_string(timeForBall.count()) + " " +
                                   std::to_string(timeLeft.count()));
@@ -64,19 +68,21 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
     }
 
     if (ball.velocity.mag() < 0.2) {
-        LinearMotionInstant target{ball.position,
-                                   (command.target - ball.position).normalized(ApproachSpeed)};
+        LinearMotionInstant target{
+            ball.position,
+            (command.target - ball.position).normalized(ApproachSpeed)};
 
         auto ball_trajectory = ball.make_trajectory();
 
         Trajectory path;
-        if (std::abs(target.velocity.angleBetween((target.position - startInstant.position()))) >
+        if (std::abs(target.velocity.angleBetween(
+                (target.position - startInstant.position()))) >
             DegreesToRadians(10)) {
-            target.position -=
-                target.velocity.normalized(ballAvoidDistance * 2 + Robot_Radius);
+            target.position -= target.velocity.normalized(
+                ballAvoidDistance * 2 + Robot_Radius);
             if (!prevPath.empty() &&
                 target.position.distTo(prevPath.last().position()) <
-                Replanner::goalPosChangeThreshold() &&
+                    Replanner::goalPosChangeThreshold() &&
                 reusePathCount < 20) {
                 target.velocity = prevPath.last().linear_velocity();
                 reusePathCount++;
@@ -84,20 +90,18 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
                 reusePathCount = 0;
             }
 
-            Replanner::PlanParams params {
-                startInstant,
-                target,
-                obstacles_with_ball,
-                dynamic_obstacles,
-                planRequest.constraints,
-                AngleFns::facePoint(command.target)
-            };
+            Replanner::PlanParams params{startInstant,
+                                         target,
+                                         obstacles_with_ball,
+                                         dynamic_obstacles,
+                                         planRequest.constraints,
+                                         AngleFns::facePoint(command.target)};
             path = Replanner::CreatePlan(params, prevPath);
             path.setDebugText("slow ball 1");
         } else {
             if (!prevPath.empty() &&
                 target.position.distTo(prevPath.last().position()) <
-                Replanner::goalPosChangeThreshold() &&
+                    Replanner::goalPosChangeThreshold() &&
                 reusePathCount < 20) {
                 target.velocity = prevPath.last().linear_velocity();
                 reusePathCount++;
@@ -107,14 +111,12 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
 
             target.position += target.velocity.normalized(Robot_Radius);
 
-            Replanner::PlanParams params {
-                startInstant,
-                target,
-                static_obstacles,
-                dynamic_obstacles,
-                planRequest.constraints,
-                AngleFns::facePoint(command.target)
-            };
+            Replanner::PlanParams params{startInstant,
+                                         target,
+                                         static_obstacles,
+                                         dynamic_obstacles,
+                                         planRequest.constraints,
+                                         AngleFns::facePoint(command.target)};
             path = Replanner::CreatePlan(params, prevPath);
             path.setDebugText("slow ball 2");
         }
@@ -125,32 +127,37 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
     }
 
     if (!prevPath.empty() && targetKickPos) {
-        auto previous_duration_remaining = prevPath.end_time() - startInstant.stamp;
+        auto previous_duration_remaining =
+            prevPath.end_time() - startInstant.stamp;
 
         LinearMotionInstant target;
-        RJ::Time intercept_time = ball.query_time_near(*targetKickPos, &target.position);
-        RJ::Seconds duration_remaining_adjusted = previous_duration_remaining - RJ::Seconds(1.0);
+        RJ::Time intercept_time =
+            ball.query_time_near(*targetKickPos, &target.position);
+        RJ::Seconds duration_remaining_adjusted =
+            previous_duration_remaining - RJ::Seconds(1.0);
         RJ::Time end_time_adjusted = prevPath.end_time() - RJ::Seconds(1.0);
         if (previous_duration_remaining < RJ::Seconds(0.0)) {
             target.velocity =
                 (command.target - target.position).normalized(ApproachSpeed);
-            target.position -= target.velocity.normalized(Robot_Radius + Ball_Radius * 2);
+            target.position -=
+                target.velocity.normalized(Robot_Radius + Ball_Radius * 2);
 
-            Replanner::PlanParams params {
-                startInstant,
-                target,
-                static_obstacles,
-                dynamic_obstacles,
-                planRequest.constraints,
-                AngleFns::facePoint(command.target)
-            };
+            Replanner::PlanParams params{startInstant,
+                                         target,
+                                         static_obstacles,
+                                         dynamic_obstacles,
+                                         planRequest.constraints,
+                                         AngleFns::facePoint(command.target)};
             Trajectory path = Replanner::CreatePlan(params, prevPath);
 
             if (!path.empty()) {
                 path.setDebugText(
-                    "FinalPath" +
-                    std::to_string(path.duration().count()) +
-                    " " + std::to_string(RJ::Seconds(intercept_time - startInstant.stamp).count()) + " " +
+                    "FinalPath" + std::to_string(path.duration().count()) +
+                    " " +
+                    std::to_string(
+                        RJ::Seconds(intercept_time - startInstant.stamp)
+                            .count()) +
+                    " " +
                     std::to_string(intercept_time.time_since_epoch().count()));
                 path.stamp(RJ::now());
                 prevPath = path;
@@ -158,12 +165,15 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
             }
         }
 
-        if (prevPath.CheckTime(startInstant.stamp) && !TrajectoryHitsStatic(prevPath, static_obstacles, startInstant.stamp, nullptr) &&
+        if (prevPath.CheckTime(startInstant.stamp) &&
+            !TrajectoryHitsStatic(prevPath, static_obstacles,
+                                  startInstant.stamp, nullptr) &&
             end_time_adjusted < intercept_time && reusePathCount < 10) {
             reusePathCount++;
             Point nearPoint;
             prevPath.setDebugText("Reuse prevPath");
-            if (ball.query_time_near(prevPath.last().position(), &nearPoint) >= end_time_adjusted) {
+            if (ball.query_time_near(prevPath.last().position(), &nearPoint) >=
+                end_time_adjusted) {
                 return prevPath;
             }
         }
@@ -172,12 +182,14 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
     Trajectory partialPath;
     RJ::Seconds partialPathTime = 0ms;
     auto tmpStartInstant = startInstant;
-    const auto partialReplanLeadTime = RJ::Seconds(Replanner::partialReplanLeadTime());
+    const auto partialReplanLeadTime =
+        RJ::Seconds(Replanner::partialReplanLeadTime());
 
     if (!prevPath.empty() && prevPath.CheckTime(startInstant.stamp)) {
-        if (startInstant.stamp < prevPath.end_time() - partialReplanLeadTime * 2) {
-            partialPath =
-                prevPath.subTrajectory(startInstant.stamp, startInstant.stamp + partialReplanLeadTime);
+        if (startInstant.stamp <
+            prevPath.end_time() - partialReplanLeadTime * 2) {
+            partialPath = prevPath.subTrajectory(
+                startInstant.stamp, startInstant.stamp + partialReplanLeadTime);
             partialPathTime = partialReplanLeadTime;
             tmpStartInstant = partialPath.last();
         }
@@ -189,30 +201,36 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
         auto ball_state_predicted = ball.predict_at(rollout_time);
         LinearMotionInstant target{ball_state_predicted.position};
         targetKickPos = target.position;
-        target.velocity = (command.target - target.position).normalized(ApproachSpeed);
-        target.position -= target.velocity.normalized(Robot_Radius + Ball_Radius * 2);
+        target.velocity =
+            (command.target - target.position).normalized(ApproachSpeed);
+        target.position -=
+            target.velocity.normalized(Robot_Radius + Ball_Radius * 2);
 
         vector<Point> intermediate_points;
         if (std::abs(target.velocity.angleBetween(
-            (target.position - tmpStartInstant.position()))) > DegreesToRadians(60)) {
+                (target.position - tmpStartInstant.position()))) >
+            DegreesToRadians(60)) {
             intermediate_points.push_back(
-                      target.position -
-                      target.velocity.normalized(Robot_Radius * 2.0 +
-                                            Ball_Radius * 2.0));
+                target.position - target.velocity.normalized(
+                                      Robot_Radius * 2.0 + Ball_Radius * 2.0));
         }
 
-        Trajectory path = CreatePath::simple(tmpStartInstant.linear_motion(), target, planRequest.constraints.mot, tmpStartInstant.stamp, intermediate_points);
+        Trajectory path =
+            CreatePath::simple(tmpStartInstant.linear_motion(), target,
+                               planRequest.constraints.mot,
+                               tmpStartInstant.stamp, intermediate_points);
 
         if (!path.empty()) {
             if (path.duration() + partialPathTime <= t) {
                 if (!partialPath.empty()) {
                     path = Trajectory(std::move(partialPath), path);
                 }
-                PlanAngles(&path, tmpStartInstant, AngleFns::facePoint(target.position), planRequest.constraints.rot);
+                PlanAngles(&path, tmpStartInstant,
+                           AngleFns::facePoint(target.position),
+                           planRequest.constraints.rot);
 
-                path.setDebugText(
-                    "FoundPath" +
-                    std::to_string(path.duration().count()));
+                path.setDebugText("FoundPath" +
+                                  std::to_string(path.duration().count()));
                 reusePathCount = 0;
                 path.stamp(RJ::now());
                 prevPath = path;
@@ -223,20 +241,19 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
 
     auto ball_predicted = ball.predict_at(curTime);
     LinearMotionInstant target{ball_predicted.position};
-    target.velocity = (command.target - target.position).normalized(ApproachSpeed);
+    target.velocity =
+        (command.target - target.position).normalized(ApproachSpeed);
     target.position -= target.velocity.normalized(Robot_Radius * 3);
 
     auto ballPath = ball.make_trajectory();
     dynamic_obstacles.emplace_back(Ball_Radius, &ballPath);
 
-    Replanner::PlanParams params {
-        startInstant,
-        target,
-        static_obstacles,
-        dynamic_obstacles,
-        planRequest.constraints,
-        AngleFns::facePoint(command.target)
-    };
+    Replanner::PlanParams params{startInstant,
+                                 target,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 planRequest.constraints,
+                                 AngleFns::facePoint(command.target)};
     Trajectory path = Replanner::CreatePlan(params, prevPath);
 
     path.setDebugText("Approaching cautious");
@@ -247,4 +264,4 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
     return path;
 }
 
-} // namespace Planning
+}  // namespace Planning

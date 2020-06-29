@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "planning/planner/Planner.hpp"
 #include "planning/Trajectory.hpp"
+#include "planning/planner/Planner.hpp"
 
 class Configuration;
 class ConfigDouble;
@@ -19,9 +19,11 @@ namespace Planning {
  *
  * TODO(Kyle): Overhaul this entire planner. It's sketchy right now.
  */
-class LineKickPlanner : public PlannerForCommandType<Planning::LineKickCommand> {
+class LineKickPlanner
+    : public PlannerForCommandType<Planning::LineKickCommand> {
 public:
-    LineKickPlanner() : PlannerForCommandType<Planning::LineKickCommand>("LineKickPlanner") {};
+    LineKickPlanner()
+        : PlannerForCommandType<Planning::LineKickCommand>("LineKickPlanner"){};
     Trajectory plan(const PlanRequest& planRequest) override;
 
     void reset() override {
