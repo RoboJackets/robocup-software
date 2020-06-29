@@ -133,8 +133,6 @@ Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
         LinearMotionInstant target;
         RJ::Time intercept_time =
             ball.query_time_near(*targetKickPos, &target.position);
-        RJ::Seconds duration_remaining_adjusted =
-            previous_duration_remaining - RJ::Seconds(1.0);
         RJ::Time end_time_adjusted = prevPath.end_time() - RJ::Seconds(1.0);
         if (previous_duration_remaining < RJ::Seconds(0.0)) {
             target.velocity =
