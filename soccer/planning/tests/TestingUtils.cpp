@@ -71,7 +71,7 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
     return true;
 }
 
-RobotInstant randomInstant(std::mt19937& generator) {
+RobotInstant randomInstant(std::mt19937* generator) {
     Point randPoint{random(generator, -3.0, 3.0), random(generator, 0.0, 6.0)};
     Pose randPose{randPoint, random(generator, 0.0, 2 * M_PI)};
     Point randVel{random(generator, -0.5, 0.5), random(generator, -0.5, 0.5)};

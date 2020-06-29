@@ -22,14 +22,14 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
  * @return random number
  */
 template <typename T>
-T random(std::mt19937& generator, T lo, T hi) {
+T random(std::mt19937* generator, T lo, T hi) {
     static std::uniform_real_distribution<> randDistribution(lo, hi);
-    return randDistribution(generator);
+    return randDistribution(*generator);
 }
 
 /**
  * generate a random RobotInstant inside the field
  * @return random robot instant
  */
-RobotInstant randomInstant(std::mt19937& generator);
+RobotInstant randomInstant(std::mt19937* generator);
 }  // namespace Planning::TestingUtils
