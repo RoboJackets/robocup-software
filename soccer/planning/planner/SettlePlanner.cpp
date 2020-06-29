@@ -238,6 +238,7 @@ Trajectory SettlePlanner::intercept(
     std::optional<Point> ball_intercept_maybe;
     int num_iterations =
         std::ceil((*_searchEndDist - *_searchStartDist) / *_searchIncDist);
+
     for (int iteration = 0; iteration < num_iterations; iteration++) {
         double dist = *_searchStartDist + iteration * *_searchIncDist;
         // Time for ball to reach the target point
@@ -254,6 +255,10 @@ Trajectory SettlePlanner::intercept(
         // position since we want the ball to still hit the mouth
         Point ballVelIntercept =
             ball.position + averageBallVel.normalized() * dist + deltaPos;
+
+        if (!fieldRect.containsPoint(ballVelIntercept)) {
+            break;
+        }
 
         // Use the mouth to center vector, rotate by X degrees
         // Take the delta between old and new mouth vector and move
@@ -277,16 +282,14 @@ Trajectory SettlePlanner::intercept(
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() &&
-                path.duration() + RJ::Seconds(*_interceptBufferTime) <=
-                    ballTime ||
-            !fieldRect.containsPoint(ballVelIntercept)) {
+        if (!path.empty() && path.duration() + RJ::Seconds(*_interceptBufferTime) <= ballTime) {
             ball_intercept_maybe = ballVelIntercept;
             break;
         }
     }
 
     Geometry2d::Point ballVelIntercept;
+    // If we still haven't found a valid intercept point, just target the stop point.
     if (ball_intercept_maybe.has_value()) {
         ballVelIntercept = ball_intercept_maybe.value();
     } else {
