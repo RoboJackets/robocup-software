@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include "TestingUtils.hpp"
+
+#include <gtest/gtest.h>
 
 #include "Geometry2d/Point.hpp"
 #include "planning/Instant.hpp"

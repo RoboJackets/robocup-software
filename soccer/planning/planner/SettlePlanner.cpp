@@ -280,14 +280,16 @@ Trajectory SettlePlanner::intercept(
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() && path.duration() + RJ::Seconds(*_interceptBufferTime) <= ballTime) {
+        if (!path.empty() &&
+            path.duration() + RJ::Seconds(*_interceptBufferTime) <= ballTime) {
             ball_intercept_maybe = ballVelIntercept;
             break;
         }
     }
 
     Geometry2d::Point ballVelIntercept;
-    // If we still haven't found a valid intercept point, just target the stop point.
+    // If we still haven't found a valid intercept point, just target the stop
+    // point.
     if (ball_intercept_maybe.has_value()) {
         ballVelIntercept = ball_intercept_maybe.value();
     } else {

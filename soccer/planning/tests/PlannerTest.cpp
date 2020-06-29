@@ -40,7 +40,8 @@ TEST(Planning, path_target_random) {
         }
         auto start = randomInstant(gen);
 
-        // If we start in an obstacle planning will trivially fail. We don't care about this case.
+        // If we start in an obstacle planning will trivially fail. We don't
+        // care about this case.
         if (obstacles.hit(start.position())) {
             continue;
         }
@@ -224,8 +225,10 @@ TEST(Planning, collect_random) {
     int failure_count = 0;
 
     for (int i = 0; i < 500; i++) {
-        world_state.ball.position = Point{random(gen, -1.5, 1.5), random(gen, 2.0, 4.0)};
-        world_state.ball.velocity = Point{random(gen, -.3, .3), random(gen, -1.0, 0.1)};
+        world_state.ball.position =
+            Point{random(gen, -1.5, 1.5), random(gen, 2.0, 4.0)};
+        world_state.ball.velocity =
+            Point{random(gen, -.3, .3), random(gen, -1.0, 0.1)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
         int numObstacles = random(gen, 2, 5);
@@ -312,8 +315,10 @@ TEST(Planning, settle_random) {
     int failure_count = 0;
 
     for (int i = 0; i < 500; i++) {
-        world_state.ball.position = Point{random(gen, -1.5, 1.5), random(gen, 3.0, 4.0)};
-        world_state.ball.velocity = Point{random(gen, -.3, .3), random(gen, -2.0, -1.0)};
+        world_state.ball.position =
+            Point{random(gen, -1.5, 1.5), random(gen, 3.0, 4.0)};
+        world_state.ball.velocity =
+            Point{random(gen, -.3, .3), random(gen, -2.0, -1.0)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
         int numObstacles = random(gen, 0, 3);

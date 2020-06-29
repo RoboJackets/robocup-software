@@ -21,11 +21,11 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
  * @param hi
  * @return random number
  */
- template<typename T>
+template <typename T>
 T random(std::mt19937& generator, T lo, T hi) {
     static std::uniform_real_distribution<> randDistribution(lo, hi);
     return randDistribution(generator);
- }
+}
 
 /**
  * generate a random RobotInstant inside the field
