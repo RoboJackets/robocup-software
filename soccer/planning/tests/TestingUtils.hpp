@@ -1,5 +1,7 @@
 #pragma once
 
+#include <random>
+
 #include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
@@ -19,11 +21,15 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
  * @param hi
  * @return random number
  */
-double random(double lo, double hi);
+template <typename T>
+T random(std::mt19937* generator, T lo, T hi) {
+    static std::uniform_real_distribution<> randDistribution(lo, hi);
+    return randDistribution(*generator);
+}
 
 /**
  * generate a random RobotInstant inside the field
  * @return random robot instant
  */
-RobotInstant randomInstant();
+RobotInstant randomInstant(std::mt19937* generator);
 }  // namespace Planning::TestingUtils
