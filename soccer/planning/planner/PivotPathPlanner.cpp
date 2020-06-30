@@ -4,14 +4,14 @@
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Util.hpp>
 #include <memory>
-#include <planning/low_level/TrapezoidalMotion.hpp>
+#include <planning/primitives/TrapezoidalMotion.hpp>
 #include <vector>
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
-#include "planning/low_level/PathSmoothing.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 
 namespace Planning {
 using namespace Geometry2d;

@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "planning/low_level/PathSmoothing.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
 
 using Geometry2d::Point;
 

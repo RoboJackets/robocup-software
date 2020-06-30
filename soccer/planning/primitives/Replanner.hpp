@@ -4,7 +4,7 @@
 #include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
 
 namespace Planning {
 

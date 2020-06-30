@@ -4,8 +4,8 @@
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PlanRequest.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 
 using namespace Geometry2d;
 

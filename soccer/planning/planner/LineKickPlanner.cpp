@@ -6,7 +6,7 @@
 
 #include "EscapeObstaclesPathPlanner.hpp"
 #include "planning/TrajectoryUtils.hpp"
-#include "planning/low_level/CreatePath.hpp"
+#include "planning/primitives/CreatePath.hpp"
 
 using namespace std;
 using namespace Geometry2d;

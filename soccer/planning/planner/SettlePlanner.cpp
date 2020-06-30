@@ -8,9 +8,9 @@
 
 #include "planning/Instant.hpp"
 #include "planning/TrajectoryUtils.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
-#include "planning/low_level/CreatePath.hpp"
-#include "planning/low_level/RRTUtil.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
+#include "planning/primitives/CreatePath.hpp"
+#include "planning/primitives/RRTUtil.hpp"
 
 using namespace Geometry2d;
 

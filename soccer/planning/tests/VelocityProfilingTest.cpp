@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-#include "planning/low_level/PathSmoothing.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 #include "planning/tests/TestingUtils.hpp"
 
 using Geometry2d::Point;
@@ -52,6 +52,14 @@ TEST(VelocityProfiling, ComplexPath) {
         ProfileVelocity(path, 0.5, 0, constraints.mot, start_time);
 
     TestingUtils::checkTrajectoryContinuous(result, constraints);
+}
+
+TEST(VelocityProfiling, ClampAccel) {
+    ASSERT_NEAR(limit_acceleration(1, 20, 1.5, 1), 2, 1e-6);
+    ASSERT_NEAR(limit_acceleration(0, 5, 0.5, 1), 1, 1e-6);
+    ASSERT_NEAR(limit_acceleration(0, 0.5, 20, 1), 0.5, 1e-6);
+    ASSERT_NEAR(limit_acceleration(3, 0.5, 20, 1), 0.5, 1e-6);
+    ASSERT_NEAR(limit_acceleration(2, 0.0, 1, 3), 0.0, 1e-6);
 }
 
 }  // namespace Planning
