@@ -43,8 +43,9 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     Trajectory trajectory = Replanner::CreatePlan(
         Replanner::PlanParams{request.start, goalInstant, static_obstacles,
                               dynamic_obstacles, request.constraints,
-                              angle_function},
+                              angle_function, RJ::Seconds(3.0)},
         std::move(previous));
+
     previous = trajectory;
     return trajectory;
 }

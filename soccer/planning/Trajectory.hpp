@@ -66,6 +66,15 @@ public:
     void AppendInstant(RobotInstant instant);
 
     /**
+     * @brief Hold the final position for a set time.
+     *
+     * Note that this will not hold forever. That would be bad, because iterating over a trajectory would always hang.
+     *
+     * @param seconds the duration after the end of the trajectory to hold pose.
+     */
+    void HoldFor(RJ::Seconds duration);
+
+    /**
      * @brief Check that the given point in time is within bounds.
      */
     [[nodiscard]] bool CheckTime(RJ::Time time) const;

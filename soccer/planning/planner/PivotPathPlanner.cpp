@@ -82,11 +82,8 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     Trajectory path =
         ProfileVelocity(pathBezier, start_instant.linear_velocity().mag(), 0,
                         linear_constraints, start_instant.stamp);
-    {
-        // Stay in place
-        RobotInstant instant = path.last();
-        instant.stamp = instant.stamp + RJ::Seconds(5.0);
-        path.AppendInstant(instant);
+    if (Twist::nearly_equals(path.last().velocity, Twist::Zero())) {
+        path.HoldFor(RJ::Seconds(3.0));
     }
 
     AngleFunction function = [pivot_point, pivot_target](
