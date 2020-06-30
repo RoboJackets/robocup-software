@@ -1,46 +1,43 @@
 #pragma once
 
-#include "Planner.hpp"
-#include "planning/Instant.hpp"
-#include "planning/primitives/Replanner.hpp"
+#include <optional>
+
+#include "planning/Trajectory.hpp"
+#include "planning/planner/Planner.hpp"
+
+class Configuration;
+class ConfigDouble;
 
 namespace Planning {
 
 /**
- * @brief Planner to kick a (possibly moving) ball without stopping to pivot
- * around it. The robot will move "through" the ball, and kick just as it comes
- * into contact with it.
+ * Planner which plans a path to line kick a ball.
+ * Uses the System State object to get the position of the ball
+ * and predict its Path. It chooses the closest intersection point
+ * with the ball Path it can reach in time and plans a Path so the
+ * ball and robot intersect at the same time.
+ *
+ * TODO(Kyle): Overhaul this entire planner. It's sketchy right now.
  */
-class LineKickPlanner : public PlannerForCommandType<LineKickCommand> {
+class LineKickPlanner
+    : public PlannerForCommandType<Planning::LineKickCommand> {
 public:
     LineKickPlanner()
-        : PlannerForCommandType<LineKickCommand>("LineKickPlanner") {}
-    ~LineKickPlanner() override = default;
+        : PlannerForCommandType<Planning::LineKickCommand>("LineKickPlanner"){};
+    Trajectory plan(const PlanRequest& planRequest) override;
 
-    LineKickPlanner(LineKickPlanner&&) noexcept = default;
-    LineKickPlanner& operator=(LineKickPlanner&&) noexcept = default;
-    LineKickPlanner(const LineKickPlanner&) = default;
-    LineKickPlanner& operator=(const LineKickPlanner&) = default;
-
-    Trajectory plan(const PlanRequest& request) override;
-    static void createConfiguration(Configuration* cfg);
+    void reset() override {
+        prevPath = {};
+        finalApproach = false;
+        targetKickPos = std::nullopt;
+        reusePathCount = 0;
+    }
 
 private:
-    enum class LineKickStates { Approach, FollowThrough };
-
-    LineKickStates state = LineKickStates::Approach;
-
-    std::optional<Trajectory> attemptBruteForce(const PlanRequest& request);
-    Trajectory planForSlowMovingBall(
-        RobotInstant start, BallState ball, Geometry2d::Point target,
-        const Geometry2d::ShapeSet& static_obstacles,
-        const std::vector<DynamicObstacle>& dynamic_obstacles,
-        RobotConstraints constraints);
-
-    static ConfigDouble* _approachSpeed;
-
-    Replanner replanner;
-    Trajectory previous;
+    Trajectory prevPath;
+    bool finalApproach = false;
+    std::optional<Geometry2d::Point> targetKickPos;
+    int reusePathCount = 0;
 };
 
 }  // namespace Planning

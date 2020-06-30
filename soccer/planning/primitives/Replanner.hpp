@@ -25,6 +25,7 @@ public:
         const std::vector<DynamicObstacle>& dynamic_obstacles;
         RobotConstraints constraints;
         const AngleFunction& angle_function;
+        std::optional<RJ::Seconds> hold_time = std::nullopt;
     };
 
     /**
