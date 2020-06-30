@@ -36,7 +36,9 @@ TEST(Planning, path_target_random) {
         int numObstacles = TestingUtils::random(&gen, 2, 5);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)}, .2));
+                Point{TestingUtils::random(&gen, -2.0, 2.0),
+                      TestingUtils::random(&gen, .5, 1.5)},
+                .2));
         }
         auto start = randomInstant(&gen);
 
@@ -225,14 +227,19 @@ TEST(Planning, collect_random) {
     int failure_count = 0;
 
     for (int i = 0; i < 500; i++) {
-        world_state.ball.position = Point{TestingUtils::random(&gen, -1.5, 1.5), TestingUtils::random(&gen, 2.0, 4.0)};
-        world_state.ball.velocity = Point{TestingUtils::random(&gen, -.3, .3), TestingUtils::random(&gen, -1.0, 0.1)};
+        world_state.ball.position = Point{TestingUtils::random(&gen, -1.5, 1.5),
+                                          TestingUtils::random(&gen, 2.0, 4.0)};
+        world_state.ball.velocity =
+            Point{TestingUtils::random(&gen, -.3, .3),
+                  TestingUtils::random(&gen, -1.0, 0.1)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
         int numObstacles = TestingUtils::random(&gen, 2, 5);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 0.5, 1.5)}, .2));
+                Point{TestingUtils::random(&gen, -2.0, 2.0),
+                      TestingUtils::random(&gen, 0.5, 1.5)},
+                .2));
         }
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             CollectCommand{},
@@ -313,14 +320,19 @@ TEST(Planning, settle_random) {
     int failure_count = 0;
 
     for (int i = 0; i < 500; i++) {
-        world_state.ball.position = Point{TestingUtils::random(&gen, -1.5, 1.5), TestingUtils::random(&gen, 3.0, 4.0)};
-        world_state.ball.velocity = Point{TestingUtils::random(&gen, -.3, .3), TestingUtils::random(&gen, -2.0, -1.0)};
+        world_state.ball.position = Point{TestingUtils::random(&gen, -1.5, 1.5),
+                                          TestingUtils::random(&gen, 3.0, 4.0)};
+        world_state.ball.velocity =
+            Point{TestingUtils::random(&gen, -.3, .3),
+                  TestingUtils::random(&gen, -2.0, -1.0)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
         int numObstacles = TestingUtils::random(&gen, 0, 3);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, .5, 1.5)}, .2));
+                Point{TestingUtils::random(&gen, -2.0, 2.0),
+                      TestingUtils::random(&gen, .5, 1.5)},
+                .2));
         }
         PlanRequest request{RobotInstant{{}, {}, RJ::now()},
                             SettleCommand{},
