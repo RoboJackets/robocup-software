@@ -4,7 +4,7 @@
 #include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
 
 namespace Planning {
 
@@ -25,6 +25,7 @@ public:
         const std::vector<DynamicObstacle>& dynamic_obstacles;
         RobotConstraints constraints;
         const AngleFunction& angle_function;
+        std::optional<RJ::Seconds> hold_time = std::nullopt;
     };
 
     /**

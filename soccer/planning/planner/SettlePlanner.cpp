@@ -8,9 +8,9 @@
 
 #include "planning/Instant.hpp"
 #include "planning/TrajectoryUtils.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
-#include "planning/low_level/CreatePath.hpp"
-#include "planning/low_level/RRTUtil.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
+#include "planning/primitives/CreatePath.hpp"
+#include "planning/primitives/RRTUtil.hpp"
 
 using namespace Geometry2d;
 
@@ -272,12 +272,10 @@ Trajectory SettlePlanner::intercept(
 
         // Plan a path from our partial path start location to the intercept
         // test location
-        Trajectory path = CreatePath::rrt(startInstant.linear_motion(),
-                                          targetRobotIntersection,
-                                          planRequest.constraints.mot,
-                                          startInstant.stamp,
-                                          staticObstacles,
-                                          dynamicObstacles);
+        Trajectory path = CreatePath::rrt(
+            startInstant.linear_motion(), targetRobotIntersection,
+            planRequest.constraints.mot, startInstant.stamp, staticObstacles,
+            dynamicObstacles);
 
         // Calculate the
         RJ::Seconds buffer_duration = ballTime - path.duration();
@@ -297,7 +295,8 @@ Trajectory SettlePlanner::intercept(
     }
 
     Geometry2d::Point ballVelIntercept;
-    // If we still haven't found a valid intercept point, just target the stop point.
+    // If we still haven't found a valid intercept point, just target the stop
+    // point.
     if (ball_intercept_maybe.has_value()) {
         ballVelIntercept = ball_intercept_maybe.value();
     } else {

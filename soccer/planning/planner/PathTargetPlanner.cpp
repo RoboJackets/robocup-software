@@ -4,8 +4,8 @@
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PlanRequest.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 
 using namespace Geometry2d;
 
@@ -43,8 +43,9 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     Trajectory trajectory = Replanner::CreatePlan(
         Replanner::PlanParams{request.start, goalInstant, static_obstacles,
                               dynamic_obstacles, request.constraints,
-                              angle_function},
+                              angle_function, RJ::Seconds(3.0)},
         std::move(previous));
+
     previous = trajectory;
     return trajectory;
 }
@@ -53,11 +54,13 @@ AngleFunction PathTargetPlanner::getAngleFunction(const PlanRequest& request) {
     auto angle_override =
         std::get<PathTargetCommand>(request.motionCommand).angle_override;
     if (std::holds_alternative<TargetFacePoint>(angle_override)) {
-        return AngleFns::facePoint(std::get<TargetFacePoint>(angle_override).face_point);
+        return AngleFns::facePoint(
+            std::get<TargetFacePoint>(angle_override).face_point);
     }
 
     if (std::holds_alternative<TargetFaceAngle>(angle_override)) {
-        return AngleFns::faceAngle(std::get<TargetFaceAngle>(angle_override).target);
+        return AngleFns::faceAngle(
+            std::get<TargetFaceAngle>(angle_override).target);
     }
 
     return AngleFns::tangent;

@@ -241,6 +241,22 @@ bool Trajectory::nearly_equal(const Trajectory& a, const Trajectory& b,
     // Otherwise, they are identical.
     return a_it == a.instants_end() && b_it == b.instants_end();
 }
+void Trajectory::HoldFor(RJ::Seconds duration) {
+    RobotInstant instant = last();
+    if (duration <= RJ::Seconds(0)) {
+        throw std::invalid_argument("Hold duration must be positive");
+    }
+
+    if (!Twist::nearly_equals(instant.velocity, Twist::Zero())) {
+        throw std::runtime_error("Cannot hold nonzero velocity");
+    }
+
+    instant.velocity = Twist::Zero();
+    instant.stamp = instant.stamp + duration;
+
+    // Does not invalidate angle planning.
+    instants_.push_back(instant);
+}
 
 Trajectory::Cursor::Cursor(const Trajectory& trajectory,
                            RobotInstantSequence::const_iterator iterator)

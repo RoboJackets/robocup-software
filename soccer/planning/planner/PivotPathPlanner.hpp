@@ -25,6 +25,7 @@ public:
 private:
     Trajectory previous;
 
+    // Cache the pivot point so we don't just push the ball across the field.
     std::optional<Geometry2d::Point> cached_pivot_point;
 
     static ConfigDouble* _pivotRadiusMultiplier;

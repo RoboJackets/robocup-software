@@ -229,7 +229,8 @@ void BezierPath::Evaluate(double s, Geometry2d::Point* position,
     }
 
     if (curvature != nullptr) {
-        Point d2 = (6 * te * (p2 - 2 * p1 + p0) + 6 * tb * (p3 - 2 * p2 + p1)) * num_curves;
+        Point d2 = (6 * te * (p2 - 2 * p1 + p0) + 6 * tb * (p3 - 2 * p2 + p1)) *
+                   num_curves;
 
         // https://en.wikipedia.org/wiki/Curvature#Local_expressions
         // K = |x'*y'' - y'*x''| / (x'^2 + y'^2)^(3/2) = |v x a|/|v|^3
