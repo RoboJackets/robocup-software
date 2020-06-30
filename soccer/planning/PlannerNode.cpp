@@ -60,6 +60,12 @@ void PlannerNode::run() {
             local_obstacles.add(goal_zones);
         }
 
+        if (debug_drawer != nullptr) {
+            for (const auto& shape : local_obstacles.shapes()) {
+                debug_drawer->drawShape(shape, QColor(0, 0, 0, 16));
+            }
+        }
+
         // TODO(#1500): Put motion constraints in intent.
         PlanRequest request{start,
                             intent.motion_command,

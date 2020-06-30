@@ -3,8 +3,8 @@
 #include <vector>
 
 #include "Planner.hpp"
-#include "planning/low_level/Replanner.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
+#include "planning/primitives/Replanner.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 
 namespace Planning {
 

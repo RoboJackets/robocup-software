@@ -50,7 +50,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
     // issues when the initial or final velocity is small: it places
     // two keypoints directly on top of one another, which makes very large
     // curvature near the endpoints.
-    // TODO(Kyle): Switch to Hermite splines and minimize
+    // TODO(#1539): Switch to Hermite splines and minimize
     //  sum-squared-acceleration instead of solving for Bezier curves.
     // double max_centripetal_acceleration = constraints.maxAcceleration;
 
@@ -64,7 +64,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
             throw std::runtime_error("Invalid curvature");
         }
 
-        // TODO(Kyle): Re-enable curvature limiting
+        // TODO(#1539): Re-enable curvature limiting
         // Centripetal acceleration: a = v^2 / r => v = sqrt(ra)
         // if (limit_curvature && curvature[n] != 0.0) {
         //     speed[n] = std::min(
@@ -78,7 +78,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
     for (int n = 0; n < num_points - 2; n++) {
         double max_tangential_acceleration = constraints.maxAcceleration;
 
-        // TODO(Kyle): Re-enable curvature limiting
+        // TODO(#1539): Re-enable curvature limiting
         // if (limit_curvature) {
         //     double centripetal_acceleartion =
         //         speed[n] * speed[n] * curvature[n];
@@ -110,7 +110,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
     for (int n = num_points - 1; n > 1; n--) {
         double max_tangential_acceleration = constraints.maxAcceleration;
 
-        // TODO(Kyle): Re-enable curvature limiting
+        // TODO(#1539): Re-enable curvature limiting
         // if (limit_curvature) {
         //     double centripetal_acceleration =
         //         speed[n] * speed[n] * curvature[n];

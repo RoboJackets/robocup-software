@@ -22,7 +22,7 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(RobotInstant start, MotionCommand command,
+    PlanRequest(RobotInstant start, MotionCommand command,  // NOLINT
                 RobotConstraints constraints,
                 Geometry2d::ShapeSet field_obstacles,
                 Geometry2d::ShapeSet virtual_obstacles,
@@ -30,7 +30,7 @@ struct PlanRequest {
                 unsigned shellID, const WorldState* world_state,
                 int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
         : start(start),
-          motionCommand(std::move(command)),
+          motionCommand(command),  // NOLINT
           constraints(constraints),
           field_obstacles(std::move(field_obstacles)),
           virtual_obstacles(std::move(virtual_obstacles)),

@@ -115,85 +115,48 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     const float y1 = dimensions.Length() / 2;
     const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
     const float r = dimensions.CenterRadius();
-    _sideObstacle = make_shared<Polygon>(
-        vector<Point>{Point(-x, y1), Point(-r, y1), Point(0, y1 + r),
-                      Point(r, y1), Point(x, y1), Point(x, y2), Point(-x, y2)});
+    _sideObstacle = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
     float y = -(float)_fieldEdgeInset->value();
     auto deadspace = (float)_fieldEdgeInset->value();
     x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
-    _nonFloor[0] = make_shared<Polygon>(vector<Point>{
-        Point(-x, y), Point(-x, y - 1000), Point(x, y - 1000), Point(x, y)});
+    _nonFloor[0] = make_shared<Rect>(Point(-x, y), Point(x, y - 1000));
 
     y = dimensions.Length() + (float)_fieldEdgeInset->value();
-    _nonFloor[1] = make_shared<Polygon>(vector<Point>{
-        Point(-x, y), Point(-x, y + 1000), Point(x, y + 1000), Point(x, y)});
+    _nonFloor[1] = make_shared<Rect>(Point(-x, y), Point(x, y + 1000));
 
     y = dimensions.FloorLength();
-    _nonFloor[2] = make_shared<Polygon>(vector<Point>{
-        Point(-x, -3 * deadspace), Point(-x - 1000, -3 * deadspace),
-        Point(-x - 1000, y), Point(-x, y)});
+    _nonFloor[2] =
+        make_shared<Rect>(Point(-x, -3 * deadspace), Point(-x - 1000, y));
 
-    _nonFloor[3] = make_shared<Polygon>(
-        vector<Point>{Point(x, -3 * deadspace), Point(x + 1000, -3 * deadspace),
-                      Point(x + 1000, y), Point(x, y)});
+    _nonFloor[3] =
+        make_shared<Rect>(Point(x, -3 * deadspace), Point(x + 1000, y));
 
     const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
     const float shortDist = dimensions.PenaltyShortDist();
     const float longDist = dimensions.PenaltyLongDist();
 
-    auto ourGoalArea = make_shared<Polygon>(vector<Point>{
-        Point(-longDist / 2, 0), Point(longDist / 2, 0),
-        Point(longDist / 2, shortDist), Point(-longDist / 2, shortDist)});
-    _ourGoalArea = make_shared<CompositeShape>();
+    _ourGoalArea = make_shared<Rect>(Point(-longDist / 2, 0),
+                                     Point(longDist / 2, shortDist));
 
-    _ourGoalArea->add(ourGoalArea);
+    _theirGoalArea =
+        make_shared<Rect>(Point(-longDist / 2, dimensions.Length()),
+                          Point(longDist / 2, dimensions.Length() - shortDist));
 
-    auto theirGoalArea = make_shared<Polygon>(
-        vector<Point>{Point(-longDist / 2, dimensions.Length()),
-                      Point(longDist / 2, dimensions.Length()),
-                      Point(longDist / 2, dimensions.Length() - shortDist),
-                      Point(-longDist / 2, dimensions.Length() - shortDist)});
-    _theirGoalArea = make_shared<CompositeShape>();
+    _ourHalf = make_shared<Rect>(Point(-x, -dimensions.Border()), Point(x, y1));
 
-    _theirGoalArea->add(theirGoalArea);
+    _opponentHalf = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
-    _ourHalf = make_shared<Polygon>(
-        vector<Point>{Point(-x, -dimensions.Border()), Point(-x, y1),
-                      Point(x, y1), Point(x, -dimensions.Border())});
-
-    _opponentHalf = make_shared<Polygon>(vector<Point>{
-        Point(-x, y1), Point(-x, y2), Point(x, y2), Point(x, y1)});
-
-    _ourGoal = make_shared<Polygon>(vector<Point>{
-        Point(-dimensions.GoalWidth() / 2, 0),
+    _ourGoal = make_shared<Rect>(
         Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
-        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
-              -dimensions.GoalDepth() - dimensions.LineWidth()),
         Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-              -dimensions.GoalDepth() - dimensions.LineWidth()),
-        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(), 0),
-        Point(dimensions.GoalWidth() / 2, 0),
-        Point(dimensions.GoalWidth() / 2, -dimensions.GoalDepth()),
-        Point(-dimensions.GoalWidth() / 2, -dimensions.GoalDepth())});
+              -dimensions.GoalDepth() - dimensions.LineWidth()));
 
-    _theirGoal = make_shared<Polygon>(vector<Point>{
+    _theirGoal = make_shared<Rect>(
         Point(-dimensions.GoalWidth() / 2, dimensions.Length()),
-        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
-              dimensions.Length()),
-        Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(),
-              dimensions.Length() + dimensions.GoalDepth() +
-                  dimensions.LineWidth()),
         Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
               dimensions.Length() + dimensions.GoalDepth() +
-                  dimensions.LineWidth()),
-        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-              dimensions.Length()),
-        Point(dimensions.GoalWidth() / 2, dimensions.Length()),
-        Point(dimensions.GoalWidth() / 2,
-              dimensions.Length() + dimensions.GoalDepth()),
-        Point(-dimensions.GoalWidth() / 2,
-              dimensions.Length() + dimensions.GoalDepth())});
+                  dimensions.LineWidth()));
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
 }
