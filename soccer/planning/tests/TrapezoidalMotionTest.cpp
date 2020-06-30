@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "planning/low_level/TrapezoidalMotion.hpp"
+#include "planning/primitives/TrapezoidalMotion.hpp"
 
 using namespace Planning;
 
