@@ -6,13 +6,13 @@
 #include "SystemState.hpp"
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/RRTUtil.hpp"
 #include "planning/planner/CollectPlanner.hpp"
 #include "planning/planner/MotionCommand.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
 #include "planning/planner/PlanRequest.hpp"
 #include "planning/planner/Planner.hpp"
 #include "planning/planner/SettlePlanner.hpp"
+#include "planning/primitives/RRTUtil.hpp"
 #include "planning/tests/TestingUtils.hpp"
 
 /*

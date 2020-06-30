@@ -1,8 +1,8 @@
 #pragma once
 
 #include "planning/Instant.hpp"
-#include "planning/low_level/Replanner.hpp"
 #include "planning/planner/Planner.hpp"
+#include "planning/primitives/Replanner.hpp"
 
 class Configuration;
 class ConfigDouble;

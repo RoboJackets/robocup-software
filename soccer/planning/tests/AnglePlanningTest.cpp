@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "planning/low_level/AnglePlanning.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
 
 using namespace Planning;
 using namespace Geometry2d;

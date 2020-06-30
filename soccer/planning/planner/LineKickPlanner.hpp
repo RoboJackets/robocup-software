@@ -2,7 +2,7 @@
 
 #include "Planner.hpp"
 #include "planning/Instant.hpp"
-#include "planning/low_level/Replanner.hpp"
+#include "planning/primitives/Replanner.hpp"
 
 namespace Planning {
 

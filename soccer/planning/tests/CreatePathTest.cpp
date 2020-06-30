@@ -3,7 +3,7 @@
 #include <iostream>
 #include <random>
 
-#include "planning/low_level/CreatePath.hpp"
+#include "planning/primitives/CreatePath.hpp"
 #include "planning/tests/TestingUtils.hpp"
 
 using namespace Geometry2d;

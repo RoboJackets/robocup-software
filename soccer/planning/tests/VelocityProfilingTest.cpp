@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-#include "planning/low_level/PathSmoothing.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 #include "planning/tests/TestingUtils.hpp"
 
 using Geometry2d::Point;

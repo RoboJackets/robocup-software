@@ -1,7 +1,7 @@
 #include "LineKickPlanner.hpp"
 
 #include "planning/Instant.hpp"
-#include "planning/low_level/RRTUtil.hpp"
+#include "planning/primitives/RRTUtil.hpp"
 namespace Planning {
 ConfigDouble* LineKickPlanner::_approachSpeed;
 
