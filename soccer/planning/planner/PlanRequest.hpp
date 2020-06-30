@@ -22,7 +22,7 @@ namespace Planning {
  * robot path to be planned.
  */
 struct PlanRequest {
-    PlanRequest(RobotInstant start, MotionCommand command,
+    PlanRequest(RobotInstant start, MotionCommand command, // NOLINT
                 RobotConstraints constraints,
                 Geometry2d::ShapeSet field_obstacles,
                 Geometry2d::ShapeSet virtual_obstacles,
