@@ -236,6 +236,8 @@ Trajectory SettlePlanner::intercept(
     const Rect& fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
 
     std::optional<Point> ball_intercept_maybe;
+    RJ::Seconds best_buffer = RJ::Seconds(-1.0);
+
     int num_iterations =
         std::ceil((*_searchEndDist - *_searchStartDist) / *_searchIncDist);
 
@@ -277,13 +279,19 @@ Trajectory SettlePlanner::intercept(
                                           staticObstacles,
                                           dynamicObstacles);
 
+        // Calculate the
+        RJ::Seconds buffer_duration = ballTime - path.duration();
+        if (!path.empty() && buffer_duration > best_buffer) {
+            ball_intercept_maybe = ballVelIntercept;
+            best_buffer = buffer_duration;
+        }
+
         // If valid path to location
         // and we can reach the target point before ball
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() && path.duration() + RJ::Seconds(*_interceptBufferTime) <= ballTime) {
-            ball_intercept_maybe = ballVelIntercept;
+        if (!path.empty() && best_buffer > RJ::Seconds(*_interceptBufferTime)) {
             break;
         }
     }
