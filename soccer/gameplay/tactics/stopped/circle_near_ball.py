@@ -157,5 +157,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         # set robot attributes
         for b in self.all_subbehaviors():
             if b.robot is not None:
-                b.robot.add_local_obstacle(robocup.Circle(main.ball().pos, constants.Field.CenterRadius))
+                b.robot.add_local_obstacle(
+                    robocup.Circle(main.ball().pos,
+                                   constants.Field.CenterRadius))
                 b.robot.face(main.ball().pos)

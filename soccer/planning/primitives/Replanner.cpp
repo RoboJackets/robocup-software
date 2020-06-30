@@ -21,7 +21,8 @@ ConfigDouble* Replanner::_offPathErrorThreshold;
 REGISTER_CONFIGURABLE(Replanner);
 
 void applyHold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
-    if (hold_time.has_value() && !trajectory->empty() && Twist::nearly_equals(trajectory->last().velocity, Twist::Zero())) {
+    if (hold_time.has_value() && !trajectory->empty() &&
+        Twist::nearly_equals(trajectory->last().velocity, Twist::Zero())) {
         trajectory->HoldFor(hold_time.value());
     }
 }

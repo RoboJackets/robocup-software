@@ -68,7 +68,8 @@ public:
     /**
      * @brief Hold the final position for a set time.
      *
-     * Note that this will not hold forever. That would be bad, because iterating over a trajectory would always hang.
+     * Note that this will not hold forever. That would be bad, because
+     * iterating over a trajectory would always hang.
      *
      * @param seconds the duration after the end of the trajectory to hold pose.
      */
