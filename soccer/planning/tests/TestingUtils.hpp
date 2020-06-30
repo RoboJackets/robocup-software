@@ -21,9 +21,18 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
  * @param hi
  * @return random number
  */
-template <typename T>
-T random(std::mt19937* generator, T lo, T hi) {
-    static std::uniform_real_distribution<> randDistribution(lo, hi);
+template<typename T>
+T random(std::mt19937* generator, T lo, T hi);
+
+template<>
+inline int random(std::mt19937* generator, int lo, int hi) {
+    std::uniform_int_distribution<> randDistribution(lo, hi);
+    return randDistribution(*generator);
+}
+
+template<>
+inline double random(std::mt19937* generator, double lo, double hi) {
+    std::uniform_real_distribution<> randDistribution(lo, hi);
     return randDistribution(*generator);
 }
 
@@ -32,4 +41,5 @@ T random(std::mt19937* generator, T lo, T hi) {
  * @return random robot instant
  */
 RobotInstant randomInstant(std::mt19937* generator);
+
 }  // namespace Planning::TestingUtils
