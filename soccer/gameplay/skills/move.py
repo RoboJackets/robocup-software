@@ -51,6 +51,10 @@ class Move(single_robot_behavior.SingleRobotBehavior):
         if self.pos != None:
             self.robot.move_to(self.pos)
 
+    def execute_completed(self):
+        if self.pos != None:
+            self.robot.move_to(self.pos)
+
     def role_requirements(  # type: ignore
             self) -> role_assignment.RoleRequirements:
         reqs = super().role_requirements()

@@ -243,8 +243,8 @@ bool Rect::nearPoint(Point other, float threshold) const {
     double min_y = std::min(pt[0].y(), pt[1].y());
     double max_y = std::max(pt[0].y(), pt[1].y());
 
-    // Calculate the minimum distance to the rectangle in the x- and y- directions.
-    // Example:
+    // Calculate the minimum distance to the rectangle in the x- and y-
+    // directions. Example:
     //                                dx
     //         |                  | ----- *
     //         |                  |       | dy

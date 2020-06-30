@@ -93,6 +93,12 @@ RJ::Seconds BallState::query_stop_time(Geometry2d::Point* out) const {
     return RJ::Seconds(speed / kBallDecayConstant);
 }
 
+Geometry2d::Point BallState::query_stop_position() const {
+    Geometry2d::Point point;
+    [[maybe_unused]] auto stop_time = query_stop_time(&point);
+    return point;
+}
+
 std::optional<RJ::Seconds> BallState::query_seconds_to_dist(
     double distance) const {
     // vf^2 - vi^2 = 2ad => vf = sqrt(vi^2 + 2ad)

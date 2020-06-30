@@ -55,14 +55,13 @@ void MotionControl::run(const RobotState& state,
     // We run this at 60Hz, so we want to do motion control off of the goal
     // position for the next frame. Evaluate the trajectory there.
     RJ::Seconds dt(1.0 / 60);
-    RJ::Seconds time_into_path = (RJ::now() - trajectory.begin_time()) + dt;
+    RJ::Time eval_time = RJ::now() + dt;
 
-    std::optional<RobotInstant> maybe_target =
-        trajectory.evaluate(time_into_path);
+    std::optional<RobotInstant> maybe_target = trajectory.evaluate(eval_time);
+    bool at_end = eval_time > trajectory.end_time();
 
     // If we're past the end of the trajectory, do motion control off of the
     // end.
-    bool at_end = time_into_path > trajectory.duration();
     if (at_end) {
         maybe_target = trajectory.last();
     }

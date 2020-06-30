@@ -6,10 +6,10 @@
 #include "math.h"
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/PathSmoothing.hpp"
-#include "planning/low_level/RRTUtil.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
+#include "planning/primitives/RRTUtil.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 
 using namespace Planning;
 using namespace Geometry2d;

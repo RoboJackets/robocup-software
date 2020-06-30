@@ -21,16 +21,16 @@ bool checkTrajectoryContinuous(const Trajectory& trajectory,
  * @param hi
  * @return random number
  */
-template<typename T>
+template <typename T>
 T random(std::mt19937* generator, T lo, T hi);
 
-template<>
+template <>
 inline int random(std::mt19937* generator, int lo, int hi) {
     std::uniform_int_distribution<> randDistribution(lo, hi);
     return randDistribution(*generator);
 }
 
-template<>
+template <>
 inline double random(std::mt19937* generator, double lo, double hi) {
     std::uniform_real_distribution<> randDistribution(lo, hi);
     return randDistribution(*generator);

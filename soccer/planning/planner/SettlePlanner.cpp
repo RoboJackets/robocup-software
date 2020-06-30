@@ -8,9 +8,9 @@
 
 #include "planning/Instant.hpp"
 #include "planning/TrajectoryUtils.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
-#include "planning/low_level/CreatePath.hpp"
-#include "planning/low_level/RRTUtil.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
+#include "planning/primitives/CreatePath.hpp"
+#include "planning/primitives/RRTUtil.hpp"
 
 using namespace Geometry2d;
 
@@ -235,9 +235,12 @@ Trajectory SettlePlanner::intercept(
     // Disallow points outside the field
     const Rect& fieldRect = Field_Dimensions::Current_Dimensions.FieldRect();
 
-    Point ballVelIntercept = Geometry2d::Point(0, 0);
+    std::optional<Point> ball_intercept_maybe;
+    RJ::Seconds best_buffer = RJ::Seconds(-1.0);
+
     int num_iterations =
         std::ceil((*_searchEndDist - *_searchStartDist) / *_searchIncDist);
+
     for (int iteration = 0; iteration < num_iterations; iteration++) {
         double dist = *_searchStartDist + iteration * *_searchIncDist;
         // Time for ball to reach the target point
@@ -252,8 +255,12 @@ Trajectory SettlePlanner::intercept(
 
         // Account for the target point causing a slight offset in robot
         // position since we want the ball to still hit the mouth
-        ballVelIntercept =
+        Point ballVelIntercept =
             ball.position + averageBallVel.normalized() * dist + deltaPos;
+
+        if (!fieldRect.containsPoint(ballVelIntercept)) {
+            break;
+        }
 
         // Use the mouth to center vector, rotate by X degrees
         // Take the delta between old and new mouth vector and move
@@ -265,25 +272,35 @@ Trajectory SettlePlanner::intercept(
 
         // Plan a path from our partial path start location to the intercept
         // test location
-        Replanner::PlanParams params{startInstant,
-                                     targetRobotIntersection,
-                                     staticObstacles,
-                                     dynamicObstacles,
-                                     planRequest.constraints,
-                                     AngleFns::facePoint(facePos)};
-        Trajectory path = Replanner::CreatePlan(params, previous);
+        Trajectory path = CreatePath::rrt(
+            startInstant.linear_motion(), targetRobotIntersection,
+            planRequest.constraints.mot, startInstant.stamp, staticObstacles,
+            dynamicObstacles);
+
+        // Calculate the
+        RJ::Seconds buffer_duration = ballTime - path.duration();
+        if (!path.empty() && buffer_duration > best_buffer) {
+            ball_intercept_maybe = ballVelIntercept;
+            best_buffer = buffer_duration;
+        }
 
         // If valid path to location
         // and we can reach the target point before ball
         //
         // Don't do the average here so we can project the intercept point
         // inside the field
-        if (!path.empty() &&
-                path.duration() + RJ::Seconds(*_interceptBufferTime) <=
-                    ballTime ||
-            !fieldRect.containsPoint(ballVelIntercept)) {
+        if (!path.empty() && best_buffer > RJ::Seconds(*_interceptBufferTime)) {
             break;
         }
+    }
+
+    Geometry2d::Point ballVelIntercept;
+    // If we still haven't found a valid intercept point, just target the stop
+    // point.
+    if (ball_intercept_maybe.has_value()) {
+        ballVelIntercept = ball_intercept_maybe.value();
+    } else {
+        ballVelIntercept = ball.query_stop_position() + deltaPos;
     }
 
     // Make sure targetRobotIntersection is inside the field
