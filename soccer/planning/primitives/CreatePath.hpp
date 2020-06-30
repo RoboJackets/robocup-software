@@ -2,7 +2,7 @@
 
 #include "planning/MotionConstraints.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/PathSmoothing.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
 
 namespace Planning::CreatePath {
 

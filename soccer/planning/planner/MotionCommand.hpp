@@ -24,12 +24,22 @@ struct LineKickCommand {
  */
 struct EmptyCommand {};
 
+struct TargetFaceTangent {};
+struct TargetFaceAngle {
+    double target;
+};
+struct TargetFacePoint {
+    Geometry2d::Point face_point;
+};
+
+using AngleOverride =
+    std::variant<TargetFaceTangent, TargetFaceAngle, TargetFacePoint>;
 /**
  * Move to a particular target with a particular velocity, avoiding obstacles.
  */
 struct PathTargetCommand {
     LinearMotionInstant goal;
-    std::optional<double> angle_override;
+    AngleOverride angle_override = TargetFaceTangent{};
 };
 
 /**

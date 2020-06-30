@@ -95,6 +95,13 @@ struct BallState {
         Geometry2d::Point* out = nullptr) const;
 
     /**
+     * @brief Predict the stop position of the ball.
+     *
+     * @return The point at which the ball will stop.
+     */
+    [[nodiscard]] Geometry2d::Point query_stop_position() const;
+
+    /**
      * @brief Query the time before the ball goes a certain distance. Return
      * nullopt if it will stop before traveling the specified distance.
      *

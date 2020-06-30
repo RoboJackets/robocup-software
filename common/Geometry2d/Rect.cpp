@@ -237,20 +237,30 @@ bool Rect::nearPoint(Point other, float threshold) const {
         return true;
     }
 
-    Point ur = Point(pt[1].x(), pt[0].y());
-    Point ll = Point(pt[0].x(), pt[1].y());
-    Segment edges[4] = {Segment(pt[0], ur), Segment(ur, pt[1]),
-                        Segment(pt[0], ll), Segment(ll, pt[1])};
+    // Calculate the bounds of this rectangle.
+    double min_x = std::min(pt[0].x(), pt[1].x());
+    double max_x = std::max(pt[0].x(), pt[1].x());
+    double min_y = std::min(pt[0].y(), pt[1].y());
+    double max_y = std::max(pt[0].y(), pt[1].y());
 
-    // If any edge of this rect is near the point, then the point is near the
-    // rect.
-    for (Segment& edge : edges) {
-        if (edge.nearPoint(other, threshold)) {
-            return true;
-        }
-    }
+    // Calculate the minimum distance to the rectangle in the x- and y-
+    // directions. Example:
+    //                                dx
+    //         |                  | ----- *
+    //         |                  |       | dy
+    // --------*------------------*--------
+    //         |                  |
+    //         |                  |
+    //         |                  |
+    // --------*------------------*--------
+    //         |                  |
+    //         |                  |
+    auto dx = std::max<double>({0.0, other.x() - max_x, min_x - other.x()});
+    auto dy = std::max<double>({0.0, other.y() - max_y, min_y - other.y()});
 
-    return false;
+    double distance_to_point = std::sqrt(dx * dx + dy * dy);
+
+    return distance_to_point < threshold;
 }
 
 }  // namespace Geometry2d

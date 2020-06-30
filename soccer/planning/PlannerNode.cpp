@@ -18,10 +18,12 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
 using namespace Geometry2d;
 void PlannerNode::run() {
     const ShapeSet& global_obstacles = context_->globalObstacles;
+    const ShapeSet& goal_zones = context_->goalZoneObstacles;
     const WorldState& world_state = context_->world_state;
     const auto& robot_intents = context_->robot_intents;
     DebugDrawer* debug_drawer = &context_->debug_drawer;
     auto* trajectories = &context_->trajectories;
+    int goalie_id = context_->game_state.getGoalieId();
 
     if (context_->game_state.state == GameState::Halt) {
         context_->trajectories.fill(Trajectory());
@@ -53,12 +55,23 @@ void PlannerNode::run() {
 
         RobotInstant start{robot.pose, robot.velocity, robot.timestamp};
 
+        ShapeSet local_obstacles = intent.local_obstacles;
+        if (goalie_id != shell) {
+            local_obstacles.add(goal_zones);
+        }
+
+        if (debug_drawer != nullptr) {
+            for (const auto& shape : local_obstacles.shapes()) {
+                debug_drawer->drawShape(shape, QColor(0, 0, 0, 16));
+            }
+        }
+
         // TODO(#1500): Put motion constraints in intent.
         PlanRequest request{start,
                             intent.motion_command,
                             RobotConstraints(),
                             global_obstacles,
-                            intent.local_obstacles,
+                            local_obstacles,
                             planned,
                             shell,
                             &world_state,

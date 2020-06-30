@@ -100,12 +100,13 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
 
         cursor.seek(start_time);
 
-        // Because we're assuming both the object and the robot are
-        // circles, checking collision is just a total radius.
+        // Inflate obstacles by our robot's radius.
         const double total_radius = obs.circle.radius() + Robot_Radius;
 
+        // Only use the trajectory cursor in the loop condition; we use the
+        // static position after the obstacle cursor runs off the end.
         for (auto cursor_obstacle = obs.path->cursor_begin();
-             cursor_obstacle.has_value() && cursor.has_value();
+             cursor.has_value();
              cursor_obstacle.advance(dt), cursor.advance(dt)) {
             // If the earlier calculated hit was before this point, stop looking
             // at this obstacle.
@@ -114,8 +115,13 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
                 break;
             }
 
-            Geometry2d::Point obstacle_position =
-                cursor_obstacle.value().position();
+            Geometry2d::Point obstacle_position;
+            if (cursor_obstacle.has_value()) {
+                obstacle_position = cursor_obstacle.value().position();
+            } else {
+                obstacle_position = obs.path->last().position();
+            }
+
             Geometry2d::Point robot_position = cursor.value().position();
 
             if (robot_position.distTo(obstacle_position) < total_radius) {

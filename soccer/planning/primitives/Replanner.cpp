@@ -5,9 +5,9 @@
 #include "RRTUtil.hpp"
 #include "planning/Instant.hpp"
 #include "planning/TrajectoryUtils.hpp"
-#include "planning/low_level/AnglePlanning.hpp"
-#include "planning/low_level/CreatePath.hpp"
 #include "planning/planner/Planner.hpp"
+#include "planning/primitives/AnglePlanning.hpp"
+#include "planning/primitives/CreatePath.hpp"
 
 using namespace Geometry2d;
 
@@ -19,6 +19,13 @@ ConfigDouble* Replanner::_partialReplanLeadTime;
 ConfigDouble* Replanner::_offPathErrorThreshold;
 
 REGISTER_CONFIGURABLE(Replanner);
+
+void applyHold(Trajectory* trajectory, std::optional<RJ::Seconds> hold_time) {
+    if (hold_time.has_value() && !trajectory->empty() &&
+        Twist::nearly_equals(trajectory->last().velocity, Twist::Zero())) {
+        trajectory->HoldFor(hold_time.value());
+    }
+}
 
 void Replanner::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
@@ -60,6 +67,8 @@ Trajectory Replanner::partialReplan(const PlanParams& params,
 
     combined.stamp(RJ::now());
 
+    applyHold(&combined, params.hold_time);
+
     return combined;
 }
 
@@ -83,6 +92,8 @@ Trajectory Replanner::fullReplan(const Replanner::PlanParams& params) {
         throw std::runtime_error("Path has invalid angles.");
     }
 
+    applyHold(&path, params.hold_time);
+
     return std::move(path);
 }
 
@@ -91,6 +102,7 @@ Trajectory Replanner::checkBetter(const Replanner::PlanParams& params,
     Trajectory newTrajectory = partialReplan(params, previous);
     if (!newTrajectory.empty() &&
         newTrajectory.end_time() < previous.end_time()) {
+        applyHold(&newTrajectory, params.hold_time);
         return std::move(newTrajectory);
     }
 

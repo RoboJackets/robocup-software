@@ -152,8 +152,8 @@ private:
     Geometry2d::TransformMatrix _oppMatrix;
 
     /// Obstacles to prevent using half the field
-    std::shared_ptr<Geometry2d::Polygon> _ourHalf;
-    std::shared_ptr<Geometry2d::Polygon> _opponentHalf;
+    std::shared_ptr<Geometry2d::Shape> _ourHalf;
+    std::shared_ptr<Geometry2d::Shape> _opponentHalf;
 
     std::shared_ptr<Geometry2d::Shape> _sideObstacle;
 
@@ -161,11 +161,11 @@ private:
     std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
 
     /// goal areas
-    std::shared_ptr<Geometry2d::CompositeShape> _ourGoalArea;
-    std::shared_ptr<Geometry2d::CompositeShape> _theirGoalArea;
+    std::shared_ptr<Geometry2d::Shape> _ourGoalArea;
+    std::shared_ptr<Geometry2d::Shape> _theirGoalArea;
 
-    std::shared_ptr<Geometry2d::Polygon> _ourGoal;
-    std::shared_ptr<Geometry2d::Polygon> _theirGoal;
+    std::shared_ptr<Geometry2d::Shape> _ourGoal;
+    std::shared_ptr<Geometry2d::Shape> _theirGoal;
 
     /// utility functions
 

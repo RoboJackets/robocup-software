@@ -6,10 +6,10 @@
 #include "math.h"
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
-#include "planning/low_level/PathSmoothing.hpp"
-#include "planning/low_level/RRTUtil.hpp"
-#include "planning/low_level/VelocityProfiling.hpp"
 #include "planning/planner/PathTargetPlanner.hpp"
+#include "planning/primitives/PathSmoothing.hpp"
+#include "planning/primitives/RRTUtil.hpp"
+#include "planning/primitives/VelocityProfiling.hpp"
 
 using namespace Planning;
 using namespace Geometry2d;
@@ -234,25 +234,3 @@ TEST(Trajectory, CombiningFail) {
     EXPECT_THROW((Trajectory{std::move(traj_1), traj_2}),
                  std::invalid_argument);
 }
-
-/*
- * Note:
- * These tests are for future use when we actually do angle profiling
- * For now, they fail
- */
-
-// TEST(Trajectory, PivotTurnEndpointsOnly) {
-//    double maxSpeed = RotationConstraints{}.maxSpeed;
-//    for(int i = 0; i < 1000; i++) {
-//        assertPivotEndpoints(random(-10 * M_PI, 10 * M_PI),
-//                             random(-10 * M_PI, 10 * M_PI),
-//                             random(-maxSpeed, maxSpeed));
-//    }
-//}
-// TEST(Trajectory, PivotTurn) {
-//    double maxSpeed = RotationConstraints{}.maxSpeed;
-//    for(int i = 0; i < 1000; i++) {
-//        assertPivot(random(-10*M_PI, 10*M_PI), random(-10*M_PI, 10*M_PI),
-//        random(-maxSpeed, maxSpeed));
-//    }
-//}
