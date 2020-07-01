@@ -3,7 +3,7 @@ name: Bug report
 about: Report a bug in soccer
 title: ''
 labels: type / bug, status / new, status / need-triage
-assignees: kylestach, tjones320
+assignees: kylestach, HussainGynai
 
 ---
 

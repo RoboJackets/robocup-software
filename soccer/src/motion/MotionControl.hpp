@@ -25,7 +25,7 @@ public:
      * This runs PID control on the position and angle of the robot and
      * sets values in the robot's radioTx packet.
      */
-    void run(const RobotState& state, const Trajectory::Trajectory& trajectory,
+    void run(const RobotState& state, const Planning::Trajectory& path,
              bool is_joystick_controlled, MotionSetpoint* setpoint);
 
     /**

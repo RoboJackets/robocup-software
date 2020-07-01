@@ -141,8 +141,6 @@ void Processor::run() {
             std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
         }
 
-        loopMutex()->lock();
-
         ////////////////
         // Inputs
         _sdl_joystick_node->run();
@@ -191,10 +189,8 @@ void Processor::run() {
 
         _grSimCom->run();
 
-        // Run all nodes in sequence
-        // TODO(Kyle): This is dead code for now. Once everything is ported over
-        // to modules we can delete the if (false), but for now we still have to
-        // update things manually.
+        // TODO(#1505): Run all modules in sequence using the vector. For now we
+        // still have to update things manually.
 
         ////////////////
         // Outputs
@@ -213,13 +209,15 @@ void Processor::run() {
         // Processor Initialization Completed
         _initialized = true;
 
-        // Log this entire frame
-        _logger->run();
+        {
+            loopMutex()->lock();
+            // Log this entire frame
+            _logger->run();
+            loopMutex()->unlock();
+        }
 
         ////////////////
         // Timing
-
-        loopMutex()->unlock();
 
         auto endTime = RJ::now();
         auto timeLapse = endTime - startTime;
