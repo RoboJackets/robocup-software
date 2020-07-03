@@ -1,4 +1,5 @@
 #include "CreatePath.hpp"
+#include <easy/profiler.h>
 
 #include "planning/TrajectoryUtils.hpp"
 #include "planning/primitives/RRTUtil.hpp"
@@ -32,6 +33,7 @@ Trajectory rrt(const LinearMotionInstant& start,
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
                const std::vector<Point>& biasWaypoints) {
+    EASY_BLOCK("CreatePath::rrt", profiler::colors::Green300)
     if (start.position.distTo(goal.position) < 1e-6) {
         return Trajectory{
             {RobotInstant{Pose(start.position, 0), Twist(), startTime}}};

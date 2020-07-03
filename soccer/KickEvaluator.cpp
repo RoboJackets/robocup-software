@@ -41,7 +41,6 @@ KickEvaluator::KickEvaluator(SystemState* systemState) : system(systemState) {}
 
 KickResults KickEvaluator::eval_pt_to_pt(Point origin, Point target,
                                          float targetWidth) {
-    EASY_BLOCK("KickEvaluator::eval_pt_to_seg", profiler::colors::Teal50)
     Point dir = (target - origin).perpCCW().normalized();
     Segment seg = Segment{target + dir * (targetWidth / 2),
                           target - dir * (targetWidth / 2)};
@@ -72,6 +71,7 @@ KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
 }
 
 KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
+    EASY_BLOCK("KickEvaluator::eval_pt_to_seg", profiler::colors::Teal50)
     Point center = target.center();
     float targetWidth = get_target_angle(origin, target);
 

@@ -229,6 +229,7 @@ Trajectory SettlePlanner::intercept(
     const Geometry2d::ShapeSet& staticObstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles,
     Geometry2d::Point deltaPos, Geometry2d::Point facePos) {
+    EASY_BLOCK("SettlePlanner::intercept", profiler::colors::Blue50)
     BallState ball = planRequest.world_state->ball;
 
     // Try find best point to intercept using brute force method
@@ -447,6 +448,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& planRequest,
                                  RobotInstant startInstant,
                                  Geometry2d::Point deltaPos,
                                  Geometry2d::Point facePos) {
+    EASY_BLOCK("SettlePlanner::dampen", profiler::colors::Red50)
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
