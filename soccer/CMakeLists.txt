@@ -63,6 +63,7 @@ if (NOT FOUND_A_BOOST_PYTHON)
     message(FATAL_ERROR "Unable to find a suitable version of boost python")
 endif ()
 
+find_package(easy_profiler REQUIRED)
 
 #======================================================================
 # QT build tool things
@@ -119,6 +120,7 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     Threads::Threads
     RRT
     spnav
+    easy_profiler
     ${SDL2_LIBRARIES}
     )
 

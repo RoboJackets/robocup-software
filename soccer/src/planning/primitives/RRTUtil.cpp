@@ -1,4 +1,5 @@
 #include "RRTUtil.hpp"
+#include <easy/profiler.h>
 
 #include <array>
 #include <rrt/planning/Path.hpp>
@@ -81,6 +82,7 @@ void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
 
 vector<Point> runRRTHelper(Point start, Point goal, const ShapeSet& obstacles,
                            const vector<Point>& waypoints, bool straightLine) {
+    EASY_BLOCK("runRRTHelper", profiler::colors::DeepOrange)
     auto state_space = std::make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);

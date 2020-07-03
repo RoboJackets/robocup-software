@@ -1,4 +1,5 @@
 #include "planning/planner/PathTargetPlanner.hpp"
+#include <easy/profiler.h>
 
 #include <utility>
 
@@ -12,6 +13,7 @@ using namespace Geometry2d;
 namespace Planning {
 
 Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
+    EASY_BLOCK("PathTargetPlanner", profiler::colors::Cyan)
     // Collect obstacles
     Geometry2d::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;

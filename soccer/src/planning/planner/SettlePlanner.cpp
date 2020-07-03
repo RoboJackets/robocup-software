@@ -1,4 +1,5 @@
 #include "SettlePlanner.hpp"
+#include <easy/profiler.h>
 
 #include <rj_constants/constants.hpp>
 #include <rj_common/Utils.hpp>
@@ -67,6 +68,7 @@ void SettlePlanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory SettlePlanner::plan(const PlanRequest& planRequest) {
+    EASY_BLOCK("SettlePlanner", profiler::colors::Cyan)
     BallState ball = planRequest.world_state->ball;
 
     const RJ::Time curTime = planRequest.start.stamp;
@@ -227,6 +229,7 @@ Trajectory SettlePlanner::intercept(
     const Geometry2d::ShapeSet& staticObstacles,
     const std::vector<DynamicObstacle>& dynamicObstacles,
     Geometry2d::Point deltaPos, Geometry2d::Point facePos) {
+    EASY_BLOCK("SettlePlanner::intercept", profiler::colors::Blue50)
     BallState ball = planRequest.world_state->ball;
 
     // Try find best point to intercept using brute force method
@@ -445,6 +448,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& planRequest,
                                  RobotInstant startInstant,
                                  Geometry2d::Point deltaPos,
                                  Geometry2d::Point facePos) {
+    EASY_BLOCK("SettlePlanner::dampen", profiler::colors::Red50)
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball

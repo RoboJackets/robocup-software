@@ -1,4 +1,5 @@
 #include "TrajectoryUtils.hpp"
+#include <easy/profiler.h>
 
 #include <rj_constants/constants.hpp>
 
@@ -62,6 +63,7 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
                            RJ::Time start_time,
                            Geometry2d::Circle* out_hit_obstacle,
                            RJ::Time* out_hit_time) {
+    EASY_BLOCK("TrajectoryHitsDynamic", profiler::colors::Purple300)
     if (trajectory.empty()) {
         return false;
     }

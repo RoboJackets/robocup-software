@@ -1,5 +1,6 @@
 #include "Processor.hpp"
 
+#include <easy/profiler.h>
 #include <rj_protos/messages_robocup_ssl_detection.pb.h>
 
 #include <Geometry2d/Util.hpp>
@@ -95,6 +96,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
     _nodes.push_back(_logger.get());
+
+    profiler::startListen();
 }
 
 Processor::~Processor() {
@@ -126,6 +129,7 @@ void Processor::run() {
     bool first = true;
     // main loop
     while (_running) {
+        EASY_BLOCK("Processor::run loop", profiler::colors::Red)
         RJ::Time startTime = RJ::now();
         auto deltaTime = startTime - curStatus.lastLoopTime;
         _framerate = RJ::Seconds(1) / deltaTime;
@@ -164,14 +168,20 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        _vision->run();
-        curStatus.lastVisionTime = _vision->GetLastVisionTime();
+        {
+            EASY_BLOCK("vision", profiler::colors::Yellow)
+            _vision->run();
+            curStatus.lastVisionTime = _vision->GetLastVisionTime();
+        }
 
         // Log referee data
         _refereeModule->run();
 
-        // Run high-level soccer logic
-        _gameplayModule->run();
+        {
+            // Run high-level soccer logic
+            EASY_BLOCK("gameplay", profiler::colors::Orange)
+            _gameplayModule->run();
+        }
 
         // recalculates Field obstacles on every run through to account for
         // changing inset
@@ -179,13 +189,19 @@ void Processor::run() {
             _gameplayModule->calculateFieldObstacles();
         }
 
-        // In: Global Obstacles
-        // Out: context_->trajectories
-        _planner_node->run();
+        {
+            EASY_BLOCK("planner", profiler::colors::LightBlue)
+            // In: Global Obstacles
+            // Out: context_->trajectories
+            _planner_node->run();
+        }
 
-        // In: context_->trajectories
-        // Out: context_->motion_setpoints
-        _motionControl->run();
+        {
+            EASY_BLOCK("motion control")
+            // In: context_->trajectories
+            // Out: context_->motion_setpoints
+            _motionControl->run();
+        }
 
         _grSimCom->run();
 
@@ -210,6 +226,7 @@ void Processor::run() {
         _initialized = true;
 
         {
+            EASY_BLOCK("loopMutex")
             loopMutex()->lock();
             // Log this entire frame
             _logger->run();
@@ -222,6 +239,7 @@ void Processor::run() {
         auto endTime = RJ::now();
         auto timeLapse = endTime - startTime;
         if (timeLapse < _framePeriod) {
+            EASY_BLOCK("usleep at end", profiler::colors::Green)
             ::usleep(RJ::numMicroseconds(_framePeriod - timeLapse));
         } else {
             //   printf("Processor took too long: %d us\n", lastFrameTime);

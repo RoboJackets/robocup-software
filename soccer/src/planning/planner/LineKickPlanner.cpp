@@ -1,4 +1,5 @@
 #include "LineKickPlanner.hpp"
+#include <easy/profiler.h>
 
 #include <Configuration.hpp>
 #include <Geometry2d/Util.hpp>
@@ -14,6 +15,7 @@ using namespace Geometry2d;
 namespace Planning {
 
 Trajectory LineKickPlanner::plan(const PlanRequest& planRequest) {
+    EASY_BLOCK("LineKickPlanner", profiler::colors::Cyan)
     const float ApproachSpeed = 0.25;
 
     const float ballAvoidDistance = 0.05;

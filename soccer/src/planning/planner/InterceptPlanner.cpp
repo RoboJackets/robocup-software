@@ -1,4 +1,5 @@
 #include "InterceptPlanner.hpp"
+#include <easy/profiler.h>
 
 #include <rj_constants/constants.hpp>
 
@@ -12,6 +13,7 @@
 namespace Planning {
 
 Trajectory InterceptPlanner::plan(const PlanRequest& planRequest) {
+    EASY_BLOCK("InterceptPlanner", profiler::colors::Cyan)
     InterceptCommand command =
         std::get<InterceptCommand>(planRequest.motionCommand);
 

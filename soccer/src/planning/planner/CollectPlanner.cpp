@@ -1,4 +1,5 @@
 #include "CollectPlanner.hpp"
+#include <easy/profiler.h>
 
 #include <rj_constants/constants.hpp>
 #include <rj_common/Utils.hpp>
@@ -63,6 +64,7 @@ void CollectPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory CollectPlanner::plan(const PlanRequest& planRequest) {
+    EASY_BLOCK("CollectPlanner", profiler::colors::Cyan)
     BallState ball = planRequest.world_state->ball;
 
     const RJ::Time curTime = planRequest.start.stamp;

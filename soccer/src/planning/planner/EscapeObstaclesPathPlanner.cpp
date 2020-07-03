@@ -1,4 +1,5 @@
 #include "EscapeObstaclesPathPlanner.hpp"
+#include <easy/profiler.h>
 
 #include <Configuration.hpp>
 #include <optional>
@@ -26,6 +27,7 @@ void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
+    EASY_BLOCK("EscapeObstaclesPathPlanner", profiler::colors::Cyan)
     const RobotInstant& startInstant = planRequest.start;
     const auto& motionConstraints = planRequest.constraints.mot;
 

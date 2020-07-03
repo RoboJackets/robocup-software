@@ -1,4 +1,5 @@
 #include "KickEvaluator.hpp"
+#include <easy/profiler.h>
 
 #include <Geometry2d/Util.hpp>
 #include <algorithm>
@@ -70,6 +71,7 @@ KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
 }
 
 KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
+    EASY_BLOCK("KickEvaluator::eval_pt_to_seg", profiler::colors::Teal50)
     Point center = target.center();
     float targetWidth = get_target_angle(origin, target);
 
