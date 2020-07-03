@@ -1,4 +1,5 @@
 #include "PivotPathPlanner.hpp"
+#include <easy/profiler.h>
 
 #include <Constants.hpp>
 #include <Geometry2d/Pose.hpp>
@@ -29,6 +30,7 @@ void PivotPathPlanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
+    EASY_BLOCK("PivotPathPlanner", profiler::colors::Cyan)
     const RobotInstant& start_instant = request.start;
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;

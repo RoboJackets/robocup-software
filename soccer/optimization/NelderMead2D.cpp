@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+#include <easy/profiler.h>
+
 NelderMead2D::NelderMead2D(NelderMead2DConfig& config)
     : config(config), iterationCount(0) {
     // Creates starting points at [start], [start] + [-x, y], [start] + [x, y]
@@ -87,6 +89,7 @@ bool NelderMead2D::singleStep() {
  * Executes the full optimization algorithm
  */
 void NelderMead2D::execute() {
+    EASY_BLOCK("NelderMead2D::execute", profiler::colors::RedA400)
     while (continueExecution()) {
         singleStep();
     }

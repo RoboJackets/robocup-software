@@ -1,4 +1,5 @@
 #include "KickEvaluator.hpp"
+#include <easy/profiler.h>
 
 #include <Geometry2d/Util.hpp>
 #include <Utils.hpp>
@@ -40,6 +41,7 @@ KickEvaluator::KickEvaluator(SystemState* systemState) : system(systemState) {}
 
 KickResults KickEvaluator::eval_pt_to_pt(Point origin, Point target,
                                          float targetWidth) {
+    EASY_BLOCK("KickEvaluator::eval_pt_to_seg", profiler::colors::Teal50)
     Point dir = (target - origin).perpCCW().normalized();
     Segment seg = Segment{target + dir * (targetWidth / 2),
                           target - dir * (targetWidth / 2)};

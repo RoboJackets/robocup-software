@@ -1,4 +1,5 @@
 #include "SettlePlanner.hpp"
+#include <easy/profiler.h>
 
 #include <Configuration.hpp>
 #include <Constants.hpp>
@@ -67,6 +68,7 @@ void SettlePlanner::createConfiguration(Configuration* cfg) {
 }
 
 Trajectory SettlePlanner::plan(const PlanRequest& planRequest) {
+    EASY_BLOCK("SettlePlanner", profiler::colors::Cyan)
     BallState ball = planRequest.world_state->ball;
 
     const RJ::Time curTime = planRequest.start.stamp;

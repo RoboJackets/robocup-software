@@ -169,6 +169,9 @@ include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 link_directories(${PYTHON_LINK_DIRS})
 target_link_libraries(robocup ${PYTHON_LIBRARIES})
 
+find_package(easy_profiler REQUIRED)
+target_link_libraries(robocup easy_profiler)
+
 # 'soccer' program
 if(APPLE)
     include(BundleUtilities)

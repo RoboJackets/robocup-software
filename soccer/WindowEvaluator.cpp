@@ -1,4 +1,5 @@
 #include "WindowEvaluator.hpp"
+#include <easy/profiler.h>
 
 #include <Geometry2d/Util.hpp>
 #include <algorithm>
@@ -137,6 +138,7 @@ void WindowEvaluator::obstacle_robot(std::vector<Window>& windows, Point origin,
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
+    EASY_BLOCK("WindowEvaluator::eval_pt_to_seg", profiler::colors::Pink)
     auto end = target.delta().magsq();
 
     // if target is a zero-length segment, there are no windows

@@ -1,5 +1,7 @@
 #include "Processor.hpp"
 
+#include <easy/arbitrary_value.h>
+#include <easy/profiler.h>
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 
 #include <Constants.hpp>
@@ -93,6 +95,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _nodes.push_back(_motionControl.get());
     _nodes.push_back(_grSimCom.get());
     _nodes.push_back(_logger.get());
+
+    profiler::startListen();
 }
 
 Processor::~Processor() {
@@ -179,6 +183,7 @@ void Processor::run() {
     bool first = true;
     // main loop
     while (_running) {
+        EASY_BLOCK("Processor::run loop", profiler::colors::Red)
         RJ::Time startTime = RJ::now();
         auto deltaTime = startTime - curStatus.lastLoopTime;
         _framerate = RJ::Seconds(1) / deltaTime;
@@ -201,10 +206,10 @@ void Processor::run() {
 
         updateOrientation();
 
-        // TODO(Kyle): Don't do this here.
-        // Because not everything is on modules yet, but we still need things to
-        // run in order, we can't just do everything via the for loop (yet).
-        _visionReceiver->run();
+        {
+            EASY_BLOCK("visionReceiver")
+            _visionReceiver->run();
+        }
 
         if (_context.field_dimensions != *currentDimensions) {
             std::cout << "Updating field geometry based off of vision packet."
@@ -220,15 +225,20 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        runModels();
+        {
+            EASY_BLOCK("runModels", profiler::colors::Blue)
+            runModels();
+        }
 
         _context.vision_packets.clear();
-
         // Log referee data
         _refereeModule->run();
 
-        // Run high-level soccer logic
-        _gameplayModule->run();
+        {
+            EASY_BLOCK("gameplay", profiler::colors::Orange)
+            // Run high-level soccer logic
+            _gameplayModule->run();
+        }
 
         // recalculates Field obstacles on every run through to account for
         // changing inset
@@ -236,13 +246,19 @@ void Processor::run() {
             _gameplayModule->calculateFieldObstacles();
         }
 
-        // In: Global Obstacles
-        // Out: context_->trajectories
-        _planner_node->run();
+        {
+            EASY_BLOCK("planner", profiler::colors::LightBlue)
+            // In: Global Obstacles
+            // Out: context_->trajectories
+            _planner_node->run();
+        }
 
-        // In: context_->trajectories
-        // Out: context_->motion_setpoints
-        _motionControl->run();
+        {
+            EASY_BLOCK("motion control")
+            // In: context_->trajectories
+            // Out: context_->motion_setpoints
+            _motionControl->run();
+        }
 
         _grSimCom->run();
 
@@ -258,15 +274,19 @@ void Processor::run() {
         updateIntentActive();
         _manual_control_node->run();
 
-        // Store processing loop status
-        _statusMutex.lock();
-        _status = curStatus;
-        _statusMutex.unlock();
+        {
+            EASY_BLOCK("_statusMutex")
+            // Store processing loop status
+            _statusMutex.lock();
+            _status = curStatus;
+            _statusMutex.unlock();
+        }
 
         // Processor Initialization Completed
         _initialized = true;
 
         {
+            EASY_BLOCK("loopMutex")
             loopMutex()->lock();
             // Log this entire frame
             _logger->run();
@@ -278,7 +298,9 @@ void Processor::run() {
 
         auto endTime = RJ::now();
         auto timeLapse = endTime - startTime;
+        EASY_VALUE("timeLapse", RJ::numMicroseconds(timeLapse));
         if (timeLapse < _framePeriod) {
+            EASY_BLOCK("usleep at end", profiler::colors::Green)
             ::usleep(RJ::numMicroseconds(_framePeriod - timeLapse));
         } else {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
