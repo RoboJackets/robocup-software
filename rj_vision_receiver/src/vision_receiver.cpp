@@ -122,9 +122,11 @@ DetectionFrameMsg VisionReceiver::ConstructROSMsg(
     const SSL_DetectionFrame& frame, const rclcpp::Time& received_time) const {
     DetectionFrameMsg msg{};
 
-    msg.t_sent = ToROSTime(frame.t_sent());
+    msg.frame_number = frame.frame_number();
     msg.t_capture = ToROSTime(frame.t_capture());
+    msg.t_sent = ToROSTime(frame.t_sent());
     msg.t_received = received_time;
+    msg.camera_id = frame.camera_id();
 
     const bool defend_plus_x = config_.gameSettings().defend_plus_x;
 
