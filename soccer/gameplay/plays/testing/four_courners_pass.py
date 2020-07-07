@@ -81,7 +81,7 @@ class FourCornerPass(play.Play):
         # speed of the hunting robots
         #TODO Create python pull from Config values. Currently this breaks the world.
         #tmp = robocup.Configuration.FromRegisteredConfigurables().nameLookup("MotionConstraints/Max Velocity").value
-        self.normal_speed = 1.0  #tmp 
+        self.normal_speed = 1.0  #tmp
         # speed of the defending robots can decrease value to make it easier for offense
         self.defense_speed = self.normal_speed * 2 / 3  #self.normal_speed/2.0
 
@@ -197,7 +197,7 @@ class FourCornerPass(play.Play):
             self.add_subbehavior(
                 self.chaser, 'chasing', required=True, priority=2)
 
-    # remove subbehaviors 
+    # remove subbehaviors
     def on_exit_passing(self):
         self.remove_subbehavior('passer')
         self.remove_subbehavior('chasing')

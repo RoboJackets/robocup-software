@@ -149,8 +149,8 @@ private:
 
     // How much extra room should we stay at the delta speed before slowing down
     // This is really a percent of the minimum stop distance to fully stop given
-    // the current velocity This should be tuned such that we don't drive too far
-    // through the ball A number of 1 should mean a constant acceleration
+    // the current velocity This should be tuned such that we don't drive too
+    // far through the ball A number of 1 should mean a constant acceleration
     // through the entire sequence Increasing this number makes the robot state
     // at delta velocity longer
     static ConfigDouble* _stopDistScale;  // %

@@ -94,7 +94,8 @@ class BasicOffensiveIndirect(standard_play.StandardPlay):
     # One is a farther position that will be chipped to
     # The other is closer and will be lineckicked to
     def calc_pass_point(
-        self):  # Determines the position of the receivers and where to pass
+            self
+    ):  # Determines the position of the receivers and where to pass
         ball = main.ball().pos  # position of ball
         self.num = random.randint(
             0, 1)  # a random int to choose which receiver to pass to

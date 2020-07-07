@@ -68,9 +68,8 @@ def get_segments_from_rect(rect: robocup.Rect,
             currentx, currenty)):
             currenty = currenty - threshold
 
-        candidate = robocup.Segment(
-            robocup.Point(currentx, rect.min_y()), robocup.Point(currentx,
-                                                                 currenty))
+        candidate = robocup.Segment(robocup.Point(currentx, rect.min_y()),
+                                    robocup.Point(currentx, currenty))
         outlist.extend([candidate])
         currentx = currentx + threshold
     currentx = rect.min_x()
