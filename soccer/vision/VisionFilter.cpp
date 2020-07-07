@@ -28,33 +28,31 @@ void VisionFilter::addFrames(const std::vector<CameraFrame>& frames) {
     frameBuffer.insert(frameBuffer.end(), frames.begin(), frames.end());
 }
 
-void VisionFilter::fillBallState(SystemState& state) {
+void VisionFilter::fillBallState(WorldState* state) {
     std::lock_guard<std::mutex> lock(worldLock);
     const WorldBall& wb = world.getWorldBall();
 
     if (wb.getIsValid()) {
-        state.ball.valid = true;
-        state.ball.pos = wb.getPos();
-        state.ball.vel = wb.getVel();
-        state.ball.time = wb.getTime();
+        state->ball.visible = true;
+        state->ball.position = wb.getPos();
+        state->ball.velocity = wb.getVel();
+        state->ball.timestamp = wb.getTime();
     } else {
-        state.ball.valid = false;
+        state->ball.visible = false;
     }
 }
 
-void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
+void VisionFilter::fillRobotState(WorldState* state, bool usBlue) {
     std::lock_guard<std::mutex> lock(worldLock);
     const auto& ourWorldRobot = usBlue ? world.getRobotsBlue() : world.getRobotsYellow();
     const auto& oppWorldRobot = usBlue ? world.getRobotsYellow() : world.getRobotsBlue();
 
     // Fill our robots
     for (int i = 0; i < Num_Shells; i++) {
-        OurRobot* robot = state.self.at(i);
         const WorldRobot& wr = ourWorldRobot.at(i);
 
         RobotState robot_state;
         robot_state.visible = wr.getIsValid();
-        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
@@ -63,17 +61,15 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
             robot_state.timestamp = wr.getTime();
         }
 
-        robot->mutable_state() = robot_state;
+        state->our_robots.at(i) = robot_state;
     }
 
     // Fill opp robots
     for (int i = 0; i < Num_Shells; i++) {
-        OpponentRobot* robot = state.opp.at(i);
         const WorldRobot& wr = oppWorldRobot.at(i);
 
         RobotState robot_state;
         robot_state.visible = wr.getIsValid();
-        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
@@ -82,7 +78,7 @@ void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
             robot_state.timestamp = wr.getTime();
         }
 
-        robot->mutable_state() = robot_state;
+        state->their_robots.at(i) = robot_state;
     }
 }
 

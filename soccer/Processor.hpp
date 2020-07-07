@@ -16,6 +16,7 @@
 #include <optional>
 #include <vector>
 
+#include "Context.hpp"
 #include "GrSimCommunicator.hpp"
 #include "Node.hpp"
 #include "VisionReceiver.hpp"

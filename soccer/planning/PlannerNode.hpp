@@ -1,40 +1,35 @@
 #pragma once
 
 #include <Context.hpp>
-#include <Node.hpp>
-#include <planning/PlanRequest.hpp>
-#include <planning/planners/MultiRobotPathPlanner.hpp>
+#include <vector>
+
+#include "Node.hpp"
+#include "Trajectory.hpp"
+#include "planner/PlanRequest.hpp"
+#include "planner/Planner.hpp"
 
 namespace Planning {
 
-struct GlobalObstacles {
-    Geometry2d::ShapeSet global_obstacles;
-    Geometry2d::ShapeSet goal_zones;
-    Geometry2d::ShapeSet global_obstacles_with_goal_zones;
+class PlannerForRobot {
+public:
+    PlannerForRobot();
+
+    Trajectory PlanForRobot(const Planning::PlanRequest& request);
+
+private:
+    std::vector<std::unique_ptr<Planner>> planners_;
 };
 
-/**
- * \brief Node that is responsible for running all the planners.
- *
- * Input: Global obstacles, Robot Intents, World State
- * Output: context_->trajectories
- */
 class PlannerNode : public Node {
 public:
     PlannerNode(Context* context);
 
-    /**
-     * \brief Collects global obstacles, builds plan request per robot, runs
-     * the planner, builds a Trajectory and sets context_->trajectories
-     */
     void run() override;
 
 private:
     Context* context_;
-    std::unique_ptr<Planning::MultiRobotPathPlanner> path_planner_;
 
-    GlobalObstacles getGlobalObstacles();
-    std::map<int, Planning::PlanRequest> buildPlanRequests(
-        const GlobalObstacles& global_obstacles);
+    std::vector<PlannerForRobot> robots_planners_;
 };
+
 }  // namespace Planning

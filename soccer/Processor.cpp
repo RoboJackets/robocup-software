@@ -165,8 +165,9 @@ void Processor::runModels() {
 
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
-    _vision->fillBallState(_context.state);
-    _vision->fillRobotState(_context.state, _context.game_state.blueTeam);
+    _vision->fillBallState(&_context.world_state);
+    _vision->fillRobotState(&_context.world_state,
+                            _context.game_state.blueTeam);
 }
 
 /**
@@ -192,8 +193,6 @@ void Processor::run() {
                 _context.logs.state == Logs::State::kReading)) {
             std::this_thread::sleep_for(RJ::Seconds(1.0 / 60.0));
         }
-
-        loopMutex()->lock();
 
         ////////////////
         // Inputs
@@ -247,10 +246,8 @@ void Processor::run() {
 
         _grSimCom->run();
 
-        // Run all nodes in sequence
-        // TODO(Kyle): This is dead code for now. Once everything is ported over
-        // to modules we can delete the if (false), but for now we still have to
-        // update things manually.
+        // TODO(#1505): Run all modules in sequence using the vector. For now we
+        // still have to update things manually.
 
         ////////////////
         // Outputs
@@ -269,13 +266,15 @@ void Processor::run() {
         // Processor Initialization Completed
         _initialized = true;
 
-        // Log this entire frame
-        _logger->run();
+        {
+            loopMutex()->lock();
+            // Log this entire frame
+            _logger->run();
+            loopMutex()->unlock();
+        }
 
         ////////////////
         // Timing
-
-        loopMutex()->unlock();
 
         auto endTime = RJ::now();
         auto timeLapse = endTime - startTime;
