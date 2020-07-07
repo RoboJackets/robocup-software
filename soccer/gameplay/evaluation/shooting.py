@@ -43,18 +43,18 @@ def find_gap(
     max_angle = max_shooting_angle * constants.DegreesToRadians
 
     # How much left and right of a robot to give
-    # Dont make this too big or it will always go far to the right or left of the robots
+    # Don't make this too big or it will always go far to the right or left of the robots
     robot_angle_offset = robot_offset * constants.DegreesToRadians
 
     zero_point = robocup.Point(0, 0)
 
-    # Limit the angle so as we get closer, we dont miss the goal completely as much
+    # Limit the angle so as we get closer, we don't miss the goal completely as much
     goal_vector = target_pos - main.ball().pos
     max_length_vector = robocup.Point(constants.Field.Length,
                                       constants.Field.Width)
     goal_limit = (goal_vector.mag() / max_length_vector.mag()) * max_angle
 
-    # Limit on one side so we dont directly kick out of bounds
+    # Limit on one side so we don't directly kick out of bounds
     # Add in the angle from the sideline to the target
     field_limit = (1 - abs(main.ball().pos.x) /
                    (constants.Field.Width / 2)) * max_angle

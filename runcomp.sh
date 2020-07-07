@@ -6,7 +6,7 @@ if ! command -v git >/dev/null; then
 fi
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then
-    echo "HEAD IS DETATCHED AT COMMIT: $(git rev-parse HEAD)"
+    echo "HEAD IS DETACHED AT COMMIT: $(git rev-parse HEAD)"
 elif ! git rev-parse --abbrev-ref HEAD | grep -q comp; then
     echo "YOUR BRANCH DOES NOT CONTAIN COMP. PLEASE RECONSIDER OR COMMENT ME OUT." >&2
     exit 1

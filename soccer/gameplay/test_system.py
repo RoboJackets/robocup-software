@@ -127,6 +127,6 @@ class TestSystem:
                 else:
                     plays.append(play.split('/'))
 
-        #Currently duplicates are allowed and it dosen't seem to cause any problems
+        #Currently duplicates are allowed and it doesn't seem to cause any problems
 
         return plays

@@ -133,7 +133,7 @@ def robot_has_ball(robot: robocup.Robot) -> bool:
                           (B.x - A.x) * D.y)
 
     # Due to the new camera configuration in the 2019 year,
-    # the ball dissapears consistently when we go to capture a ball near the
+    # the ball disappears consistently when we go to capture a ball near the
     # edge of the field. This causes the ball to "appear" inside the robot
     # so we should assume that if the ball is inside, we probably have
     # the ball

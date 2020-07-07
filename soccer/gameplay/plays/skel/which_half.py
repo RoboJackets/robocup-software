@@ -17,7 +17,7 @@ import main
 
 # Maintains the state of the ball's position by keeping track of which
 # half the ball is on and prints on both entering a given state and
-# continously during the execution of a given state.
+# continuously during the execution of a given state.
 class WhichHalf(play.Play):
     class State(enum.Enum):
         # Define your states here.

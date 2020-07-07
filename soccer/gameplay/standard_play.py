@@ -39,7 +39,7 @@ class StandardPlay(play.Play):
     ##
     # Call to attempt to preempt the play
     # Returns true if the preempt is successful
-    # Override if you want more complex responce to being preempted
+    # Override if you want more complex response to being preempted
     def try_preempt(self) -> bool:
         self.terminate()
         return True

@@ -68,10 +68,9 @@ def get_segments_from_rect(rect: robocup.Rect,
             currentx, currenty)):
             currenty = currenty - threshold
 
-        candiate = robocup.Segment(
-            robocup.Point(currentx, rect.min_y()), robocup.Point(currentx,
-                                                                 currenty))
-        outlist.extend([candiate])
+        candidate = robocup.Segment(robocup.Point(currentx, rect.min_y()),
+                                    robocup.Point(currentx, currenty))
+        outlist.extend([candidate])
         currentx = currentx + threshold
     currentx = rect.min_x()
     return outlist
@@ -94,7 +93,7 @@ def eval_single_point(
 
     currentChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                                  ignore_robots)
-    # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
+    # TODO don't only aim for center of goal. Waiting on window_evaluator returning a probability.
     if targetPoint is None:
         targetPoint = constants.Field.TheirGoalSegment.center()
     currentChance = currentChance * evaluation.passing.eval_pass(
@@ -139,7 +138,7 @@ def eval_best_receive_point(
         if best is None: continue
 
         currentChance = best.shot_success
-        # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
+        # TODO don't only aim for center of goal. Waiting on window_evaluator returning a probability.
         receivePt = best.segment.center()
 
         _, best = win_eval.eval_pt_to_seg(receivePt, targetSeg)

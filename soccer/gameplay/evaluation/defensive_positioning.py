@@ -195,7 +195,7 @@ def estimate_risk_score(pos: robocup.Point,
     space_coeff = evaluation.field.space_coeff_at_pos(pos, ignore_robots,
                                                       main.our_robots())
 
-    # Delta angle between pass recieve and shot
+    # Delta angle between pass receive and shot
     delta_angle = ball_pos_vec.angle() - (shot_pt - pos).angle()
     delta_angle = math.atan2(math.sin(delta_angle), math.cos(delta_angle))
     angle_coeff = math.fabs(delta_angle) / math.pi

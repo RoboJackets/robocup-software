@@ -43,7 +43,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # Since there is no definition of which direction a robot is facing
         # We cannot figure out if the ball is directly behind us or in it's mouth
         # We can restart the collect and it'll try it again
-        # Only restart when the ball is close, both are stopped, and we dont have the ball in the mouth
+        # Only restart when the ball is close, both are stopped, and we don't have the ball in the mouth
         self.add_transition(
             behavior.Behavior.State.running,
             behavior.Behavior.State.start, lambda: self.is_bot_ball_stopped(

@@ -7,7 +7,7 @@
 
 /**
  * Nelder-Mead in 2 Dimensions
- * Works for all functions that are continous
+ * Works for all functions that are continuous
  * Finds local / global max depending on size of the simplex
  * Can be extended to work in N dimensions
  *
@@ -27,7 +27,7 @@ public:
      *
      * @note This is most ikely not the function you are looking for to find
      *       the max. This is used when you want to split the optimization
-     *       accross multiple time steps
+     *       across multiple time steps
      */
     bool singleStep();
 

@@ -23,8 +23,8 @@ class BasicDefensiveKick(standard_play.StandardPlay):
     ] # yapf: disable
 
     class State(enum.Enum):
-        move = 1  # Move recievers to proper postions
-        kick = 2  # Kick the ball to one of the recievers
+        move = 1  # Move receivers to proper postions
+        kick = 2  # Kick the ball to one of the receivers
 
     def __init__(self, indirect=None):
         super().__init__(continuous=True)

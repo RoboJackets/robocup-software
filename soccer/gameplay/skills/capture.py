@@ -87,9 +87,9 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # We actually don't have the ball, either 50% register rate (faulty sensor?) or we just got a blip
         self.add_transition(
-            Capture.State.captured, Capture.State.settle, lambda: self.
-            probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF or self.
-            frames_in_captured > Capture.MAX_FRAMES_IN_CAPTURED,
+            Capture.State.captured, Capture.State.settle,
+            lambda: self.probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF
+            or self.frames_in_captured > Capture.MAX_FRAMES_IN_CAPTURED,
             'actually dont have ball')
 
         # Actually do have the ball, we can just leave

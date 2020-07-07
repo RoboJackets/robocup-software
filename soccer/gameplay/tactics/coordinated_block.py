@@ -127,7 +127,7 @@ class CoordinatedBlock(composite_behavior.CompositeBehavior):
                                      key=lambda rcrv_tuple: rcrv_tuple[1])
                     threats.append((best_tuple[0], .81, best_tuple[2]))
                 else:
-                    # Just deal with ball if no recievers
+                    # Just deal with ball if no receivers
                     threats.append((main.ball().pos, .9, None))
         else:
             # Assume opp is dribbling ball
@@ -190,7 +190,7 @@ class CoordinatedBlock(composite_behavior.CompositeBehavior):
 
         return passChance * shotChance
 
-    ## Estimate potential reciever score based on old defense.py play
+    ## Estimate potential receiver score based on old defense.py play
     #  @param bot Robot to estimate score at
     #  @return The potential receiver score at that point
     def estimate_potential_recievers_score(self, bot):

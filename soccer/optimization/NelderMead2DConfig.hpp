@@ -12,7 +12,7 @@ public:
      * @param start starting point of the simplex (Triangle in 2D Case)
      * @param step starting step magnitudes in X, Y directions
      * @param minDist minimum distance of bounding box before exit
-     * @param reflectionCoeff perecent to reflect by in the oposite direction
+     * @param reflectionCoeff perecent to reflect by in the opposite direction
      *           Must be greater than 0
      * @param expansionCoeff percent to extend single point by
      *           Must be greater than 1

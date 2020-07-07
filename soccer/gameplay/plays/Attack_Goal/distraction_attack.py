@@ -93,7 +93,7 @@ class Distraction(standard_play.StandardPlay):
             self.subbehavior_with_name('capture').is_done_running(),
             'striker get ball')
 
-        #If the ball is far away, then go from capturing the ball to getting robots set up to recieve a closer pass
+        #If the ball is far away, then go from capturing the ball to getting robots set up to receive a closer pass
         self.add_transition(
             behavior.Behavior.State.start,
             Distraction.State.optional_adjustment, lambda: self.ball_is_far,
@@ -104,7 +104,7 @@ class Distraction(standard_play.StandardPlay):
             Distraction.State.setup, Distraction.State.passing, lambda: self.
             subbehavior_with_name('capture').is_done_running(), 'pass')
 
-        #If the chance to pass and score with the striker is higher than passing to the Distraction recieve pass position
+        #If the chance to pass and score with the striker is higher than passing to the Distraction receive pass position
         self.add_transition(
             Distraction.State.setup,
             Distraction.State.cross, lambda: self.distracter_get_close_ball and

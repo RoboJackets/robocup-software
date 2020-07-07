@@ -31,7 +31,7 @@ class OurShootoutChip(play.Play):
         dribbling = 1
         # chip into goal
         chipping = 2
-        # intead shoot into goal
+        # instead shoot into goal
         shooting = 3
         # if still viable recapture the ball
         capture = 4
