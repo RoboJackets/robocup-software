@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Geometry2d/Pose.hpp>
-#include <rj_common/time.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_common/time.hpp>
 
 #include "DebugDrawer.hpp"
 #include "Instant.hpp"

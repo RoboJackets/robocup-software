@@ -3,8 +3,8 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <optional>
-#include <rj_common/time.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_common/time.hpp>
 
 #include "DebugDrawer.hpp"
 #include "planning/DynamicObstacle.hpp"

@@ -1,8 +1,8 @@
 #pragma once
 #include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
-#include <rrt/BiRRT.hpp>
 #include <rj_common/Field_Dimensions.hpp>
+#include <rrt/BiRRT.hpp>
 
 #include "Configuration.hpp"
 #include "RoboCupStateSpace.hpp"

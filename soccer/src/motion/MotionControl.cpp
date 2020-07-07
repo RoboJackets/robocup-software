@@ -6,6 +6,7 @@
 #include <RobotConfig.hpp>
 #include <optional>
 #include <rj_common/Utils.hpp>
+
 #include "planning/Instant.hpp"
 
 using namespace std;

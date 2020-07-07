@@ -4,10 +4,10 @@
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
+#include <planning/Instant.hpp>
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/Network.hpp>
 #include <rj_constants/constants.hpp>
-#include <planning/Instant.hpp>
 
 // for python stuff
 #include "DebugDrawer.hpp"

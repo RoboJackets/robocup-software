@@ -3,6 +3,7 @@
 #include <Geometry2d/Pose.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
 

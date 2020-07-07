@@ -10,10 +10,10 @@
 #include <cstdint>
 #include <optional>
 #include <planning/RobotConstraints.hpp>
-#include <rj_common/Utils.hpp>
-#include <rj_constants/constants.hpp>
 #include <planning/Trajectory.hpp>
 #include <planning/planner/MotionCommand.hpp>
+#include <rj_common/Utils.hpp>
+#include <rj_constants/constants.hpp>
 #include <vector>
 
 #include "Context.hpp"

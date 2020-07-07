@@ -1,16 +1,16 @@
 #include "PivotPathPlanner.hpp"
 
-#include <rj_constants/constants.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/Util.hpp>
 #include <memory>
+#include <rj_constants/constants.hpp>
 #include <vector>
 
-#include "planning/primitives/TrapezoidalMotion.hpp"
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
 #include "planning/primitives/AnglePlanning.hpp"
 #include "planning/primitives/PathSmoothing.hpp"
+#include "planning/primitives/TrapezoidalMotion.hpp"
 #include "planning/primitives/VelocityProfiling.hpp"
 
 namespace Planning {

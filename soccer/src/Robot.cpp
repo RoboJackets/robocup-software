@@ -1,6 +1,5 @@
-#include <Robot.hpp>
-
 #include <QString>
+#include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <SystemState.hpp>
 #include <cmath>

@@ -3,8 +3,8 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <WorldState.hpp>
-#include <variant>
 #include <rj_common/Utils.hpp>
+#include <variant>
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
