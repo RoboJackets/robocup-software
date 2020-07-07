@@ -2,7 +2,7 @@ from typing import Tuple, List, Type, Optional
 from play import Play
 import robocup
 from behavior import Behavior
-import plays.Stopped.basic_stopped
+import plays.stopped.basic_stopped
 import plays.testing.test_coach
 import logging
 from PyQt5 import QtCore
@@ -55,7 +55,7 @@ class RootPlay(Play, QtCore.QObject):
                 if self.play is None or not self.play.run_during_stopped():
                     logging.info(
                         "Running 'Stopped' play due to game state change")
-                    self.play = plays.Stopped.basic_stopped.BasicStopped()
+                    self.play = plays.stopped.basic_stopped.BasicStopped()
                     self._currently_restarting = True
         elif main.game_state().is_halted():
             evaluation.double_touch.tracker().restart()
