@@ -1,0 +1,216 @@
+/** @file */
+#include <rj_param_utils/param.h>
+
+#include <cstdint>
+#include <memory>
+#include <string>
+
+namespace params::internal {
+
+template <typename T>
+using ParamMap = std::unordered_map<std::string, typename Param<T>::Ptr>;
+
+/**
+ * @brief ParamMaps is a struct that contains the various ParamMap for
+ * different types.
+ */
+struct ParamMaps {
+    template <typename T>
+    ParamMap<T>& Get();
+
+    ParamMap<bool> bools;
+    ParamMap<int64_t> int64s;
+    ParamMap<double> doubles;
+    ParamMap<std::string> strings;
+    ParamMap<std::vector<uint8_t>> byte_vecs;
+    ParamMap<std::vector<bool>> bool_vecs;
+    ParamMap<std::vector<int64_t>> int64_vecs;
+    ParamMap<std::vector<double>> float64_vecs;
+    ParamMap<std::vector<std::string>> string_vecs;
+};
+
+template <>
+ParamMap<bool>& ParamMaps::Get<bool>() {
+    return bools;
+}
+template <>
+ParamMap<int64_t>& ParamMaps::Get<int64_t>() {
+    return int64s;
+}
+template <>
+ParamMap<double>& ParamMaps::Get<double>() {
+    return doubles;
+}
+template <>
+ParamMap<std::string>& ParamMaps::Get<std::string>() {
+    return strings;
+}
+template <>
+ParamMap<std::vector<uint8_t>>& ParamMaps::Get<std::vector<uint8_t>>() {
+    return byte_vecs;
+}
+template <>
+ParamMap<std::vector<bool>>& ParamMaps::Get<std::vector<bool>>() {
+    return bool_vecs;
+}
+template <>
+ParamMap<std::vector<int64_t>>& ParamMaps::Get<std::vector<int64_t>>() {
+    return int64_vecs;
+}
+template <>
+ParamMap<std::vector<double>>& ParamMaps::Get<std::vector<double>>() {
+    return float64_vecs;
+}
+template <>
+ParamMap<std::vector<std::string>>& ParamMaps::Get<std::vector<std::string>>() {
+    return string_vecs;
+}
+
+/**
+ * @brief A ParamRegistry represents a "registry" that keeps track of all the
+ * parameters. Used by ParamProvider to query and update registered parameters.
+ */
+class ParamRegistry {
+public:
+    template <typename T>
+    using ParamMap = std::unordered_map<std::string, typename Param<T>::Ptr>;
+
+    static ParamRegistry& GlobalRegistry() {
+        static ParamRegistry global_registry;
+        return global_registry;
+    }
+
+    template <typename ParamType>
+    ParamMap<std::decay_t<ParamType>>& GetParamMap() {
+        return params_.template Get<std::decay_t<ParamType>>();
+    }
+
+    template <typename ParamType>
+    void RegisterParam(typename Param<ParamType>::Ptr param) {
+        const std::string param_name = param->name();
+        GetParamMap<ParamType>().insert(
+            std::make_pair(param_name, std::move(param)));
+    }
+
+    template <typename ParamType>
+    [[nodiscard]] bool HasParam(const std::string& param_name) {
+        ParamMap<ParamType>& param_map = params_.Get<ParamType>();
+        auto it = param_map.find(param_name);
+        return it != param_map.end();
+    }
+
+    template <typename ParamType>
+    void UpdateParam(const std::string& param_name, ParamType&& new_value) {
+        auto& param_map = GetParamMap<ParamType>();
+        auto it = param_map.find(param_name);
+        if (it == param_map.end()) {
+            throw std::runtime_error("Couldn't find parameter with name" +
+                                     param_name);
+        }
+        it->second->Update(new_value);
+    }
+
+    // Delete all other constructors.
+    ParamRegistry(const ParamRegistry&) = delete;
+    ParamRegistry& operator=(const ParamRegistry&) = delete;
+
+    ParamRegistry(ParamRegistry&&) = delete;
+    ParamRegistry& operator=(ParamRegistry&&) = delete;
+
+private:
+    // Prevent ParamRegistry from being constructed outside of GlobalRegistry()
+    // method by making the ctor and dtor private.
+    ParamRegistry() = default;
+    ~ParamRegistry() = default;
+
+    ParamMaps params_;
+};
+
+/**
+ * @brief Class used by the DEFINE_* macros to register a parameter, which
+ * happens in the constructor.
+ */
+class ParamRegisterer {
+public:
+    template <typename ParamType>
+    ParamRegisterer(const char* name, const char* help, const char* filename,
+                    ParamType& current_storage);
+};
+
+template <typename ParamType>
+ParamRegisterer::ParamRegisterer(const char* name, const char* help,
+                                 const char* filename,
+                                 ParamType& current_storage) {
+    std::unique_ptr<Param<ParamType>> param =
+        std::make_unique<Param<ParamType>>(name, help, filename,
+                                           current_storage);
+    ParamRegistry::GlobalRegistry().template RegisterParam<ParamType>(
+        std::move(param));
+}
+
+#define INSTANTIATE_FLAG_REGISTERER_CTOR(type)                    \
+    template ParamRegisterer::ParamRegisterer(                    \
+        const char* name, const char* help, const char* filename, \
+        type& current_storage);
+
+// Do this for all supported flag types. For now these correspond to the ROS2
+// parameter types.
+INSTANTIATE_FLAG_REGISTERER_CTOR(bool)
+INSTANTIATE_FLAG_REGISTERER_CTOR(int64_t)
+INSTANTIATE_FLAG_REGISTERER_CTOR(double)
+INSTANTIATE_FLAG_REGISTERER_CTOR(std::string)
+INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<uint8_t>)
+INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<bool>)
+INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<int64_t>)
+INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<double>)
+INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<std::string>)
+
+#undef INSTANTIATE_FLAG_REGISTERER_CTOR
+
+template <typename ParamType>
+void ParamProvider::Update(const std::string& param_name,
+                           const ParamType& new_value) {
+    ParamRegistry::GlobalRegistry().UpdateParam(param_name, new_value);
+}
+
+template <typename ParamType>
+bool ParamProvider::TryUpdate(const std::string& param_name,
+                              const ParamType& new_value) {
+    if (!ParamRegistry::GlobalRegistry().HasParam<ParamType>(param_name)) {
+        return false;
+    }
+
+    ParamRegistry::GlobalRegistry().UpdateParam(param_name, new_value);
+    return true;
+}
+
+template <typename ParamType>
+ParamMap<ParamType>& ParamProvider::GetParamMap() {
+    return ParamRegistry::GlobalRegistry().GetParamMap<ParamType>();
+}
+
+// Instantiate Update, TryUpdate and GetParamMap for all supported types.
+#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                              \
+    template void ParamProvider::Update(const std::string& param_name,    \
+                                        const type& new_value);           \
+    template bool ParamProvider::TryUpdate(const std::string& param_name, \
+                                           const type& new_value);        \
+    template ParamMap<type>& ParamProvider::GetParamMap<type>();
+
+INSTANTIATE_PARAM_PROVIDER_FNS(bool)
+INSTANTIATE_PARAM_PROVIDER_FNS(int64_t)
+INSTANTIATE_PARAM_PROVIDER_FNS(double)
+INSTANTIATE_PARAM_PROVIDER_FNS(std::string)
+INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<uint8_t>)
+INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<bool>)
+INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<int64_t>)
+INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<double>)
+INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<std::string>)
+#undef INSTANTIATE_PARAM_PROVIDER_FNS
+
+template <typename ParamType>
+std::ostream& operator<<(std::ostream& os, const Param<ParamType>& param) {
+    os << "[" << param.filename_ << "] " << param.name_ << " - " << param.help_;
+    return os;
+}
+}  // namespace params::internal

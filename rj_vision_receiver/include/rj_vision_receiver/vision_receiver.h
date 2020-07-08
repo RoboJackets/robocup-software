@@ -1,6 +1,7 @@
 #pragma once
 
 #include <config_client/config_client.h>
+#include <rj_param_utils/ros2_param_provider.h>
 #include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
 #include <rj_vision_receiver/stamped_wrapper_packet.h>
 
@@ -122,5 +123,7 @@ private:
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr raw_packet_pub_;
     rclcpp::Publisher<DetectionFrameMsg>::SharedPtr detection_frame_pub_;
+
+    params::ROS2ParamProvider param_provider_;
 };
 }  // namespace vision_receiver
