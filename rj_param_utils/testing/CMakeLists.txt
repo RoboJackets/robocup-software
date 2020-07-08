@@ -2,7 +2,7 @@
 # Set Testing Sources
 #======================================================================
 set(RJ_PARAM_UTILS_TESTING_SRCS
-    param_tests.cpp)
+    param_test.cpp)
 
 #======================================================================
 # Add Sources
