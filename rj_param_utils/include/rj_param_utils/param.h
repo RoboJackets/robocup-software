@@ -4,6 +4,16 @@
 #include <rclcpp/node.hpp>
 
 namespace params::internal {
+/**
+ * @brief Class used by the DEFINE_* macros to register a parameter, which
+ * happens in the constructor.
+ */
+class ParamRegisterer {
+public:
+    template <typename ParamType>
+    ParamRegisterer(const char* name, const char* help, const char* filename,
+                    ParamType& current_storage);
+};
 
 /**
  * @brief A Param represents a parameter.
@@ -78,14 +88,14 @@ public:
  * @param val The default value of the parameter.
  * @param description A description of the parameter.
  */
-#define DEFINE_NAMESPACED_VARIABLE(type, prefix, name, val, description)      \
-    namespace params::variables {                                             \
-    static type PARAM_##name##_storage = val;                                 \
-    const type& PARAM_##name = PARAM_##name##_storage;                        \
-    static params::internal::FlagRegisterer o_##name(#prefix "." #name,       \
-                                                     description, __FILE__,   \
-                                                     PARAM_##name##_storage); \
-    }                                                                         \
+#define DEFINE_NAMESPACED_VARIABLE(type, prefix, name, val, description)       \
+    namespace params::variables {                                              \
+    static type PARAM_##name##_storage = val;                                  \
+    const type& PARAM_##name = PARAM_##name##_storage;                         \
+    static params::internal::ParamRegisterer o_##name(#prefix "." #name,       \
+                                                      description, __FILE__,   \
+                                                      PARAM_##name##_storage); \
+    }                                                                          \
     using params::variables::PARAM_##name;
 
 /**

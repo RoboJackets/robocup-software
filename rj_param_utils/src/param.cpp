@@ -126,17 +126,6 @@ private:
     ParamMaps params_;
 };
 
-/**
- * @brief Class used by the DEFINE_* macros to register a parameter, which
- * happens in the constructor.
- */
-class ParamRegisterer {
-public:
-    template <typename ParamType>
-    ParamRegisterer(const char* name, const char* help, const char* filename,
-                    ParamType& current_storage);
-};
-
 template <typename ParamType>
 ParamRegisterer::ParamRegisterer(const char* name, const char* help,
                                  const char* filename,
