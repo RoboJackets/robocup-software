@@ -149,7 +149,6 @@ ParamRegisterer::ParamRegisterer(const char* name, const char* help,
         std::move(param));
 }
 
-// NOLINTNEXTLINE
 #define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                   \
     template ParamRegisterer::ParamRegisterer(                    \
         const char* name, const char* help, const char* filename, \
@@ -202,7 +201,6 @@ internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
 }
 
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
-// NOLINTNEXTLINE
 #define INSTANTIATE_PARAM_PROVIDER_FNS(type)                              \
     template bool ParamProvider::Get(const std::string& param_name,       \
                                      type* value) const;                  \
