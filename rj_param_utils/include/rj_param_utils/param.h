@@ -3,7 +3,8 @@
 
 #include <rclcpp/node.hpp>
 
-namespace params::internal {
+namespace params {
+namespace internal {
 /**
  * @brief Class used by the DEFINE_* macros to register a parameter, which
  * happens in the constructor.
@@ -14,6 +15,7 @@ public:
     ParamRegisterer(const char* name, const char* help, const char* filename,
                     ParamType& current_storage);
 };
+}  // namespace internal
 
 /**
  * @brief A Param represents a parameter.
@@ -38,6 +40,8 @@ public:
      */
     void Update(T&& new_value) { param_ = std::move(new_value); }
     void Update(const T& new_value) { param_ = new_value; }
+
+    const T& value() const { return param_; }
 
     const T& default_value() const { return default_value_; }
 
@@ -67,6 +71,9 @@ public:
     using ParamMap = std::unordered_map<std::string, typename Param<T>::Ptr>;
 
     template <typename ParamType>
+    bool Get(const std::string& param_name, ParamType* value) const;
+
+    template <typename ParamType>
     void Update(const std::string& param_name, const ParamType& new_value);
 
     template <typename ParamType>
@@ -76,7 +83,7 @@ public:
     ParamMap<ParamType>& GetParamMap();
 };
 
-}  // namespace params::internal
+}  // namespace params
 
 /**
  * @brief Defines a namespaced parameter. The defined parameter can be used as
@@ -88,14 +95,13 @@ public:
  * @param val The default value of the parameter.
  * @param description A description of the parameter.
  */
-#define DEFINE_NAMESPACED_VARIABLE(type, prefix, name, val, description)       \
-    namespace params::variables {                                              \
-    static type PARAM_##name##_storage = val;                                  \
-    const type& PARAM_##name = PARAM_##name##_storage;                         \
-    static params::internal::ParamRegisterer o_##name(#prefix "." #name,       \
-                                                      description, __FILE__,   \
-                                                      PARAM_##name##_storage); \
-    }                                                                          \
+#define DEFINE_NAMESPACED_VARIABLE(type, prefix, name, val, description)   \
+    namespace params::variables {                                          \
+    static type PARAM_##name##_storage = val;                              \
+    const type& PARAM_##name = PARAM_##name##_storage;                     \
+    static ::params::internal::ParamRegisterer o_##name(                   \
+        #prefix "." #name, description, __FILE__, PARAM_##name##_storage); \
+    }                                                                      \
     using params::variables::PARAM_##name;
 
 /**
@@ -107,8 +113,14 @@ public:
  * @param val The default value of the parameter.
  * @param description A description of the parameter.
  */
-#define DEFINE_VARIABLE(type, name, val, description) \
-    DEFINE_NAMESPACED_VARIABLE(type, , name, val, description)
+#define DEFINE_VARIABLE(type, name, val, description)          \
+    namespace params::variables {                              \
+    static type PARAM_##name##_storage = val;                  \
+    const type& PARAM_##name = PARAM_##name##_storage;         \
+    static ::params::internal::ParamRegisterer o_##name(       \
+        #name, description, __FILE__, PARAM_##name##_storage); \
+    }                                                          \
+    using params::variables::PARAM_##name;
 
 // Define the DEFINE_* macro for all supported types.
 #define DEFINE_NAMESPACED_BOOL(prefix, name, val, description) \

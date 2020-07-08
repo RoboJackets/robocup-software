@@ -5,8 +5,8 @@
 #include <memory>
 #include <string>
 
-namespace params::internal {
-
+namespace params {
+namespace internal {
 template <typename T>
 using ParamMap = std::unordered_map<std::string, typename Param<T>::Ptr>;
 
@@ -100,11 +100,23 @@ public:
     }
 
     template <typename ParamType>
+    [[nodiscard]] bool GetParam(const std::string& param_name,
+                                ParamType* value) {
+        auto& param_map = GetParamMap<ParamType>();
+        auto it = param_map.find(param_name);
+        if (it == param_map.end()) {
+            return false;
+        }
+        *value = it->second->value();
+        return true;
+    }
+
+    template <typename ParamType>
     void UpdateParam(const std::string& param_name, ParamType&& new_value) {
         auto& param_map = GetParamMap<ParamType>();
         auto it = param_map.find(param_name);
         if (it == param_map.end()) {
-            throw std::runtime_error("Couldn't find parameter with name" +
+            throw std::runtime_error("Couldn't find parameter with name " +
                                      param_name);
         }
         it->second->Update(new_value);
@@ -137,54 +149,68 @@ ParamRegisterer::ParamRegisterer(const char* name, const char* help,
         std::move(param));
 }
 
-#define INSTANTIATE_FLAG_REGISTERER_CTOR(type)                    \
+// NOLINTNEXTLINE
+#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                   \
     template ParamRegisterer::ParamRegisterer(                    \
         const char* name, const char* help, const char* filename, \
         type& current_storage);
 
 // Do this for all supported flag types. For now these correspond to the ROS2
 // parameter types.
-INSTANTIATE_FLAG_REGISTERER_CTOR(bool)
-INSTANTIATE_FLAG_REGISTERER_CTOR(int64_t)
-INSTANTIATE_FLAG_REGISTERER_CTOR(double)
-INSTANTIATE_FLAG_REGISTERER_CTOR(std::string)
-INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<uint8_t>)
-INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<bool>)
-INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<int64_t>)
-INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<double>)
-INSTANTIATE_FLAG_REGISTERER_CTOR(std::vector<std::string>)
+INSTANTIATE_PARAM_REGISTERER_CTOR(bool)
+INSTANTIATE_PARAM_REGISTERER_CTOR(int64_t)
+INSTANTIATE_PARAM_REGISTERER_CTOR(double)
+INSTANTIATE_PARAM_REGISTERER_CTOR(std::string)
+INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<uint8_t>)
+INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<bool>)
+INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<int64_t>)
+INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<double>)
+INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<std::string>)
 
-#undef INSTANTIATE_FLAG_REGISTERER_CTOR
+#undef INSTANTIATE_PARAM_REGISTERER_CTOR
+}  // namespace internal
+
+template <typename ParamType>
+bool ParamProvider::Get(const std::string& param_name, ParamType* value) const {
+    return internal::ParamRegistry::GlobalRegistry().GetParam(param_name,
+                                                              value);
+}
 
 template <typename ParamType>
 void ParamProvider::Update(const std::string& param_name,
                            const ParamType& new_value) {
-    ParamRegistry::GlobalRegistry().UpdateParam(param_name, new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(param_name,
+                                                          new_value);
 }
 
 template <typename ParamType>
 bool ParamProvider::TryUpdate(const std::string& param_name,
                               const ParamType& new_value) {
-    if (!ParamRegistry::GlobalRegistry().HasParam<ParamType>(param_name)) {
+    if (!internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(
+            param_name)) {
         return false;
     }
 
-    ParamRegistry::GlobalRegistry().UpdateParam(param_name, new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(param_name,
+                                                          new_value);
     return true;
 }
 
 template <typename ParamType>
-ParamMap<ParamType>& ParamProvider::GetParamMap() {
-    return ParamRegistry::GlobalRegistry().GetParamMap<ParamType>();
+internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
+    return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>();
 }
 
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
+// NOLINTNEXTLINE
 #define INSTANTIATE_PARAM_PROVIDER_FNS(type)                              \
+    template bool ParamProvider::Get(const std::string& param_name,       \
+                                     type* value) const;                  \
     template void ParamProvider::Update(const std::string& param_name,    \
                                         const type& new_value);           \
     template bool ParamProvider::TryUpdate(const std::string& param_name, \
                                            const type& new_value);        \
-    template ParamMap<type>& ParamProvider::GetParamMap<type>();
+    template internal::ParamMap<type>& ParamProvider::GetParamMap<type>();
 
 INSTANTIATE_PARAM_PROVIDER_FNS(bool)
 INSTANTIATE_PARAM_PROVIDER_FNS(int64_t)
@@ -202,4 +228,4 @@ std::ostream& operator<<(std::ostream& os, const Param<ParamType>& param) {
     os << "[" << param.filename_ << "] " << param.name_ << " - " << param.help_;
     return os;
 }
-}  // namespace params::internal
+}  // namespace params

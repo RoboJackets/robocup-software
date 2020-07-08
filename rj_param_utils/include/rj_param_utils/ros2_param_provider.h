@@ -7,7 +7,7 @@ namespace params {
  * An implementation of ParamProvider that integrates with the ROS2 parameter
  * system.
  */
-class ROS2ParamProvider : public ::params::internal::ParamProvider {
+class ROS2ParamProvider : public ::params::ParamProvider {
 public:
     explicit ROS2ParamProvider(rclcpp::Node* node);
 
