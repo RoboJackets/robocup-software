@@ -31,28 +31,26 @@ set(ROBOCUP_LIB_SRC
     optimization/ParallelGradientAscent1D.cpp
     optimization/NelderMead2D.cpp
     optimization/PythonFunctionWrapper.cpp
-    planning/paths/CompositePath.cpp
-    planning/DynamicObstacle.cpp
-    planning/planners/DirectTargetPathPlanner.cpp
-    planning/planners/TuningPathPlanner.cpp
-    planning/planners/EscapeObstaclesPathPlanner.cpp
-    planning/paths/InterpolatedPath.cpp
-    planning/planners/IndependentMultiRobotPathPlanner.cpp
-    planning/planners/InterceptPlanner.cpp
+    planning/primitives/AnglePlanning.cpp
+    planning/primitives/CreatePath.cpp
+    planning/primitives/PathSmoothing.cpp
+    planning/primitives/Replanner.cpp
+    planning/primitives/RRTUtil.cpp
+    planning/primitives/TrapezoidalMotion.cpp
+    planning/primitives/VelocityProfiling.cpp
+    planning/planner/CollectPlanner.cpp
+    planning/planner/EscapeObstaclesPathPlanner.cpp
+    planning/planner/InterceptPlanner.cpp
+    planning/planner/LineKickPlanner.cpp
+    planning/planner/PathTargetPlanner.cpp
+    planning/planner/PivotPathPlanner.cpp
+    planning/planner/PlanRequest.cpp
+    planning/planner/SettlePlanner.cpp
     planning/MotionConstraints.cpp
-    planning/RotationConstraints.cpp
-    planning/paths/Path.cpp
-    planning/trajectory/Trajectory.cpp
-    planning/planners/RRTPlanner.cpp
-    planning/planners/RRTUtil.cpp
-    planning/planners/PivotPathPlanner.cpp
-    planning/planners/SettlePathPlanner.cpp
-    planning/planners/CollectPathPlanner.cpp
-    planning/planners/LineKickPlanner.cpp
-    planning/planners/SingleRobotPathPlanner.cpp
-    planning/planners/TargetVelPathPlanner.cpp
     planning/PlannerNode.cpp
-    planning/paths/TrapezoidalPath.cpp
+    planning/RotationConstraints.cpp
+    planning/Trajectory.cpp
+    planning/TrajectoryUtils.cpp
     Processor.cpp
     radio/NetworkRadio.cpp
     radio/PacketConvert.cpp
@@ -92,6 +90,7 @@ set(ROBOCUP_LIB_SRC
     vision/robot/WorldRobot.cpp
     vision/util/VisionFilterConfig.cpp
     vision/VisionFilter.cpp
+    WorldState.cpp
     ros2_temp/soccer_config_client.cpp
     ros2_temp/detection_frame_sub.cpp
     ros2_temp/raw_vision_packet_sub.cpp
@@ -100,14 +99,20 @@ set(ROBOCUP_LIB_SRC
 
 set(SOCCER_TEST_SRC
     BatteryProfileTest.cpp
+    BallTest.cpp
     KickEvaluatorTest.cpp
     motion/TrapezoidalMotionTest.cpp
     optimization/GradientAscent1DTest.cpp
     optimization/ParallelGradientAscent1DTest.cpp
     optimization/NelderMead2DTest.cpp
-    planning/PathTest.cpp
-    planning/planners/EscapeObstaclesPathPlannerTest.cpp
-    planning/planners/TargetVelPathPlannerTest.cpp
+    planning/tests/AnglePlanningTest.cpp
+    planning/tests/BezierPathTest.cpp
+    planning/tests/PlannerTest.cpp
+    planning/tests/CreatePathTest.cpp
+    planning/tests/TestingUtils.cpp
+    planning/tests/TrajectoryTest.cpp
+    planning/tests/TrapezoidalMotionTest.cpp
+    planning/tests/VelocityProfilingTest.cpp
     TestMain.cpp
     vision/tests/CameraBallTest.cpp
     vision/tests/KalmanBallTest.cpp

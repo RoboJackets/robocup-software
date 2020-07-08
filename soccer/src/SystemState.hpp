@@ -1,87 +1,30 @@
 #pragma once
 
-#include <rj_protos/RadioRx.pb.h>
-#include <rj_protos/RadioTx.pb.h>
-
 #include <GameState.hpp>
-#include <Geometry2d/Arc.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/ShapeSet.hpp>
-#include <QColor>
-#include <QMap>
-#include <memory>
 #include <rj_common/Utils.hpp>
 #include <rj_constants/constants.hpp>
-#include <string>
 #include <vector>
 
-#include "planning/MotionInstant.hpp"
-#include "planning/paths/Path.hpp"
-
-class RobotConfig;
 class OurRobot;
 class OpponentRobot;
+class BallState;
 
 namespace Packet {
 class LogFrame;
 }  // namespace Packet
 
-/**
- * @brief Our beliefs about the ball's position and velocity
- */
-class Ball {
-public:
-    Geometry2d::Point pos;
-    Geometry2d::Point vel;
-    RJ::Time time;
-    bool valid = false;
-
-    [[nodiscard]] Planning::MotionInstant predict(RJ::Time estimateTime) const;
-    [[nodiscard]] Geometry2d::Point predictPosition(
-        double seconds_from_now) const;
-
-    [[nodiscard]] std::unique_ptr<Planning::Path> path(
-        RJ::Time startTime) const;
-
-    RJ::Time estimateTimeTo(const Geometry2d::Point& point,
-                            Geometry2d::Point* nearPointOut = nullptr) const;
-
-    [[nodiscard]] double estimateSecondsTo(
-        const Geometry2d::Point& point) const;
-
-    [[nodiscard]] double estimateSecondsToDist(double dist) const;
-
-    [[nodiscard]] double predictSecondsToStop() const;
-};
-
 class Context;
 
 /**
- * @brief Holds the positions of everything on the field
- * @details  this has the debugging drawer for the gui
- * but it also contains the game state, so this is passed game state information
- * contains essentially everything data wise
- * used in all threads, this is the class that is passed to for data
+ * @brief Holds helper objects for everything on the field. This is being phased
+ * out on the C++ side, but is still in use throughout the python side (which
+ * needs to access C++ helpers i.e. in the OurRobot class). This will be removed
+ * with the move to ROS.
  */
 class SystemState {
 public:
     SystemState(Context* const context);
     ~SystemState();
-
-    /**
-     * @defgroup drawing_functions Drawing Functions
-     * These drawing functions add certain shapes/lines to the current LogFrame.
-     * Each time the FieldView updates, it reads the LogFrame and draws these
-     * items.
-     * This way debug data can be drawn on-screen and also logged.
-     *
-     * Each drawing function also associates the drawn content with a particular
-     * 'layer'.  Separating drawing items into layers lets you choose at runtime
-     * which items actually get drawn.
-     */
 
     RJ::Time time;
 
@@ -103,7 +46,10 @@ public:
     std::vector<OurRobot*> self;
     std::vector<OpponentRobot*> opp;
 
-    Ball ball;
+    /**
+     * A reference to the ball state. This is a helper for python code.
+     */
+    BallState* ball;
 
     std::vector<int> ourValidIds();
 
