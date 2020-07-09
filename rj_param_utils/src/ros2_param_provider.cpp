@@ -7,16 +7,35 @@ ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node) {
     InitUpdateParamCallbacks(node);
 }
 
-void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
+std::string ROS2ParamProvider::ConvertFullNameToROS2(
+    const std::string& full_name) {
+    std::string ros2_name;
+
+    ros2_name.reserve(full_name.size());
+    for (size_t char_idx = 0; char_idx < full_name.size() - 1; char_idx++) {
+        if (full_name[char_idx] == ':' && full_name[char_idx + 1] == ':') {
+            ros2_name.push_back('.');
+            char_idx++;
+        } else {
+            ros2_name.push_back(full_name[char_idx]);
+        }
+    }
+
+    return ros2_name;
+}
+
 #define DECLARE_AND_UPDATE_PARAMS(type)                           \
     for (const auto& [param_name, param] : GetParamMap<type>()) { \
         rcl_interfaces::msg::ParameterDescriptor descriptor;      \
         descriptor.description = param->help();                   \
+        const std::string& ros2_param_name =                      \
+            ConvertFullNameToROS2(param_name);                    \
         const type& val = node->declare_parameter(                \
-            param_name, param->default_value(), descriptor);      \
+            ros2_param_name, param->default_value(), descriptor); \
         Update(param_name, val);                                  \
     }
 
+void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
     // Declare the parameters
     DECLARE_AND_UPDATE_PARAMS(bool)
     DECLARE_AND_UPDATE_PARAMS(int64_t)
@@ -27,9 +46,8 @@ void ROS2ParamProvider::DeclareParameters(rclcpp::Node* node) {
     DECLARE_AND_UPDATE_PARAMS(std::vector<int64_t>)
     DECLARE_AND_UPDATE_PARAMS(std::vector<double>)
     DECLARE_AND_UPDATE_PARAMS(std::vector<std::string>)
-
-#undef DECLARE_AND_UPDATE_PARAMS
 }
+#undef DECLARE_AND_UPDATE_PARAMS
 
 void ROS2ParamProvider::InitUpdateParamCallbacks(rclcpp::Node* node) {
     using rcl_interfaces::msg::SetParametersResult;

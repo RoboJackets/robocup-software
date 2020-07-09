@@ -26,6 +26,14 @@ private:
      */
     void InitUpdateParamCallbacks(rclcpp::Node* node);
 
+    /**
+     * @brief Converts the full_name of a parameter from using double colons
+     * (::) as the namespace separator to using periods (.).
+     * @param full_name The full_name to convert.
+     * @return The full name of the parameter in ROS2 parameter convention.
+     */
+    static std::string ConvertFullNameToROS2(const std::string& full_name);
+
     rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr
         callback_handle_;
 };

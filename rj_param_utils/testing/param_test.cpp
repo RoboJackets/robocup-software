@@ -13,6 +13,8 @@ constexpr auto kExampleDoubleDescription = "Test 456.";
 
 static const std::string kExampleStringValue = "Test please.";
 constexpr auto kExampleStringDescription = "Lets go.";
+static const std::string kExampleStringValue2 = "Goodbye.";
+constexpr auto kExampleStringDescription2 = "Nice description.";
 
 static const std::vector<uint8_t> kExampleByteVecValue = {0xB0, 0xBA, 0xCA};
 constexpr auto kExampleByteVecDescription = "lmao nice.";
@@ -42,11 +44,12 @@ DEFINE_STRING_VEC(bare_string_vec, kExampleStringVecValue,
                   kExampleStringVecDescription)
 
 // Namespaced
-DEFINE_NAMESPACED_STRING(test.hello, namespaced_string, kExampleStringValue,
-                         kExampleStringDescription)
-DEFINE_NAMESPACED_FLOAT64_VEC(test.byte, namespaced_double_vec,
-                              kExampleDoubleVecValue,
-                              kExampleDoubleVecDescription)
+DEFINE_NS_STRING(test::hello, namespaced_string, kExampleStringValue,
+                 kExampleStringDescription)
+DEFINE_NS_STRING(test::bye, namespaced_string, kExampleStringValue2,
+                 kExampleStringDescription2)
+DEFINE_NS_FLOAT64_VEC(test::byte, namespaced_double_vec, kExampleDoubleVecValue,
+                      kExampleDoubleVecDescription)
 
 /**
  * @brief Test that the default value of the DEFINE_* variant of defining params
@@ -79,16 +82,54 @@ TEST(Params, CorrectDefaultBareValue) {
 }
 
 /**
- * @brief Test that the default value of the DEFINE_NAMESPACED_* variant of
+ * @brief Test that the default value of the DEFINE_NS_* variant of
  * defining params is correct.
  */
 TEST(Params, CorrectDefaultNamespaceValue) {
-    EXPECT_EQ(PARAM_namespaced_string, kExampleStringValue);
+    EXPECT_EQ(test::hello::PARAM_namespaced_string, kExampleStringValue);
 
-    ASSERT_EQ(PARAM_namespaced_double_vec.size(),
+    ASSERT_EQ(test::byte::PARAM_namespaced_double_vec.size(),
               kExampleDoubleVecValue.size());
-    for (size_t i = 0; i < PARAM_namespaced_double_vec.size(); i++) {
-        EXPECT_EQ(PARAM_namespaced_double_vec[i], kExampleDoubleVecValue[i]);
+    for (size_t i = 0; i < test::byte::PARAM_namespaced_double_vec.size();
+         i++) {
+        EXPECT_EQ(test::byte::PARAM_namespaced_double_vec[i],
+                  kExampleDoubleVecValue[i]);
+    }
+}
+
+/**
+ * @brief Checks that the param metadata, ie. fullname, description are correct.
+ */
+TEST(Params, CorrectMetadata) {
+    ::params::ParamProvider provider;
+    {
+        const auto& param_map = provider.GetParamMap<bool>();
+        const auto it = param_map.find("bare_bool");
+        ASSERT_NE(it, param_map.end());
+        EXPECT_EQ(it->second->prefix(), "");
+        EXPECT_EQ(it->second->name(), "bare_bool");
+        EXPECT_EQ(it->second->full_name(), "bare_bool");
+        EXPECT_EQ(it->second->help(), kExampleBoolDescription);
+    }
+
+    {
+        const auto& param_map = provider.GetParamMap<int64_t>();
+        const auto it = param_map.find("bare_int64");
+        ASSERT_NE(it, param_map.end());
+        EXPECT_EQ(it->second->prefix(), "");
+        EXPECT_EQ(it->second->name(), "bare_int64");
+        EXPECT_EQ(it->second->full_name(), "bare_int64");
+        EXPECT_EQ(it->second->help(), kExampleIntDescription);
+    }
+
+    {
+        const auto& param_map = provider.GetParamMap<std::vector<double>>();
+        const auto it = param_map.find("test::byte::namespaced_double_vec");
+        ASSERT_NE(it, param_map.end());
+        EXPECT_EQ(it->second->prefix(), "test::byte");
+        EXPECT_EQ(it->second->name(), "namespaced_double_vec");
+        EXPECT_EQ(it->second->full_name(), "test::byte::namespaced_double_vec");
+        EXPECT_EQ(it->second->help(), kExampleDoubleVecDescription);
     }
 }
 
@@ -150,19 +191,24 @@ TEST(Params, ParamProviderUpdate) {
 
 /**
  * @brief Tests ParamProvider::Update for parameters that are defined using
- * DEFINE_NAMESPACED_*.
+ * DEFINE_NS_*.
  */
 TEST(Params, ParamProviderUpdateNamespace) {
     ::params::ParamProvider provider;
 
     const std::string kNewString = "Haha.";
-    EXPECT_EQ(PARAM_namespaced_string, kExampleStringValue);
-    provider.Update("test.hello.namespaced_string", kNewString);
-    EXPECT_EQ(PARAM_namespaced_string, kNewString);
+    EXPECT_EQ(test::hello::PARAM_namespaced_string, kExampleStringValue);
+    provider.Update("test::hello::namespaced_string", kNewString);
+    EXPECT_EQ(test::hello::PARAM_namespaced_string, kNewString);
+
+    const std::string kNewString2 = "Jokes on you.";
+    EXPECT_EQ(test::bye::PARAM_namespaced_string, kExampleStringValue2);
+    provider.Update("test::bye::namespaced_string", kNewString2);
+    EXPECT_EQ(test::bye::PARAM_namespaced_string, kNewString2);
 
     const std::vector<double> kNewDoubleVec{0.3, 0.4, 0.1, 0.5};
-    EXPECT_EQ(PARAM_namespaced_double_vec, kExampleDoubleVecValue);
-    provider.Update("test.byte.namespaced_double_vec", kNewDoubleVec);
-    EXPECT_EQ(PARAM_namespaced_double_vec, kNewDoubleVec);
+    EXPECT_EQ(test::byte::PARAM_namespaced_double_vec, kExampleDoubleVecValue);
+    provider.Update("test::byte::namespaced_double_vec", kNewDoubleVec);
+    EXPECT_EQ(test::byte::PARAM_namespaced_double_vec, kNewDoubleVec);
 }
 }  // namespace params::testing

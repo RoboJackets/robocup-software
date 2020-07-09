@@ -87,23 +87,23 @@ public:
 
     template <typename ParamType>
     void RegisterParam(typename Param<ParamType>::Ptr param) {
-        const std::string param_name = param->name();
+        const std::string param_name = param->full_name();
         GetParamMap<ParamType>().insert(
             std::make_pair(param_name, std::move(param)));
     }
 
     template <typename ParamType>
-    [[nodiscard]] bool HasParam(const std::string& param_name) {
+    [[nodiscard]] bool HasParam(const std::string& full_name) {
         ParamMap<ParamType>& param_map = params_.Get<ParamType>();
-        auto it = param_map.find(param_name);
+        auto it = param_map.find(full_name);
         return it != param_map.end();
     }
 
     template <typename ParamType>
-    [[nodiscard]] bool GetParam(const std::string& param_name,
+    [[nodiscard]] bool GetParam(const std::string& full_name,
                                 ParamType* value) {
         auto& param_map = GetParamMap<ParamType>();
-        auto it = param_map.find(param_name);
+        auto it = param_map.find(full_name);
         if (it == param_map.end()) {
             return false;
         }
@@ -112,12 +112,12 @@ public:
     }
 
     template <typename ParamType>
-    void UpdateParam(const std::string& param_name, ParamType&& new_value) {
+    void UpdateParam(const std::string& full_name, ParamType&& new_value) {
         auto& param_map = GetParamMap<ParamType>();
-        auto it = param_map.find(param_name);
+        auto it = param_map.find(full_name);
         if (it == param_map.end()) {
             throw std::runtime_error("Couldn't find parameter with name " +
-                                     param_name);
+                                     full_name);
         }
         it->second->Update(new_value);
     }
@@ -139,20 +139,20 @@ private:
 };
 
 template <typename ParamType>
-ParamRegisterer::ParamRegisterer(const char* name, const char* help,
-                                 const char* filename,
+ParamRegisterer::ParamRegisterer(const char* prefix, const char* name,
+                                 const char* help, const char* filename,
                                  ParamType& current_storage) {
     std::unique_ptr<Param<ParamType>> param =
-        std::make_unique<Param<ParamType>>(name, help, filename,
+        std::make_unique<Param<ParamType>>(prefix, name, help, filename,
                                            current_storage);
     ParamRegistry::GlobalRegistry().template RegisterParam<ParamType>(
         std::move(param));
 }
 
-#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                   \
-    template ParamRegisterer::ParamRegisterer(                    \
-        const char* name, const char* help, const char* filename, \
-        type& current_storage);
+#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                 \
+    template ParamRegisterer::ParamRegisterer(                  \
+        const char* prefix, const char* name, const char* help, \
+        const char* filename, type& current_storage);
 
 // Do this for all supported flag types. For now these correspond to the ROS2
 // parameter types.
@@ -170,28 +170,25 @@ INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<std::string>)
 }  // namespace internal
 
 template <typename ParamType>
-bool ParamProvider::Get(const std::string& param_name, ParamType* value) const {
-    return internal::ParamRegistry::GlobalRegistry().GetParam(param_name,
-                                                              value);
+bool ParamProvider::Get(const std::string& full_name, ParamType* value) const {
+    return internal::ParamRegistry::GlobalRegistry().GetParam(full_name, value);
 }
 
 template <typename ParamType>
-void ParamProvider::Update(const std::string& param_name,
+void ParamProvider::Update(const std::string& full_name,
                            const ParamType& new_value) {
-    internal::ParamRegistry::GlobalRegistry().UpdateParam(param_name,
-                                                          new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(full_name, new_value);
 }
 
 template <typename ParamType>
-bool ParamProvider::TryUpdate(const std::string& param_name,
+bool ParamProvider::TryUpdate(const std::string& full_name,
                               const ParamType& new_value) {
     if (!internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(
-            param_name)) {
+            full_name)) {
         return false;
     }
 
-    internal::ParamRegistry::GlobalRegistry().UpdateParam(param_name,
-                                                          new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(full_name, new_value);
     return true;
 }
 
@@ -201,13 +198,13 @@ internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
 }
 
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
-#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                              \
-    template bool ParamProvider::Get(const std::string& param_name,       \
-                                     type* value) const;                  \
-    template void ParamProvider::Update(const std::string& param_name,    \
-                                        const type& new_value);           \
-    template bool ParamProvider::TryUpdate(const std::string& param_name, \
-                                           const type& new_value);        \
+#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                             \
+    template bool ParamProvider::Get(const std::string& full_name,       \
+                                     type* value) const;                 \
+    template void ParamProvider::Update(const std::string& full_name,    \
+                                        const type& new_value);          \
+    template bool ParamProvider::TryUpdate(const std::string& full_name, \
+                                           const type& new_value);       \
     template internal::ParamMap<type>& ParamProvider::GetParamMap<type>();
 
 INSTANTIATE_PARAM_PROVIDER_FNS(bool)
@@ -223,7 +220,8 @@ INSTANTIATE_PARAM_PROVIDER_FNS(std::vector<std::string>)
 
 template <typename ParamType>
 std::ostream& operator<<(std::ostream& os, const Param<ParamType>& param) {
-    os << "[" << param.filename_ << "] " << param.name_ << " - " << param.help_;
+    os << "[" << param.filename_ << "] " << param.full_name_ << " - "
+       << param.help_;
     return os;
 }
 }  // namespace params
