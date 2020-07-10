@@ -86,7 +86,7 @@ private:
  */
 class ParamProvider {
 public:
-    explicit ParamProvider(const std::string& module) : module_{module} {};
+    explicit ParamProvider(std::string module) : module_{std::move(module)} {};
 
     template <typename T>
     using ParamMap = std::unordered_map<std::string, typename Param<T>::Ptr>;
@@ -109,7 +109,7 @@ public:
      * @return Whether the parameter exists or not.
      */
     template <typename ParamType>
-    bool HasParam(const std::string& full_name) const;
+    [[nodiscard]] bool HasParam(const std::string& full_name) const;
 
     /**
      * @brief Updates the parameter with the passed in full_name and matching
