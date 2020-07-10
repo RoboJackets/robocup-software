@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <rj_param_utils/param.h>
+#include <testing/declare_test.h>
 
 namespace params::testing {
 constexpr bool kExampleBoolValue = true;
@@ -241,5 +242,27 @@ TEST(Params, ParamProviderModules) {
         provider2.HasParam<std::string>("test::hello::namespaced_string"));
     ASSERT_TRUE(
         provider2.HasParam<std::string>("test::hello::different_module"));
+}
+
+/**
+ * @brief Tests that DECLARE_* works, and params can be accessed cross
+ * translation units.
+ */
+TEST(Params, DeclareParams) {
+    ::params::ParamProvider provider{kDeclareTestModule};
+
+    ASSERT_EQ(PARAM_bare_declare_int, kDeclareIntValue);
+    ASSERT_EQ(a::b::PARAM_declare_double, kDeclareDoubleValue);
+
+    ASSERT_TRUE(provider.HasParam<int64_t>("bare_declare_int"));
+    ASSERT_TRUE(provider.HasParam<double>("a::b::declare_double"));
+
+    int64_t int_value{};
+    ASSERT_TRUE(provider.Get("bare_declare_int", &int_value));
+    EXPECT_EQ(PARAM_bare_declare_int, kDeclareIntValue);
+
+    double double_value{};
+    ASSERT_TRUE(provider.Get("a::b::declare_double", &double_value));
+    EXPECT_EQ(a::b::PARAM_declare_double, kDeclareDoubleValue);
 }
 }  // namespace params::testing
