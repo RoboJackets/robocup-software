@@ -2,7 +2,9 @@
 
 namespace params {
 
-ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node) {
+ROS2ParamProvider::ROS2ParamProvider(rclcpp::Node* node,
+                                     const std::string& module)
+    : ParamProvider{module} {
     DeclareParameters(node);
     InitUpdateParamCallbacks(node);
 }
@@ -20,6 +22,7 @@ std::string ROS2ParamProvider::ConvertFullNameToROS2(
             ros2_name.push_back(full_name[char_idx]);
         }
     }
+    ros2_name.push_back(full_name.back());
 
     return ros2_name;
 }

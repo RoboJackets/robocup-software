@@ -12,8 +12,9 @@ namespace internal {
 class ParamRegisterer {
 public:
     template <typename ParamType>
-    ParamRegisterer(const char* prefix, const char* name, const char* help,
-                    const char* filename, ParamType& current_storage);
+    ParamRegisterer(const char* module, const char* prefix, const char* name,
+                    const char* help, const char* filename,
+                    ParamType& current_storage);
 };
 }  // namespace internal
 
@@ -27,9 +28,10 @@ public:
     using Ptr = std::unique_ptr<Param>;
     static constexpr auto kPrefixSeparator = "::";
 
-    Param(const char* prefix, const char* name, const char* help,
-          const char* filename, T& param)
-        : prefix_{prefix},
+    Param(const char* module, const char* prefix, const char* name,
+          const char* help, const char* filename, T& param)
+        : module_{module},
+          prefix_{prefix},
           name_{name},
           full_name_{prefix_.empty() ? name : prefix_ + "::" + name_},
           help_{help},
@@ -56,6 +58,7 @@ public:
      */
     const T& default_value() const { return default_value_; }
 
+    [[nodiscard]] const std::string& module() const { return module_; }
     [[nodiscard]] const std::string& prefix() const { return prefix_; }
     [[nodiscard]] const std::string& name() const { return name_; }
     [[nodiscard]] const std::string& full_name() const { return full_name_; }
@@ -67,6 +70,7 @@ public:
                                     const Param<ParamType>& param);
 
 private:
+    const std::string module_;
     const std::string prefix_;
     const std::string name_;
     const std::string full_name_;
@@ -82,6 +86,8 @@ private:
  */
 class ParamProvider {
 public:
+    explicit ParamProvider(const std::string& module) : module_{module} {};
+
     template <typename T>
     using ParamMap = std::unordered_map<std::string, typename Param<T>::Ptr>;
 
@@ -124,6 +130,9 @@ public:
      */
     template <typename ParamType>
     ParamMap<ParamType>& GetParamMap();
+
+protected:
+    std::string module_;
 };
 
 }  // namespace params
@@ -138,18 +147,18 @@ public:
  * @param val The default value of the parameter.
  * @param description A description of the parameter.
  */
-#define DEFINE_NS_VARIABLE(type, prefix, name, val, description) \
-    namespace params::storage::prefix {                          \
-    static type PARAM_##name##_storage = val;                    \
-    }                                                            \
-    namespace prefix {                                           \
-    const type& PARAM_##name =                                   \
-        params::storage::prefix::PARAM_##name##_storage;         \
-    }                                                            \
-    namespace params::param_registerer::prefix {                 \
-    static ::params::internal::ParamRegisterer o_##name(         \
-        #prefix, #name, description, __FILE__,                   \
-        params::storage::prefix::PARAM_##name##_storage);        \
+#define DEFINE_NS_VARIABLE(type, module, prefix, name, val, description) \
+    namespace params::storage::prefix {                                  \
+    static type PARAM_##name##_storage = val;                            \
+    }                                                                    \
+    namespace prefix {                                                   \
+    const type& PARAM_##name =                                           \
+        params::storage::prefix::PARAM_##name##_storage;                 \
+    }                                                                    \
+    namespace params::param_registerer::prefix {                         \
+    static ::params::internal::ParamRegisterer o_##name(                 \
+        module, #prefix, #name, description, __FILE__,                   \
+        params::storage::prefix::PARAM_##name##_storage);                \
     }
 
 /**
@@ -161,50 +170,55 @@ public:
  * @param val The default value of the parameter.
  * @param description A description of the parameter.
  */
-#define DEFINE_VARIABLE(type, name, val, description)              \
-    namespace params::variables {                                  \
-    static type PARAM_##name##_storage = val;                      \
-    const type& PARAM_##name = PARAM_##name##_storage;             \
-    static ::params::internal::ParamRegisterer o_##name(           \
-        "", #name, description, __FILE__, PARAM_##name##_storage); \
-    }                                                              \
+#define DEFINE_VARIABLE(type, module, name, val, description)              \
+    namespace params::variables {                                          \
+    static type PARAM_##name##_storage = val;                              \
+    const type& PARAM_##name = PARAM_##name##_storage;                     \
+    static ::params::internal::ParamRegisterer o_##name(                   \
+        module, "", #name, description, __FILE__, PARAM_##name##_storage); \
+    }                                                                      \
     using params::variables::PARAM_##name;
 
 // Define the DEFINE_* macro for all supported types.
-#define DEFINE_NS_BOOL(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(bool, prefix, name, val, description)
-#define DEFINE_NS_INT64(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(int64_t, prefix, name, val, description)
-#define DEFINE_NS_FLOAT64(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(double, prefix, name, val, description)
-#define DEFINE_NS_STRING(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(std::string, prefix, name, val, description)
-#define DEFINE_NS_BYTE_VEC(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(std::vector<uint8_t>, prefix, name, val, description)
-#define DEFINE_NS_BOOL_VEC(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(std::vector<bool>, prefix, name, val, description)
-#define DEFINE_NS_INT64_VEC(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(std::vector<int64_t>, prefix, name, val, description)
-#define DEFINE_NS_FLOAT64_VEC(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(std::vector<double>, prefix, name, val, description)
-#define DEFINE_NS_STRING_VEC(prefix, name, val, description) \
-    DEFINE_NS_VARIABLE(std::vector<std::string>, prefix, name, val, description)
+#define DEFINE_NS_BOOL(module, prefix, name, val, description) \
+    DEFINE_NS_VARIABLE(bool, module, prefix, name, val, description)
+#define DEFINE_NS_INT64(module, prefix, name, val, description) \
+    DEFINE_NS_VARIABLE(int64_t, module, prefix, name, val, description)
+#define DEFINE_NS_FLOAT64(module, prefix, name, val, description) \
+    DEFINE_NS_VARIABLE(double, module, prefix, name, val, description)
+#define DEFINE_NS_STRING(module, prefix, name, val, description) \
+    DEFINE_NS_VARIABLE(std::string, module, prefix, name, val, description)
+#define DEFINE_NS_BYTE_VEC(module, prefix, name, val, description)      \
+    DEFINE_NS_VARIABLE(std::vector<uint8_t>, module, prefix, name, val, \
+                       description)
+#define DEFINE_NS_BOOL_VEC(module, prefix, name, val, description)   \
+    DEFINE_NS_VARIABLE(std::vector<bool>, module, prefix, name, val, \
+                       description)
+#define DEFINE_NS_INT64_VEC(module, prefix, name, val, description)     \
+    DEFINE_NS_VARIABLE(std::vector<int64_t>, module, prefix, name, val, \
+                       description)
+#define DEFINE_NS_FLOAT64_VEC(module, prefix, name, val, description)  \
+    DEFINE_NS_VARIABLE(std::vector<double>, module, prefix, name, val, \
+                       description)
+#define DEFINE_NS_STRING_VEC(module, prefix, name, val, description)        \
+    DEFINE_NS_VARIABLE(std::vector<std::string>, module, prefix, name, val, \
+                       description)
 
-#define DEFINE_BOOL(name, val, description) \
-    DEFINE_VARIABLE(bool, name, val, description)
-#define DEFINE_INT64(name, val, description) \
-    DEFINE_VARIABLE(int64_t, name, val, description)
-#define DEFINE_FLOAT64(name, val, description) \
-    DEFINE_VARIABLE(double, name, val, description)
-#define DEFINE_STRING(name, val, description) \
-    DEFINE_VARIABLE(std::string, name, val, description)
-#define DEFINE_BYTE_VEC(name, val, description) \
-    DEFINE_VARIABLE(std::vector<uint8_t>, name, val, description)
-#define DEFINE_BOOL_VEC(name, val, description) \
-    DEFINE_VARIABLE(std::vector<bool>, name, val, description)
-#define DEFINE_INT64_VEC(name, val, description) \
-    DEFINE_VARIABLE(std::vector<int64_t>, name, val, description)
-#define DEFINE_FLOAT64_VEC(name, val, description) \
-    DEFINE_VARIABLE(std::vector<double>, name, val, description)
-#define DEFINE_STRING_VEC(name, val, description) \
-    DEFINE_VARIABLE(std::vector<std::string>, name, val, description)
+#define DEFINE_BOOL(module, name, val, description) \
+    DEFINE_VARIABLE(bool, module, name, val, description)
+#define DEFINE_INT64(module, name, val, description) \
+    DEFINE_VARIABLE(int64_t, module, name, val, description)
+#define DEFINE_FLOAT64(module, name, val, description) \
+    DEFINE_VARIABLE(double, module, name, val, description)
+#define DEFINE_STRING(module, name, val, description) \
+    DEFINE_VARIABLE(std::string, module, name, val, description)
+#define DEFINE_BYTE_VEC(module, name, val, description) \
+    DEFINE_VARIABLE(std::vector<uint8_t>, module, name, val, description)
+#define DEFINE_BOOL_VEC(module, name, val, description) \
+    DEFINE_VARIABLE(std::vector<bool>, module, name, val, description)
+#define DEFINE_INT64_VEC(module, name, val, description) \
+    DEFINE_VARIABLE(std::vector<int64_t>, module, name, val, description)
+#define DEFINE_FLOAT64_VEC(module, name, val, description) \
+    DEFINE_VARIABLE(std::vector<double>, module, name, val, description)
+#define DEFINE_STRING_VEC(module, name, val, description) \
+    DEFINE_VARIABLE(std::vector<std::string>, module, name, val, description)

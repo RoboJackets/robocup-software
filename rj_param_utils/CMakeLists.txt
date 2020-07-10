@@ -12,7 +12,7 @@ find_package(rclcpp REQUIRED)
 #======================================================================
 # Define Targets
 #======================================================================
-add_library(rj_param_utils STATIC)
+add_library(rj_param_utils SHARED)
 
 add_subdirectory(src)
 

@@ -9,7 +9,9 @@
 #include <rj_utils/logging.hpp>
 #include <stdexcept>
 
-DEFINE_INT64(port, SharedVisionPortSinglePrimary,
+constexpr auto kVisionReceiverParamModule = "vision_receiver";
+
+DEFINE_INT64(kVisionReceiverParamModule, port, SharedVisionPortSinglePrimary,
              "The port used for the vision receiver.")
 
 namespace vision_receiver {
@@ -20,7 +22,7 @@ VisionReceiver::VisionReceiver()
       config_{this},
       port_{-1},
       _socket{_io_context},
-      param_provider_(this) {
+      param_provider_(this, kVisionReceiverParamModule) {
     _recv_buffer.resize(65536);
 
     setPort(PARAM_port);

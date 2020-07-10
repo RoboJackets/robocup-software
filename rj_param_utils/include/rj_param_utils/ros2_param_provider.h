@@ -9,7 +9,7 @@ namespace params {
  */
 class ROS2ParamProvider : public ::params::ParamProvider {
 public:
-    explicit ROS2ParamProvider(rclcpp::Node* node);
+    explicit ROS2ParamProvider(rclcpp::Node* node, const std::string& module);
 
 private:
     /**

@@ -32,24 +32,30 @@ static const std::vector<std::string> kExampleStringVecValue = {"123", "456",
                                                                 "789"};
 constexpr auto kExampleStringVecDescription = "abcde Test.";
 
-// Root namespace
-DEFINE_BOOL(bare_bool, kExampleBoolValue, kExampleBoolDescription)
-DEFINE_INT64(bare_int64, kExampleIntValue, kExampleIntDescription)
-DEFINE_FLOAT64(bare_double, kExampleDoubleValue, kExampleDoubleDescription)
+constexpr auto kModule = "test_module";
 
-DEFINE_BYTE_VEC(bare_byte_vec, kExampleByteVecValue, kExampleByteVecDescription)
-DEFINE_BOOL_VEC(bare_bool_vec, kExampleBoolVecValue, kExampleBoolVecDescription)
-DEFINE_INT64_VEC(bare_int64_vec, kExampleIntVecValue, kExampleIntVecDescription)
-DEFINE_STRING_VEC(bare_string_vec, kExampleStringVecValue,
+// Root namespace
+DEFINE_BOOL(kModule, bare_bool, kExampleBoolValue, kExampleBoolDescription)
+DEFINE_INT64(kModule, bare_int64, kExampleIntValue, kExampleIntDescription)
+DEFINE_FLOAT64(kModule, bare_double, kExampleDoubleValue,
+               kExampleDoubleDescription)
+
+DEFINE_BYTE_VEC(kModule, bare_byte_vec, kExampleByteVecValue,
+                kExampleByteVecDescription)
+DEFINE_BOOL_VEC(kModule, bare_bool_vec, kExampleBoolVecValue,
+                kExampleBoolVecDescription)
+DEFINE_INT64_VEC(kModule, bare_int64_vec, kExampleIntVecValue,
+                 kExampleIntVecDescription)
+DEFINE_STRING_VEC(kModule, bare_string_vec, kExampleStringVecValue,
                   kExampleStringVecDescription)
 
 // Namespaced
-DEFINE_NS_STRING(test::hello, namespaced_string, kExampleStringValue,
+DEFINE_NS_STRING(kModule, test::hello, namespaced_string, kExampleStringValue,
                  kExampleStringDescription)
-DEFINE_NS_STRING(test::bye, namespaced_string, kExampleStringValue2,
+DEFINE_NS_STRING(kModule, test::bye, namespaced_string, kExampleStringValue2,
                  kExampleStringDescription2)
-DEFINE_NS_FLOAT64_VEC(test::byte, namespaced_double_vec, kExampleDoubleVecValue,
-                      kExampleDoubleVecDescription)
+DEFINE_NS_FLOAT64_VEC(kModule, test::byte, namespaced_double_vec,
+                      kExampleDoubleVecValue, kExampleDoubleVecDescription)
 
 /**
  * @brief Test that the default value of the DEFINE_* variant of defining params
@@ -101,11 +107,11 @@ TEST(Params, CorrectDefaultNamespaceValue) {
  * @brief Checks that the param metadata, ie. fullname, description are correct.
  */
 TEST(Params, CorrectMetadata) {
-    ::params::ParamProvider provider;
+    ::params::ParamProvider provider{kModule};
     {
         const auto& param_map = provider.GetParamMap<bool>();
         const auto it = param_map.find("bare_bool");
-        ASSERT_NE(it, param_map.end());
+        ASSERT_TRUE(it != param_map.end());
         EXPECT_EQ(it->second->prefix(), "");
         EXPECT_EQ(it->second->name(), "bare_bool");
         EXPECT_EQ(it->second->full_name(), "bare_bool");
@@ -138,7 +144,7 @@ TEST(Params, CorrectMetadata) {
  * DEFINE_*.
  */
 TEST(Params, ParamProviderGet) {
-    ::params::ParamProvider provider;
+    ::params::ParamProvider provider{kModule};
 
     bool bool_value{};
     EXPECT_TRUE(provider.Get("bare_bool", &bool_value));
@@ -171,7 +177,7 @@ TEST(Params, ParamProviderGet) {
  * DEFINE_*.
  */
 TEST(Params, ParamProviderUpdate) {
-    ::params::ParamProvider provider;
+    ::params::ParamProvider provider{kModule};
 
     constexpr bool kNewBoolValue = false;
     EXPECT_EQ(PARAM_bare_bool, kExampleBoolValue);
@@ -194,7 +200,7 @@ TEST(Params, ParamProviderUpdate) {
  * DEFINE_NS_*.
  */
 TEST(Params, ParamProviderUpdateNamespace) {
-    ::params::ParamProvider provider;
+    ::params::ParamProvider provider{kModule};
 
     const std::string kNewString = "Haha.";
     EXPECT_EQ(test::hello::PARAM_namespaced_string, kExampleStringValue);

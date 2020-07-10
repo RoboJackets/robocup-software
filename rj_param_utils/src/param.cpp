@@ -81,28 +81,35 @@ public:
     }
 
     template <typename ParamType>
-    ParamMap<std::decay_t<ParamType>>& GetParamMap() {
-        return params_.template Get<std::decay_t<ParamType>>();
+    ParamMap<std::decay_t<ParamType>>& GetParamMap(const std::string& module) {
+        return params_[module].template Get<std::decay_t<ParamType>>();
     }
 
     template <typename ParamType>
     void RegisterParam(typename Param<ParamType>::Ptr param) {
         const std::string param_name = param->full_name();
-        GetParamMap<ParamType>().insert(
+        const std::string& module = param->module();
+        GetParamMap<ParamType>(module).insert(
             std::make_pair(param_name, std::move(param)));
     }
 
     template <typename ParamType>
-    [[nodiscard]] bool HasParam(const std::string& full_name) {
-        ParamMap<ParamType>& param_map = params_.Get<ParamType>();
+    [[nodiscard]] bool HasParam(const std::string& module,
+                                const std::string& full_name) {
+        if (params_.find(module) == params_.end()) {
+            return false;
+        }
+        ParamMaps& param_maps = params_[module];
+        ParamMap<ParamType>& param_map = param_maps.Get<ParamType>();
         auto it = param_map.find(full_name);
         return it != param_map.end();
     }
 
     template <typename ParamType>
-    [[nodiscard]] bool GetParam(const std::string& full_name,
+    [[nodiscard]] bool GetParam(const std::string& module,
+                                const std::string& full_name,
                                 ParamType* value) {
-        auto& param_map = GetParamMap<ParamType>();
+        auto& param_map = GetParamMap<ParamType>(module);
         auto it = param_map.find(full_name);
         if (it == param_map.end()) {
             return false;
@@ -112,8 +119,9 @@ public:
     }
 
     template <typename ParamType>
-    void UpdateParam(const std::string& full_name, ParamType&& new_value) {
-        auto& param_map = GetParamMap<ParamType>();
+    void UpdateParam(const std::string& module, const std::string& full_name,
+                     ParamType&& new_value) {
+        auto& param_map = GetParamMap<ParamType>(module);
         auto it = param_map.find(full_name);
         if (it == param_map.end()) {
             throw std::runtime_error("Couldn't find parameter with name " +
@@ -135,24 +143,25 @@ private:
     ParamRegistry() = default;
     ~ParamRegistry() = default;
 
-    ParamMaps params_;
+    std::unordered_map<std::string, ParamMaps> params_;
 };
 
 template <typename ParamType>
-ParamRegisterer::ParamRegisterer(const char* prefix, const char* name,
-                                 const char* help, const char* filename,
+ParamRegisterer::ParamRegisterer(const char* module, const char* prefix,
+                                 const char* name, const char* help,
+                                 const char* filename,
                                  ParamType& current_storage) {
     std::unique_ptr<Param<ParamType>> param =
-        std::make_unique<Param<ParamType>>(prefix, name, help, filename,
+        std::make_unique<Param<ParamType>>(module, prefix, name, help, filename,
                                            current_storage);
     ParamRegistry::GlobalRegistry().template RegisterParam<ParamType>(
         std::move(param));
 }
 
-#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                 \
-    template ParamRegisterer::ParamRegisterer(                  \
-        const char* prefix, const char* name, const char* help, \
-        const char* filename, type& current_storage);
+#define INSTANTIATE_PARAM_REGISTERER_CTOR(type)                   \
+    template ParamRegisterer::ParamRegisterer(                    \
+        const char* module, const char* prefix, const char* name, \
+        const char* help, const char* filename, type& current_storage);
 
 // Do this for all supported flag types. For now these correspond to the ROS2
 // parameter types.
@@ -171,30 +180,34 @@ INSTANTIATE_PARAM_REGISTERER_CTOR(std::vector<std::string>)
 
 template <typename ParamType>
 bool ParamProvider::Get(const std::string& full_name, ParamType* value) const {
-    return internal::ParamRegistry::GlobalRegistry().GetParam(full_name, value);
+    return internal::ParamRegistry::GlobalRegistry().GetParam(module_,
+                                                              full_name, value);
 }
 
 template <typename ParamType>
 void ParamProvider::Update(const std::string& full_name,
                            const ParamType& new_value) {
-    internal::ParamRegistry::GlobalRegistry().UpdateParam(full_name, new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name,
+                                                          new_value);
 }
 
 template <typename ParamType>
 bool ParamProvider::TryUpdate(const std::string& full_name,
                               const ParamType& new_value) {
     if (!internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(
-            full_name)) {
+            module_, full_name)) {
         return false;
     }
 
-    internal::ParamRegistry::GlobalRegistry().UpdateParam(full_name, new_value);
+    internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name,
+                                                          new_value);
     return true;
 }
 
 template <typename ParamType>
 internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
-    return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>();
+    return internal::ParamRegistry::GlobalRegistry().GetParamMap<ParamType>(
+        module_);
 }
 
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
