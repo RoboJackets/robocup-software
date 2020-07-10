@@ -185,6 +185,12 @@ bool ParamProvider::Get(const std::string& full_name, ParamType* value) const {
 }
 
 template <typename ParamType>
+bool ParamProvider::HasParam(const std::string& full_name) const {
+    return internal::ParamRegistry::GlobalRegistry().HasParam<ParamType>(
+        module_, full_name);
+}
+
+template <typename ParamType>
 void ParamProvider::Update(const std::string& full_name,
                            const ParamType& new_value) {
     internal::ParamRegistry::GlobalRegistry().UpdateParam(module_, full_name,
@@ -211,13 +217,15 @@ internal::ParamMap<ParamType>& ParamProvider::GetParamMap() {
 }
 
 // Instantiate Update, TryUpdate and GetParamMap for all supported types.
-#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                             \
-    template bool ParamProvider::Get(const std::string& full_name,       \
-                                     type* value) const;                 \
-    template void ParamProvider::Update(const std::string& full_name,    \
-                                        const type& new_value);          \
-    template bool ParamProvider::TryUpdate(const std::string& full_name, \
-                                           const type& new_value);       \
+#define INSTANTIATE_PARAM_PROVIDER_FNS(type)                                  \
+    template bool ParamProvider::Get(const std::string& full_name,            \
+                                     type* value) const;                      \
+    template bool ParamProvider::HasParam<type>(const std::string& full_name) \
+        const;                                                                \
+    template void ParamProvider::Update(const std::string& full_name,         \
+                                        const type& new_value);               \
+    template bool ParamProvider::TryUpdate(const std::string& full_name,      \
+                                           const type& new_value);            \
     template internal::ParamMap<type>& ParamProvider::GetParamMap<type>();
 
 INSTANTIATE_PARAM_PROVIDER_FNS(bool)

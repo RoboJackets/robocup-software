@@ -103,6 +103,15 @@ public:
     bool Get(const std::string& full_name, ParamType* value) const;
 
     /**
+     * @brief Returning true if the parameter exists.
+     * @tparam ParamType Type of the parameter.
+     * @param full_name Name of the parameter to find.
+     * @return Whether the parameter exists or not.
+     */
+    template <typename ParamType>
+    bool HasParam(const std::string& full_name) const;
+
+    /**
      * @brief Updates the parameter with the passed in full_name and matching
      * type with new_value.
      * @tparam ParamType Type of the parameter.

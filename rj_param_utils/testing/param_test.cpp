@@ -15,6 +15,8 @@ static const std::string kExampleStringValue = "Test please.";
 constexpr auto kExampleStringDescription = "Lets go.";
 static const std::string kExampleStringValue2 = "Goodbye.";
 constexpr auto kExampleStringDescription2 = "Nice description.";
+static const std::string kExampleStringValue3 = "See you.";
+constexpr auto kExampleStringDescription3 = "Hello there.";
 
 static const std::vector<uint8_t> kExampleByteVecValue = {0xB0, 0xBA, 0xCA};
 constexpr auto kExampleByteVecDescription = "lmao nice.";
@@ -33,6 +35,7 @@ static const std::vector<std::string> kExampleStringVecValue = {"123", "456",
 constexpr auto kExampleStringVecDescription = "abcde Test.";
 
 constexpr auto kModule = "test_module";
+constexpr auto kModule2 = "test_module2";
 
 // Root namespace
 DEFINE_BOOL(kModule, bare_bool, kExampleBoolValue, kExampleBoolDescription)
@@ -56,6 +59,11 @@ DEFINE_NS_STRING(kModule, test::bye, namespaced_string, kExampleStringValue2,
                  kExampleStringDescription2)
 DEFINE_NS_FLOAT64_VEC(kModule, test::byte, namespaced_double_vec,
                       kExampleDoubleVecValue, kExampleDoubleVecDescription)
+
+// In a different "module", emulating multiple nodes in a single
+// executable.
+DEFINE_NS_STRING(kModule2, test::hello, different_module, kExampleStringValue3,
+                 kExampleStringDescription3)
 
 /**
  * @brief Test that the default value of the DEFINE_* variant of defining params
@@ -216,5 +224,22 @@ TEST(Params, ParamProviderUpdateNamespace) {
     EXPECT_EQ(test::byte::PARAM_namespaced_double_vec, kExampleDoubleVecValue);
     provider.Update("test::byte::namespaced_double_vec", kNewDoubleVec);
     EXPECT_EQ(test::byte::PARAM_namespaced_double_vec, kNewDoubleVec);
+}
+
+/**
+ * @brief Tests that ParamProvider only picks up parameters from its own module.
+ */
+TEST(Params, ParamProviderModules) {
+    ::params::ParamProvider provider{kModule};
+    ASSERT_TRUE(
+        provider.HasParam<std::string>("test::hello::namespaced_string"));
+    ASSERT_FALSE(
+        provider.HasParam<std::string>("test::hello::different_module"));
+
+    ::params::ParamProvider provider2{kModule2};
+    ASSERT_FALSE(
+        provider2.HasParam<std::string>("test::hello::namespaced_string"));
+    ASSERT_TRUE(
+        provider2.HasParam<std::string>("test::hello::different_module"));
 }
 }  // namespace params::testing
