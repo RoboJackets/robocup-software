@@ -80,9 +80,13 @@ jobs:
       - run: pip3 install --upgrade -r util/requirements3.txt
       - run: |
           PR_NUM=$(echo $CIRCLE_PULL_REQUEST | grep -o "[0-9]*")
-          PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
-          BASE_SHA=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
-          echo "Diffing against $BASE_SHA for clang-format..."
+          if [ -z "$PR_NUM" ] then
+            DIFFBRANCH="origin/staging"
+          else
+            PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
+            DIFFBRANCH=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
+          fi
+          echo "Diffing against $DIFFBRANCH for clang-format..."
           git fetch origin && DIFFBRANCH=$BASE_SHA make checkstyle-lines
       - store_artifacts:
           path: /tmp/clean.patch
@@ -97,10 +101,14 @@ jobs:
       - <<: *load_workspace
       - run: |
           PR_NUM=$(echo $CIRCLE_PULL_REQUEST | grep -o "[0-9]*")
-          PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
-          BASE_SHA=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
-          echo "Diffing against $BASE_SHA for clang-tidy..."
-          DIFFBRANCH=$BASE_SHA make checktidy-lines
+          if [ -z "$PR_NUM" ] then
+            DIFFBRANCH="origin/staging"
+          else
+            PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
+            DIFFBRANCH=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
+          fi
+          echo "Diffing against $DIFFBRANCH for clang-tidy..."
+          DIFFBRANCH=$DIFFBRANCH make checktidy-lines
           cat /tmp/checktidy.patch
           if grep -q 'No relevant changes found' /tmp/checktidy.patch; then
             echo "No relevant changes found"
