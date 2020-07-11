@@ -14,7 +14,7 @@
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
 #include "radio/RadioNode.hpp"
-#include "vision/VisionFilter.hpp"
+#include <rj_vision_filter/VisionFilter.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 

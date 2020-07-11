@@ -3,7 +3,7 @@
 #include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
-#include "KalmanFilter.hpp"
+#include <rj_vision_filter/filter/KalmanFilter.hpp>
 
 class KalmanFilter3D : public KalmanFilter {
 public:

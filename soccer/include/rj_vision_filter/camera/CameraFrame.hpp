@@ -4,8 +4,8 @@
 #include <utility>
 #include <vector>
 
-#include "vision/ball/CameraBall.hpp"
-#include "vision/robot/CameraRobot.hpp"
+#include <rj_vision_filter/ball/CameraBall.hpp>
+#include <rj_vision_filter/robot/CameraRobot.hpp>
 
 using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;
 

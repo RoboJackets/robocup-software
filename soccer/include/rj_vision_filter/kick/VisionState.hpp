@@ -3,8 +3,8 @@
 #include <rj_common/Utils.hpp>
 #include <vector>
 
-#include "vision/ball/WorldBall.hpp"
-#include "vision/robot/WorldRobot.hpp"
+#include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/robot/WorldRobot.hpp>
 
 /**
  * Snapshot of the state of all objects in vision at a specific time

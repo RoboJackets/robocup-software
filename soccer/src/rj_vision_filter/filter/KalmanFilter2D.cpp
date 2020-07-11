@@ -1,8 +1,8 @@
-#include "KalmanFilter2D.hpp"
+#include <rj_vision_filter/filter/KalmanFilter2D.hpp>
 
 #include <cmath>
 
-#include "vision/util/VisionFilterConfig.hpp"
+#include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(KalmanFilter2D)
 

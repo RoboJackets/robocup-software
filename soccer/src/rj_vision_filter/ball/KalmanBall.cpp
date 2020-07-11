@@ -1,9 +1,9 @@
-#include "KalmanBall.hpp"
+#include <rj_vision_filter/ball/KalmanBall.hpp>
 
 #include <algorithm>
 
-#include "vision/ball/WorldBall.hpp"
-#include "vision/util/VisionFilterConfig.hpp"
+#include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(KalmanBall)
 

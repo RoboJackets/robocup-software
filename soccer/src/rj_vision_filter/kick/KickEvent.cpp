@@ -1,4 +1,4 @@
-#include "KickEvent.hpp"
+#include <rj_vision_filter/kick/KickEvent.hpp>
 
 void KickEvent::addState(RJ::Time calcTime, const WorldBall& ball,
                          const std::vector<WorldRobot>& yellowRobots,

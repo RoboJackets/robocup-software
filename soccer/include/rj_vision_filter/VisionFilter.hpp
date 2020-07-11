@@ -8,8 +8,8 @@
 #include <thread>
 #include <vector>
 
-#include "vision/camera/CameraFrame.hpp"
-#include "vision/camera/World.hpp"
+#include <rj_vision_filter/camera/CameraFrame.hpp>
+#include <rj_vision_filter/camera/World.hpp>
 
 /**
  * Uses a seperate thread to filter the vision measurements into

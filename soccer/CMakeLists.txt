@@ -123,7 +123,7 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     )
 
 set(ROBOCUP_DEPS_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/soccer
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include
     )

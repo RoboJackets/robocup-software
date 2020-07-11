@@ -4,10 +4,10 @@
 #include <deque>
 #include <rj_common/Utils.hpp>
 
-#include "vision/ball/WorldBall.hpp"
-#include "vision/kick/KickEvent.hpp"
-#include "vision/kick/VisionState.hpp"
-#include "vision/robot/WorldRobot.hpp"
+#include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/kick/KickEvent.hpp>
+#include <rj_vision_filter/kick/VisionState.hpp>
+#include <rj_vision_filter/robot/WorldRobot.hpp>
 
 /**
  * Detects extremely fast kicks in the case where the

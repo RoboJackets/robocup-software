@@ -19,7 +19,7 @@
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
 #include "radio/RobotStatus.hpp"
-#include "vision/VisionPacket.hpp"
+#include <rj_vision_filter/VisionPacket.hpp>
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}

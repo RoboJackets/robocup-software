@@ -5,7 +5,7 @@
 #include <list>
 #include <rj_common/Utils.hpp>
 
-#include "KalmanBall.hpp"
+#include <rj_vision_filter/ball/KalmanBall.hpp>
 
 class KalmanBall;
 

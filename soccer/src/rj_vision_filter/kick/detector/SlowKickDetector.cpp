@@ -1,11 +1,11 @@
-#include "SlowKickDetector.hpp"
+#include <rj_vision_filter/kick/detector/SlowKickDetector.hpp>
 
 #include <algorithm>
 #include <cmath>
 
 #include <Geometry2d/Point.hpp>
 
-#include "vision/util/VisionFilterConfig.hpp"
+#include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(SlowKickDetector)
 

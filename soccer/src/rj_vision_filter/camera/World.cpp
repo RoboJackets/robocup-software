@@ -1,8 +1,8 @@
-#include "World.hpp"
+#include <rj_vision_filter/camera/World.hpp>
 
 #include <rj_constants/constants.hpp>
 
-#include "vision/util/VisionFilterConfig.hpp"
+#include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(World)
 

@@ -5,8 +5,8 @@
 #include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
 
-#include "KalmanBall.hpp"
-#include "vision/robot/WorldRobot.hpp"
+#include <rj_vision_filter/ball/KalmanBall.hpp>
+#include <rj_vision_filter/robot/WorldRobot.hpp>
 
 class BallBounce {
 public:

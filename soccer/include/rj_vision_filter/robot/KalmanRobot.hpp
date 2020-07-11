@@ -6,8 +6,8 @@
 #include <boost/circular_buffer.hpp>
 #include <rj_common/Utils.hpp>
 
-#include "vision/filter/KalmanFilter3D.hpp"
-#include "vision/robot/CameraRobot.hpp"
+#include <rj_vision_filter/filter/KalmanFilter3D.hpp>
+#include <rj_vision_filter/robot/CameraRobot.hpp>
 
 class WorldRobot;
 

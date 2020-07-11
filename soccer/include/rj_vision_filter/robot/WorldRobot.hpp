@@ -6,7 +6,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 
-#include "KalmanRobot.hpp"
+#include <rj_vision_filter/robot/KalmanRobot.hpp>
 
 class KalmanRobot;
 

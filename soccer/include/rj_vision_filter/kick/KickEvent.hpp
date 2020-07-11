@@ -4,9 +4,9 @@
 #include <rj_common/Utils.hpp>
 #include <vector>
 
-#include "VisionState.hpp"
-#include "vision/ball/WorldBall.hpp"
-#include "vision/robot/WorldRobot.hpp"
+#include <rj_vision_filter/kick/VisionState.hpp>
+#include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/robot/WorldRobot.hpp>
 
 /**
  * Contains all the useful information for a kick

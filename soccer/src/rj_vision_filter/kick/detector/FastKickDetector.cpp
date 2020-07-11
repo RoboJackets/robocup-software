@@ -1,4 +1,4 @@
-#include "FastKickDetector.hpp"
+#include <rj_vision_filter/kick/detector/FastKickDetector.hpp>
 
 #include <Geometry2d/Point.hpp>
 #include <cmath>
@@ -6,7 +6,7 @@
 #include <iterator>
 #include <limits>
 
-#include "vision/util/VisionFilterConfig.hpp"
+#include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(FastKickDetector)
 

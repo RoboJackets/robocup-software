@@ -1,4 +1,4 @@
-#include "VisionFilterConfig.hpp"
+#include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(VisionFilterConfig)
 

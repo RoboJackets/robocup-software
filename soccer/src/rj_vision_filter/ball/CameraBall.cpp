@@ -1,4 +1,4 @@
-#include "CameraBall.hpp"
+#include <rj_vision_filter/ball/CameraBall.hpp>
 
 CameraBall::CameraBall(RJ::Time time_captured, const DetectionBallMsg& msg,
                        const Geometry2d::TransformMatrix& world_to_team)

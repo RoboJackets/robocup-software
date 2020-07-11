@@ -2,7 +2,7 @@
 
 #include <rj_constants/constants.hpp>
 
-#include "vision/camera/Camera.hpp"
+#include <rj_vision_filter/camera/Camera.hpp>
 
 TEST(Camera, invalid_camera) {
     Camera c = Camera();

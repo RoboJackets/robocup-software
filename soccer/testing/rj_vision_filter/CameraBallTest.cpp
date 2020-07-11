@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "vision/ball/CameraBall.hpp"
+#include <rj_vision_filter/ball/CameraBall.hpp>
 
 TEST(CameraBall, get_time_captured) {
     RJ::Time t = RJ::now();

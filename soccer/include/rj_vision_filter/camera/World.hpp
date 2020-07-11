@@ -3,13 +3,13 @@
 #include <rj_common/Utils.hpp>
 #include <vector>
 
-#include "vision/ball/WorldBall.hpp"
-#include "vision/camera/Camera.hpp"
-#include "vision/camera/CameraFrame.hpp"
-#include "vision/kick/KickEvent.hpp"
-#include "vision/kick/detector/FastKickDetector.hpp"
-#include "vision/kick/detector/SlowKickDetector.hpp"
-#include "vision/robot/WorldRobot.hpp"
+#include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/camera/Camera.hpp>
+#include <rj_vision_filter/camera/CameraFrame.hpp>
+#include <rj_vision_filter/kick/KickEvent.hpp>
+#include <rj_vision_filter/kick/detector/FastKickDetector.hpp>
+#include <rj_vision_filter/kick/detector/SlowKickDetector.hpp>
+#include <rj_vision_filter/robot/WorldRobot.hpp>
 
 /**
  * Keeps list of all the cameras and sends camera data down to the correct location
