@@ -78,7 +78,12 @@ jobs:
       # Ensure latest deps are installed
       - <<: *install_deps
       - run: pip3 install --upgrade -r util/requirements3.txt
-      - run: git fetch origin && DIFFBRANCH=origin/staging make checkstyle-lines
+      - run: |
+          PR_NUM=$(echo $CIRCLE_PULL_REQUEST | grep -o "[0-9]*")
+          PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
+          BASE_SHA=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
+          echo "Diffing against $BASE_SHA for clang-format..."
+          git fetch origin && DIFFBRANCH=$BASE_SHA make checkstyle-lines
       - store_artifacts:
           path: /tmp/clean.patch
 
@@ -91,7 +96,11 @@ jobs:
       - <<: *install_deps
       - <<: *load_workspace
       - run: |
-          DIFFBRANCH=origin/staging make checktidy-lines
+          PR_NUM=$(echo $CIRCLE_PULL_REQUEST | grep -o "[0-9]*")
+          PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
+          BASE_SHA=$(curl -s "$PR_API_URL" | python3 -c "import sys, json; print(json.load(sys.stdin)['base']['sha'])")
+          echo "Diffing against $BASE_SHA for clang-tidy..."
+          DIFFBRANCH=$BASE_SHA make checktidy-lines
           cat /tmp/checktidy.patch
           if grep -q 'No relevant changes found' /tmp/checktidy.patch; then
             echo "No relevant changes found"
