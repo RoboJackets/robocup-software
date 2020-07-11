@@ -80,7 +80,7 @@ jobs:
       - run: pip3 install --upgrade -r util/requirements3.txt
       - run: |
           PR_NUM=$(echo $CIRCLE_PULL_REQUEST | grep -o "[0-9]*")
-          if [ -z "$PR_NUM" ] then
+          if [ -z "$PR_NUM" ]; then
             DIFFBRANCH="origin/staging"
           else
             PR_API_URL="https://api.github.com/repos/robojackets/robocup-software/pulls/$PR_NUM"
