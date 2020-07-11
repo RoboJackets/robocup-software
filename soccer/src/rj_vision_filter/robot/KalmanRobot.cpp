@@ -1,10 +1,9 @@
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 
 #define _USE_MATH_DEFINES
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <iostream>
-
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 #include <rj_vision_filter/util/VisionFilterConfig.hpp>
 

@@ -1,11 +1,10 @@
 #pragma once
 #include <rj_common/Utils.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
-#include <utility>
-#include <vector>
-
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
+#include <utility>
+#include <vector>
 
 using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;
 

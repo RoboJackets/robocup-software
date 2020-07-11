@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <cmath>
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>

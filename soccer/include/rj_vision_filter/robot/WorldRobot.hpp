@@ -1,11 +1,9 @@
 #pragma once
 
-#include <list>
-
 #include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
-
+#include <list>
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 
 class KalmanRobot;

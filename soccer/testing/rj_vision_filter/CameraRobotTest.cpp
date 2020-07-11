@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
 TEST(CameraRobot, get_time_captured) {

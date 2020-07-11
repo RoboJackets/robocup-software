@@ -2,11 +2,10 @@
 
 #include <deque>
 #include <rj_common/Utils.hpp>
-#include <vector>
-
-#include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <vector>
 
 /**
  * Contains all the useful information for a kick

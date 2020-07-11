@@ -1,10 +1,8 @@
-#include <rj_vision_filter/VisionFilter.hpp>
-
 #include <Robot.hpp>
 #include <iostream>
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
-
+#include <rj_vision_filter/VisionFilter.hpp>
 #include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 VisionFilter::VisionFilter(Context* context) : context_{context} {

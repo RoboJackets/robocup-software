@@ -4,6 +4,7 @@
 #include <rj_protos/referee.pb.h>
 
 #include <rj_constants/constants.hpp>
+#include <rj_vision_filter/VisionPacket.hpp>
 #include <set>
 
 #include "DebugDrawer.hpp"
@@ -19,7 +20,6 @@
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"
 #include "radio/RobotStatus.hpp"
-#include <rj_vision_filter/VisionPacket.hpp>
 
 struct Context {
     Context() : state(this), debug_drawer(this) {}

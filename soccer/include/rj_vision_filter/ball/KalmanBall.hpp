@@ -4,7 +4,6 @@
 #include <Geometry2d/Point.hpp>
 #include <boost/circular_buffer.hpp>
 #include <rj_common/Utils.hpp>
-
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/filter/KalmanFilter2D.hpp>
 

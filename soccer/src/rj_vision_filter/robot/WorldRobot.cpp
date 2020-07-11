@@ -1,6 +1,6 @@
-#include <rj_vision_filter/robot/WorldRobot.hpp>
-#include <iostream>
 #include <cmath>
+#include <iostream>
+#include <rj_vision_filter/robot/WorldRobot.hpp>
 
 REGISTER_CONFIGURABLE(WorldRobot)
 

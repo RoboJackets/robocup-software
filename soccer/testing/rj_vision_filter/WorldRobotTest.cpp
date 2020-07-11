@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
 TEST(WorldRobot, invalid) {

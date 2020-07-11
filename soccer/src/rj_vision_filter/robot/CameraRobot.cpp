@@ -1,6 +1,5 @@
-#include <rj_vision_filter/robot/CameraRobot.hpp>
-
 #include <iostream>
+#include <rj_vision_filter/robot/CameraRobot.hpp>
 
 CameraRobot::CameraRobot(const RJ::Time& time_captured,
                          const DetectionRobotMsg& msg,

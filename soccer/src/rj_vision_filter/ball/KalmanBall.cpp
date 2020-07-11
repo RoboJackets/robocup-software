@@ -1,7 +1,5 @@
-#include <rj_vision_filter/ball/KalmanBall.hpp>
-
 #include <algorithm>
-
+#include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/util/VisionFilterConfig.hpp>
 

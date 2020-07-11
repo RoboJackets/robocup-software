@@ -3,16 +3,15 @@
 
 #include <Configuration.hpp>
 #include <rj_common/Utils.hpp>
-#include <vector>
-
-#include <rj_vision_filter/camera/CameraFrame.hpp>
 #include <rj_vision_filter/ball/BallBounce.hpp>
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/camera/CameraFrame.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <vector>
 
 /**
  * Contains all the kalman balls/robots for the specific camera

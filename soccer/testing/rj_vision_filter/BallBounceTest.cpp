@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
+
+#include <rj_vision_filter/ball/BallBounce.hpp>
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
-#include <rj_vision_filter/ball/BallBounce.hpp>
 
 TEST(BallBounce, no_input) {
     RJ::Time tc = RJ::now();

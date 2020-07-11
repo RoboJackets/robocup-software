@@ -1,12 +1,10 @@
 #pragma once
 
-#include <vector>
-
-#include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
-
+#include <Geometry2d/Point.hpp>
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <vector>
 
 class BallBounce {
 public:

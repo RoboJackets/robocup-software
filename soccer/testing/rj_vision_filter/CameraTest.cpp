@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include <rj_constants/constants.hpp>
-
 #include <rj_vision_filter/camera/Camera.hpp>
 
 TEST(Camera, invalid_camera) {

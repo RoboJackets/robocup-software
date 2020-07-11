@@ -10,11 +10,11 @@
 #include <gameplay/GameplayModule.hpp>
 #include <rj_common/Utils.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_vision_filter/VisionFilter.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
 #include "radio/RadioNode.hpp"
-#include <rj_vision_filter/VisionFilter.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 

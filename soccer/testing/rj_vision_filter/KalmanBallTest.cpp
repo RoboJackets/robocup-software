@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 

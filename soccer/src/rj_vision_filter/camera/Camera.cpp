@@ -1,8 +1,6 @@
-#include <rj_vision_filter/camera/Camera.hpp>
-
 #include <Geometry2d/Point.hpp>
 #include <rj_constants/constants.hpp>
-
+#include <rj_vision_filter/camera/Camera.hpp>
 #include <rj_vision_filter/util/VisionFilterConfig.hpp>
 
 REGISTER_CONFIGURABLE(Camera)

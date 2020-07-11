@@ -5,11 +5,10 @@
 #include <WorldState.hpp>
 #include <atomic>
 #include <mutex>
-#include <thread>
-#include <vector>
-
 #include <rj_vision_filter/camera/CameraFrame.hpp>
 #include <rj_vision_filter/camera/World.hpp>
+#include <thread>
+#include <vector>
 
 /**
  * Uses a seperate thread to filter the vision measurements into

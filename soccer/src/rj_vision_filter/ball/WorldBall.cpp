@@ -1,7 +1,6 @@
-#include <rj_vision_filter/ball/WorldBall.hpp>
-
-#include <iostream>
 #include <cmath>
+#include <iostream>
+#include <rj_vision_filter/ball/WorldBall.hpp>
 
 REGISTER_CONFIGURABLE(WorldBall)
 

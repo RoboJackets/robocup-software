@@ -1,8 +1,6 @@
 #include <Configuration.hpp>
 #include <list>
 #include <rj_common/Utils.hpp>
-#include <vector>
-
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/camera/Camera.hpp>
 #include <rj_vision_filter/camera/CameraFrame.hpp>
@@ -10,6 +8,7 @@
 #include <rj_vision_filter/kick/detector/FastKickDetector.hpp>
 #include <rj_vision_filter/kick/detector/SlowKickDetector.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <vector>
 
 /**
  * Keeps list of all the cameras and sends camera data down to the correct location

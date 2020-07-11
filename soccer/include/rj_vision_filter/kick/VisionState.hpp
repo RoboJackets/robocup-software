@@ -1,10 +1,9 @@
 #pragma once
 
 #include <rj_common/Utils.hpp>
-#include <vector>
-
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <vector>
 
 /**
  * Snapshot of the state of all objects in vision at a specific time

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <rj_vision_filter/filter/KalmanFilter.hpp>
-#include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
+#include <Geometry2d/Point.hpp>
+#include <rj_vision_filter/filter/KalmanFilter.hpp>
 
 class KalmanFilter2D : public KalmanFilter {
 public:
