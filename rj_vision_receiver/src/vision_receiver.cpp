@@ -9,17 +9,23 @@
 #include <rj_utils/logging.hpp>
 #include <stdexcept>
 
+constexpr auto kVisionReceiverParamModule = "vision_receiver";
+
+DEFINE_INT64(kVisionReceiverParamModule, port, SharedVisionPortSinglePrimary,
+             "The port used for the vision receiver.")
+
 namespace vision_receiver {
 using boost::asio::ip::udp;
 
 VisionReceiver::VisionReceiver()
-    : Node{"vision_receiver"}, config_{this}, port_{-1}, _socket{_io_context} {
+    : Node{"vision_receiver"},
+      config_{this},
+      port_{-1},
+      _socket{_io_context},
+      param_provider_(this, kVisionReceiverParamModule) {
     _recv_buffer.resize(65536);
 
-    // Parameters. TODO(#1529): Better parameter "library".
-    declare_parameter<int>("port", SharedVisionPortSinglePrimary);
-    get_parameter<int>("port", port_);
-    setPort(port_);
+    setPort(PARAM_port);
 
     raw_packet_pub_ =
         create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);

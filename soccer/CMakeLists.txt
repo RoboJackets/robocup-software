@@ -193,7 +193,14 @@ target_link_libraries(log_viewer
 if (BUILD_TESTING)
     target_link_libraries(test-soccer PRIVATE robocup)
     target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
-    target_link_libraries(test-soccer PRIVATE geometry2d_testing)
+
+    set(test_libs geometry2d_testing rj_param_utils_testing)
+    foreach(test_lib ${test_libs})
+        target_link_libraries(test-soccer PRIVATE
+            "-Wl,--whole-archive -L$<TARGET_FILE_DIR:${test_lib}> -l${test_lib} -Wl,--no-whole-archive")
+        target_link_libraries(test-soccer PRIVATE ${test_lib})
+    endforeach()
+
     target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
     add_dependencies(test-soccer googletest)
 endif ()

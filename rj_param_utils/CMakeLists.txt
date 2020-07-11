@@ -2,52 +2,55 @@
 # Preamble
 #======================================================================
 cmake_minimum_required(VERSION 3.16)
-project(rj_vision_receiver)
+project(rj_param_utils)
 
 #======================================================================
 # Find package
 #======================================================================
 find_package(rclcpp REQUIRED)
-find_package(Boost REQUIRED)
-find_package(rj_msgs REQUIRED)
 
 #======================================================================
 # Define Targets
 #======================================================================
-add_executable(vision_receiver)
+add_library(rj_param_utils SHARED)
 
 add_subdirectory(src)
 
 #======================================================================
 # Dependencies List
 #======================================================================
-set(RJ_VISION_RECEIVER_DEPS_INCLUDE_DIRS
+set(RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS
     include)
-
-set(RJ_VISION_RECEIVER_DEPS_SYSTEM_LIBRARIES
-    Boost::asio)
-
-set(RJ_VISION_RECEIVER_DEPS_LIBRARIES
-    config_client
-    rj_common
-    rj_param_utils
-    rj_utils)
 
 #======================================================================
 # Include and Linking
 #======================================================================
-target_include_directories(vision_receiver
-    PRIVATE
-    ${RJ_VISION_RECEIVER_DEPS_INCLUDE_DIRS})
+target_include_directories(rj_param_utils
+    PUBLIC
+    ${RJ_PARAM_UTILS_DEPS_INCLUDE_DIRS})
 
-target_link_libraries(vision_receiver
-    PRIVATE
-    ${RJ_VISION_RECEIVER_DEPS_LIBRARIES})
+target_link_libraries(rj_param_utils
+    PUBLIC
+    ${RJ_PARAM_UTILS_DEPS_LIBRARIES})
 
-ament_target_dependencies(vision_receiver PUBLIC rclcpp rj_msgs)
+ament_target_dependencies(rj_param_utils PUBLIC rclcpp)
+
+#======================================================================
+# Testing
+#======================================================================
+if(BUILD_TESTING)
+    enable_testing()
+
+    add_library(rj_param_utils_testing STATIC)
+    add_subdirectory(testing)
+    target_link_libraries(rj_param_utils_testing PUBLIC rj_param_utils ${GTEST_LIBRARIES})
+endif()
 
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS vision_receiver
-    DESTINATION lib/${CMAKE_PROJECT_NAME})
+install(TARGETS
+    rj_param_utils
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin)
