@@ -124,6 +124,7 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
 
 set(ROBOCUP_DEPS_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include
     )
 
@@ -204,6 +205,14 @@ if (BUILD_TESTING)
     target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
     add_dependencies(test-soccer googletest)
 endif ()
+
+#======================================================================
+# Testing
+#======================================================================
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(testing)
+endif()
 
 #======================================================================
 # Packaging
