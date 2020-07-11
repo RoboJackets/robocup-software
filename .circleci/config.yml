@@ -57,7 +57,7 @@ jobs:
       - run: |
           source /opt/ros/foxy/setup.sh && source install/setup.bash && ./install/lib/rj_robocup/test-soccer --gtest_filter="*"
       - run: |
-          source /opt/ros/foxy/setup.sh && source install/setup.bash && cd soccer/src/gameplay && ./run_tests.sh
+          source /opt/ros/foxy/setup.sh && source install/setup.bash && cd soccer/src/soccer/gameplay && ./run_tests.sh
   python-static:
     <<: *dir
     <<: *image
