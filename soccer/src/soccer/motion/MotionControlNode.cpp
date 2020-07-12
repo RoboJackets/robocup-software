@@ -16,11 +16,12 @@ MotionControlNode::MotionControlNode(Context* context) : _context(context) {
 
 void MotionControlNode::run() {
     const WorldStateMsg::UniquePtr world_state_msg = world_state_queue_->Get();
-    if (world_state_msg != nullptr) {
-        runMotion(*world_state_msg, _context->game_state,
-                  _context->trajectories, _context->is_joystick_controlled,
-                  &_context->motion_setpoints);
+    if (world_state_msg == nullptr) {
+        return;
     }
+
+    runMotion(*world_state_msg, _context->game_state, _context->trajectories,
+              _context->is_joystick_controlled, &_context->motion_setpoints);
 }
 
 void MotionControlNode::runMotion(
