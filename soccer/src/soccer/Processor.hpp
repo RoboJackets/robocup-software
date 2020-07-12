@@ -12,6 +12,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <Logger.hpp>
 #include <Referee.hpp>
 #include <SystemState.hpp>
@@ -177,10 +178,15 @@ private:
 
     // ROS2 temporary modules
     using TimeMsg = builtin_interfaces::msg::Time;
-    using AsyncTimeMessageQueue = ros2_temp::AsyncMessageQueue<TimeMsg, ros2_temp::MessagePolicy::LATEST>;
+    using WorldStateMsg = rj_msgs::msg::WorldState;
+    using AsyncTimeMsgQueue =
+        ros2_temp::AsyncMessageQueue<TimeMsg, ros2_temp::MessagePolicy::kLatest>;
+    using AsyncWorldStateMsgQueue = ros2_temp::AsyncMessageQueue<WorldStateMsg, ros2_temp::MessagePolicy::kLatest>;
+
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
-    std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
-    std::unique_ptr<AsyncTimeMessageQueue> _last_vision_time_queue;
+    ros2_temp::RawVisionPacketSub::UniquePtr _raw_vision_packet_sub;
+    AsyncTimeMsgQueue::UniquePtr _last_vision_time_queue;
+    AsyncWorldStateMsgQueue::UniquePtr _world_state_queue;
 
     std::vector<Node*> _nodes;
 

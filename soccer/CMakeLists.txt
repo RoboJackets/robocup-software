@@ -236,7 +236,7 @@ install(TARGETS soccer rj_vision_filter
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(DIRECTORY
-        src/gameplay
+        src/soccer/gameplay
         DESTINATION share/${CMAKE_PROJECT_NAME}
         FILES_MATCHING
         PATTERN "*.py"

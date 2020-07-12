@@ -3,12 +3,15 @@
 #include <rj_protos/referee.pb.h>
 
 #include <iostream>
+#include <rj_msgs/msg/detail/team_info__builder.hpp>
 #include <string>
 #include <vector>
 
 // Information about a single team.
 class TeamInfo {
 public:
+    using Msg = rj_msgs::msg::TeamInfo;
+
     // The team's name (empty string if operator has not typed anything).
     std::string name;
     // The number of goals scored by the team during normal play and overtime.
@@ -39,6 +42,31 @@ public:
           timeouts_left(0),
           timeout_time(0),
           goalie(0) {}
+
+    /**
+     * @brief Implicit conversion from TeamInfo::Msg.
+     */
+    TeamInfo(const Msg& msg)
+        : name{msg.name},
+          score{msg.score},
+          red_cards{msg.red_cards},
+          yellow_card_times{msg.yellow_card_times},
+          yellow_cards{msg.yellow_cards},
+          timeouts_left{msg.timeouts_left},
+          timeout_time{msg.timeout_time},
+          goalie{msg.goalie} {}
+
+    operator Msg() const {
+        return rj_msgs::build<Msg>()
+            .name(name)
+            .score(score)
+            .red_cards(red_cards)
+            .yellow_card_times(yellow_card_times)
+            .yellow_cards(yellow_cards)
+            .timeouts_left(timeouts_left)
+            .timeout_time(timeout_time)
+            .goalie(goalie);
+    }
 
     void ParseRefboxPacket(SSL_Referee_TeamInfo packet) {
         name = packet.name();

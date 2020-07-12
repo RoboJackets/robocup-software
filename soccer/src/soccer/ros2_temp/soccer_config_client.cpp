@@ -13,6 +13,7 @@ void SoccerConfigClient::spin() { executor_.spin(); }
 
 void SoccerConfigClient::run() {
     config_client_->updateGameSettings(context_->game_settings);
+    config_client_->updateGameState(context_->game_state);
 
     // Check if it is connected, otherwise the below calls are invalid.
     if (!config_client_->connected()) {

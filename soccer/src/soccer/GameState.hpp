@@ -6,6 +6,10 @@
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_msgs/msg/detail/game_command__builder.hpp>
+#include <rj_msgs/msg/detail/game_restart__builder.hpp>
+#include <rj_msgs/msg/detail/game_stage__builder.hpp>
+#include <rj_msgs/msg/detail/game_state__builder.hpp>
 
 #include "TeamInfo.hpp"
 
@@ -20,6 +24,16 @@
  */
 class GameState {
 public:
+    // GameState  ->  msg::GameState
+    // Period     ->  msg::GameStage
+    // State      ->  msg::GameCommand
+    // Restart    ->  msg::GameRestart
+    using Msg = rj_msgs::msg::GameState;
+
+    using StageMsg = rj_msgs::msg::GameStage;
+    using CommandMsg = rj_msgs::msg::GameCommand;
+    using RestartMsg = rj_msgs::msg::GameRestart;
+
     enum Period {
         FirstHalf,
         Halftime,
@@ -97,6 +111,78 @@ public:
           ballPlacementPoint{ballPlacementPoint},
           raw_stage{stage},
           raw_command{command} {}
+
+    static auto BuildStateMsg() { return rj_msgs::build<StageMsg>(); }
+    static auto BuildCommandMsg() { return rj_msgs::build<CommandMsg>(); }
+    static auto BuildRestartMsg() { return rj_msgs::build<RestartMsg>(); }
+
+    static StageMsg ToROS(Period period) {
+        switch (period) {
+            case FirstHalf:
+                return BuildStateMsg().stage(StageMsg::FIRSTHALF);
+            case Halftime:
+                return BuildStateMsg().stage(StageMsg::HALFTIME);
+            case SecondHalf:
+                return BuildStateMsg().stage(StageMsg::SECONDHALF);
+            case Overtime1:
+                return BuildStateMsg().stage(StageMsg::OVERTIME1);
+            case Overtime2:
+                return BuildStateMsg().stage(StageMsg::OVERTIME2);
+            case PenaltyShootout:
+                return BuildStateMsg().stage(StageMsg::PENALTYSHOOTOUT);
+        }
+    }
+
+    static CommandMsg ToROS(State state) {
+        switch (state) {
+            case Halt:
+                return BuildCommandMsg().command(CommandMsg::HALT);
+            case Stop:
+                return BuildCommandMsg().command(CommandMsg::STOP);
+            case Setup:
+                return BuildCommandMsg().command(CommandMsg::SETUP);
+            case Ready:
+                return BuildCommandMsg().command(CommandMsg::READY);
+            case Playing:
+                return BuildCommandMsg().command(CommandMsg::PLAYING);
+        }
+    }
+
+    static RestartMsg ToROS(Restart restart) {
+        switch (restart) {
+            case None:
+                return BuildRestartMsg().restart(RestartMsg::NONE);
+            case Kickoff:
+                return BuildRestartMsg().restart(RestartMsg::KICKOFF);
+            case Direct:
+                return BuildRestartMsg().restart(RestartMsg::DIRECT);
+            case Indirect:
+                return BuildRestartMsg().restart(RestartMsg::INDIRECT);
+            case Penalty:
+                return BuildRestartMsg().restart(RestartMsg::PENALTY);
+            case Placement:
+                return BuildRestartMsg().restart(RestartMsg::PLACEMENT);
+        }
+    }
+
+    /**
+     * @brief Implicit conversion to GameStateMsg.
+     * @return
+     */
+    operator Msg() const {
+        return rj_msgs::build<Msg>()
+            .stage(ToROS(period))
+            .command(ToROS(state))
+            .restart(ToROS(restart))
+            .our_restart(ourRestart)
+            .our_score(ourScore)
+            .their_score(theirScore)
+            .stage_time_left(RJ::ToROSDuration(stage_time_left))
+            .our_info(OurInfo)
+            .their_info(TheirInfo)
+            .blue_team(blueTeam)
+            .ball_placement_point(ballPlacementPoint);
+    }
 
     ////////
     // Rule queries
