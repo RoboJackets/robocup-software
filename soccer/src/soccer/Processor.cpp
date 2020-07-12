@@ -10,7 +10,7 @@
 #include <gameplay/GameplayModule.hpp>
 #include <rj_common/Utils.hpp>
 #include <rj_constants/constants.hpp>
-#include <rj_vision_filter/VisionFilter.hpp>
+#include <rj_constants/topic_names.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
@@ -65,7 +65,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
-    _vision = std::make_shared<VisionFilter>(&_context);
     _refereeModule = std::make_shared<Referee>(&_context);
     _refereeModule->start();
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
@@ -80,6 +79,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
     _raw_vision_packet_sub =
         std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
+    _last_vision_time_sub = std::make_unique<AsyncTimeMessageQueue>(
+        "last_vision_time_sub", vision_filter::topics::kLastUpdatedPub);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
@@ -164,8 +165,15 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        _vision->run();
-        curStatus.lastVisionTime = _vision->GetLastVisionTime();
+        const std::vector<TimeMsg::UniquePtr> last_vision_msgs =
+            _last_vision_time_sub->GetAll();
+        if (!last_vision_msgs.empty()) {
+            curStatus.lastVisionTime =
+                RJ::FromROSTime(*last_vision_msgs.back());
+            std::cout << "last_vision_time: "
+                      << curStatus.lastVisionTime.time_since_epoch().count()
+                      << std::endl;
+        }
 
         // Log referee data
         _refereeModule->run();

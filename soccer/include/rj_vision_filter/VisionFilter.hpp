@@ -36,14 +36,6 @@ public:
      */
     VisionFilter(const rclcpp::NodeOptions& options);
 
-    /**
-     * @brief Returns the latest timestamp of the received vision packets.
-     * @return
-     */
-    [[nodiscard]] RJ::Time GetLastVisionTime() const {
-        return last_update_time_;
-    }
-
 private:
     /**
      * @brief Runs prediction on all the Kalman Filters by calling out to
@@ -115,11 +107,16 @@ private:
         return world_to_team;
     }
 
-    std::mutex world_mutex;
+    mutable std::mutex world_mutex;
     World world;
 
     std::vector<CameraFrame> frameBuffer{};
-    RJ::Time last_update_time_;
+
+    /**
+     * @brief Timestamp of the last received vision message. Has value
+     * std::nullopt if we haven't received any vision messages yet.
+     */
+    std::optional<RJ::Time> last_update_time_;
 
     rclcpp::CallbackGroup::SharedPtr publish_timer_callback_group_;
     rclcpp::TimerBase::SharedPtr publish_timer_;
@@ -133,7 +130,9 @@ private:
         detection_frame_queue_;
     std::optional<RJ::Time> last_predict_time_;
 
+    using TimeMsg = builtin_interfaces::msg::Time;
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
+    rclcpp::Publisher<TimeMsg>::SharedPtr last_updated_pub_;
 
     config_client::ConfigClient config_client_;
 

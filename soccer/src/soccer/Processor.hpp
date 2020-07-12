@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
+#include <ros2_temp/async_message_queue.h>
 #include <ros2_temp/raw_vision_packet_sub.h>
 #include <ros2_temp/soccer_config_client.h>
 
@@ -34,7 +35,6 @@ class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
-class VisionFilter;
 
 namespace Gameplay {
 class GameplayModule;
@@ -165,7 +165,6 @@ private:
     Status _status;
 
     // modules
-    std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<MotionControlNode> _motionControl;
@@ -177,8 +176,11 @@ private:
     std::unique_ptr<Logger> _logger;
 
     // ROS2 temporary modules
+    using TimeMsg = builtin_interfaces::msg::Time;
+    using AsyncTimeMessageQueue = ros2_temp::AsyncMessageQueue<TimeMsg>;
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
     std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
+    std::unique_ptr<AsyncTimeMessageQueue> _last_vision_time_sub;
 
     std::vector<Node*> _nodes;
 
