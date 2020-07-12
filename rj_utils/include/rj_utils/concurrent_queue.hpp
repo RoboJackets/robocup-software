@@ -2,7 +2,7 @@
 
 #include <condition_variable>
 #include <mutex>
-#include <queue>
+#include <deque>
 
 namespace rj_utils {
 /**
@@ -21,10 +21,17 @@ public:
         std::unique_lock<std::mutex> lock{mutex_};
         cv_.wait(lock, [this]() { return !queue_.empty(); });
         auto item = std::move(queue_.front());
-        queue_.pop();
+        queue_.pop_front();
         return item;
     }
 
+    /**
+     * @brief Try getting the first item with a timeout to fail. See Get() for
+     * getting an item without a timeout.
+     * @param[out] item The item to be returned.
+     * @param timeout How long to wait for this operation.
+     * @return True if an item was obtained, false if it timed out.
+     */
     bool TryGet(T& item, const std::chrono::milliseconds& timeout) {
         std::unique_lock<std::mutex> lock{mutex_};
         const auto timeout_time = std::chrono::steady_clock::now() + timeout;
@@ -37,7 +44,7 @@ public:
         }
 
         item = std::move(queue_.front());
-        queue_.pop();
+        queue_.pop_front();
         return true;
     }
 
@@ -47,10 +54,6 @@ public:
      */
     std::vector<T> GetAll() {
         std::unique_lock<std::mutex> lock{mutex_};
-        if (queue_.empty()) {
-            return false;
-        }
-
         std::vector<T> vector(std::make_move_iterator(queue_.begin()),
                               std::make_move_iterator(queue_.end()));
         queue_.clear();
@@ -65,7 +68,7 @@ public:
     void Push(const T& item) {
         {
             std::unique_lock<std::mutex> lock{mutex_};
-            queue_.emplace(item);
+            queue_.emplace_back(item);
         }
         cv_.notify_one();
     }
@@ -77,13 +80,13 @@ public:
     void Push(T&& item) {
         {
             std::unique_lock<std::mutex> lock{mutex_};
-            queue_.emplace(std::move(item));
+            queue_.emplace_back(std::move(item));
         }
         cv_.notify_one();
     }
 
 private:
-    std::queue<T> queue_;
+    std::deque<T> queue_;
 
     mutable std::mutex mutex_;
     std::condition_variable cv_;
