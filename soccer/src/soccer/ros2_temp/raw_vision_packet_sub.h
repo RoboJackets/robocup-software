@@ -16,6 +16,7 @@ using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
  */
 class RawVisionPacketSub {
 public:
+    using UniquePtr = std::unique_ptr<RawVisionPacketSub>;
     RawVisionPacketSub(Context* context);
 
     /**
@@ -28,7 +29,7 @@ private:
     Context* context_;
 
     using RawProtobufMsgQueue =
-        AsyncMessageQueue<RawProtobufMsg, MessagePolicy::QUEUE>;
-    RawProtobufMsgQueue::SharedPtr queue_;
+        AsyncMessageQueue<RawProtobufMsg, MessagePolicy::kQueue>;
+    RawProtobufMsgQueue::UniquePtr queue_;
 };
 }  // namespace ros2_temp

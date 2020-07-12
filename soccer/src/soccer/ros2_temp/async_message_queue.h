@@ -11,7 +11,7 @@ namespace ros2_temp {
 
 /**
  * @brief Declared but not defined template class, so that Policy must be one
- * of MessagePolicy::QUEUE or MessagePolicy::LATEST.
+ * of MessagePolicy::kQueue or MessagePolicy::kLatest.
  * @tparam T
  * @tparam Policy
  */
@@ -25,10 +25,10 @@ class AsyncMessageQueue;
  * @tparam T The message type to use.
  */
 template <typename T>
-class AsyncMessageQueue<T, MessagePolicy::QUEUE> {
+class AsyncMessageQueue<T, MessagePolicy::kQueue> {
 public:
-    using SharedPtr =
-        std::shared_ptr<AsyncMessageQueue<T, MessagePolicy::QUEUE>>;
+    using UniquePtr =
+        std::unique_ptr<AsyncMessageQueue<T, MessagePolicy::kQueue>>;
 
     AsyncMessageQueue(const std::string& node_name,
                       const std::string& topic_name, int queue_size = 5);
@@ -42,7 +42,7 @@ public:
     std::vector<std::unique_ptr<T>> GetAll();
 
 private:
-    std::shared_ptr<MessageQueueNode<T, MessagePolicy::QUEUE>> queue_;
+    std::shared_ptr<MessageQueueNode<T, MessagePolicy::kQueue>> queue_;
     rclcpp::executors::SingleThreadedExecutor executor_;
     std::thread worker_;
 };
@@ -54,10 +54,10 @@ private:
  * @tparam T The message type to use.
  */
 template <typename T>
-class AsyncMessageQueue<T, MessagePolicy::LATEST> {
+class AsyncMessageQueue<T, MessagePolicy::kLatest> {
 public:
-    using SharedPtr =
-        std::shared_ptr<AsyncMessageQueue<T, MessagePolicy::LATEST>>;
+    using UniquePtr =
+        std::unique_ptr<AsyncMessageQueue<T, MessagePolicy::kLatest>>;
 
     AsyncMessageQueue(const std::string& node_name,
                       const std::string& topic_name);
@@ -71,16 +71,16 @@ public:
     std::unique_ptr<T> Get();
 
 private:
-    std::shared_ptr<MessageQueueNode<T, MessagePolicy::LATEST>> queue_;
+    std::shared_ptr<MessageQueueNode<T, MessagePolicy::kLatest>> queue_;
     rclcpp::executors::SingleThreadedExecutor executor_;
     std::thread worker_;
 };
 
 template <typename T>
-AsyncMessageQueue<T, MessagePolicy::QUEUE>::AsyncMessageQueue(
+AsyncMessageQueue<T, MessagePolicy::kQueue>::AsyncMessageQueue(
     const std::string& node_name, const std::string& topic_name,
     const int queue_size) {
-    queue_ = std::make_shared<MessageQueueNode<T, MessagePolicy::QUEUE>>(
+    queue_ = std::make_shared<MessageQueueNode<T, MessagePolicy::kQueue>>(
         node_name, topic_name, queue_size);
     executor_.add_node(queue_);
     worker_ = std::thread([this]() { executor_.spin(); });
@@ -88,23 +88,23 @@ AsyncMessageQueue<T, MessagePolicy::QUEUE>::AsyncMessageQueue(
 
 template <typename T>
 std::vector<std::unique_ptr<T>>
-AsyncMessageQueue<T, MessagePolicy::QUEUE>::GetAll() {
+AsyncMessageQueue<T, MessagePolicy::kQueue>::GetAll() {
     std::vector<std::unique_ptr<T>> vec;
     queue_->GetAllThreaded(vec);
     return vec;
 }
 
 template <typename T>
-AsyncMessageQueue<T, MessagePolicy::LATEST>::AsyncMessageQueue(
+AsyncMessageQueue<T, MessagePolicy::kLatest>::AsyncMessageQueue(
     const std::string& node_name, const std::string& topic_name) {
-    queue_ = std::make_shared<MessageQueueNode<T, MessagePolicy::LATEST>>(
+    queue_ = std::make_shared<MessageQueueNode<T, MessagePolicy::kLatest>>(
         node_name, topic_name);
     executor_.add_node(queue_);
     worker_ = std::thread([this]() { executor_.spin(); });
 }
 
 template <typename T>
-std::unique_ptr<T> AsyncMessageQueue<T, MessagePolicy::LATEST>::Get() {
+std::unique_ptr<T> AsyncMessageQueue<T, MessagePolicy::kLatest>::Get() {
     return queue_->Get();
 }
 

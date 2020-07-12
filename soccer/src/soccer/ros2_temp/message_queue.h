@@ -9,10 +9,10 @@ namespace ros2_temp {
 /**
  * @brief What kind of policy to use for the queue.
  *
- * LATEST only stores the latest message.
- * QUEUE stores a queue of the last N messages.
+ * kLatest only stores the latest message.
+ * kQueue stores a queue of the last N messages.
  */
-enum class MessagePolicy { QUEUE, LATEST };
+enum class MessagePolicy { kQueue, kLatest };
 
 /**
  * @brief A temporary node that acts as a message queue for messages.
@@ -23,18 +23,18 @@ template <typename T, MessagePolicy Policy>
 class MessageQueueNode : public rclcpp::Node {
 public:
     MessageQueueNode() {
-        static_assert(Policy == MessagePolicy::QUEUE ||
-                      Policy == MessagePolicy::LATEST);
+        static_assert(Policy == MessagePolicy::kQueue ||
+                      Policy == MessagePolicy::kLatest);
     }
 };
 
 /**
  * @brief Partially specialized template of MessageQueueNode for
- * MessagePolicy::QUEUE.
+ * MessagePolicy::kQueue.
  * @tparam T The message type to use.
  */
 template <typename T>
-class MessageQueueNode<T, MessagePolicy::QUEUE> : public rclcpp::Node {
+class MessageQueueNode<T, MessagePolicy::kQueue> : public rclcpp::Node {
 public:
     using SharedPtr = std::shared_ptr<MessageQueueNode>;
     /**
@@ -80,11 +80,11 @@ private:
 
 /**
  * @brief Partially specialized template of MessageQueueNode for
- * MessagePolicy::QUEUE.
+ * MessagePolicy::kQueue.
  * @tparam T The message type to use.
  */
 template <typename T>
-class MessageQueueNode<T, MessagePolicy::LATEST> : public rclcpp::Node {
+class MessageQueueNode<T, MessagePolicy::kLatest> : public rclcpp::Node {
 public:
     using SharedPtr = std::shared_ptr<MessageQueueNode>;
     /**
@@ -118,7 +118,7 @@ private:
 };
 
 template <typename T>
-MessageQueueNode<T, MessagePolicy::QUEUE>::MessageQueueNode(
+MessageQueueNode<T, MessagePolicy::kQueue>::MessageQueueNode(
     const std::string& name, const std::string& topic, size_t queue_size)
     : rclcpp::Node(name) {
     const auto callback = [this](typename T::UniquePtr msg) {
@@ -129,7 +129,7 @@ MessageQueueNode<T, MessagePolicy::QUEUE>::MessageQueueNode(
 }
 
 template <typename T>
-bool MessageQueueNode<T, MessagePolicy::QUEUE>::GetAll(
+bool MessageQueueNode<T, MessagePolicy::kQueue>::GetAll(
     std::vector<std::unique_ptr<T>>& vector) {
     if (queue_.empty()) {
         return false;
@@ -142,7 +142,7 @@ bool MessageQueueNode<T, MessagePolicy::QUEUE>::GetAll(
 }
 
 template <typename T>
-bool MessageQueueNode<T, MessagePolicy::QUEUE>::GetAllThreaded(
+bool MessageQueueNode<T, MessagePolicy::kQueue>::GetAllThreaded(
     std::vector<std::unique_ptr<T>>& vector) {
     std::lock_guard<std::mutex> guard(queue_mutex_);
     if (queue_.empty()) {
@@ -156,7 +156,7 @@ bool MessageQueueNode<T, MessagePolicy::QUEUE>::GetAllThreaded(
 }
 
 template <typename T>
-bool MessageQueueNode<T, MessagePolicy::QUEUE>::Get(std::unique_ptr<T>& ptr) {
+bool MessageQueueNode<T, MessagePolicy::kQueue>::Get(std::unique_ptr<T>& ptr) {
     if (queue_.empty()) {
         return false;
     }
@@ -165,7 +165,7 @@ bool MessageQueueNode<T, MessagePolicy::QUEUE>::Get(std::unique_ptr<T>& ptr) {
 }
 
 template <typename T>
-MessageQueueNode<T, MessagePolicy::LATEST>::MessageQueueNode(
+MessageQueueNode<T, MessagePolicy::kLatest>::MessageQueueNode(
     const std::string& name, const std::string& topic)
     : rclcpp::Node(name) {
     const auto callback = [this](typename T::UniquePtr msg) {
@@ -176,7 +176,7 @@ MessageQueueNode<T, MessagePolicy::LATEST>::MessageQueueNode(
 }
 
 template <typename T>
-std::unique_ptr<T> MessageQueueNode<T, MessagePolicy::LATEST>::Get() {
+std::unique_ptr<T> MessageQueueNode<T, MessagePolicy::kLatest>::Get() {
     std::lock_guard<std::mutex> latest_guard(latest_mutex_);
     return std::move(latest_);
 }
