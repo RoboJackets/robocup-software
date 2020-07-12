@@ -37,6 +37,10 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     field_dimensions_server_ = create_service<SetFieldDimensionsSrv>(
         topics::kFieldDimensionsSrv, field_dimensions_cb);
 
+    // Field Dimensions
+    game_state_publisher_ =
+        create_publisher<GameStateMsg>(topics::kGameStatePub, latching_qos);
+
     // NOLINTS below are to disable performance-unnecessary-value-param
     const auto game_state_cb =
         [this](const SetGameStateSrvReqPtr request,    // NOLINT
