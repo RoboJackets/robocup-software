@@ -1,9 +1,5 @@
 #pragma once
 
-#include <rj_protos/messages_robocup_ssl_wrapper.pb.h>
-
-#include <rj_common/time.hpp>
-
 /**
  * An unfiltered vision packet from SSL vision.
  *

@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+namespace vision_filter {
 using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;
 
 /**
@@ -64,3 +65,4 @@ public:
     std::vector<CameraRobot> cameraRobotsYellow;
     std::vector<CameraRobot> cameraRobotsBlue;
 };
+}  // namespace vision_filter

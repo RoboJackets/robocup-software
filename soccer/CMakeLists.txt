@@ -132,6 +132,7 @@ set(ROBOCUP_DEPS_LIBRARIES
     rj_common
     rj_protos
     rc-fshare
+    rj_param_utils
     config_client
     )
 

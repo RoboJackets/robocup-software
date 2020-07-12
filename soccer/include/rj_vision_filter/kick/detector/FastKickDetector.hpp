@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <deque>
 #include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
@@ -8,6 +7,7 @@
 #include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
+namespace vision_filter {
 /**
  * Detects extremely fast kicks in the case where the
  * 5 or more samples required by the slow kick detector
@@ -38,8 +38,6 @@ public:
                    const std::vector<WorldRobot>& blueRobots,
                    KickEvent& kickEvent);
 
-    static void createConfiguration(Configuration* cfg);
-
 private:
     /**
      * @return Whether there is a large enough acceleration to be a kick
@@ -52,7 +50,5 @@ private:
     WorldRobot getClosestRobot();
 
     std::deque<VisionState> stateHistory;
-
-    // How large of acceleration needed to trigger this detector
-    static ConfigDouble* acceleration_trigger;
 };
+}  // namespace vision_filter

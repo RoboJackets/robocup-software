@@ -3,16 +3,44 @@
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_vision_filter/VisionFilter.hpp>
-#include <rj_vision_filter/util/VisionFilterConfig.hpp>
+#include <rj_vision_filter/params.hpp>
 
-VisionFilter::VisionFilter(Context* context) : context_{context} {
-    detection_frame_sub_ = std::make_unique<ros2_temp::DetectionFrameSub>();
+namespace vision_filter {
+DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 120.0,
+               "The rate in Hz at which VisionFilter publishes ball and robot "
+               "observations.")
+DEFINE_FLOAT64(kVisionFilterParamModule, predict_hz, 120.0,
+               "The rate in Hz at which VisionFilter runs the prediction loop "
+               "in each Kalman filter.")
 
+VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
+    : rclcpp::Node{"vision_filter", options},
+      param_provider_{this, kVisionFilterParamModule} {
     threadEnd.store(false, std::memory_order::memory_order_seq_cst);
+
+    rclcpp::executors::MultiThreadedExecutor executor;
 
     // Have to be careful so the entire initialization list
     // is created before the thread starts
     worker = std::thread(&VisionFilter::updateLoop, this);
+
+    // Create a timer that publishes the current state of the ball + robots.
+    publish_timer_callback_group_ = this->create_callback_group(
+        rclcpp::CallbackGroupType::MutuallyExclusive);
+    const std::chrono::duration<double> publish_timer_period(1 /
+                                                             PARAM_publish_hz);
+    publish_timer_ = create_wall_timer(
+        publish_timer_period, [this]() { PublishState(); },
+        publish_timer_callback_group_);
+
+    // Create a timer that calls predict on all of the Kalman filters.
+    predict_timer_callback_group_ = this->create_callback_group(
+        rclcpp::CallbackGroupType::MutuallyExclusive);
+    const std::chrono::duration<double> predict_timer_period(1 /
+                                                             PARAM_predict_hz);
+    predict_timer_ = create_wall_timer(
+        publish_timer_period, [this]() { PublishState(); },
+        predict_timer_callback_group_);
 }
 
 VisionFilter::~VisionFilter() {
@@ -23,11 +51,11 @@ VisionFilter::~VisionFilter() {
     worker.join();
 }
 
-void VisionFilter::run() {
+void VisionFilter::PublishState() {
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
-    fillBallState(&context_->world_state);
-    fillRobotState(&context_->world_state, context_->game_state.blueTeam);
+    fillBallState(context_->state);
+    fillRobotState(context_->state, context_->game_state.blueTeam);
 }
 
 void VisionFilter::GetFrames() {
@@ -47,21 +75,21 @@ void VisionFilter::GetFrames() {
     }
 }
 
-void VisionFilter::fillBallState(WorldState* state) {
+void VisionFilter::fillBallState(SystemState& state) {
     std::lock_guard<std::mutex> lock(worldLock);
     const WorldBall& wb = world.getWorldBall();
 
     if (wb.getIsValid()) {
-        state->ball.visible = true;
-        state->ball.position = wb.getPos();
-        state->ball.velocity = wb.getVel();
-        state->ball.timestamp = wb.getTime();
+        state.ball.valid = true;
+        state.ball.pos = wb.getPos();
+        state.ball.vel = wb.getVel();
+        state.ball.time = wb.getTime();
     } else {
-        state->ball.visible = false;
+        state.ball.valid = false;
     }
 }
 
-void VisionFilter::fillRobotState(WorldState* state, bool usBlue) {
+void VisionFilter::fillRobotState(SystemState& state, bool usBlue) {
     std::lock_guard<std::mutex> lock(worldLock);
     const auto& ourWorldRobot =
         usBlue ? world.getRobotsBlue() : world.getRobotsYellow();
@@ -70,10 +98,12 @@ void VisionFilter::fillRobotState(WorldState* state, bool usBlue) {
 
     // Fill our robots
     for (int i = 0; i < Num_Shells; i++) {
+        OurRobot* robot = state.self.at(i);
         const WorldRobot& wr = ourWorldRobot.at(i);
 
         RobotState robot_state;
         robot_state.visible = wr.getIsValid();
+        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
@@ -82,15 +112,17 @@ void VisionFilter::fillRobotState(WorldState* state, bool usBlue) {
             robot_state.timestamp = wr.getTime();
         }
 
-        state->our_robots.at(i) = robot_state;
+        robot->mutable_state() = robot_state;
     }
 
     // Fill opp robots
     for (int i = 0; i < Num_Shells; i++) {
+        OpponentRobot* robot = state.opp.at(i);
         const WorldRobot& wr = oppWorldRobot.at(i);
 
         RobotState robot_state;
         robot_state.visible = wr.getIsValid();
+        robot_state.velocity_valid = wr.getIsValid();
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
@@ -99,7 +131,7 @@ void VisionFilter::fillRobotState(WorldState* state, bool usBlue) {
             robot_state.timestamp = wr.getTime();
         }
 
-        state->their_robots.at(i) = robot_state;
+        robot->mutable_state() = robot_state;
     }
 }
 
@@ -133,3 +165,4 @@ void VisionFilter::updateLoop() {
         }
     }
 }
+}  // namespace vision_filter

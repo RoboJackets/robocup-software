@@ -1,4 +1,3 @@
-#include <Configuration.hpp>
 #include <list>
 #include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
@@ -10,8 +9,10 @@
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 #include <vector>
 
+namespace vision_filter {
 /**
- * Keeps list of all the cameras and sends camera data down to the correct location
+ * Keeps list of all the cameras and sends camera data down to the correct
+ * location
  */
 class World {
 public:
@@ -25,7 +26,8 @@ public:
      *
      * @note Call this OR updateWithoutCameraFrame ONCE an iteration
      */
-    void updateWithCameraFrame(RJ::Time calcTime, const std::vector<CameraFrame>& newFrames);
+    void updateWithCameraFrame(RJ::Time calcTime,
+                               const std::vector<CameraFrame>& newFrames);
 
     /**
      * Updates all the child cameras when there are no new camera frames
@@ -55,8 +57,6 @@ public:
      * @return The best kick estimate over the last few seconds
      */
     const KickEvent& getBestKickEstimate() const;
-
-    static void createConfiguration(Configuration* cfg);
 
 private:
     /**
@@ -88,12 +88,5 @@ private:
     FastKickDetector fastKick;
     SlowKickDetector slowKick;
     KickEvent bestKickEstimate;
-
-    // Only replace fast kick estimates when this much time has passed
-    static ConfigDouble* fast_kick_timeout;
-    // Only replace slow kick estimates when this much time has passed
-    static ConfigDouble* slow_kick_timeout;
-    // Only replace the fast kick estimate with a slow when the two times
-    // are within this amount
-    static ConfigDouble* same_kick_timeout;
 };
+}  // namespace vision_filter

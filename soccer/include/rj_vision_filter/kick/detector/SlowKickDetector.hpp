@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <deque>
 #include <rj_common/Utils.hpp>
@@ -9,6 +8,7 @@
 #include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
+namespace vision_filter {
 /**
  * Accurately detects kicks by robots using 5 or more samples
  * in history.
@@ -57,7 +57,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    bool checkAllValidators(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    bool checkAllValidators(std::vector<WorldRobot>& robot,
+                            std::vector<WorldBall>& ball);
 
     /**
      * If ball and robots were close and are now far away
@@ -116,3 +117,4 @@ private:
     // Max angle difference between velocity vector and robot heading
     static ConfigDouble* max_kick_angle;
 };
+}  // namespace vision_filter

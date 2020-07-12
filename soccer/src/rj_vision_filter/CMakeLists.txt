@@ -19,7 +19,7 @@ set(RJ_VISION_FILTER_SRC
     robot/CameraRobot.cpp
     robot/KalmanRobot.cpp
     robot/WorldRobot.cpp
-    util/VisionFilterConfig.cpp
+    params.cpp
     VisionFilter.cpp)
 
 #======================================================================
