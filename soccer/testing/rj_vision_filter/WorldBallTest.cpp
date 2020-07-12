@@ -2,6 +2,7 @@
 
 #include <rj_vision_filter/ball/WorldBall.hpp>
 
+namespace vision_filter {
 TEST(WorldBall, invalid) {
     WorldBall wb;
 
@@ -18,7 +19,7 @@ TEST(WorldBall, no_ball) {
 
 TEST(WorldBall, one_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -51,8 +52,8 @@ TEST(WorldBall, one_ball) {
 
 TEST(WorldBall, two_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p1 = Geometry2d::Point(1,1);
-    Geometry2d::Point p2 = Geometry2d::Point(2,2);
+    Geometry2d::Point p1 = Geometry2d::Point(1, 1);
+    Geometry2d::Point p2 = Geometry2d::Point(2, 2);
     CameraBall b1 = CameraBall(t, p1);
     CameraBall b2 = CameraBall(t, p2);
     int cID = 1;
@@ -85,3 +86,4 @@ TEST(WorldBall, two_ball) {
     EXPECT_LT(rvc, 10000);
     EXPECT_EQ(list.size(), 2);
 }
+}  // namespace vision_filter

@@ -2,6 +2,7 @@
 
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
+namespace vision_filter {
 TEST(CameraRobot, get_time_captured) {
     RJ::Time t = RJ::now();
     Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
@@ -15,16 +16,16 @@ TEST(CameraRobot, get_time_captured) {
 }
 
 TEST(CameraRobot, get_pos) {
-RJ::Time t = RJ::now();
-Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
-int id = 0;
+    RJ::Time t = RJ::now();
+    Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
+    int id = 0;
 
-CameraRobot b = CameraRobot(t, pose, id);
+    CameraRobot b = CameraRobot(t, pose, id);
 
-Geometry2d::Point r = b.getPos();
+    Geometry2d::Point r = b.getPos();
 
-EXPECT_EQ(pose.position().x(), r.x());
-EXPECT_EQ(pose.position().x(), r.x());
+    EXPECT_EQ(pose.position().x(), r.x());
+    EXPECT_EQ(pose.position().x(), r.x());
 }
 
 TEST(CameraRobot, get_theta) {
@@ -100,3 +101,4 @@ TEST(CameraRobot, combine_two) {
     EXPECT_EQ(r.getTheta(), (pose1.heading() + pose2.heading()) / 2);
     EXPECT_EQ(r.getRobotID(), id);
 }
+}  // namespace vision_filter
