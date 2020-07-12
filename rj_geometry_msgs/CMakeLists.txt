@@ -19,8 +19,10 @@ find_package(std_msgs REQUIRED)
 rosidl_generate_interfaces(rj_geometry_msgs
     msg/Line.msg
     msg/Point.msg
+    msg/Pose.msg
     msg/Rect.msg
     msg/Segment.msg
+    msg/Twist.msg
     DEPENDENCIES std_msgs
     )
 
