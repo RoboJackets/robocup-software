@@ -6,7 +6,6 @@
 
 namespace vision_filter {
 
-// TODO(?): The parameters below aren't used anywhere.
 DEFINE_NS_FLOAT64(
     kVisionFilterParamModule, kick::detector, slow_robot_dist_filter_cutoff,
     3.0, "Doesn't check any robots past this distance in m for optimization.")
@@ -21,6 +20,7 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_min_ball_speed,
 DEFINE_NS_FLOAT64(
     kVisionFilterParamModule, kick::detector, slow_max_kick_angle, 0.34,
     "Max angle difference between velocity vector and robot heading.")
+using namespace kick::detector;
 
 bool SlowKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
                                  const std::vector<WorldRobot>& yellowRobots,
@@ -143,10 +143,10 @@ bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot,
     }
 
     int numClose = std::count_if(dist.begin(), dist.end(), [](double i) {
-        return i < *one_robot_within_dist;
+        return i < PARAM_slow_one_robot_within_dist;
     });
     int numFar = std::count_if(dist.begin(), dist.end(), [](double i) {
-        return i > *any_robot_past_dist;
+        return i > PARAM_slow_any_robot_past_dist;
     });
 
     return numClose == 1 && numFar > 0;
@@ -163,8 +163,9 @@ bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& /*robot*/,
                     PARAM_vision_loop_dt;
     }
 
-    bool allAbove = std::all_of(vel.begin(), vel.end(),
-                                [](double i) { return i > *min_ball_speed; });
+    bool allAbove = std::all_of(vel.begin(), vel.end(), [](double i) {
+        return i > PARAM_slow_min_ball_speed;
+    });
 
     return allAbove;
 }
@@ -201,7 +202,7 @@ bool SlowKickDetector::inFrontValidator(std::vector<WorldRobot>& robot,
 
         double angle = normal.angleBetween(robotToBall);
 
-        if (angle > *max_kick_angle) {
+        if (angle > PARAM_slow_max_kick_angle) {
             return false;
         }
     }

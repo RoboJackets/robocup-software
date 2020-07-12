@@ -37,8 +37,6 @@ public:
                    const std::vector<WorldRobot>& blueRobots,
                    KickEvent& kickEvent);
 
-    static void createConfiguration(Configuration* cfg);
-
 private:
     /**
      * Tries to find out if/which robot kicked
@@ -105,16 +103,5 @@ private:
                                  std::vector<WorldBall>& ball);
 
     std::deque<VisionState> stateHistory;
-
-    // Doesn't check any robots past this distance for optimization
-    static ConfigDouble* robot_dist_filter_cutoff;
-    // Only one ball measurement within this distance of the robot
-    static ConfigDouble* one_robot_within_dist;
-    // At least one ball measurement past this distance of the robot
-    static ConfigDouble* any_robot_past_dist;
-    // Ball has to be this fast
-    static ConfigDouble* min_ball_speed;
-    // Max angle difference between velocity vector and robot heading
-    static ConfigDouble* max_kick_angle;
 };
 }  // namespace vision_filter

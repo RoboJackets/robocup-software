@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <boost/circular_buffer.hpp>

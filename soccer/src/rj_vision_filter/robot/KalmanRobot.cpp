@@ -11,6 +11,7 @@ namespace vision_filter {
 DEFINE_NS_FLOAT64(
     kVisionFilterParamModule, kalman_robot, max_time_outside_vision, 0.5,
     "Max number of seconds without a measurement before the object is deleted")
+using kalman_robot::PARAM_max_time_outside_vision;
 
 KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
                          CameraRobot initMeasurement,
@@ -78,7 +79,7 @@ void KalmanRobot::predictAndUpdate(RJ::Time currentTime,
 
 bool KalmanRobot::isUnhealthy() const {
     bool updated_recently = RJ::Seconds(lastPredictTime - lastUpdateTime) <
-                            RJ::Seconds(*max_time_outside_vision);
+                            RJ::Seconds(PARAM_max_time_outside_vision);
 
     return !updated_recently;
 }
