@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ros2_temp/message_queue.h>
+#include <ros2_temp/async_message_queue.h>
 
 #include <Context.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -26,13 +26,9 @@ public:
 
 private:
     Context* context_;
-    rclcpp::executors::SingleThreadedExecutor executor_;
-    std::shared_ptr<MessageQueueNode<RawProtobufMsg>> queue_;
-    std::thread worker_;
 
-    /**
-     * @brief Calls executor_.spin().
-     */
-    void spinForever();
+    using RawProtobufMsgQueue =
+        AsyncMessageQueue<RawProtobufMsg, MessagePolicy::QUEUE>;
+    RawProtobufMsgQueue::SharedPtr queue_;
 };
 }  // namespace ros2_temp

@@ -5,22 +5,46 @@
 #include <rj_utils/logging.hpp>
 
 namespace ros2_temp {
+
+/**
+ * @brief What kind of policy to use for the queue.
+ *
+ * LATEST only stores the latest message.
+ * QUEUE stores a queue of the last N messages.
+ */
+enum class MessagePolicy { QUEUE, LATEST };
+
 /**
  * @brief A temporary node that acts as a message queue for messages.
  * @tparam T The message type this collects.
+ * @tparam Policy What policy to use for the queue.
+ */
+template <typename T, MessagePolicy Policy>
+class MessageQueueNode : public rclcpp::Node {
+public:
+    MessageQueueNode() {
+        static_assert(Policy == MessagePolicy::QUEUE ||
+                      Policy == MessagePolicy::LATEST);
+    }
+};
+
+/**
+ * @brief Partially specialized template of MessageQueueNode for
+ * MessagePolicy::QUEUE.
+ * @tparam T The message type to use.
  */
 template <typename T>
-class MessageQueueNode : public rclcpp::Node {
+class MessageQueueNode<T, MessagePolicy::QUEUE> : public rclcpp::Node {
 public:
     using SharedPtr = std::shared_ptr<MessageQueueNode>;
     /**
      * @brief Constructor for MessageQueueNode.
      * @param name
      * @param topic
-     * @param qos
+     * @param queue_size
      */
     MessageQueueNode(const std::string& name, const std::string& topic,
-                     const rclcpp::QoS& qos = rclcpp::QoS{5});
+                     size_t queue_size);
 
     /**
      * @brief Inserts all of the messages in the queue into the passed in
@@ -54,20 +78,59 @@ private:
     std::mutex queue_mutex_;
 };
 
+/**
+ * @brief Partially specialized template of MessageQueueNode for
+ * MessagePolicy::QUEUE.
+ * @tparam T The message type to use.
+ */
 template <typename T>
-MessageQueueNode<T>::MessageQueueNode(const std::string& name,
-                                      const std::string& topic,
-                                      const rclcpp::QoS& qos)
+class MessageQueueNode<T, MessagePolicy::LATEST> : public rclcpp::Node {
+public:
+    using SharedPtr = std::shared_ptr<MessageQueueNode>;
+    /**
+     * @brief Constructor for MessageQueueNode.
+     * @param name
+     * @param topic
+     * @param queue_size
+     */
+    MessageQueueNode(const std::string& name, const std::string& topic);
+
+    /**
+     * @brief Returns the latest message in the queue if we have received cone
+     * so far, otherwise nullptr.
+     * @param ptr
+     * @return The latest message if we have received one so far, otherwise
+     * returns nullptr.
+     */
+    std::unique_ptr<T> Get();
+
+    /**
+     * @brief Returns 1 if we have received a message before, 0 otherwise.
+     * This is NOT thread safe.
+     * @return
+     */
+    [[nodiscard]] int size() const { return latest_ == nullptr ? 0 : 1; }
+
+private:
+    typename rclcpp::Subscription<T>::SharedPtr sub_;
+    std::unique_ptr<T> latest_;
+    std::mutex latest_mutex_;
+};
+
+template <typename T>
+MessageQueueNode<T, MessagePolicy::QUEUE>::MessageQueueNode(
+    const std::string& name, const std::string& topic, size_t queue_size)
     : rclcpp::Node(name) {
     const auto callback = [this](typename T::UniquePtr msg) {
         std::lock_guard<std::mutex> guard(queue_mutex_);
         queue_.emplace_back(std::move(msg));
     };
-    sub_ = create_subscription<T>(topic, qos, callback);
+    sub_ = create_subscription<T>(topic, rclcpp::QoS{queue_size}, callback);
 }
 
 template <typename T>
-bool MessageQueueNode<T>::GetAll(std::vector<std::unique_ptr<T>>& vector) {
+bool MessageQueueNode<T, MessagePolicy::QUEUE>::GetAll(
+    std::vector<std::unique_ptr<T>>& vector) {
     if (queue_.empty()) {
         return false;
     }
@@ -79,7 +142,7 @@ bool MessageQueueNode<T>::GetAll(std::vector<std::unique_ptr<T>>& vector) {
 }
 
 template <typename T>
-bool MessageQueueNode<T>::GetAllThreaded(
+bool MessageQueueNode<T, MessagePolicy::QUEUE>::GetAllThreaded(
     std::vector<std::unique_ptr<T>>& vector) {
     std::lock_guard<std::mutex> guard(queue_mutex_);
     if (queue_.empty()) {
@@ -93,12 +156,29 @@ bool MessageQueueNode<T>::GetAllThreaded(
 }
 
 template <typename T>
-bool MessageQueueNode<T>::Get(std::unique_ptr<T>& ptr) {
+bool MessageQueueNode<T, MessagePolicy::QUEUE>::Get(std::unique_ptr<T>& ptr) {
     if (queue_.empty()) {
         return false;
     }
     ptr = std::move(queue_.front());
     queue_.pop_front();
+}
+
+template <typename T>
+MessageQueueNode<T, MessagePolicy::LATEST>::MessageQueueNode(
+    const std::string& name, const std::string& topic)
+    : rclcpp::Node(name) {
+    const auto callback = [this](typename T::UniquePtr msg) {
+        std::lock_guard<std::mutex> latest_guard(latest_mutex_);
+        latest_ = std::move(msg);
+    };
+    sub_ = create_subscription<T>(topic, rclcpp::QoS{1}, callback);
+}
+
+template <typename T>
+std::unique_ptr<T> MessageQueueNode<T, MessagePolicy::LATEST>::Get() {
+    std::lock_guard<std::mutex> latest_guard(latest_mutex_);
+    return std::move(latest_);
 }
 
 }  // namespace ros2_temp

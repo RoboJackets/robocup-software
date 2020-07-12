@@ -4,7 +4,6 @@
 #include <rj_protos/referee.pb.h>
 
 #include <rj_constants/constants.hpp>
-#include <rj_vision_filter/VisionPacket.hpp>
 #include <set>
 
 #include "DebugDrawer.hpp"

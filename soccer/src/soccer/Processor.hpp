@@ -177,10 +177,10 @@ private:
 
     // ROS2 temporary modules
     using TimeMsg = builtin_interfaces::msg::Time;
-    using AsyncTimeMessageQueue = ros2_temp::AsyncMessageQueue<TimeMsg>;
+    using AsyncTimeMessageQueue = ros2_temp::AsyncMessageQueue<TimeMsg, ros2_temp::MessagePolicy::LATEST>;
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
     std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
-    std::unique_ptr<AsyncTimeMessageQueue> _last_vision_time_sub;
+    std::unique_ptr<AsyncTimeMessageQueue> _last_vision_time_queue;
 
     std::vector<Node*> _nodes;
 
