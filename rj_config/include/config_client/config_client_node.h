@@ -23,12 +23,20 @@ public:
         return config_client_.fieldDimensions();
     }
 
+    [[nodiscard]] const GameStateMsg& gameState() const {
+        return config_client_.gameState();
+    }
+
     [[nodiscard]] const GameSettingsMsg& gameSettingsThreaded() const {
         return config_client_.gameSettingsThreaded();
     }
 
     [[nodiscard]] const FieldDimensionsMsg& fieldDimensionsThreaded() const {
         return config_client_.fieldDimensionsThreaded();
+    }
+
+    [[nodiscard]] const GameStateMsg& gameStateThreaded() const {
+        return config_client_.gameStateThreaded();
     }
 
     [[nodiscard]] bool connected() const { return config_client_.connected(); }
@@ -39,6 +47,10 @@ public:
 
     void updateFieldDimensions(const FieldDimensionsMsg& msg) {
         return config_client_.updateFieldDimensions(msg);
+    }
+
+    void updateGameState(const GameStateMsg& msg) {
+        return config_client_.updateGameState(msg);
     }
 
 private:
