@@ -46,24 +46,31 @@ public:
 
 private:
     /**
-     * @brief Runs prediction on all the Kalman Filters. For now, also performs
-     * the update step of the Kalman filter by emptying detection_frame_queue_;
+     * @brief Runs prediction on all the Kalman Filters by calling out to
+     * PredictStatesImpl. Also prints a warning if predict isn't running fast
+     * enough.
      */
     void PredictStates();
+
+    /**
+     * @brief Runs prediction on all the Kalman Filters. For now, also performs
+     * the update step of the Kalman filters by emptying detection_frame_queue_;
+     */
+    void PredictStatesImpl();
 
     /**
      * @brief Creates a WorldStateMsg from the robot and ball Kalman filters.
      * @return The WorldStateMsg corresponding to the current VisionFilter
      * state.
      */
-    WorldStateMsg BuildWorldStateMsg();
+    WorldStateMsg BuildWorldStateMsg() const;
 
     /**
      * @brief Creates a BallStateMsg from the ball Kalman filter.
      * @return The BallStateMsg corresponding to the current VisionFilter
      * state.
      */
-    BallStateMsg BuildBallStateMsg();
+    BallStateMsg BuildBallStateMsg() const;
 
     /**
      * @brief Creates a vector of RobotStateMsgs from the robot Kalman filters.
@@ -71,7 +78,7 @@ private:
      * yellow team's robots.
      * @return A vector of  RobotStateMsg corresponding to blue_team.
      */
-    std::vector<RobotStateMsg> BuildRobotStateMsgs(bool blue_team);
+    std::vector<RobotStateMsg> BuildRobotStateMsgs(bool blue_team) const;
 
     /**
      * @brief Publishes the current state of the balls and robots.
@@ -108,7 +115,7 @@ private:
         return world_to_team;
     }
 
-    std::mutex worldLock;
+    std::mutex world_mutex;
     World world;
 
     std::vector<CameraFrame> frameBuffer{};

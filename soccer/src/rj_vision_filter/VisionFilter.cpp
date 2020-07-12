@@ -47,11 +47,12 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize),
         callback, detection_frame_sub_opts);
 
+    // Create the publisher for the world state.
     world_state_pub_ =
         create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
 }
 
-VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg() {
+VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg() const {
     const bool us_blue = config_client_.gameState().blue_team;
 
     WorldStateMsg msg{};
@@ -62,8 +63,8 @@ VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg() {
     return msg;
 }
 
-VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() {
-    std::lock_guard<std::mutex> lock(worldLock);
+VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() const {
+    std::lock_guard<std::mutex> world_lock(world_mutex);
     const WorldBall& wb = world.getWorldBall();
 
     BallStateMsg msg{};
@@ -74,8 +75,8 @@ VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() {
 }
 
 std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
-    bool blue_team) {
-    std::lock_guard<std::mutex> lock(worldLock);
+    bool blue_team) const {
+    std::lock_guard<std::mutex> world_lock(world_mutex);
     const auto& robots =
         blue_team ? world.getRobotsBlue() : world.getRobotsYellow();
 
@@ -124,18 +125,7 @@ void VisionFilter::PredictStates() {
     const RJ::Time start = RJ::now();
 
     // Perform the updates on the Kalman Filters.
-    {
-        // Do update with whatever is in frame buffer
-        GetFrames();
-        std::lock_guard<std::mutex> lock2(worldLock);
-
-        if (!frameBuffer.empty()) {
-            world.updateWithCameraFrame(RJ::now(), frameBuffer);
-            frameBuffer.clear();
-        } else {
-            world.updateWithoutCameraFrame(RJ::now());
-        }
-    }
+    PredictStatesImpl();
 
     // Check that PredictStates runs fast enough, otherwise print a warning.
     const RJ::Seconds predict_time = RJ::now() - start;
@@ -149,6 +139,19 @@ void VisionFilter::PredictStates() {
             "Predict is not called fast enough. Iteration took "
                 << diff_duration.count() << " seconds, should be "
                 << PARAM_vision_loop_dt << ".");
+    }
+}
+
+void VisionFilter::PredictStatesImpl() {
+    // Do update with whatever is in frame buffer
+    GetFrames();
+    std::lock_guard<std::mutex> world_lock(world_mutex);
+
+    if (!frameBuffer.empty()) {
+        world.updateWithCameraFrame(RJ::now(), frameBuffer);
+        frameBuffer.clear();
+    } else {
+        world.updateWithoutCameraFrame(RJ::now());
     }
 }
 }  // namespace vision_filter
