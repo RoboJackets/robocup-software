@@ -170,9 +170,6 @@ void Processor::run() {
         if (!last_vision_msgs.empty()) {
             curStatus.lastVisionTime =
                 RJ::FromROSTime(*last_vision_msgs.back());
-            std::cout << "last_vision_time: "
-                      << curStatus.lastVisionTime.time_since_epoch().count()
-                      << std::endl;
         }
 
         // Log referee data
