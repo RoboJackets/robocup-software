@@ -3,6 +3,9 @@
 #include <Geometry2d/Pose.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_msgs/msg/detail/ball_state__builder.hpp>
+#include <rj_msgs/msg/detail/robot_state__builder.hpp>
+#include <rj_msgs/msg/detail/world_state__builder.hpp>
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
@@ -17,10 +20,20 @@ constexpr double kBallDecayConstant = 0.180;
  * what time it was last seen.
  */
 struct RobotState {
+    using Msg = rj_msgs::msg::RobotState;
+
     Geometry2d::Pose pose;
     Geometry2d::Twist velocity;
     RJ::Time timestamp;
     bool visible = false;
+
+    [[nodiscard]] operator Msg() const {
+        return rj_msgs::build<Msg>()
+            .stamp(RJ::ToROSTime(timestamp))
+            .pose(pose)
+            .velocity(velocity)
+            .visible(visible);
+    }
 };
 
 /**
