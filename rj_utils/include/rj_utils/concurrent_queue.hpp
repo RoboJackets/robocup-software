@@ -42,6 +42,23 @@ public:
     }
 
     /**
+     * @brief Returns all of the messages in the queue in a vector.
+     * @return A vector containing all the messages in the queue.
+     */
+    std::vector<T> GetAll() {
+        std::unique_lock<std::mutex> lock{mutex_};
+        if (queue_.empty()) {
+            return false;
+        }
+
+        std::vector<T> vector(std::make_move_iterator(queue_.begin()),
+                              std::make_move_iterator(queue_.end()));
+        queue_.clear();
+
+        return vector;
+    }
+
+    /**
      * @brief Pushes an item onto the queue.
      * @param item The item to be added.
      */

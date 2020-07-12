@@ -12,6 +12,7 @@ namespace ros2_temp {
 template <typename T>
 class MessageQueueNode : public rclcpp::Node {
 public:
+    using SharedPtr = std::shared_ptr<MessageQueueNode>;
     /**
      * @brief Constructor for MessageQueueNode.
      * @param name
