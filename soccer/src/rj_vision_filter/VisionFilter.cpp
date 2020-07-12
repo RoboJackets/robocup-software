@@ -47,9 +47,10 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize),
         callback, detection_frame_sub_opts);
 
-    // Create the publisher for the world state.
+    // Create publishers.
     world_state_pub_ =
         create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
+    last_updated_pub_ = create_publisher<TimeMsg>(topics::kLastUpdatedPub, 10);
 }
 
 VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg() const {
@@ -72,6 +73,7 @@ VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() const {
     msg.position = wb.getPos();
     msg.velocity = wb.getVel();
     msg.visible = wb.getIsValid();
+    return msg;
 }
 
 std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
@@ -101,9 +103,17 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
 }
 
 void VisionFilter::PublishState() {
+    if (!config_client_.connectedThreaded()) {
+        return;
+    }
+
     WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>();
     *msg = BuildWorldStateMsg();
     world_state_pub_->publish(std::move(msg));
+
+    if (last_update_time_) {
+        last_updated_pub_->publish(RJ::ToROSTime(*last_update_time_));
+    }
 }
 
 void VisionFilter::GetFrames() {

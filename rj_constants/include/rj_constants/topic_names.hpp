@@ -21,4 +21,5 @@ constexpr auto kDetectionFramePub = "vision_receiver/detection_frame";
 
 namespace vision_filter::topics {
 constexpr auto kWorldStatePub = "vision_filter/world_state";
+constexpr auto kLastUpdatedPub = "vision_filter/last_updated";
 }
