@@ -73,7 +73,6 @@ set(ROBOCUP_LIB_SRC
     GrSimCommunicator.cpp
     WorldState.cpp
     ros2_temp/soccer_config_client.cpp
-    ros2_temp/detection_frame_sub.cpp
     ros2_temp/raw_vision_packet_sub.cpp
     WindowEvaluator.cpp)
 
