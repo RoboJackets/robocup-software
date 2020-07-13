@@ -1,10 +1,12 @@
 #pragma once
 
-#include <ros2_temp/detection_frame_sub.h>
+#include <config_client/async_config_client.h>
+#include <ros2_temp/async_message_queue.h>
 
 #include <WorldState.hpp>
 #include <atomic>
 #include <mutex>
+#include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_vision_filter/camera/CameraFrame.hpp>
 #include <rj_vision_filter/camera/World.hpp>
 #include <thread>
@@ -16,7 +18,7 @@
  *
  * Add vision frames directly into the filter call the fill states functions
  * to push the newest estimates directly into the system state.
- * 
+ *
  * Note: There may be a 1 frame delay between the measurements being added
  * and the measurements being included in the filter estimate.
  */
@@ -63,8 +65,33 @@ private:
      */
     void GetFrames();
 
-    std::thread worker;
+    /**
+     * @brief Returns the team angle (It's horrible, but it's only temporary
+     * until VisionFilter gets refactored).
+     * @return The team angle.
+     */
+    [[nodiscard]] double TeamAngle() const {
+        const bool defend_plus_x =
+            config_client_->config_client_node().gameSettings().defend_plus_x;
+        return defend_plus_x ? -M_PI_2 : M_PI_2;
+    }
 
+    /**
+     * @brief Returns the transform from the world to the team.
+     * @return The transform from the world to the team frame.
+     */
+    [[nodiscard]] Geometry2d::TransformMatrix WorldToTeam() const {
+        Geometry2d::TransformMatrix world_to_team =
+            Geometry2d::TransformMatrix::translate(
+                0,
+                config_client_->config_client_node().fieldDimensions().length /
+                    2.0f);
+        world_to_team *= Geometry2d::TransformMatrix::rotate(
+            static_cast<float>(TeamAngle()));
+        return world_to_team;
+    }
+
+    std::thread worker;
     std::mutex worldLock;
     World world;
 
@@ -72,6 +99,11 @@ private:
 
     std::vector<CameraFrame> frameBuffer{};
     Context* context_;
-    std::unique_ptr<ros2_temp::DetectionFrameSub> detection_frame_sub_;
+    using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;
+    using AsyncDetectionFrameQueue =
+        ros2_temp::AsyncMessageQueue<DetectionFrameMsg,
+                                     ros2_temp::MessagePolicy::kQueue>;
+    AsyncDetectionFrameQueue::UniquePtr detection_frame_queue_;
+    config_client::AsyncConfigClient::UniquePtr config_client_;
     RJ::Time last_update_time_;
 };
