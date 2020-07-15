@@ -180,13 +180,13 @@ protected:
  * @param description A description of the parameter.
  */
 #define DEFINE_VARIABLE(type, module, name, val, description)              \
-    namespace params::variables {                                          \
+    namespace params::storage {                                            \
     static type PARAM_##name##_storage = val;                              \
     const type& PARAM_##name = PARAM_##name##_storage;                     \
     static ::params::internal::ParamRegisterer o_##name(                   \
         module, "", #name, description, __FILE__, PARAM_##name##_storage); \
     }                                                                      \
-    using params::variables::PARAM_##name;
+    using params::storage::PARAM_##name;
 
 // Define the DEFINE_* macro for all supported types.
 #define DEFINE_NS_BOOL(module, prefix, name, val, description) \
@@ -231,3 +231,74 @@ protected:
     DEFINE_VARIABLE(std::vector<double>, module, name, val, description)
 #define DEFINE_STRING_VEC(module, name, val, description) \
     DEFINE_VARIABLE(std::vector<std::string>, module, name, val, description)
+
+/**
+ * @brief Declares a namespaced parameter. The declared parameter can be used as
+ * prefix::PARAM_#, where # denotes the name passed in.
+ * @param type The type of the parameter.
+ * @param prefix The prefix / namespace of the parameter, using :: as a
+ * separator.
+ * @param name The variable name of the parameter.
+ * @param val The default value of the parameter.
+ * @param description A description of the parameter.
+ */
+#define DECLARE_NS_VARIABLE(type, module, prefix, name) \
+    namespace prefix {                                  \
+    extern const type& PARAM_##name;                    \
+    }
+
+/**
+ * @brief Declares a parameter in the root namespace. The declared parameter
+ * can be used as PARAM_#, where * denotes # denotes the name passed in.
+ * See DEFINE_NS_VARIABLE.
+ * @param type The type of the parameter.
+ * @param name The variable name of the parameter.
+ * @param val The default value of the parameter.
+ * @param description A description of the parameter.
+ */
+#define DECLARE_VARIABLE(type, module, name) \
+    namespace params::storage {              \
+    extern const type& PARAM_##name;         \
+    }                                        \
+    using params::storage::PARAM_##name;
+
+// Define the DECLARE_* macro for all supported types. DECLARE only declares the
+// variables without defining them.
+#define DECLARE_NS_BOOL(module, prefix, name) \
+    DECLARE_NS_VARIABLE(bool, module, prefix, name)
+#define DECLARE_NS_INT64(module, prefix, name) \
+    DECLARE_NS_VARIABLE(int64_t, module, prefix, name)
+#define DECLARE_NS_FLOAT64(module, prefix, name) \
+    DECLARE_NS_VARIABLE(double, module, prefix, name)
+#define DECLARE_NS_STRING(module, prefix, name) \
+    DECLARE_NS_VARIABLE(std::string, module, prefix, name)
+#define DECLARE_NS_BYTE_VEC(module, prefix, name)                        \
+    DECLARE_NS_VARIABLE(std::vector<uint8_t>, module, prefix, name, val, \
+                        description)
+#define DECLARE_NS_BOOL_VEC(module, prefix, name)                     \
+    DECLARE_NS_VARIABLE(std::vector<bool>, module, prefix, name, val, \
+                        description)
+#define DECLARE_NS_INT64_VEC(module, prefix, name)                       \
+    DECLARE_NS_VARIABLE(std::vector<int64_t>, module, prefix, name, val, \
+                        description)
+#define DECLARE_NS_FLOAT64_VEC(module, prefix, name)                    \
+    DECLARE_NS_VARIABLE(std::vector<double>, module, prefix, name, val, \
+                        description)
+#define DECLARE_NS_STRING_VEC(module, prefix, name)                          \
+    DECLARE_NS_VARIABLE(std::vector<std::string>, module, prefix, name, val, \
+                        description)
+
+#define DECLARE_BOOL(module, name) DECLARE_VARIABLE(bool, module, name)
+#define DECLARE_INT64(module, name) DECLARE_VARIABLE(int64_t, module, name)
+#define DECLARE_FLOAT64(module, name) DECLARE_VARIABLE(double, module, name)
+#define DECLARE_STRING(module, name) DECLARE_VARIABLE(std::string, module, name)
+#define DECLARE_BYTE_VEC(module, name) \
+    DECLARE_VARIABLE(std::vector<uint8_t>, module, name)
+#define DECLARE_BOOL_VEC(module, name) \
+    DECLARE_VARIABLE(std::vector<bool>, module, name)
+#define DECLARE_INT64_VEC(module, name) \
+    DECLARE_VARIABLE(std::vector<int64_t>, module, name)
+#define DECLARE_FLOAT64_VEC(module, name) \
+    DECLARE_VARIABLE(std::vector<double>, module, name)
+#define DECLARE_STRING_VEC(module, name) \
+    DECLARE_VARIABLE(std::vector<std::string>, module, name)
