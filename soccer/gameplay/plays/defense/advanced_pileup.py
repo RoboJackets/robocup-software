@@ -20,10 +20,16 @@ class AdvancedPileup(play.Play):
 
         pos1 = None
         pos2 = None
+
+        left_end = -(width / 2)
+        right_end = width / 2
+        our_edge = 0
+        their_edge = length
+
         their_end = (length * 7) / 8
         our_end = length / 8
-        left = base_width + (width / 3)
-        right = base_width + (width * 2) / 3
+        left = left_end + (width / 3)
+        right = right_end - (width / 3)
         dist = (length / 9)
 
         #initial positioning - I will keep this here until we have been able to test, since I am unable to test on my computer
@@ -67,11 +73,6 @@ class AdvancedPileup(play.Play):
         delta1 = robocup.Point.direction(angle)
         pos1 = main.ball().pos - delta1
         pos2 = main.ball().pos + delta1
-
-        left_end = -(width / 2)
-        right_end = width / 2
-        our_edge = 0
-        their_edge = length
 
         if pos1 != None:
             if constants.Field.FieldRect.contains_point(pos1):

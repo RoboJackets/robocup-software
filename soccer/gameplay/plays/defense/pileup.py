@@ -25,37 +25,6 @@ class Pileup(play.Play):
         width = constants.Field.Width
         base_width = -(width / 2)
         length = constants.Field.Length
-        #print((length * 5)/6)
-        #print(base_width, base_width + ((width * 2)/3))
-
-        # TO BE IMPLEMENTED IN A NEW PLAY
-
-        # for u in us:
-        #    ux = u.pos.x
-        #    uy = u.pos.y
-        #    print(ux, uy)
-        '''
-        combatants = [] #robots that are actively fighting for the ball at the moment
-        #directions = []
-        for u in us:
-            if fighting(u, x, y):
-                combatants.add(u)
-            print(u)
-            #directions.append(u.angle)
-            #print("Angle: ", u.angle)
-        for t in them:
-            if fighting(t, x, y):
-                combatants.add(t)
-            print(t)
-            #directions.append(t.angle)
-            #print("Angle: ", t.angle)
-        #avg = sum(directions) / len(directions)
-        #print("Average angle: ", avg)
-        #print(str(x) + "," + str(y))
-        print(len(combatants), " robots fighting for the ball")
-        self.standbyBot1 = None
-        self.standbyBot2 = None
-        '''
 
         their_end = (length * 7) / 8
         our_end = length / 8
