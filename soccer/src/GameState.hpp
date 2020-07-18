@@ -7,8 +7,6 @@
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 
-#include "TeamInfo.hpp"
-
 /**
  * @brief Holds the state of the game according to the referee
  *
@@ -40,63 +38,29 @@ public:
     // Types of restarts
     enum Restart { None, Kickoff, Direct, Indirect, Penalty, Placement };
 
-    Period period;
-    State state;
-    Restart restart;
+    Period period = Period::FirstHalf;
+    State state = State::Halt;
+    Restart restart = Restart::None;
 
     // True if our team can kick the ball during a restart
-    bool ourRestart;
-
-    // Scores
-    int ourScore;
-    int theirScore;
+    bool our_restart = false;
 
     // Time in seconds remaining in the current period
-    RJ::Seconds stage_time_left;
+    RJ::Time stage_time_end;
 
-    TeamInfo OurInfo;
-    TeamInfo TheirInfo;
+    std::optional<Geometry2d::Point> ball_placement_point;
 
-    // Bool representing if we are the blue team
-    bool blueTeam;
+    GameState() = default;
 
-    Geometry2d::Point ballPlacementPoint;
-
-    RefereeModuleEnums::Stage raw_stage =
-        RefereeModuleEnums::NORMAL_FIRST_HALF_PRE;
-    RefereeModuleEnums::Command raw_command = RefereeModuleEnums::Command::HALT;
-
-    GameState()
-        : period{FirstHalf},
-          state{Halt},
-          restart{None},
-          ourRestart{false},
-          ourScore{0},
-          theirScore{0},
-          OurInfo{},
-          TheirInfo{},
-          blueTeam{false},
-          ballPlacementPoint{} {}
-
-    GameState(Period period, State state, Restart restart, bool ourRestart,
-              int ourScore, int theirScore, RJ::Seconds stage_time_left,
-              TeamInfo our_info, TeamInfo their_info, bool blueTeam,
-              Geometry2d::Point ballPlacementPoint,
-              RefereeModuleEnums::Stage stage,
-              RefereeModuleEnums::Command command)
+    GameState(Period period, State state, Restart restart, bool our_restart,
+              RJ::Time stage_time_end,
+              std::optional<Geometry2d::Point> ball_placement_point = std::nullopt)
         : period{period},
           state{state},
           restart{restart},
-          ourRestart{ourRestart},
-          ourScore{ourScore},
-          theirScore{theirScore},
-          stage_time_left{stage_time_left},
-          OurInfo{our_info},
-          TheirInfo{their_info},
-          blueTeam{blueTeam},
-          ballPlacementPoint{ballPlacementPoint},
-          raw_stage{stage},
-          raw_command{command} {}
+          our_restart{our_restart},
+          stage_time_end{stage_time_end},
+          ball_placement_point{ball_placement_point} {}
 
     ////////
     // Rule queries
@@ -125,35 +89,35 @@ public:
 
     bool placement() const { return restart == Placement; }
 
-    bool isOurRestart() const { return ourRestart; }
+    bool isOurRestart() const { return our_restart; }
 
     bool direct() const { return restart == Direct; }
 
     bool indirect() const { return restart == Indirect; }
 
-    bool ourKickoff() const { return kickoff() && ourRestart; }
+    bool ourKickoff() const { return kickoff() && our_restart; }
 
-    bool ourPenalty() const { return penalty() && ourRestart; }
+    bool ourPenalty() const { return penalty() && our_restart; }
 
-    bool ourDirect() const { return direct() && ourRestart; }
+    bool ourDirect() const { return direct() && our_restart; }
 
-    bool ourIndirect() const { return indirect() && ourRestart; }
+    bool ourIndirect() const { return indirect() && our_restart; }
 
     bool ourFreeKick() const { return ourDirect() || ourIndirect(); }
 
-    bool ourPlacement() const { return placement() && ourRestart; }
+    bool ourPlacement() const { return placement() && our_restart; }
 
-    bool theirKickoff() const { return kickoff() && !ourRestart; }
+    bool theirKickoff() const { return kickoff() && !our_restart; }
 
-    bool theirPenalty() const { return penalty() && !ourRestart; }
+    bool theirPenalty() const { return penalty() && !our_restart; }
 
-    bool theirDirect() const { return direct() && !ourRestart; }
+    bool theirDirect() const { return direct() && !our_restart; }
 
-    bool theirIndirect() const { return indirect() && !ourRestart; }
+    bool theirIndirect() const { return indirect() && !our_restart; }
 
     bool theirFreeKick() const { return theirDirect() || theirIndirect(); }
 
-    bool theirPlacement() const { return placement() && !ourRestart; }
+    bool theirPlacement() const { return placement() && !our_restart; }
 
     // Robots must be in position for a restart
     bool setupRestart() const { return state == Setup || state == Ready; }
@@ -164,11 +128,11 @@ public:
 
     // One of our robots can kick the ball
     bool canKick() const {
-        return state == Playing || (ourRestart && state == Playing);
+        return state == Playing || (our_restart && state == Playing);
     }
 
     // Our robots must stay 500mm away from the ball
-    bool stayAwayFromBall() const { return state != Playing && !ourRestart; }
+    bool stayAwayFromBall() const { return state != Playing && !our_restart; }
 
     // Our robots must stay on our half of the field
     bool stayOnSide() const { return setupRestart() && restart == Kickoff; }
@@ -177,27 +141,7 @@ public:
     // line
     bool stayBehindPenaltyLine() const { return restart == Penalty; }
 
-    void setBallPlacementPoint(float x, float y) {
-        Geometry2d::TransformMatrix _worldToTeam =
-            Geometry2d::TransformMatrix();
-        _worldToTeam *= Geometry2d::TransformMatrix::translate(
-            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
-        ballPlacementPoint =
-            _worldToTeam * Geometry2d::Point(x / 1000, y / 1000);
+    std::optional<Geometry2d::Point> getBallPlacementPoint() const {
+        return ball_placement_point;
     }
-
-    static Geometry2d::Point convertToBallPlacementPoint(float x, float y) {
-        Geometry2d::TransformMatrix world_to_team =
-            Geometry2d::TransformMatrix();
-        world_to_team *= Geometry2d::TransformMatrix::translate(
-            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
-
-        return world_to_team * Geometry2d::Point(x / 1000, y / 1000);
-    }
-
-    Geometry2d::Point getBallPlacementPoint() const {
-        return ballPlacementPoint;
-    }
-
-    uint getGoalieId() const { return OurInfo.goalie; }
 };

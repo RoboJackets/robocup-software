@@ -13,6 +13,7 @@
 #include "RobotConfig.hpp"
 #include "RobotIntent.hpp"
 #include "SystemState.hpp"
+#include "TeamInfo.hpp"
 #include "WorldState.hpp"
 #include "joystick/GamepadMessage.hpp"
 #include "motion/MotionSetpoint.hpp"
@@ -53,6 +54,9 @@ struct Context {
 
     SystemState state;
     GameState game_state;
+    TeamInfo our_info;
+    TeamInfo their_info;
+    bool blue_team;
     DebugDrawer debug_drawer;
 
     /** \brief Vector of unique IDs of gamepads. First is oldest to connect. */

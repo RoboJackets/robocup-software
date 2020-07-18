@@ -1,10 +1,10 @@
 #include <rj_protos/LogFrame.pb.h>
 
-#include <Referee.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <planning/Instant.hpp>
+#include <referee/ExternalReferee.hpp>
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/Network.hpp>
 #include <rj_constants/constants.hpp>
@@ -45,9 +45,8 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 }
 
 // TODO: Replace this whole file when we move to ROS2
-Gameplay::GameplayModule::GameplayModule(Context* const context,
-                                         Referee* const refereeModule)
-    : _context(context), _refereeModule(refereeModule) {
+Gameplay::GameplayModule::GameplayModule(Context* const context)
+    : _context(context) {
     calculateFieldObstacles();
 
     _oldFieldEdgeInset = _fieldEdgeInset->value();
@@ -398,12 +397,12 @@ void Gameplay::GameplayModule::run() {
         cout << "Finishing GameplayModule::run()" << endl;
     }
 
-    if (_context->game_state.ourScore > _our_score_last_frame) {
+    if (_context->our_info.score > _our_score_last_frame) {
         for (OurRobot* r : _context->state.self) {
             r->sing();
         }
     }
-    _our_score_last_frame = _context->game_state.ourScore;
+    _our_score_last_frame = _context->our_info.score;
 }
 
 #pragma mark python
@@ -498,7 +497,7 @@ void Gameplay::GameplayModule::loadTest() {
             // See the other to-do in this file for the other instance of the
             // same issue.
             if (runningTests) {
-                _context->game_settings.requestRefCommand = Command::HALT;
+                _context->game_settings.requestRefCommand = SSL_Referee_Command_HALT;
 
                 // Place robots and ball
                 grSim_Packet simPacket;
@@ -517,7 +516,7 @@ void Gameplay::GameplayModule::loadTest() {
                 const int NUM_COLS = 2;
                 const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
                 const int teamDirection =
-                    _context->game_state.blueTeam ? -1 : 1;
+                    _context->blue_team ? -1 : 1;
                 for (int i = 0; i < Robots_Per_Team; i++) {
                     auto* rob = replacement->add_robots();
 
@@ -545,7 +544,7 @@ void Gameplay::GameplayModule::loadTest() {
                         rob->set_dir(0);
                     }
                     rob->set_id(i);
-                    rob->set_yellowteam(not _context->game_state.blueTeam);
+                    rob->set_yellowteam(not _context->blue_team);
                 }
 
                 // Load TheirRobots information
@@ -583,7 +582,7 @@ void Gameplay::GameplayModule::loadTest() {
                         rob->set_dir(0);
                     }
                     rob->set_id(i);
-                    rob->set_yellowteam(_context->game_state.blueTeam);
+                    rob->set_yellowteam(_context->blue_team);
                 }
 
                 // Get ball Information

@@ -176,7 +176,7 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
         referee->CopyFrom(packet);
     }
 
-    log_frame->set_blue_team(context->game_state.blueTeam);
+    log_frame->set_blue_team(context->blue_team);
     log_frame->set_command_time(RJ::timestamp());
 
     // Our robots
@@ -241,12 +241,12 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
     log_frame->set_behavior_tree(context->behavior_tree);
 
     // Team names
-    if (context->game_state.blueTeam) {
-        log_frame->set_team_name_yellow(context->game_state.TheirInfo.name);
-        log_frame->set_team_name_blue(context->game_state.OurInfo.name);
+    if (context->blue_team) {
+        log_frame->set_team_name_yellow(context->their_info.name);
+        log_frame->set_team_name_blue(context->our_info.name);
     } else {
-        log_frame->set_team_name_yellow(context->game_state.OurInfo.name);
-        log_frame->set_team_name_blue(context->game_state.TheirInfo.name);
+        log_frame->set_team_name_yellow(context->our_info.name);
+        log_frame->set_team_name_blue(context->their_info.name);
     }
 
     log_frame->set_timestamp(RJ::timestamp());

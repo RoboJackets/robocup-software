@@ -376,7 +376,7 @@ void OurRobot::face(Geometry2d::Point pt) {
 void OurRobot::resetAvoidRobotRadii() {
     for (size_t i = 0; i < Num_Shells; ++i) {
         intent().opp_avoid_mask[i] =
-            (i == _context->game_state.TheirInfo.goalie)
+            (i == _context->their_info.goalie)
                 ? *_oppGoalieAvoidRadius
                 : *_oppAvoidRadius;
     }
@@ -449,7 +449,7 @@ void OurRobot::resetAvoidBall() { avoidBallRadius(Ball_Avoid_Small); }
 std::shared_ptr<Geometry2d::Circle> OurRobot::createBallObstacle() const {
     // if game is stopped, large obstacle regardless of flags
     if (_context->game_state.state != GameState::Playing &&
-        !(_context->game_state.ourRestart ||
+        !(_context->game_state.our_restart ||
           _context->game_state.theirPenalty())) {
         return std::make_shared<Geometry2d::Circle>(
             _context->world_state.ball.position,

@@ -83,6 +83,7 @@ set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
 add_executable(soccer)
 add_executable(log_viewer)
+add_executable(referee_node)
 
 if (BUILD_TESTING)
     add_executable(test-soccer)
@@ -157,6 +158,12 @@ set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
 set(LOG_VIEWER_DEPS_LIBRARIES
     robocup)
 
+set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES
+    )
+
+set(REFEREE_NODE_DEPS_LIBRARIES
+    robocup)
+
 #======================================================================
 # Include and Linking
 #======================================================================
@@ -189,6 +196,12 @@ target_link_libraries(log_viewer
     ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
     ${LOG_VIEWER_DEPS_LIBRARIES})
 
+# -- referee_node --
+target_link_libraries(referee_node
+        PRIVATE
+        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${REFEREE_NODE_DEPS_LIBRARIES})
+
 ## Add a test runner target "test-soccer" to run all tests in this directory
 if (BUILD_TESTING)
     target_link_libraries(test-soccer PRIVATE robocup)
@@ -201,12 +214,12 @@ endif ()
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS robocup log_viewer
+install(TARGETS robocup log_viewer referee_node
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
 
-install(TARGETS soccer
+install(TARGETS soccer referee_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(DIRECTORY

@@ -1,0 +1,23 @@
+#pragma once
+
+#include <rclcpp/rclcpp.hpp>
+#include <rj_msgs/srv/quick_commands.hpp>
+#include <rj_msgs/srv/quick_restart.hpp>
+#include "config_client/config_client.h"
+
+#include "RefereeBase.hpp"
+
+namespace referee {
+
+class InternalReferee : public RefereeBase {
+public:
+    InternalReferee();
+
+private:
+    // TODO(Kyle): Add another service for ball placement
+    rclcpp::Service<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
+    rclcpp::Service<rj_msgs::srv::QuickRestart>::SharedPtr _quick_restart_srv;
+    rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr _game_settings_sub;
+};
+
+} // namespace referee

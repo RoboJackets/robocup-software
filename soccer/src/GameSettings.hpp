@@ -14,11 +14,6 @@ struct GameSettings {
     // Whether or not we're in simulation.
     bool simulation = true;
 
-    // Whether external referee is allowed.
-    // If this is set to true but no external referee is connected,
-    // none will be used and the control panel can be used as always.
-    bool use_external_referee = false;
-
     // Requests. These can be overridden by the referee if it's enabled
     bool requestBlueTeam = true;
     int requestGoalieID = 0;
@@ -68,7 +63,6 @@ struct GameSettings {
     operator GameSettingsMsg() const {
         GameSettingsMsg msg{};
         msg.simulation = simulation;
-        msg.use_external_referee = use_external_referee;
         msg.request_blue_team = requestBlueTeam;
         msg.request_goalie_id = requestGoalieID;
         msg.defend_plus_x = defendPlusX;

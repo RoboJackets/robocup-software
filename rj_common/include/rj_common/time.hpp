@@ -48,6 +48,14 @@ inline RJ::Time FromROSTime(const rclcpp::Time& time) {
     return RJ::Time{dur};
 }
 
+inline rclcpp::Duration ToROSDuration(RJ::Seconds seconds) {
+    return rclcpp::Duration(std::chrono::duration_cast<std::chrono::nanoseconds>(seconds).count());
+}
+
+inline RJ::Seconds FromROSDuration(rclcpp::Duration duration) {
+    return RJ::Seconds(duration.seconds());
+}
+
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
 constexpr RJ::Timestamp SecsToTimestamp(double secs) {
     return secs * 1000000.0f;

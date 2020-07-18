@@ -6,6 +6,10 @@
 #include <QTimer>
 #include <mutex>
 #include <optional>
+#include <rclcpp/rclcpp.hpp>
+#include <rj_msgs/srv/quick_commands.hpp>
+#include <rj_msgs/srv/quick_restart.hpp>
+#include <rj_msgs/srv/set_goalie.hpp>
 
 #include "FieldView.hpp"
 #include "Processor.hpp"
@@ -30,7 +34,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(Processor* processor, QWidget* parent = nullptr);
+    MainWindow(Processor* processor, bool has_external_ref, QWidget* parent = nullptr);
 
     void configuration(Configuration* config);
 
@@ -90,8 +94,6 @@ private Q_SLOTS:
 
     void on_actionUse_Field_Oriented_Controls_toggled(bool value);
     void on_actionUse_Multiple_Joysticks_toggled(bool value);
-
-    void on_actionUse_External_Referee_toggled(bool value);
 
     /// Field side
     void on_actionDefendPlusX_triggered();
@@ -199,6 +201,7 @@ private:
 
     Processor* const _processor;
     Configuration* _config{};
+    bool _has_external_ref;
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
@@ -209,11 +212,6 @@ private:
     // This is used specificially via StripChart and ProtobufTree
     // To export a larger amount of data.
     std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory{};
-
-    // When true, External Referee is automatically set.
-    // This is cleared by manually changing the checkbox or after the
-    // first referee packet is seen and the box is automatically checked.
-    bool _autoExternalReferee;
 
     // Tree items that are not in LogFrame
     QTreeWidgetItem* _frameNumberItem{};
@@ -253,4 +251,18 @@ private:
 
     std::mutex* _context_mutex;
     Context* _context;
+
+    // ROS Compatibility stuff
+    void send_quick_command(int command);
+    void send_quick_restart(int restart, bool blue_team);
+
+    rclcpp::Node::SharedPtr _node;
+    rclcpp::Client<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
+    rclcpp::Client<rj_msgs::srv::QuickRestart>::SharedPtr _quick_restart_srv;
+    rclcpp::Client<rj_msgs::srv::SetGameSettings>::SharedPtr _set_game_settings;
+    rclcpp::executors::SingleThreadedExecutor _executor;
+    std::thread _executor_thread;
+
+    rj_msgs::msg::GameSettings _game_settings;
+    bool _game_settings_valid = false;
 };

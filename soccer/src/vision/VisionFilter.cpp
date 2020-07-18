@@ -29,7 +29,7 @@ void VisionFilter::run() {
     // Fill the list of our robots/balls based on whether we are the blue team
     // or not
     fillBallState(&context_->world_state);
-    fillRobotState(&context_->world_state, context_->game_state.blueTeam);
+    fillRobotState(&context_->world_state, context_->blue_team);
 }
 
 void VisionFilter::GetFrames() {

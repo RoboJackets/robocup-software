@@ -33,6 +33,8 @@ public:
 
     [[nodiscard]] bool connected() const { return config_client_.connected(); }
 
+    bool waitUntilConnection() const { return config_client_.waitUntilConnected(); }
+
     void updateGameSettings(const GameSettingsMsg& msg) {
         return config_client_.updateGameSettings(msg);
     }

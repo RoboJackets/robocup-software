@@ -65,11 +65,12 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
+    _ros_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+
     _vision = std::make_shared<VisionFilter>(&_context);
-    _refereeModule = std::make_shared<Referee>(&_context);
-    _refereeModule->start();
+    _referee_sub = std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
-        &_context, _refereeModule.get());
+        &_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
@@ -143,6 +144,7 @@ void Processor::run() {
 
         ////////////////
         // Inputs
+        _ros_executor->spin_some();
         _sdl_joystick_node->run();
         _manual_control_node->run();
 
@@ -166,9 +168,6 @@ void Processor::run() {
 
         _vision->run();
         curStatus.lastVisionTime = _vision->GetLastVisionTime();
-
-        // Log referee data
-        _refereeModule->run();
 
         // Run high-level soccer logic
         _gameplayModule->run();

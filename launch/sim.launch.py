@@ -33,5 +33,13 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(launch_dir, "vision_receiver.launch.py")))
 
+    ref_receiver = Node(package='rj_robocup',
+                        executable='referee_node',
+                        output='screen',
+                        on_exit=Shutdown())
+    IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(launch_dir, "ref_receiver.launch.py")))
+
     return LaunchDescription(
-        [stdout_linebuf_envvar, config_server, grsim, soccer, vision_receiver])
+        [stdout_linebuf_envvar, config_server, soccer, grsim, vision_receiver, ref_receiver])
