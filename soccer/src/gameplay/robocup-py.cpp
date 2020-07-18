@@ -1207,26 +1207,19 @@ BOOST_PYTHON_MODULE(robocup) {
         .value("force_start", SSL_Referee_Command_FORCE_START)
         .value("prepare_kickoff_yellow",
                SSL_Referee_Command_PREPARE_KICKOFF_YELLOW)
-        .value("prepare_kickoff_blue",
-               SSL_Referee_Command_PREPARE_KICKOFF_BLUE)
+        .value("prepare_kickoff_blue", SSL_Referee_Command_PREPARE_KICKOFF_BLUE)
         .value("prepare_penalty_yellow",
                SSL_Referee_Command_PREPARE_PENALTY_YELLOW)
-        .value("prepare_penalty_blue",
-               SSL_Referee_Command_PREPARE_PENALTY_BLUE)
-        .value("direct_free_yellow",
-               SSL_Referee_Command_DIRECT_FREE_YELLOW)
-        .value("direct_free_blue",
-               SSL_Referee_Command_DIRECT_FREE_BLUE)
-        .value("indirect_free_yellow",
-               SSL_Referee_Command_INDIRECT_FREE_YELLOW)
-        .value("indirect_free_blue",
-               SSL_Referee_Command_INDIRECT_FREE_BLUE)
+        .value("prepare_penalty_blue", SSL_Referee_Command_PREPARE_PENALTY_BLUE)
+        .value("direct_free_yellow", SSL_Referee_Command_DIRECT_FREE_YELLOW)
+        .value("direct_free_blue", SSL_Referee_Command_DIRECT_FREE_BLUE)
+        .value("indirect_free_yellow", SSL_Referee_Command_INDIRECT_FREE_YELLOW)
+        .value("indirect_free_blue", SSL_Referee_Command_INDIRECT_FREE_BLUE)
         .value("timeout_yellow", SSL_Referee_Command_TIMEOUT_YELLOW)
         .value("timeout_blue", SSL_Referee_Command_TIMEOUT_BLUE)
         .value("goal_yellow", SSL_Referee_Command_GOAL_YELLOW)
         .value("goal_blue", SSL_Referee_Command_GOAL_BLUE)
         .value("ball_placement_yellow",
                SSL_Referee_Command_BALL_PLACEMENT_YELLOW)
-        .value("ball_placement_blue",
-               SSL_Referee_Command_BALL_PLACEMENT_BLUE);
+        .value("ball_placement_blue", SSL_Referee_Command_BALL_PLACEMENT_BLUE);
 }

@@ -83,7 +83,8 @@ public:
         return _gameplayModule;
     }
 
-//    std::shared_ptr<ExternalReferee> refereeModule() const { return _refereeModule; }
+    //    std::shared_ptr<ExternalReferee> refereeModule() const { return
+    //    _refereeModule; }
 
     SystemState* state() { return &_context.state; }
 

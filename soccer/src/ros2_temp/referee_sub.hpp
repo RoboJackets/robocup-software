@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Node.hpp"
-#include "Context.hpp"
-
-#include <rclcpp/rclcpp.hpp>
 #include <rclcpp/executor.hpp>
-#include <rj_msgs/msg/raw_protobuf.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/game_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/raw_protobuf.hpp>
 #include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/team_info.hpp>
+
+#include "Context.hpp"
+#include "Node.hpp"
 
 namespace ros2_temp {
 
@@ -42,4 +42,4 @@ private:
     Context* context_;
 };
 
-} // namespace ros2_temp
+}  // namespace ros2_temp

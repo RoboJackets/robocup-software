@@ -4,7 +4,7 @@
 
 namespace referee {
 
-template<typename T>
+template <typename T>
 void update_cache(T& value, const T& expected, bool& valid) {
     if (value != expected) {
         value = expected;
@@ -12,16 +12,20 @@ void update_cache(T& value, const T& expected, bool& valid) {
     }
 }
 
-RefereeBase::RefereeBase(const std::string& name)
-        : rclcpp::Node(name) {
+RefereeBase::RefereeBase(const std::string& name) : rclcpp::Node(name) {
     auto keep_latest = rclcpp::QoS(10);
     keep_latest.keep_last(1);
 
-    _team_color_pub = create_publisher<TeamColorMsg>(referee::topics::kTeamColorPub, keep_latest);
-    _goalie_id_pub = create_publisher<GoalieMsg>(referee::topics::kGoaliePub, keep_latest);
-    _our_team_info_pub = create_publisher<TeamInfoMsg>(referee::topics::kOurInfoPub, keep_latest);
-    _their_team_info_pub = create_publisher<TeamInfoMsg>(referee::topics::kTheirInfoPub, keep_latest);
-    _game_state_pub = create_publisher<GameStateMsg>(referee::topics::kGameStatePub, keep_latest);
+    _team_color_pub = create_publisher<TeamColorMsg>(
+        referee::topics::kTeamColorPub, keep_latest);
+    _goalie_id_pub =
+        create_publisher<GoalieMsg>(referee::topics::kGoaliePub, keep_latest);
+    _our_team_info_pub = create_publisher<TeamInfoMsg>(
+        referee::topics::kOurInfoPub, keep_latest);
+    _their_team_info_pub = create_publisher<TeamInfoMsg>(
+        referee::topics::kTheirInfoPub, keep_latest);
+    _game_state_pub = create_publisher<GameStateMsg>(
+        referee::topics::kGameStatePub, keep_latest);
 }
 
 void RefereeBase::play() {
@@ -60,7 +64,8 @@ void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
 
 void RefereeBase::ball_placement(Geometry2d::Point point, bool blue_placement) {
     restart(GameState::Restart::Placement, blue_placement);
-    update_cache(_state.ball_placement_point, std::make_optional(point), _state_valid);
+    update_cache(_state.ball_placement_point, std::make_optional(point),
+                 _state_valid);
 }
 
 void RefereeBase::set_period(GameState::Period period) {
@@ -97,7 +102,8 @@ void RefereeBase::set_team_color(bool is_blue) {
 
 void RefereeBase::set_goalie(uint8_t goalie_id) {
     bool valid = true;
-    update_cache(_blue_team ? _blue_info.goalie : _yellow_info.goalie, static_cast<uint>(goalie_id), valid);
+    update_cache(_blue_team ? _blue_info.goalie : _yellow_info.goalie,
+                 static_cast<uint>(goalie_id), valid);
     _team_info_valid &= valid;
     _goalie_valid &= valid;
 }
@@ -136,7 +142,7 @@ void RefereeBase::send() {
             msg.placement_point.x = _state.ball_placement_point->x();
             msg.placement_point.y = _state.ball_placement_point->y();
         }
-//        msg.stage_time_end = _state.stage_time_end;
+        //        msg.stage_time_end = _state.stage_time_end;
         _game_state_pub->publish(msg);
         _state_valid = true;
     }
@@ -169,4 +175,4 @@ void RefereeBase::update_team_color_from_names() {
     }
 }
 
-} // namespace referee
+}  // namespace referee

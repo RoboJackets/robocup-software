@@ -22,7 +22,7 @@ constexpr auto kTeamColorPub = "referee/team_color";
 
 constexpr auto kQuickCommandsSrv = "referee/quick_commands";
 constexpr auto kQuickRestartSrv = "referee/quick_restart";
-} // namespace referee
+}  // namespace referee::topics
 
 namespace vision_receiver::topics {
 constexpr auto kRawProtobufPub = "vision/raw_protobuf";

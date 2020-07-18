@@ -375,10 +375,9 @@ void OurRobot::face(Geometry2d::Point pt) {
 
 void OurRobot::resetAvoidRobotRadii() {
     for (size_t i = 0; i < Num_Shells; ++i) {
-        intent().opp_avoid_mask[i] =
-            (i == _context->their_info.goalie)
-                ? *_oppGoalieAvoidRadius
-                : *_oppAvoidRadius;
+        intent().opp_avoid_mask[i] = (i == _context->their_info.goalie)
+                                         ? *_oppGoalieAvoidRadius
+                                         : *_oppAvoidRadius;
     }
 }
 

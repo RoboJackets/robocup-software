@@ -4,7 +4,6 @@
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
-#include <rj_constants/topic_names.hpp>
 #include <ui_MainWindow.h>
 
 #include <QActionGroup>
@@ -44,7 +43,7 @@ static const std::vector<QString> defaultHiddenLayers{
     "Planning0",     "Planning1",        "Planning2",
     "Planning3",     "Planning4",        "Planning5"};
 
-template<typename T>
+template <typename T>
 void update_cache(T& value, const T& expected, bool& valid) {
     if (value != expected) {
         value = expected;
@@ -57,7 +56,8 @@ void calcMinimumWidth(QWidget* widget, const QString& text) {
     widget->setMinimumWidth(rect.width());
 }
 
-MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* parent)
+MainWindow::MainWindow(Processor* processor, bool has_external_ref,
+                       QWidget* parent)
     : QMainWindow(parent),
       _updateCount(0),
       _doubleFrameNumber(-1),
@@ -196,13 +196,14 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref, QWidget* par
     _ui.actionStopRobots->setEnabled(false);
 
     _node = std::make_shared<rclcpp::Node>("main_window");
-    _quick_commands_srv = _node->create_client<rj_msgs::srv::QuickCommands>(referee::topics::kQuickCommandsSrv);
-    _quick_restart_srv = _node->create_client<rj_msgs::srv::QuickRestart>(referee::topics::kQuickRestartSrv);
-    _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(config_server::topics::kGameSettingsSrv);
+    _quick_commands_srv = _node->create_client<rj_msgs::srv::QuickCommands>(
+        referee::topics::kQuickCommandsSrv);
+    _quick_restart_srv = _node->create_client<rj_msgs::srv::QuickRestart>(
+        referee::topics::kQuickRestartSrv);
+    _set_game_settings = _node->create_client<rj_msgs::srv::SetGameSettings>(
+        config_server::topics::kGameSettingsSrv);
     _executor.add_node(_node);
-    _executor_thread = std::thread([this] () {
-        _executor.spin();
-    });
+    _executor_thread = std::thread([this]() { _executor.spin(); });
 }
 
 void MainWindow::configuration(Configuration* config) {
@@ -298,9 +299,9 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         qActionGroups["teamGroup"]->setEnabled(false);
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
-        if (_ui.goalieID->currentIndex() != _game_settings.request_goalie_id + 1) {
-            _ui.goalieID->setCurrentIndex(
-                _game_settings.request_goalie_id + 1);
+        if (_ui.goalieID->currentIndex() !=
+            _game_settings.request_goalie_id + 1) {
+            _ui.goalieID->setCurrentIndex(_game_settings.request_goalie_id + 1);
         }
 
         bool blueTeam = _context->blue_team;
@@ -540,14 +541,14 @@ void MainWindow::updateViews() {
     // TODO(Kyle): Get these values from the protobuf.
     _ui.refStage->setText("");
     _ui.refCommand->setText("");
-//    _ui.refStage->setText(
-//        RefereeModuleEnums::stringFromStage(game_state.raw_stage).c_str());
-//    _ui.refCommand->setText(
-//        RefereeModuleEnums::stringFromCommand(game_state.raw_command).c_str());
+    //    _ui.refStage->setText(
+    //        RefereeModuleEnums::stringFromStage(game_state.raw_stage).c_str());
+    //    _ui.refCommand->setText(
+    //        RefereeModuleEnums::stringFromCommand(game_state.raw_command).c_str());
 
     // Convert time left from ms to s and display it to two decimal places
-    int timeSeconds =
-        static_cast<int>(RJ::Seconds(game_state.stage_time_end - RJ::now()).count());
+    int timeSeconds = static_cast<int>(
+        RJ::Seconds(game_state.stage_time_end - RJ::now()).count());
     int timeMinutes = timeSeconds / 60;
     timeSeconds = timeSeconds % 60;
     _ui.refTimeLeft->setText(tr("%1:%2").arg(
@@ -669,7 +670,8 @@ void MainWindow::updateViews() {
     updateTimer.start(20);
 
     if (!_game_settings_valid) {
-        auto game_settings_request = std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
+        auto game_settings_request =
+            std::make_shared<rj_msgs::srv::SetGameSettings::Request>();
         game_settings_request->game_settings = _game_settings;
         _set_game_settings->async_send_request(game_settings_request);
     }
@@ -1167,7 +1169,8 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
-    update_cache(_game_settings.request_goalie_id, value - 1, _game_settings_valid);
+    update_cache(_game_settings.request_goalie_id, value - 1,
+                 _game_settings_valid);
 }
 
 ////////////////
@@ -1336,27 +1339,33 @@ void MainWindow::on_fastForceStart_clicked() {
 }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF, true);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF,
+                       true);
 }
 
 void MainWindow::on_fastKickoffYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF, false);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_KICKOFF,
+                       false);
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT, true);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT,
+                       true);
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT, false);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_DIRECT,
+                       false);
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT, true);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT,
+                       true);
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT, false);
+    send_quick_restart(rj_msgs::srv::QuickRestart::Request::RESTART_INDIRECT,
+                       false);
 }
 
 bool MainWindow::live() { return !_playbackRate; }

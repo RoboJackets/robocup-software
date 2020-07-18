@@ -65,12 +65,13 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
-    _ros_executor = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+    _ros_executor =
+        std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
     _vision = std::make_shared<VisionFilter>(&_context);
-    _referee_sub = std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
-        &_context);
+    _referee_sub =
+        std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);

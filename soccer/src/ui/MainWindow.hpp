@@ -9,7 +9,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/srv/quick_commands.hpp>
 #include <rj_msgs/srv/quick_restart.hpp>
-#include <rj_msgs/srv/set_goalie.hpp>
+#include <rj_msgs/srv/set_game_settings.hpp>
 
 #include "FieldView.hpp"
 #include "Processor.hpp"
@@ -34,7 +34,8 @@ class MainWindow : public QMainWindow {
     Q_OBJECT;
 
 public:
-    MainWindow(Processor* processor, bool has_external_ref, QWidget* parent = nullptr);
+    MainWindow(Processor* processor, bool has_external_ref,
+               QWidget* parent = nullptr);
 
     void configuration(Configuration* config);
 

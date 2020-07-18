@@ -1,11 +1,10 @@
 #pragma once
 
 #include <rclcpp/rclcpp.hpp>
-
-#include <rj_msgs/msg/team_info.hpp>
-#include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/game_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
+#include <rj_msgs/msg/team_color.hpp>
+#include <rj_msgs/msg/team_info.hpp>
 
 #include "GameState.hpp"
 #include "TeamInfo.hpp"
@@ -51,7 +50,8 @@ protected:
 
         if (_capture_ready_point.has_value()) {
             constexpr double kMovedRadius = 0.1;
-            if (!_capture_ready_point->nearPoint(ball_position.position, kMovedRadius)) {
+            if (!_capture_ready_point->nearPoint(ball_position.position,
+                                                 kMovedRadius)) {
                 play();
             }
         }
@@ -87,4 +87,4 @@ private:
     std::optional<Geometry2d::Point> _capture_ready_point;
 };
 
-} // namespace referee
+}  // namespace referee

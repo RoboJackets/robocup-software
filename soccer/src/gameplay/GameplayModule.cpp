@@ -497,7 +497,8 @@ void Gameplay::GameplayModule::loadTest() {
             // See the other to-do in this file for the other instance of the
             // same issue.
             if (runningTests) {
-                _context->game_settings.requestRefCommand = SSL_Referee_Command_HALT;
+                _context->game_settings.requestRefCommand =
+                    SSL_Referee_Command_HALT;
 
                 // Place robots and ball
                 grSim_Packet simPacket;
@@ -515,8 +516,7 @@ void Gameplay::GameplayModule::loadTest() {
 
                 const int NUM_COLS = 2;
                 const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
-                const int teamDirection =
-                    _context->blue_team ? -1 : 1;
+                const int teamDirection = _context->blue_team ? -1 : 1;
                 for (int i = 0; i < Robots_Per_Team; i++) {
                     auto* rob = replacement->add_robots();
 

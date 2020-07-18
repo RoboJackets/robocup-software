@@ -49,7 +49,8 @@ inline RJ::Time FromROSTime(const rclcpp::Time& time) {
 }
 
 inline rclcpp::Duration ToROSDuration(RJ::Seconds seconds) {
-    return rclcpp::Duration(std::chrono::duration_cast<std::chrono::nanoseconds>(seconds).count());
+    return rclcpp::Duration(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(seconds).count());
 }
 
 inline RJ::Seconds FromROSDuration(rclcpp::Duration duration) {

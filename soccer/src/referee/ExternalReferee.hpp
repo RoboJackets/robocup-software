@@ -1,27 +1,25 @@
 #pragma once
 
-#include <rclcpp/rclcpp.hpp>
-
 #include <rj_protos/LogFrame.pb.h>
 #include <rj_protos/referee.pb.h>
-#include <rj_msgs/msg/raw_protobuf.hpp>
-
-#include "RefereeBase.hpp"
-#include "config_client/config_client.h"
 
 #include <boost/asio.hpp>
 #include <boost/config.hpp>
 #include <cstdint>
 #include <mutex>
+#include <rclcpp/rclcpp.hpp>
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_msgs/msg/raw_protobuf.hpp>
 #include <thread>
 #include <vector>
 
 #include "GameState.hpp"
 #include "Node.hpp"
+#include "RefereeBase.hpp"
 #include "SystemState.hpp"
 #include "TeamInfo.hpp"
+#include "config_client/config_client.h"
 
 namespace referee {
 
@@ -83,4 +81,4 @@ private:
 
 void spin_external_referee();
 
-} // namespace referee
+}  // namespace referee

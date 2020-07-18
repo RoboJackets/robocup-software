@@ -52,9 +52,10 @@ public:
 
     GameState() = default;
 
-    GameState(Period period, State state, Restart restart, bool our_restart,
-              RJ::Time stage_time_end,
-              std::optional<Geometry2d::Point> ball_placement_point = std::nullopt)
+    GameState(
+        Period period, State state, Restart restart, bool our_restart,
+        RJ::Time stage_time_end,
+        std::optional<Geometry2d::Point> ball_placement_point = std::nullopt)
         : period{period},
           state{state},
           restart{restart},

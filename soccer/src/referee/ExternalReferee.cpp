@@ -1,3 +1,5 @@
+#include "ExternalReferee.hpp"
+
 #include <unistd.h>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -10,7 +12,6 @@
 #include <stdexcept>
 
 #include "WorldState.hpp"
-#include "ExternalReferee.hpp"
 
 namespace referee {
 
@@ -35,7 +36,8 @@ ExternalReferee::ExternalReferee()
     auto keep_latest = rclcpp::QoS(10);
     keep_latest.keep_last(1);
 
-    _raw_ref_pub = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, keep_latest);
+    _raw_ref_pub = create_publisher<RawProtobufMsg>(
+        referee::topics::kRefereeRawPub, keep_latest);
 
     // Set up networking for external referee packets
     setupRefereeMulticast();
@@ -218,4 +220,4 @@ void ExternalReferee::handle_stage(SSL_Referee::Stage stage) {
     set_period(ExternalReferee::period_from_proto(stage));
 }
 
-} // namespace referee
+}  // namespace referee

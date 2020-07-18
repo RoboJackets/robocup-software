@@ -32,19 +32,15 @@ public:
     uint goalie = 0;
 
     bool operator==(const TeamInfo& other) {
-        return name == other.name &&
-               score == other.score &&
+        return name == other.name && score == other.score &&
                red_cards == other.red_cards &&
                yellow_card_times == other.yellow_card_times &&
                yellow_cards == other.yellow_cards &&
                timeouts_left == other.timeouts_left &&
-               timeout_time == other.timeout_time &&
-               goalie == other.goalie;
+               timeout_time == other.timeout_time && goalie == other.goalie;
     }
 
-    bool operator!=(const TeamInfo& other) {
-        return !(*this == other);
-    }
+    bool operator!=(const TeamInfo& other) { return !(*this == other); }
 
     static TeamInfo from_refbox_packet(const SSL_Referee_TeamInfo& packet) {
         TeamInfo info;
@@ -64,7 +60,7 @@ public:
     }
 };
 
-//TeamInfoMsg team_info_to_ros(const TeamInfo& other) {
+// TeamInfoMsg team_info_to_ros(const TeamInfo& other) {
 //    TeamInfoMsg msg;
 //    msg.name = other.name;
 //    msg.score = other.score;
@@ -80,7 +76,7 @@ public:
 //    return msg;
 //}
 //
-//TeamInfo team_info_from_ros(const TeamInfoMsg& msg) {
+// TeamInfo team_info_from_ros(const TeamInfoMsg& msg) {
 //    TeamInfo result;
 //    result.name = msg.name;
 //    result.score = msg.score;

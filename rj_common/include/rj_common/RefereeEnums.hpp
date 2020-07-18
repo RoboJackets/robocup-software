@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string>
 #include <rj_protos/referee.pb.h>
+
+#include <string>
 
 namespace RefereeModuleEnums {
 
