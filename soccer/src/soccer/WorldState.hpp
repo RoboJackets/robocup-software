@@ -3,9 +3,9 @@
 #include <Geometry2d/Pose.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
-#include <rj_msgs/msg/detail/ball_state__builder.hpp>
-#include <rj_msgs/msg/detail/robot_state__builder.hpp>
-#include <rj_msgs/msg/detail/world_state__builder.hpp>
+#include <rj_msgs/msg/ball_state.hpp>
+#include <rj_msgs/msg/robot_state.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"

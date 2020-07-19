@@ -1,8 +1,8 @@
 #pragma once
 
 #include <ostream>
-#include <rj_geometry_msgs/msg/detail/pose__builder.hpp>
-#include <rj_geometry_msgs/msg/detail/twist__builder.hpp>
+#include <rj_geometry_msgs/msg/pose.hpp>
+#include <rj_geometry_msgs/msg/twist.hpp>
 
 #include "Point.hpp"
 #include "TransformMatrix.hpp"
