@@ -10,10 +10,43 @@
 
 namespace Geometry2d::Testing {
 
+TEST(Arc, GetterSetter) {
+    Point center(1, 1);
+    float radius = 1.1f;
+    float start = 0.1f;
+    float end = 0.2f;
+
+    Arc a(center, radius, start, end);
+
+    EXPECT_NEAR(a.center().x(), center.x(), 0.001f);
+    EXPECT_NEAR(a.center().y(), center.y(), 0.001f);
+    EXPECT_NEAR(a.radius(), radius, 0.001f);
+    EXPECT_NEAR(a.start(), start, 0.001f);
+    EXPECT_NEAR(a.end(), end, 0.001f);
+    EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
+
+    center = Point(2, 2);
+    a.setCenter(center);
+    radius = 1.2f;
+    a.setRadius(radius);
+    start = 0.3f;
+    a.setStart(start);
+    end = 0.4f;
+    a.setEnd(end);
+
+    EXPECT_NEAR(a.center().x(), center.x(), 0.001f);
+    EXPECT_NEAR(a.center().y(), center.y(), 0.001f);
+    EXPECT_NEAR(a.radius(), radius, 0.001f);
+    EXPECT_NEAR(a.start(), start, 0.001f);
+    EXPECT_NEAR(a.end(), end, 0.001f);
+    EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
+}
+
 TEST(Arc, Intersections) {
     // Line-arc
     auto check_all_near = [](std::vector<Point> actual,
-                             std::vector<Point> expected, std::string name) {
+                             const std::vector<Point>& expected,
+                             const std::string& name) {
         for (Point pt : expected) {
             auto it =
                 std::find_if(actual.begin(), actual.end(),
@@ -45,6 +78,11 @@ TEST(Arc, Intersections) {
     check_all_near(Arc({0, 0}, 1.0, M_PI / 4, 3 * M_PI / 4)
                        .intersects(Line({0, 0}, {0, 1})),
                    {{0, 1}}, "Arc-Line 4");
+
+    // Arc-Line No intersection
+    std::vector<Point> v =
+        Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({-1, -1}, {1, -1}));
+    EXPECT_TRUE(v.empty());
 
     // Arc-Segment
     check_all_near(

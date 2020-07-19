@@ -1,8 +1,12 @@
 #pragma once
-#include "TeamInfo.hpp"
+
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
+#include <time.hpp>
+
 #include "Constants.hpp"
+#include "RefereeEnums.hpp"
+#include "TeamInfo.hpp"
 
 /**
  * @brief Holds the state of the game according to the referee
@@ -47,22 +51,51 @@ public:
     int theirScore;
 
     // Time in seconds remaining in the current period
-    int secondsRemaining;
+    RJ::Seconds stage_time_left;
 
     TeamInfo OurInfo;
     TeamInfo TheirInfo;
 
+    // Bool representing if we are the blue team
+    bool blueTeam;
+
     Geometry2d::Point ballPlacementPoint;
 
-    GameState() {
-        period = FirstHalf;
-        state = Halt;
-        restart = None;
-        ourRestart = false;
-        ourScore = 0;
-        theirScore = 0;
-        secondsRemaining = 0;
-    }
+    RefereeModuleEnums::Stage raw_stage =
+        RefereeModuleEnums::NORMAL_FIRST_HALF_PRE;
+    RefereeModuleEnums::Command raw_command = RefereeModuleEnums::Command::HALT;
+
+    GameState()
+        : period{FirstHalf},
+          state{Halt},
+          restart{None},
+          ourRestart{false},
+          ourScore{0},
+          theirScore{0},
+          OurInfo{},
+          TheirInfo{},
+          blueTeam{false},
+          ballPlacementPoint{} {}
+
+    GameState(Period period, State state, Restart restart, bool ourRestart,
+              int ourScore, int theirScore, RJ::Seconds stage_time_left,
+              TeamInfo our_info, TeamInfo their_info, bool blueTeam,
+              Geometry2d::Point ballPlacementPoint,
+              RefereeModuleEnums::Stage stage,
+              RefereeModuleEnums::Command command)
+        : period{period},
+          state{state},
+          restart{restart},
+          ourRestart{ourRestart},
+          ourScore{ourScore},
+          theirScore{theirScore},
+          stage_time_left{stage_time_left},
+          OurInfo{our_info},
+          TheirInfo{their_info},
+          blueTeam{blueTeam},
+          ballPlacementPoint{ballPlacementPoint},
+          raw_stage{stage},
+          raw_command{command} {}
 
     ////////
     // Rule queries
@@ -150,6 +183,15 @@ public:
             0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
         ballPlacementPoint =
             _worldToTeam * Geometry2d::Point(x / 1000, y / 1000);
+    }
+
+    static Geometry2d::Point convertToBallPlacementPoint(float x, float y) {
+        Geometry2d::TransformMatrix world_to_team =
+            Geometry2d::TransformMatrix();
+        world_to_team *= Geometry2d::TransformMatrix::translate(
+            0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+
+        return world_to_team * Geometry2d::Point(x / 1000, y / 1000);
     }
 
     Geometry2d::Point getBallPlacementPoint() const {

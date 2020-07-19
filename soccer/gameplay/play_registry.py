@@ -1,5 +1,7 @@
 from PyQt5 import QtCore
 import logging
+import play
+from typing import List, Iterator, Type, Union, Optional, Tuple
 
 
 ## Holds references to all Play subclasses and their enabled state
@@ -15,7 +17,7 @@ import logging
 class PlayRegistry(QtCore.QAbstractItemModel):
     def __init__(self):
         super().__init__()
-        self._root = PlayRegistry.Category(None, "")
+        self._root: PlayRegistry.Category = PlayRegistry.Category(None, "")
 
     @property
     def root(self):
@@ -24,7 +26,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     # the module path is a list
     # for a demo play called RunAround, module_path = ['demo', 'run_around']
     # (note that we left out 'plays' - every play is assumed to be in a descendent module of it)
-    def insert(self, module_path, play_class):
+    def insert(self, module_path: List[str], play_class: Type[play.Play]):
         category = self.root
 
         # iterate up to the last one (the last one is just an underscored,
@@ -40,15 +42,15 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         #     raise AssertionError("There's already a play registered for the given module path")
         category.append_child(playNode)
 
-    def load_playbook(self, list_of_plays):
+    def load_playbook(self, list_of_plays: List[List[str]]):
         self.clear()
         for play in list_of_plays:
-            node = self.node_for_module_path(play)
+            node: Optional[PlayRegistry.Node] = self.node_for_module_path(play)
             if node is not None:
                 node.enabled = True
             else:
-                logging.warn("Attempt to load non-existent play " + '/'.join(
-                    play) + " from playbook.")
+                logging.warning("Attempt to load non-existent play " +
+                                '/'.join(play) + " from playbook.")
 
     def delete(self, module_path):
         node = self.node_for_module_path(module_path)
@@ -63,22 +65,23 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             else:
                 break
 
-    def clear(self):
+    def clear(self) -> None:
         enabled_plays = self.get_enabled_plays_paths()
         for play in enabled_plays:
             node = self.node_for_module_path(play)
             if node is not None:
                 node.enabled = False
             else:
-                logging.warn("Attempt to clear non-existent play " + '/'.join(
-                    play) + " from play registry.")
+                logging.warning("Attempt to clear non-existent play " +
+                                '/'.join(play) + " from play registry.")
 
     # cache and calculate the score() function for each play class
-    def recalculate_scores(self):
+    def recalculate_scores(self) -> None:
         self.root.recalculate_scores(self)
 
     ## Get a list of all plays in the tree that are currently enabled
-    def get_enabled_plays_and_scores(self):
+    def get_enabled_plays_and_scores(
+            self) -> List[Tuple[Type[play.Play], float]]:
         return [(node.play_class, node.last_score)
                 for node in self if node.enabled]
 
@@ -103,7 +106,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         return enabled_plays
 
     # iterates over all of the Nodes registered in the tree
-    def __iter__(self):
+    def __iter__(self) -> Iterator["PlayRegistry.Node"]:
         def _recursive_iter(category):
             for child in category.children:
                 if isinstance(child, PlayRegistry.Node):
@@ -136,7 +139,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
     # module_path is a list like ['demo', 'my_demo']
     # returns a Node or None if it can't find it
-    def node_for_module_path(self, module_path):
+    def node_for_module_path(self, module_path: List[str]) -> Optional["Node"]:
         category = self.root
         for module_name in module_path[:-1]:
             category = category[module_name]
@@ -150,59 +153,64 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
         return None
 
+    CategoryChild = Union["PlayRegistry.Node", "PlayRegistry.Category"]
+
     ## Categories correspond to filesystem directories
-    class Category():
-        def __init__(self, parent, name):
+    class Category:
+        def __init__(self, parent: Optional["PlayRegistry.Category"],
+                     name: str):
             super().__init__()
 
-            self._name = name
-            self._children = list()
-            self.parent = parent
+            self._name: str = name
+            self._children: List["PlayRegistry.CategoryChild"] = list()
+            self.parent: Optional["PlayRegistry.Category"] = parent
 
         @property
-        def name(self):
+        def name(self) -> str:
             return self._name
 
         @property
-        def module_name(self):
+        def module_name(self) -> str:
             return self.name
 
         # Instructs all child nodes to recalculate their scores.
         # if a child node returns True indicating that the score value changed, we
         # emit the "dataChanged" signal with the corresponding node index
-        def recalculate_scores(self, model):
+        def recalculate_scores(self, model) -> bool:
             for child in self._children:
                 if child.recalculate_scores(model):
-                    row = child.parent.children.index(child)
-                    col = 1
                     parent = child.parent
+                    assert parent is not None
+                    row = parent.children.index(child)
+                    col = 1
                     index = model.createIndex(row, col, child)
                     model.dataChanged.emit(index, index)
             return False
 
-        def __delitem__(self, name):
+        def __delitem__(self, name) -> None:
             for idx, child in enumerate(self.children):
                 if child.name == name:
                     del self.children[idx]
                     return
             raise KeyError("Attempt to delete a child node that doesn't exist")
 
-        def append_child(self, child):
+        def append_child(self, child: "PlayRegistry.CategoryChild") -> None:
             self.children.append(child)
             child.parent = self
 
-        def __getitem__(self, name):
+        def __getitem__(self,
+                        name: str) -> Optional["PlayRegistry.CategoryChild"]:
             for child in self.children:
                 if child.name == name:
                     return child
             return None
 
-        def has_child_with_name(self, name):
+        def has_child_with_name(self, name: str) -> bool:
             return self[name] != None
 
         # @children is a list
         @property
-        def children(self):
+        def children(self) -> List["PlayRegistry.CategoryChild"]:
             return self._children
 
         @property
@@ -212,34 +220,34 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             else:
                 return 0
 
-    class Node():
-        def __init__(self, module_name, play_class):
+    class Node:
+        def __init__(self, module_name: str, play_class: Type[play.Play]):
             self._module_name = module_name
             self._last_score = float("inf")
             self.enabled = False
             self.play_class = play_class
-            self.parent = None
+            self.parent: Optional["PlayRegistry.Category"] = None
 
         @property
-        def name(self):
+        def name(self) -> str:
             return self.play_class.__name__
 
         @property
-        def module_name(self):
+        def module_name(self) -> str:
             return self._module_name
 
         # recalculates and caches the score value for the play
         # returns True if the value changed and False otherwise
-        def recalculate_scores(self, model):
+        def recalculate_scores(self, model) -> bool:
             prev = self._last_score
             self._last_score = self.play_class.score()
             return prev != self._last_score
 
         @property
-        def last_score(self):
+        def last_score(self) -> float:
             return self._last_score
 
-        def __str__(self):
+        def __str__(self) -> str:
             return self.play_class.__name__ + " " + (
                 "[ENABLED]" if self.enabled else "[DISABLED]")
 

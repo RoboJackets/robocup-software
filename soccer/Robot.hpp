@@ -1,61 +1,46 @@
 #pragma once
 
-#include <Constants.hpp>
-#include <planning/CompositePath.hpp>
-#include <planning/InterpolatedPath.hpp>
-#include <planning/MotionCommand.hpp>
-#include <planning/RRTPlanner.hpp>
-#include <planning/RobotConstraints.hpp>
-#include "planning/DynamicObstacle.hpp"
-#include "planning/RotationCommand.hpp"
-
 #include <protobuf/Control.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <protobuf/RadioTx.pb.h>
-#include <Utils.hpp>
 
-#include <stdint.h>
+#include <Constants.hpp>
 #include <Eigen/Dense>
 #include <QColor>
-#include <array>
-#include <optional>
-#include <boost/circular_buffer.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <vector>
-#include <algorithm>
-
 #include <QReadLocker>
 #include <QReadWriteLock>
 #include <QWriteLocker>
+#include <algorithm>
+#include <array>
+#include <boost/circular_buffer.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <cstdint>
+#include <optional>
+#include <planning/RobotConstraints.hpp>
+#include <planning/Trajectory.hpp>
+#include <planning/planner/MotionCommand.hpp>
+#include <vector>
 
 #include "Context.hpp"
+#include "planning/DynamicObstacle.hpp"
 #include "status.h"
 
 class RobotConfig;
-class RobotStatus;
-
-namespace Packet {
-class DebugText;
-class LogFrame_Robot;
-};  // namespace Packet
+class RobotLocalConfig;
 
 namespace Gameplay {
 class GameplayModule;
-}
-
-namespace Planning {
-class RRTPlanner;
-}
+}  // namespace Gameplay
 
 class Robot {
 public:
-    Robot(Context* context, unsigned int shell, bool self);
+    Robot(Context* context, int shell, bool self);
 
     /**
      * Get an immutable reference to the robot's estimated state from vision.
      * @return An immutable reference to the robot's state.
      */
-    const RobotState& state() const {
+    [[nodiscard]] const RobotState& state() const {
         return _context->world_state.get_robot(self(), shell());
     }
 
@@ -68,37 +53,40 @@ public:
         return _context->world_state.get_robot(self(), shell());
     }
 
-    Geometry2d::Pose pose() const { return state().pose; }
+    [[nodiscard]] Geometry2d::Pose pose() const { return state().pose; }
 
-    Geometry2d::Point pos() const { return state().pose.position(); }
+    [[nodiscard]] Geometry2d::Point pos() const {
+        return state().pose.position();
+    }
 
-    double angle() const { return state().pose.heading(); }
+    [[nodiscard]] double angle() const { return state().pose.heading(); }
 
-    Geometry2d::Twist twist() const { return state().velocity; }
+    [[nodiscard]] Geometry2d::Twist twist() const { return state().velocity; }
 
-    Geometry2d::Point vel() const { return state().velocity.linear(); }
+    [[nodiscard]] Geometry2d::Point vel() const {
+        return state().velocity.linear();
+    }
 
-    double angleVel() const { return state().velocity.angular(); }
+    [[nodiscard]] double angleVel() const { return state().velocity.angular(); }
 
-    bool visible() const { return state().visible; }
+    [[nodiscard]] bool visible() const { return state().visible; }
 
     /**
-     * ID number for the robot.  This is the number that the dot pattern on the
-     * top of the robot represents
+     * ID number for the robot.  This is the number that the dot pattern on
+     * the top of the robot represents
      */
-    unsigned int shell() const { return _shell; }
+    [[nodiscard]] int shell() const { return _shell; }
 
     /**
      * Check whether or not this robot is on our team
      */
-    bool self() const { return _self; }
+    [[nodiscard]] bool self() const { return _self; }
 
-
-    bool operator==(const Robot& other) {
+    bool operator==(const Robot& other) const {
         return shell() == other.shell() && self() == other.self();
     }
 
-    std::string toString() const {
+    [[nodiscard]] std::string toString() const {
         return std::string("<Robot ") + (self() ? "us[" : "them[") +
                std::to_string(shell()) + "], pos=" + pos().toString() + ">";
     }
@@ -112,7 +100,7 @@ protected:
     Context* _context;
 
 private:
-    const unsigned int _shell;
+    const int _shell;
     const bool _self;
 };
 
@@ -130,14 +118,7 @@ private:
  */
 class OurRobot : public Robot {
 public:
-    typedef std::array<float, Num_Shells> RobotMask;
-
-    /** radio packets */
-    Packet::Robot robotPacket;
-    Packet::Control* control;
-
-    RobotConfig* config;
-    RobotStatus* status;
+    using RobotMask = std::array<float, Num_Shells>;
 
     /**
      * @brief Construct a new OurRobot
@@ -145,11 +126,10 @@ public:
      * @param shell The robot ID
      */
     OurRobot(Context* context, int shell);
-    ~OurRobot();
 
     void addStatusText();
 
-    void addText(const QString& text, const QColor& color = Qt::white,
+    void addText(const QString& text, const QColor& qc = Qt::white,
                  const QString& layerPrefix = "RobotText");
 
     /// true if the kicker is ready
@@ -159,7 +139,7 @@ public:
     float kickTimer() const;
 
     /// segment for the location of the kicker
-    const Geometry2d::Segment kickerBar() const;
+    Geometry2d::Segment kickerBar() const;
     /// converts a point to the frame of reference of robot
     Geometry2d::Point pointInRobotSpace(Geometry2d::Point pt) const;
 
@@ -168,33 +148,33 @@ public:
     // FIXME - Function name and comment don't match
     bool behindBall(Geometry2d::Point ballPos) const;
 
-    // Gets the robot quaternion.  Returns false (and does not change q) if not
-    // available.
-    std::optional<Eigen::Quaternionf> quaternion() const;
-
     // Constraints
     const RobotConstraints& robotConstraints() const {
-        return _robotConstraints;
+        return _context->robot_constraints[shell()];
     }
 
-    RobotConstraints& robotConstraints() { return _robotConstraints; }
+    RobotConstraints& robotConstraints() {
+        return _context->robot_constraints[shell()];
+    }
 
     const MotionConstraints& motionConstraints() const {
-        return _robotConstraints.mot;
+        return robotConstraints().mot;
     }
 
-    MotionConstraints& motionConstraints() { return _robotConstraints.mot; }
-
-    const Planning::RotationCommand& rotationCommand() const {
-        return *_rotationCommand;
-    }
+    MotionConstraints& motionConstraints() { return robotConstraints().mot; }
 
     /**
      * Returns a const reference to the path of the robot.
      */
-    const Planning::Path& path() {
-        // return *angleFunctionPath.path;
-        return angleFunctionPath;
+    const Planning::Trajectory& path() const {
+        return _context->trajectories[shell()];
+    }
+
+    /**
+     * Returns a movable reference to the path of the robot.
+     */
+    Planning::Trajectory&& path_movable() {
+        return std::move(_context->trajectories[shell()]);
     }
 
     /// clears old radioTx stuff, resets robot debug text, and clears local
@@ -249,9 +229,8 @@ public:
 
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
-     * is given, the robot will try to face in that direction when the ball hits
-     * @param target - the target point in which the robot will try to bounce
-     * the towards
+     * is given, the robot will try to face in that direction when the ball
+     * hits.
      */
     void settle(std::optional<Geometry2d::Point> target);
 
@@ -260,25 +239,15 @@ public:
      */
     void collect();
 
-    /**
-     * Sets the worldVelocity in the robot's MotionConstraints
-     */
-    void worldVelocity(Geometry2d::Point targetWorldVel);
-
-    /**
-     * Face a point while remaining in place
+    /*
+     * Override the default angle planning strategy and face a point
      */
     void face(Geometry2d::Point pt);
 
     /**
-     * Returns true if the robot currently has a face command
+     * Sets the worldVelocity in the robot's MotionConstraints
      */
-    bool isFacing();
-
-    /**
-     * Remove the facing command
-     */
-    void faceNone();
+    void worldVelocity(Geometry2d::Point targetWorldVel);
 
     /**
      * The robot pivots around it's mouth toward the given target
@@ -330,8 +299,14 @@ public:
 
     RJ::Timestamp lastKickTime() const;
 
+    const RobotStatus& radioStatus() const {
+        return _context->robot_status.at(shell());
+    }
+
     /// checks if the bot has kicked/chipped very recently.
-    bool justKicked() { return !(_radioRx.kicker_status() & Kicker_Charged); }
+    bool justKicked() {
+        return radioStatus().kicker == RobotStatus::KickerState::kCharging;
+    }
 
     /**
      * Gets a string representing the series of commands called on the robot
@@ -344,8 +319,6 @@ public:
      * ignore ball sense and kick immediately
      */
     void kickImmediately();
-
-    boost::ptr_vector<Packet::DebugText> robotText;
 
     // True if this robot will treat opponents as obstacles
     // Set to false for defenders to avoid being herded
@@ -364,21 +337,16 @@ public:
      * Cleared after every frame
      */
     void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
-        _local_obstacles.add(obs);
+        intent().local_obstacles.add(obs);
     }
     const Geometry2d::ShapeSet& localObstacles() const {
-        return _local_obstacles;
+        return intent().local_obstacles;
     }
-    void clearLocalObstacles() { _local_obstacles.clear(); }
-
-    std::vector<Planning::DynamicObstacle> collectDynamicObstacles();
+    void clearLocalObstacles() { intent().local_obstacles.clear(); }
 
     Geometry2d::ShapeSet collectStaticObstacles(
         const Geometry2d::ShapeSet& globalObstacles,
         bool localObstacles = true);
-
-    Geometry2d::ShapeSet collectAllObstacles(
-        const Geometry2d::ShapeSet& globalObstacles);
 
     void approachAllOpponents(bool enable = true);
     void avoidAllOpponents(bool enable = true);
@@ -424,44 +392,41 @@ public:
     bool hasBallRaw() const;
     bool ballSenseWorks() const;
     bool kickerWorks() const;
-    float kickerVoltage() const;
-    Packet::HardwareVersion hardwareVersion() const;
+    double kickerVoltage() const;
+    RobotStatus::HardwareVersion hardwareVersion() const;
 
-    void setRadioRx(Packet::RadioRx packet) {
-        QWriteLocker locker(&radioRxMutex);
-        _radioRx = packet;
-        if (hasBallRaw()) {
-            _lastBallSense = RJ::now();
+    const Planning::MotionCommand& motionCommand() const {
+        return intent().motion_command;
+    }
+    void setMotionCommand(const Planning::MotionCommand& newCmd) {
+        if (intent().motion_command.index() != newCmd.index()) {
+            // clear path when command type changes
+            _context->trajectories[shell()] = Planning::Trajectory{{}};
         }
-    }
 
-    Packet::RadioRx radioRx() const {
-        QReadLocker locker(&radioRxMutex);
-        return _radioRx;
-    }
-
-    const std::unique_ptr<Planning::MotionCommand>& motionCommand() const {
-        return _motionCommand;
+        intent().motion_command = newCmd;
     }
 
     const RotationConstraints& rotationConstraints() const {
-        return _robotConstraints.rot;
+        return robotConstraints().rot;
     }
 
-    RotationConstraints& rotationConstraints() { return _robotConstraints.rot; }
+    RotationConstraints& rotationConstraints() {
+        return robotConstraints().rot;
+    }
 
     /**
      * @param age Time (in microseconds) that defines non-fresh
      */
-    bool rxIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
+    bool statusIsFresh(RJ::Seconds age = RJ::Seconds(0.5)) const;
 
     /**
      * @brief start the robot playing a song
      * @param song
      */
-    void sing(Packet::Control::Song song = Packet::Control::FIGHT_SONG) {
+    void sing(RobotIntent::Song song = RobotIntent::Song::FIGHT_SONG) {
         addText("GO TECH!", QColor(255, 0, 255), "Sing");
-        control->set_song(song);
+        intent().song = song;
     }
 
     bool isPenaltyKicker = false;
@@ -471,8 +436,6 @@ public:
 
     double distanceToChipLanding(int chipPower);
     uint8_t chipPowerForDistance(double distance);
-
-    void setPath(std::unique_ptr<Planning::Path> path);
 
     /**
      * Sets the priority which paths are planned.
@@ -484,7 +447,7 @@ public:
      * Gets the priority which paths are planned.
      * Higher priority values are planned first.
      */
-    int8_t getPlanningPriority() { return _planningPriority; }
+    int8_t getPlanningPriority() const { return _planningPriority; }
 
     void setPID(double p, double i, double d);
 
@@ -492,20 +455,7 @@ public:
     bool isJoystickControlled() const;
 
 protected:
-    /// set of obstacles added by plays
-    Geometry2d::ShapeSet _local_obstacles;
-
-    /// masks for obstacle avoidance
-    RobotMask _opp_avoid_mask;
-    float _avoidBallRadius;  /// radius of ball obstacle
-
-    std::unique_ptr<Planning::MotionCommand> _motionCommand;
-    std::unique_ptr<Planning::RotationCommand> _rotationCommand;
     RobotConstraints _robotConstraints;
-
-    Planning::AngleFunctionPath angleFunctionPath;  /// latest path
-
-    bool _joystickControlled = false;
 
     /**
      * Creates a set of obstacles from a given robot team mask,
@@ -521,10 +471,12 @@ protected:
     Geometry2d::ShapeSet createRobotObstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask) const {
         Geometry2d::ShapeSet result;
-        for (size_t i = 0; i < mask.size(); ++i)
-            if (mask[i] > 0 && robots[i] && robots[i]->visible())
-                result.add(std::shared_ptr<Geometry2d::Shape>(
-                    new Geometry2d::Circle(robots[i]->pos(), mask[i])));
+        for (size_t i = 0; i < mask.size(); ++i) {
+            if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
+                result.add(std::make_shared<Geometry2d::Circle>(
+                    robots[i]->pos(), mask[i]));
+            }
+        }
         return result;
     }
 
@@ -545,13 +497,14 @@ protected:
                                               Geometry2d::Point currentPosition,
                                               float checkRadius) const {
         Geometry2d::ShapeSet result;
-        for (size_t i = 0; i < mask.size(); ++i)
+        for (size_t i = 0; i < mask.size(); ++i) {
             if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
                 if (currentPosition.distTo(robots[i]->pos()) <= checkRadius) {
-                    result.add(std::shared_ptr<Geometry2d::Shape>(
-                        new Geometry2d::Circle(robots[i]->pos(), mask[i])));
+                    result.add(std::make_shared<Geometry2d::Circle>(
+                        robots[i]->pos(), mask[i]));
                 }
             }
+        }
         return result;
     }
 
@@ -561,25 +514,35 @@ protected:
     std::shared_ptr<Geometry2d::Circle> createBallObstacle() const;
 
     friend class Processor;
+    friend class RadioNode;
 
     /// The processor mutates RadioRx in place and calls this afterwards to let
     /// it know that it changed
     void radioRxUpdated();
 
+    const RobotLocalConfig* status() const {
+        return &_context->local_configs[shell()];
+    }
+
+    const RobotConfig* config() const { return _context->robot_config.get(); }
+
 private:
     RJ::Time _lastBallSense;
     const RJ::Seconds _lostBallDuration = RJ::Seconds(0.1);
 
-    mutable QReadWriteLock radioRxMutex;
     void _kick(uint8_t strength);
     void _chip(uint8_t strength);
     void _unkick();
 
-    uint32_t _lastKickerStatus;
+    RobotStatus::KickerState _lastKickerStatus =
+        RobotStatus::KickerState::kCharging;
     RJ::Time _lastKickTime;
     RJ::Time _lastChargedTime;
 
-    Packet::RadioRx _radioRx;
+    RobotIntent& intent() { return _context->robot_intents[shell()]; }
+    const RobotIntent& intent() const {
+        return _context->robot_intents[shell()];
+    }
 
     /**
      * We build a string of commands such as face(), move(), etc at each
@@ -588,7 +551,7 @@ private:
      */
     // note: originally this was not a pointer, but I got weird errors about a
     // deleted copy constructor...
-    std::stringstream* _cmdText;
+    std::stringstream _cmdText;
 
     void _clearCmdText();
 
@@ -598,7 +561,7 @@ private:
     static ConfigDouble* _oppGoalieAvoidRadius;
     static ConfigDouble* _dribbleOutOfBoundsOffset;
 
-    int8_t _planningPriority;
+    int8_t _planningPriority{};
 };
 
 /**
@@ -613,6 +576,5 @@ public:
      * @param context A pointer to the global system context object
      * @param shell The robot ID
      */
-    OpponentRobot(Context* context, unsigned int shell)
-        : Robot(context, shell, false) {}
+    OpponentRobot(Context* context, int shell) : Robot(context, shell, false) {}
 };

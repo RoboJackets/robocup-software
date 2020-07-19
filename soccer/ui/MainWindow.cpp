@@ -1,30 +1,4 @@
 #include "MainWindow.hpp"
-#include <Network.hpp>
-#include <Robot.hpp>
-#include <Utils.hpp>
-#include <gameplay/GameplayModule.hpp>
-#include <joystick/GamepadController.hpp>
-#include <joystick/Joystick.hpp>
-#include <ui/StyleSheetManager.hpp>
-#include "BatteryProfile.hpp"
-#include "Configuration.hpp"
-#include "RobotStatusWidget.hpp"
-#include "rc-fshare/git_version.hpp"
-#include "radio/Radio.hpp"
-
-#include <QActionGroup>
-#include <QFileDialog>
-#include <QInputDialog>
-#include <QMessageBox>
-
-#include <QDateTime>
-#include <QDir>
-#include <QFile>
-#include <QString>
-
-#include <ctime>
-#include <iostream>
-#include <string>
 
 #include <google/protobuf/descriptor.h>
 #include <protobuf/grSim_Commands.pb.h>
@@ -32,18 +6,43 @@
 #include <protobuf/grSim_Replacement.pb.h>
 #include <ui_MainWindow.h>
 
+#include <Network.hpp>
+#include <QActionGroup>
+#include <QDateTime>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QString>
+#include <Robot.hpp>
+#include <Utils.hpp>
+#include <ctime>
+#include <gameplay/GameplayModule.hpp>
+#include <ui/StyleSheetManager.hpp>
+
+#include "BatteryProfile.hpp"
+#include "Configuration.hpp"
+#include "GrSimCommunicator.hpp"
+#include "RobotStatusWidget.hpp"
+#include "radio/Radio.hpp"
+#include "rc-fshare/git_version.hpp"
+
 using namespace std;
 using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
 using namespace Eigen;
 
+constexpr int kHistorySize = 60 * 2;
+constexpr int kLongHistorySize = 60 * 60 * 30;
+
 static const std::vector<QString> defaultHiddenLayers{
     "MotionControl", "Global Obstacles", "Local Obstacles",
     "Planning0",     "Planning1",        "Planning2",
     "Planning3",     "Planning4",        "Planning5"};
 
-void calcMinimumWidth(QWidget* widget, QString text) {
+void calcMinimumWidth(QWidget* widget, const QString& text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);
     widget->setMinimumWidth(rect.width());
 }
@@ -54,9 +53,10 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
       _autoExternalReferee(true),
       _doubleFrameNumber(-1),
       _lastUpdateTime(RJ::now()),
-      _history(2 * 60),
-      _longHistory(10000),
-      _processor(processor) {
+      _processor(processor),
+      _context(processor->context()) {
+    _context_mutex = processor->loopMutex();
+
     qRegisterMetaType<QVector<int>>("QVector<int>");
     _ui.setupUi(this);
     _ui.fieldView->history(&_history);
@@ -165,7 +165,11 @@ MainWindow::MainWindow(Processor* processor, QWidget* parent)
     setWindowTitle(windowTitle() + " @ " + git_version_short_hash +
                    (git_version_dirty ? "*" : ""));
 
-    if (!_processor->simulation()) {
+    // Pass context into fieldview
+    // (apparently simfieldview is used even outside of simulation)
+    _ui.fieldView->setContext(_context);
+
+    if (!_context->game_settings.simulation) {
         _ui.menu_Simulator->setEnabled(false);
     } else {
         // reset the field initially, grSim will start out in some weird
@@ -187,17 +191,13 @@ void MainWindow::configuration(Configuration* config) {
 
 void MainWindow::initialize() {
     // Team
-    if (_processor->blueTeam()) {
+    if (_context->game_settings.requestBlueTeam) {
         _ui.actionTeamBlue->trigger();
     } else {
         _ui.actionTeamYellow->trigger();
     }
 
-    if (_processor->logger().recording()) {
-        _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
-                                         _processor->logger().filename());
-        _ui.actionStart_Logging->setEnabled(false);
-    }
+    logFileChanged();
 
     // Initialize to ui defaults
     on_goalieID_currentIndexChanged(_ui.goalieID->currentIndex());
@@ -207,7 +207,7 @@ void MainWindow::initialize() {
     qActionGroups["radioGroup"]->checkedAction()->trigger();
 
     // Default to FullField on Simulator
-    if (_processor->simulation()) {
+    if (_context->game_settings.simulation) {
         _ui.actionVisionFull_Field->trigger();
     }
 
@@ -215,9 +215,7 @@ void MainWindow::initialize() {
     connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     updateTimer.start(30);
 
-    _autoExternalReferee = _processor->externalReferee();
-
-    if (_processor->defendPlusX()) {
+    if (_context->game_settings.defendPlusX) {
         on_actionDefendPlusX_triggered();
         _ui.actionDefendPlusX->setChecked(true);
     } else {
@@ -225,35 +223,32 @@ void MainWindow::initialize() {
         _ui.actionDefendMinusX->setChecked(true);
     }
 
-    switch (_processor->visionChannel()) {
-        case 0:
-            on_actionVisionPrimary_Half_triggered();
-            _ui.actionVisionPrimary_Half->setChecked(true);
-            break;
-        case 1:
-            on_actionVisionSecondary_Half_triggered();
-            _ui.actionVisionSecondary_Half->setChecked(true);
-            break;
-        case 2:
-            on_actionVisionFull_Field_triggered();
-            _ui.actionVisionFull_Field->setChecked(true);
-            break;
+    // If we're reading logs, we should already have some data. Update frames
+    // for all of it.
+    for (const auto& frame : _context->logs.frames) {
+        updateDebugLayers(*frame);
+    }
+
+    if (_context->logs.state == Logs::State::kReading) {
+        _playbackRate = 0;
     }
 }
 
 void MainWindow::logFileChanged() {
-    if (_processor->logger().recording()) {
-        _logFile->setText(_processor->logger().filename());
+    if (_context->logs.state == Logs::State::kWriting) {
+        QString filename_q =
+            QString::fromStdString(_context->logs.filename.value());
+        _logFile->setText(filename_q);
         _ui.actionStart_Logging->setText(QString("Already Logging to: ") +
-                                         _processor->logger().filename());
+                                         filename_q);
         _ui.actionStart_Logging->setEnabled(false);
     } else {
         _logFile->setText("Not Recording");
     }
 }
 
-void MainWindow::addLayer(int i, QString name, bool checked) {
-    QListWidgetItem* item = new QListWidgetItem(name);
+void MainWindow::addLayer(int i, const QString& name, bool checked) {
+    auto* item = new QListWidgetItem(name);
     Qt::CheckState checkState = checked ? Qt::Checked : Qt::Unchecked;
     item->setCheckState(checkState);
     item->setData(Qt::UserRole, i);
@@ -261,7 +256,7 @@ void MainWindow::addLayer(int i, QString name, bool checked) {
     on_debugLayers_itemChanged(item);
 }
 
-string MainWindow::formatLabelBold(Side side, string label) {
+string MainWindow::formatLabelBold(Side side, const string& label) {
     string color;
     // Colors match up with those statically defined in MainWindow.ui
     if (side == Side::Yellow) {
@@ -283,13 +278,13 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() !=
-            _processor->context()->game_state.getGoalieId() + 1) {
+            _context->game_settings.requestGoalieID + 1) {
             _ui.goalieID->setCurrentIndex(
-                _processor->context()->game_state.getGoalieId() + 1);
+                _context->game_settings.requestGoalieID + 1);
         }
 
-        bool blueTeam = _processor->refereeModule()->isBlueTeam();
-        if (_processor->blueTeam() != blueTeam) {
+        bool blueTeam = _context->game_state.blueTeam;
+        if (_context->game_settings.requestBlueTeam != blueTeam) {
             blueTeam ? _ui.actionTeamBlue->trigger()
                      : _ui.actionTeamYellow->trigger();
         }
@@ -300,16 +295,16 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
 }
 
 void MainWindow::updateViews() {
-    int manual = _processor->manualID();
+    int manual = _context->game_settings.joystick_config.manualID;
     if ((manual >= 0 || _ui.manualID->isEnabled()) &&
-        !_processor->joystickValid()) {
+        !_context->joystick_valid) {
         // Joystick is gone - turn off manual control
         _ui.manualID->setCurrentIndex(0);
-        _processor->manualID(-1);
+        _context->game_settings.joystick_config.manualID = -1;
         _ui.manualID->setEnabled(false);
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
-    } else if (!_ui.manualID->isEnabled() && _processor->joystickValid()) {
+    } else if (!_ui.manualID->isEnabled() && _context->joystick_valid) {
         // Joystick reconnected
         _ui.manualID->setEnabled(true);
         _ui.joystickTab->setVisible(true);
@@ -317,6 +312,15 @@ void MainWindow::updateViews() {
                                      true);
     }
 
+    GameState game_state;
+    {
+        std::lock_guard<std::mutex> lock(*_context_mutex);
+        game_state = _context->game_state;
+    }
+    bool blueTeam = game_state.blueTeam;
+
+    // TODO(Kyle): Fix multiple manual
+#if 0
     if (_processor->multipleManual() && manual < 0) {
         _ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab),
                                      false);
@@ -347,6 +351,7 @@ void MainWindow::updateViews() {
             _ui.joystickDribblerCheckBox->setChecked(vals.dribble);
         }
     }
+#endif
 
     // Time since last update
     RJ::Time now = RJ::now();
@@ -354,6 +359,7 @@ void MainWindow::updateViews() {
     _lastUpdateTime = now;
     double framerate = RJ::Seconds(1) / delta_time;
 
+    // Update status line displays
     ++_updateCount;
     if (_updateCount == 4) {
         _updateCount = 0;
@@ -362,58 +368,82 @@ void MainWindow::updateViews() {
         _procFPS->setText(
             QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 
-        // TODO: Use constants here instead of magic numbers
-        _logMemory->setText(
-            QString("Log: %1/%2 %3 kiB")
-                .arg(QString::number(_processor->logger().size()),
-                     QString::number(_processor->logger().capacity()),
-                     QString::number((_processor->logger().spaceUsed() + 512) /
-                                     1024)));
+        _logMemory->setText(QString("Log: %1 kiB")
+                                .arg(QString::number(
+                                    (_context->logs.size_bytes + 512) / 1024)));
     }
 
     auto value = _ui.logHistoryLocation->value();
 
-    // Advance log history
-    int liveFrameNumber = _processor->logger().currentFrameNumber();
-    if (live()) {
-        _doubleFrameNumber = liveFrameNumber;
-    } else {
-        _doubleFrameNumber += *_playbackRate;
+    std::shared_ptr<LogFrame> live_frame;
+    RJ::Time start_time;
+    int minFrame = 0;
+    int maxFrame = 0;
 
-        int minFrame = _processor->logger().firstFrameNumber() + 10;
-        int maxFrame = _processor->logger().currentFrameNumber();
+    // Grab frames
+    {
+        std::lock_guard<std::mutex> lock(*_context_mutex);
+        if (_context->logs.frames.empty()) {
+            // No log frames, nothing else to update.
+            return;
+        }
+
+        start_time = _context->logs.start_time;
+
+        size_t num_dropped = _context->logs.dropped_frames;
+
+        if (live()) {
+            _doubleFrameNumber =
+                static_cast<double>(_context->logs.frames.size() + num_dropped);
+        } else {
+            _doubleFrameNumber += *_playbackRate;
+        }
+
+        minFrame = num_dropped;
+        maxFrame =
+            static_cast<int>(num_dropped + _context->logs.frames.size()) - 1;
 
         if (_doubleFrameNumber < minFrame) {
             _doubleFrameNumber = minFrame;
-            setPlayBackRate(1.0);
-        } else if (_doubleFrameNumber > maxFrame) {
+        } else if (_doubleFrameNumber >= maxFrame) {
             _doubleFrameNumber = maxFrame;
             setLive();
         }
+
+        _ui.logHistoryLocation->setMinimum(minFrame);
+        _ui.logHistoryLocation->setMaximum(maxFrame);
+
+        live_frame = _context->logs.frames.back();
+
+        // Cast to ints so that subtraction doesn't overflow.
+        int start = std::max(frameNumber() - kLongHistorySize, minFrame);
+
+        // Read the latest frames
+        _longHistory.assign(
+            _context->logs.frames.begin() + start - num_dropped,
+            _context->logs.frames.begin() + frameNumber() - num_dropped + 1);
     }
 
-    _ui.logHistoryLocation->setMinimum(_processor->logger().firstFrameNumber());
-    _ui.logHistoryLocation->setMaximum(
-        _processor->logger().currentFrameNumber());
-    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
-    _ui.logHistoryLocation->setValue(_doubleFrameNumber);
-
-    // update history slider in ui
-
-    // Read recent history from the log
-    _processor->logger().getFrames(frameNumber(), _longHistory.size(),
-                                   _longHistory.begin());
-
-    // Set the original history vector
-    _history.assign(_longHistory.begin(),
-                    _longHistory.begin() + _history.size());
+    // Set the history vector by taking the last kHistorySize elements of the
+    // "long" history, or fewer if _longHistory is shorter.
+    _history.assign(
+        _longHistory.end() -
+            std::min(kHistorySize, static_cast<int>(_longHistory.size())),
+        _longHistory.end());
 
     // Update field view
     _ui.fieldView->update();
 
+    /**************************************************************************/
+    /***************** Update the history/playback interface ******************/
+    /**************************************************************************/
+    _ui.logHistoryLocation->setTickInterval(60 * 60);  // interval is ~ 1 minute
+    _ui.logHistoryLocation->setValue(static_cast<int>(_doubleFrameNumber));
+
     // enable playback buttons based on playback rate
-    for (QPushButton* playbackBtn : _logPlaybackButtons)
+    for (QPushButton* playbackBtn : _logPlaybackButtons) {
         playbackBtn->setEnabled(true);
+    }
     _ui.logPlaybackLive->setEnabled(!live());
 
     if (live() || abs<float>(*_playbackRate) > 0.01) {
@@ -429,36 +459,22 @@ void MainWindow::updateViews() {
     // Update status indicator
     updateStatus();
 
-    _processor->setPaused(!live());
+    _context->game_settings.paused = !live();
 
     // Check if any debug layers have been added
     // (layers should never be removed)
-    const std::shared_ptr<LogFrame> liveFrame =
-        _processor->logger().lastFrame();
-    if (liveFrame &&
-        liveFrame->debug_layers_size() > _ui.debugLayers->count()) {
-        // Add the missing layers and turn them on
-        for (int i = _ui.debugLayers->count();
-             i < liveFrame->debug_layers_size(); ++i) {
-            const QString name =
-                QString::fromStdString(liveFrame->debug_layers(i));
-            bool enabled =
-                !std::any_of(defaultHiddenLayers.begin(),
-                             defaultHiddenLayers.end(),
-                             [&](QString string) { return string == name; });
-            addLayer(i, name, enabled);
-        }
-
-        _ui.debugLayers->sortItems();
+    if (live_frame) {
+        updateDebugLayers(*live_frame);
     }
 
     // Get the frame at the log playback time
-    const std::shared_ptr<LogFrame> currentFrame = _history[0];
+    const std::shared_ptr<LogFrame> currentFrame = _history.back();
 
+    // Update the playback labels
     if (currentFrame) {
         auto gametime =
-            (RJ::Time(chrono::microseconds(currentFrame->timestamp())) -
-             _processor->logger().startTime());
+            RJ::Time(chrono::microseconds(currentFrame->timestamp())) -
+            start_time;
         auto minutes = chrono::duration_cast<chrono::minutes>(gametime);
         gametime -= minutes;
         auto seconds = chrono::duration_cast<chrono::seconds>(gametime);
@@ -471,29 +487,16 @@ void MainWindow::updateViews() {
             to_string(minutes.count()) + ":" + to_string(seconds.count()) +
             "." + to_string(deciseconds.count())));
 
-        auto frameNum = _processor->logger().currentFrameNumber();
-
         _ui.frameNumLabel->setText(QString("%1/%2")
                                        .arg(QString::number(frameNumber()))
-                                       .arg(QString::number(frameNum)));
+                                       .arg(QString::number(maxFrame)));
+    }
 
-        // Update non-message tree items
-        _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
-                                  frameNumber());
-        int elapsedMillis = (currentFrame->command_time() -
-                             RJ::timestamp(*_processor->firstLogTime)) /
-                            1000;
-
-        QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
-        _elapsedTimeItem->setText(ProtobufTree::Column_Value,
-                                  elapsedTime.toString("hh:mm:ss.zzz"));
-
-        // Sort the tree by tag if items have been added
-        if (_ui.logTree->message(*currentFrame)) {
-            // Items have been added, so sort again on tag number
-            _ui.logTree->sortItems(ProtobufTree::Column_Tag,
-                                   Qt::AscendingOrder);
-        }
+    /**************************************************************************/
+    /***************** Update log tree and behavior tree **********************/
+    /**************************************************************************/
+    if (currentFrame != nullptr) {
+        _ui.logTree->message(*currentFrame);
 
         // update the behavior tree view
         QString behaviorStr =
@@ -503,282 +506,132 @@ void MainWindow::updateViews() {
         }
     }
 
-    _ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(
-                              _processor->refereeModule()->stage).c_str());
-    _ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(
-                                _processor->refereeModule()->command).c_str());
+    /**************************************************************************/
+    /******************** Update referee information **************************/
+    /**************************************************************************/
+    _ui.refStage->setText(
+        RefereeModuleEnums::stringFromStage(game_state.raw_stage).c_str());
+    _ui.refCommand->setText(
+        RefereeModuleEnums::stringFromCommand(game_state.raw_command).c_str());
 
-    // convert time left from ms to s and display it to two decimal places
+    // Convert time left from ms to s and display it to two decimal places
     int timeSeconds =
-        _processor->refereeModule()->stage_time_left.count() / 1000;
+        static_cast<int>(game_state.stage_time_left.count() / 1000);
     int timeMinutes = timeSeconds / 60;
     timeSeconds = timeSeconds % 60;
     _ui.refTimeLeft->setText(tr("%1:%2").arg(
         QString::number(timeMinutes), QString::number(std::abs(timeSeconds))));
 
-    const char* blueName = _processor->refereeModule()->blue_info.name.c_str();
+    // Get team information for the yellow and blue teams, and display it.
+    TeamInfo blue_info = blueTeam ? game_state.OurInfo : game_state.TheirInfo;
+
+    const char* blueName = blue_info.name.c_str();
     string blueFormatted = strlen(blueName) == 0 ? "Blue Team" : blueName;
     blueFormatted = formatLabelBold(Side::Blue, blueFormatted);
     _ui.refBlueName->setText(QString::fromStdString(blueFormatted));
-    _ui.refBlueScore->setText(
-        tr("%1").arg(_processor->refereeModule()->blue_info.score));
-    _ui.refBlueRedCards->setText(
-        tr("%1").arg(_processor->refereeModule()->blue_info.red_cards));
-    _ui.refBlueYellowCards->setText(
-        tr("%1").arg(_processor->refereeModule()->blue_info.yellow_cards));
-    _ui.refBlueTimeoutsLeft->setText(
-        tr("%1").arg(_processor->refereeModule()->blue_info.timeouts_left));
-    _ui.refBlueGoalie->setText(
-        tr("%1").arg(_processor->refereeModule()->blue_info.goalie));
+    _ui.refBlueScore->setText(tr("%1").arg(blue_info.score));
+    _ui.refBlueRedCards->setText(tr("%1").arg(blue_info.red_cards));
+    _ui.refBlueYellowCards->setText(tr("%1").arg(blue_info.yellow_cards));
+    _ui.refBlueTimeoutsLeft->setText(tr("%1").arg(blue_info.timeouts_left));
+    _ui.refBlueGoalie->setText(tr("%1").arg(blue_info.goalie));
 
-    const char* yellowName =
-        _processor->refereeModule()->yellow_info.name.c_str();
+    TeamInfo yellow_info = blueTeam ? game_state.TheirInfo : game_state.OurInfo;
+
+    const char* yellowName = yellow_info.name.c_str();
     string yellowFormatted =
         strlen(yellowName) == 0 ? "Yellow Team" : yellowName;
     yellowFormatted = formatLabelBold(Side::Yellow, yellowFormatted);
     _ui.refYellowName->setText(QString::fromStdString(yellowFormatted));
-    _ui.refYellowScore->setText(
-        tr("%1").arg(_processor->refereeModule()->yellow_info.score));
-    _ui.refYellowRedCards->setText(
-        tr("%1").arg(_processor->refereeModule()->yellow_info.red_cards));
-    _ui.refYellowYellowCards->setText(
-        tr("%1").arg(_processor->refereeModule()->yellow_info.yellow_cards));
-    _ui.refYellowTimeoutsLeft->setText(
-        tr("%1").arg(_processor->refereeModule()->yellow_info.timeouts_left));
-    _ui.refYellowGoalie->setText(
-        tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
+    _ui.refYellowScore->setText(tr("%1").arg(yellow_info.score));
+    _ui.refYellowRedCards->setText(tr("%1").arg(yellow_info.red_cards));
+    _ui.refYellowYellowCards->setText(tr("%1").arg(yellow_info.yellow_cards));
+    _ui.refYellowTimeoutsLeft->setText(tr("%1").arg(yellow_info.timeouts_left));
+    _ui.refYellowGoalie->setText(tr("%1").arg(yellow_info.goalie));
 
     _ui.actionUse_External_Referee->setChecked(
-        _processor->refereeModule()->useExternalReferee());
+        _context->game_settings.use_external_referee);
 
-    // update robot status list
-    for (const OurRobot* robot : _processor->state()->self) {
-        // a robot shows up in the status list if it's reachable via radio
-        bool shouldDisplay = robot->rxIsFresh();
-
-        // see if it's already in the robot status list widget
-        bool displaying = _robotStatusItemMap.find(robot->shell()) !=
-                          _robotStatusItemMap.end();
-
-        if (shouldDisplay && !displaying) {
-            // add a widget to the list for this robot
-
-            QListWidgetItem* item = new QListWidgetItem();
-            _robotStatusItemMap[robot->shell()] = item;
-            _ui.robotStatusList->addItem(item);
-
-            RobotStatusWidget* statusWidget = new RobotStatusWidget();
-            item->setSizeHint(statusWidget->minimumSizeHint());
-            _ui.robotStatusList->setItemWidget(item, statusWidget);
-
-            // set shell ID
-            statusWidget->setShellID(robot->shell());
-
-            // set team
-            statusWidget->setBlueTeam(_processor->blueTeam());
-
-            // TODO: set board ID
-
-            // set robot model
-            QString robotModel;
-            switch (robot->radioRx().hardware_version()) {
-                case RJ2008:
-                    robotModel = "RJ2008";
-                    break;
-                case RJ2011:
-                    robotModel = "RJ2011";
-                    break;
-                case RJ2015:
-                    robotModel = "RJ2015";
-                    break;
-                default:
-                    robotModel = "Unknown Bot";
-            }
-            statusWidget->setRobotModel(robotModel);
-
-// uncomment this #define to test the display of a variety of
-// different errors #define DEMO_ROBOT_STATUS
-
-#ifdef DEMO_ROBOT_STATUS
-            // set board ID
-            QString hex("");
-            for (int i = 0; i < 4; i++)
-                hex += QString::number(rand() % 16, 16).toUpper();
-            statusWidget->setBoardID(hex);
-
-            // fake vision
-            bool vision = rand() % 5 != 0;
-            statusWidget->setHasVision(vision);
-
-            // fake battery
-            float battery = robot->shell() / 6.0f;
-            statusWidget->setBatteryLevel(battery);
-
-            // fake radio
-            bool radio = rand() % 5 != 0;
-            statusWidget->setHasRadio(radio);
-
-            // fake error text
-            QString error = "Kicker Fault, Motor Fault FR, Ball Sense Fault";
-            statusWidget->setErrorText(error);
-
-            // fake ball status
-            bool ball = rand() % 4 == 0;
-            statusWidget->setHasBall(ball);
-
-            // fake ball sense error
-            bool ballFault = rand() % 4 == 0;
-            statusWidget->setBallSenseFault(ballFault);
-            bool hasWheelFault = false;
-            if (rand() % 4 == 0) {
-                statusWidget->setWheelFault(rand() % 4);
-                hasWheelFault = true;
-            }
-
-            bool showstopper =
-                !vision || !radio || hasWheelFault || battery < 0.25;
-            statusWidget->setShowstopper(showstopper);
-#endif
-        } else if (!shouldDisplay && displaying) {
-            // remove the widget for this robot from the list
-
-            QListWidgetItem* item = _robotStatusItemMap[robot->shell()];
-
-            // delete widget from list
-            for (int row = 0; row < _ui.robotStatusList->count(); row++) {
-                if (_ui.robotStatusList->item(row) == item) {
-                    _ui.robotStatusList->takeItem(row);
-                    break;
+    /**************************************************************************/
+    /********************** Update robot status list **************************/
+    /**************************************************************************/
+    if (currentFrame != nullptr) {
+        // update robot status list
+        for (int shell = 0; shell < Num_Shells; shell++) {
+            // Search for the corresponding references.
+            auto maybe_rx =
+                [&]() -> std::optional<
+                          std::reference_wrapper<const Packet::RadioRx>> {
+                for (int i = 0; i < currentFrame->radio_rx_size(); i++) {
+                    if (currentFrame->radio_rx(i).robot_id() == shell) {
+                        return currentFrame->radio_rx(i);
+                    }
                 }
-            }
+                return std::nullopt;
+            }();
+            auto maybe_robot = [&]()
+                -> std::optional<
+                    std::reference_wrapper<const Packet::LogFrame_Robot>> {
+                for (int i = 0; i < currentFrame->self_size(); i++) {
+                    if (currentFrame->self(i).shell() == shell) {
+                        return currentFrame->self(i);
+                    }
+                }
+                return std::nullopt;
+            }();
 
-            _robotStatusItemMap.erase(robot->shell());
-            delete item;
-        }
+            auto statusItemIt = _robotStatusItemMap.find(shell);
 
-        // update displayed attributes for valid robots
-        if (shouldDisplay) {
-            QListWidgetItem* item = _robotStatusItemMap[robot->shell()];
-            RobotStatusWidget* statusWidget =
-                (RobotStatusWidget*)_ui.robotStatusList->itemWidget(item);
+            // see if it's already in the robot status list widget
+            bool displaying = statusItemIt != _robotStatusItemMap.end();
 
-            // We make a copy of the robot's RadioRx package b/c the original
-            // might change during the course of this method b/c radio comm
-            // happens on a different thread.
-            RadioRx rx = robot->radioRx();
+            // If rx is missing, exit early.
+            if (!maybe_rx.has_value()) {
+                if (displaying) {
+                    // We need to remove it from the list.
+                    QListWidgetItem* item = statusItemIt->second.get();
 
-#ifndef DEMO_ROBOT_STATUS
-            // radio status
-            bool hasRadio = robot->rxIsFresh();
-            statusWidget->setHasRadio(hasRadio);
-
-            // vision status
-            bool hasVision = robot->visible();
-            statusWidget->setHasVision(hasVision);
-
-            // build a list of errors to display in the widget
-            QStringList errorList;
-
-            // motor faults
-            // each motor fault is shown as text in the error text display as
-            // well as being drawn as a red X on the graphic of a robot
-            bool hasMotorFault = false;
-            if (rx.motor_status().size() == 5) {
-                const char* motorNames[] = {"FL", "BL", "BR", "FR", "Dribbler"};
-
-                // examine status of each motor (including the dribbler)
-                for (int i = 0; i < 5; ++i) {
-                    bool motorIFault = true;
-                    switch (rx.motor_status(i)) {
-                        case Packet::Hall_Failure:
-                            errorList
-                                << QString("Motor Fault %1").arg(motorNames[i]);
+                    // Delete widget from list
+                    for (int row = 0; row < _ui.robotStatusList->count();
+                         row++) {
+                        if (_ui.robotStatusList->item(row) == item) {
+                            _ui.robotStatusList->takeItem(row);
                             break;
-                        case Packet::Stalled:
-                            errorList << QString("Stall %1").arg(motorNames[i]);
-                            break;
-                        case Packet::Encoder_Failure:
-                            errorList << QString("Encoder Fault %1")
-                                             .arg(motorNames[i]);
-                            break;
-
-                        default:
-                            motorIFault = false;
-                            break;
+                        }
                     }
 
-                    // show wheel faults (exluding dribbler, which is index 4)
-                    if (i != 4) statusWidget->setWheelFault(i, motorIFault);
-
-                    hasMotorFault = hasMotorFault || motorIFault;
-
-                    // show dribbler fault on painted robot widget
-                    if (i == 4) statusWidget->setBallSenseFault(motorIFault);
+                    _robotStatusItemMap.erase(shell);
                 }
+                continue;
             }
 
-            // check for kicker error code
-            bool kickerFault = rx.has_kicker_status() &&
-                               !(rx.kicker_status() & Kicker_Enabled);
+            // If we get here, we know there is an rx.
+            const auto& rx = maybe_rx.value().get();
 
-            bool kicker_charging =
-                rx.has_kicker_status() && rx.kicker_status() & 0x01;
-            statusWidget->setKickerState(kicker_charging);
-            bool ballSenseFault = rx.has_ball_sense_status() &&
-                                  !(rx.ball_sense_status() == Packet::NoBall ||
-                                    rx.ball_sense_status() == Packet::HasBall);
-            if (kickerFault) errorList << "Kicker Fault";
-            if (ballSenseFault) errorList << "Ball Sense Fault";
-            statusWidget->setBallSenseFault(ballSenseFault);
+            // The status widget corresponding to this robot
+            RobotStatusWidget* statusWidget = nullptr;
 
-            // check fpga status
-            bool fpgaWorking = true;
-            if (rx.has_fpga_status() && rx.fpga_status() != Packet::FpgaGood) {
-                if (rx.fpga_status() == Packet::FpgaNotInitialized) {
-                    errorList << "FPGA not initialized";
-                } else {
-                    errorList << "FPGA error";
-                }
-                fpgaWorking = false;
+            if (!displaying) {
+                // add a widget to the list for this robot
+                auto item_owned = std::make_unique<QListWidgetItem>();
+                auto* item = item_owned.get();
+                _robotStatusItemMap[shell] = std::move(item_owned);
+                _ui.robotStatusList->addItem(item);
+
+                // The item's widget is managed by Qt
+                // (setItemWidget takes ownership).
+                statusWidget = new RobotStatusWidget();  // NOLINT
+                item->setSizeHint(statusWidget->minimumSizeHint());
+                _ui.robotStatusList->setItemWidget(item, statusWidget);
+            } else {
+                statusWidget = dynamic_cast<RobotStatusWidget*>(
+                    _ui.robotStatusList->itemWidget(
+                        statusItemIt->second.get()));
             }
 
-            // display error text
-            statusWidget->setErrorText(errorList.join(", "));
-
-            // show the ball in the robot's mouth if it has one
-            bool hasBall = rx.has_ball_sense_status() &&
-                           rx.ball_sense_status() == Packet::HasBall;
-            statusWidget->setHasBall(hasBall);
-
-            // battery
-            // convert battery voltage to a percentage and show it with the
-            // battery indicator
-            float batteryLevel = 1;
-            if (rx.has_battery()) {
-                if (rx.hardware_version() == RJ2008 ||
-                    rx.hardware_version() == RJ2011) {
-                    batteryLevel =
-                        RJ2008BatteryProfile.getChargeLevel(rx.battery());
-                } else if (rx.hardware_version() == RJ2015) {
-                    batteryLevel =
-                        RJ2015BatteryProfile.getChargeLevel(rx.battery());
-                } else {
-                    cerr << "Unknown hardware revision "
-                         << rx.hardware_version()
-                         << ", unable to calculate battery %" << endl;
-                }
+            if (statusWidget != nullptr) {
+                statusWidget->loadFromLogFrame(rx, maybe_robot,
+                                               currentFrame->blue_team());
             }
-            statusWidget->setBatteryLevel(batteryLevel);
-
-            // if there is an error bad enough that we should get this robot
-            // off the field, alert the user through the UI that there is a
-            // "showstopper"
-            bool showstopper = !hasVision || !hasRadio || hasMotorFault ||
-                               kickerFault || ballSenseFault ||
-                               (batteryLevel < 0.25) || !fpgaWorking;
-            statusWidget->setShowstopper(showstopper);
-
-#endif
         }
     }
 
@@ -800,8 +653,8 @@ void MainWindow::updateStatus() {
     // The order of these checks is important to help debugging.
     // More specific or unlikely problems should be tested earlier.
 
-    if (!_processor) {
-        status("NO PROCESSOR", Status_Fail);
+    if (_processor == nullptr) {
+        status("NO PROCESSOR", StatusType::Status_Fail);
         return;
     }
 
@@ -810,7 +663,7 @@ void MainWindow::updateStatus() {
     }
 
     // Some conditions are different in simulation
-    bool sim = _processor->simulation();
+    bool sim = _context->game_settings.simulation;
 
     if (!sim) {
         updateRadioBaseStatus(_processor->isRadioOpen());
@@ -838,7 +691,7 @@ void MainWindow::updateStatus() {
         }
     }
 
-    if (haveExternalReferee && _autoExternalReferee) {
+    if (haveExternalReferee) {
         // External Ref is connected and should be used
         _ui.fastHalt->setEnabled(false);
         _ui.fastStop->setEnabled(false);
@@ -865,20 +718,20 @@ void MainWindow::updateStatus() {
         // Likely causes:
         //    Mutex deadlock (need a recursive mutex?)
         //    Excessive computation
-        status("PROCESSING HUNG", Status_Fail);
+        status("PROCESSING HUNG", StatusType::Status_Fail);
         return;
     }
 
     // Check network activity
     if (curTime - ps.lastVisionTime > RJ::Seconds(0.1)) {
         // We must always have vision
-        status("NO VISION", Status_Fail);
+        status("NO VISION", StatusType::Status_Fail);
         return;
     }
 
-    if (_processor->manualID() >= 0) {
+    if (_context->game_settings.joystick_config.manualID >= 0) {
         // Mixed auto/manual control
-        status("MANUAL", Status_Warning);
+        status("MANUAL", StatusType::Status_Warning);
         return;
     }
 
@@ -886,60 +739,56 @@ void MainWindow::updateStatus() {
     // so test this after manual driving.
     if (curTime - ps.lastRadioRxTime > RJ::Seconds(1)) {
         // Allow a long timeout in case of poor radio performance
-        status("NO RADIO RX", Status_Fail);
+        status("NO RADIO RX", StatusType::Status_Fail);
         return;
     }
 
-    if ((!sim || _processor->externalReferee()) && !haveExternalReferee) {
-        if (_autoExternalReferee && _processor->externalReferee()) {
-            // Automatically turn off external referee
-            //_ui.externalReferee->setChecked(false);
-        } else {
-            // In simulation, we will often run without a referee, so just make
-            // it a warning.
-            // There is a separate status for non-simulation with internal
-            // referee.
-            status("NO REFEREE", Status_Fail);
-            return;
-        }
+    if (!sim && _context->game_settings.use_external_referee &&
+        !haveExternalReferee) {
+        // In simulation, we will often run without a referee, so just make
+        // it a warning.
+        // There is a separate status for non-simulation with internal
+        // referee.
+        status("NO REFEREE", StatusType::Status_Fail);
+        return;
     }
 
     if (sim) {
         // Everything is good for simulation, but not for competition.
-        status("SIMULATION", Status_Warning);
+        status("SIMULATION", StatusType::Status_Warning);
         return;
     }
 
-    if (!sim && !_processor->externalReferee()) {
+    if (!sim && !_context->game_settings.use_external_referee) {
         // Competition must use external referee
-        status("INTERNAL REF", Status_Warning);
+        status("INTERNAL REF", StatusType::Status_Warning);
         return;
     }
 
-    if (!sim && !_processor->logger().recording()) {
+    if (!sim && _context->logs.state != Logs::State::kWriting) {
         // We should record logs during competition
-        status("NOT RECORDING", Status_Warning);
+        status("NOT RECORDING", StatusType::Status_Warning);
         return;
     }
 
-    status("COMPETITION", Status_OK);
+    status("COMPETITION", StatusType::Status_OK);
 }
 
-void MainWindow::status(QString text, MainWindow::StatusType status) {
+void MainWindow::status(const QString& text, MainWindow::StatusType status) {
     // Assume that the status type alone won't change.
     if (_ui.statusLabel->text() != text) {
         _ui.statusLabel->setText(text);
 
         switch (status) {
-            case Status_OK:
+            case StatusType::Status_OK:
                 _ui.statusLabel->setStyleSheet("background-color: #00ff00");
                 break;
 
-            case Status_Warning:
+            case StatusType::Status_Warning:
                 _ui.statusLabel->setStyleSheet("background-color: #ffff00");
                 break;
 
-            case Status_Fail:
+            case StatusType::Status_Fail:
                 _ui.statusLabel->setStyleSheet("background-color: #ff4040");
                 break;
         }
@@ -959,16 +808,18 @@ void MainWindow::updateRadioBaseStatus(bool usbRadio) {
         QString(usbRadio ? "Radio Connected" : "Radio Disconnected");
     if (_ui.radioBaseStatus->text() != label) {
         _ui.radioBaseStatus->setText(label);
-        _ui.radioBaseStatus->setStyleSheet(usbRadio
-                                               ? "background-color: #00ff00"
-                                               : "background-color: #ff4040");
+        _ui.radioBaseStatus->setStyleSheet(
+            usbRadio ? QString("background-color: #00ff00")
+                     : QString("background-color: #ff4040"));
     }
 }
 
 void MainWindow::on_fieldView_robotSelected(int shell) {
-    if (_processor->joystickValid()) {
+    if (_context->joystick_valid) {
         _ui.manualID->setCurrentIndex(shell + 1);
-        _processor->manualID(shell);
+
+        std::lock_guard<std::mutex> lock(*_context_mutex);
+        _context->game_settings.joystick_config.manualID = shell;
     }
 }
 
@@ -998,11 +849,13 @@ void MainWindow::on_actionTeam_Names_toggled(bool state) {
 }
 
 void MainWindow::on_actionDefendMinusX_triggered() {
-    _processor->defendPlusX(false);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.defendPlusX = false;
 }
 
 void MainWindow::on_actionDefendPlusX_triggered() {
-    _processor->defendPlusX(true);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.defendPlusX = true;
 }
 
 void MainWindow::on_action0_triggered() { _ui.fieldView->rotate(0); }
@@ -1014,37 +867,27 @@ void MainWindow::on_action180_triggered() { _ui.fieldView->rotate(2); }
 void MainWindow::on_action270_triggered() { _ui.fieldView->rotate(3); }
 
 void MainWindow::on_actionUseOurHalf_toggled(bool value) {
-    _processor->useOurHalf(value);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.use_our_half = value;
 }
 
 void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
-    _processor->useOpponentHalf(value);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.use_their_half = value;
 }
-
-void MainWindow::on_action916MHz_triggered() { channel(0); }
-
-void MainWindow::on_action918MHz_triggered() { channel(1); }
-
-void MainWindow::channel(int n) {
-    if (_processor && _processor->radio()) {
-        _processor->radio()->channel(n);
-    }
-    _ui.radioLabel->setText(QString("%1MHz").arg(916.0 + 0.2 * n, 0, 'f', 1));
-}
-
-// Simulator commands
 
 void MainWindow::on_actionCenterBall_triggered() {
     grSim_Packet simPacket;
     grSim_BallReplacement* ball_replace =
         simPacket.mutable_replacement()->mutable_ball();
 
-    ball_replace->mutable_pos()->set_x(0);
-    ball_replace->mutable_pos()->set_y(0);
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
+    ball_replace->set_x(0);
+    ball_replace->set_y(0);
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
 
-    _ui.fieldView->sendSimCommand(simPacket);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionStopBall_triggered() {
@@ -1053,12 +896,14 @@ void MainWindow::on_actionStopBall_triggered() {
         simPacket.mutable_replacement()->mutable_ball();
 
     Geometry2d::Point ballPos =
-        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    ball_replace->mutable_pos()->set_x(ballPos.x());
-    ball_replace->mutable_pos()->set_y(ballPos.y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
-    _ui.fieldView->sendSimCommand(simPacket);
+        _ui.fieldView->getTeamToWorld() * state()->ball->position;
+    ball_replace->set_x(ballPos.x());
+    ball_replace->set_y(ballPos.y());
+    ball_replace->set_vx(0);
+    ball_replace->set_vy(0);
+
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->grsim_command = simPacket;
 }
 
 void MainWindow::on_actionResetField_triggered() {
@@ -1066,7 +911,7 @@ void MainWindow::on_actionResetField_triggered() {
 
     grSim_Replacement* replacement = simPacket.mutable_replacement();
     for (int i = 0; i < Robots_Per_Team; ++i) {
-        auto rob = replacement->add_robots();
+        auto* rob = replacement->add_robots();
 
         const int NUM_COLS = 2;
         const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
@@ -1098,94 +943,20 @@ void MainWindow::on_actionResetField_triggered() {
     }
 
     auto ball_replace = replacement->mutable_ball();
-    ball_replace->mutable_pos()->set_x(0.0);
-    ball_replace->mutable_pos()->set_y(0.0);
-    ball_replace->mutable_vel()->set_x(0.0);
-    ball_replace->mutable_vel()->set_y(0.0);
+    ball_replace->set_x(0.0);
+    ball_replace->set_y(0.0);
+    ball_replace->set_vx(0.0);
+    ball_replace->set_vy(0.0);
 
-    _ui.fieldView->sendSimCommand(simPacket);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->grsim_command = simPacket;
 }
 
-void MainWindow::on_actionStopRobots_triggered() {
-    // TODO: check that this handles threads properly
-    /*
-    for (OurRobot* robot : state()->self) {
-        if (robot->visible) {
-            SimCommand::Robot* r = cmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(_processor->blueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    for (OpponentRobot* robot : state()->opp) {
-        if (robot->visible) {
-            SimCommand::Robot* r = cmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->isBlueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    */
-    //_ui.fieldView->sendSimCommand(cmd);
-}
+void MainWindow::on_actionStopRobots_triggered() {}
 
-void MainWindow::on_actionQuicksaveRobotLocations_triggered() {
-    /*
-    _ui.actionQuickloadRobotLocations->setEnabled(true);
-    _quickLoadCmd.reset();
-    for (OurRobot* robot : state()->self) {
-        if (robot->visible) {
-            SimCommand::Robot* r = _quickLoadCmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(_processor->blueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
-    for (OpponentRobot* robot : state()->opp) {
-        if (robot->visible) {
-            SimCommand::Robot* r = _quickLoadCmd.add_robots();
-            r->set_shell(robot->shell());
-            r->set_blue_team(!_processor->isBlueTeam());
-            Geometry2d::Point newPos =
-                _ui.fieldView->getTeamToWorld() * robot->pos;
-            r->mutable_pos()->set_x(newPos.x());
-            r->mutable_pos()->set_y(newPos.y());
-            r->mutable_vel()->set_x(0);
-            r->mutable_vel()->set_y(0);
-            r->set_w(0);
-        }
-    }
+void MainWindow::on_actionQuicksaveRobotLocations_triggered() {}
 
-    Geometry2d::Point ballPos =
-        _ui.fieldView->getTeamToWorld() * state()->ball.pos;
-    _quickLoadCmd.mutable_ball_pos()->set_x(ballPos.x());
-    _quickLoadCmd.mutable_ball_pos()->set_y(ballPos.y());
-    _quickLoadCmd.mutable_ball_vel()->set_x(0);
-    _quickLoadCmd.mutable_ball_vel()->set_y(0);
-    */
-}
-
-void MainWindow::on_actionQuickloadRobotLocations_triggered() {
-    //_ui.fieldView->sendSimCommand(_quickLoadCmd);
-}
+void MainWindow::on_actionQuickloadRobotLocations_triggered() {}
 
 // Style Sheets
 
@@ -1215,7 +986,9 @@ void MainWindow::on_actionDampedRotation_toggled(bool value) {
         cout << "Enabled" << endl;
     else
         cout << "Disabled" << endl;
-    _processor->dampedRotation(value);
+
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.joystick_config.dampedRotation = value;
 }
 
 void MainWindow::on_actionDampedTranslation_toggled(bool value) {
@@ -1224,19 +997,22 @@ void MainWindow::on_actionDampedTranslation_toggled(bool value) {
         cout << "Enabled" << endl;
     else
         cout << "Disabled" << endl;
-    _processor->dampedTranslation(value);
+
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.joystick_config.dampedTranslation = value;
 }
 
 void MainWindow::on_actionRestartUpdateTimer_triggered() {
     printf("Update timer: active %d, singleShot %d, interval %d\n",
-           updateTimer.isActive(), updateTimer.isSingleShot(),
+           static_cast<int>(updateTimer.isActive()),
+           static_cast<int>(updateTimer.isSingleShot()),
            updateTimer.interval());
     updateTimer.stop();
     updateTimer.start(30);
 }
 
 void MainWindow::on_actionStart_Logging_triggered() {
-    if (!_processor->logger().recording()) {
+    if (_context->logs.state != Logs::State::kWriting) {
         if (!QDir("logs").exists()) {
             QDir().mkdir("logs");
         }
@@ -1269,8 +1045,9 @@ void MainWindow::on_actionSeed_triggered() {
 
 // Joystick settings
 void MainWindow::on_joystickKickOnBreakBeam_stateChanged() {
-    _processor->joystickKickOnBreakBeam(
-        _ui.joystickKickOnBreakBeam->checkState());
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.joystick_config.useKickOnBreakBeam =
+        _ui.joystickKickOnBreakBeam->checkState() == Qt::CheckState::Checked;
 }
 
 // choose between kick on break beam and immeditate
@@ -1329,36 +1106,47 @@ void MainWindow::on_logPlaybackLive_clicked() { setLive(); }
 void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
     _ui.team->setStyleSheet("background-color: #4040ff; color: #ffffff");
-    _processor->blueTeam(true);
+
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestBlueTeam = true;
 }
 
 void MainWindow::on_actionTeamYellow_triggered() {
     _ui.team->setText("YELLOW");
     _ui.team->setStyleSheet("background-color: #ffff00");
-    _processor->blueTeam(false);
+
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestBlueTeam = false;
 }
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
-    _processor->manualID(value - 1);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.joystick_config.manualID = value - 1;
 }
 
 void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
-    _processor->setUseFieldOrientedManualDrive(value);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.joystick_config.useFieldOrientedDrive = value;
 }
 
 void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
-    _processor->multipleManual(value);
-    _processor->setupJoysticks();
+    // TODO(Kyle): Reimplement multiple manual
 }
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
-    _processor->goalieID(value - 1);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestGoalieID = value - 1;
 }
 
 void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
     _autoExternalReferee = value;
-    _processor->externalReferee(value);
+
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.use_external_referee = value;
 }
+
+////////////////
+// Tab Widget Section
 
 ////////
 // Debug layer list
@@ -1381,8 +1169,9 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
     QMenu menu;
     QAction* all = menu.addAction("All");
     QAction* none = menu.addAction("None");
-    QAction* single = nullptr, * notSingle = nullptr;
-    if (item) {
+    QAction* single = nullptr;
+    QAction* notSingle = nullptr;
+    if (item != nullptr) {
         single = menu.addAction("Only this");
         notSingle = menu.addAction("All except this");
     }
@@ -1392,10 +1181,10 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos) {
         allDebugOn();
     } else if (act == none) {
         allDebugOff();
-    } else if (single && act == single) {
+    } else if ((single != nullptr) && act == single) {
         allDebugOff();
         item->setCheckState(Qt::Checked);
-    } else if (notSingle && act == notSingle) {
+    } else if ((notSingle != nullptr) && act == notSingle) {
         allDebugOn();
         item->setCheckState(Qt::Unchecked);
     }
@@ -1440,7 +1229,7 @@ void MainWindow::on_loadPlaybook_clicked() {
             _processor->gameplayModule()->loadPlaybook(filename.toStdString(),
                                                        true);
             playIndicatorStatus(true);
-        } catch (runtime_error* error) {
+        } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
@@ -1456,7 +1245,7 @@ void MainWindow::on_savePlaybook_clicked() {
             _processor->gameplayModule()->savePlaybook(filename.toStdString(),
                                                        true);
             playIndicatorStatus(true);
-        } catch (runtime_error* error) {
+        } catch (const runtime_error&) {
             QMessageBox::critical(this, "File not found",
                                   QString("File not found: %1").arg(filename));
         }
@@ -1468,80 +1257,102 @@ void MainWindow::on_clearPlays_clicked() {
     playIndicatorStatus(true);
 }
 
-void MainWindow::setRadioChannel(RadioChannels channel) {
-    switch (channel) {
-        case RadioChannels::MHz_916:
-            this->on_action916MHz_triggered();
-            break;
-        case RadioChannels::MHz_918:
-            this->on_action918MHz_triggered();
-            break;
-    }
+////////
+// Testing Tab
+
+void MainWindow::on_testRun_clicked() {
+    _processor->gameplayModule()->loadTest();
 }
 
-void MainWindow::setUseRefChecked(bool use_ref) {
+void MainWindow::on_addToTable_clicked() {
+    _processor->gameplayModule()->addTests();
+}
+
+void MainWindow::on_removeFromTable_clicked() {
+    _processor->gameplayModule()->removeTest();
+}
+
+void MainWindow::on_testNext_clicked() {
+    _processor->gameplayModule()->nextTest();
+}
+
+// NOLINTNEXTLINE(readability-make-member-function-const): this modifies state
+void MainWindow::setUseRefChecked(bool /* use_ref */) {
     _ui.actionUse_Field_Oriented_Controls->setChecked(false);
 }
 
 void MainWindow::on_fastHalt_clicked() {
-    _processor->refereeModule()->command = NewRefereeModuleEnums::HALT;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand = RefereeModuleEnums::HALT;
 }
 
 void MainWindow::on_fastStop_clicked() {
-    _processor->refereeModule()->command = NewRefereeModuleEnums::STOP;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand = RefereeModuleEnums::STOP;
 }
 
 void MainWindow::on_fastReady_clicked() {
-    _processor->refereeModule()->command = NewRefereeModuleEnums::NORMAL_START;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::NORMAL_START;
 }
 
 void MainWindow::on_fastForceStart_clicked() {
-    _processor->refereeModule()->command = NewRefereeModuleEnums::FORCE_START;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand = RefereeModuleEnums::FORCE_START;
 }
 
 void MainWindow::on_fastKickoffBlue_clicked() {
-    _processor->refereeModule()->command =
-        NewRefereeModuleEnums::PREPARE_KICKOFF_BLUE;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::PREPARE_KICKOFF_BLUE;
 }
 
 void MainWindow::on_fastKickoffYellow_clicked() {
-    _processor->refereeModule()->command =
-        NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
 
 void MainWindow::on_fastDirectBlue_clicked() {
-    _processor->refereeModule()->command =
-        NewRefereeModuleEnums::DIRECT_FREE_BLUE;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::DIRECT_FREE_BLUE;
 }
 
 void MainWindow::on_fastDirectYellow_clicked() {
-    _processor->refereeModule()->command =
-        NewRefereeModuleEnums::DIRECT_FREE_YELLOW;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::DIRECT_FREE_YELLOW;
 }
 
 void MainWindow::on_fastIndirectBlue_clicked() {
-    _processor->refereeModule()->command =
-        NewRefereeModuleEnums::INDIRECT_FREE_BLUE;
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::INDIRECT_FREE_BLUE;
 }
 
 void MainWindow::on_fastIndirectYellow_clicked() {
-    _processor->refereeModule()->command =
-        NewRefereeModuleEnums::INDIRECT_FREE_YELLOW;
-}
-
-void MainWindow::on_actionVisionPrimary_Half_triggered() {
-    _processor->changeVisionChannel(SharedVisionPortSinglePrimary);
-    _processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
-}
-
-void MainWindow::on_actionVisionSecondary_Half_triggered() {
-    _processor->changeVisionChannel(SharedVisionPortSingleSecondary);
-    _processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
-}
-
-void MainWindow::on_actionVisionFull_Field_triggered() {
-    _processor->changeVisionChannel(SharedVisionPortDoubleNew);
-    _processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
+    std::lock_guard<std::mutex> lock(*_context_mutex);
+    _context->game_settings.requestRefCommand =
+        RefereeModuleEnums::INDIRECT_FREE_YELLOW;
 }
 
 bool MainWindow::live() { return !_playbackRate; }
+void MainWindow::updateDebugLayers(const LogFrame& frame) {
+    // Check if any debug layers have been added
+    // (layers should never be removed)
+    if (frame.debug_layers_size() > _ui.debugLayers->count()) {
+        // Add the missing layers and turn them on
+        for (int i = _ui.debugLayers->count(); i < frame.debug_layers_size();
+             ++i) {
+            const QString name = QString::fromStdString(frame.debug_layers(i));
+            bool enabled = !std::any_of(
+                defaultHiddenLayers.begin(), defaultHiddenLayers.end(),
+                [&](const QString& string) { return string == name; });
+            addLayer(i, name, enabled);
+        }
+
+        _ui.debugLayers->sortItems();
+    }
+}

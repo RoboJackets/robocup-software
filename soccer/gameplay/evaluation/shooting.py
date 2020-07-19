@@ -1,6 +1,7 @@
 import constants
 import robocup
 import main
+from typing import List
 
 
 ## Find the chance of a shot succeeding by looking at pass distance and what robots are in the way
@@ -8,12 +9,14 @@ import main
 # @param from_point The Point the shot is coming from
 # @param excluded_robots A list of robots that shouldn't be counted as obstacles to this shot
 # @return a value from zero to one that estimates the probability of the shot succeeding
-def eval_shot(from_point, excluded_robots=[]):
+def eval_shot(from_point: robocup.Point,
+              excluded_robots: List[robocup.Robot] = []) -> float:
     kick_eval = robocup.KickEvaluator(main.system_state())
     for r in excluded_robots:
         kick_eval.add_excluded_robot(r)
     point, chance = kick_eval.eval_pt_to_opp_goal(from_point)
     return chance
+
 
 ## Shoot through a formation of enemy robots at a target
 #
@@ -21,7 +24,11 @@ def eval_shot(from_point, excluded_robots=[]):
 # @param max max_shooting_angle: The largest angle we will search to find a gap
 # @param robot_offset: Max angle offset from an enemy robot we will shoot
 # @return a point
-def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_angle=60, robot_offset=8, dist_from_point=.75):
+def find_gap(
+        target_pos: robocup.Point = constants.Field.TheirGoalSegment.center(),
+        max_shooting_angle: float = 60,
+        robot_offset: float = 8,
+        dist_from_point: float = .75) -> robocup.Point:
     if (not main.ball().valid):
         return target_pos
 
@@ -36,19 +43,21 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
     max_angle = max_shooting_angle * constants.DegreesToRadians
 
     # How much left and right of a robot to give
-    # Dont make this too big or it will always go far to the right or left of the robots
+    # Don't make this too big or it will always go far to the right or left of the robots
     robot_angle_offset = robot_offset * constants.DegreesToRadians
 
     zero_point = robocup.Point(0, 0)
 
-    # Limit the angle so as we get closer, we dont miss the goal completely as much
+    # Limit the angle so as we get closer, we don't miss the goal completely as much
     goal_vector = target_pos - main.ball().pos
-    max_length_vector = robocup.Point(constants.Field.Length, constants.Field.Width)
+    max_length_vector = robocup.Point(constants.Field.Length,
+                                      constants.Field.Width)
     goal_limit = (goal_vector.mag() / max_length_vector.mag()) * max_angle
 
-    # Limit on one side so we dont directly kick out of bounds
+    # Limit on one side so we don't directly kick out of bounds
     # Add in the angle from the sideline to the target
-    field_limit = (1 - abs(main.ball().pos.x) / (constants.Field.Width / 2)) * max_angle
+    field_limit = (1 - abs(main.ball().pos.x) /
+                   (constants.Field.Width / 2)) * max_angle
     field_limit = field_limit + goal_vector.angle_between(robocup.Point(0, 1))
 
     # Limit the angle based on the opponent robots to try and always minimize the
@@ -67,12 +76,13 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             # if we actually do, then the robot is to the right of the ball vector
             ball_to_bot.rotate(zero_point, angle)
             if (ball_to_bot.angle_between(goal_vector) < 0.01):
-                right_robot_limit = max(right_robot_limit, angle + robot_angle_offset)
+                right_robot_limit = max(right_robot_limit,
+                                        angle + robot_angle_offset)
             else:
-                left_robot_limit = max(left_robot_limit, angle + robot_angle_offset)
+                left_robot_limit = max(left_robot_limit,
+                                       angle + robot_angle_offset)
         else:
             win_eval.add_excluded_robot(robot)
-
 
     # Angle limit on each side of the bot->goal vector
     left_angle = max_angle
@@ -96,23 +106,24 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
 
     # Get the angle that we need to rotate the target angle behind the defenders
     # since kick eval doesn't support a nonsymmetric angle around a target
-    rotate_target_angle = (left_angle + -right_angle)/2
+    rotate_target_angle = (left_angle + -right_angle) / 2
     target_width = (left_angle + right_angle)
 
     target_point = goal_vector.normalized() * test_distance
     target_point.rotate(zero_point, rotate_target_angle)
 
-    windows, window = win_eval.eval_pt_to_pt(main.ball().pos, target_point + main.ball().pos, target_width)
+    windows, window = win_eval.eval_pt_to_pt(main.ball().pos,
+                                             target_point + main.ball().pos,
+                                             target_width)
 
     # Test draw points
-    target_point.rotate(zero_point, target_width/2)
+    target_point.rotate(zero_point, target_width / 2)
     p1 = target_point + main.ball().pos
     target_point.rotate(zero_point, -target_width)
     p2 = target_point + main.ball().pos
     p3 = main.ball().pos
     main.debug_drawer().draw_polygon([p1, p2, p3], (0, 0, 255),
                                      "Free Kick search zone")
-
 
     is_opponent_blocking = False
 
@@ -134,8 +145,8 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
         robocup.Line(main.ball().pos, target_pos), (0, 255, 0), "Target Point")
 
     # Weights for determining best shot
-    k1 = 1.5 # Weight of closeness to ideal shot
-    k2 = 1 # Weight of shot chance
+    k1 = 1.5  # Weight of closeness to ideal shot
+    k2 = 1  # Weight of shot chance
 
     # Iterate through all possible windows to find the best possible shot
     if windows:
@@ -153,7 +164,7 @@ def find_gap(target_pos=constants.Field.TheirGoalSegment.center(), max_shooting_
             robocup.Line(main.ball().pos, best_shot), (255, 255, 0),
             "Target Shot")
 
-        best_shot = robocup.Point(0,1) + main.ball().pos
+        best_shot = robocup.Point(0, 1) + main.ball().pos
         return best_shot
     else:
         return constants.Field.TheirGoalSegment.center()

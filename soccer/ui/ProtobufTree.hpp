@@ -50,7 +50,7 @@ protected:
     bool addTreeData(QTreeWidgetItem* parent,
                      const google::protobuf::Message& msg);
 
-    void addBytes(QTreeWidgetItem* parent, const std::string& bytes);
+    static void addBytes(QTreeWidgetItem* parent, const std::string& bytes);
 
     virtual void contextMenuEvent(QContextMenuEvent* e) override;
 

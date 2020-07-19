@@ -28,8 +28,8 @@
 // channel is given on the command line, the first available one is picked based
 // on which soccer-side port can be bound.
 
-static const char RefereeAddress[] = "224.5.23.1";
-static const char SharedVisionAddress[] = "224.5.23.2";
+static const std::string RefereeAddress = "224.5.23.1";
+static const std::string SharedVisionAddress = "224.5.23.2";
 
 static const int SimCommandPort = 20011;
 static const int SimVisionPort = 10020;

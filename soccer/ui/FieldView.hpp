@@ -1,15 +1,14 @@
 
 #pragma once
 
-#include <QGLWidget>
+#include <protobuf/LogFrame.pb.h>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-#include <protobuf/LogFrame.pb.h>
-
-#include <set>
-#include <memory>
+#include <QGLWidget>
 #include <QLabel>
+#include <memory>
+#include <set>
 
 class Logger;
 
@@ -47,7 +46,7 @@ public:
 
     // True if this control is showing live (vs. historical) data.
     // If false, it will draw a red border.
-    bool live;
+    bool live{};
 
     bool showRawRobots;
     bool showRawBalls;
@@ -65,11 +64,24 @@ protected:
     virtual void drawWorldSpace(QPainter& p);
     virtual void drawTeamSpace(QPainter& p);
 
-    void drawText(QPainter& p, QPointF pos, QString text, bool center = true);
-    void drawField(QPainter& p, const Packet::LogFrame* frame);
+    void drawText(QPainter& p, QPointF pos, const QString& text,
+                  bool center = true) const;
+    static void drawField(QPainter& p, const Packet::LogFrame* frame);
     void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos,
                    float theta, bool hasBall = false, bool faulty = false);
     void drawCoords(QPainter& p);
+
+    /**
+     * \brief Draws a pink line (by default) that extends in the robot's heading
+     * @param painter
+     * @param pos
+     * @param theta
+     * @param heading_color
+     * @param heading_line_len
+     */
+    static void drawRobotHeading(QPainter* painter, QPointF pos, float theta,
+                                 const QColor& heading_color = {0xffc1da},
+                                 float heading_line_len = 0.5);
 
 protected:
     // Returns a pointer to the most recent frame, or null if none is available.
@@ -81,15 +93,15 @@ protected:
     Geometry2d::TransformMatrix _teamToWorld;
 
     // Label used to display current coordinates of mouse
-    QLabel* _posLabel;
+    QLabel* _posLabel{};
 
     // Rotation of the field in 90-degree increments (0 to 3).
     int _rotate;
 
     // How many degrees to rotate text so it shows up the right way on screen
-    int _textRotation;
+    int _textRotation{};
 
-    const std::vector<std::shared_ptr<Packet::LogFrame> >* _history;
+    const std::vector<std::shared_ptr<Packet::LogFrame> >* _history{};
 
     QVector<bool> _layerVisible;
 };

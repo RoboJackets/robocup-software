@@ -2,8 +2,9 @@
 
 #include <list>
 
-#include <Geometry2d/Point.hpp>
 #include <Configuration.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Pose.hpp>
 
 #include "KalmanRobot.hpp"
 
@@ -30,7 +31,8 @@ public:
      * @param team The team color
      * @param kalmanRobots List of kalman robots from each of the cameras to merger
      */
-    WorldRobot(RJ::Time calcTime, Team team, int robotID, std::list<KalmanRobot> kalmanRobots);
+    WorldRobot(RJ::Time calcTime, Team team, int robotID,
+               const std::list<KalmanRobot>& kalmanRobots);
 
     /**
      * @return If the robot actually represents a real robot
@@ -58,6 +60,11 @@ public:
     double getTheta() const;
 
     /**
+     * @return The best estimated pose of the robot
+     */
+    Geometry2d::Pose getPose() const;
+
+    /**
      * @return The best estimated velocity of the robot
      */
     Geometry2d::Point getVel() const;
@@ -66,6 +73,11 @@ public:
      * @return The best estimated angular velocity of the robot
      */
     double getOmega() const;
+
+    /**
+     * @return The best estimated twist of the robot
+     */
+    Geometry2d::Twist getTwist() const;
 
     /**
      * @return The average position covariance of the filter including theta
@@ -91,13 +103,11 @@ public:
 
 private:
     Team team;
-    int robotID;
-    Geometry2d::Point pos;
-    double theta;
-    Geometry2d::Point vel;
-    double omega;
-    double posCov;
-    double velCov;
+    int robotID{};
+    Geometry2d::Pose pose;
+    Geometry2d::Twist twist;
+    double posCov{};
+    double velCov{};
     std::list<KalmanRobot> robotComponents;
     RJ::Time time;
 

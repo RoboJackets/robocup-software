@@ -71,7 +71,7 @@ private:
     // Reflect Angle dampen
     // Body is bouncing off the circular shell
     // Mouth is bouncing off the front mouth
-    // 1 means a 45 degree hit reflects at 0 degrees out (parrallel to tangent)
+    // 1 means a 45 degree hit reflects at 0 degrees out (parallel to tangent)
     // 0 means a 45 degree hit perfectly reflects at 45 degrees out
     static ConfigDouble* robot_body_angle_dampen;
     static ConfigDouble* robot_mouth_angle_dampen;

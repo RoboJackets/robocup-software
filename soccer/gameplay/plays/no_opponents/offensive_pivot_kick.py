@@ -2,7 +2,6 @@ import play
 import behavior
 import robocup
 import skills.line_kick
-import tactics.defense
 import main
 import constants
 import enum

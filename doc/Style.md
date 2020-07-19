@@ -42,7 +42,7 @@ MyClassName a;
 // Variables should be camelCase with a lowercase first letter
 myVariable;
 
-// Private variables should be preceeded with an underscore
+// Private variables should be preceded with an underscore
 _privateData;
 
 // Where possible, avoid C syntax, and use C++ replacements.

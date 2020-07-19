@@ -114,7 +114,7 @@ class TheirKickoff(standard_play.StandardPlay):
         else:
             mark_robot_right = robocup.Point(TheirKickoff.DefaultDist,
                                              constants.Field.Length / 2)
-        # Set x and y seperately as we want a constant y value (just behind the kick off line)
+        # Set x and y separately as we want a constant y value (just behind the kick off line)
         mark_robot_right.y = min(
             constants.Field.Length / 2 - TheirKickoff.LineBuffer,
             mark_robot_right.y)

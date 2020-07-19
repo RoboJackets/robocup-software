@@ -76,25 +76,20 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # By default, move into the settle state since we almost never start with ball
         self.add_transition(
-            behavior.Behavior.State.start,
-            Capture.State.settle,
-            lambda: self.robot is not None and not evaluation.ball.
-            robot_has_ball(self.robot),  #self.robot.has_ball(),
-            'dont have ball')
+            behavior.Behavior.State.start, Capture.State.settle, lambda: self.
+            robot is not None and not self.robot.has_ball(), 'dont have ball')
 
         # On the offchance we start with ball, double check it's not a blip on the sensor
-        self.add_transition(
-            behavior.Behavior.State.start,
-            Capture.State.captured,
-            lambda: self.robot is not None and evaluation.ball.robot_has_ball(
-                self.robot),  #self.robot.has_ball(),
-            'may already have ball')
+        self.add_transition(behavior.Behavior.State.start,
+                            Capture.State.captured, lambda: self.robot is
+                            not None and self.robot.has_ball(),
+                            'may already have ball')
 
         # We actually don't have the ball, either 50% register rate (faulty sensor?) or we just got a blip
         self.add_transition(
-            Capture.State.captured, Capture.State.settle, lambda: self.
-            probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF or self.
-            frames_in_captured > Capture.MAX_FRAMES_IN_CAPTURED,
+            Capture.State.captured, Capture.State.settle,
+            lambda: self.probably_held_cnt < Capture.PROBABLY_NOT_HELD_CUTOFF
+            or self.frames_in_captured > Capture.MAX_FRAMES_IN_CAPTURED,
             'actually dont have ball')
 
         # Actually do have the ball, we can just leave
@@ -163,8 +158,7 @@ class Capture(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         # If we hold the ball, increment up to max
         # if not, decrement to 0
-        if (evaluation.ball.robot_has_ball(
-                self.robot)):  #self.robot.has_ball()):
+        if (self.robot.has_ball()):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
                                          Capture.PROBABLY_HELD_HISTORY_LENGTH)
         else:

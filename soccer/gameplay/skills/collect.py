@@ -43,19 +43,17 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
         # Since there is no definition of which direction a robot is facing
         # We cannot figure out if the ball is directly behind us or in it's mouth
         # We can restart the collect and it'll try it again
-        # Only restart when the ball is close, both are stopped, and we dont have the ball in the mouth
+        # Only restart when the ball is close, both are stopped, and we don't have the ball in the mouth
         self.add_transition(
             behavior.Behavior.State.running,
             behavior.Behavior.State.start, lambda: self.is_bot_ball_stopped(
-            ) and not evaluation.ball.robot_has_ball(
-                self.robot) and self.probably_held_cnt < Collect.
-            PROBABLY_HELD_CUTOFF and self.timeout == 0, 'restart')
+            ) and not self.robot.has_ball() and self.probably_held_cnt <
+            Collect.PROBABLY_HELD_CUTOFF and self.timeout == 0, 'restart')
 
         # Complete when we have the ball
         self.add_transition(
-            behavior.Behavior.State.running,
-            behavior.Behavior.State.completed, lambda: self.robot is not None
-            and evaluation.ball.robot_has_ball(self.robot) and self.
+            behavior.Behavior.State.running, behavior.Behavior.State.completed,
+            lambda: self.robot is not None and self.robot.has_ball() and self.
             probably_held_cnt > Collect.PROBABLY_HELD_CUTOFF, 'ball collected')
 
         # Go back if we loose the ball
@@ -87,8 +85,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
             # If the ball and robot are both stopped
             # and it's not in the mouth
             # increase timeout
-            if (self.is_bot_ball_stopped() and
-                    not evaluation.ball.robot_has_ball(self.robot)):
+            if (self.is_bot_ball_stopped() and not self.robot.has_ball()):
 
                 self.timeout = min(self.timeout + 1, Collect.RESTART_TIMEOUT)
             else:
@@ -105,7 +102,7 @@ class Collect(single_robot_behavior.SingleRobotBehavior):
     def update_held_cnt(self):
         # If we see the ball, increment up to max
         # if not, drop to 0
-        if (evaluation.ball.robot_has_ball(self.robot) or
+        if (self.robot.has_ball() or
                 not main.ball().valid):  #self.robot.has_ball()):
             self.probably_held_cnt = min(self.probably_held_cnt + 1,
                                          Collect.PROBABLY_HELD_MAX)

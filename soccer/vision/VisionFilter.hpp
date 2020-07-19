@@ -1,23 +1,21 @@
 #pragma once
 
+#include <WorldState.hpp>
 #include <atomic>
 #include <mutex>
-#include <vector>
-#include <vector>
 #include <thread>
-
-#include <SystemState.hpp>
+#include <vector>
 
 #include "vision/camera/CameraFrame.hpp"
 #include "vision/camera/World.hpp"
 
 /**
- * Uses a seperate thread to filter the vision measurements into
+ * Uses a separate thread to filter the vision measurements into
  * a smoother velocity/position estimate for both the ball and robots.
  *
  * Add vision frames directly into the filter call the fill states functions
  * to push the newest estimates directly into the system state.
- * 
+ *
  * Note: There may be a 1 frame delay between the measurements being added
  * and the measurements being included in the filter estimate.
  */
@@ -41,7 +39,7 @@ public:
      *
      * @param state Current system state pointer
      */
-    void fillBallState(SystemState& state);
+    void fillBallState(WorldState* state);
 
     /**
      * Fills system state with the robots pos/vel
@@ -49,7 +47,7 @@ public:
      * @param state Current system state pointer
      * @param usBlue True if we are blue
      */
-    void fillRobotState(SystemState& state, bool usBlue);
+    void fillRobotState(WorldState* state, bool usBlue);
 
 private:
     void updateLoop();
@@ -59,8 +57,8 @@ private:
     std::mutex worldLock;
     World world;
 
-    std::atomic_bool threadEnd;
+    std::atomic_bool threadEnd{};
 
     std::mutex frameLock;
-    std::vector<CameraFrame> frameBuffer;
+    std::vector<CameraFrame> frameBuffer{};
 };

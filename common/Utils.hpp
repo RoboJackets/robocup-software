@@ -16,6 +16,11 @@
 
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 
+template <typename T>
+inline int signum(T val) {
+    return (0 < val) - (val <= 0);
+}
+
 inline void debugLog(const std::string& e) { std::cerr << e << std::endl; }
 
 inline void debugLog(const std::exception& e) {
@@ -54,11 +59,9 @@ inline void debugThrowIf(const std::string& string, bool condition) {
  * @param a An angle in radians
  * @return An equivalent angle in radians restricted to [-pi, pi]
  */
-static inline float fixAngleRadians(float a) {
-    a = remainder(a, 2 * M_PI);
-    while (a < -M_PI) a += 2.0 * M_PI;
-    while (a > M_PI) a -= 2.0 * M_PI;
-    return a;
+template <typename T>
+static inline T fixAngleRadians(T a) {
+    return remainder(a, 2 * M_PI);
 }
 
 /** Checks whether or not the given ball is in the defense area. */
@@ -86,6 +89,11 @@ static Geometry2d::Point fromOursToTheirs(Geometry2d::Point& pt) {
 static bool ballIsInTheirGoalieBox(Geometry2d::Point& pt) {
     Geometry2d::Point converted = fromOursToTheirs(pt);
     return ballIsInGoalieBox(converted);
+}
+
+template <typename T>
+inline T applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
+    return gain * newValue + (1 - gain) * oldValue;
 }
 
 // Removes all entries in a std::map which associate to the given value.
@@ -126,7 +134,7 @@ typename Map::mapped_type map_lookup(const Map& map,
 template <typename T>
 class FIRFilter {
 public:
-    typedef std::vector<float> Coeffs;
+    using Coeffs = std::vector<float>;
 
     FIRFilter(const T& zero, size_t nrTaps) : _zero(zero) {
         if (nrTaps == 0)

@@ -5,7 +5,7 @@
 
 /**
  * Gradient Ascent in 1 Dimension with Temperature
- * Works for all functions that are continous with a specified derivative
+ * Works for all functions that are continuous with a specified derivative
  * function
  * Only finds the closest local max
  *

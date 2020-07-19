@@ -13,15 +13,14 @@ int DebugDrawer::findDebugLayer(QString layer) {
         _debugLayerMap[layer] = n;
         _debugLayers.append(layer);
         return n;
-    } else {
-        // Existing layer
-        return i.value();
     }
+    // Existing layer
+    return i.value();
 }
 
 void DebugDrawer::drawPolygon(const Geometry2d::Point* pts, int n,
                               const QColor& qc, const QString& layer) {
-    Packet::DebugPath* dbg = _logFrame->add_debug_polygons();
+    Packet::DebugPath* dbg = _logFrame.add_debug_polygons();
     dbg->set_layer(findDebugLayer(layer));
     for (int i = 0; i < n; ++i) {
         *dbg->add_points() = pts[i];
@@ -41,7 +40,7 @@ void DebugDrawer::drawPolygon(const Geometry2d::Polygon& polygon,
 
 void DebugDrawer::drawCircle(Geometry2d::Point center, float radius,
                              const QColor& qc, const QString& layer) {
-    Packet::DebugCircle* dbg = _logFrame->add_debug_circles();
+    Packet::DebugCircle* dbg = _logFrame.add_debug_circles();
     dbg->set_layer(findDebugLayer(layer));
     *dbg->mutable_center() = center;
     dbg->set_radius(radius);
@@ -50,7 +49,7 @@ void DebugDrawer::drawCircle(Geometry2d::Point center, float radius,
 
 void DebugDrawer::drawArc(const Geometry2d::Arc& arc, const QColor& qc,
                           const QString& layer) {
-    Packet::DebugArc* dbg = _logFrame->add_debug_arcs();
+    Packet::DebugArc* dbg = _logFrame.add_debug_arcs();
     dbg->set_layer(findDebugLayer(layer));
     *dbg->mutable_center() = arc.center();
     dbg->set_radius(arc.radius());
@@ -87,7 +86,7 @@ void DebugDrawer::drawShapeSet(const Geometry2d::ShapeSet& shapes,
 
 void DebugDrawer::drawLine(const Geometry2d::Segment& line, const QColor& qc,
                            const QString& layer) {
-    Packet::DebugPath* dbg = _logFrame->add_debug_paths();
+    Packet::DebugPath* dbg = _logFrame.add_debug_paths();
     dbg->set_layer(findDebugLayer(layer));
     *dbg->add_points() = line.pt[0];
     *dbg->add_points() = line.pt[1];
@@ -101,7 +100,7 @@ void DebugDrawer::drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
 
 void DebugDrawer::drawText(const QString& text, Geometry2d::Point pos,
                            const QColor& qc, const QString& layer) {
-    Packet::DebugText* dbg = _logFrame->add_debug_texts();
+    Packet::DebugText* dbg = _logFrame.add_debug_texts();
     dbg->set_layer(findDebugLayer(layer));
     dbg->set_text(text.toStdString());
     *dbg->mutable_pos() = pos;
@@ -110,7 +109,7 @@ void DebugDrawer::drawText(const QString& text, Geometry2d::Point pos,
 
 void DebugDrawer::drawSegment(const Geometry2d::Segment& line, const QColor& qc,
                               const QString& layer) {
-    Packet::DebugPath* dbg = _logFrame->add_debug_paths();
+    Packet::DebugPath* dbg = _logFrame.add_debug_paths();
     dbg->set_layer(findDebugLayer(layer));
     *dbg->add_points() = line.pt[0];
     *dbg->add_points() = line.pt[1];

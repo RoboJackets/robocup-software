@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include <Constants.hpp>
+#include <Utils.hpp>
 
 #include "vision/util/VisionFilterConfig.hpp"
 
@@ -16,13 +17,15 @@ ConfigDouble* BallBounce::robot_mouth_angle_dampen;
 
 /**
  * Note 0 case returns -1 instead of 0
- * Forced to check with small epsilon since we actually care about 0 being represented
- * correctly as -1. It's ok if the 1.0e-10 doesn't return -1 or 1.
- * 
+ * Forced to check with small epsilon since we actually care about 0 being
+ * represented correctly as -1. It's ok if the 1.0e-10 doesn't return -1 or 1.
+ *
  * This is mostly so the simple test case have the correct behavior
  * If it lands on the 1.0e-10 boundary the code reacts as if there was no hit
  */
-int sign(double val) { return (1.0e-10 < val) - (val <= 1.0e-10); }
+int sign(double val) {
+    return static_cast<int>(1.0e-10 < val) - static_cast<int>(val <= 1.0e-10);
+}
 
 void BallBounce::createConfiguration(Configuration* cfg) {
     robot_body_lin_dampen = new ConfigDouble(cfg, "VisionFilter/Bounce/robot_body_lin_dampen", .9);
@@ -51,7 +54,7 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
             std::vector<Geometry2d::Point> intersectPts = PossibleBallIntersectionPts(ball, robot);
 
             // Doesn't intersect
-            if (intersectPts.size() == 0) {
+            if (intersectPts.empty()) {
                 continue;
             }
 
@@ -180,8 +183,9 @@ bool BallBounce::CalcBallBounce(const KalmanBall& ball,
             // We are trying to increase the angle CBD more when angle CBD is large
             // When angle CBD is 0, we want to keep the same angle
 
-            // We dont want any extra rotation when angle CBD is 0 degrees or 90 degrees
-            // Just to simplify implementation, I'm going to do a triangle
+            // We don't want any extra rotation when angle CBD is 0 degrees or
+            // 90 degrees Just to simplify implementation, I'm going to do a
+            // triangle
             //
             // df*45  -              /  \
             //                    /        \
@@ -283,6 +287,6 @@ std::vector<Geometry2d::Point> BallBounce::PossibleBallIntersectionPts(
         out.push_back(pt1);
         out.push_back(pt2);
     }
-    
+
     return out;
 }

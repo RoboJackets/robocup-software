@@ -3,6 +3,8 @@ import constants
 import main
 import evaluation.passing
 import evaluation.chipping
+from typing import List, Optional, Tuple, Union
+
 
 ## The Touchpass positioning file finds the best location within a rectangle to ricochet
 # a ball into the goal.
@@ -21,7 +23,7 @@ import evaluation.chipping
 # opposite to the ball.
 #
 # @param kick_point current ball position/initial kick position (robocup.Point)
-def generate_default_rectangle(kick_point):
+def generate_default_rectangle(kick_point: robocup.Point) -> robocup.Rect:
     offset_from_edge = 0.25
     offset_from_ball = 0.4
     # offset_from_ball = 0.7
@@ -48,7 +50,8 @@ def generate_default_rectangle(kick_point):
 ## Returns a list of robocup.Segment object that represent candidate lines. Takes in a robocup.Rect.
 #
 # These lines will be evaluated later by the window_evaluator.
-def get_segments_from_rect(rect, threshold=0.75):
+def get_segments_from_rect(rect: robocup.Rect,
+                           threshold: float = 0.75) -> List[robocup.Segment]:
     outlist = []
     currentx = rect.min_x()
     currenty = rect.max_y()
@@ -58,17 +61,16 @@ def get_segments_from_rect(rect, threshold=0.75):
     while currentx <= rect.max_x():
         currenty = rect.max_y()
         # Don't include goal area.
-        if constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
-                currentx, rect.min_y())):
+        if constants.Field.TheirGoalZoneShape.contains_point(
+                robocup.Point(currentx, rect.min_y())):
             continue
         while constants.Field.TheirGoalZoneShape.contains_point(robocup.Point(
             currentx, currenty)):
             currenty = currenty - threshold
 
-        candiate = robocup.Segment(
-            robocup.Point(currentx, rect.min_y()), robocup.Point(currentx,
-                                                                 currenty))
-        outlist.extend([candiate])
+        candidate = robocup.Segment(robocup.Point(currentx, rect.min_y()),
+                                    robocup.Point(currentx, currenty))
+        outlist.extend([candidate])
         currentx = currentx + threshold
     currentx = rect.min_x()
     return outlist
@@ -78,10 +80,11 @@ def get_segments_from_rect(rect, threshold=0.75):
 #
 # The value returned is the probability that a pass from the kick_point to the receive_point will make it,
 # multiplied by the probability that a goal can be scored from receive_point. This probablity will be between 0 and 1.
-def eval_single_point(kick_point,
-                      receive_point,
-                      targetPoint=None,
-                      ignore_robots=[]):
+def eval_single_point(
+        kick_point: Optional[robocup.Point],
+        receive_point: robocup.Point,
+        targetPoint: Optional[robocup.Point] = None,
+        ignore_robots: List[robocup.Robot] = []) -> Optional[float]:
     if kick_point is None:
         if main.ball().valid:
             kick_point = main.ball().pos
@@ -90,7 +93,7 @@ def eval_single_point(kick_point,
 
     currentChance = evaluation.passing.eval_pass(kick_point, receive_point,
                                                  ignore_robots)
-    # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
+    # TODO don't only aim for center of goal. Waiting on window_evaluator returning a probability.
     if targetPoint is None:
         targetPoint = constants.Field.TheirGoalSegment.center()
     currentChance = currentChance * evaluation.passing.eval_pass(
@@ -104,9 +107,12 @@ def eval_single_point(kick_point,
 # If none, it will try to guess a good receive area.
 # This is a robocup.Rect
 # @param ignore_robots a list of robots to be ignored when trying to find the best receive point.
-def eval_best_receive_point(kick_point,
-                            evaluation_zone=None,
-                            ignore_robots=[]):
+def eval_best_receive_point(
+    kick_point: robocup.Point,
+    evaluation_zone: Optional[robocup.Rect] = None,
+    ignore_robots: List[robocup.Robot] = []
+) -> Union[Tuple[robocup.Point, robocup.Point, float], Tuple[None, None,
+                                                             None]]:
     win_eval = robocup.WindowEvaluator(main.context())
     for r in ignore_robots:
         win_eval.add_excluded_robot(r)
@@ -132,7 +138,7 @@ def eval_best_receive_point(kick_point,
         if best is None: continue
 
         currentChance = best.shot_success
-        # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
+        # TODO don't only aim for center of goal. Waiting on window_evaluator returning a probability.
         receivePt = best.segment.center()
 
         _, best = win_eval.eval_pt_to_seg(receivePt, targetSeg)

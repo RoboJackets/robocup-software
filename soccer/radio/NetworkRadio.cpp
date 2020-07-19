@@ -9,7 +9,9 @@ using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
     : _socket(_context, udp::endpoint(udp::v4(), server_port)),
-      _send_buffers(Robots_Per_Team) {
+      _recv_buffer{},
+      _send_buffers(Num_Shells) {
+    _connections.resize(Num_Shells);
     startReceive();
 }
 
@@ -24,109 +26,115 @@ void NetworkRadio::startReceive() {
 
 bool NetworkRadio::isOpen() const { return _socket.is_open(); }
 
-void NetworkRadio::send(Packet::RadioTx& packet) {
-    // Get a list of all the IP addresses this packet needs to be sent to
-    for (int robot_idx = 0; robot_idx < packet.robots_size(); robot_idx++) {
-        const Packet::Control& control = packet.robots(robot_idx).control();
-        uint32_t robot_id = packet.robots(robot_idx).uid();
+void NetworkRadio::send(
+    const std::array<RobotIntent, Num_Shells>& intents,
+    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
+    for (int shell = 0; shell < Num_Shells; shell++) {
+        const auto& intent = intents[shell];
+        if (!intent.is_active) {
+            continue;
+        }
+
+        const auto& setpoint = setpoints[shell];
 
         // Build the control packet for this robot.
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
-            forward_packet_buffer = _send_buffers[robot_idx];
+            forward_packet_buffer = _send_buffers[shell];
 
-        rtp::Header* header =
+        auto* header =
             reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
-        rtp::RobotTxMessage* body = reinterpret_cast<rtp::RobotTxMessage*>(
+        auto* body = reinterpret_cast<rtp::RobotTxMessage*>(
             &forward_packet_buffer[rtp::HeaderSize]);
 
-        from_robot_tx_proto(packet.robots(robot_idx), body);
+        ConvertTx::to_rtp(intent, setpoint, shell, body);
 
-        // Fetch the IP address
-        auto range = _robot_ip_map.left.equal_range(robot_id);
+        // Fetch the connection
+        auto maybe_connection = _connections.at(shell);
 
-        // Loop over all addresses for this robot; we want to send multiple
-        // copies.
-        for (auto it = range.first; it != range.second; it++) {
-            // Send to the given IP address
-            const udp::endpoint& robot_endpoint = it->second;
-            _socket.async_send_to(
-                boost::asio::buffer(forward_packet_buffer), robot_endpoint,
-                [](const boost::system::error_code& error,
-                   std::size_t num_bytes) {
-                    // Handle errors.
-                    if (error) {
-                        std::cerr << "Error sending: " << error
-                                  << " in " __FILE__ << std::endl;
-                    }
-                });
+        // If there exists a connection, we can send.
+        if (maybe_connection) {
+            const RobotConnection& connection = maybe_connection.value();
+            // Check if we've timed out.
+            if (RJ::now() + kTimeout < connection.last_received) {
+                // Remove the endpoint from the IP map and the connection list
+                assert(_robot_ip_map.erase(connection.endpoint) == 1);
+                _connections.at(shell) = std::nullopt;
+            } else {
+                // Send to the given IP address
+                const udp::endpoint& robot_endpoint = connection.endpoint;
+                _socket.async_send_to(
+                    boost::asio::buffer(forward_packet_buffer), robot_endpoint,
+                    [](const boost::system::error_code& error,
+                       std::size_t num_bytes) {
+                        // Handle errors.
+                        if (static_cast<bool>(error)) {
+                            std::cerr << "Error sending: " << error
+                                      << " in " __FILE__ << std::endl;
+                        }
+                    });
+            }
         }
     }
 }
 
 void NetworkRadio::receive() {
-    // Let boost::asio handles callbacks
+    // Let boost::asio handle callbacks
     _context.poll();
 }
 
 void NetworkRadio::receivePacket(const boost::system::error_code& error,
                                  std::size_t num_bytes) {
-    if (error) {
+    if (static_cast<bool>(error)) {
         std::cerr << "Error receiving: " << error << " in " __FILE__
                   << std::endl;
         return;
-    } else if (num_bytes != rtp::ReverseSize) {
+    }
+    if (num_bytes != rtp::ReverseSize) {
         std::cerr << "Invalid packet length: expected " << rtp::ReverseSize
                   << ", got " << num_bytes << std::endl;
         return;
     }
 
-    rtp::RobotStatusMessage* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
         &_recv_buffer[rtp::HeaderSize]);
 
     _robot_endpoint.port(25566);
 
-    // Find out which robot this corresponds to.
-    auto ip_iter = _robot_ip_map.right.find(_robot_endpoint);
-
     int robot_id = msg->uid;
 
-    // We already have this robot registered; this is a reverse packet
-    if (ip_iter == _robot_ip_map.right.end()) {
-        // This is a new robot, so we need to register this robot's UID
-        std::cout << "Adding robot with endpoint " << _robot_endpoint
-                  << std::endl;
-        registerRobot(msg->uid, _robot_endpoint);
-    } else if (ip_iter->second != robot_id) {
-        // This robot has been reassigned. Re-registering it sets the IP->ID
-        // map correctly, but we still need to remove it from the ID->IP map.
-        std::cerr << "Warning: UID of robot assigned IP " << ip_iter->first
-                  << " changed to " << ip_iter->second << ". Reassigning."
-                  << std::endl;
-        ;
-
-        // Erase the IP address and re-register the robot.
-        _robot_ip_map.right.erase(ip_iter->first);
-        registerRobot(msg->uid, _robot_endpoint);
+    auto iter = _robot_ip_map.find(_robot_endpoint);
+    if (iter != _robot_ip_map.end() && iter->second != robot_id) {
+        // Make sure this IP address isn't mapped to another robot ID.
+        // If it is, remove the entry and the connections corresponding
+        // to both this ID and this IP address.
+        _connections.at(iter->second) = std::nullopt;
+        _robot_ip_map.erase(iter);
+        _connections.at(robot_id) = std::nullopt;
     }
 
-    // Extract the protobuf form
-    Packet::RadioRx packet = convert_rx_rtp_to_proto(*msg);
+    // Update assignments.
+    if (!_connections.at(robot_id)) {
+        _connections.at(robot_id) = RobotConnection{_robot_endpoint, RJ::now()};
+        _robot_ip_map.insert({_robot_endpoint, robot_id});
+    } else {
+        // Update the timeout watchdog
+        _connections.at(robot_id)->last_received = RJ::now();
+    }
+
+    // Extract the rtp to a regular struct.
+    RobotStatus status;
+    ConvertRx::rtp_to_status(*msg, &status);
 
     {
         // Add reverse packets
         std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-        _reversePackets.push_back(packet);
+        _reversePackets.push_back(status);
     }
 
     // Restart receiving
     startReceive();
 }
 
-void NetworkRadio::switchTeam(bool) {}
-
-void NetworkRadio::registerRobot(int robot, udp::endpoint endpoint) {
-    // Insert the robot into the bimap, going both directions
-    _robot_ip_map.insert({robot, endpoint});
-}
+void NetworkRadio::switchTeam(bool /*blueTeam*/) {}

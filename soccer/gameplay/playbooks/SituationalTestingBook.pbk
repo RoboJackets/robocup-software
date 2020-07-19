@@ -1,0 +1,14 @@
+Attack_Goal/adaptive_attack
+Attack_Goal/basic_122_attack
+Attack_Goal/distraction_attack
+Attack_Goal/two_sided_attack
+Clear/adaptive_clear
+Clear/basic_clear
+Defend_Clear/basic_defend_clear
+Defend_Goal/basic_defend_goal
+Defend_Goal/winger_wall
+Defend_Restart_Defensive/BasicDefendRestartDefensive
+Defend_Restart_Offensive/BasicDefendRestartOffensive
+Defensive_Scramble/basic_defensive_scramble
+Offensive_Pileup/basic_offensive_pileup
+Offensive_Scramble/BasicOffensiveScramble

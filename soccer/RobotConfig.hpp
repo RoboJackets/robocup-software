@@ -7,43 +7,49 @@
  */
 class RobotConfig {
 public:
-    RobotConfig(Configuration* config, QString prefix);
-    ~RobotConfig();
+    RobotConfig() {}
+    RobotConfig(Configuration* config, const QString& prefix);
 
     struct PID {
-        PID(Configuration* config, QString prefix);
+        PID() {}
+        PID(Configuration* config, const QString& prefix);
 
-        ConfigDouble* p;
-        ConfigDouble* i;
-        ConfigInt*
-            i_windup;  /// how many past errors to store.  -1 means store all
-        ConfigDouble* d;
+        std::unique_ptr<ConfigDouble> p;
+        std::unique_ptr<ConfigDouble> i;
+
+        /// how many past errors to store.  -1 means store all
+        std::unique_ptr<ConfigInt> i_windup;
+
+        std::unique_ptr<ConfigDouble> d;
     };
 
     struct Kicker {
-        Kicker(Configuration* config, QString prefix);
+        Kicker() {}
+        Kicker(Configuration* config, const QString& prefix);
 
         /// these limits are applied before sending the actual commands to the
         /// robots
-        ConfigDouble* maxKick;
-        ConfigDouble* maxChip;
+        std::unique_ptr<ConfigDouble> maxKick;
+        std::unique_ptr<ConfigDouble> maxChip;
         // ConfigDouble *passKick;
     };
 
     struct Dribbler {
-        Dribbler(Configuration* config, QString prefix);
+        Dribbler() {}
+        Dribbler(Configuration* config, const QString& prefix);
 
         /// dribber values are multiplied by this before being sent to the robot
         /// this was added because 2011 bots needed lower dribbler values than
         /// the 2008 model
-        ConfigDouble* multiplier;
+        std::unique_ptr<ConfigDouble> multiplier;
     };
 
     struct Chipper {
-        Chipper(Configuration* config, QString prefix);
+        Chipper() {}
+        Chipper(Configuration* config, const QString& prefix);
 
-        ConfigDouble* calibrationSlope;
-        ConfigDouble* calibrationOffset;
+        std::unique_ptr<ConfigDouble> calibrationSlope;
+        std::unique_ptr<ConfigDouble> calibrationOffset;
     };
 
     PID translation;
@@ -54,35 +60,42 @@ public:
     Chipper chipper;
 
     /// convert from real units to bot "units"
-    ConfigDouble* velMultiplier;
-    ConfigDouble* angleVelMultiplier;
+    std::unique_ptr<ConfigDouble> velMultiplier;
+    std::unique_ptr<ConfigDouble> angleVelMultiplier;
 
     // If a command velocity we're about to send is below this value in
     // magniude, but greater than zero, we scale the velocity up to this
     // magnitude.
-    ConfigDouble* minEffectiveVelocity;
-    ConfigDouble* minEffectiveAngularSpeed;
+    std::unique_ptr<ConfigDouble> minEffectiveVelocity;
+    std::unique_ptr<ConfigDouble> minEffectiveAngularSpeed;
 
     /// we multiply this by the bot's acceleration and add this to the output
     /// targetVel
-    ConfigDouble* accelerationMultiplier;
+    std::unique_ptr<ConfigDouble> accelerationMultiplier;
 
     // when pivoting, we multiply the calculated x-velocity of the robot by this
     // value before sending it to the robot
-    ConfigDouble* pivotVelMultiplier;
+    std::unique_ptr<ConfigDouble> pivotVelMultiplier;
 };
 
 /**
  * Provides per-robot overrides for a robot
  * Should be updated for hardware revision
  */
-class RobotStatus {
+class RobotLocalConfig {
 public:
-    RobotStatus(Configuration* config, QString prefix);
-    ~RobotStatus() {}
+    RobotLocalConfig() = default;
+    ~RobotLocalConfig() = default;
 
-    ConfigBool* chipper_enabled;
-    ConfigBool* kicker_enabled;
-    ConfigBool* ball_sense_enabled;
-    ConfigBool* dribbler_enabled;
+    RobotLocalConfig(Configuration* config, const QString& prefix);
+
+    RobotLocalConfig(RobotLocalConfig&&) = default;
+    RobotLocalConfig& operator=(RobotLocalConfig&&) = default;
+    RobotLocalConfig(const RobotLocalConfig&) = delete;
+    RobotLocalConfig& operator=(const RobotLocalConfig&) = delete;
+
+    std::unique_ptr<ConfigBool> chipper_enabled;
+    std::unique_ptr<ConfigBool> kicker_enabled;
+    std::unique_ptr<ConfigBool> ball_sense_enabled;
+    std::unique_ptr<ConfigBool> dribbler_enabled;
 };

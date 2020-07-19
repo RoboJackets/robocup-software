@@ -1,28 +1,28 @@
 #include "StripChart.hpp"
-#include "time.hpp"
-
-#include <QPainter>
-#include <QFileDialog>
-#include <QDateTime>
-
-#include <stdio.h>
-#include <cmath>
-#include <algorithm>
-#include <protobuf/LogFrame.pb.h>
-#include <Geometry2d/Point.hpp>
-#include <Constants.hpp>
-#include <time.hpp>
-#include <iostream>
-#include <fstream>
 
 #include <google/protobuf/descriptor.h>
+#include <protobuf/LogFrame.pb.h>
+
+#include <Constants.hpp>
+#include <Geometry2d/Point.hpp>
+#include <QDateTime>
+#include <QFileDialog>
+#include <QPainter>
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <time.hpp>
+
+#include "time.hpp"
 
 using namespace std;
 using namespace Packet;
 using namespace boost;
 using namespace google::protobuf;
 
-StripChart::StripChart(QWidget* parent) {
+StripChart::StripChart(QWidget* /*parent*/) {
     _history = nullptr;
     _minValue = 0;
     _maxValue = 1;
@@ -41,13 +41,8 @@ StripChart::StripChart(QWidget* parent) {
     setMouseTracking(true);
 }
 
-StripChart::~StripChart() {
-    // TODO: Fix Deconstructor
-    // function(0);
-}
-
 void StripChart::function(Chart::Function* function) {
-    if (function) {
+    if (function != nullptr) {
         _functions.append(function);
     }
 }
@@ -59,8 +54,7 @@ void StripChart::exportChart() {
 
     // output column names
     outfile << "Time";
-    for (unsigned int x = 0; x < _functions.size(); x++) {
-        auto function = _functions[x];
+    for (auto* function : _functions) {
         outfile << ", " << function->name.toStdString();
     }
     outfile << std::endl;
@@ -68,22 +62,16 @@ void StripChart::exportChart() {
     // output data
 
     // Get the oldest datapoint to use as the starting time
-    unsigned int start = _history->size() - 1;
-    while (!_history->at(start)) {
-        start--;
-    }
-    auto startTime = _history->at(start).get()->timestamp();
+    auto startTime = _history->at(0).get()->timestamp();
 
-    for (unsigned int i = start; i > 0; i--) {
-        if (_history->at(i)) {
-            outfile << RJ::TimestampToSecs(_history->at(i).get()->timestamp() -
-                                           startTime);
+    for (const auto& frame_i : *_history) {
+        if (frame_i) {
+            outfile << RJ::TimestampToSecs(frame_i->timestamp() - startTime);
 
-            for (unsigned int x = 0; x < _functions.size(); x++) {
-                auto function = _functions[x];
+            for (auto* function : _functions) {
                 float v = 0;
 
-                if (function->value(*_history->at(i).get(), v)) {
+                if (function->value(*frame_i, &v)) {
                     outfile << "," << v;
                 }
             }
@@ -94,18 +82,18 @@ void StripChart::exportChart() {
 }
 
 QPointF StripChart::dataPoint(int i, float value) {
-    float x = width() - (i * width() / chartSize);
-    int h = height();
+    auto x = static_cast<float>(i * width()) / static_cast<float>(chartSize);
+    auto h = static_cast<float>(height());
     float y = h - (value - _minValue) * h / (_maxValue - _minValue);
     return QPointF(x, y);
 }
 
 int StripChart::indexAtPoint(const QPoint& point) {
-    return (width() - point.x()) * chartSize / width();
+    return chartSize - 1 - (width() - point.x()) * chartSize / width();
 }
 
-void StripChart::paintEvent(QPaintEvent* e) {
-    if (!_history || _history->empty() || _functions.isEmpty()) {
+void StripChart::paintEvent(QPaintEvent* /*e*/) {
+    if (_history == nullptr || _history->empty() || _functions.isEmpty()) {
         return;
     }
 
@@ -121,12 +109,14 @@ void StripChart::paintEvent(QPaintEvent* e) {
     auto fontHeight = QFontMetrics(p.font()).height();
 
     // X-axis
-    p.setPen(Qt::gray);
-    QPointF x = dataPoint(0, 0);
-    p.drawLine(x, QPointF(0, x.y()));
+    {
+        p.setPen(Qt::gray);
+        QPointF pt = dataPoint(0, 0);
+        p.drawLine(pt, QPointF(0, pt.y()));
+    }
 
-    for (unsigned int x = 0; x < _functions.size(); x++) {
-        auto function = _functions[x];
+    for (int x = 0; x < _functions.size(); x++) {
+        auto* function = _functions[x];
 
         bool haveLast = false;
         QPointF last;
@@ -135,10 +125,17 @@ void StripChart::paintEvent(QPaintEvent* e) {
         } else {
             p.setPen(Qt::red);
         }
-        // for (unsigned int i = 0; i < _history->size(); ++i) {
-        for (unsigned int i = 0; i < chartSize; ++i) {
+
+        int start = 0;
+        if (chartSize < _history->size()) {
+            start = static_cast<int>(_history->size()) - chartSize;
+        }
+
+        for (int i = 0; i < chartSize; ++i) {
             float v = 0;
-            if (_history->at(i) && function->value(*_history->at(i).get(), v)) {
+            int hist_idx = start + i;
+            if (hist_idx < _history->size() && _history->at(hist_idx) &&
+                function->value(*_history->at(hist_idx).get(), &v)) {
                 if (autoRange) {
                     newMin = min(newMin, v);
                     newMax = max(newMax, v);
@@ -153,14 +150,14 @@ void StripChart::paintEvent(QPaintEvent* e) {
                         mappedCursorPos + QPointF(15, 0 + fontHeight * 2 * x),
                         (" V: " + std::to_string(v)).c_str());
 
-                    if (i > 0 && i < _history->size() - 1) {
-                        float v1, v2;
+                    if (hist_idx > 0 && hist_idx < _history->size() - 1) {
+                        float v1 = 0;
+                        float v2 = 0;
+                        function->value(*_history->at(hist_idx - 1).get(), &v1);
+                        function->value(*_history->at(hist_idx + 1).get(), &v2);
 
-                        function->value(*_history->at(i - 1).get(), v1);
-                        function->value(*_history->at(i + 1).get(), v2);
-
-                        auto t1 = _history->at(i - 1)->timestamp();
-                        auto t2 = _history->at(i + 1)->timestamp();
+                        auto t1 = _history->at(hist_idx - 1)->timestamp();
+                        auto t2 = _history->at(hist_idx + 1)->timestamp();
                         auto deltaTime = RJ::TimestampToSecs(t2 - t1);
 
                         auto derivative = (v2 - v1) / (deltaTime);
@@ -192,7 +189,7 @@ void StripChart::paintEvent(QPaintEvent* e) {
 ////////
 
 bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
-                                  float& v) const {
+                                  float* v) const {
     const Message* msg = &frame;
     for (int i = 0; i < path.size(); ++i) {
         const Reflection* ref = msg->GetReflection();
@@ -201,16 +198,15 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
         int tag = path[i];
         const FieldDescriptor* fd = desc->FindFieldByNumber(tag);
         if (fd->type() != FieldDescriptor::TYPE_MESSAGE) {
-            fprintf(stderr, "PointMagnitude: expected a message field\n");
+            std::cerr << "PointMagnitude: expected a message field\n";
             return false;
         }
 
         if (fd->is_repeated()) {
             ++i;
             if (i >= path.size()) {
-                fprintf(stderr,
-                        "PointMagnitude: ends after tag for repeated field "
-                        "without giving index\n");
+                std::cerr << "PointMagnitude: ends after tag for repeated "
+                             "field without giving index\n";
                 return false;
             }
             int j = path[i];
@@ -229,16 +225,17 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
     }
 
     if (msg->GetDescriptor()->name() != "Point") {
-        fprintf(stderr,
-                "PointMagnitude: path ended in a message other than Point\n");
+        std::cerr
+            << "PointMagnitude: path ended in a message other than Point\n";
         return false;
     }
 
-    v = Geometry2d::Point(*static_cast<const Packet::Point*>(msg)).mag();
+    *v = static_cast<float>(
+        Geometry2d::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
     return true;
 }
 
-bool Chart::NumericField::value(const Packet::LogFrame& frame, float& v) const {
+bool Chart::NumericField::value(const Packet::LogFrame& frame, float* v) const {
     const Message* msg = &frame;
     for (int i = 0; i < path.size(); ++i) {
         const Reflection* ref = msg->GetReflection();
@@ -253,9 +250,8 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float& v) const {
                 if (fd->is_repeated()) {
                     ++i;
                     if (i >= path.size()) {
-                        fprintf(stderr,
-                                "NumericField: ends after tag for repeated "
-                                "field without giving index\n");
+                        std::cerr << "NumericField: ends after tag for "
+                                     "repeated field without giving index\n";
                         return false;
                     }
                     int j = path[i];
@@ -266,51 +262,48 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float& v) const {
 
                     switch (fd->type()) {
                         case FieldDescriptor::TYPE_FLOAT:
-                            v = ref->GetRepeatedFloat(*msg, fd, j);
+                            *v = ref->GetRepeatedFloat(*msg, fd, j);
                             break;
 
                         case FieldDescriptor::TYPE_DOUBLE:
-                            v = ref->GetRepeatedDouble(*msg, fd, j);
+                            *v = static_cast<float>(
+                                ref->GetRepeatedDouble(*msg, fd, j));
                             break;
 
                         default:
-                            fprintf(stderr,
-                                    "NumericField: unsupported repeated field "
-                                    "type %d\n",
-                                    fd->type());
+                            std::cerr << "NumericField: unsupported repeated "
+                                         "field type "
+                                      << fd->type() << "\n";
                             return false;
                     }
                 } else {
                     switch (fd->type()) {
                         case FieldDescriptor::TYPE_FLOAT:
-                            v = ref->GetFloat(*msg, fd);
+                            *v = ref->GetFloat(*msg, fd);
                             break;
 
                         case FieldDescriptor::TYPE_DOUBLE:
-                            v = ref->GetDouble(*msg, fd);
+                            *v = static_cast<float>(ref->GetDouble(*msg, fd));
                             break;
 
                         default:
-                            fprintf(stderr,
-                                    "NumericField: unsupported field type %d\n",
-                                    fd->type());
+                            std::cerr << "NumericField: unsupported field type "
+                                      << fd->type() << "\n";
                             return false;
                     }
                 }
                 return true;
-            } else {
-                // Non-message field in the middle of a path
-                fprintf(stderr, "NumericField: expected a message field\n");
-                return false;
             }
+            // Non-message field in the middle of a path
+            std::cerr << "NumericField: expected a message field\n";
+            return false;
         }
 
         if (fd->is_repeated()) {
             ++i;
             if (i >= path.size()) {
-                fprintf(stderr,
-                        "NumericField: ends after tag for repeated field "
-                        "without giving index\n");
+                std::cerr << "NumericField: ends after tag for repeated field "
+                             "without giving index\n";
                 return false;
             }
             int j = path[i];

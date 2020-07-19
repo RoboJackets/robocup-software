@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "Constants.hpp"
 #include "MotionControl.hpp"
 #include "Node.hpp"
@@ -16,6 +17,10 @@ public:
     void run() override;
 
 private:
+    void runMotion(const WorldState& world_state, const GameState& game_state,
+                   const std::array<Planning::Trajectory, Num_Shells>& paths,
+                   const std::array<bool, Num_Shells>& joystick_controlled,
+                   std::array<MotionSetpoint, Num_Shells>* setpoints);
     Context* _context;
-    std::vector<std::optional<MotionControl>> _controllers;
+    std::vector<MotionControl> _controllers{};
 };

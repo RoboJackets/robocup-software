@@ -16,10 +16,17 @@ static const float ShootScale = 5;
 SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragMode = DRAG_NONE;
     _dragRobot = -1;
-    _dragRobotBlue = false;
+    _dragRobotBlue = 0;
 }
 
+void SimFieldView::setContext(Context* context) { this->_context = context; }
+
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
+    // Ignore mouse events in the field if not in sim
+    if (!_context->game_settings.simulation) {
+        return;
+    }
+
     Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
 
     std::shared_ptr<LogFrame> frame = currentFrame();
@@ -41,7 +48,8 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         }
 
         if (_dragRobot < 0) {
-            placeBall(me->pos());
+            _context->ball_command = me->pos();
+            _context->screen_to_world_command = _screenToWorld;
         }
 
         _dragMode = DRAG_PLACE;
@@ -84,12 +92,13 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 robot_replace->set_x((_screenToWorld * me->pos()).x());
                 robot_replace->set_y((_screenToWorld * me->pos()).y());
                 robot_replace->set_id(_dragRobot);
-                robot_replace->set_yellowteam(!_dragRobotBlue);
+                robot_replace->set_yellowteam(_dragRobotBlue == 0);
                 robot_replace->set_dir(0.0);
 
-                sendSimCommand(simPacket);
+                _context->grsim_command = simPacket;
             } else {
-                placeBall(me->pos());
+                _context->ball_command = me->pos();
+                _context->screen_to_world_command = _screenToWorld;
             }
             break;
 
@@ -99,43 +108,20 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
     update();
 }
 
-void SimFieldView::mouseReleaseEvent(QMouseEvent* me) {
+void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
     if (_dragMode == DRAG_SHOOT) {
         grSim_Packet simPacket;
         grSim_BallReplacement* ball_replace =
             simPacket.mutable_replacement()->mutable_ball();
 
-        ball_replace->mutable_vel()->set_x(
-            _teamToWorld.transformDirection(_shot).x());
-        ball_replace->mutable_vel()->set_y(
-            _teamToWorld.transformDirection(_shot).y());
-        sendSimCommand(simPacket);
+        ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
+        ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
+        _context->grsim_command = simPacket;
 
         update();
     }
 
     _dragMode = DRAG_NONE;
-}
-
-void SimFieldView::placeBall(QPointF pos) {
-    grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace =
-        simPacket.mutable_replacement()->mutable_ball();
-
-    ball_replace->mutable_pos()->set_x((_screenToWorld * pos).x());
-    ball_replace->mutable_pos()->set_y((_screenToWorld * pos).y());
-    ball_replace->mutable_vel()->set_x(0);
-    ball_replace->mutable_vel()->set_y(0);
-
-    sendSimCommand(simPacket);
-}
-
-void SimFieldView::sendSimCommand(const grSim_Packet& cmd) {
-    std::string out;
-    cmd.SerializeToString(&out);
-    _simCommandSocket.writeDatagram(&out[0], out.size(),
-                                    QHostAddress(QHostAddress::LocalHost),
-                                    SimCommandPort);
 }
 
 void SimFieldView::drawTeamSpace(QPainter& p) {

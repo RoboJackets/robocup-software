@@ -21,7 +21,7 @@ NelderMead2D::NelderMead2D(NelderMead2DConfig& config)
  *
  * @note This is most ikely not the function you are looking for to find
  *       the max. This is used when you want to split the optimization
- *       accross multiple time steps
+ *       across multiple time steps
  */
 bool NelderMead2D::singleStep() {
     // Order vectors by score descending

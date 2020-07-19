@@ -1,11 +1,4 @@
-#include <gameplay/GameplayModule.hpp>
-#include <ui/StyleSheetManager.hpp>
-
-#include <assert.h>
 #include <fcntl.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <QApplication>
@@ -14,6 +7,12 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QString>
+#include <cassert>
+#include <csignal>
+#include <cstdio>
+#include <cstring>
+#include <gameplay/GameplayModule.hpp>
+#include <ui/StyleSheetManager.hpp>
 
 #include "Configuration.hpp"
 #include "ui/MainWindow.hpp"
@@ -36,13 +35,10 @@ void usage(const char* prog) {
             "\t-vlog <file>: view <file> instead of launching normally\n");
     fprintf(stderr, "\t-ng:          no goalie\n");
     fprintf(stderr, "\t-sim:         use simulator\n");
-    fprintf(stderr, "\t-freq:        specify radio frequency (918 or 916)\n");
     fprintf(stderr, "\t-nolog:       don't write log files\n");
     fprintf(stderr, "\t-noref:       don't use external referee commands\n");
     fprintf(stderr,
             "\t-defend:      specify half of field to defend (plus or minus)\n");
-    fprintf(stderr,
-            "\t-vision       specify the vision channel (1,2, or full)\n");
     exit(0);
 }
 
@@ -76,7 +72,6 @@ int main(int argc, char* argv[]) {
     bool noref = false;
     bool defendPlus = false;
     string readLogFile;
-    Processor::VisionChannel visionChannel = Processor::VisionChannel::full;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -143,20 +138,6 @@ int main(int argc, char* argv[]) {
                 printf("Invalid option for defendX\n");
                 usage(argv[0]);
             }
-        } else if (strcmp(var, "-vision") == 0) {
-            if (i + 1 >= argc) {
-                printf("No vision channel specified after -vision\n");
-                usage(argv[0]);
-            }
-            i++;
-            if (strcmp(argv[i], "1") == 0) {
-                visionChannel = Processor::VisionChannel::primary;
-            } else if (strcmp(argv[i], "2") == 0) {
-                visionChannel = Processor::VisionChannel::secondary;
-            } else if (strcmp(argv[i], "full") != 0) {
-                printf("Invalid option for vision channel\n");
-                usage(argv[0]);
-            }
         } else {
             printf("Not a valid flag: %s\n", argv[i]);
             usage(argv[0]);
@@ -177,9 +158,17 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<Configuration> config =
         Configuration::FromRegisteredConfigurables();
 
-    auto processor =
-        std::make_unique<Processor>(sim, defendPlus, visionChannel, blueTeam, readLogFile);
-    processor->refereeModule()->useExternalReferee(!noref);
+    auto processor = std::make_unique<Processor>(sim, blueTeam, readLogFile);
+
+    Context* context = processor->context();
+    context->game_settings.simulation = sim;
+    context->game_settings.use_external_referee = !noref;
+    context->game_settings.requestBlueTeam = blueTeam;
+    context->game_settings.defendPlusX = defendPlus;
+    context->game_settings.requestGoalieID = 0;
+
+    // If we're reading a log file, we should start off paused.
+    context->game_settings.paused = !readLogFile.empty();
 
     // Load config file
     QString error;
@@ -209,31 +198,21 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (!radioFreq.isEmpty()) {
-        if (radioFreq == "916")
-            win->setRadioChannel(RadioChannels::MHz_916);
-        else if (radioFreq == "918")
-            win->setRadioChannel(RadioChannels::MHz_918);
-        else
-            printf("Cannot recognize radio frequency : %s\n",
-                   radioFreq.toStdString().c_str());
-    }
-
     win->logFileChanged();
 
-    processor->start();
+    std::thread processor_thread(&Processor::run, processor.get());
 
     while (
         !processor
              ->isInitialized()) {  // Wait until processor finishes initializing
     }
 
-    if (playbookFile.size() > 0)
+    if (!playbookFile.empty())
         processor->gameplayModule()->loadPlaybook(playbookFile);
 
     // Sets the initial stylesheet for the application
     // based on the environment variable "SOCCER_THEME"
-    if (getenv("SOCCER_THEME")) {
+    if (getenv("SOCCER_THEME") != nullptr) {
         StyleSheetManager::changeStyleSheet(win.get(),
                                             QString(getenv("SOCCER_THEME")));
     }
@@ -242,8 +221,9 @@ int main(int argc, char* argv[]) {
 
     processor->gameplayModule()->setupUI();
 
-    int ret = app.exec();
+    int ret = QApplication::exec();
     processor->stop();
+    processor_thread.join();
 
     return ret;
 }

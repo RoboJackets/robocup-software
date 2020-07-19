@@ -1,14 +1,13 @@
 #pragma once
 
-#include <optional>
-
+#include <Configuration.hpp>
 #include <QMainWindow>
 #include <QTime>
 #include <QTimer>
+#include <mutex>
+#include <optional>
 
-#include <Configuration.hpp>
 #include "FieldView.hpp"
-
 #include "Processor.hpp"
 #include "rc-fshare/rtp.hpp"
 #include "ui_MainWindow.h"
@@ -16,8 +15,6 @@
 class TestResultTab;
 class StripChart;
 class ConfigBool;
-
-enum RadioChannels { MHz_916, MHz_918 };
 
 namespace {
 // Style sheets used for live/non-live controls
@@ -72,14 +69,12 @@ public:
     // Call this to update the status bar when the log file has changed
     void logFileChanged();
 
-    void setRadioChannel(RadioChannels channel);
-
     QTimer updateTimer;
 
     void setUseRefChecked(bool use_ref);
 
 private Q_SLOTS:
-    void addLayer(int i, QString name, bool checked);
+    void addLayer(int i, const QString& name, bool checked);
     void updateViews();
 
     void on_fieldView_robotSelected(int shell);
@@ -109,15 +104,6 @@ private Q_SLOTS:
     void on_action90_triggered();
     void on_action180_triggered();
     void on_action270_triggered();
-
-    /// Radio channels
-    void on_action916MHz_triggered();
-    void on_action918MHz_triggered();
-
-    /// Vision port
-    void on_actionVisionPrimary_Half_triggered();
-    void on_actionVisionSecondary_Half_triggered();
-    void on_actionVisionFull_Field_triggered();
 
     /// Simulator commands
     void on_actionCenterBall_triggered();
@@ -163,6 +149,12 @@ private Q_SLOTS:
     void on_debugLayers_itemChanged(QListWidgetItem* item);
     void on_debugLayers_customContextMenuRequested(const QPoint& pos);
 
+    /// Testing Tab
+    void on_testRun_clicked();
+    void on_addToTable_clicked();
+    void on_removeFromTable_clicked();
+    void on_testNext_clicked();
+
     /// Configuration
     void on_configTree_itemChanged(QTreeWidgetItem* item, int column);
     void on_loadConfig_clicked();
@@ -193,29 +185,30 @@ Q_SIGNALS:
 private:
     void updateStatus();
     void updateFromRefPacket(bool haveExternalReferee);
-    static std::string formatLabelBold(Side side, std::string label);
+    static std::string formatLabelBold(Side side, const std::string& label);
 
-    typedef enum { Status_OK, Status_Warning, Status_Fail } StatusType;
+    enum class StatusType { Status_OK, Status_Warning, Status_Fail };
 
-    void status(QString text, StatusType status);
+    void status(const QString& text, StatusType status);
     void updateRadioBaseStatus(bool usbRadio);
     void channel(int n);
+    void updateDebugLayers(const Packet::LogFrame& frame);
 
-    Ui_MainWindow _ui;
-    const QStandardItemModel* goalieModel;
+    Ui_MainWindow _ui{};
+    const QStandardItemModel* goalieModel{};
 
     Processor* const _processor;
-    Configuration* _config;
+    Configuration* _config{};
 
     // Log history, copied from Logger.
     // This is used by other controls to get log data without having to copy it
     // again from the Logger.
-    std::vector<std::shared_ptr<Packet::LogFrame> > _history;
+    std::vector<std::shared_ptr<Packet::LogFrame> > _history{};
 
     // Longer log history, copied from Logger.
     // This is used specificially via StripChart and ProtobufTree
     // To export a larger amount of data.
-    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory;
+    std::vector<std::shared_ptr<Packet::LogFrame> > _longHistory{};
 
     // When true, External Referee is automatically set.
     // This is cleared by manually changing the checkbox or after the
@@ -223,8 +216,8 @@ private:
     bool _autoExternalReferee;
 
     // Tree items that are not in LogFrame
-    QTreeWidgetItem* _frameNumberItem;
-    QTreeWidgetItem* _elapsedTimeItem;
+    QTreeWidgetItem* _frameNumberItem{};
+    QTreeWidgetItem* _elapsedTimeItem{};
 
     /// playback rate of the viewer - a value of 1 means realtime
     std::optional<double> _playbackRate;
@@ -239,17 +232,17 @@ private:
 
     RJ::Time _lastUpdateTime;
 
-    QLabel* _currentPlay;
-    QLabel* _logFile;
-    QLabel* _viewFPS;
-    QLabel* _procFPS;
-    QLabel* _logMemory;
+    QLabel* _currentPlay{};
+    QLabel* _logFile{};
+    QLabel* _viewFPS{};
+    QLabel* _procFPS{};
+    QLabel* _logMemory{};
 
     // QActionGroups for Radio Menu Actions
     std::map<std::string, QActionGroup*> qActionGroups{};
 
     // maps robot shell IDs to items in the list
-    std::map<int, QListWidgetItem*> _robotStatusItemMap{};
+    std::map<int, std::unique_ptr<QListWidgetItem>> _robotStatusItemMap{};
 
     /// the play, pause, ffwd, etc buttons
     std::vector<QPushButton*> _logPlaybackButtons{};
@@ -257,4 +250,7 @@ private:
     std::vector<QComboBox*> _robotConfigQComboBoxes{};
 
     std::vector<QComboBox*> _robotDebugResponseQComboBoxes{};
+
+    std::mutex* _context_mutex;
+    Context* _context;
 };
