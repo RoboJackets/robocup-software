@@ -54,7 +54,8 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 }
 
 VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg() const {
-    const bool us_blue = config_client_.gameState().blue_team;
+//    const bool us_blue = config_client_.gameState().blue_team;
+    const bool us_blue = false;
 
     WorldStateMsg msg{};
     msg.ball = BuildBallStateMsg();

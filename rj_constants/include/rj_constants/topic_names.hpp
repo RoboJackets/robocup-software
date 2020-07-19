@@ -12,6 +12,10 @@ constexpr auto kGameSettingsSrv = "config/set_game_settings";
 constexpr auto kFieldDimensionsSrv = "config/set_field_dimensions";
 }  // namespace config_server::topics
 
+namespace referee::topics {
+constexpr auto kTeamColorPub = "referee/team_color";
+}  // namespace referee::topics
+
 namespace vision_receiver::topics {
 constexpr auto kRawProtobufPub = "vision_receiver/raw_protobuf";
 constexpr auto kDetectionFramePub = "vision_receiver/detection_frame";

@@ -167,12 +167,12 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        const WorldStateMsg::UniquePtr world_state_msg = _world_state_queue->Get();
+        const WorldStateMsg::SharedPtr world_state_msg = _world_state_queue->Get();
         if (world_state_msg != nullptr) {
             _context.world_state = *world_state_msg;
         }
 
-        const TimeMsg::UniquePtr last_vision_time =
+        const TimeMsg::SharedPtr last_vision_time =
             _last_vision_time_queue->Get();
         if (last_vision_time != nullptr) {
             curStatus.lastVisionTime = RJ::FromROSTime(*last_vision_time);

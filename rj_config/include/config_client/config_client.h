@@ -3,10 +3,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/game_state.hpp>
 #include <rj_msgs/srv/set_field_dimensions.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
-#include <rj_msgs/srv/set_game_state.hpp>
 
 namespace config_client {
 using GameSettingsMsg = rj_msgs::msg::GameSettings;
@@ -16,10 +14,6 @@ using SetGameSettingsReq = SetGameSettingsSrv::Request;
 using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
 using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
 using SetFieldDimensionsReq = SetFieldDimensionsSrv::Request;
-
-using GameStateMsg = rj_msgs::msg::GameState;
-using SetGameStateSrv = rj_msgs::srv::SetGameState;
-using SetGameStateReq = SetGameStateSrv::Request;
 
 // TODO(1520): Add callback functionality to ConfigClient.
 
@@ -37,10 +31,6 @@ public:
 
     [[nodiscard]] const FieldDimensionsMsg& fieldDimensions() const {
         return field_dimensions_.value();
-    }
-
-    [[nodiscard]] const GameStateMsg& gameState() const {
-        return game_state_.value();
     }
 
     /**
@@ -61,16 +51,6 @@ public:
     [[nodiscard]] const FieldDimensionsMsg& fieldDimensionsThreaded() const {
         std::lock_guard<std::mutex> guard{mutex_};
         return field_dimensions_.value();
-    }
-
-    /**
-     * @brief Thread safe version of gameState(), returns
-     * game_state_ but uses a mutex.
-     * @return
-     */
-    [[nodiscard]] const GameStateMsg& gameStateThreaded() const {
-        std::lock_guard<std::mutex> guard{mutex_};
-        return game_state_.value();
     }
 
     /**
@@ -105,13 +85,6 @@ public:
      */
     void updateFieldDimensions(const FieldDimensionsMsg& msg);
 
-    /**
-     * @brief Sends a service call to ConfigServer to update the
-     * GameState.
-     * @param msg
-     */
-    void updateGameState(const GameStateMsg& msg);
-
 private:
     rclcpp::Node* node_;
 
@@ -122,10 +95,6 @@ private:
     rclcpp::Subscription<FieldDimensionsMsg>::SharedPtr field_dimensions_sub_;
     rclcpp::Client<SetFieldDimensionsSrv>::SharedPtr field_dimensions_client_;
     std::optional<FieldDimensionsMsg> field_dimensions_;
-
-    rclcpp::Subscription<GameStateMsg>::SharedPtr game_state_sub_;
-    rclcpp::Client<SetGameStateSrv>::SharedPtr game_state_client_;
-    std::optional<GameStateMsg> game_state_;
 
     mutable std::mutex mutex_;
 };

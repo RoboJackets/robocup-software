@@ -8,6 +8,7 @@
 #include <rj_common/Utils.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_constants/topic_names.hpp>
 #include <stdexcept>
 
 using RefereeModuleEnums::Command;
@@ -44,7 +45,16 @@ Referee::Referee(Context* const context)
       ballPlacementX{},
       ballPlacementY{},
       _recv_buffer{},
-      _asio_socket{_io_service} {}
+      _asio_socket{_io_service} {
+    const auto latching_qos = rclcpp::QoS(1).transient_local();
+
+    node_ = rclcpp::Node::make_shared("referee");
+    team_color_pub_ = node_->create_publisher<TeamColorMsg>(
+        referee::topics::kTeamColorPub, latching_qos);
+
+    // Set ourselves to yellow team by default for now.
+    blueTeam(false);
+}
 
 void Referee::start() {
     setupRefereeMulticast();

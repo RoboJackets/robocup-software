@@ -22,7 +22,7 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
 
 using namespace Geometry2d;
 void PlannerNode::run() {
-    const WorldStateMsg::UniquePtr world_state_msg = world_state_queue_->Get();
+    const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->Get();
     if (world_state_msg == nullptr) {
         return;
     }

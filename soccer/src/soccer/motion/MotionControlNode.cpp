@@ -15,7 +15,7 @@ MotionControlNode::MotionControlNode(Context* context) : _context(context) {
 }
 
 void MotionControlNode::run() {
-    const WorldStateMsg::UniquePtr world_state_msg = world_state_queue_->Get();
+    const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->Get();
     if (world_state_msg == nullptr) {
         return;
     }

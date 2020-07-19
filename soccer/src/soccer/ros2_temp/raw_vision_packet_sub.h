@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ros2_temp/async_message_queue.h>
+#include <rj_topic_utils/async_message_queue.h>
 
 #include <Context.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -28,8 +28,8 @@ public:
 private:
     Context* context_;
 
-    using RawProtobufMsgQueue =
-        AsyncMessageQueue<RawProtobufMsg, MessagePolicy::kQueue>;
+    using RawProtobufMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue>;
     RawProtobufMsgQueue::UniquePtr queue_;
 };
 }  // namespace ros2_temp

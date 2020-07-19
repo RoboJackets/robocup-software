@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ros2_temp/async_message_queue.h>
+#include <rj_topic_utils/async_message_queue.h>
 
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/world_state.hpp>
@@ -27,8 +27,7 @@ private:
     Context* _context;
     std::vector<MotionControl> _controllers{};
     using WorldStateMsg = rj_msgs::msg::WorldState;
-    using AsyncWorldStateMsgQueue =
-        ros2_temp::AsyncMessageQueue<WorldStateMsg,
-                                     ros2_temp::MessagePolicy::kLatest>;
+    using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        WorldStateMsg, rj_topic_utils::MessagePolicy::kLatest>;
     AsyncWorldStateMsgQueue::UniquePtr world_state_queue_;
 };

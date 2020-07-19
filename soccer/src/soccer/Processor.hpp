@@ -5,19 +5,19 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
-#include <ros2_temp/async_message_queue.h>
 #include <ros2_temp/raw_vision_packet_sub.h>
 #include <ros2_temp/soccer_config_client.h>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-#include <rj_msgs/msg/world_state.hpp>
 #include <Logger.hpp>
 #include <Referee.hpp>
 #include <SystemState.hpp>
 #include <mutex>
 #include <optional>
+#include <rj_msgs/msg/world_state.hpp>
+#include <rj_topic_utils/async_message_queue.h>
 #include <vector>
 
 #include "Context.hpp"
@@ -179,9 +179,10 @@ private:
     // ROS2 temporary modules
     using TimeMsg = builtin_interfaces::msg::Time;
     using WorldStateMsg = rj_msgs::msg::WorldState;
-    using AsyncTimeMsgQueue =
-        ros2_temp::AsyncMessageQueue<TimeMsg, ros2_temp::MessagePolicy::kLatest>;
-    using AsyncWorldStateMsgQueue = ros2_temp::AsyncMessageQueue<WorldStateMsg, ros2_temp::MessagePolicy::kLatest>;
+    using AsyncTimeMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        TimeMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
+    using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
 
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
     ros2_temp::RawVisionPacketSub::UniquePtr _raw_vision_packet_sub;

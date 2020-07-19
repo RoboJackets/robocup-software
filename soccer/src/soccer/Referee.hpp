@@ -7,8 +7,10 @@
 #include <boost/config.hpp>
 #include <cstdint>
 #include <mutex>
+#include <rclcpp/rclcpp.hpp>
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/Utils.hpp>
+#include <rj_msgs/msg/team_color.hpp>
 #include <thread>
 #include <vector>
 
@@ -17,6 +19,8 @@
 #include "Node.hpp"
 #include "SystemState.hpp"
 #include "TeamInfo.hpp"
+
+using TeamColorMsg = rj_msgs::msg::TeamColor;
 
 /**
  * @brief A packet we received over the network from ssl-refbox
@@ -105,7 +109,14 @@ protected:
     void update();
 
     // Unconditional setter for the team color.
-    void blueTeam(bool value) { _context->game_state.blueTeam = value; }
+    void blueTeam(bool value) {
+        _context->game_state.blueTeam = value;
+
+        std::cout << "setting blueTeam to " << value << std::endl;
+        TeamColorMsg team_color_msg =
+            rj_msgs::build<TeamColorMsg>().is_blue(value);
+        team_color_pub_->publish(team_color_msg);
+    }
     void spinKickWatcher(const BallState& ball);
 
     enum KickDetectState {
@@ -148,6 +159,9 @@ private:
     boost::asio::io_service _io_service;
     boost::asio::ip::udp::socket _asio_socket;
     boost::asio::ip::udp::endpoint _sender_endpoint;
+
+    rclcpp::Node::SharedPtr node_;
+    rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
 
     void setupRefereeMulticast();
     void startReceive();

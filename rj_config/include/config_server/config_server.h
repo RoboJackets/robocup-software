@@ -3,10 +3,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-#include <rj_msgs/msg/game_state.hpp>
 #include <rj_msgs/srv/set_field_dimensions.hpp>
 #include <rj_msgs/srv/set_game_settings.hpp>
-#include <rj_msgs/srv/set_game_state.hpp>
 
 namespace config_server {
 using GameSettingsMsg = rj_msgs::msg::GameSettings;
@@ -18,11 +16,6 @@ using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
 using SetFieldDimensionsSrv = rj_msgs::srv::SetFieldDimensions;
 using SetFieldDimensionsSrvReqPtr = SetFieldDimensionsSrv::Request::SharedPtr;
 using SetFieldDimensionsSrvRespPtr = SetFieldDimensionsSrv::Response::SharedPtr;
-
-using GameStateMsg = rj_msgs::msg::GameState;
-using SetGameStateSrv = rj_msgs::srv::SetGameState;
-using SetGameStateSrvReqPtr = SetGameStateSrv::Request::SharedPtr;
-using SetGameStateSrvRespPtr = SetGameStateSrv::Response::SharedPtr;
 
 /**
  * @brief This node acts as a configuration server, serving all the configs
@@ -62,21 +55,8 @@ private:
      */
     void broadcastFieldDimensions();
 
-    /**
-     * @brief Callback for the GameState service.
-     * Updates game_state_.
-     * @param msg
-     */
-    void setGameStateCallback(const GameStateMsg& msg);
-
-    /**
-     * @brief Publishes game_state_.
-     */
-    void broadcastGameState();
-
     GameSettingsMsg game_settings_;
     FieldDimensionsMsg field_dimensions_;
-    GameStateMsg game_state_;
 
     rclcpp::Service<SetGameSettingsSrv>::SharedPtr game_settings_server_;
     rclcpp::Publisher<GameSettingsMsg>::SharedPtr game_settings_publisher_;
@@ -84,8 +64,5 @@ private:
     rclcpp::Service<SetFieldDimensionsSrv>::SharedPtr field_dimensions_server_;
     rclcpp::Publisher<FieldDimensionsMsg>::SharedPtr
         field_dimensions_publisher_;
-
-    rclcpp::Service<SetGameStateSrv>::SharedPtr game_state_server_;
-    rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_publisher_;
 };
 }  // namespace config_server

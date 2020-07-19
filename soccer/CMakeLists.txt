@@ -135,11 +135,13 @@ set(ROBOCUP_DEPS_LIBRARIES
     rj_protos
     rc-fshare
     rj_param_utils
+    rj_topic_utils
     config_client
     )
 
 # ---- vision_filter ----
 set(RJ_VISION_FILTER_DEPS_LIBRARIES
+    rj_param_utils
     robocup
     )
 
