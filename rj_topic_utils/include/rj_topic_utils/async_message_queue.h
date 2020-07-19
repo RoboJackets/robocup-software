@@ -45,7 +45,8 @@ public:
     std::vector<std::unique_ptr<T>> GetAll();
 
 private:
-    std::shared_ptr<MessageQueueNode<T, MessagePolicy::kQueue>> queue_;
+    rclcpp::Node::SharedPtr node_;
+    MessageQueue<T, MessagePolicy::kQueue> queue_;
     rclcpp::executors::SingleThreadedExecutor executor_;
     std::thread worker_;
 };
@@ -76,7 +77,8 @@ public:
     std::unique_ptr<T> Get();
 
 private:
-    std::shared_ptr<MessageQueueNode<T, MessagePolicy::kQueue, 1>> queue_;
+    rclcpp::Node::SharedPtr node_;
+    MessageQueue<T, MessagePolicy::kQueue, 1> queue_;
     rclcpp::executors::SingleThreadedExecutor executor_;
     std::thread worker_;
 };
@@ -95,8 +97,10 @@ public:
         std::unique_ptr<AsyncMessageQueue<T, MessagePolicy::kLatest>>;
 
     AsyncMessageQueue(const std::string& node_name,
-                      const std::string& topic_name,
-                      std::shared_ptr<T> default_value = nullptr);
+                      const std::string& topic_name, const T& default_value);
+
+    AsyncMessageQueue(const std::string& node_name,
+                      const std::string& topic_name);
 
     /**
      * @brief Returns a shared_ptr to the latest received message, or nullptr
@@ -107,11 +111,12 @@ public:
     std::shared_ptr<T> Get();
 
 private:
-    std::shared_ptr<MessageQueueNode<T, MessagePolicy::kLatest>> queue_;
+    rclcpp::Node::SharedPtr node_;
+    MessageQueue<T, MessagePolicy::kLatest> queue_;
     rclcpp::executors::SingleThreadedExecutor executor_;
     std::thread worker_;
 };
 
 }  // namespace rj_topic_utils
 
-#include "async_message_queue_impl.h"
+#include <rj_topic_utils/impl/async_message_queue_impl.h>

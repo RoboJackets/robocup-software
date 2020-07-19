@@ -24,9 +24,9 @@ constexpr int kUnboundedQueueSize = -1;
  */
 template <typename T, MessagePolicy Policy,
           int queue_size = kUnboundedQueueSize>
-class MessageQueueNode : public rclcpp::Node {
+class MessageQueue {
 public:
-    MessageQueueNode() {
+    MessageQueue() {
         static_assert(Policy == MessagePolicy::kQueue ||
                       Policy == MessagePolicy::kLatest);
     }
@@ -34,25 +34,25 @@ public:
 
 // ============================================================================
 /**
- * @brief Partially specialized template of MessageQueueNode for
+ * @brief Partially specialized template of MessageQueue for
  * MessagePolicy::kQueue.
  * @tparam T The message type to use.
  * @tparam queue_size How large the queue should be.
  */
 template <typename T>
-class MessageQueueNode<T, MessagePolicy::kQueue, kUnboundedQueueSize>
-    : public rclcpp::Node {
+class MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize> {
 public:
     using SharedPtr = std::shared_ptr<
-        MessageQueueNode<T, MessagePolicy::kQueue, kUnboundedQueueSize>>;
+        MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>>;
     /**
-     * @brief Constructor for MessageQueueNode.
-     * @param name Name of the node.
+     * @brief Constructor for MessageQueue.
+     * @param node The node.
      * @param topic Topic name to subscribe to.
      * @param qos_queue_size What queue size to use for QoS.
      */
-    MessageQueueNode(const std::string& name, const std::string& topic,
-                     size_t qos_queue_size = 10);
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 size_t qos_queue_size = 10,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
 
     /**
      * @brief Inserts all of the messages in the queue into the passed in
@@ -81,6 +81,7 @@ public:
     [[nodiscard]] int size() const { return queue_.size(); }
 
 private:
+    rclcpp::Node* node_;
     typename rclcpp::Subscription<T>::SharedPtr sub_;
     std::deque<std::unique_ptr<T>> queue_;
     std::mutex queue_mutex_;
@@ -88,21 +89,22 @@ private:
 
 // ============================================================================
 /**
- * @brief Partially specialized template of MessageQueueNode for
+ * @brief Partially specialized template of MessageQueue for
  * MessagePolicy::kQueue, when queue size is 1.
  * @tparam T The message type to use.
  */
 template <typename T>
-class MessageQueueNode<T, MessagePolicy::kQueue, 1> : public rclcpp::Node {
+class MessageQueue<T, MessagePolicy::kQueue, 1> {
 public:
     using SharedPtr =
-        std::shared_ptr<MessageQueueNode<T, MessagePolicy::kQueue, 1>>;
+        std::shared_ptr<MessageQueue<T, MessagePolicy::kQueue, 1>>;
     /**
-     * @brief Constructor for MessageQueueNode.
-     * @param name
-     * @param topic
+     * @brief Constructor for MessageQueue.
+     * @param node Node to create the subscriber.
+     * @param topic Name of the topic.
      */
-    MessageQueueNode(const std::string& name, const std::string& topic);
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
 
     /**
      * @brief Returns a unique_ptr to item in the queue, emptying the queue. If
@@ -122,6 +124,7 @@ public:
     std::unique_ptr<T> GetThreaded();
 
 private:
+    rclcpp::Node* node_;
     typename rclcpp::Subscription<T>::SharedPtr sub_;
     std::unique_ptr<T> latest_;
     std::mutex latest_mutex_;
@@ -129,22 +132,36 @@ private:
 
 // ============================================================================
 /**
- * @brief Partially specialized template of MessageQueueNode for
+ * @brief Partially specialized template of MessageQueue for
  * MessagePolicy::kQueue.
  * @tparam T The message type to use.
  */
 template <typename T>
-class MessageQueueNode<T, MessagePolicy::kLatest> : public rclcpp::Node {
+class MessageQueue<T, MessagePolicy::kLatest> {
 public:
-    using SharedPtr = std::shared_ptr<MessageQueueNode>;
+    using SharedPtr = std::shared_ptr<MessageQueue>;
+
     /**
-     * @brief Constructor for MessageQueueNode.
-     * @param name Name of the node.
+     * @brief Constructor for MessageQueue.
+     * @param node Node to create the subscriber in.
+     * @param topic What topic to subscribe to.
+     * @param subscription_options The subscription options to pass to the
+     * subscriber.
+     */
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
+
+    /**
+     * @brief Constructor for MessageQueue.
+     * @param node Node to create the subscriber in.
      * @param topic What topic to subscribe to.
      * @param default_value The default value to use.
+     * @param subscription_options The subscription options to pass to the
+     * subscriber.
      */
-    MessageQueueNode(const std::string& name, const std::string& topic,
-                     std::shared_ptr<T> default_value = nullptr);
+    MessageQueue(rclcpp::Node* node, const std::string& topic,
+                 const T& default_value,
+                 const rclcpp::SubscriptionOptions& subscription_options = {});
 
     /**
      * @brief Returns the latest message in the queue if we have received one
@@ -166,6 +183,7 @@ public:
     std::shared_ptr<T> GetThreaded();
 
 private:
+    rclcpp::Node* node_;
     typename rclcpp::Subscription<T>::SharedPtr sub_;
     std::shared_ptr<T> latest_;
     std::mutex latest_mutex_;
@@ -173,4 +191,4 @@ private:
 
 }  // namespace rj_topic_utils
 
-#include "message_queue_impl.h"
+#include <rj_topic_utils/impl/message_queue_impl.h>

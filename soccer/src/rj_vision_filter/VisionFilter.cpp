@@ -15,6 +15,8 @@ DEFINE_FLOAT64(kVisionFilterParamModule, publish_hz, 120.0,
 VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     : rclcpp::Node{"vision_filter", options},
       config_client_{this},
+      team_color_queue_{this, referee::topics::kTeamColorPub,
+                        rj_msgs::build<TeamColorMsg>().is_blue(true)},
       param_provider_{this, kVisionFilterParamModule} {
     // Create a timer that publishes the current state of the ball + robots.
     publish_timer_callback_group_ = this->create_callback_group(
@@ -53,10 +55,8 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     last_updated_pub_ = create_publisher<TimeMsg>(topics::kLastUpdatedPub, 10);
 }
 
-VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg() const {
-//    const bool us_blue = config_client_.gameState().blue_team;
-    const bool us_blue = false;
-
+VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg(
+    bool us_blue) const {
     WorldStateMsg msg{};
     msg.ball = BuildBallStateMsg();
     msg.our_robots = BuildRobotStateMsgs(us_blue);
@@ -104,12 +104,14 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
 }
 
 void VisionFilter::PublishState() {
-    if (!config_client_.connectedThreaded()) {
+    std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.GetThreaded();
+    if (team_color == nullptr) {
+        EZ_WARN_STREAM("Returning because team_color is nullptr");
         return;
     }
 
     WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>();
-    *msg = BuildWorldStateMsg();
+    *msg = BuildWorldStateMsg(team_color->is_blue);
     world_state_pub_->publish(std::move(msg));
 
     if (last_update_time_) {

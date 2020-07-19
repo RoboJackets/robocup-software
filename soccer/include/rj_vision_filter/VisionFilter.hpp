@@ -2,11 +2,13 @@
 
 #include <config_client/config_client.h>
 #include <rj_param_utils/ros2_param_provider.h>
+#include <rj_topic_utils/message_queue.h>
 
 #include <atomic>
 #include <mutex>
 #include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
+#include <rj_msgs/msg/team_color.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <rj_utils/concurrent_queue.hpp>
 #include <rj_vision_filter/camera/CameraFrame.hpp>
@@ -15,6 +17,8 @@
 #include <vector>
 
 namespace vision_filter {
+using TeamColorMsg = rj_msgs::msg::TeamColor;
+
 /**
  * Uses a seperate thread to filter the vision measurements into
  * a smoother velocity/position estimate for both the ball and robots.
@@ -52,10 +56,11 @@ private:
 
     /**
      * @brief Creates a WorldStateMsg from the robot and ball Kalman filters.
+     * @param us_blue True if we are blue.
      * @return The WorldStateMsg corresponding to the current VisionFilter
      * state.
      */
-    WorldStateMsg BuildWorldStateMsg() const;
+    WorldStateMsg BuildWorldStateMsg(bool us_blue) const;
 
     /**
      * @brief Creates a BallStateMsg from the ball Kalman filter.
@@ -120,6 +125,10 @@ private:
 
     rclcpp::CallbackGroup::SharedPtr publish_timer_callback_group_;
     rclcpp::TimerBase::SharedPtr publish_timer_;
+    using TeamColorMsgQueue =
+        rj_topic_utils::MessageQueue<TeamColorMsg,
+                                     rj_topic_utils::MessagePolicy::kLatest>;
+    TeamColorMsgQueue team_color_queue_;
 
     rclcpp::CallbackGroup::SharedPtr predict_timer_callback_group_;
     rclcpp::TimerBase::SharedPtr predict_timer_;
