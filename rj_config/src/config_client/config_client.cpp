@@ -29,24 +29,13 @@ ConfigClient::ConfigClient(rclcpp::Node* node)
         field_dimensions_cb);
     field_dimensions_client_ = node->create_client<SetFieldDimensionsSrv>(
         config_server::topics::kFieldDimensionsSrv);
-
-    const auto game_state_cb = [this](GameStateMsg::UniquePtr msg) {
-        std::lock_guard<std::mutex> guard{mutex_};
-        game_state_ = *msg;
-    };
-    game_state_sub_ = node->create_subscription<GameStateMsg>(
-        config_server::topics::kGameStatePub, latching_qos, game_state_cb);
-    game_state_client_ = node->create_client<SetGameStateSrv>(
-        config_server::topics::kGameStateSrv);
 }
 
 bool ConfigClient::connected() const {
     const bool has_game_settings = game_settings_.has_value();
     const bool has_field_dimensions = field_dimensions_.has_value();
-    const bool has_game_state = game_state_.has_value();
 
-    const bool have_msg =
-        has_game_settings && has_field_dimensions && has_game_state;
+    const bool have_msg = has_game_settings && has_field_dimensions;
 
     static bool prev_connected = false;
 
@@ -83,12 +72,6 @@ void ConfigClient::updateFieldDimensions(const FieldDimensionsMsg& msg) {
         std::make_shared<SetFieldDimensionsReq>();
     request->field_dimensions = msg;
     field_dimensions_client_->async_send_request(request);
-}
-
-void ConfigClient::updateGameState(const GameStateMsg& msg) {
-    SetGameStateReq::SharedPtr request = std::make_shared<SetGameStateReq>();
-    request->game_state = msg;
-    game_state_client_->async_send_request(request);
 }
 
 bool ConfigClient::waitUntilConnected() const {

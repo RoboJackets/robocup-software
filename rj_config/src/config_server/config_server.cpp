@@ -37,22 +37,8 @@ ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     field_dimensions_server_ = create_service<SetFieldDimensionsSrv>(
         topics::kFieldDimensionsSrv, field_dimensions_cb);
 
-    // Field Dimensions
-    game_state_publisher_ =
-        create_publisher<GameStateMsg>(topics::kGameStatePub, latching_qos);
-
-    // NOLINTS below are to disable performance-unnecessary-value-param
-    const auto game_state_cb =
-        [this](const SetGameStateSrvReqPtr request,    // NOLINT
-               SetGameStateSrvRespPtr /*response*/) {  // NOLINT
-            setGameStateCallback(request->game_state);
-        };
-    game_state_server_ =
-        create_service<SetGameStateSrv>(topics::kGameStateSrv, game_state_cb);
-
     broadcastGameSettings();
     broadcastFieldDimensions();
-    broadcastGameState();
 
     EZ_INFO("config_server is up!");
 }
@@ -73,15 +59,6 @@ void ConfigServer::broadcastFieldDimensions() {
 void ConfigServer::setFieldDimensionsCallback(const FieldDimensionsMsg& msg) {
     field_dimensions_ = msg;
     broadcastFieldDimensions();
-}
-
-void ConfigServer::broadcastGameState() {
-    game_state_publisher_->publish(game_state_);
-}
-
-void ConfigServer::setGameStateCallback(const GameStateMsg& msg) {
-    game_state_ = msg;
-    broadcastGameState();
 }
 
 }  // namespace config_server

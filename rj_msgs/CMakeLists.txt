@@ -25,19 +25,14 @@ rosidl_generate_interfaces(rj_msgs
     msg/DetectionFrame.msg
     msg/DetectionRobot.msg
     msg/FieldDimensions.msg
-    msg/GameCommand.msg
-    msg/GameRestart.msg
     msg/GameSettings.msg
-    msg/GameStage.msg
-    msg/GameState.msg
+    msg/TeamColor.msg
     msg/RawProtobuf.msg
     msg/RobotState.msg
-    msg/TeamInfo.msg
     msg/WorldState.msg
     # Services
     srv/SetFieldDimensions.srv
     srv/SetGameSettings.srv
-    srv/SetGameState.srv
     DEPENDENCIES std_msgs builtin_interfaces rj_geometry_msgs
     )
 
