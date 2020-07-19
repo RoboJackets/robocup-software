@@ -3,9 +3,9 @@
 #include <Geometry2d/Pose.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
-#include <rj_msgs/msg/detail/ball_state__builder.hpp>
-#include <rj_msgs/msg/detail/robot_state__builder.hpp>
-#include <rj_msgs/msg/detail/world_state__builder.hpp>
+#include <rj_msgs/msg/ball_state.hpp>
+#include <rj_msgs/msg/robot_state.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 
 #include "planning/Instant.hpp"
 #include "planning/Trajectory.hpp"
@@ -164,6 +164,18 @@ struct BallState {
      * @return A trajectory for this ball to follow. Angles are meaningless.
      */
     [[nodiscard]] Planning::Trajectory make_trajectory() const;
+
+    /**
+     * @brief Implicit conversion to RobotState::Msg.
+     * @return
+     */
+    [[nodiscard]] operator Msg() const {
+        return rj_msgs::build<Msg>()
+            .stamp(RJ::ToROSTime(timestamp))
+            .position(position)
+            .velocity(velocity)
+            .visible(visible);
+    }
 };
 
 struct WorldState {
@@ -173,6 +185,15 @@ struct WorldState {
         their_robots.resize(Num_Shells);
         our_robots.resize(Num_Shells);
     }
+
+    /**
+     * @brief Constructor for WorldState.
+     */
+    WorldState(std::vector<RobotState> their_robots,
+               std::vector<RobotState> our_robots, const BallState& ball)
+        : their_robots{std::move(their_robots)},
+          our_robots{std::move(our_robots)},
+          ball{ball} {}
 
     /**
      * @brief Implicit conversion from WorldState::Msg.
@@ -196,6 +217,19 @@ struct WorldState {
         } else {
             return their_robots.at(shell);
         }
+    }
+
+    /**
+     * @brief Implicit conversion to Msg.
+     * @return
+     */
+    [[nodiscard]] operator Msg() const {
+        return rj_msgs::build<Msg>()
+            .their_robots(std::vector<RobotState::Msg>(their_robots.begin(),
+                                                       their_robots.end()))
+            .our_robots(std::vector<RobotState::Msg>(our_robots.begin(),
+                                                     our_robots.end()))
+            .ball(ball);
     }
 
     std::vector<RobotState> their_robots;
