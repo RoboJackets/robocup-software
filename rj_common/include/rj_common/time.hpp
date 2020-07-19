@@ -36,16 +36,28 @@ constexpr Timestamp timestamp(Time time) {
 inline Timestamp timestamp() { return timestamp(now()); }
 
 inline rclcpp::Time ToROSTime(RJ::Time time) {
-    int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                        time.time_since_epoch())
-                        .count();
+    const int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                              time.time_since_epoch())
+                              .count();
 
     return rclcpp::Time{nanos};
+}
+
+inline rclcpp::Duration ToROSDuration(RJ::Seconds duration) {
+    const int64_t nanos =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
+
+    return rclcpp::Duration{nanos};
 }
 
 inline RJ::Time FromROSTime(const rclcpp::Time& time) {
     const std::chrono::nanoseconds dur(time.nanoseconds());
     return RJ::Time{dur};
+}
+
+inline RJ::Seconds FromROSDuration(const rclcpp::Duration& duration) {
+    const std::chrono::nanoseconds dur(duration.nanoseconds());
+    return std::chrono::duration_cast<RJ::Seconds>(dur);
 }
 
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
