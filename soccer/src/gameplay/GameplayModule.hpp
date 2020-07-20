@@ -43,7 +43,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context);
+    GameplayModule(Context* context);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -165,12 +165,7 @@ private:
     std::shared_ptr<Geometry2d::Shape> _ourGoal;
     std::shared_ptr<Geometry2d::Shape> _theirGoal;
 
-    /// utility functions
-
-    int _our_score_last_frame;
-
-    // Shell ID of the robot to assign the goalie position
-    int _goalieID;
+    int _our_score_last_frame = 0;
 
     // python
     boost::python::object _mainPyNamespace;

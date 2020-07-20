@@ -45,7 +45,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 }
 
 // TODO: Replace this whole file when we move to ROS2
-Gameplay::GameplayModule::GameplayModule(Context* const context)
+Gameplay::GameplayModule::GameplayModule(Context* context)
     : _context(context) {
     calculateFieldObstacles();
 

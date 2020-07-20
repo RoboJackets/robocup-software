@@ -9,6 +9,7 @@
 #include <rj_common/multicast.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_utils/logging.hpp>
 #include <stdexcept>
 
 #include "WorldState.hpp"
@@ -38,6 +39,11 @@ ExternalReferee::ExternalReferee()
 
     _raw_ref_pub = create_publisher<RawProtobufMsg>(
         referee::topics::kRefereeRawPub, keep_latest);
+
+    _network_timer = create_wall_timer(std::chrono::milliseconds(10),
+                                       [this] () {
+                                           this->run();
+                                       });
 
     // Set up networking for external referee packets
     setupRefereeMulticast();
@@ -72,12 +78,14 @@ void ExternalReferee::receivePacket(const boost::system::error_code& error,
 
     // Publish the raw packet
     RawProtobufMsg msg;
-    msg.data.reserve(ref_packet.ByteSizeLong());
-    ref_packet.SerializeToArray(msg.data.data(), msg.data.size());
+    msg.data.resize(ref_packet.ByteSizeLong());
+    if (!ref_packet.SerializeToArray(msg.data.data(), msg.data.size())) {
+        EZ_ERROR("Failed to serialize referee packet.");
+    }
     _raw_ref_pub->publish(msg);
 
     // Update and publish team information
-    // TODO: Expiry times are valid when we stay in the Playing state
+    // FIXME(Kyle): Expiry times are only valid when we stay in the Playing state
     TeamInfo blue_info = TeamInfo::from_refbox_packet(ref_packet.blue());
     TeamInfo yellow_info = TeamInfo::from_refbox_packet(ref_packet.yellow());
     set_team_info(blue_info, yellow_info);

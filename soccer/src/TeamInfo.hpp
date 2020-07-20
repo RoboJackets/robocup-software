@@ -1,6 +1,7 @@
 #pragma once
 
 #include <rj_protos/referee.pb.h>
+#include <rj_common/time.hpp>
 
 #include <iostream>
 #include <string>

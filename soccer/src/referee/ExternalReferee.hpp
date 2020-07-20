@@ -45,29 +45,20 @@ public:
 
     void run();
 
-protected:
+private:
     static GameState::Period period_from_proto(SSL_Referee::Stage stage);
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr _raw_ref_pub;
-
-    // The number of commands issued since startup
-    int64_t _command_counter = 0;
-
-    // The UNIX timestamp when the command was issued, in microseconds.
-    // This value changes only when a new command is issued, not on each packet.
-    RJ::Time _last_command_time{};
+    rclcpp::TimerBase::SharedPtr _network_timer;
 
     // Process a new referee command
     void handle_command(SSL_Referee::Command command);
     void handle_stage(SSL_Referee::Stage stage);
 
-    Geometry2d::Point _readyBallPos;
-
-private:
     // Arbitrary receive buffer size
     static constexpr size_t RecvBufferSize =
         std::numeric_limits<uint16_t>::max() + 1;
-    std::array<char, RecvBufferSize> _recv_buffer;
+    std::array<char, RecvBufferSize> _recv_buffer{};
 
     boost::asio::io_service _io_service;
     boost::asio::ip::udp::socket _asio_socket;
