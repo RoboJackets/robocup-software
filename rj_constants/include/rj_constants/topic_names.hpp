@@ -25,6 +25,11 @@ constexpr auto kQuickRestartSrv = "referee/quick_restart";
 }  // namespace referee::topics
 
 namespace vision_receiver::topics {
-constexpr auto kRawProtobufPub = "vision/raw_protobuf";
-constexpr auto kDetectionFramePub = "vision/detection_frame";
+constexpr auto kRawProtobufPub = "vision_receiver/raw_protobuf";
+constexpr auto kDetectionFramePub = "vision_receiver/detection_frame";
 }  // namespace vision_receiver::topics
+
+namespace vision_filter::topics {
+constexpr auto kWorldStatePub = "vision_filter/world_state";
+constexpr auto kLastUpdatedPub = "vision_filter/last_updated";
+}  // namespace vision_filter::topics

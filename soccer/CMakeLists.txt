@@ -124,7 +124,8 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     )
 
 set(ROBOCUP_DEPS_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/soccer
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include
     )
 
@@ -206,10 +207,25 @@ target_link_libraries(referee_node
 if (BUILD_TESTING)
     target_link_libraries(test-soccer PRIVATE robocup)
     target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
-    target_link_libraries(test-soccer PRIVATE geometry2d_testing)
+
+    set(test_libs geometry2d_testing rj_param_utils_testing)
+    foreach(test_lib ${test_libs})
+        target_link_libraries(test-soccer PRIVATE
+            "-Wl,--whole-archive -L$<TARGET_FILE_DIR:${test_lib}> -l${test_lib} -Wl,--no-whole-archive")
+        target_link_libraries(test-soccer PRIVATE ${test_lib})
+    endforeach()
+
     target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
     add_dependencies(test-soccer googletest)
 endif ()
+
+#======================================================================
+# Testing
+#======================================================================
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(testing)
+endif()
 
 #======================================================================
 # Packaging

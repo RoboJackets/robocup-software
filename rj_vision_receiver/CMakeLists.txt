@@ -30,6 +30,7 @@ set(RJ_VISION_RECEIVER_DEPS_SYSTEM_LIBRARIES
 set(RJ_VISION_RECEIVER_DEPS_LIBRARIES
     config_client
     rj_common
+    rj_param_utils
     rj_utils)
 
 #======================================================================

@@ -12,6 +12,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
+find_package(rj_geometry_msgs REQUIRED)
 
 #======================================================================
 # Define Targets
@@ -20,6 +21,7 @@ find_package(builtin_interfaces REQUIRED)
 # rj_geometry_msgs__rosidl_typesupport_cpp
 rosidl_generate_interfaces(rj_msgs
     # Messages
+    msg/BallState.msg
     msg/DetectionBall.msg
     msg/DetectionFrame.msg
     msg/DetectionRobot.msg
@@ -29,8 +31,10 @@ rosidl_generate_interfaces(rj_msgs
     msg/GameState.msg
     msg/Goalie.msg
     msg/RawProtobuf.msg
+    msg/RobotState.msg
     msg/TeamColor.msg
     msg/TeamInfo.msg
+    msg/WorldState.msg
     # Services
     srv/QuickCommands.srv
     srv/QuickRestart.srv
