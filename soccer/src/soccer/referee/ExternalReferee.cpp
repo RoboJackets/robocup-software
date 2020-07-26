@@ -48,7 +48,7 @@ ExternalReferee::ExternalReferee()
         referee::topics::kRefereeRawPub, keep_latest);
 
     _network_timer = create_wall_timer(std::chrono::milliseconds(10),
-                                       [this]() { this->run(); });
+                                       [this]() { this->update(); });
 
     // Set up networking for external referee packets
     setupRefereeMulticast();
@@ -123,7 +123,7 @@ void ExternalReferee::setupRefereeMulticast() {
         boost::asio::ip::multicast::join_group(multicast_address));
 }
 
-void ExternalReferee::run() {
+void ExternalReferee::update() {
     _io_service.poll();
     BallState state;
     spin_kick_detector(state);
@@ -191,18 +191,6 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             ball_placement(Geometry2d::Point{}, true);
             stop();
             break;
-    }
-}
-
-void spin_external_referee() {
-    auto external_ref = std::make_shared<ExternalReferee>();
-
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(external_ref);
-
-    while (rclcpp::ok()) {
-        executor.spin_some(std::chrono::milliseconds(5));
-        external_ref->run();
     }
 }
 

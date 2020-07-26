@@ -9,6 +9,14 @@
 
 namespace referee {
 
+/**
+ * @brief Responsible for handling "quick actions" (UI start/stop/restart
+ * buttons) for fake matches.
+ *
+ * Exposes quick commands and restarts on @ref
+ * referee::topics::kQuickCommandsSrv and @ref
+ * referee::topics::kQuickRestartsSrv.
+ */
 class InternalReferee : public RefereeBase {
 public:
     InternalReferee();

@@ -82,12 +82,13 @@ void RefereeBase::set_team_name(const std::string& name) {
 }
 
 void RefereeBase::set_team_info(const TeamInfo& blue, const TeamInfo& yellow) {
+    update_cache(_blue_info, blue, _team_info_valid);
+    update_cache(_yellow_info, yellow, _team_info_valid);
+
     update_team_color_from_names();
 
     _goalie_valid &= _blue_team ? blue.goalie == _blue_info.goalie
                                 : yellow.goalie == _yellow_info.goalie;
-    update_cache(_blue_info, blue, _team_info_valid);
-    update_cache(_yellow_info, yellow, _team_info_valid);
 }
 
 void RefereeBase::set_team_color(bool is_blue) {

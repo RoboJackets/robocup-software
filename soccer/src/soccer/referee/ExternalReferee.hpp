@@ -26,26 +26,24 @@ namespace referee {
 using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
 
 /**
- * @brief The ref module listens to a port for referee packets over the network.
+ * @brief The ExternalReferee listens to a port for referee packets over the
+ * network.
  *
- * @details ExternalReferee packets are sent out from the
- * [ssl-refbox](https://github.com/Hawk777/ssl-refbox) program.
- * You can see the [protobuf
- * packet](https://github.com/Hawk777/ssl-refbox/blob/master/referee.proto) for
- * full details,
- * but the packets contains info about which stage of the game it is, team
+ * @details Referee packets are sent out from the
+ * [ssl-game-controller](https://github.com/RoboCup-SSL/ssl-game-controller).
+ * Referee packets contains info about which stage of the game it is, team
  * scores, yellow/red cards, etc.
- *
- * Each time a new packet arrives, the ref module updates the GameState object
- * with the new information.
  */
 class ExternalReferee : public RefereeBase {
 public:
     explicit ExternalReferee();
 
-    void run();
-
 private:
+    /**
+     * Listen on the network and publish results.
+     */
+    void update();
+
     static GameState::Period period_from_proto(SSL_Referee::Stage stage);
 
     rclcpp::Publisher<RawProtobufMsg>::SharedPtr _raw_ref_pub;
