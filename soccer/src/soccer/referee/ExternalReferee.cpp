@@ -1,5 +1,6 @@
 #include "ExternalReferee.hpp"
 
+#include <rj_param_utils/param.h>
 #include <unistd.h>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -32,22 +33,22 @@ static const int KickVerifyTime_ms = 250;
 // the ref halts/stops, make this false
 static const bool CancelBallPlaceOnHalt = true;
 
-constexpr auto OUR_TEAM_NAME = "RoboJackets";
+DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
+              "The team name we should use when automatically assigning team "
+              "colors from referee");
 
 ExternalReferee::ExternalReferee()
     : RefereeBase{"external_referee"}, _asio_socket{_io_service} {
     auto keep_latest = rclcpp::QoS(10);
     keep_latest.keep_last(1);
 
-    set_team_name(OUR_TEAM_NAME);
+    set_team_name(PARAM_team_name);
 
     _raw_ref_pub = create_publisher<RawProtobufMsg>(
         referee::topics::kRefereeRawPub, keep_latest);
 
     _network_timer = create_wall_timer(std::chrono::milliseconds(10),
-                                       [this] () {
-                                           this->run();
-                                       });
+                                       [this]() { this->run(); });
 
     // Set up networking for external referee packets
     setupRefereeMulticast();
@@ -89,7 +90,8 @@ void ExternalReferee::receivePacket(const boost::system::error_code& error,
     _raw_ref_pub->publish(msg);
 
     // Update and publish team information
-    // FIXME(Kyle): Expiry times are only valid when we stay in the Playing state
+    // FIXME(Kyle): Expiry times are only valid when we stay in the Playing
+    // state
     TeamInfo blue_info = TeamInfo::from_refbox_packet(ref_packet.blue());
     TeamInfo yellow_info = TeamInfo::from_refbox_packet(ref_packet.yellow());
     set_team_info(blue_info, yellow_info);
@@ -97,8 +99,8 @@ void ExternalReferee::receivePacket(const boost::system::error_code& error,
     // Update game state
     handle_command(ref_packet.command());
     handle_stage(ref_packet.stage());
-    set_stage_time_left(
-        std::chrono::duration_cast<RJ::Seconds>(std::chrono::microseconds(ref_packet.stage_time_left())));
+    set_stage_time_left(std::chrono::duration_cast<RJ::Seconds>(
+        std::chrono::microseconds(ref_packet.stage_time_left())));
     send();
 }
 

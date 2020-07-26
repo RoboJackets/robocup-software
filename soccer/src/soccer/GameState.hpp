@@ -76,7 +76,9 @@ public:
 
     [[nodiscard]] bool isOvertime2() const { return period == Overtime2; }
 
-    [[nodiscard]] bool isPenaltyShootout() const { return period == PenaltyShootout; }
+    [[nodiscard]] bool isPenaltyShootout() const {
+        return period == PenaltyShootout;
+    }
 
     [[nodiscard]] bool halt() const { return state == Halt; }
 
@@ -104,24 +106,40 @@ public:
 
     [[nodiscard]] bool ourIndirect() const { return indirect() && our_restart; }
 
-    [[nodiscard]] bool ourFreeKick() const { return ourDirect() || ourIndirect(); }
+    [[nodiscard]] bool ourFreeKick() const {
+        return ourDirect() || ourIndirect();
+    }
 
-    [[nodiscard]] bool ourPlacement() const { return placement() && our_restart; }
+    [[nodiscard]] bool ourPlacement() const {
+        return placement() && our_restart;
+    }
 
-    [[nodiscard]] bool theirKickoff() const { return kickoff() && !our_restart; }
+    [[nodiscard]] bool theirKickoff() const {
+        return kickoff() && !our_restart;
+    }
 
-    [[nodiscard]] bool theirPenalty() const { return penalty() && !our_restart; }
+    [[nodiscard]] bool theirPenalty() const {
+        return penalty() && !our_restart;
+    }
 
     [[nodiscard]] bool theirDirect() const { return direct() && !our_restart; }
 
-    [[nodiscard]] bool theirIndirect() const { return indirect() && !our_restart; }
+    [[nodiscard]] bool theirIndirect() const {
+        return indirect() && !our_restart;
+    }
 
-    [[nodiscard]] bool theirFreeKick() const { return theirDirect() || theirIndirect(); }
+    [[nodiscard]] bool theirFreeKick() const {
+        return theirDirect() || theirIndirect();
+    }
 
-    [[nodiscard]] bool theirPlacement() const { return placement() && !our_restart; }
+    [[nodiscard]] bool theirPlacement() const {
+        return placement() && !our_restart;
+    }
 
     // Robots must be in position for a restart
-    [[nodiscard]] bool setupRestart() const { return state == Setup || state == Ready; }
+    [[nodiscard]] bool setupRestart() const {
+        return state == Setup || state == Ready;
+    }
 
     [[nodiscard]] bool inSetupState() const { return state == Setup; }
 
@@ -133,16 +151,23 @@ public:
     }
 
     // Our robots must stay 500mm away from the ball
-    [[nodiscard]] bool stayAwayFromBall() const { return state != Playing && !our_restart; }
+    [[nodiscard]] bool stayAwayFromBall() const {
+        return state != Playing && !our_restart;
+    }
 
     // Our robots must stay on our half of the field
-    [[nodiscard]] bool stayOnSide() const { return setupRestart() && restart == Kickoff; }
+    [[nodiscard]] bool stayOnSide() const {
+        return setupRestart() && restart == Kickoff;
+    }
 
     // Our robots (except the penalty kicker) must stay 400mm behind the penalty
     // line
-    [[nodiscard]] bool stayBehindPenaltyLine() const { return restart == Penalty; }
+    [[nodiscard]] bool stayBehindPenaltyLine() const {
+        return restart == Penalty;
+    }
 
-    [[nodiscard]] std::optional<Geometry2d::Point> getBallPlacementPoint() const {
+    [[nodiscard]] std::optional<Geometry2d::Point> getBallPlacementPoint()
+        const {
         return ball_placement_point;
     }
 };

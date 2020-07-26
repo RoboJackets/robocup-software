@@ -17,7 +17,8 @@ void SoccerConfigClient::run() {
         return;
     }
 
-    context_->game_settings = GameSettings(config_client_->gameSettingsThreaded());
+    context_->game_settings =
+        GameSettings(config_client_->gameSettingsThreaded());
     context_->field_dimensions = config_client_->fieldDimensionsThreaded();
 }
 }  // namespace ros2_temp

@@ -12,7 +12,8 @@ void update_cache(T& value, const T& expected, bool& valid) {
     }
 }
 
-RefereeBase::RefereeBase(const std::string& name) : rclcpp::Node(name) {
+RefereeBase::RefereeBase(const std::string& name)
+    : rclcpp::Node(name), _param_provider(this, kRefereeParamModule) {
     auto keep_latest = rclcpp::QoS(1).transient_local();
 
     _team_color_pub = create_publisher<TeamColorMsg>(

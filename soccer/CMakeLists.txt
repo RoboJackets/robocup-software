@@ -131,6 +131,7 @@ set(ROBOCUP_DEPS_INCLUDE_DIRS
 
 set(ROBOCUP_DEPS_LIBRARIES
     rj_common
+    rj_param_utils
     rj_protos
     rc-fshare
     config_client

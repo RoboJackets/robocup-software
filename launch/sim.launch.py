@@ -43,10 +43,6 @@ def generate_launch_description():
             os.path.join(launch_dir, "ref_receiver.launch.py")))
 
     return LaunchDescription([
-        stdout_linebuf_envvar,
-        config_server,
-        soccer,
-        grsim,
-        vision_receiver,
+        stdout_linebuf_envvar, config_server, soccer, grsim, vision_receiver,
         ref_receiver
     ])

@@ -30,7 +30,8 @@ void RefereeSub::handle_game_state_msg(GameStateMsg::UniquePtr msg) {
     context_->game_state.restart =
         static_cast<GameState::Restart>(msg->restart);
     context_->game_state.our_restart = msg->our_restart;
-    context_->game_state.stage_time_left = RJ::FromROSDuration(msg->stage_time_left);
+    context_->game_state.stage_time_left =
+        RJ::FromROSDuration(msg->stage_time_left);
 }
 
 RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <rj_param_utils/ros2_param_provider.h>
+
 #include <rclcpp/rclcpp.hpp>
 #include <rj_msgs/msg/game_state.hpp>
 #include <rj_msgs/msg/goalie.hpp>
@@ -17,6 +19,8 @@ using GoalieMsg = rj_msgs::msg::Goalie;
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 using TeamInfoMsg = rj_msgs::msg::TeamInfo;
 using GameStateMsg = rj_msgs::msg::GameState;
+
+constexpr auto kRefereeParamModule = "referee";
 
 class RefereeBase : public rclcpp::Node {
 public:
@@ -86,6 +90,8 @@ private:
 
     // Kick detector information
     std::optional<Geometry2d::Point> _capture_ready_point;
+
+    params::ROS2ParamProvider _param_provider;
 };
 
 }  // namespace referee
