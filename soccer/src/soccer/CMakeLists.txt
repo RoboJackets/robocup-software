@@ -110,8 +110,11 @@ set(LOG_VIEWER_UIS
 set(LOG_VIEWER_SRC
     LogViewer.cpp)
 
-set(REFEREE_NODE_SRC
-    referee/RefereeMain.cpp)
+set(EXTERNAL_REFEREE_NODE_SRC
+    referee/ExternalRefereeMain.cpp)
+
+set(INTERNAL_REFEREE_NODE_SRC
+    referee/InternalRefereeMain.cpp)
 
 #======================================================================
 # Add sources
@@ -145,11 +148,18 @@ target_sources(
         ${LOG_VIEWER_RSRC}
 )
 
-# ---- referee_node ----
+# ---- external referee_node ----
 target_sources(
-    referee_node
+    external_referee_node
     PRIVATE
-    ${REFEREE_NODE_SRC}
+    ${EXTERNAL_REFEREE_NODE_SRC}
+)
+
+# ---- internal referee_node ----
+target_sources(
+    internal_referee_node
+    PRIVATE
+    ${INTERNAL_REFEREE_NODE_SRC}
 )
 
 # Set the directory so AUTOUIC know where to find .ui files

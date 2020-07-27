@@ -290,6 +290,8 @@ void MainWindow::updateFromRefPacket(bool haveExternalReferee) {
         _ui.goalieID->setEnabled(false);
         // disable Blue/Yellow team
         qActionGroups["teamGroup"]->setEnabled(false);
+        // disable Blue/Yellow team
+        qActionGroups["teamGroup"]->setEnabled(false);
 
         // Changes the goalie INDEX which is 1 higher than the goalie ID
         if (_ui.goalieID->currentIndex() !=
@@ -703,7 +705,8 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    bool haveExternalReferee = (curTime - ps.lastRefereeTime) < RJ::Seconds(1);
+    // TODO: if we stop getting referee packets, set this to false.
+    bool referee_updated = _has_external_ref;
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
 
@@ -720,7 +723,7 @@ void MainWindow::updateStatus() {
         }
     }
 
-    if (haveExternalReferee) {
+    if (referee_updated) {
         // External Ref is connected and should be used
         _ui.fastHalt->setEnabled(false);
         _ui.fastStop->setEnabled(false);
@@ -774,7 +777,7 @@ void MainWindow::updateStatus() {
         return;
     }
 
-    if (_has_external_ref && !haveExternalReferee) {
+    if (_has_external_ref && !referee_updated) {
         // In simulation, we will often run without a referee, so just make
         // it a warning.
         // There is a separate status for non-simulation with internal
