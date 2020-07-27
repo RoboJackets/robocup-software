@@ -32,7 +32,7 @@ public:
     // The pattern number of this team's goalie.
     uint goalie = 0;
 
-    bool operator==(const TeamInfo& other) {
+    bool operator==(const TeamInfo& other) const {
         return name == other.name && score == other.score &&
                red_cards == other.red_cards &&
                yellow_card_times == other.yellow_card_times &&
@@ -41,7 +41,7 @@ public:
                timeout_time == other.timeout_time && goalie == other.goalie;
     }
 
-    bool operator!=(const TeamInfo& other) { return !(*this == other); }
+    bool operator!=(const TeamInfo& other) const { return !(*this == other); }
 
     static TeamInfo from_refbox_packet(const SSL_Referee_TeamInfo& packet) {
         TeamInfo info;

@@ -43,14 +43,6 @@ static const std::vector<QString> defaultHiddenLayers{
     "Planning0",     "Planning1",        "Planning2",
     "Planning3",     "Planning4",        "Planning5"};
 
-template <typename T>
-void update_cache(T& value, const T& expected, bool& valid) {
-    if (value != expected) {
-        value = expected;
-        valid = false;
-    }
-}
-
 void calcMinimumWidth(QWidget* widget, const QString& text) {
     QRect rect = QFontMetrics(widget->font()).boundingRect(text);
     widget->setMinimumWidth(rect.width());
@@ -340,7 +332,7 @@ void MainWindow::updateViews() {
     GameState game_state;
     TeamInfo our_info;
     TeamInfo their_info;
-    bool blue_team;
+    bool blue_team = false;
     {
         std::lock_guard<std::mutex> lock(*_context_mutex);
         game_state = _context->game_state;
@@ -489,7 +481,7 @@ void MainWindow::updateViews() {
     // Update status indicator
     updateStatus();
 
-    update_cache(_game_settings.paused, !live(), _game_settings_valid);
+    update_cache(_game_settings.paused, !live(), &_game_settings_valid);
 
     // Check if any debug layers have been added
     // (layers should never be removed)
@@ -883,11 +875,11 @@ void MainWindow::on_actionTeam_Names_toggled(bool state) {
 }
 
 void MainWindow::on_actionDefendMinusX_triggered() {
-    update_cache(_game_settings.defend_plus_x, false, _game_settings_valid);
+    update_cache(_game_settings.defend_plus_x, false, &_game_settings_valid);
 }
 
 void MainWindow::on_actionDefendPlusX_triggered() {
-    update_cache(_game_settings.defend_plus_x, true, _game_settings_valid);
+    update_cache(_game_settings.defend_plus_x, true, &_game_settings_valid);
 }
 
 void MainWindow::on_action0_triggered() { _ui.fieldView->rotate(0); }
@@ -899,11 +891,11 @@ void MainWindow::on_action180_triggered() { _ui.fieldView->rotate(2); }
 void MainWindow::on_action270_triggered() { _ui.fieldView->rotate(3); }
 
 void MainWindow::on_actionUseOurHalf_toggled(bool value) {
-    update_cache(_game_settings.use_our_half, value, _game_settings_valid);
+    update_cache(_game_settings.use_our_half, value, &_game_settings_valid);
 }
 
 void MainWindow::on_actionUseOpponentHalf_toggled(bool value) {
-    update_cache(_game_settings.use_their_half, value, _game_settings_valid);
+    update_cache(_game_settings.use_their_half, value, &_game_settings_valid);
 }
 
 void MainWindow::on_actionCenterBall_triggered() {
@@ -1143,14 +1135,15 @@ void MainWindow::on_actionTeamBlue_triggered() {
     _ui.team->setText("BLUE");
     _ui.team->setStyleSheet("background-color: #4040ff; color: #ffffff");
 
-    update_cache(_game_settings.request_blue_team, true, _game_settings_valid);
+    update_cache(_game_settings.request_blue_team, true, &_game_settings_valid);
 }
 
 void MainWindow::on_actionTeamYellow_triggered() {
     _ui.team->setText("YELLOW");
     _ui.team->setStyleSheet("background-color: #ffff00");
 
-    update_cache(_game_settings.request_blue_team, false, _game_settings_valid);
+    update_cache(_game_settings.request_blue_team, false,
+                 &_game_settings_valid);
 }
 
 void MainWindow::on_manualID_currentIndexChanged(int value) {
@@ -1171,7 +1164,7 @@ void MainWindow::on_actionUse_Multiple_Joysticks_toggled(bool value) {
 
 void MainWindow::on_goalieID_currentIndexChanged(int value) {
     update_cache(_game_settings.request_goalie_id, value - 1,
-                 _game_settings_valid);
+                 &_game_settings_valid);
 }
 
 ////////////////

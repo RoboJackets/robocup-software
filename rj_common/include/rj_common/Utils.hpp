@@ -212,3 +212,11 @@ QString className(const std::type_info& info);
 
 /// Returns the absolute path to the 'run' directory
 QDir ApplicationRunDirectory();
+
+template <typename T>
+void update_cache(T& value, const T& expected, bool* valid) {
+    if (value != expected) {
+        value = expected;
+        *valid = false;
+    }
+}

@@ -1,16 +1,9 @@
 #include "RefereeBase.hpp"
 
+#include <rj_common/Utils.hpp>
 #include <rj_constants/topic_names.hpp>
 
 namespace referee {
-
-template <typename T>
-void update_cache(T& value, const T& expected, bool& valid) {
-    if (value != expected) {
-        value = expected;
-        valid = false;
-    }
-}
 
 RefereeBase::RefereeBase(const std::string& name)
     : rclcpp::Node(name), _param_provider(this, kRefereeParamModule) {
@@ -29,34 +22,35 @@ RefereeBase::RefereeBase(const std::string& name)
 }
 
 void RefereeBase::play() {
-    update_cache(_state.state, GameState::State::Playing, _state_valid);
-    update_cache(_state.restart, GameState::Restart::None, _state_valid);
+    update_cache(_state.state, GameState::State::Playing, &_state_valid);
+    update_cache(_state.restart, GameState::Restart::None, &_state_valid);
 }
 
 void RefereeBase::stop() {
-    update_cache(_state.state, GameState::State::Stop, _state_valid);
-    update_cache(_state.restart, GameState::Restart::None, _state_valid);
+    update_cache(_state.state, GameState::State::Stop, &_state_valid);
+    update_cache(_state.restart, GameState::Restart::None, &_state_valid);
 }
 
 void RefereeBase::halt() {
-    update_cache(_state.state, GameState::State::Halt, _state_valid);
+    update_cache(_state.state, GameState::State::Halt, &_state_valid);
 
     // TODO(Kyle): Check if restart carries through halts
-    update_cache(_state.restart, GameState::Restart::None, _state_valid);
+    update_cache(_state.restart, GameState::Restart::None, &_state_valid);
 }
 
 void RefereeBase::setup() {
-    update_cache(_state.state, GameState::State::Setup, _state_valid);
+    update_cache(_state.state, GameState::State::Setup, &_state_valid);
 }
 
 void RefereeBase::ready() {
-    update_cache(_state.state, GameState::State::Ready, _state_valid);
+    update_cache(_state.state, GameState::State::Ready, &_state_valid);
 }
 
 void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
-    update_cache(_state.restart, type, _state_valid);
-    update_cache(_blue_restart, blue_restart, _state_valid);
-    update_cache(_state.our_restart, _blue_team == _blue_restart, _state_valid);
+    update_cache(_state.restart, type, &_state_valid);
+    update_cache(_blue_restart, blue_restart, &_state_valid);
+    update_cache(_state.our_restart, _blue_team == _blue_restart,
+                 &_state_valid);
     if (_state.restart != GameState::Restart::Placement) {
         _state.ball_placement_point = std::nullopt;
     }
@@ -65,15 +59,15 @@ void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
 void RefereeBase::ball_placement(Geometry2d::Point point, bool blue_placement) {
     restart(GameState::Restart::Placement, blue_placement);
     update_cache(_state.ball_placement_point, std::make_optional(point),
-                 _state_valid);
+                 &_state_valid);
 }
 
 void RefereeBase::set_period(GameState::Period period) {
-    update_cache(_state.period, period, _state_valid);
+    update_cache(_state.period, period, &_state_valid);
 }
 
 void RefereeBase::set_stage_time_left(RJ::Seconds stage_time_left) {
-    update_cache(_state.stage_time_left, stage_time_left, _state_valid);
+    update_cache(_state.stage_time_left, stage_time_left, &_state_valid);
 }
 
 void RefereeBase::set_team_name(const std::string& name) {
@@ -82,8 +76,8 @@ void RefereeBase::set_team_name(const std::string& name) {
 }
 
 void RefereeBase::set_team_info(const TeamInfo& blue, const TeamInfo& yellow) {
-    update_cache(_blue_info, blue, _team_info_valid);
-    update_cache(_yellow_info, yellow, _team_info_valid);
+    update_cache(_blue_info, blue, &_team_info_valid);
+    update_cache(_yellow_info, yellow, &_team_info_valid);
 
     update_team_color_from_names();
 
@@ -93,7 +87,7 @@ void RefereeBase::set_team_info(const TeamInfo& blue, const TeamInfo& yellow) {
 
 void RefereeBase::set_team_color(bool is_blue) {
     bool valid = true;
-    update_cache(_blue_team, is_blue, valid);
+    update_cache(_blue_team, is_blue, &valid);
 
     // All information except for game state needs to change.
     // In game state the only field that would need to change is our_restart,
@@ -102,13 +96,14 @@ void RefereeBase::set_team_color(bool is_blue) {
     _team_info_valid &= valid;
     _goalie_valid &= valid;
 
-    update_cache(_state.our_restart, _blue_team == _blue_restart, _state_valid);
+    update_cache(_state.our_restart, _blue_team == _blue_restart,
+                 &_state_valid);
 }
 
 void RefereeBase::set_goalie(uint8_t goalie_id) {
     bool valid = true;
     update_cache(_blue_team ? _blue_info.goalie : _yellow_info.goalie,
-                 static_cast<uint>(goalie_id), valid);
+                 static_cast<uint>(goalie_id), &valid);
     _team_info_valid &= valid;
     _goalie_valid &= valid;
 }

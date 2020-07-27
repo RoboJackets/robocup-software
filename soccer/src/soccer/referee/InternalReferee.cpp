@@ -6,10 +6,13 @@ namespace referee {
 
 InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
     using rj_msgs::srv::QuickCommands;
+    // NOLINTNEXTLINE(performance-unnecessary-value-param)
     _quick_commands_srv = create_service<QuickCommands>(
         referee::topics::kQuickCommandsSrv,
-        [this](QuickCommands::Request::SharedPtr request,
-               QuickCommands::Response::SharedPtr /* response */) {
+        [this](QuickCommands::Request::SharedPtr
+                   request,  // NOLINT(performance-unnecessary-value-param)
+               [[maybe_unused]] QuickCommands::Response::SharedPtr
+                   response) {  // NOLINT(performance-unnecessary-value-param)
             switch (request->state) {
                 case QuickCommands::Request::COMMAND_HALT:
                     halt();
@@ -31,10 +34,13 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
         });
 
     using rj_msgs::srv::QuickRestart;
+    // NOLINTNEXTLINE(performance-unnecessary-value-param)
     _quick_restart_srv = create_service<QuickRestart>(
         referee::topics::kQuickRestartSrv,
-        [this](QuickRestart::Request::SharedPtr request,
-               QuickRestart::Response::SharedPtr /* response */) {
+        [this](QuickRestart::Request::SharedPtr
+                   request,  // NOLINT(performance-unnecessary-value-param)
+               [[maybe_unused]] QuickRestart::Response::SharedPtr
+                   response) {  // NOLINT(performance-unnecessary-value-param)
             switch (request->restart) {
                 case QuickRestart::Request::RESTART_DIRECT:
                     restart(GameState::Restart::Direct, request->blue_team);
@@ -54,7 +60,8 @@ InternalReferee::InternalReferee() : RefereeBase("internal_referee") {
 
     _game_settings_sub = create_subscription<rj_msgs::msg::GameSettings>(
         config_server::topics::kGameSettingsPub, rclcpp::QoS(10).keep_last(1),
-        [this](rj_msgs::msg::GameSettings::SharedPtr msg) {
+        [this](rj_msgs::msg::GameSettings::SharedPtr
+                   msg) {  // NOLINT(performance-unnecessary-value-param)
             set_team_color(msg->request_blue_team);
             set_goalie(msg->request_goalie_id);
         });

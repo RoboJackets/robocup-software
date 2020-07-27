@@ -26,8 +26,6 @@ public:
     void run() override {}
 
 private:
-    void handle_game_state_msg(GameStateMsg::UniquePtr msg);
-
     std::shared_ptr<rclcpp::Node> node_;
 
     rclcpp::Subscription<RawProtobufMsg>::SharedPtr raw_sub_;

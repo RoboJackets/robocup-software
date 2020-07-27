@@ -22,16 +22,6 @@ static TeamInfo team_info_from_msg(const TeamInfoMsg& msg) {
     result.goalie = msg.goalie_id;
 
     return result;
-};
-
-void RefereeSub::handle_game_state_msg(GameStateMsg::UniquePtr msg) {
-    context_->game_state.period = static_cast<GameState::Period>(msg->period);
-    context_->game_state.state = static_cast<GameState::State>(msg->state);
-    context_->game_state.restart =
-        static_cast<GameState::Restart>(msg->restart);
-    context_->game_state.our_restart = msg->our_restart;
-    context_->game_state.stage_time_left =
-        RJ::FromROSDuration(msg->stage_time_left);
 }
 
 RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)
@@ -63,16 +53,16 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)
                 RJ::FromROSDuration(msg->stage_time_left);
         });
 
-    goalie_sub_ = node_->create_subscription<GoalieMsg>(
-        referee::topics::kGoaliePub, keep_latest,
-        [this](GoalieMsg::UniquePtr msg) {
-            // NOP, get goalie info in the TeamInfo message
-        });
-
     team_color_sub_ = node_->create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorPub, keep_latest,
         [this](TeamColorMsg::UniquePtr msg) {
             context_->blue_team = msg->is_blue;
+        });
+
+    goalie_sub_ = node_->create_subscription<GoalieMsg>(
+        referee::topics::kGoaliePub, keep_latest,
+        []([[maybe_unused]] GoalieMsg::UniquePtr msg) {
+             NOP, get goalie info in the TeamInfo message
         });
 
     our_team_info_sub_ = node_->create_subscription<TeamInfoMsg>(
