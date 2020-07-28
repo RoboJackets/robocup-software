@@ -62,7 +62,7 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)
     goalie_sub_ = node_->create_subscription<GoalieMsg>(
         referee::topics::kGoaliePub, keep_latest,
         []([[maybe_unused]] GoalieMsg::UniquePtr msg) {
-//             NOP, get goalie info in the TeamInfo message
+            // NOP, get goalie info in the TeamInfo message
         });
 
     our_team_info_sub_ = node_->create_subscription<TeamInfoMsg>(
