@@ -705,7 +705,7 @@ void MainWindow::updateStatus() {
     RJ::Time curTime = RJ::now();
 
     // Determine if we are receiving packets from an external referee
-    // TODO: if we stop getting referee packets, set this to false.
+    // TODO(#1557): if we stop getting referee packets, set this to false.
     bool referee_updated = _has_external_ref;
 
     std::vector<int> validIds = _processor->state()->ourValidIds();
