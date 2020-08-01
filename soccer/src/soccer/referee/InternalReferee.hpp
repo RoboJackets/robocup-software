@@ -22,7 +22,7 @@ public:
     InternalReferee();
 
 private:
-    // TODO(Kyle): Add another service for ball placement
+    // TODO(#1559): Add another service for ball placement
     rclcpp::Service<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
     rclcpp::Service<rj_msgs::srv::QuickRestart>::SharedPtr _quick_restart_srv;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr

@@ -913,7 +913,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("add_vertex", &Polygon_add_vertex)
         .def("contains_point", &Geometry2d::Polygon::containsPoint);
 
-    // TODO(Kyle): Propagate score to python correctly.
     class_<GameState>("GameState")
         .def("is_halted", &GameState::halt)
         .def("is_stopped", &GameState::stopped)
@@ -950,7 +949,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("is_overtime2", &GameState::isOvertime2)
         .def("is_penalty_shootout", &GameState::isPenaltyShootout);
 
-    // TODO(Kyle): Propagate score to python correctly.
     class_<TeamInfo>("TeamInfo")
         .add_property("score", &TeamInfo::score)
         .add_property("goalie", &TeamInfo::goalie);

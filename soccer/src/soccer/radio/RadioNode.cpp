@@ -36,7 +36,6 @@ Radio* RadioNode::getRadio() { return _radio; }
 void RadioNode::switchTeam(bool blueTeam) { _radio->switchTeam(blueTeam); }
 
 void RadioNode::run() {
-    // TODO(Kyle): Do this as a callback on the team message.
     if (_context->blue_team != _was_blue_team) {
         _was_blue_team = _context->blue_team;
         _radio->switchTeam(_was_blue_team);

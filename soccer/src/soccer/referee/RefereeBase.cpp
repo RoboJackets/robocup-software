@@ -32,10 +32,9 @@ void RefereeBase::stop() {
 }
 
 void RefereeBase::halt() {
+    // The restart carries through halts, so there is no need to change the
+    // restart state.
     update_cache(_state.state, GameState::State::Halt, &_state_valid);
-
-    // TODO(Kyle): Check if restart carries through halts
-    update_cache(_state.restart, GameState::Restart::None, &_state_valid);
 }
 
 void RefereeBase::setup() {

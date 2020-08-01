@@ -145,6 +145,7 @@ void Processor::run() {
 
         ////////////////
         // Inputs
+        // TODO(#1558): Backport spin_all and use it for our main executor.
         _ros_executor->spin_some();
         _sdl_joystick_node->run();
         _manual_control_node->run();
