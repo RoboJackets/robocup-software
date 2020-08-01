@@ -39,13 +39,10 @@ DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
 
 ExternalReferee::ExternalReferee()
     : RefereeBase{"external_referee"}, _asio_socket{_io_service} {
-    auto keep_latest = rclcpp::QoS(10);
-    keep_latest.keep_last(1);
-
     set_team_name(PARAM_team_name);
 
     _raw_ref_pub = create_publisher<RawProtobufMsg>(
-        referee::topics::kRefereeRawPub, keep_latest);
+        referee::topics::kRefereeRawPub, 10);
 
     _network_timer = create_wall_timer(std::chrono::milliseconds(10),
                                        [this]() { this->update(); });
