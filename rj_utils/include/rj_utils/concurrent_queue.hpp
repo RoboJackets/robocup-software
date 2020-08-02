@@ -1,8 +1,8 @@
 #pragma once
 
 #include <condition_variable>
-#include <mutex>
 #include <deque>
+#include <mutex>
 
 namespace rj_utils {
 /**

@@ -18,55 +18,36 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
       team_color_queue_{this, referee::topics::kTeamColorPub,
                         rj_msgs::build<TeamColorMsg>().is_blue(true)},
       param_provider_{this, kVisionFilterParamModule} {
-    // Create a timer that publishes the current state of the ball + robots.
-    publish_timer_callback_group_ = this->create_callback_group(
-        rclcpp::CallbackGroupType::MutuallyExclusive);
-    const std::chrono::duration<double> publish_timer_period(1 /
-                                                             PARAM_publish_hz);
-    publish_timer_ = create_wall_timer(
-        publish_timer_period, [this]() { PublishState(); },
-        publish_timer_callback_group_);
-
     // Create a timer that calls predict on all of the Kalman filters.
-    predict_timer_callback_group_ = this->create_callback_group(
-        rclcpp::CallbackGroupType::MutuallyExclusive);
     const std::chrono::duration<double> predict_timer_period(
         PARAM_vision_loop_dt);
     auto predict_callback = [this]() { PredictStates(); };
-    predict_timer_ = create_wall_timer(publish_timer_period, predict_callback,
-                                       predict_timer_callback_group_);
+    predict_timer_ = create_wall_timer(predict_timer_period, predict_callback);
 
     // Create a subscriber for the DetectionFrameMsg
-    update_callback_group_ = this->create_callback_group(
-        rclcpp::CallbackGroupType::MutuallyExclusive);
-    rclcpp::SubscriptionOptions detection_frame_sub_opts{};
-    detection_frame_sub_opts.callback_group = update_callback_group_;
     constexpr int kQueueSize = 10;
     const auto callback = [this](DetectionFrameMsg::UniquePtr msg) {
         detection_frame_queue_.Push(std::move(msg));
     };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize),
-        callback, detection_frame_sub_opts);
+        callback);
 
     // Create publishers.
     world_state_pub_ =
         create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
-    last_updated_pub_ = create_publisher<TimeMsg>(topics::kLastUpdatedPub, 10);
 }
 
 VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg(
     bool us_blue) const {
-    WorldStateMsg msg{};
-    msg.ball = BuildBallStateMsg();
-    msg.our_robots = BuildRobotStateMsgs(us_blue);
-    msg.their_robots = BuildRobotStateMsgs(!us_blue);
-
-    return msg;
+    return rj_msgs::build<WorldStateMsg>()
+        .last_update_time(RJ::ToROSTime(world.last_update_time()))
+        .their_robots(BuildRobotStateMsgs(!us_blue))
+        .our_robots(BuildRobotStateMsgs(us_blue))
+        .ball(BuildBallStateMsg());
 }
 
 VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() const {
-    std::lock_guard<std::mutex> world_lock(world_mutex);
     const WorldBall& wb = world.getWorldBall();
 
     BallStateMsg msg{};
@@ -79,7 +60,6 @@ VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() const {
 
 std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
     bool blue_team) const {
-    std::lock_guard<std::mutex> world_lock(world_mutex);
     const auto& robots =
         blue_team ? world.getRobotsBlue() : world.getRobotsYellow();
 
@@ -104,7 +84,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
 }
 
 void VisionFilter::PublishState() {
-    std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.GetThreaded();
+    std::shared_ptr<TeamColorMsg> team_color = team_color_queue_.Get();
     if (team_color == nullptr) {
         EZ_WARN_STREAM("Returning because team_color is nullptr");
         return;
@@ -113,10 +93,6 @@ void VisionFilter::PublishState() {
     WorldStateMsg::UniquePtr msg = std::make_unique<WorldStateMsg>();
     *msg = BuildWorldStateMsg(team_color->is_blue);
     world_state_pub_->publish(std::move(msg));
-
-    if (last_update_time_) {
-        last_updated_pub_->publish(RJ::ToROSTime(*last_update_time_));
-    }
 }
 
 void VisionFilter::GetFrames() {
@@ -125,8 +101,6 @@ void VisionFilter::GetFrames() {
     if (raw_frames.empty()) {
         return;
     }
-
-    last_update_time_ = RJ::FromROSTime(raw_frames.back()->t_received);
 
     const double team_angle = TeamAngle();
     const Geometry2d::TransformMatrix world_to_team = WorldToTeam();
@@ -158,7 +132,6 @@ void VisionFilter::PredictStates() {
 void VisionFilter::PredictStatesImpl() {
     // Do update with whatever is in frame buffer
     GetFrames();
-    std::lock_guard<std::mutex> world_lock(world_mutex);
 
     if (!frameBuffer.empty()) {
         world.updateWithCameraFrame(RJ::now(), frameBuffer);
@@ -166,5 +139,8 @@ void VisionFilter::PredictStatesImpl() {
     } else {
         world.updateWithoutCameraFrame(RJ::now());
     }
+
+    // Publish the updated world state at the end.
+    PublishState();
 }
 }  // namespace vision_filter

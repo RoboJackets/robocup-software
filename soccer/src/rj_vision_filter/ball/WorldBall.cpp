@@ -4,9 +4,9 @@
 #include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
-// TODO(?): Fill param description.
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_ball, ball_merger_power, 1.5,
-                  "FILL ME IN.")
+                  "Multiplier to scale the weighted average coefficient"
+                  "to be nonlinear.")
 using world_ball::PARAM_ball_merger_power;
 
 WorldBall::WorldBall() : isValid(false) {}

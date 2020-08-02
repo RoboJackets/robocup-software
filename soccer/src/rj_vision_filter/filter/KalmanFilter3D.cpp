@@ -94,10 +94,10 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
     // clang-format off
     Q_k << dt3,   dt2,     0,     0,     0,     0,
            dt2,   dt1,     0,     0,     0,     0,
-           0,     0,   dt3,   dt2,     0,     0,
-           0,     0,   dt2,   dt1,     0,     0,
-           0,     0,     0,     0, s*dt3, s*dt2,
-           0,     0,     0,     0, s*dt2, s*dt1;
+             0,     0,   dt3,   dt2,     0,     0,
+             0,     0,   dt2,   dt1,     0,     0,
+             0,     0,     0,     0, s*dt3, s*dt2,
+             0,     0,     0,     0, s*dt2, s*dt1;
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)

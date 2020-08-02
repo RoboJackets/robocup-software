@@ -20,7 +20,7 @@ namespace vision_filter {
 using TeamColorMsg = rj_msgs::msg::TeamColor;
 
 /**
- * Uses a seperate thread to filter the vision measurements into
+ * Uses a separate thread to filter the vision measurements into
  * a smoother velocity/position estimate for both the ball and robots.
  *
  * Add vision frames directly into the filter call the fill states functions
@@ -50,7 +50,8 @@ private:
 
     /**
      * @brief Runs prediction on all the Kalman Filters. For now, also performs
-     * the update step of the Kalman filters by emptying detection_frame_queue_;
+     * the update / merge step of the Kalman filters by emptying
+     * detection_frame_queue_;
      */
     void PredictStatesImpl();
 
@@ -89,9 +90,10 @@ private:
      */
     void GetFrames();
 
+    // TODO(1562): (It's horrible, but it's only temporary until VisionFilter
+    // gets refactored).
     /**
-     * @brief Returns the team angle (It's horrible, but it's only temporary
-     * until VisionFilter gets refactored).
+     * @brief Returns the team angle
      * @return The team angle.
      */
     [[nodiscard]] double TeamAngle() const {
@@ -112,38 +114,38 @@ private:
         return world_to_team;
     }
 
-    mutable std::mutex world_mutex;
+    /**
+     * @brief State of the world, ie. robots and ball.
+     */
     World world;
 
     std::vector<CameraFrame> frameBuffer{};
 
-    /**
-     * @brief Timestamp of the last received vision message. Has value
-     * std::nullopt if we haven't received any vision messages yet.
-     */
-    std::optional<RJ::Time> last_update_time_;
-
-    rclcpp::CallbackGroup::SharedPtr publish_timer_callback_group_;
-    rclcpp::TimerBase::SharedPtr publish_timer_;
     using TeamColorMsgQueue =
         rj_topic_utils::MessageQueue<TeamColorMsg,
                                      rj_topic_utils::MessagePolicy::kLatest>;
+    using TimeMsg = builtin_interfaces::msg::Time;
+
+    config_client::ConfigClient config_client_;
+
+    /**
+     * @brief Message Queue for TeamColor that takes the latest message.
+     */
     TeamColorMsgQueue team_color_queue_;
 
-    rclcpp::CallbackGroup::SharedPtr predict_timer_callback_group_;
+    /**
+     * @brief Timer driving regular predictions.
+     */
     rclcpp::TimerBase::SharedPtr predict_timer_;
 
-    rclcpp::CallbackGroup::SharedPtr update_callback_group_;
     rclcpp::Subscription<DetectionFrameMsg>::SharedPtr detection_frame_sub_;
     rj_utils::ConcurrentQueue<DetectionFrameMsg::UniquePtr>
         detection_frame_queue_;
-    std::optional<RJ::Time> last_predict_time_;
 
-    using TimeMsg = builtin_interfaces::msg::Time;
+    /**
+     * @brief Publisher for WorldStateMsg.
+     */
     rclcpp::Publisher<WorldStateMsg>::SharedPtr world_state_pub_;
-    rclcpp::Publisher<TimeMsg>::SharedPtr last_updated_pub_;
-
-    config_client::ConfigClient config_client_;
 
     params::ROS2ParamProvider param_provider_;
 };

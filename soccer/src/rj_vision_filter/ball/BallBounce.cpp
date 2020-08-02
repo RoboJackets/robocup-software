@@ -28,10 +28,10 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, vision_filter::bounce,
                   "Reflect angle dampen for bouncing off the front mouth. "
                   "1 means 100% of the velocity is kept after collision. 0 "
                   "means 0% of the velocity is kept after collision.")
-using vision_filter::bounce::PARAM_robot_body_lin_dampen;
-using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
 using vision_filter::bounce::PARAM_robot_body_angle_dampen;
+using vision_filter::bounce::PARAM_robot_body_lin_dampen;
 using vision_filter::bounce::PARAM_robot_mouth_angle_dampen;
+using vision_filter::bounce::PARAM_robot_mouth_lin_dampen;
 
 /**
  * Note 0 case returns -1 instead of 0

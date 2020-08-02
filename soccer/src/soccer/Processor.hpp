@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
+#include <rj_topic_utils/async_message_queue.h>
 #include <ros2_temp/raw_vision_packet_sub.h>
 #include <ros2_temp/soccer_config_client.h>
 
@@ -17,7 +18,6 @@
 #include <mutex>
 #include <optional>
 #include <rj_msgs/msg/world_state.hpp>
-#include <rj_topic_utils/async_message_queue.h>
 #include <vector>
 
 #include "Context.hpp"
@@ -177,16 +177,12 @@ private:
     std::unique_ptr<Logger> _logger;
 
     // ROS2 temporary modules
-    using TimeMsg = builtin_interfaces::msg::Time;
     using WorldStateMsg = rj_msgs::msg::WorldState;
-    using AsyncTimeMsgQueue = rj_topic_utils::AsyncMessageQueue<
-        TimeMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
     using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
         WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
 
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
     ros2_temp::RawVisionPacketSub::UniquePtr _raw_vision_packet_sub;
-    AsyncTimeMsgQueue::UniquePtr _last_vision_time_queue;
     AsyncWorldStateMsgQueue::UniquePtr _world_state_queue;
 
     std::vector<Node*> _nodes;

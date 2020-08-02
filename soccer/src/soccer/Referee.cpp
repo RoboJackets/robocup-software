@@ -53,6 +53,8 @@ Referee::Referee(Context* const context)
         referee::topics::kTeamColorPub, latching_qos);
 
     // Set ourselves to yellow team by default for now.
+    std::cout << "[Referee.cpp:56] Setting blueTeam(false) by default??"
+              << std::endl;
     blueTeam(false);
 }
 
@@ -120,9 +122,13 @@ void Referee::receivePacket(const boost::system::error_code& error,
         // actually matches our team name (either yellow or blue).
         // Otherwise, keep the current color.
         if (boost::iequals(yellow_info.name, Team_Name_Lower)) {
+            std::cout << "[Referee.cpp:123] Got packet. blueTeam(false)."
+                      << std::endl;
             blueTeam(false);
             _isRefControlled = true;
         } else if (boost::iequals(blue_info.name, Team_Name_Lower)) {
+            std::cout << "[Referee.cpp:127] Got packet. blueTeam(true)."
+                      << std::endl;
             blueTeam(true);
             _isRefControlled = true;
         } else {

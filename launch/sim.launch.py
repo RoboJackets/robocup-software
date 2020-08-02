@@ -31,12 +31,14 @@ def generate_launch_description():
                          on_exit=Shutdown())
 
     vision_receiver_launch_path = str(launch_dir / "vision_receiver.launch.py")
-    vision_receiver = IncludeLaunchDescription(PythonLaunchDescriptionSource(vision_receiver_launch_path))
+    vision_receiver = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(vision_receiver_launch_path))
 
     vision_filter_launch_path = str(launch_dir / "vision_filter.launch.py")
-    vision_filter = IncludeLaunchDescription(PythonLaunchDescriptionSource(vision_filter_launch_path))
+    vision_filter = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(vision_filter_launch_path))
 
-    return LaunchDescription(
-        [stdout_linebuf_envvar, config_server, grsim,
-         soccer,
-         vision_receiver, vision_filter])
+    return LaunchDescription([
+        stdout_linebuf_envvar, config_server, grsim, soccer, vision_receiver,
+        vision_filter
+    ])

@@ -58,6 +58,14 @@ public:
      */
     const KickEvent& getBestKickEstimate() const;
 
+    /**
+     * @return Timestamp of the latest vision receiver message that was used to
+     * updated the states. Initialized with RJ::Time::min().
+     */
+    [[nodiscard]] RJ::Time last_update_time() const {
+        return last_update_time_;
+    }
+
 private:
     /**
      * Does the ball bounce calculations for each of the child cameras
@@ -78,6 +86,12 @@ private:
      * @param calcTime Current iteration time
      */
     void detectKicks(RJ::Time calcTime);
+
+    /**
+     * @brief Timestamp of the latest vision receiver message that was used to
+     * updated the states. Initialized with RJ::Time::min().
+     */
+    RJ::Time last_update_time_;
 
     std::vector<Camera> cameras;
 

@@ -199,7 +199,8 @@ struct WorldState {
      * @brief Implicit conversion from WorldState::Msg.
      */
     WorldState(const Msg& msg)
-        : their_robots(msg.their_robots.begin(), msg.their_robots.end()),
+        : last_updated_time_{RJ::FromROSTime(msg.last_update_time)},
+          their_robots(msg.their_robots.begin(), msg.their_robots.end()),
           our_robots(msg.our_robots.begin(), msg.our_robots.end()),
           ball{msg.ball} {}
 
@@ -225,12 +226,19 @@ struct WorldState {
      */
     [[nodiscard]] operator Msg() const {
         return rj_msgs::build<Msg>()
+            .last_update_time(RJ::ToROSTime(last_updated_time_))
             .their_robots(std::vector<RobotState::Msg>(their_robots.begin(),
                                                        their_robots.end()))
             .our_robots(std::vector<RobotState::Msg>(our_robots.begin(),
                                                      our_robots.end()))
             .ball(ball);
     }
+
+    /**
+     * @brief Timestamp of the last received vision message. All zeros if we
+     * haven't received anything yet.
+     */
+    RJ::Time last_updated_time_;
 
     std::vector<RobotState> their_robots;
     std::vector<RobotState> our_robots;

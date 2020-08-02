@@ -18,7 +18,8 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, same_kick_timeout,
 using namespace kick::detector;
 
 World::World()
-    : cameras(PARAM_max_num_cameras),
+    : last_update_time_{RJ::Time{RJ::Time::duration(0)}},
+      cameras(PARAM_max_num_cameras),
       robotsYellow(Num_Shells, WorldRobot()),
       robotsBlue(Num_Shells, WorldRobot()) {}
 
@@ -54,6 +55,9 @@ void World::updateWithCameraFrame(RJ::Time calcTime,
                              ball, robotsYellow, robotsBlue);
 
         cameraUpdated.at(frame.cameraID) = true;
+
+        // Update last_update_time_ with the latest tCapture.
+        last_update_time_ = std::max(last_update_time_, frame.tCapture);
     }
 
     for (int i = 0; i < cameras.size(); i++) {

@@ -79,8 +79,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
     _raw_vision_packet_sub =
         std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
-    _last_vision_time_queue = std::make_unique<AsyncTimeMsgQueue>(
-        "last_vision_time_sub", vision_filter::topics::kLastUpdatedPub);
     _world_state_queue = std::make_unique<AsyncWorldStateMsgQueue>(
         "world_state_queue", vision_filter::topics::kWorldStatePub);
 
@@ -167,15 +165,12 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        const WorldStateMsg::SharedPtr world_state_msg = _world_state_queue->Get();
+        const WorldStateMsg::SharedPtr world_state_msg =
+            _world_state_queue->Get();
         if (world_state_msg != nullptr) {
             _context.world_state = *world_state_msg;
-        }
-
-        const TimeMsg::SharedPtr last_vision_time =
-            _last_vision_time_queue->Get();
-        if (last_vision_time != nullptr) {
-            curStatus.lastVisionTime = RJ::FromROSTime(*last_vision_time);
+            curStatus.lastVisionTime =
+                RJ::FromROSTime(world_state_msg->last_update_time);
         }
 
         // Log referee data
