@@ -17,7 +17,7 @@ TEST(ROSConvert, time_lossless_convert) {
 
 TEST(ROSConvert, duration_lossless_convert) {
     // We don't expect perfect equality for seconds, because float comparisons.
-    using Cvt = RosConverter<RJ::Seconds, rclcpp::Duration>;
+    using Cvt = rj_common::RosConverter<RJ::Seconds, rclcpp::Duration>;
     EXPECT_NEAR(Cvt::from_ros(Cvt::to_ros(RJ::Seconds(1.0))).count(), 1.0,
                 1e-6);
     EXPECT_NEAR(

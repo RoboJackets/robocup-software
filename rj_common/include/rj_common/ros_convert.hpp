@@ -5,6 +5,8 @@
 
 #include "rj_common/time.hpp"
 
+namespace rj_common {
+
 template <typename CppType, typename RosType>
 struct RosConverter {};
 
@@ -104,21 +106,23 @@ struct RosConverter<std::array<CppItem, size>, std::array<RosItem, size>> {
 };
 
 template <typename CppType, typename RosType>
-void to_ros(const CppType& from, RosType* to) {
+void convert_to_ros(const CppType& from, RosType* to) {
     *to = RosConverter<CppType, RosType>::to_ros(from);
 }
 
 template <typename CppType, typename RosType>
-RosType to_ros(const CppType& from) {
+RosType convert_to_ros(const CppType& from) {
     return RosConverter<CppType, RosType>::to_ros(from);
 }
 
 template <typename CppType, typename RosType>
-void from_ros(const RosType& from, CppType* to) {
+void convert_from_ros(const RosType& from, CppType* to) {
     *to = RosConverter<CppType, RosType>::from_ros(from);
 }
 
 template <typename CppType, typename RosType>
-CppType from_ros(const RosType& from) {
+CppType convert_from_ros(const RosType& from) {
     return RosConverter<CppType, RosType>::from_ros(from);
 }
+
+} // namespace rj_common
