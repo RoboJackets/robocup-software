@@ -234,7 +234,8 @@ private:
 
 namespace rj_convert {
 
-template<> struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
+template <>
+struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
     static Field_Dimensions::Msg to_ros(const Field_Dimensions& from) {
         Field_Dimensions::Msg to;
         to.length = from.Length();
@@ -255,21 +256,13 @@ template<> struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
     }
 
     static Field_Dimensions from_ros(const Field_Dimensions::Msg& from) {
-        return Field_Dimensions(from.length,
-                                from.width,
-                                from.border,
-                                from.line_width,
-                                from.goal_width,
-                                from.goal_depth,
-                                from.goal_height,
-                                from.penalty_short_dist,
-                                from.penalty_long_dist,
-                                from.center_radius,
-                                from.center_diameter,
-                                from.goal_flat,
-                                from.floor_length,
-                                from.floor_width);
+        return Field_Dimensions(
+            from.length, from.width, from.border, from.line_width,
+            from.goal_width, from.goal_depth, from.goal_height,
+            from.penalty_short_dist, from.penalty_long_dist, from.center_radius,
+            from.center_diameter, from.goal_flat, from.floor_length,
+            from.floor_width);
     }
 };
 
-} // namespace rj_convert
+}  // namespace rj_convert
