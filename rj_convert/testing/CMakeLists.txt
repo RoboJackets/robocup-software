@@ -1,13 +1,13 @@
 #======================================================================
 # Set Sources
 #======================================================================
-set(TEST_RJ_COMMON_SRCS
-        rj_common_convert_test.cpp)
+set(TEST_RJ_CONVERT_SRCS
+        ros_convert_test.cpp)
 
 #======================================================================
 # Add sources
 #======================================================================
 target_sources(
-        test_rj_common
+        test_rj_convert
         PRIVATE
-        ${TEST_RJ_COMMON_SRCS})
+        ${TEST_RJ_CONVERT_SRCS})

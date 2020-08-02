@@ -3,9 +3,7 @@
 #include <rclcpp/time.hpp>
 #include <type_traits>
 
-#include "rj_common/time.hpp"
-
-namespace rj_common {
+namespace rj_convert {
 
 template <typename CppType, typename RosType>
 struct RosConverter {};
@@ -35,35 +33,6 @@ CONVERT_PRIMITIVE(std::string);
 CONVERT_PRIMITIVE(std::u16string);
 
 #undef CONVERT_PRIMITIVE
-
-template <>
-struct RosConverter<RJ::Time, rclcpp::Time> {
-    static rclcpp::Time to_ros(const RJ::Time& value) {
-        const int64_t nanos =
-            std::chrono::duration_cast<std::chrono::nanoseconds>(
-                value.time_since_epoch())
-                .count();
-
-        return rclcpp::Time{nanos};
-    }
-    static RJ::Time from_ros(const rclcpp::Time& value) {
-        const std::chrono::nanoseconds dur(value.nanoseconds());
-        return RJ::Time{dur};
-    }
-};
-
-template <>
-struct RosConverter<RJ::Seconds, rclcpp::Duration> {
-    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
-        return rclcpp::Duration(
-            std::chrono::duration_cast<std::chrono::nanoseconds>(value)
-                .count());
-    }
-    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
-        const std::chrono::nanoseconds dur(value.nanoseconds());
-        return std::chrono::duration_cast<RJ::Seconds>(dur);
-    }
-};
 
 template <typename CppItem, typename RosItem>
 struct RosConverter<std::vector<CppItem>, std::vector<RosItem>> {
@@ -125,4 +94,4 @@ CppType convert_from_ros(const RosType& from) {
     return RosConverter<CppType, RosType>::from_ros(from);
 }
 
-} // namespace rj_common
+} // namespace rj_convert

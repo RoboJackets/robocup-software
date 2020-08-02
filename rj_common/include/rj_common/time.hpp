@@ -5,6 +5,7 @@
 #include <chrono>
 #include <iostream>
 #include <rclcpp/time.hpp>
+#include <rj_convert/ros_convert.hpp>
 #include <string>
 
 using namespace std::chrono_literals;
@@ -91,3 +92,36 @@ inline std::ostream& operator<<(std::ostream& os, RJ::Seconds seconds) {
     os << to_string(seconds);
     return os;
 }
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<RJ::Time, rclcpp::Time> {
+    static rclcpp::Time to_ros(const RJ::Time& value) {
+        const int64_t nanos =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                value.time_since_epoch())
+                .count();
+
+        return rclcpp::Time{nanos};
+    }
+    static RJ::Time from_ros(const rclcpp::Time& value) {
+        const std::chrono::nanoseconds dur(value.nanoseconds());
+        return RJ::Time{dur};
+    }
+};
+
+template <>
+struct RosConverter<RJ::Seconds, rclcpp::Duration> {
+    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
+        return rclcpp::Duration(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(value)
+                .count());
+    }
+    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
+        const std::chrono::nanoseconds dur(value.nanoseconds());
+        return std::chrono::duration_cast<RJ::Seconds>(dur);
+    }
+};
+
+} // namespace rj_convert
