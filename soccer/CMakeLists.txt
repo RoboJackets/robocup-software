@@ -83,6 +83,8 @@ set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
 add_executable(soccer)
 add_executable(log_viewer)
+add_executable(internal_referee_node)
+add_executable(external_referee_node)
 
 if (BUILD_TESTING)
     add_executable(test-soccer)
@@ -130,6 +132,7 @@ set(ROBOCUP_DEPS_INCLUDE_DIRS
 
 set(ROBOCUP_DEPS_LIBRARIES
     rj_common
+    rj_param_utils
     rj_protos
     rc-fshare
     config_client
@@ -156,6 +159,12 @@ set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
     Qt5::Svg)
 
 set(LOG_VIEWER_DEPS_LIBRARIES
+    robocup)
+
+set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES
+    )
+
+set(REFEREE_NODE_DEPS_LIBRARIES
     robocup)
 
 #======================================================================
@@ -190,6 +199,18 @@ target_link_libraries(log_viewer
     ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
     ${LOG_VIEWER_DEPS_LIBRARIES})
 
+# -- external_referee_node --
+target_link_libraries(external_referee_node
+        PRIVATE
+        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${REFEREE_NODE_DEPS_LIBRARIES})
+
+# -- internal_referee_node --
+target_link_libraries(internal_referee_node
+        PRIVATE
+        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${REFEREE_NODE_DEPS_LIBRARIES})
+
 ## Add a test runner target "test-soccer" to run all tests in this directory
 if (BUILD_TESTING)
     target_link_libraries(test-soccer PRIVATE robocup)
@@ -217,12 +238,12 @@ endif()
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS robocup log_viewer
+install(TARGETS robocup log_viewer internal_referee_node external_referee_node
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
 
-install(TARGETS soccer
+install(TARGETS soccer internal_referee_node external_referee_node
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(DIRECTORY

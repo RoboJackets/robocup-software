@@ -638,7 +638,7 @@ class SituationalPlaySelector:
     # intended to interact with the GOALIE_CLEAR situation
     #
     def cleanGoaliePossession(self):
-        goalieID = self.gameState.get_goalie_id()
+        goalieID = self.context.our_info.goalie
         goalieBot = None
 
         for g in self.activeRobots:

@@ -34,7 +34,6 @@ using namespace boost::python;
 
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
-#include "Referee.hpp"
 #include "RobotConfig.hpp"
 #include "WindowEvaluator.hpp"
 #include "motion/TrapezoidalMotion.hpp"
@@ -42,6 +41,7 @@ using namespace boost::python;
 #include "optimization/NelderMead2DConfig.hpp"
 #include "optimization/PythonFunctionWrapper.hpp"
 #include "planning/MotionConstraints.hpp"
+#include "referee/ExternalReferee.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -914,8 +914,6 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("contains_point", &Geometry2d::Polygon::containsPoint);
 
     class_<GameState>("GameState")
-        .def_readonly("our_score", &GameState::ourScore)
-        .def_readonly("their_score", &GameState::theirScore)
         .def("is_halted", &GameState::halt)
         .def("is_stopped", &GameState::stopped)
         .def("is_playing", &GameState::playing)
@@ -944,13 +942,16 @@ BOOST_PYTHON_MODULE(robocup) {
         .def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
         .def("is_our_restart", &GameState::isOurRestart)
         .def("get_ball_placement_point", &GameState::getBallPlacementPoint)
-        .def("get_goalie_id", &GameState::getGoalieId)
         .def("is_first_half", &GameState::isFirstHalf)
         .def("is_second_half", &GameState::isSecondHalf)
         .def("is_halftime", &GameState::isHalftime)
         .def("is_overtime1", &GameState::isOvertime1)
         .def("is_overtime2", &GameState::isOvertime2)
         .def("is_penalty_shootout", &GameState::isPenaltyShootout);
+
+    class_<TeamInfo>("TeamInfo")
+        .add_property("score", &TeamInfo::score)
+        .add_property("goalie", &TeamInfo::goalie);
 
     class_<Robot>("Robot", init<Context*, int, bool>())
         .def("shell_id", &Robot::shell)
@@ -1062,6 +1063,8 @@ BOOST_PYTHON_MODULE(robocup) {
     class_<Context, Context*, boost::noncopyable>("Context")
         .def_readonly("state", &Context::state)
         .def_readonly("debug_drawer", &Context::debug_drawer)
+        .def_readonly("our_info", &Context::our_info)
+        .def_readonly("their_info", &Context::their_info)
         .def_readonly("game_state", &Context::game_state);
 
     class_<Field_Dimensions>("Field_Dimensions")
@@ -1196,32 +1199,25 @@ BOOST_PYTHON_MODULE(robocup) {
         .def_readonly("MaxRobotAccel", &MotionConstraints::_max_acceleration);
 
     enum_<RefereeModuleEnums::Command>("Command")
-        .value("halt", RefereeModuleEnums::Command::HALT)
-        .value("stop", RefereeModuleEnums::Command::STOP)
-        .value("normal_start", RefereeModuleEnums::Command::NORMAL_START)
-        .value("force_start", RefereeModuleEnums::Command::FORCE_START)
+        .value("halt", SSL_Referee_Command_HALT)
+        .value("stop", SSL_Referee_Command_STOP)
+        .value("normal_start", SSL_Referee_Command_NORMAL_START)
+        .value("force_start", SSL_Referee_Command_FORCE_START)
         .value("prepare_kickoff_yellow",
-               RefereeModuleEnums::Command::PREPARE_KICKOFF_YELLOW)
-        .value("prepare_kickoff_blue",
-               RefereeModuleEnums::Command::PREPARE_KICKOFF_BLUE)
+               SSL_Referee_Command_PREPARE_KICKOFF_YELLOW)
+        .value("prepare_kickoff_blue", SSL_Referee_Command_PREPARE_KICKOFF_BLUE)
         .value("prepare_penalty_yellow",
-               RefereeModuleEnums::Command::PREPARE_PENALTY_YELLOW)
-        .value("prepare_penalty_blue",
-               RefereeModuleEnums::Command::PREPARE_PENALTY_BLUE)
-        .value("direct_free_yellow",
-               RefereeModuleEnums::Command::DIRECT_FREE_YELLOW)
-        .value("direct_free_blue",
-               RefereeModuleEnums::Command::DIRECT_FREE_BLUE)
-        .value("indirect_free_yellow",
-               RefereeModuleEnums::Command::INDIRECT_FREE_YELLOW)
-        .value("indirect_free_blue",
-               RefereeModuleEnums::Command::INDIRECT_FREE_BLUE)
-        .value("timeout_yellow", RefereeModuleEnums::Command::TIMEOUT_YELLOW)
-        .value("timeout_blue", RefereeModuleEnums::Command::TIMEOUT_BLUE)
-        .value("goal_yellow", RefereeModuleEnums::Command::GOAL_YELLOW)
-        .value("goal_blue", RefereeModuleEnums::Command::GOAL_BLUE)
+               SSL_Referee_Command_PREPARE_PENALTY_YELLOW)
+        .value("prepare_penalty_blue", SSL_Referee_Command_PREPARE_PENALTY_BLUE)
+        .value("direct_free_yellow", SSL_Referee_Command_DIRECT_FREE_YELLOW)
+        .value("direct_free_blue", SSL_Referee_Command_DIRECT_FREE_BLUE)
+        .value("indirect_free_yellow", SSL_Referee_Command_INDIRECT_FREE_YELLOW)
+        .value("indirect_free_blue", SSL_Referee_Command_INDIRECT_FREE_BLUE)
+        .value("timeout_yellow", SSL_Referee_Command_TIMEOUT_YELLOW)
+        .value("timeout_blue", SSL_Referee_Command_TIMEOUT_BLUE)
+        .value("goal_yellow", SSL_Referee_Command_GOAL_YELLOW)
+        .value("goal_blue", SSL_Referee_Command_GOAL_BLUE)
         .value("ball_placement_yellow",
-               RefereeModuleEnums::Command::BALL_PLACEMENT_YELLOW)
-        .value("ball_placement_blue",
-               RefereeModuleEnums::Command::BALL_PLACEMENT_BLUE);
+               SSL_Referee_Command_BALL_PLACEMENT_YELLOW)
+        .value("ball_placement_blue", SSL_Referee_Command_BALL_PLACEMENT_BLUE);
 }

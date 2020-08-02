@@ -30,7 +30,7 @@ TEST(Logger, SaveContext) {
 
     // We should use blueTeam from GameState, not GameSettings
     context.game_settings.requestBlueTeam = true;
-    context.game_state.blueTeam = false;
+    context.blue_team = false;
 
     std::shared_ptr<Packet::LogFrame> frame = Logger::createLogFrame(&context);
 

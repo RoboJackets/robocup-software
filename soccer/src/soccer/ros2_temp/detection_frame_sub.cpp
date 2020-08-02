@@ -13,6 +13,7 @@ DetectionFrameSub::DetectionFrameSub() {
     executor_.add_node(config_client_);
 
     worker_ = std::thread(&DetectionFrameSub::spin, this);
+    config_client_->waitUntilConnection();
 }
 
 std::vector<DetectionFrameMsg::UniquePtr> DetectionFrameSub::GetFrames() {

@@ -2449,7 +2449,6 @@
     <addaction name="actionUseOurHalf"/>
     <addaction name="actionUseOpponentHalf"/>
     <addaction name="separator"/>
-    <addaction name="actionUse_External_Referee"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -2771,17 +2770,6 @@
    </property>
    <property name="text">
     <string>Team Names</string>
-   </property>
-  </action>
-  <action name="actionUse_External_Referee">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Use External Referee</string>
    </property>
   </action>
   <action name="actionUse_Field_Oriented_Controls">

@@ -17,7 +17,6 @@
 #include <Configuration.hpp>
 #include <Context.hpp>
 #include <GrSimCommunicator.hpp>
-#include <Referee.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 class OurRobot;
@@ -44,7 +43,7 @@ namespace Gameplay {
  */
 class GameplayModule {
 public:
-    GameplayModule(Context* const context, Referee* refereeModule);
+    GameplayModule(Context* context);
     virtual ~GameplayModule();
 
     SystemState* state() const { return &_context->state; }
@@ -143,7 +142,6 @@ private:
     double _oldFieldEdgeInset;
 
     Context* const _context;
-    Referee* const _refereeModule;
 
     std::set<OurRobot*> _playRobots;
 
@@ -167,12 +165,7 @@ private:
     std::shared_ptr<Geometry2d::Shape> _ourGoal;
     std::shared_ptr<Geometry2d::Shape> _theirGoal;
 
-    /// utility functions
-
-    int _our_score_last_frame;
-
-    // Shell ID of the robot to assign the goalie position
-    int _goalieID;
+    int _our_score_last_frame = 0;
 
     // python
     boost::python::object _mainPyNamespace;

@@ -26,7 +26,6 @@ set(ROBOCUP_LIB_SRC
     motion/MotionControl.cpp
     motion/MotionControlNode.cpp
     motion/TrapezoidalMotion.cpp
-    Referee.cpp
     optimization/GradientAscent1D.cpp
     optimization/ParallelGradientAscent1D.cpp
     optimization/NelderMead2D.cpp
@@ -56,6 +55,9 @@ set(ROBOCUP_LIB_SRC
     radio/PacketConvert.cpp
     radio/RadioNode.cpp
     radio/SimRadio.cpp
+    referee/RefereeBase.cpp
+    referee/ExternalReferee.cpp
+    referee/InternalReferee.cpp
     Robot.cpp
     RobotConfig.cpp
     SystemState.cpp
@@ -75,6 +77,7 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/soccer_config_client.cpp
     ros2_temp/detection_frame_sub.cpp
     ros2_temp/raw_vision_packet_sub.cpp
+    ros2_temp/referee_sub.cpp
     WindowEvaluator.cpp)
 
 
@@ -107,6 +110,12 @@ set(LOG_VIEWER_UIS
 set(LOG_VIEWER_SRC
     LogViewer.cpp)
 
+set(EXTERNAL_REFEREE_NODE_SRC
+    referee/ExternalRefereeMain.cpp)
+
+set(INTERNAL_REFEREE_NODE_SRC
+    referee/InternalRefereeMain.cpp)
+
 #======================================================================
 # Add sources
 #======================================================================
@@ -137,6 +146,20 @@ target_sources(
         ${LOG_VIEWER_SRC}
         ${LOG_VIEWER_UIS}
         ${LOG_VIEWER_RSRC}
+)
+
+# ---- external referee_node ----
+target_sources(
+    external_referee_node
+    PRIVATE
+    ${EXTERNAL_REFEREE_NODE_SRC}
+)
+
+# ---- internal referee_node ----
+target_sources(
+    internal_referee_node
+    PRIVATE
+    ${INTERNAL_REFEREE_NODE_SRC}
 )
 
 # Set the directory so AUTOUIC know where to find .ui files

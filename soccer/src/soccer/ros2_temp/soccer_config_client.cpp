@@ -12,13 +12,13 @@ SoccerConfigClient::SoccerConfigClient(Context* context) : context_{context} {
 void SoccerConfigClient::spin() { executor_.spin(); }
 
 void SoccerConfigClient::run() {
-    config_client_->updateGameSettings(context_->game_settings);
-
     // Check if it is connected, otherwise the below calls are invalid.
     if (!config_client_->connected()) {
         return;
     }
 
+    context_->game_settings =
+        GameSettings(config_client_->gameSettingsThreaded());
     context_->field_dimensions = config_client_->fieldDimensionsThreaded();
 }
 }  // namespace ros2_temp

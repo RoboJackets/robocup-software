@@ -69,17 +69,17 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                             'Timeout over')
 
     def our_score_increased(self):
-        if (Coach.OurScore < main.game_state().our_score):
+        if (Coach.OurScore < main.context().our_info.score):
             return True
         else:
-            Coach.OurScore = main.game_state().our_score
+            Coach.OurScore = main.context().our_info.score
             return False
 
     def their_score_increased(self):
-        if (Coach.TheirScore < main.game_state().their_score):
+        if (Coach.TheirScore < main.context().their_info.score):
             return True
         else:
-            Coach.TheirScore = main.game_state().their_score
+            Coach.TheirScore = main.context().their_info.score
             return False
 
     def on_enter_running(self):
@@ -109,7 +109,7 @@ class Coach(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             move.pos = robocup.Point(move.pos.x, move_y_pos)
 
     def on_enter_celebrating(self):
-        Coach.OurScore = main.game_state().our_score
+        Coach.OurScore = main.context().our_info.score
 
     def execute_celebrating(self):
         move = self.subbehavior_with_name('coach')

@@ -194,7 +194,7 @@ class RootPlay(Play, QtCore.QObject):
     # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None
     @property
     def goalie_id(self):
-        goalie = main.context().game_state.get_goalie_id()
+        goalie = main.context().our_info.goalie
         return None if goalie == -1 else goalie
 
     def setup_goalie_if_needed(self):
