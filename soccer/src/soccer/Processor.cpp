@@ -65,10 +65,13 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
 
     _context.field_dimensions = *currentDimensions;
 
-    _refereeModule = std::make_shared<Referee>(&_context);
-    _refereeModule->start();
-    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(
-        &_context, _refereeModule.get());
+    _ros_executor =
+        std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
+
+    _vision = std::make_shared<VisionFilter>(&_context);
+    _referee_sub =
+        std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
+    _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
     _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
@@ -144,6 +147,8 @@ void Processor::run() {
 
         ////////////////
         // Inputs
+        // TODO(#1558): Backport spin_all and use it for our main executor.
+        _ros_executor->spin_some();
         _sdl_joystick_node->run();
         _manual_control_node->run();
 
@@ -172,9 +177,6 @@ void Processor::run() {
             curStatus.lastVisionTime =
                 RJ::FromROSTime(world_state_msg->last_update_time);
         }
-
-        // Log referee data
-        _refereeModule->run();
 
         // Run high-level soccer logic
         _gameplayModule->run();

@@ -43,16 +43,14 @@ inline rclcpp::Time ToROSTime(RJ::Time time) {
     return rclcpp::Time{nanos};
 }
 
-inline rclcpp::Duration ToROSDuration(RJ::Seconds duration) {
-    const int64_t nanos =
-        std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
-
-    return rclcpp::Duration{nanos};
-}
-
 inline RJ::Time FromROSTime(const rclcpp::Time& time) {
     const std::chrono::nanoseconds dur(time.nanoseconds());
     return RJ::Time{dur};
+}
+
+inline rclcpp::Duration ToROSDuration(RJ::Seconds seconds) {
+    return rclcpp::Duration(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(seconds).count());
 }
 
 inline RJ::Seconds FromROSDuration(const rclcpp::Duration& duration) {

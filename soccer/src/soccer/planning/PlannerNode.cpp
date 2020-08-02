@@ -33,7 +33,7 @@ void PlannerNode::run() {
     const auto& robot_intents = context_->robot_intents;
     DebugDrawer* debug_drawer = &context_->debug_drawer;
     auto* trajectories = &context_->trajectories;
-    int goalie_id = context_->game_state.getGoalieId();
+    int goalie_id = context_->our_info.goalie;
 
     if (context_->game_state.state == GameState::Halt) {
         context_->trajectories.fill(Trajectory());

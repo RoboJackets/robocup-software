@@ -175,7 +175,6 @@ int main(int argc, char* argv[]) {
 
     Context* context = processor->context();
     context->game_settings.simulation = sim;
-    context->game_settings.use_external_referee = !noref;
     context->game_settings.requestBlueTeam = blueTeam;
     context->game_settings.defendPlusX = defendPlus;
     context->game_settings.requestGoalieID = 0;
@@ -192,7 +191,7 @@ int main(int argc, char* argv[]) {
                 .arg(cfgFile, error));
     }
 
-    auto win = std::make_unique<MainWindow>(processor.get());
+    auto win = std::make_unique<MainWindow>(processor.get(), !noref);
     win->configuration(config.get());
     win->initialize();
 

@@ -11,13 +11,23 @@ using GameSettingsMsg = rj_msgs::msg::GameSettings;
  * soccer program. This includes playbooks and general settings.
  */
 struct GameSettings {
+    GameSettings() = default;
+
+    /**
+     * @brief Implicit conversion from GameSettingsMsg.
+     * @return
+     */
+    GameSettings(const GameSettingsMsg& msg)
+        : simulation(msg.simulation),
+          requestBlueTeam(msg.request_blue_team),
+          requestGoalieID(msg.request_goalie_id),
+          defendPlusX(msg.defend_plus_x),
+          use_our_half(msg.use_our_half),
+          use_their_half(msg.use_their_half),
+          paused(msg.paused) {}
+
     // Whether or not we're in simulation.
     bool simulation = true;
-
-    // Whether external referee is allowed.
-    // If this is set to true but no external referee is connected,
-    // none will be used and the control panel can be used as always.
-    bool use_external_referee = false;
 
     // Requests. These can be overridden by the referee if it's enabled
     bool requestBlueTeam = true;
@@ -68,7 +78,6 @@ struct GameSettings {
     operator GameSettingsMsg() const {
         GameSettingsMsg msg{};
         msg.simulation = simulation;
-        msg.use_external_referee = use_external_referee;
         msg.request_blue_team = requestBlueTeam;
         msg.request_goalie_id = requestGoalieID;
         msg.defend_plus_x = defendPlusX;

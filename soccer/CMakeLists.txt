@@ -85,6 +85,8 @@ add_executable(rj_vision_filter)
 
 add_executable(soccer)
 add_executable(log_viewer)
+add_executable(internal_referee_node)
+add_executable(external_referee_node)
 
 if (BUILD_TESTING)
     add_executable(test-soccer)
@@ -132,6 +134,7 @@ set(ROBOCUP_DEPS_INCLUDE_DIRS
 
 set(ROBOCUP_DEPS_LIBRARIES
     rj_common
+    rj_param_utils
     rj_protos
     rc-fshare
     rj_param_utils
@@ -166,6 +169,12 @@ set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
     Qt5::Svg)
 
 set(LOG_VIEWER_DEPS_LIBRARIES
+    robocup)
+
+set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES
+    )
+
+set(REFEREE_NODE_DEPS_LIBRARIES
     robocup)
 
 #======================================================================
@@ -204,6 +213,18 @@ target_link_libraries(log_viewer
     ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
     ${LOG_VIEWER_DEPS_LIBRARIES})
 
+# -- external_referee_node --
+target_link_libraries(external_referee_node
+        PRIVATE
+        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${REFEREE_NODE_DEPS_LIBRARIES})
+
+# -- internal_referee_node --
+target_link_libraries(internal_referee_node
+        PRIVATE
+        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+        ${REFEREE_NODE_DEPS_LIBRARIES})
+
 #======================================================================
 # Testing
 #======================================================================
@@ -229,12 +250,16 @@ endif()
 #======================================================================
 # Packaging
 #======================================================================
-install(TARGETS robocup log_viewer
+install(TARGETS robocup log_viewer internal_referee_node external_referee_node
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
 
-install(TARGETS soccer rj_vision_filter
+install(TARGETS
+            soccer
+            internal_referee_node
+            external_referee_node
+            rj_vision_filter
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(DIRECTORY

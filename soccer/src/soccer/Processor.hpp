@@ -13,10 +13,12 @@
 #include <Geometry2d/Pose.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Logger.hpp>
-#include <Referee.hpp>
 #include <SystemState.hpp>
 #include <mutex>
 #include <optional>
+#include <rclcpp/executors/single_threaded_executor.hpp>
+#include <referee/ExternalReferee.hpp>
+#include <ros2_temp/referee_sub.hpp>
 #include <rj_msgs/msg/world_state.hpp>
 #include <vector>
 
@@ -81,8 +83,6 @@ public:
     std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const {
         return _gameplayModule;
     }
-
-    std::shared_ptr<Referee> refereeModule() const { return _refereeModule; }
 
     SystemState* state() { return &_context.state; }
 
@@ -166,7 +166,6 @@ private:
     Status _status;
 
     // modules
-    std::shared_ptr<Referee> _refereeModule;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<Planning::PlannerNode> _planner_node;
@@ -176,14 +175,18 @@ private:
     std::unique_ptr<joystick::ManualControlNode> _manual_control_node;
     std::unique_ptr<Logger> _logger;
 
+    std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> _ros_executor;
+
     // ROS2 temporary modules
     using WorldStateMsg = rj_msgs::msg::WorldState;
     using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
         WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
 
-    std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
-    ros2_temp::RawVisionPacketSub::UniquePtr _raw_vision_packet_sub;
     AsyncWorldStateMsgQueue::UniquePtr _world_state_queue;
+
+    std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
+    std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
+    std::unique_ptr<ros2_temp::RefereeSub> _referee_sub;
 
     std::vector<Node*> _nodes;
 

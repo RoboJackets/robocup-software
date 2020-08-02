@@ -22,7 +22,7 @@ def generate_launch_description():
     soccer = Node(package='rj_robocup',
                   executable='soccer',
                   output='screen',
-                  arguments=['-b', '-sim'],
+                  arguments=['-b', '-sim', '-noref'],
                   on_exit=Shutdown())
 
     config_server = Node(package='rj_robocup',
@@ -34,11 +34,16 @@ def generate_launch_description():
     vision_receiver = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(vision_receiver_launch_path))
 
+    ref_receiver = Node(package='rj_robocup',
+                        executable='internal_referee_node',
+                        output='screen',
+                        on_exit=Shutdown())
+
     vision_filter_launch_path = str(launch_dir / "vision_filter.launch.py")
     vision_filter = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(vision_filter_launch_path))
 
     return LaunchDescription([
-        stdout_linebuf_envvar, config_server, grsim, soccer, vision_receiver,
-        vision_filter
+        stdout_linebuf_envvar, config_server, soccer, grsim, vision_receiver,
+        ref_receiver
     ])

@@ -9,6 +9,7 @@ project(rj_msgs)
 #======================================================================
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(rj_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rj_geometry_msgs REQUIRED)
@@ -25,12 +26,18 @@ rosidl_generate_interfaces(rj_msgs
     msg/DetectionFrame.msg
     msg/DetectionRobot.msg
     msg/FieldDimensions.msg
+    msg/FieldOrientation.msg
     msg/GameSettings.msg
-    msg/TeamColor.msg
+    msg/GameState.msg
+    msg/Goalie.msg
     msg/RawProtobuf.msg
     msg/RobotState.msg
+    msg/TeamColor.msg
+    msg/TeamInfo.msg
     msg/WorldState.msg
     # Services
+    srv/QuickCommands.srv
+    srv/QuickRestart.srv
     srv/SetFieldDimensions.srv
     srv/SetGameSettings.srv
     DEPENDENCIES std_msgs builtin_interfaces rj_geometry_msgs
