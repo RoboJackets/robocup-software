@@ -1,5 +1,6 @@
 #include <Robot.hpp>
 #include <iostream>
+#include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_vision_filter/VisionFilter.hpp>
@@ -37,7 +38,8 @@ void VisionFilter::GetFrames() {
         return;
     }
 
-    last_update_time_ = RJ::FromROSTime(raw_frames.back()->t_received);
+    rj_convert::convert_from_ros(raw_frames.back()->t_received,
+                                 &last_update_time_);
 
     const double team_angle = detection_frame_sub_->TeamAngle();
     const Geometry2d::TransformMatrix world_to_team =

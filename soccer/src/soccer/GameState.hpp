@@ -1,11 +1,14 @@
 #pragma once
 
+#include <Geometry2d/GeometryConversions.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_convert/ros_convert.hpp>
+#include <rj_msgs/msg/game_state.hpp>
 
 /**
  * @brief Holds the state of the game according to the referee
@@ -18,6 +21,8 @@
  */
 class GameState {
 public:
+    using Msg = rj_msgs::msg::GameState;
+
     enum Period {
         FirstHalf,
         Halftime,
@@ -46,7 +51,7 @@ public:
     bool our_restart = false;
 
     // Time in seconds remaining in the current period
-    RJ::Seconds stage_time_left;
+    RJ::Seconds stage_time_left{};
 
     std::optional<Geometry2d::Point> ball_placement_point;
 
@@ -171,3 +176,71 @@ public:
         return ball_placement_point;
     }
 };
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<GameState::Period, uint8_t> {
+    static uint8_t to_ros(const GameState::Period& from) {
+        return static_cast<uint8_t>(from);
+    }
+
+    static GameState::Period from_ros(const uint8_t from) {
+        return static_cast<GameState::Period>(from);
+    }
+};
+
+template <>
+struct RosConverter<GameState::State, uint8_t> {
+    static uint8_t to_ros(const GameState::State& from) {
+        return static_cast<uint8_t>(from);
+    }
+
+    static GameState::State from_ros(const uint8_t from) {
+        return static_cast<GameState::State>(from);
+    }
+};
+
+template <>
+struct RosConverter<GameState::Restart, uint8_t> {
+    static uint8_t to_ros(const GameState::Restart& from) {
+        return static_cast<uint8_t>(from);
+    }
+
+    static GameState::Restart from_ros(const uint8_t from) {
+        return static_cast<GameState::Restart>(from);
+    }
+};
+
+template <>
+struct RosConverter<GameState, rj_msgs::msg::GameState> {
+    static rj_msgs::msg::GameState to_ros(const GameState& from) {
+        rj_msgs::msg::GameState to;
+        convert_to_ros(from.period, &to.period);
+        convert_to_ros(from.state, &to.state);
+        convert_to_ros(from.restart, &to.restart);
+        convert_to_ros(from.our_restart, &to.our_restart);
+        convert_to_ros(from.stage_time_left, &to.stage_time_left);
+        if (from.ball_placement_point.has_value()) {
+            convert_to_ros(from.ball_placement_point.value(),
+                           &to.placement_point);
+        }
+        return to;
+    }
+
+    static GameState from_ros(const rj_msgs::msg::GameState& from) {
+        GameState to;
+        convert_from_ros(from.period, &to.period);
+        convert_from_ros(from.state, &to.state);
+        convert_from_ros(from.restart, &to.restart);
+        convert_from_ros(from.our_restart, &to.our_restart);
+        convert_from_ros(from.stage_time_left, &to.stage_time_left);
+        if (to.restart == GameState::Restart::Placement) {
+            to.ball_placement_point =
+                convert_from_ros<Geometry2d::Point>(from.placement_point);
+        }
+        return to;
+    }
+};
+
+}  // namespace rj_convert

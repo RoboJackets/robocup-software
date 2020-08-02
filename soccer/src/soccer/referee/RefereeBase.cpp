@@ -107,22 +107,6 @@ void RefereeBase::set_goalie(uint8_t goalie_id) {
     _goalie_valid &= valid;
 }
 
-TeamInfoMsg team_info_to_ros(const TeamInfo& other) {
-    TeamInfoMsg msg;
-    msg.name = other.name;
-    msg.score = other.score;
-    msg.num_red_cards = other.red_cards;
-    msg.num_yellow_cards = other.yellow_cards;
-    msg.yellow_card_remaining_times.reserve(msg.num_yellow_cards);
-    for (const auto& value : other.yellow_card_times) {
-        msg.yellow_card_remaining_times.emplace_back(RJ::ToROSDuration(value));
-    }
-    msg.timeouts_left = other.timeouts_left;
-    msg.remaining_timeout_time = RJ::ToROSDuration(other.timeout_time);
-    msg.goalie_id = other.goalie;
-    return msg;
-}
-
 void RefereeBase::send() {
     if (!_goalie_valid) {
         GoalieMsg msg;
@@ -132,16 +116,8 @@ void RefereeBase::send() {
     }
 
     if (!_state_valid) {
-        GameStateMsg msg;
-        msg.period = _state.period;
-        msg.state = _state.state;
-        msg.restart = _state.restart;
-        msg.our_restart = _state.our_restart;
-        if (_state.ball_placement_point.has_value()) {
-            msg.placement_point.x = _state.ball_placement_point->x();
-            msg.placement_point.y = _state.ball_placement_point->y();
-        }
-        msg.stage_time_left = RJ::ToROSDuration(_state.stage_time_left);
+        GameState::Msg msg;
+        rj_convert::convert_to_ros(_state, &msg);
         _game_state_pub->publish(msg);
         _state_valid = true;
     }
@@ -149,8 +125,10 @@ void RefereeBase::send() {
     if (!_team_info_valid) {
         auto our_msg = _blue_team ? _blue_info : _yellow_info;
         auto their_msg = _blue_team ? _yellow_info : _blue_info;
-        _our_team_info_pub->publish(team_info_to_ros(our_msg));
-        _their_team_info_pub->publish(team_info_to_ros(their_msg));
+        _our_team_info_pub->publish(
+            rj_convert::convert_to_ros<TeamInfo, TeamInfo::Msg>(our_msg));
+        _their_team_info_pub->publish(
+            rj_convert::convert_to_ros<TeamInfo, TeamInfo::Msg>(our_msg));
         _team_info_valid = true;
     }
 

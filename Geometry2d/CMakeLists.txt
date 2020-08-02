@@ -32,7 +32,8 @@ set(GEOMETRY2D_DEPS_INCLUDE_DIRS
 
 set(GEOMETRY2D_DEPS_LIBRARIES
     rj_protos
-    rj_constants)
+    rj_constants
+    rj_convert)
 
 #======================================================================
 # Include and Linking

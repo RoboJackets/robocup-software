@@ -1,6 +1,8 @@
 #pragma once
 
+#include <Geometry2d/GeometryConversions.hpp>
 #include <Geometry2d/Pose.hpp>
+#include <rj_common/ros_convert.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_msgs/msg/ball_state.hpp>
@@ -38,26 +40,6 @@ struct RobotState {
           velocity{velocity},
           timestamp{timestamp},
           visible{visible} {}
-
-    /**
-     * @brief Implicit conversion from RobotState::Msg.
-     * @param msg
-     */
-    RobotState(const Msg& msg)
-        : RobotState{msg.pose, msg.velocity, RJ::FromROSTime(msg.stamp),
-                     msg.visible} {}
-
-    /**
-     * @brief Implicit conversion to RobotState::Msg.
-     * @return
-     */
-    [[nodiscard]] operator Msg() const {
-        return rj_msgs::build<Msg>()
-            .stamp(RJ::ToROSTime(timestamp))
-            .pose(pose)
-            .velocity(velocity)
-            .visible(visible);
-    }
 };
 
 /**
@@ -84,13 +66,6 @@ struct BallState {
         : position(position), velocity(velocity), timestamp(timestamp) {
         visible = true;
     }
-
-    /**
-     * @brief Implicit conversion from BallState::Msg.
-     * @param msg
-     */
-    BallState(const Msg& msg)
-        : BallState{msg.position, msg.velocity, RJ::FromROSTime(msg.stamp)} {}
 
     /**
      * @brief Predict the ball's state at a particular instance in time.
@@ -164,18 +139,6 @@ struct BallState {
      * @return A trajectory for this ball to follow. Angles are meaningless.
      */
     [[nodiscard]] Planning::Trajectory make_trajectory() const;
-
-    /**
-     * @brief Implicit conversion to RobotState::Msg.
-     * @return
-     */
-    [[nodiscard]] operator Msg() const {
-        return rj_msgs::build<Msg>()
-            .stamp(RJ::ToROSTime(timestamp))
-            .position(position)
-            .velocity(velocity)
-            .visible(visible);
-    }
 };
 
 struct WorldState {
@@ -195,14 +158,6 @@ struct WorldState {
           our_robots{std::move(our_robots)},
           ball{ball} {}
 
-    /**
-     * @brief Implicit conversion from WorldState::Msg.
-     */
-    WorldState(const Msg& msg)
-        : their_robots(msg.their_robots.begin(), msg.their_robots.end()),
-          our_robots(msg.our_robots.begin(), msg.our_robots.end()),
-          ball{msg.ball} {}
-
     RobotState& get_robot(bool ours, int shell) {
         if (ours) {
             return our_robots.at(shell);
@@ -219,20 +174,72 @@ struct WorldState {
         }
     }
 
-    /**
-     * @brief Implicit conversion to Msg.
-     * @return
-     */
-    [[nodiscard]] operator Msg() const {
-        return rj_msgs::build<Msg>()
-            .their_robots(std::vector<RobotState::Msg>(their_robots.begin(),
-                                                       their_robots.end()))
-            .our_robots(std::vector<RobotState::Msg>(our_robots.begin(),
-                                                     our_robots.end()))
-            .ball(ball);
-    }
-
     std::vector<RobotState> their_robots;
     std::vector<RobotState> our_robots;
     BallState ball;
 };
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<RobotState, RobotState::Msg> {
+    static RobotState::Msg to_ros(const RobotState& value) {
+        RobotState::Msg result;
+        convert_to_ros(value.timestamp, &result.stamp);
+        convert_to_ros(value.pose, &result.pose);
+        convert_to_ros(value.velocity, &result.velocity);
+        convert_to_ros(value.visible, &result.visible);
+        return result;
+    }
+
+    static RobotState from_ros(const RobotState::Msg& value) {
+        RobotState result;
+        convert_from_ros(value.stamp, &result.timestamp);
+        convert_from_ros(value.pose, &result.pose);
+        convert_from_ros(value.velocity, &result.velocity);
+        convert_from_ros(value.visible, &result.visible);
+        return result;
+    }
+};
+
+template <>
+struct RosConverter<BallState, BallState::Msg> {
+    static BallState::Msg to_ros(const BallState& value) {
+        BallState::Msg result;
+        convert_to_ros(value.timestamp, &result.stamp);
+        convert_to_ros(value.velocity, &result.velocity);
+        convert_to_ros(value.position, &result.position);
+        convert_to_ros(value.visible, &result.visible);
+        return result;
+    }
+
+    static BallState from_ros(const BallState::Msg& value) {
+        BallState result;
+        convert_from_ros(value.stamp, &result.timestamp);
+        convert_from_ros(value.velocity, &result.velocity);
+        convert_from_ros(value.position, &result.position);
+        convert_to_ros(value.visible, &result.visible);
+        return result;
+    }
+};
+
+template <>
+struct RosConverter<WorldState, WorldState::Msg> {
+    static WorldState::Msg to_ros(const WorldState& value) {
+        WorldState::Msg result;
+        convert_to_ros(value.ball, &result.ball);
+        convert_to_ros(value.our_robots, &result.our_robots);
+        convert_to_ros(value.their_robots, &result.their_robots);
+        return result;
+    }
+
+    static WorldState from_ros(const WorldState::Msg& value) {
+        WorldState result;
+        convert_from_ros(value.ball, &result.ball);
+        convert_from_ros(value.our_robots, &result.our_robots);
+        convert_from_ros(value.their_robots, &result.their_robots);
+        return result;
+    }
+};
+
+}  // namespace rj_convert

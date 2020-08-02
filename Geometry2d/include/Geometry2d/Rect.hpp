@@ -6,7 +6,6 @@
 #include "Shape.hpp"
 
 namespace Geometry2d {
-using RectMsg = rj_geometry_msgs::msg::Rect;
 
 class Segment;
 
@@ -17,6 +16,7 @@ private:
     int CohenSutherlandOutCode(const Point& other) const;
 
 public:
+    using Msg = rj_geometry_msgs::msg::Rect;
     Rect() {}
 
     Rect(Point p1) { pt[0] = pt[1] = p1; }
@@ -30,12 +30,6 @@ public:
         pt[0] = other.pt[0];
         pt[1] = other.pt[1];
     }
-
-    /**
-     * Constructor from RectMsg.
-     * @param msg
-     */
-    Rect(const RectMsg& msg) : Rect{msg.pt[0], msg.pt[1]} {}
 
     Shape* clone() const override;
 
@@ -126,17 +120,7 @@ public:
     [[nodiscard]] std::tuple<bool, std::vector<Point> > intersects(
         const Segment& other) const;
 
-    /**
-     * @brief Implicit conversion to RectMsg.
-     * @return
-     */
-    [[nodiscard]] operator RectMsg() const {
-        RectMsg msg{};
-        msg.pt = {pt[0], pt[1]};
-        return msg;
-    }
-
-    Point pt[2];
+    std::array<Point, 2> pt;
 
     std::string toString() override {
         std::stringstream str;

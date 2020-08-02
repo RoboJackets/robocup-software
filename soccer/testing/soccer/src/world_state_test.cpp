@@ -2,6 +2,7 @@
 
 #include <WorldState.hpp>
 #include <random>
+#include <rj_convert/testing/ros_convert_testing.hpp>
 
 RobotState GetRandomRobotState() {
     std::random_device rd;
@@ -94,25 +95,18 @@ bool operator==(const WorldState& a, const WorldState& b) {
 }
 
 TEST(ROSMsgConversionNoop, RobotState) {
-    const RobotState robot_state = GetRandomRobotState();
-    const RobotState::Msg robot_state_msg = robot_state;
-    const RobotState robot_state2 = robot_state_msg;
-
-    EXPECT_EQ(robot_state, robot_state2);
+    TEST_LOSSLESS_CONVERT_CPP_VALUE(RobotState, RobotState::Msg,
+                                    GetRandomRobotState());
 }
 
 TEST(ROSMsgConversionNoop, BallState) {
-    const BallState ball_state = GetRandomBallState();
-    const BallState::Msg ball_state_msg = ball_state;
-    const BallState ball_state2 = ball_state_msg;
-
-    EXPECT_EQ(ball_state, ball_state2);
+    auto state = GetRandomBallState();
+    auto state_msg =
+        rj_convert::convert_to_ros<BallState, BallState::Msg>(state);
+    TEST_LOSSLESS_CONVERT_CPP_VALUE(BallState, BallState::Msg, state);
 }
 
 TEST(ROSMsgConversionNoop, WorldState) {
-    const WorldState world_state = GetRandomWorldState();
-    const WorldState::Msg world_state_msg = world_state;
-    const WorldState world_state2 = world_state_msg;
-
-    EXPECT_EQ(world_state, world_state2);
+    TEST_LOSSLESS_CONVERT_CPP_VALUE(WorldState, WorldState::Msg,
+                                    GetRandomWorldState());
 }

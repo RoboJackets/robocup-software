@@ -2,29 +2,18 @@
 
 #include <optional>
 #include <rj_common/RefereeEnums.hpp>
+#include <rj_common/time.hpp>
+#include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/game_settings.hpp>
-
-using GameSettingsMsg = rj_msgs::msg::GameSettings;
 
 /**
  * Settings for the game, set by MainWindow to be consumed by the rest of the
  * soccer program. This includes playbooks and general settings.
  */
 struct GameSettings {
-    GameSettings() = default;
+    using Msg = rj_msgs::msg::GameSettings;
 
-    /**
-     * @brief Implicit conversion from GameSettingsMsg.
-     * @return
-     */
-    GameSettings(const GameSettingsMsg& msg)
-        : simulation(msg.simulation),
-          requestBlueTeam(msg.request_blue_team),
-          requestGoalieID(msg.request_goalie_id),
-          defendPlusX(msg.defend_plus_x),
-          use_our_half(msg.use_our_half),
-          use_their_half(msg.use_their_half),
-          paused(msg.paused) {}
+    GameSettings() = default;
 
     // Whether or not we're in simulation.
     bool simulation = true;
@@ -32,10 +21,6 @@ struct GameSettings {
     // Requests. These can be overridden by the referee if it's enabled
     bool requestBlueTeam = true;
     int requestGoalieID = 0;
-
-    // One-off command. This should be set once, and acknowledged by setting it
-    // back to nullopt.
-    std::optional<RefereeModuleEnums::Command> requestRefCommand = std::nullopt;
 
     // Defend the plus-x direction in vision
     bool defendPlusX = true;
@@ -54,37 +39,33 @@ struct GameSettings {
     };
 
     JoystickConfig joystick_config;
+};
 
-    /**
-     * Copy from another struct, but don't clear optional values (RPCs) unless
-     * there is a new value.
-     * @param other
-     */
-    void update(const GameSettings& other) {
-        std::optional<RefereeModuleEnums::Command> refCommand =
-            other.requestRefCommand;
-        if (refCommand == std::nullopt) {
-            refCommand = requestRefCommand;
-        }
+namespace rj_convert {
 
-        *this = other;
-        requestRefCommand = refCommand;
+template <>
+struct RosConverter<GameSettings, GameSettings::Msg> {
+    static GameSettings::Msg to_ros(const GameSettings& from) {
+        GameSettings::Msg to;
+        convert_to_ros(from.simulation, &to.simulation);
+        convert_to_ros(from.requestBlueTeam, &to.request_blue_team);
+        convert_to_ros(from.requestGoalieID, &to.request_goalie_id);
+        convert_to_ros(from.defendPlusX, &to.defend_plus_x);
+        convert_to_ros(from.use_our_half, &to.use_our_half);
+        convert_to_ros(from.use_their_half, &to.use_their_half);
+        return to;
     }
 
-    /**
-     * @brief Implicit conversion to GameSettingsMsg.
-     * @return
-     */
-    operator GameSettingsMsg() const {
-        GameSettingsMsg msg{};
-        msg.simulation = simulation;
-        msg.request_blue_team = requestBlueTeam;
-        msg.request_goalie_id = requestGoalieID;
-        msg.defend_plus_x = defendPlusX;
-        msg.use_our_half = use_our_half;
-        msg.use_their_half = use_their_half;
-        msg.paused = paused;
-
-        return msg;
+    static GameSettings from_ros(const GameSettings::Msg& from) {
+        GameSettings to;
+        convert_to_ros(from.simulation, &to.simulation);
+        convert_to_ros(from.request_blue_team, &to.requestBlueTeam);
+        convert_to_ros(from.request_goalie_id, &to.requestGoalieID);
+        convert_to_ros(from.defend_plus_x, &to.defendPlusX);
+        convert_to_ros(from.use_our_half, &to.use_our_half);
+        convert_to_ros(from.use_their_half, &to.use_their_half);
+        return to;
     }
 };
+
+}  // namespace rj_convert
