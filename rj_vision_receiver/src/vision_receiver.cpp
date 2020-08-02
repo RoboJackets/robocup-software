@@ -294,7 +294,7 @@ void VisionReceiver::UpdateGeometryPacket(
             displacement / 1000.0f,                  // GoalFlat
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
-        config_.updateFieldDimensions(new_field_dim);
+        config_.updateFieldDimensions(rj_convert::convert_to_ros<Field_Dimensions, Field_Dimensions::Msg>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
         const Field_Dimensions defaultDim =
             Field_Dimensions::Default_Dimensions;
@@ -315,7 +315,7 @@ void VisionReceiver::UpdateGeometryPacket(
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
 
-        config_.updateFieldDimensions(new_field_dim);
+        config_.updateFieldDimensions(rj_convert::convert_to_ros<Field_Dimensions, Field_Dimensions::Msg>(new_field_dim));
     } else {
         EZ_ERROR_STREAM(
             "Error: failed to decode SSL geometry packet. Not resizing "

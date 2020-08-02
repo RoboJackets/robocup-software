@@ -12,12 +12,12 @@
 #include <iostream>
 #include <rj_msgs/msg/field_dimensions.hpp>
 
-using FieldDimensionsMsg = rj_msgs::msg::FieldDimensions;
-
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
 struct Field_Dimensions {
+    using Msg = rj_msgs::msg::FieldDimensions;
+
     float Length() const { return _Length; }
     float Width() const { return _Width; }
 
@@ -115,26 +115,6 @@ struct Field_Dimensions {
         updateGeometry();
     }
 
-    /**
-     * @brief Implicit conversion from FieldDimensionsMsg.
-     * @param msg
-     */
-    Field_Dimensions(const FieldDimensionsMsg& msg)
-        : Field_Dimensions{msg.length,
-                           msg.width,
-                           msg.border,
-                           msg.line_width,
-                           msg.goal_width,
-                           msg.goal_depth,
-                           msg.goal_height,
-                           msg.penalty_short_dist,
-                           msg.penalty_long_dist,
-                           msg.center_radius,
-                           msg.center_diameter,
-                           msg.goal_flat,
-                           msg.floor_length,
-                           msg.floor_width} {}
-
     Field_Dimensions operator*(float scalar) const {
         return Field_Dimensions(
             _Length * scalar, _Width * scalar, _Border * scalar,
@@ -204,31 +184,6 @@ struct Field_Dimensions {
                              Geometry2d::Point(-_Width / 2.0, 0))};
     }
 
-    /**
-     * @brief Implicit conversion to FieldDimensionsMsg.
-     * @return
-     */
-    [[nodiscard]] operator FieldDimensionsMsg() const {
-        FieldDimensionsMsg msg{};
-
-        msg.length = _Length;
-        msg.width = _Width;
-        msg.border = _Border;
-        msg.line_width = _LineWidth;
-        msg.goal_width = _GoalWidth;
-        msg.goal_depth = _GoalDepth;
-        msg.goal_height = _GoalHeight;
-        msg.penalty_short_dist = _PenaltyShortDist;
-        msg.penalty_long_dist = _PenaltyLongDist;
-        msg.center_radius = _CenterRadius;
-        msg.center_diameter = _CenterDiameter;
-        msg.goal_flat = _GoalFlat;
-        msg.floor_length = _FloorLength;
-        msg.floor_width = _FloorWidth;
-
-        return msg;
-    }
-
     friend std::ostream& operator<<(std::ostream& stream,
                                     const Field_Dimensions& fd) {
         stream << "length: " << fd.Length() << "\n";
@@ -276,3 +231,45 @@ private:
 
     std::vector<Geometry2d::Line> _FieldBorders;
 };
+
+namespace rj_convert {
+
+template<> struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
+    static Field_Dimensions::Msg to_ros(const Field_Dimensions& from) {
+        Field_Dimensions::Msg to;
+        to.length = from.Length();
+        to.width = from.Width();
+        to.border = from.Border();
+        to.line_width = from.LineWidth();
+        to.goal_width = from.GoalWidth();
+        to.goal_depth = from.GoalDepth();
+        to.goal_height = from.GoalHeight();
+        to.penalty_short_dist = from.PenaltyShortDist();
+        to.penalty_long_dist = from.PenaltyLongDist();
+        to.center_radius = from.CenterRadius();
+        to.center_diameter = from.CenterDiameter();
+        to.goal_flat = from.GoalFlat();
+        to.floor_length = from.FloorLength();
+        to.floor_width = from.FloorWidth();
+        return to;
+    }
+
+    static Field_Dimensions from_ros(const Field_Dimensions::Msg& from) {
+        return Field_Dimensions(from.length,
+                                from.width,
+                                from.border,
+                                from.line_width,
+                                from.goal_width,
+                                from.goal_depth,
+                                from.goal_height,
+                                from.penalty_short_dist,
+                                from.penalty_long_dist,
+                                from.center_radius,
+                                from.center_diameter,
+                                from.goal_flat,
+                                from.floor_length,
+                                from.floor_width);
+    }
+};
+
+} // namespace rj_convert
