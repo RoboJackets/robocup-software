@@ -1,7 +1,6 @@
-#include <rj_convert/ros_convert.hpp>
-
 #include <gtest/gtest.h>
 
+#include <rj_convert/ros_convert.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 struct MockTime {
@@ -10,17 +9,16 @@ struct MockTime {
 
 namespace rj_convert {
 
-template<> struct RosConverter<MockTime, rclcpp::Time> {
-    static rclcpp::Time to_ros(const MockTime& from) {
-        return from.time;
-    }
+template <>
+struct RosConverter<MockTime, rclcpp::Time> {
+    static rclcpp::Time to_ros(const MockTime& from) { return from.time; }
 
     static MockTime from_ros(const rclcpp::Time& from) {
         return MockTime{from};
     }
 };
 
-} // namespace rj_convert
+}  // namespace rj_convert
 
 TEST(ROSConvert, primitives_have_lossless_convert) {
     TEST_LOSSLESS_CONVERT_ROS_VALUE(int, int, 5);

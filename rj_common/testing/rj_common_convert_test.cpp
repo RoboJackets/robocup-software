@@ -1,7 +1,6 @@
-#include <rj_common/time.hpp>
-
 #include <gtest/gtest.h>
 
+#include <rj_common/time.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 TEST(ROSConvert, time_lossless_convert) {

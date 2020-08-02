@@ -94,4 +94,4 @@ CppType convert_from_ros(const RosType& from) {
     return RosConverter<CppType, RosType>::from_ros(from);
 }
 
-} // namespace rj_convert
+}  // namespace rj_convert
