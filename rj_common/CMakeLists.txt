@@ -16,10 +16,15 @@ find_package(rj_msgs REQUIRED)
 #======================================================================
 add_library(rj_common STATIC)
 
+if (BUILD_TESTING)
+    add_executable(test_rj_common)
+endif()
+
 # position-independent-code flag
 target_compile_options(rj_common PRIVATE "-fPIC")
 
 add_subdirectory(src)
+add_subdirectory(testing)
 
 #======================================================================
 # Dependencies List
@@ -56,6 +61,13 @@ target_link_libraries(rj_common
 
 ament_target_dependencies(rj_common PUBLIC rclcpp rj_msgs)
 
+## Add a test runner target "test_rj_common" to run all tests in this directory
+if (BUILD_TESTING)
+    target_link_libraries(test_rj_common PRIVATE rj_common)
+    target_link_libraries(test_rj_common PRIVATE ${GTEST_LIBRARIES})
+    add_dependencies(test_rj_common googletest)
+endif ()
+
 #======================================================================
 # Packaging
 #======================================================================
@@ -67,3 +79,8 @@ install( TARGETS rj_common
     ARCHIVE DESTINATION lib
     RUNTIME DESTINATION bin
 )
+
+if(BUILD_TESTING)
+    install(TARGETS test_rj_common
+            DESTINATION lib/${CMAKE_PROJECT_NAME})
+endif()
