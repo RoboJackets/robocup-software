@@ -33,6 +33,8 @@ public:
 
     Shape* clone() const override;
 
+    bool operator==(const Rect& other) const { return pt == other.pt; }
+
     Rect& operator+=(Point offset) {
         pt[0] += offset;
         pt[1] += offset;

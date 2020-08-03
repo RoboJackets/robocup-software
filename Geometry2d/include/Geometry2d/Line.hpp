@@ -14,7 +14,7 @@ class Line {
 public:
     using Msg = rj_geometry_msgs::msg::Line;
 
-    Line() {}
+    Line() = default;
 
     explicit Line(Point p1, Point p2) : pt{p1, p2} {
         // assert(p1 != p2);
@@ -24,7 +24,7 @@ public:
 
     Point delta() const { return pt[1] - pt[0]; }
 
-    bool operator==(const Line& other) { return pt == other.pt; }
+    bool operator==(const Line& other) const { return pt == other.pt; }
 
     /**
     returns the shortest distance between the line and a point

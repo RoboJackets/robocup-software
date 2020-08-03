@@ -17,9 +17,7 @@ TEST(Line, equality) {
     Line l2({-1, -1}, {1, 1});
     Line l3({-2, -1}, {1, 1});
 
-    // TODO: Inavlid test due to bug. See issue #1470
-    // EXPECT_TRUE(l1 == l2);
-    EXPECT_FALSE(l1 == l3);
+    EXPECT_TRUE(l1 == l2);
 }
 
 TEST(Line, transform) {

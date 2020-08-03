@@ -66,8 +66,6 @@ public:
         return stream << seg.toString();
     }
 
-    bool operator==(const Segment& other) const {
-        return pt[0] == other.pt[0] && pt[1] == other.pt[1];
-    }
+    bool operator==(const Segment& other) const { return pt == other.pt; }
 };
 }

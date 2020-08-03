@@ -84,6 +84,23 @@ struct RosConverter<Geometry2d::Line, rj_geometry_msgs::msg::Line> {
 };
 
 template <>
+struct RosConverter<Geometry2d::Segment, rj_geometry_msgs::msg::Segment> {
+    static rj_geometry_msgs::msg::Segment to_ros(
+        const Geometry2d::Segment& from) {
+        rj_geometry_msgs::msg::Segment to;
+        convert_to_ros(from.pt, &to.pt);
+        return to;
+    }
+
+    static Geometry2d::Segment from_ros(
+        const rj_geometry_msgs::msg::Segment& from) {
+        Geometry2d::Segment to;
+        convert_from_ros(from.pt, &to.pt);
+        return to;
+    }
+};
+
+template <>
 struct RosConverter<Geometry2d::Rect, rj_geometry_msgs::msg::Rect> {
     static rj_geometry_msgs::msg::Rect to_ros(const Geometry2d::Rect& from) {
         rj_geometry_msgs::msg::Rect to;
