@@ -59,7 +59,7 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos,
     // clang-format on
 
     // Covariance of process noise (how wrong A is)
-    // Based on a guassian white noise w_k in x_dot = A*x + B*u + G*w
+    // Based on a guassian white noise w_k in x_dot = A*x + B*u + G*w.
     // The noise can be propogated through the model resulting in a process
     // noise of the form
     //
@@ -67,8 +67,10 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos,
     //  [1/2 T^2           T]
     // Where sigma is the standard deviation of the process noise
     // the change in velocity over one time step should be around sqrt(T *
-    // sigma^2) Note: T is the sample period Taken from Tiger's AutoRef. Most
-    // likely found through integration of error through the state matrices See
+    // sigma^2).
+    // Note: T is the sample period.
+    // Taken from Tiger's AutoRef. Most likely found through integration of
+    // error through the state matrices. See
     // https://en.wikipedia.org/wiki/Discretization#Discretization_of_process_noise
     p = ball::PARAM_process_noise;
     double sigma = sqrt(3.0 * p / dt) / dt;
