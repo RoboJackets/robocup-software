@@ -25,7 +25,7 @@ using namespace kick::detector;
 bool SlowKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
                                  const std::vector<WorldRobot>& yellowRobots,
                                  const std::vector<WorldRobot>& blueRobots,
-                                 KickEvent& kickEvent) {
+                                 KickEvent* kickEvent) {
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
     if (stateHistory.size() >
@@ -52,7 +52,7 @@ bool SlowKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
     return detectKick(kickEvent);
 }
 
-bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
+bool SlowKickDetector::detectKick(KickEvent* kickEvent) {
     // Find all the robots who have enough samples
     // Cut out any that are too far
     // Test validators on all of them
@@ -82,7 +82,7 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
         // Valid kick robot
         // Just take this and return a kick event
         if (checkAllValidators(robotList, ballList)) {
-            kickEvent =
+            *kickEvent =
                 KickEvent(stateHistory.at(0).calcTime,
                           stateHistory.at(0).yellowRobots.at(i), stateHistory);
 
@@ -111,7 +111,7 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
         // Valid kick robot
         // Just take this and return a kick event
         if (checkAllValidators(robotList, ballList)) {
-            kickEvent =
+            *kickEvent =
                 KickEvent(stateHistory.at(0).calcTime,
                           stateHistory.at(0).blueRobots.at(i), stateHistory);
 
@@ -122,15 +122,15 @@ bool SlowKickDetector::detectKick(KickEvent& kickEvent) {
     return false;
 }
 
-bool SlowKickDetector::checkAllValidators(std::vector<WorldRobot>& robot,
-                                          std::vector<WorldBall>& ball) {
+bool SlowKickDetector::checkAllValidators(const std::vector<WorldRobot>& robot,
+                                          const std::vector<WorldBall>& ball) {
     return distanceValidator(robot, ball) && velocityValidator(robot, ball) &&
            distanceIncreasingValidator(robot, ball) &&
            inFrontValidator(robot, ball);
 }
 
-bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot,
-                                         std::vector<WorldBall>& ball) {
+bool SlowKickDetector::distanceValidator(const std::vector<WorldRobot>& robot,
+                                         const std::vector<WorldBall>& ball) {
     // Make sure the first one is very close
     // And all the others are not
     // and if one or more are past the far distance
@@ -152,8 +152,9 @@ bool SlowKickDetector::distanceValidator(std::vector<WorldRobot>& robot,
     return numClose == 1 && numFar > 0;
 }
 
-bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& /*robot*/,
-                                         std::vector<WorldBall>& ball) {
+bool SlowKickDetector::velocityValidator(
+    const std::vector<WorldRobot>& /*robot*/,
+    const std::vector<WorldBall>& ball) {
     // Make sure all ball velocities are above a certain amount
 
     std::vector<double> vel(ball.size() - 1, 0);
@@ -171,7 +172,7 @@ bool SlowKickDetector::velocityValidator(std::vector<WorldRobot>& /*robot*/,
 }
 
 bool SlowKickDetector::distanceIncreasingValidator(
-    std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball) {
+    const std::vector<WorldRobot>& robot, const std::vector<WorldBall>& ball) {
     // Make sure derivative of position is positive
 
     // robot and ball are the same size
@@ -188,8 +189,8 @@ bool SlowKickDetector::distanceIncreasingValidator(
     return true;
 }
 
-bool SlowKickDetector::inFrontValidator(std::vector<WorldRobot>& robot,
-                                        std::vector<WorldBall>& ball) {
+bool SlowKickDetector::inFrontValidator(const std::vector<WorldRobot>& robot,
+                                        const std::vector<WorldBall>& ball) {
     // Make sure the ball is within a certain angle of the mouth
 
     // robot and ball are the same

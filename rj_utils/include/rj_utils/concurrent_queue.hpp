@@ -3,6 +3,7 @@
 #include <condition_variable>
 #include <deque>
 #include <mutex>
+#include <vector>
 
 namespace rj_utils {
 /**

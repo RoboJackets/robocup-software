@@ -5,6 +5,7 @@
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <utility>
 #include <vector>
 
 namespace vision_filter {
@@ -31,8 +32,8 @@ public:
               std::deque<VisionState> statesSinceKick)
         : isValid(true),
           kickTime(kickTime),
-          kickingRobot(kickingRobot),
-          statesSinceKick(statesSinceKick) {}
+          kickingRobot(std::move(kickingRobot)),
+          statesSinceKick(std::move(statesSinceKick)) {}
 
     /**
      * Adds a state to the history

@@ -3,6 +3,7 @@
 #include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <utility>
 #include <vector>
 
 namespace vision_filter {
@@ -21,9 +22,9 @@ public:
                 std::vector<WorldRobot> yellowRobots,
                 std::vector<WorldRobot> blueRobots)
         : calcTime(calcTime),
-          ball(ball),
-          yellowRobots(yellowRobots),
-          blueRobots(blueRobots) {}
+          ball(std::move(ball)),
+          yellowRobots(std::move(yellowRobots)),
+          blueRobots(std::move(blueRobots)) {}
 
     RJ::Time calcTime;
     WorldBall ball;
