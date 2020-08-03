@@ -175,7 +175,7 @@ void World::detectKicks(RJ::Time calcTime) {
     bool isFastKick =
         fastKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, fastEvent);
     bool isSlowKick =
-        slowKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, slowEvent);
+        slowKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, &slowEvent);
 
     // If there isn't a kick recorded already
     if (!bestKickEstimate.getIsValid()) {

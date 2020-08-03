@@ -252,7 +252,8 @@ MessageQueue<T, MessagePolicy::kQueue, 1>::MessageQueue(
         std::lock_guard<std::mutex> latest_guard(latest_mutex_);
         latest_ = std::move(msg);
     };
-    sub_ = node->create_subscription<T>(topic, rclcpp::QoS{1}, callback);
+    sub_ = node->create_subscription<T>(topic, rclcpp::QoS{1}, callback,
+                                        subscription_options);
 }
 
 // ============================================================================

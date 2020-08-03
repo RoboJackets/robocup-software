@@ -46,7 +46,7 @@ public:
     bool our_restart = false;
 
     // Time in seconds remaining in the current period
-    RJ::Seconds stage_time_left;
+    RJ::Seconds stage_time_left{};
 
     std::optional<Geometry2d::Point> ball_placement_point;
 
