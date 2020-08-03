@@ -95,18 +95,18 @@ bool operator==(const WorldState& a, const WorldState& b) {
 }
 
 TEST(ROSMsgConversionNoop, RobotState) {
-    TEST_LOSSLESS_CONVERT_CPP_VALUE(RobotState, RobotState::Msg,
-                                    GetRandomRobotState());
+    test_lossless_convert_cpp_value<RobotState, RobotState::Msg>(
+        GetRandomRobotState());
 }
 
 TEST(ROSMsgConversionNoop, BallState) {
     auto state = GetRandomBallState();
     auto state_msg =
         rj_convert::convert_to_ros<BallState, BallState::Msg>(state);
-    TEST_LOSSLESS_CONVERT_CPP_VALUE(BallState, BallState::Msg, state);
+    test_lossless_convert_cpp_value<BallState, BallState::Msg>(state);
 }
 
 TEST(ROSMsgConversionNoop, WorldState) {
-    TEST_LOSSLESS_CONVERT_CPP_VALUE(WorldState, WorldState::Msg,
-                                    GetRandomWorldState());
+    test_lossless_convert_cpp_value<WorldState, WorldState::Msg>(
+        GetRandomWorldState());
 }
