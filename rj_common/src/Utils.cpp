@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "../../rj_convert/include/rj_convert/ros_convert.hpp"
+#include <rj_convert/include/rj_convert/ros_convert.hpp>
 
 using namespace std;
 
