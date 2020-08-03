@@ -6,7 +6,6 @@
 #include <QtCore/QPointF>
 #include <boost/functional/hash.hpp>
 #include <cmath>
-#include <rj_common/ros_convert.hpp>
 #include <rj_geometry_msgs/msg/point.hpp>
 #include <sstream>
 #include <string>

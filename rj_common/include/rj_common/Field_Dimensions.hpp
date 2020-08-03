@@ -10,6 +10,7 @@
 #include <cfloat>
 #include <cmath>
 #include <iostream>
+#include <rj_convert/ros_convert.hpp>
 #include <rj_msgs/msg/field_dimensions.hpp>
 
 /// This class contains constants defining the layout of the field.
