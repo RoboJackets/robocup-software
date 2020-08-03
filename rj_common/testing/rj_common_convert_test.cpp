@@ -4,7 +4,8 @@
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 TEST(ROSConvert, time_lossless_convert) {
-    test_lossless_convert_ros_value<RJ::Time, rclcpp::Time>(rclcpp::Time(123456));
+    test_lossless_convert_ros_value<RJ::Time, rclcpp::Time>(
+        rclcpp::Time(123456));
     test_lossless_convert_cpp_value<RJ::Time, rclcpp::Time>(RJ::now());
 }
 

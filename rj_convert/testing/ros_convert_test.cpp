@@ -43,7 +43,7 @@ TEST(ROSConvert, vector_nested) {
         {rclcpp::Time(1), rclcpp::Time(2)}, {rclcpp::Time(3)}};
     test_lossless_convert_ros_value<std::vector<std::vector<MockTime>>,
                                     std::vector<std::vector<rclcpp::Time>>>(
-                                    vec_ros);
+        vec_ros);
 }
 
 TEST(ROSConvert, array_primitive) {
