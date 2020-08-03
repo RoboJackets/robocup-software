@@ -18,8 +18,8 @@
 #include <optional>
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <referee/ExternalReferee.hpp>
-#include <ros2_temp/referee_sub.hpp>
 #include <rj_msgs/msg/world_state.hpp>
+#include <ros2_temp/referee_sub.hpp>
 #include <vector>
 
 #include "Context.hpp"
