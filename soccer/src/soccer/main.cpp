@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstring>
 #include <gameplay/GameplayModule.hpp>
+#include <rj_common/qt_utils.hpp>
 #include <ui/StyleSheetManager.hpp>
 
 #include "Configuration.hpp"

@@ -1,6 +1,5 @@
 #include <Configuration.hpp>
 #include <list>
-#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/camera/Camera.hpp>
 #include <rj_vision_filter/camera/CameraFrame.hpp>

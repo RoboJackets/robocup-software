@@ -1,7 +1,6 @@
 #include "PathSmoothing.hpp"
 
 #include <motion/TrapezoidalMotion.hpp>
-#include <rj_common/Utils.hpp>
 
 namespace Planning {
 

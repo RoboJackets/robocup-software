@@ -1,6 +1,5 @@
 #pragma once
 
-#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 #include <vector>

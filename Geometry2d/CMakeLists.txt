@@ -19,6 +19,11 @@ add_library(geometry2d STATIC)
 add_subdirectory(src)
 
 #======================================================================
+# Precompiled headers
+#======================================================================
+target_precompile_headers(geometry2d PRIVATE include/Geometry2d/Point.hpp)
+
+#======================================================================
 # Dependencies List
 #======================================================================
 set(GEOMETRY2D_DEPS_SYSTEM_INCLUDE_DIRS

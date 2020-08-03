@@ -8,7 +8,6 @@
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <rj_common/Utils.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_vision_filter/VisionFilter.hpp>
 

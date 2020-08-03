@@ -14,7 +14,7 @@
 #include "WorldState.hpp"
 
 // For FRIEND_TEST
-#include <gtest/gtest.h>
+#include <gtest/gtest_prod.h>
 
 // Keep the past thirty minutes of logs by default.
 constexpr size_t kMaxLogFrames = 60 * 60 * 30;

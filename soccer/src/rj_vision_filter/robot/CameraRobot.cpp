@@ -1,4 +1,5 @@
 #include <iostream>
+#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
 CameraRobot::CameraRobot(const RJ::Time& time_captured,

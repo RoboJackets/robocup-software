@@ -1,7 +1,6 @@
 #include "Trajectory.hpp"
 
 #include <Geometry2d/Pose.hpp>
-#include <rj_common/Utils.hpp>
 #include <stdexcept>
 
 #include "Instant.hpp"

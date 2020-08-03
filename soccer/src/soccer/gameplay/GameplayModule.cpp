@@ -7,6 +7,7 @@
 #include <referee/ExternalReferee.hpp>
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/Network.hpp>
+#include <rj_common/qt_utils.hpp>
 #include <rj_constants/constants.hpp>
 
 // for python stuff
