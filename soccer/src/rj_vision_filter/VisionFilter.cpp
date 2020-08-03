@@ -32,12 +32,6 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
         vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize),
         callback);
-void VisionFilter::run() {
-    // Fill the list of our robots/balls based on whether we are the blue team
-    // or not
-    fillBallState(&context_->world_state);
-    fillRobotState(&context_->world_state, context_->blue_team);
-}
 
     // Create publishers.
     world_state_pub_ =

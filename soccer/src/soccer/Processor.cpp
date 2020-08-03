@@ -68,7 +68,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _ros_executor =
         std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    _vision = std::make_shared<VisionFilter>(&_context);
     _referee_sub =
         std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);

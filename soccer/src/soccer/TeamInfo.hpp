@@ -10,8 +10,6 @@
 // Information about a single team.
 class TeamInfo {
 public:
-    using Msg = rj_msgs::msg::TeamInfo;
-
     // The team's name (empty string if operator has not typed anything).
     std::string name = "";
     // The number of goals scored by the team during normal play and overtime.
