@@ -85,6 +85,7 @@ add_rosidl_subdirectory(rj_msgs)
 
 
 # This is manually topologically sorted because we're not using colcon
+add_subdirectory(rj_convert)
 add_subdirectory(rj_param_utils)
 add_subdirectory(external)
 add_subdirectory(rj_protos)
