@@ -21,7 +21,7 @@ add_subdirectory(src)
 #======================================================================
 # Precompiled headers
 #======================================================================
-target_precompile_headers(geometry2d PRIVATE include/Geometry2d/Point.hpp)
+target_precompile_headers(geometry2d PUBLIC include/Geometry2d/Point.hpp)
 
 #======================================================================
 # Dependencies List
