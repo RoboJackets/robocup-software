@@ -5,9 +5,10 @@
 
 namespace vision_filter {
 
-// TODO(?): Add a description for world_robot::robot_merger_power.
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_robot, robot_merger_power,
-                  1.5, "")
+                  1.5,
+                  "Multiplier to scale the weighted average coefficient "
+                  "to be nonlinear.")
 using world_robot::PARAM_robot_merger_power;
 
 WorldRobot::WorldRobot() : isValid(false) {}
