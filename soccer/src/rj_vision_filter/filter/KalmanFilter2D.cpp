@@ -37,6 +37,7 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos,
     P_k_k1 = P_k1_k1;
     P_k_k = P_k1_k1;
 
+    // TODO(1565): Allow variable dt to decouple predict, update and merging.
     // State transition matrix (A)
     // Pos, velocity integrator. Assume constant velocity
     double dt = PARAM_vision_loop_dt;

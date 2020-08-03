@@ -32,19 +32,8 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
     }
 
     if (kalmanRobots.empty()) {
-        std::cout
-            << "ERROR: Zero robots are given to the WorldRobot constructor"
-            << std::endl;
-
-        pose.position() = posCartesianAvg;
-        pose.heading() = 0;
-        twist.linear() = twistAvg.linear();
-        twist.angular() = twistAvg.angular();
-        posCov = 0;
-        velCov = 0;
-        isValid = false;
-
-        return;
+        throw std::runtime_error(
+            "ERROR: Zero robots are given to the WorldRobot constructor");
     }
 
     for (const KalmanRobot& robot : kalmanRobots) {
