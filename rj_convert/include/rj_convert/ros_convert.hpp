@@ -15,34 +15,21 @@ struct RosConverter {};
         static type from_ros(const type& value) { return value; } \
     }
 
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(int8_t);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(int16_t);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(int32_t);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(int64_t);
 
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(uint8_t);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(uint16_t);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(uint32_t);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(uint64_t);
 
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(float);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(double);
 
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(bool);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(std::string);
-// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 CONVERT_PRIMITIVE(std::u16string);
 
 #undef CONVERT_PRIMITIVE
