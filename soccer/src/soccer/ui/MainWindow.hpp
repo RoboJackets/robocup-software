@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTime>
 #include <QTimer>
+#include <QtGui/QStandardItemModel>
 #include <mutex>
 #include <optional>
 #include <rclcpp/rclcpp.hpp>

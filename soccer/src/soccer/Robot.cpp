@@ -4,9 +4,7 @@
 #include <SystemState.hpp>
 #include <cmath>
 #include <iostream>
-#include <rj_common/Utils.hpp>
 #include <stdexcept>
-#include <utility>
 
 #include "DebugDrawer.hpp"
 

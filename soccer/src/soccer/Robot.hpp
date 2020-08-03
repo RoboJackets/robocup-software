@@ -12,7 +12,6 @@
 #include <planning/RobotConstraints.hpp>
 #include <planning/Trajectory.hpp>
 #include <planning/planner/MotionCommand.hpp>
-#include <rj_common/Utils.hpp>
 #include <rj_constants/constants.hpp>
 #include <vector>
 

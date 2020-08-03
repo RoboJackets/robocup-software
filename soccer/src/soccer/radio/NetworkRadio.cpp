@@ -2,7 +2,6 @@
 
 #include <rj_common/status.h>
 
-#include <rj_common/Utils.hpp>
 
 #include "Geometry2d/Util.hpp"
 #include "PacketConvert.hpp"
