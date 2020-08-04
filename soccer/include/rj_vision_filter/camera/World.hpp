@@ -1,4 +1,3 @@
-#include <Configuration.hpp>
 #include <list>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/camera/Camera.hpp>
@@ -9,8 +8,10 @@
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 #include <vector>
 
+namespace vision_filter {
 /**
- * Keeps list of all the cameras and sends camera data down to the correct location
+ * Keeps list of all the cameras and sends camera data down to the correct
+ * location
  */
 class World {
 public:
@@ -24,7 +25,8 @@ public:
      *
      * @note Call this OR updateWithoutCameraFrame ONCE an iteration
      */
-    void updateWithCameraFrame(RJ::Time calcTime, const std::vector<CameraFrame>& newFrames);
+    void updateWithCameraFrame(RJ::Time calcTime,
+                               const std::vector<CameraFrame>& newFrames);
 
     /**
      * Updates all the child cameras when there are no new camera frames
@@ -55,7 +57,13 @@ public:
      */
     const KickEvent& getBestKickEstimate() const;
 
-    static void createConfiguration(Configuration* cfg);
+    /**
+     * @return Timestamp of the latest vision receiver message that was used to
+     * updated the states. Initialized with RJ::Time::min().
+     */
+    [[nodiscard]] RJ::Time last_update_time() const {
+        return last_update_time_;
+    }
 
 private:
     /**
@@ -78,6 +86,12 @@ private:
      */
     void detectKicks(RJ::Time calcTime);
 
+    /**
+     * @brief Timestamp of the latest vision receiver message that was used to
+     * updated the states. Initialized with RJ::Time::min().
+     */
+    RJ::Time last_update_time_;
+
     std::vector<Camera> cameras;
 
     WorldBall ball;
@@ -87,12 +101,5 @@ private:
     FastKickDetector fastKick;
     SlowKickDetector slowKick;
     KickEvent bestKickEstimate;
-
-    // Only replace fast kick estimates when this much time has passed
-    static ConfigDouble* fast_kick_timeout;
-    // Only replace slow kick estimates when this much time has passed
-    static ConfigDouble* slow_kick_timeout;
-    // Only replace the fast kick estimate with a slow when the two times
-    // are within this amount
-    static ConfigDouble* same_kick_timeout;
 };
+}  // namespace vision_filter

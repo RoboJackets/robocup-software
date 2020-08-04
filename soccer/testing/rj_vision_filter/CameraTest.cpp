@@ -3,12 +3,12 @@
 #include <rj_constants/constants.hpp>
 #include <rj_vision_filter/camera/Camera.hpp>
 
+namespace vision_filter {
 TEST(Camera, invalid_camera) {
     Camera c = Camera();
 
     EXPECT_FALSE(c.getIsValid());
 }
-
 
 TEST(Camera, valid_camera) {
     Camera c = Camera(1);
@@ -107,3 +107,4 @@ TEST(Camera, update_with_single_frame) {
     EXPECT_NEAR(kry.at(0).front().getPos().y(), 1.25, 0.01);
     EXPECT_NEAR(kry.at(0).front().getTheta(), 0.25, 0.01);
 }
+}  // namespace vision_filter

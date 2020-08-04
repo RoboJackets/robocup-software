@@ -1,14 +1,15 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <list>
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 
+namespace vision_filter {
 class KalmanBall;
 
 /**
- * Best estimate of the true ball position using the kalman balls from each camera
+ * Best estimate of the true ball position using the kalman balls from each
+ * camera
  */
 class WorldBall {
 public:
@@ -19,7 +20,8 @@ public:
     WorldBall();
 
     /**
-     * Creates a valid world ball from a list of kalman balls through special averaging
+     * Creates a valid world ball from a list of kalman balls through special
+     * averaging
      *
      * @param calcTime Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
@@ -61,8 +63,6 @@ public:
      */
     RJ::Time getTime() const;
 
-    static void createConfiguration(Configuration* cfg);
-
 private:
     bool isValid;
     Geometry2d::Point pos;
@@ -71,6 +71,5 @@ private:
     double velCov{};
     std::list<KalmanBall> ballComponents;
     RJ::Time time;
-
-    static ConfigDouble* ball_merger_power;
 };
+}  // namespace vision_filter

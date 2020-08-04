@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <rj_vision_filter/filter/KalmanFilter.hpp>
 
+namespace vision_filter {
 class KalmanFilter2D : public KalmanFilter {
 public:
     /**
@@ -49,19 +49,9 @@ public:
 
     /**
      * Set's state velocity given XY velocity
-     * 
+     *
      * @param newVel New velocity to use
      */
     void setVel(Geometry2d::Point newVel);
-
-    static void createConfiguration(Configuration* cfg);
-
-private:
-    // Initial covariance of the filter
-    // Controls how fast it gets to target
-    static ConfigDouble* ball_init_covariance;
-    // Controls how quickly it reacts to changes in ball accelerations
-    static ConfigDouble* ball_process_noise;
-    // Controls how much it trusts measurements from the camera
-    static ConfigDouble* ball_observation_noise;
 };
+}  // namespace vision_filter

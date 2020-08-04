@@ -1,6 +1,9 @@
 #pragma once
 
+#include <rj_topic_utils/async_message_queue.h>
+
 #include <Context.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <vector>
 
 #include "Node.hpp"
@@ -30,6 +33,11 @@ private:
     Context* context_;
 
     std::vector<PlannerForRobot> robots_planners_;
+
+    using WorldStateMsg = rj_msgs::msg::WorldState;
+    using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        WorldStateMsg, rj_topic_utils::MessagePolicy::kLatest>;
+    AsyncWorldStateMsgQueue::UniquePtr world_state_queue_;
 };
 
 }  // namespace Planning

@@ -9,7 +9,7 @@
 #include <RobotConfig.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <rj_constants/constants.hpp>
-#include <rj_vision_filter/VisionFilter.hpp>
+#include <rj_constants/topic_names.hpp>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
@@ -67,7 +67,6 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _ros_executor =
         std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
 
-    _vision = std::make_shared<VisionFilter>(&_context);
     _referee_sub =
         std::make_unique<ros2_temp::RefereeSub>(&_context, _ros_executor.get());
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
@@ -81,6 +80,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _config_client = std::make_unique<ros2_temp::SoccerConfigClient>(&_context);
     _raw_vision_packet_sub =
         std::make_unique<ros2_temp::RawVisionPacketSub>(&_context);
+    _world_state_queue = std::make_unique<AsyncWorldStateMsgQueue>(
+        "world_state_queue", vision_filter::topics::kWorldStatePub);
 
     // Joystick
     _sdl_joystick_node = std::make_unique<joystick::SDLJoystickNode>(&_context);
@@ -167,8 +168,13 @@ void Processor::run() {
             curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
-        _vision->run();
-        curStatus.lastVisionTime = _vision->GetLastVisionTime();
+        const WorldStateMsg::SharedPtr world_state_msg =
+            _world_state_queue->Get();
+        if (world_state_msg != nullptr) {
+            _context.world_state = *world_state_msg;
+            curStatus.lastVisionTime =
+                RJ::FromROSTime(world_state_msg->last_update_time);
+        }
 
         // Run high-level soccer logic
         _gameplayModule->run();

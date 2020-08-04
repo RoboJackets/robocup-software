@@ -2,6 +2,7 @@
 
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
+namespace vision_filter {
 TEST(WorldRobot, invalid) {
     WorldRobot wb;
 
@@ -11,9 +12,7 @@ TEST(WorldRobot, invalid) {
 TEST(WorldRobot, no_robot) {
     std::list<KalmanRobot> kbl;
 
-    WorldRobot wb = WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl);
-
-    EXPECT_FALSE(wb.getIsValid());
+    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl));
 }
 
 TEST(WorldRobot, one_robot) {
@@ -35,7 +34,7 @@ TEST(WorldRobot, one_robot) {
     double rt = wb.getTheta();
     Geometry2d::Point rv = wb.getVel();
     double ro = wb.getOmega();
-    
+
     double rpc = wb.getPosCov();
     double rvc = wb.getVelCov();
 
@@ -102,3 +101,4 @@ TEST(WorldRobot, two_robot) {
     EXPECT_LT(rvc, 10000);
     EXPECT_EQ(list.size(), 2);
 }
+}  // namespace vision_filter

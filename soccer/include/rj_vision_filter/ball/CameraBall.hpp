@@ -6,6 +6,7 @@
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <vector>
 
+namespace vision_filter {
 using DetectionBallMsg = rj_msgs::msg::DetectionBall;
 
 /**
@@ -49,3 +50,4 @@ private:
     RJ::Time timeCaptured;
     Geometry2d::Point pos;
 };
+}  // namespace vision_filter

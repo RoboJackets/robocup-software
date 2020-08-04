@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <boost/circular_buffer.hpp>
@@ -8,6 +7,7 @@
 #include <rj_vision_filter/filter/KalmanFilter3D.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
+namespace vision_filter {
 class WorldRobot;
 
 /**
@@ -21,10 +21,12 @@ public:
      * @param cameraID ID of the camera this filter is applied to
      * @param creationTime Time this filter was created
      * @param initMeasurement Initial robot measurement
-     * @param previousWorldRobot World robot from last frame (or invalid world robot)
+     * @param previousWorldRobot World robot from last frame (or invalid world
+     * robot)
      */
     KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
-                CameraRobot initMeasurement, const WorldRobot& previousWorldRobot);
+                CameraRobot initMeasurement,
+                const WorldRobot& previousWorldRobot);
 
     /**
      * Predicts one time step forward
@@ -42,7 +44,8 @@ public:
     void predictAndUpdate(RJ::Time currentTime, CameraRobot updateRobot);
 
     /**
-     * Returns true when the filter hasn't been updated in a while and should be deleted
+     * Returns true when the filter hasn't been updated in a while and should be
+     * deleted
      */
     bool isUnhealthy() const;
 
@@ -82,7 +85,8 @@ public:
     double getOmega() const;
 
     /**
-     * @return Covariance in X and Y linear direction of the position of the robot
+     * @return Covariance in X and Y linear direction of the position of the
+     * robot
      */
     Geometry2d::Point getPosCov() const;
 
@@ -92,7 +96,8 @@ public:
     double getThetaCov() const;
 
     /**
-     * @return Covariance in X and Y linear direction of the velocity of the robot
+     * @return Covariance in X and Y linear direction of the velocity of the
+     * robot
      */
     Geometry2d::Point getVelCov() const;
 
@@ -105,8 +110,6 @@ public:
      * @return List of previous camera robot measurements for kick detection
      */
     const boost::circular_buffer<CameraRobot>& getPrevMeasurements() const;
-
-    static void createConfiguration(Configuration* cfg);
 
 private:
     RJ::Time lastUpdateTime;
@@ -123,8 +126,5 @@ private:
     int robotID;
 
     unsigned int cameraID;
-
-    // Max number of seconds without a measurement before the object
-    // is deleted
-    static ConfigDouble* max_time_outside_vision;
 };
+}  // namespace vision_filter

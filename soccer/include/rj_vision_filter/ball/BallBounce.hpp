@@ -1,24 +1,25 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 #include <vector>
 
+namespace vision_filter {
 class BallBounce {
 public:
     /**
      * These functions are wrapped into a class instead of a namespace so that
-     * the config system can be used. It requires a class with the REGISTER_CONFIGUABLE
-     * define. Additionally, this allows for the extra helper functions to be hidden.
+     * the config system can be used. It requires a class with the
+     * REGISTER_CONFIGUABLE define. Additionally, this allows for the extra
+     * helper functions to be hidden.
      */
     BallBounce() = delete;
     ~BallBounce() = delete;
 
     /**
-     * Calculates whether the given kalman ball will bounce against another robot and
-     * the resulting velocity vector
+     * Calculates whether the given kalman ball will bounce against another
+     * robot and the resulting velocity vector
      *
      * @param ball Kalman ball we are trying to test
      * @param yellowRobots Best estimation of the yellow robots states
@@ -31,8 +32,6 @@ public:
                                const std::vector<WorldRobot>& yellowRobots,
                                const std::vector<WorldRobot>& blueRobots,
                                Geometry2d::Point& outNewVel);
-
-    static void createConfiguration(Configuration* cfg);
 
 private:
     /**
@@ -57,20 +56,6 @@ private:
      * 2 means chord based intersection
      */
     static std::vector<Geometry2d::Point> PossibleBallIntersectionPts(
-            const KalmanBall& ball, const WorldRobot& robot);
-
-    // Linear velocity dampen
-    // Body is bouncing off the circular shell
-    // Mouth is bouncing off the front mouth
-    // 1 means 100% of the velocity is kept after collision
-    // 0 means 0% of the velocity is kept after collision
-    static ConfigDouble* robot_body_lin_dampen;
-    static ConfigDouble* robot_mouth_lin_dampen;
-    // Reflect Angle dampen
-    // Body is bouncing off the circular shell
-    // Mouth is bouncing off the front mouth
-    // 1 means a 45 degree hit reflects at 0 degrees out (parrallel to tangent)
-    // 0 means a 45 degree hit perfectly reflects at 45 degrees out
-    static ConfigDouble* robot_body_angle_dampen;
-    static ConfigDouble* robot_mouth_angle_dampen;
+        const KalmanBall& ball, const WorldRobot& robot);
 };
+}  // namespace vision_filter

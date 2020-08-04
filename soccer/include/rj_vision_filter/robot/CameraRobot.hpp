@@ -6,6 +6,7 @@
 #include <rj_msgs/msg/detection_robot.hpp>
 #include <vector>
 
+namespace vision_filter {
 using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
 
 /**
@@ -74,3 +75,4 @@ private:
 
     int robotID;
 };
+}  // namespace vision_filter

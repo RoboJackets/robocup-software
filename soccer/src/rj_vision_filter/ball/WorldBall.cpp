@@ -1,14 +1,13 @@
 #include <cmath>
 #include <iostream>
 #include <rj_vision_filter/ball/WorldBall.hpp>
+#include <rj_vision_filter/params.hpp>
 
-REGISTER_CONFIGURABLE(WorldBall)
-
-ConfigDouble* WorldBall::ball_merger_power;
-
-void WorldBall::createConfiguration(Configuration* cfg) {
-    ball_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldBall/ball_merger_power", 1.5);
-}
+namespace vision_filter {
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_ball, ball_merger_power, 1.5,
+                  "Multiplier to scale the weighted average coefficient"
+                  "to be nonlinear.")
+using world_ball::PARAM_ball_merger_power;
 
 WorldBall::WorldBall() : isValid(false) {}
 
@@ -22,25 +21,14 @@ WorldBall::WorldBall(RJ::Time calcTime,
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (*ball_merger_power < 1 || *ball_merger_power > 2) {
-
-        std::cout
-             << "WARN: ball_merger_power should be between 1 and 2"
-             << std::endl;
+    if (PARAM_ball_merger_power < 1 || PARAM_ball_merger_power > 2) {
+        std::cout << "WARN: ball_merger_power should be between 1 and 2"
+                  << std::endl;
     }
 
     if (kalmanBalls.empty()) {
-        std::cout
-             << "ERROR: Zero balls are given to the WorldBall constructor"
-             << std::endl;
-
-        isValid = false;
-        pos = posAvg;
-        vel = velAvg;
-        posCov = 0;
-        velCov = 0;
-
-        return;
+        throw std::runtime_error(
+            "ERROR: Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalmanBalls) {
@@ -69,10 +57,10 @@ WorldBall::WorldBall(RJ::Time calcTime,
 
         // Weight better estimates higher
         double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
-                                          -*ball_merger_power);
+                                          -PARAM_ball_merger_power);
 
         double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
-                                          -*ball_merger_power);
+                                          -PARAM_ball_merger_power);
 
         posAvg += filterPosWeight * ball.getPos();
         velAvg += filterVelWeight * ball.getVel();
@@ -91,30 +79,19 @@ WorldBall::WorldBall(RJ::Time calcTime,
     ballComponents = kalmanBalls;
 }
 
-bool WorldBall::getIsValid() const {
-    return isValid;
-}
+bool WorldBall::getIsValid() const { return isValid; }
 
-Geometry2d::Point WorldBall::getPos() const {
-    return pos;
-}
+Geometry2d::Point WorldBall::getPos() const { return pos; }
 
-Geometry2d::Point WorldBall::getVel() const {
-    return vel;
-}
+Geometry2d::Point WorldBall::getVel() const { return vel; }
 
-double WorldBall::getPosCov() const {
-    return posCov;
-}
+double WorldBall::getPosCov() const { return posCov; }
 
-double WorldBall::getVelCov() const {
-    return velCov;
-}
+double WorldBall::getVelCov() const { return velCov; }
 
 const std::list<KalmanBall>& WorldBall::getBallComponents() const {
     return ballComponents;
 }
 
-RJ::Time WorldBall::getTime() const {
-    return time;
-}
+RJ::Time WorldBall::getTime() const { return time; }
+}  // namespace vision_filter
