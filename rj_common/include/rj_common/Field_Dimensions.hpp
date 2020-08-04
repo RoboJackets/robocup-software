@@ -238,22 +238,21 @@ namespace rj_convert {
 template <>
 struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
     static Field_Dimensions::Msg to_ros(const Field_Dimensions& from) {
-        Field_Dimensions::Msg to;
-        to.length = from.Length();
-        to.width = from.Width();
-        to.border = from.Border();
-        to.line_width = from.LineWidth();
-        to.goal_width = from.GoalWidth();
-        to.goal_depth = from.GoalDepth();
-        to.goal_height = from.GoalHeight();
-        to.penalty_short_dist = from.PenaltyShortDist();
-        to.penalty_long_dist = from.PenaltyLongDist();
-        to.center_radius = from.CenterRadius();
-        to.center_diameter = from.CenterDiameter();
-        to.goal_flat = from.GoalFlat();
-        to.floor_length = from.FloorLength();
-        to.floor_width = from.FloorWidth();
-        return to;
+        return rj_msgs::build<Field_Dimensions::Msg>()
+            .length(from.Length())
+            .width(from.Width())
+            .border(from.Border())
+            .line_width(from.LineWidth())
+            .goal_width(from.GoalWidth())
+            .goal_depth(from.GoalDepth())
+            .goal_height(from.GoalHeight())
+            .penalty_short_dist(from.PenaltyShortDist())
+            .penalty_long_dist(from.PenaltyLongDist())
+            .center_radius(from.CenterRadius())
+            .center_diameter(from.CenterDiameter())
+            .goal_flat(from.GoalFlat())
+            .floor_length(from.FloorLength())
+            .floor_width(from.FloorWidth());
     }
 
     static Field_Dimensions from_ros(const Field_Dimensions::Msg& from) {
