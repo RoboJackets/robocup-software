@@ -1,4 +1,5 @@
 #include <iostream>
+#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
 namespace vision_filter {

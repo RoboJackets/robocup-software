@@ -1,5 +1,7 @@
 #pragma once
 
+#include <rj_common/Utils.hpp>
+
 #include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"
 #include "planning/Trajectory.hpp"

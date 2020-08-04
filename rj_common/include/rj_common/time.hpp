@@ -2,9 +2,12 @@
 
 #include <sys/time.h>
 
+#include <builtin_interfaces/msg/duration.hpp>
+#include <builtin_interfaces/msg/time.hpp>
 #include <chrono>
 #include <iostream>
 #include <rclcpp/time.hpp>
+#include <rj_convert/ros_convert.hpp>
 #include <string>
 
 using namespace std::chrono_literals;
@@ -91,3 +94,56 @@ inline std::ostream& operator<<(std::ostream& os, RJ::Seconds seconds) {
     os << to_string(seconds);
     return os;
 }
+
+namespace rj_convert {
+
+template <>
+struct RosConverter<RJ::Time, rclcpp::Time> {
+    static rclcpp::Time to_ros(const RJ::Time& value) {
+        const int64_t nanos =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                value.time_since_epoch())
+                .count();
+
+        return rclcpp::Time{nanos};
+    }
+    static RJ::Time from_ros(const rclcpp::Time& value) {
+        const std::chrono::nanoseconds dur(value.nanoseconds());
+        return RJ::Time{dur};
+    }
+};
+
+template <>
+struct RosConverter<RJ::Time, builtin_interfaces::msg::Time> {
+    static rclcpp::Time to_ros(const RJ::Time& value) {
+        return RosConverter<RJ::Time, rclcpp::Time>::to_ros(value);
+    }
+    static RJ::Time from_ros(const rclcpp::Time& value) {
+        return RosConverter<RJ::Time, rclcpp::Time>::from_ros(value);
+    }
+};
+
+template <>
+struct RosConverter<RJ::Seconds, rclcpp::Duration> {
+    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
+        return rclcpp::Duration(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(value)
+                .count());
+    }
+    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
+        const std::chrono::nanoseconds dur(value.nanoseconds());
+        return std::chrono::duration_cast<RJ::Seconds>(dur);
+    }
+};
+
+template <>
+struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
+    static rclcpp::Duration to_ros(const RJ::Seconds& value) {
+        return RosConverter<RJ::Seconds, rclcpp::Duration>::to_ros(value);
+    }
+    static RJ::Seconds from_ros(const rclcpp::Duration& value) {
+        return RosConverter<RJ::Seconds, rclcpp::Duration>::from_ros(value);
+    }
+};
+
+}  // namespace rj_convert

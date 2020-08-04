@@ -1,6 +1,7 @@
 #pragma once
+
 #include <list>
-#include <rj_common/Utils.hpp>
+#include <Configuration.hpp>
 #include <rj_vision_filter/ball/BallBounce.hpp>
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/ball/KalmanBall.hpp>

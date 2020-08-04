@@ -1,16 +1,13 @@
 #======================================================================
 # Set Sources
 #======================================================================
-set(RJ_COMMON_SRCS
-    Field_Dimensions.cpp
-    multicast.cpp
-    RefereeEnums.cpp
-    qt_utils.cpp)
+set(TEST_RJ_COMMON_SRCS
+        rj_common_convert_test.cpp)
 
 #======================================================================
 # Add sources
 #======================================================================
 target_sources(
-    rj_common
-    PRIVATE
-    ${RJ_COMMON_SRCS})
+        test_rj_common
+        PRIVATE
+        ${TEST_RJ_COMMON_SRCS})

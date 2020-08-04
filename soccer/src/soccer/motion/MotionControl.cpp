@@ -2,7 +2,6 @@
 
 #include <Context.hpp>
 #include <Geometry2d/Util.hpp>
-#include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <optional>
 #include <rj_common/Utils.hpp>
