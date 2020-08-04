@@ -81,6 +81,8 @@ add_library(robocup SHARED)
 set_target_properties(robocup PROPERTIES PREFIX "")
 set_target_properties(robocup PROPERTIES SUFFIX ".so")
 
+add_executable(rj_vision_filter)
+
 add_executable(soccer)
 add_executable(log_viewer)
 add_executable(internal_referee_node)
@@ -96,7 +98,7 @@ add_subdirectory(src)
 # Dependencies List
 #======================================================================
 
-# Robocup (static lib)
+# ---- robocup ----
 set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS
     ${EIGEN_INCLUDE_DIRS}
     ${LIBUSB_1_INCLUDE_DIRS}
@@ -135,10 +137,18 @@ set(ROBOCUP_DEPS_LIBRARIES
     rj_param_utils
     rj_protos
     rc-fshare
+    rj_param_utils
+    rj_topic_utils
     config_client
     )
 
-# Soccer (executable)
+# ---- vision_filter ----
+set(RJ_VISION_FILTER_DEPS_LIBRARIES
+    rj_param_utils
+    robocup
+    )
+
+# ---- soccer ----
 set(SOCCER_DEPS_SYSTEM_LIBRARIES
     Qt5::Widgets
     Qt5::Xml
@@ -150,7 +160,7 @@ set(SOCCER_DEPS_SYSTEM_LIBRARIES
 set(SOCCER_DEPS_LIBRARIES
     robocup)
 
-# log_viewer
+# ---- log_viewer ----
 set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
     Qt5::Core
     Qt5::Widgets
@@ -187,6 +197,10 @@ target_link_libraries(robocup
 
 ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
+# ---- Robocup ----
+target_link_libraries(rj_vision_filter PRIVATE robocup)
+ament_target_dependencies(rj_vision_filter PUBLIC ament_index_cpp)
+
 # ---- Soccer ----
 target_link_libraries(soccer
     PUBLIC
@@ -211,8 +225,14 @@ target_link_libraries(internal_referee_node
         ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
         ${REFEREE_NODE_DEPS_LIBRARIES})
 
+#======================================================================
+# Testing
+#======================================================================
 ## Add a test runner target "test-soccer" to run all tests in this directory
-if (BUILD_TESTING)
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(testing)
+
     target_link_libraries(test-soccer PRIVATE robocup)
     target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
 
@@ -225,14 +245,6 @@ if (BUILD_TESTING)
 
     target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
     add_dependencies(test-soccer googletest)
-endif ()
-
-#======================================================================
-# Testing
-#======================================================================
-if(BUILD_TESTING)
-    enable_testing()
-    add_subdirectory(testing)
 endif()
 
 #======================================================================
@@ -243,11 +255,15 @@ install(TARGETS robocup log_viewer internal_referee_node external_referee_node
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
 
-install(TARGETS soccer internal_referee_node external_referee_node
+install(TARGETS
+            soccer
+            internal_referee_node
+            external_referee_node
+            rj_vision_filter
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
 install(DIRECTORY
-        src/gameplay
+        src/soccer/gameplay
         DESTINATION share/${CMAKE_PROJECT_NAME}
         FILES_MATCHING
         PATTERN "*.py"

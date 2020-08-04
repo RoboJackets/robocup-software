@@ -1,10 +1,11 @@
 #pragma once
 
-#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <utility>
 #include <vector>
 
+namespace vision_filter {
 /**
  * Snapshot of the state of all objects in vision at a specific time
  */
@@ -18,13 +19,15 @@ public:
      */
     VisionState(RJ::Time calcTime, WorldBall ball,
                 std::vector<WorldRobot> yellowRobots,
-                std::vector<WorldRobot> blueRobots) :
-                calcTime(calcTime), ball(ball),
-                yellowRobots(yellowRobots),
-                blueRobots(blueRobots) {}
+                std::vector<WorldRobot> blueRobots)
+        : calcTime(calcTime),
+          ball(std::move(ball)),
+          yellowRobots(std::move(yellowRobots)),
+          blueRobots(std::move(blueRobots)) {}
 
     RJ::Time calcTime;
     WorldBall ball;
     std::vector<WorldRobot> yellowRobots;
     std::vector<WorldRobot> blueRobots;
 };
+}  // namespace vision_filter

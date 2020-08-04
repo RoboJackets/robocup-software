@@ -1,14 +1,15 @@
 #include <cmath>
 #include <iostream>
+#include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
-REGISTER_CONFIGURABLE(WorldRobot)
+namespace vision_filter {
 
-ConfigDouble* WorldRobot::robot_merger_power;
-
-void WorldRobot::createConfiguration(Configuration* cfg) {
-    robot_merger_power = new ConfigDouble(cfg, "VisionFilter/WorldRobot/robot_merger_power", 1.5);
-}
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_robot, robot_merger_power,
+                  1.5,
+                  "Multiplier to scale the weighted average coefficient "
+                  "to be nonlinear.")
+using world_robot::PARAM_robot_merger_power;
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
@@ -25,26 +26,14 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
-    if (*robot_merger_power < 1 || *robot_merger_power > 2) {
-        std::cout
-             << "WARN: robot_merger_power must be between 1 and 2"
-             << std::endl;
+    if (PARAM_robot_merger_power < 1 || PARAM_robot_merger_power > 2) {
+        std::cout << "WARN: robot_merger_power must be between 1 and 2"
+                  << std::endl;
     }
 
     if (kalmanRobots.empty()) {
-        std::cout
-             << "ERROR: Zero robots are given to the WorldRobot constructor"
-             << std::endl;
-
-        pose.position() = posCartesianAvg;
-        pose.heading() = 0;
-        twist.linear() = twistAvg.linear();
-        twist.angular() = twistAvg.angular();
-        posCov = 0;
-        velCov = 0;
-        isValid = false;
-
-        return;
+        throw std::runtime_error(
+            "ERROR: Zero robots are given to the WorldRobot constructor");
     }
 
     for (const KalmanRobot& robot : kalmanRobots) {
@@ -76,10 +65,10 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
                                            std::pow(twistStdDev.angular(), 2));
 
         double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
-                                          -*robot_merger_power);
+                                          -PARAM_robot_merger_power);
 
         double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
-                                          -*robot_merger_power);
+                                          -PARAM_robot_merger_power);
 
         posCartesianAvg += filterPosWeight * robot.getPos();
         thetaCartesianAvg +=
@@ -106,13 +95,9 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
     robotComponents = kalmanRobots;
 }
 
-bool WorldRobot::getIsValid() const {
-    return isValid;
-}
+bool WorldRobot::getIsValid() const { return isValid; }
 
-int WorldRobot::getRobotID() const {
-    return robotID;
-}
+int WorldRobot::getRobotID() const { return robotID; }
 
 Geometry2d::Point WorldRobot::getPos() const { return pose.position(); }
 
@@ -126,18 +111,13 @@ double WorldRobot::getOmega() const { return twist.angular(); }
 
 Geometry2d::Twist WorldRobot::getTwist() const { return twist; }
 
-double WorldRobot::getPosCov() const {
-    return posCov;
-}
+double WorldRobot::getPosCov() const { return posCov; }
 
-double WorldRobot::getVelCov() const {
-    return velCov;
-}
+double WorldRobot::getVelCov() const { return velCov; }
 
 const std::list<KalmanRobot>& WorldRobot::getRobotComponents() const {
     return robotComponents;
 }
 
-RJ::Time WorldRobot::getTime() const {
-    return time;
-}
+RJ::Time WorldRobot::getTime() const { return time; }
+}  // namespace vision_filter

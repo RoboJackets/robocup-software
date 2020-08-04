@@ -1,5 +1,7 @@
 #include "PlannerNode.hpp"
 
+#include <rj_constants/topic_names.hpp>
+
 #include "Instant.hpp"
 #include "Robot.hpp"
 #include "planning/planner/CollectPlanner.hpp"
@@ -13,13 +15,22 @@ namespace Planning {
 
 PlannerNode::PlannerNode(Context* context) : context_(context) {
     robots_planners_.resize(Num_Shells);
+
+    world_state_queue_ = std::make_unique<AsyncWorldStateMsgQueue>(
+        "planner_node_game_state_sub", vision_filter::topics::kWorldStatePub);
 }
 
 using namespace Geometry2d;
 void PlannerNode::run() {
+    const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->Get();
+    if (world_state_msg == nullptr) {
+        return;
+    }
+
+    const WorldState world_state =
+        rj_convert::convert_from_ros(*world_state_msg);
     const ShapeSet& global_obstacles = context_->globalObstacles;
     const ShapeSet& goal_zones = context_->goalZoneObstacles;
-    const WorldState& world_state = context_->world_state;
     const auto& robot_intents = context_->robot_intents;
     DebugDrawer* debug_drawer = &context_->debug_drawer;
     auto* trajectories = &context_->trajectories;

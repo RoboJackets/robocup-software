@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <rj_common/Utils.hpp>
+
 #include "Geometry2d/Point.hpp"
 #include "planning/Instant.hpp"
 #include "planning/RobotConstraints.hpp"

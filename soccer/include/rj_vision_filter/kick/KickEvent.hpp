@@ -1,12 +1,13 @@
 #pragma once
 
 #include <deque>
-#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
+#include <utility>
 #include <vector>
 
+namespace vision_filter {
 /**
  * Contains all the useful information for a kick
  * Like: Who kicked, when, what are the ball positions since etc
@@ -17,7 +18,7 @@ public:
      * Creates invalid kick event
      * Makes things a little easier instead of check for null etc
      */
-    KickEvent() : isValid(false) {};
+    KickEvent() : isValid(false){};
 
     /**
      * Creates a valid kick event
@@ -27,10 +28,11 @@ public:
      * @param statesSinceKick All the vision states that we have since the kick
      */
     KickEvent(RJ::Time kickTime, WorldRobot kickingRobot,
-              std::deque<VisionState> statesSinceKick) :
-              isValid(true), kickTime(kickTime),
-              kickingRobot(kickingRobot),
-              statesSinceKick(statesSinceKick) {}
+              std::deque<VisionState> statesSinceKick)
+        : isValid(true),
+          kickTime(kickTime),
+          kickingRobot(std::move(kickingRobot)),
+          statesSinceKick(std::move(statesSinceKick)) {}
 
     /**
      * Adds a state to the history
@@ -76,3 +78,4 @@ private:
     // All the states since a kick
     std::deque<VisionState> statesSinceKick;
 };
+}  // namespace vision_filter

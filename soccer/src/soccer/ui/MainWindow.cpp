@@ -1,7 +1,6 @@
 #include "MainWindow.hpp"
 
 #include <google/protobuf/descriptor.h>
-#include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/grSim_Replacement.pb.h>
 #include <ui_MainWindow.h>
@@ -14,17 +13,14 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QString>
-#include <Robot.hpp>
 #include <ctime>
 #include <gameplay/GameplayModule.hpp>
-#include <rj_common/Network.hpp>
-#include <rj_common/Utils.hpp>
+#include <rj_common/qt_utils.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <ui/StyleSheetManager.hpp>
 
 #include "BatteryProfile.hpp"
 #include "Configuration.hpp"
-#include "GrSimCommunicator.hpp"
 #include "RobotStatusWidget.hpp"
 #include "radio/Radio.hpp"
 #include "rc-fshare/git_version.hpp"

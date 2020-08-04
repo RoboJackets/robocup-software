@@ -1,6 +1,8 @@
 #include <iostream>
+#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
+namespace vision_filter {
 CameraRobot::CameraRobot(const RJ::Time& time_captured,
                          const DetectionRobotMsg& msg,
                          const Geometry2d::TransformMatrix& world_to_team,
@@ -55,3 +57,4 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
         initTime + timeAvg,
         {posAvg, atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x())}, robotID);
 }
+}  // namespace vision_filter

@@ -1,24 +1,22 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <list>
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 
+namespace vision_filter {
 class KalmanRobot;
 
 class WorldRobot {
 public:
-    enum Team {
-        YELLOW,
-        BLUE
-    };
+    enum Team { YELLOW, BLUE };
 
     /**
      * Creates an invalid world robot.
-     * This is so the World can create a full list of robots without dealing with holes
-     * It's a little less efficient, but it makes things much cleaner code-wise
+     * This is so the World can create a full list of robots without dealing
+     * with holes It's a little less efficient, but it makes things much cleaner
+     * code-wise
      */
     WorldRobot();
 
@@ -27,7 +25,8 @@ public:
      *
      * @param robotID The ID of the robot
      * @param team The team color
-     * @param kalmanRobots List of kalman robots from each of the cameras to merger
+     * @param kalmanRobots List of kalman robots from each of the cameras to
+     * merger
      */
     WorldRobot(RJ::Time calcTime, Team team, int robotID,
                const std::list<KalmanRobot>& kalmanRobots);
@@ -97,8 +96,6 @@ public:
      */
     RJ::Time getTime() const;
 
-    static void createConfiguration(Configuration* cfg);
-
 private:
     Team team;
     int robotID{};
@@ -110,5 +107,5 @@ private:
     RJ::Time time;
 
     bool isValid;
-    static ConfigDouble* robot_merger_power;
 };
+}  // namespace vision_filter

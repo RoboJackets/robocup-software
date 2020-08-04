@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ros2_temp/message_queue.h>
+#include <rj_topic_utils/async_message_queue.h>
 
 #include <Context.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -16,6 +16,7 @@ using RawProtobufMsg = rj_msgs::msg::RawProtobuf;
  */
 class RawVisionPacketSub {
 public:
+    using UniquePtr = std::unique_ptr<RawVisionPacketSub>;
     RawVisionPacketSub(Context* context);
 
     /**
@@ -26,13 +27,9 @@ public:
 
 private:
     Context* context_;
-    rclcpp::executors::SingleThreadedExecutor executor_;
-    std::shared_ptr<MessageQueueNode<RawProtobufMsg>> queue_;
-    std::thread worker_;
 
-    /**
-     * @brief Calls executor_.spin().
-     */
-    void spinForever();
+    using RawProtobufMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        RawProtobufMsg, rj_topic_utils::MessagePolicy::kQueue>;
+    RawProtobufMsgQueue::UniquePtr queue_;
 };
 }  // namespace ros2_temp

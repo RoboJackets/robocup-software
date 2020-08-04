@@ -41,8 +41,8 @@ ExternalReferee::ExternalReferee()
     : RefereeBase{"external_referee"}, _asio_socket{_io_service} {
     set_team_name(PARAM_team_name);
 
-    _raw_ref_pub = create_publisher<RawProtobufMsg>(
-        referee::topics::kRefereeRawPub, 10);
+    _raw_ref_pub =
+        create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
 
     _network_timer = create_wall_timer(std::chrono::milliseconds(10),
                                        [this]() { this->update(); });

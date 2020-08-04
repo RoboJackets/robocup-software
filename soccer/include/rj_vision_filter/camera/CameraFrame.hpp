@@ -1,11 +1,11 @@
 #pragma once
-#include <rj_common/Utils.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 #include <utility>
 #include <vector>
 
+namespace vision_filter {
 using DetectionFrameMsg = rj_msgs::msg::DetectionFrame;
 
 /**
@@ -64,3 +64,4 @@ public:
     std::vector<CameraRobot> cameraRobotsYellow;
     std::vector<CameraRobot> cameraRobotsBlue;
 };
+}  // namespace vision_filter

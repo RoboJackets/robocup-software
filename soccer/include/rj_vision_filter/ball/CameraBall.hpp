@@ -1,10 +1,12 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <rj_common/Utils.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
+#include <rj_common/time.hpp>
 #include <rj_msgs/msg/detection_ball.hpp>
 #include <vector>
 
+namespace vision_filter {
 using DetectionBallMsg = rj_msgs::msg::DetectionBall;
 
 /**
@@ -48,3 +50,4 @@ private:
     RJ::Time timeCaptured;
     Geometry2d::Point pos;
 };
+}  // namespace vision_filter

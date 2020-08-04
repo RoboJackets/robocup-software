@@ -1,8 +1,7 @@
-#include <list>
 #pragma once
 
 #include <Configuration.hpp>
-#include <rj_common/Utils.hpp>
+#include <list>
 #include <rj_vision_filter/ball/BallBounce.hpp>
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/ball/KalmanBall.hpp>
@@ -13,6 +12,7 @@
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 #include <vector>
 
+namespace vision_filter {
 /**
  * Contains all the kalman balls/robots for the specific camera
  */
@@ -51,19 +51,22 @@ public:
      * @param ballList Unsorted list of balls measurements
      * @param yellowRobotList List of yellow robots sorted by id
      * @param blueRobotList List of blue robots sorted by id
-     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
-     * @param previousYellowWorldRobots Best idea of current robots pos/vel to init velocity of new filters
-     * @param previousBlueWorldRobots Best idea of current robots pos/vel to init velocity of new filters
+     * @param previousWorldBall Best idea of current ball pos/vel to init
+     * velocity of new filters
+     * @param previousYellowWorldRobots Best idea of current robots pos/vel to
+     * init velocity of new filters
+     * @param previousBlueWorldRobots Best idea of current robots pos/vel to
+     * init velocity of new filters
      *
      * Note: Call either this OR updateWithoutFrame once an iteration
      */
-    void updateWithFrame(RJ::Time calcTime,
-                         const std::vector<CameraBall>& ballList,
-                         const std::vector<std::list<CameraRobot>>& yellowRobotList,
-                         const std::vector<std::list<CameraRobot>>& blueRobotList,
-                         const WorldBall& previousWorldBall,
-                         const std::vector<WorldRobot>& previousYellowWorldRobots,
-                         const std::vector<WorldRobot>& previousBlueWorldRobots);
+    void updateWithFrame(
+        RJ::Time calcTime, const std::vector<CameraBall>& ballList,
+        const std::vector<std::list<CameraRobot>>& yellowRobotList,
+        const std::vector<std::list<CameraRobot>>& blueRobotList,
+        const WorldBall& previousWorldBall,
+        const std::vector<WorldRobot>& previousYellowWorldRobots,
+        const std::vector<WorldRobot>& previousBlueWorldRobots);
 
     /**
      * Updates all the filters without any new data from this specific camera
@@ -89,16 +92,16 @@ public:
      */
     const std::vector<std::list<KalmanRobot>>& getKalmanRobotsBlue() const;
 
-    static void createConfiguration(Configuration* cfg);
-
 private:
     /**
      * MHKF refers to the Multi-Hypothesis Kalman Filter
-     *   MHKF averages "near" the current predicted position before using that as the measurement
-     *   Any measurements not "near" a filter are used as the initial values to create a new filter
+     *   MHKF averages "near" the current predicted position before using that
+     * as the measurement Any measurements not "near" a filter are used as the
+     * initial values to create a new filter
      *
      * AKF refers to the Average Kalman Filter
-     *   AKF averages all measurements and then uses that as the measurement to the filter
+     *   AKF averages all measurements and then uses that as the measurement to
+     * the filter
      */
 
     /**
@@ -106,7 +109,8 @@ private:
      *
      * @param calcTime Time of this calculation
      * @param ballList Unsorted list of balls measurements
-     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
+     * @param previousWorldBall Best idea of current ball pos/vel to init
+     * velocity of new filters
      */
     void updateBalls(RJ::Time calcTime, const std::vector<CameraBall>& ballList,
                      const WorldBall& previousWorldBall);
@@ -116,7 +120,8 @@ private:
      *
      * @param calcTime Time of this calculation
      * @param ballList Unsorted list of balls measurements
-     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
+     * @param previousWorldBall Best idea of current ball pos/vel to init
+     * velocity of new filters
      */
     void updateBallsMHKF(RJ::Time calcTime,
                          const std::vector<CameraBall>& ballList,
@@ -127,7 +132,8 @@ private:
      *
      * @param calcTime Time of this calculation
      * @param ballList Unsorted list of balls measurements
-     * @param previousWorldBall Best idea of current ball pos/vel to init velocity of new filters
+     * @param previousWorldBall Best idea of current ball pos/vel to init
+     * velocity of new filters
      */
     void updateBallsAKF(RJ::Time calcTime,
                         const std::vector<CameraBall>& ballList,
@@ -139,21 +145,25 @@ private:
      * @param calcTime Time of this calculation
      * @param yellowRobotList List of yellow robots sorted by id
      * @param blueRobotList List of blue robots sorted by id
-     * @param previousYellowWorldRobots Best idea of current robots pos/vel to init velocity of new filters
-     * @param previousBlueWorldRobots Best idea of current robots pos/vel to init velocity of new filters
+     * @param previousYellowWorldRobots Best idea of current robots pos/vel to
+     * init velocity of new filters
+     * @param previousBlueWorldRobots Best idea of current robots pos/vel to
+     * init velocity of new filters
      */
-    void updateRobots(RJ::Time calcTime,
-                      const std::vector<std::list<CameraRobot>>& yellowRobotList,
-                      const std::vector<std::list<CameraRobot>>& blueRobotList,
-                      const std::vector<WorldRobot>& previousYellowWorldRobots,
-                      const std::vector<WorldRobot>& previousBlueWorldRobots);
+    void updateRobots(
+        RJ::Time calcTime,
+        const std::vector<std::list<CameraRobot>>& yellowRobotList,
+        const std::vector<std::list<CameraRobot>>& blueRobotList,
+        const std::vector<WorldRobot>& previousYellowWorldRobots,
+        const std::vector<WorldRobot>& previousBlueWorldRobots);
 
     /**
      * Updates robot filters using MHKF style updater
      *
      * @param calcTime Time of this calculation
      * @param singleRobotList List of one robot ID measurements
-     * @param previousWorldRobot Best idea of current robot pos/vel to init velocity of new filters
+     * @param previousWorldRobot Best idea of current robot pos/vel to init
+     * velocity of new filters
      * @param singleKalmanRobotList List of one robot ID's kalman filters
      */
     void updateRobotsMHKF(RJ::Time calcTime,
@@ -166,7 +176,8 @@ private:
      *
      * @param calcTime Time of this calculation
      * @param singleRobotList List of one robot ID measurements
-     * @param previousWorldRobot Best idea of current robot pos/vel to init velocity of new filters
+     * @param previousWorldRobot Best idea of current robot pos/vel to init
+     * velocity of new filters
      * @param singleKalmanRobotList List of one robot ID's kalman filters
      */
     void updateRobotsAKF(RJ::Time calcTime,
@@ -198,13 +209,5 @@ private:
     std::list<KalmanBall> kalmanBallList;
     std::vector<std::list<KalmanRobot>> kalmanRobotYellowList;
     std::vector<std::list<KalmanRobot>> kalmanRobotBlueList;
-
-    // The cutoff radius for when to associate measurements to kalman objects
-    static ConfigDouble* MHKF_radius_cutoff;
-    // Whether to use MHKF or AKF
-    static ConfigBool* use_MHKF;
-    // Max number of kalman balls for this specific camera
-    static ConfigInt* max_num_kalman_balls;
-    // Max number of kalman robots for each robot id for this specific camera
-    static ConfigInt* max_num_kalman_robots;
 };
+}  // namespace vision_filter

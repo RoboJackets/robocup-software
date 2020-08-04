@@ -3,9 +3,10 @@
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 
+namespace vision_filter {
 TEST(KalmanBall, invalid_world_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -26,7 +27,7 @@ TEST(KalmanBall, invalid_world_ball) {
 
 TEST(KalmanBall, valid_world_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -51,7 +52,7 @@ TEST(KalmanBall, valid_world_ball) {
 
 TEST(KalmanBall, predict) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -66,15 +67,15 @@ TEST(KalmanBall, predict) {
 
     EXPECT_GT(rp.x(), p.x());
     EXPECT_GT(rp.y(), p.y());
-    EXPECT_LT(rp.x(), p.x() + p.x()*0.02);
-    EXPECT_LT(rp.y(), p.y() + p.x()*0.02);
+    EXPECT_LT(rp.x(), p.x() + p.x() * 0.02);
+    EXPECT_LT(rp.y(), p.y() + p.x() * 0.02);
     EXPECT_EQ(rv.x(), p.x());
     EXPECT_EQ(rv.y(), p.y());
 }
 
 TEST(KalmanBall, predict_and_update) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -89,15 +90,15 @@ TEST(KalmanBall, predict_and_update) {
 
     EXPECT_NEAR(rp.x(), p.x(), 0.1);
     EXPECT_NEAR(rp.y(), p.y(), 0.01);
-    EXPECT_LT(rp.x(), p.x() + p.x()*0.02);
-    EXPECT_LT(rp.y(), p.y() + p.x()*0.02);
+    EXPECT_LT(rp.x(), p.x() + p.x() * 0.02);
+    EXPECT_LT(rp.y(), p.y() + p.x() * 0.02);
     EXPECT_LT(rv.x(), p.x());
     EXPECT_LT(rv.y(), p.y());
 }
 
 TEST(KalmanBall, is_unhealthy) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -111,7 +112,7 @@ TEST(KalmanBall, is_unhealthy) {
 
 TEST(KalmanBall, max_measurement_size) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -130,7 +131,7 @@ TEST(KalmanBall, max_measurement_size) {
 
 TEST(KalmanBall, getters) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1,1);
+    Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int cID = 1;
     WorldBall w;
@@ -165,3 +166,4 @@ TEST(KalmanBall, getters) {
     EXPECT_EQ(rv2.x(), p.x());
     EXPECT_EQ(rv2.y(), p.y());
 }
+}  // namespace vision_filter

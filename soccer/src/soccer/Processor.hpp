@@ -5,6 +5,7 @@
 #pragma once
 
 #include <rj_protos/LogFrame.pb.h>
+#include <rj_topic_utils/async_message_queue.h>
 #include <ros2_temp/raw_vision_packet_sub.h>
 #include <ros2_temp/soccer_config_client.h>
 
@@ -17,6 +18,7 @@
 #include <optional>
 #include <rclcpp/executors/single_threaded_executor.hpp>
 #include <referee/ExternalReferee.hpp>
+#include <rj_msgs/msg/world_state.hpp>
 #include <ros2_temp/referee_sub.hpp>
 #include <vector>
 
@@ -36,7 +38,6 @@ class RobotLocalConfig;
 class Joystick;
 struct JoystickControlValues;
 class Radio;
-class VisionFilter;
 
 namespace Gameplay {
 class GameplayModule;
@@ -165,7 +166,6 @@ private:
     Status _status;
 
     // modules
-    std::shared_ptr<VisionFilter> _vision;
     std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
     std::unique_ptr<MotionControlNode> _motionControl;
     std::unique_ptr<Planning::PlannerNode> _planner_node;
@@ -178,6 +178,12 @@ private:
     std::shared_ptr<rclcpp::executors::SingleThreadedExecutor> _ros_executor;
 
     // ROS2 temporary modules
+    using WorldStateMsg = rj_msgs::msg::WorldState;
+    using AsyncWorldStateMsgQueue = rj_topic_utils::AsyncMessageQueue<
+        WorldStateMsg, rj_topic_utils::MessagePolicy::kQueue, 1>;
+
+    AsyncWorldStateMsgQueue::UniquePtr _world_state_queue;
+
     std::unique_ptr<ros2_temp::SoccerConfigClient> _config_client;
     std::unique_ptr<ros2_temp::RawVisionPacketSub> _raw_vision_packet_sub;
     std::unique_ptr<ros2_temp::RefereeSub> _referee_sub;

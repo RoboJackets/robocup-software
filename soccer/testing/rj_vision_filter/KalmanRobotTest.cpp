@@ -4,6 +4,7 @@
 #include <rj_vision_filter/robot/KalmanRobot.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
+namespace vision_filter {
 TEST(KalmanRobot, invalid_world_robot) {
     RJ::Time t = RJ::now();
     Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
@@ -92,17 +93,17 @@ TEST(KalmanRobot, predict) {
     Geometry2d::Point rv = kb.getVel();
     double th = kb.getTheta();
     double om = kb.getOmega();
-    
+
     kb.predict(t);
 
     Geometry2d::Point rp2 = kb.getPos();
     Geometry2d::Point rv2 = kb.getVel();
     double th2 = kb.getTheta();
     double om2 = kb.getOmega();
-    
-    EXPECT_NEAR(rp2.x(), rp.x() + rv.y()*0.01, 0.01);
-    EXPECT_NEAR(rp2.y(), rp.y() + rv.y()*0.01, 0.01);
-    EXPECT_NEAR(th2, th + om*0.01, 0.01);
+
+    EXPECT_NEAR(rp2.x(), rp.x() + rv.y() * 0.01, 0.01);
+    EXPECT_NEAR(rp2.y(), rp.y() + rv.y() * 0.01, 0.01);
+    EXPECT_NEAR(th2, th + om * 0.01, 0.01);
     EXPECT_FALSE(kb.isUnhealthy());
     EXPECT_EQ(kb.getCameraID(), cID);
     EXPECT_GT(kb.getHealth(), 0);
@@ -200,7 +201,6 @@ TEST(KalmanRobot, getters) {
     Geometry2d::Point rv = kb.getVel();
     double ro = kb.getOmega();
 
-
     boost::circular_buffer<CameraRobot> list = kb.getPrevMeasurements();
 
     EXPECT_EQ(kb.getCameraID(), cID);
@@ -240,7 +240,7 @@ TEST(KalmanRobot, wrap_theta_up) {
     double ut = 0;
     for (int i = 0; i < 800; i++) {
         pose.heading() += 1.0 / 100.0;
-        ut += 1.0/100.0;
+        ut += 1.0 / 100.0;
 
         if (pose.heading() > M_PI) {
             pose.heading() -= 2 * M_PI;
@@ -250,7 +250,6 @@ TEST(KalmanRobot, wrap_theta_up) {
 
         b = CameraRobot(t, pose, robotID);
         kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);
-
     }
 
     double rt = kb.getTheta();
@@ -281,7 +280,7 @@ TEST(KalmanRobot, wrap_theta_down) {
     double ut = 0;
     for (int i = 0; i < 800; i++) {
         pose.heading() -= 1.0 / 100.0;
-        ut -= 1.0/100.0;
+        ut -= 1.0 / 100.0;
 
         if (pose.heading() < -M_PI) {
             pose.heading() += 2 * M_PI;
@@ -291,7 +290,6 @@ TEST(KalmanRobot, wrap_theta_down) {
 
         b = CameraRobot(t, pose, robotID);
         kb.predictAndUpdate(RJ::now() + RJ::Seconds(10), b);
-
     }
 
     double rt = kb.getTheta();
@@ -306,3 +304,4 @@ TEST(KalmanRobot, wrap_theta_down) {
     EXPECT_NEAR(rv.x(), -1, 0.01);
     EXPECT_NEAR(rv.y(), -1, 0.01);
 }
+}  // namespace vision_filter

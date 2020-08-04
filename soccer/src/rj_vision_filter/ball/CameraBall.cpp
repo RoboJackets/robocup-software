@@ -1,5 +1,6 @@
 #include <rj_vision_filter/ball/CameraBall.hpp>
 
+namespace vision_filter {
 CameraBall::CameraBall(RJ::Time time_captured, const DetectionBallMsg& msg,
                        const Geometry2d::TransformMatrix& world_to_team)
     : timeCaptured{time_captured},
@@ -33,3 +34,4 @@ CameraBall CameraBall::CombineBalls(const std::vector<CameraBall>& balls) {
 
     return CameraBall(initTime + timeAvg, posAvg);
 }
+}  // namespace vision_filter

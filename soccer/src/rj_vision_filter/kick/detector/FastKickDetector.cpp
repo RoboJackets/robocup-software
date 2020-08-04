@@ -4,15 +4,15 @@
 #include <iterator>
 #include <limits>
 #include <rj_vision_filter/kick/detector/FastKickDetector.hpp>
-#include <rj_vision_filter/util/VisionFilterConfig.hpp>
+#include <rj_vision_filter/params.hpp>
 
-REGISTER_CONFIGURABLE(FastKickDetector)
+namespace vision_filter {
 
-ConfigDouble* FastKickDetector::acceleration_trigger;
-
-void FastKickDetector::createConfiguration(Configuration* cfg) {
-    acceleration_trigger = new ConfigDouble(cfg, "VisionFilter/Kick/Detector/fast_acceleration_trigger", 750);
-}
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector,
+                  fast_acceleration_trigger, 750.0,
+                  "How large of an acceleration is needed to trigger this "
+                  "detector in m/s^2. ")
+using kick::detector::PARAM_fast_acceleration_trigger;
 
 bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
                                  const std::vector<WorldRobot>& yellowRobots,
@@ -20,21 +20,22 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
                                  KickEvent& kickEvent) {
     // Keep it a certain length
     stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
-    if (stateHistory.size() > *VisionFilterConfig::fast_kick_detector_history_length) {
+    if (stateHistory.size() >
+        static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
         stateHistory.pop_front();
     }
 
     // If we don't have enough, just return
-    if (stateHistory.size() < *VisionFilterConfig::fast_kick_detector_history_length) {
+    if (stateHistory.size() <
+        static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
         return false;
     }
 
     // Make sure all the balls are valid
     // Otherwise we can't do anything
-    bool allValid = std::all_of(stateHistory.begin(), stateHistory.end(),
-                                [](VisionState& v){
-                                    return v.ball.getIsValid();
-                                });
+    bool allValid =
+        std::all_of(stateHistory.begin(), stateHistory.end(),
+                    [](VisionState& v) { return v.ball.getIsValid(); });
 
     if (!allValid) {
         return false;
@@ -50,7 +51,8 @@ bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
 
     WorldRobot closestRobot = getClosestRobot();
     RJ::Time kickTime = stateHistory.at(midIdx).calcTime;
-    std::deque<VisionState> statesSinceKick(std::next(stateHistory.begin(), midIdx), stateHistory.end());
+    std::deque<VisionState> statesSinceKick(
+        std::next(stateHistory.begin(), midIdx), stateHistory.end());
 
     kickEvent = KickEvent(kickTime, closestRobot, statesSinceKick);
 
@@ -67,22 +69,26 @@ bool FastKickDetector::detectKick() {
     int endIdx = stateHistory.size() - 1;
 
     // Change in position between two adjacent measurements
-    Geometry2d::Point dpStart = stateHistory.at(1).ball.getPos() - stateHistory.at(0).ball.getPos();
-    Geometry2d::Point dpEnd = stateHistory.at(endIdx).ball.getPos() - stateHistory.at(endIdx - 1).ball.getPos();
+    Geometry2d::Point dpStart =
+        stateHistory.at(1).ball.getPos() - stateHistory.at(0).ball.getPos();
+    Geometry2d::Point dpEnd = stateHistory.at(endIdx).ball.getPos() -
+                              stateHistory.at(endIdx - 1).ball.getPos();
 
     // Velocity at the start and end measurements
-    Geometry2d::Point vStart = dpStart / *VisionFilterConfig::vision_loop_dt;
-    Geometry2d::Point vEnd = dpEnd / *VisionFilterConfig::vision_loop_dt;
+    Geometry2d::Point vStart = dpStart / PARAM_vision_loop_dt;
+    Geometry2d::Point vEnd = dpEnd / PARAM_vision_loop_dt;
 
     // Change in velocity between start and end measurements
     Geometry2d::Point dv = vEnd - vStart;
 
     // Acceleration between the start and final velocity
-    // This is weird when the history length is > 3, but it allows you not to have to retune it
-    Geometry2d::Point accel = dv / (*VisionFilterConfig::vision_loop_dt * stateHistory.size());
+    // This is weird when the history length is > 3, but it allows you not to
+    // have to retune it
+    Geometry2d::Point accel = dv / (PARAM_vision_loop_dt * stateHistory.size());
 
     // Check for large accelerations and only going from slow->fast transitions
-    return accel.mag() > *acceleration_trigger && vStart.mag() < vEnd.mag();
+    return accel.mag() > PARAM_fast_acceleration_trigger &&
+           vStart.mag() < vEnd.mag();
 }
 
 WorldRobot FastKickDetector::getClosestRobot() {
@@ -119,3 +125,4 @@ WorldRobot FastKickDetector::getClosestRobot() {
 
     return minRobot;
 }
+}  // namespace vision_filter

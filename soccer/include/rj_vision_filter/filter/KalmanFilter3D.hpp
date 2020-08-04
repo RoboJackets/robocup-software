@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Pose.hpp>
 #include <rj_vision_filter/filter/KalmanFilter.hpp>
 
+namespace vision_filter {
 class KalmanFilter3D : public KalmanFilter {
 public:
     /**
@@ -67,18 +67,5 @@ public:
      * @return Current heading angle velocity covariance
      */
     double getOmegaCov() const;
-
-    static void createConfiguration(Configuration* cfg);
-
-private:
-    // Initial covariance of the filter
-    // Controls how fast it gets to target
-    static ConfigDouble* robot_init_covariance;
-    // Controls how quickly it reacts to changes in ball accelerations
-    static ConfigDouble* robot_process_noise;
-    // Controls how much it trusts measurements from the camera
-    static ConfigDouble* robot_observation_noise;
-    // Scales the covariance and noise to radians instead of meters
-    // Shouldn't matter too much, but it's here
-    static ConfigDouble* orientation_scale;
 };
+}  // namespace vision_filter

@@ -1,12 +1,11 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <boost/circular_buffer.hpp>
-#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/CameraBall.hpp>
 #include <rj_vision_filter/filter/KalmanFilter2D.hpp>
 
+namespace vision_filter {
 class WorldBall;
 
 /**
@@ -19,8 +18,10 @@ public:
      *
      * @param cameraId ID of the camera this filter belongs to
      * @param creationTime Time this filter is created
-     * @param initMeasurement Initial ball measurement we are creating the filter at
-     * @param previousWorldBall Previous prediction of ball location to initialize the velocity smartly
+     * @param initMeasurement Initial ball measurement we are creating the
+     * filter at
+     * @param previousWorldBall Previous prediction of ball location to
+     * initialize the velocity smartly
      */
     KalmanBall(unsigned int cameraID, RJ::Time creationTime,
                CameraBall initMeasurement, const WorldBall& previousWorldBall);
@@ -38,14 +39,16 @@ public:
      * Predicts one time step forward then triangulates towards the measurement
      *
      * @param currentTime Current time of the prediction/update step
-     * @param updateBall Ball measurement that we are using as feedback to the filters
+     * @param updateBall Ball measurement that we are using as feedback to the
+     * filters
      *
      * @note Call either this OR predict once a frame
      */
     void predictAndUpdate(RJ::Time currentTime, CameraBall updateBall);
 
     /**
-     * @return Returns true when the filter hasn't been updated in a while etc and should be deleted
+     * @return Returns true when the filter hasn't been updated in a while etc
+     * and should be deleted
      */
     bool isUnhealthy() const;
 
@@ -80,7 +83,8 @@ public:
     Geometry2d::Point getVelCov() const;
 
     /**
-     * @return List of previous camera ball measurements for kick detection/estimation
+     * @return List of previous camera ball measurements for kick
+     * detection/estimation
      */
     const boost::circular_buffer<CameraBall>& getPrevMeasurements() const;
 
@@ -91,8 +95,6 @@ public:
      * off another robot
      */
     void setVel(Geometry2d::Point newVel);
-
-    static void createConfiguration(Configuration* cfg);
 
 private:
     RJ::Time lastUpdateTime;
@@ -106,7 +108,5 @@ private:
     int health;
 
     unsigned int cameraID;
-
-    // Max time in seconds that a filter can not be updated before it is removed
-    static ConfigDouble* max_time_outside_vision;
 };
+}  // namespace vision_filter

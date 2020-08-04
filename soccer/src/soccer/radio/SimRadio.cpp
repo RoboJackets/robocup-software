@@ -9,7 +9,6 @@
 #include <Robot.hpp>
 #include <cmath>
 #include <rj_common/Network.hpp>
-#include <rj_common/Utils.hpp>
 #include <stdexcept>
 
 #include "PacketConvert.hpp"

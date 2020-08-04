@@ -19,7 +19,7 @@ set(RJ_VISION_FILTER_SRC
     robot/CameraRobot.cpp
     robot/KalmanRobot.cpp
     robot/WorldRobot.cpp
-    util/VisionFilterConfig.cpp
+    params.cpp
     VisionFilter.cpp)
 
 #======================================================================
@@ -30,3 +30,10 @@ target_sources(
     robocup
     PRIVATE
     ${RJ_VISION_FILTER_SRC})
+
+# ---- vision_filter ----
+target_sources(
+    rj_vision_filter
+    PRIVATE
+    main.cpp
+)

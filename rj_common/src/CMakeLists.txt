@@ -5,7 +5,7 @@ set(RJ_COMMON_SRCS
     Field_Dimensions.cpp
     multicast.cpp
     RefereeEnums.cpp
-    Utils.cpp)
+    qt_utils.cpp)
 
 #======================================================================
 # Add sources

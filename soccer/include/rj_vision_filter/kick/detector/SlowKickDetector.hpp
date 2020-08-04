@@ -1,14 +1,13 @@
 #pragma once
 
-#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <deque>
-#include <rj_common/Utils.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/kick/KickEvent.hpp>
 #include <rj_vision_filter/kick/VisionState.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
+namespace vision_filter {
 /**
  * Accurately detects kicks by robots using 5 or more samples
  * in history.
@@ -35,9 +34,7 @@ public:
     bool addRecord(RJ::Time calcTime, const WorldBall& ball,
                    const std::vector<WorldRobot>& yellowRobots,
                    const std::vector<WorldRobot>& blueRobots,
-                   KickEvent& kickEvent);
-
-    static void createConfiguration(Configuration* cfg);
+                   KickEvent* kickEvent);
 
 private:
     /**
@@ -47,7 +44,7 @@ private:
      *
      * @return whether a kick event was detected
      */
-    bool detectKick(KickEvent& kickEvent);
+    bool detectKick(KickEvent* kickEvent);
 
     /**
      * Checks to see if all the different tests to detect kicks are true
@@ -57,7 +54,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    bool checkAllValidators(std::vector<WorldRobot>& robot, std::vector<WorldBall>& ball);
+    static bool checkAllValidators(const std::vector<WorldRobot>& robot,
+                                   const std::vector<WorldBall>& ball);
 
     /**
      * If ball and robots were close and are now far away
@@ -67,8 +65,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distanceValidator(std::vector<WorldRobot>& robot,
-                                  std::vector<WorldBall>& ball);
+    static bool distanceValidator(const std::vector<WorldRobot>& robot,
+                                  const std::vector<WorldBall>& ball);
 
     /**
      * Make sure ball speed is above a minimum amount
@@ -78,8 +76,8 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool velocityValidator(std::vector<WorldRobot>& robot,
-                                  std::vector<WorldBall>& ball);
+    static bool velocityValidator(const std::vector<WorldRobot>& robot,
+                                  const std::vector<WorldBall>& ball);
 
     /**
      * Make sure ball is moving away from robot that kicked it
@@ -89,8 +87,9 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distanceIncreasingValidator(std::vector<WorldRobot>& robot,
-                                            std::vector<WorldBall>& ball);
+    static bool distanceIncreasingValidator(
+        const std::vector<WorldRobot>& robot,
+        const std::vector<WorldBall>& ball);
 
     /**
      * Checks that the ball is being shot from the robot mouth
@@ -100,19 +99,9 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool inFrontValidator(std::vector<WorldRobot>& robot,
-                                 std::vector<WorldBall>& ball);
+    static bool inFrontValidator(const std::vector<WorldRobot>& robot,
+                                 const std::vector<WorldBall>& ball);
 
     std::deque<VisionState> stateHistory;
-
-    // Doesn't check any robots past this distance for optimization
-    static ConfigDouble* robot_dist_filter_cutoff;
-    // Only one ball measurement within this distance of the robot
-    static ConfigDouble* one_robot_within_dist;
-    // At least one ball measurement past this distance of the robot
-    static ConfigDouble* any_robot_past_dist;
-    // Ball has to be this fast
-    static ConfigDouble* min_ball_speed;
-    // Max angle difference between velocity vector and robot heading
-    static ConfigDouble* max_kick_angle;
 };
+}  // namespace vision_filter
