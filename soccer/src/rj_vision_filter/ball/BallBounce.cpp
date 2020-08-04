@@ -1,8 +1,8 @@
 #include <rj_param_utils/param.h>
 
+#include <Geometry2d/Line.hpp>
 #include <algorithm>
 #include <cmath>
-#include <Geometry2d/Line.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_vision_filter/ball/BallBounce.hpp>
 #include <rj_vision_filter/params.hpp>
