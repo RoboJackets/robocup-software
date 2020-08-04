@@ -27,16 +27,8 @@ WorldBall::WorldBall(RJ::Time calcTime,
     }
 
     if (kalmanBalls.empty()) {
-        std::cout << "ERROR: Zero balls are given to the WorldBall constructor"
-                  << std::endl;
-
-        isValid = false;
-        pos = posAvg;
-        vel = velAvg;
-        posCov = 0;
-        velCov = 0;
-
-        return;
+        throw std::runtime_error(
+            "ERROR: Zero balls are given to the WorldBall constructor");
     }
 
     for (const KalmanBall& ball : kalmanBalls) {

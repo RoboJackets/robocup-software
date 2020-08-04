@@ -56,7 +56,7 @@ private:
      * @note robots and balls should be time synced
      */
     static bool checkAllValidators(const std::vector<WorldRobot>& robot,
-                            const std::vector<WorldBall>& ball);
+                                   const std::vector<WorldBall>& ball);
 
     /**
      * If ball and robots were close and are now far away

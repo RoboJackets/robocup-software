@@ -12,9 +12,7 @@ TEST(WorldBall, invalid) {
 TEST(WorldBall, no_ball) {
     std::list<KalmanBall> kbl;
 
-    WorldBall wb = WorldBall(RJ::now(), kbl);
-
-    EXPECT_FALSE(wb.getIsValid());
+    EXPECT_ANY_THROW(WorldBall(RJ::now(), kbl));
 }
 
 TEST(WorldBall, one_ball) {

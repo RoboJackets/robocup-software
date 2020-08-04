@@ -12,9 +12,7 @@ TEST(WorldRobot, invalid) {
 TEST(WorldRobot, no_robot) {
     std::list<KalmanRobot> kbl;
 
-    WorldRobot wb = WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl);
-
-    EXPECT_FALSE(wb.getIsValid());
+    EXPECT_ANY_THROW(WorldRobot(RJ::now(), WorldRobot::Team::BLUE, 1, kbl));
 }
 
 TEST(WorldRobot, one_robot) {
