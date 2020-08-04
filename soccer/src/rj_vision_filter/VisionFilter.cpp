@@ -1,5 +1,6 @@
 #include <Robot.hpp>
 #include <iostream>
+#include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_msgs/msg/detection_frame.hpp>
@@ -41,7 +42,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
 VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg(
     bool us_blue) const {
     return rj_msgs::build<WorldStateMsg>()
-        .last_update_time(RJ::ToROSTime(world.last_update_time()))
+        .last_update_time(rj_convert::convert_to_ros(world.last_update_time()))
         .their_robots(BuildRobotStateMsgs(!us_blue))
         .our_robots(BuildRobotStateMsgs(us_blue))
         .ball(BuildBallStateMsg());
@@ -51,10 +52,10 @@ VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() const {
     const WorldBall& wb = world.getWorldBall();
 
     BallStateMsg msg{};
-    msg.stamp = RJ::ToROSTime(wb.getTime());
-    msg.position = wb.getPos();
-    msg.velocity = wb.getVel();
-    msg.visible = wb.getIsValid();
+    msg.stamp = rj_convert::convert_to_ros(wb.getTime());
+    msg.position = rj_convert::convert_to_ros(wb.getPos());
+    msg.velocity = rj_convert::convert_to_ros(wb.getVel());
+    msg.visible = rj_convert::convert_to_ros(wb.getIsValid());
     return msg;
 }
 
@@ -78,7 +79,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
             robot_state.timestamp = wr.getTime();
         }
 
-        robot_state_msgs.at(i) = robot_state;
+        robot_state_msgs.at(i) = rj_convert::convert_to_ros(robot_state);
     }
     return robot_state_msgs;
 }

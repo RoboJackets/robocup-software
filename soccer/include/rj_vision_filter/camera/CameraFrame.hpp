@@ -39,7 +39,7 @@ public:
     CameraFrame(const DetectionFrameMsg& msg,
                 const Geometry2d::TransformMatrix& world_to_team,
                 double team_angle)
-        : tCapture{RJ::FromROSTime(msg.t_capture)},
+        : tCapture{rj_convert::convert_from_ros(msg.t_capture)},
           cameraID{static_cast<int>(msg.camera_id)},
           cameraBalls{},
           cameraRobotsYellow{},

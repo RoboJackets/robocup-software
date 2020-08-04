@@ -40,12 +40,6 @@ public:
         : _position(other(0), other(1)), _heading(other(2)) {}
 
     /**
-     * Implicit conversion from PoseMsg.
-     */
-    Pose(const Msg& other)
-        : _position(other.position), _heading(other.heading) {}
-
-    /**
      * Compute the pose specified using this pose as coordinates in a
      * frame of reference specified by `other`, in the global space.
      *
@@ -84,14 +78,6 @@ public:
      */
     [[nodiscard]] operator Eigen::Vector3d() const {
         return Eigen::Vector3d(position().x(), position().y(), heading());
-    }
-
-    /**
-     * Implicit conversion to Msg.
-     */
-    [[nodiscard]] operator Msg() const {
-        return rj_geometry_msgs::build<Msg>().position(_position).heading(
-            _heading);
     }
 
     /**
@@ -211,11 +197,6 @@ public:
         : _linear(other(0), other(1)), _angular(other(2)) {}
 
     /**
-     * Implicit conversion from Eigen::Vector3d
-     */
-    Twist(const Msg& other) : _linear(other.linear), _angular(other.angular) {}
-
-    /**
      * Zero
      */
     static Twist Zero() { return Twist(Eigen::Vector3d::Zero()); }
@@ -225,13 +206,6 @@ public:
      */
     operator Eigen::Vector3d() const {
         return Eigen::Vector3d(linear().x(), linear().y(), angular());
-    }
-
-    /**
-     * Implicit conversion to Msg.
-     */
-    operator Msg() const {
-        return rj_geometry_msgs::build<Msg>().linear(_linear).angular(_angular);
     }
 
     /**

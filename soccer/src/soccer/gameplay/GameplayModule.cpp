@@ -333,12 +333,14 @@ void Gameplay::GameplayModule::run() {
                     "ui.main._tests.getNextCommand()", Py_eval_input,
                     _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
 
+#if 0
                 // TODO(Kyle): Part two of the
                 //  multiple-places-publishing-to-the-same-struct garbage-fest.
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
                     _context->game_settings.requestRefCommand = cmd;
                 }
+#endif
             }
 
         } catch (const error_already_set&) {
@@ -488,6 +490,7 @@ void Gameplay::GameplayModule::loadTest() {
 
             runningTests = extract<bool>(rtrn);
 
+#if 0
             // TODO(Kyle): Okay, so really all of this testing logic should be
             // removed from Gameplay and put behind some sort of GameController
             // abstraction that it shares with the main UI code. However, for
@@ -608,6 +611,7 @@ void Gameplay::GameplayModule::loadTest() {
 
                 _context->grsim_command = simPacket;
             }
+#endif
 
         } catch (const error_already_set&) {
             PyErr_Print();

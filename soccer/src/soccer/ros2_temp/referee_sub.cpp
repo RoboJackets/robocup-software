@@ -5,25 +5,6 @@
 
 namespace ros2_temp {
 
-static TeamInfo team_info_from_msg(const TeamInfoMsg& msg) {
-    TeamInfo result;
-    result.name = msg.name;
-    result.score = msg.score;
-    result.red_cards = msg.num_red_cards;
-    result.yellow_cards = msg.num_yellow_cards;
-
-    result.yellow_card_times.reserve(msg.num_yellow_cards);
-    for (const auto& duration : msg.yellow_card_remaining_times) {
-        result.yellow_card_times.emplace_back(RJ::FromROSDuration(duration));
-    }
-
-    result.timeouts_left = msg.timeouts_left;
-    result.timeout_time = RJ::FromROSDuration(msg.remaining_timeout_time);
-    result.goalie = msg.goalie_id;
-
-    return result;
-}
-
 RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)
     : context_(context) {
     node_ = std::make_shared<rclcpp::Node>("_referee_receiver");
@@ -42,21 +23,13 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)
     game_state_sub_ = node_->create_subscription<GameStateMsg>(
         referee::topics::kGameStatePub, keep_latest,
         [this](GameStateMsg::UniquePtr msg) {
-            context_->game_state.period =
-                static_cast<GameState::Period>(msg->period);
-            context_->game_state.state =
-                static_cast<GameState::State>(msg->state);
-            context_->game_state.restart =
-                static_cast<GameState::Restart>(msg->restart);
-            context_->game_state.our_restart = msg->our_restart;
-            context_->game_state.stage_time_left =
-                RJ::FromROSDuration(msg->stage_time_left);
+            rj_convert::convert_from_ros(*msg, &context_->game_state);
         });
 
     team_color_sub_ = node_->create_subscription<TeamColorMsg>(
         referee::topics::kTeamColorPub, keep_latest,
         [this](TeamColorMsg::UniquePtr msg) {
-            context_->blue_team = msg->is_blue;
+            rj_convert::convert_from_ros(msg->is_blue, &context_->blue_team);
         });
 
     goalie_sub_ = node_->create_subscription<GoalieMsg>(
@@ -68,13 +41,13 @@ RefereeSub::RefereeSub(Context* context, rclcpp::Executor* executor)
     our_team_info_sub_ = node_->create_subscription<TeamInfoMsg>(
         referee::topics::kOurInfoPub, keep_latest,
         [this](TeamInfoMsg::UniquePtr msg) {
-            context_->our_info = team_info_from_msg(*msg);
+            rj_convert::convert_from_ros(*msg, &context_->our_info);
         });
 
     their_team_info_sub_ = node_->create_subscription<TeamInfoMsg>(
         referee::topics::kTheirInfoPub, keep_latest,
         [this](TeamInfoMsg::UniquePtr msg) {
-            context_->their_info = team_info_from_msg(*msg);
+            rj_convert::convert_from_ros(*msg, &context_->their_info);
         });
 }
 

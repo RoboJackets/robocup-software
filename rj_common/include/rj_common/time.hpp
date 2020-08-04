@@ -38,29 +38,6 @@ constexpr Timestamp timestamp(Time time) {
 
 inline Timestamp timestamp() { return timestamp(now()); }
 
-inline rclcpp::Time ToROSTime(RJ::Time time) {
-    const int64_t nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
-                              time.time_since_epoch())
-                              .count();
-
-    return rclcpp::Time{nanos};
-}
-
-inline RJ::Time FromROSTime(const rclcpp::Time& time) {
-    const std::chrono::nanoseconds dur(time.nanoseconds());
-    return RJ::Time{dur};
-}
-
-inline rclcpp::Duration ToROSDuration(RJ::Seconds seconds) {
-    return rclcpp::Duration(
-        std::chrono::duration_cast<std::chrono::nanoseconds>(seconds).count());
-}
-
-inline RJ::Seconds FromROSDuration(const rclcpp::Duration& duration) {
-    const std::chrono::nanoseconds dur(duration.nanoseconds());
-    return std::chrono::duration_cast<RJ::Seconds>(dur);
-}
-
 /// Converts a decimal number of seconds to an integer timestamp in microseconds
 constexpr RJ::Timestamp SecsToTimestamp(double secs) {
     return secs * 1000000.0f;
@@ -136,6 +113,8 @@ struct RosConverter<RJ::Seconds, rclcpp::Duration> {
     }
 };
 
+ASSOCIATE_CPP_ROS(RJ::Time, builtin_interfaces::msg::Time);
+
 template <>
 struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
     static rclcpp::Duration to_ros(const RJ::Seconds& value) {
@@ -145,5 +124,7 @@ struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
         return RosConverter<RJ::Seconds, rclcpp::Duration>::from_ros(value);
     }
 };
+
+ASSOCIATE_CPP_ROS(RJ::Seconds, builtin_interfaces::msg::Duration);
 
 }  // namespace rj_convert

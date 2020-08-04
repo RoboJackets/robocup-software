@@ -59,8 +59,8 @@ inline T applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
     return gain * newValue + (1 - gain) * oldValue;
 }
 
-template <typename T>
-void update_cache(T& value, const T& expected, bool* valid) {
+template <typename T, typename S>
+void update_cache(T& value, const S& expected, bool* valid) {
     if (value != expected) {
         value = expected;
         *valid = false;

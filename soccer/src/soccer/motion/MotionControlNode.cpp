@@ -20,7 +20,8 @@ void MotionControlNode::run() {
         return;
     }
 
-    runMotion(*world_state_msg, _context->game_state, _context->trajectories,
+    runMotion(rj_convert::convert_from_ros(*world_state_msg),
+              _context->game_state, _context->trajectories,
               _context->is_joystick_controlled, &_context->motion_setpoints);
 }
 

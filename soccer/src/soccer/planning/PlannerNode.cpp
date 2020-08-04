@@ -27,7 +27,8 @@ void PlannerNode::run() {
         return;
     }
 
-    const WorldState world_state = *world_state_msg;
+    const WorldState world_state =
+        rj_convert::convert_from_ros(*world_state_msg);
     const ShapeSet& global_obstacles = context_->globalObstacles;
     const ShapeSet& goal_zones = context_->goalZoneObstacles;
     const auto& robot_intents = context_->robot_intents;

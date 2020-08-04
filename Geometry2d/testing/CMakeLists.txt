@@ -5,6 +5,7 @@ set(GEOMETRY2D_TESTING_SRCS
     ArcTest.cpp
     CircleTest.cpp
     CompositeShapeTest.cpp
+    GeometryConversionsTest.cpp
     LineTest.cpp
     PointTest.cpp
     PoseTest.cpp

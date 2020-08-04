@@ -6,14 +6,15 @@
 #include "TransformMatrix.hpp"
 
 namespace Geometry2d {
-using LineMsg = rj_geometry_msgs::msg::Line;
 
 class Circle;
 class Segment;
 
 class Line {
 public:
-    Line() {}
+    using Msg = rj_geometry_msgs::msg::Line;
+
+    Line() = default;
 
     explicit Line(Point p1, Point p2) : pt{p1, p2} {
         // assert(p1 != p2);
@@ -21,15 +22,9 @@ public:
 
     explicit Line(const Segment& segment);
 
-    /**
-     * @brief Constructor from LineMsg.
-     * @param msg
-     */
-    Line(const LineMsg& msg) : Line{msg.pt[0], msg.pt[1]} {}
-
     Point delta() const { return pt[1] - pt[0]; }
 
-    bool operator==(const Line& other) { return pt == other.pt; }
+    bool operator==(const Line& other) const { return pt == other.pt; }
 
     /**
     returns the shortest distance between the line and a point
@@ -78,22 +73,12 @@ public:
     }
 
     /**
-     * @brief Implicit conversion to LineMsg
-     * @return
-     */
-    [[nodiscard]] operator LineMsg() const {
-        LineMsg msg{};
-        msg.pt = {pt[0], pt[1]};
-        return msg;
-    }
-
-    /**
      * Returns the point on the line closest to p.
      */
     Point nearestPoint(Point p) const;
 
     /** the line consists of two points */
-    Point pt[2];
+    std::array<Point, 2> pt;
 
     std::string toString() {
         std::stringstream str;

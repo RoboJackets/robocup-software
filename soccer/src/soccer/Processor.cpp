@@ -171,9 +171,10 @@ void Processor::run() {
         const WorldStateMsg::SharedPtr world_state_msg =
             _world_state_queue->Get();
         if (world_state_msg != nullptr) {
-            _context.world_state = *world_state_msg;
+            _context.world_state =
+                rj_convert::convert_from_ros(*world_state_msg);
             curStatus.lastVisionTime =
-                RJ::FromROSTime(world_state_msg->last_update_time);
+                rj_convert::convert_from_ros(world_state_msg->last_update_time);
         }
 
         // Run high-level soccer logic
