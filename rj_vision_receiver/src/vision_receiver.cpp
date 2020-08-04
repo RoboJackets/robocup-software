@@ -317,7 +317,7 @@ void VisionReceiver::UpdateGeometryPacket(
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
 
         config_.updateFieldDimensions(
-            rj_convert::convert_to_ros<Field_Dimensions>(new_field_dim));
+            rj_convert::convert_to_ros(new_field_dim));
     } else {
         EZ_ERROR_STREAM(
             "Error: failed to decode SSL geometry packet. Not resizing "

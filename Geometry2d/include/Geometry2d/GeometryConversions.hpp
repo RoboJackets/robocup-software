@@ -33,6 +33,8 @@ struct RosConverter<Geometry2d::Point, rj_geometry_msgs::msg::Point> {
     }
 };
 
+ASSOCIATE_CPP_ROS(Geometry2d::Point, Geometry2d::Point::Msg);
+
 template <>
 struct RosConverter<Geometry2d::Pose, rj_geometry_msgs::msg::Pose> {
     static rj_geometry_msgs::msg::Pose to_ros(const Geometry2d::Pose& from) {
@@ -49,6 +51,8 @@ struct RosConverter<Geometry2d::Pose, rj_geometry_msgs::msg::Pose> {
         return to;
     }
 };
+
+ASSOCIATE_CPP_ROS(Geometry2d::Pose, Geometry2d::Pose::Msg);
 
 template <>
 struct RosConverter<Geometry2d::Twist, rj_geometry_msgs::msg::Twist> {
@@ -68,6 +72,8 @@ struct RosConverter<Geometry2d::Twist, rj_geometry_msgs::msg::Twist> {
     }
 };
 
+ASSOCIATE_CPP_ROS(Geometry2d::Twist, Geometry2d::Twist::Msg);
+
 template <>
 struct RosConverter<Geometry2d::Line, rj_geometry_msgs::msg::Line> {
     static rj_geometry_msgs::msg::Line to_ros(const Geometry2d::Line& from) {
@@ -82,6 +88,8 @@ struct RosConverter<Geometry2d::Line, rj_geometry_msgs::msg::Line> {
         return to;
     }
 };
+
+ASSOCIATE_CPP_ROS(Geometry2d::Line, Geometry2d::Line::Msg);
 
 template <>
 struct RosConverter<Geometry2d::Segment, rj_geometry_msgs::msg::Segment> {
@@ -100,6 +108,8 @@ struct RosConverter<Geometry2d::Segment, rj_geometry_msgs::msg::Segment> {
     }
 };
 
+ASSOCIATE_CPP_ROS(Geometry2d::Segment, Geometry2d::Segment::Msg);
+
 template <>
 struct RosConverter<Geometry2d::Rect, rj_geometry_msgs::msg::Rect> {
     static rj_geometry_msgs::msg::Rect to_ros(const Geometry2d::Rect& from) {
@@ -114,5 +124,7 @@ struct RosConverter<Geometry2d::Rect, rj_geometry_msgs::msg::Rect> {
         return to;
     }
 };
+
+ASSOCIATE_CPP_ROS(Geometry2d::Rect, Geometry2d::Rect::Msg);
 
 }  // namespace rj_convert

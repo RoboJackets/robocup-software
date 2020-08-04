@@ -8,8 +8,8 @@
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     : Node{"config_server", node_options},
-      field_dimensions_{rj_convert::convert_to_ros<Field_Dimensions>(
-          Field_Dimensions::Default_Dimensions)} {
+      field_dimensions_{
+          rj_convert::convert_to_ros(Field_Dimensions::Default_Dimensions)} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
 
     // Game Settings

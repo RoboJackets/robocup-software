@@ -265,4 +265,6 @@ struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
     }
 };
 
+ASSOCIATE_CPP_ROS(Field_Dimensions, Field_Dimensions::Msg);
+
 }  // namespace rj_convert

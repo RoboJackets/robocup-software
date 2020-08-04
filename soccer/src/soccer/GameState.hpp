@@ -236,11 +236,12 @@ struct RosConverter<GameState, rj_msgs::msg::GameState> {
         convert_from_ros(from.our_restart, &to.our_restart);
         convert_from_ros(from.stage_time_left, &to.stage_time_left);
         if (to.restart == GameState::Restart::Placement) {
-            to.ball_placement_point =
-                convert_from_ros<Geometry2d::Point>(from.placement_point);
+            to.ball_placement_point = convert_from_ros(from.placement_point);
         }
         return to;
     }
 };
+
+ASSOCIATE_CPP_ROS(GameState, GameState::Msg);
 
 }  // namespace rj_convert

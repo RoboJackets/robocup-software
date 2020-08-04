@@ -68,4 +68,6 @@ struct RosConverter<GameSettings, GameSettings::Msg> {
     }
 };
 
+ASSOCIATE_CPP_ROS(GameSettings, GameSettings::Msg);
+
 }  // namespace rj_convert

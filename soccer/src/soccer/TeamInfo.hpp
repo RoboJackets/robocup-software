@@ -96,4 +96,6 @@ struct RosConverter<TeamInfo, rj_msgs::msg::TeamInfo> {
     }
 };
 
+ASSOCIATE_CPP_ROS(TeamInfo, TeamInfo::Msg);
+
 }  // namespace rj_convert

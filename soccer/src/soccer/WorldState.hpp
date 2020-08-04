@@ -202,6 +202,8 @@ struct RosConverter<RobotState, RobotState::Msg> {
     }
 };
 
+ASSOCIATE_CPP_ROS(RobotState, RobotState::Msg);
+
 template <>
 struct RosConverter<BallState, BallState::Msg> {
     static BallState::Msg to_ros(const BallState& value) {
@@ -223,6 +225,8 @@ struct RosConverter<BallState, BallState::Msg> {
     }
 };
 
+ASSOCIATE_CPP_ROS(BallState, BallState::Msg);
+
 template <>
 struct RosConverter<WorldState, WorldState::Msg> {
     static WorldState::Msg to_ros(const WorldState& value) {
@@ -241,5 +245,7 @@ struct RosConverter<WorldState, WorldState::Msg> {
         return result;
     }
 };
+
+ASSOCIATE_CPP_ROS(WorldState, WorldState::Msg);
 
 }  // namespace rj_convert

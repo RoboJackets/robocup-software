@@ -20,36 +20,36 @@ struct RosConverter<MockTime, MockTime::Msg> {
     }
 };
 
+ASSOCIATE_CPP_ROS(MockTime, MockTime::Msg);
+
 }  // namespace rj_convert
 
 TEST(ROSConvert, primitives_have_lossless_convert) {
-    test_lossless_convert_ros_value<int>(5);
-    test_lossless_convert_cpp_value<int>(5);
+    test_lossless_convert_ros_value(5);
+    test_lossless_convert_cpp_value(5);
 }
 
 TEST(ROSConvert, vector_primitive) {
     std::vector<int> vec{1, 2, 3, 4, 5};
-    test_lossless_convert_ros_value<std::vector<int>>(vec);
-    test_lossless_convert_cpp_value<std::vector<int>>(vec);
+    test_lossless_convert_ros_value(vec);
+    test_lossless_convert_cpp_value(vec);
 }
 
 TEST(ROSConvert, vector_ros_type) {
     std::vector<MockTime::Msg> vec_ros{rclcpp::Time(1), rclcpp::Time(2),
                                        rclcpp::Time(3)};
-    test_lossless_convert_ros_value<std::vector<MockTime>>(vec_ros);
+    test_lossless_convert_ros_value(vec_ros);
 }
 
 TEST(ROSConvert, vector_nested) {
     std::vector<std::vector<MockTime::Msg>> vec_ros{
         {rclcpp::Time(1), rclcpp::Time(2)}, {rclcpp::Time(3)}};
-    test_lossless_convert_ros_value<std::vector<std::vector<MockTime>>>(
-        vec_ros);
+    test_lossless_convert_ros_value(vec_ros);
 }
 
 TEST(ROSConvert, array_primitive) {
     std::array<int, 5> vec{1, 2, 3, 4, 5};
 
-    using array_int = std::array<int, 5>;
-    test_lossless_convert_ros_value<array_int>(vec);
-    test_lossless_convert_cpp_value<array_int>(vec);
+    test_lossless_convert_ros_value(vec);
+    test_lossless_convert_cpp_value(vec);
 }

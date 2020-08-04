@@ -8,34 +8,24 @@ static rj_geometry_msgs::msg::Point make_ros_point() {
 static Geometry2d::Point make_rj_point() { return Geometry2d::Point{1, 2}; }
 
 TEST(ROSConvertGeometry, point_convert) {
-    test_lossless_convert_ros_value<Geometry2d::Point,
-                                    rj_geometry_msgs::msg::Point>(
-        make_ros_point());
-    test_lossless_convert_cpp_value<Geometry2d::Point,
-                                    rj_geometry_msgs::msg::Point>(
-        make_rj_point());
+    test_lossless_convert_ros_value(make_ros_point());
+    test_lossless_convert_cpp_value(make_rj_point());
 }
 
 TEST(ROSConvertGeometry, pose_convert) {
-    test_lossless_convert_ros_value<Geometry2d::Pose,
-                                    rj_geometry_msgs::msg::Pose>(
+    test_lossless_convert_ros_value(
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Pose>()
             .position(make_ros_point())
             .heading(3.0));
-    test_lossless_convert_cpp_value<Geometry2d::Pose,
-                                    rj_geometry_msgs::msg::Pose>(
-        Geometry2d::Pose{1, 2, 3});
+    test_lossless_convert_cpp_value(Geometry2d::Pose{1, 2, 3});
 }
 
 TEST(ROSConvertGeometry, twist_convert) {
-    test_lossless_convert_ros_value<Geometry2d::Twist,
-                                    rj_geometry_msgs::msg::Twist>(
+    test_lossless_convert_ros_value(
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Twist>()
             .linear(make_ros_point())
             .angular(3.0));
-    test_lossless_convert_cpp_value<Geometry2d::Twist,
-                                    rj_geometry_msgs::msg::Twist>(
-        Geometry2d::Twist{1, 2, 3});
+    test_lossless_convert_cpp_value(Geometry2d::Twist{1, 2, 3});
 }
 
 TEST(ROSConvertGeometry, line_convert) {
@@ -44,10 +34,8 @@ TEST(ROSConvertGeometry, line_convert) {
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(0).y(1);
     line.pt[1] =
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);
-    test_lossless_convert_ros_value<Geometry2d::Line,
-                                    rj_geometry_msgs::msg::Line>(line);
-    test_lossless_convert_cpp_value<Geometry2d::Line,
-                                    rj_geometry_msgs::msg::Line>(
+    test_lossless_convert_ros_value(line);
+    test_lossless_convert_cpp_value(
         Geometry2d::Line(make_rj_point(), make_rj_point() * 2));
 }
 
@@ -57,10 +45,8 @@ TEST(ROSConvertGeometry, segment_convert) {
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(0).y(1);
     segment.pt[1] =
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);
-    test_lossless_convert_ros_value<Geometry2d::Segment,
-                                    rj_geometry_msgs::msg::Segment>(segment);
-    test_lossless_convert_cpp_value<Geometry2d::Segment,
-                                    rj_geometry_msgs::msg::Segment>(
+    test_lossless_convert_ros_value(segment);
+    test_lossless_convert_cpp_value(
         Geometry2d::Segment(make_rj_point(), make_rj_point() * 2));
 }
 
@@ -70,9 +56,7 @@ TEST(ROSConvertGeometry, rect_convert) {
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(0).y(1);
     rect.pt[1] =
         rj_geometry_msgs::build<rj_geometry_msgs::msg::Point>().x(1).y(2);
-    test_lossless_convert_ros_value<Geometry2d::Rect,
-                                    rj_geometry_msgs::msg::Rect>(rect);
-    test_lossless_convert_cpp_value<Geometry2d::Rect,
-                                    rj_geometry_msgs::msg::Rect>(
+    test_lossless_convert_ros_value(rect);
+    test_lossless_convert_cpp_value(
         Geometry2d::Rect(make_rj_point(), make_rj_point() * 2));
 }

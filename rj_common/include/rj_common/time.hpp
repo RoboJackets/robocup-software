@@ -75,11 +75,6 @@ inline std::ostream& operator<<(std::ostream& os, RJ::Seconds seconds) {
 namespace rj_convert {
 
 template <>
-struct AssociatedRosType<RJ::Time> {
-    using T = builtin_interfaces::msg::Time;
-};
-
-template <>
 struct RosConverter<RJ::Time, rclcpp::Time> {
     static rclcpp::Time to_ros(const RJ::Time& value) {
         const int64_t nanos =
@@ -93,11 +88,6 @@ struct RosConverter<RJ::Time, rclcpp::Time> {
         const std::chrono::nanoseconds dur(value.nanoseconds());
         return RJ::Time{dur};
     }
-};
-
-template <>
-struct AssociatedRosType<RJ::Seconds> {
-    using T = builtin_interfaces::msg::Duration;
 };
 
 template <>
@@ -123,6 +113,8 @@ struct RosConverter<RJ::Seconds, rclcpp::Duration> {
     }
 };
 
+ASSOCIATE_CPP_ROS(RJ::Time, builtin_interfaces::msg::Time);
+
 template <>
 struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
     static rclcpp::Duration to_ros(const RJ::Seconds& value) {
@@ -132,5 +124,7 @@ struct RosConverter<RJ::Seconds, builtin_interfaces::msg::Duration> {
         return RosConverter<RJ::Seconds, rclcpp::Duration>::from_ros(value);
     }
 };
+
+ASSOCIATE_CPP_ROS(RJ::Seconds, builtin_interfaces::msg::Duration);
 
 }  // namespace rj_convert
