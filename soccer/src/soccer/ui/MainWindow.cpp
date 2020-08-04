@@ -58,8 +58,7 @@ MainWindow::MainWindow(Processor* processor, bool has_external_ref,
       _context(processor->context()),
       _has_external_ref(has_external_ref),
       _game_settings(
-          rj_convert::convert_to_ros<GameSettings, GameSettings::Msg>(
-              _context->game_settings)) {
+          rj_convert::convert_to_ros<GameSettings>(_context->game_settings)) {
     _context_mutex = processor->loopMutex();
 
     qRegisterMetaType<QVector<int>>("QVector<int>");

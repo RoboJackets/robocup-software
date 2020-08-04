@@ -126,9 +126,9 @@ void RefereeBase::send() {
         auto our_msg = _blue_team ? _blue_info : _yellow_info;
         auto their_msg = _blue_team ? _yellow_info : _blue_info;
         _our_team_info_pub->publish(
-            rj_convert::convert_to_ros<TeamInfo, TeamInfo::Msg>(our_msg));
+            rj_convert::convert_to_ros<TeamInfo>(our_msg));
         _their_team_info_pub->publish(
-            rj_convert::convert_to_ros<TeamInfo, TeamInfo::Msg>(our_msg));
+            rj_convert::convert_to_ros<TeamInfo>(our_msg));
         _team_info_valid = true;
     }
 
