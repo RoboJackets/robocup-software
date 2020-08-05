@@ -58,7 +58,7 @@ target_sources(rj_protos
 # Include and Linking
 #======================================================================
 target_link_libraries(rj_protos ${PROTOBUF_LIBRARIES})
-target_include_directories(rj_protos PUBLIC ${PROTO_INCLUDE_DIR})
+target_include_directories(rj_protos SYSTEM PUBLIC ${PROTO_INCLUDE_DIR})
 
 #======================================================================
 # Packaging
