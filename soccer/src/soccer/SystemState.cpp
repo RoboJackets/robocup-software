@@ -22,11 +22,11 @@ SystemState::~SystemState() {
 }
 
 std::vector<int> SystemState::ourValidIds() {
-    std::vector<int> validIds;
+    std::vector<int> valid_ids;
     for (auto& i : self) {
         if (i->visible()) {
-            validIds.push_back(i->shell());
+            valid_ids.push_back(i->shell());
         }
     }
-    return validIds;
+    return valid_ids;
 }

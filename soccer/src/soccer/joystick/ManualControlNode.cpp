@@ -3,10 +3,10 @@
 namespace joystick {
 REGISTER_CONFIGURABLE(ManualControlNode);
 
-ConfigDouble* ManualControlNode::JoystickRotationMaxSpeed;
-ConfigDouble* ManualControlNode::JoystickRotationMaxDampedSpeed;
-ConfigDouble* ManualControlNode::JoystickTranslationMaxSpeed;
-ConfigDouble* ManualControlNode::JoystickTranslationMaxDampedSpeed;
+ConfigDouble* ManualControlNode::joystick_rotation_max_speed;
+ConfigDouble* ManualControlNode::joystick_rotation_max_damped_speed;
+ConfigDouble* ManualControlNode::joystick_translation_max_speed;
+ConfigDouble* ManualControlNode::joystick_translation_max_damped_speed;
 
 ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
 
@@ -220,15 +220,15 @@ void ManualControlNode::applyControlModifiers() {
     controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
 
     if (context_->game_settings.joystick_config.dampedTranslation) {
-        trans *= JoystickTranslationMaxDampedSpeed->value();
+        trans *= joystick_translation_max_damped_speed->value();
     } else {
-        trans *= JoystickTranslationMaxSpeed->value();
+        trans *= joystick_translation_max_speed->value();
     }
 
     if (context_->game_settings.joystick_config.dampedRotation) {
-        trans *= JoystickRotationMaxDampedSpeed->value();
+        trans *= joystick_rotation_max_damped_speed->value();
     } else {
-        trans *= JoystickRotationMaxSpeed->value();
+        trans *= joystick_rotation_max_speed->value();
     }
 
     // Scale up kicker and dribbler speeds
@@ -237,13 +237,13 @@ void ManualControlNode::applyControlModifiers() {
 }
 
 void ManualControlNode::createConfiguration(Configuration* cfg) {
-    JoystickRotationMaxSpeed =  // NOLINT
+    joystick_rotation_max_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Rotation Speed", .5);
-    JoystickRotationMaxDampedSpeed =  // NOLINT
+    joystick_rotation_max_damped_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Damped Rotation Speed", .25);
-    JoystickTranslationMaxSpeed =  // NOLINT
+    joystick_translation_max_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Translation Speed", 3.0);
-    JoystickTranslationMaxDampedSpeed =  // NOLINT
+    joystick_translation_max_damped_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Damped Translation Speed", 1.0);
 }
 

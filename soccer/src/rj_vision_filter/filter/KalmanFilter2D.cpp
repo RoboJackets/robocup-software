@@ -1,4 +1,5 @@
 #include <cmath>
+
 #include <rj_vision_filter/filter/KalmanFilter2D.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -15,15 +16,15 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, observation_noise, 2.0,
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
-KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos,
-                               Geometry2d::Point initVel)
+KalmanFilter2D::KalmanFilter2D(Geometry2d::Point init_pos,
+                               Geometry2d::Point init_vel)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel
-    x_k1_k1 << initPos.x(),
-               initVel.x(),
-               initPos.y(),
-               initVel.y();
+    x_k1_k1 << init_pos.x(),
+               init_vel.x(),
+               init_pos.y(),
+               init_vel.y();
     x_k_k1 = x_k1_k1;
     x_k_k = x_k1_k1;
 
@@ -116,8 +117,8 @@ Geometry2d::Point KalmanFilter2D::getVelCov() const {
     return Geometry2d::Point(P_k_k(1, 1), P_k_k(3, 3));
 }
 
-void KalmanFilter2D::setVel(Geometry2d::Point newVel) {
-    x_k_k(1) = newVel.x();
-    x_k_k(3) = newVel.y();
+void KalmanFilter2D::setVel(Geometry2d::Point new_vel) {
+    x_k_k(1) = new_vel.x();
+    x_k_k(3) = new_vel.y();
 }
 }  // namespace vision_filter

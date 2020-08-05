@@ -1,9 +1,10 @@
 #include "MotionControl.hpp"
 
+#include <optional>
+
 #include <Context.hpp>
 #include <Geometry2d/Util.hpp>
 #include <RobotConfig.hpp>
-#include <optional>
 #include <rj_common/Utils.hpp>
 
 #include "planning/Instant.hpp"
@@ -16,15 +17,15 @@ using namespace Planning;
 
 REGISTER_CONFIGURABLE(MotionControl);
 
-ConfigDouble* MotionControl::_max_acceleration;
-ConfigDouble* MotionControl::_max_velocity;
-ConfigDouble* MotionControl::_x_multiplier;
+ConfigDouble* MotionControl::max_acceleration;
+ConfigDouble* MotionControl::max_velocity;
+ConfigDouble* MotionControl::x_multiplier;
 
 void MotionControl::createConfiguration(Configuration* cfg) {
-    _max_acceleration =
+    max_acceleration =
         new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
-    _max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
-    _x_multiplier = new ConfigDouble(cfg, "MotionControl/X_Multiplier", 1.0);
+    max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
+    x_multiplier = new ConfigDouble(cfg, "MotionControl/X_Multiplier", 1.0);
 }
 
 #pragma mark MotionControl
@@ -140,7 +141,7 @@ void MotionControl::reset() {
 
 void MotionControl::setVelocity(MotionSetpoint* setpoint, Twist target_vel) {
     // Limit Velocity
-    target_vel.linear().clamp(*_max_velocity);
+    target_vel.linear().clamp(*max_velocity);
 
     // make sure we don't send any bad values
     if (Eigen::Vector3d(target_vel).hasNaN()) {

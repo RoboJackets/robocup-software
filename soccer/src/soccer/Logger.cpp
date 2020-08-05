@@ -4,10 +4,10 @@
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <rc-fshare/git_version.hpp>
-
 #include "Context.hpp"
 #include "radio/PacketConvert.hpp"
+
+#include <rc-fshare/git_version.hpp>
 
 using namespace Packet;
 
@@ -21,10 +21,10 @@ using namespace Packet;
  * Write a message to an output stream, delimited by size.
  */
 bool writeDelimitedTo(const google::protobuf::MessageLite& message,
-                      google::protobuf::io::ZeroCopyOutputStream* rawOutput) {
+                      google::protobuf::io::ZeroCopyOutputStream* raw_output) {
     // We create a new coded stream for each message.  Don't worry, this is
     // fast.
-    google::protobuf::io::CodedOutputStream output(rawOutput);
+    google::protobuf::io::CodedOutputStream output(raw_output);
 
     // Write the size.
     const int size = message.ByteSize();
@@ -49,13 +49,13 @@ bool writeDelimitedTo(const google::protobuf::MessageLite& message,
 /**
  * Read a message from an input stream, delimited by size.
  */
-bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
+bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* raw_input,
                        google::protobuf::MessageLite* message) {
     // We create a new coded stream for each message.  Don't worry, this is
     // fast, and it makes sure the 64MB total size limit is imposed per-message
     // rather than on the whole stream.  (See the CodedInputStream interface for
     // more info on this limit.)
-    google::protobuf::io::CodedInputStream input(rawInput);
+    google::protobuf::io::CodedInputStream input(raw_input);
 
     // Read the size.
     uint32_t size = 0;

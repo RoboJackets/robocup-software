@@ -1,7 +1,9 @@
-#include <gtest/gtest.h>
-#include "GradientAscent1D.hpp"
-#include "Gradient1DConfig.hpp"
 #include <tuple>
+
+#include <gtest/gtest.h>
+
+#include "Gradient1DConfig.hpp"
+#include "GradientAscent1D.hpp"
 
 using namespace std;
 

@@ -1,16 +1,17 @@
 #include "Configuration.hpp"
 
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
 #include <cassert>
 #include <cstdio>
 #include <iostream>
 #include <utility>
 
-std::list<Configurable*>* Configurable::_configurables;
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+
+std::list<Configurable*>* Configurable::configurables;
 
 // Role for tree column zero for storing ConfigItem pointers.
-static const int ConfigItemRole = Qt::UserRole;
+static const int kConfigItemRole = Qt::UserRole;
 
 Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this NOLINT
 
@@ -153,7 +154,7 @@ void Configuration::addToTree(ConfigItem* item) {
     // Create a tree item
     item->_treeItem = new QTreeWidgetItem(parent);  // NOLINT
     item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
-    item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
+    item->_treeItem->setData(0, kConfigItemRole, QVariant::fromValue(item));
     item->_treeItem->setText(0, path.back());
 
     if (item->_description.empty()) {
@@ -177,7 +178,7 @@ void Configuration::tree(QTreeWidget* tree) {
 }
 
 ConfigItem* Configuration::configItem(QTreeWidgetItem* ti) {
-    return ti->data(0, ConfigItemRole).value<ConfigItem*>();
+    return ti->data(0, kConfigItemRole).value<ConfigItem*>();
 }
 
 void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
@@ -206,30 +207,30 @@ bool Configuration::load(const QString& filename, QString& error) {
         return false;
     }
 
-    QDomDocument newDoc;
-    QString domError;
-    int errorLine = 0;
-    int errorColumn = 0;
-    if (!newDoc.setContent(&file, &domError, &errorLine, &errorColumn)) {
+    QDomDocument new_doc;
+    QString dom_error;
+    int error_line = 0;
+    int error_column = 0;
+    if (!new_doc.setContent(&file, &dom_error, &error_line, &error_column)) {
         error = QString("%1:%2: %3")
-                    .arg(QString::number(errorLine),
-                         QString::number(errorColumn), domError);
+                    .arg(QString::number(error_line),
+                         QString::number(error_column), dom_error);
         return false;
     }
 
-    QDomElement root = newDoc.firstChildElement("config");
+    QDomElement root = new_doc.firstChildElement("config");
     if (root.isNull()) {
         error = "XML does not contain root <config> element";
         return false;
     }
 
-    _doc = newDoc;
+    _doc = new_doc;
     for (ConfigItem* item : _allItems) {
         QDomElement el = root;
         for (QString str : item->path()) {
-            bool isInt = false;
-            int value = str.toInt(&isInt);
-            if (isInt) {
+            bool is_int = false;
+            int value = str.toInt(&is_int);
+            if (is_int) {
                 str = QString("item%1").arg(value);
             } else {
                 // Sanitize the string
@@ -269,9 +270,9 @@ bool Configuration::save(const QString& filename, QString& error) {
     for (ConfigItem* item : _allItems) {
         QDomElement el = root;
         for (QString str : item->path()) {
-            bool isInt = false;
-            int value = str.toInt(&isInt);
-            if (isInt) {
+            bool is_int = false;
+            int value = str.toInt(&is_int);
+            if (is_int) {
                 str = QString("item%1").arg(value);
             } else {
                 // Sanitize the string
@@ -304,17 +305,17 @@ bool Configuration::save(const QString& filename, QString& error) {
 }
 
 Configurable::Configurable() {
-    if (_configurables == nullptr) {
-        _configurables = new std::list<Configurable*>();
+    if (configurables == nullptr) {
+        configurables = new std::list<Configurable*>();
     }
 
-    _configurables->push_back(this);
+    configurables->push_back(this);
 }
 
 const std::list<Configurable*>& Configurable::configurables() {
-    if (_configurables == nullptr) {
-        _configurables = new std::list<Configurable*>();
+    if (configurables == nullptr) {
+        configurables = new std::list<Configurable*>();
     }
 
-    return *_configurables;
+    return *configurables;
 }

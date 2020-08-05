@@ -1,7 +1,8 @@
+#include <random>
+
 #include <gtest/gtest.h>
 
 #include <WorldState.hpp>
-#include <random>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 RobotState GetRandomRobotState() {

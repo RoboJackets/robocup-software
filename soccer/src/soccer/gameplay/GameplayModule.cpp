@@ -1,5 +1,3 @@
-#include <rj_protos/LogFrame.pb.h>
-
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
@@ -9,9 +7,11 @@
 #include <rj_common/Network.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 // for python stuff
 #include "DebugDrawer.hpp"
+
 #include "robocup-py.hpp"
 
 // For getting data
@@ -28,7 +28,7 @@ using namespace boost::python;
 using namespace Geometry2d;
 using namespace RefereeModuleEnums;
 
-ConfigDouble* GameplayModule::_fieldEdgeInset;
+ConfigDouble* GameplayModule::field_edge_inset;
 
 void GameplayModule::createConfiguration(Configuration* cfg) {
     /*  This sets the disance from the field boundries to the edge of the global
@@ -36,12 +36,12 @@ void GameplayModule::createConfiguration(Configuration* cfg) {
 +     * The value is given in meters. As of April 20, 2016 the inner 300mm
 +     * is free space for the robots.
 +     */
-    _fieldEdgeInset =
+    field_edge_inset =
         new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
 }
 
 bool GameplayModule::hasFieldEdgeInsetChanged() const {
-    return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) >
+    return abs(field_edge_inset->value() - _oldFieldEdgeInset) >
            numeric_limits<double>::epsilon();
 }
 
@@ -49,7 +49,7 @@ bool GameplayModule::hasFieldEdgeInsetChanged() const {
 Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
     calculateFieldObstacles();
 
-    _oldFieldEdgeInset = _fieldEdgeInset->value();
+    _oldFieldEdgeInset = field_edge_inset->value();
 
     //
     // setup python interpreter
@@ -73,7 +73,7 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
             object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
             _mainPyNamespace["robocup"] = robocup_module;
 
-            QDir gameplayDir = ApplicationRunDirectory();
+            QDir gameplay_dir = ApplicationRunDirectory();
 
             // Get the location of the share directory (where the python files
             // are installed)
@@ -115,18 +115,18 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     //// Make an obstacle to cover the opponent's half of the field except for
     /// one robot diameter across the center line.
     // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
-    float x = dimensions.Width() / 2 + (float)_fieldEdgeInset->value();
+    float x = dimensions.Width() / 2 + (float)field_edge_inset->value();
     const float y1 = dimensions.Length() / 2;
-    const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
+    const float y2 = dimensions.Length() + (float)field_edge_inset->value();
     const float r = dimensions.CenterRadius();
     _sideObstacle = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
-    float y = -(float)_fieldEdgeInset->value();
-    auto deadspace = (float)_fieldEdgeInset->value();
-    x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
+    float y = -(float)field_edge_inset->value();
+    auto deadspace = (float)field_edge_inset->value();
+    x = dimensions.Width() / 2.0f + (float)field_edge_inset->value();
     _nonFloor[0] = make_shared<Rect>(Point(-x, y), Point(x, y - 1000));
 
-    y = dimensions.Length() + (float)_fieldEdgeInset->value();
+    y = dimensions.Length() + (float)field_edge_inset->value();
     _nonFloor[1] = make_shared<Rect>(Point(-x, y), Point(x, y + 1000));
 
     y = dimensions.FloorLength();
@@ -136,16 +136,16 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
     _nonFloor[3] =
         make_shared<Rect>(Point(x, -3 * deadspace), Point(x + 1000, y));
 
-    const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
-    const float shortDist = dimensions.PenaltyShortDist();
-    const float longDist = dimensions.PenaltyLongDist();
+    const float half_flat = static_cast<float>(dimensions.GoalFlat() / 2.0);
+    const float short_dist = dimensions.PenaltyShortDist();
+    const float long_dist = dimensions.PenaltyLongDist();
 
-    _ourGoalArea = make_shared<Rect>(Point(-longDist / 2, 0),
-                                     Point(longDist / 2, shortDist));
+    _ourGoalArea = make_shared<Rect>(Point(-long_dist / 2, 0),
+                                     Point(long_dist / 2, short_dist));
 
-    _theirGoalArea =
-        make_shared<Rect>(Point(-longDist / 2, dimensions.Length()),
-                          Point(longDist / 2, dimensions.Length() - shortDist));
+    _theirGoalArea = make_shared<Rect>(
+        Point(-long_dist / 2, dimensions.Length()),
+        Point(long_dist / 2, dimensions.Length() - short_dist));
 
     _ourHalf = make_shared<Rect>(Point(-x, -dimensions.Border()), Point(x, y1));
 
@@ -162,7 +162,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
               dimensions.Length() + dimensions.GoalDepth() +
                   dimensions.LineWidth()));
 
-    _oldFieldEdgeInset = _fieldEdgeInset->value();
+    _oldFieldEdgeInset = field_edge_inset->value();
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
@@ -186,11 +186,11 @@ void Gameplay::GameplayModule::setupUI() {
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile,
-                                            bool isAbsolute) {
+void Gameplay::GameplayModule::loadPlaybook(const string& playbook_file,
+                                            bool is_absolute) {
     PyGILState_STATE state = PyGILState_Ensure();
     try {
-        getMainModule().attr("load_playbook")(playbookFile, isAbsolute);
+        getMainModule().attr("load_playbook")(playbook_file, is_absolute);
     } catch (const error_already_set&) {
         PyErr_Print();
         PyGILState_Release(state);
@@ -199,11 +199,11 @@ void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile,
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::savePlaybook(const string& playbookFile,
-                                            bool isAbsolute) {
+void Gameplay::GameplayModule::savePlaybook(const string& playbook_file,
+                                            bool is_absolute) {
     PyGILState_STATE state = PyGILState_Ensure();
     try {
-        getMainModule().attr("save_playbook")(playbookFile, isAbsolute);
+        getMainModule().attr("save_playbook")(playbook_file, is_absolute);
     } catch (const error_already_set&) {
         PyErr_Print();
         PyGILState_Release(state);
@@ -220,16 +220,16 @@ void Gameplay::GameplayModule::clearPlays() {
 
 bool Gameplay::GameplayModule::checkPlaybookStatus() {
     PyGILState_STATE state = PyGILState_Ensure();
-    static int prevStatus =
+    static int prev_status =
         extract<int>(getMainModule().attr("numEnablePlays")());
     bool static change = false;
     int status = extract<int>(getMainModule().attr("numEnablePlays")());
     if (status == 0) {
         change = false;
-    } else if (status != prevStatus) {
-        change = (abs(prevStatus - status) == 1);
+    } else if (status != prev_status) {
+        change = (abs(prev_status - status) == 1);
     }
-    prevStatus = status;
+    prev_status = status;
     PyGILState_Release(state);
     return change;
 }
@@ -305,23 +305,23 @@ void Gameplay::GameplayModule::run() {
     {
         try {
             // vector of shared pointers to pass to python
-            vector<OurRobot*> botVector;
-            for (auto* ourBot : _playRobots) {
+            vector<OurRobot*> bot_vector;
+            for (auto* our_bot : _playRobots) {
                 // don't attempt to drive the robot that's joystick-controlled
                 // FIXME: exclude manual id robot
                 // if (ourBot->shell() != MANUAL_ID) {
-                botVector.push_back(ourBot);
+                bot_vector.push_back(our_bot);
                 // }
             }
-            getMainModule().attr("set_our_robots")(botVector);
+            getMainModule().attr("set_our_robots")(bot_vector);
 
-            vector<OpponentRobot*> theirBotVector;
+            vector<OpponentRobot*> their_bot_vector;
             for (auto* bot : _context->state.opp) {
                 if (bot != nullptr && bot->visible()) {
-                    theirBotVector.push_back(bot);
+                    their_bot_vector.push_back(bot);
                 }
             }
-            getMainModule().attr("set_their_robots")(theirBotVector);
+            getMainModule().attr("set_their_robots")(their_bot_vector);
 
             getMainModule().attr("set_context")(&_context);
 
@@ -373,9 +373,9 @@ void Gameplay::GameplayModule::run() {
 
             try {
                 // record the state of our behavior tree
-                std::string bhvrTreeDesc =
+                std::string bhvr_tree_desc =
                     extract<std::string>(getRootPlay().attr("__str__")());
-                _context->behavior_tree = bhvrTreeDesc;
+                _context->behavior_tree = bhvr_tree_desc;
             } catch (const error_already_set&) {
                 PyErr_Print();
             }

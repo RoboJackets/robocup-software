@@ -1,10 +1,12 @@
 #include "PythonFunctionWrapper.hpp"
+
 #include <iostream>
 
 float cpp_function_cb(Geometry2d::Point p, PyObject* pyfunc) {
     if (pyfunc == nullptr) {
-        std::cerr << "Pyfunction is null. Does the PythonFunctionWrapper " <<
-                     "have the same lifetime as the NelderMead object?" << std::endl;
+        std::cerr << "Pyfunction is null. Does the PythonFunctionWrapper "
+                  << "have the same lifetime as the NelderMead object?"
+                  << std::endl;
 
         return -1;
     }
@@ -27,9 +29,7 @@ PythonFunctionWrapper::PythonFunctionWrapper(PyObject* pf) {
 
     Py_INCREF(pyFunc);
 
-    f = std::bind(&cpp_function_cb,
-                  std::placeholders::_1,
-                  pyFunc);
+    f = std::bind(&cpp_function_cb, std::placeholders::_1, pyFunc);
 }
 
 PythonFunctionWrapper::~PythonFunctionWrapper() {

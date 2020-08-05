@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <rj_common/Utils.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
@@ -32,29 +33,30 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
 
     // Have to do the average like Ti + sum(Tn - Ti)/N
     // so that we aren't trying to add time_points. It's durations instead.
-    RJ::Time initTime = robots.front().getTimeCaptured();
-    RJ::Seconds timeAvg = RJ::Seconds(0);
+    RJ::Time init_time = robots.front().getTimeCaptured();
+    RJ::Seconds time_avg = RJ::Seconds(0);
     // Adding angles are done through conversion to rect coords then back to
     // polar
-    Geometry2d::Point posAvg;
-    Geometry2d::Point thetaCartesianAvg;
-    int robotID = -1;
+    Geometry2d::Point pos_avg;
+    Geometry2d::Point theta_cartesian_avg;
+    int robot_id = -1;
 
     for (const CameraRobot& cr : robots) {
-        timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
-        posAvg += cr.getPos();
-        thetaCartesianAvg +=
+        time_avg += RJ::Seconds(cr.getTimeCaptured() - init_time);
+        pos_avg += cr.getPos();
+        theta_cartesian_avg +=
             Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
-        robotID =
+        robot_id =
             cr.getRobotID();  // Shouldn't change besides the first iteration
     }
 
-    timeAvg /= robots.size();
-    posAvg /= robots.size();
-    thetaCartesianAvg /= robots.size();
+    time_avg /= robots.size();
+    pos_avg /= robots.size();
+    theta_cartesian_avg /= robots.size();
 
     return CameraRobot(
-        initTime + timeAvg,
-        {posAvg, atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x())}, robotID);
+        init_time + time_avg,
+        {pos_avg, atan2(theta_cartesian_avg.y(), theta_cartesian_avg.x())},
+        robot_id);
 }
 }  // namespace vision_filter

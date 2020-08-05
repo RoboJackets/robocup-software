@@ -1,18 +1,22 @@
 #include "robocup-py.hpp"
 
-#include <boost/python/register_ptr_to_python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <functional>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <utility>
 
+#include <boost/python/register_ptr_to_python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 #include "WorldState.hpp"
 
 using namespace boost::python;
 
-#include <rj_protos/LogFrame.pb.h>
+#include <exception>
+
+#include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
 
 #include <Configuration.hpp>
 #include <Context.hpp>
@@ -25,12 +29,9 @@ using namespace boost::python;
 #include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <boost/python/exception_translator.hpp>
-#include <boost/version.hpp>
-#include <exception>
 #include <motion/MotionControl.hpp>
-#include <rc-fshare/pid.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 #include "DebugDrawer.hpp"
 #include "KickEvaluator.hpp"
@@ -42,6 +43,8 @@ using namespace boost::python;
 #include "optimization/PythonFunctionWrapper.hpp"
 #include "planning/MotionConstraints.hpp"
 #include "referee/ExternalReferee.hpp"
+
+#include <rc-fshare/pid.hpp>
 
 /**
  * These functions make sure errors on the c++
@@ -161,12 +164,12 @@ void OurRobot_move_tuning(OurRobot* self, Geometry2d::Point* to) {
     self->moveTuning(*to);
 }
 
-void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* endPos,
+void OurRobot_move_to_end_vel(OurRobot* self, Geometry2d::Point* end_pos,
                               Geometry2d::Point* vf) {
-    if (endPos == nullptr || vf == nullptr) {
+    if (end_pos == nullptr || vf == nullptr) {
         throw NullArgumentException();
     }
-    self->move(*endPos, *vf);
+    self->move(*end_pos, *vf);
 }
 
 void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
@@ -178,35 +181,36 @@ void OurRobot_move_to(OurRobot* self, Geometry2d::Point* to) {
 
 void OurRobot_settle(OurRobot* self) { self->settle(std::nullopt); }
 
-void OurRobot_settle_w_bounce(OurRobot* self, Geometry2d::Point* bounceTarget) {
-    if (bounceTarget == nullptr) {
+void OurRobot_settle_w_bounce(OurRobot* self,
+                              Geometry2d::Point* bounce_target) {
+    if (bounce_target == nullptr) {
         throw NullArgumentException("bounceTarget");
     }
-    self->settle(*bounceTarget);
+    self->settle(*bounce_target);
 }
 
 void OurRobot_add_local_obstacle(OurRobot* self, Geometry2d::Shape* obs) {
     if (obs == nullptr) {
         throw NullArgumentException("obs");
     }
-    std::shared_ptr<Geometry2d::Shape> sharedObs(obs->clone());
-    self->localObstacles(sharedObs);
+    std::shared_ptr<Geometry2d::Shape> shared_obs(obs->clone());
+    self->localObstacles(shared_obs);
 }
 
 void OurRobot_set_avoid_ball_radius(OurRobot* self, float radius) {
     self->avoidBallRadius(radius);
 }
 
-void OurRobot_set_max_angle_speed(OurRobot* self, float maxAngleSpeed) {
-    self->rotationConstraints().maxSpeed = maxAngleSpeed;
+void OurRobot_set_max_angle_speed(OurRobot* self, float max_angle_speed) {
+    self->rotationConstraints().maxSpeed = max_angle_speed;
 }
 
-void OurRobot_set_max_speed(OurRobot* self, float maxSpeed) {
-    self->motionConstraints().maxSpeed = maxSpeed;
+void OurRobot_set_max_speed(OurRobot* self, float max_speed) {
+    self->motionConstraints().maxSpeed = max_speed;
 }
 
-void OurRobot_set_max_accel(OurRobot* self, float maxAccel) {
-    self->motionConstraints().maxAcceleration = maxAccel;
+void OurRobot_set_max_accel(OurRobot* self, float max_accel) {
+    self->motionConstraints().maxAcceleration = max_accel;
 }
 
 void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id,
@@ -216,9 +220,9 @@ void OurRobot_approach_opponent(OurRobot* self, unsigned shell_id,
 
 void OurRobot_add_text(OurRobot* self, const std::string& text,
                        const boost::python::tuple& rgb,
-                       const std::string& layerPrefix) {
+                       const std::string& layer_prefix) {
     self->addText(QString::fromStdString(text), Color_from_tuple(rgb),
-                  QString::fromStdString(layerPrefix));
+                  QString::fromStdString(layer_prefix));
 }
 
 void OurRobot_set_avoid_opponents(OurRobot* self, bool value) {
@@ -333,14 +337,14 @@ boost::python::object Rect_segment_intersection(Geometry2d::Rect* self,
     boost::python::list lst;
     std::tuple<bool, std::vector<Geometry2d::Point>> result =
         self->intersects(*segment);
-    bool doesIntersect = std::get<0>(result);
-    if (!doesIntersect) {
+    bool does_intersect = std::get<0>(result);
+    if (!does_intersect) {
         return boost::python::object();
     }
 
-    std::vector<Geometry2d::Point> intersectionPoints = std::get<1>(result);
+    std::vector<Geometry2d::Point> intersection_points = std::get<1>(result);
     std::vector<Geometry2d::Point>::iterator it;
-    for (it = intersectionPoints.begin(); it != intersectionPoints.end();
+    for (it = intersection_points.begin(); it != intersection_points.end();
          it++) {
         lst.append(*it);
     }
@@ -506,12 +510,12 @@ void DebugDrawer_draw_polygon(DebugDrawer* self,
                               const boost::python::list& points,
                               const boost::python::tuple& rgb,
                               const std::string& layer) {
-    std::vector<Geometry2d::Point> ptVec;
+    std::vector<Geometry2d::Point> pt_vec;
     for (int i = 0; i < len(points); i++) {
-        ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
+        pt_vec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
     }
 
-    self->drawPolygon(ptVec, Color_from_tuple(rgb),
+    self->drawPolygon(pt_vec, Color_from_tuple(rgb),
                       QString::fromStdString(layer));
 }
 
@@ -530,10 +534,10 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle* self,
     }
     boost::python::list lst;
 
-    Geometry2d::Point intersectionPoints[2];
-    int numIntersects = self->intersects(*line, intersectionPoints);
-    for (int i = 0; i < numIntersects; i++) {
-        lst.append(intersectionPoints[i]);
+    Geometry2d::Point intersection_points[2];
+    int num_intersects = self->intersects(*line, intersection_points);
+    for (int i = 0; i < num_intersects; i++) {
+        lst.append(intersection_points[i]);
     }
 
     return lst;
@@ -618,7 +622,7 @@ boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator* self,
 boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
                                            const Geometry2d::Point* origin,
                                            const Geometry2d::Point* target,
-                                           float targetWidth) {
+                                           float target_width) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -627,7 +631,7 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator* self,
     }
     boost::python::list lst;
 
-    auto window_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
+    auto window_results = self->eval_pt_to_pt(*origin, *target, target_width);
 
     lst.append(window_results.first);
     if (window_results.second.has_value())
@@ -719,7 +723,7 @@ boost::python::tuple KickEval_eval_pt_to_robot(
 boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
                                             const Geometry2d::Point* origin,
                                             const Geometry2d::Point* target,
-                                            float targetWidth) {
+                                            float target_width) {
     if (origin == nullptr) {
         throw NullArgumentException{"origin"};
     }
@@ -728,7 +732,7 @@ boost::python::tuple KickEval_eval_pt_to_pt(KickEvaluator* self,
     }
     boost::python::list lst;
 
-    auto kick_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
+    auto kick_results = self->eval_pt_to_pt(*origin, *target, target_width);
 
     lst.append(kick_results.first);
     lst.append(kick_results.second);
@@ -784,17 +788,17 @@ void Point_set_x(Geometry2d::Point* self, float x) { self->x() = x; }
 void Point_set_y(Geometry2d::Point* self, float y) { self->y() = y; }
 
 boost::shared_ptr<NelderMead2DConfig> NelderMead2DConfig_constructor(
-    PythonFunctionWrapper* functionWrapper,
+    PythonFunctionWrapper* function_wrapper,
     Geometry2d::Point start = Geometry2d::Point(0, 0),
     Geometry2d::Point step = Geometry2d::Point(1, 1),
-    Geometry2d::Point minDist = Geometry2d::Point(0.001, 0.001),
-    float reflectionCoeff = 1, float expansionCoeff = 2,
-    float contractionCoeff = 0.5, float shrinkCoeff = 0.5,
-    int maxIterations = 100, float maxValue = 0, float maxThresh = 0) {
+    Geometry2d::Point min_dist = Geometry2d::Point(0.001, 0.001),
+    float reflection_coeff = 1, float expansion_coeff = 2,
+    float contraction_coeff = 0.5, float shrink_coeff = 0.5,
+    int max_iterations = 100, float max_value = 0, float max_thresh = 0) {
     return boost::shared_ptr<NelderMead2DConfig>(new NelderMead2DConfig(
-        functionWrapper->f, start, step, minDist, reflectionCoeff,
-        expansionCoeff, contractionCoeff, shrinkCoeff, maxIterations, maxValue,
-        maxThresh));
+        function_wrapper->f, start, step, min_dist, reflection_coeff,
+        expansion_coeff, contraction_coeff, shrink_coeff, max_iterations,
+        max_value, max_thresh));
 }
 
 boost::shared_ptr<NelderMead2D> NelderMead2D_constructor(

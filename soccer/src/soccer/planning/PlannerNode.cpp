@@ -119,7 +119,7 @@ Trajectory PlannerForRobot::PlanForRobot(const Planning::PlanRequest& request) {
         // a plan.
         if (trajectory.empty() &&
             planner->isApplicable(request.motionCommand)) {
-            RobotInstant startInstant = request.start;
+            RobotInstant start_instant = request.start;
             trajectory = planner->plan(request);
         }
 

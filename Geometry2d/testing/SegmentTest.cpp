@@ -11,8 +11,8 @@ TEST(Segment, distTo) {
     ASSERT_FLOAT_EQ(Point(10, 4).distTo(Point(13, 7)),
                     test.distTo(Point(13, 7)));
     ASSERT_FLOAT_EQ(sqrt(2), test.distTo(Point(7, 3)));
-    Point testPoint(Point(5, -1) + Point(15, 0));
-    ASSERT_FLOAT_EQ(Point(10, 4).distTo(testPoint), test.distTo(testPoint));
+    Point test_point(Point(5, -1) + Point(15, 0));
+    ASSERT_FLOAT_EQ(Point(10, 4).distTo(test_point), test.distTo(test_point));
 }
 
 TEST(Segment, intersects) {

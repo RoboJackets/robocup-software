@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
@@ -13,16 +14,16 @@ using world_robot::PARAM_robot_merger_power;
 
 WorldRobot::WorldRobot() : isValid(false) {}
 
-WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
-                       const std::list<KalmanRobot>& kalmanRobots)
-    : team(team), robotID(robotID), isValid(true), time(calcTime) {
+WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
+                       const std::list<KalmanRobot>& kalman_robots)
+    : team(team), robotID(robot_id), isValid(true), time(calc_time) {
     // Theta's are converted to rect coords then back to polar to convert
-    Geometry2d::Point posCartesianAvg;
-    Geometry2d::Point thetaCartesianAvg;
-    Geometry2d::Twist twistAvg;
+    Geometry2d::Point pos_cartesian_avg;
+    Geometry2d::Point theta_cartesian_avg;
+    Geometry2d::Twist twist_avg;
 
-    double totalPosWeight = 0;
-    double totalVelWeight = 0;
+    double total_pos_weight = 0;
+    double total_vel_weight = 0;
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
@@ -31,68 +32,70 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
                   << std::endl;
     }
 
-    if (kalmanRobots.empty()) {
+    if (kalman_robots.empty()) {
         throw std::runtime_error(
             "ERROR: Zero robots are given to the WorldRobot constructor");
     }
 
-    for (const KalmanRobot& robot : kalmanRobots) {
+    for (const KalmanRobot& robot : kalman_robots) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Pose poseCov{robot.getPosCov(), robot.getThetaCov()};
-        Geometry2d::Twist twistCov{robot.getVelCov(), robot.getOmegaCov()};
+        Geometry2d::Pose pose_cov{robot.getPosCov(), robot.getThetaCov()};
+        Geometry2d::Twist twist_cov{robot.getVelCov(), robot.getOmegaCov()};
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Pose poseStdDev;
-        Geometry2d::Twist twistStdDev;
-        poseStdDev.position().x() = std::sqrt(poseCov.position().x());
-        poseStdDev.position().y() = std::sqrt(poseCov.position().y());
-        twistStdDev.linear().x() = std::sqrt(twistCov.linear().x());
-        twistStdDev.linear().y() = std::sqrt(twistCov.linear().y());
-        poseStdDev.heading() = std::sqrt(poseCov.heading());
-        twistStdDev.angular() = std::sqrt(poseCov.heading());
+        Geometry2d::Pose pose_std_dev;
+        Geometry2d::Twist twist_std_dev;
+        pose_std_dev.position().x() = std::sqrt(pose_cov.position().x());
+        pose_std_dev.position().y() = std::sqrt(pose_cov.position().y());
+        twist_std_dev.linear().x() = std::sqrt(twist_cov.linear().x());
+        twist_std_dev.linear().y() = std::sqrt(twist_cov.linear().y());
+        pose_std_dev.heading() = std::sqrt(pose_cov.heading());
+        twist_std_dev.angular() = std::sqrt(pose_cov.heading());
 
         // Inversely proportional to how much the filter has been updated
-        double filterUncertantity = 1.0 / robot.getHealth();
+        double filter_uncertantity = 1.0 / robot.getHealth();
 
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),
         //  but it's a little more clear math-wise)
-        double posUncertantity = std::sqrt(poseStdDev.position().magsq() +
-                                           std::pow(poseStdDev.heading(), 2));
-        double velUncertantity = std::sqrt(poseStdDev.position().magsq() +
-                                           std::pow(twistStdDev.angular(), 2));
+        double pos_uncertantity =
+            std::sqrt(pose_std_dev.position().magsq() +
+                      std::pow(pose_std_dev.heading(), 2));
+        double vel_uncertantity =
+            std::sqrt(pose_std_dev.position().magsq() +
+                      std::pow(twist_std_dev.angular(), 2));
 
-        double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
-                                          -PARAM_robot_merger_power);
+        double filter_pos_weight = std::pow(
+            pos_uncertantity * filter_uncertantity, -PARAM_robot_merger_power);
 
-        double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
-                                          -PARAM_robot_merger_power);
+        double filter_vel_weight = std::pow(
+            vel_uncertantity * filter_uncertantity, -PARAM_robot_merger_power);
 
-        posCartesianAvg += filterPosWeight * robot.getPos();
-        thetaCartesianAvg +=
-            Geometry2d::Point(filterPosWeight * cos(robot.getTheta()),
-                              filterPosWeight * sin(robot.getTheta()));
-        twistAvg.linear() += filterVelWeight * robot.getVel();
-        twistAvg.angular() += filterVelWeight * robot.getOmega();
+        pos_cartesian_avg += filter_pos_weight * robot.getPos();
+        theta_cartesian_avg +=
+            Geometry2d::Point(filter_pos_weight * cos(robot.getTheta()),
+                              filter_pos_weight * sin(robot.getTheta()));
+        twist_avg.linear() += filter_vel_weight * robot.getVel();
+        twist_avg.angular() += filter_vel_weight * robot.getOmega();
 
-        totalPosWeight += filterPosWeight;
-        totalVelWeight += filterVelWeight;
+        total_pos_weight += filter_pos_weight;
+        total_vel_weight += filter_vel_weight;
     }
 
-    posCartesianAvg /= totalPosWeight;
-    thetaCartesianAvg /= totalPosWeight;
-    twistAvg.linear() /= totalVelWeight;
-    twistAvg.angular() /= totalVelWeight;
+    pos_cartesian_avg /= total_pos_weight;
+    theta_cartesian_avg /= total_pos_weight;
+    twist_avg.linear() /= total_vel_weight;
+    twist_avg.angular() /= total_vel_weight;
 
-    pose.position() = posCartesianAvg;
-    pose.heading() = atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x());
-    twist.linear() = twistAvg.linear();
-    twist.angular() = twistAvg.angular();
-    posCov = totalPosWeight / kalmanRobots.size();
-    velCov = totalVelWeight / kalmanRobots.size();
-    robotComponents = kalmanRobots;
+    pose.position() = pos_cartesian_avg;
+    pose.heading() = atan2(theta_cartesian_avg.y(), theta_cartesian_avg.x());
+    twist.linear() = twist_avg.linear();
+    twist.angular() = twist_avg.angular();
+    posCov = total_pos_weight / kalman_robots.size();
+    velCov = total_vel_weight / kalman_robots.size();
+    robotComponents = kalman_robots;
 }
 
 bool WorldRobot::getIsValid() const { return isValid; }

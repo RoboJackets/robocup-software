@@ -1,14 +1,15 @@
-#include <rj_vision_receiver/vision_receiver.h>
+#include <cmath>
+#include <stdexcept>
 
 #include <boost/exception/diagnostic_information.hpp>
-#include <cmath>
+
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging.hpp>
-#include <stdexcept>
+#include <rj_vision_receiver/vision_receiver.h>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
@@ -240,81 +241,81 @@ bool VisionReceiver::InUsedHalf(bool defend_plus_x, double x) const {
  * Updates the geometry packet in `Context` based on data from the vision packet
  */
 void VisionReceiver::UpdateGeometryPacket(
-    const SSL_GeometryFieldSize& fieldSize) {
-    if (fieldSize.field_lines_size() == 0) {
+    const SSL_GeometryFieldSize& field_size) {
+    if (field_size.field_lines_size() == 0) {
         return;
     }
 
     const SSL_FieldCicularArc* center = nullptr;
-    float penaltyShortDist = 0;  // default value
-    float penaltyLongDist = 0;   // default value
+    float penalty_short_dist = 0;  // default value
+    float penalty_long_dist = 0;   // default value
     float displacement =
         Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
     // Loop through field arcs looking for needed fields
-    for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
+    for (const SSL_FieldCicularArc& arc : field_size.field_arcs()) {
         if (arc.name() == "CenterCircle") {
             // Assume center circle
             center = &arc;
         }
     }
 
-    for (const SSL_FieldLineSegment& line : fieldSize.field_lines()) {
+    for (const SSL_FieldLineSegment& line : field_size.field_lines()) {
         if (line.name() == "RightPenaltyStretch") {
             displacement = abs(line.p2().y() - line.p1().y());
-            penaltyLongDist = displacement;
+            penalty_long_dist = displacement;
         } else if (line.name() == "RightFieldRightPenaltyStretch") {
-            penaltyShortDist = abs(line.p2().x() - line.p1().x());
+            penalty_short_dist = abs(line.p2().x() - line.p1().x());
         }
     }
 
-    float thickness = fieldSize.field_lines().Get(0).thickness() / 1000.0f;
+    float thickness = field_size.field_lines().Get(0).thickness() / 1000.0f;
 
     // The values we get are the center of the lines, we want to use the
     // outside, so we can add this as an offset.
-    float adj = fieldSize.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
+    float adj = field_size.field_lines().Get(0).thickness() / 1000.0f / 2.0f;
 
-    float fieldBorder = config_.fieldDimensions().border;
+    float field_border = config_.fieldDimensions().border;
 
-    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
-        thickness != 0) {
+    if (penalty_long_dist != 0 && penalty_short_dist != 0 &&
+        center != nullptr && thickness != 0) {
         // Force a resize
         const Field_Dimensions new_field_dim{
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f,
-            fieldBorder,
+            field_size.field_length() / 1000.0f,
+            field_size.field_width() / 1000.0f,
+            field_border,
             thickness,
-            fieldSize.goal_width() / 1000.0f,
-            fieldSize.goal_depth() / 1000.0f,
+            field_size.goal_width() / 1000.0f,
+            field_size.goal_depth() / 1000.0f,
             Field_Dimensions::Default_Dimensions.GoalHeight(),
-            penaltyShortDist / 1000.0f,              // PenaltyShortDist
-            penaltyLongDist / 1000.0f,               // PenaltyLongDist
+            penalty_short_dist / 1000.0f,            // PenaltyShortDist
+            penalty_long_dist / 1000.0f,             // PenaltyLongDist
             center->radius() / 1000.0f + adj,        // CenterRadius
             (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
             displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
+            (field_size.field_length() / 1000.0f + (field_border)*2),
+            (field_size.field_width() / 1000.0f + (field_border)*2)};
         config_.updateFieldDimensions(
             rj_convert::convert_to_ros<Field_Dimensions>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
-        const Field_Dimensions defaultDim =
+        const Field_Dimensions default_dim =
             Field_Dimensions::Default_Dimensions;
 
         const Field_Dimensions new_field_dim{
-            fieldSize.field_length() / 1000.0f,
-            fieldSize.field_width() / 1000.0f,
-            fieldBorder,
+            field_size.field_length() / 1000.0f,
+            field_size.field_width() / 1000.0f,
+            field_border,
             thickness,
-            fieldSize.goal_width() / 1000.0f,
-            fieldSize.goal_depth() / 1000.0f,
+            field_size.goal_width() / 1000.0f,
+            field_size.goal_depth() / 1000.0f,
             Field_Dimensions::Default_Dimensions.GoalHeight(),
-            defaultDim.PenaltyShortDist(),           // PenaltyShortDist
-            defaultDim.PenaltyLongDist(),            // PenaltyLongDist
+            default_dim.PenaltyShortDist(),          // PenaltyShortDist
+            default_dim.PenaltyLongDist(),           // PenaltyLongDist
             center->radius() / 1000.0f + adj,        // CenterRadius
             (center->radius()) * 2 / 1000.0f + adj,  // CenterDiameter
             displacement / 1000.0f,                  // GoalFlat
-            (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
-            (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
+            (field_size.field_length() / 1000.0f + (field_border)*2),
+            (field_size.field_width() / 1000.0f + (field_border)*2)};
 
         config_.updateFieldDimensions(
             rj_convert::convert_to_ros(new_field_dim));

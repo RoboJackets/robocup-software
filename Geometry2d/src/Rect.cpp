@@ -7,12 +7,12 @@ using namespace std;
 
 namespace Geometry2d {
 
-//constants used for the rect-segment intersection
-const int INSIDE = 0x00; // 0000
-const int LEFT = 0x01;   // 0001
-const int RIGHT = 0x02;  // 0010
-const int BOTTOM = 0x04; // 0100
-const int TOP = 0x08;    // 1000
+// constants used for the rect-segment intersection
+const int kInside = 0x00;  // 0000
+const int kLeft = 0x01;    // 0001
+const int kRight = 0x02;   // 0010
+const int kBottom = 0x04;  // 0100
+const int kTop = 0x08;     // 1000
 
 Shape* Rect::clone() const { return new Rect(*this); }
 
@@ -21,31 +21,32 @@ bool Rect::intersects(const Rect& other) const {
              other.maxy() < miny() || other.miny() > maxy());
 }
 
-int Rect::CohenSutherlandOutCode(const Point& other) const{
+int Rect::CohenSutherlandOutCode(const Point& other) const {
     int code;
     double x;
     double y;
     x = other.x();
     y = other.y();
 
-    code = INSIDE;          // initialised as being inside of [[clip window]]
-    if (x < minx()) {       // to the left of clip window
-        code |= LEFT;
+    code = kInside;    // initialised as being inside of [[clip window]]
+    if (x < minx()) {  // to the left of clip window
+        code |= kLeft;
     } else if (x > maxx()) {  // to the right of clip window
-        code |= RIGHT;
+        code |= kRight;
     }
     if (y < miny()) {  // below the clip window
-        code |= BOTTOM;
+        code |= kBottom;
     } else if (y > maxy()) {  // above the clip window
-        code |= TOP;
+        code |= kTop;
     }
 
     return code;
 }
 
-std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) const{
-
-    //Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line Clipping
+std::tuple<bool, std::vector<Point> > Rect::intersects(
+    const Segment& other) const {
+    // Code aggressively borrowed from wikipedia entry Cohen-Sutherland Line
+    // Clipping
     Point p0 = other.pt[0];
     double x0 = p0.x();
     double y0 = p0.y();
@@ -56,17 +57,19 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
     int outcode0 = CohenSutherlandOutCode(p0);
     int outcode1 = CohenSutherlandOutCode(p1);
 
-    std::vector<Point> intersectionPoints;
+    std::vector<Point> intersection_points;
     bool accept = false;
     while (true) {
         if ((outcode0 | outcode1) == 0) {
-            // bitwise OR is 0: both points inside window; trivially accept and exit loop
+            // bitwise OR is 0: both points inside window; trivially accept and
+            // exit loop
             accept = true;
             break;
         }
         if ((outcode0 & outcode1) != 0) {
-            // bitwise AND is not 0: both points share an outside zone (LEFT, RIGHT, TOP,
-            // or BOTTOM), so both must be outside window; exit loop (accept is false)
+            // bitwise AND is not 0: both points share an outside zone (LEFT,
+            // RIGHT, TOP, or BOTTOM), so both must be outside window; exit loop
+            // (accept is false)
             break;
         }
         // failed both tests, so calculate the line segment to clip
@@ -75,7 +78,7 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
         double y;
 
         // At least one endpoint is outside the clip rectangle; pick it.
-        int outcodeOut = outcode0 != 0 ? outcode0 : outcode1;
+        int outcode_out = outcode0 != 0 ? outcode0 : outcode1;
 
         // Now find the intersection point;
         // use formulas:
@@ -85,18 +88,18 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
         // No need to worry about divide-by-zero because, in each case, the
         // outcode bit being tested guarantees the denominator is non-zero
 
-        if ((outcodeOut & TOP) != 0) {  // point is above the clip window
+        if ((outcode_out & kTop) != 0) {  // point is above the clip window
             x = x0 + (x1 - x0) * (maxy() - y0) / (y1 - y0);
             y = maxy();
-        } else if ((outcodeOut & BOTTOM) !=
+        } else if ((outcode_out & kBottom) !=
                    0) {  // point is below the clip window
             x = x0 + (x1 - x0) * (miny() - y0) / (y1 - y0);
             y = miny();
-        } else if ((outcodeOut & RIGHT) !=
+        } else if ((outcode_out & kRight) !=
                    0) {  // point is to the right of clip window
             y = y0 + (y1 - y0) * (maxx() - x0) / (x1 - x0);
             x = maxx();
-        } else if ((outcodeOut & LEFT) !=
+        } else if ((outcode_out & kLeft) !=
                    0) {  // point is to the left of clip window
             y = y0 + (y1 - y0) * (minx() - x0) / (x1 - x0);
             x = minx();
@@ -104,14 +107,14 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
 
         // Now we move outside point to intersection point to clip
         // and get ready for next pass.
-        if (outcodeOut == outcode0) {
+        if (outcode_out == outcode0) {
             x0 = x;
             y0 = y;
             Point pt = Point(x0, y0);
             outcode0 = CohenSutherlandOutCode(pt);
             // Save point iff it is inside the Rect
-            if (outcode0 == INSIDE) {
-                intersectionPoints.push_back(pt);
+            if (outcode0 == kInside) {
+                intersection_points.push_back(pt);
             }
         } else {
             x1 = x;
@@ -119,20 +122,20 @@ std::tuple<bool, std::vector<Point> > Rect::intersects(const Segment& other) con
             Point pt = Point(x1, y1);
             outcode1 = CohenSutherlandOutCode(pt);
             // Save point iff it is inside the Rect
-            if (outcode1 == INSIDE) {
-                intersectionPoints.push_back(pt);
+            if (outcode1 == kInside) {
+                intersection_points.push_back(pt);
             }
         }
     }
-    return std::tuple<bool, std::vector<Point> >(accept,intersectionPoints);
+    return std::tuple<bool, std::vector<Point> >(accept, intersection_points);
 }
 
-std::vector<Point> Rect::corners(){
+std::vector<Point> Rect::corners() {
     std::vector<Point> tmp;
-    tmp.emplace_back(minx(),miny());
-    tmp.emplace_back(minx(),maxy());
-    tmp.emplace_back(maxx(),maxy());
-    tmp.emplace_back(maxx(),miny());
+    tmp.emplace_back(minx(), miny());
+    tmp.emplace_back(minx(), maxy());
+    tmp.emplace_back(maxx(), maxy());
+    tmp.emplace_back(maxx(), miny());
     return tmp;
 }
 
@@ -153,15 +156,15 @@ bool Rect::hit(const Segment& seg) const {
 bool Rect::hit(Point point) const { return nearPoint(point, Robot_Radius); }
 
 void Rect::expand(Point p) {
-    float _minx = minx();
-    float _miny = miny();
-    float _maxx = maxx();
-    float _maxy = maxy();
+    float minx = minx();
+    float miny = miny();
+    float maxx = maxx();
+    float maxy = maxy();
 
-    pt[0].x() = min(_minx, (float)p.x());
-    pt[0].y() = min(_miny, (float)p.y());
-    pt[1].x() = max(_maxx, (float)p.x());
-    pt[1].y() = max(_maxy, (float)p.y());
+    pt[0].x() = min(minx, (float)p.x());
+    pt[0].y() = min(miny, (float)p.y());
+    pt[1].x() = max(maxx, (float)p.x());
+    pt[1].y() = max(maxy, (float)p.y());
 }
 
 void Rect::expand(const Rect& rect) {
@@ -169,15 +172,15 @@ void Rect::expand(const Rect& rect) {
     expand(rect.pt[1]);
 }
 
-void Rect::pad(float padding){
-    float _minx = minx();
-    float _miny = miny();
-    float _maxx = maxx();
-    float _maxy = maxy();
-    pt[0].x() = _minx - padding;
-    pt[0].y() = _miny - padding;
-    pt[1].x() = _maxx + padding;
-    pt[1].y() = _maxy + padding;
+void Rect::pad(float padding) {
+    float minx = minx();
+    float miny = miny();
+    float maxx = maxx();
+    float maxy = maxy();
+    pt[0].x() = minx - padding;
+    pt[0].y() = miny - padding;
+    pt[1].x() = maxx + padding;
+    pt[1].y() = maxy + padding;
 }
 
 bool Rect::nearSegment(const Segment& seg, float threshold) const {

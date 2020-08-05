@@ -1,17 +1,18 @@
 #include "ExternalReferee.hpp"
 
-#include <rj_param_utils/param.h>
-#include <unistd.h>
+#include <stdexcept>
 
 #include <boost/algorithm/string/predicate.hpp>
+
 #include <rj_common/Network.hpp>
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/Utils.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_param_utils/param.h>
 #include <rj_utils/logging.hpp>
-#include <stdexcept>
+#include <unistd.h>
 
 #include "WorldState.hpp"
 
@@ -21,17 +22,17 @@ using RefereeModuleEnums::Command;
 using RefereeModuleEnums::Stage;
 
 /// Distance in meters that the ball must travel for a kick to be detected
-static const float KickThreshold = Ball_Radius * 3;
+static const float kKickThreshold = Ball_Radius * 3;
 
 /// How many milliseconds the ball must be more than KickThreshold meters away
 /// from its position when the referee indicated Ready for us to detect the ball
 /// as having been kicked.
-static const int KickVerifyTime_ms = 250;
+static const int kKickVerifyTimeMs = 250;
 
 // Whether we cancel ball placement on a halt.
 // If we want ball placement to continue after
 // the ref halts/stops, make this false
-static const bool CancelBallPlaceOnHalt = true;
+static const bool kCancelBallPlaceOnHalt = true;
 
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "

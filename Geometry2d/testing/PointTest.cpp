@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "Geometry2d/Point.hpp"
 #include "Geometry2d/Util.hpp"
 using namespace std;
@@ -12,15 +13,15 @@ bool pointEqual(Point p1, Point p2) {
  */
 TEST(Point, constructors) {
     // Test Constructors
-    Point defaultConstructed;
-    EXPECT_FLOAT_EQ(defaultConstructed.x(), 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.y(), 0);
+    Point default_constructed;
+    EXPECT_FLOAT_EQ(default_constructed.x(), 0);
+    EXPECT_FLOAT_EQ(default_constructed.y(), 0);
 
     Point test(0, 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.x(), 0);
-    EXPECT_FLOAT_EQ(defaultConstructed.y(), 0);
+    EXPECT_FLOAT_EQ(default_constructed.x(), 0);
+    EXPECT_FLOAT_EQ(default_constructed.y(), 0);
 
-    EXPECT_EQ(test, defaultConstructed);
+    EXPECT_EQ(test, default_constructed);
 }
 
 TEST(Point, toEigen) {

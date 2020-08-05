@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <iostream>
-#include <joystick/SDLGamepad.hpp>
 #include <vector>
+
+#include <joystick/SDLGamepad.hpp>
 
 namespace joystick {
 SDLGamepad::SDLGamepad(int device_index) {

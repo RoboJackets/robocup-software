@@ -1,12 +1,13 @@
+#include <cmath>
+
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Geometry2d/Util.hpp>
-#include <cmath>
 
 namespace Geometry2d {
 
-const TransformMatrix TransformMatrix::identity(1, 0, 0, 0, 1, 0);
+const TransformMatrix TransformMatrix::kIdentity(1, 0, 0, 0, 1, 0);
 
-const TransformMatrix TransformMatrix::mirrorX(-1, 0, 0, 0, 1, 0);
+const TransformMatrix TransformMatrix::kMirrorX(-1, 0, 0, 0, 1, 0);
 
 TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror,
                                  float s) {
@@ -21,7 +22,7 @@ TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror,
     *this *= rotate(rotation);
     *this *= scale(s);
     if (mirror) {
-        *this *= mirrorX;
+        *this *= kMirrorX;
     }
 }
 
@@ -49,7 +50,7 @@ TransformMatrix TransformMatrix::rotateAroundPoint(const Point& center,
 
 TransformMatrix TransformMatrix::mirrorAroundPoint(const Point& center) {
     TransformMatrix xf = translate(center);
-    xf *= mirrorX;
+    xf *= kMirrorX;
     xf *= translate(-center);
 
     return xf;

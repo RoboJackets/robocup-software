@@ -18,17 +18,17 @@ TEST(WorldRobot, no_robot) {
 TEST(WorldRobot, one_robot) {
     RJ::Time t = RJ::now();
     Geometry2d::Pose pose(Geometry2d::Point(1, 1), 1);
-    int rID = 1;
-    CameraRobot b = CameraRobot(t, pose, rID);
-    int cID = 1;
+    int r_id = 1;
+    CameraRobot b = CameraRobot(t, pose, r_id);
+    int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb = KalmanRobot(cID, t, b, w);
+    KalmanRobot kb = KalmanRobot(c_id, t, b, w);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, rID, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl);
 
     Geometry2d::Point rp = wb.getPos();
     double rt = wb.getTheta();
@@ -41,7 +41,7 @@ TEST(WorldRobot, one_robot) {
     std::list<KalmanRobot> list = wb.getRobotComponents();
 
     EXPECT_TRUE(wb.getIsValid());
-    EXPECT_EQ(wb.getRobotID(), rID);
+    EXPECT_EQ(wb.getRobotID(), r_id);
     EXPECT_EQ(rp.x(), pose.position().x());
     EXPECT_EQ(rp.y(), pose.position().y());
     EXPECT_EQ(rt, pose.heading());
@@ -64,20 +64,20 @@ TEST(WorldRobot, two_robot) {
     // Geometry2d::Point p2 = Geometry2d::Point(2,2);
     // double th1 = 1;
     // double th2 = 2;
-    int rID = 1;
-    CameraRobot b1 = CameraRobot(t, pose1, rID);
-    CameraRobot b2 = CameraRobot(t, pose2, rID);
-    int cID = 1;
+    int r_id = 1;
+    CameraRobot b1 = CameraRobot(t, pose1, r_id);
+    CameraRobot b2 = CameraRobot(t, pose2, r_id);
+    int c_id = 1;
     WorldRobot w;
 
-    KalmanRobot kb1 = KalmanRobot(cID, t, b1, w);
-    KalmanRobot kb2 = KalmanRobot(cID, t, b2, w);
+    KalmanRobot kb1 = KalmanRobot(c_id, t, b1, w);
+    KalmanRobot kb2 = KalmanRobot(c_id, t, b2, w);
 
     std::list<KalmanRobot> kbl;
     kbl.push_back(kb1);
     kbl.push_back(kb2);
 
-    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, rID, kbl);
+    WorldRobot wb = WorldRobot(t, WorldRobot::Team::BLUE, r_id, kbl);
 
     Geometry2d::Point rp = wb.getPos();
     double rt = wb.getTheta();

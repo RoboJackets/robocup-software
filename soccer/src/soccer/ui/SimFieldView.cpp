@@ -3,6 +3,7 @@
 #include <QFont>
 #include <QMouseEvent>
 #include <QPainter>
+
 #include <rj_common/Network.hpp>
 #include <rj_constants/constants.hpp>
 
@@ -10,7 +11,7 @@ using namespace boost;
 using namespace Packet;
 
 // Converts from meters to m/s for manually shooting the ball
-static const float ShootScale = 5;
+static const float kShootScale = 5;
 
 SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragMode = DRAG_NONE;
@@ -60,16 +61,16 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
             _dragTo = pos;
         } else {
             // Look for a robot selection
-            int newID = -1;
+            int new_id = -1;
             for (int i = 0; i < frame->self_size(); ++i) {
                 if (pos.distTo(frame->self(i).pos()) < Robot_Radius) {
-                    newID = frame->self(i).shell();
+                    new_id = frame->self(i).shell();
                     break;
                 }
             }
 
-            if (newID != frame->manual_id()) {
-                robotSelected(newID);
+            if (new_id != frame->manual_id()) {
+                robotSelected(new_id);
             }
         }
     }
@@ -84,9 +85,9 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 
         case DRAG_PLACE:
             if (_dragRobot >= 0) {
-                grSim_Packet simPacket;
+                grSim_Packet sim_packet;
                 grSim_RobotReplacement* robot_replace =
-                    simPacket.mutable_replacement()->add_robots();
+                    sim_packet.mutable_replacement()->add_robots();
 
                 robot_replace->set_x((_screenToWorld * me->pos()).x());
                 robot_replace->set_y((_screenToWorld * me->pos()).y());
@@ -94,7 +95,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 robot_replace->set_yellowteam(_dragRobotBlue == 0);
                 robot_replace->set_dir(0.0);
 
-                _context->grsim_command = simPacket;
+                _context->grsim_command = sim_packet;
             } else {
                 _context->ball_command = me->pos();
                 _context->screen_to_world_command = _screenToWorld;
@@ -109,13 +110,13 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
 
 void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
     if (_dragMode == DRAG_SHOOT) {
-        grSim_Packet simPacket;
+        grSim_Packet sim_packet;
         grSim_BallReplacement* ball_replace =
-            simPacket.mutable_replacement()->mutable_ball();
+            sim_packet.mutable_replacement()->mutable_ball();
 
         ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
         ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
-        _context->grsim_command = simPacket;
+        _context->grsim_command = sim_packet;
 
         update();
     }
@@ -136,11 +137,11 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
         if (ball != _dragTo) {
             p.setPen(QPen(Qt::gray, 0.025f));
 
-            _shot = (ball - _dragTo) * ShootScale;
+            _shot = (ball - _dragTo) * kShootScale;
             float speed = _shot.mag();
-            Geometry2d::Point shotExtension = ball + _shot / speed * 8;
+            Geometry2d::Point shot_extension = ball + _shot / speed * 8;
 
-            p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
+            p.drawLine(ball.toQPointF(), shot_extension.toQPointF());
 
             p.setPen(Qt::black);
             QFont font;

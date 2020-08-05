@@ -1,15 +1,15 @@
 #include "Processor.hpp"
 
-#include <rj_protos/messages_robocup_ssl_detection.pb.h>
+#include <QMutexLocker>
 
 #include <Geometry2d/Util.hpp>
 #include <LogUtils.hpp>
-#include <QMutexLocker>
 #include <Robot.hpp>
 #include <RobotConfig.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_protos/messages_robocup_ssl_detection.pb.h>
 
 #include "DebugDrawer.hpp"
 #include "radio/PacketConvert.hpp"
@@ -22,7 +22,7 @@ using namespace Geometry2d;
 using namespace google::protobuf;
 
 // TODO: Remove this and just use the one in Context.
-Field_Dimensions* currentDimensions = &Field_Dimensions::Current_Dimensions;
+Field_Dimensions* current_dimensions = &Field_Dimensions::Current_Dimensions;
 
 // A temporary place to store RobotLocalConfig/RobotConfig variables as we
 // create them. They are initialized in createConfiguration, before the
@@ -47,8 +47,8 @@ void Processor::createConfiguration(Configuration* cfg) {
     }
 }
 
-Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
-    : _loopMutex(), _readLogFile(readLogFile) {
+Processor::Processor(bool sim, bool blue_team, const std::string& read_log_file)
+    : _loopMutex(), _readLogFile(read_log_file) {
     _running = true;
     _framerate = 0;
     _initialized = false;
@@ -62,7 +62,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
         robot_status_init.pop_back();
     }
 
-    _context.field_dimensions = *currentDimensions;
+    _context.field_dimensions = *current_dimensions;
 
     _ros_executor =
         std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
@@ -72,7 +72,7 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_context);
     _motionControl = std::make_unique<MotionControlNode>(&_context);
     _planner_node = std::make_unique<Planning::PlannerNode>(&_context);
-    _radio = std::make_unique<RadioNode>(&_context, sim, blueTeam);
+    _radio = std::make_unique<RadioNode>(&_context, sim, blue_team);
     _grSimCom = std::make_unique<GrSimCommunicator>(&_context);
     _logger = std::make_unique<Logger>(&_context);
 
@@ -88,8 +88,8 @@ Processor::Processor(bool sim, bool blueTeam, const std::string& readLogFile)
     _manual_control_node =
         std::make_unique<joystick::ManualControlNode>(&_context);
 
-    if (!readLogFile.empty()) {
-        _logger->read(readLogFile);
+    if (!read_log_file.empty()) {
+        _logger->read(read_log_file);
     }
 
     _logger->start();
@@ -123,16 +123,16 @@ void Processor::stop() {
  * program loop
  */
 void Processor::run() {
-    Status curStatus;
+    Status cur_status;
 
     bool first = true;
     // main loop
     while (_running) {
-        RJ::Time startTime = RJ::now();
-        auto deltaTime = startTime - curStatus.lastLoopTime;
-        _framerate = RJ::Seconds(1) / deltaTime;
-        curStatus.lastLoopTime = startTime;
-        _context.state.time = startTime;
+        RJ::Time start_time = RJ::now();
+        auto delta_time = start_time - cur_status.lastLoopTime;
+        _framerate = RJ::Seconds(1) / delta_time;
+        cur_status.lastLoopTime = start_time;
+        _context.state.time = start_time;
 
         // Don't run processor while we're paused or reading logs after the
         // first cycle (we need to run one because MainWindow waits on a single
@@ -156,7 +156,7 @@ void Processor::run() {
         // Updates context_->raw_vision_packets
         _raw_vision_packet_sub->run();
 
-        if (_context.field_dimensions != *currentDimensions) {
+        if (_context.field_dimensions != *current_dimensions) {
             std::cout << "Updating field geometry based off of vision packet."
                       << std::endl;
             setFieldDimensions(_context.field_dimensions);
@@ -165,7 +165,7 @@ void Processor::run() {
         _radio->run();
 
         if (_radio) {
-            curStatus.lastRadioRxTime = _radio->getLastRadioRxTime();
+            cur_status.lastRadioRxTime = _radio->getLastRadioRxTime();
         }
 
         const WorldStateMsg::SharedPtr world_state_msg =
@@ -173,7 +173,7 @@ void Processor::run() {
         if (world_state_msg != nullptr) {
             _context.world_state =
                 rj_convert::convert_from_ros(*world_state_msg);
-            curStatus.lastVisionTime =
+            cur_status.lastVisionTime =
                 rj_convert::convert_from_ros(world_state_msg->last_update_time);
         }
 
@@ -210,7 +210,7 @@ void Processor::run() {
 
         // Store processing loop status
         _statusMutex.lock();
-        _status = curStatus;
+        _status = cur_status;
         _statusMutex.unlock();
 
         // Processor Initialization Completed
@@ -226,10 +226,10 @@ void Processor::run() {
         ////////////////
         // Timing
 
-        auto endTime = RJ::now();
-        auto timeLapse = endTime - startTime;
-        if (timeLapse < _framePeriod) {
-            ::usleep(RJ::numMicroseconds(_framePeriod - timeLapse));
+        auto end_time = RJ::now();
+        auto time_lapse = end_time - start_time;
+        if (time_lapse < _framePeriod) {
+            ::usleep(RJ::numMicroseconds(_framePeriod - time_lapse));
         } else {
             //   printf("Processor took too long: %d us\n", lastFrameTime);
         }
@@ -260,7 +260,7 @@ void Processor::updateIntentActive() {
 }
 
 void Processor::setFieldDimensions(const Field_Dimensions& dims) {
-    *currentDimensions = dims;
+    *current_dimensions = dims;
     _gameplayModule->calculateFieldObstacles();
     _gameplayModule->updateFieldDimensions();
 }

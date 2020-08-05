@@ -1,4 +1,5 @@
 #include <cmath>
+
 #include <rj_vision_filter/filter/KalmanFilter3D.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -18,13 +19,13 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, orientation_scale, 1.0,
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
-KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
-                               Geometry2d::Twist initTwist)
+KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose init_pose,
+                               Geometry2d::Twist init_twist)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
-    x_k1_k1 << initPose.position().x(), initTwist.linear().x(),
-        initPose.position().y(), initTwist.linear().y(), initPose.heading(),
-        initTwist.angular();
+    x_k1_k1 << init_pose.position().x(), init_twist.linear().x(),
+        init_pose.position().y(), init_twist.linear().y(), init_pose.heading(),
+        init_twist.angular();
     x_k_k1 = x_k1_k1;
     x_k_k = x_k1_k1;
 

@@ -1,7 +1,8 @@
 #include "Trajectory.hpp"
 
-#include <Geometry2d/Pose.hpp>
 #include <stdexcept>
+
+#include <Geometry2d/Pose.hpp>
 
 #include "Instant.hpp"
 
@@ -150,24 +151,24 @@ RobotInstant Trajectory::interpolatedInstant(const RobotInstant& prev_entry,
     return RobotInstant{interpolated_pose, interpolated_twist, time};
 }
 
-Trajectory Trajectory::subTrajectory(RJ::Time startTime,
-                                     RJ::Time endTime) const {
-    if (startTime > endTime) {
+Trajectory Trajectory::subTrajectory(RJ::Time start_time,
+                                     RJ::Time end_time) const {
+    if (start_time > end_time) {
         throw std::invalid_argument("End time must not come before start time");
     }
 
-    Cursor cursor(*this, startTime);
+    Cursor cursor(*this, start_time);
 
     if (!cursor.has_value()) {
         throw std::invalid_argument(
             "Sub-trajectory start time is outside of trajectory");
     }
 
-    RJ::Time actual_end = std::min(endTime, end_time());
+    RJ::Time actual_end = std::min(end_time, end_time());
 
     // If the start and end times are identical, we are trying to grab an
     // infinitesimal trajectory. This is weird but technically not wrong.
-    if (startTime == actual_end) {
+    if (start_time == actual_end) {
         return Trajectory({cursor.value()});
     }
 
@@ -197,30 +198,30 @@ void Trajectory::draw(
     DebugDrawer* drawer,
     std::optional<Geometry2d::Point> alt_text_position) const {
     if (instants_.size() > 1) {
-        Packet::DebugRobotPath* dbgPath = drawer->addDebugPath();
-        dbgPath->set_layer(drawer->findDebugLayer("Motion"));
+        Packet::DebugRobotPath* dbg_path = drawer->addDebugPath();
+        dbg_path->set_layer(drawer->findDebugLayer("Motion"));
 
         for (const RobotInstant& instant : instants_) {
             Packet::DebugRobotPath::DebugRobotPathPoint* pt =
-                dbgPath->add_points();
+                dbg_path->add_points();
             *pt->mutable_pos() = instant.pose.position();
             *pt->mutable_vel() = instant.velocity.linear();
         }
     }
 
     if (debug_text_) {
-        Geometry2d::Point textPos;
+        Geometry2d::Point text_pos;
 
         // Only use the backup position if there's no trajectory.
         if (!empty()) {
-            textPos = first().pose.position() + Geometry2d::Point(0.1, 0);
+            text_pos = first().pose.position() + Geometry2d::Point(0.1, 0);
         } else if (alt_text_position.has_value()) {
-            textPos = alt_text_position.value();
+            text_pos = alt_text_position.value();
         } else {
             return;
         }
 
-        drawer->drawText(QString::fromStdString(debug_text_.value()), textPos,
+        drawer->drawText(QString::fromStdString(debug_text_.value()), text_pos,
                          QColor(100, 100, 255, 100), "PlanningDebugText");
     }
 }

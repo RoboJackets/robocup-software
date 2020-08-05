@@ -23,15 +23,15 @@ World::World()
       robotsYellow(Num_Shells, WorldRobot()),
       robotsBlue(Num_Shells, WorldRobot()) {}
 
-void World::updateWithCameraFrame(RJ::Time calcTime,
-                                  const std::vector<CameraFrame>& newFrames) {
+void World::updateWithCameraFrame(RJ::Time calc_time,
+                                  const std::vector<CameraFrame>& new_frames) {
     calcBallBounce();
 
-    std::vector<bool> cameraUpdated(PARAM_max_num_cameras, false);
+    std::vector<bool> camera_updated(PARAM_max_num_cameras, false);
 
     // TODO: Take only the newest frame if 2 come in for the same camera
 
-    for (const CameraFrame& frame : newFrames) {
+    for (const CameraFrame& frame : new_frames) {
         // Make sure camera from frame is created, if not, make it
         if (!cameras.at(frame.cameraID).getIsValid()) {
             cameras.at(frame.cameraID) = Camera(frame.cameraID);
@@ -39,48 +39,48 @@ void World::updateWithCameraFrame(RJ::Time calcTime,
 
         // Take the non-sorted list from the frame and make a list for the
         // cameras
-        std::vector<std::list<CameraRobot>> yellowTeam(Num_Shells);
-        std::vector<std::list<CameraRobot>> blueTeam(Num_Shells);
+        std::vector<std::list<CameraRobot>> yellow_team(Num_Shells);
+        std::vector<std::list<CameraRobot>> blue_team(Num_Shells);
 
         for (const CameraRobot& robot : frame.cameraRobotsYellow) {
-            yellowTeam.at(robot.getRobotID()).push_back(robot);
+            yellow_team.at(robot.getRobotID()).push_back(robot);
         }
 
         for (const CameraRobot& robot : frame.cameraRobotsBlue) {
-            blueTeam.at(robot.getRobotID()).push_back(robot);
+            blue_team.at(robot.getRobotID()).push_back(robot);
         }
 
         cameras.at(frame.cameraID)
-            .updateWithFrame(calcTime, frame.cameraBalls, yellowTeam, blueTeam,
-                             ball, robotsYellow, robotsBlue);
+            .updateWithFrame(calc_time, frame.cameraBalls, yellow_team,
+                             blue_team, ball, robotsYellow, robotsBlue);
 
-        cameraUpdated.at(frame.cameraID) = true;
+        camera_updated.at(frame.cameraID) = true;
 
         // Update last_update_time_ with the latest tCapture.
         last_update_time_ = std::max(last_update_time_, frame.tCapture);
     }
 
     for (int i = 0; i < cameras.size(); i++) {
-        if (!cameraUpdated.at(i) && cameras.at(i).getIsValid()) {
-            cameras.at(i).updateWithoutFrame(calcTime);
+        if (!camera_updated.at(i) && cameras.at(i).getIsValid()) {
+            cameras.at(i).updateWithoutFrame(calc_time);
         }
     }
 
-    updateWorldObjects(calcTime);
-    detectKicks(calcTime);
+    updateWorldObjects(calc_time);
+    detectKicks(calc_time);
 }
 
-void World::updateWithoutCameraFrame(RJ::Time calcTime) {
+void World::updateWithoutCameraFrame(RJ::Time calc_time) {
     calcBallBounce();
 
     for (Camera& camera : cameras) {
         if (camera.getIsValid()) {
-            camera.updateWithoutFrame(calcTime);
+            camera.updateWithoutFrame(calc_time);
         }
     }
 
-    updateWorldObjects(calcTime);
-    detectKicks(calcTime);
+    updateWorldObjects(calc_time);
+    detectKicks(calc_time);
 }
 
 void World::calcBallBounce() {
@@ -91,124 +91,125 @@ void World::calcBallBounce() {
     }
 }
 
-void World::updateWorldObjects(RJ::Time calcTime) {
+void World::updateWorldObjects(RJ::Time calc_time) {
     // Fill robotsYellow/Blue with what robots we want and remove the rest
     ball = WorldBall();
 
     std::fill(robotsYellow.begin(), robotsYellow.end(), WorldRobot());
     std::fill(robotsBlue.begin(), robotsBlue.end(), WorldRobot());
 
-    std::list<KalmanBall> kalmanBalls;
-    std::vector<std::list<KalmanRobot>> kalmanRobotsYellow(Num_Shells);
-    std::vector<std::list<KalmanRobot>> kalmanRobotsBlue(Num_Shells);
+    std::list<KalmanBall> kalman_balls;
+    std::vector<std::list<KalmanRobot>> kalman_robots_yellow(Num_Shells);
+    std::vector<std::list<KalmanRobot>> kalman_robots_blue(Num_Shells);
 
     // Take best kalman filter from every camera and combine them
     for (Camera& camera : cameras) {
         if (camera.getIsValid()) {
-            std::list<KalmanBall> cameraBalls = camera.getKalmanBalls();
-            std::vector<std::list<KalmanRobot>> cameraRobotsYellow =
+            std::list<KalmanBall> camera_balls = camera.getKalmanBalls();
+            std::vector<std::list<KalmanRobot>> camera_robots_yellow =
                 camera.getKalmanRobotsYellow();
-            std::vector<std::list<KalmanRobot>> cameraRobotsBlue =
+            std::vector<std::list<KalmanRobot>> camera_robots_blue =
                 camera.getKalmanRobotsBlue();
 
-            if (!cameraBalls.empty()) {
+            if (!camera_balls.empty()) {
                 // Sort by health of the kalman filter
-                cameraBalls.sort([](KalmanBall& a, KalmanBall& b) -> bool {
+                camera_balls.sort([](KalmanBall& a, KalmanBall& b) -> bool {
                     return a.getHealth() > b.getHealth();
                 });
 
-                kalmanBalls.push_back(cameraBalls.front());
+                kalman_balls.push_back(camera_balls.front());
             }
 
             // Take the best kalman filter from the camera
-            for (int i = 0; i < cameraRobotsYellow.size(); i++) {
-                if (!cameraRobotsYellow.at(i).empty()) {
-                    cameraRobotsYellow.at(i).sort(
+            for (int i = 0; i < camera_robots_yellow.size(); i++) {
+                if (!camera_robots_yellow.at(i).empty()) {
+                    camera_robots_yellow.at(i).sort(
                         [](KalmanRobot& a, KalmanRobot& b) -> bool {
                             return a.getHealth() > b.getHealth();
                         });
 
-                    kalmanRobotsYellow.at(i).push_back(
-                        cameraRobotsYellow.at(i).front());
+                    kalman_robots_yellow.at(i).push_back(
+                        camera_robots_yellow.at(i).front());
                 }
             }
 
             // Take the best kalman filter from the camera
-            for (int i = 0; i < cameraRobotsBlue.size(); i++) {
-                if (!cameraRobotsBlue.at(i).empty()) {
-                    cameraRobotsBlue.at(i).sort(
+            for (int i = 0; i < camera_robots_blue.size(); i++) {
+                if (!camera_robots_blue.at(i).empty()) {
+                    camera_robots_blue.at(i).sort(
                         [](KalmanRobot& a, KalmanRobot& b) -> bool {
                             return a.getHealth() > b.getHealth();
                         });
 
-                    kalmanRobotsBlue.at(i).push_back(
-                        cameraRobotsBlue.at(i).front());
+                    kalman_robots_blue.at(i).push_back(
+                        camera_robots_blue.at(i).front());
                 }
             }
         }
     }
 
     // Only replace the invalid result if we have measurements on any camera
-    if (!kalmanBalls.empty()) {
-        ball = WorldBall(calcTime, kalmanBalls);
+    if (!kalman_balls.empty()) {
+        ball = WorldBall(calc_time, kalman_balls);
     }
 
     for (int i = 0; i < robotsYellow.size(); i++) {
-        if (!kalmanRobotsYellow.at(i).empty()) {
-            robotsYellow.at(i) = WorldRobot(calcTime, WorldRobot::Team::YELLOW,
-                                            i, kalmanRobotsYellow.at(i));
+        if (!kalman_robots_yellow.at(i).empty()) {
+            robotsYellow.at(i) = WorldRobot(calc_time, WorldRobot::Team::YELLOW,
+                                            i, kalman_robots_yellow.at(i));
         }
     }
 
     for (int i = 0; i < robotsBlue.size(); i++) {
-        if (!kalmanRobotsBlue.at(i).empty()) {
-            robotsBlue.at(i) = WorldRobot(calcTime, WorldRobot::Team::BLUE, i,
-                                          kalmanRobotsBlue.at(i));
+        if (!kalman_robots_blue.at(i).empty()) {
+            robotsBlue.at(i) = WorldRobot(calc_time, WorldRobot::Team::BLUE, i,
+                                          kalman_robots_blue.at(i));
         }
     }
 }
 
-void World::detectKicks(RJ::Time calcTime) {
-    KickEvent fastEvent;
-    KickEvent slowEvent;
+void World::detectKicks(RJ::Time calc_time) {
+    KickEvent fast_event;
+    KickEvent slow_event;
 
-    bool isFastKick =
-        fastKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, fastEvent);
-    bool isSlowKick = slowKick.addRecord(calcTime, ball, robotsYellow,
-                                         robotsBlue, &slowEvent);
+    bool is_fast_kick = fastKick.addRecord(calc_time, ball, robotsYellow,
+                                           robotsBlue, fast_event);
+    bool is_slow_kick = slowKick.addRecord(calc_time, ball, robotsYellow,
+                                           robotsBlue, &slow_event);
 
     // If there isn't a kick recorded already
     if (!bestKickEstimate.getIsValid()) {
         // Try to use the slow kick as it's a better estimate
         // but take fast kick if there isn't a corrsponding slow kick yet
-        if (isSlowKick) {
-            bestKickEstimate = slowEvent;
-        } else if (isFastKick) {
-            bestKickEstimate = fastEvent;
+        if (is_slow_kick) {
+            bestKickEstimate = slow_event;
+        } else if (is_fast_kick) {
+            bestKickEstimate = fast_event;
         }
 
         // There is a kick recorded already
     } else {
-        const RJ::Seconds timeSinceBestEvent(bestKickEstimate.getKickTime() -
-                                             calcTime);
-        const RJ::Seconds sameKickTimeout(PARAM_same_kick_timeout);
-        const RJ::Seconds slowKickTimeout(PARAM_slow_kick_timeout);
-        const RJ::Seconds fastKickTimeout(PARAM_fast_kick_timeout);
+        const RJ::Seconds time_since_best_event(bestKickEstimate.getKickTime() -
+                                                calc_time);
+        const RJ::Seconds same_kick_timeout(PARAM_same_kick_timeout);
+        const RJ::Seconds slow_kick_timeout(PARAM_slow_kick_timeout);
+        const RJ::Seconds fast_kick_timeout(PARAM_fast_kick_timeout);
 
         // Try using the slow kick if:
         //      - It refers to the current best kick event (and probably is a
         //      better estimate)
         //      - The old kick timed out and should be updated
-        if (isSlowKick && (timeSinceBestEvent < sameKickTimeout ||
-                           timeSinceBestEvent > slowKickTimeout)) {
-            bestKickEstimate = slowEvent;
+        if (is_slow_kick && (time_since_best_event < same_kick_timeout ||
+                             time_since_best_event > slow_kick_timeout)) {
+            bestKickEstimate = slow_event;
 
             // Try using the fast kick if the old kick timed out
-        } else if (isFastKick && timeSinceBestEvent > fastKickTimeout) {
-            bestKickEstimate = fastEvent;
+        } else if (is_fast_kick && time_since_best_event > fast_kick_timeout) {
+            bestKickEstimate = fast_event;
 
             // Remove the old kick if it's completely time out
-        } else if (timeSinceBestEvent > slowKickTimeout + fastKickTimeout) {
+        } else if (time_since_best_event >
+                   slow_kick_timeout + fast_kick_timeout) {
             bestKickEstimate = KickEvent();
         }
     }

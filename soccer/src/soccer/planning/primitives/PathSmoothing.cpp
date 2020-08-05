@@ -49,9 +49,9 @@ static void FitCubicBezier(
         // points, vi represents velocity vectors)
         control_out->at(0).p1 = vi / (3 * ks[0]) + points[0];
         control_out->at(0).p2 = points[1] - vf / (3 * ks[0]);
-        double assertTestValue =
+        double assert_test_value =
             control_out->at(0).p1.mag() + control_out->at(0).p1.mag();
-        if (!std::isfinite(assertTestValue)) {
+        if (!std::isfinite(assert_test_value)) {
             throw std::runtime_error(
                 "Something went wrong. Points are too close to each other "
                 "probably");
@@ -64,17 +64,17 @@ static void FitCubicBezier(
         // unknowns. We actually have x and y, but they turn out to be the same
         // equations (with different unknowns, so we can repeat the same
         // solution)
-        int matrixSize = num_curves * 2;
-        MatrixXd equations = MatrixXd::Zero(matrixSize, matrixSize);
-        VectorXd answer_x(matrixSize);
-        VectorXd answer_y(matrixSize);
+        int matrix_size = num_curves * 2;
+        MatrixXd equations = MatrixXd::Zero(matrix_size, matrix_size);
+        VectorXd answer_x(matrix_size);
+        VectorXd answer_y(matrix_size);
 
         // These constraints come from the above special case. The first and
         // last control points should match up with that case.
         equations(0, 0) = 1;
         answer_x(0) = vi.x() / (3.0 * ks[0]) + points[0].x();
         answer_y(0) = vi.y() / (3.0 * ks[0]) + points[0].y();
-        equations(1, matrixSize - 1) = 1;
+        equations(1, matrix_size - 1) = 1;
         answer_x(1) =
             points[num_curves].x() - vf.x() / (3 * ks[num_curves - 1]);
         answer_y(1) =
@@ -145,29 +145,29 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     // [0, T])
     std::vector<double> ks(num_curves);
 
-    const double startSpeed = vi.mag();
+    const double start_speed = vi.mag();
 
-    const double endSpeed = vf.mag();
+    const double end_speed = vf.mag();
 
     // Approximate the curves as straight lines between the segments, and then
     // find an approximate ETA at each waypoint based on trapezoidal motion.
 
-    double totalPathLength = 0.0;
+    double total_path_length = 0.0;
     for (int i = 0; i < length - 1; i++) {
-        totalPathLength += (points[i] - points[i + 1]).mag();
+        total_path_length += (points[i] - points[i + 1]).mag();
     }
 
-    double pathLengthSoFar = 0.0;
+    double path_length_so_far = 0.0;
     for (int i = 0; i < num_curves; i++) {
-        double timeBefore = Trapezoidal::getTime(
-            pathLengthSoFar, totalPathLength, motion_constraints.maxSpeed,
-            motion_constraints.maxAcceleration, startSpeed, endSpeed);
-        pathLengthSoFar += (points[i + 1] - points[i]).mag();
-        double timeAfter = Trapezoidal::getTime(
-            pathLengthSoFar, totalPathLength, motion_constraints.maxSpeed,
-            motion_constraints.maxAcceleration, startSpeed, endSpeed);
+        double time_before = Trapezoidal::getTime(
+            path_length_so_far, total_path_length, motion_constraints.maxSpeed,
+            motion_constraints.maxAcceleration, start_speed, end_speed);
+        path_length_so_far += (points[i + 1] - points[i]).mag();
+        double time_after = Trapezoidal::getTime(
+            path_length_so_far, total_path_length, motion_constraints.maxSpeed,
+            motion_constraints.maxAcceleration, start_speed, end_speed);
 
-        ks[i] = 1.0 / (timeAfter - timeBefore);
+        ks[i] = 1.0 / (time_after - time_before);
 
         if (!std::isfinite(ks[i])) {
             throw std::runtime_error(

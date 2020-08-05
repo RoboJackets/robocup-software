@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <fstream>
+
+#include <gtest/gtest.h>
 
 #include "Geometry2d/Pose.hpp"
 #include "SystemState.hpp"
@@ -33,8 +33,8 @@ TEST(Planning, path_target_random) {
     int failure_count = 0;
     for (int i = 0; i < 1000; i++) {
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 2, 5);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0),
                       TestingUtils::random(&gen, .5, 1.5)},
@@ -234,8 +234,8 @@ TEST(Planning, collect_random) {
                   TestingUtils::random(&gen, -1.0, 0.1)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 2, 5);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0),
                       TestingUtils::random(&gen, 0.5, 1.5)},
@@ -327,8 +327,8 @@ TEST(Planning, settle_random) {
                   TestingUtils::random(&gen, -2.0, -1.0)};
         world_state.ball.timestamp = RJ::now();
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 0, 3);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 0, 3);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0),
                       TestingUtils::random(&gen, .5, 1.5)},

@@ -1,11 +1,12 @@
-#include <fcntl.h>
+#include <algorithm>
+#include <cstdio>
+
+#include <QApplication>
+#include <QFile>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <LogViewer.hpp>
-#include <QApplication>
-#include <QFile>
-#include <algorithm>
-#include <cstdio>
+#include <fcntl.h>
 
 using namespace std;
 using namespace boost;
@@ -49,11 +50,11 @@ LogViewer::LogViewer(QWidget* parent) : QMainWindow(parent) {
     ui.splitter->setStretchFactor(0, 98);
     ui.splitter->setStretchFactor(1, 10);
 
-    QActionGroup* rotateGroup = new QActionGroup(this);
-    rotateGroup->addAction(ui.action0);
-    rotateGroup->addAction(ui.action90);
-    rotateGroup->addAction(ui.action180);
-    rotateGroup->addAction(ui.action270);
+    QActionGroup* rotate_group = new QActionGroup(this);
+    rotate_group->addAction(ui.action0);
+    rotate_group->addAction(ui.action90);
+    rotate_group->addAction(ui.action180);
+    rotate_group->addAction(ui.action270);
 
     connect(&_updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
     _updateTimer.start(30);
@@ -114,7 +115,7 @@ void LogViewer::updateViews() {
     _doubleFrameNumber = min(frames.size() - 1.0, _doubleFrameNumber);
 
     int f = frameNumber();
-    const LogFrame& currentFrame = *frames[f];
+    const LogFrame& current_frame = *frames[f];
 
     ui.timeSlider->setValue(f);
 
@@ -130,14 +131,14 @@ void LogViewer::updateViews() {
     // Update non-message tree items
     _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
                               frameNumber());
-    int elapsedMillis =
-        (currentFrame.command_time() - frames[0]->command_time() + 500) / 1000;
-    QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
+    int elapsed_millis =
+        (current_frame.command_time() - frames[0]->command_time() + 500) / 1000;
+    QTime elapsed_time = QTime::fromMSecsSinceStartOfDay(elapsed_millis);
     _elapsedTimeItem->setText(ProtobufTree::Column_Value,
-                              elapsedTime.toString("hh:mm:ss.zzz"));
+                              elapsed_time.toString("hh:mm:ss.zzz"));
 
     // Sort the tree by tag if items have been added
-    if (ui.tree->message(currentFrame)) {
+    if (ui.tree->message(current_frame)) {
         // Items have been added, so sort again on tag number
         ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
     }

@@ -1,8 +1,11 @@
+#include <iostream>
+
 #include <gtest/gtest.h>
+
+#include <Geometry2d/Util.hpp>
+
 #include "NelderMead2D.hpp"
 #include "NelderMead2DConfig.hpp"
-#include <Geometry2d/Util.hpp>
-#include <iostream>
 
 static float evalFunction1(Geometry2d::Point p) {
     return -1 * sqrt(p.x() * p.x() + p.y() * p.y());

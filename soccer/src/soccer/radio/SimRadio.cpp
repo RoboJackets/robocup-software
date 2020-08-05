@@ -1,15 +1,15 @@
 #include "SimRadio.hpp"
 
+#include <cmath>
+#include <stdexcept>
+
+#include <Geometry2d/Util.hpp>
+#include <Robot.hpp>
+#include <rj_common/Network.hpp>
 #include <rj_common/status.h>
 #include <rj_protos/grSim_Commands.pb.h>
 #include <rj_protos/grSim_Packet.pb.h>
 #include <rj_protos/messages_robocup_ssl_robot_status.pb.h>
-
-#include <Geometry2d/Util.hpp>
-#include <Robot.hpp>
-#include <cmath>
-#include <rj_common/Network.hpp>
-#include <stdexcept>
 
 #include "PacketConvert.hpp"
 
@@ -17,12 +17,12 @@ using namespace std;
 using namespace Packet;
 using namespace boost::asio;
 
-SimRadio::SimRadio(Context* context, bool blueTeam)
+SimRadio::SimRadio(Context* context, bool blue_team)
     : _context(context),
-      _blueTeam(blueTeam),
+      _blueTeam(blue_team),
       _socket(_io_service, ip::udp::endpoint(ip::udp::v4(),
-                                             blueTeam ? SimBlueStatusPort
-                                                      : SimYellowStatusPort)) {
+                                             blue_team ? SimBlueStatusPort
+                                                       : SimYellowStatusPort)) {
     _grsim_endpoint = ip::udp::endpoint(ip::udp::v4(), SimCommandPort);
 
     _buffer.resize(1024);
@@ -33,8 +33,8 @@ bool SimRadio::isOpen() const { return _socket.is_open(); }
 
 void SimRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
                     const std::array<MotionSetpoint, Num_Shells>& setpoints) {
-    grSim_Packet simPacket;
-    grSim_Commands* simRobotCommands = simPacket.mutable_commands();
+    grSim_Packet sim_packet;
+    grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
 
     for (int i = 0; i < Num_Shells; i++) {
         const auto& intent = intents[i];
@@ -44,15 +44,16 @@ void SimRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
 
         const auto& setpoint = setpoints[i];
 
-        grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
-        ConvertTx::to_grsim(intent, setpoint, i, simRobot);
+        grSim_Robot_Command* sim_robot =
+            sim_robot_commands->add_robot_commands();
+        ConvertTx::to_grsim(intent, setpoint, i, sim_robot);
     }
 
-    simRobotCommands->set_isteamyellow(!_blueTeam);
-    simRobotCommands->set_timestamp(RJ::timestamp());
+    sim_robot_commands->set_isteamyellow(!_blueTeam);
+    sim_robot_commands->set_timestamp(RJ::timestamp());
 
     std::string out;
-    simPacket.SerializeToString(&out);
+    sim_packet.SerializeToString(&out);
 
     _socket.send_to(buffer(out), _grsim_endpoint);
 }
@@ -91,34 +92,35 @@ void SimRadio::handleReceive(const std::string& data) {
 }
 
 void SimRadio::stopRobots() {
-    grSim_Packet simPacket;
-    grSim_Commands* simRobotCommands = simPacket.mutable_commands();
+    grSim_Packet sim_packet;
+    grSim_Commands* sim_robot_commands = sim_packet.mutable_commands();
 
     for (auto* const our_robot : _context->state.self) {
-        grSim_Robot_Command* simRobot = simRobotCommands->add_robot_commands();
-        simRobot->set_id(our_robot->shell());
-        simRobot->set_veltangent(0);
-        simRobot->set_velnormal(0);
-        simRobot->set_velangular(0);
+        grSim_Robot_Command* sim_robot =
+            sim_robot_commands->add_robot_commands();
+        sim_robot->set_id(our_robot->shell());
+        sim_robot->set_veltangent(0);
+        sim_robot->set_velnormal(0);
+        sim_robot->set_velangular(0);
 
-        simRobot->set_kickspeedx(0);
-        simRobot->set_kickspeedz(0);
+        sim_robot->set_kickspeedx(0);
+        sim_robot->set_kickspeedz(0);
 
-        simRobot->set_spinner(false);
-        simRobot->set_wheelsspeed(false);
+        sim_robot->set_spinner(false);
+        sim_robot->set_wheelsspeed(false);
     }
 
-    simRobotCommands->set_isteamyellow(!_blueTeam);
-    simRobotCommands->set_timestamp(RJ::timestamp());
+    sim_robot_commands->set_isteamyellow(!_blueTeam);
+    sim_robot_commands->set_timestamp(RJ::timestamp());
 
     std::string out;
-    simPacket.SerializeToString(&out);
+    sim_packet.SerializeToString(&out);
     _socket.send_to(boost::asio::buffer(out),
                     ip::udp::endpoint(ip::udp::v4(), SimCommandPort));
 }
 
-void SimRadio::switchTeam(bool blueTeam) {
-    _blueTeam = blueTeam;
+void SimRadio::switchTeam(bool blue_team) {
+    _blueTeam = blue_team;
 
     if (_socket.is_open()) {
         stopRobots();
@@ -127,7 +129,7 @@ void SimRadio::switchTeam(bool blueTeam) {
 
     _socket.open(ip::udp::v4());
 
-    int status_port = blueTeam ? SimBlueStatusPort : SimYellowStatusPort;
+    int status_port = blue_team ? SimBlueStatusPort : SimYellowStatusPort;
 
     // Let them throw exceptions
     _socket.bind(ip::udp::endpoint(ip::udp::v4(), status_port));

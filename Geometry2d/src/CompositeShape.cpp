@@ -28,8 +28,8 @@ void CompositeShape::add(const std::shared_ptr<Shape>& shape) {
     }
 }
 
-void CompositeShape::add(const CompositeShape& compShape) {
-    for (const auto& shape : compShape.subshapes()) {
+void CompositeShape::add(const CompositeShape& comp_shape) {
+    for (const auto& shape : comp_shape.subshapes()) {
         add(shape);
     }
 }

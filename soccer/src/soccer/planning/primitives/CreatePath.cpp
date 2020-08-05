@@ -10,70 +10,71 @@ namespace Planning::CreatePath {
 
 Trajectory simple(const LinearMotionInstant& start,
                   const LinearMotionInstant& goal,
-                  const MotionConstraints& motionConstraints,
-                  RJ::Time startTime,
-                  const std::vector<Point>& intermediatePoints) {
+                  const MotionConstraints& motion_constraints,
+                  RJ::Time start_time,
+                  const std::vector<Point>& intermediate_points) {
     std::vector<Point> points;
     points.push_back(start.position);
-    for (const Point& pt : intermediatePoints) {
+    for (const Point& pt : intermediate_points) {
         points.push_back(pt);
     }
     points.push_back(goal.position);
-    BezierPath bezier(points, start.velocity, goal.velocity, motionConstraints);
+    BezierPath bezier(points, start.velocity, goal.velocity,
+                      motion_constraints);
     Trajectory path =
         ProfileVelocity(bezier, start.velocity.mag(), goal.velocity.mag(),
-                        motionConstraints, startTime);
+                        motion_constraints, start_time);
     return std::move(path);
 }
 
 Trajectory rrt(const LinearMotionInstant& start,
                const LinearMotionInstant& goal,
-               const MotionConstraints& motionConstraints, RJ::Time startTime,
+               const MotionConstraints& motion_constraints, RJ::Time start_time,
                const ShapeSet& static_obstacles,
                const std::vector<DynamicObstacle>& dynamic_obstacles,
-               const std::vector<Point>& biasWaypoints) {
+               const std::vector<Point>& bias_waypoints) {
     if (start.position.distTo(goal.position) < 1e-6) {
         return Trajectory{
-            {RobotInstant{Pose(start.position, 0), Twist(), startTime}}};
+            {RobotInstant{Pose(start.position, 0), Twist(), start_time}}};
     }
     // maybe we don't need an RRT
-    Trajectory straightTrajectory =
-        CreatePath::simple(start, goal, motionConstraints, startTime);
+    Trajectory straight_trajectory =
+        CreatePath::simple(start, goal, motion_constraints, start_time);
 
     // If we are very close to the goal (i.e. there physically can't be a robot
     // in our way) or the straight trajectory is feasible, we can use it.
     if (start.position.distTo(goal.position) < Robot_Radius ||
-        !TrajectoryHitsStatic(straightTrajectory, static_obstacles, startTime,
+        !TrajectoryHitsStatic(straight_trajectory, static_obstacles, start_time,
                               nullptr) &&
-            !TrajectoryHitsDynamic(straightTrajectory, dynamic_obstacles,
-                                   startTime, nullptr, nullptr)) {
-        return std::move(straightTrajectory);
+            !TrajectoryHitsDynamic(straight_trajectory, dynamic_obstacles,
+                                   start_time, nullptr, nullptr)) {
+        return std::move(straight_trajectory);
     }
 
     ShapeSet obstacles = static_obstacles;
     Trajectory path{{}};
-    constexpr int attemptsToAvoidDynamics = 10;
-    for (int i = 0; i < attemptsToAvoidDynamics; i++) {
+    constexpr int kAttemptsToAvoidDynamics = 10;
+    for (int i = 0; i < kAttemptsToAvoidDynamics; i++) {
         std::vector<Point> points = GenerateRRT(start.position, goal.position,
-                                                obstacles, biasWaypoints);
+                                                obstacles, bias_waypoints);
 
-        BezierPath postBezier(points, start.velocity, goal.velocity,
-                              motionConstraints);
+        BezierPath post_bezier(points, start.velocity, goal.velocity,
+                               motion_constraints);
 
-        path =
-            ProfileVelocity(postBezier, start.velocity.mag(),
-                            goal.velocity.mag(), motionConstraints, startTime);
+        path = ProfileVelocity(post_bezier, start.velocity.mag(),
+                               goal.velocity.mag(), motion_constraints,
+                               start_time);
 
-        Circle hitCircle;
+        Circle hit_circle;
         if (!TrajectoryHitsDynamic(path, dynamic_obstacles, path.begin_time(),
-                                   &hitCircle, nullptr)) {
+                                   &hit_circle, nullptr)) {
             break;
         }
 
         // Inflate the radius slightly so we don't try going super close to
         // it and hitting it again.
-        hitCircle.radius(hitCircle.radius() * 1.5f);
-        obstacles.add(std::make_shared<Circle>(hitCircle));
+        hit_circle.radius(hit_circle.radius() * 1.5f);
+        obstacles.add(std::make_shared<Circle>(hit_circle));
     }
     return std::move(path);
 }

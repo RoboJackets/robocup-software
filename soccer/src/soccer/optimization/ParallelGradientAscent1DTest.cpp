@@ -1,10 +1,12 @@
-#include <gtest/gtest.h>
-#include "ParallelGradientAscent1D.hpp"
-#include "ParallelGradient1DConfig.hpp"
-#include "GradientAscent1D.hpp"
-#include "Gradient1DConfig.hpp"
 #include <tuple>
 #include <vector>
+
+#include <gtest/gtest.h>
+
+#include "Gradient1DConfig.hpp"
+#include "GradientAscent1D.hpp"
+#include "ParallelGradient1DConfig.hpp"
+#include "ParallelGradientAscent1D.hpp"
 
 using namespace std;
 

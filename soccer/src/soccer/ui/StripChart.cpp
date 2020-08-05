@@ -1,19 +1,20 @@
 #include "StripChart.hpp"
 
-#include <google/protobuf/descriptor.h>
-#include <rj_protos/LogFrame.pb.h>
-
-#include <Geometry2d/Point.hpp>
-#include <QDateTime>
-#include <QFileDialog>
-#include <QPainter>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+
+#include <QDateTime>
+#include <QFileDialog>
+#include <QPainter>
+#include <google/protobuf/descriptor.h>
+
+#include <Geometry2d/Point.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 using namespace std;
 using namespace Packet;
@@ -46,9 +47,9 @@ void StripChart::function(Chart::Function* function) {
 }
 
 void StripChart::exportChart() {
-    QString chartName = QFileDialog::getSaveFileName(
+    QString chart_name = QFileDialog::getSaveFileName(
         this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
-    std::ofstream outfile(chartName.toStdString());
+    std::ofstream outfile(chart_name.toStdString());
 
     // output column names
     outfile << "Time";
@@ -60,11 +61,11 @@ void StripChart::exportChart() {
     // output data
 
     // Get the oldest datapoint to use as the starting time
-    auto startTime = _history->at(0).get()->timestamp();
+    auto start_time = _history->at(0).get()->timestamp();
 
     for (const auto& frame_i : *_history) {
         if (frame_i) {
-            outfile << RJ::TimestampToSecs(frame_i->timestamp() - startTime);
+            outfile << RJ::TimestampToSecs(frame_i->timestamp() - start_time);
 
             for (auto* function : _functions) {
                 float v = 0;
@@ -97,14 +98,15 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
 
     QPainter p(this);
 
-    float newMin = _minValue;
-    float newMax = _maxValue;
+    float new_min = _minValue;
+    float new_max = _maxValue;
 
-    auto mappedCursorPos = mapFromGlobal(QCursor::pos());
-    auto highlightedIndex =
-        rect().contains(mappedCursorPos) ? indexAtPoint(mappedCursorPos) : -1;
+    auto mapped_cursor_pos = mapFromGlobal(QCursor::pos());
+    auto highlighted_index = rect().contains(mapped_cursor_pos)
+                                 ? indexAtPoint(mapped_cursor_pos)
+                                 : -1;
 
-    auto fontHeight = QFontMetrics(p.font()).height();
+    auto font_height = QFontMetrics(p.font()).height();
 
     // X-axis
     {
@@ -116,7 +118,7 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
     for (int x = 0; x < _functions.size(); x++) {
         auto* function = _functions[x];
 
-        bool haveLast = false;
+        bool have_last = false;
         QPointF last;
         if (x == 0) {
             p.setPen(_color);
@@ -135,18 +137,18 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
             if (hist_idx < _history->size() && _history->at(hist_idx) &&
                 function->value(*_history->at(hist_idx).get(), &v)) {
                 if (autoRange) {
-                    newMin = min(newMin, v);
-                    newMax = max(newMax, v);
+                    new_min = min(new_min, v);
+                    new_max = max(new_max, v);
                 }
 
                 QPointF pt = dataPoint(i, v);
 
-                if (i == highlightedIndex) {
+                if (i == highlighted_index) {
                     p.drawEllipse(pt, 5, 5);
 
-                    p.drawText(
-                        mappedCursorPos + QPointF(15, 0 + fontHeight * 2 * x),
-                        (" V: " + std::to_string(v)).c_str());
+                    p.drawText(mapped_cursor_pos +
+                                   QPointF(15, 0 + font_height * 2 * x),
+                               (" V: " + std::to_string(v)).c_str());
 
                     if (hist_idx > 0 && hist_idx < _history->size() - 1) {
                         float v1 = 0;
@@ -156,32 +158,32 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
 
                         auto t1 = _history->at(hist_idx - 1)->timestamp();
                         auto t2 = _history->at(hist_idx + 1)->timestamp();
-                        auto deltaTime = RJ::TimestampToSecs(t2 - t1);
+                        auto delta_time = RJ::TimestampToSecs(t2 - t1);
 
-                        auto derivative = (v2 - v1) / (deltaTime);
+                        auto derivative = (v2 - v1) / (delta_time);
                         p.drawText(
-                            mappedCursorPos +
-                                QPointF(15, fontHeight * (1 + x * 2)),
+                            mapped_cursor_pos +
+                                QPointF(15, font_height * (1 + x * 2)),
                             ("dV: " + std::to_string(derivative)).c_str());
                     }
                 }
 
-                if (haveLast) {
+                if (have_last) {
                     p.drawLine(last, pt);
                 }
                 last = pt;
-                haveLast = true;
+                have_last = true;
             } else {
-                haveLast = false;
+                have_last = false;
             }
         }
     }
 
-    p.drawText(0, height() - 5, std::to_string(newMin).c_str());
-    p.drawText(0, fontHeight, std::to_string(newMax).c_str());
+    p.drawText(0, height() - 5, std::to_string(new_min).c_str());
+    p.drawText(0, font_height, std::to_string(new_max).c_str());
 
-    _minValue = newMin;
-    _maxValue = newMax;
+    _minValue = new_min;
+    _maxValue = new_max;
 }
 
 ////////

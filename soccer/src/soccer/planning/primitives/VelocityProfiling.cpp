@@ -145,9 +145,9 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
         RobotInstant{initial_pose, initial_twist, initial_time});
 
     for (int n = 1; n < num_points; n++) {
-        Point deltaPos = points[n] - points[n - 1];
+        Point delta_pos = points[n] - points[n - 1];
 
-        double distance = deltaPos.mag();
+        double distance = delta_pos.mag();
 
         // Average speed over the interval. We assume constant acceleration,
         // which is true in the limit of small intervals.

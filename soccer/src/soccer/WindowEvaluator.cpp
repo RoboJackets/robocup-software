@@ -1,8 +1,9 @@
 #include "WindowEvaluator.hpp"
 
-#include <Geometry2d/Util.hpp>
 #include <algorithm>
 #include <array>
+
+#include <Geometry2d/Util.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "DebugDrawer.hpp"
@@ -30,10 +31,10 @@ void WindowEvaluator::createConfiguration(Configuration* cfg) {
 WindowEvaluator::WindowEvaluator(Context* context) : context(context) {}
 
 WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target,
-                                               float targetWidth) {
+                                               float target_width) {
     auto dir_vec = (target - origin).perpCCW().normalized();
-    auto segment = Segment{target + dir_vec * (targetWidth / 2),
-                           target - dir_vec * (targetWidth / 2)};
+    auto segment = Segment{target + dir_vec * (target_width / 2),
+                           target - dir_vec * (target_width / 2)};
 
     return eval_pt_to_seg(origin, segment);
 }

@@ -1,6 +1,6 @@
-#======================================================================
+# ======================================================================
 # Set Sources
-#======================================================================
+# ======================================================================
 set(RJ_VISION_FILTER_SRC
     ball/BallBounce.cpp
     ball/CameraBall.cpp
@@ -22,18 +22,11 @@ set(RJ_VISION_FILTER_SRC
     params.cpp
     VisionFilter.cpp)
 
-#======================================================================
+# ======================================================================
 # Add sources
-#======================================================================
+# ======================================================================
 # ---- robocup ----
-target_sources(
-    robocup
-    PRIVATE
-    ${RJ_VISION_FILTER_SRC})
+target_sources(robocup PRIVATE ${RJ_VISION_FILTER_SRC})
 
 # ---- vision_filter ----
-target_sources(
-    rj_vision_filter
-    PRIVATE
-    main.cpp
-)
+target_sources(rj_vision_filter PRIVATE main.cpp)

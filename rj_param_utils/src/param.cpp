@@ -1,9 +1,9 @@
 /** @file */
-#include <rj_param_utils/param.h>
-
 #include <cstdint>
 #include <memory>
 #include <string>
+
+#include <rj_param_utils/param.h>
 
 namespace params {
 namespace internal {

@@ -1,10 +1,11 @@
 #include "RobotWidget.hpp"
 
-#include <Geometry2d/Util.hpp>
 #include <cmath>
+#include <stdexcept>
+
+#include <Geometry2d/Util.hpp>
 #include <rj_common/VisionDotPattern.hpp>
 #include <rj_constants/constants.hpp>
-#include <stdexcept>
 
 RobotWidget::RobotWidget(QWidget* /*parent*/, Qt::WindowFlags /*f*/) {
     for (int i = 0; i < 4; i++) {
@@ -17,58 +18,58 @@ RobotWidget::RobotWidget(QWidget* /*parent*/, Qt::WindowFlags /*f*/) {
 
     _hasBall = false;
     _ballSenseFault = false;
-    for (bool& _wheelFault : _wheelFaults) {
-        _wheelFault = false;
+    for (bool& wheel_fault : _wheelFaults) {
+        wheel_fault = false;
     }
 }
 
-void RobotWidget::setShellID(int shellID) { _shellID = shellID; }
+void RobotWidget::setShellID(int shell_id) { _shellID = shell_id; }
 
-void RobotWidget::setBlueTeam(bool blueTeam) {
-    if (blueTeam != _blueTeam) {
-        _blueTeam = blueTeam;
+void RobotWidget::setBlueTeam(bool blue_team) {
+    if (blue_team != _blueTeam) {
+        _blueTeam = blue_team;
         update();
     }
 }
 
 bool RobotWidget::blueTeam() const { return _blueTeam; }
 
-void RobotWidget::setWheelFault(int wheelIndex, bool faulty) {
-    if (wheelIndex < 0 || wheelIndex > 3) {
+void RobotWidget::setWheelFault(int wheel_index, bool faulty) {
+    if (wheel_index < 0 || wheel_index > 3) {
         throw std::out_of_range("Invalid wheel index");
     }
 
-    _wheelFaults[wheelIndex] = faulty;
+    _wheelFaults[wheel_index] = faulty;
     update();
 }
 
 void RobotWidget::setBallSenseFault(bool faulty) { _ballSenseFault = faulty; }
 
-void RobotWidget::setHasBall(bool hasBall) {
-    if (hasBall != _hasBall) {
-        _hasBall = hasBall;
+void RobotWidget::setHasBall(bool has_ball) {
+    if (has_ball != _hasBall) {
+        _hasBall = has_ball;
         update();
     }
 }
 
 //  draws a red X with @width = @height = @size centered at @center
 void drawRedX(QPainter& painter, const QPointF& center, float size,
-              float lineThickness = 0.01) {
-    float halfLen = 0.5 * sqrtf(powf(size, 2) + powf(size, 2));
+              float line_thickness = 0.01) {
+    float half_len = 0.5 * sqrtf(powf(size, 2) + powf(size, 2));
 
     painter.save();
     {
-        QPen xPen(Qt::red, lineThickness);
-        xPen.setCapStyle(Qt::RoundCap);
-        painter.setPen(xPen);
+        QPen x_pen(Qt::red, line_thickness);
+        x_pen.setCapStyle(Qt::RoundCap);
+        painter.setPen(x_pen);
 
         painter.translate(center);
 
         painter.rotate(45);
-        painter.drawLine(QPointF(-halfLen / 2, 0), QPointF(halfLen / 2, 0));
+        painter.drawLine(QPointF(-half_len / 2, 0), QPointF(half_len / 2, 0));
 
         painter.rotate(90);
-        painter.drawLine(QPointF(-halfLen / 2, 0), QPointF(halfLen / 2, 0));
+        painter.drawLine(QPointF(-half_len / 2, 0), QPointF(half_len / 2, 0));
     }
     painter.restore();
 }
@@ -81,9 +82,9 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
     painter.translate(rect().center());
 
     //  scale so we can draw robot in units of meters
-    float minPadding = 9;
-    float scale = std::fmin((width() - minPadding * 2) / Robot_Radius,
-                            (height() - minPadding * 2) / Robot_Radius) /
+    float min_padding = 9;
+    float scale = std::fmin((width() - min_padding * 2) / Robot_Radius,
+                            (height() - min_padding * 2) / Robot_Radius) /
                   2;
     painter.scale(scale, scale);
 
@@ -102,42 +103,44 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
     painter.setPen(Qt::NoPen);
     for (int i = 0; i < 4; i++) {
         painter.setBrush(QBrush(Dot_Pattern_Colors[_shellID][i]));
-        QPointF dotCenter;
-        dotCenter.setX((i >= 2) ? Dots_Small_Offset : Dots_Large_Offset);
-        dotCenter.setX(dotCenter.x() * ((i == 1 || i == 2) ? 1 : -1));
-        dotCenter.setY((i <= 1) ? Dots_Small_Offset : Dots_Large_Offset);
-        dotCenter.setY(dotCenter.y() * ((i <= 1) ? -1 : 1));
+        QPointF dot_center;
+        dot_center.setX((i >= 2) ? Dots_Small_Offset : Dots_Large_Offset);
+        dot_center.setX(dot_center.x() * ((i == 1 || i == 2) ? 1 : -1));
+        dot_center.setY((i <= 1) ? Dots_Small_Offset : Dots_Large_Offset);
+        dot_center.setY(dot_center.y() * ((i <= 1) ? -1 : 1));
 
-        painter.drawEllipse(dotCenter, Dots_Radius, Dots_Radius);
+        painter.drawEllipse(dot_center, Dots_Radius, Dots_Radius);
     }
 
     //  draw center dot
     painter.setBrush(_blueTeam ? Qt::blue : Qt::yellow);
     painter.drawEllipse(QPointF(0, 0), Dots_Radius, Dots_Radius);
 
-    const float RedXSize = 0.06;
+    const float red_x_size = 0.06;
 
     //  draw wheels
-    const float wheelWidth = 0.015;
-    const float wheelRadius = 0.03;
-    const float wheelDist = Robot_Radius + wheelWidth / 2;
-    const float wheelAngles[] = {-M_PI * 0.8, M_PI * 0.8, M_PI * 0.2, M_PI * -0.2};
+    const float wheel_width = 0.015;
+    const float wheel_radius = 0.03;
+    const float wheel_dist = Robot_Radius + wheel_width / 2;
+    const float wheel_angles[] = {-M_PI * 0.8, M_PI * 0.8, M_PI * 0.2,
+                                  M_PI * -0.2};
 
     for (int i = 0; i < 4; i++) {
         painter.save();
         {
-            float angle = wheelAngles[i];
+            float angle = wheel_angles[i];
 
             //  translate to center of wheel
-            painter.translate(wheelDist * cosf(angle), wheelDist * sinf(angle));
+            painter.translate(wheel_dist * cosf(angle),
+                              wheel_dist * sinf(angle));
 
             //  FIXME: draw wheel fault
             if (_wheelFaults[i]) {
                 painter.save();
                 {
-                    float dist = RedXSize / 2;
+                    float dist = red_x_size / 2;
                     painter.translate(cosf(angle) * dist, sinf(angle) * dist);
-                    drawRedX(painter, QPointF(0, 0), RedXSize);
+                    drawRedX(painter, QPointF(0, 0), red_x_size);
                 }
                 painter.restore();
             }
@@ -146,10 +149,10 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
             painter.rotate(RadiansToDegrees(angle) + 90);
 
             painter.setBrush(Qt::gray);
-            const float wheelRounding = 0.01;
-            painter.drawRoundedRect(QRectF(-wheelRadius, -wheelWidth / 2,
-                                           wheelRadius * 2, wheelWidth),
-                                    wheelRounding, wheelRounding);
+            const float wheel_rounding = 0.01;
+            painter.drawRoundedRect(QRectF(-wheel_radius, -wheel_width / 2,
+                                           wheel_radius * 2, wheel_width),
+                                    wheel_rounding, wheel_rounding);
         }
         painter.restore();
     }
@@ -157,21 +160,21 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
     if (_ballSenseFault) {
         //  draw a red X by the robot's mouth
 
-        drawRedX(painter, QPointF(0, -Robot_Radius - (RedXSize / 2) + 0.02),
-                 RedXSize);
+        drawRedX(painter, QPointF(0, -Robot_Radius - (red_x_size / 2) + 0.02),
+                 red_x_size);
     } else if (_hasBall) {
         //  draw orange golf ball
 
-        const float ballRadius = 0.02135;
-        static QColor ballColor(0xff, 0x90, 0);
-        float ballCenterY = -(Robot_Radius + ballRadius) + 0.02;
+        const float ball_radius = 0.02135;
+        static QColor ball_color(0xff, 0x90, 0);
+        float ball_center_y = -(Robot_Radius + ball_radius) + 0.02;
 
         painter.save();
         {
-            painter.translate(0, ballCenterY);
-            painter.setBrush(ballColor);
-            painter.drawEllipse(QRectF(-ballRadius, -ballRadius, ballRadius * 2,
-                                       ballRadius * 2));
+            painter.translate(0, ball_center_y);
+            painter.setBrush(ball_color);
+            painter.drawEllipse(QRectF(-ball_radius, -ball_radius,
+                                       ball_radius * 2, ball_radius * 2));
         }
         painter.restore();
     }

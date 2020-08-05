@@ -1,17 +1,20 @@
-#======================================================================
+# ======================================================================
 # Preamble
-#======================================================================
+# ======================================================================
 cmake_minimum_required(VERSION 3.16)
 project(soccer LANGUAGES CXX)
 
-#======================================================================
+# ======================================================================
 # Find package
-#======================================================================
+# ======================================================================
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 
 # Qt5
-find_package(Qt5 COMPONENTS Widgets Xml Core OpenGL Network Svg REQUIRED)
+find_package(
+  Qt5
+  COMPONENTS Widgets Xml Core OpenGL Network Svg
+  REQUIRED)
 message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
 add_definitions(-DQT_NO_KEYWORDS) # Remove QT slots/signals/emit keywords
 
@@ -40,42 +43,47 @@ find_package(Threads REQUIRED)
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost COMPONENTS system REQUIRED)
+find_package(
+  Boost
+  COMPONENTS system
+  REQUIRED)
 
-# find boost python
-# This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
+# find boost python This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and
+# 'python' on OS X
 set(FOUND_A_BOOST_PYTHON FALSE)
 # Find the matching boost python implementation
 set(version ${PYTHONLIBS_VERSION_STRING})
 
-STRING(REGEX REPLACE "[^0-9]" "" boost_py_version "${version}")
+string(REGEX REPLACE "[^0-9]" "" boost_py_version "${version}")
 # Get first two numbers of python string
-STRING(REGEX MATCH "^[0-9][0-9]" boost_py_version "${boost_py_version}")
+string(REGEX MATCH "^[0-9][0-9]" boost_py_version "${boost_py_version}")
 
-foreach (possible_name python3 python-py${boost_py_version} python)
-    find_package(Boost COMPONENTS ${possible_name} QUIET)
-    if (Boost_FOUND)
-        set(FOUND_A_BOOST_PYTHON TRUE)
-        break()
-    endif ()
-endforeach ()
-if (NOT FOUND_A_BOOST_PYTHON)
-    message(FATAL_ERROR "Unable to find a suitable version of boost python")
-endif ()
+foreach(possible_name python3 python-py${boost_py_version} python)
+  find_package(
+    Boost
+    COMPONENTS ${possible_name}
+    QUIET)
+  if(Boost_FOUND)
+    set(FOUND_A_BOOST_PYTHON TRUE)
+    break()
+  endif()
+endforeach()
+if(NOT FOUND_A_BOOST_PYTHON)
+  message(FATAL_ERROR "Unable to find a suitable version of boost python")
+endif()
 
-
-#======================================================================
+# ======================================================================
 # QT build tool things
-#======================================================================
+# ======================================================================
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-#======================================================================
+# ======================================================================
 # Define Targets
-#======================================================================
-# Build stand-alone soccer dylib
-# This is linked into soccer and our unit tests, as well as being a python module
+# ======================================================================
+# Build stand-alone soccer dylib This is linked into soccer and our unit tests, as well as being a
+# python module
 add_library(robocup SHARED)
 
 set_target_properties(robocup PROPERTIES PREFIX "")
@@ -88,23 +96,19 @@ add_executable(log_viewer)
 add_executable(internal_referee_node)
 add_executable(external_referee_node)
 
-if (BUILD_TESTING)
-    add_executable(test-soccer)
+if(BUILD_TESTING)
+  add_executable(test-soccer)
 endif()
 
 add_subdirectory(src)
 
-#======================================================================
+# ======================================================================
 # Dependencies List
-#======================================================================
+# ======================================================================
 
 # ---- robocup ----
-set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS
-    ${EIGEN_INCLUDE_DIRS}
-    ${LIBUSB_1_INCLUDE_DIRS}
-    ${PYTHON_INCLUDE_DIRS}
-    ${RRT_INCLUDE_DIR}
-    ${SDL2_INCLUDE_DIRS})
+set(ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS ${EIGEN_INCLUDE_DIRS} ${LIBUSB_1_INCLUDE_DIRS}
+                                     ${PYTHON_INCLUDE_DIRS} ${RRT_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 
 set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     ${Boost_LIBRARIES}
@@ -123,14 +127,11 @@ set(ROBOCUP_DEPS_SYSTEM_LIBRARIES
     Threads::Threads
     RRT
     spnav
-    ${SDL2_LIBRARIES}
-    )
+    ${SDL2_LIBRARIES})
 
 set(ROBOCUP_DEPS_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/soccer
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include
-    )
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/soccer ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_BINARY_DIR}/robocup_autogen/include)
 
 set(ROBOCUP_DEPS_LIBRARIES
     rj_common
@@ -139,61 +140,35 @@ set(ROBOCUP_DEPS_LIBRARIES
     rc-fshare
     rj_param_utils
     rj_topic_utils
-    config_client
-    )
+    config_client)
 
 # ---- vision_filter ----
-set(RJ_VISION_FILTER_DEPS_LIBRARIES
-    rj_param_utils
-    robocup
-    )
+set(RJ_VISION_FILTER_DEPS_LIBRARIES rj_param_utils robocup)
 
 # ---- soccer ----
-set(SOCCER_DEPS_SYSTEM_LIBRARIES
-    Qt5::Widgets
-    Qt5::Xml
-    Qt5::Core
-    Qt5::OpenGL
-    Qt5::Network
-    Qt5::Svg)
+set(SOCCER_DEPS_SYSTEM_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::Core Qt5::OpenGL Qt5::Network Qt5::Svg)
 
-set(SOCCER_DEPS_LIBRARIES
-    robocup)
+set(SOCCER_DEPS_LIBRARIES robocup)
 
 # ---- log_viewer ----
-set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::OpenGL
-    Qt5::Xml
-    Qt5::Svg)
+set(LOG_VIEWER_DEPS_SYSTEM_LIBRARIES Qt5::Core Qt5::Widgets Qt5::OpenGL Qt5::Xml Qt5::Svg)
 
-set(LOG_VIEWER_DEPS_LIBRARIES
-    robocup)
+set(LOG_VIEWER_DEPS_LIBRARIES robocup)
 
-set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES
-    )
+set(REFEREE_NODE_DEPS_SYSTEM_LIBRARIES)
 
-set(REFEREE_NODE_DEPS_LIBRARIES
-    robocup)
+set(REFEREE_NODE_DEPS_LIBRARIES robocup)
 
-#======================================================================
+# ======================================================================
 # Include and Linking
-#======================================================================
+# ======================================================================
 
 # ---- Robocup ----
 ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
-target_include_directories(robocup
-    SYSTEM PUBLIC
-    ${ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS})
-target_include_directories(robocup
-    PUBLIC
-    ${ROBOCUP_DEPS_INCLUDE_DIRS})
-target_link_libraries(robocup
-    PUBLIC
-    ${ROBOCUP_DEPS_SYSTEM_LIBRARIES}
-    ${ROBOCUP_DEPS_LIBRARIES})
+target_include_directories(robocup SYSTEM PUBLIC ${ROBOCUP_DEPS_SYSTEM_INCLUDE_DIRS})
+target_include_directories(robocup PUBLIC ${ROBOCUP_DEPS_INCLUDE_DIRS})
+target_link_libraries(robocup PUBLIC ${ROBOCUP_DEPS_SYSTEM_LIBRARIES} ${ROBOCUP_DEPS_LIBRARIES})
 
 ament_target_dependencies(robocup PUBLIC ament_index_cpp)
 
@@ -202,84 +177,73 @@ target_link_libraries(rj_vision_filter PRIVATE robocup)
 ament_target_dependencies(rj_vision_filter PUBLIC ament_index_cpp)
 
 # ---- Soccer ----
-target_link_libraries(soccer
-    PUBLIC
-    ${SOCCER_DEPS_SYSTEM_LIBRARIES}
-    ${SOCCER_DEPS_LIBRARIES})
+target_link_libraries(soccer PUBLIC ${SOCCER_DEPS_SYSTEM_LIBRARIES} ${SOCCER_DEPS_LIBRARIES})
 
 # ---- log_viewer ----
-target_link_libraries(log_viewer
-    PRIVATE
-    ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
-    ${LOG_VIEWER_DEPS_LIBRARIES})
+target_link_libraries(log_viewer PRIVATE ${LOG_VIEWER_DEPS_SYSTEM_LIBRARIES}
+                                         ${LOG_VIEWER_DEPS_LIBRARIES})
 
 # -- external_referee_node --
-target_link_libraries(external_referee_node
-        PRIVATE
-        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
-        ${REFEREE_NODE_DEPS_LIBRARIES})
+target_link_libraries(external_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+                                                    ${REFEREE_NODE_DEPS_LIBRARIES})
 
 # -- internal_referee_node --
-target_link_libraries(internal_referee_node
-        PRIVATE
-        ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
-        ${REFEREE_NODE_DEPS_LIBRARIES})
+target_link_libraries(internal_referee_node PRIVATE ${REFEREE_NODE_DEPS_SYSTEM_LIBRARIES}
+                                                    ${REFEREE_NODE_DEPS_LIBRARIES})
 
-#======================================================================
+# ======================================================================
 # Testing
-#======================================================================
-## Add a test runner target "test-soccer" to run all tests in this directory
+# ======================================================================
+# Add a test runner target "test-soccer" to run all tests in this directory
 if(BUILD_TESTING)
-    enable_testing()
-    add_subdirectory(testing)
+  enable_testing()
+  add_subdirectory(testing)
 
-    target_link_libraries(test-soccer PRIVATE robocup)
-    target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
+  target_link_libraries(test-soccer PRIVATE robocup)
+  target_link_libraries(test-soccer PRIVATE Qt5::Core Qt5::Widgets Qt5::Xml)
 
-    set(test_libs geometry2d_testing rj_param_utils_testing)
-    foreach(test_lib ${test_libs})
-        target_link_libraries(test-soccer PRIVATE
-            "-Wl,--whole-archive -L$<TARGET_FILE_DIR:${test_lib}> -l${test_lib} -Wl,--no-whole-archive")
-        target_link_libraries(test-soccer PRIVATE ${test_lib})
-    endforeach()
+  set(test_libs geometry2d_testing rj_param_utils_testing)
+  foreach(test_lib ${test_libs})
+    target_link_libraries(
+      test-soccer
+      PRIVATE
+        "-Wl,--whole-archive -L$<TARGET_FILE_DIR:${test_lib}> -l${test_lib} -Wl,--no-whole-archive")
+    target_link_libraries(test-soccer PRIVATE ${test_lib})
+  endforeach()
 
-    target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
-    add_dependencies(test-soccer googletest)
+  target_link_libraries(test-soccer PRIVATE ${GTEST_LIBRARIES})
+  add_dependencies(test-soccer googletest)
 endif()
 
-#======================================================================
+# ======================================================================
 # Packaging
-#======================================================================
-install(TARGETS robocup log_viewer internal_referee_node external_referee_node
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin)
+# ======================================================================
+install(
+  TARGETS robocup log_viewer internal_referee_node external_referee_node
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
 
-install(TARGETS
-            soccer
-            internal_referee_node
-            external_referee_node
-            rj_vision_filter
+install(TARGETS soccer internal_referee_node external_referee_node rj_vision_filter
         DESTINATION lib/${CMAKE_PROJECT_NAME})
 
-install(DIRECTORY
-        src/soccer/gameplay
-        DESTINATION share/${CMAKE_PROJECT_NAME}
-        FILES_MATCHING
-        PATTERN "*.py"
-        PATTERN "*.pbk")
+install(
+  DIRECTORY src/soccer/gameplay
+  DESTINATION share/${CMAKE_PROJECT_NAME}
+  FILES_MATCHING
+  PATTERN "*.py"
+  PATTERN "*.pbk")
 
-install(FILES
-        config/realShopField.xml
-        DESTINATION share/${CMAKE_PROJECT_NAME}/config
-        RENAME soccer-real.cfg)
+install(
+  FILES config/realShopField.xml
+  DESTINATION share/${CMAKE_PROJECT_NAME}/config
+  RENAME soccer-real.cfg)
 
-install(FILES
-        config/sim.xml
-        DESTINATION share/${CMAKE_PROJECT_NAME}/config
-        RENAME soccer-sim.cfg)
+install(
+  FILES config/sim.xml
+  DESTINATION share/${CMAKE_PROJECT_NAME}/config
+  RENAME soccer-sim.cfg)
 
 if(BUILD_TESTING)
-    install(TARGETS test-soccer
-            DESTINATION lib/${CMAKE_PROJECT_NAME})
+  install(TARGETS test-soccer DESTINATION lib/${CMAKE_PROJECT_NAME})
 endif()

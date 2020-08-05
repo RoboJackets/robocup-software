@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
-#include "WindowEvaluator.hpp"
-#include "SystemState.hpp"
+
 #include "Configuration.hpp"
+#include "SystemState.hpp"
+#include "WindowEvaluator.hpp"
 
 using namespace Geometry2d;
 
@@ -12,17 +13,17 @@ Configuration config;
 // the result.
 TEST(WindowEvaluator, eval_pt_to_seg) {
     Context context;
-    OurRobot* obstacleBot = context.state.self[0];
-    obstacleBot->mutable_state().visible = true;
-    obstacleBot->mutable_state().pose = Pose(1, 1, 0);
+    OurRobot* obstacle_bot = context.state.self[0];
+    obstacle_bot->mutable_state().visible = true;
+    obstacle_bot->mutable_state().pose = Pose(1, 1, 0);
 
-    Segment ourGoalSegment(
+    Segment our_goal_segment(
         Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
         Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
-    WindowEvaluator winEval(&context);
+    WindowEvaluator win_eval(&context);
     WindowingResult result =
-        winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
+        win_eval.eval_pt_to_seg(Point(1, 2), our_goal_segment);
 
     auto& windows = result.first;
     auto& best = result.second;
@@ -34,5 +35,5 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     EXPECT_EQ(1, windows.size());
 
     // the window should be our goal segment
-    EXPECT_EQ(ourGoalSegment, windows[0].segment);
+    EXPECT_EQ(our_goal_segment, windows[0].segment);
 }

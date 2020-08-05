@@ -20,18 +20,18 @@ CameraBall CameraBall::CombineBalls(const std::vector<CameraBall>& balls) {
 
     // Have to do the average like Ti + sum(Tn - Ti)/N
     // so that we aren't trying to add time_points. It's durations instead.
-    RJ::Time initTime = balls.front().getTimeCaptured();
-    RJ::Seconds timeAvg = RJ::Seconds(0);
-    Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
+    RJ::Time init_time = balls.front().getTimeCaptured();
+    RJ::Seconds time_avg = RJ::Seconds(0);
+    Geometry2d::Point pos_avg = Geometry2d::Point(0, 0);
 
     for (const CameraBall& cb : balls) {
-        timeAvg += RJ::Seconds(cb.getTimeCaptured() - initTime);
-        posAvg += cb.getPos();
+        time_avg += RJ::Seconds(cb.getTimeCaptured() - init_time);
+        pos_avg += cb.getPos();
     }
 
-    timeAvg /= balls.size();
-    posAvg /= balls.size();
+    time_avg /= balls.size();
+    pos_avg /= balls.size();
 
-    return CameraBall(initTime + timeAvg, posAvg);
+    return CameraBall(init_time + time_avg, pos_avg);
 }
 }  // namespace vision_filter

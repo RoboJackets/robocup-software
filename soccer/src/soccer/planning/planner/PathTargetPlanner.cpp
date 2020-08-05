@@ -28,20 +28,20 @@ Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     }
 
     auto command = std::get<PathTargetCommand>(request.motionCommand);
-    LinearMotionInstant goalInstant = command.goal;
-    Point goalPoint = goalInstant.position;
+    LinearMotionInstant goal_instant = command.goal;
+    Point goal_point = goal_instant.position;
 
     // Debug drawing
     if (request.debug_drawer != nullptr) {
         request.debug_drawer->drawCircle(
-            goalPoint, static_cast<float>(drawRadius), drawColor, drawLayer);
+            goal_point, static_cast<float>(drawRadius), drawColor, drawLayer);
     }
 
     AngleFunction angle_function = getAngleFunction(request);
 
     // Call into the sub-object to actually execute the plan.
     Trajectory trajectory = Replanner::CreatePlan(
-        Replanner::PlanParams{request.start, goalInstant, static_obstacles,
+        Replanner::PlanParams{request.start, goal_instant, static_obstacles,
                               dynamic_obstacles, request.constraints,
                               angle_function, RJ::Seconds(3.0)},
         std::move(previous));

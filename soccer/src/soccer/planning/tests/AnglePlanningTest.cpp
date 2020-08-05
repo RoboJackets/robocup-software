@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <fstream>
+
+#include <gtest/gtest.h>
 
 #include "planning/primitives/AnglePlanning.hpp"
 

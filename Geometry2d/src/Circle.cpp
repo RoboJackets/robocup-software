@@ -110,8 +110,8 @@ bool Circle::containsPoint(Point pt) const {
     return (pt - center).mag() < radius();
 }
 
-Point Circle::nearestPoint(Point P) const {
-    return (P - center).normalized() * _r + center;
+Point Circle::nearestPoint(Point p) const {
+    return (p - center).normalized() * _r + center;
 }
 
 bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {

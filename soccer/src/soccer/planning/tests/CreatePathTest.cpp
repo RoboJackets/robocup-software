@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-
 #include <iostream>
 #include <random>
+
+#include <gtest/gtest.h>
 
 #include "planning/primitives/CreatePath.hpp"
 #include "planning/tests/TestingUtils.hpp"
@@ -47,14 +47,14 @@ TEST(CreatePath, success_rate) {
     std::mt19937 gen(1337);
 
     int fails = 0;
-    constexpr int iterations = 1000;
-    constexpr int numTries = 300;
+    constexpr int kIterations = 1000;
+    constexpr int kNumTries = 300;
     RobotConstraints constraints;
 
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < kIterations; i++) {
         ShapeSet obstacles;
-        int numObstacles = TestingUtils::random(&gen, 2, 5);
-        for (int j = 0; j < numObstacles; j++) {
+        int num_obstacles = TestingUtils::random(&gen, 2, 5);
+        for (int j = 0; j < num_obstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
                 Point{TestingUtils::random(&gen, -2.0, 2.0),
                       TestingUtils::random(&gen, 2.0, 3.0)},
@@ -74,18 +74,18 @@ TEST(CreatePath, success_rate) {
         LinearMotionInstant goal{end_point, end_velocity};
 
         Trajectory path{{}};
-        for (int j = 0; j < numTries && path.empty(); j++) {
+        for (int j = 0; j < kNumTries && path.empty(); j++) {
             path = CreatePath::rrt(start, goal, constraints.mot, RJ::now(),
                                    obstacles);
             if (path.empty()) {
                 fails++;
             }
-            ASSERT_TRUE(j != numTries - 1);
+            ASSERT_TRUE(j != kNumTries - 1);
         }
         EXPECT_TRUE(TestingUtils::checkTrajectoryContinuous(path, constraints));
     }
 
-    double success_rate = (double)(iterations) / (iterations + fails);
+    double success_rate = (double)(kIterations) / (kIterations + fails);
     std::cout << "CreatePath::rrt() Success Rate: %.6f\n" << success_rate;
     EXPECT_GT(success_rate, 0.75);
 }

@@ -1,8 +1,9 @@
+#include <cmath>
+
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/Line.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include <cmath>
 
 namespace Geometry2d {
 
@@ -87,23 +88,23 @@ bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const {
 
     float common = std::sqrt(descr);
 
-    float xPart1 = det * dy;
-    float signDy = dy < 0 ? -1 : 1;
+    float x_part1 = det * dy;
+    float sign_dy = dy < 0 ? -1 : 1;
 
-    float xPart2 = signDy * dx * common;
+    float x_part2 = sign_dy * dx * common;
 
-    float yPart1 = -det * dx;
-    float yPart2 = std::fabs(dy) * common;
+    float y_part1 = -det * dx;
+    float y_part2 = std::fabs(dy) * common;
 
     if (p1 != nullptr) {
-        float x = xPart1 + xPart2;
-        float y = yPart1 + yPart2;
+        float x = x_part1 + x_part2;
+        float y = y_part1 + y_part2;
         *p1 = Point(x / dr2 + circle.center.x(), y / dr2 + circle.center.y());
     }
 
     if (p2 != nullptr) {
-        float x = xPart1 - xPart2;
-        float y = yPart1 - yPart2;
+        float x = x_part1 - x_part2;
+        float y = y_part1 - y_part2;
         *p2 = Point(x / dr2 + circle.center.x(), y / dr2 + circle.center.y());
     }
 

@@ -1,5 +1,7 @@
-#include <fcntl.h>
-#include <unistd.h>
+#include <cassert>
+#include <csignal>
+#include <cstdio>
+#include <cstring>
 
 #include <QApplication>
 #include <QDateTime>
@@ -8,13 +10,12 @@
 #include <QMessageBox>
 #include <QString>
 #include <ament_index_cpp/get_package_share_directory.hpp>
-#include <cassert>
-#include <csignal>
-#include <cstdio>
-#include <cstring>
+
+#include <fcntl.h>
 #include <gameplay/GameplayModule.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <ui/StyleSheetManager.hpp>
+#include <unistd.h>
 
 #include "Configuration.hpp"
 #include "ui/MainWindow.hpp"
@@ -62,16 +63,16 @@ int main(int argc, char* argv[]) {
 
     QApplication app(argc, argv);
 
-    bool blueTeam = true;
-    QString cfgFile;
-    vector<const char*> playDirs;
+    bool blue_team = true;
+    QString cfg_file;
+    vector<const char*> play_dirs;
     bool sim = false;
     bool log = true;
-    QString radioFreq;
-    string playbookFile;
+    QString radio_freq;
+    string playbook_file;
     bool noref = false;
-    bool defendPlus = false;
-    string readLogFile;
+    bool defend_plus = false;
+    string read_log_file;
 
     for (int i = 1; i < argc; ++i) {
         const char* var = argv[i];
@@ -83,9 +84,9 @@ int main(int argc, char* argv[]) {
         if (strcmp(var, "--help") == 0) {
             usage(argv[0]);
         } else if (strcmp(var, "-y") == 0) {
-            blueTeam = false;
+            blue_team = false;
         } else if (strcmp(var, "-b") == 0) {
-            blueTeam = true;
+            blue_team = true;
         } else if (strcmp(var, "-sim") == 0) {
             sim = true;
         } else if (strcmp(var, "-nolog") == 0) {
@@ -97,7 +98,7 @@ int main(int argc, char* argv[]) {
             }
 
             i++;
-            radioFreq = argv[i];
+            radio_freq = argv[i];
         } else if (strcmp(var, "-c") == 0) {
             if (i + 1 >= argc) {
                 printf("no config file specified after -c\n");
@@ -105,7 +106,7 @@ int main(int argc, char* argv[]) {
             }
 
             i++;
-            cfgFile = argv[i];
+            cfg_file = argv[i];
         } else if (strcmp(var, "-s") == 0) {
             if (i + 1 >= argc) {
                 printf("no seed specified after -s\n");
@@ -120,14 +121,14 @@ int main(int argc, char* argv[]) {
                 usage(argv[0]);
             }
 
-            playbookFile = argv[++i];
+            playbook_file = argv[++i];
         } else if (strcmp(var, "-vlog") == 0) {
             if (i + 1 >= argc) {
                 printf("no log file specified after -vlog\n");
                 usage(argv[0]);
             }
 
-            readLogFile = argv[++i];
+            read_log_file = argv[++i];
         } else if (strcmp(var, "-noref") == 0) {
             noref = true;
         } else if (strcmp(var, "-defend") == 0) {
@@ -137,7 +138,7 @@ int main(int argc, char* argv[]) {
             }
             i++;
             if (strcmp(argv[i], "plus") == 0) {
-                defendPlus = true;
+                defend_plus = true;
             } else if (strcmp(argv[i], "minus") != 0) {
                 printf("Invalid option for defendX\n");
                 usage(argv[0]);
@@ -157,13 +158,13 @@ int main(int argc, char* argv[]) {
     srand48(seed);
 
     // Default config file name
-    if (cfgFile.isNull()) {
+    if (cfg_file.isNull()) {
         const auto* filename = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
         const auto share_dir =
             ament_index_cpp::get_package_share_directory("rj_robocup");
         const std::string config_path = share_dir + "/config/" + filename;
 
-        cfgFile = QString::fromStdString(config_path);
+        cfg_file = QString::fromStdString(config_path);
     }
 
     std::shared_ptr<Configuration> config =
@@ -172,24 +173,24 @@ int main(int argc, char* argv[]) {
     // ROS2 init
     rclcpp::init(argc, argv);
 
-    auto processor = std::make_unique<Processor>(sim, blueTeam, readLogFile);
+    auto processor = std::make_unique<Processor>(sim, blue_team, read_log_file);
 
     Context* context = processor->context();
     context->game_settings.simulation = sim;
-    context->game_settings.requestBlueTeam = blueTeam;
-    context->game_settings.defendPlusX = defendPlus;
+    context->game_settings.requestBlueTeam = blue_team;
+    context->game_settings.defendPlusX = defend_plus;
     context->game_settings.requestGoalieID = 0;
 
     // If we're reading a log file, we should start off paused.
-    context->game_settings.paused = !readLogFile.empty();
+    context->game_settings.paused = !read_log_file.empty();
 
     // Load config file
     QString error;
-    if (!config->load(cfgFile, error)) {
+    if (!config->load(cfg_file, error)) {
         QMessageBox::critical(
             nullptr, "Soccer",
             QString("Can't read initial configuration %1:\n%2")
-                .arg(cfgFile, error));
+                .arg(cfg_file, error));
     }
 
     auto win = std::make_unique<MainWindow>(processor.get(), !noref);
@@ -202,12 +203,12 @@ int main(int argc, char* argv[]) {
         cerr << "No ./run/logs/ directory - not writing log file" << endl;
     } else if (!log) {
         cerr << "Not writing log file" << endl;
-    } else if (readLogFile.empty()) {
-        QString logFile =
+    } else if (read_log_file.empty()) {
+        QString log_file =
             ApplicationRunDirectory().filePath("./logs/") +
             QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
-        if (!processor->openLog(logFile)) {
-            printf("Failed to open %s: %m\n", (const char*)logFile.toLatin1());
+        if (!processor->openLog(log_file)) {
+            printf("Failed to open %s: %m\n", (const char*)log_file.toLatin1());
         }
     }
 
@@ -220,8 +221,8 @@ int main(int argc, char* argv[]) {
              ->isInitialized()) {  // Wait until processor finishes initializing
     }
 
-    if (!playbookFile.empty())
-        processor->gameplayModule()->loadPlaybook(playbookFile);
+    if (!playbook_file.empty())
+        processor->gameplayModule()->loadPlaybook(playbook_file);
 
     // Sets the initial stylesheet for the application
     // based on the environment variable "SOCCER_THEME"

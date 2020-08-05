@@ -14,98 +14,99 @@ namespace Planning {
 
 REGISTER_CONFIGURABLE(CollectPlanner);
 
-ConfigDouble* CollectPlanner::_ballSpeedApproachDirectionCutoff;
-ConfigDouble* CollectPlanner::_approachAccelScalePercent;
-ConfigDouble* CollectPlanner::_controlAccelScalePercent;
-ConfigDouble* CollectPlanner::_approachDistTarget;
-ConfigDouble* CollectPlanner::_touchDeltaSpeed;
-ConfigDouble* CollectPlanner::_velocityControlScale;
-ConfigDouble* CollectPlanner::_distCutoffToControl;
-ConfigDouble* CollectPlanner::_velCutoffToControl;
-ConfigDouble* CollectPlanner::_distCutoffToApproach;
-ConfigDouble* CollectPlanner::_stopDistScale;
-ConfigDouble* CollectPlanner::_targetPointAveragingGain;
+ConfigDouble* CollectPlanner::ball_speed_approach_direction_cutoff;
+ConfigDouble* CollectPlanner::approach_accel_scale_percent;
+ConfigDouble* CollectPlanner::control_accel_scale_percent;
+ConfigDouble* CollectPlanner::approach_dist_target;
+ConfigDouble* CollectPlanner::touch_delta_speed;
+ConfigDouble* CollectPlanner::velocity_control_scale;
+ConfigDouble* CollectPlanner::dist_cutoff_to_control;
+ConfigDouble* CollectPlanner::vel_cutoff_to_control;
+ConfigDouble* CollectPlanner::dist_cutoff_to_approach;
+ConfigDouble* CollectPlanner::stop_dist_scale;
+ConfigDouble* CollectPlanner::target_point_averaging_gain;
 
 void CollectPlanner::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _ballSpeedApproachDirectionCutoff = new ConfigDouble(
+    ball_speed_approach_direction_cutoff = new ConfigDouble(
         cfg, "Capture/Collect/ballSpeedApproachDirectionCutoff", 0.1);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _approachAccelScalePercent =
+    approach_accel_scale_percent =
         new ConfigDouble(cfg, "Capture/Collect/approachAccelScalePercent", 0.7);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _controlAccelScalePercent =
+    control_accel_scale_percent =
         new ConfigDouble(cfg, "Capture/Collect/controlAccelScalePercent", 0.8);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _approachDistTarget =
+    approach_dist_target =
         new ConfigDouble(cfg, "Capture/Collect/approachDistTarget", 0.04);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _touchDeltaSpeed =
+    touch_delta_speed =
         new ConfigDouble(cfg, "Capture/Collect/touchDeltaSpeed", 0.1);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _velocityControlScale =
+    velocity_control_scale =
         new ConfigDouble(cfg, "Capture/Collect/velocityControlScale", 1);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _distCutoffToControl =
+    dist_cutoff_to_control =
         new ConfigDouble(cfg, "Capture/Collect/distCutoffToControl", 0.05);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _velCutoffToControl =
+    vel_cutoff_to_control =
         new ConfigDouble(cfg, "Capture/Collect/velCutoffToControl", 1);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _distCutoffToApproach =
+    dist_cutoff_to_approach =
         new ConfigDouble(cfg, "Capture/Collect/distCutoffToApproach", 0.3);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _stopDistScale = new ConfigDouble(cfg, "Capture/Collect/stopDistScale", 1);
+    stop_dist_scale = new ConfigDouble(cfg, "Capture/Collect/stopDistScale", 1);
     // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
-    _targetPointAveragingGain =
+    target_point_averaging_gain =
         new ConfigDouble(cfg, "Capture/Collect/targetPointAveragingGain", 0.8);
 }
 
-Trajectory CollectPlanner::plan(const PlanRequest& planRequest) {
-    BallState ball = planRequest.world_state->ball;
+Trajectory CollectPlanner::plan(const PlanRequest& plan_request) {
+    BallState ball = plan_request.world_state->ball;
 
-    const RJ::Time curTime = planRequest.start.stamp;
+    const RJ::Time cur_time = plan_request.start.stamp;
 
-    const auto& command = std::get<CollectCommand>(planRequest.motionCommand);
+    const auto& command = std::get<CollectCommand>(plan_request.motionCommand);
 
     // Start state for specified robot
-    RobotInstant startInstant = planRequest.start;
-    RobotInstant partialStartInstant = startInstant;
+    RobotInstant start_instant = plan_request.start;
+    RobotInstant partial_start_instant = start_instant;
 
     // All the max velocity / acceleration constraints for translation /
     // rotation
-    RobotConstraints robotConstraints = planRequest.constraints;
-    MotionConstraints& motionConstraints = robotConstraints.mot;
+    RobotConstraints robot_constraints = plan_request.constraints;
+    MotionConstraints& motion_constraints = robot_constraints.mot;
 
     // List of obstacles
     ShapeSet obstacles;
-    std::vector<DynamicObstacle> dynamicObstacles;
-    FillObstacles(planRequest, &obstacles, &dynamicObstacles, false);
+    std::vector<DynamicObstacle> dynamic_obstacles;
+    FillObstacles(plan_request, &obstacles, &dynamic_obstacles, false);
 
     // The small beginning part of the previous path
-    Trajectory partialPath;
+    Trajectory partial_path;
 
     // The is from the original robot position to the ball
     // We only care about the replan lead time from the current position in the
     // path to the intercept point
-    RJ::Seconds timeIntoPreviousPath;
+    RJ::Seconds time_into_previous_path;
 
     // How much of the future we are devoting to the partial path
     // 0ms unless we have a partial path, then it's a partialReplanLeadTime
-    RJ::Seconds partialPathTime = 0ms;
+    RJ::Seconds partial_path_time = 0ms;
 
     // How much of the previous path to steal
-    const RJ::Seconds partialReplanLeadTime(Replanner::partialReplanLeadTime());
+    const RJ::Seconds partial_replan_lead_time(
+        Replanner::partialReplanLeadTime());
 
     // Check and see if we should reset the entire thing if we are super far off
     // course or the ball state changes significantly
-    checkSolutionValidity(ball, startInstant);
+    checkSolutionValidity(ball, start_instant);
 
     // Change start instant to be the partial path end instead of the robot
     // current location if we actually have already calculated a path the frame
     // before
     if (!previous.empty()) {
-        timeIntoPreviousPath = curTime - previous.begin_time();
+        time_into_previous_path = cur_time - previous.begin_time();
 
         // Make sure we still have time in the path to replan and correct
         // since it's likely that the old path is slightly off
@@ -114,15 +115,16 @@ Trajectory CollectPlanner::plan(const PlanRequest& planRequest) {
         // TimeNow     EndPartialPrevPath  FinalTargetPoint
         //                     |-----------------|
         //          Amount of the path we can change this iteration
-        if (timeIntoPreviousPath <
-                previous.duration() - 2 * partialReplanLeadTime &&
-            timeIntoPreviousPath > 0ms) {
+        if (time_into_previous_path <
+                previous.duration() - 2 * partial_replan_lead_time &&
+            time_into_previous_path > 0ms) {
             RJ::Time new_start = previous.begin_time();
             RJ::Time new_end =
-                new_start + timeIntoPreviousPath + partialReplanLeadTime;
-            partialPath = previous.subTrajectory(new_start, new_end);
-            partialPathTime = partialPath.duration() - timeIntoPreviousPath;
-            partialStartInstant = partialPath.last();
+                new_start + time_into_previous_path + partial_replan_lead_time;
+            partial_path = previous.subTrajectory(new_start, new_end);
+            partial_path_time =
+                partial_path.duration() - time_into_previous_path;
+            partial_start_instant = partial_path.last();
         }
     }
 
@@ -131,41 +133,41 @@ Trajectory CollectPlanner::plan(const PlanRequest& planRequest) {
         averageBallVel = ball.velocity;
         averageBallVelInitialized = true;
     } else {
-        averageBallVel = *_targetPointAveragingGain * averageBallVel +
-                         (1 - *_targetPointAveragingGain) * ball.velocity;
+        averageBallVel = *target_point_averaging_gain * averageBallVel +
+                         (1 - *target_point_averaging_gain) * ball.velocity;
     }
 
     // Approach direction is the direction we move towards the ball and through
     // it
-    if (ball.velocity.mag() < *_ballSpeedApproachDirectionCutoff) {
+    if (ball.velocity.mag() < *ball_speed_approach_direction_cutoff) {
         // Move directly to the ball
-        approachDirection = (ball.position - startInstant.position()).norm();
+        approachDirection = (ball.position - start_instant.position()).norm();
     } else {
         // Approach the ball from behind
         approachDirection = -averageBallVel.norm();
     }
 
     // Check if we should transition to control from approach
-    processStateTransition(ball, startInstant);
+    processStateTransition(ball, start_instant);
 
     switch (currentState) {
         // Moves from the current location to the slow point of approach
         case CourseApproach:
-            previous = courseApproach(planRequest, startInstant, obstacles,
-                                      dynamicObstacles);
+            previous = courseApproach(plan_request, start_instant, obstacles,
+                                      dynamic_obstacles);
             break;
         // Moves from the slow point of approach to just before point of contact
         case FineApproach:
-            previous = fineApproach(planRequest, startInstant, obstacles,
-                                    dynamicObstacles);
+            previous = fineApproach(plan_request, start_instant, obstacles,
+                                    dynamic_obstacles);
             break;
         // Move through the ball and stop
         case Control:
-            previous = control(planRequest, partialStartInstant, partialPath,
-                               obstacles, dynamicObstacles);
+            previous = control(plan_request, partial_start_instant,
+                               partial_path, obstacles, dynamic_obstacles);
             break;
         default:
-            previous = invalid(planRequest, obstacles, dynamicObstacles);
+            previous = invalid(plan_request, obstacles, dynamic_obstacles);
             break;
     }
 
@@ -173,13 +175,13 @@ Trajectory CollectPlanner::plan(const PlanRequest& planRequest) {
 }
 
 void CollectPlanner::checkSolutionValidity(BallState ball, RobotInstant start) {
-    bool nearBall = (ball.position - start.position()).mag() <
-                    *_distCutoffToApproach + *_distCutoffToControl;
+    bool near_ball = (ball.position - start.position()).mag() <
+                     *dist_cutoff_to_approach + *dist_cutoff_to_control;
 
     // Check if we need to go back into approach
     //
     // See if we are not near the ball and both almost stopped
-    if (!nearBall && currentState == Control) {
+    if (!near_ball && currentState == Control) {
         currentState = CourseApproach;
         approachDirectionCreated = false;
         controlPathCreated = false;
@@ -187,15 +189,16 @@ void CollectPlanner::checkSolutionValidity(BallState ball, RobotInstant start) {
 }
 
 void CollectPlanner::processStateTransition(BallState ball,
-                                            RobotInstant startInstant) {
+                                            RobotInstant start_instant) {
     // Do the transitions
     double dist =
-        (startInstant.position() - ball.position).mag() - Robot_MouthRadius;
-    double speedDiff = (startInstant.linear_velocity() - averageBallVel).mag() -
-                       *_touchDeltaSpeed;
+        (start_instant.position() - ball.position).mag() - Robot_MouthRadius;
+    double speed_diff =
+        (start_instant.linear_velocity() - averageBallVel).mag() -
+        *touch_delta_speed;
 
     // If we are in range to the slow dist
-    if (dist < *_approachDistTarget + Robot_MouthRadius &&
+    if (dist < *approach_dist_target + Robot_MouthRadius &&
         currentState == CourseApproach) {
         currentState = FineApproach;
     }
@@ -203,17 +206,17 @@ void CollectPlanner::processStateTransition(BallState ball,
     // If we are close enough to the target point near the ball
     // and almost the same speed we want, start slowing down
     // TODO(#1518): Check for ball sense?
-    if (dist < *_distCutoffToControl && speedDiff < *_velCutoffToControl &&
+    if (dist < *dist_cutoff_to_control && speed_diff < *vel_cutoff_to_control &&
         currentState == FineApproach) {
         currentState = Control;
     }
 }
 
 Trajectory CollectPlanner::courseApproach(
-    const PlanRequest& planRequest, RobotInstant start,
-    const Geometry2d::ShapeSet& staticObstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles) {
-    BallState ball = planRequest.world_state->ball;
+    const PlanRequest& plan_request, RobotInstant start,
+    const Geometry2d::ShapeSet& static_obstacles,
+    const std::vector<DynamicObstacle>& dynamic_obstacles) {
+    BallState ball = plan_request.world_state->ball;
 
     // There are two paths that get combined together
     //
@@ -231,31 +234,31 @@ Trajectory CollectPlanner::courseApproach(
     // is touching the ball
 
     // Setup targets for path planner
-    Point targetSlowPos =
+    Point target_slow_pos =
         ball.position -
-        (*_approachDistTarget + Robot_MouthRadius) * approachDirection;
-    Point targetSlowVel =
-        averageBallVel + approachDirection * *_touchDeltaSpeed;
+        (*approach_dist_target + Robot_MouthRadius) * approachDirection;
+    Point target_slow_vel =
+        averageBallVel + approachDirection * *touch_delta_speed;
 
     // Force the path to use the same target if it doesn't move too much
     if (!pathCoarseTargetInitialized ||
-        (pathCourseTarget - targetSlowPos).mag() >
-            (*_approachDistTarget - *_distCutoffToControl) / 2) {
-        pathCourseTarget = targetSlowPos;
+        (pathCourseTarget - target_slow_pos).mag() >
+            (*approach_dist_target - *dist_cutoff_to_control) / 2) {
+        pathCourseTarget = target_slow_pos;
     }
 
-    LinearMotionInstant targetSlow{pathCourseTarget, targetSlowVel};
+    LinearMotionInstant target_slow{pathCourseTarget, target_slow_vel};
 
     Replanner::PlanParams params{start,
-                                 targetSlow,
-                                 staticObstacles,
-                                 dynamicObstacles,
-                                 planRequest.constraints,
+                                 target_slow,
+                                 static_obstacles,
+                                 dynamic_obstacles,
+                                 plan_request.constraints,
                                  AngleFns::facePoint(ball.position)};
-    Trajectory coarsePath = Replanner::CreatePlan(params, previous);
+    Trajectory coarse_path = Replanner::CreatePlan(params, previous);
 
-    if (planRequest.debug_drawer != nullptr) {
-        planRequest.debug_drawer->drawLine(
+    if (plan_request.debug_drawer != nullptr) {
+        plan_request.debug_drawer->drawLine(
             Segment(start.position(),
                     start.position() +
                         Point::direction(AngleFns::facePoint(ball.position)(
@@ -263,18 +266,18 @@ Trajectory CollectPlanner::courseApproach(
     }
 
     // Build a path from now to the slow point
-    coarsePath.setDebugText("course");
+    coarse_path.setDebugText("course");
 
-    return coarsePath;
+    return coarse_path;
 }
 
 Trajectory CollectPlanner::fineApproach(
-    const PlanRequest& planRequest, RobotInstant startInstant,
+    const PlanRequest& plan_request, RobotInstant start_instant,
     const Geometry2d::ShapeSet& /* staticObstacles */,
     const std::vector<DynamicObstacle>& /* dynamicObstacles */) {
-    BallState ball = planRequest.world_state->ball;
-    RobotConstraints robotConstraintsHit = planRequest.constraints;
-    MotionConstraints& motionConstraintsHit = robotConstraintsHit.mot;
+    BallState ball = plan_request.world_state->ball;
+    RobotConstraints robot_constraints_hit = plan_request.constraints;
+    MotionConstraints& motion_constraints_hit = robot_constraints_hit.mot;
 
     // There are two paths that get combined together
     //
@@ -292,47 +295,49 @@ Trajectory CollectPlanner::fineApproach(
     // is touching the ball
 
     // Setup targets for path planner
-    Point targetHitPos = ball.position - Robot_MouthRadius * approachDirection;
-    Point targetHitVel = averageBallVel + approachDirection * *_touchDeltaSpeed;
+    Point target_hit_pos =
+        ball.position - Robot_MouthRadius * approachDirection;
+    Point target_hit_vel =
+        averageBallVel + approachDirection * *touch_delta_speed;
 
-    LinearMotionInstant targetHit{targetHitPos, targetHitVel};
+    LinearMotionInstant target_hit{target_hit_pos, target_hit_vel};
 
     // Decrease accel at the end so we more smoothly touch the ball
-    motionConstraintsHit.maxAcceleration *= *_approachAccelScalePercent;
+    motion_constraints_hit.maxAcceleration *= *approach_accel_scale_percent;
     // Prevent a last minute accel at the end if the approach dist allows for
     // acceleration in the trapezoid
-    motionConstraintsHit.maxSpeed =
-        std::min(targetHitVel.mag(), motionConstraintsHit.maxSpeed);
+    motion_constraints_hit.maxSpeed =
+        std::min(target_hit_vel.mag(), motion_constraints_hit.maxSpeed);
 
-    Trajectory pathHit =
-        CreatePath::simple(startInstant.linear_motion(), targetHit,
-                           planRequest.constraints.mot, startInstant.stamp);
+    Trajectory path_hit =
+        CreatePath::simple(start_instant.linear_motion(), target_hit,
+                           plan_request.constraints.mot, start_instant.stamp);
 
-    pathHit.setDebugText("fine");
-    PlanAngles(&pathHit, startInstant, AngleFns::facePoint(ball.position),
-               planRequest.constraints.rot);
-    pathHit.stamp(RJ::now());
+    path_hit.setDebugText("fine");
+    PlanAngles(&path_hit, start_instant, AngleFns::facePoint(ball.position),
+               plan_request.constraints.rot);
+    path_hit.stamp(RJ::now());
 
-    if (planRequest.debug_drawer != nullptr) {
-        planRequest.debug_drawer->drawLine(
-            Segment(startInstant.position(),
-                    startInstant.position() +
+    if (plan_request.debug_drawer != nullptr) {
+        plan_request.debug_drawer->drawLine(
+            Segment(start_instant.position(),
+                    start_instant.position() +
                         Point::direction(AngleFns::facePoint(ball.position)(
-                            startInstant.linear_motion(),
-                            startInstant.heading(), nullptr))));
+                            start_instant.linear_motion(),
+                            start_instant.heading(), nullptr))));
     }
 
-    return pathHit;
+    return path_hit;
 }
 
 Trajectory CollectPlanner::control(
-    const PlanRequest& planRequest, RobotInstant start,
+    const PlanRequest& plan_request, RobotInstant start,
     const Trajectory& /* partialPath */,
-    const Geometry2d::ShapeSet& staticObstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles) {
-    BallState ball = planRequest.world_state->ball;
-    RobotConstraints robotConstraints = planRequest.constraints;
-    MotionConstraints& motionConstraints = robotConstraints.mot;
+    const Geometry2d::ShapeSet& static_obstacles,
+    const std::vector<DynamicObstacle>& dynamic_obstacles) {
+    BallState ball = plan_request.world_state->ball;
+    RobotConstraints robot_constraints = plan_request.constraints;
+    MotionConstraints& motion_constraints = robot_constraints.mot;
 
     // Only plan the path once and run through it
     // Otherwise it will basically push the ball across the field
@@ -351,54 +356,54 @@ Trajectory CollectPlanner::control(
     //
     // If the ball is moving towards us (like receiving a pass) just move
     // forward at touchDeltaSpeed
-    double currentSpeed = averageBallVel.mag() + *_touchDeltaSpeed;
+    double current_speed = averageBallVel.mag() + *touch_delta_speed;
 
-    double velocityScale = *_velocityControlScale;
+    double velocity_scale = *velocity_control_scale;
 
     // Moving at us
     if (averageBallVel.angleBetween((ball.position - start.position())) >
         3.14 / 2) {
-        currentSpeed = *_touchDeltaSpeed;
-        velocityScale = 0;
+        current_speed = *touch_delta_speed;
+        velocity_scale = 0;
     }
 
-    motionConstraints.maxAcceleration *= *_controlAccelScalePercent;
-    motionConstraints.maxSpeed =
-        std::min(currentSpeed, motionConstraints.maxSpeed);
+    motion_constraints.maxAcceleration *= *control_accel_scale_percent;
+    motion_constraints.maxSpeed =
+        std::min(current_speed, motion_constraints.maxSpeed);
 
     // Using the current velocity
     // Calculate stopping distance given the acceleration
-    double maxAccel = motionConstraints.maxAcceleration;
+    double max_accel = motion_constraints.maxAcceleration;
 
-    double nonZeroVelTimeDelta = *_approachDistTarget / *_touchDeltaSpeed;
+    double non_zero_vel_time_delta = *approach_dist_target / *touch_delta_speed;
 
     // Assuming const accel going to zero velocity
     // speed / accel gives time to stop
     // speed / 2 is average speed over entire operation
-    double stoppingDist =
-        *_approachDistTarget + currentSpeed * currentSpeed / (2 * maxAccel);
+    double stopping_dist =
+        *approach_dist_target + current_speed * current_speed / (2 * max_accel);
 
     // Move through the ball some distance
     // The initial part will be at a constant speed, then it will decelerate to
     // 0 m/s
-    double distFromBall = *_stopDistScale * stoppingDist;
+    double dist_from_ball = *stop_dist_scale * stopping_dist;
 
-    Point targetPos =
-        start.position() +
-        distFromBall * (ball.position - start.position() +
-                        velocityScale * averageBallVel * nonZeroVelTimeDelta)
-                           .norm();
-    LinearMotionInstant target{targetPos};
+    Point target_pos =
+        start.position() + dist_from_ball * (ball.position - start.position() +
+                                             velocity_scale * averageBallVel *
+                                                 non_zero_vel_time_delta)
+                                                .norm();
+    LinearMotionInstant target{target_pos};
 
     // Try to use the RRTPlanner to generate the path first
     // It reaches the target better for some reason
-    std::vector<Point> startEndPoints{start.position(), target.position};
+    std::vector<Point> start_end_points{start.position(), target.position};
     Trajectory path =
-        CreatePath::rrt(start.linear_motion(), target, motionConstraints,
-                        start.stamp, staticObstacles, dynamicObstacles);
+        CreatePath::rrt(start.linear_motion(), target, motion_constraints,
+                        start.stamp, static_obstacles, dynamic_obstacles);
 
-    if (planRequest.debug_drawer != nullptr) {
-        planRequest.debug_drawer->drawLine(
+    if (plan_request.debug_drawer != nullptr) {
+        plan_request.debug_drawer->drawLine(
             Segment(
                 start.position(),
                 start.position() + (target.position - start.position()) * 10),
@@ -413,16 +418,17 @@ Trajectory CollectPlanner::control(
 
     // Make sure that when the path ends, we don't end up spinning around
     // because we hit go past the ball position at the time of path creation
-    Point facePt =
+    Point face_pt =
         start.position() + 10 * (target.position - start.position()).norm();
 
-    PlanAngles(&path, start, AngleFns::facePoint(facePt), robotConstraints.rot);
+    PlanAngles(&path, start, AngleFns::facePoint(face_pt),
+               robot_constraints.rot);
 
-    if (planRequest.debug_drawer != nullptr) {
-        planRequest.debug_drawer->drawLine(
+    if (plan_request.debug_drawer != nullptr) {
+        plan_request.debug_drawer->drawLine(
             Segment(start.position(),
                     start.position() +
-                        Point::direction(AngleFns::facePoint(facePt)(
+                        Point::direction(AngleFns::facePoint(face_pt)(
                             start.linear_motion(), start.heading(), nullptr))));
     }
 
@@ -431,23 +437,24 @@ Trajectory CollectPlanner::control(
 }
 
 Trajectory CollectPlanner::invalid(
-    const PlanRequest& planRequest, const Geometry2d::ShapeSet& staticObstacles,
-    const std::vector<DynamicObstacle>& dynamicObstacles) {
+    const PlanRequest& plan_request,
+    const Geometry2d::ShapeSet& static_obstacles,
+    const std::vector<DynamicObstacle>& dynamic_obstacles) {
     std::cout << "WARNING: Invalid state in collect planner. Restarting"
               << std::endl;
     currentState = CourseApproach;
 
     // Stop movement until next frame since it's the safest option
     // programmatically
-    LinearMotionInstant target{planRequest.start.position(), Point()};
+    LinearMotionInstant target{plan_request.start.position(), Point()};
 
     Replanner::PlanParams params{
-        planRequest.start,
+        plan_request.start,
         target,
-        staticObstacles,
-        dynamicObstacles,
-        planRequest.constraints,
-        AngleFns::facePoint(planRequest.world_state->ball.position)};
+        static_obstacles,
+        dynamic_obstacles,
+        plan_request.constraints,
+        AngleFns::facePoint(plan_request.world_state->ball.position)};
     Trajectory path = Replanner::CreatePlan(params, previous);
     path.setDebugText("Invalid state in collect");
 

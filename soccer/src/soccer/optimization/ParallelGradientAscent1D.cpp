@@ -1,6 +1,8 @@
 #include "ParallelGradientAscent1D.hpp"
-#include <math.h>
+
 #include <algorithm>
+
+#include <math.h>
 
 ParallelGradientAscent1D::ParallelGradientAscent1D(
     ParallelGradient1DConfig* config)
@@ -18,17 +20,17 @@ ParallelGradientAscent1D::ParallelGradientAscent1D(
  */
 void ParallelGradientAscent1D::execute() {
     // While any are not done
-    bool continueExecution = true;
+    bool continue_execution = true;
 
-    while (continueExecution) {
+    while (continue_execution) {
         // Default to false unless any still need to work
-        continueExecution = false;
+        continue_execution = false;
 
         // Execute a step for each one
-        for (auto& GA1D : GA1Ds) {
-            if (GA1D.continueExecution()) {
-                GA1D.singleStep();
-                continueExecution = true;
+        for (auto& g_a1_d : GA1Ds) {
+            if (g_a1_d.continueExecution()) {
+                g_a1_d.singleStep();
+                continue_execution = true;
             }
         }
 
@@ -52,14 +54,14 @@ void ParallelGradientAscent1D::execute() {
  * Returns a list of all X values for each max in ascending order
  */
 std::vector<float> ParallelGradientAscent1D::getMaxXValues() {
-    std::vector<float> xVals;
-    xVals.reserve(GA1Ds.size());
+    std::vector<float> x_vals;
+    x_vals.reserve(GA1Ds.size());
 
-    for (auto& GA1D : GA1Ds) {
-        xVals.push_back(GA1D.getXValue());
+    for (auto& g_a1_d : GA1Ds) {
+        x_vals.push_back(g_a1_d.getXValue());
     }
 
-    return xVals;
+    return x_vals;
 }
 
 /**
@@ -69,8 +71,8 @@ std::vector<float> ParallelGradientAscent1D::getMaxValues() {
     std::vector<float> vals;
     vals.reserve(GA1Ds.size());
 
-    for (auto& GA1D : GA1Ds) {
-        vals.push_back(GA1D.getValue());
+    for (auto& g_a1_d : GA1Ds) {
+        vals.push_back(g_a1_d.getValue());
     }
 
     return vals;

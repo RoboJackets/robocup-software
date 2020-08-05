@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
@@ -13,32 +14,32 @@ DEFINE_NS_FLOAT64(
     "Max number of seconds without a measurement before the object is deleted")
 using kalman_robot::PARAM_max_time_outside_vision;
 
-KalmanRobot::KalmanRobot(unsigned int cameraID, RJ::Time creationTime,
-                         CameraRobot initMeasurement,
-                         const WorldRobot& previousWorldRobot)
-    : cameraID(cameraID),
+KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
+                         CameraRobot init_measurement,
+                         const WorldRobot& previous_world_robot)
+    : cameraID(camera_id),
       health(filter::health::PARAM_init),
-      lastUpdateTime(creationTime),
-      lastPredictTime(creationTime),
+      lastUpdateTime(creation_time),
+      lastPredictTime(creation_time),
       unwrapThetaCtr(0),
-      robotID(initMeasurement.getRobotID()),
+      robotID(init_measurement.getRobotID()),
       previousMeasurements(kick::detector::PARAM_slow_kick_hist_length) {
-    Geometry2d::Pose initPose = initMeasurement.getPose();
-    Geometry2d::Twist initTwist(0, 0, 0);
+    Geometry2d::Pose init_pose = init_measurement.getPose();
+    Geometry2d::Twist init_twist(0, 0, 0);
 
-    if (previousWorldRobot.getIsValid()) {
-        initTwist.linear() = previousWorldRobot.getVel();
-        initTwist.angular() = previousWorldRobot.getOmega();
+    if (previous_world_robot.getIsValid()) {
+        init_twist.linear() = previous_world_robot.getVel();
+        init_twist.angular() = previous_world_robot.getOmega();
     }
 
-    filter = KalmanFilter3D(initPose, initTwist);
+    filter = KalmanFilter3D(init_pose, init_twist);
 
-    previousMeasurements.push_back(initMeasurement);
-    previousTheta = initTwist.angular();
+    previousMeasurements.push_back(init_measurement);
+    previousTheta = init_twist.angular();
 }
 
-void KalmanRobot::predict(RJ::Time currentTime) {
-    lastPredictTime = currentTime;
+void KalmanRobot::predict(RJ::Time current_time) {
+    lastPredictTime = current_time;
 
     // Decrement but make sure you don't go too low
     health =
@@ -47,34 +48,34 @@ void KalmanRobot::predict(RJ::Time currentTime) {
     filter.predict();
 }
 
-void KalmanRobot::predictAndUpdate(RJ::Time currentTime,
-                                   CameraRobot updateRobot) {
-    lastPredictTime = currentTime;
-    lastUpdateTime = currentTime;
+void KalmanRobot::predictAndUpdate(RJ::Time current_time,
+                                   CameraRobot update_robot) {
+    lastPredictTime = current_time;
+    lastUpdateTime = current_time;
 
     // Increment but make sure you don't go too high
     health =
         std::min(health + filter::health::PARAM_inc, filter::health::PARAM_max);
 
     // Keep last X camera observations in list for kick detection and filtering
-    previousMeasurements.push_back(updateRobot);
+    previousMeasurements.push_back(update_robot);
 
     // Unwrap theta so we have a continuous heading
-    double curTheta = updateRobot.getTheta();
+    double cur_theta = update_robot.getTheta();
 
     // See if it went below -pi
     // Note: PI/2 is used to give a good buffer on either side
-    if (previousTheta < -M_PI_2 && curTheta > M_PI_2) {
+    if (previousTheta < -M_PI_2 && cur_theta > M_PI_2) {
         unwrapThetaCtr--;
         // Went above pi
-    } else if (previousTheta > M_PI_2 && curTheta < -M_PI_2) {
+    } else if (previousTheta > M_PI_2 && cur_theta < -M_PI_2) {
         unwrapThetaCtr++;
     }
 
-    previousTheta = curTheta;
+    previousTheta = cur_theta;
 
     filter.predictWithUpdate(
-        {updateRobot.getPos(), curTheta + unwrapThetaCtr * 2 * M_PI});
+        {update_robot.getPos(), cur_theta + unwrapThetaCtr * 2 * M_PI});
 }
 
 bool KalmanRobot::isUnhealthy() const {

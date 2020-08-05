@@ -1,8 +1,9 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 
-#include <Configuration.hpp>
 #include <optional>
 #include <vector>
+
+#include <Configuration.hpp>
 
 #include "planning/primitives/AnglePlanning.hpp"
 #include "planning/primitives/CreatePath.hpp"
@@ -14,62 +15,62 @@ namespace Planning {
 
 REGISTER_CONFIGURABLE(EscapeObstaclesPathPlanner);
 
-ConfigDouble* EscapeObstaclesPathPlanner::_stepSize;
-ConfigDouble* EscapeObstaclesPathPlanner::_goalChangeThreshold;
+ConfigDouble* EscapeObstaclesPathPlanner::step_size;
+ConfigDouble* EscapeObstaclesPathPlanner::goal_change_threshold;
 
 void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
-    _stepSize = new ConfigDouble(
+    step_size = new ConfigDouble(
         cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
-    _goalChangeThreshold = new ConfigDouble(
+    goal_change_threshold = new ConfigDouble(
         cfg, "PathPlanner/EscapeObstaclesPathPlanner/goalChangeThreshold",
         Robot_Radius);
 }
 
-Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
-    const RobotInstant& startInstant = planRequest.start;
-    const auto& motionConstraints = planRequest.constraints.mot;
+Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
+    const RobotInstant& start_instant = plan_request.start;
+    const auto& motion_constraints = plan_request.constraints.mot;
 
     Geometry2d::ShapeSet obstacles;
-    FillObstacles(planRequest, &obstacles, nullptr, false, nullptr);
+    FillObstacles(plan_request, &obstacles, nullptr, false, nullptr);
 
-    if (!obstacles.hit(startInstant.position()) ||
-        std::holds_alternative<EmptyCommand>(planRequest.motionCommand)) {
+    if (!obstacles.hit(start_instant.position()) ||
+        std::holds_alternative<EmptyCommand>(plan_request.motionCommand)) {
         // Keep moving, but slow down the current velocity. This allows us to
         // keep continuity when we have short disruptions in planners (i.e.
         // single frame delay).
         // TODO(#1464): When the assignment delay is fixed, remove this horrible
         // hack by using Twist::Zero() instead of startInstant.velocity * 0.8
         Trajectory result{
-            {RobotInstant{startInstant.pose, startInstant.velocity * 0.8,
-                          startInstant.stamp}}};
+            {RobotInstant{start_instant.pose, start_instant.velocity * 0.8,
+                          start_instant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
         result.setDebugText("[ESCAPE " +
-                            std::to_string(planRequest.motionCommand.index()) +
+                            std::to_string(plan_request.motionCommand.index()) +
                             "]");
         return result;
     }
 
-    std::optional<Point> optPrevPt;
-    const Point unblocked =
-        findNonBlockedGoal(startInstant.position(), optPrevPt, obstacles, 300);
+    std::optional<Point> opt_prev_pt;
+    const Point unblocked = findNonBlockedGoal(start_instant.position(),
+                                               opt_prev_pt, obstacles, 300);
 
     LinearMotionInstant goal{unblocked, Point()};
-    auto result = CreatePath::simple(startInstant.linear_motion(), goal,
-                                     motionConstraints, startInstant.stamp);
-    PlanAngles(&result, startInstant, AngleFns::tangent,
-               planRequest.constraints.rot);
+    auto result = CreatePath::simple(start_instant.linear_motion(), goal,
+                                     motion_constraints, start_instant.stamp);
+    PlanAngles(&result, start_instant, AngleFns::tangent,
+               plan_request.constraints.rot);
     result.stamp(RJ::now());
     return std::move(result);
 }
 
 Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
-    Point goal, std::optional<Point> prevGoal, const ShapeSet& obstacles,
-    int maxItr) {
+    Point goal, std::optional<Point> prev_goal, const ShapeSet& obstacles,
+    int max_itr) {
     if (obstacles.hit(goal)) {
-        auto stateSpace = std::make_shared<RoboCupStateSpace>(
+        auto state_space = std::make_shared<RoboCupStateSpace>(
             Field_Dimensions::Current_Dimensions, obstacles);
-        RRT::Tree<Point> rrt(stateSpace, Point::hash, 2);
+        RRT::Tree<Point> rrt(state_space, Point::hash, 2);
         rrt.setStartState(goal);
         // note: we don't set goal state because we're not looking for a
         // particular point, just something that isn't blocked
@@ -77,28 +78,28 @@ Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
 
         // The starting point is in an obstacle, extend the tree until we find
         // an unobstructed point
-        Point newGoal;
-        for (int i = 0; i < maxItr; ++i) {
+        Point new_goal;
+        for (int i = 0; i < max_itr; ++i) {
             // extend towards a random point
-            RRT::Node<Point>* newNode = rrt.grow();
+            RRT::Node<Point>* new_node = rrt.grow();
 
             // if the new point is not blocked, it becomes the new goal
-            if (newNode && !obstacles.hit(newNode->state())) {
-                newGoal = newNode->state();
+            if (new_node && !obstacles.hit(new_node->state())) {
+                new_goal = new_node->state();
                 break;
             }
         }
 
-        if (!prevGoal || obstacles.hit(*prevGoal)) return newGoal;
+        if (!prev_goal || obstacles.hit(*prev_goal)) return new_goal;
 
         // Only use this newly-found point if it's closer to the desired goal by
         // at least a certain threshold
-        float oldDist = (*prevGoal - goal).mag();
-        float newDist = (newGoal - goal).mag();
-        if (newDist + *_goalChangeThreshold < oldDist) {
-            return newGoal;
+        float old_dist = (*prev_goal - goal).mag();
+        float new_dist = (new_goal - goal).mag();
+        if (new_dist + *goal_change_threshold < old_dist) {
+            return new_goal;
         } else {
-            return *prevGoal;
+            return *prev_goal;
         }
     }
 

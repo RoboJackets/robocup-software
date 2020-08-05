@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <fstream>
+
+#include <gtest/gtest.h>
 
 #include "planning/primitives/PathSmoothing.hpp"
 #include "planning/primitives/VelocityProfiling.hpp"

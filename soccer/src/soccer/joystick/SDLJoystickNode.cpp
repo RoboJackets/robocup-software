@@ -1,7 +1,8 @@
 #include "SDLJoystickNode.hpp"
 
-#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <iostream>
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 namespace joystick {
 SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {

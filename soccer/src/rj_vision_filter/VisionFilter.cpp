@@ -1,5 +1,6 @@
-#include <Robot.hpp>
 #include <iostream>
+
+#include <Robot.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>

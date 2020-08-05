@@ -1,8 +1,9 @@
 #include "GradientAscent1D.hpp"
 
 #include <cmath>
-#include <rj_common/Utils.hpp>
 #include <tuple>
+
+#include <rj_common/Utils.hpp>
 
 GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
     currentx = config->startX;
@@ -10,10 +11,10 @@ GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
 
     // (*(config->f))
     // value of the function pointer in the config which is also a pointer
-    std::tuple<float, float> funcOutput = (*(config->f))(currentx);
+    std::tuple<float, float> func_output = (*(config->f))(currentx);
 
-    currentVal = std::get<0>(funcOutput);
-    currentdx = std::get<1>(funcOutput);
+    currentVal = std::get<0>(func_output);
+    currentdx = std::get<1>(func_output);
     previousdx = std::get<1>((*(config->f))(previousx));
 
     temperature = 1;
@@ -22,15 +23,15 @@ GradientAscent1D::GradientAscent1D(Gradient1DConfig* config) : config(config) {
 }
 
 bool GradientAscent1D::singleStep() {
-    float newX = nextX();
-    std::tuple<float, float> funcOutput = (*(config->f))(newX);
+    float new_x = nextX();
+    std::tuple<float, float> func_output = (*(config->f))(new_x);
 
     previousx = currentx;
     previousdx = currentdx;
 
-    currentx = newX;
-    currentdx = std::get<1>(funcOutput);
-    currentVal = std::get<0>(funcOutput);
+    currentx = new_x;
+    currentdx = std::get<1>(func_output);
+    currentVal = std::get<0>(func_output);
 
     // Decrease temperature when derivative flips sign
     if (signum(previousdx) != signum(currentdx)) {

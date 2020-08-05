@@ -29,11 +29,11 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
     // TODO(#1525): Make these config variables.
-    constexpr int max_iterations = 100;
-    constexpr RJ::Seconds expected_dt{0.05};
+    constexpr int kMaxIterations = 100;
+    constexpr RJ::Seconds kExpectedDt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
-    RJ::Seconds dt = std::max(expected_dt, time_left / max_iterations);
+    RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
 
     const auto& start_hits = obstacles.hitSet(cursor.value().position());
     while (cursor.has_value()) {
@@ -84,11 +84,11 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
     // something is probably wrong, but we'll still handle it (just scale dt
     // accordingly).
     // TODO(#1525): Make these config variables.
-    constexpr int max_iterations = 100;
-    constexpr RJ::Seconds expected_dt{0.05};
+    constexpr int kMaxIterations = 100;
+    constexpr RJ::Seconds kExpectedDt{0.05};
 
     RJ::Seconds time_left{trajectory.end_time() - start_time};
-    RJ::Seconds dt = std::max(expected_dt, time_left / max_iterations);
+    RJ::Seconds dt = std::max(kExpectedDt, time_left / kMaxIterations);
 
     // The time of the earliest hit, if there is one. This is needed so that
     // we get the _first_ time we hit an obstacle, not necessarily the time we

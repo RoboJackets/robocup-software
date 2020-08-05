@@ -19,10 +19,10 @@ TEST(WorldBall, one_ball) {
     RJ::Time t = RJ::now();
     Geometry2d::Point p = Geometry2d::Point(1, 1);
     CameraBall b = CameraBall(t, p);
-    int cID = 1;
+    int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb = KalmanBall(cID, t, b, w);
+    KalmanBall kb = KalmanBall(c_id, t, b, w);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb);
@@ -54,11 +54,11 @@ TEST(WorldBall, two_ball) {
     Geometry2d::Point p2 = Geometry2d::Point(2, 2);
     CameraBall b1 = CameraBall(t, p1);
     CameraBall b2 = CameraBall(t, p2);
-    int cID = 1;
+    int c_id = 1;
     WorldBall w;
 
-    KalmanBall kb1 = KalmanBall(cID, t, b1, w);
-    KalmanBall kb2 = KalmanBall(cID, t, b2, w);
+    KalmanBall kb1 = KalmanBall(c_id, t, b1, w);
+    KalmanBall kb2 = KalmanBall(c_id, t, b2, w);
 
     std::list<KalmanBall> kbl;
     kbl.push_back(kb1);

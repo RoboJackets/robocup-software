@@ -1,6 +1,7 @@
 #include "RRTUtil.hpp"
 
 #include <array>
+
 #include <rrt/planning/Path.hpp>
 
 #include "DebugDrawer.hpp"
@@ -14,41 +15,41 @@
 namespace Planning {
 REGISTER_CONFIGURABLE(RRTConfig)
 
-ConfigBool* RRTConfig::EnableRRTDebugDrawing;
-ConfigDouble* RRTConfig::StepSize;
-ConfigDouble* RRTConfig::GoalBias;
-ConfigDouble* RRTConfig::WaypointBias;
+ConfigBool* RRTConfig::enable_rrt_debug_drawing;
+ConfigDouble* RRTConfig::step_size;
+ConfigDouble* RRTConfig::goal_bias;
+ConfigDouble* RRTConfig::waypoint_bias;
 
-ConfigInt* RRTConfig::MinIterations;
-ConfigInt* RRTConfig::MaxIterations;
+ConfigInt* RRTConfig::min_iterations;
+ConfigInt* RRTConfig::max_iterations;
 
 using std::vector;
 using namespace Geometry2d;
 
 void RRTConfig::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
-    EnableRRTDebugDrawing =
+    enable_rrt_debug_drawing =
         new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
     // NOLINTNEXTLINE
-    StepSize = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
+    step_size = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
     // NOLINTNEXTLINE
-    GoalBias = new ConfigDouble(
+    goal_bias = new ConfigDouble(
         cfg, "PathPlanner/RRT/GoalBias", 0.3,
         "Value from 0 to 1 that determines what proportion of the time the RRT "
         "will grow towards the goal rather than towards a random point");
     // NOLINTNEXTLINE
-    WaypointBias = new ConfigDouble(
+    waypoint_bias = new ConfigDouble(
         cfg, "PathPlanner/RRT/WayPointBias", 0.5,
         "Value from 0 to 1 that determines the portion of the time that the "
         "RRT will"
         " grow towards given waypoints rather than towards a random point");
     // NOLINTNEXTLINE
-    MinIterations =
+    min_iterations =
         new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
                       "The minimum number of iterations for running RRT");
     // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
     // //NOLINTNEXTLINE
-    MaxIterations =
+    max_iterations =
         new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
                       "The maximum number of iterations for running RRT");
 }
@@ -56,66 +57,66 @@ void RRTConfig::createConfiguration(Configuration* cfg) {
 ConfigBool EnableExpensiveRRTDebugDrawing();
 
 void DrawRRT(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer,
-             unsigned shellID) {
+             unsigned shell_id) {
     // Draw each robot's rrts in a different color
     // Note: feel free to change these, they're completely arbitrary
     static const std::array<QColor, 6> colors = {
         QColor("green"), QColor("blue"),   QColor("yellow"),
         QColor("red"),   QColor("purple"), QColor("orange")};
-    QColor color = colors[shellID % colors.size()];
+    QColor color = colors[shell_id % colors.size()];
 
     for (const auto& node : rrt.allNodes()) {
         if (node.parent() != nullptr) {
             debug_drawer->drawLine(
                 Segment(node.state(), node.parent()->state()), color,
-                QString("RobotRRT%1").arg(shellID));
+                QString("RobotRRT%1").arg(shell_id));
         }
     }
 }
 
-void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
-               unsigned shellID) {
-    DrawRRT(biRRT.startTree(), debug_drawer, shellID);
-    DrawRRT(biRRT.goalTree(), debug_drawer, shellID);
+void DrawBiRRT(const RRT::BiRRT<Point>& bi_rrt, DebugDrawer* debug_drawer,
+               unsigned shell_id) {
+    DrawRRT(bi_rrt.startTree(), debug_drawer, shell_id);
+    DrawRRT(bi_rrt.goalTree(), debug_drawer, shell_id);
 }
 
 vector<Point> runRRTHelper(Point start, Point goal, const ShapeSet& obstacles,
-                           const vector<Point>& waypoints, bool straightLine) {
+                           const vector<Point>& waypoints, bool straight_line) {
     auto state_space = std::make_shared<RoboCupStateSpace>(
         Field_Dimensions::Current_Dimensions, obstacles);
-    RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
-    biRRT.setStartState(start);
-    biRRT.setGoalState(goal);
+    RRT::BiRRT<Point> bi_rrt(state_space, Point::hash, 2);
+    bi_rrt.setStartState(start);
+    bi_rrt.setGoalState(goal);
 
-    if (straightLine) {
+    if (straight_line) {
         // TODO(#1511): Replace this with a check that a straight line doesn't
         // hit any static obstacles. Set the step size to be the distance
         // between the start and goal.
-        biRRT.setStepSize(state_space->distance(start, goal));
+        bi_rrt.setStepSize(state_space->distance(start, goal));
         // Plan straight toward the goal.
-        biRRT.setGoalBias(1);
+        bi_rrt.setGoalBias(1);
         // Try up to five times. If unsuccessful after five tries, there
         // probably doesn't exist
         // a straight path.
-        biRRT.setMinIterations(0);
-        biRRT.setMaxIterations(5);
+        bi_rrt.setMinIterations(0);
+        bi_rrt.setMaxIterations(5);
     } else {
-        biRRT.setStepSize(*RRTConfig::StepSize);
-        biRRT.setMinIterations(*RRTConfig::MinIterations);
-        biRRT.setMaxIterations(*RRTConfig::MaxIterations);
-        biRRT.setGoalBias(*RRTConfig::GoalBias);
+        bi_rrt.setStepSize(*RRTConfig::step_size);
+        bi_rrt.setMinIterations(*RRTConfig::min_iterations);
+        bi_rrt.setMaxIterations(*RRTConfig::max_iterations);
+        bi_rrt.setGoalBias(*RRTConfig::goal_bias);
 
         if (!waypoints.empty()) {
-            biRRT.setWaypoints(waypoints);
-            biRRT.setWaypointBias(*RRTConfig::WaypointBias);
+            bi_rrt.setWaypoints(waypoints);
+            bi_rrt.setWaypointBias(*RRTConfig::waypoint_bias);
         }
     }
 
-    bool success = biRRT.run();
+    bool success = bi_rrt.run();
     if (!success) {
         return {};
     }
-    vector<Point> points = biRRT.getPath();
+    vector<Point> points = bi_rrt.getPath();
     RRT::SmoothPath(points, *state_space);
     return std::move(points);
 }

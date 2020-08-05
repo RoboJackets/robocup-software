@@ -1,6 +1,7 @@
-#include <Geometry2d/Point.hpp>
 #include <algorithm>
 #include <cmath>
+
+#include <Geometry2d/Point.hpp>
 #include <rj_vision_filter/kick/detector/SlowKickDetector.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -22,12 +23,12 @@ DEFINE_NS_FLOAT64(
     "Max angle difference between velocity vector and robot heading.")
 using namespace kick::detector;
 
-bool SlowKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
-                                 const std::vector<WorldRobot>& yellowRobots,
-                                 const std::vector<WorldRobot>& blueRobots,
-                                 KickEvent* kickEvent) {
+bool SlowKickDetector::addRecord(RJ::Time calc_time, const WorldBall& ball,
+                                 const std::vector<WorldRobot>& yellow_robots,
+                                 const std::vector<WorldRobot>& blue_robots,
+                                 KickEvent* kick_event) {
     // Keep it a certain length
-    stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
+    stateHistory.emplace_back(calc_time, ball, yellow_robots, blue_robots);
     if (stateHistory.size() >
         static_cast<size_t>(kick::detector::PARAM_slow_kick_hist_length)) {
         stateHistory.pop_front();
@@ -41,48 +42,48 @@ bool SlowKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
 
     // Make sure all the balls are valid
     // Otherwise we can't do anything
-    bool allValid =
+    bool all_valid =
         std::all_of(stateHistory.begin(), stateHistory.end(),
                     [](VisionState& v) { return v.ball.getIsValid(); });
 
-    if (!allValid) {
+    if (!all_valid) {
         return false;
     }
 
-    return detectKick(kickEvent);
+    return detectKick(kick_event);
 }
 
-bool SlowKickDetector::detectKick(KickEvent* kickEvent) {
+bool SlowKickDetector::detectKick(KickEvent* kick_event) {
     // Find all the robots who have enough samples
     // Cut out any that are too far
     // Test validators on all of them
 
-    std::vector<WorldBall> ballList(stateHistory.size());
+    std::vector<WorldBall> ball_list(stateHistory.size());
     for (int i = 0; i < stateHistory.size(); i++) {
-        ballList.at(i) = stateHistory.at(i).ball;
+        ball_list.at(i) = stateHistory.at(i).ball;
     }
 
     // Check all robots if they have enough measurements
     for (int i = 0; i < stateHistory.at(0).yellowRobots.size(); i++) {
-        bool allValid = std::all_of(
+        bool all_valid = std::all_of(
             stateHistory.begin(), stateHistory.end(),
             [i](VisionState& v) { return v.yellowRobots.at(i).getIsValid(); });
 
         // If not all the robots of this specific id are valid
         // check the next one
-        if (!allValid) {
+        if (!all_valid) {
             continue;
         }
 
-        std::vector<WorldRobot> robotList(stateHistory.size());
+        std::vector<WorldRobot> robot_list(stateHistory.size());
         for (int j = 0; j < stateHistory.size(); j++) {
-            robotList.at(j) = stateHistory.at(j).yellowRobots.at(i);
+            robot_list.at(j) = stateHistory.at(j).yellowRobots.at(i);
         }
 
         // Valid kick robot
         // Just take this and return a kick event
-        if (checkAllValidators(robotList, ballList)) {
-            *kickEvent =
+        if (checkAllValidators(robot_list, ball_list)) {
+            *kick_event =
                 KickEvent(stateHistory.at(0).calcTime,
                           stateHistory.at(0).yellowRobots.at(i), stateHistory);
 
@@ -93,25 +94,25 @@ bool SlowKickDetector::detectKick(KickEvent* kickEvent) {
     // Check all robots if they have enough measurements
     // Same as above, need a better way to do this
     for (int i = 0; i < stateHistory.at(0).blueRobots.size(); i++) {
-        bool allValid = std::all_of(
+        bool all_valid = std::all_of(
             stateHistory.begin(), stateHistory.end(),
             [i](VisionState& v) { return v.blueRobots.at(i).getIsValid(); });
 
         // If not all the robots of this specific id are valid
         // check the next one
-        if (!allValid) {
+        if (!all_valid) {
             continue;
         }
 
-        std::vector<WorldRobot> robotList(stateHistory.size());
+        std::vector<WorldRobot> robot_list(stateHistory.size());
         for (int j = 0; j < stateHistory.size(); j++) {
-            robotList.at(j) = stateHistory.at(j).blueRobots.at(i);
+            robot_list.at(j) = stateHistory.at(j).blueRobots.at(i);
         }
 
         // Valid kick robot
         // Just take this and return a kick event
-        if (checkAllValidators(robotList, ballList)) {
-            *kickEvent =
+        if (checkAllValidators(robot_list, ball_list)) {
+            *kick_event =
                 KickEvent(stateHistory.at(0).calcTime,
                           stateHistory.at(0).blueRobots.at(i), stateHistory);
 
@@ -142,14 +143,14 @@ bool SlowKickDetector::distanceValidator(const std::vector<WorldRobot>& robot,
         dist.at(i) = (robot.at(i).getPos() - ball.at(i).getPos()).mag();
     }
 
-    int numClose = std::count_if(dist.begin(), dist.end(), [](double i) {
+    int num_close = std::count_if(dist.begin(), dist.end(), [](double i) {
         return i < PARAM_slow_one_robot_within_dist;
     });
-    int numFar = std::count_if(dist.begin(), dist.end(), [](double i) {
+    int num_far = std::count_if(dist.begin(), dist.end(), [](double i) {
         return i > PARAM_slow_any_robot_past_dist;
     });
 
-    return numClose == 1 && numFar > 0;
+    return num_close == 1 && num_far > 0;
 }
 
 bool SlowKickDetector::velocityValidator(
@@ -164,11 +165,11 @@ bool SlowKickDetector::velocityValidator(
                     PARAM_vision_loop_dt;
     }
 
-    bool allAbove = std::all_of(vel.begin(), vel.end(), [](double i) {
+    bool all_above = std::all_of(vel.begin(), vel.end(), [](double i) {
         return i > PARAM_slow_min_ball_speed;
     });
 
-    return allAbove;
+    return all_above;
 }
 
 bool SlowKickDetector::distanceIncreasingValidator(
@@ -198,10 +199,10 @@ bool SlowKickDetector::inFrontValidator(const std::vector<WorldRobot>& robot,
         Geometry2d::Point normal = Geometry2d::Point(
             cos(robot.at(i).getTheta()), sin(robot.at(i).getTheta()));
 
-        Geometry2d::Point robotToBall =
+        Geometry2d::Point robot_to_ball =
             ball.at(i).getPos() - robot.at(i).getPos();
 
-        double angle = normal.angleBetween(robotToBall);
+        double angle = normal.angleBetween(robot_to_ball);
 
         if (angle > PARAM_slow_max_kick_angle) {
             return false;

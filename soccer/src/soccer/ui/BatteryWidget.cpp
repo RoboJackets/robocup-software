@@ -1,4 +1,5 @@
 #include "BatteryWidget.hpp"
+
 #include <cmath>
 
 BatteryWidget::BatteryWidget(QWidget* parent, Qt::WindowFlags f)
@@ -9,9 +10,9 @@ BatteryWidget::BatteryWidget(QWidget* parent, Qt::WindowFlags f)
 
 float BatteryWidget::batteryLevel() const { return _batteryLevel; }
 
-void BatteryWidget::setBatteryLevel(float batteryLevel) {
-    if (std::fabs(batteryLevel - _batteryLevel) > 0.01) {
-        _batteryLevel = batteryLevel;
+void BatteryWidget::setBatteryLevel(float battery_level) {
+    if (std::fabs(battery_level - _batteryLevel) > 0.01) {
+        _batteryLevel = battery_level;
         if (_batteryLevel > 1) {
             _batteryLevel = 1;
         }
@@ -32,44 +33,44 @@ void BatteryWidget::paintEvent(QPaintEvent* /*event*/) {
 
     painter.setPen(QPen(color, 2.5));
 
-    float minPadding = 2;
+    float min_padding = 2;
     float h2w = 2;
-    float w =
-        std::fmin(width() - minPadding * 2, (height() - minPadding * 2) * h2w);
+    float w = std::fmin(width() - min_padding * 2,
+                        (height() - min_padding * 2) * h2w);
     float h = w / h2w;
-    QRectF battBounds((width() - w) / 2, (height() - h) / 2, w, h);
+    QRectF batt_bounds((width() - w) / 2, (height() - h) / 2, w, h);
 
     //  how big the positive terminal is relative to the main part of the
     //  battery
-    float nubRatio = 0.14;
+    float nub_ratio = 0.14;
 
     //  draw main part of battery
     painter.setBrush(Qt::NoBrush);
-    QRectF mainBox =
-        battBounds.adjusted(0, 0, -battBounds.width() * nubRatio, 0);
-    painter.drawRoundedRect(mainBox, 1, 1);
+    QRectF main_box =
+        batt_bounds.adjusted(0, 0, -batt_bounds.width() * nub_ratio, 0);
+    painter.drawRoundedRect(main_box, 1, 1);
 
     painter.setBrush(color);
 
     //  nub (positive terminal of battery)
-    QRectF nubBox = battBounds.adjusted(battBounds.width() * (1 - nubRatio),
-                                        battBounds.height() / 4, 0,
-                                        -battBounds.height() / 4);
-    painter.drawRoundedRect(nubBox, 0.5, 0.5);
+    QRectF nub_box = batt_bounds.adjusted(batt_bounds.width() * (1 - nub_ratio),
+                                          batt_bounds.height() / 4, 0,
+                                          -batt_bounds.height() / 4);
+    painter.drawRoundedRect(nub_box, 0.5, 0.5);
 
     //  12.5%, 37.5%, 62.5%, 87.5% are the midpoints of the 4 bars
     //  we draw the number of bars corresponding to the point that this battery
     //  level is closest to
-    int barCount = ceil(_batteryLevel * 4 - 0.24);
+    int bar_count = ceil(_batteryLevel * 4 - 0.24);
 
     //  draw bars to show battery level
     float pad = 3;
-    float barSpacing = 2;
-    float barWidth = (mainBox.width() - pad * 2 - barSpacing * 3) / 4.0;
+    float bar_spacing = 2;
+    float bar_width = (main_box.width() - pad * 2 - bar_spacing * 3) / 4.0;
     painter.setPen(Qt::NoPen);
-    for (int i = 0; i < barCount; i++) {
-        painter.drawRect(
-            QRectF(mainBox.left() + pad + (barSpacing + barWidth) * i,
-                   mainBox.top() + pad, barWidth, mainBox.height() - pad * 2));
+    for (int i = 0; i < bar_count; i++) {
+        painter.drawRect(QRectF(
+            main_box.left() + pad + (bar_spacing + bar_width) * i,
+            main_box.top() + pad, bar_width, main_box.height() - pad * 2));
     }
 }

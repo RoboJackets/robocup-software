@@ -27,17 +27,17 @@ void GrSimCommunicator::run() {
 }
 
 void GrSimCommunicator::placeBall(QPointF pos,
-                                  Geometry2d::TransformMatrix _screenToWorld) {
-    grSim_Packet simPacket;
+                                  Geometry2d::TransformMatrix screen_to_world) {
+    grSim_Packet sim_packet;
     grSim_BallReplacement* ball_replace =
-        simPacket.mutable_replacement()->mutable_ball();
+        sim_packet.mutable_replacement()->mutable_ball();
 
-    ball_replace->set_x((_screenToWorld * pos).x());
-    ball_replace->set_y((_screenToWorld * pos).y());
+    ball_replace->set_x((screen_to_world * pos).x());
+    ball_replace->set_y((screen_to_world * pos).y());
     ball_replace->set_vx(0);
     ball_replace->set_vy(0);
 
-    sendSimCommand(simPacket);
+    sendSimCommand(sim_packet);
 }
 
 void GrSimCommunicator::sendSimCommand(const grSim_Packet& cmd) {

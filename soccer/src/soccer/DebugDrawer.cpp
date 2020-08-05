@@ -1,4 +1,5 @@
 #include "DebugDrawer.hpp"
+
 #include "LogUtils.hpp"
 
 int DebugDrawer::findDebugLayer(QString layer) {
@@ -60,19 +61,19 @@ void DebugDrawer::drawArc(const Geometry2d::Arc& arc, const QColor& qc,
 
 void DebugDrawer::drawShape(const std::shared_ptr<Geometry2d::Shape>& obs,
                             const QColor& color, const QString& layer) {
-    std::shared_ptr<Geometry2d::Circle> circObs =
+    std::shared_ptr<Geometry2d::Circle> circ_obs =
         std::dynamic_pointer_cast<Geometry2d::Circle>(obs);
-    std::shared_ptr<Geometry2d::Polygon> polyObs =
+    std::shared_ptr<Geometry2d::Polygon> poly_obs =
         std::dynamic_pointer_cast<Geometry2d::Polygon>(obs);
-    std::shared_ptr<Geometry2d::CompositeShape> compObs =
+    std::shared_ptr<Geometry2d::CompositeShape> comp_obs =
         std::dynamic_pointer_cast<Geometry2d::CompositeShape>(obs);
-    if (circObs)
-        drawCircle(circObs->center, circObs->radius(), color, layer);
-    else if (polyObs)
-        drawPolygon(polyObs->vertices, color, layer);
-    else if (compObs) {
+    if (circ_obs)
+        drawCircle(circ_obs->center, circ_obs->radius(), color, layer);
+    else if (poly_obs)
+        drawPolygon(poly_obs->vertices, color, layer);
+    else if (comp_obs) {
         for (const std::shared_ptr<Geometry2d::Shape>& obs :
-             compObs->subshapes())
+             comp_obs->subshapes())
             drawShape(obs, color, layer);
     }
 }

@@ -1,8 +1,7 @@
 #include "PacketConvert.hpp"
 
-#include <rj_common/status.h>
-
 #include <Geometry2d/Util.hpp>
+#include <rj_common/status.h>
 #include <rj_common/time.hpp>
 
 #include "RobotIntent.hpp"
@@ -124,47 +123,47 @@ namespace ConvertTx {
 void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
             int shell, rtp::RobotTxMessage* rtp_message) {
     rtp_message->uid = shell;
-    rtp::ControlMessage controlMessage{};
+    rtp::ControlMessage control_message{};
 
-    controlMessage.bodyX = static_cast<int16_t>(
+    control_message.bodyX = static_cast<int16_t>(
         setpoint.xvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    controlMessage.bodyY = static_cast<int16_t>(
+    control_message.bodyY = static_cast<int16_t>(
         setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    controlMessage.bodyW = static_cast<int16_t>(
+    control_message.bodyW = static_cast<int16_t>(
         setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    controlMessage.dribbler =
+    control_message.dribbler =
         std::clamp(static_cast<uint16_t>(intent.dvelocity) * 2, 0, 255);
 
-    controlMessage.shootMode =
+    control_message.shootMode =
         intent.shoot_mode == RobotIntent::ShootMode::CHIP;
-    controlMessage.kickStrength = intent.kcstrength;
+    control_message.kickStrength = intent.kcstrength;
 
     switch (intent.trigger_mode) {
         case RobotIntent::TriggerMode::STAND_DOWN:
-            controlMessage.triggerMode = 0;
+            control_message.triggerMode = 0;
             break;
         case RobotIntent::TriggerMode::IMMEDIATE:
-            controlMessage.triggerMode = 1;
+            control_message.triggerMode = 1;
             break;
         case RobotIntent::TriggerMode::ON_BREAK_BEAM:
-            controlMessage.triggerMode = 2;
+            control_message.triggerMode = 2;
             break;
     }
 
     switch (intent.song) {
         case RobotIntent::Song::STOP:
-            controlMessage.song = 0;
+            control_message.song = 0;
             break;
         case RobotIntent::Song::CONTINUE:
-            controlMessage.song = 1;
+            control_message.song = 1;
             break;
         case RobotIntent::Song::FIGHT_SONG:
-            controlMessage.song = 2;
+            control_message.song = 2;
             break;
     }
 
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-union-access)
-    rtp_message->message.controlMessage = controlMessage;
+    rtp_message->message.controlMessage = control_message;
 
     rtp_message->messageType = rtp::RobotTxMessage::ControlMessageType;
 }

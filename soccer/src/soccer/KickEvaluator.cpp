@@ -1,10 +1,11 @@
 #include "KickEvaluator.hpp"
 
-#include <Geometry2d/Util.hpp>
 #include <algorithm>
 #include <cmath>
-#include <rj_common/Utils.hpp>
 #include <vector>
+
+#include <Geometry2d/Util.hpp>
+#include <rj_common/Utils.hpp>
 
 REGISTER_CONFIGURABLE(KickEvaluator)
 
@@ -36,13 +37,14 @@ void KickEvaluator::createConfiguration(Configuration* cfg) {
     start_x_offset = new ConfigDouble(cfg, "KickEvaluator/start_x_offset", 0.1);
 }
 
-KickEvaluator::KickEvaluator(SystemState* systemState) : system(systemState) {}
+KickEvaluator::KickEvaluator(SystemState* system_state)
+    : system(system_state) {}
 
 KickResults KickEvaluator::eval_pt_to_pt(Point origin, Point target,
-                                         float targetWidth) {
+                                         float target_width) {
     Point dir = (target - origin).perpCCW().normalized();
-    Segment seg = Segment{target + dir * (targetWidth / 2),
-                          target - dir * (targetWidth / 2)};
+    Segment seg = Segment{target + dir * (target_width / 2),
+                          target - dir * (target_width / 2)};
 
     return eval_pt_to_seg(origin, seg);
 }
@@ -71,111 +73,112 @@ KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
 
 KickResults KickEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     Point center = target.center();
-    float targetWidth = get_target_angle(origin, target);
+    float target_width = get_target_angle(origin, target);
 
     // Polar bot locations
     // <Dist, Angle>
-    vector<tuple<float, float> > botLocations =
+    vector<tuple<float, float> > bot_locations =
         convert_robots_to_polar(origin, center);
 
     // Convert polar to mean / std_dev / Vertical Scales
-    vector<float> botMeans;
-    vector<float> botStDevs;
-    vector<float> botVertScales;
+    vector<float> bot_means;
+    vector<float> bot_st_devs;
+    vector<float> bot_vert_scales;
 
-    botMeans.reserve(botLocations.size());
-    botStDevs.reserve(botLocations.size());
-    botVertScales.reserve(botLocations.size());
+    bot_means.reserve(bot_locations.size());
+    bot_st_devs.reserve(bot_locations.size());
+    bot_vert_scales.reserve(bot_locations.size());
 
-    float distPastTarget{};
+    float dist_past_target{};
 
-    for (tuple<float, float>& loc : botLocations) {
-        botMeans.push_back(get<1>(loc));
+    for (tuple<float, float>& loc : bot_locations) {
+        bot_means.push_back(get<1>(loc));
         // Want std_dev in radians, not XY distance
-        botStDevs.push_back(atan(*robot_std_dev / get<0>(loc)));
+        bot_st_devs.push_back(atan(*robot_std_dev / get<0>(loc)));
 
         // Robot Past Target
-        distPastTarget =
+        dist_past_target =
             static_cast<float>(get<0>(loc) - (origin - center).mag());
 
         // If robot is past target, only use the chance at the target segment
-        if (distPastTarget > 0 && fabs(get<1>(loc)) < M_PI / 2) {
+        if (dist_past_target > 0 && fabs(get<1>(loc)) < M_PI / 2) {
             // Evaluate a normal distribution at dist away and scale
-            botVertScales.push_back(
-                1 - erf(distPastTarget / (*robot_std_dev * sqrt(2))));
+            bot_vert_scales.push_back(
+                1 - erf(dist_past_target / (*robot_std_dev * sqrt(2))));
         } else {
-            botVertScales.push_back(1);
+            bot_vert_scales.push_back(1);
         }
     }
 
     // Create function with only 1 input
     // Rest are bound to constant values
-    function<tuple<float, float>(float)> keFunc =
+    function<tuple<float, float>(float)> ke_func =
         bind(&eval_calculation, std::placeholders::_1, (kick_mean->value()),
-             (kick_std_dev->value()), cref(botMeans), cref(botStDevs),
-             cref(botVertScales), targetWidth / -2, targetWidth / 2);
+             (kick_std_dev->value()), cref(bot_means), cref(bot_st_devs),
+             cref(bot_vert_scales), target_width / -2, target_width / 2);
 
     // No opponent robots on the field
-    if (botMeans.empty()) {
+    if (bot_means.empty()) {
         // Push it off to the side
-        botMeans.push_back(4);
+        bot_means.push_back(4);
         // Must be non-zero as 1 / botStDev is used
-        botStDevs.push_back(0.1);
-        botVertScales.push_back(0.001);
+        bot_st_devs.push_back(0.1);
+        bot_vert_scales.push_back(0.001);
 
         // Center will always be the best target X with no robots
-        return pair<Point, float>(center, get<0>(keFunc(0)));
+        return pair<Point, float>(center, get<0>(ke_func(0)));
     }
 
-    ParallelGradient1DConfig parallelConfig;
-    KickEvaluator::init_gradient_configs(parallelConfig, keFunc, botMeans,
-                                         botStDevs, targetWidth / -2,
-                                         targetWidth / 2);
+    ParallelGradient1DConfig parallel_config;
+    KickEvaluator::init_gradient_configs(parallel_config, ke_func, bot_means,
+                                         bot_st_devs, target_width / -2,
+                                         target_width / 2);
 
     // Create Gradient Ascent Optimizer and run it
-    ParallelGradientAscent1D optimizer(&parallelConfig);
+    ParallelGradientAscent1D optimizer(&parallel_config);
 
     optimizer.execute();
 
     // Grab the lcoal max values and their X location
-    vector<float> maxXValues = optimizer.getMaxXValues();
-    vector<float> maxValues = optimizer.getMaxValues();
+    vector<float> max_x_values = optimizer.getMaxXValues();
+    vector<float> max_values = optimizer.getMaxValues();
 
     // Default to a local max
-    int index = distance(maxValues.begin(),
-                         max_element(maxValues.begin(), maxValues.end()));
-    float maxX = maxXValues.at(index);
-    float maxChance = maxValues.at(index);
+    int index = distance(max_values.begin(),
+                         max_element(max_values.begin(), max_values.end()));
+    float max_x = max_x_values.at(index);
+    float max_chance = max_values.at(index);
 
     // See if there is a segment which is longer
     // Since local maxes stop on either side of the segment
-    if (maxXValues.size() > 1) {
-        for (int i = 0; i < maxXValues.size() - 1; i++) {
+    if (max_x_values.size() > 1) {
+        for (int i = 0; i < max_x_values.size() - 1; i++) {
             // Finds the score at the average between two local maxes
-            float midPoint = (maxXValues.at(i) + maxXValues.at(i + 1)) / 2;
-            float chance = get<0>(keFunc(midPoint));
+            float mid_point = (max_x_values.at(i) + max_x_values.at(i + 1)) / 2;
+            float chance = get<0>(ke_func(mid_point));
 
             // chance >= maxChance
-            if (chance > maxChance || nearlyEqual(chance, maxChance)) {
-                maxX = midPoint;
-                maxChance = chance;
+            if (chance > max_chance || nearlyEqual(chance, max_chance)) {
+                max_x = mid_point;
+                max_chance = chance;
             }
         }
     }
 
     // Angle in reference to the field
-    float realMaxAngle = static_cast<float>(maxX + (center - origin).angle());
-    Line bestKickLine(origin,
-                      origin + Point{cos(realMaxAngle), sin(realMaxAngle)});
+    float real_max_angle =
+        static_cast<float>(max_x + (center - origin).angle());
+    Line best_kick_line(
+        origin, origin + Point{cos(real_max_angle), sin(real_max_angle)});
 
     // Return point on target segment and chance
-    return pair<Point, float>(target.nearestPoint(bestKickLine), maxChance);
+    return pair<Point, float>(target.nearestPoint(best_kick_line), max_chance);
 }
 
 tuple<float, float> KickEvaluator::eval_calculation(
-    float x, float kmean, float kstdev, const vector<float>& robotMeans,
-    const vector<float>& robotStDevs, const vector<float>& robotVertScales,
-    float bLeft, float bRight) {
+    float x, float kmean, float kstdev, const vector<float>& robot_means,
+    const vector<float>& robot_st_devs, const vector<float>& robot_vert_scales,
+    float b_left, float b_right) {
     // 3 Main distribution sets
     // Set #1 : A set of each normal distribution for the obstacles
     // Set #2 : A band pass style distribution that represents a valid target
@@ -193,8 +196,8 @@ tuple<float, float> KickEvaluator::eval_calculation(
     // All of this is calculated with Mathematica
 
     // We want the worst chance of success
-    float minResults = 1.0f;
-    int minIndex = 0;
+    float min_results = 1.0f;
+    int min_index = 0;
 
     // Shortcuts for repeated operations
     float kstdev2 = kstdev * kstdev;
@@ -207,7 +210,7 @@ tuple<float, float> KickEvaluator::eval_calculation(
     float rmean{};
     float rstdev{};
     float rstdev2{};
-    float robotV{};
+    float robot_v{};
 
     float kx = kmean - x;
 
@@ -219,51 +222,51 @@ tuple<float, float> KickEvaluator::eval_calculation(
     float derivative{};
 
     sterm =
-        sqrtpi_2 * (sqrt1_kstdev2 - kstdev * erf((kx + bLeft) / sqrt2_kstdev));
+        sqrtpi_2 * (sqrt1_kstdev2 - kstdev * erf((kx + b_left) / sqrt2_kstdev));
 
-    tterm =
-        sqrtpi_2 * (sqrt1_kstdev2 - kstdev * erf((kx + bRight) / sqrt2_kstdev));
+    tterm = sqrtpi_2 *
+            (sqrt1_kstdev2 - kstdev * erf((kx + b_right) / sqrt2_kstdev));
 
     // For each robot distribution in Set #1
-    for (int i = 0; i < robotMeans.size(); i++) {
-        rmean = robotMeans[i];
-        rstdev = robotStDevs[i];
+    for (int i = 0; i < robot_means.size(); i++) {
+        rmean = robot_means[i];
+        rstdev = robot_st_devs[i];
         rstdev2 = rstdev * rstdev;
-        robotV = robotVertScales[i];
+        robot_v = robot_vert_scales[i];
 
         fterm = -1.0f *
                 fast_exp(-0.5f * (kx + rmean) * (kx + rmean) /
                          (kstdev2 + rstdev2)) *
-                robotV * sqrt2pi;
+                robot_v * sqrt2pi;
         fterm = fterm / sqrt(1.0f / kstdev2 + 1.0f / rstdev2);
 
         results = 1.0f / (kstdev * sqrt2pi) * (fterm + sterm - tterm);
 
-        if (results < minResults) {
-            minResults = results;
-            minIndex = i;
+        if (results < min_results) {
+            min_results = results;
+            min_index = i;
         }
     }
 
     // Calculate derivative of the convolution
-    rmean = robotMeans[minIndex];
-    rstdev = robotStDevs[minIndex];
+    rmean = robot_means[min_index];
+    rstdev = robot_st_devs[min_index];
     rstdev2 = rstdev * rstdev;
-    robotV = robotVertScales[minIndex];
+    robot_v = robot_vert_scales[min_index];
 
     fterm =
         fast_exp(-0.5f * (kx + rmean) * (kx + rmean) / (kstdev2 + rstdev2)) *
-        robotV * sqrt2pi * (kx + rmean);
+        robot_v * sqrt2pi * (kx + rmean);
     fterm =
         fterm / (sqrt(1.0f / kstdev2 + 1.0f / rstdev2) * (kstdev2 + rstdev2));
 
-    sterm = fast_exp(-0.5f * (kx + bLeft) * (kx + bLeft) / kstdev2);
+    sterm = fast_exp(-0.5f * (kx + b_left) * (kx + b_left) / kstdev2);
 
-    tterm = fast_exp(-0.5f * (kx + bRight) * (kx + bRight) / kstdev2);
+    tterm = fast_exp(-0.5f * (kx + b_right) * (kx + b_right) / kstdev2);
 
     derivative = 1.0f / (kstdev * sqrt2pi) * (sterm - tterm - fterm);
 
-    return make_tuple(minResults, derivative);
+    return make_tuple(min_results, derivative);
 }
 
 float KickEvaluator::get_target_angle(Point origin, Segment target) {
@@ -295,91 +298,91 @@ vector<Robot*> KickEvaluator::get_valid_robots() {
 
 tuple<float, float> KickEvaluator::rect_to_polar(Point origin, Point target,
                                                  Point obstacle) {
-    Point obstacleDir = obstacle - origin;
-    Point targetDir = target - origin;
+    Point obstacle_dir = obstacle - origin;
+    Point target_dir = target - origin;
 
-    return make_tuple(obstacleDir.mag(),
-                      fixAngleRadians(targetDir.angleBetween(obstacleDir)));
+    return make_tuple(obstacle_dir.mag(),
+                      fixAngleRadians(target_dir.angleBetween(obstacle_dir)));
 }
 
 vector<tuple<float, float> > KickEvaluator::convert_robots_to_polar(
     Point origin, Point target) {
     vector<Robot*> bots = get_valid_robots();
-    vector<tuple<float, float> > botLocations;
-    botLocations.reserve(bots.size() + botLocations.size());
+    vector<tuple<float, float> > bot_locations;
+    bot_locations.reserve(bots.size() + bot_locations.size());
 
     // Convert each bot position to polar
-    transform(bots.begin(), bots.end(), back_inserter(botLocations),
+    transform(bots.begin(), bots.end(), back_inserter(bot_locations),
               [target, origin, this](Robot* bot) {
                   return rect_to_polar(origin, target, bot->pos());
               });
 
     // Convert imaginary obstacles to polar
     transform(hypothetical_robot_locations.begin(),
-              hypothetical_robot_locations.end(), back_inserter(botLocations),
+              hypothetical_robot_locations.end(), back_inserter(bot_locations),
               [target, origin, this](Point obstacle) {
                   return rect_to_polar(origin, target, obstacle);
               });
 
-    return botLocations;
+    return bot_locations;
 }
 
 void KickEvaluator::init_gradient_configs(
-    ParallelGradient1DConfig& pConfig,
-    function<tuple<float, float>(float)>& func, const vector<float>& robotMeans,
-    const vector<float>& robotStDevs, float boundaryLower,
-    float boundaryUpper) {
-    pConfig.GA1DConfig.reserve(robotStDevs.size());
+    ParallelGradient1DConfig& p_config,
+    function<tuple<float, float>(float)>& func,
+    const vector<float>& robot_means, const vector<float>& robot_st_devs,
+    float boundary_lower, float boundary_upper) {
+    p_config.GA1DConfig.reserve(robot_st_devs.size());
 
     // Standard Gradient Configs
-    const float dxError = 0.05;
-    float maxXMovement =
-        *min_element(robotStDevs.begin(), robotStDevs.end()) * 2;
-    const float temperatureDescent = 0.5;
-    const float temperatureMin = 0.01;
-    const int maxIterations = 20;
-    const float maxValue = 1;
-    const float maxThresh = 0.05;
+    const float dx_error = 0.05;
+    float max_x_movement =
+        *min_element(robot_st_devs.begin(), robot_st_devs.end()) * 2;
+    const float temperature_descent = 0.5;
+    const float temperature_min = 0.01;
+    const int max_iterations = 20;
+    const float max_value = 1;
+    const float max_thresh = 0.05;
 
     // <PrevStart, Start>
-    vector<tuple<float, float> > xStarts;
-    xStarts.reserve(robotStDevs.size());
+    vector<tuple<float, float> > x_starts;
+    x_starts.reserve(robot_st_devs.size());
 
     // Add left boundary
-    auto startX =
-        static_cast<float>(boundaryLower + *start_x_offset * *kick_std_dev);
-    xStarts.emplace_back(boundaryLower, startX);
+    auto start_x =
+        static_cast<float>(boundary_lower + *start_x_offset * *kick_std_dev);
+    x_starts.emplace_back(boundary_lower, start_x);
 
     // Add right boundary
-    startX = boundaryUpper - *start_x_offset * *kick_std_dev;
-    xStarts.emplace_back(boundaryUpper, startX);
+    start_x = boundary_upper - *start_x_offset * *kick_std_dev;
+    x_starts.emplace_back(boundary_upper, start_x);
 
     // For each robot
-    for (int i = 0; i < robotMeans.size(); i++) {
+    for (int i = 0; i < robot_means.size(); i++) {
         // -1 or 1
         for (int side = -1; side <= 1; side += 2) {
-            startX =
-                robotMeans.at(i) + side * *start_x_offset * robotStDevs.at(i);
+            start_x = robot_means.at(i) +
+                      side * *start_x_offset * robot_st_devs.at(i);
 
-            xStarts.emplace_back(robotMeans.at(i), startX);
+            x_starts.emplace_back(robot_means.at(i), start_x);
         }
     }
 
     // Force into ascending order to make things simpler later on
-    sort(xStarts.begin(), xStarts.end(),
+    sort(x_starts.begin(), x_starts.end(),
          [&](tuple<float, float> a, tuple<float, float> b) {
              return get<1>(a) < get<1>(b);
          });
 
     // Create list of configs
-    for (tuple<float, float> xStart : xStarts) {
-        pConfig.GA1DConfig.emplace_back(&func, get<1>(xStart), get<0>(xStart),
-                                        dxError, maxXMovement,
-                                        temperatureDescent, temperatureMin,
-                                        maxIterations, maxValue, maxThresh);
+    for (tuple<float, float> x_start : x_starts) {
+        p_config.GA1DConfig.emplace_back(
+            &func, get<1>(x_start), get<0>(x_start), dx_error, max_x_movement,
+            temperature_descent, temperature_min, max_iterations, max_value,
+            max_thresh);
     }
 
-    pConfig.xCombineThresh = static_cast<float>(
-        *min_element(robotStDevs.begin(), robotStDevs.end()) * *start_x_offset /
-        2);
+    p_config.xCombineThresh = static_cast<float>(
+        *min_element(robot_st_devs.begin(), robot_st_devs.end()) *
+        *start_x_offset / 2);
 }
