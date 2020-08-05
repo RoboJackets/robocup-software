@@ -1,1 +1,25 @@
-external/style-configs/.clang-format
+---
+BasedOnStyle: Google
+DerivePointerAlignment: false
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+AccessModifierOffset: -4
+SpaceAfterCStyleCast: false
+
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  # External Libraries
+  - Regex:           '^<(Eigen|rclcpp|ament_index_cpp|boost|gtest|Q(.*)|google|gtest|SDL)(\/)?([A-Za-z0-9.\/-_])+>'
+    Priority:        2
+  # stdlib. These includes are all lowercase
+  - Regex:           '^<([a-z0-9\/-_])+>'
+    Priority:        1
+  # Project headers from other modules' .hpp. These should be prefixed with rj.
+  - Regex:           '^<([A-Za-z0-9.\/-_])+>'
+    Priority:        3
+  # Project headers from this module's .hpp. These should also be prefixed with rj.
+  - Regex:           '^"([A-Za-z0-9.\/-_])+"'
+    Priority:        4
+...
