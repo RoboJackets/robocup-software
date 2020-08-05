@@ -1,3 +1,31 @@
+if ! command -v clang-tidy-10 &> /dev/null
+then
+    echo "clang-tidy-10 could not be found. Install it by running"
+    echo "    sudo apt install clang-tidy-10"
+    exit
+fi
+
+if ! command -v clang-apply-replacements-10 &> /dev/null
+then
+    echo "clang-apply-replacements-10 could not be found. Install it by running"
+    echo "    sudo apt install clang-tidy-10"
+    exit
+fi
+
+if ! command -v clang-format-10 &> /dev/null
+then
+    echo "clang-format-10 could not be found. Install it by running"
+    echo "    sudo apt install clang-format-10"
+    exit
+fi
+
+if ! command -v cmake-format &> /dev/null
+then
+    echo "cmake-format could not be found. Install it by running"
+    echo "    pip3 install cmake-format"
+    exit
+fi
+
 echo "Filtering precompiled headers in build/compile_commands.json..."
 sed -i 's/-include [^ ]*cmake_pch\.hxx//' build/compile_commands.json
 
