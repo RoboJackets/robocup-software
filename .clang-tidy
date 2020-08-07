@@ -51,9 +51,9 @@ CheckOptions:
   - { key: readability-identifier-naming.GlobalConstantPrefix,    value: "k" }
   - { key: readability-identifier-naming.GlobalConstantCase,      value: CamelCase }
   # Functions are CamelCase.
-  - { key: readability-identifier-naming.FunctionCase,            value: CamelCase  }
-  - { key: readability-identifier-naming.PublicMethodCase,        value: CamelCase  }
-  - { key: readability-identifier-naming.PrivateMethodCase,       value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,            value: lower_case  }
+  - { key: readability-identifier-naming.PublicMethodCase,        value: lower_case  }
+  - { key: readability-identifier-naming.PrivateMethodCase,       value: lower_case  }
   # Look in base class for dependent member references.
   - { key: AggressiveDependentMemberLookup,                       value: 1 }
 ...
