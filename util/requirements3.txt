@@ -9,3 +9,4 @@ mypy == 0.770 # static arugment checker. Pinned to 0.770 because something is br
 
 yapf # python checker
 typing-extensions # For TypedDict
+cmake_format
