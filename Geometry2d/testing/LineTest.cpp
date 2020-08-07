@@ -56,14 +56,12 @@ TEST(Line, intersectsCircle) {
     EXPECT_TRUE(Point(-1, 0).nearlyEquals(p2)) << p2;
 
     circle = Circle(Point(5.5, 10.5), 1.5);
-    EXPECT_FALSE(
-        Line(Point(7, 5), Point(7.01, 10.5)).intersects(circle, &p1, &p2));
+    EXPECT_FALSE(Line(Point(7, 5), Point(7.01, 10.5)).intersects(circle, &p1, &p2));
     EXPECT_TRUE(Line(Point(7, 5), Point(7, 4)).intersects(circle, &p1, &p2));
     EXPECT_TRUE(Point(7, 10.5).nearlyEquals(p1)) << p1;
     EXPECT_TRUE(Point(7, 10.5).nearlyEquals(p2)) << p2;
 
-    EXPECT_TRUE(
-        Line(Point(5.5, 0), Point(5.5, 0.01)).intersects(circle, &p1, &p2));
+    EXPECT_TRUE(Line(Point(5.5, 0), Point(5.5, 0.01)).intersects(circle, &p1, &p2));
 
     EXPECT_TRUE(Point(5.5, 12).nearlyEquals(p1)) << p1;
     EXPECT_TRUE(Point(5.5, 9).nearlyEquals(p2)) << p2;
@@ -75,8 +73,7 @@ TEST(Line, distTo) {
     ASSERT_FLOAT_EQ(0, test.distTo(Point(5, -1)));
     ASSERT_FLOAT_EQ(0, test.distTo(Point(13, 7)));
     ASSERT_FLOAT_EQ(sqrt(2), test.distTo(Point(12, 8)));
-    ASSERT_FLOAT_EQ(sqrt(15 * 15 * 2),
-                    test.distTo(Point(5 - 60, -1 - 60) + Point(-15, 15)));
+    ASSERT_FLOAT_EQ(sqrt(15 * 15 * 2), test.distTo(Point(5 - 60, -1 - 60) + Point(-15, 15)));
 }
 
 TEST(Line, intersects) {

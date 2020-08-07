@@ -106,13 +106,9 @@ int Circle::intersects(const Line& line, Point* i) const {
     return 2;
 }
 
-bool Circle::containsPoint(Point pt) const {
-    return (pt - center).mag() < radius();
-}
+bool Circle::containsPoint(Point pt) const { return (pt - center).mag() < radius(); }
 
-Point Circle::nearestPoint(Point P) const {
-    return (P - center).normalized() * _r + center;
-}
+Point Circle::nearestPoint(Point P) const { return (P - center).normalized() * _r + center; }
 
 bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {
     if ((p1 == nullptr) && (p2 == nullptr)) {
@@ -152,9 +148,7 @@ bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {
     return true;
 }
 
-bool Circle::hit(Point pt) const {
-    return pt.nearPoint(center, radius() + Robot_Radius);
-}
+bool Circle::hit(Point pt) const { return pt.nearPoint(center, radius() + Robot_Radius); }
 
 bool Circle::hit(const Segment& seg) const {
     return seg.nearPoint(center, radius() + Robot_Radius);

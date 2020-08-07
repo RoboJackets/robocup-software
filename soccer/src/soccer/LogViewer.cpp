@@ -1,11 +1,12 @@
-#include <fcntl.h>
+#include <algorithm>
+#include <cstdio>
+
+#include <QApplication>
+#include <QFile>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <LogViewer.hpp>
-#include <QApplication>
-#include <QFile>
-#include <algorithm>
-#include <cstdio>
+#include <fcntl.h>
 
 using namespace std;
 using namespace boost;
@@ -104,8 +105,7 @@ void LogViewer::updateViews() {
     // Update current frame number
     QTime time = QTime::currentTime();
     if (!_lastUpdateTime.isNull()) {
-        _doubleFrameNumber +=
-            ui.playbackRate->value() * _lastUpdateTime.msecsTo(time) / 1000.0;
+        _doubleFrameNumber += ui.playbackRate->value() * _lastUpdateTime.msecsTo(time) / 1000.0;
     }
     _lastUpdateTime = time;
 
@@ -128,13 +128,10 @@ void LogViewer::updateViews() {
     }
 
     // Update non-message tree items
-    _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole,
-                              frameNumber());
-    int elapsedMillis =
-        (currentFrame.command_time() - frames[0]->command_time() + 500) / 1000;
+    _frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
+    int elapsedMillis = (currentFrame.command_time() - frames[0]->command_time() + 500) / 1000;
     QTime elapsedTime = QTime::fromMSecsSinceStartOfDay(elapsedMillis);
-    _elapsedTimeItem->setText(ProtobufTree::Column_Value,
-                              elapsedTime.toString("hh:mm:ss.zzz"));
+    _elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 
     // Sort the tree by tag if items have been added
     if (ui.tree->message(currentFrame)) {

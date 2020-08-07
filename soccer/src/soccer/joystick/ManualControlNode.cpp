@@ -33,9 +33,7 @@ void ManualControlNode::run() {
     const int manual_id = context_->game_settings.joystick_config.manualID;
 
     // Find the robot that we are supposed to control
-    const auto pred = [manual_id](const OurRobot* r) {
-        return r->shell() == manual_id;
-    };
+    const auto pred = [manual_id](const OurRobot* r) { return r->shell() == manual_id; };
     const auto it = std::find_if(robots.begin(), robots.end(), pred);
 
     // Return if we can't find the robot we're supposed to control
@@ -88,14 +86,13 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
 
     // kick/chip
     bool kick = controls_.kick || controls_.chip;
-    intent.trigger_mode =
-        kick ? (context_->game_settings.joystick_config.useKickOnBreakBeam
-                    ? RobotIntent::TriggerMode::ON_BREAK_BEAM
-                    : RobotIntent::TriggerMode::IMMEDIATE)
-             : RobotIntent::TriggerMode::STAND_DOWN;
+    intent.trigger_mode = kick ? (context_->game_settings.joystick_config.useKickOnBreakBeam
+                                      ? RobotIntent::TriggerMode::ON_BREAK_BEAM
+                                      : RobotIntent::TriggerMode::IMMEDIATE)
+                               : RobotIntent::TriggerMode::STAND_DOWN;
     intent.kcstrength = controls_.kick_power;
-    intent.shoot_mode = controls_.kick ? RobotIntent::ShootMode::KICK
-                                       : RobotIntent::ShootMode::CHIP;
+    intent.shoot_mode =
+        controls_.kick ? RobotIntent::ShootMode::KICK : RobotIntent::ShootMode::CHIP;
 
     // dribbler
     intent.dvelocity = controls_.dribble ? controls_.dribbler_power : 0;
@@ -130,14 +127,12 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
     // Dribbler Power
     if (msg.buttons.a) {
         if ((now - last_dribbler_time_) >= DribbleStepTime) {
-            controls_.dribbler_power =
-                std::max(controls_.dribbler_power - 0.1, 0.0);
+            controls_.dribbler_power = std::max(controls_.dribbler_power - 0.1, 0.0);
             last_dribbler_time_ = now;
         }
     } else if (msg.buttons.y) {
         if ((now - last_dribbler_time_) >= DribbleStepTime) {
-            controls_.dribbler_power =
-                std::min(controls_.dribbler_power + 0.1, 1.0);
+            controls_.dribbler_power = std::min(controls_.dribbler_power + 0.1, 1.0);
             last_dribbler_time_ = now;
         }
     } else {
@@ -164,8 +159,7 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
     controls_.kick = msg.buttons.right_shoulder;
 
     // Chip
-    controls_.chip =
-        static_cast<float>(msg.triggers.right) / AXIS_MAX > TRIGGER_CUTOFF;
+    controls_.chip = static_cast<float>(msg.triggers.right) / AXIS_MAX > TRIGGER_CUTOFF;
 
     // Rotation Velocity
     controls_.a_vel = -1.f * static_cast<float>(msg.sticks.right.x) / AXIS_MAX;

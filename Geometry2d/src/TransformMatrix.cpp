@@ -1,6 +1,7 @@
+#include <cmath>
+
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Geometry2d/Util.hpp>
-#include <cmath>
 
 namespace Geometry2d {
 
@@ -8,8 +9,7 @@ const TransformMatrix TransformMatrix::identity(1, 0, 0, 0, 1, 0);
 
 const TransformMatrix TransformMatrix::mirrorX(-1, 0, 0, 0, 1, 0);
 
-TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror,
-                                 float s) {
+TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror, float s) {
     // Set up translation
     _m[0] = 1;
     _m[1] = 0;
@@ -38,8 +38,7 @@ float TransformMatrix::transformAngle(float angle) const {
     return std::atan2(ry, rx);
 }
 
-TransformMatrix TransformMatrix::rotateAroundPoint(const Point& center,
-                                                   float angle) {
+TransformMatrix TransformMatrix::rotateAroundPoint(const Point& center, float angle) {
     TransformMatrix xf = translate(center);
     xf *= rotate(angle);
     xf *= translate(-center);

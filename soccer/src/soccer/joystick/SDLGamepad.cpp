@@ -1,15 +1,15 @@
 #include <algorithm>
 #include <iostream>
-#include <joystick/SDLGamepad.hpp>
 #include <vector>
+
+#include <joystick/SDLGamepad.hpp>
 
 namespace joystick {
 SDLGamepad::SDLGamepad(int device_index) {
     controller_ = SDL_GameControllerOpen(device_index);
 
     if (controller_ == nullptr) {
-        std::cerr << "ERROR: Could not open controller! SDL Error: "
-                  << SDL_GetError() << std::endl;
+        std::cerr << "ERROR: Could not open controller! SDL Error: " << SDL_GetError() << std::endl;
         throw std::runtime_error("Failed to open controller!");
     }
 
@@ -67,10 +67,8 @@ const GamepadMessage& SDLGamepad::update() {
     state_.buttons.start = getButton(SDL_CONTROLLER_BUTTON_START);
     state_.buttons.left_stick = getButton(SDL_CONTROLLER_BUTTON_LEFTSTICK);
     state_.buttons.right_stick = getButton(SDL_CONTROLLER_BUTTON_RIGHTSTICK);
-    state_.buttons.left_shoulder =
-        getButton(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-    state_.buttons.right_shoulder =
-        getButton(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+    state_.buttons.left_shoulder = getButton(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+    state_.buttons.right_shoulder = getButton(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
     state_.buttons.max = getButton(SDL_CONTROLLER_BUTTON_MAX);
 
     return state_;

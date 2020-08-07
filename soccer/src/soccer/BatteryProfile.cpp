@@ -1,4 +1,5 @@
 #include "BatteryProfile.hpp"
+
 #include <algorithm>
 
 using namespace std;
@@ -10,13 +11,9 @@ using namespace std;
 //
 //  based on the li-po discharge curve from SparkFun
 //  https://learn.sparkfun.com/tutorials/battery-technologies/lithium-polymer
-const BatteryProfile RJ2008BatteryProfile({{14.20, 0.20},
-                                           {15.10, 0.50},
-                                           {16.00, 1.00}});
+const BatteryProfile RJ2008BatteryProfile({{14.20, 0.20}, {15.10, 0.50}, {16.00, 1.00}});
 
-const BatteryProfile RJ2015BatteryProfile({{17.75, 0},
-                                           {18.5, 0.50},
-                                           {21.00, 1.00}});
+const BatteryProfile RJ2015BatteryProfile({{17.75, 0}, {18.5, 0.50}, {21.00, 1.00}});
 
 BatteryProfile::BatteryProfile(std::vector<BatteryProfile::Entry> dataPoints) {
     _dataPoints = std::move(dataPoints);
@@ -26,9 +23,9 @@ double BatteryProfile::getChargeLevel(double voltage) const {
     //  lower_bound does a binary search and returns an iterator pointing to the
     //  first element that is not less than @voltage, or end() if no element
     //  exists
-    auto nextBiggest = lower_bound(
-        _dataPoints.begin(), _dataPoints.end(), voltage,
-        [](const Entry& entry, double val) { return entry.first < val; });
+    auto nextBiggest =
+        lower_bound(_dataPoints.begin(), _dataPoints.end(), voltage,
+                    [](const Entry& entry, double val) { return entry.first < val; });
 
     if (nextBiggest == _dataPoints.end()) {
         return 1;  //  this voltage is off the charts!
@@ -41,8 +38,7 @@ double BatteryProfile::getChargeLevel(double voltage) const {
     double before = (nextBiggest - 1)->first;
 
     //  slope of this line segment
-    double m =
-        (_dataPoints[i].second - _dataPoints[i - 1].second) / (after - before);
+    double m = (_dataPoints[i].second - _dataPoints[i - 1].second) / (after - before);
 
     //  y1-y2 = m(x1-x2)
     //  m(x1-x2) + y2 = y1

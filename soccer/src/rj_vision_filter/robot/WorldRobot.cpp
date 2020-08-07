@@ -1,12 +1,12 @@
 #include <cmath>
 #include <iostream>
+
 #include <rj_vision_filter/params.hpp>
 #include <rj_vision_filter/robot/WorldRobot.hpp>
 
 namespace vision_filter {
 
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_robot, robot_merger_power,
-                  1.5,
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_robot, robot_merger_power, 1.5,
                   "Multiplier to scale the weighted average coefficient "
                   "to be nonlinear.")
 using world_robot::PARAM_robot_merger_power;
@@ -27,13 +27,11 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
     if (PARAM_robot_merger_power < 1 || PARAM_robot_merger_power > 2) {
-        std::cout << "WARN: robot_merger_power must be between 1 and 2"
-                  << std::endl;
+        std::cout << "WARN: robot_merger_power must be between 1 and 2" << std::endl;
     }
 
     if (kalmanRobots.empty()) {
-        throw std::runtime_error(
-            "ERROR: Zero robots are given to the WorldRobot constructor");
+        throw std::runtime_error("ERROR: Zero robots are given to the WorldRobot constructor");
     }
 
     for (const KalmanRobot& robot : kalmanRobots) {
@@ -59,21 +57,20 @@ WorldRobot::WorldRobot(RJ::Time calcTime, Team team, int robotID,
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),
         //  but it's a little more clear math-wise)
-        double posUncertantity = std::sqrt(poseStdDev.position().magsq() +
-                                           std::pow(poseStdDev.heading(), 2));
-        double velUncertantity = std::sqrt(poseStdDev.position().magsq() +
-                                           std::pow(twistStdDev.angular(), 2));
+        double posUncertantity =
+            std::sqrt(poseStdDev.position().magsq() + std::pow(poseStdDev.heading(), 2));
+        double velUncertantity =
+            std::sqrt(poseStdDev.position().magsq() + std::pow(twistStdDev.angular(), 2));
 
-        double filterPosWeight = std::pow(posUncertantity * filterUncertantity,
-                                          -PARAM_robot_merger_power);
+        double filterPosWeight =
+            std::pow(posUncertantity * filterUncertantity, -PARAM_robot_merger_power);
 
-        double filterVelWeight = std::pow(velUncertantity * filterUncertantity,
-                                          -PARAM_robot_merger_power);
+        double filterVelWeight =
+            std::pow(velUncertantity * filterUncertantity, -PARAM_robot_merger_power);
 
         posCartesianAvg += filterPosWeight * robot.getPos();
-        thetaCartesianAvg +=
-            Geometry2d::Point(filterPosWeight * cos(robot.getTheta()),
-                              filterPosWeight * sin(robot.getTheta()));
+        thetaCartesianAvg += Geometry2d::Point(filterPosWeight * cos(robot.getTheta()),
+                                               filterPosWeight * sin(robot.getTheta()));
         twistAvg.linear() += filterVelWeight * robot.getVel();
         twistAvg.angular() += filterVelWeight * robot.getOmega();
 
@@ -115,9 +112,7 @@ double WorldRobot::getPosCov() const { return posCov; }
 
 double WorldRobot::getVelCov() const { return velCov; }
 
-const std::list<KalmanRobot>& WorldRobot::getRobotComponents() const {
-    return robotComponents;
-}
+const std::list<KalmanRobot>& WorldRobot::getRobotComponents() const { return robotComponents; }
 
 RJ::Time WorldRobot::getTime() const { return time; }
 }  // namespace vision_filter

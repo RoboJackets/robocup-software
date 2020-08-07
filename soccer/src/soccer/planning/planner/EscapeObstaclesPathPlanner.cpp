@@ -1,8 +1,9 @@
 #include "EscapeObstaclesPathPlanner.hpp"
 
-#include <Configuration.hpp>
 #include <optional>
 #include <vector>
+
+#include <Configuration.hpp>
 
 #include "planning/primitives/AnglePlanning.hpp"
 #include "planning/primitives/CreatePath.hpp"
@@ -18,11 +19,9 @@ ConfigDouble* EscapeObstaclesPathPlanner::_stepSize;
 ConfigDouble* EscapeObstaclesPathPlanner::_goalChangeThreshold;
 
 void EscapeObstaclesPathPlanner::createConfiguration(Configuration* cfg) {
-    _stepSize = new ConfigDouble(
-        cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
+    _stepSize = new ConfigDouble(cfg, "PathPlanner/EscapeObstaclesPathPlanner/stepSize", 0.1);
     _goalChangeThreshold = new ConfigDouble(
-        cfg, "PathPlanner/EscapeObstaclesPathPlanner/goalChangeThreshold",
-        Robot_Radius);
+        cfg, "PathPlanner/EscapeObstaclesPathPlanner/goalChangeThreshold", Robot_Radius);
 }
 
 Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
@@ -40,35 +39,29 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& planRequest) {
         // TODO(#1464): When the assignment delay is fixed, remove this horrible
         // hack by using Twist::Zero() instead of startInstant.velocity * 0.8
         Trajectory result{
-            {RobotInstant{startInstant.pose, startInstant.velocity * 0.8,
-                          startInstant.stamp}}};
+            {RobotInstant{startInstant.pose, startInstant.velocity * 0.8, startInstant.stamp}}};
         result.mark_angles_valid();
         result.stamp(RJ::now());
-        result.setDebugText("[ESCAPE " +
-                            std::to_string(planRequest.motionCommand.index()) +
-                            "]");
+        result.setDebugText("[ESCAPE " + std::to_string(planRequest.motionCommand.index()) + "]");
         return result;
     }
 
     std::optional<Point> optPrevPt;
-    const Point unblocked =
-        findNonBlockedGoal(startInstant.position(), optPrevPt, obstacles, 300);
+    const Point unblocked = findNonBlockedGoal(startInstant.position(), optPrevPt, obstacles, 300);
 
     LinearMotionInstant goal{unblocked, Point()};
-    auto result = CreatePath::simple(startInstant.linear_motion(), goal,
-                                     motionConstraints, startInstant.stamp);
-    PlanAngles(&result, startInstant, AngleFns::tangent,
-               planRequest.constraints.rot);
+    auto result = CreatePath::simple(startInstant.linear_motion(), goal, motionConstraints,
+                                     startInstant.stamp);
+    PlanAngles(&result, startInstant, AngleFns::tangent, planRequest.constraints.rot);
     result.stamp(RJ::now());
     return std::move(result);
 }
 
-Point EscapeObstaclesPathPlanner::findNonBlockedGoal(
-    Point goal, std::optional<Point> prevGoal, const ShapeSet& obstacles,
-    int maxItr) {
+Point EscapeObstaclesPathPlanner::findNonBlockedGoal(Point goal, std::optional<Point> prevGoal,
+                                                     const ShapeSet& obstacles, int maxItr) {
     if (obstacles.hit(goal)) {
-        auto stateSpace = std::make_shared<RoboCupStateSpace>(
-            Field_Dimensions::Current_Dimensions, obstacles);
+        auto stateSpace =
+            std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obstacles);
         RRT::Tree<Point> rrt(stateSpace, Point::hash, 2);
         rrt.setStartState(goal);
         // note: we don't set goal state because we're not looking for a

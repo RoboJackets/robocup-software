@@ -1,19 +1,20 @@
 #include "StripChart.hpp"
 
-#include <google/protobuf/descriptor.h>
-#include <rj_protos/LogFrame.pb.h>
-
-#include <Geometry2d/Point.hpp>
-#include <QDateTime>
-#include <QFileDialog>
-#include <QPainter>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+
+#include <QDateTime>
+#include <QFileDialog>
+#include <QPainter>
+#include <google/protobuf/descriptor.h>
+
+#include <Geometry2d/Point.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
+#include <rj_protos/LogFrame.pb.h>
 
 using namespace std;
 using namespace Packet;
@@ -46,8 +47,8 @@ void StripChart::function(Chart::Function* function) {
 }
 
 void StripChart::exportChart() {
-    QString chartName = QFileDialog::getSaveFileName(
-        this, tr("Save Chart"), "run/newChart.csv", tr("Csv Files(*.csv)"));
+    QString chartName = QFileDialog::getSaveFileName(this, tr("Save Chart"), "run/newChart.csv",
+                                                     tr("Csv Files(*.csv)"));
     std::ofstream outfile(chartName.toStdString());
 
     // output column names
@@ -101,8 +102,7 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
     float newMax = _maxValue;
 
     auto mappedCursorPos = mapFromGlobal(QCursor::pos());
-    auto highlightedIndex =
-        rect().contains(mappedCursorPos) ? indexAtPoint(mappedCursorPos) : -1;
+    auto highlightedIndex = rect().contains(mappedCursorPos) ? indexAtPoint(mappedCursorPos) : -1;
 
     auto fontHeight = QFontMetrics(p.font()).height();
 
@@ -144,9 +144,8 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
                 if (i == highlightedIndex) {
                     p.drawEllipse(pt, 5, 5);
 
-                    p.drawText(
-                        mappedCursorPos + QPointF(15, 0 + fontHeight * 2 * x),
-                        (" V: " + std::to_string(v)).c_str());
+                    p.drawText(mappedCursorPos + QPointF(15, 0 + fontHeight * 2 * x),
+                               (" V: " + std::to_string(v)).c_str());
 
                     if (hist_idx > 0 && hist_idx < _history->size() - 1) {
                         float v1 = 0;
@@ -159,10 +158,8 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
                         auto deltaTime = RJ::TimestampToSecs(t2 - t1);
 
                         auto derivative = (v2 - v1) / (deltaTime);
-                        p.drawText(
-                            mappedCursorPos +
-                                QPointF(15, fontHeight * (1 + x * 2)),
-                            ("dV: " + std::to_string(derivative)).c_str());
+                        p.drawText(mappedCursorPos + QPointF(15, fontHeight * (1 + x * 2)),
+                                   ("dV: " + std::to_string(derivative)).c_str());
                     }
                 }
 
@@ -186,8 +183,7 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
 
 ////////
 
-bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
-                                  float* v) const {
+bool Chart::PointMagnitude::value(const Packet::LogFrame& frame, float* v) const {
     const Message* msg = &frame;
     for (int i = 0; i < path.size(); ++i) {
         const Reflection* ref = msg->GetReflection();
@@ -223,13 +219,11 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame,
     }
 
     if (msg->GetDescriptor()->name() != "Point") {
-        std::cerr
-            << "PointMagnitude: path ended in a message other than Point\n";
+        std::cerr << "PointMagnitude: path ended in a message other than Point\n";
         return false;
     }
 
-    *v = static_cast<float>(
-        Geometry2d::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
+    *v = static_cast<float>(Geometry2d::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
     return true;
 }
 
@@ -264,8 +258,7 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float* v) const {
                             break;
 
                         case FieldDescriptor::TYPE_DOUBLE:
-                            *v = static_cast<float>(
-                                ref->GetRepeatedDouble(*msg, fd, j));
+                            *v = static_cast<float>(ref->GetRepeatedDouble(*msg, fd, j));
                             break;
 
                         default:
@@ -285,8 +278,8 @@ bool Chart::NumericField::value(const Packet::LogFrame& frame, float* v) const {
                             break;
 
                         default:
-                            std::cerr << "NumericField: unsupported field type "
-                                      << fd->type() << "\n";
+                            std::cerr << "NumericField: unsupported field type " << fd->type()
+                                      << "\n";
                             return false;
                     }
                 }

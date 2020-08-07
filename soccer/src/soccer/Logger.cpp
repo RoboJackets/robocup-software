@@ -4,10 +4,10 @@
 #include <google/protobuf/io/zero_copy_stream.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
-#include <rc-fshare/git_version.hpp>
-
 #include "Context.hpp"
 #include "radio/PacketConvert.hpp"
+
+#include <rc-fshare/git_version.hpp>
 
 using namespace Packet;
 
@@ -84,18 +84,15 @@ void Logger::start() {
     _context->logs.start_time = RJ::now();
 
     // Log a message that is empty except for a log config and a start time.
-    std::shared_ptr<Packet::LogFrame> log_frame =
-        std::make_shared<Packet::LogFrame>();
+    std::shared_ptr<Packet::LogFrame> log_frame = std::make_shared<Packet::LogFrame>();
     log_frame->set_timestamp(
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            RJ::now().time_since_epoch())
+        std::chrono::duration_cast<std::chrono::microseconds>(RJ::now().time_since_epoch())
             .count());
 
     log_frame->mutable_log_config()->set_generator("soccer");
     log_frame->mutable_log_config()->set_git_version_hash(git_version_hash);
     log_frame->mutable_log_config()->set_git_version_dirty(git_version_dirty);
-    log_frame->mutable_log_config()->set_simulation(
-        _context->game_settings.simulation);
+    log_frame->mutable_log_config()->set_simulation(_context->game_settings.simulation);
 }
 
 void Logger::run() {
@@ -255,31 +252,24 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
     return log_frame;
 }
 
-bool Logger::writeToFile(Packet::LogFrame* frame,
-                         google::protobuf::io::ZeroCopyOutputStream* out) {
+bool Logger::writeToFile(Packet::LogFrame* frame, google::protobuf::io::ZeroCopyOutputStream* out) {
     return writeDelimitedTo(*frame, out);
 }
 
-bool Logger::readFromFile(Packet::LogFrame* frame,
-                          google::protobuf::io::ZeroCopyInputStream* in) {
+bool Logger::readFromFile(Packet::LogFrame* frame, google::protobuf::io::ZeroCopyInputStream* in) {
     return readDelimitedFrom(in, frame);
 }
 
-void Logger::fillRobot(Packet::LogFrame::Robot* out, int shell_id,
-                       RobotState const* state, RobotStatus const* status,
-                       MotionSetpoint const* setpoint) {
+void Logger::fillRobot(Packet::LogFrame::Robot* out, int shell_id, RobotState const* state,
+                       RobotStatus const* status, MotionSetpoint const* setpoint) {
     out->set_shell(shell_id);
 
     if (state != nullptr) {
-        out->mutable_pos()->set_x(
-            static_cast<float>(state->pose.position().x()));
-        out->mutable_pos()->set_y(
-            static_cast<float>(state->pose.position().y()));
+        out->mutable_pos()->set_x(static_cast<float>(state->pose.position().x()));
+        out->mutable_pos()->set_y(static_cast<float>(state->pose.position().y()));
         out->set_angle(static_cast<float>(state->pose.heading()));
-        out->mutable_world_vel()->set_x(
-            static_cast<float>(state->velocity.linear().x()));
-        out->mutable_world_vel()->set_y(
-            static_cast<float>(state->velocity.linear().y()));
+        out->mutable_world_vel()->set_x(static_cast<float>(state->velocity.linear().x()));
+        out->mutable_world_vel()->set_y(static_cast<float>(state->velocity.linear().y()));
     }
 
     if (status != nullptr) {
@@ -290,13 +280,11 @@ void Logger::fillRobot(Packet::LogFrame::Robot* out, int shell_id,
         out->set_kicker_voltage(static_cast<float>(status->kicker_voltage));
 
         for (int i = 0; i < 5; i++) {
-            out->add_motor_status(status->motors_healthy[i]
-                                      ? MotorStatus::Good
-                                      : MotorStatus::Encoder_Failure);
+            out->add_motor_status(status->motors_healthy[i] ? MotorStatus::Good
+                                                            : MotorStatus::Encoder_Failure);
         }
 
-        out->set_kicker_works(status->kicker !=
-                              RobotStatus::KickerState::kFailed);
+        out->set_kicker_works(status->kicker != RobotStatus::KickerState::kFailed);
         out->set_battery_voltage(static_cast<float>(status->battery_voltage));
     }
 

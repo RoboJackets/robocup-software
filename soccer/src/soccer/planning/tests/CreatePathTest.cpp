@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-
 #include <iostream>
 #include <random>
+
+#include <gtest/gtest.h>
 
 #include "planning/primitives/CreatePath.hpp"
 #include "planning/tests/TestingUtils.hpp"
@@ -17,8 +17,8 @@ TEST(CreatePath, smoke_test_efficiency) {
 
     {
         RJ::Time t0 = RJ::now();
-        CreatePath::rrt(LinearMotionInstant{Point(0, 0)},
-                        LinearMotionInstant{Point(1, 1)}, mot, RJ::now(), obs);
+        CreatePath::rrt(LinearMotionInstant{Point(0, 0)}, LinearMotionInstant{Point(1, 1)}, mot,
+                        RJ::now(), obs);
         std::cout << "time for CreatePath::rrt direct: %.6f\n"
                   << RJ::Seconds(RJ::now() - t0).count() << std::endl;
     }
@@ -26,8 +26,8 @@ TEST(CreatePath, smoke_test_efficiency) {
     {
         RJ::Time t0 = RJ::now();
         obs.add(std::make_shared<Circle>(Point{.5, .5}, 0.2));
-        CreatePath::rrt(LinearMotionInstant{Point()},
-                        LinearMotionInstant{Point(1, 1)}, mot, RJ::now(), obs);
+        CreatePath::rrt(LinearMotionInstant{Point()}, LinearMotionInstant{Point(1, 1)}, mot,
+                        RJ::now(), obs);
         std::cout << "time for CreatePath::rrt obstructed: %.6f\n"
                   << RJ::Seconds(RJ::now() - t0).count() << std::endl;
     }
@@ -56,8 +56,7 @@ TEST(CreatePath, success_rate) {
         int numObstacles = TestingUtils::random(&gen, 2, 5);
         for (int j = 0; j < numObstacles; j++) {
             obstacles.add(std::make_shared<Circle>(
-                Point{TestingUtils::random(&gen, -2.0, 2.0),
-                      TestingUtils::random(&gen, 2.0, 3.0)},
+                Point{TestingUtils::random(&gen, -2.0, 2.0), TestingUtils::random(&gen, 2.0, 3.0)},
                 .2));
         }
 
@@ -75,8 +74,7 @@ TEST(CreatePath, success_rate) {
 
         Trajectory path{{}};
         for (int j = 0; j < numTries && path.empty(); j++) {
-            path = CreatePath::rrt(start, goal, constraints.mot, RJ::now(),
-                                   obstacles);
+            path = CreatePath::rrt(start, goal, constraints.mot, RJ::now(), obstacles);
             if (path.empty()) {
                 fails++;
             }

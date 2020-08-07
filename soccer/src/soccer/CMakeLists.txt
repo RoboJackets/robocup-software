@@ -1,17 +1,14 @@
-#======================================================================
+# ======================================================================
 # Set Sources
-#======================================================================
+# ======================================================================
 set(SOCCER_UIS
     ui/qt/ConfigFileTab.ui
     ui/qt/LogViewer.ui
     ui/qt/MainWindow.ui
     ui/qt/RefereeTab.ui
-    ui/qt/RobotStatusWidget.ui
-    )
+    ui/qt/RobotStatusWidget.ui)
 
-set(SOCCER_RSRC
-    ui/qt/main_icons.qrc
-    )
+set(SOCCER_RSRC ui/qt/main_icons.qrc)
 
 set(ROBOCUP_LIB_SRC
     BatteryProfile.cpp
@@ -79,7 +76,6 @@ set(ROBOCUP_LIB_SRC
     ros2_temp/referee_sub.cpp
     WindowEvaluator.cpp)
 
-
 set(SOCCER_TEST_SRC
     BatteryProfileTest.cpp
     BallTest.cpp
@@ -100,75 +96,42 @@ set(SOCCER_TEST_SRC
     WindowEvaluatorTest.cpp
     LoggerTest.cpp)
 
-set(LOG_VIEWER_RSRC
-    ui/qt/log_icons.qrc)
+set(LOG_VIEWER_RSRC ui/qt/log_icons.qrc)
 
-set(LOG_VIEWER_UIS
-    ui/qt/LogViewer.ui)
+set(LOG_VIEWER_UIS ui/qt/LogViewer.ui)
 
-set(LOG_VIEWER_SRC
-    LogViewer.cpp)
+set(LOG_VIEWER_SRC LogViewer.cpp)
 
-set(EXTERNAL_REFEREE_NODE_SRC
-    referee/ExternalRefereeMain.cpp)
+set(EXTERNAL_REFEREE_NODE_SRC referee/ExternalRefereeMain.cpp)
 
-set(INTERNAL_REFEREE_NODE_SRC
-    referee/InternalRefereeMain.cpp)
+set(INTERNAL_REFEREE_NODE_SRC referee/InternalRefereeMain.cpp)
 
-#======================================================================
+# ======================================================================
 # Add sources
-#======================================================================
+# ======================================================================
 # ---- robocup ----
-target_sources(
-    robocup
-    PRIVATE
-        ${ROBOCUP_LIB_SRC}
-        ${SOCCER_UIS}
-        ${SOCCER_RSRC})
+target_sources(robocup PRIVATE ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set(UI_PATH ${CMAKE_CURRENT_SOURCE_DIR}/ui/qt)
 set_target_properties(robocup PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
 
-
 # ---- soccer ----
-target_sources(
-    soccer
-    PRIVATE
-        main.cpp
-)
+target_sources(soccer PRIVATE main.cpp)
 
 # ---- log_viewer ----
-target_sources(
-    log_viewer
-    PRIVATE
-        ${LOG_VIEWER_SRC}
-        ${LOG_VIEWER_UIS}
-        ${LOG_VIEWER_RSRC}
-)
+target_sources(log_viewer PRIVATE ${LOG_VIEWER_SRC} ${LOG_VIEWER_UIS} ${LOG_VIEWER_RSRC})
 
 # ---- external referee_node ----
-target_sources(
-    external_referee_node
-    PRIVATE
-    ${EXTERNAL_REFEREE_NODE_SRC}
-)
+target_sources(external_referee_node PRIVATE ${EXTERNAL_REFEREE_NODE_SRC})
 
 # ---- internal referee_node ----
-target_sources(
-    internal_referee_node
-    PRIVATE
-    ${INTERNAL_REFEREE_NODE_SRC}
-)
+target_sources(internal_referee_node PRIVATE ${INTERNAL_REFEREE_NODE_SRC})
 
 # Set the directory so AUTOUIC know where to find .ui files
 set_target_properties(log_viewer PROPERTIES AUTOUIC_SEARCH_PATHS ${UI_PATH})
 
 # ---- testing ----
-if (BUILD_TESTING)
-    target_sources(
-        test-soccer
-        PRIVATE
-            ${SOCCER_TEST_SRC}
-    )
+if(BUILD_TESTING)
+  target_sources(test-soccer PRIVATE ${SOCCER_TEST_SRC})
 endif()

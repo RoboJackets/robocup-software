@@ -1,8 +1,7 @@
 #include "PacketConvert.hpp"
 
-#include <rj_common/status.h>
-
 #include <Geometry2d/Util.hpp>
+#include <rj_common/status.h>
 #include <rj_common/time.hpp>
 
 #include "RobotIntent.hpp"
@@ -11,8 +10,7 @@
 
 namespace ConvertRx {
 
-void rtp_to_status(const rtp::RobotStatusMessage& rtp_message,
-                   RobotStatus* status) {
+void rtp_to_status(const rtp::RobotStatusMessage& rtp_message, RobotStatus* status) {
     if (status == nullptr) {
         return;
     }
@@ -23,15 +21,14 @@ void rtp_to_status(const rtp::RobotStatusMessage& rtp_message,
     status->version = RobotStatus::HardwareVersion::kFleet2018;
     status->twist_estimate = std::nullopt;
     status->pose_estimate = std::nullopt;
-    status->battery_voltage = static_cast<float>(rtp_message.battVoltage) *
-                              rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
+    status->battery_voltage =
+        static_cast<float>(rtp_message.battVoltage) * rtp::RobotStatusMessage::BATTERY_SCALE_FACTOR;
     status->kicker_voltage = 0;
     status->has_ball = rtp_message.ballSenseStatus;
-    status->kicker =
-        rtp_message.kickHealthy
-            ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
-                                      : RobotStatus::KickerState::kCharging)
-            : RobotStatus::KickerState::kFailed;
+    status->kicker = rtp_message.kickHealthy
+                         ? (rtp_message.kickStatus ? RobotStatus::KickerState::kCharged
+                                                   : RobotStatus::KickerState::kCharging)
+                         : RobotStatus::KickerState::kFailed;
     for (int i = 0; i < 5; i++) {
         status->motors_healthy[i] = (rtp_message.motorErrors & (1u << i)) == 0;
     }
@@ -57,8 +54,8 @@ void grsim_to_status(const Robot_Status& grsim, RobotStatus* status) {
     status->has_ball = grsim.infrared();
 
     bool kicked = grsim.chip_kick() || grsim.flat_kick();
-    status->kicker = kicked ? RobotStatus::KickerState::kCharging
-                            : RobotStatus::KickerState::kCharged;
+    status->kicker =
+        kicked ? RobotStatus::KickerState::kCharging : RobotStatus::KickerState::kCharged;
     for (int i = 0; i < 5; i++) {
         status->motors_healthy[i] = true;
     }
@@ -68,20 +65,16 @@ void grsim_to_status(const Robot_Status& grsim, RobotStatus* status) {
 void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
     using namespace std::chrono;
 
-    proto->set_timestamp(
-        duration_cast<microseconds>(status.timestamp.time_since_epoch())
-            .count());
+    proto->set_timestamp(duration_cast<microseconds>(status.timestamp.time_since_epoch()).count());
     proto->set_robot_id(status.shell_id);
     proto->set_battery(static_cast<float>(status.battery_voltage));
 
-    proto->set_ball_sense_status(status.has_ball
-                                     ? Packet::BallSenseStatus::HasBall
-                                     : Packet::BallSenseStatus::NoBall);
+    proto->set_ball_sense_status(status.has_ball ? Packet::BallSenseStatus::HasBall
+                                                 : Packet::BallSenseStatus::NoBall);
 
     for (int i = 0; i < 5; i++) {
-        proto->add_motor_status(status.motors_healthy[i]
-                                    ? Packet::MotorStatus::Good
-                                    : Packet::MotorStatus::Encoder_Failure);
+        proto->add_motor_status(status.motors_healthy[i] ? Packet::MotorStatus::Good
+                                                         : Packet::MotorStatus::Encoder_Failure);
     }
 
     // No encoders or RSSI
@@ -94,8 +87,7 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
             proto->set_kicker_status(Kicker_Enabled | Kicker_I2C_OK);
             break;
         case RobotStatus::KickerState::kCharged:
-            proto->set_kicker_status(Kicker_Charged | Kicker_Enabled |
-                                     Kicker_I2C_OK);
+            proto->set_kicker_status(Kicker_Charged | Kicker_Enabled | Kicker_I2C_OK);
             break;
     }
 
@@ -121,22 +113,20 @@ void status_to_proto(const RobotStatus& status, Packet::RadioRx* proto) {
 namespace ConvertTx {
 
 // NOLINT(cppcoreguidelines-pro-type-union-access)
-void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
-            int shell, rtp::RobotTxMessage* rtp_message) {
+void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+            rtp::RobotTxMessage* rtp_message) {
     rtp_message->uid = shell;
     rtp::ControlMessage controlMessage{};
 
-    controlMessage.bodyX = static_cast<int16_t>(
-        setpoint.xvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    controlMessage.bodyY = static_cast<int16_t>(
-        setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    controlMessage.bodyW = static_cast<int16_t>(
-        setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
-    controlMessage.dribbler =
-        std::clamp(static_cast<uint16_t>(intent.dvelocity) * 2, 0, 255);
+    controlMessage.bodyX =
+        static_cast<int16_t>(setpoint.xvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    controlMessage.bodyY =
+        static_cast<int16_t>(setpoint.yvelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    controlMessage.bodyW =
+        static_cast<int16_t>(setpoint.avelocity * rtp::ControlMessage::VELOCITY_SCALE_FACTOR);
+    controlMessage.dribbler = std::clamp(static_cast<uint16_t>(intent.dvelocity) * 2, 0, 255);
 
-    controlMessage.shootMode =
-        intent.shoot_mode == RobotIntent::ShootMode::CHIP;
+    controlMessage.shootMode = intent.shoot_mode == RobotIntent::ShootMode::CHIP;
     controlMessage.kickStrength = intent.kcstrength;
 
     switch (intent.trigger_mode) {
@@ -169,8 +159,8 @@ void to_rtp(const RobotIntent& intent, const MotionSetpoint& setpoint,
     rtp_message->messageType = rtp::RobotTxMessage::ControlMessageType;
 }
 
-void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
-              int shell, Packet::Robot* proto) {
+void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+              Packet::Robot* proto) {
     if (proto == nullptr) {
         return;
     }
@@ -219,8 +209,8 @@ void to_proto(const RobotIntent& intent, const MotionSetpoint& setpoint,
     }
 }
 
-void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
-              int shell, grSim_Robot_Command* grsim) {
+void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint, int shell,
+              grSim_Robot_Command* grsim) {
     if (grsim == nullptr) {
         return;
     }
@@ -235,8 +225,7 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
             // Flat kick
             constexpr double kMaxKickSpeed = 7.0;
             constexpr double kMinKickSpeed = 2.1;
-            constexpr double kStrengthToSpeed =
-                (kMaxKickSpeed - kMinKickSpeed) / 255;
+            constexpr double kStrengthToSpeed = (kMaxKickSpeed - kMinKickSpeed) / 255;
             double speed = kStrengthToSpeed * intent.kcstrength + kMinKickSpeed;
             grsim->set_kickspeedx(static_cast<float>(speed));
             grsim->set_kickspeedz(0);
@@ -244,15 +233,12 @@ void to_grsim(const RobotIntent& intent, const MotionSetpoint& setpoint,
             // Chip kick
             constexpr double kMaxChipSpeed = 4.0;
             constexpr double kMinChipSpeed = 1.0;
-            constexpr double kStrengthToSpeed =
-                (kMaxChipSpeed - kMinChipSpeed) / 255;
+            constexpr double kStrengthToSpeed = (kMaxChipSpeed - kMinChipSpeed) / 255;
             constexpr double kChipAngle = 40 * M_PI / 180;  // degrees
 
             double speed = kStrengthToSpeed * intent.kcstrength + kMinChipSpeed;
-            grsim->set_kickspeedx(
-                static_cast<float>(std::cos(kChipAngle) * speed));
-            grsim->set_kickspeedz(
-                static_cast<float>(std::sin(kChipAngle) * speed));
+            grsim->set_kickspeedx(static_cast<float>(std::cos(kChipAngle) * speed));
+            grsim->set_kickspeedz(static_cast<float>(std::sin(kChipAngle) * speed));
         }
     }
 

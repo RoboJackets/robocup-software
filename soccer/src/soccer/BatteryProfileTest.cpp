@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "BatteryProfile.hpp"
 
 TEST(BatteryProfile, getChargeLevel) {

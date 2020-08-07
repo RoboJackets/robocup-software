@@ -1,7 +1,8 @@
+#include <random>
+
 #include <gtest/gtest.h>
 
 #include <WorldState.hpp>
-#include <random>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 RobotState GetRandomRobotState() {
@@ -53,18 +54,17 @@ WorldState GetRandomWorldState() {
 
     const BallState ball_state = GetRandomBallState();
 
-    return WorldState{std::move(their_robots), std::move(our_robots),
-                      ball_state};
+    return WorldState{std::move(their_robots), std::move(our_robots), ball_state};
 }
 
 bool operator==(const RobotState& a, const RobotState& b) {
-    return a.pose == b.pose && a.velocity == b.velocity &&
-           a.timestamp == b.timestamp && a.visible == b.visible;
+    return a.pose == b.pose && a.velocity == b.velocity && a.timestamp == b.timestamp &&
+           a.visible == b.visible;
 }
 
 bool operator==(const BallState& a, const BallState& b) {
-    return a.position == b.position && a.velocity == b.velocity &&
-           a.timestamp == b.timestamp && a.visible == b.visible;
+    return a.position == b.position && a.velocity == b.velocity && a.timestamp == b.timestamp &&
+           a.visible == b.visible;
 }
 
 bool operator==(const WorldState& a, const WorldState& b) {
@@ -94,14 +94,8 @@ bool operator==(const WorldState& a, const WorldState& b) {
     return a.ball == b.ball;
 }
 
-TEST(ROSMsgConversionNoop, RobotState) {
-    test_lossless_convert_cpp_value(GetRandomRobotState());
-}
+TEST(ROSMsgConversionNoop, RobotState) { test_lossless_convert_cpp_value(GetRandomRobotState()); }
 
-TEST(ROSMsgConversionNoop, BallState) {
-    test_lossless_convert_cpp_value(GetRandomBallState());
-}
+TEST(ROSMsgConversionNoop, BallState) { test_lossless_convert_cpp_value(GetRandomBallState()); }
 
-TEST(ROSMsgConversionNoop, WorldState) {
-    test_lossless_convert_cpp_value(GetRandomWorldState());
-}
+TEST(ROSMsgConversionNoop, WorldState) { test_lossless_convert_cpp_value(GetRandomWorldState()); }

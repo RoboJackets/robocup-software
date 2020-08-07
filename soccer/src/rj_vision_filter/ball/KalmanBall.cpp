@@ -1,18 +1,17 @@
 #include <algorithm>
+
 #include <rj_vision_filter/ball/KalmanBall.hpp>
 #include <rj_vision_filter/ball/WorldBall.hpp>
 #include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
 
-DEFINE_NS_FLOAT64(
-    kVisionFilterParamModule, kalman_ball, max_time_outside_vision, 0.2,
-    "Max time in seconds that a filter can not be updated before it "
-    "is removed.")
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, kalman_ball, max_time_outside_vision, 0.2,
+                  "Max time in seconds that a filter can not be updated before it "
+                  "is removed.")
 using kalman_ball::PARAM_max_time_outside_vision;
 
-KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-                       CameraBall initMeasurement,
+KalmanBall::KalmanBall(unsigned int cameraID, RJ::Time creationTime, CameraBall initMeasurement,
                        const WorldBall& previousWorldBall)
     : lastUpdateTime(creationTime),
       lastPredictTime(creationTime),
@@ -36,8 +35,7 @@ void KalmanBall::predict(RJ::Time currentTime) {
     lastPredictTime = currentTime;
 
     // Decrement but make sure you don't go too low
-    health =
-        std::max(health - filter::health::PARAM_dec, filter::health::PARAM_min);
+    health = std::max(health - filter::health::PARAM_dec, filter::health::PARAM_min);
 
     filter.predict();
 }
@@ -47,8 +45,7 @@ void KalmanBall::predictAndUpdate(RJ::Time currentTime, CameraBall updateBall) {
     lastUpdateTime = currentTime;
 
     // Increment but make sure you don't go too high
-    health =
-        std::min(health + filter::health::PARAM_inc, filter::health::PARAM_max);
+    health = std::min(health + filter::health::PARAM_inc, filter::health::PARAM_max);
 
     // Keep last X camera observations in list for kick detection and filtering
     previousMeasurements.push_back(updateBall);
@@ -57,8 +54,8 @@ void KalmanBall::predictAndUpdate(RJ::Time currentTime, CameraBall updateBall) {
 }
 
 bool KalmanBall::isUnhealthy() const {
-    bool updated_recently = RJ::Seconds(lastPredictTime - lastUpdateTime) <
-                            RJ::Seconds(PARAM_max_time_outside_vision);
+    bool updated_recently =
+        RJ::Seconds(lastPredictTime - lastUpdateTime) < RJ::Seconds(PARAM_max_time_outside_vision);
 
     return !updated_recently;
 }
@@ -75,8 +72,7 @@ Geometry2d::Point KalmanBall::getPosCov() const { return filter.getPosCov(); }
 
 Geometry2d::Point KalmanBall::getVelCov() const { return filter.getVelCov(); }
 
-const boost::circular_buffer<CameraBall>& KalmanBall::getPrevMeasurements()
-    const {
+const boost::circular_buffer<CameraBall>& KalmanBall::getPrevMeasurements() const {
     return previousMeasurements;
 }
 

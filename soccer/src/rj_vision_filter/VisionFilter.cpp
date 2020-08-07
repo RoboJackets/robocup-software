@@ -1,5 +1,6 @@
-#include <Robot.hpp>
 #include <iostream>
+
+#include <Robot.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
@@ -20,8 +21,7 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
                         rj_msgs::build<TeamColorMsg>().is_blue(true)},
       param_provider_{this, kVisionFilterParamModule} {
     // Create a timer that calls predict on all of the Kalman filters.
-    const std::chrono::duration<double> predict_timer_period(
-        PARAM_vision_loop_dt);
+    const std::chrono::duration<double> predict_timer_period(PARAM_vision_loop_dt);
     auto predict_callback = [this]() { PredictStates(); };
     predict_timer_ = create_wall_timer(predict_timer_period, predict_callback);
 
@@ -31,16 +31,13 @@ VisionFilter::VisionFilter(const rclcpp::NodeOptions& options)
         detection_frame_queue_.Push(std::move(msg));
     };
     detection_frame_sub_ = create_subscription<DetectionFrameMsg>(
-        vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize),
-        callback);
+        vision_receiver::topics::kDetectionFramePub, rclcpp::QoS(kQueueSize), callback);
 
     // Create publishers.
-    world_state_pub_ =
-        create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
+    world_state_pub_ = create_publisher<WorldStateMsg>(topics::kWorldStatePub, 10);
 }
 
-VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg(
-    bool us_blue) const {
+VisionFilter::WorldStateMsg VisionFilter::BuildWorldStateMsg(bool us_blue) const {
     return rj_msgs::build<WorldStateMsg>()
         .last_update_time(rj_convert::convert_to_ros(world.last_update_time()))
         .their_robots(BuildRobotStateMsgs(!us_blue))
@@ -59,10 +56,8 @@ VisionFilter::BallStateMsg VisionFilter::BuildBallStateMsg() const {
     return msg;
 }
 
-std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
-    bool blue_team) const {
-    const auto& robots =
-        blue_team ? world.getRobotsBlue() : world.getRobotsYellow();
+std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(bool blue_team) const {
+    const auto& robots = blue_team ? world.getRobotsBlue() : world.getRobotsYellow();
 
     // Fill our robots
     std::vector<RobotStateMsg> robot_state_msgs(Num_Shells);
@@ -74,8 +69,7 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::BuildRobotStateMsgs(
 
         if (wr.getIsValid()) {
             robot_state.pose = Geometry2d::Pose(wr.getPos(), wr.getTheta());
-            robot_state.velocity =
-                Geometry2d::Twist(wr.getVel(), wr.getOmega());
+            robot_state.velocity = Geometry2d::Twist(wr.getVel(), wr.getOmega());
             robot_state.timestamp = wr.getTime();
         }
 
@@ -97,8 +91,7 @@ void VisionFilter::PublishState() {
 }
 
 void VisionFilter::GetFrames() {
-    std::vector<DetectionFrameMsg::UniquePtr> raw_frames =
-        detection_frame_queue_.GetAll();
+    std::vector<DetectionFrameMsg::UniquePtr> raw_frames = detection_frame_queue_.GetAll();
     if (raw_frames.empty()) {
         return;
     }
@@ -117,16 +110,14 @@ void VisionFilter::PredictStates() {
 
     // Check that PredictStates runs fast enough, otherwise print a warning.
     const RJ::Seconds predict_time = RJ::now() - start;
-    const RJ::Seconds diff_duration =
-        RJ::Seconds(PARAM_vision_loop_dt) - predict_time;
+    const RJ::Seconds diff_duration = RJ::Seconds(PARAM_vision_loop_dt) - predict_time;
 
     if (diff_duration < RJ::Seconds{0}) {
         constexpr int kWarningThrottleMS = 1000;
-        EZ_WARN_STREAM_THROTTLE(
-            kWarningThrottleMS,
-            "Predict is not called fast enough. Iteration took "
-                << diff_duration.count() << " seconds, should be "
-                << PARAM_vision_loop_dt << ".");
+        EZ_WARN_STREAM_THROTTLE(kWarningThrottleMS,
+                                "Predict is not called fast enough. Iteration took "
+                                    << diff_duration.count() << " seconds, should be "
+                                    << PARAM_vision_loop_dt << ".");
     }
 }
 

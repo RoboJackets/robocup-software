@@ -2,6 +2,7 @@
 #include "StyleSheetManager.hpp"
 
 #include <map>
+
 #include <rj_common/qt_utils.hpp>
 
 // To add a new style sheet, declare the static variable
@@ -12,8 +13,7 @@ std::map<QString, QString> filePaths = {
     {"1337H4X0R", "../soccer/ui/qt/themes/1337h4x0r.stylesheet"},
     {"NYAN", "../soccer/ui/qt/themes/nyan.stylesheet"}};
 
-void StyleSheetManager::changeStyleSheet(QMainWindow* window,
-                                         const QString& name) {
+void StyleSheetManager::changeStyleSheet(QMainWindow* window, const QString& name) {
     if (filePaths.count(name) != 0u) {
         // Found an element
         setStyleSheet(window, filePaths[name]);
@@ -23,8 +23,7 @@ void StyleSheetManager::changeStyleSheet(QMainWindow* window,
     }
 }
 
-void StyleSheetManager::setStyleSheet(QMainWindow* window,
-                                      const QString& path) {
+void StyleSheetManager::setStyleSheet(QMainWindow* window, const QString& path) {
     // Normalize file paths to work regardless of location of pwd
     QFile file(ApplicationRunDirectory().filePath(path));
     file.open(QFile::ReadOnly);

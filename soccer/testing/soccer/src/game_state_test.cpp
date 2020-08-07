@@ -4,9 +4,8 @@
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
 bool operator==(const GameState& a, const GameState& b) {
-    return a.period == b.period && a.state == b.state &&
-           a.restart == b.restart && a.our_restart == b.our_restart &&
-           a.stage_time_left == b.stage_time_left &&
+    return a.period == b.period && a.state == b.state && a.restart == b.restart &&
+           a.our_restart == b.our_restart && a.stage_time_left == b.stage_time_left &&
            a.ball_placement_point == b.ball_placement_point;
 }
 

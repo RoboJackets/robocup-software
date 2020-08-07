@@ -1,9 +1,10 @@
 #include "MotionControl.hpp"
 
+#include <optional>
+
 #include <Context.hpp>
 #include <Geometry2d/Util.hpp>
 #include <RobotConfig.hpp>
-#include <optional>
 #include <rj_common/Utils.hpp>
 
 #include "planning/Instant.hpp"
@@ -21,8 +22,7 @@ ConfigDouble* MotionControl::_max_velocity;
 ConfigDouble* MotionControl::_x_multiplier;
 
 void MotionControl::createConfiguration(Configuration* cfg) {
-    _max_acceleration =
-        new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
+    _max_acceleration = new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
     _max_velocity = new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
     _x_multiplier = new ConfigDouble(cfg, "MotionControl/X_Multiplier", 1.0);
 }
@@ -35,8 +35,7 @@ MotionControl::MotionControl(Context* context, int shell_id)
       _drawer(&context->debug_drawer),
       _config(context->robot_config.get()) {}
 
-void MotionControl::run(const RobotState& state,
-                        const Planning::Trajectory& trajectory,
+void MotionControl::run(const RobotState& state, const Planning::Trajectory& trajectory,
                         bool is_joystick_controlled, MotionSetpoint* setpoint) {
     // If we don't have a setpoint (output velocities) or we're under joystick
     // control, reset our PID controllers and exit (but don't force a stop).
@@ -92,9 +91,8 @@ void MotionControl::run(const RobotState& state,
 
     // Apply the correction and rotate into the world frame.
     Twist result_world = velocity_target + correction;
-    Twist result_body(
-        result_world.linear().rotated(M_PI_2 - state.pose.heading()),
-        result_world.angular());
+    Twist result_body(result_world.linear().rotated(M_PI_2 - state.pose.heading()),
+                      result_world.angular());
 
     // Use default constraints. Planning should be in charge of enforcing
     // constraints on the trajectory, here we just follow it.
@@ -102,32 +100,28 @@ void MotionControl::run(const RobotState& state,
     RobotConstraints constraints;
 
     if (result_body.linear().mag() > constraints.mot.maxSpeed) {
-        result_body.linear() *=
-            constraints.mot.maxSpeed / result_body.linear().mag();
+        result_body.linear() *= constraints.mot.maxSpeed / result_body.linear().mag();
     }
 
     result_body.angular() =
-        std::clamp(result_body.angular(), -constraints.rot.maxSpeed,
-                   constraints.rot.maxSpeed);
+        std::clamp(result_body.angular(), -constraints.rot.maxSpeed, constraints.rot.maxSpeed);
 
     setVelocity(setpoint, result_body);
 
     // Debug drawing
     {
         if (at_end) {
-            _drawer->drawCircle(maybe_target->pose.position(), .15, Qt::red,
-                                "Planning");
+            _drawer->drawCircle(maybe_target->pose.position(), .15, Qt::red, "Planning");
         } else if (maybe_target) {
-            _drawer->drawCircle(maybe_target->pose.position(), .15, Qt::green,
-                                "Planning");
+            _drawer->drawCircle(maybe_target->pose.position(), .15, Qt::green, "Planning");
         }
 
         // Line for velocity when we have a target
         if (maybe_pose_target) {
             Pose pose_target = maybe_pose_target.value();
             _drawer->drawLine(pose_target.position(),
-                              pose_target.position() + result_world.linear(),
-                              Qt::blue, "MotionControl");
+                              pose_target.position() + result_world.linear(), Qt::blue,
+                              "MotionControl");
         }
     }
 }

@@ -1,10 +1,11 @@
 #include "RobotWidget.hpp"
 
-#include <Geometry2d/Util.hpp>
 #include <cmath>
+#include <stdexcept>
+
+#include <Geometry2d/Util.hpp>
 #include <rj_common/VisionDotPattern.hpp>
 #include <rj_constants/constants.hpp>
-#include <stdexcept>
 
 RobotWidget::RobotWidget(QWidget* /*parent*/, Qt::WindowFlags /*f*/) {
     for (int i = 0; i < 4; i++) {
@@ -52,8 +53,7 @@ void RobotWidget::setHasBall(bool hasBall) {
 }
 
 //  draws a red X with @width = @height = @size centered at @center
-void drawRedX(QPainter& painter, const QPointF& center, float size,
-              float lineThickness = 0.01) {
+void drawRedX(QPainter& painter, const QPointF& center, float size, float lineThickness = 0.01) {
     float halfLen = 0.5 * sqrtf(powf(size, 2) + powf(size, 2));
 
     painter.save();
@@ -94,8 +94,7 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
     int end = (360 - span * 2) * 16;
     painter.setBrush(Qt::black);
     painter.setPen(Qt::NoPen);
-    painter.drawChord(QRectF(-Robot_Radius, -Robot_Radius, Robot_Radius * 2,
-                             Robot_Radius * 2),
+    painter.drawChord(QRectF(-Robot_Radius, -Robot_Radius, Robot_Radius * 2, Robot_Radius * 2),
                       start, end);
 
     //  draw dots
@@ -147,9 +146,9 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
 
             painter.setBrush(Qt::gray);
             const float wheelRounding = 0.01;
-            painter.drawRoundedRect(QRectF(-wheelRadius, -wheelWidth / 2,
-                                           wheelRadius * 2, wheelWidth),
-                                    wheelRounding, wheelRounding);
+            painter.drawRoundedRect(
+                QRectF(-wheelRadius, -wheelWidth / 2, wheelRadius * 2, wheelWidth), wheelRounding,
+                wheelRounding);
         }
         painter.restore();
     }
@@ -157,8 +156,7 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
     if (_ballSenseFault) {
         //  draw a red X by the robot's mouth
 
-        drawRedX(painter, QPointF(0, -Robot_Radius - (RedXSize / 2) + 0.02),
-                 RedXSize);
+        drawRedX(painter, QPointF(0, -Robot_Radius - (RedXSize / 2) + 0.02), RedXSize);
     } else if (_hasBall) {
         //  draw orange golf ball
 
@@ -170,8 +168,7 @@ void RobotWidget::paintEvent(QPaintEvent* /*event*/) {
         {
             painter.translate(0, ballCenterY);
             painter.setBrush(ballColor);
-            painter.drawEllipse(QRectF(-ballRadius, -ballRadius, ballRadius * 2,
-                                       ballRadius * 2));
+            painter.drawEllipse(QRectF(-ballRadius, -ballRadius, ballRadius * 2, ballRadius * 2));
         }
         painter.restore();
     }

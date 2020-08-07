@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-
 #include <algorithm>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 #include "Geometry2d/Arc.hpp"
 #include "Geometry2d/Line.hpp"
@@ -44,18 +44,15 @@ TEST(Arc, GetterSetter) {
 
 TEST(Arc, Intersections) {
     // Line-arc
-    auto check_all_near = [](std::vector<Point> actual,
-                             const std::vector<Point>& expected,
+    auto check_all_near = [](std::vector<Point> actual, const std::vector<Point>& expected,
                              const std::string& name) {
         for (Point pt : expected) {
-            auto it =
-                std::find_if(actual.begin(), actual.end(),
-                             [pt](Point ac) { return (pt - ac).mag() < 1e-6; });
+            auto it = std::find_if(actual.begin(), actual.end(),
+                                   [pt](Point ac) { return (pt - ac).mag() < 1e-6; });
             if (it != actual.end()) {
                 actual.erase(it);
             } else {
-                ADD_FAILURE() << "Expected point " << pt
-                              << ", no match between " << name << ".";
+                ADD_FAILURE() << "Expected point " << pt << ", no match between " << name << ".";
             }
         }
 
@@ -68,26 +65,22 @@ TEST(Arc, Intersections) {
     };
 
     // Arc-Line
-    check_all_near(Arc({0, 0}, 1.0, 0, M_PI).intersects(Line({0, 0}, {0, 2})),
-                   {{0, 1}}, "Arc-Line 1");
-    check_all_near(
-        Arc({0, 0}, 1.0, -M_PI, M_PI).intersects(Line({0, -2}, {0, 2})),
-        {{0, 1}, {0, -1}}, "Arc-Line 2");
-    check_all_near(Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({0, 0}, {0, 1})),
-                   {{0, 2}}, "Arc-Line 3");
-    check_all_near(Arc({0, 0}, 1.0, M_PI / 4, 3 * M_PI / 4)
-                       .intersects(Line({0, 0}, {0, 1})),
+    check_all_near(Arc({0, 0}, 1.0, 0, M_PI).intersects(Line({0, 0}, {0, 2})), {{0, 1}},
+                   "Arc-Line 1");
+    check_all_near(Arc({0, 0}, 1.0, -M_PI, M_PI).intersects(Line({0, -2}, {0, 2})),
+                   {{0, 1}, {0, -1}}, "Arc-Line 2");
+    check_all_near(Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({0, 0}, {0, 1})), {{0, 2}},
+                   "Arc-Line 3");
+    check_all_near(Arc({0, 0}, 1.0, M_PI / 4, 3 * M_PI / 4).intersects(Line({0, 0}, {0, 1})),
                    {{0, 1}}, "Arc-Line 4");
 
     // Arc-Line No intersection
-    std::vector<Point> v =
-        Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({-1, -1}, {1, -1}));
+    std::vector<Point> v = Arc({0, 0}, 2.0, 0, M_PI).intersects(Line({-1, -1}, {1, -1}));
     EXPECT_TRUE(v.empty());
 
     // Arc-Segment
-    check_all_near(
-        Arc({0, 0}, 2.0, 0, M_PI).intersects(Segment({0, 0}, {0, 1})), {},
-        "Arc-Segment");
+    check_all_near(Arc({0, 0}, 2.0, 0, M_PI).intersects(Segment({0, 0}, {0, 1})), {},
+                   "Arc-Segment");
 }
 
 }  // namespace Geometry2d::Testing

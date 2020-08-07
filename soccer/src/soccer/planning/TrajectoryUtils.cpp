@@ -4,8 +4,7 @@
 
 namespace Planning {
 
-bool TrajectoryHitsStatic(const Trajectory& trajectory,
-                          const Geometry2d::ShapeSet& obstacles,
+bool TrajectoryHitsStatic(const Trajectory& trajectory, const Geometry2d::ShapeSet& obstacles,
                           RJ::Time start_time, RJ::Time* hit_time) {
     if (trajectory.empty()) {
         return false;
@@ -58,10 +57,8 @@ bool TrajectoryHitsStatic(const Trajectory& trajectory,
 }
 
 bool TrajectoryHitsDynamic(const Trajectory& trajectory,
-                           const std::vector<DynamicObstacle>& obstacles,
-                           RJ::Time start_time,
-                           Geometry2d::Circle* out_hit_obstacle,
-                           RJ::Time* out_hit_time) {
+                           const std::vector<DynamicObstacle>& obstacles, RJ::Time start_time,
+                           Geometry2d::Circle* out_hit_obstacle, RJ::Time* out_hit_time) {
     if (trajectory.empty()) {
         return false;
     }
@@ -107,13 +104,11 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
 
         // Only use the trajectory cursor in the loop condition; we use the
         // static position after the obstacle cursor runs off the end.
-        for (auto cursor_obstacle = obs.path->cursor_begin();
-             cursor.has_value();
+        for (auto cursor_obstacle = obs.path->cursor_begin(); cursor.has_value();
              cursor_obstacle.advance(dt), cursor.advance(dt)) {
             // If the earlier calculated hit was before this point, stop looking
             // at this obstacle.
-            if (maybe_hit_time.has_value() &&
-                maybe_hit_time.value() < cursor.time()) {
+            if (maybe_hit_time.has_value() && maybe_hit_time.value() < cursor.time()) {
                 break;
             }
 
@@ -131,8 +126,7 @@ bool TrajectoryHitsDynamic(const Trajectory& trajectory,
                 // obstacle (from the check above), so this is definitely the
                 // earliest one.
                 if (out_hit_obstacle != nullptr) {
-                    *out_hit_obstacle = Geometry2d::Circle(obstacle_position,
-                                                           obs.circle.radius());
+                    *out_hit_obstacle = Geometry2d::Circle(obstacle_position, obs.circle.radius());
                 }
                 maybe_hit_time = cursor.time();
             }

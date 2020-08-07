@@ -20,12 +20,9 @@ TEST(Trajectory, Interpolation) {
     // addition/insertion, and duration calculations.
     RJ::Time start = RJ::now();
 
-    RobotInstant start_instant =
-        RobotInstant(Pose(0, 0, 0), Twist(1, 0, 0), start);
-    RobotInstant mid_instant =
-        RobotInstant(Pose(1, 1, 3), Twist(1, 0, 0), start + 1s);
-    RobotInstant end_instant =
-        RobotInstant(Pose(2, 0, 6), Twist(1, 0, 0), start + 1500ms);
+    RobotInstant start_instant = RobotInstant(Pose(0, 0, 0), Twist(1, 0, 0), start);
+    RobotInstant mid_instant = RobotInstant(Pose(1, 1, 3), Twist(1, 0, 0), start + 1s);
+    RobotInstant end_instant = RobotInstant(Pose(2, 0, 6), Twist(1, 0, 0), start + 1500ms);
 
     Trajectory trajectory;
     trajectory.AppendInstant(start_instant);
@@ -33,10 +30,8 @@ TEST(Trajectory, Interpolation) {
 
     ASSERT_EQ(*trajectory.evaluate(start), start_instant);
     ASSERT_EQ(*trajectory.evaluate(trajectory.end_time()), mid_instant);
-    EXPECT_FALSE(
-        trajectory.evaluate(trajectory.begin_time() - RJ::Seconds(1e-3s)));
-    EXPECT_FALSE(
-        trajectory.evaluate(trajectory.end_time() + RJ::Seconds(1e-3s)));
+    EXPECT_FALSE(trajectory.evaluate(trajectory.begin_time() - RJ::Seconds(1e-3s)));
+    EXPECT_FALSE(trajectory.evaluate(trajectory.end_time() + RJ::Seconds(1e-3s)));
 
     EXPECT_FALSE(Trajectory{{}}.evaluate(RJ::Seconds(0s)));
     EXPECT_FALSE(Trajectory{{}}.evaluate(start));
@@ -60,8 +55,7 @@ TEST(Trajectory, Interpolation) {
 
         // Twist should be the same as halfway through the other segment, but
         // rescaled because this segment only lasts 500ms.
-        EXPECT_NEAR(-mid_twist.linear().y() * 2, instant.velocity.linear().y(),
-                    1e-6);
+        EXPECT_NEAR(-mid_twist.linear().y() * 2, instant.velocity.linear().y(), 1e-6);
         EXPECT_NEAR(mid_twist.angular() * 2, instant.velocity.angular(), 1e-6);
     }
 
@@ -74,8 +68,7 @@ TEST(Trajectory, Interpolation) {
     EXPECT_FALSE(trajectory.CheckSeconds(-500ms));
     EXPECT_FALSE(trajectory.CheckSeconds(2500ms));
 
-    EXPECT_EQ(trajectory.duration(),
-              RJ::Seconds(end_instant.stamp - start_instant.stamp));
+    EXPECT_EQ(trajectory.duration(), RJ::Seconds(end_instant.stamp - start_instant.stamp));
 }
 
 TEST(Trajectory, TrajectoryCursor) {
@@ -130,8 +123,7 @@ TEST(Trajectory, TrajectoryCursor) {
 }
 
 TEST(Trajectory, BezierPath) {
-    std::vector<Point> points = {Point(0, 0), Point(1, 0.5), Point(1.5, 1),
-                                 Point(2, 2)};
+    std::vector<Point> points = {Point(0, 0), Point(1, 0.5), Point(1.5, 1), Point(2, 2)};
 
     Point vi(1, 0);
     Point vf(0, 1);
@@ -217,8 +209,7 @@ TEST(Trajectory, Combining) {
     Trajectory traj_2{{b, c}};
 
     Trajectory combined(std::move(traj_1), traj_2);
-    EXPECT_TRUE(traj_1.empty())
-        << "Should have moved out of the first trajectory";
+    EXPECT_TRUE(traj_1.empty()) << "Should have moved out of the first trajectory";
     EXPECT_TRUE(Trajectory::nearly_equal(combined, Trajectory{{a, b, c}}));
 }
 
@@ -231,6 +222,5 @@ TEST(Trajectory, CombiningFail) {
     Trajectory traj_1{{a, b1}};
     Trajectory traj_2{{b2, c}};
 
-    EXPECT_THROW((Trajectory{std::move(traj_1), traj_2}),
-                 std::invalid_argument);
+    EXPECT_THROW((Trajectory{std::move(traj_1), traj_2}), std::invalid_argument);
 }

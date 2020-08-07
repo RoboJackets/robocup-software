@@ -3,16 +3,13 @@
 #include <rj_vision_filter/params.hpp>
 
 namespace vision_filter {
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_kick_timeout,
-                  1.0,
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_kick_timeout, 1.0,
                   "Only replace fast kick estimates when this much time has "
                   "passed. In seconds.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_kick_timeout,
-                  0.5,
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, slow_kick_timeout, 0.5,
                   "Only replace slow kick estimates when this much time has "
                   "passed. In seconds.")
-DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, same_kick_timeout,
-                  0.5,
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, same_kick_timeout, 0.5,
                   "Only replace fast kick estimate with a slow when the two "
                   "times are within this amount.")
 using namespace kick::detector;
@@ -23,8 +20,7 @@ World::World()
       robotsYellow(Num_Shells, WorldRobot()),
       robotsBlue(Num_Shells, WorldRobot()) {}
 
-void World::updateWithCameraFrame(RJ::Time calcTime,
-                                  const std::vector<CameraFrame>& newFrames) {
+void World::updateWithCameraFrame(RJ::Time calcTime, const std::vector<CameraFrame>& newFrames) {
     calcBallBounce();
 
     std::vector<bool> cameraUpdated(PARAM_max_num_cameras, false);
@@ -51,8 +47,8 @@ void World::updateWithCameraFrame(RJ::Time calcTime,
         }
 
         cameras.at(frame.cameraID)
-            .updateWithFrame(calcTime, frame.cameraBalls, yellowTeam, blueTeam,
-                             ball, robotsYellow, robotsBlue);
+            .updateWithFrame(calcTime, frame.cameraBalls, yellowTeam, blueTeam, ball, robotsYellow,
+                             robotsBlue);
 
         cameraUpdated.at(frame.cameraID) = true;
 
@@ -106,10 +102,8 @@ void World::updateWorldObjects(RJ::Time calcTime) {
     for (Camera& camera : cameras) {
         if (camera.getIsValid()) {
             std::list<KalmanBall> cameraBalls = camera.getKalmanBalls();
-            std::vector<std::list<KalmanRobot>> cameraRobotsYellow =
-                camera.getKalmanRobotsYellow();
-            std::vector<std::list<KalmanRobot>> cameraRobotsBlue =
-                camera.getKalmanRobotsBlue();
+            std::vector<std::list<KalmanRobot>> cameraRobotsYellow = camera.getKalmanRobotsYellow();
+            std::vector<std::list<KalmanRobot>> cameraRobotsBlue = camera.getKalmanRobotsBlue();
 
             if (!cameraBalls.empty()) {
                 // Sort by health of the kalman filter
@@ -123,26 +117,22 @@ void World::updateWorldObjects(RJ::Time calcTime) {
             // Take the best kalman filter from the camera
             for (int i = 0; i < cameraRobotsYellow.size(); i++) {
                 if (!cameraRobotsYellow.at(i).empty()) {
-                    cameraRobotsYellow.at(i).sort(
-                        [](KalmanRobot& a, KalmanRobot& b) -> bool {
-                            return a.getHealth() > b.getHealth();
-                        });
+                    cameraRobotsYellow.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
+                        return a.getHealth() > b.getHealth();
+                    });
 
-                    kalmanRobotsYellow.at(i).push_back(
-                        cameraRobotsYellow.at(i).front());
+                    kalmanRobotsYellow.at(i).push_back(cameraRobotsYellow.at(i).front());
                 }
             }
 
             // Take the best kalman filter from the camera
             for (int i = 0; i < cameraRobotsBlue.size(); i++) {
                 if (!cameraRobotsBlue.at(i).empty()) {
-                    cameraRobotsBlue.at(i).sort(
-                        [](KalmanRobot& a, KalmanRobot& b) -> bool {
-                            return a.getHealth() > b.getHealth();
-                        });
+                    cameraRobotsBlue.at(i).sort([](KalmanRobot& a, KalmanRobot& b) -> bool {
+                        return a.getHealth() > b.getHealth();
+                    });
 
-                    kalmanRobotsBlue.at(i).push_back(
-                        cameraRobotsBlue.at(i).front());
+                    kalmanRobotsBlue.at(i).push_back(cameraRobotsBlue.at(i).front());
                 }
             }
         }
@@ -155,15 +145,15 @@ void World::updateWorldObjects(RJ::Time calcTime) {
 
     for (int i = 0; i < robotsYellow.size(); i++) {
         if (!kalmanRobotsYellow.at(i).empty()) {
-            robotsYellow.at(i) = WorldRobot(calcTime, WorldRobot::Team::YELLOW,
-                                            i, kalmanRobotsYellow.at(i));
+            robotsYellow.at(i) =
+                WorldRobot(calcTime, WorldRobot::Team::YELLOW, i, kalmanRobotsYellow.at(i));
         }
     }
 
     for (int i = 0; i < robotsBlue.size(); i++) {
         if (!kalmanRobotsBlue.at(i).empty()) {
-            robotsBlue.at(i) = WorldRobot(calcTime, WorldRobot::Team::BLUE, i,
-                                          kalmanRobotsBlue.at(i));
+            robotsBlue.at(i) =
+                WorldRobot(calcTime, WorldRobot::Team::BLUE, i, kalmanRobotsBlue.at(i));
         }
     }
 }
@@ -172,10 +162,8 @@ void World::detectKicks(RJ::Time calcTime) {
     KickEvent fastEvent;
     KickEvent slowEvent;
 
-    bool isFastKick =
-        fastKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, fastEvent);
-    bool isSlowKick = slowKick.addRecord(calcTime, ball, robotsYellow,
-                                         robotsBlue, &slowEvent);
+    bool isFastKick = fastKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, fastEvent);
+    bool isSlowKick = slowKick.addRecord(calcTime, ball, robotsYellow, robotsBlue, &slowEvent);
 
     // If there isn't a kick recorded already
     if (!bestKickEstimate.getIsValid()) {
@@ -189,8 +177,7 @@ void World::detectKicks(RJ::Time calcTime) {
 
         // There is a kick recorded already
     } else {
-        const RJ::Seconds timeSinceBestEvent(bestKickEstimate.getKickTime() -
-                                             calcTime);
+        const RJ::Seconds timeSinceBestEvent(bestKickEstimate.getKickTime() - calcTime);
         const RJ::Seconds sameKickTimeout(PARAM_same_kick_timeout);
         const RJ::Seconds slowKickTimeout(PARAM_slow_kick_timeout);
         const RJ::Seconds fastKickTimeout(PARAM_fast_kick_timeout);
@@ -199,8 +186,8 @@ void World::detectKicks(RJ::Time calcTime) {
         //      - It refers to the current best kick event (and probably is a
         //      better estimate)
         //      - The old kick timed out and should be updated
-        if (isSlowKick && (timeSinceBestEvent < sameKickTimeout ||
-                           timeSinceBestEvent > slowKickTimeout)) {
+        if (isSlowKick &&
+            (timeSinceBestEvent < sameKickTimeout || timeSinceBestEvent > slowKickTimeout)) {
             bestKickEstimate = slowEvent;
 
             // Try using the fast kick if the old kick timed out
@@ -216,13 +203,9 @@ void World::detectKicks(RJ::Time calcTime) {
 
 const WorldBall& World::getWorldBall() const { return ball; }
 
-const std::vector<WorldRobot>& World::getRobotsYellow() const {
-    return robotsYellow;
-}
+const std::vector<WorldRobot>& World::getRobotsYellow() const { return robotsYellow; }
 
-const std::vector<WorldRobot>& World::getRobotsBlue() const {
-    return robotsBlue;
-}
+const std::vector<WorldRobot>& World::getRobotsBlue() const { return robotsBlue; }
 
 const KickEvent& World::getBestKickEstimate() const { return bestKickEstimate; }
 }  // namespace vision_filter

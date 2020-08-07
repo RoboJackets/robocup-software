@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+
 #include "Geometry2d/Point.hpp"
 #include "Geometry2d/Util.hpp"
 using namespace std;
@@ -114,10 +115,8 @@ TEST(Point, mag) {
 }
 
 TEST(Point, dot) {
-    EXPECT_FLOAT_EQ(3.5 * 5.5 + 4.5 * 6.5,
-                    Point(3.5, 4.5).dot(Point(5.5, 6.5)));
-    EXPECT_FLOAT_EQ(3.5 * -5.5 + -4.5 * 6.5,
-                    Point(3.5, -4.5).dot(Point(-5.5, 6.5)));
+    EXPECT_FLOAT_EQ(3.5 * 5.5 + 4.5 * 6.5, Point(3.5, 4.5).dot(Point(5.5, 6.5)));
+    EXPECT_FLOAT_EQ(3.5 * -5.5 + -4.5 * 6.5, Point(3.5, -4.5).dot(Point(-5.5, 6.5)));
 }
 
 TEST(Point, rotation) {
@@ -129,8 +128,7 @@ TEST(Point, rotation) {
     EXPECT_PRED2(pointEqual, expected, unit.rotated(M_PI / 4));
     test = unit;
     EXPECT_PRED2(pointEqual, expected, test.rotate(Point(0, 0), M_PI / 4));
-    EXPECT_PRED2(pointEqual, expected,
-                 Point::rotated(unit, Point(0, 0), M_PI / 4));
+    EXPECT_PRED2(pointEqual, expected, Point::rotated(unit, Point(0, 0), M_PI / 4));
     EXPECT_PRED2(pointEqual, expected, Point::direction(M_PI / 4));
     EXPECT_FLOAT_EQ(M_PI / 4, expected.angle());
 
@@ -138,20 +136,15 @@ TEST(Point, rotation) {
     EXPECT_PRED2(pointEqual, expected, test.rotate(M_PI / 4 - 12 * M_PI));
     EXPECT_PRED2(pointEqual, expected, unit.rotated(M_PI / 4 - 12 * M_PI));
     test = unit;
-    EXPECT_PRED2(pointEqual, expected,
-                 test.rotate(Point(0, 0), M_PI / 4 - 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected,
-                 Point::rotated(unit, Point(0, 0), M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(pointEqual, expected, test.rotate(Point(0, 0), M_PI / 4 - 12 * M_PI));
+    EXPECT_PRED2(pointEqual, expected, Point::rotated(unit, Point(0, 0), M_PI / 4 - 12 * M_PI));
     EXPECT_PRED2(pointEqual, expected, Point::direction(M_PI / 4 - 12 * M_PI));
 
     test = unit;
     expected = Point(3, 2);
-    EXPECT_PRED2(pointEqual, expected,
-                 test.rotate(Point(3, 0), -M_PI / 2 + 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected,
-                 unit.rotated(Point(3, 0), -M_PI / 2 + 12 * M_PI));
-    EXPECT_PRED2(pointEqual, expected,
-                 Point::rotated(unit, Point(3, 0), -M_PI / 2 + 12 * M_PI));
+    EXPECT_PRED2(pointEqual, expected, test.rotate(Point(3, 0), -M_PI / 2 + 12 * M_PI));
+    EXPECT_PRED2(pointEqual, expected, unit.rotated(Point(3, 0), -M_PI / 2 + 12 * M_PI));
+    EXPECT_PRED2(pointEqual, expected, Point::rotated(unit, Point(3, 0), -M_PI / 2 + 12 * M_PI));
 
     EXPECT_PRED2(pointEqual, expected.rotated(M_PI / 2), expected.perpCCW());
     EXPECT_PRED2(pointEqual, expected.rotated(-M_PI / 2), expected.perpCW());
@@ -184,8 +177,7 @@ TEST(Point, distTo) {
     EXPECT_FLOAT_EQ(0, Point(5, 3).distTo(Point(5, 3)));
     EXPECT_FLOAT_EQ(5, Point(4, 5).distTo(Point(1, 1)));
     EXPECT_FLOAT_EQ(5, Point(1.5, 1.5).distTo(Point(4.5, 5.5)));
-    EXPECT_FLOAT_EQ((Point(93, 44) - Point(4.5, 5.5)).mag(),
-                    Point(93, 44).distTo(Point(4.5, 5.5)));
+    EXPECT_FLOAT_EQ((Point(93, 44) - Point(4.5, 5.5)).mag(), Point(93, 44).distTo(Point(4.5, 5.5)));
 }
 
 TEST(Point, nearPoint) {
@@ -211,15 +203,11 @@ TEST(Point, normalized) {
 
 TEST(Point, nearlyEquals) {
     EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0, 5)));
-    EXPECT_TRUE(Point(0, 5).nearlyEquals(
-        Point(0 - FLOAT_EPSILON / 2, 5 + FLOAT_EPSILON / 2)));
-    EXPECT_TRUE(Point(0, 5).nearlyEquals(
-        Point(0 + FLOAT_EPSILON / 2, 5 - FLOAT_EPSILON / 2)));
+    EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0 - FLOAT_EPSILON / 2, 5 + FLOAT_EPSILON / 2)));
+    EXPECT_TRUE(Point(0, 5).nearlyEquals(Point(0 + FLOAT_EPSILON / 2, 5 - FLOAT_EPSILON / 2)));
 
-    EXPECT_FALSE(Point(0, 5).nearlyEquals(
-        Point(0 - FLOAT_EPSILON * 1.1, 5 + FLOAT_EPSILON * 1.1)));
-    EXPECT_FALSE(Point(0, 5).nearlyEquals(
-        Point(0 + FLOAT_EPSILON * 1.1, 5 - FLOAT_EPSILON * 1.1)));
+    EXPECT_FALSE(Point(0, 5).nearlyEquals(Point(0 - FLOAT_EPSILON * 1.1, 5 + FLOAT_EPSILON * 1.1)));
+    EXPECT_FALSE(Point(0, 5).nearlyEquals(Point(0 + FLOAT_EPSILON * 1.1, 5 - FLOAT_EPSILON * 1.1)));
 }
 // TODO(ashaw596) Add tests for angleTo and angleBetween once those changes are
 // merged

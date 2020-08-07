@@ -1,14 +1,15 @@
-#include <rj_vision_receiver/vision_receiver.h>
+#include <cmath>
+#include <stdexcept>
 
 #include <boost/exception/diagnostic_information.hpp>
-#include <cmath>
+
 #include <rj_common/Field_Dimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
 #include <rj_utils/conversions.hpp>
 #include <rj_utils/logging.hpp>
-#include <stdexcept>
+#include <rj_vision_receiver/vision_receiver.h>
 
 constexpr auto kVisionReceiverParamModule = "vision_receiver";
 
@@ -28,10 +29,8 @@ VisionReceiver::VisionReceiver()
 
     setPort(PARAM_port);
 
-    raw_packet_pub_ =
-        create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
-    detection_frame_pub_ =
-        create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
+    raw_packet_pub_ = create_publisher<RawProtobufMsg>(topics::kRawProtobufPub, 10);
+    detection_frame_pub_ = create_publisher<DetectionFrameMsg>(topics::kDetectionFramePub, 10);
 
     // Spin off threads for the networking part and the publishing part.
     network_thread_ = std::thread{&VisionReceiver::ReceiveThread, this};
@@ -75,8 +74,7 @@ void VisionReceiver::setPort(int port) {
     _socket.set_option(udp::socket::reuse_address(true));
 
     // Set up multicast.
-    if (!multicast_add_native(_socket.native_handle(),
-                              SharedVisionAddress.c_str())) {
+    if (!multicast_add_native(_socket.native_handle(), SharedVisionAddress.c_str())) {
         EZ_ERROR("Multicast add failed");
         return;
     }
@@ -85,8 +83,7 @@ void VisionReceiver::setPort(int port) {
     boost::system::error_code bind_error;
     _socket.bind(udp::endpoint(udp::v4(), port), bind_error);
     if (static_cast<bool>(bind_error)) {
-        EZ_ERROR_STREAM(
-            "Vision port bind failed with error: " << bind_error.message());
+        EZ_ERROR_STREAM("Vision port bind failed with error: " << bind_error.message());
         return;
     }
 
@@ -117,16 +114,15 @@ void VisionReceiver::processOnePacket() {
         SSL_DetectionFrame* det = packet->wrapper.mutable_detection();
 
         DetectionFrameMsg::UniquePtr detection_frame_msg =
-            std::make_unique<DetectionFrameMsg>(
-                ConstructROSMsg(*det, packet->receive_time));
+            std::make_unique<DetectionFrameMsg>(ConstructROSMsg(*det, packet->receive_time));
         SyncDetectionTimestamp(detection_frame_msg.get(), packet->receive_time);
 
         detection_frame_pub_->publish(std::move(detection_frame_msg));
     }
 }
 
-DetectionFrameMsg VisionReceiver::ConstructROSMsg(
-    const SSL_DetectionFrame& frame, const rclcpp::Time& received_time) const {
+DetectionFrameMsg VisionReceiver::ConstructROSMsg(const SSL_DetectionFrame& frame,
+                                                  const rclcpp::Time& received_time) const {
     DetectionFrameMsg msg{};
 
     msg.frame_number = frame.frame_number();
@@ -138,8 +134,7 @@ DetectionFrameMsg VisionReceiver::ConstructROSMsg(
     const bool defend_plus_x = config_.gameSettings().defend_plus_x;
 
     // Only add balls that are in a used half
-    const google::protobuf::RepeatedPtrField<SSL_DetectionBall>& balls =
-        frame.balls();
+    const google::protobuf::RepeatedPtrField<SSL_DetectionBall>& balls = frame.balls();
     msg.balls.reserve(balls.size());
     for (int i = 0; i < balls.size(); ++i) {
         const SSL_DetectionBall& ball = balls.Get(i);
@@ -149,8 +144,7 @@ DetectionFrameMsg VisionReceiver::ConstructROSMsg(
     }
 
     // Add blue robots that are in a used half
-    const google::protobuf::RepeatedPtrField<SSL_DetectionRobot>& robots_blue =
-        frame.robots_blue();
+    const google::protobuf::RepeatedPtrField<SSL_DetectionRobot>& robots_blue = frame.robots_blue();
     msg.robots_blue.reserve(robots_blue.size());
     for (int i = 0; i < robots_blue.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_blue.Get(i);
@@ -160,8 +154,8 @@ DetectionFrameMsg VisionReceiver::ConstructROSMsg(
     }
 
     // Add yellow robots that are in a used half
-    const google::protobuf::RepeatedPtrField<SSL_DetectionRobot>&
-        robots_yellow = frame.robots_yellow();
+    const google::protobuf::RepeatedPtrField<SSL_DetectionRobot>& robots_yellow =
+        frame.robots_yellow();
     msg.robots_yellow.reserve(robots_yellow.size());
     for (int i = 0; i < robots_yellow.size(); ++i) {
         const SSL_DetectionRobot& robot = robots_yellow.Get(i);
@@ -175,8 +169,7 @@ DetectionFrameMsg VisionReceiver::ConstructROSMsg(
 
 rclcpp::Time VisionReceiver::ToROSTime(double time_since_epoch_s) {
     const auto seconds = static_cast<int32_t>(time_since_epoch_s);
-    const auto nanoseconds =
-        static_cast<uint32_t>((time_since_epoch_s - seconds) * 10e9);
+    const auto nanoseconds = static_cast<uint32_t>((time_since_epoch_s - seconds) * 10e9);
     return rclcpp::Time{seconds, nanoseconds, RCL_ROS_TIME};
 }
 
@@ -201,23 +194,20 @@ void VisionReceiver::startReceive() {
         });
 }
 
-void VisionReceiver::receivePacket(const boost::system::error_code& error,
-                                   std::size_t num_bytes) {
+void VisionReceiver::receivePacket(const boost::system::error_code& error, std::size_t num_bytes) {
     // Check for error
     if (static_cast<bool>(error)) {
-        EZ_ERROR_STREAM(
-            "Vision receive failed with error: " << error.message());
+        EZ_ERROR_STREAM("Vision receive failed with error: " << error.message());
         return;
     }
 
     // Parse the protobuf message and tack on the receive time.
-    StampedSSLWrapperPacket::UniquePtr stamped_packet =
-        std::make_unique<StampedSSLWrapperPacket>();
+    StampedSSLWrapperPacket::UniquePtr stamped_packet = std::make_unique<StampedSSLWrapperPacket>();
     stamped_packet->receive_time = get_clock()->now();
     if (!stamped_packet->wrapper.ParseFromArray(&_recv_buffer[0], num_bytes)) {
         EZ_ERROR_STREAM("Got bad packet of " << num_bytes << " bytes from "
-                                             << _sender_endpoint.address()
-                                             << ":" << _sender_endpoint.port());
+                                             << _sender_endpoint.address() << ":"
+                                             << _sender_endpoint.port());
         return;
     }
 
@@ -229,8 +219,7 @@ bool VisionReceiver::InUsedHalf(bool defend_plus_x, double x) const {
     const bool use_their_half = config_.gameSettings().use_their_half;
     const bool use_our_half = config_.gameSettings().use_our_half;
 
-    const bool in_our_half =
-        (defend_plus_x && x > 0) || (!defend_plus_x && x < 0);
+    const bool in_our_half = (defend_plus_x && x > 0) || (!defend_plus_x && x < 0);
     const bool in_their_half = !in_our_half;
 
     return (use_their_half && in_their_half) || (use_our_half && in_our_half);
@@ -239,17 +228,15 @@ bool VisionReceiver::InUsedHalf(bool defend_plus_x, double x) const {
 /*
  * Updates the geometry packet in `Context` based on data from the vision packet
  */
-void VisionReceiver::UpdateGeometryPacket(
-    const SSL_GeometryFieldSize& fieldSize) {
+void VisionReceiver::UpdateGeometryPacket(const SSL_GeometryFieldSize& fieldSize) {
     if (fieldSize.field_lines_size() == 0) {
         return;
     }
 
     const SSL_FieldCicularArc* center = nullptr;
-    float penaltyShortDist = 0;  // default value
-    float penaltyLongDist = 0;   // default value
-    float displacement =
-        Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
+    float penaltyShortDist = 0;                                            // default value
+    float penaltyLongDist = 0;                                             // default value
+    float displacement = Field_Dimensions::Default_Dimensions.GoalFlat();  // default displacment
 
     // Loop through field arcs looking for needed fields
     for (const SSL_FieldCicularArc& arc : fieldSize.field_arcs()) {
@@ -276,8 +263,7 @@ void VisionReceiver::UpdateGeometryPacket(
 
     float fieldBorder = config_.fieldDimensions().border;
 
-    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr &&
-        thickness != 0) {
+    if (penaltyLongDist != 0 && penaltyShortDist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
         const Field_Dimensions new_field_dim{
             fieldSize.field_length() / 1000.0f,
@@ -294,11 +280,9 @@ void VisionReceiver::UpdateGeometryPacket(
             displacement / 1000.0f,                  // GoalFlat
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
-        config_.updateFieldDimensions(
-            rj_convert::convert_to_ros<Field_Dimensions>(new_field_dim));
+        config_.updateFieldDimensions(rj_convert::convert_to_ros<Field_Dimensions>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
-        const Field_Dimensions defaultDim =
-            Field_Dimensions::Default_Dimensions;
+        const Field_Dimensions defaultDim = Field_Dimensions::Default_Dimensions;
 
         const Field_Dimensions new_field_dim{
             fieldSize.field_length() / 1000.0f,
@@ -316,8 +300,7 @@ void VisionReceiver::UpdateGeometryPacket(
             (fieldSize.field_length() / 1000.0f + (fieldBorder)*2),
             (fieldSize.field_width() / 1000.0f + (fieldBorder)*2)};
 
-        config_.updateFieldDimensions(
-            rj_convert::convert_to_ros(new_field_dim));
+        config_.updateFieldDimensions(rj_convert::convert_to_ros(new_field_dim));
     } else {
         EZ_ERROR_STREAM(
             "Error: failed to decode SSL geometry packet. Not resizing "

@@ -1,9 +1,11 @@
 
-#include "gtest/gtest.h"
-#include <Geometry2d/Point.hpp>
-#include <motion/TrapezoidalMotion.hpp>
 #include <cmath>
 #include <iostream>
+
+#include <Geometry2d/Point.hpp>
+#include <motion/TrapezoidalMotion.hpp>
+
+#include "gtest/gtest.h"
 
 using namespace std;
 
@@ -14,12 +16,12 @@ bool trapezoid1(double t, double& posOut, double& speedOut) {
     double startSpeed = 0;
     double finalSpeed = 0;
 
-    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed,
-                                   finalSpeed, posOut, speedOut);
+    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed, finalSpeed, posOut,
+                                   speedOut);
 
     if (valid) {
-        auto time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                         startSpeed, finalSpeed);
+        auto time =
+            Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -32,12 +34,12 @@ bool trapezoid2(double t, double& posOut, double& speedOut) {
     double startSpeed = 1;
     double finalSpeed = 0;
 
-    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed,
-                                   finalSpeed, posOut, speedOut);
+    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed, finalSpeed, posOut,
+                                   speedOut);
 
     if (valid) {
-        double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                           startSpeed, finalSpeed);
+        double time =
+            Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -53,12 +55,12 @@ bool triangle1(double t, double& posOut, double& speedOut) {
     double startSpeed = 0;
     double finalSpeed = 0;
 
-    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed,
-                                   finalSpeed, posOut, speedOut);
+    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed, finalSpeed, posOut,
+                                   speedOut);
 
     if (valid) {
-        double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                           startSpeed, finalSpeed);
+        double time =
+            Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -74,12 +76,12 @@ bool triangle2(double t, double& posOut, double& speedOut) {
     double startSpeed = 0;
     double finalSpeed = 0;
 
-    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed,
-                                   finalSpeed, posOut, speedOut);
+    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed, finalSpeed, posOut,
+                                   speedOut);
 
     if (valid) {
-        double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                           startSpeed, finalSpeed);
+        double time =
+            Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -95,12 +97,12 @@ bool triangle3(double t, double& posOut, double& speedOut) {
     double startSpeed = 1;
     double finalSpeed = 1;
 
-    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed,
-                                   finalSpeed, posOut, speedOut);
+    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed, finalSpeed, posOut,
+                                   speedOut);
 
     if (valid) {
-        double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                           startSpeed, finalSpeed);
+        double time =
+            Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -116,12 +118,12 @@ bool triangle4(double t, double& posOut, double& speedOut) {
     double startSpeed = 1;
     double finalSpeed = 0;
 
-    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed,
-                                   finalSpeed, posOut, speedOut);
+    bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t, startSpeed, finalSpeed, posOut,
+                                   speedOut);
 
     if (valid) {
-        double time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc,
-                                           startSpeed, finalSpeed);
+        double time =
+            Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
         EXPECT_NEAR(time, t, 0.001);
     }
     return valid;
@@ -149,10 +151,8 @@ TEST(TrapezoidalMotion, End) {
     // way after the trapezoid finishes
     double posOut, speedOut;
     bool pathValid = trapezoid1(50, posOut, speedOut);
-    EXPECT_NEAR(speedOut, 0, 0.001)
-        << "Speed should be zero at the end of the run";
-    EXPECT_NEAR(posOut, 10, 0.001)
-        << "Position should stay at end of path after path finishes";
+    EXPECT_NEAR(speedOut, 0, 0.001) << "Speed should be zero at the end of the run";
+    EXPECT_NEAR(posOut, 10, 0.001) << "Position should stay at end of path after path finishes";
     EXPECT_FALSE(pathValid);
 }
 

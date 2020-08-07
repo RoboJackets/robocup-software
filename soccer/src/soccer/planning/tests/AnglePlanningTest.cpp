@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
-
 #include <fstream>
+
+#include <gtest/gtest.h>
 
 #include "planning/primitives/AnglePlanning.hpp"
 
@@ -10,35 +10,25 @@ using namespace Geometry2d;
 // (For the case where constraints are not saturated) check that we follow the
 // angle function nearly exactly.
 void check_angle_planning_near_exact(const Trajectory& trajectory,
-                                     const AngleFunction& angle_function,
-                                     double epsilon = 1e-2) {
+                                     const AngleFunction& angle_function, double epsilon = 1e-2) {
     for (auto cursor = trajectory.cursor_begin(); cursor.has_value();
          cursor.advance(RJ::Seconds(0.01))) {
         RobotInstant instant = cursor.value();
-        EXPECT_NEAR(
-            instant.heading(),
-            angle_function(instant.linear_motion(), instant.heading(), nullptr),
-            epsilon);
+        EXPECT_NEAR(instant.heading(),
+                    angle_function(instant.linear_motion(), instant.heading(), nullptr), epsilon);
     }
 }
 
 static Trajectory make_straight_line_trajectory() {
     // Create a constant-velocity trajectory
     Trajectory trajectory;
-    trajectory.AppendInstant(
-        RobotInstant{Pose(0, 0, 2), Twist(1, 0, 0), RJ::Time(0s)});
-    trajectory.AppendInstant(
-        RobotInstant{Pose(0.5, 0, 0), Twist(1, 0, 0), RJ::Time(500ms)});
-    trajectory.AppendInstant(
-        RobotInstant{Pose(1, 0, 0), Twist(1, 0, 0), RJ::Time(1000ms)});
-    trajectory.AppendInstant(
-        RobotInstant{Pose(1.5, 0, 0), Twist(1, 0, 0), RJ::Time(1500ms)});
-    trajectory.AppendInstant(
-        RobotInstant{Pose(2, 0, 0), Twist(1, 0, 0), RJ::Time(2000ms)});
-    trajectory.AppendInstant(
-        RobotInstant{Pose(2.5, 0, 0), Twist(1, 0, 0), RJ::Time(2500ms)});
-    trajectory.AppendInstant(
-        RobotInstant{Pose(3, 0, 0), Twist(1, 0, 0), RJ::Time(3000ms)});
+    trajectory.AppendInstant(RobotInstant{Pose(0, 0, 2), Twist(1, 0, 0), RJ::Time(0s)});
+    trajectory.AppendInstant(RobotInstant{Pose(0.5, 0, 0), Twist(1, 0, 0), RJ::Time(500ms)});
+    trajectory.AppendInstant(RobotInstant{Pose(1, 0, 0), Twist(1, 0, 0), RJ::Time(1000ms)});
+    trajectory.AppendInstant(RobotInstant{Pose(1.5, 0, 0), Twist(1, 0, 0), RJ::Time(1500ms)});
+    trajectory.AppendInstant(RobotInstant{Pose(2, 0, 0), Twist(1, 0, 0), RJ::Time(2000ms)});
+    trajectory.AppendInstant(RobotInstant{Pose(2.5, 0, 0), Twist(1, 0, 0), RJ::Time(2500ms)});
+    trajectory.AppendInstant(RobotInstant{Pose(3, 0, 0), Twist(1, 0, 0), RJ::Time(3000ms)});
     return trajectory;
 }
 
@@ -51,15 +41,13 @@ static RotationConstraints make_rotation_constraints() {
 
 // Make a RobotInstant with the given linear motion and exactly coinciding with
 // the correct angle function.
-static RobotInstant make_initial_instant(const LinearMotionInstant& linear,
-                                         const RJ::Time& time,
-                                         const AngleFunction& angle_fn,
-                                         double approx_angle = 0.0) {
+static RobotInstant make_initial_instant(const LinearMotionInstant& linear, const RJ::Time& time,
+                                         const AngleFunction& angle_fn, double approx_angle = 0.0) {
     Eigen::Vector2d gradient;
     double angle = angle_fn(linear, approx_angle, &gradient);
     double angular_velocity = gradient.dot(Eigen::Vector2d(linear.velocity));
-    return RobotInstant{Pose{linear.position, angle},
-                        Twist{linear.velocity, angular_velocity}, time};
+    return RobotInstant{Pose{linear.position, angle}, Twist{linear.velocity, angular_velocity},
+                        time};
 }
 
 // Dump the angle trajectory to a file. For debugging purposes.
@@ -71,12 +59,11 @@ static RobotInstant make_initial_instant(const LinearMotionInstant& linear,
     for (; cursor.has_value(); cursor.advance(0.01s)) {
         RobotInstant instant = cursor.value();
 
-        double target =
-            angle_fn(instant.linear_motion(), instant.heading(), nullptr);
+        double target = angle_fn(instant.linear_motion(), instant.heading(), nullptr);
 
-        out << RJ::Seconds(instant.stamp - trajectory.begin_time()).count()
-            << ", " << instant.heading() << ", " << instant.angular_velocity()
-            << ", " << target << std::endl;
+        out << RJ::Seconds(instant.stamp - trajectory.begin_time()).count() << ", "
+            << instant.heading() << ", " << instant.angular_velocity() << ", " << target
+            << std::endl;
     }
 }
 
@@ -88,8 +75,8 @@ TEST(AnglePlanning, obeys_angle_function_target) {
 
     // Create a robot instant. This should allow us to have perfect tracking,
     // because we will start perfectly in line with the angle function.
-    RobotInstant initial_instant = make_initial_instant(
-        trajectory.first().linear_motion(), trajectory.first().stamp, angle_fn);
+    RobotInstant initial_instant = make_initial_instant(trajectory.first().linear_motion(),
+                                                        trajectory.first().stamp, angle_fn);
 
     PlanAngles(&trajectory, initial_instant, angle_fn, constraints);
 
@@ -110,12 +97,10 @@ TEST(AnglePlanning, DISABLED_start_from_incorrect_angle) {
     PlanAngles(&trajectory, initial_instant, angle_fn, constraints);
 
     // Check that we start in the right place.
-    EXPECT_TRUE(
-        RobotInstant::nearly_equals(trajectory.first(), initial_instant));
+    EXPECT_TRUE(RobotInstant::nearly_equals(trajectory.first(), initial_instant));
 
     // Check that by the latter half of the trajectory, we are close to correct
     check_angle_planning_near_exact(
-        trajectory.subTrajectory(trajectory.begin_time() + RJ::Seconds(2.0),
-                                 trajectory.end_time()),
+        trajectory.subTrajectory(trajectory.begin_time() + RJ::Seconds(2.0), trajectory.end_time()),
         angle_fn, 5e-2);
 }

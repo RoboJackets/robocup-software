@@ -18,18 +18,15 @@ NetworkRadio::NetworkRadio(int server_port)
 
 void NetworkRadio::startReceive() {
     // Set a receive callback
-    _socket.async_receive_from(
-        boost::asio::buffer(_recv_buffer), _robot_endpoint,
-        [this](const boost::system::error_code& error, std::size_t num_bytes) {
-            receivePacket(error, num_bytes);
-        });
+    _socket.async_receive_from(boost::asio::buffer(_recv_buffer), _robot_endpoint,
+                               [this](const boost::system::error_code& error,
+                                      std::size_t num_bytes) { receivePacket(error, num_bytes); });
 }
 
 bool NetworkRadio::isOpen() const { return _socket.is_open(); }
 
-void NetworkRadio::send(
-    const std::array<RobotIntent, Num_Shells>& intents,
-    const std::array<MotionSetpoint, Num_Shells>& setpoints) {
+void NetworkRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
+                        const std::array<MotionSetpoint, Num_Shells>& setpoints) {
     for (int shell = 0; shell < Num_Shells; shell++) {
         const auto& intent = intents[shell];
         if (!intent.is_active) {
@@ -39,15 +36,14 @@ void NetworkRadio::send(
         const auto& setpoint = setpoints[shell];
 
         // Build the control packet for this robot.
-        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>&
-            forward_packet_buffer = _send_buffers[shell];
+        std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
+            _send_buffers[shell];
 
-        auto* header =
-            reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
+        auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
 
-        auto* body = reinterpret_cast<rtp::RobotTxMessage*>(
-            &forward_packet_buffer[rtp::HeaderSize]);
+        auto* body =
+            reinterpret_cast<rtp::RobotTxMessage*>(&forward_packet_buffer[rtp::HeaderSize]);
 
         ConvertTx::to_rtp(intent, setpoint, shell, body);
 
@@ -67,12 +63,10 @@ void NetworkRadio::send(
                 const udp::endpoint& robot_endpoint = connection.endpoint;
                 _socket.async_send_to(
                     boost::asio::buffer(forward_packet_buffer), robot_endpoint,
-                    [](const boost::system::error_code& error,
-                       std::size_t num_bytes) {
+                    [](const boost::system::error_code& error, std::size_t num_bytes) {
                         // Handle errors.
                         if (static_cast<bool>(error)) {
-                            std::cerr << "Error sending: " << error
-                                      << " in " __FILE__ << std::endl;
+                            std::cerr << "Error sending: " << error << " in " __FILE__ << std::endl;
                         }
                     });
             }
@@ -85,21 +79,18 @@ void NetworkRadio::receive() {
     _context.poll();
 }
 
-void NetworkRadio::receivePacket(const boost::system::error_code& error,
-                                 std::size_t num_bytes) {
+void NetworkRadio::receivePacket(const boost::system::error_code& error, std::size_t num_bytes) {
     if (static_cast<bool>(error)) {
-        std::cerr << "Error receiving: " << error << " in " __FILE__
-                  << std::endl;
+        std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
         return;
     }
     if (num_bytes != rtp::ReverseSize) {
-        std::cerr << "Invalid packet length: expected " << rtp::ReverseSize
-                  << ", got " << num_bytes << std::endl;
+        std::cerr << "Invalid packet length: expected " << rtp::ReverseSize << ", got " << num_bytes
+                  << std::endl;
         return;
     }
 
-    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(
-        &_recv_buffer[rtp::HeaderSize]);
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&_recv_buffer[rtp::HeaderSize]);
 
     _robot_endpoint.port(25566);
 

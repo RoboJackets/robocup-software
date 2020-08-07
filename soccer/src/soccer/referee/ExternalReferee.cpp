@@ -1,17 +1,18 @@
 #include "ExternalReferee.hpp"
 
-#include <rj_param_utils/param.h>
-#include <unistd.h>
+#include <stdexcept>
 
 #include <boost/algorithm/string/predicate.hpp>
+
 #include <rj_common/Network.hpp>
 #include <rj_common/RefereeEnums.hpp>
 #include <rj_common/Utils.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_constants/topic_names.hpp>
+#include <rj_param_utils/param.h>
 #include <rj_utils/logging.hpp>
-#include <stdexcept>
+#include <unistd.h>
 
 #include "WorldState.hpp"
 
@@ -37,15 +38,12 @@ DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
 
-ExternalReferee::ExternalReferee()
-    : RefereeBase{"external_referee"}, _asio_socket{_io_service} {
+ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, _asio_socket{_io_service} {
     set_team_name(PARAM_team_name);
 
-    _raw_ref_pub =
-        create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
+    _raw_ref_pub = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
 
-    _network_timer = create_wall_timer(std::chrono::milliseconds(10),
-                                       [this]() { this->update(); });
+    _network_timer = create_wall_timer(std::chrono::milliseconds(10), [this]() { this->update(); });
 
     // Set up networking for external referee packets
     setupRefereeMulticast();
@@ -62,18 +60,16 @@ void ExternalReferee::startReceive() {
         });
 }
 
-void ExternalReferee::receivePacket(const boost::system::error_code& error,
-                                    size_t num_bytes) {
+void ExternalReferee::receivePacket(const boost::system::error_code& error, size_t num_bytes) {
     if (error != boost::system::errc::success) {
-        std::cerr << "Error receiving: " << error << " in " __FILE__
-                  << std::endl;
+        std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
         return;
     }
 
     SSL_Referee ref_packet;
     if (!ref_packet.ParseFromArray(_recv_buffer.data(), num_bytes)) {
-        std::cerr << "NewRefereeModule: got bad packet of " << num_bytes
-                  << " bytes from " << _sender_endpoint << std::endl;
+        std::cerr << "NewRefereeModule: got bad packet of " << num_bytes << " bytes from "
+                  << _sender_endpoint << std::endl;
         std::cerr << "Address: " << &RefereeAddress << std::endl;
         return;
     }
@@ -103,8 +99,7 @@ void ExternalReferee::receivePacket(const boost::system::error_code& error,
 
 void ExternalReferee::setupRefereeMulticast() {
     const auto any_address = boost::asio::ip::address_v4::any();
-    boost::asio::ip::udp::endpoint listen_endpoint{any_address,
-                                                   ProtobufRefereePort};
+    boost::asio::ip::udp::endpoint listen_endpoint{any_address, ProtobufRefereePort};
 
     _asio_socket.open(listen_endpoint.protocol());
     _asio_socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
@@ -116,8 +111,7 @@ void ExternalReferee::setupRefereeMulticast() {
     // Join multicast group
     const boost::asio::ip::address multicast_address =
         boost::asio::ip::address::from_string(RefereeAddress);
-    _asio_socket.set_option(
-        boost::asio::ip::multicast::join_group(multicast_address));
+    _asio_socket.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void ExternalReferee::update() {

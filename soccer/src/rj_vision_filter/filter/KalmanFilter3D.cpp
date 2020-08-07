@@ -1,4 +1,5 @@
 #include <cmath>
+
 #include <rj_vision_filter/filter/KalmanFilter3D.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -7,9 +8,8 @@ namespace vision_filter {
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, init_covariance, 100.0,
                   "Initial covariance of the filter. Controls how fast it gets "
                   "to the target.")
-DEFINE_NS_FLOAT64(
-    kVisionFilterParamModule, robot, process_noise, 0.1,
-    "Controls how quickly it reacts to changes in ball accelerations.")
+DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, process_noise, 0.1,
+                  "Controls how quickly it reacts to changes in ball accelerations.")
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, observation_noise, 2.0,
                   "Controls how much it trusts measurements from the camera.")
 DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, orientation_scale, 1.0,
@@ -18,13 +18,11 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, orientation_scale, 1.0,
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
-KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
-                               Geometry2d::Twist initTwist)
+KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose, Geometry2d::Twist initTwist)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
-    x_k1_k1 << initPose.position().x(), initTwist.linear().x(),
-        initPose.position().y(), initTwist.linear().y(), initPose.heading(),
-        initTwist.angular();
+    x_k1_k1 << initPose.position().x(), initTwist.linear().x(), initPose.position().y(),
+        initTwist.linear().y(), initPose.heading(), initTwist.angular();
     x_k_k1 = x_k1_k1;
     x_k_k = x_k1_k1;
 
@@ -110,21 +108,16 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose initPose,
 }
 
 void KalmanFilter3D::predictWithUpdate(Geometry2d::Pose observation) {
-    z_k << observation.position().x(), observation.position().y(),
-        observation.heading();
+    z_k << observation.position().x(), observation.position().y(), observation.heading();
 
     KalmanFilter::predictWithUpdate();
 }
 
-Geometry2d::Point KalmanFilter3D::getPos() const {
-    return Geometry2d::Point(x_k_k(0), x_k_k(2));
-}
+Geometry2d::Point KalmanFilter3D::getPos() const { return Geometry2d::Point(x_k_k(0), x_k_k(2)); }
 
 double KalmanFilter3D::getTheta() const { return x_k_k(4); }
 
-Geometry2d::Point KalmanFilter3D::getVel() const {
-    return Geometry2d::Point(x_k_k(1), x_k_k(3));
-}
+Geometry2d::Point KalmanFilter3D::getVel() const { return Geometry2d::Point(x_k_k(1), x_k_k(3)); }
 
 double KalmanFilter3D::getOmega() const { return x_k_k(5); }
 

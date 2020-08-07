@@ -1,27 +1,26 @@
 #include "SDLJoystickNode.hpp"
 
-#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <iostream>
+
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 namespace joystick {
 SDLJoystickNode::SDLJoystickNode(Context* context) : context_{context} {
     // initialize using the SDL joystick
     if (SDL_Init(SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS) != 0) {
-        std::cerr
-            << "ERROR: SDL could not initialize game controller system! SDL "
-               "Error: "
-            << SDL_GetError() << std::endl;
+        std::cerr << "ERROR: SDL could not initialize game controller system! SDL "
+                     "Error: "
+                  << SDL_GetError() << std::endl;
         throw std::runtime_error("");
     }
 
     // Attempt to add additional mappings (relative to run)
-    const auto share_dir =
-        ament_index_cpp::get_package_share_directory("rj_robocup");
+    const auto share_dir = ament_index_cpp::get_package_share_directory("rj_robocup");
     std::stringstream sdl_path;
     sdl_path << share_dir << "/gamecontrollerdb.txt";
     if (SDL_GameControllerAddMappingsFromFile(sdl_path.str().c_str()) == -1) {
-        std::cout << "Failed adding additional SDL Gamecontroller Mappings: "
-                  << SDL_GetError() << std::endl;
+        std::cout << "Failed adding additional SDL Gamecontroller Mappings: " << SDL_GetError()
+                  << std::endl;
     }
 }
 
@@ -49,8 +48,7 @@ void SDLJoystickNode::addJoystick(int device_index) {
 }
 
 void SDLJoystickNode::removeJoystick(int instance_id) {
-    const auto is_instance =
-        [instance_id](const std::unique_ptr<SDLGamepad>& gamepad) -> bool {
+    const auto is_instance = [instance_id](const std::unique_ptr<SDLGamepad>& gamepad) -> bool {
         return gamepad->instance_id == instance_id;
     };
 
@@ -60,26 +58,22 @@ void SDLJoystickNode::removeJoystick(int instance_id) {
         const int unique_id = gamepad->get().unique_id;
         // Remove gamepad from context gamepads
         std::vector<int>& gamepad_stack = context_->gamepads;
-        gamepad_stack.erase(
-            std::remove(gamepad_stack.begin(), gamepad_stack.end(), unique_id),
-            gamepad_stack.end());
+        gamepad_stack.erase(std::remove(gamepad_stack.begin(), gamepad_stack.end(), unique_id),
+                            gamepad_stack.end());
 
         // Remove own list
-        gamepads_.erase(
-            std::remove_if(gamepads_.begin(), gamepads_.end(), is_instance),
-            gamepads_.end());
+        gamepads_.erase(std::remove_if(gamepads_.begin(), gamepads_.end(), is_instance),
+                        gamepads_.end());
     }
 }
 
-std::optional<std::reference_wrapper<const SDLGamepad>>
-SDLJoystickNode::getGamepadByInstanceID(int instance_id) const {
-    const auto is_instance =
-        [instance_id](const std::unique_ptr<SDLGamepad>& gamepad) -> bool {
+std::optional<std::reference_wrapper<const SDLGamepad>> SDLJoystickNode::getGamepadByInstanceID(
+    int instance_id) const {
+    const auto is_instance = [instance_id](const std::unique_ptr<SDLGamepad>& gamepad) -> bool {
         return gamepad->instance_id == instance_id;
     };
 
-    const auto it =
-        std::find_if(gamepads_.begin(), gamepads_.end(), is_instance);
+    const auto it = std::find_if(gamepads_.begin(), gamepads_.end(), is_instance);
 
     if (it == gamepads_.end()) {
         return std::nullopt;

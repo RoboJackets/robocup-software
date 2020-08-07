@@ -1,12 +1,11 @@
 #include <iostream>
+
 #include <rj_common/Utils.hpp>
 #include <rj_vision_filter/robot/CameraRobot.hpp>
 
 namespace vision_filter {
-CameraRobot::CameraRobot(const RJ::Time& time_captured,
-                         const DetectionRobotMsg& msg,
-                         const Geometry2d::TransformMatrix& world_to_team,
-                         double team_angle)
+CameraRobot::CameraRobot(const RJ::Time& time_captured, const DetectionRobotMsg& msg,
+                         const Geometry2d::TransformMatrix& world_to_team, double team_angle)
     : timeCaptured{time_captured},
       pose{world_to_team * Geometry2d::Point{msg.x / 1000, msg.y / 1000},
            fixAngleRadians(msg.orientation + team_angle)},
@@ -43,18 +42,15 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
     for (const CameraRobot& cr : robots) {
         timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
         posAvg += cr.getPos();
-        thetaCartesianAvg +=
-            Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
-        robotID =
-            cr.getRobotID();  // Shouldn't change besides the first iteration
+        thetaCartesianAvg += Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
+        robotID = cr.getRobotID();  // Shouldn't change besides the first iteration
     }
 
     timeAvg /= robots.size();
     posAvg /= robots.size();
     thetaCartesianAvg /= robots.size();
 
-    return CameraRobot(
-        initTime + timeAvg,
-        {posAvg, atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x())}, robotID);
+    return CameraRobot(initTime + timeAvg,
+                       {posAvg, atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x())}, robotID);
 }
 }  // namespace vision_filter

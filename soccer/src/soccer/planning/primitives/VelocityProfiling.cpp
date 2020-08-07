@@ -11,18 +11,15 @@ using Geometry2d::Twist;
 
 constexpr int kInterpolationsPerBezier = 40;
 
-double limit_acceleration(double velocity_initial, double velocity_final,
-                          double displacement, double max_accel) {
+double limit_acceleration(double velocity_initial, double velocity_final, double displacement,
+                          double max_accel) {
     double offset = std::abs(2 * max_accel * displacement);
-    return std::clamp(velocity_final,
-                      std::sqrt(std::pow(velocity_initial, 2) - offset),
+    return std::clamp(velocity_final, std::sqrt(std::pow(velocity_initial, 2) - offset),
                       std::sqrt(std::pow(velocity_initial, 2) + offset));
 }
 
-Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
-                           double final_speed,
-                           const MotionConstraints& constraints,
-                           RJ::Time initial_time) {
+Trajectory ProfileVelocity(const BezierPath& path, double initial_speed, double final_speed,
+                           const MotionConstraints& constraints, RJ::Time initial_time) {
     if (path.empty()) {
         return Trajectory{{}};
     }
@@ -101,8 +98,8 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
         }
 
         double distance = (points[n + 1] - points[n]).mag();
-        speed[n + 1] = limit_acceleration(speed[n], speed[n + 1], distance,
-                                          max_tangential_acceleration);
+        speed[n + 1] =
+            limit_acceleration(speed[n], speed[n + 1], distance, max_tangential_acceleration);
     }
 
     // Deceleration pass: calculate maximum velocity at each point based on
@@ -133,16 +130,15 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
         }
 
         double distance = (points[n - 1] - points[n]).mag();
-        speed[n - 1] = limit_acceleration(speed[n], speed[n - 1], distance,
-                                          max_tangential_acceleration);
+        speed[n - 1] =
+            limit_acceleration(speed[n], speed[n - 1], distance, max_tangential_acceleration);
     }
 
     Trajectory trajectory{{}};
 
     Pose initial_pose{points[0], 0};
     Twist initial_twist{derivs1[0].normalized(speed[0]), 0};
-    trajectory.AppendInstant(
-        RobotInstant{initial_pose, initial_twist, initial_time});
+    trajectory.AppendInstant(RobotInstant{initial_pose, initial_twist, initial_time});
 
     for (int n = 1; n < num_points; n++) {
         Point deltaPos = points[n] - points[n - 1];
@@ -162,8 +158,7 @@ Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
             throw std::runtime_error("Invalid interval time");
         }
 
-        RJ::Time current_time =
-            trajectory.last().stamp + RJ::Seconds(interval_time);
+        RJ::Time current_time = trajectory.last().stamp + RJ::Seconds(interval_time);
 
         Pose pose{points[n], 0};
         Twist twist{derivs1[n].normalized(speed[n]), 0};

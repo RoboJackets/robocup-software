@@ -19,18 +19,15 @@ void GrSimCommunicator::run() {
     }
 
     if (_context->ball_command && _context->screen_to_world_command) {
-        placeBall(_context->ball_command.value(),
-                  _context->screen_to_world_command.value());
+        placeBall(_context->ball_command.value(), _context->screen_to_world_command.value());
         _context->ball_command = std::nullopt;
         _context->screen_to_world_command = std::nullopt;
     }
 }
 
-void GrSimCommunicator::placeBall(QPointF pos,
-                                  Geometry2d::TransformMatrix _screenToWorld) {
+void GrSimCommunicator::placeBall(QPointF pos, Geometry2d::TransformMatrix _screenToWorld) {
     grSim_Packet simPacket;
-    grSim_BallReplacement* ball_replace =
-        simPacket.mutable_replacement()->mutable_ball();
+    grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
     ball_replace->set_x((_screenToWorld * pos).x());
     ball_replace->set_y((_screenToWorld * pos).y());
@@ -43,8 +40,7 @@ void GrSimCommunicator::placeBall(QPointF pos,
 void GrSimCommunicator::sendSimCommand(const grSim_Packet& cmd) {
     std::string out;
     cmd.SerializeToString(&out);
-    size_t bytes =
-        _asio_socket.send_to(boost::asio::buffer(out), _grsim_endpoint);
+    size_t bytes = _asio_socket.send_to(boost::asio::buffer(out), _grsim_endpoint);
     if (bytes == 0) {
         std::cerr << "Sent 0 bytes in " __FILE__ << std::endl;
     }

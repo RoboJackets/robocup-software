@@ -1,6 +1,7 @@
 #include "RRTUtil.hpp"
 
 #include <array>
+
 #include <rrt/planning/Path.hpp>
 
 #include "DebugDrawer.hpp"
@@ -27,62 +28,56 @@ using namespace Geometry2d;
 
 void RRTConfig::createConfiguration(Configuration* cfg) {
     // NOLINTNEXTLINE
-    EnableRRTDebugDrawing =
-        new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
+    EnableRRTDebugDrawing = new ConfigBool(cfg, "PathPlanner/RRT/EnableDebugDrawing", false);
     // NOLINTNEXTLINE
     StepSize = new ConfigDouble(cfg, "PathPlanner/RRT/StepSize", 0.15);
     // NOLINTNEXTLINE
-    GoalBias = new ConfigDouble(
-        cfg, "PathPlanner/RRT/GoalBias", 0.3,
-        "Value from 0 to 1 that determines what proportion of the time the RRT "
-        "will grow towards the goal rather than towards a random point");
+    GoalBias =
+        new ConfigDouble(cfg, "PathPlanner/RRT/GoalBias", 0.3,
+                         "Value from 0 to 1 that determines what proportion of the time the RRT "
+                         "will grow towards the goal rather than towards a random point");
     // NOLINTNEXTLINE
-    WaypointBias = new ConfigDouble(
-        cfg, "PathPlanner/RRT/WayPointBias", 0.5,
-        "Value from 0 to 1 that determines the portion of the time that the "
-        "RRT will"
-        " grow towards given waypoints rather than towards a random point");
+    WaypointBias =
+        new ConfigDouble(cfg, "PathPlanner/RRT/WayPointBias", 0.5,
+                         "Value from 0 to 1 that determines the portion of the time that the "
+                         "RRT will"
+                         " grow towards given waypoints rather than towards a random point");
     // NOLINTNEXTLINE
-    MinIterations =
-        new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
-                      "The minimum number of iterations for running RRT");
+    MinIterations = new ConfigInt(cfg, "PathPlanner/RRT/MinIterations", 100,
+                                  "The minimum number of iterations for running RRT");
     // todo(Ethan) can this be increased? RRT fails sometimes. testing needed
     // //NOLINTNEXTLINE
-    MaxIterations =
-        new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
-                      "The maximum number of iterations for running RRT");
+    MaxIterations = new ConfigInt(cfg, "PathPlanner/RRT/MaxIterations", 250,
+                                  "The maximum number of iterations for running RRT");
 }
 
 ConfigBool EnableExpensiveRRTDebugDrawing();
 
-void DrawRRT(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer,
-             unsigned shellID) {
+void DrawRRT(const RRT::Tree<Point>& rrt, DebugDrawer* debug_drawer, unsigned shellID) {
     // Draw each robot's rrts in a different color
     // Note: feel free to change these, they're completely arbitrary
-    static const std::array<QColor, 6> colors = {
-        QColor("green"), QColor("blue"),   QColor("yellow"),
-        QColor("red"),   QColor("purple"), QColor("orange")};
+    static const std::array<QColor, 6> colors = {QColor("green"),  QColor("blue"),
+                                                 QColor("yellow"), QColor("red"),
+                                                 QColor("purple"), QColor("orange")};
     QColor color = colors[shellID % colors.size()];
 
     for (const auto& node : rrt.allNodes()) {
         if (node.parent() != nullptr) {
-            debug_drawer->drawLine(
-                Segment(node.state(), node.parent()->state()), color,
-                QString("RobotRRT%1").arg(shellID));
+            debug_drawer->drawLine(Segment(node.state(), node.parent()->state()), color,
+                                   QString("RobotRRT%1").arg(shellID));
         }
     }
 }
 
-void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer,
-               unsigned shellID) {
+void DrawBiRRT(const RRT::BiRRT<Point>& biRRT, DebugDrawer* debug_drawer, unsigned shellID) {
     DrawRRT(biRRT.startTree(), debug_drawer, shellID);
     DrawRRT(biRRT.goalTree(), debug_drawer, shellID);
 }
 
 vector<Point> runRRTHelper(Point start, Point goal, const ShapeSet& obstacles,
                            const vector<Point>& waypoints, bool straightLine) {
-    auto state_space = std::make_shared<RoboCupStateSpace>(
-        Field_Dimensions::Current_Dimensions, obstacles);
+    auto state_space =
+        std::make_shared<RoboCupStateSpace>(Field_Dimensions::Current_Dimensions, obstacles);
     RRT::BiRRT<Point> biRRT(state_space, Point::hash, 2);
     biRRT.setStartState(start);
     biRRT.setGoalState(goal);
@@ -124,8 +119,7 @@ vector<Point> GenerateRRT(Point start, Point goal, const ShapeSet& obstacles,
                           const vector<Point>& waypoints) {
     // note: we could just use state_space.transitionValid() for the straight
     // line test, but this runs quicker
-    vector<Point> straight =
-        runRRTHelper(start, goal, obstacles, waypoints, true);
+    vector<Point> straight = runRRTHelper(start, goal, obstacles, waypoints, true);
     if (!straight.empty()) {
         return std::move(straight);
     }

@@ -1,13 +1,10 @@
 #include <config_client/config_client.h>
-
 #include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
 
 namespace config_client {
 ConfigClient::ConfigClient(rclcpp::Node* node)
-    : node_{node},
-      game_settings_{std::nullopt},
-      field_dimensions_{std::nullopt} {
+    : node_{node}, game_settings_{std::nullopt}, field_dimensions_{std::nullopt} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
 
     const auto game_settings_cb = [this](GameSettingsMsg::UniquePtr msg) {
@@ -15,20 +12,18 @@ ConfigClient::ConfigClient(rclcpp::Node* node)
         game_settings_ = *msg;
     };
     game_settings_sub_ = node->create_subscription<GameSettingsMsg>(
-        config_server::topics::kGameSettingsPub, latching_qos,
-        game_settings_cb);
-    game_settings_client_ = node->create_client<SetGameSettingsSrv>(
-        config_server::topics::kGameSettingsSrv);
+        config_server::topics::kGameSettingsPub, latching_qos, game_settings_cb);
+    game_settings_client_ =
+        node->create_client<SetGameSettingsSrv>(config_server::topics::kGameSettingsSrv);
 
     const auto field_dimensions_cb = [this](FieldDimensionsMsg::UniquePtr msg) {
         std::lock_guard<std::mutex> guard{mutex_};
         field_dimensions_ = *msg;
     };
     field_dimensions_sub_ = node->create_subscription<FieldDimensionsMsg>(
-        config_server::topics::kFieldDimensionsPub, latching_qos,
-        field_dimensions_cb);
-    field_dimensions_client_ = node->create_client<SetFieldDimensionsSrv>(
-        config_server::topics::kFieldDimensionsSrv);
+        config_server::topics::kFieldDimensionsPub, latching_qos, field_dimensions_cb);
+    field_dimensions_client_ =
+        node->create_client<SetFieldDimensionsSrv>(config_server::topics::kFieldDimensionsSrv);
 }
 
 bool ConfigClient::connected() const {
@@ -60,16 +55,14 @@ bool ConfigClient::connectedThreaded() const {
 }
 
 void ConfigClient::updateGameSettings(const GameSettingsMsg& msg) {
-    SetGameSettingsReq::SharedPtr request =
-        std::make_shared<SetGameSettingsReq>();
+    SetGameSettingsReq::SharedPtr request = std::make_shared<SetGameSettingsReq>();
     request->game_settings = msg;
 
     game_settings_client_->async_send_request(request);
 }
 
 void ConfigClient::updateFieldDimensions(const FieldDimensionsMsg& msg) {
-    SetFieldDimensionsReq::SharedPtr request =
-        std::make_shared<SetFieldDimensionsReq>();
+    SetFieldDimensionsReq::SharedPtr request = std::make_shared<SetFieldDimensionsReq>();
     request->field_dimensions = msg;
     field_dimensions_client_->async_send_request(request);
 }

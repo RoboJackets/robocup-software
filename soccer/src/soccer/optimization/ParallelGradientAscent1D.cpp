@@ -1,9 +1,10 @@
 #include "ParallelGradientAscent1D.hpp"
-#include <math.h>
+
 #include <algorithm>
 
-ParallelGradientAscent1D::ParallelGradientAscent1D(
-    ParallelGradient1DConfig* config)
+#include <math.h>
+
+ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig* config)
     : config(config) {
     GA1Ds.reserve(config->GA1DConfig.size());
 
@@ -40,8 +41,7 @@ void ParallelGradientAscent1D::execute() {
 
             // Erase elements if they get too close
             // This helps kill any GA1Ds that are going up the same hill
-            if (fabs(lower.getXValue() - upper.getXValue()) <
-                config->xCombineThresh) {
+            if (fabs(lower.getXValue() - upper.getXValue()) < config->xCombineThresh) {
                 GA1Ds.erase(GA1Ds.begin() + i + 1);
             }
         }
