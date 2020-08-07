@@ -8,70 +8,70 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 
-std::list<Configurable*>* Configurable::_configurables;
+std::list<Configurable*>* Configurable::configurables_list;
 
 // Role for tree column zero for storing ConfigItem pointers.
-static const int ConfigItemRole = Qt::UserRole;
+static const int kConfigItemRole = Qt::UserRole;
 
 Q_DECLARE_METATYPE(ConfigItem*)  // FIXME: verify this NOLINT
 
 ConfigItem::ConfigItem(Configuration* config, const QString& name, std::string description)
-    : _config{config},
-      _treeItem{nullptr},
-      _path{name.split('/')},
-      _description{std::move(description)} {}
+    : config_{config},
+      tree_item_{nullptr},
+      path_{name.split('/')},
+      description_{std::move(description)} {}
 
 ConfigItem::~ConfigItem() {
-    if (_treeItem != nullptr) {
+    if (tree_item_ != nullptr) {
         // FIXME - Things are getting deleted in a non-GUI thread
-        // 		delete _treeItem;
-        _treeItem = nullptr;
+        // 		delete tree_item_;
+        tree_item_ = nullptr;
     }
 }
 
-void ConfigItem::valueChanged(const QString& str) {
-    if (_treeItem != nullptr) {
-        _treeItem->setText(1, str);
+void ConfigItem::value_changed(const QString& str) {
+    if (tree_item_ != nullptr) {
+        tree_item_->setText(1, str);
     }
 }
 
-void ConfigItem::setupItem() { _treeItem->setText(1, toString()); }
+void ConfigItem::setup_item() { tree_item_->setText(1, to_string()); }
 
 ////////
 
 ConfigBool::ConfigBool(Configuration* tree, const QString& name, bool value,
                        const std::string& description)
-    : ConfigItem(tree, name, description), _value{value} {
-    addItem();
+    : ConfigItem(tree, name, description), value_{value} {
+    add_item();
 }
 
-QString ConfigBool::toString() { return _value ? "true" : "false"; }
+QString ConfigBool::to_string() { return value_ ? "true" : "false"; }
 
 bool ConfigBool::value() {
-    if (_treeItem != nullptr) {
-        _value = _treeItem->checkState(1) == Qt::Checked;
+    if (tree_item_ != nullptr) {
+        value_ = tree_item_->checkState(1) == Qt::Checked;
     }
-    return _value;
+    return value_;
 }
 
-void ConfigBool::setValueString(const QString& str) {
+void ConfigBool::set_value_string(const QString& str) {
     if (str == "true") {
-        _value = true;
+        value_ = true;
     } else if (str == "false") {
-        _value = false;
+        value_ = false;
     } else {
         // Use what's in the tree in case this was called because the user
         // clicked on it
-        _value = (_treeItem->checkState(1) == Qt::Checked);
+        value_ = (tree_item_->checkState(1) == Qt::Checked);
     }
-    setupItem();
+    setup_item();
 }
 
-void ConfigBool::setupItem() {
-    if (_treeItem != nullptr) {
-        _treeItem->setCheckState(1, _value ? Qt::Checked : Qt::Unchecked);
+void ConfigBool::setup_item() {
+    if (tree_item_ != nullptr) {
+        tree_item_->setCheckState(1, value_ ? Qt::Checked : Qt::Unchecked);
         // FIXME - Can't change the checkbox anymore.  Why not?
-        _treeItem->setFlags(_treeItem->flags() | Qt::ItemIsUserCheckable);
+        tree_item_->setFlags(tree_item_->flags() | Qt::ItemIsUserCheckable);
     }
 }
 
@@ -79,53 +79,53 @@ void ConfigBool::setupItem() {
 
 ConfigInt::ConfigInt(Configuration* config, const QString& name, int value,
                      const std::string& description)
-    : ConfigItem(config, name, description), _value{value} {
-    addItem();
+    : ConfigItem(config, name, description), value_{value} {
+    add_item();
 }
 
-QString ConfigInt::toString() { return QString::number(_value); }
+QString ConfigInt::to_string() { return QString::number(value_); }
 
-void ConfigInt::setValueString(const QString& str) { _value = str.toInt(); }
+void ConfigInt::set_value_string(const QString& str) { value_ = str.toInt(); }
 
 ////////
 
 ConfigDouble::ConfigDouble(Configuration* config, const QString& name, double value,
                            const std::string& description)
-    : ConfigItem(config, name, description), _value{value} {
-    addItem();
+    : ConfigItem(config, name, description), value_{value} {
+    add_item();
 }
 
-QString ConfigDouble::toString() { return QString::number(_value); }
+QString ConfigDouble::to_string() { return QString::number(value_); }
 
-void ConfigDouble::setValueString(const QString& str) { _value = str.toDouble(); }
+void ConfigDouble::set_value_string(const QString& str) { value_ = str.toDouble(); }
 
 Configuration::Configuration() {
-    _tree = nullptr;
+    tree_ = nullptr;
 
     // Create the XML root element
-    _doc.appendChild(_doc.createElement("config"));
+    doc_.appendChild(doc_.createElement("config"));
 }
 
-std::shared_ptr<Configuration> Configuration::FromRegisteredConfigurables() {
+std::shared_ptr<Configuration> Configuration::from_registered_configurables() {
     std::shared_ptr<Configuration> config = std::make_shared<Configuration>();
     for (Configurable* obj : Configurable::configurables()) {
-        obj->createConfiguration(config.get());
+        obj->create_configuration(config.get());
     }
     return config;
 }
 
-void Configuration::addItem(ConfigItem* item) {
-    _allItems.push_back(item);
+void Configuration::add_item(ConfigItem* item) {
+    all_items_.push_back(item);
 
-    if (_tree != nullptr) {
-        addToTree(item);
+    if (tree_ != nullptr) {
+        add_to_tree(item);
     }
 }
 
-void Configuration::addToTree(ConfigItem* item) {
+void Configuration::add_to_tree(ConfigItem* item) {
     // Find the parent of this item by following the tree through all but the
     // last item in the path
-    QTreeWidgetItem* parent = _tree->invisibleRootItem();
+    QTreeWidgetItem* parent = tree_->invisibleRootItem();
     const QStringList& path = item->path();
     QStringList::const_iterator last = path.end();
     --last;
@@ -149,47 +149,47 @@ void Configuration::addToTree(ConfigItem* item) {
     }
 
     // Create a tree item
-    item->_treeItem = new QTreeWidgetItem(parent);  // NOLINT
-    item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
-    item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
-    item->_treeItem->setText(0, path.back());
+    item->tree_item_ = new QTreeWidgetItem(parent);  // NOLINT
+    item->tree_item_->setFlags(item->tree_item_->flags() | Qt::ItemIsEditable);
+    item->tree_item_->setData(0, kConfigItemRole, QVariant::fromValue(item));
+    item->tree_item_->setText(0, path.back());
 
-    if (item->_description.empty()) {
-        item->_treeItem->setToolTip(0, QString(item->_description.c_str()));
+    if (item->description_.empty()) {
+        item->tree_item_->setToolTip(0, QString(item->description_.c_str()));
     }
 
-    item->setupItem();
+    item->setup_item();
 }
 
 void Configuration::tree(QTreeWidget* tree) {
-    assert(_tree == nullptr);
+    assert(tree_ == nullptr);
 
-    _tree = tree;
-    connect(_tree, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this,
+    tree_ = tree;
+    connect(tree_, SIGNAL(itemChanged(QTreeWidgetItem*, int)), this,
             SLOT(itemChanged(QTreeWidgetItem*, int)));
 
     // Add items that were created before we got a tree
-    for (ConfigItem* item : _allItems) {
-        addToTree(item);
+    for (ConfigItem* item : all_items_) {
+        add_to_tree(item);
     }
 }
 
-ConfigItem* Configuration::configItem(QTreeWidgetItem* ti) {
-    return ti->data(0, ConfigItemRole).value<ConfigItem*>();
+ConfigItem* Configuration::config_item(QTreeWidgetItem* ti) {
+    return ti->data(0, kConfigItemRole).value<ConfigItem*>();
 }
 
 void Configuration::itemChanged(QTreeWidgetItem* item, int column) {
     if (column == 1) {
-        ConfigItem* ci = configItem(item);
+        ConfigItem* ci = config_item(item);
         if (ci != nullptr) {
-            ci->setValueString(item->text(1));
+            ci->set_value_string(item->text(1));
         }
     }
 }
 
-ConfigItem* Configuration::nameLookup(const std::string& name) const {
+ConfigItem* Configuration::name_lookup(const std::string& name) const {
     QStringList path = QString::fromStdString(name).split('/');
-    for (ConfigItem* item : _allItems) {
+    for (ConfigItem* item : all_items_) {
         if (item->path() == path) {
             return item;
         }
@@ -204,29 +204,29 @@ bool Configuration::load(const QString& filename, QString& error) {
         return false;
     }
 
-    QDomDocument newDoc;
-    QString domError;
-    int errorLine = 0;
-    int errorColumn = 0;
-    if (!newDoc.setContent(&file, &domError, &errorLine, &errorColumn)) {
+    QDomDocument new_doc;
+    QString dom_error;
+    int error_line = 0;
+    int error_column = 0;
+    if (!new_doc.setContent(&file, &dom_error, &error_line, &error_column)) {
         error = QString("%1:%2: %3")
-                    .arg(QString::number(errorLine), QString::number(errorColumn), domError);
+                    .arg(QString::number(error_line), QString::number(error_column), dom_error);
         return false;
     }
 
-    QDomElement root = newDoc.firstChildElement("config");
+    QDomElement root = new_doc.firstChildElement("config");
     if (root.isNull()) {
         error = "XML does not contain root <config> element";
         return false;
     }
 
-    _doc = newDoc;
-    for (ConfigItem* item : _allItems) {
+    doc_ = new_doc;
+    for (ConfigItem* item : all_items_) {
         QDomElement el = root;
         for (QString str : item->path()) {
-            bool isInt = false;
-            int value = str.toInt(&isInt);
-            if (isInt) {
+            bool is_int = false;
+            int value = str.toInt(&is_int);
+            if (is_int) {
                 str = QString("item%1").arg(value);
             } else {
                 // Sanitize the string
@@ -243,8 +243,8 @@ bool Configuration::load(const QString& filename, QString& error) {
         if (!el.isNull()) {
             QString str = el.attribute("value");
             if (!str.isNull()) {
-                item->setValueString(str);
-                item->valueChanged(str);
+                item->set_value_string(str);
+                item->value_changed(str);
             }
         }
     }
@@ -259,16 +259,16 @@ bool Configuration::save(const QString& filename, QString& error) {
         return false;
     }
 
-    QDomElement root = _doc.firstChildElement("config");
+    QDomElement root = doc_.firstChildElement("config");
 
     // Update the DOM
     // FIXME - Remove superfluous vector elements
-    for (ConfigItem* item : _allItems) {
+    for (ConfigItem* item : all_items_) {
         QDomElement el = root;
         for (QString str : item->path()) {
-            bool isInt = false;
-            int value = str.toInt(&isInt);
-            if (isInt) {
+            bool is_int = false;
+            int value = str.toInt(&is_int);
+            if (is_int) {
                 str = QString("item%1").arg(value);
             } else {
                 // Sanitize the string
@@ -278,7 +278,7 @@ bool Configuration::save(const QString& filename, QString& error) {
             // Find the element for the next part of the path
             QDomElement child = el.firstChildElement(str);
             if (child.isNull()) {
-                child = _doc.createElement(str);
+                child = doc_.createElement(str);
                 el.appendChild(child);
             }
 
@@ -286,11 +286,11 @@ bool Configuration::save(const QString& filename, QString& error) {
         }
 
         // Set the value
-        el.setAttribute("value", item->toString());
+        el.setAttribute("value", item->to_string());
     }
 
     // Write XML
-    QByteArray data = _doc.toByteArray();
+    QByteArray data = doc_.toByteArray();
     bool ok = (file.write(data) == data.size());
     if (!ok) {
         // Didn't write all the data
@@ -301,17 +301,17 @@ bool Configuration::save(const QString& filename, QString& error) {
 }
 
 Configurable::Configurable() {
-    if (_configurables == nullptr) {
-        _configurables = new std::list<Configurable*>();
+    if (configurables_list == nullptr) {
+        configurables_list = new std::list<Configurable*>();
     }
 
-    _configurables->push_back(this);
+    configurables_list->push_back(this);
 }
 
 const std::list<Configurable*>& Configurable::configurables() {
-    if (_configurables == nullptr) {
-        _configurables = new std::list<Configurable*>();
+    if (configurables_list == nullptr) {
+        configurables_list = new std::list<Configurable*>();
     }
 
-    return *_configurables;
+    return *configurables_list;
 }

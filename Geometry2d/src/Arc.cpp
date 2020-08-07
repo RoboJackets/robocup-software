@@ -10,8 +10,8 @@ namespace Geometry2d {
 
 vector<Point> Arc::intersects(const Line& line) const {
     // http://mathworld.wolfram.com/Circle2d-LineIntersection.html
-    const auto cx = static_cast<float>(_center.x());
-    const auto cy = static_cast<float>(_center.y());
+    const auto cx = static_cast<float>(center_.x());
+    const auto cy = static_cast<float>(center_.y());
 
     const auto x1 = static_cast<float>(line.pt[0].x() - cx);
     const auto y1 = static_cast<float>(line.pt[0].y() - cy);
@@ -32,10 +32,10 @@ vector<Point> Arc::intersects(const Line& line) const {
         // One point
         Point p{det * dy / drsq + cx, -det * dx / drsq + cy};
 
-        // TODO ashaw596 CHECK this part. Seems suspect since angleTo is really
-        // angleBetween
-        auto angle = _center.angleBetween(p);
-        if (angle > _start_angle && angle < _end_angle) {
+        // TODO ashaw596 CHECK this part. Seems suspect since angle_to is really
+        // angle_between
+        auto angle = center_.angle_between(p);
+        if (angle > start_angle_ && angle < end_angle_) {
             return {p};
         }
         return {};
@@ -51,12 +51,12 @@ vector<Point> Arc::intersects(const Line& line) const {
 
     vector<Point> results;
 
-    auto angle = (a - _center).angle();
-    if (angle > _start_angle && angle < _end_angle) {
+    auto angle = (a - center_).angle();
+    if (angle > start_angle_ && angle < end_angle_) {
         results.push_back(a);
     }
-    angle = (b - _center).angle();
-    if (angle > _start_angle && angle < _end_angle) {
+    angle = (b - center_).angle();
+    if (angle > start_angle_ && angle < end_angle_) {
         results.push_back(b);
     }
     return results;
@@ -69,7 +69,7 @@ vector<Point> Arc::intersects(const Segment& segment) const {
     auto iter = candidates.begin();
     while (iter != candidates.end()) {
         auto& candidate = *iter;
-        if (segment.distTo(candidate) == 0.0f) {
+        if (segment.dist_to(candidate) == 0.0f) {
             iter++;
         } else {
             iter = candidates.erase(iter);

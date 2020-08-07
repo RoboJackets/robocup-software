@@ -22,33 +22,33 @@ public:
     /**
      * Adds a record to our history list
      *
-     * @param calcTime Time of calculation for this vision loop
+     * @param calc_time Time of calculation for this vision loop
      * @param ball Best estimation of the current ball
-     * @param yellowRobots Best estimation of the yellow robots
-     * @param blueRobots Best estimation of the blue robots
-     * @param kickEvent Returned kick event if we find one
+     * @param yellow_robots Best estimation of the yellow robots
+     * @param blue_robots Best estimation of the blue robots
+     * @param kick_event Returned kick event if we find one
      *
      * @return Whether there was a kick
      *
-     * @note kickEvent is only filled if it returns true
+     * @note kick_event is only filled if it returns true
      * It is not touched otherwise
      */
-    bool addRecord(RJ::Time calcTime, const WorldBall& ball,
-                   const std::vector<WorldRobot>& yellowRobots,
-                   const std::vector<WorldRobot>& blueRobots,
-                   KickEvent& kickEvent);
+    bool add_record(RJ::Time calc_time, const WorldBall& ball,
+                   const std::vector<WorldRobot>& yellow_robots,
+                   const std::vector<WorldRobot>& blue_robots,
+                   KickEvent& kick_event);
 
 private:
     /**
      * @return Whether there is a large enough acceleration to be a kick
      */
-    bool detectKick();
+    bool detect_kick();
 
     /**
      * @return Closest robot to the ball at it's kick time
      */
-    WorldRobot getClosestRobot();
+    WorldRobot get_closest_robot();
 
-    std::deque<VisionState> stateHistory;
+    std::deque<VisionState> state_history_;
 };
 }  // namespace vision_filter

@@ -14,10 +14,10 @@ public:
     /**
      * Creates and initializes a kalman filter
      *
-     * @param initPos initial position
-     * @param initVel initial velocity
+     * @param init_pos initial position
+     * @param init_vel initial velocity
      */
-    KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point initVel);
+    KalmanFilter2D(Geometry2d::Point init_pos, Geometry2d::Point init_vel);
 
     /**
      * Predicts with update
@@ -25,33 +25,33 @@ public:
      *
      * @param observation The position observation for the current frame
      */
-    void predictWithUpdate(Geometry2d::Point observation);
+    void predict_with_update(Geometry2d::Point observation);
 
     /**
      * @return Current position estimate
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * @return Current velocity estimate
      */
-    Geometry2d::Point getVel() const;
+    Geometry2d::Point get_vel() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    Geometry2d::Point getPosCov() const;
+    Geometry2d::Point get_pos_cov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    Geometry2d::Point getVelCov() const;
+    Geometry2d::Point get_vel_cov() const;
 
     /**
      * Set's state velocity given XY velocity
      *
-     * @param newVel New velocity to use
+     * @param new_vel New velocity to use
      */
-    void setVel(Geometry2d::Point newVel);
+    void set_vel(Geometry2d::Point new_vel);
 };
 }  // namespace vision_filter

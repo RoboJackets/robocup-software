@@ -31,7 +31,7 @@ public:
     @param other the point to find the distance to
     @return the distance to the point from the line
     */
-    float distTo(Point other) const;
+    float dist_to(Point other) const;
 
     /**
     Applies a transformation matrix to the line.
@@ -65,7 +65,7 @@ public:
      * tells you which side of the line you are on
      * @return the sine of the non-zero portion of the cross product
      */
-    float pointSide(const Point& p) const {
+    float point_side(const Point& p) const {
         Point d = delta();
         Point v = p - pt[0];
 
@@ -75,12 +75,12 @@ public:
     /**
      * Returns the point on the line closest to p.
      */
-    Point nearestPoint(Point p) const;
+    Point nearest_point(Point p) const;
 
     /** the line consists of two points */
     std::array<Point, 2> pt;
 
-    std::string toString() {
+    std::string to_string() {
         std::stringstream str;
         str << "Line<" << pt[0] << ", " << pt[1] << ">";
         return str.str();

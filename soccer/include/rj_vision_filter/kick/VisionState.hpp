@@ -12,22 +12,22 @@ namespace vision_filter {
 class VisionState {
 public:
     /**
-     * @param calcTime Current frame time
+     * @param calc_time Current frame time
      * @param ball Current frame ball
-     * @param yellowRobots Current frame robot list
-     * @param blueRobots Current frame robot list
+     * @param yellow_robots Current frame robot list
+     * @param blue_robots Current frame robot list
      */
-    VisionState(RJ::Time calcTime, WorldBall ball,
-                std::vector<WorldRobot> yellowRobots,
-                std::vector<WorldRobot> blueRobots)
-        : calcTime(calcTime),
+    VisionState(RJ::Time calc_time, WorldBall ball,
+                std::vector<WorldRobot> yellow_robots,
+                std::vector<WorldRobot> blue_robots)
+        : calc_time(calc_time),
           ball(std::move(ball)),
-          yellowRobots(std::move(yellowRobots)),
-          blueRobots(std::move(blueRobots)) {}
+          yellow_robots(std::move(yellow_robots)),
+          blue_robots(std::move(blue_robots)) {}
 
-    RJ::Time calcTime;
+    RJ::Time calc_time;
     WorldBall ball;
-    std::vector<WorldRobot> yellowRobots;
-    std::vector<WorldRobot> blueRobots;
+    std::vector<WorldRobot> yellow_robots;
+    std::vector<WorldRobot> blue_robots;
 };
 }  // namespace vision_filter

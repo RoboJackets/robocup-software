@@ -40,5 +40,5 @@ private:
     int _dragRobotBlue;
     Geometry2d::Point _dragTo;
     Geometry2d::Point _shot;
-    Context* _context{};
+    Context* context_{};
 };

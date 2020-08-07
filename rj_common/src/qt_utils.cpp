@@ -2,8 +2,8 @@
 
 #include <rj_common/qt_utils.hpp>
 
-QDir ApplicationRunDirectory() {
-    QDir runDir(qApp->applicationDirPath());
+QDir application_run_directory() {
+    QDir run_dir(qApp->applicationDirPath());
 
 // cd up out of the application bundle on OS X
 #if defined(__APPLE__)
@@ -12,5 +12,5 @@ QDir ApplicationRunDirectory() {
     runDir.cdUp();
 #endif
 
-    return runDir;
+    return run_dir;
 }

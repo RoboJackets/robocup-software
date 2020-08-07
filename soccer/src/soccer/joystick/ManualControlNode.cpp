@@ -3,16 +3,16 @@
 namespace joystick {
 REGISTER_CONFIGURABLE(ManualControlNode);
 
-ConfigDouble* ManualControlNode::JoystickRotationMaxSpeed;
-ConfigDouble* ManualControlNode::JoystickRotationMaxDampedSpeed;
-ConfigDouble* ManualControlNode::JoystickTranslationMaxSpeed;
-ConfigDouble* ManualControlNode::JoystickTranslationMaxDampedSpeed;
+ConfigDouble* ManualControlNode::joystick_rotation_max_speed;
+ConfigDouble* ManualControlNode::joystick_rotation_max_damped_speed;
+ConfigDouble* ManualControlNode::joystick_translation_max_speed;
+ConfigDouble* ManualControlNode::joystick_translation_max_damped_speed;
 
 ManualControlNode::ManualControlNode(Context* context) : context_{context} {}
 
 void ManualControlNode::run() {
     // Update list of connected gamepads
-    updateGamepadList();
+    update_gamepad_list();
 
     // "Manually" call the fake callback on the data in context_
     for (const auto& msg : context_->gamepad_messages) {
@@ -22,7 +22,7 @@ void ManualControlNode::run() {
     const auto robots = context_->state.self;
     // Set all robots to not be joystick controlled
     for (OurRobot* robot : robots) {
-        robot->setJoystickControlled(false);
+        robot->set_joystick_controlled(false);
     }
 
     // If there aren't any gamepads that are connected, return
@@ -30,7 +30,7 @@ void ManualControlNode::run() {
         return;
     }
 
-    const int manual_id = context_->game_settings.joystick_config.manualID;
+    const int manual_id = context_->game_settings.joystick_config.manual_id;
 
     // Find the robot that we are supposed to control
     const auto pred = [manual_id](const OurRobot* r) { return r->shell() == manual_id; };
@@ -43,12 +43,12 @@ void ManualControlNode::run() {
 
     OurRobot* robot = *it;
 
-    robot->setJoystickControlled(true);
+    robot->set_joystick_controlled(true);
 
-    updateIntentAndSetpoint(robot);
+    update_intent_and_setpoint(robot);
 }
 
-void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
+void ManualControlNode::update_intent_and_setpoint(OurRobot* robot) {
     int shell = robot->shell();
 
     // Modify robot->setpoint and robot->intent
@@ -61,7 +61,7 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
     float y_vel = controls_.y_vel;
 
     // Field oriented control
-    if (context_->game_settings.joystick_config.useFieldOrientedDrive) {
+    if (context_->game_settings.joystick_config.use_field_oriented_drive) {
         // If robot isn't visible, then stop
         if (!robot->visible()) {
             intent.clear();
@@ -86,7 +86,7 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
 
     // kick/chip
     bool kick = controls_.kick || controls_.chip;
-    intent.trigger_mode = kick ? (context_->game_settings.joystick_config.useKickOnBreakBeam
+    intent.trigger_mode = kick ? (context_->game_settings.joystick_config.use_kick_on_break_beam
                                       ? RobotIntent::TriggerMode::ON_BREAK_BEAM
                                       : RobotIntent::TriggerMode::IMMEDIATE)
                                : RobotIntent::TriggerMode::STAND_DOWN;
@@ -98,9 +98,9 @@ void ManualControlNode::updateIntentAndSetpoint(OurRobot* robot) {
     intent.dvelocity = controls_.dribble ? controls_.dribbler_power : 0;
 }
 
-void ManualControlNode::updateGamepadList() {
+void ManualControlNode::update_gamepad_list() {
     gamepad_stack_ = context_->gamepads;
-    updateJoystickValid();
+    update_joystick_valid();
 }
 
 void ManualControlNode::callback(const GamepadMessage& msg) {
@@ -126,47 +126,47 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
     const auto now = RJ::now();
     // Dribbler Power
     if (msg.buttons.a) {
-        if ((now - last_dribbler_time_) >= DribbleStepTime) {
+        if ((now - last_dribbler_time_) >= kDribbleStepTime) {
             controls_.dribbler_power = std::max(controls_.dribbler_power - 0.1, 0.0);
             last_dribbler_time_ = now;
         }
     } else if (msg.buttons.y) {
-        if ((now - last_dribbler_time_) >= DribbleStepTime) {
+        if ((now - last_dribbler_time_) >= kDribbleStepTime) {
             controls_.dribbler_power = std::min(controls_.dribbler_power + 0.1, 1.0);
             last_dribbler_time_ = now;
         }
     } else {
         // Let dribbler speed change immediately
-        last_dribbler_time_ = now - DribbleStepTime;
+        last_dribbler_time_ = now - kDribbleStepTime;
     }
 
     // Kicker Power
     if (msg.buttons.x) {
-        if ((now - last_kicker_time_) >= KickerStepTime) {
+        if ((now - last_kicker_time_) >= kKickerStepTime) {
             controls_.kick_power = std::max(controls_.kick_power - 0.1, 0.0);
             last_kicker_time_ = now;
         }
     } else if (msg.buttons.b) {
-        if ((now - last_kicker_time_) >= KickerStepTime) {
+        if ((now - last_kicker_time_) >= kKickerStepTime) {
             controls_.kick_power = std::min(controls_.kick_power + 0.1, 1.0);
             last_kicker_time_ = now;
         }
     } else {
-        last_kicker_time_ = now - KickerStepTime;
+        last_kicker_time_ = now - kKickerStepTime;
     }
 
     // Kick True/False
     controls_.kick = msg.buttons.right_shoulder;
 
     // Chip
-    controls_.chip = static_cast<float>(msg.triggers.right) / AXIS_MAX > TRIGGER_CUTOFF;
+    controls_.chip = static_cast<float>(msg.triggers.right) / kAxisMax > kTriggerCutoff;
 
     // Rotation Velocity
-    controls_.a_vel = -1.f * static_cast<float>(msg.sticks.right.x) / AXIS_MAX;
+    controls_.a_vel = -1.f * static_cast<float>(msg.sticks.right.x) / kAxisMax;
 
     // Translation Velocity
-    float left_x = static_cast<float>(msg.sticks.left.x) / AXIS_MAX;
-    float left_y = static_cast<float>(msg.sticks.left.y) / AXIS_MAX;
+    float left_x = static_cast<float>(msg.sticks.left.x) / kAxisMax;
+    float left_y = static_cast<float>(msg.sticks.left.y) / kAxisMax;
 
     // Align along an axis using the DPAD as modifier buttons
     float trans_x = left_x;
@@ -205,43 +205,43 @@ void ManualControlNode::callback(const GamepadMessage& msg) {
     controls_.x_vel = trans_x;
     controls_.y_vel = trans_y;
 
-    applyControlModifiers();
+    apply_control_modifiers();
 }
 
-void ManualControlNode::applyControlModifiers() {
+void ManualControlNode::apply_control_modifiers() {
     Geometry2d::Point trans{controls_.x_vel, controls_.y_vel};
     trans.clamp(std::sqrt(2.0));
     controls_.a_vel = std::clamp(controls_.a_vel, -1.f, 1.f);
 
-    if (context_->game_settings.joystick_config.dampedTranslation) {
-        trans *= JoystickTranslationMaxDampedSpeed->value();
+    if (context_->game_settings.joystick_config.damped_translation) {
+        trans *= joystick_translation_max_damped_speed->value();
     } else {
-        trans *= JoystickTranslationMaxSpeed->value();
+        trans *= joystick_translation_max_speed->value();
     }
 
-    if (context_->game_settings.joystick_config.dampedRotation) {
-        trans *= JoystickRotationMaxDampedSpeed->value();
+    if (context_->game_settings.joystick_config.damped_rotation) {
+        trans *= joystick_rotation_max_damped_speed->value();
     } else {
-        trans *= JoystickRotationMaxSpeed->value();
+        trans *= joystick_rotation_max_speed->value();
     }
 
     // Scale up kicker and dribbler speeds
-    controls_.dribbler_power *= Max_Dribble;
-    controls_.kick_power *= Max_Kick;
+    controls_.dribbler_power *= kMaxDribble;
+    controls_.kick_power *= kMaxKick;
 }
 
-void ManualControlNode::createConfiguration(Configuration* cfg) {
-    JoystickRotationMaxSpeed =  // NOLINT
+void ManualControlNode::create_configuration(Configuration* cfg) {
+    joystick_rotation_max_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Rotation Speed", .5);
-    JoystickRotationMaxDampedSpeed =  // NOLINT
+    joystick_rotation_max_damped_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Damped Rotation Speed", .25);
-    JoystickTranslationMaxSpeed =  // NOLINT
+    joystick_translation_max_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Translation Speed", 3.0);
-    JoystickTranslationMaxDampedSpeed =  // NOLINT
+    joystick_translation_max_damped_speed =  // NOLINT
         new ConfigDouble(cfg, "Joystick/Max Damped Translation Speed", 1.0);
 }
 
-void ManualControlNode::updateJoystickValid() const {
+void ManualControlNode::update_joystick_valid() const {
     context_->joystick_valid = !gamepad_stack_.empty();
 }
 }  // namespace joystick

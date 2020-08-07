@@ -23,53 +23,53 @@ public:
      * Creates a valid world ball from a list of kalman balls through special
      * averaging
      *
-     * @param calcTime Current iteration time
+     * @param calc_time Current iteration time
      * @param kalmanBalls List of best kalman ball from every camera
      */
-    WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls);
+    WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls);
 
     /**
      * @return If the ball actually represents a real ball
      */
-    bool getIsValid() const;
+    bool get_is_valid() const;
 
     /**
      * @return The best estimated position of the ball
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * @return The best estimated velocity of the ball
      */
-    Geometry2d::Point getVel() const;
+    Geometry2d::Point get_vel() const;
 
     /**
      * @return The average position covariance of the filter
      */
-    double getPosCov() const;
+    double get_pos_cov() const;
 
     /**
      * @return The average velocity covariance of the filter
      */
-    double getVelCov() const;
+    double get_vel_cov() const;
 
     /**
      * @return List of all the building kalman balls for this world ball
      */
-    const std::list<KalmanBall>& getBallComponents() const;
+    const std::list<KalmanBall>& get_ball_components() const;
 
     /**
      * @return Time of creation for this world ball
      */
-    RJ::Time getTime() const;
+    RJ::Time get_time() const;
 
 private:
-    bool isValid;
-    Geometry2d::Point pos;
-    Geometry2d::Point vel;
-    double posCov{};
-    double velCov{};
-    std::list<KalmanBall> ballComponents;
-    RJ::Time time;
+    bool is_valid_;
+    Geometry2d::Point pos_;
+    Geometry2d::Point vel_;
+    double pos_cov_{};
+    double vel_cov_{};
+    std::list<KalmanBall> ball_components_;
+    RJ::Time time_;
 };
 }  // namespace vision_filter

@@ -25,7 +25,7 @@ public:
 
     Shape* clone() const override;
 
-    bool containsPoint(Point pt) const override;
+    bool contains_point(Point pt) const override;
 
     bool intersects(const Rect& rect) const;
     bool intersects(const Polygon& other) const;
@@ -34,18 +34,18 @@ public:
     bool hit(const Segment& seg) const override;
 
     /// Returns true if this polygon contains any vertex of other.
-    bool containsVertex(const Polygon& other) const;
+    bool contains_vertex(const Polygon& other) const;
 
-    bool nearPoint(Point pt, float threshold) const override;
-    bool nearSegment(const Segment& seg, float threshold) const;
+    bool near_point(Point pt, float threshold) const override;
+    bool near_segment(const Segment& seg, float threshold) const;
 
     Rect bbox() const;
 
     std::vector<Point> vertices;
 
-    void addVertex(Point pt) { vertices.push_back(pt); }
+    void add_vertex(Point pt) { vertices.push_back(pt); }
 
-    std::string toString() override {
+    std::string to_string() override {
         std::stringstream str;
         str << "Polygon<";
         for (int i = 0; i < vertices.size(); i++) str << vertices[i] << ", ";

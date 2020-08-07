@@ -24,11 +24,11 @@ TEST(CompositeShape, ContainsPoint) {
     cs.add(polygon);
     cs.add(rect);
 
-    EXPECT_TRUE(cs.containsPoint({0, 0.5}));      // In circle
-    EXPECT_TRUE(cs.containsPoint({5.5, -5.5}));   // In polygon
-    EXPECT_TRUE(cs.containsPoint({-4.5, -4.5}));  // In rect
+    EXPECT_TRUE(cs.contains_point({0, 0.5}));      // In circle
+    EXPECT_TRUE(cs.contains_point({5.5, -5.5}));   // In polygon
+    EXPECT_TRUE(cs.contains_point({-4.5, -4.5}));  // In rect
 
-    EXPECT_FALSE(cs.containsPoint(Point(0, 3)));
+    EXPECT_FALSE(cs.contains_point(Point(0, 3)));
 }
 
 TEST(CompositeShape, NearPoint) {
@@ -43,14 +43,14 @@ TEST(CompositeShape, NearPoint) {
     cs.add(polygon);
     cs.add(rect);
 
-    EXPECT_TRUE(cs.nearPoint(Point(1, 1), 1));    // Near circle
-    EXPECT_TRUE(cs.nearPoint(Point(5, -7), 2));   // Near polygon
-    EXPECT_TRUE(cs.nearPoint(Point(7, -6), 2));   // Near polygon
-    EXPECT_TRUE(cs.nearPoint(Point(-6, -6), 2));  // Near rect
+    EXPECT_TRUE(cs.near_point(Point(1, 1), 1));    // Near circle
+    EXPECT_TRUE(cs.near_point(Point(5, -7), 2));   // Near polygon
+    EXPECT_TRUE(cs.near_point(Point(7, -6), 2));   // Near polygon
+    EXPECT_TRUE(cs.near_point(Point(-6, -6), 2));  // Near rect
 
-    EXPECT_FALSE(cs.nearPoint(Point(0, 3), 1));
-    EXPECT_FALSE(cs.nearPoint(Point(-10, -10), 1));
-    EXPECT_FALSE(cs.nearPoint(Point(10, -1), 1));
+    EXPECT_FALSE(cs.near_point(Point(0, 3), 1));
+    EXPECT_FALSE(cs.near_point(Point(-10, -10), 1));
+    EXPECT_FALSE(cs.near_point(Point(10, -1), 1));
 }
 
 TEST(CompositeShape, Hit) {

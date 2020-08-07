@@ -9,7 +9,7 @@ namespace RefereeModuleEnums {
 using Stage = SSL_Referee_Stage;
 using Command = SSL_Referee_Command;
 
-std::string stringFromStage(Stage s);
-std::string stringFromCommand(Command c);
+std::string string_from_stage(Stage s);
+std::string string_from_command(Command c);
 
 }  // namespace RefereeModuleEnums

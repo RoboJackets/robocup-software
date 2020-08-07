@@ -17,7 +17,7 @@ class PlannerForRobot {
 public:
     PlannerForRobot();
 
-    Trajectory PlanForRobot(const Planning::PlanRequest& request);
+    Trajectory plan_for_robot(const Planning::PlanRequest& request);
 
 private:
     std::vector<std::unique_ptr<Planner>> planners_;

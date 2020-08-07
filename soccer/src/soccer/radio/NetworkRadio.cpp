@@ -9,25 +9,25 @@ using namespace boost::asio;
 using ip::udp;
 
 NetworkRadio::NetworkRadio(int server_port)
-    : _socket(_context, udp::endpoint(udp::v4(), server_port)),
-      _recv_buffer{},
-      _send_buffers(Num_Shells) {
-    _connections.resize(Num_Shells);
-    startReceive();
+    : socket_(context_, udp::endpoint(udp::v4(), server_port)),
+      recv_buffer_{},
+      send_buffers_(kNumShells) {
+    connections_.resize(kNumShells);
+    start_receive();
 }
 
-void NetworkRadio::startReceive() {
+void NetworkRadio::start_receive() {
     // Set a receive callback
-    _socket.async_receive_from(boost::asio::buffer(_recv_buffer), _robot_endpoint,
+    socket_.async_receive_from(boost::asio::buffer(recv_buffer_), robot_endpoint_,
                                [this](const boost::system::error_code& error,
-                                      std::size_t num_bytes) { receivePacket(error, num_bytes); });
+                                      std::size_t num_bytes) { receive_packet(error, num_bytes); });
 }
 
-bool NetworkRadio::isOpen() const { return _socket.is_open(); }
+bool NetworkRadio::is_open() const { return socket_.is_open(); }
 
-void NetworkRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
-                        const std::array<MotionSetpoint, Num_Shells>& setpoints) {
-    for (int shell = 0; shell < Num_Shells; shell++) {
+void NetworkRadio::send(const std::array<RobotIntent, kNumShells>& intents,
+                        const std::array<MotionSetpoint, kNumShells>& setpoints) {
+    for (int shell = 0; shell < kNumShells; shell++) {
         const auto& intent = intents[shell];
         if (!intent.is_active) {
             continue;
@@ -37,7 +37,7 @@ void NetworkRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
 
         // Build the control packet for this robot.
         std::array<uint8_t, rtp::HeaderSize + sizeof(rtp::RobotTxMessage)>& forward_packet_buffer =
-            _send_buffers[shell];
+            send_buffers_[shell];
 
         auto* header = reinterpret_cast<rtp::Header*>(&forward_packet_buffer[0]);
         fill_header(header);
@@ -48,7 +48,7 @@ void NetworkRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
         ConvertTx::to_rtp(intent, setpoint, shell, body);
 
         // Fetch the connection
-        auto maybe_connection = _connections.at(shell);
+        auto maybe_connection = connections_.at(shell);
 
         // If there exists a connection, we can send.
         if (maybe_connection) {
@@ -56,12 +56,12 @@ void NetworkRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
             // Check if we've timed out.
             if (RJ::now() + kTimeout < connection.last_received) {
                 // Remove the endpoint from the IP map and the connection list
-                assert(_robot_ip_map.erase(connection.endpoint) == 1);
-                _connections.at(shell) = std::nullopt;
+                assert(robot_ip_map_.erase(connection.endpoint) == 1);
+                connections_.at(shell) = std::nullopt;
             } else {
                 // Send to the given IP address
                 const udp::endpoint& robot_endpoint = connection.endpoint;
-                _socket.async_send_to(
+                socket_.async_send_to(
                     boost::asio::buffer(forward_packet_buffer), robot_endpoint,
                     [](const boost::system::error_code& error, std::size_t num_bytes) {
                         // Handle errors.
@@ -76,10 +76,10 @@ void NetworkRadio::send(const std::array<RobotIntent, Num_Shells>& intents,
 
 void NetworkRadio::receive() {
     // Let boost::asio handle callbacks
-    _context.poll();
+    context_.poll();
 }
 
-void NetworkRadio::receivePacket(const boost::system::error_code& error, std::size_t num_bytes) {
+void NetworkRadio::receive_packet(const boost::system::error_code& error, std::size_t num_bytes) {
     if (static_cast<bool>(error)) {
         std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
         return;
@@ -90,29 +90,29 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error, std::si
         return;
     }
 
-    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&_recv_buffer[rtp::HeaderSize]);
+    auto* msg = reinterpret_cast<rtp::RobotStatusMessage*>(&recv_buffer_[rtp::HeaderSize]);
 
-    _robot_endpoint.port(25566);
+    robot_endpoint_.port(25566);
 
     int robot_id = msg->uid;
 
-    auto iter = _robot_ip_map.find(_robot_endpoint);
-    if (iter != _robot_ip_map.end() && iter->second != robot_id) {
+    auto iter = robot_ip_map_.find(robot_endpoint_);
+    if (iter != robot_ip_map_.end() && iter->second != robot_id) {
         // Make sure this IP address isn't mapped to another robot ID.
         // If it is, remove the entry and the connections corresponding
         // to both this ID and this IP address.
-        _connections.at(iter->second) = std::nullopt;
-        _robot_ip_map.erase(iter);
-        _connections.at(robot_id) = std::nullopt;
+        connections_.at(iter->second) = std::nullopt;
+        robot_ip_map_.erase(iter);
+        connections_.at(robot_id) = std::nullopt;
     }
 
     // Update assignments.
-    if (!_connections.at(robot_id)) {
-        _connections.at(robot_id) = RobotConnection{_robot_endpoint, RJ::now()};
-        _robot_ip_map.insert({_robot_endpoint, robot_id});
+    if (!connections_.at(robot_id)) {
+        connections_.at(robot_id) = RobotConnection{robot_endpoint_, RJ::now()};
+        robot_ip_map_.insert({robot_endpoint_, robot_id});
     } else {
         // Update the timeout watchdog
-        _connections.at(robot_id)->last_received = RJ::now();
+        connections_.at(robot_id)->last_received = RJ::now();
     }
 
     // Extract the rtp to a regular struct.
@@ -121,12 +121,12 @@ void NetworkRadio::receivePacket(const boost::system::error_code& error, std::si
 
     {
         // Add reverse packets
-        std::lock_guard<std::mutex> lock(_reverse_packets_mutex);
-        _reversePackets.push_back(status);
+        std::lock_guard<std::mutex> lock(reverse_packets_mutex_);
+        reverse_packets_.push_back(status);
     }
 
     // Restart receiving
-    startReceive();
+    start_receive();
 }
 
-void NetworkRadio::switchTeam(bool /*blueTeam*/) {}
+void NetworkRadio::switch_team(bool /*blue_team*/) {}

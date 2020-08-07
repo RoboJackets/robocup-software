@@ -9,7 +9,7 @@ TEST(CameraBall, get_time_captured) {
 
     CameraBall b = CameraBall(t, p);
 
-    RJ::Time r = b.getTimeCaptured();
+    RJ::Time r = b.get_time_captured();
 
     EXPECT_EQ(t, r);
 }
@@ -20,7 +20,7 @@ TEST(CameraBall, get_pos) {
 
     CameraBall b = CameraBall(t, p);
 
-    Geometry2d::Point r = b.getPos();
+    Geometry2d::Point r = b.get_pos();
 
     EXPECT_EQ(p.x(), r.x());
     EXPECT_EQ(p.x(), r.x());
@@ -29,10 +29,10 @@ TEST(CameraBall, get_pos) {
 TEST(CameraBall, combine_zero) {
     std::vector<CameraBall> balls;
 
-    CameraBall r = CameraBall::CombineBalls(balls);
+    CameraBall r = CameraBall::combine_balls(balls);
 
-    EXPECT_EQ(r.getPos().x(), 0);
-    EXPECT_EQ(r.getPos().y(), 0);
+    EXPECT_EQ(r.get_pos().x(), 0);
+    EXPECT_EQ(r.get_pos().y(), 0);
 }
 
 TEST(CameraBall, combine_one) {
@@ -42,11 +42,11 @@ TEST(CameraBall, combine_one) {
     std::vector<CameraBall> balls;
     balls.emplace_back(t, p);
 
-    CameraBall r = CameraBall::CombineBalls(balls);
+    CameraBall r = CameraBall::combine_balls(balls);
 
-    EXPECT_EQ(r.getPos().x(), p.x());
-    EXPECT_EQ(r.getPos().y(), p.y());
-    EXPECT_EQ(r.getTimeCaptured(), t);
+    EXPECT_EQ(r.get_pos().x(), p.x());
+    EXPECT_EQ(r.get_pos().y(), p.y());
+    EXPECT_EQ(r.get_time_captured(), t);
 }
 
 TEST(CameraBall, combine_two) {
@@ -60,10 +60,10 @@ TEST(CameraBall, combine_two) {
     balls.emplace_back(t1, p1);
     balls.emplace_back(t2, p2);
 
-    CameraBall r = CameraBall::CombineBalls(balls);
+    CameraBall r = CameraBall::combine_balls(balls);
 
-    EXPECT_EQ(r.getPos().x(), (p1.x() + p2.x()) / 2);
-    EXPECT_EQ(r.getPos().y(), (p1.y() + p2.y()) / 2);
-    EXPECT_EQ(r.getTimeCaptured(), t1);
+    EXPECT_EQ(r.get_pos().x(), (p1.x() + p2.x()) / 2);
+    EXPECT_EQ(r.get_pos().y(), (p1.y() + p2.y()) / 2);
+    EXPECT_EQ(r.get_time_captured(), t1);
 }
 }  // namespace vision_filter

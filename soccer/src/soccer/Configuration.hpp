@@ -21,14 +21,14 @@ public:
     Configuration();
 
     /// Initializes a config object and adds all registered configurables to it.
-    static std::shared_ptr<Configuration> FromRegisteredConfigurables();
+    static std::shared_ptr<Configuration> from_registered_configurables();
 
     void tree(QTreeWidget* tree);
 
-    [[nodiscard]] QTreeWidget* tree() const { return _tree; }
+    [[nodiscard]] QTreeWidget* tree() const { return tree_; }
 
     // name lookup - returns pointer if exists, null otherwise
-    [[nodiscard]] ConfigItem* nameLookup(const std::string& name) const;
+    [[nodiscard]] ConfigItem* name_lookup(const std::string& name) const;
 
     bool load(const QString& filename, QString& error);
     bool save(const QString& filename, QString& error);
@@ -40,17 +40,17 @@ protected:
     friend class ConfigItem;
 
     // Called by ConfigItem's constructor
-    void addItem(ConfigItem* item);
+    void add_item(ConfigItem* item);
 
-    void addToTree(ConfigItem* item);
+    void add_to_tree(ConfigItem* item);
 
-    QList<ConfigItem*> _allItems;
+    QList<ConfigItem*> all_items_;
 
-    QTreeWidget* _tree;
+    QTreeWidget* tree_;
 
-    static ConfigItem* configItem(QTreeWidgetItem* ti);
+    static ConfigItem* config_item(QTreeWidgetItem* ti);
 
-    QDomDocument _doc;
+    QDomDocument doc_;
 };
 
 /**
@@ -73,33 +73,33 @@ public:
 
     // A ConfigItem's name is a sequence of path segments separated by '/'.
     // The path is a list of these segments in order.
-    [[nodiscard]] const QStringList& path() const { return _path; }
+    [[nodiscard]] const QStringList& path() const { return path_; }
 
     /// Returns the same name that was passed to the constructor
     [[nodiscard]] std::string name() const {
-        return _path.join('/').toStdString();
+        return path_.join('/').toStdString();
     }
 
-    virtual QString toString() = 0;
+    virtual QString to_string() = 0;
 
     // Called by Configuration when the user changes the value
-    virtual void setValueString(const QString& str) = 0;
+    virtual void set_value_string(const QString& str) = 0;
 
 protected:
     friend class Configuration;
 
-    void addItem() { _config->addItem(this); }
+    void add_item() { config_->add_item(this); }
 
     // Called when the tree item is first created
-    virtual void setupItem();
+    virtual void setup_item();
 
     // Called by subclasses to update item text
-    void valueChanged(const QString& str);
+    void value_changed(const QString& str);
 
-    QStringList _path;
-    Configuration* _config;
-    QTreeWidgetItem* _treeItem;
-    std::string _description;
+    QStringList path_;
+    Configuration* config_;
+    QTreeWidgetItem* tree_item_;
+    std::string description_;
 };
 
 class ConfigBool : public ConfigItem {
@@ -109,26 +109,26 @@ public:
 
     bool value();
 
-    void setValue(bool val) {
-        _value = val;
-        setupItem();
+    void set_value(bool val) {
+        value_ = val;
+        setup_item();
     }
 
     operator bool() { return value(); }
 
     bool operator=(bool x) {
-        setValue(x);
+        set_value(x);
         return x;
     }
 
-    QString toString() override;
-    void setValueString(const QString& str) override;
+    QString to_string() override;
+    void set_value_string(const QString& str) override;
 
 protected:
     friend class Configuration;
-    void setupItem() override;
+    void setup_item() override;
 
-    bool _value;
+    bool value_;
 };
 
 class ConfigInt : public ConfigItem {
@@ -136,26 +136,26 @@ public:
     ConfigInt(Configuration* config, const QString& name, int value = 0,
               const std::string& description = "");
 
-    QString toString() override;
-    void setValueString(const QString& str) override;
+    QString to_string() override;
+    void set_value_string(const QString& str) override;
 
-    operator int() const { return _value; }
+    operator int() const { return value_; }
 
     int operator=(int x) {
-        setValue(x);
+        set_value(x);
         return x;
     }
 
-    [[nodiscard]] int value() const { return _value; }
+    [[nodiscard]] int value() const { return value_; }
 
-    void setValue(int v) {
-        _value = v;
-        valueChanged(QString::number(v));
+    void set_value(int v) {
+        value_ = v;
+        value_changed(QString::number(v));
     }
 
 protected:
     friend class Configuration;
-    int _value;
+    int value_;
 };
 
 class ConfigDouble : public ConfigItem {
@@ -163,26 +163,26 @@ public:
     ConfigDouble(Configuration* config, const QString& name, double value = 0,
                  const std::string& description = "");
 
-    QString toString() override;
-    void setValueString(const QString& str) override;
+    QString to_string() override;
+    void set_value_string(const QString& str) override;
 
-    operator double() const { return _value; }
+    operator double() const { return value_; }
 
     double operator=(double x) {
-        setValue(x);
+        set_value(x);
         return x;
     }
 
-    [[nodiscard]] double value() const { return _value; }
+    [[nodiscard]] double value() const { return value_; }
 
-    void setValue(double v) {
-        _value = v;
-        valueChanged(QString::number(v));
+    void set_value(double v) {
+        value_ = v;
+        value_changed(QString::number(v));
     }
 
 protected:
     friend class Configuration;
-    double _value;
+    double value_;
 };
 
 #define REGISTER_CONFIGURABLE(x) static ConfigurableImpl<x> x##__configurable;
@@ -195,13 +195,13 @@ public:
     Configurable();
     virtual ~Configurable() = default;
 
-    virtual void createConfiguration(Configuration* cfg) const = 0;
+    virtual void create_configuration(Configuration* cfg) const = 0;
 
     static const std::list<Configurable*>& configurables();
 
 private:
     /// Global list of all registered configurables
-    static std::list<Configurable*>* _configurables;
+    static std::list<Configurable*>* configurables_list;
 };
 
 /**
@@ -211,7 +211,7 @@ private:
 template <class T>
 class ConfigurableImpl : public Configurable {
 public:
-    void createConfiguration(Configuration* cfg) const override {
-        T::createConfiguration(cfg);
+    void create_configuration(Configuration* cfg) const override {
+        T::create_configuration(cfg);
     }
 };

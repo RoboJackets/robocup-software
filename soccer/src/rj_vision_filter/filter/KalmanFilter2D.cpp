@@ -15,47 +15,47 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, observation_noise, 2.0,
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
-KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point initVel)
+KalmanFilter2D::KalmanFilter2D(Geometry2d::Point init_pos, Geometry2d::Point init_vel)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel
-    x_k1_k1 << initPos.x(),
-               initVel.x(),
-               initPos.y(),
-               initVel.y();
-    x_k_k1 = x_k1_k1;
-    x_k_k = x_k1_k1;
+    x_k1_k1_ << init_pos.x(),
+                init_vel.x(),
+                init_pos.y(),
+                init_vel.y();
+    x_k_k1_ = x_k1_k1_;
+    x_k_k_ = x_k1_k1_;
 
     // Initial covariance is usually extremely high to converge to the true
     // solution
     double p = ball::PARAM_init_covariance;
-    P_k1_k1 << p, 0, 0, 0,
-               0, p, 0, 0,
-               0, 0, p, 0,
-               0, 0, 0, p;
-    P_k_k1 = P_k1_k1;
-    P_k_k = P_k1_k1;
+    P_k1_k1_ << p, 0, 0, 0,
+                0, p, 0, 0,
+                0, 0, p, 0,
+                0, 0, 0, p;
+    P_k_k1_ = P_k1_k1_;
+    P_k_k_ = P_k1_k1_;
 
     // TODO(1565): Allow variable dt to decouple predict, update and merging.
     // State transition matrix (A)
     // Pos, velocity integrator. Assume constant velocity
     double dt = PARAM_vision_loop_dt;
-    F_k << 1, dt,  0,  0,
-           0,  1,  0,  0,
-           0,  0,  1, dt,
-           0,  0,  0,  1;
+    F_k_ << 1, dt,  0,  0,
+            0,  1,  0,  0,
+            0,  0,  1, dt,
+            0,  0,  0,  1;
 
     // Control transition matrix (B)
     // No inputs
-    B_k << 0,
-           0,
-           0,
-           0;
+    B_k_ << 0,
+            0,
+            0,
+            0;
 
     // Observation Matrix (C)
     // We can get positions
-    H_k << 1, 0, 0, 0,
-           0, 0, 1, 0;
+    H_k_ << 1, 0, 0, 0,
+            0, 0, 1, 0;
     // clang-format on
 
     // Covariance of process noise (how wrong A is)
@@ -79,40 +79,40 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point initPos, Geometry2d::Point init
     double dt1 = dt * sigma * sigma;
 
     // clang-format off
-    Q_k << dt3, dt2,   0,   0,
-           dt2, dt1,   0,   0,
-             0,   0, dt3, dt2,
-             0,   0, dt2, dt1;
+    Q_k_ << dt3, dt2,   0,   0,
+            dt2, dt1,   0,   0,
+              0,   0, dt3, dt2,
+              0,   0, dt2, dt1;
     // clang-format on
 
     // Covariance of observation noise (how wrong z_k is)
     double o = ball::PARAM_observation_noise;
     // clang-format off
-    R_k << o, 0,
-           0, o;
+    R_k_ << o, 0,
+            0, o;
     // clang-format on
 }
 
-void KalmanFilter2D::predictWithUpdate(Geometry2d::Point observation) {
-    z_k << observation.x(), observation.y();
+void KalmanFilter2D::predict_with_update(Geometry2d::Point observation) {
+    z_k_ << observation.x(), observation.y();
 
-    KalmanFilter::predictWithUpdate();
+    KalmanFilter::predict_with_update();
 }
 
-Geometry2d::Point KalmanFilter2D::getPos() const { return Geometry2d::Point(x_k_k(0), x_k_k(2)); }
+Geometry2d::Point KalmanFilter2D::get_pos() const { return Geometry2d::Point(x_k_k_(0), x_k_k_(2)); }
 
-Geometry2d::Point KalmanFilter2D::getVel() const { return Geometry2d::Point(x_k_k(1), x_k_k(3)); }
+Geometry2d::Point KalmanFilter2D::get_vel() const { return Geometry2d::Point(x_k_k_(1), x_k_k_(3)); }
 
-Geometry2d::Point KalmanFilter2D::getPosCov() const {
-    return Geometry2d::Point(P_k_k(0, 0), P_k_k(2, 2));
+Geometry2d::Point KalmanFilter2D::get_pos_cov() const {
+    return Geometry2d::Point(P_k_k_(0, 0), P_k_k_(2, 2));
 }
 
-Geometry2d::Point KalmanFilter2D::getVelCov() const {
-    return Geometry2d::Point(P_k_k(1, 1), P_k_k(3, 3));
+Geometry2d::Point KalmanFilter2D::get_vel_cov() const {
+    return Geometry2d::Point(P_k_k_(1, 1), P_k_k_(3, 3));
 }
 
-void KalmanFilter2D::setVel(Geometry2d::Point newVel) {
-    x_k_k(1) = newVel.x();
-    x_k_k(3) = newVel.y();
+void KalmanFilter2D::set_vel(Geometry2d::Point new_vel) {
+    x_k_k_(1) = new_vel.x();
+    x_k_k_(3) = new_vel.y();
 }
 }  // namespace vision_filter

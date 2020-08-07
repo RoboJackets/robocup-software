@@ -14,20 +14,20 @@ public:
     PivotPathPlanner(const PivotPathPlanner&) = default;
     PivotPathPlanner& operator=(const PivotPathPlanner&) = default;
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
     Trajectory plan(const PlanRequest& request) override;
 
     void reset() override {
-        previous = Trajectory{};
-        cached_pivot_point = std::nullopt;
+        previous_ = Trajectory{};
+        cached_pivot_point_ = std::nullopt;
     }
 
 private:
-    Trajectory previous;
+    Trajectory previous_;
 
     // Cache the pivot point so we don't just push the ball across the field.
-    std::optional<Geometry2d::Point> cached_pivot_point;
+    std::optional<Geometry2d::Point> cached_pivot_point_;
 
-    static ConfigDouble* _pivotRadiusMultiplier;
+    static ConfigDouble* pivot_radius_multiplier;
 };
 }  // namespace Planning

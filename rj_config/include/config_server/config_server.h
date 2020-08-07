@@ -36,24 +36,24 @@ private:
      * @brief Callback for the GameSettings service. Updates game_settings_.
      * @param msg
      */
-    void setGameSettingsCallback(const GameSettingsMsg& msg);
+    void set_game_settings_callback(const GameSettingsMsg& msg);
 
     /**
      * @brief Publishes game_settings_.
      */
-    void broadcastGameSettings();
+    void broadcast_game_settings();
 
     /**
      * @brief Callback for the FieldDimensions service.
      * Updates field_dimensions_.
      * @param msg
      */
-    void setFieldDimensionsCallback(const FieldDimensionsMsg& msg);
+    void set_field_dimensions_callback(const FieldDimensionsMsg& msg);
 
     /**
      * @brief Publishes field_dimensions_.
      */
-    void broadcastFieldDimensions();
+    void broadcast_field_dimensions();
 
     GameSettingsMsg game_settings_;
     FieldDimensionsMsg field_dimensions_;

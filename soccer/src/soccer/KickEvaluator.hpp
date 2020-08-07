@@ -20,19 +20,19 @@ class KickEvaluator {
 public:
     /**
      * @brief Constructor
-     * @param systemState, pointer to the global system state object
+     * @param system_state, pointer to the global system state object
      */
-    KickEvaluator(SystemState* systemState);
+    KickEvaluator(SystemState* system_state);
 
     /**
      * @brief Evaluates kick to target point
      * @param origin, Starting point of the kick
      * @param target, End point of the kick
-     * @param targetWidth, Width of target in radians
+     * @param target_width, Width of target in radians
      * @return Results of calculations
      */
     KickResults eval_pt_to_pt(Geometry2d::Point origin,
-                              Geometry2d::Point target, float targetWidth);
+                              Geometry2d::Point target, float target_width);
 
     /**
      * @brief Evaluates kick to target robot
@@ -71,24 +71,24 @@ public:
      * @param x, Location to run at
      * @param kmean, Kick mean
      * @param kstdev, Kick standard deviation
-     * @param robotMeans, vector of robot angle locations
-     * @param robotStDevs, vector of robot movement standard deviations
-     * @param robotVertScales, vector of how much to scale the height
-     * @param bLeft, left boundary angle
-     * @param bRight, right boundary angle
+     * @param robot_means, vector of robot angle locations
+     * @param robot_st_devs, vector of robot movement standard deviations
+     * @param robot_vert_scales, vector of how much to scale the height
+     * @param b_left, left boundary angle
+     * @param b_right, right boundary angle
      * @return F(X), F'(X)
      */
     static std::tuple<float, float> eval_calculation(
         float x, float kmean, float kstdev,
-        const std::vector<float>& robotMeans,
-        const std::vector<float>& robotStDevs,
-        const std::vector<float>& robotVertScales, float bLeft, float bRight);
+        const std::vector<float>& robot_means,
+        const std::vector<float>& robot_st_devs,
+        const std::vector<float>& robot_vert_scales, float b_left, float b_right);
 
     /**
      * @brief Initializes configurable fields
      * @note See configuration documentation for details
      */
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
     /**
      * @brief Robots that should not be consider obstacles
@@ -103,7 +103,7 @@ public:
     static ConfigDouble* kick_std_dev;
 
 private:
-    SystemState* system;
+    SystemState* system_;
 
     /**
      * @return the width of the target segment in radians
@@ -135,11 +135,11 @@ private:
      * etc
      */
     static void init_gradient_configs(
-        ParallelGradient1DConfig& pConfig,
+        ParallelGradient1DConfig& p_config,
         std::function<std::tuple<float, float>(float)>& func,
-        const std::vector<float>& robotMeans,
-        const std::vector<float>& robotStDevs, float boundaryLower,
-        float boundaryUpper);
+        const std::vector<float>& robot_means,
+        const std::vector<float>& robot_st_devs, float boundary_lower,
+        float boundary_upper);
 
     static ConfigDouble* kick_mean;
     static ConfigDouble* robot_std_dev;

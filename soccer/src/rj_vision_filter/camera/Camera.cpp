@@ -14,71 +14,71 @@ DEFINE_NS_INT64(kVisionFilterParamModule, camera, max_num_kalman_robots, 10,
                 "Max number of Kalman robots for each robot id for this specific camera.")
 using namespace camera;
 
-Camera::Camera() : isValid(false) {}
+Camera::Camera() : is_valid_(false) {}
 
-Camera::Camera(int cameraID)
-    : isValid(true),
-      cameraID(cameraID),
-      kalmanRobotYellowList(Num_Shells),
-      kalmanRobotBlueList(Num_Shells) {}
+Camera::Camera(int camera_id)
+    : is_valid_(true),
+      camera_id_(camera_id),
+      kalman_robot_yellow_list_(kNumShells),
+      kalman_robot_blue_list_(kNumShells) {}
 
-bool Camera::getIsValid() const { return isValid; }
+bool Camera::get_is_valid() const { return is_valid_; }
 
-void Camera::processBallBounce(const std::vector<WorldRobot>& yellowRobots,
-                               const std::vector<WorldRobot>& blueRobots) {
-    for (KalmanBall& b : kalmanBallList) {
-        Geometry2d::Point newVel;
-        bool isCollision = BallBounce::CalcBallBounce(b, yellowRobots, blueRobots, newVel);
+void Camera::process_ball_bounce(const std::vector<WorldRobot>& yellow_robots,
+                                 const std::vector<WorldRobot>& blue_robots) {
+    for (KalmanBall& b : kalman_ball_list_) {
+        Geometry2d::Point new_vel;
+        bool is_collision = BallBounce::calc_ball_bounce(b, yellow_robots, blue_robots, new_vel);
 
-        if (isCollision) {
-            b.setVel(newVel);
+        if (is_collision) {
+            b.set_vel(new_vel);
         }
     }
 }
 
-void Camera::updateWithFrame(RJ::Time calcTime, const std::vector<CameraBall>& ballList,
-                             const std::vector<std::list<CameraRobot>>& yellowRobotList,
-                             const std::vector<std::list<CameraRobot>>& blueRobotList,
-                             const WorldBall& previousWorldBall,
-                             const std::vector<WorldRobot>& previousYellowWorldRobots,
-                             const std::vector<WorldRobot>& previousBlueWorldRobots) {
+void Camera::update_with_frame(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                               const std::vector<std::list<CameraRobot>>& yellow_robot_list,
+                               const std::vector<std::list<CameraRobot>>& blue_robot_list,
+                               const WorldBall& previous_world_ball,
+                               const std::vector<WorldRobot>& previous_yellow_world_robots,
+                               const std::vector<WorldRobot>& previous_blue_world_robots) {
     // Prune list of balls and robots before doing anything
-    removeInvalidBalls();
-    removeInvalidRobots();
+    remove_invalid_balls();
+    remove_invalid_robots();
 
-    updateBalls(calcTime, ballList, previousWorldBall);
-    updateRobots(calcTime, yellowRobotList, blueRobotList, previousYellowWorldRobots,
-                 previousBlueWorldRobots);
+    update_balls(calc_time, ball_list, previous_world_ball);
+    update_robots(calc_time, yellow_robot_list, blue_robot_list, previous_yellow_world_robots,
+                 previous_blue_world_robots);
 }
 
-void Camera::updateWithoutFrame(RJ::Time calcTime) {
-    removeInvalidBalls();
-    removeInvalidRobots();
+void Camera::update_without_frame(RJ::Time calc_time) {
+    remove_invalid_balls();
+    remove_invalid_robots();
 
-    for (KalmanBall& b : kalmanBallList) {
-        b.predict(calcTime);
+    for (KalmanBall& b : kalman_ball_list_) {
+        b.predict(calc_time);
     }
 
-    for (std::list<KalmanRobot>& robotList : kalmanRobotYellowList) {
-        for (KalmanRobot& robot : robotList) {
-            robot.predict(calcTime);
+    for (std::list<KalmanRobot>& robot_list : kalman_robot_yellow_list_) {
+        for (KalmanRobot& robot : robot_list) {
+            robot.predict(calc_time);
         }
     }
 
-    for (std::list<KalmanRobot>& robotList : kalmanRobotBlueList) {
-        for (KalmanRobot& robot : robotList) {
-            robot.predict(calcTime);
+    for (std::list<KalmanRobot>& robot_list : kalman_robot_blue_list_) {
+        for (KalmanRobot& robot : robot_list) {
+            robot.predict(calc_time);
         }
     }
 }
 
-void Camera::updateBalls(RJ::Time calcTime, const std::vector<CameraBall>& ballList,
-                         const WorldBall& previousWorldBall) {
+void Camera::update_balls(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                          const WorldBall& previous_world_ball) {
     // Make sure there are actually balls in the measurement
     // and only predict if that's the case
-    if (ballList.empty()) {
-        for (KalmanBall& b : kalmanBallList) {
-            b.predict(calcTime);
+    if (ball_list.empty()) {
+        for (KalmanBall& b : kalman_ball_list_) {
+            b.predict(calc_time);
         }
 
         return;
@@ -86,21 +86,21 @@ void Camera::updateBalls(RJ::Time calcTime, const std::vector<CameraBall>& ballL
 
     // We have some balls, so choose which updater to use
     if (PARAM_use_mhkf) {
-        updateBallsMHKF(calcTime, ballList, previousWorldBall);
+        update_balls_mhkf(calc_time, ball_list, previous_world_ball);
     } else {
-        updateBallsAKF(calcTime, ballList, previousWorldBall);
+        update_balls_akf(calc_time, ball_list, previous_world_ball);
     }
 }
 
-void Camera::updateBallsMHKF(RJ::Time calcTime, const std::vector<CameraBall>& ballList,
-                             const WorldBall& previousWorldBall) {
+void Camera::update_balls_mhkf(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                               const WorldBall& previous_world_ball) {
     // If we have no existing filters, create a new one from average of
     // everything Easier than trying to figure out which ones are more than X
     // meters away from each other Only delays the filter collection by a camera
     // frame or two
-    if (kalmanBallList.empty()) {
-        CameraBall avgBall = CameraBall::CombineBalls(ballList);
-        kalmanBallList.emplace_back(cameraID, calcTime, avgBall, previousWorldBall);
+    if (kalman_ball_list_.empty()) {
+        CameraBall avg_ball = CameraBall::combine_balls(ball_list);
+        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball);
 
         return;
     }
@@ -109,46 +109,46 @@ void Camera::updateBallsMHKF(RJ::Time calcTime, const std::vector<CameraBall>& b
 
     // Create list of bools corresponding to whether we have used this ball
     // as measurement yet
-    std::vector<bool> usedCameraBall(ballList.size(), false);
+    std::vector<bool> used_camera_ball(ball_list.size(), false);
 
     // Which camera balls to apply to which kalman ball
-    std::vector<std::vector<CameraBall>> appliedBallsList(kalmanBallList.size());
+    std::vector<std::vector<CameraBall>> applied_balls_list(kalman_ball_list_.size());
 
     // Figure out which measurements go with which kalman balls
-    int kalmanBallIdx = 0;
-    for (KalmanBall& kalmanBall : kalmanBallList) {
-        std::vector<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
+    int kalman_ball_idx = 0;
+    for (KalmanBall& kalman_ball : kalman_ball_list_) {
+        std::vector<CameraBall>& measurement_balls = applied_balls_list.at(kalman_ball_idx);
 
-        int cameraBallIdx = 0;
-        for (const CameraBall& cameraBall : ballList) {
-            double dist = (kalmanBall.getPos() - cameraBall.getPos()).mag();
+        int camera_ball_idx = 0;
+        for (const CameraBall& camera_ball : ball_list) {
+            double dist = (kalman_ball.get_pos() - camera_ball.get_pos()).mag();
 
             // Increase the distance of our cutoff by the velocity
             // This is so the ball doesn't move outside the kalman filter
             // position radius when the ball instantly stops (like in sim)
-            if (dist < PARAM_mhkf_radius_cutoff + kalmanBall.getVel().mag()) {
-                measurementBalls.push_back(cameraBall);
-                usedCameraBall.at(cameraBallIdx) = true;
+            if (dist < PARAM_mhkf_radius_cutoff + kalman_ball.get_vel().mag()) {
+                measurement_balls.push_back(camera_ball);
+                used_camera_ball.at(camera_ball_idx) = true;
             }
-            cameraBallIdx++;
+            camera_ball_idx++;
         }
 
-        kalmanBallIdx++;
+        kalman_ball_idx++;
     }
 
     // Apply the ball measurements to the kalman filters
-    kalmanBallIdx = 0;
-    for (KalmanBall& kalmanBall : kalmanBallList) {
-        std::vector<CameraBall>& measurementBalls = appliedBallsList.at(kalmanBallIdx);
+    kalman_ball_idx = 0;
+    for (KalmanBall& kalman_ball : kalman_ball_list_) {
+        std::vector<CameraBall>& measurement_balls = applied_balls_list.at(kalman_ball_idx);
 
         // We had at least one measurement near this ball
-        if (!measurementBalls.empty()) {
-            CameraBall avgBall = CameraBall::CombineBalls(measurementBalls);
-            kalmanBall.predictAndUpdate(calcTime, avgBall);
+        if (!measurement_balls.empty()) {
+            CameraBall avg_ball = CameraBall::combine_balls(measurement_balls);
+            kalman_ball.predict_and_update(calc_time, avg_ball);
 
             // There aren't any measurements so just predict
         } else {
-            kalmanBall.predict(calcTime);
+            kalman_ball.predict(calc_time);
         }
     }
 
@@ -159,88 +159,88 @@ void Camera::updateBallsMHKF(RJ::Time calcTime, const std::vector<CameraBall>& b
     // two individual kalman filters intead of a single one
     // with an update.
     // A slight delay in will most likely be seen in these cases
-    for (int i = 0; i < ballList.size(); i++) {
-        const CameraBall& cameraBall = ballList.at(i);
-        bool wasUsed = usedCameraBall.at(i);
+    for (int i = 0; i < ball_list.size(); i++) {
+        const CameraBall& camera_ball = ball_list.at(i);
+        bool was_used = used_camera_ball.at(i);
 
-        if (!wasUsed && kalmanBallList.size() < PARAM_max_num_kalman_balls) {
-            kalmanBallList.emplace_back(cameraID, calcTime, cameraBall, previousWorldBall);
+        if (!was_used && kalman_ball_list_.size() < PARAM_max_num_kalman_balls) {
+            kalman_ball_list_.emplace_back(camera_id_, calc_time, camera_ball, previous_world_ball);
         }
     }
 }
 
-void Camera::updateBallsAKF(RJ::Time calcTime, const std::vector<CameraBall>& ballList,
-                            const WorldBall& previousWorldBall) {
+void Camera::update_balls_akf(RJ::Time calc_time, const std::vector<CameraBall>& ball_list,
+                              const WorldBall& previous_world_ball) {
     // Average everything and add as measuremnet
-    CameraBall avgBall = CameraBall::CombineBalls(ballList);
+    CameraBall avg_ball = CameraBall::combine_balls(ball_list);
 
     // If we have no existing filters, create a new one from average of
     // everything
-    if (kalmanBallList.empty()) {
-        kalmanBallList.emplace_back(cameraID, calcTime, avgBall, previousWorldBall);
+    if (kalman_ball_list_.empty()) {
+        kalman_ball_list_.emplace_back(camera_id_, calc_time, avg_ball, previous_world_ball);
 
         return;
     }
 
     // Kinda cheating, but we are only keeping a single element in the list
-    kalmanBallList.front().predictAndUpdate(calcTime, avgBall);
+    kalman_ball_list_.front().predict_and_update(calc_time, avg_ball);
 }
 
-void Camera::updateRobots(RJ::Time calcTime,
-                          const std::vector<std::list<CameraRobot>>& yellowRobotList,
-                          const std::vector<std::list<CameraRobot>>& blueRobotList,
-                          const std::vector<WorldRobot>& previousYellowWorldRobots,
-                          const std::vector<WorldRobot>& previousBlueWorldRobots) {
-    for (int i = 0; i < Num_Shells; i++) {
-        const std::list<CameraRobot>& singleYellowRobotList = yellowRobotList.at(i);
-        const std::list<CameraRobot>& singleBlueRobotList = blueRobotList.at(i);
+void Camera::update_robots(RJ::Time calc_time,
+                           const std::vector<std::list<CameraRobot>>& yellow_robot_list,
+                           const std::vector<std::list<CameraRobot>>& blue_robot_list,
+                           const std::vector<WorldRobot>& previous_yellow_world_robots,
+                           const std::vector<WorldRobot>& previous_blue_world_robots) {
+    for (int i = 0; i < kNumShells; i++) {
+        const std::list<CameraRobot>& single_yellow_robot_list = yellow_robot_list.at(i);
+        const std::list<CameraRobot>& single_blue_robot_list = blue_robot_list.at(i);
 
         // Make sure we actually have robots for the yellow team
-        if (singleYellowRobotList.empty()) {
-            for (KalmanRobot& robot : kalmanRobotYellowList.at(i)) {
-                robot.predict(calcTime);
+        if (single_yellow_robot_list.empty()) {
+            for (KalmanRobot& robot : kalman_robot_yellow_list_.at(i)) {
+                robot.predict(calc_time);
             }
 
             // If we do, do the fancy updates
         } else {
             if (PARAM_use_mhkf) {
-                updateRobotsMHKF(calcTime, singleYellowRobotList, previousYellowWorldRobots.at(i),
-                                 kalmanRobotYellowList.at(i));
+                update_robots_mhkf(calc_time, single_yellow_robot_list,
+                                 previous_yellow_world_robots.at(i), kalman_robot_yellow_list_.at(i));
             } else {
-                updateRobotsAKF(calcTime, singleYellowRobotList, previousYellowWorldRobots.at(i),
-                                kalmanRobotYellowList.at(i));
+                update_robots_akf(calc_time, single_yellow_robot_list,
+                                previous_yellow_world_robots.at(i), kalman_robot_yellow_list_.at(i));
             }
         }
 
         // Make sure we actually have robots for the blue team
-        if (singleBlueRobotList.empty()) {
-            for (KalmanRobot& robot : kalmanRobotBlueList.at(i)) {
-                robot.predict(calcTime);
+        if (single_blue_robot_list.empty()) {
+            for (KalmanRobot& robot : kalman_robot_blue_list_.at(i)) {
+                robot.predict(calc_time);
             }
 
             // If we do, do the fancy updates
         } else {
             if (PARAM_use_mhkf) {
-                updateRobotsMHKF(calcTime, singleBlueRobotList, previousBlueWorldRobots.at(i),
-                                 kalmanRobotBlueList.at(i));
+                update_robots_mhkf(calc_time, single_blue_robot_list,
+                                 previous_blue_world_robots.at(i), kalman_robot_blue_list_.at(i));
             } else {
-                updateRobotsAKF(calcTime, singleBlueRobotList, previousBlueWorldRobots.at(i),
-                                kalmanRobotBlueList.at(i));
+                update_robots_akf(calc_time, single_blue_robot_list, previous_blue_world_robots.at(i),
+                                kalman_robot_blue_list_.at(i));
             }
         }
     }
 }
 
-void Camera::updateRobotsMHKF(RJ::Time calcTime, const std::list<CameraRobot>& singleRobotList,
-                              const WorldRobot& previousWorldRobot,
-                              std::list<KalmanRobot>& singleKalmanRobotList) {
+void Camera::update_robots_mhkf(RJ::Time calc_time, const std::list<CameraRobot>& single_robot_list,
+                                const WorldRobot& previous_world_robot,
+                                std::list<KalmanRobot>& single_kalman_robot_list) {
     // If we have no existing filters, create a new one from average of
     // everything Easier than trying to figure out which ones are more than X
     // meters away from each other Only delays the filter collection by a camera
     // frame or two
-    if (singleKalmanRobotList.empty()) {
-        CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
-        singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
+    if (single_kalman_robot_list.empty()) {
+        CameraRobot avg_robot = CameraRobot::combine_robots(single_robot_list);
+        single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot, previous_world_robot);
 
         return;
     }
@@ -249,114 +249,115 @@ void Camera::updateRobotsMHKF(RJ::Time calcTime, const std::list<CameraRobot>& s
 
     // Create list of bools corresponding to whether we have used this Robot
     // as measurement yet
-    std::vector<bool> usedCameraRobot(singleRobotList.size(), false);
+    std::vector<bool> used_camera_robot(single_robot_list.size(), false);
 
     // Which camera robots to apply to which kalman Robot
-    std::vector<std::list<CameraRobot>> appliedRobotsList(singleKalmanRobotList.size());
+    std::vector<std::list<CameraRobot>> applied_robots_list(single_kalman_robot_list.size());
 
     // Apply camera robots to different kalman filters based off a fixed
     // distance A single camera robots can go to multiple different kalman
     // robots
-    int kalmanRobotIdx = 0;
-    for (KalmanRobot& kalmanRobot : singleKalmanRobotList) {
-        std::list<CameraRobot>& measurementRobot = appliedRobotsList.at(kalmanRobotIdx);
+    int kalman_robot_idx = 0;
+    for (KalmanRobot& kalman_robot : single_kalman_robot_list) {
+        std::list<CameraRobot>& measurement_robot = applied_robots_list.at(kalman_robot_idx);
 
-        int cameraRobotIdx = 0;
-        for (const CameraRobot& cameraRobot : singleRobotList) {
-            double dist = (kalmanRobot.getPos() - cameraRobot.getPos()).mag();
+        int camera_robot_idx = 0;
+        for (const CameraRobot& camera_robot : single_robot_list) {
+            double dist = (kalman_robot.get_pos() - camera_robot.get_pos()).mag();
 
             // Increase the distance of our cutoff by the velocity
             // This is so the robot doesn't move outside the kalman filter
             // position radius when the robot instantly stops (like in sim)
-            if (dist < PARAM_mhkf_radius_cutoff + kalmanRobot.getVel().mag()) {
-                measurementRobot.push_back(cameraRobot);
-                usedCameraRobot.at(cameraRobotIdx) = true;
+            if (dist < PARAM_mhkf_radius_cutoff + kalman_robot.get_vel().mag()) {
+                measurement_robot.push_back(camera_robot);
+                used_camera_robot.at(camera_robot_idx) = true;
             }
-            cameraRobotIdx++;
+            camera_robot_idx++;
         }
 
-        kalmanRobotIdx++;
+        kalman_robot_idx++;
     }
 
     // Predict and update the filters based on measurements
-    kalmanRobotIdx = 0;
-    for (KalmanRobot& kalmanRobot : singleKalmanRobotList) {
-        std::list<CameraRobot>& measurementRobots = appliedRobotsList.at(kalmanRobotIdx);
+    kalman_robot_idx = 0;
+    for (KalmanRobot& kalman_robot : single_kalman_robot_list) {
+        std::list<CameraRobot>& measurement_robots = applied_robots_list.at(kalman_robot_idx);
 
         // We had at least one measurement near this Robot
-        if (!measurementRobots.empty()) {
-            CameraRobot avgRobot = CameraRobot::CombineRobots(measurementRobots);
-            kalmanRobot.predictAndUpdate(calcTime, avgRobot);
+        if (!measurement_robots.empty()) {
+            CameraRobot avg_robot = CameraRobot::combine_robots(measurement_robots);
+            kalman_robot.predict_and_update(calc_time, avg_robot);
 
             // There aren't any measurements so just predict
         } else {
-            kalmanRobot.predict(calcTime);
+            kalman_robot.predict(calc_time);
         }
     }
 
     // Create kalman robots if one isn't near camera measurement
-    int cameraRobotIdx = 0;
-    for (const CameraRobot& cameraRobot : singleRobotList) {
-        bool wasUsed = usedCameraRobot.at(cameraRobotIdx);
+    int camera_robot_idx = 0;
+    for (const CameraRobot& camera_robot : single_robot_list) {
+        bool was_used = used_camera_robot.at(camera_robot_idx);
 
-        if (!wasUsed && singleKalmanRobotList.size() < PARAM_max_num_kalman_robots) {
-            singleKalmanRobotList.emplace_back(cameraID, calcTime, cameraRobot, previousWorldRobot);
+        if (!was_used && single_kalman_robot_list.size() < PARAM_max_num_kalman_robots) {
+            single_kalman_robot_list.emplace_back(camera_id_, calc_time, camera_robot,
+                                                  previous_world_robot);
         }
 
-        cameraRobotIdx++;
+        camera_robot_idx++;
     }
 }
 
-void Camera::updateRobotsAKF(RJ::Time calcTime, const std::list<CameraRobot>& singleRobotList,
-                             const WorldRobot& previousWorldRobot,
-                             std::list<KalmanRobot>& singleKalmanRobotList) {
+void Camera::update_robots_akf(RJ::Time calc_time, const std::list<CameraRobot>& single_robot_list,
+                               const WorldRobot& previous_world_robot,
+                               std::list<KalmanRobot>& single_kalman_robot_list) {
     // Average everything and add as measuremnet
-    CameraRobot avgRobot = CameraRobot::CombineRobots(singleRobotList);
+    CameraRobot avg_robot = CameraRobot::combine_robots(single_robot_list);
 
     // If we have no existing filters, create a new one from average of
     // everything
-    if (singleKalmanRobotList.empty()) {
-        singleKalmanRobotList.emplace_back(cameraID, calcTime, avgRobot, previousWorldRobot);
+    if (single_kalman_robot_list.empty()) {
+        single_kalman_robot_list.emplace_back(camera_id_, calc_time, avg_robot, previous_world_robot);
 
         return;
     }
 
     // Kinda cheating, but we are only keeping a single element in the list
-    singleKalmanRobotList.front().predictAndUpdate(calcTime, avgRobot);
+    single_kalman_robot_list.front().predict_and_update(calc_time, avg_robot);
 }
 
-void Camera::removeInvalidBalls() {
+void Camera::remove_invalid_balls() {
     // Remove all balls that are unhealthy
-    kalmanBallList.remove_if([](KalmanBall& b) { return b.isUnhealthy(); });
+    kalman_ball_list_.remove_if([](KalmanBall& b) { return b.is_unhealthy(); });
 }
 
-void Camera::removeInvalidRobots() {
+void Camera::remove_invalid_robots() {
     // Remove all the robots that are unhealthy
-    for (std::list<KalmanRobot>& robotList : kalmanRobotBlueList) {
-        robotList.remove_if([](KalmanRobot& r) { return r.isUnhealthy(); });
+    for (std::list<KalmanRobot>& robot_list : kalman_robot_blue_list_) {
+        robot_list.remove_if([](KalmanRobot& r) { return r.is_unhealthy(); });
     }
 
-    for (std::list<KalmanRobot>& robotList : kalmanRobotYellowList) {
-        robotList.remove_if([](KalmanRobot& r) { return r.isUnhealthy(); });
+    for (std::list<KalmanRobot>& robot_list : kalman_robot_yellow_list_) {
+        robot_list.remove_if([](KalmanRobot& r) { return r.is_unhealthy(); });
     }
 }
 
-void Camera::predictAllRobots(RJ::Time calcTime,
-                              std::vector<std::list<KalmanRobot>>& robotListList) {
-    for (std::list<KalmanRobot>& robotList : robotListList) {
-        for (KalmanRobot& robot : robotList) {
-            robot.predict(calcTime);
+void Camera::predict_all_robots(RJ::Time calc_time,
+                                std::vector<std::list<KalmanRobot>>& robot_list_list) {
+    for (std::list<KalmanRobot>& robot_list : robot_list_list) {
+        for (KalmanRobot& robot : robot_list) {
+            robot.predict(calc_time);
         }
     }
 }
 
-const std::list<KalmanBall>& Camera::getKalmanBalls() const { return kalmanBallList; }
+const std::list<KalmanBall>& Camera::get_kalman_balls() const { return kalman_ball_list_; }
 
-const std::vector<std::list<KalmanRobot>>& Camera::getKalmanRobotsYellow() const {
-    return kalmanRobotYellowList;
+const std::vector<std::list<KalmanRobot>>& Camera::get_kalman_robots_yellow() const {
+    return kalman_robot_yellow_list_;
 }
 
-const std::vector<std::list<KalmanRobot>>& Camera::getKalmanRobotsBlue() const {
-    return kalmanRobotBlueList;
+const std::vector<std::list<KalmanRobot>>& Camera::get_kalman_robots_blue() const {
+    return kalman_robot_blue_list_;
 }
 }  // namespace vision_filter

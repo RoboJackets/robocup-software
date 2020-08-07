@@ -15,13 +15,13 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
 class CameraRobot {
 public:
     /**
-     * @param timeCaptured Time the frame was captured
+     * @param time_captured Time the frame was captured
      * @param pos Position of the robot observation
      * @param theta Heading of the robot observation
-     * @param robotID ID of the robot
+     * @param robot_id ID of the robot
      */
-    CameraRobot(RJ::Time timeCaptured, Geometry2d::Pose pose, int robotID)
-        : timeCaptured(timeCaptured), pose(pose), robotID(robotID) {}
+    CameraRobot(RJ::Time time_captured, Geometry2d::Pose pose, int robot_id)
+        : time_captured_(time_captured), pose_(pose), robot_id_(robot_id) {}
 
     /**
      * Constructor that takes in a DetectionRobotMsg.
@@ -37,27 +37,27 @@ public:
     /**
      * @return the time the detection was captured
      */
-    RJ::Time getTimeCaptured() const;
+    RJ::Time get_time_captured() const;
 
     /**
      * @return the position of the measurement
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * @return the heading of the measurement
      */
-    double getTheta() const;
+    double get_theta() const;
 
     /**
      * @return the robot ID of the measurement
      */
-    int getRobotID() const;
+    int get_robot_id() const;
 
     /**
      * @return the pose of the measurement
      */
-    Geometry2d::Pose getPose() const;
+    Geometry2d::Pose get_pose() const;
 
     /**
      * Combines all the robots in the list and returns a robot
@@ -65,14 +65,14 @@ public:
      *
      * @param robots The list of robots to combine
      *
-     * Note: All robots must have the same robotID
+     * Note: All robots must have the same robot_id
      */
-    static CameraRobot CombineRobots(const std::list<CameraRobot>& robots);
+    static CameraRobot combine_robots(const std::list<CameraRobot>& robots);
 
 private:
-    RJ::Time timeCaptured;
-    Geometry2d::Pose pose;
+    RJ::Time time_captured_;
+    Geometry2d::Pose pose_;
 
-    int robotID;
+    int robot_id_;
 };
 }  // namespace vision_filter

@@ -49,28 +49,28 @@ bool ConfigClient::connected() const {
     return have_msg;
 }
 
-bool ConfigClient::connectedThreaded() const {
+bool ConfigClient::connected_threaded() const {
     std::lock_guard<std::mutex> guard{mutex_};
     return connected();
 }
 
-void ConfigClient::updateGameSettings(const GameSettingsMsg& msg) {
+void ConfigClient::update_game_settings(const GameSettingsMsg& msg) {
     SetGameSettingsReq::SharedPtr request = std::make_shared<SetGameSettingsReq>();
     request->game_settings = msg;
 
     game_settings_client_->async_send_request(request);
 }
 
-void ConfigClient::updateFieldDimensions(const FieldDimensionsMsg& msg) {
+void ConfigClient::update_field_dimensions(const FieldDimensionsMsg& msg) {
     SetFieldDimensionsReq::SharedPtr request = std::make_shared<SetFieldDimensionsReq>();
     request->field_dimensions = msg;
     field_dimensions_client_->async_send_request(request);
 }
 
-bool ConfigClient::waitUntilConnected() const {
+bool ConfigClient::wait_until_connected() const {
     constexpr std::chrono::milliseconds kSleepDuration{100};
     while (rclcpp::ok()) {
-        if (connectedThreaded()) {
+        if (connected_threaded()) {
             return true;
         }
         rclcpp::sleep_for(kSleepDuration);

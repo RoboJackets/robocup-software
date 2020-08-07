@@ -29,9 +29,9 @@ public:
 
         /// these limits are applied before sending the actual commands to the
         /// robots
-        std::unique_ptr<ConfigDouble> maxKick;
-        std::unique_ptr<ConfigDouble> maxChip;
-        // ConfigDouble *passKick;
+        std::unique_ptr<ConfigDouble> max_kick;
+        std::unique_ptr<ConfigDouble> max_chip;
+        // ConfigDouble *pass_kick;
     };
 
     struct Dribbler {
@@ -48,8 +48,8 @@ public:
         Chipper() {}
         Chipper(Configuration* config, const QString& prefix);
 
-        std::unique_ptr<ConfigDouble> calibrationSlope;
-        std::unique_ptr<ConfigDouble> calibrationOffset;
+        std::unique_ptr<ConfigDouble> calibration_slope;
+        std::unique_ptr<ConfigDouble> calibration_offset;
     };
 
     PID translation;
@@ -60,22 +60,22 @@ public:
     Chipper chipper;
 
     /// convert from real units to bot "units"
-    std::unique_ptr<ConfigDouble> velMultiplier;
-    std::unique_ptr<ConfigDouble> angleVelMultiplier;
+    std::unique_ptr<ConfigDouble> vel_multiplier;
+    std::unique_ptr<ConfigDouble> angle_vel_multiplier;
 
     // If a command velocity we're about to send is below this value in
     // magniude, but greater than zero, we scale the velocity up to this
     // magnitude.
-    std::unique_ptr<ConfigDouble> minEffectiveVelocity;
-    std::unique_ptr<ConfigDouble> minEffectiveAngularSpeed;
+    std::unique_ptr<ConfigDouble> min_effective_velocity;
+    std::unique_ptr<ConfigDouble> min_effective_angular_speed;
 
     /// we multiply this by the bot's acceleration and add this to the output
-    /// targetVel
-    std::unique_ptr<ConfigDouble> accelerationMultiplier;
+    /// target_vel
+    std::unique_ptr<ConfigDouble> acceleration_multiplier;
 
     // when pivoting, we multiply the calculated x-velocity of the robot by this
     // value before sending it to the robot
-    std::unique_ptr<ConfigDouble> pivotVelMultiplier;
+    std::unique_ptr<ConfigDouble> pivot_vel_multiplier;
 };
 
 /**

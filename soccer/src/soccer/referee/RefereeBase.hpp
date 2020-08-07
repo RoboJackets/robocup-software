@@ -99,17 +99,17 @@ protected:
 
     // TODO(1556): Implement kick watcher
     void capture_ready_point(const Geometry2d::Point& ball_position) {
-        _capture_ready_point = ball_position;
+        capture_ready_point_ = ball_position;
     }
 
     void spin_kick_detector(const BallState& ball_position) {
-        if (!_state.inReadyState()) {
-            _capture_ready_point = std::nullopt;
+        if (!state_.in_ready_state()) {
+            capture_ready_point_ = std::nullopt;
         }
 
-        if (_capture_ready_point.has_value()) {
+        if (capture_ready_point_.has_value()) {
             constexpr double kMovedRadius = 0.1;
-            if (!_capture_ready_point->nearPoint(ball_position.position,
+            if (!capture_ready_point_->near_point(ball_position.position,
                                                  kMovedRadius)) {
                 play();
             }
@@ -122,7 +122,7 @@ protected:
     void send();
 
 private:
-    std::string _our_name;
+    std::string our_name_;
 
     /**
      * @brief Current team info for both teams.
@@ -130,30 +130,30 @@ private:
      * @details This is indexed by blue/yellow rather than ours/theirs to avoid
      * transient issues when our team color switches.
      */
-    TeamInfo _blue_info;
-    TeamInfo _yellow_info;
-    bool _team_info_valid = false;
+    TeamInfo blue_info_;
+    TeamInfo yellow_info_;
+    bool team_info_valid_ = false;
 
     /**
      * @brief Current game state.
      */
-    GameState _state;
-    bool _blue_restart = false;
-    bool _state_valid = false;
+    GameState state_;
+    bool blue_restart_ = false;
+    bool state_valid_ = false;
 
-    bool _goalie_valid = false;
+    bool goalie_valid_ = false;
 
     /**
      * @brief Our current team color.
      */
-    bool _blue_team = false;
-    bool _blue_team_valid = false;
+    bool blue_team_ = false;
+    bool blue_team_valid_ = false;
 
-    rclcpp::Publisher<TeamColorMsg>::SharedPtr _team_color_pub;
-    rclcpp::Publisher<GoalieMsg>::SharedPtr _goalie_id_pub;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr _our_team_info_pub;
-    rclcpp::Publisher<TeamInfoMsg>::SharedPtr _their_team_info_pub;
-    rclcpp::Publisher<GameStateMsg>::SharedPtr _game_state_pub;
+    rclcpp::Publisher<TeamColorMsg>::SharedPtr team_color_pub_;
+    rclcpp::Publisher<GoalieMsg>::SharedPtr goalie_id_pub_;
+    rclcpp::Publisher<TeamInfoMsg>::SharedPtr our_team_info_pub_;
+    rclcpp::Publisher<TeamInfoMsg>::SharedPtr their_team_info_pub_;
+    rclcpp::Publisher<GameStateMsg>::SharedPtr game_state_pub_;
 
     /**
      * @brief Update the team color from the names currently available in the
@@ -162,9 +162,9 @@ private:
     void update_team_color_from_names();
 
     // Kick detector information
-    std::optional<Geometry2d::Point> _capture_ready_point;
+    std::optional<Geometry2d::Point> capture_ready_point_;
 
-    params::ROS2ParamProvider _param_provider;
+    params::ROS2ParamProvider param_provider_;
 };
 
 }  // namespace referee

@@ -10,14 +10,14 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, world_ball, ball_merger_power, 1.5,
                   "to be nonlinear.")
 using world_ball::PARAM_ball_merger_power;
 
-WorldBall::WorldBall() : isValid(false) {}
+WorldBall::WorldBall() : is_valid_(false) {}
 
-WorldBall::WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls)
-    : isValid(true), time(calcTime) {
-    Geometry2d::Point posAvg = Geometry2d::Point(0, 0);
-    Geometry2d::Point velAvg = Geometry2d::Point(0, 0);
-    double totalPosWeight = 0;
-    double totalVelWeight = 0;
+WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls)
+    : is_valid_(true), time_(calc_time) {
+    Geometry2d::Point pos_avg = Geometry2d::Point(0, 0);
+    Geometry2d::Point vel_avg = Geometry2d::Point(0, 0);
+    double total_pos_weight = 0;
+    double total_vel_weight = 0;
 
     // Below 1 would invert the ratio of scaling
     // Above 2 would just be super noisy
@@ -25,69 +25,69 @@ WorldBall::WorldBall(RJ::Time calcTime, const std::list<KalmanBall>& kalmanBalls
         std::cout << "WARN: ball_merger_power should be between 1 and 2" << std::endl;
     }
 
-    if (kalmanBalls.empty()) {
+    if (kalman_balls.empty()) {
         throw std::runtime_error("ERROR: Zero balls are given to the WorldBall constructor");
     }
 
-    for (const KalmanBall& ball : kalmanBalls) {
+    for (const KalmanBall& ball : kalman_balls) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Point posCov = ball.getPosCov();
-        Geometry2d::Point velCov = ball.getVelCov();
+        Geometry2d::Point pos_cov = ball.get_pos_cov();
+        Geometry2d::Point vel_cov = ball.get_vel_cov();
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Point posStdDev;
-        Geometry2d::Point velStdDev;
-        posStdDev.x() = std::sqrt(posCov.x());
-        posStdDev.y() = std::sqrt(posCov.y());
-        velStdDev.x() = std::sqrt(velCov.x());
-        velStdDev.y() = std::sqrt(velCov.y());
+        Geometry2d::Point pos_std_dev;
+        Geometry2d::Point vel_std_dev;
+        pos_std_dev.x() = std::sqrt(pos_cov.x());
+        pos_std_dev.y() = std::sqrt(pos_cov.y());
+        vel_std_dev.x() = std::sqrt(vel_cov.x());
+        vel_std_dev.y() = std::sqrt(vel_cov.y());
 
         // Inversely proportional to how much the filter has been updated
-        double filterUncertantity = 1.0 / ball.getHealth();
+        double filter_uncertantity = 1.0 / ball.get_health();
 
         // How good of pos/vel estimation in total
         // (This is less efficient than just doing the sqrt(x_cov + y_cov),
         //  but it's a little more clear math-wise)
-        double posUncertantity = posStdDev.mag();
-        double velUncertantity = velStdDev.mag();
+        double pos_uncertantity = pos_std_dev.mag();
+        double vel_uncertantity = vel_std_dev.mag();
 
         // Weight better estimates higher
-        double filterPosWeight =
-            std::pow(posUncertantity * filterUncertantity, -PARAM_ball_merger_power);
+        double filter_pos_weight =
+            std::pow(pos_uncertantity * filter_uncertantity, -PARAM_ball_merger_power);
 
-        double filterVelWeight =
-            std::pow(velUncertantity * filterUncertantity, -PARAM_ball_merger_power);
+        double filter_vel_weight =
+            std::pow(vel_uncertantity * filter_uncertantity, -PARAM_ball_merger_power);
 
-        posAvg += filterPosWeight * ball.getPos();
-        velAvg += filterVelWeight * ball.getVel();
+        pos_avg += filter_pos_weight * ball.get_pos();
+        vel_avg += filter_vel_weight * ball.get_vel();
 
-        totalPosWeight += filterPosWeight;
-        totalVelWeight += filterVelWeight;
+        total_pos_weight += filter_pos_weight;
+        total_vel_weight += filter_vel_weight;
     }
 
-    posAvg /= totalPosWeight;
-    velAvg /= totalVelWeight;
+    pos_avg /= total_pos_weight;
+    vel_avg /= total_vel_weight;
 
-    pos = posAvg;
-    vel = velAvg;
-    posCov = totalPosWeight / kalmanBalls.size();
-    velCov = totalVelWeight / kalmanBalls.size();
-    ballComponents = kalmanBalls;
+    pos_ = pos_avg;
+    vel_ = vel_avg;
+    pos_cov_ = total_pos_weight / kalman_balls.size();
+    vel_cov_ = total_vel_weight / kalman_balls.size();
+    ball_components_ = kalman_balls;
 }
 
-bool WorldBall::getIsValid() const { return isValid; }
+bool WorldBall::get_is_valid() const { return is_valid_; }
 
-Geometry2d::Point WorldBall::getPos() const { return pos; }
+Geometry2d::Point WorldBall::get_pos() const { return pos_; }
 
-Geometry2d::Point WorldBall::getVel() const { return vel; }
+Geometry2d::Point WorldBall::get_vel() const { return vel_; }
 
-double WorldBall::getPosCov() const { return posCov; }
+double WorldBall::get_pos_cov() const { return pos_cov_; }
 
-double WorldBall::getVelCov() const { return velCov; }
+double WorldBall::get_vel_cov() const { return vel_cov_; }
 
-const std::list<KalmanBall>& WorldBall::getBallComponents() const { return ballComponents; }
+const std::list<KalmanBall>& WorldBall::get_ball_components() const { return ball_components_; }
 
-RJ::Time WorldBall::getTime() const { return time; }
+RJ::Time WorldBall::get_time() const { return time_; }
 }  // namespace vision_filter

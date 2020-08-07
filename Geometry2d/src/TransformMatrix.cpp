@@ -5,40 +5,40 @@
 
 namespace Geometry2d {
 
-const TransformMatrix TransformMatrix::identity(1, 0, 0, 0, 1, 0);
+const TransformMatrix TransformMatrix::kIdentity(1, 0, 0, 0, 1, 0);
 
-const TransformMatrix TransformMatrix::mirrorX(-1, 0, 0, 0, 1, 0);
+const TransformMatrix TransformMatrix::kMirrorX(-1, 0, 0, 0, 1, 0);
 
 TransformMatrix::TransformMatrix(Point origin, float rotation, bool mirror, float s) {
     // Set up translation
-    _m[0] = 1;
-    _m[1] = 0;
-    _m[2] = static_cast<float>(origin.x());
-    _m[3] = 0;
-    _m[4] = 1;
-    _m[5] = static_cast<float>(origin.y());
+    m_[0] = 1;
+    m_[1] = 0;
+    m_[2] = static_cast<float>(origin.x());
+    m_[3] = 0;
+    m_[4] = 1;
+    m_[5] = static_cast<float>(origin.y());
 
     *this *= rotate(rotation);
     *this *= scale(s);
     if (mirror) {
-        *this *= mirrorX;
+        *this *= kMirrorX;
     }
 }
 
-float TransformMatrix::transformAngle(float angle) const {
+float TransformMatrix::transform_angle(float angle) const {
     // Multiply the matrix by a unit vector in the given direction with a 3rd
     // element of zero and find the direction of the result.
 
     float px = std::cos(angle);
     float py = std::sin(angle);
 
-    float rx = px * _m[0] + py * _m[1];
-    float ry = px * _m[3] + py * _m[4];
+    float rx = px * m_[0] + py * m_[1];
+    float ry = px * m_[3] + py * m_[4];
 
     return std::atan2(ry, rx);
 }
 
-TransformMatrix TransformMatrix::rotateAroundPoint(const Point& center, float angle) {
+TransformMatrix TransformMatrix::rotate_around_point(const Point& center, float angle) {
     TransformMatrix xf = translate(center);
     xf *= rotate(angle);
     xf *= translate(-center);
@@ -46,16 +46,16 @@ TransformMatrix TransformMatrix::rotateAroundPoint(const Point& center, float an
     return xf;
 }
 
-TransformMatrix TransformMatrix::mirrorAroundPoint(const Point& center) {
+TransformMatrix TransformMatrix::mirror_around_point(const Point& center) {
     TransformMatrix xf = translate(center);
-    xf *= mirrorX;
+    xf *= kMirrorX;
     xf *= translate(-center);
 
     return xf;
 }
 
 float TransformMatrix::rotation() const {
-    auto angle = static_cast<float>(std::atan2(_m[4], _m[1]) - M_PI_2);
+    auto angle = static_cast<float>(std::atan2(m_[4], m_[1]) - M_PI_2);
     if (angle < 0) {
         angle += 2.0 * M_PI;
     }
@@ -71,7 +71,7 @@ bool TransformMatrix::mirrored() const {
     // In a right-handed coordinate system, +X cross +Y = +Z. A reflection flips
     // the coordinate system to be left-handed so the (right-handed) cross
     // product becomes -Z.
-    return (_m[0] * _m[4] - _m[1] * _m[3]) < 0;
+    return (m_[0] * m_[4] - m_[1] * m_[3]) < 0;
 }
 
 }  // namespace Geometry2d

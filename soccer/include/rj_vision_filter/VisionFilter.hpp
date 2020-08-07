@@ -46,14 +46,14 @@ private:
      * PredictStatesImpl. Also prints a warning if predict isn't running fast
      * enough.
      */
-    void PredictStates();
+    void predict_states();
 
     /**
      * @brief Runs prediction on all the Kalman Filters. For now, also performs
      * the update / merge step of the Kalman filters by emptying
      * detection_frame_queue_;
      */
-    void PredictStatesImpl();
+    void predict_states_impl();
 
     /**
      * @brief Creates a WorldStateMsg from the robot and ball Kalman filters.
@@ -61,14 +61,14 @@ private:
      * @return The WorldStateMsg corresponding to the current VisionFilter
      * state.
      */
-    WorldStateMsg BuildWorldStateMsg(bool us_blue) const;
+    WorldStateMsg build_world_state_msg(bool us_blue) const;
 
     /**
      * @brief Creates a BallStateMsg from the ball Kalman filter.
      * @return The BallStateMsg corresponding to the current VisionFilter
      * state.
      */
-    BallStateMsg BuildBallStateMsg() const;
+    BallStateMsg build_ball_state_msg() const;
 
     /**
      * @brief Creates a vector of RobotStateMsgs from the robot Kalman filters.
@@ -76,19 +76,19 @@ private:
      * yellow team's robots.
      * @return A vector of  RobotStateMsg corresponding to blue_team.
      */
-    std::vector<RobotStateMsg> BuildRobotStateMsgs(bool blue_team) const;
+    std::vector<RobotStateMsg> build_robot_state_msgs(bool blue_team) const;
 
     /**
      * @brief Publishes the current state of the balls and robots.
      */
-    void PublishState();
+    void publish_state();
 
     /**
      * @brief Obtains a std::vector<DetectionFrameMsg::UniqePtr> from
      * detection_frame_sub_, then converts that to std::vector<CameraFrame>
      * and stores it in new_frames_.
      */
-    void GetFrames();
+    void get_frames();
 
     // TODO(1562): (It's horrible, but it's only temporary until VisionFilter
     // gets refactored).
@@ -96,8 +96,8 @@ private:
      * @brief Returns the team angle
      * @return The team angle.
      */
-    [[nodiscard]] double TeamAngle() const {
-        const bool defend_plus_x = config_client_.gameSettings().defend_plus_x;
+    [[nodiscard]] double team_angle() const {
+        const bool defend_plus_x = config_client_.game_settings().defend_plus_x;
         return defend_plus_x ? -M_PI_2 : M_PI_2;
     }
 
@@ -105,21 +105,21 @@ private:
      * @brief Returns the transform from the world to the team.
      * @return The transform from the world to the team frame.
      */
-    [[nodiscard]] Geometry2d::TransformMatrix WorldToTeam() const {
+    [[nodiscard]] Geometry2d::TransformMatrix world_to_team() const {
         Geometry2d::TransformMatrix world_to_team =
             Geometry2d::TransformMatrix::translate(
-                0, config_client_.fieldDimensions().length / 2.0f);
+                0, config_client_.field_dimensions().length / 2.0f);
         world_to_team *= Geometry2d::TransformMatrix::rotate(
-            static_cast<float>(TeamAngle()));
+            static_cast<float>(team_angle()));
         return world_to_team;
     }
 
     /**
      * @brief State of the world, ie. robots and ball.
      */
-    World world;
+    World world_;
 
-    std::vector<CameraFrame> frameBuffer{};
+    std::vector<CameraFrame> frame_buffer_{};
 
     using TeamColorMsgQueue =
         rj_topic_utils::MessageQueue<TeamColorMsg,

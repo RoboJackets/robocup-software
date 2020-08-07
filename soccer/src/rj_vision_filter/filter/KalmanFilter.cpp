@@ -2,34 +2,34 @@
 
 namespace vision_filter {
 void KalmanFilter::predict() {
-    x_k1_k1 = x_k_k;
-    P_k1_k1 = P_k_k;
+    x_k1_k1_ = x_k_k_;
+    P_k1_k1_ = P_k_k_;
 
     // Predict
-    x_k_k1 = F_k * x_k1_k1 + B_k * u_k;
-    P_k_k1 = F_k * P_k1_k1 * F_k.transpose() + Q_k;
+    x_k_k1_ = F_k_ * x_k1_k1_ + B_k_ * u_k_;
+    P_k_k1_ = F_k_ * P_k1_k1_ * F_k_.transpose() + Q_k_;
 
-    x_k_k = x_k_k1;
-    P_k_k = P_k_k1;
+    x_k_k_ = x_k_k1_;
+    P_k_k_ = P_k_k1_;
 }
 
-void KalmanFilter::predictWithUpdate() {
-    x_k1_k1 = x_k_k;
-    P_k1_k1 = P_k_k;
+void KalmanFilter::predict_with_update() {
+    x_k1_k1_ = x_k_k_;
+    P_k1_k1_ = P_k_k_;
 
     // Predict
-    x_k_k1 = F_k * x_k1_k1 + B_k * u_k;
-    P_k_k1 = F_k * P_k1_k1 * F_k.transpose() + Q_k;
+    x_k_k1_ = F_k_ * x_k1_k1_ + B_k_ * u_k_;
+    P_k_k1_ = F_k_ * P_k1_k1_ * F_k_.transpose() + Q_k_;
 
     // Update
-    y_k_k1 = z_k - H_k * x_k_k1;
+    y_k_k1_ = z_k_ - H_k_ * x_k_k1_;
 
-    S_k = R_k + H_k * P_k_k1 * H_k.transpose();
-    K_k = P_k_k1 * H_k.transpose() * S_k.inverse();
+    S_k_ = R_k_ + H_k_ * P_k_k1_ * H_k_.transpose();
+    K_k_ = P_k_k1_ * H_k_.transpose() * S_k_.inverse();
 
-    x_k_k = x_k_k1 + K_k * y_k_k1;
-    P_k_k = (I - K_k * H_k) * P_k_k1 * (I - K_k * H_k).transpose() + K_k * R_k * K_k.transpose();
+    x_k_k_ = x_k_k1_ + K_k_ * y_k_k1_;
+    P_k_k_ = (identity_ - K_k_ * H_k_) * P_k_k1_ * (identity_ - K_k_ * H_k_).transpose() + K_k_ * R_k_ * K_k_.transpose();
 
-    y_k_k = z_k - H_k * x_k_k;
+    y_k_k_ = z_k_ - H_k_ * x_k_k_;
 }
 }  // namespace vision_filter

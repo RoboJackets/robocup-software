@@ -18,64 +18,64 @@ public:
      * Creates invalid kick event
      * Makes things a little easier instead of check for null etc
      */
-    KickEvent() : isValid(false){};
+    KickEvent() : is_valid_(false){};
 
     /**
      * Creates a valid kick event
      *
-     * @param kickTime Time of kick
-     * @param kickingRobot World robot who is the one kicking
-     * @param statesSinceKick All the vision states that we have since the kick
+     * @param kick_time Time of kick
+     * @param kicking_robot World robot who is the one kicking
+     * @param states_since_kick All the vision states that we have since the kick
      */
-    KickEvent(RJ::Time kickTime, WorldRobot kickingRobot,
-              std::deque<VisionState> statesSinceKick)
-        : isValid(true),
-          kickTime(kickTime),
-          kickingRobot(std::move(kickingRobot)),
-          statesSinceKick(std::move(statesSinceKick)) {}
+    KickEvent(RJ::Time kick_time, WorldRobot kicking_robot,
+              std::deque<VisionState> states_since_kick)
+        : is_valid_(true),
+          kick_time_(kick_time),
+          kicking_robot_(std::move(kicking_robot)),
+          states_since_kick_(std::move(states_since_kick)) {}
 
     /**
      * Adds a state to the history
      * Use when the kick event is already created and we are trying
      * to estimate the kick trajectory
      *
-     * @param calcTime Time of current frame
+     * @param calc_time Time of current frame
      * @param ball Ball at current frame
-     * @param yellowRobots Yellow robots at current frame
-     * @param blueRobots Blue robots at current frame
+     * @param yellow_robots Yellow robots at current frame
+     * @param blue_robots Blue robots at current frame
      */
-    void addState(RJ::Time calcTime, const WorldBall& ball,
-                  const std::vector<WorldRobot>& yellowRobots,
-                  const std::vector<WorldRobot>& blueRobots);
+    void add_state(RJ::Time calc_time, const WorldBall& ball,
+                  const std::vector<WorldRobot>& yellow_robots,
+                  const std::vector<WorldRobot>& blue_robots);
 
     /**
      * @return true if the kick is a valid one
      */
-    bool getIsValid() const;
+    bool get_is_valid() const;
 
     /**
      * @return time we think a robot kicked
      */
-    RJ::Time getKickTime() const;
+    RJ::Time get_kick_time() const;
 
     /**
      * @return robot we think kicked
      */
-    WorldRobot getKickingRobot() const;
+    WorldRobot get_kicking_robot() const;
 
     /**
      * @return vision states since that time we kicked
      */
-    const std::deque<VisionState>& getStatesSinceKick() const;
+    const std::deque<VisionState>& get_states_since_kick() const;
 
 private:
     // If it's a valid kick event object
-    bool isValid;
+    bool is_valid_;
     // When it was kicked
-    RJ::Time kickTime;
+    RJ::Time kick_time_;
     // Who kicked it
-    WorldRobot kickingRobot;
+    WorldRobot kicking_robot_;
     // All the states since a kick
-    std::deque<VisionState> statesSinceKick;
+    std::deque<VisionState> states_since_kick_;
 };
 }  // namespace vision_filter

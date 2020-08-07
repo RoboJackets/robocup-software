@@ -8,11 +8,11 @@
 #include <unordered_map>
 
 namespace joystick {
-static constexpr auto DribbleStepTime = RJ::Seconds(0.125);
-static constexpr auto KickerStepTime = RJ::Seconds(0.125);
+static constexpr auto kDribbleStepTime = RJ::Seconds(0.125);
+static constexpr auto kKickerStepTime = RJ::Seconds(0.125);
 
-static constexpr float AXIS_MAX = 32768.0f;
-static constexpr float TRIGGER_CUTOFF = 0.9;
+static constexpr float kAxisMax = 32768.0f;
+static constexpr float kTriggerCutoff = 0.9;
 
 /**
  * A node that receives joystick::GamepadMessage and converts that to
@@ -32,7 +32,7 @@ public:
      */
     void run() override;
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
 private:
     /**
@@ -45,23 +45,23 @@ private:
     /**
      * Updates the current list of gamepads.
      */
-    void updateGamepadList();
+    void update_gamepad_list();
 
     /**
      * Updates the intent and setpoint using controls_;
      * @param robot
      */
-    void updateIntentAndSetpoint(OurRobot* robot);
+    void update_intent_and_setpoint(OurRobot* robot);
 
     /**
      * Updates the context_->joystick_valid
      */
-    void updateJoystickValid() const;
+    void update_joystick_valid() const;
 
     /**
      * Apply things like translation damping, rotation damping etc.
      */
-    void applyControlModifiers();
+    void apply_control_modifiers();
 
     std::vector<int> gamepad_stack_;
 
@@ -80,10 +80,10 @@ private:
 
     ManualControls controls_{};
 
-    static ConfigDouble* JoystickRotationMaxSpeed;
-    static ConfigDouble* JoystickRotationMaxDampedSpeed;
-    static ConfigDouble* JoystickTranslationMaxSpeed;
-    static ConfigDouble* JoystickTranslationMaxDampedSpeed;
+    static ConfigDouble* joystick_rotation_max_speed;
+    static ConfigDouble* joystick_rotation_max_damped_speed;
+    static ConfigDouble* joystick_translation_max_speed;
+    static ConfigDouble* joystick_translation_max_damped_speed;
 
     // And then random state needed for the control logic
     RJ::Time last_dribbler_time_;

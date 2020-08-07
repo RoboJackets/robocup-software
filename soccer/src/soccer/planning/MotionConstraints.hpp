@@ -7,8 +7,8 @@
 /**
  * This class contains the motion constraints that the high-level logic sets for
  * a robot.
- * For position: set EITHER @motionTarget OR @targetWorldVel.
- * For angle: set EITHER @targetAngleVel OR @faceTarget.
+ * For position: set EITHER @motion_target OR @target_world_vel.
+ * For angle: set EITHER @target_angle_vel OR @face_target.
  */
 struct MotionConstraints {
     MotionConstraints();
@@ -21,15 +21,15 @@ struct MotionConstraints {
      * This is useful for going slower while carrying the ball or when trying to
      * do precise movements.
      */
-    double maxSpeed;
-    double maxAcceleration;
+    double max_speed;
+    double max_acceleration;
 
     /// Default constraint values supplied by config
     ////////////////////////////////////////////////////////////////////////////////
 
-    static double defaultMaxSpeed() { return *_max_speed; }
+    static double default_max_speed() { return *max_speed_config; }
 
-    static void createConfiguration(Configuration* cfg);
-    static ConfigDouble* _max_acceleration;
-    static ConfigDouble* _max_speed;
+    static void create_configuration(Configuration* cfg);
+    static ConfigDouble* max_acceleration_config;
+    static ConfigDouble* max_speed_config;
 };

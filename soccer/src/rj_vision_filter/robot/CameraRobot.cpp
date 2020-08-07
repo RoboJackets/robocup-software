@@ -6,22 +6,22 @@
 namespace vision_filter {
 CameraRobot::CameraRobot(const RJ::Time& time_captured, const DetectionRobotMsg& msg,
                          const Geometry2d::TransformMatrix& world_to_team, double team_angle)
-    : timeCaptured{time_captured},
-      pose{world_to_team * Geometry2d::Point{msg.x / 1000, msg.y / 1000},
-           fixAngleRadians(msg.orientation + team_angle)},
-      robotID{static_cast<int>(msg.robot_id)} {}
+    : time_captured_{time_captured},
+      pose_{world_to_team * Geometry2d::Point{msg.x / 1000, msg.y / 1000},
+           fix_angle_radians(msg.orientation + team_angle)},
+      robot_id_{static_cast<int>(msg.robot_id)} {}
 
-RJ::Time CameraRobot::getTimeCaptured() const { return timeCaptured; }
+RJ::Time CameraRobot::get_time_captured() const { return time_captured_; }
 
-Geometry2d::Point CameraRobot::getPos() const { return pose.position(); }
+Geometry2d::Point CameraRobot::get_pos() const { return pose_.position(); }
 
-double CameraRobot::getTheta() const { return pose.heading(); }
+double CameraRobot::get_theta() const { return pose_.heading(); }
 
-int CameraRobot::getRobotID() const { return robotID; }
+int CameraRobot::get_robot_id() const { return robot_id_; }
 
-Geometry2d::Pose CameraRobot::getPose() const { return pose; }
+Geometry2d::Pose CameraRobot::get_pose() const { return pose_; }
 
-CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
+CameraRobot CameraRobot::combine_robots(const std::list<CameraRobot>& robots) {
     // Make sure we don't divide by zero due to some weird error
     if (robots.empty()) {
         std::cout << "ERROR: Number of robots to combine is zero" << std::endl;
@@ -31,26 +31,27 @@ CameraRobot CameraRobot::CombineRobots(const std::list<CameraRobot>& robots) {
 
     // Have to do the average like Ti + sum(Tn - Ti)/N
     // so that we aren't trying to add time_points. It's durations instead.
-    RJ::Time initTime = robots.front().getTimeCaptured();
-    RJ::Seconds timeAvg = RJ::Seconds(0);
+    RJ::Time init_time = robots.front().get_time_captured();
+    RJ::Seconds time_avg = RJ::Seconds(0);
     // Adding angles are done through conversion to rect coords then back to
     // polar
-    Geometry2d::Point posAvg;
-    Geometry2d::Point thetaCartesianAvg;
-    int robotID = -1;
+    Geometry2d::Point pos_avg;
+    Geometry2d::Point theta_cartesian_avg;
+    int robot_id_ = -1;
 
     for (const CameraRobot& cr : robots) {
-        timeAvg += RJ::Seconds(cr.getTimeCaptured() - initTime);
-        posAvg += cr.getPos();
-        thetaCartesianAvg += Geometry2d::Point(cos(cr.getTheta()), sin(cr.getTheta()));
-        robotID = cr.getRobotID();  // Shouldn't change besides the first iteration
+        time_avg += RJ::Seconds(cr.get_time_captured() - init_time);
+        pos_avg += cr.get_pos();
+        theta_cartesian_avg += Geometry2d::Point(cos(cr.get_theta()), sin(cr.get_theta()));
+        robot_id_ = cr.get_robot_id();  // Shouldn't change besides the first iteration
     }
 
-    timeAvg /= robots.size();
-    posAvg /= robots.size();
-    thetaCartesianAvg /= robots.size();
+    time_avg /= robots.size();
+    pos_avg /= robots.size();
+    theta_cartesian_avg /= robots.size();
 
-    return CameraRobot(initTime + timeAvg,
-                       {posAvg, atan2(thetaCartesianAvg.y(), thetaCartesianAvg.x())}, robotID);
+    return CameraRobot(init_time + time_avg,
+                       {pos_avg, atan2(theta_cartesian_avg.y(), theta_cartesian_avg.x())},
+                       robot_id_);
 }
 }  // namespace vision_filter

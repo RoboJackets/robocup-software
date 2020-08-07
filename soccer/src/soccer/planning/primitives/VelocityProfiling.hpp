@@ -34,7 +34,7 @@ double limit_acceleration(double velocity_initial, double velocity_final,
  * or the most recent instant from vision).
  * @return A profiled time-indexed trajectory that follows velocity constraints.
  */
-Trajectory ProfileVelocity(const BezierPath& path, double initial_speed,
+Trajectory profile_velocity(const BezierPath& path, double initial_speed,
                            double final_speed,
                            const MotionConstraints& constraints,
                            RJ::Time initial_time = RJ::now());

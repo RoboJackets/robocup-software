@@ -25,30 +25,30 @@ class ConfigClient {
 public:
     ConfigClient(rclcpp::Node* node);
 
-    [[nodiscard]] const GameSettingsMsg& gameSettings() const {
+    [[nodiscard]] const GameSettingsMsg& game_settings() const {
         return game_settings_.value();
     }
 
-    [[nodiscard]] const FieldDimensionsMsg& fieldDimensions() const {
+    [[nodiscard]] const FieldDimensionsMsg& field_dimensions() const {
         return field_dimensions_.value();
     }
 
     /**
-     * @brief Thread safe version of gameSettings(), returns
+     * @brief Thread safe version of game_settings(), returns
      * game_settings_ but uses a mutex.
      * @return
      */
-    [[nodiscard]] const GameSettingsMsg& gameSettingsThreaded() const {
+    [[nodiscard]] const GameSettingsMsg& game_settings_threaded() const {
         std::lock_guard<std::mutex> guard{mutex_};
         return game_settings_.value();
     }
 
     /**
-     * @brief Thread safe version of fieldDimensions(), returns
+     * @brief Thread safe version of field_dimensions(), returns
      * field_dimensions_ but uses a mutex.
      * @return
      */
-    [[nodiscard]] const FieldDimensionsMsg& fieldDimensionsThreaded() const {
+    [[nodiscard]] const FieldDimensionsMsg& field_dimensions_threaded() const {
         std::lock_guard<std::mutex> guard{mutex_};
         return field_dimensions_.value();
     }
@@ -64,26 +64,26 @@ public:
      * @brief Thread safe version of connected().
      * @return
      */
-    [[nodiscard]] bool connectedThreaded() const;
+    [[nodiscard]] bool connected_threaded() const;
 
     /**
      * @brief Blocks until the config client is connected. Should only be called
      * from a different thread than the one that is spinning.
      */
-    bool waitUntilConnected() const;
+    bool wait_until_connected() const;
 
     /**
      * @brief Sends a service call to ConfigServer to update the GameSettings.
      * @param msg
      */
-    void updateGameSettings(const GameSettingsMsg& msg);
+    void update_game_settings(const GameSettingsMsg& msg);
 
     /**
      * @brief Sends a service call to ConfigServer to update the
      * FieldDimensions.
      * @param msg
      */
-    void updateFieldDimensions(const FieldDimensionsMsg& msg);
+    void update_field_dimensions(const FieldDimensionsMsg& msg);
 
 private:
     rclcpp::Node* node_;

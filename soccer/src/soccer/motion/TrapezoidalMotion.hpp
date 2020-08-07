@@ -14,9 +14,9 @@
  * @return		true if the trapezoid is valid at the given time, false
  * otherwise
  */
-bool TrapezoidalMotion(double pathLength, double maxSpeed, double maxAcc,
-                       double timeIntoLap, double startSpeed, double finalSpeed,
-                       double& posOut, double& speedOut);
+bool trapezoidal_motion(double path_length, double max_speed, double max_acc,
+                       double time_into_lap, double start_speed, double final_speed,
+                       double& pos_out, double& speed_out);
 
 namespace Trapezoidal {
 /**
@@ -34,7 +34,7 @@ namespace Trapezoidal {
  * @return The estimated time it would take for the robot to move that certain
  *     distance down the path
  */
-double getTime(double distance, double pathLength, double maxSpeed,
-               double maxAcc, double startSpeed, double finalSpeed);
+double get_time(double distance, double path_length, double max_speed,
+               double max_acc, double start_speed, double final_speed);
 
 }  // namespace Trapezoidal

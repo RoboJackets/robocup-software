@@ -16,9 +16,9 @@ using Geometry2d::Point;
  * @param ks An estimate of the time it will take to travel each curve.
  * @return A vector of control point locations.
  */
-static void FitCubicBezier(Point vi, Point vf, const std::vector<Point>& points,
-                           const std::vector<double>& ks,
-                           std::vector<BezierPath::CubicBezierControlPoints>* control_out) {
+static void fit_cubic_bezier(Point vi, Point vf, const std::vector<Point>& points,
+                             const std::vector<double>& ks,
+                             std::vector<BezierPath::CubicBezierControlPoints>* control_out) {
     if (points.size() < 2) {
         throw std::invalid_argument("Must have at least 2 points to fit cubic Bezier.");
     }
@@ -47,8 +47,8 @@ static void FitCubicBezier(Point vi, Point vf, const std::vector<Point>& points,
         // points, vi represents velocity vectors)
         control_out->at(0).p1 = vi / (3 * ks[0]) + points[0];
         control_out->at(0).p2 = points[1] - vf / (3 * ks[0]);
-        double assertTestValue = control_out->at(0).p1.mag() + control_out->at(0).p1.mag();
-        if (!std::isfinite(assertTestValue)) {
+        double assert_test_value = control_out->at(0).p1.mag() + control_out->at(0).p1.mag();
+        if (!std::isfinite(assert_test_value)) {
             throw std::runtime_error(
                 "Something went wrong. Points are too close to each other "
                 "probably");
@@ -61,17 +61,17 @@ static void FitCubicBezier(Point vi, Point vf, const std::vector<Point>& points,
         // unknowns. We actually have x and y, but they turn out to be the same
         // equations (with different unknowns, so we can repeat the same
         // solution)
-        int matrixSize = num_curves * 2;
-        MatrixXd equations = MatrixXd::Zero(matrixSize, matrixSize);
-        VectorXd answer_x(matrixSize);
-        VectorXd answer_y(matrixSize);
+        int matrix_size = num_curves * 2;
+        MatrixXd equations = MatrixXd::Zero(matrix_size, matrix_size);
+        VectorXd answer_x(matrix_size);
+        VectorXd answer_y(matrix_size);
 
         // These constraints come from the above special case. The first and
         // last control points should match up with that case.
         equations(0, 0) = 1;
         answer_x(0) = vi.x() / (3.0 * ks[0]) + points[0].x();
         answer_y(0) = vi.y() / (3.0 * ks[0]) + points[0].y();
-        equations(1, matrixSize - 1) = 1;
+        equations(1, matrix_size - 1) = 1;
         answer_x(1) = points[num_curves].x() - vf.x() / (3 * ks[num_curves - 1]);
         answer_y(1) = points[num_curves].y() - vf.y() / (3 * ks[num_curves - 1]);
 
@@ -137,29 +137,29 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     // [0, T])
     std::vector<double> ks(num_curves);
 
-    const double startSpeed = vi.mag();
+    const double start_speed = vi.mag();
 
-    const double endSpeed = vf.mag();
+    const double end_speed = vf.mag();
 
     // Approximate the curves as straight lines between the segments, and then
     // find an approximate ETA at each waypoint based on trapezoidal motion.
 
-    double totalPathLength = 0.0;
+    double total_path_length = 0.0;
     for (int i = 0; i < length - 1; i++) {
-        totalPathLength += (points[i] - points[i + 1]).mag();
+        total_path_length += (points[i] - points[i + 1]).mag();
     }
 
-    double pathLengthSoFar = 0.0;
+    double path_length_so_far = 0.0;
     for (int i = 0; i < num_curves; i++) {
-        double timeBefore =
-            Trapezoidal::getTime(pathLengthSoFar, totalPathLength, motion_constraints.maxSpeed,
-                                 motion_constraints.maxAcceleration, startSpeed, endSpeed);
-        pathLengthSoFar += (points[i + 1] - points[i]).mag();
-        double timeAfter =
-            Trapezoidal::getTime(pathLengthSoFar, totalPathLength, motion_constraints.maxSpeed,
-                                 motion_constraints.maxAcceleration, startSpeed, endSpeed);
+        double time_before =
+            Trapezoidal::get_time(path_length_so_far, total_path_length, motion_constraints.max_speed,
+                                 motion_constraints.max_acceleration, start_speed, end_speed);
+        path_length_so_far += (points[i + 1] - points[i]).mag();
+        double time_after =
+            Trapezoidal::get_time(path_length_so_far, total_path_length, motion_constraints.max_speed,
+                                 motion_constraints.max_acceleration, start_speed, end_speed);
 
-        ks[i] = 1.0 / (timeAfter - timeBefore);
+        ks[i] = 1.0 / (time_after - time_before);
 
         if (!std::isfinite(ks[i])) {
             throw std::runtime_error(
@@ -170,17 +170,17 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     }
 
     // Finally, we can find our control points as the solutions to a set of
-    // equations. This computation is carried out by cubicBezierCalc.
-    FitCubicBezier(vi, vf, points, ks, &control);
+    // equations. This computation is carried out by cubic_bezier_calc.
+    fit_cubic_bezier(vi, vf, points, ks, &control_);
 }
 
-void BezierPath::Evaluate(double s, Geometry2d::Point* position, Geometry2d::Point* tangent,
+void BezierPath::evaluate(double s, Geometry2d::Point* position, Geometry2d::Point* tangent,
                           double* curvature) const {
     if (s < 0 || s > 1) {
         throw std::invalid_argument("Interpolant out of range.");
     }
 
-    size_t num_curves = control.size();
+    size_t num_curves = control_.size();
 
     // First, find the curve to use.
     int index = static_cast<int>(s * num_curves);
@@ -195,10 +195,10 @@ void BezierPath::Evaluate(double s, Geometry2d::Point* position, Geometry2d::Poi
     double t = s * num_curves - index;
 
     // Control points for this curve.
-    Point p0 = control[index].p0;
-    Point p1 = control[index].p1;
-    Point p2 = control[index].p2;
-    Point p3 = control[index].p3;
+    Point p0 = control_[index].p0;
+    Point p1 = control_[index].p1;
+    Point p2 = control_[index].p2;
+    Point p3 = control_[index].p3;
 
     // Equations from
     // https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves.

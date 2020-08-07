@@ -22,55 +22,55 @@ using RefereeModuleEnums::Command;
 using RefereeModuleEnums::Stage;
 
 /// Distance in meters that the ball must travel for a kick to be detected
-static const float KickThreshold = Ball_Radius * 3;
+static const float kKickThreshold = kBallRadius * 3;
 
 /// How many milliseconds the ball must be more than KickThreshold meters away
 /// from its position when the referee indicated Ready for us to detect the ball
 /// as having been kicked.
-static const int KickVerifyTime_ms = 250;
+static const int kKickVerifyTimeMs = 250;
 
 // Whether we cancel ball placement on a halt.
 // If we want ball placement to continue after
 // the ref halts/stops, make this false
-static const bool CancelBallPlaceOnHalt = true;
+static const bool kCancelBallPlaceOnHalt = true;
 
 DEFINE_STRING(kRefereeParamModule, team_name, "RoboJackets",
               "The team name we should use when automatically assigning team "
               "colors from referee");
 
-ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, _asio_socket{_io_service} {
+ExternalReferee::ExternalReferee() : RefereeBase{"external_referee"}, asio_socket_{io_service_} {
     set_team_name(PARAM_team_name);
 
-    _raw_ref_pub = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
+    raw_ref_pub_ = create_publisher<RawProtobufMsg>(referee::topics::kRefereeRawPub, 10);
 
-    _network_timer = create_wall_timer(std::chrono::milliseconds(10), [this]() { this->update(); });
+    network_timer_ = create_wall_timer(std::chrono::milliseconds(10), [this]() { this->update(); });
 
     // Set up networking for external referee packets
-    setupRefereeMulticast();
-    startReceive();
+    setup_referee_multicast();
+    start_receive();
 }
 
-void ExternalReferee::startReceive() {
+void ExternalReferee::start_receive() {
     // Set a receive callback
-    _asio_socket.async_receive_from(
-        boost::asio::buffer(_recv_buffer), _sender_endpoint,
+    asio_socket_.async_receive_from(
+        boost::asio::buffer(recv_buffer_), sender_endpoint_,
         [this](const boost::system::error_code& error, std::size_t num_bytes) {
-            receivePacket(error, num_bytes);
-            startReceive();
+            receive_packet(error, num_bytes);
+            start_receive();
         });
 }
 
-void ExternalReferee::receivePacket(const boost::system::error_code& error, size_t num_bytes) {
+void ExternalReferee::receive_packet(const boost::system::error_code& error, size_t num_bytes) {
     if (error != boost::system::errc::success) {
         std::cerr << "Error receiving: " << error << " in " __FILE__ << std::endl;
         return;
     }
 
     SSL_Referee ref_packet;
-    if (!ref_packet.ParseFromArray(_recv_buffer.data(), num_bytes)) {
+    if (!ref_packet.ParseFromArray(recv_buffer_.data(), num_bytes)) {
         std::cerr << "NewRefereeModule: got bad packet of " << num_bytes << " bytes from "
-                  << _sender_endpoint << std::endl;
-        std::cerr << "Address: " << &RefereeAddress << std::endl;
+                  << sender_endpoint_ << std::endl;
+        std::cerr << "Address: " << &kRefereeAddress << std::endl;
         return;
     }
 
@@ -80,7 +80,7 @@ void ExternalReferee::receivePacket(const boost::system::error_code& error, size
     if (!ref_packet.SerializeToArray(msg.data.data(), msg.data.size())) {
         EZ_ERROR("Failed to serialize referee packet.");
     }
-    _raw_ref_pub->publish(msg);
+    raw_ref_pub_->publish(msg);
 
     // Update and publish team information
     // FIXME(Kyle): Expiry times are only valid when we stay in the Playing
@@ -97,25 +97,25 @@ void ExternalReferee::receivePacket(const boost::system::error_code& error, size
     send();
 }
 
-void ExternalReferee::setupRefereeMulticast() {
+void ExternalReferee::setup_referee_multicast() {
     const auto any_address = boost::asio::ip::address_v4::any();
-    boost::asio::ip::udp::endpoint listen_endpoint{any_address, ProtobufRefereePort};
+    boost::asio::ip::udp::endpoint listen_endpoint{any_address, kProtobufRefereePort};
 
-    _asio_socket.open(listen_endpoint.protocol());
-    _asio_socket.set_option(boost::asio::ip::udp::socket::reuse_address(true));
+    asio_socket_.open(listen_endpoint.protocol());
+    asio_socket_.set_option(boost::asio::ip::udp::socket::reuse_address(true));
     try {
-        _asio_socket.bind(listen_endpoint);
+        asio_socket_.bind(listen_endpoint);
     } catch (const boost::system::system_error& e) {
         throw std::runtime_error("Failed to bind to shared referee port");
     }
     // Join multicast group
     const boost::asio::ip::address multicast_address =
-        boost::asio::ip::address::from_string(RefereeAddress);
-    _asio_socket.set_option(boost::asio::ip::multicast::join_group(multicast_address));
+        boost::asio::ip::address::from_string(kRefereeAddress);
+    asio_socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
 }
 
 void ExternalReferee::update() {
-    _io_service.poll();
+    io_service_.poll();
     BallState state;
     spin_kick_detector(state);
 }

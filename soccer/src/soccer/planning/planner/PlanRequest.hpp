@@ -26,16 +26,16 @@ struct PlanRequest {
                 RobotConstraints constraints,
                 Geometry2d::ShapeSet field_obstacles,
                 Geometry2d::ShapeSet virtual_obstacles,
-                std::array<Trajectory*, Num_Shells> planned_trajectories,
-                unsigned shellID, const WorldState* world_state,
+                std::array<Trajectory*, kNumShells> planned_trajectories,
+                unsigned shell_id, const WorldState* world_state,
                 int8_t priority = 0, DebugDrawer* debug_drawer = nullptr)
         : start(start),
-          motionCommand(command),  // NOLINT
+          motion_command(command),  // NOLINT
           constraints(constraints),
           field_obstacles(std::move(field_obstacles)),
           virtual_obstacles(std::move(virtual_obstacles)),
           planned_trajectories(planned_trajectories),
-          shellID(shellID),
+          shell_id(shell_id),
           priority(priority),
           world_state(world_state),
           debug_drawer(debug_drawer) {}
@@ -48,7 +48,7 @@ struct PlanRequest {
     /**
      * The goal to plan for.
      */
-    MotionCommand motionCommand;
+    MotionCommand motion_command;
 
     /**
      * Angular and linear acceleration and velocity constraints on the robot.
@@ -70,12 +70,12 @@ struct PlanRequest {
      * Trajectories for each of the robots that has already been planned.
      * nullptr for unplanned robots.
      */
-    std::array<Trajectory*, Num_Shells> planned_trajectories;
+    std::array<Trajectory*, kNumShells> planned_trajectories;
 
     /**
      * The robot's shell ID. Used for debug drawing.
      */
-    unsigned shellID;
+    unsigned shell_id;
 
     /**
      * The state of the world, containing robot and ball states.
@@ -113,7 +113,7 @@ struct PlanRequest {
  *  outlive the usage of out_dynamic. If avoid_ball == false, this should be
  *  nullptr.
  */
-void FillObstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
+void fill_obstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
                    std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                    Trajectory* out_ball_trajectory = nullptr);
 

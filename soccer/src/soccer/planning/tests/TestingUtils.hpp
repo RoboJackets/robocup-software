@@ -12,7 +12,7 @@ namespace Planning::TestingUtils {
  * @param path
  * @param constraints
  */
-bool checkTrajectoryContinuous(const Trajectory& trajectory,
+bool check_trajectory_continuous(const Trajectory& trajectory,
                                const RobotConstraints& constraints);
 
 /**
@@ -26,20 +26,20 @@ T random(std::mt19937* generator, T lo, T hi);
 
 template <>
 inline int random(std::mt19937* generator, int lo, int hi) {
-    std::uniform_int_distribution<> randDistribution(lo, hi);
-    return randDistribution(*generator);
+    std::uniform_int_distribution<> rand_distribution(lo, hi);
+    return rand_distribution(*generator);
 }
 
 template <>
 inline double random(std::mt19937* generator, double lo, double hi) {
-    std::uniform_real_distribution<> randDistribution(lo, hi);
-    return randDistribution(*generator);
+    std::uniform_real_distribution<> rand_distribution(lo, hi);
+    return rand_distribution(*generator);
 }
 
 /**
  * generate a random RobotInstant inside the field
  * @return random robot instant
  */
-RobotInstant randomInstant(std::mt19937* generator);
+RobotInstant random_instant(std::mt19937* generator);
 
 }  // namespace Planning::TestingUtils

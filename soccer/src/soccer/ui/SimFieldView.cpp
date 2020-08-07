@@ -19,11 +19,11 @@ SimFieldView::SimFieldView(QWidget* parent) : FieldView(parent) {
     _dragRobotBlue = 0;
 }
 
-void SimFieldView::setContext(Context* context) { this->_context = context; }
+void SimFieldView::setContext(Context* context) { this->context_ = context; }
 
 void SimFieldView::mousePressEvent(QMouseEvent* me) {
     // Ignore mouse events in the field if not in sim
-    if (!_context->game_settings.simulation) {
+    if (!context_->game_settings.simulation) {
         return;
     }
 
@@ -33,14 +33,14 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
     if (me->button() == Qt::LeftButton && frame) {
         _dragRobot = -1;
         for (const LogFrame::Robot& r : frame->self()) {
-            if (pos.nearPoint(r.pos(), Robot_Radius)) {
+            if (pos.near_point(r.pos(), kRobotRadius)) {
                 _dragRobot = r.shell();
                 _dragRobotBlue = frame->blue_team();
                 break;
             }
         }
         for (const LogFrame::Robot& r : frame->opp()) {
-            if (pos.nearPoint(r.pos(), Robot_Radius)) {
+            if (pos.near_point(r.pos(), kRobotRadius)) {
                 _dragRobot = r.shell();
                 _dragRobotBlue = !frame->blue_team();
                 break;
@@ -48,13 +48,13 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         }
 
         if (_dragRobot < 0) {
-            _context->ball_command = me->pos();
-            _context->screen_to_world_command = _screenToWorld;
+            context_->ball_command = me->pos();
+            context_->screen_to_world_command = _screenToWorld;
         }
 
         _dragMode = DRAG_PLACE;
     } else if (me->button() == Qt::RightButton && frame) {
-        if (frame->has_ball() && pos.nearPoint(frame->ball().pos(), 10 * Ball_Radius)) {
+        if (frame->has_ball() && pos.near_point(frame->ball().pos(), 10 * kBallRadius)) {
             // Drag to shoot the ball
             _dragMode = DRAG_SHOOT;
             _dragTo = pos;
@@ -62,7 +62,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
             // Look for a robot selection
             int newID = -1;
             for (int i = 0; i < frame->self_size(); ++i) {
-                if (pos.distTo(frame->self(i).pos()) < Robot_Radius) {
+                if (pos.dist_to(frame->self(i).pos()) < kRobotRadius) {
                     newID = frame->self(i).shell();
                     break;
                 }
@@ -94,10 +94,10 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me) {
                 robot_replace->set_yellowteam(_dragRobotBlue == 0);
                 robot_replace->set_dir(0.0);
 
-                _context->grsim_command = simPacket;
+                context_->grsim_command = simPacket;
             } else {
-                _context->ball_command = me->pos();
-                _context->screen_to_world_command = _screenToWorld;
+                context_->ball_command = me->pos();
+                context_->screen_to_world_command = _screenToWorld;
             }
             break;
 
@@ -112,9 +112,9 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* /*me*/) {
         grSim_Packet simPacket;
         grSim_BallReplacement* ball_replace = simPacket.mutable_replacement()->mutable_ball();
 
-        ball_replace->set_vx(_teamToWorld.transformDirection(_shot).x());
-        ball_replace->set_vy(_teamToWorld.transformDirection(_shot).y());
-        _context->grsim_command = simPacket;
+        ball_replace->set_vx(_teamToWorld.transform_direction(_shot).x());
+        ball_replace->set_vy(_teamToWorld.transform_direction(_shot).y());
+        context_->grsim_command = simPacket;
 
         update();
     }
@@ -130,7 +130,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     if (_dragMode == DRAG_SHOOT && frame) {
         p.setPen(QPen(Qt::white, 0.025f));
         Geometry2d::Point ball = frame->ball().pos();
-        p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
+        p.drawLine(ball.to_q_point_f(), _dragTo.to_q_point_f());
 
         if (ball != _dragTo) {
             p.setPen(QPen(Qt::gray, 0.025f));
@@ -139,13 +139,13 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
             float speed = _shot.mag();
             Geometry2d::Point shotExtension = ball + _shot / speed * 8;
 
-            p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
+            p.drawLine(ball.to_q_point_f(), shotExtension.to_q_point_f());
 
             p.setPen(Qt::black);
             QFont font;
             font.setPixelSize(30);
             p.setFont(font);
-            drawText(p, _dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
+            drawText(p, _dragTo.to_q_point_f(), QString("%1 m/s").arg(speed, 0, 'f', 1));
         }
     }
 }

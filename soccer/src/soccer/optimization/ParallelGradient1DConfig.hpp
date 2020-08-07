@@ -14,23 +14,23 @@ public:
     /**
      * Default constructor
      * GA1DConfig is initialized to empty
-     * xCombineThresh is initialized to 0.1
+     * x_combine_thresh is initialized to 0.1
      */
-    ParallelGradient1DConfig() : xCombineThresh(0.1) {}
+    ParallelGradient1DConfig() : x_combine_thresh(0.1) {}
 
     /**
      * Creates a Parallel Gradient Ascent 1D config
      *
-     * @param GA1DConfig, vector of GA1D configs, xStart must be ascending
-     * @param xCombineThresh, Minimum delta X before two GA1D's are combined
+     * @param GA1DConfig, vector of GA1D configs, x_start must be ascending
+     * @param x_combine_thresh, Minimum delta X before two GA1D's are combined
      */
-    ParallelGradient1DConfig(std::vector<Gradient1DConfig> GA1DConfig,
-                             float xCombineThresh)
+    ParallelGradient1DConfig(std::vector<Gradient1DConfig> ga_config,
+                             float x_combine_thresh)
         :
 
-          GA1DConfig(std::move(GA1DConfig)),
-          xCombineThresh(xCombineThresh) {}
+          ga_config(std::move(ga_config)),
+          x_combine_thresh(x_combine_thresh) {}
 
-    std::vector<Gradient1DConfig> GA1DConfig;
-    float xCombineThresh;
+    std::vector<Gradient1DConfig> ga_config;
+    float x_combine_thresh;
 };

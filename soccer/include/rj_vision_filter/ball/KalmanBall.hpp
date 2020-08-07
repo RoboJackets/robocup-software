@@ -14,99 +14,99 @@ class WorldBall;
 class KalmanBall {
 public:
     /**
-     * Checks the previousWorldBall to see if it's valid
+     * Checks the previous_world_ball to see if it's valid
      *
-     * @param cameraId ID of the camera this filter belongs to
-     * @param creationTime Time this filter is created
-     * @param initMeasurement Initial ball measurement we are creating the
+     * @param camera_id ID of the camera this filter belongs to
+     * @param creation_time Time this filter is created
+     * @param init_measurement Initial ball measurement we are creating the
      * filter at
-     * @param previousWorldBall Previous prediction of ball location to
+     * @param previous_world_ball Previous prediction of ball location to
      * initialize the velocity smartly
      */
-    KalmanBall(unsigned int cameraID, RJ::Time creationTime,
-               CameraBall initMeasurement, const WorldBall& previousWorldBall);
+    KalmanBall(unsigned int camera_id, RJ::Time creation_time,
+               CameraBall init_measurement, const WorldBall& previous_world_ball);
 
     /**
      * Predicts one time step forward
      *
-     * @param currentTime Time at the current frame
+     * @param current_time Time at the current frame
      *
-     * @note Call either this OR predictAndUpdate once a frame
+     * @note Call either this OR predict_and_update once a frame
      */
-    void predict(RJ::Time currentTime);
+    void predict(RJ::Time current_time);
 
     /**
      * Predicts one time step forward then triangulates towards the measurement
      *
-     * @param currentTime Current time of the prediction/update step
-     * @param updateBall Ball measurement that we are using as feedback to the
+     * @param current_time Current time of the prediction/update step
+     * @param update_ball Ball measurement that we are using as feedback to the
      * filters
      *
      * @note Call either this OR predict once a frame
      */
-    void predictAndUpdate(RJ::Time currentTime, CameraBall updateBall);
+    void predict_and_update(RJ::Time current_time, CameraBall update_ball);
 
     /**
      * @return Returns true when the filter hasn't been updated in a while etc
      * and should be deleted
      */
-    bool isUnhealthy() const;
+    bool is_unhealthy() const;
 
     /**
      * @return The camera id this belongs to
      */
-    unsigned int getCameraID() const;
+    unsigned int get_camera_id() const;
 
     /**
      * @return How healthy this filter is. AKA How often it's been updated
      */
-    int getHealth() const;
+    int get_health() const;
 
     /**
      * @return Best estimate of the position of the ball
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * @return Best estimate of the velocity of the ball
      */
-    Geometry2d::Point getVel() const;
+    Geometry2d::Point get_vel() const;
 
     /**
      * @return Covariance in X and Y direction of the position of the ball
      */
-    Geometry2d::Point getPosCov() const;
+    Geometry2d::Point get_pos_cov() const;
 
     /**
      * @return Covariance in X and Y direction of the velocity of the ball
      */
-    Geometry2d::Point getVelCov() const;
+    Geometry2d::Point get_vel_cov() const;
 
     /**
      * @return List of previous camera ball measurements for kick
      * detection/estimation
      */
-    const boost::circular_buffer<CameraBall>& getPrevMeasurements() const;
+    const boost::circular_buffer<CameraBall>& get_prev_measurements() const;
 
     /**
-     * @param newVel new velocity to insert into the kalman filter
+     * @param new_vel new velocity to insert into the kalman filter
      *
      * Note: Only used to set the velocity when we think the ball will bounce
      * off another robot
      */
-    void setVel(Geometry2d::Point newVel);
+    void set_vel(Geometry2d::Point new_vel);
 
 private:
-    RJ::Time lastUpdateTime;
-    RJ::Time lastPredictTime;
+    RJ::Time last_update_time_;
+    RJ::Time last_predict_time_;
 
     // Keeps track of this for kick detection stuff
-    boost::circular_buffer<CameraBall> previousMeasurements;
+    boost::circular_buffer<CameraBall> previous_measurements_;
 
-    KalmanFilter2D filter;
+    KalmanFilter2D filter_;
 
-    int health;
+    int health_;
 
-    unsigned int cameraID;
+    unsigned int camera_id_;
 };
 }  // namespace vision_filter

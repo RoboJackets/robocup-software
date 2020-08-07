@@ -23,14 +23,14 @@ float cpp_function_cb(Geometry2d::Point p, PyObject* pyfunc) {
 }
 
 PythonFunctionWrapper::PythonFunctionWrapper(PyObject* pf) {
-    pyFunc = pf;
+    py_func = pf;
 
-    Py_INCREF(pyFunc);
+    Py_INCREF(py_func);
 
-    f = std::bind(&cpp_function_cb, std::placeholders::_1, pyFunc);
+    f = std::bind(&cpp_function_cb, std::placeholders::_1, py_func);
 }
 
 PythonFunctionWrapper::~PythonFunctionWrapper() {
-    Py_DECREF(pyFunc);
-    pyFunc = nullptr;
+    Py_DECREF(py_func);
+    py_func = nullptr;
 }

@@ -19,13 +19,13 @@ using namespace Geometry2d;
 
 REGISTER_CONFIGURABLE(PivotPathPlanner);
 
-ConfigDouble* PivotPathPlanner::_pivotRadiusMultiplier;
+ConfigDouble* PivotPathPlanner::pivot_radius_multiplier;
 
-void PivotPathPlanner::createConfiguration(Configuration* cfg) {
+void PivotPathPlanner::create_configuration(Configuration* cfg) {
     // NOLINTNEXTLINE
-    _pivotRadiusMultiplier = new ConfigDouble(cfg, "PathPlanner/Pivot/radiusMultiplier", 1.0,
-                                              "Multiplier for the pivotRadius. PivotRadius = "
-                                              "RobotRadius * multiplier");
+    pivot_radius_multiplier = new ConfigDouble(cfg, "PathPlanner/Pivot/radiusMultiplier", 1.0,
+                                               "Multiplier for the pivotRadius. PivotRadius = "
+                                               "RobotRadius * multiplier");
 }
 
 Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
@@ -35,32 +35,32 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
 
     Geometry2d::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
-    FillObstacles(request, &static_obstacles, &dynamic_obstacles, false);
+    fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false);
 
-    const auto& command = std::get<PivotCommand>(request.motionCommand);
+    const auto& command = std::get<PivotCommand>(request.motion_command);
 
-    double radius = _pivotRadiusMultiplier->value() * Robot_Radius;
-    auto pivot_point = command.pivotPoint;
+    double radius = pivot_radius_multiplier->value() * kRobotRadius;
+    auto pivot_point = command.pivot_point;
 
-    if (cached_pivot_point.has_value() &&
-        cached_pivot_point.value().distTo(pivot_point) < Robot_MouthWidth / 2) {
-        pivot_point = cached_pivot_point.value();
-        return previous;
+    if (cached_pivot_point_.has_value() &&
+        cached_pivot_point_.value().dist_to(pivot_point) < kRobotMouthWidth / 2) {
+        pivot_point = cached_pivot_point_.value();
+        return previous_;
     }
-    cached_pivot_point = pivot_point;
+    cached_pivot_point_ = pivot_point;
 
-    auto pivot_target = command.pivotTarget;
+    auto pivot_target = command.pivot_target;
     auto final_position = pivot_point + (pivot_point - pivot_target).normalized(radius);
     std::vector<Point> points;
 
-    // maxSpeed = maxRadians * radius
+    // max_speed = max_radians * radius
     MotionConstraints new_constraints = request.constraints.mot;
-    new_constraints.maxSpeed =
-        std::min(new_constraints.maxSpeed, rotation_constraints.maxSpeed * radius) * .5;
+    new_constraints.max_speed =
+        std::min(new_constraints.max_speed, rotation_constraints.max_speed * radius) * .5;
 
-    double start_angle = pivot_point.angleTo(start_instant.position());
-    double target_angle = pivot_point.angleTo(final_position);
-    double angle_change = fixAngleRadians(target_angle - start_angle);
+    double start_angle = pivot_point.angle_to(start_instant.position());
+    double target_angle = pivot_point.angle_to(final_position);
+    double angle_change = fix_angle_radians(target_angle - start_angle);
 
     constexpr double kMaxInterpolationSize = 3 * M_PI / 180;
     const int interpolations = std::ceil(std::abs(angle_change) / kMaxInterpolationSize);
@@ -73,35 +73,35 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
         points.push_back(point);
     }
 
-    BezierPath pathBezier(points, Point(0, 0), Point(0, 0), linear_constraints);
+    BezierPath path_bezier(points, Point(0, 0), Point(0, 0), linear_constraints);
 
-    Trajectory path = ProfileVelocity(pathBezier, start_instant.linear_velocity().mag(), 0,
+    Trajectory path = profile_velocity(path_bezier, start_instant.linear_velocity().mag(), 0,
                                       linear_constraints, start_instant.stamp);
-    if (Twist::nearly_equals(path.last().velocity, Twist::Zero())) {
-        path.HoldFor(RJ::Seconds(3.0));
+    if (Twist::nearly_equals(path.last().velocity, Twist::zero())) {
+        path.hold_for(RJ::Seconds(3.0));
     }
 
     AngleFunction function = [pivot_point, pivot_target](const LinearMotionInstant& instant,
                                                          double /*previous_angle*/,
                                                          Eigen::Vector2d* jacobian) -> double {
         Point position = instant.position;
-        auto angleToPivot = position.angleTo(pivot_point);
-        auto angleToPivotTarget = position.angleTo(pivot_target);
+        auto angle_to_pivot = position.angle_to(pivot_point);
+        auto angle_to_pivot_target = position.angle_to(pivot_target);
 
-        if (abs(angleToPivot - angleToPivotTarget) < DegreesToRadians(10)) {
-            return angleToPivotTarget;
+        if (abs(angle_to_pivot - angle_to_pivot_target) < degrees_to_radians(10)) {
+            return angle_to_pivot_target;
         }
         if (jacobian != nullptr) {
             *jacobian = (position - pivot_point).rotate(M_PI / 2);
         }
 
-        return angleToPivot;
+        return angle_to_pivot;
     };
 
-    PlanAngles(&path, start_instant, AngleFns::facePoint(pivot_point), request.constraints.rot);
+    plan_angles(&path, start_instant, AngleFns::face_point(pivot_point), request.constraints.rot);
     path.stamp(RJ::now());
 
-    previous = path;
+    previous_ = path;
     return path;
 }
 

@@ -4,18 +4,18 @@ namespace Geometry2d {
 
 Shape* CompositeShape::clone() const { return new CompositeShape(*this); }
 
-bool CompositeShape::containsPoint(Point pt) const {
-    for (const auto& subshape : _subshapes) {
-        if (subshape->containsPoint(pt)) {
+bool CompositeShape::contains_point(Point pt) const {
+    for (const auto& subshape : subshapes_) {
+        if (subshape->contains_point(pt)) {
             return true;
         }
     }
     return false;
 }
 
-bool CompositeShape::nearPoint(Point pt, float threshold) const {
-    for (const auto& subshape : _subshapes) {
-        if (subshape->nearPoint(pt, threshold)) {
+bool CompositeShape::near_point(Point pt, float threshold) const {
+    for (const auto& subshape : subshapes_) {
+        if (subshape->near_point(pt, threshold)) {
             return true;
         }
     }
@@ -24,16 +24,16 @@ bool CompositeShape::nearPoint(Point pt, float threshold) const {
 
 void CompositeShape::add(const std::shared_ptr<Shape>& shape) {
     if (shape != nullptr) {
-        _subshapes.push_back(shape);
+        subshapes_.push_back(shape);
     }
 }
 
-void CompositeShape::add(const CompositeShape& compShape) {
-    for (const auto& shape : compShape.subshapes()) {
+void CompositeShape::add(const CompositeShape& comp_shape) {
+    for (const auto& shape : comp_shape.subshapes()) {
         add(shape);
     }
 }
 
-void CompositeShape::clear() { _subshapes.clear(); }
+void CompositeShape::clear() { subshapes_.clear(); }
 
 }  // namespace Geometry2d

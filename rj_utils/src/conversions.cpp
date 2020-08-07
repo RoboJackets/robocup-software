@@ -1,6 +1,6 @@
 #include <rj_utils/conversions.hpp>
 
-RawProtobufMsg::UniquePtr ToROSMsg(const SSL_WrapperPacket& packet) {
+RawProtobufMsg::UniquePtr to_ros_msg(const SSL_WrapperPacket& packet) {
     RawProtobufMsg::UniquePtr msg = std::make_unique<RawProtobufMsg>();
     const auto packet_size = packet.ByteSizeLong();
     msg->data.resize(packet_size);
@@ -10,7 +10,7 @@ RawProtobufMsg::UniquePtr ToROSMsg(const SSL_WrapperPacket& packet) {
     return msg;
 }
 
-DetectionBallMsg ToROSMsg(const SSL_DetectionBall& ball) {
+DetectionBallMsg to_ros_msg(const SSL_DetectionBall& ball) {
     return rj_msgs::build<DetectionBallMsg>()
         .confidence(ball.confidence())
         .area(ball.area())
@@ -21,7 +21,7 @@ DetectionBallMsg ToROSMsg(const SSL_DetectionBall& ball) {
         .pixel_y(ball.pixel_y());
 }
 
-DetectionRobotMsg ToROSMsg(const SSL_DetectionRobot& robot) {
+DetectionRobotMsg to_ros_msg(const SSL_DetectionRobot& robot) {
     return rj_msgs::build<DetectionRobotMsg>()
         .confidence(robot.confidence())
         .robot_id(robot.robot_id())

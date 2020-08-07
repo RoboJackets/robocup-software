@@ -26,13 +26,13 @@ TEST(Arc, GetterSetter) {
     EXPECT_NEAR(a.radius_sq(), radius * radius, 0.001f);
 
     center = Point(2, 2);
-    a.setCenter(center);
+    a.set_center(center);
     radius = 1.2f;
-    a.setRadius(radius);
+    a.set_radius(radius);
     start = 0.3f;
-    a.setStart(start);
+    a.set_start(start);
     end = 0.4f;
-    a.setEnd(end);
+    a.set_end(end);
 
     EXPECT_NEAR(a.center().x(), center.x(), 0.001f);
     EXPECT_NEAR(a.center().y(), center.y(), 0.001f);

@@ -24,7 +24,7 @@ TEST(BallState, QuerySecondsTo) {
 
     Geometry2d::Point actual;
     EXPECT_NEAR(state.query_seconds_near(in_3_seconds.position, &actual).count(), 3, 1e-6);
-    EXPECT_TRUE(actual.nearPoint(in_3_seconds.position, 1e-6));
+    EXPECT_TRUE(actual.near_point(in_3_seconds.position, 1e-6));
 }
 
 TEST(BallState, QueryFar) {
@@ -38,5 +38,5 @@ TEST(BallState, QueryFar) {
     // give slightly different results, which results in this error being really
     // high (2e-3). Diagnose this and make sure it isn't a bug.
     EXPECT_NEAR(state.query_stop_time().count(), t.count(), 2e-3);
-    EXPECT_TRUE(actual.nearPoint(state.predict_in(t).position, 1e-6));
+    EXPECT_TRUE(actual.near_point(state.predict_in(t).position, 1e-6));
 }

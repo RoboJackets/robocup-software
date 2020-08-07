@@ -19,40 +19,40 @@
 struct Field_Dimensions {
     using Msg = rj_msgs::msg::FieldDimensions;
 
-    float Length() const { return _Length; }
-    float Width() const { return _Width; }
+    float length() const { return length_; }
+    float width() const { return width_; }
 
     /** the distance from the edge of the field to the border line */
-    float Border() const { return _Border; }
+    float border() const { return border_; }
 
     /** The width of the border lines */
-    float LineWidth() const { return _LineWidth; }
+    float line_width() const { return line_width_; }
 
-    float GoalWidth() const { return _GoalWidth; }
-    float GoalDepth() const { return _GoalDepth; }
-    float GoalHeight() const { return _GoalHeight; }
+    float goal_width() const { return goal_width_; }
+    float goal_depth() const { return goal_depth_; }
+    float goal_height() const { return goal_height_; }
 
     /** Dimensions of the rectangular penalty zone */
-    float PenaltyShortDist() const { return _PenaltyShortDist; }
-    float PenaltyLongDist() const { return _PenaltyLongDist; }
+    float penalty_short_dist() const { return penalty_short_dist_; }
+    float penalty_long_dist() const { return penalty_long_dist_; }
 
     /** diameter of the center circle */
-    float CenterRadius() const { return _CenterRadius; }
-    float CenterDiameter() const { return _CenterDiameter; }
+    float center_radius() const { return center_radius_; }
+    float center_diameter() const { return center_diameter_; }
 
     /** flat area for defence markings */
-    float GoalFlat() const { return _GoalFlat; }
+    float goal_flat() const { return goal_flat_; }
 
-    float FloorLength() const { return _FloorLength; }
-    float FloorWidth() const { return _FloorWidth; }
+    float floor_length() const { return floor_length_; }
+    float floor_width() const { return floor_width_; }
 
-    Geometry2d::Point CenterPoint() const { return _CenterPoint; }
+    Geometry2d::Point center_point() const { return center_point_; }
 
-    [[nodiscard]] Geometry2d::Rect OurGoalZoneShape() const {
-        return _OurGoalZoneShape;
+    [[nodiscard]] Geometry2d::Rect our_goal_zone_shape() const {
+        return our_goal_zone_shape_;
     }
-    [[nodiscard]] Geometry2d::Rect TheirGoalZoneShape() const {
-        return _TheirGoalZoneShape;
+    [[nodiscard]] Geometry2d::Rect their_goal_zone_shape() const {
+        return their_goal_zone_shape_;
     }
 
     /*
@@ -60,38 +60,38 @@ struct Field_Dimensions {
      * used mostly for movement at the play level
      * exposed to python via constants.Field
      */
-    Geometry2d::Rect TheirGoalZoneShapePadded(float padding) {
-        Geometry2d::Rect tmp = Geometry2d::Rect(_TheirGoalZoneShape);
+    Geometry2d::Rect their_goal_zone_shape_padded(float padding) {
+        Geometry2d::Rect tmp = Geometry2d::Rect(their_goal_zone_shape_);
         tmp.pad(padding);
         return tmp;
     };
 
-    Geometry2d::Segment OurGoalSegment() const { return _OurGoalSegment; }
-    Geometry2d::Segment TheirGoalSegment() const { return _TheirGoalSegment; }
-    Geometry2d::Rect OurHalf() const { return _OurHalf; }
-    Geometry2d::Rect TheirHalf() const { return _TheirHalf; }
-    Geometry2d::Rect FieldRect() const { return _FieldRect; }
+    Geometry2d::Segment our_goal_segment() const { return our_goal_segment_; }
+    Geometry2d::Segment their_goal_segment() const { return their_goal_segment_; }
+    Geometry2d::Rect our_half() const { return our_half_; }
+    Geometry2d::Rect their_half() const { return their_half_; }
+    Geometry2d::Rect field_rect() const { return field_rect_; }
 
     /*
      * Provides a rect that is a padded version of our goalbox
      * used mostly for movement at the play level
      * exposed to python via constants.Field
      */
-    Geometry2d::Rect OurGoalZoneShapePadded(float padding) {
-        Geometry2d::Rect tmp = Geometry2d::Rect(_OurGoalZoneShape);
+    Geometry2d::Rect our_goal_zone_shape_padded(float padding) {
+        Geometry2d::Rect tmp = Geometry2d::Rect(our_goal_zone_shape_);
         tmp.pad(padding);
         return tmp;
     };
 
-    std::vector<Geometry2d::Line> FieldBorders() const { return _FieldBorders; }
+    std::vector<Geometry2d::Line> field_borders() const { return field_borders_; }
 
-    static const Field_Dimensions Single_Field_Dimensions;
+    static const Field_Dimensions kSingleFieldDimensions;
 
-    static const Field_Dimensions Double_Field_Dimensions;
+    static const Field_Dimensions kDoubleFieldDimensions;
 
-    static const Field_Dimensions Default_Dimensions;
+    static const Field_Dimensions kDefaultDimensions;
 
-    static Field_Dimensions Current_Dimensions;
+    static Field_Dimensions current_dimensions;
 
     Field_Dimensions()
         : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
@@ -99,138 +99,138 @@ struct Field_Dimensions {
     Field_Dimensions(float fl, float fw, float fb, float flw, float gw,
                      float gd, float gh, float psd, float pld, float cr,
                      float cd, float gf, float ffl, float ffw)
-        : _Length(fl),
-          _Width(fw),
-          _Border(fb),
-          _LineWidth(flw),
-          _GoalWidth(gw),
-          _GoalDepth(gd),
-          _GoalHeight(gh),
-          _PenaltyShortDist(psd),
-          _PenaltyLongDist(pld),
-          _CenterRadius(cr),
-          _CenterDiameter(cd),
-          _GoalFlat(gf),
-          _FloorLength(ffl),
-          _FloorWidth(ffw) {
-        updateGeometry();
+        : length_(fl),
+          width_(fw),
+          border_(fb),
+          line_width_(flw),
+          goal_width_(gw),
+          goal_depth_(gd),
+          goal_height_(gh),
+          penalty_short_dist_(psd),
+          penalty_long_dist_(pld),
+          center_radius_(cr),
+          center_diameter_(cd),
+          goal_flat_(gf),
+          floor_length_(ffl),
+          floor_width_(ffw) {
+        update_geometry();
     }
 
     Field_Dimensions operator*(float scalar) const {
         return Field_Dimensions(
-            _Length * scalar, _Width * scalar, _Border * scalar,
-            _LineWidth * scalar, _GoalWidth * scalar, _GoalDepth * scalar,
-            _GoalHeight * scalar, _PenaltyShortDist * scalar,
-            _PenaltyLongDist * scalar, _CenterRadius * scalar,
-            _CenterDiameter * scalar, _GoalFlat * scalar, _FloorLength * scalar,
-            _FloorWidth * scalar);
+            length_ * scalar, width_ * scalar, border_ * scalar,
+            line_width_ * scalar, goal_width_ * scalar, goal_depth_ * scalar,
+            goal_height_ * scalar, penalty_short_dist_ * scalar,
+            penalty_long_dist_ * scalar, center_radius_ * scalar,
+            center_diameter_ * scalar, goal_flat_ * scalar, floor_length_ * scalar,
+            floor_width_ * scalar);
     }
 
     bool operator==(const Field_Dimensions& a) const {
         return !(
-            std::abs(Length() - a.Length()) > FLT_EPSILON ||
-            std::abs(Width() - a.Width()) > FLT_EPSILON ||
-            std::abs(Border() - a.Border()) > FLT_EPSILON ||
-            std::abs(LineWidth() - a.LineWidth()) > FLT_EPSILON ||
-            std::abs(GoalWidth() - a.GoalWidth()) > FLT_EPSILON ||
-            std::abs(GoalDepth() - a.GoalDepth()) > FLT_EPSILON ||
-            std::abs(GoalHeight() - a.GoalHeight()) > FLT_EPSILON ||
-            std::abs(PenaltyShortDist() - a.PenaltyShortDist()) > FLT_EPSILON ||
-            std::abs(PenaltyLongDist() - a.PenaltyLongDist()) > FLT_EPSILON ||
-            std::abs(CenterRadius() - a.CenterRadius()) > FLT_EPSILON ||
-            std::abs(CenterDiameter() - a.CenterDiameter()) > FLT_EPSILON ||
-            std::abs(GoalFlat() - a.GoalFlat()) > FLT_EPSILON ||
-            std::abs(FloorLength() - a.FloorLength()) > FLT_EPSILON ||
-            std::abs(FloorWidth() - a.FloorWidth()) > FLT_EPSILON);
+            std::abs(length() - a.length()) > FLT_EPSILON ||
+            std::abs(width() - a.width()) > FLT_EPSILON ||
+            std::abs(border() - a.border()) > FLT_EPSILON ||
+            std::abs(line_width() - a.line_width()) > FLT_EPSILON ||
+            std::abs(goal_width() - a.goal_width()) > FLT_EPSILON ||
+            std::abs(goal_depth() - a.goal_depth()) > FLT_EPSILON ||
+            std::abs(goal_height() - a.goal_height()) > FLT_EPSILON ||
+            std::abs(penalty_short_dist() - a.penalty_short_dist()) > FLT_EPSILON ||
+            std::abs(penalty_long_dist() - a.penalty_long_dist()) > FLT_EPSILON ||
+            std::abs(center_radius() - a.center_radius()) > FLT_EPSILON ||
+            std::abs(center_diameter() - a.center_diameter()) > FLT_EPSILON ||
+            std::abs(goal_flat() - a.goal_flat()) > FLT_EPSILON ||
+            std::abs(floor_length() - a.floor_length()) > FLT_EPSILON ||
+            std::abs(floor_width() - a.floor_width()) > FLT_EPSILON);
     }
 
     bool operator!=(const Field_Dimensions& a) const { return !(*this == a); }
 
-    void updateGeometry() {
-        _CenterPoint = Geometry2d::Point(0.0, _Length / 2.0);
+    void update_geometry() {
+        center_point_ = Geometry2d::Point(0.0, length_ / 2.0);
 
-        _OurGoalZoneShape = Geometry2d::Rect(
-            Geometry2d::Point(_PenaltyLongDist / 2, _PenaltyShortDist),
-            Geometry2d::Point(-_PenaltyLongDist / 2, 0));
+        our_goal_zone_shape_ = Geometry2d::Rect(
+            Geometry2d::Point(penalty_long_dist_ / 2, penalty_short_dist_),
+            Geometry2d::Point(-penalty_long_dist_ / 2, 0));
 
-        _TheirGoalZoneShape =
-            Geometry2d::Rect(Geometry2d::Point(-_PenaltyLongDist / 2, _Length),
-                             Geometry2d::Point(_PenaltyLongDist / 2,
-                                               _Length - _PenaltyShortDist));
+        their_goal_zone_shape_ =
+            Geometry2d::Rect(Geometry2d::Point(-penalty_long_dist_ / 2, length_),
+                             Geometry2d::Point(penalty_long_dist_ / 2,
+                                               length_ - penalty_short_dist_));
 
-        _TheirGoalSegment =
-            Geometry2d::Segment(Geometry2d::Point(_GoalWidth / 2.0, _Length),
-                                Geometry2d::Point(-_GoalWidth / 2.0, _Length));
-        _OurGoalSegment =
-            Geometry2d::Segment(Geometry2d::Point(_GoalWidth / 2.0, 0),
-                                Geometry2d::Point(-_GoalWidth / 2.0, 0));
+        their_goal_segment_ =
+            Geometry2d::Segment(Geometry2d::Point(goal_width_ / 2.0, length_),
+                                Geometry2d::Point(-goal_width_ / 2.0, length_));
+        our_goal_segment_ =
+            Geometry2d::Segment(Geometry2d::Point(goal_width_ / 2.0, 0),
+                                Geometry2d::Point(-goal_width_ / 2.0, 0));
 
-        _TheirHalf =
-            Geometry2d::Rect(Geometry2d::Point(-_Width / 2, _Length),
-                             Geometry2d::Point(_Width / 2, _Length / 2));
-        _OurHalf = Geometry2d::Rect(Geometry2d::Point(-_Width / 2, 0),
-                                    Geometry2d::Point(_Width / 2, _Length / 2));
+        their_half_ =
+            Geometry2d::Rect(Geometry2d::Point(-width_ / 2, length_),
+                             Geometry2d::Point(width_ / 2, length_ / 2));
+        our_half_ = Geometry2d::Rect(Geometry2d::Point(-width_ / 2, 0),
+                                    Geometry2d::Point(width_ / 2, length_ / 2));
 
-        _FieldRect = Geometry2d::Rect(Geometry2d::Point(-_Width / 2.0, 0),
-                                      Geometry2d::Point(_Width / 2.0, _Length));
+        field_rect_ = Geometry2d::Rect(Geometry2d::Point(-width_ / 2.0, 0),
+                                      Geometry2d::Point(width_ / 2.0, length_));
 
-        _FieldBorders = {
-            Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, 0),
-                             Geometry2d::Point(-_Width / 2.0, _Length)),
-            Geometry2d::Line(Geometry2d::Point(-_Width / 2.0, _Length),
-                             Geometry2d::Point(_Width / 2.0, _Length)),
-            Geometry2d::Line(Geometry2d::Point(_Width / 2.0, _Length),
-                             Geometry2d::Point(_Width / 2.0, 0)),
-            Geometry2d::Line(Geometry2d::Point(_Width / 2.0, 0),
-                             Geometry2d::Point(-_Width / 2.0, 0))};
+        field_borders_ = {
+            Geometry2d::Line(Geometry2d::Point(-width_ / 2.0, 0),
+                             Geometry2d::Point(-width_ / 2.0, length_)),
+            Geometry2d::Line(Geometry2d::Point(-width_ / 2.0, length_),
+                             Geometry2d::Point(width_ / 2.0, length_)),
+            Geometry2d::Line(Geometry2d::Point(width_ / 2.0, length_),
+                             Geometry2d::Point(width_ / 2.0, 0)),
+            Geometry2d::Line(Geometry2d::Point(width_ / 2.0, 0),
+                             Geometry2d::Point(-width_ / 2.0, 0))};
     }
 
     friend std::ostream& operator<<(std::ostream& stream,
                                     const Field_Dimensions& fd) {
-        stream << "length: " << fd.Length() << "\n";
-        stream << "width: " << fd.Width() << "\n";
-        stream << "border: " << fd.Border() << "\n";
-        stream << "line_width: " << fd.LineWidth() << "\n";
-        stream << "goal_width: " << fd.GoalWidth() << "\n";
-        stream << "goal_depth: " << fd.GoalDepth() << "\n";
-        stream << "goal_height: " << fd.GoalHeight() << "\n";
-        stream << "penalty_short_dist: " << fd.PenaltyShortDist() << "\n";
-        stream << "penalty_long_dist: " << fd.PenaltyLongDist() << "\n";
-        stream << "center_radius: " << fd.CenterRadius() << "\n";
-        stream << "center_diameter: " << fd.CenterDiameter() << "\n";
-        stream << "goal_flat: " << fd.GoalFlat() << "\n";
-        stream << "floor_length: " << fd.FloorLength() << "\n";
-        stream << "floor_width: " << fd.FloorWidth();
+        stream << "length: " << fd.length() << "\n";
+        stream << "width: " << fd.width() << "\n";
+        stream << "border: " << fd.border() << "\n";
+        stream << "line_width: " << fd.line_width() << "\n";
+        stream << "goal_width: " << fd.goal_width() << "\n";
+        stream << "goal_depth: " << fd.goal_depth() << "\n";
+        stream << "goal_height: " << fd.goal_height() << "\n";
+        stream << "penalty_short_dist: " << fd.penalty_short_dist() << "\n";
+        stream << "penalty_long_dist: " << fd.penalty_long_dist() << "\n";
+        stream << "center_radius: " << fd.center_radius() << "\n";
+        stream << "center_diameter: " << fd.center_diameter() << "\n";
+        stream << "goal_flat: " << fd.goal_flat() << "\n";
+        stream << "floor_length: " << fd.floor_length() << "\n";
+        stream << "floor_width: " << fd.floor_width();
         return stream;
     }
 
 private:
-    float _Length;
-    float _Width;
-    float _Border;
-    float _LineWidth;
-    float _GoalWidth;
-    float _GoalDepth;
-    float _GoalHeight;
-    float _PenaltyShortDist;
-    float _PenaltyLongDist;
-    float _ArcRadius;
-    float _CenterRadius;
-    float _CenterDiameter;
-    float _GoalFlat;
-    float _FloorLength;
-    float _FloorWidth;
+    float length_;
+    float width_;
+    float border_;
+    float line_width_;
+    float goal_width_;
+    float goal_depth_;
+    float goal_height_;
+    float penalty_short_dist_;
+    float penalty_long_dist_;
+    float arc_radius_;
+    float center_radius_;
+    float center_diameter_;
+    float goal_flat_;
+    float floor_length_;
+    float floor_width_;
 
-    Geometry2d::Point _CenterPoint;
-    Geometry2d::Rect _OurGoalZoneShape;
-    Geometry2d::Rect _TheirGoalZoneShape;
-    Geometry2d::Segment _OurGoalSegment;
-    Geometry2d::Segment _TheirGoalSegment;
-    Geometry2d::Rect _OurHalf;
-    Geometry2d::Rect _TheirHalf;
-    Geometry2d::Rect _FieldRect;
+    Geometry2d::Point center_point_;
+    Geometry2d::Rect our_goal_zone_shape_;
+    Geometry2d::Rect their_goal_zone_shape_;
+    Geometry2d::Segment our_goal_segment_;
+    Geometry2d::Segment their_goal_segment_;
+    Geometry2d::Rect our_half_;
+    Geometry2d::Rect their_half_;
+    Geometry2d::Rect field_rect_;
 
-    std::vector<Geometry2d::Line> _FieldBorders;
+    std::vector<Geometry2d::Line> field_borders_;
 };
 
 namespace rj_convert {
@@ -239,20 +239,20 @@ template <>
 struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
     static Field_Dimensions::Msg to_ros(const Field_Dimensions& from) {
         return rj_msgs::build<Field_Dimensions::Msg>()
-            .length(from.Length())
-            .width(from.Width())
-            .border(from.Border())
-            .line_width(from.LineWidth())
-            .goal_width(from.GoalWidth())
-            .goal_depth(from.GoalDepth())
-            .goal_height(from.GoalHeight())
-            .penalty_short_dist(from.PenaltyShortDist())
-            .penalty_long_dist(from.PenaltyLongDist())
-            .center_radius(from.CenterRadius())
-            .center_diameter(from.CenterDiameter())
-            .goal_flat(from.GoalFlat())
-            .floor_length(from.FloorLength())
-            .floor_width(from.FloorWidth());
+            .length(from.length())
+            .width(from.width())
+            .border(from.border())
+            .line_width(from.line_width())
+            .goal_width(from.goal_width())
+            .goal_depth(from.goal_depth())
+            .goal_height(from.goal_height())
+            .penalty_short_dist(from.penalty_short_dist())
+            .penalty_long_dist(from.penalty_long_dist())
+            .center_radius(from.center_radius())
+            .center_diameter(from.center_diameter())
+            .goal_flat(from.goal_flat())
+            .floor_length(from.floor_length())
+            .floor_width(from.floor_width());
     }
 
     static Field_Dimensions from_ros(const Field_Dimensions::Msg& from) {

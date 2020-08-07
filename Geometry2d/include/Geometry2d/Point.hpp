@@ -19,17 +19,17 @@ class Point {
 public:
     using Msg = rj_geometry_msgs::msg::Point;
 
-    [[nodiscard]] const double& x() const { return _x; }
-    [[nodiscard]] const double& y() const { return _y; }
-    double& x() { return _x; }
-    double& y() { return _y; }
+    [[nodiscard]] const double& x() const { return x_; }
+    [[nodiscard]] const double& y() const { return y_; }
+    double& x() { return x_; }
+    double& y() { return y_; }
 
     /**
     sets the point to x,y
     @param x the x coordinate
     @param y the y coordinate
     */
-    Point(double x = 0, double y = 0) : _x(x), _y(y) {}
+    Point(double x = 0, double y = 0) : x_(x), y_(y) {}
 
     /**
      * Implicit constructor for creating a Point from a Packet::Point
@@ -64,7 +64,7 @@ public:
     /**
      * to draw stuff and interface with QT
      */
-    [[nodiscard]] QPointF toQPointF() const { return QPointF(x(), y()); }
+    [[nodiscard]] QPointF to_q_point_f() const { return QPointF(x(), y()); }
 
     operator Packet::Point() const {
         Packet::Point out;
@@ -186,20 +186,20 @@ public:
 
     [[nodiscard]] const double& operator[](int i) const {
         if (0 == i) {
-            return _x;
+            return x_;
         }
         if (1 == i) {
-            return _y;
+            return y_;
         }
         throw std::out_of_range("Out of range index for Geometry2d::Point");
     }
 
     double& operator[](int i) {
         if (0 == i) {
-            return _x;
+            return x_;
         }
         if (1 == i) {
-            return _y;
+            return y_;
         }
         throw std::out_of_range("Out of range index for Geometry2d::Point");
     }
@@ -269,10 +269,10 @@ public:
      * rotates the point around the origin
      */
     Point& rotate(double angle) {
-        double newX = x() * cos(angle) - y() * sin(angle);
-        double newY = y() * cos(angle) + x() * sin(angle);
-        x() = newX;
-        y() = newY;
+        double new_x = x() * cos(angle) - y() * sin(angle);
+        double new_y = y() * cos(angle) + x() * sin(angle);
+        x() = new_x;
+        y() = new_y;
         return *this;
     }
 
@@ -280,9 +280,9 @@ public:
      * Like rotate(), but returns a new point instead of changing *this
      */
     [[nodiscard]] Point rotated(double angle) const {
-        double newX = x() * cos(angle) - y() * sin(angle);
-        double newY = y() * cos(angle) + x() * sin(angle);
-        return Point(newX, newY);
+        double new_x = x() * cos(angle) - y() * sin(angle);
+        double new_y = y() * cos(angle) + x() * sin(angle);
+        return Point(new_x, new_y);
     }
 
     /**
@@ -296,9 +296,9 @@ public:
      * static function to use rotate
      */
     static Point rotated(const Point& pt, const Point& origin, double angle) {
-        Point newPt = pt;
-        newPt.rotate(origin, angle);
-        return newPt;
+        Point new_pt = pt;
+        new_pt.rotate(origin, angle);
+        return new_pt;
     }
 
     /**
@@ -306,7 +306,7 @@ public:
     @param other the point to find the distance to
     @return the distance between the points
     */
-    [[nodiscard]] double distTo(const Point& other) const {
+    [[nodiscard]] double dist_to(const Point& other) const {
         Point delta = other - *this;
         return delta.mag();
     }
@@ -332,7 +332,7 @@ public:
      * Returns true if this point is within the given distance (threshold)
      * of (pt)
      */
-    [[nodiscard]] bool nearPoint(const Point& other, double threshold) const {
+    [[nodiscard]] bool near_point(const Point& other, double threshold) const {
         return (*this - other).magsq() <= (threshold * threshold);
     }
 
@@ -349,10 +349,10 @@ public:
     }
 
     /** returns the perpendicular to the point, Clockwise */
-    [[nodiscard]] Point perpCW() const { return Point(y(), -x()); }
+    [[nodiscard]] Point perp_cw() const { return Point(y(), -x()); }
 
     /** returns the perpendicular to the point, Counter Clockwise */
-    [[nodiscard]] Point perpCCW() const { return Point(-y(), x()); }
+    [[nodiscard]] Point perp_ccw() const { return Point(-y(), x()); }
 
     /** saturates the magnitude of a vector */
     static Geometry2d::Point saturate(Geometry2d::Point value, double max) {
@@ -363,7 +363,7 @@ public:
         return value;
     }
 
-    [[nodiscard]] double angleTo(const Point& other) const {
+    [[nodiscard]] double angle_to(const Point& other) const {
         return (other - *this).angle();
     }
 
@@ -372,26 +372,26 @@ public:
     }
 
     /** returns the angle between the two normalized points (radians) */
-    [[nodiscard]] double angleBetween(const Point& other) const {
+    [[nodiscard]] double angle_between(const Point& other) const {
         double angle = normalized().dot(other.normalized());
         return acos(std::max(std::min(angle, 1.0), -1.0));
     }
 
-    [[nodiscard]] bool nearlyEquals(Point other) const;
+    [[nodiscard]] bool nearly_equals(Point other) const;
 
-    [[nodiscard]] std::string toString() const {
+    [[nodiscard]] std::string to_string() const {
         std::stringstream str;
         str << "Point(" << x() << ", " << y() << ")";
         return str.str();
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const Point& point) {
-        stream << point.toString();
+        stream << point.to_string();
         return stream;
     }
 
 private:
-    double _x, _y;
+    double x_, y_;
 };  // \class Point
 
 // global operations

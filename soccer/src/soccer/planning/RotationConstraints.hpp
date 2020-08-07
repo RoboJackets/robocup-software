@@ -5,12 +5,12 @@
 struct RotationConstraints {
 public:
     RotationConstraints()
-        : maxSpeed(*_max_rotation_speed),
-          maxAccel(*_max_rotation_acceleration) {}
-    double maxSpeed;
-    double maxAccel;
+        : max_speed(*max_rotation_speed),
+          max_accel(*max_rotation_acceleration) {}
+    double max_speed;
+    double max_accel;
 
-    static void createConfiguration(Configuration* cfg);
-    static ConfigDouble* _max_rotation_speed;
-    static ConfigDouble* _max_rotation_acceleration;
+    static void create_configuration(Configuration* cfg);
+    static ConfigDouble* max_rotation_speed;
+    static ConfigDouble* max_rotation_acceleration;
 };

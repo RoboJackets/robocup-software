@@ -15,11 +15,11 @@ using DetectionBallMsg = rj_msgs::msg::DetectionBall;
 class CameraBall {
 public:
     /**
-     * @param timeCaptured Time that the picture was taken
+     * @param time_captured Time that the picture was taken
      * @param pos Position of the ball at that time
      */
-    CameraBall(RJ::Time timeCaptured, Geometry2d::Point pos)
-        : timeCaptured(timeCaptured), pos(pos) {}
+    CameraBall(RJ::Time time_captured, Geometry2d::Point pos)
+        : time_captured_(time_captured), pos_(pos) {}
 
     /**
      * @brief Constructor from DetectionBallMsg.
@@ -31,12 +31,12 @@ public:
     /**
      * @return Time this measurement was captured
      */
-    RJ::Time getTimeCaptured() const;
+    RJ::Time get_time_captured() const;
 
     /**
      * @return Position of the measurement
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * Combines all the balls in the list and returns a ball
@@ -44,10 +44,10 @@ public:
      *
      * @param balls The list of balls to combine
      */
-    static CameraBall CombineBalls(const std::vector<CameraBall>& balls);
+    static CameraBall combine_balls(const std::vector<CameraBall>& balls);
 
 private:
-    RJ::Time timeCaptured;
-    Geometry2d::Point pos;
+    RJ::Time time_captured_;
+    Geometry2d::Point pos_;
 };
 }  // namespace vision_filter

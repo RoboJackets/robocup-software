@@ -14,109 +14,111 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, kick::detector, fast_acceleration_tr
                   "detector in m/s^2. ")
 using kick::detector::PARAM_fast_acceleration_trigger;
 
-bool FastKickDetector::addRecord(RJ::Time calcTime, const WorldBall& ball,
-                                 const std::vector<WorldRobot>& yellowRobots,
-                                 const std::vector<WorldRobot>& blueRobots, KickEvent& kickEvent) {
+bool FastKickDetector::add_record(RJ::Time calc_time, const WorldBall& ball,
+                                  const std::vector<WorldRobot>& yellow_robots,
+                                  const std::vector<WorldRobot>& blue_robots,
+                                  KickEvent& kick_event) {
     // Keep it a certain length
-    stateHistory.emplace_back(calcTime, ball, yellowRobots, blueRobots);
-    if (stateHistory.size() > static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
-        stateHistory.pop_front();
+    state_history_.emplace_back(calc_time, ball, yellow_robots, blue_robots);
+    if (state_history_.size() > static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
+        state_history_.pop_front();
     }
 
     // If we don't have enough, just return
-    if (stateHistory.size() < static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
+    if (state_history_.size() < static_cast<size_t>(kick::detector::PARAM_fast_kick_hist_length)) {
         return false;
     }
 
     // Make sure all the balls are valid
     // Otherwise we can't do anything
-    bool allValid = std::all_of(stateHistory.begin(), stateHistory.end(),
-                                [](VisionState& v) { return v.ball.getIsValid(); });
+    bool all_valid = std::all_of(state_history_.begin(), state_history_.end(),
+                                 [](VisionState& v) { return v.ball.get_is_valid(); });
 
-    if (!allValid) {
+    if (!all_valid) {
         return false;
     }
 
     // If we didn't kick, just return
-    if (!detectKick()) {
+    if (!detect_kick()) {
         return false;
     }
 
     // Assume the kick happened in the middle of the history
-    int midIdx = static_cast<int>(std::floor(stateHistory.size() / 2));
+    int mid_idx = static_cast<int>(std::floor(state_history_.size() / 2));
 
-    WorldRobot closestRobot = getClosestRobot();
-    RJ::Time kickTime = stateHistory.at(midIdx).calcTime;
-    std::deque<VisionState> statesSinceKick(std::next(stateHistory.begin(), midIdx),
-                                            stateHistory.end());
+    WorldRobot closest_robot = get_closest_robot();
+    RJ::Time kick_time = state_history_.at(mid_idx).calc_time;
+    std::deque<VisionState> states_since_kick(std::next(state_history_.begin(), mid_idx),
+                                              state_history_.end());
 
-    kickEvent = KickEvent(kickTime, closestRobot, statesSinceKick);
+    kick_event = KickEvent(kick_time, closest_robot, states_since_kick);
 
     return true;
 }
 
-bool FastKickDetector::detectKick() {
+bool FastKickDetector::detect_kick() {
     // Note: This may be weird at camera frame intersections
     // It may be a good idea to look at the kalman balls
     // and checking kalman balls for velocity jumps
 
     // Returns true on a large velocity jump across the first and last
     // velocity calc
-    int endIdx = stateHistory.size() - 1;
+    int end_idx = state_history_.size() - 1;
 
     // Change in position between two adjacent measurements
-    Geometry2d::Point dpStart = stateHistory.at(1).ball.getPos() - stateHistory.at(0).ball.getPos();
-    Geometry2d::Point dpEnd =
-        stateHistory.at(endIdx).ball.getPos() - stateHistory.at(endIdx - 1).ball.getPos();
+    Geometry2d::Point dp_start =
+        state_history_.at(1).ball.get_pos() - state_history_.at(0).ball.get_pos();
+    Geometry2d::Point dp_end =
+        state_history_.at(end_idx).ball.get_pos() - state_history_.at(end_idx - 1).ball.get_pos();
 
     // Velocity at the start and end measurements
-    Geometry2d::Point vStart = dpStart / PARAM_vision_loop_dt;
-    Geometry2d::Point vEnd = dpEnd / PARAM_vision_loop_dt;
+    Geometry2d::Point v_start = dp_start / PARAM_vision_loop_dt;
+    Geometry2d::Point v_end = dp_end / PARAM_vision_loop_dt;
 
     // Change in velocity between start and end measurements
-    Geometry2d::Point dv = vEnd - vStart;
+    Geometry2d::Point dv = v_end - v_start;
 
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to
     // have to retune it
-    Geometry2d::Point accel = dv / (PARAM_vision_loop_dt * stateHistory.size());
+    Geometry2d::Point accel = dv / (PARAM_vision_loop_dt * state_history_.size());
 
     // Check for large accelerations and only going from slow->fast transitions
-    return accel.mag() > PARAM_fast_acceleration_trigger && vStart.mag() < vEnd.mag();
+    return accel.mag() > PARAM_fast_acceleration_trigger && v_start.mag() < v_end.mag();
 }
 
-WorldRobot FastKickDetector::getClosestRobot() {
+WorldRobot FastKickDetector::get_closest_robot() {
     // Get's the closest robot to the ball position in the center measurement
     // Assumes kick is in the center
     // Valid assumption as long as history length is small
 
-    int midIdx = (int)floor(stateHistory.size() / 2);
-    Geometry2d::Point midBallPos = stateHistory.at(midIdx).ball.getPos();
+    int mid_idx = (int)floor(state_history_.size() / 2);
+    Geometry2d::Point mid_ball_pos = state_history_.at(mid_idx).ball.get_pos();
 
-    WorldRobot minRobot;
-    double minDist = std::numeric_limits<double>::infinity();
+    WorldRobot min_robot;
+    double min_dist = std::numeric_limits<double>::infinity();
 
     // Finds closest robot to ball at assumed kick time
-    for (WorldRobot& robot : stateHistory.at(midIdx).yellowRobots) {
-        if (robot.getIsValid()) {
-            double dist = (midBallPos - robot.getPos()).mag();
+    for (WorldRobot& robot : state_history_.at(mid_idx).yellow_robots) {
+        if (robot.get_is_valid()) {
+            double dist = (mid_ball_pos - robot.get_pos()).mag();
 
-            if (dist < minDist) {
-                minRobot = robot;
+            if (dist < min_dist) {
+                min_robot = robot;
             }
         }
     }
 
-    for (WorldRobot& robot : stateHistory.at(midIdx).blueRobots) {
-        if (robot.getIsValid()) {
-            double dist = (midBallPos - robot.getPos()).mag();
+    for (WorldRobot& robot : state_history_.at(mid_idx).blue_robots) {
+        if (robot.get_is_valid()) {
+            double dist = (mid_ball_pos - robot.get_pos()).mag();
 
-            if (dist < minDist) {
-                minRobot = robot;
+            if (dist < min_dist) {
+                min_robot = robot;
             }
         }
     }
 
-    return minRobot;
+    return min_robot;
 }
 }  // namespace vision_filter

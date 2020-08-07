@@ -20,11 +20,11 @@ using namespace Packet;
 /**
  * Write a message to an output stream, delimited by size.
  */
-bool writeDelimitedTo(const google::protobuf::MessageLite& message,
-                      google::protobuf::io::ZeroCopyOutputStream* rawOutput) {
+bool write_delimited_to(const google::protobuf::MessageLite& message,
+                        google::protobuf::io::ZeroCopyOutputStream* raw_output) {
     // We create a new coded stream for each message.  Don't worry, this is
     // fast.
-    google::protobuf::io::CodedOutputStream output(rawOutput);
+    google::protobuf::io::CodedOutputStream output(raw_output);
 
     // Write the size.
     const int size = message.ByteSize();
@@ -49,13 +49,13 @@ bool writeDelimitedTo(const google::protobuf::MessageLite& message,
 /**
  * Read a message from an input stream, delimited by size.
  */
-bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
-                       google::protobuf::MessageLite* message) {
+bool read_delimited_from(google::protobuf::io::ZeroCopyInputStream* raw_input,
+                         google::protobuf::MessageLite* message) {
     // We create a new coded stream for each message.  Don't worry, this is
     // fast, and it makes sure the 64MB total size limit is imposed per-message
     // rather than on the whole stream.  (See the CodedInputStream interface for
     // more info on this limit.)
-    google::protobuf::io::CodedInputStream input(rawInput);
+    google::protobuf::io::CodedInputStream input(raw_input);
 
     // Read the size.
     uint32_t size = 0;
@@ -81,7 +81,7 @@ bool readDelimitedFrom(google::protobuf::io::ZeroCopyInputStream* rawInput,
 }
 
 void Logger::start() {
-    _context->logs.start_time = RJ::now();
+    context_->logs.start_time = RJ::now();
 
     // Log a message that is empty except for a log config and a start time.
     std::shared_ptr<Packet::LogFrame> log_frame = std::make_shared<Packet::LogFrame>();
@@ -92,74 +92,74 @@ void Logger::start() {
     log_frame->mutable_log_config()->set_generator("soccer");
     log_frame->mutable_log_config()->set_git_version_hash(git_version_hash);
     log_frame->mutable_log_config()->set_git_version_dirty(git_version_dirty);
-    log_frame->mutable_log_config()->set_simulation(_context->game_settings.simulation);
+    log_frame->mutable_log_config()->set_simulation(context_->game_settings.simulation);
 }
 
 void Logger::run() {
-    std::shared_ptr<Packet::LogFrame> log_frame = createLogFrame(_context);
+    std::shared_ptr<Packet::LogFrame> log_frame = create_log_frame(context_);
 
-    if (_context->logs.state == Logs::State::kWriting) {
-        _context->logs.size_bytes += log_frame->ByteSize();
-        google::protobuf::io::OstreamOutputStream output(&_log_file.value());
-        writeToFile(log_frame.get(), &output);
+    if (context_->logs.state == Logs::State::kWriting) {
+        context_->logs.size_bytes += log_frame->ByteSize();
+        google::protobuf::io::OstreamOutputStream output(&log_file_.value());
+        write_to_file(log_frame.get(), &output);
     }
 
-    while (_context->logs.frames.size() + 1 >= kMaxLogFrames) {
-        _context->logs.frames.pop_front();
+    while (context_->logs.frames.size() + 1 >= kMaxLogFrames) {
+        context_->logs.frames.pop_front();
     }
 
-    _context->logs.frames.emplace_back(std::move(log_frame));
+    context_->logs.frames.emplace_back(std::move(log_frame));
 }
 
 void Logger::stop() {}
 
 void Logger::read(const std::string& filename) {
-    _log_file = std::fstream();
-    _log_file->open(filename, std::fstream::in | std::fstream::binary);
-    _context->logs.filename = filename;
-    _context->logs.state = Logs::State::kReading;
+    log_file_ = std::fstream();
+    log_file_->open(filename, std::fstream::in | std::fstream::binary);
+    context_->logs.filename = filename;
+    context_->logs.state = Logs::State::kReading;
 
-    _context->logs.frames.clear();
+    context_->logs.frames.clear();
 
-    if (!_log_file->good()) {
+    if (!log_file_->good()) {
         std::cerr << "Log file " << filename << " does not exist." << std::endl;
         std::exit(-1);
     }
 
     // Populate the entire logs struct.
     auto frame = std::make_shared<LogFrame>();
-    google::protobuf::io::IstreamInputStream input(&_log_file.value());
-    while (readFromFile(frame.get(), &input)) {
-        _context->logs.size_bytes += frame->ByteSize();
-        _context->logs.frames.emplace_back(std::move(frame));
+    google::protobuf::io::IstreamInputStream input(&log_file_.value());
+    while (read_from_file(frame.get(), &input)) {
+        context_->logs.size_bytes += frame->ByteSize();
+        context_->logs.frames.emplace_back(std::move(frame));
         frame = std::make_shared<LogFrame>();
     }
 }
 
 void Logger::write(const std::string& filename) {
-    _log_file = std::fstream();
-    _log_file->open(filename, std::fstream::out | std::fstream::binary);
-    _context->logs.filename = filename;
-    _context->logs.state = Logs::State::kWriting;
+    log_file_ = std::fstream();
+    log_file_->open(filename, std::fstream::out | std::fstream::binary);
+    context_->logs.filename = filename;
+    context_->logs.state = Logs::State::kWriting;
 
-    google::protobuf::io::OstreamOutputStream output(&_log_file.value());
-    for (const auto& frame : _context->logs.frames) {
-        writeToFile(frame.get(), &output);
+    google::protobuf::io::OstreamOutputStream output(&log_file_.value());
+    for (const auto& frame : context_->logs.frames) {
+        write_to_file(frame.get(), &output);
     }
 }
 
 void Logger::close() {
-    _log_file = std::nullopt;
-    _context->logs.filename = std::nullopt;
-    _context->logs.state = Logs::State::kNoFile;
+    log_file_ = std::nullopt;
+    context_->logs.filename = std::nullopt;
+    context_->logs.state = Logs::State::kNoFile;
 }
 
-std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
+std::shared_ptr<Packet::LogFrame> Logger::create_log_frame(Context* context) {
     // Add everything to the log frame.
     auto log_frame = std::make_shared<LogFrame>();
 
     // Debug drawing
-    context->debug_drawer.fillLogFrame(log_frame.get());
+    context->debug_drawer.fill_log_frame(log_frame.get());
 
     // Copy raw vision packets.
     for (const SSL_WrapperPacket& packet : context->raw_vision_packets) {
@@ -178,7 +178,7 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
     log_frame->set_command_time(RJ::timestamp());
 
     // Our robots
-    for (int shell = 0; shell < Num_Shells; shell++) {
+    for (int shell = 0; shell < kNumShells; shell++) {
         const auto& state = context->world_state.our_robots.at(shell);
         const auto& status = context->robot_status.at(shell);
         const auto& setpoint = context->motion_setpoints.at(shell);
@@ -188,11 +188,11 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
         }
 
         LogFrame::Robot* robot = log_frame->add_self();
-        fillRobot(robot, shell, &state, &status, &setpoint);
+        fill_robot(robot, shell, &state, &status, &setpoint);
     }
 
     // Radio RX/TX for each robot
-    for (int shell = 0; shell < Num_Shells; shell++) {
+    for (int shell = 0; shell < kNumShells; shell++) {
         const auto& status = context->robot_status.at(shell);
         if (RJ::now() - status.timestamp > RJ::Seconds(0.5)) {
             continue;
@@ -208,14 +208,14 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
     }
 
     // Opponent robots
-    for (int shell = 0; shell < Num_Shells; shell++) {
+    for (int shell = 0; shell < kNumShells; shell++) {
         const auto& state = context->world_state.their_robots.at(shell);
         if (!state.visible) {
             continue;
         }
 
         LogFrame::Robot* robot = log_frame->add_opp();
-        fillRobot(robot, shell, &state, nullptr, nullptr);
+        fill_robot(robot, shell, &state, nullptr, nullptr);
     }
 
     // Ball
@@ -230,8 +230,8 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
             static_cast<float>(context->world_state.ball.velocity.y()));
     }
 
-    log_frame->set_manual_id(context->game_settings.joystick_config.manualID);
-    log_frame->set_defend_plus_x(context->game_settings.defendPlusX);
+    log_frame->set_manual_id(context->game_settings.joystick_config.manual_id);
+    log_frame->set_defend_plus_x(context->game_settings.defend_plus_x);
     log_frame->set_use_our_half(context->game_settings.use_our_half);
     log_frame->set_use_opponent_half(context->game_settings.use_their_half);
 
@@ -252,16 +252,18 @@ std::shared_ptr<Packet::LogFrame> Logger::createLogFrame(Context* context) {
     return log_frame;
 }
 
-bool Logger::writeToFile(Packet::LogFrame* frame, google::protobuf::io::ZeroCopyOutputStream* out) {
-    return writeDelimitedTo(*frame, out);
+bool Logger::write_to_file(Packet::LogFrame* frame,
+                           google::protobuf::io::ZeroCopyOutputStream* out) {
+    return write_delimited_to(*frame, out);
 }
 
-bool Logger::readFromFile(Packet::LogFrame* frame, google::protobuf::io::ZeroCopyInputStream* in) {
-    return readDelimitedFrom(in, frame);
+bool Logger::read_from_file(Packet::LogFrame* frame,
+                            google::protobuf::io::ZeroCopyInputStream* in) {
+    return read_delimited_from(in, frame);
 }
 
-void Logger::fillRobot(Packet::LogFrame::Robot* out, int shell_id, RobotState const* state,
-                       RobotStatus const* status, MotionSetpoint const* setpoint) {
+void Logger::fill_robot(Packet::LogFrame::Robot* out, int shell_id, RobotState const* state,
+                        RobotStatus const* status, MotionSetpoint const* setpoint) {
     out->set_shell(shell_id);
 
     if (state != nullptr) {

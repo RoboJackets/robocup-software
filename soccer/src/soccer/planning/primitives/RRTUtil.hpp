@@ -13,25 +13,25 @@
 namespace Planning {
 class RRTConfig {
 public:
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
     // if set, enables drawng of rrts to the SystemState so they can be shown in
     // the gui
-    static ConfigBool* EnableRRTDebugDrawing;
+    static ConfigBool* enable_rrt_debug_drawing;
 
-    static ConfigDouble* StepSize;
-    static ConfigDouble* GoalBias;
-    static ConfigDouble* WaypointBias;
+    static ConfigDouble* step_size;
+    static ConfigDouble* goal_bias;
+    static ConfigDouble* waypoint_bias;
 
-    static ConfigInt* MinIterations;
-    static ConfigInt* MaxIterations;
+    static ConfigInt* min_iterations;
+    static ConfigInt* max_iterations;
 };
 
 /// Drawing
-void DrawRRT(const RRT::Tree<Geometry2d::Point>& rrt, DebugDrawer* debug_drawer,
-             unsigned shellID);
-void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
-               DebugDrawer* debug_drawer, unsigned shellID);
+void draw_rrt(const RRT::Tree<Geometry2d::Point>& rrt, DebugDrawer* debug_drawer,
+             unsigned shell_id);
+void draw_bi_rrt(const RRT::BiRRT<Geometry2d::Point>& bi_rrt,
+               DebugDrawer* debug_drawer, unsigned shell_id);
 
 /**
  * Generate a path with BiRRT
@@ -44,7 +44,7 @@ void DrawBiRRT(const RRT::BiRRT<Geometry2d::Point>& biRRT,
  * @return A vector of points representing some clear path from the start to
  *      the end.
  */
-std::vector<Geometry2d::Point> GenerateRRT(
+std::vector<Geometry2d::Point> generate_rrt(
     Geometry2d::Point start, Geometry2d::Point goal,
     const Geometry2d::ShapeSet& obstacles,
     const std::vector<Geometry2d::Point>& waypoints = {});

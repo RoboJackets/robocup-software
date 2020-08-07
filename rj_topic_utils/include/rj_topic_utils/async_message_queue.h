@@ -42,7 +42,7 @@ public:
      * @return A vector of all the messages in in chronologically
      * ascending order (first is oldest, last is newest).
      */
-    std::vector<std::unique_ptr<T>> GetAll();
+    std::vector<std::unique_ptr<T>> get_all();
 
 private:
     rclcpp::Node::SharedPtr node_;
@@ -74,7 +74,7 @@ public:
      * @return unique_ptr to the item in the queue, returning nullptr if the
      * queue is empty.
      */
-    std::unique_ptr<T> Get();
+    std::unique_ptr<T> get();
 
 private:
     rclcpp::Node::SharedPtr node_;
@@ -108,7 +108,7 @@ public:
      * @return shared_ptr to the latest received message, or nullptr
      * if none have been received so far.
      */
-    std::shared_ptr<T> Get();
+    std::shared_ptr<T> get();
 
 private:
     rclcpp::Node::SharedPtr node_;
@@ -130,9 +130,9 @@ AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::AsyncMessageQueue(
 // ============================================================================
 template <typename T, int queue_size>
 std::vector<std::unique_ptr<T>>
-AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::GetAll() {
+AsyncMessageQueue<T, MessagePolicy::kQueue, queue_size>::get_all() {
     std::vector<std::unique_ptr<T>> vec;
-    queue_.GetAllThreaded(vec);
+    queue_.get_all_threaded(vec);
     return vec;
 }
 
@@ -148,8 +148,8 @@ AsyncMessageQueue<T, MessagePolicy::kQueue, 1>::AsyncMessageQueue(
 
 // ============================================================================
 template <typename T>
-std::unique_ptr<T> AsyncMessageQueue<T, MessagePolicy::kQueue, 1>::Get() {
-    return queue_.GetThreaded();
+std::unique_ptr<T> AsyncMessageQueue<T, MessagePolicy::kQueue, 1>::get() {
+    return queue_.get_threaded();
 }
 
 // ============================================================================
@@ -175,8 +175,8 @@ AsyncMessageQueue<T, MessagePolicy::kLatest>::AsyncMessageQueue(
 
 // ============================================================================
 template <typename T>
-std::shared_ptr<T> AsyncMessageQueue<T, MessagePolicy::kLatest>::Get() {
-    return queue_.GetThreaded();
+std::shared_ptr<T> AsyncMessageQueue<T, MessagePolicy::kLatest>::get() {
+    return queue_.get_threaded();
 }
 
 }  // namespace rj_topic_utils

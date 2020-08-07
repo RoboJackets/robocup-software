@@ -59,7 +59,7 @@ public:
      * @param vector
      * @return Whether at least one item was added to the vector.
      */
-    bool GetAll(std::vector<std::unique_ptr<T>>& vector);
+    bool get_all(std::vector<std::unique_ptr<T>>& vector);
 
     /**
      * @brief Inserts all of the messages in the queue into the passed in
@@ -67,7 +67,7 @@ public:
      * @param vector
      * @return Whether at least one item was added to the vector.
      */
-    bool GetAllThreaded(std::vector<std::unique_ptr<T>>& vector);
+    bool get_all_threaded(std::vector<std::unique_ptr<T>>& vector);
 
     /**
      * @brief Returns the first message in the queue, if any.
@@ -75,7 +75,7 @@ public:
      * @return Whether an item was popped off the queue and into the passed in
      * ptr.
      */
-    bool Get(std::unique_ptr<T>& ptr);
+    bool get(std::unique_ptr<T>& ptr);
 
     [[nodiscard]] int size() const { return queue_.size(); }
 
@@ -111,7 +111,7 @@ public:
      * @return unique_ptr to the item in the queue, returning nullptr if the
      * queue is empty.
      */
-    std::unique_ptr<T> Get();
+    std::unique_ptr<T> get();
 
     /**
      * @brief Returns a unique_ptr to item in the queue, emptying the queue. If
@@ -120,7 +120,7 @@ public:
      * @return unique_ptr to the item in the queue, returning nullptr if the
      * queue is empty.
      */
-    std::unique_ptr<T> GetThreaded();
+    std::unique_ptr<T> get_threaded();
 
 private:
     rclcpp::Node* node_;
@@ -169,7 +169,7 @@ public:
      * @return The latest message if we have received one so far, otherwise
      * returns nullptr if no default is set.
      */
-    std::shared_ptr<T> Get();
+    std::shared_ptr<T> get();
 
     /**
      * @brief Returns the latest message in the queue if we have received one
@@ -179,7 +179,7 @@ public:
      * @return The latest message if we have received one so far, otherwise
      * returns nullptr if no default is set.
      */
-    std::shared_ptr<T> GetThreaded();
+    std::shared_ptr<T> get_threaded();
 
 private:
     rclcpp::Node* node_;
@@ -204,7 +204,7 @@ MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::MessageQueue(
 
 // ============================================================================
 template <typename T>
-bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::GetAll(
+bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::get_all(
     std::vector<std::unique_ptr<T>>& vector) {
     if (queue_.empty()) {
         return false;
@@ -219,7 +219,7 @@ bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::GetAll(
 // ============================================================================
 template <typename T>
 bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::
-    GetAllThreaded(std::vector<std::unique_ptr<T>>& vector) {
+    get_all_threaded(std::vector<std::unique_ptr<T>>& vector) {
     std::lock_guard<std::mutex> guard(queue_mutex_);
     if (queue_.empty()) {
         return false;
@@ -233,7 +233,7 @@ bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::
 
 // ============================================================================
 template <typename T>
-bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::Get(
+bool MessageQueue<T, MessagePolicy::kQueue, kUnboundedQueueSize>::get(
     std::unique_ptr<T>& ptr) {
     if (queue_.empty()) {
         return false;
@@ -258,13 +258,13 @@ MessageQueue<T, MessagePolicy::kQueue, 1>::MessageQueue(
 
 // ============================================================================
 template <typename T>
-std::unique_ptr<T> MessageQueue<T, MessagePolicy::kQueue, 1>::Get() {
+std::unique_ptr<T> MessageQueue<T, MessagePolicy::kQueue, 1>::get() {
     return std::move(latest_);
 }
 
 // ============================================================================
 template <typename T>
-std::unique_ptr<T> MessageQueue<T, MessagePolicy::kQueue, 1>::GetThreaded() {
+std::unique_ptr<T> MessageQueue<T, MessagePolicy::kQueue, 1>::get_threaded() {
     std::lock_guard<std::mutex> latest_guard(latest_mutex_);
     return std::move(latest_);
 }
@@ -302,13 +302,13 @@ MessageQueue<T, MessagePolicy::kLatest>::MessageQueue(
 
 // ============================================================================
 template <typename T>
-std::shared_ptr<T> MessageQueue<T, MessagePolicy::kLatest>::Get() {
+std::shared_ptr<T> MessageQueue<T, MessagePolicy::kLatest>::get() {
     return latest_;
 }
 
 // ============================================================================
 template <typename T>
-std::shared_ptr<T> MessageQueue<T, MessagePolicy::kLatest>::GetThreaded() {
+std::shared_ptr<T> MessageQueue<T, MessagePolicy::kLatest>::get_threaded() {
     std::lock_guard<std::mutex> latest_guard(latest_mutex_);
     return latest_;
 }

@@ -20,24 +20,24 @@ public:
     /**
      * Default constructor - zero-initialize
      */
-    Pose() : _position{}, _heading{0} {}
+    Pose() : position_{}, heading_{0} {}
 
     /**
      * Point-heading constructor
      */
     Pose(Point position, double heading)
-        : _position(position), _heading(heading) {}
+        : position_(position), heading_(heading) {}
 
     /**
      * Component-wise constructor
      */
-    Pose(double x, double y, double h) : _position(x, y), _heading(h) {}
+    Pose(double x, double y, double h) : position_(x, y), heading_(h) {}
 
     /**
      * Implicit conversion from Eigen::Vector3d
      */
     Pose(const Eigen::Vector3d& other)
-        : _position(other(0), other(1)), _heading(other(2)) {}
+        : position_(other(0), other(1)), heading_(other(2)) {}
 
     /**
      * Compute the pose specified using this pose as coordinates in a
@@ -61,14 +61,14 @@ public:
      *     |\
      *     | y
      *
-     * y.withOrigin(x):
+     * y.with_origin(x):
      *       |  x
      *       | / \
      *       |/   y
      * ------|------
      *       |
      */
-    [[nodiscard]] Pose withOrigin(Pose other) const {
+    [[nodiscard]] Pose with_origin(Pose other) const {
         Point rotated = position().rotated(other.heading());
         return other + Pose(rotated, heading());
     }
@@ -91,10 +91,10 @@ public:
     /**
      * Accessors
      */
-    Point& position() { return _position; }
-    [[nodiscard]] Point const& position() const { return _position; }
-    double& heading() { return _heading; }
-    [[nodiscard]] double const& heading() const { return _heading; }
+    Point& position() { return position_; }
+    [[nodiscard]] Point const& position() const { return position_; }
+    double& heading() { return heading_; }
+    [[nodiscard]] double const& heading() const { return heading_; }
 
     /**
      * Operators
@@ -136,7 +136,7 @@ public:
      * Equality comparison operation.
      */
     bool operator==(const Pose& other) const {
-        return _position == other._position && _heading == other._heading;
+        return position_ == other.position_ && heading_ == other.heading_;
     }
 
     /**
@@ -163,8 +163,8 @@ public:
     }
 
 private:
-    Point _position;
-    double _heading;
+    Point position_;
+    double heading_;
 };
 
 /**
@@ -177,29 +177,29 @@ public:
     /**
      * Default constructor - zero-initialize
      */
-    Twist() : _linear{}, _angular{0} {}
+    Twist() : linear_{}, angular_{0} {}
 
     /**
      * Linear+angular terms.
      */
     Twist(const Point& linear, double angular)
-        : _linear(linear), _angular(angular) {}
+        : linear_(linear), angular_(angular) {}
 
     /**
      * Component-wise constructor
      */
-    Twist(double dx, double dy, double dh) : _linear(dx, dy), _angular(dh) {}
+    Twist(double dx, double dy, double dh) : linear_(dx, dy), angular_(dh) {}
 
     /**
      * Implicit conversion from Eigen::Vector3d
      */
     Twist(const Eigen::Vector3d& other)
-        : _linear(other(0), other(1)), _angular(other(2)) {}
+        : linear_(other(0), other(1)), angular_(other(2)) {}
 
     /**
      * Zero
      */
-    static Twist Zero() { return Twist(Eigen::Vector3d::Zero()); }
+    static Twist zero() { return Twist(Eigen::Vector3d::Zero()); }
 
     /**
      * Implicit conversion to Eigen::Vector3d
@@ -211,10 +211,10 @@ public:
     /**
      * Accessors
      */
-    Point& linear() { return _linear; }
-    [[nodiscard]] Point const& linear() const { return _linear; }
-    double& angular() { return _angular; }
-    [[nodiscard]] double const& angular() const { return _angular; }
+    Point& linear() { return linear_; }
+    [[nodiscard]] Point const& linear() const { return linear_; }
+    double& angular() { return angular_; }
+    [[nodiscard]] double const& angular() const { return angular_; }
 
     /**
      * Find the resulting pose (delta) of an object starting at the origin
@@ -225,9 +225,9 @@ public:
      * constant (but velocity in the pose's reference frame is changing in
      * direction as the pose rotates)
      *
-     * Called deltaFixed because it operates fixed to the origin frame.
+     * Called delta_fixed because it operates fixed to the origin frame.
      */
-    [[nodiscard]] Pose deltaFixed(double /*t*/) const {
+    [[nodiscard]] Pose delta_fixed(double /*t*/) const {
         return Pose(linear().x(), linear().y(), angular());
     }
 
@@ -240,13 +240,13 @@ public:
      * reference is constant (but linear velocity relative to the origin might
      * change as the pose rotates)
      *
-     * Called deltaRelative because it operates with velocities that remain
+     * Called delta_relative because it operates with velocities that remain
      * constant relative to the pose.
      *
      * In mathematical terms, this is the exponential mapping that takes the Lie
      * algebra se(2) (twists) to the Lie group SE(2) (poses).
      */
-    [[nodiscard]] Pose deltaRelative(double t) const {
+    [[nodiscard]] Pose delta_relative(double t) const {
         // twist = (x', y', h')
         // dh(world) = h' * dt
         // dx(world) = dx(local)cos(dh(world)) - dy(local)sin(dh(world))
@@ -322,7 +322,7 @@ public:
      * Equality comparison operation.
      */
     bool operator==(const Twist& other) const {
-        return _linear == other._linear && _angular == other._angular;
+        return linear_ == other.linear_ && angular_ == other.angular_;
     }
 
     /**
@@ -349,8 +349,8 @@ public:
     }
 
 private:
-    Point _linear;
-    double _angular;
+    Point linear_;
+    double angular_;
 };
 
 }  // namespace Geometry2d

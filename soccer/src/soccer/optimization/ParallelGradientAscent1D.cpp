@@ -5,44 +5,44 @@
 #include <math.h>
 
 ParallelGradientAscent1D::ParallelGradientAscent1D(ParallelGradient1DConfig* config)
-    : config(config) {
-    GA1Ds.reserve(config->GA1DConfig.size());
+    : config_(config) {
+    problems_.reserve(config_->ga_config.size());
 
-    // Create list of GA1Ds
-    for (int i = 0; i < config->GA1DConfig.size(); i++) {
-        GA1Ds.push_back(GradientAscent1D(&config->GA1DConfig.at(i)));
+    // Create list of problems
+    for (int i = 0; i < config_->ga_config.size(); i++) {
+        problems_.push_back(GradientAscent1D(&config_->ga_config.at(i)));
     }
 }
 
 /**
- * Executes all GA1Ds until their max has been reached
+ * Executes all problems until their max has been reached
  */
 void ParallelGradientAscent1D::execute() {
     // While any are not done
-    bool continueExecution = true;
+    bool continue_execution = true;
 
-    while (continueExecution) {
+    while (continue_execution) {
         // Default to false unless any still need to work
-        continueExecution = false;
+        continue_execution = false;
 
         // Execute a step for each one
-        for (auto& GA1D : GA1Ds) {
-            if (GA1D.continueExecution()) {
-                GA1D.singleStep();
-                continueExecution = true;
+        for (auto& problem : problems_) {
+            if (problem.continue_execution()) {
+                problem.single_step();
+                continue_execution = true;
             }
         }
 
-        // Assume ascending order for xStart
+        // Assume ascending order for x_start
         // Remove any that are too close
-        for (int i = 0; i < GA1Ds.size() - 1; i++) {
-            GradientAscent1D lower = GA1Ds.at(i);
-            GradientAscent1D upper = GA1Ds.at(i + 1);
+        for (int i = 0; i < problems_.size() - 1; i++) {
+            GradientAscent1D lower = problems_.at(i);
+            GradientAscent1D upper = problems_.at(i + 1);
 
             // Erase elements if they get too close
-            // This helps kill any GA1Ds that are going up the same hill
-            if (fabs(lower.getXValue() - upper.getXValue()) < config->xCombineThresh) {
-                GA1Ds.erase(GA1Ds.begin() + i + 1);
+            // This helps kill any problems_ that are going up the same hill
+            if (fabs(lower.get_x_value() - upper.get_x_value()) < config_->x_combine_thresh) {
+                problems_.erase(problems_.begin() + i + 1);
             }
         }
     }
@@ -51,26 +51,26 @@ void ParallelGradientAscent1D::execute() {
 /**
  * Returns a list of all X values for each max in ascending order
  */
-std::vector<float> ParallelGradientAscent1D::getMaxXValues() {
-    std::vector<float> xVals;
-    xVals.reserve(GA1Ds.size());
+std::vector<float> ParallelGradientAscent1D::get_max_x_values() {
+    std::vector<float> x_vals;
+    x_vals.reserve(problems_.size());
 
-    for (auto& GA1D : GA1Ds) {
-        xVals.push_back(GA1D.getXValue());
+    for (auto& problem : problems_) {
+        x_vals.push_back(problem.get_x_value());
     }
 
-    return xVals;
+    return x_vals;
 }
 
 /**
  * Returns a list of all X values for each max in ascending order
  */
-std::vector<float> ParallelGradientAscent1D::getMaxValues() {
+std::vector<float> ParallelGradientAscent1D::get_max_values() {
     std::vector<float> vals;
-    vals.reserve(GA1Ds.size());
+    vals.reserve(problems_.size());
 
-    for (auto& GA1D : GA1Ds) {
-        vals.push_back(GA1D.getValue());
+    for (auto& problem : problems_) {
+        vals.push_back(problem.get_value());
     }
 
     return vals;

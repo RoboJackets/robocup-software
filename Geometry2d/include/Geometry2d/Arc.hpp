@@ -25,9 +25,9 @@ public:
      * Default-initialze an arc to the empty arc.
      */
     Arc() {
-        _radius = -1;
-        _start_angle = 0;
-        _end_angle = 0;
+        radius_ = -1;
+        start_angle_ = 0;
+        end_angle_ = 0;
     }
 
     /**
@@ -42,39 +42,39 @@ public:
      * @note angle 0 radians is aligned with the x axis.
      */
     Arc(Point center, float radius, float start, float end) {
-        _center = center;
-        _radius = radius;
-        _start_angle = start;
-        _end_angle = end;
+        center_ = center;
+        radius_ = radius;
+        start_angle_ = start;
+        end_angle_ = end;
     }
 
-    Point center() const { return _center; }
+    Point center() const { return center_; }
 
-    void setCenter(Point center) { _center = center; }
+    void set_center(Point center) { center_ = center; }
 
-    float radius() const { return _radius; }
+    float radius() const { return radius_; }
 
-    void setRadius(float radius) { _radius = radius; }
+    void set_radius(float radius) { radius_ = radius; }
 
-    float start() const { return _start_angle; }
+    float start() const { return start_angle_; }
 
-    void setStart(float start) { _start_angle = start; }
+    void set_start(float start) { start_angle_ = start; }
 
-    float end() const { return _end_angle; }
+    float end() const { return end_angle_; }
 
-    void setEnd(float end) { _end_angle = end; }
+    void set_end(float end) { end_angle_ = end; }
 
-    float radius_sq() const { return _radius * _radius; }
+    float radius_sq() const { return radius_ * radius_; }
 
     std::vector<Point> intersects(const Line& line) const;
 
     std::vector<Point> intersects(const Segment& segment) const;
 
 private:
-    Point _center;
-    float _radius;
-    float _start_angle;
-    float _end_angle;
+    Point center_;
+    float radius_;
+    float start_angle_;
+    float end_angle_;
 };
 
 }  // namespace Geometry2d

@@ -30,7 +30,7 @@ using DetectionRobotMsg = rj_msgs::msg::DetectionRobot;
  *
  * Whenever a new packet comes in (encoded as Google Protobuf), it is parsed
  * into an SSL_WrapperPacket and placed onto the circular buffer @_packets.
- * They remain there until they are retrieved with getPackets().
+ * They remain there until they are retrieved with get_packets().
  */
 class VisionReceiver : public rclcpp::Node {
 public:
@@ -38,23 +38,23 @@ public:
 
     VisionReceiver();
 
-    void setPort(int port);
+    void set_port(int port);
 
 private:
-    void startReceive();
-    void receivePacket(const boost::system::error_code& error,
+    void start_receive();
+    void receive_packet(const boost::system::error_code& error,
                        std::size_t num_bytes);
 
     /**
      * @brief Handles the network packets for vision.
      */
-    void ReceiveThread();
+    void receive_thread();
 
     /**
      * @brief Consumes the raw vision packets, converts them to ROS messages
      * and publishes them.
      */
-    void PublishThread();
+    void publish_thread();
 
     /**
      * @brief Given the current config on which half we are enabling vision on,
@@ -65,7 +65,7 @@ private:
      * @param x The x coordinate.
      * @return Whether the x coordinate lies in an enabled half.
      */
-    [[nodiscard]] bool InUsedHalf(bool defend_plus_x, double x) const;
+    [[nodiscard]] bool in_used_half(bool defend_plus_x, double x) const;
 
     /**
      * @brief Process new packets
@@ -73,7 +73,7 @@ private:
      * Publishes the raw packet. If the packet has geometry info, publish that.
      * If it has detection information, also publish that.
      */
-    void processOnePacket();
+    void process_one_packet();
 
     /**
      * @brief Converts from the janky floating point time that is used in
@@ -81,7 +81,7 @@ private:
      * @param time_since_epoch_s Floating point time
      * @return rclcpp::Time
      */
-    static rclcpp::Time ToROSTime(double time_since_epoch_s);
+    static rclcpp::Time to_ros_time(double time_since_epoch_s);
 
     /**
      * @brief "Syncs" up the timestamp of the proto (because the computer clock
@@ -91,10 +91,10 @@ private:
      * @param frame
      * @param receive_time The time we received the message on this computer.
      */
-    static void SyncDetectionTimestamp(DetectionFrameMsg* frame,
+    static void sync_detection_timestamp(DetectionFrameMsg* frame,
                                        const rclcpp::Time& receive_time);
 
-    void UpdateGeometryPacket(const SSL_GeometryFieldSize& fieldSize);
+    void update_geometry_packet(const SSL_GeometryFieldSize& field_size);
 
     /**
      * @brief Converts from a SSL_WrapperPacket to a DetectionFrameMsg,
@@ -104,18 +104,18 @@ private:
      * @param received_time Time that this packet was received.
      * @return
      */
-    [[nodiscard]] DetectionFrameMsg ConstructROSMsg(
+    [[nodiscard]] DetectionFrameMsg construct_ros_msg(
         const SSL_DetectionFrame& frame,
         const rclcpp::Time& received_time) const;
 
     config_client::ConfigClient config_;
     int port_;
 
-    std::vector<uint8_t> _recv_buffer{};
+    std::vector<uint8_t> recv_buffer_{};
 
-    boost::asio::io_service _io_context;
-    boost::asio::ip::udp::socket _socket;
-    boost::asio::ip::udp::endpoint _sender_endpoint;
+    boost::asio::io_service io_context_;
+    boost::asio::ip::udp::socket socket_;
+    boost::asio::ip::udp::endpoint sender_endpoint_;
     std::thread network_thread_;
     std::thread publish_thread_;
 

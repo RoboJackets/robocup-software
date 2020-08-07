@@ -12,39 +12,39 @@ class RoboCupStateSpace : public RRT::StateSpace<Geometry2d::Point> {
 public:
     RoboCupStateSpace(const Field_Dimensions& dims,
                       const Geometry2d::ShapeSet& obstacles)
-        : _fieldDimensions(dims), _obstacles(obstacles) {}
+        : field_dimensions_(dims), obstacles_(obstacles) {}
 
     Geometry2d::Point randomState() const {
-        double x = _fieldDimensions.FloorWidth() * (drand48() - 0.5f);
-        double y = _fieldDimensions.FloorLength() * drand48() -
-                   _fieldDimensions.Border();
+        double x = field_dimensions_.floor_width() * (drand48() - 0.5f);
+        double y = field_dimensions_.floor_length() * drand48() -
+                   field_dimensions_.border();
         return Geometry2d::Point(x, y);
     }
 
     double distance(const Geometry2d::Point& from,
                     const Geometry2d::Point& to) const {
-        return from.distTo(to);
+        return from.dist_to(to);
     }
 
     bool stateValid(const Geometry2d::Point& state) const {
-        // note: _obstacles contains obstacles that define the limits of the
+        // note: obstacles_ contains obstacles that define the limits of the
         // field, so we shouldn't have to check separately that the point is
         // within the field boundaries.
 
-        return !_obstacles.hit(state);
+        return !obstacles_.hit(state);
     }
 
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
                                         const Geometry2d::Point& target,
-                                        double stepSize) const {
+                                        double step_size) const {
         auto dir = (target - source).norm();
-        return source + dir * stepSize;
+        return source + dir * step_size;
     }
 
     Geometry2d::Point intermediateState(const Geometry2d::Point& source,
                                         const Geometry2d::Point& target,
-                                        double minStepSize,
-                                        double maxStepSize) const {
+                                        double min_step_size,
+                                        double max_step_size) const {
         throw std::runtime_error("Adaptive stepsize control not implemented");
     }
 
@@ -53,7 +53,7 @@ public:
         // Ensure that @to doesn't hit any obstacles that @from doesn't. This
         // allows the RRT to start inside an obstacle, but prevents it from
         // entering a new obstacle.
-        for (const auto& shape : _obstacles.shapes()) {
+        for (const auto& shape : obstacles_.shapes()) {
             if (shape->hit(Geometry2d::Segment(from, to)) && !shape->hit(from))
                 return false;
         }
@@ -61,8 +61,8 @@ public:
     }
 
 private:
-    const Geometry2d::ShapeSet& _obstacles;
-    const Field_Dimensions _fieldDimensions;
+    const Geometry2d::ShapeSet& obstacles_;
+    const Field_Dimensions field_dimensions_;
 };
 
 }  // namespace Planning

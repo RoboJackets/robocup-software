@@ -7,7 +7,7 @@ float cpp_function_cb(Geometry2d::Point p, PyObject* pyfunc);
 
 class PythonFunctionWrapper {
 public:
-    PyObject* pyFunc;
+    PyObject* py_func;
     std::function<float(Geometry2d::Point)> f;
 
     PythonFunctionWrapper(PyObject* pf);

@@ -15,42 +15,42 @@
 #include "Radio.hpp"
 #include "SimRadio.hpp"
 
-RadioNode::RadioNode(Context* context, bool simulation, bool blueTeam) : _context(context) {
-    _lastRadioRxTime = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
-    _simulation = simulation;
-    _was_blue_team = blueTeam;
-    _radio = _simulation ? static_cast<Radio*>(new SimRadio(_context, blueTeam))
-                         : static_cast<Radio*>(new NetworkRadio(NetworkRadioServerPort));
+RadioNode::RadioNode(Context* context, bool simulation, bool blue_team) : context_(context) {
+    last_radio_rx_time_ = RJ::Time(std::chrono::microseconds(RJ::timestamp()));
+    simulation_ = simulation;
+    was_blue_team_ = blue_team;
+    radio_ = simulation_ ? static_cast<Radio*>(new SimRadio(context_, blue_team))
+                         : static_cast<Radio*>(new NetworkRadio(kNetworkRadioServerPort));
 }
 
-bool RadioNode::isOpen() { return _radio->isOpen(); }
+bool RadioNode::is_open() { return radio_->is_open(); }
 
-RJ::Time RadioNode::getLastRadioRxTime() { return _lastRadioRxTime; }
+RJ::Time RadioNode::get_last_radio_rx_time() { return last_radio_rx_time_; }
 
-Radio* RadioNode::getRadio() { return _radio; }
+Radio* RadioNode::get_radio() { return radio_; }
 
-void RadioNode::switchTeam(bool blueTeam) { _radio->switchTeam(blueTeam); }
+void RadioNode::switch_team(bool blue_team) { radio_->switch_team(blue_team); }
 
 void RadioNode::run() {
-    if (_context->blue_team != _was_blue_team) {
-        _was_blue_team = _context->blue_team;
-        _radio->switchTeam(_was_blue_team);
+    if (context_->blue_team != was_blue_team_) {
+        was_blue_team_ = context_->blue_team;
+        radio_->switch_team(was_blue_team_);
     }
 
     // Read radio reverse packets
-    _radio->receive();
+    radio_->receive();
 
-    while (_radio->hasReversePackets()) {
-        RobotStatus rx = _radio->popReversePacket();
+    while (radio_->has_reverse_packets()) {
+        RobotStatus rx = radio_->pop_reverse_packet();
 
-        _lastRadioRxTime = rx.timestamp;
+        last_radio_rx_time_ = rx.timestamp;
 
         // Store this packet in the appropriate robot
-        if (rx.shell_id < Num_Shells) {
-            _context->robot_status[rx.shell_id] = rx;
-            _context->state.self[rx.shell_id]->radioRxUpdated();
+        if (rx.shell_id < kNumShells) {
+            context_->robot_status[rx.shell_id] = rx;
+            context_->state.self[rx.shell_id]->radio_rx_updated();
         }
     }
 
-    _radio->send(_context->robot_intents, _context->motion_setpoints);
+    radio_->send(context_->robot_intents, context_->motion_setpoints);
 }

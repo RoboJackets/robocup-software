@@ -10,7 +10,7 @@
 #include <vector>
 
 namespace joystick {
-constexpr auto GameControllerDBPath = "gamecontrollerdb.txt";
+constexpr auto kGameControllerDbPath = "gamecontrollerdb.txt";
 /**
  * Node that uses libsdl for handling joysticks input
  */
@@ -44,28 +44,28 @@ private:
      * Queries for joysticks, and updates the current
      * list of connected joysticks (inserting + deleting)
      */
-    void queryAndUpdateGamepadList();
+    void query_and_update_gamepad_list();
 
     /**
      * Add a joystick with the specified device id
      * @param device_index
      */
-    void addJoystick(int device_index);
+    void add_joystick(int device_index);
 
     /**
      * Calls update on each gamepad and puts all
      * messages into a vector (for now this lives in context)
      */
-    void updateGamepadMessages();
+    void update_gamepad_messages();
 
     /**
      * Remove a joystick with the specified instance_id
      * @param instance_id
      */
-    void removeJoystick(int instance_id);
+    void remove_joystick(int instance_id);
 
     [[nodiscard]] std::optional<std::reference_wrapper<const SDLGamepad>>
-    getGamepadByInstanceID(int instance_id) const;
+    get_gamepad_by_instance_id(int instance_id) const;
 
     std::vector<std::unique_ptr<SDLGamepad>> gamepads_;
     Context* context_;

@@ -145,8 +145,8 @@ struct WorldState {
     using Msg = rj_msgs::msg::WorldState;
 
     WorldState() {
-        their_robots.resize(Num_Shells);
-        our_robots.resize(Num_Shells);
+        their_robots.resize(kNumShells);
+        our_robots.resize(kNumShells);
     }
 
     /**
@@ -178,7 +178,7 @@ struct WorldState {
      * @brief Timestamp of the last received vision message. All zeros if we
      * haven't received anything yet.
      */
-    RJ::Time last_updated_time_;
+    RJ::Time last_updated_time;
 
     std::vector<RobotState> their_robots;
     std::vector<RobotState> our_robots;
@@ -240,7 +240,7 @@ struct RosConverter<WorldState, WorldState::Msg> {
         convert_to_ros(value.ball, &result.ball);
         convert_to_ros(value.our_robots, &result.our_robots);
         convert_to_ros(value.their_robots, &result.their_robots);
-        convert_to_ros(value.last_updated_time_, &result.last_update_time);
+        convert_to_ros(value.last_updated_time, &result.last_update_time);
         return result;
     }
 
@@ -249,7 +249,7 @@ struct RosConverter<WorldState, WorldState::Msg> {
         convert_from_ros(value.ball, &result.ball);
         convert_from_ros(value.our_robots, &result.our_robots);
         convert_from_ros(value.their_robots, &result.their_robots);
-        convert_from_ros(value.last_update_time, &result.last_updated_time_);
+        convert_from_ros(value.last_update_time, &result.last_updated_time);
         return result;
     }
 };

@@ -20,42 +20,42 @@ public:
     /**
      * Updates all the child cameras given a set of new camera frames
      *
-     * @param calcTime Current iteration time
-     * @param newFrames List of new frames from ssl vision
+     * @param calc_time Current iteration time
+     * @param new_frames List of new frames from ssl vision
      *
-     * @note Call this OR updateWithoutCameraFrame ONCE an iteration
+     * @note Call this OR update_without_camera_frame ONCE an iteration
      */
-    void updateWithCameraFrame(RJ::Time calcTime,
-                               const std::vector<CameraFrame>& newFrames);
+    void update_with_camera_frame(RJ::Time calc_time,
+                               const std::vector<CameraFrame>& new_frames);
 
     /**
      * Updates all the child cameras when there are no new camera frames
      *
-     * @param calcTime Current iteration time
+     * @param calc_time Current iteration time
      *
-     * @note Call this OR updateWithCameraFrame ONCE an iteration
+     * @note Call this OR update_with_camera_frame ONCE an iteration
      */
-    void updateWithoutCameraFrame(RJ::Time calcTime);
+    void update_without_camera_frame(RJ::Time calc_time);
 
     /**
      * @return Best estimate of the ball
      */
-    const WorldBall& getWorldBall() const;
+    const WorldBall& get_world_ball() const;
 
     /**
      * @return List of the best estimates of all the yellow robots
      */
-    const std::vector<WorldRobot>& getRobotsYellow() const;
+    const std::vector<WorldRobot>& get_robots_yellow() const;
 
     /**
      * @return List of the best estimates of all the blue robots
      */
-    const std::vector<WorldRobot>& getRobotsBlue() const;
+    const std::vector<WorldRobot>& get_robots_blue() const;
 
     /**
      * @return The best kick estimate over the last few seconds
      */
-    const KickEvent& getBestKickEstimate() const;
+    const KickEvent& get_best_kick_estimate() const;
 
     /**
      * @return Timestamp of the latest vision receiver message that was used to
@@ -69,22 +69,22 @@ private:
     /**
      * Does the ball bounce calculations for each of the child cameras
      */
-    void calcBallBounce();
+    void calc_ball_bounce();
 
     /**
      * Fills the world objects with a mix of the best kalman filters from
      * each camera
      *
-     * @param calcTime Current iteration time
+     * @param calc_time Current iteration time
      */
-    void updateWorldObjects(RJ::Time calcTime);
+    void update_world_objects(RJ::Time calc_time);
 
     /**
      * Adds the latest estimate to the kick detectors and checks for kick
      *
-     * @param calcTime Current iteration time
+     * @param calc_time Current iteration time
      */
-    void detectKicks(RJ::Time calcTime);
+    void detect_kicks(RJ::Time calc_time);
 
     /**
      * @brief Timestamp of the latest vision receiver message that was used to
@@ -92,14 +92,14 @@ private:
      */
     RJ::Time last_update_time_;
 
-    std::vector<Camera> cameras;
+    std::vector<Camera> cameras_;
 
-    WorldBall ball;
-    std::vector<WorldRobot> robotsYellow;
-    std::vector<WorldRobot> robotsBlue;
+    WorldBall ball_;
+    std::vector<WorldRobot> robots_yellow_;
+    std::vector<WorldRobot> robots_blue_;
 
-    FastKickDetector fastKick;
-    SlowKickDetector slowKick;
-    KickEvent bestKickEstimate;
+    FastKickDetector fast_kick_;
+    SlowKickDetector slow_kick_;
+    KickEvent best_kick_estimate_;
 };
 }  // namespace vision_filter

@@ -106,21 +106,21 @@ int Circle::intersects(const Line& line, Point* i) const {
     return 2;
 }
 
-bool Circle::containsPoint(Point pt) const { return (pt - center).mag() < radius(); }
+bool Circle::contains_point(Point pt) const { return (pt - center).mag() < radius(); }
 
-Point Circle::nearestPoint(Point P) const { return (P - center).normalized() * _r + center; }
+Point Circle::nearest_point(Point p) const { return (p - center).normalized() * r_ + center; }
 
-bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {
+bool Circle::tangent_points(Point src, Point* p1, Point* p2) const {
     if ((p1 == nullptr) && (p2 == nullptr)) {
         return false;
     }
 
-    const auto dist = static_cast<float>(src.distTo(center));
+    const auto dist = static_cast<float>(src.dist_to(center));
 
-    if (dist < _r) {
+    if (dist < r_) {
         return false;
     }
-    if (dist == _r) {
+    if (dist == r_) {
         if (p1 != nullptr) {
             *p1 = src;
         }
@@ -130,7 +130,7 @@ bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {
         }
     } else {
         // source is outside of circle
-        const float theta = std::asin(_r / dist);
+        const float theta = std::asin(r_ / dist);
 
         if (p1 != nullptr) {
             Point final = center;
@@ -148,14 +148,14 @@ bool Circle::tangentPoints(Point src, Point* p1, Point* p2) const {
     return true;
 }
 
-bool Circle::hit(Point pt) const { return pt.nearPoint(center, radius() + Robot_Radius); }
+bool Circle::hit(Point pt) const { return pt.near_point(center, radius() + kRobotRadius); }
 
 bool Circle::hit(const Segment& seg) const {
-    return seg.nearPoint(center, radius() + Robot_Radius);
+    return seg.near_point(center, radius() + kRobotRadius);
 }
 
-bool Circle::nearPoint(Point pt, float threshold) const {
-    return center.nearPoint(pt, threshold + radius());
+bool Circle::near_point(Point pt, float threshold) const {
+    return center.near_point(pt, threshold + radius());
 }
 
 }  // namespace Geometry2d

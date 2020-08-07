@@ -49,7 +49,7 @@ RJ::Time BallState::query_time_near(Geometry2d::Point near_to, Geometry2d::Point
 
     // Otherwise, find the closest point on the ball's line of travel...
     Geometry2d::Segment segment(position, predict_at(RJ::Time::max()).position);
-    Geometry2d::Point nearest = segment.nearestPoint(near_to);
+    Geometry2d::Point nearest = segment.nearest_point(near_to);
 
     double distance_to_nearest = (position - nearest).mag();
 
@@ -122,7 +122,7 @@ Planning::Trajectory BallState::make_trajectory() const {
 
     Point stop_position;
     RJ::Time stop_time = timestamp + query_stop_time(&stop_position);
-    Planning::RobotInstant instant1{Pose{stop_position, 0}, Twist::Zero(), stop_time};
+    Planning::RobotInstant instant1{Pose{stop_position, 0}, Twist::zero(), stop_time};
 
     return Planning::Trajectory({instant0, instant1});
 }

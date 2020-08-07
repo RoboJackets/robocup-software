@@ -5,7 +5,7 @@
 #include <WorldState.hpp>
 #include <rj_convert/testing/ros_convert_testing.hpp>
 
-RobotState GetRandomRobotState() {
+RobotState get_random_robot_state() {
     std::random_device rd;
     std::default_random_engine e1(rd());
     std::uniform_real_distribution<double> uniform(0.0, 1.0);
@@ -23,7 +23,7 @@ RobotState GetRandomRobotState() {
     return RobotState{pose, twist, timestamp, visible};
 }
 
-BallState GetRandomBallState() {
+BallState get_random_ball_state() {
     std::random_device rd;
     std::default_random_engine e1(rd());
     std::uniform_real_distribution<double> uniform(0.0, 1.0);
@@ -36,7 +36,7 @@ BallState GetRandomBallState() {
     return BallState{position, velocity, timestamp};
 }
 
-WorldState GetRandomWorldState() {
+WorldState get_random_world_state() {
     std::random_device rd;
     std::default_random_engine e1(rd());
     std::uniform_int_distribution<int> uniform(0, 10);
@@ -44,15 +44,15 @@ WorldState GetRandomWorldState() {
 
     std::vector<RobotState> their_robots;
     for (int i = 0; i < rand(); i++) {
-        their_robots.emplace_back(GetRandomRobotState());
+        their_robots.emplace_back(get_random_robot_state());
     }
 
     std::vector<RobotState> our_robots;
     for (int i = 0; i < rand(); i++) {
-        our_robots.emplace_back(GetRandomRobotState());
+        our_robots.emplace_back(get_random_robot_state());
     }
 
-    const BallState ball_state = GetRandomBallState();
+    const BallState ball_state = get_random_ball_state();
 
     return WorldState{std::move(their_robots), std::move(our_robots), ball_state};
 }
@@ -94,8 +94,12 @@ bool operator==(const WorldState& a, const WorldState& b) {
     return a.ball == b.ball;
 }
 
-TEST(ROSMsgConversionNoop, RobotState) { test_lossless_convert_cpp_value(GetRandomRobotState()); }
+TEST(ROSMsgConversionNoop, RobotState) {
+    test_lossless_convert_cpp_value(get_random_robot_state());
+}
 
-TEST(ROSMsgConversionNoop, BallState) { test_lossless_convert_cpp_value(GetRandomBallState()); }
+TEST(ROSMsgConversionNoop, BallState) { test_lossless_convert_cpp_value(get_random_ball_state()); }
 
-TEST(ROSMsgConversionNoop, WorldState) { test_lossless_convert_cpp_value(GetRandomWorldState()); }
+TEST(ROSMsgConversionNoop, WorldState) {
+    test_lossless_convert_cpp_value(get_random_world_state());
+}

@@ -25,7 +25,7 @@ void StyleSheetManager::changeStyleSheet(QMainWindow* window, const QString& nam
 
 void StyleSheetManager::setStyleSheet(QMainWindow* window, const QString& path) {
     // Normalize file paths to work regardless of location of pwd
-    QFile file(ApplicationRunDirectory().filePath(path));
+    QFile file(application_run_directory().filePath(path));
     file.open(QFile::ReadOnly);
     QString styleSheet = file.readAll();
     window->setStyleSheet(styleSheet);

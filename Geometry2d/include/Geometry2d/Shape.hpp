@@ -29,7 +29,7 @@ public:
         throw std::runtime_error("Unimplemented method");
     }
 
-    [[nodiscard]] virtual bool containsPoint(Point /*pt*/) const {
+    [[nodiscard]] virtual bool contains_point(Point /*pt*/) const {
         throw std::runtime_error("Unimplemented method");
     }
 
@@ -44,15 +44,15 @@ public:
         throw std::runtime_error("Unimplemented method");
     }
 
-    [[nodiscard]] virtual bool nearPoint(Point /*other*/,
+    [[nodiscard]] virtual bool near_point(Point /*other*/,
                                          float /*threshold*/) const {
         throw std::runtime_error("Unimplemented method");
     }
 
-    virtual std::string toString() { return "Shape"; }
+    virtual std::string to_string() { return "Shape"; }
 
     friend std::ostream& operator<<(std::ostream& stream, Shape& shape) {
-        stream << shape.toString();
+        stream << shape.to_string();
         return stream;
     }
 };

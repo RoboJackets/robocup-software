@@ -24,20 +24,20 @@ class LineKickPlanner
 public:
     LineKickPlanner()
         : PlannerForCommandType<Planning::LineKickCommand>("LineKickPlanner"){};
-    Trajectory plan(const PlanRequest& planRequest) override;
+    Trajectory plan(const PlanRequest& plan_request) override;
 
     void reset() override {
-        prevPath = {};
-        finalApproach = false;
-        targetKickPos = std::nullopt;
-        reusePathCount = 0;
+        prev_path_ = {};
+        final_approach_ = false;
+        target_kick_pos_ = std::nullopt;
+        reuse_path_count_ = 0;
     }
 
 private:
-    Trajectory prevPath;
-    bool finalApproach = false;
-    std::optional<Geometry2d::Point> targetKickPos;
-    int reusePathCount = 0;
+    Trajectory prev_path_;
+    bool final_approach_ = false;
+    std::optional<Geometry2d::Point> target_kick_pos_;
+    int reuse_path_count_ = 0;
 };
 
 }  // namespace Planning

@@ -25,7 +25,7 @@ struct SDLGUID {
         }
     }
 
-    [[nodiscard]] std::string toString() const {
+    [[nodiscard]] std::string to_string() const {
         std::stringstream ss;
         ss << std::hex << std::setfill('0');
 
@@ -41,7 +41,7 @@ struct SDLGUID {
     bool operator==(const SDLGUID& other) const { return data == other.data; }
 
     friend std::ostream& operator<<(std::ostream& stream, const SDLGUID& guid) {
-        stream << guid.toString();
+        stream << guid.to_string();
         return stream;
     }
 };
@@ -63,17 +63,17 @@ public:
     SDLGamepad(SDLGamepad&&) = default;
     SDLGamepad& operator=(SDLGamepad&&) = default;
 
-    [[nodiscard]] std::string toString() const;
+    [[nodiscard]] std::string to_string() const;
 
     /**
      * Returns a unique ID for the passed in GUID
      * @param guid
      * @return Unique ID for the given GUID
      */
-    static int getUniqueID(const SDLGUID& guid);
+    static int get_unique_id(const SDLGUID& guid);
 
-    bool getButton(SDL_GameControllerButton button);
-    int32_t getAxis(SDL_GameControllerAxis axis);
+    bool get_button(SDL_GameControllerButton button);
+    int32_t get_axis(SDL_GameControllerAxis axis);
 
     /**
      * Updates the internal state_ variable and returns a const ref to it

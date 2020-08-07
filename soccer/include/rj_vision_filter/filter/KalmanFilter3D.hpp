@@ -15,10 +15,10 @@ public:
     /**
      * Creates and initializes a kalman filter
      *
-     * @param initPose initial pose
-     * @param initTwist initial twist
+     * @param init_pose initial pose
+     * @param init_twist initial twist
      */
-    KalmanFilter3D(Geometry2d::Pose initPose, Geometry2d::Twist initTwist);
+    KalmanFilter3D(Geometry2d::Pose init_pose, Geometry2d::Twist init_twist);
 
     /**
      * Predicts with update
@@ -26,46 +26,46 @@ public:
      *
      * @param observation The observation for the current frame
      */
-    void predictWithUpdate(Geometry2d::Pose observation);
+    void predict_with_update(Geometry2d::Pose observation);
 
     /**
      * @return Current position estimate
      */
-    Geometry2d::Point getPos() const;
+    Geometry2d::Point get_pos() const;
 
     /**
      * @return Current heading angle estimate
      */
-    double getTheta() const;
+    double get_theta() const;
 
     /**
      * @return Current velocity estimate
      */
-    Geometry2d::Point getVel() const;
+    Geometry2d::Point get_vel() const;
 
     /**
      * @return Current heading angle velocity estimate
      */
-    double getOmega() const;
+    double get_omega() const;
 
     /**
      * @return Current position covariance (X and Y)
      */
-    Geometry2d::Point getPosCov() const;
+    Geometry2d::Point get_pos_cov() const;
 
     /**
      * @return Current heading covariance
      */
-    double getThetaCov() const;
+    double get_theta_cov() const;
 
     /**
      * @return Current velocity covariance (X and Y)
      */
-    Geometry2d::Point getVelCov() const;
+    Geometry2d::Point get_vel_cov() const;
 
     /**
      * @return Current heading angle velocity covariance
      */
-    double getOmegaCov() const;
+    double get_omega_cov() const;
 };
 }  // namespace vision_filter

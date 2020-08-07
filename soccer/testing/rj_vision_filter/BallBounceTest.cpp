@@ -16,11 +16,11 @@ TEST(BallBounce, no_input) {
     std::vector<WorldRobot> yellow;
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_FALSE(isBounce);
+    EXPECT_FALSE(is_bounce);
 }
 
 TEST(BallBounce, invalid_robot) {
@@ -29,17 +29,17 @@ TEST(BallBounce, invalid_robot) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     std::vector<WorldRobot> yellow;
     yellow.push_back(WorldRobot());
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_FALSE(isBounce);
+    EXPECT_FALSE(is_bounce);
 }
 
 TEST(BallBounce, no_intersection) {
@@ -48,7 +48,7 @@ TEST(BallBounce, no_intersection) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(1, 1);
     double th = 1;
@@ -65,11 +65,11 @@ TEST(BallBounce, no_intersection) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_FALSE(isBounce);
+    EXPECT_FALSE(is_bounce);
 }
 
 TEST(BallBounce, wrong_direction) {
@@ -78,7 +78,7 @@ TEST(BallBounce, wrong_direction) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(1, 0);
     double th = 1;
@@ -95,11 +95,11 @@ TEST(BallBounce, wrong_direction) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_FALSE(isBounce);
+    EXPECT_FALSE(is_bounce);
 }
 
 TEST(BallBounce, too_far) {
@@ -108,7 +108,7 @@ TEST(BallBounce, too_far) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(-1, 0);
     double th = 1;
@@ -125,11 +125,11 @@ TEST(BallBounce, too_far) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_FALSE(isBounce);
+    EXPECT_FALSE(is_bounce);
 }
 
 TEST(BallBounce, flat_intersect_side) {
@@ -138,7 +138,7 @@ TEST(BallBounce, flat_intersect_side) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(-.1, 0);
     double th = 3.14 / 2;
@@ -155,14 +155,14 @@ TEST(BallBounce, flat_intersect_side) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_TRUE(isBounce);
-    EXPECT_GT(outVel.x(), 0);
-    EXPECT_LT(outVel.x(), 1.01);
-    EXPECT_NEAR(outVel.y(), 0, 0.01);
+    EXPECT_TRUE(is_bounce);
+    EXPECT_GT(out_vel.x(), 0);
+    EXPECT_LT(out_vel.x(), 1.01);
+    EXPECT_NEAR(out_vel.y(), 0, 0.01);
 }
 
 TEST(BallBounce, flat_intersect_mouth) {
@@ -171,7 +171,7 @@ TEST(BallBounce, flat_intersect_mouth) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(-.1, 0);
     double th = 0;
@@ -188,14 +188,14 @@ TEST(BallBounce, flat_intersect_mouth) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_TRUE(isBounce);
-    EXPECT_GT(outVel.x(), 0);
-    EXPECT_LT(outVel.x(), 1.01);
-    EXPECT_NEAR(outVel.y(), 0, 0.01);
+    EXPECT_TRUE(is_bounce);
+    EXPECT_GT(out_vel.x(), 0);
+    EXPECT_LT(out_vel.x(), 1.01);
+    EXPECT_NEAR(out_vel.y(), 0, 0.01);
 }
 
 TEST(BallBounce, angle_intersect_side) {
@@ -204,7 +204,7 @@ TEST(BallBounce, angle_intersect_side) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(-0.1, -0.06);
     double th = 3.14;
@@ -221,15 +221,15 @@ TEST(BallBounce, angle_intersect_side) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
-    EXPECT_TRUE(isBounce);
-    EXPECT_GT(outVel.x(), 0);
-    EXPECT_LT(outVel.x(), 1.0);
-    EXPECT_GT(outVel.y(), 0);
-    EXPECT_LT(outVel.y(), 1.0);
+    EXPECT_TRUE(is_bounce);
+    EXPECT_GT(out_vel.x(), 0);
+    EXPECT_LT(out_vel.x(), 1.0);
+    EXPECT_GT(out_vel.y(), 0);
+    EXPECT_LT(out_vel.y(), 1.0);
 }
 
 TEST(BallBounce, angle_intersect_mouth) {
@@ -238,7 +238,7 @@ TEST(BallBounce, angle_intersect_mouth) {
     CameraBall cb = CameraBall(tc, p1);
     WorldBall wb;
     KalmanBall kb = KalmanBall(1, tc, cb, wb);
-    kb.setVel(Geometry2d::Point(-1, 0));
+    kb.set_vel(Geometry2d::Point(-1, 0));
 
     Geometry2d::Point p2 = Geometry2d::Point(-0.06, -0.04);
     double th = 1 * 3.14 / 4;
@@ -255,13 +255,13 @@ TEST(BallBounce, angle_intersect_mouth) {
     yellow.push_back(wr2);
     std::vector<WorldRobot> blue;
 
-    Geometry2d::Point outVel;
+    Geometry2d::Point out_vel;
 
-    bool isBounce = BallBounce::CalcBallBounce(kb, yellow, blue, outVel);
+    bool is_bounce = BallBounce::calc_ball_bounce(kb, yellow, blue, out_vel);
 
     // Straight left with a 45 degree wall causes ball to go straight up
-    EXPECT_TRUE(isBounce);
-    EXPECT_NEAR(outVel.x(), 0, 0.1);
-    EXPECT_NEAR(outVel.y(), 1, 0.1);
+    EXPECT_TRUE(is_bounce);
+    EXPECT_NEAR(out_vel.x(), 0, 0.1);
+    EXPECT_NEAR(out_vel.y(), 1, 0.1);
 }
 }  // namespace vision_filter

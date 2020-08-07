@@ -20,37 +20,37 @@ Window::Window() : t0(0), t1(0), a0(0), a1(0), shot_success(0) {}
 
 Window::Window(double t0, double t1) : t0(t0), t1(t1), a0(0), a1(0), shot_success(0) {}
 
-void WindowEvaluator::createConfiguration(Configuration* cfg) {
+void WindowEvaluator::create_configuration(Configuration* cfg) {
     angle_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/angleScoreCoeff", 0.7);
     distance_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
 }
 
-WindowEvaluator::WindowEvaluator(Context* context) : context(context) {}
+WindowEvaluator::WindowEvaluator(Context* context) : context_(context) {}
 
-WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target, float targetWidth) {
-    auto dir_vec = (target - origin).perpCCW().normalized();
+WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target, float target_width) {
+    auto dir_vec = (target - origin).perp_ccw().normalized();
     auto segment =
-        Segment{target + dir_vec * (targetWidth / 2), target - dir_vec * (targetWidth / 2)};
+        Segment{target + dir_vec * (target_width / 2), target - dir_vec * (target_width / 2)};
 
     return eval_pt_to_seg(origin, segment);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_robot(Point origin, Point target) {
-    return eval_pt_to_pt(origin, target, 2 * Robot_Radius);
+    return eval_pt_to_pt(origin, target, 2 * kRobotRadius);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_opp_goal(Point origin) {
-    Segment their_goal{Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-                             Field_Dimensions::Current_Dimensions.Length()},
-                       Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2,
-                             Field_Dimensions::Current_Dimensions.Length()}};
+    Segment their_goal{Point{-Field_Dimensions::current_dimensions.goal_width() / 2,
+                             Field_Dimensions::current_dimensions.length()},
+                       Point{Field_Dimensions::current_dimensions.goal_width() / 2,
+                             Field_Dimensions::current_dimensions.length()}};
 
     return eval_pt_to_seg(origin, their_goal);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
-    Segment our_goal{Point{-Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0},
-                     Point{Field_Dimensions::Current_Dimensions.GoalWidth() / 2, 0}};
+    Segment our_goal{Point{-Field_Dimensions::current_dimensions.goal_width() / 2, 0},
+                     Point{Field_Dimensions::current_dimensions.goal_width() / 2, 0}};
 
     return eval_pt_to_seg(origin, our_goal);
 }
@@ -94,13 +94,13 @@ void WindowEvaluator::obstacle_range(std::vector<Window>& windows, double& t0, d
 void WindowEvaluator::obstacle_robot(std::vector<Window>& windows, Point origin, Segment target,
                                      Point bot_pos) {
     auto n = (bot_pos - origin).normalized();
-    auto t = n.perpCCW();
-    auto r = Robot_Radius + Ball_Radius;
+    auto t = n.perp_ccw();
+    auto r = kRobotRadius + kBallRadius;
 
-    Segment seg{bot_pos - n * Robot_Radius + t * r, bot_pos - n * Robot_Radius - t * r};
+    Segment seg{bot_pos - n * kRobotRadius + t * r, bot_pos - n * kRobotRadius - t * r};
 
     if (debug) {
-        context->debug_drawer.drawLine(seg, QColor{"Red"}, "Debug");
+        context_->debug_drawer.draw_line(seg, QColor{"Red"}, "Debug");
     }
 
     auto end = target.delta().magsq();
@@ -138,25 +138,25 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     }
 
     if (debug) {
-        context->debug_drawer.drawLine(target, QColor{"Blue"}, "Debug");
+        context_->debug_drawer.draw_line(target, QColor{"Blue"}, "Debug");
     }
 
     std::vector<Window> windows = {Window{0, end}};
 
     // apply the obstacles
 
-    std::vector<Robot*> bots(context->state.self.size() + context->state.opp.size());
+    std::vector<Robot*> bots(context_->state.self.size() + context_->state.opp.size());
 
     auto filter_predicate = [&](const Robot* bot) -> bool {
         return bot != nullptr && bot->visible() &&
                find(excluded_robots.begin(), excluded_robots.end(), bot) == excluded_robots.end();
     };
 
-    auto end_it = copy_if(context->state.self.begin(), context->state.self.end(), bots.begin(),
+    auto end_it = copy_if(context_->state.self.begin(), context_->state.self.end(), bots.begin(),
                           filter_predicate);
 
     end_it =
-        copy_if(context->state.opp.begin(), context->state.opp.end(), end_it, filter_predicate);
+        copy_if(context_->state.opp.begin(), context_->state.opp.end(), end_it, filter_predicate);
 
     bots.resize(distance(bots.begin(), end_it));
 
@@ -170,8 +170,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     for (auto& pos : bot_locations) {
         auto d = (pos - origin).mag();
         // whether or not we can ship over this bot
-        auto chip_overable = chip_enabled && (d < max_chip_range - Robot_Radius) &&
-                             (d > min_chip_range + Robot_Radius);
+        auto chip_overable = chip_enabled && (d < max_chip_range - kRobotRadius) &&
+                             (d > min_chip_range + kRobotRadius);
         if (!chip_overable) {
             obstacle_robot(windows, origin, target, pos);
         }
@@ -182,8 +182,8 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
     for (auto& w : windows) {
         w.segment = Segment{p0 + delta * w.t0, p0 + delta * w.t1};
-        w.a0 = RadiansToDegrees(static_cast<float>((w.segment.pt[0] - origin).angle()));
-        w.a1 = RadiansToDegrees(static_cast<float>((w.segment.pt[1] - origin).angle()));
+        w.a0 = radians_to_degrees(static_cast<float>((w.segment.pt[0] - origin).angle()));
+        w.a1 = radians_to_degrees(static_cast<float>((w.segment.pt[1] - origin).angle()));
         fill_shot_success(w, origin);
     }
 
@@ -195,12 +195,12 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     }
     if (debug) {
         if (best) {
-            context->debug_drawer.drawLine(Segment{origin, best->segment.center()}, QColor{"Green"},
+            context_->debug_drawer.draw_line(Segment{origin, best->segment.center()}, QColor{"Green"},
                                            "Debug");
         }
         for (Window& window : windows) {
-            context->debug_drawer.drawLine(window.segment, QColor{"Green"}, "Debug");
-            context->debug_drawer.drawText(QString::number(window.shot_success),
+            context_->debug_drawer.draw_line(window.segment, QColor{"Green"}, "Debug");
+            context_->debug_drawer.draw_text(QString::number(window.shot_success),
                                            window.segment.center() + Point(0, 0.1), QColor{"Green"},
                                            "Debug");
         }
@@ -238,8 +238,8 @@ void WindowEvaluator::fill_shot_success(Window& window, Point origin) {
     auto angle_score = std::min(angle / shot_angle_baseline, 1.0);
 
     float longest_possible_shot =
-        std::sqrt(pow(Field_Dimensions::Current_Dimensions.Length(), 2.0f) +
-                  pow(Field_Dimensions::Current_Dimensions.Width(), 2.0f));
+        std::sqrt(pow(Field_Dimensions::current_dimensions.length(), 2.0f) +
+                  pow(Field_Dimensions::current_dimensions.width(), 2.0f));
     const auto& std = *KickEvaluator::kick_std_dev;
     auto angle_prob =
         phi(angle_between_shot_and_window / (std)) - phi(-angle_between_shot_and_window / (std));

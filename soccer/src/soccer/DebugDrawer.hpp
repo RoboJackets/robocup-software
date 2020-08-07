@@ -18,65 +18,65 @@ class Context;
 
 class DebugDrawer {
 public:
-    DebugDrawer(Context* context) : _context(context), _numDebugLayers(0) {
-        resetLogFrame();
+    DebugDrawer(Context* context) : context_(context), num_debug_layers_(0) {
+        reset_log_frame();
     }
 
-    const QStringList& debugLayers() const { return _debugLayers; }
+    const QStringList& debug_layers() const { return debug_layers_; }
 
     /// Returns the number of a debug layer given its name
-    int findDebugLayer(QString layer);
+    int find_debug_layer(QString layer);
 
     /** @ingroup drawing_functions */
-    void drawPolygon(const Geometry2d::Point* pts, int n,
+    void draw_polygon(const Geometry2d::Point* pts, int n,
                      const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawPolygon(const std::vector<Geometry2d::Point>& pts,
+    void draw_polygon(const std::vector<Geometry2d::Point>& pts,
                      const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawPolygon(const Geometry2d::Polygon& pts,
+    void draw_polygon(const Geometry2d::Polygon& pts,
                      const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawCircle(Geometry2d::Point center, float radius,
+    void draw_circle(Geometry2d::Point center, float radius,
                     const QColor& qc = Qt::black,
                     const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawArc(const Geometry2d::Arc& arc, const QColor& qw = Qt::black,
+    void draw_arc(const Geometry2d::Arc& arc, const QColor& qw = Qt::black,
                  const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawShape(const std::shared_ptr<Geometry2d::Shape>& obs,
+    void draw_shape(const std::shared_ptr<Geometry2d::Shape>& obs,
                    const QColor& qw = Qt::black,
                    const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawShapeSet(const Geometry2d::ShapeSet& shapes,
+    void draw_shape_set(const Geometry2d::ShapeSet& shapes,
                       const QColor& qw = Qt::black,
                       const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawLine(const Geometry2d::Segment& line, const QColor& qw = Qt::black,
+    void draw_line(const Geometry2d::Segment& line, const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawLine(Geometry2d::Point p0, Geometry2d::Point p1,
+    void draw_line(Geometry2d::Point p0, Geometry2d::Point p1,
                   const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawText(const QString& text, Geometry2d::Point pos,
+    void draw_text(const QString& text, Geometry2d::Point pos,
                   const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void drawSegment(const Geometry2d::Segment& line,
+    void draw_segment(const Geometry2d::Segment& line,
                      const QColor& qw = Qt::black,
                      const QString& layer = QString());
 
@@ -86,38 +86,38 @@ public:
      *
      * @param log_frame
      */
-    void fillLogFrame(Packet::LogFrame* log_frame) {
-        log_frame->MergeFrom(_logFrame);
-        resetLogFrame();
+    void fill_log_frame(Packet::LogFrame* log_frame) {
+        log_frame->MergeFrom(log_frame_);
+        reset_log_frame();
     }
 
     /**
      * Helper pass-through method to create a new debug path.
      */
-    Packet::DebugRobotPath* addDebugPath() {
-        return _logFrame.add_debug_robot_paths();
+    Packet::DebugRobotPath* add_debug_path() {
+        return log_frame_.add_debug_robot_paths();
     }
 
 private:
-    void resetLogFrame() {
-        _logFrame.Clear();
-        for (const QString& string : _debugLayers) {
-            _logFrame.add_debug_layers(string.toStdString());
+    void reset_log_frame() {
+        log_frame_.Clear();
+        for (const QString& string : debug_layers_) {
+            log_frame_.add_debug_layers(string.toStdString());
         }
     }
     /// Number of debug layers
-    int _numDebugLayers;
+    int num_debug_layers_;
 
     /// Map from debug layer name to ID
-    QMap<QString, int> _debugLayerMap;
+    QMap<QString, int> debug_layer_map_;
 
     /// Debug layers in order by ID
-    QStringList _debugLayers;
+    QStringList debug_layers_;
 
-    Context* _context;
+    Context* context_;
 
     // Keep an entire log frame, but only fill the parts related to debug
     // drawing. Then we can use protobuf's merge functionality to merge it into
     // the main log frame.
-    Packet::LogFrame _logFrame;
+    Packet::LogFrame log_frame_;
 };

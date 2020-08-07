@@ -28,26 +28,26 @@ using namespace boost::python;
 using namespace Geometry2d;
 using namespace RefereeModuleEnums;
 
-ConfigDouble* GameplayModule::_fieldEdgeInset;
+ConfigDouble* GameplayModule::field_edge_inset;
 
-void GameplayModule::createConfiguration(Configuration* cfg) {
+void GameplayModule::create_configuration(Configuration* cfg) {
     /*  This sets the disance from the field boundries to the edge of the global
 +     * obstacles, which the robots will not move through or into.
 +     * The value is given in meters. As of April 20, 2016 the inner 300mm
 +     * is free space for the robots.
 +     */
-    _fieldEdgeInset = new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
+    field_edge_inset = new ConfigDouble(cfg, "PathPlanner/Field Edge Obstacle", .33);
 }
 
-bool GameplayModule::hasFieldEdgeInsetChanged() const {
-    return abs(_fieldEdgeInset->value() - _oldFieldEdgeInset) > numeric_limits<double>::epsilon();
+bool GameplayModule::has_field_edge_inset_changed() const {
+    return abs(field_edge_inset->value() - old_field_edge_inset_) > numeric_limits<double>::epsilon();
 }
 
 // TODO: Replace this whole file when we move to ROS2
-Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
-    calculateFieldObstacles();
+Gameplay::GameplayModule::GameplayModule(Context* context) : context_(context) {
+    calculate_field_obstacles();
 
-    _oldFieldEdgeInset = _fieldEdgeInset->value();
+    old_field_edge_inset_ = field_edge_inset->value();
 
     //
     // setup python interpreter
@@ -65,12 +65,12 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
         PyEval_InitThreads();
         {
             object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
-            _mainPyNamespace = main_module.attr("__dict__");
+            main_py_namespace_ = main_module.attr("__dict__");
 
             object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
-            _mainPyNamespace["robocup"] = robocup_module;
+            main_py_namespace_["robocup"] = robocup_module;
 
-            QDir gameplayDir = ApplicationRunDirectory();
+            QDir gameplay_dir = application_run_directory();
 
             // Get the location of the share directory (where the python files
             // are installed)
@@ -78,15 +78,15 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
             std::stringstream command;
             command << "import sys; sys.path.append('" << share_dir << "/gameplay/')";
             handle<> ignored2{(PyRun_String(command.str().c_str(), Py_file_input,
-                                            _mainPyNamespace.ptr(), _mainPyNamespace.ptr()))};
+                                            main_py_namespace_.ptr(), main_py_namespace_.ptr()))};
 
-            _mainPyNamespace["constants"] = handle<>(PyImport_ImportModule("constants"));
+            main_py_namespace_["constants"] = handle<>(PyImport_ImportModule("constants"));
 
-            _mainPyNamespace["constants"].attr("Field") = &Field_Dimensions::Current_Dimensions;
+            main_py_namespace_["constants"].attr("Field") = &Field_Dimensions::current_dimensions;
 
             // instantiate the root play
             handle<> ignored3((PyRun_String("import main; main.init()", Py_file_input,
-                                            _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                                            main_py_namespace_.ptr(), main_py_namespace_.ptr())));
         }
         PyEval_SaveThread();
     } catch (const error_already_set&) {
@@ -95,58 +95,58 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : _context(context) {
     }
 }
 
-void Gameplay::GameplayModule::calculateFieldObstacles() {
-    auto dimensions = Field_Dimensions::Current_Dimensions;
+void Gameplay::GameplayModule::calculate_field_obstacles() {
+    auto dimensions = Field_Dimensions::current_dimensions;
 
-    _centerMatrix = TransformMatrix::translate(Point(0, dimensions.Length() / 2));
-    _oppMatrix =
-        TransformMatrix::translate(Point(0, dimensions.Length())) * TransformMatrix::rotate(M_PI);
+    center_matrix_ = TransformMatrix::translate(Point(0, dimensions.length() / 2));
+    opp_matrix_ =
+        TransformMatrix::translate(Point(0, dimensions.length())) * TransformMatrix::rotate(M_PI);
 
     //// Make an obstacle to cover the opponent's half of the field except for
     /// one robot diameter across the center line.
     // TODO(barulicm): double check this - shouldn't the y be inset, not the x?
-    float x = dimensions.Width() / 2 + (float)_fieldEdgeInset->value();
-    const float y1 = dimensions.Length() / 2;
-    const float y2 = dimensions.Length() + (float)_fieldEdgeInset->value();
-    const float r = dimensions.CenterRadius();
-    _sideObstacle = make_shared<Rect>(Point(-x, y1), Point(x, y2));
+    float x = dimensions.width() / 2 + (float)field_edge_inset->value();
+    const float y1 = dimensions.length() / 2;
+    const float y2 = dimensions.length() + (float)field_edge_inset->value();
+    const float r = dimensions.center_radius();
+    side_obstacle_ = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
-    float y = -(float)_fieldEdgeInset->value();
-    auto deadspace = (float)_fieldEdgeInset->value();
-    x = dimensions.Width() / 2.0f + (float)_fieldEdgeInset->value();
-    _nonFloor[0] = make_shared<Rect>(Point(-x, y), Point(x, y - 1000));
+    float y = -(float)field_edge_inset->value();
+    auto deadspace = (float)field_edge_inset->value();
+    x = dimensions.width() / 2.0f + (float)field_edge_inset->value();
+    non_floor_[0] = make_shared<Rect>(Point(-x, y), Point(x, y - 1000));
 
-    y = dimensions.Length() + (float)_fieldEdgeInset->value();
-    _nonFloor[1] = make_shared<Rect>(Point(-x, y), Point(x, y + 1000));
+    y = dimensions.length() + (float)field_edge_inset->value();
+    non_floor_[1] = make_shared<Rect>(Point(-x, y), Point(x, y + 1000));
 
-    y = dimensions.FloorLength();
-    _nonFloor[2] = make_shared<Rect>(Point(-x, -3 * deadspace), Point(-x - 1000, y));
+    y = dimensions.floor_length();
+    non_floor_[2] = make_shared<Rect>(Point(-x, -3 * deadspace), Point(-x - 1000, y));
 
-    _nonFloor[3] = make_shared<Rect>(Point(x, -3 * deadspace), Point(x + 1000, y));
+    non_floor_[3] = make_shared<Rect>(Point(x, -3 * deadspace), Point(x + 1000, y));
 
-    const float halfFlat = static_cast<float>(dimensions.GoalFlat() / 2.0);
-    const float shortDist = dimensions.PenaltyShortDist();
-    const float longDist = dimensions.PenaltyLongDist();
+    const float half_flat = static_cast<float>(dimensions.goal_flat() / 2.0);
+    const float short_dist = dimensions.penalty_short_dist();
+    const float long_dist = dimensions.penalty_long_dist();
 
-    _ourGoalArea = make_shared<Rect>(Point(-longDist / 2, 0), Point(longDist / 2, shortDist));
+    our_goal_area_ = make_shared<Rect>(Point(-long_dist / 2, 0), Point(long_dist / 2, short_dist));
 
-    _theirGoalArea = make_shared<Rect>(Point(-longDist / 2, dimensions.Length()),
-                                       Point(longDist / 2, dimensions.Length() - shortDist));
+    their_goal_area_ = make_shared<Rect>(Point(-long_dist / 2, dimensions.length()),
+                                       Point(long_dist / 2, dimensions.length() - short_dist));
 
-    _ourHalf = make_shared<Rect>(Point(-x, -dimensions.Border()), Point(x, y1));
+    our_half_ = make_shared<Rect>(Point(-x, -dimensions.border()), Point(x, y1));
 
-    _opponentHalf = make_shared<Rect>(Point(-x, y1), Point(x, y2));
+    opponent_half_ = make_shared<Rect>(Point(-x, y1), Point(x, y2));
 
-    _ourGoal = make_shared<Rect>(Point(-dimensions.GoalWidth() / 2 - dimensions.LineWidth(), 0),
-                                 Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-                                       -dimensions.GoalDepth() - dimensions.LineWidth()));
+    our_goal_ = make_shared<Rect>(Point(-dimensions.goal_width() / 2 - dimensions.line_width(), 0),
+                                 Point(dimensions.goal_width() / 2 + dimensions.line_width(),
+                                       -dimensions.goal_depth() - dimensions.line_width()));
 
-    _theirGoal = make_shared<Rect>(
-        Point(-dimensions.GoalWidth() / 2, dimensions.Length()),
-        Point(dimensions.GoalWidth() / 2 + dimensions.LineWidth(),
-              dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
+    their_goal_ = make_shared<Rect>(
+        Point(-dimensions.goal_width() / 2, dimensions.length()),
+        Point(dimensions.goal_width() / 2 + dimensions.line_width(),
+              dimensions.length() + dimensions.goal_depth() + dimensions.line_width()));
 
-    _oldFieldEdgeInset = _fieldEdgeInset->value();
+    old_field_edge_inset_ = field_edge_inset->value();
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
@@ -155,12 +155,12 @@ Gameplay::GameplayModule::~GameplayModule() {
     // Py_Finalize();
 }
 
-void Gameplay::GameplayModule::setupUI() {
+void Gameplay::GameplayModule::setup_ui() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
             handle<> ignored3((PyRun_String("import ui.main; ui.main.setup()", Py_file_input,
-                                            _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                                            main_py_namespace_.ptr(), main_py_namespace_.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to setup python-based UI");
@@ -169,10 +169,10 @@ void Gameplay::GameplayModule::setupUI() {
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile, bool isAbsolute) {
+void Gameplay::GameplayModule::load_playbook(const string& playbook_file, bool is_absolute) {
     PyGILState_STATE state = PyGILState_Ensure();
     try {
-        getMainModule().attr("load_playbook")(playbookFile, isAbsolute);
+        get_main_module().attr("load_playbook")(playbook_file, is_absolute);
     } catch (const error_already_set&) {
         PyErr_Print();
         PyGILState_Release(state);
@@ -181,10 +181,10 @@ void Gameplay::GameplayModule::loadPlaybook(const string& playbookFile, bool isA
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::savePlaybook(const string& playbookFile, bool isAbsolute) {
+void Gameplay::GameplayModule::save_playbook(const string& playbook_file, bool is_absolute) {
     PyGILState_STATE state = PyGILState_Ensure();
     try {
-        getMainModule().attr("save_playbook")(playbookFile, isAbsolute);
+        get_main_module().attr("save_playbook")(playbook_file, is_absolute);
     } catch (const error_already_set&) {
         PyErr_Print();
         PyGILState_Release(state);
@@ -193,23 +193,23 @@ void Gameplay::GameplayModule::savePlaybook(const string& playbookFile, bool isA
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::clearPlays() {
+void Gameplay::GameplayModule::clear_plays() {
     PyGILState_STATE state = PyGILState_Ensure();
-    getMainModule().attr("clear")();
+    get_main_module().attr("clear")();
     PyGILState_Release(state);
 }
 
-bool Gameplay::GameplayModule::checkPlaybookStatus() {
+bool Gameplay::GameplayModule::check_playbook_status() {
     PyGILState_STATE state = PyGILState_Ensure();
-    static int prevStatus = extract<int>(getMainModule().attr("numEnablePlays")());
+    static int prev_status = extract<int>(get_main_module().attr("num_enable_plays")());
     bool static change = false;
-    int status = extract<int>(getMainModule().attr("numEnablePlays")());
+    int status = extract<int>(get_main_module().attr("num_enable_plays")());
     if (status == 0) {
         change = false;
-    } else if (status != prevStatus) {
-        change = (abs(prevStatus - status) == 1);
+    } else if (status != prev_status) {
+        change = (abs(prev_status - status) == 1);
     }
-    prevStatus = status;
+    prev_status = status;
     PyGILState_Release(state);
     return change;
 }
@@ -217,35 +217,35 @@ bool Gameplay::GameplayModule::checkPlaybookStatus() {
 /**
  * returns the group of obstacles for the field
  */
-Geometry2d::ShapeSet Gameplay::GameplayModule::globalObstacles() const {
+Geometry2d::ShapeSet Gameplay::GameplayModule::global_obstacles() const {
     Geometry2d::ShapeSet obstacles;
-    if (_context->game_state.stayOnSide()) {
-        obstacles.add(_sideObstacle);
+    if (context_->game_state.stay_on_side()) {
+        obstacles.add(side_obstacle_);
     }
 
-    if (!_context->game_settings.use_our_half) {
-        obstacles.add(_ourHalf);
+    if (!context_->game_settings.use_our_half) {
+        obstacles.add(our_half_);
     }
 
-    if (!_context->game_settings.use_their_half) {
-        obstacles.add(_opponentHalf);
+    if (!context_->game_settings.use_their_half) {
+        obstacles.add(opponent_half_);
     }
 
     /// Add non floor obstacles
-    for (const std::shared_ptr<Shape>& ptr : _nonFloor) {
+    for (const std::shared_ptr<Shape>& ptr : non_floor_) {
         obstacles.add(ptr);
     }
 
-    obstacles.add(_ourGoal);
-    obstacles.add(_theirGoal);
+    obstacles.add(our_goal_);
+    obstacles.add(their_goal_);
 
     return obstacles;
 }
 
-Geometry2d::ShapeSet Gameplay::GameplayModule::goalZoneObstacles() const {
+Geometry2d::ShapeSet Gameplay::GameplayModule::goal_zone_obstacles() const {
     Geometry2d::ShapeSet zones;
-    zones.add(_theirGoalArea);
-    zones.add(_ourGoalArea);
+    zones.add(their_goal_area_);
+    zones.add(our_goal_area_);
     return zones;
 }
 
@@ -258,25 +258,25 @@ void Gameplay::GameplayModule::run() {
         cout << "Starting GameplayModule::run()" << endl;
     }
 
-    _ballMatrix = Geometry2d::TransformMatrix::translate(_context->world_state.ball.position);
+    ball_matrix_ = Geometry2d::TransformMatrix::translate(context_->world_state.ball.position);
 
-    _context->globalObstacles = globalObstacles();
-    _context->goalZoneObstacles = goalZoneObstacles();
+    context_->global_obstacles = global_obstacles();
+    context_->goal_zone_obstacles = goal_zone_obstacles();
 
     /// prepare each bot for the next iteration by resetting temporary things
-    for (OurRobot* robot : _context->state.self) {
+    for (OurRobot* robot : context_->state.self) {
         if (robot != nullptr) {
-            robot->resetAvoidBall();
-            robot->resetAvoidRobotRadii();
-            robot->resetForNextIteration();
+            robot->reset_avoid_ball();
+            robot->reset_avoid_robot_radii();
+            robot->reset_for_next_iteration();
         }
     }
 
     /// Build a list of visible robots
-    _playRobots.clear();
-    for (OurRobot* r : _context->state.self) {
-        if (r->visible() && r->statusIsFresh()) {
-            _playRobots.insert(r);
+    play_robots_.clear();
+    for (OurRobot* r : context_->state.self) {
+        if (r->visible() && r->status_is_fresh()) {
+            play_robots_.insert(r);
         }
     }
 
@@ -284,39 +284,39 @@ void Gameplay::GameplayModule::run() {
     {
         try {
             // vector of shared pointers to pass to python
-            vector<OurRobot*> botVector;
-            for (auto* ourBot : _playRobots) {
+            vector<OurRobot*> bot_vector;
+            for (auto* our_bot : play_robots_) {
                 // don't attempt to drive the robot that's joystick-controlled
                 // FIXME: exclude manual id robot
-                // if (ourBot->shell() != MANUAL_ID) {
-                botVector.push_back(ourBot);
+                // if (our_bot->shell() != MANUAL_ID) {
+                bot_vector.push_back(our_bot);
                 // }
             }
-            getMainModule().attr("set_our_robots")(botVector);
+            get_main_module().attr("set_our_robots")(bot_vector);
 
-            vector<OpponentRobot*> theirBotVector;
-            for (auto* bot : _context->state.opp) {
+            vector<OpponentRobot*> their_bot_vector;
+            for (auto* bot : context_->state.opp) {
                 if (bot != nullptr && bot->visible()) {
-                    theirBotVector.push_back(bot);
+                    their_bot_vector.push_back(bot);
                 }
             }
-            getMainModule().attr("set_their_robots")(theirBotVector);
+            get_main_module().attr("set_their_robots")(their_bot_vector);
 
-            getMainModule().attr("set_context")(&_context);
+            get_main_module().attr("set_context")(&context_);
 
             // Handle Tests
-            if (runningTests) {
+            if (running_tests_) {
                 // I could add a bool to check if this needs to run or not if
                 // this is too inefficient
-                object rtrn(handle<>(PyRun_String("ui.main._tests.getNextCommand()", Py_eval_input,
-                                                  _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                object rtrn(handle<>(PyRun_String("ui.main._tests.get_next_command()", Py_eval_input,
+                                                  main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
 #if 0
                 // TODO(Kyle): Part two of the
                 //  multiple-places-publishing-to-the-same-struct garbage-fest.
                 if (rtrn.ptr() != Py_None) {
                     Command cmd = extract<Command>(rtrn);
-                    _context->game_settings.requestRefCommand = cmd;
+                    context_->game_settings.request_ref_command = cmd;
                 }
 #endif
             }
@@ -345,13 +345,13 @@ void Gameplay::GameplayModule::run() {
              because if it fails, we don't want to crash the program.
              */
 
-            handle<> ignored3((PyRun_String("main.run()", Py_file_input, _mainPyNamespace.ptr(),
-                                            _mainPyNamespace.ptr())));
+            handle<> ignored3((PyRun_String("main.run()", Py_file_input, main_py_namespace_.ptr(),
+                                            main_py_namespace_.ptr())));
 
             try {
                 // record the state of our behavior tree
-                std::string bhvrTreeDesc = extract<std::string>(getRootPlay().attr("__str__")());
-                _context->behavior_tree = bhvrTreeDesc;
+                std::string bhvr_tree_desc = extract<std::string>(get_root_play().attr("__str__")());
+                context_->behavior_tree = bhvr_tree_desc;
             } catch (const error_already_set&) {
                 PyErr_Print();
             }
@@ -363,9 +363,9 @@ void Gameplay::GameplayModule::run() {
     PyGILState_Release(state);
 
     /// visualize
-    if (_context->game_state.stayAwayFromBall() && _context->world_state.ball.visible) {
-        _context->debug_drawer.drawCircle(_context->world_state.ball.position,
-                                          Field_Dimensions::Current_Dimensions.CenterRadius(),
+    if (context_->game_state.stay_away_from_ball() && context_->world_state.ball.visible) {
+        context_->debug_drawer.draw_circle(context_->world_state.ball.position,
+                                          Field_Dimensions::current_dimensions.center_radius(),
                                           Qt::black, "Rules");
     }
 
@@ -373,35 +373,37 @@ void Gameplay::GameplayModule::run() {
         cout << "Finishing GameplayModule::run()" << endl;
     }
 
-    if (_context->our_info.score > _our_score_last_frame) {
-        for (OurRobot* r : _context->state.self) {
+    if (context_->our_info.score > our_score_last_frame_) {
+        for (OurRobot* r : context_->state.self) {
             r->sing();
         }
     }
-    _our_score_last_frame = _context->our_info.score;
+    our_score_last_frame_ = context_->our_info.score;
 }
 
 #pragma mark python
 
-boost::python::object Gameplay::GameplayModule::getRootPlay() {
-    return getMainModule().attr("root_play")();
+boost::python::object Gameplay::GameplayModule::get_root_play() {
+    return get_main_module().attr("root_play")();
 }
 
-boost::python::object Gameplay::GameplayModule::getMainModule() { return _mainPyNamespace["main"]; }
+boost::python::object Gameplay::GameplayModule::get_main_module() {
+    return main_py_namespace_["main"];
+}
 
-void Gameplay::GameplayModule::updateFieldDimensions() {
+void Gameplay::GameplayModule::update_field_dimensions() {
     PyGILState_STATE state = PyGILState_Ensure();
-    { _mainPyNamespace["constants"].attr("Field") = &Field_Dimensions::Current_Dimensions; }
+    { main_py_namespace_["constants"].attr("Field") = &Field_Dimensions::current_dimensions; }
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::addTests() {
+void Gameplay::GameplayModule::add_tests() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
             handle<> ignored3(
-                (PyRun_String("import ui.main; ui.main._tests.addTests()", Py_file_input,
-                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                (PyRun_String("import ui.main; ui.main._tests.add_tests()", Py_file_input,
+                              main_py_namespace_.ptr(), main_py_namespace_.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to add tests");
@@ -410,17 +412,17 @@ void Gameplay::GameplayModule::addTests() {
     PyGILState_Release(state);
 
     // TODO: Implement custom MIME type for tests
-    //      Enable dragdrop in allTestsTable
-    //      Link selectedTestsTable to a python list in main.py
+    //      Enable dragdrop in all_tests_table
+    //      Link selected_tests_table to a python list in main.py
 }
 
-void Gameplay::GameplayModule::removeTest() {
+void Gameplay::GameplayModule::remove_test() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
             handle<> ignored3(
-                (PyRun_String("import ui.main; ui.main._tests.removeTest()", Py_file_input,
-                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                (PyRun_String("import ui.main; ui.main._tests.remove_test()", Py_file_input,
+                              main_py_namespace_.ptr(), main_py_namespace_.ptr())));
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to add tests");
@@ -429,14 +431,14 @@ void Gameplay::GameplayModule::removeTest() {
     PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::nextTest() {
+void Gameplay::GameplayModule::next_test() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
-            object rtrn(handle<>(PyRun_String("ui.main._tests.nextTest()", Py_eval_input,
-                                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+            object rtrn(handle<>(PyRun_String("ui.main._tests.next_test()", Py_eval_input,
+                                              main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
-            runningTests = extract<bool>(rtrn);
+            running_tests_ = extract<bool>(rtrn);
         } catch (const error_already_set&) {
             PyErr_Print();
             throw runtime_error("Error trying to go to next test");
@@ -445,17 +447,17 @@ void Gameplay::GameplayModule::nextTest() {
     PyGILState_Release(state);
 
     // load the test
-    loadTest();
+    load_test();
 }
 
-void Gameplay::GameplayModule::loadTest() {
+void Gameplay::GameplayModule::load_test() {
     PyGILState_STATE state = PyGILState_Ensure();
     {
         try {
             object rtrn(handle<>(PyRun_String("ui.main._tests.loadTest()", Py_eval_input,
-                                              _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                                              main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
-            runningTests = extract<bool>(rtrn);
+            running_tests_ = extract<bool>(rtrn);
 
 #if 0
             // TODO(Kyle): Okay, so really all of this testing logic should be
@@ -466,12 +468,12 @@ void Gameplay::GameplayModule::loadTest() {
             //
             // See the other to-do in this file for the other instance of the
             // same issue.
-            if (runningTests) {
-                _context->game_settings.requestRefCommand =
+            if (running_tests_) {
+                context_->game_settings.request_ref_command =
                     SSL_Referee_Command_HALT;
 
                 // Place robots and ball
-                grSim_Packet simPacket;
+                grSim_Packet sim_packet;
 
                 grSim_Replacement* replacement =
                     simPacket.mutable_replacement();
@@ -479,15 +481,15 @@ void Gameplay::GameplayModule::loadTest() {
                 // Load OurRobots information
                 object our_robot_rtrn(handle<>(PyRun_String(
                     "ui.main._tests.getTestOurRobots()", Py_eval_input,
-                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                    main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
                 boost::python::list our_robots =
                     extract<boost::python::list>(our_robot_rtrn);
 
                 const int NUM_COLS = 2;
-                const int ROBOTS_PER_COL = Robots_Per_Team / NUM_COLS;
-                const int teamDirection = _context->blue_team ? -1 : 1;
-                for (int i = 0; i < Robots_Per_Team; i++) {
+                const int ROBOTS_PER_COL = kRobotsPerTeam / NUM_COLS;
+                const int team_direction = context_->blue_team ? -1 : 1;
+                for (int i = 0; i < kRobotsPerTeam; i++) {
                     auto* rob = replacement->add_robots();
 
                     if (i < len(our_robots)) {
@@ -498,15 +500,15 @@ void Gameplay::GameplayModule::loadTest() {
                         float y = extract<float>(robot[1]);
 
                         rob->set_x(
-                            -teamDirection *
+                            -team_direction *
                             (y -
-                             (Field_Dimensions::Current_Dimensions.Length() /
+                             (Field_Dimensions::current_dimensions.length() /
                               2)));
-                        rob->set_y(teamDirection * x);
+                        rob->set_y(team_direction * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
                         double x_pos =
-                            teamDirection * (2.5 - i / ROBOTS_PER_COL);
+                            team_direction * (2.5 - i / ROBOTS_PER_COL);
                         double y_pos =
                             i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
                         rob->set_x(x_pos);
@@ -514,18 +516,18 @@ void Gameplay::GameplayModule::loadTest() {
                         rob->set_dir(0);
                     }
                     rob->set_id(i);
-                    rob->set_yellowteam(not _context->blue_team);
+                    rob->set_yellowteam(not context_->blue_team);
                 }
 
                 // Load TheirRobots information
                 object their_robot_rtrn(handle<>(PyRun_String(
                     "ui.main._tests.getTestTheirRobots()", Py_eval_input,
-                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                    main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
                 boost::python::list their_robots =
                     extract<boost::python::list>(their_robot_rtrn);
 
-                for (int i = 0; i < Robots_Per_Team; i++) {
+                for (int i = 0; i < kRobotsPerTeam; i++) {
                     auto* rob = replacement->add_robots();
 
                     if (i < len(their_robots)) {
@@ -536,15 +538,15 @@ void Gameplay::GameplayModule::loadTest() {
                         float y = extract<float>(robot[1]);
 
                         rob->set_x(
-                            -teamDirection *
+                            -team_direction *
                             (y -
-                             (Field_Dimensions::Current_Dimensions.Length() /
+                             (Field_Dimensions::current_dimensions.length() /
                               2)));
-                        rob->set_y(teamDirection * x);
+                        rob->set_y(team_direction * x);
                         rob->set_dir(extract<float>(robot[2]));
                     } else {
                         double x_pos =
-                            -teamDirection * (2.5 - i / ROBOTS_PER_COL);
+                            -team_direction * (2.5 - i / ROBOTS_PER_COL);
                         double y_pos =
                             i % ROBOTS_PER_COL - ROBOTS_PER_COL / NUM_COLS;
                         rob->set_x(x_pos);
@@ -552,13 +554,13 @@ void Gameplay::GameplayModule::loadTest() {
                         rob->set_dir(0);
                     }
                     rob->set_id(i);
-                    rob->set_yellowteam(_context->blue_team);
+                    rob->set_yellowteam(context_->blue_team);
                 }
 
                 // Get ball Information
                 object ball_rtrn(handle<>(PyRun_String(
-                    "ui.main._tests.getTestBall()", Py_eval_input,
-                    _mainPyNamespace.ptr(), _mainPyNamespace.ptr())));
+                    "ui.main._tests.get_test_ball()", Py_eval_input,
+                    main_py_namespace_.ptr(), main_py_namespace_.ptr())));
 
                 boost::python::list ball =
                     extract<boost::python::list>(ball_rtrn);
@@ -569,14 +571,14 @@ void Gameplay::GameplayModule::loadTest() {
                 double vely = extract<double>(ball[3]);
 
                 ball_replace->set_x(
-                    -teamDirection *
+                    -team_direction *
                     (posy -
-                     (Field_Dimensions::Current_Dimensions.Length() / 2)));
-                ball_replace->set_y(teamDirection * posx);
-                ball_replace->set_vx(-teamDirection * vely);
-                ball_replace->set_vy(teamDirection * velx);
+                     (Field_Dimensions::current_dimensions.length() / 2)));
+                ball_replace->set_y(team_direction * posx);
+                ball_replace->set_vx(-team_direction * vely);
+                ball_replace->set_vy(team_direction * velx);
 
-                _context->grsim_command = simPacket;
+                context_->grsim_command = sim_packet;
             }
 #endif
 

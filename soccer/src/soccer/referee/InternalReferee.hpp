@@ -23,10 +23,10 @@ public:
 
 private:
     // TODO(#1559): Add another service for ball placement
-    rclcpp::Service<rj_msgs::srv::QuickCommands>::SharedPtr _quick_commands_srv;
-    rclcpp::Service<rj_msgs::srv::QuickRestart>::SharedPtr _quick_restart_srv;
+    rclcpp::Service<rj_msgs::srv::QuickCommands>::SharedPtr quick_commands_srv_;
+    rclcpp::Service<rj_msgs::srv::QuickRestart>::SharedPtr quick_restart_srv_;
     rclcpp::Subscription<rj_msgs::msg::GameSettings>::SharedPtr
-        _game_settings_sub;
+        game_settings_sub_;
 };
 
 }  // namespace referee

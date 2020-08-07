@@ -38,59 +38,59 @@ public:
      *
      * @return A planned trajectory.
      */
-    static Trajectory CreatePlan(PlanParams params, Trajectory previous);
+    static Trajectory create_plan(PlanParams params, Trajectory previous);
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
     /**
      * @brief The threshold by which the goal needs to change before we require
      * a replan.
      */
-    static double goalPosChangeThreshold() { return *_goalPosChangeThreshold; }
+    static double goal_pos_change_threshold() { return *goal_pos_change_threshold_config; }
 
     /**
      * @brief The duration of the previous path to reuse (from the beginning) in
      * a partial replan. This will be used if possible, although in some cases a
      * full replan will be required.
      */
-    static double partialReplanLeadTime() { return *_partialReplanLeadTime; }
+    static double partial_replan_lead_time() { return *partial_replan_lead_time_config; }
 
 private:
     // Attempt a partial replan, and use it only if it is faster.
-    static Trajectory checkBetter(const PlanParams& params,
+    static Trajectory check_better(const PlanParams& params,
                                   Trajectory previous);
 
     // Replan part of the trajectory, re-using the first
-    // `partialReplanLeadTime()` of the previous trajectory.
-    static Trajectory partialReplan(const PlanParams& params,
+    // `partial_replan_lead_time()` of the previous trajectory.
+    static Trajectory partial_replan(const PlanParams& params,
                                     const Trajectory& previous);
 
     // Replan from the start without a previous trajectory.
-    static Trajectory fullReplan(const PlanParams& params);
+    static Trajectory full_replan(const PlanParams& params);
 
     // Whether the trajectory has deviated from the path and requires a replan.
-    static bool veeredOffPath(const Trajectory& trajectory, RobotInstant actual,
+    static bool veered_off_path(const Trajectory& trajectory, RobotInstant actual,
                               RJ::Time now);
 
-    // Whether the goal has changed past the `goalPosChangeThreshold()`.
-    static bool goalChanged(const LinearMotionInstant& prevGoal,
+    // Whether the goal has changed past the `goal_pos_change_threshold()`.
+    static bool goal_changed(const LinearMotionInstant& prev_goal,
                             const LinearMotionInstant& goal);
 
     // Get the partial path starting at `now`, plus the partial replan lead time
     // duration.
-    static Trajectory partialPath(const Trajectory& prevTrajectory,
+    static Trajectory partial_path(const Trajectory& prev_trajectory,
                                   RJ::Time now) {
-        RJ::Time end_time = now + RJ::Seconds(*_partialReplanLeadTime);
-        return prevTrajectory.subTrajectory(prevTrajectory.begin_time(),
+        RJ::Time end_time = now + RJ::Seconds(*partial_replan_lead_time_config);
+        return prev_trajectory.sub_trajectory(prev_trajectory.begin_time(),
                                             end_time);
     }
 
-    static ConfigDouble* _goalPosChangeThreshold;
-    static ConfigDouble* _goalVelChangeThreshold;
-    static ConfigDouble* _partialReplanLeadTime;
-    static ConfigDouble* _offPathErrorThreshold;
+    static ConfigDouble* goal_pos_change_threshold_config;
+    static ConfigDouble* goal_vel_change_threshold_config;
+    static ConfigDouble* partial_replan_lead_time_config;
+    static ConfigDouble* off_path_error_threshold_config;
 
-    static constexpr RJ::Seconds _checkBetterDeltaTime = 0.2s;
+    static constexpr RJ::Seconds kCheckBetterDeltaTime = 0.2s;
 };
 
 }  // namespace Planning

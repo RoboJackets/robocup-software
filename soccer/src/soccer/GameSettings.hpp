@@ -19,11 +19,11 @@ struct GameSettings {
     bool simulation = true;
 
     // Requests. These can be overridden by the referee if it's enabled
-    bool requestBlueTeam = true;
-    int requestGoalieID = 0;
+    bool request_blue_team = true;
+    int request_goalie_id = 0;
 
     // Defend the plus-x direction in vision
-    bool defendPlusX = true;
+    bool defend_plus_x = true;
 
     bool use_our_half = true;
     bool use_their_half = true;
@@ -31,11 +31,11 @@ struct GameSettings {
     bool paused = false;
 
     struct JoystickConfig {
-        int manualID = -1;
-        bool dampedTranslation = true;
-        bool dampedRotation = true;
-        bool useKickOnBreakBeam = false;
-        bool useFieldOrientedDrive = false;
+        int manual_id = -1;
+        bool damped_translation = true;
+        bool damped_rotation = true;
+        bool use_kick_on_break_beam = false;
+        bool use_field_oriented_drive = false;
     };
 
     JoystickConfig joystick_config;
@@ -48,9 +48,9 @@ struct RosConverter<GameSettings, GameSettings::Msg> {
     static GameSettings::Msg to_ros(const GameSettings& from) {
         GameSettings::Msg to;
         convert_to_ros(from.simulation, &to.simulation);
-        convert_to_ros(from.requestBlueTeam, &to.request_blue_team);
-        convert_to_ros(from.requestGoalieID, &to.request_goalie_id);
-        convert_to_ros(from.defendPlusX, &to.defend_plus_x);
+        convert_to_ros(from.request_blue_team, &to.request_blue_team);
+        convert_to_ros(from.request_goalie_id, &to.request_goalie_id);
+        convert_to_ros(from.defend_plus_x, &to.defend_plus_x);
         convert_to_ros(from.use_our_half, &to.use_our_half);
         convert_to_ros(from.use_their_half, &to.use_their_half);
         return to;
@@ -59,9 +59,9 @@ struct RosConverter<GameSettings, GameSettings::Msg> {
     static GameSettings from_ros(const GameSettings::Msg& from) {
         GameSettings to;
         convert_to_ros(from.simulation, &to.simulation);
-        convert_to_ros(from.request_blue_team, &to.requestBlueTeam);
-        convert_to_ros(from.request_goalie_id, &to.requestGoalieID);
-        convert_to_ros(from.defend_plus_x, &to.defendPlusX);
+        convert_to_ros(from.request_blue_team, &to.request_blue_team);
+        convert_to_ros(from.request_goalie_id, &to.request_goalie_id);
+        convert_to_ros(from.defend_plus_x, &to.defend_plus_x);
         convert_to_ros(from.use_our_half, &to.use_our_half);
         convert_to_ros(from.use_their_half, &to.use_their_half);
         return to;

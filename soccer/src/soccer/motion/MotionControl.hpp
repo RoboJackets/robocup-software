@@ -23,7 +23,7 @@ public:
 
     /**
      * This runs PID control on the position and angle of the robot and
-     * sets values in the robot's radioTx packet.
+     * sets values in the robot's radio_tx packet.
      */
     void run(const RobotState& state, const Planning::Trajectory& path,
              bool is_joystick_controlled, MotionSetpoint* setpoint);
@@ -38,9 +38,9 @@ public:
     /**
      * Resets all PID controllers.
      */
-    void resetPIDControllers();
+    void reset_pid_controllers();
 
-    static void createConfiguration(Configuration* cfg);
+    static void create_configuration(Configuration* cfg);
 
 private:
     /**
@@ -52,27 +52,27 @@ private:
     /**
      * Update PID parameters.
      */
-    void updateParams();
+    void update_params();
 
-    static void setVelocity(MotionSetpoint* setpoint,
+    static void set_velocity(MotionSetpoint* setpoint,
                             Geometry2d::Twist target_vel);
 
-    int _shell_id;
+    int shell_id_;
 
     /// The last velocity command (in m/s) that we sent / to the robot
-    Geometry2d::Twist _last_world_vel_command;
+    Geometry2d::Twist last_world_vel_command_;
 
     /// the time when the last velocity command was sent
-    RJ::Time _lastCmdTime;
+    RJ::Time last_cmd_time_;
 
-    Pid _positionXController;
-    Pid _positionYController;
-    Pid _angleController;
+    Pid position_x_controller_;
+    Pid position_y_controller_;
+    Pid angle_controller_;
 
-    static ConfigDouble* _max_acceleration;
-    static ConfigDouble* _max_velocity;
-    static ConfigDouble* _x_multiplier;
+    static ConfigDouble* max_acceleration;
+    static ConfigDouble* max_velocity;
+    static ConfigDouble* x_multiplier;
 
-    DebugDrawer* _drawer{};
-    RobotConfig* _config{};
+    DebugDrawer* drawer_{};
+    RobotConfig* config_{};
 };

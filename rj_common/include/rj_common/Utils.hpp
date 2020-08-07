@@ -4,42 +4,42 @@
 #include <iostream>
 #include <stdexcept>
 
-const static bool THROW_DEBUG_EXCEPTIONS = true;
+const static bool kThrowDebugExceptions = true;
 
 template <typename T>
 inline int signum(T val) {
     return (0 < val) - (val <= 0);
 }
 
-inline void debugLog(const std::string& e) { std::cerr << e << std::endl; }
+inline void debug_log(const std::string& e) { std::cerr << e << std::endl; }
 
-inline void debugLog(const std::exception& e) {
+inline void debug_log(const std::exception& e) {
     std::cerr << e.what() << std::endl;
 }
 
-inline void debugLogIf(const std::string& e, bool condition) {
+inline void debug_log_if(const std::string& e, bool condition) {
     if (condition) {
-        debugLog(e);
+        debug_log(e);
     }
 }
 
 template <class T,
           typename std::enable_if<std::is_base_of<std::exception, T>::value,
                                   int>::type = 0>
-inline void debugThrow(const T& e) {
-    debugLog(e);
-    if (THROW_DEBUG_EXCEPTIONS) {
+inline void debug_throw(const T& e) {
+    debug_log(e);
+    if (kThrowDebugExceptions) {
         throw e;
     }
 }
 
-inline void debugThrow(const std::string& string) {
-    debugThrow(std::runtime_error(string));
+inline void debug_throw(const std::string& string) {
+    debug_throw(std::runtime_error(string));
 }
 
-inline void debugThrowIf(const std::string& string, bool condition) {
+inline void debug_throw_if(const std::string& string, bool condition) {
     if (condition) {
-        debugThrow(std::runtime_error(string));
+        debug_throw(std::runtime_error(string));
     }
 }
 
@@ -50,13 +50,13 @@ inline void debugThrowIf(const std::string& string, bool condition) {
  * @return An equivalent angle in radians restricted to [-pi, pi]
  */
 template <typename T>
-static inline T fixAngleRadians(T a) {
+static inline T fix_angle_radians(T a) {
     return remainder(a, 2 * M_PI);
 }
 
 template <typename T>
-inline T applyLowPassFilter(const T& oldValue, const T& newValue, double gain) {
-    return gain * newValue + (1 - gain) * oldValue;
+inline T apply_low_pass_filter(const T& old_value, const T& new_value, double gain) {
+    return gain * new_value + (1 - gain) * old_value;
 }
 
 template <typename T, typename S>

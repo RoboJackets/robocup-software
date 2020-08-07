@@ -20,31 +20,31 @@ public:
     /**
      * Adds a record to our history list
      *
-     * @param calcTime Time of calculation for this vision loop
+     * @param calc_time Time of calculation for this vision loop
      * @param ball Best estimation of the current ball
-     * @param yellowRobots Best estimation of the yellow robots
-     * @param blueRobots Best estimation of the blue robots
-     * @param kickEvent Returned kick event if we find one
+     * @param yellow_robots Best estimation of the yellow robots
+     * @param blue_robots Best estimation of the blue robots
+     * @param kick_event Returned kick event if we find one
      *
      * @return Whether there was a kick
      *
-     * @note kickEvent is only filled if it returns true
+     * @note kick_event is only filled if it returns true
      * It will change, but will have invalid data in it
      */
-    bool addRecord(RJ::Time calcTime, const WorldBall& ball,
-                   const std::vector<WorldRobot>& yellowRobots,
-                   const std::vector<WorldRobot>& blueRobots,
-                   KickEvent* kickEvent);
+    bool add_record(RJ::Time calc_time, const WorldBall& ball,
+                   const std::vector<WorldRobot>& yellow_robots,
+                   const std::vector<WorldRobot>& blue_robots,
+                   KickEvent* kick_event);
 
 private:
     /**
      * Tries to find out if/which robot kicked
      *
-     * @param kickEvent Returned kick event if one is detected
+     * @param kick_event Returned kick event if one is detected
      *
      * @return whether a kick event was detected
      */
-    bool detectKick(KickEvent* kickEvent);
+    bool detect_kick(KickEvent* kick_event);
 
     /**
      * Checks to see if all the different tests to detect kicks are true
@@ -54,7 +54,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool checkAllValidators(const std::vector<WorldRobot>& robot,
+    static bool check_all_validators(const std::vector<WorldRobot>& robot,
                                    const std::vector<WorldBall>& ball);
 
     /**
@@ -65,7 +65,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distanceValidator(const std::vector<WorldRobot>& robot,
+    static bool distance_validator(const std::vector<WorldRobot>& robot,
                                   const std::vector<WorldBall>& ball);
 
     /**
@@ -76,7 +76,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool velocityValidator(const std::vector<WorldRobot>& robot,
+    static bool velocity_validator(const std::vector<WorldRobot>& robot,
                                   const std::vector<WorldBall>& ball);
 
     /**
@@ -87,7 +87,7 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool distanceIncreasingValidator(
+    static bool distance_increasing_validator(
         const std::vector<WorldRobot>& robot,
         const std::vector<WorldBall>& ball);
 
@@ -99,9 +99,9 @@ private:
      *
      * @note robots and balls should be time synced
      */
-    static bool inFrontValidator(const std::vector<WorldRobot>& robot,
+    static bool in_front_validator(const std::vector<WorldRobot>& robot,
                                  const std::vector<WorldBall>& ball);
 
-    std::deque<VisionState> stateHistory;
+    std::deque<VisionState> state_history_;
 };
 }  // namespace vision_filter

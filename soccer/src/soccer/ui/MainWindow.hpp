@@ -251,8 +251,8 @@ private:
 
     std::vector<QComboBox*> _robotDebugResponseQComboBoxes{};
 
-    std::mutex* _context_mutex;
-    Context* _context;
+    std::mutex* context__mutex;
+    Context* context_;
 
     // ROS Compatibility stuff
     void send_quick_command(int command);

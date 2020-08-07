@@ -65,7 +65,7 @@ void StripChart::exportChart() {
 
     for (const auto& frame_i : *_history) {
         if (frame_i) {
-            outfile << RJ::TimestampToSecs(frame_i->timestamp() - startTime);
+            outfile << RJ::timestamp_to_secs(frame_i->timestamp() - startTime);
 
             for (auto* function : _functions) {
                 float v = 0;
@@ -155,7 +155,7 @@ void StripChart::paintEvent(QPaintEvent* /*e*/) {
 
                         auto t1 = _history->at(hist_idx - 1)->timestamp();
                         auto t2 = _history->at(hist_idx + 1)->timestamp();
-                        auto deltaTime = RJ::TimestampToSecs(t2 - t1);
+                        auto deltaTime = RJ::timestamp_to_secs(t2 - t1);
 
                         auto derivative = (v2 - v1) / (deltaTime);
                         p.drawText(mappedCursorPos + QPointF(15, fontHeight * (1 + x * 2)),
