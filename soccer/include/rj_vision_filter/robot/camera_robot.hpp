@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/pose.hpp>
 #include <rj_common/time.hpp>
 #include <rj_msgs/msg/detection_robot.hpp>
 #include <vector>
@@ -20,7 +20,7 @@ public:
      * @param theta Heading of the robot observation
      * @param robot_id ID of the robot
      */
-    CameraRobot(RJ::Time time_captured, Geometry2d::Pose pose, int robot_id)
+    CameraRobot(RJ::Time time_captured, rj_geometry::Pose pose, int robot_id)
         : time_captured_(time_captured), pose_(pose), robot_id_(robot_id) {}
 
     /**
@@ -31,7 +31,7 @@ public:
      * @param team_angle
      */
     CameraRobot(const RJ::Time& time_captured, const DetectionRobotMsg& msg,
-                const Geometry2d::TransformMatrix& world_to_team,
+                const rj_geometry::TransformMatrix& world_to_team,
                 double team_angle);
 
     /**
@@ -42,7 +42,7 @@ public:
     /**
      * @return the position of the measurement
      */
-    Geometry2d::Point get_pos() const;
+    rj_geometry::Point get_pos() const;
 
     /**
      * @return the heading of the measurement
@@ -57,7 +57,7 @@ public:
     /**
      * @return the pose of the measurement
      */
-    Geometry2d::Pose get_pose() const;
+    rj_geometry::Pose get_pose() const;
 
     /**
      * Combines all the robots in the list and returns a robot
@@ -71,7 +71,7 @@ public:
 
 private:
     RJ::Time time_captured_;
-    Geometry2d::Pose pose_;
+    rj_geometry::Pose pose_;
 
     int robot_id_;
 };

@@ -2,14 +2,14 @@
 
 #include <stdexcept>
 
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/pose.hpp>
 
 #include "instant.hpp"
 
 namespace Planning {
 
-using Geometry2d::Pose;
-using Geometry2d::Twist;
+using rj_geometry::Pose;
+using rj_geometry::Twist;
 
 Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     if (a.empty() || b.empty()) {
@@ -19,7 +19,7 @@ Trajectory::Trajectory(Trajectory a, const Trajectory& b) {
     RobotInstant a_end = a.last();
     RobotInstant b_begin = b.first();
 
-    using Geometry2d::Point;
+    using rj_geometry::Point;
     if (!a_end.position().near_point(b_begin.position(), 1e-6) ||
         !a_end.linear_velocity().near_point(b_begin.linear_velocity(), 1e-6) ||
         a_end.stamp != b_begin.stamp) {
@@ -184,7 +184,7 @@ Trajectory::Cursor Trajectory::cursor(RJ::Time start_time) const {
 Trajectory::Cursor Trajectory::cursor_begin() const { return Cursor{*this, instants_.begin()}; }
 
 void Trajectory::draw(DebugDrawer* drawer,
-                      std::optional<Geometry2d::Point> alt_text_position) const {
+                      std::optional<rj_geometry::Point> alt_text_position) const {
     if (instants_.size() > 1) {
         Packet::DebugRobotPath* dbg_path = drawer->add_debug_path();
         dbg_path->set_layer(drawer->find_debug_layer("Motion"));
@@ -197,11 +197,11 @@ void Trajectory::draw(DebugDrawer* drawer,
     }
 
     if (debug_text_) {
-        Geometry2d::Point text_pos;
+        rj_geometry::Point text_pos;
 
         // Only use the backup position if there's no trajectory.
         if (!empty()) {
-            text_pos = first().pose.position() + Geometry2d::Point(0.1, 0);
+            text_pos = first().pose.position() + rj_geometry::Point(0.1, 0);
         } else if (alt_text_position.has_value()) {
             text_pos = alt_text_position.value();
         } else {

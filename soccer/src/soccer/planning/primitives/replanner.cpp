@@ -9,7 +9,7 @@
 #include "planning/primitives/angle_planning.hpp"
 #include "planning/primitives/create_path.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning {
 
@@ -105,7 +105,7 @@ Trajectory Replanner::check_better(const Replanner::PlanParams& params, Trajecto
 }
 
 Trajectory Replanner::create_plan(Replanner::PlanParams params, Trajectory previous) {
-    Geometry2d::Point goal_point = params.goal.position;
+    rj_geometry::Point goal_point = params.goal.position;
 
     if (!previous.empty() && !previous.time_created().has_value()) {
         throw std::invalid_argument(

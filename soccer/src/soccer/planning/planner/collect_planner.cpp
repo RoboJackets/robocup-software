@@ -8,7 +8,7 @@
 #include "planning/primitives/create_path.hpp"
 #include "planning/primitives/rrt_util.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning {
 
@@ -197,7 +197,7 @@ void CollectPlanner::process_state_transition(BallState ball, RobotInstant start
 }
 
 Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, RobotInstant start,
-                                           const Geometry2d::ShapeSet& static_obstacles,
+                                           const rj_geometry::ShapeSet& static_obstacles,
                                            const std::vector<DynamicObstacle>& dynamic_obstacles) {
     BallState ball = plan_request.world_state->ball;
 
@@ -253,7 +253,7 @@ Trajectory CollectPlanner::coarse_approach(const PlanRequest& plan_request, Robo
 
 Trajectory CollectPlanner::fine_approach(
     const PlanRequest& plan_request, RobotInstant start_instant,
-    const Geometry2d::ShapeSet& /* static_obstacles */,
+    const rj_geometry::ShapeSet& /* static_obstacles */,
     const std::vector<DynamicObstacle>& /* dynamic_obstacles */) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints_hit = plan_request.constraints;
@@ -308,7 +308,7 @@ Trajectory CollectPlanner::fine_approach(
 
 Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant start,
                                    const Trajectory& /* partial_path */,
-                                   const Geometry2d::ShapeSet& static_obstacles,
+                                   const rj_geometry::ShapeSet& static_obstacles,
                                    const std::vector<DynamicObstacle>& dynamic_obstacles) {
     BallState ball = plan_request.world_state->ball;
     RobotConstraints robot_constraints = plan_request.constraints;
@@ -402,7 +402,7 @@ Trajectory CollectPlanner::control(const PlanRequest& plan_request, RobotInstant
 }
 
 Trajectory CollectPlanner::invalid(const PlanRequest& plan_request,
-                                   const Geometry2d::ShapeSet& static_obstacles,
+                                   const rj_geometry::ShapeSet& static_obstacles,
                                    const std::vector<DynamicObstacle>& dynamic_obstacles) {
     std::cout << "WARNING: Invalid state in collect planner. Restarting" << std::endl;
     current_state_ = CourseApproach;

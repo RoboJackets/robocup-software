@@ -17,7 +17,7 @@ TEST(WorldBall, no_ball) {
 
 TEST(WorldBall, one_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1, 1);
+    rj_geometry::Point p = rj_geometry::Point(1, 1);
     CameraBall b = CameraBall(t, p);
     int c_id = 1;
     WorldBall w;
@@ -29,8 +29,8 @@ TEST(WorldBall, one_ball) {
 
     WorldBall wb = WorldBall(t, kbl);
 
-    Geometry2d::Point rp = wb.get_pos();
-    Geometry2d::Point rv = wb.get_vel();
+    rj_geometry::Point rp = wb.get_pos();
+    rj_geometry::Point rv = wb.get_vel();
     double rpc = wb.get_pos_cov();
     double rvc = wb.get_vel_cov();
 
@@ -50,8 +50,8 @@ TEST(WorldBall, one_ball) {
 
 TEST(WorldBall, two_ball) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p1 = Geometry2d::Point(1, 1);
-    Geometry2d::Point p2 = Geometry2d::Point(2, 2);
+    rj_geometry::Point p1 = rj_geometry::Point(1, 1);
+    rj_geometry::Point p2 = rj_geometry::Point(2, 2);
     CameraBall b1 = CameraBall(t, p1);
     CameraBall b2 = CameraBall(t, p2);
     int c_id = 1;
@@ -66,8 +66,8 @@ TEST(WorldBall, two_ball) {
 
     WorldBall wb = WorldBall(t, kbl);
 
-    Geometry2d::Point rp = wb.get_pos();
-    Geometry2d::Point rv = wb.get_vel();
+    rj_geometry::Point rp = wb.get_pos();
+    rj_geometry::Point rv = wb.get_vel();
     double rpc = wb.get_pos_cov();
     double rvc = wb.get_vel_cov();
 

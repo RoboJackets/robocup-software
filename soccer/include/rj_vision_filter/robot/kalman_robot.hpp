@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/pose.hpp>
 #include <boost/circular_buffer.hpp>
 #include <rj_common/utils.hpp>
 #include <rj_vision_filter/filter/kalman_filter3_d.hpp>
@@ -67,7 +67,7 @@ public:
     /**
      * @return Best estimate of the linear position of the robot
      */
-    Geometry2d::Point get_pos() const;
+    rj_geometry::Point get_pos() const;
 
     /**
      * @return Best estimate of the heading. Not bounded
@@ -77,7 +77,7 @@ public:
     /**
      * @return Best estimate of the linear velocity of the robot
      */
-    Geometry2d::Point get_vel() const;
+    rj_geometry::Point get_vel() const;
 
     /**
      * @return Best estimate of the angular velocity
@@ -88,7 +88,7 @@ public:
      * @return Covariance in X and Y linear direction of the position of the
      * robot
      */
-    Geometry2d::Point get_pos_cov() const;
+    rj_geometry::Point get_pos_cov() const;
 
     /**
      * @return Covariance of theta of the robot
@@ -99,7 +99,7 @@ public:
      * @return Covariance in X and Y linear direction of the velocity of the
      * robot
      */
-    Geometry2d::Point get_vel_cov() const;
+    rj_geometry::Point get_vel_cov() const;
 
     /**
      * @return Covariance of omega of the robot

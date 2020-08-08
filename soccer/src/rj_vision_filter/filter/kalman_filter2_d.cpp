@@ -15,7 +15,7 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, ball, observation_noise, 2.0,
 
 KalmanFilter2D::KalmanFilter2D() : KalmanFilter(1, 1) {}
 
-KalmanFilter2D::KalmanFilter2D(Geometry2d::Point init_pos, Geometry2d::Point init_vel)
+KalmanFilter2D::KalmanFilter2D(rj_geometry::Point init_pos, rj_geometry::Point init_vel)
     : KalmanFilter(4, 2) {
     // clang-format off
     // States are X pos, X vel, Y pos, Y vel
@@ -93,29 +93,29 @@ KalmanFilter2D::KalmanFilter2D(Geometry2d::Point init_pos, Geometry2d::Point ini
     // clang-format on
 }
 
-void KalmanFilter2D::predict_with_update(Geometry2d::Point observation) {
+void KalmanFilter2D::predict_with_update(rj_geometry::Point observation) {
     z_k_ << observation.x(), observation.y();
 
     KalmanFilter::predict_with_update();
 }
 
-Geometry2d::Point KalmanFilter2D::get_pos() const {
-    return Geometry2d::Point(x_k_k_(0), x_k_k_(2));
+rj_geometry::Point KalmanFilter2D::get_pos() const {
+    return rj_geometry::Point(x_k_k_(0), x_k_k_(2));
 }
 
-Geometry2d::Point KalmanFilter2D::get_vel() const {
-    return Geometry2d::Point(x_k_k_(1), x_k_k_(3));
+rj_geometry::Point KalmanFilter2D::get_vel() const {
+    return rj_geometry::Point(x_k_k_(1), x_k_k_(3));
 }
 
-Geometry2d::Point KalmanFilter2D::get_pos_cov() const {
-    return Geometry2d::Point(P_k_k_(0, 0), P_k_k_(2, 2));
+rj_geometry::Point KalmanFilter2D::get_pos_cov() const {
+    return rj_geometry::Point(P_k_k_(0, 0), P_k_k_(2, 2));
 }
 
-Geometry2d::Point KalmanFilter2D::get_vel_cov() const {
-    return Geometry2d::Point(P_k_k_(1, 1), P_k_k_(3, 3));
+rj_geometry::Point KalmanFilter2D::get_vel_cov() const {
+    return rj_geometry::Point(P_k_k_(1, 1), P_k_k_(3, 3));
 }
 
-void KalmanFilter2D::set_vel(Geometry2d::Point new_vel) {
+void KalmanFilter2D::set_vel(rj_geometry::Point new_vel) {
     x_k_k_(1) = new_vel.x();
     x_k_k_(3) = new_vel.y();
 }

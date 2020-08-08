@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/pose.hpp>
 #include <world_state.hpp>
 #include <variant>
 
@@ -11,11 +11,11 @@
 namespace Planning {
 // todo(Ethan) discuss whether we want to have settle with bounce
 struct SettleCommand {
-    std::optional<Geometry2d::Point> target;
+    std::optional<rj_geometry::Point> target;
 };
 struct CollectCommand {};
 struct LineKickCommand {
-    Geometry2d::Point target;
+    rj_geometry::Point target;
 };
 
 /**
@@ -28,7 +28,7 @@ struct TargetFaceAngle {
     double target;
 };
 struct TargetFacePoint {
-    Geometry2d::Point face_point;
+    rj_geometry::Point face_point;
 };
 
 using AngleOverride =
@@ -45,7 +45,7 @@ struct PathTargetCommand {
  * Move with a particular velocity.
  */
 struct WorldVelCommand {
-    Geometry2d::Point world_vel;
+    rj_geometry::Point world_vel;
 };
 
 /**
@@ -54,8 +54,8 @@ struct WorldVelCommand {
  * The robot will face the pivot_point throughout the command.
  */
 struct PivotCommand {
-    Geometry2d::Point pivot_point;
-    Geometry2d::Point pivot_target;
+    rj_geometry::Point pivot_point;
+    rj_geometry::Point pivot_target;
 };
 
 /**
@@ -65,7 +65,7 @@ struct PivotCommand {
  * Designed for goal defense.
  */
 struct InterceptCommand {
-    Geometry2d::Point target;
+    rj_geometry::Point target;
 };
 
 using MotionCommand =

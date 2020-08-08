@@ -5,7 +5,7 @@
 #include "kick_evaluator.hpp"
 #include "system_state.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 TEST(KickEvaluator, no_robots) {
     Context context;

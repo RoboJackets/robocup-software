@@ -79,7 +79,7 @@ protected:
      * @param point The goal point for placement.
      * @param blue_placement Who is placing the ball.
      */
-    void ball_placement(Geometry2d::Point point, bool blue_placement);
+    void ball_placement(rj_geometry::Point point, bool blue_placement);
 
     void set_period(GameState::Period period);
     void set_stage_time_left(RJ::Seconds stage_time_left);
@@ -98,7 +98,7 @@ protected:
     void set_goalie(uint8_t goalie_id);
 
     // TODO(1556): Implement kick watcher
-    void capture_ready_point(const Geometry2d::Point& ball_position) {
+    void capture_ready_point(const rj_geometry::Point& ball_position) {
         capture_ready_point_ = ball_position;
     }
 
@@ -162,7 +162,7 @@ private:
     void update_team_color_from_names();
 
     // Kick detector information
-    std::optional<Geometry2d::Point> capture_ready_point_;
+    std::optional<rj_geometry::Point> capture_ready_point_;
 
     params::ROS2ParamProvider param_provider_;
 };

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Geometry2d/GeometryConversions.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/TransformMatrix.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/transform_matrix.hpp>
 #include <rj_common/field_dimensions.hpp>
 #include <rj_common/referee_enums.hpp>
 #include <rj_common/time.hpp>
@@ -53,14 +53,14 @@ public:
     // Time in seconds remaining in the current period
     RJ::Seconds stage_time_left{};
 
-    std::optional<Geometry2d::Point> ball_placement_point;
+    std::optional<rj_geometry::Point> ball_placement_point;
 
     GameState() = default;
 
     GameState(
         Period period, State state, Restart restart, bool our_restart,
         RJ::Seconds stage_time_left,
-        std::optional<Geometry2d::Point> ball_placement_point = std::nullopt)
+        std::optional<rj_geometry::Point> ball_placement_point = std::nullopt)
         : period{period},
           state{state},
           restart{restart},
@@ -171,7 +171,7 @@ public:
         return restart == Penalty;
     }
 
-    [[nodiscard]] std::optional<Geometry2d::Point> get_ball_placement_point()
+    [[nodiscard]] std::optional<rj_geometry::Point> get_ball_placement_point()
         const {
         return ball_placement_point;
     }

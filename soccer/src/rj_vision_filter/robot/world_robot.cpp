@@ -17,9 +17,9 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
                        const std::list<KalmanRobot>& kalman_robots)
     : team_(team), robot_id_(robot_id), is_valid_(true), time_(calc_time) {
     // Theta's are converted to rect coords then back to polar to convert
-    Geometry2d::Point pos_cartesian_avg;
-    Geometry2d::Point theta_cartesian_avg;
-    Geometry2d::Twist twist_avg;
+    rj_geometry::Point pos_cartesian_avg;
+    rj_geometry::Point theta_cartesian_avg;
+    rj_geometry::Twist twist_avg;
 
     double total_pos_weight = 0;
     double total_vel_weight = 0;
@@ -37,13 +37,13 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
     for (const KalmanRobot& robot : kalman_robots) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Pose pose_cov{robot.get_pos_cov(), robot.get_theta_cov()};
-        Geometry2d::Twist twist_cov{robot.get_vel_cov(), robot.get_omega_cov()};
+        rj_geometry::Pose pose_cov{robot.get_pos_cov(), robot.get_theta_cov()};
+        rj_geometry::Twist twist_cov{robot.get_vel_cov(), robot.get_omega_cov()};
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Pose pose_std_dev;
-        Geometry2d::Twist twist_std_dev;
+        rj_geometry::Pose pose_std_dev;
+        rj_geometry::Twist twist_std_dev;
         pose_std_dev.position().x() = std::sqrt(pose_cov.position().x());
         pose_std_dev.position().y() = std::sqrt(pose_cov.position().y());
         twist_std_dev.linear().x() = std::sqrt(twist_cov.linear().x());
@@ -69,7 +69,7 @@ WorldRobot::WorldRobot(RJ::Time calc_time, Team team, int robot_id,
             std::pow(vel_uncertantity * filter_uncertantity, -PARAM_robot_merger_power);
 
         pos_cartesian_avg += filter_pos_weight * robot.get_pos();
-        theta_cartesian_avg += Geometry2d::Point(filter_pos_weight * cos(robot.get_theta()),
+        theta_cartesian_avg += rj_geometry::Point(filter_pos_weight * cos(robot.get_theta()),
                                                  filter_pos_weight * sin(robot.get_theta()));
         twist_avg.linear() += filter_vel_weight * robot.get_vel();
         twist_avg.angular() += filter_vel_weight * robot.get_omega();
@@ -96,17 +96,17 @@ bool WorldRobot::get_is_valid() const { return is_valid_; }
 
 int WorldRobot::get_robot_id() const { return robot_id_; }
 
-Geometry2d::Point WorldRobot::get_pos() const { return pose_.position(); }
+rj_geometry::Point WorldRobot::get_pos() const { return pose_.position(); }
 
 double WorldRobot::get_theta() const { return pose_.heading(); }
 
-Geometry2d::Pose WorldRobot::get_pose() const { return pose_; }
+rj_geometry::Pose WorldRobot::get_pose() const { return pose_; }
 
-Geometry2d::Point WorldRobot::get_vel() const { return twist_.linear(); }
+rj_geometry::Point WorldRobot::get_vel() const { return twist_.linear(); }
 
 double WorldRobot::get_omega() const { return twist_.angular(); }
 
-Geometry2d::Twist WorldRobot::get_twist() const { return twist_; }
+rj_geometry::Twist WorldRobot::get_twist() const { return twist_; }
 
 double WorldRobot::get_pos_cov() const { return pos_cov_; }
 

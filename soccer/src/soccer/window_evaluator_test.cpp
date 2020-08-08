@@ -4,7 +4,7 @@
 #include "system_state.hpp"
 #include "window_evaluator.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 Configuration config;
 

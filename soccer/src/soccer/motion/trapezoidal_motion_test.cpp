@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <motion/trapezoidal_motion.hpp>
 
 #include "gtest/gtest.h"

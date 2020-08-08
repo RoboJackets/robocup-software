@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/kick/detector/slow_kick_detector.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -180,10 +180,10 @@ bool SlowKickDetector::in_front_validator(const std::vector<WorldRobot>& robot,
 
     // robot and ball are the same
     for (int i = 0; i < robot.size(); i++) {
-        Geometry2d::Point normal =
-            Geometry2d::Point(cos(robot.at(i).get_theta()), sin(robot.at(i).get_theta()));
+        rj_geometry::Point normal =
+            rj_geometry::Point(cos(robot.at(i).get_theta()), sin(robot.at(i).get_theta()));
 
-        Geometry2d::Point robot_to_ball = ball.at(i).get_pos() - robot.at(i).get_pos();
+        rj_geometry::Point robot_to_ball = ball.at(i).get_pos() - robot.at(i).get_pos();
 
         double angle = normal.angle_between(robot_to_ball);
 

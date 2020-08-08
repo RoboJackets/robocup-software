@@ -22,8 +22,8 @@ KalmanRobot::KalmanRobot(unsigned int camera_id, RJ::Time creation_time,
       unwrap_theta_ctr_(0),
       robot_id_(init_measurement.get_robot_id()),
       previous_measurements_(kick::detector::PARAM_slow_kick_hist_length) {
-    Geometry2d::Pose init_pose = init_measurement.get_pose();
-    Geometry2d::Twist init_twist(0, 0, 0);
+    rj_geometry::Pose init_pose = init_measurement.get_pose();
+    rj_geometry::Twist init_twist(0, 0, 0);
 
     if (previous_world_robot.get_is_valid()) {
         init_twist.linear() = previous_world_robot.get_vel();
@@ -85,19 +85,19 @@ int KalmanRobot::get_robot_id() const { return robot_id_; }
 
 int KalmanRobot::get_health() const { return health_; }
 
-Geometry2d::Point KalmanRobot::get_pos() const { return filter_.get_pos(); }
+rj_geometry::Point KalmanRobot::get_pos() const { return filter_.get_pos(); }
 
 double KalmanRobot::get_theta() const { return filter_.get_theta(); }
 
-Geometry2d::Point KalmanRobot::get_vel() const { return filter_.get_vel(); }
+rj_geometry::Point KalmanRobot::get_vel() const { return filter_.get_vel(); }
 
 double KalmanRobot::get_omega() const { return filter_.get_omega(); }
 
-Geometry2d::Point KalmanRobot::get_pos_cov() const { return filter_.get_pos_cov(); }
+rj_geometry::Point KalmanRobot::get_pos_cov() const { return filter_.get_pos_cov(); }
 
 double KalmanRobot::get_theta_cov() const { return filter_.get_theta_cov(); }
 
-Geometry2d::Point KalmanRobot::get_vel_cov() const { return filter_.get_vel_cov(); }
+rj_geometry::Point KalmanRobot::get_vel_cov() const { return filter_.get_vel_cov(); }
 
 double KalmanRobot::get_omega_cov() const { return filter_.get_omega_cov(); }
 

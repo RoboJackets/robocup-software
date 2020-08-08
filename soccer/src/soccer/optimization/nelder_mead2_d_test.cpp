@@ -2,21 +2,21 @@
 
 #include <gtest/gtest.h>
 
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/util.hpp>
 
 #include "nelder_mead2_d.hpp"
 #include "nelder_mead2_d_config.hpp"
 
-static float eval_function1(Geometry2d::Point p) {
+static float eval_function1(rj_geometry::Point p) {
     return -1 * sqrt(p.x() * p.x() + p.y() * p.y());
 }
 
-static float eval_function2(Geometry2d::Point p) { return 1; }
+static float eval_function2(rj_geometry::Point p) { return 1; }
 
 TEST(NelderMead2D, execute) {
-    std::function<float(Geometry2d::Point)> f = &eval_function1;
-    NelderMead2DConfig config(f, Geometry2d::Point(1, 1), Geometry2d::Point(1, 1),
-                              Geometry2d::Point(0.001, 0.001), 1, 2, .5, .5, 100, 0, 0);
+    std::function<float(rj_geometry::Point)> f = &eval_function1;
+    NelderMead2DConfig config(f, rj_geometry::Point(1, 1), rj_geometry::Point(1, 1),
+                              rj_geometry::Point(0.001, 0.001), 1, 2, .5, .5, 100, 0, 0);
 
     NelderMead2D nm(config);
 
@@ -28,9 +28,9 @@ TEST(NelderMead2D, execute) {
 }
 
 TEST(NelderMead2D, iteration_limit) {
-    std::function<float(Geometry2d::Point)> f = &eval_function2;
-    NelderMead2DConfig config(f, Geometry2d::Point(1, 1), Geometry2d::Point(.0001, .0001),
-                              Geometry2d::Point(0.001, 0.001), 1, 2, .5, .5, 100, 0, 0);
+    std::function<float(rj_geometry::Point)> f = &eval_function2;
+    NelderMead2DConfig config(f, rj_geometry::Point(1, 1), rj_geometry::Point(.0001, .0001),
+                              rj_geometry::Point(0.001, 0.001), 1, 2, .5, .5, 100, 0, 0);
 
     NelderMead2D nm(config);
 
@@ -42,9 +42,9 @@ TEST(NelderMead2D, iteration_limit) {
 }
 
 TEST(NelderMead2D, max_limit) {
-    std::function<float(Geometry2d::Point)> f = &eval_function1;
-    NelderMead2DConfig config(f, Geometry2d::Point(1, 1), Geometry2d::Point(1, 1),
-                              Geometry2d::Point(0.001, 0.001), 1, 2, .5, .5, 100, 0, 0.1);
+    std::function<float(rj_geometry::Point)> f = &eval_function1;
+    NelderMead2DConfig config(f, rj_geometry::Point(1, 1), rj_geometry::Point(1, 1),
+                              rj_geometry::Point(0.001, 0.001), 1, 2, .5, .5, 100, 0, 0.1);
 
     NelderMead2D nm(config);
 

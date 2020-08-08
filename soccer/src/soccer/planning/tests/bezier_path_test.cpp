@@ -4,7 +4,7 @@
 
 #include "planning/primitives/path_smoothing.hpp"
 
-using Geometry2d::Point;
+using rj_geometry::Point;
 
 static void check_bezier_low_curvature(const Planning::BezierPath& path) {
     // Expected error is O(1/N)

@@ -14,8 +14,8 @@ WorldBall::WorldBall() : is_valid_(false) {}
 
 WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_balls)
     : is_valid_(true), time_(calc_time) {
-    Geometry2d::Point pos_avg = Geometry2d::Point(0, 0);
-    Geometry2d::Point vel_avg = Geometry2d::Point(0, 0);
+    rj_geometry::Point pos_avg = rj_geometry::Point(0, 0);
+    rj_geometry::Point vel_avg = rj_geometry::Point(0, 0);
     double total_pos_weight = 0;
     double total_vel_weight = 0;
 
@@ -32,13 +32,13 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
     for (const KalmanBall& ball : kalman_balls) {
         // Get the covariance of everything
         // AKA how well we can predict the next measurement
-        Geometry2d::Point pos_cov = ball.get_pos_cov();
-        Geometry2d::Point vel_cov = ball.get_vel_cov();
+        rj_geometry::Point pos_cov = ball.get_pos_cov();
+        rj_geometry::Point vel_cov = ball.get_vel_cov();
 
         // Std dev of each state
         // Lower std dev gives better idea of true values
-        Geometry2d::Point pos_std_dev;
-        Geometry2d::Point vel_std_dev;
+        rj_geometry::Point pos_std_dev;
+        rj_geometry::Point vel_std_dev;
         pos_std_dev.x() = std::sqrt(pos_cov.x());
         pos_std_dev.y() = std::sqrt(pos_cov.y());
         vel_std_dev.x() = std::sqrt(vel_cov.x());
@@ -79,9 +79,9 @@ WorldBall::WorldBall(RJ::Time calc_time, const std::list<KalmanBall>& kalman_bal
 
 bool WorldBall::get_is_valid() const { return is_valid_; }
 
-Geometry2d::Point WorldBall::get_pos() const { return pos_; }
+rj_geometry::Point WorldBall::get_pos() const { return pos_; }
 
-Geometry2d::Point WorldBall::get_vel() const { return vel_; }
+rj_geometry::Point WorldBall::get_vel() const { return vel_; }
 
 double WorldBall::get_pos_cov() const { return pos_cov_; }
 

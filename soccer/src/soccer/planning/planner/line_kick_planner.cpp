@@ -1,7 +1,7 @@
 #include "line_kick_planner.hpp"
 
 #include <configuration.hpp>
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/util.hpp>
 #include <motion/trapezoidal_motion.hpp>
 
 #include "escape_obstacles_path_planner.hpp"
@@ -9,7 +9,7 @@
 #include "planning/primitives/create_path.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning {
 

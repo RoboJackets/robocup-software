@@ -38,7 +38,7 @@ BallState BallState::predict_in(RJ::Seconds seconds) const {
     return predict_at(timestamp + seconds);
 }
 
-RJ::Time BallState::query_time_near(Geometry2d::Point near_to, Geometry2d::Point* out) const {
+RJ::Time BallState::query_time_near(rj_geometry::Point near_to, rj_geometry::Point* out) const {
     // If the ball isn't moving we're as close as we're ever going to get.
     if (velocity.mag() == 0) {
         if (out != nullptr) {
@@ -48,8 +48,8 @@ RJ::Time BallState::query_time_near(Geometry2d::Point near_to, Geometry2d::Point
     }
 
     // Otherwise, find the closest point on the ball's line of travel...
-    Geometry2d::Segment segment(position, predict_at(RJ::Time::max()).position);
-    Geometry2d::Point nearest = segment.nearest_point(near_to);
+    rj_geometry::Segment segment(position, predict_at(RJ::Time::max()).position);
+    rj_geometry::Point nearest = segment.nearest_point(near_to);
 
     double distance_to_nearest = (position - nearest).mag();
 
@@ -69,11 +69,11 @@ RJ::Time BallState::query_time_near(Geometry2d::Point near_to, Geometry2d::Point
     return timestamp + seconds;
 }
 
-RJ::Seconds BallState::query_seconds_near(Geometry2d::Point near_to, Geometry2d::Point* out) const {
+RJ::Seconds BallState::query_seconds_near(rj_geometry::Point near_to, rj_geometry::Point* out) const {
     return query_time_near(near_to, out) - timestamp;
 }
 
-RJ::Seconds BallState::query_stop_time(Geometry2d::Point* out) const {
+RJ::Seconds BallState::query_stop_time(rj_geometry::Point* out) const {
     double speed = velocity.mag();
 
     if (out != nullptr) {
@@ -86,8 +86,8 @@ RJ::Seconds BallState::query_stop_time(Geometry2d::Point* out) const {
     return RJ::Seconds(speed / kBallDecayConstant);
 }
 
-Geometry2d::Point BallState::query_stop_position() const {
-    Geometry2d::Point point;
+rj_geometry::Point BallState::query_stop_position() const {
+    rj_geometry::Point point;
     [[maybe_unused]] auto stop_time = query_stop_time(&point);
     return point;
 }
@@ -108,7 +108,7 @@ std::optional<RJ::Seconds> BallState::query_seconds_to_dist(double distance) con
 }
 
 Planning::Trajectory BallState::make_trajectory() const {
-    using namespace Geometry2d;
+    using namespace rj_geometry;
 
     // The trajectory interface fits cubic splines. Luckily, a cubic spline
     // between two instants that can be connected by a constant acceleration

@@ -2,12 +2,12 @@
 
 #include <rj_protos/LogFrame.pb.h>
 
-#include <Geometry2d/Arc.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/ShapeSet.hpp>
+#include <rj_geometry/arc.hpp>
+#include <rj_geometry/composite_shape.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/polygon.hpp>
+#include <rj_geometry/segment.hpp>
+#include <rj_geometry/shape_set.hpp>
 #include <QColor>
 #include <QMap>
 #include <memory>
@@ -28,55 +28,55 @@ public:
     int find_debug_layer(QString layer);
 
     /** @ingroup drawing_functions */
-    void draw_polygon(const Geometry2d::Point* pts, int n,
+    void draw_polygon(const rj_geometry::Point* pts, int n,
                      const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_polygon(const std::vector<Geometry2d::Point>& pts,
+    void draw_polygon(const std::vector<rj_geometry::Point>& pts,
                      const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_polygon(const Geometry2d::Polygon& pts,
+    void draw_polygon(const rj_geometry::Polygon& pts,
                      const QColor& qc = Qt::black,
                      const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_circle(Geometry2d::Point center, float radius,
+    void draw_circle(rj_geometry::Point center, float radius,
                     const QColor& qc = Qt::black,
                     const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_arc(const Geometry2d::Arc& arc, const QColor& qw = Qt::black,
+    void draw_arc(const rj_geometry::Arc& arc, const QColor& qw = Qt::black,
                  const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_shape(const std::shared_ptr<Geometry2d::Shape>& obs,
+    void draw_shape(const std::shared_ptr<rj_geometry::Shape>& obs,
                    const QColor& qw = Qt::black,
                    const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_shape_set(const Geometry2d::ShapeSet& shapes,
+    void draw_shape_set(const rj_geometry::ShapeSet& shapes,
                       const QColor& qw = Qt::black,
                       const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_line(const Geometry2d::Segment& line, const QColor& qw = Qt::black,
+    void draw_line(const rj_geometry::Segment& line, const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_line(Geometry2d::Point p0, Geometry2d::Point p1,
+    void draw_line(rj_geometry::Point p0, rj_geometry::Point p1,
                   const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_text(const QString& text, Geometry2d::Point pos,
+    void draw_text(const QString& text, rj_geometry::Point pos,
                   const QColor& qw = Qt::black,
                   const QString& layer = QString());
 
     /** @ingroup drawing_functions */
-    void draw_segment(const Geometry2d::Segment& line,
+    void draw_segment(const rj_geometry::Segment& line,
                      const QColor& qw = Qt::black,
                      const QString& layer = QString());
 

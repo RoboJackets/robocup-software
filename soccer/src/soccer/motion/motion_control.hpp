@@ -2,7 +2,7 @@
 
 #include <configuration.hpp>
 #include <context.hpp>
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <rc-fshare/pid.hpp>
 #include <rj_common/time.hpp>
 
@@ -55,12 +55,12 @@ private:
     void update_params();
 
     static void set_velocity(MotionSetpoint* setpoint,
-                            Geometry2d::Twist target_vel);
+                            rj_geometry::Twist target_vel);
 
     int shell_id_;
 
     /// The last velocity command (in m/s) that we sent / to the robot
-    Geometry2d::Twist last_world_vel_command_;
+    rj_geometry::Twist last_world_vel_command_;
 
     /// the time when the last velocity command was sent
     RJ::Time last_cmd_time_;

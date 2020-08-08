@@ -25,7 +25,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::python;
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 using namespace RefereeModuleEnums;
 
 ConfigDouble* GameplayModule::field_edge_inset;
@@ -218,8 +218,8 @@ bool Gameplay::GameplayModule::check_playbook_status() {
 /**
  * returns the group of obstacles for the field
  */
-Geometry2d::ShapeSet Gameplay::GameplayModule::global_obstacles() const {
-    Geometry2d::ShapeSet obstacles;
+rj_geometry::ShapeSet Gameplay::GameplayModule::global_obstacles() const {
+    rj_geometry::ShapeSet obstacles;
     if (context_->game_state.stay_on_side()) {
         obstacles.add(side_obstacle_);
     }
@@ -243,8 +243,8 @@ Geometry2d::ShapeSet Gameplay::GameplayModule::global_obstacles() const {
     return obstacles;
 }
 
-Geometry2d::ShapeSet Gameplay::GameplayModule::goal_zone_obstacles() const {
-    Geometry2d::ShapeSet zones;
+rj_geometry::ShapeSet Gameplay::GameplayModule::goal_zone_obstacles() const {
+    rj_geometry::ShapeSet zones;
     zones.add(their_goal_area_);
     zones.add(our_goal_area_);
     return zones;
@@ -259,7 +259,7 @@ void Gameplay::GameplayModule::run() {
         cout << "Starting GameplayModule::run()" << endl;
     }
 
-    ball_matrix_ = Geometry2d::TransformMatrix::translate(context_->world_state.ball.position);
+    ball_matrix_ = rj_geometry::TransformMatrix::translate(context_->world_state.ball.position);
 
     context_->global_obstacles = global_obstacles();
     context_->goal_zone_obstacles = goal_zone_obstacles();

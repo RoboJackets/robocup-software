@@ -25,6 +25,6 @@ TEST(ROSConvertGameState, game_state_lossless_convert_with_placement) {
                          GameState::Restart::Placement,
                          true,
                          RJ::Seconds(1.0),
-                         Geometry2d::Point(1.0, 2.0)};
+                         rj_geometry::Point(1.0, 2.0)};
     test_lossless_convert_cpp_value<GameState>(mock_state);
 }

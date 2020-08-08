@@ -174,12 +174,12 @@ void ExternalReferee::handle_command(SSL_Referee::Command command) {
             break;
         case SSL_Referee::BALL_PLACEMENT_YELLOW:
             // TODO(#1559): ball placement point
-            ball_placement(Geometry2d::Point{}, false);
+            ball_placement(rj_geometry::Point{}, false);
             stop();
             break;
         case SSL_Referee::BALL_PLACEMENT_BLUE:
             // TODO(#1559): ball placement point
-            ball_placement(Geometry2d::Point{}, true);
+            ball_placement(rj_geometry::Point{}, true);
             stop();
             break;
     }

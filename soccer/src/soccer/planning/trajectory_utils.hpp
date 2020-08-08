@@ -19,7 +19,7 @@ namespace Planning {
  * @return           Whether or not there is a collision.
  */
 bool trajectory_hits_static(const Trajectory& trajectory,
-                          const Geometry2d::ShapeSet& obstacles,
+                          const rj_geometry::ShapeSet& obstacles,
                           RJ::Time start_time, RJ::Time* hit_time);
 
 /**
@@ -36,7 +36,7 @@ bool trajectory_hits_static(const Trajectory& trajectory,
 bool trajectory_hits_dynamic(const Trajectory& trajectory,
                            const std::vector<DynamicObstacle>& obstacles,
                            RJ::Time start_time,
-                           Geometry2d::Circle* out_hit_obstacle,
+                           rj_geometry::Circle* out_hit_obstacle,
                            RJ::Time* out_hit_time);
 
 }  // namespace Planning

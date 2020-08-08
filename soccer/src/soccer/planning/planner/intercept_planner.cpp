@@ -25,11 +25,11 @@ Trajectory InterceptPlanner::plan(const PlanRequest& plan_request) {
 
     // Time for ball to hit target point
     // Target point is projected into ball velocity line
-    Geometry2d::Point target_pos_on_line;
+    rj_geometry::Point target_pos_on_line;
     RJ::Seconds ball_to_point_time = ball.query_seconds_near(command.target, &target_pos_on_line);
 
     // vector from robot to target
-    Geometry2d::Point bot_to_target = (target_pos_on_line - start_instant.position());
+    rj_geometry::Point bot_to_target = (target_pos_on_line - start_instant.position());
 
     // Max speed we can reach given the distance to target and constant
     // acceleration If we don't constrain the speed, there is a velocity

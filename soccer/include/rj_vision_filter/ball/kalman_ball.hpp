@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <boost/circular_buffer.hpp>
 #include <rj_vision_filter/ball/camera_ball.hpp>
 #include <rj_vision_filter/filter/kalman_filter2_d.hpp>
@@ -65,22 +65,22 @@ public:
     /**
      * @return Best estimate of the position of the ball
      */
-    Geometry2d::Point get_pos() const;
+    rj_geometry::Point get_pos() const;
 
     /**
      * @return Best estimate of the velocity of the ball
      */
-    Geometry2d::Point get_vel() const;
+    rj_geometry::Point get_vel() const;
 
     /**
      * @return Covariance in X and Y direction of the position of the ball
      */
-    Geometry2d::Point get_pos_cov() const;
+    rj_geometry::Point get_pos_cov() const;
 
     /**
      * @return Covariance in X and Y direction of the velocity of the ball
      */
-    Geometry2d::Point get_vel_cov() const;
+    rj_geometry::Point get_vel_cov() const;
 
     /**
      * @return List of previous camera ball measurements for kick
@@ -94,7 +94,7 @@ public:
      * Note: Only used to set the velocity when we think the ball will bounce
      * off another robot
      */
-    void set_vel(Geometry2d::Point new_vel);
+    void set_vel(rj_geometry::Point new_vel);
 
 private:
     RJ::Time last_update_time_;

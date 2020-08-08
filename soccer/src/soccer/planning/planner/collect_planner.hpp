@@ -45,21 +45,21 @@ private:
 
     Trajectory coarse_approach(
         const PlanRequest& plan_request, RobotInstant start,
-        const Geometry2d::ShapeSet& static_obstacles,
+        const rj_geometry::ShapeSet& static_obstacles,
         const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory fine_approach(
         const PlanRequest& plan_request, RobotInstant start_instant,
-        const Geometry2d::ShapeSet& static_obstacles,
+        const rj_geometry::ShapeSet& static_obstacles,
         const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory control(const PlanRequest& plan_request, RobotInstant start,
                        const Trajectory& partial_path,
-                       const Geometry2d::ShapeSet& static_obstacles,
+                       const rj_geometry::ShapeSet& static_obstacles,
                        const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory invalid(const PlanRequest& plan_request,
-                       const Geometry2d::ShapeSet& static_obstacles,
+                       const rj_geometry::ShapeSet& static_obstacles,
                        const std::vector<DynamicObstacle>& dynamic_obstacles);
 
     Trajectory previous_;
@@ -68,15 +68,15 @@ private:
         CollectPathPlannerStates::CourseApproach;
 
     // Ball Velocity Filtering Variables
-    Geometry2d::Point average_ball_vel_;
+    rj_geometry::Point average_ball_vel_;
     bool average_ball_vel_initialized_ = false;
 
-    Geometry2d::Point approach_direction_;
+    rj_geometry::Point approach_direction_;
     bool approach_direction_created_ = false;
 
     bool control_path_created_ = false;
 
-    Geometry2d::Point path_coarse_target_;
+    rj_geometry::Point path_coarse_target_;
     bool path_coarse_target_initialized_ = false;
 
     // Controls at which ball speed we should try to go directly to the ball

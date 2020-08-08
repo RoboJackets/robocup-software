@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include <Geometry2d/Pose.hpp>
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/pose.hpp>
+#include <rj_geometry/util.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "planning/instant.hpp"
@@ -15,7 +15,7 @@
 #include "planning/primitives/velocity_profiling.hpp"
 
 namespace Planning {
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 REGISTER_CONFIGURABLE(PivotPathPlanner);
 
@@ -33,7 +33,7 @@ Trajectory PivotPathPlanner::plan(const PlanRequest& request) {
     const auto& linear_constraints = request.constraints.mot;
     const auto& rotation_constraints = request.constraints.rot;
 
-    Geometry2d::ShapeSet static_obstacles;
+    rj_geometry::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     fill_obstacles(request, &static_obstacles, &dynamic_obstacles, false);
 

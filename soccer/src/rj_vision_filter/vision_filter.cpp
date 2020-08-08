@@ -69,8 +69,8 @@ std::vector<VisionFilter::RobotStateMsg> VisionFilter::build_robot_state_msgs(
         robot_state.visible = wr.get_is_valid();
 
         if (wr.get_is_valid()) {
-            robot_state.pose = Geometry2d::Pose(wr.get_pos(), wr.get_theta());
-            robot_state.velocity = Geometry2d::Twist(wr.get_vel(), wr.get_omega());
+            robot_state.pose = rj_geometry::Pose(wr.get_pos(), wr.get_theta());
+            robot_state.velocity = rj_geometry::Twist(wr.get_vel(), wr.get_omega());
             robot_state.timestamp = wr.get_time();
         }
 
@@ -98,7 +98,7 @@ void VisionFilter::get_frames() {
     }
 
     const double current_team_angle = team_angle();
-    const Geometry2d::TransformMatrix current_world_to_team = world_to_team();
+    const rj_geometry::TransformMatrix current_world_to_team = world_to_team();
     for (const DetectionFrameMsg::UniquePtr& msg : raw_frames) {
         frame_buffer_.emplace_back(*msg, current_world_to_team, current_team_angle);
     }

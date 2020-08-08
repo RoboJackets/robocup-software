@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/segment.hpp>
+#include <rj_geometry/point.hpp>
 #include "robot.hpp"
 #include "system_state.hpp"
 
@@ -21,7 +21,7 @@ public:
     double a1;
     double t0;
     double t1;
-    Geometry2d::Segment segment;
+    rj_geometry::Segment segment;
     double shot_success;
 
     bool operator==(const Window& other) const {
@@ -52,8 +52,8 @@ public:
      * @param target_width Virtual width to apply to the target
      * @return Results of windowing operation
      */
-    WindowingResult eval_pt_to_pt(Geometry2d::Point origin,
-                                  Geometry2d::Point target, float target_width);
+    WindowingResult eval_pt_to_pt(rj_geometry::Point origin,
+                                  rj_geometry::Point target, float target_width);
 
     /**
      * @brief Evaluates shot windows to a target point
@@ -61,22 +61,22 @@ public:
      * @param target The target point to aim at
      * @return Results of windowing operation
      */
-    WindowingResult eval_pt_to_robot(Geometry2d::Point origin,
-                                     Geometry2d::Point target);
+    WindowingResult eval_pt_to_robot(rj_geometry::Point origin,
+                                     rj_geometry::Point target);
 
     /**
      * @brief Evaluates shot windows to the oponents goal segment
      * @param origin The starting point of the shot
      * @return Results of windowing operation
      */
-    WindowingResult eval_pt_to_opp_goal(Geometry2d::Point origin);
+    WindowingResult eval_pt_to_opp_goal(rj_geometry::Point origin);
 
     /**
      * @brief Evaluates shot windows to our team's goal segment
      * @param origin The starting point of the shot
      * @return Results of windowing operation
      */
-    WindowingResult eval_pt_to_our_goal(Geometry2d::Point origin);
+    WindowingResult eval_pt_to_our_goal(rj_geometry::Point origin);
 
     /**
      * @brief Evaluates shot windows to a target segment
@@ -84,8 +84,8 @@ public:
      * @param target The target segment to aim at
      * @return Results of windowing operation
      */
-    WindowingResult eval_pt_to_seg(Geometry2d::Point origin,
-                                   Geometry2d::Segment target);
+    WindowingResult eval_pt_to_seg(rj_geometry::Point origin,
+                                   rj_geometry::Segment target);
 
     /**
      * @brief Initializes configurable fields.
@@ -121,18 +121,18 @@ public:
     /**
      * @brief Locations to pretend are robot obstacles during evaluation
      */
-    std::vector<Geometry2d::Point> hypothetical_robot_locations;
+    std::vector<rj_geometry::Point> hypothetical_robot_locations;
 
 private:
     Context* context_;
 
-    static void fill_shot_success(Window& window, Geometry2d::Point origin);
+    static void fill_shot_success(Window& window, rj_geometry::Point origin);
 
     static void obstacle_range(std::vector<Window>& windows, double& t0,
                                double& t1);
 
-    void obstacle_robot(std::vector<Window>& windows, Geometry2d::Point origin,
-                        Geometry2d::Segment target, Geometry2d::Point bot_pos);
+    void obstacle_robot(std::vector<Window>& windows, rj_geometry::Point origin,
+                        rj_geometry::Segment target, rj_geometry::Point bot_pos);
 
     static ConfigDouble* angle_score_coefficient;
     static ConfigDouble* distance_score_coefficient;

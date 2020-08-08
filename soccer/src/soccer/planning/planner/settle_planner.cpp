@@ -13,7 +13,7 @@
 #include "planning/primitives/create_path.hpp"
 #include "planning/primitives/rrt_util.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning {
 
@@ -139,7 +139,7 @@ Trajectory SettlePlanner::plan(const PlanRequest& plan_request) {
 }
 
 void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_instant,
-                                            Geometry2d::Point delta_pos) {
+                                            rj_geometry::Point delta_pos) {
     const double max_ball_angle_change_for_path_reset = *max_ball_angle_for_reset * M_PI / 180.0f;
 
     // If the ball changed directions or magnitude really quickly, do a reset of
@@ -173,13 +173,13 @@ void SettlePlanner::check_solution_validity(BallState ball, RobotInstant start_i
 }
 
 void SettlePlanner::process_state_transition(BallState ball, RobotInstant* start_instant,
-                                             double angle, Geometry2d::Point delta_pos) {
+                                             double angle, rj_geometry::Point delta_pos) {
     // State transitions
     // Intercept -> Dampen, PrevPath and almost at the end of the path
     // Dampen -> Complete, PrevPath and almost slowed down to 0?
     if (!previous_.empty() && start_instant->stamp > previous_.begin_time() &&
         start_instant->stamp <= previous_.end_time()) {
-        Geometry2d::Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
+        rj_geometry::Line ball_movement_line(ball.position, ball.position + average_ball_vel_);
 
         Trajectory path_so_far =
             previous_.sub_trajectory(previous_.begin_time(), start_instant->stamp);
@@ -209,9 +209,9 @@ void SettlePlanner::process_state_transition(BallState ball, RobotInstant* start
 }
 
 Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstant start_instant,
-                                    const Geometry2d::ShapeSet& static_obstacles,
+                                    const rj_geometry::ShapeSet& static_obstacles,
                                     const std::vector<DynamicObstacle>& dynamic_obstacles,
-                                    Geometry2d::Point delta_pos, Geometry2d::Point face_pos) {
+                                    rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     BallState ball = plan_request.world_state->ball;
 
     // Try find best point to intercept using brute force method
@@ -276,7 +276,7 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
         }
     }
 
-    Geometry2d::Point ball_vel_intercept;
+    rj_geometry::Point ball_vel_intercept;
     // If we still haven't found a valid intercept point, just target the stop
     // point.
     if (ball_intercept_maybe.has_value()) {
@@ -411,7 +411,7 @@ Trajectory SettlePlanner::intercept(const PlanRequest& plan_request, RobotInstan
 }
 
 Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant start_instant,
-                                 Geometry2d::Point delta_pos, Geometry2d::Point face_pos) {
+                                 rj_geometry::Point delta_pos, rj_geometry::Point face_pos) {
     // Only run once if we can
 
     // Intercept ends with a % ball velocity in the direction of the ball
@@ -507,7 +507,7 @@ Trajectory SettlePlanner::dampen(const PlanRequest& plan_request, RobotInstant s
 }
 
 Trajectory SettlePlanner::invalid(const PlanRequest& plan_request,
-                                  const Geometry2d::ShapeSet& static_obstacles,
+                                  const rj_geometry::ShapeSet& static_obstacles,
                                   const std::vector<DynamicObstacle>& dynamic_obstacles) {
     std::cout << "WARNING: Invalid state in settle planner. Restarting" << std::endl;
     current_state_ = SettlePlannerStates::Intercept;
@@ -526,8 +526,8 @@ Trajectory SettlePlanner::invalid(const PlanRequest& plan_request,
 }
 
 void SettlePlanner::calc_delta_pos_for_dir(BallState ball, RobotInstant start_instant,
-                                           double* angle_out, Geometry2d::Point* delta_robot_pos,
-                                           Geometry2d::Point* face_pos) {
+                                           double* angle_out, rj_geometry::Point* delta_robot_pos,
+                                           rj_geometry::Point* face_pos) {
     // If we have a valid bounce target
     if (target_bounce_direction_) {
         // Get angle between target and normal hit

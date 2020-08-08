@@ -45,17 +45,17 @@ public:
         return context_->world_state.get_robot(self(), shell());
     }
 
-    [[nodiscard]] Geometry2d::Pose pose() const { return state().pose; }
+    [[nodiscard]] rj_geometry::Pose pose() const { return state().pose; }
 
-    [[nodiscard]] Geometry2d::Point pos() const {
+    [[nodiscard]] rj_geometry::Point pos() const {
         return state().pose.position();
     }
 
     [[nodiscard]] double angle() const { return state().pose.heading(); }
 
-    [[nodiscard]] Geometry2d::Twist twist() const { return state().velocity; }
+    [[nodiscard]] rj_geometry::Twist twist() const { return state().velocity; }
 
-    [[nodiscard]] Geometry2d::Point vel() const {
+    [[nodiscard]] rj_geometry::Point vel() const {
         return state().velocity.linear();
     }
 
@@ -131,14 +131,14 @@ public:
     float kick_timer() const;
 
     /// segment for the location of the kicker
-    Geometry2d::Segment kicker_bar() const;
+    rj_geometry::Segment kicker_bar() const;
     /// converts a point to the frame of reference of robot
-    Geometry2d::Point point_in_robot_space(Geometry2d::Point pt) const;
+    rj_geometry::Point point_in_robot_space(rj_geometry::Point pt) const;
 
     // simple checks to do geometry
     /** returns true if the position specified is behind the robot */
     // FIXME - Function name and comment don't match
-    bool behind_ball(Geometry2d::Point ball_pos) const;
+    bool behind_ball(rj_geometry::Point ball_pos) const;
 
     // Constraints
     const RobotConstraints& robot_constraints() const {
@@ -185,7 +185,7 @@ public:
      *
      * @param target - The target to kick towards (aiming point)
      */
-    void line_kick(Geometry2d::Point target);
+    void line_kick(rj_geometry::Point target);
 
     /**
      * Intercept the ball as quickly as possible
@@ -193,15 +193,15 @@ public:
      *
      * @param target - The target position to intercept the ball at
      */
-    void intercept(Geometry2d::Point target);
+    void intercept(rj_geometry::Point target);
 
     /**
      * @brief Move to a given point using the default RRT planner
      * @param end_speed - the speed we should be going when we reach the end of
      * the path
      */
-    void move(Geometry2d::Point goal,
-              Geometry2d::Point end_velocity = Geometry2d::Point());
+    void move(rj_geometry::Point goal,
+              rj_geometry::Point end_velocity = rj_geometry::Point());
 
     /**
      * @brief Move to a given point bypassing the RRT Path planner. This will
@@ -209,7 +209,7 @@ public:
      * @param end_speed - the speed we should be going when we reach the end of
      * the path
      */
-    void move_direct(Geometry2d::Point goal, float end_speed = 0);
+    void move_direct(rj_geometry::Point goal, float end_speed = 0);
 
     /**
      * @brief Move to a given point while breaking everything. Tells the robot
@@ -217,14 +217,14 @@ public:
      * @param end_speed - the speed we should be going when we reach the end of
      * the path. I'm not even sure if this part makes any sense here.
      */
-    void move_tuning(Geometry2d::Point goal, float end_speed = 0);
+    void move_tuning(rj_geometry::Point goal, float end_speed = 0);
 
     /**
      * @brief Move in front of the ball to intercept it. If a target face point
      * is given, the robot will try to face in that direction when the ball
      * hits.
      */
-    void settle(std::optional<Geometry2d::Point> target);
+    void settle(std::optional<rj_geometry::Point> target);
 
     /**
      * @brief Approaches the ball and moves through it slowly
@@ -234,17 +234,17 @@ public:
     /*
      * Override the default angle planning strategy and face a point
      */
-    void face(Geometry2d::Point pt);
+    void face(rj_geometry::Point pt);
 
     /**
      * Sets the world_velocity in the robot's MotionConstraints
      */
-    void world_velocity(Geometry2d::Point target_world_vel);
+    void world_velocity(rj_geometry::Point target_world_vel);
 
     /**
      * The robot pivots around it's mouth toward the given target
      */
-    void pivot(Geometry2d::Point pivot_target);
+    void pivot(rj_geometry::Point pivot_target);
 
     /*
      * Enable dribbler (0 to 127)
@@ -328,16 +328,16 @@ public:
      * Adds an obstacle to the local set of obstacles for avoidance
      * Cleared after every frame
      */
-    void local_obstacles(const std::shared_ptr<Geometry2d::Shape>& obs) {
+    void local_obstacles(const std::shared_ptr<rj_geometry::Shape>& obs) {
         intent().local_obstacles.add(obs);
     }
-    const Geometry2d::ShapeSet& local_obstacles() const {
+    const rj_geometry::ShapeSet& local_obstacles() const {
         return intent().local_obstacles;
     }
     void clear_local_obstacles() { intent().local_obstacles.clear(); }
 
-    Geometry2d::ShapeSet collect_static_obstacles(
-        const Geometry2d::ShapeSet& global_obstacles,
+    rj_geometry::ShapeSet collect_static_obstacles(
+        const rj_geometry::ShapeSet& global_obstacles,
         bool local_obstacles = true);
 
     void approach_all_opponents(bool enable = true);
@@ -366,7 +366,7 @@ public:
 
     void avoid_opponent_radius(unsigned shell_id, float radius);
 
-    Geometry2d::Point mouth_center_pos() const;
+    rj_geometry::Point mouth_center_pos() const;
 
     /**
      * status evaluations for choosing robots in behaviors - combines multiple
@@ -460,12 +460,12 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
+    rj_geometry::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask) const {
-        Geometry2d::ShapeSet result;
+        rj_geometry::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i) {
             if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
-                result.add(std::make_shared<Geometry2d::Circle>(
+                result.add(std::make_shared<rj_geometry::Circle>(
                     robots[i]->pos(), mask[i]));
             }
         }
@@ -484,15 +484,15 @@ protected:
      * or opp from _state
      */
     template <class ROBOT>
-    Geometry2d::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
+    rj_geometry::ShapeSet create_robot_obstacles(const std::vector<ROBOT*>& robots,
                                               const RobotMask& mask,
-                                              Geometry2d::Point current_position,
+                                              rj_geometry::Point current_position,
                                               float check_radius) const {
-        Geometry2d::ShapeSet result;
+        rj_geometry::ShapeSet result;
         for (size_t i = 0; i < mask.size(); ++i) {
             if (mask[i] > 0 && robots[i] && robots[i]->visible()) {
                 if (current_position.dist_to(robots[i]->pos()) <= check_radius) {
-                    result.add(std::make_shared<Geometry2d::Circle>(
+                    result.add(std::make_shared<rj_geometry::Circle>(
                         robots[i]->pos(), mask[i]));
                 }
             }
@@ -503,7 +503,7 @@ protected:
     /**
      * Creates an obstacle for the ball if necessary
      */
-    std::shared_ptr<Geometry2d::Circle> create_ball_obstacle() const;
+    std::shared_ptr<rj_geometry::Circle> create_ball_obstacle() const;
 
     friend class Processor;
     friend class RadioNode;

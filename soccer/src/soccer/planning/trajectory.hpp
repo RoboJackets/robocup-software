@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/pose.hpp>
 #include <rj_common/time.hpp>
 
 #include "debug_drawer.hpp"
@@ -273,7 +273,7 @@ public:
      * the event that the trajectory is empty.
      */
     void draw(DebugDrawer* drawer,
-              std::optional<Geometry2d::Point> alt_text_position =
+              std::optional<rj_geometry::Point> alt_text_position =
                   std::nullopt) const;
 
     /**

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/pose.hpp>
 #include <optional>
 #include <rj_common/time.hpp>
 
@@ -15,12 +15,12 @@ namespace Planning {
  * including position and velocity.
  */
 struct LinearMotionInstant {
-    explicit LinearMotionInstant(Geometry2d::Point pos = {0, 0},
-                                 Geometry2d::Point vel = {0, 0})
+    explicit LinearMotionInstant(rj_geometry::Point pos = {0, 0},
+                                 rj_geometry::Point vel = {0, 0})
         : position(pos), velocity(vel) {}
 
-    Geometry2d::Point position;
-    Geometry2d::Point velocity;
+    rj_geometry::Point position;
+    rj_geometry::Point velocity;
 
     friend std::ostream& operator<<(std::ostream& stream,
                                     const LinearMotionInstant& instant) {
@@ -33,7 +33,7 @@ struct LinearMotionInstant {
  * @brief Represents the current state of a robot in a planned trajectory.
  */
 struct RobotInstant {
-    RobotInstant(Geometry2d::Pose pose, Geometry2d::Twist velocity,
+    RobotInstant(rj_geometry::Pose pose, rj_geometry::Twist velocity,
                  RJ::Time stamp)
         : pose(pose), velocity(velocity), stamp(stamp) {}
 
@@ -44,24 +44,24 @@ struct RobotInstant {
 
     static bool nearly_equals(const RobotInstant& a, const RobotInstant& b,
                               double tolerance = 1e-6) {
-        return Geometry2d::Pose::nearly_equals(a.pose, b.pose, tolerance) &&
-               Geometry2d::Twist::nearly_equals(a.velocity, b.velocity,
+        return rj_geometry::Pose::nearly_equals(a.pose, b.pose, tolerance) &&
+               rj_geometry::Twist::nearly_equals(a.velocity, b.velocity,
                                                 tolerance) &&
                a.stamp == b.stamp;
     }
 
     RobotInstant() = default;
 
-    Geometry2d::Pose pose;
-    Geometry2d::Twist velocity;
+    rj_geometry::Pose pose;
+    rj_geometry::Twist velocity;
     RJ::Time stamp;
 
-    [[nodiscard]] Geometry2d::Point& position() { return pose.position(); }
-    [[nodiscard]] Geometry2d::Point position() const { return pose.position(); }
-    [[nodiscard]] Geometry2d::Point& linear_velocity() {
+    [[nodiscard]] rj_geometry::Point& position() { return pose.position(); }
+    [[nodiscard]] rj_geometry::Point position() const { return pose.position(); }
+    [[nodiscard]] rj_geometry::Point& linear_velocity() {
         return velocity.linear();
     }
-    [[nodiscard]] Geometry2d::Point linear_velocity() const {
+    [[nodiscard]] rj_geometry::Point linear_velocity() const {
         return velocity.linear();
     }
     [[nodiscard]] double& heading() { return pose.heading(); }

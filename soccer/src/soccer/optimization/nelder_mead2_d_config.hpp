@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <functional>
 
 class NelderMead2DConfig {
@@ -25,10 +25,10 @@ public:
      * @param max_thresh threshold for the max vlaue before exit
      * @note Set max_value = max_thresh to disable
      */
-    NelderMead2DConfig(std::function<float(Geometry2d::Point)>& f,
-                       Geometry2d::Point start = Geometry2d::Point(0, 0),
-                       Geometry2d::Point step = Geometry2d::Point(1, 1),
-                       Geometry2d::Point min_dist = Geometry2d::Point(0.001,
+    NelderMead2DConfig(std::function<float(rj_geometry::Point)>& f,
+                       rj_geometry::Point start = rj_geometry::Point(0, 0),
+                       rj_geometry::Point step = rj_geometry::Point(1, 1),
+                       rj_geometry::Point min_dist = rj_geometry::Point(0.001,
                                                                      0.001),
                        float reflection_coeff = 1, float expansion_coeff = 2,
                        float contraction_coeff = 0.5, float shrink_coeff = 0.5,
@@ -46,10 +46,10 @@ public:
           max_value(max_value),
           max_thresh(max_thresh) {}
 
-    std::function<float(Geometry2d::Point)>& f;
-    Geometry2d::Point start;
-    Geometry2d::Point step;
-    Geometry2d::Point min_dist;
+    std::function<float(rj_geometry::Point)>& f;
+    rj_geometry::Point start;
+    rj_geometry::Point step;
+    rj_geometry::Point min_dist;
     float reflection_coeff;
     float expansion_coeff;
     float contraction_coeff;

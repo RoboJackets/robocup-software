@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <list>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 
@@ -36,12 +36,12 @@ public:
     /**
      * @return The best estimated position of the ball
      */
-    Geometry2d::Point get_pos() const;
+    rj_geometry::Point get_pos() const;
 
     /**
      * @return The best estimated velocity of the ball
      */
-    Geometry2d::Point get_vel() const;
+    rj_geometry::Point get_vel() const;
 
     /**
      * @return The average position covariance of the filter
@@ -65,8 +65,8 @@ public:
 
 private:
     bool is_valid_;
-    Geometry2d::Point pos_;
-    Geometry2d::Point vel_;
+    rj_geometry::Point pos_;
+    rj_geometry::Point vel_;
     double pos_cov_{};
     double vel_cov_{};
     std::list<KalmanBall> ball_components_;

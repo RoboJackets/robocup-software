@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/GeometryConversions.hpp>
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/geometry_conversions.hpp>
+#include <rj_geometry/pose.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_convert/ros_convert.hpp>
@@ -24,8 +24,8 @@ constexpr double kBallDecayConstant = 0.180;
 struct RobotState {
     using Msg = rj_msgs::msg::RobotState;
 
-    Geometry2d::Pose pose;
-    Geometry2d::Twist velocity;
+    rj_geometry::Pose pose;
+    rj_geometry::Twist velocity;
     RJ::Time timestamp;
     bool visible = false;
 
@@ -34,7 +34,7 @@ struct RobotState {
      */
     RobotState() = default;
 
-    RobotState(const Geometry2d::Pose& pose, const Geometry2d::Twist& velocity,
+    RobotState(const rj_geometry::Pose& pose, const rj_geometry::Twist& velocity,
                const RJ::Time& timestamp, bool visible)
         : pose{pose},
           velocity{velocity},
@@ -48,8 +48,8 @@ struct RobotState {
 struct BallState {
     using Msg = rj_msgs::msg::BallState;
 
-    Geometry2d::Point position;
-    Geometry2d::Point velocity;
+    rj_geometry::Point position;
+    rj_geometry::Point velocity;
     RJ::Time timestamp;
     bool visible = false;
 
@@ -61,7 +61,7 @@ struct BallState {
     /**
      * @brief Construct a BallState with a valid estimate.
      */
-    BallState(Geometry2d::Point position, Geometry2d::Point velocity,
+    BallState(rj_geometry::Point position, rj_geometry::Point velocity,
               RJ::Time timestamp = RJ::now())
         : position(position), velocity(velocity), timestamp(timestamp) {
         visible = true;
@@ -97,14 +97,14 @@ struct BallState {
      * @return The instant in time at which the ball is nearest to `near_to`.
      */
     [[nodiscard]] RJ::Time query_time_near(
-        Geometry2d::Point near_to, Geometry2d::Point* out = nullptr) const;
+        rj_geometry::Point near_to, rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Similar to @ref predict_at "query_time_near(RJ::Time)", but for a
      * duration in the future
      */
     [[nodiscard]] RJ::Seconds query_seconds_near(
-        Geometry2d::Point near_to, Geometry2d::Point* out = nullptr) const;
+        rj_geometry::Point near_to, rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Predict the stop time of the ball.
@@ -114,14 +114,14 @@ struct BallState {
      * @return The duration until the ball stops.
      */
     [[nodiscard]] RJ::Seconds query_stop_time(
-        Geometry2d::Point* out = nullptr) const;
+        rj_geometry::Point* out = nullptr) const;
 
     /**
      * @brief Predict the stop position of the ball.
      *
      * @return The point at which the ball will stop.
      */
-    [[nodiscard]] Geometry2d::Point query_stop_position() const;
+    [[nodiscard]] rj_geometry::Point query_stop_position() const;
 
     /**
      * @brief Query the time before the ball goes a certain distance. Return

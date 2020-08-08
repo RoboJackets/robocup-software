@@ -2,7 +2,7 @@
 
 #include <rj_common/status.hpp>
 
-#include "Geometry2d/Util.hpp"
+#include "rj_geometry/util.hpp"
 #include "packet_convert.hpp"
 
 using namespace boost::asio;

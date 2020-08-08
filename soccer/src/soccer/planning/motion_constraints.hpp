@@ -1,7 +1,7 @@
 #pragma once
 
 #include <configuration.hpp>
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <configuration.hpp>
 
 /**

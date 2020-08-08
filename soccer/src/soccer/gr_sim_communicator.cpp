@@ -25,7 +25,7 @@ void GrSimCommunicator::run() {
     }
 }
 
-void GrSimCommunicator::place_ball(QPointF pos, Geometry2d::TransformMatrix screen_to_world) {
+void GrSimCommunicator::place_ball(QPointF pos, rj_geometry::TransformMatrix screen_to_world) {
     grSim_Packet sim_packet;
     grSim_BallReplacement* ball_replace = sim_packet.mutable_replacement()->mutable_ball();
 

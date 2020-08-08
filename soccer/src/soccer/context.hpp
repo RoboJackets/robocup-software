@@ -48,8 +48,8 @@ struct Context {
     std::array<RobotConstraints, kNumShells> robot_constraints;
     std::unique_ptr<RobotConfig> robot_config;
 
-    Geometry2d::ShapeSet global_obstacles;
-    Geometry2d::ShapeSet goal_zone_obstacles;
+    rj_geometry::ShapeSet global_obstacles;
+    rj_geometry::ShapeSet goal_zone_obstacles;
 
     SystemState state;
     GameState game_state;
@@ -72,7 +72,7 @@ struct Context {
     std::optional<grSim_Packet> grsim_command;
 
     std::optional<QPointF> ball_command;
-    std::optional<Geometry2d::TransformMatrix> screen_to_world_command;
+    std::optional<rj_geometry::TransformMatrix> screen_to_world_command;
 
     GameSettings game_settings;
 

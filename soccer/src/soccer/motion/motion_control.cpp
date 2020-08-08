@@ -3,14 +3,14 @@
 #include <optional>
 
 #include <context.hpp>
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/util.hpp>
 #include <robot_config.hpp>
 #include <rj_common/utils.hpp>
 
 #include "planning/instant.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace rj_geometry;
 using namespace Planning;
 
 #pragma mark Config Variables

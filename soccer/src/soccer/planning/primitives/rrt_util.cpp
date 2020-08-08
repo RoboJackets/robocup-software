@@ -24,7 +24,7 @@ ConfigInt* RRTConfig::min_iterations;
 ConfigInt* RRTConfig::max_iterations;
 
 using std::vector;
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 void RRTConfig::create_configuration(Configuration* cfg) {
     // NOLINTNEXTLINE

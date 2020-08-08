@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <array>
 
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/util.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "debug_drawer.hpp"
@@ -11,7 +11,7 @@
 
 REGISTER_CONFIGURABLE(WindowEvaluator)
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 ConfigDouble* WindowEvaluator::angle_score_coefficient;
 ConfigDouble* WindowEvaluator::distance_score_coefficient;

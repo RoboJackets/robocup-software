@@ -1,4 +1,4 @@
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_vision_filter/camera/camera.hpp>
 #include <rj_vision_filter/params.hpp>
@@ -27,7 +27,7 @@ bool Camera::get_is_valid() const { return is_valid_; }
 void Camera::process_ball_bounce(const std::vector<WorldRobot>& yellow_robots,
                                  const std::vector<WorldRobot>& blue_robots) {
     for (KalmanBall& b : kalman_ball_list_) {
-        Geometry2d::Point new_vel;
+        rj_geometry::Point new_vel;
         bool is_collision = BallBounce::calc_ball_bounce(b, yellow_robots, blue_robots, new_vel);
 
         if (is_collision) {

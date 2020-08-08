@@ -4,12 +4,12 @@
 #include <cmath>
 #include <vector>
 
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/util.hpp>
 #include <rj_common/utils.hpp>
 
 REGISTER_CONFIGURABLE(KickEvaluator)
 
-using Geometry2d::Point, Geometry2d::Segment, Geometry2d::Line;
+using rj_geometry::Point, rj_geometry::Segment, rj_geometry::Line;
 using std::tuple, std::vector, std::abs, std::make_tuple, std::function, std::pair, std::get;
 
 ConfigDouble* KickEvaluator::kick_std_dev;

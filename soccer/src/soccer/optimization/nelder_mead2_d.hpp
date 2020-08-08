@@ -1,7 +1,7 @@
 #pragma once
 
 #include "nelder_mead2_d_config.hpp"
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <vector>
 #include <tuple>
 
@@ -39,7 +39,7 @@ public:
     /**
      * @return the XY coordinate of the current guess of the max
      */
-    Geometry2d::Point get_point();
+    rj_geometry::Point get_point();
 
     /**
      * @return the current guess of the max value
@@ -54,8 +54,8 @@ public:
 private:
     NelderMead2DConfig& config_;
     int iteration_count_;
-    std::vector<std::tuple<float, Geometry2d::Point>> vertices_;
+    std::vector<std::tuple<float, rj_geometry::Point>> vertices_;
 
     void sort_vertices();
-    bool replace_worst(float new_score, Geometry2d::Point new_point);
+    bool replace_worst(float new_score, rj_geometry::Point new_point);
 };

@@ -4,7 +4,7 @@
 
 namespace Planning {
 
-bool trajectory_hits_static(const Trajectory& trajectory, const Geometry2d::ShapeSet& obstacles,
+bool trajectory_hits_static(const Trajectory& trajectory, const rj_geometry::ShapeSet& obstacles,
                             RJ::Time start_time, RJ::Time* hit_time) {
     if (trajectory.empty()) {
         return false;
@@ -58,7 +58,7 @@ bool trajectory_hits_static(const Trajectory& trajectory, const Geometry2d::Shap
 
 bool trajectory_hits_dynamic(const Trajectory& trajectory,
                              const std::vector<DynamicObstacle>& obstacles, RJ::Time start_time,
-                             Geometry2d::Circle* out_hit_obstacle, RJ::Time* out_hit_time) {
+                             rj_geometry::Circle* out_hit_obstacle, RJ::Time* out_hit_time) {
     if (trajectory.empty()) {
         return false;
     }
@@ -112,21 +112,21 @@ bool trajectory_hits_dynamic(const Trajectory& trajectory,
                 break;
             }
 
-            Geometry2d::Point obstacle_position;
+            rj_geometry::Point obstacle_position;
             if (cursor_obstacle.has_value()) {
                 obstacle_position = cursor_obstacle.value().position();
             } else {
                 obstacle_position = obs.path->last().position();
             }
 
-            Geometry2d::Point robot_position = cursor.value().position();
+            rj_geometry::Point robot_position = cursor.value().position();
 
             if (robot_position.dist_to(obstacle_position) < total_radius) {
                 // We would already have broken out if we had an earlier
                 // obstacle (from the check above), so this is definitely the
                 // earliest one.
                 if (out_hit_obstacle != nullptr) {
-                    *out_hit_obstacle = Geometry2d::Circle(obstacle_position, obs.circle.radius());
+                    *out_hit_obstacle = rj_geometry::Circle(obstacle_position, obs.circle.radius());
                 }
                 maybe_hit_time = cursor.time();
             }

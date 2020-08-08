@@ -11,7 +11,7 @@
 #include "debug_drawer.hpp"
 
 using namespace std;
-using namespace Geometry2d;
+using namespace rj_geometry;
 using Planning::LinearMotionInstant;
 using Planning::MotionCommand;
 
@@ -131,7 +131,7 @@ void OurRobot::stop() {
     cmd_text_ << "stop()\n";
 }
 
-void OurRobot::move_direct(Geometry2d::Point goal, float end_speed) {
+void OurRobot::move_direct(rj_geometry::Point goal, float end_speed) {
     if (!visible()) {
         return;
     }
@@ -151,7 +151,7 @@ void OurRobot::move_direct(Geometry2d::Point goal, float end_speed) {
     cmd_text_ << "end_speed(" << end_speed << ")" << endl;
 }
 
-void OurRobot::move_tuning(Geometry2d::Point goal, float end_speed) {
+void OurRobot::move_tuning(rj_geometry::Point goal, float end_speed) {
     if (!visible()) {
         return;
     }
@@ -163,8 +163,8 @@ void OurRobot::move_tuning(Geometry2d::Point goal, float end_speed) {
     }
 
     // TODO(#1510): Add in a tuning planner.
-    Geometry2d::Point target_point = goal;
-    Geometry2d::Point target_vel = (goal - pos()).normalized() * end_speed;
+    rj_geometry::Point target_point = goal;
+    rj_geometry::Point target_vel = (goal - pos()).normalized() * end_speed;
     LinearMotionInstant goal_instant{target_point, target_vel};
     set_motion_command(Planning::PathTargetCommand{goal_instant});
 
@@ -172,7 +172,7 @@ void OurRobot::move_tuning(Geometry2d::Point goal, float end_speed) {
     cmd_text_ << "end_speed(" << end_speed << ")" << endl;
 }
 
-void OurRobot::move(Geometry2d::Point goal, Geometry2d::Point end_velocity) {
+void OurRobot::move(rj_geometry::Point goal, rj_geometry::Point end_velocity) {
     if (!visible()) {
         return;
     }
@@ -230,14 +230,14 @@ void OurRobot::intercept(Point target) {
     set_motion_command(Planning::InterceptCommand{target});
 }
 
-void OurRobot::world_velocity(Geometry2d::Point target_world_vel) {
+void OurRobot::world_velocity(rj_geometry::Point target_world_vel) {
     set_motion_command(Planning::WorldVelCommand{target_world_vel});
     cmd_text_ << "world_vel(" << target_world_vel.x() << ", " << target_world_vel.y() << ")"
               << endl;
 }
 
-void OurRobot::pivot(Geometry2d::Point pivot_target) {
-    Geometry2d::Point pivot_point = context_->world_state.ball.position;
+void OurRobot::pivot(rj_geometry::Point pivot_target) {
+    rj_geometry::Point pivot_point = context_->world_state.ball.position;
 
     // reset other conflicting motion commands
     set_motion_command(Planning::PivotCommand{pivot_point, pivot_target});
@@ -245,13 +245,13 @@ void OurRobot::pivot(Geometry2d::Point pivot_target) {
     cmd_text_ << "pivot(" << pivot_target.x() << ", " << pivot_target.y() << ")" << endl;
 }
 
-Geometry2d::Point OurRobot::point_in_robot_space(Geometry2d::Point pt) const {
+rj_geometry::Point OurRobot::point_in_robot_space(rj_geometry::Point pt) const {
     Point p = pt;
     p.rotate(pos(), -angle());
     return p;
 }
 
-Geometry2d::Segment OurRobot::kicker_bar() const {
+rj_geometry::Segment OurRobot::kicker_bar() const {
     TransformMatrix pose(pos(), static_cast<float>(angle()));
     const float mouth_half = kRobotMouthWidth / 2.0f;
     float x = sin(acos(mouth_half / kRobotRadius)) * kRobotRadius;
@@ -260,9 +260,9 @@ Geometry2d::Segment OurRobot::kicker_bar() const {
     return Segment(pose * l, pose * r);
 }
 
-Geometry2d::Point OurRobot::mouth_center_pos() const { return kicker_bar().center(); }
+rj_geometry::Point OurRobot::mouth_center_pos() const { return kicker_bar().center(); }
 
-bool OurRobot::behind_ball(Geometry2d::Point ball_pos) const {
+bool OurRobot::behind_ball(rj_geometry::Point ball_pos) const {
     Point ball_transformed = point_in_robot_space(ball_pos);
     return ball_transformed.x() < -kRobotRadius;
 }
@@ -276,7 +276,7 @@ void OurRobot::dribble(uint8_t speed) {
     FieldDimensions current_dimensions = FieldDimensions::current_dimensions;
     auto offset = static_cast<float>(*dribble_out_of_bounds_offset);
 
-    Geometry2d::Rect modified_field = Geometry2d::Rect(
+    rj_geometry::Rect modified_field = rj_geometry::Rect(
         Point((-current_dimensions.width() / 2) - offset, -offset),
         Point((current_dimensions.width() / 2) + offset, current_dimensions.length() + offset));
 
@@ -344,7 +344,7 @@ void OurRobot::unkick() {
 
 void OurRobot::kick_immediately() { intent().trigger_mode = RobotIntent::TriggerMode::IMMEDIATE; }
 
-void OurRobot::face(Geometry2d::Point pt) {
+void OurRobot::face(rj_geometry::Point pt) {
     if (!std::holds_alternative<Planning::PathTargetCommand>(intent().motion_command)) {
         intent().motion_command.emplace<Planning::PathTargetCommand>();
     }
@@ -426,18 +426,18 @@ float OurRobot::avoid_ball_radius() const { return intent().avoid_ball_radius; }
 
 void OurRobot::reset_avoid_ball() { avoid_ball_radius(kBallAvoidSmall); }
 
-std::shared_ptr<Geometry2d::Circle> OurRobot::create_ball_obstacle() const {
+std::shared_ptr<rj_geometry::Circle> OurRobot::create_ball_obstacle() const {
     // if game is stopped, large obstacle regardless of flags
     if (context_->game_state.state != GameState::Playing &&
         !(context_->game_state.our_restart || context_->game_state.their_penalty())) {
-        return std::make_shared<Geometry2d::Circle>(
+        return std::make_shared<rj_geometry::Circle>(
             context_->world_state.ball.position,
             FieldDimensions::current_dimensions.center_radius());
     }
 
     // create an obstacle if necessary
     if (intent().avoid_ball_radius > 0.0) {
-        return std::make_shared<Geometry2d::Circle>(context_->world_state.ball.position,
+        return std::make_shared<rj_geometry::Circle>(context_->world_state.ball.position,
                                                     intent().avoid_ball_radius);
     }
     return nullptr;

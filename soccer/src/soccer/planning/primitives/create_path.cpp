@@ -4,7 +4,7 @@
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning::CreatePath {
 

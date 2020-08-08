@@ -11,7 +11,7 @@
 #include <QPainter>
 #include <google/protobuf/descriptor.h>
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_common/time.hpp>
 #include <rj_constants/constants.hpp>
 #include <rj_protos/LogFrame.pb.h>
@@ -223,7 +223,7 @@ bool Chart::PointMagnitude::value(const Packet::LogFrame& frame, float* v) const
         return false;
     }
 
-    *v = static_cast<float>(Geometry2d::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
+    *v = static_cast<float>(rj_geometry::Point(*dynamic_cast<const Packet::Point*>(msg)).mag());
     return true;
 }
 

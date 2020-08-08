@@ -1,5 +1,5 @@
 #pragma once
-#include <Geometry2d/Circle.hpp>
+#include <rj_geometry/circle.hpp>
 
 namespace Planning {
 
@@ -16,8 +16,8 @@ struct DynamicObstacle {
      * outlive the usage of this object.
      */
     DynamicObstacle(double radius, const Trajectory* path)
-        : circle(Geometry2d::Point(), static_cast<float>(radius)), path(path) {}
-    Geometry2d::Circle circle;
+        : circle(rj_geometry::Point(), static_cast<float>(radius)), path(path) {}
+    rj_geometry::Circle circle;
     const Trajectory* path;
 };
 

@@ -4,7 +4,7 @@
 
 namespace Planning {
 
-using Geometry2d::Point;
+using rj_geometry::Point;
 
 /**
  * For each curve, calculate control points using a heuristic.
@@ -174,7 +174,7 @@ BezierPath::BezierPath(const std::vector<Point>& points, Point vi, Point vf,
     fit_cubic_bezier(vi, vf, points, ks, &control_);
 }
 
-void BezierPath::evaluate(double s, Geometry2d::Point* position, Geometry2d::Point* tangent,
+void BezierPath::evaluate(double s, rj_geometry::Point* position, rj_geometry::Point* tangent,
                           double* curvature) const {
     if (s < 0 || s > 1) {
         throw std::invalid_argument("Interpolant out of range.");

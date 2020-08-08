@@ -7,13 +7,13 @@
 #include "planning/planner/plan_request.hpp"
 #include "planning/primitives/velocity_profiling.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning {
 
 Trajectory PathTargetPlanner::plan(const PlanRequest& request) {
     // Collect obstacles
-    Geometry2d::ShapeSet static_obstacles;
+    rj_geometry::ShapeSet static_obstacles;
     std::vector<DynamicObstacle> dynamic_obstacles;
     Trajectory ball_trajectory;
     fill_obstacles(request, &static_obstacles, &dynamic_obstacles, true, &ball_trajectory);

@@ -36,7 +36,7 @@ public:
 private:
     Trajectory prev_path_;
     bool final_approach_ = false;
-    std::optional<Geometry2d::Point> target_kick_pos_;
+    std::optional<rj_geometry::Point> target_kick_pos_;
     int reuse_path_count_ = 0;
 };
 

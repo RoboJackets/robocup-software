@@ -20,7 +20,7 @@ PlannerNode::PlannerNode(Context* context) : context_(context) {
         "planner_node_game_state_sub", vision_filter::topics::kWorldStatePub);
 }
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 void PlannerNode::run() {
     const WorldStateMsg::SharedPtr world_state_msg = world_state_queue_->get();
     if (world_state_msg == nullptr) {

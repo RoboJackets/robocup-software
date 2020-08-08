@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/ShapeSet.hpp>
+#include <rj_geometry/shape_set.hpp>
 #include <rj_constants/constants.hpp>
 
 #include "planning/rotation_command.hpp"
@@ -16,7 +16,7 @@ struct RobotIntent {
     Planning::MotionCommand motion_command;
 
     /// set of obstacles added by plays
-    Geometry2d::ShapeSet local_obstacles;
+    rj_geometry::ShapeSet local_obstacles;
 
     /// masks for obstacle avoidance
     RobotMask opp_avoid_mask{};

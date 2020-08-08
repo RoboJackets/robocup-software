@@ -32,7 +32,7 @@ namespace AngleFns {
  */
 inline double tangent(const LinearMotionInstant& instant, double previous_angle,
                       Eigen::Vector2d* jacobian) {
-    Geometry2d::Point vel = instant.velocity;
+    rj_geometry::Point vel = instant.velocity;
 
     double delta_forward = fix_angle_radians(vel.angle() - previous_angle);
     double delta_reverse = fix_angle_radians(M_PI + vel.angle() - previous_angle);
@@ -56,11 +56,11 @@ inline double tangent(const LinearMotionInstant& instant, double previous_angle,
  * @brief Create an @ref AngleFunction for facing a particular point on the
  * field.
  */
-inline AngleFunction face_point(const Geometry2d::Point point) {
+inline AngleFunction face_point(const rj_geometry::Point point) {
     return [=](const LinearMotionInstant& instant, double /*previous_angle*/,
                Eigen::Vector2d* jacobian) -> double {
         if (jacobian != nullptr) {
-            Geometry2d::Point displacement = point - instant.position;
+            rj_geometry::Point displacement = point - instant.position;
             double distance_sq = displacement.magsq();
             *jacobian =
                 Eigen::Vector2d(displacement.rotate(-M_PI / 2) / distance_sq);

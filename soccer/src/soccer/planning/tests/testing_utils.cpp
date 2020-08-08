@@ -4,16 +4,16 @@
 
 #include <rj_common/utils.hpp>
 
-#include "Geometry2d/Point.hpp"
+#include "rj_geometry/point.hpp"
 #include "planning/instant.hpp"
 #include "planning/robot_constraints.hpp"
 #include "planning/trajectory.hpp"
 
 namespace Planning::TestingUtils {
 
-using Geometry2d::Point;
-using Geometry2d::Pose;
-using Geometry2d::Twist;
+using rj_geometry::Point;
+using rj_geometry::Pose;
+using rj_geometry::Twist;
 
 bool check_trajectory_continuous(const Trajectory& trajectory,
                                  const RobotConstraints& constraints) {

@@ -27,7 +27,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me) {
         return;
     }
 
-    Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    rj_geometry::Point pos = _worldToTeam * _screenToWorld * me->pos();
 
     std::shared_ptr<LogFrame> frame = currentFrame();
     if (me->button() == Qt::LeftButton && frame) {
@@ -129,7 +129,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
     std::shared_ptr<LogFrame> frame = currentFrame();
     if (_dragMode == DRAG_SHOOT && frame) {
         p.setPen(QPen(Qt::white, 0.025f));
-        Geometry2d::Point ball = frame->ball().pos();
+        rj_geometry::Point ball = frame->ball().pos();
         p.drawLine(ball.to_q_point_f(), _dragTo.to_q_point_f());
 
         if (ball != _dragTo) {
@@ -137,7 +137,7 @@ void SimFieldView::drawTeamSpace(QPainter& p) {
 
             _shot = (ball - _dragTo) * ShootScale;
             float speed = _shot.mag();
-            Geometry2d::Point shotExtension = ball + _shot / speed * 8;
+            rj_geometry::Point shotExtension = ball + _shot / speed * 8;
 
             p.drawLine(ball.to_q_point_f(), shotExtension.to_q_point_f());
 

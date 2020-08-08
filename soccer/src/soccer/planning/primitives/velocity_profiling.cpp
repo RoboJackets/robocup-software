@@ -5,9 +5,9 @@
 
 namespace Planning {
 
-using Geometry2d::Point;
-using Geometry2d::Pose;
-using Geometry2d::Twist;
+using rj_geometry::Point;
+using rj_geometry::Pose;
+using rj_geometry::Twist;
 
 constexpr int kInterpolationsPerBezier = 40;
 

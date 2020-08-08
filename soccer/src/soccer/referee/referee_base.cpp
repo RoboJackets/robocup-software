@@ -46,7 +46,7 @@ void RefereeBase::restart(GameState::Restart type, bool blue_restart) {
     }
 }
 
-void RefereeBase::ball_placement(Geometry2d::Point point, bool blue_placement) {
+void RefereeBase::ball_placement(rj_geometry::Point point, bool blue_placement) {
     restart(GameState::Restart::Placement, blue_placement);
     update_cache(state_.ball_placement_point, std::make_optional(point), &state_valid_);
 }

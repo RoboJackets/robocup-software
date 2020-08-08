@@ -37,7 +37,7 @@ public:
      * @param msg
      */
     CameraFrame(const DetectionFrameMsg& msg,
-                const Geometry2d::TransformMatrix& world_to_team,
+                const rj_geometry::TransformMatrix& world_to_team,
                 double team_angle)
         : t_capture{rj_convert::convert_from_ros(msg.t_capture)},
           camera_id{static_cast<int>(msg.camera_id)},

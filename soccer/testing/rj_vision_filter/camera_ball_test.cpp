@@ -5,7 +5,7 @@
 namespace vision_filter {
 TEST(CameraBall, get_time_captured) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1, 1);
+    rj_geometry::Point p = rj_geometry::Point(1, 1);
 
     CameraBall b = CameraBall(t, p);
 
@@ -16,11 +16,11 @@ TEST(CameraBall, get_time_captured) {
 
 TEST(CameraBall, get_pos) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1, 1);
+    rj_geometry::Point p = rj_geometry::Point(1, 1);
 
     CameraBall b = CameraBall(t, p);
 
-    Geometry2d::Point r = b.get_pos();
+    rj_geometry::Point r = b.get_pos();
 
     EXPECT_EQ(p.x(), r.x());
     EXPECT_EQ(p.x(), r.x());
@@ -37,7 +37,7 @@ TEST(CameraBall, combine_zero) {
 
 TEST(CameraBall, combine_one) {
     RJ::Time t = RJ::now();
-    Geometry2d::Point p = Geometry2d::Point(1, 1);
+    rj_geometry::Point p = rj_geometry::Point(1, 1);
 
     std::vector<CameraBall> balls;
     balls.emplace_back(t, p);
@@ -51,10 +51,10 @@ TEST(CameraBall, combine_one) {
 
 TEST(CameraBall, combine_two) {
     RJ::Time t1 = RJ::now();
-    Geometry2d::Point p1 = Geometry2d::Point(1, 1);
+    rj_geometry::Point p1 = rj_geometry::Point(1, 1);
 
     RJ::Time t2 = t1;
-    Geometry2d::Point p2 = Geometry2d::Point(2, 2);
+    rj_geometry::Point p2 = rj_geometry::Point(2, 2);
 
     std::vector<CameraBall> balls;
     balls.emplace_back(t1, p1);

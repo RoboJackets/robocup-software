@@ -10,7 +10,7 @@
 #include "planning/primitives/rrt_util.hpp"
 #include "planning/primitives/robo_cup_state_space.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 namespace Planning {
 
 REGISTER_CONFIGURABLE(EscapeObstaclesPathPlanner);
@@ -29,7 +29,7 @@ Trajectory EscapeObstaclesPathPlanner::plan(const PlanRequest& plan_request) {
     const RobotInstant& start_instant = plan_request.start;
     const auto& motion_constraints = plan_request.constraints.mot;
 
-    Geometry2d::ShapeSet obstacles;
+    rj_geometry::ShapeSet obstacles;
     fill_obstacles(plan_request, &obstacles, nullptr, false, nullptr);
 
     if (!obstacles.hit(start_instant.position()) ||

@@ -5,11 +5,11 @@
 // the Qt includes (because of the 'slots' macro)
 #include <boost/python.hpp>
 
-#include <Geometry2d/TransformMatrix.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/ShapeSet.hpp>
+#include <rj_geometry/transform_matrix.hpp>
+#include <rj_geometry/polygon.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/composite_shape.hpp>
+#include <rj_geometry/shape_set.hpp>
 
 #include <set>
 #include <QString>
@@ -75,26 +75,26 @@ public:
      * to team space.
      *
      * Example:
-     * team = gameplay_->opp_matrix() * Geometry2d::Point(1, 0);
+     * team = gameplay_->opp_matrix() * rj_geometry::Point(1, 0);
      */
 
     /**
      * Centered on the ball
      * @ingroup matrices
      */
-    Geometry2d::TransformMatrix ball_matrix() const { return ball_matrix_; }
+    rj_geometry::TransformMatrix ball_matrix() const { return ball_matrix_; }
 
     /**
      * Center of the field
      * @ingroup matrices
      */
-    Geometry2d::TransformMatrix center_matrix() const { return center_matrix_; }
+    rj_geometry::TransformMatrix center_matrix() const { return center_matrix_; }
 
     /**
      * Opponent's coordinates
      * @ingroup matrices
      */
-    Geometry2d::TransformMatrix opp_matrix() const { return opp_matrix_; }
+    rj_geometry::TransformMatrix opp_matrix() const { return opp_matrix_; }
 
     /// All robots on our team that are usable by plays
     const std::set<OurRobot*>& play_robots() const { return play_robots_; }
@@ -110,10 +110,10 @@ public:
     /**
      * Returns the current set of global obstacles, including the field
      */
-    Geometry2d::ShapeSet global_obstacles() const;
+    rj_geometry::ShapeSet global_obstacles() const;
 
     /// Returns a ShapeSet containing both goal zones
-    Geometry2d::ShapeSet goal_zone_obstacles() const;
+    rj_geometry::ShapeSet goal_zone_obstacles() const;
 
     /// Resends the current field dimensions to python. This should be called
     /// whenever the current field dimensions change
@@ -145,25 +145,25 @@ private:
 
     std::set<OurRobot*> play_robots_;
 
-    Geometry2d::TransformMatrix ball_matrix_;
-    Geometry2d::TransformMatrix center_matrix_;
-    Geometry2d::TransformMatrix opp_matrix_;
+    rj_geometry::TransformMatrix ball_matrix_;
+    rj_geometry::TransformMatrix center_matrix_;
+    rj_geometry::TransformMatrix opp_matrix_;
 
     /// Obstacles to prevent using half the field
-    std::shared_ptr<Geometry2d::Shape> our_half_;
-    std::shared_ptr<Geometry2d::Shape> opponent_half_;
+    std::shared_ptr<rj_geometry::Shape> our_half_;
+    std::shared_ptr<rj_geometry::Shape> opponent_half_;
 
-    std::shared_ptr<Geometry2d::Shape> side_obstacle_;
+    std::shared_ptr<rj_geometry::Shape> side_obstacle_;
 
     /// outside of the floor boundaries
-    std::shared_ptr<Geometry2d::Shape> non_floor_[4];
+    std::shared_ptr<rj_geometry::Shape> non_floor_[4];
 
     /// goal areas
-    std::shared_ptr<Geometry2d::Shape> our_goal_area_;
-    std::shared_ptr<Geometry2d::Shape> their_goal_area_;
+    std::shared_ptr<rj_geometry::Shape> our_goal_area_;
+    std::shared_ptr<rj_geometry::Shape> their_goal_area_;
 
-    std::shared_ptr<Geometry2d::Shape> our_goal_;
-    std::shared_ptr<Geometry2d::Shape> their_goal_;
+    std::shared_ptr<rj_geometry::Shape> our_goal_;
+    std::shared_ptr<rj_geometry::Shape> their_goal_;
 
     int our_score_last_frame_ = 0;
 

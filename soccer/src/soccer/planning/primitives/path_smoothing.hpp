@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 
 #include "planning/motion_constraints.hpp"
 
@@ -25,8 +25,8 @@ public:
      *      to approximate the time between control points, which is later used
      *      to match up tangent vectors (approximately) with velocities.
      */
-    BezierPath(const std::vector<Geometry2d::Point>& points,
-               Geometry2d::Point vi, Geometry2d::Point vf,
+    BezierPath(const std::vector<rj_geometry::Point>& points,
+               rj_geometry::Point vi, rj_geometry::Point vf,
                MotionConstraints motion_constraints);
 
     /**
@@ -39,8 +39,8 @@ public:
      * @param tangent Output parameter for the tangent vector at s, if non-null.
      * @param curvature Output parameter for the curvature at s, if non-null.
      */
-    void evaluate(double s, Geometry2d::Point* position = nullptr,
-                  Geometry2d::Point* tangent = nullptr,
+    void evaluate(double s, rj_geometry::Point* position = nullptr,
+                  rj_geometry::Point* tangent = nullptr,
                   double* curvature = nullptr) const;
 
     /**
@@ -57,12 +57,12 @@ public:
      * @brief Control points for a Bezier curve.
      */
     struct CubicBezierControlPoints {
-        Geometry2d::Point p0, p1, p2, p3;
+        rj_geometry::Point p0, p1, p2, p3;
 
         CubicBezierControlPoints() = default;
 
-        CubicBezierControlPoints(Geometry2d::Point p0, Geometry2d::Point p1,
-                                 Geometry2d::Point p2, Geometry2d::Point p3)
+        CubicBezierControlPoints(rj_geometry::Point p0, rj_geometry::Point p1,
+                                 rj_geometry::Point p2, rj_geometry::Point p3)
             : p0(p0), p1(p1), p2(p2), p3(p3) {}
     };
 

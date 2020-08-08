@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <functional>
 #include <optional>
 #include <rrt/Tree.hpp>
@@ -41,9 +41,9 @@ public:
     /// If @prev_pt is give, only uses a newly-found point if it is closer to @pt
     /// by a configurable threshold.
     /// @param rrt_logger Optional callback to log the rrt tree after it's built
-    static Geometry2d::Point find_non_blocked_goal(
-        Geometry2d::Point pt, std::optional<Geometry2d::Point> prev_pt,
-        const Geometry2d::ShapeSet& obstacles, int max_itr = 300);
+    static rj_geometry::Point find_non_blocked_goal(
+        rj_geometry::Point pt, std::optional<rj_geometry::Point> prev_pt,
+        const rj_geometry::ShapeSet& obstacles, int max_itr = 300);
 
     static void create_configuration(Configuration* cfg);
 

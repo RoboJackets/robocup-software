@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/ball/kalman_ball.hpp>
 #include <rj_vision_filter/robot/world_robot.hpp>
 #include <vector>
@@ -31,7 +31,7 @@ public:
     static bool calc_ball_bounce(const KalmanBall& ball,
                                const std::vector<WorldRobot>& yellow_robots,
                                const std::vector<WorldRobot>& blue_robots,
-                               Geometry2d::Point& out_new_vel);
+                               rj_geometry::Point& out_new_vel);
 
 private:
     /**
@@ -55,7 +55,7 @@ private:
      * 1 means tangental intersection
      * 2 means chord based intersection
      */
-    static std::vector<Geometry2d::Point> possible_ball_intersection_pts(
+    static std::vector<rj_geometry::Point> possible_ball_intersection_pts(
         const KalmanBall& ball, const WorldRobot& robot);
 };
 }  // namespace vision_filter

@@ -2,7 +2,7 @@
 
 #include <QMutexLocker>
 
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/util.hpp>
 #include <log_utils.hpp>
 #include <robot.hpp>
 #include <robot_config.hpp>
@@ -18,7 +18,7 @@
 REGISTER_CONFIGURABLE(Processor)
 
 using namespace boost;
-using namespace Geometry2d;
+using namespace rj_geometry;
 using namespace google::protobuf;
 
 // TODO: Remove this and just use the one in Context.

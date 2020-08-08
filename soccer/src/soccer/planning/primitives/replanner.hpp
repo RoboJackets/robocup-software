@@ -21,7 +21,7 @@ public:
     struct PlanParams {
         RobotInstant start;
         LinearMotionInstant goal;
-        const Geometry2d::ShapeSet& static_obstacles;
+        const rj_geometry::ShapeSet& static_obstacles;
         const std::vector<DynamicObstacle>& dynamic_obstacles;
         RobotConstraints constraints;
         const AngleFunction& angle_function;

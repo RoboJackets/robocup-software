@@ -9,9 +9,9 @@
 #include <QResizeEvent>
 #include <QStyleOption>
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/Util.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/segment.hpp>
+#include <rj_geometry/util.hpp>
 #include <log_utils.hpp>
 #include <planning/motion_constraints.hpp>
 #include <rj_common/field_dimensions.hpp>
@@ -70,7 +70,7 @@ void FieldView::enterEvent(QEvent* /*event*/) { _posLabel->setVisible(true); }
 
 void FieldView::mouseMoveEvent(QMouseEvent* me) {
     _posLabel->move(QPoint(me->pos().x() - 45, me->pos().y() + 17));
-    Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
+    rj_geometry::Point pos = _worldToTeam * _screenToWorld * me->pos();
     QString s = "X: ";
     s += QString::number(std::round(pos.x() * 100) / 100);
     s += " Y: ";
@@ -132,33 +132,33 @@ void FieldView::paintEvent(QPaintEvent* /*e*/) {
     }
 
     // Make coordinate transformations
-    _screenToWorld = Geometry2d::TransformMatrix();
+    _screenToWorld = rj_geometry::TransformMatrix();
     _screenToWorld *=
-        Geometry2d::TransformMatrix::scale(FieldDimensions::current_dimensions.floor_length(),
+        rj_geometry::TransformMatrix::scale(FieldDimensions::current_dimensions.floor_length(),
                                            FieldDimensions::current_dimensions.floor_width());
     _screenToWorld *=
-        Geometry2d::TransformMatrix::rotate(-static_cast<float>(_rotate * M_PI / 2.0));
-    _screenToWorld *= Geometry2d::TransformMatrix::scale(static_cast<float>(1.0 / width()),
+        rj_geometry::TransformMatrix::rotate(-static_cast<float>(_rotate * M_PI / 2.0));
+    _screenToWorld *= rj_geometry::TransformMatrix::scale(static_cast<float>(1.0 / width()),
                                                          static_cast<float>(-1.0 / height()));
-    _screenToWorld *= Geometry2d::TransformMatrix::translate(static_cast<float>(-width() / 2.0),
+    _screenToWorld *= rj_geometry::TransformMatrix::translate(static_cast<float>(-width() / 2.0),
                                                              static_cast<float>(-height() / 2.0));
 
-    _worldToTeam = Geometry2d::TransformMatrix();
-    _worldToTeam *= Geometry2d::TransformMatrix::translate(
+    _worldToTeam = rj_geometry::TransformMatrix();
+    _worldToTeam *= rj_geometry::TransformMatrix::translate(
         0, FieldDimensions::current_dimensions.length() / 2.0f);
     if (frame->defend_plus_x()) {
-        _worldToTeam *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
+        _worldToTeam *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     } else {
-        _worldToTeam *= Geometry2d::TransformMatrix::rotate(M_PI / 2.0);
+        _worldToTeam *= rj_geometry::TransformMatrix::rotate(M_PI / 2.0);
     }
 
-    _teamToWorld = Geometry2d::TransformMatrix();
+    _teamToWorld = rj_geometry::TransformMatrix();
     if (frame->defend_plus_x()) {
-        _teamToWorld *= Geometry2d::TransformMatrix::rotate(M_PI / 2.0);
+        _teamToWorld *= rj_geometry::TransformMatrix::rotate(M_PI / 2.0);
     } else {
-        _teamToWorld *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
+        _teamToWorld *= rj_geometry::TransformMatrix::rotate(-M_PI / 2.0);
     }
-    _teamToWorld *= Geometry2d::TransformMatrix::translate(
+    _teamToWorld *= rj_geometry::TransformMatrix::translate(
         0, -FieldDimensions::current_dimensions.length() / 2.0f);
 
     // Draw world-space graphics
@@ -304,8 +304,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 const DebugRobotPath::DebugRobotPathPoint& from = path.points(i);
                 const DebugRobotPath::DebugRobotPathPoint& to = path.points(i + 1);
 
-                Geometry2d::Point avgVel = (Geometry2d::Point(path.points(i).vel()) +
-                                            Geometry2d::Point(path.points(i + 1).vel())) /
+                rj_geometry::Point avgVel = (rj_geometry::Point(path.points(i).vel()) +
+                                            rj_geometry::Point(path.points(i + 1).vel())) /
                                            2;
                 auto pcntMaxSpd =
                     static_cast<float>(avgVel.mag() / MotionConstraints::default_max_speed());
@@ -316,8 +316,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
                 pen.setWidthF(0.03);
                 p.setPen(pen);
 
-                const Geometry2d::Point fromPos = Geometry2d::Point(from.pos());
-                const Geometry2d::Point toPos = Geometry2d::Point(to.pos());
+                const rj_geometry::Point fromPos = rj_geometry::Point(from.pos());
+                const rj_geometry::Point toPos = rj_geometry::Point(to.pos());
                 p.drawLine(fromPos.to_q_point_f(), toPos.to_q_point_f());
             }
         }
@@ -438,8 +438,8 @@ void FieldView::drawTeamSpace(QPainter& p) {
     }
 
     // Text positioning vectors
-    QPointF rtX = qpointf(Geometry2d::Point(0, 1).rotated(-_rotate * 90));
-    QPointF rtY = qpointf(Geometry2d::Point(-1, 0).rotated(-_rotate * 90));
+    QPointF rtX = qpointf(rj_geometry::Point(0, 1).rotated(-_rotate * 90));
+    QPointF rtY = qpointf(rj_geometry::Point(-1, 0).rotated(-_rotate * 90));
 
     // Opponent robots
     for (const LogFrame::Robot& r : frame->opp()) {

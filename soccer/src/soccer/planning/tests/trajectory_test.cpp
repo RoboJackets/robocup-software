@@ -12,7 +12,7 @@
 #include "planning/primitives/velocity_profiling.hpp"
 
 using namespace Planning;
-using namespace Geometry2d;
+using namespace rj_geometry;
 using namespace Planning::TestingUtils;
 
 TEST(Trajectory, Interpolation) {

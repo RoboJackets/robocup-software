@@ -18,7 +18,7 @@ DEFINE_NS_FLOAT64(kVisionFilterParamModule, robot, orientation_scale, 1.0,
 
 KalmanFilter3D::KalmanFilter3D() : KalmanFilter(1, 1) {}
 
-KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose init_pose, Geometry2d::Twist init_twist)
+KalmanFilter3D::KalmanFilter3D(rj_geometry::Pose init_pose, rj_geometry::Twist init_twist)
     : KalmanFilter(6, 3) {
     // States are X pos, X vel, Y pos, Y vel, theta, omega
     x_k1_k1_ << init_pose.position().x(), init_twist.linear().x(), init_pose.position().y(),
@@ -107,32 +107,32 @@ KalmanFilter3D::KalmanFilter3D(Geometry2d::Pose init_pose, Geometry2d::Twist ini
     // clang-format on
 }
 
-void KalmanFilter3D::predict_with_update(Geometry2d::Pose observation) {
+void KalmanFilter3D::predict_with_update(rj_geometry::Pose observation) {
     z_k_ << observation.position().x(), observation.position().y(), observation.heading();
 
     KalmanFilter::predict_with_update();
 }
 
-Geometry2d::Point KalmanFilter3D::get_pos() const {
-    return Geometry2d::Point(x_k_k_(0), x_k_k_(2));
+rj_geometry::Point KalmanFilter3D::get_pos() const {
+    return rj_geometry::Point(x_k_k_(0), x_k_k_(2));
 }
 
 double KalmanFilter3D::get_theta() const { return x_k_k_(4); }
 
-Geometry2d::Point KalmanFilter3D::get_vel() const {
-    return Geometry2d::Point(x_k_k_(1), x_k_k_(3));
+rj_geometry::Point KalmanFilter3D::get_vel() const {
+    return rj_geometry::Point(x_k_k_(1), x_k_k_(3));
 }
 
 double KalmanFilter3D::get_omega() const { return x_k_k_(5); }
 
-Geometry2d::Point KalmanFilter3D::get_pos_cov() const {
-    return Geometry2d::Point(P_k_k_(0, 0), P_k_k_(2, 2));
+rj_geometry::Point KalmanFilter3D::get_pos_cov() const {
+    return rj_geometry::Point(P_k_k_(0, 0), P_k_k_(2, 2));
 }
 
 double KalmanFilter3D::get_theta_cov() const { return P_k_k_(4, 4); }
 
-Geometry2d::Point KalmanFilter3D::get_vel_cov() const {
-    return Geometry2d::Point(P_k_k_(1, 1), P_k_k_(3, 3));
+rj_geometry::Point KalmanFilter3D::get_vel_cov() const {
+    return rj_geometry::Point(P_k_k_(1, 1), P_k_k_(3, 3));
 }
 
 double KalmanFilter3D::get_omega_cov() const { return P_k_k_(5, 5); }

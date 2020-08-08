@@ -1,14 +1,14 @@
 #include <functional>
 #include <Python.h>
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 
 
-float cpp_function_cb(Geometry2d::Point p, PyObject* pyfunc);
+float cpp_function_cb(rj_geometry::Point p, PyObject* pyfunc);
 
 class PythonFunctionWrapper {
 public:
     PyObject* py_func;
-    std::function<float(Geometry2d::Point)> f;
+    std::function<float(rj_geometry::Point)> f;
 
     PythonFunctionWrapper(PyObject* pf);
 

@@ -191,8 +191,8 @@ class Basic122(standard_play.StandardPlay):
             # raise NotImplementedError("Make support robots avoid the shot channel")
             # FROM C++:
             # Polygon shot_obs;
-            # shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
-            # shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));
+            # shot_obs.vertices.push_back(rj_geometry::Point(Field_GoalWidth / 2, Field_Length));
+            # shot_obs.vertices.push_back(rj_geometry::Point(-Field_GoalWidth / 2, Field_Length));
             # shot_obs.vertices.push_back(ballProj);
 
             # TODO: this would be a good place for a "keep-trying container behavior"

@@ -6,7 +6,7 @@
 #include "planning/primitives/velocity_profiling.hpp"
 #include "planning/tests/testing_utils.hpp"
 
-using Geometry2d::Point;
+using rj_geometry::Point;
 
 namespace Planning {
 

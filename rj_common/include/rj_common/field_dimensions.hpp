@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Geometry2d/Arc.hpp>
-#include <Geometry2d/Circle.hpp>
-#include <Geometry2d/CompositeShape.hpp>
-#include <Geometry2d/Line.hpp>
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Rect.hpp>
+#include <rj_geometry/arc.hpp>
+#include <rj_geometry/circle.hpp>
+#include <rj_geometry/composite_shape.hpp>
+#include <rj_geometry/line.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/polygon.hpp>
+#include <rj_geometry/rect.hpp>
 #include <cfloat>
 #include <cmath>
 #include <iostream>
@@ -46,12 +46,12 @@ struct FieldDimensions {
     float floor_length() const { return floor_length_; }
     float floor_width() const { return floor_width_; }
 
-    Geometry2d::Point center_point() const { return center_point_; }
+    rj_geometry::Point center_point() const { return center_point_; }
 
-    [[nodiscard]] Geometry2d::Rect our_goal_zone_shape() const {
+    [[nodiscard]] rj_geometry::Rect our_goal_zone_shape() const {
         return our_goal_zone_shape_;
     }
-    [[nodiscard]] Geometry2d::Rect their_goal_zone_shape() const {
+    [[nodiscard]] rj_geometry::Rect their_goal_zone_shape() const {
         return their_goal_zone_shape_;
     }
 
@@ -60,30 +60,30 @@ struct FieldDimensions {
      * used mostly for movement at the play level
      * exposed to python via constants.Field
      */
-    Geometry2d::Rect their_goal_zone_shape_padded(float padding) {
-        Geometry2d::Rect tmp = Geometry2d::Rect(their_goal_zone_shape_);
+    rj_geometry::Rect their_goal_zone_shape_padded(float padding) {
+        rj_geometry::Rect tmp = rj_geometry::Rect(their_goal_zone_shape_);
         tmp.pad(padding);
         return tmp;
     };
 
-    Geometry2d::Segment our_goal_segment() const { return our_goal_segment_; }
-    Geometry2d::Segment their_goal_segment() const { return their_goal_segment_; }
-    Geometry2d::Rect our_half() const { return our_half_; }
-    Geometry2d::Rect their_half() const { return their_half_; }
-    Geometry2d::Rect field_rect() const { return field_rect_; }
+    rj_geometry::Segment our_goal_segment() const { return our_goal_segment_; }
+    rj_geometry::Segment their_goal_segment() const { return their_goal_segment_; }
+    rj_geometry::Rect our_half() const { return our_half_; }
+    rj_geometry::Rect their_half() const { return their_half_; }
+    rj_geometry::Rect field_rect() const { return field_rect_; }
 
     /*
      * Provides a rect that is a padded version of our goalbox
      * used mostly for movement at the play level
      * exposed to python via constants.Field
      */
-    Geometry2d::Rect our_goal_zone_shape_padded(float padding) {
-        Geometry2d::Rect tmp = Geometry2d::Rect(our_goal_zone_shape_);
+    rj_geometry::Rect our_goal_zone_shape_padded(float padding) {
+        rj_geometry::Rect tmp = rj_geometry::Rect(our_goal_zone_shape_);
         tmp.pad(padding);
         return tmp;
     };
 
-    std::vector<Geometry2d::Line> field_borders() const { return field_borders_; }
+    std::vector<rj_geometry::Line> field_borders() const { return field_borders_; }
 
     static const FieldDimensions kSingleFieldDimensions;
 
@@ -147,42 +147,42 @@ struct FieldDimensions {
     bool operator!=(const FieldDimensions& a) const { return !(*this == a); }
 
     void update_geometry() {
-        center_point_ = Geometry2d::Point(0.0, length_ / 2.0);
+        center_point_ = rj_geometry::Point(0.0, length_ / 2.0);
 
-        our_goal_zone_shape_ = Geometry2d::Rect(
-            Geometry2d::Point(penalty_long_dist_ / 2, penalty_short_dist_),
-            Geometry2d::Point(-penalty_long_dist_ / 2, 0));
+        our_goal_zone_shape_ = rj_geometry::Rect(
+            rj_geometry::Point(penalty_long_dist_ / 2, penalty_short_dist_),
+            rj_geometry::Point(-penalty_long_dist_ / 2, 0));
 
         their_goal_zone_shape_ =
-            Geometry2d::Rect(Geometry2d::Point(-penalty_long_dist_ / 2, length_),
-                             Geometry2d::Point(penalty_long_dist_ / 2,
+            rj_geometry::Rect(rj_geometry::Point(-penalty_long_dist_ / 2, length_),
+                             rj_geometry::Point(penalty_long_dist_ / 2,
                                                length_ - penalty_short_dist_));
 
         their_goal_segment_ =
-            Geometry2d::Segment(Geometry2d::Point(goal_width_ / 2.0, length_),
-                                Geometry2d::Point(-goal_width_ / 2.0, length_));
+            rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, length_),
+                                rj_geometry::Point(-goal_width_ / 2.0, length_));
         our_goal_segment_ =
-            Geometry2d::Segment(Geometry2d::Point(goal_width_ / 2.0, 0),
-                                Geometry2d::Point(-goal_width_ / 2.0, 0));
+            rj_geometry::Segment(rj_geometry::Point(goal_width_ / 2.0, 0),
+                                rj_geometry::Point(-goal_width_ / 2.0, 0));
 
         their_half_ =
-            Geometry2d::Rect(Geometry2d::Point(-width_ / 2, length_),
-                             Geometry2d::Point(width_ / 2, length_ / 2));
-        our_half_ = Geometry2d::Rect(Geometry2d::Point(-width_ / 2, 0),
-                                    Geometry2d::Point(width_ / 2, length_ / 2));
+            rj_geometry::Rect(rj_geometry::Point(-width_ / 2, length_),
+                             rj_geometry::Point(width_ / 2, length_ / 2));
+        our_half_ = rj_geometry::Rect(rj_geometry::Point(-width_ / 2, 0),
+                                    rj_geometry::Point(width_ / 2, length_ / 2));
 
-        field_rect_ = Geometry2d::Rect(Geometry2d::Point(-width_ / 2.0, 0),
-                                      Geometry2d::Point(width_ / 2.0, length_));
+        field_rect_ = rj_geometry::Rect(rj_geometry::Point(-width_ / 2.0, 0),
+                                      rj_geometry::Point(width_ / 2.0, length_));
 
         field_borders_ = {
-            Geometry2d::Line(Geometry2d::Point(-width_ / 2.0, 0),
-                             Geometry2d::Point(-width_ / 2.0, length_)),
-            Geometry2d::Line(Geometry2d::Point(-width_ / 2.0, length_),
-                             Geometry2d::Point(width_ / 2.0, length_)),
-            Geometry2d::Line(Geometry2d::Point(width_ / 2.0, length_),
-                             Geometry2d::Point(width_ / 2.0, 0)),
-            Geometry2d::Line(Geometry2d::Point(width_ / 2.0, 0),
-                             Geometry2d::Point(-width_ / 2.0, 0))};
+            rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, 0),
+                             rj_geometry::Point(-width_ / 2.0, length_)),
+            rj_geometry::Line(rj_geometry::Point(-width_ / 2.0, length_),
+                             rj_geometry::Point(width_ / 2.0, length_)),
+            rj_geometry::Line(rj_geometry::Point(width_ / 2.0, length_),
+                             rj_geometry::Point(width_ / 2.0, 0)),
+            rj_geometry::Line(rj_geometry::Point(width_ / 2.0, 0),
+                             rj_geometry::Point(-width_ / 2.0, 0))};
     }
 
     friend std::ostream& operator<<(std::ostream& stream,
@@ -221,16 +221,16 @@ private:
     float floor_length_;
     float floor_width_;
 
-    Geometry2d::Point center_point_;
-    Geometry2d::Rect our_goal_zone_shape_;
-    Geometry2d::Rect their_goal_zone_shape_;
-    Geometry2d::Segment our_goal_segment_;
-    Geometry2d::Segment their_goal_segment_;
-    Geometry2d::Rect our_half_;
-    Geometry2d::Rect their_half_;
-    Geometry2d::Rect field_rect_;
+    rj_geometry::Point center_point_;
+    rj_geometry::Rect our_goal_zone_shape_;
+    rj_geometry::Rect their_goal_zone_shape_;
+    rj_geometry::Segment our_goal_segment_;
+    rj_geometry::Segment their_goal_segment_;
+    rj_geometry::Rect our_half_;
+    rj_geometry::Rect their_half_;
+    rj_geometry::Rect field_rect_;
 
-    std::vector<Geometry2d::Line> field_borders_;
+    std::vector<rj_geometry::Line> field_borders_;
 };
 
 namespace rj_convert {

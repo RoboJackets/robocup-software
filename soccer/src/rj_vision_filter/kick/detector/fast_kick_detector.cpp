@@ -3,7 +3,7 @@
 #include <iterator>
 #include <limits>
 
-#include <Geometry2d/Point.hpp>
+#include <rj_geometry/point.hpp>
 #include <rj_vision_filter/kick/detector/fast_kick_detector.hpp>
 #include <rj_vision_filter/params.hpp>
 
@@ -66,22 +66,22 @@ bool FastKickDetector::detect_kick() {
     int end_idx = state_history_.size() - 1;
 
     // Change in position between two adjacent measurements
-    Geometry2d::Point dp_start =
+    rj_geometry::Point dp_start =
         state_history_.at(1).ball.get_pos() - state_history_.at(0).ball.get_pos();
-    Geometry2d::Point dp_end =
+    rj_geometry::Point dp_end =
         state_history_.at(end_idx).ball.get_pos() - state_history_.at(end_idx - 1).ball.get_pos();
 
     // Velocity at the start and end measurements
-    Geometry2d::Point v_start = dp_start / PARAM_vision_loop_dt;
-    Geometry2d::Point v_end = dp_end / PARAM_vision_loop_dt;
+    rj_geometry::Point v_start = dp_start / PARAM_vision_loop_dt;
+    rj_geometry::Point v_end = dp_end / PARAM_vision_loop_dt;
 
     // Change in velocity between start and end measurements
-    Geometry2d::Point dv = v_end - v_start;
+    rj_geometry::Point dv = v_end - v_start;
 
     // Acceleration between the start and final velocity
     // This is weird when the history length is > 3, but it allows you not to
     // have to retune it
-    Geometry2d::Point accel = dv / (PARAM_vision_loop_dt * state_history_.size());
+    rj_geometry::Point accel = dv / (PARAM_vision_loop_dt * state_history_.size());
 
     // Check for large accelerations and only going from slow->fast transitions
     return accel.mag() > PARAM_fast_acceleration_trigger && v_start.mag() < v_end.mag();
@@ -93,7 +93,7 @@ WorldRobot FastKickDetector::get_closest_robot() {
     // Valid assumption as long as history length is small
 
     int mid_idx = (int)floor(state_history_.size() / 2);
-    Geometry2d::Point mid_ball_pos = state_history_.at(mid_idx).ball.get_pos();
+    rj_geometry::Point mid_ball_pos = state_history_.at(mid_idx).ball.get_pos();
 
     WorldRobot min_robot;
     double min_dist = std::numeric_limits<double>::infinity();

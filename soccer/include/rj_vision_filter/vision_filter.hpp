@@ -105,11 +105,11 @@ private:
      * @brief Returns the transform from the world to the team.
      * @return The transform from the world to the team frame.
      */
-    [[nodiscard]] Geometry2d::TransformMatrix world_to_team() const {
-        Geometry2d::TransformMatrix world_to_team =
-            Geometry2d::TransformMatrix::translate(
+    [[nodiscard]] rj_geometry::TransformMatrix world_to_team() const {
+        rj_geometry::TransformMatrix world_to_team =
+            rj_geometry::TransformMatrix::translate(
                 0, config_client_.field_dimensions().length / 2.0f);
-        world_to_team *= Geometry2d::TransformMatrix::rotate(
+        world_to_team *= rj_geometry::TransformMatrix::rotate(
             static_cast<float>(team_angle()));
         return world_to_team;
     }

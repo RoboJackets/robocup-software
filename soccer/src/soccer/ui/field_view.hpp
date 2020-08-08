@@ -3,8 +3,8 @@
 
 #include <rj_protos/LogFrame.pb.h>
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/TransformMatrix.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/transform_matrix.hpp>
 #include <QGLWidget>
 #include <QLabel>
 #include <memory>
@@ -40,7 +40,7 @@ public:
 
     void rotate(int value);
 
-    const Geometry2d::TransformMatrix& getTeamToWorld() const {
+    const rj_geometry::TransformMatrix& getTeamToWorld() const {
         return _teamToWorld;
     }
 
@@ -88,9 +88,9 @@ protected:
     std::shared_ptr<Packet::LogFrame> currentFrame();
 
     // Coordinate transformations
-    Geometry2d::TransformMatrix _screenToWorld;
-    Geometry2d::TransformMatrix _worldToTeam;
-    Geometry2d::TransformMatrix _teamToWorld;
+    rj_geometry::TransformMatrix _screenToWorld;
+    rj_geometry::TransformMatrix _worldToTeam;
+    rj_geometry::TransformMatrix _teamToWorld;
 
     // Label used to display current coordinates of mouse
     QLabel* _posLabel{};

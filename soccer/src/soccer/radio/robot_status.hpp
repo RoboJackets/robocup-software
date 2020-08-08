@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Geometry2d/Pose.hpp>
+#include <rj_geometry/pose.hpp>
 #include <optional>
 #include <rj_common/time.hpp>
 
@@ -17,8 +17,8 @@ struct RobotStatus {
 
     HardwareVersion version = HardwareVersion::kFleet2018;
 
-    std::optional<Geometry2d::Twist> twist_estimate;
-    std::optional<Geometry2d::Pose> pose_estimate;
+    std::optional<rj_geometry::Twist> twist_estimate;
+    std::optional<rj_geometry::Pose> pose_estimate;
 
     double battery_voltage = 0.0;
     double kicker_voltage = 0.0;

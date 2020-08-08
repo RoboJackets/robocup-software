@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
+#include <rj_geometry/point.hpp>
+#include <rj_geometry/segment.hpp>
 #include <functional>
 #include <vector>
 
@@ -11,7 +11,7 @@
 #include "optimization/parallel_gradient_ascent1_d.hpp"
 
 // < [Point along target segment to aim at], [% Chance of success] >
-using KickResults = std::pair<Geometry2d::Point, float>;
+using KickResults = std::pair<rj_geometry::Point, float>;
 
 /**
  * @brief Finds the best position to kick to and the chance of success
@@ -31,8 +31,8 @@ public:
      * @param target_width, Width of target in radians
      * @return Results of calculations
      */
-    KickResults eval_pt_to_pt(Geometry2d::Point origin,
-                              Geometry2d::Point target, float target_width);
+    KickResults eval_pt_to_pt(rj_geometry::Point origin,
+                              rj_geometry::Point target, float target_width);
 
     /**
      * @brief Evaluates kick to target robot
@@ -40,22 +40,22 @@ public:
      * @param target, Target robot location
      * @return Results of calculations
      */
-    KickResults eval_pt_to_robot(Geometry2d::Point origin,
-                                 Geometry2d::Point target);
+    KickResults eval_pt_to_robot(rj_geometry::Point origin,
+                                 rj_geometry::Point target);
 
     /**
      * @brief Evaluates kick to opponent goal
      * @param origin, Starting point of the kick
      * @return Results of calculations
      */
-    KickResults eval_pt_to_opp_goal(Geometry2d::Point origin);
+    KickResults eval_pt_to_opp_goal(rj_geometry::Point origin);
 
     /**
      * @brief Evaluates kick to our goal
      * @param origin, Starting point of the kick
      * @return Results of calculations
      */
-    KickResults eval_pt_to_our_goal(Geometry2d::Point origin);
+    KickResults eval_pt_to_our_goal(rj_geometry::Point origin);
 
     /**
      * @brief Evaluates kick to target segment
@@ -63,8 +63,8 @@ public:
      * @param target, End segment of the kick
      * @return Results of calculations
      */
-    KickResults eval_pt_to_seg(Geometry2d::Point origin,
-                               Geometry2d::Segment target);
+    KickResults eval_pt_to_seg(rj_geometry::Point origin,
+                               rj_geometry::Segment target);
 
     /**
      * @brief Evaluates closed form solution of the KickEvaluation problem
@@ -98,7 +98,7 @@ public:
     /**
      * @brief Locations to pretend are robot obstacles during evaluation
      */
-    std::vector<Geometry2d::Point> hypothetical_robot_locations;
+    std::vector<rj_geometry::Point> hypothetical_robot_locations;
 
     static ConfigDouble* kick_std_dev;
 
@@ -108,8 +108,8 @@ private:
     /**
      * @return the width of the target segment in radians
      */
-    static float get_target_angle(Geometry2d::Point origin,
-                                  Geometry2d::Segment target);
+    static float get_target_angle(rj_geometry::Point origin,
+                                  rj_geometry::Segment target);
 
     /**
      * @return Vector of valid robots on the field
@@ -120,15 +120,15 @@ private:
      * @brief Converts Robot position to polar in reference to the goal vector
      * @return <R, Theta>
      */
-    static std::tuple<float, float> rect_to_polar(Geometry2d::Point origin,
-                                                  Geometry2d::Point target,
-                                                  Geometry2d::Point obstacle);
+    static std::tuple<float, float> rect_to_polar(rj_geometry::Point origin,
+                                                  rj_geometry::Point target,
+                                                  rj_geometry::Point obstacle);
 
     /**
      * @return List of all robots positions in polar coordinates
      */
     std::vector<std::tuple<float, float> > convert_robots_to_polar(
-        Geometry2d::Point origin, Geometry2d::Point target);
+        rj_geometry::Point origin, rj_geometry::Point target);
 
     /**
      * @brief Initilizes ParallelGraident1DConfig based upon the robot locations

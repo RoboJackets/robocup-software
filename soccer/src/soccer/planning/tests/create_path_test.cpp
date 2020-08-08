@@ -6,7 +6,7 @@
 #include "planning/primitives/create_path.hpp"
 #include "planning/tests/testing_utils.hpp"
 
-using namespace Geometry2d;
+using namespace rj_geometry;
 
 namespace Planning {
 

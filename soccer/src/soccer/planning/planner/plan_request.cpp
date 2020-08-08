@@ -2,7 +2,7 @@
 
 namespace Planning {
 
-void fill_obstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
+void fill_obstacles(const PlanRequest& in, rj_geometry::ShapeSet* out_static,
                     std::vector<DynamicObstacle>* out_dynamic, bool avoid_ball,
                     Trajectory* out_ball_trajectory) {
     out_static->clear();
@@ -14,7 +14,7 @@ void fill_obstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
         const auto& robot = in.world_state->their_robots.at(shell);
         if (robot.visible) {
             out_static->add(
-                std::make_shared<Geometry2d::Circle>(robot.pose.position(), kRobotRadius));
+                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius));
         }
     }
 
@@ -32,7 +32,7 @@ void fill_obstacles(const PlanRequest& in, Geometry2d::ShapeSet* out_static,
         } else {
             // Static obstacle
             out_static->add(
-                std::make_shared<Geometry2d::Circle>(robot.pose.position(), kRobotRadius));
+                std::make_shared<rj_geometry::Circle>(robot.pose.position(), kRobotRadius));
         }
     }
 

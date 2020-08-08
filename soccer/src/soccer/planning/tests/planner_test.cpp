@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Geometry2d/Pose.hpp"
+#include "rj_geometry/pose.hpp"
 #include "system_state.hpp"
 #include "planning/instant.hpp"
 #include "planning/trajectory.hpp"
@@ -21,7 +21,7 @@
  */
 
 using namespace Planning;
-using namespace Geometry2d;
+using namespace rj_geometry;
 using namespace Planning::TestingUtils;
 
 TEST(Planning, path_target_random) {
