@@ -43,7 +43,7 @@ CameraRobot CameraRobot::combine_robots(const std::list<CameraRobot>& robots) {
         time_avg += RJ::Seconds(cr.get_time_captured() - init_time);
         pos_avg += cr.get_pos();
         theta_cartesian_avg += Geometry2d::Point(cos(cr.get_theta()), sin(cr.get_theta()));
-        rrobot_id cr.get_robot_id();  // Shouldn't change besides the first iteration
+        robot_id = cr.get_robot_id();  // Shouldn't change besides the first iteration
     }
 
     time_avg /= robots.size();
@@ -52,6 +52,6 @@ CameraRobot CameraRobot::combine_robots(const std::list<CameraRobot>& robots) {
 
     return CameraRobot(init_time + time_avg,
                        {pos_avg, atan2(theta_cartesian_avg.y(), theta_cartesian_avg.x())},
-                       rorobot_id
+                       robot_id);
 }
 }  // namespace vision_filter

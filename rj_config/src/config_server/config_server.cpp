@@ -1,14 +1,14 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <config_server/config_server.h>
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_utils/logging.hpp>
 
 namespace config_server {
 ConfigServer::ConfigServer(const rclcpp::NodeOptions& node_options)
     : Node{"config_server", node_options},
-      field_dimensions_{rj_convert::convert_to_ros(Field_Dimensions::kDefaultDimensions)} {
+      field_dimensions_{rj_convert::convert_to_ros(FieldDimensions::kDefaultDimensions)} {
     const auto latching_qos = rclcpp::QoS(1).transient_local();
 
     // Game Settings

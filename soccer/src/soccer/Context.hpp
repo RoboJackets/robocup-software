@@ -67,7 +67,7 @@ struct Context {
 
     WorldState world_state;
 
-    Field_Dimensions field_dimensions;
+    FieldDimensions field_dimensions;
 
     std::optional<grSim_Packet> grsim_command;
 

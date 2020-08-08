@@ -3,7 +3,7 @@
 
 #include <boost/exception/diagnostic_information.hpp>
 
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <rj_common/multicast.hpp>
 #include <rj_constants/topic_names.hpp>
 #include <rj_convert/ros_convert.hpp>
@@ -234,9 +234,9 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
     }
 
     const SSL_FieldCicularArc* center = nullptr;
-    float penalty_short_dist = 0;                                          // default value
-    float penalty_long_dist = 0;                                           // default value
-    float displacement = Field_Dimensions::kDefaultDimensions.goal_flat();  // default displacment
+    float penalty_short_dist = 0;                                           // default value
+    float penalty_long_dist = 0;                                            // default value
+    float displacement = FieldDimensions::kDefaultDimensions.goal_flat();  // default displacment
 
     // Loop through field arcs looking for needed fields
     for (const SSL_FieldCicularArc& arc : field_size.field_arcs()) {
@@ -265,14 +265,14 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
 
     if (penalty_long_dist != 0 && penalty_short_dist != 0 && center != nullptr && thickness != 0) {
         // Force a resize
-        const Field_Dimensions new_field_dim{
+        const FieldDimensions new_field_dim{
             field_size.field_length() / 1000.0f,
             field_size.field_width() / 1000.0f,
             field_border,
             thickness,
             field_size.goal_width() / 1000.0f,
             field_size.goal_depth() / 1000.0f,
-            Field_Dimensions::kDefaultDimensions.goal_height(),
+            FieldDimensions::kDefaultDimensions.goal_height(),
             penalty_short_dist / 1000.0f,
             penalty_long_dist / 1000.0f,
             center->radius() / 1000.0f + adj,
@@ -280,18 +280,19 @@ void VisionReceiver::update_geometry_packet(const SSL_GeometryFieldSize& field_s
             displacement / 1000.0f,
             (field_size.field_length() / 1000.0f + (field_border)*2),
             (field_size.field_width() / 1000.0f + (field_border)*2)};
-        config_.update_field_dimensions(rj_convert::convert_to_ros<Field_Dimensions>(new_field_dim));
+        config_.update_field_dimensions(
+            rj_convert::convert_to_ros<FieldDimensions>(new_field_dim));
     } else if (center != nullptr && thickness != 0) {
-        const Field_Dimensions default_dim = Field_Dimensions::kDefaultDimensions;
+        const FieldDimensions default_dim = FieldDimensions::kDefaultDimensions;
 
-        const Field_Dimensions new_field_dim{
+        const FieldDimensions new_field_dim{
             field_size.field_length() / 1000.0f,
             field_size.field_width() / 1000.0f,
             field_border,
             thickness,
             field_size.goal_width() / 1000.0f,
             field_size.goal_depth() / 1000.0f,
-            Field_Dimensions::kDefaultDimensions.goal_height(),
+            FieldDimensions::kDefaultDimensions.goal_height(),
             default_dim.penalty_short_dist(),
             default_dim.penalty_long_dist(),
             center->radius() / 1000.0f + adj,

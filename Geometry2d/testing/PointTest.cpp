@@ -177,7 +177,8 @@ TEST(Point, dist_to) {
     EXPECT_FLOAT_EQ(0, Point(5, 3).dist_to(Point(5, 3)));
     EXPECT_FLOAT_EQ(5, Point(4, 5).dist_to(Point(1, 1)));
     EXPECT_FLOAT_EQ(5, Point(1.5, 1.5).dist_to(Point(4.5, 5.5)));
-    EXPECT_FLOAT_EQ((Point(93, 44) - Point(4.5, 5.5)).mag(), Point(93, 44).dist_to(Point(4.5, 5.5)));
+    EXPECT_FLOAT_EQ((Point(93, 44) - Point(4.5, 5.5)).mag(),
+                    Point(93, 44).dist_to(Point(4.5, 5.5)));
 }
 
 TEST(Point, near_point) {
@@ -206,8 +207,10 @@ TEST(Point, nearly_equals) {
     EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon / 2, 5 + kFloatEpsilon / 2)));
     EXPECT_TRUE(Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon / 2, 5 - kFloatEpsilon / 2)));
 
-    EXPECT_FALSE(Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon * 1.1, 5 + kFloatEpsilon * 1.1)));
-    EXPECT_FALSE(Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon * 1.1, 5 - kFloatEpsilon * 1.1)));
+    EXPECT_FALSE(
+        Point(0, 5).nearly_equals(Point(0 - kFloatEpsilon * 1.1, 5 + kFloatEpsilon * 1.1)));
+    EXPECT_FALSE(
+        Point(0, 5).nearly_equals(Point(0 + kFloatEpsilon * 1.1, 5 - kFloatEpsilon * 1.1)));
 }
 // TODO(ashaw596) Add tests for angle_to and angle_between once those changes are
 // merged

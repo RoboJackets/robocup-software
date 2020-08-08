@@ -47,16 +47,16 @@ public:
           z_k_(observation_size),
           y_k_k1_(observation_size),
           y_k_k_(observation_size),
-          p_k1_k1_(state_size, state_size),
-          p_k_k1_(state_size, state_size),
-          p_k_k_(state_size, state_size),
-          s_k_(observation_size, observation_size),
-          k_k_(state_size, observation_size),
-          f_k_(state_size, state_size),
-          b_k_(state_size, 1),
-          h_k_(observation_size, state_size),
-          q_k_(state_size, state_size),
-          r_k_(observation_size, observation_size),
+          P_k1_k1_(state_size, state_size),
+          P_k_k1_(state_size, state_size),
+          P_k_k_(state_size, state_size),
+          S_k_(observation_size, observation_size),
+          K_k_(state_size, observation_size),
+          F_k_(state_size, state_size),
+          B_k_(state_size, 1),
+          H_k_(observation_size, state_size),
+          Q_k_(state_size, state_size),
+          R_k_(observation_size, observation_size),
           identity_(Eigen::MatrixXd::Identity(state_size, state_size)) {}
 
     /**
@@ -81,19 +81,29 @@ protected:
     Eigen::VectorXd y_k_k1_;
     Eigen::VectorXd y_k_k_;
 
-    Eigen::MatrixXd p_k1_k1_;
-    Eigen::MatrixXd p_k_k1_;
-    Eigen::MatrixXd p_k_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd P_k1_k1_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd P_k_k1_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd P_k_k_;
 
-    Eigen::MatrixXd s_k_;
-    Eigen::MatrixXd k_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd S_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd K_k_;
 
-    Eigen::MatrixXd f_k_;
-    Eigen::MatrixXd b_k_;
-    Eigen::MatrixXd h_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd F_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd B_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd H_k_;
 
-    Eigen::MatrixXd q_k_;
-    Eigen::MatrixXd r_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd Q_k_;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    Eigen::MatrixXd R_k_;
 
     Eigen::MatrixXd identity_;
 };

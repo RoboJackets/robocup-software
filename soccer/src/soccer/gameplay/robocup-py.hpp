@@ -1,5 +1,6 @@
 #include <boost/python.hpp>
 
 extern "C" {
-PyObject* py_init_robocup();
+// NOLINTNEXTLINE(readability-identifier-naming)
+PyObject* PyInit_robocup();
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/ShapeSet.hpp>
 #include <rrt/2dplane/PlaneStateSpace.hpp>
@@ -12,7 +12,7 @@ namespace Planning {
  */
 class RoboCupStateSpace : public RRT::StateSpace<Geometry2d::Point> {
 public:
-    RoboCupStateSpace(const Field_Dimensions& dims,
+    RoboCupStateSpace(const FieldDimensions& dims,
                       const Geometry2d::ShapeSet& obstacles)
         : field_dimensions_(dims), obstacles_(obstacles) {}
 
@@ -64,7 +64,7 @@ public:
 
 private:
     const Geometry2d::ShapeSet& obstacles_;
-    const Field_Dimensions field_dimensions_;
+    const FieldDimensions field_dimensions_;
 };
 
 }  // namespace Planning

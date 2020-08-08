@@ -16,7 +16,7 @@
 /// This class contains constants defining the layout of the field.
 /// See the official SSL rules page for a detailed diagram:
 /// http://robocupssl.cpe.ku.ac.th/rules:main
-struct Field_Dimensions {
+struct FieldDimensions {
     using Msg = rj_msgs::msg::FieldDimensions;
 
     float length() const { return length_; }
@@ -85,18 +85,18 @@ struct Field_Dimensions {
 
     std::vector<Geometry2d::Line> field_borders() const { return field_borders_; }
 
-    static const Field_Dimensions kSingleFieldDimensions;
+    static const FieldDimensions kSingleFieldDimensions;
 
-    static const Field_Dimensions kDoubleFieldDimensions;
+    static const FieldDimensions kDoubleFieldDimensions;
 
-    static const Field_Dimensions kDefaultDimensions;
+    static const FieldDimensions kDefaultDimensions;
 
-    static Field_Dimensions current_dimensions;
+    static FieldDimensions current_dimensions;
 
-    Field_Dimensions()
-        : Field_Dimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
+    FieldDimensions()
+        : FieldDimensions(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) {}
 
-    Field_Dimensions(float fl, float fw, float fb, float flw, float gw,
+    FieldDimensions(float fl, float fw, float fb, float flw, float gw,
                      float gd, float gh, float psd, float pld, float cr,
                      float cd, float gf, float ffl, float ffw)
         : length_(fl),
@@ -116,8 +116,8 @@ struct Field_Dimensions {
         update_geometry();
     }
 
-    Field_Dimensions operator*(float scalar) const {
-        return Field_Dimensions(
+    FieldDimensions operator*(float scalar) const {
+        return FieldDimensions(
             length_ * scalar, width_ * scalar, border_ * scalar,
             line_width_ * scalar, goal_width_ * scalar, goal_depth_ * scalar,
             goal_height_ * scalar, penalty_short_dist_ * scalar,
@@ -126,7 +126,7 @@ struct Field_Dimensions {
             floor_width_ * scalar);
     }
 
-    bool operator==(const Field_Dimensions& a) const {
+    bool operator==(const FieldDimensions& a) const {
         return !(
             std::abs(length() - a.length()) > FLT_EPSILON ||
             std::abs(width() - a.width()) > FLT_EPSILON ||
@@ -144,7 +144,7 @@ struct Field_Dimensions {
             std::abs(floor_width() - a.floor_width()) > FLT_EPSILON);
     }
 
-    bool operator!=(const Field_Dimensions& a) const { return !(*this == a); }
+    bool operator!=(const FieldDimensions& a) const { return !(*this == a); }
 
     void update_geometry() {
         center_point_ = Geometry2d::Point(0.0, length_ / 2.0);
@@ -186,7 +186,7 @@ struct Field_Dimensions {
     }
 
     friend std::ostream& operator<<(std::ostream& stream,
-                                    const Field_Dimensions& fd) {
+                                    const FieldDimensions& fd) {
         stream << "length: " << fd.length() << "\n";
         stream << "width: " << fd.width() << "\n";
         stream << "border: " << fd.border() << "\n";
@@ -236,9 +236,9 @@ private:
 namespace rj_convert {
 
 template <>
-struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
-    static Field_Dimensions::Msg to_ros(const Field_Dimensions& from) {
-        return rj_msgs::build<Field_Dimensions::Msg>()
+struct RosConverter<FieldDimensions, FieldDimensions::Msg> {
+    static FieldDimensions::Msg to_ros(const FieldDimensions& from) {
+        return rj_msgs::build<FieldDimensions::Msg>()
             .length(from.length())
             .width(from.width())
             .border(from.border())
@@ -255,8 +255,8 @@ struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
             .floor_width(from.floor_width());
     }
 
-    static Field_Dimensions from_ros(const Field_Dimensions::Msg& from) {
-        return Field_Dimensions(
+    static FieldDimensions from_ros(const FieldDimensions::Msg& from) {
+        return FieldDimensions(
             from.length, from.width, from.border, from.line_width,
             from.goal_width, from.goal_depth, from.goal_height,
             from.penalty_short_dist, from.penalty_long_dist, from.center_radius,
@@ -265,6 +265,6 @@ struct RosConverter<Field_Dimensions, Field_Dimensions::Msg> {
     }
 };
 
-ASSOCIATE_CPP_ROS(Field_Dimensions, Field_Dimensions::Msg);
+ASSOCIATE_CPP_ROS(FieldDimensions, FieldDimensions::Msg);
 
 }  // namespace rj_convert

@@ -273,7 +273,7 @@ float OurRobot::kick_timer() const {
 
 // TODO make speed a float from 0->1 to make this more clear.
 void OurRobot::dribble(uint8_t speed) {
-    Field_Dimensions current_dimensions = Field_Dimensions::current_dimensions;
+    FieldDimensions current_dimensions = FieldDimensions::current_dimensions;
     auto offset = static_cast<float>(*dribble_out_of_bounds_offset);
 
     Geometry2d::Rect modified_field = Geometry2d::Rect(
@@ -432,7 +432,7 @@ std::shared_ptr<Geometry2d::Circle> OurRobot::create_ball_obstacle() const {
         !(context_->game_state.our_restart || context_->game_state.their_penalty())) {
         return std::make_shared<Geometry2d::Circle>(
             context_->world_state.ball.position,
-            Field_Dimensions::current_dimensions.center_radius());
+            FieldDimensions::current_dimensions.center_radius());
     }
 
     // create an obstacle if necessary

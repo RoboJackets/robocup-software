@@ -113,7 +113,7 @@ public:
      */
     void stop_robots();
 
-    void set_field_dimensions(const Field_Dimensions& dims);
+    void set_field_dimensions(const FieldDimensions& dims);
 
     bool is_radio_open() const;
 

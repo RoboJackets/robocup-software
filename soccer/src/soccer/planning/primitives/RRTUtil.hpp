@@ -1,7 +1,7 @@
 #pragma once
 #include <DebugDrawer.hpp>
 #include <Geometry2d/Point.hpp>
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <rrt/BiRRT.hpp>
 
 #include "Configuration.hpp"

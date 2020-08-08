@@ -64,7 +64,7 @@ Point EscapeObstaclesPathPlanner::find_non_blocked_goal(Point goal, std::optiona
                                                         const ShapeSet& obstacles, int max_itr) {
     if (obstacles.hit(goal)) {
         auto state_space =
-            std::make_shared<RoboCupStateSpace>(Field_Dimensions::current_dimensions, obstacles);
+            std::make_shared<RoboCupStateSpace>(FieldDimensions::current_dimensions, obstacles);
         RRT::Tree<Point> rrt(state_space, Point::hash, 2);
         rrt.setStartState(goal);
         // note: we don't set goal state because we're not looking for a

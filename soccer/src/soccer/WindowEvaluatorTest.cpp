@@ -17,8 +17,8 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     obstacle_bot->mutable_state().visible = true;
     obstacle_bot->mutable_state().pose = Pose(1, 1, 0);
 
-    Segment our_goal_segment(Point(Field_Dimensions::current_dimensions.goal_width() / 2.0, 0),
-                             Point(-Field_Dimensions::current_dimensions.goal_width() / 2.0, 0));
+    Segment our_goal_segment(Point(FieldDimensions::current_dimensions.goal_width() / 2.0, 0),
+                             Point(-FieldDimensions::current_dimensions.goal_width() / 2.0, 0));
 
     WindowEvaluator win_eval(&context);
     WindowingResult result = win_eval.eval_pt_to_seg(Point(1, 2), our_goal_segment);

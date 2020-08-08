@@ -48,17 +48,17 @@ KickResults KickEvaluator::eval_pt_to_robot(Point origin, Point target) {
 }
 
 KickResults KickEvaluator::eval_pt_to_opp_goal(Point origin) {
-    Segment their_goal{Point{-Field_Dimensions::current_dimensions.goal_width() / 2,
-                             Field_Dimensions::current_dimensions.length()},
-                       Point{Field_Dimensions::current_dimensions.goal_width() / 2,
-                             Field_Dimensions::current_dimensions.length()}};
+    Segment their_goal{Point{-FieldDimensions::current_dimensions.goal_width() / 2,
+                             FieldDimensions::current_dimensions.length()},
+                       Point{FieldDimensions::current_dimensions.goal_width() / 2,
+                             FieldDimensions::current_dimensions.length()}};
 
     return eval_pt_to_seg(origin, their_goal);
 }
 
 KickResults KickEvaluator::eval_pt_to_our_goal(Point origin) {
-    Segment our_goal{Point{-Field_Dimensions::current_dimensions.goal_width() / 2, 0},
-                     Point{Field_Dimensions::current_dimensions.goal_width() / 2, 0}};
+    Segment our_goal{Point{-FieldDimensions::current_dimensions.goal_width() / 2, 0},
+                     Point{FieldDimensions::current_dimensions.goal_width() / 2, 0}};
 
     return eval_pt_to_seg(origin, our_goal);
 }

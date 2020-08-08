@@ -22,7 +22,7 @@ using namespace Geometry2d;
 using namespace google::protobuf;
 
 // TODO: Remove this and just use the one in Context.
-Field_Dimensions* current_dimensions = &Field_Dimensions::current_dimensions;
+FieldDimensions* current_dimensions = &FieldDimensions::current_dimensions;
 
 // A temporary place to store RobotLocalConfig/RobotConfig variables as we
 // create them. They are initialized in create_configuration, before the
@@ -250,7 +250,7 @@ void Processor::update_intent_active() {
     }
 }
 
-void Processor::set_field_dimensions(const Field_Dimensions& dims) {
+void Processor::set_field_dimensions(const FieldDimensions& dims) {
     *current_dimensions = dims;
     gameplay_module_->calculate_field_obstacles();
     gameplay_module_->update_field_dimensions();

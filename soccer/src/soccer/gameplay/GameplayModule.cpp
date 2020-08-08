@@ -3,7 +3,7 @@
 #include <gameplay/GameplayModule.hpp>
 #include <planning/Instant.hpp>
 #include <referee/ExternalReferee.hpp>
-#include <rj_common/Field_Dimensions.hpp>
+#include <rj_common/FieldDimensions.hpp>
 #include <rj_common/Network.hpp>
 #include <rj_common/qt_utils.hpp>
 #include <rj_constants/constants.hpp>
@@ -83,7 +83,7 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : context_(context) {
 
             main_py_namespace_["constants"] = handle<>(PyImport_ImportModule("constants"));
 
-            main_py_namespace_["constants"].attr("Field") = &Field_Dimensions::current_dimensions;
+            main_py_namespace_["constants"].attr("Field") = &FieldDimensions::current_dimensions;
 
             // instantiate the root play
             handle<> ignored3((PyRun_String("import main; main.init()", Py_file_input,
@@ -97,7 +97,7 @@ Gameplay::GameplayModule::GameplayModule(Context* context) : context_(context) {
 }
 
 void Gameplay::GameplayModule::calculate_field_obstacles() {
-    auto dimensions = Field_Dimensions::current_dimensions;
+    auto dimensions = FieldDimensions::current_dimensions;
 
     center_matrix_ = TransformMatrix::translate(Point(0, dimensions.length() / 2));
     opp_matrix_ =
@@ -368,7 +368,7 @@ void Gameplay::GameplayModule::run() {
     /// visualize
     if (context_->game_state.stay_away_from_ball() && context_->world_state.ball.visible) {
         context_->debug_drawer.draw_circle(context_->world_state.ball.position,
-                                           Field_Dimensions::current_dimensions.center_radius(),
+                                           FieldDimensions::current_dimensions.center_radius(),
                                            Qt::black, "Rules");
     }
 
@@ -396,7 +396,7 @@ boost::python::object Gameplay::GameplayModule::get_main_module() {
 
 void Gameplay::GameplayModule::update_field_dimensions() {
     PyGILState_STATE state = PyGILState_Ensure();
-    { main_py_namespace_["constants"].attr("Field") = &Field_Dimensions::current_dimensions; }
+    { main_py_namespace_["constants"].attr("Field") = &FieldDimensions::current_dimensions; }
     PyGILState_Release(state);
 }
 
@@ -505,7 +505,7 @@ void Gameplay::GameplayModule::load_test() {
                         rob->set_x(
                             -team_direction *
                             (y -
-                             (Field_Dimensions::current_dimensions.length() /
+                             (FieldDimensions::current_dimensions.length() /
                               2)));
                         rob->set_y(team_direction * x);
                         rob->set_dir(extract<float>(robot[2]));
@@ -543,7 +543,7 @@ void Gameplay::GameplayModule::load_test() {
                         rob->set_x(
                             -team_direction *
                             (y -
-                             (Field_Dimensions::current_dimensions.length() /
+                             (FieldDimensions::current_dimensions.length() /
                               2)));
                         rob->set_y(team_direction * x);
                         rob->set_dir(extract<float>(robot[2]));
@@ -576,7 +576,7 @@ void Gameplay::GameplayModule::load_test() {
                 ball_replace->set_x(
                     -team_direction *
                     (posy -
-                     (Field_Dimensions::current_dimensions.length() / 2)));
+                     (FieldDimensions::current_dimensions.length() / 2)));
                 ball_replace->set_y(team_direction * posx);
                 ball_replace->set_vx(-team_direction * vely);
                 ball_replace->set_vy(team_direction * velx);
